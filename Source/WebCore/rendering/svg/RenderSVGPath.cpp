@@ -167,7 +167,7 @@ void RenderSVGPath::strokeZeroLengthSubpaths(GraphicsContext& context) const
 
     AffineTransform nonScalingTransform;
     if (hasNonScalingStroke())
-        nonScalingTransform = nonScalingStrokeTransform();
+        nonScalingTransform = computeNonScalingStrokeTransform();
 
     GraphicsContextStateSaver stateSaver(context, true);
     useStrokeStyleToFill(context);
@@ -236,7 +236,7 @@ void RenderSVGPath::drawMarkers(PaintInfo& paintInfo)
             GraphicsContextStateSaver stateSaver(context);
 
             context.setLineDash(DashArray(), 0);
-            auto contentTransform = marker->markerTransformation(markerPosition.origin, markerPosition.angle, strokeWidth);
+            auto contentTransform = marker->computeMarkerTransform(markerPosition.origin, markerPosition.angle, strokeWidth);
             protect(marker->layer())->paintResourceLayerForSVG(context, contentTransform);
         }
     }
@@ -264,7 +264,7 @@ FloatRect RenderSVGPath::computeMarkerBoundingBox(const SVGBoundingBoxComputatio
     FloatRect boundaries;
     for (auto& markerPosition : m_markerPositions) {
         if (CheckedPtr marker = markerForType(markerPosition.type, markerStart.get(), markerMid.get(), markerEnd.get()))
-            boundaries.unite(marker->computeMarkerBoundingBox(options, marker->markerTransformation(markerPosition.origin, markerPosition.angle, strokeWidth())));
+            boundaries.unite(marker->computeMarkerBoundingBox(options, marker->computeMarkerTransform(markerPosition.origin, markerPosition.angle, strokeWidth())));
     }
 
     return boundaries;

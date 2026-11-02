@@ -63,12 +63,8 @@ public:
 
     inline SVGElement& element() const;
 
-    // Cached local SVG transform for non-layered elements.
-    // For layered elements, the layer caches the transform instead.
-    // Updated via updateLocalTransform(), analogous to updateLayerTransform() for layered elements.
-    AffineTransform localTransform() const override { return m_localTransform.value_or(AffineTransform()); }
-    void updateLocalTransform();
-    AffineTransform computeLocalTransform() const;
+    AffineTransform nominalTransform() const { return m_cachedNominalTransform.value_or(AffineTransform()); }
+    void updateCachedNominalTransform();
 
     LayoutRect currentSVGLayoutRect() const { return m_layoutRect; }
     void setCurrentSVGLayoutRect(const LayoutRect& layoutRect) { m_layoutRect = layoutRect; }
@@ -161,7 +157,7 @@ private:
     bool isInsideSVGResourceContainer() const;
 
     LayoutRect m_layoutRect;
-    std::optional<AffineTransform> m_localTransform;
+    std::optional<AffineTransform> m_cachedNominalTransform;
 
     mutable std::optional<FloatPoint3D> m_cachedTransformOrigin;
     mutable FloatRect m_cachedTransformOriginBox;

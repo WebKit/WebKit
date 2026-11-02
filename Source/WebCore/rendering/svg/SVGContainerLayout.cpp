@@ -104,11 +104,7 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
 
 LayoutPoint SVGContainerLayout::containerLayoutLocation(const RenderLayerModelObject& container)
 {
-    // The nominal SVG layout location (== flooredLayoutPoint(objectBoundingBoxWithoutTransformsTopLeft), where
-    // objectBoundingBoxWithoutTransforms = union of child boxes, not mapped through their tranforms) is
-    // only meaningful for the children of the RenderSVGRoot. RenderSVGRoot itself is positioned according to
-    // the CSS box model object, where we need to respect border & padding, encoded in the contentBoxLocation().
-    // -> Position all RenderSVGRoot children relative to the contentBoxLocation() to avoid intruding border/padding area.
+    // RenderSVGRoot children are positioned relative to its contentBoxLocation(), to respect border and padding.
     if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(container))
         return -svgRoot->contentBoxLocation();
 

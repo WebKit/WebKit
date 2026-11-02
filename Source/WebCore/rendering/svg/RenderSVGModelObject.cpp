@@ -102,24 +102,16 @@ void RenderSVGModelObject::updateFromStyle()
     RenderLayerModelObject::updateFromStyle();
     updateHasSVGTransformFlags();
     if (!hasLayer())
-        updateLocalTransform();
+        updateCachedNominalTransform();
     else
-        m_localTransform = std::nullopt;
+        m_cachedNominalTransform = std::nullopt;
 }
 
-AffineTransform RenderSVGModelObject::computeLocalTransform() const
+void RenderSVGModelObject::updateCachedNominalTransform()
 {
-    TransformationMatrix transform;
-    CheckedRef style = this->style();
-    applyTransform(transform, style, transformReferenceBoxRect(style), Style::TransformResolver::allTransformOperations);
-    return transform.toAffineTransform();
-}
-
-void RenderSVGModelObject::updateLocalTransform()
-{
-    auto localTransform = computeLocalTransform();
-    auto oldTransform = std::exchange(m_localTransform, localTransform);
-    invalidateNonScalingStrokeCachesInSubtreeForSVG(oldTransform, localTransform);
+    auto transform = computeNominalTransform();
+    auto oldTransform = std::exchange(m_cachedNominalTransform, transform);
+    invalidateNonScalingStrokeCachesInSubtreeForSVG(oldTransform, transform);
 }
 
 LayoutRect RenderSVGModelObject::overflowClipRect(const LayoutPoint&, OverlayScrollbarSizeRelevancy, PaintPhase) const
@@ -437,16 +429,12 @@ void RenderSVGModelObject::updateLayerTransform()
 {
     // Transform-origin depends on box size, so we need to update the layer transform after layout.
     if (hasLayer()) {
-        m_localTransform = std::nullopt;
+        m_cachedNominalTransform = std::nullopt;
         RenderLayerModelObject::updateLayerTransform();
         return;
     }
-    // Non-layered SVG renderers cache their transform in m_localTransform (via applyTransform()).
-    // Subclasses like RenderSVGViewportContainer compute supplemental transforms (viewBox, zoom, pan)
-    // in their updateLayerTransform() override before calling the base. We must refresh the cached
-    // local transform so that coordinate mapping (e.g. for scalingFactor computation) picks up
-    // the supplemental transform.
-    updateLocalTransform();
+    // Subclasses compute their supplemental transform before calling this, so refresh the cache.
+    updateCachedNominalTransform();
 }
 
 } // namespace WebCore

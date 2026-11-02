@@ -79,6 +79,7 @@
 #include "RenderSVGBlock.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGModelObject.h"
+#include "RenderSVGText.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTableRow.h"
 #include "RenderTextControl.h"
@@ -1689,9 +1690,12 @@ void RenderObject::getTransformFromContainer(const LayoutSize& offsetInContainer
     if (hasLayer() && (layer = downcast<RenderLayerModelObject>(*this).layer()) && layer->transform())
         transform.multiply(layer->currentTransform());
     else if (document().settings().layerBasedSVGEngineEnabled() && isSVGLayerAwareRenderer()) {
-        // Non-layered SVG elements: use the cached local transform. localTransform() is virtual,
-        // returning m_localTransform for RenderSVGModelObject and RenderSVGText, identity otherwise.
-        if (auto svgTransform = localTransform(); !svgTransform.isIdentity())
+        AffineTransform svgTransform;
+        if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(*this))
+            svgTransform = svgModelObject->nominalTransform();
+        else if (auto* svgText = dynamicDowncast<RenderSVGText>(*this))
+            svgTransform = svgText->nominalTransform();
+        if (!svgTransform.isIdentity())
             transform.multiply(TransformationMatrix(svgTransform));
     }
 

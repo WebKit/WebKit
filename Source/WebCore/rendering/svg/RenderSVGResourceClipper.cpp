@@ -277,19 +277,7 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
 
         auto testPoint = point;
         if (svgChild->isTransformed()) {
-            // Compute the child's SVG transform and inverse-map the point.
-            // For non-layer children, localTransform() is already populated.
-            // For layer children, localTransform() is not maintained, so compute it.
-            AffineTransform childTransform;
-            if (svgChild->hasLayer()) {
-                TransformationMatrix tm;
-                CheckedRef childStyle = svgChild->style();
-                auto referenceBoxRect = svgChild->transformReferenceBoxRect(childStyle);
-                svgChild->applyTransform(tm, childStyle, referenceBoxRect, Style::TransformResolver::allTransformOperations);
-                childTransform = tm.toAffineTransform();
-            } else
-                childTransform = svgChild->localTransform();
-
+            auto childTransform = svgChild->hasLayer() ? svgChild->computeNominalTransform() : svgChild->nominalTransform();
             auto inverseTransform = childTransform.inverse();
             if (!inverseTransform)
                 continue;

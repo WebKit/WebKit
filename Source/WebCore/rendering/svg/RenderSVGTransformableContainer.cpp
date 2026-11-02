@@ -84,16 +84,14 @@ bool RenderSVGTransformableContainer::needsHasSVGTransformFlags() const
 
 void RenderSVGTransformableContainer::updateLayerTransform()
 {
-    // First update the supplemental layer transform...
-    m_supplementalLayerTransform = AffineTransform::makeTranslation(additionalContainerTranslation());
+    m_supplementalTransform = AffineTransform::makeTranslation(additionalContainerTranslation());
 
-    // ... before being able to use it in RenderLayerModelObject::updateLayerTransform().
     RenderSVGContainer::updateLayerTransform();
 }
 
 void RenderSVGTransformableContainer::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
-    auto postTransform = m_supplementalLayerTransform.isIdentity() ? std::nullopt : std::make_optional(m_supplementalLayerTransform);
+    auto postTransform = m_supplementalTransform.isIdentity() ? std::nullopt : std::make_optional(m_supplementalTransform);
     applySVGTransform(transform, protect(graphicsElement()), style, boundingBox, std::nullopt, postTransform, options);
 }
 

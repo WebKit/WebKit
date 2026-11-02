@@ -125,7 +125,7 @@ public:
         return AffineTransform::makeScale({ 1 / zoom, 1 / zoom }).multiply(ctm);
     }
 
-    FloatSize calculateAccumulatedSVGAncestorTransformScale()
+    FloatSize computeAccumulatedSVGAncestorTransformScale()
     {
         AffineTransform accumulatedTransform = computeAccumulatedTransform(nullptr, TransformState::TrackSVGScreenCTMMatrix);
         return {

@@ -102,8 +102,8 @@ public:
     // This lives in RenderLayerModelObject, which is the common base-class for all SVG renderers.
     void mapLocalToSVGContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const;
 
-    void applySVGTransform(TransformationMatrix&, const SVGGraphicsElement&, const Style::ComputedStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption>) const;
-    void applySVGTransform(TransformationMatrix&, const AffineTransform& svgTransform, const AffineTransform* supplementalTransform, const Style::ComputedStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption>) const;
+    void applySVGTransform(TransformationMatrix&, const SVGGraphicsElement&, const Style::ComputedStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplyTransform, const std::optional<AffineTransform>& postApplyTransform, OptionSet<Style::TransformResolverOption>) const;
+    void applySVGTransform(TransformationMatrix&, const AffineTransform& svgTransform, const AffineTransform* motionTransform, const Style::ComputedStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplyTransform, const std::optional<AffineTransform>& postApplyTransform, OptionSet<Style::TransformResolverOption>) const;
     void updateHasSVGTransformFlags();
     virtual bool needsHasSVGTransformFlags() const { ASSERT_NOT_REACHED(); return false; }
 
@@ -119,7 +119,7 @@ public:
     void updateTransformAndRepaintForSVGAfterAttributeChange(SVGAttributeChangeRepaintMode = SVGAttributeChangeRepaintMode::Issue);
     bool svgTransformAttributeChangeInducesLayerComposition();
 
-    LayoutPoint nominalSVGLayoutLocation() const { return flooredLayoutPoint(objectBoundingBoxWithoutTransformations().minXMinYCorner()); }
+    LayoutPoint nominalSVGLayoutLocation() const { return flooredLayoutPoint(objectBoundingBoxWithoutTransforms().minXMinYCorner()); }
     LayoutPoint objectBoundingBoxLocation() const { return flooredLayoutPoint(objectBoundingBox().minXMinYCorner()); }
     virtual LayoutPoint currentSVGLayoutLocation() const { ASSERT_NOT_REACHED(); return { }; }
     virtual void setCurrentSVGLayoutLocation(const LayoutPoint&) { ASSERT_NOT_REACHED(); }
@@ -168,6 +168,9 @@ public:
     bool layerAccessPreventedSlow() const;
 #endif
 
+    // Nominal transform: the element's transform relative to nominalSVGLayoutLocation(), used for painting and layers.
+    AffineTransform computeNominalTransform() const;
+
     AffineTransform computeRendererTransform() const;
 
     void contentChanged(ContentChangeType, const std::optional<FloatRect>& = std::nullopt);
@@ -187,8 +190,8 @@ private:
     bool createLayerIfAllowed();
     void removeOnlyThisLayerWithRepaint();
 
-    std::optional<AffineTransform> svgTransformBeforeStyleChange(const Style::ComputedStyle& oldStyle) const;
-    AffineTransform svgTransformAfterStyleChange() const;
+    std::optional<AffineTransform> nominalTransformBeforeStyleChange(const Style::ComputedStyle& oldStyle) const;
+    AffineTransform computeNominalTransformAfterStyleChange() const;
     bool markSVGTextForRelayoutIfScaleChanged(const AffineTransform& previousTransform, const AffineTransform& currentTransform);
 
     RenderSVGResourceMarker* svgMarkerResourceFromStyle(const Style::SVGMarkerResource&) const;

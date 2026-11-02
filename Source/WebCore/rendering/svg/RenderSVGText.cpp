@@ -119,17 +119,9 @@ static inline void updateFontInAllDescendants(RenderSVGText& text)
     }
 }
 
-AffineTransform RenderSVGText::computeLocalTransform() const
+void RenderSVGText::updateCachedNominalTransform()
 {
-    ASSERT(document().settings().layerBasedSVGEngineEnabled());
-    TransformationMatrix transform;
-    applyTransform(transform, style(), transformReferenceBoxRect(style()), Style::TransformResolver::allTransformOperations);
-    return transform.toAffineTransform();
-}
-
-void RenderSVGText::updateLocalTransform()
-{
-    m_localTransform = computeLocalTransform();
+    m_cachedNominalTransform = computeNominalTransform();
 }
 
 void RenderSVGText::updateTransform()
@@ -137,7 +129,7 @@ void RenderSVGText::updateTransform()
     ASSERT(document().settings().layerBasedSVGEngineEnabled());
     updateLayerTransform();
     if (!hasLayer())
-        updateLocalTransform();
+        updateCachedNominalTransform();
 }
 
 void RenderSVGText::layout()

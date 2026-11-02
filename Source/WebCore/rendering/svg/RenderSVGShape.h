@@ -102,7 +102,7 @@ public:
 
     void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
 
-    AffineTransform nonScalingStrokeTransform() const;
+    AffineTransform computeNonScalingStrokeTransform() const;
 
     void invalidateNonScalingStrokeCaches();
 

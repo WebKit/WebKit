@@ -640,7 +640,7 @@ public:
     // They are laid out in such a way that transformations do NOT affect layout, as in HTML/CSS world, but take affect during
     // painting, hit-testing etc. This allows to minimize the amount of re-layouts when animating transformations in SVG
     // (not using CSS Animations/Transitions / Web Animations, but e.g. SMIL <animateTransform>, JS, ...).
-    virtual FloatRect objectBoundingBoxWithoutTransformations() const { return objectBoundingBox(); }
+    virtual FloatRect objectBoundingBoxWithoutTransforms() const { return objectBoundingBox(); }
 
     // Returns the smallest rectangle enclosing all of the painted content
     // respecting clipping, masking, filters, opacity, stroke-width and markers

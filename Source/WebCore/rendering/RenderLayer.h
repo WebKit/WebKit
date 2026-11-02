@@ -484,7 +484,7 @@ public:
     void dirtyChildrenInDOMOrderForSVG();
     void invalidateEnclosingSVGContainerSegmentation();
     bool shouldSkipRepaintAfterLayoutForSVG() const;
-    std::optional<TransformationMatrix> containerTransformForRepaintForSVG() const;
+    std::optional<TransformationMatrix> computeContainerTransformForRepaintForSVG() const;
     void setNeedsFullRepaintIfSVGContainerTransformChanged(const RenderLayerModelObject* repaintContainer);
     bool hasFailedFilterForSVG() const;
     bool LEGACY_NODELETE shouldSkipHitTestForSVG() const;
@@ -1076,11 +1076,11 @@ private:
     HitLayer hitTestRendererByInversingTransformForSVG(RenderElement&, const LayoutSize& positionOffset, const HitTestRequest&, HitTestResult&, const LayoutRect& hitTestRect, const HitTestLocation&);
     HitLayer hitTestSubtreeWithinTransformScopeForSVG(RenderElement& container, const LayoutPoint& accumulatedOffset, const HitTestRequest&, HitTestResult&, const LayoutRect& hitTestRect, const HitTestLocation&);
 
-    struct SVGRendererTransform {
+    struct SVGLocalToContainerTransform {
         TransformationMatrix transform;
         LayoutSize containerOffset;
     };
-    std::optional<SVGRendererTransform> computeRendererTransformForSVG(CheckedRef<RenderElement>, const LayoutSize& positionOffset) const;
+    std::optional<SVGLocalToContainerTransform> computeLocalToContainerTransformForSVG(CheckedRef<RenderElement>, const LayoutSize& positionOffset) const;
     void dirtyPaintOrderListsOnChildChange(RenderLayer&);
 
     bool shouldBeNormalFlowOnly() const;

@@ -1349,7 +1349,7 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
             auto styleable = Styleable::fromRenderer(renderer());
             bool runningAcceleratedTransformAnimation = styleable && styleable->isRunningAcceleratedTransformRelatedAnimation();
             LAYER_POSITIONS_ASSERT_IMPLIES(repaintRects() && !runningAcceleratedTransformAnimation, *repaintRects() == renderer().rectsForRepaintingAfterLayout(repaintContainer.get(), RepaintOutlineBounds::Yes));
-            LAYER_POSITIONS_ASSERT_IMPLIES(m_svgData && !runningAcceleratedTransformAnimation, m_svgData->containerTransformForRepaintRects == containerTransformForRepaintForSVG());
+            LAYER_POSITIONS_ASSERT_IMPLIES(m_svgData && !runningAcceleratedTransformAnimation, m_svgData->containerTransformForRepaintRects == computeContainerTransformForRepaintForSVG());
 #endif
             return;
         }
@@ -1557,7 +1557,7 @@ void RenderLayer::computeRepaintRects(const RenderLayerModelObject* repaintConta
         setRepaintRects(renderer().rectsForRepaintingAfterLayout(repaintContainer, RepaintOutlineBounds::Yes));
 
     if (m_svgData && is<RenderSVGContainer>(renderer()))
-        m_svgData->containerTransformForRepaintRects = containerTransformForRepaintForSVG();
+        m_svgData->containerTransformForRepaintRects = computeContainerTransformForRepaintForSVG();
 
     m_repaintContainer = repaintContainer;
 }

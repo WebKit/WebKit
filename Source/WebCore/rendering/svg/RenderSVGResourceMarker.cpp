@@ -88,11 +88,10 @@ void RenderSVGResourceMarker::updateFromStyle()
 
 void RenderSVGResourceMarker::updateLayerTransform()
 {
-    // First update the supplemental layer transform.
     Ref useMarkerElement = markerElement();
     auto viewportSize = this->viewportSize();
 
-    m_supplementalLayerTransform.makeIdentity();
+    m_supplementalTransform.makeIdentity();
 
     if (useMarkerElement->hasAttribute(SVGNames::viewBoxAttr)) {
         // An empty viewBox disables the rendering -- dirty the visible descendant status!
@@ -100,10 +99,9 @@ void RenderSVGResourceMarker::updateLayerTransform()
             if (hasLayer())
                 layer()->dirtyVisibleContentStatus();
         } else if (auto viewBoxTransform = useMarkerElement->viewBoxToViewTransform(viewportSize.width(), viewportSize.height()); !viewBoxTransform.isIdentity())
-            m_supplementalLayerTransform = viewBoxTransform;
+            m_supplementalTransform = viewBoxTransform;
     }
 
-    // After updating the supplemental layer transform we're able to use it in RenderLayerModelObjects::updateLayerTransform().
     RenderSVGContainer::updateLayerTransform();
 }
 
@@ -116,11 +114,11 @@ void RenderSVGResourceMarker::applyTransform(TransformationMatrix& transform, co
     Style::TransformResolver transformResolver { transform, style };
 
     FloatPoint3D originTranslate;
-    if (options.contains(Style::TransformResolverOption::TransformOrigin) && !m_supplementalLayerTransform.isIdentityOrTranslation())
+    if (options.contains(Style::TransformResolverOption::TransformOrigin) && !m_supplementalTransform.isIdentityOrTranslation())
         originTranslate = transformResolver.computeTransformOrigin(boundingBox);
 
     transformResolver.applyTransformOrigin(originTranslate);
-    transform.multiplyAffineTransform(m_supplementalLayerTransform);
+    transform.multiplyAffineTransform(m_supplementalTransform);
     transformResolver.unapplyTransformOrigin(originTranslate);
 }
 
@@ -133,22 +131,22 @@ LayoutRect RenderSVGResourceMarker::overflowClipRect(const LayoutPoint& location
         if (useMarkerElement->hasEmptyViewBox())
             return { };
 
-        if (!m_supplementalLayerTransform.isIdentity())
-            clipRect = enclosingLayoutRect(m_supplementalLayerTransform.inverse().value_or(AffineTransform { }).mapRect(viewport()));
+        if (!m_supplementalTransform.isIdentity())
+            clipRect = enclosingLayoutRect(m_supplementalTransform.inverse().value_or(AffineTransform { }).mapRect(viewport()));
     }
 
     clipRect.moveBy(location);
     return clipRect;
 }
 
-AffineTransform RenderSVGResourceMarker::markerTransformation(const FloatPoint& origin, float autoAngle, float strokeWidth) const
+AffineTransform RenderSVGResourceMarker::computeMarkerTransform(const FloatPoint& origin, float autoAngle, float strokeWidth) const
 {
     AffineTransform transform;
     transform.translate(origin);
     transform.rotate(angle().value_or(autoAngle));
 
     // The 'referencePoint()' coordinate maps to SVGs refX/refY, given in coordinates relative to the viewport established by the marker
-    auto mappedOrigin = m_supplementalLayerTransform.mapPoint(referencePoint());
+    auto mappedOrigin = m_supplementalTransform.mapPoint(referencePoint());
 
     if (markerUnits() == SVGMarkerUnitsType::StrokeWidth)
         transform.scaleNonUniform(strokeWidth, strokeWidth);
@@ -157,13 +155,13 @@ AffineTransform RenderSVGResourceMarker::markerTransformation(const FloatPoint& 
     return transform;
 }
 
-FloatRect RenderSVGResourceMarker::computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions& options, const AffineTransform& markerTransformation) const
+FloatRect RenderSVGResourceMarker::computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions& options, const AffineTransform& markerTransform) const
 {
     SVGBoundingBoxComputation boundingBoxComputation(*this);
     auto boundingBox = boundingBoxComputation.computeDecoratedBoundingBox(options);
 
     // Map repaint rect into parent coordinate space, in which the marker boundaries have to be evaluated
-    return markerTransformation.mapRect(m_supplementalLayerTransform.mapRect(boundingBox));
+    return markerTransform.mapRect(m_supplementalTransform.mapRect(boundingBox));
 }
 
 }

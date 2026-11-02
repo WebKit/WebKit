@@ -40,7 +40,7 @@ public:
         IncludeClippers                     = 1 << 3, /* corresponds to 'bool clippers' */
         IncludeMaskers                      = 1 << 4, /* WebKit extension - internal    */
         IncludeOutline                      = 1 << 5, /* WebKit extension - internal    */
-        IgnoreTransformations               = 1 << 6, /* WebKit extension - internal    */
+        IgnoreTransforms                    = 1 << 6, /* WebKit extension - internal    */
         OverrideBoxWithFilterBox            = 1 << 7, /* WebKit extension - internal    */
         OverrideBoxWithFilterBoxForChildren = 1 << 8, /* WebKit extension - internal    */
         CalculateFastRepaintRect            = 1 << 9, /* WebKit extension - internal    */

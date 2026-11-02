@@ -54,7 +54,7 @@ private:
 
     bool isOutermostSVGViewportContainer() const { return isAnonymous(); }
     bool updateLayoutSizeIfNeeded() final;
-    std::optional<FloatRect> overridenObjectBoundingBoxWithoutTransformations() const final { return std::make_optional(viewport()); }
+    std::optional<FloatRect> overriddenObjectBoundingBoxWithoutTransforms() const final { return std::make_optional(viewport()); }
 
     FloatPoint computeViewportLocation() const;
     FloatSize computeViewportSize() const;
@@ -63,7 +63,7 @@ private:
     void updateLayerTransform() final;
     bool needsHasSVGTransformFlags() const final;
 
-    AffineTransform m_supplementalLayerTransform;
+    AffineTransform m_supplementalTransform;
     FloatRect m_viewport;
     SingleThreadWeakPtr<RenderSVGRoot> m_owningSVGRoot;
 };

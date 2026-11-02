@@ -104,11 +104,11 @@ RefPtr<Pattern> RenderSVGResourcePattern::buildPattern(GraphicsContext& context,
             transform = patternTransform * transform;
 
         m_imageMap.set(renderer, *tileImage);
-        m_transformMap.set(renderer, transform);
+        m_tileImageTransformMap.set(renderer, transform);
     }
 
     // Build pattern.
-    return Pattern::create({ tileImage.releaseNonNull() }, { true, true, m_transformMap.get(renderer) } );
+    return Pattern::create({ tileImage.releaseNonNull() }, { true, true, m_tileImageTransformMap.get(renderer) } );
 }
 
 bool RenderSVGResourcePattern::prepareFillOperation(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const Style::ComputedStyle& style)
@@ -133,7 +133,7 @@ bool RenderSVGResourcePattern::prepareStrokeOperation(GraphicsContext& context, 
     SVGRenderSupport::applyStrokeStyleToContext(context, style, targetRenderer);
     if (style.vectorEffect() == VectorEffect::NonScalingStroke) {
         if (CheckedPtr shape = dynamicDowncast<RenderSVGShape>(targetRenderer))
-            pattern->setPatternSpaceTransform(shape->nonScalingStrokeTransform().multiply(m_transformMap.get(targetRenderer)));
+            pattern->setPatternSpaceTransform(shape->computeNonScalingStrokeTransform().multiply(m_tileImageTransformMap.get(targetRenderer)));
     }
     context.setStrokePattern(*pattern);
     return true;
@@ -195,7 +195,7 @@ void RenderSVGResourcePattern::removeReferencingCSSClient(const RenderElement& c
 {
     if (auto renderer = dynamicDowncast<RenderLayerModelObject>(client)) {
         m_imageMap.remove(renderer);
-        m_transformMap.remove(renderer);
+        m_tileImageTransformMap.remove(renderer);
     }
 }
 

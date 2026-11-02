@@ -499,7 +499,7 @@ void LocalFrameViewLayoutContext::flushPendingSVGTransformAttributeUpdatesIfNeed
     // container happens once per parent in Pass 3, not once per child.
     auto childRectInParentSpace = [](const RenderSVGModelObject& shape) -> LayoutRect {
         auto localRect = shape.visualOverflowRectEquivalent();
-        auto transform = shape.localTransform();
+        auto transform = shape.nominalTransform();
         auto rect = transform.isIdentity() ? localRect : enclosingLayoutRect(transform.mapRect(FloatRect { localRect }));
         rect.move(shape.locationOffsetEquivalent());
         return rect;

@@ -140,16 +140,15 @@ inline AffineTransform viewBoxToViewTransform(const SVGSVGElement& svgSVGElement
 
 void RenderSVGViewportContainer::updateLayerTransform()
 {
-    // First update the supplemental layer transform.
     Ref useSVGSVGElement = svgSVGElement();
     auto viewportSize = this->viewportSize();
 
-    m_supplementalLayerTransform.makeIdentity();
+    m_supplementalTransform.makeIdentity();
 
     if (isOutermostSVGViewportContainer()) {
         // Handle pan - set on outermost <svg> element.
         if (auto translation = useSVGSVGElement->currentTranslateValue(); !translation.isZero())
-            m_supplementalLayerTransform.translate(translation);
+            m_supplementalTransform.translate(translation);
 
         // Handle zoom - take effective zoom from outermost <svg> element.
         CheckedRef svgRoot = downcast<RenderSVGRoot>(*useSVGSVGElement->renderer());
@@ -164,28 +163,27 @@ void RenderSVGViewportContainer::updateLayerTransform()
             if (!contentBoxOffset.isZero()) {
                 auto cbx = contentBoxOffset.x().toFloat();
                 auto cby = contentBoxOffset.y().toFloat();
-                m_supplementalLayerTransform.translate(cbx, cby);
-                m_supplementalLayerTransform.scale(scale);
-                m_supplementalLayerTransform.translate(-cbx, -cby);
+                m_supplementalTransform.translate(cbx, cby);
+                m_supplementalTransform.scale(scale);
+                m_supplementalTransform.translate(-cbx, -cby);
             } else
-                m_supplementalLayerTransform.scale(scale);
+                m_supplementalTransform.scale(scale);
             viewportSize.scale(1.0 / scale);
         }
     } else if (!m_viewport.location().isZero())
-        m_supplementalLayerTransform.translate(m_viewport.location());
+        m_supplementalTransform.translate(m_viewport.location());
 
     // An empty viewBox disables painting -- dirty the visible descendant status!
     if (useSVGSVGElement->viewBoxDisablesPainting()) {
         if (hasLayer())
             layer()->dirtyVisibleContentStatus();
     } else if (auto viewBoxTransform = viewBoxToViewTransform(useSVGSVGElement, viewportSize); !viewBoxTransform.isIdentity()) {
-        if (m_supplementalLayerTransform.isIdentity())
-            m_supplementalLayerTransform = viewBoxTransform;
+        if (m_supplementalTransform.isIdentity())
+            m_supplementalTransform = viewBoxTransform;
         else
-            m_supplementalLayerTransform.multiply(viewBoxTransform);
+            m_supplementalTransform.multiply(viewBoxTransform);
     }
 
-    // After updating the supplemental layer transform we're able to use it in RenderLayerModelObjects::updateLayerTransform().
     RenderSVGContainer::updateLayerTransform();
 }
 
@@ -199,16 +197,16 @@ void RenderSVGViewportContainer::paint(PaintInfo& paintInfo, const LayoutPoint& 
 
 void RenderSVGViewportContainer::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
-    auto supplementalLayerTransform = m_supplementalLayerTransform.isIdentity() ? std::nullopt : std::make_optional(m_supplementalLayerTransform);
+    auto supplementalTransform = m_supplementalTransform.isIdentity() ? std::nullopt : std::make_optional(m_supplementalTransform);
 
     // The transform attribute of the outermost <svg> element is mapped to the CSS transform property of RenderSVGRoot.
     if (isOutermostSVGViewportContainer()) {
         Ref useSVGSVGElement = svgSVGElement();
-        applySVGTransform(transform, identity, useSVGSVGElement->supplementalTransform(), style, boundingBox, supplementalLayerTransform, std::nullopt, options);
+        applySVGTransform(transform, identity, useSVGSVGElement->supplementalTransform(), style, boundingBox, supplementalTransform, std::nullopt, options);
         return;
     }
 
-    applySVGTransform(transform, protect(svgSVGElement()), style, boundingBox, supplementalLayerTransform, std::nullopt, options);
+    applySVGTransform(transform, protect(svgSVGElement()), style, boundingBox, supplementalTransform, std::nullopt, options);
 }
 
 LayoutRect RenderSVGViewportContainer::overflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy, PaintPhase) const

@@ -40,9 +40,9 @@ public:
     void invalidateMarker();
 
     // Calculates marker boundaries, mapped to the target element's coordinate space
-    FloatRect computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&, const AffineTransform& markerTransformation) const;
+    FloatRect computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&, const AffineTransform& markerTransform) const;
 
-    AffineTransform markerTransformation(const FloatPoint& origin, float angle, float strokeWidth) const;
+    AffineTransform computeMarkerTransform(const FloatPoint& origin, float angle, float strokeWidth) const;
 
 private:
     bool requiresLayer() const final { return true; }
@@ -58,7 +58,7 @@ private:
 
     void element() const = delete;
     bool updateLayoutSizeIfNeeded() final;
-    std::optional<FloatRect> overridenObjectBoundingBoxWithoutTransformations() const final { return std::make_optional(viewport()); }
+    std::optional<FloatRect> overriddenObjectBoundingBoxWithoutTransforms() const final { return std::make_optional(viewport()); }
 
     FloatRect computeViewport() const;
 
@@ -71,7 +71,7 @@ private:
     void updateFromStyle() final;
 
 private:
-    AffineTransform m_supplementalLayerTransform;
+    AffineTransform m_supplementalTransform;
     FloatRect m_viewport;
 };
 

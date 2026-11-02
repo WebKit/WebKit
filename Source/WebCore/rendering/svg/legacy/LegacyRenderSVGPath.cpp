@@ -187,7 +187,7 @@ void LegacyRenderSVGPath::strokeZeroLengthSubpaths(GraphicsContext& context) con
 
     AffineTransform nonScalingTransform;
     if (hasNonScalingStroke())
-        nonScalingTransform = nonScalingStrokeTransform();
+        nonScalingTransform = computeNonScalingStrokeTransform();
 
     GraphicsContextStateSaver stateSaver(context, true);
     legacyUseStrokeStyleToFill(context);

@@ -89,7 +89,7 @@ void RenderSVGResourceGradient::invalidateGradientOnLayoutSizeChange()
     invalidateGradient();
 }
 
-bool RenderSVGResourceGradient::buildGradientIfNeeded(const RenderLayerModelObject& targetRenderer, const Style::ComputedStyle& style, AffineTransform& userspaceTransform)
+bool RenderSVGResourceGradient::buildGradientIfNeeded(const RenderLayerModelObject& targetRenderer, const Style::ComputedStyle& style, AffineTransform& gradientToUserSpaceTransform)
 {
     if (!m_gradient || m_gradientColorFilter != style.appleColorFilter()) {
         collectGradientAttributesIfNeeded();
@@ -107,45 +107,45 @@ bool RenderSVGResourceGradient::buildGradientIfNeeded(const RenderLayerModelObje
         if (objectBoundingBox.isEmpty())
             return false;
 
-        userspaceTransform.translate(objectBoundingBox.location());
-        userspaceTransform.scale(objectBoundingBox.size());
+        gradientToUserSpaceTransform.translate(objectBoundingBox.location());
+        gradientToUserSpaceTransform.scale(objectBoundingBox.size());
     }
 
     auto gradientTransform = this->gradientTransform();
     if (!gradientTransform.isInvertible())
         return false;
     if (!gradientTransform.isIdentity())
-        userspaceTransform.multiply(gradientTransform);
+        gradientToUserSpaceTransform.multiply(gradientTransform);
 
     return true;
 }
 
 bool RenderSVGResourceGradient::prepareFillOperation(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const Style::ComputedStyle& style)
 {
-    AffineTransform userspaceTransform;
-    if (!buildGradientIfNeeded(targetRenderer, style, userspaceTransform))
+    AffineTransform gradientToUserSpaceTransform;
+    if (!buildGradientIfNeeded(targetRenderer, style, gradientToUserSpaceTransform))
         return false;
 
     context.setAlpha(Style::evaluate<float>(style.fillOpacity()));
     context.setFillRule(style.fillRule());
-    context.setFillGradient(m_gradient.copyRef().releaseNonNull(), userspaceTransform);
+    context.setFillGradient(m_gradient.copyRef().releaseNonNull(), gradientToUserSpaceTransform);
     return true;
 }
 
 bool RenderSVGResourceGradient::prepareStrokeOperation(GraphicsContext& context, const RenderLayerModelObject& targetRenderer, const Style::ComputedStyle& style)
 {
-    AffineTransform userspaceTransform;
-    if (!buildGradientIfNeeded(targetRenderer, style, userspaceTransform))
+    AffineTransform gradientToUserSpaceTransform;
+    if (!buildGradientIfNeeded(targetRenderer, style, gradientToUserSpaceTransform))
         return false;
 
     if (style.vectorEffect() == VectorEffect::NonScalingStroke) {
         if (CheckedPtr shape = dynamicDowncast<RenderSVGShape>(targetRenderer))
-            userspaceTransform = shape->nonScalingStrokeTransform() * userspaceTransform;
+            gradientToUserSpaceTransform = shape->computeNonScalingStrokeTransform() * gradientToUserSpaceTransform;
     }
 
     context.setAlpha(Style::evaluate<float>(style.strokeOpacity()));
     SVGRenderSupport::applyStrokeStyleToContext(context, style, targetRenderer);
-    context.setStrokeGradient(m_gradient.copyRef().releaseNonNull(), userspaceTransform);
+    context.setStrokeGradient(m_gradient.copyRef().releaseNonNull(), gradientToUserSpaceTransform);
     return true;
 }
 

@@ -297,8 +297,8 @@ void RenderSVGRoot::layoutChildren()
     m_strokeBoundingBox = std::nullopt;
     m_cachedVisualOverflowRect = std::nullopt;
 
-    constexpr auto objectBoundingBoxDecorationWithoutTransformations = SVGBoundingBoxComputation::objectBoundingBoxDecoration | SVGBoundingBoxComputation::DecorationOption::IgnoreTransformations;
-    m_objectBoundingBoxWithoutTransformations = boundingBoxComputation.computeDecoratedBoundingBox(objectBoundingBoxDecorationWithoutTransformations);
+    constexpr auto objectBoundingBoxDecorationWithoutTransforms = SVGBoundingBoxComputation::objectBoundingBoxDecoration | SVGBoundingBoxComputation::DecorationOption::IgnoreTransforms;
+    m_objectBoundingBoxWithoutTransforms = boundingBoxComputation.computeDecoratedBoundingBox(objectBoundingBoxDecorationWithoutTransforms);
 
     containerLayout.positionChildrenRelativeToContainer();
 }

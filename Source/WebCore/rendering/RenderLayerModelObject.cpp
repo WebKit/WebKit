@@ -183,7 +183,7 @@ void RenderLayerModelObject::styleWillChange(Style::Difference diff, const Style
 void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     // Read before updateFromStyle() and RenderLayer::styleChanged() refresh the transform.
-    auto previousSVGTransform = oldStyle ? svgTransformBeforeStyleChange(*oldStyle) : std::nullopt;
+    auto previousSVGTransform = oldStyle ? nominalTransformBeforeStyleChange(*oldStyle) : std::nullopt;
 
     updateFromStyle();
     RenderElement::styleDidChange(diff, oldStyle);
@@ -248,7 +248,7 @@ void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style:
     }
 
     if (previousSVGTransform)
-        markSVGTextForRelayoutIfScaleChanged(*previousSVGTransform, svgTransformAfterStyleChange());
+        markSVGTextForRelayoutIfScaleChanged(*previousSVGTransform, computeNominalTransformAfterStyleChange());
 
     bool newStyleIsViewportConstrained = style().hasViewportConstrainedPosition();
     bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
@@ -408,16 +408,10 @@ auto RenderLayerModelObject::computeVisibleRectsInSVGContainer(const RepaintRect
     // We are now in our parent container's coordinate space. Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
     if (!hasLayer()) {
-        // Non-layered SVG elements: apply the SVG transform first, then locationOffset.
-        // The localTransform() includes the transform-origin effect (which accounts for
-        // the element's position in the reference box), matching the layer path order
-        // (transform, then offset). Applying offset first would double-count the position.
-        //
-        // Don't use isTransformed() here -- the flags may already reflect the NEW transform
-        // (e.g., identity after clearing the transform attribute), while localTransform()
-        // still holds the OLD value needed for correct old-position repaint.
+        // Apply the transform before locationOffset, like the layer path. Don't check isTransformed():
+        // the flags may already reflect the new transform, while the cache still holds the old one.
         if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(this)) {
-            auto svgTransform = svgModel->localTransform();
+            auto svgTransform = svgModel->nominalTransform();
             if (!svgTransform.isIdentity())
                 adjustedRects.transform(TransformationMatrix(svgTransform));
         }
@@ -472,14 +466,14 @@ void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject
     container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
 
-void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, const SVGGraphicsElement& graphicsElement, const Style::ComputedStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption> options) const
+void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, const SVGGraphicsElement& graphicsElement, const Style::ComputedStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplyTransform, const std::optional<AffineTransform>& postApplyTransform, OptionSet<Style::TransformResolverOption> options) const
 {
     // SMIL <animateMotion> sets the supplemental transform.
     // FIXME: Switch from "const AffineTransform*" to "std::optional<AffineTransform>" for supplementalTransform().
-    applySVGTransform(transform, graphicsElement.concatenatedTransform(), graphicsElement.supplementalTransform(), style, boundingBox, preApplySVGTransformMatrix, postApplySVGTransformMatrix, options);
+    applySVGTransform(transform, graphicsElement.concatenatedTransform(), graphicsElement.supplementalTransform(), style, boundingBox, preApplyTransform, postApplyTransform, options);
 }
 
-void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, const AffineTransform& svgTransform, const AffineTransform* supplementalTransform, const Style::ComputedStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption> options) const
+void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, const AffineTransform& svgTransform, const AffineTransform* motionTransform, const Style::ComputedStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplyTransform, const std::optional<AffineTransform>& postApplyTransform, OptionSet<Style::TransformResolverOption> options) const
 {
     // This check does not use style.hasTransformRelatedProperty() on purpose -- we only want to know if either the 'transform' property, an
     // offset path, or the individual transform operations are set (perspective / transform-style: preserve-3d are not relevant here).
@@ -488,10 +482,10 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
         || !style.rotate().isNone()
         || !style.translate().isNone()
         || !style.scale().isNone();
-    bool hasSupplementalOrExternalTransformMatrix = preApplySVGTransformMatrix || postApplySVGTransformMatrix || supplementalTransform;
-    bool hasSVGTransform = !svgTransform.isIdentity() || hasSupplementalOrExternalTransformMatrix;
+    bool hasMotionOrExternalTransform = preApplyTransform || postApplyTransform || motionTransform;
+    bool hasSVGTransform = !svgTransform.isIdentity() || hasMotionOrExternalTransform;
 
-    // Common case: 'viewBox' set on outermost <svg> element -> 'preApplySVGTransformMatrix'
+    // Common case: 'viewBox' set on outermost <svg> element -> 'preApplyTransform'
     // passed by RenderSVGViewportContainer::applyTransform(), the anonymous single child
     // of RenderSVGRoot, that wraps all direct children from <svg> as present in DOM. All
     // other transformations are unset (no need to compute transform-origin, etc. in that case).
@@ -501,11 +495,11 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
     Style::TransformResolver transformResolver { transform, style };
 
     auto affectedByTransformOrigin = [&]() {
-        if (preApplySVGTransformMatrix && !preApplySVGTransformMatrix->isIdentityOrTranslation())
+        if (preApplyTransform && !preApplyTransform->isIdentityOrTranslation())
             return true;
-        if (postApplySVGTransformMatrix && !postApplySVGTransformMatrix->isIdentityOrTranslation())
+        if (postApplyTransform && !postApplyTransform->isIdentityOrTranslation())
             return true;
-        if (supplementalTransform && !supplementalTransform->isIdentityOrTranslation())
+        if (motionTransform && !motionTransform->isIdentityOrTranslation())
             return true;
         if (hasCSSTransform)
             return transformResolver.affectedByTransformOrigin();
@@ -518,7 +512,7 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
         // or external matrix) the transform origin depends only on the style and the reference box,
         // both of which are stable while the shape is only animated by its transform.
         std::optional<FloatPoint3D> cached;
-        if (!hasCSSTransform && !hasSupplementalOrExternalTransformMatrix)
+        if (!hasCSSTransform && !hasMotionOrExternalTransform)
             cached = cachedTransformOriginForReferenceBox(style, boundingBox);
 
         originTranslate = cached ? cached.value() : transformResolver.computeTransformOrigin(boundingBox);
@@ -526,11 +520,11 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
 
     transformResolver.applyTransformOrigin(originTranslate);
 
-    if (supplementalTransform)
-        transform.multiplyAffineTransform(*supplementalTransform);
+    if (motionTransform)
+        transform.multiplyAffineTransform(*motionTransform);
 
-    if (preApplySVGTransformMatrix)
-        transform.multiplyAffineTransform(preApplySVGTransformMatrix.value());
+    if (preApplyTransform)
+        transform.multiplyAffineTransform(preApplyTransform.value());
 
     // CSS transforms take precedence over SVG transforms.
     if (hasCSSTransform)
@@ -538,8 +532,8 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
     else if (!svgTransform.isIdentity())
         transform.multiplyAffineTransform(svgTransform);
 
-    if (postApplySVGTransformMatrix)
-        transform.multiplyAffineTransform(postApplySVGTransformMatrix.value());
+    if (postApplyTransform)
+        transform.multiplyAffineTransform(postApplyTransform.value());
 
     transformResolver.unapplyTransformOrigin(originTranslate);
 }
@@ -819,11 +813,7 @@ void RenderLayerModelObject::updateTransformAndRepaintForSVGAfterAttributeChange
     const bool isLayered = hasLayer();
     ASSERT(!isRenderSVGContainer() || requiresLayer() == isLayered);
 
-    // Refresh the transform, returning the (previous, current) pair. For layered renderers this
-    // forces a stacking context on an identity-to-non-identity transition (the batched flush skips
-    // RenderLayer::styleChanged) and marks the layer subtree for a position update. A non-layered
-    // RenderSVGModelObject updates its cached m_localTransform in place, while a non-layered
-    // RenderSVGText is only probed (see the branch below).
+    // Refresh the transform, returning the (previous, current) pair. Non-layered text is only probed.
     auto refreshTransform = [&]() -> std::pair<AffineTransform, AffineTransform> {
         if (isLayered) {
             auto previousTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
@@ -835,15 +825,13 @@ void RenderLayerModelObject::updateTransformAndRepaintForSVGAfterAttributeChange
             return { previousTransform, currentTransform };
         }
         if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(this)) {
-            auto previousTransform = svgModel->localTransform();
-            svgModel->updateLocalTransform();
-            return { previousTransform, svgModel->localTransform() };
+            auto previousTransform = svgModel->nominalTransform();
+            svgModel->updateCachedNominalTransform();
+            return { previousTransform, svgModel->nominalTransform() };
         }
-        // RenderSVGText is probed, not cached: writing m_localTransform before layout would feed
-        // updateScaledFont() a reference box that is only final after layout. The caller writes it
-        // once the scale is known unchanged, or leaves it for layout on a scale change.
+        // Caching it now would feed updateScaledFont() a reference box that is only final after layout.
         if (auto* text = dynamicDowncast<RenderSVGText>(this))
-            return { text->localTransform(), text->computeLocalTransform() };
+            return { text->nominalTransform(), text->computeNominalTransform() };
         return { identity, identity };
     };
 
@@ -878,7 +866,7 @@ void RenderLayerModelObject::updateTransformAndRepaintForSVGAfterAttributeChange
     if (auto* text = dynamicDowncast<RenderSVGText>(this); text && !isLayered) {
         auto repaintContainer = containerForRepaint().renderer;
         auto oldRects = rectsForRepaintingAfterLayout(repaintContainer.get(), RepaintOutlineBounds::Yes);
-        text->updateLocalTransform();
+        text->updateCachedNominalTransform();
         auto newRects = rectsForRepaintingAfterLayout(repaintContainer.get(), RepaintOutlineBounds::Yes);
         repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderLayerModelObject> { repaintContainer.get() }, RequiresFullRepaint::No, oldRects, newRects);
     } else if (!isLayered && repaintMode == SVGAttributeChangeRepaintMode::Issue)
@@ -916,7 +904,7 @@ bool RenderLayerModelObject::markSVGTextForRelayoutIfScaleChanged(const AffineTr
     return markedAny;
 }
 
-std::optional<AffineTransform> RenderLayerModelObject::svgTransformBeforeStyleChange(const Style::ComputedStyle& oldStyle) const
+std::optional<AffineTransform> RenderLayerModelObject::nominalTransformBeforeStyleChange(const Style::ComputedStyle& oldStyle) const
 {
     if (!document().settings().layerBasedSVGEngineEnabled() || (!isRenderSVGContainer() && !isRenderSVGRoot()))
         return std::nullopt;
@@ -929,18 +917,18 @@ std::optional<AffineTransform> RenderLayerModelObject::svgTransformBeforeStyleCh
         return transform->toAffineTransform();
 
     if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(*this))
-        return svgModel->localTransform();
+        return svgModel->nominalTransform();
 
     return AffineTransform();
 }
 
-AffineTransform RenderLayerModelObject::svgTransformAfterStyleChange() const
+AffineTransform RenderLayerModelObject::computeNominalTransformAfterStyleChange() const
 {
     if (auto* transform = layerTransform())
         return transform->toAffineTransform();
 
     if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(*this))
-        return svgModel->computeLocalTransform();
+        return svgModel->computeNominalTransform();
 
     ASSERT(isRenderSVGRoot());
     return AffineTransform();
@@ -1038,6 +1026,15 @@ void RenderLayerModelObject::paintSVGEventRegion(PaintInfo& paintInfo, const Lay
     auto eventRegionBounds = strokeBoundingBox();
     eventRegionBounds.move(coordinateSystemOriginTranslation);
     paintInfo.eventRegionContext()->unite(FloatRoundedRect(eventRegionBounds), *this, style(), false);
+}
+
+AffineTransform RenderLayerModelObject::computeNominalTransform() const
+{
+    ASSERT(document().settings().layerBasedSVGEngineEnabled());
+    TransformationMatrix transform;
+    CheckedRef style = this->style();
+    applyTransform(transform, style, transformReferenceBoxRect(style), Style::TransformResolver::allTransformOperations);
+    return transform.toAffineTransform();
 }
 
 AffineTransform RenderLayerModelObject::computeRendererTransform() const

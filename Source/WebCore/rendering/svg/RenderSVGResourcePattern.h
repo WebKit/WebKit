@@ -45,7 +45,7 @@ public:
     {
         m_attributes = std::nullopt;
         m_imageMap.clear();
-        m_transformMap.clear();
+        m_tileImageTransformMap.clear();
         if (suppressRepaint == SuppressRepaint::No)
             repaintAllClients();
     }
@@ -67,7 +67,7 @@ protected:
     std::optional<PatternAttributes> m_attributes;
 
     HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, Ref<ImageBuffer>> m_imageMap;
-    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, AffineTransform> m_transformMap;
+    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, AffineTransform> m_tileImageTransformMap;
 };
 
 }

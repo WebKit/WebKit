@@ -84,7 +84,7 @@ void RenderSVGContainer::layout()
     clearNeedsLayout();
 }
 
-TransformationMatrix RenderSVGContainer::transformToParentUserSpace() const
+TransformationMatrix RenderSVGContainer::computeChildrenToParentUserSpaceTransform() const
 {
     // The layer transform is relative to the layout location, which moves with the children.
     auto* transform = layerTransform();
@@ -113,14 +113,14 @@ void RenderSVGContainer::layoutChildren()
     m_strokeBoundingBox = std::nullopt;
     m_cachedVisualOverflowRect = std::nullopt;
 
-    if (auto objectBoundingBoxWithoutTransformations = overridenObjectBoundingBoxWithoutTransformations())
-        m_objectBoundingBoxWithoutTransformations = objectBoundingBoxWithoutTransformations.value();
+    if (auto objectBoundingBoxWithoutTransforms = overriddenObjectBoundingBoxWithoutTransforms())
+        m_objectBoundingBoxWithoutTransforms = objectBoundingBoxWithoutTransforms.value();
     else {
-        constexpr auto objectBoundingBoxDecorationWithoutTransformations = SVGBoundingBoxComputation::objectBoundingBoxDecoration | SVGBoundingBoxComputation::DecorationOption::IgnoreTransformations;
-        m_objectBoundingBoxWithoutTransformations = boundingBoxComputation.computeDecoratedBoundingBox(objectBoundingBoxDecorationWithoutTransformations);
+        constexpr auto objectBoundingBoxDecorationWithoutTransforms = SVGBoundingBoxComputation::objectBoundingBoxDecoration | SVGBoundingBoxComputation::DecorationOption::IgnoreTransforms;
+        m_objectBoundingBoxWithoutTransforms = boundingBoxComputation.computeDecoratedBoundingBox(objectBoundingBoxDecorationWithoutTransforms);
     }
 
-    setCurrentSVGLayoutRect(enclosingLayoutRect(m_objectBoundingBoxWithoutTransformations));
+    setCurrentSVGLayoutRect(enclosingLayoutRect(m_objectBoundingBoxWithoutTransforms));
 
     containerLayout.positionChildrenRelativeToContainer();
 }

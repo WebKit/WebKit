@@ -267,7 +267,7 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
     if (layerRenderer) {
         // Ancestor transforms -- the viewBox transform of the outermost <svg> above all -- live on
         // RenderLayers, where calculateTransformationToOutermostCoordinateSystem() cannot see them.
-        scale = SVGTransformComputation(*layerRenderer).calculateAccumulatedSVGAncestorTransformScale();
+        scale = SVGTransformComputation(*layerRenderer).computeAccumulatedSVGAncestorTransformScale();
         scale.scale(protect(document())->deviceScaleFactor());
         if (scale.isEmpty())
             return { };

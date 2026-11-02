@@ -68,7 +68,7 @@ public:
         updateSVGTransformDependentBoundingBoxesIfNeeded();
         return m_objectBoundingBox;
     }
-    FloatRect objectBoundingBoxWithoutTransformations() const final { return m_objectBoundingBoxWithoutTransformations; }
+    FloatRect objectBoundingBoxWithoutTransforms() const final { return m_objectBoundingBoxWithoutTransforms; }
     FloatRect strokeBoundingBox() const final;
 
     void invalidateCachedSVGTransformDependentBoundingBoxes() final { m_transformDependentBoundingBoxesDirty = true; }
@@ -141,7 +141,7 @@ private:
 
     IntSize m_containerSize;
     mutable FloatRect m_objectBoundingBox;
-    FloatRect m_objectBoundingBoxWithoutTransformations;
+    FloatRect m_objectBoundingBoxWithoutTransforms;
     mutable Markable<FloatRect> m_strokeBoundingBox;
     mutable std::optional<LayoutRect> m_cachedVisualOverflowRect;
 #if ENABLE(AX_CUSTOM_COLOR_MODE)

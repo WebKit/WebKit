@@ -63,15 +63,15 @@ void SVGBoundingBoxComputation::recomputeTransformDependentBoundingBoxes(const R
 FloatRect SVGBoundingBoxComputation::computeDecoratedBoundingBox(const SVGBoundingBoxComputation::DecorationOptions& options, bool* boundingBoxValid) const
 {
     // A viewport-establishing container (inner <svg>, <marker>) contributes its viewport rectangle
-    // (cached in overridenObjectBoundingBoxWithoutTransformations()) to an ancestor's bounding box,
+    // (cached in overriddenObjectBoundingBoxWithoutTransforms()) to an ancestor's bounding box,
     // not its descendant geometry. This follows from viewport establishment, independent of overflow,
     // and keeps the ancestor's recursion consistent with the box the container reports for itself.
-    if (options.contains(DecorationOption::IgnoreTransformations)) {
+    if (options.contains(DecorationOption::IgnoreTransforms)) {
         if (CheckedPtr container = dynamicDowncast<RenderSVGContainer>(m_renderer.get())) {
-            if (auto overriden = container->overridenObjectBoundingBoxWithoutTransformations()) {
+            if (auto overridden = container->overriddenObjectBoundingBoxWithoutTransforms()) {
                 if (boundingBoxValid)
                     *boundingBoxValid = true;
-                return *overriden;
+                return *overridden;
             }
         }
     }
@@ -161,7 +161,7 @@ FloatRect SVGBoundingBoxComputation::handleShapeOrTextOrInline(const SVGBounding
 
 FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxComputation::DecorationOptions& options, bool* boundingBoxValid) const
 {
-    auto transformationMatrixFromChild = [&](const RenderLayerModelObject& child) -> std::optional<AffineTransform> {
+    auto transformFromChild = [&](const RenderLayerModelObject& child) -> std::optional<AffineTransform> {
         if (!child.isTransformed())
             return std::nullopt;
 
@@ -233,8 +233,8 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
             childBoundingBoxComputation.adjustBoxForClippingAndEffects(optionsForChild, childBox);
         }
 
-        if (!options.contains(DecorationOption::IgnoreTransformations)) {
-            if (auto transform = transformationMatrixFromChild(child))
+        if (!options.contains(DecorationOption::IgnoreTransforms)) {
+            if (auto transform = transformFromChild(child))
                 childBox = transform->mapRect(childBox);
         }
 

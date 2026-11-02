@@ -46,7 +46,7 @@ private:
     void updateLayerTransform() final;
     bool needsHasSVGTransformFlags() const final;
 
-    AffineTransform m_supplementalLayerTransform;
+    AffineTransform m_supplementalTransform;
 };
 
 } // namespace WebCore
