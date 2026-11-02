@@ -213,7 +213,7 @@ MutableCSSSelectorList CSSSelectorParser::consumeForgivingSelectorList(CSSParser
         // Consume until next comma and add the full range as an unknown selector to the selector list.
         if ((!range.atEnd() && range.peek().type() != CommaToken) || !selector) {
             while (!range.atEnd() && range.peek().type() != CommaToken)
-                range.consume();
+                range.consumeComponentValue();
             if (!m_disableForgivingParsing)
                 selectorList.append(unknownSelector());
             return;
