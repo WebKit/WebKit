@@ -233,6 +233,7 @@ class LayoutTestFinderTestsBase(object):
                 'http/tests/passes/image.html',
                 'http/tests/passes/text.html',
                 'http/tests/ssl/text.html',
+                'http/tests/websocket/passes/text.html',
             ],
         )
 
@@ -419,6 +420,7 @@ class LayoutTestFinderTestsBase(object):
                 'http/tests/passes/image.html',
                 'http/tests/passes/text.html',
                 'http/tests/ssl/text.html',
+                'http/tests/websocket/passes/text.html',
             ],
         )
 
@@ -981,11 +983,58 @@ class LayoutTestFinderTestsBase(object):
             ],
         )
 
+    def test_is_http_test(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        files = [
+            "http/tests/foo.html",
+            # http/tests/local/ still expects an HTTP server, just serves the
+            # test itself from a different URL; it should still count as an
+            # HTTP test.
+            "http/tests/local/foo.html",
+            # A path that merely contains "http/tests/" isn't itself an HTTP test.
+            "some/http/tests/foo.html",
+            # A directory inserted between "http" and "tests" isn't a match either.
+            "http/some/tests/foo.html",
+            # Near-miss on the first segment.
+            "httpfoo/tests/foo.html",
+            # Near-miss on the second segment that still shares a "test" prefix.
+            "http/testing/foo.html",
+            # Near-miss on the second segment: "tests" is a prefix of the
+            # directory name, but there's no "/" boundary after it.
+            "http/testsfoo/bar.html",
+            # "http/" without any "tests" segment at all.
+            "http/foo/bar.html",
+        ]
+
+        fs.chdir(self.port.layout_tests_dir())
+
+        for f in files:
+            fs.maybe_make_directory(fs.dirname(f))
+            fs.write_text_file(f, "XXX")
+
+        tests = finder.find_tests_by_path(files, with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(test_path="http/tests/foo.html", is_http_test=True),
+                Test(test_path="http/tests/local/foo.html", is_http_test=True),
+                Test(test_path="some/http/tests/foo.html", is_http_test=False),
+                Test(test_path="http/some/tests/foo.html", is_http_test=False),
+                Test(test_path="httpfoo/tests/foo.html", is_http_test=False),
+                Test(test_path="http/testing/foo.html", is_http_test=False),
+                Test(test_path="http/testsfoo/bar.html", is_http_test=False),
+                Test(test_path="http/foo/bar.html", is_http_test=False),
+            ],
+        )
+
     def test_is_websocket_test(self):
         finder = self.finder
         fs = finder._filesystem
 
         files = [
+            "websocket/tests/foo.html",
             "http/tests/test.html",
             "http/tests/websocket/construct-in-detached-frame.html",
             "http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html",
@@ -1005,6 +1054,13 @@ class LayoutTestFinderTestsBase(object):
         self.assertEqual(
             tests,
             [
+                # A bare "websocket/" directory outside http/tests/ is still
+                # a websocket test, just not an HTTP one.
+                Test(
+                    test_path="websocket/tests/foo.html",
+                    is_http_test=False,
+                    is_websocket_test=True,
+                ),
                 Test(
                     test_path="http/tests/test.html",
                     is_http_test=True,
@@ -1050,6 +1106,63 @@ class LayoutTestFinderTestsBase(object):
         fs.chdir("/crashtests")
 
         self.assertFalse(finder.find_tests_by_path([test], with_expectations=True)[0].is_wpt_crash_test)
+
+    def test_is_wpt_test(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        files = [
+            "imported/w3c/web-platform-tests/some/fresh.html",
+            "http/wpt/some/foo.html",
+            # A path that merely contains the WPT dir isn't itself a WPT test.
+            "some/imported/w3c/web-platform-tests/foo.html",
+            # A directory inserted before the last segment isn't a match either.
+            "imported/w3c/foo/web-platform-tests/text.html",
+            # Near-miss on the last segment: it's a prefix of the directory
+            # name, but there's no "/" boundary after it.
+            "imported/w3c/web-platform-testsfoo/bar.html",
+            # The WPT dir without its final segment at all.
+            "imported/w3c/foo.html",
+            # is_wpt_test also accepts the local "http/wpt/" dir; the same
+            # anchoring and boundary checks apply to it independently.
+            "some/http/wpt/foo.html",
+            "http/wptfoo/bar.html",
+        ]
+
+        fs.chdir(self.port.layout_tests_dir())
+
+        for f in files:
+            fs.maybe_make_directory(fs.dirname(f))
+            # Use testharness.js script so SourceFile classifies WPT files as
+            # tests rather than support files.
+            fs.write_text_file(f, '<script src="/resources/testharness.js"></script>')
+
+        tests = finder.find_tests_by_path(files, with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="imported/w3c/web-platform-tests/some/fresh.html",
+                    is_wpt_test=True,
+                ),
+                Test(test_path="http/wpt/some/foo.html", is_wpt_test=True),
+                Test(
+                    test_path="some/imported/w3c/web-platform-tests/foo.html",
+                    is_wpt_test=False,
+                ),
+                Test(
+                    test_path="imported/w3c/foo/web-platform-tests/text.html",
+                    is_wpt_test=False,
+                ),
+                Test(
+                    test_path="imported/w3c/web-platform-testsfoo/bar.html",
+                    is_wpt_test=False,
+                ),
+                Test(test_path="imported/w3c/foo.html", is_wpt_test=False),
+                Test(test_path="some/http/wpt/foo.html", is_wpt_test=False),
+                Test(test_path="http/wptfoo/bar.html", is_wpt_test=False),
+            ],
+        )
 
     def test_is_wpt_crash_test(self):
         finder = self.finder
