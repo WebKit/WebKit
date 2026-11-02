@@ -169,7 +169,7 @@ public:
 
     bool needsPopupFromMicrosoftOfficeToOneDrive(const String& targetURLString) const;
 
-    bool needsConsistentQueryParameterFilteringQuirk(const URL&) const;
+    bool needsConsistentQueryParameterFilteringQuirkForScript(const URL&) const;
     WEBCORE_EXPORT ConsistentQueryParameterFilteringLevel consistentQueryParameterFilteringLevel(const URL& sourceURL, const URL& destinationURL) const;
     bool mayBenefitFromFingerprintingProtectionQuirk(const URL&) const;
     static String standardUserAgentWithApplicationNameIncludingCompatOverrides(const String&, const String&, UserAgentType);

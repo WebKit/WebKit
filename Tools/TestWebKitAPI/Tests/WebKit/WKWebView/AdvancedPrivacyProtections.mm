@@ -567,9 +567,9 @@ TEST(AdvancedPrivacyProtections, TrackingQueryParametersWith8BitValues)
     testURL(@"https://bundle-file/simple.html?foo=0000", @"https://bundle-file/simple.html", @"https://bundle-file/simple.html");
     testURL(@"https://bundle-file/simple.html?foo=1+&bar=2", @"https://bundle-file/simple.html?bar=2", @"https://bundle-file/simple.html?bar=2");
     testURL(@"https://bundle-file/simple.html?foo=1%20&bar=2", @"https://bundle-file/simple.html?bar=2", @"https://bundle-file/simple.html?bar=2");
-    testURL(@"https://bundle-file/simple.html?foo=000", @"https://bundle-file/simple.html?foo=000", @"https://bundle-file/simple.html");
-    testURL(@"https://bundle-file/simple.html?foo=010", @"https://bundle-file/simple.html?foo=010", @"https://bundle-file/simple.html");
-    testURL(@"https://bundle-file/simple.html?foo=255", @"https://bundle-file/simple.html?foo=255", @"https://bundle-file/simple.html");
+    testURL(@"https://bundle-file/simple.html?foo=000&level=high", @"https://bundle-file/simple.html?foo=000&level=high", @"https://bundle-file/simple.html");
+    testURL(@"https://bundle-file/simple.html?foo=010&level=high", @"https://bundle-file/simple.html?foo=010&level=high", @"https://bundle-file/simple.html");
+    testURL(@"https://bundle-file/simple.html?foo=255&level=high", @"https://bundle-file/simple.html?foo=255&level=high", @"https://bundle-file/simple.html");
 }
 
 TEST(AdvancedPrivacyProtections, ApplyNavigationalProtectionsAfterMultiplePSON)
@@ -1318,6 +1318,17 @@ static ConsistentQueryParameterFilteringNavigationResult navigateWithConsistentQ
     };
 }
 
+TEST(AdvancedPrivacyProtections, ConsistentlyRemoveAllQueryParametersOnCrossSiteNavigationWithHighLevel)
+{
+    QueryParameterRequestSwizzler swizzler { @[ @"foo" ], @[ @"" ], @[ @"" ] };
+
+    auto result = navigateWithConsistentQueryParameterFiltering(@"https://consistentqueryparameterfiltering.internal/source.html", @"https://site.example/destination.html?foo=123&hello=456");
+
+    EXPECT_WK_STREQ(@"https://site.example/destination.html", result.webViewURL.get());
+    EXPECT_WK_STREQ(@"https://site.example/destination.html", result.firstPartyScriptURL.get());
+}
+
+
 TEST(AdvancedPrivacyProtections, DoNotRemoveAllQueryParametersOnSameSiteNavigationWithHighLevel)
 {
     QueryParameterRequestSwizzler swizzler { @[ @"foo" ], @[ @"" ], @[ @"" ] };
@@ -1327,23 +1338,42 @@ TEST(AdvancedPrivacyProtections, DoNotRemoveAllQueryParametersOnSameSiteNavigati
     EXPECT_WK_STREQ(@"https://www.consistentqueryparameterfiltering.internal/destination.html?hello=456", result.webViewURL.get());
 }
 
-TEST(AdvancedPrivacyProtections, DoNotRemoveAllQueryParametersFromCrossSiteSubframeWithHighLevel)
+TEST(AdvancedPrivacyProtections, ConsistentlyHideQueryParametersFromTrackingScriptsWithLowLevel)
 {
-    QueryParameterRequestSwizzler swizzler { @[ @"foo" ], @[ @"" ], @[ @"" ] };
+    AllowedLinkFilteringDataRequestSwizzler allowListSwizzler { @[ @"preserveMe" ] };
+    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockMe" ], @[ @"" ], @[ @"" ] };
 
-    HTTPServer server({
-        { "/parent.html"_s, { "<script>window.frameURL = new Promise(resolve => addEventListener('message', event => resolve(event.data)));</script>"
-            "<iframe src='https://site.example/frame.html?hello=456'></iframe>"_s } },
-        { "/frame.html?hello=456"_s,  { "<script>parent.postMessage(location.href, '*');</script>"_s } },
-    }, HTTPServer::Protocol::HttpsProxy);
+    auto result = navigateWithConsistentQueryParameterFiltering(@"https://consistentqueryparameterfiltering-low.internal/source.html", @"https://site.example/destination.html?hello=123");
 
-    RetainPtr<TestNavigationDelegate> navigationDelegate;
-    RetainPtr webView = createWebViewForConsistentQueryParameterFiltering(server, navigationDelegate);
+    EXPECT_WK_STREQ(@"https://site.example/destination.html?hello=123", result.webViewURL.get());
+    EXPECT_WK_STREQ(@"https://site.example/destination.html?hello=123", result.firstPartyScriptURL.get());
+    EXPECT_WK_STREQ(@"https://site.example/destination.html?hello=123", result.crossSiteScriptURL.get());
+    EXPECT_WK_STREQ(@"https://site.example/destination.html", result.trackingScriptURL.get());
+}
 
-    [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:@"https://consistentqueryparameterfiltering.internal/parent.html"]).get()]).get()];
-    [navigationDelegate waitForDidFinishNavigation];
+TEST(AdvancedPrivacyProtections, ConsistentlyHideQueryParametersFromCrossSiteScriptsWithMediumLevelOnSource)
+{
+    AllowedLinkFilteringDataRequestSwizzler allowListSwizzler { @[ @"preserveMe" ] };
+    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockMe" ], @[ @"" ], @[ @"" ] };
 
-    EXPECT_WK_STREQ(@"https://site.example/frame.html?hello=456", [webView objectByCallingAsyncFunction:@"return await window.frameURL" withArguments:nil]);
+    auto result = navigateWithConsistentQueryParameterFiltering(@"https://consistentqueryparameterfiltering-medium.internal/source.html", @"https://site.example/destination.html?hello=123");
+
+    EXPECT_WK_STREQ(@"https://site.example/destination.html?hello=123", result.webViewURL.get());
+    EXPECT_WK_STREQ(@"https://site.example/destination.html?hello=123", result.firstPartyScriptURL.get());
+    EXPECT_WK_STREQ(@"https://site.example/destination.html", result.crossSiteScriptURL.get());
+    EXPECT_WK_STREQ(@"https://site.example/destination.html", result.trackingScriptURL.get());
+}
+
+TEST(AdvancedPrivacyProtections, ConsistentlyHideQueryParametersFromCrossSiteScriptsWithMediumLevelOnDestination)
+{
+    AllowedLinkFilteringDataRequestSwizzler allowListSwizzler { @[ @"preserveMe" ] };
+    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockMe" ], @[ @"" ], @[ @"" ] };
+
+    auto result = navigateWithConsistentQueryParameterFiltering(@"https://site.example/source.html", @"https://consistentqueryparameterfiltering-medium.internal/destination.html?hello=123");
+
+    EXPECT_WK_STREQ(@"https://consistentqueryparameterfiltering-medium.internal/destination.html?hello=123", result.webViewURL.get());
+    EXPECT_WK_STREQ(@"https://consistentqueryparameterfiltering-medium.internal/destination.html?hello=123", result.firstPartyScriptURL.get());
+    EXPECT_WK_STREQ(@"https://consistentqueryparameterfiltering-medium.internal/destination.html", result.crossSiteScriptURL.get());
 }
 
 TEST(AdvancedPrivacyProtections, HideScreenMetricsFromBindings)
@@ -1458,7 +1488,7 @@ TEST(AdvancedPrivacyProtections, AddNoiseToWebAudioAPIs)
     [webView loadFileRequest:[NSURLRequest requestWithURL:testURL] allowingReadAccessToURL:resourcesURL];
     [webView _test_waitForDidFinishNavigation];
 
-    [webViewWithFiltering loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://consistentQueryParameterFiltering.internal/audio-fingerprinting.html"]]];
+    [webViewWithFiltering loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://consistentQueryParameterFiltering-tracker.internal/audio-fingerprinting.html"]]];
     [webViewWithFiltering _test_waitForDidFinishNavigation];
 
     auto checkFingerprintForNoise = [&](NSString *functionName) {

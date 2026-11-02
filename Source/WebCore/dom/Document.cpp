@@ -4871,11 +4871,59 @@ void Document::setURL(URL&& url)
 
     m_documentURI = m_url.url();
     m_adjustedURL = adjustedURL();
+    m_consistentQueryParameterFilteringLevelForBindings = std::nullopt;
     updateBaseURL();
 
     urlsAffectingQuirksDidChange();
     if (RefPtr page = this->page(); page && isTopDocument())
         page->topDocumentURLDidChange();
+}
+
+static bool areSameSiteIgnoringPublicSuffix(StringView domain, StringView otherDomain)
+{
+    auto& publicSuffixStore = PublicSuffixStore::singleton();
+    auto domainString = publicSuffixStore.topPrivatelyControlledDomain(domain);
+    auto otherDomainString = publicSuffixStore.topPrivatelyControlledDomain(otherDomain);
+    auto substringToSeparator = [](const String& string) -> String {
+        auto indexOfFirstSeparator = string.find('.');
+        if (indexOfFirstSeparator == notFound)
+            return { };
+        return string.left(indexOfFirstSeparator);
+    };
+    auto firstSubstring = substringToSeparator(domainString);
+    return !firstSubstring.isEmpty() && firstSubstring == substringToSeparator(otherDomainString);
+}
+
+ConsistentQueryParameterFilteringLevel Document::consistentQueryParameterFilteringLevelForBindings()
+{
+    if (m_consistentQueryParameterFilteringLevelForBindings)
+        return *m_consistentQueryParameterFilteringLevelForBindings;
+
+    auto level = [&] {
+        RefPtr documentLoader = loader();
+        if (!documentLoader)
+            return ConsistentQueryParameterFilteringLevel::Disabled;
+
+        auto navigationSourceURL = [&] -> URL {
+            // Prefer the requester over the referrer, which may be stripped by referrer policy.
+            if (auto& requester = documentLoader->crossSiteRequester())
+                return requester->url;
+            if (auto& requester = documentLoader->triggeringAction().requester())
+                return requester->url;
+            return URL { documentLoader->originalRequest().httpReferrer() };
+        }();
+
+        // Only apply following a cross-site navigation.
+        if (navigationSourceURL.isEmpty()
+            || RegistrableDomain { navigationSourceURL }.matches(securityOrigin().data())
+            || areSameSiteIgnoringPublicSuffix(navigationSourceURL.host(), securityOrigin().data().host()))
+            return ConsistentQueryParameterFilteringLevel::Disabled;
+
+        return quirks().consistentQueryParameterFilteringLevel(navigationSourceURL, m_url.url());
+    }();
+
+    m_consistentQueryParameterFilteringLevelForBindings = level;
+    return level;
 }
 
 const URL& Document::urlForBindings()
@@ -4889,38 +4937,9 @@ const URL& Document::urlForBindings()
         if (!documentLoader)
             return false;
 
-        auto navigationalProtections = documentLoader->navigationalAdvancedPrivacyProtections();
-        if (navigationalProtections.isEmpty())
-            return false;
+        auto currentHost = securityOrigin().data().host();
 
-        auto preNavigationURL = URL { documentLoader->originalRequest().httpReferrer() };
-        if (preNavigationURL.isEmpty() || RegistrableDomain { preNavigationURL }.matches(securityOrigin().data())) {
-            // Only apply the protections below following a cross-origin navigation.
-            return false;
-        }
-
-        auto areSameSiteIgnoringPublicSuffix = [](StringView domain, StringView otherDomain) {
-            auto& publicSuffixStore = PublicSuffixStore::singleton();
-            auto domainString = publicSuffixStore.topPrivatelyControlledDomain(domain);
-            auto otherDomainString = publicSuffixStore.topPrivatelyControlledDomain(otherDomain);
-            auto substringToSeparator = [](const String& string) -> String {
-                auto indexOfFirstSeparator = string.find('.');
-                if (indexOfFirstSeparator == notFound)
-                    return { };
-                return string.left(indexOfFirstSeparator);
-            };
-            auto firstSubstring = substringToSeparator(domainString);
-            return !firstSubstring.isEmpty() && firstSubstring == substringToSeparator(otherDomainString);
-        };
-
-        auto shouldApplyBaselineProtections = [&] {
-            if (!navigationalProtections.contains(AdvancedPrivacyProtections::BaselineProtections))
-                return false;
-
-            auto currentHost = securityOrigin().data().host();
-            if (areSameSiteIgnoringPublicSuffix(preNavigationURL.host(), currentHost))
-                return false;
-
+        auto isCrossSiteScript = [&] {
             if (!m_hasLoadedThirdPartyScript)
                 return false;
 
@@ -4934,6 +4953,51 @@ const URL& Document::urlForBindings()
             addConsoleMessage(MessageSource::JS, MessageLevel::Info, makeLogMessage(m_url, ScriptTrackingPrivacyCategory::QueryParameters));
 
             return true;
+        };
+
+        auto isKnownTrackingScript = [&] {
+            if (requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::QueryParameters))
+                return true;
+
+            // Scripts are only tainted at load time when script tracking privacy protections are enabled,
+            // so also check the calling script against the known tracking scripts directly.
+            RefPtr page = this->page();
+            auto sourceURL = currentSourceURL();
+            return page && !sourceURL.isEmpty() && page->chrome().client().requiresScriptTrackingPrivacyProtections(sourceURL, protect(topOrigin()));
+        };
+
+        switch (consistentQueryParameterFilteringLevelForBindings()) {
+        case ConsistentQueryParameterFilteringLevel::Disabled:
+            break;
+        case ConsistentQueryParameterFilteringLevel::Low:
+            if (isKnownTrackingScript())
+                return true;
+            break;
+        case ConsistentQueryParameterFilteringLevel::Medium:
+        case ConsistentQueryParameterFilteringLevel::High:
+            if (isCrossSiteScript() || isKnownTrackingScript())
+                return true;
+            break;
+        }
+
+        auto navigationalProtections = documentLoader->navigationalAdvancedPrivacyProtections();
+        if (navigationalProtections.isEmpty())
+            return false;
+
+        auto preNavigationURL = URL { documentLoader->originalRequest().httpReferrer() };
+        if (preNavigationURL.isEmpty() || RegistrableDomain { preNavigationURL }.matches(securityOrigin().data())) {
+            // Only apply the protections below following a cross-origin navigation.
+            return false;
+        }
+
+        auto shouldApplyBaselineProtections = [&] {
+            if (!navigationalProtections.contains(AdvancedPrivacyProtections::BaselineProtections))
+                return false;
+
+            if (areSameSiteIgnoringPublicSuffix(preNavigationURL.host(), currentHost))
+                return false;
+
+            return isCrossSiteScript();
         };
 
         auto shouldApplyEnhancedProtections = [&] {
