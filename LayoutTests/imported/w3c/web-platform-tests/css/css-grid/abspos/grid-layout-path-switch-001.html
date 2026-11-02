@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: a grid whose content changes keeps a consistent layout and intrinsic width</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#abspos">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#algo-track-sizing">
+<link rel="help" href="https://drafts.csswg.org/css-align-3/#distribution-grid">
+<meta name="assert" content="Adding or removing an absolutely positioned child, or changing justify-content, does not change the tracks, the grid areas used by absolutely positioned boxes, or the intrinsic width of the grid, however many times the grid changes in between.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+#wrapper { float: left; position: relative; }
+#grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: 100px 50px;
+  column-gap: 10px;
+}
+#grid > div { height: 10px; }
+.abspos {
+  position: absolute;
+  inset: 0;
+  grid-column: 2 / 3;
+}
+</style>
+<div id="wrapper"><div id="grid"><div id="item1"></div><div id="item2"></div></div></div>
+<script>
+const wrapper = document.getElementById("wrapper");
+const grid = document.getElementById("grid");
+
+function appendAbspos(parent) {
+  const abspos = document.createElement("div");
+  abspos.className = "abspos";
+  parent.appendChild(abspos);
+  return abspos;
+}
+
+function checkTracks() {
+  assert_equals(getComputedStyle(grid).gridTemplateColumns, "100px 50px", "resolved columns");
+}
+
+let abspos;
+
+test(() => {
+  assert_equals(wrapper.offsetWidth, 160, "the wrapper shrinks to the grid's max-content width");
+  checkTracks();
+}, "Initial grid");
+
+test(() => {
+  abspos = appendAbspos(grid);
+  assert_equals(wrapper.offsetWidth, 160, "wrapper");
+  assert_equals(abspos.offsetLeft, 110, "abspos left");
+  assert_equals(abspos.offsetWidth, 50, "abspos width");
+  checkTracks();
+}, "Absolutely positioned child of the grid");
+
+test(() => {
+  abspos.remove();
+  // Removing an out-of-flow child does not by itself lay the grid out again.
+  document.getElementById("item2").style.height = "12px";
+  assert_equals(wrapper.offsetWidth, 160, "wrapper");
+  checkTracks();
+}, "The absolutely positioned child is removed");
+
+test(() => {
+  grid.style.width = "400px";
+  grid.style.justifyContent = "space-between";
+  abspos = appendAbspos(grid);
+  assert_equals(wrapper.offsetWidth, 400, "wrapper");
+  assert_equals(abspos.offsetLeft, 350, "abspos left");
+  assert_equals(abspos.offsetWidth, 50, "abspos width");
+  checkTracks();
+}, "justify-content: space-between distributes the free space");
+
+test(() => {
+  abspos.remove();
+  grid.style.justifyContent = "";
+  abspos = appendAbspos(document.getElementById("item1"));
+  assert_equals(wrapper.offsetWidth, 400, "wrapper");
+  assert_equals(abspos.offsetLeft, 110, "abspos left");
+  assert_equals(abspos.offsetWidth, 50, "abspos width");
+  // The end line of this area is not the last line of the grid, so a content distribution offset left over from
+  // space-between would be subtracted from it.
+  const first = appendAbspos(document.getElementById("item1"));
+  first.style.gridColumn = "1 / 2";
+  assert_equals(first.offsetLeft, 0, "first track left");
+  assert_equals(first.offsetWidth, 100, "first track width");
+  first.remove();
+  checkTracks();
+}, "No content distribution offset is left after justify-content goes back to normal");
+
+test(() => {
+  abspos.remove();
+  grid.style.width = "";
+  const steps = [
+    { justifyContent: "", columns: "100px 70px", outOfFlowChild: true, wrapperWidth: 180 },
+    { justifyContent: "", columns: "100px 60px", outOfFlowChild: false, wrapperWidth: 170 },
+    { justifyContent: "space-between", columns: "100px 50px", outOfFlowChild: false, wrapperWidth: 160 },
+    { justifyContent: "", columns: "100px 55px", outOfFlowChild: false, wrapperWidth: 165 },
+  ];
+  let child = null;
+  for (const step of steps) {
+    grid.style.justifyContent = step.justifyContent;
+    grid.style.gridTemplateColumns = step.columns;
+    if (child)
+      child.remove();
+    child = step.outOfFlowChild ? appendAbspos(grid) : null;
+    assert_equals(wrapper.offsetWidth, step.wrapperWidth, JSON.stringify(step));
+    assert_equals(getComputedStyle(grid).gridTemplateColumns, step.columns, JSON.stringify(step));
+  }
+}, "The width of a shrink-to-fit wrapper follows the grid's intrinsic width after every change");
+</script>

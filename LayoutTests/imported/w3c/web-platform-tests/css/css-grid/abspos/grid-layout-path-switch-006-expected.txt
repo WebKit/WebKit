@@ -1,0 +1,5 @@
+
+PASS Removing the out-of-flow child, then changing the item
+PASS Inserting and removing an out-of-flow child
+PASS An item becoming out-of-flow and in-flow again
+

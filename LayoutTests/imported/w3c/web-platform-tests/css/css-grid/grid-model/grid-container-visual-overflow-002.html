@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: outline of a grid container is painted when only the outline intersects the viewport</title>
+<link rel="help" href="https://drafts.csswg.org/css-ui-4/#outline">
+<link rel="match" href="grid-container-visual-overflow-002-ref.html">
+<meta name="assert" content="The outline of a grid container whose border box is far below the viewport (outside of any pre-painted tile), but whose outline reaches into it, is painted.">
+<style>
+html { overflow: hidden; }
+body { margin: 0; }
+.grid { display: grid; grid-template-columns: 100px; grid-template-rows: 30px; width: 100px; margin-top: 3000px; outline: 40px solid green; outline-offset: 2500px; }
+.item { background: green; }
+</style>
+<div class="grid"><div class="item"></div></div>

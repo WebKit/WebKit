@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: reference for A stretch max-width is no constraint for repeat(auto-fill) when the containing block is a shrink-to-fit float</title>
+<style>
+.float { float: left; }
+.grid {
+  display: grid;
+  grid-auto-rows: 50px;
+  grid-template-columns: 50px;
+  background: grey;
+}
+.grid > div:nth-child(1) { grid-column: 1; background: green; }
+.grid > div:nth-child(2) { grid-column: 1; background: lime; }
+</style>
+<div class="float">
+  <div class="grid"><div></div><div></div></div>
+</div>

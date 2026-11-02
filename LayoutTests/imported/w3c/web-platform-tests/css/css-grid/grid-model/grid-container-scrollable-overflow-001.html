@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: a grid container with visible overflow contributes its items and out-of-flow boxes to the scrollable overflow of its scroll container</title>
+<link rel="help" href="https://drafts.csswg.org/css-overflow-3/#scrollable-overflow-calculation">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#overflow">
+<meta name="assert" content="The scrollable overflow area of the scroll container is the union of the border boxes of the grid items (accounting for transforms and relative positioning), the overflow of the items' descendants and the out-of-flow descendants whose containing block is the grid. Ink overflow does not contribute. A fixed positioned box whose containing block is the viewport does not contribute.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+body { margin: 0; }
+.scroller { overflow: hidden; width: 60px; height: 40px; position: relative; }
+.grid { display: grid; width: 30px; grid-template-columns: 30px; grid-template-rows: 10px; }
+.item { background: green; }
+</style>
+<div id="host"></div>
+<script>
+function metrics(markup, scrollerStyle) {
+    host.innerHTML = '<div class="scroller" style="' + (scrollerStyle || '') + '">' + markup + '</div>';
+    let scroller = host.firstChild;
+    return [scroller.scrollWidth, scroller.scrollHeight];
+}
+
+test(() => {
+    assert_array_equals(metrics('<div class="grid" style="grid-template-columns: 150px;"><div class="item"></div></div>'), [150, 40]);
+}, "item overflowing the inline end of the grid");
+
+test(() => {
+    assert_array_equals(metrics('<div class="grid" style="width: 50px; grid-template-columns: 50px; grid-template-rows: 150px;"><div class="item"></div></div>'), [60, 150]);
+}, "item overflowing the block end of the grid");
+
+test(() => {
+    assert_array_equals(metrics('<div class="grid"><div class="item"><div style="width: 90px; height: 50px;"></div></div></div>', 'height: 20px;'), [90, 50]);
+}, "overflow of the item's own descendants");
+
+test(() => {
+    assert_array_equals(metrics('<div class="grid"><div class="item" style="transform: translateX(120px);"></div></div>'), [150, 40]);
+}, "transformed item");
+
+test(() => {
+    assert_array_equals(metrics('<div class="grid"><div class="item" style="position: relative; left: 120px;"></div></div>'), [150, 40]);
+}, "relatively positioned item");
+
+test(() => {
+    assert_array_equals(metrics('<div class="grid"><div class="item" style="width: 80px; margin-right: -50px;"></div></div>', 'height: 20px;'), [80, 20]);
+}, "negative margin-end: the border box contributes, not the margin box");
+
+test(() => {
+    assert_array_equals(metrics('<div class="grid" style="position: relative;"><div class="item"><div style="position: absolute; left: -80px; top: -50px; width: 10px; height: 5px;"></div></div></div>', 'height: 20px;'), [60, 20]);
+}, "overflow towards the start edges is unreachable");
+
+test(() => {
+    assert_array_equals(metrics('<div class="grid" style="position: relative;"><div class="item"><div style="position: absolute; left: 80px; top: 0; width: 10px; height: 5px;"></div></div></div>', 'height: 20px;'), [90, 20]);
+}, "absolutely positioned descendant whose containing block is the grid");
+
+test(() => {
+    assert_array_equals(metrics('<div class="grid" style="position: relative;"><div class="item"><div style="position: fixed; left: 900px; top: 0; width: 10px; height: 5px;"></div></div></div>'), [60, 40]);
+}, "fixed positioned descendant whose containing block is the viewport");
+
+test(() => {
+    assert_array_equals(metrics('<div class="grid"><div class="item" style="transform: scale(3);"></div></div>', 'width: 40px; height: 20px;'), [60, 20]);
+}, "transform whose origin depends on the item's size");
+
+test(() => {
+    assert_array_equals(metrics('<div class="grid" style="column-gap: 20px; grid-template-columns: repeat(auto-fit, 100px);"><div class="item" style="grid-column: 2; width: 150px;"></div></div>'), [150, 40]);
+}, "collapsed auto-fit track and its gutter take no space");
+
+test(() => {
+    assert_array_equals(metrics('<div class="grid" style="column-gap: 20px; grid-template-columns: repeat(auto-fill, 100px);"><div class="item" style="grid-column: 2; width: 150px;"></div></div>'), [270, 40]);
+}, "auto-fill track is not collapsed");
+
+test(() => {
+    assert_array_equals(metrics('<div class="grid" style="box-shadow: 0 0 0 50px red;"><div class="item"></div></div>', 'height: 20px;'), [60, 20]);
+}, "box-shadow of the grid does not scroll");
+</script>

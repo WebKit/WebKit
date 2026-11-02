@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: a grid that stops being laid out by the legacy path is measured and laid out consistently</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-repeat">
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#stretch-fit-sizing">
+<meta name="assert" content="After the out-of-flow child of a grid is removed, the intrinsic size of the grid and the grid itself agree on the number of auto-fill tracks, in both axes.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+#cb { width: 390px; height: 390px; }
+#core {
+  float: left;
+  display: grid;
+  max-width: stretch;
+  max-height: stretch;
+  grid-template-columns: repeat(auto-fill, 50px);
+  grid-template-rows: repeat(auto-fill, 50px);
+}
+#item { height: 10px; }
+#abspos { position: absolute; }
+</style>
+<div id="cb"><div id="core"><div id="item"></div><div id="abspos"></div></div></div>
+<script>
+const core = document.getElementById("core");
+const trackCount = (property) => getComputedStyle(core)[property].split(" ").length;
+
+test(() => {
+  // The out-of-flow child is laid out by the legacy path. Without it the grid is laid out by the grid formatting context.
+  core.offsetWidth;
+  document.getElementById("abspos").remove();
+  core.style.paddingLeft = "1px";
+
+  // 390px - 1px of padding leaves 350px for the content (stretch is the 390px of the containing block), which is
+  // 7 tracks of 50px in each axis.
+  assert_equals(core.offsetWidth, 351, "width");
+  assert_equals(core.offsetHeight, 350, "height");
+  assert_equals(trackCount("gridTemplateColumns"), 7, "columns");
+  assert_equals(trackCount("gridTemplateRows"), 7, "rows");
+}, "Removing the out-of-flow child of a grid with auto-fill tracks sized by stretch");
+</script>

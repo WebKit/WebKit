@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Reference: absolutely positioned descendant placed against collapsed auto-fit rows</title>
+<style>
+.container {
+  position: relative;
+  width: 200px;
+  height: 580px;
+}
+.box {
+  position: absolute;
+  box-sizing: border-box;
+  width: 10px;
+  background: green;
+  border-top: 1px solid black;
+}
+</style>
+<div class="container">
+  <div class="box" style="left: 0; top: 120px; height: 100px"></div>
+  <div class="box" style="left: 20px; top: 120px; height: 460px"></div>
+  <div class="box" style="left: 40px; top: 0; height: 220px"></div>
+  <div class="box" style="left: 60px; top: 0; height: 100px"></div>
+  <div class="box" style="left: 80px; top: 120px; height: 1px"></div>
+  <div class="box" style="left: 100px; top: 0; height: 220px"></div>
+  <div class="box" style="left: 120px; top: 120px; height: 100px"></div>
+</div>

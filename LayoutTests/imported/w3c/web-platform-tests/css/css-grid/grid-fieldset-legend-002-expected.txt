@@ -1,0 +1,20 @@
+L
+L
+L
+L
+L
+L
+L
+L
+L
+
+PASS A legend wider than the grid sizes the fieldset
+PASS A legend narrower than the grid does not change the width of the fieldset
+PASS width: min-content includes the legend
+PASS width: max-content includes the legend
+PASS The margins of the legend are part of its contribution
+PASS A fieldset in a shrink-to-fit container
+PASS A legend wider than the grid gives an auto-fill grid more columns
+PASS A legend wider than a definite width does not give an auto-fill grid more columns
+PASS Changing the legend of a fieldset with a shrink-to-fit width
+

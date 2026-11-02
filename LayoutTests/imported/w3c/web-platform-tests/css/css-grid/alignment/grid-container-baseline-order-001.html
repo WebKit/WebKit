@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: The order property decides which grid item provides the grid's baseline</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-baselines">
+<link rel="help" href="https://drafts.csswg.org/css-align-3/#baseline-export">
+<meta name="flags" content="ahem">
+<meta name="assert" content="Items encountered at the same time in row-major grid order are taken in order-modified document order, and order changes auto-placement. The first (last) item in that order provides the first (last) baseline.">
+<style>
+body { margin: 0; font: 20px/20px Ahem; }
+.ref { width: 10px; height: 100px; background: gray; }
+.flex { display: flex; position: relative; align-items: baseline; margin-bottom: 10px; }
+.last { align-items: last baseline; }
+.fc { display: flex; }
+.grid { display: grid; grid-template-columns: 100px 100px; background: lightblue; }
+.grid > div { background: yellow; }
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.fc, .inline')">
+<div id="log"></div>
+<!-- Auto-placed items: order puts B in column 1, so B provides the first baseline and A the last. -->
+<div class="flex">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="75">
+    <div class="grid">
+      <div style="padding-top: 3px;">A</div>
+      <div style="order: -1; padding-top: 9px;">B</div>
+    </div>
+  </div>
+</div>
+<div class="flex last">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="81">
+    <div class="grid">
+      <div style="padding-top: 3px;">A</div>
+      <div style="order: -1; padding-top: 9px;">B</div>
+    </div>
+  </div>
+</div>
+<!-- Two items in the same cell are encountered at the same time: order-modified document order decides. -->
+<div class="flex">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="75">
+    <div class="grid">
+      <div style="grid-area: 1 / 1; padding-top: 3px;">A</div>
+      <div style="grid-area: 1 / 1; order: -1; padding-top: 9px;">B</div>
+    </div>
+  </div>
+</div>
+<div class="flex last">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="81">
+    <div class="grid">
+      <div style="grid-area: 1 / 1; padding-top: 3px;">A</div>
+      <div style="grid-area: 1 / 1; order: -1; padding-top: 9px;">B</div>
+    </div>
+  </div>
+</div>

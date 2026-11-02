@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: a horizontal nested grid container in a vertical grid item area resolves percentage padding against the area's inline size</title>
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#padding-props">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-item-sizing">
+<link rel="match" href="grid-container-percentage-padding-orthogonal-002-ref.html">
+<meta name="assert" content="Guard. The vertical-rl parent grid has columns of 100px and 300px along the vertical axis. The horizontal nested grid is in the 300px area, so its 10% padding is 30px, not 10% of the area's physical width.">
+<style>
+.o { display: grid; writing-mode: vertical-rl; height: 400px; grid-template-columns: 100px 300px; }
+.i { display: grid; writing-mode: horizontal-tb; grid-template-columns: 50px; padding: 10%; background: yellow; }
+.i > div { height: 10px; background: green; }
+</style>
+<div class="o"><div></div><div class="i"><div></div></div></div>

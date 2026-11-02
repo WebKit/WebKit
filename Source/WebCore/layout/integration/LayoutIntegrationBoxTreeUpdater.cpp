@@ -185,7 +185,8 @@ void BoxTreeUpdater::initializeInlineContent(const RenderElement& container)
 void BoxTreeUpdater::initializeGridContent()
 {
     for (CheckedRef gridItemRenderer : childrenOfType<RenderElement>(m_rootRenderer)) {
-        if (gridItemRenderer->layoutBox().isIntegrationRoot())
+        // The rendered legend of a fieldset sits in the border and is not a grid item, so it is not part of the grid's boxes.
+        if (Layout::isExcludedFromLayoutBoxNavigation(gridItemRenderer) || gridItemRenderer->layoutBox().isIntegrationRoot())
             continue;
         initializeLayoutBox(gridItemRenderer);
     }

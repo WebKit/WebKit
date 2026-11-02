@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS: Block grid as the last child of an inline-block provides the inline-block baseline</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-baselines">
+<link rel="help" href="https://drafts.csswg.org/css-align-3/#baseline-export">
+<meta name="flags" content="ahem">
+<meta name="assert" content="An inline-block in a line box takes its baseline from its last in-flow child. When that child is a block grid container, the baseline of the grid item providing the grid's baseline is the inline-block's baseline.">
+<style>
+body { margin: 0; font: 20px/20px Ahem; }
+.ref { display: inline-block; width: 10px; height: 100px; background: gray; }
+.line { position: relative; margin-bottom: 10px; }
+.ib { display: inline-block; border: 5px solid; padding: 3px; }
+.grid { display: grid; grid-template-columns: 100px; background: lightblue; }
+.grid > div { background: yellow; }
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.ib')">
+<div id="log"></div>
+<!-- Single row: the baseline is that of the only grid item. -->
+<div class="line">
+  <div class="ref"></div>
+  <div class="ib" data-offset-y="65">
+    <div class="grid">
+      <div style="border-top: 7px solid; padding-top: 4px;">Xx</div>
+    </div>
+  </div>
+</div>
+<!-- The grid is the last child, after other content and with a margin. -->
+<div class="line">
+  <div class="ref"></div>
+  <div class="ib" data-offset-y="51">
+    <div style="height: 10px;"></div>
+    <div class="grid" style="margin-top: 6px;">
+      <div style="padding: 9px 0 2px;">Y</div>
+    </div>
+  </div>
+</div>

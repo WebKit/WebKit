@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: absolutely positioned descendant after the number of auto-fill tracks shrinks</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#abspos">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#valdef-repeat-auto-fill">
+<link rel="match" href="grid-abspos-descendant-track-count-shrinks-001-ref.html">
+<meta name="assert" content="The last grid line is recognized as such after a relayout that reduces the number of tracks, so no gutter is subtracted from the grid area of an absolutely positioned descendant.">
+<style>
+#container { width: 1000px; }
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 100px);
+  column-gap: 10px;
+  height: 50px;
+}
+.abspos {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 20px;
+  background: green;
+  grid-column: 1 / 4;
+}
+</style>
+<div id="container">
+  <div class="grid"><div><div class="abspos"></div></div></div>
+</div>
+<script>
+document.body.offsetWidth;
+document.getElementById("container").style.width = "320px";
+</script>

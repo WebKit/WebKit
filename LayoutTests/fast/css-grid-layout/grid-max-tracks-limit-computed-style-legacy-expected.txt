@@ -1,0 +1,15 @@
+
+PASS Resolved tracks when the auto-repeat has no repetitions because it starts at the limit
+PASS Resolved tracks when the limit cuts the last repetition of the auto-repeat
+PASS Resolved tracks when the auto-repeat starts past the limit
+PASS Resolved line names when the auto-repeat has no repetitions because it starts at the limit
+PASS Resolved line names when the limit cuts the last repetition of the auto-repeat
+PASS Resolved line names when the auto-repeat starts past the limit
+PASS Resolved line names when the last repetition of the auto-repeat ends at the limit and no more would fit
+PASS Resolved line names when the last repetition of the auto-repeat ends at the limit and more would fit
+PASS Resolved line names when the auto-repeat has no repetitions and no names inside it
+PASS Resolved line names when the limit cuts a repetition of the auto-repeat that has two tracks
+PASS Resolved line names when the auto-repeat ends at the limit, no repetition was left out, and a track after it is dropped
+PASS Resolved line names of an auto-repeat after other tracks that the limit does not cut
+PASS Resolved line names of an auto-repeat after other tracks when the limit ends it on a repetition and more would fit
+

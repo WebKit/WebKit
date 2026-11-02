@@ -37,7 +37,7 @@ GridItemPlacer::GridItemPlacer(GridAutoFlowOptions autoFlowOptions)
 {
 }
 
-static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logicalGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount)
+static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logicalGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount, size_t maxTracks)
 {
     UnplacedGridItems unplacedGridItems;
     for (auto& gridItem : logicalGridItems) {
@@ -57,7 +57,8 @@ static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logi
             explicitColumnsCount,
             explicitRowsCount,
             leadingImplicitTracks.columnsCount,
-            leadingImplicitTracks.rowsCount
+            leadingImplicitTracks.rowsCount,
+            maxTracks
         };
 
         // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
@@ -76,10 +77,10 @@ static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logi
 //
 // Step 3 (determining the columns in the implicit grid) is handled while the grid is built, in
 // ImplicitGrid::createInitialGrid().
-GridItemPlacementResult GridItemPlacer::placeItems(const LogicalGridItems& logicalGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount) const
+GridItemPlacementResult GridItemPlacer::placeItems(const LogicalGridItems& logicalGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount, size_t maxTracks) const
 {
-    auto unplacedGridItems = constructUnplacedGridItems(logicalGridItems, leadingImplicitTracks, explicitColumnsCount, explicitRowsCount);
-    auto implicitGrid = ImplicitGrid::createInitialGrid(unplacedGridItems, leadingImplicitTracks, explicitColumnsCount, explicitRowsCount);
+    auto unplacedGridItems = constructUnplacedGridItems(logicalGridItems, leadingImplicitTracks, explicitColumnsCount, explicitRowsCount, maxTracks);
+    auto implicitGrid = ImplicitGrid::createInitialGrid(unplacedGridItems, leadingImplicitTracks, explicitColumnsCount, explicitRowsCount, maxTracks);
 
     GridAreas gridAreas;
     gridAreas.reserveInitialCapacity(unplacedGridItems.nonAutoPositionedItems.size()

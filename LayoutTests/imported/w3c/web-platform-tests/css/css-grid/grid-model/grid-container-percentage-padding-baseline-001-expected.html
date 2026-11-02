@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Reference for CSS Grid: a nested grid container's percentage padding is also used for the baseline that a flex container aligns to</title>
+<style>
+.f { display: flex; align-items: baseline; }
+.o { display: grid; width: 400px; grid-template-columns: 300px 100px; }
+.i { display: grid; grid-template-columns: 50px; padding: 30px; background: yellow; }
+</style>
+<div class="f"><span>X</span><div class="o"><div class="i"><span>Y</span></div></div></div>

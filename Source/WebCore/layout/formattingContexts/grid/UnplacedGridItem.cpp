@@ -52,9 +52,9 @@ static int LEGACY_NODELETE explicitLineToIndex(const Style::GridPosition& positi
     return line > 0 ? line - 1 : static_cast<int>(explicitTrackCount) + 1 + line;
 }
 
-UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t leadingImplicitTracksCount)
+UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t leadingImplicitTracksCount, size_t maxTracks)
 {
-    auto explicitRange = UnplacedGridItem::resolveDefinitePosition(start, end, explicitTrackCount);
+    auto explicitRange = UnplacedGridItem::resolveDefinitePosition(start, end, explicitTrackCount, maxTracks);
     if (!explicitRange) {
         // An axis with no explicit line is auto-positioned; carry the span forward for the
         // placement algorithm to resolve.
@@ -78,7 +78,7 @@ UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Styl
     return DefinitePosition { static_cast<size_t>(startLine), static_cast<size_t>(endLine) };
 }
 
-std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount)
+std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t maxTracks)
 {
     // An axis is only definite when one of its edges references an explicit line. Anything
     // else (auto/auto, span/auto, auto/span) is auto-positioned and has no explicit line range.
@@ -115,6 +115,34 @@ std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(con
         startLine = endLine - 1;
     }
 
+    // https://drafts.csswg.org/css-grid-1/#overlarge-grids
+    // "If a grid item is placed outside this limit, its grid area must be clamped to within this limited grid."
+    // The spec states the limit as a range of lines around the start of the explicit grid ("lines -10000 to 10000"). The
+    // limited grid here is the lines [1 - maxTracks, maxTracks] around the explicit grid: up to maxTracks - 1 leading implicit
+    // tracks and, counting the explicit grid, up to maxTracks tracks after its start, so the trailing implicit tracks are at
+    // most maxTracks minus the explicit tracks. The leading and trailing implicit tracks together stay below 2 * maxTracks,
+    // which is what the render tree's Grid allows. Chrome allows maxTracks leading tracks, so an item placed before the
+    // explicit grid can get one track fewer here than in Chrome.
+    // Style has already clamped line numbers to +-maxTracks. That makes a line number alone reach one line less than the spec's
+    // example (500 / 1500 with 1000 tracks gives 500 / 1000 here, 500 / 1001 in the spec), because Style counts line numbers
+    // where the spec counts tracks. A span can reach the last line.
+    auto firstLine = 1 - static_cast<int>(maxTracks);
+    auto lastLine = static_cast<int>(maxTracks);
+    if (endLine <= firstLine) {
+        // "If the grid area would be placed completely outside the limited grid, its span must be truncated to 1 and the
+        // area repositioned into the last grid track on that side of the grid."
+        startLine = firstLine;
+        endLine = firstLine + 1;
+    } else if (startLine >= lastLine) {
+        // Same rule, on the trailing side.
+        startLine = lastLine - 1;
+        endLine = lastLine;
+    } else {
+        // "If the grid area would span outside the limited grid, its span is clamped to the last line of the limited grid."
+        startLine = std::max(startLine, firstLine);
+        endLine = std::min(endLine, lastLine);
+    }
+
     return std::pair { startLine, endLine };
 }
 
@@ -127,10 +155,10 @@ size_t UnplacedGridItem::GridPosition::span() const
 
 UnplacedGridItem::UnplacedGridItem(const ElementBox& layoutBox, Style::GridPosition columnStart, Style::GridPosition columnEnd,
     Style::GridPosition rowStart, Style::GridPosition rowEnd, size_t explicitColumnCount, size_t explicitRowCount,
-    size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount)
+    size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, size_t maxTracks)
     : m_layoutBox(layoutBox)
-    , m_columnPosition(GridPosition::create(columnStart, columnEnd, explicitColumnCount, leadingImplicitColumnsCount))
-    , m_rowPosition(GridPosition::create(rowStart, rowEnd, explicitRowCount, leadingImplicitRowsCount))
+    , m_columnPosition(GridPosition::create(columnStart, columnEnd, explicitColumnCount, leadingImplicitColumnsCount, maxTracks))
+    , m_rowPosition(GridPosition::create(rowStart, rowEnd, explicitRowCount, leadingImplicitRowsCount, maxTracks))
 {
 }
 

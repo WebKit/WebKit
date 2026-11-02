@@ -1,0 +1,33 @@
+L
+L
+L
+1
+2
+L
+L
+L
+
+L
+
+1
+2
+L
+L
+
+
+
+PASS The rendered legend is in the border, and the items fill the content box
+PASS A tall rendered legend with margins pushes the content box down
+PASS A definite height and a tall legend: the first row is the first row of the content box
+PASS Only the first legend is the rendered legend, the second one is a grid item
+PASS A grid fieldset with only a rendered legend has no grid items
+PASS The style of the rendered legend does not matter to the grid: margin: auto
+PASS The style of the rendered legend does not matter to the grid: a vertical writing mode
+PASS A grid fieldset without a legend
+PASS A legend in a grid that is not a fieldset is a grid item
+PASS The rendered legend does not have to be the first child
+PASS Only the first legend is the rendered legend when it is not the first child
+PASS A rendered legend shorter than the border is centered over the border, and the border sets the content box
+PASS A rendered legend taller than a thin border replaces the border
+PASS The rendered legend is hit-tested in the border
+

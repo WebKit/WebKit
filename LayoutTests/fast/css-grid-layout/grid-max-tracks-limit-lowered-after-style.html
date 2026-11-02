@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<title>An auto-placed grid item whose span is larger than a limit on the number of grid tracks that was lowered after its style was resolved</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#overlarge-grids">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+.grid { display: grid; grid-auto-columns: 10px; grid-auto-rows: 10px; float: left; }
+</style>
+<div id="container"></div>
+<script>
+// Style clamps a span to the limit in effect when the style is resolved. The limit is lowered after that and the grid is laid out
+// again without resolving the style of its items, so the item has a span of 20 in a grid limited to 10 columns. Its span is clamped
+// to the last line of the limited grid, and no cell is written past the end of a row.
+function layoutWithLoweredLimit(gridStyle, itemStyles)
+{
+    container.innerHTML = `<div class="grid" style="${gridStyle}">${itemStyles.map(style => `<div style="${style}"></div>`).join("")}</div>`;
+    let grid = container.firstChild;
+    // Resolve the style of the grid and of its items with the default limit.
+    grid.offsetWidth;
+    window.internals.setGridMaxTracksLimit(10);
+    // The width of the grid changes only the style of the grid.
+    grid.style.width = "300px";
+    return grid;
+}
+
+function itemRects(grid)
+{
+    let gridRect = grid.getBoundingClientRect();
+    return [...grid.children].map(item => {
+        let rect = item.getBoundingClientRect();
+        return [rect.left - gridRect.left, rect.top - gridRect.top, rect.width, rect.height].join(",");
+    });
+}
+
+for (let flow of ["row", "row dense"]) {
+    test(() => {
+        let grid = layoutWithLoweredLimit(`grid-auto-flow: ${flow}`, ["grid-column: span 20", "grid-column: span 1"]);
+        assert_array_equals(itemRects(grid), ["0,0,100,10", "0,10,10,10"]);
+    }, `A span of 20 columns in a grid limited to 10 columns is clamped to 10 (${flow})`);
+
+    test(() => {
+        let grid = layoutWithLoweredLimit(`grid-auto-flow: ${flow}`, ["grid-column: span 4", "grid-column: span 20", "grid-column: span 1"]);
+        // The dense item goes back to the first free cell, after the first item.
+        assert_array_equals(itemRects(grid), ["0,0,40,10", "0,10,100,10", flow == "row" ? "0,20,10,10" : "40,0,10,10"]);
+    }, `A span of 20 columns after another item in a grid limited to 10 columns is clamped to 10 (${flow})`);
+}
+</script>
