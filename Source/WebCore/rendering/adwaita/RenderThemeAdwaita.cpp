@@ -481,7 +481,11 @@ std::optional<Seconds> RenderThemeAdwaita::caretBlinkInterval() const
 
 void RenderThemeAdwaita::setAccentColor(const Color& color)
 {
-    static_cast<ThemeAdwaita&>(Theme::singleton()).setAccentColor(color);
+    auto& theme = static_cast<ThemeAdwaita&>(Theme::singleton());
+    if (theme.accentColor() == color)
+        return;
+
+    theme.setAccentColor(color);
     platformColorsDidChange();
 }
 
