@@ -3647,9 +3647,11 @@ static void testCollectionGetMatches(AccessibilityTest* test, gconstpointer)
 
 void beforeAll()
 {
+#ifdef ATSPI_CHECK_VERSION
 #if ATSPI_CHECK_VERSION(2, 61, 0)
     // The tests inspect their own process, so GTK must get to answer while libatspi waits.
     atspi_set_g_main_loop_reentrancy(TRUE);
+#endif
 #endif
     AccessibilityTest::add("WebKitAccessibility", "accessible/basic-hierarchy", testAccessibleBasicHierarchy);
     AccessibilityTest::add("WebKitAccessibility", "accessible/ignored-objects", testAccessibleIgnoredObjects);
