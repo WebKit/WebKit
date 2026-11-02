@@ -135,6 +135,62 @@ TEST(WTF_Vector, InitializerList)
     EXPECT_EQ(4, vector[3]);
 }
 
+TEST(WTF_Vector, ReserveCapacityTag)
+{
+    Vector<int> vector(ReserveCapacityTag { }, 10);
+    EXPECT_TRUE(vector.isEmpty());
+    EXPECT_EQ(0U, vector.size());
+    EXPECT_GE(vector.capacity(), 10U);
+
+    auto capacity = vector.capacity();
+    auto* buffer = vector.span().data();
+    EXPECT_NE(nullptr, buffer);
+    for (int i = 0; i < 10; ++i)
+        vector.append(i);
+
+    EXPECT_EQ(10U, vector.size());
+    EXPECT_EQ(capacity, vector.capacity());
+    EXPECT_EQ(buffer, vector.span().data());
+    for (int i = 0; i < 10; ++i)
+        EXPECT_EQ(i, vector[i]);
+}
+
+TEST(WTF_Vector, ReserveCapacityTagZero)
+{
+    Vector<int> vector(ReserveCapacityTag { }, 0);
+    EXPECT_TRUE(vector.isEmpty());
+    EXPECT_EQ(0U, vector.capacity());
+    EXPECT_EQ(nullptr, vector.span().data());
+}
+
+TEST(WTF_Vector, ReserveCapacityTagInline)
+{
+    Vector<int, 8> smallVector(ReserveCapacityTag { }, 4);
+    EXPECT_TRUE(smallVector.isEmpty());
+    EXPECT_EQ(8U, smallVector.capacity());
+
+    Vector<int, 8> largeVector(ReserveCapacityTag { }, 20);
+    EXPECT_TRUE(largeVector.isEmpty());
+    EXPECT_GE(largeVector.capacity(), 20U);
+
+    auto* buffer = largeVector.span().data();
+    for (int i = 0; i < 20; ++i)
+        largeVector.append(i);
+    EXPECT_EQ(buffer, largeVector.span().data());
+}
+
+TEST(WTF_Vector, ReserveCapacityTagDoesNotConstructElements)
+{
+    ConstructorDestructorCounter::TestingScope scope;
+    {
+        Vector<ConstructorDestructorCounter> vector(ReserveCapacityTag { }, 5);
+        EXPECT_TRUE(vector.isEmpty());
+        EXPECT_GE(vector.capacity(), 5U);
+    }
+    EXPECT_EQ(0U, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(0U, ConstructorDestructorCounter::destructionCount);
+}
+
 TEST(WTF_Vector, ConstructWithFrom)
 {
     auto vector = Vector<int>::from(1, 2, 3, 4, 5);

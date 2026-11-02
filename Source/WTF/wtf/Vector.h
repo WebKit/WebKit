@@ -652,6 +652,12 @@ public:
     {
     }
 
+    // Constructs an empty Vector with room for at least `capacity` elements.
+    Vector(ReserveCapacityTag, size_t capacity)
+        : Base(capacity, 0)
+    {
+    }
+
     template<typename Range>
         requires std::ranges::input_range<Range> && std::convertible_to<std::ranges::range_value_t<Range>, T>
     explicit Vector(FromRange, Range&& range)

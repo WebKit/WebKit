@@ -86,6 +86,7 @@ struct MachSendRightAnnotated;
 struct MainThreadAccessTraits;
 struct ObjectIdentifierMainThreadAccessTraits;
 struct ObjectIdentifierThreadSafeAccessTraits;
+struct ReserveCapacityTag { };
 
 #if USE(PROTECTED_JIT)
 struct SequesteredArenaMalloc;
@@ -314,6 +315,7 @@ using WTF::OrdinalNumber;
 using WTF::PrintStream;
 using WTF::RawPtrTraits;
 using WTF::RawValueTraits;
+using WTF::ReserveCapacityTag;
 using WTF::ReducedResolutionSeconds;
 using WTF::Ref;
 using WTF::RefPtr;
