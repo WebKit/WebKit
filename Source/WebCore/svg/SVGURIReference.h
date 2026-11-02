@@ -70,6 +70,7 @@ public:
 
     String href() const { return m_href->currentValue(); }
     SVGAnimatedString& hrefAnimated() { return m_href; }
+    const SVGAnimatedString& hrefAnimated() const { return m_href; }
 
 protected:
     SVGURIReference(SVGElement* contextElement);

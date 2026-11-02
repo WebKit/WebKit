@@ -36,3 +36,4 @@
 };
 
 SVGAElement includes SVGURIReference;
+SVGAElement includes HyperlinkElementUtils;

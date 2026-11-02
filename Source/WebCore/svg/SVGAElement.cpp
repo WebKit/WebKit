@@ -44,6 +44,7 @@
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "Settings.h"
+#include "TrustedScriptURL.h"
 #include "XLinkNames.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -245,6 +246,17 @@ SharedStringHash SVGAElement::visitedLinkHash() const
 URL SVGAElement::hrefURL() const
 {
     return protect(document())->encodingParseURL(href());
+}
+
+// https://w3c.github.io/svgwg/svg2-draft/linking.html#InterfaceSVGAElement
+URL SVGAElement::fullURL() const
+{
+    return protect(document())->encodingParseURL(hrefAnimated().baseVal());
+}
+
+void SVGAElement::setFullURL(const URL& fullURL)
+{
+    protect(hrefAnimated())->setBaseVal(fullURL.string());
 }
 
 DOMTokenList& SVGAElement::relList()
