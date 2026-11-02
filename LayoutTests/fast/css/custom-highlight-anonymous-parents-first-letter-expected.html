@@ -1,0 +1,16 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: Ahem; src: url("../../resources/Ahem.ttf"); }
+body { font: 20px Ahem; color: black; background: white; }
+#host::first-letter { color: blue; }
+#host::highlight(probe) { background-color: cyan; color: purple; }
+.origin::highlight(probe) { background-color: lime; color: red; }
+</style>
+<span id="before">x</span><div id="host"><span class="origin">TEXT</span></div><span id="after">y</span>
+<script>
+const range = new Range();
+range.setStart(document.getElementById('before').firstChild, 1);
+range.setEnd(document.getElementById('after').firstChild, 0);
+CSS.highlights.set('probe', new Highlight(range));
+</script>

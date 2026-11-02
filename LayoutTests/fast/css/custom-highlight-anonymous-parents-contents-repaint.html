@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<meta charset="utf-8">
+<link rel="match" href="custom-highlight-anonymous-parents-contents-repaint-expected.html">
+<title>Boxless highlight repaint follows composed text ownership</title>
+<style>
+@font-face { font-family: Ahem; src: url("../../resources/Ahem.ttf"); }
+body { font: 20px Ahem; }
+.origin { display: contents; }
+.transparent { opacity: 0; }
+.origin:not(.inherited)::highlight(probe) { background-color: red; color: black; }
+.origin.changed::highlight(probe) { background-color: lime; }
+.origin.unrelated { background-color: blue; }
+.first-letter::first-letter { color: blue; }
+</style>
+<div><span id="transparent" class="origin transparent">TEXT</span></div>
+<div><span id="nested" class="origin"><span class="origin inherited"><span class="origin inherited">TEXT</span></span></span></div>
+<div><span id="rendered-child" class="origin"><span>TEXT</span></span></div>
+<div><span id="multiple" class="origin">TEXT<!-- Keep separate Text nodes. -->TEXT</span></div>
+<div id="slot-host">TEXT</div>
+<div><span id="shadow-host" class="origin"></span></div>
+<span id="before">x</span><div class="first-letter"><span id="first-letter" class="origin">TEXT</span></div><span id="after">y</span>
+<script>
+const slotRoot = document.getElementById('slot-host').attachShadow({ mode: 'open' });
+slotRoot.innerHTML = `<style>
+slot { display: contents; }
+slot::highlight(probe) { background-color: red; }
+slot.changed::highlight(probe) { background-color: lime; }
+</style><slot></slot>`;
+const shadowHost = document.getElementById('shadow-host');
+shadowHost.attachShadow({ mode: 'open' }).textContent = 'TEXT';
+const cases = [
+    ['constant zero opacity', document.getElementById('transparent'), document.getElementById('transparent').firstChild],
+    ['nested boxless inheritance', document.getElementById('nested'), document.getElementById('nested').firstChild.firstChild.firstChild],
+    ['rendered child inheritance', document.getElementById('rendered-child'), document.getElementById('rendered-child').firstChild.firstChild],
+    ['assigned Text in boxless slot', slotRoot.querySelector('slot'), document.getElementById('slot-host').firstChild],
+    ['direct shadow Text', shadowHost, shadowHost.shadowRoot.firstChild],
+    ['multiple direct Text children', document.getElementById('multiple'), document.getElementById('multiple').firstChild],
+    ['first-letter', document.getElementById('first-letter'), document.getElementById('first-letter').firstChild],
+];
+const ranges = cases.map(([, , text], index) => {
+    const range = new Range();
+    if (index == cases.length - 1) {
+        // Avoid the existing split-Text endpoint issue by spanning sibling nodes.
+        range.setStart(document.getElementById('before').firstChild, 1);
+        range.setEnd(document.getElementById('after').firstChild, 0);
+    } else
+        range.selectNodeContents(text);
+    return range;
+});
+const extraRange = new Range();
+extraRange.selectNodeContents(document.getElementById('multiple').lastChild);
+ranges.push(extraRange);
+CSS.highlights.set('probe', new Highlight(...ranges));
+const nextFrame = () => new Promise(requestAnimationFrame);
+window.addEventListener('load', async () => {
+    await nextFrame();
+    await nextFrame();
+    for (const [, origin] of cases)
+        origin.classList.add('changed');
+    await nextFrame();
+    await nextFrame();
+    document.documentElement.classList.remove('reftest-wait');
+});
+</script>

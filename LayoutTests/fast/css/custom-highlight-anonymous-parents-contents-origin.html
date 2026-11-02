@@ -1,0 +1,22 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Custom Highlight uses the boxless originating element style</title>
+<link rel="help" href="https://drafts.csswg.org/css-pseudo-4/#highlight-cascade">
+<link rel="issue" href="https://bugs.webkit.org/show_bug.cgi?id=307455">
+<link rel="match" href="custom-highlight-anonymous-parents-contents-origin-expected.html">
+<style>
+@font-face { font-family: Ahem; src: url("../../resources/Ahem.ttf"); }
+body { font: 20px Ahem; color: black; background: white; }
+math { font: inherit; }
+mtext::highlight(probe), .holder::highlight(probe) { background-color: cyan; color: purple; }
+.origin::highlight(probe) { background-color: lime; color: red; }
+</style>
+<div class="holder" style="display:flex"><span id="flex" class="origin" style="display:contents">T XT</span></div>
+<math><mtext><span id="math" class="origin" style="display:contents">T XT</span></mtext></math>
+<div class="holder" style="display:flex"><span id="control" class="origin">T XT</span></div>
+<script>
+const ranges = [...document.querySelectorAll('[id]')].map(element => {
+ const range = new Range(); range.selectNodeContents(element.firstChild); return range;
+});
+CSS.highlights.set('probe', new Highlight(...ranges));
+</script>

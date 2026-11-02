@@ -820,6 +820,7 @@ public:
     const Style::ComputedStyle* LEGACY_NODELETE existingComputedStyle() const LIFETIME_BOUND;
     WEBCORE_EXPORT const Style::ComputedStyle* LEGACY_NODELETE renderOrDisplayContentsStyle() const LIFETIME_BOUND;
     WEBCORE_EXPORT const Style::ComputedStyle* LEGACY_NODELETE renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
+    Style::ComputedStyle* LEGACY_NODELETE mutableDisplayContentsStyle() LIFETIME_BOUND;
 
     void clearBeforePseudoElement();
     void clearAfterPseudoElement();

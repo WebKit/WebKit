@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>A boxless highlight style change schedules a repaint</title>
+<style>
+body { font: 20px Ahem; }
+.origin { display: contents; }
+.origin::highlight(probe) { background-color: red; }
+.origin.changed::highlight(probe) { background-color: lime; }
+</style>
+<div><span id="origin" class="origin">before TEXT after</span></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+const origin = document.getElementById('origin');
+const range = new Range();
+range.setStart(origin.firstChild, 7);
+range.setEnd(origin.firstChild, 11);
+CSS.highlights.set('probe', new Highlight(range));
+
+const nextFrame = () => new Promise(requestAnimationFrame);
+window.addEventListener('load', async () => {
+    await nextFrame();
+    await nextFrame();
+    internals.startTrackingRepaints();
+    origin.classList.add('changed');
+    const repaintRects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+    document.body.textContent = repaintRects ? 'PASS: highlight style change scheduled a repaint' : 'FAIL: highlight style change did not schedule a repaint';
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
