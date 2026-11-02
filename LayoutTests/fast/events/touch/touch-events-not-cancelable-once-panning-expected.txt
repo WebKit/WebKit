@@ -1,0 +1,18 @@
+Tests that once a touch pan has started, its touch moves and its touch end are not cancelable, and that a page can still stop a pan before it starts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The page prevents every touch move, so the pan never starts:
+PASS cancelableMoves.join() is "true,true,true,true"
+PASS touchEndCancelable is true
+PASS scrollBeforeRelease is 0
+
+The page prevents the touch moves from the second one on, after the pan has started:
+PASS cancelableMoves.join() is "true,false,false,false"
+PASS touchEndCancelable is false
+PASS scrollBeforeRelease > 20 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

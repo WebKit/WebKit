@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body { height: 5000px; }
+</style>
+</head>
+<body onload="runTest();">
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Tests that once a touch pan has started, its touch moves and its touch end are not cancelable, and that a page can still stop a pan before it starts.');
+
+window.jsTestIsAsync = true;
+
+let preventFromMove = 0;
+let moveCount = 0;
+let cancelableMoves = [];
+let touchEndCancelable;
+let scrollBeforeRelease;
+
+document.addEventListener('touchstart', () => {
+    moveCount = 0;
+    cancelableMoves = [];
+}, { passive: false });
+document.addEventListener('touchmove', event => {
+    cancelableMoves.push(event.cancelable);
+    if (preventFromMove && ++moveCount >= preventFromMove)
+        event.preventDefault();
+}, { passive: false });
+document.addEventListener('touchend', event => {
+    touchEndCancelable = event.cancelable;
+}, { passive: false });
+
+async function drag()
+{
+    touchEndCancelable = undefined;
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(100, 400);
+    await eventSender.asyncTouchStart();
+    // Each step is longer than the drag threshold, so the pan starts after the first move if the page doesn't stop it.
+    for (let y = 380; y >= 320; y -= 20) {
+        eventSender.updateTouchPoint(0, 100, y);
+        await eventSender.asyncTouchMove();
+    }
+    // Read the scroll position before the release, which can start a fling.
+    await UIHelper.renderingComplete();
+    scrollBeforeRelease = window.scrollY;
+    eventSender.releaseTouchPoint(0);
+    await eventSender.asyncTouchEnd();
+    await UIHelper.waitForCondition(() => touchEndCancelable !== undefined);
+    await UIHelper.renderingComplete();
+}
+
+async function runTest()
+{
+    // Touch event regions must reach the scrolling tree before touch events are dispatched.
+    await UIHelper.renderingComplete();
+
+    if (!window.eventSender) {
+        debug('This test requires WebKitTestRunner.');
+        finishJSTest();
+        return;
+    }
+
+    debug('The page prevents every touch move, so the pan never starts:');
+    preventFromMove = 1;
+    await drag();
+    shouldBeEqualToString('cancelableMoves.join()', 'true,true,true,true');
+    shouldBeTrue('touchEndCancelable');
+    shouldBe('scrollBeforeRelease', '0');
+
+    debug('');
+    debug('The page prevents the touch moves from the second one on, after the pan has started:');
+    preventFromMove = 2;
+    await drag();
+    shouldBeEqualToString('cancelableMoves.join()', 'true,false,false,false');
+    shouldBeFalse('touchEndCancelable');
+    // Each move is 20px, so only the first move scrolls if the page can cancel the others.
+    shouldBeTrue('scrollBeforeRelease > 20');
+
+    finishJSTest();
+}
+</script>
+</body>
+</html>

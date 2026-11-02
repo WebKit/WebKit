@@ -41,9 +41,10 @@ public:
     virtual ~TouchEvent();
 
     static Ref<TouchEvent> create(TouchList* touches, TouchList* targetTouches, TouchList* changedTouches,
-        const AtomString& type, RefPtr<WindowProxy>&& view, const DoublePoint& globalLocation, OptionSet<Modifier> modifiers)
+        const AtomString& type, RefPtr<WindowProxy>&& view, const DoublePoint& globalLocation, OptionSet<Modifier> modifiers,
+        IsCancelable isCancelable = IsCancelable::Yes)
     {
-        return adoptRef(*new TouchEvent(touches, targetTouches, changedTouches, type, WTF::move(view), globalLocation, modifiers));
+        return adoptRef(*new TouchEvent(touches, targetTouches, changedTouches, type, WTF::move(view), globalLocation, modifiers, isCancelable));
     }
     static Ref<TouchEvent> createForBindings()
     {
@@ -72,7 +73,7 @@ public:
 private:
     TouchEvent();
     TouchEvent(TouchList* touches, TouchList* targetTouches, TouchList* changedTouches, const AtomString& type,
-        RefPtr<WindowProxy>&&, const DoublePoint& globalLocation, OptionSet<Modifier>);
+        RefPtr<WindowProxy>&&, const DoublePoint& globalLocation, OptionSet<Modifier>, IsCancelable);
     TouchEvent(const AtomString&, const Init&, IsTrusted);
 
     RefPtr<TouchList> m_touches;
