@@ -84,7 +84,7 @@ using SignalHandler = Function<SignalAction(Signal, SigInfo&, PlatformRegisters&
 using SignalHandlerMemory = AlignedStorage<SignalHandler>;
 
 struct SignalHandlers {
-    NODELETE static void initialize();
+    static void LEGACY_NODELETE initialize();
     static void finalize();
 
     void add(Signal, SignalHandler&&);

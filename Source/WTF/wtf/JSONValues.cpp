@@ -69,7 +69,7 @@ constexpr auto trueToken = "true"_s;
 constexpr auto falseToken = "false"_s;
 
 template<typename CodeUnit>
-NODELETE bool parseConstToken(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenEnd, ASCIILiteral token)
+bool LEGACY_NODELETE parseConstToken(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenEnd, ASCIILiteral token)
 {
     if (data.size() < token.length())
         return false;
@@ -84,7 +84,7 @@ NODELETE bool parseConstToken(std::span<const CodeUnit> data, std::span<const Co
 }
 
 template<typename CodeUnit>
-NODELETE bool readInt(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenEnd, bool canHaveLeadingZeros)
+bool LEGACY_NODELETE readInt(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenEnd, bool canHaveLeadingZeros)
 {
     if (data.empty())
         return false;
@@ -105,7 +105,7 @@ NODELETE bool readInt(std::span<const CodeUnit> data, std::span<const CodeUnit>&
 }
 
 template<typename CodeUnit>
-NODELETE bool parseNumberToken(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenEnd)
+bool LEGACY_NODELETE parseNumberToken(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenEnd)
 {
     // We just grab the number here. We validate the size in DecodeNumber.
     // According to RFC 4627, a valid number is: [minus] int [frac] [exp]
@@ -149,7 +149,7 @@ NODELETE bool parseNumberToken(std::span<const CodeUnit> data, std::span<const C
 }
 
 template<typename CodeUnit>
-NODELETE bool readHexDigits(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenEnd, unsigned digits)
+bool LEGACY_NODELETE readHexDigits(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenEnd, unsigned digits)
 {
     if (data.size() < digits)
         return false;
@@ -165,7 +165,7 @@ NODELETE bool readHexDigits(std::span<const CodeUnit> data, std::span<const Code
 }
 
 template<typename CodeUnit>
-NODELETE bool parseStringToken(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenEnd)
+bool LEGACY_NODELETE parseStringToken(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenEnd)
 {
     while (!data.empty()) {
         CodeUnit c = consume(data);
@@ -204,7 +204,7 @@ NODELETE bool parseStringToken(std::span<const CodeUnit> data, std::span<const C
 }
 
 template<typename CodeUnit>
-NODELETE Token parseToken(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenStart, std::span<const CodeUnit>& tokenEnd)
+Token LEGACY_NODELETE parseToken(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenStart, std::span<const CodeUnit>& tokenEnd)
 {
     skipWhile<isASCIIWhitespaceWithoutFF>(data);
 

@@ -39,11 +39,11 @@ public:
     virtual ~LogChannels() = default;
     virtual String logLevelString() = 0;
 
-    NODELETE WTF_EXPORT_PRIVATE bool isLogChannelEnabled(const String& name);
-    NODELETE WTF_EXPORT_PRIVATE void setLogChannelToAccumulate(const String& name);
+    WTF_EXPORT_PRIVATE bool LEGACY_NODELETE isLogChannelEnabled(const String& name);
+    WTF_EXPORT_PRIVATE void LEGACY_NODELETE setLogChannelToAccumulate(const String& name);
     WTF_EXPORT_PRIVATE void clearAllLogChannelsToAccumulate();
     WTF_EXPORT_PRIVATE void initializeLogChannelsIfNecessary(std::optional<String> = std::nullopt);
-    NODELETE WTF_EXPORT_PRIVATE WTFLogChannel* getLogChannel(const String& name);
+    WTF_EXPORT_PRIVATE WTFLogChannel* LEGACY_NODELETE getLogChannel(const String& name);
 
 protected:
     Vector<WTFLogChannel*> m_logChannels;

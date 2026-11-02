@@ -438,14 +438,14 @@ private:
         sendMessageToObservers(channel, level, { { file, function, line } }, arguments...);
     }
 
-    NODELETE WTF_EXPORT_PRIVATE static Vector<std::reference_wrapper<Observer>>& observers() WTF_REQUIRES_LOCK(observerLock());
+    WTF_EXPORT_PRIVATE static Vector<std::reference_wrapper<Observer>>& LEGACY_NODELETE observers() WTF_REQUIRES_LOCK(observerLock());
 
     static Lock& observerLock() WTF_RETURNS_LOCK(loggerObserverLock)
     {
         return loggerObserverLock;
     }
 
-    NODELETE WTF_EXPORT_PRIVATE static Vector<std::reference_wrapper<MessageHandlerObserver>>& messageHandlerObservers() WTF_REQUIRES_LOCK(messageHandlerObserverLock());
+    WTF_EXPORT_PRIVATE static Vector<std::reference_wrapper<MessageHandlerObserver>>& LEGACY_NODELETE messageHandlerObservers() WTF_REQUIRES_LOCK(messageHandlerObserverLock());
 
     static Lock& messageHandlerObserverLock() WTF_RETURNS_LOCK(messageHandlerLoggerObserverLock)
     {

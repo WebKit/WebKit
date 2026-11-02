@@ -533,7 +533,7 @@ public:
     void fill(bool value) { value ? setAll() : clearAll(); }
     void grow(size_t newSize) { resize(newSize); }
 
-    NODELETE WTF_EXPORT_PRIVATE void clearRange(size_t begin, size_t end);
+    WTF_EXPORT_PRIVATE void LEGACY_NODELETE clearRange(size_t begin, size_t end);
 
     // Returns true if the contents of this bitvector changed.
     template<typename OtherWords>

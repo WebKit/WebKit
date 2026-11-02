@@ -253,7 +253,7 @@ const unsigned maxLoadFactor = 3;
 
 const unsigned growthFactor = 2;
 
-NODELETE unsigned hashAddress(const void* address)
+unsigned LEGACY_NODELETE hashAddress(const void* address)
 {
     return WTF::PtrHash<const void*>::hash(address);
 }
@@ -327,7 +327,7 @@ IGNORE_CLANG_WARNINGS_END
     }
 }
 
-NODELETE void unlockHashtable(const Vector<Bucket*>& buckets)
+void LEGACY_NODELETE unlockHashtable(const Vector<Bucket*>& buckets)
 {
 IGNORE_CLANG_WARNINGS_BEGIN("thread-safety")
     for (Bucket* bucket : buckets)

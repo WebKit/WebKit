@@ -49,7 +49,7 @@ public:
     WTF_EXPORT_PRIVATE std::expected<String, UTF8ConversionError> tryToString() const;
     WTF_EXPORT_PRIVATE String toString() const;
     WTF_EXPORT_PRIVATE String toStringWithLatin1Fallback() const;
-    NODELETE WTF_EXPORT_PRIVATE void reset();
+    WTF_EXPORT_PRIVATE void LEGACY_NODELETE reset();
     
 private:
     void increaseSize(size_t);

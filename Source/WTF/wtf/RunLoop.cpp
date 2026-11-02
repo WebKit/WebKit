@@ -54,7 +54,7 @@ public:
         m_runLoop->threadWillExit();
     }
 
-    NODELETE RunLoop& runLoop() { return m_runLoop; }
+    RunLoop& LEGACY_NODELETE runLoop() { return m_runLoop; }
 
 private:
     const Ref<RunLoop> m_runLoop;

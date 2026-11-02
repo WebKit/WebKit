@@ -214,7 +214,7 @@ OSObjectPtr<T, RetainTraits> protect(OSObjectPtr<T, RetainTraits>&&)
 }
 
 template<typename T, typename U, typename RetainTraits>
-NODELETE SUPPRESS_NODELETE ALWAYS_INLINE void lazyInitialize(const OSObjectPtr<T, RetainTraits>& ptr, OSObjectPtr<U, RetainTraits>&& obj)
+SUPPRESS_NODELETE ALWAYS_INLINE void LEGACY_NODELETE lazyInitialize(const OSObjectPtr<T, RetainTraits>& ptr, OSObjectPtr<U, RetainTraits>&& obj)
 {
     RELEASE_ASSERT(!ptr);
     const_cast<OSObjectPtr<T, RetainTraits>&>(ptr) = std::move(obj); // NOLINT

@@ -144,7 +144,7 @@ private:
     friend class NeverDestroyed<TextBreakIteratorCache>;
     friend class CachedTextBreakIterator;
 
-    NODELETE WTF_EXPORT_PRIVATE static TextBreakIteratorCache& singleton();
+    WTF_EXPORT_PRIVATE static TextBreakIteratorCache& LEGACY_NODELETE singleton();
 
     TextBreakIteratorCache(const TextBreakIteratorCache&) = delete;
     TextBreakIteratorCache(TextBreakIteratorCache&&) = delete;
