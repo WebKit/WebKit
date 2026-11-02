@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>HTML MSE test: video is shown</title>
     <link rel="author" title="Alicia Boya García" href="mailto:aboya@igalia.com">
-    <link rel="match" href="mediasource-video-is-visible-expected.html">
+    <link rel="match" href="mediasource-video-is-visible-ref.html">
     <meta name="fuzzy" content="maxDifference=30;totalPixels=76800">
     <meta name="assert" content="Video is rendered in the MSE player.">
     <style>
@@ -35,10 +35,6 @@
 <video id="video"></video>
 <div id="explanation">A video containing a blue static image should be visible above.</div>
 <script>
-    if ("testRunner" in window)
-        // WebKit reftests use a different mechanism for delaying the test finish.
-        testRunner.waitUntilDone();
-
     const mediaElement = document.getElementById("video");
 
     class NetworkError extends Error {
@@ -131,8 +127,6 @@
         mediaElement.play();
         await waitForEvent(mediaElement, "ended");
 
-        if ("testRunner" in window)
-            testRunner.notifyDone();
         document.documentElement.classList.remove("reftest-wait");
     }
 
