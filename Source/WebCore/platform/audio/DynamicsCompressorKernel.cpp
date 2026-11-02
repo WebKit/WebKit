@@ -33,7 +33,6 @@
 #include "DynamicsCompressorKernel.h"
 
 #include "AudioUtilities.h"
-#include "DenormalDisabler.h"
 #include <algorithm>
 #include <numbers>
 #include <wtf/MathExtras.h>
@@ -438,8 +437,8 @@ void DynamicsCompressorKernel::process(std::span<const std::span<const float>> s
             // Locals back to member variables.
             m_preDelayReadIndex = preDelayReadIndex;
             m_preDelayWriteIndex = preDelayWriteIndex;
-            m_detectorAverage = DenormalDisabler::flushDenormalFloatToZero(detectorAverage);
-            m_compressorGain = DenormalDisabler::flushDenormalFloatToZero(compressorGain);
+            m_detectorAverage = AudioUtilities::flushDenormalFloatToZero(detectorAverage);
+            m_compressorGain = AudioUtilities::flushDenormalFloatToZero(compressorGain);
         }
     }
 }

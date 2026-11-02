@@ -28,6 +28,7 @@
 #include <cmath>
 #include <span>
 #include <wtf/Forward.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -78,6 +79,18 @@ Vector<uint8_t> createFLACMagicCookie(std::span<const uint8_t> description);
 
 // Returns the WebCodecs flac description for a 'dfLa' magic cookie, or an empty vector if the cookie is invalid.
 WEBCORE_EXPORT Vector<uint8_t> flacDescriptionFromFLACMagicCookie(std::span<const uint8_t> cookie);
+
+// A nop on x86, where SSE arithmetic historically produced no denormals to flush because
+// the audio rendering path disabled them in hardware.
+inline float flushDenormalFloatToZero(float f)
+{
+// FIXME: Do any current ports fail this check?
+#if (COMPILER(GCC_COMPATIBLE) && defined(__SSE__)) || (OS(WINDOWS) && COMPILER(MSVC) && defined(_M_IX86_FP) && _M_IX86_FP)
+    return f;
+#else
+    return (std::abs(f) < FLT_MIN) ? 0.0f : f;
+#endif
+}
 
 } // AudioUtilites
 
