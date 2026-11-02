@@ -311,8 +311,10 @@ static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const Re
         return { };
     if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer))
         return atomicInlineLevelBoxAvoidanceReason(*box, rootContainer);
-    CheckedRef style = renderer.style();
-    if (renderer.type() != RenderObject::Type::Inline || style->display() != Style::DisplayType::InlineFlow || style->pseudoElementType() == PseudoElementType::FirstLetter)
+    // Inline boxes, ruby ones and ::first-letter included, which the inline formatting context lays out.
+    auto display = renderer.style().display();
+    auto isInlineBox = display == Style::DisplayType::InlineFlow || display == Style::DisplayType::InlineRuby || display == Style::DisplayType::RubyBase || display == Style::DisplayType::RubyText;
+    if (renderer.type() != RenderObject::Type::Inline || !isInlineBox)
         return BlockAvoidanceReason::ContentHasUnsupportedInlineBox;
     return { };
 }
@@ -843,7 +845,7 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
     case BlockAvoidanceReason::ContentHasBlockInInline:
         return "block-in-inline"_s;
     case BlockAvoidanceReason::ContentHasUnsupportedInlineBox:
-        return "ruby, first-letter or other inline box"_s;
+        return "unsupported inline box"_s;
     case BlockAvoidanceReason::ContentHasOrthogonalFlow:
         return "orthogonal writing mode"_s;
     case BlockAvoidanceReason::ContentHasSizingKeyword:
