@@ -1762,6 +1762,80 @@ TEST_P(CopyTexImageTestES3, RedefineSameLevel)
                          GLColor::yellow);
 }
 
+// Make sure a level redefined to a larger size through glCopyTexImage2D is read back at its new
+// size, and not through a render target still cached for the smaller texture the level used to
+// have.  Regression test for a bug in the Metal backend where such a stale cache entry survived
+// the redefinition inside the framebuffer's render pass descriptor, so that reading the level's
+// full extents read past the end of the older, smaller texture.
+//
+// The sequence runs twice: once with the level initially smaller than its redefined size, and once
+// with a level whose size never changes, so that a check that rejects too much fails here rather
+// than passing unnoticed.
+TEST_P(CopyTexImageTestES3, RedefineLevelLargerThenReadPixels)
+{
+    constexpr GLsizei kBaseSize  = 64;
+    constexpr GLsizei kLevelSize = kBaseSize / 2;
+    constexpr GLsizei kStaleSize = 12;
+
+    for (const GLsizei initialSize : {kStaleSize, kLevelSize})
+    {
+        SCOPED_TRACE(initialSize == kLevelSize ? "level 1 never changes size"
+                                               : "level 1 redefined larger");
+
+        GLTexture tex;
+        glBindTexture(GL_TEXTURE_2D, tex);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kBaseSize, kBaseSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA8, initialSize, initialSize, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+        ASSERT_GL_NO_ERROR();
+
+        // The framebuffer the glCopyTex*Image2D() calls below read from. Its color differs from
+        // the one level 1 is cleared to further down, so a read that returns the copied contents
+        // instead of the cleared level is caught too.
+        GLRenderbuffer rbo;
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kLevelSize, kLevelSize);
+        GLFramebuffer readFbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, readFbo);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        glClearColor(1, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        // Caches a render target for level 1 holding the level's current texture.
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, 0, 0, initialSize, initialSize);
+
+        // Redefines level 1 to kLevelSize.
+        glCopyTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, 0, 0, kLevelSize, kLevelSize, 0);
+        ASSERT_GL_NO_ERROR();
+
+        // Complete the mipmap chain so that level 1 can be attached to a framebuffer.
+        for (GLsizei level = 2; (kBaseSize >> level) >= 1; ++level)
+        {
+            glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA8, kBaseSize >> level, kBaseSize >> level, 0,
+                         GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        }
+        ASSERT_GL_NO_ERROR();
+
+        // Clearing through a framebuffer on level 1 is what puts the render target's texture into
+        // the framebuffer's render pass descriptor, where it outlives the redefinition.
+        GLFramebuffer levelFbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, levelFbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 1);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        glClearColor(0, 1, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        // Reads level 1 at its redefined size. The whole rect must be the color cleared above; a
+        // stale render target yields the clear color only where the two textures overlap.
+        EXPECT_PIXEL_RECT_EQ(0, 0, kLevelSize, kLevelSize, GLColor::green);
+        EXPECT_GL_NO_ERROR();
+    }
+}
+
 // Test glCopyTexSubImage3D() for an SNORM 3D texture to make sure it updates the correct depth.
 TEST_P(CopyTexImageTestES3, Snorm3DTextureNonZeroOffset)
 {
