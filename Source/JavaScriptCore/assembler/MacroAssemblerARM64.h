@@ -7322,7 +7322,6 @@ public:
     void vectorSwizzle(FPRegisterID a, FPRegisterID control, FPRegisterID dest) { m_assembler.tbl(dest, a, control); }
     void vectorSwizzle2(FPRegisterID a, FPRegisterID b, FPRegisterID control, FPRegisterID dest)
     {
-        RELEASE_ASSERT(b == a + 1);
         m_assembler.tbl2(dest, a, b, control);
     }
 

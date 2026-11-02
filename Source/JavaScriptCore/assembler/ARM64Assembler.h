@@ -292,6 +292,7 @@ public:
 
     static Condition invert(Condition cond)
     {
+        ASSERT(cond < ConditionAL);
         return static_cast<Condition>(cond ^ 1);
     }
 
@@ -1589,7 +1590,7 @@ public:
 
     ALWAYS_INLINE void ins(FPRegisterID vd, RegisterID rn, SIMDLane lane, uint32_t laneIndex)
     {
-        insn(simdGeneral(0, 1, encodeLaneAndIndex(lane, laneIndex), 0b0011, rn, vd));
+        insn(simdGeneral(0, 1, encodeLaneAndIndex(lane, laneIndex), 0b0011, xOrZr(rn), vd));
     }
 
     ALWAYS_INLINE void ins(FPRegisterID vd, FPRegisterID vn, SIMDLane lane, uint32_t laneIndex)
@@ -1607,13 +1608,15 @@ public:
     ALWAYS_INLINE void umov(RegisterID rd, FPRegisterID vn, SIMDLane lane, uint32_t laneIndex)
     {
         ASSERT(scalarTypeIsIntegral(lane));
-        insn(simdGeneral(0, simdQBit(lane), encodeLaneAndIndex(lane, laneIndex), 0b0111, vn, rd));
+        insn(simdGeneral(0, simdQBit(lane), encodeLaneAndIndex(lane, laneIndex), 0b0111, vn, xOrZr(rd)));
     }
 
     ALWAYS_INLINE void smov(RegisterID rd, FPRegisterID vn, SIMDLane lane, uint32_t laneIndex)
     {
         ASSERT(scalarTypeIsIntegral(lane));
-        insn(simdGeneral(0, simdQBit(lane), encodeLaneAndIndex(lane, laneIndex), 0b0101, vn, rd));
+        ASSERT(elementByteSize(lane) < 8);
+        // Q selects an X destination, which SMOV requires for 32-bit lanes.
+        insn(simdGeneral(0, elementByteSize(lane) == 4, encodeLaneAndIndex(lane, laneIndex), 0b0101, vn, xOrZr(rd)));
     }
 
     ALWAYS_INLINE void dupElement(FPRegisterID vd, FPRegisterID vn, SIMDLane lane, uint32_t laneIndex)
@@ -1626,7 +1629,7 @@ public:
     {
         // Take element from gpr and put it in each lane in vd
         ASSERT(scalarTypeIsIntegral(lane));
-        insn(simdGeneral(0, 1, encodeLaneAndIndex(lane, 0), 0b0001, rn, vd));
+        insn(simdGeneral(0, 1, encodeLaneAndIndex(lane, 0), 0b0001, xOrZr(rn), vd));
     }
 
     ALWAYS_INLINE void fcmeq(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
@@ -2102,7 +2105,7 @@ public:
     ALWAYS_INLINE void sshr_vi(FPRegisterID vd, FPRegisterID vn, uint8_t shift, SIMDLane lane)
     {
         uint8_t maxShift = elementByteSize(lane) * 8;
-        ASSERT(shift < maxShift && shift < 64 && shift);
+        ASSERT(shift && shift <= maxShift);
         shift = maxShift - shift;
         unsigned immh = elementByteSize(lane) | ((shift & 0b0111000) >> 3);
         unsigned immb = shift & 0b0111;
@@ -2143,7 +2146,7 @@ public:
         constexpr uint8_t destBitSize = narrowedLane == SIMDLane::i8x16 ? 8 : (narrowedLane == SIMDLane::i16x8 ? 16 : 32);
         constexpr uint8_t srcBitSize = destBitSize * 2;
 
-        ASSERT(shift > 0 && shift <= srcBitSize);
+        ASSERT(shift > 0 && shift <= destBitSize);
 
         // immh:immb = (source_element_bits) - shift
         unsigned immhb = srcBitSize - shift;
@@ -2242,9 +2245,14 @@ public:
         insn(0b00001110000000000000000000000000 | (Q << 30) | (vm << 16) | (len << 13) | (vn << 5) | vd);
     }
 
+    static constexpr bool isConsecutiveVectorRegisterPair(FPRegisterID first, FPRegisterID second)
+    {
+        return static_cast<unsigned>(second) == ((static_cast<unsigned>(first) + 1) & 31);
+    }
+
     ALWAYS_INLINE void tbl2(FPRegisterID vd, FPRegisterID vn, FPRegisterID vn2, FPRegisterID vm)
     {
-        RELEASE_ASSERT(vn2, vn2 == vn + 1);
+        RELEASE_ASSERT(isConsecutiveVectorRegisterPair(vn, vn2));
         const unsigned len = 1;
         const unsigned Q = 1;
         insn(0b00001110000000000000000000000000 | (Q << 30) | (vm << 16) | (len << 13) | (vn << 5) | vd);
@@ -2272,7 +2280,7 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        insn(0b01001101010000001100000000000000 | (sizeEncoding << 10) | (rn << 5) | vt);
+        insn(0b01001101010000001100000000000000 | (sizeEncoding << 10) | (xOrSp(rn) << 5) | vt);
     }
 
     template<int datasize>
@@ -2320,7 +2328,7 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        insn(0b00001101010000000000000000000000 | (Q << 30) | (opcode << 14) | (S << 12) | (size << 10) | (rn << 5) | vt);
+        insn(0b00001101010000000000000000000000 | (Q << 30) | (opcode << 14) | (S << 12) | (size << 10) | (xOrSp(rn) << 5) | vt);
     }
 
     template<int datasize>
@@ -2368,7 +2376,7 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        insn(0b0'0'0011010'0'0'000000000000000000000 | (Q << 30) | (opcode << 14) | (S << 12) | (size << 10) | (rn << 5) | vt);
+        insn(0b0'0'0011010'0'0'000000000000000000000 | (Q << 30) | (opcode << 14) | (S << 12) | (size << 10) | (xOrSp(rn) << 5) | vt);
     }
 
     template<int datasize>
@@ -3394,12 +3402,12 @@ public:
 
     ALWAYS_INLINE void fmov_top(FPRegisterID vd, RegisterID rn)
     {
-        insn(floatingPointIntegerConversions(Datasize_64, Datasize_64, FPIntConvOp_FMOV_XtoQ_top, rn, vd));
+        insn(floatingPointIntegerConversions(Datasize_64, Datasize_128, FPIntConvOp_FMOV_XtoQ_top, rn, vd));
     }
 
     ALWAYS_INLINE void fmov_top(RegisterID rd, FPRegisterID vn)
     {
-        insn(floatingPointIntegerConversions(Datasize_64, Datasize_64, FPIntConvOp_FMOV_QtoX_top, vn, rd));
+        insn(floatingPointIntegerConversions(Datasize_64, Datasize_128, FPIntConvOp_FMOV_QtoX_top, vn, rd));
     }
 
     template<int datasize>
@@ -3678,18 +3686,15 @@ public:
 
     static int exoticAtomicLoadStore(MemOpSize size, ExoticAtomicLoadStoreOp op, ExoticLoadFence loadFence, ExoticStoreFence storeFence, RegisterID rs, RegisterID rt, RegisterID rn)
     {
-        ASSERT((rs & 0b11111) == rs);
-        ASSERT((rn & 0b11111) == rn);
-        ASSERT((rt & 0b11111) == rt);
-        return 0b00111000'00100000'00000000'00000000 | size << 30 | loadFence << 23 | storeFence << 22 | rs << 16 | op << 10 | rn << 5 | rt;
+        // A zero register destination drops the acquire half of the ordering.
+        ASSERT(loadFence == ExoticLoadFence_None || !isZr(rt));
+        return 0b00111000'00100000'00000000'00000000 | size << 30 | loadFence << 23 | storeFence << 22 | xOrZr(rs) << 16 | op << 10 | xOrSp(rn) << 5 | xOrZr(rt);
     }
 
     static int exoticAtomicCAS(MemOpSize size, ExoticLoadFence loadFence, ExoticStoreFence storeFence, RegisterID rs, RegisterID rt, RegisterID rn)
     {
-        ASSERT((rs & 0b11111) == rs);
-        ASSERT((rn & 0b11111) == rn);
-        ASSERT((rt & 0b11111) == rt);
-        return 0b00001000'10100000'01111100'00000000 | size << 30 | storeFence << 22 | rs << 16 | loadFence << 15 | rn << 5 | rt;
+        ASSERT(loadFence == ExoticLoadFence_None || !isZr(rs));
+        return 0b00001000'10100000'01111100'00000000 | size << 30 | loadFence << 22 | xOrZr(rs) << 16 | storeFence << 15 | xOrSp(rn) << 5 | xOrZr(rt);
     }
 
     template<int datasize>
@@ -4950,22 +4955,25 @@ protected:
     
     static int exoticLoad(MemOpSize size, ExoticLoadFence fence, ExoticLoadAtomic atomic, RegisterID dst, RegisterID src)
     {
-        return 0x085f7c00 | size << 30 | fence << 15 | atomic << 23 | src << 5 | dst;
+        return 0x085f7c00 | size << 30 | fence << 15 | atomic << 23 | xOrSp(src) << 5 | xOrZr(dst);
     }
     
     static int storeRelease(MemOpSize size, RegisterID src, RegisterID dst)
     {
-        return 0x089ffc00 | size << 30 | dst << 5 | src;
+        return 0x089ffc00 | size << 30 | xOrSp(dst) << 5 | xOrZr(src);
     }
     
     static int exoticStore(MemOpSize size, ExoticStoreFence fence, RegisterID result, RegisterID src, RegisterID dst)
     {
-        return 0x08007c00 | size << 30 | result << 16 | fence << 15 | dst << 5 | src;
+        // Overlapping the status register with the data or base register is CONSTRAINED UNPREDICTABLE.
+        ASSERT(result != src);
+        ASSERT(result != dst);
+        return 0x08007c00 | size << 30 | xOrZr(result) << 16 | fence << 15 | xOrSp(dst) << 5 | xOrZr(src);
     }
 
     static int fjcvtzsInsn(FPRegisterID dn, RegisterID rd)
     {
-        return 0x1e7e0000 | (dn << 5) | rd;
+        return 0x1e7e0000 | (dn << 5) | xOrZr(rd);
     }
     
     static int simdGeneral(bool scalar, bool Q, int imm5, int imm4, int rn, int rd)

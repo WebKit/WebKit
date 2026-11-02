@@ -8626,6 +8626,84 @@ static void testVectorDupElement()
 }
 
 #if CPU(ARM64)
+template<typename Functor>
+static uint32_t encodeARM64Instruction(const Functor& functor)
+{
+    ARM64Assembler assembler;
+    functor(assembler);
+    CHECK_EQ(assembler.buffer().codeSize(), sizeof(uint32_t));
+    AssemblerData data = assembler.buffer().releaseAssemblerData();
+#if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
+    AssemblerHashes hashes = assembler.buffer().releaseAssemblerHashes();
+#endif
+    return *reinterpret_cast<const uint32_t*>(data.buffer());
+}
+
+#define CHECK_ARM64_ENCODING(expected, ...) \
+    CHECK_EQ(encodeARM64Instruction([](ARM64Assembler& assembler) { \
+        assembler.__VA_ARGS__; \
+    }), expected)
+
+static void testARM64ZeroRegisterEncoding()
+{
+    using namespace ARM64Registers;
+    CHECK_ARM64_ENCODING(0x089ffc5fU, stlr<8>(zr, x2));
+    CHECK_ARM64_ENCODING(0x889ffc5fU, stlr<32>(zr, x2));
+    CHECK_ARM64_ENCODING(0xc89ffc5fU, stlr<64>(zr, x2));
+    CHECK_ARM64_ENCODING(0x88dffc5fU, ldar<32>(zr, x2));
+    CHECK_ARM64_ENCODING(0xc8dffc5fU, ldar<64>(zr, x2));
+    CHECK_ARM64_ENCODING(0xc85f7c5fU, ldxr<64>(zr, x2));
+    CHECK_ARM64_ENCODING(0xc85ffc5fU, ldaxr<64>(zr, x2));
+    CHECK_ARM64_ENCODING(0xc8037c5fU, stxr<64>(x3, zr, x2));
+    CHECK_ARM64_ENCODING(0x8803fc5fU, stlxr<32>(x3, zr, x2));
+    CHECK_ARM64_ENCODING(0xc803fc5fU, stlxr<64>(x3, zr, x2));
+    CHECK_ARM64_ENCODING(0xf8ff00c5U, ldaddal<64>(zr, x5, x6));
+    CHECK_ARM64_ENCODING(0xb8ff8041U, swpal<32>(zr, x1, x2));
+    CHECK_ARM64_ENCODING(0xc8e4fcdfU, casal<64>(x4, zr, x6));
+    CHECK_ARM64_ENCODING(0x1e7e005fU, fjcvtzs(zr, q2));
+    CHECK_ARM64_ENCODING(0x0e0c3c5fU, umov(zr, q2, SIMDLane::i32x4, 1));
+    CHECK_ARM64_ENCODING(0x0e062c5fU, smov(zr, q2, SIMDLane::i16x8, 1));
+    CHECK_ARM64_ENCODING(0x4e0c1fe0U, ins(q0, zr, SIMDLane::i32x4, 1));
+    CHECK_ARM64_ENCODING(0x4e040fe0U, dupGeneral(q0, zr, SIMDLane::i32x4));
+}
+
+static void testARM64FmovTopEncoding()
+{
+    CHECK_ARM64_ENCODING(0x9eaf00c5U, fmov_top(ARM64Registers::q5, ARM64Registers::x6));
+    CHECK_ARM64_ENCODING(0x9eae00a6U, fmov_top(ARM64Registers::x6, ARM64Registers::q5));
+    CHECK_ARM64_ENCODING(0x9eaf03e0U, fmov_top(ARM64Registers::q0, ARM64Registers::zr));
+    CHECK_ARM64_ENCODING(0x9eae03ffU, fmov_top(ARM64Registers::zr, ARM64Registers::q31));
+}
+
+static void testARM64SmovEncoding()
+{
+    using namespace ARM64Registers;
+    CHECK_ARM64_ENCODING(0x0e072c41U, smov(x1, q2, SIMDLane::i8x16, 3));
+    CHECK_ARM64_ENCODING(0x0e062c41U, smov(x1, q2, SIMDLane::i16x8, 1));
+    CHECK_ARM64_ENCODING(0x4e0c2c41U, smov(x1, q2, SIMDLane::i32x4, 1));
+}
+
+static void testARM64SIMDShiftAndTableEncoding()
+{
+    using namespace ARM64Registers;
+    CHECK_ARM64_ENCODING(0x4f080420U, sshr_vi(q0, q1, 8, SIMDLane::i8x16));
+    CHECK_ARM64_ENCODING(0x4f100420U, sshr_vi(q0, q1, 16, SIMDLane::i16x8));
+    CHECK_ARM64_ENCODING(0x4f200420U, sshr_vi(q0, q1, 32, SIMDLane::i32x4));
+    CHECK_ARM64_ENCODING(0x4f400420U, sshr_vi(q0, q1, 64, SIMDLane::i64x2));
+    CHECK_ARM64_ENCODING(0x4e042041U, tbl2(q1, q2, q3, q4));
+    CHECK_ARM64_ENCODING(0x4e0423e1U, tbl2(q1, q31, q0, q4));
+    CHECK_ARM64_ENCODING(0x0f088420U, shrn<SIMDLane::i8x16>(q0, q1, 8));
+    CHECK_ARM64_ENCODING(0x0f208420U, shrn<SIMDLane::i32x4>(q0, q1, 32));
+}
+
+static void testARM64SIMDStackPointerBaseEncoding()
+{
+    using namespace ARM64Registers;
+    CHECK_ARM64_ENCODING(0x4d40cbe0U, ld1r<32>(q0, sp));
+    CHECK_ARM64_ENCODING(0x0d4093e0U, ld1<32>(q0, sp, 1));
+    CHECK_ARM64_ENCODING(0x4d0093e0U, st1<32>(q0, sp, 3));
+}
+
 // Test half-precision FMOV encoding (cmode=0b1110, op=1)
 // Verifies that 16-bit, 32-bit, and 64-bit FMOV use correct encodings
 static void testFMovHalfPrecisionEncoding()
@@ -9430,6 +9508,11 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testFMovHalfPrecisionEncoding());
     RUN(testCanEmitJumpMatchesBranchEncoding());
     RUN(testCachedTempRegisterImm32Normalization());
+    RUN(testARM64ZeroRegisterEncoding());
+    RUN(testARM64FmovTopEncoding());
+    RUN(testARM64SmovEncoding());
+    RUN(testARM64SIMDShiftAndTableEncoding());
+    RUN(testARM64SIMDStackPointerBaseEncoding());
 #endif
 
     RUN(testGPRInfoConsistency());

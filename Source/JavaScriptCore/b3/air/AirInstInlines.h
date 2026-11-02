@@ -423,7 +423,7 @@ inline bool isBranchAtomicStrongCAS64Valid(const Inst& inst)
 inline bool isVectorSwizzle2Valid(const Inst& inst)
 {
 #if CPU(ARM64)
-    return inst.args()[1].fpr() == inst.args()[0].fpr() + 1;
+    return ARM64Assembler::isConsecutiveVectorRegisterPair(inst.args()[0].fpr(), inst.args()[1].fpr());
 #else
     UNUSED_PARAM(inst);
     return false;
