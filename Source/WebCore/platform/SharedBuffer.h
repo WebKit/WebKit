@@ -160,6 +160,7 @@ private:
 };
 
 class FragmentedSharedBuffer : public ThreadSafeRefCounted<FragmentedSharedBuffer> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FragmentedSharedBuffer, WEBCORE_EXPORT);
 public:
     using IPCData = Variant<std::optional<WebCore::SharedMemoryHandle>, Vector<std::span<const uint8_t>>>;
 

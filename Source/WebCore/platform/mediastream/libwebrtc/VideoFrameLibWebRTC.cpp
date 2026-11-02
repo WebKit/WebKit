@@ -29,10 +29,13 @@
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
 
 #include "LibWebRTCRefWrappers.h"
+#include <wtf/TZoneMallocInlines.h>
 #include "CoreVideoSoftLink.h"
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoFrameLibWebRTC);
 
 NODELETE static PlatformVideoColorSpace defaultVPXColorSpace()
 {

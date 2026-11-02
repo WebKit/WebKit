@@ -43,6 +43,7 @@
 #include <wtf/MediaTime.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
@@ -69,6 +70,7 @@ class MediaStreamPrivate final
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED(MediaStreamPrivate);
 public:
     static Ref<MediaStreamPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&);
     static Ref<MediaStreamPrivate> create(Ref<const Logger>&&, RefPtr<RealtimeMediaSource>&& audioSource, RefPtr<RealtimeMediaSource>&& videoSource);

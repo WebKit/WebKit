@@ -27,11 +27,13 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class PlatformSpeechSynthesisVoice : public RefCounted<PlatformSpeechSynthesisVoice> {
+    WTF_MAKE_TZONE_ALLOCATED(PlatformSpeechSynthesisVoice);
 public:
     NODELETE WEBCORE_EXPORT static Ref<PlatformSpeechSynthesisVoice> create(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault);
     NODELETE static Ref<PlatformSpeechSynthesisVoice> create();

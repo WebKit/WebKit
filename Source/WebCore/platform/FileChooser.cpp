@@ -29,7 +29,11 @@
 #include "config.h"
 #include "FileChooser.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileChooser);
 
 FileChooser::FileChooser(FileChooserClient& client, const FileChooserSettings& settings)
     : m_client(&client)

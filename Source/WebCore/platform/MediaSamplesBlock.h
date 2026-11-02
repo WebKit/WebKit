@@ -30,6 +30,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/TrackInfo.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 template<typename> struct ArgumentCoder;
@@ -38,7 +39,7 @@ template<typename> struct ArgumentCoder;
 namespace WebCore {
 
 class MediaSamplesBlock {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MediaSamplesBlock);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaSamplesBlock, WEBCORE_EXPORT);
 public:
     struct MediaSampleItem {
         using MediaSampleDataType = RefPtr<FragmentedSharedBuffer>;

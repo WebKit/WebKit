@@ -38,8 +38,11 @@
 #include "SpatialAudioExperienceHelper.h"
 #include <algorithm>
 #include <pal/cf/CoreAudioExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioDestinationCocoa);
 
 CreateAudioDestinationCocoaOverride AudioDestinationCocoa::createOverride = nullptr;
 

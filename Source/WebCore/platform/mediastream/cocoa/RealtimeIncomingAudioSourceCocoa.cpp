@@ -36,10 +36,13 @@
 #include "LibWebRTCAudioModule.h"
 #include "Logging.h"
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RealtimeIncomingAudioSourceCocoa);
 
 Ref<RealtimeIncomingAudioSource> RealtimeIncomingAudioSource::create(Ref<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
 {

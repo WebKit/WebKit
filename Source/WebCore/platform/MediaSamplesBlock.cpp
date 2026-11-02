@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MediaSamplesBlock.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if USE(AVFOUNDATION)
 #include "CMUtilities.h"
 #include "MediaSampleAVFObjC.h"
@@ -35,6 +37,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSamplesBlock);
 
 RefPtr<MediaSample> MediaSamplesBlock::toMediaSample(const MediaSample* referenceSample) const
 {

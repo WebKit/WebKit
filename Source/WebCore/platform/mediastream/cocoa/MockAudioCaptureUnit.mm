@@ -94,6 +94,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, AtomStri
 }
 
 class MockAudioCaptureInternalUnitState : public ThreadSafeRefCounted<MockAudioCaptureInternalUnitState> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MockAudioCaptureInternalUnitState);
 public:
     NODELETE static Ref<MockAudioCaptureInternalUnitState> create() { return adoptRef(*new MockAudioCaptureInternalUnitState()); }
 

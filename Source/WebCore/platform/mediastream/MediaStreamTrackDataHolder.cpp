@@ -32,7 +32,12 @@
 
 namespace WebCore {
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(MediaStreamTrackData);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackDataHolder);
+
 class PreventSourceFromEndingObserverWrapper : public ThreadSafeRefCounted<PreventSourceFromEndingObserverWrapper, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PreventSourceFromEndingObserverWrapper);
 public:
     static Ref<PreventSourceFromEndingObserverWrapper> create(Ref<RealtimeMediaSource>&& source)
     {

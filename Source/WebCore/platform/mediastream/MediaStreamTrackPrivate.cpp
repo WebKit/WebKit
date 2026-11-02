@@ -51,6 +51,10 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackPrivateSourceObserver);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackPrivate);
+
 Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source, std::function<void(Function<void()>&&)>&& postTask)
 {
     return create(WTF::move(logger), WTF::move(source), createVersion4UUIDString(), WTF::move(postTask));

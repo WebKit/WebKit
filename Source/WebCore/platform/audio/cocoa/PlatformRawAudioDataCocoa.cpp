@@ -39,12 +39,15 @@
 
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 
 using namespace WTF;
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformRawAudioDataCocoa);
 
 Ref<PlatformRawAudioData> PlatformRawAudioData::create(Ref<MediaSample>&& sample)
 {

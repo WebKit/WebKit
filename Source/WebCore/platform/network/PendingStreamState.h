@@ -34,6 +34,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Markable.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ namespace WebCore {
 class SharedBuffer;
 
 class PendingStreamState : public ThreadSafeRefCounted<PendingStreamState> {
+    WTF_MAKE_TZONE_ALLOCATED(PendingStreamState);
 public:
     enum class HTTPVersion : uint8_t {
         Unknown,

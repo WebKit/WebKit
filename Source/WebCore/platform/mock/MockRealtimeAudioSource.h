@@ -36,11 +36,13 @@
 #include <WebCore/MockMediaDevice.h>
 #include <WebCore/RealtimeMediaSourceFactory.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
 class MockRealtimeAudioSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MockRealtimeAudioSource, WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_TZONE_ALLOCATED(MockRealtimeAudioSource);
 public:
     static CaptureSourceOrError create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
     virtual ~MockRealtimeAudioSource();

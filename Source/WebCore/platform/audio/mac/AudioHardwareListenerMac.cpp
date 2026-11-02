@@ -31,9 +31,12 @@
 #include <algorithm>
 #include <pal/spi/cf/CoreAudioSPI.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/darwin/DispatchExtras.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioHardwareListenerMac);
     
 static AudioHardwareActivityType isAudioHardwareProcessRunning()
 {

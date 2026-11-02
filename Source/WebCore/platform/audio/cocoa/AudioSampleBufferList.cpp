@@ -34,11 +34,14 @@
 #include <pal/cf/CoreAudioExtras.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ZippedRange.h>
 
 #include <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSampleBufferList);
 
 Ref<AudioSampleBufferList> AudioSampleBufferList::create(const CAAudioStreamDescription& format, size_t maximumSampleCount)
 {

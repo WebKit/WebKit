@@ -28,10 +28,13 @@
 
 #include "SpringSolver.h"
 #include "UnitBezier.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CubicBezierTimingFunction);
 
 TextStream& operator<<(TextStream& ts, const TimingFunction& timingFunction)
 {

@@ -26,9 +26,13 @@
 #include "config.h"
 #include "PlatformSpeechSynthesisVoice.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(SPEECH_SYNTHESIS)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformSpeechSynthesisVoice);
 
 Ref<PlatformSpeechSynthesisVoice> PlatformSpeechSynthesisVoice::create(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault)
 {

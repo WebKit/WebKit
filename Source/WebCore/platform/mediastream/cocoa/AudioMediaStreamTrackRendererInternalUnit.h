@@ -29,6 +29,7 @@
 
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudioTypes.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
@@ -44,6 +45,7 @@ public:
     virtual void deref() const = 0;
 
     class Client : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Client> {
+        WTF_MAKE_TZONE_ALLOCATED_EXPORT(Client, WEBCORE_EXPORT);
     public:
         virtual ~Client() = default;
 

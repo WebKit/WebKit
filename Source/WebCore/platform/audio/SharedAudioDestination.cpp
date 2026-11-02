@@ -31,6 +31,7 @@
 #include "AudioUtilities.h"
 #include <wtf/MediaTime.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WTFSemaphore.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
@@ -38,7 +39,10 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedAudioDestination);
+
 class SharedAudioDestinationAdapter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SharedAudioDestinationAdapter>, public AudioIOCallback {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SharedAudioDestinationAdapter);
 public:
     using CreationOptions = AudioDestinationCreationOptions;
     using AudioDestinationCreationFunction = SharedAudioDestination::AudioDestinationCreationFunction;

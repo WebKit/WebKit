@@ -28,6 +28,7 @@
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/PlatformRawAudioData.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(AVFOUNDATION)
 
@@ -39,6 +40,7 @@ namespace WebCore {
 class MediaSampleAVFObjC;
 
 class PlatformRawAudioDataCocoa final : public PlatformRawAudioData {
+    WTF_MAKE_TZONE_ALLOCATED(PlatformRawAudioDataCocoa);
 public:
     static Ref<PlatformRawAudioData> create(Ref<MediaSampleAVFObjC>&& sample)
     {

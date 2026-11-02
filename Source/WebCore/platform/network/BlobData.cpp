@@ -33,8 +33,11 @@
 
 #include "Blob.h"
 #include "BlobURL.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobData);
 
 BlobData::BlobData(const String& contentType)
     : m_contentType(contentType)

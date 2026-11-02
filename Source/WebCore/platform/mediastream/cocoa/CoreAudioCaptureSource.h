@@ -37,6 +37,7 @@
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceFactory.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct OpaqueCMClock* CMClockRef;
@@ -54,6 +55,7 @@ class CaptureDeviceInfo;
 class WebAudioSourceProviderAVFObjC;
 
 class CoreAudioCaptureSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CoreAudioCaptureSource, WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_TZONE_ALLOCATED(CoreAudioCaptureSource);
 public:
     WEBCORE_EXPORT static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
     static CaptureSourceOrError createForTesting(String&& persistentID, uint32_t deviceID, AtomString&& label, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>, std::optional<bool>);

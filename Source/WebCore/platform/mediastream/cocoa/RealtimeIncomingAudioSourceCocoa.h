@@ -34,12 +34,14 @@
 #include "Timer.h"
 #include "WebAudioBufferList.h"
 #include <CoreAudio/CoreAudioTypes.h>
+#include <wtf/TZoneMalloc.h>
 
 typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 
 namespace WebCore {
 
 class RealtimeIncomingAudioSourceCocoa final : public RealtimeIncomingAudioSource {
+    WTF_MAKE_TZONE_ALLOCATED(RealtimeIncomingAudioSourceCocoa);
 public:
     NODELETE static Ref<RealtimeIncomingAudioSourceCocoa> create(Ref<webrtc::AudioTrackInterface>&&, String&&);
     ~RealtimeIncomingAudioSourceCocoa();

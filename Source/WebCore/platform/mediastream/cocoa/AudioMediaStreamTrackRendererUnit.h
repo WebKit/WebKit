@@ -34,6 +34,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 
@@ -71,6 +72,7 @@ private:
     void deleteUnitsIfPossible();
 
     class Unit : public AudioMediaStreamTrackRendererInternalUnit::Client {
+        WTF_MAKE_TZONE_ALLOCATED(Unit);
     public:
         static Ref<Unit> create(const String& deviceID) { return adoptRef(*new Unit(deviceID)); }
         ~Unit();

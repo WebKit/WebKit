@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
 
 #include <WebCore/LibWebRTCUtils.h>
@@ -46,6 +47,7 @@ typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 namespace WebCore {
 
 class VideoFrameLibWebRTC final : public VideoFrame {
+    WTF_MAKE_TZONE_ALLOCATED(VideoFrameLibWebRTC);
 public:
     using ConversionCallback = std::function<RetainPtr<CVPixelBufferRef>(webrtc::VideoFrameBuffer&)>;
     static RefPtr<VideoFrameLibWebRTC> create(MediaTime, bool isMirrored, Rotation, std::optional<PlatformVideoColorSpace>&&, Ref<webrtc::VideoFrameBuffer>&&, ConversionCallback&&);

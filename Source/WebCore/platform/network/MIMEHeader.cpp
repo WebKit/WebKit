@@ -36,12 +36,15 @@
 #include "ParsedContentType.h"
 #include "SharedBufferChunkReader.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MIMEHeader);
 
 typedef HashMap<String, String> KeyValueMap;
 

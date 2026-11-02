@@ -31,9 +31,12 @@
 #include <wtf/Locker.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PendingStreamState);
 
 class PendingStreamState::CallbackHandler : public ThreadSafeRefCounted<CallbackHandler> {
 public:

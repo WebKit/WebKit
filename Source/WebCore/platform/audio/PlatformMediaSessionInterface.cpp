@@ -28,11 +28,12 @@
 
 #include "MediaSessionManagerInterface.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class EmptyPlatformMediaSessionClient final : public PlatformMediaSessionClient {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EmptyPlatformMediaSessionClient);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(EmptyPlatformMediaSessionClient);
 public:
     RefPtr<MediaSessionManagerInterface> sessionManager() const final { return nullptr; }
     PlatformMediaSessionMediaType mediaType() const final { return PlatformMediaSessionMediaType::None; }

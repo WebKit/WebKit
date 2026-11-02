@@ -37,8 +37,11 @@
 #include "LibWebRTCAudioModule.h"
 #include "LibWebRTCRefWrappers.h"
 #include "Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RealtimeIncomingAudioSource);
 
 RealtimeIncomingAudioSource::RealtimeIncomingAudioSource(Ref<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
     : RealtimeMediaSource(CaptureDevice { WTF::move(audioTrackId), CaptureDevice::DeviceType::Microphone, "remote audio"_s })

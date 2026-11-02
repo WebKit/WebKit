@@ -31,6 +31,7 @@
 #include <wtf/ArgumentCoder.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -58,6 +59,7 @@ private:
 };
 
 class ShareableResource : public ThreadSafeRefCounted<ShareableResource> {
+    WTF_MAKE_TZONE_ALLOCATED(ShareableResource);
 public:
     using Handle = ShareableResourceHandle;
 

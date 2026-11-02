@@ -34,6 +34,7 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -42,6 +43,7 @@ class SharedBufferChunkReader;
 
 // FIXME: This class is a limited MIME parser used to parse the MIME headers of MHTML files.
 class MIMEHeader : public RefCounted<MIMEHeader> {
+    WTF_MAKE_TZONE_ALLOCATED(MIMEHeader);
 public:
     enum Encoding {
         QuotedPrintable,

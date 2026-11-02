@@ -30,6 +30,7 @@
 #include <wtf/Box.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
@@ -62,7 +63,7 @@ constexpr MonotonicTime reusedTLSConnectionSentinel { MonotonicTime::fromRawSeco
 struct AdditionalNetworkLoadMetricsForWebInspector;
 
 class NetworkLoadMetrics {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NetworkLoadMetrics);
+    WTF_MAKE_TZONE_ALLOCATED(NetworkLoadMetrics);
 public:
     NODELETE WEBCORE_EXPORT NetworkLoadMetrics();
     NODELETE WEBCORE_EXPORT NetworkLoadMetrics(MonotonicTime&& redirectStart, MonotonicTime&& fetchStart, MonotonicTime&& domainLookupStart, MonotonicTime&& domainLookupEnd, MonotonicTime&& connectStart, MonotonicTime&& secureConnectionStart, MonotonicTime&& connectEnd, MonotonicTime&& requestStart, MonotonicTime&& responseStart, MonotonicTime&& responseEnd, MonotonicTime&& workerStart, MonotonicTime&& firstInterimResponseStart, String&& protocol, uint16_t redirectCount, bool complete, bool cellular, bool expensive, bool constrained, bool multipath, bool isReusedConnection, bool failsTAOCheck, bool hasCrossOriginRedirect, bool fromPrefetch, bool fromCache, PrivacyStance, uint64_t responseBodyBytesReceived, uint64_t responseBodyDecodedSize, RefPtr<AdditionalNetworkLoadMetricsForWebInspector>&&);
@@ -129,6 +130,7 @@ public:
 };
 
 struct AdditionalNetworkLoadMetricsForWebInspector : public RefCounted<AdditionalNetworkLoadMetricsForWebInspector> {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(AdditionalNetworkLoadMetricsForWebInspector, WEBCORE_EXPORT);
 
     static Ref<AdditionalNetworkLoadMetricsForWebInspector> create() { return adoptRef(*new AdditionalNetworkLoadMetricsForWebInspector()); }
     NODELETE WEBCORE_EXPORT static Ref<AdditionalNetworkLoadMetricsForWebInspector> create(NetworkLoadPriority&&, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection);

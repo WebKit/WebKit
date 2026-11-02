@@ -38,6 +38,7 @@
 #include "ScrollbarTheme.h"
 #include "ScrollbarsController.h"
 #include <algorithm>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(MAC)
 #include "ScrollbarMac.h"
@@ -50,6 +51,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Scrollbar);
 
 Ref<Scrollbar> Scrollbar::createNativeScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarWidth width)
 {

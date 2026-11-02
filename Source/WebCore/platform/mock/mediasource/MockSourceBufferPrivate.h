@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "SourceBufferPrivate.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,6 +41,7 @@ class TimeRanges;
 class VideoTrackPrivate;
 
 class MockSourceBufferPrivate final : public SourceBufferPrivate {
+    WTF_MAKE_TZONE_ALLOCATED(MockSourceBufferPrivate);
 public:
     NODELETE static Ref<MockSourceBufferPrivate> create(MockMediaSourcePrivate&);
     virtual ~MockSourceBufferPrivate();

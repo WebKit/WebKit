@@ -31,6 +31,7 @@
 #include <WebCore/PlatformSpeechSynthesisVoice.h>
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -47,6 +48,7 @@ protected:
 };
     
 class PlatformSpeechSynthesisUtterance : public RefCounted<PlatformSpeechSynthesisUtterance> {
+    WTF_MAKE_TZONE_ALLOCATED(PlatformSpeechSynthesisUtterance);
 public:
     NODELETE WEBCORE_EXPORT static Ref<PlatformSpeechSynthesisUtterance> create(PlatformSpeechSynthesisUtteranceClient*);
 

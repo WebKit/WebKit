@@ -30,13 +30,14 @@
 #include <WebCore/MediaStreamTrackHintValue.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class PreventSourceFromEndingObserverWrapper;
 
 struct MediaStreamTrackData {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MediaStreamTrackData);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(MediaStreamTrackData);
 
     String trackId;
     String label;
@@ -57,7 +58,7 @@ struct MediaStreamTrackData {
 };
 
 class MediaStreamTrackDataHolder {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MediaStreamTrackDataHolder);
+    WTF_MAKE_TZONE_ALLOCATED(MediaStreamTrackDataHolder);
 public:
     WEBCORE_EXPORT MediaStreamTrackDataHolder(MediaStreamTrackData&&, Ref<RealtimeMediaSource>&&);
     WEBCORE_EXPORT ~MediaStreamTrackDataHolder();

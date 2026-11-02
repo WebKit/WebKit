@@ -42,6 +42,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -53,6 +54,7 @@ class RealtimeIncomingAudioSource
     , private webrtc::ObserverInterface
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeIncomingAudioSource, WTF::DestructionThread::MainRunLoop>
 {
+    WTF_MAKE_TZONE_ALLOCATED(RealtimeIncomingAudioSource);
 public:
     static Ref<RealtimeIncomingAudioSource> create(Ref<webrtc::AudioTrackInterface>&&, String&&);
 

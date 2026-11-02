@@ -188,6 +188,7 @@ void CoreLocationGeolocationProvider::setEnableHighAccuracy(bool highAccuracyEna
 }
 
 class AuthorizationChecker final : public RefCounted<AuthorizationChecker>, public CoreLocationGeolocationProvider::Client {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AuthorizationChecker);
 public:
     NODELETE static Ref<AuthorizationChecker> create()
     {

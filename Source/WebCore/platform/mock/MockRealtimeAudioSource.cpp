@@ -40,6 +40,7 @@
 #include "NotImplemented.h"
 #include "PlatformMediaSessionManager.h"
 #include "RealtimeMediaSourceSettings.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 
 #if PLATFORM(COCOA)
@@ -51,6 +52,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockRealtimeAudioSource);
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY) && !USE(GSTREAMER)
 CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&& name, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier>)

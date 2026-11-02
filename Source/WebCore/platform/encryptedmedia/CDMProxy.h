@@ -62,6 +62,7 @@ using KeyHandleValueVariant = Variant<
 >;
 
 class KeyHandle : public ThreadSafeRefCounted<KeyHandle> {
+    WTF_MAKE_TZONE_ALLOCATED(KeyHandle);
 public:
     using KeyStatus = CDMInstanceSession::KeyStatus;
 
@@ -242,6 +243,7 @@ class CDMProxyDecryptionClient;
 // Handle to a "real" CDM, not the JavaScript facade. This can be used
 // from background threads (i.e. decryptors).
 class CDMProxy : public ThreadSafeRefCounted<CDMProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(CDMProxy);
 public:
     static constexpr Seconds MaxKeyWaitTimeSeconds = 10_s;
 

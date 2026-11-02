@@ -38,6 +38,7 @@
 #include <wtf/MediaTime.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/NativePromise.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 
@@ -57,6 +58,7 @@ class AudioInfo;
 class VideoInfo;
 
 class MediaRecorderPrivateEncoder final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivateEncoder, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED(MediaRecorderPrivateEncoder);
 public:
     static RefPtr<MediaRecorderPrivateEncoder> create(bool hasAudio, bool hasVideo, const MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivateEncoder();

@@ -41,6 +41,7 @@
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <pal/cf/CoreAudioExtras.h>
 #include <wtf/NativePromise.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ZippedRange.h>
 
 #import <pal/cf/AudioToolboxSoftLink.h>
@@ -50,6 +51,8 @@
 constexpr uint32_t kNoMoreDataErr = 'MOAR';
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSampleBufferConverter);
 
 RefPtr<AudioSampleBufferConverter> AudioSampleBufferConverter::create(Function<void()>&& outputCallback, const Options& options)
 {

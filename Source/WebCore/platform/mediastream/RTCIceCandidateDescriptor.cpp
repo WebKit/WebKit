@@ -34,7 +34,11 @@
 
 #include "RTCIceCandidateDescriptor.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCIceCandidateDescriptor);
 
 Ref<RTCIceCandidateDescriptor> RTCIceCandidateDescriptor::create(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex)
 {
