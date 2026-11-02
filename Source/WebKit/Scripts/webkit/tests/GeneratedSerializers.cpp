@@ -24,59 +24,9 @@
 
 #include "config.h"
 #include "GeneratedSerializers.h"
-#include "GeneratedWebKitSecureCoding.h"
-#include <wtf/IsIncreasing.h>
 
-#include "CommonHeader.h"
-#if ENABLE(TEST_FEATURE)
-#include "CommonHeader.h"
-#endif
-#if USE(GLIB)
-#include "CoreIPCGFooBar.h"
-#endif
-#include "CustomEncoded.h"
-#if ENABLE(TEST_FEATURE)
-#include "FirstMemberType.h"
-#endif
-#include "FooWrapper.h"
-#include "FormDataReference.h"
-#include "HeaderWithoutCondition"
-#include "LayerProperties.h"
-#include "RValueWithFunctionCalls.h"
-#include "RemoteVideoFrameIdentifier.h"
-#if ENABLE(TEST_FEATURE)
-#include "SecondMemberType.h"
-#endif
-#if ENABLE(TEST_FEATURE)
-#include "StructHeader.h"
-#endif
-#include "TemplateTest.h"
-#include <Namespace/EmptyConstructorStruct.h>
-#include <Namespace/EmptyConstructorWithIf.h>
-#if !(ENABLE(OUTER_CONDITION))
-#include <Namespace/OtherOuterClass.h>
-#endif
-#if ENABLE(OUTER_CONDITION)
-#include <Namespace/OuterClass.h>
-#endif
-#include <Namespace/ReturnRefClass.h>
-#if USE(APPKIT)
-#include <WebCore/AppKitControlSystemImage.h>
-#endif
-#include <WebCore/FloatBoxExtent.h>
-#include <WebCore/InheritanceGrandchild.h>
-#include <WebCore/InheritsFrom.h>
-#include <WebCore/MoveOnlyBaseClass.h>
-#include <WebCore/MoveOnlyDerivedClass.h>
-#include <WebCore/OpaqueTypeObject.h>
-#if USE(APPKIT)
-#include <WebCore/ScrollbarTrackCornerSystemImageMac.h>
-#endif
-#include <WebCore/ScrollingStateFrameHostingNode.h>
-#include <WebCore/ScrollingStateFrameHostingNodeWithStuffAfterTuple.h>
-#include <WebCore/TimingFunction.h>
-#include <wtf/CreateUsingClass.h>
-#include <wtf/Seconds.h>
+#include "GeneratedSerializersHeaders.h"
+
 #if USE(AVFOUNDATION)
 #include <pal/cocoa/AVFoundationSoftLink.h>
 #endif
