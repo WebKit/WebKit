@@ -72,11 +72,10 @@ svg/as-image/image-preserveAspectRatio-all.svg                           [ Pass 
 svg/as-image/svg-as-image-pattern-scale.html                             [ Pass ImageOnlyFailure ]
 svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop.html [ Pass ImageOnlyFailure ]
 
-# 3) Other flakiness (SMIL animations, filters, SVG <image> in webarchive)
+# 3) Other flakiness (SMIL animations, filters)
 svg/W3C-SVG-1.1/filters-light-04-f.svg                           [ Pass ImageOnlyFailure ]
 svg/animations/attributeNameAndAttributeTypeMismatch.html        [ Pass ImageOnlyFailure ]
 svg/animations/avoid-calculating-for-non-animating-elements.html [ Pass ImageOnlyFailure ]
-svg/custom/image-with-prefix-in-webarchive.svg                   [ Pass ImageOnlyFailure ]
 
 # 4) Unknown origin
 imported/w3c/web-platform-tests/svg/painting/svg-percent-stroke-width-viewbox-update.html [ Pass ImageOnlyFailure ]
