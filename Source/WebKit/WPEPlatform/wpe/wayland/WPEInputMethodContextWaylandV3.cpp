@@ -303,42 +303,44 @@ static void textInputV3UpdateState(WPEIMContextWaylandV3* context, enum zwp_text
     textInputV3CommitState(context);
 }
 
-static void textInputV3PreeditApply(TextInputV3Global* global, uint32_t serial)
+static void textInputV3PreeditApply(TextInputV3Global* global)
 {
     auto* priv = WPE_IM_CONTEXT_WAYLAND_V3(global->current)->priv;
 
-    bool valid = global->serial == serial;
+    // There was no preedit and there is still none.
+    if (!priv->pendingPreedit.text && !priv->currentPreedit.text) {
+        priv->pendingPreedit.cursorBegin = priv->pendingPreedit.cursorEnd = 0;
+        return;
+    }
+
     bool stateChanged = (priv->currentPreedit.text != nullptr) != (priv->pendingPreedit.text != nullptr);
-    if (valid && stateChanged && !priv->currentPreedit.text)
+    if (stateChanged && !priv->currentPreedit.text)
         g_signal_emit_by_name(global->current, "preedit-started");
 
     priv->currentPreedit = priv->pendingPreedit;
     priv->pendingPreedit.text.reset(nullptr);
     priv->pendingPreedit.cursorBegin = priv->pendingPreedit.cursorEnd = 0;
 
-    if (valid)
-        g_signal_emit_by_name(global->current, "preedit-changed");
+    g_signal_emit_by_name(global->current, "preedit-changed");
 
-    if (valid && stateChanged && !priv->currentPreedit.text)
+    if (stateChanged && !priv->currentPreedit.text)
         g_signal_emit_by_name(global->current, "preedit-finished");
 }
 
-static void textInputV3CommitApply(TextInputV3Global* global, uint32_t serial)
+static void textInputV3CommitApply(TextInputV3Global* global)
 {
     auto* priv = WPE_IM_CONTEXT_WAYLAND_V3(global->current)->priv;
 
-    bool valid = global->serial == serial;
-    if (valid && priv->pendingCommit)
+    if (priv->pendingCommit)
         g_signal_emit_by_name(global->current, "committed", priv->pendingCommit.get());
     g_clear_pointer(&priv->pendingCommit, g_free);
 }
 
-static void textInputV3DeleteSurroundingTextApply(TextInputV3Global* global, uint32_t serial)
+static void textInputV3DeleteSurroundingTextApply(TextInputV3Global* global)
 {
     auto* priv = WPE_IM_CONTEXT_WAYLAND_V3(global->current)->priv;
 
-    bool valid = global->serial == serial;
-    if ((valid && priv->pendingSurroundingDelete.beforeLength) || priv->pendingSurroundingDelete.afterLength) {
+    if (priv->pendingSurroundingDelete.beforeLength || priv->pendingSurroundingDelete.afterLength) {
         g_signal_emit_by_name(global->current,
             "delete-surrounding",
             -priv->pendingSurroundingDelete.beforeLength,
@@ -439,9 +441,12 @@ static const struct zwp_text_input_v3_listener textInputListenerV3 = {
         bool hasPendingCommit = context->priv->pendingCommit != nullptr;
         bool updateIm = (hasPendingPreedit || hasPendingCommit);
 
-        textInputV3DeleteSurroundingTextApply(global, serial);
-        textInputV3CommitApply(global, serial);
-        textInputV3PreeditApply(global, serial);
+        // The changes are applied even when the serial is not the number of commit requests, as the protocol asks,
+        // since the input method can send them before it gets the state committed last. Only the new state is not
+        // committed then.
+        textInputV3DeleteSurroundingTextApply(global);
+        textInputV3CommitApply(global);
+        textInputV3PreeditApply(global);
 
         if (updateIm && global->serial == serial)
             textInputV3UpdateState(context, ZWP_TEXT_INPUT_V3_CHANGE_CAUSE_INPUT_METHOD);
