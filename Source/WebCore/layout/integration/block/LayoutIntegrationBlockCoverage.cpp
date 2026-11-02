@@ -132,9 +132,23 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     if (rootContainer.isHTMLMarquee())
         return BlockAvoidanceReason::RootIsMarquee;
     // A text control lays out its inner text with the block formatting context and adjusts it after (RenderTextControlSingleLine::layout), and
-    // its placeholder itself (RenderTextControl::layoutExcludedChildren).
-    auto isTextControl = rootContainer.isRenderTextControl() || rootContainer.isRenderTextControlInnerBlock();
-    if (rootContainer.type() != RenderObject::Type::BlockFlow && !rootContainer.isRenderListItem() && !rootContainer.isRenderTableCell() && !isTextControl)
+    // its placeholder itself (RenderTextControl::layoutExcludedChildren). A table caption, a file input and an SVG foreignObject only size and
+    // place themselves their own way.
+    auto isSupportedRenderer = [&] {
+        switch (rootContainer.type()) {
+        case RenderObject::Type::BlockFlow:
+        case RenderObject::Type::ListItem:
+        case RenderObject::Type::TableCell:
+        case RenderObject::Type::TableCaption:
+        case RenderObject::Type::FileUploadControl:
+        case RenderObject::Type::SVGForeignObject:
+        case RenderObject::Type::LegacySVGForeignObject:
+            return true;
+        default:
+            return rootContainer.isRenderTextControl() || rootContainer.isRenderTextControlInnerBlock();
+        }
+    };
+    if (!isSupportedRenderer())
         return BlockAvoidanceReason::RootHasUnsupportedRenderer;
     // Percentage block sizes inside look through an anonymous block to the flex or grid container (RenderBox::skipContainingBlockForPercentHeightCalculation),
     // which the block formatting context does not give its content. A button's label has none.
