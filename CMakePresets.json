@@ -68,9 +68,24 @@
             "inherits": ["cocoa"]
         },
         {
-            "name": "gtk",
+            "name": "glib",
             "hidden": true,
             "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": {
+                    "type": "STRING",
+                    "value": "clang"
+                },
+                "CMAKE_CXX_COMPILER": {
+                    "type": "STRING",
+                    "value": "clang++"
+                }
+            }
+        },
+        {
+            "name": "gtk",
+            "hidden": true,
+            "inherits": ["glib"],
             "cacheVariables": {
                 "PORT": {
                     "type": "STRING",
@@ -515,7 +530,7 @@
         {
             "name": "wpe",
             "hidden": true,
-            "generator": "Ninja",
+            "inherits": ["glib"],
             "cacheVariables": {
                 "PORT": {
                     "type": "STRING",
