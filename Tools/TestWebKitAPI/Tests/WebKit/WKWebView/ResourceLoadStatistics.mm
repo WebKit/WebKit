@@ -39,10 +39,12 @@
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKString.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
@@ -2486,3 +2488,103 @@ TEST(ResourceLoadStatistics, HasStorageAccessWithDatabaseError)
 
     [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
 }
+
+#if WK_HAVE_C_SPI
+
+static constexpr NSTimeInterval oneWeek = 7 * 24 * 60 * 60;
+
+// The cookie is set with a one year lifetime. Returns its remaining lifetime, or -1 if it was not stored.
+static NSTimeInterval cnameCloakedCookieLifetime(ASCIILiteral firstPartyHost, ASCIILiteral subresourceHost, const char* cnameURL, bool debugMode)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, makeString("<img src='https://"_s, subresourceHost, "/cookie.png'>"_s) } },
+        { "/cookie.png"_s, { { { "Content-Type"_s, "image/png"_s }, { "Set-Cookie"_s, "cnameCloakingTest=value; Max-Age=31536000; Secure; SameSite=None"_s } }, ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    [dataStore _setResourceLoadStatisticsDebugMode:debugMode];
+
+    RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:dataStore.get()];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:delegate.get()];
+
+    bool networkSessionReady = false;
+    [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeCookies] completionHandler:[&](NSArray<WKWebsiteDataRecord *> *) {
+        networkSessionReady = true;
+    }];
+    Util::run(&networkSessionReady);
+
+    bool cnameSet = false;
+    WKRetainPtr cnameURLString = adoptWK(WKStringCreateWithUTF8CString(cnameURL));
+    WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainForTesting((WKWebsiteDataStoreRef)dataStore.get(), cnameURLString.get(), &cnameSet, [](void* context) {
+        *static_cast<bool*>(context) = true;
+    });
+    Util::run(&cnameSet);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://%s/", firstPartyHost.characters()]]]];
+    [delegate waitForDidFinishNavigation];
+
+    __block RetainPtr<NSHTTPCookie> storedCookie;
+    __block bool gotCookies = false;
+    [[dataStore httpCookieStore] getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+        for (NSHTTPCookie *cookie in cookies) {
+            if ([cookie.name isEqualToString:@"cnameCloakingTest"])
+                storedCookie = cookie;
+        }
+        gotCookies = true;
+    }];
+    Util::run(&gotCookies);
+
+    if (!storedCookie)
+        return -1;
+    return [storedCookie expiresDate].timeIntervalSinceNow;
+}
+
+TEST(ResourceLoadStatistics, CNAMECloakingCapIsSkippedBetweenYouTubeAndGoogle)
+{
+    EXPECT_GT(cnameCloakedCookieLifetime("www.youtube.com"_s, "accounts.youtube.com"_s, "https://google.com/", false), oneWeek + 3600);
+}
+
+TEST(ResourceLoadStatistics, CNAMECloakingCapIsSkippedBetweenYouTubeAndGoogleInDebugMode)
+{
+    EXPECT_GT(cnameCloakedCookieLifetime("www.youtube.com"_s, "accounts.youtube.com"_s, "https://google.com/", true), oneWeek + 3600);
+}
+
+// Shows that the google.com CNAME reaches the network process, so the two tests above are not passing vacuously.
+TEST(ResourceLoadStatistics, CNAMECloakingCapStillAppliesToOtherSitesWithAGoogleCNAME)
+{
+    auto lifetime = cnameCloakedCookieLifetime("www.example.com"_s, "sub.example.com"_s, "https://google.com/", false);
+    EXPECT_GT(lifetime, 0);
+    EXPECT_LE(lifetime, oneWeek);
+}
+
+TEST(ResourceLoadStatistics, CNAMECloakingCapStillAppliesToYouTubeWithAnotherCNAME)
+{
+    auto lifetime = cnameCloakedCookieLifetime("www.youtube.com"_s, "accounts.youtube.com"_s, "https://3rdpartytestwebkit.org/", false);
+    EXPECT_GT(lifetime, 0);
+    EXPECT_LE(lifetime, oneWeek);
+}
+
+TEST(ResourceLoadStatistics, CNAMECloakingCapStillAppliesToYouTubeWithAnotherCNAMEInDebugMode)
+{
+    auto lifetime = cnameCloakedCookieLifetime("www.youtube.com"_s, "accounts.youtube.com"_s, "https://3rdpartytestwebkit.org/", true);
+    EXPECT_GT(lifetime, 0);
+    EXPECT_LE(lifetime, oneWeek);
+}
+
+TEST(ResourceLoadStatistics, CNAMECloakingCapStillAppliesToOtherSites)
+{
+    auto lifetime = cnameCloakedCookieLifetime("www.example.com"_s, "sub.example.com"_s, "https://3rdpartytestwebkit.org/", false);
+    EXPECT_GT(lifetime, 0);
+    EXPECT_LE(lifetime, oneWeek);
+}
+
+#endif // WK_HAVE_C_SPI

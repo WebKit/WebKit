@@ -168,6 +168,27 @@ TEST_F(QuirksTest, EmbeddedQuirksResolveFromTheDocumentURL)
 
     EXPECT_FALSE(resolveQuirksForTopURL("https://www.youtube-nocookie.com/embed/abc"_s).isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsYouTubeCaptionQuirk));
 }
+
+static bool cnameCloakingCookieCapExempt(ASCIILiteral firstPartyURLString, ASCIILiteral cnameHostName)
+{
+    auto patterns = WebCore::Quirks::cnameCloakingCookieCapExemptTargetPatterns(URL { firstPartyURLString });
+    return WebCore::Quirks::anyPatternMatchesCNAMETarget(patterns, String { cnameHostName });
+}
+
+TEST_F(QuirksTest, CNAMECloakingCookieCapIsSkippedOnlyBetweenDomainsOfOneOwner)
+{
+    EXPECT_TRUE(cnameCloakingCookieCapExempt("https://www.youtube.com/"_s, "www3.l.google.com"_s));
+    EXPECT_TRUE(cnameCloakingCookieCapExempt("https://www.youtube.com/"_s, "www3.l.google.com."_s));
+    EXPECT_TRUE(cnameCloakingCookieCapExempt("https://music.youtube.com/"_s, "www3.l.google.com"_s));
+    EXPECT_TRUE(cnameCloakingCookieCapExempt("https://www.google.com/"_s, "www3.l.google.com"_s));
+    EXPECT_TRUE(cnameCloakingCookieCapExempt("https://www.google.com/"_s, "youtube.com"_s));
+
+    EXPECT_FALSE(cnameCloakingCookieCapExempt("https://www.youtube.com/"_s, "tracker.example"_s));
+    EXPECT_FALSE(cnameCloakingCookieCapExempt("https://www.google.com/"_s, "tracker.example"_s));
+    EXPECT_FALSE(cnameCloakingCookieCapExempt("https://www.example.com/"_s, "www3.l.google.com"_s));
+    EXPECT_FALSE(cnameCloakingCookieCapExempt("https://www.youtube.com/"_s, "evilgoogle.com"_s));
+    EXPECT_FALSE(cnameCloakingCookieCapExempt("https://www.google.de/"_s, "www3.l.google.com"_s));
+}
 #endif
 
 static String shippedQuirkTableJSON()
