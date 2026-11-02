@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ deviceScaleFactor=2 ] -->
+<style>
+    body { margin: 0; }
+    svg { display: block; }
+</style>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <filter id="filter">
+    <feBlend mode="normal" in="SourceGraphic" in2="SourceGraphic"/>
+  </filter>
+  <path d="M100 20 L120 80 L180 100 L120 120 L100 180 L80 120 L20 100 L80 80 Z" fill="green" filter="url(#filter)"/>
+</svg>

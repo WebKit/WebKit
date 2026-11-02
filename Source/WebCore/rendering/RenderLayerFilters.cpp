@@ -199,7 +199,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
 
     auto filterScale = m_filterScale;
     if (usesSVGUserSpace)
-        filterScale = m_filterScale * SVGTransformComputation(downcast<RenderLayerModelObject>(renderer)).calculateAccumulatedSVGAncestorTransformScale();
+        filterScale = (m_filterScale * SVGTransformComputation(downcast<RenderLayerModelObject>(renderer)).calculateAccumulatedSVGAncestorTransformScale()).expandedTo(context.scaleFactor());
 
     auto geometry = FilterGeometry {
         .referenceBox = referenceBox,
