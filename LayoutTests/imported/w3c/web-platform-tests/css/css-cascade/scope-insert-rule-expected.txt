@@ -1,0 +1,7 @@
+
+PASS Inserting an implicit @scope rule applies to the parent of the owner node
+PASS Inserting a @scope rule with a prelude
+PASS Inserted implicit @scope rule can use :scope and be removed
+PASS Existing implicit @scope rule keeps working after the stylesheet is mutated
+PASS Inserting an implicit @scope rule into a grouping rule
+

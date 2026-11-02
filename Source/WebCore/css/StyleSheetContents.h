@@ -134,6 +134,7 @@ public:
     unsigned LEGACY_NODELETE estimatedSizeInBytes() const;
     
     bool wrapperInsertRule(Ref<StyleRuleBase>&&, unsigned index);
+    void adoptScopeRules(StyleRuleBase&) const;
     bool wrapperDeleteRule(unsigned index);
 
     Ref<StyleSheetContents> copy() const { return adoptRef(*new StyleSheetContents(*this)); }

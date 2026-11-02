@@ -113,6 +113,23 @@ StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
 
     for (size_t i = 0; i < m_childRules.size(); ++i)
         m_childRules[i] = protect(o.m_childRules[i])->copy();
+
+    for (Ref rule : m_childRules)
+        adoptScopeRules(rule);
+}
+
+void StyleSheetContents::adoptScopeRules(StyleRuleBase& rule) const
+{
+    if (RefPtr scopeRule = dynamicDowncast<StyleRuleScope>(rule))
+        scopeRule->setStyleSheetContents(*this);
+    if (RefPtr styleRule = dynamicDowncast<StyleRuleWithNesting>(rule)) {
+        for (Ref nestedRule : styleRule->nestedRules())
+            adoptScopeRules(nestedRule);
+    }
+    if (RefPtr groupRule = dynamicDowncast<StyleRuleGroup>(rule)) {
+        for (Ref childRule : groupRule->childRules())
+            adoptScopeRules(childRule);
+    }
 }
 
 StyleSheetContents::~StyleSheetContents()
@@ -345,6 +362,7 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
             return false;
     }
 
+    adoptScopeRules(rule);
     m_childRules.insert(childVectorIndex, WTF::move(rule));
     return true;
 }
