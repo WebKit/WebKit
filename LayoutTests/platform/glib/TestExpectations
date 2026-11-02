@@ -5293,7 +5293,9 @@ imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-end-0
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-end-001.html?class=vrl,ideographic-ink [ Crash ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-inline-box-text-decoration-001.html?class=ideographic-ink [ Crash ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-inline-box-text-decoration-001.html?class=vrl,ideographic-ink [ Crash ]
+imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-inline-box-text-decoration-001.html?class=vlr,ideographic-ink [ Crash ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-inline-box-text-decoration-002.html?class=ideographic-ink [ Crash ]
+imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-inline-box-text-decoration-002.html?class=vlr,ideographic-ink [ Crash ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-start-001.html?class=ideographic [ Crash ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-start-001.html?class=ideographic-ink [ Crash ]
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-start-001.html?class=vlr,ideographic [ Crash ]
@@ -5306,6 +5308,14 @@ webkit.org/b/329247 http/tests/inspector/network/fetch-response-body-304.html [ 
 webkit.org/b/329572 fast/history/site-isolation/history-back-initial-vs-final-url.html [ Pass Timeout ]
 webkit.org/b/329573 http/tests/webgl/webgl-in-service-worker-separate-process.html [ Pass Timeout ]
 webkit.org/b/310413 compositing/backing/animate-into-view.html [ Failure Pass ]
+
+# Inner timeout in the arm64 bots... bug in infra?
+webkit.org/b/329812 [ arm64 ] imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Failure ]
+
+# macOS-specific
+http/tests/secure-input/ [ Skip ]
+
+webkit.org/b/329824 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-014.html [ ImageOnlyFailure ]
 
 # End: Common failures between GTK and WPE.
 
