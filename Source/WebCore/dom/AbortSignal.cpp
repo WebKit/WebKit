@@ -187,8 +187,11 @@ void AbortSignal::runAbortSteps()
 
     // 1. For each algorithm of signal's abort algorithms: run algorithm.
     //    2. Empty signal's abort algorithms. (std::exchange empties)
-    for (auto& algorithm : std::exchange(m_algorithms, { }))
-        algorithm.second(reason);
+    m_removedAlgorithmCount = 0;
+    for (auto& algorithm : std::exchange(m_algorithms, { })) {
+        if (algorithm.second)
+            algorithm.second(reason);
+    }
 
     // 3. Fire an event named abort at signal.
     dispatchEvent(Event::create(eventNames().abortEvent, Event::CanBubble::No, Event::IsCancelable::No));
@@ -242,9 +245,22 @@ uint32_t AbortSignal::addAlgorithm(Algorithm&& algorithm)
 
 void AbortSignal::removeAlgorithm(uint32_t algorithmIdentifier)
 {
-    m_algorithms.removeFirstMatching([algorithmIdentifier](auto& pair) {
-        return pair.first == algorithmIdentifier;
+    // Identifiers only increase, so m_algorithms is sorted by them. Erasing an algorithm would be linear, which makes
+    // removing many algorithms one by one quadratic, so clear it, and compact m_algorithms once most of it is cleared.
+    auto* entry = std::lower_bound(m_algorithms.begin(), m_algorithms.end(), algorithmIdentifier, [](auto& pair, uint32_t identifier) {
+        return pair.first < identifier;
     });
+    if (entry == m_algorithms.end() || entry->first != algorithmIdentifier || !entry->second)
+        return;
+
+    // Destroy the algorithm only after updating m_algorithms, in case that removes more algorithms.
+    auto algorithm = std::exchange(entry->second, nullptr);
+    if (++m_removedAlgorithmCount > m_algorithms.size() / 2) {
+        m_algorithms.removeAllMatching([](auto& pair) {
+            return !pair.second;
+        });
+        m_removedAlgorithmCount = 0;
+    }
 }
 
 void AbortSignal::throwIfAborted(JSC::JSGlobalObject& lexicalGlobalObject)

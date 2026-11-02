@@ -32,6 +32,9 @@
 
 namespace WebCore {
 
+class AbortSignal;
+class EventTarget;
+
 // https://dom.spec.whatwg.org/#concept-event-listener
 class RegisteredEventListener : public RefCounted<RegisteredEventListener> {
 public:
@@ -54,6 +57,8 @@ public:
         return adoptRef(*new RegisteredEventListener(WTF::move(listener), options));
     }
 
+    ~RegisteredEventListener() { ASSERT(!m_hasAbortSignal); }
+
     EventListener& callback() const { return m_callback; }
     bool useCapture() const { return m_useCapture; }
     bool isPassive() const { return m_isPassive; }
@@ -63,7 +68,17 @@ public:
 
     Options options() const { return { m_useCapture, m_isPassive, m_isOnce, m_trustedOnly }; }
 
-    void markAsRemoved() { m_wasRemoved = true; }
+    void markAsRemoved()
+    {
+        m_wasRemoved = true;
+        if (m_hasAbortSignal) [[unlikely]]
+            removeAbortAlgorithm(nullptr);
+    }
+
+    // The abort algorithm that removes this listener when its signal aborts.
+    bool hasAbortSignal() const { return m_hasAbortSignal; }
+    void setAbortSignal(AbortSignal&, uint32_t abortAlgorithmIdentifier);
+    void removeAbortAlgorithm(const EventTarget* ownerBeingDestroyed);
 
 private:
     RegisteredEventListener(Ref<EventListener>&& listener, const Options& options)
@@ -72,6 +87,7 @@ private:
         , m_isOnce(options.once)
         , m_wasRemoved(false)
         , m_trustedOnly(options.trustedOnly)
+        , m_hasAbortSignal(false)
         , m_callback(WTF::move(listener))
     {
     }
@@ -81,6 +97,7 @@ private:
     bool m_isOnce : 1;
     bool m_wasRemoved : 1;
     bool m_trustedOnly : 1;
+    bool m_hasAbortSignal : 1;
     const Ref<EventListener> m_callback;
 };
 

@@ -68,14 +68,10 @@ public:
     bool LEGACY_NODELETE containsActive(const AtomString& eventType) const;
 
     void clear();
-    void clearEntriesForTearDown()
-    {
-        releaseAssertOrSetThreadUID();
-        m_entries.clear();
-    }
+    void clearEntriesForTearDown(const EventTarget& owner);
 
     void replacePreservingOptions(const AtomString& eventType, EventListener& oldListener, Ref<EventListener>&& newListener, bool useCapture = false);
-    bool add(const AtomString& eventType, Ref<EventListener>&&, const RegisteredEventListener::Options&);
+    RefPtr<RegisteredEventListener> add(const AtomString& eventType, Ref<EventListener>&&, const RegisteredEventListener::Options&);
     bool remove(const AtomString& eventType, EventListener&, bool useCapture);
     WEBCORE_EXPORT EventListenerVector* LEGACY_NODELETE find(const AtomString& eventType);
     const EventListenerVector* find(const AtomString& eventType) const { return const_cast<EventListenerMap*>(this)->find(eventType); }

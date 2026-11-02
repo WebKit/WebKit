@@ -61,9 +61,9 @@ struct EventTargetData {
 public:
     EventTargetData() = default;
 
-    void clear()
+    void clear(const EventTarget& owner)
     {
-        eventListenerMap.clearEntriesForTearDown();
+        eventListenerMap.clearEntriesForTearDown(owner);
     }
 
     EventListenerMap eventListenerMap;

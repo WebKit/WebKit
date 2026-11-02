@@ -81,7 +81,7 @@ EventTarget::~EventTarget()
 {
     // Explicitly tearing down since WeakPtrImpl can be alive longer than EventTarget.
     if (auto* eventTargetData = this->eventTargetData())
-        eventTargetData->clear();
+        eventTargetData->clear(*this);
 }
 
 WebCoreOpaqueRoot EventTarget::opaqueRoot() const
@@ -121,14 +121,18 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
             trustedOnly = true;
     }
 
-    if (!ensureEventTargetData().eventListenerMap.add(eventType, listener.copyRef(), { options.capture, passive.value_or(false), options.once, trustedOnly }))
+    RefPtr registeredListener = ensureEventTargetData().eventListenerMap.add(eventType, listener.copyRef(), { options.capture, passive.value_or(false), options.once, trustedOnly });
+    if (!registeredListener)
         return false;
 
     if (RefPtr signal = options.signal) {
-        signal->addAlgorithm([weakThis = WeakPtr { *this }, eventType, listener = WeakPtr { listener }, capture = options.capture](JSC::JSValue) {
-            if (weakThis && listener)
-                Ref { *weakThis }->removeEventListener(eventType, *protect(listener), { .capture = capture });
+        auto abortAlgorithmIdentifier = signal->addAlgorithm([weakThis = WeakPtr { *this }, eventType, registeredListener = Ref { *registeredListener }](JSC::JSValue) {
+            // The listener may have been removed while the signal runs its abort algorithms, and another one with the
+            // same callback and capture added; that one must stay.
+            if (weakThis && !registeredListener->wasRemoved())
+                Ref { *weakThis }->removeEventListener(eventType, protect(registeredListener->callback()), { .capture = registeredListener->useCapture() });
         });
+        registeredListener->setAbortSignal(*signal, abortAlgorithmIdentifier);
     }
 
     if (listenerCreatedFromScript)

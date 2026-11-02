@@ -68,7 +68,7 @@ public:
 
     bool hasActiveTimeoutTimer() const { return m_hasActiveTimeoutTimer; }
     bool hasAbortEventListener() const { return m_hasAbortEventListener; }
-    bool hasAbortAlgorithms() const { return !m_algorithms.isEmpty(); }
+    bool hasAbortAlgorithms() const { return m_algorithms.size() > m_removedAlgorithmCount; }
 
     using Algorithm = Function<void(JSC::JSValue reason)>;
     uint32_t addAlgorithm(Algorithm&&);
@@ -111,6 +111,7 @@ private:
     AbortSignalSet m_dependentSignals;
     JSValueInWrappedObject m_reason;
     uint32_t m_algorithmIdentifier { 0 };
+    uint32_t m_removedAlgorithmCount { 0 };
     bool m_aborted { false };
     bool m_hasActiveTimeoutTimer { false };
     bool m_hasAbortEventListener { false };

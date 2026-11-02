@@ -37,12 +37,55 @@
 #include "Event.h"
 #include "EventTarget.h"
 #include "JSEventListener.h"
+#include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 
 namespace WebCore {
+
+struct AbortSignalRegistration {
+    WeakPtr<AbortSignal, WeakPtrImplWithEventTargetData> signal;
+    uint32_t abortAlgorithmIdentifier { 0 };
+};
+
+// Few listeners have a signal, so RegisteredEventListener only has a bit for it, and the signal is kept here.
+static Lock abortSignalRegistrationsLock;
+static HashMap<const RegisteredEventListener*, AbortSignalRegistration>& LEGACY_NODELETE abortSignalRegistrations() WTF_REQUIRES_LOCK(abortSignalRegistrationsLock)
+{
+    static NeverDestroyed<HashMap<const RegisteredEventListener*, AbortSignalRegistration>> registrations;
+    return registrations;
+}
+
+void RegisteredEventListener::setAbortSignal(AbortSignal& signal, uint32_t abortAlgorithmIdentifier)
+{
+    ASSERT(!m_hasAbortSignal);
+    m_hasAbortSignal = true;
+    Locker locker { abortSignalRegistrationsLock };
+    abortSignalRegistrations().set(this, AbortSignalRegistration { signal, abortAlgorithmIdentifier });
+}
+
+// Without this, the abort algorithm would stay with the signal until it aborts, and keep a signal returned by
+// AbortSignal.any() alive while its source signals are.
+void RegisteredEventListener::removeAbortAlgorithm(const EventTarget* ownerBeingDestroyed)
+{
+    ASSERT(m_hasAbortSignal);
+    m_hasAbortSignal = false;
+    AbortSignalRegistration registration;
+    {
+        Locker locker { abortSignalRegistrationsLock };
+        registration = abortSignalRegistrations().take(this);
+    }
+
+    // A listener registered on its own signal is torn down after that signal's abort algorithms were destroyed.
+    if (ownerBeingDestroyed && static_cast<const EventTarget*>(registration.signal.get()) == ownerBeingDestroyed)
+        return;
+
+    if (RefPtr signal = registration.signal)
+        signal->removeAlgorithm(registration.abortAlgorithmIdentifier);
+}
 
 EventListenerMap::EventListenerMap() = default;
 
@@ -85,6 +128,20 @@ void EventListenerMap::clear()
     m_entries.clear();
 }
 
+void EventListenerMap::clearEntriesForTearDown(const EventTarget& owner)
+{
+    releaseAssertOrSetThreadUID();
+
+    for (auto& entry : m_entries) {
+        for (auto& listener : entry.second) {
+            if (listener->hasAbortSignal()) [[unlikely]]
+                listener->removeAbortAlgorithm(&owner);
+        }
+    }
+
+    m_entries.clear();
+}
+
 Vector<AtomString> EventListenerMap::eventTypes() const
 {
     return m_entries.map([](auto& entry) {
@@ -117,20 +174,20 @@ void EventListenerMap::replacePreservingOptions(const AtomString& eventType, Eve
     registeredListener = RegisteredEventListener::create(WTF::move(newListener), existingOptions);
 }
 
-bool EventListenerMap::add(const AtomString& eventType, Ref<EventListener>&& listener, const RegisteredEventListener::Options& options)
+RefPtr<RegisteredEventListener> EventListenerMap::add(const AtomString& eventType, Ref<EventListener>&& listener, const RegisteredEventListener::Options& options)
 {
     releaseAssertOrSetThreadUID();
     Locker locker { m_lock };
 
     if (auto* listeners = find(eventType)) {
         if (findListener(*listeners, listener, options.capture) != notFound)
-            return false; // Duplicate listener.
+            return nullptr; // Duplicate listener.
         listeners->append(RegisteredEventListener::create(WTF::move(listener), options));
-        return true;
+        return listeners->last().copyRef();
     }
 
     m_entries.append({ eventType, EventListenerVector { RegisteredEventListener::create(WTF::move(listener), options) } });
-    return true;
+    return m_entries.last().second.last().copyRef();
 }
 
 static bool removeListenerFromVector(EventListenerVector& listeners, EventListener& listener, bool useCapture)
@@ -139,7 +196,7 @@ static bool removeListenerFromVector(EventListenerVector& listeners, EventListen
     if (indexOfRemovedListener == notFound) [[unlikely]]
         return false;
 
-    listeners[indexOfRemovedListener]->markAsRemoved();
+    protect(listeners[indexOfRemovedListener])->markAsRemoved();
     listeners.removeAt(indexOfRemovedListener);
     return true;
 }
