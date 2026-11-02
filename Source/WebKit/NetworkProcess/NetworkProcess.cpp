@@ -234,6 +234,9 @@ void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebP
     m_webProcessConnections.remove(connection.webProcessIdentifier());
     m_allowedFirstPartiesForCookies.remove(connection.webProcessIdentifier());
     m_allowedWebPageProxyIdentifiers.remove(connection.webProcessIdentifier());
+    m_authorizedDownloads.removeIf([webProcessIdentifier = connection.webProcessIdentifier()] (auto& entry) {
+        return entry.value == webProcessIdentifier;
+    });
     auto completionHandlers = m_webProcessConnectionCloseHandlers.take(connection.webProcessIdentifier());
     for (auto& completionHandler : borrow(completionHandlers))
         completionHandler();
@@ -584,6 +587,25 @@ bool NetworkProcess::allowsWebPageProxyIdentifier(WebCore::ProcessIdentifier pro
     if (iterator == m_allowedWebPageProxyIdentifiers.end())
         return false;
     return iterator->value.contains(*pageID);
+}
+
+void NetworkProcess::authorizeDownloadForWebProcess(WebCore::ProcessIdentifier processIdentifier, DownloadID downloadID, CompletionHandler<void()>&& completionHandler)
+{
+    m_authorizedDownloads.set(downloadID, processIdentifier);
+    completionHandler();
+}
+
+std::optional<WebCore::ProcessIdentifier> NetworkProcess::authorizedProcessForDownload(DownloadID downloadID) const
+{
+    auto iterator = m_authorizedDownloads.find(downloadID);
+    if (iterator == m_authorizedDownloads.end())
+        return std::nullopt;
+    return iterator->value;
+}
+
+void NetworkProcess::removeAuthorizedDownload(DownloadID downloadID)
+{
+    m_authorizedDownloads.remove(downloadID);
 }
 
 #if PLATFORM(COCOA)
