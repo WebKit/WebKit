@@ -96,6 +96,9 @@ private:
     bool isViewFocused() const;
 
     void notifyContentType();
+    void notifyCursorRectAndSurroundingToContext();
+    void notifyCursorRectToContext();
+    void notifySurroundingToContext();
 
     WebCore::IntRect platformTransformCursorRectToViewCoordinates(const WebCore::IntRect&);
     bool platformEventKeyIsKeyPress(PlatformEventKey*) const;
