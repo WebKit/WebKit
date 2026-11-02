@@ -6546,7 +6546,11 @@ static inline OptionSet<WebKit::FindOptions> LEGACY_NODELETE toFindOptions(_WKFi
     auto request = WebCore::ResourceRequest { url };
     if (auto userAgent = _page->userAgent(); !userAgent.isEmpty())
         request.setHTTPUserAgent(WTF::move(userAgent));
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    _page->preconnectTo(WTF::move(request), _page->advancedPrivacyProtectionsPolicies());
+#else
     _page->preconnectTo(WTF::move(request));
+#endif
 }
 
 - (BOOL)_canUseCredentialStorage
