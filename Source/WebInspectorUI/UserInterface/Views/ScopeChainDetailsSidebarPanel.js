@@ -293,24 +293,12 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
         if (!watchExpressions.length) {
             if (this._usedWatchExpressionsObjectGroup) {
                 this._usedWatchExpressionsObjectGroup = false;
-                for (let target of WI.targets) {
-                    // FIXME: <https://webkit.org/b/298910> Add Runtime support for FrameTarget.
-                    if (target instanceof WI.FrameTarget)
-                        continue;
-
-                    target.RuntimeAgent.releaseObjectGroup(WI.ScopeChainDetailsSidebarPanel.WatchExpressionsObjectGroupName);
-                }
+                this._releaseWatchExpressionsObjectGroup();
             }
             return Promise.resolve(null);
         }
 
-        for (let target of WI.targets) {
-            // FIXME: <https://webkit.org/b/298910> Add Runtime support for FrameTarget.
-            if (target instanceof WI.FrameTarget)
-                continue;
-
-            target.RuntimeAgent.releaseObjectGroup(WI.ScopeChainDetailsSidebarPanel.WatchExpressionsObjectGroupName);
-        }
+        this._releaseWatchExpressionsObjectGroup();
         this._usedWatchExpressionsObjectGroup = true;
 
         let watchExpressionsRemoteObject = WI.RemoteObject.createFakeRemoteObject();
@@ -344,6 +332,15 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
         return Promise.all(promises).then(function() {
             return Promise.resolve(new WI.ObjectPropertiesDetailSectionRow(objectTree));
         });
+    }
+
+    _releaseWatchExpressionsObjectGroup()
+    {
+        for (let target of WI.targets) {
+            // COMPATIBILITY (macOS 26.4, iOS 26.4): Frame targets did not support the Runtime domain yet.
+            if (target.hasDomain("Runtime"))
+                target.RuntimeAgent.releaseObjectGroup(WI.ScopeChainDetailsSidebarPanel.WatchExpressionsObjectGroupName);
+        }
     }
 
     _addWatchExpression(expression)

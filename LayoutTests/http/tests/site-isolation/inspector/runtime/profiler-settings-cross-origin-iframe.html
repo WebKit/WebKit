@@ -1,0 +1,91 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function addThirdSiteIFrame() {
+    let iframe = document.createElement("iframe");
+    iframe.src = "https://127.0.0.1:8443/site-isolation/inspector/runtime/resources/frame-with-passphrase.html?late";
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    const noControlFlowError = "VM has no control flow information";
+    const noTypeInformationError = "VM has no type information";
+    const unknownSourceID = "1";
+
+    async function outcome(promise) {
+        try {
+            await promise;
+            return "enabled";
+        } catch (error) {
+            return error.message;
+        }
+    }
+
+    async function expectProfilers(target, targetName, {controlFlow, types}) {
+        InspectorTest.expectEqual(await outcome(target.RuntimeAgent.getBasicBlocks(unknownSourceID)), controlFlow, `${targetName}: control flow profiler state.`);
+        InspectorTest.expectEqual(await outcome(target.RuntimeAgent.getRuntimeTypesForVariablesAtOffsets([])), types, `${targetName}: type profiler state.`);
+    }
+
+    let crossOriginTarget;
+    let lateTarget;
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Runtime.ProfilerSettings");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.ProfilerSettings.DisabledByDefault",
+        description: "A cross-origin iframe's VM should not profile before the settings are turned on.",
+        async test() {
+            crossOriginTarget = await waitForFrameTargetForURLContaining("frame-with-passphrase.html");
+            InspectorTest.assert(crossOriginTarget instanceof WI.FrameTarget, "Should find the cross-origin frame target.");
+
+            await expectProfilers(crossOriginTarget, "Cross-origin frame", {controlFlow: noControlFlowError, types: noTypeInformationError});
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.ProfilerSettings.EnableReachesFrameTarget",
+        description: "Turning the settings on while inspecting should enable both profilers in the cross-origin iframe.",
+        async test() {
+            WI.settings.enableControlFlowProfiler.value = true;
+            WI.settings.showJavaScriptTypeInformation.value = true;
+
+            await expectProfilers(crossOriginTarget, "Cross-origin frame", {controlFlow: "enabled", types: "enabled"});
+            await expectProfilers(WI.pageTarget, "Page", {controlFlow: "enabled", types: "enabled"});
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.ProfilerSettings.EnabledSettingsApplyToLateFrameTarget",
+        description: "A frame target that attaches while the settings are on should have both profilers enabled in its new process.",
+        async test() {
+            InspectorTest.evaluateInPage("addThirdSiteIFrame()");
+
+            lateTarget = await waitForFrameTargetForURLContaining("frame-with-passphrase.html?late");
+            InspectorTest.assert(lateTarget instanceof WI.FrameTarget, "Should find the late frame target.");
+
+            await expectProfilers(lateTarget, "Late cross-origin frame", {controlFlow: "enabled", types: "enabled"});
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.ProfilerSettings.DisableReachesFrameTarget",
+        description: "Turning the settings off should disable both profilers in every frame target.",
+        async test() {
+            WI.settings.enableControlFlowProfiler.value = false;
+            WI.settings.showJavaScriptTypeInformation.value = false;
+
+            await expectProfilers(crossOriginTarget, "Cross-origin frame", {controlFlow: noControlFlowError, types: noTypeInformationError});
+            await expectProfilers(lateTarget, "Late cross-origin frame", {controlFlow: noControlFlowError, types: noTypeInformationError});
+            await expectProfilers(WI.pageTarget, "Page", {controlFlow: noControlFlowError, types: noTypeInformationError});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+    <p>Test that the type profiler and control flow profiler settings reach a cross-origin iframe's frame target under site isolation.</p>
+    <iframe src="http://localhost:8000/site-isolation/inspector/runtime/resources/frame-with-passphrase.html"></iframe>
+</body>

@@ -409,6 +409,8 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>> 
 {
     static constexpr bool verbose = false;
 
+    JSLockHolder lock(m_vm);
+
     if (!m_vm.typeProfiler())
         return makeUnexpected("VM has no type information"_s);
 
@@ -464,8 +466,10 @@ void InspectorRuntimeAgent::didCreateFrontendAndBackend()
 
 void InspectorRuntimeAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
 {
-    if (reason != DisconnectReason::InspectedTargetDestroyed && m_isTypeProfilingEnabled)
+    if (reason != DisconnectReason::InspectedTargetDestroyed || vmOutlivesInspectedTarget()) {
         setTypeProfilerEnabledState(false);
+        setControlFlowProfilerEnabledState(false);
+    }
 
     std::ignore = disable();
 }

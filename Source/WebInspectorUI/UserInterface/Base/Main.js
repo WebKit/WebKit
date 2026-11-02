@@ -239,8 +239,6 @@ WI.contentLoaded = function()
     WI.layoutMeasurementContainer = document.body.appendChild(document.createElement("div"));
     WI.layoutMeasurementContainer.id = "layout-measurement-container";
 
-    WI.settings.showJavaScriptTypeInformation.addEventListener(WI.Setting.Event.Changed, WI._showJavaScriptTypeInformationSettingChanged, WI);
-    WI.settings.enableControlFlowProfiler.addEventListener(WI.Setting.Event.Changed, WI._enableControlFlowProfilerSettingChanged, WI);
     WI.settings.clearNetworkOnNavigate.addEventListener(WI.Setting.Event.Changed, WI._clearResourceDataOnNavigateSettingChanged, WI);
     WI.settings.experimentalAllowInspectingInspector.addEventListener(WI.Setting.Event.Changed, WI._allowInspectingInspectorSettingChanged, WI);
 
@@ -2633,36 +2631,6 @@ WI._showTabAtIndexFromShortcut = function(i)
         WI.tabBar.selectTabBarItem(i - 1, {
             initiatorHint: WI.TabBrowser.TabNavigationInitiator.KeyboardShortcut,
         });
-    }
-};
-
-WI._showJavaScriptTypeInformationSettingChanged = function(event)
-{
-    let shouldEnable = WI.settings.showJavaScriptTypeInformation.value;
-    for (let target of WI.targets) {
-        // FIXME: <https://webkit.org/b/298910> Add Runtime support for FrameTarget.
-        if (target instanceof WI.FrameTarget)
-            continue;
-
-        if (shouldEnable)
-            target.RuntimeAgent.enableTypeProfiler();
-        else
-            target.RuntimeAgent.disableTypeProfiler();
-    }
-};
-
-WI._enableControlFlowProfilerSettingChanged = function(event)
-{
-    let shouldEnable = WI.settings.enableControlFlowProfiler.value;
-    for (let target of WI.targets) {
-        // FIXME: <https://webkit.org/b/298910> Add Runtime support for FrameTarget.
-        if (target instanceof WI.FrameTarget)
-            continue;
-
-        if (shouldEnable)
-            target.RuntimeAgent.enableControlFlowProfiler();
-        else
-            target.RuntimeAgent.disableControlFlowProfiler();
     }
 };
 
