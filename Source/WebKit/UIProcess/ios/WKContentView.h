@@ -150,3 +150,15 @@ using LayerHostingContextID = uint32_t;
 #endif
 - (BOOL)_shouldExposeRollAngleAsTwist;
 @end
+
+#if HAVE(UIKIT_PRINTING)
+
+@class _WKWebViewPrintFormatter;
+
+@interface WKContentView (_WKWebViewPrintFormatter)
+- (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter;
+- (void)_wk_requestDocumentForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter;
+- (void)_wk_requestImageForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter;
+@end
+
+#endif // HAVE(UIKIT_PRINTING)

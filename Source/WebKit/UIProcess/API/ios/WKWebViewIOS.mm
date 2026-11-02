@@ -5732,14 +5732,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return [_WKWebViewPrintFormatter class];
 }
 
-- (id <_WKWebViewPrintProvider>)_printProvider
-{
-    RetainPtr printProvider = _customContentView ? _customContentView.get() : _contentView.get();
-    if ([printProvider conformsToProtocol:@protocol(_WKWebViewPrintProvider)])
-        return (id<_WKWebViewPrintProvider>)printProvider.autorelease();
-    return nil;
-}
-
 @end
 
 #endif // HAVE(UIKIT_PRINTING)
