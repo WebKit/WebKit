@@ -32,7 +32,9 @@
 #include "text-input-unstable-v1-client-protocol.h"
 #include <algorithm>
 #include <cstdlib>
+#include <utility>
 #include <wayland-client-protocol.h>
+#include <wtf/SetForScope.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/StringView.h>
@@ -50,6 +52,13 @@ struct _TextInputV1Global {
     bool focused;
 
     uint32_t serial;
+
+    // Whether an event of the input method is being handled. The input method sends the serial of the last state it
+    // knows with its events, and the events with an older serial are ignored, so a state committed while handling an
+    // event, for example by a handler of the signals emitted for it, would make the events already received after it
+    // be ignored. The state is committed when the events have been handled instead.
+    bool isHandlingEvent;
+    unsigned commitStateSourceID;
 };
 
 struct _WPEIMContextWaylandV1Private {
@@ -262,8 +271,21 @@ static void textInputV1SetContentType(WPEIMContextWaylandV1* context)
 static void textInputV1CommitState(WPEIMContextWaylandV1* context)
 {
     auto* global = textInputV1GetGlobalByContext(context);
-    if (global == nullptr)
+    if (!global)
         return;
+
+    if (global->isHandlingEvent) {
+        if (!global->commitStateSourceID) {
+            global->commitStateSourceID = g_idle_add_full(G_PRIORITY_DEFAULT, [](gpointer data) -> gboolean {
+                auto* global = static_cast<TextInputV1Global*>(data);
+                global->commitStateSourceID = 0;
+                if (global->current)
+                    textInputV1CommitState(WPE_IM_CONTEXT_WAYLAND_V1(global->current));
+                return G_SOURCE_REMOVE;
+            }, global, nullptr);
+        }
+        return;
+    }
 
     global->serial++;
 
@@ -337,14 +359,20 @@ static const struct zwp_text_input_v1_listener textInputListenerV1 = {
         if (global->current == nullptr)
             return;
 
+        SetForScope isHandlingEvent(global->isHandlingEvent, true);
+
         auto* priv = WPE_IM_CONTEXT_WAYLAND_V1(global->current)->priv;
-        bool valid = global->serial == serial;
-        if (valid && !priv->preedit.text)
+        // An event based on an outdated state is ignored, with the styling sent for it.
+        if (global->serial != serial) {
+            g_list_free_full(std::exchange(priv->preedit.underlines, nullptr), g_object_unref);
+            return;
+        }
+
+        if (!priv->preedit.text)
             g_signal_emit_by_name(global->current, "preedit-started");
 
         priv->preedit.text.reset(g_strdup(text));
-        if (valid)
-            g_signal_emit_by_name(global->current, "preedit-changed");
+        g_signal_emit_by_name(global->current, "preedit-changed");
     },
     // preedit_styling
     [](void* data, struct zwp_text_input_v1* /*text_input*/, uint32_t index, uint32_t length, uint32_t style)
@@ -400,16 +428,23 @@ static const struct zwp_text_input_v1_listener textInputListenerV1 = {
         if (global->current == nullptr)
             return;
 
+        SetForScope isHandlingEvent(global->isHandlingEvent, true);
+
         auto* priv = WPE_IM_CONTEXT_WAYLAND_V1(global->current)->priv;
-        bool valid = global->serial == serial;
-        if (valid && priv->preedit.text) {
+        // An event based on an outdated state is ignored, with the deletion sent for it.
+        if (global->serial != serial) {
+            priv->pendingSurroundingDelete.index = 0;
+            priv->pendingSurroundingDelete.length = 0;
+            return;
+        }
+
+        if (priv->preedit.text) {
             priv->preedit.text.reset(nullptr);
             g_signal_emit_by_name(global->current, "preedit-changed");
             g_signal_emit_by_name(global->current, "preedit-finished");
-        } else
-            priv->preedit.text.reset(nullptr);
+        }
 
-        if (valid && priv->surrounding.text && priv->pendingSurroundingDelete.length > 0) {
+        if (priv->surrounding.text && priv->pendingSurroundingDelete.length > 0) {
             char* pos = priv->surrounding.text.get() + priv->surrounding.cursorIndex;
             glong charIndex = g_utf8_pointer_to_offset(priv->surrounding.text.get(), pos);
             pos += priv->pendingSurroundingDelete.index;
@@ -422,7 +457,7 @@ static const struct zwp_text_input_v1_listener textInputListenerV1 = {
         priv->pendingSurroundingDelete.index = 0;
         priv->pendingSurroundingDelete.length = 0;
 
-        if (valid && text)
+        if (text)
             g_signal_emit_by_name(global->current, "committed", text);
     },
     // cursor_position
@@ -447,6 +482,8 @@ static const struct zwp_text_input_v1_listener textInputListenerV1 = {
         auto* global = static_cast<TextInputV1Global*>(data);
         if (global->current == nullptr)
             return;
+
+        SetForScope isHandlingEvent(global->isHandlingEvent, true);
 
         auto* priv = WPE_IM_CONTEXT_WAYLAND_V1(global->current)->priv;
         auto* view = wpe_input_method_context_get_view(global->current);
@@ -478,6 +515,7 @@ static const struct zwp_text_input_v1_listener textInputListenerV1 = {
 static void wpeIMContextWaylandV1GlobalFree(gpointer data)
 {
     auto* global = static_cast<TextInputV1Global*>(data);
+    g_clear_handle_id(&global->commitStateSourceID, g_source_remove);
     g_free(global);
 }
 
