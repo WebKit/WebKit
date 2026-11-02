@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<iframe id="frame" srcdoc="<!DOCTYPE html><body></body>"></iframe>
+<script>
+description("Deleting an unrelated node in a nested document must not drop that document's touch handlers from its parent document.");
+jsTestIsAsync = true;
+
+onload = () => {
+    var frame = document.getElementById('frame');
+    var nestedDocument = frame.contentDocument;
+
+    nestedDocument.addEventListener('touchstart', () => { });
+    shouldBe('internals.touchEventHandlerCount()', '1');
+
+    var div = nestedDocument.createElement('div');
+    div.addEventListener('click', () => { });
+    nestedDocument.body.appendChild(div);
+    div.remove();
+    div = null;
+
+    gc();
+    shouldBe('internals.touchEventHandlerCount()', '1');
+
+    frame.remove();
+    shouldBe('internals.touchEventHandlerCount()', '0');
+    finishJSTest();
+};
+</script>
