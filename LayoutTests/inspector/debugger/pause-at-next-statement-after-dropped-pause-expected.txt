@@ -1,0 +1,8 @@
+Tests that pausing at the next statement works after the debugger dropped a pending pause.
+
+
+== Running test suite: Debugger.PauseAtNextStatement.AfterDroppedPause
+-- Running test case: Debugger.PauseAtNextStatement.AfterDroppedPause.BreakpointAfterBlackboxedScript
+PASS: Should not pause at the breakpoint with a false condition after the blackboxed script.
+PASS: Should pause when asked to again.
+
