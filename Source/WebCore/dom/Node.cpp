@@ -2225,7 +2225,6 @@ inline unsigned Node::moveShadowTreeToNewDocumentFastCase(ShadowRoot& shadowRoot
 
 inline void Node::moveShadowTreeToNewDocumentSlowCase(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
 {
-    ASSERT(!isDocumentEligibleForFastAdoption(oldDocument, newDocument));
     adoptCustomElementRegistryIfNotExplicitlySet(shadowRoot, newDocument);
     traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) -> unsigned {
         if (&node.treeScope() != static_cast<TreeScope*>(&shadowRoot)) {
