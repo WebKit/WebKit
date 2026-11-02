@@ -73,6 +73,8 @@ class WebDriverTestRunner(object):
         self._port = port
         _log.info('Using port %s' % self._port.name())
         _log.info('Test configuration: %s' % self._port.test_configuration())
+        if self._port.get_option('site_isolation'):
+            _log.info('Site Isolation enabled')
 
         self._display_driver = self._port._driver_class()(self._port, worker_number=0, pixel_tests=False, no_timeout=True)
         if not self._display_driver.check_driver(self._port):
