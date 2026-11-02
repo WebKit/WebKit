@@ -1568,6 +1568,13 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, con
         return false;
     }
 
+    // FIXME: The cached document would share the group's processes with the next one. Keep it in its process's WebPage
+    // instead, so that it can stay in the group.
+    if (protect(preferences())->siteIsolationEnabled() && &provisionalPage.browsingContextGroup() == m_browsingContextGroup.ptr()) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because the next document stays in its BrowsingContextGroup", m_legacyMainFrameProcess->processID());
+        return false;
+    }
+
     RefPtr fromItem = navigation.fromItem();
 
     // If the source and the destination back / forward list items are the same, then this is a client-side redirect. In this case,
@@ -6949,6 +6956,10 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
     const auto oldProcessID = siteIsolatedProcess().coreProcessIdentifier();
     const auto oldWebPageID = m_webPageID;
     RefPtr deferredTopDocumentSyncData = provisionalPage->takeDeferredTopDocumentSyncData();
+    // FIXME: The page can have gone back or forward past a cached document in the committed document's group, whose
+    // processes the two can't share yet.
+    if (preferences->siteIsolationEnabled())
+        protect(backForwardCache())->removeEntriesForPageAndBrowsingContextGroup(*this, protect(provisionalPage->browsingContextGroup()));
     swapToProvisionalPage(provisionalPage.releaseNonNull());
 
     if (deferredTopDocumentSyncData)

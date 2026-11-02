@@ -216,6 +216,14 @@ void WebBackForwardCache::removeEntriesForPageAndProcess(WebPageProxy& page, Web
     });
 }
 
+void WebBackForwardCache::removeEntriesForPageAndBrowsingContextGroup(WebPageProxy& page, BrowsingContextGroup& group)
+{
+    removeEntriesMatching([pageID = page.identifier(), &group](auto& item) {
+        RefPtr suspendedPage = item.suspendedPage();
+        return item.pageID() == pageID && suspendedPage && &suspendedPage->browsingContextGroup() == &group;
+    });
+}
+
 void WebBackForwardCache::removeEntriesMatching(NOESCAPE const Function<bool(WebBackForwardListItem&)>& matches)
 {
     Vector<Ref<WebBackForwardListItem>> itemsWithEntriesToClear;

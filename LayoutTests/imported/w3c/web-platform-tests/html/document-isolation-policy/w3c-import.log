@@ -15,6 +15,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/README.md
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/agent-cluster.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/back-forward-cache-frames.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/back-forward-cache-same-origin-frames.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/back-forward-cache.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/blob-document-inherits-policy.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/broadcast-channel.tentative.https.html

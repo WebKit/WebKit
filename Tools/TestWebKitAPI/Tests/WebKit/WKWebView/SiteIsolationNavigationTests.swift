@@ -25,8 +25,10 @@ private import TestWebKitAPILibrary
 import Testing
 @_spi(Testing) import WebKit
 private import WebKit_Private.WKFrameInfoPrivate
+private import WebKit_Private.WKPreferencesPrivate
 private import WebKit_Private.WKProcessPoolPrivate
 private import WebKit_Private.WKWebViewPrivate
+private import WebKit_Private._WKFeature
 private import WebKit_Private._WKFrameTreeNode
 private import WebKit_Private._WKProcessPoolConfiguration
 
@@ -161,6 +163,156 @@ struct SiteIsolationNavigationTests {
                 !isProcessRunning(iframeProcessIdentifier)
             }
         }
+    }
+
+    // The document the main frame leaves within the group doesn't keep its process for documents with a policy.
+    @Test
+    func childWithDocumentIsolationPolicyAfterMainFrameLeftProcessForPolicy() async throws {
+        let documentIsolationPolicy = Self.documentIsolationPolicy
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/isolated", headerFields: documentIsolationPolicy) {
+                "isolated"
+            }
+
+            Route("/main") {
+                "<iframe src='https://example.com/isolated_frame'></iframe>"
+            }
+
+            Route("/isolated_frame", headerFields: documentIsolationPolicy) {
+                "<script>alert('loaded')</script>"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(
+                configuration: Self.configurationWithDocumentIsolationPolicy(serverConfiguration)
+            )
+            let alerts = AlertRecorder()
+            webView.uiDelegate = alerts
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/isolated"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let isolatedProcessIdentifier = webView._webProcessIdentifier
+
+            // The next navigation is to this process's site, so it stays here until its response arrives.
+            webView.load(URLRequest(url: try #require(URL(string: "about:blank"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/main"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let alert = try await alerts.nextAlert()
+            #expect(alert == "loaded")
+
+            let mainFrame = try #require(await webView._frames())
+            let childFrame = try #require(mainFrame.childFrames.first)
+            #expect(mainFrame.info._processIdentifier != isolatedProcessIdentifier)
+            #expect(childFrame.info._processIdentifier != isolatedProcessIdentifier)
+            #expect(childFrame.info._processIdentifier != mainFrame.info._processIdentifier)
+        }
+    }
+
+    // Clearing the back/forward cache leaves the remote pages of the document that replaced the cached one in its group.
+    @Test
+    func clearingBackForwardCacheKeepsFramesOfDocumentInSameGroup() async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/isolated", headerFields: Self.documentIsolationPolicy) {
+                "isolated"
+            }
+
+            Route("/main") {
+                "<iframe src='https://webkit.org/frame'></iframe>"
+            }
+
+            Route("/frame") {
+                "<script>alert('loaded')</script>"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(
+                configuration: Self.configurationWithDocumentIsolationPolicy(serverConfiguration)
+            )
+            let alerts = AlertRecorder()
+            webView.uiDelegate = alerts
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/isolated"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            // The same-site navigation stays in the group, and only moves processes when its response arrives.
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/main"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let alert = try await alerts.nextAlert()
+            #expect(alert == "loaded")
+
+            webView._clearBackForwardCache()
+
+            let mainFrame = try #require(await webView._frames())
+            let childFrame = try #require(mainFrame.childFrames.first)
+            let host = try await webView.__evaluateJavaScript("location.host", inFrame: childFrame.info, in: .page)
+            #expect(host as? String == "webkit.org")
+        }
+    }
+
+    // The next document's main frame starts in the process of a frame of the document it replaces, which going back loads again.
+    @Test
+    func goingBackToDocumentWithFrameInProcessOfNextDocument() async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/main") {
+                "<script>window.token = crypto.randomUUID()</script>"
+            }
+
+            Route("/isolated_frame", headerFields: Self.documentIsolationPolicy) {
+                "<script>alert('loaded')</script>"
+            }
+
+            Route("/isolated", headerFields: Self.documentIsolationPolicy) {
+                "isolated"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(
+                configuration: Self.configurationWithDocumentIsolationPolicy(serverConfiguration)
+            )
+            let alerts = AlertRecorder()
+            webView.uiDelegate = alerts
+            // Added by script, as a frame that loads from its history entry can't move to another process when its response
+            // arrives yet.
+            let appendChildFrame = "document.body.appendChild(document.createElement('iframe')).src = '/isolated_frame'; true"
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/main"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let token = try #require(await webView.evaluateJavaScript("token") as? String)
+            _ = try await webView.evaluateJavaScript(appendChildFrame)
+            var alert = try await alerts.nextAlert()
+            #expect(alert == "loaded")
+            let mainFrame = try #require(await webView._frames())
+            let childFrameProcessIdentifier = try #require(mainFrame.childFrames.first).info._processIdentifier
+
+            // The response moves the main frame to the process for documents with a policy, which is the child frame's.
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/isolated"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView._webProcessIdentifier == childFrameProcessIdentifier)
+
+            webView.goBack()
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let isSameDocument = try await webView.evaluateJavaScript("token") as? String == token
+            #expect(!isSameDocument)
+            _ = try await webView.evaluateJavaScript(appendChildFrame)
+            alert = try await alerts.nextAlert()
+            #expect(alert == "loaded")
+        }
+    }
+
+    private static let documentIsolationPolicy = ["Document-Isolation-Policy": "isolate-and-require-corp"]
+
+    private static func configurationWithDocumentIsolationPolicy(_ server: HTTPServer.Configuration) -> WKWebViewConfiguration {
+        let configuration = WKWebViewConfiguration(httpsProxyFor: server)
+        let features = ["DocumentIsolationPolicyEnabled", "MultiProcessBackForwardCacheEnabled"]
+        for feature in WKPreferences._features() where features.contains(feature.key) {
+            configuration.preferences._setEnabled(true, for: feature)
+        }
+        return configuration
     }
 
     #if ENABLE_SWIFTUI
