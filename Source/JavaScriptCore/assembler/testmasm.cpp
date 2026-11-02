@@ -4490,6 +4490,61 @@ void testAtomicStrongCASFill16()
     CHECK_EQ(data[1], 0xffff);
 }
 
+void testVectorRelaxedDotI8x16I7x16AddAliasing()
+{
+    struct Operands {
+        unsigned a;
+        unsigned b;
+        unsigned addend;
+        unsigned dest;
+    };
+    static constexpr Operands operandsList[] = {
+        { 0, 1, 2, 3 },
+        { 0, 1, 2, 0 },
+        { 0, 1, 2, 1 },
+        { 0, 1, 2, 2 },
+        { 0, 0, 1, 0 },
+        { 0, 0, 1, 1 },
+        { 0, 0, 1, 2 },
+        { 0, 1, 0, 0 },
+        { 0, 1, 1, 1 },
+        { 0, 0, 0, 0 },
+    };
+    static constexpr FPRReg registers[] = { FPRInfo::fpRegT0, FPRInfo::fpRegT1, FPRInfo::fpRegT2, FPRInfo::fpRegT3 };
+
+    // Every byte is in [0, 127] so that the result does not depend on how the relaxed operation treats b.
+    alignas(16) uint8_t inputs[3][16];
+    for (unsigned i = 0; i < 3; ++i) {
+        for (unsigned j = 0; j < 16; ++j)
+            inputs[i][j] = static_cast<uint8_t>((i * 37 + j * 11 + 5) & 0x7f);
+    }
+
+    for (auto& operands : operandsList) {
+        auto test = compile([&](CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            for (unsigned i = 0; i < 3; ++i)
+                jit.loadVector(CCallHelpers::Address(GPRInfo::argumentGPR0, i * 16), registers[i]);
+            jit.vectorRelaxedDotI8x16I7x16Add(registers[operands.a], registers[operands.b], registers[operands.addend], registers[operands.dest], FPRInfo::fpRegT4, FPRInfo::fpRegT5);
+            jit.storeVector(registers[operands.dest], CCallHelpers::Address(GPRInfo::argumentGPR1));
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        alignas(16) int32_t result[4] = { };
+        invoke<void>(test, inputs, result);
+
+        const uint8_t* a = inputs[operands.a];
+        const uint8_t* b = inputs[operands.b];
+        const uint8_t* addend = inputs[operands.addend];
+        for (unsigned lane = 0; lane < 4; ++lane) {
+            int32_t expected = static_cast<int32_t>(addend[lane * 4] | (addend[lane * 4 + 1] << 8) | (addend[lane * 4 + 2] << 16) | (static_cast<uint32_t>(addend[lane * 4 + 3]) << 24));
+            for (unsigned j = 0; j < 4; ++j)
+                expected += static_cast<int8_t>(a[lane * 4 + j]) * static_cast<int8_t>(b[lane * 4 + j]);
+            CHECK_EQ(result[lane], expected);
+        }
+    }
+}
+
 #endif // CPU(ARM64)
 
 void testLoadStorePair32()
@@ -9131,6 +9186,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
         RUN(testAtomicStrongCASFill8());
         RUN(testAtomicStrongCASFill16());
     }
+    RUN(testVectorRelaxedDotI8x16I7x16AddAliasing());
 #endif
 
 #if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)

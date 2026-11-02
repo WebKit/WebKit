@@ -6785,14 +6785,10 @@ public:
             // SDOT Vd.4S, Vn.16B, Vm.16B: for each i32 lane, accumulate sum of 4 signed 8-bit products.
             // SDOT accumulates into Vd, so we need addend in dest before the instruction.
             // Handle cases where dest overlaps with a or b to avoid clobbering inputs.
-            if (dest == a) {
-                moveVector(a, scratch1);
+            if (dest == a || dest == b) {
+                moveVector(dest, scratch1);
                 moveVector(addend, dest);
-                m_assembler.sdotv(dest, scratch1, b);
-            } else if (dest == b) {
-                moveVector(b, scratch1);
-                moveVector(addend, dest);
-                m_assembler.sdotv(dest, a, scratch1);
+                m_assembler.sdotv(dest, dest == a ? scratch1 : a, dest == b ? scratch1 : b);
             } else {
                 moveVector(addend, dest);
                 m_assembler.sdotv(dest, a, b);
