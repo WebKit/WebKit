@@ -1432,6 +1432,7 @@ localizedStrings["Regular Expression"] = "Regular Expression";
 localizedStrings["Regular Expression @ Context Menu"] = "Regular Expression";
 /* Settings tab checkbox label for whether searches should be treated as regular expressions. */
 localizedStrings["Regular Expression @ Settings"] = "Regular Expression";
+localizedStrings["Reload Page Without Site Isolation"] = "Reload Page Without Site Isolation";
 localizedStrings["Reload Web Inspector"] = "Reload Web Inspector";
 localizedStrings["Reload page (%s)\nReload page ignoring cache (%s)"] = "Reload page (%s)\nReload page ignoring cache (%s)";
 localizedStrings["Removals"] = "Removals";
@@ -1442,6 +1443,7 @@ localizedStrings["Render Pipeline %d"] = "Render Pipeline %d";
 /* Section title for text grouped by rendered font. */
 localizedStrings["Rendered Text @ Font Details Sidebar Section"] = "Rendered Text";
 localizedStrings["Rendering Frames"] = "Rendering Frames";
+localizedStrings["Reopens only this page with Site Isolation off. New windows that this page opens also have Site Isolation off."] = "Reopens only this page with Site Isolation off. New windows that this page opens also have Site Isolation off.";
 localizedStrings["Repeating Conic Gradient"] = "Repeating Conic Gradient";
 localizedStrings["Repeating Linear Gradient"] = "Repeating Linear Gradient";
 localizedStrings["Repeating Radial Gradient"] = "Repeating Radial Gradient";
@@ -1676,6 +1678,7 @@ localizedStrings["Snapshot Comparison (%d and %d)"] = "Snapshot Comparison (%d a
 localizedStrings["Snapshot List"] = "Snapshot List";
 localizedStrings["Socket"] = "Socket";
 localizedStrings["Sockets"] = "Sockets";
+localizedStrings["Some Web Inspector features don't work with Site Isolation yet"] = "Some Web Inspector features don't work with Site Isolation yet";
 localizedStrings["Some examples of ways to use this script include (but are not limited to):"] = "Some examples of ways to use this script include (but are not limited to):";
 localizedStrings["Sort Ascending"] = "Sort Ascending";
 localizedStrings["Sort Descending"] = "Sort Descending";

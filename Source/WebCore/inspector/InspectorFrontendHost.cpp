@@ -473,6 +473,12 @@ void InspectorFrontendHost::revealFileExternally(const String& path)
         m_client->revealFileExternally(path);
 }
 
+void InspectorFrontendHost::requestDisableSiteIsolation()
+{
+    if (m_client)
+        m_client->requestDisableSiteIsolation();
+}
+
 bool InspectorFrontendHost::canSave(SaveMode saveMode)
 {
     if (m_client)

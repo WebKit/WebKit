@@ -92,6 +92,11 @@ InspectorFrontendAPI = {
             WI.diagnosticController.diagnosticLoggingAvailable = available;
     },
 
+    setSiteIsolationDisablingAvailable: function(available)
+    {
+        WI.setSiteIsolationDisablingAvailable(available);
+    },
+
     systemAppearanceDidChange: function()
     {
         if (WI.Platform.name === "mac")

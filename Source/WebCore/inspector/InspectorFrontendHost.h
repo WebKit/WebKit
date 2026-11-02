@@ -115,6 +115,8 @@ public:
     void openURLExternally(const String& url);
     void revealFileExternally(const String& path);
 
+    void requestDisableSiteIsolation();
+
     using SaveMode = InspectorFrontendClient::SaveMode;
     using SaveData = InspectorFrontendClient::SaveData;
     bool canSave(SaveMode);

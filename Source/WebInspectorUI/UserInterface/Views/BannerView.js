@@ -25,7 +25,7 @@
 
 WI.BannerView = class BannerView extends WI.View
 {
-    constructor(message, {actionButtonMessage, showDismissButton} = {})
+    constructor(message, {actionButtonMessage, actionButtonToolTip, showDismissButton} = {})
     {
         super();
 
@@ -35,6 +35,8 @@ WI.BannerView = class BannerView extends WI.View
         if (actionButtonMessage) {
             let actionButtonElement = this.element.appendChild(document.createElement("button"));
             actionButtonElement.textContent = actionButtonMessage;
+            if (actionButtonToolTip)
+                actionButtonElement.title = actionButtonToolTip;
             actionButtonElement.addEventListener("click", this._handleActionButtonClicked.bind(this));
         }
 

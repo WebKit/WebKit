@@ -177,6 +177,7 @@ WI.updateDockedState = () => {};
 WI.updateDockingAvailability = () => {};
 WI.updateVisibilityState = () => {};
 WI.updateFindString = () => {};
+WI.setSiteIsolationDisablingAvailable = () => {};
 
 WI.isSiteIsolationEnabled = () => WI.targets.some((x) => x instanceof WI.FrameTarget);
 

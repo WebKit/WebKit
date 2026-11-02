@@ -28,6 +28,8 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
+#import "Helpers/cocoa/SiteIsolationTestUtilities.h"
+#import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKURLSchemeHandler.h>
 #import <WebKit/WKURLSchemeTask.h>
@@ -54,6 +56,8 @@ static bool shouldCallInspectorCloseReentrantly = false;
 static bool openURLExternallyCalled = false;
 static bool configurationForLocalInspectorCalled = false;
 static bool startURLSchemeTaskCalled = false;
+static bool disablingSiteIsolationRequested = false;
+static unsigned disablingSiteIsolationRequestCount = 0;
 
 static RetainPtr<SimpleURLSchemeHandler> sharedSimpleURLSchemeHandler;
 static RetainPtr<id <_WKInspectorDelegate>> sharedInspectorDelegate;
@@ -70,6 +74,8 @@ static void resetInspectorGlobalState()
     openURLExternallyCalled = false;
     configurationForLocalInspectorCalled = false;
     startURLSchemeTaskCalled = false;
+    disablingSiteIsolationRequested = false;
+    disablingSiteIsolationRequestCount = 0;
 
     sharedSimpleURLSchemeHandler.clear();
     sharedInspectorDelegate.clear();
@@ -115,6 +121,20 @@ static void resetInspectorGlobalState()
 - (void)inspectorFrontendLoaded:(_WKInspector *)inspector
 {
     inspectorFrontendLoadedCalled = true;
+}
+
+@end
+
+@interface SiteIsolationDisablingInspectorDelegate : InspectorDelegate
+@end
+
+@implementation SiteIsolationDisablingInspectorDelegate
+
+- (void)inspectorDidRequestDisablingSiteIsolation:(_WKInspector *)inspector
+{
+    EXPECT_TRUE(inspector.isConnected);
+    disablingSiteIsolationRequested = true;
+    ++disablingSiteIsolationRequestCount;
 }
 
 @end
@@ -266,6 +286,154 @@ TEST(WKInspectorDelegate, InspectorConfiguration)
 
     [[webView _inspector] close];
     TestWebKitAPI::Util::run(&willCloseLocalInspectorCalled);
+}
+
+static RetainPtr<WKWebView> showInspectorForPage(BOOL siteIsolationEnabled, id<_WKInspectorDelegate> inspectorDelegate)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
+    TestWebKitAPI::setFeatureEnabled(webViewConfiguration.get(), @"SiteIsolationEnabled", siteIsolationEnabled);
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+
+    [webView _inspector].delegate = inspectorDelegate;
+    [[webView _inspector] show];
+    TestWebKitAPI::Util::run(&inspectorFrontendLoadedCalled);
+    return webView;
+}
+
+static NSString * const siteIsolationBannerSelector = @"#main > .banner-view";
+static NSString * const siteIsolationBannerActionButtonSelector = @"#main > .banner-view > button";
+static NSString * const siteIsolationBannerDismissButtonSelector = @"#main > .banner-view > .dismiss";
+
+static id evaluateInFrontend(WKWebView *webView, NSString *script)
+{
+    return [[webView _inspector].inspectorWebView objectByEvaluatingJavaScript:script];
+}
+
+static bool frontendDetectedSiteIsolation(WKWebView *webView)
+{
+    return [evaluateInFrontend(webView, @"WI.isSiteIsolationEnabled()") boolValue];
+}
+
+static bool frontendHasElement(WKWebView *webView, NSString *selector)
+{
+    return [evaluateInFrontend(webView, [NSString stringWithFormat:@"!!document.querySelector('%@')", selector]) boolValue];
+}
+
+static void clickFrontendElement(WKWebView *webView, NSString *selector)
+{
+    evaluateInFrontend(webView, [NSString stringWithFormat:@"document.querySelector('%@').click(); true", selector]);
+}
+
+TEST(WKInspectorDelegate, SiteIsolationBannerRequestsDisablingSiteIsolation)
+{
+    resetInspectorGlobalState();
+
+    RetainPtr inspectorDelegate = adoptNS([SiteIsolationDisablingInspectorDelegate new]);
+    RetainPtr webView = showInspectorForPage(YES, inspectorDelegate.get());
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return frontendHasElement(webView.get(), siteIsolationBannerActionButtonSelector);
+    }));
+    EXPECT_TRUE(frontendDetectedSiteIsolation(webView.get()));
+
+    // Click the same button twice, as a double click would.
+    evaluateInFrontend(webView.get(), [NSString stringWithFormat:@"let button = document.querySelector('%@'); button.click(); button.click(); true", siteIsolationBannerActionButtonSelector]);
+    EXPECT_TRUE(TestWebKitAPI::Util::runFor(&disablingSiteIsolationRequested, 10_s));
+
+    // The script's reply comes after any request that the clicks sent, so a second request would have arrived by now.
+    EXPECT_FALSE(frontendHasElement(webView.get(), siteIsolationBannerActionButtonSelector));
+    EXPECT_TRUE(frontendHasElement(webView.get(), siteIsolationBannerSelector));
+    EXPECT_EQ(disablingSiteIsolationRequestCount, 1u);
+}
+
+TEST(WKInspectorDelegate, SiteIsolationBannerWithoutDelegateSupport)
+{
+    resetInspectorGlobalState();
+
+    RetainPtr inspectorDelegate = adoptNS([InspectorDelegate new]);
+    RetainPtr webView = showInspectorForPage(YES, inspectorDelegate.get());
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return frontendHasElement(webView.get(), siteIsolationBannerSelector);
+    }));
+    EXPECT_TRUE(frontendDetectedSiteIsolation(webView.get()));
+    EXPECT_FALSE(frontendHasElement(webView.get(), siteIsolationBannerActionButtonSelector));
+
+    clickFrontendElement(webView.get(), siteIsolationBannerDismissButtonSelector);
+    EXPECT_FALSE(frontendHasElement(webView.get(), siteIsolationBannerSelector));
+}
+
+TEST(WKInspectorDelegate, SiteIsolationBannerFollowsDelegateChanges)
+{
+    resetInspectorGlobalState();
+
+    RetainPtr inspectorDelegate = adoptNS([InspectorDelegate new]);
+    RetainPtr siteIsolationDisablingInspectorDelegate = adoptNS([SiteIsolationDisablingInspectorDelegate new]);
+    RetainPtr webView = showInspectorForPage(YES, inspectorDelegate.get());
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return frontendHasElement(webView.get(), siteIsolationBannerSelector);
+    }));
+    EXPECT_FALSE(frontendHasElement(webView.get(), siteIsolationBannerActionButtonSelector));
+
+    [webView _inspector].delegate = siteIsolationDisablingInspectorDelegate.get();
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return frontendHasElement(webView.get(), siteIsolationBannerActionButtonSelector);
+    }));
+
+    [webView _inspector].delegate = inspectorDelegate.get();
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return !frontendHasElement(webView.get(), siteIsolationBannerActionButtonSelector);
+    }));
+    EXPECT_TRUE(frontendHasElement(webView.get(), siteIsolationBannerSelector));
+}
+
+TEST(WKInspectorDelegate, SiteIsolationBannerDismissalLastsForSession)
+{
+    resetInspectorGlobalState();
+
+    RetainPtr inspectorDelegate = adoptNS([InspectorDelegate new]);
+    RetainPtr siteIsolationDisablingInspectorDelegate = adoptNS([SiteIsolationDisablingInspectorDelegate new]);
+    RetainPtr webView = showInspectorForPage(YES, inspectorDelegate.get());
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return frontendHasElement(webView.get(), siteIsolationBannerSelector);
+    }));
+    clickFrontendElement(webView.get(), siteIsolationBannerDismissButtonSelector);
+    EXPECT_FALSE(frontendHasElement(webView.get(), siteIsolationBannerSelector));
+
+    // A change in what the banner would show doesn't bring it back.
+    [webView _inspector].delegate = siteIsolationDisablingInspectorDelegate.get();
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [evaluateInFrontend(webView.get(), @"!!WI._siteIsolationDisablingAvailable") boolValue];
+    }));
+    EXPECT_FALSE(frontendHasElement(webView.get(), siteIsolationBannerSelector));
+
+    // A new inspector session shows it again.
+    inspectorFrontendLoadedCalled = false;
+    [[webView _inspector] close];
+    [[webView _inspector] show];
+    EXPECT_TRUE(TestWebKitAPI::Util::runFor(&inspectorFrontendLoadedCalled, 10_s));
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return frontendHasElement(webView.get(), siteIsolationBannerSelector);
+    }));
+}
+
+TEST(WKInspectorDelegate, NoSiteIsolationBannerWithoutSiteIsolation)
+{
+    resetInspectorGlobalState();
+
+    RetainPtr inspectorDelegate = adoptNS([SiteIsolationDisablingInspectorDelegate new]);
+    RetainPtr webView = showInspectorForPage(NO, inspectorDelegate.get());
+
+    // Without Site Isolation there are no frame targets, so the banner can't appear once targets are available.
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [evaluateInFrontend(webView.get(), @"WI.targetsAvailable()") boolValue];
+    }));
+    EXPECT_FALSE(frontendDetectedSiteIsolation(webView.get()));
+    EXPECT_FALSE(frontendHasElement(webView.get(), siteIsolationBannerSelector));
 }
 
 #endif // PLATFORM(MAC)
