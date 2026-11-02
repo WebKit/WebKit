@@ -1,0 +1,19 @@
+Tests that scrolling an element into view keeps it above a software keyboard covering the bottom of the view.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+An element above the keyboard doesn't need to scroll.
+PASS scrollY is 0
+scrollIntoView({ block: 'nearest' }) on an element behind the keyboard
+PASS result is true
+scrollIntoViewIfNeeded() on an element behind the keyboard
+PASS result is true
+scrollIntoView({ block: 'end' }) on an element below the viewport
+PASS result is true
+Without a keyboard, the same element doesn't need to scroll.
+PASS scrollY is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -733,6 +733,7 @@ public:
     void setFooterHeight(float);
 
     float obscuredContentInsetTop();
+    ExceptionOr<void> setSoftwareKeyboardHeight(float);
 
     struct FullscreenInsets {
         float top { 0 };

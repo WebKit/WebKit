@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+    height: 3000px;
+}
+.box {
+    position: absolute;
+    left: 10px;
+    width: 100px;
+    height: 20px;
+    background: green;
+}
+</style>
+</head>
+<body>
+<div id="above" class="box"></div>
+<div id="behind" class="box"></div>
+<div id="below" class="box"></div>
+<script>
+description("Tests that scrolling an element into view keeps it above a software keyboard covering the bottom of the view.");
+jsTestIsAsync = true;
+
+const keyboardHeight = 200;
+const above = document.getElementById("above");
+const behind = document.getElementById("behind");
+const below = document.getElementById("below");
+// "above" and "behind" start out within the viewport; only "behind" is under the keyboard. "below" starts out offscreen.
+above.style.top = `${innerHeight - keyboardHeight - 60}px`;
+behind.style.top = `${innerHeight - keyboardHeight + 40}px`;
+below.style.top = `${innerHeight + 500}px`;
+
+function isAboveKeyboard(element) {
+    return element.getBoundingClientRect().bottom <= innerHeight - keyboardHeight;
+}
+
+async function reset() {
+    scrollTo(0, 0);
+    await UIHelper.ensurePresentationUpdate();
+}
+
+async function scrollAndCheck(description, scrollFunction, element) {
+    await reset();
+    scrollFunction();
+    await UIHelper.ensurePresentationUpdate();
+    window.result = isAboveKeyboard(element);
+    debug(description);
+    shouldBeTrue("result");
+}
+
+addEventListener("load", async () => {
+    internals.setSoftwareKeyboardHeight(keyboardHeight);
+
+    await reset();
+    above.scrollIntoView({ block: "nearest" });
+    await UIHelper.ensurePresentationUpdate();
+    debug("An element above the keyboard doesn't need to scroll.");
+    shouldBe("scrollY", "0");
+
+    await scrollAndCheck("scrollIntoView({ block: 'nearest' }) on an element behind the keyboard", () => behind.scrollIntoView({ block: "nearest" }), behind);
+    await scrollAndCheck("scrollIntoViewIfNeeded() on an element behind the keyboard", () => behind.scrollIntoViewIfNeeded(false), behind);
+    await scrollAndCheck("scrollIntoView({ block: 'end' }) on an element below the viewport", () => below.scrollIntoView({ block: "end" }), below);
+
+    // Without a keyboard, the element is visible where it is.
+    internals.setSoftwareKeyboardHeight(0);
+    await reset();
+    behind.scrollIntoView({ block: "nearest" });
+    await UIHelper.ensurePresentationUpdate();
+    debug("Without a keyboard, the same element doesn't need to scroll.");
+    shouldBe("scrollY", "0");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

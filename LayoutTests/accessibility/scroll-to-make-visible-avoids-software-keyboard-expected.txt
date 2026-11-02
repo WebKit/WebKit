@@ -1,0 +1,10 @@
+Tests that scrolling to make an element visible keeps it above a software keyboard covering the bottom of the view.
+
+PASS: window.pageYOffset === 0
+PASS: behind.getBoundingClientRect().bottom <= window.innerHeight - keyboardHeight === true
+PASS: window.pageYOffset === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Fence
