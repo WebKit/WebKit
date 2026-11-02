@@ -425,6 +425,7 @@ static RefPtr<const Font> fontForOrientation(const Font& font, char32_t characte
 RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView, std::optional<char32_t>& matchedPrecomposedCharacter) const
 {
     matchedPrecomposedCharacter = std::nullopt;
+    Ref fonts = *this->fonts();
     auto codePoints = stringView.codePoints();
     auto codePointsIterator = codePoints.begin();
 
@@ -463,8 +464,10 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
         return font;
     };
 
-    for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
-        auto& fontRanges = fallbackRangesAt(i);
+    for (unsigned fallbackIndex = 0; ; ++fallbackIndex) {
+        auto& fontRanges = fallbackRangesAt(fonts, fallbackIndex);
+        if (fontRanges.isNull())
+            break;
         if (fontRanges.isGenericFontFamily() && isPrivateUseAreaCharacter(baseCharacter))
             continue;
         RefPtr font = fontRanges.fontForCharacter(baseCharacter);

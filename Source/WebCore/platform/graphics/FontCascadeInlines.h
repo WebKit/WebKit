@@ -50,9 +50,9 @@ inline const Font& FontCascade::primaryFont() const
     return font;
 }
 
-inline const FontRanges& FontCascade::fallbackRangesAt(unsigned index) const
+inline const FontRanges& FontCascade::fallbackRangesAt(FontCascadeFonts& fonts, unsigned index) const
 {
-    return protect(m_fonts)->realizeFallbackRangesAt(m_fontDescription, protect(fontSelector()).get(), index);
+    return fonts.realizeFallbackRangesAt(m_fontDescription, protect(fontSelector()).get(), index);
 }
 
 inline bool FontCascade::isFixedPitch() const
