@@ -238,7 +238,7 @@ void TextTrackCue::didMoveToNewDocument(Document& newDocument)
     ActiveDOMObject::didMoveToNewDocument(newDocument);
     if (RefPtr cueNode = m_cueNode)
         cueNode->setTreeScopeRecursively(newDocument);
-    if (RefPtr displayTree = m_displayTree)
+    if (RefPtr displayTree = m_displayTree; displayTree && !displayTree->parentNode())
         displayTree->setTreeScopeRecursively(newDocument);
 }
 
