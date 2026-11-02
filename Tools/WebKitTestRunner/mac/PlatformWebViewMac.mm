@@ -115,6 +115,7 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
     [m_window setCollectionBehavior:NSWindowCollectionBehaviorStationary];
     [[m_window contentView] addSubview:m_view];
     [m_window setReleasedWhenClosed:NO];
+    [m_window setAnimationBehavior:NSWindowAnimationBehaviorNone];
 
     if (m_options.shouldShowCursor() && m_options.shouldShowWindow()) {
         m_cursorOverlay = adoptNS([[WTRCursorOverlayView alloc] initWithFrame:NSZeroRect]);

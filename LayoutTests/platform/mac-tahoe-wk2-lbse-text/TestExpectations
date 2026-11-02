@@ -87,7 +87,6 @@ svg/dom/use-element-reference-within-use-shadow-tree.html                       
 svg/hixie/perf/004.xml                                                                    [ Pass ImageOnlyFailure ]
 svg/repaint/repaint-non-scaling-stroke-text-decoration.html                               [ Pass Failure ]
 svg/repaint/repaint-non-scaling-stroke-text.html                                          [ Pass Failure ]
-svg/text/hidpi-text-selection-rect-position.html                                          [ Pass ImageOnlyFailure ]
 svg/text/kerning.svg                                                                      [ Pass ImageOnlyFailure ]
 svg/transforms/animated-path-inside-transformed-html.xhtml                                [ Pass ImageOnlyFailure ]
 svg/wicd/test-rightsizing-b.xhtml                                                         [ Pass ImageOnlyFailure ]
