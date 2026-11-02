@@ -1,0 +1,9 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>body { font-family: monospace; font-size: 12px; } .root { position: relative; width: 300px; height: 60px; margin: 4px; border: 1px solid; } .a { position: absolute; }</style>
+<div class="root"><input type="range" class="a" style="top: 5px; left: 5px"></div>
+<div class="root"><input type="range" class="a" style="inset: 5px 20px"></div>
+<div class="root"><input type="range" class="a" style="right: 0; bottom: 0; width: 80px"></div>
+<div class="root">text <input type="range" class="a"></div>
+<div class="root"><select class="a" style="top: 2px; left: 10px"><option>option</option><option>a longer option</option></select></div>
+<div class="root"><select class="a" style="left: 0; right: 0"><option>stretched</option></select></div>
+<div class="root" dir="rtl"><select class="a" style="top: 3px"><option>right to left</option></select><input type="range" class="a" style="bottom: 0"></div>
