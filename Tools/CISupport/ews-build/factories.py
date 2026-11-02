@@ -190,6 +190,9 @@ class TestFactory(Factory):
             self.addStep(RunWebKitTestsInStressMode(num_iterations=10, layout_test_class=self.LayoutTestClass))
             self.addStep(self.LayoutTestClass())
         if self.APITestClass:
+            if platform in ['gtk', 'wpe']:
+                self.addStep(FindChangedAPITests())
+                self.addStep(RunAPITestsInStressMode())
             self.addStep(self.APITestClass())
         if self.willTriggerCrashLogSubmission:
             self.addStep(TriggerCrashLogSubmission())
