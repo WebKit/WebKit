@@ -69,6 +69,7 @@ struct TargetedElementInfo {
     FloatRect boundsInClientCoordinates;
     PositionType positionType { PositionType::Static };
     Vector<FrameIdentifier> childFrameIdentifiers;
+    Vector<FrameIdentifier> remoteFrameIdentifiers;
     HashSet<URL> mediaAndLinkURLs;
     bool isNearbyTarget { true };
     bool isPseudoElement { false };
@@ -91,6 +92,11 @@ struct TargetedTextSearchResult {
     // Targets for the owner element of each of the main frame's subframes. Only computed by the main frame's process.
     HashMap<FrameIdentifier, Vector<TargetedElementInfo>> targetsBySubframe;
 };
+
+struct TargetedFrameContent {
+};
+
+WEBCORE_EXPORT void mergeRemoteFrameContent(TargetedElementInfo&, const TargetedFrameContent&);
 
 WEBCORE_EXPORT Ref<SharedBuffer> serializeTargetedElementSelectors(const TargetedElementSelectors&);
 WEBCORE_EXPORT std::optional<TargetedElementSelectors> deserializeTargetedElementSelectors(std::span<const uint8_t>);

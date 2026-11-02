@@ -87,4 +87,8 @@ std::optional<TargetedElementSelectors> deserializeTargetedElementSelectors(std:
     return result;
 }
 
+void mergeRemoteFrameContent(TargetedElementInfo&, const TargetedFrameContent&)
+{
+}
+
 } // namespace WebCore

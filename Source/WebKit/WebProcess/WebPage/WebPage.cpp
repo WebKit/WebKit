@@ -11233,6 +11233,15 @@ void WebPage::requestTargetedElementsForText(TargetedElementRequest&& request, C
     completion(protect(page->elementTargetingController())->searchTextInLocalFrames(WTF::move(request)));
 }
 
+void WebPage::requestTargetedFrameContent(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(HashMap<WebCore::FrameIdentifier, WebCore::TargetedFrameContent>&&)>&& completion)
+{
+    RefPtr page = corePage();
+    if (!page)
+        return completion({ });
+
+    completion(protect(page->elementTargetingController())->contentForLocalFrames(frameIDs));
+}
+
 void WebPage::requestAllTargetableElements(float hitTestInterval, CompletionHandler<void(Vector<Vector<WebCore::TargetedElementInfo>>&&)>&& completion)
 {
     RefPtr page = corePage();
