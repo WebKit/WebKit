@@ -61,7 +61,7 @@ static constexpr int kMaximalTargetExponent = -32;
 // Output: returns true if the buffer is guaranteed to contain the closest
 //    representable number to the input.
 //  Modifies the generated digits in the buffer to approach (round towards) w.
-static bool LEGACY_NODELETE RoundWeed(BufferReference<char> buffer,
+NODELETE static bool RoundWeed(BufferReference<char> buffer,
                       int length,
                       uint64_t distance_too_high_w,
                       uint64_t unsafe_interval,
@@ -181,7 +181,7 @@ static bool LEGACY_NODELETE RoundWeed(BufferReference<char> buffer,
 // unambiguously determined.
 //
 // Precondition: rest < ten_kappa.
-static bool LEGACY_NODELETE RoundWeedCounted(BufferReference<char> buffer,
+NODELETE static bool RoundWeedCounted(BufferReference<char> buffer,
                              int length,
                              uint64_t rest,
                              uint64_t ten_kappa,
@@ -240,7 +240,7 @@ static constexpr std::array<unsigned, 11> kSmallPowersOfTen {
     0, 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000
 };
 
-static void LEGACY_NODELETE BiggestPowerTen(uint32_t number,
+NODELETE static void BiggestPowerTen(uint32_t number,
                             int number_bits,
                             uint32_t& power,
                             int& exponent_plus_one) {
@@ -300,7 +300,7 @@ static void LEGACY_NODELETE BiggestPowerTen(uint32_t number,
 // represent 'w' we can stop. Everything inside the interval low - high
 // represents w. However we have to pay attention to low, high and w's
 // imprecision.
-static bool LEGACY_NODELETE DigitGen(DiyFp low,
+NODELETE static bool DigitGen(DiyFp low,
                      DiyFp w,
                      DiyFp high,
                      BufferReference<char> buffer,
@@ -427,7 +427,7 @@ static bool LEGACY_NODELETE DigitGen(DiyFp low,
 //   numbers. If the precision is not enough to guarantee all the postconditions
 //   then false is returned. This usually happens rarely, but the failure-rate
 //   increases with higher requested_digits.
-static bool LEGACY_NODELETE DigitGenCounted(DiyFp w,
+NODELETE static bool DigitGenCounted(DiyFp w,
                             int requested_digits,
                             BufferReference<char> buffer,
                             int& length,

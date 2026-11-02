@@ -58,14 +58,14 @@ static const struct UTextFuncs textUTF16ContextAwareFuncs = {
     nullptr
 };
 
-static inline UTextProviderContext LEGACY_NODELETE textUTF16ContextAwareGetCurrentContext(const UText* text)
+NODELETE static inline UTextProviderContext textUTF16ContextAwareGetCurrentContext(const UText* text)
 {
     if (!text->chunkContents)
         return UTextProviderContext::NoContext;
     return text->chunkContents == text->p ? UTextProviderContext::PrimaryContext : UTextProviderContext::PriorContext;
 }
 
-static void LEGACY_NODELETE textUTF16ContextAwareMoveInPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
+NODELETE static void textUTF16ContextAwareMoveInPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(text->chunkContents == text->p);
     ASSERT_UNUSED(forward, forward ? nativeIndex >= text->b : nativeIndex > text->b);
@@ -83,14 +83,14 @@ static void LEGACY_NODELETE textUTF16ContextAwareMoveInPrimaryContext(UText* tex
     text->chunkOffset = std::min(offset < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0, text->chunkLength);
 }
 
-static void LEGACY_NODELETE textUTF16ContextAwareSwitchToPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
+NODELETE static void textUTF16ContextAwareSwitchToPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(!text->chunkContents || text->chunkContents == text->q);
     text->chunkContents = static_cast<const char16_t*>(text->p);
     textUTF16ContextAwareMoveInPrimaryContext(text, nativeIndex, nativeLength, forward);
 }
 
-static void LEGACY_NODELETE textUTF16ContextAwareMoveInPriorContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
+NODELETE static void textUTF16ContextAwareMoveInPriorContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(text->chunkContents == text->q);
     ASSERT_UNUSED(forward, forward ? nativeIndex < text->b : nativeIndex <= text->b);
@@ -105,7 +105,7 @@ static void LEGACY_NODELETE textUTF16ContextAwareMoveInPriorContext(UText* text,
     text->chunkOffset = std::min(offset < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0, text->chunkLength);
 }
 
-static void LEGACY_NODELETE textUTF16ContextAwareSwitchToPriorContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
+NODELETE static void textUTF16ContextAwareSwitchToPriorContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(!text->chunkContents || text->chunkContents == text->p);
     text->chunkContents = static_cast<const char16_t*>(text->q);
@@ -117,12 +117,12 @@ static UText* uTextUTF16ContextAwareClone(UText* destination, const UText* sourc
     return uTextCloneImpl(destination, source, deep, status);
 }
 
-static inline int64_t LEGACY_NODELETE uTextUTF16ContextAwareNativeLength(UText* text)
+NODELETE static inline int64_t uTextUTF16ContextAwareNativeLength(UText* text)
 {
     return text->a + text->b;
 }
 
-static UBool LEGACY_NODELETE uTextUTF16ContextAwareAccess(UText* text, int64_t nativeIndex, UBool forward)
+NODELETE static UBool uTextUTF16ContextAwareAccess(UText* text, int64_t nativeIndex, UBool forward)
 {
     if (!text->context)
         return false;
@@ -148,7 +148,7 @@ static UBool LEGACY_NODELETE uTextUTF16ContextAwareAccess(UText* text, int64_t n
     return true;
 }
 
-static int32_t LEGACY_NODELETE uTextUTF16ContextAwareExtract(UText*, int64_t, int64_t, char16_t*, int32_t, UErrorCode* errorCode)
+NODELETE static int32_t uTextUTF16ContextAwareExtract(UText*, int64_t, int64_t, char16_t*, int32_t, UErrorCode* errorCode)
 {
     // In the present context, this text provider is used only with ICU functions
     // that do not perform an extract operation.
@@ -157,7 +157,7 @@ static int32_t LEGACY_NODELETE uTextUTF16ContextAwareExtract(UText*, int64_t, in
     return 0;
 }
 
-static void LEGACY_NODELETE uTextUTF16ContextAwareClose(UText* text)
+NODELETE static void uTextUTF16ContextAwareClose(UText* text)
 {
     text->context = nullptr;
 }

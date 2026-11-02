@@ -212,8 +212,8 @@ WTF_EXPORT_PRIVATE void WTFLogAlwaysV(const char* format, va_list) WTF_ATTRIBUTE
 WTF_EXPORT_PRIVATE void WTFLogAlways(const char* format, ...) WTF_ATTRIBUTE_NSSTRING(1, 2);
 WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFLogAlwaysAndCrash(const char* format, ...) WTF_ATTRIBUTE_NSSTRING(1, 2);
 WTF_EXPORT_PRIVATE void WTFLogWithLevel(WTFLogChannel*, WTFLogLevel, const char* format, ...) WTF_ATTRIBUTE_NSSTRING(3, 4);
-WTF_EXPORT_PRIVATE void LEGACY_NODELETE WTFSetLogChannelLevel(WTFLogChannel*, WTFLogLevel);
-WTF_EXPORT_PRIVATE bool LEGACY_NODELETE WTFWillLogWithLevel(WTFLogChannel*, WTFLogLevel);
+NODELETE WTF_EXPORT_PRIVATE void WTFSetLogChannelLevel(WTFLogChannel*, WTFLogLevel);
+NODELETE WTF_EXPORT_PRIVATE bool WTFWillLogWithLevel(WTFLogChannel*, WTFLogLevel);
 
 #if ENABLE(JOURNALD_LOG)
 WTF_EXPORT_PRIVATE bool WTFShouldLogToJournal(void);
@@ -343,7 +343,7 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 
 #endif // !defined(CRASH)
 
-WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void LEGACY_NODELETE WTFCrash(void);
+NODELETE WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrash(void);
 
 #ifndef CRASH_WITH_SECURITY_IMPLICATION
 #define CRASH_WITH_SECURITY_IMPLICATION() WTFCrashWithSecurityImplication()
@@ -354,7 +354,7 @@ extern WTF_EXPORT_PRIVATE int wtfConjectureAssertIsEnabled;
 WTF_EXPORT_PRIVATE NEVER_INLINE NO_RETURN_DUE_TO_CRASH void WTFCrashDueToConjectureAssert(const char* file, int line, const char* function, const char* assertion);
 #endif
 
-WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void LEGACY_NODELETE WTFCrashWithSecurityImplication(void);
+NODELETE WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(void);
 
 #ifdef __cplusplus
 }
@@ -363,7 +363,7 @@ namespace WTF {
 class StringView;
 }
 
-WTF_EXPORT_PRIVATE WTFLogChannel* LEGACY_NODELETE WTFLogChannelByName(WTFLogChannel*[], size_t count, WTF::StringView name);
+NODELETE WTF_EXPORT_PRIVATE WTFLogChannel* WTFLogChannelByName(WTFLogChannel*[], size_t count, WTF::StringView name);
 WTF_EXPORT_PRIVATE void WTFInitializeLogChannelStatesFromString(WTFLogChannel*[], size_t count, WTF::StringView logLevel);
 #endif
 
@@ -566,7 +566,7 @@ template<typename T> requires (std::is_pointer_v<T>) inline T CLANG_POINTER_CONV
 // SIMD vector element, neither of which a reference can bind to.
 //
 // The overloads that hand a pointer straight back are annotated CLANG_POINTER_CONVERSION rather than
-// LEGACY_NODELETE so that the static analyzer traces an argument back to its origin through them. LEGACY_NODELETE
+// NODELETE so that the static analyzer traces an argument back to its origin through them. NODELETE
 // only tells it the call is harmless, which leaves a CF or NS pointer the call site had already made
 // safe, as in someFormatMacro("%@", string.createCFString().get()), looking like it originates from
 // the conversion call once the macro wraps it, and so reported as unretained.
@@ -574,9 +574,9 @@ template<typename T> concept LogPrintfConvertibleType = !std::is_scalar_v<std::d
     && requires (T&& argument) { safePrintfType(std::forward<T>(argument)); };
 
 template<typename T> requires (std::is_scalar_v<T>) inline T CLANG_POINTER_CONVERSION logPrintfType(T argument) { return argument; }
-template<LogPrintfConvertibleType T> inline decltype(auto) LEGACY_NODELETE logPrintfType(T&& argument) { return safePrintfType(std::forward<T>(argument)); }
+template<LogPrintfConvertibleType T> NODELETE inline decltype(auto) logPrintfType(T&& argument) { return safePrintfType(std::forward<T>(argument)); }
 template<typename T> requires (!std::is_scalar_v<std::decay_t<T>> && !LogPrintfConvertibleType<T>)
-inline T LEGACY_NODELETE logPrintfType(T argument) { return argument; }
+NODELETE inline T logPrintfType(T argument) { return argument; }
 
 } // namespace WTF
 
@@ -1045,8 +1045,8 @@ inline const char* wtfLogPriorityName(int priority)
 
 // The combination of line, file, and function should be a unique number per call to this crash. This tricks the compiler into not coalescing calls to WTFCrashWithInfo.
 // The easiest way to fill these values per translation unit is to pass __LINE__, __FILE__, and WTF_PRETTY_FUNCTION.
-WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void LEGACY_NODELETE WTFCrashWithInfoImpl(int line, const char* file, const char* function, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3, UCPURegister misc4, UCPURegister misc5, UCPURegister misc6);
-WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void LEGACY_NODELETE WTFCrashWithInfoImpl(int line, const char* file, const char* function, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3, UCPURegister misc4, UCPURegister misc5);
+NODELETE WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfoImpl(int line, const char* file, const char* function, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3, UCPURegister misc4, UCPURegister misc5, UCPURegister misc6);
+NODELETE WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfoImpl(int line, const char* file, const char* function, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3, UCPURegister misc4, UCPURegister misc5);
 WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfoImpl(int line, const char* file, const char* function, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3, UCPURegister misc4);
 WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfoImpl(int line, const char* file, const char* function, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3);
 WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfoImpl(int line, const char* file, const char* function, UCPURegister reason, UCPURegister misc1, UCPURegister misc2);
@@ -1144,7 +1144,7 @@ void isIntegralOrPointerType(T, Types... types)
 }
 
 #if PLATFORM(COCOA) || OS(ANDROID)
-WTF_EXPORT_PRIVATE void LEGACY_NODELETE disableForwardingVPrintfStdErrToOSLog();
+NODELETE WTF_EXPORT_PRIVATE void disableForwardingVPrintfStdErrToOSLog();
 #endif
 
 } // namespace WTF

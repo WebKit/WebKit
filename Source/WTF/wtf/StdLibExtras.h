@@ -150,9 +150,9 @@ static constexpr size_t KB = 1024;
 static constexpr size_t MB = 1024 * 1024;
 static constexpr size_t GB = 1024 * 1024 * 1024;
 
-// std::min and std::max are not annotated LEGACY_NODELETE, but they run no destructors, so the suppression is safe.
-template<typename T> SUPPRESS_NODELETE constexpr const T& LEGACY_NODELETE min(const T& a, const T& b) { return std::min(a, b); }
-template<typename T> SUPPRESS_NODELETE constexpr const T& LEGACY_NODELETE max(const T& a, const T& b) { return std::max(a, b); }
+// std::min and std::max are not annotated NODELETE, but they run no destructors, so the suppression is safe.
+template<typename T> NODELETE SUPPRESS_NODELETE constexpr const T& min(const T& a, const T& b) { return std::min(a, b); }
+template<typename T> NODELETE SUPPRESS_NODELETE constexpr const T& max(const T& a, const T& b) { return std::max(a, b); }
 
 inline bool isPointerAligned(void* p)
 {
@@ -885,14 +885,14 @@ ALWAYS_INLINE constexpr T* CLANG_POINTER_CONVERSION addressOfArgument(T& value)
 }
 
 template<typename T, std::size_t N>
-[[nodiscard]] SUPPRESS_NODELETE constexpr std::array<std::remove_cv_t<T>, N> LEGACY_NODELETE toArray(T (&array)[N])
+NODELETE [[nodiscard]] SUPPRESS_NODELETE constexpr std::array<std::remove_cv_t<T>, N> toArray(T (&array)[N])
     noexcept(std::is_nothrow_constructible_v<T, T&>)
 {
     return std::to_array<T>(array); // NOLINT(runtime/wtf_to_array)
 }
 
 template<typename T, std::size_t N>
-[[nodiscard]] SUPPRESS_NODELETE constexpr std::array<std::remove_cv_t<T>, N> LEGACY_NODELETE toArray(T (&&array)[N])
+NODELETE [[nodiscard]] SUPPRESS_NODELETE constexpr std::array<std::remove_cv_t<T>, N> toArray(T (&&array)[N])
     noexcept(std::is_nothrow_move_constructible_v<T>)
 {
     return std::to_array<T>(WTF::move(array)); // NOLINT(runtime/wtf_to_array)
@@ -1042,7 +1042,7 @@ T& reinterpretCastSpanStartTo(std::span<U, Extent> span)
 enum class IgnoreTypeChecks : bool { No, Yes };
 
 template<IgnoreTypeChecks ignoreTypeChecks = IgnoreTypeChecks::No, typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-SUPPRESS_NODELETE bool LEGACY_NODELETE equalSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
+NODELETE SUPPRESS_NODELETE bool equalSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
 {
     static_assert(sizeof(T) == sizeof(U));
     static_assert(ignoreTypeChecks == IgnoreTypeChecks::Yes || std::has_unique_object_representations_v<T>);
@@ -1055,7 +1055,7 @@ SUPPRESS_NODELETE bool LEGACY_NODELETE equalSpans(std::span<T, TExtent> a, std::
 }
 
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-SUPPRESS_NODELETE bool LEGACY_NODELETE spanHasPrefix(std::span<T, TExtent> span, std::span<U, UExtent> prefix)
+NODELETE SUPPRESS_NODELETE bool spanHasPrefix(std::span<T, TExtent> span, std::span<U, UExtent> prefix)
 {
     static_assert(sizeof(T) == sizeof(U));
     static_assert(std::has_unique_object_representations_v<T>);
@@ -1066,7 +1066,7 @@ SUPPRESS_NODELETE bool LEGACY_NODELETE spanHasPrefix(std::span<T, TExtent> span,
 }
 
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-SUPPRESS_NODELETE bool LEGACY_NODELETE spanHasSuffix(std::span<T, TExtent> span, std::span<U, UExtent> suffix)
+NODELETE SUPPRESS_NODELETE bool spanHasSuffix(std::span<T, TExtent> span, std::span<U, UExtent> suffix)
 {
     static_assert(sizeof(T) == sizeof(U));
     static_assert(std::has_unique_object_representations_v<T>);
@@ -1077,7 +1077,7 @@ SUPPRESS_NODELETE bool LEGACY_NODELETE spanHasSuffix(std::span<T, TExtent> span,
 }
 
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-SUPPRESS_NODELETE std::strong_ordering LEGACY_NODELETE compareSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
+NODELETE SUPPRESS_NODELETE std::strong_ordering compareSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
 {
     static_assert(sizeof(T) == sizeof(U));
     static_assert(std::has_unique_object_representations_v<T>);
@@ -1138,9 +1138,9 @@ bool contains(std::span<T, TExtent> haystack, std::span<U, UExtent> needle)
     return find(haystack, needle) != notFound;
 }
 
-// memcpy() is not annotated LEGACY_NODELETE, but it runs no destructors, so the suppression is safe.
+// memcpy() is not annotated NODELETE, but it runs no destructors, so the suppression is safe.
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-SUPPRESS_NODELETE void LEGACY_NODELETE memcpySpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
+NODELETE SUPPRESS_NODELETE void memcpySpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
 {
     static_assert(sizeof(T) == sizeof(U));
     static_assert(std::is_trivially_copyable_v<T> || std::is_floating_point_v<T>);
@@ -1149,9 +1149,9 @@ SUPPRESS_NODELETE void LEGACY_NODELETE memcpySpan(std::span<T, TExtent> destinat
     memcpy(destination.data(), source.data(), source.size_bytes()); // NOLINT
 }
 
-// memmove() is not annotated LEGACY_NODELETE, but it runs no destructors, so the suppression is safe.
+// memmove() is not annotated NODELETE, but it runs no destructors, so the suppression is safe.
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-SUPPRESS_NODELETE void LEGACY_NODELETE memmoveSpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
+NODELETE SUPPRESS_NODELETE void memmoveSpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
 {
     static_assert(sizeof(T) == sizeof(U));
     static_assert(std::is_trivially_copyable_v<T> || std::is_floating_point_v<T>);
@@ -1180,9 +1180,9 @@ void zeroBytes(T& object)
     zeroSpan(asMutableByteSpan(object));
 }
 
-// memset(), memset_s() and the compiler barrier are not annotated LEGACY_NODELETE, but they run no destructors, so the suppression is safe.
+// memset(), memset_s() and the compiler barrier are not annotated NODELETE, but they run no destructors, so the suppression is safe.
 template<typename T, std::size_t Extent>
-SUPPRESS_NODELETE void LEGACY_NODELETE secureZeroSpan(std::span<T, Extent> destination)
+NODELETE SUPPRESS_NODELETE void secureZeroSpan(std::span<T, Extent> destination)
 {
     static_assert(std::is_trivially_copyable_v<T>);
 #ifdef __STDC_LIB_EXT1__
@@ -1197,7 +1197,7 @@ SUPPRESS_NODELETE void LEGACY_NODELETE secureZeroSpan(std::span<T, Extent> desti
 }
 
 // Like zeroBytes, but guaranteed not to be optimized away by the compiler.
-template<typename T> void LEGACY_NODELETE secureZeroBytes(T& object)
+template<typename T> NODELETE void secureZeroBytes(T& object)
 {
     secureZeroSpan(asMutableByteSpan(object));
 }
@@ -1299,7 +1299,7 @@ template<typename T> concept ObjectiveCObjectPointer = false;
 
 template<ObjectiveCObjectPointer T> inline T CLANG_POINTER_CONVERSION safeNSStringPrintfType(T argument) { return argument; }
 template<typename T> requires (!ObjectiveCObjectPointer<std::decay_t<T>>)
-inline decltype(auto) LEGACY_NODELETE safeNSStringPrintfType(T&& argument) { return safePrintfType(std::forward<T>(argument)); }
+NODELETE inline decltype(auto) safeNSStringPrintfType(T&& argument) { return safePrintfType(std::forward<T>(argument)); }
 
 #define SAFE_NSSTRING_PRINTF_TYPE(...) WTF_FOR_EACH(WTF::safeNSStringPrintfType, __VA_ARGS__)
 
@@ -1629,7 +1629,7 @@ template<typename Object, typename Allocator = FastMalloc> void destroyWithTrail
 }
 
 template<typename T, typename TDeleter, typename U, typename UDeleter>
-SUPPRESS_NODELETE ALWAYS_INLINE void LEGACY_NODELETE lazyInitialize(const std::unique_ptr<T, TDeleter>& ptr, const std::unique_ptr<U, UDeleter>&& obj)
+NODELETE SUPPRESS_NODELETE ALWAYS_INLINE void lazyInitialize(const std::unique_ptr<T, TDeleter>& ptr, const std::unique_ptr<U, UDeleter>&& obj)
 {
     RELEASE_ASSERT(!ptr);
     const_cast<std::unique_ptr<T, TDeleter>&>(ptr) = std::move(const_cast<std::unique_ptr<U, UDeleter>&&>(obj)); // NOLINT.

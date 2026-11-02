@@ -46,7 +46,7 @@ public:
     {
     }
 
-    const void* LEGACY_NODELETE ptr() { return m_ptr; }
+    NODELETE const void* ptr() { return m_ptr; }
 
     void print()
     {

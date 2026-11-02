@@ -35,7 +35,7 @@ namespace StringWrapperCFAllocator {
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(StringWrapperCFAllocator, WTF_INTERNAL);
     DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringWrapperCFAllocator);
 
-    static RefPtr<StringImpl>& LEGACY_NODELETE currentString()
+    NODELETE static RefPtr<StringImpl>& currentString()
     {
         static NeverDestroyed<RefPtr<StringImpl>> currentString;
         return currentString;
@@ -45,18 +45,18 @@ namespace StringWrapperCFAllocator {
         const RefPtr<StringImpl> m_stringImpl;
     };
 
-    static const void* LEGACY_NODELETE retain(const void* info)
+    NODELETE static const void* retain(const void* info)
     {
         return info;
     }
 
-    NO_RETURN_DUE_TO_ASSERT
-    static void LEGACY_NODELETE release(const void*)
+    NODELETE NO_RETURN_DUE_TO_ASSERT
+    static void release(const void*)
     {
         ASSERT_NOT_REACHED();
     }
 
-    static CFStringRef LEGACY_NODELETE copyDescription(const void*)
+    NODELETE static CFStringRef copyDescription(const void*)
     {
         return CFSTR("WTF::String-based allocator");
     }
@@ -91,7 +91,7 @@ namespace StringWrapperCFAllocator {
         }
     }
 
-    static CFIndex LEGACY_NODELETE preferredSize(CFIndex size, CFOptionFlags, void*)
+    NODELETE static CFIndex preferredSize(CFIndex size, CFOptionFlags, void*)
     {
         // FIXME: If FastMalloc provided a "good size" callback, we'd want to use it here.
         // Note that this optimization would help performance for strings created with the

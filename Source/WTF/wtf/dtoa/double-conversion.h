@@ -130,10 +130,10 @@ class DoubleToStringConverter {
   }
 
   // Returns a converter following the EcmaScript specification.
-  WTF_EXPORT_PRIVATE static const DoubleToStringConverter& LEGACY_NODELETE EcmaScriptConverter();
-  WTF_EXPORT_PRIVATE static const DoubleToStringConverter& LEGACY_NODELETE EcmaScriptConverterWithTrailingPoint();
+  NODELETE WTF_EXPORT_PRIVATE static const DoubleToStringConverter& EcmaScriptConverter();
+  NODELETE WTF_EXPORT_PRIVATE static const DoubleToStringConverter& EcmaScriptConverterWithTrailingPoint();
 
-  WTF_EXPORT_PRIVATE static const DoubleToStringConverter& LEGACY_NODELETE CSSConverter();
+  NODELETE WTF_EXPORT_PRIVATE static const DoubleToStringConverter& CSSConverter();
 
   // Computes the shortest string of digits that correctly represent the input
   // number. Depending on decimal_in_shortest_low and decimal_in_shortest_high
@@ -367,11 +367,11 @@ class DoubleToStringConverter {
   bool HandleSpecialValues(double value, StringBuilder* result_builder) const;
   // Constructs an exponential representation (i.e. 1.234e56).
   // The given exponent assumes a decimal point after the first decimal digit.
-  void LEGACY_NODELETE CreateExponentialRepresentation(std::span<const char> decimal_digits,
+  NODELETE void CreateExponentialRepresentation(std::span<const char> decimal_digits,
                                        int exponent,
                                        StringBuilder* result_builder) const;
   // Creates a decimal representation (i.e 1234.5678).
-  void LEGACY_NODELETE CreateDecimalRepresentation(std::span<const char> decimal_digits,
+  NODELETE void CreateDecimalRepresentation(std::span<const char> decimal_digits,
                                    int decimal_point,
                                    int digits_after_point,
                                    StringBuilder* result_builder) const;

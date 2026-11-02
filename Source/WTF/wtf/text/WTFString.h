@@ -53,7 +53,7 @@ WTF_EXPORT_PRIVATE float charactersToFloat(std::span<const char16_t>, bool* ok =
 WTF_EXPORT_PRIVATE float charactersToFloat(std::span<const Latin1Character>, size_t& parsedLength);
 WTF_EXPORT_PRIVATE float charactersToFloat(std::span<const char16_t>, size_t& parsedLength);
 
-template<bool isSpecialCharacter(char16_t), typename CharacterType, std::size_t Extent> bool LEGACY_NODELETE containsOnly(std::span<const CharacterType, Extent>);
+template<bool isSpecialCharacter(char16_t), typename CharacterType, std::size_t Extent> NODELETE bool containsOnly(std::span<const CharacterType, Extent>);
 
 enum class TrailingZerosPolicy : bool { Keep, Truncate };
 
@@ -139,12 +139,12 @@ public:
     char16_t codeUnitAt(unsigned index) const;
     char16_t operator[](unsigned index) const { return codeUnitAt(index); }
 
-    WTF_EXPORT_PRIVATE static String LEGACY_NODELETE number(int);
-    WTF_EXPORT_PRIVATE static String LEGACY_NODELETE number(unsigned);
-    WTF_EXPORT_PRIVATE static String LEGACY_NODELETE number(long);
-    WTF_EXPORT_PRIVATE static String LEGACY_NODELETE number(unsigned long);
-    WTF_EXPORT_PRIVATE static String LEGACY_NODELETE number(long long);
-    WTF_EXPORT_PRIVATE static String LEGACY_NODELETE number(unsigned long long);
+    NODELETE WTF_EXPORT_PRIVATE static String number(int);
+    NODELETE WTF_EXPORT_PRIVATE static String number(unsigned);
+    NODELETE WTF_EXPORT_PRIVATE static String number(long);
+    NODELETE WTF_EXPORT_PRIVATE static String number(unsigned long);
+    NODELETE WTF_EXPORT_PRIVATE static String number(long long);
+    NODELETE WTF_EXPORT_PRIVATE static String number(unsigned long long);
     WTF_EXPORT_PRIVATE static String number(float);
     WTF_EXPORT_PRIVATE static String number(double);
 
@@ -159,10 +159,10 @@ public:
     size_t find(Latin1Character character, unsigned start = 0) const { return m_impl ? m_impl->find(character, start) : notFound; }
     size_t find(char character, unsigned start = 0) const { return m_impl ? m_impl->find(character, start) : notFound; }
 
-    size_t LEGACY_NODELETE find(StringView) const;
-    size_t LEGACY_NODELETE find(StringView, unsigned start) const;
-    size_t LEGACY_NODELETE findIgnoringASCIICase(StringView) const;
-    size_t LEGACY_NODELETE findIgnoringASCIICase(StringView, unsigned start) const;
+    NODELETE size_t find(StringView) const;
+    NODELETE size_t find(StringView, unsigned start) const;
+    NODELETE size_t findIgnoringASCIICase(StringView) const;
+    NODELETE size_t findIgnoringASCIICase(StringView, unsigned start) const;
 
     template<typename CodeUnitMatchFunction>
         requires (std::is_invocable_r_v<bool, CodeUnitMatchFunction, char16_t>)
@@ -177,27 +177,27 @@ public:
     WTF_EXPORT_PRIVATE std::expected<Vector<char16_t>, UTF8ConversionError> charactersWithNullTermination() const;
     WTF_EXPORT_PRIVATE std::expected<Vector<char16_t>, UTF8ConversionError> charactersWithoutNullTermination() const;
 
-    WTF_EXPORT_PRIVATE char32_t LEGACY_NODELETE codePointAt(unsigned) const;
+    NODELETE WTF_EXPORT_PRIVATE char32_t codePointAt(unsigned) const;
 
     bool contains(char16_t character) const { return find(character) != notFound; }
     bool contains(ASCIILiteral literal) const { return find(literal) != notFound; }
-    bool LEGACY_NODELETE contains(StringView) const;
+    NODELETE bool contains(StringView) const;
     template<typename CodeUnitMatchFunction>
         requires (std::is_invocable_r_v<bool, CodeUnitMatchFunction, char16_t>)
     bool contains(CodeUnitMatchFunction matchFunction) const { return find(matchFunction, 0) != notFound; }
-    bool LEGACY_NODELETE containsIgnoringASCIICase(StringView) const;
-    bool LEGACY_NODELETE containsIgnoringASCIICase(StringView, unsigned start) const;
+    NODELETE bool containsIgnoringASCIICase(StringView) const;
+    NODELETE bool containsIgnoringASCIICase(StringView, unsigned start) const;
 
-    bool LEGACY_NODELETE startsWith(StringView) const;
-    bool LEGACY_NODELETE startsWithIgnoringASCIICase(StringView) const;
+    NODELETE bool startsWith(StringView) const;
+    NODELETE bool startsWithIgnoringASCIICase(StringView) const;
     bool startsWith(char16_t character) const { return m_impl && m_impl->startsWith(character); }
-    bool LEGACY_NODELETE hasInfixStartingAt(StringView prefix, unsigned start) const;
+    NODELETE bool hasInfixStartingAt(StringView prefix, unsigned start) const;
 
-    bool LEGACY_NODELETE endsWith(StringView) const;
-    bool LEGACY_NODELETE endsWithIgnoringASCIICase(StringView) const;
+    NODELETE bool endsWith(StringView) const;
+    NODELETE bool endsWithIgnoringASCIICase(StringView) const;
     bool endsWith(char16_t character) const { return m_impl && m_impl->endsWith(character); }
     bool endsWith(char character) const { return endsWith(static_cast<char16_t>(character)); }
-    bool LEGACY_NODELETE hasInfixEndingAt(StringView suffix, unsigned end) const;
+    NODELETE bool hasInfixEndingAt(StringView suffix, unsigned end) const;
 
     [[nodiscard]] String substring(unsigned position, unsigned length = MaxLength) const;
     [[nodiscard]] WTF_EXPORT_PRIVATE String substringSharingImpl(unsigned position, unsigned length = MaxLength) const;
@@ -245,7 +245,7 @@ public:
     [[nodiscard]] WTF_EXPORT_PRIVATE String isolatedCopy() const &;
     [[nodiscard]] WTF_EXPORT_PRIVATE String isolatedCopy() &&;
 
-    WTF_EXPORT_PRIVATE bool LEGACY_NODELETE isSafeToSendToAnotherThread() const;
+    NODELETE WTF_EXPORT_PRIVATE bool isSafeToSendToAnotherThread() const;
 
     // Prevent Strings from being implicitly convertable to bool as it will be ambiguous on any platform that
     // allows implicit conversion to another pointer type (e.g., Mac allows implicit conversion to NSString *).
@@ -347,8 +347,8 @@ inline bool operator==(const String& a, const String& b) { return equal(a.impl()
 inline bool operator==(const String& a, ASCIILiteral b) { return equal(a.impl(), b); }
 template<size_t inlineCapacity> inline bool operator==(const String& a, const Vector<char, inlineCapacity>& b) { return b == a; }
 
-bool LEGACY_NODELETE equalIgnoringASCIICase(const String&, const String&);
-bool LEGACY_NODELETE equalIgnoringASCIICase(const String&, ASCIILiteral);
+NODELETE bool equalIgnoringASCIICase(const String&, const String&);
+NODELETE bool equalIgnoringASCIICase(const String&, ASCIILiteral);
 
 bool equalLettersIgnoringASCIICase(const String&, ASCIILiteral);
 bool startsWithLettersIgnoringASCIICase(const String&, ASCIILiteral);
@@ -569,12 +569,12 @@ inline bool equalLettersIgnoringASCIICase(const String& string, ASCIILiteral lit
     return equalLettersIgnoringASCIICase(string.impl(), literal);
 }
 
-inline bool LEGACY_NODELETE equalIgnoringASCIICase(const String& a, const String& b)
+NODELETE inline bool equalIgnoringASCIICase(const String& a, const String& b)
 {
     return equalIgnoringASCIICase(a.impl(), b.impl());
 }
 
-inline bool LEGACY_NODELETE equalIgnoringASCIICase(const String& a, ASCIILiteral b)
+NODELETE inline bool equalIgnoringASCIICase(const String& a, ASCIILiteral b)
 {
     return equalIgnoringASCIICase(a.impl(), b);
 }

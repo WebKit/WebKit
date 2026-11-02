@@ -66,7 +66,7 @@ class DiyFp {
 
 
   // this = this * other.
-  void LEGACY_NODELETE Multiply(const DiyFp& other);
+  NODELETE void Multiply(const DiyFp& other);
 
   // returns a * b;
   static DiyFp Times(const DiyFp& a, const DiyFp& b) {

@@ -42,7 +42,7 @@ enum class Replacement : bool { None, ReplaceInvalidSequences };
 template<Replacement = Replacement::None, typename CharacterType> static char32_t next(std::span<const CharacterType>, size_t& offset);
 template<typename CharacterType> static bool append(std::span<CharacterType>, size_t& offset, char32_t character);
 
-template<> char32_t LEGACY_NODELETE next<Replacement::None, Latin1Character>(std::span<const Latin1Character> characters, size_t& offset)
+template<> NODELETE char32_t next<Replacement::None, Latin1Character>(std::span<const Latin1Character> characters, size_t& offset)
 {
     return characters[offset++];
 }
@@ -61,28 +61,28 @@ template<> char32_t next<Replacement::ReplaceInvalidSequences, char8_t>(std::spa
     return character;
 }
 
-template<> char32_t LEGACY_NODELETE next<Replacement::None, char16_t>(std::span<const char16_t> characters, size_t& offset)
+template<> NODELETE char32_t next<Replacement::None, char16_t>(std::span<const char16_t> characters, size_t& offset)
 {
     char32_t character;
     U16_NEXT(characters, offset, characters.size(), character);
     return U_IS_SURROGATE(character) ? sentinelCodePoint : character;
 }
 
-template<> char32_t LEGACY_NODELETE next<Replacement::ReplaceInvalidSequences, char16_t>(std::span<const char16_t> characters, size_t& offset)
+template<> NODELETE char32_t next<Replacement::ReplaceInvalidSequences, char16_t>(std::span<const char16_t> characters, size_t& offset)
 {
     char32_t character;
     U16_NEXT_OR_FFFD(characters, offset, characters.size(), character);
     return character;
 }
 
-template<> bool LEGACY_NODELETE append<char8_t>(std::span<char8_t> characters, size_t& offset, char32_t character)
+template<> NODELETE bool append<char8_t>(std::span<char8_t> characters, size_t& offset, char32_t character)
 {
     UBool sawError = false;
     U8_APPEND(characters, offset, characters.size(), character, sawError);
     return sawError;
 }
 
-template<> bool LEGACY_NODELETE append<char16_t>(std::span<char16_t> characters, size_t& offset, char32_t character)
+template<> NODELETE bool append<char16_t>(std::span<char16_t> characters, size_t& offset, char32_t character)
 {
     UBool sawError = false;
     U16_APPEND(characters, offset, characters.size(), character, sawError);
@@ -168,7 +168,7 @@ CheckedUTF8 checkUTF8(std::span<const char8_t> source)
 }
 
 template<typename CharacterTypeA, typename CharacterTypeB>
-SUPPRESS_NODELETE bool LEGACY_NODELETE equalInternal(std::span<CharacterTypeA> a, std::span<CharacterTypeB> b)
+NODELETE SUPPRESS_NODELETE bool equalInternal(std::span<CharacterTypeA> a, std::span<CharacterTypeB> b)
 {
     size_t offsetA = 0;
     size_t offsetB = 0;

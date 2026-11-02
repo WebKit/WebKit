@@ -506,15 +506,15 @@ private:
     
     WTF_EXPORT_PRIVATE void mergeSlow(const BitVector& other);
     WTF_EXPORT_PRIVATE void filterSlow(const BitVector& other);
-    WTF_EXPORT_PRIVATE void LEGACY_NODELETE excludeSlow(const BitVector& other);
+    NODELETE WTF_EXPORT_PRIVATE void excludeSlow(const BitVector& other);
     
-    WTF_EXPORT_PRIVATE size_t LEGACY_NODELETE bitCountSlow() const;
+    NODELETE WTF_EXPORT_PRIVATE size_t bitCountSlow() const;
     WTF_EXPORT_PRIVATE bool isEmptySlow() const;
     
     WTF_EXPORT_PRIVATE bool equalsSlowCase(const BitVector& other) const;
     bool equalsSlowCaseFast(const BitVector& other) const;
-    bool LEGACY_NODELETE equalsSlowCaseSimple(const BitVector& other) const;
-    WTF_EXPORT_PRIVATE uintptr_t LEGACY_NODELETE hashSlowCase() const;
+    NODELETE bool equalsSlowCaseSimple(const BitVector& other) const;
+    NODELETE WTF_EXPORT_PRIVATE uintptr_t hashSlowCase() const;
     
     std::span<uintptr_t> words() LIFETIME_BOUND
     {

@@ -215,7 +215,7 @@ std::pair<FileHandle, String> createTemporaryFileInDirectory(const String& direc
 }
 
 #ifdef IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES
-static int LEGACY_NODELETE toIOPolicyScope(PolicyScope scope)
+NODELETE static int toIOPolicyScope(PolicyScope scope)
 {
     switch (scope) {
     case PolicyScope::Process:

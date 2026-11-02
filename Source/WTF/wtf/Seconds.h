@@ -110,14 +110,14 @@ public:
     bool isInfinity() const { return std::isinf(m_value); }
     bool isFinite() const { return std::isfinite(m_value); }
 
-    explicit constexpr LEGACY_NODELETE operator bool() const { return !!m_value; }
+    NODELETE explicit constexpr operator bool() const { return !!m_value; }
     
-    constexpr Seconds LEGACY_NODELETE operator+(Seconds other) const
+    NODELETE constexpr Seconds operator+(Seconds other) const
     {
         return Seconds(value() + other.value());
     }
     
-    constexpr Seconds LEGACY_NODELETE operator-(Seconds other) const
+    NODELETE constexpr Seconds operator-(Seconds other) const
     {
         return Seconds(value() - other.value());
     }
@@ -190,19 +190,19 @@ public:
         return *this = *this % other;
     }
     
-    WTF_EXPORT_PRIVATE WallTime LEGACY_NODELETE operator+(WallTime) const;
-    WTF_EXPORT_PRIVATE MonotonicTime LEGACY_NODELETE operator+(MonotonicTime) const;
-    WTF_EXPORT_PRIVATE ApproximateTime LEGACY_NODELETE operator+(ApproximateTime) const;
-    WTF_EXPORT_PRIVATE ContinuousTime LEGACY_NODELETE operator+(ContinuousTime) const;
-    WTF_EXPORT_PRIVATE ContinuousApproximateTime LEGACY_NODELETE operator+(ContinuousApproximateTime) const;
-    WTF_EXPORT_PRIVATE TimeWithDynamicClockType LEGACY_NODELETE operator+(const TimeWithDynamicClockType&) const;
+    NODELETE WTF_EXPORT_PRIVATE WallTime operator+(WallTime) const;
+    NODELETE WTF_EXPORT_PRIVATE MonotonicTime operator+(MonotonicTime) const;
+    NODELETE WTF_EXPORT_PRIVATE ApproximateTime operator+(ApproximateTime) const;
+    NODELETE WTF_EXPORT_PRIVATE ContinuousTime operator+(ContinuousTime) const;
+    NODELETE WTF_EXPORT_PRIVATE ContinuousApproximateTime operator+(ContinuousApproximateTime) const;
+    NODELETE WTF_EXPORT_PRIVATE TimeWithDynamicClockType operator+(const TimeWithDynamicClockType&) const;
     
-    WTF_EXPORT_PRIVATE WallTime LEGACY_NODELETE operator-(WallTime) const;
-    WTF_EXPORT_PRIVATE MonotonicTime LEGACY_NODELETE operator-(MonotonicTime) const;
-    WTF_EXPORT_PRIVATE ApproximateTime LEGACY_NODELETE operator-(ApproximateTime) const;
-    WTF_EXPORT_PRIVATE ContinuousTime LEGACY_NODELETE operator-(ContinuousTime) const;
-    WTF_EXPORT_PRIVATE ContinuousApproximateTime LEGACY_NODELETE operator-(ContinuousApproximateTime) const;
-    WTF_EXPORT_PRIVATE TimeWithDynamicClockType LEGACY_NODELETE operator-(const TimeWithDynamicClockType&) const;
+    NODELETE WTF_EXPORT_PRIVATE WallTime operator-(WallTime) const;
+    NODELETE WTF_EXPORT_PRIVATE MonotonicTime operator-(MonotonicTime) const;
+    NODELETE WTF_EXPORT_PRIVATE ApproximateTime operator-(ApproximateTime) const;
+    NODELETE WTF_EXPORT_PRIVATE ContinuousTime operator-(ContinuousTime) const;
+    NODELETE WTF_EXPORT_PRIVATE ContinuousApproximateTime operator-(ContinuousApproximateTime) const;
+    NODELETE WTF_EXPORT_PRIVATE TimeWithDynamicClockType operator-(const TimeWithDynamicClockType&) const;
     
     // FIXME: Remove this suppression once rdar://190195764 is fixed.
     SUPPRESS_MEMORY_UNSAFE_CAST friend constexpr auto operator<=>(Seconds, Seconds) = default;

@@ -43,7 +43,7 @@ public:
         unsigned callCount { 0 };
         Seconds maxDuration;
         
-        Seconds LEGACY_NODELETE meanDuration() const { return totalDuration / callCount; }
+        NODELETE Seconds meanDuration() const { return totalDuration / callCount; }
     };
 
     State() = default;

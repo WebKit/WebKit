@@ -36,7 +36,7 @@ namespace WTF {
 static bool presentingApplicationPIDOverrideWasQueried;
 #endif
 
-static std::optional<int>& LEGACY_NODELETE presentingApplicationPIDOverride()
+NODELETE static std::optional<int>& presentingApplicationPIDOverride()
 {
     static NeverDestroyed<std::optional<int>> pid;
 #if !ASSERT_MSG_DISABLED
@@ -68,7 +68,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 #endif
 
-static std::optional<AuxiliaryProcessType>& LEGACY_NODELETE auxiliaryProcessType()
+NODELETE static std::optional<AuxiliaryProcessType>& auxiliaryProcessType()
 {
     static std::optional<AuxiliaryProcessType> auxiliaryProcessType;
     return auxiliaryProcessType;
