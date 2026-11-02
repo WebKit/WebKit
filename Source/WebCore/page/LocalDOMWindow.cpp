@@ -1426,7 +1426,7 @@ int LocalDOMWindow::innerHeight() const
     if (!view)
         return 0;
 
-    return view->mapFromLayoutToCSSUnits(static_cast<int>(view->unobscuredContentRectIncludingScrollbars().height()));
+    return view->unobscuredContentSizeInCSSUnits().height();
 }
 
 int LocalDOMWindow::innerWidth() const
@@ -1446,7 +1446,7 @@ int LocalDOMWindow::innerWidth() const
     if (!view)
         return 0;
 
-    return view->mapFromLayoutToCSSUnits(static_cast<int>(view->unobscuredContentRectIncludingScrollbars().width()));
+    return view->unobscuredContentSizeInCSSUnits().width();
 }
 
 int LocalDOMWindow::screenX() const
