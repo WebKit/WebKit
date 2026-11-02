@@ -158,6 +158,8 @@ void WebExtensionAPIEvent::addListener(WebCore::FrameIdentifier frameIdentifier,
         RefPtr webExtensionControllerProxy = webPage ? webPage->webExtensionControllerProxy() : nullptr;
 
         if (webExtensionControllerProxy && webExtensionControllerProxy->inTestingMode()) {
+            webExtensionControllerProxy->addFrameWithTestListeners(*webFrame);
+
             for (Ref extensionContext : webExtensionControllerProxy->extensionContexts()) {
                 extensionContext->addFrameWithExtensionContent(*webFrame);
                 WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(*m_frameIdentifier, m_type, contentWorldType()), extensionContext->identifier());
@@ -168,6 +170,15 @@ void WebExtensionAPIEvent::addListener(WebCore::FrameIdentifier frameIdentifier,
     }
 
     WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(*m_frameIdentifier, m_type, contentWorldType()), extensionContext().identifier());
+}
+
+void WebExtensionAPIEvent::addListenersToContext(WebExtensionContextProxy& context)
+{
+    if (!m_frameIdentifier)
+        return;
+
+    for (size_t i = 0; i < m_listeners.size(); ++i)
+        WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(*m_frameIdentifier, m_type, contentWorldType()), context.identifier());
 }
 
 void WebExtensionAPIEvent::removeListener(WebCore::FrameIdentifier frameIdentifier, RefPtr<WebExtensionCallbackHandler> listener)

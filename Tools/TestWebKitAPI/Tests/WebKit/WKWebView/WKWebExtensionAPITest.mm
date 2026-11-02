@@ -463,6 +463,56 @@ TEST(WKWebExtensionAPITest, SendMessageBeforeListenerAdded)
     [manager run];
 }
 
+TEST(WKWebExtensionAPITest, TestFinishedEventListenerAddedToPageBeforeExtensionLoads)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script>browser.test.onTestFinished.addListener((data) => { document.title = data.testName }); document.title = 'Listener Added'</script>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    RetainPtr extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": @"// This script is intentionally left blank.", @"content.js": @"// This script is intentionally left blank." }]);
+    RetainPtr manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *webView = manager.get().defaultTab.webView;
+    [webView loadRequest:server.requestWithLocalhost()];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [webView.title isEqualToString:@"Listener Added"];
+    }));
+
+    [manager load];
+
+    [manager sendTestFinishedWithArgument:@{ @"testName": @"Test Finished" }];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [webView.title isEqualToString:@"Test Finished"];
+    }));
+}
+
+TEST(WKWebExtensionAPITest, TestStartedEventListenerAddedToPageAfterExtensionLoads)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script>browser.test.onTestStarted.addListener((data) => { document.title = data.testName }); document.title = 'Listener Added'</script>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    RetainPtr extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": @"// This script is intentionally left blank.", @"content.js": @"// This script is intentionally left blank." }]);
+    RetainPtr manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager load];
+
+    auto *webView = manager.get().defaultTab.webView;
+    [webView loadRequest:server.requestWithLocalhost()];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [webView.title isEqualToString:@"Listener Added"];
+    }));
+
+    [manager sendTestStartedWithArgument:@{ @"testName": @"Test Started" }];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [webView.title isEqualToString:@"Test Started"];
+    }));
+}
+
 TEST(WKWebExtensionAPITest, AddAnonymousAsyncTest)
 {
     auto *backgroundScript = Util::constructScript(@[

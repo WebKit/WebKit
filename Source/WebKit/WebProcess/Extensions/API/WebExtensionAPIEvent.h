@@ -79,6 +79,7 @@ public:
     bool hasListener(RefPtr<WebExtensionCallbackHandler>);
 
     void removeAllListeners();
+    void addListenersToContext(WebExtensionContextProxy&);
 
     virtual ~WebExtensionAPIEvent()
     {
