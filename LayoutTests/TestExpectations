@@ -8297,3 +8297,5 @@ webkit.org/b/329240 webgl/video-formats/upload-path-vp9-alpha-420-bt709-videoran
 webkit.org/b/329236 webkit.org/b/329240 webgl/video-formats/upload-path-vp9-alpha-420-bt709-videorange-mse.html [ Failure ]
 webkit.org/b/329236 webgl/video-formats/upload-path-vp9-p0-420-bt709-videorange-mse.html [ Failure ]
 webkit.org/b/329235 webgl/video-formats/upload-path-vp9-p2-420-10bit-pq-videorange-mse.html [ Failure ]
+
+[ Debug ] ipc/restrictedendpoints/deny-oversized-writeBufferWithCopy.html [ Skip ]

@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "Logging.h"
 #include "RemoteBufferProxy.h"
 #include "RemoteGPU.h"
 #include "RemoteQueueMessages.h"
@@ -45,6 +46,8 @@
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/VideoFrame.h>
 #endif
+
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
 
 namespace WebKit {
 
@@ -141,6 +144,7 @@ void RemoteQueue::writeBufferWithCopy(
     if (!convertedBuffer)
         return;
 
+    MESSAGE_CHECK(data.size() <= WebGPU::maxCrossProcessResourceCopySize);
     protect(m_backing)->writeBuffer(protect(*convertedBuffer), bufferOffset, data.span());
 }
 
@@ -178,6 +182,7 @@ void RemoteQueue::writeTextureWithCopy(
     if (!convertedDestination)
         return;
 
+    MESSAGE_CHECK(data.size() <= WebGPU::maxCrossProcessResourceCopySize);
     protect(m_backing)->writeTexture(*convertedDestination, data.span(), dataLayout, size);
 }
 

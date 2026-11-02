@@ -1,0 +1,158 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=false WebGPUEnabled=true runSingly=true ] -->
+<title>Test that RemoteQueue::WriteBufferWithCopy() rejects a payload at or above WGPU_LARGE_BUFFER_SIZE</title>
+<body>
+<pre id="log"></pre>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+
+function log(s)
+{
+    document.getElementById('log').textContent += s + '\n';
+}
+
+function finish(s)
+{
+    log(s);
+    testRunner?.notifyDone();
+}
+
+// rdar://185199742: RemoteQueue::writeBufferWithCopy()/writeTextureWithCopy() alias their Vector<uint8_t>
+// argument in a no-copy MTLBuffer once it is WGPU_LARGE_BUFFER_SIZE (32MiB) or larger, and the caller-owned
+// storage does not outlive that use. RemoteQueueProxy never legitimately constructs *WithCopy with a
+// payload this large (it routes anything over maxCrossProcessResourceCopySize through the SharedMemory-
+// backed writeBuffer()/writeTexture() instead), so a payload this large can only come from a compromised
+// WebContent process. The fix is a MESSAGE_CHECK that treats it as exactly that: this test passes if the
+// GPU process is torn down before the fallback timeout below fires, mirroring
+// ipc/restrictedendpoints/deny-access-webGPU.html's pattern for the same reason it gives (the test runner
+// cannot directly observe a subprocess crash, so ending the test early stands in for it).
+async function run()
+{
+    if (!window.IPC)
+        return finish('PASS');
+
+    const { CoreIPC, ArgumentSerializer } = await import('../../../ipc/coreipc.js');
+    CoreIPC.default_timeout = 30;
+
+    if (!await navigator.gpu?.requestAdapter())
+        return finish('PASS');
+
+    let nextId = (Math.floor(Math.random() * 100000) + 1) * 100000;
+    const freshId = () => ++nextId;
+
+    const renderingBackend = freshId();
+    const renderingBackendStream = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier: renderingBackend,
+        connectionHandle: renderingBackendStream,
+    });
+    const didInitialize = renderingBackendStream.connection.waitForMessage(renderingBackend, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 5);
+    if (!didInitialize)
+        return finish('PASS');
+    renderingBackendStream.connection.setSemaphores(didInitialize[0].value, didInitialize[1].value);
+
+    const gpu = freshId();
+    const gpuStream = CoreIPC.newStreamConnection();
+    // CoreIPC.newStreamConnection()'s 100ms default local wait timeout is too short for constructing and
+    // sending a 32MiB+ Vector<uint8_t>; swap in a longer one the same way the (now-removed)
+    // sar3/ipc/webgpu-queue-writebufferwithcopy-large-payload.html did.
+    {
+        const [longTimeoutConnection, longTimeoutHandle] = IPC.createStreamClientConnection(14, 30);
+        longTimeoutConnection.open();
+        gpuStream.connection = longTimeoutConnection;
+        gpuStream.handle = longTimeoutHandle;
+    }
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateGPU(0, {
+        identifier: gpu,
+        renderingBackendIdentifier: renderingBackend,
+        serverConnection: gpuStream,
+    });
+    const wasCreated = gpuStream.connection.waitForMessage(gpu, IPC.messages.RemoteGPUProxy_WasCreated.name, 5);
+    if (!wasCreated)
+        return finish('PASS');
+    gpuStream.connection.setSemaphores(wasCreated[1].value, wasCreated[2].value);
+
+    function requestAdapter()
+    {
+        let gotAdapter = false;
+        const adapter = freshId();
+        gpuStream.newInterface('RemoteGPU', gpu).RequestAdapter({
+            options: { powerPreference: {}, forceFallbackAdapter: false, xrCompatible: false },
+            identifier: adapter,
+        }, () => { gotAdapter = true; });
+        return gotAdapter ? adapter : null;
+    }
+
+    const adapter = requestAdapter();
+    if (!adapter)
+        return finish('PASS');
+
+    const device = freshId();
+    const queueId = freshId();
+    let gotDevice = false;
+    gpuStream.newInterface('RemoteAdapter', adapter).RequestDevice({
+        deviceDescriptor: { label: '', requiredFeatures: [], requiredLimits: [] },
+        identifier: device,
+        queueIdentifier: queueId,
+    }, () => { gotDevice = true; });
+    if (!gotDevice)
+        return finish('PASS');
+    const remoteDevice = gpuStream.newInterface('RemoteDevice', device);
+
+    function alias(typeName, value)
+    {
+        return IPC.serializedTypeInfo[typeName] ? { alias: value } : value;
+    }
+
+    // A trivially small, otherwise-unremarkable buffer: writeBufferWithCopy()'s MESSAGE_CHECK on the
+    // *data* size runs before anything about the target buffer's own size or usage is considered.
+    const targetBuffer = freshId();
+    remoteDevice.CreateBuffer({
+        descriptor: {
+            label: '',
+            size: alias('WebCore::WebGPU::Size64', 4),
+            usage: alias('WebCore::WebGPU::BufferUsageFlags', 8 /* CopyDestination */),
+            mappedAtCreation: false,
+        },
+        identifier: targetBuffer,
+    });
+
+    // Exactly WGPU_LARGE_BUFFER_SIZE: the MESSAGE_CHECK is `data.size() < WGPU_LARGE_BUFFER_SIZE`, so this
+    // is the smallest payload guaranteed to fail it.
+    const oversizedData = new Uint8Array(33554432);
+    const writeBufferWithCopyDefinition = CoreIPC.messages['RemoteQueue_WriteBufferWithCopy'];
+    // A raw Uint8Array tuple element needs an explicit uint64_t length prefix immediately ahead of it:
+    // encodeTypedArray() (IPCTestingAPI.cpp) omits the size prefix that ArgumentCoder<std::span<T>>
+    // normally writes for a dynamic-extent span, and encodeArrayArgument()'s Tuple mode just concatenates
+    // each tuple element's bytes with no boundary markers, so the prefix has to be supplied separately.
+    gpuStream.connection.sendMessage(queueId, writeBufferWithCopyDefinition.name, [
+        ArgumentSerializer.serializeArgument(writeBufferWithCopyDefinition.arguments[0], targetBuffer),
+        ArgumentSerializer.serializeArgument(writeBufferWithCopyDefinition.arguments[1], alias('WebCore::WebGPU::Size64', 0)),
+        { value: oversizedData.length, type: 'uint64_t' },
+        oversizedData,
+    ]);
+
+    // WriteBufferWithCopy doesn't reply, so there's nothing to await for it directly. Force a round trip
+    // on the same stream instead, so this script doesn't reach the "PASS" log (and arm the fallback
+    // timeout) until the GPU process has had a chance to act on the message above: if it terminated while
+    // processing it, this synchronous call simply never returns, matching how
+    // ipc/restrictedendpoints/deny-access-webGPU.html uses syncFlush() for the same purpose.
+    requestAdapter();
+
+    // RemoteGPU::didReceiveInvalidMessage() (the client callback StreamServerConnection::
+    // dispatchDidReceiveInvalidMessage() invokes once MESSAGE_CHECK fails) calls
+    // GPUConnectionToWebProcess::terminateWebProcess() via callOnMainRunLoop(), which then has to
+    // round-trip through the UI process to actually kill this WebContent process. Give that real
+    // latency room instead of the 1s deny-access-webGPU.html gets away with for its more direct check.
+    //
+    // FIXME: as in deny-access-webGPU.html, the test runner cannot directly observe a GPU process
+    // terminating, so this is a fallback in case that isn't detected: the failure signature is this FAIL
+    // text showing up in actual output instead of termination ending the test first.
+    setTimeout(() => finish('FAIL: test runner should have detected the GPU process terminating.'), 15000);
+    log('PASS: will pass if the test runner ends the test prematurely due to the GPU process terminating.');
+}
+
+run().catch((error) => finish(`FAIL: ${error}`));
+</script>
+</body>
+</html>
