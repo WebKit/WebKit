@@ -2638,7 +2638,7 @@ void WebPage::loadDataInFrame(std::span<const uint8_t> data, String&& type, Stri
     ASSERT(&mainWebFrame() != frame);
 
     Ref sharedBuffer = SharedBuffer::create(data);
-    ResourceResponse response(URL { baseURL }, WTF::move(type), sharedBuffer->size(), WTF::move(encodingName));
+    auto response = ResourceResponse::responseForMIMEType(URL { baseURL }, type, sharedBuffer->size(), encodingName);
     SubstituteData substituteData(WTF::move(sharedBuffer), URL { baseURL }, WTF::move(response), SubstituteData::SessionHistoryVisibility::Hidden);
     m_pendingAgentClusterAssignment = agentClusterAssignment;
     auto pendingAgentClusterAssignmentScope = makeScopeExit([this] {
@@ -2869,7 +2869,7 @@ void WebPage::loadData(LoadParameters&& loadParameters)
     if (loadParameters.isServiceWorkerLoad && corePage())
         corePage()->markAsServiceWorkerPage();
 
-    ResourceResponse response(URL(), WTF::move(loadParameters.MIMEType), sharedBuffer->size(), WTF::move(loadParameters.encodingName));
+    auto response = ResourceResponse::responseForMIMEType(URL(), loadParameters.MIMEType, sharedBuffer->size(), loadParameters.encodingName);
     m_pendingAgentClusterAssignment = loadParameters.agentClusterAssignment;
     auto pendingAgentClusterAssignmentScope = makeScopeExit([this] {
         m_pendingAgentClusterAssignment = std::nullopt;
@@ -2891,7 +2891,7 @@ void WebPage::loadAlternateHTML(LoadParameters&& loadParameters)
     }
     protect(m_mainFrame->coreLocalFrame()->loader())->setProvisionalLoadErrorBeingHandledURL(provisionalLoadErrorURL);
 
-    ResourceResponse response(URL(), WTF::move(loadParameters.MIMEType), sharedBuffer->size(), WTF::move(loadParameters.encodingName));
+    auto response = ResourceResponse::responseForMIMEType(URL(), loadParameters.MIMEType, sharedBuffer->size(), loadParameters.encodingName);
     m_pendingAgentClusterAssignment = loadParameters.agentClusterAssignment;
     auto pendingAgentClusterAssignmentScope = makeScopeExit([this] {
         m_pendingAgentClusterAssignment = std::nullopt;

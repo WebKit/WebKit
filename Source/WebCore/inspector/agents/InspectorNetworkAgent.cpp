@@ -47,6 +47,7 @@
 #include "FrameLoader.h"
 #include "HTTPHeaderMap.h"
 #include "HTTPHeaderNames.h"
+#include "HTTPParsers.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorNetworkIntercept.h"
 #include "InspectorResourceType.h"
@@ -1029,7 +1030,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRes
     if (!!statusText)
         overrideResponse.setHTTPStatusText(String { statusText });
     if (!!mimeType)
-        overrideResponse.setMimeType(String { mimeType });
+        overrideResponse.setMimeType(extractMIMETypeFromMediaType(mimeType));
     if (headers) {
         HTTPHeaderMap explicitHeaders;
         for (auto& header : *headers) {

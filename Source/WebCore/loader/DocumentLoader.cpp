@@ -2039,7 +2039,7 @@ URL DocumentLoader::documentURL() const
 // FIXME: This method seems to violate the encapsulation of this class.
 void DocumentLoader::setResponseMIMEType(const String& responseMIMEType)
 {
-    m_response.setMimeType(String { responseMIMEType });
+    m_response.setMimeType(extractMIMETypeFromMediaType(responseMIMEType));
 }
 
 #endif

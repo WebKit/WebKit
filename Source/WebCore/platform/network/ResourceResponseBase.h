@@ -233,6 +233,7 @@ public:
     WEBCORE_EXPORT bool containsInvalidHTTPHeaders() const;
 
     WEBCORE_EXPORT static ResourceResponse dataURLResponse(const URL&, const DataURLDecoder::Result&);
+    WEBCORE_EXPORT static ResourceResponse responseForMIMEType(URL&&, const String& mimeType, long long expectedLength, const String& textEncodingName);
     
     WEBCORE_EXPORT ResourceResponseBase(std::optional<ResourceResponseData>&&);
     

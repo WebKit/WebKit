@@ -29,6 +29,7 @@
 #include "config.h"
 #include "ArchiveResource.h"
 
+#include "HTTPParsers.h"
 #include "SharedBuffer.h"
 #include <wtf/RunLoop.h>
 
@@ -36,8 +37,8 @@ namespace WebCore {
 
 inline ArchiveResource::ArchiveResource(Ref<FragmentedSharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response, const String& relativeFilePath)
     : SubstituteResource(URL { url }, ResourceResponse { response }, WTF::move(data))
-    , m_mimeType(mimeType)
-    , m_textEncoding(textEncoding)
+    , m_mimeType(extractMIMETypeFromMediaType(mimeType))
+    , m_textEncoding(textEncoding.isEmpty() ? extractCharsetFromMediaType(mimeType).toString() : textEncoding)
     , m_frameName(frameName)
     , m_relativeFilePath(relativeFilePath)
     , m_shouldIgnoreWhenUnarchiving(false)

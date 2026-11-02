@@ -2509,7 +2509,7 @@ static RetainPtr<NSURL> createUniqueWebDataURL()
 
     WebCore::ResourceRequest request(absoluteBaseURL.get());
 
-    WebCore::ResourceResponse response(responseURL.get(), MIMEType, [data length], encodingName);
+    auto response = WebCore::ResourceResponse::responseForMIMEType(responseURL.get(), MIMEType, [data length], encodingName);
     WebCore::SubstituteData substituteData(WebCore::SharedBuffer::create(data), [unreachableURL absoluteURL], WTF::move(response), WebCore::SubstituteData::SessionHistoryVisibility::Hidden);
 
     RefPtr coreFrame = _private->coreFrame.get();

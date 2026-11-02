@@ -25,6 +25,7 @@
 
 #include "HTMLMetaCharsetParser.h"
 #include "HTMLNames.h"
+#include "HTTPParsers.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include <pal/text/TextCodec.h>
@@ -240,13 +241,13 @@ auto KanjiCode::judge(std::span<const uint8_t> string) -> Type
 
 TextResourceDecoder::ContentType TextResourceDecoder::contentTypeForMIMEType(const String& mimeType)
 {
-    // FIXME: The MIME type should have been canonicalized by now, but libsoup and responses that clients
-    // construct, such as for loadSimulatedRequest, can still pass it on in mixed case.
-    if (equalLettersIgnoringASCIICase(mimeType, "text/css"_s))
+    ASSERT(mimeType == extractMIMETypeFromMediaType(mimeType));
+
+    if (mimeType == "text/css"_s)
         return ContentType::CSS;
-    if (equalLettersIgnoringASCIICase(mimeType, "text/html"_s))
+    if (mimeType == "text/html"_s)
         return ContentType::HTML;
-    if (MIMETypeRegistry::isXMLMIMEType(mimeType) || equalLettersIgnoringASCIICase(mimeType, "text/xsl"_s))
+    if (MIMETypeRegistry::isXMLMIMEType(mimeType) || mimeType == "text/xsl"_s)
         return ContentType::XML;
     return ContentType::PlainText;
 }

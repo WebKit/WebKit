@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_jpg.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_mimeheader_01.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_mimeheader_02.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_mimeheader_03.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_png.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_txt.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_xml.html

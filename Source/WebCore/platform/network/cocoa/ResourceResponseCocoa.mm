@@ -170,10 +170,15 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
 
         if (m_initLevel < CommonFieldsOnly) {
             m_url = [m_nsResponse URL];
-            m_mimeType = [m_nsResponse MIMEType];
+            // CFNetwork only canonicalizes a MIME type it parses from a header. One that a client passes
+            // to NSURLResponse is kept as is.
+            String mimeType = [m_nsResponse MIMEType];
+            m_mimeType = extractMIMETypeFromMediaType(mimeType);
             m_expectedContentLength = [m_nsResponse expectedContentLength];
             // Stripping double quotes as a workaround for <rdar://problem/8757088>, can be removed once that is fixed.
             m_textEncodingName = stripLeadingAndTrailingDoubleQuote([m_nsResponse textEncodingName]);
+            if (m_textEncodingName.isEmpty())
+                m_textEncodingName = extractCharsetFromMediaType(mimeType).toString();
             m_httpStatusCode = messageRef ? CFHTTPMessageGetResponseStatusCode(messageRef.get()) : 0;
             if (messageRef)
                 m_httpHeaderFields = initializeHTTPHeaders(messageRef.get());

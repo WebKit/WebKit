@@ -401,7 +401,7 @@ String extractMIMETypeFromMediaType(const String& mediaType)
         typeEnd = position + 1;
     }
 
-    return mediaType.substring(typeStart, typeEnd - typeStart);
+    return mediaType.substring(typeStart, typeEnd - typeStart).convertToASCIILowercase();
 }
 
 StringView extractCharsetFromMediaType(StringView mediaType LIFETIME_BOUND)

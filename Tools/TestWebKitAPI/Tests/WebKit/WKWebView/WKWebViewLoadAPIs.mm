@@ -75,12 +75,39 @@ TEST(WKWebView, LoadSimulatedRequestUsingResponseData)
 
     [webView loadSimulatedRequest:loadRequest response:response.get() responseData:data];
     [delegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ("text/html", [webView stringByEvaluatingJavaScript:@"document.contentType"]);
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // FIXME(223658): Remove this once adopters have moved to the final API.
     [webView loadSimulatedRequest:loadRequest withResponse:response.get() responseData:data];
 ALLOW_DEPRECATED_DECLARATIONS_END
     [delegate waitForDidFinishNavigation];
+}
+
+TEST(WKWebView, LoadMIMETypeWithParameters)
+{
+    // A MIME type that a client passes is used without changes by NSURLResponse and SubstituteData, so WebKit
+    // canonicalizes it, and takes the charset from it when there is no separate text encoding name.
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    static const char windows1252Markup[] = "<p>\xE9</p>";
+    RetainPtr data = adoptNS([[NSData alloc] initWithBytes:windows1252Markup length:strlen(windows1252Markup)]);
+    NSString *mimeType = @"Text/HTML; charset=windows-1252";
+    auto checkDocument = [&] {
+        [delegate waitForDidFinishNavigation];
+        EXPECT_WK_STREQ("text/html", [webView stringByEvaluatingJavaScript:@"document.contentType"]);
+        EXPECT_WK_STREQ("windows-1252", [webView stringByEvaluatingJavaScript:@"document.characterSet"]);
+        EXPECT_WK_STREQ("é", [webView stringByEvaluatingJavaScript:@"document.querySelector('p').textContent"]);
+    };
+
+    RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:exampleURL MIMEType:mimeType expectedContentLength:[data length] textEncodingName:nil]);
+    [webView loadSimulatedRequest:[NSURLRequest requestWithURL:exampleURL] response:response.get() responseData:data.get()];
+    checkDocument();
+
+    [webView loadData:data.get() MIMEType:mimeType characterEncodingName:@"" baseURL:exampleURL];
+    checkDocument();
 }
 
 TEST(WKWebView, LoadSimulatedRequestDelegateCallbacks)
