@@ -783,7 +783,7 @@ static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, 
         return false;
     }();
 
-    auto [renderedText, screenReaderText, hasLargeReplacedDescendant] = TextExtraction::extractRenderedText(element);
+    auto [renderedText, screenReaderText, hasLargeReplacedDescendant, sizeInDocument] = TextExtraction::extractRenderedText(element);
     return { {
         .nodeIdentifier = element.nodeIdentifier(),
         .documentIdentifier = element.document().identifier(),
@@ -803,7 +803,8 @@ static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, 
         .isInShadowTree = element.isInShadowTree(),
         .isInVisibilityAdjustmentSubtree = isInVisibilityAdjustmentSubtree,
         .hasLargeReplacedDescendant = hasLargeReplacedDescendant,
-        .hasAudibleMedia = hasAudibleMedia(element)
+        .sizeInDocument = sizeInDocument,
+        .hasAudibleMedia = hasAudibleMedia(element),
     } };
 }
 
@@ -1218,7 +1219,11 @@ static TargetedFrameContent targetedFrameContent(Document& document)
 {
     document.updateLayoutIgnorePendingStylesheets();
 
-    return { };
+    RefPtr documentElement = document.documentElement();
+    return {
+        .hasAudibleMedia = documentElement && hasAudibleMedia(*documentElement),
+        .largestReplacedContentSizes = TextExtraction::extractLargestReplacedContentSizes(document),
+    };
 }
 
 HashMap<FrameIdentifier, TargetedFrameContent> ElementTargetingController::contentForLocalFrames(const Vector<FrameIdentifier>& requestedFrameIDs)

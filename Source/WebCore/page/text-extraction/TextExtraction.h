@@ -25,10 +25,13 @@
 
 #pragma once
 
+#include <WebCore/FloatSize.h>
+#include <WebCore/IntSize.h>
 #include <WebCore/TextExtractionTypes.h>
 
 namespace WebCore {
 
+class ContainerNode;
 class Element;
 class FloatRect;
 class LocalFrame;
@@ -61,9 +64,15 @@ struct RenderedText {
     String textWithReplacedContent;
     String textWithoutReplacedContent;
     bool hasLargeReplacedDescendant { false };
+    FloatSize elementSizeInDocument;
 };
 
 RenderedText extractRenderedText(Element&);
+
+// Sizes of replaced content and background images in the container, in document coordinates. Omits sizes that another
+// size exceeds in both dimensions, since only the largest matter when checking isLargeReplacedContent().
+Vector<IntSize> extractLargestReplacedContentSizes(ContainerNode&);
+bool isLargeReplacedContent(IntSize, FloatSize elementSizeInDocument);
 
 } // namespace TextExtraction
 } // namespace WebCore

@@ -505,6 +505,7 @@ header: <WebCore/ElementTargetingTypes.h>
     bool isInShadowTree
     bool isInVisibilityAdjustmentSubtree
     bool hasLargeReplacedDescendant
+    WebCore::FloatSize sizeInDocument
     bool hasAudibleMedia
 };
 
@@ -523,6 +524,8 @@ header: <WebCore/ElementTargetingTypes.h>
 
 header: <WebCore/ElementTargetingTypes.h>
 [CustomHeader] struct WebCore::TargetedFrameContent {
+    bool hasAudibleMedia
+    Vector<WebCore::IntSize> largestReplacedContentSizes
 };
 
 header: <WebCore/RenderStyleConstants.h>

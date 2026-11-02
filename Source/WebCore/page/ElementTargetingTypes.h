@@ -28,6 +28,7 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/IntSize.h>
 #include <WebCore/NodeIdentifier.h>
 #include <WebCore/RectEdges.h>
 #include <WebCore/RenderStyleConstants.h>
@@ -76,6 +77,7 @@ struct TargetedElementInfo {
     bool isInShadowTree { false };
     bool isInVisibilityAdjustmentSubtree { false };
     bool hasLargeReplacedDescendant { false };
+    FloatSize sizeInDocument;
     bool hasAudibleMedia { false };
 };
 
@@ -94,6 +96,8 @@ struct TargetedTextSearchResult {
 };
 
 struct TargetedFrameContent {
+    bool hasAudibleMedia { false };
+    Vector<IntSize> largestReplacedContentSizes;
 };
 
 WEBCORE_EXPORT void mergeRemoteFrameContent(TargetedElementInfo&, const TargetedFrameContent&);
