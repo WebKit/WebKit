@@ -55,8 +55,8 @@ public:
         InvalidQuantifier,
     };
     static ASCIILiteral statusString(ParseStatus);
-    explicit URLFilterParser(CombinedURLFilters&);
-    ~URLFilterParser();
+    NODELETE explicit URLFilterParser(CombinedURLFilters&);
+    NODELETE ~URLFilterParser();
     ParseStatus addPattern(StringView pattern, bool patternIsCaseSensitive, uint64_t patternId);
 
 private:

@@ -51,7 +51,7 @@ public:
     static constexpr ptrdiff_t offsetOfWrapper() { return CAST_OFFSET(Derived*, ScriptWrappable*) + OBJECT_OFFSETOF(ScriptWrappable, m_wrapper); }
 
 protected:
-    WEBCORE_EXPORT ~ScriptWrappable();
+    NODELETE WEBCORE_EXPORT ~ScriptWrappable();
 
 private:
     JSC::Weak<JSC::JSObject> m_wrapper;

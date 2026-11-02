@@ -40,7 +40,7 @@ class CSSTokenizerInputStream {
     WTF_MAKE_NONCOPYABLE(CSSTokenizerInputStream);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSTokenizerInputStream, CSSTokenizerInputStream);
 public:
-    explicit CSSTokenizerInputStream(StringView string LIFETIME_BOUND);
+    NODELETE explicit CSSTokenizerInputStream(StringView string LIFETIME_BOUND);
 
     // Gets the char in the stream. Will return (NUL) kEndOfFileMarker when at the
     // end of the stream.

@@ -33,7 +33,7 @@ namespace WebCore {
 class CSSBorderImageRepeatValue final : public CSSValue {
 public:
     static Ref<CSSBorderImageRepeatValue> LEGACY_NODELETE create(CSS::BorderImageRepeat&&);
-    ~CSSBorderImageRepeatValue();
+    NODELETE ~CSSBorderImageRepeatValue();
 
     const CSS::BorderImageRepeat& repeats() const LIFETIME_BOUND { return m_repeats; }
 

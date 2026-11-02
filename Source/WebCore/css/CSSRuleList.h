@@ -44,7 +44,7 @@ public:
     virtual CSSStyleSheet* styleSheet() const = 0;
     
 protected:
-    CSSRuleList();
+    NODELETE CSSRuleList();
 };
 
 class StaticCSSRuleList final : public CSSRuleList, public RefCounted<StaticCSSRuleList> {

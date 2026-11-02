@@ -54,7 +54,7 @@ public:
     bool LEGACY_NODELETE equals(const CSSFontFaceSrcLocalValue&) const;
 
 private:
-    explicit CSSFontFaceSrcLocalValue(AtomString&&);
+    NODELETE explicit CSSFontFaceSrcLocalValue(AtomString&&);
 
     AtomString m_fontFaceName;
     WeakPtr<SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_element;

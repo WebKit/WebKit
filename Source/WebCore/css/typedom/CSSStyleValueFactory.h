@@ -57,7 +57,7 @@ public:
     static ExceptionOr<Vector<Ref<CSSStyleValue>>> vectorFromStyleValuesOrStringsForCustomProperty(Document&, const AtomString& property, FixedVector<Variant<Ref<CSSStyleValue>, String>>&&);
     static ExceptionOr<Vector<Ref<CSSStyleValue>>> vectorFromStyleValuesOrStringsForKnownProperty(Document&, CSSPropertyID, FixedVector<Variant<Ref<CSSStyleValue>, String>>&&);
 
-    ~CSSStyleValueFactory();
+    NODELETE ~CSSStyleValueFactory();
 
 protected:
     CSSStyleValueFactory() = delete;

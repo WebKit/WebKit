@@ -98,9 +98,9 @@ private:
     friend bool CSSValue::addHash(Hasher&) const;
 
     CSSPrimitiveValue(const String&, CSSUnitType);
-    CSSPrimitiveValue(double, CSSUnitType);
-    CSSPrimitiveValue(StaticCSSValueTag, double, CSSUnitType);
-    CSSPrimitiveValue(CSS::UnevaluatedCalcBase&&);
+    NODELETE CSSPrimitiveValue(double, CSSUnitType);
+    NODELETE CSSPrimitiveValue(StaticCSSValueTag, double, CSSUnitType);
+    NODELETE CSSPrimitiveValue(CSS::UnevaluatedCalcBase&&);
 
     CSSUnitType primitiveUnitType() const { return static_cast<CSSUnitType>(m_primitiveUnitType); }
     void setPrimitiveUnitType(CSSUnitType type) { m_primitiveUnitType = std::to_underlying(type); }

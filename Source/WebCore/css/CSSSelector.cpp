@@ -86,8 +86,8 @@ struct SelectorSpecificity {
     unsigned specificity { 0 };
 
     SelectorSpecificity() = default;
-    SelectorSpecificity(unsigned);
-    SelectorSpecificity(SelectorSpecificityIncrement);
+    NODELETE SelectorSpecificity(unsigned);
+    NODELETE SelectorSpecificity(SelectorSpecificityIncrement);
     SelectorSpecificity& operator+=(SelectorSpecificity);
 
     std::array<uint8_t, 3> LEGACY_NODELETE specificityTuple() const

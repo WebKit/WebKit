@@ -87,7 +87,7 @@ public:
 protected:
     friend bool CSSValue::addHash(Hasher&) const;
 
-    CSSValueContainingVector(ClassType, ValueSeparator);
+    NODELETE CSSValueContainingVector(ClassType, ValueSeparator);
     CSSValueContainingVector(ClassType, ValueSeparator, CSSValueListBuilder);
     CSSValueContainingVector(ClassType, ValueSeparator, Ref<CSSValue>);
     CSSValueContainingVector(ClassType, ValueSeparator, Ref<CSSValue>, Ref<CSSValue>);
@@ -130,7 +130,7 @@ public:
 private:
     friend void add(Hasher&, const CSSValueList&);
 
-    explicit CSSValueList(ValueSeparator);
+    NODELETE explicit CSSValueList(ValueSeparator);
     CSSValueList(ValueSeparator, CSSValueListBuilder);
     CSSValueList(ValueSeparator, Ref<CSSValue>);
     CSSValueList(ValueSeparator, Ref<CSSValue>, Ref<CSSValue>);

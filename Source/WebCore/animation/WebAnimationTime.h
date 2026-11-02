@@ -34,9 +34,9 @@ namespace WebCore {
 class WebAnimationTime {
 public:
     WebAnimationTime() = default;
-    WEBCORE_EXPORT WebAnimationTime(std::optional<Seconds>, std::optional<double>);
+    NODELETE WEBCORE_EXPORT WebAnimationTime(std::optional<Seconds>, std::optional<double>);
 
-    WEBCORE_EXPORT WebAnimationTime(const Seconds&);
+    NODELETE WEBCORE_EXPORT WebAnimationTime(const Seconds&);
     WEBCORE_EXPORT WebAnimationTime(const ReducedResolutionSeconds&);
     WebAnimationTime(const CSSNumberish&);
 
@@ -84,7 +84,7 @@ public:
 private:
     enum class Type : uint8_t { Unknown, Time, Percentage };
 
-    WebAnimationTime(Type, double);
+    NODELETE WebAnimationTime(Type, double);
 
     Type m_type { Type::Unknown };
     double m_value { 0 };

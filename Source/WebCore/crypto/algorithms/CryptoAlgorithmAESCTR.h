@@ -37,7 +37,7 @@ class CryptoAlgorithmAESCTR final : public CryptoAlgorithm {
 public:
     class CounterBlockHelper {
     public:
-        CounterBlockHelper(const Vector<uint8_t>& counterVector, size_t counterLength);
+        NODELETE CounterBlockHelper(const Vector<uint8_t>& counterVector, size_t counterLength);
 
         size_t LEGACY_NODELETE countToOverflowSaturating() const;
         Vector<uint8_t> counterVectorAfterOverflow() const;

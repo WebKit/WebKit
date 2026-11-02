@@ -42,7 +42,7 @@ public:
     CSSValueID yValue() const { return m_yValue; }
 
 private:
-    CSSBackgroundRepeatValue(CSSValueID repeatXValue, CSSValueID repeatYValue);
+    NODELETE CSSBackgroundRepeatValue(CSSValueID repeatXValue, CSSValueID repeatYValue);
 
     CSSValueID m_xValue;
     CSSValueID m_yValue;

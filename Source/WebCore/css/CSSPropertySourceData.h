@@ -43,8 +43,8 @@ namespace WebCore {
 class StyleRuleBase;
 
 struct SourceRange {
-    SourceRange();
-    SourceRange(unsigned start, unsigned end);
+    NODELETE SourceRange();
+    NODELETE SourceRange(unsigned start, unsigned end);
     unsigned LEGACY_NODELETE length() const;
 
     unsigned start;
@@ -52,9 +52,9 @@ struct SourceRange {
 };
 
 struct CSSPropertySourceData {
-    CSSPropertySourceData(const String& name, const String& value, bool important, bool disabled, bool parsedOk, const SourceRange&);
-    CSSPropertySourceData(const CSSPropertySourceData& other);
-    CSSPropertySourceData();
+    NODELETE CSSPropertySourceData(const String& name, const String& value, bool important, bool disabled, bool parsedOk, const SourceRange&);
+    NODELETE CSSPropertySourceData(const CSSPropertySourceData& other);
+    NODELETE CSSPropertySourceData();
 
     String toString() const;
     unsigned hash() const;

@@ -51,8 +51,8 @@ struct CSSSelectorParserContext {
     bool isHashTableDeletedValue : 1 { false };
 
     CSSSelectorParserContext() = default;
-    CSSSelectorParserContext(const CSSParserContext&);
-    explicit CSSSelectorParserContext(const Document&);
+    NODELETE CSSSelectorParserContext(const CSSParserContext&);
+    NODELETE explicit CSSSelectorParserContext(const Document&);
 
     friend bool operator==(const CSSSelectorParserContext&, const CSSSelectorParserContext&) = default;
 };

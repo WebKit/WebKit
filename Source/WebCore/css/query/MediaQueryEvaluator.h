@@ -32,8 +32,8 @@ namespace MQ {
 
 class MediaQueryEvaluator : public GenericMediaQueryEvaluator<MediaQueryEvaluator> {
 public:
-    MediaQueryEvaluator(const AtomString& mediaType, const Document&);
-    MediaQueryEvaluator(const AtomString& mediaType = nullAtom(), EvaluationResult mediaConditionResult = EvaluationResult::False);
+    NODELETE MediaQueryEvaluator(const AtomString& mediaType, const Document&);
+    NODELETE MediaQueryEvaluator(const AtomString& mediaType = nullAtom(), EvaluationResult mediaConditionResult = EvaluationResult::False);
 
     bool evaluate(const MediaQueryList&) const;
     bool evaluate(const MediaQuery&) const;

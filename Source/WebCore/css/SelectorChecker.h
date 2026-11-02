@@ -84,7 +84,7 @@ public:
         QueryingRules
     };
 
-    SelectorChecker(Document&);
+    NODELETE SelectorChecker(Document&);
 
     struct CheckingContext {
         CheckingContext(SelectorChecker::Mode resolvingMode)

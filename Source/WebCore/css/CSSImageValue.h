@@ -81,7 +81,7 @@ public:
     }
 
 private:
-    CSSImageValue();
+    NODELETE CSSImageValue();
     CSSImageValue(CSS::URL&&, AtomString&&);
     explicit CSSImageValue(CachedImage&);
 

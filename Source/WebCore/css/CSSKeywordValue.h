@@ -47,9 +47,9 @@ public:
 
 private:
     friend class StaticCSSValuePool;
-    CSSKeywordValue(StaticCSSValueTag, CSS::Keyword);
+    NODELETE CSSKeywordValue(StaticCSSValueTag, CSS::Keyword);
     enum ImplicitInitialValueTag { ImplicitInitialValue };
-    CSSKeywordValue(StaticCSSValueTag, ImplicitInitialValueTag);
+    NODELETE CSSKeywordValue(StaticCSSValueTag, ImplicitInitialValueTag);
 
     const CSS::Keyword m_keyword;
 };

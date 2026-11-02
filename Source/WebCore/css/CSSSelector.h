@@ -64,7 +64,7 @@ public:
     CSSSelector(CSSSelector&&);
     enum MutableSelectorCopyTag { MutableSelectorCopy };
     CSSSelector(const CSSSelector&, MutableSelectorCopyTag);
-    explicit CSSSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
+    NODELETE explicit CSSSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
 
     ~CSSSelector();
     CSSSelector& operator=(CSSSelector&&);
