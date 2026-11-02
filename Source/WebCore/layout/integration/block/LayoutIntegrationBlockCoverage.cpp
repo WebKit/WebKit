@@ -131,7 +131,10 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::RootIsFieldset;
     if (rootContainer.isHTMLMarquee())
         return BlockAvoidanceReason::RootIsMarquee;
-    if (rootContainer.type() != RenderObject::Type::BlockFlow && !rootContainer.isRenderListItem() && !rootContainer.isRenderTableCell())
+    // A text control lays out its inner text with the block formatting context and adjusts it after (RenderTextControlSingleLine::layout), and
+    // its placeholder itself (RenderTextControl::layoutExcludedChildren).
+    auto isTextControl = rootContainer.isRenderTextControl() || rootContainer.isRenderTextControlInnerBlock();
+    if (rootContainer.type() != RenderObject::Type::BlockFlow && !rootContainer.isRenderListItem() && !rootContainer.isRenderTableCell() && !isTextControl)
         return BlockAvoidanceReason::RootHasUnsupportedRenderer;
     // Percentage block sizes inside look through an anonymous block to the flex or grid container (RenderBox::skipContainingBlockForPercentHeightCalculation),
     // which the block formatting context does not give its content. A button's label has none.
@@ -334,7 +337,8 @@ static bool isLaidOutThroughRenderTree(const RenderObject& renderer)
     case RenderObject::Type::Grid:
         return true;
     case RenderObject::Type::BlockFlow:
-    case RenderObject::Type::ListItem: {
+    case RenderObject::Type::ListItem:
+    case RenderObject::Type::TextControlInnerBlock: {
         auto& blockContainer = downcast<RenderBlockFlow>(renderer);
         return blockContainer.createsNewFormattingContext() && !hasListMarker(blockContainer) && !canUseForNestedBlockLayout(blockContainer);
     }
@@ -603,7 +607,7 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(renderer);
     if (hasListMarker(renderer))
         return BlockAvoidanceReason::ContentHasListMarker;
-    if (!blockContainer || (blockContainer->type() != RenderObject::Type::BlockFlow && !blockContainer->isRenderListItem()))
+    if (!blockContainer || (blockContainer->type() != RenderObject::Type::BlockFlow && !blockContainer->isRenderListItem() && !blockContainer->isRenderTextControlInnerBlock()))
         return BlockAvoidanceReason::ContentHasUnsupportedRenderer;
     // Form controls and legends treat an auto width as fit-content (RenderBox::sizesLogicalWidthToFitContent).
     if (isAnyOf<HTMLButtonElement, HTMLInputElement, HTMLLegendElement, HTMLSelectElement, HTMLTextAreaElement>(blockContainer->element()))
@@ -690,6 +694,11 @@ static std::optional<BlockAvoidanceReason> descendantsAvoidanceReason(const Rend
     // out-of-flow box laid out by a containing block outside the root, or of a box laid out through the render tree, is not part of it.
     for (CheckedPtr<const RenderObject> descendant = rootContainer.firstChild(); descendant;) {
         CheckedPtr renderer = dynamicDowncast<RenderElement>(*descendant);
+        // Its parent lays out a box excluded from normal layout, like a text control's placeholder (RenderBlock::layoutExcludedChildren).
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(*descendant); box && box->isExcludedFromNormalLayout()) {
+            descendant = descendant->nextInPreOrderAfterChildren(&rootContainer);
+            continue;
+        }
         auto laidOutThroughRenderTree = renderer && isLaidOutThroughRenderTree(*renderer);
         if (renderer) {
             if (auto reason = laidOutThroughRenderTree ? independentFormattingContextAvoidanceReason(downcast<RenderBox>(*renderer), rootContainer) : contentAvoidanceReason(*renderer, rootContainer))
