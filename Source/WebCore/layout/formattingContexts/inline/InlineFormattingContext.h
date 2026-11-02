@@ -65,7 +65,9 @@ struct InlineLayoutResult {
 class InlineFormattingContext {
     WTF_MAKE_TZONE_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);
+    InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, const BlockLayoutState& parentBlockLayoutState, PlacedFloats&);
+    // The block formatting context the content is in lays out the block-level boxes in it, and adds them to the result it is building.
+    InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, const BlockLayoutState& parentBlockLayoutState, PlacedFloats&, BlockFormattingContext&, BlockLayoutResult&);
 
     // Nullptr signals that there was no actual inline content to lay out and no lines were generated.
     std::unique_ptr<InlineLayoutResult> layout(const ConstraintsForInlineContent&, InlineDamage* = nullptr);
@@ -91,6 +93,8 @@ public:
     const IntegrationUtils& integrationUtils() const LIFETIME_BOUND { return m_integrationUtils; }
 
 private:
+    InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, const BlockLayoutState& parentBlockLayoutState, PlacedFloats&, IntegrationUtils&&);
+
     UniqueRef<InlineLayoutResult> lineLayout(AbstractLineBuilder&, const InlineItemList&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage*, bool mayUseSimplifiedDisplayContentBuild = false);
     void layoutFloatContentOnly(const ConstraintsForInlineContent&);
 
