@@ -147,7 +147,9 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     }
 
     if (globalObject->trustedTypesEnforcement() != TrustedTypesEnforcement::None && !isTrusted) [[unlikely]] {
-        bool canCompileStrings = globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::DirectEval, programString->value(globalObject).data, *vm.emptyList);
+        auto programSource = programString->value(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        bool canCompileStrings = globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::DirectEval, programSource.data, *vm.emptyList);
         RETURN_IF_EXCEPTION(scope, { });
         if (!canCompileStrings) [[unlikely]] {
             throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_s));
@@ -157,7 +159,9 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
 
     TopCallFrameSetter topCallFrame(vm, callFrame);
     if (!globalObject->evalEnabled() && globalObject->trustedTypesEnforcement() != TrustedTypesEnforcement::EnforcedWithEvalEnabled) [[unlikely]] {
-        globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, programString->value(globalObject).data);
+        auto programSource = programString->value(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, programSource.data);
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return { };
     }
