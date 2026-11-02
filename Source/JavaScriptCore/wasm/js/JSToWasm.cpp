@@ -515,13 +515,6 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
             CCallHelpers::lowWordFor(CallFrameSlot::argumentCountIncludingThis), CCallHelpers::TrustedImm32(argumentCount() + 1)));
     }
 
-    bool haveTagRegisters = false;
-    auto materializeTagRegistersIfNeeded = [&] {
-        if (!haveTagRegisters) {
-            haveTagRegisters = true;
-            jit.emitMaterializeTagCheckRegisters();
-        }
-    };
 
     // Loop backwards so we can use the first FP/GP argument as a scratch.
     FPRReg scratchFPR = Wasm::wasmCallingConvention().fprArgs[0];
@@ -535,9 +528,8 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
         JIT_COMMENT(jit, "Arg ", i, " : ", type);
         switch (type.kind()) {
         case Wasm::TypeKind::I32: {
-            materializeTagRegistersIfNeeded();
             jit.loadValue(jsParam, scratchGPR);
-            slowPath.append(jit.branchIfNotInt32(scratchGPR));
+            slowPath.append(jit.branchIfNotInt32(scratchGPR, DoNotHaveTagRegisters));
             if (isStack) {
                 CCallHelpers::Address addr { calleeFrame.withOffset(wasmCallInfo.params[i].location.offsetFromSP()) };
                 jit.store32(scratchGPR, addr.withOffset(LowWordOffset));
@@ -548,7 +540,7 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
         }
         case Wasm::TypeKind::I64: {
             jit.loadValue(jsParam, scratchGPR);
-            slowPath.append(jit.branchIfNotCell(scratchGPR));
+            slowPath.append(jit.branchIfNotCell(scratchGPR, DoNotHaveTagRegisters));
             slowPath.append(jit.branchIfNotHeapBigInt(scratchGPR));
             if (isStack) {
                 jit.toBigInt64(scratchGPR, stackLimitGPR);
@@ -559,7 +551,6 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
                 if (wasmCallInfo.params[i].location.gpr() == scratch) {
                     scratch = GPRInfo::numberTagRegister;
                     // FIXME: In theory this only needs to restore the numberTagRegister not both but this is rare.
-                    haveTagRegisters = false;
                 }
                 jit.toBigInt64(scratchGPR, wasmCallInfo.params[i].location.gpr());
             }
@@ -575,7 +566,7 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
                 auto isNull = jit.branchIfNull(scratchGPR);
                 if (!type.isNullable())
                     slowPath.append(isNull);
-                slowPath.append(jit.branchIfNotCell(scratchGPR));
+                slowPath.append(jit.branchIfNotCell(scratchGPR, DoNotHaveTagRegisters));
 
                 jit.emitLoadStructure(scratchGPR, scratchGPR);
                 jit.loadPtr(CCallHelpers::Address(scratchGPR, Structure::classInfoOffset()), scratchGPR);
@@ -625,12 +616,11 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
         }
         case Wasm::TypeKind::F32:
         case Wasm::TypeKind::F64: {
-            materializeTagRegistersIfNeeded();
             if (!isStack)
                 scratchFPR = wasmCallInfo.params[i].location.fpr();
 
             jit.loadValue(jsParam, scratchGPR);
-            slowPath.append(jit.branchIfNotNumber(scratchGPR));
+            slowPath.append(jit.branchIfNotNumber(scratchGPR, DoNotHaveTagRegisters));
             auto isInt32 = jit.branchIfInt32(scratchGPR);
             jit.unboxDouble(scratchGPR, scratchGPR, scratchFPR);
             if (argumentType(i).isF32())
