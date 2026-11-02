@@ -367,6 +367,8 @@ macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
         storep lr, ReturnPC[sp]
         cloopCallNative temp1
     else
+        # Clear the ReturnPC slot because it's not initialized or used by the host call path.
+        storep 0, ReturnPC[sp]
         call temp1, HostFunctionPtrTag
     end
 end

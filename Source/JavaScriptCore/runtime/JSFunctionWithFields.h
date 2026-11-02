@@ -63,7 +63,7 @@ public:
         RevocableProxy = 0,
 
 #if ENABLE(WEBASSEMBLY)
-        WebAssemblySuspendingWrappedCallable = 0,
+        WebAssemblySuspendingWrappedFunction = 0,
         WebAssemblyPromisingWrappedFunction = 0,
         PromiseHandlerPinballCompletion = 0,
 #endif
