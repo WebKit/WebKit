@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: Block grid provides its first baseline to a flex container</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-baselines">
+<link rel="help" href="https://drafts.csswg.org/css-align-3/#baseline-export">
+<meta name="flags" content="ahem">
+<meta name="assert" content="A block grid container's first baseline comes from the first grid item, in row-major grid order, of the first row containing an item. A baseline-aligned flex item and an inline-flex container take their baseline from it.">
+<style>
+body { margin: 0; font: 20px/20px Ahem; }
+.ref { width: 10px; height: 100px; background: gray; }
+.flex { display: flex; position: relative; align-items: baseline; margin-bottom: 10px; }
+.fc { display: flex; }
+.line { position: relative; }
+.grid { display: grid; grid-template-columns: 100px 100px; background: lightblue; }
+.grid > div { background: yellow; }
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.fc, .inline')">
+<div id="log"></div>
+<!-- Row-major: the item in column 1 is first, even though it comes later in the document. -->
+<div class="flex">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="81">
+    <div class="grid">
+      <div style="grid-column: 2; padding-top: 3px;">A</div>
+      <div style="grid-column: 1; padding-top: 8px;">B</div>
+    </div>
+  </div>
+</div>
+<!-- The baseline comes from the first row, not from the taller second row. -->
+<div class="flex">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="79">
+    <div class="grid">
+      <div style="padding-top: 5px;">A</div>
+      <div style="font-size: 40px; line-height: 40px;">B</div>
+      <div style="grid-row: 2; font-size: 60px; line-height: 60px;">C</div>
+    </div>
+  </div>
+</div>
+<!-- Baseline of an inline-flex that contains the grid. -->
+<div class="line">
+  <div class="ref" style="display: inline-block;"></div>
+  <div class="inline" style="display: inline-flex; border-top: 4px solid;" data-offset-y="72">
+    <div class="grid" style="padding-top: 6px;">
+      <div style="padding-top: 2px;">A</div>
+    </div>
+    <div style="height: 30px; width: 5px;"></div>
+  </div>
+</div>

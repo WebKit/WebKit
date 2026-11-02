@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: the baselines of a grid are the same whichever way its content has been laid out</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-baselines">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-1/#flex-baselines">
+<link rel="help" href="https://drafts.csswg.org/css2/#inline-block">
+<meta name="assert" content="An inline-flex container (or an inline-block) is aligned by the first (or last) baseline of the grid inside it, before and after an absolutely positioned child is added to or removed from the grid or justify-content changes.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+@font-face { font-family: Ahem; src: url("/fonts/Ahem.ttf"); }
+.line {
+  font: 20px/1 Ahem;
+  margin-bottom: 20px;
+}
+#first .box { display: inline-flex; }
+#last .box { display: inline-block; }
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: 100px;
+}
+.grid > div { padding-top: 10px; }
+.abspos { position: absolute; }
+</style>
+<!-- The baseline of an inline-flex container is the first baseline of its flex item, the baseline of an inline-block is the last baseline of its last in-flow block. In both the grid supplies it. -->
+<div id="first" class="line"><div class="box"><div class="grid"><div>X</div></div></div><span>X</span></div>
+<div id="last" class="line"><div class="box"><div class="grid"><div>X</div></div></div><span>X</span></div>
+<script>
+const lines = [document.getElementById("first"), document.getElementById("last")];
+
+function check(description) {
+  for (let line of lines) {
+    let box = line.firstChild;
+    let span = line.lastChild;
+    // The baseline of the grid is 26px from its top (10px of padding plus Ahem's 16px ascent, with a 20px line height).
+    // The baseline of the span is 16px from its top, so the span sits 10px below the top of the box.
+    assert_equals(span.getBoundingClientRect().top - box.getBoundingClientRect().top, 10, line.id + " span top relative to the box, " + description);
+  }
+}
+
+promise_test(async () => {
+  await document.fonts.load("20px Ahem");
+  check("initial");
+}, "Initial grid");
+
+promise_test(async () => {
+  for (let line of lines)
+    line.firstChild.firstChild.style.justifyContent = "space-between";
+  check("space-between");
+}, "justify-content: space-between");
+
+promise_test(async () => {
+  for (let line of lines)
+    line.firstChild.firstChild.style.justifyContent = "";
+  check("normal again");
+}, "justify-content: normal again");
+
+promise_test(async () => {
+  for (let line of lines) {
+    let abspos = document.createElement("div");
+    abspos.className = "abspos";
+    line.firstChild.firstChild.appendChild(abspos);
+  }
+  check("with an absolutely positioned child");
+}, "Absolutely positioned child added");
+
+promise_test(async () => {
+  for (let line of lines)
+    line.firstChild.firstChild.lastChild.remove();
+  check("child removed");
+}, "Absolutely positioned child removed");
+</script>

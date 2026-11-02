@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: reference for a floated grid container with a stretch min-height</title>
+<style>
+.grid {
+  float: left;
+  display: grid;
+  grid-template-columns: 100px;
+  grid-template-rows: repeat(4, 50px);
+  background: grey;
+}
+.grid > div:nth-child(1) { grid-row: 1; background: green; }
+.grid > div:nth-child(2) { grid-row: 4; background: lime; }
+</style>
+<div class="grid"><div></div><div></div></div>

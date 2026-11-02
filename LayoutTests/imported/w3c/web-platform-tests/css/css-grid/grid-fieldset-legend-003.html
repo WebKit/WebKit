@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: changing the rendered legend of a grid fieldset</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/rendering.html#the-fieldset-and-legend-elements">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+body { margin: 0; }
+/* min-width: 0 replaces the UA stylesheet's min-width: min-content. */
+fieldset {
+  display: grid;
+  min-width: 0;
+  margin: 0;
+  padding: 5px;
+  border: 10px solid blue;
+  width: 300px;
+  grid-template-columns: 100px 100px;
+  grid-auto-rows: 20px;
+}
+legend { padding: 0; width: 60px; height: 10px; }
+.item { background: orange; }
+</style>
+<fieldset id="f"><legend id="first">1</legend><div class="item" id="a"></div><div class="item" id="b"></div><div class="item" id="c"></div></fieldset>
+<fieldset id="shrink-to-fit" style="float: left; clear: left; width: auto; grid-template-columns: auto"><legend style="width: 250px">L</legend><div class="item"></div></fieldset>
+<div style="display: flow-root; clear: both"><fieldset id="margin-legend"><legend style="margin-top: 15px">L</legend><div class="item"></div></fieldset></div>
+<div style="display: flow-root; clear: both"><fieldset id="margin-nolegend"><div class="item"></div></fieldset></div>
+<div><fieldset id="extrinsic" style="width: auto; height: 100px; grid-template-columns: 100px; grid-template-rows: 20px"><legend id="extrinsic-legend" style="height: auto; line-height: 20px; white-space: pre">a</legend><div class="item"></div></fieldset></div>
+<script>
+const f = document.getElementById("f");
+const first = document.getElementById("first");
+
+function rect(el) {
+  const r = el.getBoundingClientRect();
+  const c = f.getBoundingClientRect();
+  return `${r.left - c.left},${r.top - c.top} ${r.width}x${r.height}`;
+}
+
+// The fieldset's height, the rect of each legend, then the rect of each item.
+function state() {
+  const legends = Array.from(f.querySelectorAll("legend")).filter(l => getComputedStyle(l).display != "none").map(rect);
+  const items = Array.from(f.querySelectorAll(".item"), rect);
+  return [f.getBoundingClientRect().height, ...legends, ...items].join(" | ");
+}
+
+function newLegend(id) {
+  const legend = document.createElement("legend");
+  legend.id = id;
+  return legend;
+}
+
+test(() => {
+  assert_equals(state(), "70 | 15,0 60x10 | 15,15 100x20 | 115,15 100x20 | 15,35 100x20");
+
+  // A legend before the rendered one becomes the rendered legend, and the old one is a grid item.
+  const second = newLegend("second");
+  f.insertBefore(second, first);
+  assert_equals(state(), "70 | 15,0 60x10 | 15,15 60x10 | 115,15 100x20 | 15,35 100x20 | 115,35 100x20", "insert a legend before the rendered legend");
+
+  second.remove();
+  assert_equals(state(), "70 | 15,0 60x10 | 15,15 100x20 | 115,15 100x20 | 15,35 100x20", "remove it again");
+
+  first.style.display = "none";
+  assert_equals(state(), "70 | 15,15 100x20 | 115,15 100x20 | 15,35 100x20", "hide the only legend");
+
+  first.style.display = "";
+  assert_equals(state(), "70 | 15,0 60x10 | 15,15 100x20 | 115,15 100x20 | 15,35 100x20", "show it again");
+
+  first.remove();
+  assert_equals(state(), "70 | 15,15 100x20 | 115,15 100x20 | 15,35 100x20", "remove the only legend");
+
+  f.insertBefore(first, f.firstChild);
+  assert_equals(state(), "70 | 15,0 60x10 | 15,15 100x20 | 115,15 100x20 | 15,35 100x20", "insert it again");
+}, "Inserting, removing and hiding legends");
+
+// A float with an automatic width is as wide as the fieldset's intrinsic widths, which include the width of the legend (the
+// grid's tracks alone would make this fieldset 70px wide, not 280px). min-width: min-content and min-width: 0 only differ once
+// the width is specified, so the checks below toggle between the two with both an automatic and a specified width.
+test(() => {
+  const s = document.getElementById("shrink-to-fit");
+  const legend = s.querySelector("legend");
+  const item = s.querySelector(".item");
+  function state() {
+    const r = item.getBoundingClientRect();
+    const c = s.getBoundingClientRect();
+    const l = legend.getBoundingClientRect();
+    return `${c.width}x${c.height} | legend ${l.left - c.left},${l.top - c.top} ${l.width}x${l.height} | item ${r.left - c.left},${r.top - c.top} ${r.width}x${r.height}`;
+  }
+
+  assert_equals(state(), "280x50 | legend 15,0 250x10 | item 15,15 250x20", "min-width: 0");
+
+  s.style.minWidth = "min-content";
+  assert_equals(state(), "280x50 | legend 15,0 250x10 | item 15,15 250x20", "min-width: min-content");
+
+  s.style.minWidth = "0";
+  assert_equals(state(), "280x50 | legend 15,0 250x10 | item 15,15 250x20", "min-width: 0 again");
+
+  // A specified width makes the two differ. min-width: min-content is the legend's width, and with min-width: 0 the legend
+  // overflows the content box (it does not make the track of the fieldset's grid wider).
+  s.style.width = "100px";
+  assert_equals(state(), "130x50 | legend 15,0 250x10 | item 15,15 100x20", "width: 100px, min-width: 0");
+
+  s.style.minWidth = "min-content";
+  assert_equals(state(), "280x50 | legend 15,0 250x10 | item 15,15 250x20", "width: 100px, min-width: min-content");
+
+  legend.style.width = "120px";
+  assert_equals(state(), "150x50 | legend 15,0 120x10 | item 15,15 120x20", "min-width: min-content, narrower legend");
+
+  s.style.minWidth = "0";
+  assert_equals(state(), "130x50 | legend 15,0 120x10 | item 15,15 100x20", "min-width: 0, narrower legend");
+
+  s.style.width = "auto";
+  assert_equals(state(), "150x50 | legend 15,0 120x10 | item 15,15 120x20", "automatic width");
+}, "Changing the fieldset's min-width");
+
+// Chrome ignores the margin-top of a rendered legend and WebKit adds it above the fieldset, so only the fieldset without the
+// legend is checked: it has to be where a fieldset that never had a legend is.
+test(() => {
+  const withLegend = document.getElementById("margin-legend");
+  const without = document.getElementById("margin-nolegend");
+  function offset(fieldset) {
+    return fieldset.getBoundingClientRect().top - fieldset.parentNode.getBoundingClientRect().top;
+  }
+
+  assert_equals(offset(without), 0, "fieldset that never had a legend");
+  withLegend.querySelector("legend").remove();
+  assert_equals(offset(withLegend), offset(without), "fieldset after its legend with a margin-top was removed");
+  assert_equals(withLegend.querySelector(".item").getBoundingClientRect().top - withLegend.getBoundingClientRect().top, 15, "item");
+}, "Removing a legend with a margin-top");
+
+// A fieldset with an automatic width and a height, with tracks that do not depend on its content, is laid out without its
+// content being affected by a change of its children. The legend is not a grid item and still moves the items.
+test(() => {
+  const fieldset = document.getElementById("extrinsic");
+  const legend = document.getElementById("extrinsic-legend");
+  const item = fieldset.querySelector(".item");
+  function state() {
+    const c = fieldset.getBoundingClientRect();
+    const l = legend.getBoundingClientRect();
+    const r = item.getBoundingClientRect();
+    return `${c.height} | legend ${l.left - c.left},${l.top - c.top} ${l.width}x${l.height} | item ${r.left - c.left},${r.top - c.top} ${r.width}x${r.height}`;
+  }
+
+  assert_equals(state(), "130 | legend 15,0 60x20 | item 15,25 100x20");
+
+  legend.firstChild.data = "a\nb\nc";
+  assert_equals(state(), "130 | legend 15,0 60x60 | item 15,65 100x20", "the legend gets taller");
+
+  legend.firstChild.data = "a";
+  assert_equals(state(), "130 | legend 15,0 60x20 | item 15,25 100x20", "the legend gets shorter");
+}, "Changing the height of the legend of a fieldset with an automatic width and a height");
+</script>

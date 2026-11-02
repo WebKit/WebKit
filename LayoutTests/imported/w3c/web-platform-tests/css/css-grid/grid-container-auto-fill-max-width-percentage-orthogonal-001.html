@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: A percentage max-width resolves against an orthogonal containing block that has an auto height for repeat(auto-fill)</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-repeat">
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#stretch-fit-sizing">
+<link rel="match" href="grid-container-auto-fill-max-width-percentage-orthogonal-001-ref.html">
+<meta name="assert" content="The grid container's inline axis is the block axis of its vertical containing block, so its inline size resolves against the containing block's width, which does not depend on the grid's content, and the containing block having an auto height must not make it cyclic. The containing block is 500px wide, so the max-width of 50% is 250px, which is 5 columns of 50px.">
+<style>
+.containing-block {
+  writing-mode: vertical-rl;
+  width: 500px;
+}
+.grid {
+  display: grid;
+  writing-mode: horizontal-tb;
+  grid-auto-rows: 50px;
+  grid-template-columns: repeat(auto-fill, 50px);
+  max-width: 50%;
+}
+.grid > div:nth-child(1) { grid-column: 1; background: green; }
+.grid > div:nth-child(2) { grid-column: -2; background: lime; }
+</style>
+<div class="containing-block">
+  <div class="grid"><div></div><div></div></div>
+</div>

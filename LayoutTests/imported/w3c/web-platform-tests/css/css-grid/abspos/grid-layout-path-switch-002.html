@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: a grid that loses most of its items and tracks resolves lines past the end</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#abspos">
+<meta name="assert" content="After a grid with several rows of items is reduced to one item in one column, a line past the end of the grid resolves to the padding edge of the grid container.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+#grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 50px);
+  width: 400px;
+}
+#grid > div { height: 10px; }
+.abspos {
+  position: absolute;
+  inset: 0;
+  grid-column: 2 / 3;
+}
+</style>
+<div id="grid"><div id="item1"></div><div></div><div></div><div></div><div></div><div></div></div>
+<script>
+const grid = document.getElementById("grid");
+
+test(() => {
+  // The absolutely positioned child fills the first row of every track.
+  const child = document.createElement("div");
+  child.className = "abspos";
+  grid.appendChild(child);
+  assert_equals(child.offsetLeft, 50, "abspos left with 3 columns");
+  assert_equals(child.offsetWidth, 50, "abspos width with 3 columns");
+  child.remove();
+
+  while (grid.children.length > 1)
+    grid.lastChild.remove();
+  grid.style.gridTemplateColumns = "100px";
+
+  const descendant = document.createElement("div");
+  descendant.className = "abspos";
+  document.getElementById("item1").appendChild(descendant);
+  assert_equals(getComputedStyle(grid).gridTemplateColumns, "100px", "resolved columns");
+  assert_equals(descendant.offsetLeft, 100, "line 2 is the last line of the grid");
+  assert_equals(descendant.offsetWidth, 300, "line 3 does not exist, so the padding edge is used");
+}, "Lines past the end of a grid that shrank");
+</script>

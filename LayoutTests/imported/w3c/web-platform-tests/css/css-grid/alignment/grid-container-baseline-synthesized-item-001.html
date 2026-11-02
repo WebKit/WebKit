@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: Grid container baseline synthesized from a grid item without a baseline</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-baselines">
+<link rel="help" href="https://drafts.csswg.org/css-align-3/#baseline-export">
+<meta name="flags" content="ahem">
+<meta name="assert" content="A grid item without an alignment baseline provides a baseline synthesized from its border box edges, ignoring its margins, as the grid container's baseline.">
+<style>
+body { margin: 0; font: 20px/20px Ahem; }
+.ref { width: 10px; height: 100px; background: gray; }
+.flex { display: flex; position: relative; align-items: baseline; margin-bottom: 10px; }
+.last { align-items: last baseline; }
+.fc { display: flex; }
+.grid { display: grid; grid-template-columns: 100px 100px; background: lightblue; }
+.grid > div { background: yellow; }
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.fc, .inline')">
+<div id="log"></div>
+<div class="flex">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="64">
+    <div class="grid">
+      <div style="height: 30px; border: 3px solid;"></div>
+      <div style="padding-top: 20px;">B</div>
+    </div>
+  </div>
+</div>
+<div class="flex last">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="59">
+    <div class="grid">
+      <div style="padding-top: 20px;">B</div>
+      <div style="height: 30px; border: 3px solid; padding-bottom: 5px; margin-bottom: 5px;"></div>
+    </div>
+  </div>
+</div>
+<div class="flex">
+  <div class="ref"></div>
+  <div class="fc" data-offset-y="77">
+    <div class="grid" style="padding: 7px 0 0;">
+      <div style="margin-top: 4px; margin-bottom: 5px; height: 12px;"></div>
+    </div>
+  </div>
+</div>

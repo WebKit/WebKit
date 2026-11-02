@@ -1,0 +1,5 @@
+
+PASS Resolved tracks when the auto-repeat has no repetitions because it starts at the limit
+PASS Resolved tracks when the limit cuts the last repetition of the auto-repeat
+PASS Resolved tracks when the auto-repeat starts past the limit
+

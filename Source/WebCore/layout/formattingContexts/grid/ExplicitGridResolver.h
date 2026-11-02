@@ -47,15 +47,17 @@ struct AutoRepeatConstraint;
 // auto-repeat mean the track lists in style are not the explicit grid's final tracks.
 class ExplicitGridResolver {
 public:
-    static ExplicitGridTrackSizes resolve(const Style::ComputedStyle& gridContainerStyle, const AutoRepeatConstraint& inlineAxisAutoRepeatConstraint, const AutoRepeatConstraint& blockAxisAutoRepeatConstraint, LayoutUnit usedColumnGap, LayoutUnit usedRowGap);
+    // maxTracks is the most tracks the grid may have in an axis (https://drafts.csswg.org/css-grid-1/#overlarge-grids).
+    static ExplicitGridTrackSizes resolve(const Style::ComputedStyle& gridContainerStyle, const AutoRepeatConstraint& inlineAxisAutoRepeatConstraint, const AutoRepeatConstraint& blockAxisAutoRepeatConstraint, LayoutUnit usedColumnGap, LayoutUnit usedRowGap, size_t maxTracks);
 
 private:
     struct ResolveTrackSizesResult {
         Vector<Style::GridTrackSize> trackSizes;
         WTF::Range<size_t> autoRepeatTracksIndexes;
+        bool autoRepeatTruncatedByLimit { false };
     };
-    // This is clamped by the large grid limit.
-    static ResolveTrackSizesResult resolveTrackSizes(const Style::GridTemplateList&, const AutoRepeatConstraint&, LayoutUnit usedGap, Style::ZoomFactor);
+    // This is clamped by the large grid limit, maxTracks.
+    static ResolveTrackSizesResult resolveTrackSizes(const Style::GridTemplateList&, const AutoRepeatConstraint&, LayoutUnit usedGap, Style::ZoomFactor, size_t maxTracks);
 };
 
 } // namespace Layout

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: a grid that stops being laid out by the grid formatting context is not affected by its previous layout</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-item-sizing">
+<link rel="help" href="https://drafts.csswg.org/css-values-4/#percentages">
+<meta name="assert" content="A grid whose items get percentage sizes and an out-of-flow sibling in the same change is laid out like a grid that always had them: the percentages do not resolve against the grid areas of the previous layout.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+.cb { width: 500px; }
+.flex { display: flex; }
+.float > .grid { float: left; }
+.grid {
+  display: grid;
+  grid-template-columns: 100px;
+  padding-left: 10%;
+}
+.item div { width: 80px; height: 10px; }
+.abspos { position: absolute; }
+.percentages { width: 50%; padding-left: 20%; }
+</style>
+<div id="host"></div>
+<script>
+function createGrid(cbClassName, itemClassName, withOutOfFlowChild) {
+  const cb = document.createElement("div");
+  cb.className = "cb " + cbClassName;
+  const grid = document.createElement("div");
+  grid.className = "grid";
+  const item = document.createElement("div");
+  item.className = "item " + itemClassName;
+  item.append(document.createElement("div"));
+  grid.append(item);
+  if (withOutOfFlowChild) {
+    const abspos = document.createElement("div");
+    abspos.className = "abspos";
+    grid.append(abspos);
+  }
+  cb.append(grid);
+  document.getElementById("host").append(cb);
+  return grid;
+}
+
+function checkSwitch(cbClassName) {
+  // The first grid is laid out by the grid formatting context, since nothing in it needs legacy layout, and then gets
+  // everything that sends it to legacy layout at once. The second one always had it.
+  const switched = createGrid(cbClassName, "", false);
+  switched.offsetWidth;
+  const item = switched.firstChild;
+  item.className = "item percentages";
+  switched.append(Object.assign(document.createElement("div"), { className: "abspos" }));
+  switched.style.gridTemplateColumns = "auto";
+
+  const reference = createGrid(cbClassName, "percentages", true);
+  reference.style.gridTemplateColumns = "auto";
+
+  assert_equals(switched.offsetWidth, reference.offsetWidth, "grid width");
+  assert_equals(item.offsetWidth, reference.firstChild.offsetWidth, "item width");
+  assert_equals(getComputedStyle(switched).gridTemplateColumns, getComputedStyle(reference).gridTemplateColumns, "tracks");
+}
+
+test(() => checkSwitch("float"), "A floated grid that changed from the grid formatting context to legacy layout is laid out like one that always used legacy layout");
+test(() => checkSwitch("flex"), "A grid in a flex container that changed from the grid formatting context to legacy layout is laid out like one that always used legacy layout");
+</script>

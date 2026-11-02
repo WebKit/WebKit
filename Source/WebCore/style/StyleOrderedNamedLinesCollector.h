@@ -65,11 +65,12 @@ protected:
 
 class OrderedNamedLinesCollectorInGridLayout : public OrderedNamedLinesCollector {
 public:
-    OrderedNamedLinesCollectorInGridLayout(ExtractorState& state, const Style::GridTemplateList& tracks, unsigned autoRepeatTracksCount, unsigned autoRepeatTrackListLength)
+    OrderedNamedLinesCollectorInGridLayout(ExtractorState& state, const Style::GridTemplateList& tracks, unsigned autoRepeatTracksCount, unsigned autoRepeatTrackListLength, bool autoRepeatTruncatedByLimit)
         : OrderedNamedLinesCollector(state, tracks)
         , m_insertionPoint(tracks.autoRepeatInsertionPoint)
         , m_autoRepeatTotalTracks(autoRepeatTracksCount)
         , m_autoRepeatTrackListLength(autoRepeatTrackListLength)
+        , m_autoRepeatTruncatedByLimit(autoRepeatTruncatedByLimit)
     {
     }
 
@@ -79,6 +80,7 @@ private:
     unsigned m_insertionPoint { 0 };
     unsigned m_autoRepeatTotalTracks { 0 };
     unsigned m_autoRepeatTrackListLength { 0 };
+    bool m_autoRepeatTruncatedByLimit { false };
 };
 
 class OrderedNamedLinesCollectorInSubgridLayout : public OrderedNamedLinesCollector {
@@ -130,16 +132,36 @@ inline void OrderedNamedLinesCollectorInGridLayout::collectLineNamesForIndex(Gri
         return;
     }
 
+    // The named lines of the track list count the auto-repeat as one track, which is why the lines after it are shifted
+    // by the number of repeated tracks minus one.
+    if (i == m_insertionPoint) {
+        appendLines(lineNamesValue, i, NamedLinesType::NamedLines);
+        appendLines(lineNamesValue, 0, NamedLinesType::AutoRepeatNamedLines);
+        return;
+    }
+
+    // The limit on the number of grid tracks (https://drafts.csswg.org/css-grid-1/#overlarge-grids) can leave out repetitions
+    // that would have fitted, down to all of them. The grid then ends inside the auto-repeat: the last line is the one at the
+    // start of the next repetition (the end of the previous one if there is one), and the lines and names after the repeat() are dropped.
+    if (m_autoRepeatTruncatedByLimit) {
+        unsigned lastLine = m_insertionPoint + m_autoRepeatTotalTracks;
+        if (i > lastLine)
+            return;
+        if (i == lastLine) {
+            if (auto tracksInLastRepetition = m_autoRepeatTotalTracks % m_autoRepeatTrackListLength) {
+                appendLines(lineNamesValue, tracksInLastRepetition, NamedLinesType::AutoRepeatNamedLines);
+                return;
+            }
+            appendLines(lineNamesValue, m_autoRepeatTrackListLength, NamedLinesType::AutoRepeatNamedLines);
+            appendLines(lineNamesValue, 0, NamedLinesType::AutoRepeatNamedLines);
+            return;
+        }
+    }
+
     ASSERT(m_autoRepeatTotalTracks);
 
     if (i > m_insertionPoint + m_autoRepeatTotalTracks) {
         appendLines(lineNamesValue, i - (m_autoRepeatTotalTracks - 1), NamedLinesType::NamedLines);
-        return;
-    }
-
-    if (i == m_insertionPoint) {
-        appendLines(lineNamesValue, i, NamedLinesType::NamedLines);
-        appendLines(lineNamesValue, 0, NamedLinesType::AutoRepeatNamedLines);
         return;
     }
 

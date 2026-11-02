@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Reference for CSS Grid: percentage tracks and max-width of a grid item grid container resolve against its own box and its grid area</title>
+<style>
+.o { display: grid; width: 400px; grid-template-columns: 100px 300px; }
+.i { display: grid; grid-template-columns: 45px 45px; padding: 30px; width: 150px; box-sizing: border-box; background: yellow; }
+.i > div { height: 10px; background: green; }
+.i > div:nth-child(2) { background: blue; }
+</style>
+<div class="o"><div></div><div class="i"><div></div><div></div></div></div>

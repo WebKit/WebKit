@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: The grid container's min-height: stretch is the definite size the fr rows are resolved against</title>
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#stretch-fit-sizing">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#algo-grid-sizing">
+<link rel="match" href="grid-container-min-height-sizing-ref.html">
+<meta name="assert" content="The grid container's min-height: stretch is the definite size the fr rows are resolved against">
+<style>
+.containing-block { width: 200px; height: 200px; }
+.grid {
+  display: grid;
+  grid-template-columns: 100px;
+  grid-template-rows: 1fr 1fr;
+  min-height: stretch;
+}
+.grid > div:nth-child(1) { background: green; }
+.grid > div:nth-child(2) { background: lime; }
+</style>
+<div class="containing-block">
+  <div class="grid"><div></div><div></div></div>
+</div>

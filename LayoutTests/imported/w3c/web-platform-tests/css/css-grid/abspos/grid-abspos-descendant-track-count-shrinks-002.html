@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: absolutely positioned descendant appended after the number of auto-fill tracks shrinks</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#abspos">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#valdef-repeat-auto-fill">
+<link rel="match" href="grid-abspos-descendant-track-count-shrinks-002-ref.html">
+<meta name="assert" content="A grid line past the end of the grid, targeted by an absolutely positioned descendant added after a relayout that reduced the number of tracks, resolves to the padding edge of the grid container.">
+<style>
+#container { width: 1000px; }
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 100px);
+  column-gap: 10px;
+  height: 50px;
+}
+.abspos {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 20px;
+  background: green;
+  grid-column: 2 / 8;
+}
+</style>
+<div id="container">
+  <div class="grid"><div id="item"></div></div>
+</div>
+<script>
+document.body.offsetWidth;
+document.getElementById("container").style.width = "500px";
+document.body.offsetWidth;
+var abspos = document.createElement("div");
+abspos.className = "abspos";
+document.getElementById("item").appendChild(abspos);
+</script>

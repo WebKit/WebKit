@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: A stretch max-width is no constraint for repeat(auto-fill) when the containing block is a shrink-to-fit float</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-repeat">
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#stretch-fit-sizing">
+<link rel="match" href="grid-container-auto-fill-max-width-stretch-cyclic-float-001-ref.html">
+<meta name="assert" content="The width of the floated containing block depends on the grid container's own intrinsic size, so the stretch max-width is cyclic and behaves as none: repeat(auto-fill) repeats once, and the float is as wide as one 50px column, not as wide as the 800px block. Both items are in the only column.">
+<style>
+.float { float: left; }
+.grid {
+  display: grid;
+  grid-auto-rows: 50px;
+  grid-template-columns: repeat(auto-fill, 50px);
+  max-width: stretch;
+  background: grey;
+}
+.grid > div:nth-child(1) { grid-column: 1; background: green; }
+.grid > div:nth-child(2) { grid-column: -2; background: lime; }
+</style>
+<div class="float">
+  <div class="grid"><div></div><div></div></div>
+</div>

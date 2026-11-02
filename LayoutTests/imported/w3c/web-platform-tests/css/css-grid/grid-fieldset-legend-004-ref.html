@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: the border of a grid fieldset is painted around the rendered legend, reference</title>
+<style>
+body { margin: 0; }
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 5px;
+  border: 10px solid blue;
+  width: 200px;
+}
+legend { padding: 0; width: 60px; height: 30px; margin-left: 20px; background: lime; }
+.item { width: 100px; height: 20px; background: orange; }
+</style>
+<fieldset><legend></legend><div class="item"></div><div class="item"></div></fieldset>

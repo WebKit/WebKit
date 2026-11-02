@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: box-shadow of a grid container is painted when only the shadow intersects the viewport</title>
+<link rel="help" href="https://drafts.csswg.org/css-backgrounds-3/#box-shadow">
+<link rel="match" href="grid-container-visual-overflow-001-ref.html">
+<meta name="assert" content="The shadow of a grid container whose border box is far below the viewport (outside of any pre-painted tile), but whose shadow reaches into it, is painted.">
+<style>
+html { overflow: hidden; }
+body { margin: 0; }
+.grid { display: grid; grid-template-columns: 100px; grid-template-rows: 30px; width: 100px; margin-top: 3000px; box-shadow: 0 -2500px 0 green; }
+.item { background: green; }
+</style>
+<div class="grid"><div class="item"></div></div>

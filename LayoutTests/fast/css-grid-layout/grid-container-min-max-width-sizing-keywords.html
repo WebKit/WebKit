@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<title>Grid container min-width and max-width sizing keywords</title>
+<style>
+.cb { width: 200px; height: 200px; }
+.grid { display: grid; background: grey; }
+.grid > div { height: 20px; background: blue; }
+</style>
+<body>
+<pre id="out"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// Each case lists: name, grid container style, track list, expected container size, columns, rows.
+// The expectations follow css-grid-1 #auto-repeat (a definite size gives the largest count that fits, a definite minimum size the smallest
+// that fulfills it) and match what Chrome produces. In layout the columns are counted from the used width, which RenderBox computes.
+const cases = [
+  ["minw-stretch-autofill", "min-width: stretch; width: 50px", "grid-template-columns: repeat(auto-fill, 20px)", "200x20", "20px 20px 20px 20px 20px 20px 20px 20px 20px 20px", "20px"],
+  ["minw-fill-autofill", "min-width: -webkit-fill-available; width: 50px", "grid-template-columns: repeat(auto-fill, 20px)", "200x20", "20px 20px 20px 20px 20px 20px 20px 20px 20px 20px", "20px"],
+  ["maxw-stretch-autofill", "max-width: stretch; width: 500px", "grid-template-columns: repeat(auto-fill, 20px)", "200x20", "20px 20px 20px 20px 20px 20px 20px 20px 20px 20px", "20px"],
+  ["maxw-fill-autofill", "max-width: -webkit-fill-available; width: 500px", "grid-template-columns: repeat(auto-fill, 20px)", "200x20", "20px 20px 20px 20px 20px 20px 20px 20px 20px 20px", "20px"],
+  ["minw-calcsize", "min-width: calc-size(100px, size * 2); width: 50px", "grid-template-columns: repeat(auto-fill, 20px)", "200x20", "20px 20px 20px 20px 20px 20px 20px 20px 20px 20px", "20px"],
+  ["maxw-calcsize", "max-width: calc-size(100px, size * 2); width: 500px", "grid-template-columns: repeat(auto-fill, 20px)", "200x20", "20px 20px 20px 20px 20px 20px 20px 20px 20px 20px", "20px"],
+];
+
+// intrinsic and min-intrinsic are WebKit-only keywords, which Chrome drops as invalid, so they follow RenderBox, which applies them to the
+// used width. min-width: intrinsic makes a block box with a 50px width 200px wide in a 200px containing block, and the grid container
+// is sized the same way. max-width: min-intrinsic resolves as min-content (RenderBox::computeSizingKeywordLogicalWidthUsing for
+// MinIntrinsic), which for this grid container is one 20px column.
+// They are not definite sizes for css-grid-1 #auto-repeat, so they give no constraint to the repeat count: the columns are counted from the
+// used width.
+const webkitOnlyCases = [
+  ["minw-intrinsic", "min-width: intrinsic; width: 50px", "grid-template-columns: repeat(auto-fill, 20px)", "200x20", "20px 20px 20px 20px 20px 20px 20px 20px 20px 20px", "20px"],
+  ["maxw-minintrinsic", "max-width: min-intrinsic; width: 500px", "grid-template-columns: repeat(auto-fill, 20px)", "20x60", "20px", "20px 20px 20px"]
+];
+
+const out = document.getElementById("out");
+for (const [name, css, template, size, columns, rows] of [...cases, ...webkitOnlyCases]) {
+    const containingBlock = document.createElement("div");
+    containingBlock.className = "cb";
+    containingBlock.innerHTML = `<div class="grid" style="${css}; ${template}"><div></div><div></div><div></div></div>`;
+    document.body.appendChild(containingBlock);
+    const grid = containingBlock.firstChild;
+    const style = getComputedStyle(grid);
+    const actual = `${grid.offsetWidth}x${grid.offsetHeight} cols[${style.gridTemplateColumns}] rows[${style.gridTemplateRows}]`;
+    const expected = `${size} cols[${columns}] rows[${rows}]`;
+    out.textContent += `${actual == expected ? "PASS" : "FAIL"} ${name}${actual == expected ? "" : `: expected ${expected} but got ${actual}`}\n`;
+    containingBlock.remove();
+}
+
+// The cases below are checked against Chrome. Each case lists: name, markup of the containing blocks around the grid container ("$" is the grid container),
+// expected container size and number of columns.
+const gridContainerStyle = "display: grid; background: grey; grid-template-columns: repeat(auto-fill, 50px)";
+const gridContainer = css => `<div style="${gridContainerStyle}; ${css}"><div style="height: 20px"></div></div>`;
+const resolvedCases = [
+  // The inline axis of the grid container is the block axis of its vertical parent, 500px wide and 200px tall (its logical width and
+  // height are swapped), so percentages and stretch resolve against 500px rather than the 200px logical width.
+  ["orthogonal-maxw-stretch", `<div style="writing-mode: vertical-rl; width: 500px; height: 200px">${gridContainer("writing-mode: horizontal-tb; max-width: stretch")}</div>`, "500x20", 10],
+  ["orthogonal-minw-stretch", `<div style="writing-mode: vertical-rl; width: 500px; height: 200px">${gridContainer("writing-mode: horizontal-tb; min-width: stretch")}</div>`, "500x20", 10],
+  ["orthogonal-maxw-fill", `<div style="writing-mode: vertical-rl; width: 500px; height: 200px">${gridContainer("writing-mode: horizontal-tb; max-width: -webkit-fill-available")}</div>`, "500x20", 10],
+  ["orthogonal-maxw-percent", `<div style="writing-mode: vertical-rl; width: 500px; height: 200px">${gridContainer("writing-mode: horizontal-tb; max-width: 50%")}</div>`, "250x20", 5],
+  ["orthogonal-minw-percent", `<div style="writing-mode: vertical-rl; width: 500px; height: 200px">${gridContainer("writing-mode: horizontal-tb; min-width: 50%")}</div>`, "250x20", 5],
+  ["orthogonal-maxw-calc", `<div style="writing-mode: vertical-rl; width: 500px; height: 200px">${gridContainer("writing-mode: horizontal-tb; max-width: calc(50% + 10px)")}</div>`, "250x20", 5],
+  // Stretch subtracts the margin, border and padding: 400 - 30 - 20 - 10 = 340px of content, which is not a multiple of 60px.
+  ["float-maxw-stretch-box-model", `<div style="width: 400px">${gridContainer("float: left; max-width: stretch; padding: 10px; border: 5px solid; margin: 0 10px 0 20px; grid-template-columns: repeat(auto-fill, 60px)")}</div>`, "330x50", 5],
+  ["float-minw-stretch-box-model", `<div style="width: 400px">${gridContainer("float: left; min-width: stretch; padding: 10px; border: 5px solid; margin: 0 10px 0 20px; grid-template-columns: repeat(auto-fill, 60px)")}</div>`, "390x50", 6],
+  // A grid container which is a grid item has no definite containing block width while its area is not resolved. That must not
+  // make max-width: stretch zero (a single column either way): when the area is resolved, 230px gives 4 columns.
+  ["grid-item-maxw-stretch-resolved-area", `<div style="display: grid; grid-template-columns: 230px; width: 400px">${gridContainer("max-width: stretch")}</div>`, "230x20", 4],
+  ["grid-item-minw-stretch-auto-track", `<div style="display: grid; grid-template-columns: auto; width: 400px">${gridContainer("min-width: stretch")}</div>`, "400x20", 8],
+  ["grid-item-maxw-stretch-auto-track", `<div style="display: grid; grid-template-columns: auto; width: 400px">${gridContainer("max-width: stretch")}</div>`, "400x20", 8],
+  ["grid-item-maxw-percent-auto-track", `<div style="display: grid; grid-template-columns: auto; width: 400px">${gridContainer("max-width: 50%")}</div>`, "200x20", 4],
+  // The containing block's width depends on the grid container, so stretch and percentages in its intrinsic sizing are cyclic:
+  // a stretch size is no constraint, a percentage in max-width is none and a percentage in min-width is zero.
+  ["cyclic-inline-grid-maxw-stretch", `<div style="display: inline-grid; grid-template-columns: auto">${gridContainer("max-width: stretch")}</div>`, "50x20", 1],
+  ["cyclic-inline-grid-minw-stretch", `<div style="display: inline-grid; grid-template-columns: auto">${gridContainer("min-width: stretch")}</div>`, "50x20", 1],
+  ["cyclic-float-maxw-stretch", `<div style="float: left">${gridContainer("max-width: stretch")}</div>`, "50x20", 1],
+  ["cyclic-float-minw-stretch", `<div style="float: left">${gridContainer("min-width: stretch")}</div>`, "50x20", 1],
+  ["cyclic-float-maxw-fill", `<div style="float: left">${gridContainer("max-width: -webkit-fill-available")}</div>`, "50x20", 1],
+  ["cyclic-inline-block-maxw-stretch", `<div style="display: inline-block">${gridContainer("max-width: stretch")}</div>`, "50x20", 1],
+  ["cyclic-float-maxw-calcsize-stretch", `<div style="float: left">${gridContainer("max-width: calc-size(stretch, size)")}</div>`, "50x20", 1],
+  ["cyclic-float-maxw-percent", `<div style="float: left">${gridContainer("max-width: 50%")}</div>`, "25x20", 1],
+  ["cyclic-float-minw-percent", `<div style="float: left">${gridContainer("min-width: 50%")}</div>`, "50x20", 1],
+  ["cyclic-float-minw-calc-percent", `<div style="float: left">${gridContainer("min-width: calc(50% + 120px)")}</div>`, "195x20", 3],
+  ["cyclic-float-maxw-calc-percent", `<div style="float: left">${gridContainer("max-width: calc(50% + 120px)")}</div>`, "50x20", 1],
+  // calc-size() with a stretch basis: 390 - 45 = 345px, which is not a multiple of 50px.
+  ["float-maxw-calcsize-stretch", `<div style="width: 390px">${gridContainer("float: left; max-width: calc-size(stretch, size - 45px)")}</div>`, "300x20", 6],
+  ["float-minw-calcsize-stretch", `<div style="width: 390px">${gridContainer("float: left; min-width: calc-size(stretch, size - 45px)")}</div>`, "350x20", 7],
+  // The containing block has a definite width, so nothing is cyclic.
+  ["float-parent-fixed-maxw-stretch", `<div style="float: left; width: 300px">${gridContainer("max-width: stretch")}</div>`, "300x20", 6],
+  ["float-parent-fixed-maxw-percent", `<div style="float: left; width: 300px">${gridContainer("max-width: 50%")}</div>`, "150x20", 3],
+];
+const webkitOnlyResolvedCases = [
+  // -webkit-fill-available is not specified: RenderBox resolves it as stretch in the inline axis, so calc-size() with it as a basis
+  // behaves as calc-size(stretch, ...).
+  ["float-maxw-calcsize-fill", `<div style="width: 390px">${gridContainer("float: left; max-width: calc-size(-webkit-fill-available, size - 45px)")}</div>`, "300x20", 6],
+  ["float-minw-calcsize-fill", `<div style="width: 390px">${gridContainer("float: left; min-width: calc-size(-webkit-fill-available, size - 45px)")}</div>`, "350x20", 7],
+  ["cyclic-float-maxw-calcsize-fill", `<div style="float: left">${gridContainer("max-width: calc-size(-webkit-fill-available, size)")}</div>`, "50x20", 1],
+];
+for (const [name, markup, size, columnCount] of [...resolvedCases, ...webkitOnlyResolvedCases]) {
+    const container = document.createElement("div");
+    container.innerHTML = markup;
+    document.body.appendChild(container);
+    const grid = container.querySelector("[style*='display: grid; background']");
+    const actual = `${grid.offsetWidth}x${grid.offsetHeight} columns=${getComputedStyle(grid).gridTemplateColumns.split(" ").length}`;
+    const expected = `${size} columns=${columnCount}`;
+    out.textContent += `${actual == expected ? "PASS" : "FAIL"} ${name}${actual == expected ? "" : `: expected ${expected} but got ${actual}`}\n`;
+    container.remove();
+}
+
+// The intrinsic sizing of a cyclic containing block must not depend on the width the containing block had in an earlier layout.
+// The 300px sibling makes the float, and so the grid container's containing block, 300px wide; once it is gone the float is only as
+// wide as the grid container's single column. Each case lists: name, grid container style.
+for (const [name, css] of [["relayout-maxw-stretch", "max-width: stretch"], ["relayout-minw-stretch", "min-width: stretch"], ["relayout-maxw-percent", "max-width: 50%"]]) {
+    const container = document.createElement("div");
+    container.innerHTML = `<div style="float: left"><div style="width: 300px; height: 5px"></div>${gridContainer(css)}</div>`;
+    document.body.appendChild(container);
+    const float = container.firstChild;
+    const grid = float.lastChild;
+    const widthWithSibling = float.offsetWidth;
+    float.firstChild.remove();
+    const actual = `${widthWithSibling} -> ${float.offsetWidth} columns=${getComputedStyle(grid).gridTemplateColumns.split(" ").length}`;
+    const expected = "300 -> 50 columns=1";
+    out.textContent += `${actual == expected ? "PASS" : "FAIL"} ${name}${actual == expected ? "" : `: expected ${expected} but got ${actual}`}\n`;
+    container.remove();
+}
+</script>

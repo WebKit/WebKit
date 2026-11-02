@@ -38,7 +38,8 @@ class GridSizer {
 public:
     GridSizer(const GridFormattingContext&, const GridLayoutState&);
 
-    // Runs step 1 of the grid sizing algorithm alone. Steps 2-4 cannot change the column sizes, so
+    // Runs step 1 of the grid sizing algorithm alone. When no grid item's inline-axis contributions
+    // depend on the available space in the block axis, steps 2-4 cannot change the column sizes, so
     // a caller that only needs those can stop here and skip row sizing, grid-item layout, and
     // alignment.
     TrackSizes sizeColumnsOnlyFastPath(const PlacedGridItems&, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions) const;
@@ -47,7 +48,8 @@ public:
     UsedTrackSizes sizeGrid(const PlacedGridItems&, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions) const;
 
 private:
-    TrackSizes sizeColumnTracks(const PlacedGridItems&, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions) const;
+    Vector<std::optional<LayoutUnit>> rowSizesForFirstIterationColumnSizing(const TrackSizingFunctionsList& rowTrackSizingFunctions) const;
+    TrackSizes sizeColumnTracks(const PlacedGridItems&, const Vector<std::optional<LayoutUnit>>& rowSizes, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions) const;
     TrackSizes sizeRowTracks(const PlacedGridItems&, const TrackSizes& columnSizes, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions) const;
 
     const GridFormattingContext& formattingContext() const LIFETIME_BOUND { return m_gridFormattingContext; }

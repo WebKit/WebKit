@@ -1,0 +1,8 @@
+
+PASS Initial grid
+PASS Absolutely positioned child of the grid
+PASS The absolutely positioned child is removed
+PASS justify-content: space-between distributes the free space
+PASS No content distribution offset is left after justify-content goes back to normal
+PASS The width of a shrink-to-fit wrapper follows the grid's intrinsic width after every change
+

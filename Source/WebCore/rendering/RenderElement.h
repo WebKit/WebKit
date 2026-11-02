@@ -586,9 +586,18 @@ SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderElement, isRenderElement())
 namespace WebCore {
 namespace Layout {
 
+// The rendered legend of a fieldset that is a grid container sits in the border and is not a grid item
+// (https://html.spec.whatwg.org/multipage/rendering.html#the-fieldset-and-legend-elements). Defined in RenderGrid.cpp.
+bool isRenderedLegendOfGridFieldset(const RenderObject&);
+
 inline bool isExcludedFromLayoutBoxNavigation(const RenderObject& renderer)
 {
-    return renderer.isRenderListOutsideMarker() && renderer.isExcludedMarker();
+    if (renderer.isRenderListOutsideMarker() && renderer.isExcludedMarker())
+        return true;
+    // The grid formatting context only sees the grid's child boxes, so the legend is left out of them, and the box
+    // before the legend is the previous sibling of the box after it.
+    SUPPRESS_UNCHECKED_LOCAL auto* parent = renderer.parent();
+    return parent && parent->isRenderGrid() && isRenderedLegendOfGridFieldset(renderer);
 }
 
 inline RenderElement* ElementBox::rendererForIntegration() const
