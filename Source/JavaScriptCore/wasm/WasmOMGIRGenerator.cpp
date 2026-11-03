@@ -2085,6 +2085,10 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         // See the static_assert above for why the code pointer needs a fixed register.
         patchpoint->append(calleeCode, ValueRep(GPRInfo::nonPreservedNonArgumentGPR0)); // patchArgsIndex
         patchpoint->append(calleeInstance, ValueRep::SomeRegister); // patchArgsIndex + 1
+        // The callee test guarding the restore frame below needs boxedCalleeCallee in a register; the rep
+        // createTailCallPatchpoint already appends is LateColdAny and may be on the stack.
+        ASSERT(boxedCalleeCallee);
+        patchpoint->append(boxedCalleeCallee, ValueRep::SomeRegister); // patchArgsIndex + 2
         // Cross-instance setup below reloads pinned registers before the tail-call shuffle consumes late inputs.
         // FIXME: We should not have to do this, but the wasm->wasm stub assumes it can
         // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
@@ -2101,9 +2105,18 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
             GPRReg calleeInstanceGPR = params[patchArgsIndex + 1].gpr();
             GPRReg scratch2 = mode == MemoryMode::Signaling ? params.gpScratch(0) : GPRInfo::wasmBoundsCheckingSizeRegister;
             ASSERT_WITH_MESSAGE(calleeInstanceGPR != GPRInfo::wasmContextInstancePointer, "Cross-instance check is broken");
-            auto sameInstance = jit.branchPtr(CCallHelpers::Equal, calleeInstanceGPR, GPRInfo::wasmContextInstancePointer);
+            // We need a restore frame if the wasm instance is different or if the call goes out to JS.
+            // In the latter case JS can grow wasm memory, invalidating memory base cached in a callee save register.
+            auto needsRestoreFrame = jit.branchPtr(CCallHelpers::NotEqual, calleeInstanceGPR, GPRInfo::wasmContextInstancePointer);
+            // FIXME: consider overloading WasmCallableFunction::targetInstance to hold a JSFunction when the
+            // callee exits to JS. The instance comparison above would then fail for a JS import on its own and
+            // this second test could go away. See also BBQJIT::emitIndirectTailCall().
+            GPRReg calleeCalleeGPR = params[patchArgsIndex + 2].gpr();
+            CCallHelpers::Jump skipRestoreFrame;
             {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
+                skipRestoreFrame = branchIfCalleeNotWasmToJS(jit, calleeCalleeGPR);
+                needsRestoreFrame.link(&jit);
                 int32_t topSource = -static_cast<int32_t>(params.code().frameSize());
                 for (unsigned i = 0; i < params.size(); ++i) {
                     if (params[i].isStack())
@@ -2124,7 +2137,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
                 ASSERT(noOverlap(cageScratch, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, calleeCode));
                 jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, cageScratch);
             }
-            sameInstance.link(&jit);
+            skipRestoreFrame.link(&jit);
             prepareForCall->run(jit, params);
             AllowMacroScratchRegisterUsage allowScratch(jit);
             jit.farJump(calleeCode, WasmEntryPtrTag);
