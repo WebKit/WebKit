@@ -265,12 +265,14 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionAPIAvailableWhenManifestRequestsBo
 TEST_F(WKWebExtensionAPISidebar, SidebarActionAPIDisallowsMissingArguments)
 {
     auto *script = @[
-        @"browser.test.assertThrows(() => browser.sidebarAction.getTitle())",
         @"browser.test.assertThrows(() => browser.sidebarAction.setTitle())",
-        @"browser.test.assertThrows(() => browser.sidebarAction.getPanel())",
         @"browser.test.assertThrows(() => browser.sidebarAction.setPanel())",
-        @"browser.test.assertThrows(() => browser.sidebarAction.isOpen())",
         @"browser.test.assertThrows(() => browser.sidebarAction.setIcon())",
+
+        @"await browser.test.assertSafeResolve(() => browser.sidebarAction.getTitle())",
+        @"await browser.test.assertSafeResolve(() => browser.sidebarAction.getPanel())",
+        @"await browser.test.assertSafeResolve(() => browser.sidebarAction.isOpen())",
+
         @"browser.test.notifyPass()",
     ];
 
@@ -969,11 +971,14 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelAPIAvailableWhenManifestRequests)
 TEST_F(WKWebExtensionAPISidebar, SidePanelAPIDisallowsMissingArguments)
 {
     auto *script = @[
-        @"browser.test.assertThrows(() => browser.sidePanel.getOptions())",
         @"browser.test.assertThrows(() => browser.sidePanel.setOptions())",
         @"browser.test.assertThrows(() => browser.sidePanel.setPanelBehavior())",
         @"browser.test.assertThrows(() => browser.sidePanel.open())",
         @"browser.test.assertThrows(() => browser.sidePanel.close())",
+
+        @"await browser.test.assertSafeResolve(() => browser.sidePanel.getOptions())",
+        @"await browser.test.assertSafeResolve(() => browser.sidePanel.setOptions({ }))",
+
         @"browser.test.notifyPass()",
     ];
 

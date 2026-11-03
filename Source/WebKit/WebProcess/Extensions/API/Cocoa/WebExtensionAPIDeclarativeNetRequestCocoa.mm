@@ -422,7 +422,13 @@ void WebExtensionAPIDeclarativeNetRequest::setExtensionActionOptions(NSDictionar
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DeclarativeNetRequestDisplayActionCountAsBadgeText(objectForKey<NSNumber>(options, actionCountDisplayActionCountAsBadgeTextKey).boolValue), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
+    auto *displayActionCountAsBadgeText = objectForKey<NSNumber>(options, actionCountDisplayActionCountAsBadgeTextKey);
+    if (!displayActionCountAsBadgeText) {
+        callback->call();
+        return;
+    }
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DeclarativeNetRequestDisplayActionCountAsBadgeText(displayActionCountAsBadgeText.boolValue), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;

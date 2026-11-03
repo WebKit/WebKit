@@ -73,9 +73,9 @@ dictionary WebExtensionTabCreateProperties {
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPITabs {
 
-    [RaisesException, NeedsPageIdentifier, ImplementedAs=createTab] void create([NSDictionary] any properties, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier, ImplementedAs=createTab] void create([Optional, NSDictionary] any properties, [Optional, CallbackHandler] function callback);
 
-    [RaisesException, NeedsPageIdentifier] void query([NSDictionary] any info, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPageIdentifier] void query([Optional, NSDictionary] any info, [Optional, CallbackHandler] function callback);
 
     [RaisesException] void get(double tabID, [Optional, CallbackHandler] function callback);
     [NeedsPageIdentifier] void getCurrent([Optional, CallbackHandler] function callback);

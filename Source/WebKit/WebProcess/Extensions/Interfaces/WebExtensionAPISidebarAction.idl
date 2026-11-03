@@ -57,10 +57,10 @@ dictionary WebExtensionSidebarActionSetIconDetails {
     [RaisesException] void close([Optional, CallbackHandler] function callback);
     [RaisesException] void toggle([Optional, CallbackHandler] function callback);
 
-    [RaisesException] void isOpen([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
-    [RaisesException] void getPanel([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
+    [RaisesException] void isOpen([Optional, NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
+    [RaisesException] void getPanel([Optional, NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
     [RaisesException] void setPanel([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
-    [RaisesException] void getTitle([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
+    [RaisesException] void getTitle([Optional, NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
     [RaisesException] void setTitle([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
     [RaisesException] void setIcon([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
 

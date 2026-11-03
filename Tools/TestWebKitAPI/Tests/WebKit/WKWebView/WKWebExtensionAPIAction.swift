@@ -1252,10 +1252,43 @@ struct WKWebExtensionAPIActionTests {
     }
 
     @Test
-    func setIconWithEmptyDetails() async throws {
+    func setIconWithoutKnownPropertiesIsNoop() async throws {
+        let backgroundScript = """
+            const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })
+
+            await browser.action.setIcon({ path: 'toolbar-48.png' })
+
+            await browser.action.setIcon({})
+            await browser.action.setIcon({ tabId: null })
+            await browser.action.setIcon({ windowId: currentTab.windowId })
+            await browser.action.setIcon({ path: undefined })
+
+            browser.test.sendMessage('Icon Set')
+            """
+
+        let resources: [String: Any] = [
+            "background.js": backgroundScript,
+            "toolbar-32.png": makePNGData(size: CGSize(width: 32, height: 32), color: .blue),
+            "toolbar-48.png": makePNGData(size: CGSize(width: 48, height: 48), color: .red),
+            "popup.html": "Hello world!",
+        ]
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
+        let context = try #require(manager.context)
+
+        try await manager.waitForTestMessage("Icon Set")
+
+        let action = try #require(context.action(for: nil))
+        let icon = try #require(action.icon(for: CGSize(width: 48, height: 48)))
+        #expect(compareColors(pixelColor(of: icon), .red))
+    }
+
+    @Test
+    func setIconWithNullPathStillResetsAfterNoop() async throws {
         let backgroundScript = """
             await browser.action.setIcon({ path: 'toolbar-48.png' })
             await browser.action.setIcon({})
+            await browser.action.setIcon({ path: null })
             browser.test.sendMessage('Icon Set')
             """
 

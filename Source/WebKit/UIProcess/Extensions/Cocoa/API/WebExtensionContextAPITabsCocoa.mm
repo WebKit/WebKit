@@ -220,8 +220,13 @@ void WebExtensionContext::tabsUpdate(WebPageProxyIdentifier webPageProxyIdentifi
     };
 
     auto updateParentTab = [this, protectedThis = Ref { *this }](WebExtensionTab& tab, const WebExtensionTabParameters& parameters, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& stepCompletionHandler) {
+        if (!parameters.parentTabIdentifier) {
+            stepCompletionHandler({ });
+            return;
+        }
+
         auto currentParentTab = tab.parentTab();
-        auto newParentTab = parameters.parentTabIdentifier ? getTab(parameters.parentTabIdentifier.value()) : nullptr;
+        auto newParentTab = getTab(parameters.parentTabIdentifier.value());
 
         if (currentParentTab == newParentTab) {
             stepCompletionHandler({ });

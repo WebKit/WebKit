@@ -154,7 +154,7 @@ void WebExtensionAPISidePanel::setOptions(NSDictionary *options, Ref<WebExtensio
     RetainPtr enabled = objectForKey<NSNumber>(options, @"enabled");
 
     if (!path && !enabled) {
-        *outExceptionString = toErrorString(nullString(), @"options", @"it must specify at least one of 'path' or 'enabled'").createNSString().get();
+        callback->call();
         return;
     }
 

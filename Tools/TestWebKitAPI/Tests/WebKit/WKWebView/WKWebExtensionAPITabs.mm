@@ -629,6 +629,37 @@ TEST(WKWebExtensionAPITabs, DuplicateWithOptions)
     [manager run];
 }
 
+TEST(WKWebExtensionAPITabs, OptionalPropertiesOmitted)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const firstTab = allWindows[0].tabs[0]",
+        @"const secondTab = allWindows[0].tabs[1]",
+
+        @"const queriedWithEmptyObject = await browser.tabs.query({ })",
+        @"const queriedWithoutArguments = await browser.tabs.query()",
+        @"browser.test.assertEq(queriedWithoutArguments.length, queriedWithEmptyObject.length, 'query() should match query({ })')",
+
+        @"await browser.tabs.update(secondTab.id, { openerTabId: firstTab.id })",
+
+        @"const emptyTab = await browser.tabs.update(secondTab.id, { })",
+        @"browser.test.assertEq(emptyTab.openerTabId, firstTab.id, 'update(tabId, { }) should keep the openerTabId')",
+
+        @"const pinnedTab = await browser.tabs.update(secondTab.id, { pinned: true })",
+        @"browser.test.assertEq(pinnedTab.openerTabId, firstTab.id, 'Updating another property should keep the openerTabId')",
+
+        @"const createdTab = await browser.tabs.create()",
+        @"browser.test.assertEq(typeof createdTab.id, 'number', 'create() should open a tab')",
+        @"browser.test.assertEq(createdTab.windowId, firstTab.windowId, 'create() should open the tab in the current window')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    [manager runForTimeInterval:5];
+}
+
 TEST(WKWebExtensionAPITabs, Update)
 {
     auto *backgroundScript = Util::constructScript(@[
