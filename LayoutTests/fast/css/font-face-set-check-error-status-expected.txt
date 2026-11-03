@@ -1,0 +1,7 @@
+This test verifies that document.fonts.check() returns false once a FontFace has permanently failed to load (status "error"), per https://drafts.csswg.org/css-font-loading/#font-face-set-check: check() may only report true when every matching face has a status of "loaded", and "error" is not "loaded". Regression test for a bug where a family whose only matching face had already failed was excluded from check()'s matching entirely, so check() fell through to its "no matching faces" branch and incorrectly kept returning true.
+
+check() before load settles: false
+face.status: error
+check() after fonts.ready: false
+check() after another layout: false
+hello
