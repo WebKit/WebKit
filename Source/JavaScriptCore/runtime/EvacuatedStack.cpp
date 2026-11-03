@@ -154,6 +154,7 @@ static const Register* LEGACY_NODELETE topOfFrame(const CallFrame* callFrame)
         case Wasm::CompilationMode::WasmBuiltinMode:
             RELEASE_ASSERT_NOT_REACHED(); // case not accounted for
         }
+        RELEASE_ASSERT_NOT_REACHED();
     } else {
         // A JSFunction
         return alignStackPointer(callFrame->registers() + static_cast<size_t>(CallFrameSlot::firstArgument) + callFrame->argumentCount());
