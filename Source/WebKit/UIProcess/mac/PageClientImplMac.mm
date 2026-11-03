@@ -258,7 +258,10 @@ bool PageClientImpl::isViewInWindow()
 
 bool PageClientImpl::isVisuallyIdle()
 {
-    return WindowServerConnection::singleton().applicationWindowModificationsHaveStopped() || !isActiveViewVisible();
+    // The window server's window modification notifications are a form of occlusion detection, so they
+    // should be ignored when the client has disabled it.
+    bool applicationWindowModificationsHaveStopped = m_impl && m_impl->windowOcclusionDetectionEnabled() && WindowServerConnection::singleton().applicationWindowModificationsHaveStopped();
+    return applicationWindowModificationsHaveStopped || !isActiveViewVisible();
 }
 
 void PageClientImpl::viewWillMoveToAnotherWindow()

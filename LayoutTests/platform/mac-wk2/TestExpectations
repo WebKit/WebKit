@@ -2170,8 +2170,6 @@ webkit.org/b/310853 imported/w3c/web-platform-tests/trusted-types/navigate-to-ja
 
 webkit.org/b/305673 [ Debug ] inspector/idl-extensions/CanvasRenderingContext2D/setPath.html [ Timeout ]
 
-webkit.org/b/305675 fast/animation/request-animation-frame-throttle-subframe-zero-size.html [ Pass Failure ]
-
 webkit.org/b/305947 compositing/visibility/frameset-visibility-hidden.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/305958 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Pass Failure ]
@@ -2460,12 +2458,6 @@ webkit.org/b/318150 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/318150 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-shape.html [ ImageOnlyFailure ]
 
 webkit.org/b/318450 [ Debug ] accessibility/mac/input-replacevalue-userinfo.html [ Timeout ]
-
-# webkit.org/b/305671 3x fast/animation/* (layout-tests) are flaky failures.
-fast/animation/css-animation-throttling.html [ Pass Failure ]
-fast/animation/request-animation-frame-throttle-inside-overflow-scroll.html [ Pass Failure ]
-fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Pass Failure ]
-webkit.org/b/319501 fast/animation/request-animation-frame-throttle-subframe.html [ Pass Timeout ]
 
 # webkit.org/b/319018 2x media/media-source/* (layout-tests) are flaky timeouts.
 media/media-source/media-source-real-play-after-eos.html [ Pass ImageOnlyFailure Timeout ]
