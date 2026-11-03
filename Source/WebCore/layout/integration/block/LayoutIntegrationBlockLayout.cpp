@@ -63,6 +63,14 @@ BlockLayout::BlockLayout(RenderBlockFlow& rootRenderer)
 // root element (quirks §3.5).
 static std::optional<LayoutUnit> contentBoxBlockSizeForPercentages(const RenderBlockFlow& rootRenderer)
 {
+    // A table cell gives its children the block size the row gives it, once it has one, not its own (RenderTableSection::relayoutCellIfFlexed).
+    if (CheckedPtr tableCell = dynamicDowncast<RenderTableCell>(rootRenderer)) {
+        if (tableCell->style().logicalHeight().isPercentOrCalculated() && tableCell->table()->style().logicalHeight().isAuto())
+            return { };
+        return tableCell->overridingBorderBoxLogicalHeight().transform([&](auto borderBoxBlockSize) {
+            return borderBoxBlockSize - tableCell->computedCSSPaddingBefore() - tableCell->computedCSSPaddingAfter() - tableCell->borderLogicalHeight() - tableCell->scrollbarLogicalHeight();
+        });
+    }
     auto isPerpendicular = [&](const RenderBlock& containingBlock) {
         return rootRenderer.isHorizontalWritingMode() != containingBlock.isHorizontalWritingMode();
     };
@@ -380,6 +388,19 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
             logicalLeft = containingBlock->logicalWidth() - logicalLeft - geometry.borderBoxWidth();
         auto location = LayoutPoint { logicalLeft, Layout::BoxGeometry::borderBoxTop(geometry) };
         renderer->setLocation(containingBlock->writingMode().isHorizontal() ? location : location.transposedPoint());
+    }
+
+    // What RenderBox::computePercentageLogicalHeight does for a box whose percentage block sizes resolve against a table cell: the cell registers
+    // it, which makes the table lay the cell out again once the row has its height (RenderTableSection::relayoutCellIfFlexed).
+    for (auto& box : result.boxes) {
+        CheckedRef renderer = mutableRenderer(box.renderer);
+        if (box.isLaidOutThroughRenderTree || !Layout::BlockFormattingUtils::hasPercentageBlockSize(renderer, renderer->writingMode()))
+            continue;
+        CheckedPtr containingBlock = renderer->containingBlock();
+        while (containingBlock && renderer->skipContainingBlockForPercentHeightCalculation(*containingBlock, renderer->isHorizontalWritingMode() != containingBlock->isHorizontalWritingMode()))
+            containingBlock = containingBlock->containingBlock();
+        if (CheckedPtr tableCell = dynamicDowncast<RenderTableCell>(containingBlock))
+            tableCell->addPercentHeightDescendant(renderer);
     }
 
     // What RenderBlockFlow::adjustOutOfFlowBlock and layoutBlockChildren do for an out-of-flow child: its layer keeps the static position, and its
