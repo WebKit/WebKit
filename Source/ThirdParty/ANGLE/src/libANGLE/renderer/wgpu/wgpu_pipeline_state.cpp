@@ -361,34 +361,53 @@ angle::Result RenderPipelineDesc::createPipeline(ContextWgpu *context,
     pipelineDesc.primitive.frontFace = UnpackFrontFace(mPrimitiveState.frontFace);
     pipelineDesc.primitive.cullMode  = static_cast<WGPUCullMode>(mPrimitiveState.cullMode);
 
+    // The used vertex buffer slots are 0 to bufferCount - 1. Each slot's layout lists the
+    // attributes that share it.
+    size_t bufferCount = 0;
+    for (const PackedVertexAttribute &packedAttrib : mVertexAttributes)
+    {
+        if (packedAttrib.enabled)
+        {
+            bufferCount = std::max<size_t>(bufferCount, packedAttrib.bufferSlot + 1u);
+        }
+    }
+
     size_t attribCount = 0;
     gl::AttribArray<WGPUVertexBufferLayout> vertexBuffers;
     gl::AttribArray<WGPUVertexAttribute> vertexAttribs;
 
-    for (PackedVertexAttribute packedAttrib : mVertexAttributes)
+    for (size_t slot = 0; slot < bufferCount; ++slot)
     {
-        if (!packedAttrib.enabled)
+        const size_t firstSlotAttrib = attribCount;
+        uint32_t slotStride          = 0;
+        for (const PackedVertexAttribute &packedAttrib : mVertexAttributes)
         {
-            continue;
+            if (!packedAttrib.enabled || packedAttrib.bufferSlot != slot)
+            {
+                continue;
+            }
+
+            WGPUVertexAttribute &newAttribute = vertexAttribs[attribCount];
+            newAttribute                      = WGPU_VERTEX_ATTRIBUTE_INIT;
+            newAttribute.format               = static_cast<WGPUVertexFormat>(packedAttrib.format);
+            newAttribute.offset               = packedAttrib.offset;
+            newAttribute.shaderLocation       = packedAttrib.shaderLocation;
+            ASSERT(attribCount == firstSlotAttrib || slotStride == packedAttrib.stride);
+            slotStride = packedAttrib.stride;
+
+            attribCount++;
         }
+        ASSERT(attribCount > firstSlotAttrib);
 
-        WGPUVertexAttribute &newAttribute   = vertexAttribs[attribCount];
-        newAttribute                        = WGPU_VERTEX_ATTRIBUTE_INIT;
-        newAttribute.format                 = static_cast<WGPUVertexFormat>(packedAttrib.format);
-        newAttribute.offset                 = packedAttrib.offset;
-        newAttribute.shaderLocation         = packedAttrib.shaderLocation;
-
-        WGPUVertexBufferLayout &newBufferLayout   = vertexBuffers[attribCount];
-        newBufferLayout                           = WGPU_VERTEX_BUFFER_LAYOUT_INIT;
-        newBufferLayout.arrayStride               = packedAttrib.stride;
-        newBufferLayout.stepMode                  = WGPUVertexStepMode_Undefined;
-        newBufferLayout.attributeCount            = 1;
-        newBufferLayout.attributes                = &newAttribute;
-
-        attribCount++;
+        WGPUVertexBufferLayout &newBufferLayout = vertexBuffers[slot];
+        newBufferLayout                         = WGPU_VERTEX_BUFFER_LAYOUT_INIT;
+        newBufferLayout.arrayStride             = slotStride;
+        newBufferLayout.stepMode                = WGPUVertexStepMode_Undefined;
+        newBufferLayout.attributeCount          = attribCount - firstSlotAttrib;
+        newBufferLayout.attributes              = &vertexAttribs[firstSlotAttrib];
     }
 
-    pipelineDesc.vertex.bufferCount = attribCount;
+    pipelineDesc.vertex.bufferCount = bufferCount;
     pipelineDesc.vertex.buffers     = vertexBuffers.data();
 
     WGPUFragmentState fragmentState = WGPU_FRAGMENT_STATE_INIT;

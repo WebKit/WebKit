@@ -301,8 +301,11 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     glCaps->maxServerWaitTimeout   = 0;
 
     glCaps->maxVertexAttribRelativeOffset = (1u << kAttributeOffsetMaxBits) - 1;
-    glCaps->maxVertexAttribBindings =
-        rx::LimitToInt(std::min(limitsWgpu.maxVertexBuffers, limitsWgpu.maxVertexAttributes));
+    // Attributes and bindings do not need a vertex buffer slot each: VertexArrayWgpu shares the
+    // slots between attributes and streams the attributes that do not fit in the slots.
+    const GLint maxVertexAttributes = rx::LimitToInt(std::min<uint32_t>(
+        limitsWgpu.maxVertexAttributes, static_cast<uint32_t>(gl::MAX_VERTEX_ATTRIBS)));
+    glCaps->maxVertexAttribBindings = maxVertexAttributes;
     glCaps->maxVertexAttribStride =
         rx::LimitToInt(std::min(limitsWgpu.maxVertexBufferArrayStride,
                                 static_cast<uint32_t>(std::numeric_limits<uint16_t>::max())));
@@ -356,10 +359,7 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
 
     const GLint maxVaryingComponents = rx::LimitToInt(limitsWgpu.maxInterStageShaderVariables * 4);
 
-    glCaps->maxVertexAttributes = rx::LimitToInt(
-        limitsWgpu.maxVertexBuffers);  // WebGPU has maxVertexBuffers and maxVertexAttributes but
-                                       // since each vertex attribute can use a unique buffer, we
-                                       // are limited by the total number of vertex buffers
+    glCaps->maxVertexAttributes = maxVertexAttributes;
     glCaps->maxVertexUniformVectors =
         maxUniformVectors;  // Uniforms are implemented using a uniform buffer, so the max number of
                             // uniforms we can support is the max buffer range divided by the size

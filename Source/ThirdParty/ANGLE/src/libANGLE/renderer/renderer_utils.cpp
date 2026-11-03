@@ -1772,6 +1772,35 @@ void StreamEmulatedLineLoopIndices(gl::DrawElementsType glIndexType,
     }
 }
 
+size_t StreamEmulatedTriangleFanIndices(gl::DrawElementsType glIndexType,
+                                        GLsizei indexCount,
+                                        const uint8_t *srcPtr,
+                                        uint8_t *outPtr,
+                                        bool primitiveRestartEnabled)
+{
+    switch (glIndexType)
+    {
+        case gl::DrawElementsType::UnsignedByte:
+            return primitiveRestartEnabled
+                       ? CopyTriangleFanIndicesWithRestart<uint8_t, uint16_t>(indexCount, srcPtr,
+                                                                              outPtr)
+                       : CopyTriangleFanIndices<uint8_t, uint16_t>(indexCount, srcPtr, outPtr);
+        case gl::DrawElementsType::UnsignedShort:
+            return primitiveRestartEnabled
+                       ? CopyTriangleFanIndicesWithRestart<uint16_t, uint16_t>(indexCount, srcPtr,
+                                                                               outPtr)
+                       : CopyTriangleFanIndices<uint16_t, uint16_t>(indexCount, srcPtr, outPtr);
+        case gl::DrawElementsType::UnsignedInt:
+            return primitiveRestartEnabled
+                       ? CopyTriangleFanIndicesWithRestart<uint32_t, uint32_t>(indexCount, srcPtr,
+                                                                               outPtr)
+                       : CopyTriangleFanIndices<uint32_t, uint32_t>(indexCount, srcPtr, outPtr);
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
 void GetSamplePosition(GLsizei sampleCount, size_t index, GLfloat *xy)
 {
     ASSERT(gl::isPow2(sampleCount));
