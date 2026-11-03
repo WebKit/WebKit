@@ -39,9 +39,7 @@ public:
     // This variant is expensive. Use ScriptDisallowedScope::InMainThread whenever possible.
     ScriptDisallowedScope()
     {
-        if (!isMainThread())
-            return;
-        ++s_count;
+        ++count();
     }
 
     ScriptDisallowedScope(const ScriptDisallowedScope&)
@@ -51,10 +49,8 @@ public:
 
     ~ScriptDisallowedScope()
     {
-        if (!isMainThread())
-            return;
-        ASSERT(s_count);
-        s_count--;
+        ASSERT(count());
+        count()--;
     }
 
     ScriptDisallowedScope& operator=(const ScriptDisallowedScope&)
@@ -64,7 +60,12 @@ public:
 
     static bool isScriptAllowedInMainThread()
     {
-        return !isInWebProcess() || !isMainThread() || !s_count;
+        return !isInWebProcess() || !isMainThread() || !count();
+    }
+
+    static bool isScriptAllowedInCurrentThread()
+    {
+        return !isInWebProcess() || !count();
     }
 
     class InMainThread {
@@ -72,14 +73,14 @@ public:
         InMainThread()
         {
             ASSERT(isMainThread());
-            ++s_count;
+            ++count();
         }
 
         ~InMainThread()
         {
             ASSERT(isMainThread());
-            ASSERT(s_count);
-            --s_count;
+            ASSERT(count());
+            --count();
         }
 
         // Don't enable this assertion in release since it's O(n).
@@ -97,16 +98,16 @@ public:
         static bool hasDisallowedScope()
         {
             ASSERT(isMainThread());
-            return s_count;
+            return count();
         }
 
         static bool isScriptAllowed()
         {
             ASSERT(isMainThread());
 #if PLATFORM(IOS_FAMILY)
-            return !s_count || !isInWebProcess() || webThreadDelegateMessageScopeCount;
+            return !count() || !isInWebProcess() || webThreadDelegateMessageScopeCount;
 #else
-            return !s_count || !isInWebProcess();
+            return !count() || !isInWebProcess();
 #endif
         }
     };
@@ -158,19 +159,25 @@ public:
         DisableAssertionsInScope()
         {
             ASSERT(isMainThread());
-            std::swap(s_count, m_originalCount);
+            std::swap(count(), m_originalCount);
         }
 
         ~DisableAssertionsInScope()
         {
-            s_count = m_originalCount;
+            count() = m_originalCount;
         }
     private:
         unsigned m_originalCount { 0 };
     };
 
 private:
-    WEBCORE_EXPORT static unsigned s_count;
+#if OS(WINDOWS) || PLATFORM(PLAYSTATION)
+    // A thread_local data member cannot be dllexport.
+    WEBCORE_EXPORT static unsigned& count();
+#else
+    static unsigned& count() { return s_count; }
+    WEBCORE_EXPORT static thread_local unsigned s_count;
+#endif
 };
 
 } // namespace WebCore

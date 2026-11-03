@@ -89,7 +89,15 @@ static_assert(sizeof(ContainerNode) == sizeof(SameSizeAsContainerNode), "Contain
 static void dispatchChildInsertionEvents(Node&);
 static void dispatchChildRemovalEvents(Ref<Node>&);
 
-unsigned ScriptDisallowedScope::s_count = 0;
+#if OS(WINDOWS) || PLATFORM(PLAYSTATION)
+unsigned& ScriptDisallowedScope::count()
+{
+    static thread_local unsigned s_count = 0;
+    return s_count;
+}
+#else
+thread_local unsigned ScriptDisallowedScope::s_count = 0;
+#endif
 #if ASSERT_ENABLED
 ScriptDisallowedScope::EventAllowedScope* ScriptDisallowedScope::EventAllowedScope::s_currentScope = nullptr;
 #endif
