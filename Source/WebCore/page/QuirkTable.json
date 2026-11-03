@@ -222,8 +222,8 @@
             "behaviors": [{ "id": "ShouldUseLayoutViewportForClientRectsQuirk" }]
         },
         {
-            "bugs": ["rdar://189766320"],
-            "matches": ["*://*.chatgpt.com/*"],
+            "bugs": ["rdar://189766320", "rdar://191470125"],
+            "matches": ["*://*.chatgpt.com/*", "*://*.grok.com/*"],
             "behaviors": [{ "id": "NeedsMarginTrimInlineSupportsQuirk" }]
         },
         {

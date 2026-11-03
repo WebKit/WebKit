@@ -131,7 +131,7 @@ NeedsCNNCaptionQuirk:
   available: cocoa
   export: true
 
-# chatgpt.com rdar://189766320
+# chatgpt.com rdar://189766320, grok.com rdar://191470125
 NeedsMarginTrimInlineSupportsQuirk:
 
 NeedsLimitedMatroskaSupportQuirk:
