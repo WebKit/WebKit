@@ -89,7 +89,7 @@ public:
     {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-        IndexingType indexingType = array->indexingType() & IndexingShapeMask;
+        IndexingType indexingType = array->indexingType();
         unsigned length = array->length();
 
         // FIXME: JSCellButterfly::createFromArray should support re-using non contiguous indexing types as well.
@@ -107,22 +107,16 @@ public:
         if (!length)
             return result;
 
-        if (indexingType == ContiguousShape || indexingType == Int32Shape) {
-            for (unsigned i = 0; i < length; i++) {
-                JSValue value = array->butterfly()->contiguous().at(array, i).get();
-                value = !!value ? value : jsUndefined();
-                result->setIndex(vm, i, value);
-            }
+        if (indexingType == ArrayWithContiguous || indexingType == ArrayWithInt32 || indexingType == ArrayWithUndecided) {
+            copyArrayElements<ArrayFillMode::Undefined, NeedsGCSafeOps::No>(result->toButterfly()->contiguous().data(), 0, array->butterfly()->contiguous().data(), 0, length, indexingType);
+            if (indexingType == ArrayWithContiguous)
+                vm.writeBarrier(result);
             return result;
         }
 
-        if (indexingType == DoubleShape) {
+        if (indexingType == ArrayWithDouble) {
             ASSERT(Options::allowDoubleShape());
-            for (unsigned i = 0; i < length; i++) {
-                double d = array->butterfly()->contiguousDouble().at(array, i);
-                JSValue value = std::isnan(d) ? jsUndefined() : JSValue(JSValue::EncodeAsDouble, d);
-                result->setIndex(vm, i, value);
-            }
+            copyArrayElements<ArrayFillMode::Undefined, NeedsGCSafeOps::No>(result->toButterfly()->contiguous().data(), 0, array->butterfly()->contiguousDouble().data(), 0, length, indexingType);
             return result;
         }
 
