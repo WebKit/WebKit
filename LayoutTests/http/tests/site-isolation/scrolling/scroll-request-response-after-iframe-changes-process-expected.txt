@@ -1,0 +1,10 @@
+Verifies that replies to scroll requests an iframe made are not sent to the process the iframe moves to.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The iframe's new process is still responsive.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

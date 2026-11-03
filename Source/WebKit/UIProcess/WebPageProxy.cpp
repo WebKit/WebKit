@@ -21878,10 +21878,15 @@ void WebPageProxy::sendScrollUpdateForNode(std::optional<WebCore::FrameIdentifie
     if (!scrollingCoordinatorProxy)
         return;
 
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::RemoteScrollingCoordinator::ScrollUpdateForNode(update), [weakScrollingCoordinatorProxy = WeakPtr { *scrollingCoordinatorProxy }, isLastUpdate] {
+    auto completionHandler = [weakScrollingCoordinatorProxy = WeakPtr { *scrollingCoordinatorProxy }, isLastUpdate] {
         if (isLastUpdate && weakScrollingCoordinatorProxy)
             protect(weakScrollingCoordinatorProxy)->receivedLastScrollingTreeNodeUpdateReply();
-    });
+    };
+
+    if (processContainingFrame(frameID)->coreProcessIdentifier() != update.nodeID.processIdentifier())
+        return completionHandler();
+
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::RemoteScrollingCoordinator::ScrollUpdateForNode(update), WTF::move(completionHandler));
 }
 #endif
 

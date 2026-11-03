@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<iframe id="blocker" width="300" height="200" src="https://127.0.0.1:8443/site-isolation/scrolling/resources/hold-scroll-update-reply.html"></iframe>
+<iframe id="frame" width="300" height="200" src="http://localhost:8000/site-isolation/scrolling/resources/scroll-requests-then-navigate.html"></iframe>
+<script>
+description("Verifies that replies to scroll requests an iframe made are not sent to the process the iframe moves to.");
+jsTestIsAsync = true;
+
+function nextMessage(expected)
+{
+    return new Promise(resolve => {
+        addEventListener("message", function handler(event) {
+            if (event.data !== expected)
+                return;
+            removeEventListener("message", handler);
+            resolve();
+        });
+    });
+}
+
+onload = async () => {
+    const frame = document.getElementById("frame");
+    const blocker = document.getElementById("blocker");
+
+    const blocking = nextMessage("blocking");
+    const idle = nextMessage("idle");
+    blocker.contentWindow.postMessage("block", "*");
+    await blocking;
+
+    const loadedInNewProcess = nextMessage("loaded");
+    frame.contentWindow.postMessage("https://localhost:8443/site-isolation/scrolling/resources/reply-to-ping.html", "*");
+    await loadedInNewProcess;
+    await idle;
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const pong = nextMessage("pong");
+    frame.contentWindow.postMessage("ping", "*");
+    await pong;
+    testPassed("The iframe's new process is still responsive.");
+    finishJSTest();
+};
+</script>
+</body>
