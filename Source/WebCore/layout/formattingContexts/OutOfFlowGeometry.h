@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FormattingConstraints.h"
+#include "StyleSelfAlignmentData.h"
 #include <WebCore/LayoutUnit.h>
 #include <WebCore/WritingMode.h>
 #include <optional>
@@ -42,15 +43,17 @@ class ComputedStyle;
 namespace Layout {
 
 // The absolute positioning layout model (css-position-3 §4) for a box in the logical coordinates of its containing block, whose writing mode
-// is the box's (not orthogonal): the inset-modified containing block, the size, the auto margins and the alignment of the margin box (normal
-// is start alignment). The inline axis first; the block axis may need the content laid out with the inline size.
+// is the box's (not orthogonal): the inset-modified containing block, the size, the auto margins and the alignment of the margin box. The
+// inline axis first; the block axis may need the content laid out with the inline size.
 class OutOfFlowGeometry {
 public:
-    // The padding box of the containing block (CSS 2.2 §10.1).
+    // The padding box of the containing block (CSS 2.2 §10.1). A scroll container's scrollable overflow reaches past its end sides only
+    // (css-overflow-3 §2.2).
     struct ContainingBlock {
         LayoutUnit inlineSize;
         LayoutUnit blockSize;
         WritingMode writingMode;
+        bool isScrollContainer { false };
     };
     // Where the margin box would start with position: static (CSS 2.2 §10.3.7, §10.6.4), relative to the padding box of the containing
     // block, in its direction. The inline position is where the margin box would end when the static-position containing block has the
@@ -81,8 +84,8 @@ public:
 
     OutOfFlowGeometry(const RenderBox&, const ContainingBlock&, const StaticPosition&, LayoutUnit inlineAxisBorderAndPadding, LayoutUnit blockAxisBorderAndPadding);
 
-    // An auto inline size is the fit-content size when an inset in the inline axis is auto (css-position-3 §4.3), which takes the
-    // min-content and max-content inline sizes of the content (css-sizing-3 §5.1).
+    // An auto inline size is the fit-content size when an inset in the inline axis is auto or justify-self is neither normal nor stretch
+    // (css-position-3 §4.3), which takes the min-content and max-content inline sizes of the content (css-sizing-3 §5.1).
     bool hasFitContentInlineSize() const;
     AxisGeometry computeInlineAxisGeometry(std::optional<IntrinsicWidthConstraints> contentInlineSizes = { }) const;
     // The content box block size when it does not depend on the content, which percentages inside the box resolve against.
@@ -105,9 +108,12 @@ private:
         LayoutUnit staticPosition;
         bool staticPositionIsMarginBoxEnd { false };
         std::optional<StaticPosition::Alignment> staticPositionAlignment;
+        StyleSelfAlignmentData selfAlignment;
     };
     static std::pair<LayoutUnit, LayoutUnit> insetModifiedContainingBlock(const AxisValues&);
-    static AxisGeometry computeAxisGeometry(Axis, const AxisValues&, LayoutUnit borderBoxSize);
+    AxisGeometry computeAxisGeometry(Axis, const AxisValues&, LayoutUnit borderBoxSize) const;
+    StyleSelfAlignmentData selfAlignment(Axis, bool usesStaticPosition) const;
+    LayoutUnit alignmentOffset(Axis, const AxisValues&, LayoutUnit rangeStart, LayoutUnit rangeEnd, LayoutUnit freeSpace) const;
     AxisValues inlineAxisValues() const;
     AxisValues blockAxisValues() const;
     std::optional<LayoutUnit> definiteBorderBoxBlockSize(const AxisValues&) const;
