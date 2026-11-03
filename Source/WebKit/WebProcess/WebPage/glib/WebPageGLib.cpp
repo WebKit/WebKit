@@ -265,7 +265,7 @@ void WebPage::restoreInputMethodStateAfterPageFocus()
     if (protect(element->document())->focusedElement() != element)
         return;
 
-    sendInputMethodState(element.get(), InhibitOnScreenKeyboard::Yes);
+    sendInputMethodState(element.get(), m_page->settings().showOnScreenKeyboardOnViewFocus() ? InhibitOnScreenKeyboard::No : InhibitOnScreenKeyboard::Yes);
 
     // The UI process forgot the cursor area and the surrounding text when the view lost the focus. The selection did not
     // change, so nothing else is sure to send an editor state.
