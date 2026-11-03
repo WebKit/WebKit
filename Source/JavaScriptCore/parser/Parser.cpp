@@ -2767,28 +2767,20 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         functionBodyType = StandardFunctionBodyBlock;
     }
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=156962
-    // This loop collects the set of capture candidates that aren't
-    // part of the set of this function's declared parameters. We will
-    // figure out which parameters are captured for this function when
-    // we actually generate code for it. For now, we just propagate to
-    // our parent scopes which variables we might have closed over that
-    // belong to them. This is necessary for correctness when using
-    // the source provider cache because we can't close over a variable
-    // that we don't claim to close over. The source provider cache must
-    // know this information to properly cache this function.
-    // This might work itself out nicer if we declared a different
-    // Scope struct for the parameters (because they are indeed implemented
-    // as their own scope).
+    // Parameter expressions cannot see the body's declarations, which live in a separate environment
+    // (https://tc39.es/ecma262/#sec-functiondeclarationinstantiation). The parameters and the body
+    // share this Scope, so the parameter list's free variables must reach the parent before the
+    // body's declarations hide them, as they would hide x in `function f(a = x) { var x; }`.
+    // FIXME: Give the parameters their own Scope. Until then, a closure in a parameter expression
+    // makes a same-named body declaration look captured. https://bugs.webkit.org/show_bug.cgi?id=156962
     UniquedStringImplPtrSet nonLocalCapturesFromParameterExpressions;
     functionScope->forEachUsedVariable([&] (UniquedStringImpl* impl) {
-        if (!functionScope->hasDeclaredParameter(impl)) {
+        if (!functionScope->hasDeclaredParameter(impl))
             nonLocalCapturesFromParameterExpressions.add(impl);
-            if (TreeBuilder::NeedsFreeVariableInfo)
-                parentScope->addClosedVariableCandidateUnconditionally(impl);
-        }
         return IterationStatus::Continue;
     });
+    if (!nonLocalCapturesFromParameterExpressions.isEmpty())
+        parentScope->collectFreeVariablesFrom(functionScope.scope(), TreeBuilder::NeedsFreeVariableInfo);
 
     auto performParsingFunctionBody = [&] {
         return parseFunctionBody(context, syntaxChecker, startLocation, functionStart, functionNameStart, parametersStart, constructorKind, expectedSuperBinding, functionBodyType, functionInfo.parameterCount);
