@@ -428,8 +428,12 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
     ASSERT(previous.isText() || previous.isAtomicInlineBox() || previous.layoutBox().isRubyInlineBox());
     ASSERT(next.isText() || next.isAtomicInlineBox() || next.layoutBox().isRubyInlineBox());
 
-    auto mayWrapPrevious = TextUtil::isWrappingAllowed(previous.layoutBox().parent().style());
-    auto mayWrapNext = TextUtil::isWrappingAllowed(next.layoutBox().parent().style());
+    // Text has the white-space of its own style. It differs from the parent box style for text in a display: contents element.
+    auto wrappingStyle = [](auto& inlineItem) -> const Style::ComputedStyle& {
+        return inlineItem.isText() ? inlineItem.style() : inlineItem.layoutBox().parent().style();
+    };
+    auto mayWrapPrevious = TextUtil::isWrappingAllowed(wrappingStyle(previous));
+    auto mayWrapNext = TextUtil::isWrappingAllowed(wrappingStyle(next));
     if (&previous.layoutBox().parent() == &next.layoutBox().parent() && !mayWrapPrevious && !mayWrapNext)
         return false;
 
@@ -465,7 +469,7 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
         // [text][text] : is a continuous content.
         // [text-][text] : after [hyphen] position is a soft wrap opportunity.
         auto previousAndNextHaveSameParent = &previousInlineTextItem.layoutBox().parent() == &nextInlineTextItem.layoutBox().parent();
-        if (previousAndNextHaveSameParent && !TextUtil::isWrappingAllowed(previousInlineTextItem.style()))
+        if (previousAndNextHaveSameParent && !TextUtil::isWrappingAllowed(previousInlineTextItem.style()) && !TextUtil::isWrappingAllowed(nextInlineTextItem.style()))
             return false;
         // For soft wrap opportunities defined by the boundary between two characters, the white-space property on the nearest common ancestor of the two characters controls breaking.
         if (!endsWithSoftWrapOpportunity(previousInlineTextItem, nextInlineTextItem))

@@ -65,6 +65,12 @@ InlineRect LineBox::logicalRectForTextRun(const LineRun& run) const
     auto runlogicalTop = ancestorInlineBox->logicalTop() - ancestorInlineBox->inlineBoxContentOffsetForTextBoxTrim();
     auto& metricsOfPrimaryFont = ancestorInlineBox->primarymetricsOfPrimaryFont();
     auto logicalHeight = metricsOfPrimaryFont.ascent() + metricsOfPrimaryFont.descent();
+    CheckedRef textStyle = isFirstFormattedLine() ? run.layoutBox().firstLineStyle() : run.layoutBox().style();
+    if (auto& textMetrics = textStyle->fontCascade().metricsOfPrimaryFont(); &textMetrics != &metricsOfPrimaryFont) {
+        // Text with a font of its own (in a display: contents element) sits on the baseline of its parent inline box.
+        runlogicalTop += metricsOfPrimaryFont.ascent(m_baselineType) - textMetrics.ascent(m_baselineType);
+        logicalHeight = textMetrics.ascent() + textMetrics.descent();
+    }
 
     while (ancestorInlineBox != &m_rootInlineBox && !ancestorInlineBox->hasLineBoxRelativeAlignment()) {
         ancestorInlineBox = &parentInlineBox(*ancestorInlineBox);

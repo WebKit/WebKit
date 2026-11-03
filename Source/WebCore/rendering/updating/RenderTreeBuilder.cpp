@@ -317,10 +317,7 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
 
     ASSERT(&parent.view() == &m_view);
 
-    if (auto* beforeChildText = dynamicDowncast<RenderText>(beforeChild)) {
-        if (auto* wrapperInline = beforeChildText->inlineWrapperForDisplayContents())
-            beforeChild = wrapperInline;
-    } else if (auto* beforeChildBox = dynamicDowncast<RenderBox>(beforeChild)) {
+    if (auto* beforeChildBox = dynamicDowncast<RenderBox>(beforeChild)) {
         // Adjust the beforeChild if it happens to be a spanner and the its actual location is inside the fragmented flow.
         if (auto* enclosingFragmentedFlow = parent.enclosingFragmentedFlow()) {
             auto columnSpannerPlaceholderForBeforeChild = [&]() -> RenderMultiColumnSpannerPlaceholder* {
@@ -508,7 +505,6 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     }
 
     ASSERT(!beforeChild || beforeChild->parent() == &parent);
-    ASSERT(!is<RenderText>(beforeChild) || !downcast<RenderText>(*beforeChild).inlineWrapperForDisplayContents());
 
     // Take the ownership.
     auto* newChild = parent.attachRendererInternal(WTF::move(child), beforeChild);

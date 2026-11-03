@@ -120,7 +120,8 @@ IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineForm
         if (!m_mayUseSimplifiedTextOnlyInlineLayoutInRange)
             return;
 
-        m_mayUseSimplifiedTextOnlyInlineLayoutInRange = inlineItems.hasTextAndLineBreakOnlyContent() && !inlineItems.requiresVisualReordering();
+        // The text style is taken from the root and the inline boxes.
+        m_mayUseSimplifiedTextOnlyInlineLayoutInRange = inlineItems.hasTextAndLineBreakOnlyContent() && !inlineItems.hasTextWithStyleOfItsOwn() && !inlineItems.requiresVisualReordering();
         if (!m_mayUseSimplifiedTextOnlyInlineLayoutInRange)
             return;
         // Non-bidi text only content maybe nested inside inline boxes e.g. <div>simple text</div>, <div><span>simple text inside inline box</span></div> or

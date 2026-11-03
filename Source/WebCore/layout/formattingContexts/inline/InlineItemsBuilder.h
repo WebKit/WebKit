@@ -80,6 +80,7 @@ private:
 
     size_t m_inlineBoxCount { 0 };
     bool m_hasTextAndLineBreakOnlyContent { true }; // Note that this is true for cases like <span>text content</span>
+    bool m_hasTextWithStyleOfItsOwn { false };
     bool m_contentRequiresVisualReordering { false };
     bool m_hasTextAutospace { !root().style().textAutospace().isNoAutospace() };
     bool m_hasWhiteSpaceTrim { !root().style().whiteSpaceTrim().isNone() };

@@ -336,11 +336,7 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
 void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChild)
 {
     RenderElement* textContentParent = currentTextChild.parent();
-    RenderElement* firstLetterContainer = nullptr;
-    if (auto* wrapperInlineForDisplayContents = currentTextChild.inlineWrapperForDisplayContents())
-        firstLetterContainer = wrapperInlineForDisplayContents->parent();
-    else
-        firstLetterContainer = textContentParent;
+    RenderElement* firstLetterContainer = textContentParent;
     if (!firstLetterContainer)
         return;
     
@@ -368,8 +364,9 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
 
         RefPtr textNode = currentTextChild.textNode();
         WeakPtr beforeChild = currentTextChild.nextSibling();
-        WeakPtr inlineWrapperForDisplayContents = currentTextChild.inlineWrapperForDisplayContents();
-        auto hasInlineWrapperForDisplayContents = inlineWrapperForDisplayContents.get();
+        std::optional<Style::ComputedStyle> displayContentsParentStyle;
+        if (currentTextChild.inheritsStyleFromDisplayContentsParent())
+            displayContentsParentStyle = Style::ComputedStyle::clone(currentTextChild.style());
         auto quoteType = [&] -> std::optional<QuoteType> {
             if (CheckedPtr textFragment = dynamicDowncast<RenderTextFragment>(currentTextChild))
                 return textFragment->quoteType();
@@ -391,8 +388,8 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
         }
 
         RenderTextFragment& remainingText = *newRemainingText;
-        ASSERT_UNUSED(hasInlineWrapperForDisplayContents, hasInlineWrapperForDisplayContents == inlineWrapperForDisplayContents.get());
-        remainingText.setInlineWrapperForDisplayContents(inlineWrapperForDisplayContents.get());
+        if (displayContentsParentStyle)
+            remainingText.setStyleInheritedFromDisplayContentsParent(WTF::move(*displayContentsParentStyle));
         m_builder.attach(*textContentParent, WTF::move(newRemainingText), beforeChild.get());
 
         // FIXME: Make attach the final step so that we don't need to keep firstLetter around.

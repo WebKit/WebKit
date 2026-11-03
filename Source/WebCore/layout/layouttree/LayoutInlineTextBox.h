@@ -45,6 +45,8 @@ public:
     };
     const String& content() const LIFETIME_BOUND { return m_content; }
     bool isCombined() const { return m_isCombined; }
+    // Text in a display: contents element has a style of its own instead of inheriting from the parent box.
+    bool inheritsStyleFromDisplayContentsParent() const { return m_inheritsStyleFromDisplayContentsParent; }
     // FIXME: This should not be a box's property.
     bool canUseSimplifiedContentMeasuring() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::CanUseSimplifiedContentMeasuring); }
     bool canUseSimpleFontCodePath() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::CanUseSimpleFontCodepath); }
@@ -62,9 +64,12 @@ protected:
     explicit InlineTextBox(Style::ComputedStyle&&);
     ~InlineTextBox() = default;
 
+    void setInheritsStyleFromDisplayContentsParent(bool value) { m_inheritsStyleFromDisplayContentsParent = value; }
+
 private:
     String m_content;
     bool m_isCombined { false };
+    bool m_inheritsStyleFromDisplayContentsParent { false };
     EnumSet<ContentCharacteristic> m_contentCharacteristicSet;
 };
 

@@ -1301,6 +1301,7 @@ static std::unique_ptr<Style::ComputedStyle> createInheritedDisplayContentsStyle
     // Compute style for imaginary unstyled <span> around the text node.
     auto style = Style::ComputedStyle::createPtr();
     style->inheritFrom(parentElementStyle);
+    style->setUseSVGZoomRulesForLength(parentElementStyle.useSVGZoomRulesForLength());
     return style;
 }
 
@@ -1355,7 +1356,7 @@ void TreeResolver::resolveComposedTree()
                 auto* textRenderer = text->renderer();
                 if (isDisplayContentsParent) {
                     if (textRenderer)
-                        return textRenderer->hasInlineWrapperForDisplayContents();
+                        return textRenderer->inheritsStyleFromDisplayContentsParent();
                     if (!containsOnlyASCIIWhitespace)
                         return true;
                 }

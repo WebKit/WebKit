@@ -93,12 +93,15 @@ public:
 
     WEBCORE_EXPORT Text* LEGACY_NODELETE textNode() const;
 
-    // The style of an anonymous inline box around the text. The inherited properties come from the parent, the other properties
-    // have their initial values.
+    // The style of an anonymous inline box around the text. The inherited properties come from the parent box, or from the
+    // DOM parent when it is display: contents and has no box. The other properties have their initial values.
     ALWAYS_INLINE const Style::ComputedStyle& style() const LIFETIME_BOUND { return Layout::InlineTextBox::style(); }
     ALWAYS_INLINE const Style::ComputedStyle& firstLineStyle() const LIFETIME_BOUND { return Layout::InlineTextBox::firstLineStyle(); }
     // On attach and parent style change.
     void inheritStyleFromParent();
+    bool inheritsStyleFromDisplayContentsParent() const { return Layout::InlineTextBox::inheritsStyleFromDisplayContentsParent(); }
+    void setStyleInheritedFromDisplayContentsParent(Style::ComputedStyle&&);
+    void clearStyleInheritedFromDisplayContentsParent();
     const Style::ComputedStyle* lazyPseudoElementStyle(const Style::PseudoElementIdentifier&, const Style::ComputedStyle* parentStyle = nullptr) const LIFETIME_BOUND;
 
     Color selectionBackgroundColor() const;
@@ -205,10 +208,6 @@ public:
 
     Vector<std::pair<unsigned, unsigned>> contentRangesBetweenOffsetsForType(const DocumentMarkerType, unsigned startOffset, unsigned endOffset) const;
 
-    bool hasInlineWrapperForDisplayContents() const { return m_hasInlineWrapperForDisplayContents; }
-    RenderBoxModelObject* LEGACY_NODELETE inlineWrapperForDisplayContents();
-    void setInlineWrapperForDisplayContents(RenderBoxModelObject*);
-
     template <typename MeasureTextCallback>
     static float measureTextConsideringPossibleTrailingSpace(bool currentCharacterIsSpace, unsigned startIndex, unsigned wordLength, WordTrailingSpace&, SingleThreadWeakHashSet<const Font>& fallbackFonts, NOESCAPE const MeasureTextCallback&);
 
@@ -236,6 +235,7 @@ protected:
     virtual void setTextInternal(const String&, bool force);
 
     void layoutBoxContentDidChange();
+    void displayContentsParentStyleDidChange(const Style::ComputedStyle& oldStyle, bool didChangeStyleSource);
 
 private:
     void updateRenderedText();
@@ -290,7 +290,6 @@ private:
     mutable unsigned m_knownToHaveNoOverflowAndNoFallbackFonts : 1 { false };
     unsigned m_useBackslashAsYenSymbol : 1 { false };
     unsigned m_originalTextDiffersFromRendered : 1 { false };
-    unsigned m_hasInlineWrapperForDisplayContents : 1 { false };
     unsigned m_layoutBoxContentNeedsUpdate : 1 { false };
     unsigned m_hasSecureTextTimer : 1 { false };
     FontCascade::CodePath m_fontCodePath : 2;

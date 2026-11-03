@@ -3491,7 +3491,12 @@ const Style::ComputedStyle* AccessibilityObject::style() const
             // set yet, or it was destroyed as part of an in-progress render-tree update) will cause a
             // crash because RenderTexts get their style from their parent.
             // Non-inherited properties like the background color come from the parent.
-            return renderText->parent() ? &renderText->parent()->style() : nullptr;
+            if (!renderText->parent())
+                return nullptr;
+            // Text in a display: contents element has inherited properties of its own and no parent box of its own.
+            if (renderText->inheritsStyleFromDisplayContentsParent())
+                return &renderText->style();
+            return &renderText->parent()->style();
         }
         return &renderer->style();
     }

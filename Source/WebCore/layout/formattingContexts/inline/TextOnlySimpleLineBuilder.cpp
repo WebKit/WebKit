@@ -497,6 +497,9 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByCon
         return false;
     if (!inlineItems.hasTextAndLineBreakOnlyContent() || inlineItems.hasInlineBoxes() || inlineItems.requiresVisualReordering() || inlineItems.hasTextAutospace())
         return false;
+    // Text only layout takes the text style from the root.
+    if (inlineItems.hasTextWithStyleOfItsOwn())
+        return false;
     if (!inlineLayoutState.placedFloats().isEmpty())
         return false;
     if (auto lineClamp = inlineLayoutState.parentBlockLayoutState().lineClamp(); lineClamp && !lineClamp->isLegacy)

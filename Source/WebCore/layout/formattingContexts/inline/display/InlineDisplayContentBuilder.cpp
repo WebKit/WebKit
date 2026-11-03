@@ -166,8 +166,14 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
     auto& text = lineRun.textContent();
     auto isContentful = true;
 
-    auto& textStyle = isFirstFormattedLine() ? inlineTextBox->parent().firstLineStyle() : inlineTextBox->parent().style();
-    m_contentHasInkOverflow = m_contentHasInkOverflow || textStyle.textDecorationLineInEffect() || !Style::shadowOutsetExtent(textStyle.textShadow(), textStyle.usedZoomForLength()).isZero() || textStyle.hasPositiveStrokeWidth() || style.fontCascade().letterSpacing() < 0 || !lineRun.glyphOverflow().isEmpty();
+    // A font of its own, as in a display: contents element, can take the text outside its parent inline box.
+    auto hasFontOfItsOwn = [&] {
+        if (!inlineTextBox->parent().isInlineBox())
+            return false;
+        auto& parentStyle = isFirstFormattedLine() ? inlineTextBox->parent().firstLineStyle() : inlineTextBox->parent().style();
+        return &style.fontCascade() != &parentStyle.fontCascade() && style.fontCascade() != parentStyle.fontCascade();
+    };
+    m_contentHasInkOverflow = m_contentHasInkOverflow || style.textDecorationLineInEffect() || !Style::shadowOutsetExtent(style.textShadow(), style.usedZoomForLength()).isZero() || style.hasPositiveStrokeWidth() || style.fontCascade().letterSpacing() < 0 || !lineRun.glyphOverflow().isEmpty() || hasFontOfItsOwn();
 
     float glyphOverflowTop = lineRun.glyphOverflow().top;
     float glyphOverflowBottom = lineRun.glyphOverflow().bottom;

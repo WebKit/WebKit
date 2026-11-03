@@ -171,6 +171,9 @@ bool RangeBasedLineBuilder::isEligibleForRangeInlineLayout(const InlineFormattin
         // Check the nested text content.
         if (!inlineItems.hasTextAndLineBreakOnlyContent() || inlineItems.requiresVisualReordering() || !placedFloats.isEmpty() || inlineItems.hasTextAutospace())
             return false;
+        // The text style is taken from the root and the inline box.
+        if (inlineItems.hasTextWithStyleOfItsOwn())
+            return false;
 
         CheckedRef rootStyle = inlineFormattingContext.root().style();
         CheckedRef inlineBoxStyle = inlineItemList.first().layoutBox().style();

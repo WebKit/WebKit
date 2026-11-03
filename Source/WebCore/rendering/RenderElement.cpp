@@ -645,8 +645,10 @@ void RenderElement::setStyle(Style::ComputedStyle&& style, Style::DifferenceResu
 
     if (hasTextChildren) {
         // The old style has the old inherited values of the text.
-        for (CheckedRef child : childrenOfType<RenderText>(*this))
-            child->styleDidChange(diff, &oldStyle);
+        for (CheckedRef child : childrenOfType<RenderText>(*this)) {
+            if (!child->inheritsStyleFromDisplayContentsParent())
+                child->styleDidChange(diff, &oldStyle);
+        }
     }
 
     // FIXME: |this| might be destroyed here. This can currently happen for a RenderTextFragment when

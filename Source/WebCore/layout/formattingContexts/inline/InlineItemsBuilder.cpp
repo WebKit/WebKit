@@ -94,6 +94,12 @@ static inline bool LEGACY_NODELETE isTextOrLineBreak(const Box& layoutBox)
     return layoutBox.isInFlow() && (layoutBox.isInlineTextBox() || (layoutBox.isLineBreakBox() && !layoutBox.isWordBreakOpportunity()));
 }
 
+static inline bool LEGACY_NODELETE isTextWithStyleOfItsOwn(const Box& layoutBox)
+{
+    auto* inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox);
+    return inlineTextBox && inlineTextBox->inheritsStyleFromDisplayContentsParent();
+}
+
 struct WidthAndGlyphOverflow {
     InlineLayoutUnit width { 0.f };
     std::optional<std::pair<LayoutUnit, LayoutUnit>> topBottomOverflow { };
@@ -141,7 +147,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
     auto adjustInlineContentCacheWithNewInlineItems = [&] {
         ASSERT(!startPosition || startPosition.index < inlineContentCache().inlineItems().content().size());
 
-        auto contentAttributes = InlineContentCache::InlineItems::ContentAttributes { m_contentRequiresVisualReordering, m_hasTextAndLineBreakOnlyContent, m_hasTextAutospace, m_hasWhiteSpaceTrim, m_inlineBoxCount };
+        auto contentAttributes = InlineContentCache::InlineItems::ContentAttributes { m_contentRequiresVisualReordering, m_hasTextAndLineBreakOnlyContent, m_hasTextWithStyleOfItsOwn, m_hasTextAutospace, m_hasWhiteSpaceTrim, m_inlineBoxCount };
         auto isPopulatedFromCache = m_textContentPopulatedFromCache && *m_textContentPopulatedFromCache ? InlineContentCache::InlineItems::IsPopulatedFromCache::Yes : InlineContentCache::InlineItems::IsPopulatedFromCache::No;
         auto& inlineItemCache = inlineContentCache().inlineItems();
         if (!startPosition || startPosition.index >= inlineItemCache.content().size())
@@ -155,6 +161,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
     size_t inlineBoxStart = 0;
     size_t inlineBoxEnd = 0;
     auto hasTextAndLineBreakOnlyContent = true;
+    auto hasTextWithStyleOfItsOwn = false;
     auto inlineLevelItems = HashSet<const Box*> { };
     for (auto& inlineItem : inlineContentCache().inlineItems().content()) {
         if (inlineItem.isInlineBoxStart()) {
@@ -169,10 +176,12 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
         if (hasToBeUniqueLayoutBox)
             ASSERT(inlineLevelItems.add(&inlineItem.layoutBox()).isNewEntry);
         hasTextAndLineBreakOnlyContent &= isTextOrLineBreak(inlineItem.layoutBox());
+        hasTextWithStyleOfItsOwn |= isTextWithStyleOfItsOwn(inlineItem.layoutBox());
     }
     ASSERT(inlineBoxStart == inlineBoxEnd);
     ASSERT(m_inlineBoxCount == inlineBoxStart);
     ASSERT(m_hasTextAndLineBreakOnlyContent == hasTextAndLineBreakOnlyContent);
+    ASSERT(m_hasTextWithStyleOfItsOwn == hasTextWithStyleOfItsOwn);
 #endif
 }
 
@@ -362,6 +371,7 @@ InlineItemsBuilder::LayoutQueue InlineItemsBuilder::traverseUntilDamaged(const B
         queue.append(layoutBox);
         m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(layoutBox);
         m_hasTextAndLineBreakOnlyContent &= (isInlineBoxWithInlineContent(layoutBox) || isTextOrLineBreak(layoutBox));
+        m_hasTextWithStyleOfItsOwn |= isTextWithStyleOfItsOwn(layoutBox);
         return &layoutBox == &firstDamagedLayoutBox;
     };
 
@@ -469,6 +479,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItemList& inlineItemList, Inli
         while (!layoutQueue.isEmpty()) {
             auto layoutBox = layoutQueue.takeLast();
             m_hasTextAndLineBreakOnlyContent &= (isInlineBoxWithInlineContent(layoutBox) || isTextOrLineBreak(layoutBox));
+            m_hasTextWithStyleOfItsOwn |= isTextWithStyleOfItsOwn(layoutBox);
             if (layoutBox->isOutOfFlowPositioned())
                 inlineItemList.append({ layoutBox, InlineItem::Type::OutOfFlow });
             else if (CheckedPtr inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox))

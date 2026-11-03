@@ -101,7 +101,7 @@ struct SameSizeAsRenderText : public RenderObject, private Layout::InlineTextBox
     float candidateTextSize;
     float widths[4];
     String text;
-    uint32_t bitfields : 15;
+    uint32_t bitfields : 14;
 };
 
 static_assert(sizeof(RenderText) == sizeof(SameSizeAsRenderText), "RenderText should stay small");
@@ -156,12 +156,6 @@ void SecureTextTimer::fired()
 static HashMap<SingleThreadWeakRef<const RenderText>, String>& LEGACY_NODELETE originalTextMap()
 {
     static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, String>> map;
-    return map;
-}
-
-static HashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderBoxModelObject>>& LEGACY_NODELETE inlineWrapperForDisplayContentsMap()
-{
-    static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderBoxModelObject>>> map;
     return map;
 }
 
@@ -489,17 +483,64 @@ bool RenderText::computeUseBackslashAsYenSymbol() const
 
 void RenderText::inheritStyleFromParent()
 {
+    if (inheritsStyleFromDisplayContentsParent())
+        return;
     CheckedPtr parentRenderer = parent();
     CheckedRef parentStyle = parentRenderer->style();
     auto& style = mutableStyle();
     style.inheritFrom(parentStyle);
     style.inheritUnicodeBidiFrom(parentStyle);
+    // Text lengths resolve like the lengths of the content it is in.
+    style.setUseSVGZoomRulesForLength(parentStyle->useSVGZoomRulesForLength());
     auto mayHaveFirstLineStyle = parentRenderer->mayHaveFirstLineStyle();
     setMayHaveFirstLineStyle(mayHaveFirstLineStyle);
     // Measuring depends on the first-line font. It can change with the parent style or with a move to another parent,
     // which doesn't send styleDidChange.
     if (mayHaveFirstLineStyle)
         LayoutIntegration::BoxTreeUpdater::updateSimplifiedMeasuring(*this);
+}
+
+void RenderText::setStyleInheritedFromDisplayContentsParent(Style::ComputedStyle&& style)
+{
+    bool didChangeStyleSource = !inheritsStyleFromDisplayContentsParent();
+    setInheritsStyleFromDisplayContentsParent(true);
+    // The style doesn't come from the parent box, so neither does a first-line style.
+    setMayHaveFirstLineStyle(false);
+    auto oldStyle = mutableStyle().replace(WTF::move(style));
+    // A renderer that is not attached yet gets its first style notification on attach.
+    if (!parent())
+        return;
+    displayContentsParentStyleDidChange(oldStyle, didChangeStyleSource);
+}
+
+void RenderText::clearStyleInheritedFromDisplayContentsParent()
+{
+    if (!inheritsStyleFromDisplayContentsParent())
+        return;
+    setInheritsStyleFromDisplayContentsParent(false);
+    if (!parent())
+        return;
+    auto oldStyle = Style::ComputedStyle::clone(style());
+    inheritStyleFromParent();
+    displayContentsParentStyleDidChange(oldStyle, true);
+}
+
+void RenderText::displayContentsParentStyleDidChange(const Style::ComputedStyle& oldStyle, bool didChangeStyleSource)
+{
+    auto diff = Style::difference(oldStyle, style());
+    // Inline layout has simpler paths for text that inherits from its parent box.
+    bool needsLineLayoutInvalidation = didChangeStyleSource || diff == Style::DifferenceResult::Layout;
+    if (needsLineLayoutInvalidation && LayoutIntegration::BoxTreeUpdater::isInLiveFormattingContext(*this)) {
+        if (CheckedPtr container = LayoutIntegration::LineLayout::blockContainer(*this))
+            container->invalidateLineLayout(RenderBlockFlow::InvalidationReason::ContentChange);
+    }
+    if (diff == Style::DifferenceResult::Equal)
+        return;
+    // The text has no parent style change to take care of it.
+    repaint();
+    if (diff == Style::DifferenceResult::Overflow)
+        parent()->setNeedsLayoutForOverflowChange();
+    styleDidChange(diff, &oldStyle);
 }
 
 void RenderText::layoutBoxContentDidChange()
@@ -575,8 +616,6 @@ void RenderText::willBeDestroyed()
 
     if (m_originalTextDiffersFromRendered)
         originalTextMap().remove(this);
-
-    setInlineWrapperForDisplayContents(nullptr);
 
     RenderObject::willBeDestroyed();
 }
@@ -2236,30 +2275,6 @@ StringView RenderText::stringView(unsigned start, std::optional<unsigned> stop) 
     ASSERT(destination <= length());
     ASSERT(start <= destination);
     return StringView { text() }.substring(start, destination - start);
-}
-
-RenderBoxModelObject* RenderText::inlineWrapperForDisplayContents()
-{
-    ASSERT(m_hasInlineWrapperForDisplayContents == inlineWrapperForDisplayContentsMap().contains(this));
-
-    if (!m_hasInlineWrapperForDisplayContents)
-        return nullptr;
-    return inlineWrapperForDisplayContentsMap().get(this);
-}
-
-void RenderText::setInlineWrapperForDisplayContents(RenderBoxModelObject* wrapper)
-{
-    ASSERT(m_hasInlineWrapperForDisplayContents == inlineWrapperForDisplayContentsMap().contains(this));
-
-    if (!wrapper) {
-        if (!m_hasInlineWrapperForDisplayContents)
-            return;
-        inlineWrapperForDisplayContentsMap().remove(*this);
-        m_hasInlineWrapperForDisplayContents = false;
-        return;
-    }
-    inlineWrapperForDisplayContentsMap().add(*this, wrapper);
-    m_hasInlineWrapperForDisplayContents = true;
 }
 
 } // namespace WebCore

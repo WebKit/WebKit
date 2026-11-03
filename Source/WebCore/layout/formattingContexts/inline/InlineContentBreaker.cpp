@@ -302,13 +302,14 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         // e.g. <div style="white-space: nowrap">no wrap<div style="display: inline-block; white-space: normal">yes wrap</div></div>.
         // While the inline-block has pre-wrap which allows wrapping (for its own content), the content lives in a nowrap context.
         auto& runs = continuousContent.runs();
-        auto& overflowingBox = runs[overflowingRunIndex].inlineItem.layoutBox();
-        auto& styleToUse = overflowingBox.isInlineBox() ? overflowingBox.style() : overflowingBox.parent().style();
-        auto isWrappingAllowed = TextUtil::isWrappingAllowed(styleToUse);
-        for (auto index = overflowingRunIndex; !isWrappingAllowed && index--;) {
-            auto& styleToUse = runs[index].inlineItem.layoutBox().parent().style();
-            isWrappingAllowed = TextUtil::isWrappingAllowed(styleToUse);
-        }
+        // Text has the white-space of its own style. It differs from the parent box style for text in a display: contents element.
+        auto wrappingStyle = [](const Box& layoutBox) -> const Style::ComputedStyle& {
+            return layoutBox.isInlineTextBox() ? layoutBox.style() : layoutBox.parent().style();
+        };
+        CheckedRef overflowingBox = runs[overflowingRunIndex].inlineItem.layoutBox();
+        auto isWrappingAllowed = TextUtil::isWrappingAllowed(overflowingBox->isInlineBox() ? overflowingBox->style() : wrappingStyle(overflowingBox));
+        for (auto index = overflowingRunIndex; !isWrappingAllowed && index--;)
+            isWrappingAllowed = TextUtil::isWrappingAllowed(wrappingStyle(runs[index].inlineItem.layoutBox()));
         return isWrappingAllowed;
     };
     if (shouldWrapUnbreakableContentToNextLine())

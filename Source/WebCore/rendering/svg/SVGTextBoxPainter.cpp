@@ -101,8 +101,7 @@ void SVGTextBoxPainter::paintSelectionBackground()
     if (renderer().usedStyle().visibility() != UsedVisibility::Visible)
         return;
 
-    auto& parentRenderer = this->parentRenderer();
-    ASSERT(!parentRenderer.document().printing());
+    ASSERT(!parentRenderer().document().printing());
 
     // Determine whether or not we're selected.
     bool paintSelectedTextOnly = m_paintInfo.phase == PaintPhase::Selection;
@@ -116,7 +115,7 @@ void SVGTextBoxPainter::paintSelectionBackground()
     if (!textShouldBePainted(renderer()))
         return;
 
-    auto& style = parentRenderer.style();
+    auto& style = renderer().style();
 
     auto [startPosition, endPosition] = selectionStartEnd();
 
@@ -167,7 +166,7 @@ void SVGTextBoxPainter::paint()
     if (!textShouldBePainted(renderer()))
         return;
 
-    auto& style = parentRenderer.style();
+    auto& style = renderer().style();
 
     bool hasFill = !style.fill().isNone();
     bool hasVisibleStroke = !style.stroke().isNone() && style.strokeWidth().isPossiblyPositive();
@@ -234,7 +233,7 @@ void SVGTextBoxPainter::paint()
     }
 
     // Finally, paint the outline if any.
-    if (style.hasOutline()) {
+    if (parentRenderer.style().hasOutline()) {
         if (parentRenderer.isInlineBox())
             OutlinePainter { m_paintInfo }.paintOutline(parentRenderer, m_paintOffset);
     }
@@ -260,7 +259,7 @@ bool SVGTextBoxPainter::acquirePaintingResource(SVGPaintServerHandling& paintSer
         context.save();
         context.setTextDrawingMode(TextDrawingMode::Stroke);
 
-        if (style.vectorEffect() == VectorEffect::NonScalingStroke) {
+        if (renderer.style().vectorEffect() == VectorEffect::NonScalingStroke) {
             if (auto nonScalingStrokeScale = RenderSVGInlineText::computeNonScalingStrokeScaleForRenderer(renderer); nonScalingStrokeScale > 0)
                 scalingFactor /= nonScalingStrokeScale;
         }
@@ -318,7 +317,7 @@ bool SVGTextBoxPainter::acquireLegacyPaintingResource(GraphicsContext*& context,
     }
 
     if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke)) {
-        if (style.vectorEffect() == VectorEffect::NonScalingStroke) {
+        if (renderer.style().vectorEffect() == VectorEffect::NonScalingStroke) {
             if (auto nonScalingStrokeScale = RenderSVGInlineText::computeNonScalingStrokeScaleForRenderer(renderer); nonScalingStrokeScale > 0)
                 scalingFactor /= nonScalingStrokeScale;
         }
