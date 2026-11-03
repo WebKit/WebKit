@@ -235,6 +235,7 @@
 #include "SVGSVGElement.h"
 #include "SWClientConnection.h"
 #include "ScriptController.h"
+#include "ScriptDisallowedScope.h"
 #include "ScriptExecutionContextInlines.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollTimeline.h"
@@ -8922,6 +8923,7 @@ String Internals::dumpStyleResolvers()
 
     dumpResolver("document resolver"_s, protect(document->styleScope().resolver()));
 
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     for (Ref shadowRoot : document->inDocumentShadowRoots()) {
         auto name = shadowRoot->mode() == ShadowRootMode::UserAgent ? "shadow root resolver (user agent)"_s : "shadow root resolver (author)"_s;
         dumpResolver(name, protect(protect(const_cast<ShadowRoot&>(shadowRoot.get()).styleScope())->resolver()));
