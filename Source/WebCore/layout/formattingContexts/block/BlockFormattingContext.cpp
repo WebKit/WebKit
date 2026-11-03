@@ -70,6 +70,22 @@ static std::optional<LayoutUnit> percentageBasis(const RenderBox& box, const Con
     return 0_lu;
 }
 
+// What stretch block sizes resolve against. The children of a table cell stretch to the block size the cell has from its style when that is
+// fixed, not to the one the row gives it, which only percentages resolve against (RenderBox::isBlockSizeResolvableForStretch), and like those
+// without the intrinsic padding of its vertical alignment.
+static std::optional<LayoutUnit> stretchFitBasis(const ContainingBlockState& containingBlockState)
+{
+    CheckedPtr tableCell = dynamicDowncast<RenderTableCell>(containingBlockState.blockContainer);
+    if (!tableCell)
+        return containingBlockState.contentBoxBlockSize;
+    if (!tableCell->style().logicalHeight().isFixed())
+        return { };
+    auto& geometry = containingBlockState.geometry;
+    auto borderAndPaddingBlockSize = geometry.verticalBorderAndPadding() - tableCell->intrinsicPaddingBefore() - tableCell->intrinsicPaddingAfter();
+    auto borderBoxBlockSize = BlockFormattingUtils::borderBoxBlockSize(*tableCell, borderAndPaddingBlockSize, { }, { }, { }, tableCell->writingMode());
+    return std::max(0_lu, borderBoxBlockSize - borderAndPaddingBlockSize - tableCell->scrollbarLogicalHeight());
+}
+
 BlockFormattingContext::BlockFormattingContext(const RenderBlockFlow& root, LayoutIntegration::BlockIntegrationUtils& integrationUtils, BlockLayoutState& blockLayoutState)
     : m_root(root)
     , m_integrationUtils(integrationUtils)
@@ -734,7 +750,8 @@ std::optional<LayoutUnit> BlockFormattingContext::stretchFitBorderBoxBlockSize(c
     // -webkit-fill-available resolves to what it did before the stretch keyword: the available block size, margins included (RenderBox::computeSizingKeywordLogicalContentHeightUsing).
     if (BlockFormattingUtils::hasFillAvailableBlockSize(box, root().writingMode()))
         return containingBlockState.fillAvailableBlockSize;
-    if (!containingBlockState.contentBoxBlockSize)
+    auto containingBlockContentBoxBlockSize = stretchFitBasis(containingBlockState);
+    if (!containingBlockContentBoxBlockSize)
         return { };
     auto marginBefore = geometry.marginBefore();
     auto marginAfter = geometry.marginAfter();
@@ -747,7 +764,7 @@ std::optional<LayoutUnit> BlockFormattingContext::stretchFitBorderBoxBlockSize(c
         if (!containingBlockGeometry.borderAndPaddingAfter())
             marginAfter = { };
     }
-    return std::max(0_lu, *containingBlockState.contentBoxBlockSize - marginBefore - marginAfter);
+    return std::max(0_lu, *containingBlockContentBoxBlockSize - marginBefore - marginAfter);
 }
 
 void BlockFormattingContext::computeBlockSize(const RenderBox& box, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState& containingBlockState, BoxGeometry& geometry) const
