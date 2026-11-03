@@ -1554,21 +1554,6 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, con
         return false;
     }
 
-    if (!hasCommittedAnyProvisionalLoads()) {
-        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because has not committed any load yet", m_legacyMainFrameProcess->processID());
-        return false;
-    }
-
-    if (isPageOpenedByDOMShowingInitialEmptyDocument()) {
-        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because it is showing the initial empty document", m_legacyMainFrameProcess->processID());
-        return false;
-    }
-
-    if (protect(m_browsingContextGroup)->hasMultiplePages()) {
-        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because BrowsingContextGroup has multiple pages", m_legacyMainFrameProcess->processID());
-        return false;
-    }
-
     // FIXME: The cached document would share the group's processes with the next one. Keep it in its process's WebPage
     // instead, so that it can stay in the group.
     if (protect(preferences())->siteIsolationEnabled() && &provisionalPage.browsingContextGroup() == m_browsingContextGroup.ptr()) {
@@ -1576,27 +1561,9 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, con
         return false;
     }
 
-    RefPtr fromItem = navigation.fromItem();
-
-    // If the source and the destination back / forward list items are the same, then this is a client-side redirect. In this case,
-    // there is no need to suspend the previous page as there will be no way to get back to it.
-    if (fromItem && fromItem == backForwardList().currentItem()) {
-        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because this is a client-side redirect", m_legacyMainFrameProcess->processID());
+    RefPtr fromItem = backForwardItemForCachingOutgoingDocument(navigation);
+    if (!fromItem)
         return false;
-    }
-
-    if (fromItem && fromItem->url() != pageLoadState().url()) {
-        WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because fromItem's URL does not match the page URL.", m_legacyMainFrameProcess->processID());
-        return false;
-    }
-
-    if (!fromItem || !shouldUseBackForwardCache()) {
-        if (!fromItem)
-            WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i there is no associated WebBackForwardListItem", m_legacyMainFrameProcess->processID());
-        else
-            WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i the back / forward cache is disabled", m_legacyMainFrameProcess->processID());
-        return false;
-    }
 
     WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Suspending current page for process pid %i", m_legacyMainFrameProcess->processID());
     mainFrame->frameLoadState().didSuspend();
@@ -1618,6 +1585,70 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, con
     protect(backForwardCache())->addEntry(*fromItem, WTF::move(suspendedPage));
 
     return true;
+}
+
+RefPtr<WebBackForwardListItem> WebPageProxy::backForwardItemForCachingOutgoingDocument(API::Navigation& navigation)
+{
+    if (!hasCommittedAnyProvisionalLoads()) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "backForwardItemForCachingOutgoingDocument: Not caching the document in process pid %i because has not committed any load yet", m_legacyMainFrameProcess->processID());
+        return nullptr;
+    }
+
+    if (isPageOpenedByDOMShowingInitialEmptyDocument()) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "backForwardItemForCachingOutgoingDocument: Not caching the document in process pid %i because it is the initial empty document", m_legacyMainFrameProcess->processID());
+        return nullptr;
+    }
+
+    if (protect(m_browsingContextGroup)->hasMultiplePages()) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "backForwardItemForCachingOutgoingDocument: Not caching the document in process pid %i because BrowsingContextGroup has multiple pages", m_legacyMainFrameProcess->processID());
+        return nullptr;
+    }
+
+    RefPtr fromItem = navigation.fromItem();
+
+    // If the source and the destination back / forward list items are the same, then this is a client-side redirect. In this case,
+    // there is no need to cache the previous document as there will be no way to get back to it.
+    if (fromItem && fromItem == backForwardList().currentItem()) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "backForwardItemForCachingOutgoingDocument: Not caching the document in process pid %i because this is a client-side redirect", m_legacyMainFrameProcess->processID());
+        return nullptr;
+    }
+
+    if (fromItem && fromItem->url() != pageLoadState().url()) {
+        WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "backForwardItemForCachingOutgoingDocument: Not caching the document in process pid %i because fromItem's URL does not match the page URL.", m_legacyMainFrameProcess->processID());
+        return nullptr;
+    }
+
+    if (!fromItem || !shouldUseBackForwardCache()) {
+        if (!fromItem)
+            WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "backForwardItemForCachingOutgoingDocument: Not caching the document in process pid %i there is no associated WebBackForwardListItem", m_legacyMainFrameProcess->processID());
+        else
+            WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "backForwardItemForCachingOutgoingDocument: Not caching the document in process pid %i the back / forward cache is disabled", m_legacyMainFrameProcess->processID());
+        return nullptr;
+    }
+
+    return fromItem;
+}
+
+void WebPageProxy::suspendIframeProcessesForBackForwardCache(WebBackForwardListItem& item, Vector<Ref<WebProcessProxy>>&& iframeProcesses, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (iframeProcesses.isEmpty())
+        return completionHandler(true);
+
+    auto mainFrameItemID = item.mainFrameItem().identifier();
+
+    auto aggregator = MainRunLoopSuccessCallbackAggregator::create(
+        [weakThis = WeakPtr { *this }, itemID = item.identifier(), completionHandler = WTF::move(completionHandler)](bool success) mutable {
+            if (!success) {
+                if (RefPtr page = weakThis)
+                    page->discardBackForwardCacheEntry(itemID);
+            }
+            completionHandler(success);
+        });
+
+    for (Ref process : iframeProcesses) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendIframeProcessesForBackForwardCache: dispatching SuspendWithFrameItem to pid %i", process->processID());
+        process->sendWithAsyncReply(Messages::WebPage::SuspendWithFrameItem(mainFrameItemID), aggregator->chain(), webPageIDInProcess(process));
+    }
 }
 
 WebBackForwardCache& WebPageProxy::backForwardCache() const
@@ -22018,24 +22049,7 @@ void WebPageProxy::didCacheBackForwardItem(BackForwardItemIdentifier itemID, Com
     // and released when the entry is discarded.
     entry->setCachedChildren(mainFrame->takeChildFrames());
 
-    if (iframeProcesses.isEmpty())
-        return completionHandler(true);
-
-    auto mainFrameItemID = item->mainFrameItem().identifier();
-
-    auto aggregator = MainRunLoopSuccessCallbackAggregator::create(
-        [weakThis = WeakPtr { *this }, itemID, completionHandler = WTF::move(completionHandler)](bool success) mutable {
-            if (!success) {
-                if (RefPtr page = weakThis.get())
-                    page->discardBackForwardCacheEntry(itemID);
-            }
-            completionHandler(success);
-        });
-
-    for (Ref process : iframeProcesses) {
-        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didCacheBackForwardItem: dispatching SuspendWithFrameItem to pid %i", process->processID());
-        process->sendWithAsyncReply(Messages::WebPage::SuspendWithFrameItem(mainFrameItemID), aggregator->chain(), webPageIDInProcess(process));
-    }
+    suspendIframeProcessesForBackForwardCache(*item, WTF::move(iframeProcesses), WTF::move(completionHandler));
 }
 
 void WebPageProxy::restoreOrCancelPendingBackForwardIframes(const PendingBackForwardIframeRestore& pendingRestore, RestoredFromBackForwardCache restoredFromBackForwardCache)

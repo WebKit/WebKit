@@ -3294,6 +3294,7 @@ private:
     void updateHiddenPageThrottlingAutoIncreases();
 
     bool suspendCurrentPageIfPossible(API::Navigation&, const ProvisionalPageProxy&, RefPtr<WebFrameProxy>&& mainFrame);
+    RefPtr<WebBackForwardListItem> backForwardItemForCachingOutgoingDocument(API::Navigation&);
 
     enum class ResetStateReason : uint8_t {
         PageInvalidated,
@@ -3919,6 +3920,7 @@ private:
 
     Vector<Ref<WebProcessProxy>> activeRemoteFrameProcesses() const;
     void discardBackForwardCacheEntry(WebCore::BackForwardItemIdentifier);
+    void suspendIframeProcessesForBackForwardCache(WebBackForwardListItem&, Vector<Ref<WebProcessProxy>>&&, CompletionHandler<void(bool)>&&);
 
     void setTextIndicatorFromFrame(WebCore::FrameIdentifier, RefPtr<WebCore::TextIndicator>&&, WebCore::TextIndicatorLifetime);
     void updateTextIndicatorFromFrame(WebCore::FrameIdentifier, RefPtr<WebCore::TextIndicator>&&);
