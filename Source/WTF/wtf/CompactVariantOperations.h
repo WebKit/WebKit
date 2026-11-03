@@ -72,6 +72,8 @@ template<CompactVariantAlternative... Ts> struct CompactVariantOperations {
     using StdVariant = Variant<Ts...>;
     using Index = uint8_t;
     using Storage = uint64_t;
+    // Unless CompactVariantTraits encodes it, an alternative is constructed directly in the 64-bit storage.
+    static_assert(((CompactVariantTraits<Ts>::hasAlternativeRepresentation || (sizeof(Ts) <= sizeof(Storage) && alignof(Ts) <= alignof(Storage))) && ...), "CompactVariant alternatives must fit in its 64-bit storage");
     static constexpr Storage movedFromDataValue = std::numeric_limits<Storage>::max();
     static constexpr Storage indexShift = 48;
     static constexpr Storage indexMask = 0xFFULL << indexShift;

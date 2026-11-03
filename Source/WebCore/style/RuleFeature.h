@@ -23,13 +23,51 @@
 
 #include "CSSSelectorList.h"
 #include "CommonAtomStrings.h"
+#include <wtf/CompactVariant.h>
 #include <wtf/Forward.h>
 #include <wtf/GenericHashKey.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Markable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
+
+namespace WebCore {
+namespace Style {
+
+// Optional selectors of RuleFeature.
+struct RuleFeatureInvalidationSelector {
+    CSSSelectorList selectorList;
+};
+
+struct RuleFeatureScopeSelector {
+    CSSSelectorList selectorList;
+};
+
+struct RuleFeatureSelectors : RefCounted<RuleFeatureSelectors> {
+    static Ref<RuleFeatureSelectors> create(CSSSelectorList&& invalidationSelector, CSSSelectorList&& scopeSelector);
+
+    CSSSelectorList invalidationSelector;
+    CSSSelectorList scopeSelector;
+
+private:
+    RuleFeatureSelectors(CSSSelectorList&& invalidationSelector, CSSSelectorList&& scopeSelector);
+};
+
+} // namespace Style
+} // namespace WebCore
+
+namespace WTF {
+// CSSSelectorList owns its selectors through a single std::unique_ptr so these wrappers are effectively smart pointers.
+// This allows CompactVariant to store them inline.
+template<> struct IsSmartPtr<WebCore::Style::RuleFeatureInvalidationSelector> {
+    static constexpr bool value = true;
+};
+template<> struct IsSmartPtr<WebCore::Style::RuleFeatureScopeSelector> {
+    static constexpr bool value = true;
+};
+} // namespace WTF
 
 namespace WebCore {
 
@@ -97,16 +135,21 @@ struct RuleAndSelector {
 struct RuleFeature : public RuleAndSelector {
     RuleFeature(const RuleData&, MatchElement, IsNegation, CSSSelectorList&& invalidationSelector = { }, CSSSelectorList&& scopeSelector = { });
 
-    MatchElement matchElement;
-    IsNegation isNegation; // Whether the selector is in a (non-paired) :not() context.
     // Invalidation selector is used for attribute selector and :has() invalidation.
     // For attribute selectors it is the simple selector for fast testing whether an attribute mutation may have an effect.
     // For :has() it is the complex argument selector for testing if adding or removing a node may affect :has() matching.
-    CSSSelectorList invalidationSelector;
+    const CSSSelector* invalidationSelector() const;
     // Selector for the :has() scope element, used to bound invalidation traversal.
-    CSSSelectorList scopeSelector;
+    const CSSSelector* scopeSelector() const;
+
+    MatchElement matchElement;
+    IsNegation isNegation; // Whether the selector is in a (non-paired) :not() context.
+
+private:
+    using Selectors = CompactVariant<std::monostate, RuleFeatureInvalidationSelector, RuleFeatureScopeSelector, Ref<const RuleFeatureSelectors>>;
+    Selectors m_selectors;
 };
-static_assert(sizeof(RuleFeature) <= 32, "RuleFeature is a frequently allocated object. Keep it small.");
+static_assert(sizeof(RuleFeature) <= 24, "RuleFeature is a frequently allocated object. Keep it small.");
 #pragma pack(pop)
 
 using PseudoClassInvalidationKey = std::tuple<unsigned, uint8_t, AtomString>;

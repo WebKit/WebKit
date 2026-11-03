@@ -78,13 +78,64 @@ const CSSSelector& RuleAndSelector::selector() const
     return styleRule->selectorList().selectorAt(selectorIndex);
 }
 
+Ref<RuleFeatureSelectors> RuleFeatureSelectors::create(CSSSelectorList&& invalidationSelector, CSSSelectorList&& scopeSelector)
+{
+    return adoptRef(*new RuleFeatureSelectors(WTF::move(invalidationSelector), WTF::move(scopeSelector)));
+}
+
+RuleFeatureSelectors::RuleFeatureSelectors(CSSSelectorList&& invalidationSelector, CSSSelectorList&& scopeSelector)
+    : invalidationSelector(WTF::move(invalidationSelector))
+    , scopeSelector(WTF::move(scopeSelector))
+{
+}
+
 RuleFeature::RuleFeature(const RuleData& ruleData, MatchElement matchElement, IsNegation isNegation, CSSSelectorList&& invalidationSelector, CSSSelectorList&& scopeSelector)
     : RuleAndSelector(ruleData)
     , matchElement(matchElement)
     , isNegation(isNegation)
-    , invalidationSelector(WTF::move(invalidationSelector))
-    , scopeSelector(WTF::move(scopeSelector))
+    , m_selectors([&] -> Selectors {
+        // The accessors return a single complex selector.
+        ASSERT(invalidationSelector.size() <= 1);
+        ASSERT(scopeSelector.size() <= 1);
+
+        if (!invalidationSelector.isEmpty() && !scopeSelector.isEmpty())
+            return RuleFeatureSelectors::create(WTF::move(invalidationSelector), WTF::move(scopeSelector));
+        if (!invalidationSelector.isEmpty())
+            return RuleFeatureInvalidationSelector { WTF::move(invalidationSelector) };
+        if (!scopeSelector.isEmpty())
+            return RuleFeatureScopeSelector { WTF::move(scopeSelector) };
+        return std::monostate { };
+    }())
 {
+}
+
+// CompactVariant::switchOn() passes alternatives decoded into a temporary so only the heap allocated selectors may be referenced.
+const CSSSelector* RuleFeature::invalidationSelector() const
+{
+    return WTF::switchOn(m_selectors,
+        [](const RuleFeatureInvalidationSelector& selector) -> const CSSSelector* {
+            return &selector.selectorList.first();
+        },
+        [](const Ref<const RuleFeatureSelectors>& selectors) -> const CSSSelector* {
+            return &selectors->invalidationSelector.first();
+        },
+        [](const auto&) -> const CSSSelector* {
+            return nullptr;
+        });
+}
+
+const CSSSelector* RuleFeature::scopeSelector() const
+{
+    return WTF::switchOn(m_selectors,
+        [](const RuleFeatureScopeSelector& selector) -> const CSSSelector* {
+            return &selector.selectorList.first();
+        },
+        [](const Ref<const RuleFeatureSelectors>& selectors) -> const CSSSelector* {
+            return &selectors->scopeSelector.first();
+        },
+        [](const auto&) -> const CSSSelector* {
+            return nullptr;
+        });
 }
 
 SelectorDeduplicationKey::SelectorDeduplicationKey(const CSSSelector& selector)

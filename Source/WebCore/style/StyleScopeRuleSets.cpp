@@ -331,11 +331,12 @@ static void LEGACY_NODELETE scanHasArgument(const CSSSelector& complexSelector, 
     }
 }
 
-static OptionSet<HasArgumentProperty> LEGACY_NODELETE hasArgumentProperties(const CSSSelectorList& argument)
+static OptionSet<HasArgumentProperty> LEGACY_NODELETE hasArgumentProperties(const CSSSelector* argument)
 {
+    if (!argument)
+        return { };
     HasArgumentSiblingInfo info;
-    for (const auto& complexSelector : argument)
-        scanHasArgument(complexSelector, info);
+    scanHasArgument(*argument, info);
     return info.properties();
 }
 
@@ -344,32 +345,37 @@ static Vector<InvalidationRuleSet> buildInvalidationRuleSets(const RuleFeatureVe
     struct RuleSetKey {
         MatchElement matchElement;
         IsNegation isNegation;
-        const CSSSelectorList* invalidationSelector { nullptr };
-        const CSSSelectorList* scopeSelector { nullptr };
+        const CSSSelector* invalidationSelector { nullptr };
+        const CSSSelector* scopeSelector { nullptr };
 
         unsigned LEGACY_NODELETE hash() const
         {
             Hasher hasher;
             add(hasher, matchElement.relation, matchElement.hasRelation, isNegation);
             if (invalidationSelector)
-                add(hasher, *invalidationSelector);
+                addComplexSelector(hasher, *invalidationSelector);
             if (scopeSelector)
-                add(hasher, *scopeSelector);
+                addComplexSelector(hasher, *scopeSelector);
             return hasher.hash();
         }
         bool operator==(const RuleSetKey& other) const
         {
+            auto equalSelectors = [](const CSSSelector* a, const CSSSelector* b) {
+                if (!a || !b)
+                    return a == b;
+                return complexSelectorsEqual(*a, *b);
+            };
             return matchElement == other.matchElement
                 && isNegation == other.isNegation
-                && arePointingToEqualData(invalidationSelector, other.invalidationSelector)
-                && arePointingToEqualData(scopeSelector, other.scopeSelector);
+                && equalSelectors(invalidationSelector, other.invalidationSelector)
+                && equalSelectors(scopeSelector, other.scopeSelector);
         }
     };
 
     HashMap<GenericHashKey<RuleSetKey>, RefPtr<RuleSet>> ruleSetMap;
 
     for (auto& feature : features) {
-        auto key = GenericHashKey<RuleSetKey> { { feature.matchElement, feature.isNegation, &feature.invalidationSelector, &feature.scopeSelector } };
+        auto key = GenericHashKey<RuleSetKey> { { feature.matchElement, feature.isNegation, feature.invalidationSelector(), feature.scopeSelector() } };
 
         auto& ruleSet = ruleSetMap.ensure(key, [] {
             return RuleSet::create();
@@ -382,22 +388,22 @@ static Vector<InvalidationRuleSet> buildInvalidationRuleSets(const RuleFeatureVe
         auto& key = entry.key.key();
         entry.value->shrinkToFit();
         auto invalidationSelector = [&] {
-            if (!key.invalidationSelector->isEmpty() && !key.scopeSelector->isEmpty())
-                return CSSSelectorParser::makeHasArgumentWithScope(key.invalidationSelector->first(), key.scopeSelector->first());
-            if (!key.invalidationSelector->isEmpty())
-                return CSSSelectorList { *key.invalidationSelector };
+            if (key.invalidationSelector && key.scopeSelector)
+                return CSSSelectorParser::makeHasArgumentWithScope(*key.invalidationSelector, *key.scopeSelector);
+            if (key.invalidationSelector)
+                return CSSSelectorList::makeCopyingComplexSelector(*key.invalidationSelector);
             return CSSSelectorList { };
         }();
         // Null scopeSelector means scope-breaking; otherwise wrap a copy so it outlives this cache.
         RefPtr<const RefCountedCSSSelectorList> scopeSelector;
-        if (!key.scopeSelector->isEmpty())
-            scopeSelector = RefCountedCSSSelectorList::create(CSSSelectorList { *key.scopeSelector });
+        if (key.scopeSelector)
+            scopeSelector = RefCountedCSSSelectorList::create(CSSSelectorList::makeCopyingComplexSelector(*key.scopeSelector));
         return InvalidationRuleSet {
             WTF::move(entry.value),
             WTF::move(invalidationSelector),
             key.matchElement,
             key.isNegation,
-            hasArgumentProperties(*key.invalidationSelector),
+            hasArgumentProperties(key.invalidationSelector),
             WTF::move(scopeSelector)
         };
     });
