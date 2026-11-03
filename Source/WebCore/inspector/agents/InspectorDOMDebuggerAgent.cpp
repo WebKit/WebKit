@@ -462,6 +462,9 @@ void InspectorDOMDebuggerAgent::didFireAnimationFrame(Inspector::InspectorDebugg
 
 void InspectorDOMDebuggerAgent::willSendRequest(Inspector::InspectorDebuggerAgent* debuggerAgent, ResourceRequest& request)
 {
+    if (request.hiddenFromInspector())
+        return;
+
     if (request.requester() == ResourceRequestRequester::XHR || request.requester() == ResourceRequestRequester::Fetch)
         return;
 
