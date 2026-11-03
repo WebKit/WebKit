@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// Regression test for a use-after-free in FontCascadeFonts::glyphDataForCharacter(), which held a
+// reference into the m_cachedPages glyph-page cache across a callout that can reallocate it.
+//
+// The callout is the fallback walk in glyphDataForVariant(). Here it reaches a still-pending
+// downloadable @font-face; on a worker that load runs synchronously
+// (WorkerThreadableLoader::loadResourceSynchronously), spinning a nested run loop. FontCache's purge
+// timer fires inside that loop and calls FontCascadeFonts::pruneSystemFallbacks() on the same object,
+// removing its mixed-font pages; the table then shrinks and rehash() frees the bucket array the
+// suspended frame still references. This reaches the bug with no author script, so it is independent
+// of the reentrancy mitigations in CSSFontFace/DeferredPromise.
+//
+// The fault is a write into the freed bucket array, so it only crashes under ASan; a plain build
+// completes and prints the pass text either way.
+//
+// PASS: "PASS if no crash".
+
+let workerSource = `
+let phase = 'start';
+try {
+    // Only cover for U+13A0, and still pending when the trigger below walks the cascade: the data:
+    // URL is over a megabyte, so CSSFontFaceSource::opportunisticallyStartFontDataURLLoading() won't
+    // pre-warm it, and the unicode-range keeps it out of the priming walk. The bytes never need to
+    // parse as a font; the synchronous load itself is the window.
+    phase = 'face';
+    self.fonts.add(new FontFace('PendingFam',
+        'url("data:font/ttf;base64,' + 'A'.repeat(1100000) + '")',
+        { unicodeRange: 'U+13A0' }));
+
+    // Churn distinct (family, size) pairs. Every FontCache::fontForFamily() arms the purge timer, and
+    // crossing the FontCascadeCache size limit prunes these cascades again so their fonts go
+    // inactive. Both are needed: below cMaxInactiveFontData inactive entries,
+    // purgeInactiveFontDataIfNeeded() returns without purging anything.
+    phase = 'churn';
+    let churn = new OffscreenCanvas(8, 8).getContext('2d');
+    let families = ['Helvetica', 'Courier', 'Georgia', 'Verdana', 'Monaco',
+                    'Menlo', 'Optima', 'Futura', 'Baskerville', 'Palatino'];
+    for (let size = 5; size <= 127; size++) {
+        for (let family of families) {
+            churn.font = size + 'px "' + family + '"';
+            churn.measureText('x');
+        }
+    }
+
+    phase = 'victim';
+    let context = new OffscreenCanvas(64, 64).getContext('2d');
+    context.font = '10px Times, PendingFam';
+
+    // Twelve ideographs in twelve glyph pages of their own. Times covers none of them and the pending
+    // family is excluded by its unicode-range, so each resolves through system fallback: twelve
+    // mixed-font entries plus a non-empty system fallback set. pruneSystemFallbacks() drops all twelve,
+    // taking the table under its shrink threshold.
+    phase = 'prime';
+    context.measureText('\\u4E01\\u4F01\\u5001\\u5101\\u5201\\u5301\\u5401\\u5501\\u5601\\u5701\\u5801\\u5901');
+
+    // WorkerRunLoop::runInMode() takes its wait deadline from CFRunLoopGetNextTimerFireDate(), so
+    // something has to be scheduled on the worker's run loop for the nested wait below to time out
+    // and fire the shared timer. Dropping a large object graph arms JSC's heap timers.
+    phase = 'gc-prime';
+    let garbage = [];
+    for (let i = 0; i < 200000; i++)
+        garbage.push({ i: i, s: 'g' + i });
+    garbage = null;
+
+    // Ask the main thread to block. This message is queued to it before the load request below is,
+    // so the main thread is guaranteed to start blocking first and the load's main-thread bridge
+    // task queues behind it, which is what makes the nested wait reliably time out.
+    phase = 'hold';
+    postMessage('hold');
+
+    // U+13A0 is not in Times, so resolving it binds the cache entry for its page and then walks the
+    // cascade down to the pending family, whose synchronous load opens the window described above.
+    phase = 'trigger';
+    context.measureText('\\u13A0');
+
+    postMessage('pass');
+} catch (error) {
+    postMessage('setup failed in phase ' + phase + ': ' + error);
+}
+`;
+
+let worker = new Worker(URL.createObjectURL(new Blob([workerSource], { type: 'application/javascript' })));
+
+function finish(message)
+{
+    document.write(message);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+worker.onmessage = function(event) {
+    if (event.data === 'hold') {
+        // Blocking, not sleeping: the point is that the main thread does not service the worker's
+        // load request while the worker sits in its nested run loop.
+        let start = performance.now();
+        while (performance.now() - start < 1800) { }
+        return;
+    }
+    finish(event.data === 'pass' ? 'PASS if no crash' : 'FAIL: ' + event.data);
+};
+
+worker.onerror = function(event) { finish('FAIL: worker error: ' + event.message); };
+
+setTimeout(function() { finish('FAIL: timed out'); }, 20000);
+</script>
+</body>
+</html>
