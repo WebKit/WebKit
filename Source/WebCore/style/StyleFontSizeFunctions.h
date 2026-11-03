@@ -46,6 +46,7 @@ struct UsedFontSize {
 };
 
 float LEGACY_NODELETE usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule, const SettingsValues&);
+float LEGACY_NODELETE textZoomFactorForFontSize(const ComputedStyle&, const Document&);
 UsedFontSize LEGACY_NODELETE usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSize, bool useSVGZoomRules, const ComputedStyle&, const Document&);
 float LEGACY_NODELETE usedFontSizeFromComputedSizeForSVGInlineText(float computedSize, bool isAbsoluteSize, float zoomFactor, const Document&);
 float LEGACY_NODELETE adjustedFontSize(float size, const WebCore::FontSizeAdjust&, const FontMetrics&);

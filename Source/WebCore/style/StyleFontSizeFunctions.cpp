@@ -90,15 +90,19 @@ float usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSize, floa
     return std::min(maximumAllowedFontSize, zoomedSize);
 }
 
+float textZoomFactorForFontSize(const ComputedStyle& style, const Document& document)
+{
+    auto* frame = document.frame();
+    if (!frame || style.textZoom() == TextZoom::Reset)
+        return 1.0f;
+    return frame->textZoomFactor();
+}
+
 UsedFontSize usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSize, bool useSVGZoomRules, const ComputedStyle& style, const Document& document)
 {
     float zoomFactor = 1.0f;
-    if (!useSVGZoomRules) {
-        zoomFactor = style.usedZoom();
-        auto* frame = document.frame();
-        if (frame && style.textZoom() != TextZoom::Reset)
-            zoomFactor *= frame->textZoomFactor();
-    }
+    if (!useSVGZoomRules)
+        zoomFactor = style.usedZoom() * textZoomFactorForFontSize(style, document);
     return { usedFontSizeFromComputedSize(computedSize, isAbsoluteSize, zoomFactor, useSVGZoomRules ? MinimumFontSizeRule::None : MinimumFontSizeRule::AbsoluteAndRelative, document.settingsValues()), zoomFactor };
 }
 

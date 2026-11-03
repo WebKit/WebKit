@@ -29,7 +29,7 @@ for (const textZoom of [1, 2]) {
             internals.setTextZoomFactor(textZoom);
             t.add_cleanup(() => internals.setTextZoomFactor(1));
             const scale = textScaleForCategory(category);
-            assertFontSize(document.getElementById("medium"), scaledMediumSize(scale), "computed medium");
+            assertFontSize(document.getElementById("medium"), scaledMediumSize(scale) * textZoom, "computed medium");
             assert_approx_equals(usedFontSize("medium"), scaledMediumSize(scale) * textZoom, 0.05, "used medium");
             assert_approx_equals(usedFontSize("keyword"), scaledKeywordSize("x-large", scale) * textZoom, 0.05, "used x-large");
             assert_approx_equals(usedFontSize("px"), 20 * textZoom, 0.05, "used 20px");
