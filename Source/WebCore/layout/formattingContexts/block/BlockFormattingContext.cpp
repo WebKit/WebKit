@@ -371,10 +371,10 @@ void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayou
 
 // A replaced element or a flex container, whose own formatting context lays it out through the render tree; the block formatting context
 // places it, and sizes the flex container (css-position-3 §4.3), whose block size comes from its content when it is auto.
-BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition)
+BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition, const std::optional<OutOfFlowGeometry::DefaultAnchor>& defaultAnchor)
 {
     auto geometry = computeBorderAndPadding(root, containingBlock.inlineSize);
-    auto outOfFlowGeometry = OutOfFlowGeometry { root, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.box->writingMode(), containingBlock.box->hasPotentiallyScrollableOverflow() }, staticPosition, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
+    auto outOfFlowGeometry = OutOfFlowGeometry { root, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.box->writingMode(), containingBlock.box->hasPotentiallyScrollableOverflow(), containingBlock.scrollableContainingBlock }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
     auto [inlineAxis, blockAxis] = [&] -> std::pair<OutOfFlowGeometry::AxisGeometry, OutOfFlowGeometry::AxisGeometry> {
         if (root.isRenderReplaced() || root.isRenderOrLegacyRenderSVGRoot()) {
             // From its natural size and aspect ratio (CSS 2.2 §10.3.8, §10.6.5).
@@ -408,14 +408,14 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingCo
     return result;
 }
 
-BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& outOfFlowBox, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition)
+BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& outOfFlowBox, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition, const std::optional<OutOfFlowGeometry::DefaultAnchor>& defaultAnchor)
 {
     if (!is<RenderBlockFlow>(outOfFlowBox))
-        return layoutOutOfFlowIndependentFormattingContext(outOfFlowBox, containingBlock, staticPosition);
+        return layoutOutOfFlowIndependentFormattingContext(outOfFlowBox, containingBlock, staticPosition, defaultAnchor);
     auto result = BlockLayoutResult { };
     CheckedRef box = downcast<RenderBlockFlow>(outOfFlowBox);
     auto geometry = computeBorderAndPadding(box, containingBlock.inlineSize);
-    auto outOfFlowGeometry = OutOfFlowGeometry { box, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.box->writingMode(), containingBlock.box->hasPotentiallyScrollableOverflow() }, staticPosition, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
+    auto outOfFlowGeometry = OutOfFlowGeometry { box, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.box->writingMode(), containingBlock.box->hasPotentiallyScrollableOverflow(), containingBlock.scrollableContainingBlock }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
 
     auto contentInlineSizes = outOfFlowGeometry.hasFitContentInlineSize() ? std::optional { computeIntrinsicInlineSizes(box) } : std::nullopt;
     auto inlineAxis = outOfFlowGeometry.computeInlineAxisGeometry(contentInlineSizes);
