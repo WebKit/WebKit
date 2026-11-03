@@ -1,0 +1,10 @@
+Test that a Page.setEmulatedMedia override set on the page target survives a cross-origin main-frame navigation under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.SetEmulatedMediaProcessSwapPageTarget
+-- Running test case: SiteIsolation.Page.SetEmulatedMedia.ProcessSwapKeepsPageTargetOverride
+Setting emulated media to print on the page target before the cross-origin main-frame navigation...
+Navigating the main frame cross-origin to force a process swap...
+PASS: Swapped-in main-frame process should observe the print media override.
+PASS: Swapped-in main-frame process should still observe the print media override after a UIProcess round-trip.
+

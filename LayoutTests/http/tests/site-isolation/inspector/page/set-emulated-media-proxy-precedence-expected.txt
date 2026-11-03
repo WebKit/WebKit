@@ -1,0 +1,17 @@
+Test that under site isolation an emulated-media override set on the page target and cleared on the web-page target is cleared in every frame.
+
+
+== Running test suite: SiteIsolation.Page.SetEmulatedMediaProxyPrecedence
+-- Running test case: SiteIsolation.Page.SetEmulatedMediaProxyPrecedence.ClearOnWebPageTarget
+PASS: Main page should start with screen styles (blue).
+PASS: Cross-origin iframe should start with screen styles (blue).
+Setting emulated media to print on the page target...
+PASS: Main page should switch to print styles (green).
+PASS: Cross-origin iframe should switch to print styles (green).
+Clearing emulated media on the web-page target...
+PASS: Main page should return to screen styles (blue).
+PASS: Cross-origin iframe should return to screen styles (blue).
+Setting emulated media to print on the page target again...
+PASS: Main page should switch to print styles again (green).
+PASS: Cross-origin iframe should switch to print styles again (green).
+

@@ -283,7 +283,7 @@
         {
             "name": "setEmulatedMedia",
             "description": "Emulates the given media for CSS media queries.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "media", "type": "string", "description": "Media type to emulate. Empty string disables the override." }
             ]
