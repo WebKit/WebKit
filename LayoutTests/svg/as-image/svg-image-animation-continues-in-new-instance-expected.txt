@@ -1,0 +1,4 @@
+
+PASS SMIL animation
+PASS CSS animation
+

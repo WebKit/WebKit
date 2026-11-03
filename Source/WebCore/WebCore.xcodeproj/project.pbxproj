@@ -18670,6 +18670,10 @@
 		B23540F00D00782E002382FA /* StringTruncator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StringTruncator.cpp; sourceTree = "<group>"; };
 		B23540F10D00782E002382FA /* StringTruncator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StringTruncator.h; sourceTree = "<group>"; };
 		B255990B0D00D8B900BB825C /* SVGImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImage.cpp; sourceTree = "<group>"; };
+		6DAA71F465164E1E92DBE63A /* SVGImageInstance.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageInstance.cpp; sourceTree = "<group>"; };
+		1A323C38DA544D928437A8B9 /* SVGImageInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGImageInstance.h; sourceTree = "<group>"; };
+		ED8BCB0083FF49ADB7E33B89 /* SVGImageInstanceCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageInstanceCache.cpp; sourceTree = "<group>"; };
+		05D7F8BE11914A81A54A1586 /* SVGImageInstanceCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGImageInstanceCache.h; sourceTree = "<group>"; };
 		B255990C0D00D8B900BB825C /* SVGImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGImage.h; sourceTree = "<group>"; };
 		B255990D0D00D8B900BB825C /* EmptyClients.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EmptyClients.h; sourceTree = "<group>"; };
 		B275352A0B053814002CE64F /* TransformationMatrixCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TransformationMatrixCG.cpp; sourceTree = "<group>"; };
@@ -44204,6 +44208,10 @@
 				B255990B0D00D8B900BB825C /* SVGImage.cpp */,
 				B255990C0D00D8B900BB825C /* SVGImage.h */,
 				55D408F71A7C631800C78450 /* SVGImageClients.h */,
+				6DAA71F465164E1E92DBE63A /* SVGImageInstance.cpp */,
+				1A323C38DA544D928437A8B9 /* SVGImageInstance.h */,
+				ED8BCB0083FF49ADB7E33B89 /* SVGImageInstanceCache.cpp */,
+				05D7F8BE11914A81A54A1586 /* SVGImageInstanceCache.h */,
 			);
 			path = svg;
 			sourceTree = "<group>";

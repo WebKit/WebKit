@@ -2255,6 +2255,8 @@ loader/images/bitmap/ImageSource.cpp
 loader/images/sizing/ImageSizingContext.cpp
 loader/images/sizing/ObjectSizeNegotiation.cpp
 loader/images/svg/SVGImage.cpp @header:RenderStyleGetters
+loader/images/svg/SVGImageInstance.cpp
+loader/images/svg/SVGImageInstanceCache.cpp
 mathml/MathMLAnchorElement.cpp @header:RenderStyleGetters
 mathml/MathMLAnnotationElement.cpp @header:RenderStyleGetters
 mathml/MathMLElement.cpp @header:RenderStyleGetters

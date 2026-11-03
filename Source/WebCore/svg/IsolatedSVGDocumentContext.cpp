@@ -65,7 +65,7 @@ SVGDocument* IsolatedSVGDocumentContext::document() const
     if (!svgImage)
         return nullptr;
 
-    RefPtr page = svgImage->internalPage();
+    RefPtr page = svgImage->defaultInstancePage();
     if (!page)
         return nullptr;
 

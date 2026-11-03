@@ -2771,7 +2771,7 @@ AccessibilitySVGObject* AccessibilityRenderObject::remoteSVGRootElement(CreateIf
     if (!svgImage)
         return nullptr;
 
-    RefPtr frameView = svgImage->frameView();
+    RefPtr frameView = svgImage->defaultInstanceFrameView();
     if (!frameView)
         return nullptr;
 

@@ -2614,10 +2614,8 @@ void Page::updateRendering()
     });
 
     runProcessingStep(RenderingUpdateStep::Images, [] (Document& document) {
-        for (auto& image : protect(document.cachedResourceLoader())->allCachedSVGImages()) {
-            if (RefPtr page = image->internalPage())
-                page->isolatedUpdateRendering();
-        }
+        for (auto& image : protect(document.cachedResourceLoader())->allCachedSVGImages())
+            image->updateRendering();
     });
 
     runProcessingStep(RenderingUpdateStep::UpdateValidationMessagePositions, [] (Document& document) {

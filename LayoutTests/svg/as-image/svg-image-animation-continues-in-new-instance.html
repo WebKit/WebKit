@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<title>An SVG image document parsed for a page with other settings keeps animating after it is created</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="resources/svg-image-per-page.js"></script>
+<body>
+<script>
+async function testAnimationContinuesInNewInstance(test, resource)
+{
+    assert_own_property(window, "internals");
+
+    // Opening a page reapplies the shared preferences to every page, so change the setting after.
+    const secondPage = openSecondPage(test);
+    await new Promise(requestAnimationFrame);
+    assert_own_property(secondPage, "internals");
+    internals.settings.setCSSDPropertyEnabled(true);
+    secondPage.internals.settings.setCSSDPropertyEnabled(false);
+
+    // Show the image so that its animation runs.
+    const imageURL = new URL(resource, location.href).href;
+    const shownImage = await loadImage(document, imageURL);
+    document.body.appendChild(shownImage);
+    test.add_cleanup(() => shownImage.remove());
+
+    const otherImage = await loadImage(secondPage.document, imageURL);
+    assert_array_equals(pixelOfDraw(otherImage, 50, 50), [255, 0, 0, 255], "page with another CSS d property setting, before the animation turns green");
+
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(requestAnimationFrame);
+    assert_array_equals(pixelOfDraw(shownImage, 50, 50), [0, 128, 0, 255], "page that loaded the image");
+    assert_array_equals(pixelOfDraw(otherImage, 50, 50), [0, 128, 0, 255], "page with another CSS d property setting, after the animation turns green");
+}
+
+promise_test(test => testAnimationContinuesInNewInstance(test, "resources/smil-turns-green-after-1s.svg"), "SMIL animation");
+promise_test(test => testAnimationContinuesInNewInstance(test, "resources/css-animation-turns-green-after-1s.svg"), "CSS animation");
+</script>

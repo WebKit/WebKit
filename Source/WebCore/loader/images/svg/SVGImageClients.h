@@ -52,6 +52,8 @@ public:
     bool isSVGImageChromeClient() const final { return true; }
     SVGImage* image() const { return m_image.get(); }
 
+    void detachFromImage() { m_image = nullptr; }
+
 private:
     void chromeDestroyed() final
     {
@@ -61,7 +63,7 @@ private:
     void didFinishLoadingImageForSVGImage(SVGImageElement&) final
     {
         RefPtr image { m_image.get() };
-        if (!image || !image->internalPage())
+        if (!image || !image->defaultInstancePage())
             return;
 
         if (RefPtr imageObserver = image->imageObserver())
@@ -71,9 +73,7 @@ private:
     void invalidateContentsAndRootView(const IntRect& rect) final
     {
         RefPtr image { m_image.get() };
-
-        // If m_image->internalPage() is null, we're being destroyed.
-        if (!image || !image->internalPage())
+        if (!image || !image->defaultInstancePage())
             return;
 
         RefPtr imageObserver = image->imageObserver();
@@ -97,3 +97,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGImageChromeClient)
+    static bool isType(const WebCore::ChromeClient& client) { return client.isSVGImageChromeClient(); }
+SPECIALIZE_TYPE_TRAITS_END()

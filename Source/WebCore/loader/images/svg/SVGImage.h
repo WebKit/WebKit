@@ -27,9 +27,8 @@
 #pragma once
 
 #include <WebCore/Image.h>
-#include <WebCore/StyleLinkParameters.h>
 #include <WebCore/Timer.h>
-#include <wtf/URL.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
@@ -41,6 +40,8 @@ class RenderObject;
 class RenderReplaced;
 class SVGSVGElement;
 class SVGImageChromeClient;
+class SVGImageInstance;
+class SVGImageInstanceCache;
 class Settings;
 
 class SVGImage final : public Image {
@@ -49,15 +50,19 @@ public:
     WEBCORE_EXPORT static void tryCreateFromData(std::span<const uint8_t>, CompletionHandler<void(RefPtr<SVGImage>&&)>&&);
     WEBCORE_EXPORT static bool isDataDecodable(const Settings&, std::span<const uint8_t>);
 
-    RenderReplaced* embeddedSVGRoot() const;
-    LocalFrameView* LEGACY_NODELETE frameView() const;
-
     bool LEGACY_NODELETE isSVGImage() const final { return true; }
+
+    Page* defaultInstancePage() const;
+    RenderReplaced* defaultInstanceEmbeddedSVGRoot() const;
+    LocalFrameView* defaultInstanceFrameView() const;
+
+    RefPtr<SVGSVGElement> rootElement(const ImageDrawDescriptor&);
 
     void subresourcesAreFinished(Document*, CompletionHandler<void()>&&) final;
 
-    bool hasSomethingToDraw() const final;
+    void updateRendering();
 
+    bool hasSomethingToDraw() const final;
     bool renderingTaintsOrigin() const final;
 
     void startAnimation() final;
@@ -65,13 +70,8 @@ public:
     void resetAnimation() final;
     bool isAnimating() const final;
 
-    Page* internalPage() { return m_page.get(); }
-    WEBCORE_EXPORT RefPtr<SVGSVGElement> rootElement() const;
-
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    // Used by draws with InvertContent::FromResource. The internal page's settings are only changed by
-    // applyDocumentState(), so they stay in sync with m_appliedDocumentState.
-    void setFallbackInvertContent(bool invertContent) { m_fallbackInvertContent = invertContent; }
+    void setFallbackInvertContent(bool);
 #endif
 
     RefPtr<NativeImage> nativeImage(const ImageDrawDescriptor&, const ColorSpace& = ColorSpace::SRGB()) final;
@@ -83,22 +83,21 @@ private:
     virtual ~SVGImage();
 
     String filenameExtension() const final;
-
-    void setContainerSize(const FloatSize&);
-    IntSize containerSize() const;
-
     NaturalDimensions unorientedNaturalDimensions() const final;
-
     bool usesConcreteObjectSizeAsViewport() const final { return true; }
 
-    void reportApproximateMemoryCost() const;
+    RefPtr<SVGSVGElement> defaultInstanceRootElement() const;
+
+    RefPtr<SVGImageInstance> instanceForDraw(const ImageDrawDescriptor&);
+    void didCreateInstance(SVGImageInstance&);
+    void reportApproximateMemoryCost(const SVGImageInstance&) const;
     EncodedDataStatus dataChanged(bool allDataReceived) final;
 
     // FIXME: SVGImages will be unable to prune because destroyDecodedData() is not implemented yet.
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const final { return false; }
-    bool currentFrameIsComplete() const final { return !!m_page; }
+    bool currentFrameIsComplete() const final { return !!defaultInstancePage(); }
 
     bool hasHDRContent() const final;
 
@@ -110,24 +109,7 @@ private:
     ImageDrawResult drawImage(GraphicsContext&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source) final;
     std::optional<PatternTile> currentPatternTile(GraphicsContext&, const ImageDrawDescriptor&) final;
 
-    // FIXME: This should also hold the variable state dataChanged() sets on the Page and its Settings.
-    struct DocumentState {
-        IntSize containerSize;
-        ImageRenditionOptions rendition;
-
-        bool operator==(const DocumentState&) const = default;
-    };
-
-    DocumentState documentStateForDraw(const ImageDrawDescriptor&) const;
-    void applyDocumentState(Document&, LocalFrameView&, const DocumentState&);
-
-    RefPtr<Page> m_page;
-
-    DocumentState m_appliedDocumentState;
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-    bool m_fallbackInvertContent { false };
-#endif
-
+    const UniqueRef<SVGImageInstanceCache> m_instances;
     Timer m_startAnimationTimer;
 };
 

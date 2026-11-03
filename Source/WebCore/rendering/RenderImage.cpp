@@ -1174,7 +1174,7 @@ RenderReplaced* RenderImage::embeddedSVGRoot() const
 {
     if (RefPtr cachedImage = this->cachedImage()) {
         if (RefPtr image = dynamicDowncast<SVGImage>(cachedImage->image()))
-            return image->embeddedSVGRoot();
+            return image->defaultInstanceEmbeddedSVGRoot();
     }
     return nullptr;
 }

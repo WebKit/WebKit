@@ -40,6 +40,7 @@ class Document;
 class LegacyRenderSVGResourceContainer;
 class RenderElement;
 class RenderSVGResourceContainer;
+class SVGSVGElement;
 class TreeScope;
 
 namespace Style {
@@ -122,6 +123,7 @@ private:
         explicit operator bool() const { return resource || legacyResource; }
     };
     ReferencedSVGResource referencedSVGResource(const RenderElement&) const;
+    RefPtr<SVGSVGElement> svgImageRootElement(const RenderElement&) const;
     LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(TreeScope&, const AtomString& fragment) const;
     LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(const RenderElement*) const;
     LegacyRenderSVGResourceContainer* legacyRenderSVGResource(const RenderElement*) const;
