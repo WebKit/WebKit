@@ -455,10 +455,8 @@ public:
         Copy, // GraphicsContextGL::copyTextureFromVideoFrame() was tried.
         Forced, // Software path forced for testing.
         GateFunction,
-        GateTarget, // Not TEXTURE_2D, e.g. a cube map face.
         GateSourceRect,
         GateCombination,
-        GateLevel,
         GateVideoFrameFormat,
         NoFrame,
     };
@@ -1132,10 +1130,10 @@ private:
 #if ENABLE(VIDEO)
     ExceptionOr<void> texImageSource(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, HTMLVideoElement& source);
 
-    std::optional<VideoUploadDecision> videoUploadGate(TexImageFunctionID, GCGLenum target, bool sourceImageRectIsDefault, GCGLenum format, GCGLenum type, GCGLint level) const;
+    std::optional<VideoUploadDecision> videoUploadGate(TexImageFunctionID, bool sourceImageRectIsDefault, GCGLint internalformat, GCGLenum format, GCGLenum type) const;
     // Done: the frame was copied, or the software path is not allowed and the upload failed.
     enum class VideoUploadStatus : bool { Done, UseSoftwarePath };
-    VideoUploadStatus copyVideoFrameToTexture(VideoFrame&, WebGLTexture&, ASCIILiteral functionName, GCGLint level, GCGLint internalformat, GCGLenum format, GCGLenum type);
+    VideoUploadStatus copyVideoFrameToTexture(VideoFrame&, WebGLTexture&, ASCIILiteral functionName, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLenum type);
     VideoUploadStatus recordSoftwareVideoUpload(VideoUploadDecision, ASCIILiteral functionName);
 
     struct LastVideoUploadForTesting {

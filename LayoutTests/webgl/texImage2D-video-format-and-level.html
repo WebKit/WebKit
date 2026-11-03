@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL test for texImage2D(video) format combination validation and non-zero levels</title>
+<script src="../resources/js-test.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("texImage2D(video) validates the internalformat, format and type combination and supports non-zero levels.");
+window.jsTestIsAsync = true;
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var wtu = WebGLTestUtils;
+// The video is 300x300, blue at the top and red at the bottom.
+const videoSize = 300;
+const blue = [0, 0, 255, 255];
+const red = [255, 0, 0, 255];
+
+async function loadVideo() {
+    const video = document.createElement("video");
+    video.muted = true;
+    video.playsInline = true;
+    video.loop = true;
+    video.src = "../fast/canvas/webgl/resources/orientation-normal.mp4";
+    await video.play();
+    await new Promise(resolve => video.requestVideoFrameCallback(resolve));
+    video.pause();
+    return video;
+}
+
+function combinationName(gl, level, internalformat, format, type) {
+    return `texImage2D(level ${level}, ${wtu.glEnumToString(gl, internalformat)}, ${wtu.glEnumToString(gl, format)}, ${wtu.glEnumToString(gl, type)}, video)`;
+}
+
+function texImageVideo(gl, video, level, internalformat, format, type, expectedError) {
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, level, internalformat, format, type, video);
+    wtu.glErrorShouldBe(gl, expectedError, combinationName(gl, level, internalformat, format, type));
+    return texture;
+}
+
+function testCombinations(gl, video, combinations, expectedError) {
+    for (const [internalformat, format, type] of combinations)
+        gl.deleteTexture(texImageVideo(gl, video, 0, internalformat, format, type, expectedError));
+}
+
+// Checks the top and bottom rows of the texture level, which are the top and bottom of the video.
+function checkVideoContent(gl, texture, level) {
+    const framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, level);
+    wtu.framebufferStatusShouldBe(gl, gl.FRAMEBUFFER, gl.FRAMEBUFFER_COMPLETE, `level ${level}`);
+    wtu.checkCanvasRect(gl, videoSize / 2, 2, 1, 1, blue, `level ${level}: top of the video should be blue`, 20);
+    wtu.checkCanvasRect(gl, videoSize / 2, videoSize - 3, 1, 1, red, `level ${level}: bottom of the video should be red`, 20);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.deleteFramebuffer(framebuffer);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "after checking the content");
+}
+
+function testWebGL1(video) {
+    debug("");
+    debug("WebGL 1.0");
+    const gl = wtu.create3DContext(undefined, undefined, 1);
+    if (!gl) {
+        testFailed("Could not create a WebGL 1.0 context");
+        return;
+    }
+    testCombinations(gl, video, [
+        [gl.RGB, gl.RGB, gl.UNSIGNED_BYTE],
+        [gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE],
+    ], gl.NO_ERROR);
+
+    debug("WebGL 1.0 requires internalformat == format.");
+    testCombinations(gl, video, [
+        [gl.RGBA, gl.RGB, gl.UNSIGNED_BYTE],
+        [gl.RGB, gl.RGBA, gl.UNSIGNED_BYTE],
+    ], gl.INVALID_OPERATION);
+
+    debug("An invalid combination is an error also when the texture already has the frame.");
+    const texture = texImageVideo(gl, video, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, gl.NO_ERROR);
+    checkVideoContent(gl, texture, 0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGB, gl.UNSIGNED_BYTE, video);
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, combinationName(gl, 0, gl.RGBA, gl.RGB, gl.UNSIGNED_BYTE) + " after a valid upload of the same frame");
+    gl.deleteTexture(texture);
+
+    debug("Non-zero levels must have power of two sizes in WebGL 1.0.");
+    gl.deleteTexture(texImageVideo(gl, video, 1, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, gl.INVALID_VALUE));
+}
+
+function testWebGL2(video) {
+    debug("");
+    debug("WebGL 2.0");
+    const gl = wtu.create3DContext(undefined, undefined, 2);
+    if (!gl) {
+        testFailed("Could not create a WebGL 2.0 context");
+        return;
+    }
+    testCombinations(gl, video, [
+        [gl.RGB, gl.RGB, gl.UNSIGNED_BYTE],
+        [gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE],
+        [gl.RGB8, gl.RGB, gl.UNSIGNED_BYTE],
+        [gl.SRGB8, gl.RGB, gl.UNSIGNED_BYTE],
+        [gl.RGB565, gl.RGB, gl.UNSIGNED_BYTE],
+        [gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE],
+        [gl.SRGB8_ALPHA8, gl.RGBA, gl.UNSIGNED_BYTE],
+        [gl.RGBA4, gl.RGBA, gl.UNSIGNED_BYTE],
+        [gl.RGB5_A1, gl.RGBA, gl.UNSIGNED_BYTE],
+    ], gl.NO_ERROR);
+
+    testCombinations(gl, video, [
+        [gl.RGBA, gl.RGB, gl.UNSIGNED_BYTE],
+        [gl.RGB, gl.RGBA, gl.UNSIGNED_BYTE],
+        [gl.RGBA8, gl.RGB, gl.UNSIGNED_BYTE],
+        [gl.RGB8, gl.RGBA, gl.UNSIGNED_BYTE],
+        [gl.SRGB8_ALPHA8, gl.RGB, gl.UNSIGNED_BYTE],
+        [gl.RGB565, gl.RGBA, gl.UNSIGNED_BYTE],
+        [gl.RGBA8UI, gl.RGBA, gl.UNSIGNED_BYTE],
+        [gl.RGB8UI, gl.RGB, gl.UNSIGNED_BYTE],
+    ], gl.INVALID_OPERATION);
+
+    for (const level of [1, 2]) {
+        const texture = texImageVideo(gl, video, level, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, gl.NO_ERROR);
+        // A non-base level attachment requires a mipmap complete texture, so make the level the base level.
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_BASE_LEVEL, level);
+        checkVideoContent(gl, texture, level);
+        gl.deleteTexture(texture);
+    }
+}
+
+async function runTest() {
+    const video = await loadVideo();
+    testWebGL1(video);
+    testWebGL2(video);
+    debug("");
+    finishJSTest();
+}
+
+runTest();
+</script>
+</body>
+</html>

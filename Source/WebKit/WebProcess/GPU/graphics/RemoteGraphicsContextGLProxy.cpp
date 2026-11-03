@@ -239,7 +239,7 @@ RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::surfaceBufferToVideoFr
 #endif
 
 #if ENABLE(VIDEO)
-bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame& videoFrame, PlatformGLObject texture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
+bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame& videoFrame, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum type, bool unpackFlipY, bool unpackPremultiplyAlpha)
 {
 #if PLATFORM(COCOA)
     recordVideoUploadForTesting(VideoUploadOutcome::NotTransferable, videoFrame.pixelFormat());
@@ -266,7 +266,7 @@ bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame
 
     m_lastVideoUploadWasSentForTesting = true;
     ++m_videoUploadsSentForTesting;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CopyTextureFromVideoFrame(WTF::move(*sharedVideoFrame), texture, level, internalFormat, format, type, premultiplyAlpha, flipY));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CopyTextureFromVideoFrame(WTF::move(*sharedVideoFrame), texture, target, level, internalFormat, type, unpackFlipY, unpackPremultiplyAlpha));
     if (!sendResult.succeeded()) {
         markContextLost();
         return false;
@@ -301,18 +301,6 @@ std::optional<GraphicsContextGL::VideoUploadRecord> RemoteGraphicsContextGLProxy
     return record;
 #else
     return GraphicsContextGL::lastVideoUploadForTesting();
-#endif
-}
-
-void RemoteGraphicsContextGLProxy::setVideoUploadHardwareOnlyForTesting(bool hardwareOnly)
-{
-    GraphicsContextGL::setVideoUploadHardwareOnlyForTesting(hardwareOnly);
-#if PLATFORM(COCOA)
-    if (isContextLost() || !WebProcess::singleton().sharedPreferencesForWebProcessValue().allowTestOnlyIPC)
-        return;
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::SetVideoUploadHardwareOnlyForTesting(hardwareOnly));
-    if (sendResult != IPC::Error::NoError)
-        markContextLost();
 #endif
 }
 

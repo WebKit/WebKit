@@ -20,14 +20,14 @@ PASS WebGL 1 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB_EXT/UNS
 PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE) default path: hardware (direct)
 PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE) hardware path: hardware (direct)
 PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE) software path: software (forced)
-PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) default path: software (fbo-incomplete)
-WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) hardware path: hardware not available (fbo-incomplete)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) default path: hardware (direct)
+PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) hardware path: hardware (direct)
 PASS WebGL 2 h264-420-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) software path: software (forced)
 PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE) default path: hardware (converted)
 PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE) hardware path: hardware (converted)
 PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8_ALPHA8/RGBA/UNSIGNED_BYTE) software path: software (forced)
-PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) default path: software (fbo-incomplete)
-WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) hardware path: hardware not available (fbo-incomplete)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) default path: hardware (converted)
+PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) hardware path: hardware (converted)
 PASS WebGL 2 hevc-420-10bit-bt709-videorange.mp4 <video> texImage2D(SRGB8/RGB/UNSIGNED_BYTE) software path: software (forced)
 
 PASS successfullyParsed is true

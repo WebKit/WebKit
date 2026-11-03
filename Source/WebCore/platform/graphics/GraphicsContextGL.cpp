@@ -646,11 +646,6 @@ std::optional<GraphicsContextGL::VideoUploadRecord> GraphicsContextGL::lastVideo
 {
     return m_lastVideoUploadForTesting;
 }
-
-void GraphicsContextGL::setVideoUploadHardwareOnlyForTesting(bool hardwareOnly)
-{
-    m_videoUploadHardwareOnlyForTesting = hardwareOnly;
-}
 #endif
 
 } // namespace WebCore

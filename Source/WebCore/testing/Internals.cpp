@@ -7275,7 +7275,7 @@ static ASCIILiteral webglVideoUploadOutcomeName(GraphicsContextGL::VideoUploadOu
     case GraphicsContextGL::VideoUploadOutcome::Unsupported: return "unsupported"_s;
     case GraphicsContextGL::VideoUploadOutcome::ConversionFailed: return "conversion-failed"_s;
     case GraphicsContextGL::VideoUploadOutcome::NoIOSurface: return "no-iosurface"_s;
-    case GraphicsContextGL::VideoUploadOutcome::FramebufferIncomplete: return "fbo-incomplete"_s;
+    case GraphicsContextGL::VideoUploadOutcome::CopyFailed: return "copy-failed"_s;
     case GraphicsContextGL::VideoUploadOutcome::PbufferFailed: return "pbuffer-failed"_s;
     }
     ASSERT_NOT_REACHED();
@@ -7289,10 +7289,8 @@ static ASCIILiteral webglVideoUploadDecisionName(WebGLRenderingContextBase::Vide
     case Decision::Copy: return "copy"_s;
     case Decision::Forced: return "forced"_s;
     case Decision::GateFunction: return "gate-function"_s;
-    case Decision::GateTarget: return "gate-target"_s;
     case Decision::GateSourceRect: return "gate-source-rect"_s;
     case Decision::GateCombination: return "gate-combination"_s;
-    case Decision::GateLevel: return "gate-level"_s;
     case Decision::GateVideoFrameFormat: return "gate-videoframe-format"_s;
     case Decision::NoFrame: return "no-frame"_s;
     }

@@ -33,6 +33,7 @@
 #include <array>
 #include <memory>
 #include <wtf/CheckedPtr.h>
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(WEBXR)
@@ -48,10 +49,6 @@ OBJC_PROTOCOL(MTLRasterizationRateMap);
 namespace WebCore {
 
 class GraphicsLayerContentsDisplayDelegate;
-
-#if ENABLE(VIDEO)
-class GraphicsContextGLCVCocoa;
-#endif
 
 // IOSurface backing store for an image of a texture.
 // When preserveDrawingBuffer == false, this is the drawing buffer backing store.
@@ -104,7 +101,7 @@ public:
     // GraphicsContextGLANGLE overrides.
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 #if ENABLE(VIDEO)
-    bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) final;
+    bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum type, bool unpackFlipY, bool unpackPremultiplyAlpha) final;
 #endif
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
@@ -129,6 +126,7 @@ protected:
     bool platformInitializeExtensions() final;
     bool platformInitialize() final;
     void invalidateKnownTextureContent(GCGLuint) final;
+    void invalidateKnownTextureContentForTarget(GCGLenum) final;
     bool reshapeDrawingBuffer() final;
 
     IOSurfacePbuffer& LEGACY_NODELETE drawingBuffer();
@@ -149,16 +147,29 @@ protected:
 #if ENABLE(WEBXR)
     bool enableRequiredWebXRExtensionsImpl();
 #endif
-#if ENABLE(VIDEO)
-    GraphicsContextGLCV* cvContext();
-#endif
     void* createMetalSharedEventEGLSync(id, uint64_t);
     RetainPtr<IOSurfaceRef> copySurfaceBuffer(SurfaceBuffer);
 
     ProcessIdentity m_resourceOwner;
     ColorSpace m_drawingBufferColorSpace;
 #if ENABLE(VIDEO)
-    const std::unique_ptr<GraphicsContextGLCVCocoa> m_cv;
+    // The source of the latest copyTextureFromVideoFrame() per texture, so that repeated uploads of
+    // an unchanged frame can be skipped.
+    struct VideoTextureContent {
+        RetainPtr<IOSurfaceRef> surface;
+        uint32_t surfaceID { 0 };
+        uint32_t surfaceSeed { 0 };
+        GCGLenum target { 0 };
+        GCGLint level { 0 };
+        GCGLenum internalFormat { 0 };
+        GCGLenum type { 0 };
+        GCGLint orientation { 0 };
+        bool unpackFlipY { false };
+        bool unpackPremultiplyAlpha { false };
+
+        friend bool LEGACY_NODELETE operator==(const VideoTextureContent&, const VideoTextureContent&) = default;
+    };
+    HashMap<GCGLuint, VideoTextureContent, IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>> m_knownVideoTextureContent;
 #endif
     const RetainPtr<MTLSharedEventListener> m_finishedMetalSharedEventListener;
     const RetainPtr<id> m_finishedMetalSharedEvent; // FIXME: Remove all C++ includees and use id<MTLSharedEvent>.
@@ -178,8 +189,6 @@ protected:
     Vector<SpareDrawingBuffer> m_spareDrawingBuffers;
     // On iOS CoreAnimation keeps a displayed buffer for about 4 frames; one more for headroom.
     static constexpr size_t maxSpareDrawingBuffers { 5 };
-
-    friend class GraphicsContextGLCVCocoa;
 };
 
 inline IOSurfacePbuffer::IOSurfacePbuffer(std::unique_ptr<IOSurface>&& surface, void* pbuffer)
