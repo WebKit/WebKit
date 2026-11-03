@@ -1,0 +1,8 @@
+
+PASS <model> refuses a model document with a buffer URI naming a sibling file.
+PASS <model> refuses a model document with a buffer URI traversing out of the document's directory.
+PASS <model> refuses a model document with a buffer URI with an absolute file system path.
+PASS <model> refuses a model document with an image URI.
+PASS <model> refuses a model document with a buffer URI inside a binary glTF container.
+PASS <model> loads a model document that contains all of its assets.
+
