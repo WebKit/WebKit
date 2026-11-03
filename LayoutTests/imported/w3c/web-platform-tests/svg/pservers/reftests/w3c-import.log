@@ -33,6 +33,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-02.tentative.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-objectBoundingBox-absolute-units-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-objectBoundingBox-absolute-units.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-on-text-after-font-size-change-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-on-tspan-after-font-size-change-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-on-tspan-after-font-size-change.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-on-use-context-fill-after-font-size-change-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-on-use-context-fill-after-font-size-change.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-01-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-02-expected.svg
@@ -40,7 +45,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-03-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-03.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-template-inheritance-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-template-inheritance-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-template-inheritance.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/linear-gradient-transform-empty-attr-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/linear-gradient-transform-empty-attr-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/linear-gradient-transform-empty-attr.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-01.tentative.svg
@@ -58,7 +65,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-03-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-03.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-empty-attr-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-empty-attr-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-empty-attr.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-template-inheritance-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-template-inheritance-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-template-inheritance.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-viewbox-01-expected.svg
@@ -68,10 +77,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/percent-encoded-fragment-fill-stroke.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/percent-encoded-fragment-refs.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radial-gradient-transform-empty-attr-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radial-gradient-transform-empty-attr-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radial-gradient-transform-empty-attr.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-002-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-002-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-003-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-003-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-003.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-fully-overlapping-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-fully-overlapping.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/stop-color-currentcolor-dynamic-001-expected.svg

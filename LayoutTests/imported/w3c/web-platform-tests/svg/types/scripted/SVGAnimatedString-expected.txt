@@ -1,0 +1,5 @@
+
+PASS Basic properties
+PASS Setting baseStr
+PASS Setting baseStr of an element declared via HTML
+

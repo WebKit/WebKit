@@ -39,6 +39,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-size.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-under-clip-path-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-under-defs-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-visibility-hidden-visible-content-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-visibility-hidden-visible-content-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-visibility-hidden-visible-content.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-with-position-under-clip-path-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-with-position-under-clip-path.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/extensibility/foreignObject/getboundingclientrect.html

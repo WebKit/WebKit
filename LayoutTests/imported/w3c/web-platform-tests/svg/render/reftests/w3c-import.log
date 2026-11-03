@@ -39,3 +39,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/render-sync-with-font-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/render-sync-with-font-size-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/render-sync-with-font-size.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/svg-filter-unresolved-reference-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/svg-filter-unresolved-reference-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/svg-filter-unresolved-reference.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/visibility-hidden-container-mask-clip-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/visibility-hidden-container-mask-clip-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/visibility-hidden-container-mask-clip.html

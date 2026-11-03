@@ -15,3 +15,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/support/blank.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/support/use-external-reload-in-iframe-child.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/support/use-external-reload-in-iframe-resource.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/scripted/support/use-script-strict-dynamic.js

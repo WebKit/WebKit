@@ -2783,7 +2783,9 @@ webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-pro
 webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-003.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-fetch-properties-001.sub.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/render/reftests/render-sync-with-font-size.html [ Skip ]
-imported/w3c/web-platform-tests/svg/render/order/z-index.svg [ ImageOnlyFailure ]
+webkit.org/b/328375 imported/w3c/web-platform-tests/svg/struct/scripted/switch_reentrant_removal.html [ Skip ]
+webkit.org/b/328373 imported/w3c/web-platform-tests/svg/text/crashtests/unicode-bidi-crash.html [ Skip ]
+imported/w3c/web-platform-tests/svg/render/order/z-index.tentative.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/render/reftests/blending-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/layout/svg-foreign-relayout-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/layout/svg-foreign-relayout-002.html [ ImageOnlyFailure ]
@@ -2835,6 +2837,8 @@ imported/w3c/web-platform-tests/svg/styling/svg-filter-render-cross-origin-navig
 imported/w3c/web-platform-tests/svg/styling/svg-filter-render-same-origin-frame-in-cross-origin-frame.tentative.sub.https.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/styling/svg-filter-render-same-origin-frame-reload-as-sandbox.tentative.https.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/styling/svg-filter-render-sandbox-frame.tentative.https.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/styling/svg-filter-render-swap.tentative.https.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/struct/reftests/conditional-processing-never-rendered-resources.svg [ ImageOnlyFailure ]
 
 webkit.org/b/201110 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/stacking-context.html [ Skip ]
 webkit.org/b/201110 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/position-svg-root-in-foreign-object.html [ Skip ]
@@ -8297,3 +8301,7 @@ webkit.org/b/329236 webgl/video-formats/upload-path-vp9-p0-420-bt709-videorange-
 webkit.org/b/329235 webgl/video-formats/upload-path-vp9-p2-420-10bit-pq-videorange-mse.html [ Failure ]
 
 [ Debug ] ipc/restrictedendpoints/deny-oversized-writeBufferWithCopy.html [ Skip ]
+
+# Debug assertion in RenderLayer::recursiveUpdateLayerPositions (repaintRects mismatch on the RenderSVGRoot).
+webkit.org/b/328364 imported/w3c/web-platform-tests/svg/as-image/external-resource-data-url-import.sub.html [ Pass Crash ]
+webkit.org/b/328364 imported/w3c/web-platform-tests/svg/as-image/external-resource-data-url-sheet.sub.html [ Pass Crash ]

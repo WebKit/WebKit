@@ -15,3 +15,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/crashtests/abspos-pseudo.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/crashtests/ruby-crash.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/crashtests/textlength-zwj-crash.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/crashtests/unicode-bidi-crash.html

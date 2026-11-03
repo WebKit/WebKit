@@ -15,6 +15,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/green-100x100.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/green-random-rects.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/green-red-200x200.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/green-viewbox-25x25.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-green-200x100.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-green-200x200.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-green-no-natural-size.svg
@@ -22,4 +23,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-green-viewbox-only.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-green-viewbox-width.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-green-zero-size.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/red-viewbox-25x25.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/squares.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/support/view-invalid-viewbox.svg

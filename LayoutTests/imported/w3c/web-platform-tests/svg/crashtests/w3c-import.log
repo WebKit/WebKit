@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/chrome-bug-452651700.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/chrome-bug-485819134.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/chrome-bug-517309206.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/chrome-bug-565674533.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/firefox-bug-1688293.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/firefox-bug-1703592.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/firefox-bug-1719483.html
@@ -34,3 +35,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/firefox-bug-1980267.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/firefox-bug-2018671.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/image-dispatch-event-on-destruct.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/crashtests/svg-zero-width-img-crash.html

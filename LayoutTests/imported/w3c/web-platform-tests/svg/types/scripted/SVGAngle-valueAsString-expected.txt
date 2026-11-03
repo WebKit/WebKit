@@ -1,0 +1,6 @@
+
+PASS SVGAngle.valueAsString normalizes -0 to 0
+FAIL SVGAngle clamps overflowing unit conversions and round-trips valueAsString assert_equals: value getter clamps positive overflow expected 3.4028234663852886e+38 but got Infinity
+FAIL Reflected marker orient attribute clamps overflowing unit conversions and round-trips assert_equals: marker orient 1e38rad -> deg: valueInSpecifiedUnits expected 3.4028234663852886e+38 but got Infinity
+PASS SVGAngle.valueAsString formats large and small numbers consistently with CSS numbers
+

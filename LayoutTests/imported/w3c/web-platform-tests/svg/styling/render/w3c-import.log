@@ -12,6 +12,9 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/render/opacity-text-decoration-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/render/opacity-text-decoration-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/render/opacity-text-decoration.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/render/transform-box-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/render/transform-box-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/render/transform-box.svg

@@ -16,6 +16,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/order/clip-path-filter-order-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/order/clip-path-filter-order-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/order/clip-path-filter-order.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/render/order/z-index-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/order/z-index-ref.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/render/order/z-index.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/order/z-index.tentative-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/order/z-index.tentative.svg

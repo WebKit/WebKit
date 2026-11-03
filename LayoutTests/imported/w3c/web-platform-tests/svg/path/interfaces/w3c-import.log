@@ -22,6 +22,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/getPathData-malformed-d.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/getPathData-normalize.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/getPathData-segments.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/getPathSegmentAtLength-boundaries.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/getPathSegmentAtLength-clamping.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/getPathSegmentAtLength-detached-element.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/getPathSegmentAtLength-during-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/getPathSegmentAtLength-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/getPathSegmentAtLength-segments.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/setPathData-css-d.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/setPathData-during-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/interfaces/setPathData-malformed.html

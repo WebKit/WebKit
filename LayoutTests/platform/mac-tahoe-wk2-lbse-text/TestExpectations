@@ -127,7 +127,7 @@ imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-003.htm
 imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-non-uniform-scale.html                   [ Pass ]
 imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-with-none-preserve-aspect-ratio.html     [ Pass ]
 imported/w3c/web-platform-tests/svg/path/distance/pathlength-circle-mutating.svg                                  [ Pass ]
-imported/w3c/web-platform-tests/svg/render/order/z-index.svg                                                      [ Pass ]
+imported/w3c/web-platform-tests/svg/render/order/z-index.tentative.svg                                                      [ Pass ]
 imported/w3c/web-platform-tests/svg/render/reftests/blending-001.svg                                              [ Pass ]
 imported/w3c/web-platform-tests/svg/shapes/rect-03.svg                                                            [ Pass ]
 imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003.svg                                            [ Pass ]

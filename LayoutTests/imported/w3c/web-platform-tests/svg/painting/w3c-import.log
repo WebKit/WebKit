@@ -74,12 +74,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-orient-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-orient-001-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-orient-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-with-clip-path-cycle-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-with-mask-cycle-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/mask-containing-image-with-clip-path-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/mask-containing-image-with-clip-path.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/negative-dashoffset-odd-dasharray-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/negative-dashoffset-odd-dasharray-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/negative-dashoffset-odd-dasharray.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/paint-stroke.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/subpixel-clip-path-transform-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/subpixel-clip-path-transform-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/subpixel-clip-path-transform.html

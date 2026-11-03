@@ -12,8 +12,22 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/attribute-style-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/nth-child-of-class-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/nth-child-of-class-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/nth-child-of-class.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/nth-last-child-of-class-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/nth-last-child-of-class.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/opacity-style-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-filter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-filter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-filter.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-marker-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-marker-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-marker.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-stroke-dasharray-01-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-stroke-dasharray-01-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-stroke-dasharray-01.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-stroke-dasharray-02-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-stroke-dasharray-02-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-stroke-dasharray-02.html

@@ -13,6 +13,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/conditional-processing-never-rendered-resources-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/conditional-processing-never-rendered-resources.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/currentScale-change-repaint-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/currentScale-change-repaint.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/currentScale-expected.svg

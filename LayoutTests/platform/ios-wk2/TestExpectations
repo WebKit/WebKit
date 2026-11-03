@@ -1,1 +1,5 @@
 http/tests/media/media-controls-context-menu-anchor-in-iframe.html [ Pass ]
+
+webkit.org/b/328381 imported/w3c/web-platform-tests/svg/text/scripted/range-getboundingclientrect-scaled.html [ Failure ]
+
+imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-fractional-valid.html [ ImageOnlyFailure ]

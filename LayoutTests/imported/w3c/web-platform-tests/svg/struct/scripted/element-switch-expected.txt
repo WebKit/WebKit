@@ -1,0 +1,6 @@
+
+PASS Inheritance chain
+PASS SVGElement inherited properties
+PASS SVGTests mixin properties
+PASS Detached
+

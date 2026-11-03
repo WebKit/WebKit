@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/attr-style-title.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/attr-style-type-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/attr-style-type.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/border-spacing-svg-zoom-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/border-spacing-svg-zoom-table-display-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/border-spacing-svg-zoom-table-display-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/border-spacing-svg-zoom-table-display.html
@@ -129,6 +130,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-srcdoc-frame-ref.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-srcdoc-frame.tentative.https-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-srcdoc-frame.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-swap-ref.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-swap.tentative.https-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-swap.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-web-plugin-ref.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-web-plugin.tentative.https-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-web-plugin.tentative.https.html

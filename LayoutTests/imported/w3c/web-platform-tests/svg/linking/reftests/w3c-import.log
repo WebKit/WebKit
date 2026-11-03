@@ -101,10 +101,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-timesegment.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-transform-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-transform.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-viewbox-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-viewbox-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-viewbox-override-multiple-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-viewbox-override-multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-viewbox-then-transform-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-viewbox-then-transform.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-viewbox-zero-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-viewbox-zero.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-fetch-properties-001.sub-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-fetch-properties-001.sub.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-fetch-properties-002.sub-expected.svg
@@ -136,5 +140,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/use-template-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/use-template-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/use-template.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/view-viewbox-invalid-fallback-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/view-viewbox-invalid-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/view-viewbox-override-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/view-viewbox-override.html
