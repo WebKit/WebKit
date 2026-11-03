@@ -517,6 +517,11 @@ enum ContentsFormat {
     "hardware"
 };
 
+enum LayerType {
+    "primary",
+    "backdrop"
+};
+
 [
     Conditional=WEBGL&VIDEO,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
@@ -878,7 +883,7 @@ enum ContentsFormat {
 
     DOMString viewTransitionOldCaptureState(Document document, [AtomString] DOMString name);
 
-    unsigned long long layerIDForElement(Element element);
+    unsigned long long layerIDForElement(Element element, optional LayerType layerType = "primary");
     unsigned long long horizontalScrollbarLayerID(optional Node? node = null);
     unsigned long long verticalScrollbarLayerID(optional Node? node = null);
     DOMRect horizontalScrollbarFrameRect(optional Node? node = null);

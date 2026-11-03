@@ -513,6 +513,13 @@ std::optional<PlatformLayerIdentifier> GraphicsLayerCA::primaryLayerID() const
     return primaryLayer()->layerID();
 }
 
+std::optional<PlatformLayerIdentifier> GraphicsLayerCA::backdropLayerID() const
+{
+    if (m_backdropLayer)
+        return m_backdropLayer->layerID();
+    return std::nullopt;
+}
+
 std::optional<PlatformLayerIdentifier> GraphicsLayerCA::layerIDIgnoringStructuralLayer() const
 {
     return m_layer->layerID();
@@ -2810,6 +2817,12 @@ void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
         else
 #endif
             backdropLayer->setName(MAKE_STATIC_STRING_IMPL("backdrop"));
+#if ENABLE(THREADED_ANIMATIONS)
+        if (RefPtr effectsStack = acceleratedEffectStack()) {
+            if (!effectsStack->backdropLayerEffects().isEmpty())
+                backdropLayer->setAcceleratedEffectsAndBaseValues(effectsStack->backdropLayerEffects(), effectsStack->baseValues());
+        }
+#endif
     }
 
     Ref backdropLayer = *m_backdropLayer;

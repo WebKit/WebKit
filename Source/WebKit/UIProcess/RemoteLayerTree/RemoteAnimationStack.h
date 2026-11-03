@@ -102,6 +102,7 @@ private:
 
     bool m_hasProgressBasedAnimations { false };
     bool m_hasTimeBasedAnimations { false };
+    bool m_filtersAffectBackdrop { false };
 };
 
 } // namespace WebKit

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+.target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+const make_target = t => {
+    const target = createDiv(t);
+    target.className = "target";
+    return target;
+};
+
+promise_test(async t => {
+    const target = make_target(t);
+    const animation = target.animate({ backdropFilter: ['blur(10px)', 'blur(20px)'] }, 1000);
+    await animationAcceleration(animation);
+    const remoteAnimationStack = await UIHelper.remoteAnimationStackForElement(target, "backdrop");
+    const remoteAnimations = remoteAnimationStack.animations;
+    assert_equals(remoteAnimations.length, 1);
+}, "Animating 'backdrop-filter' yields a remote effect stack.");
+
+</script>
+</body>

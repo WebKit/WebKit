@@ -2309,12 +2309,12 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static remoteAnimationStackForElement(element)
+    static remoteAnimationStackForElement(element, layerType)
     {
         if (!this.isWebKit2() || !element)
             return Promise.resolve();
 
-        const layerID = window.internals?.layerIDForElement(element);
+        const layerID = window.internals?.layerIDForElement(element, layerType);
         const script = `uiController.uiScriptComplete(uiController.animationStackForLayerWithID(${layerID}))`;
         return new Promise(resolve => {
             testRunner.runUIScript(script, result => resolve(JSON.parse(result)));

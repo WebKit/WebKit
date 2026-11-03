@@ -54,7 +54,8 @@ RemoteAnimationStack::RemoteAnimationStack(RemoteAnimations&& animations, WebCor
 
     for (auto& animation : m_animations) {
         auto& properties = animation->animatedProperties();
-        affectsFilter = affectsFilter || properties.containsAny({ WebCore::AcceleratedEffectProperty::Filter, WebCore::AcceleratedEffectProperty::BackdropFilter });
+        m_filtersAffectBackdrop = m_filtersAffectBackdrop || properties.contains(WebCore::AcceleratedEffectProperty::BackdropFilter);
+        affectsFilter = affectsFilter || m_filtersAffectBackdrop || properties.contains(WebCore::AcceleratedEffectProperty::Filter);
         affectsOpacity = affectsOpacity || properties.contains(WebCore::AcceleratedEffectProperty::Opacity);
         affectsTransform = affectsTransform || properties.containsAny(WebCore::transformRelatedAcceleratedProperties);
         m_hasProgressBasedAnimations = m_hasProgressBasedAnimations || animation->timeline().isProgressBased();
@@ -64,6 +65,21 @@ RemoteAnimationStack::RemoteAnimationStack(RemoteAnimations&& animations, WebCor
     }
 
     ASSERT(affectsFilter || affectsOpacity || affectsTransform);
+
+#if ASSERT_ENABLED
+    if (affectsFilter) {
+        // We are not supposed to have an effect stack in the remote layer tree affecting both `filter` and `backdrop-filter`.
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=329905
+        bool hasAnimationTargetingFilter = false;
+        bool hasAnimationTargetingBackdropFilter = false;
+        for (auto& animation : m_animations) {
+            auto& properties = animation->animatedProperties();
+            hasAnimationTargetingFilter = hasAnimationTargetingFilter || properties.contains(WebCore::AcceleratedEffectProperty::Filter);
+            hasAnimationTargetingBackdropFilter = hasAnimationTargetingBackdropFilter || properties.contains(WebCore::AcceleratedEffectProperty::BackdropFilter);
+        }
+        ASSERT(hasAnimationTargetingFilter != hasAnimationTargetingBackdropFilter);
+    }
+#endif
 
     if (affectsFilter)
         m_affectedLayerProperties.add(LayerProperty::Filter);
@@ -107,7 +123,7 @@ const WebCore::FilterOperations* RemoteAnimationStack::longestFilterList() const
     }
 
     if (longestFilterList) {
-        auto& baseFilter = m_baseValues.filter;
+        auto& baseFilter = m_filtersAffectBackdrop ? m_baseValues.backdropFilter : m_baseValues.filter;
         if (longestFilterList->size() < baseFilter.size())
             longestFilterList = &baseFilter;
     }
@@ -156,7 +172,7 @@ void RemoteAnimationStack::initEffectsFromMainThread(PlatformLayer *layer)
     [m_presentationModifierGroup setUpdatesAsynchronously:NO];
 
     if (canonicalFilters) {
-        WebCore::PlatformCAFilters::presentationModifiers(computedValues.filter, canonicalFilters, m_filterPresentationModifiers, m_presentationModifierGroup);
+        WebCore::PlatformCAFilters::presentationModifiers(m_filtersAffectBackdrop ? computedValues.backdropFilter : computedValues.filter, canonicalFilters, m_filterPresentationModifiers, m_presentationModifierGroup);
         for (auto& filterPresentationModifier : borrow(m_filterPresentationModifiers))
             [layer addPresentationModifier:filterPresentationModifier.second.get()];
     }
@@ -185,7 +201,7 @@ void RemoteAnimationStack::applyEffects() const
     auto computedValues = computeValues();
 
     if (!m_filterPresentationModifiers.isEmpty())
-        WebCore::PlatformCAFilters::updatePresentationModifiers(computedValues.filter, m_filterPresentationModifiers);
+        WebCore::PlatformCAFilters::updatePresentationModifiers(m_filtersAffectBackdrop ? computedValues.backdropFilter : computedValues.filter, m_filterPresentationModifiers);
 
     if (m_opacityPresentationModifier) {
         // Setting 0.f here may result in a stale value for the CAPresentationModifier.
@@ -211,7 +227,7 @@ void RemoteAnimationStack::applyEffectsFromMainThread(PlatformLayer *layer, bool
     auto computedValues = computeValues();
 
     if (m_affectedLayerProperties.contains(LayerProperty::Filter))
-        WebCore::PlatformCAFilters::setFiltersOnLayer(layer, computedValues.filter, backdropRootIsOpaque);
+        WebCore::PlatformCAFilters::setFiltersOnLayer(layer, m_filtersAffectBackdrop ? computedValues.backdropFilter : computedValues.filter, backdropRootIsOpaque);
 
     if (m_affectedLayerProperties.contains(LayerProperty::Opacity))
         [layer setOpacity:computedValues.opacity.value];

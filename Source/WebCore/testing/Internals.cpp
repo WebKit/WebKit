@@ -3856,7 +3856,7 @@ String Internals::viewTransitionOldCaptureState(Document& document, const AtomSt
     return "none"_s;
 }
 
-ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
+ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element, LayerType layerType)
 {
     RefPtr document = contextDocument();
     if (!document || !document->frame())
@@ -3873,7 +3873,15 @@ ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
 
     auto* backing = layerModelObject->layer()->backing();
     RefPtr graphicsLayer = backing->graphicsLayer();
-    return graphicsLayer->primaryLayerID() ? graphicsLayer->primaryLayerID()->object().toUInt64() : 0;
+    switch (layerType) {
+    case LayerType::Primary:
+        return graphicsLayer->primaryLayerID() ? graphicsLayer->primaryLayerID()->object().toUInt64() : 0;
+    case LayerType::Backdrop:
+        return graphicsLayer->backdropLayerID() ? graphicsLayer->backdropLayerID()->object().toUInt64() : 0;
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
 }
 
 static ExceptionOr<uint64_t> getLayerID(GraphicsLayer* layer)

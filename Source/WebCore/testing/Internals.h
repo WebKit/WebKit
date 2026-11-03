@@ -606,7 +606,8 @@ public:
     };
     ExceptionOr<String> layerTreeAsText(Document&, unsigned short flags) const;
     String viewTransitionOldCaptureState(Document&, const AtomString& name) const;
-    ExceptionOr<uint64_t> layerIDForElement(Element&);
+    enum class LayerType { Primary, Backdrop };
+    ExceptionOr<uint64_t> layerIDForElement(Element&, LayerType);
     ExceptionOr<String> repaintRectsAsText() const;
 
     ExceptionOr<ScrollingNodeID> scrollingNodeIDForNode(Node*);
