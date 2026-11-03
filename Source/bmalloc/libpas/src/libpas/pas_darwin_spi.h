@@ -96,4 +96,21 @@ PAS_END_EXTERN_C;
 
 #endif /* defined(__has_include) && __has_include(<stack_logging.h>) */
 
+#if !PAS_OS(DARWIN)
+PAS_BEGIN_EXTERN_C;
+
+/* Minimal stand-in for libmalloc's malloc_zone_t, so that code which hands a zone to
+   malloc_logger hooks does not have to be gated on the platform. Only the leading members
+   up to and including size() are declared, with the same layout as libmalloc's definition
+   (https://github.com/apple-oss-distributions/libmalloc/blob/main/include/malloc/malloc.h#L132).
+   Hooks must only ever use zone->size. */
+typedef struct _malloc_zone_t {
+    void* reserved1;
+    void* reserved2;
+    size_t (*size)(struct _malloc_zone_t* zone, const void* ptr);
+} malloc_zone_t;
+
+PAS_END_EXTERN_C;
+#endif /* !PAS_OS(DARWIN) */
+
 #endif /* PAS_DARWIN_SPI_H */

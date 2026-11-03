@@ -113,7 +113,7 @@ static PAS_ALWAYS_INLINE bool pas_try_deallocate_not_small_exclusive_segregated(
     /* Now that we know that the page belongs to this config's page-header
        table, we know that we will successfully free it (or crash), so
        it's safe to log to msl. */
-    pas_msl_free_logging((void*)begin);
+    pas_msl_free_logging((void*)begin, config.config_ptr, pas_lock_is_not_held);
 
     switch (pas_page_base_get_kind(page_base)) {
     case pas_small_exclusive_segregated_page_kind:

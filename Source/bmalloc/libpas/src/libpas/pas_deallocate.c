@@ -67,7 +67,7 @@ bool pas_try_deallocate_known_large(void* ptr,
     }
 
     /* Log while the object is still live, while holding the heap lock. */
-    pas_msl_free_logging(ptr);
+    pas_msl_free_logging(ptr, config, pas_lock_is_held);
 
     bool did_deallocate = pas_large_heap_try_deallocate(begin, config);
     PAS_ASSERT(did_deallocate);
@@ -89,7 +89,7 @@ bool pas_try_deallocate_pgm_large(void* ptr,
     bool result = pas_probabilistic_guard_malloc_check_exists(begin);
 
     if (result) {
-        pas_msl_free_logging(ptr);
+        pas_msl_free_logging(ptr, config_ptr, pas_lock_is_held);
         pas_probabilistic_guard_malloc_deallocate((void *) begin);
     }
 
@@ -170,7 +170,7 @@ bool pas_try_deallocate_slow_no_cache(void* ptr,
 
     switch (config_ptr->fast_megapage_kind_func(begin)) {
     case pas_small_exclusive_segregated_fast_megapage_kind: {
-        pas_msl_free_logging(ptr);
+        pas_msl_free_logging(ptr, config_ptr, pas_lock_is_not_held);
         deallocate_segregated(begin, &config_ptr->small_segregated_config);
         return true;
     }
@@ -180,7 +180,7 @@ bool pas_try_deallocate_slow_no_cache(void* ptr,
         page_and_kind = pas_get_page_base_and_kind_for_small_other_in_fast_megapage(begin, *config_ptr);
         switch (page_and_kind.page_kind) {
         case pas_small_bitfit_page_kind:
-            pas_msl_free_logging(ptr);
+            pas_msl_free_logging(ptr, config_ptr, pas_lock_is_not_held);
             config_ptr->small_bitfit_config.specialized_page_deallocate_with_page(
                 pas_page_base_get_bitfit(page_and_kind.page_base),
                 begin);
@@ -198,7 +198,7 @@ bool pas_try_deallocate_slow_no_cache(void* ptr,
         if (!page_base)
             return pas_try_deallocate_slow(begin, config_ptr, deallocation_mode);
 
-        pas_msl_free_logging(ptr);
+        pas_msl_free_logging(ptr, config_ptr, pas_lock_is_not_held);
         switch (pas_page_base_get_kind(page_base)) {
         case pas_small_exclusive_segregated_page_kind:
             PAS_ASSERT(!config_ptr->small_segregated_is_in_megapage);
