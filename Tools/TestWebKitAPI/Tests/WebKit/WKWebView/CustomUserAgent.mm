@@ -361,4 +361,57 @@ TEST(CustomUserAgent, ChromeCompatibilityQuirkAppliesToWebViewCustomUserAgent)
     EXPECT_WK_STREQ("CustomUA/1.0 (KHTML, like Gecko, like Chrome/151.)", [webView stringByEvaluatingJavaScript:@"navigator.userAgent"]);
 }
 
+#if PLATFORM(MAC)
+
+TEST(CustomUserAgent, SiteSpecificUserAgentQuirksMigratedFromSafari)
+{
+    constexpr auto chrome = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"_s;
+    constexpr auto safari18_6 = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15"_s;
+    constexpr auto safari13 = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15"_s;
+
+    struct Case {
+        ASCIILiteral url;
+        ASCIILiteral expectedUserAgent;
+    };
+
+    Case cases[] = {
+        { "https://www.hfhs.org/"_s, chrome },
+        { "https://www.irs.gov/"_s, chrome },
+        { "https://www.sutterhealth.org/"_s, chrome },
+        { "https://security.us.hsbc.com/"_s, safari13 },
+        { "https://www.bilibili.com/"_s, safari18_6 },
+        { "https://studio.atomm.com/"_s, chrome },
+        { "https://www.gunbroker.com/"_s, safari18_6 },
+        { "https://digits.t-mobile.com/"_s, chrome },
+        { "https://commitmono.com/"_s, chrome },
+        { "https://dev.ti.com/"_s, chrome },
+        { "https://tool.european-calculator.eu/"_s, chrome },
+        { "https://ippk.pl/"_s, chrome },
+        { "https://meet.goto.com/"_s, chrome },
+        { "https://santaclaracounty.telleronline.net/"_s, chrome },
+        { "https://mypay.dfas.mil/"_s, chrome },
+        { "https://www.upgrad.com/"_s, chrome },
+        { "https://www.sapo.pt/"_s, chrome },
+        { "https://invideo.io/"_s, chrome },
+        { "https://www.capcut.com/"_s, chrome },
+        { "https://www.digiposte.fr/"_s, chrome },
+    };
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().preferences._needsSiteSpecificQuirks = YES;
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    for (auto testCase : cases) {
+        [webView loadSimulatedRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:testCase.url.createNSString().get()]] responseHTMLString:@"<body></body>"];
+        [webView _test_waitForDidFinishNavigation];
+        EXPECT_WK_STREQ(testCase.expectedUserAgent, [webView stringByEvaluatingJavaScript:@"navigator.userAgent"]) << testCase.url;
+    }
+
+    [webView loadSimulatedRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.irs.gov.example.com/"]] responseHTMLString:@"<body></body>"];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_FALSE([[webView stringByEvaluatingJavaScript:@"navigator.userAgent"] containsString:@"Chrome/152"]);
+}
+
+#endif // PLATFORM(MAC)
+
 } // namespace TestWebKitAPI
