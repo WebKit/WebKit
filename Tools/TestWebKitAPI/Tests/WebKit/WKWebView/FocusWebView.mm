@@ -401,6 +401,36 @@ TEST(FocusWebView, NoFocusEventsForBackgroundWindow)
     EXPECT_EQ([focusEventCount intValue], 1);
 }
 
+TEST(FocusWebView, FocusEventDispatchedForUserGestureInBackgroundWindow)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+
+    NSString *html = @"<!DOCTYPE html>"
+        "<html>"
+        "<body>"
+        "<input id='input' type='text'>"
+        "<script>"
+        "let focusEventCount = 0;"
+        "input.addEventListener('focus', () => {"
+        "    focusEventCount++;"
+        "});"
+        "function getFocusEventCount() { return focusEventCount; }"
+        "</script>"
+        "</body>"
+        "</html>";
+    [webView synchronouslyLoadHTMLString:html];
+
+    [[webView window] resignKeyWindow];
+    NSNumber *focusEventCountWithoutGesture = [webView objectByEvaluatingJavaScript:@"input.focus(); getFocusEventCount()"];
+    EXPECT_EQ([focusEventCountWithoutGesture intValue], 0);
+
+    [webView objectByEvaluatingJavaScript:@"input.blur()"];
+
+    NSNumber *focusEventCountAfterFocus = [webView objectByEvaluatingJavaScriptWithUserGesture:@"input.focus(); getFocusEventCount()"];
+    EXPECT_EQ([focusEventCountAfterFocus intValue], 1);
+}
+
 TEST(FocusWebView, SingleBlurEventWhenNoLongerActiveAndFocused)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

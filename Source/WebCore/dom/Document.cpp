@@ -6904,7 +6904,7 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
             }
 
             // Dispatch the blur event and let the node do any other blur related activities (important for text fields)
-            if (RefPtr page = this->page(); page && page->focusController().isFocused())
+            if (RefPtr page = this->page(); (page && page->focusController().isFocused()) || UserGestureIndicator::processingUserGesture())
                 oldFocusedElement->dispatchBlurEvent(newFocusedElement);
 
             if (m_focusedElement) {
@@ -6985,7 +6985,7 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
         }
 
         // Dispatch the focus event and let the node do any other focus related activities (important for text fields)
-        if (RefPtr page = this->page(); page && page->focusController().isFocused())
+        if (RefPtr page = this->page(); (page && page->focusController().isFocused()) || UserGestureIndicator::processingUserGesture())
             focusedElement->dispatchFocusEvent(oldFocusedElement.copyRef(), options);
 
         if (m_focusedElement != focusedElement) {
