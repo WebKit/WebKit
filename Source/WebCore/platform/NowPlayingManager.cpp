@@ -81,7 +81,7 @@ bool NowPlayingManager::setNowPlayingInfo(const NowPlayingInfo& nowPlayingInfo, 
         return false;
 
     bool shouldUpdateNowPlayingSuppression = [&] {
-#if PLATFORM(APPLETV)
+#if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
         if (!m_nowPlayingInfo)
             return true;
 

@@ -112,7 +112,7 @@ AVExperienceControllerFullscreenEnabled:
   condition: HAVE(AVEXPERIENCECONTROLLER)
   defaultValue:
     default: false
-    WebKit: WebKit::defaultAVExperienceControllerFullscreenEnabled()
+    WebKit: true
 
 AVFoundationEnabled:
   type: bool
@@ -5271,7 +5271,7 @@ RequestVideoFrameCallbackEnabled:
 RequiresPageVisibilityForVideoToBeNowPlaying:
   type: bool
   status: embedder
-  condition: PLATFORM(APPLETV)
+  condition: ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
   defaultValue:
     default: false
     WebKit: defaultRequiresPageVisibilityForVideoToBeNowPlaying()

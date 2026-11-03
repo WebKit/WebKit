@@ -745,7 +745,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         return true;
     }
 
-#if PLATFORM(APPLETV)
+#if ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
     if (purpose == MediaElementSession::PlaybackControlsPurpose::NowPlaying
         && hasBehaviorRestriction(RequirePageVisibilityForVideoToBeNowPlaying)
         && element->isVideo()

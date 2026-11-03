@@ -813,6 +813,7 @@ if (USE_APPLE_INTERNAL_SDK)
         AppKitGesturesExtras
         TestWebKitAPILibraryAdditions
         UIWindowScene+Extras
+        WKSExperienceController+Transitions
         WKWebView+SystemTextExtraction)
 
     # WebKitAdditions may predate DigitalCredentialsExtras.swift.in; its call sites are behind
@@ -843,6 +844,9 @@ if (USE_APPLE_INTERNAL_SDK)
         ${WebKit_DERIVED_SOURCES_DIR}/TestWebKitAPILibraryAdditions.swift
         ${WebKit_DERIVED_SOURCES_DIR}/UIWindowScene+Extras.swift
         ${WebKit_DERIVED_SOURCES_DIR}/WKWebView+SystemTextExtraction.swift
+    )
+    target_sources(WebKitSwift PRIVATE
+        ${WebKit_DERIVED_SOURCES_DIR}/WKSExperienceController+Transitions.swift
     )
     if (_digital_credentials_extras_available)
         target_sources(WebKitSwift PRIVATE ${WebKit_DERIVED_SOURCES_DIR}/DigitalCredentialsExtras.swift)

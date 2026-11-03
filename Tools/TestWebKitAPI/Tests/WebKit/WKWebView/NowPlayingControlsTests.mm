@@ -143,7 +143,7 @@ TEST(NowPlayingControlsTests, NowPlayingControlsShowForBackgroundPage)
     ASSERT_GE(webView.get().lastUpdatedElapsedTime, 0);
 }
 
-#if PLATFORM(APPLETV)
+#if ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
 TEST(NowPlayingControlsTests, NowPlayingApplicationNotRegisteredForBackgroundPage)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -167,7 +167,7 @@ TEST(NowPlayingControlsTests, NowPlayingApplicationNotRegisteredForBackgroundPag
     ASSERT_EQ(10, webView.get().lastUpdatedDuration);
     ASSERT_GE(webView.get().lastUpdatedElapsedTime, 0);
 }
-#endif // PLATFORM(APPLETV)
+#endif // ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
 
 TEST(NowPlayingControlsTests, NowPlayingControlsHideAfterShowingKeepsSessionActive)
 {

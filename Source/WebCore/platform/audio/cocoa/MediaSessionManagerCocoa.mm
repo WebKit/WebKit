@@ -49,8 +49,8 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 
-#if PLATFORM(APPLETV)
-#import <pal/system/ios/Device.h>
+#if HAVE(AVEXPERIENCECONTROLLER)
+#import <WebKitAdditions/MediaSessionManagerCocoaAdditions.h>
 #endif
 
 #import "MediaRemoteSoftLink.h"
@@ -415,7 +415,7 @@ void MediaSessionManagerCocoa::clearNowPlayingInfo()
         SAFE_WTFLOGALWAYS("MediaSessionManagerCocoa::clearNowPlayingInfo swallowed exception: %@", [exception description]);
     }
 
-#if PLATFORM(APPLETV)
+#if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
     updateNowPlayingSuppression(nullptr);
 #endif
 }
@@ -425,7 +425,7 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
     if (!isMediaRemoteFrameworkAvailable())
         return;
 
-#if PLATFORM(APPLETV)
+#if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
     if (shouldUpdateNowPlayingSuppression)
         updateNowPlayingSuppression(&nowPlayingInfo);
 #else
@@ -768,7 +768,7 @@ void MediaSessionManagerCocoa::audioOutputDeviceChanged()
     updateSessionState();
 }
 
-#if PLATFORM(APPLETV)
+#if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
 
 static id<MRNowPlayingActivityUIControllable> nowPlayingActivityController()
 {
@@ -784,9 +784,6 @@ static void setPreferredState(MRNowPlayingActivityUIState preferredState)
 
 void MediaSessionManagerCocoa::updateNowPlayingSuppression(const NowPlayingInfo* nowPlayingInfo)
 {
-    if (!PAL::deviceClassIsHomeView())
-        return;
-
     if (!nowPlayingInfo || !nowPlayingInfo->isVideo || nowPlayingInfo->fullscreenMode != MediaPlayerEnums::VideoFullscreenModeNone) {
         RELEASE_LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingSuppression: clearing suppressPresentationOverBundleIdentifiers (hasNowPlayingInfo=%d, isVideo=%d, fullscreenMode=%d)", !!nowPlayingInfo, nowPlayingInfo && nowPlayingInfo->isVideo, nowPlayingInfo && nowPlayingInfo->fullscreenMode);
         [nowPlayingActivityController() suppressPresentationOverBundleIdentifiers:nil];
@@ -795,10 +792,10 @@ void MediaSessionManagerCocoa::updateNowPlayingSuppression(const NowPlayingInfo*
         if (nowPlayingInfo && nowPlayingInfo->fullscreenMode != MediaPlayerEnums::VideoFullscreenModeNone)
             preferredState = MRNowPlayingActivityUIStateFullScreen;
         else
-            preferredState = MRNowPlayingActivityUIStateRound;
+            preferredState = MRNowPlayingActivityUIStateInline;
         setPreferredState(preferredState);
     } else {
-        setPreferredState(MRNowPlayingActivityUIStateRound);
+        setPreferredState(MRNowPlayingActivityUIStateInline);
 
         RetainPtr parentApplicationBundleIdentifier = applicationBundleIdentifier().createNSString();
         RetainPtr presentingApplicationBundleIdentifier = nowPlayingInfo->metadata.sourceApplicationIdentifier.createNSString();
@@ -808,7 +805,7 @@ void MediaSessionManagerCocoa::updateNowPlayingSuppression(const NowPlayingInfo*
     }
 }
 
-#endif // PLATFORM(APPLETV)
+#endif // USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
 
 } // namespace WebCore
 

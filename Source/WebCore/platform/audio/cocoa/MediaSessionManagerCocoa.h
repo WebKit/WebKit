@@ -117,7 +117,7 @@ private:
 
     void possiblyChangeAudioCategory();
 
-#if PLATFORM(APPLETV)
+#if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
     static void updateNowPlayingSuppression(const NowPlayingInfo*);
 #endif
 

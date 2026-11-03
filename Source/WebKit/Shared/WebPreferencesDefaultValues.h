@@ -144,10 +144,6 @@ bool LEGACY_NODELETE defaultDigitalCredentialsEnabled();
 bool defaultApplePayEnabled();
 #endif
 
-#if HAVE(AVEXPERIENCECONTROLLER)
-bool defaultAVExperienceControllerFullscreenEnabled();
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 bool defaultAutomaticLiveResizeEnabled();
 bool defaultAutomaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth();
@@ -184,7 +180,7 @@ bool defaultHorizontalBannerViewOverlaysEnabled();
 bool LEGACY_NODELETE defaultDeviceOrientationPermissionAPIEnabled();
 #endif
 
-#if PLATFORM(APPLETV)
+#if ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
 bool defaultRequiresPageVisibilityForVideoToBeNowPlaying();
 #endif
 
