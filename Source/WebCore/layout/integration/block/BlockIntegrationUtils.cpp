@@ -37,6 +37,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
@@ -141,6 +142,16 @@ static RenderBlock* drawableContentBlock(RenderBox& box)
     return canvas ? canvas->innerRenderer() : nullptr;
 }
 
+// A table cell gives the percentage block sizes inside it, also the ones that look through anonymous blocks to it, what the table gives it,
+// which the render tree reads from the cell (RenderBox::computePercentageLogicalHeight, RenderReplaced::computeReplacedLogicalHeightUsing).
+static bool percentagesResolveAgainstTableCell(const RenderBlock& containingBlock)
+{
+    CheckedPtr ancestor = &containingBlock;
+    while (ancestor && ancestor->isAnonymousBlock())
+        ancestor = ancestor->containingBlock();
+    return ancestor && ancestor->isRenderTableCell();
+}
+
 BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegrationUtils::layoutIndependentFormattingContext(const RenderBox& root, const Layout::ConstraintsForIndependentFormattingContext& constraints)
 {
     // Only the root and its content are written here, by the root's own formatting context, and nothing else in the block formatting context
@@ -164,7 +175,7 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     auto containingBlockWritingMode = containingBlock->writingMode();
     auto isOrthogonal = box->writingMode().isOrthogonal(containingBlockWritingMode);
     box->setOverridingContainingBlockContentLogicalWidth(constraints.containingBlockInlineSize);
-    if (!isOrthogonal && Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box->writingMode()))
+    if (!isOrthogonal && !percentagesResolveAgainstTableCell(containingBlock) && Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box->writingMode()))
         box->setOverridingContainingBlockContentLogicalHeight(constraints.containingBlockBlockSize);
     CheckedPtr drawableContent = drawableContentBlock(box);
     if (drawableContent)
@@ -357,7 +368,7 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
             continue;
         }
         box->setOverridingContainingBlockContentLogicalWidth(constraints.horizontal().logicalWidth);
-        if (!box->writingMode().isOrthogonal(inlineContentRoot.writingMode()) && Layout::BlockFormattingUtils::hasPercentageBlockSize(*box, box->writingMode()))
+        if (!box->writingMode().isOrthogonal(inlineContentRoot.writingMode()) && !percentagesResolveAgainstTableCell(inlineContentRoot) && Layout::BlockFormattingUtils::hasPercentageBlockSize(*box, box->writingMode()))
             box->setOverridingContainingBlockContentLogicalHeight(box->isRenderReplaced() && box->document().inQuirksMode() ? std::optional { replacedElementAvailableBlockSize } : contentBoxBlockSize);
         atomicInlineLevelBoxes.append(*box);
         if (CheckedPtr drawableContent = drawableContentBlock(*box))
