@@ -217,6 +217,9 @@ TEST(FocusWebView, MultipleFrames)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
+#if PLATFORM(IOS_FAMILY)
+    [webView focusInWindow];
+#endif
     [webView evaluateJavaScript:@""
         "let i = document.getElementById('input');"
         "i.addEventListener('focusin', (e) => {"
@@ -265,6 +268,9 @@ static void runFocusNavigationIntoFrameWithNestedRemoteFrameTest(bool siteIsolat
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
     [navigationDelegate waitForDidFinishNavigation];
+#if PLATFORM(IOS_FAMILY)
+    [webView focusInWindow];
+#endif
 
     [webView evaluateJavaScript:@""
         "document.getElementById('mainInput').addEventListener('focusin', () => alert('mainInput focused'));"
@@ -321,6 +327,9 @@ TEST(FocusWebView, MultipleFramesSomeUnfocusable)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
+#if PLATFORM(IOS_FAMILY)
+    [webView focusInWindow];
+#endif
     [webView evaluateJavaScript:@""
         "let i = document.getElementById('input');"
         "i.addEventListener('focusin', (e) => {"
@@ -379,10 +388,15 @@ TEST(FocusWebView, NoFocusEventsForBackgroundWindow)
         "<input id='input' type='text'>"
         "<script>"
         "let focusEventCount = 0;"
+        "let focusInEventCount = 0;"
         "input.addEventListener('focus', () => {"
         "    focusEventCount++;"
         "});"
+        "input.addEventListener('focusin', () => {"
+        "    focusInEventCount++;"
+        "});"
         "function getFocusEventCount() { return focusEventCount; }"
+        "function getFocusInEventCount() { return focusInEventCount; }"
         "</script>"
         "</body>"
         "</html>";
@@ -399,6 +413,9 @@ TEST(FocusWebView, NoFocusEventsForBackgroundWindow)
 
     NSNumber *focusEventCount = [webView objectByEvaluatingJavaScript:@"getFocusEventCount()"];
     EXPECT_EQ([focusEventCount intValue], 1);
+
+    NSNumber *focusInEventCount = [webView objectByEvaluatingJavaScript:@"getFocusInEventCount()"];
+    EXPECT_EQ([focusInEventCount intValue], 1);
 }
 
 TEST(FocusWebView, FocusEventDispatchedForUserGestureInBackgroundWindow)
@@ -442,10 +459,15 @@ TEST(FocusWebView, SingleBlurEventWhenNoLongerActiveAndFocused)
         "<input id='input' type='text'>"
         "<script>"
         "let blurEventCount = 0;"
+        "let focusOutEventCount = 0;"
         "input.addEventListener('blur', () => {"
         "    blurEventCount++;"
         "});"
+        "input.addEventListener('focusout', () => {"
+        "    focusOutEventCount++;"
+        "});"
         "function getBlurEventCount() { return blurEventCount; }"
+        "function getFocusOutEventCount() { return focusOutEventCount; }"
         "</script>"
         "</body>"
         "</html>";
@@ -468,12 +490,53 @@ TEST(FocusWebView, SingleBlurEventWhenNoLongerActiveAndFocused)
 
     NSNumber *blurEventCount = [webView objectByEvaluatingJavaScript:@"getBlurEventCount()"];
     EXPECT_EQ([blurEventCount intValue], 1);
+    NSNumber *focusOutEventCount = [webView objectByEvaluatingJavaScript:@"getFocusOutEventCount()"];
+    EXPECT_EQ([focusOutEventCount intValue], 1);
 
     [[webView window] resignKeyWindow];
     [webView waitForNextPresentationUpdate];
 
     blurEventCount = [webView objectByEvaluatingJavaScript:@"getBlurEventCount()"];
     EXPECT_EQ([blurEventCount intValue], 1);
+    focusOutEventCount = [webView objectByEvaluatingJavaScript:@"getFocusOutEventCount()"];
+    EXPECT_EQ([focusOutEventCount intValue], 1);
+}
+
+TEST(FocusWebView, FocusInAndFocusOutEventsAccompanyFocusAndBlurWhenActiveAndFocused)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration]);
+
+    NSString *html = @"<!DOCTYPE html>"
+        "<html>"
+        "<body>"
+        "<input id='first' type='text' onfocus='record(\"first.focus\")' onfocusin='record(\"first.focusin\")' onblur='record(\"first.blur\")' onfocusout='record(\"first.focusout\")'>"
+        "<input id='second' type='text'>"
+        "<script>"
+        "const counts = { };"
+        "function record(key) { counts[key] = (counts[key] || 0) + 1; }"
+        "</script>"
+        "</body>"
+        "</html>";
+    [webView synchronouslyLoadHTMLString:html];
+
+    [[webView window] makeKeyWindow];
+#if PLATFORM(IOS_FAMILY)
+    [webView becomeFirstResponder];
+#else
+    [[webView window] makeFirstResponder:webView.get()];
+#endif
+
+    auto count = [&](NSString *key) {
+        return [[webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"counts['%@'] || 0", key]] intValue];
+    };
+
+    [webView objectByEvaluatingJavaScript:@"first.focus()"];
+    EXPECT_EQ(count(@"first.focus"), 1);
+    EXPECT_EQ(count(@"first.focusin"), 1);
+    [webView objectByEvaluatingJavaScript:@"second.focus()"];
+    EXPECT_EQ(count(@"first.blur"), 1);
+    EXPECT_EQ(count(@"first.focusout"), 1);
 }
 
 

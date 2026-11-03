@@ -480,11 +480,14 @@ static inline void dispatchEventsOnWindowAndFocusedElement(Document* document, b
         }
 
         focusedElement->dispatchBlurEvent(nullptr);
+        focusedElement->dispatchFocusOutEventIfNeeded(nullptr);
     }
 
     document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    if (RefPtr focusedElement = document->focusedElement(); focused && focusedElement)
+    if (RefPtr focusedElement = document->focusedElement(); focused && focusedElement) {
         focusedElement->dispatchFocusEvent(nullptr, { });
+        focusedElement->dispatchFocusInEventIfNeeded(nullptr);
+    }
 }
 
 static inline bool isFocusableElementOrScopeOwner(Element& element, const FocusEventData& focusEventData)

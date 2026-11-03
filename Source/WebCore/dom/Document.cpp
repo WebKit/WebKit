@@ -6903,17 +6903,18 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
                     formControlElement->dispatchFormControlChangeEvent();
             }
 
-            // Dispatch the blur event and let the node do any other blur related activities (important for text fields)
-            if (RefPtr page = this->page(); (page && page->focusController().isFocused()) || UserGestureIndicator::processingUserGesture())
+            // Dispatch the blur or focusout events and let the node do any other blur related activities (important for text fields)
+            if (RefPtr page = this->page(); (page && page->focusController().isFocused()) || UserGestureIndicator::processingUserGesture()) {
                 oldFocusedElement->dispatchBlurEvent(newFocusedElement);
 
-            if (m_focusedElement) {
-                // handler shifted focus
-                focusChangeBlocked = true;
-                newFocusedElement = nullptr;
-            }
+                if (m_focusedElement) {
+                    // handler shifted focus
+                    focusChangeBlocked = true;
+                    newFocusedElement = nullptr;
+                }
 
-            oldFocusedElement->dispatchFocusOutEventIfNeeded(newFocusedElement); // DOM level 3 bubbling blur event.
+                oldFocusedElement->dispatchFocusOutEventIfNeeded(newFocusedElement); // DOM level 3 bubbling blur event.
+            }
 
             if (m_focusedElement) {
                 // handler shifted focus
@@ -6984,16 +6985,17 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
             return false;
         }
 
-        // Dispatch the focus event and let the node do any other focus related activities (important for text fields)
-        if (RefPtr page = this->page(); (page && page->focusController().isFocused()) || UserGestureIndicator::processingUserGesture())
+        // Dispatch the focus or focusin events and let the node do any other focus related activities (important for text fields)
+        if (RefPtr page = this->page(); (page && page->focusController().isFocused()) || UserGestureIndicator::processingUserGesture()) {
             focusedElement->dispatchFocusEvent(oldFocusedElement.copyRef(), options);
 
-        if (m_focusedElement != focusedElement) {
-            // handler shifted focus
-            return false;
-        }
+            if (m_focusedElement != focusedElement) {
+                // handler shifted focus
+                return false;
+            }
 
-        focusedElement->dispatchFocusInEventIfNeeded(oldFocusedElement.copyRef()); // DOM level 3 bubbling focus event.
+            focusedElement->dispatchFocusInEventIfNeeded(oldFocusedElement.copyRef()); // DOM level 3 bubbling focus event.
+        }
 
         if (m_focusedElement != focusedElement) {
             // handler shifted focus
