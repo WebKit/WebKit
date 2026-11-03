@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 import time
 
@@ -166,6 +167,18 @@ Reviewed by NOBODY (OOPS!).
             ))
 
             self.assertEqual('a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd', local.Git(self.path).commit().hash)
+
+    def test_checkout_remote_fetches_existing_branch(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+            repo.edit_config('remote.webkit.url', 'https://github.com/WebKit/WebKit')
+            repo.commits['remotes/webkit/eng/example'] = [repo.commits[repo.default_branch][2]]
+
+            self.assertEqual(0, program.main(
+                args=('checkout', 'webkit:eng/example', '-v'),
+                path=self.path,
+            ))
+
+        self.assertIn('Fetching webkit...', captured.root.log.getvalue())
 
     def test_checkout_ambiguous_remote(self):
         with OutputCapture(), mocks.remote.GitHub() as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
