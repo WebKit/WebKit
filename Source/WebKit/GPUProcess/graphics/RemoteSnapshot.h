@@ -44,6 +44,10 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+namespace IPC {
+class StreamServerConnection;
+}
+
 namespace WebKit {
 
 // RemoteSnapshot represents a web page rendering. Solves the problem of generating the rendering from various different WebContent processes that
@@ -72,6 +76,10 @@ public:
     void abandonFramesOwnedBy(WebCore::ProcessIdentifier);
     // Gives up on every frame still to come, so that the snapshot completes without them.
     void abandonUnresolvedFrames();
+    // Notes a connection that frames are recorded over, so that recordingActivity() changes whenever it
+    // processes a message.
+    void addRecordingConnection(IPC::StreamServerConnection&);
+    uint64_t recordingActivity() const;
     // Completes every waiter unsuccessfully, for a snapshot that has been released before it completed.
     void fail();
     bool isComplete() const;
@@ -131,6 +139,7 @@ private:
     size_t m_unresolvedFrames WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     bool m_hasFailed WTF_GUARDED_BY_LOCK(m_lock) { false };
     Vector<CompletionHandler<void(bool)>> m_completionHandlers WTF_GUARDED_BY_LOCK(m_lock);
+    Vector<Ref<IPC::StreamServerConnection>> m_recordingConnections WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 }

@@ -98,7 +98,7 @@ public:
 
 private:
     // Longer than the GPU process takes to give up on frames that do not come.
-    static constexpr Seconds snapshotTimeout = 15_s;
+    static constexpr Seconds snapshotTimeout = remoteSnapshotMaximumDuration + 15_s;
     // Sent before the GPU process answered the wait, so it has already come in.
     static constexpr Seconds replyTimeout = 1_s;
 
