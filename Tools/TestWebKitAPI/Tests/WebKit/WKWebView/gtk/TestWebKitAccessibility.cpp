@@ -825,11 +825,11 @@ static void testAccessibleEventListener(AccessibilityTest* test, gconstpointer)
     g_assert_true(ATSPI_IS_ACCESSIBLE(entry));
     g_assert_cmpint(atspi_accessible_get_role(entry, nullptr), ==, ATSPI_ROLE_ENTRY);
 
-    auto panel = adoptGRef(atspi_accessible_get_parent(entry, nullptr));
-    g_assert_true(ATSPI_IS_ACCESSIBLE(panel.get()));
-    g_assert_cmpint(atspi_accessible_get_role(panel.get(), nullptr), ==, ATSPI_ROLE_PANEL);
+    GRefPtr<AtspiAccessible> section = adoptGRef(atspi_accessible_get_parent(entry, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_role(section.get(), nullptr), ==, ATSPI_ROLE_SECTION);
 
-    auto documentWeb = adoptGRef(atspi_accessible_get_parent(panel.get(), nullptr));
+    GRefPtr<AtspiAccessible> documentWeb = adoptGRef(atspi_accessible_get_parent(section.get(), nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_role(documentWeb.get(), nullptr), ==, ATSPI_ROLE_DOCUMENT_WEB);
 
@@ -2242,11 +2242,11 @@ static void testValueBasic(AccessibilityTest* test, gconstpointer)
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
-    auto panel = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
-    g_assert_true(ATSPI_IS_ACCESSIBLE(panel.get()));
-    g_assert_cmpint(atspi_accessible_get_role(panel.get(), nullptr), ==, ATSPI_ROLE_PANEL);
+    GRefPtr<AtspiAccessible> section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_role(section.get(), nullptr), ==, ATSPI_ROLE_SECTION);
 
-    auto slider = adoptGRef(atspi_accessible_get_child_at_index(panel.get(), 0, nullptr));
+    GRefPtr<AtspiAccessible> slider = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_VALUE(slider.get()));
     g_assert_cmpfloat(atspi_value_get_current_value(ATSPI_VALUE(slider.get()), nullptr), ==, 50);
     g_assert_cmpfloat(atspi_value_get_minimum_value(ATSPI_VALUE(slider.get()), nullptr), ==, 0);
@@ -2709,14 +2709,14 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
-    auto panel = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
-    g_assert_true(ATSPI_IS_ACCESSIBLE(panel.get()));
-    g_assert_cmpint(atspi_accessible_get_role(panel.get(), nullptr), ==, ATSPI_ROLE_PANEL);
-    g_assert_cmpint(atspi_accessible_get_child_count(panel.get(), nullptr), ==, 2);
+    GRefPtr<AtspiAccessible> section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_role(section.get(), nullptr), ==, ATSPI_ROLE_SECTION);
+    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 2);
 
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('single').focus();", nullptr);
 
-    auto listBox = adoptGRef(atspi_accessible_get_child_at_index(panel.get(), 0, nullptr));
+    GRefPtr<AtspiAccessible> listBox = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_SELECTION(listBox.get()));
     g_assert_cmpint(atspi_accessible_get_role(listBox.get(), nullptr), ==, ATSPI_ROLE_LIST_BOX);
     g_assert_cmpint(atspi_accessible_get_child_count(listBox.get(), nullptr), ==, 3);
@@ -2776,7 +2776,7 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
 
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('multiple').focus();", nullptr);
 
-    listBox = adoptGRef(atspi_accessible_get_child_at_index(panel.get(), 1, nullptr));
+    listBox = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 1, nullptr));
     g_assert_true(ATSPI_IS_SELECTION(listBox.get()));
     g_assert_cmpint(atspi_accessible_get_role(listBox.get(), nullptr), ==, ATSPI_ROLE_LIST_BOX);
     g_assert_cmpint(atspi_accessible_get_child_count(listBox.get(), nullptr), ==, 3);
@@ -2846,14 +2846,14 @@ static void testSelectionMenuList(AccessibilityTest* test, gconstpointer)
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
-    auto panel = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
-    g_assert_true(ATSPI_IS_ACCESSIBLE(panel.get()));
-    g_assert_cmpint(atspi_accessible_get_role(panel.get(), nullptr), ==, ATSPI_ROLE_PANEL);
-    g_assert_cmpint(atspi_accessible_get_child_count(panel.get(), nullptr), ==, 1);
+    GRefPtr<AtspiAccessible> section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_role(section.get(), nullptr), ==, ATSPI_ROLE_SECTION);
+    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 1);
 
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('combo').focus();", nullptr);
 
-    auto combo = adoptGRef(atspi_accessible_get_child_at_index(panel.get(), 0, nullptr));
+    GRefPtr<AtspiAccessible> combo = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(combo.get()));
     g_assert_cmpint(atspi_accessible_get_role(combo.get(), nullptr), ==, ATSPI_ROLE_COMBO_BOX);
     g_assert_cmpint(atspi_accessible_get_child_count(combo.get(), nullptr), ==, 1);
