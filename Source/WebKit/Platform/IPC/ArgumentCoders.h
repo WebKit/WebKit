@@ -540,7 +540,7 @@ template<typename T> struct FixedVectorArgumentCoder<false, T> {
 
         // Limit direct allocations from untrusted sources to 1MB.
         if (*size < 1024 * 1024 / sizeof(T)) [[likely]] {
-            auto vector = FixedVector<T>::createWithSizeFromFailableGenerator(*size, [&](auto i) {
+            auto vector = FixedVector<T>::createWithSizeFromFailableGenerator(*size, [&](size_t) {
                 return decoder.template decode<T>();
             });
             if (vector.size() != *size)
