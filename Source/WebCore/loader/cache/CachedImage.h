@@ -31,6 +31,7 @@
 #include <WebCore/StyleLinkParameters.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -42,6 +43,7 @@ class NativeImage;
 class SecurityOrigin;
 
 class CachedImage final : public CachedResource {
+    WTF_MAKE_TZONE_ALLOCATED(CachedImage);
     friend class MemoryCache;
 
 public:
@@ -128,6 +130,7 @@ private:
     bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
 
     class CachedImageObserver final : public ImageObserver {
+        WTF_MAKE_TZONE_ALLOCATED(CachedImageObserver);
     public:
         static Ref<CachedImageObserver> create(CachedImage& image) { return adoptRef(*new CachedImageObserver(image)); }
         WeakHashSet<CachedImage>& cachedImages() LIFETIME_BOUND { return m_cachedImages; }

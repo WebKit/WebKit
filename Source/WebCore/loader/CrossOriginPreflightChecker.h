@@ -34,6 +34,7 @@
 #include "CachedResourceHandle.h"
 #include "ResourceLoaderIdentifier.h"
 #include "ResourceRequest.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,6 +44,7 @@ class DocumentThreadableLoader;
 class ResourceError;
 
 class CrossOriginPreflightChecker final : public RefCounted<CrossOriginPreflightChecker>, private CachedRawResourceClient {
+    WTF_MAKE_TZONE_ALLOCATED(CrossOriginPreflightChecker);
 public:
     static void doPreflight(DocumentThreadableLoader&, ResourceRequest&&);
 

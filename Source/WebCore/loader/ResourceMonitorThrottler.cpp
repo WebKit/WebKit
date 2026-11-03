@@ -31,12 +31,17 @@
 #include <wtf/MainThread.h>
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #define RESOURCEMONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(ResourceMonitoring, "ResourceMonitorThrottler::" fmt, ##__VA_ARGS__)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceMonitorThrottler);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceMonitorThrottler::AccessThrottler);
 
 ResourceMonitorThrottler::ResourceMonitorThrottler(String&& directoryPath, size_t count, Seconds duration, size_t maxHosts)
     : m_config { count, duration, maxHosts }

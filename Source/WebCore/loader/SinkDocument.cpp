@@ -29,6 +29,7 @@
 #include "LocalFrame.h"
 #include "NodeInlines.h"
 #include "RawDataDocumentParser.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -36,6 +37,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SinkDocument);
 
 class SinkDocumentParser final : public RawDataDocumentParser {
+    WTF_MAKE_TZONE_ALLOCATED(SinkDocumentParser);
 public:
     static Ref<SinkDocumentParser> create(SinkDocument& document)
     {
@@ -53,6 +55,8 @@ private:
     {
     }
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SinkDocumentParser);
 
 SinkDocument::SinkDocument(LocalFrame& frame, const URL& url)
     : HTMLDocument(&frame, frame.settings(), url, { })

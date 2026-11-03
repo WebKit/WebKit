@@ -40,6 +40,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashCountedSet.h>
@@ -70,6 +71,7 @@ enum class CachePolicy : uint8_t;
 // This class also does the actual communication with the loader to obtain the resource from the network.
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CachedResourceResponseData);
 class CachedResource : public RefCountedAndCanMakeWeakPtr<CachedResource> {
+    WTF_MAKE_TZONE_ALLOCATED(CachedResource);
     WTF_MAKE_NONCOPYABLE(CachedResource);
     friend class MemoryCache;
 

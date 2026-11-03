@@ -33,6 +33,7 @@
 #if ENABLE(MHTML)
 
 #include "Archive.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,6 +42,7 @@ class Page;
 class FragmentedSharedBuffer;
 
 class MHTMLArchive final : public Archive {
+    WTF_MAKE_TZONE_ALLOCATED(MHTMLArchive);
 public:
     static Ref<MHTMLArchive> create();
     static RefPtr<MHTMLArchive> create(const URL&, FragmentedSharedBuffer&);

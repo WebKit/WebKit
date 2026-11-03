@@ -61,6 +61,8 @@
 #include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -132,6 +134,7 @@ private:
 };
 
 class ScheduledURLNavigation : public ScheduledNavigation {
+    WTF_MAKE_TZONE_ALLOCATED(ScheduledURLNavigation);
 protected:
     ScheduledURLNavigation(Document& initiatingDocument, double delay, SecurityOrigin* securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad, bool isLocationChange)
         : ScheduledNavigation(delay, lockHistory, lockBackForwardList, duringLoad, isLocationChange, initiatingDocument.shouldOpenExternalURLsPolicyToPropagate())
@@ -187,7 +190,10 @@ private:
     bool m_haveToldClient { false };
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScheduledURLNavigation);
+
 class ScheduledRedirect : public ScheduledURLNavigation {
+    WTF_MAKE_TZONE_ALLOCATED(ScheduledRedirect);
 public:
     ScheduledRedirect(Document& initiatingDocument, double delay, SecurityOrigin* securityOrigin, const URL& url, LockHistory lockHistory, LockBackForwardList lockBackForwardList, IsMetaRefresh isMetaRefresh)
         : ScheduledURLNavigation(initiatingDocument, delay, securityOrigin, url, String(), lockHistory, lockBackForwardList, false, false)
@@ -245,7 +251,10 @@ private:
     IsMetaRefresh m_isMetaRefresh;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScheduledRedirect);
+
 class ScheduledLocationChange : public ScheduledURLNavigation {
+    WTF_MAKE_TZONE_ALLOCATED(ScheduledLocationChange);
 public:
     ScheduledLocationChange(Document& initiatingDocument, SecurityOrigin* securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad, NavigationHistoryBehavior navigationHandling, ReplaceIfNotCompletelyLoaded replaceIfNotCompletelyLoaded, bool hasDispatchedNavigateEvent, CompletionHandler<void(bool)>&& completionHandler)
         : ScheduledURLNavigation(initiatingDocument, 0.0, securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, true)
@@ -288,7 +297,10 @@ private:
     bool m_hasDispatchedNavigateEvent { false };
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScheduledLocationChange);
+
 class ScheduledRefresh : public ScheduledURLNavigation {
+    WTF_MAKE_TZONE_ALLOCATED(ScheduledRefresh);
 public:
     ScheduledRefresh(Document& initiatingDocument, SecurityOrigin* securityOrigin, const URL& url, const String& referrer)
         : ScheduledURLNavigation(initiatingDocument, 0.0, securityOrigin, url, referrer, LockHistory::Yes, LockBackForwardList::Yes, false, true)
@@ -309,7 +321,10 @@ public:
     }
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScheduledRefresh);
+
 class ScheduledHistoryNavigation : public ScheduledNavigation {
+    WTF_MAKE_TZONE_ALLOCATED(ScheduledHistoryNavigation);
 public:
     explicit ScheduledHistoryNavigation(int steps)
         : ScheduledNavigation(0, LockHistory::No, LockBackForwardList::No, false, true)
@@ -404,10 +419,13 @@ private:
     int m_steps;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScheduledHistoryNavigation);
+
 // This matches ScheduledHistoryNavigation, but instead of having a HistoryItem provided, it finds
 // the HistoryItem corresponding to the provided Navigation API key:
 // https://html.spec.whatwg.org/multipage/browsing-the-web.html#she-navigation-api-key
 class ScheduledHistoryNavigationByKey : public ScheduledNavigation {
+    WTF_MAKE_TZONE_ALLOCATED(ScheduledHistoryNavigationByKey);
 public:
     explicit ScheduledHistoryNavigationByKey(const String& key, CompletionHandler<void(ScheduleHistoryNavigationResult)>&& completionHandler)
         : ScheduledNavigation(0, LockHistory::No, LockBackForwardList::No, false, true)
@@ -519,7 +537,10 @@ private:
     CompletionHandler<void(ScheduleHistoryNavigationResult)> m_completionHandler;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScheduledHistoryNavigationByKey);
+
 class ScheduledFormSubmission final : public ScheduledNavigation {
+    WTF_MAKE_TZONE_ALLOCATED(ScheduledFormSubmission);
 public:
     ScheduledFormSubmission(Ref<FormSubmission>&& submission, LockBackForwardList lockBackForwardList, bool duringLoad)
         : ScheduledNavigation(0, submission->lockHistory(), lockBackForwardList, duringLoad, true, submission->state()->sourceDocument().shouldOpenExternalURLsPolicyToPropagate())
@@ -609,7 +630,10 @@ private:
     NavigationHistoryBehavior m_navigationHistoryBehavior { NavigationHistoryBehavior::Push };
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScheduledFormSubmission);
+
 class ScheduledPageBlock final : public ScheduledNavigation {
+    WTF_MAKE_TZONE_ALLOCATED(ScheduledPageBlock);
 public:
     ScheduledPageBlock(Document& originDocument)
         : ScheduledNavigation(0, LockHistory::Yes, LockBackForwardList::Yes, false, false)
@@ -642,6 +666,8 @@ public:
 private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_originDocument;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScheduledPageBlock);
 
 NavigationScheduler::NavigationScheduler(Frame& frame)
     : m_frame(frame)

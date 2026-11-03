@@ -31,10 +31,13 @@
 #include "CachedStyleSheetClient.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 #if ENABLE(XSLT)
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedXSLStyleSheet);
 
 CachedXSLStyleSheet::CachedXSLStyleSheet(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : CachedResource(WTF::move(request), Type::XSLStyleSheet, sessionID, cookieJar)

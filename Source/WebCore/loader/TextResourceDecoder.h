@@ -23,6 +23,7 @@
 
 #include <pal/text/TextEncoding.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace PAL {
 class TextCodec;
@@ -33,6 +34,7 @@ namespace WebCore {
 class HTMLMetaCharsetParser;
 
 class TextResourceDecoder : public RefCounted<TextResourceDecoder> {
+    WTF_MAKE_TZONE_ALLOCATED(TextResourceDecoder);
 public:
     enum class EncodingSource : uint8_t {
         Default,

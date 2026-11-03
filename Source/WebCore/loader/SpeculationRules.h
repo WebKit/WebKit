@@ -42,6 +42,7 @@ enum class ReferrerPolicy : uint8_t;
 
 // https://wicg.github.io/nav-speculation/speculation-rules.html
 class SpeculationRules : public RefCounted<SpeculationRules> {
+    WTF_MAKE_TZONE_ALLOCATED(SpeculationRules);
 public:
     // https://wicg.github.io/nav-speculation/speculation-rules.html#valid-eagerness-strings
     enum class Eagerness : uint8_t {

@@ -31,6 +31,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringHash.h>
@@ -60,7 +61,10 @@ enum class ScreenAPIsAccessed : uint64_t {
 };
 
 struct ResourceLoadStatistics {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ResourceLoadStatistics);
+    // Exported because WebKit allocates this via makeUnique<ResourceLoadStatistics>
+    // (WebResourceLoadObserver), which instantiates operator new in that linkage
+    // unit, so s_heapRef and operatorNewSlow have to be visible outside WebCore.
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(ResourceLoadStatistics, WEBCORE_EXPORT);
     explicit ResourceLoadStatistics(const RegistrableDomain& domain)
         : registrableDomain { domain }
     {
