@@ -26,6 +26,7 @@
 #include "GStreamerCommon.h"
 #include "GUniquePtrGStreamer.h"
 #include "HTTPHeaderNames.h"
+#include "LegacySchemeRegistry.h"
 #include "MediaPlayerPrivateGStreamer.h"
 #include "PlatformMediaResourceLoader.h"
 #include "PolicyChecker.h"
@@ -871,7 +872,7 @@ static gboolean webKitWebSrcUnLockStop(GstBaseSrc* baseSrc)
 
 static bool urlHasSupportedProtocol(const URL& url)
 {
-    return url.isValid() && url.protocolIsInHTTPFamilyOrBlob();
+    return url.isValid() && (url.protocolIsInHTTPFamilyOrBlob() || LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()));
 }
 
 // uri handler interface
@@ -883,8 +884,15 @@ static GstURIType webKitWebSrcUriGetType(GType)
 
 const gchar* const* webKitWebSrcGetProtocols(GType)
 {
-    static std::array<const char*, 4> protocols { "http", "https", "blob" };
-    return protocols.data();
+    // The array must stay valid forever; it is leaked on purpose.
+    GPtrArray* protocols = g_ptr_array_sized_new(8);
+    g_ptr_array_add(protocols, const_cast<gchar*>("http"));
+    g_ptr_array_add(protocols, const_cast<gchar*>("https"));
+    g_ptr_array_add(protocols, const_cast<gchar*>("blob"));
+    for (auto& scheme : LegacySchemeRegistry::allURLSchemesRegisteredAsHandledBySchemeHandler())
+        g_ptr_array_add(protocols, gStrdup(scheme.utf8()));
+    g_ptr_array_add(protocols, nullptr);
+    return reinterpret_cast<const gchar* const*>(g_ptr_array_free(protocols, FALSE));
 }
 
 static URL convertPlaybinURI(String&& uriString)
@@ -1279,6 +1287,15 @@ bool webKitSrcIsCrossOrigin(WebKitWebSrc* src, const SecurityOrigin& origin)
 bool webKitSrcIsSeekable(WebKitWebSrc* src)
 {
     return webKitWebSrcIsSeekable(GST_BASE_SRC(src));
+}
+
+void webKitWebSrcRefreshUriProtocols()
+{
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    // GStreamer snapshots URI protocol lists into the GstElementFactory at
+    // registration time; re-register to pick up late-registered schemes.
+    gst_element_register(nullptr, "webkitwebsrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEB_SRC);
+#endif
 }
 
 void webKitWebSrcSetPlayer(WebKitWebSrc* src, ThreadSafeWeakPtr<WebCore::MediaPlayerPrivateGStreamer>&& player)

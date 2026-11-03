@@ -37,6 +37,7 @@
 #if GTK_CHECK_VERSION(3, 98, 0)
 #include <webkit/webkit.h>
 #else
+#include <libsoup/soup.h>
 #include <webkit2/webkit2.h>
 #endif
 
@@ -91,6 +92,9 @@ static gchar *argumentToURL(const char *filename)
 {
     if (g_str_equal(filename, "about:gpu"))
         filename = "webkit://gpu";
+
+    if (g_strrstr(filename, "://"))
+        return g_strdup(filename);
 
     GFile *gfile = g_file_new_for_commandline_arg(filename);
     gchar *fileURL = g_file_get_uri(gfile);
@@ -812,6 +816,44 @@ static void addUserScript(WebKitUserContentManager *userContentManager, const gc
         g_printerr("Failed to load user script at path '%s': %s\n", userScriptPath, error->message);
 }
 
+static GBytes* probeMediaBytes = NULL;
+
+static void probeMediaSchemeRequestCallback(WebKitURISchemeRequest *request, gpointer userData)
+{
+    const char *uri = webkit_uri_scheme_request_get_uri(request);
+    if (g_str_has_prefix(uri, "probe://page")) {
+        const char *pageFile = g_getenv("WKPROBE_PAGE");
+        gchar *pageContents = NULL;
+        gsize pageLen = 0;
+        if (!pageFile || !g_file_get_contents(pageFile, &pageContents, &pageLen, NULL)) {
+            pageContents = g_strdup("<html><body>set WKPROBE_PAGE</body></html>");
+            pageLen = strlen(pageContents);
+        }
+        GInputStream *stream = g_memory_input_stream_new_from_data(pageContents, pageLen, (GDestroyNotify)g_free);
+        webkit_uri_scheme_request_finish(request, stream, pageLen, "text/html");
+        g_object_unref(stream);
+        return;
+    }
+    if (g_str_has_prefix(uri, "probe://report")) {
+        const char *q = g_strrstr(uri, "?");
+        g_print("WKPROBE-REPORT: %s\n", q ? q + 1 : "(no query)");
+        GInputStream *stream = g_memory_input_stream_new_from_data("", 0, NULL);
+        webkit_uri_scheme_request_finish(request, stream, 0, "text/plain");
+        g_object_unref(stream);
+        return;
+    }
+    gsize size = g_bytes_get_size(probeMediaBytes);
+    GInputStream *stream = g_memory_input_stream_new_from_bytes(probeMediaBytes);
+    WebKitURISchemeResponse *response = webkit_uri_scheme_response_new(stream, size);
+    webkit_uri_scheme_response_set_content_type(response, "audio/mpeg");
+    webkit_uri_scheme_response_set_status(response, 200, "OK");
+    SoupMessageHeaders *corsHeaders = soup_message_headers_new(SOUP_MESSAGE_HEADERS_RESPONSE);
+    soup_message_headers_append(corsHeaders, "Access-Control-Allow-Origin", "*");
+    webkit_uri_scheme_response_set_http_headers(response, corsHeaders);
+    webkit_uri_scheme_request_finish_with_response(request, response);
+    g_object_unref(stream);
+}
+
 static void activate(GApplication *application, WebKitSettings *webkitSettings)
 {
 #if GTK_CHECK_VERSION(3, 98, 0)
@@ -916,6 +958,16 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
 #endif
 
     webkit_web_context_register_uri_scheme(webContext, BROWSER_ABOUT_SCHEME, (WebKitURISchemeRequestCallback)aboutURISchemeRequestCallback, NULL, NULL);
+
+    const char *probeMedia = g_getenv("WKPROBE_MEDIA");
+    if (probeMedia) {
+        gchar *contents;
+        gsize length;
+        if (g_file_get_contents(probeMedia, &contents, &length, NULL)) {
+            probeMediaBytes = g_bytes_new_take(contents, length);
+            webkit_web_context_register_uri_scheme(webContext, "probe", probeMediaSchemeRequestCallback, NULL, NULL);
+        }
+    }
 
     WebKitUserContentManager *userContentManager = webkit_user_content_manager_new();
     WebKitWebsiteDataManager *dataManager;

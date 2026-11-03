@@ -61,6 +61,7 @@ bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc*);
 bool webKitSrcIsCrossOrigin(WebKitWebSrc*, const WebCore::SecurityOrigin&);
 bool webKitSrcIsSeekable(WebKitWebSrc*);
 void webKitWebSrcSetPlayer(WebKitWebSrc*, ThreadSafeWeakPtr<WebCore::MediaPlayerPrivateGStreamer>&&);
+WEBCORE_EXPORT void webKitWebSrcRefreshUriProtocols();
 
 G_END_DECLS
 
