@@ -2912,6 +2912,9 @@ void WebProcessProxy::didCommitMainFrameLoad(const URL& url)
 
 void WebProcessProxy::updateSiteForMainFrameNavigation(const URL& url)
 {
+    if (firstPartyAccessIsAnswerable(*this))
+        return;
+
     // This process has been used for several registrable domains already.
     if (!m_site && m_site.error() == SiteState::MultipleSites)
         return;
