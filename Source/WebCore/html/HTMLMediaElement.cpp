@@ -5127,6 +5127,14 @@ void HTMLMediaElement::setMutedInternal(bool muted, ForceMuteChange forceChange)
         if (processingUserGestureForMedia()) {
             removeBehaviorRestrictionsAfterFirstUserGesture(restrictionsToRemoveOnAudibilityChange);
 
+            if (muted && !paused() && volume()) {
+                if (RefPtr page = document().page())
+                    page->clearMediaUserInteractionToCarryForwardAcrossNavigation();
+            } else if (!muted && volume()) {
+                if (RefPtr mainFrameDocument = protect(document())->mainFrameDocument())
+                    mainFrameDocument->noteUserDidEnableMediaElementAudio();
+            }
+
             if (hasAudio() && muted)
                 userDidInterfereWithAutoplay();
         }

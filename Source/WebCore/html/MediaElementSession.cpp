@@ -31,6 +31,7 @@
 #include "AudioTrack.h"
 #include "AudioTrackConfiguration.h"
 #include "AudioTrackList.h"
+#include "AutoplayPolicy.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DocumentFullscreen.h"
@@ -544,6 +545,12 @@ std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbac
     if (mainFrameDocument
         && mainFrameDocument->mediaState() & MediaProducerMediaState::HasUserInteractedWithMediaElement
         && mainFrameDocument->quirks().needsPerDocumentAutoplayBehavior())
+        return { };
+
+    if (mainFrameDocument
+        && mainFrameDocument->quirks().allowsAutoplayToCarryForwardAcrossNavigation()
+        && protect(page->mainFrame())->autoplayPolicy() != AutoplayPolicy::Deny
+        && page->canCarryMediaUserInteractionForwardAcrossNavigation())
         return { };
 
     if (document->quirks().needsYouTubeEmbedAutoplayQuirk())

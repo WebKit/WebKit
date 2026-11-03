@@ -194,6 +194,10 @@
             "behaviors": [{ "id": "ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk", "elementSelector": "avia-button" }]
         },
         {
+            "matches": ["*://*.cbssports.com/*"],
+            "behaviors": [{ "id": "AllowsAutoplayToCarryForwardAcrossNavigationQuirk" }]
+        },
+        {
             "matches": ["*://*.ceac.state.gov/*"],
             "behaviors": [
                 { "id": "NeedsFormControlToBeMouseFocusableQuirk", "bugs": ["https://webkit.org/b/193478"] },

@@ -75,6 +75,7 @@ https://bungalow.com/
 https://www.capitalgroup.com/
     ShouldDelayReloadWhenRegisteringServiceWorker
 https://www.cbssports.com/
+    AllowsAutoplayToCarryForwardAcrossNavigationQuirk
     ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk
         elementSelector: avia-button
 https://chatgpt.com/
@@ -333,7 +334,7 @@ https://invideo.io/
     NeedsUserAgentStringOverrideQuirk
         userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36
 https://www.linkedin.com/
-    (none)
+    ShouldAllowNativeTapsOnMediaElementsQuirk
 https://outlook.live.com/
     MayNeedToIgnoreContentObservation
         elementSelector: [id^=swatchColorPicker]
@@ -342,6 +343,7 @@ https://outlook.live.com/
         userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
     ShouldAllowTouchMoveToChangeSelectionQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+    ShouldPreventTouchMoveDispatchQuirk
 https://outlook.office.com/
     (none)
 https://outlook.office365.com/
@@ -394,6 +396,7 @@ https://www.netflix.com/
     NeedsNetflixVolumeSliderQuirk
     NeedsPerDocumentAutoplayBehaviorQuirk
     NeedsSeekingSupportDisabledQuirk
+    ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick
 https://www.nba.com/
     NeedsPerDocumentAutoplayBehaviorQuirk
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
@@ -460,7 +463,7 @@ https://soundcloud.com/
     ShouldDispatchSimulatedMouseEventsQuirk
     ShouldExposeShowModalDialog
 https://soylent.com/
-    (none)
+    ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick
 https://open.spotify.com/
     NeedsBodyScrollbarWidthNoneDisabledQuirk
     NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk
@@ -595,6 +598,7 @@ https://twitter.com/
 https://www.yahoo.com/
     NeedsYahooVolumeSliderQuirk
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
+    ShouldPreventTouchEndDispatchQuirk
 https://news.ycombinator.com/
     ShouldIgnoreTextAutoSizingQuirk
 https://ycombinator.com/

@@ -27,6 +27,7 @@
 
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "TestURLSchemeHandler.h"
@@ -34,6 +35,7 @@
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKString.h>
 #import <WebKit/WKURLSchemeTask.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
 
@@ -288,6 +290,209 @@ TEST(MediaLoading, UnansweredCustomSchemeRequestTimesOut)
     EXPECT_TRUE(!!unansweredTask);
 
     webView.get().UIDelegate = nil;
+}
+
+static constexpr auto autoplayWithSoundGestureHTML =
+    "<video id='video' src='/video-with-audio.mp4' muted playsinline style='width:300px; height:200px'></video>"
+    "<script>"
+    "let video = document.getElementById('video');"
+    "function unmuteAndPlayWithUserGesture()"
+    "{"
+        "video.muted = false;"
+        "video.play();"
+    "}"
+    "function muteWithUserGesture()"
+    "{"
+        "video.muted = true;"
+    "}"
+    "function playWithUserGesture()"
+    "{"
+        "video.play();"
+    "}"
+    "function isPlayingWithSound()"
+    "{"
+        "return !video.paused && !video.muted && !!video.volume;"
+    "}"
+    "addEventListener('load', async () => {"
+        "if (video.readyState < HTMLMediaElement.HAVE_METADATA) {"
+            "await new Promise(resolve => {"
+                "video.addEventListener('loadedmetadata', resolve, { once: true });"
+                "setTimeout(resolve, 2000);"
+            "});"
+        "}"
+        "alert('ready');"
+    "});"
+    "</script>"_s;
+
+static constexpr auto autoplayWithSoundTargetHTML =
+    "<video id='video' src='/video-with-audio.mp4' playsinline style='width:300px; height:200px'></video>"
+    "<script>"
+    "let video = document.getElementById('video');"
+    "addEventListener('load', async () => {"
+        "if (video.readyState < HTMLMediaElement.HAVE_METADATA) {"
+            "await new Promise(resolve => {"
+                "video.addEventListener('loadedmetadata', resolve, { once: true });"
+                "setTimeout(resolve, 2000);"
+            "});"
+        "}"
+        "video.play().then(() => alert('played'), error => alert(error.name));"
+    "});"
+    "</script>"_s;
+
+static HTTPServer autoplayWithSoundTestServer()
+{
+    RetainPtr videoData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"video-with-audio" withExtension:@"mp4"]];
+    return HTTPServer({
+        { "/first"_s, { { { "Content-Type"_s, "text/html"_s } }, autoplayWithSoundGestureHTML } },
+        { "/second"_s, { { { "Content-Type"_s, "text/html"_s } }, autoplayWithSoundTargetHTML } },
+        { "/video-with-audio.mp4"_s, { { { "Content-Type"_s, "video/mp4"_s } }, videoData.get() } },
+    }, HTTPServer::Protocol::HttpsProxy);
+}
+
+class AutoplayWithSoundTester {
+public:
+    enum class AutoplayPolicy : bool { Default, Deny };
+
+    explicit AutoplayWithSoundTester(AutoplayPolicy autoplayPolicy = AutoplayPolicy::Default)
+        : m_server(autoplayWithSoundTestServer())
+    {
+        RetainPtr configuration = m_server.httpsProxyConfiguration();
+        [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeAudio];
+#if PLATFORM(IOS_FAMILY)
+        // Without this, requiresFullscreenForVideoPlayback() denies before the quirk is consulted.
+        [configuration setAllowsInlineMediaPlayback:YES];
+#endif
+
+        m_navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [m_navigationDelegate allowAnyTLSCertificate];
+
+        if (autoplayPolicy == AutoplayPolicy::Deny) {
+            m_navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+                preferences._autoplayPolicy = _WKWebsiteAutoplayPolicyDeny;
+                decisionHandler(WKNavigationActionPolicyAllow, preferences);
+            };
+        }
+
+        m_uiDelegate = adoptNS([TestUIDelegate new]);
+        m_uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *, void (^completionHandler)(void)) {
+            m_alertMessage = message;
+            m_receivedAlert = true;
+            completionHandler();
+        };
+
+        m_webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+        [m_webView setNavigationDelegate:m_navigationDelegate.get()];
+        [m_webView setUIDelegate:m_uiDelegate.get()];
+    }
+
+    TestWKWebView *webView() const { return m_webView.get(); }
+
+    NSString *waitForAlert()
+    {
+        Util::run(&m_receivedAlert);
+        m_receivedAlert = false;
+        return m_alertMessage.autorelease();
+    }
+
+    void loadGesturePage()
+    {
+        [m_webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.cbssports.com/first"]]];
+        EXPECT_WK_STREQ("ready", waitForAlert());
+
+        // Audible playback is denied outright from a hidden page, before the quirk is consulted.
+        EXPECT_WK_STREQ("visible", [m_webView objectByEvaluatingJavaScript:@"document.visibilityState"]);
+    }
+
+    void waitUntilPlayingWithSound()
+    {
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [[m_webView objectByEvaluatingJavaScript:@"isPlayingWithSound()"] boolValue];
+        }));
+    }
+
+private:
+    HTTPServer m_server;
+    RetainPtr<TestWKWebView> m_webView;
+    RetainPtr<TestNavigationDelegate> m_navigationDelegate;
+    RetainPtr<TestUIDelegate> m_uiDelegate;
+    RetainPtr<NSString> m_alertMessage;
+    bool m_receivedAlert { false };
+};
+
+TEST(MediaLoading, QuirkCarriesAutoplayWithSoundForwardAcrossNavigation)
+{
+    AutoplayWithSoundTester tester;
+    tester.loadGesturePage();
+
+    [tester.webView() objectByEvaluatingJavaScriptWithUserGesture:@"unmuteAndPlayWithUserGesture()"];
+    [tester.webView() evaluateJavaScript:@"location.href = '/second'" completionHandler:nil];
+
+    EXPECT_WK_STREQ("played", tester.waitForAlert());
+}
+
+TEST(MediaLoading, QuirkDoesNotCarryAutoplayWithSoundForwardAcrossOrigins)
+{
+    AutoplayWithSoundTester tester;
+    tester.loadGesturePage();
+
+    [tester.webView() objectByEvaluatingJavaScriptWithUserGesture:@"unmuteAndPlayWithUserGesture()"];
+
+    // Both hosts match the quirk, so only the origin check can deny this.
+    [tester.webView() evaluateJavaScript:@"location.href = 'https://video.cbssports.com/second'" completionHandler:nil];
+
+    EXPECT_WK_STREQ("NotAllowedError", tester.waitForAlert());
+}
+
+TEST(MediaLoading, QuirkDoesNotCarryAutoplayWithSoundForwardAcrossReload)
+{
+    AutoplayWithSoundTester tester;
+    tester.loadGesturePage();
+
+    [tester.webView() objectByEvaluatingJavaScriptWithUserGesture:@"unmuteAndPlayWithUserGesture()"];
+    [tester.webView() evaluateJavaScript:@"location.href = '/second'" completionHandler:nil];
+    EXPECT_WK_STREQ("played", tester.waitForAlert());
+
+    [tester.webView() reload];
+    EXPECT_WK_STREQ("NotAllowedError", tester.waitForAlert());
+}
+
+TEST(MediaLoading, QuirkDoesNotCarryAutoplayWithSoundForwardAfterUserMutes)
+{
+    AutoplayWithSoundTester tester;
+    tester.loadGesturePage();
+
+    [tester.webView() objectByEvaluatingJavaScriptWithUserGesture:@"unmuteAndPlayWithUserGesture()"];
+
+    // Revoking on mute requires the element to be unpaused and audible.
+    tester.waitUntilPlayingWithSound();
+    [tester.webView() objectByEvaluatingJavaScriptWithUserGesture:@"muteWithUserGesture()"];
+
+    [tester.webView() evaluateJavaScript:@"location.href = '/second'" completionHandler:nil];
+    EXPECT_WK_STREQ("NotAllowedError", tester.waitForAlert());
+}
+
+TEST(MediaLoading, QuirkDoesNotCarryAutoplayWithSoundForwardAfterAPlayGestureAlone)
+{
+    AutoplayWithSoundTester tester;
+    tester.loadGesturePage();
+
+    [tester.webView() objectByEvaluatingJavaScript:@"video.muted = false"];
+    [tester.webView() objectByEvaluatingJavaScriptWithUserGesture:@"playWithUserGesture()"];
+    tester.waitUntilPlayingWithSound();
+
+    [tester.webView() evaluateJavaScript:@"location.href = '/second'" completionHandler:nil];
+    EXPECT_WK_STREQ("NotAllowedError", tester.waitForAlert());
+}
+
+TEST(MediaLoading, QuirkDoesNotOverrideAnExplicitDenyAutoplayPolicy)
+{
+    AutoplayWithSoundTester tester { AutoplayWithSoundTester::AutoplayPolicy::Deny };
+    tester.loadGesturePage();
+
+    [tester.webView() objectByEvaluatingJavaScriptWithUserGesture:@"unmuteAndPlayWithUserGesture()"];
+    [tester.webView() evaluateJavaScript:@"location.href = '/second'" completionHandler:nil];
+
+    EXPECT_WK_STREQ("NotAllowedError", tester.waitForAlert());
 }
 
 } // namespace TestWebKitAPI
