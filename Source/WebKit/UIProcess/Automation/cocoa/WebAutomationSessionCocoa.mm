@@ -74,6 +74,11 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(cons
     return getBase64EncodedPNGData(snapshotSurface->createImage(context.get()));
 }
 
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(CGImageRef image)
+{
+    return getBase64EncodedPNGData(RetainPtr { image });
+}
+
 std::optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFile(const String& remoteFilePath, const String& base64EncodedFileContents)
 {
     RetainPtr<NSData> fileContents = adoptNS([[NSData alloc] initWithBase64EncodedString:base64EncodedFileContents.createNSString().get() options:0]);
