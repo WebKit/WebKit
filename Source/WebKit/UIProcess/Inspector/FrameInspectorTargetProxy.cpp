@@ -47,6 +47,7 @@ FrameInspectorTargetProxy::FrameInspectorTargetProxy(WebCore::FrameIdentifier fr
     : InspectorTargetProxy(FrameInspectorTarget::toTargetID(frameID, process.coreProcessIdentifier()), Inspector::InspectorTargetType::Frame)
     , m_targetProcess(process)
     , m_frameID(frameID)
+    , m_processID(process.coreProcessIdentifier())
     , m_isProvisional(isProvisional)
 {
 }
