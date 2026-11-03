@@ -33,7 +33,9 @@
 #import "WebExtensionAPIKeys.h"
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionAPIWebRequest.h"
+#import <WebCore/AuthenticationChallenge.h>
 #import <WebCore/HTTPStatusCodes.h>
+#import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <wtf/Borrow.h>
 #import <wtf/URLParser.h>

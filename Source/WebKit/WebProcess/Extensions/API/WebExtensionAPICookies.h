@@ -31,6 +31,7 @@
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
 
+OBJC_CLASS NSArray;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
 

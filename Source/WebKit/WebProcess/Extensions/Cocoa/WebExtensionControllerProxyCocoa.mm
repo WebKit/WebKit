@@ -42,6 +42,7 @@
 #include "WebExtensionContextProxy.h"
 #include "WebExtensionControllerMessages.h"
 #include "WebExtensionFrameIdentifier.h"
+#include "WebExtensionUtilities.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"

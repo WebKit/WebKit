@@ -105,7 +105,7 @@ messages -> WebExtensionContextProxy {
     DispatchTabsAttachedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier newWindowIdentifier, uint64_t newIndex)
     DispatchTabsActivatedEvent(WebKit::WebExtensionTabIdentifier previousActiveTabIdentifier, WebKit::WebExtensionTabIdentifier newActiveTabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier)
     DispatchTabsHighlightedEvent(Vector<WebKit::WebExtensionTabIdentifier> tabs, WebKit::WebExtensionWindowIdentifier windowIdentifier)
-    DispatchTabsRemovedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebKit::WebExtensionContext::WindowIsClosing windowIsClosing)
+    DispatchTabsRemovedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, enum:bool WebKit::WebExtensionContextWindowIsClosing windowIsClosing)
 
     // Test Events
     DispatchTestMessageEvent(String message, String argumentJSON, WebKit::WebExtensionContentWorldType contentWorldType)

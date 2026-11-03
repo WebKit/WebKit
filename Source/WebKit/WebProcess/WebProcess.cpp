@@ -58,6 +58,7 @@
 #include "WebCacheStorageProvider.h"
 #include "WebChromeClient.h"
 #include "WebCookieJar.h"
+#include "WebExtensionMatchPattern.h"
 #include "WebFileSystemStorageConnection.h"
 #include "WebFrame.h"
 #include "WebFrameMessages.h"

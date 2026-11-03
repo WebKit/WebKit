@@ -41,7 +41,6 @@
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionContentWorldType.h"
 #import "WebExtensionContextMessages.h"
-#import "WebExtensionDynamicScripts.h"
 #import "WebExtensionFrameIdentifier.h"
 #import "WebExtensionRegisteredScriptParameters.h"
 #import "WebExtensionScriptInjectionParameters.h"
@@ -58,8 +57,6 @@
 // FIXME: <https://webkit.org/b/264829> Add support for matchOriginAsFallback.
 
 namespace WebKit {
-
-using namespace WebExtensionDynamicScripts;
 
 NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>& parametersVector, bool returnExecutionResultOnly)
 {

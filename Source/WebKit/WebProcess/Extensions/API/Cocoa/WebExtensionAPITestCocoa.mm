@@ -35,6 +35,7 @@
 #import "MessageSenderInlines.h"
 #import "WebExtensionControllerMessages.h"
 #import "WebExtensionControllerProxy.h"
+#import "WebExtensionUtilities.h"
 #import "WebPage.h"
 #import "WebProcess.h"
 

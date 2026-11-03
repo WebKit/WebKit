@@ -29,6 +29,7 @@
 
 #include "JSWebExtensionAPIScripting.h"
 #include "WebExtensionAPIObject.h"
+#include "WebExtensionRegisteredScriptParameters.h"
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSObject;
@@ -36,9 +37,11 @@ OBJC_CLASS NSString;
 
 namespace WebKit {
 
-using FirstTimeRegistration = WebExtensionDynamicScripts::WebExtensionRegisteredScript::FirstTimeRegistration;
+using FirstTimeRegistration = WebExtensionFirstTimeRegistration;
 
 class WebExtension;
+struct WebExtensionScriptInjectionParameters;
+struct WebExtensionScriptInjectionResultParameters;
 
 class WebExtensionAPIScripting : public WebExtensionAPIObject, public JSWebExtensionWrappable {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIScripting, scripting, scripting);

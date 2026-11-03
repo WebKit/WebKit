@@ -30,6 +30,7 @@
 #include "JSWebExtensionAPIExtension.h"
 #include "WebExtensionAPIObject.h"
 
+OBJC_CLASS NSArray;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 

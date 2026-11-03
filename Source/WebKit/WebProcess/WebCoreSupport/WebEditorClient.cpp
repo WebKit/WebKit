@@ -35,7 +35,6 @@
 #include "WKBundlePageEditorClient.h"
 #include "WebFrame.h"
 #include "WebPage.h"
-#include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebUndoStep.h"

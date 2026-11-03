@@ -39,6 +39,7 @@
 #include "WebExtensionAlarm.h"
 #include "WebExtensionCommand.h"
 #include "WebExtensionContextIdentifier.h"
+#include "WebExtensionContextParameters.h"
 #include "WebExtensionController.h"
 #include "WebExtensionDataType.h"
 #include "WebExtensionDeclarativeNetRequestSQLiteStore.h"
@@ -177,13 +178,6 @@ struct WebExtensionMessageTargetParameters;
 struct ContentRuleListMatchedRule;
 #endif
 
-enum class WebExtensionContextInstallReason : uint8_t {
-    None,
-    ExtensionInstall,
-    ExtensionUpdate,
-    BrowserUpdate,
-};
-
 class WebExtensionContext : public API::ObjectImpl<API::Object::Type::WebExtensionContext>, public IPC::MessageReceiver, public Identified<WebExtensionContextIdentifier> {
     WTF_MAKE_NONCOPYABLE(WebExtensionContext);
 
@@ -225,7 +219,7 @@ public:
     explicit WebExtensionContext(WebKitWebExtensionContext*);
 #endif
 
-    using PermissionsMap = HashMap<String, WallTime>;
+    using PermissionsMap = WebExtensionPermissionsMap;
     using PermissionMatchPatternsMap = HashMap<Ref<WebExtensionMatchPattern>, WallTime>;
 
     using UserScriptVector = Vector<Ref<API::UserScript>>;
@@ -278,7 +272,7 @@ public:
     using PortQueuedMessageMap = HashMap<PortWorldPair, Vector<PortQueuedMessage>>;
     using NativePortMap = HashMap<WebExtensionPortChannelIdentifier, Ref<WebExtensionMessagePort>>;
 
-    using PageIdentifierTuple = std::tuple<WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>>;
+    using PageIdentifierTuple = WebExtensionPageIdentifierTuple;
 
     using CommandsVector = Vector<Ref<WebExtensionCommand>>;
 
@@ -297,7 +291,7 @@ public:
     using ReloadFromOrigin = WebExtensionTab::ReloadFromOrigin;
 
     enum class EqualityOnly : bool { No, Yes };
-    enum class WindowIsClosing : bool { No, Yes };
+    using WindowIsClosing = WebExtensionContextWindowIsClosing;
     enum class UserTriggered : bool { No, Yes };
     enum class SuppressEvents : bool { No, Yes };
     enum class UpdateWindowOrder : bool { No, Yes };

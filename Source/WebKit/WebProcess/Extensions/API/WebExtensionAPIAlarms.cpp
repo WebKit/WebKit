@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "WebExtensionAPINamespace.h"
+#include "WebExtensionAlarmParameters.h"
 #include "WebExtensionConstants.h"
 #include "WebExtensionContextMessages.h"
 #include "WebExtensionContextProxy.h"

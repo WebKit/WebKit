@@ -30,6 +30,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "WebExtensionAPIKeys.h"
 #include "WebExtensionAPINamespace.h"
@@ -39,6 +40,7 @@
 #include "WebExtensionControllerProxy.h"
 #include "WebExtensionMessageSenderParameters.h"
 #include "WebExtensionMessageTargetParameters.h"
+#include "WebExtensionUtilities.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -734,20 +736,20 @@ void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWo
     }
 }
 
-inline String toWebAPI(WebExtensionContext::InstallReason installReason)
+inline String toWebAPI(WebExtensionContextInstallReason installReason)
 {
     switch (installReason) {
-    case WebExtensionContext::InstallReason::None:
+    case WebExtensionContextInstallReason::None:
         ASSERT_NOT_REACHED();
         return nullString();
 
-    case WebExtensionContext::InstallReason::ExtensionInstall:
+    case WebExtensionContextInstallReason::ExtensionInstall:
         return installKey;
 
-    case WebExtensionContext::InstallReason::ExtensionUpdate:
+    case WebExtensionContextInstallReason::ExtensionUpdate:
         return updateKey;
 
-    case WebExtensionContext::InstallReason::BrowserUpdate:
+    case WebExtensionContextInstallReason::BrowserUpdate:
         return browserUpdateKey;
     }
 
@@ -755,13 +757,13 @@ inline String toWebAPI(WebExtensionContext::InstallReason installReason)
     return nullString();
 }
 
-void WebExtensionContextProxy::dispatchRuntimeInstalledEvent(WebExtensionContext::InstallReason installReason, String previousVersion)
+void WebExtensionContextProxy::dispatchRuntimeInstalledEvent(WebExtensionContextInstallReason installReason, String previousVersion)
 {
     Ref<JSON::Object> details = JSON::Object::create();
 
     details->setString(reasonKey, toWebAPI(installReason));
 
-    if (installReason == WebExtensionContext::InstallReason::ExtensionUpdate)
+    if (installReason == WebExtensionContextInstallReason::ExtensionUpdate)
         details->setString(previousVersionKey, previousVersion);
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {

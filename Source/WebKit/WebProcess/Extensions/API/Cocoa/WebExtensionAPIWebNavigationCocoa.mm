@@ -32,7 +32,6 @@
 #import "WebExtensionAPIKeys.h"
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionAPIWebNavigation.h"
-#import "WebExtensionContext.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionFrameIdentifier.h"
 #import "WebExtensionFrameParameters.h"

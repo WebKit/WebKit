@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+enum class WebExtensionFirstTimeRegistration : bool { No, Yes };
+
 struct WebExtensionRegisteredScriptParameters {
 
     std::optional<Vector<String>> css;

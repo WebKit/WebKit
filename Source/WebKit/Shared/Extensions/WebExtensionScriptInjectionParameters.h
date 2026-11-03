@@ -28,6 +28,8 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "APIData.h"
+#include "WebExtensionContentWorldType.h"
+#include "WebExtensionFrameIdentifier.h"
 #include "WebExtensionTabIdentifier.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/UserStyleSheetTypes.h>

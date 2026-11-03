@@ -34,6 +34,7 @@
 #include "WebExtensionContextMessages.h"
 #include "WebExtensionContextProxy.h"
 #include "WebExtensionDataType.h"
+#include "WebExtensionUtilities.h"
 #include <wtf/Borrow.h>
 
 namespace WebKit {

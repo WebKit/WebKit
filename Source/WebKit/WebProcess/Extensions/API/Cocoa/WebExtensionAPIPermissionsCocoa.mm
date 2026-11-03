@@ -41,6 +41,7 @@
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
+#import <WebCore/UserGestureIndicator.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {

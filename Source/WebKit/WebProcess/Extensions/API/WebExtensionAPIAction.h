@@ -32,7 +32,10 @@
 #include "WebExtensionAPIObject.h"
 #include "WebPageProxyIdentifier.h"
 
+OBJC_CLASS NSArray;
 OBJC_CLASS NSDictionary;
+OBJC_CLASS NSMutableDictionary;
+OBJC_CLASS NSObject;
 OBJC_CLASS NSString;
 
 namespace WebKit {

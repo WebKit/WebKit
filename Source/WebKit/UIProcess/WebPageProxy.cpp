@@ -486,7 +486,7 @@
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #endif
 
-#if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
+#if ENABLE(WK_WEB_EXTENSIONS)
 #include "WebExtensionController.h"
 #endif
 

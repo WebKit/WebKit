@@ -33,6 +33,7 @@
 #include "WebExtensionEventListenerType.h"
 
 OBJC_CLASS JSValue;
+OBJC_CLASS NSArray;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;

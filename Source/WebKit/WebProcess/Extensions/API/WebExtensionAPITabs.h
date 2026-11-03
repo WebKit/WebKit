@@ -35,6 +35,7 @@
 #include "WebPageProxyIdentifier.h"
 
 OBJC_CLASS NSDictionary;
+OBJC_CLASS NSObject;
 OBJC_CLASS NSString;
 
 namespace WebKit {

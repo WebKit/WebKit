@@ -29,6 +29,7 @@
 
 #include "WebExtensionError.h"
 #include "WebExtensionEventListenerType.h"
+#include "WebExtensionMatchPattern.h"
 #include "WebExtensionTabIdentifier.h"
 #include "WebExtensionTabParameters.h"
 #include "WebPageProxyIdentifier.h"
@@ -49,7 +50,6 @@ OBJC_PROTOCOL(WKWebExtensionTab);
 namespace WebKit {
 
 class WebExtensionContext;
-class WebExtensionMatchPattern;
 class WebExtensionWindow;
 class WebProcessProxy;
 struct WebExtensionTabParameters;

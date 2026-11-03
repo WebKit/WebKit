@@ -29,6 +29,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "JSWebExtensionWrappable.h"
+#include "Logging.h"
 #include "WebExtensionAPIRuntime.h"
 #include "WebFrame.h"
 #include "WebPage.h"

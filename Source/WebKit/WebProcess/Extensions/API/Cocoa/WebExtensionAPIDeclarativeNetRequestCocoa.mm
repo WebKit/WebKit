@@ -35,7 +35,6 @@
 #import "JSWebExtensionWrapper.h"
 #import "MessageSenderInlines.h"
 #import "WKContentRuleListPrivate.h"
-#import "WebExtensionContext.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionMatchedRuleParameters.h"
 #import "WebExtensionUtilities.h"

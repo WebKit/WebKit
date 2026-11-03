@@ -38,6 +38,7 @@
 #import "WebFrame.h"
 #import "WebProcess.h"
 #import "_WKWebExtensionWebRequestFilter.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 

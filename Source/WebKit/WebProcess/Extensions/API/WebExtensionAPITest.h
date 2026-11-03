@@ -31,6 +31,7 @@
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
 #include "WebExtensionAPIWebNavigationEvent.h"
+#include "WebExtensionControllerIdentifier.h"
 #include <wtf/Deque.h>
 
 namespace WebKit {

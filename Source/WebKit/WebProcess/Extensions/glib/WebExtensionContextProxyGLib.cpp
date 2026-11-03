@@ -23,6 +23,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include <WebCore/NotImplemented.h>
+#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 
@@ -112,7 +113,7 @@ void WebExtensionContextProxy::dispatchTabsHighlightedEvent(const Vector<WebExte
     notImplemented();
 }
 
-void WebExtensionContextProxy::dispatchTabsRemovedEvent(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, WebExtensionContext::WindowIsClosing)
+void WebExtensionContextProxy::dispatchTabsRemovedEvent(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, WebExtensionContextWindowIsClosing)
 {
     notImplemented();
 }

@@ -28,15 +28,34 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "APIData.h"
-#include "WebExtensionContext.h"
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionStorageAccessLevel.h"
 #include "WebExtensionTabIdentifier.h"
 #include "WebExtensionWindowIdentifier.h"
+#include <WebCore/PageIdentifier.h>
 #include <pal/SessionID.h>
+#include <tuple>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/Markable.h>
 #include <wtf/URL.h>
+#include <wtf/Vector.h>
+#include <wtf/WallTime.h>
 
 namespace WebKit {
+
+enum class WebExtensionContextInstallReason : uint8_t {
+    None,
+    ExtensionInstall,
+    ExtensionUpdate,
+    BrowserUpdate,
+};
+
+enum class WebExtensionContextWindowIsClosing : bool { No, Yes };
+
+using WebExtensionPermissionsMap = HashMap<String, WallTime>;
+
+using WebExtensionPageIdentifierTuple = std::tuple<WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>>;
 
 struct WebExtensionContextParameters {
     WebExtensionContextIdentifier unprivilegedIdentifier;
@@ -46,7 +65,7 @@ struct WebExtensionContextParameters {
     String uniqueIdentifier;
     HashSet<String> unsupportedAPIs;
 
-    HashMap<String, WallTime> grantedPermissions;
+    WebExtensionPermissionsMap grantedPermissions;
 
     RefPtr<API::Data> localizationJSON;
     RefPtr<API::Data> manifestJSON;
@@ -59,11 +78,11 @@ struct WebExtensionContextParameters {
 
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier;
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    Vector<WebExtensionContext::PageIdentifierTuple> inspectorPageIdentifiers;
-    Vector<WebExtensionContext::PageIdentifierTuple> inspectorBackgroundPageIdentifiers;
+    Vector<WebExtensionPageIdentifierTuple> inspectorPageIdentifiers;
+    Vector<WebExtensionPageIdentifierTuple> inspectorBackgroundPageIdentifiers;
 #endif
-    Vector<WebExtensionContext::PageIdentifierTuple> popupPageIdentifiers;
-    Vector<WebExtensionContext::PageIdentifierTuple> tabPageIdentifiers;
+    Vector<WebExtensionPageIdentifierTuple> popupPageIdentifiers;
+    Vector<WebExtensionPageIdentifierTuple> tabPageIdentifiers;
 };
 
 } // namespace WebKit

@@ -28,18 +28,37 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "MessageReceiver.h"
-#include "WebExtensionContext.h"
+#include "WebExtensionContentWorldType.h"
 #include "WebExtensionContextParameters.h"
+#include "WebExtensionLocalization.h"
+#include "WebExtensionPortChannelIdentifier.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+#include "InspectorExtensionTypes.h"
+#endif
+
 OBJC_CLASS JSValue;
 OBJC_CLASS NSDictionary;
+
+namespace IPC {
+class FormDataReference;
+}
+
+namespace WebCore {
+class AuthenticationChallenge;
+class ResourceError;
+class ResourceRequest;
+class ResourceResponse;
+}
 
 namespace WebKit {
 
@@ -49,11 +68,19 @@ class WebExtensionAPIWebPageNamespace;
 class WebExtensionControllerProxy;
 class WebExtensionMatchPattern;
 class WebFrame;
+class WebPage;
 
+struct ResourceLoadInfo;
 struct WebExtensionAlarmParameters;
 struct WebExtensionFrameParameters;
+struct WebExtensionMenuItemContextParameters;
+struct WebExtensionMenuItemParameters;
+struct WebExtensionMessageSenderParameters;
+struct WebExtensionMessageTargetParameters;
 struct WebExtensionTabParameters;
 struct WebExtensionWindowParameters;
+
+enum class WebExtensionEventListenerType : uint8_t;
 
 class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProxy>, public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(WebExtensionContextProxy);
@@ -71,7 +98,7 @@ public:
     using WeakFrameSet = WeakHashSet<WebFrame>;
     using TabWindowIdentifierPair = std::pair<std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>>;
     using WeakPageTabWindowMap = WeakHashMap<WebPage, TabWindowIdentifierPair>;
-    using PermissionsMap = WebExtensionContext::PermissionsMap;
+    using PermissionsMap = WebExtensionPermissionsMap;
 
     WebExtensionContextIdentifier identifier() const { return m_privilegedIdentifier ? *m_privilegedIdentifier : m_unprivilegedIdentifier; }
     WebExtensionContextIdentifier unprivilegedIdentifier() const { return m_unprivilegedIdentifier; }
@@ -220,7 +247,7 @@ private:
     void internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&&);
     void dispatchRuntimeMessageEvent(WebExtensionContentWorldType, const String& messageJSON, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(String&& replyJSON)>&&);
     void dispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&&);
-    void dispatchRuntimeInstalledEvent(WebExtensionContext::InstallReason, String previousVersion);
+    void dispatchRuntimeInstalledEvent(WebExtensionContextInstallReason, String previousVersion);
     void dispatchRuntimeStartupEvent();
     bool matchesTarget(WebFrame&, const std::optional<WebExtensionMessageTargetParameters>&);
 
@@ -237,7 +264,7 @@ private:
     void dispatchTabsAttachedEvent(WebExtensionTabIdentifier, WebExtensionWindowIdentifier newWindowIdentifier, uint64_t newIndex);
     void dispatchTabsActivatedEvent(WebExtensionTabIdentifier previousActiveTabIdentifier, WebExtensionTabIdentifier newActiveTabIdentifier, WebExtensionWindowIdentifier);
     void dispatchTabsHighlightedEvent(const Vector<WebExtensionTabIdentifier>&, WebExtensionWindowIdentifier);
-    void dispatchTabsRemovedEvent(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, WebExtensionContext::WindowIsClosing);
+    void dispatchTabsRemovedEvent(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, WebExtensionContextWindowIsClosing);
 
     // Test
     void dispatchTestMessageEvent(const String& message, const String& argumentJSON, WebExtensionContentWorldType);

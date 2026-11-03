@@ -36,6 +36,7 @@
 #import "WebExtensionAPIKeys.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionOffscreenDocumentParameters.h"
+#import "WebExtensionUtilities.h"
 #import "WebProcess.h"
 
 namespace WebKit {

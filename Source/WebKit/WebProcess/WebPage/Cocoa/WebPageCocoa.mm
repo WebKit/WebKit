@@ -162,11 +162,13 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/Borrow.h>
 #import <wtf/CoroutineUtilities.h>
+#import <wtf/MemoryPressureHandler.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/VectorCF.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/StringToIntegerConversion.h>
 

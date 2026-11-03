@@ -39,9 +39,9 @@
 #import <JavaScriptCore/MathCommon.h>
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionAPIPort.h"
-#import "WebExtensionContext.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxy.h"
+#import "WebExtensionMatchPattern.h"
 #import "WebExtensionMessageSenderParameters.h"
 #import "WebExtensionMessageTargetParameters.h"
 #import "WebExtensionScriptInjectionParameters.h"
@@ -841,8 +841,6 @@ void WebExtensionAPITabs::reload(WebPageProxyIdentifier webPageProxyIdentifier, 
     if (properties && !validateDictionary(properties, @"properties", nil, types, outExceptionString))
         return;
 
-    using ReloadFromOrigin = WebExtensionContext::ReloadFromOrigin;
-
     NSNumber *bypassCacheNumber = objectForKey<NSNumber>(properties, bypassCacheKey);
     ReloadFromOrigin reloadFromOrigin = bypassCacheNumber.boolValue ? ReloadFromOrigin::Yes : ReloadFromOrigin::No;
 
@@ -1349,11 +1347,11 @@ void WebExtensionContextProxy::dispatchTabsHighlightedEvent(const Vector<WebExte
     });
 }
 
-void WebExtensionContextProxy::dispatchTabsRemovedEvent(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, WebExtensionContext::WindowIsClosing windowIsClosing)
+void WebExtensionContextProxy::dispatchTabsRemovedEvent(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, WebExtensionContextWindowIsClosing windowIsClosing)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onRemoved
 
-    auto *removeInfo = @{ windowIdKey: @(toWebAPI(windowIdentifier)), isWindowClosingKey: @(windowIsClosing == WebExtensionContext::WindowIsClosing::Yes) };
+    auto *removeInfo = @{ windowIdKey: @(toWebAPI(windowIdentifier)), isWindowClosingKey: @(windowIsClosing == WebExtensionContextWindowIsClosing::Yes) };
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         protect(protect(namespaceObject.tabs())->onRemoved())->invokeListenersWithArgument(@(toWebAPI(tabIdentifier)), removeInfo);

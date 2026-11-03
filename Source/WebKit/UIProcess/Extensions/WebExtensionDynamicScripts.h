@@ -72,7 +72,7 @@ public:
         return adoptRef(*new WebExtensionRegisteredScript(std::forward<Args>(args)...));
     }
 
-    enum class FirstTimeRegistration { No, Yes };
+    using FirstTimeRegistration = WebExtensionFirstTimeRegistration;
 
     void updateParameters(const WebExtensionRegisteredScriptParameters&);
 

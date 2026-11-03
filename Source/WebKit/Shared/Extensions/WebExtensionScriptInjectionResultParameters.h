@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "WebExtensionFrameIdentifier.h"
 #include <wtf/Forward.h>
 
 namespace WebKit {

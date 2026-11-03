@@ -22,7 +22,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-headers: "WebExtensionContext.h"
+headers: "WebExtensionContextParameters.h"
 
 enum class WebKit::WebExtensionContextInstallReason : uint8_t {
     None,
@@ -31,6 +31,6 @@ enum class WebKit::WebExtensionContextInstallReason : uint8_t {
     BrowserUpdate,
 };
 
-[Nested] enum class WebKit::WebExtensionContext::WindowIsClosing : bool;
+enum class WebKit::WebExtensionContextWindowIsClosing : bool;
 
 #endif
