@@ -43,7 +43,7 @@ public:
     {
     }
 
-    WEBCORE_EXPORT UserStyleSheet(const String&, const URL&, Vector<String>&& = { }, Vector<String>&& = { }, UserContentInjectedFrames = UserContentInjectedFrames::InjectInAllFrames, UserContentMatchParentFrame = UserContentMatchParentFrame::Never, UserStyleLevel = UserStyleLevel::User, std::optional<PageIdentifier> = std::nullopt);
+    WEBCORE_EXPORT UserStyleSheet(const String&, const URL&, Vector<String>&& = { }, Vector<String>&& = { }, UserContentInjectedFrames = UserContentInjectedFrames::InjectInAllFrames, UserContentMatchParentFrame = UserContentMatchParentFrame::Never, UserStyleLevel = UserStyleLevel::User, std::optional<PageIdentifier> = std::nullopt, bool persistsAcrossDocuments = false);
     WEBCORE_EXPORT ~UserStyleSheet();
 
     const String& source() const LIFETIME_BOUND { return m_source; }
@@ -54,6 +54,7 @@ public:
     UserContentMatchParentFrame matchParentFrame() const { return m_matchParentFrame; }
     UserStyleLevel level() const { return m_level; }
     std::optional<PageIdentifier> pageID() const { return m_pageID; }
+    bool persistsAcrossDocuments() const { return m_persistsAcrossDocuments; }
 
 private:
     String m_source;
@@ -64,6 +65,7 @@ private:
     UserContentMatchParentFrame m_matchParentFrame { UserContentMatchParentFrame::Never };
     UserStyleLevel m_level { UserStyleLevel::User };
     std::optional<PageIdentifier> m_pageID;
+    bool m_persistsAcrossDocuments { false };
 };
 
 } // namespace WebCore

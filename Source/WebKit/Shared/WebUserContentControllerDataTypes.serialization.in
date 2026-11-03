@@ -29,6 +29,7 @@ header: "WebUserContentControllerDataTypes.h"
     WebCore::UserScriptInjectionTime injectionTime;
     WebCore::UserContentInjectedFrames injectedFrames;
     WebCore::UserContentMatchParentFrame matchParentFrame;
+    std::optional<WebCore::PageIdentifier> pageID;
 }
 
 [CustomHeader, DebugDecodingFailure] struct WebKit::WebUserScriptData {
@@ -46,6 +47,7 @@ header: "WebUserContentControllerDataTypes.h"
     WebCore::UserContentMatchParentFrame matchParentFrame;
     WebCore::UserStyleLevel level;
     std::optional<WebCore::PageIdentifier> pageID;
+    bool persistsAcrossDocuments;
 }
 
 [CustomHeader, DebugDecodingFailure] struct WebKit::WebUserStyleSheetData {

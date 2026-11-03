@@ -25,6 +25,7 @@
  
 #pragma once
 
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>
 #include <wtf/TZoneMalloc.h>
@@ -36,7 +37,7 @@ namespace WebCore {
 class UserScript {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(UserScript, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT UserScript(String&& source, URL&& = { }, Vector<String>&& allowlist = { }, Vector<String>&& blocklist = { }, UserScriptInjectionTime = UserScriptInjectionTime::DocumentStart, UserContentInjectedFrames = UserContentInjectedFrames::InjectInAllFrames, UserContentMatchParentFrame = UserContentMatchParentFrame::Never);
+    WEBCORE_EXPORT UserScript(String&& source, URL&& = { }, Vector<String>&& allowlist = { }, Vector<String>&& blocklist = { }, UserScriptInjectionTime = UserScriptInjectionTime::DocumentStart, UserContentInjectedFrames = UserContentInjectedFrames::InjectInAllFrames, UserContentMatchParentFrame = UserContentMatchParentFrame::Never, std::optional<PageIdentifier> = std::nullopt);
     WEBCORE_EXPORT ~UserScript();
 
     const String& source() const LIFETIME_BOUND { return m_source; }
@@ -46,6 +47,7 @@ public:
     UserScriptInjectionTime injectionTime() const { return m_injectionTime; }
     UserContentInjectedFrames injectedFrames() const { return m_injectedFrames; }
     UserContentMatchParentFrame matchParentFrame() const { return m_matchParentFrame; }
+    std::optional<PageIdentifier> pageID() const { return m_pageID; }
     String debugDescription() const;
 
 private:
@@ -56,6 +58,7 @@ private:
     UserScriptInjectionTime m_injectionTime { UserScriptInjectionTime::DocumentStart };
     UserContentInjectedFrames m_injectedFrames { UserContentInjectedFrames::InjectInAllFrames };
     UserContentMatchParentFrame m_matchParentFrame { UserContentMatchParentFrame::Never };
+    std::optional<PageIdentifier> m_pageID;
 };
 
 } // namespace WebCore

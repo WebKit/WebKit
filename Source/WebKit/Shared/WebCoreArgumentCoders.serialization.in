@@ -1900,6 +1900,7 @@ struct WebCore::DictationAlternative {
     WebCore::UserContentMatchParentFrame matchParentFrame();
     WebCore::UserStyleLevel level();
     std::optional<WebCore::PageIdentifier> pageID();
+    bool persistsAcrossDocuments();
 };
 
 header: <WebCore/ScrollTypes.h>
@@ -5834,6 +5835,7 @@ enum class WebCore::UserContentMatchParentFrame : uint8_t {
     WebCore::UserScriptInjectionTime injectionTime();
     WebCore::UserContentInjectedFrames injectedFrames();
     WebCore::UserContentMatchParentFrame matchParentFrame();
+    std::optional<WebCore::PageIdentifier> pageID();
 }
 
 enum class WebCore::WindRule : bool

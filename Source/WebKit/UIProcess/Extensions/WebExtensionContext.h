@@ -64,6 +64,7 @@
 #include "WebExtensionWindowIdentifier.h"
 #include "WebExtensionWindowParameters.h"
 #include "WebFrameProxy.h"
+#include "WebPageProxy.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxy.h"
 #include <WebCore/ContentRuleListResults.h>
@@ -353,6 +354,7 @@ public:
         RequestedWithTabsPermission = 1 << 0, // Request access to a URL if the extension also has the "tabs" permission.
         SkipRequestedPermissions    = 1 << 1, // Don't check requested permissions.
         IncludeOptionalPermissions  = 1 << 2, // Check the optional permissions, and count them as RequestedImplicitly.
+        RequestedWithActiveTab      = 1 << 3, // Request access to a URL if the extension also has the "activeTab" permission.
     };
 
     using InstallReason = WebExtensionContextInstallReason;
@@ -494,6 +496,7 @@ public:
     bool needsPermission(const WebExtensionMatchPattern&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
 
     bool hasPermission(const String& permission, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { });
+    bool activeTabWillGrantAccess(WebExtensionTab*);
     bool hasPermission(const URL&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
     bool hasPermission(const WebExtensionMatchPattern&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
 
@@ -782,6 +785,8 @@ private:
 
     void permissionsDidChange(PermissionNotification, const PermissionsSet&);
     void permissionsDidChange(PermissionNotification, const MatchPatternSet&);
+    void temporaryPermissionMatchPatternsDidChange(PermissionNotification, const MatchPatternSet&, WebExtensionTab&);
+    void postPermissionMatchPatternsNotification(PermissionNotification, const MatchPatternSet&, WebExtensionTab* = nullptr);
 
     bool removePermissions(PermissionsMap&, PermissionsSet&, WallTime& nextExpirationDate, PermissionNotification = PermissionNotification::None);
     bool removePermissionMatchPatterns(PermissionMatchPatternsMap&, MatchPatternSet&, EqualityOnly, WallTime& nextExpirationDate, PermissionNotification = PermissionNotification::None);
@@ -850,13 +855,36 @@ private:
     void addInjectedContent() { addInjectedContent(injectedContents()); }
     void addInjectedContent(const InjectedContentVector&);
     void addInjectedContent(const InjectedContentVector&, const MatchPatternSet&);
+
+    // The activeTab permission only covers a single tab, so its content is injected into that tab's page alone.
+    struct TabInjectionTarget {
+        WebExtensionTabIdentifier tabIdentifier;
+        Ref<WebPageProxy> page;
+    };
+
+    struct TabInjectedContent {
+        UserScriptVector userScripts;
+        UserStyleSheetVector userStyleSheets;
+        HashMap<String, UserScriptVector> registeredUserScripts;
+        HashMap<String, UserStyleSheetVector> registeredUserStyleSheets;
+    };
+
     void addInjectedContent(const InjectedContentVector&, WebExtensionMatchPattern&);
+    void addInjectedContent(const InjectedContentVector&, WebExtensionMatchPattern&, const TabInjectionTarget&);
+    void addInjectedContent(const InjectedContentVector&, WebExtensionMatchPattern&, UserScriptVector&, UserStyleSheetVector&, RefPtr<WebPageProxy>, TabInjectedContent* = nullptr);
+    void addInjectedContent(const InjectedContentVector&, WebExtensionTab&, WebExtensionMatchPattern&);
+
+    void addTemporaryInjectedContent(const InjectedContentVector&);
+    void removeTemporaryInjectedContent(const String& scriptID);
 
     void updateInjectedContent() { removeInjectedContent(); addInjectedContent(); }
 
     void removeInjectedContent();
+    void removeAllInjectedContent();
     void removeInjectedContent(const MatchPatternSet&);
     void removeInjectedContent(WebExtensionMatchPattern&);
+    void removeInjectedContent(WebExtensionTab&);
+    void removeInjectedContent(const UserScriptVector&, const UserStyleSheetVector&);
 
     // DeclarativeNetRequest methods.
     // Loading/unloading static rules
@@ -1250,6 +1278,7 @@ private:
     RefPtr<WebExtensionRegisteredScriptsSQLiteStore> m_registeredContentScriptsStorage;
 
     UserStyleSheetVector m_dynamicallyInjectedUserStyleSheets;
+    HashMap<WebExtensionTabIdentifier, TabInjectedContent> m_temporaryInjectedContentPerTabMap;
 
     HashMap<String, Ref<WebExtensionAlarm>> m_alarmMap;
     WeakHashMap<WebExtensionWindow, Ref<WebExtensionAction>> m_actionWindowMap;
