@@ -656,10 +656,7 @@ private:
         m_stream = webkitMediaStreamNew(track());
 
         g_signal_connect_swapped(m_stream.get(), "notify::tags", G_CALLBACK(+[](InternalSource* self) {
-            GRefPtr pad = adoptGRef(gst_element_get_static_pad(self->m_src.get(), "src"));
-            GST_DEBUG_OBJECT(self->m_src.get(), "Pushing tags for %" GST_PTR_FORMAT, self->m_stream.get());
-            gst_pad_push_event(pad.get(), gst_event_new_tag(gst_stream_get_tags(self->m_stream.get())));
-            self->m_hasPushedInitialTags = true;
+            self->m_hasPushedInitialTags = false;
         }), this);
     }
 

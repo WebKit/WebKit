@@ -79,7 +79,6 @@ public:
     virtual std::optional<GstElementFactoryListType> audioVideoDecoderFactoryListType() const { return std::nullopt; }
     virtual Vector<String> disallowedWebAudioDecoders() const { return { }; }
     virtual unsigned getAdditionalPlaybinFlags() const { return 0; }
-    virtual bool shouldParseIncomingLibWebRTCBitStream() const { return true; }
 
     virtual bool needsBufferingPercentageCorrection() const { return false; }
     // Returns name of the queried GstElement, or nullptr if no element was queried.
@@ -150,8 +149,6 @@ public:
     void setHolePunchEnabledForTesting(bool);
 
     unsigned getAdditionalPlaybinFlags() const;
-
-    bool shouldParseIncomingLibWebRTCBitStream() const;
 
     bool needsBufferingPercentageCorrection() const;
     // Returns name of the queried GstElement, or nullptr if no element was queried.

@@ -308,15 +308,6 @@ unsigned GStreamerQuirksManager::getAdditionalPlaybinFlags() const
     return flags;
 }
 
-bool GStreamerQuirksManager::shouldParseIncomingLibWebRTCBitStream() const
-{
-    for (auto& quirk : m_quirks) {
-        if (!quirk->shouldParseIncomingLibWebRTCBitStream())
-            return false;
-    }
-    return true;
-}
-
 GRefPtr<GstCaps> GStreamerQuirksManager::videoSinkGLCapsFormat() const
 {
     for (auto& quirk : m_quirks) {

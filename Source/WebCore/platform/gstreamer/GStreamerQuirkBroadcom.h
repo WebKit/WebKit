@@ -39,7 +39,6 @@ public:
     std::optional<GstElementFactoryListType> audioVideoDecoderFactoryListType() const final { return GST_ELEMENT_FACTORY_TYPE_PARSER; }
     Vector<String> disallowedWebAudioDecoders() const final { return m_disallowedWebAudioDecoders; }
     unsigned getAdditionalPlaybinFlags() const final { return getGstPlayFlag("text") | getGstPlayFlag("native-audio"); }
-    bool shouldParseIncomingLibWebRTCBitStream() const final { return false; }
     bool needsCustomInstantRateChange() const final { return true; }
 
 private:
