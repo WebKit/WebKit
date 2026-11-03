@@ -322,7 +322,7 @@ ScrollOffset RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrol
         // cancelling it. Cancelling tears the animation down, which prematurely fires a
         // scrollend event at the current intermediate position rather than running to
         // the new destination.
-        if (options.animated == ScrollIsAnimated::Yes && scrollAnimator().retargetRunningAnimation(snappedPosition, options.animationCurve))
+        if (options.animated == ScrollIsAnimated::Yes && scrollAnimator().retargetRunningAnimation(snappedPosition))
             return snappedOffset;
         scrollAnimator().cancelAnimations();
         stopAsyncAnimatedScroll();

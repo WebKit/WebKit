@@ -71,7 +71,6 @@ public:
         RespectScrollSnap,
         Paged,
         NeverAnimate,
-        DocumentEdge,
     };
 
     // Computes a scroll destination for the given parameters.  Returns false if
@@ -81,9 +80,9 @@ public:
     bool singleAxisScroll(ScrollEventAxis, float delta, EnumSet<ScrollBehavior>);
 
     WEBCORE_EXPORT bool scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
-    WEBCORE_EXPORT bool scrollToPositionWithAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped, ScrollAnimationCurve = ScrollAnimationCurve::Default);
+    WEBCORE_EXPORT bool scrollToPositionWithAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
 
-    bool retargetRunningAnimation(const FloatPoint& newPosition, ScrollAnimationCurve);
+    bool retargetRunningAnimation(const FloatPoint& newPosition);
 
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
     virtual bool processWheelEventForScrollSnap(const PlatformWheelEvent&) { return false; }

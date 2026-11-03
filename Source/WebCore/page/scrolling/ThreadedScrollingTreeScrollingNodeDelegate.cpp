@@ -78,21 +78,16 @@ void ThreadedScrollingTreeScrollingNodeDelegate::updateUserScrollInProgressForEv
         scrollingNode()->setUserScrollInProgress(isInUserScroll);
 }
 
-bool ThreadedScrollingTreeScrollingNodeDelegate::startAnimatedScrollToPosition(FloatPoint destinationPosition, ScrollAnimationCurve curve)
+bool ThreadedScrollingTreeScrollingNodeDelegate::startAnimatedScrollToPosition(FloatPoint destinationPosition)
 {
     auto currentOffset = ScrollableArea::scrollOffsetFromPosition(currentScrollPosition(), scrollOrigin());
     auto destinationOffset = ScrollableArea::scrollOffsetFromPosition(destinationPosition, scrollOrigin());
-    return m_scrollController.startAnimatedScrollToDestination(currentOffset, destinationOffset, curve);
+    return m_scrollController.startAnimatedScrollToDestination(currentOffset, destinationOffset);
 }
 
 void ThreadedScrollingTreeScrollingNodeDelegate::stopAnimatedScroll(EnumSet<AnimatedScrollType>)
 {
     m_scrollController.stopAnimatedScroll();
-}
-
-void ThreadedScrollingTreeScrollingNodeDelegate::stopSpringAnimation()
-{
-    m_scrollController.stopSpringAnimation();
 }
 
 void ThreadedScrollingTreeScrollingNodeDelegate::serviceScrollAnimation(MonotonicTime currentTime)
