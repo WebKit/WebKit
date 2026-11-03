@@ -128,9 +128,6 @@
 359729255 METAL : VertexAttributeTest.VertexAttribPointerCopyBufferFromInvalid* = SKIP
 359729255 WGPU : VertexAttributeTest.VertexAttribPointerCopyBufferFromInvalid* = SKIP
 
-// Using a non-zero offset non-aligned with the stride.
-468923885 WGPU : VertexAttributeTest.BufferOffsetNonAlignedWithStride/* = SKIP
-
 // Propagate buffer changes to VertexArray fail on some desktop drivers
 433331119 LINUX NVIDIA OPENGL : ValidationStateChangeTest.RebindBufferShouldPickupBufferChange/* = SKIP
 433331119 LINUX NVIDIA OPENGL : ValidationStateChangeTestES31.RebindVertexBufferShouldPickupBufferChange/* = SKIP
@@ -2528,16 +2525,10 @@
 // Can't handle the resize of the texture
 389145696 WGPU : MipmapTestES3.ResizeBaseMipTo1x1ThenDelete/* = SKIP
 // Can't glReadPixels from a cube map face correctly.
-// 383356846 ubyte index formats are not fully supported yet.
-383356846 WGPU : LineLoopTest.*UShort* = SKIP
-383356846 WGPU : LineLoopTest.*BufferBlend* = SKIP
 // The WebGPU backend does not support depth ranges with near > far yet.
 0 WGPU : ViewportTest.ReversedDepthRangeAfterViewportAndFramebufferChanges/* = SKIP
 
 42266907 WGPU : AddMockTextureNoRenderTargetTest.NoProgramOutputWorkaround/* = SKIP
-42266907 WGPU : AttributeLayoutBufferIndexed.Test/* = SKIP
-42266907 WGPU : AttributeLayoutMemoryIndexed.Test/* = SKIP
-42266907 WGPU : AttributeLayoutNonIndexed.Test/* = SKIP
 42266907 WGPU : BindUniformLocationTest.Compositor/* = SKIP
 42266907 WGPU : BlitFramebufferANGLETest.BlitWithMissingAttachments/* = SKIP
 42266907 WGPU : BlitFramebufferANGLETest.BlitWithDepthUserToDefault/* = SKIP
@@ -2612,14 +2603,12 @@
 42267100 WGPU : GLSLTestNoValidation.DepthRangeUniforms/* = SKIP
 42266907 WGPU : IncompleteTextureTest.IncompleteTexture2D/* = SKIP
 42266907 WGPU : IncompleteTextureTest.UpdateTexture/* = SKIP
-42266907 WGPU : IndexBufferOffsetTest.DrawArraysLineLoopFollowedByDrawElementsTriangle/* = SKIP
-42266907 WGPU : IndexBufferOffsetTest.DrawAtDifferentOffsetAlignments/* = SKIP
-42266907 WGPU : IndexBufferOffsetTest.DrawWithDifferentCountsSameOffset/* = SKIP
 42266907 WGPU : IndexBufferOffsetTest.DrawWithSameBufferButDifferentModes/* = SKIP
-42266907 WGPU : IndexBufferOffsetTest.DrawWithSameBufferButDifferentTypes/* = SKIP
 42266907 WGPU : IndexBufferOffsetTest.UInt8Index/* = SKIP
 42266907 WGPU : IndexBufferOffsetTest.UInt8IndexSmallUpdates/* = SKIP
 42266907 WGPU : IndexedPointsTest* = SKIP
+// The current values of disabled vertex attributes are unimplemented.
+42266907 WGPU : InstancingTest.LineLoop/* = SKIP
 42266907 WGPU : LinkAndRelinkTest.RenderingProgramFailsWithProgramInstalled/* = SKIP
 42266907 WGPU : LineLoopStateChangeTest.DrawElementsThenDrawArrays/* = SKIP
 42266907 WGPU : LineLoopStateChangeTest.DrawArraysThenDrawElements/* = SKIP
@@ -2638,16 +2627,12 @@
 42266907 WGPU : SimpleStateChangeTest.DeleteNonActiveTextureThenDraw/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.DeleteTextureThenDraw/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.DrawArraysThenDrawElements/* = SKIP
-42266907 WGPU : SimpleStateChangeTest.DrawArraysWithZeroSizedElementArrayBuffer/* = SKIP
-42266907 WGPU : SimpleStateChangeTest.DrawElementsThenDrawElementsNewIndexBuffer/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.DrawElementsThenDrawElementsNewIndices/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.DrawElementsThenDrawElementsWholeNewIndices/* = SKIP
-42266907 WGPU : SimpleStateChangeTest.DrawElementsUBYTEX2ThenDrawElementsUSHORT/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.DrawRepeatUnalignedVboChange/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.DrawWithTextureTexSubImageThenDrawAgain/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.FboEarlyCullFaceBackCCWState/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.FboEarlyCullFaceBackCWState/* = SKIP
-42266907 WGPU : SimpleStateChangeTest.RebindTranslatedAttribute/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.RedefineTextureInUse/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.UpdateBoundElementArrayBuffer/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.UpdateBufferInUse/* = SKIP
@@ -2667,8 +2652,6 @@
 42266907 WGPU : TextureLimitsTest.MaxVertexTextures/* = SKIP
 42266907 WGPU : TextureLimitsTest.TextureTypeConflict/* = SKIP
 42266907 WGPU : TextureUploadFormatTest.All/* = SKIP
-42266907 WGPU : TriangleFanDrawTest.DrawTriangleFan/* = SKIP
-42266907 WGPU : TriangleFanDrawTest.DrawTriangleFanElements/* = SKIP
 42266907 WGPU : UniformTest.SamplerUniformsAppearOnce/* = SKIP
 42266907 WGPU : UniformTest.UnusedUniformsInSamplerArray/* = SKIP
 42266907 WGPU : UnpackAlignmentTest.Alignment1AUByte/* = SKIP
@@ -2685,12 +2668,13 @@
 42266907 WGPU : UnpackAlignmentTest.Alignment8LUByte/* = SKIP
 42266907 WGPU : VertexAttributeCachingTest.BufferMulticaching/* = SKIP
 42266907 WGPU : VertexAttributeCachingTest.BufferMulticachingWithOneUnchangedAttrib/* = SKIP
+42266907 WGPU : VertexAttributeTest.AliasingAttribNaming/* = SKIP
+42266907 WGPU : VertexAttributeTest.AliasingMatrixAttribLocations/* = SKIP
+42266907 WGPU : VertexAttributeTest.AliasingVectorAttribLocations/* = SKIP
 42266907 WGPU : VertexAttributeTest.AliasingVectorAttribLocationsDifferingPrecisions/* = SKIP
 42266907 WGPU : VertexAttributeTest.DisabledAttribArrays/* = SKIP
 42266907 WGPU : VertexAttributeTest.DisabledAttribUpdates/* = SKIP
-42266907 WGPU : VertexAttributeTest.DrawArraysWithAlignedAndUnalignedBufferOffset/* = SKIP
 42266907 WGPU : VertexAttributeTest.DrawArraysWithOverlapBufferSubData/* = SKIP
-42266907 WGPU : VertexAttributeTest.DrawArraysWithUnalignedBufferOffset/* = SKIP
 42266907 WGPU : VertexAttributeTest.MaxAttribs/* = SKIP
 42266907 WGPU : VertexAttributeTest.MixedMatrixSources/* = SKIP
 42266907 WGPU : VertexAttributeTest.MixedUsingBufferAndClientMemoryPointer/* = SKIP

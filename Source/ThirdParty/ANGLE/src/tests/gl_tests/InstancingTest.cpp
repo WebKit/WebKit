@@ -5,6 +5,8 @@
 //
 
 #include <array>
+#include <cstring>
+#include <sstream>
 
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -964,6 +966,845 @@ void main() { o = v; })";
     EXPECT_GL_NO_ERROR();
 }
 
+// Draws instances of a quad, one in each cell of a grid, and checks that every vertex reads the
+// values of its vertex from the per-vertex attributes and of its instance from the per-instance
+// attributes. Attribute 0 is the vec2 corner of the quad (0 or 1 in x and y), and attribute 1 the
+// vec2 cell of the instance, with a divisor of 1. The other attributes are floats. The value of
+// per-vertex attribute i at a vertex is i + x + 2 * y, where (x, y) is the corner, and the value of
+// element e of per-instance attribute i is i + 4 * e, so the vertices that read a wrong value draw
+// red, and the cells of the instances that are not drawn stay blue.
+class InstancedAttributeTest : public ANGLETest<>
+{
+  protected:
+    static constexpr int kWindowSize = 64;
+
+    InstancedAttributeTest()
+    {
+        setWindowWidth(kWindowSize);
+        setWindowHeight(kWindowSize);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+
+    void testTearDown() override
+    {
+        for (GLuint program : mPrograms)
+        {
+            glDeleteProgram(program);
+        }
+    }
+
+    // Where the data of an attribute is. The attributes whose buffer is kClientMemory each read
+    // their own client memory.
+    static constexpr size_t kClientMemory = std::numeric_limits<size_t>::max();
+    struct AttribLayout
+    {
+        size_t buffer;
+        size_t offset;
+        // 0 for tightly packed.
+        size_t stride;
+        GLuint divisor;
+    };
+
+    enum class DrawMode
+    {
+        Arrays,
+        ElementsInBuffer,
+        ElementsInClientMemory,
+        // Non-instanced draws, which draw instance 0.
+        NonInstancedArrays,
+        NonInstancedElements,
+    };
+
+    // The vertices before the quad, which a draw that ignores its first vertex reads.
+    static constexpr size_t kPadVertexCount                                      = 2;
+    static constexpr size_t kQuadVertexCount                                     = 6;
+    static constexpr std::array<std::array<GLfloat, 2>, kQuadVertexCount> kCorners = {{
+        {0.0f, 0.0f},
+        {1.0f, 0.0f},
+        {0.0f, 1.0f},
+        {0.0f, 1.0f},
+        {1.0f, 0.0f},
+        {1.0f, 1.0f},
+    }};
+
+    // Returns false when the context has no instanced arrays.
+    bool initInstancing()
+    {
+        if (getClientMajorVersion() >= 3)
+        {
+            return true;
+        }
+        if (EnsureGLExtensionEnabled("GL_ANGLE_instanced_arrays"))
+        {
+            mUseANGLEEntryPoints = true;
+            return true;
+        }
+        return EnsureGLExtensionEnabled("GL_EXT_instanced_arrays");
+    }
+
+    GLint getAttribCount()
+    {
+        GLint maxAttribs = 0;
+        glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttribs);
+        return std::min(maxAttribs, 16);
+    }
+
+    void vertexAttribDivisor(GLuint index, GLuint divisor)
+    {
+        if (getClientMajorVersion() >= 3)
+        {
+            glVertexAttribDivisor(index, divisor);
+        }
+        else if (mUseANGLEEntryPoints)
+        {
+            glVertexAttribDivisorANGLE(index, divisor);
+        }
+        else
+        {
+            glVertexAttribDivisorEXT(index, divisor);
+        }
+    }
+
+    void drawArraysInstanced(GLint first, GLsizei count, GLsizei instanceCount)
+    {
+        if (getClientMajorVersion() >= 3)
+        {
+            glDrawArraysInstanced(GL_TRIANGLES, first, count, instanceCount);
+        }
+        else if (mUseANGLEEntryPoints)
+        {
+            glDrawArraysInstancedANGLE(GL_TRIANGLES, first, count, instanceCount);
+        }
+        else
+        {
+            glDrawArraysInstancedEXT(GL_TRIANGLES, first, count, instanceCount);
+        }
+    }
+
+    void drawElementsInstanced(GLsizei count, const void *indices, GLsizei instanceCount)
+    {
+        if (getClientMajorVersion() >= 3)
+        {
+            glDrawElementsInstanced(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, indices,
+                                    instanceCount);
+        }
+        else if (mUseANGLEEntryPoints)
+        {
+            glDrawElementsInstancedANGLE(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, indices,
+                                         instanceCount);
+        }
+        else
+        {
+            glDrawElementsInstancedEXT(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, indices,
+                                       instanceCount);
+        }
+    }
+
+    // The divisors of the attributes are uniforms, so that draws with other divisors can use the
+    // same program. With checkInstanceID, the program also checks that gl_InstanceID is the
+    // instance of the cell.
+    GLuint getProgram(size_t attribCount, bool checkInstanceID)
+    {
+        const size_t key = attribCount * 2 + (checkInstanceID ? 1 : 0);
+        if (mPrograms.size() <= key)
+        {
+            mPrograms.resize(key + 1, 0);
+        }
+        if (mPrograms[key] != 0)
+        {
+            return mPrograms[key];
+        }
+
+        const char *in = checkInstanceID ? "in" : "attribute";
+        std::stringstream vs;
+        if (checkInstanceID)
+        {
+            vs << "#version 300 es\n";
+        }
+        vs << in << " vec2 a0;\n" << in << " vec2 a1;\n";
+        for (size_t attribIndex = 2; attribIndex < attribCount; ++attribIndex)
+        {
+            vs << in << " float a" << attribIndex << ";\n"
+               << "uniform float u_divisor" << attribIndex << ";\n";
+        }
+        vs << "uniform float u_columns;\n"
+           << (checkInstanceID ? "out" : "varying") << " vec4 v_color;\n"
+           << "void main()\n"
+              "{\n"
+              "    float instance = a1.x + u_columns * a1.y;\n"
+              "    gl_Position = vec4((a1 + a0) * (2.0 / u_columns) - 1.0, 0.0, 1.0);\n"
+              "    float vertexValue = a0.x + 2.0 * a0.y;\n"
+              "    bool ok = true;\n";
+        for (size_t attribIndex = 2; attribIndex < attribCount; ++attribIndex)
+        {
+            const std::string divisor = "u_divisor" + std::to_string(attribIndex);
+            vs << "    ok = ok && abs(a" << attribIndex << " - (" << attribIndex << ".0 + ("
+               << divisor << " == 0.0 ? vertexValue : 4.0 * floor((instance + 0.5) / " << divisor
+               << ")))) < 0.01;\n";
+        }
+        if (checkInstanceID)
+        {
+            vs << "    ok = ok && gl_InstanceID == int(instance);\n";
+        }
+        vs << "    v_color = ok ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(1.0, 0.0, 0.0, 1.0);\n"
+              "}\n";
+
+        const char *kFS =
+            "precision mediump float;\n"
+            "varying vec4 v_color;\n"
+            "void main()\n"
+            "{\n"
+            "    gl_FragColor = v_color;\n"
+            "}\n";
+        const char *kFS3 =
+            "#version 300 es\n"
+            "precision mediump float;\n"
+            "in vec4 v_color;\n"
+            "out vec4 fragColor;\n"
+            "void main()\n"
+            "{\n"
+            "    fragColor = v_color;\n"
+            "}\n";
+
+        mPrograms[key] =
+            CompileProgram(vs.str().c_str(), checkInstanceID ? kFS3 : kFS, [&](GLuint program) {
+                for (size_t attribIndex = 0; attribIndex < attribCount; ++attribIndex)
+                {
+                    const std::string name = "a" + std::to_string(attribIndex);
+                    glBindAttribLocation(program, static_cast<GLuint>(attribIndex), name.c_str());
+                }
+            });
+        return mPrograms[key];
+    }
+
+    static size_t GetAttribSize(size_t attribIndex) { return attribIndex < 2 ? 8 : 4; }
+
+    // The values of element e of an attribute.
+    static std::array<GLfloat, 2> GetAttribValue(size_t attribIndex,
+                                                 GLuint divisor,
+                                                 size_t element,
+                                                 size_t columns)
+    {
+        if (divisor != 0)
+        {
+            if (attribIndex == 1)
+            {
+                return {static_cast<GLfloat>(element % columns),
+                        static_cast<GLfloat>(element / columns)};
+            }
+            return {static_cast<GLfloat>(attribIndex + 4 * element), 0.0f};
+        }
+        if (element < kPadVertexCount)
+        {
+            // Vertices that are not drawn: outside the window, and wrong values.
+            return {1000.0f, 1000.0f};
+        }
+        const std::array<GLfloat, 2> &corner = kCorners[element - kPadVertexCount];
+        if (attribIndex == 0)
+        {
+            return corner;
+        }
+        return {static_cast<GLfloat>(attribIndex) + corner[0] + 2.0f * corner[1], 0.0f};
+    }
+
+    void drawAndCheck(const std::vector<AttribLayout> &layouts,
+                      GLsizei instanceCount,
+                      DrawMode drawMode,
+                      size_t columns = 16)
+    {
+        ASSERT_GE(layouts.size(), 2u);
+        ASSERT_EQ(layouts[0].divisor, 0u);
+        ASSERT_EQ(layouts[1].divisor, 1u);
+        ASSERT_LE(static_cast<size_t>(instanceCount), columns * columns);
+        ASSERT_EQ(kWindowSize % columns, 0u);
+
+        GLuint program = getProgram(layouts.size(), mCheckInstanceID);
+        ASSERT_NE(program, 0u);
+        glUseProgram(program);
+        glUniform1f(glGetUniformLocation(program, "u_columns"), static_cast<GLfloat>(columns));
+        for (size_t attribIndex = 2; attribIndex < layouts.size(); ++attribIndex)
+        {
+            const std::string name = "u_divisor" + std::to_string(attribIndex);
+            glUniform1f(glGetUniformLocation(program, name.c_str()),
+                        static_cast<GLfloat>(layouts[attribIndex].divisor));
+        }
+
+        // Fill the buffers and client memory. The bytes that no attribute reads are garbage.
+        std::vector<std::vector<uint8_t>> bufferData;
+        std::vector<std::vector<bool>> bufferWritten;
+        std::vector<std::vector<uint8_t>> clientData(layouts.size());
+        for (size_t attribIndex = 0; attribIndex < layouts.size(); ++attribIndex)
+        {
+            const AttribLayout &layout = layouts[attribIndex];
+            const size_t size          = GetAttribSize(attribIndex);
+            const size_t stride        = layout.stride == 0 ? size : layout.stride;
+            size_t elementCount =
+                layout.divisor == 0
+                    ? kPadVertexCount + kQuadVertexCount
+                    : std::max<size_t>((instanceCount + layout.divisor - 1) / layout.divisor, 1);
+            if (attribIndex + 1 == layouts.size() && mLastAttribElementCount != 0)
+            {
+                elementCount = mLastAttribElementCount;
+            }
+            const size_t end = layout.offset + (elementCount - 1) * stride + size;
+
+            std::vector<uint8_t> *data = &clientData[attribIndex];
+            std::vector<bool> written;
+            std::vector<bool> *writtenData = &written;
+            if (layout.buffer != kClientMemory)
+            {
+                if (bufferData.size() <= layout.buffer)
+                {
+                    bufferData.resize(layout.buffer + 1);
+                    bufferWritten.resize(layout.buffer + 1);
+                }
+                data        = &bufferData[layout.buffer];
+                writtenData = &bufferWritten[layout.buffer];
+            }
+            if (data->size() < ((end + 3) & ~size_t(3)))
+            {
+                const size_t oldSize = data->size();
+                data->resize(((end + 3) & ~size_t(3)));
+                writtenData->resize(data->size(), false);
+                const GLfloat garbage = -1000.0f;
+                for (size_t offset = oldSize; offset < data->size(); offset += 4)
+                {
+                    memcpy(data->data() + offset, &garbage, 4);
+                }
+            }
+            for (size_t element = 0; element < elementCount; ++element)
+            {
+                const std::array<GLfloat, 2> value =
+                    GetAttribValue(attribIndex, layout.divisor, element, columns);
+                const size_t offset = layout.offset + element * stride;
+                for (size_t byte = offset; byte < offset + size; ++byte)
+                {
+                    ASSERT_FALSE((*writtenData)[byte]) << "Overlapping attributes";
+                    (*writtenData)[byte] = true;
+                }
+                memcpy(data->data() + offset, value.data(), size);
+            }
+        }
+
+        std::vector<GLBuffer> buffers(bufferData.size());
+        for (size_t buffer = 0; buffer < bufferData.size(); ++buffer)
+        {
+            glBindBuffer(GL_ARRAY_BUFFER, buffers[buffer]);
+            glBufferData(GL_ARRAY_BUFFER, bufferData[buffer].size(), bufferData[buffer].data(),
+                         GL_STATIC_DRAW);
+        }
+
+        for (size_t attribIndex = 0; attribIndex < layouts.size(); ++attribIndex)
+        {
+            const AttribLayout &layout = layouts[attribIndex];
+            const GLuint location      = static_cast<GLuint>(attribIndex);
+            const GLint components     = attribIndex < 2 ? 2 : 1;
+            if (layout.buffer == kClientMemory)
+            {
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+                glVertexAttribPointer(location, components, GL_FLOAT, GL_FALSE,
+                                      static_cast<GLsizei>(layout.stride),
+                                      clientData[attribIndex].data() + layout.offset);
+            }
+            else
+            {
+                glBindBuffer(GL_ARRAY_BUFFER, buffers[layout.buffer]);
+                glVertexAttribPointer(location, components, GL_FLOAT, GL_FALSE,
+                                      static_cast<GLsizei>(layout.stride),
+                                      reinterpret_cast<const void *>(layout.offset));
+            }
+            glEnableVertexAttribArray(location);
+            vertexAttribDivisor(location, layout.divisor);
+        }
+        for (size_t attribIndex = layouts.size(); attribIndex < mEnabledAttribCount; ++attribIndex)
+        {
+            glDisableVertexAttribArray(static_cast<GLuint>(attribIndex));
+            vertexAttribDivisor(static_cast<GLuint>(attribIndex), 0);
+        }
+        mEnabledAttribCount = layouts.size();
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        ASSERT_GL_NO_ERROR();
+
+        std::array<GLushort, kQuadVertexCount> indices;
+        for (size_t index = 0; index < kQuadVertexCount; ++index)
+        {
+            indices[index] = static_cast<GLushort>(kPadVertexCount + kQuadVertexCount - 1 - index);
+        }
+        GLBuffer indexBuffer;
+        const void *indicesPointer = indices.data();
+        if (drawMode != DrawMode::ElementsInClientMemory)
+        {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices.data(),
+                         GL_STATIC_DRAW);
+            indicesPointer = nullptr;
+        }
+        else
+        {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        }
+
+        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        GLsizei drawnCount = instanceCount;
+        switch (drawMode)
+        {
+            case DrawMode::Arrays:
+                drawArraysInstanced(kPadVertexCount, kQuadVertexCount, instanceCount);
+                break;
+            case DrawMode::ElementsInBuffer:
+            case DrawMode::ElementsInClientMemory:
+                drawElementsInstanced(kQuadVertexCount, indicesPointer, instanceCount);
+                break;
+            case DrawMode::NonInstancedArrays:
+                glDrawArrays(GL_TRIANGLES, kPadVertexCount, kQuadVertexCount);
+                drawnCount = 1;
+                break;
+            case DrawMode::NonInstancedElements:
+                glDrawElements(GL_TRIANGLES, kQuadVertexCount, GL_UNSIGNED_SHORT, indicesPointer);
+                drawnCount = 1;
+                break;
+        }
+        ASSERT_GL_NO_ERROR();
+
+        std::vector<GLColor> pixels(kWindowSize * kWindowSize);
+        glReadPixels(0, 0, kWindowSize, kWindowSize, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+        ASSERT_GL_NO_ERROR();
+        // With mLastAttribElementCount, the instances that read the last attribute past the end of
+        // its buffer read undefined values, so their cells can have any color, but they are drawn.
+        size_t checkedCount = static_cast<size_t>(drawnCount);
+        if (mLastAttribElementCount != 0)
+        {
+            checkedCount = std::min(checkedCount, mLastAttribElementCount * layouts.back().divisor);
+        }
+        const size_t cellSize = kWindowSize / columns;
+        size_t wrongCells     = 0;
+        std::stringstream firstWrongCells;
+        for (size_t cell = 0; cell < columns * columns; ++cell)
+        {
+            const size_t x         = (cell % columns) * cellSize + cellSize / 2;
+            const size_t y         = (cell / columns) * cellSize + cellSize / 2;
+            const GLColor expected = cell < static_cast<size_t>(drawnCount) ? GLColor::green
+                                                                             : GLColor::blue;
+            const GLColor &actual  = pixels[y * kWindowSize + x];
+            const bool isUndefined = cell >= checkedCount && cell < static_cast<size_t>(drawnCount);
+            if (isUndefined ? actual.A != 255 || actual == GLColor::blue : actual != expected)
+            {
+                if (wrongCells < 8)
+                {
+                    firstWrongCells << " cell " << cell << ": " << actual << " instead of "
+                                    << expected << ";";
+                }
+                ++wrongCells;
+            }
+        }
+        EXPECT_EQ(wrongCells, 0u) << "Draw mode " << static_cast<int>(drawMode) << ", "
+                                  << instanceCount << " instances:" << firstWrongCells.str();
+    }
+
+    // Draws with glDrawArraysInstanced, glDrawElementsInstanced with indices in a buffer and,
+    // with client arrays, in client memory, and glDrawArrays and glDrawElements, which draw
+    // instance 0.
+    void drawWithAllModes(const std::vector<AttribLayout> &layouts,
+                          GLsizei instanceCount,
+                          size_t columns = 16)
+    {
+        for (DrawMode drawMode :
+             {DrawMode::Arrays, DrawMode::ElementsInBuffer, DrawMode::ElementsInClientMemory,
+              DrawMode::NonInstancedArrays, DrawMode::NonInstancedElements})
+        {
+            if (drawMode == DrawMode::ElementsInClientMemory && !mClientArraysEnabled)
+            {
+                continue;
+            }
+            drawAndCheck(layouts, instanceCount, drawMode, columns);
+        }
+    }
+
+    // Per-instance attributes with distinct divisors 1 to attribCount - 2.
+    std::vector<AttribLayout> distinctDivisorLayouts(GLint attribCount, bool clientMemory)
+    {
+        std::vector<AttribLayout> layouts;
+        for (GLint attribIndex = 0; attribIndex < attribCount; ++attribIndex)
+        {
+            const size_t buffer =
+                clientMemory ? kClientMemory : static_cast<size_t>(attribIndex);
+            const GLuint divisor = attribIndex == 0 ? 0 : std::max<GLuint>(attribIndex - 1, 1);
+            layouts.push_back({buffer, 0, 0, divisor});
+        }
+        return layouts;
+    }
+
+    // Attributes in one buffer, for 11 instances: the per-vertex attributes interleaved at the
+    // start of the buffer, then two per-instance attributes with a divisor of 1 interleaved, then,
+    // withDivisorTwo, a per-instance attribute with a divisor of 2.
+    std::vector<AttribLayout> perVertexAndPerInstanceLayouts(bool withDivisorTwo)
+    {
+        constexpr size_t kInstanceStart   = (kPadVertexCount + kQuadVertexCount) * 12;
+        constexpr size_t kDivisorTwoStart = kInstanceStart + 11 * 12;
+        std::vector<AttribLayout> layouts = {{0, 0, 12, 0},
+                                             {0, kInstanceStart, 12, 1},
+                                             {0, 8, 12, 0},
+                                             {0, kInstanceStart + 8, 12, 1}};
+        if (withDivisorTwo)
+        {
+            layouts.push_back({0, kDivisorTwoStart, 0, 2});
+        }
+        return layouts;
+    }
+
+    // When not 0, the buffer or client memory of the last attribute has this many elements.
+    size_t mLastAttribElementCount = 0;
+    bool mClientArraysEnabled      = true;
+    bool mCheckInstanceID          = false;
+    bool mUseANGLEEntryPoints      = false;
+    size_t mEnabledAttribCount     = 0;
+    std::vector<GLuint> mPrograms;
+};
+
+class WebGLInstancedAttributeTest : public InstancedAttributeTest
+{
+  protected:
+    WebGLInstancedAttributeTest()
+    {
+        setWebGLCompatibilityEnabled(true);
+        setClientArraysEnabled(false);
+        mClientArraysEnabled = false;
+    }
+};
+
+// Per-instance attributes with a divisor of 1 in buffers.
+TEST_P(InstancedAttributeTest, DivisorOneInBuffers)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 1}}, 11);
+}
+
+// Per-instance attributes with a divisor of 1 in buffers that have fewer elements than the vertices
+// that the draw reads.
+TEST_P(InstancedAttributeTest, DivisorOneInBuffersWithFewerInstancesThanVertices)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 1}}, 3);
+}
+
+// Per-instance attributes with a divisor of 1 in client memory.
+TEST_P(InstancedAttributeTest, DivisorOneInClientMemory)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{kClientMemory, 0, 0, 0}, {kClientMemory, 0, 0, 1}, {kClientMemory, 0, 0, 1}},
+                     11);
+}
+
+// Per-instance attributes with a divisor of 1 in a buffer and in client memory, with the
+// per-vertex attribute in a buffer.
+TEST_P(InstancedAttributeTest, DivisorOneInBufferAndClientMemory)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0}, {kClientMemory, 0, 0, 1}, {1, 0, 0, 1}}, 11);
+}
+
+// Per-instance attributes with a divisor of 2 in a buffer, with the instance count a multiple of
+// the divisor and not.
+TEST_P(InstancedAttributeTest, DivisorTwoInBuffer)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 2}}, 11);
+    drawWithAllModes({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 2}}, 12);
+}
+
+// Per-instance attributes with a divisor of 2 in client memory.
+TEST_P(InstancedAttributeTest, DivisorTwoInClientMemory)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0}, {1, 0, 0, 1}, {kClientMemory, 0, 0, 2}}, 11);
+}
+
+// Per-instance attributes with a divisor of 3 in a buffer.
+TEST_P(InstancedAttributeTest, DivisorThreeInBuffer)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 3}}, 11);
+}
+
+// Per-instance attributes with a divisor of 3 in client memory.
+TEST_P(InstancedAttributeTest, DivisorThreeInClientMemory)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes(
+        {{kClientMemory, 0, 0, 0}, {kClientMemory, 0, 0, 1}, {kClientMemory, 0, 0, 3}}, 11);
+}
+
+// Per-instance attributes with the divisors 1, 2 and 3 in buffers and in client memory.
+TEST_P(InstancedAttributeTest, DivisorsOneTwoAndThree)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0},
+                      {1, 0, 0, 1},
+                      {kClientMemory, 0, 0, 1},
+                      {2, 0, 0, 2},
+                      {kClientMemory, 0, 0, 2},
+                      {3, 0, 0, 3},
+                      {kClientMemory, 0, 0, 3}},
+                     23);
+}
+
+// A divisor larger than the instance count: every instance reads the first element.
+TEST_P(InstancedAttributeTest, DivisorLargerThanInstanceCount)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 16}, {kClientMemory, 0, 0, 100}}, 11);
+}
+
+// Per-vertex and per-instance attributes in one buffer: the per-vertex attributes interleaved at
+// the start of the buffer, then two per-instance attributes interleaved.
+TEST_P(InstancedAttributeTest, PerVertexAndPerInstanceAttributesInOneBuffer)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes(perVertexAndPerInstanceLayouts(false), 11);
+}
+
+// As above, with a per-instance attribute with a divisor of 2 after the others in the buffer.
+TEST_P(InstancedAttributeTest, PerVertexAndPerInstanceAttributesWithDivisorTwoInOneBuffer)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes(perVertexAndPerInstanceLayouts(true), 11);
+}
+
+// A per-instance attribute in its own buffer and per-vertex attributes that share a buffer.
+TEST_P(InstancedAttributeTest, PerInstanceAttributeAndSharedBufferPerVertexAttributes)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 16, 0}, {1, 0, 0, 1}, {0, 8, 16, 0}, {0, 12, 16, 0}}, 11);
+}
+
+// As above, with a per-instance attribute with a divisor of 2 in another buffer.
+TEST_P(InstancedAttributeTest, DivisorTwoAndSharedBufferPerVertexAttributes)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 16, 0}, {1, 0, 0, 1}, {0, 8, 16, 0}, {0, 12, 16, 0}, {2, 0, 0, 2}},
+                     11);
+}
+
+// Per-instance attributes with a divisor of 1 in a buffer and in client memory with a large
+// instance count, a pixel for each instance.
+TEST_P(InstancedAttributeTest, LargeInstanceCountWithDivisorOne)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0}, {1, 0, 0, 1}, {kClientMemory, 0, 0, 1}},
+                     kWindowSize * kWindowSize - 5, kWindowSize);
+}
+
+// Per-instance attributes with the divisors 1, 3 and 7 in buffers and in client memory with a large
+// instance count.
+TEST_P(InstancedAttributeTest, LargeInstanceCount)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0},
+                      {1, 0, 0, 1},
+                      {kClientMemory, 0, 0, 1},
+                      {2, 0, 0, 3},
+                      {kClientMemory, 0, 0, 7}},
+                     kWindowSize * kWindowSize - 5, kWindowSize);
+}
+
+// The divisor of an attribute in a buffer changes between 0 and 1 between draws with the same
+// program.
+TEST_P(InstancedAttributeTest, DivisorChangesBetweenZeroAndOne)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    for (GLuint divisor : {0u, 1u, 0u, 1u})
+    {
+        drawAndCheck({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, divisor}}, 11, DrawMode::Arrays);
+    }
+}
+
+// The divisor of an attribute in a buffer changes between 0, 1 and larger divisors between draws
+// with the same program.
+TEST_P(InstancedAttributeTest, DivisorChangesBetweenDraws)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    for (GLuint divisor : {1u, 2u, 3u, 0u, 2u, 1u})
+    {
+        drawAndCheck({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, divisor}}, 11, DrawMode::Arrays);
+    }
+}
+
+// A per-instance attribute with a divisor of 2 in a buffer that has elements for only some of the
+// instances. The values of the attribute at the other instances are undefined in ES, but they are
+// drawn, and the draw does not lose the other instances or the clear before it.
+TEST_P(InstancedAttributeTest, DivisorTwoInBufferWithTooFewElements)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    // The reads past the end of the buffer are undefined without robust buffer access, and Metal's
+    // shader validation aborts on them. WebGPU's vertex fetches are always in bounds.
+    ANGLE_SKIP_TEST_IF(!IsWebGPU());
+    mLastAttribElementCount = 3;
+    drawAndCheck({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 2}}, 11, DrawMode::Arrays);
+    drawAndCheck({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 2}}, 11, DrawMode::ElementsInBuffer);
+}
+
+// Draws with an instance count so large that the expanded per-instance attribute with a divisor
+// of 2, in a buffer and in client memory, does not fit in a buffer, which fails with
+// GL_OUT_OF_MEMORY, and then draws normally unless the GL_OUT_OF_MEMORY lost the context.
+TEST_P(InstancedAttributeTest, HugeInstanceCount)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    // Only the WebGPU backend expands the per-instance attributes to an element for each instance.
+    // The other backends would draw all the instances.
+    ANGLE_SKIP_TEST_IF(!IsWebGPU());
+
+    GLuint program = getProgram(3, false);
+    ASSERT_NE(program, 0u);
+    glUseProgram(program);
+
+    std::array<std::array<GLfloat, 2>, kPadVertexCount + kQuadVertexCount> corners = {};
+    std::copy(kCorners.begin(), kCorners.end(), corners.begin() + kPadVertexCount);
+    GLBuffer cornerBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, cornerBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(corners), corners.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(0);
+
+    const std::array<GLfloat, 8> cells = {};
+    GLBuffer cellBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, cellBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cells), cells.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(1);
+    vertexAttribDivisor(1, 1);
+
+    const std::array<GLfloat, 16> values = {};
+    GLBuffer valueBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, valueBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(values), values.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(2);
+    vertexAttribDivisor(2, 2);
+    ASSERT_GL_NO_ERROR();
+
+    bool outOfMemoryReported = false;
+    for (bool clientMemory : {false, true})
+    {
+        SCOPED_TRACE(testing::Message() << "client memory: " << clientMemory);
+        glBindBuffer(GL_ARRAY_BUFFER, clientMemory ? 0 : valueBuffer.get());
+        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 0, clientMemory ? values.data() : nullptr);
+        drawArraysInstanced(kPadVertexCount, kQuadVertexCount,
+                            std::numeric_limits<GLsizei>::max());
+        const GLenum error = glGetError();
+        // Contexts that are lost on backend errors, such as WebGL contexts, report
+        // GL_CONTEXT_LOST for the draws after the first GL_OUT_OF_MEMORY.
+        if (error == GL_CONTEXT_LOST && outOfMemoryReported)
+        {
+            return;
+        }
+        EXPECT_GLENUM_EQ(GL_OUT_OF_MEMORY, error);
+        outOfMemoryReported = outOfMemoryReported || error == GL_OUT_OF_MEMORY;
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    drawAndCheck({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 2}}, 11, DrawMode::Arrays);
+}
+
+// Per-instance attributes in client memory with more distinct divisors than WebGPU has vertex
+// buffers.
+TEST_P(InstancedAttributeTest, ManyDistinctDivisorsInClientMemory)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes(distinctDivisorLayouts(getAttribCount(), true), 25);
+}
+
+// Per-instance attributes in separate buffers with more distinct divisors than WebGPU has vertex
+// buffers.
+TEST_P(InstancedAttributeTest, ManyDistinctDivisorsInBuffers)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes(distinctDivisorLayouts(getAttribCount(), false), 25);
+}
+
+// gl_InstanceID with per-instance attributes with a divisor of 1.
+TEST_P(InstancedAttributeTest, InstanceIDWithDivisorOne)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    mCheckInstanceID = true;
+    for (DrawMode drawMode :
+         {DrawMode::Arrays, DrawMode::ElementsInBuffer, DrawMode::ElementsInClientMemory})
+    {
+        drawAndCheck({{0, 0, 0, 0}, {1, 0, 0, 1}, {kClientMemory, 0, 0, 1}}, 23, drawMode);
+    }
+}
+
+// gl_InstanceID with per-instance attributes with the divisors 1, 2 and 3.
+TEST_P(InstancedAttributeTest, InstanceID)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    mCheckInstanceID = true;
+    for (DrawMode drawMode :
+         {DrawMode::Arrays, DrawMode::ElementsInBuffer, DrawMode::ElementsInClientMemory})
+    {
+        drawAndCheck({{0, 0, 0, 0},
+                      {1, 0, 0, 1},
+                      {kClientMemory, 0, 0, 1},
+                      {2, 0, 0, 2},
+                      {kClientMemory, 0, 0, 3}},
+                     23, drawMode);
+    }
+}
+
+// Per-instance attributes with a divisor of 1 in WebGL, which has no client arrays.
+TEST_P(WebGLInstancedAttributeTest, DivisorOne)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 1}}, 11);
+}
+
+// Per-instance attributes with a divisor of 1 in buffers that have fewer elements than the vertices
+// that the draw reads, in WebGL.
+TEST_P(WebGLInstancedAttributeTest, DivisorOneWithFewerInstancesThanVertices)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 1}}, 3);
+}
+
+// Per-instance attributes with the divisors 1, 2 and 3 in WebGL.
+TEST_P(WebGLInstancedAttributeTest, DivisorsOneTwoAndThree)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 1}, {3, 0, 0, 2}, {4, 0, 0, 3}}, 11);
+}
+
+// Per-vertex and per-instance attributes in one buffer in WebGL.
+TEST_P(WebGLInstancedAttributeTest, PerVertexAndPerInstanceAttributesInOneBuffer)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes(perVertexAndPerInstanceLayouts(false), 11);
+}
+
+// Per-vertex and per-instance attributes with a divisor of 2 in one buffer in WebGL.
+TEST_P(WebGLInstancedAttributeTest, PerVertexAndPerInstanceAttributesWithDivisorTwoInOneBuffer)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes(perVertexAndPerInstanceLayouts(true), 11);
+}
+
+// Per-instance attributes with a large instance count in WebGL.
+TEST_P(WebGLInstancedAttributeTest, LargeInstanceCount)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes({{0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 3}}, kWindowSize * kWindowSize - 5,
+                     kWindowSize);
+}
+
+// Per-instance attributes in separate buffers with more distinct divisors than WebGPU has vertex
+// buffers, in WebGL.
+TEST_P(WebGLInstancedAttributeTest, ManyDistinctDivisors)
+{
+    ANGLE_SKIP_TEST_IF(!initInstancing());
+    drawWithAllModes(distinctDivisorLayouts(getAttribCount(), false), 25);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(InstancingTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(InstancingTestES3);
 
@@ -974,3 +1815,6 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(InstancingTestES31);
 ANGLE_INSTANTIATE_TEST_ES31(InstancingTestES31);
 
 ANGLE_INSTANTIATE_TEST_ES2(InstancingTest);
+
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(InstancedAttributeTest, ES3_WEBGPU());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(WebGLInstancedAttributeTest, ES3_WEBGPU());

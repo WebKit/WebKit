@@ -10,6 +10,7 @@
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
+#include <numeric>
 #include <vector>
 
 #include "test_utils/gl_raii.h"
@@ -702,6 +703,800 @@ TEST_P(TriangleFanDrawTest, DrawTriangleFanPrimitiveRestartNonIndexedDraw)
     EXPECT_GL_NO_ERROR();
 
     verifyTriangles();
+}
+
+// Draws triangle fans with glDrawArrays and glDrawElements: with each index type, with the indices
+// and the vertices in buffers and in client memory, and instanced. The fans cover the left half of
+// the window. The vertices that the fans do not use, and the indices before the indices of the
+// fans, are in the right half, so a fan that uses them draws into the right half.
+class TriangleFanTest : public ANGLETest<>
+{
+  protected:
+    TriangleFanTest()
+    {
+        setWindowWidth(16);
+        setWindowHeight(16);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+
+    enum class Source
+    {
+        Buffer,
+        ClientMemory,
+    };
+
+    static constexpr GLuint kRestart = std::numeric_limits<GLuint>::max();
+
+    // clang-format off
+    static constexpr std::array<GLfloat, 14> kPositions = {
+         1.0f, -1.0f,  // 0: the lower right corner of the window
+        -1.0f, -1.0f,  // 1: the lower left corner of the left half
+         1.0f,  1.0f,  // 2: the upper right corner of the window
+         0.0f, -1.0f,  // 3: the lower right corner of the left half
+        -0.5f,  0.0f,  // 4: the center of the left half
+         0.0f,  1.0f,  // 5: the upper right corner of the left half
+        -1.0f,  1.0f,  // 6: the upper left corner of the left half
+    };
+    // clang-format on
+
+    // The fan around the center of the left half that covers it.
+    static constexpr std::array<GLuint, 6> kFanIndices = {4, 1, 3, 5, 6, 1};
+    // The indices before the indices of the fan.
+    static constexpr std::array<GLuint, 3> kPaddingIndices = {0, 2, 0};
+
+    void testSetUp() override
+    {
+        // In ES 3.0 contexts, instance 1 draws the fans translated to the right half.
+        constexpr char kVS[]          = R"(attribute vec2 a_position;
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+})";
+        constexpr char kInstancedVS[] = R"(#version 300 es
+in vec2 a_position;
+void main()
+{
+    gl_Position = vec4(a_position.x + float(gl_InstanceID), a_position.y, 0.0, 1.0);
+})";
+        constexpr char kInstancedFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 color;
+void main()
+{
+    color = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+        if (getClientMajorVersion() >= 3)
+        {
+            mProgram.makeRaster(kInstancedVS, kInstancedFS);
+        }
+        else
+        {
+            mProgram.makeRaster(kVS, essl1_shaders::fs::Green());
+        }
+        ASSERT_TRUE(mProgram.valid());
+        glUseProgram(mProgram);
+        mPositionLocation = glGetAttribLocation(mProgram, "a_position");
+        ASSERT_NE(-1, mPositionLocation);
+        glEnableVertexAttribArray(mPositionLocation);
+    }
+
+    std::vector<Source> sources() const
+    {
+        if (mClientArraysEnabled)
+        {
+            return {Source::Buffer, Source::ClientMemory};
+        }
+        return {Source::Buffer};
+    }
+
+    // Instance counts to draw with: 0 for the non-instanced draw calls.
+    std::vector<GLsizei> instanceCounts() const
+    {
+        if (getClientMajorVersion() >= 3)
+        {
+            return {0, 1, 2};
+        }
+        return {0};
+    }
+
+    bool unsignedIntIndicesSupported()
+    {
+        if (getClientMajorVersion() >= 3)
+        {
+            return true;
+        }
+        if (IsGLExtensionRequestable("GL_OES_element_index_uint"))
+        {
+            glRequestExtensionANGLE("GL_OES_element_index_uint");
+        }
+        return IsGLExtensionEnabled("GL_OES_element_index_uint");
+    }
+
+    void setPositions(const std::vector<GLfloat> &positions, Source source)
+    {
+        // The data stays alive until the next call, as client memory is read at draw time.
+        mPositions = positions;
+        if (source == Source::Buffer)
+        {
+            glBindBuffer(GL_ARRAY_BUFFER, mPositionBuffer);
+            glBufferData(GL_ARRAY_BUFFER, mPositions.size() * sizeof(GLfloat), mPositions.data(),
+                         GL_STATIC_DRAW);
+            glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+        }
+        else
+        {
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, mPositions.data());
+        }
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    // Returns the positions of the vertices with the given indices.
+    static std::vector<GLfloat> GetPositions(const std::vector<GLuint> &indices)
+    {
+        std::vector<GLfloat> positions;
+        for (GLuint index : indices)
+        {
+            positions.push_back(kPositions[2 * index]);
+            positions.push_back(kPositions[2 * index + 1]);
+        }
+        return positions;
+    }
+
+    void clear()
+    {
+        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    // Checks that the fans covered the left half, and with 2 instances also the right half.
+    void checkFans(GLsizei instanceCount)
+    {
+        ASSERT_GL_NO_ERROR();
+        const int halfWidth = getWindowWidth() / 2;
+        EXPECT_PIXEL_RECT_EQ(0, 0, halfWidth, getWindowHeight(), GLColor::green);
+        EXPECT_PIXEL_RECT_EQ(halfWidth, 0, getWindowWidth() - halfWidth, getWindowHeight(),
+                             instanceCount == 2 ? GLColor::green : GLColor::blue);
+    }
+
+    void drawArrays(GLint first, GLsizei count, GLsizei instanceCount)
+    {
+        if (instanceCount > 0)
+        {
+            glDrawArraysInstanced(GL_TRIANGLE_FAN, first, count, instanceCount);
+        }
+        else
+        {
+            glDrawArrays(GL_TRIANGLE_FAN, first, count);
+        }
+    }
+
+    // Draws a fan with the given indices, where kRestart is the primitive restart index of the
+    // type, after kPaddingIndices.
+    template <typename T>
+    void drawElements(GLenum type,
+                      const std::vector<GLuint> &fanIndices,
+                      Source source,
+                      GLsizei instanceCount)
+    {
+        std::vector<T> indices;
+        for (GLuint index : kPaddingIndices)
+        {
+            indices.push_back(static_cast<T>(index));
+        }
+        for (GLuint index : fanIndices)
+        {
+            indices.push_back(index == kRestart ? std::numeric_limits<T>::max()
+                                                : static_cast<T>(index));
+        }
+
+        const void *indicesPointer = nullptr;
+        if (source == Source::Buffer)
+        {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(T), indices.data(),
+                         GL_STATIC_DRAW);
+            indicesPointer = reinterpret_cast<const void *>(kPaddingIndices.size() * sizeof(T));
+        }
+        else
+        {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            indicesPointer = ANGLE_UNSAFE_TODO(indices.data() + kPaddingIndices.size());
+        }
+
+        const GLsizei count = static_cast<GLsizei>(fanIndices.size());
+        if (instanceCount > 0)
+        {
+            glDrawElementsInstanced(GL_TRIANGLE_FAN, count, type, indicesPointer, instanceCount);
+        }
+        else
+        {
+            glDrawElements(GL_TRIANGLE_FAN, count, type, indicesPointer);
+        }
+    }
+
+    // Draws the fan of kFanIndices with indices of type T, with each source of the vertices and
+    // of the indices, and each instance count.
+    template <typename T>
+    void testDrawElements(GLenum type)
+    {
+        const std::vector<GLuint> fanIndices(kFanIndices.begin(), kFanIndices.end());
+        for (Source vertexSource : sources())
+        {
+            setPositions(std::vector<GLfloat>(kPositions.begin(), kPositions.end()), vertexSource);
+            for (Source indexSource : sources())
+            {
+                for (GLsizei instanceCount : instanceCounts())
+                {
+                    SCOPED_TRACE(
+                        testing::Message()
+                        << "vertices in client memory: " << (vertexSource == Source::ClientMemory)
+                        << ", indices in client memory: " << (indexSource == Source::ClientMemory)
+                        << ", instance count: " << instanceCount);
+                    clear();
+                    drawElements<T>(type, fanIndices, indexSource, instanceCount);
+                    checkFans(instanceCount);
+                }
+            }
+        }
+    }
+
+    // Checks that the fans drew as checkFans() expects when frontFace is GL_CCW, the winding of
+    // the fans, and that culling removed them when it is GL_CW.
+    void checkFansWithCulling(GLenum frontFace, GLsizei instanceCount)
+    {
+        if (frontFace == GL_CCW)
+        {
+            checkFans(instanceCount);
+            return;
+        }
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::blue);
+    }
+
+    // Draws the fans with back face culling, with glDrawArrays from a first vertex that is not 0
+    // and with glDrawElements with each index type, with each front face and instance count.
+    void testCullFace()
+    {
+        const std::vector<GLfloat> arrayPositions = GetPositions({0, 2, 4, 1, 3, 5, 6, 1});
+        const std::vector<GLfloat> positions(kPositions.begin(), kPositions.end());
+        const std::vector<GLuint> fanIndices(kFanIndices.begin(), kFanIndices.end());
+        const bool unsignedIntIndices = unsignedIntIndicesSupported();
+        glEnable(GL_CULL_FACE);
+        for (GLenum frontFace : {GL_CCW, GL_CW})
+        {
+            glFrontFace(frontFace);
+            for (GLsizei instanceCount : instanceCounts())
+            {
+                SCOPED_TRACE(testing::Message() << "front face: " << frontFace
+                                                << ", instance count: " << instanceCount);
+                setPositions(arrayPositions, Source::Buffer);
+                clear();
+                drawArrays(2, 6, instanceCount);
+                checkFansWithCulling(frontFace, instanceCount);
+
+                setPositions(positions, Source::Buffer);
+                clear();
+                drawElements<GLubyte>(GL_UNSIGNED_BYTE, fanIndices, Source::Buffer, instanceCount);
+                checkFansWithCulling(frontFace, instanceCount);
+                clear();
+                drawElements<GLushort>(GL_UNSIGNED_SHORT, fanIndices, Source::Buffer,
+                                       instanceCount);
+                checkFansWithCulling(frontFace, instanceCount);
+                if (unsignedIntIndices)
+                {
+                    clear();
+                    drawElements<GLuint>(GL_UNSIGNED_INT, fanIndices, Source::Buffer,
+                                         instanceCount);
+                    checkFansWithCulling(frontFace, instanceCount);
+                }
+
+                if (getClientMajorVersion() >= 3)
+                {
+                    // Two fans with primitive restart, with different first vertices.
+                    const std::vector<GLuint> restartFanIndices = {4, 1, 3, 5, kRestart,
+                                                                   5, 6, 1, 4};
+                    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+                    clear();
+                    drawElements<GLubyte>(GL_UNSIGNED_BYTE, restartFanIndices, Source::Buffer,
+                                          instanceCount);
+                    checkFansWithCulling(frontFace, instanceCount);
+                    clear();
+                    drawElements<GLushort>(GL_UNSIGNED_SHORT, restartFanIndices, Source::Buffer,
+                                           instanceCount);
+                    checkFansWithCulling(frontFace, instanceCount);
+                    clear();
+                    drawElements<GLuint>(GL_UNSIGNED_INT, restartFanIndices, Source::Buffer,
+                                         instanceCount);
+                    checkFansWithCulling(frontFace, instanceCount);
+                    glDisable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+                }
+            }
+        }
+    }
+
+    // Draws fans with glDrawArrays with vertex counts whose triangle lists have more indices than
+    // 32-bit indices can index, which fail with GL_OUT_OF_MEMORY, and then a fan unless the
+    // GL_OUT_OF_MEMORY lost the context.
+    void testTooManyIndices()
+    {
+        // The draws read no vertex attributes.
+        glDisableVertexAttribArray(mPositionLocation);
+        bool outOfMemoryReported = false;
+        // 3 * (1431655768 - 2) is 2^32 + 2, which wraps to 2 in 32 bits.
+        for (GLsizei count : {1431655768, std::numeric_limits<GLsizei>::max()})
+        {
+            for (GLsizei instanceCount : instanceCounts())
+            {
+                SCOPED_TRACE(testing::Message()
+                             << "count: " << count << ", instance count: " << instanceCount);
+                drawArrays(0, count, instanceCount);
+                const GLenum error = glGetError();
+                // Contexts that are lost on backend errors, such as WebGL contexts, report
+                // GL_CONTEXT_LOST for the draws after the first GL_OUT_OF_MEMORY.
+                if (error == GL_CONTEXT_LOST && outOfMemoryReported)
+                {
+                    return;
+                }
+                EXPECT_GLENUM_EQ(GL_OUT_OF_MEMORY, error);
+                outOfMemoryReported = outOfMemoryReported || error == GL_OUT_OF_MEMORY;
+            }
+        }
+
+        glEnableVertexAttribArray(mPositionLocation);
+        setPositions(GetPositions({0, 2, 4, 1, 3, 5, 6, 1}), Source::Buffer);
+        clear();
+        drawArrays(2, 6, 0);
+        checkFans(0);
+    }
+
+    // Draws two fans that cover the left half with primitive restart, with each source of the
+    // vertices and of the indices, and each instance count. Between and around the fans are
+    // primitive restart indices and fans with fewer than three vertices, which use the vertices of
+    // the right half.
+    template <typename T>
+    void testPrimitiveRestart(GLenum type)
+    {
+        // The two fans have different first vertices.
+        const std::vector<GLuint> fanIndices = {kRestart, kRestart, 4,        1,        3,       5,
+                                                kRestart, 0,        2,        kRestart, 5,       6,
+                                                1,        4,        kRestart, 2,        kRestart};
+        glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+        for (Source vertexSource : sources())
+        {
+            setPositions(std::vector<GLfloat>(kPositions.begin(), kPositions.end()), vertexSource);
+            for (Source indexSource : sources())
+            {
+                for (GLsizei instanceCount : instanceCounts())
+                {
+                    SCOPED_TRACE(
+                        testing::Message()
+                        << "vertices in client memory: " << (vertexSource == Source::ClientMemory)
+                        << ", indices in client memory: " << (indexSource == Source::ClientMemory)
+                        << ", instance count: " << instanceCount);
+                    clear();
+                    drawElements<T>(type, fanIndices, indexSource, instanceCount);
+                    checkFans(instanceCount);
+                }
+            }
+        }
+    }
+
+    // Draws fans with primitive restart that have fewer than three vertices, which draw nothing,
+    // and then the fan of kFanIndices.
+    template <typename T>
+    void testPrimitiveRestartNoTriangles(GLenum type)
+    {
+        const std::vector<GLuint> noTriangleIndices = {kRestart, 4, 1, kRestart, kRestart, 0,
+                                                       kRestart, 2, 2, kRestart, 5};
+        const std::vector<GLuint> fanIndices(kFanIndices.begin(), kFanIndices.end());
+        glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+        setPositions(std::vector<GLfloat>(kPositions.begin(), kPositions.end()), Source::Buffer);
+        for (Source indexSource : sources())
+        {
+            for (GLsizei instanceCount : instanceCounts())
+            {
+                SCOPED_TRACE(testing::Message() << "indices in client memory: "
+                                                << (indexSource == Source::ClientMemory)
+                                                << ", instance count: " << instanceCount);
+                clear();
+                drawElements<T>(type, noTriangleIndices, indexSource, instanceCount);
+                ASSERT_GL_NO_ERROR();
+                EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::blue);
+
+                drawElements<T>(type, fanIndices, indexSource, instanceCount);
+                checkFans(instanceCount);
+            }
+        }
+    }
+
+    bool mClientArraysEnabled = true;
+    GLProgram mProgram;
+    GLint mPositionLocation = -1;
+    GLBuffer mPositionBuffer;
+    GLBuffer mIndexBuffer;
+    std::vector<GLfloat> mPositions;
+};
+
+// Tests triangle fans with client arrays disabled, as in WebGL contexts.
+class WebGLTriangleFanTest : public TriangleFanTest
+{
+  protected:
+    WebGLTriangleFanTest()
+    {
+        setWebGLCompatibilityEnabled(true);
+        setClientArraysEnabled(false);
+        mClientArraysEnabled = false;
+    }
+};
+
+// Draws a fan with glDrawArrays from a first vertex that is not 0, with each source of the
+// vertices and each instance count.
+TEST_P(TriangleFanTest, DrawArrays)
+{
+    // The fan starts at vertex 2. A fan that started at vertex 0 would use the vertices 0 and 1.
+    const std::vector<GLfloat> positions = GetPositions({0, 2, 4, 1, 3, 5, 6, 1});
+    for (Source vertexSource : sources())
+    {
+        setPositions(positions, vertexSource);
+        for (GLsizei instanceCount : instanceCounts())
+        {
+            SCOPED_TRACE(testing::Message()
+                         << "vertices in client memory: " << (vertexSource == Source::ClientMemory)
+                         << ", instance count: " << instanceCount);
+            clear();
+            drawArrays(2, 6, instanceCount);
+            checkFans(instanceCount);
+        }
+    }
+}
+
+// Draws a fan with glDrawArrays from a first vertex that does not fit in 16 bits.
+TEST_P(TriangleFanTest, DrawArraysLargeFirst)
+{
+    constexpr GLint kFirst = 70000;
+    std::vector<GLuint> vertices(kFirst, 0);
+    vertices.insert(vertices.end(), kFanIndices.begin(), kFanIndices.end());
+    const std::vector<GLfloat> positions = GetPositions(vertices);
+    for (Source vertexSource : sources())
+    {
+        setPositions(positions, vertexSource);
+        for (GLsizei instanceCount : instanceCounts())
+        {
+            SCOPED_TRACE(testing::Message()
+                         << "vertices in client memory: " << (vertexSource == Source::ClientMemory)
+                         << ", instance count: " << instanceCount);
+            clear();
+            drawArrays(kFirst, static_cast<GLsizei>(kFanIndices.size()), instanceCount);
+            checkFans(instanceCount);
+        }
+    }
+}
+
+// Draws a fan with glDrawArrays with more vertices than 16-bit indices can index. The vertices
+// after the center go around the left half.
+TEST_P(TriangleFanTest, DrawArraysManyVertices)
+{
+    constexpr size_t kVerticesPerSide   = 20000;
+    const std::array<GLuint, 5> corners = {1, 3, 5, 6, 1};
+    std::vector<GLfloat> positions      = GetPositions({0, 4});
+    for (size_t side = 0; side + 1 < corners.size(); ++side)
+    {
+        const std::vector<GLfloat> from = GetPositions({corners[side]});
+        const std::vector<GLfloat> to   = GetPositions({corners[side + 1]});
+        for (size_t vertex = 0; vertex < kVerticesPerSide; ++vertex)
+        {
+            const GLfloat t = static_cast<GLfloat>(vertex) / kVerticesPerSide;
+            positions.push_back(from[0] + t * (to[0] - from[0]));
+            positions.push_back(from[1] + t * (to[1] - from[1]));
+        }
+    }
+    const std::vector<GLfloat> last = GetPositions({corners.back()});
+    positions.insert(positions.end(), last.begin(), last.end());
+    const GLsizei count = static_cast<GLsizei>(positions.size() / 2 - 1);
+    ASSERT_GT(count, 0xFFFF);
+
+    for (Source vertexSource : sources())
+    {
+        setPositions(positions, vertexSource);
+        for (GLsizei instanceCount : instanceCounts())
+        {
+            SCOPED_TRACE(testing::Message()
+                         << "vertices in client memory: " << (vertexSource == Source::ClientMemory)
+                         << ", instance count: " << instanceCount);
+            clear();
+            drawArrays(1, count, instanceCount);
+            checkFans(instanceCount);
+        }
+    }
+}
+
+// Draws a fan with 8-bit indices.
+TEST_P(TriangleFanTest, DrawElementsUnsignedByte)
+{
+    testDrawElements<GLubyte>(GL_UNSIGNED_BYTE);
+}
+
+// Draws a fan with 16-bit indices.
+TEST_P(TriangleFanTest, DrawElementsUnsignedShort)
+{
+    testDrawElements<GLushort>(GL_UNSIGNED_SHORT);
+}
+
+// Draws a fan with 32-bit indices.
+TEST_P(TriangleFanTest, DrawElementsUnsignedInt)
+{
+    ANGLE_SKIP_TEST_IF(!unsignedIntIndicesSupported());
+    testDrawElements<GLuint>(GL_UNSIGNED_INT);
+}
+
+// Draws a fan with the 8-bit index 0xFF, which is a vertex when primitive restart is disabled.
+TEST_P(TriangleFanTest, DrawElementsUnsignedByteIndex255)
+{
+    // Vertex 255 is the center of the left half.
+    std::vector<GLuint> vertices(256, 0);
+    for (size_t index = 0; index < kPositions.size() / 2; ++index)
+    {
+        vertices[index] = static_cast<GLuint>(index);
+    }
+    vertices[255] = kFanIndices[0];
+    std::vector<GLuint> fanIndices(kFanIndices.begin(), kFanIndices.end());
+    fanIndices[0] = 255;
+
+    for (Source vertexSource : sources())
+    {
+        setPositions(GetPositions(vertices), vertexSource);
+        for (Source indexSource : sources())
+        {
+            SCOPED_TRACE(testing::Message()
+                         << "vertices in client memory: " << (vertexSource == Source::ClientMemory)
+                         << ", indices in client memory: "
+                         << (indexSource == Source::ClientMemory));
+            clear();
+            drawElements<GLubyte>(GL_UNSIGNED_BYTE, fanIndices, indexSource, 0);
+            checkFans(0);
+        }
+    }
+}
+
+// Draws a fan with indices from a buffer, then triangles with other indices from the same buffer
+// that cover the right half.
+TEST_P(TriangleFanTest, DrawElementsThenTriangles)
+{
+    setPositions(std::vector<GLfloat>(kPositions.begin(), kPositions.end()), Source::Buffer);
+    for (GLenum type : {GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT})
+    {
+        SCOPED_TRACE(type);
+        // The fan, then the triangles of the right half.
+        const std::vector<GLuint> indices = {4, 1, 3, 5, 6, 1, 3, 0, 5, 5, 0, 2};
+        const size_t indexSize = type == GL_UNSIGNED_BYTE ? sizeof(GLubyte) : sizeof(GLushort);
+        std::vector<GLubyte> unsignedByteIndices(indices.begin(), indices.end());
+        std::vector<GLushort> unsignedShortIndices(indices.begin(), indices.end());
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
+        if (type == GL_UNSIGNED_BYTE)
+        {
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, unsignedByteIndices.size(),
+                         unsignedByteIndices.data(), GL_STATIC_DRAW);
+        }
+        else
+        {
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, unsignedShortIndices.size() * sizeof(GLushort),
+                         unsignedShortIndices.data(), GL_STATIC_DRAW);
+        }
+
+        clear();
+        glDrawElements(GL_TRIANGLE_FAN, 6, type, nullptr);
+        glDrawElements(GL_TRIANGLES, 6, type, reinterpret_cast<const void *>(6 * indexSize));
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+    }
+}
+
+// Draws fans with back face culling. The fans are counterclockwise.
+TEST_P(TriangleFanTest, CullFace)
+{
+    testCullFace();
+}
+
+// Draws fans whose triangle lists have more indices than 32-bit indices can index.
+TEST_P(TriangleFanTest, TooManyIndices)
+{
+    // Only the backends that emulate triangle fans with index buffers need the indices.
+    ANGLE_SKIP_TEST_IF(!IsWebGPU() && !IsMetal());
+    testTooManyIndices();
+}
+
+// Draws fans whose vertices check that gl_VertexID is their index, with glDrawArrays from a first
+// vertex that is not 0 and with glDrawElements, and with each instance count.
+TEST_P(TriangleFanTest, VertexID)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    constexpr char kVS[] = R"(#version 300 es
+in vec2 a_position;
+in float a_vertexId;
+out vec4 v_color;
+void main()
+{
+    gl_Position = vec4(a_position.x + float(gl_InstanceID), a_position.y, 0.0, 1.0);
+    v_color = int(a_vertexId) == gl_VertexID ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(1.0, 0.0, 0.0, 1.0);
+})";
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+in vec4 v_color;
+out vec4 color;
+void main()
+{
+    color = v_color;
+})";
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    mPositionLocation            = glGetAttribLocation(program, "a_position");
+    const GLint vertexIdLocation = glGetAttribLocation(program, "a_vertexId");
+    ASSERT_NE(-1, mPositionLocation);
+    ASSERT_NE(-1, vertexIdLocation);
+    glEnableVertexAttribArray(mPositionLocation);
+
+    std::vector<GLfloat> vertexIds(8);
+    std::iota(vertexIds.begin(), vertexIds.end(), 0.0f);
+    GLBuffer vertexIdBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexIdBuffer);
+    glBufferData(GL_ARRAY_BUFFER, vertexIds.size() * sizeof(GLfloat), vertexIds.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(vertexIdLocation, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(vertexIdLocation);
+
+    const std::vector<GLuint> fanIndices(kFanIndices.begin(), kFanIndices.end());
+    for (GLsizei instanceCount : instanceCounts())
+    {
+        SCOPED_TRACE(instanceCount);
+        setPositions(GetPositions({0, 2, 4, 1, 3, 5, 6, 1}), Source::Buffer);
+        clear();
+        drawArrays(2, 6, instanceCount);
+        checkFans(instanceCount);
+
+        setPositions(std::vector<GLfloat>(kPositions.begin(), kPositions.end()), Source::Buffer);
+        clear();
+        drawElements<GLushort>(GL_UNSIGNED_SHORT, fanIndices, Source::Buffer, instanceCount);
+        checkFans(instanceCount);
+    }
+}
+
+// Draws fans with primitive restart with 8-bit indices.
+TEST_P(TriangleFanTest, PrimitiveRestartUnsignedByte)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestart<GLubyte>(GL_UNSIGNED_BYTE);
+}
+
+// Draws fans with primitive restart with 16-bit indices.
+TEST_P(TriangleFanTest, PrimitiveRestartUnsignedShort)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestart<GLushort>(GL_UNSIGNED_SHORT);
+}
+
+// Draws fans with primitive restart with 32-bit indices.
+TEST_P(TriangleFanTest, PrimitiveRestartUnsignedInt)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestart<GLuint>(GL_UNSIGNED_INT);
+}
+
+// Draws fans with primitive restart and no triangles with 8-bit indices, then a fan.
+TEST_P(TriangleFanTest, PrimitiveRestartNoTrianglesUnsignedByte)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestartNoTriangles<GLubyte>(GL_UNSIGNED_BYTE);
+}
+
+// Draws fans with primitive restart and no triangles with 16-bit indices, then a fan.
+TEST_P(TriangleFanTest, PrimitiveRestartNoTrianglesUnsignedShort)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestartNoTriangles<GLushort>(GL_UNSIGNED_SHORT);
+}
+
+// Draws fans with primitive restart and no triangles with 32-bit indices, then a fan.
+TEST_P(TriangleFanTest, PrimitiveRestartNoTrianglesUnsignedInt)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestartNoTriangles<GLuint>(GL_UNSIGNED_INT);
+}
+
+// Draws a fan with glDrawArrays from a first vertex that is not 0, with client arrays disabled.
+TEST_P(WebGLTriangleFanTest, DrawArrays)
+{
+    setPositions(GetPositions({0, 2, 4, 1, 3, 5, 6, 1}), Source::Buffer);
+    for (GLsizei instanceCount : instanceCounts())
+    {
+        SCOPED_TRACE(instanceCount);
+        clear();
+        drawArrays(2, 6, instanceCount);
+        checkFans(instanceCount);
+    }
+}
+
+// Draws a fan with 8-bit indices, with client arrays disabled.
+TEST_P(WebGLTriangleFanTest, DrawElementsUnsignedByte)
+{
+    testDrawElements<GLubyte>(GL_UNSIGNED_BYTE);
+}
+
+// Draws a fan with 16-bit indices, with client arrays disabled.
+TEST_P(WebGLTriangleFanTest, DrawElementsUnsignedShort)
+{
+    testDrawElements<GLushort>(GL_UNSIGNED_SHORT);
+}
+
+// Draws a fan with 32-bit indices, with client arrays disabled.
+TEST_P(WebGLTriangleFanTest, DrawElementsUnsignedInt)
+{
+    ANGLE_SKIP_TEST_IF(!unsignedIntIndicesSupported());
+    testDrawElements<GLuint>(GL_UNSIGNED_INT);
+}
+
+// Draws fans with back face culling, with client arrays disabled.
+TEST_P(WebGLTriangleFanTest, CullFace)
+{
+    testCullFace();
+}
+
+// Draws fans whose triangle lists have more indices than 32-bit indices can index, with client
+// arrays disabled.
+TEST_P(WebGLTriangleFanTest, TooManyIndices)
+{
+    // Only the backends that emulate triangle fans with index buffers need the indices.
+    ANGLE_SKIP_TEST_IF(!IsWebGPU() && !IsMetal());
+    testTooManyIndices();
+}
+
+// Draws fans with primitive restart with 8-bit indices, with client arrays disabled.
+TEST_P(WebGLTriangleFanTest, PrimitiveRestartUnsignedByte)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestart<GLubyte>(GL_UNSIGNED_BYTE);
+}
+
+// Draws fans with primitive restart with 16-bit indices, with client arrays disabled.
+TEST_P(WebGLTriangleFanTest, PrimitiveRestartUnsignedShort)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestart<GLushort>(GL_UNSIGNED_SHORT);
+}
+
+// Draws fans with primitive restart with 32-bit indices, with client arrays disabled.
+TEST_P(WebGLTriangleFanTest, PrimitiveRestartUnsignedInt)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestart<GLuint>(GL_UNSIGNED_INT);
+}
+
+// Draws fans with primitive restart and no triangles with 8-bit indices, then a fan, with client
+// arrays disabled.
+TEST_P(WebGLTriangleFanTest, PrimitiveRestartNoTrianglesUnsignedByte)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestartNoTriangles<GLubyte>(GL_UNSIGNED_BYTE);
+}
+
+// Draws fans with primitive restart and no triangles with 16-bit indices, then a fan, with client
+// arrays disabled.
+TEST_P(WebGLTriangleFanTest, PrimitiveRestartNoTrianglesUnsignedShort)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestartNoTriangles<GLushort>(GL_UNSIGNED_SHORT);
+}
+
+// Draws fans with primitive restart and no triangles with 32-bit indices, then a fan, with client
+// arrays disabled.
+TEST_P(WebGLTriangleFanTest, PrimitiveRestartNoTrianglesUnsignedInt)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    testPrimitiveRestartNoTriangles<GLuint>(GL_UNSIGNED_INT);
 }
 
 // Simple repeated draw and swap test.
@@ -1709,7 +2504,11 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     TriangleFanDrawTest,
     ES3_METAL().enable(Feature::ForceBufferGPUStorage),
-    ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass));
+    ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass),
+    ES3_WEBGPU());
+
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(TriangleFanTest, ES3_WEBGPU());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(WebGLTriangleFanTest, ES3_WEBGPU());
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31(SimpleOperationTest31);
 
