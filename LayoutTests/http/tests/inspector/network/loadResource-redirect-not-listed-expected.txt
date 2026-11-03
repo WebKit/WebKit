@@ -1,0 +1,18 @@
+Tests that Network.loadResource of a URL that redirects does not list a resource for either hop.
+
+
+== Running test suite: Network.loadResource.Redirect
+-- Running test case: Network.loadResource.Redirect.NotListed
+PASS: Network.loadResource should resolve with a 200 status.
+PASS: Network.loadResource should resolve with the content of the redirect target.
+PASS: Should list a fetch made by the page.
+PASS: Should not list either hop of the redirected load.
+PASS: Main frame should have no resource for either hop.
+
+-- Running test case: Network.loadResource.Redirect.CrossOrigin.NotListed
+PASS: Network.loadResource should resolve with a 200 status.
+PASS: Network.loadResource should resolve with the content of the redirect target.
+PASS: Should list a fetch made by the page.
+PASS: Should not list either hop of the redirected load.
+PASS: Main frame should have no resource for either hop.
+
