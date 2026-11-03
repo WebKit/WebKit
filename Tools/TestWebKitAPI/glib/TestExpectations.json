@@ -99,18 +99,6 @@
             "/webkit/WebKitAccessibility/text/for-range-embedded-objects": {
                 "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/279009"}}
             },
-            "/webkit/WebKitAccessibility/accessible/ignored-objects": {
-                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/279009"}}
-	    },
-            "/webkit/WebKitAccessibility/hypertext/basic": {
-                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/279009"}}
-	    },
-            "/webkit/WebKitAccessibility/document/basic": {
-                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/279009"}}
-	    },
-            "/webkit/WebKitAccessibility/selection/menulist": {
-                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/279009"}}
-	    },
             "afterAll": {
                 "expected": {"gtk": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/273682"}}
             }
