@@ -44,10 +44,13 @@ enum class StagingPurpose
     Upload
 };
 
+// Whether to write byteCount bytes of the texture, uploaded data or initialization, through a
+// staging buffer or a GPU clear rather than on the CPU.
 bool PreferStagedTextureUploads(const gl::Context *context,
                                 const TextureRef &texture,
                                 const Format &textureObjFormat,
-                                const StagingPurpose purpose);
+                                const StagingPurpose purpose,
+                                size_t byteCount);
 
 // Initialize texture content to black (or non-zero if requested).
 angle::Result InitializeTextureContents(const gl::Context *context,
