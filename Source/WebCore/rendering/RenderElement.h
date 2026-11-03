@@ -362,7 +362,7 @@ public:
     void establishesTopLayerWillChange();
     void establishesTopLayerDidChange();
 
-    static void markRendererDirtyAfterTopLayerChange(RenderElement* renderer, RenderBlock* containingBlockBeforeStyleResolution);
+    static void markRendererDirtyAfterTopLayerChange(RenderElement* renderer, RenderBoxModelObject* containingBlockBeforeStyleResolution);
 
     void clearNeedsLayoutForSkippedContent();
 

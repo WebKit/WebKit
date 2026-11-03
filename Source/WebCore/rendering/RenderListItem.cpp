@@ -747,7 +747,7 @@ RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRo
 
 CheckedPtr<RenderListOutsideMarker> RenderListItem::excludedMarkerAnchoredTo(const RenderBlockFlow& firstFormattedLineRoot)
 {
-    for (CheckedPtr<const RenderBlock> ancestor = &firstFormattedLineRoot; ancestor; ancestor = ancestor->containingBlock()) {
+    for (CheckedPtr<const RenderBoxModelObject> ancestor = &firstFormattedLineRoot; ancestor; ancestor = ancestor->containingBlock()) {
         auto* listItem = dynamicDowncast<RenderListItem>(ancestor);
         CheckedPtr marker = listItem ? listItem->markerBox() : nullptr;
         if (!marker || !marker->isExcludedMarker())

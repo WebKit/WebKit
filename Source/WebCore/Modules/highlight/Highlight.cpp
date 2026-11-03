@@ -46,7 +46,7 @@ void Highlight::repaintRange(const AbstractRange& range)
     if (is_gt(treeOrder<ComposedTree>(sortedRange.start, sortedRange.end)))
         std::swap(sortedRange.start, sortedRange.end);
     // Highlight decorations can paint outside a renderer's ink overflow, so also repaint containing blocks (collected to avoid redundant repaints of shared containers).
-    SingleThreadWeakHashSet<RenderBlock> containingBlocks;
+    SingleThreadWeakHashSet<RenderBoxModelObject> containingBlocks;
     for (Ref node : intersectingNodes(sortedRange)) {
         if (CheckedPtr renderer = node->renderer()) {
             renderer->repaint();

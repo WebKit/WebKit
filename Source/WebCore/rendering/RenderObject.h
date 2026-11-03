@@ -770,7 +770,7 @@ public:
     inline void setNeedsLayout(MarkingBehavior = MarkingBehavior::ContainingBlockChain);
     enum class HadSkippedLayout { No, Yes };
     void clearNeedsLayout(HadSkippedLayout = HadSkippedLayout::No);
-    void invalidateContentLogicalWidths(MarkingBehavior = MarkingBehavior::ContainingBlockChain, const RenderBlock* ancestorUpdateBoundary = nullptr);
+    void invalidateContentLogicalWidths(MarkingBehavior = MarkingBehavior::ContainingBlockChain, const RenderBoxModelObject* ancestorUpdateBoundary = nullptr);
     void clearContentLogicalWidthsInvalidation() { m_stateBitfields.setFlag(StateFlag::ContentLogicalWidthsInvalidated, { }); }
 
     void notifyInspectorOfLayoutInvalidate();
@@ -1187,7 +1187,7 @@ private:
     NODELETE void setLayerNeedsFullRepaint();
     NODELETE void setLayerNeedsFullRepaintForOutOfFlowMovementLayout();
 
-    void invalidateContainerContentLogicalWidths(const RenderBlock* ancestorUpdateBoundary = nullptr);
+    void invalidateContainerContentLogicalWidths(const RenderBoxModelObject* ancestorUpdateBoundary = nullptr);
 
     struct SelectionGeometriesInternal {
         Vector<SelectionGeometry> geometries;
