@@ -60,6 +60,8 @@ public:
         Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
         for (int i = childCount - 1; i >= 0; --i)  {
             GRefPtr<AtspiAccessible> current = adoptGRef(atspi_accessible_get_child_at_index(desktop.get(), i, nullptr));
+            if (!current)
+                continue;
             GUniquePtr<char> name(atspi_accessible_get_name(current.get(), nullptr));
             if (!g_strcmp0(name.get(), "TestWebKitAccessibility"))
                 return current;
@@ -92,6 +94,26 @@ public:
 
         auto parent = adoptGRef(atspi_accessible_get_parent(documentWeb.get(), nullptr));
         return parent ? adoptGRef(atspi_accessible_get_parent(parent.get(), nullptr)) : nullptr;
+    }
+
+    void waitUntilLoadFinished()
+    {
+        WebViewTest::waitUntilLoadFinished();
+
+        bool childrenAdded = false;
+        GRefPtr<AtspiEventListener> listener = adoptGRef(atspi_event_listener_new([](AtspiEvent*, gpointer userData) {
+            *static_cast<bool*>(userData) = true;
+        }, &childrenAdded, nullptr));
+        atspi_event_listener_register(listener.get(), "object:children-changed:add", nullptr);
+        while (true) {
+            auto testApp = findTestApplication();
+            if (testApp && findDocumentWeb(testApp.get()))
+                break;
+            while (!childrenAdded)
+                g_main_context_iteration(nullptr, TRUE);
+            childrenAdded = false;
+        }
+        atspi_event_listener_deregister(listener.get(), "object:children-changed:add", nullptr);
     }
 
     void waitUntilChildrenRemoved(AtspiAccessible* accessible)
