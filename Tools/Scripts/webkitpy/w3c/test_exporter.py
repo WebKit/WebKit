@@ -381,7 +381,24 @@ class WebPlatformTestExporter(object):
         if self._bug_id and pr:
             self._bug.add_related_links([pr.url])
             self._bug.add_comment(f'Submitted web-platform-tests pull request: {pr.url}')
+        if pr and self._options.auto_merge:
+            self.enable_auto_merge(pr)
         return pr
+
+    def enable_auto_merge(self, pr):
+        node_id = (self._remote.request(f'pulls/{pr.number}') or {}).get('node_id')
+        # Rebasing keeps the exported commit's author, where squashing would credit whoever opened the pull request.
+        result = self._remote.graphql('''mutation {{
+  enablePullRequestAutoMerge(input: {{pullRequestId: "{}", mergeMethod: REBASE}}) {{
+    clientMutationId
+  }}
+}}'''.format(node_id)) if node_id else None
+        errors = [error.get('message') for error in (result or {}).get('errors') or []]
+        if not result or errors:
+            _log.warning(f'Could not enable auto-merge for pr #{pr.number}, which needs write access to {WPT_GH_ORG}/{WPT_GH_REPO_NAME}' + (f": {'; '.join(errors)}" if errors else ''))
+            return False
+        _log.info(f'Enabled auto-merge for pr #{pr.number}')
+        return True
 
     def create_wpt_pull_request(self, remote_branch_name, title, body):
         existing_pr = PullRequestProgram.find_existing_pull_request(self._wpt_repo, self._remote, branch=self._public_branch_name)
@@ -486,6 +503,7 @@ def parse_args(args):
     - Create a remote branch on https://github.com/USERNAME/{WPT_GH_REPO_NAME}.git repository based on the locally applied patch.
        * {WPT_GH_URL}.git should have already been cloned to https://github.com/USERNAME/{WPT_GH_REPO_NAME}.git.
     - Make the related pull request on {WPT_GH_URL}.git repository.
+    - Enable auto-merge on the pull request, so that it merges once wpt-pr-bot approves it and its checks pass. This needs write access to {WPT_GH_URL}; use --no-auto-merge to skip it.
     - Clean the local Git repository
     Notes:
     - As a dry run, one can start by running the script without -c. This will only create the branch on the user public GitHub repository.
@@ -512,6 +530,12 @@ def parse_args(args):
         dest='delete_existing', default=False,
         action=arguments.NoAction,
         help='Allow overwriting an existing local branch or force-pushing to an existing remote branch.',
+    )
+    parser.add_argument(
+        '--auto-merge', '--no-auto-merge',
+        dest='auto_merge', default=True,
+        action=arguments.NoAction,
+        help='Enable auto-merge on the pull request, which needs write access to web-platform-tests.',
     )
 
     options, args = parser.parse_known_args(args)

@@ -329,13 +329,28 @@ class GitHub(bmocks.GitHub):
             ), url=url
         )
 
-    # FIXME: Not a very flexible mock of GitHub's GraphQL API, only supports pull-request querying
+    @staticmethod
+    def _node_id(pull_request):
+        return pull_request.get('node_id') or 'PR_{}'.format(pull_request['number'])
+
+    # FIXME: Not a very flexible mock of GitHub's GraphQL API, only supports pull-request querying and enabling auto-merge
     def graphql(self, url, auth=None, json=None):
         query = (json or {}).get('query')
         if not query:
             return mocks.Response.create404(url)
 
         qline = query.splitlines()[1]
+        auto_merge = re.match(r'\s*enablePullRequestAutoMerge\(input:\s+\{pullRequestId:\s+"(?P<id>[^"]+)",\s+mergeMethod:\s+(?P<method>[A-Z]+)\}\)\s*\{', qline)
+        if auto_merge:
+            for candidate in self.pull_requests:
+                if self._node_id(candidate) == auto_merge.group('id'):
+                    candidate['auto_merge'] = dict(enabled_by=dict(login=auth.username), merge_method=auto_merge.group('method').lower())
+                    return mocks.Response.fromJson(dict(data=dict(enablePullRequestAutoMerge=dict(clientMutationId=None))), url=url)
+            return mocks.Response.fromJson(dict(
+                data=dict(enablePullRequestAutoMerge=None),
+                errors=[dict(type='NOT_FOUND', message="Could not resolve to a node with the global id of '{}'".format(auto_merge.group('id')))],
+            ), url=url)
+
         pr_search = re.match(r'\s*search\(query:\s+"(?P<query>.+)",\s+type:\s+ISSUE,\s+last:\s+(?P<last>\d+)\)\s*\{', qline)
         if pr_search:
             query_bits = {}
@@ -482,7 +497,8 @@ class GitHub(bmocks.GitHub):
                         return self._diff_response(url=url, ref=candidate['head']['sha'])
 
                     return mocks.Response.fromJson({
-                        key: value for key, value in candidate.items() if key not in ('diff_comments', 'requested_reviews', 'reviews')
+                        'node_id': self._node_id(candidate),
+                        **{key: value for key, value in candidate.items() if key not in ('diff_comments', 'requested_reviews', 'reviews')},
                     }, url=url)
 
             return mocks.Response.fromJson(

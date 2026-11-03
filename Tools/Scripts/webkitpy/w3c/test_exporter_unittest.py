@@ -114,6 +114,7 @@ class TestExporterTest(testing.PathTestCase):
                 'WebKit-Bug: <a href="https://bugs.example.com/show_bug.cgi?id=1">https://bugs.example.com/show_bug.cgi?id=1</a>',
                 '</pre>',
             ]))
+            self.assertEqual(wpt_remote.pull_requests[0]['auto_merge'], dict(enabled_by=dict(login='username'), merge_method='rebase'))
 
         mock_linter_class.assert_called_once_with(self.path)
         mock_linter_class.return_value.lint.assert_called_once_with()
@@ -134,6 +135,7 @@ class TestExporterTest(testing.PathTestCase):
                 'Branch available at https://github.com/username/wpt/tree/wpt-export-for-webkit-1',
                 '',
                 "Creating pull-request for 'username:wpt-export-for-webkit-1'...",
+                'Enabled auto-merge for pr #1',
                 'Removing local branch wpt-export-for-webkit-1',
                 'WPT Pull Request: https://github.com/web-platform-tests/wpt/pull/1'],
         )
@@ -170,6 +172,84 @@ class TestExporterTest(testing.PathTestCase):
                 [['commit', '-m', 'Custom message']],
             )
             self.assertEqual(wpt_remote.pull_requests[0]['title'], 'WebKit export of https://bugs.example.com/show_bug.cgi?id=1')
+
+    def test_export_no_auto_merge(self):
+        with OutputCapture(level=logging.INFO) as captured, bmocks.Bugzilla(self.BUGZILLA_URL.split('://')[1], issues=bmocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
+            'webkit-export': dict(color='00000', description=''),
+        }) as wpt_remote, mocks.local.Git(
+            self.path,
+            remote='https://{}'.format(wpt_remote.remote)
+        ) as git_mock, patch(
+            'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
+        ), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
+        ), patch(
+            'webkitpy.w3c.test_exporter.WPTLinter', autospec=True, spec_set=True,
+        ):
+            git_mock.head.message = f'Test\n{self.BUGZILLA_URL}/show_bug.cgi?id=1\n'
+            host = TestExporterTest.MyMockHost()
+            host.filesystem.maybe_make_directory(self.path)
+            host.filesystem.write_binary_file(f'{self.path}/resources/testharness.js', '')
+            host.filesystem.write_binary_file(f'{self.path}/wpt', '')
+            host.web.responses.append({'status_code': 200, 'body': '{"login": "USER"}'})
+            options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '--no-auto-merge', '-d', self.path])
+            WebPlatformTestExporter(host, options).do_export()
+
+            self.assertEqual(wpt_remote.pull_requests[0]['title'], 'WebKit export of https://bugs.example.com/show_bug.cgi?id=1')
+            self.assertNotIn('auto_merge', wpt_remote.pull_requests[0])
+        self.assertNotIn('auto-merge', captured.root.log.getvalue())
+
+    def test_export_auto_merge_refused(self):
+        with OutputCapture(level=logging.INFO) as captured, bmocks.Bugzilla(self.BUGZILLA_URL.split('://')[1], issues=bmocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
+            'webkit-export': dict(color='00000', description=''),
+        }) as wpt_remote, mocks.local.Git(
+            self.path,
+            remote='https://{}'.format(wpt_remote.remote)
+        ) as git_mock, patch(
+            'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
+        ), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
+        ), patch(
+            'webkitpy.w3c.test_exporter.WPTLinter', autospec=True, spec_set=True,
+        ):
+            graphql = wpt_remote.graphql
+
+            def refuse_auto_merge(url, auth=None, json=None):
+                if 'enablePullRequestAutoMerge' not in json['query']:
+                    return graphql(url, auth=auth, json=json)
+                return wkmocks.Response.fromJson(dict(
+                    data=dict(enablePullRequestAutoMerge=None),
+                    errors=[dict(type='FORBIDDEN', message='username does not have the correct permissions to execute `EnablePullRequestAutoMerge`')],
+                ), url=url)
+
+            git_mock.head.message = f'Test\n{self.BUGZILLA_URL}/show_bug.cgi?id=1\n'
+            host = TestExporterTest.MyMockHost()
+            host.filesystem.maybe_make_directory(self.path)
+            host.filesystem.write_binary_file(f'{self.path}/resources/testharness.js', '')
+            host.filesystem.write_binary_file(f'{self.path}/wpt', '')
+            host.web.responses.append({'status_code': 200, 'body': '{"login": "USER"}'})
+            options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '-d', self.path])
+            with patch.object(wpt_remote, 'graphql', new=refuse_auto_merge):
+                WebPlatformTestExporter(host, options).do_export()
+
+            self.assertEqual(wpt_remote.pull_requests[0]['title'], 'WebKit export of https://bugs.example.com/show_bug.cgi?id=1')
+            self.assertNotIn('auto_merge', wpt_remote.pull_requests[0])
+            issue = Tracker.from_string('{}/show_bug.cgi?id=1'.format(self.BUGZILLA_URL))
+            self.assertEqual(issue.related_links, ['https://github.com/web-platform-tests/wpt/pull/1'])
+
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line][-3:], [
+                'Could not enable auto-merge for pr #1, which needs write access to web-platform-tests/wpt: username does not have the correct permissions to execute `EnablePullRequestAutoMerge`',
+                'Removing local branch wpt-export-for-webkit-1',
+                'WPT Pull Request: https://github.com/web-platform-tests/wpt/pull/1'],
+        )
 
     def test_export_dry_run(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
@@ -317,6 +397,7 @@ class TestExporterTest(testing.PathTestCase):
                 'Branch available at https://github.com/username/wpt/tree/wpt-export-for-webkit-1',
                 '',
                 "Creating pull-request for 'username:wpt-export-for-webkit-1'...",
+                'Enabled auto-merge for pr #1',
                 'Removing local branch wpt-export-for-webkit-1',
                 'WPT Pull Request: https://github.com/web-platform-tests/wpt/pull/1'],
         )
@@ -371,6 +452,7 @@ class TestExporterTest(testing.PathTestCase):
                 'Branch available at https://github.com/username/wpt/tree/wpt-export-for-webkit-1',
                 '',
                 "Creating pull-request for 'username:wpt-export-for-webkit-1'...",
+                'Enabled auto-merge for pr #1',
                 'Removing local branch wpt-export-for-webkit-1',
                 'WPT Pull Request: https://github.com/web-platform-tests/wpt/pull/1'],
         )
@@ -449,6 +531,7 @@ class TestExporterTest(testing.PathTestCase):
                 'Branch available at https://github.com/username/wpt/tree/wpt-export-for-webkit-1',
                 '',
                 "Updating pull-request for 'username:wpt-export-for-webkit-1'...",
+                'Enabled auto-merge for pr #42',
                 'Removing local branch wpt-export-for-webkit-1',
                 'WPT Pull Request: https://github.com/web-platform-tests/wpt/pull/42'],
         )
@@ -531,6 +614,7 @@ class TestExporterTest(testing.PathTestCase):
                 'Branch available at https://github.com/username/wpt/tree/wpt-export-for-webkit-1',
                 '',
                 "Updating pull-request for 'username:wpt-export-for-webkit-1'...",
+                'Enabled auto-merge for pr #42',
                 'Removing local branch wpt-export-for-webkit-1',
                 'WPT Pull Request: https://github.com/web-platform-tests/wpt/pull/42'],
         )
@@ -608,6 +692,7 @@ class TestExporterTest(testing.PathTestCase):
                 'Branch available at https://github.com/username/wpt/tree/wpt-export-for-webkit-1',
                 '',
                 "Creating pull-request for 'username:wpt-export-for-webkit-1'...",
+                'Enabled auto-merge for pr #43',
                 'Removing local branch wpt-export-for-webkit-1',
                 'WPT Pull Request: https://github.com/web-platform-tests/wpt/pull/43'],
         )
@@ -1013,6 +1098,7 @@ class TestExporterTest(testing.PathTestCase):
                 'Branch available at https://github.com/username/wpt/tree/wpt-export-for-webkit-1',
                 '',
                 "Creating pull-request for 'username:wpt-export-for-webkit-1'...",
+                'Enabled auto-merge for pr #43',
                 'Removing local branch wpt-export-for-webkit-1',
                 'WPT Pull Request: https://github.com/web-platform-tests/wpt/pull/43'],
         )
@@ -1065,6 +1151,7 @@ class TestExporterTest(testing.PathTestCase):
                 'Branch available at https://github.com/username/wpt/tree/wpt-export-branch',
                 '',
                 "Creating pull-request for 'username:wpt-export-branch'...",
+                'Enabled auto-merge for pr #1',
                 'Removing local branch wpt-export-for-webkit-1',
                 'WPT Pull Request: https://github.com/web-platform-tests/wpt/pull/1'],
         )
@@ -1117,6 +1204,7 @@ class TestExporterTest(testing.PathTestCase):
                 'Branch available at https://github.com/username/wpt/tree/wpt-export-for-webkit-1',
                 '',
                 "Creating pull-request for 'username:wpt-export-for-webkit-1'...",
+                'Enabled auto-merge for pr #1',
                 'Keeping local branch wpt-export-for-webkit-1',
                 'WPT Pull Request: https://github.com/web-platform-tests/wpt/pull/1'],
         )
