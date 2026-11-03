@@ -42,8 +42,8 @@ class InlineContent;
 // GridLayout refers to them. The root flags are set and cleared by the root's own LineLayout or GridLayout.
 class BoxTreeUpdater {
 public:
-    BoxTreeUpdater(RenderBlock&);
-    ~BoxTreeUpdater();
+    NODELETE BoxTreeUpdater(RenderBlock&);
+    NODELETE ~BoxTreeUpdater();
 
     // Initializes the boxes of the formatting context content. The root box too, unless it is content of another live formatting context.
     void build();

@@ -39,7 +39,7 @@ class InlineContent;
 
 class InlineContentBuilder {
 public:
-    InlineContentBuilder(const RenderBlockFlow&);
+    NODELETE InlineContentBuilder(const RenderBlockFlow&);
 
     FloatRect build(std::unique_ptr<Layout::InlineLayoutResult>&&, InlineContent&, const Layout::InlineDamage*) const;
 

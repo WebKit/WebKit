@@ -38,7 +38,7 @@ namespace Layout {
 class FloatAvoider {
     WTF_MAKE_TZONE_ALLOCATED(FloatAvoider);
 public:
-    FloatAvoider(LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const BoxGeometry::Edges& margin, BoxGeometry::HorizontalEdges containingBlockAbsoluteContentBox, bool isFloatingPositioned, bool isLeftAligned);
+    NODELETE FloatAvoider(LayoutPoint absoluteTopLeft, LayoutUnit borderBoxWidth, const BoxGeometry::Edges& margin, BoxGeometry::HorizontalEdges containingBlockAbsoluteContentBox, bool isFloatingPositioned, bool isLeftAligned);
     virtual ~FloatAvoider() = default;
 
     void setInlineStart(LayoutUnit);

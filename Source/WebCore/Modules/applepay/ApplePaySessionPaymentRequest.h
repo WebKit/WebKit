@@ -62,7 +62,7 @@ struct ApplePaySessionPaymentRequestContactFields {
 
 class ApplePaySessionPaymentRequest {
 public:
-    WEBCORE_EXPORT ApplePaySessionPaymentRequest();
+    NODELETE WEBCORE_EXPORT ApplePaySessionPaymentRequest();
     WEBCORE_EXPORT ~ApplePaySessionPaymentRequest();
 
     unsigned version() const { return m_version; }

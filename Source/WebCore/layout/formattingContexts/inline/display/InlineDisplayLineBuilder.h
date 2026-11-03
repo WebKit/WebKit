@@ -38,7 +38,7 @@ class LineBox;
 
 class InlineDisplayLineBuilder {
 public:
-    InlineDisplayLineBuilder(InlineFormattingContext&, const ConstraintsForInlineContent&);
+    NODELETE InlineDisplayLineBuilder(InlineFormattingContext&, const ConstraintsForInlineContent&);
 
     InlineDisplay::Line build(const LineLayoutResult&, const LineBox&, bool lineIsFullyTruncatedInBlockDirection) const;
 

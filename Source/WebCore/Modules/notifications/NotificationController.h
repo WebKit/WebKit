@@ -37,7 +37,7 @@ namespace WebCore {
 class NotificationController : public Supplement<Page> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(NotificationController, WEBCORE_EXPORT);
 public:
-    explicit NotificationController(NotificationClient*);
+    NODELETE explicit NotificationController(NotificationClient*);
     ~NotificationController();
 
     static ASCIILiteral supplementName() { return "NotificationController"_s; }

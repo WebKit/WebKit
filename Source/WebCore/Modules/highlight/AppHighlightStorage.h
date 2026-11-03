@@ -52,7 +52,7 @@ enum class ScrollToHighlight : bool { No, Yes };
 class AppHighlightStorage final {
     WTF_MAKE_TZONE_ALLOCATED(AppHighlightStorage);
 public:
-    AppHighlightStorage(Document&);
+    NODELETE AppHighlightStorage(Document&);
     ~AppHighlightStorage();
 
     WEBCORE_EXPORT void storeAppHighlight(Ref<StaticRange>&&, CompletionHandler<void(AppHighlight&&)>&&);

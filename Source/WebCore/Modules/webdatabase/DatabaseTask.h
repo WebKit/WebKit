@@ -46,7 +46,7 @@ template<typename> class ExceptionOr;
 class DatabaseTaskSynchronizer {
     WTF_MAKE_NONCOPYABLE(DatabaseTaskSynchronizer);
 public:
-    DatabaseTaskSynchronizer();
+    NODELETE DatabaseTaskSynchronizer();
 
     // Called from main thread to wait until task is completed.
     void waitForTaskCompletion();

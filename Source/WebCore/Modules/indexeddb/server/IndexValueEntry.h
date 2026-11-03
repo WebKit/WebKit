@@ -58,9 +58,9 @@ public:
         {
         }
 
-        Iterator(IndexValueEntry&);
-        Iterator(IndexValueEntry&, IDBKeyDataSet::iterator);
-        Iterator(IndexValueEntry&, IDBKeyDataSet::reverse_iterator);
+        NODELETE Iterator(IndexValueEntry&);
+        NODELETE Iterator(IndexValueEntry&, IDBKeyDataSet::iterator);
+        NODELETE Iterator(IndexValueEntry&, IDBKeyDataSet::reverse_iterator);
 
         NODELETE bool isValid() const;
         NODELETE void invalidate();

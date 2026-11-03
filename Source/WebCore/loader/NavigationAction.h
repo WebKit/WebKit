@@ -80,7 +80,7 @@ public:
     const std::optional<NavigationRequester>& requester() const LIFETIME_BOUND { return m_requester; }
 
     struct UIEventWithKeyStateData {
-        UIEventWithKeyStateData(const UIEventWithKeyState&);
+        NODELETE UIEventWithKeyStateData(const UIEventWithKeyState&);
 
         bool isTrusted;
         bool shiftKey;

@@ -118,7 +118,7 @@ private:
 class ScopedFlexBasisAsFlexItemMainSize {
 public:
     ScopedFlexBasisAsFlexItemMainSize(const FlexLayoutItem&, Style::PreferredSize&&);
-    ~ScopedFlexBasisAsFlexItemMainSize();
+    NODELETE ~ScopedFlexBasisAsFlexItemMainSize();
 
 private:
     const CheckedRef<RenderBox> m_flexItem;

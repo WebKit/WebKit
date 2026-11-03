@@ -50,8 +50,8 @@ using IDBResourceObjectIdentifier = AtomicObjectIdentifier<IDBResourceObjectIden
 
 class IDBResourceIdentifier {
 public:
-    explicit IDBResourceIdentifier(const IDBClient::IDBConnectionProxy&);
-    IDBResourceIdentifier(const IDBClient::IDBConnectionProxy&, const IDBRequest&);
+    NODELETE explicit IDBResourceIdentifier(const IDBClient::IDBConnectionProxy&);
+    NODELETE IDBResourceIdentifier(const IDBClient::IDBConnectionProxy&, const IDBRequest&);
     explicit IDBResourceIdentifier(const IDBServer::IDBConnectionToClient&);
 
     bool isEmpty() const
@@ -67,13 +67,13 @@ public:
 
     WEBCORE_EXPORT String loggingString() const;
 
-    WEBCORE_EXPORT IDBResourceIdentifier();
+    NODELETE WEBCORE_EXPORT IDBResourceIdentifier();
 private:
     friend struct IPC::ArgumentCoder<IDBResourceIdentifier>;
     friend struct IDBResourceIdentifierHashTraits;
     friend void add(Hasher&, const IDBResourceIdentifier&);
 
-    WEBCORE_EXPORT IDBResourceIdentifier(std::optional<IDBConnectionIdentifier>, std::optional<IDBResourceObjectIdentifier>);
+    NODELETE WEBCORE_EXPORT IDBResourceIdentifier(std::optional<IDBConnectionIdentifier>, std::optional<IDBResourceObjectIdentifier>);
 
     Markable<IDBConnectionIdentifier> m_idbConnectionIdentifier;
     Markable<IDBResourceObjectIdentifier> m_resourceNumber;

@@ -41,7 +41,7 @@ struct GridItemPlacementResult {
 
 class GridItemPlacer {
 public:
-    GridItemPlacer(GridAutoFlowOptions);
+    NODELETE GridItemPlacer(GridAutoFlowOptions);
 
     // Runs the grid item placement algorithm over the grid's in-flow children.
     GridItemPlacementResult placeItems(const LogicalGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount) const;

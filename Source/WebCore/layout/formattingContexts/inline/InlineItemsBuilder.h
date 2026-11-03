@@ -44,7 +44,7 @@ class InlineTextBox;
 
 class InlineItemsBuilder {
 public:
-    InlineItemsBuilder(InlineContentCache&, const ElementBox& root, const SecurityOrigin&);
+    NODELETE InlineItemsBuilder(InlineContentCache&, const ElementBox& root, const SecurityOrigin&);
     void build(InlineItemPosition startPosition);
 
     static void populateBreakingPositionCache(const InlineItemList&, const Document&, bool contentMayAdjustWidths);

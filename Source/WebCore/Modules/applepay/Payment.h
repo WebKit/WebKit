@@ -38,8 +38,8 @@ struct LocalizedApplePayPayment;
 
 class WEBCORE_EXPORT Payment {
 public:
-    Payment();
-    explicit Payment(RetainPtr<PKPayment>&&);
+    NODELETE Payment();
+    NODELETE explicit Payment(RetainPtr<PKPayment>&&);
     virtual ~Payment();
 
     virtual ApplePayPayment toApplePayPayment(unsigned version) const;

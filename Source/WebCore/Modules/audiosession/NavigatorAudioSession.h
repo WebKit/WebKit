@@ -39,7 +39,7 @@ class Navigator;
 class NavigatorAudioSession final : public Supplement<Navigator> {
     WTF_MAKE_TZONE_ALLOCATED(NavigatorAudioSession);
 public:
-    NavigatorAudioSession();
+    NODELETE NavigatorAudioSession();
     ~NavigatorAudioSession();
 
     static Ref<DOMAudioSession> audioSession(Navigator&);

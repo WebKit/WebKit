@@ -72,8 +72,8 @@ public:
         {
         }
 
-        Iterator(IndexValueStore&, IDBKeyDataSet::iterator, IndexValueEntry::Iterator);
-        Iterator(IndexValueStore&, CursorDuplicity, IDBKeyDataSet::reverse_iterator, IndexValueEntry::Iterator);
+        NODELETE Iterator(IndexValueStore&, IDBKeyDataSet::iterator, IndexValueEntry::Iterator);
+        NODELETE Iterator(IndexValueStore&, CursorDuplicity, IDBKeyDataSet::reverse_iterator, IndexValueEntry::Iterator);
 
         NODELETE void invalidate();
         NODELETE bool isValid();

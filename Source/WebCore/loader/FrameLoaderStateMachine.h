@@ -37,7 +37,7 @@ namespace WebCore {
 class FrameLoaderStateMachine {
     WTF_MAKE_NONCOPYABLE(FrameLoaderStateMachine);
 public:
-    FrameLoaderStateMachine();
+    NODELETE FrameLoaderStateMachine();
 
     // Once a load has been committed, the state may
     // alternate between CommittedFirstRealLoad and FirstLayoutDone.

@@ -94,7 +94,7 @@ public:
     // CBOR nested depth sufficient for most use cases.
     static const int kCBORMaxDepth = 16;
 
-    ~CBORReader();
+    NODELETE ~CBORReader();
 
     // Reads and parses |input_data| into a CBORValue. If any one of the syntax
     // formats is violated -including unknown additional info and incomplete

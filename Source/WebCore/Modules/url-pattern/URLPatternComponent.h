@@ -63,7 +63,7 @@ public:
     bool matchSpecialSchemeProtocol() const;
     std::optional<Vector<unsigned>> componentExec(StringView) const;
     URLPatternComponentResult createComponentMatchResult(String&& input, const Vector<unsigned>& offsets) const;
-    URLPatternComponent();
+    NODELETE URLPatternComponent();
     ~URLPatternComponent();
     URLPatternComponent(URLPatternComponent&&);
     URLPatternComponent& operator=(URLPatternComponent&&);

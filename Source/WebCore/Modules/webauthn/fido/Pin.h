@@ -112,7 +112,7 @@ struct RetriesResponse {
     uint64_t retries;
 
 private:
-    RetriesResponse();
+    NODELETE RetriesResponse();
 };
 
 // KeyAgreementRequest asks an authenticator for an ephemeral ECDH key for

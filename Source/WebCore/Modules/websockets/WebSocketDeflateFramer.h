@@ -44,7 +44,7 @@ struct WebSocketFrame;
 class DeflateResultHolder {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(DeflateResultHolder, WEBCORE_EXPORT);
 public:
-    explicit DeflateResultHolder(WebSocketDeflateFramer&);
+    NODELETE explicit DeflateResultHolder(WebSocketDeflateFramer&);
     WEBCORE_EXPORT ~DeflateResultHolder();
 
     bool succeeded() const { return m_succeeded; }
@@ -61,7 +61,7 @@ private:
 class InflateResultHolder {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(InflateResultHolder, WEBCORE_EXPORT);
 public:
-    explicit InflateResultHolder(WebSocketDeflateFramer&);
+    NODELETE explicit InflateResultHolder(WebSocketDeflateFramer&);
     WEBCORE_EXPORT ~InflateResultHolder();
 
     bool succeeded() const { return m_succeeded; }

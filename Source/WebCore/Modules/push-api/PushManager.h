@@ -42,7 +42,7 @@ class PushManager {
     WTF_MAKE_TZONE_ALLOCATED(PushManager);
 public:
     explicit PushManager(PushSubscriptionOwner&);
-    ~PushManager();
+    NODELETE ~PushManager();
 
     NODELETE void ref() const;
     void deref() const;

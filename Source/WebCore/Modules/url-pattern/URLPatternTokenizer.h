@@ -46,7 +46,7 @@ struct Token {
 
 class Tokenizer {
 public:
-    Tokenizer(StringView input, TokenizePolicy tokenizerPolicy);
+    NODELETE Tokenizer(StringView input, TokenizePolicy tokenizerPolicy);
 
     ExceptionOr<Vector<Token>> tokenize();
 

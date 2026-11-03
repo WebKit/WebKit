@@ -120,7 +120,7 @@ private:
     static bool appendTrailingInlineItemAsTrailingRun(RunList&, InlineLayoutUnit trimmedTrailingWhitespaceWidth, InlineItemRange, const InlineItemList&);
 
     struct TrimmableTrailingContent {
-        TrimmableTrailingContent(RunList&);
+        NODELETE TrimmableTrailingContent(RunList&);
 
         NODELETE void addFullyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableContentOffset, InlineLayoutUnit trimmableWidth);
         NODELETE void addPartiallyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth);

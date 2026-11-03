@@ -40,9 +40,9 @@ struct FileSystemHandleRecord;
 class IDBValue {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBValue, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT IDBValue();
+    NODELETE WEBCORE_EXPORT IDBValue();
     IDBValue(const SerializedScriptValue&);
-    WEBCORE_EXPORT IDBValue(const ThreadSafeDataBuffer&);
+    NODELETE WEBCORE_EXPORT IDBValue(const ThreadSafeDataBuffer&);
     IDBValue(const SerializedScriptValue&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths);
     WEBCORE_EXPORT IDBValue(const ThreadSafeDataBuffer&, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths, Vector<FileSystemHandleGlobalIdentifier>&& fileSystemHandleGlobalIdentifiers = { });
     IDBValue(const ThreadSafeDataBuffer&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, const Vector<FileSystemHandleGlobalIdentifier>& fileSystemHandleGlobalIdentifiers = { });

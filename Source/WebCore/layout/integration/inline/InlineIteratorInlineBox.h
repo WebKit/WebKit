@@ -33,7 +33,7 @@ namespace InlineIterator {
 
 class InlineBox : public Box {
 public:
-    InlineBox(const LayoutIntegration::InlineContent&, size_t boxIndex);
+    NODELETE InlineBox(const LayoutIntegration::InlineContent&, size_t boxIndex);
 
     const RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(Box::renderer()); }
 

@@ -41,7 +41,7 @@ public:
     operator bool() const { return !!m_resource; }
 
 protected:
-    WEBCORE_EXPORT CachedResourceHandleBase();
+    NODELETE WEBCORE_EXPORT CachedResourceHandleBase();
     WEBCORE_EXPORT explicit CachedResourceHandleBase(RefPtr<CachedResource>&&);
     WEBCORE_EXPORT explicit CachedResourceHandleBase(Ref<CachedResource>&&);
     WEBCORE_EXPORT CachedResourceHandleBase(const CachedResourceHandleBase&);

@@ -60,7 +60,7 @@ struct URLPatternStringOptions {
 
 class URLPatternParser {
 public:
-    URLPatternParser(EncodingCallbackType, String&& segmentWildcardRegexp);
+    NODELETE URLPatternParser(EncodingCallbackType, String&& segmentWildcardRegexp);
     ExceptionOr<void> performParse(const URLPatternStringOptions&);
 
     void setTokenList(Vector<Token>&& tokenList) { m_tokenList = WTF::move(tokenList); }

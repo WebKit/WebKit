@@ -34,7 +34,7 @@ namespace Layout {
 
 class LineBoxVerticalAligner {
 public:
-    LineBoxVerticalAligner(const InlineFormattingContext&);
+    NODELETE LineBoxVerticalAligner(const InlineFormattingContext&);
     InlineLayoutUnit computeLogicalHeightAndAlign(LineBox&, bool hasContentfulInlineContent) const;
 
 private:

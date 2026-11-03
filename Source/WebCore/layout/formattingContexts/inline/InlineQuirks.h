@@ -36,7 +36,7 @@ enum class IntrinsicWidthMode;
 
 class InlineQuirks {
 public:
-    InlineQuirks(const InlineFormattingContext&);
+    NODELETE InlineQuirks(const InlineFormattingContext&);
 
     NODELETE bool trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWidthMode, bool lineHasOverflow) const;
     NODELETE InlineLayoutUnit initialLineHeight() const;

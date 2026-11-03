@@ -36,7 +36,7 @@ struct GridLayoutState;
 
 class GridSizer {
 public:
-    GridSizer(const GridFormattingContext&, const GridLayoutState&);
+    NODELETE GridSizer(const GridFormattingContext&, const GridLayoutState&);
 
     // Runs step 1 of the grid sizing algorithm alone. Steps 2-4 cannot change the column sizes, so
     // a caller that only needs those can stop here and skip row sizing, grid-item layout, and

@@ -38,7 +38,7 @@ public:
     BoxGeometry(const BoxGeometry&);
     BoxGeometry& operator=(const BoxGeometry&);
     BoxGeometry() = default;
-    ~BoxGeometry();
+    NODELETE ~BoxGeometry();
 
     static LayoutUnit borderBoxTop(const BoxGeometry& box) { return box.top(); }
     static LayoutUnit borderBoxLeft(const BoxGeometry& box) { return box.left(); }

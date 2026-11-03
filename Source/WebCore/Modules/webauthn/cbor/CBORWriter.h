@@ -79,7 +79,7 @@ public:
     // Default that should be sufficiently large for most use cases.
     static constexpr size_t kDefaultMaxNestingDepth = 16;
 
-    ~CBORWriter();
+    NODELETE ~CBORWriter();
 
     // Returns the CBOR byte string representation of |node|, unless its nesting
     // depth is greater than |max_nesting_depth|, in which case an empty optional
@@ -90,7 +90,7 @@ public:
     WEBCORE_EXPORT static std::optional<Vector<uint8_t>> write(const CBORValue&, size_t maxNestingLevel = kDefaultMaxNestingDepth);
 
 private:
-    explicit CBORWriter(Vector<uint8_t>*);
+    NODELETE explicit CBORWriter(Vector<uint8_t>*);
 
     // Called recursively to build the CBOR bytestring. When completed,
     // |m_encodedCBOR| will contain the CBOR.

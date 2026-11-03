@@ -39,8 +39,8 @@ struct LocalizedApplePayPaymentContact;
 
 class WEBCORE_EXPORT PaymentContact {
 public:
-    PaymentContact();
-    explicit PaymentContact(RetainPtr<PKContact>&&);
+    NODELETE PaymentContact();
+    NODELETE explicit PaymentContact(RetainPtr<PKContact>&&);
     virtual ~PaymentContact();
 
     static PaymentContact fromApplePayPaymentContact(unsigned version, const ApplePayPaymentContact&);

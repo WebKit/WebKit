@@ -38,7 +38,7 @@ struct ApplePaySessionError;
 class WEBCORE_EXPORT PaymentSessionError {
 public:
     PaymentSessionError() = default;
-    PaymentSessionError(RetainPtr<NSError>&&);
+    NODELETE PaymentSessionError(RetainPtr<NSError>&&);
 
     ApplePaySessionError sessionError() const;
     RetainPtr<NSError> platformError() const;

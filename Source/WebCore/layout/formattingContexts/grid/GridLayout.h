@@ -44,7 +44,7 @@ struct UsedMargins;
 
 class GridLayout {
 public:
-    GridLayout(const GridFormattingContext&);
+    NODELETE GridLayout(const GridFormattingContext&);
 
     GridItemRects layout(const PlacedGridItems&, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions,
         const UsedTrackSizes&, const GridLayoutState&);

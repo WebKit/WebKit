@@ -41,7 +41,7 @@ enum class IntrinsicWidthMode;
 
 class InlineFormattingUtils {
 public:
-    InlineFormattingUtils(const InlineFormattingContext&);
+    NODELETE InlineFormattingUtils(const InlineFormattingContext&);
 
     InlineLayoutUnit logicalTopForNextLine(const LineLayoutResult&, const InlineRect& lineLogicalRect, const FloatingContext&) const;
 

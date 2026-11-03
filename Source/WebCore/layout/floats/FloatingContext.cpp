@@ -91,7 +91,7 @@ public:
 
 private:
     friend class Iterator;
-    FloatPair(const PlacedFloats::List&);
+    NODELETE FloatPair(const PlacedFloats::List&);
 
     const PlacedFloats::List& m_floats;
     InlineStartEndIndex m_floatPair;

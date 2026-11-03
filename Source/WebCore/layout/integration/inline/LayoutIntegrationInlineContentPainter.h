@@ -74,7 +74,7 @@ private:
 
 class LayerPaintScope {
 public:
-    LayerPaintScope(const RenderBoxModelObject* inlineBoxWithLayer);
+    NODELETE LayerPaintScope(const RenderBoxModelObject* inlineBoxWithLayer);
     bool testIsIncludesAndUpdate(const InlineDisplay::Box&);
 
 private:

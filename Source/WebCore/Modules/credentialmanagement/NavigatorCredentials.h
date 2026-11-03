@@ -41,7 +41,7 @@ class Navigator;
 class NavigatorCredentials final : public Supplement<Navigator> {
     WTF_MAKE_TZONE_ALLOCATED(NavigatorCredentials);
 public:
-    NavigatorCredentials();
+    NODELETE NavigatorCredentials();
     virtual ~NavigatorCredentials();
 
     static CredentialsContainer* credentials(Navigator&);

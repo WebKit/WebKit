@@ -37,7 +37,7 @@ namespace InlineIterator {
 
 class SVGTextBox : public TextBox {
 public:
-    SVGTextBox(const LayoutIntegration::InlineContent&, size_t boxIndex);
+    NODELETE SVGTextBox(const LayoutIntegration::InlineContent&, size_t boxIndex);
 
     FloatRect calculateBoundariesIncludingSVGTransform() const;
     static FloatRect calculateBoundariesIncludingSVGTransform(const RenderSVGInlineText&, std::span<const SVGTextFragment>);

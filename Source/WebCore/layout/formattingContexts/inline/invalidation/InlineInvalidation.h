@@ -46,7 +46,7 @@ struct InvalidatedLine;
 
 class InlineInvalidation {
 public:
-    InlineInvalidation(InlineDamage&, const InlineItemList&, const InlineDisplay::Content&);
+    NODELETE InlineInvalidation(InlineDamage&, const InlineItemList&, const InlineDisplay::Content&);
 
     bool rootStyleWillChange(const ElementBox& formattingContextRoot, const Style::ComputedStyle& newStyle);
     bool styleWillChange(const Box&, const Style::ComputedStyle& newStyle, Style::Difference);
