@@ -35,6 +35,19 @@
 namespace WebCore {
 namespace Layout {
 
+// "In the positioning phase—calculating the positioning offsets, margins, borders, and padding—the dimensions of the box and its containing block are
+// mapped to the inline size and block size and calculations are performed according to the writing mode of the containing block of the box establishing
+// the orthogonal flow." https://drafts.csswg.org/css-writing-modes-4/#orthogonal-flows
+// "A grid item is sized within the containing block defined by its grid area." https://drafts.csswg.org/css-grid-1/#grid-item-sizing
+// The grid area's axes are the grid container's, so the item's sizes and margins are mapped through the container's writing mode, not the item's own.
+// For an orthogonal item, the inline-axis sizes are therefore its block-size properties.
+static ComputedSizes computedSizesInContainerAxis(const Style::ComputedStyle& gridItemStyle, WritingMode gridContainerWritingMode, LogicalBoxAxis axis)
+{
+    if (axis == LogicalBoxAxis::Inline)
+        return { gridItemStyle.logicalWidth(gridContainerWritingMode), gridItemStyle.logicalMinWidth(gridContainerWritingMode), gridItemStyle.logicalMaxWidth(gridContainerWritingMode), gridItemStyle.marginStart(gridContainerWritingMode), gridItemStyle.marginEnd(gridContainerWritingMode) };
+    return { gridItemStyle.logicalHeight(gridContainerWritingMode), gridItemStyle.logicalMinHeight(gridContainerWritingMode), gridItemStyle.logicalMaxHeight(gridContainerWritingMode), gridItemStyle.marginBefore(gridContainerWritingMode), gridItemStyle.marginAfter(gridContainerWritingMode) };
+}
+
 PlacedGridItem::PlacedGridItem(const ElementBox& gridItem, const GridAreaLines& gridAreaLines, const Style::ComputedStyle& gridContainerStyle)
     : PlacedGridItem(gridItem, gridAreaLines, gridContainerStyle, gridItem.style())
 {
@@ -42,8 +55,8 @@ PlacedGridItem::PlacedGridItem(const ElementBox& gridItem, const GridAreaLines& 
 
 PlacedGridItem::PlacedGridItem(const ElementBox& gridItem, const GridAreaLines& gridAreaLines, const Style::ComputedStyle& gridContainerStyle, const Style::ComputedStyle& gridItemStyle)
     : m_layoutBox(gridItem)
-    , m_inlineAxisSizes({ gridItemStyle.width(), gridItemStyle.minWidth(), gridItemStyle.maxWidth(), gridItemStyle.marginLeft(), gridItemStyle.marginRight() })
-    , m_blockAxisSizes({ gridItemStyle.height(), gridItemStyle.minHeight(), gridItemStyle.maxHeight(), gridItemStyle.marginTop(), gridItemStyle.marginBottom() })
+    , m_inlineAxisSizes(computedSizesInContainerAxis(gridItemStyle, gridContainerStyle.writingMode(), LogicalBoxAxis::Inline))
+    , m_blockAxisSizes(computedSizesInContainerAxis(gridItemStyle, gridContainerStyle.writingMode(), LogicalBoxAxis::Block))
     , m_inlineAxisAlignment(gridItemStyle.justifySelf().resolve(&gridContainerStyle))
     , m_blockAxisAlignment(gridItemStyle.alignSelf().resolve(&gridContainerStyle))
     , m_writingMode(gridItemStyle.writingMode())

@@ -44,13 +44,14 @@ struct ComputedSizes {
     Style::MinimumSize minimumSize;
     Style::MaximumSize maximumSize;
 
+    // For the block axis these are the before and after margins.
     Style::MarginEdge marginStart;
     Style::MarginEdge marginEnd;
 };
 
 class PlacedGridItem {
 public:
-    PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const Style::ComputedStyle& gridContainerWritingMode);
+    PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const Style::ComputedStyle& gridContainerStyle);
 
     const ComputedSizes& inlineAxisSizes() const LIFETIME_BOUND { return m_inlineAxisSizes; }
     const ComputedSizes& blockAxisSizes() const LIFETIME_BOUND { return m_blockAxisSizes; }
@@ -73,7 +74,7 @@ public:
     const Style::ZoomFactor& usedZoom() const LIFETIME_BOUND { return m_usedZoom; }
 
 private:
-    PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const Style::ComputedStyle& gridContainerWritingMode, const Style::ComputedStyle& gridItemWritingMode);
+    PlacedGridItem(const ElementBox& gridItem, const GridAreaLines&, const Style::ComputedStyle& gridContainerStyle, const Style::ComputedStyle& gridItemStyle);
 
     const CheckedRef<const ElementBox> m_layoutBox;
 
