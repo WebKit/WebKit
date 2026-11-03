@@ -79,6 +79,14 @@ class TestRadar(unittest.TestCase):
             self.assertIsNone(tracker.library)
             self.assertIsNone(tracker.client)
 
+    def test_appleconnect_interactivity_default(self):
+        with mocks.Radar():
+            self.assertEqual(radar.Tracker().authentication().interactivity_type, 'gui')
+
+    def test_appleconnect_interactivity_from_environment(self):
+        with wkmocks.Environment(RADAR_INTERACTIVITY_TYPE='none'), mocks.Radar():
+            self.assertEqual(radar.Tracker().authentication().interactivity_type, 'none')
+
     def test_users(self):
         with mocks.Radar(users=mocks.USERS):
             tracker = radar.Tracker()
