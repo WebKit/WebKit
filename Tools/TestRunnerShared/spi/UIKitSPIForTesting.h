@@ -241,7 +241,8 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @end
 
 typedef NS_ENUM(NSInteger, UIWKGestureType) {
-    UIWKGestureLoupe
+    UIWKGestureLoupe = 0,
+    UIWKGestureTapAndAHalf = 2,
 };
 
 @class RVItem;

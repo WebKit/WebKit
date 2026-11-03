@@ -256,6 +256,21 @@ TEST(UIWKInteractionViewProtocol, TextInteractionCanBeginInExistingSelection)
     EXPECT_TRUE(allowsTextInteractionInsideSelection);
 }
 
+TEST(UIWKInteractionViewProtocol, TapAndAHalfDoesNotBeginInUserSelectNone)
+{
+    RetainPtr selectableWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    [selectableWebView synchronouslyLoadHTMLString:@"<body style='font-size: 20px;'>Hello world</body>"];
+    RetainPtr selectableContentView = [selectableWebView textInputContentView];
+    EXPECT_TRUE([selectableContentView textInteractionGesture:UIWKGestureLoupe shouldBeginAtPoint:CGPointMake(10, 20)]);
+    EXPECT_TRUE([selectableContentView textInteractionGesture:UIWKGestureTapAndAHalf shouldBeginAtPoint:CGPointMake(10, 20)]);
+
+    RetainPtr unselectableWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    [unselectableWebView synchronouslyLoadHTMLString:@"<body style='font-size: 20px; -webkit-user-select: none;'>Hello world</body>"];
+    RetainPtr unselectableContentView = [unselectableWebView textInputContentView];
+    EXPECT_FALSE([unselectableContentView textInteractionGesture:UIWKGestureLoupe shouldBeginAtPoint:CGPointMake(10, 20)]);
+    EXPECT_FALSE([unselectableContentView textInteractionGesture:UIWKGestureTapAndAHalf shouldBeginAtPoint:CGPointMake(10, 20)]);
+}
+
 TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextContainingEmojis)
 {
     auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
