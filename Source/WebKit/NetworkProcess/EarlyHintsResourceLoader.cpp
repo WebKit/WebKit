@@ -148,6 +148,8 @@ void EarlyHintsResourceLoader::startPreconnectTask(const URL& baseURL, const Lin
     if (!networkSession)
         return;
 
+    const auto& loaderParameters = loader->parameters();
+
     NetworkLoadParameters parameters;
     auto globalFrameID = loader->globalFrameID();
     parameters.webPageProxyID = globalFrameID.webPageProxyID;
@@ -158,7 +160,10 @@ void EarlyHintsResourceLoader::startPreconnectTask(const URL& baseURL, const Lin
     parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
     parameters.request = constructPreconnectRequest(originalRequest, url);
-    parameters.isNavigatingToAppBoundDomain = loader->parameters().isNavigatingToAppBoundDomain;
+    parameters.isNavigatingToAppBoundDomain = loaderParameters.isNavigatingToAppBoundDomain;
+    parameters.advancedPrivacyProtections = loaderParameters.advancedPrivacyProtections;
+    parameters.allowPrivacyProxy = loaderParameters.allowPrivacyProxy;
+    parameters.hadMainFrameMainResourcePrivateRelayed = loaderParameters.hadMainFrameMainResourcePrivateRelayed;
 
     startPreconnectTaskAfterContentRuleListCheck(WTF::move(parameters), originalRequest.url());
 #else
