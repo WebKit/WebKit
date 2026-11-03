@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<style id="tokens"></style>
+<style>
+.row { color: var(--fg-default); }
+.cell { border-color: var(--border-default); }
+</style>
+</head>
+<body>
+<div id="container"></div>
+</body>
+<script>
+// A design system exposes 2000 custom properties on the root, and a script changes one of them.
+let tokens = ":root {";
+for (let i = 0; i < 2000; ++i)
+    tokens += `--token-${i}: #${(i * 2654435761 % 0xffffff).toString(16).padStart(6, "0")};`;
+tokens += "--fg-default: #111; --border-default: #ccc; }";
+document.getElementById("tokens").textContent = tokens;
+
+let html = "";
+for (let i = 0; i < 3000; ++i)
+    html += `<div class="row"><span class="cell">${i}</span><span class="cell">a</span><span class="cell">b</span><span class="cell">c</span></div>`;
+const container = document.getElementById("container");
+container.innerHTML = html;
+container.offsetTop;
+
+let n = 0;
+PerfTestRunner.measureTime({run:function() {
+    const start = PerfTestRunner.now();
+    for (let i = 0; i < 10; ++i) {
+        document.documentElement.style.setProperty("--fg-default", n++ % 2 ? "#111" : "#112");
+        container.offsetTop;
+    }
+    return PerfTestRunner.now() - start;
+}});
+</script>
+</html>
