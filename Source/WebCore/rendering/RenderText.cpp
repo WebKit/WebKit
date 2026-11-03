@@ -1980,6 +1980,10 @@ void RenderText::updateRenderedText()
         container->invalidateLineLayout(RenderBlockFlow::InvalidationReason::ContentChange);
     };
     invalidateLineLayoutIfNeeded();
+
+    // Accessibility exposes the rendered text (e.g. the bullets of a password field), so it needs to hear about style driven changes too.
+    if (AXObjectCache* cache = document().existingAXObjectCache())
+        cache->deferTextChangedIfNeeded(protect(textNode()));
 }
 
 void RenderText::setText(const String& newContent, bool force)
