@@ -300,6 +300,48 @@ static Layout::OutOfFlowGeometry::StaticPosition staticPosition(const RenderBox&
     return result;
 }
 
+// The border box of the default anchor of a box that position-area or anchor-center positions against it, from the anchor's geometry in the
+// render tree, which is committed by the time the containing block lays out its out-of-flow boxes (PositionedLayoutConstraints::captureAnchorGeometry).
+static std::optional<Layout::OutOfFlowGeometry::DefaultAnchor> defaultAnchor(const RenderBox& outOfFlowBox, const RenderBlock& containingBlock)
+{
+    if (!Style::AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(outOfFlowBox.style()))
+        return { };
+    CheckedPtr anchor = Style::AnchorPositionEvaluator::defaultAnchorForBox(outOfFlowBox);
+    if (!anchor)
+        return { };
+    // Physical and relative to the border box of the containing block, scrolled to the start, but for a scrollbar on the left, which it takes
+    // off for PositionedLayoutConstraints, whose containing block starts at the border.
+    auto anchorRect = Style::AnchorPositionEvaluator::computeAnchorRectRelativeToContainingBlock(*anchor, containingBlock, outOfFlowBox);
+    if (containingBlock.shouldPlaceVerticalScrollbarOnLeft())
+        anchorRect.move(containingBlock.verticalScrollbarWidth(), 0);
+    auto writingMode = containingBlock.writingMode();
+    auto borderBoxSize = containingBlock.borderBoxSize();
+    if (!writingMode.isHorizontal()) {
+        anchorRect = anchorRect.transposedRect();
+        borderBoxSize = borderBoxSize.transposedSize();
+    }
+    if (writingMode.isBlockFlipped())
+        anchorRect.setY(borderBoxSize.height() - anchorRect.maxY());
+    auto paddingBox = logicalPaddingBoxRect(containingBlock);
+    auto inlineStart = writingMode.isLogicalLeftInlineStart() ? anchorRect.x() - paddingBox.x() : paddingBox.maxX() - anchorRect.maxX();
+    return Layout::OutOfFlowGeometry::DefaultAnchor { inlineStart, anchorRect.width(), anchorRect.y() - paddingBox.y(), anchorRect.height() };
+}
+
+// The padding box of a scroll container extended to its scrollable overflow (css-position-4 §2.2), relative to its padding box. In the box's
+// coordinates, which have the block start at the top or the left.
+static std::optional<LayoutRect> scrollableContainingBlock(const RenderBlock& containingBlock)
+{
+    if (!containingBlock.hasRenderOverflow() || !containingBlock.hasPotentiallyScrollableOverflow())
+        return { };
+    auto rect = containingBlock.scrollablePaddingAreaOverflowRect();
+    auto writingMode = containingBlock.writingMode();
+    if (!writingMode.isHorizontal())
+        rect = rect.transposedRect();
+    auto paddingBox = logicalPaddingBoxRect(containingBlock);
+    auto inlineStart = writingMode.isLogicalLeftInlineStart() ? rect.x() - paddingBox.x() : paddingBox.maxX() - rect.maxX();
+    return LayoutRect { inlineStart, rect.y() - paddingBox.y(), rect.width(), rect.height() };
+}
+
 // Like RenderBlock::layoutOutOfFlowBoxes once the containing block has its size: the out-of-flow boxes BlockLayout::updateRenderers registered
 // on it (RenderBlock::outOfFlowBoxes()).
 void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, PaintInvalidation& paintInvalidation)
@@ -309,7 +351,7 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
         return;
     auto paddingBox = logicalPaddingBoxRect(containingBlock);
     auto paddingBoxInlineStart = containingBlock.writingMode().isLogicalLeftInlineStart() ? paddingBox.x() : containingBlock.logicalWidth() - paddingBox.maxX();
-    auto outOfFlowContainingBlock = Layout::OutOfFlowContainingBlock { containingBlock, paddingBoxInlineStart, paddingBox.y(), paddingBox.width(), paddingBox.height() };
+    auto outOfFlowContainingBlock = Layout::OutOfFlowContainingBlock { containingBlock, paddingBoxInlineStart, paddingBox.y(), paddingBox.width(), paddingBox.height(), scrollableContainingBlock(containingBlock) };
     auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
     auto blockLayoutState = Layout::BlockLayoutState { { } };
     // Laying out a box registers the out-of-flow boxes in it, which can make the list grow while it is iterated (like in RenderBlock::layoutOutOfFlowBoxes).
@@ -318,7 +360,7 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
         // it when it lays the box out. Capturing again compares with the previous capture, which tells style resolution to resolve anchor()
         // and position-visibility again.
         auto capturesScrollSnapshots = outOfFlowBox->needsLayout() && Style::AnchorPositionEvaluator::isAnchorPositioned(outOfFlowBox->style());
-        auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layoutOutOfFlowBox(outOfFlowBox, outOfFlowContainingBlock, staticPosition(outOfFlowBox, containingBlock));
+        auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layoutOutOfFlowBox(outOfFlowBox, outOfFlowContainingBlock, staticPosition(outOfFlowBox, containingBlock), defaultAnchor(outOfFlowBox, containingBlock));
         LOG_WITH_STREAM(Layout, stream << "BlockLayout for out-of-flow box (" << outOfFlowBox.ptr() << "): " << result);
         updateRenderers(result, paintInvalidation);
         if (capturesScrollSnapshots)

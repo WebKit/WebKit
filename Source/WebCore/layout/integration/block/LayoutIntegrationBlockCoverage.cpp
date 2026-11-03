@@ -457,9 +457,9 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
         return BlockAvoidanceReason::ContentHasInlineBoxContainingBlock;
     CheckedRef style = outOfFlowBox.style();
     // Style resolution gives anchor() and anchor-size() their values and picks the position-try fallback (Style::AnchorPositionEvaluator).
-    // FIXME: position-area, which makes the containing block from the default anchor (css-anchor-position-1 §3.1), and alignment other
-    // than normal (css-position-3 §4.5).
-    if (Style::AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(style.get()))
+    // FIXME: position-area and anchor-center without a default anchor, which leave the render tree path in between static and anchored
+    // positioning (PositionedLayoutConstraints::captureInsets, resolveAlignmentValue).
+    if (Style::AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(style.get()) && !Style::AnchorPositionEvaluator::defaultAnchorForBox(outOfFlowBox))
         return BlockAvoidanceReason::ContentHasAnchorPositioning;
     // FIXME: A grid that aligns the static position of its out-of-flow child (PositionedLayoutConstraints::remainingSpaceForStaticAlignment).
     if (CheckedPtr grid = dynamicDowncast<RenderGrid>(outOfFlowBox.parent()); grid && !style->alignSelf().resolve(&grid->style()).isNormalStretchOrLegacy())
