@@ -26,6 +26,9 @@
 #pragma once
 
 #include "WebSocketChannel.h"
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace IPC {
 class Connection;
@@ -52,12 +55,13 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     void addChannel(WebSocketChannel&);
-    void removeChannel(WebSocketChannel& channel) { m_channels.remove(channel.identifier() ); }
+    void removeChannel(WebSocketChannel&);
 
-    bool hasReachedSocketLimit() const { return m_channels.size() >= maximumSocketCount; }
+    bool hasReachedSocketLimit() const;
 
 private:
-    HashMap<WebCore::WebSocketIdentifier, WeakPtr<WebSocketChannel>> m_channels;
+    mutable Lock m_lock;
+    HashMap<WebCore::WebSocketIdentifier, ThreadSafeWeakPtr<WebSocketChannel>> m_channels WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace WebKit

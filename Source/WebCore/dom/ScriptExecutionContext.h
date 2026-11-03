@@ -401,6 +401,8 @@ public:
     void clearMicrotaskGlobalObjects();
     virtual bool isEventLoopGroupStoppedPermanently() const { return false; }
 
+    WEBCORE_EXPORT GuaranteedSerialFunctionDispatcher& nativePromiseDispatcher();
+
 protected:
     class AddConsoleMessageTask : public Task {
     public:
@@ -435,7 +437,6 @@ private:
     RejectedPromiseTracker* ensureRejectedPromiseTrackerSlow();
 
     void LEGACY_NODELETE checkConsistency() const;
-    WEBCORE_EXPORT GuaranteedSerialFunctionDispatcher& nativePromiseDispatcher();
 
     WeakHashSet<MessagePort, WeakPtrImplWithEventTargetData> m_messagePorts;
     WeakHashSet<ContextDestructionObserver> m_destructionObservers;
