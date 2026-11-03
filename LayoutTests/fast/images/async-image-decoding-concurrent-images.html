@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <style>
+        #images { position: fixed; top: 0; right: 0; display: grid; grid-template-columns: repeat(40, 10px); }
+        #images img { width: 10px; height: 10px; }
+    </style>
+</head>
+<body>
+    <div id="images"></div>
+    <script>
+        description("Many independent animated images must finish asynchronous decoding without exhausting decoding workers.");
+        jsTestIsAsync = true;
+        var completedImages = 0;
+
+        (async () => {
+            internals.clearMemoryCache();
+            const images = await Promise.all(Array.from({ length: 600 }, async (_, index) => {
+                const image = new Image;
+                await new Promise((resolve, reject) => {
+                    image.onload = resolve;
+                    image.onerror = reject;
+                    // Distinct URLs prevent the images from sharing one decoder.
+                    image.src = `resources/animated-red-green-blue-repeat-infinite.gif?concurrent-${index}`;
+                });
+                internals.setAsyncDecodingEnabledForTesting(image, true);
+                return image;
+            }));
+            await Promise.all(images.map(image => image.decode()));
+            for (const image of images)
+                internals.setImageFrameDecodingDuration(image, 0.05);
+            document.getElementById("images").append(...images);
+            document.body.offsetHeight;
+            testRunner.display();
+            // Keep the animations visible while all their next-frame requests finish.
+            await Promise.all(images.map(image => image.decode()));
+            completedImages = images.filter(image => internals.imageDecodeCount(image) >= 2).length;
+            shouldBe("completedImages", "600");
+        })().catch(error => testFailed(String(error))).finally(() => {
+            document.getElementById("images").remove();
+            finishJSTest();
+        });
+    </script>
+</body>
+</html>

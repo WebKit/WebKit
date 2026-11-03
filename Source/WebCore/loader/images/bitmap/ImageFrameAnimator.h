@@ -58,6 +58,7 @@ public:
 
     bool hasEverAnimated() const { return !!m_desiredFrameStartTime; }
     unsigned currentFrameIndex() const { return m_currentFrameIndex; }
+    unsigned nextFrameIndex() const { return (m_currentFrameIndex + 1) % m_frameCount; }
 
     void dump(TextStream&) const;
 
@@ -67,8 +68,6 @@ private:
     void startTimer(Seconds delay);
     void clearTimer();
     void timerFired();
-
-    unsigned nextFrameIndex() const { return (m_currentFrameIndex + 1) % m_frameCount; }
 
     UTF8CString sourceUTF8() const;
 
