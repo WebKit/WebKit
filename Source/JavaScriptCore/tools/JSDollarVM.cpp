@@ -62,6 +62,7 @@
 #include "OperationResult.h"
 #include "Options.h"
 #include "Parser.h"
+#include "PreventCollectionScope.h"
 #include "ProbeContext.h"
 #include "PropertyInlineCacheClearingWatchpoint.h"
 #include "Scribble.h"
@@ -4022,11 +4023,11 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateCustomTestGetterSetterWithSharedStructure
     return JSValue::encode(JSTestCustomGetterSetter::create(vm, globalObject, dollarVM->testCustomGetterSetterStructure()));
 }
 
-// Usage: $vm.installPropertyInlineCacheClearingWatchpointWithDeadOwner(proto, "propertyName") Creates a
+// Usage: $vm.installPropertyInlineCacheClearingWatchpointWithDeadOwner(proto, "propertyName", sibling) Creates a
 //
 // PolymorphicAccessJITStubRoutine with an AdaptiveValuePropertyInlineCacheClearingWatchpoint installed on
 // proto's Structure for the given Equivalence property condition, then simulates the dead-owner
-// state.
+// state while it transitions sibling, which shares proto's Structure, to fire the watchpoint.
 JSC_DEFINE_HOST_FUNCTION(functionInstallPropertyInlineCacheClearingWatchpointWithDeadOwner, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
 #if ENABLE(JIT)
@@ -4037,11 +4038,14 @@ JSC_DEFINE_HOST_FUNCTION(functionInstallPropertyInlineCacheClearingWatchpointWit
     RELEASE_ASSERT(proto);
     JSString* propNameStr = dynamicDowncast<JSString>(callFrame->argument(1));
     RELEASE_ASSERT(propNameStr);
+    JSObject* sibling = dynamicDowncast<JSObject>(callFrame->argument(2));
+    RELEASE_ASSERT(sibling);
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto propertyName = propNameStr->toIdentifier(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     Structure* structure = proto->structure();
+    RELEASE_ASSERT(sibling->structure() == structure);
     PropertyOffset offset = structure->get(vm, propertyName);
     RELEASE_ASSERT(isValidOffset(offset));
     JSValue value = proto->getDirect(offset);
@@ -4077,8 +4081,15 @@ JSC_DEFINE_HOST_FUNCTION(functionInstallPropertyInlineCacheClearingWatchpointWit
     RELEASE_ASSERT(dollarVM);
     dollarVM->m_testStubRoutine = WTF::move(stub);
 
-    // Scribble proto's cell header to simulate a swept dead cell.
+    // Scribble proto's cell header to simulate a swept dead cell. proto is live, so no collection may see it scribbled.
+    PreventCollectionScope preventCollectionScope(vm.heap);
+    DeferGC deferGC(vm);
+    static_assert(sizeof(JSCell) == sizeof(uint64_t));
+    auto* header = std::bit_cast<uint64_t*>(proto);
+    uint64_t savedHeader = *header;
     scribble(proto, sizeof(JSCell));
+    sibling->putDirect(vm, Identifier::fromString(vm, "triggerTransition"_s), jsBoolean(true));
+    *header = savedHeader;
 
     return JSValue::encode(jsUndefined());
 #else
@@ -4898,7 +4909,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, allowIfNotFuzz, "loadGetterFromGetterSetter"_s, functionLoadGetterFromGetterSetter, 1);
     addFunction(vm, alwaysAllow, "createCustomTestGetterSetter"_s, functionCreateCustomTestGetterSetter, 1);
     addFunction(vm, allowIfNotFuzz, "createCustomTestGetterSetterWithSharedStructure"_s, functionCreateCustomTestGetterSetterWithSharedStructure, 0);
-    addFunction(vm, allowIfNotFuzz, "installPropertyInlineCacheClearingWatchpointWithDeadOwner"_s, functionInstallPropertyInlineCacheClearingWatchpointWithDeadOwner, 2);
+    addFunction(vm, allowIfNotFuzz, "installPropertyInlineCacheClearingWatchpointWithDeadOwner"_s, functionInstallPropertyInlineCacheClearingWatchpointWithDeadOwner, 3);
 
     addFunction(vm, allowIfNotFuzz, "deltaBetweenButterflies"_s, functionDeltaBetweenButterflies, 2);
     
