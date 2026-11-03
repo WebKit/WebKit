@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 <title>CSS Text Decoration: text-decoration-inset keeps a single decoration continuous across a bidi run boundary</title>
 <link rel="help" href="https://drafts.csswg.org/css-text-decor-4/#text-decoration-inset-property">
-<link rel="match" href="text-decoration-inset-bidi-seam-expected.html">
+<link rel="match" href="text-decoration-inset-bidi-seam-ref.html">
 <meta name="assert" content="A single underline spanning a bidi direction boundary is painted as one segment per run. text-decoration-inset applies the whole-decoration shift to every segment (so an interior seam between runs moves with the decoration rather than being pinned) and the extend/trim overhang only at the segment reaching the decoration's visual start/end, so the underline stays continuous. Regression test for the seam between bidi runs being misplaced.">
 <link rel="stylesheet" href="/fonts/ahem.css">
 <style>
