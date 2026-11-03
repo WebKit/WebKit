@@ -453,7 +453,7 @@ public:
     void add64(RegisterID src, Address dest)
     {
         load64(dest, getCachedDataTempRegisterIDAndInvalidate());
-        m_assembler.add<64>(src, dataTempRegister, dataTempRegister);
+        m_assembler.add<64>(dataTempRegister, dataTempRegister, src);
         store64(dataTempRegister, dest);
     }
 
@@ -1341,8 +1341,8 @@ public:
 
     void or32(TrustedImm32 imm, Address address)
     {
-        load32(address, getCachedDataTempRegisterIDAndInvalidate());
-        or32(imm, dataTempRegister, dataTempRegister);
+        load32(address, getCachedMemoryTempRegisterIDAndInvalidate());
+        or32(imm, memoryTempRegister, getCachedDataTempRegisterIDAndInvalidate());
         store32(dataTempRegister, address);
     }
 
@@ -1952,7 +1952,7 @@ public:
             return;
         }
         loadFloat(Address(src, offset.m_value), dest1);
-        loadFloat(Address(src, offset.m_value + 8), dest2);
+        loadFloat(Address(src, offset.m_value + 4), dest2);
     }
 
     void loadPairFloat(Address src, FPRegisterID dest1, FPRegisterID dest2)
@@ -2597,7 +2597,7 @@ public:
             return;
         }
         storeFloat(src1, Address(dest, offset.m_value));
-        storeFloat(src2, Address(dest, offset.m_value + 8));
+        storeFloat(src2, Address(dest, offset.m_value + 4));
     }
 
     void storePairFloat(FPRegisterID src1, FPRegisterID src2, Address dest)
@@ -2876,7 +2876,10 @@ public:
 
     void getEffectiveAddress(BaseIndex address, RegisterID dest)
     {
-        m_assembler.add<64>(dest, address.base, address.index, Assembler::LSL, address.scale);
+        if (address.extend == Extend::None)
+            m_assembler.add<64>(dest, address.base, address.index, Assembler::LSL, address.scale);
+        else
+            m_assembler.add<64>(dest, address.base, address.index, indexExtendType(address), address.scale);
         if (address.offset)
             add64(TrustedImm32(address.offset), dest);
     }
@@ -3211,7 +3214,7 @@ public:
 
     void loadVector(BaseIndex address, FPRegisterID dest)
     {
-        if (address.scale == TimesOne || address.scale == TimesEight) {
+        if (address.scale == TimesOne) {
             if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
                 m_assembler.ldr<128>(dest, baseGPR.value(), address.index, indexExtendType(address), address.scale);
                 return;
@@ -3298,7 +3301,7 @@ public:
 
     void loadFloat16(BaseIndex address, FPRegisterID dest)
     {
-        if (address.scale == TimesOne || address.scale == TimesFour) {
+        if (address.scale == TimesOne || address.scale == TimesTwo) {
             if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
                 m_assembler.ldr<16>(dest, baseGPR.value(), address.index, indexExtendType(address), address.scale);
                 return;
@@ -4138,7 +4141,7 @@ public:
     void storeVector(FPRegisterID src, BaseIndex address)
     {
         ASSERT(Options::useWasmSIMD());
-        if (address.scale == TimesOne || address.scale == TimesEight) {
+        if (address.scale == TimesOne) {
             if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
                 m_assembler.str<128>(src, baseGPR.value(), address.index, indexExtendType(address), address.scale);
                 return;
@@ -4161,7 +4164,7 @@ public:
 
     void storeFloat16(FPRegisterID src, BaseIndex address)
     {
-        if (address.scale == TimesOne || address.scale == TimesFour) {
+        if (address.scale == TimesOne || address.scale == TimesTwo) {
             if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
                 m_assembler.str<16>(src, baseGPR.value(), address.index, indexExtendType(address), address.scale);
                 return;
@@ -4313,7 +4316,7 @@ public:
 
     void pushToSave(Address address)
     {
-        load32(address, getCachedDataTempRegisterIDAndInvalidate());
+        load64(address, getCachedDataTempRegisterIDAndInvalidate());
         pushToSave(dataTempRegister);
     }
 
@@ -5000,6 +5003,7 @@ public:
                 return Jump(makeBranch(cond));
             }
 
+            ASSERT(reg != dataTempRegister);
             signExtend32ToPtr(mask, getCachedDataTempRegisterIDAndInvalidate());
             m_assembler.tst<64>(reg, dataTempRegister);
         }
@@ -5022,6 +5026,7 @@ public:
                 return Jump(makeBranch(cond));
             }
 
+            ASSERT(reg != dataTempRegister);
             move(mask, getCachedDataTempRegisterIDAndInvalidate());
             m_assembler.tst<64>(reg, dataTempRegister);
         }
@@ -5036,20 +5041,20 @@ public:
 
     Jump branchTest64(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        load64(address, getCachedDataTempRegisterIDAndInvalidate());
-        return branchTest64(cond, dataTempRegister, mask);
+        load64(address, getCachedMemoryTempRegisterIDAndInvalidate());
+        return branchTest64(cond, memoryTempRegister, mask);
     }
 
     Jump branchTest64(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        load64(address, getCachedDataTempRegisterIDAndInvalidate());
-        return branchTest64(cond, dataTempRegister, mask);
+        load64(address, getCachedMemoryTempRegisterIDAndInvalidate());
+        return branchTest64(cond, memoryTempRegister, mask);
     }
 
     Jump branchTest64(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        load64(address.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
-        return branchTest64(cond, dataTempRegister, mask);
+        load64(address.m_ptr, memoryTempRegister);
+        return branchTest64(cond, memoryTempRegister, mask);
     }
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
@@ -7817,7 +7822,8 @@ protected:
 
             if ((addressAsInt & (~maskHalfWord0)) == (currentRegisterContents & (~maskHalfWord0))) {
                 m_assembler.movk<64>(memoryTempRegister, addressAsInt & maskHalfWord0, 0);
-                cachedMemoryTempRegister().setValue(reinterpret_cast<intptr_t>(address));
+                if (dest != memoryTempRegister)
+                    cachedMemoryTempRegister().setValue(reinterpret_cast<intptr_t>(address));
                 if constexpr (datasize == 16)
                     m_assembler.ldrh(dest, memoryTempRegister, ARM64Registers::zr);
                 else
@@ -8233,8 +8239,11 @@ protected:
     RegisterID extractSimpleAddress(BaseIndex address)
     {
         RegisterID result = getCachedMemoryTempRegisterIDAndInvalidate();
-        lshift64(address.index, TrustedImm32(address.scale), result);
-        add64(address.base, result);
+        if (address.extend == Extend::None) {
+            lshift64(address.index, TrustedImm32(address.scale), result);
+            add64(address.base, result);
+        } else
+            m_assembler.add<64>(result, address.base, address.index, indexExtendType(address), address.scale);
         add64(TrustedImm32(address.offset), result);
         return result;
     }

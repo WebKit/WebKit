@@ -408,6 +408,132 @@ static void testBranch32()
 }
 
 #if CPU(X86_64) || CPU(ARM64)
+static void testBranchTest64WithImm32Mask()
+{
+    static constexpr int32_t masks[] = { 5, 0x12345, -2, 1, -1, 0x40000000 };
+    static constexpr int64_t values[] = { 0, 1, 4, 5, 0x100000000LL, 0x80000000LL, -1, std::numeric_limits<int64_t>::min(), 0x12340, 0x7ffffffffffffffeLL };
+    static constexpr CCallHelpers::ResultCondition conditions[] = { CCallHelpers::Zero, CCallHelpers::NonZero, CCallHelpers::Signed, CCallHelpers::PositiveOrZero };
+
+    auto expectedResult = [](CCallHelpers::ResultCondition cond, int64_t value, int32_t mask) -> int {
+        int64_t result = value & static_cast<int64_t>(mask);
+        switch (cond) {
+        case CCallHelpers::Zero:
+            return !result;
+        case CCallHelpers::NonZero:
+            return !!result;
+        case CCallHelpers::Signed:
+            return result < 0;
+        case CCallHelpers::PositiveOrZero:
+            return result >= 0;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        return 0;
+    };
+
+    for (int32_t mask : masks) {
+        for (auto cond : conditions) {
+            auto emitResult = [](CCallHelpers& jit, CCallHelpers::Jump taken) {
+                jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+                auto done = jit.jump();
+                taken.link(&jit);
+                jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+                done.link(&jit);
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            };
+            auto testRegister = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                emitResult(jit, jit.branchTest64(cond, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(mask)));
+            });
+            auto testAddress = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                emitResult(jit, jit.branchTest64(cond, CCallHelpers::Address(GPRInfo::argumentGPR0, 8), CCallHelpers::TrustedImm32(mask)));
+            });
+            auto testBaseIndex = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                emitResult(jit, jit.branchTest64(cond, CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesEight), CCallHelpers::TrustedImm32(mask)));
+            });
+
+            for (int64_t value : values) {
+                int expected = expectedResult(cond, value, mask);
+                int64_t memory[2] = { 0, value };
+                CHECK_EQ(invoke<int>(testRegister, value), expected);
+                CHECK_EQ(invoke<int>(testAddress, memory), expected);
+                CHECK_EQ(invoke<int>(testBaseIndex, memory, static_cast<int64_t>(1)), expected);
+
+                static int64_t absoluteMemory[2];
+                absoluteMemory[1] = value;
+                auto testAbsoluteAddress = compile([=](CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+                    emitResult(jit, jit.branchTest64(cond, CCallHelpers::AbsoluteAddress(&absoluteMemory[1]), CCallHelpers::TrustedImm32(mask)));
+                });
+                CHECK_EQ(invoke<int>(testAbsoluteAddress), expected);
+                // The first load leaves a nearby address cached, so the branch's load is relative to it on ARM64.
+                auto testAbsoluteAddressAfterLoad = compile([=](CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+                    jit.load64(&absoluteMemory[0], GPRInfo::argumentGPR2);
+                    emitResult(jit, jit.branchTest64(cond, CCallHelpers::AbsoluteAddress(&absoluteMemory[1]), CCallHelpers::TrustedImm32(mask)));
+                });
+                CHECK_EQ(invoke<int>(testAbsoluteAddressAfterLoad), expected);
+            }
+        }
+    }
+}
+#endif
+
+#if CPU(X86_64) || CPU(ARM64)
+static void testOr32ImmToAddress()
+{
+    static constexpr int32_t immediates[] = { 0, -1, 1, 5, 0x12345, static_cast<int32_t>(0x80000001) };
+    static constexpr int32_t offsets[] = { 8, 0x10000 };
+
+    for (int32_t immediate : immediates) {
+        for (int32_t offset : offsets) {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.or32(CCallHelpers::TrustedImm32(immediate), CCallHelpers::Address(GPRInfo::argumentGPR0, offset));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            for (uint32_t value : { 0U, 0x10U, 0xffffffffU, 0x80000000U }) {
+                uint32_t memory[3] = { 0xaaaaaaaa, value, 0xbbbbbbbb };
+                invoke<void>(test, std::bit_cast<uintptr_t>(&memory[1]) - offset);
+                CHECK_EQ(memory[0], 0xaaaaaaaaU);
+                CHECK_EQ(memory[1], value | static_cast<uint32_t>(immediate));
+                CHECK_EQ(memory[2], 0xbbbbbbbbU);
+            }
+        }
+    }
+}
+#endif
+
+#if CPU(X86_64) || CPU(ARM64)
+static void testAdd64RegisterToAddress()
+{
+    static constexpr int32_t offsets[] = { 8, 0x10000 };
+    for (int32_t offset : offsets) {
+        auto test = compile([=](CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            jit.add64(GPRInfo::argumentGPR1, CCallHelpers::Address(GPRInfo::argumentGPR0, offset));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        for (int64_t value : int64Operands()) {
+            for (int64_t addend : { static_cast<int64_t>(0), static_cast<int64_t>(7), static_cast<int64_t>(-1), std::numeric_limits<int64_t>::min() }) {
+                int64_t memory[3] = { 0x1111, value, 0x2222 };
+                CHECK_EQ(invoke<int64_t>(test, std::bit_cast<uintptr_t>(&memory[1]) - offset, addend), addend);
+                CHECK_EQ(memory[0], 0x1111);
+                CHECK_EQ(memory[1], static_cast<int64_t>(static_cast<uint64_t>(value) + static_cast<uint64_t>(addend)));
+                CHECK_EQ(memory[2], 0x2222);
+            }
+        }
+    }
+}
+#endif
+
+#if CPU(X86_64) || CPU(ARM64)
 static void testBranch64()
 {
     auto compare = [](CCallHelpers::RelationalCondition cond, int64_t v1, int64_t v2) -> int {
@@ -4680,6 +4806,228 @@ void testAtomicRelaxedCAS()
             result = invoke<uint64_t>(weak64, &memory, 0x1234567800000005ULL, 0x8765432100000007ULL);
         CHECK_EQ(result, 1U);
         CHECK_EQ(memory, 0x8765432100000007ULL);
+    }
+}
+
+void testLoadStoreFloat16BaseIndex()
+{
+    static constexpr CCallHelpers::Scale scales[] = { CCallHelpers::TimesOne, CCallHelpers::TimesTwo, CCallHelpers::TimesFour, CCallHelpers::TimesEight };
+    static constexpr int32_t offsets[] = { 0, 2, -2, 6 };
+    static constexpr unsigned baseOffset = 64;
+
+    for (auto scale : scales) {
+        for (int32_t offset : offsets) {
+            auto load = compile([&](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.loadFloat16(CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, scale, offset), FPRInfo::fpRegT0);
+                jit.moveFloatTo32(FPRInfo::fpRegT0, GPRInfo::returnValueGPR);
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            auto store = compile([&](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.move32ToFloat(GPRInfo::argumentGPR2, FPRInfo::fpRegT0);
+                jit.storeFloat16(FPRInfo::fpRegT0, CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, scale, offset));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            for (uint64_t index : { 0, 2, 6 }) {
+                alignas(16) uint16_t buffer[128];
+                for (unsigned i = 0; i < std::size(buffer); ++i)
+                    buffer[i] = static_cast<uint16_t>(0x1000 + i);
+                uint8_t* base = reinterpret_cast<uint8_t*>(buffer) + baseOffset;
+                unsigned element = (baseOffset + (index << scale) + offset) / sizeof(uint16_t);
+
+                CHECK_EQ(invoke<uint32_t>(load, base, index), buffer[element]);
+
+                invoke<void>(store, base, index, static_cast<uint64_t>(0xbeef));
+                for (unsigned i = 0; i < std::size(buffer); ++i)
+                    CHECK_EQ(buffer[i], i == element ? 0xbeef : 0x1000 + i);
+            }
+        }
+    }
+}
+
+void testLoadStoreVectorBaseIndex()
+{
+    static constexpr CCallHelpers::Scale scales[] = { CCallHelpers::TimesOne, CCallHelpers::TimesTwo, CCallHelpers::TimesFour, CCallHelpers::TimesEight };
+    static constexpr int32_t offsets[] = { 0, 16, -16, 32 };
+    static constexpr unsigned baseOffset = 64;
+
+    for (auto scale : scales) {
+        for (int32_t offset : offsets) {
+            auto load = compile([&](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.loadVector(CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, scale, offset), FPRInfo::fpRegT0);
+                jit.storeVector(FPRInfo::fpRegT0, CCallHelpers::Address(GPRInfo::argumentGPR2));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            auto store = compile([&](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.loadVector(CCallHelpers::Address(GPRInfo::argumentGPR2), FPRInfo::fpRegT0);
+                jit.storeVector(FPRInfo::fpRegT0, CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, scale, offset));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            for (uint64_t index : { 0, 2, 6 }) {
+                alignas(16) uint8_t buffer[256];
+                for (unsigned i = 0; i < std::size(buffer); ++i)
+                    buffer[i] = static_cast<uint8_t>(i);
+                uint8_t* base = buffer + baseOffset;
+                unsigned start = baseOffset + (index << scale) + offset;
+
+                alignas(16) uint8_t vector[16];
+                invoke<void>(load, base, index, vector);
+                for (unsigned i = 0; i < std::size(vector); ++i)
+                    CHECK_EQ(vector[i], buffer[start + i]);
+
+                for (unsigned i = 0; i < std::size(vector); ++i)
+                    vector[i] = static_cast<uint8_t>(0xa0 + i);
+                invoke<void>(store, base, index, vector);
+                for (unsigned i = 0; i < std::size(buffer); ++i)
+                    CHECK_EQ(buffer[i], (i >= start && i < start + 16) ? 0xa0 + i - start : i);
+            }
+        }
+    }
+}
+
+void testLoadStorePairFloat()
+{
+    // The offsets that the pair instructions cannot encode take the two-instruction fallback.
+    static constexpr int32_t offsets[] = { 0, 4, -256, 252, 256, -260, 2, 1000 };
+    static constexpr int32_t baseOffset = 512;
+
+    for (int32_t offset : offsets) {
+        auto load = compile([&](CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            jit.loadPairFloat(CCallHelpers::Address(GPRInfo::argumentGPR0, offset), FPRInfo::fpRegT0, FPRInfo::fpRegT1);
+            jit.moveFloatTo32(FPRInfo::fpRegT0, GPRInfo::argumentGPR2);
+            jit.moveFloatTo32(FPRInfo::fpRegT1, GPRInfo::argumentGPR3);
+            jit.store32(GPRInfo::argumentGPR2, CCallHelpers::Address(GPRInfo::argumentGPR1));
+            jit.store32(GPRInfo::argumentGPR3, CCallHelpers::Address(GPRInfo::argumentGPR1, 4));
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        auto store = compile([&](CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            jit.move32ToFloat(GPRInfo::argumentGPR1, FPRInfo::fpRegT0);
+            jit.move32ToFloat(GPRInfo::argumentGPR2, FPRInfo::fpRegT1);
+            jit.storePairFloat(FPRInfo::fpRegT0, FPRInfo::fpRegT1, CCallHelpers::Address(GPRInfo::argumentGPR0, offset));
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        alignas(16) uint8_t buffer[2048];
+        alignas(16) uint8_t expected[2048];
+        for (unsigned i = 0; i < std::size(buffer); ++i)
+            buffer[i] = expected[i] = static_cast<uint8_t>(i * 7);
+        uint8_t* base = buffer + baseOffset;
+        unsigned start = baseOffset + offset;
+        auto word = [&](unsigned byteOffset) {
+            return static_cast<uint32_t>(buffer[byteOffset] | (buffer[byteOffset + 1] << 8) | (buffer[byteOffset + 2] << 16) | (static_cast<uint32_t>(buffer[byteOffset + 3]) << 24));
+        };
+
+        uint32_t pair[2] = { };
+        invoke<void>(load, base, pair);
+        CHECK_EQ(pair[0], word(start));
+        CHECK_EQ(pair[1], word(start + 4));
+
+        constexpr uint32_t value1 = 0x11223344;
+        constexpr uint32_t value2 = 0x55667788;
+        invoke<void>(store, base, static_cast<uint64_t>(value1), static_cast<uint64_t>(value2));
+        for (unsigned i = 0; i < 4; ++i) {
+            expected[start + i] = static_cast<uint8_t>(value1 >> (i * 8));
+            expected[start + 4 + i] = static_cast<uint8_t>(value2 >> (i * 8));
+        }
+        for (unsigned i = 0; i < std::size(buffer); ++i)
+            CHECK_EQ(buffer[i], expected[i]);
+    }
+}
+
+static void testBaseIndexExtendInEffectiveAddressAndLoadAcq()
+{
+    struct Case {
+        CCallHelpers::Extend extend;
+        uint64_t index;
+        int64_t effectiveIndex;
+    };
+    static constexpr Case cases[] = {
+        { CCallHelpers::Extend::ZExt32, 0xffffffff00000003ULL, 3 },
+        { CCallHelpers::Extend::SExt32, 0x12345678ffffffffULL, -1 },
+        { CCallHelpers::Extend::None, 2, 2 },
+    };
+    static constexpr int32_t offset = 8;
+
+    for (auto& testCase : cases) {
+        CCallHelpers::BaseIndex address(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesFour, offset, testCase.extend);
+        auto effectiveAddress = compile([=](CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            jit.getEffectiveAddress(address, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        auto loadAcq = compile([=](CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            jit.loadAcq32(address, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        alignas(16) uint32_t buffer[16];
+        for (unsigned i = 0; i < std::size(buffer); ++i)
+            buffer[i] = 0x100 + i;
+        uint32_t* base = &buffer[4];
+        uintptr_t expected = std::bit_cast<uintptr_t>(base) + testCase.effectiveIndex * 4 + offset;
+        CHECK_EQ(invoke<uintptr_t>(effectiveAddress, base, testCase.index), expected);
+        CHECK_EQ(invoke<uint32_t>(loadAcq, base, testCase.index), *std::bit_cast<uint32_t*>(expected));
+
+        CHECK_EQ(address.withOffset(4).extend, testCase.extend);
+        CHECK_EQ(address.withSwappedRegister(GPRInfo::argumentGPR0, GPRInfo::argumentGPR2).extend, testCase.extend);
+    }
+}
+
+static void testLoadFromAbsoluteAddressIntoMemoryTempRegister()
+{
+    // The two addresses share their upper 48 bits, but are too far apart for an immediate offset,
+    // so the second load reuses the cached memory temp register with a MOVK.
+    constexpr size_t blockSize = 64 * KB;
+    Vector<uint64_t> buffer(2 * blockSize / sizeof(uint64_t));
+    uint64_t* block = std::bit_cast<uint64_t*>(roundUpToMultipleOf<blockSize>(std::bit_cast<uintptr_t>(buffer.mutableSpan().data())));
+    uint64_t* first = block + 2;
+    uint64_t* second = block + 0x8008 / sizeof(uint64_t) + 2;
+    uint64_t* third = second + 1;
+    *first = 1;
+    *second = 2;
+    *third = 3;
+
+    auto test = compile([=](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.load64(first, GPRInfo::argumentGPR0);
+        jit.load64(second, ARM64Registers::x17);
+        jit.move(ARM64Registers::x17, GPRInfo::argumentGPR1);
+        jit.load64(third, GPRInfo::argumentGPR2);
+        jit.add64(GPRInfo::argumentGPR1, GPRInfo::argumentGPR2, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    CHECK_EQ(invoke<uint64_t>(test), 5U);
+}
+
+static void testPushToSaveAddress()
+{
+    auto test = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.pushToSave(CCallHelpers::Address(GPRInfo::argumentGPR0, 8));
+        jit.popToRestore(GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    for (uint64_t value : { 0x123456789abcdef0ULL, 0xffffffff00000001ULL, 0ULL }) {
+        uint64_t memory[2] = { 0, value };
+        CHECK_EQ(invoke<uint64_t>(test, memory), value);
     }
 }
 
@@ -9257,6 +9605,9 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 
 #if CPU(X86_64) || CPU(ARM64)
     RUN(testBranch64());
+    RUN(testBranchTest64WithImm32Mask());
+    RUN(testOr32ImmToAddress());
+    RUN(testAdd64RegisterToAddress());
     RUN(testClearBit64());
     RUN(testClearBits64WithMask());
     RUN(testClearBits64WithMaskTernary());
@@ -9405,6 +9756,12 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testVectorRelaxedDotI8x16I7x16AddAliasing());
     RUN(testAtomicStrongCASWithStatusUnderContention());
     RUN(testAtomicRelaxedCAS());
+    RUN(testLoadStoreFloat16BaseIndex());
+    RUN(testLoadStoreVectorBaseIndex());
+    RUN(testLoadStorePairFloat());
+    RUN(testBaseIndexExtendInEffectiveAddressAndLoadAcq());
+    RUN(testLoadFromAbsoluteAddressIntoMemoryTempRegister());
+    RUN(testPushToSaveAddress());
 #endif
 
 #if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)

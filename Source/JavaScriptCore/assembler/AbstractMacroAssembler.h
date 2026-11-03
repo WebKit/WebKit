@@ -222,12 +222,12 @@ public:
         
         BaseIndex withOffset(int32_t additionalOffset)
         {
-            return BaseIndex(base, index, scale, offset + additionalOffset);
+            return BaseIndex(base, index, scale, offset + additionalOffset, extend);
         }
 
         BaseIndex withSwappedRegister(RegisterID left, RegisterID right)
         {
-            return BaseIndex(AbstractMacroAssembler::withSwappedRegister(base, left, right), AbstractMacroAssembler::withSwappedRegister(index, left, right), scale, offset);
+            return BaseIndex(AbstractMacroAssembler::withSwappedRegister(base, left, right), AbstractMacroAssembler::withSwappedRegister(index, left, right), scale, offset, extend);
         }
 
         friend bool operator==(const BaseIndex&, const BaseIndex&) = default;
