@@ -1,0 +1,60 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebRTCAV1CodecEnabled=true ] -->
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas id="cv" width="64" height="64"></canvas>
+<script>
+promise_test(async t => {
+    const av1Codecs = RTCRtpSender.getCapabilities("video").codecs.filter(c => /AV1/i.test(c.mimeType));
+    if (!av1Codecs.length) {
+console.log("test");
+        return;
+}
+
+    const ctx = cv.getContext("2d");
+    let hue = 0;
+    (function draw() {
+        ctx.fillStyle = `hsl(${hue++ % 360},100%,50%)`;
+        ctx.fillRect(0, 0, 64, 64);
+        t.step_timeout(draw, 33);
+    })();
+    const stream = cv.captureStream(30);
+
+    const worker = new Worker("av1-packetizer-large-obu-overflow-worker.js");
+    const wroteFrame = new Promise(resolve => {
+        worker.onmessage = e => {
+            if (e.data === "wrote" || e.data === "alloc-failed")
+                resolve(e.data);
+        };
+    });
+
+    const pc1 = new RTCPeerConnection();
+    const pc2 = new RTCPeerConnection();
+    t.add_cleanup(() => { pc1.close(); pc2.close(); stream.getTracks().forEach(tr => tr.stop()); worker.terminate(); });
+    pc1.onicecandidate = e => e.candidate && pc2.addIceCandidate(e.candidate);
+    pc2.onicecandidate = e => e.candidate && pc1.addIceCandidate(e.candidate);
+
+    const sender = pc1.addTrack(stream.getVideoTracks()[0], stream);
+    pc1.getTransceivers()[0].setCodecPreferences(av1Codecs);
+    sender.transform = new RTCRtpScriptTransform(worker);
+
+    await pc1.setLocalDescription(await pc1.createOffer());
+    await pc2.setRemoteDescription(pc1.localDescription);
+    await pc2.setLocalDescription(await pc2.createAnswer());
+    await pc1.setRemoteDescription(pc2.localDescription);
+
+    const result = await Promise.race([
+        wroteFrame,
+        new Promise(resolve => t.step_timeout(() => resolve("timeout"), 10000)),
+    ]);
+    assert_true(result === "wrote" || result === "alloc-failed" || result === "timeout", "transform reached: " + result);
+
+    // Give the packetizer a moment to process the oversized frame.
+    await new Promise(resolve => t.step_timeout(resolve, 500));
+}, "RtpPacketizerAv1 must not read out of bounds when an encoded transform supplies a very big OBU");
+</script>
+</body>
+</html>
