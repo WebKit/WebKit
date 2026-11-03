@@ -36,6 +36,7 @@
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
 #import <WebCore/TileController.h>
+#import <pal/system/ios/Device.h>
 #import <wtf/TZoneMallocInlines.h>
 
 @interface WKTextInteractionWrapper ()
@@ -136,7 +137,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
 
     _textInteractionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:view]);
 
-#if PLATFORM(APPLETV) && HAVE(UI_TEXT_CONTEXT_MENU_INTERACTION)
+#if PLATFORM(APPLETV)
+    if (!PAL::deviceClassIsHomeView())
+        return self;
+
     if (RetainPtr contextMenuInteraction = [self contextMenuInteraction]) {
         [view removeInteraction:contextMenuInteraction.get()];
         [self setExternalContextMenuInteractionDelegate:nil];

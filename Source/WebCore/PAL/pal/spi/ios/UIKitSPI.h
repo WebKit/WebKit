@@ -131,6 +131,7 @@ typedef enum {
 @end
 
 static const UIUserInterfaceIdiom UIUserInterfaceIdiomWatch = (UIUserInterfaceIdiom)4;
+static const UIUserInterfaceIdiom UIUserInterfaceIdiomUndefined8 = (UIUserInterfaceIdiom)8;
 
 @interface UIColor ()
 

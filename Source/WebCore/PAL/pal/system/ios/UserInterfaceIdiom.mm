@@ -32,24 +32,11 @@
 #import <atomic>
 #import <pal/spi/ios/UIKitSPI.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/UserInterfaceIdiomAdditionsBefore.mm>
-#endif
-
 #import <pal/ios/UIKitSoftLink.h>
 
 namespace PAL {
 
 static std::atomic<std::optional<UserInterfaceIdiom>> s_currentUserInterfaceIdiom;
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/UserInterfaceIdiomAdditionsAfter.mm>
-#else
-static bool shouldForceUserInterfaceIdiomSmallScreen(std::optional<UIUserInterfaceIdiom> = std::nullopt)
-{
-    return false;
-}
-#endif
 
 bool currentUserInterfaceIdiomIsDesktop()
 {
@@ -97,7 +84,7 @@ bool updateCurrentUserInterfaceIdiom()
         if (![PAL::getUIApplicationClassSingleton() sharedApplication]) {
             if (PAL::deviceClassIsDesktop())
                 return UserInterfaceIdiom::Desktop;
-            if (PAL::deviceClassIsSmallScreen() || shouldForceUserInterfaceIdiomSmallScreen())
+            if (PAL::deviceClassIsSmallScreen())
                 return UserInterfaceIdiom::SmallScreen;
             if (PAL::deviceClassIsVision())
                 return UserInterfaceIdiom::Vision;
@@ -105,7 +92,9 @@ bool updateCurrentUserInterfaceIdiom()
             auto idiom = [[PAL::getUIDeviceClassSingleton() currentDevice] userInterfaceIdiom];
             if (idiom == UIUserInterfaceIdiomPad || idiom == UIUserInterfaceIdiomMac)
                 return UserInterfaceIdiom::Desktop;
-            if (idiom == UIUserInterfaceIdiomPhone || idiom == UIUserInterfaceIdiomWatch || shouldForceUserInterfaceIdiomSmallScreen(idiom))
+            if (idiom == UIUserInterfaceIdiomPhone || idiom == UIUserInterfaceIdiomWatch)
+                return UserInterfaceIdiom::SmallScreen;
+            if (idiom == UIUserInterfaceIdiomUndefined8)
                 return UserInterfaceIdiom::SmallScreen;
 #if HAVE(UI_USER_INTERFACE_IDIOM_VISION)
             if (idiom == UIUserInterfaceIdiomVision)
