@@ -414,6 +414,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     ProvokingVertexHelper &getProvokingVertexHelper() { return mProvokingVertexHelper; }
 
+    // The staging buffers of small texture uploads.
+    mtl::BufferPool &getStagingBufferPool() { return mStagingBufferPool; }
+
     mtl::PipelineCache &getPipelineCache() { return mPipelineCache; }
 
     const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }
@@ -649,6 +652,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
     mtl::BufferPool mLineLoopIndexBuffer;
     mtl::BufferPool mLineLoopLastSegmentIndexBuffer;
     mtl::BufferPool mTriFanIndexBuffer;
+    mtl::BufferPool mStagingBufferPool;
     // one buffer can be reused for any starting vertex in DrawArrays()
     mtl::BufferRef mTriFanArraysIndexBuffer;
 

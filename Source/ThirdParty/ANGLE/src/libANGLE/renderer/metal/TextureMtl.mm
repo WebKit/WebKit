@@ -304,11 +304,28 @@ angle::Result CopyTextureContentsToStagingBuffer(ContextMtl *contextMtl,
                                                  size_t bytesPer2DImage,
                                                  size_t *bufferRowPitchOut,
                                                  size_t *buffer2DImageSizeOut,
-                                                 mtl::BufferRef *bufferOut)
+                                                 mtl::BufferSlice *bufferOut)
 {
     size_t stagingBufferRowPitch    = regionSize.width * textureAngleFormat.pixelBytes;
     size_t stagingBuffer2DImageSize = stagingBufferRowPitch * regionSize.height;
     size_t stagingBufferSize        = stagingBuffer2DImageSize * regionSize.depth;
+
+    *bufferRowPitchOut    = stagingBufferRowPitch;
+    *buffer2DImageSizeOut = stagingBuffer2DImageSize;
+
+    // Allocating a buffer for each small upload costs more than copying the data.
+    mtl::BufferPool &pool = contextMtl->getStagingBufferPool();
+    if (stagingBufferSize <= mtl::kStagingBufferPoolMaxAllocationSize &&
+        mtl::kStagingBufferPoolAlignment % textureAngleFormat.pixelBytes == 0)
+    {
+        pool.releaseInFlightBuffers(contextMtl);
+        angle::Span<uint8_t> mappedData;
+        ANGLE_TRY(pool.allocateAndMap(contextMtl, stagingBufferSize, &mappedData, bufferOut));
+        CopyTextureData(regionSize, bytesPerRow, bytesPer2DImage, data, stagingBufferRowPitch,
+                        stagingBuffer2DImageSize, mappedData.data());
+        return pool.commit(contextMtl);
+    }
+
     mtl::BufferRef stagingBuffer;
     ANGLE_TRY(mtl::Buffer::MakeBuffer(contextMtl, stagingBufferSize, &stagingBuffer));
 
@@ -318,9 +335,7 @@ angle::Result CopyTextureContentsToStagingBuffer(ContextMtl *contextMtl,
 
     stagingBuffer->unmap(contextMtl);
 
-    *bufferOut            = stagingBuffer;
-    *bufferRowPitchOut    = stagingBufferRowPitch;
-    *buffer2DImageSizeOut = stagingBuffer2DImageSize;
+    *bufferOut = mtl::BufferSlice(stagingBuffer);
 
     return angle::Result::Continue;
 }
@@ -535,17 +550,17 @@ angle::Result UploadTextureContentsWithStagingBuffer(ContextMtl *contextMtl,
 
     size_t stagingBufferRowPitch;
     size_t stagingBuffer2DImageSize;
-    mtl::BufferRef stagingBuffer;
+    mtl::BufferSlice stagingBuffer;
     ANGLE_TRY(CopyTextureContentsToStagingBuffer(
         contextMtl, angleStagingFormat, region.size, data, bytesPerRow, bytesPer2DImage,
         &stagingBufferRowPitch, &stagingBuffer2DImageSize, &stagingBuffer));
 
-    mtl::BlitCommandEncoder *encoder =
-        GetBlitCommandEncoderForResources(contextMtl, {stagingBuffer.get(), texture.get()});
+    mtl::BlitCommandEncoder *encoder = GetBlitCommandEncoderForResources(
+        contextMtl, {stagingBuffer.buffer().get(), texture.get()});
 
     CopyBufferToOriginalTextureIfDstIsAView(
-        contextMtl, encoder, stagingBuffer, 0, stagingBufferRowPitch, stagingBuffer2DImageSize,
-        region.size, texture, slice, mipmapLevel, region.origin, 0);
+        contextMtl, encoder, stagingBuffer.buffer(), stagingBuffer.offset(), stagingBufferRowPitch,
+        stagingBuffer2DImageSize, region.size, texture, slice, mipmapLevel, region.origin, 0);
 
     return angle::Result::Continue;
 }

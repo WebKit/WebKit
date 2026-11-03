@@ -105,6 +105,13 @@ constexpr uint32_t kMaxShaderXFBs = gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_SE
 // for shared memory.
 constexpr size_t kSharedMemBufferMaxBufSizeHint = 256 * 1024;
 
+// Staging copies of texture uploads of up to kStagingBufferPoolMaxAllocationSize bytes come from
+// buffers of kStagingBufferPoolBufferSize bytes, which are reused once the GPU is done with them.
+// The offsets are aligned for every texel size that divides kStagingBufferPoolAlignment.
+constexpr size_t kStagingBufferPoolBufferSize        = 1024 * 1024;
+constexpr size_t kStagingBufferPoolMaxAllocationSize = 256 * 1024;
+constexpr size_t kStagingBufferPoolAlignment         = 16;
+
 constexpr size_t kDefaultAttributeSize = 4 * sizeof(float);
 
 // Metal limits
