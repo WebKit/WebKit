@@ -43,6 +43,7 @@
 #include "RenderChildIterator.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementStyleInlines.h"
+#include "RenderGrid.h"
 #include "RenderLayoutState.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
@@ -460,10 +461,8 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     // than normal (css-position-3 §4.5).
     if (Style::AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(style.get()))
         return BlockAvoidanceReason::ContentHasAnchorPositioning;
-    if (!(style->justifySelf().isAuto() || style->justifySelf().isNormal()) || !(style->alignSelf().isAuto() || style->alignSelf().isNormal()))
-        return BlockAvoidanceReason::ContentHasOutOfFlowSelfAlignment;
-    // Nor the justify-items of its parent, which an auto justify-self takes to align its static position (PositionedLayoutConstraints::shouldAlignStaticPositionInInlineAxis).
-    if (CheckedPtr parent = outOfFlowBox.parent(); parent && !style->justifySelf().resolve(&parent->style()).isNormalStretchOrLegacy())
+    // FIXME: A grid that aligns the static position of its out-of-flow child (PositionedLayoutConstraints::remainingSpaceForStaticAlignment).
+    if (CheckedPtr grid = dynamicDowncast<RenderGrid>(outOfFlowBox.parent()); grid && !style->alignSelf().resolve(&grid->style()).isNormalStretchOrLegacy())
         return BlockAvoidanceReason::ContentHasOutOfFlowSelfAlignment;
     // FIXME: Scrollbars (hasScrollbarsOrGutter).
     if (outOfFlowBox.hasNonVisibleOverflow() && hasScrollbarsOrGutter(outOfFlowBox))
@@ -486,9 +485,11 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
         || !(isAuto(style->minWidth()) || isSupportedSize(style->minWidth())) || !(isAuto(style->minHeight()) || isSupportedSize(style->minHeight()))
         || !(style->maxWidth().isNone() || isSupportedSize(style->maxWidth())) || !(style->maxHeight().isNone() || isSupportedSize(style->maxHeight())))
         return BlockAvoidanceReason::ContentHasSizingKeyword;
-    // An auto inline size with an auto inset is the fit-content size (css-position-3 §4.3), from the inline sizes of the content.
+    // An auto inline size with an auto inset, or with justify-self other than normal and stretch, is the fit-content size (css-position-3 §4.3),
+    // from the inline sizes of the content.
     auto writingMode = outOfFlowBox.writingMode();
-    auto hasFitContentInlineSize = style->logicalWidth(writingMode).isAuto() && (style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto());
+    auto justifySelf = style->justifySelf().resolve();
+    auto hasFitContentInlineSize = style->logicalWidth(writingMode).isAuto() && (style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto() || !(justifySelf.isNormal() || justifySelf.isStretch()));
     // The render tree measures a leaf container (BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes).
     if (hasFitContentInlineSize && !isLeafContainer && !canComputeContentInlineSizes(downcast<RenderBlockFlow>(outOfFlowBox)))
         return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
