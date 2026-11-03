@@ -27,7 +27,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 
 namespace TestWebKitAPI {
@@ -52,6 +55,34 @@ TEST(GestureRecognizerTests, DoNotAllowTapToRecognizeAlongsideReparentedScrollVi
 
     EXPECT_FALSE(canRecognizeSimultaneouslyWithSingleTap([hiddenScrollView panGestureRecognizer]));
     EXPECT_TRUE(canRecognizeSimultaneouslyWithSingleTap([webView scrollView].panGestureRecognizer));
+}
+
+TEST(GestureRecognizerTests, GestureRecognizersAreNotDuplicatedAfterProcessSwap)
+{
+    HTTPServer server({
+        { "/page"_s, { "<body>Hello world</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568) configuration:server.httpsProxyConfiguration()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/page"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr contentView = [webView wkContentView];
+    auto numberOfGestureRecognizersBeforeProcessSwap = [contentView gestureRecognizers].count;
+
+    EXPECT_GT(numberOfGestureRecognizersBeforeProcessSwap, 0U);
+
+    auto firstProcessIdentifier = [webView _webProcessIdentifier];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/page"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE([webView _webProcessIdentifier], firstProcessIdentifier);
+
+    EXPECT_EQ([webView wkContentView], contentView);
+    EXPECT_EQ([contentView gestureRecognizers].count, numberOfGestureRecognizersBeforeProcessSwap);
 }
 
 } // namespace TestWebKitAPI

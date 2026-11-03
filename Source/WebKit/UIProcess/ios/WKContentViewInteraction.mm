@@ -1638,6 +1638,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_keyboardDismissalGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_keyboardDismissalGestureRecognizer.get()];
 
+#if ENABLE(GAMEPAD)
+    [_gamepadInteractionGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_gamepadInteractionGestureRecognizer];
+#endif
+
     [_singleTapGestureRecognizer setDelegate:nil];
     [_singleTapGestureRecognizer setGestureIdentifiedTarget:nil action:nil];
     [_singleTapGestureRecognizer setResetTarget:nil action:nil];
@@ -1792,6 +1797,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self removeGestureRecognizer:_touchActionUpSwipeGestureRecognizer.get()];
     [self removeGestureRecognizer:_touchActionDownSwipeGestureRecognizer.get()];
     [self removeGestureRecognizer:_keyboardDismissalGestureRecognizer.get()];
+#if ENABLE(GAMEPAD)
+    [self removeGestureRecognizer:_gamepadInteractionGestureRecognizer];
+#endif
 }
 
 - (void)_addDefaultGestureRecognizers
