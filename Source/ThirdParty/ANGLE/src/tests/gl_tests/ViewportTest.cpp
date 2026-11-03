@@ -433,6 +433,41 @@ TEST_P(ViewportTest, ClampOnStore)
     ASSERT_EQ(viewport[3], maxDims[1]);
 }
 
+// Tests that a reversed depth range stays in effect after the viewport or the framebuffer changes.
+TEST_P(ViewportTest, ReversedDepthRangeAfterViewportAndFramebufferChanges)
+{
+    constexpr char kFS[] = R"(precision highp float;
+void main()
+{
+    gl_FragColor = vec4(gl_FragCoord.z, 0.0, 0.0, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+
+    // The window depth is n + (f - n) * (z + 1) / 2, also when n > f: 0.375 for z = 0.5.
+    glDepthRangef(0.75f, 0.25f);
+    constexpr float kExpectedRed = 0.375f * 255.0f;
+    // Draw before changing the viewport so that the depth range change is not pending anymore.
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(getWindowWidth() / 2, getWindowHeight() / 2, kExpectedRed, 0, 0, 255, 1);
+
+    glViewport(0, 0, getWindowWidth() / 2, getWindowHeight());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(getWindowWidth() / 4, getWindowHeight() / 2, kExpectedRed, 0, 0, 255, 1);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(0, 0, kExpectedRed, 0, 0, 255, 1);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND(ViewportTest, ES2_D3D11_PRESENT_PATH_FAST());
