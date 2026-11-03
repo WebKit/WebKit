@@ -455,8 +455,10 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     if (CheckedPtr container = outOfFlowBox.container(); container && container->isInlineBox())
         return BlockAvoidanceReason::ContentHasInlineBoxContainingBlock;
     CheckedRef style = outOfFlowBox.style();
-    // FIXME: Anchor positioning, position-area and position-try fallbacks, and alignment other than normal (css-position-3 §4.5).
-    if (Style::AnchorPositionEvaluator::isAnchorPositioned(style.get()) || !style->positionTryFallbacks().isNone())
+    // Style resolution gives anchor() and anchor-size() their values and picks the position-try fallback (Style::AnchorPositionEvaluator).
+    // FIXME: position-area, which makes the containing block from the default anchor (css-anchor-position-1 §3.1), and alignment other
+    // than normal (css-position-3 §4.5).
+    if (Style::AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(style.get()))
         return BlockAvoidanceReason::ContentHasAnchorPositioning;
     if (!(style->justifySelf().isAuto() || style->justifySelf().isNormal()) || !(style->alignSelf().isAuto() || style->alignSelf().isNormal()))
         return BlockAvoidanceReason::ContentHasOutOfFlowSelfAlignment;

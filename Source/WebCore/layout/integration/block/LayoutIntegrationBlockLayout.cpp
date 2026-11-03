@@ -27,6 +27,7 @@
 #include "LayoutIntegrationBlockLayout.h"
 
 #include "AXObjectCache.h"
+#include "AnchorPositionEvaluator.h"
 #include "BlockFormattingContext.h"
 #include "BlockFormattingUtils.h"
 #include "BlockIntegrationUtils.h"
@@ -309,9 +310,15 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
     auto blockLayoutState = Layout::BlockLayoutState { { } };
     // Laying out a box registers the out-of-flow boxes in it, which can make the list grow while it is iterated (like in RenderBlock::layoutOutOfFlowBoxes).
     for (CheckedRef outOfFlowBox : *outOfFlowBoxes) {
+        // Like RenderElement::layoutIfNeeded, which captures how far scrolling between an anchor-positioned box and its default anchor moves
+        // it when it lays the box out. Capturing again compares with the previous capture, which tells style resolution to resolve anchor()
+        // and position-visibility again.
+        auto capturesScrollSnapshots = outOfFlowBox->needsLayout() && Style::AnchorPositionEvaluator::isAnchorPositioned(outOfFlowBox->style());
         auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layoutOutOfFlowBox(outOfFlowBox, outOfFlowContainingBlock, staticPosition(outOfFlowBox, containingBlock));
         LOG_WITH_STREAM(Layout, stream << "BlockLayout for out-of-flow box (" << outOfFlowBox.ptr() << "): " << result);
         updateRenderers(result, paintInvalidation);
+        if (capturesScrollSnapshots)
+            Style::AnchorPositionEvaluator::captureScrollSnapshots(outOfFlowBox);
     }
     SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableContainingBlock = const_cast<RenderBlock&>(containingBlock);
     // The transforms of the boxes that depend on the size of their containing block (offset-path), before the overflow they extend.
