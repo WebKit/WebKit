@@ -57,7 +57,7 @@ Vector<Ref<WebPageProxy>> BidiUserContext::allPages() const
 {
     Vector<Ref<WebPageProxy>> pages;
     for (Ref process : borrow(m_processPool->processes()).get()) {
-        for (Ref page : process->pages()) {
+        for (Ref page : process->mainPages()) {
             if (page->websiteDataStore() == m_dataStore.get())
                 pages.append(WTF::move(page));
         }

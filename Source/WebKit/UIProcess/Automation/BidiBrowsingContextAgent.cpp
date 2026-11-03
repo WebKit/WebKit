@@ -423,7 +423,7 @@ void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std:
 
     RefPtr processPool = session->processPool();
     for (Ref process : borrow(processPool->processes()).get()) {
-        for (Ref page : process->pages()) {
+        for (Ref page : process->mainPages()) {
             if (!page->isControlledByAutomation())
                 continue;
 
