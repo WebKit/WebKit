@@ -141,12 +141,19 @@ protected:
 // copy of it: a message with any other ID is a notification rather than an invalid message.
 constexpr mach_msg_id_t webkitMachMessageID = 0xdba0dba;
 
+// Matches messageStorageSize in MachMessage.cpp (4096-byte inline body + 16 port descriptors).
+constexpr size_t messageStorageSize = 4316;
+
+// Encoded size of makeEncoder(makeBody(128)): 16-byte header + 8-byte length + 128-byte payload.
+constexpr size_t testBodyEncodedSize = 152;
+
 // MachMessage sends every attachment as a port descriptor of its own, however many there are. These are the
 // counts past which that could go wrong: past 127, an earlier version sent the attachments as an out-of-line
-// array of ports instead, which the kernel does not let a sandboxed process send, and past 337 the message
-// no longer fits the storage that MachMessage sends from and receives into without allocating.
+// array of ports instead, which the kernel does not let a sandboxed process send, and past the attachments that
+// fit messageStorageSize together with a test body, the message no longer fits the storage that MachMessage sends
+// from and receives into without allocating.
 constexpr size_t manyAttachmentCount = 128;
-constexpr size_t largeMessageAttachmentCount = 338;
+constexpr size_t largeMessageAttachmentCount = (messageStorageSize - sizeof(mach_msg_header_t) - sizeof(mach_msg_body_t) - testBodyEncodedSize) / sizeof(mach_msg_port_descriptor_t) + 1;
 
 // A message built by hand, so that receiveDecoder() can be given the messages a sender could send rather than
 // only the ones sendEncoder() builds, and received by hand, so that a test can inspect the descriptors
@@ -589,8 +596,8 @@ TEST_F(MachMessageTest, SendReceiveManyAttachments)
     EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
 }
 
-// As many attachments as fit the storage that MachMessage sends from and receives into without allocating,
-// which leaves no room for the body, so it is sent out-of-line.
+// As many attachments as fit the storage that MachMessage sends from and receives into without allocating, together
+// with the inline body.
 TEST_F(MachMessageTest, SendReceiveLargestMessageInStorage)
 {
     constexpr size_t attachmentCount = largeMessageAttachmentCount - 1;
@@ -598,6 +605,7 @@ TEST_F(MachMessageTest, SendReceiveLargestMessageInStorage)
     auto attachmentSendRights = sendRightCount(m_attachmentPort);
 
     auto encoder = makeEncoder(body);
+    ASSERT_EQ(encoder->span().size(), testBodyEncodedSize);
     for (size_t i = 0; i < attachmentCount; ++i)
         encoder.get() << MachSendRight::create(m_attachmentPort);
 

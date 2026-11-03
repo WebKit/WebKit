@@ -38,6 +38,10 @@
 #include <time.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include <mach/mach.h>
+#endif
+
 
 namespace TestWebKitAPI {
 
@@ -96,7 +100,7 @@ struct MockTestMessageWithAsyncReplyCanDispatchOutOfOrder {
     using ReplyArguments = std::tuple<uint64_t>;
 };
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 struct MockTestMessageWithDataAndAttachments {
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
@@ -122,7 +126,7 @@ static Vector<uint8_t> testDataOfSize(size_t size)
         return static_cast<uint8_t>(i * 31 + size);
     });
 }
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)
 
 namespace {
 class SimpleConnectionTest : public testing::Test {
@@ -338,6 +342,72 @@ TEST_P(ConnectionTestABBA, UnopenedAAndInvalidateDoesNotDeliverBDidClose)
     a()->invalidate();
     deleteA();
     EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
+}
+
+// Test payload sizes around Encoder buffer boundaries (512 B inline, 1/2/4 KB heap, >4 KB mmap).
+// With a 24-byte prefix (header + span length) and 8-byte attachment count trailer, data sizes of
+// 488, 1000, 2024, and 4064 straddle each boundary, and >=17 attachments with a 4 KB body force
+// MACH_RCV_TOO_LARGE heap allocation on receive.
+TEST_P(ConnectionTestABBA, SendMessagesAroundEncoderBufferSizes)
+{
+    ASSERT_TRUE(openBoth());
+
+    mach_port_t port = MACH_PORT_NULL;
+    ASSERT_EQ(mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port), KERN_SUCCESS);
+    auto sendRight = MachSendRight::createFromReceiveRight(port);
+    ASSERT_TRUE(!!sendRight);
+
+    struct TestCase {
+        size_t dataSize;
+        size_t attachmentCount;
+    };
+    Vector<size_t> dataSizes { 0, 400, 470, 480, 488, 490, 992, 1000, 2016, 2024, 3000, 4065, 4095, 4096, 4097, 8000, 16000, 16384, 16500, 40000 };
+    for (size_t dataSize = 3980; dataSize <= 4080; dataSize += 4)
+        dataSizes.append(dataSize);
+    Vector<TestCase> testCases;
+    for (auto dataSize : dataSizes) {
+        for (size_t attachmentCount : { 0u, 1u, 5u, 16u, 17u, 40u })
+            testCases.append({ dataSize, attachmentCount });
+    }
+
+    bClient().setAsyncMessageHandler([&](IPC::Connection&, IPC::Decoder& decoder) -> bool {
+        auto index = decoder.destinationID();
+        if (index >= testCases.size())
+            return false;
+        auto& testCase = testCases[index];
+        SCOPED_TRACE(testCase.dataSize);
+        SCOPED_TRACE(testCase.attachmentCount);
+
+        auto data = decoder.decode<std::span<const uint8_t>>();
+        auto attachmentCount = decoder.decode<uint64_t>();
+        EXPECT_TRUE(data && attachmentCount);
+        if (!data || !attachmentCount)
+            return false;
+        EXPECT_TRUE(equalSpans(*data, testDataOfSize(testCase.dataSize).span()));
+        EXPECT_EQ(*attachmentCount, testCase.attachmentCount);
+        for (uint64_t i = 0; i < *attachmentCount; ++i) {
+            auto attachment = decoder.decode<IPC::Attachment>();
+            EXPECT_TRUE(attachment && attachment->sendRight() == port);
+        }
+        return false; // Record the message.
+    });
+
+    for (size_t i = 0; i < testCases.size(); ++i) {
+        auto data = testDataOfSize(testCases[i].dataSize);
+        Vector<IPC::Attachment> attachments(testCases[i].attachmentCount, [&](size_t) {
+            return MachSendRight { sendRight };
+        });
+        auto result = a()->send(MockTestMessageWithDataAndAttachments { data.span(), WTF::move(attachments) }, i);
+        EXPECT_TRUE(result == IPC::Error::NoError);
+    }
+    for (size_t i = 0; i < testCases.size(); ++i) {
+        auto message = bClient().waitForMessage(kDefaultWaitForTimeout);
+        EXPECT_EQ(message.messageName, MockTestMessageWithDataAndAttachments::name());
+        EXPECT_EQ(message.destinationID, i);
+    }
+
+    sendRight = { };
+    mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_RECEIVE, -1);
 }
 
 // Sends one message at a time while B doesn't receive, until a message can't be sent because B's port is full. That

@@ -5,11 +5,9 @@
 <body>
 <script>
 const defaultTimeout = 1000;
-// A mach message carries at most 127 attachments as an inline port descriptor each, so a message with
-// more than that has to be sent some other way. Note that an out-of-line array of port names is not a
-// way: the kernel refuses one sent to an ordinary connection port with a fatal EXC_GUARD. Past 337
-// attachments, the message no longer fits the storage it is sent from without allocating.
-const attachmentCounts = [ 127, 128, 337, 338, 1000 ];
+// Test attachment counts around 127 (where 319119@main switched to MACH_MSG_OOL_PORTS_DESCRIPTOR,
+// triggering EXC_GUARD) and around ~350 (where the message outgrows inline receive storage).
+const attachmentCounts = [ 127, 128, 340, 370, 1000 ];
 
 for (const attachmentCount of attachmentCounts) {
     test(() => {
