@@ -627,6 +627,12 @@ static RefPtr<PrintContext>& LEGACY_NODELETE printContextForTesting()
     return context;
 }
 
+static WeakHashSet<CachedImage>& LEGACY_NODELETE cachedImagesTouchedByTestingSetters()
+{
+    static NeverDestroyed<WeakHashSet<CachedImage>> cachedImages;
+    return cachedImages;
+}
+
 Ref<Internals> Internals::create(Document& document)
 {
     return adoptRef(*new Internals(document));
@@ -650,6 +656,10 @@ void Internals::resetToConsistentState(Page& page)
     page.setPagination(Pagination());
 
     CachedMatchFinder::setMaximumRunCountForTesting(std::nullopt);
+
+    for (RefPtr cachedImage : cachedImagesTouchedByTestingSetters())
+        MemoryCache::singleton().remove(*cachedImage);
+    cachedImagesTouchedByTestingSetters().clear();
 
     page.setDefersLoading(false);
     page.setResourceCachingDisabledByWebInspector(false);
@@ -1232,6 +1242,12 @@ static BitmapImage* bitmapImageFromImageElement(HTMLImageElement& element)
     return dynamicDowncast<BitmapImage>(imageFromImageElement(element));
 }
 
+static void markCachedImageForEvictionAfterTest(HTMLImageElement& element)
+{
+    if (RefPtr cachedImage = element.cachedImage())
+        cachedImagesTouchedByTestingSetters().add(*cachedImage);
+}
+
 #if USE(CG)
 static PDFDocumentImage* pdfDocumentImageFromImageElement(HTMLImageElement& element)
 {
@@ -1269,6 +1285,7 @@ float Internals::imageFrameDurationAtIndex(HTMLImageElement& element, unsigned i
     
 void Internals::setImageFrameDecodingDuration(HTMLImageElement& element, float duration)
 {
+    markCachedImageForEvictionAfterTest(element);
     if (RefPtr bitmapImage = bitmapImageFromImageElement(element))
         bitmapImage->setMinimumDecodingDurationForTesting(Seconds { duration });
 }
@@ -1334,6 +1351,7 @@ unsigned Internals::imagePendingDecodePromisesCountForTesting(HTMLImageElement& 
 
 void Internals::setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement& element, bool enabled)
 {
+    markCachedImageForEvictionAfterTest(element);
     if (RefPtr bitmapImage = bitmapImageFromImageElement(element))
         bitmapImage->setClearDecoderAfterAsyncFrameRequestForTesting(enabled);
 }
@@ -1409,12 +1427,14 @@ unsigned Internals::remoteImagesCountForTesting() const
 
 void Internals::setAsyncDecodingEnabledForTesting(HTMLImageElement& element, bool enabled)
 {
+    markCachedImageForEvictionAfterTest(element);
     if (RefPtr bitmapImage = bitmapImageFromImageElement(element))
         bitmapImage->setAsyncDecodingEnabledForTesting(enabled);
 }
 
 void Internals::setForceUpdateImageDataEnabledForTesting(HTMLImageElement& element, bool enabled)
 {
+    markCachedImageForEvictionAfterTest(element);
     if (auto* cachedImage = element.cachedImage())
         cachedImage->setForceUpdateImageDataEnabledForTesting(enabled);
 }
@@ -1422,12 +1442,14 @@ void Internals::setForceUpdateImageDataEnabledForTesting(HTMLImageElement& eleme
 // Stands in for the disk cache handing the memory cache a file-backed copy of a resource's body.
 void Internals::simulateImageDataReplacedForTesting(HTMLImageElement& element)
 {
+    markCachedImageForEvictionAfterTest(element);
     if (RefPtr bitmapImage = bitmapImageFromImageElement(element))
         bitmapImage->simulateDataReplacedForTesting();
 }
 
 void Internals::setHasHDRContentForTesting(HTMLImageElement& element)
 {
+    markCachedImageForEvictionAfterTest(element);
     if (RefPtr bitmapImage = bitmapImageFromImageElement(element))
         bitmapImage->setHasHDRContentForTesting();
 }

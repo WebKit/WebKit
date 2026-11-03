@@ -104,7 +104,7 @@ public:
     WEBCORE_EXPORT CachedResource* resourceForRequest(const ResourceRequest&, PAL::SessionID);
 
     bool add(CachedResource&);
-    void remove(CachedResource&);
+    WEBCORE_EXPORT void remove(CachedResource&);
 
     static bool LEGACY_NODELETE shouldRemoveFragmentIdentifier(const URL&);
     WEBCORE_EXPORT static URL removeFragmentIdentifierIfNeeded(const URL&);
