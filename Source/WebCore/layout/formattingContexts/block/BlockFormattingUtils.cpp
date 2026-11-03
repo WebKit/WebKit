@@ -57,7 +57,7 @@ static bool isPercentageOfContainingBlock(const SizeType& size)
 }
 
 template<typename SizeType>
-static std::optional<LayoutUnit> borderBoxBlockSizeFor(const SizeType& size, const Style::ComputedStyle& style, LayoutUnit borderAndPaddingBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, std::optional<LayoutUnit> intrinsicContentBlockSize = { })
+static std::optional<LayoutUnit> borderBoxBlockSizeFor(const SizeType& size, const Style::ComputedStyle& style, LayoutUnit borderAndPaddingBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, std::optional<LayoutUnit> intrinsicContentBlockSize = { }, BlockFormattingUtils::ContainingBlockIsTableCell containingBlockIsTableCell = BlockFormattingUtils::ContainingBlockIsTableCell::No)
 {
     auto keywordBorderBoxBlockSize = [&] -> std::optional<LayoutUnit> {
         // Without a definite stretch-fit block size, stretch behaves as the initial value (css-sizing-4 §6.1).
@@ -89,18 +89,18 @@ static std::optional<LayoutUnit> borderBoxBlockSizeFor(const SizeType& size, con
     if (isPercentageOfContainingBlock(size) && !containingBlockContentBoxBlockSize)
         return { };
     auto value = Style::evaluate<LayoutUnit>(size, containingBlockContentBoxBlockSize.value_or(0_lu), style.usedZoomForLength());
-    if (style.boxSizing() == BoxSizing::BorderBox)
+    if (style.boxSizing() == BoxSizing::BorderBox || (containingBlockIsTableCell == BlockFormattingUtils::ContainingBlockIsTableCell::Yes && size.isPercentOrCalculated()))
         return std::max(value, borderAndPaddingBlockSize);
     return value + borderAndPaddingBlockSize;
 }
 
-LayoutUnit BlockFormattingUtils::borderBoxBlockSize(const RenderBox& box, LayoutUnit borderAndPaddingBlockSize, std::optional<LayoutUnit> intrinsicContentBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode writingMode)
+LayoutUnit BlockFormattingUtils::borderBoxBlockSize(const RenderBox& box, LayoutUnit borderAndPaddingBlockSize, std::optional<LayoutUnit> intrinsicContentBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode writingMode, ContainingBlockIsTableCell containingBlockIsTableCell)
 {
     CheckedRef style = box.style();
-    auto blockSize = borderBoxBlockSizeFor(style->logicalHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, intrinsicContentBlockSize).value_or(intrinsicContentBlockSize.value_or(0_lu) + borderAndPaddingBlockSize);
-    if (auto maximumBlockSize = borderBoxBlockSizeFor(style->logicalMaxHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, intrinsicContentBlockSize))
+    auto blockSize = borderBoxBlockSizeFor(style->logicalHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, intrinsicContentBlockSize, containingBlockIsTableCell).value_or(intrinsicContentBlockSize.value_or(0_lu) + borderAndPaddingBlockSize);
+    if (auto maximumBlockSize = borderBoxBlockSizeFor(style->logicalMaxHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, intrinsicContentBlockSize, containingBlockIsTableCell))
         blockSize = std::min(blockSize, *maximumBlockSize);
-    if (auto minimumBlockSize = borderBoxBlockSizeFor(style->logicalMinHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, intrinsicContentBlockSize))
+    if (auto minimumBlockSize = borderBoxBlockSizeFor(style->logicalMinHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, intrinsicContentBlockSize, containingBlockIsTableCell))
         blockSize = std::max(blockSize, *minimumBlockSize);
     return blockSize;
 }
@@ -198,18 +198,19 @@ bool BlockFormattingUtils::blockSizeBehavesAsAuto(const Style::PreferredSize& bl
     return blockSize.isAuto() || blockSize.isIntrinsic() || ((isPercentageOfContainingBlock(blockSize) || blockSize.isStretch()) && !containingBlockContentBoxBlockSize);
 }
 
-std::optional<LayoutUnit> BlockFormattingUtils::definiteContentBoxBlockSize(const RenderBox& box, const BoxGeometry& geometry, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode writingMode)
+std::optional<LayoutUnit> BlockFormattingUtils::definiteContentBoxBlockSize(const RenderBox& box, const BoxGeometry& geometry, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode writingMode, ContainingBlockIsTableCell containingBlockIsTableCell)
 {
+    auto passedThroughContainingBlockContentBoxBlockSize = containingBlockIsTableCell == ContainingBlockIsTableCell::Yes ? std::nullopt : containingBlockContentBoxBlockSize;
     // Anonymous block boxes are ignored when resolving percentage values that would refer to them (CSS 2.2 §9.2.1.1).
     if (box.isAnonymous())
-        return containingBlockContentBoxBlockSize;
+        return passedThroughContainingBlockContentBoxBlockSize;
     auto borderAndPaddingBlockSize = geometry.verticalBorderAndPadding();
     CheckedRef style = box.style();
     // In quirks mode so are the ones with an auto block size, and those of the body and the root element take their margins, borders and
     // padding with them (quirks §3.5, RenderBox::skipContainingBlockForPercentHeightCalculation).
     if (box.document().inQuirksMode() && !box.isOutOfFlowPositioned() && style->logicalHeight(writingMode).isAuto()) {
         if (!box.isBody() && !box.isDocumentElementRenderer())
-            return containingBlockContentBoxBlockSize;
+            return passedThroughContainingBlockContentBoxBlockSize;
         return containingBlockContentBoxBlockSize.transform([&](auto blockSize) {
             return std::max(0_lu, blockSize - geometry.marginBefore() - geometry.marginAfter() - borderAndPaddingBlockSize);
         });
@@ -217,9 +218,9 @@ std::optional<LayoutUnit> BlockFormattingUtils::definiteContentBoxBlockSize(cons
     // A preferred aspect ratio gives an auto block size from the definite inline size.
     if (auto aspectRatioBlockSize = aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, writingMode))
         return *aspectRatioBlockSize - borderAndPaddingBlockSize;
-    if (!borderBoxBlockSizeFor(style->logicalHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize))
+    if (!borderBoxBlockSizeFor(style->logicalHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, { }, containingBlockIsTableCell))
         return { };
-    return borderBoxBlockSize(box, borderAndPaddingBlockSize, { }, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, writingMode) - borderAndPaddingBlockSize;
+    return borderBoxBlockSize(box, borderAndPaddingBlockSize, { }, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, writingMode, containingBlockIsTableCell) - borderAndPaddingBlockSize;
 }
 
 bool BlockFormattingUtils::hasIntrinsicInlineSize(const RenderBox& box, WritingMode writingMode)
