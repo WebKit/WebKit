@@ -10126,6 +10126,12 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
         internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications = nullptr;
         internals().didCommitLoadForMainFrameTimestamp = MonotonicTime::now();
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+        m_allowedImmersiveElementFrameInfo = nullptr;
+        if (m_immersive)
+            dismissImmersiveElement([] { });
+#endif
+
 #if HAVE(SAFE_BROWSING)
         m_committedMainFrameNavigationID = navigationID;
         if (navigation && (navigation->safeBrowsingCheckOngoing() || navigation->safeBrowsingWarning()))
@@ -17819,41 +17825,77 @@ void WebPageProxy::allowImmersiveElement(CompletionHandler<void(bool)>&& complet
     });
 }
 
-void WebPageProxy::presentImmersiveElement(const WebCore::LayerHostingContextIdentifier contextID, CompletionHandler<void(bool)>&& completion)
+void WebPageProxy::prepareImmersiveFrameIfAllowed(CompletionHandler<void(RefPtr<API::FrameInfo>&&)>&& continuation)
 {
     if (!m_mainFrame || !m_allowedImmersiveElementFrameInfo)
-        return completion(false);
+        return continuation(nullptr);
 
-    m_mainFrame->getFrameInfo([weakThis = WeakPtr { *this }, contextID, completion = WTF::move(completion)](std::optional<FrameInfoData>&& frameInfoData) mutable {
+    m_mainFrame->getFrameInfo([weakThis = WeakPtr { *this }, continuation = WTF::move(continuation)](std::optional<FrameInfoData>&& frameInfoData) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !frameInfoData)
-            return completion(false);
+            return continuation(nullptr);
 
         RefPtr allowedFrameInfo = std::exchange(protectedThis->m_allowedImmersiveElementFrameInfo, nullptr);
         if (!allowedFrameInfo
             || allowedFrameInfo->request().url() != frameInfoData->request.url()
             || allowedFrameInfo->securityOrigin() != frameInfoData->securityOrigin) {
-            RELEASE_LOG_ERROR(ModelElement, "%p - WebPageProxy::presentImmersiveElement: Rejecting request - frame info mismatch with previously allowed frame.", protectedThis.get());
-            return completion(false);
+            RELEASE_LOG_ERROR(ModelElement, "%p - WebPageProxy::prepareImmersiveFrameIfAllowed: Rejecting request - frame info mismatch with previously allowed frame.", protectedThis.get());
+            return continuation(nullptr);
         }
 
-        auto frameInfo = API::FrameInfo::create(WTF::move(*frameInfoData));
-
-        if (RefPtr pageClient = protectedThis->pageClient()) {
-            pageClient->presentImmersiveElement(contextID, WTF::move(frameInfo), [weakThis, completion = WTF::move(completion)](bool success) mutable {
-                RefPtr protectedThis = weakThis.get();
-                if (protectedThis && success)
-                    protectedThis->m_immersive = true;
-                completion(success);
-            });
-        } else
-            completion(false);
+        continuation(API::FrameInfo::create(WTF::move(*frameInfoData)));
     });
 }
+
+void WebPageProxy::presentImmersiveModelElement(const WebCore::LayerHostingContextIdentifier contextID, CompletionHandler<void(bool)>&& completion)
+{
+    prepareImmersiveFrameIfAllowed([weakThis = WeakPtr { *this }, contextID, completion = WTF::move(completion)](RefPtr<API::FrameInfo>&& frameInfo) mutable {
+        RefPtr protectedThis = weakThis;
+        RefPtr pageClient = protectedThis ? protectedThis->pageClient() : nullptr;
+        if (!pageClient || !frameInfo)
+            return completion(false);
+
+        Ref presentedFrameInfo = frameInfo.releaseNonNull();
+        protectedThis->m_presentedImmersiveElementFrameInfo = presentedFrameInfo.copyRef();
+        pageClient->presentImmersiveModelElement(contextID, WTF::move(presentedFrameInfo), [weakThis, completion = WTF::move(completion)](bool success) mutable {
+            RefPtr protectedThis = weakThis;
+            if (protectedThis && success)
+                protectedThis->m_immersive = true;
+            completion(success);
+        });
+    });
+}
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+void WebPageProxy::presentImmersiveImageElement(IPC::Connection& connection, WebCore::ShareableBitmapHandle&& imageHandle, std::optional<float> focalLengthIn35mm, CompletionHandler<void(bool)>&& completion)
+{
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_COMPLETION(process, !focalLengthIn35mm || (std::isfinite(*focalLengthIn35mm) && *focalLengthIn35mm > 0), completion(false));
+
+    prepareImmersiveFrameIfAllowed([weakThis = WeakPtr { *this }, imageHandle = WTF::move(imageHandle), focalLengthIn35mm, completion = WTF::move(completion)](RefPtr<API::FrameInfo>&& frameInfo) mutable {
+        RefPtr protectedThis = weakThis;
+        RefPtr pageClient = protectedThis ? protectedThis->pageClient() : nullptr;
+        if (!pageClient || !frameInfo)
+            return completion(false);
+
+        protectedThis->m_immersive = true;
+        Ref presentedFrameInfo = frameInfo.releaseNonNull();
+        protectedThis->m_presentedImmersiveElementFrameInfo = presentedFrameInfo.copyRef();
+        pageClient->presentImmersiveImageElement(WTF::move(imageHandle), focalLengthIn35mm, presentedFrameInfo.copyRef(), [weakThis, presentedFrameInfo = presentedFrameInfo.copyRef(), completion = WTF::move(completion)](bool success) mutable {
+            if (RefPtr protectedThis = weakThis; protectedThis && !success && protectedThis->m_presentedImmersiveElementFrameInfo == presentedFrameInfo.ptr()) {
+                protectedThis->m_immersive = false;
+                protectedThis->m_presentedImmersiveElementFrameInfo = nullptr;
+            }
+            completion(success);
+        });
+    });
+}
+#endif
 
 void WebPageProxy::dismissImmersiveElement(CompletionHandler<void()>&& completion)
 {
     m_immersive = false;
+    m_presentedImmersiveElementFrameInfo = nullptr;
 
     if (RefPtr pageClient = this->pageClient())
         pageClient->dismissImmersiveElement(WTF::move(completion));

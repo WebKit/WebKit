@@ -171,6 +171,9 @@ public:
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     virtual bool isPanorama() const { return false; }
 #endif
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    virtual std::optional<float> focalLengthIn35mm() const { return std::nullopt; }
+#endif
 
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
     virtual bool isSpatial() const { return false; }

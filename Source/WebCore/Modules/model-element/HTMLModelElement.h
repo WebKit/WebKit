@@ -182,6 +182,7 @@ public:
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     void requestImmersive(DOMPromiseDeferred<void>&&);
+    std::optional<LayerHostingContextIdentifier> immersiveContextID() const { return m_immersiveContextID; }
 #endif
 
     NODELETE WEBCORE_EXPORT bool supportsDragging() const;
@@ -286,7 +287,6 @@ private:
     HTMLElement& asHTMLElement() final { return *this; }
     bool isImmersiveEnabled() const final;
     void prepareImmersivePresentation(CompletionHandler<void(ExceptionOr<void>)>&&) final;
-    void presentImmersivePresentation(ChromeClient&, CompletionHandler<void(bool)>&&) final;
     void exitImmersivePresentation(CompletionHandler<void()>&&) final;
 #endif
 

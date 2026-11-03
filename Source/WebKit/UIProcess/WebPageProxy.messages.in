@@ -102,9 +102,20 @@ messages -> WebPageProxy {
     SetCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents)
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    [EnabledBy=ModelElementImmersiveEnabled || ImageElementImmersiveEnabled] AllowImmersiveElement() -> (bool allow)
+#endif
+#if !ENABLE(IMAGE_ELEMENT_IMMERSIVE)
     [EnabledBy=ModelElementImmersiveEnabled] AllowImmersiveElement() -> (bool allow)
-    [EnabledBy=ModelElementImmersiveEnabled] PresentImmersiveElement(WebCore::LayerHostingContextIdentifier contextID) -> (bool success)
+#endif
+    [EnabledBy=ModelElementImmersiveEnabled] PresentImmersiveModelElement(WebCore::LayerHostingContextIdentifier contextID) -> (bool success)
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    [EnabledBy=ImageElementImmersiveEnabled] PresentImmersiveImageElement(WebCore::ShareableBitmapHandle imageHandle, std::optional<float> focalLengthIn35mm) -> (bool success)
+    [EnabledBy=ModelElementImmersiveEnabled || ImageElementImmersiveEnabled] DismissImmersiveElement() -> ()
+#endif
+#if !ENABLE(IMAGE_ELEMENT_IMMERSIVE)
     [EnabledBy=ModelElementImmersiveEnabled] DismissImmersiveElement() -> ()
+#endif
 #endif
 
     DidChangeContentSize(WebCore::IntSize newSize)

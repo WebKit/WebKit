@@ -237,7 +237,6 @@ private:
 
     bool isImmersiveEnabled() const final;
     void prepareImmersivePresentation(CompletionHandler<void(ExceptionOr<void>)>&&) final;
-    void presentImmersivePresentation(ChromeClient&, CompletionHandler<void(bool)>&&) final;
 
     std::optional<Exception> immersiveImageError() const;
     void exitImmersiveIfNeeded();

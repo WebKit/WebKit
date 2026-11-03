@@ -51,6 +51,10 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+#import <WebCore/ShareableBitmap.h>
+#endif
+
 #if ENABLE(SCREEN_TIME)
 #import <pal/cocoa/ScreenTimeSoftLink.h>
 #endif
@@ -129,10 +133,26 @@ void PageClientImplCocoa::allowImmersiveElement(Ref<API::FrameInfo>&& frameInfo,
     [webView() _allowImmersiveElement:wrapper(WTF::move(frameInfo)).get() completion:WTF::move(completion)];
 }
 
-void PageClientImplCocoa::presentImmersiveElement(const WebCore::LayerHostingContextIdentifier contextID, Ref<API::FrameInfo>&& frameInfo, CompletionHandler<void(bool)>&& completion) const
+void PageClientImplCocoa::presentImmersiveModelElement(const WebCore::LayerHostingContextIdentifier contextID, Ref<API::FrameInfo>&& frameInfo, CompletionHandler<void(bool)>&& completion) const
 {
     [webView() _presentImmersiveElement:contextID frameInfo:wrapper(WTF::move(frameInfo)).get() completion:WTF::move(completion)];
 }
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+void PageClientImplCocoa::presentImmersiveImageElement(WebCore::ShareableBitmapHandle&& imageHandle, std::optional<float> focalLengthIn35mm, Ref<API::FrameInfo>&& frameInfo, CompletionHandler<void(bool)>&& completion) const
+{
+    RefPtr bitmap = WebCore::ShareableBitmap::create(WTF::move(imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
+    if (!bitmap)
+        return completion(false);
+
+    RetainPtr image = bitmap->createPlatformImage(WebCore::CopyBackingStore);
+    if (!image)
+        return completion(false);
+
+    RetainPtr<NSNumber> focalLength = focalLengthIn35mm ? adoptNS([[NSNumber alloc] initWithFloat:*focalLengthIn35mm]) : nullptr;
+    [webView() _presentImmersiveImageElement:image.get() focalLengthIn35mm:focalLength.get() frameInfo:wrapper(WTF::move(frameInfo)).get() completion:WTF::move(completion)];
+}
+#endif
 
 void PageClientImplCocoa::dismissImmersiveElement(CompletionHandler<void()>&& completion) const
 {

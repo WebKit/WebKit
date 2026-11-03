@@ -32,7 +32,6 @@
 
 namespace WebCore {
 
-class ChromeClient;
 class HTMLElement;
 
 template<typename> class ExceptionOr;
@@ -48,7 +47,6 @@ public:
 
     virtual bool isImmersiveEnabled() const = 0;
     virtual void prepareImmersivePresentation(CompletionHandler<void(ExceptionOr<void>)>&&) = 0;
-    virtual void presentImmersivePresentation(ChromeClient&, CompletionHandler<void(bool)>&&) = 0;
     virtual void exitImmersivePresentation(CompletionHandler<void()>&& completion) { completion(); }
 
 private:
