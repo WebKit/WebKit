@@ -1,4 +1,4 @@
-Unchanged
+Inside
 
-FAIL HTML partial updates: invalid shadowrootmode superseded by for assert_equals: expected "Inside" but got "Unchanged"
+PASS HTML partial updates: invalid shadowrootmode superseded by for
 

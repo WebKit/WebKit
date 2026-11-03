@@ -1,13 +1,13 @@
 
 PASS Setter innerHTML should not patch existing target in head
-FAIL Setter innerHTML should patch targets inside the fragment assert_equals: Inner target should be patched expected "New content" but got "DIV content"
+PASS Setter innerHTML should patch targets inside the fragment
 PASS Setter outerHTML should not patch existing target in head
-FAIL Setter outerHTML should patch targets inside the fragment assert_equals: Inner target should be patched expected "New content" but got "DIV content"
+PASS Setter outerHTML should patch targets inside the fragment
 PASS Setter outerHTML should not patch existing target in body
 PASS Setter setHTMLUnsafe should not patch existing target in head
-FAIL Setter setHTMLUnsafe should patch targets inside the fragment assert_equals: Inner target should be patched expected "New content" but got "DIV content"
+PASS Setter setHTMLUnsafe should patch targets inside the fragment
 PASS Setter insertAdjacentHTML should not patch existing target in head
-FAIL Setter insertAdjacentHTML should patch targets inside the fragment assert_equals: Inner target should be patched expected "New content" but got "DIV content"
+PASS Setter insertAdjacentHTML should patch targets inside the fragment
 PASS Setter insertAdjacentHTML should not patch existing target in body
 FAIL Setter appendHTMLUnsafe should not patch existing target in head container.appendHTMLUnsafe is not a function. (In 'container.appendHTMLUnsafe(content)', 'container.appendHTMLUnsafe' is undefined)
 FAIL Setter appendHTMLUnsafe should patch targets inside the fragment container.appendHTMLUnsafe is not a function. (In 'container.appendHTMLUnsafe(content)', 'container.appendHTMLUnsafe' is undefined)
@@ -25,6 +25,6 @@ FAIL Setter replaceWithHTMLUnsafe should not patch existing target in head conta
 FAIL Setter replaceWithHTMLUnsafe should patch targets inside the fragment container.replaceWithHTMLUnsafe is not a function. (In 'container.replaceWithHTMLUnsafe(content)', 'container.replaceWithHTMLUnsafe' is undefined)
 FAIL Setter replaceWithHTMLUnsafe should not patch existing target in body container.replaceWithHTMLUnsafe is not a function. (In 'container.replaceWithHTMLUnsafe(content)', 'container.replaceWithHTMLUnsafe' is undefined)
 PASS Setter createContextualFragment should not patch existing target in head
-FAIL Setter createContextualFragment should patch targets inside the fragment assert_equals: Inner target should be patched expected "New content" but got "DIV content"
+PASS Setter createContextualFragment should patch targets inside the fragment
 PASS Setter createContextualFragment should not patch existing target in body
 

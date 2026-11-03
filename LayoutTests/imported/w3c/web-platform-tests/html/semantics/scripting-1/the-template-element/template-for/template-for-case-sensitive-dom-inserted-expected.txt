@@ -1,4 +1,4 @@
-f
+def
 
-FAIL marker/end/start PI targets are parsed as lower case, but attributes are case-sensitive assert_equals: expected "<?Start name=\"a\"?><?End ?><?MARKER name=\"b\"?><?marKER name=\"c\"?><?marker Name=\"z\"?>def" but got "<?Start name=\"a\"?><?End ?><?MARKER name=\"b\"?><?marKER name=\"c\"?><?marker Name=\"z\"?><?marker name=\"d\"?><?start name=\"e\"?><?end ?>f"
+PASS marker/end/start PI targets are parsed as lower case, but attributes are case-sensitive
 

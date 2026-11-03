@@ -1,3 +1,4 @@
+ab
 
-FAIL empty hash matches marker without name attribute assert_equals: expected "ab" but got ""
+PASS empty hash matches marker without name attribute
 
