@@ -94,8 +94,11 @@ bool updateCurrentUserInterfaceIdiom()
                 return UserInterfaceIdiom::Desktop;
             if (idiom == UIUserInterfaceIdiomPhone || idiom == UIUserInterfaceIdiomWatch)
                 return UserInterfaceIdiom::SmallScreen;
+            // FIXME: Replace UIUserInterfaceIdiomUndefined8 with UIUserInterfaceIdiomHomeAccessory once the latter is widely available in SDKs.
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (idiom == UIUserInterfaceIdiomUndefined8)
                 return UserInterfaceIdiom::SmallScreen;
+ALLOW_DEPRECATED_DECLARATIONS_END
 #if HAVE(UI_USER_INTERFACE_IDIOM_VISION)
             if (idiom == UIUserInterfaceIdiomVision)
                 return UserInterfaceIdiom::Vision;
