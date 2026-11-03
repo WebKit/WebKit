@@ -35,6 +35,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderTable.h"
+#include "RenderTableCell.h"
 #include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -49,6 +50,25 @@ namespace WebCore {
 namespace Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BlockFormattingContext);
+
+static BlockFormattingUtils::ContainingBlockIsTableCell containingBlockIsTableCell(const ContainingBlockState& containingBlockState)
+{
+    return containingBlockState.blockContainer->isRenderTableCell() ? BlockFormattingUtils::ContainingBlockIsTableCell::Yes : BlockFormattingUtils::ContainingBlockIsTableCell::No;
+}
+
+// What the percentage block sizes of a box resolve against: the content box block size of its containing block. A table cell is a root
+// whose content box block size is the one the row gives it (constraintsForBlockContent); before it has one, a child that scrolls its
+// overflow gets zero when the cell or the table has a block size (RenderBox::computePercentageLogicalHeight, tableCellShouldHaveZeroInitialSize).
+static std::optional<LayoutUnit> percentageBasis(const RenderBox& box, const ContainingBlockState& containingBlockState)
+{
+    CheckedPtr tableCell = dynamicDowncast<RenderTableCell>(containingBlockState.blockContainer);
+    if (!tableCell || containingBlockState.contentBoxBlockSize || !box.scrollsOverflowY())
+        return containingBlockState.contentBoxBlockSize;
+    auto& cellBlockSize = tableCell->style().logicalHeight();
+    if (tableCell->table()->style().logicalHeight().isAuto() && (cellBlockSize.isAuto() || cellBlockSize.isPercentOrCalculated()))
+        return { };
+    return 0_lu;
+}
 
 BlockFormattingContext::BlockFormattingContext(const RenderBlockFlow& root, LayoutIntegration::BlockIntegrationUtils& integrationUtils, BlockLayoutState& blockLayoutState)
     : m_root(root)
@@ -149,7 +169,7 @@ void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockConta
             if (viewportStretchedBorderBoxBlockSize(blockContainerState.margins.collapsedMarginsBefore().collapsedValue(), margins.collapsedValue()) > 0)
                 return false;
         }
-        return BlockMarginCollapse::marginsCollapseThrough(blockContainer, blockContainerState.geometry, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(blockContainer, blockContainerState.geometry, containingBlockState), root().writingMode());
+        return BlockMarginCollapse::marginsCollapseThrough(blockContainer, blockContainerState.geometry, percentageBasis(blockContainer, containingBlockState), stretchFitBorderBoxBlockSize(blockContainer, blockContainerState.geometry, containingBlockState), root().writingMode());
     };
     if (!blockContainerState.borderBoxLogicalTop && !marginsCollapseThrough())
         resolveBorderBoxLogicalTops(blockContainerState);
@@ -438,7 +458,7 @@ ContainingBlockState BlockFormattingContext::containingBlockStateForRoot(const C
 
 ContainingBlockState BlockFormattingContext::containingBlockStateFor(const RenderBox& blockContainer, const BoxGeometry& geometry, const ContainingBlockState& parentState) const
 {
-    auto contentBoxBlockSize = BlockFormattingUtils::definiteContentBoxBlockSize(blockContainer, geometry, parentState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(blockContainer, geometry, parentState), root().writingMode());
+    auto contentBoxBlockSize = BlockFormattingUtils::definiteContentBoxBlockSize(blockContainer, geometry, percentageBasis(blockContainer, parentState), stretchFitBorderBoxBlockSize(blockContainer, geometry, parentState), root().writingMode(), containingBlockIsTableCell(parentState));
     return {
         .blockContainer = blockContainer,
         .geometry = geometry,
@@ -737,7 +757,7 @@ void BlockFormattingContext::computeBlockSize(const RenderBox& box, LayoutUnit i
     if (box.shouldApplySizeContainment())
         intrinsicContentBlockSize = box.explicitIntrinsicInnerLogicalHeight().value_or(0_lu);
     auto borderAndPaddingBlockSize = geometry.verticalBorderAndPadding();
-    auto blockSize = BlockFormattingUtils::borderBoxBlockSize(box, borderAndPaddingBlockSize, intrinsicContentBlockSize, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), root().writingMode());
+    auto blockSize = BlockFormattingUtils::borderBoxBlockSize(box, borderAndPaddingBlockSize, intrinsicContentBlockSize, percentageBasis(box, containingBlockState), stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), root().writingMode(), containingBlockIsTableCell(containingBlockState));
     if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), borderAndPaddingBlockSize, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), root().writingMode(), intrinsicContentBlockSize))
         blockSize = *aspectRatioBlockSize;
     geometry.setContentBoxHeight(blockSize - borderAndPaddingBlockSize);
