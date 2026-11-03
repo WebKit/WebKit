@@ -145,10 +145,13 @@ static const Register* LEGACY_NODELETE topOfFrame(const CallFrame* callFrame)
         case Wasm::CompilationMode::IPIntMode:
         case Wasm::CompilationMode::BBQMode:
         case Wasm::CompilationMode::OMGMode:
+        case Wasm::CompilationMode::RestoreFrameMode:
             return callFrame->registers() + 2;
         case Wasm::CompilationMode::JSToWasmMode:
             return alignStackPointer(callFrame->registers() + static_cast<size_t>(CallFrameSlot::firstArgument) + callFrame->argumentCount());
-        default:
+        case Wasm::CompilationMode::OMGForOSREntryMode:
+        case Wasm::CompilationMode::JSToWasmICMode:
+        case Wasm::CompilationMode::WasmBuiltinMode:
             RELEASE_ASSERT_NOT_REACHED(); // case not accounted for
         }
     } else {
@@ -359,7 +362,8 @@ IterationStatus SlabSlicer::step(VM& vm, StackVisitor& visitor)
             case Wasm::CompilationMode::IPIntMode:
             case Wasm::CompilationMode::BBQMode:
             case Wasm::CompilationMode::OMGMode:
-            case Wasm::CompilationMode::OMGForOSREntryMode: {
+            case Wasm::CompilationMode::OMGForOSREntryMode:
+            case Wasm::CompilationMode::RestoreFrameMode: {
                 m_pendingFrameRecords.append(callFrame);
                 break;
             }
@@ -369,7 +373,7 @@ IterationStatus SlabSlicer::step(VM& vm, StackVisitor& visitor)
                 m_state = State::ScannedJSToWasm;
                 break;
             }
-            default: {
+            case Wasm::CompilationMode::WasmBuiltinMode: {
                 setErrorMessageWithCompilationMode("unrecognized type of Wasm frame: "_s, *compilationMode);
                 m_state = State::Failure;
             }
@@ -457,6 +461,7 @@ IterationStatus FragSlicer::step(VM& vm, StackVisitor& visitor)
         break;
     }
     case State::ScannedWasmToJS: {
+        // FIXME: Keep RestoreFrameMode in the same slice as the tail-callee frame below it.
         if (compilationMode == Wasm::CompilationMode::IPIntMode
             || compilationMode == Wasm::CompilationMode::BBQMode
             || compilationMode == Wasm::CompilationMode::OMGMode
@@ -494,7 +499,10 @@ IterationStatus FragSlicer::step(VM& vm, StackVisitor& visitor)
                 m_state = State::ScannedJSToWasm;
                 break;
             }
-            default: {
+            case Wasm::CompilationMode::WasmToJSMode:
+            // FIXME: Handle RestoreFrameMode here as well.
+            case Wasm::CompilationMode::RestoreFrameMode:
+            case Wasm::CompilationMode::WasmBuiltinMode: {
                 setErrorMessageWithCompilationMode("unrecognized type of Wasm frame: "_s, *compilationMode);
                 m_state = State::Failure;
             }
