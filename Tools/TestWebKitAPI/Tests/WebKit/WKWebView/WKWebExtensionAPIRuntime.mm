@@ -382,6 +382,27 @@ TEST(WKWebExtensionAPIRuntime, GetManifest)
     Util::loadAndRunExtension(testManifest, @{ @"background.js": backgroundScript });
 }
 
+TEST(WKWebExtensionAPIRuntime, BackgroundScriptDecodedAsUTF8)
+{
+    auto *testManifest = @{
+        @"manifest_version": @3,
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"persistent": @NO,
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const literal = '✕’ąŠ'",
+        @"browser.test.assertEq(literal, '\\u2715\\u2019\\u0105\\u0160')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(testManifest, @{ @"background.js": backgroundScript });
+}
+
 TEST(WKWebExtensionAPIRuntime, GetVersion)
 {
     auto *testManifest = @{

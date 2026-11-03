@@ -1120,7 +1120,7 @@ const String& WebExtension::generatedBackgroundContent()
 
     StringBuilder generatedBackgroundContent;
     if (!isServiceWorker)
-        generatedBackgroundContent.append("<!DOCTYPE html>\n<body>\n"_s);
+        generatedBackgroundContent.append("<!DOCTYPE html>\n<meta charset=\"utf-8\">\n<body>\n"_s);
 
     for (auto& scriptPath : scripts)
         generatedBackgroundContent.append(scriptPath, "\n"_s);
