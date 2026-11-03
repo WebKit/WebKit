@@ -43,7 +43,9 @@ CLANG_ENABLE_OBJC_ARC = YES;
 OTHER_CFLAGS = $(inherited) -isystem icu -Wno-error=stack-exhausted $(OTHER_CFLAGS_JSC_SUPPORTS_SWIFT_$(JSC_SUPPORTS_SWIFT));
 OTHER_CFLAGS_JSC_SUPPORTS_SWIFT_YES = -DJSC_SUPPORTS_SWIFT=1;
 
-OTHER_LDFLAGS = $(inherited) $(JSC_SEC_LD_FLAGS) $(SOURCE_VERSION_LDFLAGS);
+OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_TARGET_$(TARGET_NAME)) $(SOURCE_VERSION_LDFLAGS);
+// testmasm repatches JIT code through inline helpers that call BrowserEngineCore directly.
+OTHER_LDFLAGS_TARGET_testmasm = $(JSC_SEC_LD_FLAGS);
 
 // Explicitly add the PrivateHeaders directory to the search path so that generated header files can be found in production builds.
 HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" "${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}" "$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders" $(inherited);
