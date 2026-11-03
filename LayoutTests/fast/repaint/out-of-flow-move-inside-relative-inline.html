@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<title>Repaint of an out-of-flow box whose containing block is an inline box</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+.container {
+    position: relative;
+    font: 20px/1 Ahem;
+    width: 300px;
+}
+.abs {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    background: green;
+}
+</style>
+<div id=tests></div>
+<script>
+// The repaint rects issued for a moving out-of-flow box must cover both its old and its new position.
+const tests = document.getElementById("tests");
+const abs = `<i class=abs></i>`;
+const cases = [
+    { description: "inline box in the containing block's inline formatting context", markup: `XX <span style="position: relative">XX${abs}XX</span>` },
+    { description: "relatively offset inline box", markup: `XX <span style="position: relative; left: 13px; top: 7px">XX${abs}XX</span>` },
+    { description: "inline box inside an anonymous block", markup: `<div style="height: 50px"></div>XX <span style="position: relative">XX${abs}XX</span><div></div>` },
+    { description: "inline box with border and padding", markup: `XX <span style="position: relative; border: 10px solid blue; padding: 5px">XX${abs}XX</span>` },
+    { description: "inline box on the second line", markup: `XXXXXXXXXX XXXX <span style="position: relative">XX${abs}XX</span>` },
+];
+
+function documentRect(element)
+{
+    const rect = element.getBoundingClientRect();
+    return { x: rect.left + scrollX, y: rect.top + scrollY, width: rect.width, height: rect.height };
+}
+
+function repaintRects()
+{
+    return [...internals.repaintRectsAsText().matchAll(/\(rect (-?[\d.]+) (-?[\d.]+) (-?[\d.]+) (-?[\d.]+)\)/g)].map(match => {
+        return { x: parseFloat(match[1]), y: parseFloat(match[2]), width: parseFloat(match[3]), height: parseFloat(match[4]) };
+    });
+}
+
+function isCovered(rect, rects)
+{
+    return rects.some(candidate => candidate.x <= rect.x + 0.5 && candidate.y <= rect.y + 0.5
+        && candidate.x + candidate.width >= rect.x + rect.width - 0.5 && candidate.y + candidate.height >= rect.y + rect.height - 0.5);
+}
+
+for (const testCase of cases) {
+    const container = document.createElement("div");
+    container.className = "container";
+    container.innerHTML = testCase.markup;
+    tests.append(container);
+}
+document.body.offsetHeight;
+
+for (const container of tests.children) {
+    const testCase = cases[[...tests.children].indexOf(container)];
+    test(() => {
+        assert_own_property(window, "internals", "This test requires internals");
+        const element = container.querySelector(".abs");
+        const oldRect = documentRect(element);
+        internals.startTrackingRepaints();
+        element.style.left = "30px";
+        document.body.offsetHeight;
+        const rects = repaintRects();
+        internals.stopTrackingRepaints();
+        const newRect = documentRect(element);
+        assert_true(isCovered(oldRect, rects), `old position ${JSON.stringify(oldRect)} is repainted (${JSON.stringify(rects)})`);
+        assert_true(isCovered(newRect, rects), `new position ${JSON.stringify(newRect)} is repainted (${JSON.stringify(rects)})`);
+    }, testCase.description);
+}
+
+tests.remove();
+</script>

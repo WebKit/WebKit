@@ -1,0 +1,21 @@
+
+PASS direction: rtl; inline box 'position: relative'; in-flow inline-block
+PASS direction: rtl; inline box 'position: relative'; absolutely positioned box at its static position
+PASS direction: rtl; inline box 'position: relative'; absolutely positioned box with 'left: 0; top: 0'
+PASS direction: rtl; inline box 'position: relative'; absolutely positioned box with 'right: 0; bottom: 0'
+PASS direction: rtl; inline box 'position: relative'; absolutely positioned box with 'left: 0'
+PASS direction: rtl; inline box 'position: relative'; absolutely positioned box with 'top: 0'
+PASS direction: rtl; inline box 'position: relative; border: 10px solid; padding: 5px'; in-flow inline-block
+PASS direction: rtl; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box at its static position
+PASS direction: rtl; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'left: 0; top: 0'
+PASS direction: rtl; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'right: 0; bottom: 0'
+PASS direction: rtl; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'left: 0'
+PASS direction: rtl; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'top: 0'
+PASS direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; in-flow inline-block
+PASS direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box at its static position
+PASS direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'left: 0; top: 0'
+PASS direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'right: 0; bottom: 0'
+PASS direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'left: 0'
+PASS direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'top: 0'
+PASS direction: ltr; inline box 'position: relative'; absolutely positioned box with 'right: 0; bottom: 0'
+

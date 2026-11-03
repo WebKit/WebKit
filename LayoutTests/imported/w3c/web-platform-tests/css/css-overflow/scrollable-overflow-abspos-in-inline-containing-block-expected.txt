@@ -1,0 +1,5 @@
+
+PASS inline box in the scroll container's inline formatting context; absolutely positioned box 'top: auto'
+PASS inline box in the scroll container's inline formatting context; absolutely positioned box 'left: auto'
+PASS inline box in an anonymous block; absolutely positioned box 'left: auto'
+

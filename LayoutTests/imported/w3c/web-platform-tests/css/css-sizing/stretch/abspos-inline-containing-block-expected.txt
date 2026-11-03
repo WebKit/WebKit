@@ -1,0 +1,4 @@
+
+PASS 'width: stretch' fills the padding box of the inline box
+PASS 'height: stretch' fills the padding box of the inline box
+
