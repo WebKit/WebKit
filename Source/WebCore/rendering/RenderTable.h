@@ -57,7 +57,7 @@ public:
     LayoutUnit hBorderSpacing() const { return m_hSpacing; }
     LayoutUnit vBorderSpacing() const { return m_vSpacing; }
     
-    bool LEGACY_NODELETE collapseBorders() const;
+    NODELETE bool collapseBorders() const;
 
     LayoutUnit borderStart() const final;
     LayoutUnit borderEnd() const final;
@@ -100,7 +100,7 @@ public:
     }
 
     // This function returns 0 if the table has no section.
-    RenderTableSection* LEGACY_NODELETE topSection() const;
+    NODELETE RenderTableSection* topSection() const;
     RenderTableSection* bottomSection() const;
 
     // This function returns 0 if the table has no non-empty sections.
@@ -154,7 +154,7 @@ public:
     inline LayoutUnit bordersPaddingAndSpacingInRowDirection() const;
 
     // Return the first column or column-group.
-    RenderTableCol* LEGACY_NODELETE firstColumn() const;
+    NODELETE RenderTableCol* firstColumn() const;
 
     RenderTableCol* colElement(unsigned col, bool* startEdge = nullptr, bool* endEdge = nullptr) const
     {
@@ -203,7 +203,7 @@ public:
     
     void markForPaginationRelayoutIfNeeded() final;
 
-    void LEGACY_NODELETE willInsertTableColumn(RenderTableCol& child, RenderObject* beforeChild);
+    NODELETE void willInsertTableColumn(RenderTableCol& child, RenderObject* beforeChild);
     void willInsertTableSection(RenderTableSection& child, RenderObject* beforeChild);
 
     LayoutUnit sumCaptionsLogicalHeight() const;
@@ -240,7 +240,7 @@ protected:
     void updateColumnCache() const;
     void invalidateCachedColumns();
 
-    void LEGACY_NODELETE invalidateCachedColumnOffsets();
+    NODELETE void invalidateCachedColumnOffsets();
     
     void updateLogicalWidth() final;
 

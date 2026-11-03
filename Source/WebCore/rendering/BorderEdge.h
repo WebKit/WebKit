@@ -58,8 +58,8 @@ public:
     inline bool presentButInvisible() const { return widthForPainting() && !hasVisibleColorAndStyle(); }
     inline float widthForPainting() const { return m_isPresent ? m_flooredToDevicePixelWidth : 0; }
     void getDoubleBorderStripeWidths(LayoutUnit& outerWidth, LayoutUnit& innerWidth) const;
-    bool LEGACY_NODELETE obscuresBackgroundEdge(float scale) const;
-    bool LEGACY_NODELETE obscuresBackground() const;
+    NODELETE bool obscuresBackgroundEdge(float scale) const;
+    NODELETE bool obscuresBackground() const;
 
 private:
     inline float borderWidthInDevicePixel(int logicalPixels) const { return LayoutUnit(logicalPixels / m_devicePixelRatio).toFloat(); }

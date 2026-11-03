@@ -77,7 +77,7 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-static CSSParserMode LEGACY_NODELETE parserMode(ScriptExecutionContext& context)
+NODELETE static CSSParserMode parserMode(ScriptExecutionContext& context)
 {
     auto* document = dynamicDowncast<Document>(context);
     return (document && document->inQuirksMode()) ? HTMLQuirksMode : HTMLStandardMode;
@@ -624,7 +624,7 @@ Vector<FontTechnology> consumeFontTech(CSSParserTokenRange& range, CSS::Property
     return technologies;
 }
 
-static bool LEGACY_NODELETE isFontFormatKeywordValid(CSSValueID id)
+NODELETE static bool isFontFormatKeywordValid(CSSValueID id)
 {
     switch (id) {
     case CSSValueID::Collection:
@@ -977,7 +977,7 @@ RefPtr<CSSValue> consumeFontFaceFontStyle(CSSParserTokenRange& range, CSS::Prope
 
 // MARK: @font-face 'font-feature-settings'
 
-static std::optional<FontTag> LEGACY_NODELETE consumeFontOpenTypeTag(CSSParserTokenRange& range)
+NODELETE static std::optional<FontTag> consumeFontOpenTypeTag(CSSParserTokenRange& range)
 {
     // <opentype-tag> = <string>
     // https://drafts.csswg.org/css-fonts/#typedef-opentype-tag

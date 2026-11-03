@@ -38,8 +38,8 @@ public:
     {
     }
 
-    std::optional<uint64_t> LEGACY_NODELETE read(size_t);
-    std::optional<bool> LEGACY_NODELETE readBit();
+    NODELETE std::optional<uint64_t> read(size_t);
+    NODELETE std::optional<bool> readBit();
     template <typename T> std::optional<T> read()
     {
         static_assert(std::is_unsigned<T>::value);
@@ -48,17 +48,17 @@ public:
             return { };
         return static_cast<T>(*value);
     }
-    size_t LEGACY_NODELETE bitOffset() const;
-    bool LEGACY_NODELETE skipBytes(size_t);
+    NODELETE size_t bitOffset() const;
+    NODELETE bool skipBytes(size_t);
     size_t byteOffset() const { return m_index; }
 
     // Once a read fails, ok() becomes false and every subsequent call to these helpers returns 0/false without touching m_index further.
     bool ok() const { return !m_invalid; }
-    uint32_t LEGACY_NODELETE readBits(size_t bits);
-    bool LEGACY_NODELETE readFlag();
-    void LEGACY_NODELETE consumeBits(size_t bits);
-    uint32_t LEGACY_NODELETE readExpGolomb();
-    int32_t LEGACY_NODELETE readSignedExpGolomb();
+    NODELETE uint32_t readBits(size_t bits);
+    NODELETE bool readFlag();
+    NODELETE void consumeBits(size_t bits);
+    NODELETE uint32_t readExpGolomb();
+    NODELETE int32_t readSignedExpGolomb();
     std::span<const uint8_t> readSpan(size_t bytes);
     // Reads a size encoded as in MPEG-4 systems (ISO 14496-1, 8.3.3): 1 to 4 bytes holding 7 bits each, most significant first, the high bit meaning another byte follows.
     uint32_t readExpandableSize();

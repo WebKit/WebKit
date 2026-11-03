@@ -81,7 +81,7 @@ static LayoutBoxExtent computeSlices(const LayoutSize& size, const SliceValues& 
     };
 }
 
-static void LEGACY_NODELETE scaleSlicesIfNeeded(const LayoutSize& size, LayoutBoxExtent& slices, float deviceScaleFactor)
+NODELETE static void scaleSlicesIfNeeded(const LayoutSize& size, LayoutBoxExtent& slices, float deviceScaleFactor)
 {
     LayoutUnit width  = std::max(LayoutUnit(1 / deviceScaleFactor), slices.left() + slices.right());
     LayoutUnit height = std::max(LayoutUnit(1 / deviceScaleFactor), slices.top() + slices.bottom());
@@ -98,7 +98,7 @@ static void LEGACY_NODELETE scaleSlicesIfNeeded(const LayoutSize& size, LayoutBo
     slices.left()   *= sliceScaleFactor;
 }
 
-static bool LEGACY_NODELETE isEmptyPieceRect(ImagePiece piece, const NinePieceRects& destinationRects, const NinePieceRects& sourceRects)
+NODELETE static bool isEmptyPieceRect(ImagePiece piece, const NinePieceRects& destinationRects, const NinePieceRects& sourceRects)
 {
     return destinationRects[piece].isEmpty() || sourceRects[piece].isEmpty();
 }
@@ -139,7 +139,7 @@ static NinePieceRects computeNineRects(const FloatRect& outer, const LayoutBoxEx
     return rects;
 }
 
-static FloatSize LEGACY_NODELETE computeSideTileScale(ImagePiece piece, const NinePieceRects& destinationRects, const NinePieceRects& sourceRects)
+NODELETE static FloatSize computeSideTileScale(ImagePiece piece, const NinePieceRects& destinationRects, const NinePieceRects& sourceRects)
 {
     ASSERT(!isCornerPiece(piece) && piece != ImagePiece::Middle);
     if (isEmptyPieceRect(piece, destinationRects, sourceRects))
@@ -154,7 +154,7 @@ static FloatSize LEGACY_NODELETE computeSideTileScale(ImagePiece piece, const Ni
     return FloatSize(scale, scale);
 }
 
-static FloatSize LEGACY_NODELETE computeMiddleTileScale(const NinePieceScales& scales, const NinePieceRects& destinationRects, const NinePieceRects& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule)
+NODELETE static FloatSize computeMiddleTileScale(const NinePieceScales& scales, const NinePieceRects& destinationRects, const NinePieceRects& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule)
 {
     using enum ImagePiece;
 
@@ -181,7 +181,7 @@ static FloatSize LEGACY_NODELETE computeMiddleTileScale(const NinePieceScales& s
     return scale;
 }
 
-static NinePieceScales LEGACY_NODELETE computeTileScales(const NinePieceRects& destinationRects, const NinePieceRects& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule)
+NODELETE static NinePieceScales computeTileScales(const NinePieceRects& destinationRects, const NinePieceRects& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule)
 {
     using enum ImagePiece;
 

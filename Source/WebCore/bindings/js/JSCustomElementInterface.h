@@ -116,7 +116,7 @@ public:
     bool hasFormStateRestoreCallback() const { return !!m_formStateRestoreCallback; }
     void invokeFormStateRestoreCallback(Element&, CustomElementFormValue state);
 
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const;
     JSC::JSObject* constructor() { return m_constructor.get(); }
 
     const QualifiedName& name() const LIFETIME_BOUND { return m_name; }

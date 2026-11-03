@@ -36,7 +36,7 @@ public:
     RenderSlider(HTMLInputElement&, Style::ComputedStyle&&);
     virtual ~RenderSlider();
 
-    HTMLInputElement& LEGACY_NODELETE element() const;
+    NODELETE HTMLInputElement& element() const;
 
     bool canHaveGeneratedChildren() const override { return false; }
 

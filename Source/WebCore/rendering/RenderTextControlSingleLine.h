@@ -42,7 +42,7 @@ public:
 protected:
     HTMLElement* containerElement() const;
     HTMLElement* innerBlockElement() const;
-    HTMLInputElement& LEGACY_NODELETE inputElement() const;
+    NODELETE HTMLInputElement& inputElement() const;
 
 private:
     void textFormControlElement() const = delete;

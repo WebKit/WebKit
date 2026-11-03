@@ -40,8 +40,8 @@ class CanvasNoiseInjection {
 public:
     void postProcessDirtyCanvasBuffer(ImageBuffer*, NoiseInjectionHashSalt, CanvasNoiseInjectionPostProcessArea = CanvasNoiseInjectionPostProcessArea::DirtyRect);
     bool postProcessPixelBufferResults(PixelBuffer&, NoiseInjectionHashSalt) const;
-    void LEGACY_NODELETE updateDirtyRect(const IntRect&);
-    void LEGACY_NODELETE clearDirtyRect();
+    NODELETE void updateDirtyRect(const IntRect&);
+    NODELETE void clearDirtyRect();
     bool haveDirtyRects() const { return !m_postProcessDirtyRect.isEmpty(); }
 
 private:

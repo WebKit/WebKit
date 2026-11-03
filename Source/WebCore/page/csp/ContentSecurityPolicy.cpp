@@ -106,7 +106,7 @@ ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ContentSecurity
     updateSourceSelf(SecurityOrigin::create(m_protectedURL).get());
 }
 
-static ReportingClient* LEGACY_NODELETE reportingClientForContext(ScriptExecutionContext& scriptExecutionContext)
+NODELETE static ReportingClient* reportingClientForContext(ScriptExecutionContext& scriptExecutionContext)
 {
     if (auto* document = dynamicDowncast<Document>(scriptExecutionContext))
         return document;

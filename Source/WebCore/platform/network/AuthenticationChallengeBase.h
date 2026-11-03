@@ -39,14 +39,14 @@ public:
     WEBCORE_EXPORT AuthenticationChallengeBase();
     WEBCORE_EXPORT AuthenticationChallengeBase(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error);
 
-    WEBCORE_EXPORT unsigned LEGACY_NODELETE previousFailureCount() const;
-    WEBCORE_EXPORT const Credential& LEGACY_NODELETE proposedCredential() const;
-    WEBCORE_EXPORT const ProtectionSpace& LEGACY_NODELETE protectionSpace() const;
-    WEBCORE_EXPORT const ResourceResponse& LEGACY_NODELETE failureResponse() const;
-    WEBCORE_EXPORT const ResourceError& LEGACY_NODELETE error() const;
+    NODELETE WEBCORE_EXPORT unsigned previousFailureCount() const;
+    NODELETE WEBCORE_EXPORT const Credential& proposedCredential() const;
+    NODELETE WEBCORE_EXPORT const ProtectionSpace& protectionSpace() const;
+    NODELETE WEBCORE_EXPORT const ResourceResponse& failureResponse() const;
+    NODELETE WEBCORE_EXPORT const ResourceError& error() const;
     
-    WEBCORE_EXPORT bool LEGACY_NODELETE isNull() const;
-    WEBCORE_EXPORT void LEGACY_NODELETE nullify();
+    NODELETE WEBCORE_EXPORT bool isNull() const;
+    NODELETE WEBCORE_EXPORT void nullify();
     
     WEBCORE_EXPORT static bool equalForWebKitLegacyChallengeComparison(const AuthenticationChallenge&, const AuthenticationChallenge&);
 

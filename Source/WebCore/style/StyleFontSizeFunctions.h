@@ -45,15 +45,15 @@ struct UsedFontSize {
     float zoomFactor { 1.0f };
 };
 
-float LEGACY_NODELETE usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule, const SettingsValues&);
-float LEGACY_NODELETE textZoomFactorForFontSize(const ComputedStyle&, const Document&);
-UsedFontSize LEGACY_NODELETE usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSize, bool useSVGZoomRules, const ComputedStyle&, const Document&);
-float LEGACY_NODELETE usedFontSizeFromComputedSizeForSVGInlineText(float computedSize, bool isAbsoluteSize, float zoomFactor, const Document&);
-float LEGACY_NODELETE adjustedFontSize(float size, const WebCore::FontSizeAdjust&, const FontMetrics&);
+NODELETE float usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule, const SettingsValues&);
+NODELETE float textZoomFactorForFontSize(const ComputedStyle&, const Document&);
+NODELETE UsedFontSize usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSize, bool useSVGZoomRules, const ComputedStyle&, const Document&);
+NODELETE float usedFontSizeFromComputedSizeForSVGInlineText(float computedSize, bool isAbsoluteSize, float zoomFactor, const Document&);
+NODELETE float adjustedFontSize(float size, const WebCore::FontSizeAdjust&, const FontMetrics&);
 
 // Given a CSS keyword id in the range (CSSValueID::XxSmall to CSSValueID::XxxLarge), this function will return
 // the correct font size scaled relative to the user's default (medium).
-float LEGACY_NODELETE fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, const SettingsValues&, bool inQuirksMode = false);
+NODELETE float fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, const SettingsValues&, bool inQuirksMode = false);
 float fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, const Document&);
 
 // Given a font size in pixel, this function will return legacy font size between 1 and 7.

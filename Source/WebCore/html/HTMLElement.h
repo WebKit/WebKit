@@ -56,7 +56,7 @@ class HTMLElement : public StyledElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLElement);
 public:
-    static Ref<HTMLElement> LEGACY_NODELETE create(const QualifiedName& tagName, Document&);
+    NODELETE static Ref<HTMLElement> create(const QualifiedName& tagName, Document&);
 
     WEBCORE_EXPORT String title() const final;
 
@@ -66,7 +66,7 @@ public:
     enum class IncludeAltText : bool { No, Yes };
     static String htmlAwareTextContent(const Element&, IncludeAltText);
 
-    virtual bool LEGACY_NODELETE hasCustomFocusLogic() const;
+    NODELETE virtual bool hasCustomFocusLogic() const;
     bool supportsFocus() const override;
 
     WEBCORE_EXPORT String contentEditable() const;
@@ -107,7 +107,7 @@ public:
     virtual bool isLabelable() const { return false; }
     WEBCORE_EXPORT RefPtr<NodeList> labels();
 
-    virtual FormAssociatedElement* LEGACY_NODELETE asFormAssociatedElement();
+    NODELETE virtual FormAssociatedElement* asFormAssociatedElement();
 
     virtual bool isInteractiveContent() const { return false; }
 
@@ -116,7 +116,7 @@ public:
     static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName);
 
     // Only some element types can be disabled: https://html.spec.whatwg.org/multipage/scripting.html#concept-element-disabled
-    bool LEGACY_NODELETE canBeActuallyDisabled() const;
+    NODELETE bool canBeActuallyDisabled() const;
     virtual bool isActuallyDisabled() const;
 
 #if ENABLE(AUTOCAPITALIZE)
@@ -159,7 +159,7 @@ public:
     ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents, HTMLElement* = nullptr);
     ExceptionOr<bool> togglePopover(Variant<WebCore::HTMLElement::TogglePopoverOptions, bool>);
 
-    const AtomString& LEGACY_NODELETE popover() const;
+    NODELETE const AtomString& popover() const;
     void setPopover(const AtomString& value);
     void popoverAttributeChanged(const AtomString& value);
 
@@ -202,7 +202,7 @@ protected:
     virtual void popoverWasHidden() { }
 
     using EventHandlerNameMap = HashMap<AtomString, AtomString>;
-    static const AtomString& LEGACY_NODELETE eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
+    NODELETE static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
 
 private:
     HTMLElement(ClangVTableWorkaroundTag, const QualifiedName&, Document&);

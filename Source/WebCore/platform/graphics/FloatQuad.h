@@ -86,26 +86,26 @@ public:
     // that is, if two edges are parallel to the x-axis and the other two
     // are parallel to the y-axis. If this method returns true, the
     // corresponding FloatRect can be retrieved with boundingBox().
-    WEBCORE_EXPORT bool LEGACY_NODELETE isRectilinear() const;
+    NODELETE WEBCORE_EXPORT bool isRectilinear() const;
 
     // Tests whether the given point is inside, or on an edge or corner of this quad.
-    WEBCORE_EXPORT bool LEGACY_NODELETE containsPoint(const FloatPoint&) const;
+    NODELETE WEBCORE_EXPORT bool containsPoint(const FloatPoint&) const;
 
     // Tests whether the four corners of other are inside, or coincident with the sides of this quad.
     // Note that this only works for convex quads, but that includes all quads that originate
     // from transformed rects.
-    WEBCORE_EXPORT bool LEGACY_NODELETE containsQuad(const FloatQuad&) const;
+    NODELETE WEBCORE_EXPORT bool containsQuad(const FloatQuad&) const;
 
     // Tests whether any part of the rectangle intersects with this quad.
     // This only works for convex quads.
-    bool LEGACY_NODELETE intersectsRect(const FloatRect&) const;
+    NODELETE bool intersectsRect(const FloatRect&) const;
 
     // Test whether any part of the circle/ellipse intersects with this quad.
     // Note that these two functions only work for convex quads.
-    bool LEGACY_NODELETE intersectsCircle(const FloatPoint& center, float radius) const;
-    bool LEGACY_NODELETE intersectsEllipse(const FloatPoint& center, const FloatSize& radii) const;
+    NODELETE bool intersectsCircle(const FloatPoint& center, float radius) const;
+    NODELETE bool intersectsEllipse(const FloatPoint& center, const FloatSize& radii) const;
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE intersectsQuad(const FloatQuad&) const;
+    NODELETE WEBCORE_EXPORT bool intersectsQuad(const FloatQuad&) const;
 
     // The center of the quad. If the quad is the result of a affine-transformed rectangle this is the same as the original center transformed.
     FloatPoint center() const
@@ -114,7 +114,7 @@ public:
                           (m_p1.y() + m_p2.y() + m_p3.y() + m_p4.y()) / 4.0);
     }
 
-    WEBCORE_EXPORT FloatRect LEGACY_NODELETE boundingBox() const;
+    NODELETE WEBCORE_EXPORT FloatRect boundingBox() const;
     IntRect enclosingBoundingBox() const
     {
         return enclosingIntRect(boundingBox());
@@ -151,7 +151,7 @@ public:
 
     // Tests whether points are in clock-wise, or counter clock-wise order.
     // Note that output is undefined when all points are colinear.
-    bool LEGACY_NODELETE isCounterclockwise() const;
+    NODELETE bool isCounterclockwise() const;
 
     friend bool operator==(const FloatQuad&, const FloatQuad&) = default;
 
@@ -177,6 +177,6 @@ inline FloatQuad& operator-=(FloatQuad& a, const FloatSize& b)
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatQuad&);
 
 Vector<FloatRect> boundingBoxes(const Vector<FloatQuad>&);
-WEBCORE_EXPORT FloatRect LEGACY_NODELETE unitedBoundingBoxes(const Vector<FloatQuad>&);
+NODELETE WEBCORE_EXPORT FloatRect unitedBoundingBoxes(const Vector<FloatQuad>&);
 
 } // namespace WebCore

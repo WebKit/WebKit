@@ -41,7 +41,7 @@ public:
 
     PasteboardCustomData takeCustomData();
 
-    bool LEGACY_NODELETE hasNonDefaultData() const;
+    NODELETE bool hasNonDefaultData() const;
     bool isStatic() const final { return true; }
 
     bool hasData() final;

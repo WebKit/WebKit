@@ -55,7 +55,7 @@ public:
     ~HRTFDatabaseLoader();
     
     // Returns true once the default database has been completely loaded.
-    bool LEGACY_NODELETE isLoaded() const;
+    NODELETE bool isLoaded() const;
 
     // waitForLoaderThreadCompletion() may be called more than once and is thread-safe.
     void waitForLoaderThreadCompletion();

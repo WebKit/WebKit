@@ -362,7 +362,7 @@ public:
     virtual ASCIILiteral renderName() const = 0;
 
     inline RenderElement* parent() const; // Defined in RenderElement.h.
-    bool LEGACY_NODELETE isDescendantOf(const RenderObject*) const;
+    NODELETE bool isDescendantOf(const RenderObject*) const;
 
     RenderObject* previousSibling() const { return m_previous.get(); }
     RenderObject* nextSibling() const { return m_next.get(); }
@@ -375,8 +375,8 @@ public:
 
     RenderObject* nextInPreOrder() const;
     RenderObject* nextInPreOrder(const RenderObject* stayWithin) const;
-    RenderObject* LEGACY_NODELETE nextInPreOrderAfterChildren() const;
-    RenderObject* LEGACY_NODELETE nextInPreOrderAfterChildren(const RenderObject* stayWithin) const;
+    NODELETE RenderObject* nextInPreOrderAfterChildren() const;
+    NODELETE RenderObject* nextInPreOrderAfterChildren(const RenderObject* stayWithin) const;
     RenderObject* previousInPreOrder() const;
     RenderObject* previousInPreOrder(const RenderObject* stayWithin) const;
     WEBCORE_EXPORT RenderObject* childAt(unsigned) const;
@@ -384,7 +384,7 @@ public:
     RenderObject* firstLeafChild() const;
     RenderObject* lastLeafChild() const;
 
-    RenderElement* LEGACY_NODELETE firstNonAnonymousAncestor() const;
+    NODELETE RenderElement* firstNonAnonymousAncestor() const;
 
     // Minimal distance between the block with fixed height and overflowing content and the text block to apply text autosizing.
     // The greater this constant is the more potential places we have where autosizing is turned off.
@@ -400,10 +400,10 @@ public:
     typedef BlockContentHeightType (*HeightTypeTraverseNextInclusionFunction)(const RenderObject&);
     RenderObject* traverseNext(const RenderObject* stayWithin, HeightTypeTraverseNextInclusionFunction, int& currentDepth, int& newFixedDepth) const;
 
-    WEBCORE_EXPORT RenderLayer* LEGACY_NODELETE enclosingLayer() const;
+    NODELETE WEBCORE_EXPORT RenderLayer* enclosingLayer() const;
 
-    WEBCORE_EXPORT RenderBox& LEGACY_NODELETE enclosingBox() const;
-    RenderBoxModelObject& LEGACY_NODELETE enclosingBoxModelObject() const;
+    NODELETE WEBCORE_EXPORT RenderBox& enclosingBox() const;
+    NODELETE RenderBoxModelObject& enclosingBoxModelObject() const;
     RenderBox* enclosingScrollableContainer() const;
 
     // Return our enclosing flow thread if we are contained inside one. Follows the containing block chain.
@@ -450,7 +450,7 @@ public:
     bool isRenderGlyph() const { return type() == Type::Glyph; }
 
     bool isRenderEmbeddedObject() const { return type() == Type::EmbeddedObject; }
-    bool LEGACY_NODELETE isFieldset() const;
+    NODELETE bool isFieldset() const;
     bool isRenderFileUploadControl() const { return type() == Type::FileUploadControl; }
     bool isRenderFrame() const { return type() == Type::Frame; }
     bool isRenderFrameSet() const { return type() == Type::FrameSet; }
@@ -506,9 +506,9 @@ public:
     inline bool isDocumentElementRenderer() const; // Defined in RenderObjectInlines.h
     inline bool isBody() const; // Defined in RenderObjectNode.h
     inline bool isHR() const; // Defined in RenderObjectNode.h
-    bool LEGACY_NODELETE isLegend() const;
+    NODELETE bool isLegend() const;
 
-    bool LEGACY_NODELETE isHTMLMarquee() const;
+    NODELETE bool isHTMLMarquee() const;
 
     bool isTablePart() const { return isRenderTableCell() || isRenderTableCol() || isRenderTableCaption() || isRenderTableRow() || isRenderTableSection(); }
 
@@ -534,7 +534,7 @@ public:
     void setFragmentedFlowState(FragmentedFlowState state) { m_stateBitfields.setFragmentedFlowState(state); }
 
 #if ENABLE(MATHML)
-    virtual bool LEGACY_NODELETE isRenderMathMLBlock() const { return false; }
+    NODELETE virtual bool isRenderMathMLBlock() const { return false; }
     bool isRenderMathMLTable() const { return type() == Type::MathMLTable; }
     virtual bool isRenderMathMLOperator() const { return false; }
     bool isRenderMathMLRow() const;
@@ -616,9 +616,9 @@ public:
     // FIXME: Those belong into a SVG specific base-class for all renderers (see above)
     // Unfortunately we don't have such a class yet, because it's not possible for all renderers
     // to inherit from RenderSVGObject -> RenderObject (some need RenderBlock inheritance for instance)
-    void LEGACY_NODELETE invalidateCachedBoundaries();
+    NODELETE void invalidateCachedBoundaries();
     bool usesBoundaryCaching() const;
-    virtual void LEGACY_NODELETE setNeedsBoundariesUpdate();
+    NODELETE virtual void setNeedsBoundariesUpdate();
     virtual void setNeedsTransformUpdate() { }
 
     // Per SVG 1.1 objectBoundingBox ignores clipping, masking, filter effects, opacity and stroke-width.
@@ -654,7 +654,7 @@ public:
 
     // This only returns the transform="" value from the element
     // most callsites want localToParentTransform() instead.
-    virtual AffineTransform LEGACY_NODELETE localTransform() const;
+    NODELETE virtual AffineTransform localTransform() const;
 
     // Returns the full transform mapping from local coordinates to local coords for the parent SVG renderer
     // This includes any viewport transforms and x/y offsets as well as the transform="" value off the element.
@@ -697,7 +697,7 @@ public:
     bool isExcludedFromNormalLayout() const { return m_stateBitfields.hasFlag(StateFlag::IsExcludedFromNormalLayout); }
     void setIsExcludedFromNormalLayout(bool excluded) { m_stateBitfields.setFlag(StateFlag::IsExcludedFromNormalLayout, excluded); }
     bool isExcludedAndPlacedInBorder() const { return isExcludedFromNormalLayout() && isLegend(); }
-    bool LEGACY_NODELETE isExcludedMarker() const;
+    NODELETE bool isExcludedMarker() const;
 
     bool isYouTubeReplacement() const { return hasRareData() && rareData().isYouTubeReplacement; }
     void markIsYouTubeReplacement();
@@ -726,7 +726,7 @@ public:
     bool normalChildNeedsLayout() const { return m_stateBitfields.hasFlag(StateFlag::NormalChildNeedsLayout); }
     bool outOfFlowChildNeedsStaticPositionLayout() const { return m_stateBitfields.hasFlag(StateFlag::OutOfFlowChildNeedsStaticPositionLayout); }
 
-    bool LEGACY_NODELETE isSelectionBorder() const;
+    NODELETE bool isSelectionBorder() const;
 
     bool hasNonVisibleOverflow() const { return m_stateBitfields.hasFlag(StateFlag::HasNonVisibleOverflow); }
 
@@ -741,19 +741,19 @@ public:
     // instead. Returns the capture state with this adjustment applied.
     bool effectiveCapturedInViewTransition() const;
 
-    inline RenderView& LEGACY_NODELETE view() const LIFETIME_BOUND; // Defined in RenderObjectDocument.h
+    NODELETE inline RenderView& view() const LIFETIME_BOUND; // Defined in RenderObjectDocument.h
     inline LocalFrameViewLayoutContext& layoutContext() const;
 
     HostWindow* hostWindow() const;
 
     // Returns true if this renderer is rooted.
-    bool LEGACY_NODELETE isRooted() const;
+    NODELETE bool isRooted() const;
 
     inline Node* node() const; // Defined in RenderObjectNode.h
 
     inline Node* nonPseudoNode() const; // Defined in RenderObjectNode.h
 
-    inline Document& LEGACY_NODELETE document() const; // Defined in RenderObjectDocument.h
+    NODELETE inline Document& document() const; // Defined in RenderObjectDocument.h
     inline TreeScope& treeScopeForSVGReferences() const; // Defined in RenderObjectInlines.h
     inline LocalFrame& frame() const; // Defined in RenderObjectDocument.h
     inline Page& page() const; // Defined in RenderObjectInlines.h
@@ -801,7 +801,7 @@ public:
     // repaint and do not need a relayout
     virtual void updateFromElement() { }
 
-    bool LEGACY_NODELETE isComposited() const;
+    NODELETE bool isComposited() const;
 
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestFilter = HitTestFilter::All);
     virtual Node* nodeForHitTest() const;
@@ -1091,7 +1091,7 @@ public:
     virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed = nullptr) const;
     virtual void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const;
 
-    bool LEGACY_NODELETE shouldUseTransformFromContainer(const RenderElement* container) const;
+    NODELETE bool shouldUseTransformFromContainer(const RenderElement* container) const;
     void getTransformFromContainer(const LayoutSize& offsetInContainer, TransformationMatrix&) const;
     
     void pushOntoTransformState(TransformState&, OptionSet<MapCoordinatesMode>, const RenderLayerModelObject* repaintContainer, const RenderElement* container, const LayoutSize& offsetInContainer, bool containerSkipped) const;
@@ -1112,14 +1112,14 @@ public:
 
     bool isSkippedContent() const;
 
-    PointerEvents LEGACY_NODELETE usedPointerEvents() const;
+    NODELETE PointerEvents usedPointerEvents() const;
 
 protected:
     //////////////////////////////////////////
     // Helper functions. Dangerous to use!
     void setPreviousSibling(RenderObject* previous) { m_previous = previous; }
     void setNextSibling(RenderObject* next) { m_next = next; }
-    void LEGACY_NODELETE setParent(RenderElement*);
+    NODELETE void setParent(RenderElement*);
     //////////////////////////////////////////
 
     inline Node& nodeForNonAnonymous() const; // Defined in RenderObjectInlines.h
@@ -1155,7 +1155,7 @@ private:
     class CachedImageListener final : public CachedImageClient, public RefCounted<CachedImageListener> {
         WTF_MAKE_TZONE_ALLOCATED(CachedImageListener);
     public:
-        static Ref<CachedImageListener> LEGACY_NODELETE create(RenderObject&);
+        NODELETE static Ref<CachedImageListener> create(RenderObject&);
 
         // CachedImageClient.
         void ref() const final { RefCounted::ref(); }
@@ -1184,8 +1184,8 @@ private:
     virtual RepaintRects localRectsForRepaint(RepaintOutlineBounds) const;
 
     void addAbsoluteRectForLayer(LayoutRect& result, RespectTransforms = RespectTransforms::No);
-    void LEGACY_NODELETE setLayerNeedsFullRepaint();
-    void LEGACY_NODELETE setLayerNeedsFullRepaintForOutOfFlowMovementLayout();
+    NODELETE void setLayerNeedsFullRepaint();
+    NODELETE void setLayerNeedsFullRepaintForOutOfFlowMovementLayout();
 
     void invalidateContainerContentLogicalWidths(const RenderBlock* ancestorUpdateBoundary = nullptr);
 
@@ -1319,12 +1319,12 @@ private:
         RefPtr<ControlPart> controlPart;
     };
 
-    WEBCORE_EXPORT const RenderObject::RenderObjectRareData& LEGACY_NODELETE rareData() const;
+    NODELETE WEBCORE_EXPORT const RenderObject::RenderObjectRareData& rareData() const;
     RenderObjectRareData& ensureRareData();
     void removeRareData();
 
     using RareDataMap = SingleThreadWeakHashMap<const RenderObject, std::unique_ptr<RenderObjectRareData>>;
-    static RareDataMap& LEGACY_NODELETE rareDataMap();
+    NODELETE static RareDataMap& rareDataMap();
 };
 
 class RenderObject::SetLayoutNeededForbiddenScope {
@@ -1505,7 +1505,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject::RepaintRects&)
 
 enum class ScrollbarWidth : uint8_t;
 WEBCORE_EXPORT IntRect absoluteInteractionBounds(const RenderObject&);
-WEBCORE_EXPORT ScrollbarWidth LEGACY_NODELETE scrollbarWidth(const RenderObject&);
+NODELETE WEBCORE_EXPORT ScrollbarWidth scrollbarWidth(const RenderObject&);
 #if ENABLE(CSS_TAP_HIGHLIGHT_COLOR)
 WEBCORE_EXPORT Color tapHighlightColor(const RenderObject&);
 #endif

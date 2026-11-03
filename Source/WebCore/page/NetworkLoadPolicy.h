@@ -43,7 +43,7 @@ struct NetworkLoadPolicy {
     WEBCORE_EXPORT NetworkLoadPolicy isolatedCopy() const;
 
     // The policy of a context with no Page, which restricts nothing.
-    WEBCORE_EXPORT static const NetworkLoadPolicy& LEGACY_NODELETE unrestricted();
+    NODELETE WEBCORE_EXPORT static const NetworkLoadPolicy& unrestricted();
 };
 
 } // namespace WebCore

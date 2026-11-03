@@ -73,7 +73,7 @@ class DummyServiceWorkerThreadProxy final : public WorkerObjectProxy, public Can
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DummyServiceWorkerThreadProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DummyServiceWorkerThreadProxy);
 public:
-    static DummyServiceWorkerThreadProxy& LEGACY_NODELETE singleton()
+    NODELETE static DummyServiceWorkerThreadProxy& singleton()
     {
         static NeverDestroyed<DummyServiceWorkerThreadProxy> proxy;
         return proxy;
@@ -128,7 +128,7 @@ static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData&
     };
 }
 
-static WorkerThreadStartMode LEGACY_NODELETE threadStartModeFromSettings()
+NODELETE static WorkerThreadStartMode threadStartModeFromSettings()
 {
 #if ENABLE(REMOTE_INSPECTOR) && ENABLE(REMOTE_INSPECTOR_SERVICE_WORKER_AUTO_INSPECTION)
     // FIXME: Find a reasonable heuristic for when the service worker definitely won't be

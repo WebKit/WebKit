@@ -159,7 +159,7 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
 
 HitTestResult& HitTestResult::operator=(HitTestResult&&) = default;
 
-static Node* LEGACY_NODELETE moveOutOfUserAgentShadowTree(Node& node)
+NODELETE static Node* moveOutOfUserAgentShadowTree(Node& node)
 {
     if (node.isInShadowTree()) {
         if (ShadowRoot* root = node.containingShadowRoot()) {

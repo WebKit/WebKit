@@ -60,17 +60,17 @@ public:
     void deref() const final { HTMLElement::deref(); }
 
     URL href() const;
-    WEBCORE_EXPORT const AtomString& LEGACY_NODELETE rel() const;
+    NODELETE WEBCORE_EXPORT const AtomString& rel() const;
 
     AtomString target() const final;
 
-    const AtomString& LEGACY_NODELETE type() const;
+    NODELETE const AtomString& type() const;
 
-    std::optional<LinkIconType> LEGACY_NODELETE iconType() const;
+    NODELETE std::optional<LinkIconType> iconType() const;
 
     CSSStyleSheet* sheet() const { return m_sheet.get(); }
 
-    bool LEGACY_NODELETE styleSheetIsLoading() const;
+    NODELETE bool styleSheetIsLoading() const;
 
     bool isDisabled() const { return m_disabledState == Disabled; }
     bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }
@@ -113,7 +113,7 @@ private:
 
     void potentiallyBlockRendering();
     void unblockRendering();
-    bool LEGACY_NODELETE isImplicitlyPotentiallyRenderBlocking() const;
+    NODELETE bool isImplicitlyPotentiallyRenderBlocking() const;
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void postConnectionSteps() final;
@@ -134,7 +134,7 @@ private:
     
     void setDisabledState(bool);
 
-    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const final;
+    NODELETE bool isURLAttribute(const Attribute&) const final;
 
     HTMLLinkElement(const QualifiedName&, Document&, bool createdByParser);
 

@@ -55,7 +55,7 @@ class WebCoreAVFResourceLoader : public ThreadSafeRefCountedAndCanMakeThreadSafe
     WTF_MAKE_TZONE_ALLOCATED(WebCoreAVFResourceLoader);
     WTF_MAKE_NONCOPYABLE(WebCoreAVFResourceLoader);
 public:
-    static Ref<WebCoreAVFResourceLoader> LEGACY_NODELETE create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, Ref<PlatformMediaResourceLoader>&&, GuaranteedSerialFunctionDispatcher&);
+    NODELETE static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, Ref<PlatformMediaResourceLoader>&&, GuaranteedSerialFunctionDispatcher&);
     virtual ~WebCoreAVFResourceLoader();
 
     void startLoading();
@@ -82,13 +82,13 @@ private:
     void loadFinished();
 
     void startLoadingTimer();
-    void LEGACY_NODELETE stopLoadingTimer();
+    NODELETE void stopLoadingTimer();
     void loadTimedOut();
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger.get(); }
     ASCIILiteral logClassName() const { return "WebCoreAVFResourceLoader"_s; }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const;
+    NODELETE WTFLogChannel& logChannel() const;
 #endif
 
     ThreadSafeWeakPtr<MediaPlayerPrivateAVFoundationObjC> m_parent;

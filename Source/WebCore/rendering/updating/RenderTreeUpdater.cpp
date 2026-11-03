@@ -99,7 +99,7 @@ RenderTreeUpdater::RenderTreeUpdater(Document& document, Style::PostResolutionCa
 
 RenderTreeUpdater::~RenderTreeUpdater() = default;
 
-static RefPtr<Element> LEGACY_NODELETE findRenderingAncestor(Node& node)
+NODELETE static RefPtr<Element> findRenderingAncestor(Node& node)
 {
     for (SUPPRESS_UNCOUNTED_LOCAL auto& ancestor : composedTreeAncestors(node)) {
         if (ancestor.renderer())
@@ -110,7 +110,7 @@ static RefPtr<Element> LEGACY_NODELETE findRenderingAncestor(Node& node)
     return nullptr;
 }
 
-static RefPtr<ContainerNode> LEGACY_NODELETE findRenderingRoot(ContainerNode& node)
+NODELETE static RefPtr<ContainerNode> findRenderingRoot(ContainerNode& node)
 {
     if (node.renderer())
         return &node;

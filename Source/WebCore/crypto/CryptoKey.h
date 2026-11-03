@@ -80,7 +80,7 @@ inline auto CryptoKey::type() const -> Type
     return m_type;
 }
 
-WebCoreOpaqueRoot LEGACY_NODELETE root(CryptoKey*);
+NODELETE WebCoreOpaqueRoot root(CryptoKey*);
 
 } // namespace WebCore
 

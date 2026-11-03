@@ -53,7 +53,7 @@ public:
     PhoneNumberPossessionCoordinator(Page&, std::unique_ptr<PhoneNumberPossessionCoordinatorClient>&&);
     ~PhoneNumberPossessionCoordinator();
 
-    void LEGACY_NODELETE ref() const;
+    NODELETE void ref() const;
     void deref() const;
 
     void discoverFromExternalSource(const Document&, PhoneNumberPossessionRequest&&, MediationRequirement, RefPtr<AbortSignal>&&, CredentialPromise&&);

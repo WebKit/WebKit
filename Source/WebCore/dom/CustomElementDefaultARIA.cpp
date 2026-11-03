@@ -46,7 +46,7 @@ void CustomElementDefaultARIA::setValueForAttribute(const QualifiedName& name, c
     m_map.set(name, value);
 }
 
-static bool LEGACY_NODELETE isElementVisible(const Element& element, const Element& thisElement)
+NODELETE static bool isElementVisible(const Element& element, const Element& thisElement)
 {
     return !element.isConnected() || element.isInDocumentTree() || thisElement.isShadowIncludingDescendantOf(element.rootNode());
 }

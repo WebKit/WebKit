@@ -50,13 +50,13 @@ public:
     void setVersion(uint64_t version) { m_version = version; }
     uint64_t version() const { return m_version; }
 
-    bool LEGACY_NODELETE hasObjectStore(const String& name) const;
+    NODELETE bool hasObjectStore(const String& name) const;
     IDBObjectStoreInfo createNewObjectStore(const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement);
     void addExistingObjectStore(const IDBObjectStoreInfo&);
-    IDBObjectStoreInfo* LEGACY_NODELETE infoForExistingObjectStore(IDBObjectStoreIdentifier);
-    IDBObjectStoreInfo* LEGACY_NODELETE infoForExistingObjectStore(const String& objectStoreName);
-    const IDBObjectStoreInfo* LEGACY_NODELETE infoForExistingObjectStore(IDBObjectStoreIdentifier) const;
-    const IDBObjectStoreInfo* LEGACY_NODELETE infoForExistingObjectStore(const String& objectStoreName) const;
+    NODELETE IDBObjectStoreInfo* infoForExistingObjectStore(IDBObjectStoreIdentifier);
+    NODELETE IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName);
+    NODELETE const IDBObjectStoreInfo* infoForExistingObjectStore(IDBObjectStoreIdentifier) const;
+    NODELETE const IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName) const;
 
     void renameObjectStore(IDBObjectStoreIdentifier, const String& newName);
 
@@ -66,7 +66,7 @@ public:
     void deleteObjectStore(const String& objectStoreName);
     void deleteObjectStore(IDBObjectStoreIdentifier);
 
-    void LEGACY_NODELETE setMaxIndexID(uint64_t maxIndexID);
+    NODELETE void setMaxIndexID(uint64_t maxIndexID);
     IDBIndexIdentifier generateNextIndexID() { return IDBIndexIdentifier { ++m_maxIndexID }; }
 
 #if !LOG_DISABLED
@@ -75,8 +75,8 @@ public:
 
 private:
     friend struct IPC::ArgumentCoder<IDBDatabaseInfo>;
-    IDBObjectStoreInfo* LEGACY_NODELETE getInfoForExistingObjectStore(const String& objectStoreName);
-    IDBObjectStoreInfo* LEGACY_NODELETE getInfoForExistingObjectStore(IDBObjectStoreIdentifier);
+    NODELETE IDBObjectStoreInfo* getInfoForExistingObjectStore(const String& objectStoreName);
+    NODELETE IDBObjectStoreInfo* getInfoForExistingObjectStore(IDBObjectStoreIdentifier);
 
     String m_name;
     uint64_t m_version { 0 };

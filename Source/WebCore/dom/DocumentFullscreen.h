@@ -59,9 +59,9 @@ public:
     // Helpers.
     Document& document() { return m_document; }
     const Document& document() const { return m_document; }
-    LocalFrame* LEGACY_NODELETE frame() const;
+    NODELETE LocalFrame* frame() const;
     Element* documentElement() const { return document().documentElement(); }
-    bool LEGACY_NODELETE isSimpleFullscreenDocument() const;
+    NODELETE bool isSimpleFullscreenDocument() const;
     Document::BackForwardCacheState backForwardCacheState() const { return document().backForwardCacheState(); }
 
     // WHATWG Fullscreen API.
@@ -96,7 +96,7 @@ public:
 
     void exitRemovedFullscreenElement(Element&);
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE isAnimatingFullscreen() const;
+    NODELETE WEBCORE_EXPORT bool isAnimatingFullscreen() const;
     WEBCORE_EXPORT void setAnimatingFullscreen(bool);
 
     void clear();
@@ -113,10 +113,10 @@ private:
     const Logger& logger() const { return protect(document())->logger(); }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "DocumentFullscreen"_s; }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const;
+    NODELETE WTFLogChannel& logChannel() const;
 #endif
 
-    Page* LEGACY_NODELETE page() const;
+    NODELETE Page* page() const;
     Document* mainFrameDocument() { return protect(document())->mainFrameDocument(); }
 
     RefPtr<Element> fullscreenOrPendingElement() const { return m_fullscreenElement ? m_fullscreenElement : m_pendingFullscreenElement; }

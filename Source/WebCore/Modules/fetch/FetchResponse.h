@@ -119,7 +119,7 @@ public:
 
     const HTTPHeaderMap& internalResponseHeaders() const LIFETIME_BOUND { return m_internalResponse.httpHeaderFields(); }
 
-    bool LEGACY_NODELETE isCORSSameOrigin() const;
+    NODELETE bool isCORSSameOrigin() const;
     bool hasWasmMIMEType() const;
     std::optional<ResourceLoaderIdentifier> resourceLoaderIdentifier() const { return m_resourceLoaderIdentifier; }
 
@@ -129,7 +129,7 @@ public:
 
     void setIsNavigationPreload(bool isNavigationPreload) { m_isNavigationPreload = isNavigationPreload; }
     bool isAvailableNavigationPreload() const { return m_isNavigationPreload && m_loader && !m_loader->hasLoader() && !hasReadableStreamBody(); }
-    void LEGACY_NODELETE markAsUsedForPreload();
+    NODELETE void markAsUsedForPreload();
     bool isUsedForPreload() const { return m_isUsedForPreload; }
 
     void setBodyLoader(UniqueRef<FetchResponseBodyLoader>&&);
@@ -145,7 +145,7 @@ private:
     void stop() final;
     void loadBody() final;
 
-    const ResourceResponse& LEGACY_NODELETE filteredResponse() const;
+    NODELETE const ResourceResponse& filteredResponse() const;
     void setNetworkLoadMetrics(const NetworkLoadMetrics& metrics) { m_networkLoadMetrics = metrics; }
     void closeStream();
 
@@ -155,7 +155,7 @@ private:
     class Loader final : public RefCounted<Loader>, public FetchLoaderClient {
         WTF_MAKE_TZONE_ALLOCATED(Loader);
     public:
-        static Ref<Loader> LEGACY_NODELETE create(FetchResponse&, NotificationCallback&&, RefPtr<ReadableStreamToSharedBufferSink>&&);
+        NODELETE static Ref<Loader> create(FetchResponse&, NotificationCallback&&, RefPtr<ReadableStreamToSharedBufferSink>&&);
         ~Loader();
 
         // FetchLoaderClient.

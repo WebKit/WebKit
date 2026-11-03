@@ -179,7 +179,7 @@ private:
     void updateMutedStateTimerFired();
 
     void updateVoiceActivityDetection(bool shouldDisableVoiceActivityDetection = false);
-    bool LEGACY_NODELETE shouldEnableVoiceActivityDetection() const;
+    NODELETE bool shouldEnableVoiceActivityDetection() const;
     RetainPtr<WebCoreAudioInputMuteChangeListener> createAudioInputMuteChangeListener();
     void setMutedState(bool isMuted);
 

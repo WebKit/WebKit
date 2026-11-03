@@ -71,7 +71,7 @@ public:
         friend bool operator==(const EncodedData&, const EncodedData&) = default;
 
         uint64_t coefficient() const { return m_coefficient; }
-        int LEGACY_NODELETE countDigits() const;
+        NODELETE int countDigits() const;
         int exponent() const { return m_exponent; }
         bool isFinite() const { return !isSpecial(); }
         bool isInfinity() const { return m_formatClass == ClassInfinity; }
@@ -101,17 +101,17 @@ public:
     constexpr Decimal(int32_t = 0);
     constexpr Decimal(Sign, int exponent, uint64_t coefficient);
 
-    Decimal& LEGACY_NODELETE operator+=(const Decimal&);
-    Decimal& LEGACY_NODELETE operator-=(const Decimal&);
-    Decimal& LEGACY_NODELETE operator*=(const Decimal&);
-    Decimal& LEGACY_NODELETE operator/=(const Decimal&);
+    NODELETE Decimal& operator+=(const Decimal&);
+    NODELETE Decimal& operator-=(const Decimal&);
+    NODELETE Decimal& operator*=(const Decimal&);
+    NODELETE Decimal& operator/=(const Decimal&);
 
-    Decimal LEGACY_NODELETE operator-() const;
+    NODELETE Decimal operator-() const;
 
-    Decimal LEGACY_NODELETE operator+(const Decimal&) const;
-    Decimal LEGACY_NODELETE operator-(const Decimal&) const;
-    Decimal LEGACY_NODELETE operator*(const Decimal&) const;
-    Decimal LEGACY_NODELETE operator/(const Decimal&) const;
+    NODELETE Decimal operator+(const Decimal&) const;
+    NODELETE Decimal operator-(const Decimal&) const;
+    NODELETE Decimal operator*(const Decimal&) const;
+    NODELETE Decimal operator/(const Decimal&) const;
 
     int exponent() const
     {
@@ -127,11 +127,11 @@ public:
     bool isSpecial() const { return m_data.isSpecial(); }
     bool isZero() const { return m_data.isZero(); }
 
-    Decimal LEGACY_NODELETE abs() const;
-    Decimal LEGACY_NODELETE ceil() const;
-    Decimal LEGACY_NODELETE floor() const;
-    Decimal LEGACY_NODELETE remainder(const Decimal&) const;
-    Decimal LEGACY_NODELETE round() const;
+    NODELETE Decimal abs() const;
+    NODELETE Decimal ceil() const;
+    NODELETE Decimal floor() const;
+    NODELETE Decimal remainder(const Decimal&) const;
+    NODELETE Decimal round() const;
 
     double toDouble() const;
     // Note: toString method supports infinity and nan but fromString not.
@@ -158,7 +158,7 @@ public:
     {
     }
 
-    const EncodedData& LEGACY_NODELETE value() const LIFETIME_BOUND { return m_data; }
+    NODELETE const EncodedData& value() const LIFETIME_BOUND { return m_data; }
 
     friend bool operator==(const Decimal&, const Decimal&);
     friend bool operator!=(const Decimal&, const Decimal&);
@@ -172,9 +172,9 @@ private:
     };
 
     Decimal(double);
-    WEBCORE_EXPORT Decimal LEGACY_NODELETE compareTo(const Decimal&) const;
+    NODELETE WEBCORE_EXPORT Decimal compareTo(const Decimal&) const;
 
-    static AlignedOperands LEGACY_NODELETE alignOperands(const Decimal& lhs, const Decimal& rhs);
+    NODELETE static AlignedOperands alignOperands(const Decimal& lhs, const Decimal& rhs);
     static inline Sign invertSign(Sign sign) { return sign == Negative ? Positive : Negative; }
 
     Sign sign() const { return m_data.sign(); }

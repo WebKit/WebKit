@@ -51,14 +51,14 @@ Ref<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Documen
 
 class SVGTRefTargetEventListener final : public EventListener {
 public:
-    static Ref<SVGTRefTargetEventListener> LEGACY_NODELETE create(SVGTRefElement& trefElement)
+    NODELETE static Ref<SVGTRefTargetEventListener> create(SVGTRefElement& trefElement)
     {
         return adoptRef(*new SVGTRefTargetEventListener(trefElement));
     }
 
     void attach(RefPtr<Element>&& target);
     void detach();
-    bool LEGACY_NODELETE isAttached() const { return m_target.get(); }
+    NODELETE bool isAttached() const { return m_target.get(); }
 
 private:
     explicit SVGTRefTargetEventListener(SVGTRefElement& trefElement);
@@ -262,7 +262,7 @@ void SVGTRefElement::removingSteps(RemovalType removalType, ContainerNode& oldPa
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGTRefTargetEventListener)
-    static bool LEGACY_NODELETE isType(const WebCore::EventListener& listener)
+    NODELETE static bool isType(const WebCore::EventListener& listener)
     {
         return listener.type() == WebCore::EventListener::SVGTRefTargetEventListenerType;
     }

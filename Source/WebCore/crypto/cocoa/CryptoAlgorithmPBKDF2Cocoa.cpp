@@ -34,7 +34,7 @@
 namespace WebCore {
 
 namespace CryptoAlgorithmPBKDF2CocoaInternal {
-static CCPseudoRandomAlgorithm LEGACY_NODELETE commonCryptoHMACAlgorithm(CryptoAlgorithmIdentifier hashFunction)
+NODELETE static CCPseudoRandomAlgorithm commonCryptoHMACAlgorithm(CryptoAlgorithmIdentifier hashFunction)
 {
     switch (hashFunction) {
     case CryptoAlgorithmIdentifier::SHA_1:

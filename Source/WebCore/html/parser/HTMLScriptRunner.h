@@ -46,7 +46,7 @@ public:
     HTMLScriptRunner(Document&, HTMLScriptRunnerHost&);
     ~HTMLScriptRunner();
 
-    void LEGACY_NODELETE detach();
+    NODELETE void detach();
 
     // Processes the passed in script and any pending scripts if possible.
     void execute(Ref<ScriptElement>&&, const TextPosition& scriptStartPosition);
@@ -56,7 +56,7 @@ public:
     void executeScriptsWaitingForStylesheets();
     bool executeScriptsWaitingForParsing();
 
-    bool LEGACY_NODELETE hasParserBlockingScript() const;
+    NODELETE bool hasParserBlockingScript() const;
     bool isExecutingScript() const { return !!m_scriptNestingLevel; }
 
 private:

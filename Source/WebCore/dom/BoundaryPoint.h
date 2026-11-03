@@ -44,7 +44,7 @@ bool operator==(const BoundaryPoint&, const BoundaryPoint&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const BoundaryPoint&);
 
-template<TreeType = Tree> std::partial_ordering treeOrder(const BoundaryPoint&, const BoundaryPoint&);
+template<TreeType = Tree> NODELETE std::partial_ordering treeOrder(const BoundaryPoint&, const BoundaryPoint&);
 template<> WEBCORE_EXPORT std::partial_ordering treeOrder<ComposedTree>(const BoundaryPoint&, const BoundaryPoint&);
 
 WEBCORE_EXPORT std::optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node&);

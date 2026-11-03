@@ -39,7 +39,7 @@ using GridTrackSizeList = SpaceSeparatedFixedVector<GridTrackSize>;
 
 // Default values for <'grid-auto-columns'>/<'grid-auto-rows'> is 'auto'.
 struct GridTrackSizeDefaulter {
-    const GridTrackSize& LEGACY_NODELETE operator()() const;
+    NODELETE const GridTrackSize& operator()() const;
     bool operator==(const GridTrackSizeDefaulter&) const = default;
 };
 

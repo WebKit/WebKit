@@ -137,22 +137,22 @@ static inline void addStyleRelation(SelectorChecker::CheckingContext& checkingCo
     checkingContext.styleRelations.append({ element, type, value });
 }
 
-static inline bool LEGACY_NODELETE isFirstChildElement(const Element& element)
+NODELETE static inline bool isFirstChildElement(const Element& element)
 {
     return !ElementTraversal::previousSibling(element);
 }
 
-static inline bool LEGACY_NODELETE isLastChildElement(const Element& element)
+NODELETE static inline bool isLastChildElement(const Element& element)
 {
     return !ElementTraversal::nextSibling(element);
 }
 
-static inline bool LEGACY_NODELETE doesNotMatchDuringParsing(const SelectorChecker::CheckingContext& checkingContext, const Element& parentElement)
+NODELETE static inline bool doesNotMatchDuringParsing(const SelectorChecker::CheckingContext& checkingContext, const Element& parentElement)
 {
     return checkingContext.resolvingMode != SelectorChecker::Mode::QueryingRules && !parentElement.isFinishedParsingChildren();
 }
 
-static inline bool LEGACY_NODELETE isFirstOfType(const Element& element, const QualifiedName& type)
+NODELETE static inline bool isFirstOfType(const Element& element, const QualifiedName& type)
 {
     for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
         if (sibling->hasTagName(type))
@@ -161,7 +161,7 @@ static inline bool LEGACY_NODELETE isFirstOfType(const Element& element, const Q
     return true;
 }
 
-static inline bool LEGACY_NODELETE isLastOfType(const Element& element, const QualifiedName& type)
+NODELETE static inline bool isLastOfType(const Element& element, const QualifiedName& type)
 {
     for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(*sibling)) {
         if (sibling->hasTagName(type))
@@ -170,7 +170,7 @@ static inline bool LEGACY_NODELETE isLastOfType(const Element& element, const Qu
     return true;
 }
 
-static inline int LEGACY_NODELETE countElementsBefore(const Element& element)
+NODELETE static inline int countElementsBefore(const Element& element)
 {
     int count = 0;
     for (auto* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
@@ -184,7 +184,7 @@ static inline int LEGACY_NODELETE countElementsBefore(const Element& element)
     return count;
 }
 
-static inline int LEGACY_NODELETE countElementsOfTypeBefore(const Element& element, const QualifiedName& type)
+NODELETE static inline int countElementsOfTypeBefore(const Element& element, const QualifiedName& type)
 {
     int count = 0;
     for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
@@ -194,7 +194,7 @@ static inline int LEGACY_NODELETE countElementsOfTypeBefore(const Element& eleme
     return count;
 }
 
-static inline int LEGACY_NODELETE countElementsAfter(const Element& element)
+NODELETE static inline int countElementsAfter(const Element& element)
 {
     int count = 0;
     for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(*sibling))
@@ -202,7 +202,7 @@ static inline int LEGACY_NODELETE countElementsAfter(const Element& element)
     return count;
 }
 
-static inline int LEGACY_NODELETE countElementsOfTypeAfter(const Element& element, const QualifiedName& type)
+NODELETE static inline int countElementsOfTypeAfter(const Element& element, const QualifiedName& type)
 {
     int count = 0;
     for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(*sibling)) {
@@ -309,7 +309,7 @@ inline static bool hasScrollbarPseudoElement(EnumSet<PseudoElementType> collecte
     return collectedPseudoElements.contains(PseudoElementType::WebKitResizer);
 }
 
-static SelectorChecker::LocalContext LEGACY_NODELETE localContextForParent(const SelectorChecker::LocalContext& context)
+NODELETE static SelectorChecker::LocalContext localContextForParent(const SelectorChecker::LocalContext& context)
 {
     SelectorChecker::LocalContext updatedContext(context);
     // Disable :visited matching when we see the first link.
@@ -335,7 +335,7 @@ static SelectorChecker::LocalContext LEGACY_NODELETE localContextForParent(const
     return updatedContext;
 }
 
-static bool LEGACY_NODELETE isScopeOnlyCompoundSelector(const CSSSelector& selector)
+NODELETE static bool isScopeOnlyCompoundSelector(const CSSSelector& selector)
 {
     if (selector.match() != CSSSelector::Match::PseudoClass || selector.precedingInComplexSelector())
         return false;
@@ -355,7 +355,7 @@ static bool LEGACY_NODELETE isScopeOnlyCompoundSelector(const CSSSelector& selec
 }
 
 // A document scoping root is not an element, so the ancestor traversal never reaches it.
-static bool LEGACY_NODELETE matchesDocumentScopingRoot(const SelectorChecker::CheckingContext& checkingContext, const CSSSelector& selector, const ContainerNode* ancestor)
+NODELETE static bool matchesDocumentScopingRoot(const SelectorChecker::CheckingContext& checkingContext, const CSSSelector& selector, const ContainerNode* ancestor)
 {
     return is<Document>(checkingContext.scope)
         && ancestor == checkingContext.scope
@@ -754,7 +754,7 @@ bool SelectorChecker::attributeSelectorMatches(const Element& element, const Qua
     return attributeValueMatches(Attribute(attributeName, attributeValue), selector.match(), selector.value(), caseSensitive);
 }
 
-static bool LEGACY_NODELETE canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContext& context)
+NODELETE static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContext& context)
 {
     // For quirks mode, follow this: http://quirks.spec.whatwg.org/#the-:active-and-:hover-quirk
     // In quirks mode, a compound selector 'selector' that matches the following conditions must not match elements that would not also match the ':any-link' selector.
@@ -814,7 +814,7 @@ static bool LEGACY_NODELETE canMatchHoverOrActiveInQuirksMode(const SelectorChec
     return false;
 }
 
-static inline bool LEGACY_NODELETE tagMatches(const Element& element, const CSSSelector& simpleSelector)
+NODELETE static inline bool tagMatches(const Element& element, const CSSSelector& simpleSelector)
 {
     const QualifiedName& tagQName = simpleSelector.tagQName();
 
@@ -832,7 +832,7 @@ static inline bool LEGACY_NODELETE tagMatches(const Element& element, const CSSS
 static bool isSelectorListAllowedToMatchFeaturelessShadowHost(const CSSSelectorList*);
 
 // https://drafts.csswg.org/selectors-4/#featureless
-static bool LEGACY_NODELETE isSimpleSelectorAllowedToMatchFeaturelessShadowHost(const CSSSelector& selector)
+NODELETE static bool isSimpleSelectorAllowedToMatchFeaturelessShadowHost(const CSSSelector& selector)
 {
     if (selector.match() == CSSSelector::Match::PseudoElement || selector.match() == CSSSelector::Match::HasScope)
         return true;
@@ -865,7 +865,7 @@ bool SelectorChecker::isCompoundSelectorAllowedToMatchFeaturelessShadowHost(cons
     return hasAllowedSimpleSelector;
 }
 
-static bool LEGACY_NODELETE isSelectorListAllowedToMatchFeaturelessShadowHost(const CSSSelectorList* selectorList)
+NODELETE static bool isSelectorListAllowedToMatchFeaturelessShadowHost(const CSSSelectorList* selectorList)
 {
     if (!selectorList)
         return false;
@@ -1548,7 +1548,7 @@ bool SelectorChecker::matchSelectorList(CheckingContext& checkingContext, const 
 #if ENABLE(CSS_SELECTOR_JIT)
 static constexpr auto maximumCompiledHasArgumentSelectorsSize = 1024u;
 
-static HashMap<GenericHashKey<CSSSelectorList>, FixedVector<CompiledSelector>>& LEGACY_NODELETE compiledHasArgumentSelectorsMap()
+NODELETE static HashMap<GenericHashKey<CSSSelectorList>, FixedVector<CompiledSelector>>& compiledHasArgumentSelectorsMap()
 {
     static NeverDestroyed<HashMap<GenericHashKey<CSSSelectorList>, FixedVector<CompiledSelector>>> map;
     return map;
@@ -1566,7 +1566,7 @@ void SelectorChecker::clearCompiledHasArgumentSelectors()
 // FIXME(https://bugs.webkit.org/show_bug.cgi?id=313164): The JIT doesn't generate the full set
 // of style relations needed for :has() invalidation with adjacent/sibling combinators. Skip JIT
 // for argument selectors containing these, or functional pseudo-classes that may nest them.
-static bool LEGACY_NODELETE canJITCompileHasArgument(const CSSSelector& selector)
+NODELETE static bool canJITCompileHasArgument(const CSSSelector& selector)
 {
     for (auto* current = &selector; current; current = current->precedingInComplexSelector()) {
         auto relation = current->relation();

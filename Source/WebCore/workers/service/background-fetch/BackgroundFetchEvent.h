@@ -38,7 +38,7 @@ public:
     using Init = BackgroundFetchEventInit;
     static Ref<BackgroundFetchEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
 
-    BackgroundFetchRegistration& LEGACY_NODELETE registration() const;
+    NODELETE BackgroundFetchRegistration& registration() const;
 
 protected:
     BackgroundFetchEvent(enum EventInterfaceType, const AtomString&, ExtendableEventInit&&, Ref<BackgroundFetchRegistration>&&, IsTrusted);

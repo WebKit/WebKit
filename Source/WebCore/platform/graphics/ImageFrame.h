@@ -49,15 +49,15 @@ public:
 
     ~ImageFrame();
 
-    static const ImageFrame& LEGACY_NODELETE defaultFrame();
+    NODELETE static const ImageFrame& defaultFrame();
 
     ImageFrame& operator=(const ImageFrame&);
 
     size_t clearImage(std::optional<DecodingDestination> = std::nullopt);
     size_t clear();
 
-    void LEGACY_NODELETE setDecodingStatus(DecodingStatus);
-    DecodingStatus LEGACY_NODELETE decodingStatus() const;
+    NODELETE void setDecodingStatus(DecodingStatus);
+    NODELETE DecodingStatus decodingStatus() const;
 
     bool isInvalid() const { return m_decodingStatus == DecodingStatus::Invalid; }
     bool isPartial() const { return m_decodingStatus == DecodingStatus::Partial; }
@@ -91,7 +91,7 @@ public:
     bool hasAlpha() const { return !hasMetadata() || m_hasAlpha; }
 
     bool hasNativeImage(DecodingDestination decodingDestination) const { return m_destinations[decodingDestination].hasNativeImage(); }
-    bool LEGACY_NODELETE hasNativeImage(DecodingDestination, SubsamplingLevel) const;
+    NODELETE bool hasNativeImage(DecodingDestination, SubsamplingLevel) const;
     bool hasNativeImage(const NativeImage& nativeImage) const
     {
         for (auto& destination : m_destinations) {
@@ -100,8 +100,8 @@ public:
         }
         return false;
     }
-    bool LEGACY_NODELETE hasFullSizeNativeImage(DecodingDestination, SubsamplingLevel) const;
-    std::optional<DecodingDestination> LEGACY_NODELETE compatibleDecodingDestinationWithOptions(const DecodingOptions&, SubsamplingLevel) const;
+    NODELETE bool hasFullSizeNativeImage(DecodingDestination, SubsamplingLevel) const;
+    NODELETE std::optional<DecodingDestination> compatibleDecodingDestinationWithOptions(const DecodingOptions&, SubsamplingLevel) const;
     bool hasMetadata() const { return !size().isEmpty(); }
 
 private:

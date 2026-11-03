@@ -45,7 +45,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGData);
 class SVGData : public RefCounted<SVGData> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SVGData, SVGData);
 public:
-    static Ref<SVGData> LEGACY_NODELETE createDefaultStyle();
+    NODELETE static Ref<SVGData> createDefaultStyle();
     static Ref<SVGData> create() { return adoptRef(*new SVGData); }
     Ref<SVGData> copy() const;
     ~SVGData();
@@ -112,7 +112,7 @@ private:
     enum CreateDefaultType { CreateDefault };
     SVGData(CreateDefaultType); // Used to create the default style.
 
-    void LEGACY_NODELETE setBitDefaults();
+    NODELETE void setBitDefaults();
 };
 
 } // namespace Style

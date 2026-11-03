@@ -63,7 +63,7 @@ public:
     
     std::optional<IDBConnectionIdentifier> connectionIdentifier() const { return m_idbConnectionIdentifier; }
 
-    WEBCORE_EXPORT IDBResourceIdentifier LEGACY_NODELETE isolatedCopy() const;
+    NODELETE WEBCORE_EXPORT IDBResourceIdentifier isolatedCopy() const;
 
     WEBCORE_EXPORT String loggingString() const;
 

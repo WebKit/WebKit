@@ -43,7 +43,7 @@ public:
     void addColumn(const String& name) { m_columns.append(name); }
     void addResult(const SQLValue& result) { m_result.append(result); }
 
-    unsigned LEGACY_NODELETE length() const;
+    NODELETE unsigned length() const;
     ExceptionOr<Vector<KeyValuePair<String, SQLValue>>> item(unsigned index) const;
 
 private:

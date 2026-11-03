@@ -126,13 +126,13 @@ public:
     using ScriptErrorCallback = Function<void(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber)>;
 
     void addScriptErrorCallback(ScriptErrorCallback&&);
-    bool LEGACY_NODELETE hasScriptErrorCallbacks() const;
+    NODELETE bool hasScriptErrorCallbacks() const;
     void invokeScriptErrorCallbacks(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber) const;
 
     void addJSHandle(JSHandleIdentifier, JSC::JSObject&);
-    void LEGACY_NODELETE refJSHandle(JSHandleIdentifier);
+    NODELETE void refJSHandle(JSHandleIdentifier);
     bool derefJSHandle(JSHandleIdentifier);
-    JSC::JSObject* LEGACY_NODELETE jsHandle(JSHandleIdentifier) const;
+    NODELETE JSC::JSObject* jsHandle(JSHandleIdentifier) const;
 
 protected:
     JSDOMGlobalObject(JSC::VM&, JSC::Structure*, Ref<DOMWrapperWorld>&&, const JSC::GlobalObjectMethodTable* = nullptr);
@@ -151,7 +151,7 @@ protected:
     static JSC::JSValue moduleLoaderEvaluate(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, RefPtr<JSC::ScriptFetcher>, JSC::JSValue, JSC::JSValue);
     static JSC::JSPromise* moduleLoaderImportModule(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSString*, RefPtr<JSC::ScriptFetchParameters>, const JSC::SourceOrigin&, bool deferred);
     static JSC::JSObject* moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSModuleRecord*, RefPtr<JSC::ScriptFetcher>);
-    static bool LEGACY_NODELETE moduleTypeIsAllowed(JSC::ScriptFetchParameters::Type);
+    NODELETE static bool moduleTypeIsAllowed(JSC::ScriptFetchParameters::Type);
 
     JSDOMStructureMap m_structures WTF_GUARDED_BY_LOCK(m_gcLock);
     DOMGuardedObjectSet m_guardedObjects WTF_GUARDED_BY_LOCK(m_gcLock);

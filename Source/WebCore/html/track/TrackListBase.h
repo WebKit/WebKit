@@ -51,7 +51,7 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    virtual unsigned LEGACY_NODELETE length() const;
+    NODELETE virtual unsigned length() const;
     virtual bool contains(TrackBase&) const;
     virtual bool contains(TrackID) const;
     virtual void remove(TrackBase&, bool scheduleEvent = true);
@@ -61,7 +61,7 @@ public:
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const override = 0;
     ScriptExecutionContext* scriptExecutionContext() const final;
-    WebCoreOpaqueRoot LEGACY_NODELETE opaqueRoot() const final;
+    NODELETE WebCoreOpaqueRoot opaqueRoot() const final;
 
     void didMoveToNewDocument(Document&);
 

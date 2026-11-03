@@ -69,14 +69,14 @@ public:
     void stop(Function<void()>&& terminatedCallback = { });
 
     void startRunningDebuggerTasks();
-    void LEGACY_NODELETE stopRunningDebuggerTasks();
+    NODELETE void stopRunningDebuggerTasks();
 
     void suspend();
     void resume();
 
     const String& inspectorIdentifier() const LIFETIME_BOUND { return m_inspectorIdentifier; }
 
-    static ThreadSafeWeakHashSet<WorkerOrWorkletThread>& LEGACY_NODELETE workerOrWorkletThreads();
+    NODELETE static ThreadSafeWeakHashSet<WorkerOrWorkletThread>& workerOrWorkletThreads();
     static void releaseFastMallocFreeMemoryInAllThreads();
 
     void addChildThread(WorkerOrWorkletThread&);

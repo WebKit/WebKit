@@ -430,7 +430,7 @@ template<> struct ValueRepresentation<DisplayType> {
 
 template<> struct Blending<Display> {
     constexpr auto canBlend(Display, Display) -> bool { return false; }
-    Display LEGACY_NODELETE blend(Display, Display, const BlendingContext&);
+    NODELETE Display blend(Display, Display, const BlendingContext&);
 };
 
 } // namespace Style

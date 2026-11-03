@@ -47,16 +47,16 @@ public:
     BaseTypeStorage percent;
     Markable<CSSNumericBaseType> percentHint;
 
-    static std::optional<CSSNumericType> LEGACY_NODELETE create(CSSUnitType, int exponent = 1);
+    NODELETE static std::optional<CSSNumericType> create(CSSUnitType, int exponent = 1);
     friend bool operator==(const CSSNumericType&, const CSSNumericType&) = default;
     static std::optional<CSSNumericType> addTypes(const Vector<Ref<CSSNumericValue>>&);
-    static std::optional<CSSNumericType> LEGACY_NODELETE addTypes(CSSNumericType, CSSNumericType);
+    NODELETE static std::optional<CSSNumericType> addTypes(CSSNumericType, CSSNumericType);
     static std::optional<CSSNumericType> multiplyTypes(const Vector<Ref<CSSNumericValue>>&);
     static std::optional<CSSNumericType> multiplyTypes(const CSSNumericType&, const CSSNumericType&);
-    BaseTypeStorage& LEGACY_NODELETE valueForType(CSSNumericBaseType);
+    NODELETE BaseTypeStorage& valueForType(CSSNumericBaseType);
     const BaseTypeStorage& valueForType(CSSNumericBaseType type) const { return const_cast<CSSNumericType*>(this)->valueForType(type); }
-    void LEGACY_NODELETE applyPercentHint(CSSNumericBaseType);
-    size_t LEGACY_NODELETE nonZeroEntryCount() const;
+    NODELETE void applyPercentHint(CSSNumericBaseType);
+    NODELETE size_t nonZeroEntryCount() const;
 
     template<CSSNumericBaseType type>
     bool matches() const

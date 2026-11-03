@@ -58,14 +58,14 @@ public:
     }
 
     ExceptionOr<RefPtr<SVGTransform>> consolidate();
-    std::optional<AffineTransform> LEGACY_NODELETE concatenate() const;
+    NODELETE std::optional<AffineTransform> concatenate() const;
 
     bool parse(StringView);
     String valueAsString() const override;
 
     static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringView);
-    static std::optional<SVGTransformValue::SVGTransformType> LEGACY_NODELETE parseTransformType(StringParsingBuffer<Latin1Character>&);
-    static std::optional<SVGTransformValue::SVGTransformType> LEGACY_NODELETE parseTransformType(StringParsingBuffer<char16_t>&);
+    NODELETE static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringParsingBuffer<Latin1Character>&);
+    NODELETE static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringParsingBuffer<char16_t>&);
 
     template<typename CharacterType>
     static bool parseAndReplaceTransform(SVGTransformValue::SVGTransformType, StringParsingBuffer<CharacterType>&, SVGTransform&); // Defined in SVGTransformListInlines.h

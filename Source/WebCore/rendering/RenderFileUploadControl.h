@@ -40,7 +40,7 @@ public:
     String buttonValue();
     String fileTextValue() const;
 
-    HTMLInputElement& LEGACY_NODELETE inputElement() const;
+    NODELETE HTMLInputElement& inputElement() const;
     
 private:
     void element() const = delete;
@@ -57,7 +57,7 @@ private:
 
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
-    HTMLInputElement* LEGACY_NODELETE uploadButton() const;
+    NODELETE HTMLInputElement* uploadButton() const;
 
     bool m_canReceiveDroppedFiles;
 };

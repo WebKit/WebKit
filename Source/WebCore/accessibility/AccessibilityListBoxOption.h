@@ -59,7 +59,7 @@ private:
     bool isAccessibilityListBoxOptionInstance() const final { return true; }
     void addChildren() final;
     bool canHaveChildren() const final;
-    HTMLSelectElement* LEGACY_NODELETE listBoxOptionParentNode() const;
+    NODELETE HTMLSelectElement* listBoxOptionParentNode() const;
     int listBoxOptionIndex() const;
     IntRect listBoxOptionRect() const;
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;

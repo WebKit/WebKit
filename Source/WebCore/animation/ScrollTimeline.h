@@ -53,7 +53,7 @@ class ScrollTimeline : public AnimationTimeline {
 public:
     static Ref<ScrollTimeline> create(Document&, ScrollTimelineOptions&& = { });
     static Ref<ScrollTimeline> create(const Style::ScopedName&, ScrollAxis);
-    static Ref<ScrollTimeline> LEGACY_NODELETE create(Scroller, ScrollAxis);
+    NODELETE static Ref<ScrollTimeline> create(Scroller, ScrollAxis);
     static Ref<ScrollTimeline> createInactiveStyleOriginatedTimeline(const AtomString& name);
 
     const WeakStyleable& sourceStyleable() const LIFETIME_BOUND { return m_source; }
@@ -70,7 +70,7 @@ public:
 
     bool isInactiveStyleOriginatedTimeline() const { return m_isInactiveStyleOriginatedTimeline; }
 
-    bool LEGACY_NODELETE matchesAnonymousScrollFunctionForSource(const Style::ScrollFunction&, const Styleable&) const;
+    NODELETE bool matchesAnonymousScrollFunctionForSource(const Style::ScrollFunction&, const Styleable&) const;
 
     AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
     void updateCurrentTimeIfStale();
@@ -79,8 +79,8 @@ public:
 
     std::optional<WebAnimationTime> currentTime(UseCachedCurrentTime = UseCachedCurrentTime::Yes) override;
     Style::SingleAnimationRange defaultRange() const override;
-    Element* LEGACY_NODELETE timelineScopeDeclaredElement() const { return m_timelineScopeElement.get(); }
-    void LEGACY_NODELETE setTimelineScopeElement(const Element&);
+    NODELETE Element* timelineScopeDeclaredElement() const { return m_timelineScopeElement.get(); }
+    NODELETE void setTimelineScopeElement(const Element&);
     void clearTimelineScopeDeclaredElement() { m_timelineScopeElement = nullptr; }
 
     virtual std::pair<WebAnimationTime, WebAnimationTime> intervalForAttachmentRange(const ResolvableTimelineRange&) const;

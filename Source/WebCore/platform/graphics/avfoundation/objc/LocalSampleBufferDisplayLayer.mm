@@ -144,7 +144,7 @@ static void runWithoutAnimations(NOESCAPE const WTF::Function<void()>& function)
     [CATransaction commit];
 }
 
-static bool LEGACY_NODELETE isValidLayerGeometry(CGRect rect)
+NODELETE static bool isValidLayerGeometry(CGRect rect)
 {
     return std::isfinite(rect.origin.x) && std::isfinite(rect.origin.y)
         && std::isfinite(rect.size.width) && std::isfinite(rect.size.height);

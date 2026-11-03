@@ -54,9 +54,9 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    bool LEGACY_NODELETE pending() const;
-    bool LEGACY_NODELETE speaking() const;
-    bool LEGACY_NODELETE paused() const;
+    NODELETE bool pending() const;
+    NODELETE bool speaking() const;
+    NODELETE bool paused() const;
 
     void speak(SpeechSynthesisUtterance&);
     void cancel();
@@ -102,14 +102,14 @@ private:
     // ActiveDOMObject
     void suspend(ReasonForSuspension) final;
     void stop() final;
-    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
+    NODELETE bool virtualHasPendingActivity() const final;
 
     void startSpeakingImmediately(SpeechSynthesisUtterance&);
     void handleSpeakingCompleted(SpeechSynthesisUtterance&, bool errorOccurred);
     void stopPlatformSpeech();
 
     // EventTarget
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::SpeechSynthesis; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
@@ -117,7 +117,7 @@ private:
 
     PlatformSpeechSynthesizer& ensurePlatformSpeechSynthesizer();
 
-    SpeechSynthesisUtterance* LEGACY_NODELETE currentSpeechUtterance();
+    NODELETE SpeechSynthesisUtterance* currentSpeechUtterance();
 
     RefPtr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
     std::optional<Vector<Ref<SpeechSynthesisVoice>>> m_voiceList;

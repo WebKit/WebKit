@@ -52,13 +52,13 @@ static Ref<LayoutShape> createInsetShape(const FloatRoundedRect& bounds)
     return adoptRef(*new BoxLayoutShape(bounds));
 }
 
-static Ref<LayoutShape> LEGACY_NODELETE createCircleShape(const FloatPoint& center, float radius, float borderBoxLogicalWidth)
+NODELETE static Ref<LayoutShape> createCircleShape(const FloatPoint& center, float radius, float borderBoxLogicalWidth)
 {
     ASSERT(radius >= 0);
     return adoptRef(*new RectangleLayoutShape(FloatRect(center.x() - radius, center.y() - radius, radius*2, radius*2), FloatSize(radius, radius), borderBoxLogicalWidth));
 }
 
-static Ref<LayoutShape> LEGACY_NODELETE createEllipseShape(const FloatPoint& center, const FloatSize& radii, float borderBoxLogicalWidth)
+NODELETE static Ref<LayoutShape> createEllipseShape(const FloatPoint& center, const FloatSize& radii, float borderBoxLogicalWidth)
 {
     ASSERT(radii.width() >= 0 && radii.height() >= 0);
     return adoptRef(*new RectangleLayoutShape(FloatRect(center.x() - radii.width(), center.y() - radii.height(), radii.width()*2, radii.height()*2), radii, borderBoxLogicalWidth));
@@ -69,7 +69,7 @@ static Ref<LayoutShape> createPolygonShape(Vector<FloatPoint>&& vertices, float 
     return adoptRef(*new PolygonLayoutShape(WTF::move(vertices), borderBoxLogicalWidth));
 }
 
-static inline FloatRect LEGACY_NODELETE physicalRectToLogical(const FloatRect& rect, float logicalBoxHeight, WritingMode writingMode)
+NODELETE static inline FloatRect physicalRectToLogical(const FloatRect& rect, float logicalBoxHeight, WritingMode writingMode)
 {
     if (writingMode.isHorizontal())
         return rect;
@@ -78,7 +78,7 @@ static inline FloatRect LEGACY_NODELETE physicalRectToLogical(const FloatRect& r
     return rect.transposedRect();
 }
 
-static inline FloatPoint LEGACY_NODELETE physicalPointToLogical(const FloatPoint& point, float logicalBoxHeight, WritingMode writingMode)
+NODELETE static inline FloatPoint physicalPointToLogical(const FloatPoint& point, float logicalBoxHeight, WritingMode writingMode)
 {
     if (writingMode.isHorizontal())
         return point;
@@ -87,7 +87,7 @@ static inline FloatPoint LEGACY_NODELETE physicalPointToLogical(const FloatPoint
     return point.transposedPoint();
 }
 
-static inline FloatSize LEGACY_NODELETE physicalSizeToLogical(const FloatSize& size, WritingMode writingMode)
+NODELETE static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode writingMode)
 {
     if (writingMode.isHorizontal())
         return size;

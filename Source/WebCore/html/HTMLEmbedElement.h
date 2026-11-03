@@ -41,7 +41,7 @@ private:
 
     bool rendererIsNeeded(const Style::ComputedStyle&) final;
 
-    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const final;
+    NODELETE bool isURLAttribute(const Attribute&) const final;
     String imageSourceURL() const final;
 
     bool isInteractiveContent() const final { return true; }

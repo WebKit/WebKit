@@ -72,24 +72,24 @@ class SVGElement : public StyledElement, public SVGPropertyOwner {
     WTF_MAKE_TZONE_ALLOCATED(SVGElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGElement);
 public:
-    bool LEGACY_NODELETE isInnerSVGSVGElement() const;
-    bool LEGACY_NODELETE isOutermostSVGSVGElement() const;
+    NODELETE bool isInnerSVGSVGElement() const;
+    NODELETE bool isOutermostSVGSVGElement() const;
 
-    SVGSVGElement* LEGACY_NODELETE ownerSVGElement() const;
+    NODELETE SVGSVGElement* ownerSVGElement() const;
 
     enum class ViewportElementType : uint8_t {
         Any, // Returns first SVGSVGElement, SVGImageElement, or symbol
         SVGSVGOnly // Returns only SVGSVGElement
     };
 
-    SVGElement* LEGACY_NODELETE viewportElement(ViewportElementType = ViewportElementType::Any) const;
+    NODELETE SVGElement* viewportElement(ViewportElementType = ViewportElementType::Any) const;
 
     String title() const override;
     virtual bool supportsMarkers() const { return false; }
     bool hasRelativeLengths() const { return m_selfHasRelativeLengths || !m_childElementsWithRelativeLengths.isEmptyIgnoringNullReferences(); }
     virtual bool needsPendingResourceHandling() const { return true; }
-    bool LEGACY_NODELETE instanceUpdatesBlocked() const;
-    void LEGACY_NODELETE setInstanceUpdatesBlocked(bool);
+    NODELETE bool instanceUpdatesBlocked() const;
+    NODELETE void setInstanceUpdatesBlocked(bool);
     virtual AffineTransform localCoordinateSpaceTransform(CTMScope) const;
 
     bool hasPendingResources() const { return hasEventTargetFlag(EventTargetFlag::HasPendingResources); }
@@ -121,7 +121,7 @@ public:
     void updateSVGRendererForElementChange(Style::SVGRendererUpdateType = Style::SVGRendererUpdateType { });
 
     // The instances of an element are clones made in shadow trees to implement <use>.
-    const WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>& LEGACY_NODELETE instances() const;
+    NODELETE const WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>& instances() const;
 
     std::optional<FloatRect> getBoundingBox() const;
 
@@ -139,8 +139,8 @@ public:
     bool isInSVGResourceContainer() const;
     static bool isResourceContainerTagName(const QualifiedName&);
 
-    SVGElement* LEGACY_NODELETE correspondingElement() const;
-    SVGUseElement* LEGACY_NODELETE correspondingUseElement() const;
+    NODELETE SVGElement* correspondingElement() const;
+    NODELETE SVGUseElement* correspondingUseElement() const;
 
     void setCorrespondingElement(SVGElement*);
 
@@ -151,9 +151,9 @@ public:
     bool isAnimatableAttribute(const QualifiedName&) const;
 #endif
 
-    MutableStyleProperties* LEGACY_NODELETE animatedSMILStyleProperties() const;
+    NODELETE MutableStyleProperties* animatedSMILStyleProperties() const;
     MutableStyleProperties& ensureAnimatedSMILStyleProperties();
-    void LEGACY_NODELETE setUseOverrideComputedStyle(bool);
+    NODELETE void setUseOverrideComputedStyle(bool);
 
     virtual bool haveLoadedRequiredResources();
 
@@ -196,9 +196,9 @@ public:
     SVGAnimatedString& classNameAnimated() { return m_className; }
 
     SVGConditionalProcessingAttributes& conditionalProcessingAttributes();
-    SVGConditionalProcessingAttributes* LEGACY_NODELETE conditionalProcessingAttributesIfExists() const;
+    NODELETE SVGConditionalProcessingAttributes* conditionalProcessingAttributesIfExists() const;
 
-    bool LEGACY_NODELETE hasAssociatedSVGLayoutBox() const;
+    NODELETE bool hasAssociatedSVGLayoutBox() const;
     void invalidateInstances();
 
 protected:

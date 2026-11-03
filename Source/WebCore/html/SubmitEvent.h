@@ -40,8 +40,8 @@ public:
         RefPtr<HTMLElement> submitter;
     };
 
-    static Ref<SubmitEvent> LEGACY_NODELETE create(const AtomString& type, Init&&);
-    static Ref<SubmitEvent> LEGACY_NODELETE create(RefPtr<HTMLElement>&& submitter);
+    NODELETE static Ref<SubmitEvent> create(const AtomString& type, Init&&);
+    NODELETE static Ref<SubmitEvent> create(RefPtr<HTMLElement>&& submitter);
 
     HTMLElement* submitter() const { return m_submitter.get(); }
 

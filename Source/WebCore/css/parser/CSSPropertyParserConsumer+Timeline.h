@@ -49,7 +49,7 @@ struct ViewTimelineInsetItem;
 
 namespace CSSPropertyParserHelpers {
 
-bool LEGACY_NODELETE isTimelineRangeName(CSSValueID);
+NODELETE bool isTimelineRangeName(CSSValueID);
 std::optional<Style::SingleAnimationRangeName> parseTimelineRangeNameRaw(StringView);
 std::optional<Style::SingleAnimationRangeName> parseTimelineRangeNameOrNormalRaw(StringView);
 

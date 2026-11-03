@@ -86,11 +86,11 @@ public:
     void handleAlternativeTextUIResult(const String& result) UNLESS_ENABLED({ UNUSED_PARAM(result); })
     void handleCancelOperation() UNLESS_ENABLED({ })
 
-    bool LEGACY_NODELETE hasPendingCorrection() const UNLESS_ENABLED({ return false; })
+    NODELETE bool hasPendingCorrection() const UNLESS_ENABLED({ return false; })
     bool isSpellingMarkerAllowed(const SimpleRange& misspellingRange) const UNLESS_ENABLED({ UNUSED_PARAM(misspellingRange); return true; })
     bool isAutomaticSpellingCorrectionEnabled() UNLESS_ENABLED({ return false; })
     bool canEnableAutomaticSpellingCorrection() const UNLESS_ENABLED({ return false; })
-    bool LEGACY_NODELETE isAlternativeTextUIActive() const UNLESS_ENABLED({ return false; })
+    NODELETE bool isAlternativeTextUIActive() const UNLESS_ENABLED({ return false; })
     bool shouldRemoveMarkersUponEditing();
 
     void recordAutocorrectionResponse(AutocorrectionResponse, const String& replacedString, const SimpleRange& replacementRange) UNLESS_ENABLED({ UNUSED_PARAM(replacedString); UNUSED_PARAM(replacementRange); })
@@ -117,7 +117,7 @@ private:
     bool shouldStartTimerFor(const DocumentMarker&, int endOffset) const;
     bool respondToMarkerAtEndOfWord(const DocumentMarker&, const Position& endOfWordPosition);
 
-    EditorClient* LEGACY_NODELETE editorClient();
+    NODELETE EditorClient* editorClient();
     
     TextCheckerClient* textChecker();
     FloatRect rootViewRectForRange(const SimpleRange&) const;
@@ -136,9 +136,9 @@ private:
     Position m_positionForLastDeletedAutocorrection;
 #endif
 #if USE(DICTATION_ALTERNATIVES) || USE(AUTOCORRECTION_PANEL)
-    String LEGACY_NODELETE markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarkerType);
+    NODELETE String markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarkerType);
     void applyAlternativeTextToRange(const SimpleRange&, const String&, AlternativeTextType, OptionSet<DocumentMarkerType>);
-    AlternativeTextClient* LEGACY_NODELETE alternativeTextClient();
+    NODELETE AlternativeTextClient* alternativeTextClient();
 #endif
     void removeCorrectionIndicatorMarkers();
 

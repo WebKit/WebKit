@@ -37,24 +37,24 @@ template<typename> class ExceptionOr;
 namespace NameValidation {
 
 // https://dom.spec.whatwg.org/#valid-element-name
-bool LEGACY_NODELETE isValidElementName(StringView);
-bool LEGACY_NODELETE isValidElementName(const QualifiedName&);
+NODELETE bool isValidElementName(StringView);
+NODELETE bool isValidElementName(const QualifiedName&);
 
 // https://dom.spec.whatwg.org/#valid-attribute-name
-bool LEGACY_NODELETE isValidAttributeName(StringView);
+NODELETE bool isValidAttributeName(StringView);
 
 // https://dom.spec.whatwg.org/#valid-doctype-name
-bool LEGACY_NODELETE isValidDoctypeName(StringView);
+NODELETE bool isValidDoctypeName(StringView);
 
 // https://www.w3.org/TR/xml/#NT-Name - used by createProcessingInstruction
-bool LEGACY_NODELETE isValidXMLName(StringView);
+NODELETE bool isValidXMLName(StringView);
 
 ExceptionOr<QualifiedName> parseQualifiedElementName(const AtomString& namespaceURI, const AtomString& qualifiedName);
 ExceptionOr<QualifiedName> parseQualifiedAttributeName(const AtomString& namespaceURI, const AtomString& qualifiedName);
 ExceptionOr<std::pair<AtomString, AtomString>> parseQualifiedAttributeName(const AtomString& qualifiedName);
 
-bool LEGACY_NODELETE hasValidNamespaceForElements(const QualifiedName&);
-bool LEGACY_NODELETE hasValidNamespaceForAttributes(const QualifiedName&);
+NODELETE bool hasValidNamespaceForElements(const QualifiedName&);
+NODELETE bool hasValidNamespaceForAttributes(const QualifiedName&);
 
 } // namespace NameValidation
 

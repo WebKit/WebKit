@@ -75,14 +75,14 @@ static const AtomString& indefiniteAtom()
 
 class ConditionEventListener final : public EventListener {
 public:
-    static Ref<ConditionEventListener> LEGACY_NODELETE create(SVGSMILElement* animation, SVGSMILElement::Condition* condition)
+    NODELETE static Ref<ConditionEventListener> create(SVGSMILElement* animation, SVGSMILElement::Condition* condition)
     {
         return adoptRef(*new ConditionEventListener(animation, condition));
     }
 
     bool operator==(const EventListener& other) const final;
     
-    void LEGACY_NODELETE disconnectAnimation()
+    NODELETE void disconnectAnimation()
     {
         m_animation = nullptr;
     }
@@ -1345,7 +1345,7 @@ void SVGSMILElement::dispatchPendingEvent(SMILEventSender* eventSender, const At
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ConditionEventListener)
-    static bool LEGACY_NODELETE isType(const WebCore::EventListener& listener)
+    NODELETE static bool isType(const WebCore::EventListener& listener)
     {
         return listener.type() == WebCore::EventListener::ConditionEventListenerType;
     }

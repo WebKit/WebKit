@@ -102,8 +102,8 @@ template<> struct CSSValueCreation<MaskBorderSlice> { auto operator()(CSSValuePo
 // MARK: - Blending
 
 template<> struct Blending<MaskBorderSlice> {
-    bool LEGACY_NODELETE canBlend(const MaskBorderSlice&, const MaskBorderSlice&);
-    bool LEGACY_NODELETE requiresInterpolationForAccumulativeIteration(const MaskBorderSlice&, const MaskBorderSlice&);
+    NODELETE bool canBlend(const MaskBorderSlice&, const MaskBorderSlice&);
+    NODELETE bool requiresInterpolationForAccumulativeIteration(const MaskBorderSlice&, const MaskBorderSlice&);
     auto blend(const MaskBorderSlice&, const MaskBorderSlice&, const BlendingContext&) -> MaskBorderSlice;
 };
 

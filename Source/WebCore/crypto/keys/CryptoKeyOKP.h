@@ -42,10 +42,10 @@ public:
         Ed25519,
     };
 
-    static RefPtr<CryptoKeyOKP> LEGACY_NODELETE create(CryptoAlgorithmIdentifier, NamedCurve, CryptoKeyType, KeyMaterial&&, bool extractable, CryptoKeyUsageBitmap);
+    NODELETE static RefPtr<CryptoKeyOKP> create(CryptoAlgorithmIdentifier, NamedCurve, CryptoKeyType, KeyMaterial&&, bool extractable, CryptoKeyUsageBitmap);
 
     WEBCORE_EXPORT static ExceptionOr<CryptoKeyPair> generatePair(CryptoAlgorithmIdentifier, NamedCurve, bool extractable, CryptoKeyUsageBitmap);
-    WEBCORE_EXPORT static RefPtr<CryptoKeyOKP> LEGACY_NODELETE importRaw(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
+    NODELETE WEBCORE_EXPORT static RefPtr<CryptoKeyOKP> importRaw(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
     static RefPtr<CryptoKeyOKP> importJwk(CryptoAlgorithmIdentifier, NamedCurve, JsonWebKey&&, bool extractable, CryptoKeyUsageBitmap);
     static RefPtr<CryptoKeyOKP> importSpki(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
     static RefPtr<CryptoKeyOKP> importPkcs8(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
@@ -55,11 +55,11 @@ public:
     ExceptionOr<Vector<uint8_t>> exportSpki() const;
     ExceptionOr<Vector<uint8_t>> exportPkcs8() const;
 
-    static std::optional<NamedCurve> LEGACY_NODELETE namedCurveFromString(const String&);
+    NODELETE static std::optional<NamedCurve> namedCurveFromString(const String&);
     NamedCurve namedCurve() const { return m_curve; }
     String namedCurveString() const;
 
-    static bool LEGACY_NODELETE isValidOKPAlgorithm(CryptoAlgorithmIdentifier);
+    NODELETE static bool isValidOKPAlgorithm(CryptoAlgorithmIdentifier);
 
     size_t keySizeInBits() const { return platformKey().size() * 8; }
     size_t keySizeInBytes() const { return platformKey().size(); }
@@ -75,7 +75,7 @@ private:
     String generateJwkD() const;
     String generateJwkX() const;
 
-    static bool LEGACY_NODELETE supportsNamedCurve();
+    NODELETE static bool supportsNamedCurve();
     static std::optional<CryptoKeyPair> platformGeneratePair(CryptoAlgorithmIdentifier, NamedCurve, bool extractable, CryptoKeyUsageBitmap);
     static bool platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve, const Vector<uint8_t>&, const Vector<uint8_t>&);
     Vector<uint8_t> platformExportRaw() const;

@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-static inline ScriptExecutionContext* LEGACY_NODELETE suitableScriptExecutionContext(ScriptExecutionContext* scriptExecutionContext)
+NODELETE static inline ScriptExecutionContext* suitableScriptExecutionContext(ScriptExecutionContext* scriptExecutionContext)
 {
     // For detached documents, make sure we observe their context document instead.
     if (auto* document = dynamicDowncast<Document>(scriptExecutionContext))

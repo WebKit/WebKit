@@ -41,7 +41,7 @@ public:
     static Ref<DatagramSink> create(WebTransport* transport) { return adoptRef(*new DatagramSink(transport)); }
     ~DatagramSink();
 
-    void LEGACY_NODELETE attachTo(WebTransportDatagramsWritable&);
+    NODELETE void attachTo(WebTransportDatagramsWritable&);
 
 private:
     explicit DatagramSink(WebTransport*);

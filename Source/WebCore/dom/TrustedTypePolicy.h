@@ -50,7 +50,7 @@ enum class IfMissing : bool { Throw, ReturnNull };
 class TrustedTypePolicy : public ScriptWrappable, public RefCounted<TrustedTypePolicy> {
     WTF_MAKE_TZONE_ALLOCATED(TrustedTypePolicy);
 public:
-    static Ref<TrustedTypePolicy> LEGACY_NODELETE create(const String&, const TrustedTypePolicyOptions&);
+    NODELETE static Ref<TrustedTypePolicy> create(const String&, const TrustedTypePolicyOptions&);
     ~TrustedTypePolicy();
 
     ExceptionOr<Ref<TrustedHTML>> createHTML(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
@@ -68,6 +68,6 @@ private:
     const TrustedTypePolicyOptions m_options;
 };
 
-WebCoreOpaqueRoot LEGACY_NODELETE root(TrustedTypePolicy*);
+NODELETE WebCoreOpaqueRoot root(TrustedTypePolicy*);
 
 } // namespace WebCore

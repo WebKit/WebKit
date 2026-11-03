@@ -115,8 +115,8 @@ private:
     void observeSource();
     void unobserveSource();
 
-    void LEGACY_NODELETE sourceMutedChanged();
-    void LEGACY_NODELETE sourceEnabledChanged();
+    NODELETE void sourceMutedChanged();
+    NODELETE void sourceEnabledChanged();
 
     virtual bool isReachingBufferedAudioDataHighLimit() { return false; };
     virtual bool isReachingBufferedAudioDataLowLimit() { return false; };
@@ -129,7 +129,7 @@ private:
     void trackEnded(MediaStreamTrackPrivate&) final { }
     void trackSettingsChanged(MediaStreamTrackPrivate&) final { }
 
-    void LEGACY_NODELETE initializeConverter();
+    NODELETE void initializeConverter();
 
     Ref<MediaStreamTrackPrivate> m_audioSource;
     bool m_muted { false };

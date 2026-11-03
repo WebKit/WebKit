@@ -33,7 +33,7 @@ namespace WebCore {
 
 class MessagePortChannelProviderImpl final : public MessagePortChannelProvider, public RefCounted<MessagePortChannelProviderImpl> {
 public:
-    static Ref<MessagePortChannelProviderImpl> LEGACY_NODELETE create();
+    NODELETE static Ref<MessagePortChannelProviderImpl> create();
     ~MessagePortChannelProviderImpl() final;
 
     void ref() const final { RefCounted::ref(); }

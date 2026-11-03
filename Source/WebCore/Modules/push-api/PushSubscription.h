@@ -53,13 +53,13 @@ public:
     template<typename... Args> static Ref<PushSubscription> create(Args&&... args) { return adoptRef(*new PushSubscription(std::forward<Args>(args)...)); }
     WEBCORE_EXPORT ~PushSubscription();
 
-    WEBCORE_EXPORT const PushSubscriptionData& LEGACY_NODELETE data() const;
+    NODELETE WEBCORE_EXPORT const PushSubscriptionData& data() const;
 
-    const String& LEGACY_NODELETE endpoint() const;
-    std::optional<EpochTimeStamp> LEGACY_NODELETE expirationTime() const;
+    NODELETE const String& endpoint() const;
+    NODELETE std::optional<EpochTimeStamp> expirationTime() const;
     PushSubscriptionOptions& options() const;
-    const Vector<uint8_t>& LEGACY_NODELETE clientECDHPublicKey() const;
-    const Vector<uint8_t>& LEGACY_NODELETE sharedAuthenticationSecret() const;
+    NODELETE const Vector<uint8_t>& clientECDHPublicKey() const;
+    NODELETE const Vector<uint8_t>& sharedAuthenticationSecret() const;
 
     ExceptionOr<RefPtr<JSC::ArrayBuffer>> getKey(PushEncryptionKeyName) const;
     void unsubscribe(ScriptExecutionContext&, DOMPromiseDeferred<IDLBoolean>&&);

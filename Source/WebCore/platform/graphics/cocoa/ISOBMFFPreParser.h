@@ -81,9 +81,9 @@ private:
         uint8_t headerSize; // 8 or 16
     };
 
-    static std::optional<BoxHeader> LEGACY_NODELETE parseBoxHeader(std::span<const uint8_t>);
-    static bool LEGACY_NODELETE isInitSegmentStartBox(FourCC);
-    static bool LEGACY_NODELETE isMediaSegmentStartBox(FourCC);
+    NODELETE static std::optional<BoxHeader> parseBoxHeader(std::span<const uint8_t>);
+    NODELETE static bool isInitSegmentStartBox(FourCC);
+    NODELETE static bool isMediaSegmentStartBox(FourCC);
 
     ForwardDataCallback m_forwardDataCallback;
     TrackInfoCallback m_trackInfoCallback;

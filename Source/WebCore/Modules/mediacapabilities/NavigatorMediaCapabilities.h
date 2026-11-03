@@ -42,7 +42,7 @@ public:
     static MediaCapabilities& mediaCapabilities(Navigator&);
     static NavigatorMediaCapabilities& from(Navigator&);
 
-    MediaCapabilities& LEGACY_NODELETE mediaCapabilities() const;
+    NODELETE MediaCapabilities& mediaCapabilities() const;
 private:
     static ASCIILiteral supplementName() { return "NavigatorMediaCapabilities"_s; }
     bool isNavigatorMediaCapabilities() const final { return true; }

@@ -49,7 +49,7 @@ public:
     RefPtr<HTMLImageElement> createImageForIconNameAndType(const String& iconName, const String& iconType);
 
 private:
-    Document* LEGACY_NODELETE document() const;
+    NODELETE Document* document() const;
 
     MediaControlsUtils(Document&);
 };

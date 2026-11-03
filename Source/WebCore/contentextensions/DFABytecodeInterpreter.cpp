@@ -38,12 +38,12 @@ namespace WebCore::ContentExtensions {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DFABytecodeInterpreter);
 
 template <typename IntType>
-static IntType LEGACY_NODELETE getBits(std::span<const uint8_t> bytecode, uint32_t index)
+NODELETE static IntType getBits(std::span<const uint8_t> bytecode, uint32_t index)
 {
     return reinterpretCastSpanStartTo<const IntType>(bytecode.subspan(index));
 }
 
-static uint32_t LEGACY_NODELETE get24BitsUnsigned(std::span<const uint8_t> bytecode, uint32_t index)
+NODELETE static uint32_t get24BitsUnsigned(std::span<const uint8_t> bytecode, uint32_t index)
 {
     ASSERT(index + UInt24Size <= bytecode.size());
     uint32_t highBits = getBits<uint8_t>(bytecode, index + sizeof(uint16_t));
@@ -51,12 +51,12 @@ static uint32_t LEGACY_NODELETE get24BitsUnsigned(std::span<const uint8_t> bytec
     return (highBits << 16) | lowBits;
 }
 
-static DFABytecodeInstruction LEGACY_NODELETE getInstruction(std::span<const uint8_t> bytecode, uint32_t index)
+NODELETE static DFABytecodeInstruction getInstruction(std::span<const uint8_t> bytecode, uint32_t index)
 {
     return static_cast<DFABytecodeInstruction>(getBits<uint8_t>(bytecode, index) & DFABytecodeInstructionMask);
 }
 
-static size_t LEGACY_NODELETE jumpSizeInBytes(DFABytecodeJumpSize jumpSize)
+NODELETE static size_t jumpSizeInBytes(DFABytecodeJumpSize jumpSize)
 {
     switch (jumpSize) {
     case DFABytecodeJumpSize::Int8:
@@ -71,18 +71,18 @@ static size_t LEGACY_NODELETE jumpSizeInBytes(DFABytecodeJumpSize jumpSize)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-template<typename T> uint32_t LEGACY_NODELETE consumeInteger(std::span<const uint8_t> bytecode, uint32_t& programCounter)
+template<typename T> NODELETE uint32_t consumeInteger(std::span<const uint8_t> bytecode, uint32_t& programCounter)
 {
     programCounter += sizeof(T);
     return getBits<T>(bytecode, programCounter - sizeof(T));
 }
-static uint32_t LEGACY_NODELETE consume24BitUnsignedInteger(std::span<const uint8_t> bytecode, uint32_t& programCounter)
+NODELETE static uint32_t consume24BitUnsignedInteger(std::span<const uint8_t> bytecode, uint32_t& programCounter)
 {
     programCounter += UInt24Size;
     return get24BitsUnsigned(bytecode, programCounter - UInt24Size);
 }
 
-static constexpr bool LEGACY_NODELETE hasFlags(DFABytecodeInstruction instruction)
+NODELETE static constexpr bool hasFlags(DFABytecodeInstruction instruction)
 {
     switch (instruction) {
     case DFABytecodeInstruction::TestFlagsAndAppendAction:
@@ -101,7 +101,7 @@ static constexpr bool LEGACY_NODELETE hasFlags(DFABytecodeInstruction instructio
     return false;
 }
 
-static constexpr bool LEGACY_NODELETE hasAction(DFABytecodeInstruction instruction)
+NODELETE static constexpr bool hasAction(DFABytecodeInstruction instruction)
 {
     switch (instruction) {
     case DFABytecodeInstruction::TestFlagsAndAppendAction:
@@ -120,7 +120,7 @@ static constexpr bool LEGACY_NODELETE hasAction(DFABytecodeInstruction instructi
     return false;
 }
 
-static ResourceFlags LEGACY_NODELETE consumeResourceFlagsAndInstruction(std::span<const uint8_t> bytecode, uint32_t& programCounter)
+NODELETE static ResourceFlags consumeResourceFlagsAndInstruction(std::span<const uint8_t> bytecode, uint32_t& programCounter)
 {
     ASSERT_UNUSED(hasFlags, hasFlags(getInstruction(bytecode, programCounter)));
     switch (static_cast<DFABytecodeFlagsSize>(bytecode[programCounter++] & DFABytecodeFlagsSizeMask)) {
@@ -137,7 +137,7 @@ static ResourceFlags LEGACY_NODELETE consumeResourceFlagsAndInstruction(std::spa
     return 0;
 }
 
-static uint32_t LEGACY_NODELETE consumeAction(std::span<const uint8_t> bytecode, uint32_t& programCounter, uint32_t instructionLocation)
+NODELETE static uint32_t consumeAction(std::span<const uint8_t> bytecode, uint32_t& programCounter, uint32_t instructionLocation)
 {
     ASSERT_UNUSED(hasAction, hasAction(getInstruction(bytecode, instructionLocation)));
     ASSERT(programCounter > instructionLocation);
@@ -155,7 +155,7 @@ static uint32_t LEGACY_NODELETE consumeAction(std::span<const uint8_t> bytecode,
     return 0;
 }
 
-static DFABytecodeJumpSize LEGACY_NODELETE getJumpSize(std::span<const uint8_t> bytecode, uint32_t index)
+NODELETE static DFABytecodeJumpSize getJumpSize(std::span<const uint8_t> bytecode, uint32_t index)
 {
     auto jumpSize = static_cast<DFABytecodeJumpSize>(getBits<uint8_t>(bytecode, index) & DFABytecodeJumpSizeMask);
     ASSERT(jumpSize == DFABytecodeJumpSize::Int32
@@ -165,7 +165,7 @@ static DFABytecodeJumpSize LEGACY_NODELETE getJumpSize(std::span<const uint8_t> 
     return jumpSize;
 }
 
-static int32_t LEGACY_NODELETE getJumpDistance(std::span<const uint8_t> bytecode, uint32_t index, DFABytecodeJumpSize jumpSize)
+NODELETE static int32_t getJumpDistance(std::span<const uint8_t> bytecode, uint32_t index, DFABytecodeJumpSize jumpSize)
 {
     switch (jumpSize) {
     case DFABytecodeJumpSize::Int8:
@@ -211,7 +211,7 @@ void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(uint32_t& program
 }
 
 template<bool caseSensitive>
-inline void LEGACY_NODELETE DFABytecodeInterpreter::interpretJumpTable(std::span<const Latin1Character> url, uint32_t& urlIndex, uint32_t& programCounter)
+NODELETE inline void DFABytecodeInterpreter::interpretJumpTable(std::span<const Latin1Character> url, uint32_t& urlIndex, uint32_t& programCounter)
 {
     DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, programCounter);
 

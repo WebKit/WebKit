@@ -113,8 +113,8 @@ public:
         bool hasBufferedData() const { return hasData(); }
 
     private:
-        bool LEGACY_NODELETE hasData() const;
-        size_t LEGACY_NODELETE dataLength() const;
+        NODELETE bool hasData() const;
+        NODELETE size_t dataLength() const;
         void appendData(const SharedBuffer&);
         void decodeDataToContent();
 

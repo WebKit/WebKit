@@ -68,7 +68,7 @@ void SettingsBase::initializeDefaultFontFamilies()
 
 #if ENABLE(MEDIA_SOURCE)
 
-bool LEGACY_NODELETE SettingsBase::platformDefaultMediaSourceEnabled()
+NODELETE bool SettingsBase::platformDefaultMediaSourceEnabled()
 {
 #if PLATFORM(MAC)
     return true;
@@ -77,7 +77,7 @@ bool LEGACY_NODELETE SettingsBase::platformDefaultMediaSourceEnabled()
 #endif
 }
 
-uint64_t LEGACY_NODELETE SettingsBase::defaultMaximumSourceBufferSize()
+NODELETE uint64_t SettingsBase::defaultMaximumSourceBufferSize()
 {
 #if PLATFORM(IOS_FAMILY)
     // iOS Devices have lower memory limits, enforced by jetsam rates, and a very limited

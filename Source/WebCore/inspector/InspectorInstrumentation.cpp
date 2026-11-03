@@ -104,7 +104,7 @@ namespace WebCore {
 
 using namespace Inspector;
 
-static HashSet<InstrumentingAgents*>& LEGACY_NODELETE instrumentingAgentsSet()
+NODELETE static HashSet<InstrumentingAgents*>& instrumentingAgentsSet()
 {
     static NeverDestroyed<HashSet<InstrumentingAgents*>> set;
     return set;
@@ -1244,7 +1244,7 @@ void InspectorInstrumentation::interceptResponseImpl(InstrumentingAgents& instru
 }
 
 // JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
-static bool LEGACY_NODELETE isConsoleAssertMessage(MessageSource source, MessageType type)
+NODELETE static bool isConsoleAssertMessage(MessageSource source, MessageType type)
 {
     return source == MessageSource::ConsoleAPI && type == MessageType::Assert;
 }

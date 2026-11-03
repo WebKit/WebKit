@@ -58,7 +58,7 @@ public:
     WEBCORE_EXPORT unsigned length();
     HTMLElement* item(unsigned index);
     std::optional<Variant<Ref<RadioNodeList>, Ref<Element>>> namedItem(const AtomString&);
-    Vector<AtomString> LEGACY_NODELETE supportedPropertyNames() const;
+    NODELETE Vector<AtomString> supportedPropertyNames() const;
 
     String enctype() const { return m_attributes.encodingType(); }
 
@@ -83,9 +83,9 @@ public:
 
     void submitImplicitly(Event&, bool fromImplicitSubmissionTrigger);
 
-    String LEGACY_NODELETE name() const;
+    NODELETE String name() const;
 
-    bool LEGACY_NODELETE noValidate() const;
+    NODELETE bool noValidate() const;
 
     String acceptCharset() const { return m_attributes.acceptCharset(); }
     void setAcceptCharset(const String&);
@@ -99,7 +99,7 @@ public:
     AtomString target() const final;
     AtomString effectiveTarget(const Event*, HTMLFormControlElement* submitter) const;
 
-    bool LEGACY_NODELETE wasUserSubmitted() const;
+    NODELETE bool wasUserSubmitted() const;
 
     HTMLFormControlElement* findSubmitter(const Event*) const;
 
@@ -111,7 +111,7 @@ public:
 
     RadioButtonGroups& radioButtonGroups() LIFETIME_BOUND { return m_radioButtonGroups; }
 
-    WEBCORE_EXPORT const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& LEGACY_NODELETE unsafeListedElements() const;
+    NODELETE WEBCORE_EXPORT const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& unsafeListedElements() const;
     WEBCORE_EXPORT Vector<Ref<FormListedElement>> copyListedElementsVector() const;
     Vector<Ref<ValidatedFormListedElement>> copyValidatedListedElementsVector() const;
     const Vector<WeakPtr<HTMLImageElement, WeakPtrImplWithEventTargetData>>& imageElements() const LIFETIME_BOUND { return m_imageElements; }
@@ -131,7 +131,7 @@ private:
     void finishParsingChildren() final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
-    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const final;
+    NODELETE bool isURLAttribute(const Attribute&) const final;
 
     void resumeFromDocumentSuspension() final;
 
@@ -153,7 +153,7 @@ private:
     // are any invalid controls in this form.
     bool checkInvalidControlsAndCollectUnhandled(Vector<Ref<ValidatedFormListedElement>>&);
 
-    RefPtr<HTMLElement> LEGACY_NODELETE elementFromPastNamesMap(const AtomString&) const;
+    NODELETE RefPtr<HTMLElement> elementFromPastNamesMap(const AtomString&) const;
     void addToPastNamesMap(FormAssociatedElement&, const AtomString& pastName);
 #if ASSERT_ENABLED
     void assertItemCanBeInPastNamesMap(FormAssociatedElement&) const;

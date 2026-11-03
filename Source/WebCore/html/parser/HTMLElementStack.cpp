@@ -45,12 +45,12 @@ using namespace ElementNames;
 
 namespace {
 
-inline bool LEGACY_NODELETE isRootNode(HTMLStackItem& item)
+NODELETE inline bool isRootNode(HTMLStackItem& item)
 {
     return item.isDocumentFragment() || item.elementName() == HTML::html;
 }
 
-inline bool LEGACY_NODELETE isScopeMarker(HTMLStackItem& item)
+NODELETE inline bool isScopeMarker(HTMLStackItem& item)
 {
     switch (item.elementName()) {
     case HTML::applet:
@@ -78,21 +78,21 @@ inline bool LEGACY_NODELETE isScopeMarker(HTMLStackItem& item)
     return isRootNode(item);
 }
 
-inline bool LEGACY_NODELETE isListItemScopeMarker(HTMLStackItem& item)
+NODELETE inline bool isListItemScopeMarker(HTMLStackItem& item)
 {
     return isScopeMarker(item)
         || item.elementName() == HTML::ol
         || item.elementName() == HTML::ul;
 }
 
-inline bool LEGACY_NODELETE isTableScopeMarker(HTMLStackItem& item)
+NODELETE inline bool isTableScopeMarker(HTMLStackItem& item)
 {
     return item.elementName() == HTML::table
         || item.elementName() == HTML::template_
         || isRootNode(item);
 }
 
-inline bool LEGACY_NODELETE isTableBodyScopeMarker(HTMLStackItem& item)
+NODELETE inline bool isTableBodyScopeMarker(HTMLStackItem& item)
 {
     return item.elementName() == HTML::tbody
         || item.elementName() == HTML::tfoot
@@ -101,7 +101,7 @@ inline bool LEGACY_NODELETE isTableBodyScopeMarker(HTMLStackItem& item)
         || isRootNode(item);
 }
 
-inline bool LEGACY_NODELETE isTableRowScopeMarker(HTMLStackItem& item)
+NODELETE inline bool isTableRowScopeMarker(HTMLStackItem& item)
 {
     return item.elementName() == HTML::tr
         || item.elementName() == HTML::template_
@@ -115,7 +115,7 @@ inline bool isForeignContentScopeMarker(HTMLStackItem& item)
         || isInHTMLNamespace(item);
 }
 
-inline bool LEGACY_NODELETE isButtonScopeMarker(HTMLStackItem& item)
+NODELETE inline bool isButtonScopeMarker(HTMLStackItem& item)
 {
     return isScopeMarker(item)
         || item.elementName() == HTML::button;
@@ -408,7 +408,7 @@ bool HTMLElementStack::contains(Element& element) const
     return !!find(element);
 }
 
-template <bool isMarker(HTMLStackItem&)> bool LEGACY_NODELETE inScopeCommon(HTMLElementStack::ElementRecord* top, ElementName targetElement)
+template <bool isMarker(HTMLStackItem&)> NODELETE bool inScopeCommon(HTMLElementStack::ElementRecord* top, ElementName targetElement)
 {
     ASSERT(targetElement != ElementName::Unknown);
     for (auto* record = top; record; record = record->next()) {

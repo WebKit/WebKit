@@ -70,7 +70,7 @@ public:
     void mouseDidLeaveLocalRoot(const LocalFrame&);
 
     // DataDetectorHighlightClient.
-    void LEGACY_NODELETE ref() const final;
+    NODELETE void ref() const final;
     void deref() const final;
 #else
     void ref() const;
@@ -78,7 +78,7 @@ public:
 #endif
 
 #if ENABLE(DATA_DETECTION)
-    WEBCORE_EXPORT bool LEGACY_NODELETE hasActiveDataDetectorHighlightForTesting() const;
+    NODELETE WEBCORE_EXPORT bool hasActiveDataDetectorHighlightForTesting() const;
     void textRecognitionResultsChanged(HTMLElement&);
 #endif
 
@@ -90,7 +90,7 @@ private:
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) final;
     bool mouseEvent(PageOverlay& overlay, const PlatformMouseEvent& event) final { return platformHandleMouseEvent(overlay, event); }
 
-    bool LEGACY_NODELETE shouldUsePageOverlayToPaintSelection(const RenderElement&);
+    NODELETE bool shouldUsePageOverlayToPaintSelection(const RenderElement&);
 
     static RefPtr<LocalFrame> rootFrameForHost(const WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>&);
     void updateOverlays();

@@ -35,7 +35,7 @@ class SVGAnimateElement final : public SVGAnimateElementBase {
     WTF_MAKE_TZONE_ALLOCATED(SVGAnimateElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAnimateElement);
 public:
-    static Ref<SVGAnimateElement> LEGACY_NODELETE create(const QualifiedName&, Document&);
+    NODELETE static Ref<SVGAnimateElement> create(const QualifiedName&, Document&);
 
 private:
     SVGAnimateElement(const QualifiedName&, Document&);

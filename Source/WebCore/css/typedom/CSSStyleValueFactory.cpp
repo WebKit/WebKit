@@ -197,7 +197,7 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValueFor
     return results;
 }
 
-static bool LEGACY_NODELETE mayConvertCSSValueListToSingleValue(const AssociatedProperty& property)
+NODELETE static bool mayConvertCSSValueListToSingleValue(const AssociatedProperty& property)
 {
     auto propertyID = property.propertyID();
     if (!propertyID)

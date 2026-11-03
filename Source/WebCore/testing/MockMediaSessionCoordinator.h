@@ -40,7 +40,7 @@ class StringCallback;
 class MockMediaSessionCoordinator : public MediaSessionCoordinatorPrivate, public CanMakeWeakPtr<MockMediaSessionCoordinator> {
     WTF_MAKE_TZONE_ALLOCATED(MockMediaSessionCoordinator);
 public:
-    static Ref<MockMediaSessionCoordinator> LEGACY_NODELETE create(ScriptExecutionContext&, RefPtr<StringCallback>&&);
+    NODELETE static Ref<MockMediaSessionCoordinator> create(ScriptExecutionContext&, RefPtr<StringCallback>&&);
 
     void setCommandsShouldFail(bool shouldFail) { m_failCommands = shouldFail; }
 
@@ -63,7 +63,7 @@ private:
     void trackIdentifierChanged(const String&) final;
 
     ASCIILiteral logClassName() const { return "MockMediaSessionCoordinator"_s; }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const;
+    NODELETE WTFLogChannel& logChannel() const;
 
     std::optional<Exception> result() const;
 

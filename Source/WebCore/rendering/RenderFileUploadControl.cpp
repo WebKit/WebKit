@@ -81,7 +81,7 @@ RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement& input, Style:
 
 RenderFileUploadControl::~RenderFileUploadControl() = default;
 
-HTMLInputElement& LEGACY_NODELETE RenderFileUploadControl::inputElement() const
+NODELETE HTMLInputElement& RenderFileUploadControl::inputElement() const
 {
     return downcast<HTMLInputElement>(nodeForNonAnonymous());
 }
@@ -106,13 +106,13 @@ void RenderFileUploadControl::updateFromElement()
         repaint();
 }
 
-static int LEGACY_NODELETE nodeLogicalWidth(Node* node)
+NODELETE static int nodeLogicalWidth(Node* node)
 {
     return (node && node->renderBox()) ? roundToInt(node->renderBox()->logicalSize().width()) : 0;
 }
 
 #if PLATFORM(COCOA)
-static int LEGACY_NODELETE nodeLogicalHeight(Node* node)
+NODELETE static int nodeLogicalHeight(Node* node)
 {
     return (node && node->renderBox()) ? roundToInt(node->renderBox()->logicalSize().height()) : 0;
 }

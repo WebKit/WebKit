@@ -155,8 +155,8 @@ template<> struct CSSValueConversion<ContainIntrinsicSize> { auto operator()(Bui
 // MARK: - Blending
 
 template<> struct Blending<ContainIntrinsicSize> {
-    bool LEGACY_NODELETE canBlend(const ContainIntrinsicSize&, const ContainIntrinsicSize&);
-    ContainIntrinsicSize LEGACY_NODELETE blend(const ContainIntrinsicSize&, const ContainIntrinsicSize&, const BlendingContext&);
+    NODELETE bool canBlend(const ContainIntrinsicSize&, const ContainIntrinsicSize&);
+    NODELETE ContainIntrinsicSize blend(const ContainIntrinsicSize&, const ContainIntrinsicSize&, const BlendingContext&);
 };
 
 } // namespace Style

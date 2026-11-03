@@ -113,7 +113,7 @@ static Vector<Style::GridTrackSize> trackSizesWithPercentagesConvertedToAuto(con
     return trackSizes.map(GridLayoutUtils::trackSizeWithPercentagesConvertedToAuto);
 }
 
-static AutoRepeatConstraint LEGACY_NODELETE autoRepeatConstraint(const AxisConstraint& axisConstraint)
+NODELETE static AutoRepeatConstraint autoRepeatConstraint(const AxisConstraint& axisConstraint)
 {
     auto containerMinimumSize = axisConstraint.containerMinimumSize();
     auto containerMaximumSize = axisConstraint.containerMaximumSize();

@@ -467,7 +467,7 @@ static MediaElementSessionInfo mediaElementSessionInfoForSession(const MediaElem
     return { };
 }
 
-static bool LEGACY_NODELETE preferMediaControlsForCandidateSessionOverOtherCandidateSession(const MediaElementSessionInfo& session, const MediaElementSessionInfo& otherSession)
+NODELETE static bool preferMediaControlsForCandidateSessionOverOtherCandidateSession(const MediaElementSessionInfo& session, const MediaElementSessionInfo& otherSession)
 {
     MediaElementSession::PlaybackControlsPurpose purpose = session.purpose;
     ASSERT(purpose == otherSession.purpose);
@@ -491,7 +491,7 @@ static bool LEGACY_NODELETE preferMediaControlsForCandidateSessionOverOtherCandi
     return session.timeOfLastUserInteraction.value_or(MonotonicTime { }) > otherSession.timeOfLastUserInteraction.value_or(MonotonicTime { });
 }
 
-static bool LEGACY_NODELETE mediaSessionMayBeConfusedWithMainContent(const MediaElementSessionInfo& session, MediaElementSession::PlaybackControlsPurpose purpose)
+NODELETE static bool mediaSessionMayBeConfusedWithMainContent(const MediaElementSessionInfo& session, MediaElementSession::PlaybackControlsPurpose purpose)
 {
     if (purpose == MediaElementSession::PlaybackControlsPurpose::MediaSession)
         return false;
@@ -510,7 +510,7 @@ static bool LEGACY_NODELETE mediaSessionMayBeConfusedWithMainContent(const Media
     return true;
 }
 
-SUPPRESS_NODELETE static bool LEGACY_NODELETE defaultVolumeLocked()
+NODELETE SUPPRESS_NODELETE static bool defaultVolumeLocked()
 {
 #if PLATFORM(IOS)
     return PAL::currentUserInterfaceIdiomIsSmallScreen();
@@ -519,7 +519,7 @@ SUPPRESS_NODELETE static bool LEGACY_NODELETE defaultVolumeLocked()
 #endif
 }
 
-static bool LEGACY_NODELETE isInWindowOrStandardFullscreen(HTMLMediaElementEnums::VideoFullscreenMode mode)
+NODELETE static bool isInWindowOrStandardFullscreen(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     return mode == HTMLMediaElementEnums::VideoFullscreenModeStandard || mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
 }
@@ -2350,7 +2350,7 @@ static bool compareCueInterval(const CueInterval& one, const CueInterval& two)
     return protect(one.data())->isOrderedBefore(protect(two.data()));
 }
 
-static bool LEGACY_NODELETE compareCueIntervalEndTime(const CueInterval& one, const CueInterval& two)
+NODELETE static bool compareCueIntervalEndTime(const CueInterval& one, const CueInterval& two)
 {
     return one.data()->endMediaTime() > two.data()->endMediaTime();
 }
@@ -6039,7 +6039,7 @@ void HTMLMediaElement::configureTextTracks()
     configureTextTrackDisplay();
 }
 
-static bool LEGACY_NODELETE isSubtitleOrCaptionTrackKind(TextTrack::Kind kind)
+NODELETE static bool isSubtitleOrCaptionTrackKind(TextTrack::Kind kind)
 {
     return kind == TextTrack::Kind::Subtitles || kind == TextTrack::Kind::Captions;
 }
@@ -8566,7 +8566,7 @@ void HTMLMediaElement::setShouldDelayLoadEvent(bool shouldDelay)
         protect(document())->decrementLoadEventDelayCount();
 }
 
-static String& LEGACY_NODELETE sharedMediaCacheDirectory()
+NODELETE static String& sharedMediaCacheDirectory()
 {
     static NeverDestroyed<String> sharedMediaCacheDirectory;
     return sharedMediaCacheDirectory;
@@ -9087,7 +9087,7 @@ String HTMLMediaElement::mediaPlayerUserAgent() const
     return frame->loader().userAgent(m_currentSrc);
 }
 
-static inline PlatformTextTrackData::TrackKind LEGACY_NODELETE toPlatform(TextTrack::Kind kind)
+NODELETE static inline PlatformTextTrackData::TrackKind toPlatform(TextTrack::Kind kind)
 {
     switch (kind) {
     case TextTrack::Kind::Captions:
@@ -9107,7 +9107,7 @@ static inline PlatformTextTrackData::TrackKind LEGACY_NODELETE toPlatform(TextTr
     return PlatformTextTrackData::TrackKind::Caption;
 }
 
-static inline PlatformTextTrackData::TrackMode LEGACY_NODELETE toPlatform(TextTrack::Mode mode)
+NODELETE static inline PlatformTextTrackData::TrackMode toPlatform(TextTrack::Mode mode)
 {
     switch (mode) {
     case TextTrack::Mode::Disabled:
@@ -9885,7 +9885,7 @@ bool HTMLMediaElement::supportsSeeking() const
 }
 
 #if ENABLE(MEDIA_STREAM)
-static bool LEGACY_NODELETE isCameraTrack(const MediaStreamTrack& track)
+NODELETE static bool isCameraTrack(const MediaStreamTrack& track)
 {
     return track.isCaptureTrack() && track.isVideo();
 }

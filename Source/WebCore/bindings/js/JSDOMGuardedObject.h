@@ -47,7 +47,7 @@ public:
     template<typename Visitor> void visitAggregateInGCThread(Visitor& visitor) { visitor.append(m_guarded); }
 
     JSC::JSValue guardedObject() const { return m_guarded.get(); }
-    JSDOMGlobalObject* LEGACY_NODELETE globalObject() const;
+    NODELETE JSDOMGlobalObject* globalObject() const;
 
     void clear();
 

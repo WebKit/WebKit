@@ -56,8 +56,8 @@ public:
     void adjustUsedUserSelect(Style::ComputedStyle&) const;
 
     static void adjustVisibilityForPseudoElement(Style::ComputedStyle&, const Element& host);
-    static void LEGACY_NODELETE adjustFirstLetterStyle(Style::ComputedStyle&);
-    static void LEGACY_NODELETE adjustFirstLineStyle(Style::ComputedStyle&);
+    NODELETE static void adjustFirstLetterStyle(Style::ComputedStyle&);
+    NODELETE static void adjustFirstLineStyle(Style::ComputedStyle&);
     static void adjustSVGElementStyle(Style::ComputedStyle&, const SVGElement&);
     static bool adjustEventListenerRegionTypesForRootStyle(Style::ComputedStyle&, const Document&);
     static void adjustColumnStylesForPaginationMode(Style::ComputedStyle&, PaginationMode);
@@ -75,7 +75,7 @@ public:
     static bool adjustForTextAutosizing(Style::ComputedStyle&, const Element&);
 
 private:
-    void LEGACY_NODELETE adjustDisplayContentsStyle(Style::ComputedStyle&) const;
+    NODELETE void adjustDisplayContentsStyle(Style::ComputedStyle&) const;
     void adjustForSiteSpecificQuirks(Style::ComputedStyle&) const;
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)

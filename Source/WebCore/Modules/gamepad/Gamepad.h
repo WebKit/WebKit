@@ -55,8 +55,8 @@ public:
 
     bool connected() const { return m_connected; }
     double timestamp() const { return m_timestamp.secondsSinceEpoch().seconds(); }
-    const Vector<double>& LEGACY_NODELETE axes() const;
-    const Vector<Ref<GamepadButton>>& LEGACY_NODELETE buttons() const;
+    NODELETE const Vector<double>& axes() const;
+    NODELETE const Vector<Ref<GamepadButton>>& buttons() const;
     const GamepadHapticEffectTypeSet& supportedEffectTypes() const LIFETIME_BOUND { return m_supportedEffectTypes; }
 
     void updateFromPlatformGamepad(const PlatformGamepad&);

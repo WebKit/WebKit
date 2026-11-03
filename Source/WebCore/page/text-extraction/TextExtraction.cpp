@@ -143,7 +143,7 @@ static String normalizeText(const String& string, unsigned maxDescriptionLength 
 static constexpr auto minimumClassOrIdLength = 6;
 static constexpr auto maximumClassOrIdLength = 24;
 
-static bool LEGACY_NODELETE isCandidateClassOrId(StringView text)
+NODELETE static bool isCandidateClassOrId(StringView text)
 {
     if (text.length() < minimumClassOrIdLength)
         return false;
@@ -167,7 +167,7 @@ static constexpr OptionSet behaviorsForTextExtraction {
     TextIteratorBehavior::TraversesFlatTree
 };
 
-static bool LEGACY_NODELETE hasEnclosingAutoFilledInput(Node& node)
+NODELETE static bool hasEnclosingAutoFilledInput(Node& node)
 {
     auto* input = dynamicDowncast<HTMLInputElement>(node.shadowHost());
     if (!input)
@@ -228,7 +228,7 @@ static inline TextNodesAndText collectText(const SimpleRange& range, IncludeText
     return nodesAndText;
 }
 
-static String LEGACY_NODELETE stringOnlyIfHumanReadable(const String& string)
+NODELETE static String stringOnlyIfHumanReadable(const String& string)
 {
     if (StringEntropyHelpers::isProbablyHumanReadable(string))
         return string;
@@ -321,12 +321,12 @@ struct TraversalContext {
     bool includeAccessibilityAttributes { false };
     unsigned visibleTextLength { 0 };
 
-    inline bool LEGACY_NODELETE shouldIncludeNodeWithRect(const FloatRect& rect) const
+    NODELETE inline bool shouldIncludeNodeWithRect(const FloatRect& rect) const
     {
         return !rectInRootView || rectInRootView->intersects(rect);
     }
 
-    unsigned LEGACY_NODELETE currentVisualBlockContainerNumber() const
+    NODELETE unsigned currentVisualBlockContainerNumber() const
     {
         return visualBlockContainerStack.isEmpty() ? 0 : visualBlockContainerStack.last();
     }
@@ -573,7 +573,7 @@ static inline bool paintsVisibleContent(const RenderObject& renderer)
 }
 
 template<typename RectOrSize>
-static inline bool LEGACY_NODELETE isNearlyEmpty(const RectOrSize& rectOrSize)
+NODELETE static inline bool isNearlyEmpty(const RectOrSize& rectOrSize)
 {
     return rectOrSize.width() <= 1 || rectOrSize.height() <= 1;
 }
@@ -658,7 +658,7 @@ static inline RefPtr<Node> visualProxyForTransparentControl(const HTMLInputEleme
 }
 
 template<typename T>
-RefPtr<T> LEGACY_NODELETE shadowHostOrSelfInclusiveParent(Node& node)
+NODELETE RefPtr<T> shadowHostOrSelfInclusiveParent(Node& node)
 {
     if (node.isInUserAgentShadowTree())
         return dynamicDowncast<T>(node.shadowHost());
@@ -725,7 +725,7 @@ enum class SkipExtraction : bool {
     SelfAndSubtree
 };
 
-static bool LEGACY_NODELETE shouldTreatAsPasswordField(const Element* element)
+NODELETE static bool shouldTreatAsPasswordField(const Element* element)
 {
     auto* input = dynamicDowncast<HTMLInputElement>(element);
     return input && input->hasEverBeenPasswordField();
@@ -1142,7 +1142,7 @@ static bool containsInteractiveDescendant(const Element& element)
     return false;
 }
 
-static bool LEGACY_NODELETE isProbablyNotInteractiveBasedOnTagName(const Element& element)
+NODELETE static bool isProbablyNotInteractiveBasedOnTagName(const Element& element)
 {
     return is<HTMLHeadingElement>(element)
         || element.hasTagName(HTMLNames::addressTag)
@@ -1932,7 +1932,7 @@ struct TokenAndBlockOffset {
     int offset { 0 };
 };
 
-static IntSize LEGACY_NODELETE reducePrecision(FloatSize size)
+NODELETE static IntSize reducePrecision(FloatSize size)
 {
     static constexpr auto resolution = 10;
     return {
@@ -2594,7 +2594,7 @@ static SelectOptionResult selectOptionByValue(NodeIdentifier identifier, const S
     return { };
 }
 
-static Element* LEGACY_NODELETE bodyOrDocumentElement(const LocalFrame& frame)
+NODELETE static Element* bodyOrDocumentElement(const LocalFrame& frame)
 {
     if (auto* document = frame.document()) {
         if (auto* body = document->body())
@@ -2606,7 +2606,7 @@ static Element* LEGACY_NODELETE bodyOrDocumentElement(const LocalFrame& frame)
     return nullptr;
 }
 
-static RefPtr<Node> LEGACY_NODELETE resolveNodeWithBodyOrDocumentElementAsFallback(const LocalFrame& frame, std::optional<NodeIdentifier> identifier)
+NODELETE static RefPtr<Node> resolveNodeWithBodyOrDocumentElementAsFallback(const LocalFrame& frame, std::optional<NodeIdentifier> identifier)
 {
     if (identifier)
         return Node::fromIdentifier(WTF::move(*identifier));

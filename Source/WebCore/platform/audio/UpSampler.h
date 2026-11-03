@@ -48,7 +48,7 @@ public:
     void reset();
 
     // Latency based on the source sample-rate.
-    size_t LEGACY_NODELETE latencyFrames() const;
+    NODELETE size_t latencyFrames() const;
 
 private:
     enum { DefaultKernelSize = 128 };

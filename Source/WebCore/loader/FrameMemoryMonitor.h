@@ -33,11 +33,11 @@ class LocalFrame;
 
 class FrameMemoryMonitor final : public RefCounted<FrameMemoryMonitor> {
 public:
-    static Ref<FrameMemoryMonitor> LEGACY_NODELETE create(const LocalFrame&);
+    NODELETE static Ref<FrameMemoryMonitor> create(const LocalFrame&);
     WEBCORE_EXPORT ~FrameMemoryMonitor() = default;
 
     WEBCORE_EXPORT void setUsage(size_t);
-    WEBCORE_EXPORT void LEGACY_NODELETE lowerAllMemoryLimitsForTesting();
+    NODELETE WEBCORE_EXPORT void lowerAllMemoryLimitsForTesting();
 
 private:
     explicit FrameMemoryMonitor(const LocalFrame&);

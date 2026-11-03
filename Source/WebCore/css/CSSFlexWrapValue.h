@@ -38,7 +38,7 @@ public:
     const CSS::FlexWrap& flexWrap() const LIFETIME_BOUND { return m_flexWrap; }
 
     String customCSSText(const CSS::SerializationContext&) const;
-    bool LEGACY_NODELETE equals(const CSSFlexWrapValue&) const;
+    NODELETE bool equals(const CSSFlexWrapValue&) const;
 
 private:
     CSSFlexWrapValue(CSS::FlexWrap&&);

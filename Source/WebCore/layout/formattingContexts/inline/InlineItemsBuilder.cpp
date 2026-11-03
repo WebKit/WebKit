@@ -89,12 +89,12 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, CachedLineBr
     return textLength - startPosition;
 }
 
-static inline bool LEGACY_NODELETE isTextOrLineBreak(const Box& layoutBox)
+NODELETE static inline bool isTextOrLineBreak(const Box& layoutBox)
 {
     return layoutBox.isInFlow() && (layoutBox.isInlineTextBox() || (layoutBox.isLineBreakBox() && !layoutBox.isWordBreakOpportunity()));
 }
 
-static inline bool LEGACY_NODELETE isTextWithStyleOfItsOwn(const Box& layoutBox)
+NODELETE static inline bool isTextWithStyleOfItsOwn(const Box& layoutBox)
 {
     auto* inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox);
     return inlineTextBox && inlineTextBox->inheritsStyleFromDisplayContentsParent();
@@ -185,7 +185,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
 #endif
 }
 
-static bool LEGACY_NODELETE isNonReplacedInlineBlock(const Box& layoutBox)
+NODELETE static bool isNonReplacedInlineBlock(const Box& layoutBox)
 {
     // inline-block (InlineFlowRoot) is the inline-level block container 'white-space-trim' applies to; it already
     // implies isAtomicInlineBox(). A replaced box or iframe may carry InlineFlowRoot display but is not a block container.
@@ -347,7 +347,7 @@ void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacings(const InlineItemLi
         inlineContentCache().setInlineBoxBoundaryTextSpacings(WTF::move(spacings));
 }
 
-static bool LEGACY_NODELETE requiresVisualReordering(const Box& layoutBox)
+NODELETE static bool requiresVisualReordering(const Box& layoutBox)
 {
     if (auto* inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox))
         return inlineTextBox->hasStrongDirectionalityContent();
@@ -358,7 +358,7 @@ static bool LEGACY_NODELETE requiresVisualReordering(const Box& layoutBox)
     return false;
 }
 
-static inline bool LEGACY_NODELETE isInlineBoxWithInlineContent(const Box& layoutBox)
+NODELETE static inline bool isInlineBoxWithInlineContent(const Box& layoutBox)
 {
     return layoutBox.isInlineBox() && !layoutBox.isLineBreakBox() && !layoutBox.isOutOfFlowPositioned();
 }

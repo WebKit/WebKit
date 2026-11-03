@@ -115,7 +115,7 @@ static constexpr std::array<uint8_t, maximumEscapedentityCharacter + 1> entityMa
     EntitySubstitutionIndex::Nbsp // noBreakSpace.
 };
 
-static bool LEGACY_NODELETE elementCannotHaveEndTag(const Node& node)
+NODELETE static bool elementCannotHaveEndTag(const Node& node)
 {
     using namespace ElementNames;
     auto* element = dynamicDowncast<Element>(node);
@@ -156,7 +156,7 @@ static bool LEGACY_NODELETE elementCannotHaveEndTag(const Node& node)
 // 2. Elements w/ children never self-close because they use a separate end tag.
 // 3. HTML elements which do not have a "forbidden" end tag will close with a separate end tag.
 // 4. Other elements self-close.
-static bool LEGACY_NODELETE shouldSelfClose(const Element& element, SerializationSyntax syntax)
+NODELETE static bool shouldSelfClose(const Element& element, SerializationSyntax syntax)
 {
     if (syntax != SerializationSyntax::XML)
         return false;
@@ -611,7 +611,7 @@ static void appendDocumentType(StringBuilder& result, const DocumentType& docume
     );
 }
 
-static bool LEGACY_NODELETE isURLAttributeForElement(const Element& element, const Attribute& attribute)
+NODELETE static bool isURLAttributeForElement(const Element& element, const Attribute& attribute)
 {
     return element.isURLAttribute(attribute) || element.isHTMLContentAttribute(attribute);
 }

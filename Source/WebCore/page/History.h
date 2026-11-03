@@ -58,7 +58,7 @@ public:
     void setTotalStateObjectPayloadLimitOverride(std::optional<uint32_t> limit) { m_totalStateObjectPayloadLimitOverride = limit; }
 
     ExceptionOr<SerializedScriptValue*> state();
-    JSValueInWrappedObject& LEGACY_NODELETE cachedState() LIFETIME_BOUND;
+    NODELETE JSValueInWrappedObject& cachedState() LIFETIME_BOUND;
     JSValueInWrappedObject& cachedStateForGC() LIFETIME_BOUND { return m_cachedState; }
 
     ExceptionOr<void> back();
@@ -69,7 +69,7 @@ public:
     ExceptionOr<void> forward(Document&);
     ExceptionOr<void> go(Document&, int);
 
-    bool LEGACY_NODELETE isSameAsCurrentState(SerializedScriptValue*) const;
+    NODELETE bool isSameAsCurrentState(SerializedScriptValue*) const;
 
     ExceptionOr<void> pushState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString);
     ExceptionOr<void> replaceState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString);
@@ -79,10 +79,10 @@ private:
 
     ExceptionOr<void> stateObjectAdded(RefPtr<SerializedScriptValue>&&, const String& url, NavigationHistoryBehavior);
     ExceptionOr<void> updateAndCheckStateObjectQuota(const URL&, SerializedScriptValue*, NavigationHistoryBehavior);
-    bool LEGACY_NODELETE stateChanged() const;
+    NODELETE bool stateChanged() const;
 
-    SerializedScriptValue* LEGACY_NODELETE stateInternal() const;
-    uint32_t LEGACY_NODELETE totalStateObjectPayloadLimit() const;
+    NODELETE SerializedScriptValue* stateInternal() const;
+    NODELETE uint32_t totalStateObjectPayloadLimit() const;
 
     RefPtr<SerializedScriptValue> m_lastStateObjectRequested;
     JSValueInWrappedObject m_cachedState;

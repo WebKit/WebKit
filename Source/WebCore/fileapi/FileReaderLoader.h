@@ -70,7 +70,7 @@ public:
     };
 
     // If client is given, do the loading asynchronously. Otherwise, load synchronously.
-    WEBCORE_EXPORT static Ref<FileReaderLoader> LEGACY_NODELETE create(ReadType, FileReaderLoaderClient*);
+    NODELETE WEBCORE_EXPORT static Ref<FileReaderLoader> create(ReadType, FileReaderLoaderClient*);
     WEBCORE_EXPORT ~FileReaderLoader();
 
     WEBCORE_EXPORT void start(ScriptExecutionContext*, Blob&);
@@ -96,7 +96,7 @@ public:
 
     const URL& url() LIFETIME_BOUND { return m_urlForReading; }
 
-    bool LEGACY_NODELETE isCompleted() const;
+    NODELETE bool isCompleted() const;
 
 private:
     // If client is given, do the loading asynchronously. Otherwise, load synchronously.
@@ -109,8 +109,8 @@ private:
     void convertToDataURL();
     bool processResponse(const ResourceResponse&);
 
-    static ExceptionCode LEGACY_NODELETE httpStatusCodeToErrorCode(int);
-    static ExceptionCode LEGACY_NODELETE toErrorCode(BlobResourceHandle::Error);
+    NODELETE static ExceptionCode httpStatusCodeToErrorCode(int);
+    NODELETE static ExceptionCode toErrorCode(BlobResourceHandle::Error);
 
     ReadType m_readType;
     WeakPtr<FileReaderLoaderClient> m_client;

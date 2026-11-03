@@ -56,13 +56,13 @@ namespace WebCore {
 
 using BlobURLOriginMap = HashMap<String, Ref<SecurityOrigin>>;
 
-static BlobURLOriginMap& LEGACY_NODELETE originMap()
+NODELETE static BlobURLOriginMap& originMap()
 {
     static MainThreadNeverDestroyed<BlobURLOriginMap> map;
     return map;
 }
 
-static HashCountedSet<String>& LEGACY_NODELETE blobURLReferencesMap()
+NODELETE static HashCountedSet<String>& blobURLReferencesMap()
 {
     static MainThreadNeverDestroyed<HashCountedSet<String>> map;
     return map;

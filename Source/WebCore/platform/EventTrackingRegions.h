@@ -67,7 +67,7 @@ struct EventTrackingRegions {
     using EventType = EventTrackingRegionsEventType;
 
     WEBCORE_EXPORT static ASCIILiteral eventName(EventType);
-    WEBCORE_EXPORT static const AtomString& LEGACY_NODELETE eventNameAtomString(const EventNames&, EventType);
+    NODELETE WEBCORE_EXPORT static const AtomString& eventNameAtomString(const EventNames&, EventType);
 
     // Region for which events can be dispatched without blocking scrolling.
     Region asynchronousDispatchRegion;
@@ -77,13 +77,13 @@ struct EventTrackingRegions {
     using EventSpecificSynchronousDispatchRegions = HashMap<EventType, Region, WTF::IntHash<EventType>, WTF::StrongEnumHashTraits<EventType>>;
     EventSpecificSynchronousDispatchRegions eventSpecificSynchronousDispatchRegions;
 
-    bool LEGACY_NODELETE isEmpty() const;
+    NODELETE bool isEmpty() const;
 
-    void LEGACY_NODELETE translate(IntSize);
+    NODELETE void translate(IntSize);
     void uniteSynchronousRegion(EventType, const Region&);
     void unite(const EventTrackingRegions&);
 
-    TrackingType LEGACY_NODELETE trackingTypeForPoint(EventType, const IntPoint&) const;
+    NODELETE TrackingType trackingTypeForPoint(EventType, const IntPoint&) const;
 
     friend bool operator==(const EventTrackingRegions&, const EventTrackingRegions&) = default;
 };

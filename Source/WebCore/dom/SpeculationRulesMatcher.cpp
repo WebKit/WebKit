@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-static bool LEGACY_NODELETE isUnslottedElement(Element& element)
+NODELETE static bool isUnslottedElement(Element& element)
 {
     for (auto* ancestor = &element; ancestor; ) {
         auto* parent = ancestor->parentElement();

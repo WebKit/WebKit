@@ -122,7 +122,7 @@ public:
     bool isFixedPitch(const FontCascadeDescription&, FontSelector*);
 
     bool canTakeFixedPitchFastContentMeasuring(const FontCascadeDescription&, FontSelector*);
-    TriState LEGACY_NODELETE cachedCanTakeFixedPitchFastContentMeasuring() const
+    NODELETE TriState cachedCanTakeFixedPitchFastContentMeasuring() const
     {
         return m_canTakeFixedPitchFastContentMeasuring;
     }
@@ -152,7 +152,7 @@ public:
     TextShapingResultAndDisplayList* getOrCreateCachedShapedText(const TextRun&, const FontCascade&, unsigned from, std::optional<unsigned> to, ForTextEmphasis);
 
     const Font& primaryFont(const FontCascadeDescription&, FontSelector*);
-    const Font* LEGACY_NODELETE cachedPrimaryFont() const { return m_cachedPrimaryFont.get(); }
+    NODELETE const Font* cachedPrimaryFont() const { return m_cachedPrimaryFont.get(); }
     WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontCascadeDescription&, FontSelector*, unsigned fallbackIndex);
 
     void pruneSystemFallbacks();
@@ -183,7 +183,7 @@ private:
         GlyphPageCacheEntry& operator=(GlyphPageCacheEntry&&) = default;
         ~GlyphPageCacheEntry();
 
-        GlyphData LEGACY_NODELETE glyphDataForCharacter(char32_t);
+        NODELETE GlyphData glyphDataForCharacter(char32_t);
 
         void setSingleFontPage(RefPtr<GlyphPage>&&);
         void setGlyphDataForCharacter(char32_t, GlyphData);

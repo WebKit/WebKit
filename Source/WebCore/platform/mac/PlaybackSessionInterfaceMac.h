@@ -52,7 +52,7 @@ class WEBCORE_EXPORT PlaybackSessionInterfaceMac final
 public:
     static Ref<PlaybackSessionInterfaceMac> create(PlaybackSessionModel&);
     virtual ~PlaybackSessionInterfaceMac();
-    PlaybackSessionModel* LEGACY_NODELETE playbackSessionModel() const;
+    NODELETE PlaybackSessionModel* playbackSessionModel() const;
 
     bool isInWindowFullscreenActive() const;
     void enterInWindowFullscreen();
@@ -92,7 +92,7 @@ public:
     uint64_t logIdentifier() const;
     const Logger* loggerPtr() const;
     ASCIILiteral logClassName() const { return "PlaybackSessionInterfaceMac"_s; };
-    WTFLogChannel& LEGACY_NODELETE logChannel() const;
+    NODELETE WTFLogChannel& logChannel() const;
 #endif
 
 private:

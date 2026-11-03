@@ -69,13 +69,13 @@ protected:
     void setSupportedPresets(Vector<VideoPresetData>&&);
     virtual const Vector<VideoPreset>& presets();
 
-    bool LEGACY_NODELETE frameRateRangeIncludesRate(const FrameRateRange&, double);
+    NODELETE bool frameRateRangeIncludesRate(const FrameRateRange&, double);
 
     void updateCapabilities(RealtimeMediaSourceCapabilities&);
 
     void dispatchVideoFrameToObservers(VideoFrame&, VideoFrameTimeMetadata);
 
-    static std::span<const IntSize> LEGACY_NODELETE standardVideoSizes();
+    NODELETE static std::span<const IntSize> standardVideoSizes();
 
     virtual Ref<TakePhotoNativePromise> takePhotoInternal(PhotoSettings&&);
     bool mutedForPhotoCapture() const { return m_mutedForPhotoCapture; }
@@ -95,8 +95,8 @@ private:
     std::optional<CaptureSizeFrameRateAndZoom> bestSupportedSizeFrameRateAndZoom(const VideoPresetConstraints&, TryPreservingSize = TryPreservingSize::Yes);
     std::optional<CaptureSizeFrameRateAndZoom> bestSupportedSizeFrameRateAndZoomConsideringObservers(const VideoPresetConstraints&);
 
-    bool LEGACY_NODELETE presetSupportsFrameRate(const VideoPreset&, double);
-    bool LEGACY_NODELETE presetSupportsZoom(const VideoPreset&, double);
+    NODELETE bool presetSupportsFrameRate(const VideoPreset&, double);
+    NODELETE bool presetSupportsZoom(const VideoPreset&, double);
 
     void setSizeFrameRateAndZoomForPhoto(CaptureSizeFrameRateAndZoom&&);
     Ref<TakePhotoNativePromise> takePhoto(PhotoSettings&&) final;

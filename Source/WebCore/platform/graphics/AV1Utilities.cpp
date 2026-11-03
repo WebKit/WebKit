@@ -37,7 +37,7 @@
 
 namespace WTF {
 
-template<> bool LEGACY_NODELETE isValidEnum<WebCore::AV1ConfigurationProfile>(std::underlying_type_t<WebCore::AV1ConfigurationProfile> value)
+template<> NODELETE bool isValidEnum<WebCore::AV1ConfigurationProfile>(std::underlying_type_t<WebCore::AV1ConfigurationProfile> value)
 {
     switch (value) {
     case std::to_underlying(WebCore::AV1ConfigurationProfile::Main):
@@ -49,7 +49,7 @@ template<> bool LEGACY_NODELETE isValidEnum<WebCore::AV1ConfigurationProfile>(st
     }
 }
 
-template<> bool LEGACY_NODELETE isValidEnum<WebCore::AV1ConfigurationLevel>(std::underlying_type_t<WebCore::AV1ConfigurationLevel> value)
+template<> NODELETE bool isValidEnum<WebCore::AV1ConfigurationLevel>(std::underlying_type_t<WebCore::AV1ConfigurationLevel> value)
 {
     switch (value) {
     case std::to_underlying(WebCore::AV1ConfigurationLevel::Level_2_0):
@@ -83,7 +83,7 @@ template<> bool LEGACY_NODELETE isValidEnum<WebCore::AV1ConfigurationLevel>(std:
     }
 }
 
-template<> bool LEGACY_NODELETE isValidEnum<WebCore::AV1ConfigurationChromaSubsampling>(std::underlying_type_t<WebCore::AV1ConfigurationChromaSubsampling> value)
+template<> NODELETE bool isValidEnum<WebCore::AV1ConfigurationChromaSubsampling>(std::underlying_type_t<WebCore::AV1ConfigurationChromaSubsampling> value)
 {
     switch (value) {
     case std::to_underlying(WebCore::AV1ConfigurationChromaSubsampling::Subsampling_444):
@@ -97,7 +97,7 @@ template<> bool LEGACY_NODELETE isValidEnum<WebCore::AV1ConfigurationChromaSubsa
     }
 }
 
-template<> bool LEGACY_NODELETE isValidEnum<WebCore::AV1ConfigurationRange>(std::underlying_type_t<WebCore::AV1ConfigurationRange> value)
+template<> NODELETE bool isValidEnum<WebCore::AV1ConfigurationRange>(std::underlying_type_t<WebCore::AV1ConfigurationRange> value)
 {
     switch (value) {
     case std::to_underlying(WebCore::AV1ConfigurationRange::VideoRange):
@@ -108,7 +108,7 @@ template<> bool LEGACY_NODELETE isValidEnum<WebCore::AV1ConfigurationRange>(std:
     }
 }
 
-template<> bool LEGACY_NODELETE isValidEnum<WebCore::AV1ConfigurationColorPrimaries>(std::underlying_type_t<WebCore::AV1ConfigurationColorPrimaries> value)
+template<> NODELETE bool isValidEnum<WebCore::AV1ConfigurationColorPrimaries>(std::underlying_type_t<WebCore::AV1ConfigurationColorPrimaries> value)
 {
     switch (value) {
     case std::to_underlying(WebCore::AV1ConfigurationColorPrimaries::BT_709_6):
@@ -129,7 +129,7 @@ template<> bool LEGACY_NODELETE isValidEnum<WebCore::AV1ConfigurationColorPrimar
     }
 }
 
-template<> bool LEGACY_NODELETE isValidEnum<WebCore::AV1ConfigurationTransferCharacteristics>(std::underlying_type_t<WebCore::AV1ConfigurationTransferCharacteristics> value)
+template<> NODELETE bool isValidEnum<WebCore::AV1ConfigurationTransferCharacteristics>(std::underlying_type_t<WebCore::AV1ConfigurationTransferCharacteristics> value)
 {
     switch (value) {
     case std::to_underlying(WebCore::AV1ConfigurationTransferCharacteristics::BT_709_6):
@@ -155,7 +155,7 @@ template<> bool LEGACY_NODELETE isValidEnum<WebCore::AV1ConfigurationTransferCha
     }
 };
 
-template<> bool LEGACY_NODELETE isValidEnum<WebCore::AV1ConfigurationMatrixCoefficients>(std::underlying_type_t<WebCore::AV1ConfigurationMatrixCoefficients> value)
+template<> NODELETE bool isValidEnum<WebCore::AV1ConfigurationMatrixCoefficients>(std::underlying_type_t<WebCore::AV1ConfigurationMatrixCoefficients> value)
 {
     switch (value) {
     case std::to_underlying(WebCore::AV1ConfigurationMatrixCoefficients::Identity):
@@ -1304,7 +1304,7 @@ static Ref<VideoInfo> createVideoInfoFromAV1CodecConfigurationRecord(const AV1Co
     });
 }
 
-static size_t LEGACY_NODELETE readULEBSize(std::span<const uint8_t> data, size_t& index)
+NODELETE static size_t readULEBSize(std::span<const uint8_t> data, size_t& index)
 {
     size_t value = 0;
     for (size_t cptr = 0; cptr < 8; ++cptr) {
@@ -1322,7 +1322,7 @@ static size_t LEGACY_NODELETE readULEBSize(std::span<const uint8_t> data, size_t
     return value;
 }
 
-static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t>>> LEGACY_NODELETE getSequenceHeaderOBU(std::span<const uint8_t> data)
+NODELETE static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t>>> getSequenceHeaderOBU(std::span<const uint8_t> data)
 {
     size_t index = 0;
     do {

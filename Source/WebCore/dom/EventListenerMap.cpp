@@ -53,7 +53,7 @@ struct AbortSignalRegistration {
 
 // Few listeners have a signal, so RegisteredEventListener only has a bit for it, and the signal is kept here.
 static Lock abortSignalRegistrationsLock;
-static HashMap<const RegisteredEventListener*, AbortSignalRegistration>& LEGACY_NODELETE abortSignalRegistrations() WTF_REQUIRES_LOCK(abortSignalRegistrationsLock)
+NODELETE static HashMap<const RegisteredEventListener*, AbortSignalRegistration>& abortSignalRegistrations() WTF_REQUIRES_LOCK(abortSignalRegistrationsLock)
 {
     static NeverDestroyed<HashMap<const RegisteredEventListener*, AbortSignalRegistration>> registrations;
     return registrations;

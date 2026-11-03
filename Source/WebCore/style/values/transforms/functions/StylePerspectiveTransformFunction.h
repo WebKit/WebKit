@@ -38,7 +38,7 @@ namespace Style {
 
 class PerspectiveTransformFunction final : public TransformFunctionBase {
 public:
-    static Ref<const PerspectiveTransformFunction> LEGACY_NODELETE create(Perspective);
+    NODELETE static Ref<const PerspectiveTransformFunction> create(Perspective);
 
     Ref<const TransformFunctionBase> clone() const override;
     Ref<TransformOperation> toPlatform(const FloatSize&, ZoomFactor) const override;

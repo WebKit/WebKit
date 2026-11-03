@@ -45,7 +45,7 @@ struct Contrast {
 
     Parameter value;
 
-    static Contrast LEGACY_NODELETE passthroughForInterpolation();
+    NODELETE static Contrast passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return false; }
@@ -69,7 +69,7 @@ template<> struct ToStyle<CSS::Contrast> { auto operator()(const CSS::Contrast&,
 // MARK: - Blending
 
 template<> struct Blending<Contrast> {
-    Contrast LEGACY_NODELETE blend(const Contrast&, const Contrast&, const BlendingContext&);
+    NODELETE Contrast blend(const Contrast&, const Contrast&, const BlendingContext&);
 };
 
 // MARK: - Evaluation
@@ -78,7 +78,7 @@ template<> struct Evaluation<Contrast, Ref<FilterEffect>> { auto operator()(cons
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Contrast> { Ref<FilterOperation> LEGACY_NODELETE operator()(const Contrast&); };
+template<> struct ToPlatform<Contrast> { NODELETE Ref<FilterOperation> operator()(const Contrast&); };
 
 } // namespace Style
 } // namespace WebCore

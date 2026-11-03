@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-static inline Node* LEGACY_NODELETE nodeFromPosition(const Position& position)
+NODELETE static inline Node* nodeFromPosition(const Position& position)
 {
     ASSERT(position.isNotNull());
     Node* node = nullptr;
@@ -67,7 +67,7 @@ static inline Node* LEGACY_NODELETE nodeFromPosition(const Position& position)
     return node;
 }
 
-static inline const RenderObject* LEGACY_NODELETE rendererFromPosition(const Position& position)
+NODELETE static inline const RenderObject* rendererFromPosition(const Position& position)
 {
     return nodeFromPosition(position)->renderer();
 }

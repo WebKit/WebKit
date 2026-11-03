@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-static HashMap<const CSSPrimitiveValue*, String>& LEGACY_NODELETE serializedPrimitiveValues()
+NODELETE static HashMap<const CSSPrimitiveValue*, String>& serializedPrimitiveValues()
 {
     static NeverDestroyed<HashMap<const CSSPrimitiveValue*, String>> map;
     return map;
@@ -174,7 +174,7 @@ CSSPrimitiveValue::~CSSPrimitiveValue()
     }
 }
 
-static CSSPrimitiveValue* LEGACY_NODELETE valueFromPool(std::span<AlignedStorage<CSSPrimitiveValue>> pool, double value)
+NODELETE static CSSPrimitiveValue* valueFromPool(std::span<AlignedStorage<CSSPrimitiveValue>> pool, double value)
 {
     // Casting to a signed integer first since casting a negative floating point value to an unsigned
     // integer is undefined behavior.

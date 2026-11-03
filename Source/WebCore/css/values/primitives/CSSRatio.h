@@ -49,7 +49,7 @@ template<size_t I> const auto& get(const Ratio& value)
 }
 
 // `Ratio` is special-cased to return a `CSSRatioValue`.
-template<> struct CSSValueCreation<Ratio> { Ref<CSSValue> LEGACY_NODELETE operator()(CSSValuePool&, const Ratio&); };
+template<> struct CSSValueCreation<Ratio> { NODELETE Ref<CSSValue> operator()(CSSValuePool&, const Ratio&); };
 
 } // namespace CSS
 } // namespace WebCore

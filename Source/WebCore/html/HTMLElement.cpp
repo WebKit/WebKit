@@ -162,7 +162,7 @@ String HTMLElement::nodeName() const
     return Element::nodeName();
 }
 
-static inline CSSValueID LEGACY_NODELETE unicodeBidiAttributeForDirAuto(HTMLElement& element)
+NODELETE static inline CSSValueID unicodeBidiAttributeForDirAuto(HTMLElement& element)
 {
     if (element.hasTagName(preTag) || element.hasTagName(textareaTag))
         return CSSValueID::Plaintext;

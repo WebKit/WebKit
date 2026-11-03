@@ -44,7 +44,7 @@ public:
 
     ~DataListButtonElement();
 
-    static Ref<DataListButtonElement> LEGACY_NODELETE create(Document&, DataListButtonOwner&);
+    NODELETE static Ref<DataListButtonElement> create(Document&, DataListButtonOwner&);
 
     bool canAdjustStyleForAppearance() const { return m_canAdjustStyleForAppearance; }
 

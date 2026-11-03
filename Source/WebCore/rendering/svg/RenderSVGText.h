@@ -39,7 +39,7 @@ public:
     RenderSVGText(SVGTextElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGText();
 
-    SVGTextElement& LEGACY_NODELETE textElement() const;
+    NODELETE SVGTextElement& textElement() const;
 
     bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
 
@@ -49,8 +49,8 @@ public:
     // FIXME: [LBSE] Only needed for legacy SVG engine.
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
 
-    static RenderSVGText* LEGACY_NODELETE locateRenderSVGTextAncestor(RenderObject&);
-    static const RenderSVGText* LEGACY_NODELETE locateRenderSVGTextAncestor(const RenderObject&);
+    NODELETE static RenderSVGText* locateRenderSVGTextAncestor(RenderObject&);
+    NODELETE static const RenderSVGText* locateRenderSVGTextAncestor(const RenderObject&);
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
     FloatRect strokeBoundingBox() const final;

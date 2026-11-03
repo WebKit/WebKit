@@ -53,7 +53,7 @@ template<typename> class ExceptionOr;
 
 class SWContextManager {
 public:
-    WEBCORE_EXPORT static SWContextManager& LEGACY_NODELETE singleton();
+    NODELETE WEBCORE_EXPORT static SWContextManager& singleton();
 
     class Connection : public AbstractRefCounted {
     public:
@@ -109,7 +109,7 @@ public:
     };
 
     WEBCORE_EXPORT void setConnection(Ref<Connection>&&);
-    WEBCORE_EXPORT Connection* LEGACY_NODELETE connection() const;
+    NODELETE WEBCORE_EXPORT Connection* connection() const;
 
     WEBCORE_EXPORT void registerServiceWorkerThreadForInstall(Ref<ServiceWorkerThreadProxy>&&, Function<void()>&& debuggerTasksStartedCallback = { });
     WEBCORE_EXPORT ServiceWorkerThreadProxy* serviceWorkerThreadProxy(ServiceWorkerIdentifier) const;

@@ -154,7 +154,7 @@ public:
 
     // Returns false if there has not been any potential draws since last call.
     // Returns true if there has been potential draws since last call.
-    bool LEGACY_NODELETE consumeHasDrawn();
+    NODELETE bool consumeHasDrawn();
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
     void setMaxEDRHeadroom(std::optional<float>) final;
@@ -176,7 +176,7 @@ private:
 #endif
 
     // Returns the platform context for purposes of context state change, not draws.
-    const RetainPtr<CGContextRef>& LEGACY_NODELETE contextForState() const;
+    NODELETE const RetainPtr<CGContextRef>& contextForState() const;
 
     const RetainPtr<CGContextRef> m_cgContext;
     mutable std::optional<ColorSpace> m_colorSpace;

@@ -49,7 +49,7 @@ class ImageQualityController {
 public:
     explicit ImageQualityController(const RenderView&);
 
-    static std::optional<InterpolationQuality> LEGACY_NODELETE interpolationQualityFromStyle(const Style::ComputedStyle&);
+    NODELETE static std::optional<InterpolationQuality> interpolationQualityFromStyle(const Style::ComputedStyle&);
     static InterpolationQuality chooseInterpolationQuality(GraphicsContext&, const RenderElement&, const IntSize& imageSize, const void* layer, const LayoutSize&);
 
     void rendererWillBeDestroyed(RenderBoxModelObject& renderer) { removeObject(&renderer); }

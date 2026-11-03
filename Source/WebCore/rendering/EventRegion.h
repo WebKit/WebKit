@@ -139,7 +139,7 @@ public:
     friend bool operator==(const EventRegion&, const EventRegion&) = default;
 
     void unite(const Region&, const RenderObject&, const Style::ComputedStyle&, bool overrideUserModifyIsEditable = false);
-    void LEGACY_NODELETE translate(const IntSize&);
+    NODELETE void translate(const IntSize&);
 
     bool contains(const IntPoint& point) const { return m_region.contains(point); }
     bool contains(const IntRect& rect) const { return m_region.contains(rect); }
@@ -159,8 +159,8 @@ public:
 #endif
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
-    WEBCORE_EXPORT OptionSet<EventListenerRegionType> LEGACY_NODELETE eventListenerRegionTypesForPoint(const IntPoint&) const;
-    const Region& LEGACY_NODELETE eventListenerRegionForType(EventListenerRegionType) const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(const IntPoint&) const;
+    NODELETE const Region& eventListenerRegionForType(EventListenerRegionType) const LIFETIME_BOUND;
 #endif
 
 #if ENABLE(EDITABLE_REGION)

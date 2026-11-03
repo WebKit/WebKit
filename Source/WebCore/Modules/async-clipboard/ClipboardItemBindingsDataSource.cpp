@@ -57,7 +57,7 @@
 
 namespace WebCore {
 
-static Document* LEGACY_NODELETE documentFromClipboard(const Clipboard* clipboard)
+NODELETE static Document* documentFromClipboard(const Clipboard* clipboard)
 {
     if (!clipboard)
         return nullptr;

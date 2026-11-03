@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CSSMaskBorderRepeatValue final : public CSSValue {
 public:
-    static Ref<CSSMaskBorderRepeatValue> LEGACY_NODELETE create(CSS::MaskBorderRepeat&&);
+    NODELETE static Ref<CSSMaskBorderRepeatValue> create(CSS::MaskBorderRepeat&&);
     NODELETE ~CSSMaskBorderRepeatValue();
 
     const CSS::MaskBorderRepeat& repeats() const LIFETIME_BOUND { return m_repeats; }

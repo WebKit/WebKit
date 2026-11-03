@@ -94,7 +94,7 @@ public:
         const SelectorChecker::Mode resolvingMode;
 
         void setRequestedPseudoElement(Style::PseudoElementIdentifier);
-        std::optional<Style::PseudoElementIdentifier> LEGACY_NODELETE requestedPseudoElement() const;
+        NODELETE std::optional<Style::PseudoElementIdentifier> requestedPseudoElement() const;
 
     private:
         friend class SelectorCompiler::SelectorCodeGenerator;
@@ -131,7 +131,7 @@ public:
     static void clearCompiledHasArgumentSelectors();
 
     // Takes the first simple selector of the compound. https://drafts.csswg.org/selectors-4/#featureless
-    static bool LEGACY_NODELETE isCompoundSelectorAllowedToMatchFeaturelessShadowHost(const CSSSelector&);
+    NODELETE static bool isCompoundSelectorAllowedToMatchFeaturelessShadowHost(const CSSSelector&);
 
     enum LinkMatchMask { MatchDefault = 0, MatchLink = 1, MatchVisited = 2, MatchAll = MatchLink | MatchVisited };
     static unsigned determineLinkMatchType(const CSSSelector&, const StyleRuleScope* = nullptr);
@@ -145,8 +145,8 @@ private:
     bool matchHasPseudoClass(CheckingContext&, const Element&, const CSSSelectorList&, bool matchingHost) const;
     bool matchHasArgumentSelector(CheckingContext&, const Element&, const CSSSelector&, CompiledSelector*, bool matchingHost) const;
 
-    bool LEGACY_NODELETE checkScrollbarPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;
-    bool LEGACY_NODELETE checkViewTransitionPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;
+    NODELETE bool checkScrollbarPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;
+    NODELETE bool checkViewTransitionPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;
 
     bool m_strictParsing;
     bool m_documentIsHTML;

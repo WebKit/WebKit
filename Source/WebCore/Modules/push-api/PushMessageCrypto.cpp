@@ -53,12 +53,12 @@ ClientKeys ClientKeys::generate()
     };
 }
 
-static bool LEGACY_NODELETE areClientKeyLengthsValid(const ClientKeys& clientKeys)
+NODELETE static bool areClientKeyLengthsValid(const ClientKeys& clientKeys)
 {
     return clientKeys.clientP256DHKeyPair.publicKey.size() == p256dhPublicKeyLength && clientKeys.clientP256DHKeyPair.privateKey.size() == p256dhPrivateKeyLength && clientKeys.sharedAuthSecret.size() == sharedAuthSecretLength;
 }
 
-static size_t LEGACY_NODELETE computeAES128GCMPaddingLength(std::span<const uint8_t> data)
+NODELETE static size_t computeAES128GCMPaddingLength(std::span<const uint8_t> data)
 {
     /*
      * Compute padding length as defined in RFC8188 Section 2:
@@ -179,7 +179,7 @@ std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientK
     return plainText;
 }
 
-static size_t LEGACY_NODELETE computeAESGCMPaddingLength(std::span<const uint8_t> span)
+NODELETE static size_t computeAESGCMPaddingLength(std::span<const uint8_t> span)
 {
     /*
      * Compute padding length as defined in draft-ietf-httpbis-encryption-encoding-03:

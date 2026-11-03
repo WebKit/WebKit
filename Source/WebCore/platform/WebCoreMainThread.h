@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT bool LEGACY_NODELETE shouldUseWebThread();
+NODELETE WEBCORE_EXPORT bool shouldUseWebThread();
 WEBCORE_EXPORT void initializeMainThreadIfNeeded();
 
 } // namespace WebCore

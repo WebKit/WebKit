@@ -43,7 +43,7 @@ class ScriptExecutionContext;
 class TrustedTypePolicyFactory : public ScriptWrappable, public RefCounted<TrustedTypePolicyFactory>, public ContextDestructionObserver {
     WTF_MAKE_TZONE_ALLOCATED(TrustedTypePolicyFactory);
 public:
-    static Ref<TrustedTypePolicyFactory> LEGACY_NODELETE create(ScriptExecutionContext&);
+    NODELETE static Ref<TrustedTypePolicyFactory> create(ScriptExecutionContext&);
     ~TrustedTypePolicyFactory();
 
     // ContextDestructionObserver.
@@ -51,9 +51,9 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     ExceptionOr<Ref<TrustedTypePolicy>> createPolicy(ScriptExecutionContext&, const String& policyName, const TrustedTypePolicyOptions&);
-    bool LEGACY_NODELETE isHTML(JSC::JSValue) const;
-    bool LEGACY_NODELETE isScript(JSC::JSValue) const;
-    bool LEGACY_NODELETE isScriptURL(JSC::JSValue) const;
+    NODELETE bool isHTML(JSC::JSValue) const;
+    NODELETE bool isScript(JSC::JSValue) const;
+    NODELETE bool isScriptURL(JSC::JSValue) const;
     Ref<TrustedHTML> emptyHTML() const;
     Ref<TrustedScript> emptyScript() const;
 

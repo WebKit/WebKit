@@ -137,10 +137,10 @@ public:
             m_rootElementStyle = document.initialContainingBlockStyle();
     }
 
-    const Element* LEGACY_NODELETE element() const { return m_element; }
+    NODELETE const Element* element() const { return m_element; }
 
     void setStyle(std::unique_ptr<Style::ComputedStyle> style) { m_style = WTF::move(style); }
-    Style::ComputedStyle* LEGACY_NODELETE style() const { return m_style.get(); }
+    NODELETE Style::ComputedStyle* style() const { return m_style.get(); }
     std::unique_ptr<Style::ComputedStyle> takeStyle() { return WTF::move(m_style); }
 
     void setParentStyle(std::unique_ptr<Style::ComputedStyle> parentStyle)
@@ -148,11 +148,11 @@ public:
         m_ownedParentStyle = WTF::move(parentStyle);
         m_parentStyle = m_ownedParentStyle.get();
     }
-    const Style::ComputedStyle* LEGACY_NODELETE parentStyle() const { return m_parentStyle; }
-    const Style::ComputedStyle* LEGACY_NODELETE parentHighlightStyle() const { return m_parentHighlightStyle; }
-    const Style::ComputedStyle* LEGACY_NODELETE rootElementStyle() const { return m_rootElementStyle; }
+    NODELETE const Style::ComputedStyle* parentStyle() const { return m_parentStyle; }
+    NODELETE const Style::ComputedStyle* parentHighlightStyle() const { return m_parentHighlightStyle; }
+    NODELETE const Style::ComputedStyle* rootElementStyle() const { return m_rootElementStyle; }
 
-    CheckedPtr<TreeResolutionState> LEGACY_NODELETE treeResolutionState() { return m_treeResolutionState; }
+    NODELETE CheckedPtr<TreeResolutionState> treeResolutionState() { return m_treeResolutionState; }
 
 private:
     const Element* m_element { };
@@ -376,7 +376,7 @@ UnadjustedStyle Resolver::unadjustedStyleForCachedMatchResult(Element& element, 
 
 // animation-timing-function and animation-composition in a keyframe describe the composite operation
 // and timing function between this keyframe and the next. interpolate-size is not animatable.
-static bool LEGACY_NODELETE isAnimatedInKeyframe(CSSPropertyID property)
+NODELETE static bool isAnimatedInKeyframe(CSSPropertyID property)
 {
     switch (property) {
     case CSSPropertyID::AnimationTimingFunction:

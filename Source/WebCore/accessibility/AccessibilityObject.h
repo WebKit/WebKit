@@ -94,12 +94,12 @@ public:
     void addAncestorFlags(const OptionSet<AXAncestorFlag>& flags) { m_ancestorFlags.add(flags); }
     bool ancestorFlagsAreInitialized() const { return m_ancestorFlags.contains(AXAncestorFlag::FlagsInitialized); }
     // Computes the flags that this object matches (no traversal is done).
-    OptionSet<AXAncestorFlag> LEGACY_NODELETE computeAncestorFlags() const;
+    NODELETE OptionSet<AXAncestorFlag> computeAncestorFlags() const;
     // Computes the flags that this object and all ancestors match, traversing all the way to the root.
     OptionSet<AXAncestorFlag> computeAncestorFlagsWithTraversal() const;
     void initializeAncestorFlags(const OptionSet<AXAncestorFlag>&);
     bool hasAncestorMatchingFlag(AXAncestorFlag) const;
-    bool LEGACY_NODELETE matchesAncestorFlag(AXAncestorFlag) const;
+    NODELETE bool matchesAncestorFlag(AXAncestorFlag) const;
 
     bool hasRareData() const { return !!m_rareDataWithBitfields.pointer(); }
     AXObjectRareData* rareData() const { return m_rareDataWithBitfields.pointer(); }
@@ -147,7 +147,7 @@ public:
     bool isContainedBySecureField() const;
     bool isNativeTextControl() const final { return nativeTextControl(); }
     // The <textarea> or text <input> whose value this object exposes, or null.
-    HTMLTextFormControlElement* LEGACY_NODELETE nativeTextControl() const;
+    NODELETE HTMLTextFormControlElement* nativeTextControl() const;
     virtual bool isSearchField() const { return false; }
     bool isAttachment() const override { return false; }
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -292,7 +292,7 @@ public:
     bool canSetSelectedAttribute() const override { return false; }
 
     Element* element() const final;
-    Node* LEGACY_NODELETE node() const override { return nullptr; }
+    NODELETE Node* node() const override { return nullptr; }
     RenderObject* renderer() const override { return nullptr; }
     CheckedPtr<RenderObject> rendererOrNearestAncestor() const;
     // Resolves the computed style if necessary (and safe to do so).
@@ -321,7 +321,7 @@ public:
     virtual float stepValueForRange() const { return 0.0f; }
     int layoutCount() const override { return 0; }
     double loadingProgress() const final;
-    WEBCORE_EXPORT static bool LEGACY_NODELETE isARIAControl(AccessibilityRole);
+    NODELETE WEBCORE_EXPORT static bool isARIAControl(AccessibilityRole);
     bool supportsCheckedState() const override;
 
     bool supportsARIAOwns() const override { return false; }
@@ -350,7 +350,7 @@ public:
 
     // This function checks if the object should be ignored when there's a modal dialog displayed.
     virtual bool ignoredFromModalPresence() const;
-    bool LEGACY_NODELETE isModalDescendant(Node&) const;
+    NODELETE bool isModalDescendant(Node&) const;
     bool isModalNode() const final;
 
     bool supportsSetSize() const final;
@@ -997,9 +997,9 @@ protected:
 
     virtual bool shouldIgnoreAttributeRole() const { return false; }
     virtual AccessibilityRole buttonRoleType() const;
-    bool LEGACY_NODELETE dispatchTouchEvent();
+    NODELETE bool dispatchTouchEvent();
 
-    static bool LEGACY_NODELETE isARIAInput(AccessibilityRole);
+    NODELETE static bool isARIAInput(AccessibilityRole);
 
     AccessibilityObject* radioGroupAncestor() const;
 
@@ -1009,7 +1009,7 @@ protected:
 #if ASSERT_ENABLED
     void verifyChildrenIndexInParent() const final { return AXCoreObject::verifyChildrenIndexInParent(m_children); }
 #endif
-    void LEGACY_NODELETE resetChildrenIndexInParent() const;
+    NODELETE void resetChildrenIndexInParent() const;
 
 private:
     ProcessID processID() const final { return legacyPresentingApplicationPID(); }

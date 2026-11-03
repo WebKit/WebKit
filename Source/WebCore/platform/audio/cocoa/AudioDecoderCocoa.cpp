@@ -69,7 +69,7 @@ class InternalAudioDecoderCocoa : public ThreadSafeRefCountedAndCanMakeThreadSaf
     WTF_MAKE_TZONE_ALLOCATED(InternalAudioDecoderCocoa);
 
 public:
-    static Ref<InternalAudioDecoderCocoa> LEGACY_NODELETE create(AudioDecoder::OutputCallback&& outputCallback)
+    NODELETE static Ref<InternalAudioDecoderCocoa> create(AudioDecoder::OutputCallback&& outputCallback)
     {
         return adoptRef(*new InternalAudioDecoderCocoa(WTF::move(outputCallback)));
     }

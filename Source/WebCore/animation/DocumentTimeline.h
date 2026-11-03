@@ -55,7 +55,7 @@ public:
 
     virtual ~DocumentTimeline();
 
-    Document* LEGACY_NODELETE document() const;
+    NODELETE Document* document() const;
 
     std::optional<WebAnimationTime> currentTime(UseCachedCurrentTime = UseCachedCurrentTime::Yes) override;
     ExceptionOr<Ref<WebAnimation>> animate(Ref<CustomEffectCallback>&&, Variant<double, CustomAnimationOptions>&&);
@@ -80,12 +80,12 @@ public:
     WEBCORE_EXPORT Seconds animationInterval() const;
     void suspendAnimations() override;
     void resumeAnimations() override;
-    WEBCORE_EXPORT unsigned LEGACY_NODELETE numberOfActiveAnimationsForTesting() const;
-    WEBCORE_EXPORT unsigned LEGACY_NODELETE numberOfAnimationTimelineInvalidationsForTesting() const;
+    NODELETE WEBCORE_EXPORT unsigned numberOfActiveAnimationsForTesting() const;
+    NODELETE WEBCORE_EXPORT unsigned numberOfAnimationTimelineInvalidationsForTesting() const;
 
-    Seconds LEGACY_NODELETE convertTimelineTimeToOriginRelativeTime(Seconds) const;
+    NODELETE Seconds convertTimelineTimeToOriginRelativeTime(Seconds) const;
 
-    std::optional<FramesPerSecond> LEGACY_NODELETE maximumFrameRate() const;
+    NODELETE std::optional<FramesPerSecond> maximumFrameRate() const;
 
 #if ENABLE(THREADED_ANIMATIONS)
     void scheduleAcceleratedEffectStackUpdate();

@@ -46,12 +46,12 @@ static size_t bufferLengthForDelay(double maxDelayTime, double sampleRate)
 }
 
 // Returns (a - b) if a is greater than b, 0 otherwise.
-template<typename T> static inline size_t LEGACY_NODELETE positiveSubtract(T a, T b)
+template<typename T> NODELETE static inline size_t positiveSubtract(T a, T b)
 {
     return a <= b ? 0 : static_cast<size_t>(a - b);
 }
 
-static void LEGACY_NODELETE copyToCircularBuffer(std::span<float> buffer, size_t writeIndex, std::span<const float> source)
+NODELETE static void copyToCircularBuffer(std::span<float> buffer, size_t writeIndex, std::span<const float> source)
 {
     // The algorithm below depends on this being true because we don't expect to have to fill the entire buffer more than once.
     RELEASE_ASSERT(buffer.size() >= source.size());

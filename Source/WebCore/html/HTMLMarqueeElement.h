@@ -39,7 +39,7 @@ public:
     void ref() const final { HTMLElement::ref(); }
     void deref() const final { HTMLElement::deref(); }
 
-    int LEGACY_NODELETE minimumDelay() const;
+    NODELETE int minimumDelay() const;
 
     WEBCORE_EXPORT void start();
     WEBCORE_EXPORT void stop() final;
@@ -69,7 +69,7 @@ private:
     void suspend(ReasonForSuspension) final;
     void resume() final;
 
-    RenderMarquee* LEGACY_NODELETE renderMarquee() const;
+    NODELETE RenderMarquee* renderMarquee() const;
 };
 
 } // namespace WebCore

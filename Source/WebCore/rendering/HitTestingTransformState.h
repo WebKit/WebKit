@@ -36,7 +36,7 @@ namespace WebCore {
 
 // FIXME: Now that TransformState lazily creates its TransformationMatrix it takes up less space.
 // So there's really no need for a ref counted version. So This class should be removed and replaced
-// with TransformState. There are some minor differences (like the way LEGACY_NODELETE translate() works slightly
+// with TransformState. There are some minor differences (like the way NODELETE translate() works slightly
 // differently than move()) so care has to be taken when this is done.
 class HitTestingTransformState : public RefCounted<HitTestingTransformState> {
 public:
@@ -50,7 +50,7 @@ public:
         return adoptRef(*new HitTestingTransformState(other));
     }
 
-    void LEGACY_NODELETE translate(int x, int y);
+    NODELETE void translate(int x, int y);
     void applyTransform(const TransformationMatrix& transformFromContainer);
 
     FloatPoint mappedPoint() const;
@@ -59,7 +59,7 @@ public:
     LayoutRect boundsOfMappedArea() const;
     LayoutRect boundsOfMappedQuad() const;
 
-    void LEGACY_NODELETE flatten();
+    NODELETE void flatten();
 
     FloatPoint m_lastPlanarPoint;
     FloatQuad m_lastPlanarQuad;

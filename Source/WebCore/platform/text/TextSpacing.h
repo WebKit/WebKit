@@ -85,7 +85,7 @@ public:
 
     bool isAuto() const { return m_trim == TrimType::Auto; }
     bool isSpaceAll() const { return m_trim == TrimType::SpaceAll; }
-    bool LEGACY_NODELETE shouldTrimSpacing(const TextSpacing::CharactersData&) const;
+    NODELETE bool shouldTrimSpacing(const TextSpacing::CharactersData&) const;
     friend bool operator==(const TextSpacingTrim&, const TextSpacingTrim&) = default;
     constexpr TrimType type() const { return m_trim; }
 private:
@@ -141,7 +141,7 @@ public:
 
     bool shouldApplySpacing(TextSpacing::CharacterClass firstCharacterClass, TextSpacing::CharacterClass secondCharacterClass) const;
     bool shouldApplySpacing(char32_t firstCharacter, char32_t secondCharacter) const;
-    static float LEGACY_NODELETE textAutospaceSize(const Font&);
+    NODELETE static float textAutospaceSize(const Font&);
 
 private:
     Options m_options { };

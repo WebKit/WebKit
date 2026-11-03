@@ -44,29 +44,29 @@ public:
     ~LargestContentfulPaint();
 
     // PaintTimingMixin
-    DOMHighResTimeStamp LEGACY_NODELETE paintTime() const;
-    std::optional<DOMHighResTimeStamp> LEGACY_NODELETE presentationTime() const;
+    NODELETE DOMHighResTimeStamp paintTime() const;
+    NODELETE std::optional<DOMHighResTimeStamp> presentationTime() const;
 
     // LargestContentfulPaint
-    DOMHighResTimeStamp LEGACY_NODELETE loadTime() const;
-    void LEGACY_NODELETE setLoadTime(DOMHighResTimeStamp);
+    NODELETE DOMHighResTimeStamp loadTime() const;
+    NODELETE void setLoadTime(DOMHighResTimeStamp);
 
-    DOMHighResTimeStamp LEGACY_NODELETE renderTime() const;
-    void LEGACY_NODELETE setRenderTime(DOMHighResTimeStamp);
+    NODELETE DOMHighResTimeStamp renderTime() const;
+    NODELETE void setRenderTime(DOMHighResTimeStamp);
 
-    DOMHighResTimeStamp LEGACY_NODELETE startTime() const final;
+    NODELETE DOMHighResTimeStamp startTime() const final;
 
-    unsigned LEGACY_NODELETE size() const;
-    void LEGACY_NODELETE setSize(unsigned);
+    NODELETE unsigned size() const;
+    NODELETE void setSize(unsigned);
 
-    String LEGACY_NODELETE id() const;
+    NODELETE String id() const;
     void setID(const String&);
 
-    String LEGACY_NODELETE url() const;
+    NODELETE String url() const;
     void setURLString(const String&);
 
     Element* element() const;
-    void LEGACY_NODELETE setElement(Element*);
+    NODELETE void setElement(Element*);
 
     ASCIILiteral entryType() const final { return "largest-contentful-paint"_s; }
 

@@ -82,7 +82,7 @@ SPECIALIZE_OBJC_TYPE_TRAITS(DDScannerResult, PAL::getDDScannerResultClassSinglet
 - (instancetype)initWithString:(NSString *)fullText;
 @end
 
-static NSRange LEGACY_NODELETE clampRange(NSRange rangeToClamp, NSRange extentRange)
+NODELETE static NSRange clampRange(NSRange rangeToClamp, NSRange extentRange)
 {
     NSUInteger minRange1 = rangeToClamp.location;
     NSUInteger maxRange1 = NSMaxRange(rangeToClamp);

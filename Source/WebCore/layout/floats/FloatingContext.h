@@ -68,15 +68,15 @@ public:
 
     PlacedFloats::Item makeFloatItem(const Box& floatBox, const BoxGeometry&, std::optional<size_t> line = { }) const;
 
-    bool LEGACY_NODELETE isStartPositioned(const Box& floatBox) const;
+    NODELETE bool isStartPositioned(const Box& floatBox) const;
 
 private:
-    bool LEGACY_NODELETE isFloatingCandidateStartPositionedInBlockFormattingContext(const Box&) const;
-    Clear LEGACY_NODELETE clearInBlockFormattingContext(const Box&) const;
+    NODELETE bool isFloatingCandidateStartPositionedInBlockFormattingContext(const Box&) const;
+    NODELETE Clear clearInBlockFormattingContext(const Box&) const;
 
     const ElementBox& root() const { return m_formattingContextRoot; }
     // FIXME: Turn this into an actual geometry cache.
-    const LayoutState& LEGACY_NODELETE containingBlockGeometries() const LIFETIME_BOUND;
+    NODELETE const LayoutState& containingBlockGeometries() const LIFETIME_BOUND;
 
     void findPositionForFormattingContextRoot(FloatAvoider&, BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const;
 

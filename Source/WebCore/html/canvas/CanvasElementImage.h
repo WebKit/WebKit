@@ -38,11 +38,11 @@ struct CanvasElementSnapshot {
 
 class CanvasElementImage : public RefCounted<CanvasElementImage> {
 public:
-    static Ref<CanvasElementImage> LEGACY_NODELETE create(CanvasElementSnapshot&&);
+    NODELETE static Ref<CanvasElementImage> create(CanvasElementSnapshot&&);
 
     double width() const { return size().width(); }
     double height() const { return size().height(); }
-    void LEGACY_NODELETE close();
+    NODELETE void close();
 
     const CanvasElementSnapshot& snapshot() const { return m_snapshot; }
     const DisplayList::DisplayList& displayList() const { return m_snapshot.displayList; }

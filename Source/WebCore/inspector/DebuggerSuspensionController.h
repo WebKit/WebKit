@@ -62,7 +62,7 @@ public:
 private:
     static void updateHeldDocumentsInAllPages();
 
-    bool LEGACY_NODELETE shouldHoldDocuments() const;
+    NODELETE bool shouldHoldDocuments() const;
     void updateHeldDocuments();
     void holdDocument(Document&);
     void releaseDocument(Document&);

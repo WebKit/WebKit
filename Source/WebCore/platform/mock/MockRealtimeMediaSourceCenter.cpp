@@ -259,7 +259,7 @@ void MockDisplayCapturer::triggerMockCaptureConfigurationChange()
 
 class MockRealtimeDisplaySourceFactory : public DisplayCaptureFactory {
 public:
-    static MockRealtimeDisplaySourceFactory& LEGACY_NODELETE singleton();
+    NODELETE static MockRealtimeDisplaySourceFactory& singleton();
 
     CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier) final
     {
@@ -296,7 +296,7 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    WeakPtr<MockDisplayCapturer> LEGACY_NODELETE latestCapturer() { return m_capturer; }
+    NODELETE WeakPtr<MockDisplayCapturer> latestCapturer() { return m_capturer; }
 #endif
 
 private:

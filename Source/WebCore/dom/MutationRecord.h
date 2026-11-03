@@ -52,16 +52,16 @@ class QualifiedName;
 
 class MutationRecord : public RefCounted<MutationRecord> {
 public:
-    static Ref<MutationRecord> LEGACY_NODELETE createChildList(ContainerNode& target, Ref<NodeList>&& added, Ref<NodeList>&& removed, RefPtr<Node>&& previousSibling, RefPtr<Node>&& nextSibling);
-    static Ref<MutationRecord> LEGACY_NODELETE createAttributes(Element& target, const QualifiedName&, const AtomString& oldValue);
-    static Ref<MutationRecord> LEGACY_NODELETE createCharacterData(CharacterData& target, const String& oldValue);
+    NODELETE static Ref<MutationRecord> createChildList(ContainerNode& target, Ref<NodeList>&& added, Ref<NodeList>&& removed, RefPtr<Node>&& previousSibling, RefPtr<Node>&& nextSibling);
+    NODELETE static Ref<MutationRecord> createAttributes(Element& target, const QualifiedName&, const AtomString& oldValue);
+    NODELETE static Ref<MutationRecord> createCharacterData(CharacterData& target, const String& oldValue);
 
-    static Ref<MutationRecord> LEGACY_NODELETE createWithNullOldValue(MutationRecord&);
+    NODELETE static Ref<MutationRecord> createWithNullOldValue(MutationRecord&);
 
     virtual ~MutationRecord();
 
     virtual const AtomString& type() = 0;
-    virtual Node& LEGACY_NODELETE target() = 0;
+    NODELETE virtual Node& target() = 0;
 
     virtual NodeList& addedNodes() = 0;
     virtual NodeList& removedNodes() = 0;

@@ -75,7 +75,7 @@ private:
         void willRemoveNode(Node*);
         void didReplaceNode(Node*, Node* newNode);
 
-        bool LEGACY_NODELETE isEmpty() { return !m_firstNodeInserted; }
+        NODELETE bool isEmpty() { return !m_firstNodeInserted; }
         Node* firstNodeInserted() const { return m_firstNodeInserted.get(); }
         Node* lastLeafInserted() const
         {
@@ -116,7 +116,7 @@ private:
     VisiblePosition positionAtEndOfInsertedContent() const;
 
     bool shouldPerformSmartReplace() const;
-    bool LEGACY_NODELETE shouldPerformSmartParagraphReplace() const;
+    NODELETE bool shouldPerformSmartParagraphReplace() const;
     void addSpacesForSmartReplace();
     void addNewLinesForSmartReplace();
     void completeHTMLReplacement(const Position& lastPositionToSelect);

@@ -88,16 +88,16 @@ public:
     WEBCORE_EXPORT std::optional<RealtimeMediaSourceCapabilities> getCapabilities(const CaptureDevice&);
 
     WEBCORE_EXPORT AudioCaptureFactory& audioCaptureFactory();
-    WEBCORE_EXPORT void LEGACY_NODELETE setAudioCaptureFactory(AudioCaptureFactory&);
-    WEBCORE_EXPORT void LEGACY_NODELETE unsetAudioCaptureFactory(AudioCaptureFactory&);
+    NODELETE WEBCORE_EXPORT void setAudioCaptureFactory(AudioCaptureFactory&);
+    NODELETE WEBCORE_EXPORT void unsetAudioCaptureFactory(AudioCaptureFactory&);
 
-    WEBCORE_EXPORT VideoCaptureFactory& LEGACY_NODELETE videoCaptureFactory();
-    WEBCORE_EXPORT void LEGACY_NODELETE setVideoCaptureFactory(VideoCaptureFactory&);
-    WEBCORE_EXPORT void LEGACY_NODELETE unsetVideoCaptureFactory(VideoCaptureFactory&);
+    NODELETE WEBCORE_EXPORT VideoCaptureFactory& videoCaptureFactory();
+    NODELETE WEBCORE_EXPORT void setVideoCaptureFactory(VideoCaptureFactory&);
+    NODELETE WEBCORE_EXPORT void unsetVideoCaptureFactory(VideoCaptureFactory&);
 
-    WEBCORE_EXPORT DisplayCaptureFactory& LEGACY_NODELETE displayCaptureFactory();
-    WEBCORE_EXPORT void LEGACY_NODELETE setDisplayCaptureFactory(DisplayCaptureFactory&);
-    WEBCORE_EXPORT void LEGACY_NODELETE unsetDisplayCaptureFactory(DisplayCaptureFactory&);
+    NODELETE WEBCORE_EXPORT DisplayCaptureFactory& displayCaptureFactory();
+    NODELETE WEBCORE_EXPORT void setDisplayCaptureFactory(DisplayCaptureFactory&);
+    NODELETE WEBCORE_EXPORT void unsetDisplayCaptureFactory(DisplayCaptureFactory&);
 
     WEBCORE_EXPORT static String hashStringWithSalt(const String& id, const String& hashSalt);
 
@@ -127,8 +127,8 @@ private:
     friend class NeverDestroyed<RealtimeMediaSourceCenter>;
 
     AudioCaptureFactory& defaultAudioCaptureFactory();
-    VideoCaptureFactory& LEGACY_NODELETE defaultVideoCaptureFactory();
-    DisplayCaptureFactory& LEGACY_NODELETE defaultDisplayCaptureFactory();
+    NODELETE VideoCaptureFactory& defaultVideoCaptureFactory();
+    NODELETE DisplayCaptureFactory& defaultDisplayCaptureFactory();
 
     struct DeviceInfo {
         double fitnessScore;

@@ -36,28 +36,28 @@
 namespace WebCore {
 
 namespace FloatPolygonInternal {
-static inline float LEGACY_NODELETE determinant(const FloatSize& a, const FloatSize& b)
+NODELETE static inline float determinant(const FloatSize& a, const FloatSize& b)
 {
     return a.width() * b.height() - a.height() * b.width();
 }
 }
 
-static inline bool LEGACY_NODELETE areCollinearPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2)
+NODELETE static inline bool areCollinearPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2)
 {
     return !FloatPolygonInternal::determinant(p1 - p0, p2 - p0);
 }
 
-static inline bool LEGACY_NODELETE areCoincidentPoints(const FloatPoint& p0, const FloatPoint& p1)
+NODELETE static inline bool areCoincidentPoints(const FloatPoint& p0, const FloatPoint& p1)
 {
     return p0.x() == p1.x() && p0.y() == p1.y();
 }
 
-static inline unsigned LEGACY_NODELETE nextVertexIndex(unsigned vertexIndex, unsigned nVertices, bool clockwise)
+NODELETE static inline unsigned nextVertexIndex(unsigned vertexIndex, unsigned nVertices, bool clockwise)
 {
     return ((clockwise) ? vertexIndex + 1 : vertexIndex - 1 + nVertices) % nVertices;
 }
 
-static unsigned LEGACY_NODELETE findNextEdgeVertexIndex(const FloatPolygon& polygon, unsigned vertexIndex1, bool clockwise)
+NODELETE static unsigned findNextEdgeVertexIndex(const FloatPolygon& polygon, unsigned vertexIndex1, bool clockwise)
 {
     unsigned nVertices = polygon.numberOfVertices();
     unsigned vertexIndex2 = nextVertexIndex(vertexIndex1, nVertices, clockwise);

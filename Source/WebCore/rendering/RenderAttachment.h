@@ -39,10 +39,10 @@ public:
     RenderAttachment(HTMLAttachmentElement&, Style::ComputedStyle&&);
     virtual ~RenderAttachment();
 
-    HTMLAttachmentElement& LEGACY_NODELETE attachmentElement() const;
+    NODELETE HTMLAttachmentElement& attachmentElement() const;
 
     void setShouldDrawBorder(bool drawBorder) { m_shouldDrawBorder = drawBorder; }
-    bool LEGACY_NODELETE shouldDrawBorder() const;
+    NODELETE bool shouldDrawBorder() const;
 
     void setHasShadowControls(bool hasShadowControls) { m_hasShadowControls = hasShadowControls; }
     bool hasShadowControls() const { return m_hasShadowControls; }

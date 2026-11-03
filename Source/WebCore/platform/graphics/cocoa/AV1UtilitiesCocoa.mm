@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-static bool LEGACY_NODELETE isConfigurationRecordHDR(const AV1CodecConfigurationRecord& record)
+NODELETE static bool isConfigurationRecordHDR(const AV1CodecConfigurationRecord& record)
 {
     if (record.bitDepth < 10)
         return false;

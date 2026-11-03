@@ -179,7 +179,7 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
     }
 }
 
-static bool LEGACY_NODELETE isNewLineAtPosition(const Position& position)
+NODELETE static bool isNewLineAtPosition(const Position& position)
 {
     auto* textNode = dynamicDowncast<Text>(position.containerNode());
     if (!textNode)

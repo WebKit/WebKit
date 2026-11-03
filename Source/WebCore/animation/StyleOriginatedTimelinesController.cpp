@@ -56,26 +56,26 @@
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleOriginatedTimelinesController);
 
-static const WeakStyleable& LEGACY_NODELETE originatingStyleable(const Ref<ScrollTimeline>& timeline LIFETIME_BOUND)
+NODELETE static const WeakStyleable& originatingStyleable(const Ref<ScrollTimeline>& timeline LIFETIME_BOUND)
 {
     if (auto* viewTimeline = dynamicDowncast<ViewTimeline>(timeline.get()))
         return viewTimeline->subjectStyleable();
     return timeline->sourceStyleable();
 }
 
-static Element* LEGACY_NODELETE originatingElement(const Ref<ScrollTimeline>& timeline)
+NODELETE static Element* originatingElement(const Ref<ScrollTimeline>& timeline)
 {
     return originatingStyleable(timeline).element().get();
 }
 
-static Element* LEGACY_NODELETE originatingElementIncludingTimelineScope(const Ref<ScrollTimeline>& timeline)
+NODELETE static Element* originatingElementIncludingTimelineScope(const Ref<ScrollTimeline>& timeline)
 {
     if (auto* timelineScopeElement = timeline->timelineScopeDeclaredElement())
         return timelineScopeElement;
     return originatingElement(timeline);
 }
 
-static Element* LEGACY_NODELETE originatingElementExcludingTimelineScope(const Ref<ScrollTimeline>& timeline)
+NODELETE static Element* originatingElementExcludingTimelineScope(const Ref<ScrollTimeline>& timeline)
 {
     return timeline->timelineScopeDeclaredElement() ? nullptr : originatingElement(timeline);
 }

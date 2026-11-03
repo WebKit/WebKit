@@ -74,7 +74,7 @@ bool Shape::operator==(const Shape&) const = default;
 
 // MARK: - Control Point Evaluation
 
-template<typename ControlPoint> static ControlPointAnchor LEGACY_NODELETE evaluateControlPointAnchoring(const ControlPoint& value, ControlPointAnchor defaultValue)
+template<typename ControlPoint> NODELETE static ControlPointAnchor evaluateControlPointAnchoring(const ControlPoint& value, ControlPointAnchor defaultValue)
 {
     if (value.anchor)
         return *value.anchor;
@@ -323,10 +323,10 @@ public:
     {
     }
 
-    const std::optional<Position>& LEGACY_NODELETE initialMove() const { return m_initialMove; }
+    NODELETE const std::optional<Position>& initialMove() const { return m_initialMove; }
 
 private:
-    static Position LEGACY_NODELETE toPosition(FloatPoint p)
+    NODELETE static Position toPosition(FloatPoint p)
     {
         return { p };
     }
@@ -336,7 +336,7 @@ private:
         return { CoordinatePair::value_type::Dimension { p.x() }, CoordinatePair::value_type::Dimension { p.y() } };
     }
 
-    static Position LEGACY_NODELETE absoluteOffsetPoint(FloatPoint p)
+    NODELETE static Position absoluteOffsetPoint(FloatPoint p)
     {
         return toPosition(p);
     }
@@ -357,7 +357,7 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    template<typename Command> static Variant<typename Command::To, typename Command::By> LEGACY_NODELETE fromOffsetLength(float offset, PathCoordinateMode mode)
+    template<typename Command> NODELETE static Variant<typename Command::To, typename Command::By> fromOffsetLength(float offset, PathCoordinateMode mode)
     {
         switch (mode) {
         case AbsoluteCoordinates:
@@ -368,7 +368,7 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    static AbsoluteControlPoint LEGACY_NODELETE absoluteControlPoint(const FloatPoint& controlPoint)
+    NODELETE static AbsoluteControlPoint absoluteControlPoint(const FloatPoint& controlPoint)
     {
         return { toPosition(controlPoint), std::nullopt };
     }
@@ -733,7 +733,7 @@ template<> struct Evaluation<SmoothCommand::To, AcceleratedEffectShapeFunction::
 template<> struct Evaluation<SmoothCommand::By, AcceleratedEffectShapeFunction::SmoothCommand::By> { AcceleratedEffectShapeFunction::SmoothCommand::By operator()(const SmoothCommand::By&, const FloatRect&, ZoomFactor); };
 
 template<> struct Evaluation<ArcCommand, AcceleratedEffectShapeFunction::ArcCommand> { AcceleratedEffectShapeFunction::ArcCommand operator()(const ArcCommand&, const FloatRect&, ZoomFactor); };
-template<> struct Evaluation<CloseCommand, AcceleratedEffectShapeFunction::CloseCommand> { AcceleratedEffectShapeFunction::CloseCommand LEGACY_NODELETE operator()(const CloseCommand&, const FloatRect&, ZoomFactor); };
+template<> struct Evaluation<CloseCommand, AcceleratedEffectShapeFunction::CloseCommand> { NODELETE AcceleratedEffectShapeFunction::CloseCommand operator()(const CloseCommand&, const FloatRect&, ZoomFactor); };
 
 AcceleratedEffectShapeFunction::ControlPointAnchor Evaluation<ControlPointAnchor, AcceleratedEffectShapeFunction::ControlPointAnchor>::operator()(const ControlPointAnchor& value)
 {

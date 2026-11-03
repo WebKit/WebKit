@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-int LEGACY_NODELETE windowsKeyCodeForKeyCode(uint16_t keyCode)
+NODELETE int windowsKeyCodeForKeyCode(uint16_t keyCode)
 {
     static constexpr auto windowsKeyCode = WTF::toArray<int>({
         /* 0 */ VK_A,
@@ -172,7 +172,7 @@ int LEGACY_NODELETE windowsKeyCodeForKeyCode(uint16_t keyCode)
     return 0;
 }
 
-int LEGACY_NODELETE windowsKeyCodeForCharCode(unichar charCode)
+NODELETE int windowsKeyCodeForCharCode(unichar charCode)
 {
     switch (charCode) {
     case 'a': case 'A': return VK_A;

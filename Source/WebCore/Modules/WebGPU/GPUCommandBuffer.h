@@ -42,7 +42,7 @@ public:
         return adoptRef(*new GPUCommandBuffer(WTF::move(backing), WTF::move(label), encoder));
     }
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
     void setOverrideLabel(String&&);
 
@@ -50,7 +50,7 @@ public:
     const ::WebGPU::CommandBuffer& backing() const { return m_backing; }
     void setBacking(::WebGPU::CommandEncoder&, ::WebGPU::CommandBuffer&);
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

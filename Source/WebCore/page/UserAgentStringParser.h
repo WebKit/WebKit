@@ -46,15 +46,15 @@ private:
 
     void consumeProduct();
     void consumeComment();
-    void LEGACY_NODELETE consumeRWS();
-    void LEGACY_NODELETE consumeToken();
-    void LEGACY_NODELETE consumeQuotedPair();
+    NODELETE void consumeRWS();
+    NODELETE void consumeToken();
+    NODELETE void consumeQuotedPair();
 
     void populateUserAgentData();
 
-    inline char16_t LEGACY_NODELETE peek();
-    inline void LEGACY_NODELETE increment();
-    inline bool LEGACY_NODELETE atEnd();
+    NODELETE inline char16_t peek();
+    NODELETE inline void increment();
+    NODELETE inline bool atEnd();
     inline String getSubstring();
 
     bool malformed { false };

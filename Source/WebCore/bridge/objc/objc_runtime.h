@@ -138,13 +138,13 @@ private:
     void finishCreation(JSGlobalObject*);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
-    static bool LEGACY_NODELETE put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    NODELETE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static CallData getCallData(JSCell*);
-    static bool LEGACY_NODELETE deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
+    NODELETE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
 
     bool toBoolean(JSGlobalObject*) const; // FIXME: Currently this is broken because none of the superclasses are marked virtual. We need to solve this in the longer term.
 
-    static GCClient::IsoSubspace* LEGACY_NODELETE subspaceForImpl(VM&);
+    NODELETE static GCClient::IsoSubspace* subspaceForImpl(VM&);
 
     RefPtr<ObjcInstance> _instance;
     String m_item;

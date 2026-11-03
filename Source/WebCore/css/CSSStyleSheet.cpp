@@ -52,7 +52,7 @@
 
 namespace WebCore {
 
-static Style::Scope& LEGACY_NODELETE styleScopeFor(ContainerNode& treeScope)
+NODELETE static Style::Scope& styleScopeFor(ContainerNode& treeScope)
 {
     ASSERT(is<Document>(treeScope) || is<ShadowRoot>(treeScope));
     if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(treeScope))
@@ -67,13 +67,13 @@ public:
     StyleSheetCSSRuleList(CSSStyleSheet* sheet) : m_styleSheet(sheet) { }
     
 private:
-    void LEGACY_NODELETE ref() const final { m_styleSheet->ref(); }
+    NODELETE void ref() const final { m_styleSheet->ref(); }
     void deref() const final { m_styleSheet->deref(); }
 
     unsigned length() const final { return m_styleSheet->length(); }
     CSSRule* item(unsigned index) const final { return protect(m_styleSheet)->item(index); }
 
-    CSSStyleSheet* LEGACY_NODELETE styleSheet() const final { return m_styleSheet.get(); }
+    NODELETE CSSStyleSheet* styleSheet() const final { return m_styleSheet.get(); }
 
     // CSSStyleSheet::item() lazily creates the child wrappers, so it must not be reached from the
     // GC marker threads; the sheet is the list's opaque root anyway.

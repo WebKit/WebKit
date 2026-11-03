@@ -43,9 +43,9 @@ public:
     static constexpr unsigned maxRowspan = 65534;
     static constexpr unsigned defaultRowspan = 1;
 
-    static Ref<HTMLTableCellElement> LEGACY_NODELETE create(const QualifiedName&, Document&);
+    NODELETE static Ref<HTMLTableCellElement> create(const QualifiedName&, Document&);
 
-    WEBCORE_EXPORT int LEGACY_NODELETE cellIndex() const;
+    NODELETE WEBCORE_EXPORT int cellIndex() const;
     WEBCORE_EXPORT unsigned colSpan() const;
     WEBCORE_EXPORT unsigned rowSpan() const;
 
@@ -53,9 +53,9 @@ public:
     WEBCORE_EXPORT void setColSpan(unsigned);
     WEBCORE_EXPORT void setRowSpan(unsigned);
 
-    String LEGACY_NODELETE abbr() const;
-    String LEGACY_NODELETE axis() const;
-    String LEGACY_NODELETE headers() const;
+    NODELETE String abbr() const;
+    NODELETE String axis() const;
+    NODELETE String headers() const;
     WEBCORE_EXPORT const AtomString& scope() const;
 
     WEBCORE_EXPORT HTMLTableCellElement* cellAbove() const;
@@ -68,7 +68,7 @@ private:
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     const MutableStyleProperties* additionalPresentationalHintStyle() const override;
 
-    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const override;
+    NODELETE bool isURLAttribute(const Attribute&) const override;
 
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const override;
 };

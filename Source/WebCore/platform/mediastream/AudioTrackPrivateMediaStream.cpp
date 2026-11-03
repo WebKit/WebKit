@@ -55,7 +55,7 @@ AudioTrackPrivateMediaStream::~AudioTrackPrivateMediaStream()
 }
 
 #if USE(LIBWEBRTC)
-static RefPtr<LibWebRTCAudioModule> LEGACY_NODELETE audioModuleFromSource(RealtimeMediaSource& source)
+NODELETE static RefPtr<LibWebRTCAudioModule> audioModuleFromSource(RealtimeMediaSource& source)
 {
     auto* audioSource = dynamicDowncast<RealtimeIncomingAudioSource>(source);
     return audioSource ? audioSource->audioModule() : nullptr;

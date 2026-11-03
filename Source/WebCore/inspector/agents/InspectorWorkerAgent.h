@@ -81,7 +81,7 @@ private:
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageChannel);
 
     public:
-        static Ref<PageChannel> LEGACY_NODELETE create(InspectorWorkerAgent&);
+        NODELETE static Ref<PageChannel> create(InspectorWorkerAgent&);
 
         void ref() const final { ThreadSafeRefCounted::ref(); }
         void deref() const final { ThreadSafeRefCounted::deref(); }

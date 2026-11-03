@@ -72,7 +72,7 @@ public:
     const FontFamily& familyAt(unsigned i) const { return m_families.get()[i]; }
     RefCountedFixedVector<FontFamily>& families() const { return m_families.get(); }
 
-    static bool LEGACY_NODELETE familyNamesAreEqual(const AtomString&, const AtomString&);
+    NODELETE static bool familyNamesAreEqual(const AtomString&, const AtomString&);
     static unsigned familyNameHash(const AtomString&);
     static String foldedFamilyName(const String&);
 
@@ -83,8 +83,8 @@ public:
     bool isAbsoluteSize() const { return m_isAbsoluteSize; }
     FontSelectionValue lighterWeight() const { return lighterWeight(weight()); }
     FontSelectionValue bolderWeight() const { return bolderWeight(weight()); }
-    static FontSelectionValue LEGACY_NODELETE lighterWeight(FontSelectionValue);
-    static FontSelectionValue LEGACY_NODELETE bolderWeight(FontSelectionValue);
+    NODELETE static FontSelectionValue lighterWeight(FontSelectionValue);
+    NODELETE static FontSelectionValue bolderWeight(FontSelectionValue);
 
     // only use fixed default size when there is only one font family, and that family is "monospace"
     bool useFixedDefaultSize() const { return familyCount() == 1 && firstFamily().name == monospaceFamily; }
@@ -98,7 +98,7 @@ public:
         return identifier;
     }
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
-    FontSmoothingMode LEGACY_NODELETE usedFontSmoothing() const;
+    NODELETE FontSmoothingMode usedFontSmoothing() const;
     // Used by RenderText::computeUseBackslashAsYenSymbol. In Japanese encodings
     // (EUC-JP, Shift_JIS, etc.), the backslash byte (0x5C) maps to the yen sign.
     // When the CSS author (or canvas font string) explicitly chose a non-generic
@@ -131,7 +131,7 @@ public:
     void setFontSmoothing(FontSmoothingMode smoothing) { m_fontSmoothing = static_cast<unsigned>(smoothing); }
     void setHasAuthorSpecifiedNonGenericPrimaryFont(bool value) { m_hasAuthorSpecifiedNonGenericPrimaryFont = value; }
 
-    bool LEGACY_NODELETE familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const;
+    NODELETE bool familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const;
 
     bool equalForTextAutoSizing(const FontCascadeDescription& other) const
     {
@@ -141,7 +141,7 @@ public:
             && m_isAbsoluteSize == other.m_isAbsoluteSize;
     }
 
-    WEBCORE_EXPORT void LEGACY_NODELETE resolveFontSizeAdjustFromFontIfNeeded(const Font&);
+    NODELETE WEBCORE_EXPORT void resolveFontSizeAdjustFromFontIfNeeded(const Font&);
 
 private:
     Ref<RefCountedFixedVector<FontFamily>> m_families;

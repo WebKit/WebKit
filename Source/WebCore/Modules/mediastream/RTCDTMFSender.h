@@ -52,7 +52,7 @@ public:
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     bool canInsertDTMF() const;
-    String LEGACY_NODELETE toneBuffer() const;
+    NODELETE String toneBuffer() const;
 
     ExceptionOr<void> insertDTMF(const String& tones, size_t duration, size_t interToneGap);
 
@@ -63,7 +63,7 @@ private:
     void stop() final;
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCDTMFSender; }
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
     bool virtualHasPendingActivity() const final { return m_isPendingPlayoutTask; }
 
     void refEventTarget() final { ref(); }

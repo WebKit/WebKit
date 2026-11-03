@@ -94,8 +94,8 @@ class GPUDevice : public RefCounted<GPUDevice>, public ActiveDOMObject, public E
 public:
     static Ref<GPUDevice> create(ScriptExecutionContext*, Ref<::WebGPU::Device>&&, Ref<WebGPUIntegration>&&, String&& label, String&& queueLabel, GPUAdapterInfo&);
 
-    static HashSet<GPUDevice*>& LEGACY_NODELETE instances() WTF_REQUIRES_LOCK(instancesLock());
-    static Lock& LEGACY_NODELETE instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
+    NODELETE static HashSet<GPUDevice*>& instances() WTF_REQUIRES_LOCK(instancesLock());
+    NODELETE static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
     virtual ~GPUDevice();
 
@@ -107,13 +107,13 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
-    Ref<GPUSupportedFeatures> LEGACY_NODELETE features() const;
-    Ref<GPUSupportedLimits> LEGACY_NODELETE limits() const;
+    NODELETE Ref<GPUSupportedFeatures> features() const;
+    NODELETE Ref<GPUSupportedLimits> limits() const;
 
-    Ref<GPUQueue> LEGACY_NODELETE queue() const;
+    NODELETE Ref<GPUQueue> queue() const;
 
     void destroy(ScriptExecutionContext&);
 
@@ -152,7 +152,7 @@ public:
     using LostPromise = DOMPromiseProxy<IDLInterface<GPUDeviceLostInfo>>;
     LostPromise& lost() LIFETIME_BOUND;
 
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
 
     ::WebGPU::Device& backing() { return m_backing; }
     const ::WebGPU::Device& backing() const { return m_backing; }
@@ -165,8 +165,8 @@ public:
     Ref<::WebGPU::BindGroupLayout> emptyBindGroupLayout() const { return *m_emptyBindGroupLayout; }
     void removeBufferToUnmap(GPUBuffer&);
     void addBufferToUnmap(GPUBuffer&);
-    Ref<GPUAdapterInfo> LEGACY_NODELETE adapterInfo() const;
-    size_t LEGACY_NODELETE memoryCost() const;
+    NODELETE Ref<GPUAdapterInfo> adapterInfo() const;
+    NODELETE size_t memoryCost() const;
 
 #if ENABLE(VIDEO)
     WeakPtr<GPUExternalTexture> takeExternalTextureForVideoElement(const HTMLVideoElement&);

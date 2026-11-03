@@ -882,12 +882,12 @@ Font::ComplexColorFormatGlyphs Font::ComplexColorFormatGlyphs::createWithRelevan
     return { true, glyphCount };
 }
 
-bool LEGACY_NODELETE Font::ComplexColorFormatGlyphs::hasValueFor(Glyph glyph) const
+NODELETE bool Font::ComplexColorFormatGlyphs::hasValueFor(Glyph glyph) const
 {
     return m_bits.contains(bitForInitialized(glyph));
 }
 
-bool LEGACY_NODELETE Font::ComplexColorFormatGlyphs::get(Glyph glyph) const
+NODELETE bool Font::ComplexColorFormatGlyphs::get(Glyph glyph) const
 {
     ASSERT(hasValueFor(glyph));
     return m_bits.contains(bitForValue(glyph));

@@ -148,7 +148,7 @@ public:
     // By default you only receive paint events for the area that is visible. In the case of using a
     // tiled backing store, this function can be set, so that the view paints the entire contents.
     bool paintsEntireContents() const { return m_paintsEntireContents; }
-    WEBCORE_EXPORT void LEGACY_NODELETE setPaintsEntireContents(bool);
+    NODELETE WEBCORE_EXPORT void setPaintsEntireContents(bool);
 
     // By default scrolling is handled by WebCore, but some WebKit implementations take over scrolling,
     // delegating it to a native scrolling widget or the UI process.
@@ -219,11 +219,11 @@ public:
 
     // The given rect is only used if there is no platform widget, and is in view space. View space is the same as contents
     // space only when scrolling is delegated to the native view.
-    WEBCORE_EXPORT void LEGACY_NODELETE setExposedViewRect(const ViewFloatRect&);
+    NODELETE WEBCORE_EXPORT void setExposedViewRect(const ViewFloatRect&);
 
     void adjustExposedContentRectForProgrammaticScroll(ScrollPosition);
 
-    WEBCORE_EXPORT FloatSize LEGACY_NODELETE unobscuredContentSize() const;
+    NODELETE WEBCORE_EXPORT FloatSize unobscuredContentSize() const;
     WEBCORE_EXPORT void setUnobscuredContentSize(const FloatSize&);
 
 #if PLATFORM(IOS_FAMILY)
@@ -242,9 +242,9 @@ public:
     int layoutWidth() const { return layoutSize().width(); }
     int layoutHeight() const { return layoutSize().height(); }
 
-    WEBCORE_EXPORT IntSize LEGACY_NODELETE fixedLayoutSize() const;
+    NODELETE WEBCORE_EXPORT IntSize fixedLayoutSize() const;
     WEBCORE_EXPORT void setFixedLayoutSize(const IntSize&);
-    WEBCORE_EXPORT bool LEGACY_NODELETE useFixedLayout() const;
+    NODELETE WEBCORE_EXPORT bool useFixedLayout() const;
     WEBCORE_EXPORT void setUseFixedLayout(bool enable);
 
     // Functions for getting/setting the size of the document contained inside the ScrollView (as an IntSize or as individual width and height
@@ -433,7 +433,7 @@ public:
     void setAllowsUnclampedScrollPositionForTesting(bool allowsUnclampedScrollPosition) { m_allowsUnclampedScrollPosition = allowsUnclampedScrollPosition; }
     bool allowsUnclampedScrollPosition() const { return m_allowsUnclampedScrollPosition; }
 
-    bool LEGACY_NODELETE managesScrollbars() const;
+    NODELETE bool managesScrollbars() const;
     virtual void updateScrollbarSteps();
 
     // Called to update the scrollbars to accurately reflect the state of the view.
@@ -489,7 +489,7 @@ public:
     WEBCORE_EXPORT NSView* documentView() const;
 
 private:
-    PlatformScrollView* LEGACY_NODELETE scrollView() const;
+    NODELETE PlatformScrollView* scrollView() const;
 #endif
 
 protected:
@@ -537,7 +537,7 @@ private:
     IntPoint platformScreenToContents(const IntPoint&) const;
 
     void platformSetScrollPosition(const IntPoint&);
-    bool LEGACY_NODELETE platformScroll(ScrollDirection, ScrollGranularity);
+    NODELETE bool platformScroll(ScrollDirection, ScrollGranularity);
     void platformSetScrollbarsSuppressed(bool repaintOnUnsuppress);
     void platformRepaintContentRectangle(const IntRect&);
     bool platformIsOffscreen() const;

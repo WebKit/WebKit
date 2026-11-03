@@ -101,7 +101,7 @@ public:
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 
-    void LEGACY_NODELETE setLoadingProgresssed(bool);
+    NODELETE void setLoadingProgresssed(bool);
     void setHasAvailableVideoFrame(bool);
     bool hasAvailableVideoFrame() const override;
     void durationChanged();
@@ -128,7 +128,7 @@ public:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void setCDMSession(LegacyCDMSession*) override;
-    RefPtr<CDMSessionAVContentKeySession> LEGACY_NODELETE cdmSession() const;
+    NODELETE RefPtr<CDMSessionAVContentKeySession> cdmSession() const;
     void keyAdded() final;
 #endif
 
@@ -173,7 +173,7 @@ public:
     const Logger& mediaPlayerLogger() { return logger(); }
 #endif
 
-    bool LEGACY_NODELETE supportsLimitedMatroska() const;
+    NODELETE bool supportsLimitedMatroska() const;
 
 private:
     // MediaPlayerPrivateInterface
@@ -211,14 +211,14 @@ private:
     void setPageIsVisible(bool) final;
     void setViewportVisibility(ViewportVisibility) final;
     void updateRendererVisibility();
-    bool LEGACY_NODELETE shouldTeardownOnVisibilityChange() const;
+    NODELETE bool shouldTeardownOnVisibilityChange() const;
 
     MediaTime duration() const override;
     MediaTime startTime() const override;
     MediaTime initialTime() const override;
 
     Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
-    bool LEGACY_NODELETE seeking() const;
+    NODELETE bool seeking() const;
     void setRateDouble(double) override;
     double rate() const override;
     double effectiveRate() const override;
@@ -248,7 +248,7 @@ private:
 
     void setPresentationSize(const IntSize&) final;
 
-    Ref<AudioVideoRenderer> LEGACY_NODELETE audioVideoRenderer() const;
+    NODELETE Ref<AudioVideoRenderer> audioVideoRenderer() const;
 
 
     // NOTE: Because the only way for MSE to recieve data is through an ArrayBuffer provided by

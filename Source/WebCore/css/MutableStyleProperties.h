@@ -41,10 +41,10 @@ class MutableStyleProperties final : public StyleProperties, public CanMakeCheck
 public:
     inline void deref() const;
 
-    static Ref<MutableStyleProperties> LEGACY_NODELETE create(CSSParserMode);
-    WEBCORE_EXPORT static Ref<MutableStyleProperties> LEGACY_NODELETE create();
+    NODELETE static Ref<MutableStyleProperties> create(CSSParserMode);
+    NODELETE WEBCORE_EXPORT static Ref<MutableStyleProperties> create();
     static Ref<MutableStyleProperties> create(Vector<CSSProperty>&&);
-    static Ref<MutableStyleProperties> LEGACY_NODELETE createEmpty();
+    NODELETE static Ref<MutableStyleProperties> createEmpty();
 
     WEBCORE_EXPORT ~MutableStyleProperties();
 
@@ -59,7 +59,7 @@ public:
     static constexpr std::nullptr_t end() { return nullptr; }
     unsigned size() const { return propertyCount(); }
 
-    CSSStyleProperties* LEGACY_NODELETE cssStyleProperties();
+    NODELETE CSSStyleProperties* cssStyleProperties();
 
     bool addParsedProperties(const ParsedPropertyVector&);
     bool addParsedProperty(const CSSProperty&);
@@ -84,8 +84,8 @@ public:
     WEBCORE_EXPORT CSSStyleProperties& ensureCSSStyleProperties();
     CSSStyleProperties& ensureInlineCSSStyleProperties(StyledElement& parentElement);
 
-    int LEGACY_NODELETE findPropertyIndex(CSSPropertyID) const;
-    int LEGACY_NODELETE findCustomPropertyIndex(StringView propertyName) const;
+    NODELETE int findPropertyIndex(CSSPropertyID) const;
+    NODELETE int findCustomPropertyIndex(StringView propertyName) const;
 
     // Methods for querying and altering CSS custom properties.
     bool setCustomProperty(const String& propertyName, const String& value, CSSParserContext, IsImportant = IsImportant::No);
@@ -99,8 +99,8 @@ private:
     bool removeLonghandProperty(CSSPropertyID, String* returnText);
     bool removeShorthandProperty(CSSPropertyID, String* returnText);
     bool removePropertyAtIndex(int index, String* returnText);
-    CSSProperty* LEGACY_NODELETE findCSSPropertyWithID(CSSPropertyID);
-    CSSProperty* LEGACY_NODELETE findCustomCSSPropertyWithName(const String&);
+    NODELETE CSSProperty* findCSSPropertyWithID(CSSPropertyID);
+    NODELETE CSSProperty* findCustomCSSPropertyWithName(const String&);
     bool canUpdateInPlace(const CSSProperty&, CSSProperty* toReplace) const;
 
     friend class StyleProperties;

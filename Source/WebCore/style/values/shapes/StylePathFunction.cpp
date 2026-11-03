@@ -44,7 +44,7 @@ namespace Style {
 // MARK: - Path Caching
 
 struct SVGPathTransformedByteStream {
-    bool LEGACY_NODELETE isEmpty() const
+    NODELETE bool isEmpty() const
     {
         return rawStream.isEmpty();
     }
@@ -66,7 +66,7 @@ struct SVGPathTransformedByteStream {
 };
 
 struct TransformedByteStreamPathPolicy : TinyLRUCachePolicy<SVGPathTransformedByteStream, WebCore::Path> {
-    static bool LEGACY_NODELETE isKeyNull(const SVGPathTransformedByteStream& stream)
+    NODELETE static bool isKeyNull(const SVGPathTransformedByteStream& stream)
     {
         return stream.isEmpty();
     }

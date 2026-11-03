@@ -47,7 +47,7 @@ public:
     int descent() const;
     String fontFamily() const;
 
-    SVGFontElement* LEGACY_NODELETE associatedFontElement() const;
+    NODELETE SVGFontElement* associatedFontElement() const;
     void rebuildFontFace();
 
     StyleRuleFontFace& fontFaceRule() const { return m_fontFaceRule.get(); }

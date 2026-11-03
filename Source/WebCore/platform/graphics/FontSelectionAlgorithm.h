@@ -404,9 +404,9 @@ public:
         FontSelectionValue distance;
         FontSelectionValue value;
     };
-    DistanceResult LEGACY_NODELETE widthDistance(Capabilities) const;
-    DistanceResult LEGACY_NODELETE styleDistance(Capabilities) const;
-    DistanceResult LEGACY_NODELETE weightDistance(Capabilities) const;
+    NODELETE DistanceResult widthDistance(Capabilities) const;
+    NODELETE DistanceResult styleDistance(Capabilities) const;
+    NODELETE DistanceResult weightDistance(Capabilities) const;
 
     size_t indexOfBestCapabilities();
     const Vector<bool>& eliminatedCapabilities();

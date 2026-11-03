@@ -37,7 +37,7 @@ public:
 private:
     HTMLQuoteElement(const QualifiedName&, Document&);
 
-    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const final;
+    NODELETE bool isURLAttribute(const Attribute&) const final;
 };
 
 } // namespace WebCore

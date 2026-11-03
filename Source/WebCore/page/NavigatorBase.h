@@ -63,7 +63,7 @@ public:
     static String product();
     static String productSub();
     static String vendor();
-    static String LEGACY_NODELETE vendorSub();
+    NODELETE static String vendorSub();
 
     virtual bool onLine() const = 0;
 
@@ -90,6 +90,6 @@ private:
     const std::unique_ptr<ServiceWorkerContainer> m_serviceWorkerContainer;
 };
 
-WebCoreOpaqueRoot LEGACY_NODELETE root(NavigatorBase*);
+NODELETE WebCoreOpaqueRoot root(NavigatorBase*);
 
 } // namespace WebCore

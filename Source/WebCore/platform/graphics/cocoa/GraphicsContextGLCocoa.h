@@ -72,7 +72,7 @@ public:
     // Returns false after the display was terminated.
     static bool isDisplayInitializedForTesting(GCGLDisplay);
     ~GraphicsContextGLCocoa();
-    IOSurface* LEGACY_NODELETE displayBufferSurface();
+    NODELETE IOSurface* displayBufferSurface();
 
     enum class PbufferAttachmentUsage { Read, Write, ReadWrite };
     // Returns a handle which, if non-null, must be released via the
@@ -129,10 +129,10 @@ protected:
     void invalidateKnownTextureContentForTarget(GCGLenum) final;
     bool reshapeDrawingBuffer() final;
 
-    IOSurfacePbuffer& LEGACY_NODELETE drawingBuffer();
-    IOSurfacePbuffer& LEGACY_NODELETE displayBuffer();
-    IOSurfacePbuffer& LEGACY_NODELETE copyBuffer();
-    IOSurfacePbuffer& LEGACY_NODELETE surfaceBuffer(SurfaceBuffer);
+    NODELETE IOSurfacePbuffer& drawingBuffer();
+    NODELETE IOSurfacePbuffer& displayBuffer();
+    NODELETE IOSurfacePbuffer& copyBuffer();
+    NODELETE IOSurfacePbuffer& surfaceBuffer(SurfaceBuffer);
     bool bindNextDrawingBuffer();
     IOSurfacePbuffer createDrawingBuffer();
     IOSurfacePbuffer createPbuffer(std::unique_ptr<IOSurface>&&);
@@ -167,7 +167,7 @@ protected:
         bool unpackFlipY { false };
         bool unpackPremultiplyAlpha { false };
 
-        friend bool LEGACY_NODELETE operator==(const VideoTextureContent&, const VideoTextureContent&) = default;
+        NODELETE friend bool operator==(const VideoTextureContent&, const VideoTextureContent&) = default;
     };
     HashMap<GCGLuint, VideoTextureContent, IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>> m_knownVideoTextureContent;
 #endif

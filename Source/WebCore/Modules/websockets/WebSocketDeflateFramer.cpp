@@ -48,7 +48,7 @@ public:
 private:
     String handshakeString() final;
     bool processResponse(const HashMap<String, String>&) final;
-    String LEGACY_NODELETE failureReason() final { return m_failureReason; }
+    NODELETE String failureReason() final { return m_failureReason; }
 
     WebSocketDeflateFramer& m_framer;
     bool m_responseProcessed { false };
@@ -64,7 +64,7 @@ WebSocketExtensionDeflateFrame::WebSocketExtensionDeflateFrame(WebSocketDeflateF
 {
 }
 
-String LEGACY_NODELETE WebSocketExtensionDeflateFrame::handshakeString()
+NODELETE String WebSocketExtensionDeflateFrame::handshakeString()
 {
     return extensionToken(); // No parameter
 }

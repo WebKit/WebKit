@@ -52,7 +52,7 @@ public:
     ContextMenuController(Page&, UniqueRef<ContextMenuClient>&&);
     ~ContextMenuController();
 
-    Page& LEGACY_NODELETE page();
+    NODELETE Page& page();
     ContextMenuClient& client() LIFETIME_BOUND { return m_client.get(); }
 
     ContextMenu* contextMenu() const LIFETIME_BOUND { return m_contextMenu.get(); }

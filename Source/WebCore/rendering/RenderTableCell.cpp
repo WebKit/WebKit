@@ -680,7 +680,7 @@ void RenderTableCell::styleDidChange(Style::Difference diff, const Style::Comput
 // (4) If border styles differ only in color, then a style set on a cell wins over one on a row, 
 // which wins over a row group, column, column group and, lastly, table. It is undefined which color 
 // is used when two elements of the same type disagree.
-static bool LEGACY_NODELETE compareBorders(const CollapsedBorderValue& border1, const CollapsedBorderValue& border2)
+NODELETE static bool compareBorders(const CollapsedBorderValue& border1, const CollapsedBorderValue& border2)
 {
     // Sanity check the values passed in. The null border have lowest priority.
     if (!border2.exists())
@@ -712,7 +712,7 @@ static bool LEGACY_NODELETE compareBorders(const CollapsedBorderValue& border1, 
     return border1.precedence() < border2.precedence();
 }
 
-static CollapsedBorderValue LEGACY_NODELETE chooseBorder(const CollapsedBorderValue& border1, const CollapsedBorderValue& border2)
+NODELETE static CollapsedBorderValue chooseBorder(const CollapsedBorderValue& border1, const CollapsedBorderValue& border2)
 {
     const CollapsedBorderValue& border = compareBorders(border1, border2) ? border2 : border1;
     return border.style() == BorderStyle::Hidden ? CollapsedBorderValue() : border;
@@ -1384,7 +1384,7 @@ public:
         }
     }
 
-    CollapsedBorder* LEGACY_NODELETE nextBorder()
+    NODELETE CollapsedBorder* nextBorder()
     {
         for (unsigned i = 0; i < m_count; i++) {
             if (m_borders[i].borderValue.exists() && m_borders[i].shouldPaint) {
@@ -1494,7 +1494,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     }
 }
 
-static LayoutRect LEGACY_NODELETE backgroundRectForRow(const RenderBox& tableRow, const RenderTable& table)
+NODELETE static LayoutRect backgroundRectForRow(const RenderBox& tableRow, const RenderTable& table)
 {
     LayoutRect rect = { tableRow.location(), tableRow.borderBoxSize() };
     if (!table.collapseBorders()) {
@@ -1509,7 +1509,7 @@ static LayoutRect LEGACY_NODELETE backgroundRectForRow(const RenderBox& tableRow
     return rect;
 }
 
-static LayoutRect LEGACY_NODELETE backgroundRectForSection(const RenderTableSection& tableSection, const RenderTable& table)
+NODELETE static LayoutRect backgroundRectForSection(const RenderTableSection& tableSection, const RenderTable& table)
 {
     LayoutRect rect = { { }, tableSection.borderBoxSize() };
     if (!table.collapseBorders()) {

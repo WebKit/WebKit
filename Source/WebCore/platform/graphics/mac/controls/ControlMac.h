@@ -48,7 +48,7 @@ public:
 protected:
     static bool userPrefersContrast();
     static bool userPrefersWithoutColorDifferentiation();
-    static FloatRect LEGACY_NODELETE inflatedRect(const FloatRect& bounds, const FloatSize&, const IntOutsets&, const ControlStyle&);
+    NODELETE static FloatRect inflatedRect(const FloatRect& bounds, const FloatSize&, const IntOutsets&, const ControlStyle&);
 
     static void updateCheckedState(NSCell *, const ControlStyle&);
     static void updateEnabledState(NSCell *, const ControlStyle&);
@@ -58,7 +58,7 @@ protected:
     virtual IntSize cellSize(NSControlSize, const ControlStyle&) const { return { }; };
     virtual IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const { return { }; };
 
-    NSControlSize LEGACY_NODELETE controlSizeForFont(const ControlStyle&) const;
+    NODELETE NSControlSize controlSizeForFont(const ControlStyle&) const;
     NSControlSize controlSizeForSystemFont(const ControlStyle&) const;
     NSControlSize controlSizeForSize(const FloatSize&, const ControlStyle&) const;
 

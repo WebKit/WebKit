@@ -58,7 +58,7 @@ public:
     void stopThread(StopThread = StopThread::ReleaseProcessors);
 
     void postTaskToAudioWorklet(Function<void(AudioWorklet&)>&&);
-    ScriptExecutionContextIdentifier LEGACY_NODELETE loaderContextIdentifier() const final;
+    NODELETE ScriptExecutionContextIdentifier loaderContextIdentifier() const final;
 
     uint32_t checkedPtrCount() const final { return CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::checkedPtrCount(); }
     uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::checkedPtrCountWithoutThreadCheck(); }

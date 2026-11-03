@@ -44,14 +44,14 @@ public:
         return adoptRef(*new GPUTextureView(WTF::move(backing), WTF::move(label), texture));
     }
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
     ::WebGPU::TextureView& backing() { return m_backing; }
     const ::WebGPU::TextureView& backing() const { return m_backing; }
     bool isCanvasBacking() const { return m_isCanvasBacking; }
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

@@ -42,7 +42,7 @@ class BitmapImageSource final : public ImageSource, public CanMakeCheckedPtr<Bit
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BitmapImageSource);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BitmapImageSource);
 public:
-    static Ref<BitmapImageSource> LEGACY_NODELETE create(BitmapImage&, AlphaOption, GammaAndColorProfileOption);
+    NODELETE static Ref<BitmapImageSource> create(BitmapImage&, AlphaOption, GammaAndColorProfileOption);
 
     virtual ~BitmapImageSource();
 
@@ -125,9 +125,9 @@ private:
 
     // Decoding
     DecodingDestination preferredDecodingDestination(GraphicsContext&, const ImageDrawDescriptor&) const final;
-    std::optional<DecodingDestination> LEGACY_NODELETE compatibleDecodingDestinationWithOptionsAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&) const;
+    NODELETE std::optional<DecodingDestination> compatibleDecodingDestinationWithOptionsAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&) const;
     bool isLargeForDecoding() const final;
-    bool LEGACY_NODELETE isDecodingWorkQueueIdle() const;
+    NODELETE bool isDecodingWorkQueueIdle() const;
     void stopDecodingWorkQueue() final;
     void decode(Function<void(DecodingStatus)>&& decodeCallback) final;
     void callDecodeCallbacks(DecodingStatus);
@@ -139,7 +139,7 @@ private:
     void cacheMetadataAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&);
     void cacheNativeImageAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&, Ref<NativeImage>&&);
 
-    const ImageFrame& LEGACY_NODELETE frameAtIndex(unsigned index) const;
+    NODELETE const ImageFrame& frameAtIndex(unsigned index) const;
     const ImageFrame& frameAtIndexCacheIfNeeded(unsigned index, const std::optional<SubsamplingLevel>& = std::nullopt);
     const ImageFrame& currentImageFrame(const std::optional<SubsamplingLevel>& subsamplingLevel = std::nullopt) final { return frameAtIndexCacheIfNeeded(currentFrameIndex(), subsamplingLevel); }
 

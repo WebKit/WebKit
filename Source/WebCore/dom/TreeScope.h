@@ -73,7 +73,7 @@ public:
     TreeScope* parentTreeScope() const { return m_parentTreeScope.get(); }
     void setParentTreeScope(TreeScope&);
 
-    WEBCORE_EXPORT void LEGACY_NODELETE ref() const;
+    NODELETE WEBCORE_EXPORT void ref() const;
     WEBCORE_EXPORT void deref() const;
 
     uint32_t checkedPtrCount() const;
@@ -82,8 +82,8 @@ public:
     void decrementCheckedPtrCount() const;
     void setDidBeginCheckedPtrDeletion();
 
-    Element* LEGACY_NODELETE focusedElementInScope();
-    Element* LEGACY_NODELETE pointerLockElement() const;
+    NODELETE Element* focusedElementInScope();
+    NODELETE Element* pointerLockElement() const;
 
     void setCustomElementRegistry(RefPtr<CustomElementRegistry>&&);
     CustomElementRegistry* customElementRegistry() const { return m_customElementRegistry.get(); }
@@ -104,14 +104,14 @@ public:
     void addElementByName(const AtomString&, Element&);
     void removeElementByName(const AtomString&, Element&);
 
-    Document& LEGACY_NODELETE documentScope() const { return m_documentScope.get(); }
+    NODELETE Document& documentScope() const { return m_documentScope.get(); }
     static constexpr ptrdiff_t documentScopeMemoryOffset() { return OBJECT_OFFSETOF(TreeScope, m_documentScope); }
 
     // https://dom.spec.whatwg.org/#retarget
-    Ref<Node> LEGACY_NODELETE retargetToScope(Node&) const;
+    NODELETE Ref<Node> retargetToScope(Node&) const;
 
-    WEBCORE_EXPORT Node* LEGACY_NODELETE ancestorNodeInThisScope(Node*) const;
-    WEBCORE_EXPORT Element* LEGACY_NODELETE ancestorElementInThisScope(Element*) const;
+    NODELETE WEBCORE_EXPORT Node* ancestorNodeInThisScope(Node*) const;
+    NODELETE WEBCORE_EXPORT Element* ancestorElementInThisScope(Element*) const;
 
     void addImageMap(HTMLMapElement&, const AtomString& name, const AtomString& id);
     void removeImageMap(HTMLMapElement&, const AtomString& name, const AtomString& id);
@@ -136,7 +136,7 @@ public:
     // Anchor name matching is case sensitive in strict mode and not case sensitive in
     // quirks mode for historical compatibility reasons.
     RefPtr<Element> findAnchor(StringView name);
-    bool LEGACY_NODELETE isMatchingAnchor(HTMLAnchorElement&, StringView name);
+    NODELETE bool isMatchingAnchor(HTMLAnchorElement&, StringView name);
 
     inline ContainerNode& rootNode() const; // Defined in TreeScopeInlines.h
 
@@ -146,7 +146,7 @@ public:
     RadioButtonGroups& radioButtonGroups();
 
     JSC::JSValue adoptedStyleSheetWrapper(JSDOMGlobalObject&);
-    std::span<const Ref<CSSStyleSheet>> LEGACY_NODELETE adoptedStyleSheets() const;
+    NODELETE std::span<const Ref<CSSStyleSheet>> adoptedStyleSheets() const;
     ExceptionOr<void> setAdoptedStyleSheets(Vector<Ref<CSSStyleSheet>>&&);
 
     void addSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer&);
@@ -202,6 +202,6 @@ private:
     const std::unique_ptr<SVGResourcesMap> m_svgResourcesMap;
 };
 
-TreeScope* LEGACY_NODELETE commonTreeScope(Node*, Node*);
+NODELETE TreeScope* commonTreeScope(Node*, Node*);
 
 } // namespace WebCore

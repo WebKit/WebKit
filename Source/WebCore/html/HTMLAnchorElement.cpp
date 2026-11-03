@@ -645,7 +645,7 @@ bool HTMLAnchorElement::hasActivationBehavior() const
     return isLink();
 }
 
-static auto& LEGACY_NODELETE rootEditableElementMap()
+NODELETE static auto& rootEditableElementMap()
 {
     static NeverDestroyed<WeakHashMap<HTMLAnchorElement, WeakPtr<Element, WeakPtrImplWithEventTargetData>, WeakPtrImplWithEventTargetData>> map;
     return map.get();

@@ -52,10 +52,10 @@ public:
     template<typename... Args> static Ref<SharedWorkerThreadProxy> create(Args&&... args) { return adoptRef(*new SharedWorkerThreadProxy(std::forward<Args>(args)...)); }
     WEBCORE_EXPORT ~SharedWorkerThreadProxy();
 
-    static RefPtr<SharedWorkerThreadProxy> LEGACY_NODELETE byIdentifier(ScriptExecutionContextIdentifier);
-    WEBCORE_EXPORT static bool LEGACY_NODELETE hasInstances();
+    NODELETE static RefPtr<SharedWorkerThreadProxy> byIdentifier(ScriptExecutionContextIdentifier);
+    NODELETE WEBCORE_EXPORT static bool hasInstances();
 
-    SharedWorkerIdentifier LEGACY_NODELETE identifier() const;
+    NODELETE SharedWorkerIdentifier identifier() const;
     SharedWorkerThread& thread() { return m_workerThread; }
 
     bool isTerminatingOrTerminated() const { return m_isTerminatingOrTerminated; }

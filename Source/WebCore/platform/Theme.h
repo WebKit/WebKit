@@ -40,7 +40,7 @@ enum class InterfaceContrastPreference : uint8_t {
 
 class Theme {
 public:
-    static Theme& LEGACY_NODELETE singleton();
+    NODELETE static Theme& singleton();
 
     virtual void drawNamedImage(const String&, GraphicsContext&, const FloatSize&) const;
     virtual String invertedNamedImage(const String&) const;

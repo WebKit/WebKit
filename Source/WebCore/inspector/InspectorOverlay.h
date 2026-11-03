@@ -151,17 +151,17 @@ class InspectorOverlayOwner : public AbstractCanMakeCheckedPtr {
 public:
     virtual ~InspectorOverlayOwner() = default;
 
-    virtual void LEGACY_NODELETE overlayOwnerRef() const = 0;
+    NODELETE virtual void overlayOwnerRef() const = 0;
     virtual void overlayOwnerDeref() const = 0;
 
     // Null for a frame overlay once its frame is detached.
-    virtual Page* LEGACY_NODELETE overlayOwnerPage() const = 0;
+    NODELETE virtual Page* overlayOwnerPage() const = 0;
 
     // Not cached by callers: destroyed by PageInspectorController::inspectedPageDestroyed().
-    virtual InspectorBackendClient* LEGACY_NODELETE overlayOwnerBackendClient() const = 0;
+    NODELETE virtual InspectorBackendClient* overlayOwnerBackendClient() const = 0;
 
     // The frame the overlay draws in, or null for the page overlay. See frameForGeometry().
-    virtual LocalFrame* LEGACY_NODELETE overlayOwnerFrame() const { return nullptr; }
+    NODELETE virtual LocalFrame* overlayOwnerFrame() const { return nullptr; }
 
     // Flex line-wrap positions for line separators, from the owning DOM agent's cache.
     virtual Vector<size_t> overlayOwnerFlexLineStarts(const RenderObject&) const { return { }; }
@@ -173,7 +173,7 @@ public:
     explicit InspectorOverlay(InspectorOverlayOwner&);
     ~InspectorOverlay();
 
-    void LEGACY_NODELETE ref() const;
+    NODELETE void ref() const;
     void deref() const;
 
     using Highlight = InspectorOverlayHighlight;
@@ -219,7 +219,7 @@ public:
     void update();
     void paint(GraphicsContext&);
     void getHighlight(Highlight&, CoordinateSystem);
-    bool LEGACY_NODELETE shouldShowOverlay() const;
+    NODELETE bool shouldShowOverlay() const;
 
     void hideHighlight();
     void highlightNodeList(RefPtr<NodeList>&&, const Highlight::Config&, const std::optional<Grid::Config>& = std::nullopt, const std::optional<Flex::Config>& = std::nullopt, bool showRulers = false);
@@ -232,7 +232,7 @@ public:
 
     void setShowRulers(bool);
 
-    Node* LEGACY_NODELETE highlightedNode() const;
+    NODELETE Node* highlightedNode() const;
     unsigned gridOverlayCount() const { return m_activeGridOverlays.size(); }
     unsigned flexOverlayCount() const { return m_activeFlexOverlays.size(); }
 
@@ -279,16 +279,16 @@ private:
     bool removeFlexOverlayForNode(Node&);
 
     // Null once the owner is detached from its page; every geometry path must tolerate that.
-    Page* LEGACY_NODELETE page() const;
+    NODELETE Page* page() const;
 
     // The frame this overlay draws in: the owner's frame, else the page's local main frame.
-    LocalFrame* LEGACY_NODELETE frameForGeometry() const;
+    NODELETE LocalFrame* frameForGeometry() const;
 
     // True when scoped to one frame rather than the whole page.
     bool isFrameScoped() const { return !!m_owner->overlayOwnerFrame(); }
 
     // Single answer to "are rulers being drawn", so the guide lines and tooltip insets agree.
-    bool LEGACY_NODELETE shouldDrawRulers() const;
+    NODELETE bool shouldDrawRulers() const;
 
     const CheckedRef<const InspectorOverlayOwner> m_owner;
 

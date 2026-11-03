@@ -97,7 +97,7 @@ public:
     double m44() const { return m_matrix.m44(); }
 
     bool is2D() const { return m_is2D; }
-    bool LEGACY_NODELETE isIdentity() const;
+    NODELETE bool isIdentity() const;
 
     ExceptionOr<void> setMatrixValue(Document&, const String&);
 
@@ -115,7 +115,7 @@ public:
     Ref<DOMMatrix> skewY(double sy = 0); // Angle is in degrees.
     Ref<DOMMatrix> inverse() const;
 
-    Ref<DOMPoint> LEGACY_NODELETE transformPoint(DOMPointInit&&);
+    NODELETE Ref<DOMPoint> transformPoint(DOMPointInit&&);
 
     ExceptionOr<Ref<Float32Array>> toFloat32Array() const;
     ExceptionOr<Ref<Float64Array>> toFloat64Array() const;
@@ -124,7 +124,7 @@ public:
 
     const TransformationMatrix& transformationMatrix() const LIFETIME_BOUND { return m_matrix; }
     
-    Ref<DOMMatrix> LEGACY_NODELETE cloneAsDOMMatrix() const;
+    NODELETE Ref<DOMMatrix> cloneAsDOMMatrix() const;
 
 protected:
     DOMMatrixReadOnly() = default;

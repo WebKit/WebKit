@@ -84,7 +84,7 @@ public:
 
     static bool compare(const ResourceError&, const ResourceError&);
 
-    WEBCORE_EXPORT void LEGACY_NODELETE setType(Type);
+    NODELETE WEBCORE_EXPORT void setType(Type);
     Type type() const { return m_type; }
 
     bool isSanitized() const { return m_isSanitized == IsSanitized::Yes; }
@@ -119,7 +119,7 @@ protected:
     IsSanitized m_isSanitized { IsSanitized::No };
 
 private:
-    const ResourceError& LEGACY_NODELETE asResourceError() const;
+    NODELETE const ResourceError& asResourceError() const;
 };
 
 WEBCORE_EXPORT ResourceError internalError(const URL&, std::source_location = std::source_location::current());

@@ -61,8 +61,8 @@ public:
     static ExceptionOr<Ref<RTCRtpScriptTransformer>> create(ScriptExecutionContext&, MessageWithMessagePorts&&);
     ~RTCRtpScriptTransformer();
 
-    ReadableStream& LEGACY_NODELETE readable();
-    WritableStream& LEGACY_NODELETE writable();
+    NODELETE ReadableStream& readable();
+    NODELETE WritableStream& writable();
     JSC::JSValue options(JSC::JSGlobalObject&);
 
     void generateKeyFrame(const String&, Ref<DeferredPromise>&&);

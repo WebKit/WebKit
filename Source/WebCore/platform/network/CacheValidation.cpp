@@ -190,7 +190,7 @@ bool redirectChainAllowsReuse(RedirectChainCacheStatus redirectChainCacheStatus,
     return false;
 }
 
-inline bool LEGACY_NODELETE isCacheHeaderSeparator(char16_t c)
+NODELETE inline bool isCacheHeaderSeparator(char16_t c)
 {
     // http://tools.ietf.org/html/rfc7230#section-3.2.6
     switch (c) {
@@ -219,7 +219,7 @@ inline bool LEGACY_NODELETE isCacheHeaderSeparator(char16_t c)
     }
 }
 
-inline bool LEGACY_NODELETE isControlCharacterOrSpace(char16_t character)
+NODELETE inline bool isControlCharacterOrSpace(char16_t character)
 {
     return character <= ' ' || character == 127;
 }

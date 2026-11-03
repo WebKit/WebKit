@@ -201,7 +201,7 @@ static const size_t kMaximumDeviceIdentifierSeedSize = 20;
 namespace WebCore {
 
 #if !RELEASE_LOG_DISABLED
-static WTFLogChannel& LEGACY_NODELETE logChannel() { return LogEME; }
+NODELETE static WTFLogChannel& logChannel() { return LogEME; }
 
 // Variants of LOGIDENTIFIER / *_LOG for use inside lambdas, where the logging members have to be
 // reached through a protected pointer instead of an implicitly captured `this`. The LoggerHelper
@@ -673,7 +673,7 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
     return nullptr;
 }
 
-static bool LEGACY_NODELETE isPotentiallyUsableKeyStatus(CDMInstanceSession::KeyStatus status)
+NODELETE static bool isPotentiallyUsableKeyStatus(CDMInstanceSession::KeyStatus status)
 {
     switch (status) {
     case CDMInstanceSession::KeyStatus::Expired:
@@ -1614,7 +1614,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::groupSessionIdentifierChanged(A
 #endif
 }
 
-static CDMKeyStatus LEGACY_NODELETE requestStatusToCDMStatus(AVContentKeyRequestStatus status)
+NODELETE static CDMKeyStatus requestStatusToCDMStatus(AVContentKeyRequestStatus status)
 {
     switch (status) {
         case AVContentKeyRequestStatusRequestingResponse:
@@ -1684,7 +1684,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::externalProtectionStatusDidChan
 }
 
 #if HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
-static std::optional<CDMKeyStatus> LEGACY_NODELETE keyStatusForContentProtectionStatus(AVExternalContentProtectionStatus status)
+NODELETE static std::optional<CDMKeyStatus> keyStatusForContentProtectionStatus(AVExternalContentProtectionStatus status)
 {
     switch (status) {
     case AVExternalContentProtectionStatusPending:

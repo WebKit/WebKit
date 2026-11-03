@@ -52,7 +52,7 @@ class Filter : public FilterFunction {
     using FilterFunction::createFilterStyles;
 
 public:
-    RenderingMode LEGACY_NODELETE renderingMode() const;
+    NODELETE RenderingMode renderingMode() const;
 
     OptionSet<FilterRenderingMode> filterRenderingModes() const { return m_filterRenderingModes; }
     WEBCORE_EXPORT void setFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes);
@@ -73,12 +73,12 @@ public:
     virtual FloatSize resolvedSize(const FloatSize& size) const { return size; }
     virtual FloatPoint3D resolvedPoint3D(const FloatPoint3D& point) const { return point; }
 
-    FloatPoint LEGACY_NODELETE scaledByFilterScale(const FloatPoint&) const;
-    FloatSize LEGACY_NODELETE scaledByFilterScale(const FloatSize&) const;
-    FloatRect LEGACY_NODELETE scaledByFilterScale(const FloatRect&) const;
+    NODELETE FloatPoint scaledByFilterScale(const FloatPoint&) const;
+    NODELETE FloatSize scaledByFilterScale(const FloatSize&) const;
+    NODELETE FloatRect scaledByFilterScale(const FloatRect&) const;
 
-    FloatRect LEGACY_NODELETE maxEffectRect(const FloatRect& primitiveSubregion) const;
-    FloatRect LEGACY_NODELETE clipToMaxEffectRect(const FloatRect& imageRect, const FloatRect& primitiveSubregion) const;
+    NODELETE FloatRect maxEffectRect(const FloatRect& primitiveSubregion) const;
+    NODELETE FloatRect clipToMaxEffectRect(const FloatRect& imageRect, const FloatRect& primitiveSubregion) const;
 
 #if USE(CORE_IMAGE)
     // When CSS filter has a mixture of CSS and SVG filters, we need to compute CI filter geometry
@@ -87,8 +87,8 @@ public:
     FloatRect enclosingFilterRegion() const { return m_enclosingFilterRegion; }
     void setEnclosingFilterRegion(const FloatRect& rect) { m_enclosingFilterRegion = rect; }
 
-    FloatRect LEGACY_NODELETE absoluteEnclosingFilterRegion() const;
-    FloatRect LEGACY_NODELETE flippedRectRelativeToAbsoluteEnclosingFilterRegion(const FloatRect&) const;
+    NODELETE FloatRect absoluteEnclosingFilterRegion() const;
+    NODELETE FloatRect flippedRectRelativeToAbsoluteEnclosingFilterRegion(const FloatRect&) const;
 #endif
 
     virtual FilterEffectVector effectsOfType(FilterFunction::Type) const = 0;

@@ -38,7 +38,7 @@ class SpeechSynthesisErrorEvent final : public SpeechSynthesisEvent {
 public:
     using Init = SpeechSynthesisErrorEventInit;
 
-    static Ref<SpeechSynthesisErrorEvent> LEGACY_NODELETE create(const AtomString& type, Init&&);
+    NODELETE static Ref<SpeechSynthesisErrorEvent> create(const AtomString& type, Init&&);
 
     SpeechSynthesisErrorCode error() const { return m_error; }
 

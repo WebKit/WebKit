@@ -191,19 +191,19 @@ private:
     explicit NullMediaPlayerPrivate(MediaPlayer&) { }
 };
 
-static const Vector<WebCore::ContentType>& LEGACY_NODELETE nullContentTypeVector()
+NODELETE static const Vector<WebCore::ContentType>& nullContentTypeVector()
 {
     static NeverDestroyed<Vector<WebCore::ContentType>> vector;
     return vector;
 }
 
-static const std::optional<Vector<String>>& LEGACY_NODELETE nullOptionalStringVector()
+NODELETE static const std::optional<Vector<String>>& nullOptionalStringVector()
 {
     static NeverDestroyed<std::optional<Vector<String>>> vector;
     return vector;
 }
 
-static const std::optional<Vector<FourCC>>& LEGACY_NODELETE nullOptionalFourCCVector()
+NODELETE static const std::optional<Vector<FourCC>>& nullOptionalFourCCVector()
 {
     static NeverDestroyed<std::optional<Vector<FourCC>>> vector;
     return vector;
@@ -266,7 +266,7 @@ class NullMediaPlayerClient final
     , public RefCounted<NullMediaPlayerClient>
     , public Identified<MediaPlayerClientIdentifier> {
 public:
-    static Ref<NullMediaPlayerClient> LEGACY_NODELETE create()
+    NODELETE static Ref<NullMediaPlayerClient> create()
     {
         return adoptRef(*new NullMediaPlayerClient);
     }
@@ -291,19 +291,19 @@ static void addMediaEngine(std::unique_ptr<MediaPlayerFactory>&&);
 
 static Lock mediaEngineVectorLock;
 
-static bool& LEGACY_NODELETE haveMediaEnginesVector() WTF_REQUIRES_LOCK(mediaEngineVectorLock)
+NODELETE static bool& haveMediaEnginesVector() WTF_REQUIRES_LOCK(mediaEngineVectorLock)
 {
     static bool haveVector;
     return haveVector;
 }
 
-static Vector<std::unique_ptr<MediaPlayerFactory>>& LEGACY_NODELETE mutableInstalledMediaEnginesVector()
+NODELETE static Vector<std::unique_ptr<MediaPlayerFactory>>& mutableInstalledMediaEnginesVector()
 {
     static NeverDestroyed<Vector<std::unique_ptr<MediaPlayerFactory>>> installedEngines;
     return installedEngines;
 }
 
-static RemoteMediaPlayerSupport::RegisterRemotePlayerCallback& LEGACY_NODELETE registerRemotePlayerCallback()
+NODELETE static RemoteMediaPlayerSupport::RegisterRemotePlayerCallback& registerRemotePlayerCallback()
 {
     static NeverDestroyed<RemoteMediaPlayerSupport::RegisterRemotePlayerCallback> callback;
     return callback;
@@ -399,12 +399,12 @@ MediaPlayerPrivateInterface* MediaPlayer::playerPrivate()
     return m_private.get();
 }
 
-static MediaPlayerScope LEGACY_NODELETE effectiveSelectedScope(const MediaPlayerEngineSelection& selection)
+NODELETE static MediaPlayerScope effectiveSelectedScope(const MediaPlayerEngineSelection& selection)
 {
     return selection.scope.value_or(hasPlatformStrategies() ? MediaPlayerScope::Playback : MediaPlayerScope::Supports);
 }
 
-static bool LEGACY_NODELETE engineScopeMatchesSelection(MediaPlayerScope engineScope, MediaPlayerScope selectionScope)
+NODELETE static bool engineScopeMatchesSelection(MediaPlayerScope engineScope, MediaPlayerScope selectionScope)
 {
     if (selectionScope == MediaPlayerScope::Playback)
         return engineScope == MediaPlayerScope::Playback;

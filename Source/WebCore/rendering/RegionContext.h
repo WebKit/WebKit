@@ -42,11 +42,11 @@ public:
     virtual ~RegionContext() = default;
 
     void pushTransform(const AffineTransform&);
-    void LEGACY_NODELETE popTransform();
+    NODELETE void popTransform();
 
     void pushClip(const IntRect&);
     void pushClip(const Path&);
-    void LEGACY_NODELETE popClip();
+    NODELETE void popClip();
 
     virtual bool isEventRegionContext() const { return false; }
     virtual bool isAccessibilityRegionContext() const { return false; }

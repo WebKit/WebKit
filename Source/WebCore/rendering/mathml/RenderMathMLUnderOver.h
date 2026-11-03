@@ -45,17 +45,17 @@ private:
     bool isRenderMathMLScripts() const final { return false; }
     bool isMathContentCentered() const final { return !shouldMoveLimits(); }
     ASCIILiteral renderName() const final { return "RenderMathMLUnderOver"_s; }
-    MathMLUnderOverElement& LEGACY_NODELETE element() const;
+    NODELETE MathMLUnderOverElement& element() const;
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() final;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
 
     void stretchHorizontalOperatorsAndLayoutChildren();
-    bool LEGACY_NODELETE isValid() const;
+    NODELETE bool isValid() const;
     bool shouldMoveLimits() const;
-    RenderBox& LEGACY_NODELETE base() const;
-    RenderBox& LEGACY_NODELETE under() const;
-    RenderBox& LEGACY_NODELETE over() const;
+    NODELETE RenderBox& base() const;
+    NODELETE RenderBox& under() const;
+    NODELETE RenderBox& over() const;
     LayoutUnit horizontalOffset(const RenderBox&) const;
     bool hasAccent(bool accentUnder = false) const;
     bool hasAccentUnder() const { return hasAccent(true); };

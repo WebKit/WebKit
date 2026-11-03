@@ -61,22 +61,22 @@ public:
     ~SQLiteIDBCursor();
 
     const IDBResourceIdentifier& identifier() const LIFETIME_BOUND { return m_cursorIdentifier; }
-    SQLiteIDBTransaction* LEGACY_NODELETE transaction() const;
+    NODELETE SQLiteIDBTransaction* transaction() const;
 
     IDBObjectStoreIdentifier objectStoreID() const { return m_objectStoreID; }
-    int64_t LEGACY_NODELETE currentRecordRowID() const;
+    NODELETE int64_t currentRecordRowID() const;
 
-    const IDBKeyData& LEGACY_NODELETE currentKey() const;
-    const IDBKeyData& LEGACY_NODELETE currentPrimaryKey() const;
-    const IDBValue& LEGACY_NODELETE currentValue() const;
+    NODELETE const IDBKeyData& currentKey() const;
+    NODELETE const IDBKeyData& currentPrimaryKey() const;
+    NODELETE const IDBValue& currentValue() const;
 
     bool advance(uint64_t count);
     bool iterate(const IDBKeyData& targetKey, const IDBKeyData& targetPrimaryKey);
     bool prefetchOneRecord();
     bool prefetch();
 
-    bool LEGACY_NODELETE didComplete() const;
-    bool LEGACY_NODELETE didError() const;
+    NODELETE bool didComplete() const;
+    NODELETE bool didError() const;
 
     void objectStoreRecordsChanged();
 
@@ -118,7 +118,7 @@ private:
 
     bool isDirectionNext() const { return m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::Nextunique; }
 
-    void LEGACY_NODELETE increaseCountToPrefetch();
+    NODELETE void increaseCountToPrefetch();
 
     uint64_t boundIDValue() const;
 

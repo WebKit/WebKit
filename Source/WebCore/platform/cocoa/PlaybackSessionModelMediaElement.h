@@ -169,7 +169,7 @@ private:
     uint64_t logIdentifier() const final;
     const Logger* loggerPtr() const final;
     ASCIILiteral logClassName() const { return "PlaybackSessionModelMediaElement"_s; }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const;
+    NODELETE WTFLogChannel& logChannel() const;
 #endif
 
     RefPtr<HTMLMediaElement> m_mediaElement;

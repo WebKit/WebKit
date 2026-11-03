@@ -52,9 +52,9 @@ public:
         });
     }
     WEBCORE_EXPORT IsCallbackRegistered whenSettledWithResult(Function<void(JSDOMGlobalObject*, bool, JSC::JSValue)>&&);
-    JSC::JSValue LEGACY_NODELETE result() const;
+    NODELETE JSC::JSValue result() const;
 
-    void LEGACY_NODELETE markAsHandled();
+    NODELETE void markAsHandled();
 
     enum class Status { Pending, Fulfilled, Rejected };
     WEBCORE_EXPORT Status status() const;

@@ -66,7 +66,7 @@ public:
     Box(const LayoutIntegration::InlineContent&, size_t boxIndex);
 
     bool isText() const;
-    bool LEGACY_NODELETE isSVGText() const;
+    NODELETE bool isSVGText() const;
     bool isInlineBox() const;
     bool isRubyBase() const;
     bool isRootInlineBox() const;
@@ -74,7 +74,7 @@ public:
     bool isBlockLevelBox() const;
     bool isAtomicInlineBox() const;
 
-    FloatRect LEGACY_NODELETE visualRect() const;
+    NODELETE FloatRect visualRect() const;
     FloatRect visualRectIgnoringBlockDirection() const;
     // Visual in inline direction, logical for writing mode.
     inline FloatRect logicalRectIgnoringInlineDirection() const;
@@ -111,10 +111,10 @@ public:
     WritingMode writingMode() const { return style()->writingMode(); }
 
     // Text-relative left/right leaf boxes.
-    LeafBoxIterator LEGACY_NODELETE nextLineRightwardOnLine() const;
-    LeafBoxIterator LEGACY_NODELETE nextLineLeftwardOnLine() const;
-    LeafBoxIterator LEGACY_NODELETE nextLineRightwardOnLineIgnoringLineBreak() const;
-    LeafBoxIterator LEGACY_NODELETE nextLineLeftwardOnLineIgnoringLineBreak() const;
+    NODELETE LeafBoxIterator nextLineRightwardOnLine() const;
+    NODELETE LeafBoxIterator nextLineLeftwardOnLine() const;
+    NODELETE LeafBoxIterator nextLineRightwardOnLineIgnoringLineBreak() const;
+    NODELETE LeafBoxIterator nextLineLeftwardOnLineIgnoringLineBreak() const;
 
     // Coordinate-relative left/right leaf boxes.
     inline LeafBoxIterator nextLogicalRightwardOnLine() const;
@@ -124,7 +124,7 @@ public:
 
     InlineBoxIterator parentInlineBox() const;
 
-    LineBox LEGACY_NODELETE lineBox() const;
+    NODELETE LineBox lineBox() const;
     size_t lineIndex() const;
 
     const InlineDisplay::Box& displayBox() const { return displayBoxes()[m_boxIndex]; }
@@ -396,7 +396,7 @@ using LeafBoxRange = BoxRange<LeafBoxIterator>;
 
 LeafBoxIterator boxFor(const RenderLineBreak&);
 LeafBoxIterator boxFor(const RenderBox&);
-Box LEGACY_NODELETE boxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
+NODELETE Box boxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
 
 // -----------------------------------------------
 

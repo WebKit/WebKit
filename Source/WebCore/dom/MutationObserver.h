@@ -57,7 +57,7 @@ template<typename> class ExceptionOr;
 class MutationObserver final : public RefCounted<MutationObserver> {
     WTF_MAKE_TZONE_ALLOCATED(MutationObserver);
 public:
-    static Ref<MutationObserver> LEGACY_NODELETE create(Ref<MutationCallback>&&);
+    NODELETE static Ref<MutationObserver> create(Ref<MutationCallback>&&);
 
     ~MutationObserver();
 
@@ -84,7 +84,7 @@ public:
     void observationEnded(MutationObserverRegistration&);
     void enqueueMutationRecord(Ref<MutationRecord>&&);
     void setHasTransientRegistration(Document&);
-    bool LEGACY_NODELETE canDeliver();
+    NODELETE bool canDeliver();
 
     bool isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor&) const;
 
@@ -103,7 +103,7 @@ private:
     explicit MutationObserver(Ref<MutationCallback>&&);
     void deliver();
 
-    static bool LEGACY_NODELETE validateOptions(MutationObserverOptions);
+    NODELETE static bool validateOptions(MutationObserverOptions);
 
     const Ref<MutationCallback> m_callback;
     Vector<Ref<MutationRecord>> m_records;

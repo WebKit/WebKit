@@ -88,7 +88,7 @@ public:
 
     bool isAuthorStyleDefined() const { return m_isAuthorStyleDefined; }
     RuleSet* userAgentMediaQueryStyle() const;
-    RuleSet* LEGACY_NODELETE dynamicViewTransitionsStyle() const;
+    NODELETE RuleSet* dynamicViewTransitionsStyle() const;
     RuleSet& authorStyle() const { return *m_authorStyle; }
     RuleSet* userStyle() const;
     RuleSet* styleForDeclarationOrigin(DeclarationOrigin);
@@ -113,9 +113,9 @@ public:
 
     void resetUserAgentMediaQueryStyle();
 
-    bool LEGACY_NODELETE hasViewportDependentMediaQueries() const;
-    bool LEGACY_NODELETE hasContainerQueries() const;
-    bool LEGACY_NODELETE hasScopeRules() const;
+    NODELETE bool hasViewportDependentMediaQueries() const;
+    NODELETE bool hasContainerQueries() const;
+    NODELETE bool hasScopeRules() const;
 
     RefPtr<StyleRuleViewTransition> viewTransitionRule() const;
 

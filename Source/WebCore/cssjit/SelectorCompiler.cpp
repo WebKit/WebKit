@@ -321,7 +321,7 @@ static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttribut
 
 } // extern "C"
 
-static bool LEGACY_NODELETE shouldDumpCSSJITDisassembly()
+NODELETE static bool shouldDumpCSSJITDisassembly()
 {
     return JSC::Options::dumpDisassembly() || JSC::Options::dumpCSSJITDisassembly();
 }
@@ -414,8 +414,8 @@ public:
         ASSERT(!(selector.match() == CSSSelector::Match::Set && m_attributeCaseSensitivity != AttributeCaseSensitivity::CaseSensitive));
     }
 
-    AttributeCaseSensitivity LEGACY_NODELETE attributeCaseSensitivity() const { return m_attributeCaseSensitivity; }
-    const CSSSelector& LEGACY_NODELETE selector() const { return *m_selector; }
+    NODELETE AttributeCaseSensitivity attributeCaseSensitivity() const { return m_attributeCaseSensitivity; }
+    NODELETE const CSSSelector& selector() const { return *m_selector; }
 
 private:
     const CSSSelector* m_selector;
@@ -685,7 +685,7 @@ void compileSelector(CompiledSelector& compiledSelector, const CSSSelector& sele
     ASSERT(compiledSelector.status != SelectorCompilationStatus::NotCompiled);
 }
 
-static inline FragmentRelation LEGACY_NODELETE fragmentRelationForSelectorRelation(CSSSelector::Relation relation)
+NODELETE static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::Relation relation)
 {
     switch (relation) {
     case CSSSelector::Relation::DescendantSpace:
@@ -706,22 +706,22 @@ static inline FragmentRelation LEGACY_NODELETE fragmentRelationForSelectorRelati
     return FragmentRelation::Descendant;
 }
 
-static inline FunctionType LEGACY_NODELETE mostRestrictiveFunctionType(FunctionType a, FunctionType b)
+NODELETE static inline FunctionType mostRestrictiveFunctionType(FunctionType a, FunctionType b)
 {
     return std::max(a, b);
 }
 
-static inline bool LEGACY_NODELETE fragmentMatchesTheRightmostElement(const SelectorFragment& fragment)
+NODELETE static inline bool fragmentMatchesTheRightmostElement(const SelectorFragment& fragment)
 {
     return fragment.relationToRightFragment == FragmentRelation::Rightmost && fragment.positionInRootFragments == FragmentPositionInRootFragments::Rightmost;
 }
 
-static inline bool LEGACY_NODELETE fragmentMatchesRightmostOrAdjacentElement(const SelectorFragment& fragment)
+NODELETE static inline bool fragmentMatchesRightmostOrAdjacentElement(const SelectorFragment& fragment)
 {
     return fragment.isRightmostOrAdjacent && fragment.positionInRootFragments != FragmentPositionInRootFragments::Other;
 }
 
-static inline FunctionType LEGACY_NODELETE addPseudoElementPseudoClassType(const CSSSelector&, SelectorFragment&)
+NODELETE static inline FunctionType addPseudoElementPseudoClassType(const CSSSelector&, SelectorFragment&)
 {
     // FIXME: scrollbar pseudoclass interaction with :not doesn't behave correctly.
     // Compile them when they are fixed and tested.
@@ -1533,7 +1533,7 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector& rootSelec
         computeBacktrackingInformation(m_selectorFragments);
 }
 
-static bool LEGACY_NODELETE pseudoClassOnlyMatchesLinksInQuirksMode(const CSSSelector& selector)
+NODELETE static bool pseudoClassOnlyMatchesLinksInQuirksMode(const CSSSelector& selector)
 {
     auto pseudoClass = selector.pseudoClass();
     return pseudoClass == CSSSelector::PseudoClass::Hover || pseudoClass == CSSSelector::PseudoClass::Active;
@@ -1740,12 +1740,12 @@ static FunctionType constructFragments(const CSSSelector& rootSelector, Selector
     return functionType;
 }
 
-static inline unsigned LEGACY_NODELETE extraRegistersForAttributeNameTesting(const CSSSelector& attributeSelector)
+NODELETE static inline unsigned extraRegistersForAttributeNameTesting(const CSSSelector& attributeSelector)
 {
     return attributeSelector.attribute().prefix() == starAtom() || attributeSelector.attribute().namespaceURI().isNull() ? 0 : 1;
 }
 
-static inline unsigned LEGACY_NODELETE extraRegistersForAttributeValueTesting(const AttributeMatchingInfo& attributeInfo)
+NODELETE static inline unsigned extraRegistersForAttributeValueTesting(const AttributeMatchingInfo& attributeInfo)
 {
     switch (attributeInfo.attributeCaseSensitivity()) {
     case AttributeCaseSensitivity::CaseSensitive:
@@ -1768,7 +1768,7 @@ static const unsigned minimumRequiredRegisterCountForAttributeFilter = 6;
 //     Element + elementCounter + previousSibling + checkingContext + lastRelation + nextSiblingElement.
 static const unsigned minimumRequiredRegisterCountForNthChildFilter = 6;
 
-static unsigned LEGACY_NODELETE minimumRegisterRequirements(const SelectorFragment& selectorFragment)
+NODELETE static unsigned minimumRegisterRequirements(const SelectorFragment& selectorFragment)
 {
     unsigned minimum = minimumRequiredRegisterCount;
     const auto& attributes = selectorFragment.attributes;
@@ -1805,9 +1805,9 @@ static unsigned LEGACY_NODELETE minimumRegisterRequirements(const SelectorFragme
 
 bool hasAnyCombinators(const Vector<SelectorFragmentList>& selectorList);
 template <size_t inlineCapacity>
-bool LEGACY_NODELETE hasAnyCombinators(const Vector<SelectorFragment, inlineCapacity>& selectorFragmentList);
+NODELETE bool hasAnyCombinators(const Vector<SelectorFragment, inlineCapacity>& selectorFragmentList);
 
-bool LEGACY_NODELETE hasAnyCombinators(const Vector<SelectorFragmentList>& selectorList)
+NODELETE bool hasAnyCombinators(const Vector<SelectorFragmentList>& selectorList)
 {
     for (const SelectorFragmentList& selectorFragmentList : selectorList) {
         if (hasAnyCombinators(selectorFragmentList))
@@ -1817,7 +1817,7 @@ bool LEGACY_NODELETE hasAnyCombinators(const Vector<SelectorFragmentList>& selec
 }
 
 template <size_t inlineCapacity>
-bool LEGACY_NODELETE hasAnyCombinators(const Vector<SelectorFragment, inlineCapacity>& selectorFragmentList)
+NODELETE bool hasAnyCombinators(const Vector<SelectorFragment, inlineCapacity>& selectorFragmentList)
 {
     if (selectorFragmentList.isEmpty())
         return false;
@@ -1843,9 +1843,9 @@ bool LEGACY_NODELETE hasAnyCombinators(const Vector<SelectorFragment, inlineCapa
 // The CSS JIT has only been validated with a strict minimum of 6 allocated registers.
 const unsigned minimumRegisterRequirement = 6;
 
-void LEGACY_NODELETE computeBacktrackingMemoryRequirements(SelectorFragmentList& selectorFragments, bool backtrackingRegisterReserved = false);
+NODELETE void computeBacktrackingMemoryRequirements(SelectorFragmentList& selectorFragments, bool backtrackingRegisterReserved = false);
 
-static void LEGACY_NODELETE computeBacktrackingMemoryRequirements(SelectorList& selectorList, unsigned& totalRegisterRequirements, unsigned& totalStackRequirements, bool backtrackingRegisterReservedForFragment = false)
+NODELETE static void computeBacktrackingMemoryRequirements(SelectorList& selectorList, unsigned& totalRegisterRequirements, unsigned& totalStackRequirements, bool backtrackingRegisterReservedForFragment = false)
 {
     unsigned selectorListRegisterRequirements = 0;
     unsigned selectorListStackRequirements = 0;
@@ -1941,7 +1941,7 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::MacroAssemb
 }
 
 
-static inline void LEGACY_NODELETE updateChainStates(const SelectorFragment& fragment, bool& hasDescendantRelationOnTheRight, unsigned& ancestorPositionSinceDescendantRelation, bool& hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain, unsigned& adjacentPositionSinceIndirectAdjacentTreeWalk)
+NODELETE static inline void updateChainStates(const SelectorFragment& fragment, bool& hasDescendantRelationOnTheRight, unsigned& ancestorPositionSinceDescendantRelation, bool& hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain, unsigned& adjacentPositionSinceIndirectAdjacentTreeWalk)
 {
     switch (fragment.relationToRightFragment) {
     case FragmentRelation::Rightmost:
@@ -1967,17 +1967,17 @@ static inline void LEGACY_NODELETE updateChainStates(const SelectorFragment& fra
     }
 }
 
-static inline bool LEGACY_NODELETE isFirstAncestor(unsigned ancestorPositionSinceDescendantRelation)
+NODELETE static inline bool isFirstAncestor(unsigned ancestorPositionSinceDescendantRelation)
 {
     return ancestorPositionSinceDescendantRelation == 1;
 }
 
-static inline bool LEGACY_NODELETE isFirstAdjacent(unsigned adjacentPositionSinceIndirectAdjacentTreeWalk)
+NODELETE static inline bool isFirstAdjacent(unsigned adjacentPositionSinceIndirectAdjacentTreeWalk)
 {
     return adjacentPositionSinceIndirectAdjacentTreeWalk == 1;
 }
 
-static inline BacktrackingAction LEGACY_NODELETE solveDescendantBacktrackingActionForChild(const SelectorFragment& fragment, unsigned backtrackingStartHeightFromDescendant)
+NODELETE static inline BacktrackingAction solveDescendantBacktrackingActionForChild(const SelectorFragment& fragment, unsigned backtrackingStartHeightFromDescendant)
 {
     // If height is invalid (e.g. There's no tag name).
     if (backtrackingStartHeightFromDescendant == invalidHeight)
@@ -1994,7 +1994,7 @@ static inline BacktrackingAction LEGACY_NODELETE solveDescendantBacktrackingActi
     return BacktrackingAction::JumpToDescendantTail;
 }
 
-static inline BacktrackingAction LEGACY_NODELETE solveAdjacentBacktrackingActionForDirectAdjacent(const SelectorFragment& fragment, unsigned backtrackingStartWidthFromIndirectAdjacent)
+NODELETE static inline BacktrackingAction solveAdjacentBacktrackingActionForDirectAdjacent(const SelectorFragment& fragment, unsigned backtrackingStartWidthFromIndirectAdjacent)
 {
     // If width is invalid (e.g. There's no tag name).
     if (backtrackingStartWidthFromIndirectAdjacent == invalidWidth)
@@ -2011,7 +2011,7 @@ static inline BacktrackingAction LEGACY_NODELETE solveAdjacentBacktrackingAction
     return BacktrackingAction::JumpToDirectAdjacentTail;
 }
 
-static inline BacktrackingAction LEGACY_NODELETE solveAdjacentTraversalBacktrackingAction(const SelectorFragment& fragment, bool hasDescendantRelationOnTheRight)
+NODELETE static inline BacktrackingAction solveAdjacentTraversalBacktrackingAction(const SelectorFragment& fragment, bool hasDescendantRelationOnTheRight)
 {
     if (!hasDescendantRelationOnTheRight)
         return BacktrackingAction::NoBacktracking;
@@ -2022,7 +2022,7 @@ static inline BacktrackingAction LEGACY_NODELETE solveAdjacentTraversalBacktrack
     return BacktrackingAction::JumpToDescendantTail;
 }
 
-static inline void LEGACY_NODELETE solveBacktrackingAction(SelectorFragment& fragment, bool hasDescendantRelationOnTheRight, bool hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain)
+NODELETE static inline void solveBacktrackingAction(SelectorFragment& fragment, bool hasDescendantRelationOnTheRight, bool hasIndirectAdjacentRelationOnTheRightOfDirectAdjacentChain)
 {
     switch (fragment.relationToRightFragment) {
     case FragmentRelation::Rightmost:
@@ -2065,7 +2065,7 @@ enum class TagNameEquality {
     StrictlyEqual
 };
 
-static inline TagNameEquality LEGACY_NODELETE equalTagNames(const CSSSelector* lhs, const CSSSelector* rhs)
+NODELETE static inline TagNameEquality equalTagNames(const CSSSelector* lhs, const CSSSelector* rhs)
 {
     if (!lhs || !rhs)
         return TagNameEquality::MaybeEqual;
@@ -2103,7 +2103,7 @@ static inline TagNameEquality LEGACY_NODELETE equalTagNames(const CSSSelector* l
     return TagNameEquality::MaybeEqual;
 }
 
-static inline bool LEGACY_NODELETE equalTagNamePatterns(const TagNamePattern& lhs, const TagNamePattern& rhs)
+NODELETE static inline bool equalTagNamePatterns(const TagNamePattern& lhs, const TagNamePattern& rhs)
 {
     TagNameEquality result = equalTagNames(lhs.tagNameSelector, rhs.tagNameSelector);
     if (result == TagNameEquality::MaybeEqual)
@@ -2119,7 +2119,7 @@ static inline bool LEGACY_NODELETE equalTagNamePatterns(const TagNamePattern& lh
 
 // Find the largest matching prefix from already known tagNames.
 // And by using this, compute an appropriate height of backtracking start element from the closest base element in the chain.
-static inline unsigned LEGACY_NODELETE computeBacktrackingStartOffsetInChain(const TagNameList& tagNames, unsigned maxPrefixSize)
+NODELETE static inline unsigned computeBacktrackingStartOffsetInChain(const TagNameList& tagNames, unsigned maxPrefixSize)
 {
     RELEASE_ASSERT(!tagNames.isEmpty());
     RELEASE_ASSERT(maxPrefixSize < tagNames.size());
@@ -2228,13 +2228,13 @@ static inline void computeBacktrackingWidthFromIndirectAdjacent(SelectorFragment
     }
 }
 
-static bool LEGACY_NODELETE requiresAdjacentTail(const SelectorFragment& fragment)
+NODELETE static bool requiresAdjacentTail(const SelectorFragment& fragment)
 {
     ASSERT(fragment.traversalBacktrackingAction != BacktrackingAction::JumpToDirectAdjacentTail);
     return fragment.matchingTagNameBacktrackingAction == BacktrackingAction::JumpToDirectAdjacentTail || fragment.matchingPostTagNameBacktrackingAction == BacktrackingAction::JumpToDirectAdjacentTail;
 }
 
-static bool LEGACY_NODELETE requiresDescendantTail(const SelectorFragment& fragment)
+NODELETE static bool requiresDescendantTail(const SelectorFragment& fragment)
 {
     return fragment.matchingTagNameBacktrackingAction == BacktrackingAction::JumpToDescendantTail || fragment.matchingPostTagNameBacktrackingAction == BacktrackingAction::JumpToDescendantTail || fragment.traversalBacktrackingAction == BacktrackingAction::JumpToDescendantTail;
 }
@@ -2343,11 +2343,11 @@ void computeBacktrackingInformation(SelectorFragmentList& selectorFragments, uns
     }
 }
 
-inline void LEGACY_NODELETE SelectorCodeGenerator::pushMacroAssemblerRegisters()
+NODELETE inline void SelectorCodeGenerator::pushMacroAssemblerRegisters()
 {
 }
 
-inline void LEGACY_NODELETE SelectorCodeGenerator::popMacroAssemblerRegisters(StackAllocator&)
+NODELETE inline void SelectorCodeGenerator::popMacroAssemblerRegisters(StackAllocator&)
 {
 }
 
@@ -2396,12 +2396,12 @@ inline void SelectorCodeGenerator::generateReturn()
     m_assembler.ret();
 }
 
-static bool LEGACY_NODELETE isAdjacentRelation(FragmentRelation relation)
+NODELETE static bool isAdjacentRelation(FragmentRelation relation)
 {
     return relation == FragmentRelation::DirectAdjacent || relation == FragmentRelation::IndirectAdjacent;
 }
 
-static bool LEGACY_NODELETE shouldMarkStyleIsAffectedByPreviousSibling(const SelectorFragment& fragment)
+NODELETE static bool shouldMarkStyleIsAffectedByPreviousSibling(const SelectorFragment& fragment)
 {
     return isAdjacentRelation(fragment.relationToLeftFragment) && !isAdjacentRelation(fragment.relationToRightFragment);
 }
@@ -3325,7 +3325,7 @@ void SelectorCodeGenerator::generateElementLinkMatching(Assembler::JumpList& fai
         generateElementIsLink(failureCases);
 }
 
-static inline bool LEGACY_NODELETE canMatchStyleAttribute(const SelectorFragment& fragment)
+NODELETE static inline bool canMatchStyleAttribute(const SelectorFragment& fragment)
 {
     for (unsigned i = 0; i < fragment.attributes.size(); ++i) {
         const CSSSelector& attributeSelector = fragment.attributes[i].selector();
@@ -3539,7 +3539,7 @@ enum CaseSensitivity {
 };
 
 template<CaseSensitivity caseSensitivity>
-static bool LEGACY_NODELETE attributeValueBeginsWith(const Attribute* attribute, AtomStringImpl* expectedString)
+NODELETE static bool attributeValueBeginsWith(const Attribute* attribute, AtomStringImpl* expectedString)
 {
     ASSERT(expectedString);
 
@@ -3559,7 +3559,7 @@ static bool attributeValueContains(const Attribute* attribute, AtomStringImpl* e
 }
 
 template<CaseSensitivity caseSensitivity>
-static bool LEGACY_NODELETE attributeValueEndsWith(const Attribute* attribute, AtomStringImpl* expectedString)
+NODELETE static bool attributeValueEndsWith(const Attribute* attribute, AtomStringImpl* expectedString)
 {
     ASSERT(expectedString);
 
@@ -3570,7 +3570,7 @@ static bool LEGACY_NODELETE attributeValueEndsWith(const Attribute* attribute, A
 }
 
 template<CaseSensitivity caseSensitivity>
-static bool LEGACY_NODELETE attributeValueMatchHyphenRule(const Attribute* attribute, AtomStringImpl* expectedString)
+NODELETE static bool attributeValueMatchHyphenRule(const Attribute* attribute, AtomStringImpl* expectedString)
 {
     ASSERT(expectedString);
 
@@ -4242,7 +4242,7 @@ void SelectorCodeGenerator::generateElementIsLink(Assembler::JumpList& failureCa
     failureCases.append(m_assembler.branchTest16(Assembler::Zero, Assembler::Address(elementAddressRegister, Node::stateFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsLink())));
 }
 
-static bool LEGACY_NODELETE nthFilterIsAlwaysSatisified(int a, int b)
+NODELETE static bool nthFilterIsAlwaysSatisified(int a, int b)
 {
     // Anything modulo 1 is zero. Unless b restricts the range, this does not filter anything out.
     if (a == 1 && (!b || (b == 1)))
@@ -4504,7 +4504,7 @@ void SelectorCodeGenerator::generateElementMatchesMatchesPseudoClass(Assembler::
         generateElementMatchesSelectorList(failureCases, elementAddressRegister, matchesList);
 }
 
-void LEGACY_NODELETE SelectorCodeGenerator::generateElementHasPseudoElement(Assembler::JumpList&, const SelectorFragment& fragment)
+NODELETE void SelectorCodeGenerator::generateElementHasPseudoElement(Assembler::JumpList&, const SelectorFragment& fragment)
 {
     ASSERT_UNUSED(fragment, fragment.pseudoElementSelector);
     ASSERT_WITH_MESSAGE(m_selectorContext != SelectorContext::QuerySelector, "When the fragment has pseudo element, the selector becomes CannotMatchAnything for QuerySelector and this test function is not called.");

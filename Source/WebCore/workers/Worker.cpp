@@ -63,7 +63,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Worker);
 
 static Lock allWorkersLock;
-static HashSet<ScriptExecutionContextIdentifier>& LEGACY_NODELETE allWorkerContexts() WTF_REQUIRES_LOCK(allWorkersLock)
+NODELETE static HashSet<ScriptExecutionContextIdentifier>& allWorkerContexts() WTF_REQUIRES_LOCK(allWorkersLock)
 {
     static NeverDestroyed<HashSet<ScriptExecutionContextIdentifier>> map;
     return map;

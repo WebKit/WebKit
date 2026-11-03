@@ -679,7 +679,7 @@ void TextBoxPainter::paintBackgroundFillForRange(unsigned startOffset, unsigned 
     context.fillRect(backgroundRect, color);
 }
 
-static bool LEGACY_NODELETE isTransparent(const StyledMarkedText& markedText)
+NODELETE static bool isTransparent(const StyledMarkedText& markedText)
 {
     switch (markedText.type) {
     case MarkedText::Type::DraggedContent:
@@ -911,7 +911,7 @@ static inline Style::TextDecorationLine computedTextDecorationType(const Style::
     return textDecorations;
 }
 
-static inline CheckedRef<const Style::ComputedStyle> LEGACY_NODELETE decoratingBoxStyleForInlineBox(const InlineIterator::InlineBox& inlineBox, bool isFirstLine)
+NODELETE static inline CheckedRef<const Style::ComputedStyle> decoratingBoxStyleForInlineBox(const InlineIterator::InlineBox& inlineBox, bool isFirstLine)
 {
     if (!inlineBox.isRootInlineBox())
         return inlineBox.style();
@@ -1036,7 +1036,7 @@ void TextBoxPainter::collectDecoratingBoxesForBackgroundPainting(DecoratingBoxLi
     }
 }
 
-static float LEGACY_NODELETE autoTextDecorationInset(const Style::ComputedStyle& style)
+NODELETE static float autoTextDecorationInset(const Style::ComputedStyle& style)
 {
     // A small UA-chosen inset (relative to font size) so that two adjacent identical underlined
     // elements do not appear to share a single continuous underline (important for e.g. Chinese,
@@ -1049,9 +1049,9 @@ struct DecoratingBoxFragmentInlineSizes {
     float current { 0.f };
     float following { 0.f };
 
-    float LEGACY_NODELETE total() const { return preceding + current + following; }
+    NODELETE float total() const { return preceding + current + following; }
 };
-static DecoratingBoxFragmentInlineSizes LEGACY_NODELETE decoratingBoxFragmentInlineSizes(const InlineIterator::InlineBox& decoratingInlineBox)
+NODELETE static DecoratingBoxFragmentInlineSizes decoratingBoxFragmentInlineSizes(const InlineIterator::InlineBox& decoratingInlineBox)
 {
     auto inlineSizes = DecoratingBoxFragmentInlineSizes { .current = decoratingInlineBox.logicalWidth() };
     for (auto fragment = decoratingInlineBox.nextInlineBoxLineLeftward(); fragment; fragment.traverseInlineBoxLineLeftward())
@@ -1308,7 +1308,7 @@ enum class TrimSide : bool {
     Right,
 };
 
-static CornerRadii LEGACY_NODELETE trimRadii(const CornerRadii& radii, TrimSide trimSide)
+NODELETE static CornerRadii trimRadii(const CornerRadii& radii, TrimSide trimSide)
 {
     switch (trimSide) {
     case TrimSide::Left:
@@ -1339,7 +1339,7 @@ static FloatRect snapRectToDevicePixelsInDirection(const FloatRect& rect, float 
 }
 
 enum class TextBoxFragmentLocationWithinLayoutBox : uint8_t { First = 1 << 0, Last = 1 << 1 };
-static OptionSet<TextBoxFragmentLocationWithinLayoutBox> LEGACY_NODELETE textBoxFragmentLocationWithinLayoutBox(const InlineIterator::TextBox& textBox)
+NODELETE static OptionSet<TextBoxFragmentLocationWithinLayoutBox> textBoxFragmentLocationWithinLayoutBox(const InlineIterator::TextBox& textBox)
 {
     OptionSet<TextBoxFragmentLocationWithinLayoutBox> location;
     if (textBox.displayBox().isFirstForLayoutBox())
@@ -1487,7 +1487,7 @@ void TextBoxPainter::paintCompositionUnderlines()
     }
 }
 
-static inline void LEGACY_NODELETE mirrorRTLSegment(float logicalWidth, TextDirection direction, float& start, float width)
+NODELETE static inline void mirrorRTLSegment(float logicalWidth, TextDirection direction, float& start, float width)
 {
     if (direction == TextDirection::LTR)
         return;
@@ -1551,14 +1551,14 @@ static void removeMarkersPaintedByTextDecorationPainter(const RenderText& render
     }
 }
 
-static std::optional<MarkedText> LEGACY_NODELETE markedTextForTextDecorationLineSpellingError(const RenderText& renderer)
+NODELETE static std::optional<MarkedText> markedTextForTextDecorationLineSpellingError(const RenderText& renderer)
 {
     if (!renderer.style().textDecorationLineInEffect().isSpellingError())
         return std::nullopt;
     return std::make_optional<MarkedText>(0, static_cast<unsigned>(renderer.length()), MarkedText::Type::SpellingError);
 }
 
-static std::optional<MarkedText> LEGACY_NODELETE markedTextForTextDecorationLineGrammarError(const RenderText& renderer)
+NODELETE static std::optional<MarkedText> markedTextForTextDecorationLineGrammarError(const RenderText& renderer)
 {
     if (!renderer.style().textDecorationLineInEffect().isGrammarError())
         return std::nullopt;

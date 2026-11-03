@@ -76,7 +76,7 @@
 
 namespace WebCore {
 
-static bool LEGACY_NODELETE isRendererThreadSafe(WebSampleBufferVideoRendering *renderering)
+NODELETE static bool isRendererThreadSafe(WebSampleBufferVideoRendering *renderering)
 {
     if (!renderering)
         return true;

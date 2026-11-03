@@ -35,12 +35,12 @@
 
 namespace WebCore {
 
-static bool LEGACY_NODELETE isValidVPProfile(uint8_t profile)
+NODELETE static bool isValidVPProfile(uint8_t profile)
 {
     return profile <= 3;
 }
 
-static bool LEGACY_NODELETE isValidVPLevel(uint8_t level)
+NODELETE static bool isValidVPLevel(uint8_t level)
 {
     constexpr auto validLevels = WTF::toArray<uint8_t>({
         VPConfigurationLevel::Level_1,
@@ -63,26 +63,26 @@ static bool LEGACY_NODELETE isValidVPLevel(uint8_t level)
     return std::binary_search(std::begin(validLevels), std::end(validLevels), level);
 }
 
-static bool LEGACY_NODELETE isValidBitDepth(uint8_t bitDepth)
+NODELETE static bool isValidBitDepth(uint8_t bitDepth)
 {
     return bitDepth == 8
         || bitDepth == 10
         || bitDepth == 12;
 }
 
-static bool LEGACY_NODELETE isValidRange(uint8_t range)
+NODELETE static bool isValidRange(uint8_t range)
 {
     return range == VPConfigurationRange::VideoRange
         || range == VPConfigurationRange::FullRange;
 }
 
-static bool LEGACY_NODELETE isValidChromaSubsampling(uint8_t subsampling)
+NODELETE static bool isValidChromaSubsampling(uint8_t subsampling)
 {
     return subsampling >= VPConfigurationChromaSubsampling::Subsampling_420_Vertical
         && subsampling <= VPConfigurationChromaSubsampling::Subsampling_444;
 }
 
-static bool LEGACY_NODELETE isValidVPColorPrimaries(uint8_t colorPrimaries)
+NODELETE static bool isValidVPColorPrimaries(uint8_t colorPrimaries)
 {
     constexpr auto validColorPrimaries = WTF::toArray<uint8_t>({
         VPConfigurationColorPrimaries::BT_709_6,
@@ -103,7 +103,7 @@ static bool LEGACY_NODELETE isValidVPColorPrimaries(uint8_t colorPrimaries)
     return std::binary_search(std::begin(validColorPrimaries), std::end(validColorPrimaries), colorPrimaries);
 }
 
-static bool LEGACY_NODELETE isValidVPTransferCharacteristics(uint8_t transferCharacteristics)
+NODELETE static bool isValidVPTransferCharacteristics(uint8_t transferCharacteristics)
 {
     constexpr auto validTransferCharacteristics = WTF::toArray<uint8_t>({
         VPConfigurationTransferCharacteristics::BT_709_6,
@@ -128,7 +128,7 @@ static bool LEGACY_NODELETE isValidVPTransferCharacteristics(uint8_t transferCha
     return std::binary_search(std::begin(validTransferCharacteristics), std::end(validTransferCharacteristics), transferCharacteristics);
 }
 
-static bool LEGACY_NODELETE isValidVPMatrixCoefficients(uint8_t matrixCoefficients)
+NODELETE static bool isValidVPMatrixCoefficients(uint8_t matrixCoefficients)
 {
     constexpr auto validMatrixCoefficients = WTF::toArray<uint8_t>({
         VPConfigurationMatrixCoefficients::Identity,
@@ -630,7 +630,7 @@ std::optional<VPCodecConfigurationRecord> vpCodecConfigurationRecordFromVPXByteS
     return record;
 }
 
-static PlatformVideoColorPrimaries LEGACY_NODELETE convertToPlatformVideoColorPrimaries(uint8_t primaries)
+NODELETE static PlatformVideoColorPrimaries convertToPlatformVideoColorPrimaries(uint8_t primaries)
 {
     switch (primaries) {
     case VPConfigurationColorPrimaries::BT_709_6:
@@ -661,7 +661,7 @@ static PlatformVideoColorPrimaries LEGACY_NODELETE convertToPlatformVideoColorPr
     }
 }
 
-static PlatformVideoTransferCharacteristics LEGACY_NODELETE convertToPlatformVideoTransferCharacteristics(uint8_t characteristics)
+NODELETE static PlatformVideoTransferCharacteristics convertToPlatformVideoTransferCharacteristics(uint8_t characteristics)
 {
     switch (characteristics) {
     case VPConfigurationTransferCharacteristics::BT_709_6:
@@ -702,7 +702,7 @@ static PlatformVideoTransferCharacteristics LEGACY_NODELETE convertToPlatformVid
     }
 }
 
-static PlatformVideoMatrixCoefficients LEGACY_NODELETE convertToPlatformVideoMatrixCoefficients(uint8_t coefficients)
+NODELETE static PlatformVideoMatrixCoefficients convertToPlatformVideoMatrixCoefficients(uint8_t coefficients)
 {
     switch (coefficients) {
     case VPConfigurationMatrixCoefficients::Identity:

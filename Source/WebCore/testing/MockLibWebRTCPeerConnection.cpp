@@ -38,13 +38,13 @@
 
 namespace WebCore {
 
-static inline webrtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>& LEGACY_NODELETE getRealPeerConnectionFactory()
+NODELETE static inline webrtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>& getRealPeerConnectionFactory()
 {
     static NeverDestroyed<webrtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>> realPeerConnectionFactory;
     return realPeerConnectionFactory;
 }
 
-static inline webrtc::PeerConnectionFactoryInterface* LEGACY_NODELETE realPeerConnectionFactory()
+NODELETE static inline webrtc::PeerConnectionFactoryInterface* realPeerConnectionFactory()
 {
     return getRealPeerConnectionFactory().get();
 }

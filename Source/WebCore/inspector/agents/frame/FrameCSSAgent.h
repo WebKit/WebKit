@@ -141,7 +141,7 @@ private:
     void collectStyleSheets(CSSStyleSheet*, Vector<CSSStyleSheet*>&);
     void setActiveStyleSheetsForDocument(Document&, Vector<CSSStyleSheet*>&);
     InspectorStyleSheet* createInspectorStyleSheetForDocument(Document&);
-    Inspector::Protocol::CSS::StyleSheetOrigin LEGACY_NODELETE detectOrigin(CSSStyleSheet*, Document*);
+    NODELETE Inspector::Protocol::CSS::StyleSheetOrigin detectOrigin(CSSStyleSheet*, Document*);
     void nodeHasLayoutFlagsChange(Node&);
     void nodesWithPendingLayoutFlagsChangeDispatchTimerFired();
     void pushLayoutContextNodesToFrontend(FrameDOMAgent&);

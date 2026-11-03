@@ -49,7 +49,7 @@ public:
 
     WEBCORE_EXPORT explicit Credential(NSURLCredential *);
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE isEmpty() const;
+    NODELETE WEBCORE_EXPORT bool isEmpty() const;
 
     bool encodingRequiresPlatformData() const;
 

@@ -773,12 +773,12 @@ bool InputType::rendererIsNeeded()
     return true;
 }
 
-ValueOrReference<String> LEGACY_NODELETE InputType::fallbackValue() const
+NODELETE ValueOrReference<String> InputType::fallbackValue() const
 {
     return String();
 }
 
-String LEGACY_NODELETE InputType::defaultValue() const
+NODELETE String InputType::defaultValue() const
 {
     return String();
 }

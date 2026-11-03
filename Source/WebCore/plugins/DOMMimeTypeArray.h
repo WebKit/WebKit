@@ -34,13 +34,13 @@ class Navigator;
 class DOMMimeTypeArray final : public ScriptWrappable, public RefCounted<DOMMimeTypeArray> {
     WTF_MAKE_TZONE_ALLOCATED(DOMMimeTypeArray);
 public:
-    static Ref<DOMMimeTypeArray> LEGACY_NODELETE create(Navigator&, Vector<Ref<DOMMimeType>>&& = { });
+    NODELETE static Ref<DOMMimeTypeArray> create(Navigator&, Vector<Ref<DOMMimeType>>&& = { });
     ~DOMMimeTypeArray();
 
-    unsigned LEGACY_NODELETE length() const;
+    NODELETE unsigned length() const;
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_types.size(); }
-    RefPtr<DOMMimeType> LEGACY_NODELETE item(unsigned index);
-    RefPtr<DOMMimeType> LEGACY_NODELETE namedItem(const AtomString& propertyName);
+    NODELETE RefPtr<DOMMimeType> item(unsigned index);
+    NODELETE RefPtr<DOMMimeType> namedItem(const AtomString& propertyName);
     Vector<AtomString> supportedPropertyNames() const;
 
     bool isSupportedPropertyName(const AtomString&) const;

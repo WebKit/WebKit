@@ -39,7 +39,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<Ref<HTMLTableRowElement>> insertRow(int index = -1);
     WEBCORE_EXPORT ExceptionOr<void> deleteRow(int index);
 
-    int LEGACY_NODELETE numRows() const;
+    NODELETE int numRows() const;
 
     WEBCORE_EXPORT Ref<HTMLCollection> rows();
 

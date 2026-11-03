@@ -68,7 +68,7 @@ constexpr DecodedHTMLEntity::DecodedHTMLEntity(ConstructNotEnoughCharactersType)
 {
 }
 
-static constexpr DecodedHTMLEntity LEGACY_NODELETE makeEntity(char32_t character)
+NODELETE static constexpr DecodedHTMLEntity makeEntity(char32_t character)
 {
     if (!character || character > UCHAR_MAX_VALUE || U_IS_SURROGATE(character))
         return { replacementCharacter };
@@ -82,14 +82,14 @@ static constexpr DecodedHTMLEntity LEGACY_NODELETE makeEntity(char32_t character
     return { windowsLatin1ExtensionArray[character - 0x80] };
 }
 
-static DecodedHTMLEntity LEGACY_NODELETE makeEntity(const Checked<uint32_t, RecordOverflow>& character)
+NODELETE static DecodedHTMLEntity makeEntity(const Checked<uint32_t, RecordOverflow>& character)
 {
     if (character.hasOverflowed())
         return { replacementCharacter };
     return makeEntity(character.value());
 }
 
-static constexpr DecodedHTMLEntity LEGACY_NODELETE makeEntity(HTMLEntityTableEntry entry)
+NODELETE static constexpr DecodedHTMLEntity makeEntity(HTMLEntityTableEntry entry)
 {
     char16_t second = entry.optionalSecondCharacter;
     if (U_IS_BMP(entry.firstCharacter)) {
@@ -107,8 +107,8 @@ class SegmentedStringSource {
 public:
     NODELETE explicit SegmentedStringSource(SegmentedString&);
 
-    bool LEGACY_NODELETE isEmpty() const { return m_source.isEmpty(); }
-    char16_t LEGACY_NODELETE currentCharacter() const { return m_source.currentCharacter(); }
+    NODELETE bool isEmpty() const { return m_source.isEmpty(); }
+    NODELETE char16_t currentCharacter() const { return m_source.currentCharacter(); }
     void advance();
     void pushEverythingBack();
     void pushBackButKeep(unsigned keepCount);
@@ -122,11 +122,11 @@ template<typename CharacterType> class StringParsingBufferSource {
 public:
     explicit StringParsingBufferSource(StringParsingBuffer<CharacterType>&);
 
-    static bool LEGACY_NODELETE isEmpty() { return false; }
-    char16_t LEGACY_NODELETE currentCharacter() const { return m_source.atEnd() ? 0 : char16_t { *m_source }; }
-    void LEGACY_NODELETE advance() { m_source.advance(); }
-    void LEGACY_NODELETE pushEverythingBack() { m_source.setPosition(m_startPosition); }
-    void LEGACY_NODELETE pushBackButKeep(unsigned keepCount) { m_source.setPosition(m_startPosition.subspan(keepCount)); }
+    NODELETE static bool isEmpty() { return false; }
+    NODELETE char16_t currentCharacter() const { return m_source.atEnd() ? 0 : char16_t { *m_source }; }
+    NODELETE void advance() { m_source.advance(); }
+    NODELETE void pushEverythingBack() { m_source.setPosition(m_startPosition); }
+    NODELETE void pushBackButKeep(unsigned keepCount) { m_source.setPosition(m_startPosition.subspan(keepCount)); }
 
 private:
     StringParsingBuffer<CharacterType>& m_source;

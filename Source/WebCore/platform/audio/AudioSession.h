@@ -80,7 +80,7 @@ public:
     static void setSharedSession(Ref<AudioSession>&&);
     static AudioSession& singleton();
 
-    static bool LEGACY_NODELETE enableMediaPlayback();
+    NODELETE static bool enableMediaPlayback();
 
     using SetActivePromise = GenericPromise;
     using ChangedObserver = WTF::Observer<void(AudioSession&)>;
@@ -135,7 +135,7 @@ public:
     // How many times the audio session has been made active, counting only transitions from inactive to active.
     using ActivationCountPromise = NativePromise<uint64_t, void>;
     virtual Ref<ActivationCountPromise> systemActivationCountForTesting();
-    uint64_t LEGACY_NODELETE activationCountForTesting() const;
+    NODELETE uint64_t activationCountForTesting() const;
 
     virtual void clearInterruptionFlagForTesting() { }
 
@@ -146,8 +146,8 @@ public:
 
     void setRoutingArbitrationClient(AudioSessionRoutingArbitrationClient& client) { m_routingArbitrationClient = client; }
 
-    static bool LEGACY_NODELETE shouldManageAudioSessionCategory();
-    static void LEGACY_NODELETE setShouldManageAudioSessionCategory(bool);
+    NODELETE static bool shouldManageAudioSessionCategory();
+    NODELETE static void setShouldManageAudioSessionCategory(bool);
 
     virtual void setHostProcessAttribution(audit_token_t) { };
     virtual void setPresentingProcesses(Vector<audit_token_t>&&) { };
@@ -166,12 +166,12 @@ protected:
     AudioSession();
 
     virtual Ref<SetActivePromise> tryToSetActiveInternal(bool);
-    void LEGACY_NODELETE setActive(bool);
+    NODELETE void setActive(bool);
     void activeStateChanged();
 
     Logger& logger();
     ASCIILiteral logClassName() const { return "AudioSession"_s; }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const;
+    NODELETE WTFLogChannel& logChannel() const;
     uint64_t logIdentifier() const { return 0; }
 
     mutable RefPtr<Logger> m_logger;

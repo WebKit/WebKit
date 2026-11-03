@@ -89,7 +89,7 @@ bool isValidVideoFrameBufferInit(const WebCodecsVideoFrame::BufferInit& init)
     return true;
 }
 
-static bool LEGACY_NODELETE isMultiple(double value, unsigned factor)
+NODELETE static bool isMultiple(double value, unsigned factor)
 {
      return !(static_cast<unsigned>(value) % factor);
 }
@@ -171,7 +171,7 @@ size_t videoPixelFormatToSampleByteSizePerPlane(VideoPixelFormat format)
     return isHighBitDepthVideoPixelFormat(format) ? 2 : 1;
 }
 
-static inline size_t LEGACY_NODELETE sampleCountPerPixel(VideoPixelFormat format, size_t planeNumber)
+NODELETE static inline size_t sampleCountPerPixel(VideoPixelFormat format, size_t planeNumber)
 {
     switch (format) {
     case VideoPixelFormat::I420:
@@ -196,7 +196,7 @@ static inline size_t LEGACY_NODELETE sampleCountPerPixel(VideoPixelFormat format
     return 1;
 }
 
-static bool LEGACY_NODELETE isChromaPlane(VideoPixelFormat format, size_t planeNumber)
+NODELETE static bool isChromaPlane(VideoPixelFormat format, size_t planeNumber)
 {
     if (format == VideoPixelFormat::NV12)
         return planeNumber == 1;
@@ -374,7 +374,7 @@ VideoColorSpaceInit videoFramePickColorSpace(const std::optional<VideoColorSpace
 }
 
 // https://w3c.github.io/webcodecs/#validate-videoframeinit
-static bool LEGACY_NODELETE isNegativeOrNonFinite(double value)
+NODELETE static bool isNegativeOrNonFinite(double value)
 {
     return value < 0 || !std::isfinite(value);
 }

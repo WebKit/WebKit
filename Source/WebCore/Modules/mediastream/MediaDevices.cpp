@@ -104,7 +104,7 @@ Document* MediaDevices::document() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-static bool LEGACY_NODELETE shouldEnableEnumerateDeviceQuirk(const Document& document)
+NODELETE static bool shouldEnableEnumerateDeviceQuirk(const Document& document)
 {
     return document.settings().exposeCaptureDevicesAfterCaptureEnabled() && document.quirks().shouldEnableEnumerateDeviceQuirk();
 }
@@ -340,7 +340,7 @@ static inline bool checkSpeakerAccess(const Document& document)
         && MediaDevices::isFeaturePolicyAllowingSpeakerSelection(document);
 }
 
-static inline bool LEGACY_NODELETE exposeSpeakersWithoutMicrophoneAccess(const Document& document)
+NODELETE static inline bool exposeSpeakersWithoutMicrophoneAccess(const Document& document)
 {
     return document.frame() && document.frame()->settings().exposeSpeakersWithoutMicrophoneEnabled();
 }

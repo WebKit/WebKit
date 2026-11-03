@@ -60,8 +60,8 @@ public:
 private:
     void paintDisplayBox(const InlineDisplay::Box&);
     void paintEllipsis(size_t lineIndex);
-    LayoutPoint LEGACY_NODELETE flippedContentOffsetIfNeeded(const RenderBox&) const;
-    const RenderBlock& LEGACY_NODELETE root() const;
+    NODELETE LayoutPoint flippedContentOffsetIfNeeded(const RenderBox&) const;
+    NODELETE const RenderBlock& root() const;
 
     PaintInfo& m_paintInfo;
     const LayoutPoint m_paintOffset;

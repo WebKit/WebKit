@@ -38,13 +38,13 @@ template<>
 class TinyLRUCachePolicy<AtomString, RetainPtr<CFLocaleRef>>
 {
 public:
-    static TinyLRUCache<AtomString, RetainPtr<CFLocaleRef>>& LEGACY_NODELETE cache()
+    NODELETE static TinyLRUCache<AtomString, RetainPtr<CFLocaleRef>>& cache()
     {
         static NeverDestroyed<TinyLRUCache<AtomString, RetainPtr<CFLocaleRef>>> cache;
         return cache;
     }
 
-    static bool LEGACY_NODELETE isKeyNull(const AtomString& localeIdentifier)
+    NODELETE static bool isKeyNull(const AtomString& localeIdentifier)
     {
         return localeIdentifier.isNull();
     }
@@ -61,7 +61,7 @@ public:
         return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : nullptr;
     }
 
-    static AtomString LEGACY_NODELETE createKeyForStorage(const AtomString& key) { return key; }
+    NODELETE static AtomString createKeyForStorage(const AtomString& key) { return key; }
 };
 }
 

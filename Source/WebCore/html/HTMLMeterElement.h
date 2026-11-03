@@ -58,11 +58,11 @@ private:
     HTMLMeterElement(const QualifiedName&, Document&);
     virtual ~HTMLMeterElement();
 
-    RenderMeter* LEGACY_NODELETE renderMeter() const;
+    NODELETE RenderMeter* renderMeter() const;
 
     bool isLabelable() const final { return true; }
 
-    bool LEGACY_NODELETE supportsBaseAppearance(StyleAppearance) const final;
+    NODELETE bool supportsBaseAppearance(StyleAppearance) const final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool childShouldCreateRenderer(const Node&) const final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;

@@ -127,7 +127,7 @@ static URLSchemesMap& localURLSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
     return localSchemes;
 }
 
-static URLSchemesMap& LEGACY_NODELETE displayIsolatedURLSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
+NODELETE static URLSchemesMap& displayIsolatedURLSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
 {
     ASSERT(schemeRegistryLock.isHeld());
     static NeverDestroyed<URLSchemesMap> displayIsolatedSchemes;
@@ -158,7 +158,7 @@ static URLSchemesMap& secureSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
     return secureSchemes;
 }
 
-static URLSchemesMap& LEGACY_NODELETE schemesAllowingServiceWorkerClients()
+NODELETE static URLSchemesMap& schemesAllowingServiceWorkerClients()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<URLSchemesMap> schemesAllowingServiceWorkerClients;
@@ -197,7 +197,7 @@ static URLSchemesMap& emptyDocumentSchemes()
     return emptyDocumentSchemes;
 }
 
-static URLSchemesMap& LEGACY_NODELETE schemesForbiddenFromDomainRelaxation()
+NODELETE static URLSchemesMap& schemesForbiddenFromDomainRelaxation()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<URLSchemesMap> schemes;
@@ -218,7 +218,7 @@ static URLSchemesMap& canDisplayOnlyIfCanRequestSchemes() WTF_REQUIRES_LOCK(sche
     return canDisplayOnlyIfCanRequestSchemes;
 }
 
-static URLSchemesMap& LEGACY_NODELETE notAllowingJavascriptURLsSchemes()
+NODELETE static URLSchemesMap& notAllowingJavascriptURLsSchemes()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<URLSchemesMap> notAllowingJavascriptURLsSchemes;
@@ -243,7 +243,7 @@ void LegacySchemeRegistry::removeURLSchemeRegisteredAsLocal(const String& scheme
     localURLSchemes().remove(scheme);
 }
 
-static MemoryCompactRobinHoodHashSet<String>& LEGACY_NODELETE schemesHandledBySchemeHandler() WTF_REQUIRES_LOCK(schemeRegistryLock)
+NODELETE static MemoryCompactRobinHoodHashSet<String>& schemesHandledBySchemeHandler() WTF_REQUIRES_LOCK(schemeRegistryLock)
 {
     ASSERT(schemeRegistryLock.isHeld());
     static NeverDestroyed<MemoryCompactRobinHoodHashSet<String>> set;
@@ -265,7 +265,7 @@ bool LegacySchemeRegistry::schemeIsHandledBySchemeHandler(StringView scheme)
     return schemesHandledBySchemeHandler().contains<StringViewHashTranslator>(scheme);
 }
 
-static URLSchemesMap& LEGACY_NODELETE schemesAllowingDatabaseAccessInPrivateBrowsing()
+NODELETE static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<URLSchemesMap> schemesAllowingDatabaseAccessInPrivateBrowsing;
@@ -294,7 +294,7 @@ static std::span<const ASCIILiteral> builtinCSPBypassingSchemes()
 }
 #endif
 
-static URLSchemesMap& LEGACY_NODELETE ContentSecurityPolicyBypassingSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
+NODELETE static URLSchemesMap& ContentSecurityPolicyBypassingSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
 {
     ASSERT(schemeRegistryLock.isHeld());
 #if ENABLE(PDFJS)
@@ -305,14 +305,14 @@ static URLSchemesMap& LEGACY_NODELETE ContentSecurityPolicyBypassingSchemes() WT
     return schemes;
 }
 
-static URLSchemesMap& LEGACY_NODELETE cachePartitioningSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
+NODELETE static URLSchemesMap& cachePartitioningSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
 {
     ASSERT(schemeRegistryLock.isHeld());
     static NeverDestroyed<URLSchemesMap> schemes;
     return schemes;
 }
 
-static URLSchemesMap& LEGACY_NODELETE alwaysRevalidatedSchemes()
+NODELETE static URLSchemesMap& alwaysRevalidatedSchemes()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<URLSchemesMap> schemes;

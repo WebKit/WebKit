@@ -67,7 +67,7 @@ public:
     bool shouldPlay() const { return m_shouldPlay; }
 
     void setVolume(float);
-    float LEGACY_NODELETE volume() const;
+    NODELETE float volume() const;
 
     void setMuted(bool);
     bool muted() const { return m_muted; }

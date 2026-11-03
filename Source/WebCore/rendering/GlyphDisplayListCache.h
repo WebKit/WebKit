@@ -49,7 +49,7 @@ struct Box;
 class GlyphDisplayListCacheEntry : public RefCounted<GlyphDisplayListCacheEntry>, public CanMakeSingleThreadWeakPtr<GlyphDisplayListCacheEntry> {
     WTF_MAKE_TZONE_ALLOCATED(GlyphDisplayListCacheEntry);
     friend struct GlyphDisplayListCacheKeyTranslator;
-    friend void LEGACY_NODELETE add(Hasher&, const GlyphDisplayListCacheEntry&);
+    friend void add(Hasher&, const GlyphDisplayListCacheEntry&);
 public:
     static Ref<GlyphDisplayListCacheEntry> create(Ref<const DisplayList::DisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)
     {
@@ -84,7 +84,7 @@ private:
     bool m_shouldSubpixelQuantizeFont;
 };
 
-inline void add(Hasher& hasher, const GlyphDisplayListCacheEntry& entry)
+NODELETE inline void add(Hasher& hasher, const GlyphDisplayListCacheEntry& entry)
 {
     add(hasher, entry.m_textRun, entry.m_scaleFactor.width(), entry.m_scaleFactor.height(), entry.m_fontCascadeGeneration, entry.m_shouldSubpixelQuantizeFont);
 }
@@ -95,7 +95,7 @@ class GlyphDisplayListCache {
 public:
     GlyphDisplayListCache() = default;
 
-    static GlyphDisplayListCache& LEGACY_NODELETE singleton();
+    NODELETE static GlyphDisplayListCache& singleton();
 
     RefPtr<const DisplayList::DisplayList> get(const InlineDisplay::Box&, const FontCascade&, GraphicsContext&, const TextRun&, const PaintInfo&);
 
@@ -104,7 +104,7 @@ public:
     void remove(const InlineDisplay::Box& box) { m_entriesForBox.remove(&box); }
 
     void clear();
-    unsigned LEGACY_NODELETE size() const;
+    NODELETE unsigned size() const;
 
     void setForceUseGlyphDisplayListForTesting(bool flag)
     {
@@ -112,7 +112,7 @@ public:
     }
 
 private:
-    static bool LEGACY_NODELETE canShareDisplayList(const DisplayList::DisplayList&);
+    NODELETE static bool canShareDisplayList(const DisplayList::DisplayList&);
 
     HashMap<const InlineDisplay::Box*, Ref<GlyphDisplayListCacheEntry>> m_entriesForBox;
     Deque<WeakPtr<GlyphDisplayListCacheEntry, SingleThreadWeakPtrImpl>> m_entries;

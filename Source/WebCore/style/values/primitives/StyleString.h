@@ -46,15 +46,15 @@ struct String {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<String> { CSS::String LEGACY_NODELETE operator()(const String&, const Style::ComputedStyle&); };
-template<> struct ToStyle<CSS::String> { String LEGACY_NODELETE operator()(const CSS::String&, const BuilderState&); };
+template<> struct ToCSS<String> { NODELETE CSS::String operator()(const String&, const Style::ComputedStyle&); };
+template<> struct ToStyle<CSS::String> { NODELETE String operator()(const CSS::String&, const BuilderState&); };
 
 template<> struct CSSValueCreation<String> {
     Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const String&);
 };
 
 template<> struct CSSValueConversion<String> {
-    String LEGACY_NODELETE operator()(BuilderState&, const CSSStringValue&);
+    NODELETE String operator()(BuilderState&, const CSSStringValue&);
     auto operator()(BuilderState&, const CSSValue&) -> String;
 };
 
@@ -72,7 +72,7 @@ TextStream& operator<<(TextStream&, const String&);
 
 // MARK: - Hashing
 
-void LEGACY_NODELETE add(Hasher&, const String&);
+NODELETE void add(Hasher&, const String&);
 
 } // namespace Style
 } // namespace WebCore

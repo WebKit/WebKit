@@ -110,8 +110,8 @@ public:
 private:
     void mapToContainer(TransformState&, const RenderLayerModelObject* container = nullptr) const;
 
-    void LEGACY_NODELETE stepInserted(const RenderGeometryMapStep&);
-    void LEGACY_NODELETE stepRemoved(const RenderGeometryMapStep&);
+    NODELETE void stepInserted(const RenderGeometryMapStep&);
+    NODELETE void stepRemoved(const RenderGeometryMapStep&);
     
     bool hasNonUniformStep() const { return m_nonUniformStepsCount; }
     bool hasTransformStep() const { return m_transformedStepsCount; }

@@ -87,7 +87,7 @@ static void callDefaultEventHandlersInBubblingOrder(Event& event, const EventPat
     }
 }
 
-static bool LEGACY_NODELETE isInShadowTree(EventTarget* target)
+NODELETE static bool isInShadowTree(EventTarget* target)
 {
     auto* node = dynamicDowncast<Node>(target);
     return node && node->isInShadowTree();

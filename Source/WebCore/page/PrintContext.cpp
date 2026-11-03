@@ -310,7 +310,7 @@ void PrintContext::end()
     m_linkedDestinations = nullptr;
 }
 
-static inline RenderBoxModelObject* LEGACY_NODELETE enclosingBoxModelObject(RenderElement* renderer)
+NODELETE static inline RenderBoxModelObject* enclosingBoxModelObject(RenderElement* renderer)
 {
     while (renderer && !is<RenderBoxModelObject>(*renderer))
         renderer = renderer->parent();

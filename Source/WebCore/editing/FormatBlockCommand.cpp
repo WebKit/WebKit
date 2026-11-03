@@ -48,7 +48,7 @@ using namespace HTMLNames;
 static RefPtr<Node> enclosingBlockToSplitTreeTo(Node* startNode);
 static bool isElementForFormatBlock(const QualifiedName& tagName);
 
-static inline bool LEGACY_NODELETE isElementForFormatBlock(Node& node)
+NODELETE static inline bool isElementForFormatBlock(Node& node)
 {
     auto* element = dynamicDowncast<Element>(node);
     return element && isElementForFormatBlock(element->tagQName());
@@ -142,7 +142,7 @@ RefPtr<Element> FormatBlockCommand::elementForFormatBlockCommand(const std::opti
     return commonAncestorElement;
 }
 
-bool LEGACY_NODELETE isElementForFormatBlock(const QualifiedName& tagName)
+NODELETE bool isElementForFormatBlock(const QualifiedName& tagName)
 {
     using namespace ElementNames;
 

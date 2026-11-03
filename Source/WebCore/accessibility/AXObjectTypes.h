@@ -64,7 +64,7 @@ inline unsigned accessibilityModeRank(AccessibilityMode mode)
     return mode == AccessibilityMode::AXThread ? 2 : 1;
 }
 
-std::optional<AccessibilityMode> LEGACY_NODELETE resolveAccessibilityModeTransition(AccessibilityMode current, AccessibilityMode requested);
+NODELETE std::optional<AccessibilityMode> resolveAccessibilityModeTransition(AccessibilityMode current, AccessibilityMode requested);
 
 enum class TextMarkerOrigin : uint16_t;
 

@@ -56,11 +56,11 @@ template<typename> class ExceptionOr;
 
 class PublicKeyCredential final : public BasicCredential {
 public:
-    static Ref<PublicKeyCredential> LEGACY_NODELETE create(Ref<AuthenticatorResponse>&&);
+    NODELETE static Ref<PublicKeyCredential> create(Ref<AuthenticatorResponse>&&);
 
-    ArrayBuffer& LEGACY_NODELETE rawId() const;
+    NODELETE ArrayBuffer& rawId() const;
     AuthenticatorResponse& response() const { return m_response; }
-    AuthenticatorAttachment LEGACY_NODELETE authenticatorAttachment() const;
+    NODELETE AuthenticatorAttachment authenticatorAttachment() const;
     AuthenticationExtensionsClientOutputs getClientExtensionResults() const;
     PublicKeyCredentialJSON toJSON();
 

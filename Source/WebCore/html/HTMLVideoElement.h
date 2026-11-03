@@ -102,22 +102,22 @@ public:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     enum class VideoPresentationMode { Inline, Fullscreen, PictureInPicture, InWindow };
-    static VideoPresentationMode LEGACY_NODELETE toPresentationMode(HTMLMediaElementEnums::VideoFullscreenMode);
+    NODELETE static VideoPresentationMode toPresentationMode(HTMLMediaElementEnums::VideoFullscreenMode);
     WEBCORE_EXPORT bool webkitSupportsPresentationMode(VideoPresentationMode) const;
-    VideoPresentationMode LEGACY_NODELETE webkitPresentationMode() const;
-    VideoPresentationMode LEGACY_NODELETE webkitPresentationModeForBindings() const;
+    NODELETE VideoPresentationMode webkitPresentationMode() const;
+    NODELETE VideoPresentationMode webkitPresentationModeForBindings() const;
     void webkitSetPresentationMode(VideoPresentationMode);
 
     WEBCORE_EXPORT void setPresentationMode(VideoPresentationMode);
     WEBCORE_EXPORT void didEnterFullscreenOrPictureInPicture(const FloatSize&);
     WEBCORE_EXPORT void didExitFullscreenOrPictureInPicture();
-    WEBCORE_EXPORT bool LEGACY_NODELETE isChangingPresentationMode() const;
+    NODELETE WEBCORE_EXPORT bool isChangingPresentationMode() const;
     WEBCORE_EXPORT void setPresentationModeIgnoringPermissionsPolicy(VideoPresentationMode);
 
     void setVideoFullscreenFrame(const FloatRect&) final;
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
-    void LEGACY_NODELETE setPictureInPictureObserver(PictureInPictureObserver*);
+    NODELETE void setPictureInPictureObserver(PictureInPictureObserver*);
 #endif
 #endif
 
@@ -182,7 +182,7 @@ private:
     bool isVideo() const final { return true; }
     bool hasVideo() const final { return player() && protect(player())->hasVideo(); }
     bool supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) const final;
-    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const final;
+    NODELETE bool isURLAttribute(const Attribute&) const final;
     String imageSourceURL() const final;
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;

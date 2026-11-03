@@ -138,7 +138,7 @@ enum class ResolutionCategory : uint8_t {
     R_12K,
 };
 
-static ResolutionCategory LEGACY_NODELETE resolutionCategory(const FloatSize& size)
+NODELETE static ResolutionCategory resolutionCategory(const FloatSize& size)
 {
     auto pixels = size.area();
     if (pixels > 7680 * 4320)
@@ -195,12 +195,12 @@ void registerSupplementalVP9Decoder()
         s_vp9HardwareDecoderAvailableInProcess = { };
 }
 
-bool LEGACY_NODELETE shouldEnableVP9Decoder()
+NODELETE bool shouldEnableVP9Decoder()
 {
     return VP9TestingOverrides::singleton().shouldEnableVP9Decoder();
 }
 
-static bool LEGACY_NODELETE isSWDecodersAlwaysEnabled()
+NODELETE static bool isSWDecodersAlwaysEnabled()
 {
     return VP9TestingOverrides::singleton().swVPDecodersAlwaysEnabled();
 }
@@ -210,7 +210,7 @@ bool shouldEnableSWVP9Decoder()
     return isSWDecodersAlwaysEnabled() || (!vp9HardwareDecoderAvailable() && !systemHasBattery());
 }
 
-static bool LEGACY_NODELETE isVP9HardwareDecoderAvailabilityKnown()
+NODELETE static bool isVP9HardwareDecoderAvailabilityKnown()
 {
     return VP9TestingOverrides::singleton().hardwareDecoderDisabled() || VP9TestingOverrides::singleton().vp9HardwareDecoderEnabledOverride();
 }
@@ -447,7 +447,7 @@ std::optional<PlatformMediaCapabilitiesInfo> computeVPParameters(const PlatformM
     return info;
 }
 
-static uint8_t LEGACY_NODELETE convertToColorPrimaries(const Primaries& coefficients)
+NODELETE static uint8_t convertToColorPrimaries(const Primaries& coefficients)
 {
     switch (coefficients) {
     case Primaries::kBt709:
@@ -477,7 +477,7 @@ static uint8_t LEGACY_NODELETE convertToColorPrimaries(const Primaries& coeffici
     }
 }
 
-static uint8_t LEGACY_NODELETE convertToTransferCharacteristics(const TransferCharacteristics& characteristics)
+NODELETE static uint8_t convertToTransferCharacteristics(const TransferCharacteristics& characteristics)
 {
     switch (characteristics) {
     case TransferCharacteristics::kBt709:
@@ -517,7 +517,7 @@ static uint8_t LEGACY_NODELETE convertToTransferCharacteristics(const TransferCh
     }
 }
 
-static uint8_t LEGACY_NODELETE convertToMatrixCoefficients(const MatrixCoefficients& coefficients)
+NODELETE static uint8_t convertToMatrixCoefficients(const MatrixCoefficients& coefficients)
 {
     switch (coefficients) {
     case MatrixCoefficients::kRgb:
@@ -542,7 +542,7 @@ static uint8_t LEGACY_NODELETE convertToMatrixCoefficients(const MatrixCoefficie
         return VPConfigurationMatrixCoefficients::BT_2020_Constant_Luminance;
     }
 }
-static uint8_t LEGACY_NODELETE convertSubsamplingXYToChromaSubsampling(uint64_t x, uint64_t y)
+NODELETE static uint8_t convertSubsamplingXYToChromaSubsampling(uint64_t x, uint64_t y)
 {
     if (x & y)
         return VPConfigurationChromaSubsampling::Subsampling_420_Colocated;

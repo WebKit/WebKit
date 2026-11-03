@@ -64,7 +64,7 @@ private:
 
 class CSSCounterStyleRule final : public CSSRule {
 public:
-    static Ref<CSSCounterStyleRule> LEGACY_NODELETE create(StyleRuleCounterStyle&, CSSStyleSheet*);
+    NODELETE static Ref<CSSCounterStyleRule> create(StyleRuleCounterStyle&, CSSStyleSheet*);
     virtual ~CSSCounterStyleRule();
 
     String cssText() const final;
@@ -93,7 +93,7 @@ public:
     void setFallback(const String&);
     void setSymbols(const String&);
     void setAdditiveSymbols(const String&);
-    void LEGACY_NODELETE setSpeakAs(const String&);
+    NODELETE void setSpeakAs(const String&);
 
 private:
     CSSCounterStyleRule(StyleRuleCounterStyle&, CSSStyleSheet* parent);

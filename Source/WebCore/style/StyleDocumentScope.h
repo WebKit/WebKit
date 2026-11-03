@@ -87,7 +87,7 @@ public:
     };
     // Runs as part of the snapshot post-layout state steps, invalidating the containers whose state changed.
     void updateScrollStateSnapshots();
-    ScrollState LEGACY_NODELETE scrollStateSnapshotFor(const Element&) const;
+    NODELETE ScrollState scrollStateSnapshotFor(const Element&) const;
 
     AnchorPositionedToAnchorMap& anchorPositionedToAnchorMap() LIFETIME_BOUND { return m_anchorPositionedToAnchorMap; }
     const AnchorPositionedToAnchorMap& anchorPositionedToAnchorMap() const LIFETIME_BOUND { return m_anchorPositionedToAnchorMap; }

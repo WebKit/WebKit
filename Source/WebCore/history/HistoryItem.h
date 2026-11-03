@@ -99,44 +99,44 @@ public:
 
     bool operator==(const HistoryItem& other) const { return itemID() == other.itemID(); }
 
-    WEBCORE_EXPORT const String& LEGACY_NODELETE originalURLString() const LIFETIME_BOUND;
-    WEBCORE_EXPORT const String& LEGACY_NODELETE urlString() const LIFETIME_BOUND;
-    WEBCORE_EXPORT const String& LEGACY_NODELETE title() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const String& originalURLString() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const String& urlString() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const String& title() const LIFETIME_BOUND;
     
     WEBCORE_EXPORT bool isInBackForwardCache() const;
     WEBCORE_EXPORT bool hasCachedPageExpired() const;
 
     WEBCORE_EXPORT void setAlternateTitle(const String&);
-    WEBCORE_EXPORT const String& LEGACY_NODELETE alternateTitle() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const String& alternateTitle() const LIFETIME_BOUND;
     
     WEBCORE_EXPORT URL url() const;
     WEBCORE_EXPORT URL originalURL() const;
-    WEBCORE_EXPORT const String& LEGACY_NODELETE referrer() const LIFETIME_BOUND;
-    WEBCORE_EXPORT const AtomString& LEGACY_NODELETE target() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const String& referrer() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const AtomString& target() const LIFETIME_BOUND;
     std::optional<FrameIdentifier> frameID() const { return m_frameID; }
     bool isTargetItem() const { return m_isTargetItem; }
     
-    WEBCORE_EXPORT FormData* LEGACY_NODELETE formData();
-    WEBCORE_EXPORT String LEGACY_NODELETE formContentType() const;
+    NODELETE WEBCORE_EXPORT FormData* formData();
+    NODELETE WEBCORE_EXPORT String formContentType() const;
     
     bool lastVisitWasFailure() const { return m_lastVisitWasFailure; }
 
-    WEBCORE_EXPORT const IntPoint& LEGACY_NODELETE scrollPosition() const LIFETIME_BOUND;
-    WEBCORE_EXPORT void LEGACY_NODELETE setScrollPosition(const IntPoint&);
-    void LEGACY_NODELETE clearScrollPosition();
+    NODELETE WEBCORE_EXPORT const IntPoint& scrollPosition() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT void setScrollPosition(const IntPoint&);
+    NODELETE void clearScrollPosition();
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE shouldRestoreScrollPosition() const;
+    NODELETE WEBCORE_EXPORT bool shouldRestoreScrollPosition() const;
     WEBCORE_EXPORT void setShouldRestoreScrollPosition(bool);
     
-    WEBCORE_EXPORT float LEGACY_NODELETE pageScaleFactor() const;
-    WEBCORE_EXPORT void LEGACY_NODELETE setPageScaleFactor(float);
+    NODELETE WEBCORE_EXPORT float pageScaleFactor() const;
+    NODELETE WEBCORE_EXPORT void setPageScaleFactor(float);
     
-    WEBCORE_EXPORT const Vector<AtomString>& LEGACY_NODELETE documentState() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const Vector<AtomString>& documentState() const LIFETIME_BOUND;
     WEBCORE_EXPORT void setDocumentState(const Vector<AtomString>&);
     void clearDocumentState();
 
-    WEBCORE_EXPORT void LEGACY_NODELETE setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy);
-    WEBCORE_EXPORT ShouldOpenExternalURLsPolicy LEGACY_NODELETE shouldOpenExternalURLsPolicy() const;
+    NODELETE WEBCORE_EXPORT void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy);
+    NODELETE WEBCORE_EXPORT ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const;
 
     void setURL(const URL&);
     WEBCORE_EXPORT void setURLString(const String&);
@@ -171,12 +171,12 @@ public:
 
     WEBCORE_EXPORT void addChildItem(Ref<HistoryItem>&&);
     void setChildItem(Ref<HistoryItem>&&);
-    WEBCORE_EXPORT HistoryItem* LEGACY_NODELETE childItemWithTarget(const AtomString&);
-    WEBCORE_EXPORT HistoryItem* LEGACY_NODELETE childItemWithFrameID(FrameIdentifier);
-    WEBCORE_EXPORT const Vector<Ref<HistoryItem>>& LEGACY_NODELETE children() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT HistoryItem* childItemWithTarget(const AtomString&);
+    NODELETE WEBCORE_EXPORT HistoryItem* childItemWithFrameID(FrameIdentifier);
+    NODELETE WEBCORE_EXPORT const Vector<Ref<HistoryItem>>& children() const LIFETIME_BOUND;
     void clearChildren();
 
-    bool LEGACY_NODELETE shouldDoSameDocumentNavigationTo(HistoryItem& otherItem) const;
+    NODELETE bool shouldDoSameDocumentNavigationTo(HistoryItem& otherItem) const;
 
     bool isCurrentDocument(Document&) const;
     

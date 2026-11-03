@@ -60,20 +60,20 @@ public:
 
     // numberOfChannels() returns the number of output channels.  This value equals the number of channels from the buffer.
     // If a new buffer is set with a different number of channels, then this value will dynamically change.
-    unsigned LEGACY_NODELETE numberOfChannels();
+    NODELETE unsigned numberOfChannels();
 
     // Play-state
     ExceptionOr<void> startLater(double when, double grainOffset, std::optional<double> grainDuration);
 
     // This function doesn't grab the lock before accessing m_isLooping and is thus only safe to call on the main thread.
     bool loopForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_isLooping; }
-    void LEGACY_NODELETE setLoopForBindings(bool);
+    NODELETE void setLoopForBindings(bool);
 
     // Loop times in seconds.
     double loopStartForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_loopStart; } // This function doesn't grab the lock and is thus only safe to call on the main thread.
     double loopEndForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_loopEnd; } // This function doesn't grab the lock and is thus only safe to call on the main thread.
-    void LEGACY_NODELETE setLoopStartForBindings(double);
-    void LEGACY_NODELETE setLoopEndForBindings(double);
+    NODELETE void setLoopStartForBindings(double);
+    NODELETE void setLoopEndForBindings(double);
 
     AudioParam& detune() { return m_detune.get(); }
     AudioParam& playbackRate() { return m_playbackRate.get(); }

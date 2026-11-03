@@ -160,8 +160,8 @@ class QuirkBehavior
   def declaration
     prefix = @isExported ? "WEBCORE_EXPORT " : ""
     prefix += "static " if @isStatic
-    nodelete = isNoDelete? ? "LEGACY_NODELETE " : ""
-    "#{prefix}bool #{nodelete}#{@accessor}(#{argument})#{constSuffix};"
+    nodelete = isNoDelete? ? "NODELETE " : ""
+    "#{nodelete}#{prefix}bool #{@accessor}(#{argument})#{constSuffix};"
   end
 
   def definitionSignature

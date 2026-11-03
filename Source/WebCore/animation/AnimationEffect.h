@@ -67,7 +67,7 @@ public:
     virtual void animationDidFinish() { };
     virtual void animationPlaybackRateDidChange();
     virtual void animationProgressBasedTimelineSourceDidChangeMetrics(const ResolvableTimelineRange&);
-    void LEGACY_NODELETE animationRangeDidChange();
+    NODELETE void animationRangeDidChange();
 
     AnimationEffectTiming timing() const { return m_timing; }
 
@@ -76,14 +76,14 @@ public:
 
     WebAnimationTime delay();
     Seconds specifiedDelay() const { return m_timing.specifiedStartDelay; }
-    void LEGACY_NODELETE setDelay(const Seconds&);
+    NODELETE void setDelay(const Seconds&);
 
     WebAnimationTime endDelay();
     Seconds specifiedEndDelay() const { return m_timing.specifiedEndDelay; }
-    void LEGACY_NODELETE setEndDelay(const Seconds&);
+    NODELETE void setEndDelay(const Seconds&);
 
     FillMode fill() const { return m_timing.fill; }
-    void LEGACY_NODELETE setFill(FillMode);
+    NODELETE void setFill(FillMode);
 
     double iterationStart() const { return m_timing.iterationStart; }
     ExceptionOr<void> setIterationStart(double);
@@ -92,12 +92,12 @@ public:
     ExceptionOr<void> setIterations(double);
 
     WebAnimationTime iterationDuration();
-    WebAnimationTime LEGACY_NODELETE iterationDuration() const;
+    NODELETE WebAnimationTime iterationDuration() const;
     std::optional<Seconds> specifiedIterationDuration() const { return m_timing.specifiedIterationDuration; }
-    void LEGACY_NODELETE setIterationDuration(const std::optional<Seconds>&);
+    NODELETE void setIterationDuration(const std::optional<Seconds>&);
 
     PlaybackDirection direction() const { return m_timing.direction; }
-    void LEGACY_NODELETE setDirection(PlaybackDirection);
+    NODELETE void setDirection(PlaybackDirection);
 
     TimingFunction* timingFunction() const { return m_timing.timingFunction.get(); }
     void setTimingFunction(const RefPtr<TimingFunction>&);

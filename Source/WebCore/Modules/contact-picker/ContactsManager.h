@@ -44,11 +44,11 @@ struct ContactsSelectOptions;
 class ContactsManager final : public RefCountedAndCanMakeWeakPtr<ContactsManager> {
     WTF_MAKE_TZONE_ALLOCATED(ContactsManager);
 public:
-    static Ref<ContactsManager> LEGACY_NODELETE create(Navigator&);
+    NODELETE static Ref<ContactsManager> create(Navigator&);
     ~ContactsManager();
 
-    LocalFrame* LEGACY_NODELETE frame() const;
-    Navigator* LEGACY_NODELETE navigator();
+    NODELETE LocalFrame* frame() const;
+    NODELETE Navigator* navigator();
 
     void getProperties(Ref<DeferredPromise>&&);
     void select(const Vector<ContactProperty>&, const ContactsSelectOptions&, Ref<DeferredPromise>&&);

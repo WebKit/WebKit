@@ -52,7 +52,7 @@ private:
 };
 
 // Custom StylePropertyShorthand function.
-StylePropertyShorthand LEGACY_NODELETE transitionShorthandForParsing();
+NODELETE StylePropertyShorthand transitionShorthandForParsing();
 
 // Returns empty value if the property is not a shorthand.
 // The implementation is generated in StylePropertyShorthandFunctions.cpp.
@@ -63,7 +63,7 @@ StylePropertyShorthand shorthandForProperty(CSSPropertyID);
 using StylePropertyShorthandVector = Vector<StylePropertyShorthand, 4>;
 StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID);
 
-unsigned LEGACY_NODELETE indexOfShorthandForLonghand(CSSPropertyID, const StylePropertyShorthandVector&);
+NODELETE unsigned indexOfShorthandForLonghand(CSSPropertyID, const StylePropertyShorthandVector&);
 
 } // namespace WebCore
 

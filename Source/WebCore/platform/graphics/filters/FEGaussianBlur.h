@@ -38,15 +38,15 @@ public:
     bool operator==(const FEGaussianBlur&) const;
 
     float stdDeviationX() const { return m_stdX; }
-    bool LEGACY_NODELETE setStdDeviationX(float);
+    NODELETE bool setStdDeviationX(float);
 
     float stdDeviationY() const { return m_stdY; }
-    bool LEGACY_NODELETE setStdDeviationY(float);
+    NODELETE bool setStdDeviationY(float);
 
     EdgeModeType edgeMode() const { return m_edgeMode; }
-    bool LEGACY_NODELETE setEdgeMode(EdgeModeType);
+    NODELETE bool setEdgeMode(EdgeModeType);
 
-    FloatSize LEGACY_NODELETE effectiveStdDeviation(OptionSet<FilterRenderingOption> = { }) const;
+    NODELETE FloatSize effectiveStdDeviation(OptionSet<FilterRenderingOption> = { }) const;
 
     static IntSize calculateKernelSize(const Filter&, FloatSize stdDeviation);
     static IntSize calculateUnscaledKernelSize(FloatSize stdDeviation);

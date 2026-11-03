@@ -37,14 +37,14 @@ class ScrollingTree;
 class ScrollingTreePluginHostingNode : public ScrollingTreeNode {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreePluginHostingNode, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<ScrollingTreePluginHostingNode> LEGACY_NODELETE create(ScrollingTree&, ScrollingNodeID);
+    NODELETE WEBCORE_EXPORT static Ref<ScrollingTreePluginHostingNode> create(ScrollingTree&, ScrollingNodeID);
     virtual ~ScrollingTreePluginHostingNode();
 
 private:
     ScrollingTreePluginHostingNode(ScrollingTree&, ScrollingNodeID);
 
     bool commitStateBeforeChildren(const ScrollingStateNode&) final;
-    void LEGACY_NODELETE applyLayerPositions() final;
+    NODELETE void applyLayerPositions() final;
 
     WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 };

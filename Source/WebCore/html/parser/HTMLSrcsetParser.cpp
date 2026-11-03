@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-static inline bool LEGACY_NODELETE compareByDensity(const ImageCandidate& first, const ImageCandidate& second)
+NODELETE static inline bool compareByDensity(const ImageCandidate& first, const ImageCandidate& second)
 {
     return first.density < second.density;
 }
@@ -64,7 +64,7 @@ static void appendDescriptorAndReset(std::span<const CharType>& descriptorStart,
 
 // The following is called appendCharacter to match the spec's terminology.
 template<typename CharType>
-static void LEGACY_NODELETE appendCharacter(std::span<const CharType>& descriptorStart, std::span<const CharType> position)
+NODELETE static void appendCharacter(std::span<const CharType>& descriptorStart, std::span<const CharType> position)
 {
     // Since we don't copy the tokens, this just set the point where the descriptor tokens start.
     if (!descriptorStart.data())

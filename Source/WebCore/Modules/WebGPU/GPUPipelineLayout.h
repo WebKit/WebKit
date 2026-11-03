@@ -43,13 +43,13 @@ public:
         return adoptRef(*new GPUPipelineLayout(WTF::move(backing), WTF::move(label), device));
     }
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
     ::WebGPU::PipelineLayout& backing() { return m_backing; }
     const ::WebGPU::PipelineLayout& backing() const { return m_backing; }
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

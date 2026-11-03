@@ -46,7 +46,7 @@ static uint64_t nextLogIdentifier()
     return ++logIdentifier;
 }
 
-static RefPtr<Logger>& LEGACY_NODELETE nullLogger()
+NODELETE static RefPtr<Logger>& nullLogger()
 {
     static NeverDestroyed<RefPtr<Logger>> logger;
     return logger;

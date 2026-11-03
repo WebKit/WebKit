@@ -32,8 +32,8 @@ class RenderProgress;
 
 class AccessibilityProgressIndicator final : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilityProgressIndicator> LEGACY_NODELETE create(AXID, RenderObject&, AXObjectCache&);
-    static Ref<AccessibilityProgressIndicator> LEGACY_NODELETE create(AXID, Element&, AXObjectCache&);
+    NODELETE static Ref<AccessibilityProgressIndicator> create(AXID, RenderObject&, AXObjectCache&);
+    NODELETE static Ref<AccessibilityProgressIndicator> create(AXID, Element&, AXObjectCache&);
 
     bool isIndeterminate() const final;
     bool isAccessibilityProgressIndicatorInstance() const final { return true; }
@@ -50,8 +50,8 @@ private:
     float maxValueForRange() const final;
     float minValueForRange() const final;
 
-    HTMLProgressElement* LEGACY_NODELETE progressElement() const;
-    HTMLMeterElement* LEGACY_NODELETE meterElement() const;
+    NODELETE HTMLProgressElement* progressElement() const;
+    NODELETE HTMLMeterElement* meterElement() const;
 
     bool computeIsIgnored() const final;
 };

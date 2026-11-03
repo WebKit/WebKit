@@ -112,7 +112,7 @@ bool LibWebRTCPeerConnectionBackend::isNegotiationNeeded(uint32_t eventId) const
     return m_endpoint->isNegotiationNeeded(eventId);
 }
 
-static inline webrtc::PeerConnectionInterface::BundlePolicy LEGACY_NODELETE bundlePolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
+NODELETE static inline webrtc::PeerConnectionInterface::BundlePolicy bundlePolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
 {
     switch (configuration.bundlePolicy) {
     case RTCBundlePolicy::MaxCompat:
@@ -127,7 +127,7 @@ static inline webrtc::PeerConnectionInterface::BundlePolicy LEGACY_NODELETE bund
     return webrtc::PeerConnectionInterface::kBundlePolicyMaxCompat;
 }
 
-static inline webrtc::PeerConnectionInterface::RtcpMuxPolicy LEGACY_NODELETE rtcpMuxPolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
+NODELETE static inline webrtc::PeerConnectionInterface::RtcpMuxPolicy rtcpMuxPolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
 {
     switch (configuration.rtcpMuxPolicy) {
     case RTCPMuxPolicy::Negotiate:
@@ -140,7 +140,7 @@ static inline webrtc::PeerConnectionInterface::RtcpMuxPolicy LEGACY_NODELETE rtc
     return webrtc::PeerConnectionInterface::kRtcpMuxPolicyRequire;
 }
 
-static inline webrtc::PeerConnectionInterface::IceTransportsType LEGACY_NODELETE iceTransportPolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
+NODELETE static inline webrtc::PeerConnectionInterface::IceTransportsType iceTransportPolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
 {
     switch (configuration.iceTransportPolicy) {
     case RTCIceTransportPolicy::Relay:
@@ -203,7 +203,7 @@ void LibWebRTCPeerConnectionBackend::getStats(Ref<DeferredPromise>&& promise)
     m_endpoint->getStats(WTF::move(promise));
 }
 
-static inline LibWebRTCRtpSenderBackend& LEGACY_NODELETE backendFromRTPSender(RTCRtpSender& sender)
+NODELETE static inline LibWebRTCRtpSenderBackend& backendFromRTPSender(RTCRtpSender& sender)
 {
     return downcast<LibWebRTCRtpSenderBackend>(sender.backend());
 }
@@ -301,7 +301,7 @@ std::unique_ptr<RTCDataChannelHandler> LibWebRTCPeerConnectionBackend::createDat
     return m_endpoint->createDataChannel(label, options);
 }
 
-static inline RefPtr<RTCRtpSender> LEGACY_NODELETE findExistingSender(const Vector<Ref<RTCRtpTransceiver>>& transceivers, LibWebRTCRtpSenderBackend& senderBackend)
+NODELETE static inline RefPtr<RTCRtpSender> findExistingSender(const Vector<Ref<RTCRtpTransceiver>>& transceivers, LibWebRTCRtpSenderBackend& senderBackend)
 {
     ASSERT(senderBackend.rtcSender());
     for (auto& transceiver : transceivers) {

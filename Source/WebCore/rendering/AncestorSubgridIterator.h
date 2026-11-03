@@ -38,9 +38,9 @@ public:
     AncestorSubgridIterator();
     AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, Style::GridTrackSizingDirection);
 
-    RenderGrid& LEGACY_NODELETE operator*();
+    NODELETE RenderGrid& operator*();
 
-    bool LEGACY_NODELETE operator==(const AncestorSubgridIterator&) const;
+    NODELETE bool operator==(const AncestorSubgridIterator&) const;
 
     AncestorSubgridIterator& operator++();
     AncestorSubgridIterator begin();

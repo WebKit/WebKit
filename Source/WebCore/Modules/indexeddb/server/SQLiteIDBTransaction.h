@@ -71,10 +71,10 @@ public:
 
     IDBTransactionMode mode() const { return m_info.mode(); }
     IDBTransactionDurability durability() const { return m_info.durability(); }
-    bool LEGACY_NODELETE inProgress() const;
-    bool LEGACY_NODELETE inProgressOrReadOnly() const;
+    NODELETE bool inProgress() const;
+    NODELETE bool inProgressOrReadOnly() const;
 
-    SQLiteDatabase* LEGACY_NODELETE sqliteDatabase() const;
+    NODELETE SQLiteDatabase* sqliteDatabase() const;
     SQLiteTransaction* sqliteTransaction() const LIFETIME_BOUND { return m_sqliteTransaction.get(); }
     SQLiteIDBBackingStore& backingStore() { return m_backingStore.get(); }
 

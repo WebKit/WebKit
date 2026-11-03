@@ -48,13 +48,13 @@ public:
         m_dispatcher(WTF::move(task), forceRunInWorker);
     }
 
-    void LEGACY_NODELETE setMediaSourcePrivate(MediaSourcePrivate& mediaSourcePrivate)
+    NODELETE void setMediaSourcePrivate(MediaSourcePrivate& mediaSourcePrivate)
     {
         Locker locker { m_lock };
         m_private = mediaSourcePrivate;
     }
 
-    RefPtr<MediaSourcePrivate> LEGACY_NODELETE mediaSourcePrivate() const
+    NODELETE RefPtr<MediaSourcePrivate> mediaSourcePrivate() const
     {
         Locker locker { m_lock };
         return m_private.get();

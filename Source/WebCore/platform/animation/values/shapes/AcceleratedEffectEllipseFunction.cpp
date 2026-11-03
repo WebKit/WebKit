@@ -40,7 +40,7 @@ namespace WebCore {
 
 struct AcceleratedEffectEllipsePathPolicy final : public TinyLRUCachePolicy<FloatRect, WebCore::Path> {
 public:
-    static bool LEGACY_NODELETE isKeyNull(const FloatRect& rect)
+    NODELETE static bool isKeyNull(const FloatRect& rect)
     {
         return rect.isEmpty();
     }
@@ -66,7 +66,7 @@ static WebCore::Path cachedAcceleratedEffectEllipsePath(const FloatRect& rect)
 
 // MARK: - Path Evaluation
 
-static FloatPoint LEGACY_NODELETE resolvePosition(const AcceleratedEffectEllipseFunction& value, FloatSize boundingBox)
+NODELETE static FloatPoint resolvePosition(const AcceleratedEffectEllipseFunction& value, FloatSize boundingBox)
 {
     return value.position ? *value.position : FloatPoint { boundingBox.width() / 2, boundingBox.height() / 2 };
 }

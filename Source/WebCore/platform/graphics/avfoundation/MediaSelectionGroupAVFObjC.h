@@ -47,7 +47,7 @@ class MediaSelectionGroupAVFObjC;
 
 class MediaSelectionOptionAVFObjC : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSelectionOptionAVFObjC, WTF::DestructionThread::Main> {
 public:
-    static Ref<MediaSelectionOptionAVFObjC> LEGACY_NODELETE create(MediaSelectionGroupAVFObjC&, AVMediaSelectionOption *);
+    NODELETE static Ref<MediaSelectionOptionAVFObjC> create(MediaSelectionGroupAVFObjC&, AVMediaSelectionOption *);
 
     void setSelected(bool);
     bool selected() const;

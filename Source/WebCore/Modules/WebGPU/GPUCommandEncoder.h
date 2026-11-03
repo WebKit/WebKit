@@ -56,7 +56,7 @@ public:
         return adoptRef(*new GPUCommandEncoder(WTF::move(backing), WTF::move(label), device));
     }
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
     ExceptionOr<Ref<GPURenderPassEncoder>> beginRenderPass(const GPURenderPassDescriptor&);
@@ -113,7 +113,7 @@ public:
     const ::WebGPU::CommandEncoder& backing() const { return m_backing; }
     void setBacking(::WebGPU::CommandEncoder&);
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

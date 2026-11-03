@@ -57,7 +57,7 @@ public:
     using RequestAdapterPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<GPUAdapter>>>;
     void requestAdapter(const std::optional<GPURequestAdapterOptions>&, RequestAdapterPromise&&);
 
-    GPUTextureFormat LEGACY_NODELETE getPreferredCanvasFormat() const;
+    NODELETE GPUTextureFormat getPreferredCanvasFormat() const;
     WGSLLanguageFeatures& wgslLanguageFeatures() const { return m_wgslLanguageFeatures; }
 
     RefPtr<GPUPresentationContext> createPresentationContext(const GPUPresentationContextDescriptor&);

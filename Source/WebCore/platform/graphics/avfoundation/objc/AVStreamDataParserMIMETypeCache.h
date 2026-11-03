@@ -38,7 +38,7 @@ class ContentType;
 
 class WEBCORE_EXPORT AVStreamDataParserMIMETypeCache final : public MIMETypeCache {
 public:
-    static AVStreamDataParserMIMETypeCache& LEGACY_NODELETE singleton();
+    NODELETE static AVStreamDataParserMIMETypeCache& singleton();
 
     bool isAvailable() const final;
     MediaPlayerEnums::SupportsType canDecodeType(const String&) final;

@@ -39,7 +39,7 @@ namespace Style {
 
 struct RoundedInsetPathPolicy : public TinyLRUCachePolicy<FloatRoundedRect, WebCore::Path> {
 public:
-    static bool LEGACY_NODELETE isKeyNull(const FloatRoundedRect& rect)
+    NODELETE static bool isKeyNull(const FloatRoundedRect& rect)
     {
         return rect.isEmpty();
     }

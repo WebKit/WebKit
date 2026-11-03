@@ -601,7 +601,7 @@ public:
     WEBCORE_EXPORT DrawDisplayList(Ref<const DisplayList>&&);
     WEBCORE_EXPORT ~DrawDisplayList();
 
-    WEBCORE_EXPORT Ref<const DisplayList> LEGACY_NODELETE displayList() const;
+    NODELETE WEBCORE_EXPORT Ref<const DisplayList> displayList() const;
 
     void apply(GraphicsContext&, ControlFactory&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -618,7 +618,7 @@ public:
     WEBCORE_EXPORT ~DrawPlaceholder();
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    void LEGACY_NODELETE dump(TextStream&, OptionSet<AsTextFlag>) const;
+    NODELETE void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
     using FunctionHolder = Box<Function<void(GraphicsContext&)>>;

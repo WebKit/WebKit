@@ -52,7 +52,7 @@ private:
     struct Data;
 
     RangeResponseGenerator(WTF::GuaranteedSerialFunctionDispatcher&);
-    HashMap<String, std::unique_ptr<Data>>& LEGACY_NODELETE map();
+    NODELETE HashMap<String, std::unique_ptr<Data>>& map();
 
     class MediaResourceClient;
     void giveResponseToTasksWithFinishedRanges(Data&);

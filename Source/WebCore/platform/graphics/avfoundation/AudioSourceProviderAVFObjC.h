@@ -66,8 +66,8 @@ public:
     void setPlayerItem(AVPlayerItem *);
     void setAudioTrack(AVAssetTrack *);
     void setPlaybackRate(double);
-    void LEGACY_NODELETE setPreservesPitch(bool);
-    void LEGACY_NODELETE setVolume(double);
+    NODELETE void setPreservesPitch(bool);
+    NODELETE void setVolume(double);
 
     using AudioCallback = Function<void(uint64_t startFrame, uint64_t numberOfFrames, bool needFlush)>;
     WEBCORE_EXPORT void setAudioCallback(AudioCallback&&);
@@ -88,7 +88,7 @@ private:
     void setClient(WeakPtr<AudioSourceProviderClient>&&) override;
     bool isHandlingAVPlayer() const final { return true; }
 
-    static void LEGACY_NODELETE initCallback(MTAudioProcessingTapRef, void*, void**);
+    NODELETE static void initCallback(MTAudioProcessingTapRef, void*, void**);
     static void finalizeCallback(MTAudioProcessingTapRef);
     static void prepareCallback(MTAudioProcessingTapRef, CMItemCount, const AudioStreamBasicDescription*);
     static void unprepareCallback(MTAudioProcessingTapRef);

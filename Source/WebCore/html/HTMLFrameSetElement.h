@@ -53,7 +53,7 @@ public:
 
     static RefPtr<HTMLFrameSetElement> findContaining(Element* descendant);
 
-    Vector<AtomString> LEGACY_NODELETE supportedPropertyNames() const;
+    NODELETE Vector<AtomString> supportedPropertyNames() const;
     WindowProxy* namedItem(const AtomString&);
     bool isSupportedPropertyName(const AtomString&);
 

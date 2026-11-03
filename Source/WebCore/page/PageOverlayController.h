@@ -46,8 +46,8 @@ public:
     PageOverlayController(Page&);
     virtual ~PageOverlayController();
 
-    bool LEGACY_NODELETE hasDocumentOverlays() const;
-    bool LEGACY_NODELETE hasViewOverlays() const;
+    NODELETE bool hasDocumentOverlays() const;
+    NODELETE bool hasViewOverlays() const;
 
     GraphicsLayer& layerWithDocumentOverlaysForFrame(LocalFrame* rootFrame);
     GraphicsLayer& layerWithViewOverlays();
@@ -91,10 +91,10 @@ public:
 private:
     void createRootLayersIfNeeded();
 
-    WEBCORE_EXPORT GraphicsLayer* LEGACY_NODELETE documentOverlayRootLayer() const;
+    NODELETE WEBCORE_EXPORT GraphicsLayer* documentOverlayRootLayer() const;
     GraphicsLayer& documentOverlayRootLayerForFrame(LocalFrame* rootFrame);
 
-    WEBCORE_EXPORT GraphicsLayer* LEGACY_NODELETE viewOverlayRootLayer() const;
+    NODELETE WEBCORE_EXPORT GraphicsLayer* viewOverlayRootLayer() const;
 
     void installedPageOverlaysChanged();
     void attachViewOverlayLayers();
@@ -106,8 +106,8 @@ private:
     // GraphicsLayerClient
     void notifyFlushRequired(const GraphicsLayer*) override;
     void paintContents(const GraphicsLayer&, GraphicsContext&, const FloatRect& clipRect, OptionSet<GraphicsLayerPaintBehavior>) override;
-    float LEGACY_NODELETE deviceScaleFactor() const override;
-    bool LEGACY_NODELETE shouldSkipLayerInDump(const GraphicsLayer*, OptionSet<LayerTreeAsTextOptions>) const override;
+    NODELETE float deviceScaleFactor() const override;
+    NODELETE bool shouldSkipLayerInDump(const GraphicsLayer*, OptionSet<LayerTreeAsTextOptions>) const override;
     bool shouldDumpPropertyForLayer(const GraphicsLayer*, ASCIILiteral propertyName, OptionSet<LayerTreeAsTextOptions>) const override;
     void tiledBackingUsageChanged(const GraphicsLayer*, bool) override;
 

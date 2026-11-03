@@ -36,8 +36,8 @@ public:
     void add(Ref<CloseWatcher>);
     void remove(CloseWatcher&);
 
-    void LEGACY_NODELETE notifyAboutUserActivation();
-    bool LEGACY_NODELETE canPreventClose();
+    NODELETE void notifyAboutUserActivation();
+    NODELETE bool canPreventClose();
 
     void processCloseWatchers();
 private:

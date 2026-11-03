@@ -49,11 +49,11 @@ public:
 
 private:
     void performParse();
-    void LEGACY_NODELETE rewind();
-    const URLPatternUtilities::Token& LEGACY_NODELETE getSafeToken(size_t index) const;
-    bool LEGACY_NODELETE isNonSpecialPatternChararacter(size_t index, char value) const;
+    NODELETE void rewind();
+    NODELETE const URLPatternUtilities::Token& getSafeToken(size_t index) const;
+    NODELETE bool isNonSpecialPatternChararacter(size_t index, char value) const;
     bool isSearchPrefix() const;
-    bool LEGACY_NODELETE isAuthoritySlashesNext() const;
+    NODELETE bool isAuthoritySlashesNext() const;
     String makeComponentString() const;
     void changeState(URLPatternConstructorStringParserState, size_t skip);
     void updateState();

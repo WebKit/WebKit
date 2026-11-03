@@ -146,7 +146,7 @@ bool ContextMenuItem::enabled() const
     return m_enabled;
 }
 
-static bool LEGACY_NODELETE isValidContextMenuAction(WebCore::ContextMenuAction action)
+NODELETE static bool isValidContextMenuAction(WebCore::ContextMenuAction action)
 {
     switch (action) {
     case ContextMenuAction::ContextMenuItemTagNoAction:
@@ -305,7 +305,7 @@ static bool LEGACY_NODELETE isValidContextMenuAction(WebCore::ContextMenuAction 
 
 namespace WTF {
 
-template<> bool LEGACY_NODELETE isValidEnum<WebCore::ContextMenuAction>(std::underlying_type_t<WebCore::ContextMenuAction> action)
+template<> NODELETE bool isValidEnum<WebCore::ContextMenuAction>(std::underlying_type_t<WebCore::ContextMenuAction> action)
 {
     return WebCore::isValidContextMenuAction(static_cast<WebCore::ContextMenuAction>(action));
 }

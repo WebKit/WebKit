@@ -66,27 +66,27 @@ class Iterator;
 class FloatPair {
 public:
     struct InlineStartEndIndex {
-        bool LEGACY_NODELETE isEmpty() const { return !inlineStart && !inlineEnd; }
+        NODELETE bool isEmpty() const { return !inlineStart && !inlineEnd; }
 
         std::optional<size_t> inlineStart;
         std::optional<size_t> inlineEnd;
     };
 
-    bool LEGACY_NODELETE isEmpty() const { return m_floatPair.isEmpty(); }
+    NODELETE bool isEmpty() const { return m_floatPair.isEmpty(); }
     const PlacedFloats::Item* inlineStart() const;
     const PlacedFloats::Item* inlineEnd() const;
     bool intersects(const FloatAvoider&) const;
     bool intersects(BoxGeometry::HorizontalEdges) const;
     bool containsFloatFromFormattingContext() const;
-    PositionInContextRoot LEGACY_NODELETE highestBlockAxisPosition() const { return m_highestBlockAxisPosition; }
-    PositionInContextRoot LEGACY_NODELETE lowestBlockAxisPosition() const;
+    NODELETE PositionInContextRoot highestBlockAxisPosition() const { return m_highestBlockAxisPosition; }
+    NODELETE PositionInContextRoot lowestBlockAxisPosition() const;
 
     struct InlineAxisConstraints {
         std::optional<PositionInContextRoot> start;
         std::optional<PositionInContextRoot> end;
     };
     InlineAxisConstraints inlineAxisConstraints() const;
-    InlineStartEndIndex LEGACY_NODELETE operator*() const { return m_floatPair; };
+    NODELETE InlineStartEndIndex operator*() const { return m_floatPair; };
     bool operator==(const FloatPair&) const;
 
 private:
@@ -102,7 +102,7 @@ class Iterator {
 public:
     Iterator(const PlacedFloats::List&, std::optional<PositionInContextRoot> blockStart);
 
-    const FloatPair& LEGACY_NODELETE operator*() const { return m_current; }
+    NODELETE const FloatPair& operator*() const { return m_current; }
     Iterator& operator++();
     bool operator==(const Iterator&) const;
 
@@ -348,7 +348,7 @@ std::optional<FloatingContext::BlockAxisPositionWithClearance> FloatingContext::
     return { };
 }
 
-static bool LEGACY_NODELETE floatContainsLine(const Rect& floatBoxRect, LayoutUnit candidateTop, LayoutUnit candidateBottom, LayoutUnit candidateHeight)
+NODELETE static bool floatContainsLine(const Rect& floatBoxRect, LayoutUnit candidateTop, LayoutUnit candidateBottom, LayoutUnit candidateHeight)
 {
     if (floatBoxRect.isEmpty())
         return false;
@@ -630,7 +630,7 @@ FloatPair::FloatPair(const PlacedFloats::List& floats)
 {
 }
 
-const PlacedFloats::Item* LEGACY_NODELETE FloatPair::inlineStart() const
+NODELETE const PlacedFloats::Item* FloatPair::inlineStart() const
 {
     if (!m_floatPair.inlineStart)
         return { };
@@ -639,7 +639,7 @@ const PlacedFloats::Item* LEGACY_NODELETE FloatPair::inlineStart() const
     return &m_floats[*m_floatPair.inlineStart];
 }
 
-const PlacedFloats::Item* LEGACY_NODELETE FloatPair::inlineEnd() const
+NODELETE const PlacedFloats::Item* FloatPair::inlineEnd() const
 {
     if (!m_floatPair.inlineEnd)
         return { };
@@ -663,7 +663,7 @@ bool FloatPair::intersects(const FloatAvoider& floatAvoider) const
     return intersects(inlineStart()) || intersects(inlineEnd());
 }
 
-bool LEGACY_NODELETE FloatPair::intersects(BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const
+NODELETE bool FloatPair::intersects(BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const
 {
     ASSERT(!m_floatPair.isEmpty());
 
@@ -689,12 +689,12 @@ bool FloatPair::containsFloatFromFormattingContext() const
     return isInsideCurrentFormattingContext(inlineStart()) || isInsideCurrentFormattingContext(inlineEnd());
 }
 
-bool LEGACY_NODELETE FloatPair::operator ==(const FloatPair& other) const
+NODELETE bool FloatPair::operator ==(const FloatPair& other) const
 {
     return m_floatPair.inlineStart == other.m_floatPair.inlineStart && m_floatPair.inlineEnd == other.m_floatPair.inlineEnd;
 }
 
-FloatPair::InlineAxisConstraints LEGACY_NODELETE FloatPair::inlineAxisConstraints() const
+NODELETE FloatPair::InlineAxisConstraints FloatPair::inlineAxisConstraints() const
 {
     auto startEdge = std::optional<PositionInContextRoot> { };
     auto endEdge = std::optional<PositionInContextRoot> { };
@@ -734,7 +734,7 @@ Iterator::Iterator(const PlacedFloats::List& floats, std::optional<PositionInCon
         set(*blockStart);
 }
 
-inline static std::optional<size_t> LEGACY_NODELETE previousFloatingIndex(Float floatingType, const PlacedFloats::List& floats, size_t currentIndex)
+NODELETE inline static std::optional<size_t> previousFloatingIndex(Float floatingType, const PlacedFloats::List& floats, size_t currentIndex)
 {
     ASSERT(floatingType == Float::InlineStart || floatingType == Float::InlineEnd);
     RELEASE_ASSERT(currentIndex <= floats.size());
@@ -848,7 +848,7 @@ void Iterator::set(PositionInContextRoot blockAxisPosition)
     ASSERT(!m_current.m_floatPair.inlineEnd || (*m_current.m_floatPair.inlineEnd < m_floats.size() && !m_floats[*m_current.m_floatPair.inlineEnd].isStartPositioned()));
 }
 
-bool LEGACY_NODELETE Iterator::operator==(const Iterator& other) const
+NODELETE bool Iterator::operator==(const Iterator& other) const
 {
     return m_current == other.m_current;
 }

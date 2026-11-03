@@ -189,12 +189,12 @@ IntRect DragCaretController::editableElementRectInMainFrameViewCoordinates() con
     return { };
 }
 
-static inline bool LEGACY_NODELETE shouldAlwaysUseDirectionalSelection(Document* document)
+NODELETE static inline bool shouldAlwaysUseDirectionalSelection(Document* document)
 {
     return !document || document->editingBehavior().shouldConsiderSelectionAsDirectional();
 }
 
-static inline bool LEGACY_NODELETE isPageActive(Document* document)
+NODELETE static inline bool isPageActive(Document* document)
 {
     return document && document->page() && document->page()->focusController().isActive();
 }
@@ -600,7 +600,7 @@ void FrameSelection::updateDataDetectorsForSelection()
 #endif
 }
 
-static bool LEGACY_NODELETE removingNodeRemovesPosition(Node& node, const Position& position)
+NODELETE static bool removingNodeRemovesPosition(Node& node, const Position& position)
 {
     if (!position.anchorNode())
         return false;
@@ -636,7 +636,7 @@ void DragCaretController::clearCaretPositionWithoutUpdatingStyle()
     clearCaretRect();
 }
 
-static void LEGACY_NODELETE setNodeContainsSelectionEndPoint(const Position& position, bool value)
+NODELETE static void setNodeContainsSelectionEndPoint(const Position& position, bool value)
 {
     // We use anchorNode instead of containerNode() because nodeWillBeRemoved must update position when anchored node is removed.
     for (auto* currentNode = position.anchorNode(); currentNode; currentNode = currentNode->parentOrShadowHostNode()) {
@@ -1395,7 +1395,7 @@ VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity
     return pos;
 }
 
-static bool LEGACY_NODELETE isBoundary(TextGranularity granularity)
+NODELETE static bool isBoundary(TextGranularity granularity)
 {
     return granularity == TextGranularity::LineBoundary || granularity == TextGranularity::ParagraphBoundary || granularity == TextGranularity::DocumentBoundary;
 }
@@ -1468,7 +1468,7 @@ AXTextStateChangeIntent FrameSelection::textSelectionIntent(Alteration alter, Se
     return intent;
 }
 
-static AXTextSelection LEGACY_NODELETE textSelectionWithDirectionAndGranularity(SelectionDirection direction, TextGranularity granularity)
+NODELETE static AXTextSelection textSelectionWithDirectionAndGranularity(SelectionDirection direction, TextGranularity granularity)
 {
     // FIXME: Account for BIDI in SelectionDirection::Right & SelectionDirection::Left. (In a RTL block, Right would map to Previous/Beginning and Left to Next/End.)
     AXTextSelectionDirection intentDirection = AXTextSelectionDirection::Unknown;
@@ -1870,7 +1870,7 @@ RenderBlock* DragCaretController::caretRenderer() const
     return rendererForCaretPainting(protect(m_position.deepEquivalent().deprecatedNode()));
 }
 
-static bool LEGACY_NODELETE isNonOrphanedCaret(const VisibleSelection& selection)
+NODELETE static bool isNonOrphanedCaret(const VisibleSelection& selection)
 {
     return selection.isCaret() && !selection.start().isOrphan() && !selection.end().isOrphan();
 }
@@ -1886,7 +1886,7 @@ IntRect FrameSelection::absoluteCaretBounds(bool* insideFixed)
     return m_absCaretBounds;
 }
 
-static LayoutBoxExtent LEGACY_NODELETE computeOutsetFromInnerOuterRect(const LayoutRect& innerRect, const LayoutRect& outerRect)
+NODELETE static LayoutBoxExtent computeOutsetFromInnerOuterRect(const LayoutRect& innerRect, const LayoutRect& outerRect)
 {
     LayoutBoxExtent result;
     result.setLeft(std::max<LayoutUnit>(0, innerRect.x() - outerRect.x()));
@@ -2781,7 +2781,7 @@ static RefPtr<HTMLFormElement> scanForForm(Element* start)
     return nullptr;
 }
 
-static ValidatedFormListedElement* LEGACY_NODELETE findFormControlElementAncestor(Element& element)
+NODELETE static ValidatedFormListedElement* findFormControlElementAncestor(Element& element)
 {
     for (auto& ancestor : lineageOfType<Element>(element)) {
         if (auto* formControlAncestor = ancestor.asValidatedFormListedElement())
@@ -3201,7 +3201,7 @@ void FrameSelection::setCaretColor(const Color& caretColor)
 
 #endif // PLATFORM(IOS_FAMILY)
 
-static bool LEGACY_NODELETE containsEndpoints(const WeakPtr<Document, WeakPtrImplWithEventTargetData>& document, const std::optional<SimpleRange>& range)
+NODELETE static bool containsEndpoints(const WeakPtr<Document, WeakPtrImplWithEventTargetData>& document, const std::optional<SimpleRange>& range)
 {
     return document && range && document->contains(range->start.container) && document->contains(range->end.container);
 }

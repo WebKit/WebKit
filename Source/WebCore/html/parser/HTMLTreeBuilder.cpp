@@ -80,7 +80,7 @@ CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElement
 
 CustomElementConstructionData::~CustomElementConstructionData() = default;
 
-static inline TextPosition LEGACY_NODELETE uninitializedPositionValue1()
+NODELETE static inline TextPosition uninitializedPositionValue1()
 {
     return TextPosition(OrdinalNumber::fromOneBasedInt(-1), OrdinalNumber());
 }
@@ -101,7 +101,7 @@ static bool isTableBodyContextElement(ElementName elementName)
 }
 #endif
 
-static bool LEGACY_NODELETE isNonAnchorNonNobrFormattingTag(TagName tagName)
+NODELETE static bool isNonAnchorNonNobrFormattingTag(TagName tagName)
 {
     return tagName == TagName::b
         || tagName == TagName::big
@@ -117,13 +117,13 @@ static bool LEGACY_NODELETE isNonAnchorNonNobrFormattingTag(TagName tagName)
         || tagName == TagName::u;
 }
 
-static bool LEGACY_NODELETE isNonAnchorFormattingTag(TagName tagName)
+NODELETE static bool isNonAnchorFormattingTag(TagName tagName)
 {
     return tagName == TagName::nobr || isNonAnchorNonNobrFormattingTag(tagName);
 }
 
 // https://html.spec.whatwg.org/multipage/syntax.html#formatting
-bool LEGACY_NODELETE HTMLConstructionSite::isFormattingTag(TagName tagName)
+NODELETE bool HTMLConstructionSite::isFormattingTag(TagName tagName)
 {
     return tagName == TagName::a || isNonAnchorFormattingTag(tagName);
 }
@@ -149,18 +149,18 @@ public:
         ASSERT(isEmpty());
     }
 
-    bool LEGACY_NODELETE isEmpty() const { return m_text.isEmpty(); }
+    NODELETE bool isEmpty() const { return m_text.isEmpty(); }
 
-    bool LEGACY_NODELETE isAll8BitData() const { return m_isAll8BitData; }
+    NODELETE bool isAll8BitData() const { return m_isAll8BitData; }
 
-    void LEGACY_NODELETE skipAtMostOneLeadingNewline()
+    NODELETE void skipAtMostOneLeadingNewline()
     {
         ASSERT(!isEmpty());
         if (m_text[0] == '\n')
             m_text = m_text.substring(1);
     }
 
-    void LEGACY_NODELETE skipLeadingWhitespace()
+    NODELETE void skipLeadingWhitespace()
     {
         skipLeading<isASCIIWhitespace>();
     }
@@ -170,7 +170,7 @@ public:
         return takeLeading<isASCIIWhitespace>();
     }
 
-    void LEGACY_NODELETE skipLeadingNonWhitespace()
+    NODELETE void skipLeadingNonWhitespace()
     {
         skipLeading<isNotASCIIWhitespace>();
     }
@@ -209,7 +209,7 @@ public:
     }
 
 private:
-    template<bool characterPredicate(char16_t)> void LEGACY_NODELETE skipLeading()
+    template<bool characterPredicate(char16_t)> NODELETE void skipLeading()
     {
         ASSERT(!isEmpty());
         while (characterPredicate(m_text[0])) {
@@ -469,12 +469,12 @@ void HTMLTreeBuilder::processFakePEndTagIfPInButtonScope()
 
 namespace {
 
-bool LEGACY_NODELETE isLi(const HTMLStackItem& item)
+NODELETE bool isLi(const HTMLStackItem& item)
 {
     return item.elementName() == HTML::li;
 }
 
-bool LEGACY_NODELETE isDdOrDt(const HTMLStackItem& item)
+NODELETE bool isDdOrDt(const HTMLStackItem& item)
 {
     return item.elementName() == HTML::dd || item.elementName() == HTML::dt;
 }
@@ -498,7 +498,7 @@ template <bool shouldClose(const HTMLStackItem&)> void HTMLTreeBuilder::processC
     m_tree.insertHTMLElement(WTF::move(token));
 }
 
-static void LEGACY_NODELETE adjustSVGTagNameCase(AtomHTMLToken& token)
+NODELETE static void adjustSVGTagNameCase(AtomHTMLToken& token)
 {
     if (auto currentTagName = token.tagName(); currentTagName != TagName::Unknown)
         token.setTagName(adjustSVGTagName(currentTagName));
@@ -1517,13 +1517,13 @@ bool HTMLTreeBuilder::processBodyEndTagForInBody(AtomHTMLToken&& token)
     return true;
 }
 
-static bool LEGACY_NODELETE itemMatchesName(const HTMLStackItem& item, ElementName elementName)
+NODELETE static bool itemMatchesName(const HTMLStackItem& item, ElementName elementName)
 {
     ASSERT(elementName != ElementName::Unknown);
     return item.elementName() == elementName;
 }
 
-static bool LEGACY_NODELETE itemMatchesName(const HTMLStackItem& item, const AtomString& tagName)
+NODELETE static bool itemMatchesName(const HTMLStackItem& item, const AtomString& tagName)
 {
     return item.matchesHTMLTag(tagName);
 }
@@ -2928,7 +2928,7 @@ bool HTMLTreeBuilder::shouldProcessTokenInForeignContent(const AtomHTMLToken& to
     return true;
 }
 
-static bool LEGACY_NODELETE hasAttribute(const AtomHTMLToken& token, const QualifiedName& name)
+NODELETE static bool hasAttribute(const AtomHTMLToken& token, const QualifiedName& name)
 {
     return findAttribute(token.attributes(), name);
 }

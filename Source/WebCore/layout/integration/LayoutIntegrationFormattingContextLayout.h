@@ -57,7 +57,7 @@ enum class LogicalHeightType : uint8_t  {
     MinContentContribution,
     MaxContentContribution
 };
-LayoutUnit LEGACY_NODELETE formattingContextRootLogicalHeightForType(const Layout::ElementBox&, LogicalHeightType);
+NODELETE LayoutUnit formattingContextRootLogicalHeightForType(const Layout::ElementBox&, LogicalHeightType);
 
 void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLineLogicalTopLeft, Layout::InlineLayoutState&, Layout::LayoutState&);
 

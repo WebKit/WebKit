@@ -64,8 +64,8 @@ public:
 
 class WEBCORE_EXPORT AutomationInstrumentation {
 public:
-    static void LEGACY_NODELETE setClient(const AutomationInstrumentationClient&);
-    static void LEGACY_NODELETE clearClient();
+    NODELETE static void setClient(const AutomationInstrumentationClient&);
+    NODELETE static void clearClient();
 
     static void addMessageToConsole(const std::unique_ptr<Inspector::ConsoleMessage>&);
     static void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&, DOMWrapperWorld&);

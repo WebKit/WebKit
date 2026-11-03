@@ -70,7 +70,7 @@ private:
     bool resetCompressionSession();
     void configureCompressionSession();
     void setEncoderBitrateBps(uint32_t);
-    CMVideoCodecType LEGACY_NODELETE codecType() const;
+    NODELETE CMVideoCodecType codecType() const;
     void notifyDescription(std::span<const uint8_t>, const PlatformVideoColorSpace&);
 
     const CreationInfo m_creationInfo;

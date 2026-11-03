@@ -1560,7 +1560,7 @@ TextShapingResult FontCascade::layoutComplexText(const TextRun& run, unsigned fr
     return result;
 }
 
-inline bool LEGACY_NODELETE shouldDrawIfLoading(const Font& font, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
+NODELETE inline bool shouldDrawIfLoading(const Font& font, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
 {
     // Don't draw anything while we are using custom fonts that are in the process of loading,
     // except if the 'customFontNotReadyAction' argument is set to UseFallbackIfFontNotReady
@@ -1779,14 +1779,14 @@ struct GlyphIterationState {
     float maxX;
 };
 
-static std::optional<float> LEGACY_NODELETE findIntersectionPoint(float y, FloatPoint p1, FloatPoint p2)
+NODELETE static std::optional<float> findIntersectionPoint(float y, FloatPoint p1, FloatPoint p2)
 {
     if ((p1.y() < y && p2.y() > y) || (p1.y() > y && p2.y() < y))
         return p1.x() + (y - p1.y()) * (p2.x() - p1.x()) / (p2.y() - p1.y());
     return std::nullopt;
 }
 
-static void LEGACY_NODELETE updateX(GlyphIterationState& state, float x)
+NODELETE static void updateX(GlyphIterationState& state, float x)
 {
     state.minX = std::min(state.minX, x);
     state.maxX = std::max(state.maxX, x);
@@ -1799,7 +1799,7 @@ static void LEGACY_NODELETE updateX(GlyphIterationState& state, float x)
 // GlyphIterationState::y1 and GlyphIterationState::y2. It keeps track of the
 // leftmost and rightmost intersection in GlyphIterationState::minX and
 // GlyphIterationState::maxX.
-static void LEGACY_NODELETE findPathIntersections(GlyphIterationState& state, const PathElement& element)
+NODELETE static void findPathIntersections(GlyphIterationState& state, const PathElement& element)
 {
     bool doIntersection = false;
     FloatPoint point = FloatPoint();
@@ -1850,7 +1850,7 @@ public:
 #endif
     }
 
-    bool LEGACY_NODELETE containsMorePaths() { return m_index != m_glyphBuffer.size(); }
+    NODELETE bool containsMorePaths() { return m_index != m_glyphBuffer.size(); }
     Path path();
     std::pair<float, float> extents();
     GlyphUnderlineType underlineType();

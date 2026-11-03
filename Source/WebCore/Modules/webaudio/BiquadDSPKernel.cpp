@@ -49,7 +49,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BiquadDSPKernel);
 
-static bool LEGACY_NODELETE hasConstantValue(std::span<float> values)
+NODELETE static bool hasConstantValue(std::span<float> values)
 {
     // Load the initial value
     const float value = values[0];

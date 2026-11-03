@@ -62,7 +62,7 @@ public:
 
     const ServiceWorkerRegistrationKey& key() const LIFETIME_BOUND { return m_registrationKey; }
 
-    SWServerWorker* LEGACY_NODELETE getNewestWorker();
+    NODELETE SWServerWorker* getNewestWorker();
     WEBCORE_EXPORT ServiceWorkerRegistrationData data() const;
 
     void setLastUpdateTime(WallTime);

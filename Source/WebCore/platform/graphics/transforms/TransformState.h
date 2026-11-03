@@ -80,7 +80,7 @@ public:
         move(LayoutSize(x, y), accumulate);
     }
 
-    void LEGACY_NODELETE move(const LayoutSize&, TransformAccumulation = FlattenTransform);
+    NODELETE void move(const LayoutSize&, TransformAccumulation = FlattenTransform);
     void applyTransform(const AffineTransform& transformFromContainer, TransformAccumulation = FlattenTransform, bool* wasClamped = nullptr);
     WEBCORE_EXPORT void applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation = FlattenTransform, bool* wasClamped = nullptr);
 
@@ -96,15 +96,15 @@ public:
     std::unique_ptr<TransformationMatrix> releaseTrackedTransform();
     TransformDirection direction() const { return m_direction; }
 
-    void LEGACY_NODELETE flatten();
+    NODELETE void flatten();
 
 private:
-    void LEGACY_NODELETE translateTransform(const LayoutSize&, TransformDirection);
+    NODELETE void translateTransform(const LayoutSize&, TransformDirection);
     void applyAccumulatedOffset();
 
 
-    bool LEGACY_NODELETE shouldFlattenBefore(TransformAccumulation accumulate = FlattenTransform);
-    bool LEGACY_NODELETE shouldFlattenAfter(TransformAccumulation accumulate = FlattenTransform);
+    NODELETE bool shouldFlattenBefore(TransformAccumulation accumulate = FlattenTransform);
+    NODELETE bool shouldFlattenAfter(TransformAccumulation accumulate = FlattenTransform);
     
     TransformDirection inverseDirection() const;
 

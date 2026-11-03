@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-static StrokeStyle LEGACY_NODELETE textDecorationStyleToStrokeStyle(TextDecorationStyle decorationStyle)
+NODELETE static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorationStyle)
 {
     StrokeStyle strokeStyle = StrokeStyle::SolidStroke;
     switch (decorationStyle) {
@@ -65,7 +65,7 @@ static StrokeStyle LEGACY_NODELETE textDecorationStyleToStrokeStyle(TextDecorati
     return strokeStyle;
 }
 
-static void LEGACY_NODELETE adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle penStyle)
+NODELETE static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle penStyle)
 {
     // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
     // works out. For example, with a border width of 3, WebKit will pass us (y1+y2)/2, e.g.,

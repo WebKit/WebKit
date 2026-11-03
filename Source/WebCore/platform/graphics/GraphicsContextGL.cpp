@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-static GraphicsContextGL::DataFormat LEGACY_NODELETE getDataFormat(GCGLenum destinationFormat, GCGLenum destinationType)
+NODELETE static GraphicsContextGL::DataFormat getDataFormat(GCGLenum destinationFormat, GCGLenum destinationType)
 {
     switch (destinationType) {
     case GraphicsContextGL::BYTE:
@@ -281,7 +281,7 @@ ALWAYS_INLINE static unsigned texelBytesForFormat(GraphicsContextGL::DataFormat 
     }
 }
 
-static std::span<const uint8_t> LEGACY_NODELETE clampedSubspan(std::span<const uint8_t> span, size_t offset, size_t length)
+NODELETE static std::span<const uint8_t> clampedSubspan(std::span<const uint8_t> span, size_t offset, size_t length)
 {
     size_t clampedOffset = std::min(offset, span.size());
     size_t clampedLength = std::min(span.size() - clampedOffset, length);
@@ -289,12 +289,12 @@ static std::span<const uint8_t> LEGACY_NODELETE clampedSubspan(std::span<const u
 }
 
 template<typename T>
-static void LEGACY_NODELETE clampedSkip(std::span<T>& span, size_t offset)
+NODELETE static void clampedSkip(std::span<T>& span, size_t offset)
 {
     skip(span, std::min(offset, span.size()));
 }
 
-static void LEGACY_NODELETE clampedMoveCursorWithinSpan(std::span<uint8_t>& cursor, std::span<uint8_t> container, ptrdiff_t delta)
+NODELETE static void clampedMoveCursorWithinSpan(std::span<uint8_t>& cursor, std::span<uint8_t> container, ptrdiff_t delta)
 {
     ASSERT(cursor.data() >= container.data());
     ASSERT(std::to_address(cursor.end()) == std::to_address(container.end()));

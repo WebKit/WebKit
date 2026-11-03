@@ -66,11 +66,11 @@ public:
 
     void constructTree(AtomHTMLToken&&);
 
-    bool LEGACY_NODELETE isParsingTemplateContents() const;
+    NODELETE bool isParsingTemplateContents() const;
     bool hasParserBlockingScriptWork() const;
 
     // Must be called to take the parser-blocking script before calling the parser again.
-    RefPtr<ScriptElement> LEGACY_NODELETE takeScriptToProcess(TextPosition& scriptStartPosition);
+    NODELETE RefPtr<ScriptElement> takeScriptToProcess(TextPosition& scriptStartPosition);
     const ScriptElement* scriptToProcess() const { return m_scriptToProcess.get(); }
 
     std::unique_ptr<CustomElementConstructionData> takeCustomElementConstructionData() { return WTF::move(m_customElementToConstruct); }
@@ -79,7 +79,7 @@ public:
     // Done, close any open tags, etc.
     void finished();
 
-    bool LEGACY_NODELETE isOnStackOfOpenElements(Element&) const;
+    NODELETE bool isOnStackOfOpenElements(Element&) const;
 
 private:
     class ExternalCharacterTokenBuffer;
@@ -110,7 +110,7 @@ private:
         AfterAfterFrameset,
     };
 
-    bool LEGACY_NODELETE isParsingFragmentOrTemplateContents() const;
+    NODELETE bool isParsingFragmentOrTemplateContents() const;
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
     void insertPhoneNumberLink(const String&);
@@ -137,7 +137,7 @@ private:
     void processEndTagForInCell(AtomHTMLToken&&);
 
     void processHtmlStartTagForInBody(AtomHTMLToken&&);
-    bool LEGACY_NODELETE processBodyEndTagForInBody(AtomHTMLToken&&);
+    NODELETE bool processBodyEndTagForInBody(AtomHTMLToken&&);
     bool processTableEndTagForInTable();
     bool processCaptionEndTagForInCaption();
     bool processColgroupEndTagForInColumnGroup();
@@ -171,7 +171,7 @@ private:
     bool shouldProcessTokenInForeignContent(const AtomHTMLToken&);
     void processTokenInForeignContent(AtomHTMLToken&&);
 
-    HTMLStackItem& LEGACY_NODELETE adjustedCurrentStackItem() LIFETIME_BOUND;
+    NODELETE HTMLStackItem& adjustedCurrentStackItem() LIFETIME_BOUND;
 
     ALWAYS_INLINE void updateTokenizerForAdjustedCurrentNode();
 
@@ -181,7 +181,7 @@ private:
 
     template <bool shouldClose(const HTMLStackItem&)> void processCloseWhenNestedTag(AtomHTMLToken&&);
 
-    void LEGACY_NODELETE parseError(const AtomHTMLToken&);
+    NODELETE void parseError(const AtomHTMLToken&);
 
     void resetInsertionModeAppropriately();
 
@@ -197,9 +197,9 @@ private:
         NODELETE FragmentParsingContext(DocumentFragment&, Element& contextElement);
 
         DocumentFragment* fragment() const;
-        Element& LEGACY_NODELETE contextElement();
-        HTMLStackItem& LEGACY_NODELETE contextElementStackItem() LIFETIME_BOUND;
-        bool LEGACY_NODELETE contextElementIsTemplate() const;
+        NODELETE Element& contextElement();
+        NODELETE HTMLStackItem& contextElementStackItem() LIFETIME_BOUND;
+        NODELETE bool contextElementIsTemplate() const;
 
     private:
         WeakPtr<DocumentFragment, WeakPtrImplWithEventTargetData> m_fragment;

@@ -55,8 +55,8 @@ public:
     virtual ~IDBDatabase();
 
     // IDBDatabase IDL
-    const String LEGACY_NODELETE name() const;
-    uint64_t LEGACY_NODELETE version() const;
+    NODELETE const String name() const;
+    NODELETE uint64_t version() const;
     Ref<DOMStringList> objectStoreNames() const;
 
     struct ObjectStoreParameters {
@@ -79,7 +79,7 @@ public:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::IDBDatabase; }
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void derefEventTarget() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
@@ -89,7 +89,7 @@ public:
 
     IDBDatabaseInfo& info() LIFETIME_BOUND { return m_info; }
     IDBDatabaseConnectionIdentifier databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
-    std::optional<ScriptExecutionContextIdentifier> LEGACY_NODELETE scriptExecutionContextIdentifier() const;
+    NODELETE std::optional<ScriptExecutionContextIdentifier> scriptExecutionContextIdentifier() const;
 
     Ref<IDBTransaction> startVersionChangeTransaction(const IDBTransactionInfo&, IDBOpenDBRequest&);
     void didStartTransaction(IDBTransaction&);

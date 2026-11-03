@@ -47,7 +47,7 @@ public:
     // Manage the relationship with the owner.
     bool isAttached() const { return !!m_contextElement; }
     void detach() { m_contextElement = nullptr; }
-    SVGElement* LEGACY_NODELETE contextElement() const;
+    NODELETE SVGElement* contextElement() const;
 
     virtual String baseValAsString() const { return emptyString(); }
     virtual String animValAsString() const { return emptyString(); }
@@ -64,7 +64,7 @@ public:
 
 protected:
     explicit SVGAnimatedPropertyBase(SVGElement*);
-    SVGPropertyOwner* LEGACY_NODELETE owner() const override;
+    NODELETE SVGPropertyOwner* owner() const override;
     void commitPropertyChange(SVGProperty*) override;
 
     // Out of line because it reaches the owner's property registry, and SVGElement is incomplete

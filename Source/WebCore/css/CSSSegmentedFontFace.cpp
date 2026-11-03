@@ -86,7 +86,7 @@ private:
     {
     }
 
-    bool LEGACY_NODELETE isLoading() const final
+    NODELETE bool isLoading() const final
     {
         return m_result && m_result.value() && m_result.value()->isInterstitial();
     }

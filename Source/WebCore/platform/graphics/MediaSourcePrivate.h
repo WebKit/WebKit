@@ -82,11 +82,11 @@ public:
     explicit MediaSourcePrivate(MediaSourcePrivateClient&);
     virtual ~MediaSourcePrivate();
 
-    RefPtr<MediaSourcePrivateClient> LEGACY_NODELETE client() const;
+    NODELETE RefPtr<MediaSourcePrivateClient> client() const;
     virtual RefPtr<MediaPlayerPrivateInterface> player() const = 0;
     virtual void setPlayer(MediaPlayerPrivateInterface*) = 0;
     virtual void willShutdown() { }
-    void LEGACY_NODELETE shutdown();
+    NODELETE void shutdown();
     // Returns the target of the seek being waited on if any, the platform's current time otherwise.
     MediaTime currentTime() const;
     virtual bool timeIsProgressing() const;
@@ -110,7 +110,7 @@ public:
     // ranges change so a single algorithm produces the value.
     WEBCORE_EXPORT static PlatformTimeRanges computeBufferedRanges(const Vector<PlatformTimeRanges>& activeRanges, bool ended);
 
-    MediaPlayer::ReadyState LEGACY_NODELETE mediaPlayerReadyState() const;
+    NODELETE MediaPlayer::ReadyState mediaPlayerReadyState() const;
     void setMediaPlayerReadyState(MediaPlayer::ReadyState);
     virtual void markEndOfStream(EndOfStreamStatus);
     virtual void unmarkEndOfStream() { m_isEnded = false; }
@@ -119,7 +119,7 @@ public:
     virtual MediaSourceReadyState readyState() const { return m_readyState; }
     void setReadyState(MediaSourceReadyState readyState) { m_readyState = readyState; }
     void setLiveSeekableRange(const PlatformTimeRanges&);
-    const PlatformTimeRanges& LEGACY_NODELETE liveSeekableRange() const;
+    NODELETE const PlatformTimeRanges& liveSeekableRange() const;
     void clearLiveSeekableRange();
 
     Ref<MediaTimePromise> waitForTarget(const SeekTarget&);
@@ -156,12 +156,12 @@ public:
     MediaTime gapToleranceAtTime(const MediaTime&, std::optional<TrackID> excluded = std::nullopt) const;
     bool isWithinStartGapAllowance(const MediaTime&) const;
 
-    MediaTime LEGACY_NODELETE duration() const;
+    NODELETE MediaTime duration() const;
     PlatformTimeRanges buffered() const;
     // Compares the argument against m_buffered under m_lock without copying
     // m_buffered into the caller. Useful for short-circuit checks on the main
     // thread which would otherwise pay a full PlatformTimeRanges copy via buffered().
-    bool LEGACY_NODELETE isBufferedEqual(const PlatformTimeRanges&) const;
+    NODELETE bool isBufferedEqual(const PlatformTimeRanges&) const;
     bool isBuffered(const PlatformTimeRanges&) const;
     PlatformTimeRanges seekable() const;
 
@@ -173,14 +173,14 @@ public:
     // the cross-SourceBuffer intersection.
     MediaTime nextStallTime(const MediaTime& currentTime) const;
     MediaTime nextStallTime(const MediaTime& currentTime, const PlatformTimeRanges&) const;
-    bool LEGACY_NODELETE hasBufferedData() const;
+    NODELETE bool hasBufferedData() const;
     bool hasCurrentTime() const;
     bool hasFutureTime() const;
     bool hasFutureTime(const MediaTime& currentTime) const;
     static constexpr MediaTime futureDataThreshold() { return MediaTime { 1001, 24000 }; }
     bool hasFutureTime(const MediaTime& currentTime, const MediaTime& threshold) const;
-    bool LEGACY_NODELETE hasAudio() const;
-    bool LEGACY_NODELETE hasVideo() const;
+    NODELETE bool hasAudio() const;
+    NODELETE bool hasVideo() const;
     using TracksType = OptionSet<TrackInfoTrackType>;
     void tracksTypeChanged(SourceBufferPrivate&, TracksType);
     virtual bool supportsTracksTypeChanged() const { return false; }

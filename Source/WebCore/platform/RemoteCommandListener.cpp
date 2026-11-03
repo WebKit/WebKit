@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-static RemoteCommandListener::CreationFunction& LEGACY_NODELETE remoteCommandListenerCreationFunction()
+NODELETE static RemoteCommandListener::CreationFunction& remoteCommandListenerCreationFunction()
 {
     static NeverDestroyed<RemoteCommandListener::CreationFunction> creationFunction;
     return creationFunction;

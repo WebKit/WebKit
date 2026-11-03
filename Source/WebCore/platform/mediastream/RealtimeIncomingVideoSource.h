@@ -53,7 +53,7 @@ public:
     ~RealtimeIncomingVideoSource();
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
-    void LEGACY_NODELETE enableFrameRatedMonitoring();
+    NODELETE void enableFrameRatedMonitoring();
     void requestKeyFrame();
 
 protected:

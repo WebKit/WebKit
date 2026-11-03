@@ -94,7 +94,7 @@ public:
 
     virtual Class* getClass() const = 0;
     WEBCORE_EXPORT JSObject* createRuntimeObject(JSGlobalObject*);
-    void LEGACY_NODELETE willInvalidateRuntimeObject();
+    NODELETE void willInvalidateRuntimeObject();
 
     // Returns false if the value was not set successfully.
     virtual bool setValueOfUndefinedField(JSGlobalObject*, PropertyName, JSValue) { return false; }
@@ -114,7 +114,7 @@ public:
 
     virtual JSValue valueOf(JSGlobalObject* exec) const = 0;
 
-    RootObject* LEGACY_NODELETE rootObject() const;
+    NODELETE RootObject* rootObject() const;
 
     WEBCORE_EXPORT virtual ~Instance();
 

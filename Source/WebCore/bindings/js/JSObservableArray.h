@@ -94,7 +94,7 @@ private:
     JSObservableArray(VM&, Structure*);
     void finishCreation(VM&, Ref<ObservableArray>&&);
 
-    static JSC::GCClient::IsoSubspace* LEGACY_NODELETE subspaceForImpl(JSC::VM&);
+    NODELETE static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM&);
 
     const RefPtr<ObservableArray> m_array;
 };

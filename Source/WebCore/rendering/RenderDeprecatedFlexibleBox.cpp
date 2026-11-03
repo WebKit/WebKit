@@ -74,7 +74,7 @@ public:
         reset();
     }
 
-    void LEGACY_NODELETE reset()
+    NODELETE void reset()
     {
         m_currentChild = nullptr;
         m_ordinalIteration = std::numeric_limits<unsigned>::max();
@@ -118,7 +118,7 @@ public:
     }
 
 private:
-    bool LEGACY_NODELETE notFirstOrdinalValue()
+    NODELETE bool notFirstOrdinalValue()
     {
         unsigned int firstOrdinalValue = m_forward ? 1 : m_largestOrdinal;
         return m_currentOrdinal == firstOrdinalValue && m_currentChild->style().boxOrdinalGroup() != firstOrdinalValue;
@@ -143,7 +143,7 @@ RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, Style
 
 RenderDeprecatedFlexibleBox::~RenderDeprecatedFlexibleBox() = default;
 
-static LayoutUnit LEGACY_NODELETE marginWidthForChild(RenderBox* child)
+NODELETE static LayoutUnit marginWidthForChild(RenderBox* child)
 {
     // A margin basically has three types: fixed, percentage, and auto (variable).
     // Auto and percentage margins simply become 0 when computing min/max width.
@@ -157,20 +157,20 @@ static LayoutUnit LEGACY_NODELETE marginWidthForChild(RenderBox* child)
     return margin;
 }
 
-static bool LEGACY_NODELETE childDoesNotAffectWidthOrFlexing(RenderObject* child)
+NODELETE static bool childDoesNotAffectWidthOrFlexing(RenderObject* child)
 {
     // Positioned children don't affect the min/max width.
     return child->isOutOfFlowPositioned();
 }
 
-static LayoutUnit LEGACY_NODELETE widthForChild(RenderBox* child)
+NODELETE static LayoutUnit widthForChild(RenderBox* child)
 {
     if (auto overridingLogicalWidth = child->overridingBorderBoxLogicalWidth())
         return *overridingLogicalWidth;
     return child->logicalWidth();
 }
 
-static LayoutUnit LEGACY_NODELETE heightForChild(RenderBox* child)
+NODELETE static LayoutUnit heightForChild(RenderBox* child)
 {
     if (auto overridingLogicalHeight = child->overridingBorderBoxLogicalHeight())
         return *overridingLogicalHeight;
@@ -187,7 +187,7 @@ static LayoutUnit contentHeightForChild(RenderBox* child)
     return std::max<LayoutUnit>(0, heightForChild(child) - child->borderAndPaddingLogicalHeight());
 }
 
-static LayoutUnit LEGACY_NODELETE mainAxisExtentForChild(RenderBox* child, bool isVerticalBox)
+NODELETE static LayoutUnit mainAxisExtentForChild(RenderBox* child, bool isVerticalBox)
 {
     bool useLogicalHeight = isVerticalBox == child->isHorizontalWritingMode();
     return useLogicalHeight ? heightForChild(child) : widthForChild(child);

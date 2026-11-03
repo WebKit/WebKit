@@ -79,7 +79,7 @@ public:
 
     WebCore::Color colorApplyingColorFilter(const WebCore::Color&) const;
 
-    bool LEGACY_NODELETE visitedDependentShouldReturnUnvisitedLinkColor(OptionSet<PaintBehavior>) const;
+    NODELETE bool visitedDependentShouldReturnUnvisitedLinkColor(OptionSet<PaintBehavior>) const;
 
 protected:
     const CheckedRef<const ComputedStyleProperties> m_style;

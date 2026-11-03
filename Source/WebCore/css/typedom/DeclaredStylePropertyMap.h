@@ -36,16 +36,16 @@ class StyleRule;
 // https://drafts.css-houdini.org/css-typed-om/#declared-stylepropertymap-objects
 class DeclaredStylePropertyMap final : public StylePropertyMap {
 public:
-    static Ref<DeclaredStylePropertyMap> LEGACY_NODELETE create(CSSStyleRule&);
+    NODELETE static Ref<DeclaredStylePropertyMap> create(CSSStyleRule&);
 
     Vector<StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
-    unsigned LEGACY_NODELETE size() const final;
+    NODELETE unsigned size() const final;
     Type type() const final { return Type::Declared; }
 
 private:
     explicit DeclaredStylePropertyMap(CSSStyleRule&);
 
-    StyleRule* LEGACY_NODELETE styleRule() const;
+    NODELETE StyleRule* styleRule() const;
 
     void clear() final;
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;

@@ -202,16 +202,16 @@ public:
 
     LayoutRect containingBlockRect();
 
-    DOMPromise& LEGACY_NODELETE ready();
-    DOMPromise& LEGACY_NODELETE updateCallbackDone();
-    DOMPromise& LEGACY_NODELETE finished();
+    NODELETE DOMPromise& ready();
+    NODELETE DOMPromise& updateCallbackDone();
+    NODELETE DOMPromise& finished();
 
     ViewTransitionPhase phase() const { return m_phase; }
     const OrderedNamedElementsMap& namedElements() const { return m_namedElements; };
 
-    Document* LEGACY_NODELETE document() const;
+    NODELETE Document* document() const;
 
-    bool LEGACY_NODELETE documentElementIsCaptured() const;
+    NODELETE bool documentElementIsCaptured() const;
 
     const ViewTransitionTypeSet& types() const { return m_types; }
     void setTypes(Ref<ViewTransitionTypeSet>&&);

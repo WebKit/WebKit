@@ -104,7 +104,7 @@ public:
 
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
 
-    float LEGACY_NODELETE spaceWidth() const { return m_spaceWidth; }
+    NODELETE float spaceWidth() const { return m_spaceWidth; }
 
     float maxCharWidth() const { return m_maxCharWidth; }
     void setMaxCharWidth(float maxCharWidth) { m_maxCharWidth = maxCharWidth; }
@@ -195,7 +195,7 @@ protected:
     FontBase();
 
     WEBCORE_EXPORT void platformInit();
-    WEBCORE_EXPORT void LEGACY_NODELETE platformVerticalDataInit();
+    NODELETE WEBCORE_EXPORT void platformVerticalDataInit();
     WEBCORE_EXPORT void applyFontMetricsOverrides();
 
 #if PLATFORM(COCOA)

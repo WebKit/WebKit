@@ -75,8 +75,8 @@ public:
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
     using Preferences = VideoRendererPreferences;
-    bool LEGACY_NODELETE prefersDecompressionSession() const;
-    void LEGACY_NODELETE setPreferences(Preferences);
+    NODELETE bool prefersDecompressionSession() const;
+    NODELETE void setPreferences(Preferences);
     bool isUsingDecompressionSession() const { return m_isUsingDecompressionSession; }
     bool managesDecodedFrames() const { return m_isUsingDecompressionSession || m_isReceivingDecodedSamples; }
     bool isReceivingDecodedSamples() const { return m_lastEnqueuedSampleWasDecoded; }
@@ -103,9 +103,9 @@ public:
 
     void expectMinimumUpcomingSampleBufferPresentationTime(const MediaTime&);
 
-    WebSampleBufferVideoRendering *LEGACY_NODELETE renderer() const;
+    NODELETE WebSampleBufferVideoRendering *renderer() const;
 
-    template <typename T> T* LEGACY_NODELETE as() const;
+    template <typename T> NODELETE T* as() const;
     template <> AVSampleBufferVideoRenderer* as() const;
     template <> AVSampleBufferDisplayLayer* as() const
     {
@@ -119,7 +119,7 @@ public:
     };
     DisplayedPixelBufferEntry copyDisplayedPixelBuffer();
 
-    unsigned LEGACY_NODELETE totalDisplayedFrames() const;
+    NODELETE unsigned totalDisplayedFrames() const;
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() const;
 
     void setResourceOwner(const ProcessIdentity&);
@@ -155,7 +155,7 @@ private:
         Displayed
     };
     DecodedFrameResult maybeQueueFrameForDisplay(const MediaTime&, const MediaSample&, FlushId);
-    void LEGACY_NODELETE flushCompressedSampleQueue();
+    NODELETE void flushCompressedSampleQueue();
     void flushDecodedSampleQueue();
     void cancelTimer();
     void purgeDecodedSampleQueue(FlushId);
@@ -170,8 +170,8 @@ private:
     RetainPtr<CVPixelBufferRef> imageForSample(CMSampleBufferRef) const;
 
     void assignResourceOwner(const MediaSample&);
-    bool LEGACY_NODELETE areSamplesQueuesReadyForMoreMediaData(size_t waterMark) const;
-    size_t LEGACY_NODELETE compressedSamplesCount() const;
+    NODELETE bool areSamplesQueuesReadyForMoreMediaData(size_t waterMark) const;
+    NODELETE size_t compressedSamplesCount() const;
     void maybeBecomeReadyForMoreMediaData();
     bool shouldDecodeSample(const MediaSample&);
 
@@ -183,10 +183,10 @@ private:
     void ensureOnDispatcher(Function<void()>&&) const;
     void ensureOnDispatcherSync(NOESCAPE Function<void()>&&) const;
     dispatch_queue_t dispatchQueue() const;
-    RefPtr<WebCoreDecompressionSession> LEGACY_NODELETE decompressionSession() const;
-    bool LEGACY_NODELETE useDecompressionSessionForProtectedFallback() const;
-    bool LEGACY_NODELETE useDecompressionSessionForProtectedContent() const;
-    bool LEGACY_NODELETE useStereoDecoding() const;
+    NODELETE RefPtr<WebCoreDecompressionSession> decompressionSession() const;
+    NODELETE bool useDecompressionSessionForProtectedFallback() const;
+    NODELETE bool useDecompressionSessionForProtectedContent() const;
+    NODELETE bool useStereoDecoding() const;
 
     // WebAVSampleBufferListenerClient
     void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *) final;

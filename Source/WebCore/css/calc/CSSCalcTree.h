@@ -277,21 +277,21 @@ struct Children {
     Children(Vector<Child>&&);
     Children& operator=(Vector<Child>&&);
 
-    iterator LEGACY_NODELETE begin() LIFETIME_BOUND;
-    iterator LEGACY_NODELETE end() LIFETIME_BOUND;
-    reverse_iterator LEGACY_NODELETE rbegin() LIFETIME_BOUND;
-    reverse_iterator LEGACY_NODELETE rend() LIFETIME_BOUND;
+    NODELETE iterator begin() LIFETIME_BOUND;
+    NODELETE iterator end() LIFETIME_BOUND;
+    NODELETE reverse_iterator rbegin() LIFETIME_BOUND;
+    NODELETE reverse_iterator rend() LIFETIME_BOUND;
 
-    const_iterator LEGACY_NODELETE begin() const LIFETIME_BOUND;
-    const_iterator LEGACY_NODELETE end() const LIFETIME_BOUND;
-    const_reverse_iterator LEGACY_NODELETE rbegin() const LIFETIME_BOUND;
-    const_reverse_iterator LEGACY_NODELETE rend() const LIFETIME_BOUND;
+    NODELETE const_iterator begin() const LIFETIME_BOUND;
+    NODELETE const_iterator end() const LIFETIME_BOUND;
+    NODELETE const_reverse_iterator rbegin() const LIFETIME_BOUND;
+    NODELETE const_reverse_iterator rend() const LIFETIME_BOUND;
 
-    bool LEGACY_NODELETE isEmpty() const;
-    size_t LEGACY_NODELETE size() const;
+    NODELETE bool isEmpty() const;
+    NODELETE size_t size() const;
 
-    Child& LEGACY_NODELETE operator[](size_t i) LIFETIME_BOUND;
-    const Child& LEGACY_NODELETE operator[](size_t i) const LIFETIME_BOUND;
+    NODELETE Child& operator[](size_t i) LIFETIME_BOUND;
+    NODELETE const Child& operator[](size_t i) const LIFETIME_BOUND;
 
     bool operator==(const Children&) const = default;
 };
@@ -938,16 +938,16 @@ template<typename T> inline Type getType(const IndirectNode<T>& root)
 }
 
 // Gets the Type representing a CanonicalDimension::Dimension.
-Type LEGACY_NODELETE getType(CanonicalDimension::Dimension);
+NODELETE Type getType(CanonicalDimension::Dimension);
 
 // Gets the Type of the leaf node.
-Type LEGACY_NODELETE getType(const Number&);
-Type LEGACY_NODELETE getType(const Percentage&);
-Type LEGACY_NODELETE getType(const NonCanonicalDimension&);
-Type LEGACY_NODELETE getType(const CanonicalDimension&);
-Type LEGACY_NODELETE getType(const Symbol&);
-Type LEGACY_NODELETE getType(const SiblingCount&);
-Type LEGACY_NODELETE getType(const SiblingIndex&);
+NODELETE Type getType(const Number&);
+NODELETE Type getType(const Percentage&);
+NODELETE Type getType(const NonCanonicalDimension&);
+NODELETE Type getType(const CanonicalDimension&);
+NODELETE Type getType(const Symbol&);
+NODELETE Type getType(const SiblingCount&);
+NODELETE Type getType(const SiblingIndex&);
 
 // Gets the Type of the child node.
 Type getType(const Child&);
@@ -957,7 +957,7 @@ std::optional<Type> toType(const Sum&);
 std::optional<Type> toType(const Product&);
 std::optional<Type> toType(const Negate&);
 std::optional<Type> toType(const Invert&);
-std::optional<Type> LEGACY_NODELETE toType(const Deg2Rad&);
+NODELETE std::optional<Type> toType(const Deg2Rad&);
 std::optional<Type> toType(const Min&);
 std::optional<Type> toType(const Max&);
 std::optional<Type> toType(const Clamp&);
@@ -1017,16 +1017,16 @@ bool isNumeric(const Child& root);
 // Convenience constructors
 
 // Makes the appropriate child type (number, percentage, canonical-dimensions, non-canonical-dimension) based on the CSSUnitType.
-Child LEGACY_NODELETE makeNumeric(double, CSSUnitType);
+NODELETE Child makeNumeric(double, CSSUnitType);
 
 Sum add(Child&& a, Child&& b);
 Product multiply(Child&& a, Child&& b);
 Sum subtract(Child&& a, Child&& b);
 
-Child LEGACY_NODELETE makeChildWithValueBasedOn(double value, const Number&);
-Child LEGACY_NODELETE makeChildWithValueBasedOn(double value, const Percentage&);
-Child LEGACY_NODELETE makeChildWithValueBasedOn(double value, const CanonicalDimension&);
-Child LEGACY_NODELETE makeChildWithValueBasedOn(double value, const NonCanonicalDimension&);
+NODELETE Child makeChildWithValueBasedOn(double value, const Number&);
+NODELETE Child makeChildWithValueBasedOn(double value, const Percentage&);
+NODELETE Child makeChildWithValueBasedOn(double value, const CanonicalDimension&);
+NODELETE Child makeChildWithValueBasedOn(double value, const NonCanonicalDimension&);
 
 // MARK: Tuple Conformance
 

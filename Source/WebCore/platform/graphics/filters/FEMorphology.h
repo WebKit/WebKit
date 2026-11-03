@@ -41,13 +41,13 @@ public:
     bool operator==(const FEMorphology&) const;
 
     MorphologyOperatorType morphologyOperator() const { return m_type; }
-    bool LEGACY_NODELETE setMorphologyOperator(MorphologyOperatorType);
+    NODELETE bool setMorphologyOperator(MorphologyOperatorType);
 
     float radiusX() const { return m_radiusX; }
-    bool LEGACY_NODELETE setRadiusX(float);
+    NODELETE bool setRadiusX(float);
 
     float radiusY() const { return m_radiusY; }
-    bool LEGACY_NODELETE setRadiusY(float);
+    NODELETE bool setRadiusY(float);
 
 private:
     FEMorphology(MorphologyOperatorType, float radiusX, float radiusY, ColorSpace);

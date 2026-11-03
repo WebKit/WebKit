@@ -319,7 +319,7 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
 
 // MARK: - 'font-variant-caps'
 
-static FontVariantCaps LEGACY_NODELETE fontVariantCapsFromUnresolvedFontVariantCaps(const CSSPropertyParserHelpers::UnresolvedFontVariantCaps& unresolvedVariantCaps)
+NODELETE static FontVariantCaps fontVariantCapsFromUnresolvedFontVariantCaps(const CSSPropertyParserHelpers::UnresolvedFontVariantCaps& unresolvedVariantCaps)
 {
     return fromCSSValueID<FontVariantCaps>(unresolvedVariantCaps);
 }

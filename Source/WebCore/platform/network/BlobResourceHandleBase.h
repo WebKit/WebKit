@@ -71,18 +71,18 @@ protected:
     void incrementReadItemCount() { ++m_readItemCount; }
     uint64_t lengthOfItemBeingRead() const { return m_itemLengthList[m_readItemCount]; }
     WEBCORE_EXPORT void clearAsyncStream();
-    WEBCORE_EXPORT BlobData* LEGACY_NODELETE blobData() const;
+    NODELETE WEBCORE_EXPORT BlobData* blobData() const;
     FileStream* syncStream() const;
     AsyncFileStream* asyncStream() const;
     WEBCORE_EXPORT void resizeBuffer(size_t);
     const Vector<uint8_t>& buffer() const LIFETIME_BOUND { return *m_buffer; }
 
-    static uint64_t LEGACY_NODELETE clampReadSizeToRemaining(uint64_t requested, uint64_t totalRemaining);
+    NODELETE static uint64_t clampReadSizeToRemaining(uint64_t requested, uint64_t totalRemaining);
 
 private:
     void getSizeForNext();
-    std::optional<Error> LEGACY_NODELETE seek();
-    std::optional<Error> LEGACY_NODELETE adjustAndValidateRangeBounds();
+    NODELETE std::optional<Error> seek();
+    NODELETE std::optional<Error> adjustAndValidateRangeBounds();
     bool consumeData(std::span<const uint8_t>);
     bool readDataAsync(const BlobDataItem&, DataSegment&);
     void readFileAsync(const BlobDataItem&, BlobDataFileReference&);

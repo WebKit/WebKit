@@ -46,12 +46,12 @@ WEBCORE_EXPORT void registerSupplementalVP9Decoder();
 bool isVP9DecoderAvailable();
 WEBCORE_EXPORT bool vp9HardwareDecoderAvailable();
 WEBCORE_EXPORT bool vp9HardwareDecoderAvailableInProcess();
-WEBCORE_EXPORT void LEGACY_NODELETE setVP9HardwareDecoderAvailableInProcess(bool);
+NODELETE WEBCORE_EXPORT void setVP9HardwareDecoderAvailableInProcess(bool);
 bool isVP8DecoderAvailable();
 bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord&);
 std::optional<PlatformMediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord&, const PlatformMediaCapabilitiesVideoConfiguration&);
 std::optional<PlatformMediaCapabilitiesInfo> computeVPParameters(const PlatformMediaCapabilitiesVideoConfiguration&, bool vp9HardwareDecoderAvailable);
-bool LEGACY_NODELETE isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
+NODELETE bool isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
 RetainPtr<CMVideoFormatDescriptionRef> createVP9FormatDescriptionFromRecord(const VPCodecConfigurationRecord&, const std::optional<PlatformVideoColorSpace>& colorSpaceOverride = std::nullopt);
 WEBCORE_EXPORT Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord&, const std::optional<PlatformVideoColorSpace>& colorSpaceOverride = std::nullopt);
 // FIXME: createVideoInfoFromVP9Stream should take optional width/height parameters.
@@ -74,7 +74,7 @@ std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t>);
 
 class VP9TestingOverrides {
 public:
-    static WEBCORE_EXPORT VP9TestingOverrides& LEGACY_NODELETE singleton();
+    NODELETE static WEBCORE_EXPORT VP9TestingOverrides& singleton();
 
     WEBCORE_EXPORT void setHardwareDecoderDisabled(std::optional<bool>&&);
     std::optional<bool> hardwareDecoderDisabled() const
@@ -99,11 +99,11 @@ public:
     WEBCORE_EXPORT void setConfigurationChangedCallback(std::function<void(bool)>&&);
     WEBCORE_EXPORT void resetOverridesToDefaultValues();
 
-    WEBCORE_EXPORT void LEGACY_NODELETE setSWVPDecodersAlwaysEnabled(bool);
+    NODELETE WEBCORE_EXPORT void setSWVPDecodersAlwaysEnabled(bool);
     bool swVPDecodersAlwaysEnabled() const { return m_swVPDecodersAlwaysEnabled; }
 
-    WEBCORE_EXPORT void LEGACY_NODELETE setShouldEnableVP9Decoder(bool);
-    WEBCORE_EXPORT bool LEGACY_NODELETE shouldEnableVP9Decoder() const;
+    NODELETE WEBCORE_EXPORT void setShouldEnableVP9Decoder(bool);
+    NODELETE WEBCORE_EXPORT bool shouldEnableVP9Decoder() const;
 
 private:
     mutable Lock m_hardwareDecoderLock;

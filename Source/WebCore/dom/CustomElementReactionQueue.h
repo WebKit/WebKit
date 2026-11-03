@@ -139,12 +139,12 @@ public:
     static void enqueueFormStateRestoreCallbackIfNeeded(Element&, CustomElementFormValue&&);
     static void enqueuePostUpgradeReactions(Element&);
 
-    bool LEGACY_NODELETE observesStyleAttribute() const;
-    bool LEGACY_NODELETE isElementInternalsDisabled() const;
+    NODELETE bool observesStyleAttribute() const;
+    NODELETE bool isElementInternalsDisabled() const;
     bool isElementInternalsAttached() const { return m_elementInternalsAttached; }
-    void LEGACY_NODELETE setElementInternalsAttached();
-    bool LEGACY_NODELETE isFormAssociated() const;
-    bool LEGACY_NODELETE hasFormStateRestoreCallback() const;
+    NODELETE void setElementInternalsAttached();
+    NODELETE bool isFormAssociated() const;
+    NODELETE bool hasFormStateRestoreCallback() const;
 
     void invokeAll(Element&);
     void clear();

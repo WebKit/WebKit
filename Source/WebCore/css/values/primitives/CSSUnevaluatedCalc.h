@@ -60,7 +60,7 @@ enum class Category : uint8_t;
 
 // Type-erased helpers to allow for shared code.
 
-void LEGACY_NODELETE unevaluatedCalcRef(CSSCalc::Value*);
+NODELETE void unevaluatedCalcRef(CSSCalc::Value*);
 void unevaluatedCalcDeref(CSSCalc::Value*);
 
 // `UnevaluatedCalc` annotates a `CSSCalc::Value` with the raw value type that it
@@ -83,14 +83,14 @@ public:
     static std::optional<UnevaluatedCalcBase> parseBase(CSSParserTokenRange&, PropertyParserState&, Category, Range, CSSCalcSymbolsAllowed&&, const CSSPropertyParserOptions&);
 
     CSSCalc::Value& calcValue() const { return m_calc; }
-    [[nodiscard]] CSSCalc::Value& LEGACY_NODELETE leakRef();
+    NODELETE [[nodiscard]] CSSCalc::Value& leakRef();
 
-    Category LEGACY_NODELETE runtimeCategory() const;
-    CSSUnitType LEGACY_NODELETE primitiveType() const;
-    bool LEGACY_NODELETE rootNodeIsPercentage() const;
-    bool LEGACY_NODELETE requiresConversionData() const;
+    NODELETE Category runtimeCategory() const;
+    NODELETE CSSUnitType primitiveType() const;
+    NODELETE bool rootNodeIsPercentage() const;
+    NODELETE bool requiresConversionData() const;
 
-    bool LEGACY_NODELETE canBeCastedTo(Category) const;
+    NODELETE bool canBeCastedTo(Category) const;
 
     WTF::String serializationForCSS(const SerializationContext&) const;
     void serializationForCSS(StringBuilder&, const SerializationContext&) const;

@@ -58,9 +58,9 @@ public:
     float normalAngle() const { return m_normalAngle; }
 
 private:
-    void LEGACY_NODELETE closeSubpath();
-    void LEGACY_NODELETE moveTo(const FloatPoint&);
-    void LEGACY_NODELETE lineTo(const FloatPoint&);
+    NODELETE void closeSubpath();
+    NODELETE void moveTo(const FloatPoint&);
+    NODELETE void lineTo(const FloatPoint&);
     void quadraticBezierTo(const FloatPoint&, const FloatPoint&);
     void cubicBezierTo(const FloatPoint&, const FloatPoint&, const FloatPoint&);
 

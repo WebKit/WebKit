@@ -31,8 +31,8 @@ namespace WebCore {
 
 class CSSRatioValue final : public CSSValue {
 public:
-    static Ref<CSSRatioValue> LEGACY_NODELETE create(CSS::Ratio&&);
-    static Ref<CSSRatioValue> LEGACY_NODELETE create(const CSS::Ratio&);
+    NODELETE static Ref<CSSRatioValue> create(CSS::Ratio&&);
+    NODELETE static Ref<CSSRatioValue> create(const CSS::Ratio&);
 
     const CSS::Ratio& ratio() const LIFETIME_BOUND { return m_ratio; }
 

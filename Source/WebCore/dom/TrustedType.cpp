@@ -48,7 +48,7 @@ namespace WebCore {
 using namespace JSC;
 
 struct TrustedTypeVisitor {
-    String LEGACY_NODELETE operator()(std::monostate)
+    NODELETE String operator()(std::monostate)
     {
         return nullString();
     }
@@ -56,15 +56,15 @@ struct TrustedTypeVisitor {
     {
         return nullString();
     }
-    String LEGACY_NODELETE operator()(const Ref<TrustedHTML>& value)
+    NODELETE String operator()(const Ref<TrustedHTML>& value)
     {
         return value->toString();
     }
-    String LEGACY_NODELETE operator()(const Ref<TrustedScript>& value)
+    NODELETE String operator()(const Ref<TrustedScript>& value)
     {
         return value->toString();
     }
-    String LEGACY_NODELETE operator()(const Ref<TrustedScriptURL>& value)
+    NODELETE String operator()(const Ref<TrustedScriptURL>& value)
     {
         return value->toString();
     }

@@ -68,7 +68,7 @@ public:
 
     bool useBackgroundThreads() const { return m_useBackgroundThreads; }
 
-    size_t LEGACY_NODELETE latencyFrames() const;
+    NODELETE size_t latencyFrames() const;
 private:
     void backgroundThreadEntry();
 

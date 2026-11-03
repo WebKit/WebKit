@@ -59,7 +59,7 @@ public:
         return adoptRef(*new GPUQueue(WTF::move(backing), WTF::move(gpu), device));
     }
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
     void submit(Vector<Ref<GPUCommandBuffer>>&&);
@@ -93,7 +93,7 @@ public:
     ::WebGPU::Queue& backing() { return m_backing; }
     const ::WebGPU::Queue& backing() const { return m_backing; }
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

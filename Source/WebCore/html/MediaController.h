@@ -50,7 +50,7 @@ class MediaController final
     , public EventTarget {
     WTF_MAKE_TZONE_ALLOCATED(MediaController);
 public:
-    static Ref<MediaController> LEGACY_NODELETE create(ScriptExecutionContext&);
+    NODELETE static Ref<MediaController> create(ScriptExecutionContext&);
     virtual ~MediaController();
 
     // ContextDestructionObserver.
@@ -95,7 +95,7 @@ private:
     void bringElementUpToSpeed(HTMLMediaElement&);
     void scheduleEvent(const AtomString& eventName);
     void asyncEventTimerFired();
-    void LEGACY_NODELETE clearPositionTimerFired();
+    NODELETE void clearPositionTimerFired();
     bool hasEnded() const;
     void scheduleTimeupdateEvent();
     void startTimeupdateTimer();

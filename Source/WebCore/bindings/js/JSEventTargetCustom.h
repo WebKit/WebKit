@@ -55,7 +55,7 @@ private:
     JSC::JSObject* m_wrapper { nullptr };
 };
 
-JSEventTargetWrapper LEGACY_NODELETE jsEventTargetCast(JSC::VM&, JSC::JSValue thisValue);
+NODELETE JSEventTargetWrapper jsEventTargetCast(JSC::VM&, JSC::JSValue thisValue);
 
 template<> class IDLOperation<JSEventTarget> {
 public:

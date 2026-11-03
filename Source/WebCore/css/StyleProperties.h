@@ -114,7 +114,7 @@ public:
 
     bool propertyIsImportant(CSSPropertyID) const;
     String getPropertyShorthand(CSSPropertyID) const;
-    bool LEGACY_NODELETE isPropertyImplicit(CSSPropertyID) const;
+    NODELETE bool isPropertyImplicit(CSSPropertyID) const;
 
     RefPtr<CSSValue> getCustomPropertyCSSValue(const String& propertyName) const;
     String getCustomPropertyValue(const String& propertyName) const;
@@ -132,13 +132,13 @@ public:
     String asText(const CSS::SerializationContext&) const;
     AtomString asTextAtom(const CSS::SerializationContext&) const;
 
-    bool LEGACY_NODELETE hasCSSOMWrapper() const;
+    NODELETE bool hasCSSOMWrapper() const;
     bool isMutable() const { return m_isMutable; }
 
     bool traverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>& handler) const;
     bool mayDependOnBaseURL() const;
 
-    static unsigned LEGACY_NODELETE averageSizeInBytes();
+    NODELETE static unsigned averageSizeInBytes();
 
 #ifndef NDEBUG
     void showStyle();

@@ -77,7 +77,7 @@ public:
     };
     static std::expected<InternalConfig, String> checkConfiguration(const String&, const Config&);
 
-    static Ref<InternalAudioEncoderCocoa> LEGACY_NODELETE create(const Config& config, InternalConfig&& internalConfig, AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback)
+    NODELETE static Ref<InternalAudioEncoderCocoa> create(const Config& config, InternalConfig&& internalConfig, AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback)
     {
         return adoptRef(*new InternalAudioEncoderCocoa(config, WTF::move(internalConfig), WTF::move(descriptionCallback), WTF::move(outputCallback)));
     }
@@ -92,7 +92,7 @@ public:
 
 private:
     InternalAudioEncoderCocoa(const AudioEncoder::Config&, InternalConfig&&, AudioEncoder::DescriptionCallback&&, AudioEncoder::OutputCallback&&);
-    Ref<AudioSampleBufferConverter> LEGACY_NODELETE converter() const { return *m_converter; }
+    NODELETE Ref<AudioSampleBufferConverter> converter() const { return *m_converter; }
     void processEncodedOutputs();
     AudioEncoder::ActiveConfiguration activeConfiguration(CMSampleBufferRef) const;
     Vector<uint8_t> generateDecoderDescriptionFromSample(CMSampleBufferRef) const;

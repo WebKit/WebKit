@@ -36,7 +36,7 @@ struct GPUExternalTextureBindingLayout {
         return { };
     }
 
-    Ref<JSON::Object> LEGACY_NODELETE toJSON() const;
+    NODELETE Ref<JSON::Object> toJSON() const;
 };
 
 }

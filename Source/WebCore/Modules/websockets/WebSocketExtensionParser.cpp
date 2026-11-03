@@ -48,13 +48,13 @@ bool WebSocketExtensionParser::parsedSuccessfully()
     return m_data.empty() && !m_didFailParsing;
 }
 
-static bool LEGACY_NODELETE isSeparator(char character)
+NODELETE static bool isSeparator(char character)
 {
     static constexpr auto separatorCharacters = "()<>@,;:\\\"/[]?={} \t"_span;
     return WTF::contains(separatorCharacters, character);
 }
 
-static bool LEGACY_NODELETE isSpaceOrTab(Latin1Character character)
+NODELETE static bool isSpaceOrTab(Latin1Character character)
 {
     return character == ' ' || character == '\t';
 }

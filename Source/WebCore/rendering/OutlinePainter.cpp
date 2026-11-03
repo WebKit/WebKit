@@ -257,7 +257,7 @@ void OutlinePainter::paintOutlineWithLineRects(const RenderBoxModelObject& rende
         graphicsContext.endTransparencyLayer();
 }
 
-static bool LEGACY_NODELETE usePlatformFocusRingColorForOutlineStyleAuto()
+NODELETE static bool usePlatformFocusRingColorForOutlineStyleAuto()
 {
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     return true;
@@ -266,7 +266,7 @@ static bool LEGACY_NODELETE usePlatformFocusRingColorForOutlineStyleAuto()
 #endif
 }
 
-static bool LEGACY_NODELETE useShrinkWrappedFocusRingForOutlineStyleAuto()
+NODELETE static bool useShrinkWrappedFocusRingForOutlineStyleAuto()
 {
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     return true;
@@ -507,7 +507,7 @@ void OutlinePainter::collectFocusRingRectsForInlineChildren(const RenderBlockFlo
     }
 }
 
-static std::pair<FloatPoint, FloatPoint> LEGACY_NODELETE startAndEndPointsForCorner(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const FloatSize& radius)
+NODELETE static std::pair<FloatPoint, FloatPoint> startAndEndPointsForCorner(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const FloatSize& radius)
 {
     FloatSize fromEdgeVector = *fromEdge.second - *fromEdge.first;
     FloatSize toEdgeVector = *toEdge.second - *toEdge.first;
@@ -526,7 +526,7 @@ static std::pair<FloatPoint, FloatPoint> LEGACY_NODELETE startAndEndPointsForCor
 
 enum class PainterCornerType : uint8_t { TopLeft, TopRight, BottomRight, BottomLeft, Other };
 
-static PainterCornerType LEGACY_NODELETE cornerType(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge)
+NODELETE static PainterCornerType cornerType(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge)
 {
     auto fromEdgeVector = *fromEdge.second - *fromEdge.first;
     auto toEdgeVector = *toEdge.second - *toEdge.first;
@@ -542,7 +542,7 @@ static PainterCornerType LEGACY_NODELETE cornerType(const FloatPointGraph::Edge&
     return PainterCornerType::Other;
 }
 
-static PainterCornerType LEGACY_NODELETE cornerTypeForMultiline(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const Vector<FloatPoint>& corners)
+NODELETE static PainterCornerType cornerTypeForMultiline(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const Vector<FloatPoint>& corners)
 {
     auto corner = cornerType(fromEdge, toEdge);
     if (corner == PainterCornerType::TopLeft && corners.at(0) == *fromEdge.second)
@@ -556,7 +556,7 @@ static PainterCornerType LEGACY_NODELETE cornerTypeForMultiline(const FloatPoint
     return PainterCornerType::Other;
 }
 
-static std::pair<FloatPoint, FloatPoint> LEGACY_NODELETE controlPointsForBezierCurve(PainterCornerType cornerType, const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const FloatSize& radius)
+NODELETE static std::pair<FloatPoint, FloatPoint> controlPointsForBezierCurve(PainterCornerType cornerType, const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const FloatSize& radius)
 {
     FloatPoint cp1;
     FloatPoint cp2;
@@ -612,7 +612,7 @@ static CornerRadii adjustedRadiiForHuggingCurve(const CornerRadii& inputRadii, f
     };
 }
 
-static std::optional<FloatRect> LEGACY_NODELETE rectFromPolygon(const FloatPointGraph::Polygon& poly)
+NODELETE static std::optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& poly)
 {
     if (poly.size() != 4)
         return std::optional<FloatRect>();

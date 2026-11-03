@@ -41,7 +41,7 @@
 namespace WebCore {
 
 // Keeps track of loaders on a per-sample-rate basis.
-static HashMap<double, ThreadSafeWeakPtr<HRTFDatabaseLoader>>& LEGACY_NODELETE loaderMap()
+NODELETE static HashMap<double, ThreadSafeWeakPtr<HRTFDatabaseLoader>>& loaderMap()
 {
     static NeverDestroyed<HashMap<double, ThreadSafeWeakPtr<HRTFDatabaseLoader>>> loaderMap;
     return loaderMap;

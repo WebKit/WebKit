@@ -72,9 +72,9 @@ public:
     ExceptionOr<void> setChannelCountMode(ChannelCountMode) final;
 
 private:
-    double LEGACY_NODELETE tailTime() const override;
-    double LEGACY_NODELETE latencyTime() const override;
-    bool LEGACY_NODELETE requiresTailProcessing() const final;
+    NODELETE double tailTime() const override;
+    NODELETE double latencyTime() const override;
+    NODELETE bool requiresTailProcessing() const final;
 
     ScriptProcessorNode(BaseAudioContext&, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels);
 

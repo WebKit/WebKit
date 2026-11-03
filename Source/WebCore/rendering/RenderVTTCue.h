@@ -56,19 +56,19 @@ private:
     CheckedPtr<RenderVTTCue> overlappingObjectForRect(const FloatRect&) const;
     bool shouldSwitchDirection(const InlineIterator::InlineBox&, LayoutUnit) const;
 
-    void LEGACY_NODELETE moveBoxesByStep(LayoutUnit);
-    bool LEGACY_NODELETE switchDirection(bool&, LayoutUnit&);
+    NODELETE void moveBoxesByStep(LayoutUnit);
+    NODELETE bool switchDirection(bool&, LayoutUnit&);
     void moveIfNecessaryToKeepWithinContainer();
     bool findNonOverlappingPosition(float& x, float& y) const;
 
     bool initializeLayoutParameters(LayoutUnit&, LayoutUnit&);
-    void LEGACY_NODELETE placeBoxInDefaultPosition(LayoutUnit, bool&);
+    NODELETE void placeBoxInDefaultPosition(LayoutUnit, bool&);
     void repositionCueSnapToLinesSet();
     void repositionCueSnapToLinesNotSet();
     void repositionGenericCue();
 
-    RenderBlockFlow* LEGACY_NODELETE backdropBox() const;
-    RenderBoxModelObject* LEGACY_NODELETE cueBox() const;
+    NODELETE RenderBlockFlow* backdropBox() const;
+    NODELETE RenderBoxModelObject* cueBox() const;
     static FloatRect unroundedAbsoluteBoundingBoxRect(const RenderBox&);
 
     WeakPtr<VTTCue, WeakPtrImplWithEventTargetData> m_cue;

@@ -131,8 +131,8 @@ enum class ShareableCVPixelFormat : uint8_t {
     Type_Lossy_422YpCbCr10PackedBiPlanarVideoRange,
 };
 
-ShareableCVPixelFormat LEGACY_NODELETE fromCVPixelFormat(OSType);
-OSType LEGACY_NODELETE toCVPixelFormat(ShareableCVPixelFormat);
+NODELETE ShareableCVPixelFormat fromCVPixelFormat(OSType);
+NODELETE OSType toCVPixelFormat(ShareableCVPixelFormat);
 
 } // namespace WebCore
 

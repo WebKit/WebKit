@@ -831,7 +831,7 @@ static JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject& lexicalGlobalO
                 : m_skipFirstFrame(skipFirstFrame)
             { }
 
-            IterationStatus LEGACY_NODELETE operator()(StackVisitor& visitor) const
+            NODELETE IterationStatus operator()(StackVisitor& visitor) const
             {
                 if (m_skipFirstFrame) {
                     if (!m_hasSkippedFirstFrame) {
@@ -853,7 +853,7 @@ static JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject& lexicalGlobalO
                 return IterationStatus::Done;
             }
 
-            JSC::JSGlobalObject* LEGACY_NODELETE globalObject() const { return m_globalObject; }
+            NODELETE JSC::JSGlobalObject* globalObject() const { return m_globalObject; }
 
         private:
             bool m_skipFirstFrame { false };

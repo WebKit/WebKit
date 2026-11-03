@@ -55,8 +55,8 @@ public:
 
     // Implements the IDL.
     size_t length() const { return m_strings.size(); }
-    String LEGACY_NODELETE item(unsigned index) const;
-    bool LEGACY_NODELETE contains(const String&) const;
+    NODELETE String item(unsigned index) const;
+    NODELETE bool contains(const String&) const;
 
     operator const Vector<String>&() const LIFETIME_BOUND { return m_strings; }
 

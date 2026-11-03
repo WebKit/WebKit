@@ -83,7 +83,7 @@ public:
         DocumentPredicate(DocumentPredicate&&) = default;
         DocumentPredicate& operator=(DocumentPredicate&&) = default;
 
-        const PredicateVariant& LEGACY_NODELETE value() const;
+        NODELETE const PredicateVariant& value() const;
 
     private:
         PredicateVariant m_value;
@@ -100,7 +100,7 @@ public:
         String noVarySearchHint;
     };
 
-    static Ref<SpeculationRules> LEGACY_NODELETE create();
+    NODELETE static Ref<SpeculationRules> create();
 
     // https://wicg.github.io/nav-speculation/speculation-rules.html#parse-speculation-rules
     WEBCORE_EXPORT bool parseSpeculationRules(Node& sourceNode, const StringView&, const URL& rulesetBaseURL, const URL& documentBaseURL);
@@ -110,7 +110,7 @@ public:
 
     const WeakHashMap<Node, Vector<Rule>, WeakPtrImplWithEventTargetData>& prefetchRules() const LIFETIME_BOUND { return m_prefetchRulesByNode; }
 
-    bool LEGACY_NODELETE hasNonConservativePrefetchRules() const;
+    NODELETE bool hasNonConservativePrefetchRules() const;
 
 private:
     SpeculationRules() = default;

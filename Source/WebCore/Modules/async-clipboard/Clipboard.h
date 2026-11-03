@@ -43,14 +43,14 @@ class PasteboardCustomData;
 class Clipboard final : public RefCounted<Clipboard>, public EventTarget {
     WTF_MAKE_TZONE_ALLOCATED(Clipboard);
 public:
-    static Ref<Clipboard> LEGACY_NODELETE create(Navigator&);
+    NODELETE static Ref<Clipboard> create(Navigator&);
     ~Clipboard();
 
     enum EventTargetInterfaceType eventTargetInterface() const final;
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
 
-    LocalFrame* LEGACY_NODELETE frame() const;
-    Navigator* LEGACY_NODELETE navigator();
+    NODELETE LocalFrame* frame() const;
+    NODELETE Navigator* navigator();
 
     using RefCounted::ref;
     using RefCounted::deref;
@@ -75,7 +75,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    Pasteboard& LEGACY_NODELETE activePasteboard();
+    NODELETE Pasteboard& activePasteboard();
 
     enum class SessionIsValid : bool { No, Yes };
     SessionIsValid updateSessionValidity();

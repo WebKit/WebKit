@@ -72,15 +72,15 @@ public:
     const OrderedHashSet<Ref<ContainerNode>>& roots() const LIFETIME_BOUND { return m_roots; }
     OrderedHashSet<Ref<Element>> takeRebuildRoots() { return WTF::move(m_rebuildRoots); }
 
-    const ElementUpdate* LEGACY_NODELETE elementUpdate(const Element&) const;
-    ElementUpdate* LEGACY_NODELETE elementUpdate(const Element&);
+    NODELETE const ElementUpdate* elementUpdate(const Element&) const;
+    NODELETE ElementUpdate* elementUpdate(const Element&);
 
-    const TextUpdate* LEGACY_NODELETE textUpdate(const Text&) const;
+    NODELETE const TextUpdate* textUpdate(const Text&) const;
 
     const Style::ComputedStyle* initialContainingBlockUpdate() const LIFETIME_BOUND { return m_initialContainingBlockUpdate.get(); }
 
-    const Style::ComputedStyle* LEGACY_NODELETE elementStyle(const Element&) const;
-    Style::ComputedStyle* LEGACY_NODELETE elementStyle(const Element&);
+    NODELETE const Style::ComputedStyle* elementStyle(const Element&) const;
+    NODELETE Style::ComputedStyle* elementStyle(const Element&);
 
     const Document& document() const { return m_document; }
 

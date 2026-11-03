@@ -64,13 +64,13 @@ private:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCDtlsTransport; }
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     // ActiveDOMObject
-    void LEGACY_NODELETE stop() final;
-    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
+    NODELETE void stop() final;
+    NODELETE bool virtualHasPendingActivity() const final;
 
     // RTCDtlsTransportBackendClient
     void onStateChanged(RTCDtlsTransportState, Vector<Ref<JSC::ArrayBuffer>>&&) final;

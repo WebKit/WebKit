@@ -59,9 +59,9 @@ public:
     
     template<typename Visitor> void visitOwnerElementInGCThread(Visitor&);
 
-    const AtomString& LEGACY_NODELETE namespaceURI() const LIFETIME_BOUND final { return m_name.namespaceURI(); }
-    const AtomString& LEGACY_NODELETE localName() const LIFETIME_BOUND final { return m_name.localName(); }
-    const AtomString& LEGACY_NODELETE prefix() const LIFETIME_BOUND final { return m_name.prefix(); }
+    NODELETE const AtomString& namespaceURI() const LIFETIME_BOUND final { return m_name.namespaceURI(); }
+    NODELETE const AtomString& localName() const LIFETIME_BOUND final { return m_name.localName(); }
+    NODELETE const AtomString& prefix() const LIFETIME_BOUND final { return m_name.prefix(); }
 
 private:
     Attr(Element&, const QualifiedName&);

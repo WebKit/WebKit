@@ -45,8 +45,8 @@ private:
         return x * bytesPerPixel + y * rowBytes;
     }
 
-    int LEGACY_NODELETE xChannelIndex() const;
-    int LEGACY_NODELETE yChannelIndex() const;
+    NODELETE int xChannelIndex() const;
+    NODELETE int yChannelIndex() const;
 };
 
 } // namespace WebCore

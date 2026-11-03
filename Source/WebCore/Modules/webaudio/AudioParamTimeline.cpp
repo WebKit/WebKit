@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-static void LEGACY_NODELETE fillWithValue(std::span<float> values, float value, unsigned endFrame, unsigned& writeIndex)
+NODELETE static void fillWithValue(std::span<float> values, float value, unsigned endFrame, unsigned& writeIndex)
 {
     if (writeIndex < endFrame) {
         std::ranges::fill(values.subspan(writeIndex).first(endFrame - writeIndex), value);
@@ -49,7 +49,7 @@ static void LEGACY_NODELETE fillWithValue(std::span<float> values, float value, 
 
 // Test that for a SetTarget event, the current value is close enough to the target value that
 // we can consider the event to have converged to the target.
-static bool LEGACY_NODELETE hasSetTargetConverged(float value, float target, Seconds currentTime, Seconds startTime, double timeConstant)
+NODELETE static bool hasSetTargetConverged(float value, float target, Seconds currentTime, Seconds startTime, double timeConstant)
 {
     // For a SetTarget event, we want the event to terminate eventually so that we can stop using
     // the timeline to compute the values.
@@ -126,12 +126,12 @@ ExceptionOr<void> AudioParamTimeline::setValueCurveAtTime(Vector<float>&& curve,
     return insertEvent(ParamEvent::createSetValueEvent(curveEndValue, time + duration));
 }
 
-static bool LEGACY_NODELETE isValidNumber(float x)
+NODELETE static bool isValidNumber(float x)
 {
     return std::isfinite(x);
 }
 
-static bool LEGACY_NODELETE isValidNumber(Seconds s)
+NODELETE static bool isValidNumber(Seconds s)
 {
     return std::isfinite(s.value());
 }

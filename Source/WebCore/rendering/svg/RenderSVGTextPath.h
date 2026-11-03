@@ -36,12 +36,12 @@ public:
     RenderSVGTextPath(SVGTextPathElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGTextPath();
 
-    SVGTextPathElement& LEGACY_NODELETE textPathElement() const;
+    NODELETE SVGTextPathElement& textPathElement() const;
     RefPtr<SVGGeometryElement> targetElement() const;
 
     bool usesPathAttribute() const;
     Path layoutPath() const;
-    const SVGLengthValue& LEGACY_NODELETE startOffset() const LIFETIME_BOUND;
+    NODELETE const SVGLengthValue& startOffset() const LIFETIME_BOUND;
 
     bool isLayoutPathReversed() const;
 

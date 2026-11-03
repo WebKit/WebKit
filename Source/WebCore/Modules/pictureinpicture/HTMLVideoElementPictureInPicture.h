@@ -66,11 +66,11 @@ public:
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "HTMLVideoElementPictureInPicture"_s; }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const final;
+    NODELETE WTFLogChannel& logChannel() const final;
 #endif
 
     // PictureInPictureObserver.
-    void LEGACY_NODELETE ref() const final;
+    NODELETE void ref() const final;
     void deref() const final;
 
 private:

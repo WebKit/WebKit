@@ -46,12 +46,12 @@ public:
     RenderHTMLCanvas(HTMLCanvasElement&, Style::ComputedStyle&&);
     virtual ~RenderHTMLCanvas();
 
-    HTMLCanvasElement& LEGACY_NODELETE canvasElement() const;
+    NODELETE HTMLCanvasElement& canvasElement() const;
 
     void canvasSizeChanged();
 
     RenderBlock* innerRenderer() const { return m_innerRenderer.get(); }
-    void LEGACY_NODELETE setInnerRenderer(RenderBlock*);
+    NODELETE void setInnerRenderer(RenderBlock*);
 
     bool hasDrawableContent() const final;
 

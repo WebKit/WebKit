@@ -101,8 +101,8 @@ class WebGLObject : public RefCounted<WebGLObject> {
 public:
     virtual ~WebGLObject();
 
-    WebGLRenderingContextBase* LEGACY_NODELETE context() const;
-    GraphicsContextGL* LEGACY_NODELETE graphicsContextGL() const;
+    NODELETE WebGLRenderingContextBase* context() const;
+    NODELETE GraphicsContextGL* graphicsContextGL() const;
 
     PlatformGLObject object() const { return m_object; }
 
@@ -122,9 +122,9 @@ public:
     bool isDeleted() const { return m_deleted; }
 
     // True if this object belongs to the context.
-    bool LEGACY_NODELETE validate(const WebGLRenderingContextBase&) const;
+    NODELETE bool validate(const WebGLRenderingContextBase&) const;
 
-    Lock& LEGACY_NODELETE objectGraphLockForContext();
+    NODELETE Lock& objectGraphLockForContext();
 
     bool hasActiveInspectorCanvasCallTracer() const;
 
@@ -150,7 +150,7 @@ PlatformGLObject objectOrZero(const T& object)
     return object ? object->object() : 0;
 }
 
-WebCoreOpaqueRoot LEGACY_NODELETE root(WebGLObject*);
+NODELETE WebCoreOpaqueRoot root(WebGLObject*);
 
 } // namespace WebCore
 

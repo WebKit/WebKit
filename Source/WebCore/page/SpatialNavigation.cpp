@@ -58,7 +58,7 @@ static bool areRectsMoreThanFullScreenApart(FocusDirection, const LayoutRect& cu
 static bool isRectInDirection(FocusDirection, const LayoutRect&, const LayoutRect&);
 static void deflateIfOverlapped(LayoutRect&, LayoutRect&);
 static LayoutRect rectToAbsoluteCoordinates(LocalFrame* initialFrame, const LayoutRect&);
-static void LEGACY_NODELETE entryAndExitPointsForDirection(FocusDirection, const LayoutRect& startingRect, const LayoutRect& potentialRect, LayoutPoint& exitPoint, LayoutPoint& entryPoint);
+NODELETE static void entryAndExitPointsForDirection(FocusDirection, const LayoutRect& startingRect, const LayoutRect& potentialRect, LayoutPoint& exitPoint, LayoutPoint& entryPoint);
 static bool isScrollableNode(const ContainerNode&);
 
 FocusCandidate::FocusCandidate(Element* element, FocusDirection direction)
@@ -88,7 +88,7 @@ FocusCandidate::FocusCandidate(Element* element, FocusDirection direction)
     isOffscreenAfterScrolling = hasOffscreenRect(*protectedVisibleNode, direction);
 }
 
-static RectsAlignment LEGACY_NODELETE alignmentForRects(FocusDirection direction, const LayoutRect& curRect, const LayoutRect& targetRect, const LayoutSize& viewSize)
+NODELETE static RectsAlignment alignmentForRects(FocusDirection direction, const LayoutRect& curRect, const LayoutRect& targetRect, const LayoutSize& viewSize)
 {
     // If we found a node in full alignment, but it is too far away, ignore it.
     if (areRectsMoreThanFullScreenApart(direction, curRect, targetRect, viewSize))
@@ -103,23 +103,23 @@ static RectsAlignment LEGACY_NODELETE alignmentForRects(FocusDirection direction
     return RectsAlignment::None;
 }
 
-static inline bool LEGACY_NODELETE isHorizontalMove(FocusDirection direction)
+NODELETE static inline bool isHorizontalMove(FocusDirection direction)
 {
     return direction == FocusDirection::Left || direction == FocusDirection::Right;
 }
 
-static inline LayoutUnit LEGACY_NODELETE start(FocusDirection direction, const LayoutRect& rect)
+NODELETE static inline LayoutUnit start(FocusDirection direction, const LayoutRect& rect)
 {
     return isHorizontalMove(direction) ? rect.y() : rect.x();
 }
 
-static inline LayoutUnit LEGACY_NODELETE middle(FocusDirection direction, const LayoutRect& rect)
+NODELETE static inline LayoutUnit middle(FocusDirection direction, const LayoutRect& rect)
 {
     LayoutPoint center(rect.center());
     return isHorizontalMove(direction) ? center.y(): center.x();
 }
 
-static inline LayoutUnit LEGACY_NODELETE end(FocusDirection direction, const LayoutRect& rect)
+NODELETE static inline LayoutUnit end(FocusDirection direction, const LayoutRect& rect)
 {
     return isHorizontalMove(direction) ? rect.maxY() : rect.maxX();
 }
@@ -131,7 +131,7 @@ static inline LayoutUnit LEGACY_NODELETE end(FocusDirection direction, const Lay
 // operations.
 // * a = Current focused node's rect.
 // * b = Focus candidate node's rect.
-static bool LEGACY_NODELETE areRectsFullyAligned(FocusDirection direction, const LayoutRect& a, const LayoutRect& b)
+NODELETE static bool areRectsFullyAligned(FocusDirection direction, const LayoutRect& a, const LayoutRect& b)
 {
     LayoutUnit aStart, bStart, aEnd, bEnd;
 
@@ -203,7 +203,7 @@ static bool LEGACY_NODELETE areRectsFullyAligned(FocusDirection direction, const
 // horizontally or vertically.
 // * a = Current focused node's rect.
 // * b = Focus candidate node's rect.
-static bool LEGACY_NODELETE areRectsPartiallyAligned(FocusDirection direction, const LayoutRect& a, const LayoutRect& b)
+NODELETE static bool areRectsPartiallyAligned(FocusDirection direction, const LayoutRect& a, const LayoutRect& b)
 {
     LayoutUnit aStart  = start(direction, a);
     LayoutUnit bStart  = start(direction, b);
@@ -231,7 +231,7 @@ static bool LEGACY_NODELETE areRectsPartiallyAligned(FocusDirection direction, c
             || (bEnd >= aStart && bEnd <= aEnd));
 }
 
-static bool LEGACY_NODELETE areRectsMoreThanFullScreenApart(FocusDirection direction, const LayoutRect& curRect, const LayoutRect& targetRect, const LayoutSize& viewSize)
+NODELETE static bool areRectsMoreThanFullScreenApart(FocusDirection direction, const LayoutRect& curRect, const LayoutRect& targetRect, const LayoutSize& viewSize)
 {
     ASSERT(isRectInDirection(direction, curRect, targetRect));
 
@@ -251,18 +251,18 @@ static bool LEGACY_NODELETE areRectsMoreThanFullScreenApart(FocusDirection direc
 }
 
 // Return true if rect |a| is below |b|. False otherwise.
-static inline bool LEGACY_NODELETE below(const LayoutRect& a, const LayoutRect& b)
+NODELETE static inline bool below(const LayoutRect& a, const LayoutRect& b)
 {
     return a.y() > b.maxY();
 }
 
 // Return true if rect |a| is on the right of |b|. False otherwise.
-static inline bool LEGACY_NODELETE rightOf(const LayoutRect& a, const LayoutRect& b)
+NODELETE static inline bool rightOf(const LayoutRect& a, const LayoutRect& b)
 {
     return a.x() > b.maxX();
 }
 
-static bool LEGACY_NODELETE isRectInDirection(FocusDirection direction, const LayoutRect& curRect, const LayoutRect& targetRect)
+NODELETE static bool isRectInDirection(FocusDirection direction, const LayoutRect& curRect, const LayoutRect& targetRect)
 {
     switch (direction) {
     case FocusDirection::Left:
@@ -398,7 +398,7 @@ bool scrollInDirection(const ContainerNode& container, FocusDirection direction)
     return false;
 }
 
-static void LEGACY_NODELETE deflateIfOverlapped(LayoutRect& a, LayoutRect& b)
+NODELETE static void deflateIfOverlapped(LayoutRect& a, LayoutRect& b)
 {
     if (!a.intersects(b) || a.contains(b) || b.contains(a))
         return;

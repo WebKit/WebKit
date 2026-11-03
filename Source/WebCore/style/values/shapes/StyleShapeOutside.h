@@ -107,7 +107,7 @@ private:
     public:
         using Kind = Variant<Shape, ShapeBox, ShapeAndShapeBox, Image>;
 
-        static Ref<Value> LEGACY_NODELETE create(Kind&&);
+        NODELETE static Ref<Value> create(Kind&&);
         ~Value();
 
         inline const BasicShape* shape() const;

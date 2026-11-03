@@ -54,7 +54,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderWidget);
 
-static HashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>& LEGACY_NODELETE widgetRendererMap()
+NODELETE static HashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>& widgetRendererMap()
 {
     static NeverDestroyed<HashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>> staticWidgetRendererMap;
     return staticWidgetRendererMap;
@@ -128,7 +128,7 @@ RenderWidget::~RenderWidget() = default;
 // Widgets are always placed on integer boundaries, so rounding the size is actually
 // the desired behavior. This function is here because it's otherwise seldom what we
 // want to do with a LayoutRect.
-static inline IntRect LEGACY_NODELETE roundedIntRect(const LayoutRect& rect)
+NODELETE static inline IntRect roundedIntRect(const LayoutRect& rect)
 {
     return IntRect(roundedIntPoint(rect.location()), roundedIntSize(rect.size()));
 }
@@ -527,7 +527,7 @@ bool RenderWidget::requiresAcceleratedCompositing() const
     return false;
 }
 
-RemoteFrame* LEGACY_NODELETE RenderWidget::remoteFrame() const
+NODELETE RemoteFrame* RenderWidget::remoteFrame() const
 {
     return dynamicDowncast<RemoteFrame>(frameOwnerElement().contentFrame());
 }

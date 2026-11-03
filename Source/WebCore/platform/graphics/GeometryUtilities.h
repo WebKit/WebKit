@@ -35,52 +35,52 @@ namespace WebCore {
 
 class FloatQuad;
 
-float LEGACY_NODELETE euclidianDistance(const FloatSize&);
-WEBCORE_EXPORT float LEGACY_NODELETE euclidianDistance(const FloatPoint&, const FloatPoint&);
+NODELETE float euclidianDistance(const FloatSize&);
+NODELETE WEBCORE_EXPORT float euclidianDistance(const FloatPoint&, const FloatPoint&);
 
-float LEGACY_NODELETE dotProduct(const FloatSize&, const FloatSize&);
+NODELETE float dotProduct(const FloatSize&, const FloatSize&);
 
 // Which side of the directed line lineStart->lineEnd a point lies on: > 0 to the left of the direction, < 0 to the right, 0 on the line.
-float LEGACY_NODELETE signedDistanceToLine(const FloatPoint&, const FloatPoint& lineStart, const FloatPoint& lineEnd);
+NODELETE float signedDistanceToLine(const FloatPoint&, const FloatPoint& lineStart, const FloatPoint& lineEnd);
 
 // Find where two infinite lines intersect, each given by a pair of points lying on it. Returns std::nullopt if the lines are parallel.
-WEBCORE_EXPORT std::optional<FloatPoint> LEGACY_NODELETE findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2);
+NODELETE WEBCORE_EXPORT std::optional<FloatPoint> findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2);
 
-std::optional<FloatPoint> LEGACY_NODELETE findLineIntersection(const FloatPoint& firstOrigin, const FloatSize& firstDirection, const FloatPoint& secondOrigin, const FloatSize& secondDirection, float parallelTolerance = 1e-6f);
+NODELETE std::optional<FloatPoint> findLineIntersection(const FloatPoint& firstOrigin, const FloatSize& firstDirection, const FloatPoint& secondOrigin, const FloatSize& secondDirection, float parallelTolerance = 1e-6f);
 
 // Find where the segment crosses the infinite line through lineA and lineB. Returns std::nullopt if they are parallel or the crossing lies beyond the segment's ends.
-std::optional<FloatPoint> LEGACY_NODELETE findSegmentLineIntersection(const FloatPoint& segmentStart, const FloatPoint& segmentEnd, const FloatPoint& lineA, const FloatPoint& lineB);
+NODELETE std::optional<FloatPoint> findSegmentLineIntersection(const FloatPoint& segmentStart, const FloatPoint& segmentEnd, const FloatPoint& lineA, const FloatPoint& lineB);
 
-WEBCORE_EXPORT IntRect LEGACY_NODELETE unionRect(const Vector<IntRect>&);
-WEBCORE_EXPORT IntRect LEGACY_NODELETE unionRectIgnoringZeroRects(const Vector<IntRect>&);
-WEBCORE_EXPORT FloatRect LEGACY_NODELETE unionRect(const Vector<FloatRect>&);
-WEBCORE_EXPORT FloatRect LEGACY_NODELETE unionRectIgnoringZeroRects(const Vector<FloatRect>&);
+NODELETE WEBCORE_EXPORT IntRect unionRect(const Vector<IntRect>&);
+NODELETE WEBCORE_EXPORT IntRect unionRectIgnoringZeroRects(const Vector<IntRect>&);
+NODELETE WEBCORE_EXPORT FloatRect unionRect(const Vector<FloatRect>&);
+NODELETE WEBCORE_EXPORT FloatRect unionRectIgnoringZeroRects(const Vector<FloatRect>&);
 
 // Map point from srcRect to an equivalent point in destRect.
-FloatPoint LEGACY_NODELETE mapPoint(FloatPoint, const FloatRect& srcRect, const FloatRect& destRect);
+NODELETE FloatPoint mapPoint(FloatPoint, const FloatRect& srcRect, const FloatRect& destRect);
 
 // Map rect from srcRect to an equivalent rect in destRect.
-WEBCORE_EXPORT FloatRect LEGACY_NODELETE mapRect(const FloatRect&, const FloatRect& srcRect, const FloatRect& destRect);
+NODELETE WEBCORE_EXPORT FloatRect mapRect(const FloatRect&, const FloatRect& srcRect, const FloatRect& destRect);
 
-WEBCORE_EXPORT FloatRect LEGACY_NODELETE largestRectWithAspectRatioInsideRect(float aspectRatio, const FloatRect&);
-WEBCORE_EXPORT FloatRect LEGACY_NODELETE smallestRectWithAspectRatioAroundRect(float aspectRatio, const FloatRect&);
+NODELETE WEBCORE_EXPORT FloatRect largestRectWithAspectRatioInsideRect(float aspectRatio, const FloatRect&);
+NODELETE WEBCORE_EXPORT FloatRect smallestRectWithAspectRatioAroundRect(float aspectRatio, const FloatRect&);
 
 // Given a natural size and a subrect of it, compute the rect that natural-sized content
 // would occupy such that subrect maps exactly onto destRect. Used by object-view-box rendering.
-FloatRect LEGACY_NODELETE fullRectFromSubrectAndSize(const FloatSize& naturalSize, const FloatRect& subrect, const FloatRect& destRect);
+NODELETE FloatRect fullRectFromSubrectAndSize(const FloatSize& naturalSize, const FloatRect& subrect, const FloatRect& destRect);
 
-FloatSize LEGACY_NODELETE sizeWithAreaAndAspectRatio(float area, float aspectRatio);
+NODELETE FloatSize sizeWithAreaAndAspectRatio(float area, float aspectRatio);
 
 // Compute a rect that encloses all points covered by the given rect if it were rotated a full turn around (0,0).
-FloatRect LEGACY_NODELETE boundsOfRotatingRect(const FloatRect&);
+NODELETE FloatRect boundsOfRotatingRect(const FloatRect&);
 
-bool LEGACY_NODELETE ellipseContainsPoint(const FloatPoint& center, const FloatSize& radii, const FloatPoint&);
-float LEGACY_NODELETE eccentricAngle(FloatPoint, FloatPoint center, float radiusX, float radiusY);
+NODELETE bool ellipseContainsPoint(const FloatPoint& center, const FloatSize& radii, const FloatPoint&);
+NODELETE float eccentricAngle(FloatPoint, FloatPoint center, float radiusX, float radiusY);
 
-FloatPoint LEGACY_NODELETE midPoint(const FloatPoint&, const FloatPoint&);
+NODELETE FloatPoint midPoint(const FloatPoint&, const FloatPoint&);
 
 // The point a fraction `t` of the way from `from` to `to`: from + t * (to - from). (t = 0.5 is midPoint.)
-FloatPoint LEGACY_NODELETE linearInterpolation(const FloatPoint& from, const FloatPoint& to, float);
+NODELETE FloatPoint linearInterpolation(const FloatPoint& from, const FloatPoint& to, float);
 
 // -------------
 // |   h\  |s  |
@@ -93,35 +93,35 @@ FloatPoint LEGACY_NODELETE linearInterpolation(const FloatPoint& from, const Flo
 // the length from the starting position to the intersection of the ray with the box. Given the above diagram, we are
 // trying to calculate h, with lengthOfPointToSideOfIntersection computing the length of s, and angleOfPointToSideOfIntersection
 // computing a.
-double LEGACY_NODELETE lengthOfRayIntersectionWithBoundingBox(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
+NODELETE double lengthOfRayIntersectionWithBoundingBox(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
 
 // Given a box and a ray (described by an offset from the top left corner of the box and angle from vertical in degrees),
 // compute the closest length from the starting position to the side that the ray intersects with.
-double LEGACY_NODELETE lengthOfPointToSideOfIntersection(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
+NODELETE double lengthOfPointToSideOfIntersection(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
 
 // Given a box and a ray (described by an offset from the top left corner of the box and angle from vertical in degrees)
 // compute the acute angle between the ray and the line segment from the starting point to the closest point on the
 // side that the ray intersects with.
-float LEGACY_NODELETE angleOfPointToSideOfIntersection(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
+NODELETE float angleOfPointToSideOfIntersection(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
 
 // Given a box and an offset from the top left corner, calculate the distance of the point from each side
-RectEdges<double> LEGACY_NODELETE distanceOfPointToSidesOfRect(const FloatRect&, const FloatPoint&);
+NODELETE RectEdges<double> distanceOfPointToSidesOfRect(const FloatRect&, const FloatPoint&);
 
-float LEGACY_NODELETE distanceToClosestSide(FloatPoint, FloatSize);
-float LEGACY_NODELETE distanceToFarthestSide(FloatPoint, FloatSize);
-float LEGACY_NODELETE distanceToClosestCorner(FloatPoint, FloatSize);
-float LEGACY_NODELETE distanceToFarthestCorner(FloatPoint, FloatSize);
+NODELETE float distanceToClosestSide(FloatPoint, FloatSize);
+NODELETE float distanceToFarthestSide(FloatPoint, FloatSize);
+NODELETE float distanceToClosestCorner(FloatPoint, FloatSize);
+NODELETE float distanceToFarthestCorner(FloatPoint, FloatSize);
 
 // Given a box and an offset from the top left corner, construct a coordinate system with this offset as the origin,
 // and return the vertices of the box in this coordinate system
-std::array<FloatPoint, 4> LEGACY_NODELETE verticesForBox(const FloatRect&, const FloatPoint);
+NODELETE std::array<FloatPoint, 4> verticesForBox(const FloatRect&, const FloatPoint);
 
-float LEGACY_NODELETE toPositiveAngle(float angle);
-float LEGACY_NODELETE toRelatedAcuteAngle(float angle);
+NODELETE float toPositiveAngle(float angle);
+NODELETE float toRelatedAcuteAngle(float angle);
 
-float LEGACY_NODELETE normalizeAngleInRadians(float radians);
+NODELETE float normalizeAngleInRadians(float radians);
 
-WEBCORE_EXPORT FloatRect LEGACY_NODELETE scaledRectAtOrigin(const FloatRect& sourceRect, float scale, const FloatPoint& origin);
+NODELETE WEBCORE_EXPORT FloatRect scaledRectAtOrigin(const FloatRect& sourceRect, float scale, const FloatPoint& origin);
 
 struct RotatedRect {
     FloatPoint center;
@@ -129,7 +129,7 @@ struct RotatedRect {
     float angleInRadians;
 };
 
-WEBCORE_EXPORT RotatedRect LEGACY_NODELETE rotatedBoundingRectWithMinimumAngleOfRotation(const FloatQuad&, std::optional<float> minRotationInRadians = std::nullopt);
+NODELETE WEBCORE_EXPORT RotatedRect rotatedBoundingRectWithMinimumAngleOfRotation(const FloatQuad&, std::optional<float> minRotationInRadians = std::nullopt);
 
 static inline float min3(float a, float b, float c)
 {

@@ -127,7 +127,7 @@ public:
         MultipartFormData // for multipart/form-data
     };
 
-    WEBCORE_EXPORT static Ref<FormData> LEGACY_NODELETE create();
+    NODELETE WEBCORE_EXPORT static Ref<FormData> create();
     WEBCORE_EXPORT static Ref<FormData> create(std::span<const uint8_t>);
     WEBCORE_EXPORT static Ref<FormData> create(std::span<const char8_t>);
     WEBCORE_EXPORT static Ref<FormData> create(Vector<uint8_t>&&);
@@ -154,7 +154,7 @@ public:
     // Resolve all blob references so we only have file and data.
     // If the FormData has no blob references to resolve, this is returned.
     WEBCORE_EXPORT Ref<FormData> resolveBlobReferences(BlobRegistryImpl* = nullptr);
-    bool LEGACY_NODELETE containsBlobElement() const;
+    NODELETE bool containsBlobElement() const;
 
     WEBCORE_EXPORT bool isPendingStream() const;
     WEBCORE_EXPORT void setPendingStreamState(Ref<PendingStreamState>&&);
@@ -189,7 +189,7 @@ public:
 
     WEBCORE_EXPORT uint64_t lengthInBytes() const;
 
-    WEBCORE_EXPORT URL LEGACY_NODELETE asBlobURL() const;
+    NODELETE WEBCORE_EXPORT URL asBlobURL() const;
 
 private:
     friend struct IPC::ArgumentCoder<FormData>;

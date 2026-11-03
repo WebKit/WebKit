@@ -757,7 +757,7 @@ struct InlineRunToApplyStyle {
         ASSERT(start->parentNode() == end->parentNode());
     }
 
-    bool LEGACY_NODELETE startAndEndAreStillInDocument()
+    NODELETE bool startAndEndAreStillInDocument()
     {
         return start && end && start->isConnected() && end->isConnected();
     }

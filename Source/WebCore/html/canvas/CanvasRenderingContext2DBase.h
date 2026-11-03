@@ -283,7 +283,7 @@ public:
         bool realized() const { return m_font.hasFontSelector(); }
         void initialize(FontSelector&, const FontCascade&);
         const FontMetrics& metricsOfPrimaryFont() const LIFETIME_BOUND;
-        const FontCascadeDescription& LEGACY_NODELETE fontDescription() const LIFETIME_BOUND;
+        NODELETE const FontCascadeDescription& fontDescription() const LIFETIME_BOUND;
         float width(const TextRun&, GlyphOverflow* = 0) const;
         void drawBidiText(GraphicsContext&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction) const;
 
@@ -352,14 +352,14 @@ public:
 
         RefPtr<CanvasLayerContextSwitcher> targetSwitcher;
 
-        CanvasLineCap LEGACY_NODELETE canvasLineCap() const;
-        CanvasLineJoin LEGACY_NODELETE canvasLineJoin() const;
-        CanvasTextAlign LEGACY_NODELETE canvasTextAlign() const;
-        CanvasTextBaseline LEGACY_NODELETE canvasTextBaseline() const;
-        CanvasFontKerning LEGACY_NODELETE canvasFontKerning() const;
-        CanvasFontStretch LEGACY_NODELETE canvasFontStretch() const;
-        CanvasFontVariantCaps LEGACY_NODELETE canvasFontVariantCaps() const;
-        CanvasTextRendering LEGACY_NODELETE canvasTextRendering() const;
+        NODELETE CanvasLineCap canvasLineCap() const;
+        NODELETE CanvasLineJoin canvasLineJoin() const;
+        NODELETE CanvasTextAlign canvasTextAlign() const;
+        NODELETE CanvasTextBaseline canvasTextBaseline() const;
+        NODELETE CanvasFontKerning canvasFontKerning() const;
+        NODELETE CanvasFontStretch canvasFontStretch() const;
+        NODELETE CanvasFontVariantCaps canvasFontVariantCaps() const;
+        NODELETE CanvasTextRendering canvasTextRendering() const;
         String fontString() const;
         String globalCompositeOperationString() const;
         String shadowColorString() const;
@@ -449,14 +449,14 @@ private:
     void applyLineDash() const;
     void setShadow(const FloatSize& offset, float blur, const Color&);
     void applyShadow();
-    bool LEGACY_NODELETE shouldDrawShadows() const;
+    NODELETE bool shouldDrawShadows() const;
 
     bool delegatesDisplay() const final;
     bool needsPreparationForDisplay() const final;
     void prepareForDisplay() final;
 
     void clearAccumulatedDirtyRect() final;
-    bool LEGACY_NODELETE isEntireBackingStoreDirty() const;
+    NODELETE bool isEntireBackingStoreDirty() const;
     FloatRect backingStoreBounds() const { return FloatRect { { }, FloatSize { canvasBase().size() } }; }
 
     PixelFormat pixelFormat() const final;
@@ -516,12 +516,12 @@ private:
 
     Path transformAreaToDevice(const Path&) const;
     Path transformAreaToDevice(const FloatRect&) const;
-    bool LEGACY_NODELETE rectContainsCanvas(const FloatRect&) const;
+    NODELETE bool rectContainsCanvas(const FloatRect&) const;
 
     template<class T> IntRect calculateCompositingBufferRect(const T&, IntSize*);
     void compositeBuffer(ImageBuffer&, const IntRect&, CompositeOperator);
 
-    FloatRect LEGACY_NODELETE inflatedStrokeRect(const FloatRect&) const;
+    NODELETE FloatRect inflatedStrokeRect(const FloatRect&) const;
 
     void fullCanvasCompositedDraw(const FloatRect& destination, CompositeOperator, const auto& draw);
 

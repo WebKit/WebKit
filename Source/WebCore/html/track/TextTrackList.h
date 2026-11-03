@@ -51,10 +51,10 @@ public:
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     unsigned length() const final;
     int getTrackIndex(TextTrack&);
-    int LEGACY_NODELETE getTrackIndexRelativeToRenderedTracks(TextTrack&);
+    NODELETE int getTrackIndexRelativeToRenderedTracks(TextTrack&);
     bool contains(TrackBase&) const final;
 
-    TextTrack* LEGACY_NODELETE item(unsigned index) const;
+    NODELETE TextTrack* item(unsigned index) const;
     RefPtr<TextTrack> getTrackById(const AtomString&) const;
     RefPtr<TextTrack> getTrackById(TrackID) const;
     TextTrack* lastItem() const { return item(length() - 1); }

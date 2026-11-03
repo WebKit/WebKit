@@ -99,7 +99,7 @@ struct AppleColorFilter : ListOrNone<AppleColorFilterValueList> {
 
     using ListOrNone<AppleColorFilterValueList>::ListOrNone;
 
-    static const AppleColorFilter& LEGACY_NODELETE none();
+    NODELETE static const AppleColorFilter& none();
 
     bool transformColor(WebCore::Color&) const;
     bool inverseTransformColor(WebCore::Color&) const;
@@ -125,7 +125,7 @@ template<> struct CSSValueCreation<AppleColorFilter> { auto operator()(CSSValueP
 // MARK: - Blending
 
 template<> struct Blending<AppleColorFilter> {
-    bool LEGACY_NODELETE canBlend(const AppleColorFilter&, const AppleColorFilter&, CompositeOperation);
+    NODELETE bool canBlend(const AppleColorFilter&, const AppleColorFilter&, CompositeOperation);
     constexpr auto requiresInterpolationForAccumulativeIteration(const AppleColorFilter&, const AppleColorFilter&) -> bool { return true; }
     auto blend(const AppleColorFilter&, const AppleColorFilter&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> AppleColorFilter;
 };

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT bool LEGACY_NODELETE operator==(const AudioStreamBasicDescription&, const AudioStreamBasicDescription&);
+NODELETE WEBCORE_EXPORT bool operator==(const AudioStreamBasicDescription&, const AudioStreamBasicDescription&);
 
 class WEBCORE_EXPORT CAAudioStreamDescription final : public AudioStreamDescription {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(CAAudioStreamDescription, WEBCORE_EXPORT);
@@ -59,16 +59,16 @@ public:
     uint32_t numberOfChannelStreams() const final;
     uint32_t numberOfChannels() const final;
     uint32_t sampleWordSize() const final;
-    uint32_t LEGACY_NODELETE bytesPerFrame() const;
-    uint32_t LEGACY_NODELETE bytesPerPacket() const;
-    uint32_t LEGACY_NODELETE formatFlags() const;
+    NODELETE uint32_t bytesPerFrame() const;
+    NODELETE uint32_t bytesPerPacket() const;
+    NODELETE uint32_t formatFlags() const;
 
     bool operator==(const CAAudioStreamDescription& other) const { return operator==(static_cast<const AudioStreamDescription&>(other)); }
-    bool LEGACY_NODELETE operator==(const AudioStreamBasicDescription&) const;
+    NODELETE bool operator==(const AudioStreamBasicDescription&) const;
     bool operator==(const AudioStreamDescription&) const;
 
-    const AudioStreamBasicDescription& LEGACY_NODELETE streamDescription() const LIFETIME_BOUND;
-    AudioStreamBasicDescription& LEGACY_NODELETE streamDescription() LIFETIME_BOUND;
+    NODELETE const AudioStreamBasicDescription& streamDescription() const LIFETIME_BOUND;
+    NODELETE AudioStreamBasicDescription& streamDescription() LIFETIME_BOUND;
 
 private:
     AudioStreamBasicDescription m_streamDescription;

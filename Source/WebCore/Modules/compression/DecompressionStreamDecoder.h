@@ -50,13 +50,13 @@ public:
     bool didDetectExtraBytes() const { return m_didDetectExtraBytes; }
 
 private:
-    bool LEGACY_NODELETE didInflateFinish(int) const;
-    bool LEGACY_NODELETE didInflateContainExtraBytes(int) const;
+    NODELETE bool didInflateFinish(int) const;
+    NODELETE bool didInflateContainExtraBytes(int) const;
 
     ExceptionOr<Ref<JSC::ArrayBuffer>> decompress(std::span<const uint8_t>);
     ExceptionOr<Ref<JSC::ArrayBuffer>> decompressZlib(std::span<const uint8_t>);
 #if PLATFORM(COCOA)
-    bool LEGACY_NODELETE didInflateFinishAppleCompressionFramework(int);
+    NODELETE bool didInflateFinishAppleCompressionFramework(int);
     ExceptionOr<Ref<JSC::ArrayBuffer>> decompressAppleCompressionFramework(std::span<const uint8_t>);
 #endif
 

@@ -67,21 +67,21 @@ public:
 
     ServiceWorkerRegistrationIdentifier identifier() const { return m_registrationData.identifier; }
 
-    ServiceWorker* LEGACY_NODELETE installing();
-    ServiceWorker* LEGACY_NODELETE waiting();
-    ServiceWorker* LEGACY_NODELETE active();
+    NODELETE ServiceWorker* installing();
+    NODELETE ServiceWorker* waiting();
+    NODELETE ServiceWorker* active();
 
     bool isActive() const final { return !!m_activeWorker; }
 
-    ServiceWorker* LEGACY_NODELETE getNewestWorker() const;
+    NODELETE ServiceWorker* getNewestWorker() const;
 
-    const String& LEGACY_NODELETE scope() const;
+    NODELETE const String& scope() const;
 
-    ServiceWorkerUpdateViaCache LEGACY_NODELETE updateViaCache() const;
-    void LEGACY_NODELETE setUpdateViaCache(ServiceWorkerUpdateViaCache);
+    NODELETE ServiceWorkerUpdateViaCache updateViaCache() const;
+    NODELETE void setUpdateViaCache(ServiceWorkerUpdateViaCache);
 
-    WallTime LEGACY_NODELETE lastUpdateTime() const;
-    void LEGACY_NODELETE setLastUpdateTime(WallTime);
+    NODELETE WallTime lastUpdateTime() const;
+    NODELETE void setLastUpdateTime(WallTime);
 
     bool needsUpdate() const { return lastUpdateTime() && (WallTime::now() - lastUpdateTime()) > 86400_s; }
 
@@ -139,7 +139,7 @@ private:
     const RefPtr<CookieStoreManager> m_cookieStoreManager;
 };
 
-WebCoreOpaqueRoot LEGACY_NODELETE root(ServiceWorkerRegistration*);
+NODELETE WebCoreOpaqueRoot root(ServiceWorkerRegistration*);
 
 } // namespace WebCore
 

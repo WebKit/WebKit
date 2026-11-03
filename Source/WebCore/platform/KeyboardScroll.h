@@ -38,7 +38,7 @@ class TextStream;
 
 namespace WebCore {
 
-WEBCORE_EXPORT FloatSize LEGACY_NODELETE unitVectorForScrollDirection(ScrollDirection);
+NODELETE WEBCORE_EXPORT FloatSize unitVectorForScrollDirection(ScrollDirection);
 
 struct KeyboardScroll {
     FloatSize offset; // Points per increment.

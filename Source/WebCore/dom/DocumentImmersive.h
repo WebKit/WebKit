@@ -47,7 +47,7 @@ public:
 
     // Document+Immersive.idl methods.
     static bool immersiveEnabled(Document&);
-    static Element* LEGACY_NODELETE immersiveElement(Document&);
+    NODELETE static Element* immersiveElement(Document&);
     static void exitImmersive(Document&, Ref<DeferredPromise>&&);
 
     // Helpers.

@@ -71,9 +71,9 @@ private:
 
     Layout::LayoutState& layoutState() LIFETIME_BOUND { return *m_layoutState; }
     const Layout::LayoutState& layoutState() const LIFETIME_BOUND { return *m_layoutState; }
-    const Layout::ElementBox& LEGACY_NODELETE rootLayoutBox() const;
-    const RenderBlock& LEGACY_NODELETE rootRenderer() const;
-    inline WritingMode LEGACY_NODELETE writingMode() const;
+    NODELETE const Layout::ElementBox& rootLayoutBox() const;
+    NODELETE const RenderBlock& rootRenderer() const;
+    NODELETE inline WritingMode writingMode() const;
 
 private:
     WeakPtr<Layout::LayoutState> m_layoutState;

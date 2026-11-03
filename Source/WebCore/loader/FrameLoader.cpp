@@ -199,7 +199,7 @@
 #else
 namespace WebCore {
 
-static void LEGACY_NODELETE verifyUserAgent(const String&)
+NODELETE static void verifyUserAgent(const String&)
 {
 }
 
@@ -259,12 +259,12 @@ bool isReload(FrameLoadType type)
 // non-member lets us exclude it from the header file, thus keeping FrameLoader.h's
 // API simpler.
 //
-static bool LEGACY_NODELETE isDocumentSandboxed(LocalFrame& frame, SandboxFlag flag)
+NODELETE static bool isDocumentSandboxed(LocalFrame& frame, SandboxFlag flag)
 {
     return frame.document() && frame.document()->isSandboxed(flag);
 }
 
-static bool LEGACY_NODELETE isInVisibleAndActivePage(const LocalFrame& frame)
+NODELETE static bool isInVisibleAndActivePage(const LocalFrame& frame)
 {
     auto* page = frame.page();
     return page && page->isVisibleAndActive();
@@ -1414,7 +1414,7 @@ void FrameLoader::setFirstPartyForCookies(const URL& url)
     }
 }
 
-static NavigationNavigationType LEGACY_NODELETE determineNavigationType(FrameLoadType loadType, NavigationHistoryBehavior historyHandling)
+NODELETE static NavigationNavigationType determineNavigationType(FrameLoadType loadType, NavigationHistoryBehavior historyHandling)
 {
     if (historyHandling == NavigationHistoryBehavior::Push)
         return NavigationNavigationType::Push;
@@ -3135,7 +3135,7 @@ void FrameLoader::willChangeTitle(DocumentLoader* loader)
     m_client->willChangeTitle(loader);
 }
 
-FrameLoadType LEGACY_NODELETE FrameLoader::loadType() const
+NODELETE FrameLoadType FrameLoader::loadType() const
 {
     return m_loadType;
 }
@@ -4160,7 +4160,7 @@ bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const S
         && !stateMachine().isDisplayingInitialEmptyDocument();
 }
 
-static bool LEGACY_NODELETE itemAllowsScrollRestoration(HistoryItem* historyItem, FrameLoadType loadType)
+NODELETE static bool itemAllowsScrollRestoration(HistoryItem* historyItem, FrameLoadType loadType)
 {
     if (!historyItem)
         return true;
@@ -4176,7 +4176,7 @@ static bool LEGACY_NODELETE itemAllowsScrollRestoration(HistoryItem* historyItem
     return true;
 }
 
-static bool LEGACY_NODELETE isSameDocumentReload(bool isNewNavigation, FrameLoadType loadType)
+NODELETE static bool isSameDocumentReload(bool isNewNavigation, FrameLoadType loadType)
 {
     return !isNewNavigation && !isBackForwardLoadType(loadType);
 }
@@ -4311,7 +4311,7 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
         protect(m_frame->document())->removeAllEventListeners();
 }
 
-static bool LEGACY_NODELETE shouldAskForNavigationConfirmation(Document& document, const BeforeUnloadEvent& event)
+NODELETE static bool shouldAskForNavigationConfirmation(Document& document, const BeforeUnloadEvent& event)
 {
     // Confirmation dialog should not be displayed when the allow-modals flag is not set.
     if (document.isSandboxed(SandboxFlag::Modals))
@@ -5378,7 +5378,7 @@ void FrameLoader::clearTestingOverrides()
     m_isStrictRawResourceValidationPolicyDisabledForTesting = false;
 }
 
-bool LEGACY_NODELETE LocalFrameLoaderClient::hasHTMLView() const
+NODELETE bool LocalFrameLoaderClient::hasHTMLView() const
 {
     return true;
 }

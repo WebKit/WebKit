@@ -56,12 +56,12 @@ bool hasPresentationRole(Element&);
 bool hasTableRole(Element&);
 bool isRowGroup(Element&);
 bool isRowGroup(Node*);
-RefPtr<ContainerNode> LEGACY_NODELETE composedParentIgnoringDocumentFragments(const Node&);
+NODELETE RefPtr<ContainerNode> composedParentIgnoringDocumentFragments(const Node&);
 RefPtr<ContainerNode> composedParentIgnoringDocumentFragments(const Node*);
 
 // Returns NodeName and not ElementName because it's impossible to forward declare ElementName.
-NodeName LEGACY_NODELETE elementName(Node*);
-NodeName LEGACY_NODELETE elementName(Node&);
+NODELETE NodeName elementName(Node*);
+NODELETE NodeName elementName(Node&);
 
 RenderImage* toSimpleImage(RenderObject&);
 
@@ -72,7 +72,7 @@ bool hasAccNameAttribute(Element&);
 // aria-describedby, aria-description), not the HTML title attribute.
 bool hasARIAAccNameAttribute(Element&);
 
-bool LEGACY_NODELETE isNodeFocused(Node&);
+NODELETE bool isNodeFocused(Node&);
 
 enum class DocumentNeeds : uint8_t {
     Layout = 1 << 0,
@@ -82,15 +82,15 @@ enum class DocumentNeeds : uint8_t {
 // accessibility tree from. Returns an empty set if the document is clean.
 OptionSet<DocumentNeeds> needsLayoutOrStyleRecalc(const Document&);
 
-bool LEGACY_NODELETE isRenderHidden(const Style::ComputedStyle*);
+NODELETE bool isRenderHidden(const Style::ComputedStyle*);
 // Checks both CSS display properties, and CSS visibility properties.
-bool LEGACY_NODELETE isRenderHidden(const RenderObject&);
+NODELETE bool isRenderHidden(const RenderObject&);
 // For elements without a renderer, and for comparing styles.
-bool LEGACY_NODELETE isRenderHidden(const Style::ComputedStyle&);
+NODELETE bool isRenderHidden(const Style::ComputedStyle&);
 // Only checks CSS visibility properties.
-bool LEGACY_NODELETE isVisibilityHidden(const RenderObject&);
+NODELETE bool isVisibilityHidden(const RenderObject&);
 // For elements without a renderer, and for comparing styles.
-bool LEGACY_NODELETE isVisibilityHidden(const Style::ComputedStyle&);
+NODELETE bool isVisibilityHidden(const Style::ComputedStyle&);
 const Style::ComputedStyle* safeStyleFrom(Element&);
 
 // The part of the mapping from the renderer's local coordinates to absolute document coordinates that scales,

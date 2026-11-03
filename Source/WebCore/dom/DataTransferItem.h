@@ -50,19 +50,19 @@ class DataTransferItem : public RefCounted<DataTransferItem> {
 public:
     enum class Kind : uint8_t { String, File };
 
-    static Ref<DataTransferItem> LEGACY_NODELETE create(WeakPtr<DataTransferItemList>&&, const String&, Kind);
-    static Ref<DataTransferItem> LEGACY_NODELETE create(WeakPtr<DataTransferItemList>&&, const String&, Ref<File>&&);
+    NODELETE static Ref<DataTransferItem> create(WeakPtr<DataTransferItemList>&&, const String&, Kind);
+    NODELETE static Ref<DataTransferItem> create(WeakPtr<DataTransferItemList>&&, const String&, Ref<File>&&);
 
     ~DataTransferItem();
 
     File* file() { return m_file; }
-    void LEGACY_NODELETE clearListAndPutIntoDisabledMode();
+    NODELETE void clearListAndPutIntoDisabledMode();
 
-    bool LEGACY_NODELETE isFile() const;
+    NODELETE bool isFile() const;
     String kind() const;
-    String LEGACY_NODELETE type() const;
+    NODELETE String type() const;
     void getAsString(Document&, RefPtr<StringCallback>&&) const;
-    File* LEGACY_NODELETE getAsFile() const;
+    NODELETE File* getAsFile() const;
     RefPtr<FileSystemEntry> getAsEntry(ScriptExecutionContext&) const;
 
 private:

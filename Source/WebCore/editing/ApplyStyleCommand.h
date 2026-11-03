@@ -115,8 +115,8 @@ private:
     void removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsplitAncestor);
 
     void updateStartEnd(const Position& newStart, const Position& newEnd);
-    Position LEGACY_NODELETE startPosition();
-    Position LEGACY_NODELETE endPosition();
+    NODELETE Position startPosition();
+    NODELETE Position endPosition();
 
     const RefPtr<EditingStyle> m_style;
     ApplyStylePropertyLevel m_propertyLevel { ApplyStylePropertyLevel::Default };

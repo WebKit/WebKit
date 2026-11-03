@@ -57,7 +57,7 @@ public:
 
     void setMuted(bool muted) { m_muted = muted; }
     bool isPlayingAudio() const { return m_isEffectivelyPlayingAudio; }
-    bool LEGACY_NODELETE isConnected() const;
+    NODELETE bool isConnected() const;
 
     // The completion handler reports whether the device was acquired; on failure the previous
     // routing stays in effect.

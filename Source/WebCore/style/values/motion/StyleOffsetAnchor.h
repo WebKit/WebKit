@@ -54,7 +54,7 @@ struct OffsetAnchor {
 
 private:
 #if ENABLE(THREADED_ANIMATIONS)
-    static Variant<CSS::Keyword::Auto, Position> LEGACY_NODELETE convert(const AcceleratedEffectOffsetAnchor&);
+    NODELETE static Variant<CSS::Keyword::Auto, Position> convert(const AcceleratedEffectOffsetAnchor&);
 #endif
 
     Variant<CSS::Keyword::Auto, Position> m_value;
@@ -77,7 +77,7 @@ template<> struct CSSValueConversion<OffsetAnchor> { auto operator()(BuilderStat
 // MARK: - Blending
 
 template<> struct Blending<OffsetAnchor> {
-    bool LEGACY_NODELETE canBlend(const OffsetAnchor&, const OffsetAnchor&);
+    NODELETE bool canBlend(const OffsetAnchor&, const OffsetAnchor&);
     auto requiresInterpolationForAccumulativeIteration(const OffsetAnchor&, const OffsetAnchor&) -> bool;
     auto blend(const OffsetAnchor&, const OffsetAnchor&, const BlendingContext&) -> OffsetAnchor;
 };

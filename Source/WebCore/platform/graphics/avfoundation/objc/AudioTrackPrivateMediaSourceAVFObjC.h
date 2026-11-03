@@ -50,7 +50,7 @@ public:
 
     void setEnabled(bool) final;
 
-    AVAssetTrack* LEGACY_NODELETE assetTrack();
+    NODELETE AVAssetTrack* assetTrack();
 
 private:
     explicit AudioTrackPrivateMediaSourceAVFObjC(AVAssetTrack*);

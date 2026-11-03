@@ -42,21 +42,21 @@
 
 namespace WebCore {
 
-static WindRule LEGACY_NODELETE windRule(const AcceleratedEffectShapeFunction& value)
+NODELETE static WindRule windRule(const AcceleratedEffectShapeFunction& value)
 {
     return value.fillRule.value_or(WindRule::NonZero);
 }
 
 // MARK: - Path Evaluation
 
-template<typename ControlPoint> static AcceleratedEffectShapeFunction::ControlPointAnchor LEGACY_NODELETE evaluateControlPointAnchoring(const ControlPoint& value, AcceleratedEffectShapeFunction::ControlPointAnchor defaultValue)
+template<typename ControlPoint> NODELETE static AcceleratedEffectShapeFunction::ControlPointAnchor evaluateControlPointAnchoring(const ControlPoint& value, AcceleratedEffectShapeFunction::ControlPointAnchor defaultValue)
 {
     if (value.anchor)
         return *value.anchor;
     return defaultValue;
 }
 
-template<typename ControlPoint> static FloatPoint LEGACY_NODELETE evaluateControlPointOffset(const ControlPoint& value)
+template<typename ControlPoint> NODELETE static FloatPoint evaluateControlPointOffset(const ControlPoint& value)
 {
     return value.offset;
 }
@@ -297,30 +297,30 @@ public:
     {
     }
 
-    const std::optional<FloatPoint>& LEGACY_NODELETE initialMove() const { return m_initialMove; }
+    NODELETE const std::optional<FloatPoint>& initialMove() const { return m_initialMove; }
 
 private:
-    static FloatPoint LEGACY_NODELETE toPosition(FloatPoint p)
+    NODELETE static FloatPoint toPosition(FloatPoint p)
     {
         return p;
     }
 
-    static FloatPoint LEGACY_NODELETE toCoordinatePair(FloatPoint p)
+    NODELETE static FloatPoint toCoordinatePair(FloatPoint p)
     {
         return p;
     }
 
-    static FloatPoint LEGACY_NODELETE absoluteOffsetPoint(FloatPoint p)
+    NODELETE static FloatPoint absoluteOffsetPoint(FloatPoint p)
     {
         return p;
     }
 
-    static FloatPoint LEGACY_NODELETE relativeOffsetPoint(FloatPoint p)
+    NODELETE static FloatPoint relativeOffsetPoint(FloatPoint p)
     {
         return p;
     }
 
-    static Variant<AcceleratedEffectShapeFunction::ToPosition, AcceleratedEffectShapeFunction::ByCoordinatePair> LEGACY_NODELETE fromOffsetPoint(const FloatPoint& offsetPoint, PathCoordinateMode mode)
+    NODELETE static Variant<AcceleratedEffectShapeFunction::ToPosition, AcceleratedEffectShapeFunction::ByCoordinatePair> fromOffsetPoint(const FloatPoint& offsetPoint, PathCoordinateMode mode)
     {
         switch (mode) {
         case AbsoluteCoordinates:
@@ -331,7 +331,7 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    template<typename Command> static Variant<typename Command::To, typename Command::By> LEGACY_NODELETE fromOffsetLength(float offset, PathCoordinateMode mode)
+    template<typename Command> NODELETE static Variant<typename Command::To, typename Command::By> fromOffsetLength(float offset, PathCoordinateMode mode)
     {
         switch (mode) {
         case AbsoluteCoordinates:
@@ -342,12 +342,12 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    static AcceleratedEffectShapeFunction::AbsoluteControlPoint LEGACY_NODELETE absoluteControlPoint(const FloatPoint& controlPoint)
+    NODELETE static AcceleratedEffectShapeFunction::AbsoluteControlPoint absoluteControlPoint(const FloatPoint& controlPoint)
     {
         return { toPosition(controlPoint), std::nullopt };
     }
 
-    static AcceleratedEffectShapeFunction::RelativeControlPoint LEGACY_NODELETE relativeControlPoint(const FloatPoint& controlPoint)
+    NODELETE static AcceleratedEffectShapeFunction::RelativeControlPoint relativeControlPoint(const FloatPoint& controlPoint)
     {
         return { toCoordinatePair(controlPoint), std::nullopt };
     }
@@ -548,7 +548,7 @@ Path path(const AcceleratedEffectShapeFunction& value, const FloatRect& bounding
 // MARK: - Blending
 
 template<typename T>
-static T LEGACY_NODELETE blendWithPreferredValue(const T& from, const T& to, const T& preferredValue, const BlendingContext& context)
+NODELETE static T blendWithPreferredValue(const T& from, const T& to, const T& preferredValue, const BlendingContext& context)
 {
     if (context.progress <= 0)
         return from;
@@ -563,20 +563,20 @@ static T LEGACY_NODELETE blendWithPreferredValue(const T& from, const T& to, con
 }
 
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::ToPosition> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::ToPosition&, const AcceleratedEffectShapeFunction::ToPosition&);
-    AcceleratedEffectShapeFunction::ToPosition LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::ToPosition&, const AcceleratedEffectShapeFunction::ToPosition&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::ToPosition&, const AcceleratedEffectShapeFunction::ToPosition&);
+    NODELETE AcceleratedEffectShapeFunction::ToPosition blend(const AcceleratedEffectShapeFunction::ToPosition&, const AcceleratedEffectShapeFunction::ToPosition&, const BlendingContext&);
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::ByCoordinatePair> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::ByCoordinatePair&, const AcceleratedEffectShapeFunction::ByCoordinatePair&);
-    AcceleratedEffectShapeFunction::ByCoordinatePair LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::ByCoordinatePair&, const AcceleratedEffectShapeFunction::ByCoordinatePair&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::ByCoordinatePair&, const AcceleratedEffectShapeFunction::ByCoordinatePair&);
+    NODELETE AcceleratedEffectShapeFunction::ByCoordinatePair blend(const AcceleratedEffectShapeFunction::ByCoordinatePair&, const AcceleratedEffectShapeFunction::ByCoordinatePair&, const BlendingContext&);
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::RelativeControlPoint> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::RelativeControlPoint&, const AcceleratedEffectShapeFunction::RelativeControlPoint&);
-    AcceleratedEffectShapeFunction::RelativeControlPoint LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::RelativeControlPoint&, const AcceleratedEffectShapeFunction::RelativeControlPoint&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::RelativeControlPoint&, const AcceleratedEffectShapeFunction::RelativeControlPoint&);
+    NODELETE AcceleratedEffectShapeFunction::RelativeControlPoint blend(const AcceleratedEffectShapeFunction::RelativeControlPoint&, const AcceleratedEffectShapeFunction::RelativeControlPoint&, const BlendingContext&);
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::AbsoluteControlPoint> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::AbsoluteControlPoint&, const AcceleratedEffectShapeFunction::AbsoluteControlPoint&);
-    AcceleratedEffectShapeFunction::AbsoluteControlPoint LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::AbsoluteControlPoint&, const AcceleratedEffectShapeFunction::AbsoluteControlPoint&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::AbsoluteControlPoint&, const AcceleratedEffectShapeFunction::AbsoluteControlPoint&);
+    NODELETE AcceleratedEffectShapeFunction::AbsoluteControlPoint blend(const AcceleratedEffectShapeFunction::AbsoluteControlPoint&, const AcceleratedEffectShapeFunction::AbsoluteControlPoint&, const BlendingContext&);
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::MoveCommand> {
     auto canBlend(const AcceleratedEffectShapeFunction::MoveCommand&, const AcceleratedEffectShapeFunction::MoveCommand&) -> bool;
@@ -587,12 +587,12 @@ template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction:
     auto blend(const AcceleratedEffectShapeFunction::LineCommand&, const AcceleratedEffectShapeFunction::LineCommand&, const BlendingContext&) -> AcceleratedEffectShapeFunction::LineCommand;
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::HLineCommand::To> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::HLineCommand::To&, const AcceleratedEffectShapeFunction::HLineCommand::To&);
-    AcceleratedEffectShapeFunction::HLineCommand::To LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::HLineCommand::To&, const AcceleratedEffectShapeFunction::HLineCommand::To&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::HLineCommand::To&, const AcceleratedEffectShapeFunction::HLineCommand::To&);
+    NODELETE AcceleratedEffectShapeFunction::HLineCommand::To blend(const AcceleratedEffectShapeFunction::HLineCommand::To&, const AcceleratedEffectShapeFunction::HLineCommand::To&, const BlendingContext&);
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::HLineCommand::By> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::HLineCommand::By&, const AcceleratedEffectShapeFunction::HLineCommand::By&);
-    AcceleratedEffectShapeFunction::HLineCommand::By LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::HLineCommand::By&, const AcceleratedEffectShapeFunction::HLineCommand::By&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::HLineCommand::By&, const AcceleratedEffectShapeFunction::HLineCommand::By&);
+    NODELETE AcceleratedEffectShapeFunction::HLineCommand::By blend(const AcceleratedEffectShapeFunction::HLineCommand::By&, const AcceleratedEffectShapeFunction::HLineCommand::By&, const BlendingContext&);
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::HLineCommand> {
     auto canBlend(const AcceleratedEffectShapeFunction::HLineCommand&, const AcceleratedEffectShapeFunction::HLineCommand&) -> bool;
@@ -600,12 +600,12 @@ template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction:
 };
 
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::VLineCommand::To> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::VLineCommand::To&, const AcceleratedEffectShapeFunction::VLineCommand::To&);
-    AcceleratedEffectShapeFunction::VLineCommand::To LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::VLineCommand::To&, const AcceleratedEffectShapeFunction::VLineCommand::To&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::VLineCommand::To&, const AcceleratedEffectShapeFunction::VLineCommand::To&);
+    NODELETE AcceleratedEffectShapeFunction::VLineCommand::To blend(const AcceleratedEffectShapeFunction::VLineCommand::To&, const AcceleratedEffectShapeFunction::VLineCommand::To&, const BlendingContext&);
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::VLineCommand::By> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::VLineCommand::By&, const AcceleratedEffectShapeFunction::VLineCommand::By&);
-    AcceleratedEffectShapeFunction::VLineCommand::By LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::VLineCommand::By&, const AcceleratedEffectShapeFunction::VLineCommand::By&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::VLineCommand::By&, const AcceleratedEffectShapeFunction::VLineCommand::By&);
+    NODELETE AcceleratedEffectShapeFunction::VLineCommand::By blend(const AcceleratedEffectShapeFunction::VLineCommand::By&, const AcceleratedEffectShapeFunction::VLineCommand::By&, const BlendingContext&);
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::VLineCommand> {
     auto canBlend(const AcceleratedEffectShapeFunction::VLineCommand&, const AcceleratedEffectShapeFunction::VLineCommand&) -> bool;
@@ -613,24 +613,24 @@ template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction:
 };
 
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::CurveCommand::To> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::CurveCommand::To&, const AcceleratedEffectShapeFunction::CurveCommand::To&);
-    AcceleratedEffectShapeFunction::CurveCommand::To LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::CurveCommand::To&, const AcceleratedEffectShapeFunction::CurveCommand::To&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::CurveCommand::To&, const AcceleratedEffectShapeFunction::CurveCommand::To&);
+    NODELETE AcceleratedEffectShapeFunction::CurveCommand::To blend(const AcceleratedEffectShapeFunction::CurveCommand::To&, const AcceleratedEffectShapeFunction::CurveCommand::To&, const BlendingContext&);
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::CurveCommand::By> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::CurveCommand::By&, const AcceleratedEffectShapeFunction::CurveCommand::By&);
-    AcceleratedEffectShapeFunction::CurveCommand::By LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::CurveCommand::By&, const AcceleratedEffectShapeFunction::CurveCommand::By&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::CurveCommand::By&, const AcceleratedEffectShapeFunction::CurveCommand::By&);
+    NODELETE AcceleratedEffectShapeFunction::CurveCommand::By blend(const AcceleratedEffectShapeFunction::CurveCommand::By&, const AcceleratedEffectShapeFunction::CurveCommand::By&, const BlendingContext&);
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::CurveCommand> {
     auto canBlend(const AcceleratedEffectShapeFunction::CurveCommand&, const AcceleratedEffectShapeFunction::CurveCommand&) -> bool;
     auto blend(const AcceleratedEffectShapeFunction::CurveCommand&, const AcceleratedEffectShapeFunction::CurveCommand&, const BlendingContext&) -> AcceleratedEffectShapeFunction::CurveCommand;
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::SmoothCommand::To> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::SmoothCommand::To&, const AcceleratedEffectShapeFunction::SmoothCommand::To&);
-    AcceleratedEffectShapeFunction::SmoothCommand::To LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::SmoothCommand::To&, const AcceleratedEffectShapeFunction::SmoothCommand::To&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::SmoothCommand::To&, const AcceleratedEffectShapeFunction::SmoothCommand::To&);
+    NODELETE AcceleratedEffectShapeFunction::SmoothCommand::To blend(const AcceleratedEffectShapeFunction::SmoothCommand::To&, const AcceleratedEffectShapeFunction::SmoothCommand::To&, const BlendingContext&);
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::SmoothCommand::By> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::SmoothCommand::By&, const AcceleratedEffectShapeFunction::SmoothCommand::By&);
-    AcceleratedEffectShapeFunction::SmoothCommand::By LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::SmoothCommand::By&, const AcceleratedEffectShapeFunction::SmoothCommand::By&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::SmoothCommand::By&, const AcceleratedEffectShapeFunction::SmoothCommand::By&);
+    NODELETE AcceleratedEffectShapeFunction::SmoothCommand::By blend(const AcceleratedEffectShapeFunction::SmoothCommand::By&, const AcceleratedEffectShapeFunction::SmoothCommand::By&, const BlendingContext&);
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::SmoothCommand> {
     auto canBlend(const AcceleratedEffectShapeFunction::SmoothCommand&, const AcceleratedEffectShapeFunction::SmoothCommand&) -> bool;
@@ -641,12 +641,12 @@ template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction:
     auto blend(const AcceleratedEffectShapeFunction::ArcCommand&, const AcceleratedEffectShapeFunction::ArcCommand&, const BlendingContext&) -> AcceleratedEffectShapeFunction::ArcCommand;
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::CloseCommand> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::CloseCommand&, const AcceleratedEffectShapeFunction::CloseCommand&);
-    AcceleratedEffectShapeFunction::CloseCommand LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::CloseCommand&, const AcceleratedEffectShapeFunction::CloseCommand&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::CloseCommand&, const AcceleratedEffectShapeFunction::CloseCommand&);
+    NODELETE AcceleratedEffectShapeFunction::CloseCommand blend(const AcceleratedEffectShapeFunction::CloseCommand&, const AcceleratedEffectShapeFunction::CloseCommand&, const BlendingContext&);
 };
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction::Command> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction::Command&, const AcceleratedEffectShapeFunction::Command&);
-    AcceleratedEffectShapeFunction::Command LEGACY_NODELETE blend(const AcceleratedEffectShapeFunction::Command&, const AcceleratedEffectShapeFunction::Command&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction::Command&, const AcceleratedEffectShapeFunction::Command&);
+    NODELETE AcceleratedEffectShapeFunction::Command blend(const AcceleratedEffectShapeFunction::Command&, const AcceleratedEffectShapeFunction::Command&, const BlendingContext&);
 };
 
 // MARK: - AcceleratedEffectShapeFunction::ToPosition (blending)

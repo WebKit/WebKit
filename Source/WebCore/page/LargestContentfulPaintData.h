@@ -79,8 +79,8 @@ private:
     static FloatRect computeViewportIntersectionRect(Element&, FloatRect localRect);
     static FloatRect computeViewportIntersectionRectForTextContainer(Element&, const WeakHashSet<Text, WeakPtrImplWithEventTargetData>&);
 
-    static bool LEGACY_NODELETE isEligibleForLargestContentfulPaint(const Element&, float effectiveVisualArea);
-    static bool LEGACY_NODELETE canCompareWithLargestPaintArea(const Element&);
+    NODELETE static bool isEligibleForLargestContentfulPaint(const Element&, float effectiveVisualArea);
+    NODELETE static bool canCompareWithLargestPaintArea(const Element&);
 
     void potentiallyAddLargestContentfulPaintEntry(Element&, CachedImage*, FloatRect imageLocalRect, FloatRect intersectionRect, MonotonicTime loadTime, DOMHighResTimeStamp paintTimestamp, std::optional<FloatSize>& viewportSize);
 

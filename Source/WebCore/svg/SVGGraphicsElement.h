@@ -71,7 +71,7 @@ public:
     Ref<SVGRect> getBBoxForBindings();
     virtual FloatRect getBBox(StyleUpdateStrategy = StyleUpdateStrategy::Allow);
 
-    static SVGElement* LEGACY_NODELETE nearestViewportElement(const SVGElement*);
+    NODELETE static SVGElement* nearestViewportElement(const SVGElement*);
 
     bool shouldIsolateBlending() const { return m_shouldIsolateBlending; }
     void setShouldIsolateBlending(bool isolate) { m_shouldIsolateBlending = isolate; }

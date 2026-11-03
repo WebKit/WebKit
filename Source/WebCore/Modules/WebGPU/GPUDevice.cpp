@@ -453,7 +453,7 @@ ExceptionOr<Ref<GPUTexture>> GPUDevice::createTexture(GPUTextureDescriptor&& tex
     return result;
 }
 
-static WebGPU::SamplerDescriptor LEGACY_NODELETE convertToBacking(const std::optional<GPUSamplerDescriptor>& samplerDescriptor)
+NODELETE static WebGPU::SamplerDescriptor convertToBacking(const std::optional<GPUSamplerDescriptor>& samplerDescriptor)
 {
     if (!samplerDescriptor) {
         return {
@@ -530,7 +530,7 @@ private:
     {
     }
 
-    bool LEGACY_NODELETE hasCallback() const final { return true; }
+    NODELETE bool hasCallback() const final { return true; }
 
     CallbackResult<void> invoke(double, const VideoFrameMetadata&) override
     {
@@ -818,7 +818,7 @@ ExceptionOr<void> GPUDevice::createRenderPipelineAsync(UniquelyAnnotatedDescript
     return { };
 }
 
-static WebGPU::CommandEncoderDescriptor LEGACY_NODELETE convertToBacking(const std::optional<GPUCommandEncoderDescriptor>& commandEncoderDescriptor)
+NODELETE static WebGPU::CommandEncoderDescriptor convertToBacking(const std::optional<GPUCommandEncoderDescriptor>& commandEncoderDescriptor)
 {
     if (!commandEncoderDescriptor)
         return { };
@@ -955,7 +955,7 @@ Ref<GPUAdapterInfo> GPUDevice::adapterInfo() const
 }
 
 
-static OptionSet<::WebGPU::ColorWrite> LEGACY_NODELETE convertToAPI(uint32_t writeMask)
+NODELETE static OptionSet<::WebGPU::ColorWrite> convertToAPI(uint32_t writeMask)
 {
     auto result = OptionSet<::WebGPU::ColorWrite>::fromRaw(writeMask & webGPUColorWriteMaskAll);
     if (writeMask & ~webGPUColorWriteMaskAll)

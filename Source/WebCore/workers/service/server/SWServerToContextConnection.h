@@ -59,7 +59,7 @@ class SWServerToContextConnection: public RefCountedAndCanMakeWeakPtr<SWServerTo
 public:
     WEBCORE_EXPORT virtual ~SWServerToContextConnection();
 
-    WEBCORE_EXPORT SWServer* LEGACY_NODELETE server() const;
+    NODELETE WEBCORE_EXPORT SWServer* server() const;
 
     // This flag gets set when the service worker process is no longer clean (because it has loaded several eTLD+1s).
     bool shouldTerminateWhenPossible() const { return m_shouldTerminateWhenPossible; }

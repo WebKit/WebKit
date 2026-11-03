@@ -69,7 +69,7 @@ public:
     ~MediaControlsHost();
 
 #if ENABLE(MEDIA_SESSION)
-    WEBCORE_EXPORT void LEGACY_NODELETE ref() const final;
+    NODELETE WEBCORE_EXPORT void ref() const final;
     WEBCORE_EXPORT void deref() const final;
 #else
     WEBCORE_EXPORT void ref() const;
@@ -98,23 +98,23 @@ public:
     void setSelectedTextTrack(TextTrack*);
     Element* textTrackContainer();
     void updateTextTrackContainer();
-    TextTrackRepresentation* LEGACY_NODELETE textTrackRepresentation() const;
+    NODELETE TextTrackRepresentation* textTrackRepresentation() const;
     bool allowsInlineMediaPlayback() const;
     bool supportsFullscreen() const;
-    bool LEGACY_NODELETE isVideoLayerInline() const;
-    bool LEGACY_NODELETE isInMediaDocument() const;
+    NODELETE bool isVideoLayerInline() const;
+    NODELETE bool isInMediaDocument() const;
     bool userGestureRequired() const;
     bool shouldForceControlsDisplay() const;
     bool supportsSeeking() const;
-    bool LEGACY_NODELETE inWindowFullscreen() const;
+    NODELETE bool inWindowFullscreen() const;
     bool supportsRewind() const;
     bool needsChromeMediaControlsPseudoElement() const;
-    bool LEGACY_NODELETE isMediaControlsMacInlineSizeSpecsEnabled() const;
-    bool LEGACY_NODELETE spatialVideoRenderingEnabled() const;
+    NODELETE bool isMediaControlsMacInlineSizeSpecsEnabled() const;
+    NODELETE bool spatialVideoRenderingEnabled() const;
     String spatialVideoProjectionKind() const;
     std::optional<int32_t> spatialVideoHorizontalFieldOfView() const;
     void spatialCameraDidMove(double yaw, double pitch, double fieldOfView);
-    bool LEGACY_NODELETE isAVExperienceControllerFullscreenEnabled() const;
+    NODELETE bool isAVExperienceControllerFullscreenEnabled() const;
 
     void captionPreferencesChanged();
     enum class ForceUpdate : bool { No, Yes };
@@ -130,7 +130,7 @@ public:
     enum class DeviceType { None, Airplay, Tvout };
     DeviceType externalDeviceType() const;
 
-    bool LEGACY_NODELETE controlsDependOnPageScaleFactor() const;
+    NODELETE bool controlsDependOnPageScaleFactor() const;
     void setControlsDependOnPageScaleFactor(bool v);
 
     static String generateUUID();

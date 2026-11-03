@@ -52,9 +52,9 @@ public:
     virtual void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
     virtual void deprecatedDidReceiveCachedResource(CachedResource&);
 
-    static CachedResourceClientType LEGACY_NODELETE expectedType();
-    virtual CachedResourceClientType LEGACY_NODELETE resourceClientType() const;
-    virtual bool LEGACY_NODELETE shouldMarkAsReferenced() const;
+    NODELETE static CachedResourceClientType expectedType();
+    NODELETE virtual CachedResourceClientType resourceClientType() const;
+    NODELETE virtual bool shouldMarkAsReferenced() const;
 
 #if ASSERT_ENABLED
     void addAssociatedResource(CachedResource&);

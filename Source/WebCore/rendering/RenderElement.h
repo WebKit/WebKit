@@ -107,7 +107,7 @@ public:
 
     const Style::ComputedStyle& style() const LIFETIME_BOUND { return Layout::ElementBox::style(); }
     const Style::ComputedStyle* parentStyle() const LIFETIME_BOUND { return !RenderObject::m_parent ? nullptr : &RenderObject::m_parent->style(); }
-    const Style::ComputedStyle& LEGACY_NODELETE firstLineStyle() const LIFETIME_BOUND;
+    NODELETE const Style::ComputedStyle& firstLineStyle() const LIFETIME_BOUND;
     // False when firstLineStyle() is style().
     inline bool mayHaveFirstLineStyle() const;
 
@@ -178,7 +178,7 @@ public:
     // The following functions are used when the render tree hierarchy changes to make sure layers get
     // properly added and removed. Since containership can be implemented by any subclass, and since a hierarchy
     // can contain a mixture of boxes and other object types, these functions need to be in the base class.
-    RenderLayer* LEGACY_NODELETE layerParent() const;
+    NODELETE RenderLayer* layerParent() const;
     RenderLayer* layerNextSibling(RenderLayer& parentLayer) const;
     void removeLayers();
     void moveLayers(RenderLayer& newParent);
@@ -188,15 +188,15 @@ public:
     // positive (never cleared once set); never a false negative — set on every
     // createLayer and on every attach of a subtree that already has the bit.
     bool mayHaveLayerInSubtree() const { return m_mayHaveLayerInSubtree; }
-    void LEGACY_NODELETE setMayHaveLayerInSubtreeIncludingAncestors();
+    NODELETE void setMayHaveLayerInSubtreeIncludingAncestors();
 
     // Never cleared, so it may be a false positive - just like the mayHaveLayerInSubtree() logic.
     bool mayHaveNonScalingStrokeInSubtree() const { return m_mayHaveNonScalingStrokeInSubtree; }
-    void LEGACY_NODELETE setMayHaveNonScalingStrokeInSubtreeIncludingAncestors();
+    NODELETE void setMayHaveNonScalingStrokeInSubtreeIncludingAncestors();
 
     void setChildNeedsLayout(MarkingBehavior = MarkingBehavior::ContainingBlockChain);
     void setOutOfFlowChildNeedsStaticPositionLayout();
-    void LEGACY_NODELETE clearChildNeedsLayout();
+    NODELETE void clearChildNeedsLayout();
     void setNeedsOutOfFlowMovementLayout(const Style::ComputedStyle* oldStyle);
     void setNeedsLayoutForStyleDifference(Style::Difference, const Style::ComputedStyle* oldStyle);
     void setNeedsLayoutForOverflowChange();
@@ -244,14 +244,14 @@ public:
     inline bool hasClipOrNonVisibleOverflow() const; // Defined in RenderElementStyleInlines.h.
     inline bool hasClipPath() const; // Defined in RenderElementStyleInlines.h.
     inline bool hasHiddenBackface() const; // Defined in RenderElementStyleInlines.h.
-    bool LEGACY_NODELETE hasViewTransitionName() const;
-    bool LEGACY_NODELETE isViewTransitionRoot() const;
-    bool LEGACY_NODELETE requiresRenderingConsolidationForViewTransition() const;
+    NODELETE bool hasViewTransitionName() const;
+    NODELETE bool isViewTransitionRoot() const;
+    NODELETE bool requiresRenderingConsolidationForViewTransition() const;
     bool hasOutlineAnnotation() const;
     inline bool hasOutline() const; // Defined in RenderElementStyleInlines.h.
-    bool LEGACY_NODELETE hasSelfPaintingLayer() const;
+    NODELETE bool hasSelfPaintingLayer() const;
 
-    bool LEGACY_NODELETE checkForRepaintDuringLayout() const;
+    NODELETE bool checkForRepaintDuringLayout() const;
 
     // absoluteAnchorRect() is conceptually similar to absoluteBoundingBoxRect(), but is intended for scrolling to an
     // anchor. For inline renderers, this gets the logical top left of the first leaf child and the logical bottom
@@ -310,7 +310,7 @@ public:
     void adjustFontSizesOnBlocks(float size, float visibleWidth);
     WEBCORE_EXPORT void resetTextAutosizing();
 
-    WEBCORE_EXPORT ImageOrientation LEGACY_NODELETE imageOrientation() const;
+    NODELETE WEBCORE_EXPORT ImageOrientation imageOrientation() const;
 
     virtual std::optional<FloatSize> usedImageSize() const { return std::nullopt; }
     inline std::optional<FloatSize> usedZoomedImageSize() const; // Defined in RenderElementInlines.h
@@ -346,10 +346,10 @@ public:
     void setPseudoElementRenderer(PseudoElementType, RenderBlockFlow&);
 
     ReferencedSVGResources& ensureReferencedSVGResources();
-    ReferencedSVGResources* LEGACY_NODELETE referencedSVGResources() const;
+    NODELETE ReferencedSVGResources* referencedSVGResources() const;
 
-    Overflow LEGACY_NODELETE effectiveOverflowX() const;
-    Overflow LEGACY_NODELETE effectiveOverflowY() const;
+    NODELETE Overflow effectiveOverflowX() const;
+    NODELETE Overflow effectiveOverflowY() const;
     inline Overflow effectiveOverflowInlineDirection() const;
     inline Overflow effectiveOverflowBlockDirection() const;
     virtual bool overflowChangesMayAffectLayout() const { return false; }
@@ -377,7 +377,7 @@ public:
     bool isInPendingSVGTransformAttributeUpdates() const { return m_isInPendingSVGTransformAttributeUpdates; }
     void setIsInPendingSVGTransformAttributeUpdates(bool b) { m_isInPendingSVGTransformAttributeUpdates = b; }
 
-    bool LEGACY_NODELETE isAnonymousBlock() const;
+    NODELETE bool isAnonymousBlock() const;
     inline bool shouldSkipForPercentageResolution() const;
     inline bool isBlockBox() const;
     inline bool isBlockLevelBox() const;
@@ -396,12 +396,12 @@ public:
 
     inline bool hasPotentiallyScrollableOverflow() const;
 
-    inline bool LEGACY_NODELETE isBeforeContent() const;
-    inline bool LEGACY_NODELETE isAfterContent() const;
-    inline bool LEGACY_NODELETE isBeforeOrAfterContent() const;
-    static bool LEGACY_NODELETE isBeforeContent(const RenderElement*);
-    static bool LEGACY_NODELETE isAfterContent(const RenderElement*);
-    static bool LEGACY_NODELETE isBeforeOrAfterContent(const RenderElement*);
+    NODELETE inline bool isBeforeContent() const;
+    NODELETE inline bool isAfterContent() const;
+    NODELETE inline bool isBeforeOrAfterContent() const;
+    NODELETE static bool isBeforeContent(const RenderElement*);
+    NODELETE static bool isAfterContent(const RenderElement*);
+    NODELETE static bool isBeforeOrAfterContent(const RenderElement*);
 
     WritingMode writingMode() const { return style().writingMode(); }
 
@@ -411,7 +411,7 @@ protected:
     RenderElement(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
     RenderElement(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
 
-    bool LEGACY_NODELETE layerCreationAllowedForSubtree() const;
+    NODELETE bool layerCreationAllowedForSubtree() const;
 
     enum class StylePropagationType {
         AllChildren,
@@ -472,7 +472,7 @@ private:
 
     inline bool mayContainOutOfFlowPositionedObjects(const Style::ComputedStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
 
-    RenderElement* LEGACY_NODELETE rendererForPseudoStyleAcrossShadowBoundary() const;
+    NODELETE RenderElement* rendererForPseudoStyleAcrossShadowBoundary() const;
 
     // Called when an object that was floating or positioned becomes a normal flow object
     // again.  We have to make sure the render tree updates as needed to accommodate the new
@@ -537,7 +537,7 @@ private:
     // 8 bits free.
 };
 
-WEBCORE_EXPORT float LEGACY_NODELETE opacity(const RenderElement&);
+NODELETE WEBCORE_EXPORT float opacity(const RenderElement&);
 
 inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
 {

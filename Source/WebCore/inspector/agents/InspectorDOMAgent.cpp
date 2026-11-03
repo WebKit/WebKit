@@ -218,7 +218,7 @@ private:
 
 class EventFiredCallback final : public EventListener {
 public:
-    static Ref<EventFiredCallback> LEGACY_NODELETE create(InspectorDOMAgent& domAgent)
+    NODELETE static Ref<EventFiredCallback> create(InspectorDOMAgent& domAgent)
     {
         return adoptRef(*new EventFiredCallback(domAgent));
     }
@@ -597,7 +597,7 @@ void InspectorDOMAgent::discardBindings()
     m_childrenRequested.clear();
 }
 
-static RefPtr<Element> LEGACY_NODELETE elementToPushForStyleable(const Styleable& styleable)
+NODELETE static RefPtr<Element> elementToPushForStyleable(const Styleable& styleable)
 {
     auto& element = styleable.element;
     // FIXME: We want to get rid of PseudoElement.
@@ -1947,7 +1947,7 @@ String InspectorDOMAgent::documentBaseURLString(Document* document)
     return document->encodingParseURL(emptyString()).string();
 }
 
-static bool LEGACY_NODELETE pseudoElementType(PseudoElementType pseudoElementType, Inspector::Protocol::DOM::PseudoType* type)
+NODELETE static bool pseudoElementType(PseudoElementType pseudoElementType, Inspector::Protocol::DOM::PseudoType* type)
 {
     switch (pseudoElementType) {
     case PseudoElementType::Before:
@@ -1961,7 +1961,7 @@ static bool LEGACY_NODELETE pseudoElementType(PseudoElementType pseudoElementTyp
     }
 }
 
-static Inspector::Protocol::DOM::ShadowRootType LEGACY_NODELETE shadowRootType(ShadowRootMode mode)
+NODELETE static Inspector::Protocol::DOM::ShadowRootType shadowRootType(ShadowRootMode mode)
 {
     switch (mode) {
     case ShadowRootMode::UserAgent:
@@ -1976,7 +1976,7 @@ static Inspector::Protocol::DOM::ShadowRootType LEGACY_NODELETE shadowRootType(S
     return Inspector::Protocol::DOM::ShadowRootType::UserAgent;
 }
 
-static Inspector::Protocol::DOM::CustomElementState LEGACY_NODELETE customElementState(const Element& element)
+NODELETE static Inspector::Protocol::DOM::CustomElementState customElementState(const Element& element)
 {
     if (element.isDefinedCustomElement())
         return Inspector::Protocol::DOM::CustomElementState::Custom;
@@ -2595,7 +2595,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
     return value;
 }
 
-static bool LEGACY_NODELETE containsOnlyASCIIWhitespace(Node* node)
+NODELETE static bool containsOnlyASCIIWhitespace(Node* node)
 {
     // FIXME: Respect ignoreWhitespace setting from inspector front end?
     // This static is invoked during node deletion so cannot use RefPtr.
@@ -3190,7 +3190,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setAllowEditingUserA
 }
 
 #if ENABLE(VIDEO)
-static Inspector::Protocol::DOM::VideoProjectionMetadataKind LEGACY_NODELETE videoProjectionMetadataKind(VideoProjectionMetadataKind kind)
+NODELETE static Inspector::Protocol::DOM::VideoProjectionMetadataKind videoProjectionMetadataKind(VideoProjectionMetadataKind kind)
 {
     switch (kind) {
     case VideoProjectionMetadataKind::Unknown:

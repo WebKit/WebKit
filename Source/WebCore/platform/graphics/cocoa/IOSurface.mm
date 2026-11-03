@@ -218,7 +218,7 @@ void IOSurface::moveToPool(std::unique_ptr<IOSurface>&& surface, IOSurfacePool* 
 
 // MARK: -
 
-static OSType LEGACY_NODELETE coreVideoFormatFromIOSurfaceFormat(IOSurface::Format format, UseLosslessCompression useLosslessCompression)
+NODELETE static OSType coreVideoFormatFromIOSurfaceFormat(IOSurface::Format format, UseLosslessCompression useLosslessCompression)
 {
     switch (format) {
     case IOSurface::Format::BGRX:
@@ -255,7 +255,7 @@ static OSType LEGACY_NODELETE coreVideoFormatFromIOSurfaceFormat(IOSurface::Form
 }
 
 #if HAVE(IOSURFACE_ALPHA_CHANNEL_MODE)
-static CFStringRef LEGACY_NODELETE alphaChannelModeValue(AlphaPremultiplication alphaPremultiplication)
+NODELETE static CFStringRef alphaChannelModeValue(AlphaPremultiplication alphaPremultiplication)
 {
     return alphaPremultiplication == AlphaPremultiplication::Premultiplied ? kIOSurfaceAlphaChannelMode_PremultipliedAlpha : kIOSurfaceAlphaChannelMode_StraightAlpha;
 }
@@ -534,7 +534,7 @@ IOSurface::IOSurface(IOSurfaceRef surface, std::optional<ColorSpace>&& colorSpac
 
 IOSurface::~IOSurface() = default;
 
-static constexpr IntSize LEGACY_NODELETE fallbackMaxSurfaceDimension()
+NODELETE static constexpr IntSize fallbackMaxSurfaceDimension()
 {
     // Match limits imposed by Core Animation. FIXME: should have API for this <rdar://problem/25454148>
 #if PLATFORM(WATCHOS)
@@ -561,7 +561,7 @@ static IntSize computeMaximumSurfaceSize()
     return maxSize;
 }
 
-static WTF::Atomic<IntSize>& LEGACY_NODELETE surfaceMaximumSize()
+NODELETE static WTF::Atomic<IntSize>& surfaceMaximumSize()
 {
     static WTF::Atomic<IntSize> maximumSize;
     return maximumSize;
@@ -584,7 +584,7 @@ IntSize IOSurface::maximumSize()
     return size;
 }
 
-static WTF::Atomic<size_t>& LEGACY_NODELETE surfaceBytesPerRowAlignment()
+NODELETE static WTF::Atomic<size_t>& surfaceBytesPerRowAlignment()
 {
     static WTF::Atomic<size_t> alignment = 0;
     return alignment;
@@ -644,7 +644,7 @@ RetainPtr<CGImageRef> IOSurface::createImage(CGContextRef context)
     return adoptCF(CGIOSurfaceContextCreateImage(context));
 }
 
-static std::optional<CGImageAlphaInfo> LEGACY_NODELETE alphaInfoForNativeImage(const IOSurface& surface, IOSurface::ShouldForceOpaque shouldForceOpaque)
+NODELETE static std::optional<CGImageAlphaInfo> alphaInfoForNativeImage(const IOSurface& surface, IOSurface::ShouldForceOpaque shouldForceOpaque)
 {
 #if ENABLE(PIXEL_FORMAT_RGBA16F) || ENABLE(PIXEL_FORMAT_RGBA16)
     // A 64-bit surface always uses IOSurface::Format::RGBA16F or RGBA16 regardless of whether

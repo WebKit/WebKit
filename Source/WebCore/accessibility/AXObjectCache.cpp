@@ -190,20 +190,20 @@ static bool isSecureFieldOrContainedBySecureField(AccessibilityObject& object)
 
 #endif // PLATFORM(COCOA)
 
-static bool LEGACY_NODELETE rendererNeedsDeferredUpdate(const RenderObject& renderer)
+NODELETE static bool rendererNeedsDeferredUpdate(const RenderObject& renderer)
 {
     AX_ASSERT(!renderer.beingDestroyed());
     auto& document = renderer.document();
     return renderer.needsLayout() || document.needsStyleRecalc() || document.inRenderTreeUpdate() || (document.view() && document.view()->layoutContext().isInRenderTreeLayout());
 }
 
-static bool LEGACY_NODELETE nodeRendererIsValid(Node& node)
+NODELETE static bool nodeRendererIsValid(Node& node)
 {
     auto* renderer = node.renderer();
     return renderer && !renderer->beingDestroyed();
 }
 
-static bool LEGACY_NODELETE nodeAndRendererAreValid(Node* node)
+NODELETE static bool nodeAndRendererAreValid(Node* node)
 {
     return node ? nodeRendererIsValid(*node) : false;
 }
@@ -246,7 +246,7 @@ std::atomic<bool> AXObjectCache::gAccessibilityDOMIdentifiersEnabled = false;
 std::atomic<bool> AXObjectCache::gShouldRepostNotificationsForTests = false;
 #endif
 
-static AXObjectCache::SyncModeToOtherProcessesCallback& LEGACY_NODELETE syncModeToOtherProcessesCallback()
+NODELETE static AXObjectCache::SyncModeToOtherProcessesCallback& syncModeToOtherProcessesCallback()
 {
     static NeverDestroyed<AXObjectCache::SyncModeToOtherProcessesCallback> callback;
     return callback.get();
@@ -2332,7 +2332,7 @@ void AXObjectCache::enqueueNotificationToPost(Ref<AccessibilityObject>&& object,
         m_notificationPostTimer.startOneShot(0_s);
 }
 
-static std::optional<Seconds>& LEGACY_NODELETE announcementTranslationTimeoutOverrideForTesting()
+NODELETE static std::optional<Seconds>& announcementTranslationTimeoutOverrideForTesting()
 {
     static NeverDestroyed<std::optional<Seconds>> override;
     return override;
@@ -3179,7 +3179,7 @@ void AXObjectCache::handleRemoteFrameGainedFocus(RemoteFrame& remoteFrame, Eleme
     recomputeIsIgnored(oldFocusedElement);
 }
 
-static bool LEGACY_NODELETE isContentVisibilityHidden(const Style::ComputedStyle& style)
+NODELETE static bool isContentVisibilityHidden(const Style::ComputedStyle& style)
 {
     return style.usedContentVisibility() == ContentVisibility::Hidden;
 }
@@ -3595,10 +3595,10 @@ public:
     void add(Node&);
     void addSubtree(Node&, unsigned& nodesLeftToVisit);
 
-    unsigned LEGACY_NODELETE textFieldCount() const { return m_textFieldCount; }
-    bool LEGACY_NODELETE hasButton() const { return m_hasButton; }
+    NODELETE unsigned textFieldCount() const { return m_textFieldCount; }
+    NODELETE bool hasButton() const { return m_hasButton; }
     // Enough that every ancestor qualifies whatever else it holds, so counting can stop.
-    bool LEGACY_NODELETE hasEnough() const { return m_textFieldCount >= minimumTextFieldsForFormLikeContainer && m_hasButton; }
+    NODELETE bool hasEnough() const { return m_textFieldCount >= minimumTextFieldsForFormLikeContainer && m_hasButton; }
 
 private:
     unsigned m_textFieldCount { 0 };
@@ -4925,7 +4925,7 @@ void AXObjectCache::updateCachedTextOfAssociatedObjects(AccessibilityObject& obj
 #endif
 }
 
-static bool LEGACY_NODELETE hasAnyARIALabelling(Element& element)
+NODELETE static bool hasAnyARIALabelling(Element& element)
 {
     return element.hasAttributeWithoutSynchronization(aria_labelAttr)
         || element.hasAttributeWithoutSynchronization(aria_labelledbyAttr)
@@ -5851,7 +5851,7 @@ char32_t AXObjectCache::characterBefore(const CharacterOffset& characterOffset)
     return characterForCharacterOffset(characterOffset);
 }
 
-static bool LEGACY_NODELETE characterOffsetNodeIsBR(const CharacterOffset& characterOffset)
+NODELETE static bool characterOffsetNodeIsBR(const CharacterOffset& characterOffset)
 {
     if (characterOffset.isNull())
         return false;
@@ -7539,14 +7539,14 @@ AXRelation AXObjectCache::attributeToRelationType(const QualifiedName& attribute
     return AXRelation::None;
 }
 
-static bool LEGACY_NODELETE validRelation(void* origin, void* target, AXRelation relation)
+NODELETE static bool validRelation(void* origin, void* target, AXRelation relation)
 {
     if (!origin || !target || relation == AXRelation::None)
         return false;
     return origin != target || relation == AXRelation::LabeledBy;
 }
 
-static bool LEGACY_NODELETE validRelation(Element& origin, Element& target, AXRelation relation)
+NODELETE static bool validRelation(Element& origin, Element& target, AXRelation relation)
 {
     if (relation == AXRelation::None)
         return false;
@@ -7572,7 +7572,7 @@ bool AXObjectCache::addRelation(Element& origin, Element& target, AXRelation rel
     return addRelation(RefPtr { getOrCreate(origin, IsPartOfRelation::Yes) }.get(), RefPtr { getOrCreate(target, IsPartOfRelation::Yes) }.get(), relation);
 }
 
-static bool LEGACY_NODELETE canHaveRelations(Element& element)
+NODELETE static bool canHaveRelations(Element& element)
 {
     auto elementName = element.elementName();
     return !(elementName == ElementName::HTML_meta || elementName == ElementName::HTML_head || elementName == ElementName::HTML_script || elementName == ElementName::HTML_html || elementName == ElementName::HTML_style);

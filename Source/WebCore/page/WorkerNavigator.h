@@ -43,8 +43,8 @@ public:
 
     virtual ~WorkerNavigator();
 
-    const String& LEGACY_NODELETE userAgent() const final;
-    bool LEGACY_NODELETE onLine() const final;
+    NODELETE const String& userAgent() const final;
+    NODELETE bool onLine() const final;
     void setIsOnline(bool isOnline) { m_isOnline = isOnline; }
 
     void setAppBadge(ScriptExecutionContext&, std::optional<unsigned long long>, Ref<DeferredPromise>&&);

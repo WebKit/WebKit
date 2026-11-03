@@ -53,8 +53,8 @@ public:
     ProposedDatabase(DatabaseManager&, SecurityOrigin&, const String& name, const String& displayName, unsigned long estimatedSize);
     ~ProposedDatabase();
 
-    SecurityOrigin& LEGACY_NODELETE origin() { return m_origin; }
-    DatabaseDetails& LEGACY_NODELETE details() { return m_details; }
+    NODELETE SecurityOrigin& origin() { return m_origin; }
+    NODELETE DatabaseDetails& details() { return m_details; }
 
 private:
     DatabaseManager& m_manager;
@@ -114,7 +114,7 @@ Ref<DatabaseContext> DatabaseManager::databaseContext(Document& document)
 
 #if LOG_DISABLED
 
-static inline void LEGACY_NODELETE logOpenDatabaseError(Document&, const String&)
+NODELETE static inline void logOpenDatabaseError(Document&, const String&)
 {
 }
 

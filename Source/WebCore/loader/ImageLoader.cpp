@@ -123,7 +123,7 @@ static ImageEventSender& loadEventSenderSingleton()
     return sender;
 }
 
-static inline bool LEGACY_NODELETE pageIsBeingDismissed(Document& document)
+NODELETE static inline bool pageIsBeingDismissed(Document& document)
 {
     auto* frame = document.frame();
     return frame && frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::PageDismissalType::None;

@@ -160,7 +160,7 @@ public:
 
     bool shadowsIgnoreTransforms() const { return m_state.shadowsIgnoreTransforms(); }
     void setShadowsIgnoreTransforms(bool shadowsIgnoreTransforms) { m_state.setShadowsIgnoreTransforms(shadowsIgnoreTransforms); didUpdateState(m_state); }
-    FloatSize LEGACY_NODELETE platformShadowOffset(const FloatSize&) const;
+    NODELETE FloatSize platformShadowOffset(const FloatSize&) const;
 
     const GraphicsContextState& state() const LIFETIME_BOUND { return m_state; }
     void mergeLastChanges(const GraphicsContextState&);
@@ -395,9 +395,9 @@ protected:
 
     FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatRect&, bool printing, Color&);
 
-    float LEGACY_NODELETE dashedLineCornerWidthForStrokeWidth(float) const;
-    float LEGACY_NODELETE dashedLinePatternWidthForStrokeWidth(float) const;
-    float LEGACY_NODELETE dashedLinePatternOffsetForPatternAndStrokeWidth(float patternWidth, float strokeWidth) const;
+    NODELETE float dashedLineCornerWidthForStrokeWidth(float) const;
+    NODELETE float dashedLinePatternWidthForStrokeWidth(float) const;
+    NODELETE float dashedLinePatternOffsetForPatternAndStrokeWidth(float patternWidth, float strokeWidth) const;
     Vector<FloatPoint> centerLineAndCutOffCorners(bool isVerticalLine, float cornerWidth, FloatPoint point1, FloatPoint point2) const;
 
     struct RectsAndStrokeColor {

@@ -770,7 +770,7 @@ void CSSFontFace::load()
     pump(ExternalResourceDownloadPolicy::Allow);
 }
 
-static Font::Visibility LEGACY_NODELETE visibility(CSSFontFace::Status status, CSSFontFace::FontLoadTiming timing)
+NODELETE static Font::Visibility visibility(CSSFontFace::Status status, CSSFontFace::FontLoadTiming timing)
 {
     switch (status) {
     case CSSFontFace::Status::Pending:

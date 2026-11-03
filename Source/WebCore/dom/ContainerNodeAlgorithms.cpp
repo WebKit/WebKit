@@ -90,13 +90,13 @@ void notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node& node, No
         notifyNodeInsertedIntoTree(parentOfInsertedTree, node, treeScopeChange);
 }
 
-inline RemovedSubtreeObservability LEGACY_NODELETE observabilityOfRemovedNode(Node& node)
+NODELETE inline RemovedSubtreeObservability observabilityOfRemovedNode(Node& node)
 {
     bool isRootOfRemovedTree = !node.parentNode();
     return node.refCount() > 1 && !isRootOfRemovedTree ? RemovedSubtreeObservability::MaybeObservableByRefPtr : RemovedSubtreeObservability::NotObservable;
 }
 
-inline RemovedSubtreeObservability LEGACY_NODELETE observabilityOfRemovedShadowRoot(ShadowRoot& shadowRoot)
+NODELETE inline RemovedSubtreeObservability observabilityOfRemovedShadowRoot(ShadowRoot& shadowRoot)
 {
     constexpr unsigned referenceCountHeldByThisRemoval = 2;
     ASSERT(!shadowRoot.parentNode());
@@ -104,7 +104,7 @@ inline RemovedSubtreeObservability LEGACY_NODELETE observabilityOfRemovedShadowR
     return shadowRoot.refCount() > referenceCountHeldByThisRemoval ? RemovedSubtreeObservability::MaybeObservableByRefPtr : RemovedSubtreeObservability::NotObservable;
 }
 
-inline void LEGACY_NODELETE updateObservability(RemovedSubtreeObservability& currentObservability, RemovedSubtreeObservability newStatus)
+NODELETE inline void updateObservability(RemovedSubtreeObservability& currentObservability, RemovedSubtreeObservability newStatus)
 {
     if (newStatus == RemovedSubtreeObservability::MaybeObservableByRefPtr)
         currentObservability = newStatus;

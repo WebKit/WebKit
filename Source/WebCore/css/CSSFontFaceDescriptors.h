@@ -71,7 +71,7 @@ public:
 private:
     CSSFontFaceDescriptors(MutableStyleProperties&, CSSFontFaceRule&);
 
-    StyleRuleType LEGACY_NODELETE ruleType() const final;
+    NODELETE StyleRuleType ruleType() const final;
 };
 
 } // namespace WebCore

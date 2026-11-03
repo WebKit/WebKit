@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-inline int LEGACY_NODELETE mapFontWidthVariantToCTFeatureSelector(FontWidthVariant variant)
+NODELETE inline int mapFontWidthVariantToCTFeatureSelector(FontWidthVariant variant)
 {
     switch (variant) {
     case FontWidthVariant::RegularWidth:

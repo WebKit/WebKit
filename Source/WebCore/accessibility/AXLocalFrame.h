@@ -38,7 +38,7 @@ public:
     static Ref<AXLocalFrame> create(AXID, AXObjectCache&);
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-    void LEGACY_NODELETE setLocalFrameView(LocalFrameView*);
+    NODELETE void setLocalFrameView(LocalFrameView*);
     LocalFrameView* localFrameView() const { return m_localFrameView.get(); }
     AccessibilityObject* crossFrameChildObject() const final;
     std::optional<FrameIdentifier> frameID() const { return m_frameID; }

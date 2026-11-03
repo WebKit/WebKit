@@ -60,7 +60,7 @@ private:
     {
     }
 
-    bool LEGACY_NODELETE hasCallback() const final { return true; }
+    NODELETE bool hasCallback() const final { return true; }
 
     CallbackResult<void> invoke(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver&) final
     {

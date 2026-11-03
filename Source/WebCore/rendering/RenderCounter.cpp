@@ -55,7 +55,7 @@ using CounterMaps = SingleThreadWeakHashMap<RenderElement, std::unique_ptr<Count
 
 static CounterNode* makeCounterNode(RenderElement&, const AtomString& identifier, bool alwaysCreateCounter);
 
-static CounterMaps& LEGACY_NODELETE counterMaps()
+NODELETE static CounterMaps& counterMaps()
 {
     static NeverDestroyed<CounterMaps> staticCounterMaps;
     return staticCounterMaps;
@@ -91,7 +91,7 @@ static RenderElement* previousInPreOrderRespectingContainment(const RenderElemen
 }
 
 // Unwrap anonymous block to find the real element it contains.
-static RenderElement* LEGACY_NODELETE lastDescendantInAnonymousBlock(RenderElement& anonymousBlock)
+NODELETE static RenderElement* lastDescendantInAnonymousBlock(RenderElement& anonymousBlock)
 {
     ASSERT(anonymousBlock.isAnonymous());
     RenderElement* current = &anonymousBlock;
@@ -101,7 +101,7 @@ static RenderElement* LEGACY_NODELETE lastDescendantInAnonymousBlock(RenderEleme
     return current;
 }
 
-static RenderElement* LEGACY_NODELETE previousSiblingUnwrappingAnonymous(const RenderElement& renderer)
+NODELETE static RenderElement* previousSiblingUnwrappingAnonymous(const RenderElement& renderer)
 {
     for (auto* previous = renderer.previousSibling(); previous; previous = previous->previousSibling()) {
         if (auto* previousElement = dynamicDowncast<RenderElement>(previous))
@@ -132,7 +132,7 @@ static RenderElement* previousSiblingOrParent(const RenderElement& renderer)
     return previousSiblingOrParentSkippingAnonymous(renderer);
 }
 
-static inline bool LEGACY_NODELETE areRenderersElementsSiblings(const RenderElement& first, const RenderElement& second)
+NODELETE static inline bool areRenderersElementsSiblings(const RenderElement& first, const RenderElement& second)
 {
     return first.firstNonAnonymousAncestor() == second.firstNonAnonymousAncestor();
 }

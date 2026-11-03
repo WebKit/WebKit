@@ -79,7 +79,7 @@ namespace WebCore {
 
 static void formEventCallback(CFReadStreamRef, CFStreamEventType, void* context);
 
-static CFStringRef LEGACY_NODELETE formDataPointerPropertyNameSingleton()
+NODELETE static CFStringRef formDataPointerPropertyNameSingleton()
 {
     static CFStringRef formDataPointerPropertyName = CFSTR("WebKitFormDataPointer");
     return formDataPointerPropertyName;
@@ -416,7 +416,7 @@ static void pendingStreamFinalize(CFReadStreamRef stream, void* context)
     });
 }
 
-static Boolean LEGACY_NODELETE pendingStreamOpen(CFReadStreamRef, CFStreamError* error, Boolean* openComplete, void*)
+NODELETE static Boolean pendingStreamOpen(CFReadStreamRef, CFStreamError* error, Boolean* openComplete, void*)
 {
     *openComplete = TRUE;
     error->error = 0;
@@ -475,7 +475,7 @@ static void pendingStreamClose(CFReadStreamRef, void* context)
     protect(fields->state)->clearDataAvailableHandler();
 }
 
-static CFTypeRef LEGACY_NODELETE pendingStreamCopyProperty(CFReadStreamRef, CFStringRef, void*)
+NODELETE static CFTypeRef pendingStreamCopyProperty(CFReadStreamRef, CFStringRef, void*)
 {
     // Deliberately do not answer WebKitFormDataStreamLength — length is unknown for a pending stream.
     return 0;

@@ -65,7 +65,7 @@ public:
     LayoutPoint contentBoxLocation() const { return m_contentBoxLocation; }
     OptionSet<FrameOwnerElementAppearance> ownerElementAppearance() const { return m_ownerElementAppearance; }
 
-    WEBCORE_EXPORT friend bool LEGACY_NODELETE operator==(const RemoteFrameLayoutInfo&, const RemoteFrameLayoutInfo&);
+    WEBCORE_EXPORT friend bool operator==(const RemoteFrameLayoutInfo&, const RemoteFrameLayoutInfo&);
 
 private:
     WEBCORE_EXPORT RemoteFrameLayoutInfo(
@@ -126,6 +126,8 @@ private:
 
     OptionSet<FrameOwnerElementAppearance> m_ownerElementAppearance;
 };
+
+NODELETE WEBCORE_EXPORT bool operator==(const RemoteFrameLayoutInfo&, const RemoteFrameLayoutInfo&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, FrameOwnerElementAppearance);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const RemoteFrameLayoutInfo&);

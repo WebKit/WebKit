@@ -106,12 +106,12 @@ public:
     WEBCORE_EXPORT virtual ~ImageBufferBackend();
 
     WEBCORE_EXPORT static IntSize calculateSafeBackendSize(const ImageBufferParameters&);
-    WEBCORE_EXPORT static size_t LEGACY_NODELETE calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
+    NODELETE WEBCORE_EXPORT static size_t calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
     WEBCORE_EXPORT static AffineTransform calculateBaseTransform(const ImageBufferParameters&);
 
     virtual RenderingMode renderingMode() const { return RenderingMode::Unaccelerated; }
     virtual size_t memoryCost() const { return calculateMemoryCost(m_backendSize, bytesPerRow()); }
-    WEBCORE_EXPORT AffineTransform LEGACY_NODELETE baseTransform() const;
+    NODELETE WEBCORE_EXPORT AffineTransform baseTransform() const;
 
     virtual GraphicsContext& context() = 0;
     virtual void flushContext() { }
@@ -181,7 +181,7 @@ protected:
     RenderingPurpose purpose() const { return m_purpose; }
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-    void LEGACY_NODELETE convertToLuminanceMaskFloat16();
+    NODELETE void convertToLuminanceMaskFloat16();
 #endif
     void convertToLuminanceMaskUint8();
 

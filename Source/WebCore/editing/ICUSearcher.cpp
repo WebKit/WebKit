@@ -295,7 +295,7 @@ static std::pair<std::span<const char16_t>, size_t> extractSubspanIncludingConte
     return { buffer.subspan(contextStart, contextEnd - contextStart), contextStart };
 }
 
-static std::pair<std::span<const char16_t>, size_t> LEGACY_NODELETE boundedWordContextForNonComplexText(std::span<const char16_t> buffer, size_t start, size_t length)
+NODELETE static std::pair<std::span<const char16_t>, size_t> boundedWordContextForNonComplexText(std::span<const char16_t> buffer, size_t start, size_t length)
 {
     size_t windowStart = start;
     while (windowStart && !isASCIIWhitespace(buffer[windowStart - 1]))
@@ -410,7 +410,7 @@ void normalizeCharacters(const char16_t* characters, unsigned length, Vector<cha
     ASSERT(U_SUCCESS(status));
 }
 
-char16_t LEGACY_NODELETE foldQuoteMarkAndReplaceNoBreakSpace(char16_t c)
+NODELETE char16_t foldQuoteMarkAndReplaceNoBreakSpace(char16_t c)
 {
     switch (c) {
     case hebrewPunctuationGershayim:
@@ -479,7 +479,7 @@ bool isSeparator(char32_t character)
     return isNonLatin1Separator(character);
 }
 
-bool LEGACY_NODELETE containsKanaLetters(const String& pattern)
+NODELETE bool containsKanaLetters(const String& pattern)
 {
     if (pattern.is8Bit())
         return false;
@@ -539,7 +539,7 @@ String foldQuoteMarks(const String& stringToFold)
 
 // We refer to the above technique as the "kana workaround". The next few
 // functions are helper functinos for the kana workaround.
-static bool LEGACY_NODELETE isKanaLetter(char16_t character)
+NODELETE static bool isKanaLetter(char16_t character)
 {
     // Hiragana letters.
     if (character >= 0x3041 && character <= 0x3096)
@@ -558,7 +558,7 @@ static bool LEGACY_NODELETE isKanaLetter(char16_t character)
     return false;
 }
 
-static bool LEGACY_NODELETE isSmallKanaLetter(char16_t character)
+NODELETE static bool isSmallKanaLetter(char16_t character)
 {
     ASSERT(isKanaLetter(character));
 
@@ -617,7 +617,7 @@ static bool LEGACY_NODELETE isSmallKanaLetter(char16_t character)
     return false;
 }
 
-static VoicedSoundMarkType LEGACY_NODELETE composedVoicedSoundMark(char16_t character)
+NODELETE static VoicedSoundMarkType composedVoicedSoundMark(char16_t character)
 {
     ASSERT(isKanaLetter(character));
 
@@ -684,7 +684,7 @@ static VoicedSoundMarkType LEGACY_NODELETE composedVoicedSoundMark(char16_t char
     return VoicedSoundMarkType::NoVoicedSoundMark;
 }
 
-static bool LEGACY_NODELETE isCombiningVoicedSoundMark(char16_t character)
+NODELETE static bool isCombiningVoicedSoundMark(char16_t character)
 {
     switch (character) {
     case 0x3099: // COMBINING KATAKANA-HIRAGANA VOICED SOUND MARK

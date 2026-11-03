@@ -78,7 +78,7 @@ inline static Decimal sliderPosition(HTMLInputElement& element)
     return stepRange.proportionFromValue(stepRange.clampValue(oldValue));
 }
 
-inline static bool LEGACY_NODELETE hasVerticalAppearance(HTMLInputElement& input)
+NODELETE inline static bool hasVerticalAppearance(HTMLInputElement& input)
 {
     ASSERT(input.renderer());
     return !input.renderer()->isHorizontalWritingMode() || input.renderer()->style().usedAppearance() == StyleAppearance::SliderVertical;
@@ -102,7 +102,7 @@ public:
 
 private:
     void layout() override;
-    bool LEGACY_NODELETE isFlexibleBoxImpl() const override { return true; }
+    NODELETE bool isFlexibleBoxImpl() const override { return true; }
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSliderContainer);

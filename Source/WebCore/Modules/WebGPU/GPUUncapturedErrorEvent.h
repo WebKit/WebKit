@@ -44,7 +44,7 @@ public:
         return adoptRef(*new GPUUncapturedErrorEvent(type, WTF::move(gpuUncapturedErrorEventInitDict)));
     }
 
-    GPUError& LEGACY_NODELETE error() const;
+    NODELETE GPUError& error() const;
 
 private:
     GPUUncapturedErrorEvent(const AtomString&, GPUUncapturedErrorEventInit&&);

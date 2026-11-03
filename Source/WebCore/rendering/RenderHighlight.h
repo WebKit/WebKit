@@ -68,7 +68,7 @@ private:
 class RenderRangeIterator {
 public:
     RenderRangeIterator(RenderObject* start);
-    RenderObject* LEGACY_NODELETE current() const;
+    NODELETE RenderObject* current() const;
     RenderObject* next();
 
 private:
@@ -86,7 +86,7 @@ public:
         : m_isSelection(true)
     { }
 
-    void LEGACY_NODELETE setRenderRange(const RenderRange&);
+    NODELETE void setRenderRange(const RenderRange&);
     bool setRenderRange(const HighlightRange&); // Returns true if successful.
     const RenderRange& get() const LIFETIME_BOUND { return m_renderRange; }
 

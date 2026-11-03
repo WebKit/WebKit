@@ -79,7 +79,7 @@ public:
 
 private:
     Vector<Ref<DataTransferItem>>& ensureItems() const;
-    Document* LEGACY_NODELETE document() const;
+    NODELETE Document* document() const;
 
     WeakRef<DataTransfer> m_dataTransfer;
     mutable std::optional<Vector<Ref<DataTransferItem>>> m_items;

@@ -100,7 +100,7 @@ public:
 
 private:
     Value::Type resultType() const final { return Value::Type::Boolean; }
-    bool LEGACY_NODELETE shortCircuitOn() const;
+    NODELETE bool shortCircuitOn() const;
     Value evaluate() const final;
 
     Opcode m_opcode;

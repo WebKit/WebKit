@@ -51,9 +51,9 @@ public:
 
     virtual ~UserMessageHandlersNamespace();
 
-    Vector<AtomString> LEGACY_NODELETE supportedPropertyNames() const;
+    NODELETE Vector<AtomString> supportedPropertyNames() const;
     RefPtr<UserMessageHandler> namedItem(DOMWrapperWorld&, const AtomString&);
-    bool LEGACY_NODELETE isSupportedPropertyName(const AtomString&);
+    NODELETE bool isSupportedPropertyName(const AtomString&);
 
     // UserContentProviderInvalidationClient, FrameDestructionObserver.
     void ref() const final { RefCounted::ref(); }

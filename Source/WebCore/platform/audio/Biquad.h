@@ -64,7 +64,7 @@ public:
     void setNotchParams(size_t index, double frequency, double Q);
 
     // Resets filter state
-    void LEGACY_NODELETE reset();
+    NODELETE void reset();
 
     // Filter response at the frequencies in |frequencyHz|, given in Hz and normalized
     // against |nyquist|. The magnitude and phase response are returned in magResponse
@@ -80,7 +80,7 @@ public:
     double tailFrame(size_t coefIndex, double maxFrame);
 
 private:
-    void LEGACY_NODELETE setNormalizedCoefficients(size_t index, double b0, double b1, double b2, double a0, double a1, double a2);
+    NODELETE void setNormalizedCoefficients(size_t index, double b0, double b1, double b2, double a0, double a1, double a2);
 
     // Filter coefficients. The filter is defined as
     //

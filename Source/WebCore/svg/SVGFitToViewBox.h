@@ -37,7 +37,7 @@ class SVGFitToViewBox {
     WTF_MAKE_TZONE_ALLOCATED(SVGFitToViewBox);
     WTF_MAKE_NONCOPYABLE(SVGFitToViewBox);
 public:
-    static AffineTransform LEGACY_NODELETE viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatioValue&, float viewWidth, float viewHeight);
+    NODELETE static AffineTransform viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatioValue&, float viewWidth, float viewHeight);
 
     using PropertyRegistry = SVGPropertyOwnerRegistryBase<SVGFitToViewBox>;
 

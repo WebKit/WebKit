@@ -55,7 +55,7 @@ public:
     Element* queryFirst(ContainerNode& rootNode) const;
 
     bool shouldStoreInDocument() const { return m_matchType == MatchType::TagNameMatch || m_matchType == MatchType::ClassNameMatch; }
-    AtomString LEGACY_NODELETE classNameToMatch() const;
+    NODELETE AtomString classNameToMatch() const;
 
 private:
     struct SelectorData {
@@ -122,7 +122,7 @@ private:
 class SelectorQueryCache {
     WTF_MAKE_TZONE_ALLOCATED(SelectorQueryCache);
 public:
-    static SelectorQueryCache& LEGACY_NODELETE singleton();
+    NODELETE static SelectorQueryCache& singleton();
 
     SelectorQuery* add(const String&, const Document&);
     void clear();

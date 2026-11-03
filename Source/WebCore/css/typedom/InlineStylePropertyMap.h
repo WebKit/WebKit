@@ -34,14 +34,14 @@ class WeakPtrImplWithEventTargetData;
 
 class InlineStylePropertyMap final : public StylePropertyMap {
 public:
-    static Ref<InlineStylePropertyMap> LEGACY_NODELETE create(StyledElement&);
+    NODELETE static Ref<InlineStylePropertyMap> create(StyledElement&);
 
     Type type() const final { return Type::Inline; }
 
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
     String shorthandPropertySerialization(CSSPropertyID) const final;
     RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final;
-    unsigned LEGACY_NODELETE size() const final;
+    NODELETE unsigned size() const final;
     Vector<StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
     void removeProperty(CSSPropertyID) final;
     bool setShorthandProperty(CSSPropertyID, const String& value) final;

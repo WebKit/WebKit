@@ -554,7 +554,7 @@ static void CallbackForContainIntrinsicSize(const Vector<Ref<ResizeObserverEntry
     }
 }
 
-static Widget* LEGACY_NODELETE widgetForElement(Element* focusedElement)
+NODELETE static Widget* widgetForElement(Element* focusedElement)
 {
     auto* renderer = focusedElement ? dynamicDowncast<RenderWidget>(focusedElement->renderer()) : nullptr;
     return renderer ? renderer->widget() : nullptr;
@@ -616,7 +616,7 @@ static const void* sharedLoggerOwner()
     return reinterpret_cast<const void*>(owner);
 }
 
-static Logger*& LEGACY_NODELETE staticSharedLogger()
+NODELETE static Logger*& staticSharedLogger()
 {
     static Logger* logger;
     return logger;
@@ -672,7 +672,7 @@ auto Document::allDocuments() -> DocumentsMap::ValuesIteratorRange
     return allDocumentsMap().values();
 }
 
-static inline IntDegrees LEGACY_NODELETE currentOrientation(LocalFrame* frame)
+NODELETE static inline IntDegrees currentOrientation(LocalFrame* frame)
 {
 #if ENABLE(ORIENTATION_EVENTS)
     if (frame)
@@ -1877,7 +1877,7 @@ struct UnicodeCodePointRange {
 
 #if ASSERT_ENABLED
 
-static inline bool LEGACY_NODELETE operator<(const UnicodeCodePointRange& a, const UnicodeCodePointRange& b)
+NODELETE static inline bool operator<(const UnicodeCodePointRange& a, const UnicodeCodePointRange& b)
 {
     ASSERT(a.minimum <= a.maximum);
     ASSERT(b.minimum <= b.maximum);
@@ -1886,13 +1886,13 @@ static inline bool LEGACY_NODELETE operator<(const UnicodeCodePointRange& a, con
 
 #endif // ASSERT_ENABLED
 
-static inline bool LEGACY_NODELETE operator<(const UnicodeCodePointRange& a, char32_t b)
+NODELETE static inline bool operator<(const UnicodeCodePointRange& a, char32_t b)
 {
     ASSERT(a.minimum <= a.maximum);
     return a.maximum < b;
 }
 
-static inline bool LEGACY_NODELETE operator<(char32_t a, const UnicodeCodePointRange& b)
+NODELETE static inline bool operator<(char32_t a, const UnicodeCodePointRange& b)
 {
     ASSERT(b.minimum <= b.maximum);
     return a < b.minimum;
@@ -1912,7 +1912,7 @@ CustomElementRegistry* Document::effectiveGlobalCustomElementRegistry()
     return customElementRegistry();
 }
 
-static inline bool LEGACY_NODELETE isPotentialCustomElementNameCharacter(char32_t character)
+NODELETE static inline bool isPotentialCustomElementNameCharacter(char32_t character)
 {
     static constexpr auto ranges = WTF::toArray<UnicodeCodePointRange>({
         { '-', '.' },
@@ -1945,7 +1945,7 @@ enum class CustomElementNameCharacterKind : uint8_t {
     Upper,
 };
 
-static ALWAYS_INLINE CustomElementNameCharacterKind LEGACY_NODELETE customElementNameCharacterKind(Latin1Character character)
+NODELETE static ALWAYS_INLINE CustomElementNameCharacterKind customElementNameCharacterKind(Latin1Character character)
 {
     using Kind = CustomElementNameCharacterKind;
     static constexpr std::array<Kind, 256> table {
@@ -1985,7 +1985,7 @@ static ALWAYS_INLINE CustomElementNameCharacterKind LEGACY_NODELETE customElemen
     return table[character];
 }
 
-static ALWAYS_INLINE CustomElementNameValidationStatus LEGACY_NODELETE validateCustomElementNameWithoutCheckingStandardElementNames(const AtomString& localName)
+NODELETE static ALWAYS_INLINE CustomElementNameValidationStatus validateCustomElementNameWithoutCheckingStandardElementNames(const AtomString& localName)
 {
     if (!isASCIILower(localName[0]))
         return CustomElementNameValidationStatus::FirstCharacterIsNotLowercaseASCIILetter;
@@ -2612,16 +2612,16 @@ void Document::setTitle(String&& title)
 template<typename> struct TitleTraits;
 
 template<> struct TitleTraits<HTMLTitleElement> {
-    static bool LEGACY_NODELETE isInEligibleLocation(HTMLTitleElement& element) { return element.isConnected() && !element.isInShadowTree(); }
-    static HTMLTitleElement* LEGACY_NODELETE findTitleElement(Document& document) { return descendantsOfType<HTMLTitleElement>(document).first(); }
+    NODELETE static bool isInEligibleLocation(HTMLTitleElement& element) { return element.isConnected() && !element.isInShadowTree(); }
+    NODELETE static HTMLTitleElement* findTitleElement(Document& document) { return descendantsOfType<HTMLTitleElement>(document).first(); }
 };
 
 template<> struct TitleTraits<SVGTitleElement> {
-    static bool LEGACY_NODELETE isInEligibleLocation(SVGTitleElement& element) { return element.parentNode() == element.document().documentElement(); }
-    static SVGTitleElement* LEGACY_NODELETE findTitleElement(Document& document) { return childrenOfType<SVGTitleElement>(*document.documentElement()).first(); }
+    NODELETE static bool isInEligibleLocation(SVGTitleElement& element) { return element.parentNode() == element.document().documentElement(); }
+    NODELETE static SVGTitleElement* findTitleElement(Document& document) { return childrenOfType<SVGTitleElement>(*document.documentElement()).first(); }
 };
 
-template<typename TitleElement> Element* LEGACY_NODELETE selectNewTitleElement(Document& document, Element* oldTitleElement, Element& changingElement)
+template<typename TitleElement> NODELETE Element* selectNewTitleElement(Document& document, Element* oldTitleElement, Element& changingElement)
 {
     using Traits = TitleTraits<TitleElement>;
 
@@ -6637,7 +6637,7 @@ void Document::updateCaptureAccordingToMutedState()
 }
 #endif // ENABLE(MEDIA_STREAM)
 
-static bool LEGACY_NODELETE isNodeInSubtree(Node& node, Node& container, Document::NodeRemoval nodeRemoval)
+NODELETE static bool isNodeInSubtree(Node& node, Node& container, Document::NodeRemoval nodeRemoval)
 {
     if (nodeRemoval == Document::NodeRemoval::ChildrenOfNode)
         return node.isDescendantOf(container);
@@ -7043,7 +7043,7 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
     return true;
 }
 
-static bool LEGACY_NODELETE shouldResetFocusNavigationStartingNode(Node& node)
+NODELETE static bool shouldResetFocusNavigationStartingNode(Node& node)
 {
     // Setting focus navigation starting node to the following nodes means that we should start
     // the search from the beginning of the document.
@@ -7277,7 +7277,7 @@ void Document::parentlessNodeMovedToNewDocument(Node& node)
         range->updateRangeForParentlessNodeMovedToNewDocument(node);
 }
 
-static Node* LEGACY_NODELETE fallbackFocusNavigationStartingNodeAfterRemoval(Node& node)
+NODELETE static Node* fallbackFocusNavigationStartingNodeAfterRemoval(Node& node)
 {
     return node.previousSibling() ? node.previousSibling() : node.parentNode();
 }
@@ -11944,7 +11944,7 @@ static MessageSource messageSourceForWTFLogChannel(const WTFLogChannel& channel)
     return MessageSource::Other;
 }
 
-static MessageLevel LEGACY_NODELETE messageLevelFromWTFLogLevel(WTFLogLevel level)
+NODELETE static MessageLevel messageLevelFromWTFLogLevel(WTFLogLevel level)
 {
     switch (level) {
     case WTFLogLevel::Always:

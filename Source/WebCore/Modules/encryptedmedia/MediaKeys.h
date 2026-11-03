@@ -81,7 +81,7 @@ public:
     const CDMInstance& cdmInstance() const { return m_instance; }
 
 #if !RELEASE_LOG_DISABLED
-    uint64_t LEGACY_NODELETE nextChildIdentifier() const;
+    NODELETE uint64_t nextChildIdentifier() const;
 #endif
 
     unsigned internalInstanceObjectRefCount() const { return m_instance->refCount(); }

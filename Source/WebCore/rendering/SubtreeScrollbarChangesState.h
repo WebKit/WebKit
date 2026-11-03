@@ -47,7 +47,7 @@ struct SubtreeScrollbarChangesState {
 
     EnumSet<LogicalBoxAxis> sizesAffectedForSubtreeRootFromScrollbarChanges(const RenderBlock& rendererWithScrollbarChanges, EnumSet<ScrollbarOrientation> orientationsForChangedScrollbars) const;
     void addRendererWithScrollbarChange(RenderBlock&, EnumSet<LogicalBoxAxis> sizesAffectedFromScrollbarChanges);
-    static bool LEGACY_NODELETE isEligibleForScrollbarHandlingByAncestor(const RenderBlock&);
+    NODELETE static bool isEligibleForScrollbarHandlingByAncestor(const RenderBlock&);
 };
 
 class LocalFrameViewLayoutContext;

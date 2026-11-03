@@ -141,8 +141,8 @@ public:
     // Returns the frame to render, without its rotation if WebCodecsVideoFrameRotationEnabled is off.
     RefPtr<VideoFrame> internalFrameForRendering(ScriptExecutionContext&) const;
 
-    void LEGACY_NODELETE setDisplaySize(size_t, size_t);
-    void LEGACY_NODELETE setVisibleRect(const DOMRectInit&);
+    NODELETE void setDisplaySize(size_t, size_t);
+    NODELETE void setVisibleRect(const DOMRectInit&);
 
     const WebCodecsVideoFrameData& data() const LIFETIME_BOUND { return m_data; }
 

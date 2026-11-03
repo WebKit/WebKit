@@ -48,7 +48,7 @@ public:
     virtual ~XRReferenceSpaceEvent();
 
     const WebXRReferenceSpace& referenceSpace() const;
-    WebXRRigidTransform* LEGACY_NODELETE transform() const;
+    NODELETE WebXRRigidTransform* transform() const;
 
 private:
     XRReferenceSpaceEvent(const AtomString&, Init&&, IsTrusted);

@@ -35,15 +35,15 @@ class SelectPopoverElement final : public HTMLDivElement {
     WTF_MAKE_TZONE_ALLOCATED(SelectPopoverElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SelectPopoverElement);
 public:
-    static Ref<SelectPopoverElement> LEGACY_NODELETE create(Document&);
+    NODELETE static Ref<SelectPopoverElement> create(Document&);
 
-    HTMLSelectElement* LEGACY_NODELETE selectElement() const;
+    NODELETE HTMLSelectElement* selectElement() const;
 
 private:
     explicit SelectPopoverElement(Document&);
 
     bool isSelectPopoverElement() const final { return true; }
-    bool LEGACY_NODELETE supportsBaseAppearance(StyleAppearance) const final;
+    NODELETE bool supportsBaseAppearance(StyleAppearance) const final;
 
     void didAttachRenderers() final;
     void setPopoverVisibilityState(PopoverVisibilityState) final;

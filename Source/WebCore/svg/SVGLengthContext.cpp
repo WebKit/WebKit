@@ -108,7 +108,7 @@ float SVGLengthContext::resolveLength(const SVGElement* context, SVGUnitTypes::S
     return x.valueAsPercentage();
 }
 
-static inline float LEGACY_NODELETE dimensionForLengthMode(SVGLengthMode mode, FloatSize viewportSize)
+NODELETE static inline float dimensionForLengthMode(SVGLengthMode mode, FloatSize viewportSize)
 {
     switch (mode) {
     case SVGLengthMode::Width:
@@ -295,7 +295,7 @@ double SVGLengthContext::convertValueFromPercentageToUserUnits(double value, SVG
     return value * dimensionForLengthMode(lengthMode, viewportSize);
 }
 
-static inline const Style::ComputedStyle* LEGACY_NODELETE renderStyleForLengthResolving(const SVGElement* context)
+NODELETE static inline const Style::ComputedStyle* renderStyleForLengthResolving(const SVGElement* context)
 {
     if (!context)
         return nullptr;
@@ -310,7 +310,7 @@ static inline const Style::ComputedStyle* LEGACY_NODELETE renderStyleForLengthRe
     return nullptr;
 }
 
-static inline const Style::ComputedStyle* LEGACY_NODELETE rootRenderStyleForLengthResolving(const SVGElement* svgElement)
+NODELETE static inline const Style::ComputedStyle* rootRenderStyleForLengthResolving(const SVGElement* svgElement)
 {
     if (!svgElement)
         return nullptr;

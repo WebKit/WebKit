@@ -118,7 +118,7 @@ public:
     bool openedByDOMWithOpener() const { return m_openedByDOMWithOpener; }
     void setOpenedByDOMWithOpener() { m_openedByDOMWithOpener = true; }
 
-    void LEGACY_NODELETE setSourceBackForwardItem(HistoryItem*);
+    NODELETE void setSourceBackForwardItem(HistoryItem*);
     const std::optional<BackForwardItemIdentifier>& sourceBackForwardItemIdentifier() const LIFETIME_BOUND { return m_sourceBackForwardItemIdentifier; }
 
     const std::optional<PrivateClickMeasurement>& privateClickMeasurement() const { return m_privateClickMeasurement; };
@@ -130,7 +130,7 @@ public:
 
     // The NavigationHistoryBehavior which m_navigationAPIType was resolved from, so that a process taking
     // over this navigation can resolve the navigation API type the same way.
-    WEBCORE_EXPORT NavigationHistoryBehavior LEGACY_NODELETE navigationHistoryBehavior() const;
+    NODELETE WEBCORE_EXPORT NavigationHistoryBehavior navigationHistoryBehavior() const;
 
     using DispatchNavigateEventFunction = std::function<NavigateEventDispatchResult()>;
 

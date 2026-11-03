@@ -67,9 +67,9 @@ public:
     static ExceptionOr<Vector<Part>> parse(StringView, const URLPatternStringOptions&, EncodingCallbackType);
 
 private:
-    Token LEGACY_NODELETE tryToConsumeToken(TokenType);
-    Token LEGACY_NODELETE tryToConsumeRegexOrWildcardToken(const Token&);
-    Token LEGACY_NODELETE tryToConsumeModifierToken();
+    NODELETE Token tryToConsumeToken(TokenType);
+    NODELETE Token tryToConsumeRegexOrWildcardToken(const Token&);
+    NODELETE Token tryToConsumeModifierToken();
 
     String consumeText();
     ExceptionOr<Token> consumeRequiredToken(TokenType);

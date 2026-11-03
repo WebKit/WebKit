@@ -44,13 +44,13 @@ public:
         return adoptRef(*new GPURenderBundle(WTF::move(backing), WTF::move(label), renderBundleEncoder));
     }
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
     ::WebGPU::RenderBundle& backing() { return m_backing; }
     const ::WebGPU::RenderBundle& backing() const { return m_backing; }
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

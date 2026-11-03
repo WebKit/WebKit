@@ -69,7 +69,7 @@ public:
     AXFrameGeometry frameGeometry() const;
     IntPoint frameScreenPosition() const final { return frameGeometry().screenPosition; }
     AffineTransform frameScreenTransform() const final { return frameGeometry().screenTransform; }
-    IntPoint LEGACY_NODELETE frameViewOriginScrollPosition() const;
+    NODELETE IntPoint frameViewOriginScrollPosition() const;
 
     bool isFrameGeometryInitialized() const final;
 

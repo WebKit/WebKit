@@ -50,7 +50,7 @@ Node::NeedsPostConnectionSteps SVGTitleElement::insertionSteps(InsertionType ins
     return result;
 }
 
-static bool LEGACY_NODELETE isTitleElementRemovedFromSVGSVGElement(SVGTitleElement& title, ContainerNode& oldParentOfRemovedTree)
+NODELETE static bool isTitleElementRemovedFromSVGSVGElement(SVGTitleElement& title, ContainerNode& oldParentOfRemovedTree)
 {
     if (!title.parentNode() && is<SVGSVGElement>(oldParentOfRemovedTree) && title.document().documentElement() == &oldParentOfRemovedTree)
         return true;

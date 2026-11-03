@@ -40,7 +40,7 @@ public:
     String end() const;
 
 private:
-    const StyleRuleScope& LEGACY_NODELETE styleRuleScope() const;
+    NODELETE const StyleRuleScope& styleRuleScope() const;
 
     CSSScopeRule(StyleRuleScope&, CSSStyleSheet*);
     StyleRuleType styleRuleType() const final { return StyleRuleType::Scope; }

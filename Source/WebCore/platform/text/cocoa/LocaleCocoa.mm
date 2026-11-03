@@ -277,14 +277,14 @@ struct LocaleCache {
 };
 
 
-static LocaleCache& LEGACY_NODELETE localeCache()
+NODELETE static LocaleCache& localeCache()
 {
     static MainThreadNeverDestroyed<LocaleCache> localeCache;
     return localeCache.get();
 }
 
 static Lock nonMainThreadLocaleCacheLock;
-static HashMap<String, RetainPtr<CFStringRef>>& LEGACY_NODELETE nonMainThreadLocaleCache() WTF_REQUIRES_LOCK(nonMainThreadLocaleCacheLock)
+NODELETE static HashMap<String, RetainPtr<CFStringRef>>& nonMainThreadLocaleCache() WTF_REQUIRES_LOCK(nonMainThreadLocaleCacheLock)
 {
     static NeverDestroyed<HashMap<String, RetainPtr<CFStringRef>>> cache;
     return cache.get();

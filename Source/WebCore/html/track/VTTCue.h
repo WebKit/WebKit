@@ -141,13 +141,13 @@ public:
     bool snapToLines() const { return m_snapToLines; }
     void setSnapToLines(bool);
 
-    LineAndPositionSetting LEGACY_NODELETE line() const;
+    NODELETE LineAndPositionSetting line() const;
     void setLine(const LineAndPositionSetting&);
 
     LineAlignSetting lineAlign() const { return m_lineAlignment; }
     void setLineAlign(LineAlignSetting);
 
-    LineAndPositionSetting LEGACY_NODELETE position() const;
+    NODELETE LineAndPositionSetting position() const;
     virtual ExceptionOr<void> setPosition(const LineAndPositionSetting&);
 
     PositionAlignSetting positionAlign() const { return m_positionAlignment; }
@@ -169,12 +169,12 @@ public:
     RefPtr<DocumentFragment> createCueRenderingTree();
     String textWithoutMarkup();
 
-    void LEGACY_NODELETE notifyRegionWhenRemovingDisplayTree(bool);
+    NODELETE void notifyRegionWhenRemovingDisplayTree(bool);
 
-    VTTRegion* LEGACY_NODELETE region();
+    NODELETE VTTRegion* region();
     void setRegion(VTTRegion*);
 
-    const String& LEGACY_NODELETE regionId() LIFETIME_BOUND;
+    NODELETE const String& regionId() LIFETIME_BOUND;
 
     void setIsActive(bool) override;
 
@@ -193,10 +193,10 @@ public:
     using DisplayPosition = std::pair<std::optional<double>, std::optional<double>>;
     const DisplayPosition& getCSSPosition() const LIFETIME_BOUND { return m_displayPosition; };
 
-    CSSValueID LEGACY_NODELETE getCSSAlignment() const;
-    int LEGACY_NODELETE getCSSSize() const;
-    CSSValueID LEGACY_NODELETE getCSSWritingDirection() const;
-    CSSValueID LEGACY_NODELETE getCSSWritingMode() const;
+    NODELETE CSSValueID getCSSAlignment() const;
+    NODELETE int getCSSSize() const;
+    NODELETE CSSValueID getCSSWritingDirection() const;
+    NODELETE CSSValueID getCSSWritingMode() const;
 
     void recalculateStyles() final { m_displayTreeShouldChange = true; }
     void setFontSize(int, bool important) override;
@@ -208,9 +208,9 @@ public:
 
     void didChange(bool = false) final;
 
-    double LEGACY_NODELETE calculateComputedTextPosition() const;
-    PositionAlignSetting LEGACY_NODELETE calculateComputedPositionAlignment() const;
-    double LEGACY_NODELETE calculateMaximumSize() const;
+    NODELETE double calculateComputedTextPosition() const;
+    NODELETE PositionAlignSetting calculateComputedPositionAlignment() const;
+    NODELETE double calculateMaximumSize() const;
 
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisUtterance* speechUtterance() const { return m_speechUtterance.get(); }
@@ -240,7 +240,7 @@ private:
 
     void determineTextDirection();
     void calculateDisplayParameters();
-    void LEGACY_NODELETE calculateDisplayParametersWithRegion();
+    NODELETE void calculateDisplayParametersWithRegion();
     void obtainCSSBoxes();
 
     enum CueSetting {
@@ -252,7 +252,7 @@ private:
         Align,
         Region
     };
-    CueSetting LEGACY_NODELETE settingName(VTTScanner&);
+    NODELETE CueSetting settingName(VTTScanner&);
 
     void prepareToSpeak(SpeechSynthesis&, double, double, SpeakCueCompletionHandler&&) final;
     void beginSpeaking() final;

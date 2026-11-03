@@ -80,11 +80,11 @@ public:
     }
 
     // For CachedHTMLCollection.
-    bool LEGACY_NODELETE elementMatches(const Element& element) const { return elementMatches(element, m_name.impl()); }
+    NODELETE bool elementMatches(const Element& element) const { return elementMatches(element, m_name.impl()); }
 
     static bool elementMatchesIfIdAttributeMatch(const Element&) { return true; }
-    static bool LEGACY_NODELETE elementMatchesIfNameAttributeMatch(const Element&);
-    static bool LEGACY_NODELETE elementMatches(const Element&, const AtomString&);
+    NODELETE static bool elementMatchesIfNameAttributeMatch(const Element&);
+    NODELETE static bool elementMatches(const Element&, const AtomString&);
 
 private:
     WindowNameCollection(Document& document, CollectionType type, const AtomString& name)
@@ -102,13 +102,13 @@ public:
         return adoptRef(*new DocumentNameCollection(document, type, name));
     }
 
-    static bool LEGACY_NODELETE elementMatchesIfIdAttributeMatch(const Element&);
-    static bool LEGACY_NODELETE elementMatchesIfNameAttributeMatch(const Element&);
+    NODELETE static bool elementMatchesIfIdAttributeMatch(const Element&);
+    NODELETE static bool elementMatchesIfNameAttributeMatch(const Element&);
 
     // For CachedHTMLCollection.
     bool elementMatches(const Element& element) const { return elementMatches(element, m_name.impl()); }
 
-    static bool LEGACY_NODELETE elementMatches(const Element&, const AtomString&);
+    NODELETE static bool elementMatches(const Element&, const AtomString&);
 
 private:
     DocumentNameCollection(Document& document, CollectionType type, const AtomString& name)

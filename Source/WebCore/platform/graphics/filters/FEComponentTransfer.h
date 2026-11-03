@@ -67,7 +67,7 @@ class FEComponentTransfer final : public FilterEffect {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEComponentTransfer);
 public:
     WEBCORE_EXPORT static Ref<FEComponentTransfer> create(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc, ColorSpace = ColorSpace::SRGB());
-    static Ref<FEComponentTransfer> LEGACY_NODELETE create(ComponentTransferFunctions&&);
+    NODELETE static Ref<FEComponentTransfer> create(ComponentTransferFunctions&&);
 
     using LookupTable = std::array<uint8_t, 256>;
     static LookupTable computeLookupTable(const ComponentTransferFunction&);
@@ -79,12 +79,12 @@ public:
     ComponentTransferFunction blueFunction() const { return m_functions[ComponentTransferChannel::Blue]; }
     ComponentTransferFunction alphaFunction() const { return m_functions[ComponentTransferChannel::Alpha]; }
 
-    bool LEGACY_NODELETE setType(ComponentTransferChannel, ComponentTransferType);
-    bool LEGACY_NODELETE setSlope(ComponentTransferChannel, float);
-    bool LEGACY_NODELETE setIntercept(ComponentTransferChannel, float);
-    bool LEGACY_NODELETE setAmplitude(ComponentTransferChannel, float);
-    bool LEGACY_NODELETE setExponent(ComponentTransferChannel, float);
-    bool LEGACY_NODELETE setOffset(ComponentTransferChannel, float);
+    NODELETE bool setType(ComponentTransferChannel, ComponentTransferType);
+    NODELETE bool setSlope(ComponentTransferChannel, float);
+    NODELETE bool setIntercept(ComponentTransferChannel, float);
+    NODELETE bool setAmplitude(ComponentTransferChannel, float);
+    NODELETE bool setExponent(ComponentTransferChannel, float);
+    NODELETE bool setOffset(ComponentTransferChannel, float);
     bool setTableValues(ComponentTransferChannel, Vector<float>&&);
 
 private:

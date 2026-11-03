@@ -39,7 +39,7 @@ public:
 
     virtual ~CSSFontPaletteValuesRule();
 
-    String LEGACY_NODELETE name() const;
+    NODELETE String name() const;
     String fontFamily() const;
     String basePalette() const;
     String overrideColors() const;

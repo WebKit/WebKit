@@ -163,8 +163,8 @@ public:
 private:
     WEBCORE_EXPORT AudioVideoRendererAVFObjC(const Logger&, uint64_t, std::unique_ptr<SharedTimebase>&&);
 
-    MediaTime LEGACY_NODELETE clampTimeToLastSeekTime(const MediaTime&) const;
-    void LEGACY_NODELETE setTimeFloor(const MediaTime&);
+    NODELETE MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
+    NODELETE void setTimeFloor(const MediaTime&);
     void maybeCompleteSeek();
     bool shouldBePlaying() const;
     bool allRenderersHaveAvailableSamples() const { return m_allRenderersHaveAvailableSamples; }
@@ -172,7 +172,7 @@ private:
     void setHasAvailableVideoFrame(bool);
     void setHasAvailableAudioSample(TrackIdentifier, bool);
 
-    std::optional<TrackType> LEGACY_NODELETE typeOf(TrackIdentifier) const;
+    NODELETE std::optional<TrackType> typeOf(TrackIdentifier) const;
 
     void addAudioRenderer(TrackIdentifier);
     void removeAudioRenderer(TrackIdentifier);
@@ -182,14 +182,14 @@ private:
     void applyOnAudioRenderers(NOESCAPE const Function<void(AVSampleBufferAudioRenderer *)>&) const;
 
     Ref<GenericPromise> updateDisplayLayerIfNeeded();
-    bool LEGACY_NODELETE shouldEnsureLayerOrVideoRenderer() const;
-    WebSampleBufferVideoRendering *LEGACY_NODELETE layerOrVideoRenderer() const;
+    NODELETE bool shouldEnsureLayerOrVideoRenderer() const;
+    NODELETE WebSampleBufferVideoRendering *layerOrVideoRenderer() const;
     Ref<GenericPromise> ensureLayerOrVideoRenderer();
     void ensureLayer();
     void destroyLayer();
-    void LEGACY_NODELETE ensureVideoRenderer();
-    void LEGACY_NODELETE destroyVideoRenderer();
-    void LEGACY_NODELETE destroyExpiringVideoRenderersIfNeeded();
+    NODELETE void ensureVideoRenderer();
+    NODELETE void destroyVideoRenderer();
+    NODELETE void destroyExpiringVideoRenderersIfNeeded();
     Ref<GenericPromise> setVideoRenderer(WebSampleBufferVideoRendering *);
     void configureHasAvailableVideoFrameCallbackIfNeeded();
     void configureLayerOrVideoRenderer(WebSampleBufferVideoRendering *);
@@ -201,7 +201,7 @@ private:
         Layer = 0,
         VideoRenderer,
     };
-    AcceleratedVideoMode LEGACY_NODELETE acceleratedVideoMode() const;
+    NODELETE AcceleratedVideoMode acceleratedVideoMode() const;
 
     void notifyError(PlatformMediaError);
     // WebAVSampleBufferListenerClient
@@ -242,8 +242,8 @@ private:
     void maybePurgeLastPixelBuffer();
     void setNeedsPlaceholderImage(bool);
 
-    bool LEGACY_NODELETE isEnabledVideoTrackId(TrackIdentifier) const;
-    bool LEGACY_NODELETE hasSelectedVideo() const;
+    NODELETE bool isEnabledVideoTrackId(TrackIdentifier) const;
+    NODELETE bool hasSelectedVideo() const;
     void flushVideo();
     void flushAudio();
     void flushAudioTrack(TrackIdentifier);
@@ -259,10 +259,10 @@ private:
     void cancelSeekingPromiseIfNeeded();
     void cancelPerformTaskAtTimeObserverIfNeeded();
 
-    bool LEGACY_NODELETE canUseDecompressionSession() const;
-    bool LEGACY_NODELETE isUsingDecompressionSession() const;
-    bool LEGACY_NODELETE isReceivingDecodedSamples() const;
-    bool LEGACY_NODELETE willUseDecompressionSessionIfNeeded() const;
+    NODELETE bool canUseDecompressionSession() const;
+    NODELETE bool isUsingDecompressionSession() const;
+    NODELETE bool isReceivingDecodedSamples() const;
+    NODELETE bool willUseDecompressionSessionIfNeeded() const;
 
     void sizeWillChangeAtTime(const MediaTime&, const FloatSize&);
     void flushPendingSizeChanges();
@@ -290,7 +290,7 @@ private:
         std::unique_ptr<RequestPromise::AutoRejectProducer> requestPromise;
         Function<void(TrackIdentifier, const MediaTime&)> callbackForReenqueuing;
     };
-    AudioTrackProperties& LEGACY_NODELETE audioTrackPropertiesFor(TrackIdentifier);
+    NODELETE AudioTrackProperties& audioTrackPropertiesFor(TrackIdentifier);
 
     String toString(TrackIdentifier) const;
     String toString(SeekState) const;

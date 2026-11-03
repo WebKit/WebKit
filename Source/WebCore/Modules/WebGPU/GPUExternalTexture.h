@@ -43,7 +43,7 @@ public:
         return adoptRef(*new GPUExternalTexture(WTF::move(backing), WTF::move(label), device));
     }
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
     ::WebGPU::ExternalTexture& backing() { return m_backing; }
@@ -51,7 +51,7 @@ public:
     void destroy();
     void undestroy();
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

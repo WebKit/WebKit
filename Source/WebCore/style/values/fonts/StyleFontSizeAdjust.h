@@ -74,8 +74,8 @@ template<> struct Serialize<FontSizeAdjust> { void operator()(StringBuilder&, co
 // MARK: - Blending
 
 template<> struct Blending<FontSizeAdjust> {
-    bool LEGACY_NODELETE canBlend(const FontSizeAdjust&, const FontSizeAdjust&);
-    FontSizeAdjust LEGACY_NODELETE blend(const FontSizeAdjust&, const FontSizeAdjust&, const BlendingContext&);
+    NODELETE bool canBlend(const FontSizeAdjust&, const FontSizeAdjust&);
+    NODELETE FontSizeAdjust blend(const FontSizeAdjust&, const FontSizeAdjust&, const BlendingContext&);
 };
 
 // MARK: - Logging

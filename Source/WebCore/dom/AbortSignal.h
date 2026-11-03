@@ -45,7 +45,7 @@ class WebCoreOpaqueRoot;
 class AbortSignal final : public RefCounted<AbortSignal>, public EventTarget, private ContextDestructionObserver {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(AbortSignal, WEBCORE_EXPORT);
 public:
-    static Ref<AbortSignal> LEGACY_NODELETE create(ScriptExecutionContext*);
+    NODELETE static Ref<AbortSignal> create(ScriptExecutionContext*);
     WEBCORE_EXPORT ~AbortSignal();
 
     // ContextDestructionObserver.
@@ -118,7 +118,7 @@ private:
     bool m_isDependent { false };
 };
 
-WebCoreOpaqueRoot LEGACY_NODELETE root(AbortSignal*);
+NODELETE WebCoreOpaqueRoot root(AbortSignal*);
 
 } // namespace WebCore
 

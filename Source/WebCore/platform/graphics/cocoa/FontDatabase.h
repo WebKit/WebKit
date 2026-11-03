@@ -57,7 +57,7 @@ public:
 
         explicit InstalledFontFamily(Vector<InstalledFont>&& installedFonts);
 
-        void LEGACY_NODELETE expand(const InstalledFont&);
+        NODELETE void expand(const InstalledFont&);
         bool isEmpty() const { return installedFonts.isEmpty(); }
         size_t size() const { return installedFonts.size(); }
 

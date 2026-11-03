@@ -128,7 +128,7 @@ size_t DetachedImageBitmap::memoryCost() const
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBitmap);
 
-static inline RenderingMode LEGACY_NODELETE bufferRenderingMode(ScriptExecutionContext& scriptExecutionContext)
+NODELETE static inline RenderingMode bufferRenderingMode(ScriptExecutionContext& scriptExecutionContext)
 {
 #if USE(CA) || USE(SKIA)
     static RenderingMode defaultRenderingMode = RenderingMode::Accelerated;
@@ -209,7 +209,7 @@ static PixelFormat imageBufferPixelFormat(const ColorSpace& colorSpace)
     return PixelFormat::BGRA8;
 }
 
-static AllowExtendedColorSpace LEGACY_NODELETE allowExtendedColorSpace(const ImageData& imageData)
+NODELETE static AllowExtendedColorSpace allowExtendedColorSpace(const ImageData& imageData)
 {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (imageData.pixelFormat() == ImageDataPixelFormat::RgbaFloat16)
@@ -358,7 +358,7 @@ static IntSize outputSizeForSourceRectangle(IntRect sourceRectangle, ImageBitmap
     return { outputWidth, outputHeight };
 }
 
-static InterpolationQuality LEGACY_NODELETE interpolationQualityForResizeQuality(ImageBitmapOptions::ResizeQuality resizeQuality)
+NODELETE static InterpolationQuality interpolationQualityForResizeQuality(ImageBitmapOptions::ResizeQuality resizeQuality)
 {
     switch (resizeQuality) {
     case ImageBitmapOptions::ResizeQuality::Pixelated:
@@ -374,7 +374,7 @@ static InterpolationQuality LEGACY_NODELETE interpolationQualityForResizeQuality
     return InterpolationQuality::Low;
 }
 
-static AlphaPremultiplication LEGACY_NODELETE alphaPremultiplicationForPremultiplyAlpha(ImageBitmapOptions::PremultiplyAlpha premultiplyAlpha)
+NODELETE static AlphaPremultiplication alphaPremultiplicationForPremultiplyAlpha(ImageBitmapOptions::PremultiplyAlpha premultiplyAlpha)
 {
     // The default is to premultiply - this is the least surprising behavior.
     if (premultiplyAlpha == ImageBitmapOptions::PremultiplyAlpha::None)
@@ -987,18 +987,18 @@ public:
         return adoptRef(*new ImageBitmapImageObserver(mimeType, expectedContentLength, sourceUrl));
     }
 
-    URL LEGACY_NODELETE sourceUrl() const override { return m_sourceUrl; }
-    String LEGACY_NODELETE mimeType() const override { return m_mimeType; }
-    long long LEGACY_NODELETE expectedContentLength() const override { return m_expectedContentLength; }
+    NODELETE URL sourceUrl() const override { return m_sourceUrl; }
+    NODELETE String mimeType() const override { return m_mimeType; }
+    NODELETE long long expectedContentLength() const override { return m_expectedContentLength; }
 
-    void LEGACY_NODELETE decodedSizeChanged(const Image&, long long) override { }
+    NODELETE void decodedSizeChanged(const Image&, long long) override { }
 
-    void LEGACY_NODELETE didDraw(const Image&) override { }
+    NODELETE void didDraw(const Image&) override { }
 
-    void LEGACY_NODELETE imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* = nullptr, DecodingStatus = DecodingStatus::Invalid) override { }
-    void LEGACY_NODELETE changedInRect(const Image&, const IntRect* = nullptr) override { }
-    void LEGACY_NODELETE imageContentChanged(const Image&) override { }
-    void LEGACY_NODELETE scheduleRenderingUpdate(const Image&) override { }
+    NODELETE void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* = nullptr, DecodingStatus = DecodingStatus::Invalid) override { }
+    NODELETE void changedInRect(const Image&, const IntRect* = nullptr) override { }
+    NODELETE void imageContentChanged(const Image&) override { }
+    NODELETE void scheduleRenderingUpdate(const Image&) override { }
 
 private:
     ImageBitmapImageObserver(String mimeType, long long expectedContentLength, const URL& sourceUrl)
@@ -1015,7 +1015,7 @@ private:
 class PendingImageBitmap final : public RefCounted<PendingImageBitmap>, public ActiveDOMObject, public FileReaderLoaderClient {
     WTF_MAKE_TZONE_ALLOCATED(PendingImageBitmap);
 public:
-    void LEGACY_NODELETE ref() const final { RefCounted::ref(); }
+    NODELETE void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(FileReaderLoaderClient);
 
@@ -1057,8 +1057,8 @@ private:
     void stop() final { m_pendingActivity = nullptr; }
 
     // FileReaderLoaderClient
-    void LEGACY_NODELETE didStartLoading() final { }
-    void LEGACY_NODELETE didReceiveData() final { }
+    NODELETE void didStartLoading() final { }
+    NODELETE void didReceiveData() final { }
     void didFinishLoading() final
     {
         createImageBitmapAndCallCompletionHandlerSoon(m_blobLoader->arrayBufferResult());

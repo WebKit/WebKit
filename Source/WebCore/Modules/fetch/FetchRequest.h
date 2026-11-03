@@ -61,7 +61,7 @@ public:
     static Ref<FetchRequest> create(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceRequest&&, FetchOptions&&, String&& referrer);
 
     const String& method() const LIFETIME_BOUND { return m_request.httpMethod(); }
-    const String& LEGACY_NODELETE urlString() const;
+    NODELETE const String& urlString() const;
     FetchHeaders& headers() { return m_headers.get(); }
     const FetchHeaders& headers() const { return m_headers.get(); }
 
@@ -122,6 +122,6 @@ private:
     IPAddressSpace m_targetAddressSpace { IPAddressSpace::Public };
 };
 
-WebCoreOpaqueRoot LEGACY_NODELETE root(FetchRequest*);
+NODELETE WebCoreOpaqueRoot root(FetchRequest*);
 
 } // namespace WebCore

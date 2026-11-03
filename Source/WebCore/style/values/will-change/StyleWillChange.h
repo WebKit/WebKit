@@ -78,9 +78,9 @@ struct WillChangeAnimatableFeature {
     {
     }
 
-    static bool LEGACY_NODELETE propertyCreatesStackingContext(CSSPropertyID);
-    static bool LEGACY_NODELETE propertyTriggersCompositing(CSSPropertyID);
-    static bool LEGACY_NODELETE propertyTriggersCompositingOnBoxesOnly(CSSPropertyID);
+    NODELETE static bool propertyCreatesStackingContext(CSSPropertyID);
+    NODELETE static bool propertyTriggersCompositing(CSSPropertyID);
+    NODELETE static bool propertyTriggersCompositingOnBoxesOnly(CSSPropertyID);
 
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
@@ -190,7 +190,7 @@ private:
             initializeCachedChecks();
         }
 
-        void LEGACY_NODELETE initializeCachedChecks();
+        NODELETE void initializeCachedChecks();
 
         bool m_canCreateStackingContext { false };
         bool m_canTriggerCompositing { false };

@@ -60,7 +60,7 @@ public:
 
     USING_CAN_MAKE_WEAKPTR(FontSelector);
 
-    unsigned LEGACY_NODELETE version() const final { return m_version; }
+    NODELETE unsigned version() const final { return m_version; }
     unsigned uniqueId() const final { return m_uniqueId; }
 
     FontRanges fontRangesForFamily(const FontDescription&, const FontFamily&) final;
@@ -78,7 +78,7 @@ public:
 
     void fontCacheInvalidated() final;
 
-    bool LEGACY_NODELETE isEmpty() const;
+    NODELETE bool isEmpty() const;
 
     void registerForInvalidationCallbacks(FontSelectorClient&) final;
     void unregisterForInvalidationCallbacks(FontSelectorClient&) final;
@@ -89,7 +89,7 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const { return m_context.get(); }
 
-    FontFaceSet* LEGACY_NODELETE fontFaceSetIfExists();
+    NODELETE FontFaceSet* fontFaceSetIfExists();
     FontFaceSet& fontFaceSet();
     CSSFontFaceSet& cssFontFaceSet() { return m_cssFontFaceSet; }
 

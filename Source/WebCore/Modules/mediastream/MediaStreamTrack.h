@@ -88,21 +88,21 @@ public:
 
     const AtomString& kind() const;
     const String& id() const { return m_private->id(); }
-    const String& LEGACY_NODELETE label() const;
+    NODELETE const String& label() const;
 
     const AtomString& contentHint() const;
     void setContentHint(const String&);
         
-    bool LEGACY_NODELETE enabled() const;
+    NODELETE bool enabled() const;
     void setEnabled(bool);
 
-    bool LEGACY_NODELETE muted() const;
-    bool LEGACY_NODELETE mutedForBindings() const;
+    NODELETE bool muted() const;
+    NODELETE bool mutedForBindings() const;
 
     enum class State { Live, Ended };
     State readyState() const { return m_readyState; }
 
-    bool LEGACY_NODELETE ended() const;
+    NODELETE bool ended() const;
 
     virtual RefPtr<MediaStreamTrack> clone();
 
@@ -190,7 +190,7 @@ public:
     void setMediaStreamId(const String& id) { m_mediaStreamId = id; }
     const String& mediaStreamId() const LIFETIME_BOUND { return m_mediaStreamId; }
 
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
 
     class Keeper : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Keeper> {
     public:
@@ -237,14 +237,14 @@ private:
     void trackConfigurationChanged(MediaStreamTrackPrivate&) final;
 
     // AudioCaptureSource
-    bool LEGACY_NODELETE isCapturingAudio() const final;
-    bool LEGACY_NODELETE wantsToCaptureAudio() const final;
+    NODELETE bool isCapturingAudio() const final;
+    NODELETE bool wantsToCaptureAudio() const final;
 
     RefPtr<MediaSessionManagerInterface> mediaSessionManager() const;
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "MediaStreamTrack"_s; }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const final;
+    NODELETE WTFLogChannel& logChannel() const final;
 #endif
 
     Vector<Observer*> m_observers;

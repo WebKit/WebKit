@@ -54,7 +54,7 @@ static String processBaseURLString(StringView input, BaseURLStringType type)
 }
 
 // https://urlpattern.spec.whatwg.org/#hostname-pattern-is-an-ipv6-address
-static bool LEGACY_NODELETE isHostnamePatternIPv6(StringView hostname)
+NODELETE static bool isHostnamePatternIPv6(StringView hostname)
 {
     if (hostname.length() < 2)
         return false;

@@ -47,7 +47,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGPathElement);
 
 class PathCache {
 public:
-    static PathCache& LEGACY_NODELETE singleton();
+    NODELETE static PathCache& singleton();
 
     std::optional<DataRef<SVGPathByteStream::Data>> get(const AtomString& attributeValue) const;
     void add(const AtomString& attributeValue, DataRef<SVGPathByteStream::Data>);

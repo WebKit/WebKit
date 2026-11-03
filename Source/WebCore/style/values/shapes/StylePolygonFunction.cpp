@@ -40,7 +40,7 @@ namespace Style {
 
 struct PolygonPathPolicy : TinyLRUCachePolicy<Vector<FloatPoint>, WebCore::Path> {
 public:
-    static bool LEGACY_NODELETE isKeyNull(const Vector<FloatPoint>& points)
+    NODELETE static bool isKeyNull(const Vector<FloatPoint>& points)
     {
         return !points.size();
     }

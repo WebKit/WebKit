@@ -80,8 +80,8 @@ public:
 
     WEBCORE_EXPORT void openDatabaseConnection(IDBConnectionToClient&, const IDBOpenRequestData&);
 
-    const IDBDatabaseInfo& LEGACY_NODELETE info() const;
-    UniqueIDBDatabaseManager* LEGACY_NODELETE manager();
+    NODELETE const IDBDatabaseInfo& info() const;
+    NODELETE UniqueIDBDatabaseManager* manager();
     const IDBDatabaseIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
 
     enum class SpaceCheckResult : uint8_t {
@@ -110,7 +110,7 @@ public:
 
     void didFinishHandlingVersionChange(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& transactionIdentifier);
     void connectionClosedFromClient(UniqueIDBDatabaseConnection&);
-    WEBCORE_EXPORT bool LEGACY_NODELETE isVersionChangeTransactionActive(const UniqueIDBDatabaseConnection&) const;
+    NODELETE WEBCORE_EXPORT bool isVersionChangeTransactionActive(const UniqueIDBDatabaseConnection&) const;
     void didFireVersionChangeEvent(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer);
     WEBCORE_EXPORT void openDBRequestCancelled(const IDBResourceIdentifier& requestIdentifier);
 
@@ -119,17 +119,17 @@ public:
     WEBCORE_EXPORT void handleDelete(IDBConnectionToClient&, const IDBOpenRequestData&);
     WEBCORE_EXPORT void immediateClose();
 
-    bool LEGACY_NODELETE hasActiveTransactions() const;
+    NODELETE bool hasActiveTransactions() const;
     WEBCORE_EXPORT void abortActiveTransactions();
     void handleTransactionsAfterAbortingSuspendedClientTransactions();
     WEBCORE_EXPORT bool tryClose();
 
     WEBCORE_EXPORT String filePath() const;
-    WEBCORE_EXPORT std::optional<IDBDatabaseNameAndVersion> LEGACY_NODELETE nameAndVersion() const;
+    NODELETE WEBCORE_EXPORT std::optional<IDBDatabaseNameAndVersion> nameAndVersion() const;
     WEBCORE_EXPORT bool hasDataInMemory() const;
     WEBCORE_EXPORT void handleLowMemoryWarning();
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE isVersionChangeTransactionFinishingOrFinished(const IDBResourceIdentifier& transactionIdentifier) const;
+    NODELETE WEBCORE_EXPORT bool isVersionChangeTransactionFinishingOrFinished(const IDBResourceIdentifier& transactionIdentifier) const;
 
 private:
     void handleDatabaseOperations();
@@ -139,8 +139,8 @@ private:
     void performCurrentDeleteOperation();
     RefPtr<ServerOpenDBRequest> takeNextRunnableRequest();
     void addOpenDatabaseConnection(Ref<UniqueIDBDatabaseConnection>&&);
-    bool LEGACY_NODELETE hasAnyOpenConnections() const;
-    bool LEGACY_NODELETE allConnectionsAreClosedOrClosing() const;
+    NODELETE bool hasAnyOpenConnections() const;
+    NODELETE bool allConnectionsAreClosedOrClosing() const;
 
     void startVersionChangeTransaction();
     void maybeNotifyConnectionsOfVersionChange();

@@ -35,7 +35,7 @@ class FEImage final : public FilterEffect {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEImage);
 public:
-    WEBCORE_EXPORT static Ref<FEImage> LEGACY_NODELETE create(SourceImage&&, const FloatRect& sourceImageRect);
+    NODELETE WEBCORE_EXPORT static Ref<FEImage> create(SourceImage&&, const FloatRect& sourceImageRect);
 
     bool operator==(const FEImage&) const;
 

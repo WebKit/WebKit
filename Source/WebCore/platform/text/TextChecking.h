@@ -54,7 +54,7 @@ enum class TextCheckingType : uint8_t {
 
 #if PLATFORM(MAC)
 typedef uint64_t NSTextCheckingTypes;
-WEBCORE_EXPORT NSTextCheckingTypes LEGACY_NODELETE nsTextCheckingTypes(OptionSet<TextCheckingType>);
+NODELETE WEBCORE_EXPORT NSTextCheckingTypes nsTextCheckingTypes(OptionSet<TextCheckingType>);
 #endif
 
 enum class TextCheckingProcessType : bool {

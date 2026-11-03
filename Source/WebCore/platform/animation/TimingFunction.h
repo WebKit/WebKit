@@ -127,7 +127,7 @@ public:
         return adoptRef(*new CubicBezierTimingFunction(preset, x1, y1, x2, y2));
     }
 
-    WEBCORE_EXPORT static Ref<CubicBezierTimingFunction> LEGACY_NODELETE create(TimingFunctionPreset);
+    NODELETE WEBCORE_EXPORT static Ref<CubicBezierTimingFunction> create(TimingFunctionPreset);
 
     bool operator==(const TimingFunction& other) const final
     {

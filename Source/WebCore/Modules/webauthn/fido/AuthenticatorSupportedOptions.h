@@ -66,11 +66,11 @@ public:
     AuthenticatorSupportedOptions(AuthenticatorSupportedOptions&&) = default;
     AuthenticatorSupportedOptions& operator=(AuthenticatorSupportedOptions&&) = default;
 
-    AuthenticatorSupportedOptions& LEGACY_NODELETE setIsPlatformDevice(bool);
-    AuthenticatorSupportedOptions& LEGACY_NODELETE setResidentKeyAvailability(ResidentKeyAvailability);
-    AuthenticatorSupportedOptions& LEGACY_NODELETE setUserVerificationAvailability(UserVerificationAvailability);
-    AuthenticatorSupportedOptions& LEGACY_NODELETE setUserPresenceRequired(bool);
-    AuthenticatorSupportedOptions& LEGACY_NODELETE setClientPinAvailability(ClientPinAvailability);
+    NODELETE AuthenticatorSupportedOptions& setIsPlatformDevice(bool);
+    NODELETE AuthenticatorSupportedOptions& setResidentKeyAvailability(ResidentKeyAvailability);
+    NODELETE AuthenticatorSupportedOptions& setUserVerificationAvailability(UserVerificationAvailability);
+    NODELETE AuthenticatorSupportedOptions& setUserPresenceRequired(bool);
+    NODELETE AuthenticatorSupportedOptions& setClientPinAvailability(ClientPinAvailability);
 
     bool isPlatformDevice() const { return m_isPlatformDevice; }
     ResidentKeyAvailability residentKeyAvailability() const { return m_residentKeyAvailability; };

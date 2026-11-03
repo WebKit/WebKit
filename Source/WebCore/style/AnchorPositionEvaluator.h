@@ -83,9 +83,9 @@ public:
 class AnchorScrollAdjuster {
 public:
     AnchorScrollAdjuster(RenderBox& anchored, const RenderBoxModelObject& defaultAnchor);
-    RenderBox* LEGACY_NODELETE anchored() const;
+    NODELETE RenderBox* anchored() const;
 
-    inline bool LEGACY_NODELETE isEmpty() const;
+    NODELETE inline bool isEmpty() const;
     bool mayNeedAdjustment() const { return m_needsXAdjustment | m_needsYAdjustment; }
     bool mayNeedXAdjustment() const { return m_needsXAdjustment; }
     bool mayNeedYAdjustment() const { return m_needsYAdjustment; }
@@ -101,7 +101,7 @@ public:
     inline void addStickySnapshot(const RenderBoxModelObject& sticky);
 
     enum Diff : uint8_t { New, SnapshotsDiffer, SnapshotsMatch };
-    bool LEGACY_NODELETE recaptureDiffers(const AnchorScrollAdjuster&) const; // Snapshot differences can require invalidation.
+    NODELETE bool recaptureDiffers(const AnchorScrollAdjuster&) const; // Snapshot differences can require invalidation.
     void removeMatchingSnapshots(const AnchorScrollAdjuster&);
 
     void setFallbackLimits(const RenderBox& anchored);
@@ -211,9 +211,9 @@ public:
 
     static AnchorToAnchorPositionedMap makeAnchorPositionedForAnchorMap(AnchorPositionedToAnchorMap&);
 
-    static bool LEGACY_NODELETE isAnchorPositioned(const Style::ComputedStyle&);
-    static bool LEGACY_NODELETE isStyleTimeAnchorPositioned(const Style::ComputedStyle&);
-    static bool LEGACY_NODELETE isLayoutTimeAnchorPositioned(const Style::ComputedStyle&);
+    NODELETE static bool isAnchorPositioned(const Style::ComputedStyle&);
+    NODELETE static bool isStyleTimeAnchorPositioned(const Style::ComputedStyle&);
+    NODELETE static bool isLayoutTimeAnchorPositioned(const Style::ComputedStyle&);
 
     static CSSPropertyID resolvePositionTryFallbackProperty(CSSPropertyID, WritingMode, const BuilderPositionTryFallback&);
     static CSSValueID resolvePositionTryFallbackValueForSelfPosition(CSSPropertyID, CSSValueID, WritingMode, const BuilderPositionTryFallback&);

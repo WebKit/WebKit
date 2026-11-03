@@ -38,7 +38,7 @@ namespace WebCore {
 
 constexpr float kPathSegmentLengthTolerance = 0.00001f;
 
-inline float LEGACY_NODELETE distanceLine(const FloatPoint& start, const FloatPoint& end)
+NODELETE inline float distanceLine(const FloatPoint& start, const FloatPoint& end)
 {
     return std::hypot(end.x() - start.x(), end.y() - start.y());
 }
@@ -52,15 +52,15 @@ struct QuadraticBezier {
     {
     }
 
-    friend bool LEGACY_NODELETE operator==(const QuadraticBezier&, const QuadraticBezier&) = default;
+    NODELETE friend bool operator==(const QuadraticBezier&, const QuadraticBezier&) = default;
 
-    float LEGACY_NODELETE approximateDistance() const
+    NODELETE float approximateDistance() const
     {
         return distanceLine(start, control) + distanceLine(control, end);
     }
 
     // std::nullopt when halving no longer makes progress in float arithmetic.
-    std::optional<std::pair<QuadraticBezier, QuadraticBezier>> LEGACY_NODELETE split() const
+    NODELETE std::optional<std::pair<QuadraticBezier, QuadraticBezier>> split() const
     {
         QuadraticBezier left;
         QuadraticBezier right;
@@ -96,15 +96,15 @@ struct CubicBezier {
     {
     }
 
-    friend bool LEGACY_NODELETE operator==(const CubicBezier&, const CubicBezier&) = default;
+    NODELETE friend bool operator==(const CubicBezier&, const CubicBezier&) = default;
 
-    float LEGACY_NODELETE approximateDistance() const
+    NODELETE float approximateDistance() const
     {
         return distanceLine(start, control1) + distanceLine(control1, control2) + distanceLine(control2, end);
     }
 
     // std::nullopt when halving no longer makes progress in float arithmetic.
-    std::optional<std::pair<CubicBezier, CubicBezier>> LEGACY_NODELETE split() const
+    NODELETE std::optional<std::pair<CubicBezier, CubicBezier>> split() const
     {
         CubicBezier left;
         CubicBezier right;

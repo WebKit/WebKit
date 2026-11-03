@@ -45,7 +45,7 @@ enum class GamepadHapticEffectType : uint8_t;
 class GameControllerHapticEngines final : public RefCountedAndCanMakeWeakPtr<GameControllerHapticEngines> {
     WTF_MAKE_TZONE_ALLOCATED(GameControllerHapticEngines);
 public:
-    static Ref<GameControllerHapticEngines> LEGACY_NODELETE create(GCController *);
+    NODELETE static Ref<GameControllerHapticEngines> create(GCController *);
     ~GameControllerHapticEngines();
 
     void playEffect(GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&);
@@ -61,7 +61,7 @@ public:
 private:
     explicit GameControllerHapticEngines(GCController *);
 
-    RefPtr<GameControllerHapticEffect>& LEGACY_NODELETE currentEffectForType(GamepadHapticEffectType);
+    NODELETE RefPtr<GameControllerHapticEffect>& currentEffectForType(GamepadHapticEffectType);
 
     const RetainPtr<CHHapticEngine> m_leftHandleEngine;
     const RetainPtr<CHHapticEngine> m_rightHandleEngine;

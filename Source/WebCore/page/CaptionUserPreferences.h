@@ -57,7 +57,7 @@ enum class CaptionUserPreferencesDisplayMode : uint8_t {
 class CaptionUserPreferences : public RefCountedAndCanMakeWeakPtr<CaptionUserPreferences> {
     WTF_MAKE_TZONE_ALLOCATED(CaptionUserPreferences);
 public:
-    static Ref<CaptionUserPreferences> LEGACY_NODELETE create(PageGroup&);
+    NODELETE static Ref<CaptionUserPreferences> create(PageGroup&);
     virtual ~CaptionUserPreferences();
 
     using CaptionDisplayMode = CaptionUserPreferencesDisplayMode;
@@ -112,20 +112,20 @@ public:
     virtual bool testingMode() const { return m_testingModeCount; }
 
     friend class CaptionUserPreferencesTestingModeToken;
-    WEBCORE_EXPORT UniqueRef<CaptionUserPreferencesTestingModeToken> LEGACY_NODELETE createTestingModeToken();
+    NODELETE WEBCORE_EXPORT UniqueRef<CaptionUserPreferencesTestingModeToken> createTestingModeToken();
 
     virtual String captionPreviewTitle() const;
     virtual String captionPreviewProfileID() const { return emptyString(); }
     virtual void setCaptionPreviewProfileID(const String&) { }
 
-    PageGroup& LEGACY_NODELETE pageGroup() const;
+    NODELETE PageGroup& pageGroup() const;
 
 protected:
     explicit CaptionUserPreferences(PageGroup&);
 
     void updateCaptionStyleSheetOverride();
-    void LEGACY_NODELETE beginBlockingNotifications();
-    void LEGACY_NODELETE endBlockingNotifications();
+    NODELETE void beginBlockingNotifications();
+    NODELETE void endBlockingNotifications();
 
 private:
     void incrementTestingModeCount() { ++m_testingModeCount; }
@@ -138,7 +138,7 @@ private:
 
     void timerFired();
     void notify();
-    RefPtr<Page> LEGACY_NODELETE currentPage() const;
+    NODELETE RefPtr<Page> currentPage() const;
 
     WeakRef<PageGroup> m_pageGroup;
     mutable CaptionDisplayMode m_displayMode;

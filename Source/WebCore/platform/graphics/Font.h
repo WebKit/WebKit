@@ -156,7 +156,7 @@ private:
     void initCharWidths();
     void initZeroWidth(Glyph);
 
-    void LEGACY_NODELETE platformDestroy();
+    NODELETE void platformDestroy();
 
     RefPtr<Font> createFontWithoutSynthesizableFeatures() const;
     RefPtr<Font> createScaledFont(const FontDescription&, float scaleFactor) const;

@@ -34,7 +34,7 @@ class SecurityOrigin;
 
 class SecurityOriginPolicy : public RefCounted<SecurityOriginPolicy> {
 public:
-    static Ref<SecurityOriginPolicy> LEGACY_NODELETE create(Ref<SecurityOrigin>&&);
+    NODELETE static Ref<SecurityOriginPolicy> create(Ref<SecurityOrigin>&&);
     ~SecurityOriginPolicy();
 
     // FIXME: This should return a const reference.

@@ -73,10 +73,10 @@ public:
 private:
     explicit PerformanceTiming(LocalDOMWindow*);
 
-    const DocumentEventTiming* LEGACY_NODELETE documentEventTiming() const;
-    const DocumentLoader* LEGACY_NODELETE documentLoader() const;
-    const DocumentLoadTiming* LEGACY_NODELETE documentLoadTiming() const;
-    const NetworkLoadMetrics* LEGACY_NODELETE networkLoadMetrics() const;
+    NODELETE const DocumentEventTiming* documentEventTiming() const;
+    NODELETE const DocumentLoader* documentLoader() const;
+    NODELETE const DocumentLoadTiming* documentLoadTiming() const;
+    NODELETE const NetworkLoadMetrics* networkLoadMetrics() const;
     unsigned long long monotonicTimeToIntegerMilliseconds(MonotonicTime) const;
 
     mutable unsigned long long m_navigationStart { 0 };

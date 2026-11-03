@@ -193,7 +193,7 @@ void ImageOverlayController::textRecognitionResultsChanged(HTMLElement& element)
     updateOverlays();
 }
 
-bool LEGACY_NODELETE ImageOverlayController::hasActiveDataDetectorHighlightForTesting() const
+NODELETE bool ImageOverlayController::hasActiveDataDetectorHighlightForTesting() const
 {
     return !!m_activeDataDetectorHighlight;
 }

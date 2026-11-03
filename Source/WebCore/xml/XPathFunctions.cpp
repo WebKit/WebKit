@@ -47,7 +47,7 @@ namespace WebCore::XPath {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Function);
 
-static inline bool LEGACY_NODELETE isWhitespace(char16_t c)
+NODELETE static inline bool isWhitespace(char16_t c)
 {
     return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 }
@@ -301,7 +301,7 @@ inline Interval::Interval(int min, int max)
 {
 }
 
-inline bool LEGACY_NODELETE Interval::contains(int value) const
+NODELETE inline bool Interval::contains(int value) const
 {
     if (m_min == Inf && m_max == Inf)
         return true;
@@ -383,7 +383,7 @@ Value FunId::evaluate() const
     return Value(WTF::move(result));
 }
 
-static inline String LEGACY_NODELETE expandedNameLocalPart(Node& node)
+NODELETE static inline String expandedNameLocalPart(Node& node)
 {
     if (auto* pi = dynamicDowncast<ProcessingInstruction>(node))
         return pi->target();
@@ -545,7 +545,7 @@ Value FunSubstringAfter::evaluate() const
 // Computes the 1-based start and end (exclusive) string indices for
 // substring. This is all the positions [1, maxLen (inclusive)] where
 // start <= position < start + len
-static std::pair<unsigned, unsigned> LEGACY_NODELETE computeSubstringStartEnd(double start, double len, double maxLen)
+NODELETE static std::pair<unsigned, unsigned> computeSubstringStartEnd(double start, double len, double maxLen)
 {
     ASSERT(std::isfinite(maxLen));
     const double end = start + len;

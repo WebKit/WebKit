@@ -106,7 +106,7 @@ private:
     enum class Operation : bool { FindFirst, MarkAll };
     std::pair<MisspelledWord, std::optional<SimpleRange>> findMisspelledWords(Operation) const; // Returns the first.
     UngrammaticalPhrase findUngrammaticalPhrases(Operation) const; // Returns the first.
-    bool LEGACY_NODELETE unifiedTextCheckerEnabled() const;
+    NODELETE bool unifiedTextCheckerEnabled() const;
     int findUngrammaticalPhrases(Operation, const Vector<GrammarDetail>&, uint64_t badGrammarPhraseLocation, uint64_t startOffset, uint64_t endOffset) const;
 
     WeakRef<EditorClient> m_client;
@@ -115,8 +115,8 @@ private:
 
 void checkTextOfParagraph(TextCheckerClient&, StringView, OptionSet<TextCheckingType>, Vector<TextCheckingResult>&, const VisibleSelection& currentSelection);
 
-bool LEGACY_NODELETE unifiedTextCheckerEnabled(const LocalFrame*);
-bool LEGACY_NODELETE platformDrivenTextCheckerEnabled();
+NODELETE bool unifiedTextCheckerEnabled(const LocalFrame*);
+NODELETE bool platformDrivenTextCheckerEnabled();
 bool platformOrClientDrivenTextCheckerEnabled();
 
 } // namespace WebCore

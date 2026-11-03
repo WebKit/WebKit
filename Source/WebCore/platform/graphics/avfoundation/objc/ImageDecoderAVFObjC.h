@@ -101,10 +101,10 @@ private:
     void readSamples();
     void readTrackMetadata();
     bool storeSampleBuffer(CMSampleBufferRef) WTF_REQUIRES_LOCK(m_sampleGeneratorLock);
-    void LEGACY_NODELETE advanceCursor() WTF_REQUIRES_LOCK(m_sampleGeneratorLock);
+    NODELETE void advanceCursor() WTF_REQUIRES_LOCK(m_sampleGeneratorLock);
     void setTrack(AVAssetTrack *);
 
-    const ImageDecoderAVFObjCSample* LEGACY_NODELETE sampleAtIndex(size_t) const WTF_REQUIRES_SHARED_LOCK(m_sampleGeneratorLock);
+    NODELETE const ImageDecoderAVFObjCSample* sampleAtIndex(size_t) const WTF_REQUIRES_SHARED_LOCK(m_sampleGeneratorLock);
     bool sampleIsComplete(const ImageDecoderAVFObjCSample&) const;
 
     String m_mimeType;

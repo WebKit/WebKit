@@ -69,7 +69,7 @@ public:
 
     void destroyLayer();
 
-    bool LEGACY_NODELETE hasSelfPaintingLayer() const;
+    NODELETE bool hasSelfPaintingLayer() const;
     RenderLayer* layer() const LIFETIME_BOUND { return m_layer.get(); }
 
     void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
@@ -84,7 +84,7 @@ public:
 
     virtual bool isScrollableOrRubberbandableBox() const { return false; }
 
-    bool LEGACY_NODELETE shouldPlaceVerticalScrollbarOnLeft() const;
+    NODELETE bool shouldPlaceVerticalScrollbarOnLeft() const;
 
     bool startAnimation(double timeOffset, const GraphicsLayerAnimation&, const BlendingKeyframes&) override;
     void animationPaused(double timeOffset, const BlendingKeyframes&) override;
@@ -144,7 +144,7 @@ public:
     void paintSVGMask(PaintInfo&, const LayoutPoint& adjustedPaintOffset) const;
     void paintSVGEventRegion(PaintInfo&, const LayoutPoint& paintOffset);
 
-    TransformationMatrix* LEGACY_NODELETE layerTransform() const;
+    NODELETE TransformationMatrix* layerTransform() const;
 
     virtual void updateLayerTransform();
     virtual void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const = 0;
@@ -161,7 +161,7 @@ public:
     void invalidateCachedSVGBoundingBoxesOfAncestors() const;
     void invalidateNonScalingStrokeCachesInSubtreeForSVG(const std::optional<AffineTransform>& oldTransform, const AffineTransform& newTransform);
 
-    bool LEGACY_NODELETE transformReferenceBoxIsSVGViewport() const;
+    NODELETE bool transformReferenceBoxIsSVGViewport() const;
     inline bool shouldUsePositionedClipping() const;
 
 #if ASSERT_ENABLED
@@ -210,7 +210,7 @@ private:
 };
 
 // Pixel-snapping (== 'device pixel alignment') helpers.
-bool LEGACY_NODELETE rendererNeedsPixelSnapping(const RenderLayerModelObject&);
+NODELETE bool rendererNeedsPixelSnapping(const RenderLayerModelObject&);
 FloatRect snapRectToDevicePixelsIfNeeded(const LayoutRect&, const RenderLayerModelObject&);
 FloatRect snapRectToDevicePixelsIfNeeded(const FloatRect&, const RenderLayerModelObject&);
 

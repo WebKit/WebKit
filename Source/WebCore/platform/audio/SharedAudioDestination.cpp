@@ -48,7 +48,7 @@ public:
     void addRenderer(SharedAudioDestination&, CompletionHandler<void(bool)>&&);
     void removeRenderer(SharedAudioDestination&, CompletionHandler<void(bool)>&&);
 
-    unsigned LEGACY_NODELETE framesPerBuffer() const
+    NODELETE unsigned framesPerBuffer() const
     {
         return m_workBus->length();
     }
@@ -71,7 +71,7 @@ private:
     using AdapterKey = std::tuple<unsigned, float>;
 #endif
     using AdapterMap = HashMap<AdapterKey, ThreadSafeWeakPtr<SharedAudioDestinationAdapter>>;
-    static AdapterMap& LEGACY_NODELETE sharedMap();
+    NODELETE static AdapterMap& sharedMap();
 
     SharedAudioDestinationAdapter(const CreationOptions&, AudioDestinationCreationFunction&&);
 

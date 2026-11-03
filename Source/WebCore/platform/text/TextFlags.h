@@ -183,7 +183,7 @@ struct FontVariantAlternatesValues {
     String annotation;
     bool historicalForms = false;
 
-    friend void LEGACY_NODELETE add(Hasher&, const FontVariantAlternatesValues&);
+    friend void add(Hasher&, const FontVariantAlternatesValues&);
 
     bool operator==(const FontVariantAlternatesValues&) const = default;
 
@@ -192,6 +192,8 @@ private:
 
     bool m_isEmpty { false };
 };
+
+NODELETE void add(Hasher&, const FontVariantAlternatesValues&);
 
 } // namespace WebCore
 
@@ -251,12 +253,14 @@ public:
         return { };
     }
 
-    friend void LEGACY_NODELETE add(Hasher&, const FontVariantAlternates&);
+    friend void add(Hasher&, const FontVariantAlternates&);
 
 private:
     Markable<Values> m_values;
     FontVariantAlternates() = default;
 };
+
+NODELETE void add(Hasher&, const FontVariantAlternates&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const FontVariantAlternates&);
 

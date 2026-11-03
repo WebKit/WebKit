@@ -162,10 +162,10 @@ public:
     bool applyPropertyToRegularStyle() const { return m_linkMatch != SelectorChecker::MatchVisited; }
     bool applyPropertyToVisitedLinkStyle() const { return m_linkMatch != SelectorChecker::MatchLink; }
 
-    float LEGACY_NODELETE zoomWithTextZoomFactor();
+    NODELETE float zoomWithTextZoomFactor();
 
-    bool LEGACY_NODELETE useSVGZoomRules() const;
-    bool LEGACY_NODELETE useSVGZoomRulesForLength() const;
+    NODELETE bool useSVGZoomRules() const;
+    NODELETE bool useSVGZoomRulesForLength() const;
 
     // Defaults to Element when called outside property cascade application (e.g. attr() resolution
     // during container-query evaluation), where there is no current property in flight.
@@ -192,20 +192,20 @@ public:
         return m_currentProperty && m_currentProperty->origin == PropertyCascade::Origin::Author;
     }
 
-    CSSPropertyID LEGACY_NODELETE cssPropertyID() const;
+    NODELETE CSSPropertyID cssPropertyID() const;
     AtomString customPropertyName() const;
 
-    bool LEGACY_NODELETE isCurrentPropertyInvalidAtComputedValueTime() const;
-    void LEGACY_NODELETE setCurrentPropertyInvalidAtComputedValueTime();
+    NODELETE bool isCurrentPropertyInvalidAtComputedValueTime() const;
+    NODELETE void setCurrentPropertyInvalidAtComputedValueTime();
 
-    void LEGACY_NODELETE setUsesViewportUnits();
-    void LEGACY_NODELETE setIsContainerDependent();
+    NODELETE void setUsesViewportUnits();
+    NODELETE void setIsContainerDependent();
 
     double lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey&, std::optional<CSS::Keyword::ElementScoped>) const;
 
     // Accessors for sibling information used by the sibling-count() and sibling-index() CSS functions.
-    unsigned LEGACY_NODELETE siblingCount();
-    unsigned LEGACY_NODELETE siblingIndex();
+    NODELETE unsigned siblingCount();
+    NODELETE unsigned siblingIndex();
 
     AnchorPositionedStates* anchorPositionedStates() LIFETIME_BOUND { return m_context.treeResolutionState ? &m_context.treeResolutionState->anchorPositionedStates : nullptr; }
     const std::optional<BuilderPositionTryFallback>& positionTryFallback() const LIFETIME_BOUND { return m_context.positionTryFallback; }
@@ -213,7 +213,7 @@ public:
     // FIXME: Copying a FontCascadeDescription is really inefficient. Migrate all callers to
     // setFontDescriptionXXX() variants below, then remove these functions.
     inline void setFontDescription(FontCascadeDescription&&);
-    void LEGACY_NODELETE setFontSize(FontCascadeDescription&, float size);
+    NODELETE void setFontSize(FontCascadeDescription&, float size);
 
     void setFontDescriptionKeywordSizeFromIdentifier(CSSValueID);
     void setFontDescriptionIsAbsoluteSize(bool);
@@ -268,7 +268,7 @@ private:
 
     BuilderState(ComputedStyle&, BuilderContext&&);
 
-    void LEGACY_NODELETE adjustStyleForInterCharacterRuby();
+    NODELETE void adjustStyleForInterCharacterRuby();
 
     void updateFont();
     void updateFontForTextSizeAdjust();

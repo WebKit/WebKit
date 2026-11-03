@@ -46,7 +46,7 @@ public:
 private:
     void updateAnimationProperties() final;
     void start() final;
-    FloatRect LEGACY_NODELETE tailRect() const;
+    NODELETE FloatRect tailRect() const;
 
     String debugDescription() const final;
 
@@ -65,9 +65,9 @@ private:
 
     void stop(CaretAnimatorStopReason) final;
 
-    Seconds LEGACY_NODELETE keyframeTimeDelta() const;
-    size_t LEGACY_NODELETE keyframeCount() const;
-    void LEGACY_NODELETE updateGlowTail(float caretPosition, Seconds elapsedTime);
+    NODELETE Seconds keyframeTimeDelta() const;
+    NODELETE size_t keyframeCount() const;
+    NODELETE void updateGlowTail(float caretPosition, Seconds elapsedTime);
     void resetGlowTail(FloatRect);
     void updateGlowTail(Seconds elapsedTime);
     void paint(GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const final;
@@ -75,8 +75,8 @@ private:
     Path makeDictationTailConePath(const FloatRect&) const;
     void fillCaretTail(const FloatRect&, GraphicsContext&, const Color&) const;
 
-    FloatRect LEGACY_NODELETE computeTailRect() const;
-    bool LEGACY_NODELETE isLeftToRightLayout() const;
+    NODELETE FloatRect computeTailRect() const;
+    NODELETE bool isLeftToRightLayout() const;
     FloatRoundedRect expandedCaretRect(const FloatRect&, bool fillTail) const;
     int computeScrollLeft() const;
 

@@ -38,12 +38,12 @@ public:
     bool evaluate(const MediaQueryList&) const;
     bool evaluate(const MediaQuery&) const;
 
-    bool LEGACY_NODELETE evaluateMediaType(const MediaQuery&) const;
+    NODELETE bool evaluateMediaType(const MediaQuery&) const;
 
     OptionSet<MediaQueryDynamicDependency> collectDynamicDependencies(const MediaQueryList&) const;
     OptionSet<MediaQueryDynamicDependency> collectDynamicDependencies(const MediaQuery&) const;
 
-    bool LEGACY_NODELETE isPrintMedia() const;
+    NODELETE bool isPrintMedia() const;
 
 private:
     AtomString m_mediaType;

@@ -42,8 +42,8 @@ public:
 
     String cssText() const final;
     String cssText(const CSS::SerializationContext&) const final;
-    String LEGACY_NODELETE conditionText() const final;
-    bool LEGACY_NODELETE matches() const;
+    NODELETE String conditionText() const final;
+    NODELETE bool matches() const;
 
 private:
     CSSSupportsRule(StyleRuleSupports&, CSSStyleSheet*);

@@ -49,7 +49,7 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGRectElement, SVGGeometryElement>;
 
-    SVGAnimatedPropertyBase* LEGACY_NODELETE propertyForAttribute(const QualifiedName&) const;
+    NODELETE SVGAnimatedPropertyBase* propertyForAttribute(const QualifiedName&) const;
 
 private:
     SVGRectElement(const QualifiedName&, Document&);

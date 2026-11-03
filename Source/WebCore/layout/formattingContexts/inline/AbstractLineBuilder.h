@@ -49,7 +49,7 @@ public:
     virtual LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&, bool isFirstFormattedLineCandidate) = 0;
     virtual ~AbstractLineBuilder() { };
 
-    void LEGACY_NODELETE setIntrinsicWidthMode(IntrinsicWidthMode);
+    NODELETE void setIntrinsicWidthMode(IntrinsicWidthMode);
 
 protected:
     AbstractLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
@@ -68,12 +68,12 @@ protected:
     InlineFormattingContext& formattingContext() LIFETIME_BOUND { return m_inlineFormattingContext; }
     const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_inlineFormattingContext; }
     const HorizontalConstraints& rootHorizontalConstraints() const LIFETIME_BOUND { return m_rootHorizontalConstraints; }
-    const InlineLayoutState& LEGACY_NODELETE layoutState() const LIFETIME_BOUND;
-    InlineLayoutState& LEGACY_NODELETE layoutState() LIFETIME_BOUND;
+    NODELETE const InlineLayoutState& layoutState() const LIFETIME_BOUND;
+    NODELETE InlineLayoutState& layoutState() LIFETIME_BOUND;
     const BlockLayoutState& blockLayoutState() const LIFETIME_BOUND { return layoutState().parentBlockLayoutState(); }
     BlockLayoutState& blockLayoutState() LIFETIME_BOUND { return layoutState().parentBlockLayoutState(); }
     const ElementBox& root() const { return m_rootBox; }
-    const Style::ComputedStyle& LEGACY_NODELETE rootStyle() const LIFETIME_BOUND;
+    NODELETE const Style::ComputedStyle& rootStyle() const LIFETIME_BOUND;
 
 protected:
     Line m_line;

@@ -35,10 +35,10 @@ public:
     bool operator==(const FEOffset&) const;
 
     float dx() const { return m_dx; }
-    bool LEGACY_NODELETE setDx(float);
+    NODELETE bool setDx(float);
 
     float dy() const { return m_dy; }
-    bool LEGACY_NODELETE setDy(float);
+    NODELETE bool setDy(float);
 
     static IntOutsets calculateOutsets(const FloatSize& offset);
 

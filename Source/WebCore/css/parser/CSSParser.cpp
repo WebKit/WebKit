@@ -346,7 +346,7 @@ void CSSParser::parseStyleSheetForInspector(StringView string, const CSSParserCo
     styleSheet.setHasSyntacticallyValidCSSHeader(firstRuleValid);
 }
 
-static CSSParser::AllowedRules LEGACY_NODELETE computeNewAllowedRules(CSSParser::AllowedRules allowedRules, StyleRuleBase* rule)
+NODELETE static CSSParser::AllowedRules computeNewAllowedRules(CSSParser::AllowedRules allowedRules, StyleRuleBase* rule)
 {
     if (!rule || allowedRules == CSSParser::AllowedRules::FontFeatureValuesRules || allowedRules == CSSParser::AllowedRules::KeyframeRules || allowedRules == CSSParser::AllowedRules::NoRules)
         return allowedRules;
@@ -801,7 +801,7 @@ RefPtr<StyleRuleFontFace> CSSParser::consumeFontFaceRule(CSSParserTokenRange pre
 
 // The associated number represents the maximum number of allowed values for this font-feature-values type.
 // No value means unlimited (for styleset).
-static std::pair<FontFeatureValuesType, std::optional<unsigned>> LEGACY_NODELETE fontFeatureValuesTypeMappings(CSSAtRuleID id)
+NODELETE static std::pair<FontFeatureValuesType, std::optional<unsigned>> fontFeatureValuesTypeMappings(CSSAtRuleID id)
 {
     switch (id) {
     case CSSAtRuleStyleset:
@@ -1817,7 +1817,7 @@ IsImportant CSSParser::consumeTrailingImportantAndWhitespace(CSSParserTokenRange
 }
 
 // Check if a CSS rule type does not allow declarations with !important.
-static bool LEGACY_NODELETE ruleDoesNotAllowImportant(StyleRuleType type)
+NODELETE static bool ruleDoesNotAllowImportant(StyleRuleType type)
 {
     return type == StyleRuleType::CounterStyle
         || type == StyleRuleType::FontFace

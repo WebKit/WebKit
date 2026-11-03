@@ -93,7 +93,7 @@ public:
 
     FontPlatformData fontPlatformData(const FontDescription&, const FontCreationContext&);
 
-    WEBCORE_EXPORT FontCustomPlatformSerializedData LEGACY_NODELETE serializedData() const;
+    NODELETE WEBCORE_EXPORT FontCustomPlatformSerializedData serializedData() const;
     WEBCORE_EXPORT static std::optional<Ref<FontCustomPlatformData>> tryMakeFromSerializationData(FontCustomPlatformSerializedData&&, bool);
 
     const String& sourceURL() const { return m_sourceURL; }
@@ -110,7 +110,7 @@ public:
 #endif
 
     static bool supportsFormat(const String&);
-    static bool LEGACY_NODELETE supportsTechnology(const FontTechnology&);
+    NODELETE static bool supportsTechnology(const FontTechnology&);
 
 #if PLATFORM(WIN) && USE(CAIRO)
     String name;

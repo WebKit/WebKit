@@ -40,10 +40,10 @@ class PathStream final : public PathImpl {
     WTF_MAKE_TZONE_ALLOCATED(PathStream);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PathStream);
 public:
-    static Ref<PathStream> LEGACY_NODELETE create();
+    NODELETE static Ref<PathStream> create();
     static Ref<PathStream> create(PathSegment&&);
     static Ref<PathStream> create(const Vector<FloatPoint>&);
-    static Ref<PathStream> LEGACY_NODELETE create(Vector<PathSegment>&&, IsTransient = IsTransient::Yes);
+    NODELETE static Ref<PathStream> create(Vector<PathSegment>&&, IsTransient = IsTransient::Yes);
 
     bool definitelyEqual(const PathImpl&) const final;
     Ref<PathImpl> copy() const final;
@@ -87,9 +87,9 @@ private:
     PathStream(Vector<PathSegment>&&, IsTransient);
     PathStream(const Vector<PathSegment>&);
 
-    static Ref<PathStream> LEGACY_NODELETE create(const Vector<PathSegment>&);
+    NODELETE static Ref<PathStream> create(const Vector<PathSegment>&);
 
-    const PathMoveTo* LEGACY_NODELETE lastIfMoveTo() const;
+    NODELETE const PathMoveTo* lastIfMoveTo() const;
 
     bool isPathStream() const final { return true; }
 

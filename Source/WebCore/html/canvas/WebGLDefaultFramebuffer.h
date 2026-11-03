@@ -94,7 +94,7 @@ public:
     // Sets the size of the drawing buffer, reported by size(). The storage is reallocated to the
     // new size and cleared in the next ensureSize(). Resizing the canvas with separate width and
     // height assignments thus does not allocate the storage for the intermediate sizes.
-    void LEGACY_NODELETE setSize(IntSize);
+    NODELETE void setSize(IntSize);
     // Reallocates the storage if the size was set since the last reallocation. Must be called
     // before the storage is used. Returns false if the storage could not be allocated. The caller
     // must then lose the context, as the default framebuffer is unusable. The reallocation stays
@@ -105,9 +105,9 @@ public:
     // reallocation does not allocate more than is already allocated.
     bool pendingSizeShrinksStorage() const { return m_needsReshape && m_size.unclampedArea() < m_storageSize.unclampedArea(); }
     GCGLbitfield dirtyBuffers() const { return m_dirtyBuffers; }
-    void LEGACY_NODELETE markBuffersClear(GCGLbitfield clearBuffers);
-    void LEGACY_NODELETE markAllUnpreservedBuffersDirty();
-    void LEGACY_NODELETE markAllBuffersDirty();
+    NODELETE void markBuffersClear(GCGLbitfield clearBuffers);
+    NODELETE void markAllUnpreservedBuffersDirty();
+    NODELETE void markAllBuffersDirty();
 
     // DRAW_BUFFER0 and READ_BUFFER of the default framebuffer, which the application can set to
     // BACK or NONE only. BACK is simulated with COLOR_ATTACHMENT0, so the state is tracked here

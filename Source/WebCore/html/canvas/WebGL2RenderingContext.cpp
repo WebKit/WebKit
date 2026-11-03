@@ -2191,7 +2191,7 @@ void WebGL2RenderingContext::bindTransformFeedback(GCGLenum target, WebGLTransfo
     m_boundTransformFeedback = toBeBound;
 }
 
-static bool LEGACY_NODELETE ValidateTransformFeedbackPrimitiveMode(GCGLenum mode)
+NODELETE static bool ValidateTransformFeedbackPrimitiveMode(GCGLenum mode)
 {
     switch (mode) {
     case GraphicsContextGL::POINTS:
@@ -2776,7 +2776,7 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
     return result;
 }
 
-static bool LEGACY_NODELETE validateDefaultFramebufferAttachment(GCGLenum attachment)
+NODELETE static bool validateDefaultFramebufferAttachment(GCGLenum attachment)
 {
     switch (attachment) {
     case GraphicsContextGL::BACK:

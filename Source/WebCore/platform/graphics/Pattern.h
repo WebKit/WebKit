@@ -67,10 +67,10 @@ struct PatternParameters {
 class Pattern final : public ThreadSafeRefCounted<Pattern> {
 public:
     using Parameters = PatternParameters;
-    WEBCORE_EXPORT static Ref<Pattern> LEGACY_NODELETE create(SourceImage&& tileImage, const Parameters& = { });
+    NODELETE WEBCORE_EXPORT static Ref<Pattern> create(SourceImage&& tileImage, const Parameters& = { });
     WEBCORE_EXPORT ~Pattern();
 
-    WEBCORE_EXPORT const SourceImage& LEGACY_NODELETE tileImage() const;
+    NODELETE WEBCORE_EXPORT const SourceImage& tileImage() const;
     WEBCORE_EXPORT void setTileImage(SourceImage&&);
 
     WEBCORE_EXPORT RefPtr<NativeImage> tileNativeImage() const;
@@ -85,7 +85,7 @@ public:
     PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransform) const;
 #endif
 
-    void LEGACY_NODELETE setPatternSpaceTransform(const AffineTransform&);
+    NODELETE void setPatternSpaceTransform(const AffineTransform&);
 
     const AffineTransform& patternSpaceTransform() const { return m_parameters.patternSpaceTransform; };
     bool repeatX() const { return m_parameters.repeatX; }

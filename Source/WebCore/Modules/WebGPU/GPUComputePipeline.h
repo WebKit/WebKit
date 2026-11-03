@@ -49,11 +49,11 @@ public:
 
     ~GPUComputePipeline();
 
-    static HashMap<GPUComputePipeline*, GPUDevice*>& LEGACY_NODELETE instances() WTF_REQUIRES_LOCK(instancesLock());
-    static Lock& LEGACY_NODELETE instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
+    NODELETE static HashMap<GPUComputePipeline*, GPUDevice*>& instances() WTF_REQUIRES_LOCK(instancesLock());
+    NODELETE static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
     static void willDestroyDevice(GPUDevice&);
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
     Ref<GPUBindGroupLayout> getBindGroupLayout(uint32_t index);
@@ -61,7 +61,7 @@ public:
     ::WebGPU::ComputePipeline& backing() { return m_backing; }
     const ::WebGPU::ComputePipeline& backing() const { return m_backing; }
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
     const String& shaderSource() const { return m_shaderModuleDescriptor.code; }
     void updateShader(const String&, CompletionHandler<void(bool)>&&);
 

@@ -550,17 +550,17 @@ public:
     ListBoxInterpretation listBoxInterpretation() const;
     bool isListBoxOption() const { return role() == AccessibilityRole::ListBoxOption; }
     virtual bool isAttachment() const = 0;
-    bool LEGACY_NODELETE isMenuRelated() const;
+    NODELETE bool isMenuRelated() const;
     bool isMenu() const { return role() == AccessibilityRole::Menu; }
     bool isMenuBar() const { return role() == AccessibilityRole::MenuBar; }
-    bool LEGACY_NODELETE isMenuItem() const;
+    NODELETE bool isMenuItem() const;
     bool isInputImage() const;
     bool isProgressIndicator() const { return role() == AccessibilityRole::ProgressIndicator || role() == AccessibilityRole::Meter; }
     bool isSlider() const { return role() == AccessibilityRole::Slider; }
     bool isControl() const;
     bool isRadioInput() const;
     // lists support (l, ul, ol, dl)
-    bool LEGACY_NODELETE isList() const;
+    NODELETE bool isList() const;
     virtual bool isDescriptionList() const = 0;
     bool isFileUploadButton() const;
     // True for a native select.
@@ -568,7 +568,7 @@ public:
     // Returns true for objects whose role implies interactivity. For example, when a screen
     // reader announces "link", it doesn't need to announce "clickable" or "pressable" — that
     // is implicit in the concept of a link.
-    bool LEGACY_NODELETE isImplicitlyInteractive() const;
+    NODELETE bool isImplicitlyInteractive() const;
     bool isReplacedElement() const;
 
     virtual std::optional<InputType::Type> inputType() const = 0;
@@ -577,9 +577,9 @@ public:
     virtual bool isTable() const = 0;
     virtual bool isExposableTable() const = 0;
     unsigned tableLevel() const;
-    bool LEGACY_NODELETE hasGridRole() const;
-    bool LEGACY_NODELETE hasCellRole() const;
-    bool LEGACY_NODELETE hasCellOrRowRole() const;
+    NODELETE bool hasGridRole() const;
+    NODELETE bool hasCellRole() const;
+    NODELETE bool hasCellOrRowRole() const;
     bool supportsSelectedRows() const { return hasGridRole(); }
     virtual AccessibilityChildrenVector columns() = 0;
     virtual AccessibilityChildrenVector rows() = 0;
@@ -636,7 +636,7 @@ public:
 
     virtual bool isFieldset() const = 0;
     bool isImageMapLink() const;
-    bool LEGACY_NODELETE isGroup() const;
+    NODELETE bool isGroup() const;
 #if PLATFORM(MAC)
     bool isEmptyGroup();
 #endif
@@ -650,8 +650,8 @@ public:
     virtual bool isMockObject() const = 0;
     bool isSwitch() const { return role() == AccessibilityRole::Switch; }
     bool isToggleButton() const { return role() == AccessibilityRole::ToggleButton; }
-    bool LEGACY_NODELETE isTextControl() const;
-    static bool LEGACY_NODELETE isTextControl(AccessibilityRole);
+    NODELETE bool isTextControl() const;
+    NODELETE static bool isTextControl(AccessibilityRole);
     virtual bool isEditableWebArea() const = 0;
     virtual bool isNonNativeTextControl() const = 0;
     bool isTabList() const { return role() == AccessibilityRole::TabList; }
@@ -674,7 +674,7 @@ public:
 #endif
     virtual bool hasRemoteFrameChild() const = 0;
 
-    bool LEGACY_NODELETE isButton() const;
+    NODELETE bool isButton() const;
     bool isMeter() const { return role() == AccessibilityRole::Meter; }
 
     bool isListItem() const { return role() == AccessibilityRole::ListItem; }
@@ -693,7 +693,7 @@ public:
 #endif
     bool isLineBreak() const { return role() == AccessibilityRole::LineBreak; }
 
-    bool LEGACY_NODELETE isLandmark() const;
+    NODELETE bool isLandmark() const;
     virtual bool isKeyboardFocusable() const = 0;
     virtual bool isOutput() const = 0;
 
@@ -757,7 +757,7 @@ public:
     bool canSetExpandedAttribute() const;
 
     virtual Element* element() const = 0;
-    virtual Node* LEGACY_NODELETE node() const = 0;
+    NODELETE virtual Node* node() const = 0;
     virtual RenderObject* renderer() const = 0;
 
     virtual bool isIgnored() const = 0;
@@ -787,10 +787,10 @@ public:
     virtual RefPtr<SharedBuffer> imageData(const AXImageDataParameters&) const = 0;
     virtual String extendedDescription() const = 0;
 
-    bool LEGACY_NODELETE supportsActiveDescendant() const;
+    NODELETE bool supportsActiveDescendant() const;
     bool isActiveDescendantOfFocusedContainer() const;
     virtual bool supportsARIAOwns() const = 0;
-    bool LEGACY_NODELETE supportsARIARoleDescription() const;
+    NODELETE bool supportsARIARoleDescription() const;
 
     // Retrieval of related objects.
     AXCoreObject* activeDescendant() const;
@@ -1139,7 +1139,7 @@ public:
     // which inherently are horizontal or vertical.
     virtual std::optional<AccessibilityOrientation> explicitOrientation() const = 0;
     AccessibilityOrientation orientation() const;
-    std::optional<AccessibilityOrientation> LEGACY_NODELETE defaultOrientation() const;
+    NODELETE std::optional<AccessibilityOrientation> defaultOrientation() const;
 
     virtual void increment() = 0;
     virtual void decrement() = 0;
@@ -1263,7 +1263,7 @@ public:
     AccessibilityChildrenVector listboxSelectedChildren();
     AccessibilityChildrenVector selectedRows();
     AccessibilityChildrenVector selectedListItems();
-    bool LEGACY_NODELETE canHaveSelectedChildren() const;
+    NODELETE bool canHaveSelectedChildren() const;
     AccessibilityChildrenVector selectedChildren();
     virtual void setSelectedChildren(const AccessibilityChildrenVector&) = 0;
     virtual AccessibilityChildrenVector visibleChildren() = 0;
@@ -2063,7 +2063,7 @@ template<typename T, typename U> inline T retrieveAutoreleasedValueFromMainThrea
 }
 #endif
 
-bool LEGACY_NODELETE inRenderTreeOrStyleUpdate(const Document&);
+NODELETE bool inRenderTreeOrStyleUpdate(const Document&);
 
 using PlatformRoleMap = HashMap<AccessibilityRole, String, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
 

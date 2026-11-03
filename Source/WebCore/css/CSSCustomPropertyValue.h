@@ -55,11 +55,11 @@ public:
 
     bool isCurrentColor() const;
 
-    bool LEGACY_NODELETE isVariableReference() const;
-    bool LEGACY_NODELETE isVariableData() const;
-    bool LEGACY_NODELETE isCSSWideKeyword() const;
+    NODELETE bool isVariableReference() const;
+    NODELETE bool isVariableData() const;
+    NODELETE bool isCSSWideKeyword() const;
 
-    std::optional<CSSWideKeyword> LEGACY_NODELETE tryCSSWideKeyword() const;
+    NODELETE std::optional<CSSWideKeyword> tryCSSWideKeyword() const;
 
     // The value's tokens (empty for a CSS-wide keyword).
     const Vector<CSSParserToken>& tokens() const;

@@ -46,7 +46,7 @@ public:
 
     GCGLDisplay platformDisplay() const;
     GCGLConfig platformConfig() const;
-    std::optional<size_t> LEGACY_NODELETE estimatedMemoryCost() final;
+    NODELETE std::optional<size_t> estimatedMemoryCost() final;
 
     enum class ReleaseThreadResourceBehavior {
         // Releases current context after GraphicsContextGLANGLE calls done in the thread.
@@ -362,10 +362,10 @@ public:
     // Returns columns, rows of executed read on success.
     std::optional<IntSize> readPixelsWithStatus(IntRect, GCGLenum format, GCGLenum type, GCGLboolean packReverseRowOrder, std::span<uint8_t> data);
 
-    void LEGACY_NODELETE addError(GCGLErrorCode);
+    NODELETE void addError(GCGLErrorCode);
 
-    EnumSet<GCGLExtension> LEGACY_NODELETE knownActiveExtensions() const;
-    EnumSet<GCGLExtension> LEGACY_NODELETE requestableExtensions() const;
+    NODELETE EnumSet<GCGLExtension> knownActiveExtensions() const;
+    NODELETE EnumSet<GCGLExtension> requestableExtensions() const;
 
 protected:
     GraphicsContextGLANGLE(GraphicsContextGLAttributes);
@@ -396,13 +396,13 @@ protected:
     virtual RefPtr<PixelBuffer> readCompositedResults() = 0;
     RefPtr<PixelBuffer> readPixelsForPaintResults();
 
-    void LEGACY_NODELETE prepareTexture();
+    NODELETE void prepareTexture();
 #if PLATFORM(COCOA)
     static bool makeCurrent(GCGLDisplay, GCGLContext);
 #endif
     virtual bool reshapeDrawingBuffer() = 0;
 
-    static void LEGACY_NODELETE platformReleaseThreadResources();
+    NODELETE static void platformReleaseThreadResources();
 
     virtual void invalidateKnownTextureContent(GCGLuint);
     // Invalidates the known content of the texture bound to the binding point of `target` in the
@@ -414,9 +414,9 @@ protected:
     bool isExtensionEnabledImpl(ASCIILiteral) const;
 
     // Only for non-WebGL 2.0 contexts.
-    GCGLenum LEGACY_NODELETE adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
+    NODELETE GCGLenum adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
     void setPackParameters(GCGLint alignment, GCGLint rowLength, GCGLboolean reverseRowOrder);
-    bool LEGACY_NODELETE validateClearBufferv(GCGLenum buffer, size_t valuesSize);
+    NODELETE bool validateClearBufferv(GCGLenum buffer, size_t valuesSize);
 
     HashSet<UTF8CString> m_allRequestableExtensions;
     HashSet<UTF8CString> m_allEnabledRequestableExtensions;

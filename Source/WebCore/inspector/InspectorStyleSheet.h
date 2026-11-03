@@ -63,12 +63,12 @@ class ParsedStyleSheet {
 public:
     ParsedStyleSheet();
 
-    const String& LEGACY_NODELETE text() const { ASSERT(m_hasText); return m_text; }
+    NODELETE const String& text() const { ASSERT(m_hasText); return m_text; }
     void setText(const String&);
-    bool LEGACY_NODELETE hasText() const { return m_hasText; }
-    RuleSourceDataList* LEGACY_NODELETE sourceData() const { return m_sourceData.get(); }
+    NODELETE bool hasText() const { return m_hasText; }
+    NODELETE RuleSourceDataList* sourceData() const { return m_sourceData.get(); }
     void setSourceData(std::unique_ptr<RuleSourceDataList>);
-    bool LEGACY_NODELETE hasSourceData() const { return m_sourceData != nullptr; }
+    NODELETE bool hasSourceData() const { return m_sourceData != nullptr; }
     CSSRuleSourceData* ruleSourceDataAt(unsigned) const;
 
 private:
@@ -156,7 +156,7 @@ struct InspectorStyleProperty {
 
 class InspectorStyle final : public RefCounted<InspectorStyle> {
 public:
-    static Ref<InspectorStyle> LEGACY_NODELETE create(const InspectorCSSId& styleId, Ref<CSSStyleDeclaration>&&, InspectorStyleSheet* parentStyleSheet);
+    NODELETE static Ref<InspectorStyle> create(const InspectorCSSId& styleId, Ref<CSSStyleDeclaration>&&, InspectorStyleSheet* parentStyleSheet);
     ~InspectorStyle();
 
     CSSStyleDeclaration& cssStyle() const { return m_style.get(); }
@@ -191,8 +191,8 @@ public:
 
     using StyleDeclarationOrCSSRule = Variant<CSSStyleDeclaration*, CSSRule*>;
 
-    static Ref<InspectorStyleSheet> LEGACY_NODELETE create(Inspector::IdentifierRegistry&, const String& id, RefPtr<CSSStyleSheet>&& pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin, const String& documentURL, Listener*);
-    static String LEGACY_NODELETE styleSheetURL(CSSStyleSheet* pageStyleSheet);
+    NODELETE static Ref<InspectorStyleSheet> create(Inspector::IdentifierRegistry&, const String& id, RefPtr<CSSStyleSheet>&& pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin, const String& documentURL, Listener*);
+    NODELETE static String styleSheetURL(CSSStyleSheet* pageStyleSheet);
 
     virtual ~InspectorStyleSheet();
 
@@ -497,7 +497,7 @@ public:
     {
     }
 
-    InspectorCSSId LEGACY_NODELETE newRuleId() const { return m_newId; }
+    NODELETE InspectorCSSId newRuleId() const { return m_newId; }
 
 private:
     ExceptionOr<void> perform() final

@@ -45,33 +45,33 @@ public:
     // The render tree children, without excluded list markers. RenderView's box is the only child of the initial containing block.
     // Defined in RenderElement.h.
     inline const Box* firstChild() const;
-    const Box* LEGACY_NODELETE firstInFlowChild() const;
-    const Box* LEGACY_NODELETE firstInFlowOrFloatingChild() const;
-    const Box* LEGACY_NODELETE firstOutOfFlowChild() const;
+    NODELETE const Box* firstInFlowChild() const;
+    NODELETE const Box* firstInFlowOrFloatingChild() const;
+    NODELETE const Box* firstOutOfFlowChild() const;
     inline const Box* lastChild() const;
-    const Box* LEGACY_NODELETE lastInFlowChild() const;
-    const Box* LEGACY_NODELETE lastInFlowOrFloatingChild() const;
-    const Box* LEGACY_NODELETE lastOutOfFlowChild() const;
+    NODELETE const Box* lastInFlowChild() const;
+    NODELETE const Box* lastInFlowOrFloatingChild() const;
+    NODELETE const Box* lastOutOfFlowChild() const;
 
     bool hasChild() const { return firstChild(); }
     bool hasInFlowChild() const { return firstInFlowChild(); }
     bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
-    bool LEGACY_NODELETE hasOutOfFlowChild() const;
+    NODELETE bool hasOutOfFlowChild() const;
 
     void setBaselineForIntegration(LayoutUnit baseline) { m_baselineForIntegration = baseline; }
     std::optional<LayoutUnit> baselineForIntegration() const { return m_baselineForIntegration; }
 
-    bool LEGACY_NODELETE hasIntrinsicWidth() const;
-    bool LEGACY_NODELETE hasIntrinsicHeight() const;
-    bool LEGACY_NODELETE hasIntrinsicRatio() const;
-    bool LEGACY_NODELETE hasNaturalWidth() const;
-    bool LEGACY_NODELETE hasNaturalHeight() const;
-    LayoutUnit LEGACY_NODELETE naturalWidth() const;
-    LayoutUnit LEGACY_NODELETE naturalHeight() const;
-    LayoutUnit LEGACY_NODELETE intrinsicWidth() const;
-    LayoutUnit LEGACY_NODELETE intrinsicHeight() const;
-    LayoutUnit LEGACY_NODELETE intrinsicRatio() const;
-    bool LEGACY_NODELETE hasAspectRatio() const;
+    NODELETE bool hasIntrinsicWidth() const;
+    NODELETE bool hasIntrinsicHeight() const;
+    NODELETE bool hasIntrinsicRatio() const;
+    NODELETE bool hasNaturalWidth() const;
+    NODELETE bool hasNaturalHeight() const;
+    NODELETE LayoutUnit naturalWidth() const;
+    NODELETE LayoutUnit naturalHeight() const;
+    NODELETE LayoutUnit intrinsicWidth() const;
+    NODELETE LayoutUnit intrinsicHeight() const;
+    NODELETE LayoutUnit intrinsicRatio() const;
+    NODELETE bool hasAspectRatio() const;
 
     void setIsListMarkerImage(IsListMarkerImage);
 
@@ -94,7 +94,7 @@ protected:
 private:
     friend class Box;
 
-    const Box& LEGACY_NODELETE initialContainingBlockChild() const;
+    NODELETE const Box& initialContainingBlockChild() const;
 
     struct ReplacedData {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReplacedData);

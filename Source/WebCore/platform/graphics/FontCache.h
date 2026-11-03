@@ -137,7 +137,7 @@ public:
     Vector<String> systemFontFamilies();
     void platformInit();
 
-    static bool LEGACY_NODELETE isSystemFontForbiddenForEditing(const String&);
+    NODELETE static bool isSystemFontForbiddenForEditing(const String&);
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static void setFontAllowlist(const Vector<String>&);
@@ -174,7 +174,7 @@ public:
     enum class ShouldRunInvalidationCallback : bool { No, Yes };
     WEBCORE_EXPORT static void invalidateAllFontCaches(ShouldRunInvalidationCallback = ShouldRunInvalidationCallback::Yes);
 
-    WEBCORE_EXPORT size_t LEGACY_NODELETE fontCount();
+    NODELETE WEBCORE_EXPORT size_t fontCount();
     WEBCORE_EXPORT size_t inactiveFontCount();
     WEBCORE_EXPORT void purgeInactiveFontData(unsigned count = UINT_MAX);
     void platformPurgeInactiveFontData();
@@ -240,7 +240,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    FontDatabase& LEGACY_NODELETE database(AllowUserInstalledFonts);
+    NODELETE FontDatabase& database(AllowUserInstalledFonts);
 #endif
 
     Timer m_purgeTimer;

@@ -79,7 +79,7 @@ template<typename... F> static decltype(auto) switchTogether(const Child& a, con
 
 // MARK: Predicate: percentageResolveToDimension
 
-static bool LEGACY_NODELETE percentageResolveToDimension(const SimplificationOptions& options)
+NODELETE static bool percentageResolveToDimension(const SimplificationOptions& options)
 {
     switch (options.category) {
     case CSS::Category::Integer:
@@ -104,66 +104,66 @@ static bool LEGACY_NODELETE percentageResolveToDimension(const SimplificationOpt
 
 // MARK: Predicate: unitsMatch
 
-constexpr bool LEGACY_NODELETE unitsMatch(const Number&, const Number&, const SimplificationOptions&)
+NODELETE constexpr bool unitsMatch(const Number&, const Number&, const SimplificationOptions&)
 {
     return true;
 }
 
-constexpr bool LEGACY_NODELETE unitsMatch(const Percentage&, const Percentage&, const SimplificationOptions&)
+NODELETE constexpr bool unitsMatch(const Percentage&, const Percentage&, const SimplificationOptions&)
 {
     return true;
 }
 
-static bool LEGACY_NODELETE unitsMatch(const CanonicalDimension& a, const CanonicalDimension& b, const SimplificationOptions&)
+NODELETE static bool unitsMatch(const CanonicalDimension& a, const CanonicalDimension& b, const SimplificationOptions&)
 {
     return a.dimension == b.dimension;
 }
 
-static bool LEGACY_NODELETE unitsMatch(const NonCanonicalDimension& a, const NonCanonicalDimension& b, const SimplificationOptions&)
+NODELETE static bool unitsMatch(const NonCanonicalDimension& a, const NonCanonicalDimension& b, const SimplificationOptions&)
 {
     return a.unit == b.unit;
 }
 
 // MARK: Predicate: magnitudeComparable
 
-constexpr bool LEGACY_NODELETE magnitudeComparable(const Number&, const SimplificationOptions&)
+NODELETE constexpr bool magnitudeComparable(const Number&, const SimplificationOptions&)
 {
     return true;
 }
 
-static bool LEGACY_NODELETE magnitudeComparable(const Percentage&, const SimplificationOptions& options)
+NODELETE static bool magnitudeComparable(const Percentage&, const SimplificationOptions& options)
 {
     return !percentageResolveToDimension(options);
 }
 
-constexpr bool LEGACY_NODELETE magnitudeComparable(const CanonicalDimension&, const SimplificationOptions&)
+NODELETE constexpr bool magnitudeComparable(const CanonicalDimension&, const SimplificationOptions&)
 {
     return true;
 }
 
-constexpr bool LEGACY_NODELETE magnitudeComparable(const NonCanonicalDimension&, const SimplificationOptions&)
+NODELETE constexpr bool magnitudeComparable(const NonCanonicalDimension&, const SimplificationOptions&)
 {
     return true;
 }
 
 // MARK: Predicate: fullyResolved
 
-constexpr bool LEGACY_NODELETE fullyResolved(const Number&, const SimplificationOptions&)
+NODELETE constexpr bool fullyResolved(const Number&, const SimplificationOptions&)
 {
     return true;
 }
 
-static bool LEGACY_NODELETE fullyResolved(const Percentage&, const SimplificationOptions& options)
+NODELETE static bool fullyResolved(const Percentage&, const SimplificationOptions& options)
 {
     return !percentageResolveToDimension(options);
 }
 
-constexpr bool LEGACY_NODELETE fullyResolved(const CanonicalDimension&, const SimplificationOptions&)
+NODELETE constexpr bool fullyResolved(const CanonicalDimension&, const SimplificationOptions&)
 {
     return true;
 }
 
-constexpr bool LEGACY_NODELETE fullyResolved(const NonCanonicalDimension&, const SimplificationOptions&)
+NODELETE constexpr bool fullyResolved(const NonCanonicalDimension&, const SimplificationOptions&)
 {
     return false;
 }
@@ -1684,7 +1684,7 @@ Vector<CalcMix::Item> copyAndSimplify(const Vector<CalcMix::Item>& items, const 
     return WTF::map(items, [&](auto& item) { return copyAndSimplify(item, options); });
 }
 
-CSS::Keyword::None LEGACY_NODELETE copyAndSimplify(const CSS::Keyword::None& root, const SimplificationOptions&)
+NODELETE CSS::Keyword::None copyAndSimplify(const CSS::Keyword::None& root, const SimplificationOptions&)
 {
     return root;
 }
@@ -1706,7 +1706,7 @@ template<typename T> auto copyAndSimplify(const std::optional<T>& root, const Si
     return { };
 }
 
-template<Leaf Op> static Op LEGACY_NODELETE copyAndSimplifyChildren(const Op& op, const SimplificationOptions&)
+template<Leaf Op> NODELETE static Op copyAndSimplifyChildren(const Op& op, const SimplificationOptions&)
 {
     return op;
 }

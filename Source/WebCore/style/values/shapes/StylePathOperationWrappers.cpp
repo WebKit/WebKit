@@ -148,7 +148,7 @@ void Serialize<BasicShapePath>::operator()(StringBuilder& builder, const CSS::Se
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-static std::optional<AcceleratedEffectCoordBox> LEGACY_NODELETE toAcceleratedEffectCoordBox(CSSBoxType boxType)
+NODELETE static std::optional<AcceleratedEffectCoordBox> toAcceleratedEffectCoordBox(CSSBoxType boxType)
 {
     switch (boxType) {
     case CSSBoxType::BoxMissing:

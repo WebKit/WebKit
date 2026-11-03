@@ -60,12 +60,12 @@ template<size_t I> const auto& get(const Polygon& value)
 DEFINE_TYPE_MAPPING(CSS::Polygon, Polygon)
 
 template<> struct PathComputation<Polygon> { WebCore::Path operator()(const Polygon&, const FloatRect&, ZoomFactor); };
-template<> struct WindRuleComputation<Polygon> { WebCore::WindRule LEGACY_NODELETE operator()(const Polygon&); };
+template<> struct WindRuleComputation<Polygon> { NODELETE WebCore::WindRule operator()(const Polygon&); };
 
 // MARK: - Blending
 
 template<> struct Blending<Polygon> {
-    bool LEGACY_NODELETE canBlend(const Polygon&, const Polygon&);
+    NODELETE bool canBlend(const Polygon&, const Polygon&);
     auto blend(const Polygon&, const Polygon&, const BlendingContext&) -> Polygon;
 };
 

@@ -33,7 +33,7 @@ class StyleRuleFunction;
 
 class CSSFunctionRule final : public CSSGroupingRule {
 public:
-    static Ref<CSSFunctionRule> LEGACY_NODELETE create(StyleRuleFunction&, CSSStyleSheet* parent);
+    NODELETE static Ref<CSSFunctionRule> create(StyleRuleFunction&, CSSStyleSheet* parent);
 
     struct FunctionParameter {
         String name;
@@ -41,14 +41,14 @@ public:
         std::optional<String> defaultValue;
     };
 
-    String LEGACY_NODELETE name() const;
+    NODELETE String name() const;
     Vector<FunctionParameter> getParameters() const;
     String returnType() const;
 
     String cssText() const final;
 
 private:
-    const StyleRuleFunction& LEGACY_NODELETE styleRuleFunction() const;
+    NODELETE const StyleRuleFunction& styleRuleFunction() const;
 
     CSSFunctionRule(StyleRuleFunction&, CSSStyleSheet*);
     StyleRuleType styleRuleType() const final { return StyleRuleType::Function; }

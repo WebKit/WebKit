@@ -45,7 +45,7 @@ class WeakPtrImplWithEventTargetData;
 class ResizeObservation : public RefCounted<ResizeObservation> {
     WTF_MAKE_TZONE_ALLOCATED(ResizeObservation);
 public:
-    static Ref<ResizeObservation> LEGACY_NODELETE create(Element& target, ResizeObserverBoxOptions);
+    NODELETE static Ref<ResizeObservation> create(Element& target, ResizeObserverBoxOptions);
 
     ~ResizeObservation();
     
@@ -56,17 +56,17 @@ public:
     };
 
     std::optional<BoxSizes> elementSizeChanged() const;
-    void LEGACY_NODELETE updateObservationSize(const BoxSizes&);
-    void LEGACY_NODELETE resetObservationSize();
+    NODELETE void updateObservationSize(const BoxSizes&);
+    NODELETE void resetObservationSize();
 
     FloatRect computeContentRect() const;
-    FloatSize LEGACY_NODELETE borderBoxSize() const;
-    FloatSize LEGACY_NODELETE contentBoxSize() const;
-    FloatSize LEGACY_NODELETE snappedContentBoxSize() const;
+    NODELETE FloatSize borderBoxSize() const;
+    NODELETE FloatSize contentBoxSize() const;
+    NODELETE FloatSize snappedContentBoxSize() const;
 
     Element* target() const { return m_target.get(); }
     ResizeObserverBoxOptions observedBox() const { return m_observedBox; }
-    size_t LEGACY_NODELETE targetElementDepth() const;
+    NODELETE size_t targetElementDepth() const;
 
 private:
     ResizeObservation(Element&, ResizeObserverBoxOptions);

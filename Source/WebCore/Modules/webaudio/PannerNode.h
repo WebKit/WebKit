@@ -83,8 +83,8 @@ public:
     AudioParam& orientationZ() WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_orientationZ.get(); }
 
     // Distance parameters
-    DistanceModelType LEGACY_NODELETE distanceModelForBindings() const;
-    void LEGACY_NODELETE setDistanceModelForBindings(DistanceModelType);
+    NODELETE DistanceModelType distanceModelForBindings() const;
+    NODELETE void setDistanceModelForBindings(DistanceModelType);
 
     double refDistanceForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_distanceEffect.refDistance(); }
     ExceptionOr<void> setRefDistanceForBindings(double);
@@ -97,10 +97,10 @@ public:
 
     // Sound cones - angles in degrees
     double coneInnerAngleForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_coneEffect.innerAngle(); }
-    void LEGACY_NODELETE setConeInnerAngleForBindings(double);
+    NODELETE void setConeInnerAngleForBindings(double);
 
     double coneOuterAngleForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_coneEffect.outerAngle(); }
-    void LEGACY_NODELETE setConeOuterAngleForBindings(double);
+    NODELETE void setConeOuterAngleForBindings(double);
 
     double coneOuterGainForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_coneEffect.outerGain(); }
     ExceptionOr<void> setConeOuterGainForBindings(double);
@@ -118,7 +118,7 @@ private:
         double azimuth { 0. };
         double elevation { 0. };
     };
-    static AzimuthElevation LEGACY_NODELETE calculateAzimuthElevation(const FloatPoint3D& position, const FloatPoint3D& listenerPosition, const FloatPoint3D& listenerForward, const FloatPoint3D& listenerUp);
+    NODELETE static AzimuthElevation calculateAzimuthElevation(const FloatPoint3D& position, const FloatPoint3D& listenerPosition, const FloatPoint3D& listenerForward, const FloatPoint3D& listenerUp);
     static float calculateDistanceConeGain(const FloatPoint3D& position, const FloatPoint3D& orientation, const FloatPoint3D& listenerPosition, const DistanceEffect&, const ConeEffect&);
 
     // Returns the combined distance and cone gain attenuation.
@@ -131,7 +131,7 @@ private:
     const AzimuthElevation& azimuthElevation() WTF_REQUIRES_LOCK(m_processLock);
     void processSampleAccurateValues(AudioBus& destination, const AudioBus& source, size_t framesToProcess) WTF_REQUIRES_LOCK(m_processLock);
     bool hasSampleAccurateValues() const WTF_REQUIRES_LOCK(m_processLock);
-    bool LEGACY_NODELETE shouldUseARate() const WTF_REQUIRES_LOCK(m_processLock);
+    NODELETE bool shouldUseARate() const WTF_REQUIRES_LOCK(m_processLock);
 
     FloatPoint3D position() const WTF_REQUIRES_LOCK(m_processLock);
     FloatPoint3D orientation() const WTF_REQUIRES_LOCK(m_processLock);

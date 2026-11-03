@@ -41,7 +41,7 @@ public:
     RenderTableCol(Document&, Style::ComputedStyle&&);
     virtual ~RenderTableCol();
 
-    void LEGACY_NODELETE clearContentLogicalWidthsInvalidation();
+    NODELETE void clearContentLogicalWidthsInvalidation();
 
     unsigned span() const { return m_span; }
     void setSpan(unsigned span) { m_span = span; }
@@ -50,17 +50,17 @@ public:
     bool isTableColumn() const { return style().display() == Style::DisplayType::TableColumn; }
     bool isTableColumnGroup() const { return style().display() == Style::DisplayType::TableColumnGroup; }
 
-    RenderTableCol* LEGACY_NODELETE enclosingColumnGroup() const;
+    NODELETE RenderTableCol* enclosingColumnGroup() const;
     RenderTableCol* enclosingColumnGroupIfAdjacentBefore() const;
     RenderTableCol* enclosingColumnGroupIfAdjacentAfter() const;
 
     // Returns the next column or column-group.
-    RenderTableCol* LEGACY_NODELETE nextColumn() const;
+    NODELETE RenderTableCol* nextColumn() const;
 
-    const BorderValue& LEGACY_NODELETE borderAdjoiningCellStartBorder() const;
-    const BorderValue& LEGACY_NODELETE borderAdjoiningCellEndBorder() const;
-    const BorderValue& LEGACY_NODELETE borderAdjoiningCellBefore(const RenderTableCell&) const;
-    const BorderValue& LEGACY_NODELETE borderAdjoiningCellAfter(const RenderTableCell&) const;
+    NODELETE const BorderValue& borderAdjoiningCellStartBorder() const;
+    NODELETE const BorderValue& borderAdjoiningCellEndBorder() const;
+    NODELETE const BorderValue& borderAdjoiningCellBefore(const RenderTableCell&) const;
+    NODELETE const BorderValue& borderAdjoiningCellAfter(const RenderTableCell&) const;
 
     LayoutUnit offsetLeft() const override;
     LayoutUnit offsetTop() const override;
@@ -88,7 +88,7 @@ private:
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
     void paint(PaintInfo&, const LayoutPoint&) override { }
 
-    RenderTable* LEGACY_NODELETE table() const;
+    NODELETE RenderTable* table() const;
 
     unsigned m_span { 1 };
 };

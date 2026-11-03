@@ -34,11 +34,11 @@ using DeprecatedCSSOMValueListBuilder = Vector<Ref<DeprecatedCSSOMValue>, 4>;
 
 class DeprecatedCSSOMValueList final : public DeprecatedCSSOMValue {
 public:
-    static Ref<DeprecatedCSSOMValueList> LEGACY_NODELETE create(DeprecatedCSSOMValueListBuilder&&, CSSValue::ValueSeparator, CSSStyleDeclaration&);
+    NODELETE static Ref<DeprecatedCSSOMValueList> create(DeprecatedCSSOMValueListBuilder&&, CSSValue::ValueSeparator, CSSStyleDeclaration&);
     static Ref<DeprecatedCSSOMValueList> create(const CSSValueContainingVector&, CSSStyleDeclaration&);
 
     String cssText() const override;
-    unsigned short LEGACY_NODELETE cssValueType() const override;
+    NODELETE unsigned short cssValueType() const override;
     bool isValueList() const override { return true; }
 
     size_t length() const { return m_values.size(); }

@@ -88,7 +88,7 @@ class CDMInstanceFairPlayStreamingAVFObjC final : public CDMInstance, public AVC
 public:
     USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC>);
 
-    static Ref<CDMInstanceFairPlayStreamingAVFObjC> LEGACY_NODELETE create(const CDMPrivateFairPlayStreaming&);
+    NODELETE static Ref<CDMInstanceFairPlayStreamingAVFObjC> create(const CDMPrivateFairPlayStreaming&);
     virtual ~CDMInstanceFairPlayStreamingAVFObjC() = default;
 
     // AVContentKeySessionDelegateClient.
@@ -96,7 +96,7 @@ public:
     void deref() const final { CDMInstance::deref(); }
 
     static bool supportsPersistableState();
-    static bool LEGACY_NODELETE supportsPersistentKeys();
+    NODELETE static bool supportsPersistentKeys();
     static bool supportsMediaCapability(const CDMMediaCapability&);
     static bool mimeTypeIsPlayable(const String&);
 
@@ -185,7 +185,7 @@ class CDMInstanceSessionFairPlayStreamingAVFObjC final
 public:
     USING_CAN_MAKE_WEAKPTR(AVContentKeySessionDelegateClient);
 
-    static Ref<CDMInstanceSessionFairPlayStreamingAVFObjC> LEGACY_NODELETE create(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
+    NODELETE static Ref<CDMInstanceSessionFairPlayStreamingAVFObjC> create(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
     virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC();
 
     // ContentKeyGroupDataSource, AVContentKeySessionDelegateClient.
@@ -247,7 +247,7 @@ private:
     void updateKeyStatuses();
     void nextRequest();
 
-    AVContentKeyRequest* LEGACY_NODELETE lastKeyRequest() const;
+    NODELETE AVContentKeyRequest* lastKeyRequest() const;
     Vector<RetainPtr<AVContentKey>> contentKeys() const;
     Vector<RetainPtr<AVContentKeyRequest>> contentKeyRequests() const;
 

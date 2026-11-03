@@ -54,7 +54,7 @@ public:
     void updateDocument();
 
     DOMWindow& wrapped() const { return m_wrapped; }
-    Document* LEGACY_NODELETE scriptExecutionContext() const;
+    NODELETE Document* scriptExecutionContext() const;
 
     // Called just before removing this window from the JSWindowProxy.
     void willRemoveFromWindowProxy();
@@ -64,21 +64,21 @@ public:
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSValue prototype);
 
     static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
-    static bool LEGACY_NODELETE shouldInterruptScript(const JSC::JSGlobalObject*);
+    NODELETE static bool shouldInterruptScript(const JSC::JSGlobalObject*);
     static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
-    static JSC::RuntimeFlags LEGACY_NODELETE javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
+    NODELETE static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
     static JSC::JSObject* currentScriptExecutionOwner(JSC::JSGlobalObject*);
-    static JSC::ScriptExecutionStatus LEGACY_NODELETE scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
+    NODELETE static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
     static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
 
     void printErrorMessage(const String&) const;
 
-    JSWindowProxy& LEGACY_NODELETE proxy() const;
+    NODELETE JSWindowProxy& proxy() const;
 
     static void fireFrameClearedWatchpointsForWindow(LocalDOMWindow*);
 
     void setCurrentEvent(Event*);
-    Event* LEGACY_NODELETE currentEvent() const;
+    NODELETE Event* currentEvent() const;
 
 protected:
     JSDOMWindowBase(JSC::VM&, JSC::Structure*, Ref<DOMWindow>&&, JSWindowProxy*);
@@ -113,8 +113,8 @@ inline JSDOMWindow* toJSDOMWindow(LocalFrame* frame, DOMWrapperWorld& world) { r
 LocalDOMWindow& incumbentDOMWindow(JSC::JSGlobalObject&, JSC::CallFrame&);
 LocalDOMWindow& incumbentDOMWindow(JSC::JSGlobalObject&);
 
-LocalDOMWindow& LEGACY_NODELETE activeDOMWindow(JSC::JSGlobalObject&);
-LocalDOMWindow& LEGACY_NODELETE firstDOMWindow(JSC::JSGlobalObject&);
+NODELETE LocalDOMWindow& activeDOMWindow(JSC::JSGlobalObject&);
+NODELETE LocalDOMWindow& firstDOMWindow(JSC::JSGlobalObject&);
 
 LocalDOMWindow& legacyActiveDOMWindowForAccessor(JSC::JSGlobalObject&, JSC::CallFrame&);
 LocalDOMWindow& legacyActiveDOMWindowForAccessor(JSC::JSGlobalObject&);

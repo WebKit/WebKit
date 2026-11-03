@@ -67,7 +67,7 @@ WEBCORE_EXPORT Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& X, cons
 
 WEBCORE_EXPORT String toString(AuthenticatorTransport);
 
-WEBCORE_EXPORT std::optional<AuthenticatorTransport> LEGACY_NODELETE convertStringToAuthenticatorTransport(const String& transport);
+NODELETE WEBCORE_EXPORT std::optional<AuthenticatorTransport> convertStringToAuthenticatorTransport(const String& transport);
 
 // Returns why a URL can't be used as the crossDeviceFallbackUrl extension input, or nullopt if it can.
 WEBCORE_EXPORT std::optional<ASCIILiteral> validateCrossDeviceFallbackURL(const URL&);

@@ -33,7 +33,7 @@ class CryptoAlgorithmSHA1 final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "SHA-1"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::SHA_1;
-    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
+    NODELETE static Ref<CryptoAlgorithm> create();
 
 private:
     CryptoAlgorithmSHA1() = default;

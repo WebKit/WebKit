@@ -34,7 +34,7 @@
 namespace WebCore {
 using namespace JSC;
 
-inline WebCoreOpaqueRoot LEGACY_NODELETE root(CustomPaintCanvas* canvas)
+NODELETE inline WebCoreOpaqueRoot root(CustomPaintCanvas* canvas)
 {
     return WebCoreOpaqueRoot { canvas };
 }

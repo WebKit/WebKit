@@ -41,9 +41,9 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     enum class AllowVisited : bool { No, Yes };
-    WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> LEGACY_NODELETE create(Element&, AllowVisited);
-    static Ref<CSSComputedStyleDeclaration> LEGACY_NODELETE create(Element&, const std::optional<Style::PseudoElementIdentifier>&);
-    static Ref<CSSComputedStyleDeclaration> LEGACY_NODELETE createEmpty(Element&);
+    NODELETE WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> create(Element&, AllowVisited);
+    NODELETE static Ref<CSSComputedStyleDeclaration> create(Element&, const std::optional<Style::PseudoElementIdentifier>&);
+    NODELETE static Ref<CSSComputedStyleDeclaration> createEmpty(Element&);
 
     WEBCORE_EXPORT virtual ~CSSComputedStyleDeclaration();
 
@@ -56,18 +56,18 @@ private:
     CSSComputedStyleDeclaration(Element&, const std::optional<Style::PseudoElementIdentifier>&);
 
     // CSSOM functions. Don't make these public.
-    CSSRule* LEGACY_NODELETE parentRule() const final;
-    CSSRuleList* LEGACY_NODELETE cssRules() const final;
+    NODELETE CSSRule* parentRule() const final;
+    NODELETE CSSRuleList* cssRules() const final;
     unsigned length() const final;
     String item(unsigned index) const final;
     RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) final;
     String getPropertyValue(const String& propertyName) final;
-    String LEGACY_NODELETE getPropertyPriority(const String& propertyName) final;
-    String LEGACY_NODELETE getPropertyShorthand(const String& propertyName) final;
-    bool LEGACY_NODELETE isPropertyImplicit(const String& propertyName) final;
+    NODELETE String getPropertyPriority(const String& propertyName) final;
+    NODELETE String getPropertyShorthand(const String& propertyName) final;
+    NODELETE bool isPropertyImplicit(const String& propertyName) final;
     ExceptionOr<void> setProperty(const String& propertyName, const String& value, const String& priority) final;
     ExceptionOr<String> removeProperty(const String& propertyName) final;
-    String LEGACY_NODELETE cssText() const final;
+    NODELETE String cssText() const final;
     ExceptionOr<void> setCssText(const String&) final;
     String getPropertyValueInternal(CSSPropertyID) final;
     ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant) final;
@@ -75,7 +75,7 @@ private:
 
     Element& element() const { return m_element; }
 
-    const Settings* LEGACY_NODELETE settings() const final;
+    NODELETE const Settings* settings() const final;
     const FixedVector<CSSPropertyID>& exposedComputedCSSPropertyIDs() const;
 
     Style::Extractor extractor() const;

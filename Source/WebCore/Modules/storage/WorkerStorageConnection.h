@@ -36,7 +36,7 @@ struct StorageEstimate;
 
 class WorkerStorageConnection final : public StorageConnection  {
 public:
-    static Ref<WorkerStorageConnection> LEGACY_NODELETE create(WorkerGlobalScope&);
+    NODELETE static Ref<WorkerStorageConnection> create(WorkerGlobalScope&);
     void scopeClosed();
 
 private:

@@ -123,9 +123,9 @@ public:
 #endif
 
     bool requiresFullscreenForVideoPlayback() const;
-    WEBCORE_EXPORT bool LEGACY_NODELETE allowsPictureInPicture() const;
+    NODELETE WEBCORE_EXPORT bool allowsPictureInPicture() const;
     MediaPlayer::Preload effectivePreloadForElement() const;
-    bool LEGACY_NODELETE allowsAutomaticMediaDataLoading() const;
+    NODELETE bool allowsAutomaticMediaDataLoading() const;
 
     void mediaEngineUpdated();
 
@@ -134,7 +134,7 @@ public:
 
     void suspendBuffering() override;
     void resumeBuffering() override;
-    bool LEGACY_NODELETE bufferingSuspended() const;
+    NODELETE bool bufferingSuspended() const;
     void updateBufferingPolicy() { scheduleClientDataBufferingCheck(); }
 
     // Restrictions to modify default behaviors.
@@ -170,7 +170,7 @@ public:
     WEBCORE_EXPORT void removeBehaviorRestriction(BehaviorRestrictions);
     bool hasBehaviorRestriction(BehaviorRestrictions restriction) const { return restriction & m_restrictions; }
 
-    void LEGACY_NODELETE mediaUsageManagerSessionWillBeSuspended();
+    NODELETE void mediaUsageManagerSessionWillBeSuspended();
 
     inline HTMLMediaElement* element() const; // Defined in HTMLMediaElement.h.
 
@@ -182,9 +182,9 @@ public:
     bool isLargeEnoughForMainContent() const final { return isLargeEnoughForMainContent(MediaSessionMainContentPurpose::MediaControls); }
     bool isLongEnoughForMainContent() const final;
     bool isMainContentForPurposesOfAutoplayEvents() const;
-    Markable<MonotonicTime> LEGACY_NODELETE mostRecentUserInteractionTime() const final;
+    NODELETE Markable<MonotonicTime> mostRecentUserInteractionTime() const final;
 
-    bool LEGACY_NODELETE allowsPlaybackControlsForAutoplayingAudio() const;
+    NODELETE bool allowsPlaybackControlsForAutoplayingAudio() const;
 
     static bool isMediaElementSessionMediaType(MediaType type)
     {
@@ -210,7 +210,7 @@ public:
 #endif
     void metadataChanged(const RefPtr<MediaMetadata>&);
     void positionStateChanged(const std::optional<MediaPositionState>&);
-    void LEGACY_NODELETE playbackStateChanged(MediaSessionPlaybackState);
+    NODELETE void playbackStateChanged(MediaSessionPlaybackState);
     void actionHandlersChanged();
 
     MediaSession* mediaSession() const;

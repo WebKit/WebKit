@@ -47,15 +47,15 @@ struct CustomIdent {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<CustomIdent> { CSS::CustomIdent LEGACY_NODELETE operator()(const CustomIdent&, const Style::ComputedStyle&); };
-template<> struct ToStyle<CSS::CustomIdent> { CustomIdent LEGACY_NODELETE operator()(const CSS::CustomIdent&, const BuilderState&); };
+template<> struct ToCSS<CustomIdent> { NODELETE CSS::CustomIdent operator()(const CustomIdent&, const Style::ComputedStyle&); };
+template<> struct ToStyle<CSS::CustomIdent> { NODELETE CustomIdent operator()(const CSS::CustomIdent&, const BuilderState&); };
 
 template<> struct CSSValueCreation<CustomIdent> {
     Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const CustomIdent&);
 };
 
 template<> struct CSSValueConversion<CustomIdent> {
-    CustomIdent LEGACY_NODELETE operator()(BuilderState&, const CSSCustomIdentValue&);
+    NODELETE CustomIdent operator()(BuilderState&, const CSSCustomIdentValue&);
     auto operator()(BuilderState&, const CSSValue&) -> CustomIdent;
 };
 
@@ -73,7 +73,7 @@ TextStream& operator<<(TextStream&, const CustomIdent&);
 
 // MARK: - Hashing
 
-void LEGACY_NODELETE add(Hasher&, const CustomIdent&);
+NODELETE void add(Hasher&, const CustomIdent&);
 
 } // namespace Style
 } // namespace WebCore

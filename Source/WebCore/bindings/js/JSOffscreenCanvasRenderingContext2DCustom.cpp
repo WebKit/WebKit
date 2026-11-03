@@ -27,7 +27,7 @@
 namespace WebCore {
 using namespace JSC;
 
-inline WebCoreOpaqueRoot LEGACY_NODELETE root(OffscreenCanvas* canvas)
+NODELETE inline WebCoreOpaqueRoot root(OffscreenCanvas* canvas)
 {
     return WebCoreOpaqueRoot { canvas };
 }

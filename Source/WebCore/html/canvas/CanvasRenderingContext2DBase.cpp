@@ -130,7 +130,7 @@ static constexpr ASCIILiteral DefaultFont = "10px sans-serif"_s;
 // putImageData data smaller than this is cached in anticipation for next getImageData.
 static constexpr unsigned putImageDataCacheAreaLimit = 60 * 60;
 
-static CanvasLineCap LEGACY_NODELETE toCanvasLineCap(LineCap lineCap)
+NODELETE static CanvasLineCap toCanvasLineCap(LineCap lineCap)
 {
     switch (lineCap) {
     case LineCap::Butt:
@@ -144,7 +144,7 @@ static CanvasLineCap LEGACY_NODELETE toCanvasLineCap(LineCap lineCap)
     return CanvasLineCap::Butt;
 }
 
-static LineCap LEGACY_NODELETE fromCanvasLineCap(CanvasLineCap canvasLineCap)
+NODELETE static LineCap fromCanvasLineCap(CanvasLineCap canvasLineCap)
 {
     switch (canvasLineCap) {
     case CanvasLineCap::Butt:
@@ -158,7 +158,7 @@ static LineCap LEGACY_NODELETE fromCanvasLineCap(CanvasLineCap canvasLineCap)
     return LineCap::Butt;
 }
 
-static CanvasLineJoin LEGACY_NODELETE toCanvasLineJoin(LineJoin lineJoin)
+NODELETE static CanvasLineJoin toCanvasLineJoin(LineJoin lineJoin)
 {
     switch (lineJoin) {
     case LineJoin::Round:
@@ -172,7 +172,7 @@ static CanvasLineJoin LEGACY_NODELETE toCanvasLineJoin(LineJoin lineJoin)
     return CanvasLineJoin::Round;
 }
 
-static LineJoin LEGACY_NODELETE fromCanvasLineJoin(CanvasLineJoin canvasLineJoin)
+NODELETE static LineJoin fromCanvasLineJoin(CanvasLineJoin canvasLineJoin)
 {
     switch (canvasLineJoin) {
     case CanvasLineJoin::Round:
@@ -186,7 +186,7 @@ static LineJoin LEGACY_NODELETE fromCanvasLineJoin(CanvasLineJoin canvasLineJoin
     return LineJoin::Round;
 }
 
-static CanvasTextAlign LEGACY_NODELETE toCanvasTextAlign(TextAlign textAlign)
+NODELETE static CanvasTextAlign toCanvasTextAlign(TextAlign textAlign)
 {
     switch (textAlign) {
     case StartTextAlign:
@@ -204,7 +204,7 @@ static CanvasTextAlign LEGACY_NODELETE toCanvasTextAlign(TextAlign textAlign)
     return CanvasTextAlign::Start;
 }
 
-static TextAlign LEGACY_NODELETE fromCanvasTextAlign(CanvasTextAlign canvasTextAlign)
+NODELETE static TextAlign fromCanvasTextAlign(CanvasTextAlign canvasTextAlign)
 {
     switch (canvasTextAlign) {
     case CanvasTextAlign::Start:
@@ -222,7 +222,7 @@ static TextAlign LEGACY_NODELETE fromCanvasTextAlign(CanvasTextAlign canvasTextA
     return StartTextAlign;
 }
 
-static CanvasTextBaseline LEGACY_NODELETE toCanvasTextBaseline(TextBaseline textBaseline)
+NODELETE static CanvasTextBaseline toCanvasTextBaseline(TextBaseline textBaseline)
 {
     switch (textBaseline) {
     case TopTextBaseline:
@@ -242,7 +242,7 @@ static CanvasTextBaseline LEGACY_NODELETE toCanvasTextBaseline(TextBaseline text
     return CanvasTextBaseline::Top;
 }
 
-static TextBaseline LEGACY_NODELETE fromCanvasTextBaseline(CanvasTextBaseline canvasTextBaseline)
+NODELETE static TextBaseline fromCanvasTextBaseline(CanvasTextBaseline canvasTextBaseline)
 {
     switch (canvasTextBaseline) {
     case CanvasTextBaseline::Top:
@@ -999,7 +999,7 @@ void CanvasRenderingContext2DBase::setShadowColor(const String& colorString)
     applyShadow();
 }
 
-static bool LEGACY_NODELETE lineDashSequenceIsValid(const Vector<double>& dash)
+NODELETE static bool lineDashSequenceIsValid(const Vector<double>& dash)
 {
     for (size_t i = 0; i < dash.size(); i++) {
         if (!std::isfinite(dash[i]) || dash[i] < 0)
@@ -1318,7 +1318,7 @@ void CanvasRenderingContext2DBase::beginPath()
     m_path.clear();
 }
 
-static bool LEGACY_NODELETE validateRectForCanvas(double& x, double& y, double& width, double& height)
+NODELETE static bool validateRectForCanvas(double& x, double& y, double& width, double& height)
 {
     if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(width) || !std::isfinite(height))
         return false;
@@ -1339,7 +1339,7 @@ static bool LEGACY_NODELETE validateRectForCanvas(double& x, double& y, double& 
     return true;
 }
 
-static bool LEGACY_NODELETE isFullCanvasCompositeMode(CompositeOperator op)
+NODELETE static bool isFullCanvasCompositeMode(CompositeOperator op)
 {
     // See 4.8.11.1.3 Compositing
     // CompositeOperator::SourceAtop and CompositeOperator::DestinationOut are not listed here as the platforms already
@@ -1347,7 +1347,7 @@ static bool LEGACY_NODELETE isFullCanvasCompositeMode(CompositeOperator op)
     return op == CompositeOperator::SourceIn || op == CompositeOperator::SourceOut || op == CompositeOperator::DestinationIn || op == CompositeOperator::DestinationAtop;
 }
 
-static WindRule LEGACY_NODELETE toWindRule(CanvasFillRule rule)
+NODELETE static WindRule toWindRule(CanvasFillRule rule)
 {
     return rule == CanvasFillRule::Nonzero ? WindRule::NonZero : WindRule::EvenOdd;
 }
@@ -1782,7 +1782,7 @@ static ConcreteObjectSize size(SVGImageElement& element, FloatSize outputBitmapS
     return imageElementSize(element, outputBitmapSize, applyImageDevicePixelRatio);
 }
 
-static inline FloatSize LEGACY_NODELETE size(CanvasBase& canvas)
+NODELETE static inline FloatSize size(CanvasBase& canvas)
 {
     return canvas.size();
 }
@@ -1832,7 +1832,7 @@ static inline ConcreteObjectSize size(CSSStyleImageValue& image, FloatSize outpu
 }
 
 #if ENABLE(WEB_CODECS)
-static inline FloatSize LEGACY_NODELETE size(const WebCodecsVideoFrame& frame)
+NODELETE static inline FloatSize size(const WebCodecsVideoFrame& frame)
 {
     return FloatSize { static_cast<float>(frame.displayWidth()), static_cast<float>(frame.displayHeight()) };
 }
@@ -3187,7 +3187,7 @@ FloatRect CanvasRenderingContext2DBase::inflatedStrokeRect(const FloatRect& rect
     return inflatedStrokeRect;
 }
 
-static inline InterpolationQuality LEGACY_NODELETE smoothingToInterpolationQuality(ImageSmoothingQuality quality)
+NODELETE static inline InterpolationQuality smoothingToInterpolationQuality(ImageSmoothingQuality quality)
 {
     switch (quality) {
     case ImageSmoothingQuality::Low:
@@ -3289,7 +3289,7 @@ bool CanvasRenderingContext2DBase::canDrawText(double x, double y, bool fill, st
     return true;
 }
 
-static inline bool LEGACY_NODELETE isSpaceThatNeedsReplacing(char16_t c)
+NODELETE static inline bool isSpaceThatNeedsReplacing(char16_t c)
 {
     // According to specification all space characters should be replaced with 0x0020 space character.
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#text-preparation-algorithm
@@ -3625,7 +3625,7 @@ PixelFormat CanvasRenderingContext2DBase::pixelFormat() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static constexpr AllowExtendedColorSpace LEGACY_NODELETE allowExtendedColorSpace(CanvasRenderingContext2DSettings::ColorType colorType)
+NODELETE static constexpr AllowExtendedColorSpace allowExtendedColorSpace(CanvasRenderingContext2DSettings::ColorType colorType)
 {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (colorType == CanvasRenderingContext2DSettings::ColorType::Float16)
@@ -3710,7 +3710,7 @@ std::optional<CanvasRenderingContext2DBase::RenderingMode> CanvasRenderingContex
 
 // FIXME: The HTML spec currently doesn't define how <length> units should be resolved, so we only
 // allow units where the resolution is straightforward. See https://github.com/whatwg/html/issues/10893.
-static bool LEGACY_NODELETE unitAllowedForSpacing(CSS::LengthUnit lenghtUnit)
+NODELETE static bool unitAllowedForSpacing(CSS::LengthUnit lenghtUnit)
 {
     using enum CSS::LengthUnit;
 

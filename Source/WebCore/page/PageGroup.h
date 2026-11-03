@@ -44,7 +44,7 @@ class PageGroup final : public CanMakeWeakPtr<PageGroup>, public CanMakeCheckedP
     WTF_MAKE_NONCOPYABLE(PageGroup);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageGroup);
 public:
-    WEBCORE_EXPORT static UniqueRef<PageGroup> LEGACY_NODELETE create(const String&);
+    NODELETE WEBCORE_EXPORT static UniqueRef<PageGroup> create(const String&);
     WEBCORE_EXPORT static UniqueRef<PageGroup> create(Page&);
     WEBCORE_EXPORT ~PageGroup();
 
@@ -60,7 +60,7 @@ public:
 
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT void captionPreferencesChanged();
-    WEBCORE_EXPORT CaptionUserPreferences& LEGACY_NODELETE ensureCaptionPreferences();
+    NODELETE WEBCORE_EXPORT CaptionUserPreferences& ensureCaptionPreferences();
     CaptionUserPreferences* captionPreferences() const { return m_captionPreferences.get(); }
 #endif
 

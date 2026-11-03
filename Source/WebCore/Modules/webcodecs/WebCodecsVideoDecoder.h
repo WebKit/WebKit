@@ -73,7 +73,7 @@ private:
 
     // ActiveDOMObject.
     void stop() final;
-    void LEGACY_NODELETE suspend(ReasonForSuspension) final;
+    NODELETE void suspend(ReasonForSuspension) final;
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebCodecsVideoDecoder; }

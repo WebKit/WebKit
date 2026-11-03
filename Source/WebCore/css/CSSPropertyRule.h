@@ -33,12 +33,12 @@ class StyleRuleProperty;
 
 class CSSPropertyRule final : public CSSRule {
 public:
-    static Ref<CSSPropertyRule> LEGACY_NODELETE create(StyleRuleProperty&, CSSStyleSheet* parent);
+    NODELETE static Ref<CSSPropertyRule> create(StyleRuleProperty&, CSSStyleSheet* parent);
     virtual ~CSSPropertyRule();
 
-    String LEGACY_NODELETE name() const;
-    String LEGACY_NODELETE syntax() const;
-    bool LEGACY_NODELETE inherits() const;
+    NODELETE String name() const;
+    NODELETE String syntax() const;
+    NODELETE bool inherits() const;
     String initialValue() const;
 
     String cssText() const final;

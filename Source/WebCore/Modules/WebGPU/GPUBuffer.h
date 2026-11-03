@@ -56,7 +56,7 @@ public:
         return adoptRef(*new GPUBuffer(WTF::move(backing), bufferSize, usage, mappedAtCreation, WTF::move(label), device));
     }
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
     using MapAsyncPromise = DOMPromiseDeferred<void>;
@@ -69,7 +69,7 @@ public:
     ::WebGPU::Buffer& backing() { return m_backing; }
     const ::WebGPU::Buffer& backing() const { return m_backing; }
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
 
     GPUSize64 size() const { return static_cast<GPUSize64>(m_bufferSize); }
     GPUBufferUsageFlags usage() const { return m_usage; }

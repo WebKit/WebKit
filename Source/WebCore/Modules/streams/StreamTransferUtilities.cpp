@@ -121,7 +121,7 @@ public:
         return source;
     }
 
-    void LEGACY_NODELETE ref() const final { RefCounted::ref(); }
+    NODELETE void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
 private:
@@ -178,8 +178,8 @@ private:
     }
 
     // ReadableStreamSource
-    void LEGACY_NODELETE setActive() final { };
-    void LEGACY_NODELETE setInactive() final { };
+    NODELETE void setActive() final { };
+    NODELETE void setInactive() final { };
 
     void doStart() final { startFinished(); }
     void doPull() final

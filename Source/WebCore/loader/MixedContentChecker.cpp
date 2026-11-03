@@ -84,12 +84,12 @@ static bool isMixedContent(const Frame& frame, const URL& url)
     return false;
 }
 
-static bool LEGACY_NODELETE destinationIsImageAudioOrVideo(FetchOptions::Destination destination)
+NODELETE static bool destinationIsImageAudioOrVideo(FetchOptions::Destination destination)
 {
     return destination == FetchOptions::Destination::Audio || destination == FetchOptions::Destination::Image || destination == FetchOptions::Destination::Video;
 }
 
-static bool LEGACY_NODELETE destinationIsImageAndInitiatorIsImageset(FetchOptions::Destination destination, Initiator initiator)
+NODELETE static bool destinationIsImageAndInitiatorIsImageset(FetchOptions::Destination destination, Initiator initiator)
 {
     return destination == FetchOptions::Destination::Image && initiator == Initiator::Imageset;
 }

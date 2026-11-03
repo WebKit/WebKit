@@ -38,7 +38,7 @@ namespace WebCore {
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ScreenProperties);
 
-static Lock& LEGACY_NODELETE platformScreenLock()
+NODELETE static Lock& platformScreenLock()
 {
     static Lock lock;
     return lock;

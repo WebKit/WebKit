@@ -95,8 +95,8 @@ public:
     // FIXME: Make these methods not static.
     static void callOnWebRTCNetworkThread(Function<void()>&&);
     static void callOnWebRTCSignalingThread(Function<void()>&&);
-    static bool LEGACY_NODELETE hasWebRTCThreads();
-    static webrtc::Thread& LEGACY_NODELETE signalingThread();
+    NODELETE static bool hasWebRTCThreads();
+    NODELETE static webrtc::Thread& signalingThread();
 
     // Used for mock testing
     void setPeerConnectionFactory(webrtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&&);
@@ -111,10 +111,10 @@ public:
 
     virtual bool isSupportingAV1HardwareDecoder() const { return false; }
 
-    WEBCORE_EXPORT void LEGACY_NODELETE disableEnumeratingAllNetworkInterfaces();
-    WEBCORE_EXPORT void LEGACY_NODELETE enableEnumeratingAllNetworkInterfaces();
-    bool LEGACY_NODELETE isEnumeratingAllNetworkInterfacesEnabled() const;
-    WEBCORE_EXPORT void LEGACY_NODELETE enableEnumeratingVisibleNetworkInterfaces();
+    NODELETE WEBCORE_EXPORT void disableEnumeratingAllNetworkInterfaces();
+    NODELETE WEBCORE_EXPORT void enableEnumeratingAllNetworkInterfaces();
+    NODELETE bool isEnumeratingAllNetworkInterfacesEnabled() const;
+    NODELETE WEBCORE_EXPORT void enableEnumeratingVisibleNetworkInterfaces();
     bool isEnumeratingVisibleNetworkInterfacesEnabled() const { return m_enableEnumeratingVisibleNetworkInterfaces; }
 
     class SuspendableSocketFactory : public webrtc::PacketSocketFactory {

@@ -48,7 +48,7 @@ public:
     ~GPUInternalError();
 
     Type type() const final { return Type::Internal; }
-    const String& LEGACY_NODELETE message() const LIFETIME_BOUND final;
+    NODELETE const String& message() const LIFETIME_BOUND final;
 
     WebGPUInternalError* backing() { return m_backing.get(); }
     const WebGPUInternalError* backing() const { return m_backing.get(); }

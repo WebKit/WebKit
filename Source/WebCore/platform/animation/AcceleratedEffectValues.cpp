@@ -85,7 +85,7 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
     };
 }
 
-static constexpr AcceleratedEffectTransformBox LEGACY_NODELETE toAcceleratedEffectTransformBox(TransformBox transformBox)
+NODELETE static constexpr AcceleratedEffectTransformBox toAcceleratedEffectTransformBox(TransformBox transformBox)
 {
     switch (transformBox) {
     case TransformBox::StrokeBox:   return AcceleratedEffectTransformBox::StrokeBox;
@@ -97,7 +97,7 @@ static constexpr AcceleratedEffectTransformBox LEGACY_NODELETE toAcceleratedEffe
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static constexpr TransformBox LEGACY_NODELETE toTransformBox(AcceleratedEffectTransformBox transformBox)
+NODELETE static constexpr TransformBox toTransformBox(AcceleratedEffectTransformBox transformBox)
 {
     switch (transformBox) {
     case AcceleratedEffectTransformBox::StrokeBox:   return TransformBox::StrokeBox;

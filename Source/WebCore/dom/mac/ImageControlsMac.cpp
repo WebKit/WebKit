@@ -176,7 +176,7 @@ bool handleEvent(HTMLElement& element, Event& event)
     return false;
 }
 
-static bool LEGACY_NODELETE isImageMenuEnabled(HTMLElement& element)
+NODELETE static bool isImageMenuEnabled(HTMLElement& element)
 {
     if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element))
         return imageElement->isImageMenuEnabled();

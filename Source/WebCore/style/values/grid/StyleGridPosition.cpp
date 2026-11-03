@@ -47,7 +47,7 @@ namespace Style {
 static std::optional<int> maxPositionForTesting;
 static constexpr auto gridMaxPosition = 1000000;
 
-static int LEGACY_NODELETE clampGridIntegerPosition(int integerPosition)
+NODELETE static int clampGridIntegerPosition(int integerPosition)
 {
     return clampTo(integerPosition, GridPosition::min(), GridPosition::max());
 }
@@ -115,10 +115,10 @@ void GridPosition::setMaxPositionForTesting(unsigned maxPosition)
 template<> struct ToCSS<GridPosition> { auto operator()(const GridPosition&, const Style::ComputedStyle&) -> CSS::GridLine; };
 template<> struct ToStyle<CSS::GridLine> { auto operator()(const CSS::GridLine&, const BuilderState&) -> GridPosition; };
 
-template<> struct ToCSS<GridPosition::Explicit> { CSS::GridLine::Explicit LEGACY_NODELETE operator()(const GridPosition::Explicit&, const Style::ComputedStyle&); };
+template<> struct ToCSS<GridPosition::Explicit> { NODELETE CSS::GridLine::Explicit operator()(const GridPosition::Explicit&, const Style::ComputedStyle&); };
 template<> struct ToStyle<CSS::GridLine::Explicit> { auto operator()(const CSS::GridLine::Explicit&, const BuilderState&) -> GridPosition::Explicit; };
 
-template<> struct ToCSS<GridPosition::Span> { CSS::GridLine::Span LEGACY_NODELETE operator()(const GridPosition::Span&, const Style::ComputedStyle&); };
+template<> struct ToCSS<GridPosition::Span> { NODELETE CSS::GridLine::Span operator()(const GridPosition::Span&, const Style::ComputedStyle&); };
 template<> struct ToStyle<CSS::GridLine::Span> { auto operator()(const CSS::GridLine::Span&, const BuilderState&) -> GridPosition::Span; };
 
 auto ToCSS<GridPosition>::operator()(const GridPosition& value, const Style::ComputedStyle& style) -> CSS::GridLine

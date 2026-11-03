@@ -51,12 +51,12 @@ private:
     bool executeQuery(Data*, ProcessTextFragmentCallback) const;
 
     void collectTextBoxesInInlineBox(InlineIterator::InlineBoxIterator);
-    bool LEGACY_NODELETE mapStartEndPositionsIntoFragmentCoordinates(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
-    void LEGACY_NODELETE modifyStartEndPositionsRespectingLigatures(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
+    NODELETE bool mapStartEndPositionsIntoFragmentCoordinates(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
+    NODELETE void modifyStartEndPositionsRespectingLigatures(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
 
 private:
-    bool LEGACY_NODELETE numberOfCharactersCallback(Data*, const SVGTextFragment&) const;
-    bool LEGACY_NODELETE textLengthCallback(Data*, const SVGTextFragment&) const;
+    NODELETE bool numberOfCharactersCallback(Data*, const SVGTextFragment&) const;
+    NODELETE bool textLengthCallback(Data*, const SVGTextFragment&) const;
     bool subStringLengthCallback(Data*, const SVGTextFragment&) const;
     bool startPositionOfCharacterCallback(Data*, const SVGTextFragment&) const;
     bool endPositionOfCharacterCallback(Data*, const SVGTextFragment&) const;

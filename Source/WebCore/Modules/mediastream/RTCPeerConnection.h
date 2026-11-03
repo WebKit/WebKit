@@ -151,7 +151,7 @@ public:
     // 5.1 RTCPeerConnection extensions
     Vector<std::reference_wrapper<RTCRtpSender>> getSenders() const;
     Vector<std::reference_wrapper<RTCRtpReceiver>> getReceivers() const;
-    const Vector<Ref<RTCRtpTransceiver>>& LEGACY_NODELETE getTransceivers() const;
+    NODELETE const Vector<Ref<RTCRtpTransceiver>>& getTransceivers() const;
 
     const Vector<Ref<RTCRtpTransceiver>>& currentTransceivers() const LIFETIME_BOUND { return m_transceiverSet.list(); }
 
@@ -171,7 +171,7 @@ public:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCPeerConnection; }
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
 
     // API used by PeerConnectionBackend and relatives
     void updateIceGatheringState(RTCIceGatheringState);
@@ -187,7 +187,7 @@ public:
 
     void clearController() { m_controller = nullptr; }
 
-    Document* LEGACY_NODELETE document();
+    NODELETE Document* document();
 
     void updateDescriptions(PeerConnectionBackend::DescriptionStates&&);
     void updateTransceiversAfterSuccessfulLocalDescription();
@@ -237,7 +237,7 @@ private:
     WEBCORE_EXPORT void stop() final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
-    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
+    NODELETE bool virtualHasPendingActivity() const final;
 
     bool updateIceConnectionStateFromIceTransports();
     RTCIceConnectionState computeIceConnectionStateFromIceTransports();

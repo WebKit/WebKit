@@ -49,7 +49,7 @@ public:
         }
     }
 
-    GlyphData LEGACY_NODELETE glyphDataForCharacter(char32_t c) const
+    NODELETE GlyphData glyphDataForCharacter(char32_t c) const
     {
         unsigned index = GlyphPage::indexForCodePoint(c);
         return { m_glyphs[index], m_fonts[index].get() };
@@ -61,7 +61,7 @@ public:
     }
 
 private:
-    void LEGACY_NODELETE setGlyphDataForIndex(unsigned index, const GlyphData& glyphData)
+    NODELETE void setGlyphDataForIndex(unsigned index, const GlyphData& glyphData)
     {
         m_glyphs[index] = glyphData.glyph;
         m_fonts[index] = glyphData.font.get();
@@ -233,12 +233,12 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
     return fontRanges;
 }
 
-static inline bool LEGACY_NODELETE isInRange(char32_t character, char32_t lowerBound, char32_t upperBound)
+NODELETE static inline bool isInRange(char32_t character, char32_t lowerBound, char32_t upperBound)
 {
     return character >= lowerBound && character <= upperBound;
 }
 
-static bool LEGACY_NODELETE shouldIgnoreRotation(char32_t character)
+NODELETE static bool shouldIgnoreRotation(char32_t character)
 {
     if (character == 0x000A7 || character == 0x000A9 || character == 0x000AE)
         return true;

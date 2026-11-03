@@ -51,7 +51,7 @@ public:
 
     static bool isSuggestion(const HTMLOptionElement& descendant);
     using SuggestionRange = FilteredElementDescendantRange<HTMLOptionElement, isSuggestion>;
-    SuggestionRange LEGACY_NODELETE suggestions() const;
+    NODELETE SuggestionRange suggestions() const;
 
 private:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;

@@ -54,14 +54,14 @@ public:
 
     ~RemoteDOMWindow() final;
 
-    RemoteFrame* LEGACY_NODELETE frame() const final { return m_frame; }
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final { return nullptr; }
+    NODELETE RemoteFrame* frame() const final { return m_frame; }
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final { return nullptr; }
 
     // DOM API exposed cross-origin.
-    WindowProxy* LEGACY_NODELETE self() const;
+    NODELETE WindowProxy* self() const;
     void focus(LocalDOMWindow& incumbentWindow);
     void blur();
-    unsigned LEGACY_NODELETE length() const;
+    NODELETE unsigned length() const;
     void frameDetached();
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
 

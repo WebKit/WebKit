@@ -86,7 +86,7 @@ static const bool isTextInsertion = true;
 // Related to Editor::selectionForCommand.
 // Certain operations continue to use the target control's selection even if the event handler
 // already moved the selection outside of the text control.
-static LocalFrame* LEGACY_NODELETE targetFrame(LocalFrame& frame, Event* event)
+NODELETE static LocalFrame* targetFrame(LocalFrame& frame, Event* event)
 {
     if (!event)
         return &frame;
@@ -1224,17 +1224,17 @@ static bool executeYankAndSelect(LocalFrame& frame, Event*, EditorCommandSource,
 
 // Supported functions
 
-static bool LEGACY_NODELETE supported(LocalFrame*)
+NODELETE static bool supported(LocalFrame*)
 {
     return true;
 }
 
-static bool LEGACY_NODELETE supportedFromMenuOrKeyBinding(LocalFrame*)
+NODELETE static bool supportedFromMenuOrKeyBinding(LocalFrame*)
 {
     return false;
 }
 
-static bool LEGACY_NODELETE defaultValueForSupportedCopyCut(LocalFrame& frame)
+NODELETE static bool defaultValueForSupportedCopyCut(LocalFrame& frame)
 {
     auto& settings = frame.settings();
     if (settings.javaScriptCanAccessClipboard())
@@ -1263,7 +1263,7 @@ static bool supportedCopyCut(LocalFrame* frame)
     return client ? client->canCopyCut(frame, defaultValue) : defaultValue;
 }
 
-static bool LEGACY_NODELETE defaultValueForSupportedPaste(LocalFrame& frame)
+NODELETE static bool defaultValueForSupportedPaste(LocalFrame& frame)
 {
     auto& settings = frame.settings();
     if (settings.javaScriptCanAccessClipboard() && settings.domPasteAllowed())
@@ -1285,7 +1285,7 @@ static bool supportedPaste(LocalFrame* frame)
 
 // Enabled functions
 
-static bool LEGACY_NODELETE enabled(LocalFrame&, Event*, EditorCommandSource)
+NODELETE static bool enabled(LocalFrame&, Event*, EditorCommandSource)
 {
     return true;
 }
@@ -1297,7 +1297,7 @@ static bool enabledVisibleSelection(LocalFrame& frame, Event* event, EditorComma
     return (selection.isCaret() && selection.isContentEditable()) || selection.isRange();
 }
 
-static bool LEGACY_NODELETE caretBrowsingEnabled(LocalFrame& frame)
+NODELETE static bool caretBrowsingEnabled(LocalFrame& frame)
 {
     return frame.settings().caretBrowsingEnabled();
 }
@@ -1384,7 +1384,7 @@ static bool enabledCut(LocalFrame& frame, Event*, EditorCommandSource source)
     return false;
 }
 
-static bool LEGACY_NODELETE enabledClearText(LocalFrame& frame, Event*, EditorCommandSource)
+NODELETE static bool enabledClearText(LocalFrame& frame, Event*, EditorCommandSource)
 {
     UNUSED_PARAM(frame);
     return false;
@@ -1477,7 +1477,7 @@ static bool enabledUndo(LocalFrame& frame, Event*, EditorCommandSource)
 
 // State functions
 
-static TriState LEGACY_NODELETE stateNone(LocalFrame&, Event*)
+NODELETE static TriState stateNone(LocalFrame&, Event*)
 {
     return TriState::False;
 }
@@ -1564,7 +1564,7 @@ static TriState stateJustifyRight(LocalFrame& frame, Event*)
 
 // Value functions
 
-static String LEGACY_NODELETE valueNull(LocalFrame&, Event*)
+NODELETE static String valueNull(LocalFrame&, Event*)
 {
     return String();
 }
@@ -1572,7 +1572,7 @@ static String LEGACY_NODELETE valueNull(LocalFrame&, Event*)
 // The command has no value.
 // https://w3c.github.io/editing/execCommand.html#querycommandvalue()
 // > ... or has no value, return the empty string.
-static String LEGACY_NODELETE valueAsEmptyString(LocalFrame&, Event*)
+NODELETE static String valueAsEmptyString(LocalFrame&, Event*)
 {
     return emptyString();
 }
@@ -1629,12 +1629,12 @@ static String valueFormatBlock(LocalFrame& frame, Event*)
 
 // allowExecutionWhenDisabled functions
 
-static bool LEGACY_NODELETE allowExecutionWhenDisabled(LocalFrame&, EditorCommandSource)
+NODELETE static bool allowExecutionWhenDisabled(LocalFrame&, EditorCommandSource)
 {
     return true;
 }
 
-static bool LEGACY_NODELETE doNotAllowExecutionWhenDisabled(LocalFrame&, EditorCommandSource)
+NODELETE static bool doNotAllowExecutionWhenDisabled(LocalFrame&, EditorCommandSource)
 {
     return false;
 }
@@ -1902,7 +1902,7 @@ Editor::Command::Command(const EditorInternalCommand* command, EditorCommandSour
     ASSERT(command || !m_document);
 }
 
-RefPtr<LocalFrame> LEGACY_NODELETE Editor::Command::frame() const
+NODELETE RefPtr<LocalFrame> Editor::Command::frame() const
 {
     return m_document ? m_document->frame() : nullptr;
 }
@@ -1973,7 +1973,7 @@ String Editor::Command::value(Event* triggeringEvent) const
     return m_command->value(*frame, triggeringEvent);
 }
 
-bool LEGACY_NODELETE Editor::Command::isTextInsertion() const
+NODELETE bool Editor::Command::isTextInsertion() const
 {
     return m_command && m_command->isTextInsertion;
 }

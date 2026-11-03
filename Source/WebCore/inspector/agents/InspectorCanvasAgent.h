@@ -138,8 +138,8 @@ public:
     void recordActionResult(GPUDevice&, InspectorCanvasProcessedArgument&&);
 
     RefPtr<InspectorCanvas> assertInspectorCanvas(Inspector::Protocol::ErrorString&, const String& canvasId);
-    RefPtr<InspectorCanvas> LEGACY_NODELETE findInspectorCanvas(const CanvasRenderingContext&);
-    RefPtr<InspectorCanvas> LEGACY_NODELETE findInspectorCanvas(const GPUDevice&);
+    NODELETE RefPtr<InspectorCanvas> findInspectorCanvas(const CanvasRenderingContext&);
+    NODELETE RefPtr<InspectorCanvas> findInspectorCanvas(const GPUDevice&);
 
 protected:
     InspectorCanvasAgent(WebAgentContext&);
@@ -184,10 +184,10 @@ private:
     void unbindProgram(InspectorShaderProgram&);
     RefPtr<InspectorShaderProgram> assertInspectorProgram(Inspector::Protocol::ErrorString&, const String& programId);
 #if ENABLE(WEBGL)
-    RefPtr<InspectorShaderProgram> LEGACY_NODELETE findInspectorProgram(WebGLProgram&);
+    NODELETE RefPtr<InspectorShaderProgram> findInspectorProgram(WebGLProgram&);
 #endif // ENABLE(WEBGL)
-    RefPtr<InspectorShaderProgram> LEGACY_NODELETE findInspectorProgram(GPUComputePipeline&);
-    RefPtr<InspectorShaderProgram> LEGACY_NODELETE findInspectorProgram(GPURenderPipeline&);
+    NODELETE RefPtr<InspectorShaderProgram> findInspectorProgram(GPUComputePipeline&);
+    NODELETE RefPtr<InspectorShaderProgram> findInspectorProgram(GPURenderPipeline&);
 
     const Ref<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
 

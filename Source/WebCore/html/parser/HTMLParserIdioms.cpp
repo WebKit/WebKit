@@ -131,7 +131,7 @@ double parseToDoubleForNumberType(StringView string)
 }
 
 template <typename CharacterType>
-static std::expected<int, HTMLIntegerParsingError> LEGACY_NODELETE parseHTMLIntegerInternal(std::span<const CharacterType> data)
+NODELETE static std::expected<int, HTMLIntegerParsingError> parseHTMLIntegerInternal(std::span<const CharacterType> data)
 {
     skipWhile<isASCIIWhitespace>(data);
 
@@ -273,18 +273,18 @@ double parseHTMLFloatingPointNumberValue(StringView input, double fallbackValue)
 }
 
 template<typename CharacterType>
-static inline bool LEGACY_NODELETE isHTMLSpaceOrDelimiter(CharacterType character)
+NODELETE static inline bool isHTMLSpaceOrDelimiter(CharacterType character)
 {
     return isASCIIWhitespace(character) || character == ',' || character == ';';
 }
 
-static inline bool LEGACY_NODELETE isNumberStart(char16_t character)
+NODELETE static inline bool isNumberStart(char16_t character)
 {
     return isASCIIDigit(character) || character == '.' || character == '-';
 }
 
 template<typename CharacterType>
-static inline bool LEGACY_NODELETE isHTMLSpaceOrDelimiterOrNumberStart(CharacterType character)
+NODELETE static inline bool isHTMLSpaceOrDelimiterOrNumberStart(CharacterType character)
 {
     return isHTMLSpaceOrDelimiter(character) || isNumberStart(character);
 }
@@ -347,13 +347,13 @@ String parseCORSSettingsAttribute(const AtomString& value)
 }
 
 template<typename CharacterType>
-static bool LEGACY_NODELETE isASCIIDigitOrPeriod(CharacterType character)
+NODELETE static bool isASCIIDigitOrPeriod(CharacterType character)
 {
     return isASCIIDigit(character) || character == '.';
 }
 
 template<typename CharacterType>
-static bool LEGACY_NODELETE isSemicolonOrComma(CharacterType character)
+NODELETE static bool isSemicolonOrComma(CharacterType character)
 {
     return character == ';' || character == ',';
 }
@@ -532,7 +532,7 @@ std::optional<HTMLDimension> parseHTMLMultiLength(StringView multiLengthString)
 }
 
 template<typename CharacterType>
-static unsigned LEGACY_NODELETE countCommas(StringParsingBuffer<CharacterType> rawInput)
+NODELETE static unsigned countCommas(StringParsingBuffer<CharacterType> rawInput)
 {
     unsigned count = 0;
     while (rawInput.hasCharactersRemaining())

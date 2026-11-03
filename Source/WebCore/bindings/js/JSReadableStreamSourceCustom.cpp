@@ -59,7 +59,7 @@ JSValue JSReadableStreamSource::pull(JSGlobalObject&, CallFrame&, Ref<DeferredPr
     return jsUndefined();
 }
 
-JSValue LEGACY_NODELETE JSReadableStreamSource::controller(JSGlobalObject&) const
+NODELETE JSValue JSReadableStreamSource::controller(JSGlobalObject&) const
 {
     ASSERT_NOT_REACHED();
     return jsUndefined();

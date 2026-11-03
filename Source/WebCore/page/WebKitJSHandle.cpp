@@ -39,14 +39,14 @@ namespace WebCore {
 
 using HandleToGlobalMap = JSC::WeakGCMap<JSHandleIdentifier, JSDOMGlobalObject>;
 
-static HandleToGlobalMap& LEGACY_NODELETE handleToGlobalMap(JSC::VM& vm)
+NODELETE static HandleToGlobalMap& handleToGlobalMap(JSC::VM& vm)
 {
     return downcast<JSVMClientData>(vm.clientData)->jsHandleGlobalObjects();
 }
 
 // Handles are only ever created on the main thread, so the global object a handle names always
 // belongs to the common VM.
-static HandleToGlobalMap* LEGACY_NODELETE handleToGlobalMapIfExists()
+NODELETE static HandleToGlobalMap* handleToGlobalMapIfExists()
 {
     ASSERT(isMainThread());
     auto* vm = commonVMOrNull();
@@ -93,7 +93,7 @@ JSC::JSObject* WebKitJSHandle::objectForIdentifier(JSHandleIdentifier identifier
     return global->jsHandle(identifier);
 }
 
-static Markable<FrameIdentifier> LEGACY_NODELETE windowFrameIdentifier(JSC::JSObject* object)
+NODELETE static Markable<FrameIdentifier> windowFrameIdentifier(JSC::JSObject* object)
 {
     if (auto* window = dynamicDowncast<WebCore::JSWindowProxy>(object)) {
         if (auto* frame = window->wrapped().frame())

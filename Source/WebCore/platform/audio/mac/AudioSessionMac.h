@@ -40,7 +40,7 @@ namespace WebCore {
 class AudioSessionMac final : public AudioSessionCocoa {
     WTF_MAKE_TZONE_ALLOCATED(AudioSessionMac);
 public:
-    static Ref<AudioSessionMac> LEGACY_NODELETE create();
+    NODELETE static Ref<AudioSessionMac> create();
     ~AudioSessionMac();
 
 private:
@@ -61,10 +61,10 @@ private:
     void handleBufferSizeChange() const;
 
     AudioDeviceID defaultDevice() const;
-    static const AudioObjectPropertyAddress& LEGACY_NODELETE defaultOutputDeviceAddress();
-    static const AudioObjectPropertyAddress& LEGACY_NODELETE nominalSampleRateAddress();
-    static const AudioObjectPropertyAddress& LEGACY_NODELETE bufferSizeAddress();
-    static const AudioObjectPropertyAddress& LEGACY_NODELETE muteAddress();
+    NODELETE static const AudioObjectPropertyAddress& defaultOutputDeviceAddress();
+    NODELETE static const AudioObjectPropertyAddress& nominalSampleRateAddress();
+    NODELETE static const AudioObjectPropertyAddress& bufferSizeAddress();
+    NODELETE static const AudioObjectPropertyAddress& muteAddress();
 
     bool hasSampleRateObserver() const { return !!m_handleSampleRateChangeBlock; };
     bool hasBufferSizeObserver() const { return !!m_handleBufferSizeChangeBlock; };
@@ -90,7 +90,7 @@ private:
     void addConfigurationChangeObserver(AudioSessionConfigurationChangeObserver&) final;
     void removeConfigurationChangeObserver(AudioSessionConfigurationChangeObserver&) final;
 
-    WTFLogChannel& LEGACY_NODELETE logChannel() const;
+    NODELETE WTFLogChannel& logChannel() const;
     uint64_t logIdentifier() const;
 
     std::optional<bool> m_lastMutedState;

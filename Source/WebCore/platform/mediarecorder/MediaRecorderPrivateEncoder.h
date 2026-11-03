@@ -70,9 +70,9 @@ public:
     void stopRecording();
     void close();
 
-    String LEGACY_NODELETE mimeType() const;
-    unsigned LEGACY_NODELETE audioBitRate() const;
-    unsigned LEGACY_NODELETE videoBitRate() const;
+    NODELETE String mimeType() const;
+    NODELETE unsigned audioBitRate() const;
+    NODELETE unsigned videoBitRate() const;
 
     bool hasAudio() const { return m_hasAudio; }
     bool hasVideo() const { return m_hasVideo; }
@@ -84,7 +84,7 @@ private:
 
     static WorkQueue& queueSingleton();
 
-    Ref<MediaRecorderPrivateWriterListener> LEGACY_NODELETE listener();
+    NODELETE Ref<MediaRecorderPrivateWriterListener> listener();
 
     class Listener;
     friend class Listener;

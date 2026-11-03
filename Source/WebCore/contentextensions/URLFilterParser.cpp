@@ -71,7 +71,7 @@ public:
         combinedURLFilters.addPattern(patternId, m_sunkTerms);
     }
 
-    URLFilterParser::ParseStatus LEGACY_NODELETE parseStatus() const
+    NODELETE URLFilterParser::ParseStatus parseStatus() const
     {
         return m_parseStatus;
     }
@@ -107,7 +107,7 @@ public:
             fail(URLFilterParser::UnsupportedCharacterClass);
     }
 
-    void LEGACY_NODELETE quantifyAtom(unsigned minimum, unsigned maximum, bool)
+    NODELETE void quantifyAtom(unsigned minimum, unsigned maximum, bool)
     {
         if (hasError())
             return;
@@ -124,22 +124,22 @@ public:
             fail(URLFilterParser::InvalidQuantifier);
     }
 
-    void LEGACY_NODELETE atomBackReference(unsigned)
+    NODELETE void atomBackReference(unsigned)
     {
         fail(URLFilterParser::BackReference);
     }
 
-    void LEGACY_NODELETE atomNamedBackReference(const String&)
+    NODELETE void atomNamedBackReference(const String&)
     {
         fail(URLFilterParser::BackReference);
     }
 
-    void LEGACY_NODELETE atomNamedForwardReference(const String&)
+    NODELETE void atomNamedForwardReference(const String&)
     {
         fail(URLFilterParser::ForwardReference);
     }
     
-    void LEGACY_NODELETE assertionBOL()
+    NODELETE void assertionBOL()
     {
         if (hasError())
             return;
@@ -163,7 +163,7 @@ public:
         m_floatingTerm = Term(Term::EndOfLineAssertionTerm);
     }
 
-    void LEGACY_NODELETE assertionBOI()
+    NODELETE void assertionBOI()
     {
         if (hasError())
             return;
@@ -182,7 +182,7 @@ public:
         assertionEOL();
     }
 
-    void LEGACY_NODELETE assertionWordBoundary(bool)
+    NODELETE void assertionWordBoundary(bool)
     {
         fail(URLFilterParser::WordBoundary);
     }
@@ -198,7 +198,7 @@ public:
         m_floatingTerm = Term(Term::CharacterSetTerm, inverted);
     }
 
-    void LEGACY_NODELETE atomCharacterClassAtom(char16_t character)
+    NODELETE void atomCharacterClassAtom(char16_t character)
     {
         if (hasError())
             return;
@@ -211,7 +211,7 @@ public:
         m_floatingTerm.addCharacter(character, m_patternIsCaseSensitive);
     }
 
-    void LEGACY_NODELETE atomCharacterClassRange(char16_t a, char16_t b)
+    NODELETE void atomCharacterClassRange(char16_t a, char16_t b)
     {
         if (hasError())
             return;
@@ -225,32 +225,32 @@ public:
             m_floatingTerm.addCharacter(static_cast<char16_t>(i), m_patternIsCaseSensitive);
     }
 
-    void LEGACY_NODELETE atomClassStringDisjunction(Vector<Vector<char32_t>>)
+    NODELETE void atomClassStringDisjunction(Vector<Vector<char32_t>>)
     {
         fail(URLFilterParser::AtomCharacter);
     }
 
-    void LEGACY_NODELETE atomCharacterClassSetOp(JSC::Yarr::CharacterClassSetOp)
+    NODELETE void atomCharacterClassSetOp(JSC::Yarr::CharacterClassSetOp)
     {
         // Nothing to do here.
     }
 
-    void LEGACY_NODELETE atomCharacterClassPushNested(bool)
+    NODELETE void atomCharacterClassPushNested(bool)
     {
         // Nothing to do here.
     }
 
-    void LEGACY_NODELETE atomCharacterClassPopNested(bool)
+    NODELETE void atomCharacterClassPopNested(bool)
     {
         // Nothing to do here.
     }
 
-    void LEGACY_NODELETE atomCharacterClassEnd()
+    NODELETE void atomCharacterClassEnd()
     {
         // Nothing to do here. The character set atom may have a quantifier, we sink the atom lazily.
     }
 
-    void LEGACY_NODELETE atomCharacterClassBuiltIn(JSC::Yarr::BuiltInCharacterClassID, bool)
+    NODELETE void atomCharacterClassBuiltIn(JSC::Yarr::BuiltInCharacterClassID, bool)
     {
         fail(URLFilterParser::AtomCharacter);
     }
@@ -265,12 +265,12 @@ public:
         m_openGroups.append(Term(Term::GroupTerm));
     }
 
-    void LEGACY_NODELETE atomParentheticalAssertionBegin(bool, MatchDirection)
+    NODELETE void atomParentheticalAssertionBegin(bool, MatchDirection)
     {
         fail(URLFilterParser::Group);
     }
 
-    void LEGACY_NODELETE atomParentheticalModifierBegin(OptionSet<JSC::Yarr::Flags>, OptionSet<JSC::Yarr::Flags>)
+    NODELETE void atomParentheticalModifierBegin(OptionSet<JSC::Yarr::Flags>, OptionSet<JSC::Yarr::Flags>)
     {
         fail(URLFilterParser::Group);
     }
@@ -286,7 +286,7 @@ public:
         m_floatingTerm = m_openGroups.takeLast();
     }
 
-    void LEGACY_NODELETE disjunction(JSC::Yarr::CreateDisjunctionPurpose)
+    NODELETE void disjunction(JSC::Yarr::CreateDisjunctionPurpose)
     {
         fail(URLFilterParser::Disjunction);
     }
@@ -296,16 +296,16 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    constexpr static bool LEGACY_NODELETE abortedDueToError() { return false; }
-    constexpr static JSC::Yarr::ErrorCode LEGACY_NODELETE abortErrorCode() { return JSC::Yarr::ErrorCode::NoError; }
+    NODELETE constexpr static bool abortedDueToError() { return false; }
+    NODELETE constexpr static JSC::Yarr::ErrorCode abortErrorCode() { return JSC::Yarr::ErrorCode::NoError; }
 
 private:
-    bool LEGACY_NODELETE hasError() const
+    NODELETE bool hasError() const
     {
         return m_parseStatus != URLFilterParser::Ok;
     }
 
-    void LEGACY_NODELETE fail(URLFilterParser::ParseStatus reason)
+    NODELETE void fail(URLFilterParser::ParseStatus reason)
     {
         if (hasError())
             return;

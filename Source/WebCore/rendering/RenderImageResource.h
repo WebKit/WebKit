@@ -68,7 +68,7 @@ public:
     WrappedImagePtr imagePtr() const { return m_styleImage ? m_styleImage->data() : nullptr; }
 
 private:
-    float LEGACY_NODELETE density() const;
+    NODELETE float density() const;
 
     SingleThreadWeakPtr<RenderElement> m_renderer;
     RefPtr<Style::Image> m_styleImage;

@@ -58,7 +58,7 @@ private:
     const CheckedRef<RenderView> m_renderView;
 };
 
-const InitialContainingBlock& LEGACY_NODELETE initialContainingBlock(const Box&);
+NODELETE const InitialContainingBlock& initialContainingBlock(const Box&);
 
 }
 }

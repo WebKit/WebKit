@@ -305,7 +305,7 @@ private:
     {
     }
 
-    static Ref<AttachmentImageEventsListener> LEGACY_NODELETE create(HTMLAttachmentElement& attachment) { return adoptRef(*new AttachmentImageEventsListener(attachment)); }
+    NODELETE static Ref<AttachmentImageEventsListener> create(HTMLAttachmentElement& attachment) { return adoptRef(*new AttachmentImageEventsListener(attachment)); }
 
     WeakPtr<HTMLAttachmentElement, WeakPtrImplWithEventTargetData> m_attachment;
 };
@@ -416,7 +416,7 @@ void HTMLAttachmentElement::addSelectionClasses(HighlightState state)
 
 class AttachmentSaveEventListener final : public EventListener {
 public:
-    static Ref<AttachmentSaveEventListener> LEGACY_NODELETE create(HTMLAttachmentElement& attachment) { return adoptRef(*new AttachmentSaveEventListener(attachment)); }
+    NODELETE static Ref<AttachmentSaveEventListener> create(HTMLAttachmentElement& attachment) { return adoptRef(*new AttachmentSaveEventListener(attachment)); }
 
     void handleEvent(ScriptExecutionContext&, Event& event) final
     {
@@ -589,11 +589,11 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes
 #if ATTACHMENT_LOG_DOCUMENT_TRAFFIC
 class AttachmentEvent {
 public:
-    uintptr_t LEGACY_NODELETE attachment() const { return m_attachment; }
-    uintptr_t LEGACY_NODELETE document() const { return m_document; }
-    String LEGACY_NODELETE uniqueIdentifier() const { return m_uniqueIdentifier; }
-    WTF::MonotonicTime LEGACY_NODELETE time() const { return m_time; }
-    StackTrace& LEGACY_NODELETE stackTrace() const { return *m_stackTrace; }
+    NODELETE uintptr_t attachment() const { return m_attachment; }
+    NODELETE uintptr_t document() const { return m_document; }
+    NODELETE String uniqueIdentifier() const { return m_uniqueIdentifier; }
+    NODELETE WTF::MonotonicTime time() const { return m_time; }
+    NODELETE StackTrace& stackTrace() const { return *m_stackTrace; }
 
     void capture(const HTMLAttachmentElement& a, WTF::MonotonicTime t)
     {
@@ -611,7 +611,7 @@ public:
         m_stackTrace = 0;
     }
 
-    explicit operator bool LEGACY_NODELETE () const
+    NODELETE explicit operator bool() const
     {
         ASSERT(!m_attachment == !m_stackTrace);
         return !!m_attachment;

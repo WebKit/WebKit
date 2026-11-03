@@ -57,7 +57,7 @@ public:
     OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeThreadSafeCheckedPtr);
 
     bool isClosing() const { return m_isClosing; }
-    RefPtr<WorkerOrWorkletThread> LEGACY_NODELETE workerOrWorkletThread() const;
+    NODELETE RefPtr<WorkerOrWorkletThread> workerOrWorkletThread() const;
 
     WorkerOrWorkletScriptController* script() const { return m_script.get(); }
     void clearScript();

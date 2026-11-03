@@ -82,14 +82,14 @@ public:
     // Takes `closedEdges` into account.
     const RectEdges<LayoutUnit>& borderWidths() const LIFETIME_BOUND { return m_borderWidths; }
 
-    LayoutRoundedRect LEGACY_NODELETE deprecatedRoundedRect() const;
-    LayoutRoundedRect LEGACY_NODELETE deprecatedInnerRoundedRect() const;
+    NODELETE LayoutRoundedRect deprecatedRoundedRect() const;
+    NODELETE LayoutRoundedRect deprecatedInnerRoundedRect() const;
     FloatRoundedRect deprecatedPixelSnappedRoundedRect(float deviceScaleFactor) const;
     FloatRoundedRect deprecatedPixelSnappedInnerRoundedRect(float deviceScaleFactor) const;
 
     // Returns true if the given rect is entirely inside the inner/outer shape.
-    bool LEGACY_NODELETE innerShapeContains(const LayoutRect&) const;
-    bool LEGACY_NODELETE outerShapeContains(const LayoutRect&) const;
+    NODELETE bool innerShapeContains(const LayoutRect&) const;
+    NODELETE bool outerShapeContains(const LayoutRect&) const;
 
     bool shapeIntersectsHitTestLocation(const HitTestLocation&, float deviceScaleFactor) const;
 
@@ -106,7 +106,7 @@ public:
 
     // Returns true if no corner regions of the outer border intersect the given rect,
     // meaning border painting can use simpler rectangular paths.
-    bool LEGACY_NODELETE allCornersClippedOut(const LayoutRect&) const;
+    NODELETE bool allCornersClippedOut(const LayoutRect&) const;
 
     const LayoutRoundedRectRadii& radii() const LIFETIME_BOUND { return m_borderRect.radii(); }
     void setRadii(const LayoutRoundedRectRadii& radii) { m_borderRect.setRadii(radii); }
@@ -121,14 +121,14 @@ public:
 
     bool hasNonZeroRadii() const { return m_borderRect.hasNonZeroRadii(); }
 
-    bool LEGACY_NODELETE outerShapeIsRectangular() const;
-    bool LEGACY_NODELETE innerShapeIsRectangular() const;
+    NODELETE bool outerShapeIsRectangular() const;
+    NODELETE bool innerShapeIsRectangular() const;
 
-    bool LEGACY_NODELETE hasNonRoundCornerShape() const;
+    NODELETE bool hasNonRoundCornerShape() const;
 
     bool isEmpty() const { return m_borderRect.rect().isEmpty(); }
 
-    void LEGACY_NODELETE move(LayoutSize);
+    NODELETE void move(LayoutSize);
 
     // This will inflate the m_borderRect, and scale the radii up accordingly. Note that this changes the meaning of "inner shape" which will no longer correspond to the padding box.
     void inflate(LayoutUnit);

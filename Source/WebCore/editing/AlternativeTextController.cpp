@@ -64,7 +64,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AlternativeTextController);
 
 #if USE(DICTATION_ALTERNATIVES) || USE(AUTOCORRECTION_PANEL)
 
-constexpr OptionSet<DocumentMarkerType> LEGACY_NODELETE markerTypesForAppliedDictationAlternative()
+NODELETE constexpr OptionSet<DocumentMarkerType> markerTypesForAppliedDictationAlternative()
 {
     return DocumentMarkerType::SpellCheckingExemption;
 }

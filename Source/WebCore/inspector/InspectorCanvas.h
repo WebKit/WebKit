@@ -65,14 +65,14 @@ template<typename> struct InspectorCanvasArgumentProcessor;
 
 class InspectorCanvas final : public RefCountedAndCanMakeWeakPtr<InspectorCanvas> {
 public:
-    static Ref<InspectorCanvas> LEGACY_NODELETE create(CanvasRenderingContext&);
-    static Ref<InspectorCanvas> LEGACY_NODELETE create(GPUDevice&);
+    NODELETE static Ref<InspectorCanvas> create(CanvasRenderingContext&);
+    NODELETE static Ref<InspectorCanvas> create(GPUDevice&);
     ~InspectorCanvas();
 
     const String& identifier() const LIFETIME_BOUND { return m_identifier; }
 
-    CanvasRenderingContext* LEGACY_NODELETE canvasContext() const;
-    GPUDevice* LEGACY_NODELETE deviceContext() const;
+    NODELETE CanvasRenderingContext* canvasContext() const;
+    NODELETE GPUDevice* deviceContext() const;
 
     HashSet<HTMLCanvasElement*> canvasElements() const;
 
@@ -92,8 +92,8 @@ public:
     void setHasActiveInspectorCanvasCallTracer(bool);
 
     void resetRecordingData();
-    bool LEGACY_NODELETE hasRecordingData() const;
-    bool LEGACY_NODELETE currentFrameHasData() const;
+    NODELETE bool hasRecordingData() const;
+    NODELETE bool currentFrameHasData() const;
 
     void recordAction(String&&, InspectorCanvasProcessedArguments&& = { });
     void recordAction(String&&, InspectorCanvasProcessedArgument&& receiver, InspectorCanvasProcessedArguments&& = { });
@@ -106,12 +106,12 @@ public:
 
     void setRecordingName(const String& name) { m_recordingName = name; }
 
-    void LEGACY_NODELETE setBufferLimit(long);
-    bool LEGACY_NODELETE hasBufferSpace() const;
+    NODELETE void setBufferLimit(long);
+    NODELETE bool hasBufferSpace() const;
     long bufferUsed() const { return m_bufferUsed; }
 
-    void LEGACY_NODELETE setFrameCount(long);
-    bool LEGACY_NODELETE overFrameCount() const;
+    NODELETE void setFrameCount(long);
+    NODELETE bool overFrameCount() const;
 
     Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(bool captureBacktrace);
     Ref<Inspector::Protocol::Recording::Recording> releaseObjectForRecording();

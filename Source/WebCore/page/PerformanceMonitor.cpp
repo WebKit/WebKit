@@ -59,7 +59,7 @@ static constexpr const double postPageLoadCPUUsageDomainReportingThreshold { 20.
 static constexpr const uint64_t postPageLoadMemoryUsageDomainReportingThreshold { 2048 * MB };
 #endif
 
-static inline ActivityStateForCPUSampling LEGACY_NODELETE activityStateForCPUSampling(OptionSet<ActivityState> state)
+NODELETE static inline ActivityStateForCPUSampling activityStateForCPUSampling(OptionSet<ActivityState> state)
 {
     if (!(state & ActivityState::IsVisible))
         return ActivityStateForCPUSampling::NonVisible;

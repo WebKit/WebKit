@@ -556,7 +556,7 @@ RefPtr<Node> highestEnclosingNodeOfType(const Position& position, bool (*nodeIsO
     return highest;
 }
 
-static bool LEGACY_NODELETE hasARenderedDescendant(Node* node, Node* excludedNode)
+NODELETE static bool hasARenderedDescendant(Node* node, Node* excludedNode)
 {
     for (auto* n = node->firstChild(); n;) {
         if (n == excludedNode) {
@@ -1140,7 +1140,7 @@ Position adjustedSelectionStartForStyleComputation(const VisibleSelection& selec
 }
 
 // FIXME: Should this be deprecated like deprecatedEnclosingBlockFlowElement is?
-static Element* LEGACY_NODELETE elementIfBlockFlow(Node& node)
+NODELETE static Element* elementIfBlockFlow(Node& node)
 {
     auto* element = dynamicDowncast<Element>(node);
     if (!element)
@@ -1154,7 +1154,7 @@ bool isBlockFlowElement(const Node& node)
     return elementIfBlockFlow(const_cast<Node&>(node));
 }
 
-Element* LEGACY_NODELETE deprecatedEnclosingBlockFlowElement(Node* node)
+NODELETE Element* deprecatedEnclosingBlockFlowElement(Node* node)
 {
     if (!node)
         return nullptr;
@@ -1322,7 +1322,7 @@ static std::optional<BoundaryPoint> findBidiBoundary(const RenderedPosition& pos
 }
 
 enum class BoxIterationDirection : bool { SameAsLine, OppositeOfLine };
-static InlineIterator::LeafBoxIterator LEGACY_NODELETE advanceInDirection(InlineIterator::LeafBoxIterator box, TextDirection direction, BoxIterationDirection iterationDirection)
+NODELETE static InlineIterator::LeafBoxIterator advanceInDirection(InlineIterator::LeafBoxIterator box, TextDirection direction, BoxIterationDirection iterationDirection)
 {
     bool shouldMoveRight = (iterationDirection == BoxIterationDirection::SameAsLine) == (direction == TextDirection::LTR);
     return shouldMoveRight ? box->nextLineRightwardOnLine() : box->nextLineLeftwardOnLine();

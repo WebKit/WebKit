@@ -111,9 +111,9 @@ public:
     std::unique_ptr<Style::ComputedStyle> styleForPage(int pageIndex);
     std::unique_ptr<Style::ComputedStyle> defaultStyleForElement(const Element*);
 
-    Document& LEGACY_NODELETE document();
-    const Document& LEGACY_NODELETE document() const;
-    const Settings& LEGACY_NODELETE settings() const;
+    NODELETE Document& document();
+    NODELETE const Document& document() const;
+    NODELETE const Settings& settings() const;
 
     ScopeType scopeType() const { return m_scopeType; }
 
@@ -127,7 +127,7 @@ public:
     void addCurrentSVGFontFaceRules();
 
     std::unique_ptr<Style::ComputedStyle> styleForKeyframe(Element&, const Style::ComputedStyle& elementStyle, const ResolutionContext&, const StyleRuleKeyframe&, BlendingKeyframe&) const;
-    bool LEGACY_NODELETE isAnimationNameValid(const AtomString&) const;
+    NODELETE bool isAnimationNameValid(const AtomString&) const;
 
     void setViewTransitionStyles(CSSSelector::PseudoElement, const AtomString&, Ref<MutableStyleProperties>);
 
@@ -145,16 +145,16 @@ public:
     bool hasSelectorForId(const AtomString&) const;
     bool hasSelectorForAttribute(const Element&, const AtomString&) const;
 
-    bool LEGACY_NODELETE hasViewportDependentMediaQueries() const;
+    NODELETE bool hasViewportDependentMediaQueries() const;
     std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueries();
 
-    static KeyframesRuleMap& LEGACY_NODELETE userAgentKeyframes();
+    NODELETE static KeyframesRuleMap& userAgentKeyframes();
     static void addUserAgentKeyframeStyle(Ref<StyleRuleKeyframes>&&);
     void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
     RefPtr<StyleRuleKeyframes> keyframesRuleForName(const AtomString&) const;
     Vector<Ref<StyleRuleKeyframe>> keyframeRulesForName(const AtomString&, const TimingFunction*) const;
 
-    const CustomFunctionRegistry* LEGACY_NODELETE customFunctionRegistry() const;
+    NODELETE const CustomFunctionRegistry* customFunctionRegistry() const;
     CustomFunctionRegistry& ensureCustomFunctionRegistry();
 
     RefPtr<StyleRuleViewTransition> viewTransitionRule() const;
@@ -178,7 +178,7 @@ private:
     class State;
 
     State initializeStateAndStyle(const Element&, const ResolutionContext&, std::unique_ptr<Style::ComputedStyle>&& initialStyle = { });
-    BuilderContext LEGACY_NODELETE builderContext(State&) const;
+    NODELETE BuilderContext builderContext(State&) const;
 
     void applyMatchedProperties(State&, const MatchResult&, PropertyCascade::IncludedProperties&&);
     void setGlobalStateAfterApplyingProperties(const BuilderState&);

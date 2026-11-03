@@ -34,7 +34,7 @@ namespace Style {
 namespace Calculation {
 class Value;
 struct Child;
-Ref<Value> CLANG_POINTER_CONVERSION LEGACY_NODELETE protect(Value&);
+NODELETE Ref<Value> CLANG_POINTER_CONVERSION protect(Value&);
 }
 
 struct ZoomFactor;
@@ -54,7 +54,7 @@ public:
     WEBCORE_EXPORT ~UnevaluatedCalculationBase();
 
     Calculation::Value& calculation() const { return m_calc; }
-    [[nodiscard]] Calculation::Value& LEGACY_NODELETE leakRef();
+    NODELETE [[nodiscard]] Calculation::Value& leakRef();
 
     bool equal(const UnevaluatedCalculationBase&) const;
 

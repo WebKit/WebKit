@@ -49,7 +49,7 @@ public:
     virtual void iterate(const IDBKeyData&, const IDBKeyData& primaryKey, uint32_t count, IDBGetResult&) = 0;
 
     IDBCursorInfo info() const { return m_info; }
-    MemoryBackingStoreTransaction* LEGACY_NODELETE transaction() const;
+    NODELETE MemoryBackingStoreTransaction* transaction() const;
 
 protected:
     MemoryCursor(const IDBCursorInfo&, MemoryBackingStoreTransaction&);

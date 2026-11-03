@@ -75,7 +75,7 @@ public:
     // create CSSOM wrappers and are main-thread only.
     WEBCORE_EXPORT WebCoreOpaqueRoot opaqueRootForGCThread();
 
-    WEBCORE_EXPORT ExceptionOr<void> LEGACY_NODELETE setCssText(const String&);
+    NODELETE WEBCORE_EXPORT ExceptionOr<void> setCssText(const String&);
 
 protected:
     explicit CSSRule(CSSStyleSheet*);

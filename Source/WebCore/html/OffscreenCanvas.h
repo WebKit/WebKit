@@ -164,7 +164,7 @@ public:
 
     SecurityOrigin* securityOrigin() const final;
 
-    bool LEGACY_NODELETE canDetach() const;
+    NODELETE bool canDetach() const;
     std::unique_ptr<DetachedOffscreenCanvas> detach();
 
     void commitToPlaceholderCanvas();

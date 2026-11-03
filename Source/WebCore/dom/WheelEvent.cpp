@@ -35,12 +35,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WheelEvent);
 
-inline static unsigned LEGACY_NODELETE determineDeltaMode(const PlatformWheelEvent& event)
+NODELETE inline static unsigned determineDeltaMode(const PlatformWheelEvent& event)
 {
     return event.granularity() == PlatformWheelEventGranularity::ScrollByPageWheelEvent ? WheelEvent::DOM_DELTA_PAGE : WheelEvent::DOM_DELTA_PIXEL;
 }
 
-static double LEGACY_NODELETE wheelDeltaToDelta(int wheelDelta)
+NODELETE static double wheelDeltaToDelta(int wheelDelta)
 {
     // Avoid returning negative zero.
     if (!wheelDelta)

@@ -91,7 +91,7 @@ public:
     enum class Type : bool { Local, Remote };
     Type type() const { return m_type; }
 
-    Document* LEGACY_NODELETE trackingDocument() const;
+    NODELETE Document* trackingDocument() const;
 
     ContainerNode* root() const { return m_root.get(); }
     String rootMargin() const;
@@ -105,9 +105,9 @@ public:
         Locker locker { m_observationTargetsLock };
         return !m_observationTargets.isEmptyIgnoringNullReferences();
     }
-    bool LEGACY_NODELETE isObserving(const Element&) const;
+    NODELETE bool isObserving(const Element&) const;
 
-    void LEGACY_NODELETE resetPreviousThresholdIndexForTarget(const Element&);
+    NODELETE void resetPreviousThresholdIndexForTarget(const Element&);
 
     void observe(Element&);
     void unobserve(Element&);

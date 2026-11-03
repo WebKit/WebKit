@@ -65,7 +65,7 @@ protected:
     inline LayoutUnit ruleThicknessFallback() const;
 
     LayoutUnit mathAxisHeight() const;
-    LayoutUnit LEGACY_NODELETE mirrorIfNeeded(LayoutUnit horizontalOffset, LayoutUnit boxWidth = 0_lu) const;
+    NODELETE LayoutUnit mirrorIfNeeded(LayoutUnit horizontalOffset, LayoutUnit boxWidth = 0_lu) const;
     inline LayoutUnit mirrorIfNeeded(LayoutUnit horizontalOffset, const RenderBox& child) const;
 
     static inline LayoutUnit ascentForChild(const RenderBox& child);
@@ -75,7 +75,7 @@ protected:
     void insertPositionedChildrenIntoContainingBlock();
     void layoutFloatingChildren();
 
-    void LEGACY_NODELETE shiftInFlowChildren(LayoutUnit left, LayoutUnit top);
+    NODELETE void shiftInFlowChildren(LayoutUnit left, LayoutUnit top);
     void adjustLayoutForBorderAndPadding();
 
     enum class LayoutPhase : uint8_t {
@@ -99,7 +99,7 @@ protected:
     LayoutUnit applySizeToMathContent(LayoutPhase, const SizeAppliedToMathContent&);
 
 private:
-    bool LEGACY_NODELETE isRenderMathMLBlock() const final { return true; }
+    NODELETE bool isRenderMathMLBlock() const final { return true; }
     ASCIILiteral renderName() const override { return "RenderMathMLBlock"_s; }
     bool canDropAnonymousBlockChild() const final { return false; }
     void layoutItems(RelayoutChildren);

@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-static Node* LEGACY_NODELETE selectionShadowAncestor(LocalFrame& frame)
+NODELETE static Node* selectionShadowAncestor(LocalFrame& frame)
 {
     auto* node = frame.selection().selection().base().anchorNode();
     if (!node || !node->isInShadowTree())

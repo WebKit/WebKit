@@ -89,13 +89,13 @@ public:
         unsigned audio;
         unsigned video;
     };
-    static BitRates LEGACY_NODELETE computeBitRates(const MediaRecorderPrivateOptions&, const MediaStreamPrivate* = nullptr);
+    NODELETE static BitRates computeBitRates(const MediaRecorderPrivateOptions&, const MediaStreamPrivate* = nullptr);
 
 protected:
     void setAudioSource(RefPtr<RealtimeMediaSource>&&);
     void setVideoSource(RefPtr<RealtimeMediaSource>&&);
 
-    void LEGACY_NODELETE checkTrackState(const MediaStreamTrackPrivate&);
+    NODELETE void checkTrackState(const MediaStreamTrackPrivate&);
 
     bool shouldMuteAudio() const { return m_shouldMuteAudio; }
     bool shouldMuteVideo() const { return m_shouldMuteVideo; }

@@ -48,7 +48,7 @@ class Node;
 
 class AccessibilityNodeObject : public AccessibilityObject {
 public:
-    static Ref<AccessibilityNodeObject> LEGACY_NODELETE create(AXID, Node*, AXObjectCache&);
+    NODELETE static Ref<AccessibilityNodeObject> create(AXID, Node*, AXObjectCache&);
     virtual ~AccessibilityNodeObject();
 
     void init() override;
@@ -64,7 +64,7 @@ public:
     bool isOrderedList() const final;
     bool isDescriptionList() const final;
     bool isMultiSelectable() const override;
-    bool LEGACY_NODELETE isNativeImage() const;
+    NODELETE bool isNativeImage() const;
     bool isSecureField() const final;
     bool isSearchField() const final;
 
@@ -84,7 +84,7 @@ public:
     bool canSetSelectedAttribute() const override;
     void setSelected(bool) final;
 
-    Node* LEGACY_NODELETE node() const final { return m_node.get(); }
+    NODELETE Node* node() const final { return m_node.get(); }
     Document* document() const override;
     LocalFrameView* documentFrameView() const override;
 
@@ -149,8 +149,8 @@ public:
     String axColumnIndexText() const final;
     unsigned colSpan() const;
     unsigned rowSpan() const;
-    void LEGACY_NODELETE incrementEffectiveRowSpan();
-    void LEGACY_NODELETE resetEffectiveRowSpan();
+    NODELETE void incrementEffectiveRowSpan();
+    NODELETE void resetEffectiveRowSpan();
     void setAXColIndexFromRow(int);
     void setColumnIndex(unsigned);
 #if USE(ATSPI)

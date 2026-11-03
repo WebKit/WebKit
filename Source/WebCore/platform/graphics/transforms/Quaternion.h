@@ -40,9 +40,9 @@ struct Quaternion {
     }
 
     Quaternion slerp(const Quaternion& other, double progress);
-    WEBCORE_EXPORT Quaternion LEGACY_NODELETE accumulate(const Quaternion& other) const;
-    WEBCORE_EXPORT Quaternion LEGACY_NODELETE conjugate() const;
-    WEBCORE_EXPORT FloatPoint3D LEGACY_NODELETE rotate(const FloatPoint3D&) const;
+    NODELETE WEBCORE_EXPORT Quaternion accumulate(const Quaternion& other) const;
+    NODELETE WEBCORE_EXPORT Quaternion conjugate() const;
+    NODELETE WEBCORE_EXPORT FloatPoint3D rotate(const FloatPoint3D&) const;
     Quaternion interpolate(const Quaternion& other, double progress, CompositeOperation);
 };
 

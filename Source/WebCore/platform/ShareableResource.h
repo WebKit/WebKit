@@ -62,7 +62,7 @@ public:
     using Handle = ShareableResourceHandle;
 
     // Create a shareable resource that uses malloced memory.
-    WEBCORE_EXPORT static RefPtr<ShareableResource> LEGACY_NODELETE create(Ref<SharedMemory>&&, unsigned offset, unsigned size);
+    NODELETE WEBCORE_EXPORT static RefPtr<ShareableResource> create(Ref<SharedMemory>&&, unsigned offset, unsigned size);
 
     // Create a shareable resource from a handle.
     static RefPtr<ShareableResource> map(Handle&&);
@@ -71,8 +71,8 @@ public:
 
     WEBCORE_EXPORT ~ShareableResource();
 
-    unsigned LEGACY_NODELETE size() const;
-    std::span<const uint8_t> LEGACY_NODELETE span() const LIFETIME_BOUND;
+    NODELETE unsigned size() const;
+    NODELETE std::span<const uint8_t> span() const LIFETIME_BOUND;
 
 private:
     friend class ShareableResourceHandle;

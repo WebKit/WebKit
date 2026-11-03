@@ -42,7 +42,7 @@ public:
 
     void scheduleLoad(const URL&);
 
-    size_t LEGACY_NODELETE trackElementIndex();
+    NODELETE size_t trackElementIndex();
     HTMLTrackElement* trackElement() const { return m_trackElement.get(); }
 
     void ref() const final { TextTrack::ref(); }

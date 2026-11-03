@@ -92,7 +92,7 @@ private:
     void setPreload(MediaPlayer::Preload) final;
     void doPreload();
     void load(const URL&, const LoadOptions&) final;
-    bool LEGACY_NODELETE needsResourceClient() const;
+    NODELETE bool needsResourceClient() const;
     bool createResourceClientIfNeeded();
 
 #if ENABLE(MEDIA_SOURCE)
@@ -285,12 +285,12 @@ private:
 #endif
 
     using TrackIdentifier = TracksRendererManager::TrackIdentifier;
-    TrackIdentifier LEGACY_NODELETE trackIdentifierFor(TrackID) const;
-    std::optional<TrackIdentifier> LEGACY_NODELETE maybeTrackIdentifierFor(TrackID) const;
+    NODELETE TrackIdentifier trackIdentifierFor(TrackID) const;
+    NODELETE std::optional<TrackIdentifier> maybeTrackIdentifierFor(TrackID) const;
 
     void setLayerRequiresFlush();
-    void LEGACY_NODELETE setAllTracksForReenqueuing();
-    void LEGACY_NODELETE setTrackForReenqueuing(TrackID);
+    NODELETE void setAllTracksForReenqueuing();
+    NODELETE void setTrackForReenqueuing(TrackID);
 
     // Remote layer support
     WebCore::HostingContext hostingContext() const final;
@@ -354,8 +354,8 @@ private:
     MediaTime m_durationMainThread WTF_GUARDED_BY_CAPABILITY(mainThread) { MediaTime::indefiniteTime() };
     double m_rate WTF_GUARDED_BY_CAPABILITY(mainThread) { 1 };
 
-    bool LEGACY_NODELETE isEnabledVideoTrackID(TrackID) const;
-    bool LEGACY_NODELETE hasSelectedVideo() const;
+    NODELETE bool isEnabledVideoTrackID(TrackID) const;
+    NODELETE bool hasSelectedVideo() const;
     std::optional<TrackID> m_enabledVideoTrackID WTF_GUARDED_BY_CAPABILITY(runningQueue());
     size_t m_contentLength WTF_GUARDED_BY_CAPABILITY(mainThread) { 0 };
     size_t m_contentReceived WTF_GUARDED_BY_CAPABILITY(mainThread) { 0 };
@@ -380,7 +380,7 @@ private:
 
     // Seek logic support
     Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
-    bool LEGACY_NODELETE seeking() const;
+    NODELETE bool seeking() const;
     void seekInternal();
     void cancelPendingSeek(); // Called from destructor or running queue
     void completeSeek(const MediaTime&);
@@ -391,7 +391,7 @@ private:
     // WorkQueue on which the player is running.
     WorkQueue& runningQueue() const { return m_runningQueue.get(); }
     void ensureOnRunningQueue(Function<void()>&&);
-    MediaTime LEGACY_NODELETE durationOnRunningQueue() const;
+    NODELETE MediaTime durationOnRunningQueue() const;
 
     Timer m_seekTimer WTF_GUARDED_BY_CAPABILITY(mainThread);
     MediaTime m_lastSeekTime WTF_GUARDED_BY_CAPABILITY(runningQueue());

@@ -42,7 +42,7 @@ public:
     virtual ~NamedImage();
 
     bool operator==(const Image&) const final;
-    bool LEGACY_NODELETE equals(const NamedImage&) const;
+    NODELETE bool equals(const NamedImage&) const;
 
 private:
     explicit NamedImage(CustomIdent&&);

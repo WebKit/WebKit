@@ -48,7 +48,7 @@ struct VariantDeserializerHelper {
             return VariantType::deserialize(span);
         return VariantDeserializerHelper<index - 1, Types...>::deserialize(span, i);
     }
-    static size_t LEGACY_NODELETE serializedLength(std::span<const uint8_t> span, size_t i)
+    NODELETE static size_t serializedLength(std::span<const uint8_t> span, size_t i)
     {
         if (i == index)
             return VariantType::serializedLength(span);
@@ -59,12 +59,12 @@ struct VariantDeserializerHelper {
 template<typename... Types>
 struct VariantDeserializerHelper<0, Types...> {
     using VariantType = typename WTF::VariantAlternativeT<0, Variant<Types...>>;
-    static Variant<Types...> LEGACY_NODELETE deserialize(std::span<const uint8_t> span, size_t i)
+    NODELETE static Variant<Types...> deserialize(std::span<const uint8_t> span, size_t i)
     {
         ASSERT_UNUSED(i, !i);
         return VariantType::deserialize(span);
     }
-    static size_t LEGACY_NODELETE serializedLength(std::span<const uint8_t> span, size_t i)
+    NODELETE static size_t serializedLength(std::span<const uint8_t> span, size_t i)
     {
         ASSERT_UNUSED(i, !i);
         return VariantType::serializedLength(span);
@@ -77,7 +77,7 @@ template<typename... Types> struct VariantDeserializer<Variant<Types...>> {
     {
         return VariantDeserializerHelper<sizeof...(Types) - 1, Types...>::deserialize(span, i);
     }
-    static size_t LEGACY_NODELETE serializedLength(std::span<const uint8_t> span, size_t i)
+    NODELETE static size_t serializedLength(std::span<const uint8_t> span, size_t i)
     {
         return VariantDeserializerHelper<sizeof...(Types) - 1, Types...>::serializedLength(span, i);
     }

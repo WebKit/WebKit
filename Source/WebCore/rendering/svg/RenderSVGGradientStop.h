@@ -57,7 +57,7 @@ private:
     bool canHaveChildren() const override { return false; }
     void paint(PaintInfo&, const LayoutPoint&) override { }
 
-    SVGGradientElement* LEGACY_NODELETE gradientElement();
+    NODELETE SVGGradientElement* gradientElement();
 };
 
 } // namespace WebCore

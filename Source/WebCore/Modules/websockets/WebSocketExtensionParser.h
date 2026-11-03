@@ -43,8 +43,8 @@ public:
         : m_data(data)
     {
     }
-    bool LEGACY_NODELETE finished();
-    bool LEGACY_NODELETE parsedSuccessfully();
+    NODELETE bool finished();
+    NODELETE bool parsedSuccessfully();
 
     // FIXME: What character encoding are we parsing? Specify Latin1Character, char8_t, char16_t, or something else here.
     bool parseExtension(String& extensionToken, HashMap<String, String>& parameters);
@@ -57,9 +57,9 @@ private:
     bool consumeToken();
     bool consumeQuotedString();
     bool consumeQuotedStringOrToken();
-    bool LEGACY_NODELETE consumeCharacter(char);
+    NODELETE bool consumeCharacter(char);
 
-    void LEGACY_NODELETE skipSpaces();
+    NODELETE void skipSpaces();
 
     std::span<const uint8_t> m_data;
     String m_currentToken;

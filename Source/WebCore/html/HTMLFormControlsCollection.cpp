@@ -65,7 +65,7 @@ std::optional<Variant<Ref<RadioNodeList>, Ref<Element>>> HTMLFormControlsCollect
     return Variant<Ref<RadioNodeList>, Ref<Element>> { protect(ownerNode())->radioNodeList(name) };
 }
 
-static unsigned LEGACY_NODELETE findFormListedElement(const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& elements, const Element& element)
+NODELETE static unsigned findFormListedElement(const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& elements, const Element& element)
 {
     for (unsigned i = 0; i < elements.size(); ++i) {
         auto* currentElement = elements[i].get();

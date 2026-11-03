@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static RefPtr<WebLockRegistry>& LEGACY_NODELETE sharedRegistry()
+NODELETE static RefPtr<WebLockRegistry>& sharedRegistry()
 {
     static MainThreadNeverDestroyed<RefPtr<WebLockRegistry>> registry;
     return registry;

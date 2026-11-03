@@ -51,7 +51,7 @@ protected:
 private:
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
     SerializedNode serializeNode(CloningOperation) const override;
-    bool LEGACY_NODELETE childTypeAllowed(NodeType) const final;
+    NODELETE bool childTypeAllowed(NodeType) const final;
 };
 
 } // namespace WebCore

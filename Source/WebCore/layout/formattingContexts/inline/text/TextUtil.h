@@ -94,13 +94,13 @@ public:
 
     static bool mayBreakInBetween(const InlineTextItem& previousInlineItem, const InlineTextItem& nextInlineItem);
     static unsigned findNextBreakablePosition(CachedLineBreakIteratorFactory&, unsigned startPosition, const Style::ComputedStyle&);
-    static TextBreakIterator::LineMode::Behavior LEGACY_NODELETE lineBreakIteratorMode(LineBreak);
-    static TextBreakIterator::ContentAnalysis LEGACY_NODELETE contentAnalysis(WordBreak);
+    NODELETE static TextBreakIterator::LineMode::Behavior lineBreakIteratorMode(LineBreak);
+    NODELETE static TextBreakIterator::ContentAnalysis contentAnalysis(WordBreak);
 
-    static bool LEGACY_NODELETE shouldPreserveSpacesAndTabs(const Box&);
-    static bool LEGACY_NODELETE shouldPreserveNewline(const Box&);
-    static bool LEGACY_NODELETE isWrappingAllowed(const Style::ComputedStyle&);
-    static bool LEGACY_NODELETE shouldTrailingWhitespaceHang(const Style::ComputedStyle&);
+    NODELETE static bool shouldPreserveSpacesAndTabs(const Box&);
+    NODELETE static bool shouldPreserveNewline(const Box&);
+    NODELETE static bool isWrappingAllowed(const Style::ComputedStyle&);
+    NODELETE static bool shouldTrailingWhitespaceHang(const Style::ComputedStyle&);
 
     static bool isStrongDirectionalityCharacter(char32_t);
     static bool containsStrongDirectionalityText(StringView);
@@ -129,7 +129,7 @@ public:
     static bool canUseSimplifiedTextMeasuring(StringView, const FontCascade&, bool whitespaceIsCollapsed, const Style::ComputedStyle* firstLineStyle);
     static bool hasPositionDependentContentWidth(StringView);
 
-    static char32_t LEGACY_NODELETE lastBaseCharacterFromText(StringView);
+    NODELETE static char32_t lastBaseCharacterFromText(StringView);
 };
 
 } // namespace Layout

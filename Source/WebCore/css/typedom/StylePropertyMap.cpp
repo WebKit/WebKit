@@ -69,7 +69,7 @@ static const AtomString& propertySerializationForCheckAssociatedProperties(CSSPr
     return nameString(propertyID);
 }
 
-static const AtomString& LEGACY_NODELETE propertySerializationForCheckAssociatedProperties(const AtomString& customPropertyID)
+NODELETE static const AtomString& propertySerializationForCheckAssociatedProperties(const AtomString& customPropertyID)
 {
     return customPropertyID;
 }

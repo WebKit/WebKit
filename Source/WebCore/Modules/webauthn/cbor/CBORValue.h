@@ -173,16 +173,16 @@ public:
 
     // FIXME(183535): Considering adding && getter for better performance.
     // These will all fatally assert if the type doesn't match.
-    SimpleValue LEGACY_NODELETE getSimpleValue() const;
-    bool LEGACY_NODELETE getBool() const;
-    const int64_t& LEGACY_NODELETE getInteger() const;
-    const int64_t& LEGACY_NODELETE getUnsigned() const;
-    const int64_t& LEGACY_NODELETE getNegative() const;
-    const BinaryValue& LEGACY_NODELETE getByteString() const;
+    NODELETE SimpleValue getSimpleValue() const;
+    NODELETE bool getBool() const;
+    NODELETE const int64_t& getInteger() const;
+    NODELETE const int64_t& getUnsigned() const;
+    NODELETE const int64_t& getNegative() const;
+    NODELETE const BinaryValue& getByteString() const;
     // Returned string may contain NUL characters.
-    const String& LEGACY_NODELETE getString() const;
-    const ArrayValue& LEGACY_NODELETE getArray() const;
-    const MapValue& LEGACY_NODELETE getMap() const;
+    NODELETE const String& getString() const;
+    NODELETE const ArrayValue& getArray() const;
+    NODELETE const MapValue& getMap() const;
 
 private:
     Type m_type;

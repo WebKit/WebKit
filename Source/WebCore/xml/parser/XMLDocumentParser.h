@@ -119,7 +119,7 @@ private:
 
     void end();
 
-    void LEGACY_NODELETE pauseParsing();
+    NODELETE void pauseParsing();
     void resumeParsing();
 
     bool appendFragmentSource(const String&);

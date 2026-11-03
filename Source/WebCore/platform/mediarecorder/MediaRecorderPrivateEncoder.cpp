@@ -52,7 +52,7 @@ namespace WebCore {
 
 class MediaRecorderPrivateEncoder::Listener : public MediaRecorderPrivateWriterListener {
 public:
-    static Ref<Listener> LEGACY_NODELETE create(MediaRecorderPrivateEncoder& encoder) { return adoptRef(*new Listener(encoder)); }
+    NODELETE static Ref<Listener> create(MediaRecorderPrivateEncoder& encoder) { return adoptRef(*new Listener(encoder)); }
 
 private:
     Listener(MediaRecorderPrivateEncoder& encoder)

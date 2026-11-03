@@ -39,7 +39,7 @@ class InternalSettings : public InternalSettingsGenerated {
 public:
     static Ref<InternalSettings> create(Page*);
     static InternalSettings* from(Page*);
-    void LEGACY_NODELETE hostDestroyed();
+    NODELETE void hostDestroyed();
     void resetToConsistentState();
 
     // Settings
@@ -69,15 +69,15 @@ public:
     ExceptionOr<void> setFontLoadTimingOverride(FontLoadTimingOverride);
 
     using ForcedAccessibilityValue = WebCore::ForcedAccessibilityValue;
-    ForcedAccessibilityValue LEGACY_NODELETE forcedColorsAreInvertedAccessibilityValue() const;
-    void LEGACY_NODELETE setForcedColorsAreInvertedAccessibilityValue(ForcedAccessibilityValue);
-    ForcedAccessibilityValue LEGACY_NODELETE forcedDisplayIsMonochromeAccessibilityValue() const;
-    void LEGACY_NODELETE setForcedDisplayIsMonochromeAccessibilityValue(ForcedAccessibilityValue);
-    ForcedAccessibilityValue LEGACY_NODELETE forcedPrefersContrastAccessibilityValue() const;
-    void LEGACY_NODELETE setForcedPrefersContrastAccessibilityValue(ForcedAccessibilityValue);
-    ForcedAccessibilityValue LEGACY_NODELETE forcedPrefersReducedMotionAccessibilityValue() const;
-    void LEGACY_NODELETE setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue);
-    ForcedAccessibilityValue LEGACY_NODELETE forcedSupportsHighDynamicRangeValue() const;
+    NODELETE ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue() const;
+    NODELETE void setForcedColorsAreInvertedAccessibilityValue(ForcedAccessibilityValue);
+    NODELETE ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue() const;
+    NODELETE void setForcedDisplayIsMonochromeAccessibilityValue(ForcedAccessibilityValue);
+    NODELETE ForcedAccessibilityValue forcedPrefersContrastAccessibilityValue() const;
+    NODELETE void setForcedPrefersContrastAccessibilityValue(ForcedAccessibilityValue);
+    NODELETE ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue() const;
+    NODELETE void setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue);
+    NODELETE ForcedAccessibilityValue forcedSupportsHighDynamicRangeValue() const;
     void setForcedSupportsHighDynamicRangeValue(ForcedAccessibilityValue);
 
     ExceptionOr<void> setAllowAnimationControlsOverride(bool);
@@ -85,9 +85,9 @@ public:
     // DeprecatedGlobalSettings.
     ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
 
-    bool LEGACY_NODELETE vp9DecoderEnabled() const;
+    NODELETE bool vp9DecoderEnabled() const;
 
-    ExceptionOr<void> LEGACY_NODELETE setShouldManageAudioSessionCategory(bool);
+    NODELETE ExceptionOr<void> setShouldManageAudioSessionCategory(bool);
 
     // CaptionUserPreferences.
     enum class TrackKind : uint8_t { Subtitles, Captions, TextDescriptions };
@@ -123,7 +123,7 @@ private:
 
     bool isInternalSettings() const final { return true; }
 
-    Settings& LEGACY_NODELETE settings() const;
+    NODELETE Settings& settings() const;
     static ASCIILiteral supplementName();
 
     class Backup {

@@ -64,7 +64,7 @@ public:
 private:
     friend NeverDestroyed<ResourceUsageThread>;
     ResourceUsageThread();
-    static ResourceUsageThread& LEGACY_NODELETE singleton();
+    NODELETE static ResourceUsageThread& singleton();
 
     void waitUntilObservers();
     void notifyObservers(ResourceUsageData&&);
@@ -74,7 +74,7 @@ private:
     void createThreadIfNeeded();
     [[noreturn]] void threadBody();
 
-    void LEGACY_NODELETE platformSaveStateBeforeStarting();
+    NODELETE void platformSaveStateBeforeStarting();
     void platformCollectCPUData(JSC::VM*, ResourceUsageData&);
     void platformCollectMemoryData(JSC::VM*, ResourceUsageData&);
 

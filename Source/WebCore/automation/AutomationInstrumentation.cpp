@@ -46,7 +46,7 @@ namespace WebCore {
 using namespace Inspector;
 
 namespace {
-static WeakPtr<AutomationInstrumentationClient>& LEGACY_NODELETE automationClient()
+NODELETE static WeakPtr<AutomationInstrumentationClient>& automationClient()
 {
     static NeverDestroyed<WeakPtr<AutomationInstrumentationClient>> s_client;
     return s_client.get();

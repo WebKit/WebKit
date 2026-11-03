@@ -88,7 +88,7 @@ struct ScrollSnapOffsetsInfo {
     // the snapport in an axis, then any scroll position in which the snap area covers the snapport is
     // a valid snap position in that axis. Returns true if any of the snap offset's areas is larger
     // than the snapport and covers it at the given offset.
-    bool LEGACY_NODELETE snapOffsetCoversSnapport(const SnapOffset<UnitType>&, ScrollEventAxis, UnitType axisOffset, UnitType viewportLength) const;
+    NODELETE bool snapOffsetCoversSnapport(const SnapOffset<UnitType>&, ScrollEventAxis, UnitType axisOffset, UnitType viewportLength) const;
 
     template<typename OutputType> OutputType convertUnits(float deviceScaleFactor = 0.0) const;
     template<typename SizeType, typename PointType>
@@ -118,7 +118,7 @@ WEBCORE_EXPORT std::pair<LayoutUnit, std::optional<unsigned>> LayoutScrollSnapOf
 // Update the snap offsets for this scrollable area, given the RenderBox of the scroll container, the StyleComputedStyle
 // which defines the scroll-snap properties, and the viewport rectangle with the origin at the top left of
 // the scrolling container's border box.
-bool LEGACY_NODELETE mayHaveScrollSnappedBoxes(const RenderBox& scrollingElementBox);
+NODELETE bool mayHaveScrollSnappedBoxes(const RenderBox& scrollingElementBox);
 void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const Style::ComputedStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates, WritingMode, Element* focusedElement, Element* targetElement);
 // Adjust the scroll-into-view alignment of each axis to honor the target's scroll-snap-align. Only axes
 // without an author-specified alignment (adjustX / adjustY) are adjusted, per the CSSOM View rule that an

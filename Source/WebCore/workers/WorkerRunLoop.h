@@ -61,7 +61,7 @@ public:
     void postTask(ScriptExecutionContext::Task&&);
     void postDebuggerTask(ScriptExecutionContext::Task&&);
 
-    WEBCORE_EXPORT static String LEGACY_NODELETE defaultMode();
+    NODELETE WEBCORE_EXPORT static String defaultMode();
 
     unsigned long createUniqueId() { return ++m_uniqueId; }
 
@@ -135,7 +135,7 @@ class WorkerMainRunLoop final : public WorkerRunLoop, public CanMakeWeakPtr<Work
 public:
     WorkerMainRunLoop();
 
-    void LEGACY_NODELETE setGlobalScope(WorkerOrWorkletGlobalScope&);
+    NODELETE void setGlobalScope(WorkerOrWorkletGlobalScope&);
 
     void terminate() final { m_terminated = true; }
     bool terminated() const final { return m_terminated; }

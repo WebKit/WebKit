@@ -56,11 +56,11 @@ public:
 
     FloatingContext::Constraints floatConstraintsForLine(InlineLayoutUnit lineLogicalTop, InlineLayoutUnit contentLogicalHeight, const FloatingContext&) const;
 
-    static InlineRect LEGACY_NODELETE flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode);
+    NODELETE static InlineRect flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode);
 
     static InlineLayoutUnit horizontalAlignmentOffset(const Style::ComputedStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalRight, InlineLayoutUnit hangingTrailingWidth, bool isLastLineOrLineEndsWithForcedLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride = std::nullopt);
 
-    static InlineItemPosition LEGACY_NODELETE leadingInlineItemPositionForNextLine(const LineLayoutResult&, std::optional<InlineItemPosition> previousLineContentEnd, InlineItemPosition layoutRangeEnd);
+    NODELETE static InlineItemPosition leadingInlineItemPositionForNextLine(const LineLayoutResult&, std::optional<InlineItemPosition> previousLineContentEnd, InlineItemPosition layoutRangeEnd);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft, bool useFirstLineStyle) const;
     InlineLayoutUnit intrinsicMarginBoxWidth(const ElementBox&, IntrinsicWidthMode) const;
@@ -69,11 +69,11 @@ public:
 
     static std::pair<InlineLayoutUnit, InlineLayoutUnit> textEmphasisForInlineBox(const Box&, const ElementBox& rootBox);
 
-    static LineEndingTruncationPolicy LEGACY_NODELETE lineEndingTruncationPolicy(const Style::ComputedStyle& rootStyle, size_t numberOfContentfulLines, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineIsContentful);
+    NODELETE static LineEndingTruncationPolicy lineEndingTruncationPolicy(const Style::ComputedStyle& rootStyle, size_t numberOfContentfulLines, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineIsContentful);
 
-    static std::optional<LineLayoutResult::InlineContentEnding> LEGACY_NODELETE inlineContentEnding(const LineResult&);
+    NODELETE static std::optional<LineLayoutResult::InlineContentEnding> inlineContentEnding(const LineResult&);
 
-    bool LEGACY_NODELETE shouldDiscardRemainingContentInBlockDirection() const;
+    NODELETE bool shouldDiscardRemainingContentInBlockDirection() const;
 
     std::optional<BlockOverflowEllipsis> blockEllipsisForLine() const;
 

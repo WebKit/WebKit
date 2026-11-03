@@ -39,7 +39,7 @@ private:
     void willBeRemovedFromTree() override;
     LayoutUnit containingBlockLogicalWidthForContent() const final;
 
-    RenderTable* LEGACY_NODELETE table() const;
+    NODELETE RenderTable* table() const;
 };
 
 } // namespace WebCore

@@ -49,14 +49,14 @@ public:
 
     TextBoxSelectableRange selectableRange() const;
 
-    const FontCascade& LEGACY_NODELETE fontCascade() const;
+    NODELETE const FontCascade& fontCascade() const;
 
     TextRun textRun(TextRunMode = TextRunMode::Painting) const;
 
     const RenderText& renderer() const { return downcast<RenderText>(Box::renderer()); }
 
     // This returns the next text box generated for the same RenderText/Layout::InlineTextBox.
-    TextBoxIterator LEGACY_NODELETE nextTextBox() const;
+    NODELETE TextBoxIterator nextTextBox() const;
 };
 
 // Text boxes generated for one RenderText, in display order.

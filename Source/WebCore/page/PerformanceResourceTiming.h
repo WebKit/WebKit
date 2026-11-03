@@ -44,11 +44,11 @@ class ResourceTiming;
 
 class PerformanceResourceTiming : public PerformanceEntry {
 public:
-    static Ref<PerformanceResourceTiming> LEGACY_NODELETE create(MonotonicTime timeOrigin, ResourceTiming&&);
+    NODELETE static Ref<PerformanceResourceTiming> create(MonotonicTime timeOrigin, ResourceTiming&&);
 
     const String& initiatorType() const LIFETIME_BOUND { return m_resourceTiming.initiatorType(); }
     String deliveryType() const { return m_resourceTiming.deliveryType(); }
-    const String& LEGACY_NODELETE nextHopProtocol() const LIFETIME_BOUND;
+    NODELETE const String& nextHopProtocol() const LIFETIME_BOUND;
 
     double workerStart() const;
     double redirectStart() const;
@@ -64,13 +64,13 @@ public:
     double firstInterimResponseStart() const;
     double responseStart() const;
     double responseEnd() const;
-    uint64_t LEGACY_NODELETE transferSize() const;
-    uint64_t LEGACY_NODELETE encodedBodySize() const;
-    uint64_t LEGACY_NODELETE decodedBodySize() const;
+    NODELETE uint64_t transferSize() const;
+    NODELETE uint64_t encodedBodySize() const;
+    NODELETE uint64_t decodedBodySize() const;
     double workerRouterEvaluationStart() const;
     double workerCacheLookupStart() const;
-    const String& LEGACY_NODELETE workerMatchedRouterSource() const LIFETIME_BOUND;
-    const String& LEGACY_NODELETE workerFinalRouterSource() const LIFETIME_BOUND;
+    NODELETE const String& workerMatchedRouterSource() const LIFETIME_BOUND;
+    NODELETE const String& workerFinalRouterSource() const LIFETIME_BOUND;
 
     const Vector<Ref<PerformanceServerTiming>>& serverTiming() const LIFETIME_BOUND { return m_serverTiming; }
     ResourceTiming& resourceTiming() LIFETIME_BOUND { return m_resourceTiming; }
@@ -85,7 +85,7 @@ protected:
     bool isLoadedFromServiceWorker() const { return m_resourceTiming.isLoadedFromServiceWorker(); }
 
     // Navigation timing exposes redirect timing under a different condition than the TAO check.
-    virtual bool LEGACY_NODELETE shouldExposeRedirectTiming() const;
+    NODELETE virtual bool shouldExposeRedirectTiming() const;
 
     MonotonicTime m_timeOrigin;
     ResourceTiming m_resourceTiming;

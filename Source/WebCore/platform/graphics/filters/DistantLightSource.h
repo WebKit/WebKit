@@ -32,7 +32,7 @@ class DistantLightSource : public LightSource {
     friend struct IPC::ArgumentCoder<DistantLightSource>;
 
 public:
-    WEBCORE_EXPORT static Ref<DistantLightSource> LEGACY_NODELETE create(float azimuth, float elevation);
+    NODELETE WEBCORE_EXPORT static Ref<DistantLightSource> create(float azimuth, float elevation);
 
     bool operator==(const DistantLightSource&) const;
 
@@ -44,7 +44,7 @@ public:
     bool setElevation(float) override;
 
     void initPaintingData(const Filter&, const FilterImage& result, PaintingData&) const override;
-    ComputedLightingData LEGACY_NODELETE computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
+    NODELETE ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
 

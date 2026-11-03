@@ -51,7 +51,7 @@ std::optional<BoundaryPoint> makeBoundaryPointAfterNode(Node& node)
     return BoundaryPoint { parent.releaseNonNull(), node.computeNodeIndex() + 1 };
 }
 
-static bool LEGACY_NODELETE isOffsetBeforeChild(ContainerNode& container, unsigned offset, Node& child)
+NODELETE static bool isOffsetBeforeChild(ContainerNode& container, unsigned offset, Node& child)
 {
     if (!offset)
         return true;
@@ -59,7 +59,7 @@ static bool LEGACY_NODELETE isOffsetBeforeChild(ContainerNode& container, unsign
     if (child.parentNode() != &container)
         return false;
     unsigned currentOffset = 0;
-    for (auto currentChild = container.firstChild(); currentChild && currentChild != &child; currentChild = currentChild->nextSibling()) {
+    for (auto* currentChild = container.firstChild(); currentChild && currentChild != &child; currentChild = currentChild->nextSibling()) {
         if (offset <= ++currentOffset)
             return true;
     }
@@ -71,18 +71,18 @@ template<TreeType treeType> std::partial_ordering treeOrderInternal(const Bounda
     if (a.container.ptr() == b.container.ptr())
         return a.offset <=> b.offset;
 
-    for (RefPtr ancestor = b.container.copyRef(); ancestor; ) {
-        RefPtr nextAncestor = parent<treeType>(*ancestor);
+    for (auto* ancestor = b.container.ptr(); ancestor; ) {
+        auto* nextAncestor = parent<treeType>(*ancestor);
         if (nextAncestor == a.container.ptr())
             return isOffsetBeforeChild(*nextAncestor, a.offset, *ancestor) ? std::strong_ordering::less : std::strong_ordering::greater;
-        ancestor = WTF::move(nextAncestor);
+        ancestor = nextAncestor;
     }
 
-    for (RefPtr ancestor = a.container.copyRef(); ancestor; ) {
-        RefPtr nextAncestor = parent<treeType>(*ancestor);
+    for (auto* ancestor = a.container.ptr(); ancestor; ) {
+        auto* nextAncestor = parent<treeType>(*ancestor);
         if (nextAncestor == b.container.ptr())
             return isOffsetBeforeChild(*nextAncestor, b.offset, *ancestor) ? std::strong_ordering::greater : std::strong_ordering::less;
-        ancestor = WTF::move(nextAncestor);
+        ancestor = nextAncestor;
     }
 
     return treeOrder<treeType>(a.container, b.container);

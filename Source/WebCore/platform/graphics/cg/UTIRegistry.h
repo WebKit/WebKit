@@ -31,7 +31,7 @@
 namespace WebCore {
 
 const MemoryCompactLookupOnlyRobinHoodHashSet<String>& supportedImageTypes();
-MemoryCompactRobinHoodHashSet<String>& LEGACY_NODELETE additionalSupportedImageTypes();
+NODELETE MemoryCompactRobinHoodHashSet<String>& additionalSupportedImageTypes();
 WEBCORE_EXPORT void setAdditionalSupportedImageTypes(const Vector<String>&);
 WEBCORE_EXPORT void setAdditionalSupportedImageTypesForTesting(const String&);
 WEBCORE_EXPORT bool isSupportedImageType(const String&);

@@ -43,10 +43,10 @@ public:
     const MatchResult& matchResult() const LIFETIME_BOUND { return m_result; }
 
 private:
-    bool LEGACY_NODELETE isLeftPage(int pageIndex) const;
+    NODELETE bool isLeftPage(int pageIndex) const;
     bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
-    bool LEGACY_NODELETE isFirstPage(int pageIndex) const;
-    WTF::String LEGACY_NODELETE pageName(int pageIndex) const;
+    NODELETE bool isFirstPage(int pageIndex) const;
+    NODELETE WTF::String pageName(int pageIndex) const;
 
     void matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName);
     void matchPageRulesForList(Vector<Ref<StyleRulePage>>& matchedRules, const Vector<Ref<StyleRulePage>>& rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName);

@@ -34,7 +34,7 @@ class HTMLOptionElement;
 
 class AccessibilityMenuListOption final : public AccessibilityNodeObject {
 public:
-    static Ref<AccessibilityMenuListOption> LEGACY_NODELETE create(AXID, HTMLOptionElement&, AXObjectCache&);
+    NODELETE static Ref<AccessibilityMenuListOption> create(AXID, HTMLOptionElement&, AXObjectCache&);
     void setParent(AccessibilityObject* parent) { m_parent = parent; }
 
 private:
@@ -46,7 +46,7 @@ private:
     bool canHaveChildren() const final { return false; }
     AccessibilityObject* parentObject() const final { return m_parent.get(); }
 
-    HTMLOptionElement* LEGACY_NODELETE optionElement() const;
+    NODELETE HTMLOptionElement* optionElement() const;
     Element* actionElement() const final;
     bool isEnabled() const final;
     bool isVisible() const final;

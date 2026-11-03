@@ -880,7 +880,7 @@ void RenderLayerScrollableArea::createScrollbarsController()
     m_layer.page().chrome().client().ensureScrollbarsController(protect(m_layer.page()), *this);
 }
 
-static inline RenderElement* LEGACY_NODELETE rendererForScrollbar(RenderLayerModelObject& renderer)
+NODELETE static inline RenderElement* rendererForScrollbar(RenderLayerModelObject& renderer)
 {
     if (auto* element = renderer.element()) {
         if (auto* shadowRoot = element->containingShadowRoot()) {

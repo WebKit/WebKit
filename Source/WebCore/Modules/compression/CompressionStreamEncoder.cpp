@@ -74,7 +74,7 @@ bool CompressionStreamEncoder::didDeflateFinish(int result) const
 }
 
 // See https://www.zlib.net/manual.html#Constants
-static bool LEGACY_NODELETE didDeflateFail(int result)
+NODELETE static bool didDeflateFail(int result)
 {
     return result != Z_OK && result != Z_STREAM_END && result != Z_BUF_ERROR;
 }
@@ -88,7 +88,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(std::span<
     return compressZlib(input);
 }
 
-static ZStream::Algorithm LEGACY_NODELETE compressionAlgorithm(Formats::CompressionFormat format)
+NODELETE static ZStream::Algorithm compressionAlgorithm(Formats::CompressionFormat format)
 {
     switch (format) {
     case Formats::CompressionFormat::Brotli:

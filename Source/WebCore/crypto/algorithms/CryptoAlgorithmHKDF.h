@@ -36,7 +36,7 @@ class CryptoAlgorithmHKDF final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "HKDF"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::HKDF;
-    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
+    NODELETE static Ref<CryptoAlgorithm> create();
 
 private:
     CryptoAlgorithmHKDF() = default;

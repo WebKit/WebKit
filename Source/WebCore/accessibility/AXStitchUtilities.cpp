@@ -45,7 +45,7 @@ StitchingContext::StitchingContext(const AccessibilityNodeObject& containingBloc
     : containingBlockFlowObject(containingBlockFlowObject)
 { }
 
-static bool LEGACY_NODELETE hasEnclosingInputElement(Node* node)
+NODELETE static bool hasEnclosingInputElement(Node* node)
 {
     return node && is<HTMLInputElement>(node->shadowHost());
 }
@@ -60,7 +60,7 @@ static bool hasStitchBreakingRole(Element& element)
     });
 }
 
-static bool LEGACY_NODELETE hasStitchBreakingTag(Element& element)
+NODELETE static bool hasStitchBreakingTag(Element& element)
 {
     switch (element.elementName()) {
     case ElementName::HTML_ins:

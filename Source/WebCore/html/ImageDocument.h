@@ -45,7 +45,7 @@ public:
         return document;
     }
 
-    WEBCORE_EXPORT HTMLImageElement* LEGACY_NODELETE imageElement() const;
+    NODELETE WEBCORE_EXPORT HTMLImageElement* imageElement() const;
 
     void updateDuringParsing();
     void finishedParsing();

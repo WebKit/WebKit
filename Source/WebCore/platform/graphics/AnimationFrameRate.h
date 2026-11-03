@@ -56,12 +56,12 @@ constexpr const int IntervalThrottlingFactor { 2 };
 constexpr const FramesPerSecond FullSpeedFramesPerSecond = 60;
 constexpr const FramesPerSecond HalfSpeedThrottlingFramesPerSecond = 30;
 
-WEBCORE_EXPORT FramesPerSecond LEGACY_NODELETE framesPerSecondNearestFullSpeed(FramesPerSecond);
+NODELETE WEBCORE_EXPORT FramesPerSecond framesPerSecondNearestFullSpeed(FramesPerSecond);
 
 // This will return std::nullopt if throttling results in a frequency < 1fps.
-WEBCORE_EXPORT std::optional<FramesPerSecond> LEGACY_NODELETE preferredFramesPerSecond(OptionSet<ThrottlingReason>, std::optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS);
+NODELETE WEBCORE_EXPORT std::optional<FramesPerSecond> preferredFramesPerSecond(OptionSet<ThrottlingReason>, std::optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS);
 
-WEBCORE_EXPORT Seconds LEGACY_NODELETE preferredFrameInterval(OptionSet<ThrottlingReason>, std::optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS);
+NODELETE WEBCORE_EXPORT Seconds preferredFrameInterval(OptionSet<ThrottlingReason>, std::optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS);
 
 WEBCORE_EXPORT FramesPerSecond preferredFramesPerSecondFromInterval(Seconds);
 

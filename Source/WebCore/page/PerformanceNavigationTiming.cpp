@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static PerformanceNavigationTiming::NavigationType LEGACY_NODELETE toPerformanceNavigationTimingNavigationType(NavigationType navigationType)
+NODELETE static PerformanceNavigationTiming::NavigationType toPerformanceNavigationTimingNavigationType(NavigationType navigationType)
 {
     switch (navigationType) {
     case NavigationType::BackForward:

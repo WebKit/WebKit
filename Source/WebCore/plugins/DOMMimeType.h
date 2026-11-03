@@ -31,13 +31,13 @@ class Navigator;
 
 class DOMMimeType : public RefCounted<DOMMimeType> {
 public:
-    static Ref<DOMMimeType> LEGACY_NODELETE create(Navigator&, const MimeClassInfo&, DOMPlugin&);
+    NODELETE static Ref<DOMMimeType> create(Navigator&, const MimeClassInfo&, DOMPlugin&);
     ~DOMMimeType();
 
-    AtomString LEGACY_NODELETE type() const;
+    NODELETE AtomString type() const;
     String suffixes() const;
-    String LEGACY_NODELETE description() const;
-    RefPtr<DOMPlugin> LEGACY_NODELETE enabledPlugin() const;
+    NODELETE String description() const;
+    NODELETE RefPtr<DOMPlugin> enabledPlugin() const;
 
     Navigator* navigator() { return m_navigator.get(); }
 

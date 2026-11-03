@@ -71,7 +71,7 @@ public:
     DragController(Page&, std::unique_ptr<DragClient>&&);
     ~DragController();
 
-    static DragOperation LEGACY_NODELETE platformGenericDragOperation();
+    NODELETE static DragOperation platformGenericDragOperation();
 
     WEBCORE_EXPORT Variant<std::optional<DragOperation>, RemoteUserInputEventData> dragEnteredOrUpdated(LocalFrame&, DragData&&);
     WEBCORE_EXPORT void dragExited(LocalFrame&, DragData&&);
@@ -116,7 +116,7 @@ public:
     WEBCORE_EXPORT static std::pair<DragImage, RefPtr<TextIndicator>> dragImageAndTextIndicatorForSelection(LocalFrame&, bool forceBlackText = false);
     static std::pair<DragImage, RefPtr<TextIndicator>> dragImageAndTextIndicatorForLink(Element&, URL&, const String& label, float deviceScaleFactor);
 
-    static const IntSize& LEGACY_NODELETE maxDragImageSize();
+    NODELETE static const IntSize& maxDragImageSize();
     static const int MaxOriginalImageArea;
     static const int DragIconRightInset;
     static const int DragIconBottomInset;
@@ -133,7 +133,7 @@ private:
     std::optional<DragOperation> dragOperation(const DragData&);
     void clearDragCaret();
     bool dragIsMove(FrameSelection&, const DragData&);
-    bool LEGACY_NODELETE isCopyKeyDown(const DragData&);
+    NODELETE bool isCopyKeyDown(const DragData&);
 
     void mouseMovedIntoDocument(RefPtr<Document>&&);
     void disallowFileAccessIfNeeded(DragData&);

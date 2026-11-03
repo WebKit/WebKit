@@ -53,7 +53,7 @@ public:
         return adoptRef(*new GPUComputePassEncoder(WTF::move(backing), WTF::move(label), commandEncoder));
     }
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
     void setPipeline(const GPUComputePipeline&);
@@ -77,7 +77,7 @@ public:
     ::WebGPU::ComputePassEncoder& backing() { return m_backing; }
     const ::WebGPU::ComputePassEncoder& backing() const { return m_backing; }
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

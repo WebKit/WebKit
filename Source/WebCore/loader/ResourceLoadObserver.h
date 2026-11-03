@@ -46,9 +46,9 @@ public:
     // https://fetch.spec.whatwg.org/#request-destination-script-like
     enum class FetchDestinationIsScriptLike : bool { No, Yes };
 
-    WEBCORE_EXPORT static ResourceLoadObserver& LEGACY_NODELETE singleton();
-    WEBCORE_EXPORT static ResourceLoadObserver* LEGACY_NODELETE singletonIfExists();
-    WEBCORE_EXPORT static void LEGACY_NODELETE setShared(ResourceLoadObserver&);
+    NODELETE WEBCORE_EXPORT static ResourceLoadObserver& singleton();
+    NODELETE WEBCORE_EXPORT static ResourceLoadObserver* singletonIfExists();
+    NODELETE WEBCORE_EXPORT static void setShared(ResourceLoadObserver&);
     
     virtual ~ResourceLoadObserver() { }
 

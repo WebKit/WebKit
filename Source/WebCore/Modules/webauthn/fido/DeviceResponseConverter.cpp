@@ -45,7 +45,7 @@ namespace fido {
 using namespace WebCore;
 using CBOR = cbor::CBORValue;
 
-static ProtocolVersion LEGACY_NODELETE convertStringToProtocolVersion(const String& version)
+NODELETE static ProtocolVersion convertStringToProtocolVersion(const String& version)
 {
     if (version == kCtap21Version)
         return ProtocolVersion::kCtap21;

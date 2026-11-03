@@ -48,11 +48,11 @@ public:
     using DataHolder = MediaStreamTrackHandleDataHolder;
 
     static ExceptionOr<Ref<MediaStreamTrackHandle>> create(MediaStreamTrack&);
-    static Ref<MediaStreamTrackHandle> LEGACY_NODELETE create(DataHolder&&);
-    static Ref<MediaStreamTrackHandle> LEGACY_NODELETE create(ScriptExecutionContextIdentifier, WeakPtr<MediaStreamTrack, WeakPtrImplWithEventTargetData>&&, Ref<MediaStreamTrack::Keeper>&&, Ref<MediaStreamTrackPrivateSourceObserver>&&);
+    NODELETE static Ref<MediaStreamTrackHandle> create(DataHolder&&);
+    NODELETE static Ref<MediaStreamTrackHandle> create(ScriptExecutionContextIdentifier, WeakPtr<MediaStreamTrack, WeakPtrImplWithEventTargetData>&&, Ref<MediaStreamTrack::Keeper>&&, Ref<MediaStreamTrackPrivateSourceObserver>&&);
 
     bool isDetached() const { return m_isDetached; }
-    UniqueRef<DataHolder> LEGACY_NODELETE detach();
+    NODELETE UniqueRef<DataHolder> detach();
 
     ScriptExecutionContextIdentifier trackContextIdentifier() const { return m_contextIdentifier; }
     WeakPtr<MediaStreamTrack, WeakPtrImplWithEventTargetData> track() const { return m_track; }

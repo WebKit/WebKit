@@ -56,12 +56,12 @@ namespace {
 enum class AlphaFormat : uint8_t { Opaque, Unpremultiplied, Premultiplied };
 
 // Whether the color components already have the alpha applied to them.
-constexpr bool LEGACY_NODELETE isAlphaApplied(AlphaFormat alphaFormat)
+NODELETE constexpr bool isAlphaApplied(AlphaFormat alphaFormat)
 {
     return alphaFormat != AlphaFormat::Unpremultiplied;
 }
 
-constexpr AlphaFormat LEGACY_NODELETE toAlphaFormat(AlphaPremultiplication alphaFormat, PixelFormat pixelFormat)
+NODELETE constexpr AlphaFormat toAlphaFormat(AlphaPremultiplication alphaFormat, PixelFormat pixelFormat)
 {
     if (pixelFormatIsOpaque(pixelFormat))
         return AlphaFormat::Opaque;
@@ -72,7 +72,7 @@ constexpr AlphaFormat LEGACY_NODELETE toAlphaFormat(AlphaPremultiplication alpha
 
 }
 
-static bool LEGACY_NODELETE isSupportedConversionFormat(PixelFormat pixelFormat)
+NODELETE static bool isSupportedConversionFormat(PixelFormat pixelFormat)
 {
     switch (pixelFormat) {
     case PixelFormat::RGBX8:
@@ -155,7 +155,7 @@ static inline vImage_CGImageFormat makeVImageCGImageFormat(const PixelBufferForm
 }
 
 template<typename View>
-static vImage_Buffer LEGACY_NODELETE makeVImageBuffer(const View& view, const IntSize& size)
+NODELETE static vImage_Buffer makeVImageBuffer(const View& view, const IntSize& size)
 {
     vImage_Buffer result;
 
@@ -397,20 +397,20 @@ static bool convertImagePixelsSkia(const ConstPixelBufferConversionView& source,
 #error "PixelFormat::RGBA16 unimplemented."
 #endif
 
-static constexpr uint8_t LEGACY_NODELETE premultiply(uint8_t unpremultiplied, uint8_t alpha)
+NODELETE static constexpr uint8_t premultiply(uint8_t unpremultiplied, uint8_t alpha)
 {
     // Same as vImagePremultiplyData_ARGB8888: (src * alpha + 127) / 255
     return (unpremultiplied * alpha + 127) / 255;
 }
 
-static constexpr uint8_t LEGACY_NODELETE unpremultiply(uint8_t premultiplied, uint8_t alpha)
+NODELETE static constexpr uint8_t unpremultiply(uint8_t premultiplied, uint8_t alpha)
 {
     // Same as vImageUnpremultiplyData_RGBA8888: (MIN(src_color, alpha) * 255 + alpha/2) / alpha
     return (std::min(premultiplied, alpha) * 255 + alpha / 2) / alpha;
 }
 
 template <AlphaFormat sourceAlphaFormat, AlphaFormat destinationAlphaFormat, bool swapComponentOrder>
-static bool LEGACY_NODELETE convertImagePixelsUnacceleratedFunction(const ConstPixelBufferConversionView& sourceView, const PixelBufferConversionView& destinationView, const IntSize& destinationSize)
+NODELETE static bool convertImagePixelsUnacceleratedFunction(const ConstPixelBufferConversionView& sourceView, const PixelBufferConversionView& destinationView, const IntSize& destinationSize)
 {
     // The caller has established that both formats are 8 bits per component, 4 bytes per pixel, with
     // the alpha (or the ignored component that takes its place) in the last byte.
@@ -563,7 +563,7 @@ static bool platformConvertImagePixels(const ConstPixelBufferConversionView& sou
 
 // The rows the conversion reads and writes have to be inside the buffer the view describes.
 template<typename View>
-static bool LEGACY_NODELETE hasEnoughBytesForConversion(const View& view, const IntSize& destinationSize)
+NODELETE static bool hasEnoughBytesForConversion(const View& view, const IntSize& destinationSize)
 {
     if (destinationSize.width() <= 0 || destinationSize.height() <= 0)
         return true;

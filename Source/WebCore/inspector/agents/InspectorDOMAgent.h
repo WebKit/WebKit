@@ -100,16 +100,16 @@ public:
     static String toErrorString(ExceptionCode);
     static String toErrorString(Exception&&);
 
-    static String LEGACY_NODELETE documentURLString(Document*);
+    NODELETE static String documentURLString(Document*);
     static String documentBaseURLString(Document*);
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
     // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
-    static Node* LEGACY_NODELETE innerFirstChild(Node*);
-    static Node* LEGACY_NODELETE innerNextSibling(Node*);
-    static Node* LEGACY_NODELETE innerPreviousSibling(Node*);
-    static unsigned LEGACY_NODELETE innerChildNodeCount(Node*);
-    static Node* LEGACY_NODELETE innerParentNode(Node*);
+    NODELETE static Node* innerFirstChild(Node*);
+    NODELETE static Node* innerNextSibling(Node*);
+    NODELETE static Node* innerPreviousSibling(Node*);
+    NODELETE static unsigned innerChildNodeCount(Node*);
+    NODELETE static Node* innerParentNode(Node*);
 
     static Node* scriptValueAsNode(JSC::JSValue);
     static JSC::JSValue nodeAsScriptValue(JSC::JSGlobalObject&, Node*);
@@ -192,7 +192,7 @@ public:
     void didInsertDOMNode(Node&);
     void didRemoveDOMNode(Node&);
     void willDestroyDOMNode(Node&);
-    void LEGACY_NODELETE willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
+    NODELETE void willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
     void didModifyDOMAttr(Element&, const AtomString& name, const AtomString& value);
     void didRemoveDOMAttr(Element&, const AtomString& name);
     void characterDataModified(CharacterData&);

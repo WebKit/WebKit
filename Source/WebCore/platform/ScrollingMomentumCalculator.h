@@ -39,7 +39,7 @@ class FloatSize;
 class ScrollingMomentumCalculator {
     WTF_MAKE_TZONE_ALLOCATED(ScrollingMomentumCalculator);
 public:
-    WEBCORE_EXPORT static void LEGACY_NODELETE setPlatformMomentumScrollingPredictionEnabled(bool);
+    NODELETE WEBCORE_EXPORT static void setPlatformMomentumScrollingPredictionEnabled(bool);
 
     static std::unique_ptr<ScrollingMomentumCalculator> create(const ScrollExtents&, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
 
@@ -76,12 +76,12 @@ private:
     FloatPoint scrollOffsetAfterElapsedTime(Seconds) final;
     Seconds animationDuration() final;
 
-    void LEGACY_NODELETE initializeInterpolationCoefficientsIfNecessary();
-    void LEGACY_NODELETE initializeSnapProgressCurve();
-    float LEGACY_NODELETE animationProgressAfterElapsedTime(Seconds) const;
+    NODELETE void initializeInterpolationCoefficientsIfNecessary();
+    NODELETE void initializeSnapProgressCurve();
+    NODELETE float animationProgressAfterElapsedTime(Seconds) const;
 
-    FloatPoint LEGACY_NODELETE linearlyInterpolatedOffsetAtProgress(float progress);
-    FloatPoint LEGACY_NODELETE cubicallyInterpolatedOffsetAtProgress(float progress) const;
+    NODELETE FloatPoint linearlyInterpolatedOffsetAtProgress(float progress);
+    NODELETE FloatPoint cubicallyInterpolatedOffsetAtProgress(float progress) const;
 
     float m_snapAnimationCurveMagnitude { 0 };
     float m_snapAnimationDecayFactor { 0 };

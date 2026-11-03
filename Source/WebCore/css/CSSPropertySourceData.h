@@ -45,7 +45,7 @@ class StyleRuleBase;
 struct SourceRange {
     NODELETE SourceRange();
     NODELETE SourceRange(unsigned start, unsigned end);
-    unsigned LEGACY_NODELETE length() const;
+    NODELETE unsigned length() const;
 
     unsigned start;
     unsigned end;

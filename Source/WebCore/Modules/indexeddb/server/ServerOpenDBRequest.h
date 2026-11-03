@@ -42,13 +42,13 @@ class UniqueIDBDatabaseTransaction;
 
 class ServerOpenDBRequest : public RefCounted<ServerOpenDBRequest> {
 public:
-    static Ref<ServerOpenDBRequest> LEGACY_NODELETE create(IDBConnectionToClient&, const IDBOpenRequestData&);
+    NODELETE static Ref<ServerOpenDBRequest> create(IDBConnectionToClient&, const IDBOpenRequestData&);
 
     IDBConnectionToClient& connection() { return m_connection; }
     const IDBOpenRequestData& requestData() const LIFETIME_BOUND { return m_requestData; }
 
-    bool LEGACY_NODELETE isOpenRequest() const;
-    bool LEGACY_NODELETE isDeleteRequest() const;
+    NODELETE bool isOpenRequest() const;
+    NODELETE bool isDeleteRequest() const;
 
     void maybeNotifyRequestBlocked(uint64_t currentVersion);
 

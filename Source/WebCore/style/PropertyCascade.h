@@ -106,12 +106,12 @@ public:
 
     bool hasCustomProperty(const AtomString&) const;
     const Property& customProperty(const AtomString&) const LIFETIME_BOUND;
-    const Property& LEGACY_NODELETE functionResultProperty() const LIFETIME_BOUND;
+    NODELETE const Property& functionResultProperty() const LIFETIME_BOUND;
 
     std::span<const CSSPropertyID> logicalGroupPropertyIDs() const LIFETIME_BOUND;
     const OrderedHashMap<AtomString, Property>& customProperties() const LIFETIME_BOUND { return m_customProperties; }
 
-    ValueOrReference<HashSet<AnimatableCSSProperty>> LEGACY_NODELETE overriddenAnimatedProperties() const;
+    NODELETE ValueOrReference<HashSet<AnimatableCSSProperty>> overriddenAnimatedProperties() const;
 
     const MatchResult& matchResult() const LIFETIME_BOUND { return m_matchResult; }
 
@@ -130,12 +130,12 @@ private:
     void addPositionTryFallbackProperties();
 
     void set(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
-    void LEGACY_NODELETE setLogicalGroupProperty(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
-    static void LEGACY_NODELETE setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
+    NODELETE void setLogicalGroupProperty(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
+    NODELETE static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
     void setDelayingForRuleRollback(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
 
-    bool LEGACY_NODELETE hasProperty(CSSPropertyID, const CSSValue&);
-    bool LEGACY_NODELETE mayOverrideExistingProperty(CSSPropertyID, const CSSValue&);
+    NODELETE bool hasProperty(CSSPropertyID, const CSSValue&);
+    NODELETE bool mayOverrideExistingProperty(CSSPropertyID, const CSSValue&);
 
     unsigned logicalGroupPropertyIndex(CSSPropertyID) const;
     void setLogicalGroupPropertyIndex(CSSPropertyID, unsigned);

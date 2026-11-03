@@ -49,7 +49,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const FontFamilyName&);
 
 // MARK: - Hashing
 
-void LEGACY_NODELETE add(Hasher&, const FontFamilyName&);
+NODELETE void add(Hasher&, const FontFamilyName&);
 
 } // namespace CSS
 } // namespace WebCore

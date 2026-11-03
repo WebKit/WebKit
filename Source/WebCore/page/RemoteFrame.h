@@ -57,7 +57,7 @@ public:
     WEBCORE_EXPORT static Ref<RemoteFrame> createSubframe(Page&, ClientCreator&&, FrameIdentifier, Frame& parent, Frame* opener, std::optional<LayerHostingContextIdentifier>, Ref<FrameTreeSyncData>&&, AddToFrameTree);
     ~RemoteFrame();
 
-    RemoteDOMWindow& LEGACY_NODELETE window() const;
+    NODELETE RemoteDOMWindow& window() const;
 
     const RemoteFrameClient& client() const LIFETIME_BOUND { return m_client.get(); }
     RemoteFrameClient& client() LIFETIME_BOUND { return m_client.get(); }
@@ -74,7 +74,7 @@ public:
     // this falls back to the process encoded in the FrameIdentifier's upper bits, which
     // matches the legacy IdentifierRegistry::protocolFrameId(FrameIdentifier) behavior.
     // See webkit.org/b/310164.
-    WEBCORE_EXPORT ProcessIdentifier LEGACY_NODELETE hostingProcessIdentifier() const;
+    NODELETE WEBCORE_EXPORT ProcessIdentifier hostingProcessIdentifier() const;
     void setHostingProcessIdentifier(ProcessIdentifier processID) { m_hostingProcessIdentifier = processID; }
 
     String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
@@ -86,53 +86,54 @@ public:
     void unbindRemoteAccessibilityFrames(int);
 
     void setCustomUserAgent(String&& customUserAgent) { m_customUserAgent = WTF::move(customUserAgent); }
-    String LEGACY_NODELETE customUserAgent() const final;
+    NODELETE String customUserAgent() const final;
     void setCustomUserAgentAsSiteSpecificQuirks(String&& customUserAgentAsSiteSpecificQuirks) { m_customUserAgentAsSiteSpecificQuirks = WTF::move(customUserAgentAsSiteSpecificQuirks); }
-    String LEGACY_NODELETE customUserAgentAsSiteSpecificQuirks() const final;
+    NODELETE String customUserAgentAsSiteSpecificQuirks() const final;
 
     void setCustomNavigatorPlatform(String&& customNavigatorPlatform) { m_customNavigatorPlatform = WTF::move(customNavigatorPlatform); }
-    String LEGACY_NODELETE customNavigatorPlatform() const final;
+    NODELETE String customNavigatorPlatform() const final;
 
     void setAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections) { m_advancedPrivacyProtections = advancedPrivacyProtections; }
-    OptionSet<AdvancedPrivacyProtections> LEGACY_NODELETE advancedPrivacyProtections() const final;
+    NODELETE OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final;
 
     void setAllowPrivacyProxy(bool allowPrivacyProxy) { m_allowPrivacyProxy = allowPrivacyProxy; }
-    bool LEGACY_NODELETE allowPrivacyProxy() const final;
+    NODELETE bool allowPrivacyProxy() const final;
 
     void setAutoplayPolicy(AutoplayPolicy autoplayPolicy) { m_autoplayPolicy = autoplayPolicy; }
-    AutoplayPolicy LEGACY_NODELETE autoplayPolicy() const final;
+    NODELETE AutoplayPolicy autoplayPolicy() const final;
 
     void setColorSchemePreference(ColorSchemePreference colorSchemePreference) { m_colorSchemePreference = colorSchemePreference; }
-    ColorSchemePreference LEGACY_NODELETE colorSchemePreference() const final;
+    NODELETE ColorSchemePreference colorSchemePreference() const final;
 
     void updateScrollingMode() final;
     void reportMixedContentViolation(bool blocked, const URL& target) const final;
     void addResourceTimingFromChild(ResourceTiming&&);
 
     String debugDescription() const final;
+
     WEBCORE_EXPORT const SecurityOrigin& frameDocumentSecurityOriginOrOpaque() const;
-    bool LEGACY_NODELETE frameDocumentIsSandboxedOrigin() const;
+    NODELETE bool frameDocumentIsSandboxedOrigin() const;
 
 private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, ClientCreator&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Markable<LayerHostingContextIdentifier>, Frame* opener, Ref<FrameTreeSyncData>&&, AddToFrameTree = AddToFrameTree::Yes);
 
     void frameDetached() final;
-    bool LEGACY_NODELETE preventsParentFromBeingComplete() const final;
+    NODELETE bool preventsParentFromBeingComplete() const final;
     void changeLocation(FrameLoadRequest&&) final;
     void loadFrameRequest(FrameLoadRequest&&, Event*) final;
     void didFinishLoadInAnotherProcess() final;
     bool isRootFrame() const final { return false; }
     URL urlForConsoleLog() const final;
-    SecurityOrigin* LEGACY_NODELETE frameDocumentSecurityOrigin() const final;
-    std::optional<DocumentSecurityPolicy> LEGACY_NODELETE frameDocumentSecurityPolicy() const final;
-    std::optional<AgentClusterIdentifier> LEGACY_NODELETE frameAgentClusterIdentifier() const final;
-    String LEGACY_NODELETE frameURLProtocol() const final;
+    NODELETE SecurityOrigin* frameDocumentSecurityOrigin() const final;
+    NODELETE std::optional<DocumentSecurityPolicy> frameDocumentSecurityPolicy() const final;
+    NODELETE std::optional<AgentClusterIdentifier> frameAgentClusterIdentifier() const final;
+    NODELETE String frameURLProtocol() const final;
     float frameScaleFactorForChild(const Frame&) const final;
 
-    FrameView* LEGACY_NODELETE virtualView() const final;
+    NODELETE FrameView* virtualView() const final;
     void disconnectView() final;
-    DOMWindow* LEGACY_NODELETE virtualWindow() const final;
-    FrameLoaderClient& LEGACY_NODELETE loaderClient() LIFETIME_BOUND final;
+    NODELETE DOMWindow* virtualWindow() const final;
+    NODELETE FrameLoaderClient& loaderClient() LIFETIME_BOUND final;
     void reinitializeDocumentSecurityContext() final { }
     void detachLocalDescendants();
 

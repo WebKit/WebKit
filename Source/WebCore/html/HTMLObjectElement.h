@@ -37,7 +37,7 @@ public:
 
     static Ref<HTMLObjectElement> create(const QualifiedName&, Document&);
 
-    bool LEGACY_NODELETE hasFallbackContent() const;
+    NODELETE bool hasFallbackContent() const;
     bool useFallbackContent() const final { return m_useFallbackContent; }
     void renderFallbackContent();
 
@@ -69,7 +69,7 @@ private:
 
     void childrenChanged(const ChildChange&) final;
 
-    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const final;
+    NODELETE bool isURLAttribute(const Attribute&) const final;
     String imageSourceURL() const final;
 
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const final;
@@ -82,18 +82,18 @@ private:
     void refFormAssociatedElement() const final { ref(); }
     void derefFormAssociatedElement() const final { deref(); }
 
-    FormAssociatedElement* LEGACY_NODELETE asFormAssociatedElement() final { return this; }
-    FormListedElement* LEGACY_NODELETE asFormListedElement() final { return this; }
-    ValidatedFormListedElement* LEGACY_NODELETE asValidatedFormListedElement() final { return nullptr; }
+    NODELETE FormAssociatedElement* asFormAssociatedElement() final { return this; }
+    NODELETE FormListedElement* asFormListedElement() final { return this; }
+    NODELETE ValidatedFormListedElement* asValidatedFormListedElement() final { return nullptr; }
 
     // These functions can be called concurrently for ValidityState.
     HTMLObjectElement& asHTMLElement() final { return *this; }
     const HTMLObjectElement& asHTMLElement() const final { return *this; }
 
-    bool LEGACY_NODELETE isFormListedElement() const final { return true; }
-    bool LEGACY_NODELETE isValidatedFormListedElement() const final { return false; }
+    NODELETE bool isFormListedElement() const final { return true; }
+    NODELETE bool isValidatedFormListedElement() const final { return false; }
 
-    bool LEGACY_NODELETE isEnumeratable() const final { return true; }
+    NODELETE bool isEnumeratable() const final { return true; }
 
     bool canContainRangeEndPoint() const final;
 

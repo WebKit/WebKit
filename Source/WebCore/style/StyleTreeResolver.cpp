@@ -618,7 +618,7 @@ std::optional<ElementUpdate> TreeResolver::resolveAncestorPseudoElement(Element&
     return createAnimatedElementUpdate(WTF::move(*pseudoElementStyle), { element, pseudoElementIdentifier }, changes, resolutionContext);
 }
 
-static bool LEGACY_NODELETE isChildInBlockFormattingContext(const Style::ComputedStyle& style)
+NODELETE static bool isChildInBlockFormattingContext(const Style::ComputedStyle& style)
 {
     // FIXME: Incomplete. There should be shared code with layout for this.
     if (style.display() != DisplayType::BlockFlow && style.display() != DisplayType::BlockFlowListItem)
@@ -1119,7 +1119,7 @@ HashSet<AnimatableCSSProperty> TreeResolver::applyCascadeAfterAnimation(Style::C
     return styleBuilder.overriddenAnimatedProperties();
 }
 
-static bool LEGACY_NODELETE isInlineBox(Style::Display display)
+NODELETE static bool isInlineBox(Style::Display display)
 {
     return display == DisplayType::InlineFlow || display.isRubyContainerOrInternalRubyBox();
 }
@@ -1268,7 +1268,7 @@ auto TreeResolver::determineResolutionType(const Element& element, const Style::
     return { };
 }
 
-static void LEGACY_NODELETE clearNeedsStyleResolution(Element& element)
+NODELETE static void clearNeedsStyleResolution(Element& element)
 {
     element.setHasValidStyle();
     if (auto* before = element.beforePseudoElement())
@@ -2074,13 +2074,13 @@ void TreeResolver::collectChangedAnchorNames(const Style::ComputedStyle& newStyl
     }
 }
 
-static Vector<Function<void ()>>& LEGACY_NODELETE postResolutionCallbackQueue()
+NODELETE static Vector<Function<void ()>>& postResolutionCallbackQueue()
 {
     static NeverDestroyed<Vector<Function<void ()>>> vector;
     return vector;
 }
 
-static Vector<Ref<Frame>>& LEGACY_NODELETE memoryCacheClientCallsResumeQueue()
+NODELETE static Vector<Ref<Frame>>& memoryCacheClientCallsResumeQueue()
 {
     static NeverDestroyed<Vector<Ref<Frame>>> vector;
     return vector;

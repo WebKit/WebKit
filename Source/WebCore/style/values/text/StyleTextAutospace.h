@@ -97,7 +97,7 @@ private:
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<TextAutospace> { TextAutospace LEGACY_NODELETE operator()(BuilderState&, const CSSValue&); };
+template<> struct CSSValueConversion<TextAutospace> { NODELETE TextAutospace operator()(BuilderState&, const CSSValue&); };
 
 // MARK: - Platform
 

@@ -58,7 +58,7 @@ class CredentialRequestCoordinator final : public RefCountedAndCanMakeWeakPtr<Cr
     WTF_MAKE_NONCOPYABLE(CredentialRequestCoordinator);
 
 public:
-    static Ref<CredentialRequestCoordinator> LEGACY_NODELETE create(Ref<CredentialRequestCoordinatorClient>&&, Page&);
+    NODELETE static Ref<CredentialRequestCoordinator> create(Ref<CredentialRequestCoordinatorClient>&&, Page&);
     WEBCORE_EXPORT void prepareCredentialRequests(const Document&, CredentialPromise&&, Vector<UnvalidatedDigitalCredentialRequest>&&, RefPtr<AbortSignal>);
     WEBCORE_EXPORT void abortTheCredentialRequest(ExceptionOr<JSC::JSValue>&&);
     ~CredentialRequestCoordinator();
@@ -77,9 +77,9 @@ private:
         Aborting
     }; // enum class InteractionState
 
-    bool LEGACY_NODELETE canTransitionTo(InteractionState) const;
-    InteractionState LEGACY_NODELETE interactionState() const;
-    void LEGACY_NODELETE setInteractionState(InteractionState);
+    NODELETE bool canTransitionTo(InteractionState) const;
+    NODELETE InteractionState interactionState() const;
+    NODELETE void setInteractionState(InteractionState);
 
     void initiateTheCredentialRequest(const Document&, Vector<std::optional<ValidatedDigitalCredentialRequest>>&&, Vector<UnvalidatedDigitalCredentialRequest>&&, RefPtr<AbortSignal>);
     void processCredentialChooserResponse(std::expected<DigitalCredentialsResponseData, ExceptionData>&& responseOrException, RefPtr<AbortSignal>);

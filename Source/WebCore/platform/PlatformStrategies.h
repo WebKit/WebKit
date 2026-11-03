@@ -71,8 +71,8 @@ private:
 #endif
 };
 
-bool LEGACY_NODELETE hasPlatformStrategies();
-WEBCORE_EXPORT PlatformStrategies* LEGACY_NODELETE platformStrategies();
-WEBCORE_EXPORT void LEGACY_NODELETE setPlatformStrategies(PlatformStrategies*);
+NODELETE bool hasPlatformStrategies();
+NODELETE WEBCORE_EXPORT PlatformStrategies* platformStrategies();
+NODELETE WEBCORE_EXPORT void setPlatformStrategies(PlatformStrategies*);
     
 } // namespace WebCore

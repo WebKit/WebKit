@@ -115,8 +115,8 @@ RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange&, CSS::PropertyParserStat
 RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange&, CSS::PropertyParserState&);
 // Sub-production of 'font-family': <generic-family>
 // https://drafts.csswg.org/css-fonts-4/#generic-family-name-syntax
-const AtomString& LEGACY_NODELETE genericFontFamily(CSSValueID);
-WebKitFontFamilyNames::FamilyNamesIndex LEGACY_NODELETE genericFontFamilyIndex(CSSValueID);
+NODELETE const AtomString& genericFontFamily(CSSValueID);
+NODELETE WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID);
 
 // MARK: 'font-size-adjust'
 // https://drafts.csswg.org/css-fonts-4/#font-size-adjust-prop

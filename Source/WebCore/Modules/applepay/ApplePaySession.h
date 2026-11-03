@@ -109,11 +109,11 @@ private:
     // ActiveDOMObject.
     void stop() override;
     void suspend(ReasonForSuspension) override;
-    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
+    NODELETE bool virtualHasPendingActivity() const final;
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const override { return EventTargetInterfaceType::ApplePaySession; }
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const override;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const override;
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
@@ -129,22 +129,22 @@ private:
 #endif
     void didCancelPaymentSession(PaymentSessionError&&) override;
 
-    PaymentCoordinator& LEGACY_NODELETE paymentCoordinator() const;
+    NODELETE PaymentCoordinator& paymentCoordinator() const;
 
-    bool LEGACY_NODELETE canBegin() const;
-    bool LEGACY_NODELETE canAbort() const;
-    bool LEGACY_NODELETE canCancel() const;
-    bool LEGACY_NODELETE canCompleteMerchantValidation() const;
-    bool LEGACY_NODELETE canCompleteShippingMethodSelection() const;
-    bool LEGACY_NODELETE canCompleteShippingContactSelection() const;
-    bool LEGACY_NODELETE canCompletePaymentMethodSelection() const;
+    NODELETE bool canBegin() const;
+    NODELETE bool canAbort() const;
+    NODELETE bool canCancel() const;
+    NODELETE bool canCompleteMerchantValidation() const;
+    NODELETE bool canCompleteShippingMethodSelection() const;
+    NODELETE bool canCompleteShippingContactSelection() const;
+    NODELETE bool canCompletePaymentMethodSelection() const;
 #if ENABLE(APPLE_PAY_COUPON_CODE)
-    bool LEGACY_NODELETE canCompleteCouponCodeChange() const;
+    NODELETE bool canCompleteCouponCodeChange() const;
 #endif
-    bool LEGACY_NODELETE canCompletePayment() const;
-    bool LEGACY_NODELETE canSuspendWithoutCanceling() const;
+    NODELETE bool canCompletePayment() const;
+    NODELETE bool canSuspendWithoutCanceling() const;
 
-    bool LEGACY_NODELETE isFinalState() const;
+    NODELETE bool isFinalState() const;
 
     enum class State {
         Idle,

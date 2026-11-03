@@ -44,7 +44,7 @@ public:
     static void verifyLayoutLocationConsistency(const RenderLayerModelObject&);
 
 private:
-    bool LEGACY_NODELETE layoutSizeOfNearestViewportChanged() const;
+    NODELETE bool layoutSizeOfNearestViewportChanged() const;
 
     SingleThreadWeakRef<RenderLayerModelObject> m_container;
     Vector<std::reference_wrapper<RenderLayerModelObject>> m_positionedChildren;

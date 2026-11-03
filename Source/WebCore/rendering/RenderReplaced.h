@@ -47,7 +47,7 @@ public:
 
     // Out-of-line so callers outside style/rendering/layout code don't need to pull in
     // the (compile-time-expensive) computed style getter headers just to check this.
-    WEBCORE_EXPORT bool LEGACY_NODELETE hasObjectViewBoxSet() const;
+    NODELETE WEBCORE_EXPORT bool hasObjectViewBoxSet() const;
 
     // Returns the full content rect scaled so the view-box sub-region maps onto destRect,
     // or destRect itself when object-view-box is not set.
@@ -99,7 +99,7 @@ protected:
 
     virtual LayoutUnit minimumReplacedHeight() const { return 0_lu; }
 
-    bool LEGACY_NODELETE isSelected() const;
+    NODELETE bool isSelected() const;
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
@@ -110,7 +110,7 @@ protected:
 
     void paint(PaintInfo&, const LayoutPoint&) override;
     bool shouldPaint(PaintInfo&, const LayoutPoint&);
-    LayoutRect LEGACY_NODELETE localSelectionRect(bool checkWhetherSelected = true) const; // This is in local coordinates, but it's a physical rect (so the top left corner is physical top left).
+    NODELETE LayoutRect localSelectionRect(bool checkWhetherSelected = true) const; // This is in local coordinates, but it's a physical rect (so the top left corner is physical top left).
 
     virtual void layoutShadowContent(const LayoutSize&);
 
@@ -152,7 +152,7 @@ private:
     virtual bool shouldDrawSelectionTint() const;
     
     Color calculateHighlightColor() const;
-    bool LEGACY_NODELETE isHighlighted(HighlightState, const RenderHighlight&) const;
+    NODELETE bool isHighlighted(HighlightState, const RenderHighlight&) const;
 
     bool hasReplacedLogicalHeight() const;
 

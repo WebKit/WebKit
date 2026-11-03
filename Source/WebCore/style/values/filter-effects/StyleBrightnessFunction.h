@@ -46,7 +46,7 @@ struct Brightness {
 
     Parameter value;
 
-    static Brightness LEGACY_NODELETE passthroughForInterpolation();
+    NODELETE static Brightness passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return false; }
@@ -70,7 +70,7 @@ template<> struct ToStyle<CSS::Brightness> { auto operator()(const CSS::Brightne
 // MARK: - Blending
 
 template<> struct Blending<Brightness> {
-    Brightness LEGACY_NODELETE blend(const Brightness&, const Brightness&, const BlendingContext&);
+    NODELETE Brightness blend(const Brightness&, const Brightness&, const BlendingContext&);
 };
 
 // MARK: - Evaluation
@@ -79,7 +79,7 @@ template<> struct Evaluation<Brightness, Ref<FilterEffect>> { auto operator()(co
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Brightness> { Ref<FilterOperation> LEGACY_NODELETE operator()(const Brightness&); };
+template<> struct ToPlatform<Brightness> { NODELETE Ref<FilterOperation> operator()(const Brightness&); };
 
 } // namespace Style
 } // namespace WebCore

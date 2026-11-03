@@ -51,10 +51,10 @@ public:
     WEBCORE_EXPORT explicit CSSTokenizer(StringView string LIFETIME_BOUND);
     CSSTokenizer(StringView string LIFETIME_BOUND, CSSParserObserverWrapper&); // For the inspector
 
-    WEBCORE_EXPORT CSSParserTokenRange LEGACY_NODELETE tokenRange() const LIFETIME_BOUND;
-    unsigned LEGACY_NODELETE tokenCount() const;
+    NODELETE WEBCORE_EXPORT CSSParserTokenRange tokenRange() const LIFETIME_BOUND;
+    NODELETE unsigned tokenCount() const;
 
-    static bool LEGACY_NODELETE isWhitespace(CSSParserTokenType);
+    NODELETE static bool isWhitespace(CSSParserTokenType);
 
     Vector<String>&& escapedStringsForAdoption() { return WTF::move(m_stringPool); }
 
@@ -63,8 +63,8 @@ private:
 
     CSSParserToken nextToken();
 
-    char16_t LEGACY_NODELETE consume();
-    void LEGACY_NODELETE reconsume(char16_t);
+    NODELETE char16_t consume();
+    NODELETE void reconsume(char16_t);
 
     StringView preprocessString(StringView);
 
@@ -74,19 +74,19 @@ private:
     CSSParserToken consumeStringTokenUntil(char16_t);
     CSSParserToken consumeURLToken();
 
-    void LEGACY_NODELETE consumeBadUrlRemnants();
-    void LEGACY_NODELETE consumeSingleWhitespaceIfNext();
+    NODELETE void consumeBadUrlRemnants();
+    NODELETE void consumeSingleWhitespaceIfNext();
     void consumeUntilCommentEndFound();
 
-    bool LEGACY_NODELETE consumeIfNext(char16_t);
+    NODELETE bool consumeIfNext(char16_t);
     StringView consumeName();
-    char32_t LEGACY_NODELETE consumeEscape();
+    NODELETE char32_t consumeEscape();
 
-    bool LEGACY_NODELETE nextTwoCharsAreValidEscape();
-    bool LEGACY_NODELETE nextCharsAreNumber(char16_t);
-    bool LEGACY_NODELETE nextCharsAreNumber();
-    bool LEGACY_NODELETE nextCharsAreIdentifier(char16_t);
-    bool LEGACY_NODELETE nextCharsAreIdentifier();
+    NODELETE bool nextTwoCharsAreValidEscape();
+    NODELETE bool nextCharsAreNumber(char16_t);
+    NODELETE bool nextCharsAreNumber();
+    NODELETE bool nextCharsAreIdentifier(char16_t);
+    NODELETE bool nextCharsAreIdentifier();
 
     CSSParserToken blockStart(CSSParserTokenType);
     CSSParserToken blockStart(CSSParserTokenType blockType, CSSParserTokenType, StringView);

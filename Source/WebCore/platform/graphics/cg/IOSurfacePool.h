@@ -86,10 +86,10 @@ private:
     static constexpr size_t maximumInUseBytes { 32 * MB };
 #endif
 
-    bool LEGACY_NODELETE shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
+    NODELETE bool shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
 
     void willAddSurface(IOSurface&, bool inUse) WTF_REQUIRES_LOCK(m_lock);
-    void LEGACY_NODELETE didRemoveSurface(IOSurface&, bool inUse) WTF_REQUIRES_LOCK(m_lock);
+    NODELETE void didRemoveSurface(IOSurface&, bool inUse) WTF_REQUIRES_LOCK(m_lock);
     void didUseSurfaceOfSize(IntSize) WTF_REQUIRES_LOCK(m_lock);
 
     void insertSurfaceIntoPool(std::unique_ptr<IOSurface>) WTF_REQUIRES_LOCK(m_lock);
@@ -104,7 +104,7 @@ private:
 
     void discardAllSurfacesInternal() WTF_REQUIRES_LOCK(m_lock);
 
-    String LEGACY_NODELETE poolStatistics() const WTF_REQUIRES_LOCK(m_lock);
+    NODELETE String poolStatistics() const WTF_REQUIRES_LOCK(m_lock);
 
     Lock m_lock;
     // The collection runs as a delayed task on a shared work queue. It holds only a weak reference, so the pool can be destroyed on any thread.

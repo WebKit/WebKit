@@ -485,12 +485,12 @@ public:
     void wrapWithStyleNode(StyleProperties*, bool isBlock = false);
     String takeResults();
     
-    bool LEGACY_NODELETE needRelativeStyleWrapper() const { return m_needRelativeStyleWrapper; }
-    bool LEGACY_NODELETE needClearingDiv() const { return m_needClearingDiv; }
+    NODELETE bool needRelativeStyleWrapper() const { return m_needRelativeStyleWrapper; }
+    NODELETE bool needClearingDiv() const { return m_needClearingDiv; }
 
     using MarkupAccumulator::append;
 
-    ContainerNode* LEGACY_NODELETE parentNode(Node& node)
+    NODELETE ContainerNode* parentNode(Node& node)
     {
         if (m_useComposedTree) [[unlikely]]
             return parentInComposedTreeIgnoringUserAgentShadow(node);
@@ -597,7 +597,7 @@ private:
         return node.hasChildNodes();
     }
 
-    bool LEGACY_NODELETE isDescendantOf(Node& node, Node& possibleAncestor)
+    NODELETE bool isDescendantOf(Node& node, Node& possibleAncestor)
     {
         if (m_useComposedTree) [[unlikely]]
             return node.isShadowIncludingDescendantOf(&possibleAncestor);
@@ -609,12 +609,12 @@ private:
 
     bool appendNodeToPreserveMSOList(Node&);
 
-    bool LEGACY_NODELETE shouldAnnotate()
+    NODELETE bool shouldAnnotate()
     {
         return m_annotate == AnnotateForInterchange::Yes;
     }
 
-    bool LEGACY_NODELETE shouldApplyWrappingStyle(const Node& node) const
+    NODELETE bool shouldApplyWrappingStyle(const Node& node) const
     {
         return m_highestNodeToBeSerialized && m_highestNodeToBeSerialized->parentNode() == node.parentNode() && m_wrappingStyle && m_wrappingStyle->style();
     }
@@ -696,7 +696,7 @@ const String& StyledMarkupAccumulator::styleNodeCloseTag(bool isBlock)
     return isBlock ? divClose : styleSpanClose;
 }
 
-bool LEGACY_NODELETE StyledMarkupAccumulator::containsOnlyASCII() const
+NODELETE bool StyledMarkupAccumulator::containsOnlyASCII() const
 {
     for (auto& preceding : m_reversedPrecedingMarkup) {
         if (!preceding.containsOnlyASCII())
@@ -1116,7 +1116,7 @@ bool StyledMarkupAccumulator::appendNodeToPreserveMSOList(Node& node)
     return false;
 }
 
-static Node* LEGACY_NODELETE ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestorBlock)
+NODELETE static Node* ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestorBlock)
 {
     if (!commonAncestorBlock)
         return nullptr;
@@ -1167,7 +1167,7 @@ static RefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(Node& node)
     return style;
 }
 
-static bool LEGACY_NODELETE isElementPresentational(const Node& node)
+NODELETE static bool isElementPresentational(const Node& node)
 {
     return node.hasTagName(uTag) || node.hasTagName(sTag) || node.hasTagName(strikeTag)
         || node.hasTagName(iTag) || node.hasTagName(emTag) || node.hasTagName(bTag) || node.hasTagName(strongTag);
@@ -1740,7 +1740,7 @@ ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element& element, co
     return fragment;
 }
 
-static inline RefPtr<Text> LEGACY_NODELETE singleTextChild(ContainerNode& node)
+NODELETE static inline RefPtr<Text> singleTextChild(ContainerNode& node)
 {
     return node.hasOneChild() ? dynamicDowncast<Text>(node.firstChild()) : nullptr;
 }

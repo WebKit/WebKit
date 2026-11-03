@@ -54,13 +54,13 @@ private:
 class SVGTests {
     WTF_MAKE_NONCOPYABLE(SVGTests);
 public:
-    static bool LEGACY_NODELETE hasExtension(const String&);
+    NODELETE static bool hasExtension(const String&);
     using PropertyRegistry = SVGPropertyOwnerRegistryBase<SVGTests>;
 
     static void addSupportedAttributes(MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName>&);
 
     SVGConditionalProcessingAttributes& conditionalProcessingAttributes();
-    SVGConditionalProcessingAttributes* LEGACY_NODELETE conditionalProcessingAttributesIfExists() const;
+    NODELETE SVGConditionalProcessingAttributes* conditionalProcessingAttributesIfExists() const;
 
     // These methods are called from DOM through the super classes.
     SVGStringList& requiredExtensions() { return conditionalProcessingAttributes().requiredExtensions(); }

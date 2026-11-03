@@ -86,11 +86,11 @@ private:
     void compileNode(uint32_t index, bool root);
     unsigned nodeTransitionsMaxBytecodeSize(const DFANode&);
     void compileNodeTransitions(uint32_t nodeIndex);
-    unsigned LEGACY_NODELETE checkForJumpTableMaxBytecodeSize(const JumpTable&);
-    unsigned LEGACY_NODELETE checkForRangeMaxBytecodeSize(const Range&);
+    NODELETE unsigned checkForJumpTableMaxBytecodeSize(const JumpTable&);
+    NODELETE unsigned checkForRangeMaxBytecodeSize(const Range&);
     void compileJumpTable(uint32_t nodeIndex, const JumpTable&);
     void compileCheckForRange(uint32_t nodeIndex, const Range&);
-    int32_t LEGACY_NODELETE longestPossibleJump(uint32_t jumpLocation, uint32_t sourceNodeIndex, uint32_t destinationNodeIndex);
+    NODELETE int32_t longestPossibleJump(uint32_t jumpLocation, uint32_t sourceNodeIndex, uint32_t destinationNodeIndex);
 
     void emitAppendAction(uint64_t);
     void emitJump(uint32_t sourceNodeIndex, uint32_t destinationNodeIndex);

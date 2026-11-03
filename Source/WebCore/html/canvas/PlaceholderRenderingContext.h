@@ -53,7 +53,7 @@ public:
 #if PLATFORM(COCOA)
     bool displaySurface(const MachSendRight&, ContentsFormat, bool opaque, PlaceholderFrameIdentifier);
 #endif
-    bool LEGACY_NODELETE needsFrameBuffers() const;
+    NODELETE bool needsFrameBuffers() const;
     void requestFrameBuffers();
     void setRecommitHandler(Function<void()>&&);
     // Like copyFrame(), for a buffer that nothing will draw into again. It reaches the compositor
@@ -79,7 +79,7 @@ private:
 class LocalPlaceholderRenderingContextSource final : public PlaceholderRenderingContextSource {
     WTF_MAKE_TZONE_ALLOCATED(LocalPlaceholderRenderingContextSource);
 public:
-    static Ref<LocalPlaceholderRenderingContextSource> LEGACY_NODELETE create(PlaceholderRenderingContext&);
+    NODELETE static Ref<LocalPlaceholderRenderingContextSource> create(PlaceholderRenderingContext&);
 
     void setPlaceholderBuffer(ImageBuffer&, bool originClean, bool opaque) final;
 #if PLATFORM(COCOA)
@@ -101,12 +101,12 @@ class PlaceholderRenderingContext final : public CanvasRenderingContext {
     WTF_MAKE_TZONE_ALLOCATED(PlaceholderRenderingContext);
 public:
     static std::unique_ptr<PlaceholderRenderingContext> create(HTMLCanvasElement&);
-    static PlaceholderRenderingContext* LEGACY_NODELETE fromIdentifier(PlaceholderRenderingContextIdentifier);
+    NODELETE static PlaceholderRenderingContext* fromIdentifier(PlaceholderRenderingContextIdentifier);
 
     ~PlaceholderRenderingContext();
 
-    HTMLCanvasElement& LEGACY_NODELETE canvas() const;
-    IntSize LEGACY_NODELETE size() const;
+    NODELETE HTMLCanvasElement& canvas() const;
+    NODELETE IntSize size() const;
     void setPlaceholderBuffer(Ref<ImageBuffer>&&, PlaceholderFrameIdentifier, bool originClean, bool opaque);
     // A frame from a source in another process, whose buffer nothing will draw into again.
     void setPlaceholderBufferFromAnotherProcess(Ref<ImageBuffer>&&, PlaceholderFrameIdentifier, bool originClean, bool opaque);

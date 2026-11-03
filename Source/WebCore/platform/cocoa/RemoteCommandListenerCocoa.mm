@@ -90,7 +90,7 @@ static RemoteCommandListener::RemoteCommandsSet& minimalCommands()
     return commands;
 }
 
-static bool LEGACY_NODELETE isSeekCommand(PlatformMediaSession::RemoteControlCommandType command)
+NODELETE static bool isSeekCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
     return command == PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand
         || command == PlatformMediaSession::RemoteControlCommandType::SkipForwardCommand

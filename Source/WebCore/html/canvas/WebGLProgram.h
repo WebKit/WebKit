@@ -60,8 +60,8 @@ public:
     void ref() const final { WebGLObject::ref(); }
     void deref() const final { WebGLObject::deref(); }
 
-    static HashMap<WebGLProgram*, WebGLRenderingContextBase*>& LEGACY_NODELETE instances() WTF_REQUIRES_LOCK(instancesLock());
-    static Lock& LEGACY_NODELETE instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
+    NODELETE static HashMap<WebGLProgram*, WebGLRenderingContextBase*>& instances() WTF_REQUIRES_LOCK(instancesLock());
+    NODELETE static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
     bool linkStatus();
     std::span<const GCGLAttribActiveInfo> activeAttribs() LIFETIME_BOUND;
@@ -79,8 +79,8 @@ public:
     // Also, we invalidate the cached program info.
     void increaseLinkCount();
 
-    RefPtr<WebGLShader> LEGACY_NODELETE fragmentShader() const;
-    RefPtr<WebGLShader> LEGACY_NODELETE vertexShader() const;
+    NODELETE RefPtr<WebGLShader> fragmentShader() const;
+    NODELETE RefPtr<WebGLShader> vertexShader() const;
 
     bool attachShader(const AbstractLocker&, WebGLShader&);
     bool detachShader(const AbstractLocker&, WebGLShader&);

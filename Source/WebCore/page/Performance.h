@@ -89,14 +89,14 @@ public:
 
     DOMHighResTimeStamp now() const;
     DOMHighResTimeStamp timeOrigin() const;
-    MonotonicTime LEGACY_NODELETE monotonicTimeFromOriginRelative(Seconds offset) const;
+    NODELETE MonotonicTime monotonicTimeFromOriginRelative(Seconds offset) const;
     ReducedResolutionSeconds nowInReducedResolutionSeconds() const;
 
     PerformanceNavigation& navigation();
     PerformanceTiming& timing();
     EventCounts& eventCounts() LIFETIME_BOUND;
 
-    uint64_t LEGACY_NODELETE interactionCount();
+    NODELETE uint64_t interactionCount();
 
     Vector<Ref<PerformanceEntry>> getEntries() const;
     Vector<Ref<PerformanceEntry>> getEntriesByType(const String& entryType) const;
@@ -107,7 +107,7 @@ public:
     void processEventEntry(const PerformanceEventTimingCandidate&);
 
     void clearResourceTimings();
-    void LEGACY_NODELETE setResourceTimingBufferSize(unsigned);
+    NODELETE void setResourceTimingBufferSize(unsigned);
 
     ExceptionOr<Ref<PerformanceMark>> mark(JSC::JSGlobalObject&, const String& markName, std::optional<PerformanceMarkOptions>&&);
     void clearMarks(const String& markName);
@@ -128,15 +128,15 @@ public:
     void registerPerformanceObserver(PerformanceObserver&);
     void unregisterPerformanceObserver(PerformanceObserver&);
 
-    static void LEGACY_NODELETE allowHighPrecisionTime();
-    static Seconds LEGACY_NODELETE timeResolution();
+    NODELETE static void allowHighPrecisionTime();
+    NODELETE static Seconds timeResolution();
     static ReducedResolutionSeconds reduceTimeResolution(Seconds);
 
     ReducedResolutionSeconds relativeTimeFromTimeOriginInReducedResolutionSeconds(MonotonicTime) const;
     DOMHighResTimeStamp relativeTimeFromTimeOriginInReducedResolution(MonotonicTime) const;
-    MonotonicTime LEGACY_NODELETE monotonicTimeFromRelativeTime(DOMHighResTimeStamp) const;
+    NODELETE MonotonicTime monotonicTimeFromRelativeTime(DOMHighResTimeStamp) const;
 
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
 
     void scheduleTaskIfNeeded();
 
@@ -152,7 +152,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    bool LEGACY_NODELETE isResourceTimingBufferFull() const;
+    NODELETE bool isResourceTimingBufferFull() const;
     void resourceTimingBufferFullTimerFired();
 
     void queueEntry(PerformanceEntry&);
@@ -166,10 +166,10 @@ private:
     };
 
     static unsigned entryTypeIndex(PerformanceEntry::Type type) { return static_cast<unsigned>(type); }
-    PerformanceEntryBuffer& LEGACY_NODELETE entryBufferTuple(PerformanceEntry::Type);
-    const PerformanceEntryBuffer& LEGACY_NODELETE entryBufferTuple(PerformanceEntry::Type) const;
+    NODELETE PerformanceEntryBuffer& entryBufferTuple(PerformanceEntry::Type);
+    NODELETE const PerformanceEntryBuffer& entryBufferTuple(PerformanceEntry::Type) const;
 
-    void LEGACY_NODELETE initializeEntryBufferMap();
+    NODELETE void initializeEntryBufferMap();
     bool addToEntryBuffer(PerformanceEntry&);
     void clearEntryBuffer(PerformanceEntry::Type, const String& name = { });
 

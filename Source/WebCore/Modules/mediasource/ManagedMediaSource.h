@@ -40,7 +40,7 @@ public:
     ~ManagedMediaSource();
 
     enum class PreferredQuality { Low, Medium, High };
-    ExceptionOr<PreferredQuality> LEGACY_NODELETE quality() const;
+    NODELETE ExceptionOr<PreferredQuality> quality() const;
 
     static bool isTypeSupported(ScriptExecutionContext&, const String& type);
 

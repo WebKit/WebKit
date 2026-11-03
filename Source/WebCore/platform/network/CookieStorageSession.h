@@ -71,8 +71,8 @@ public:
 #endif
     WEBCORE_EXPORT virtual ~CookieStorageSession();
 
-    WEBCORE_EXPORT static void LEGACY_NODELETE permitProcessToUseCookieAPI(bool);
-    WEBCORE_EXPORT static bool LEGACY_NODELETE processMayUseCookieAPI();
+    NODELETE WEBCORE_EXPORT static void permitProcessToUseCookieAPI(bool);
+    NODELETE WEBCORE_EXPORT static bool processMayUseCookieAPI();
 
     PAL::SessionID sessionID() const { return m_sessionID; }
     CredentialStorage& credentialStorage() LIFETIME_BOUND { return m_credentialStorage; }

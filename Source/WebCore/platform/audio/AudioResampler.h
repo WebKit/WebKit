@@ -49,12 +49,12 @@ public:
     void process(AudioSourceProvider*, AudioBus& destinationBus, size_t framesToProcess);
 
     // Resets the processing state.
-    void LEGACY_NODELETE reset();
+    NODELETE void reset();
 
     void configureChannels(unsigned numberOfChannels);
 
     // 0 < rate <= MaxRate
-    void LEGACY_NODELETE setRate(double rate);
+    NODELETE void setRate(double rate);
     double rate() const { return m_rate; }
 
     static constexpr double MaxRate { 8 };

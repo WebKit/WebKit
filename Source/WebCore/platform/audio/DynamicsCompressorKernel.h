@@ -70,7 +70,7 @@ public:
 
     float meteringGain() const { return m_meteringGain; }
 
-    double LEGACY_NODELETE tailTime() const;
+    NODELETE double tailTime() const;
 
 protected:
     static constexpr float uninitializedValue = -1;

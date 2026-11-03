@@ -100,7 +100,7 @@ protected:
 
 private:
     bool processClientWillPausePlayback(DelayCallingUpdateNowPlaying);
-    size_t LEGACY_NODELETE activeInterruptionCount() const;
+    NODELETE size_t activeInterruptionCount() const;
 
     State m_state { State::Idle };
     State m_stateToRestore { State::Idle };

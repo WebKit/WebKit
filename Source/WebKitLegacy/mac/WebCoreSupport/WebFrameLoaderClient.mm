@@ -1350,7 +1350,8 @@ void WebFrameLoaderClient::savePlatformDataToCachedFrame(WebCore::CachedFrame* c
 
 void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(WebCore::CachedFrame* cachedFrame)
 {
-    WebCachedFramePlatformData* platformData = static_cast<WebCachedFramePlatformData*>(cachedFrame->cachedFramePlatformData());
+    // Only subclass of CachedFramePlatformData in WebKitLegacy is WebCachedFramePlatformData.
+    SUPPRESS_MEMORY_UNSAFE_CAST WebCachedFramePlatformData* platformData = static_cast<WebCachedFramePlatformData*>(cachedFrame->cachedFramePlatformData());
     RetainPtr<NSView<WebDocumentView>> cachedView = platformData->webDocumentView();
     ASSERT(cachedView);
     ASSERT(cachedFrame->documentLoader());

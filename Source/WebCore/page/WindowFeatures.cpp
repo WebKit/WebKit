@@ -42,7 +42,7 @@ static std::optional<bool> boolFeature(const DialogFeaturesMap&, ASCIILiteral ke
 static std::optional<float> floatFeature(const DialogFeaturesMap&, ASCIILiteral key, float min, float max);
 
 // https://html.spec.whatwg.org/#feature-separator
-static bool LEGACY_NODELETE isSeparator(char16_t character)
+NODELETE static bool isSeparator(char16_t character)
 {
     return isASCIIWhitespace(character) || character == '=' || character == ',';
 }

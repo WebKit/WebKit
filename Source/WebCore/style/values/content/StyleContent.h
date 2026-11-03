@@ -145,7 +145,7 @@ struct Content {
         return WTF::switchOn(m_value, std::forward<F>(f)...);
     }
 
-    WTF::String LEGACY_NODELETE altText() const;
+    NODELETE WTF::String altText() const;
 
     bool operator==(const Content&) const = default;
 

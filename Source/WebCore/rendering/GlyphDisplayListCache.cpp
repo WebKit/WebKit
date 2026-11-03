@@ -53,18 +53,18 @@ struct GlyphDisplayListCacheKey {
     const bool shouldSubpixelQuantizeFonts;
 };
 
-static void LEGACY_NODELETE add(Hasher& hasher, const GlyphDisplayListCacheKey& key)
+NODELETE static void add(Hasher& hasher, const GlyphDisplayListCacheKey& key)
 {
     add(hasher, key.textRun, key.scaleFactor.width(), key.scaleFactor.height(), key.fontCascadeGeneration, key.shouldSubpixelQuantizeFonts);
 }
 
 struct GlyphDisplayListCacheKeyTranslator {
-    static unsigned LEGACY_NODELETE hash(const GlyphDisplayListCacheKey& key)
+    NODELETE static unsigned hash(const GlyphDisplayListCacheKey& key)
     {
         return computeHash(key);
     }
 
-    static bool LEGACY_NODELETE equal(const WeakPtr<GlyphDisplayListCacheEntry, SingleThreadWeakPtrImpl>& entryRef, const GlyphDisplayListCacheKey& key)
+    NODELETE static bool equal(const WeakPtr<GlyphDisplayListCacheEntry, SingleThreadWeakPtrImpl>& entryRef, const GlyphDisplayListCacheKey& key)
     {
         if (!entryRef)
             return false;

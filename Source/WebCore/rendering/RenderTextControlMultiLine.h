@@ -34,7 +34,7 @@ public:
     RenderTextControlMultiLine(HTMLTextAreaElement&, Style::ComputedStyle&&);
     virtual ~RenderTextControlMultiLine();
 
-    HTMLTextAreaElement& LEGACY_NODELETE textAreaElement() const;
+    NODELETE HTMLTextAreaElement& textAreaElement() const;
 
 private:
     void element() const = delete;

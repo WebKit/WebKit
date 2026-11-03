@@ -142,7 +142,7 @@ public:
 #if ASSERT_ENABLED
     bool isRefCountedWrapper() const override { return true; }
 #endif
-    InternalSettings* LEGACY_NODELETE internalSettings() const { return m_internalSettings.get(); }
+    NODELETE InternalSettings* internalSettings() const { return m_internalSettings.get(); }
 
 private:
     bool isInternalSettingsWrapper() const final { return true; }

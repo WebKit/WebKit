@@ -84,17 +84,17 @@ private:
 class WEBCORE_EXPORT EventTarget : public ScriptWrappable, public CanMakeWeakPtrWithBitField<EventTarget, WeakPtrFactoryInitialization::Lazy, WeakPtrImplWithEventTargetData> {
     WTF_MAKE_TZONE_ALLOCATED(EventTarget);
 public:
-    static Ref<EventTarget> LEGACY_NODELETE create(ScriptExecutionContext&);
+    NODELETE static Ref<EventTarget> create(ScriptExecutionContext&);
 
     inline void ref(); // Defined in EventTargetInlines.h.
     inline void deref(); // Defined in EventTargetInlines.h.
 
-    virtual enum EventTargetInterfaceType LEGACY_NODELETE eventTargetInterface() const = 0;
+    NODELETE virtual enum EventTargetInterfaceType eventTargetInterface() const = 0;
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
-    virtual WebCoreOpaqueRoot LEGACY_NODELETE opaqueRoot() const;
+    NODELETE virtual WebCoreOpaqueRoot opaqueRoot() const;
 
-    virtual bool LEGACY_NODELETE isPaymentRequest() const;
+    NODELETE virtual bool isPaymentRequest() const;
 
     using AddEventListenerOptionsOrBoolean = Variant<AddEventListenerOptions, bool>;
     void addEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&&, AddEventListenerOptionsOrBoolean&&);
@@ -120,12 +120,12 @@ public:
 
     inline bool hasEventListeners() const; // Defined in EventTargetInlines.h
     inline bool hasEventListeners(const AtomString& eventType) const; // Defined in EventTargetInlines.h
-    bool LEGACY_NODELETE hasAnyEventListeners(std::span<const AtomString> eventTypes) const;
+    NODELETE bool hasAnyEventListeners(std::span<const AtomString> eventTypes) const;
     inline bool hasCapturingEventListeners(const AtomString& eventType); // Defined in EventTargetInlines.h
-    bool LEGACY_NODELETE hasActiveEventListeners(const AtomString& eventType) const;
+    NODELETE bool hasActiveEventListeners(const AtomString& eventType) const;
 
     Vector<AtomString> eventTypes() const;
-    const EventListenerVector& LEGACY_NODELETE eventListeners(const AtomString& eventType);
+    NODELETE const EventListenerVector& eventListeners(const AtomString& eventType);
 
     enum class EventInvokePhase { Capturing, Bubbling };
     void fireEventListeners(Event&, EventInvokePhase);

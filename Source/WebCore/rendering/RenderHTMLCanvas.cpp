@@ -66,7 +66,7 @@ RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, Style::ComputedSt
 
 RenderHTMLCanvas::~RenderHTMLCanvas() = default;
 
-HTMLCanvasElement& LEGACY_NODELETE RenderHTMLCanvas::canvasElement() const
+NODELETE HTMLCanvasElement& RenderHTMLCanvas::canvasElement() const
 {
     return downcast<HTMLCanvasElement>(nodeForNonAnonymous());
 }

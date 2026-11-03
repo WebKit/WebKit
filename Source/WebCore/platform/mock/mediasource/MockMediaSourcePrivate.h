@@ -51,7 +51,7 @@ public:
     RefPtr<MediaPlayerPrivateInterface> player() const final;
     void setPlayer(WebCore::MediaPlayerPrivateInterface*) final;
 
-    std::optional<VideoPlaybackQualityMetrics> LEGACY_NODELETE videoPlaybackQualityMetrics();
+    NODELETE std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 
     void incrementTotalVideoFrames() { ++m_totalVideoFrames; }
     void incrementDroppedFrames() { ++m_droppedVideoFrames; }

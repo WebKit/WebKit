@@ -96,11 +96,11 @@ public:
     const URL& currentURL() const LIFETIME_BOUND { return m_currentURL; }
     WEBCORE_EXPORT const AtomString& currentSrc();
 
-    bool LEGACY_NODELETE isServerMap() const;
+    NODELETE bool isServerMap() const;
 
-    const AtomString& LEGACY_NODELETE altText() const;
+    NODELETE const AtomString& altText() const;
 
-    WEBCORE_EXPORT CachedImage* LEGACY_NODELETE cachedImage() const;
+    NODELETE WEBCORE_EXPORT CachedImage* cachedImage() const;
 
     // https://html.spec.whatwg.org/multipage/images.html#img-req-state
     ImageRequestState currentRequestState() const;
@@ -112,15 +112,15 @@ public:
 
     RefPtr<Image> sourceImage() const;
 
-    void LEGACY_NODELETE setLoadManually(bool);
+    NODELETE void setLoadManually(bool);
 
-    bool LEGACY_NODELETE matchesUsemap(const AtomString&) const;
+    NODELETE bool matchesUsemap(const AtomString&) const;
     RefPtr<HTMLMapElement> associatedMapElement() const;
 
     WEBCORE_EXPORT String crossOrigin() const;
     WEBCORE_EXPORT int x() const;
     WEBCORE_EXPORT int y() const;
-    WEBCORE_EXPORT bool LEGACY_NODELETE complete() const;
+    NODELETE WEBCORE_EXPORT bool complete() const;
     String decoding() const;
 
     DecodingMode decodingMode() const;
@@ -138,7 +138,7 @@ public:
     void setAttachmentElement(Ref<HTMLAttachmentElement>&&) final;
 #endif
 
-    WEBCORE_EXPORT size_t LEGACY_NODELETE pendingDecodePromisesCountForTesting() const;
+    NODELETE WEBCORE_EXPORT size_t pendingDecodePromisesCountForTesting() const;
 
     bool canContainRangeEndPoint() const override { return false; }
 
@@ -149,8 +149,8 @@ public:
     void setImageMenuEnabled(bool value) { m_isImageMenuEnabled = value; }
 #endif
 
-    HTMLPictureElement* LEGACY_NODELETE pictureElement() const;
-    void LEGACY_NODELETE setPictureElement(HTMLPictureElement*);
+    NODELETE HTMLPictureElement* pictureElement() const;
+    NODELETE void setPictureElement(HTMLPictureElement*);
 
 #if USE(SYSTEM_PREVIEW)
     WEBCORE_EXPORT bool isSystemPreviewImage() const;
@@ -165,7 +165,7 @@ public:
 
     AtomString srcsetForBindings() const;
 
-    bool LEGACY_NODELETE usesSrcsetOrPicture() const;
+    NODELETE bool usesSrcsetOrPicture() const;
 
     enum LoadingValues { Lazy, Eager };
 
@@ -174,21 +174,21 @@ public:
     static bool hasAutoSizesAttributeValue(StringView);
     void scheduleAutoSizesResolution();
 
-    bool LEGACY_NODELETE isDeferred() const;
+    NODELETE bool isDeferred() const;
 
     static bool isSupportedImageSourceType(const String& typeAttribute);
 
     bool isDroppedImagePlaceholder() const { return m_isDroppedImagePlaceholder; }
     void setIsDroppedImagePlaceholder() { m_isDroppedImagePlaceholder = true; }
 
-    void LEGACY_NODELETE setIsUserAgentShadowRootResource();
+    NODELETE void setIsUserAgentShadowRootResource();
 
     void evaluateDynamicMediaQueryDependencies();
 
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const;
 
-    bool LEGACY_NODELETE allowsOrientationOverride() const;
+    NODELETE bool allowsOrientationOverride() const;
 
     bool allowsAnimation() const;
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
@@ -249,8 +249,8 @@ private:
 
     bool canStartSelection() const override;
 
-    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const override;
-    bool LEGACY_NODELETE attributeContainsURL(const Attribute&) const override;
+    NODELETE bool isURLAttribute(const Attribute&) const override;
+    NODELETE bool attributeContainsURL(const Attribute&) const override;
     String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::YesExcludingURLsForPrivacy) const override;
     Attribute replaceURLsInAttributeValue(const Attribute&, const CSS::SerializationContext&) const override;
 
@@ -263,8 +263,8 @@ private:
     void removingSteps(RemovalType, ContainerNode&) override;
     void movingSteps(MovingType, ContainerNode&) override;
 
-    bool LEGACY_NODELETE isFormListedElement() const final { return false; }
-    FormAssociatedElement* LEGACY_NODELETE asFormAssociatedElement() final { return this; }
+    NODELETE bool isFormListedElement() const final { return false; }
+    NODELETE FormAssociatedElement* asFormAssociatedElement() final { return this; }
     HTMLImageElement& asHTMLElement() final { return *this; }
     const HTMLImageElement& asHTMLElement() const final { return *this; }
 
@@ -294,11 +294,11 @@ private:
     bool childShouldCreateRenderer(const Node&) const override;
 #endif
 
-    HTMLSourceElement* LEGACY_NODELETE sourceElement() const;
+    NODELETE HTMLSourceElement* sourceElement() const;
     void setSourceElement(HTMLSourceElement*);
 
     IntersectionObserverData& ensureIntersectionObserverData() final;
-    IntersectionObserverData* LEGACY_NODELETE intersectionObserverDataIfExists() const final;
+    NODELETE IntersectionObserverData* intersectionObserverDataIfExists() const final;
 
     const std::unique_ptr<HTMLImageLoader> m_imageLoader;
     const std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;

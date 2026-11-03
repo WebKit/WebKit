@@ -39,7 +39,7 @@ struct OutlineValue {
     PREFERRED_TYPE(OutlineStyle) unsigned outlineStyle : 4 { static_cast<unsigned>(OutlineStyle::None) };
 
     bool isVisible() const;
-    bool LEGACY_NODELETE nonZero() const;
+    NODELETE bool nonZero() const;
 
     bool operator==(const OutlineValue&) const = default;
 };

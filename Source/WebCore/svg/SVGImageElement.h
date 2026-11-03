@@ -38,7 +38,7 @@ class SVGImageElement final : public SVGGraphicsElement, public SVGURIReference 
 public:
     static Ref<SVGImageElement> create(const QualifiedName&, Document&);
 
-    WEBCORE_EXPORT CachedImage* LEGACY_NODELETE cachedImage() const;
+    NODELETE WEBCORE_EXPORT CachedImage* cachedImage() const;
 
     // https://html.spec.whatwg.org/multipage/images.html#img-req-state
     ImageRequestState currentRequestState() const;
@@ -48,7 +48,7 @@ public:
 
     RefPtr<Image> sourceImage() const;
 
-    ImageOrientation LEGACY_NODELETE orientationForSourceImage();
+    NODELETE ImageOrientation orientationForSourceImage();
 
     bool renderingTaintsOrigin() const;
     String imageSourceURL() const final;

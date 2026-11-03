@@ -44,7 +44,7 @@ public:
     explicit PushManager(PushSubscriptionOwner&);
     ~PushManager();
 
-    void LEGACY_NODELETE ref() const;
+    NODELETE void ref() const;
     void deref() const;
 
     static Vector<String> supportedContentEncodings();

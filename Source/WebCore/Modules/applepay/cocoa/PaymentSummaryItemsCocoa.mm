@@ -53,7 +53,7 @@ NSDecimalNumber *toDecimalNumber(const String& amount)
     return [NSDecimalNumber decimalNumberWithString:amount.createNSString().get() locale:@{ NSLocaleDecimalSeparator : @"." }];
 }
 
-static PKPaymentSummaryItemType LEGACY_NODELETE toPKPaymentSummaryItemType(ApplePayLineItem::Type type)
+NODELETE static PKPaymentSummaryItemType toPKPaymentSummaryItemType(ApplePayLineItem::Type type)
 {
     switch (type) {
     case ApplePayLineItem::Type::Final:
@@ -82,7 +82,7 @@ static NSDate *toDate(WallTime date)
 
 #if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
 
-static NSCalendarUnit LEGACY_NODELETE toCalendarUnit(ApplePayRecurringPaymentDateUnit unit)
+NODELETE static NSCalendarUnit toCalendarUnit(ApplePayRecurringPaymentDateUnit unit)
 {
     switch (unit) {
     case ApplePayRecurringPaymentDateUnit::Year:

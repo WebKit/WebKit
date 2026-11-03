@@ -46,7 +46,7 @@ public:
     virtual MediaPlayerEnums::SupportsType canDecodeType(const String&);
     virtual HashSet<String> supportedTypes();
 
-    bool LEGACY_NODELETE isEmpty() const;
+    NODELETE bool isEmpty() const;
     bool supportsContainerType(const String&);
 
 protected:

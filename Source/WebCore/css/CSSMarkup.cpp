@@ -37,7 +37,7 @@
 namespace WebCore {
 
 template <typename CharacterType>
-static inline bool LEGACY_NODELETE isCSSTokenizerIdentifier(std::span<const CharacterType> characters)
+NODELETE static inline bool isCSSTokenizerIdentifier(std::span<const CharacterType> characters)
 {
     // -?
     skipWhile(characters, '-');
@@ -53,7 +53,7 @@ static inline bool LEGACY_NODELETE isCSSTokenizerIdentifier(std::span<const Char
 }
 
 // "ident" from the CSS tokenizer, minus backslash-escape sequences
-static bool LEGACY_NODELETE isCSSTokenizerIdentifier(StringView string)
+NODELETE static bool isCSSTokenizerIdentifier(StringView string)
 {
     if (string.isEmpty())
         return false;
@@ -64,7 +64,7 @@ static bool LEGACY_NODELETE isCSSTokenizerIdentifier(StringView string)
 }
 
 // https://drafts.csswg.org/css-syntax-3/#non-printable-code-point
-static bool LEGACY_NODELETE isNonPrintableCodePoint(char32_t c)
+NODELETE static bool isNonPrintableCodePoint(char32_t c)
 {
     return c <= 0x08 || c == 0x0b || (c >= 0x0e && c <= 0x1f) || c == deleteCharacter;
 }

@@ -66,7 +66,7 @@ public:
 private:
     CSSVariableData(const CSSParserTokenRange&, const CSSParserContext&);
     CSSVariableData(const CSSParserTokenRange&, Style::IsAttrTainted, const CSSParserContext&);
-    template<typename CharacterType> void LEGACY_NODELETE updateBackingStringsInTokens();
+    template<typename CharacterType> NODELETE void updateBackingStringsInTokens();
 
     String m_backingString;
     Vector<CSSParserToken> m_tokens;

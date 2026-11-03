@@ -71,7 +71,7 @@ public:
         return createIfNeeded(target, MutationObserverOptionType::Attributes, MutationObserverOptionType::AttributeOldValue, &attributeName);
     }
 
-    bool LEGACY_NODELETE isOldValueRequested() const;
+    NODELETE bool isOldValueRequested() const;
     void enqueueMutationRecord(Ref<MutationRecord>&&);
 
 private:

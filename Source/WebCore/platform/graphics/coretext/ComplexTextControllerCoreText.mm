@@ -147,7 +147,7 @@ struct ProviderInfo {
     RetainPtr<CFDictionaryRef> attributes;
 };
 
-static const UniChar* LEGACY_NODELETE provideStringAndAttributes(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void* refCon)
+NODELETE static const UniChar* provideStringAndAttributes(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void* refCon)
 {
     ProviderInfo* info = static_cast<struct ProviderInfo*>(refCon);
     if (stringIndex < 0 || static_cast<size_t>(stringIndex) >= info->characters.size())

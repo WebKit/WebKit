@@ -38,7 +38,7 @@ class CryptoAlgorithmRSA_PSS final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "RSA-PSS"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::RSA_PSS;
-    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
+    NODELETE static Ref<CryptoAlgorithm> create();
 
 private:
     CryptoAlgorithmRSA_PSS() = default;

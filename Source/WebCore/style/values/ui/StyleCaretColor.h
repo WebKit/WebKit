@@ -41,7 +41,7 @@ struct CaretColor : ValueOrKeyword<Color, CSS::Keyword::Auto> {
     std::optional<Color> tryColor() const { return tryValue(); }
 
     // Returns the color or a `currentColor` singleton if `auto`.
-    const Color& LEGACY_NODELETE colorOrCurrentColor() const;
+    NODELETE const Color& colorOrCurrentColor() const;
 };
 
 // MARK: - Blending

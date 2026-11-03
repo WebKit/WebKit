@@ -86,7 +86,7 @@ public:
     {
     }
 
-    void LEGACY_NODELETE ref() const override;
+    NODELETE void ref() const override;
     void deref() const override;
 
     StyleSheetContents* contextStyleSheet() const;
@@ -160,9 +160,9 @@ public:
 private:
     StyleRuleCSSStyleProperties(MutableStyleProperties&, CSSRule&);
 
-    CSSStyleSheet* LEGACY_NODELETE parentStyleSheet() const final;
+    NODELETE CSSStyleSheet* parentStyleSheet() const final;
 
-    CSSRule* LEGACY_NODELETE parentRule() const final;
+    NODELETE CSSRule* parentRule() const final;
 
     [[nodiscard]] bool willMutate() final;
     void didMutate(MutationType) final;

@@ -173,7 +173,7 @@ inline static NSTextAlignment reconstructNSTextAlignment(ParagraphStyleAlignment
     return NSTextAlignmentLeft;
 }
 
-inline static NSTextBlockVerticalAlignment LEGACY_NODELETE reconstructNSTextBlockVerticalAlignment(TextTableBlockVerticalAlignment alignment)
+NODELETE inline static NSTextBlockVerticalAlignment reconstructNSTextBlockVerticalAlignment(TextTableBlockVerticalAlignment alignment)
 {
     switch (alignment) {
     case TextTableBlockVerticalAlignment::Top:
@@ -189,7 +189,7 @@ inline static NSTextBlockVerticalAlignment LEGACY_NODELETE reconstructNSTextBloc
     return NSTextBlockVerticalAlignmentTop;
 }
 
-inline static NSTextTableLayoutAlgorithm LEGACY_NODELETE reconstructNSTextTableLayoutAlgorithm(TextTableLayoutAlgorithm layout)
+NODELETE inline static NSTextTableLayoutAlgorithm reconstructNSTextTableLayoutAlgorithm(TextTableLayoutAlgorithm layout)
 {
     switch (layout) {
     case TextTableLayoutAlgorithm::Automatic:
@@ -201,7 +201,7 @@ inline static NSTextTableLayoutAlgorithm LEGACY_NODELETE reconstructNSTextTableL
     return NSTextTableLayoutAlgorithmAutomatic;
 }
 
-inline static NSWritingDirection LEGACY_NODELETE reconstructNSWritingDirection(ParagraphStyleWritingDirection writingDirection)
+NODELETE inline static NSWritingDirection reconstructNSWritingDirection(ParagraphStyleWritingDirection writingDirection)
 {
     switch (writingDirection) {
     case ParagraphStyleWritingDirection::LeftToRight:
@@ -608,7 +608,7 @@ static std::optional<AttributedString::AttributeValue> extractArray(NSArray *arr
     return std::nullopt;
 }
 
-inline static ParagraphStyleAlignment LEGACY_NODELETE extractParagraphStyleAlignment(NSTextAlignment alignment)
+NODELETE inline static ParagraphStyleAlignment extractParagraphStyleAlignment(NSTextAlignment alignment)
 {
     switch (alignment) {
     case NSTextAlignmentLeft:
@@ -626,7 +626,7 @@ inline static ParagraphStyleAlignment LEGACY_NODELETE extractParagraphStyleAlign
     return ParagraphStyleAlignment::Left;
 }
 
-inline static TextTableBlockVerticalAlignment LEGACY_NODELETE extractTextTableBlockVerticalAlignment(NSTextBlockVerticalAlignment verticalAlignment)
+NODELETE inline static TextTableBlockVerticalAlignment extractTextTableBlockVerticalAlignment(NSTextBlockVerticalAlignment verticalAlignment)
 {
     switch (verticalAlignment) {
     case NSTextBlockVerticalAlignmentTop:
@@ -642,7 +642,7 @@ inline static TextTableBlockVerticalAlignment LEGACY_NODELETE extractTextTableBl
     return TextTableBlockVerticalAlignment::Top;
 }
 
-inline static TextTableLayoutAlgorithm LEGACY_NODELETE extractTextTableLayoutAlgorithm(NSTextTableLayoutAlgorithm layout)
+NODELETE inline static TextTableLayoutAlgorithm extractTextTableLayoutAlgorithm(NSTextTableLayoutAlgorithm layout)
 {
     switch (layout) {
     case NSTextTableLayoutAlgorithmAutomatic:
@@ -654,7 +654,7 @@ inline static TextTableLayoutAlgorithm LEGACY_NODELETE extractTextTableLayoutAlg
     return TextTableLayoutAlgorithm::Automatic;
 }
 
-inline static ParagraphStyleWritingDirection LEGACY_NODELETE extractParagraphStyleWritingDirection(NSWritingDirection writingDirection)
+NODELETE inline static ParagraphStyleWritingDirection extractParagraphStyleWritingDirection(NSWritingDirection writingDirection)
 {
     switch (writingDirection) {
     case NSWritingDirectionLeftToRight:

@@ -44,7 +44,7 @@ public:
     explicit XMLDocumentParserScope(CachedResourceLoader*);
     ~XMLDocumentParserScope();
 
-    static WeakPtr<CachedResourceLoader>& LEGACY_NODELETE currentCachedResourceLoader();
+    NODELETE static WeakPtr<CachedResourceLoader>& currentCachedResourceLoader();
 
 #if ENABLE(XSLT)
     XMLDocumentParserScope(CachedResourceLoader*, xmlGenericErrorFunc, xmlStructuredErrorFunc = nullptr, void* genericErrorContext = nullptr, void* structuredErrorContext = nullptr);

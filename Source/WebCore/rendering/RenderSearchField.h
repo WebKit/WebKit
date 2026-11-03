@@ -43,7 +43,7 @@ public:
     bool popupIsVisible() const { return m_searchPopupIsVisible; }
     void showPopup();
     void hidePopup();
-    void LEGACY_NODELETE popupDidHide();
+    NODELETE void popupDidHide();
     WEBCORE_EXPORT std::span<const RecentSearch> recentSearches();
 
     void updatePopup(const AtomString& name, const Vector<WebCore::RecentSearch>& searchItems);
@@ -61,7 +61,7 @@ private:
     LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     void updateFromElement() override;
     Visibility visibilityForCancelButton() const;
-    const AtomString& LEGACY_NODELETE autosaveName() const;
+    NODELETE const AtomString& autosaveName() const;
 
     SearchPopupMenu* searchPopup() const { return m_searchPopup.get(); }
 

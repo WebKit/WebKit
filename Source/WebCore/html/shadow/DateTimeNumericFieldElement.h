@@ -38,8 +38,8 @@ public:
     struct Range {
         Range(int minimum, int maximum)
             : minimum(minimum), maximum(maximum) { }
-        int LEGACY_NODELETE clampValue(int) const;
-        bool LEGACY_NODELETE isInRange(int) const;
+        NODELETE int clampValue(int) const;
+        NODELETE bool isInRange(int) const;
 
         int minimum;
         int maximum;
@@ -48,7 +48,7 @@ public:
 protected:
     DateTimeNumericFieldElement(Document&, DateTimeFieldElementFieldOwner&, const Range&, int placeholder);
 
-    int LEGACY_NODELETE maximum() const;
+    NODELETE int maximum() const;
 
     // DateTimeFieldElement functions:
     bool hasValue() const final;

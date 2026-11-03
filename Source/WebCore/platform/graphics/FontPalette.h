@@ -52,10 +52,10 @@ struct FontPalette {
 
     WEBCORE_EXPORT ~FontPalette();
 
-    bool LEGACY_NODELETE isNormal() const;
-    bool LEGACY_NODELETE isLight() const;
-    bool LEGACY_NODELETE isDark() const;
-    std::optional<AtomString> LEGACY_NODELETE ident() const;
+    NODELETE bool isNormal() const;
+    NODELETE bool isLight() const;
+    NODELETE bool isDark() const;
+    NODELETE std::optional<AtomString> ident() const;
 
     OrderedHashSet<AtomString> referencedIdentifiers() const;
 

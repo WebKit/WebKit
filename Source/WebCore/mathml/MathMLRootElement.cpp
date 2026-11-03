@@ -41,7 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLRootElement);
 
 using namespace MathMLNames;
 
-static RootType LEGACY_NODELETE rootTypeOf(const QualifiedName& tagName)
+NODELETE static RootType rootTypeOf(const QualifiedName& tagName)
 {
     if (tagName.matches(msqrtTag))
         return RootType::SquareRoot;

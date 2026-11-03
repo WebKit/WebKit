@@ -116,7 +116,7 @@ String WritingToolsController::plainText(const SimpleRange& range)
 
 #pragma mark - Static utility helper methods.
 
-static bool LEGACY_NODELETE isZeroToOneCompositionType(WritingTools::Session::CompositionType type)
+NODELETE static bool isZeroToOneCompositionType(WritingTools::Session::CompositionType type)
 {
     switch (type) {
     case WritingTools::Session::CompositionType::Compose:
@@ -128,7 +128,7 @@ static bool LEGACY_NODELETE isZeroToOneCompositionType(WritingTools::Session::Co
     }
 }
 
-static CharacterRange LEGACY_NODELETE rangeClampedToLength(CharacterRange range, unsigned length)
+NODELETE static CharacterRange rangeClampedToLength(CharacterRange range, unsigned length)
 {
     range.location = std::min<uint64_t>(range.location, length);
     range.length = std::min<uint64_t>(range.length, length - range.location);
@@ -1030,7 +1030,7 @@ void WritingToolsController::willEndWritingToolsSession<WritingTools::Session::T
 }
 
 template<>
-void LEGACY_NODELETE WritingToolsController::willEndWritingToolsSession<WritingTools::Session::Type::Composition>(bool)
+NODELETE void WritingToolsController::willEndWritingToolsSession<WritingTools::Session::Type::Composition>(bool)
 {
 }
 

@@ -57,7 +57,7 @@ private:
     void serviceAnimation(MonotonicTime) final;
     String debugDescription() const final;
 
-    Seconds LEGACY_NODELETE durationFromDistance(const FloatSize&) const;
+    NODELETE Seconds durationFromDistance(const FloatSize&) const;
 
     bool animateScroll(MonotonicTime);
 

@@ -42,7 +42,7 @@ ObjcClass::ObjcClass(ClassStructPtr aClass)
 {
 }
 
-static RetainPtr<CFMutableDictionaryRef>& LEGACY_NODELETE classesByIsA()
+NODELETE static RetainPtr<CFMutableDictionaryRef>& classesByIsA()
 {
     static NeverDestroyed<RetainPtr<CFMutableDictionaryRef>> classesByIsA;
     return classesByIsA;

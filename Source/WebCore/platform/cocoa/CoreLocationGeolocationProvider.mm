@@ -189,7 +189,7 @@ void CoreLocationGeolocationProvider::setEnableHighAccuracy(bool highAccuracyEna
 
 class AuthorizationChecker final : public RefCounted<AuthorizationChecker>, public CoreLocationGeolocationProvider::Client {
 public:
-    static Ref<AuthorizationChecker> LEGACY_NODELETE create()
+    NODELETE static Ref<AuthorizationChecker> create()
     {
         return adoptRef(*new AuthorizationChecker);
     }

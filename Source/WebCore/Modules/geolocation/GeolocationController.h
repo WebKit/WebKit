@@ -61,7 +61,7 @@ public:
 
     std::optional<GeolocationPositionData> lastPosition();
 
-    GeolocationClient& LEGACY_NODELETE client();
+    NODELETE GeolocationClient& client();
 
     WEBCORE_EXPORT static ASCIILiteral supplementName();
     static GeolocationController* from(Page* page) { return downcast<GeolocationController>(Supplement<Page>::from(page, supplementName())); }

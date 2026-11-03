@@ -43,10 +43,10 @@ public:
 
     void takeLayerContents(PlatformCALayer&);
     
-    void LEGACY_NODELETE mainThreadCommitWillStart();
+    NODELETE void mainThreadCommitWillStart();
     void mainThreadCommitDidEnd();
 
-    void LEGACY_NODELETE scrollingThreadCommitWillStart();
+    NODELETE void scrollingThreadCommitWillStart();
     void scrollingThreadCommitDidEnd();
 
 private:
@@ -54,7 +54,7 @@ private:
     
     PlatformCALayerContentsDelayedReleaser();
 
-    void LEGACY_NODELETE updateSawOverlappingCommit() WTF_REQUIRES_LOCK(m_lock);
+    NODELETE void updateSawOverlappingCommit() WTF_REQUIRES_LOCK(m_lock);
     void clearRetainedContents();
 
     Vector<RetainPtr<CFTypeRef>> m_retainedContents;

@@ -59,7 +59,7 @@ struct ClientState {
     {
     }
 
-    bool LEGACY_NODELETE operator==(const ClientState& other) const
+    NODELETE bool operator==(const ClientState& other) const
     {
         return contextId == other.contextId && &client == &other.client;
     }
@@ -75,7 +75,7 @@ struct ClientState {
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ClientState);
 
-static bool LEGACY_NODELETE flagsAreSet(MediaProducerMediaStateFlags value, MediaProducerMediaStateFlags flags)
+NODELETE static bool flagsAreSet(MediaProducerMediaStateFlags value, MediaProducerMediaStateFlags flags)
 {
     return value.containsAny(flags);
 }

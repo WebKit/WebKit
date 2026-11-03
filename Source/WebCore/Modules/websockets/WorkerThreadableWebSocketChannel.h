@@ -140,7 +140,7 @@ private:
         static RefPtr<Peer> mainThreadInitialize(ScriptExecutionContext&, WorkerThread&, ScriptExecutionContextIdentifier, Ref<ThreadableWebSocketChannelClientWrapper>&&, const String& taskMode, Ref<SocketProvider>&&, IsInitiatedByWorker);
 
         // Executed on the worker context's thread.
-        void LEGACY_NODELETE clearClientWrapper();
+        NODELETE void clearClientWrapper();
 
         const Ref<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
         RefPtr<WorkerGlobalScope> m_workerGlobalScope;

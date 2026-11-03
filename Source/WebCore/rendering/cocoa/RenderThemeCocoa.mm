@@ -111,12 +111,12 @@ static constexpr auto switchCornerRadiusFraction = 0.f;
 
 #if ENABLE(FORM_CONTROL_REFRESH)
 
-static bool LEGACY_NODELETE formControlRefreshEnabled(const RenderObject& renderer)
+NODELETE static bool formControlRefreshEnabled(const RenderObject& renderer)
 {
     return renderer.settings().formControlRefreshEnabled();
 }
 
-static bool LEGACY_NODELETE formControlRefreshEnabled(const Element* element)
+NODELETE static bool formControlRefreshEnabled(const Element* element)
 {
     if (!element)
         return false;
@@ -220,19 +220,19 @@ constexpr auto logicalSwitchHeight = 31.f;
 constexpr auto logicalSwitchHeight = 18.f;
 #endif
 
-static float LEGACY_NODELETE easeInOut(float progress)
+NODELETE static float easeInOut(float progress)
 {
     return -2.0f * pow(progress, 3.0f) + 3.0f * pow(progress, 2.0f);
 }
 
-static float LEGACY_NODELETE switchTrackScale(const FloatSize& size, bool isVertical, float logicalSwitchWidthForMode)
+NODELETE static float switchTrackScale(const FloatSize& size, bool isVertical, float logicalSwitchWidthForMode)
 {
     auto switchWidth = isVertical ? logicalSwitchHeight : logicalSwitchWidthForMode;
     auto switchHeight = isVertical ? logicalSwitchWidthForMode : logicalSwitchHeight;
     return std::min(size.width() / switchWidth, size.height() / switchHeight);
 }
 
-static const FloatRect LEGACY_NODELETE switchTrackRect(const FloatRect& rect, float scale, bool isVertical, float logicalSwitchWidthForMode)
+NODELETE static const FloatRect switchTrackRect(const FloatRect& rect, float scale, bool isVertical, float logicalSwitchWidthForMode)
 {
     auto logicalHeight = logicalSwitchHeight * scale;
     auto logicalWidth = logicalSwitchWidthForMode * scale;
@@ -242,7 +242,7 @@ static const FloatRect LEGACY_NODELETE switchTrackRect(const FloatRect& rect, fl
     return isVertical ? logicalRect.transposedRect() : logicalRect;
 }
 
-static HTMLInputElement& LEGACY_NODELETE switchElement(const RenderObject& renderer)
+NODELETE static HTMLInputElement& switchElement(const RenderObject& renderer)
 {
     return downcast<HTMLInputElement>(*renderer.node());
 }
@@ -417,7 +417,7 @@ static constexpr auto switchDisabledOpacity = 0.5f;
 static constexpr FloatSize idealSwitchSize = { 64, 28 };
 static constexpr auto logicalRefreshedSwitchWidth = logicalSwitchHeight * (idealSwitchSize.width() / idealSwitchSize.height());
 
-static float LEGACY_NODELETE thumbHeightForLogicalTrackHeight(float logicalTrackHeight)
+NODELETE static float thumbHeightForLogicalTrackHeight(float logicalTrackHeight)
 {
 #if PLATFORM(IOS_FAMILY)
     return 0.85714285714f * logicalTrackHeight; // ratio of 6:7
@@ -848,7 +848,7 @@ constexpr int kThumbnailBorderCornerRadius = 1;
 constexpr int kVisibleBackgroundImageWidth = 1;
 constexpr int kMultipleThumbnailShrinkSize = 2;
 
-static inline bool LEGACY_NODELETE canShowCapsLockIndicator()
+NODELETE static inline bool canShowCapsLockIndicator()
 {
 #if HAVE(ACCELERATED_TEXT_INPUT)
     if (redesignedTextCursorEnabled())
@@ -1873,7 +1873,7 @@ static constexpr auto searchFieldDecorationWithDropdownEmSizeLTR = 1.5f;
 static constexpr auto searchFieldDecorationWithDropdownEmSizeRTL = 1.7f;
 #endif
 
-static bool LEGACY_NODELETE searchFieldCanBeCapsule(const RenderElement& box, const FloatRect& rect, float pixelsPerEm, bool supportsResults)
+NODELETE static bool searchFieldCanBeCapsule(const RenderElement& box, const FloatRect& rect, float pixelsPerEm, bool supportsResults)
 {
     // Depending on dimensions and styles, it might not be possible to make the control
     // capsule-shaped in a reasonable manner, or it may look especially strange with a
@@ -2564,7 +2564,7 @@ static PathWithSize spinButtonIndicatorPath(ControlSize controlSize)
     }
 }
 
-static float LEGACY_NODELETE spinButtonDividerWidthRatioForControlSize(ControlSize controlSize)
+NODELETE static float spinButtonDividerWidthRatioForControlSize(ControlSize controlSize)
 {
     switch (controlSize) {
     case ControlSize::Micro:
@@ -2581,7 +2581,7 @@ static float LEGACY_NODELETE spinButtonDividerWidthRatioForControlSize(ControlSi
     }
 }
 
-static ControlSize LEGACY_NODELETE spinButtonControlSizeForHeight(float size)
+NODELETE static ControlSize spinButtonControlSizeForHeight(float size)
 {
     if (size < 16)
         return ControlSize::Micro;
@@ -2597,7 +2597,7 @@ static ControlSize LEGACY_NODELETE spinButtonControlSizeForHeight(float size)
     return ControlSize::ExtraLarge;
 }
 
-static float LEGACY_NODELETE spinButtonIndicatorWidthRatio(ControlSize controlSize)
+NODELETE static float spinButtonIndicatorWidthRatio(ControlSize controlSize)
 {
     switch (controlSize) {
     case ControlSize::Micro:
@@ -2614,7 +2614,7 @@ static float LEGACY_NODELETE spinButtonIndicatorWidthRatio(ControlSize controlSi
     }
 }
 
-static FloatRect LEGACY_NODELETE spinButtonRectForContentRect(const RenderElement& box, const FloatRect& contentRect)
+NODELETE static FloatRect spinButtonRectForContentRect(const RenderElement& box, const FloatRect& contentRect)
 {
     const auto isHorizontal = !box.writingMode().isVertical();
     const auto isInlineFlipped = box.writingMode().isInlineFlipped();
@@ -2861,7 +2861,7 @@ bool RenderThemeCocoa::adjustTextFieldStyleForVectorBasedControls(Style::Compute
     return true;
 }
 
-static ControlSize LEGACY_NODELETE listButtonControlSizeForBlockSize(float size)
+NODELETE static ControlSize listButtonControlSizeForBlockSize(float size)
 {
     if (size < 9)
         return ControlSize::Micro;
@@ -2877,7 +2877,7 @@ static ControlSize LEGACY_NODELETE listButtonControlSizeForBlockSize(float size)
     return ControlSize::ExtraLarge;
 }
 
-static FloatSize LEGACY_NODELETE listButtonIndicatorSize(ControlSize controlSize)
+NODELETE static FloatSize listButtonIndicatorSize(ControlSize controlSize)
 {
     switch (controlSize) {
     case ControlSize::Micro:
@@ -2893,7 +2893,7 @@ static FloatSize LEGACY_NODELETE listButtonIndicatorSize(ControlSize controlSize
 }
 
 #if PLATFORM(MAC)
-static float LEGACY_NODELETE listButtonCornerRadius(ControlSize controlSize)
+NODELETE static float listButtonCornerRadius(ControlSize controlSize)
 {
     switch (controlSize) {
     case ControlSize::Micro:
@@ -3854,7 +3854,7 @@ bool RenderThemeCocoa::paintProgressBarForVectorBasedControls(const RenderElemen
     return true;
 }
 
-static bool LEGACY_NODELETE hasVisibleSliderThumbDescendant(const RenderElement& box)
+NODELETE static bool hasVisibleSliderThumbDescendant(const RenderElement& box)
 {
     CheckedPtr renderBox = dynamicDowncast<RenderBox>(box);
     if (!renderBox)

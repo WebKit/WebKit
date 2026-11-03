@@ -71,7 +71,7 @@ public:
 private:
     explicit InspectorAuditResourcesObject(Inspector::InspectorAuditAgent&);
 
-    Ref<CachedResourceClient> LEGACY_NODELETE clientForResource(const CachedResource&);
+    NODELETE Ref<CachedResourceClient> clientForResource(const CachedResource&);
 
     const CheckedRef<Inspector::InspectorAuditAgent> m_auditAgent;
 

@@ -240,7 +240,7 @@ static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value,
     }
 }
 
-static CSS::Range LEGACY_NODELETE rangeForProperty(CSSPropertyID propertyID, CSSUnitType)
+NODELETE static CSS::Range rangeForProperty(CSSPropertyID propertyID, CSSUnitType)
 {
     // FIXME: Merge with isValueOutOfRangeForProperty.
 
@@ -320,7 +320,7 @@ static CSS::Range LEGACY_NODELETE rangeForProperty(CSSPropertyID propertyID, CSS
     }
 }
 
-static CSS::Category LEGACY_NODELETE calculationCategoryForProperty(CSSPropertyID, CSSUnitType unit)
+NODELETE static CSS::Category calculationCategoryForProperty(CSSPropertyID, CSSUnitType unit)
 {
     // FIXME: This should be looking up the supported calculation categories for the CSSPropertyID and picking the one that best matches the unit.
 

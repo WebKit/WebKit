@@ -38,32 +38,32 @@ namespace WebCore::NameValidation {
 
 // https://dom.spec.whatwg.org/#validate-and-extract
 
-static constexpr bool LEGACY_NODELETE isInvalidAttributeNameCharacter(char16_t c)
+NODELETE static constexpr bool isInvalidAttributeNameCharacter(char16_t c)
 {
     return !c || isASCIIWhitespace(c) || c == '/' || c == '>' || c == '=';
 }
 
-static constexpr bool LEGACY_NODELETE isInvalidElementNameCharacterAfterAlphaStart(char16_t c)
+NODELETE static constexpr bool isInvalidElementNameCharacterAfterAlphaStart(char16_t c)
 {
     return !c || isASCIIWhitespace(c) || c == '/' || c == '>';
 }
 
-static constexpr bool LEGACY_NODELETE isValidElementNameContinuationCharacter(char16_t c)
+NODELETE static constexpr bool isValidElementNameContinuationCharacter(char16_t c)
 {
     return isASCIIAlphanumeric(c) || c == '-' || c == '.' || c == ':' || c == '_' || !isASCII(c);
 }
 
-static constexpr bool LEGACY_NODELETE isInvalidNamespacePrefixCharacter(char16_t c)
+NODELETE static constexpr bool isInvalidNamespacePrefixCharacter(char16_t c)
 {
     return !c || isASCIIWhitespace(c) || c == '/' || c == '>';
 }
 
-static constexpr bool LEGACY_NODELETE isInvalidDoctypeNameCharacter(char16_t c)
+NODELETE static constexpr bool isInvalidDoctypeNameCharacter(char16_t c)
 {
     return !c || isASCIIWhitespace(c) || c == '>';
 }
 
-static constexpr bool LEGACY_NODELETE isValidASCIIXMLNamePart(char16_t c)
+NODELETE static constexpr bool isValidASCIIXMLNamePart(char16_t c)
 {
     return isASCIIAlphanumeric(c) || c == ':' || c == '_' || c == '-' || c == '.';
 }
@@ -97,7 +97,7 @@ bool isValidAttributeName(StringView name)
 }
 
 // https://dom.spec.whatwg.org/#valid-namespace-prefix
-static bool LEGACY_NODELETE isValidNamespacePrefix(StringView prefix)
+NODELETE static bool isValidNamespacePrefix(StringView prefix)
 {
     return !prefix.isEmpty() && !prefix.contains(isInvalidNamespacePrefixCharacter);
 }
@@ -108,7 +108,7 @@ bool isValidDoctypeName(StringView name)
     return !name.contains(isInvalidDoctypeNameCharacter);
 }
 
-static inline bool LEGACY_NODELETE isValidASCIIXMLName(StringView name)
+NODELETE static inline bool isValidASCIIXMLName(StringView name)
 {
     if (name.isEmpty())
         return false;
@@ -122,7 +122,7 @@ static inline bool LEGACY_NODELETE isValidASCIIXMLName(StringView name)
 
 // https://www.w3.org/TR/xml/#NT-NameStartChar
 // NameStartChar ::= ":" | [A-Z] | "_" | [a-z] | [#xC0-#xD6] | [#xD8-#xF6] | [#xF8-#x2FF] | [#x370-#x37D] | [#x37F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
-static inline bool LEGACY_NODELETE isValidXMLNameStart(char32_t c)
+NODELETE static inline bool isValidXMLNameStart(char32_t c)
 {
     return c == ':' || isASCIIAlpha(c) || c == '_' || (c >= 0x00C0 && c <= 0x00D6)
         || (c >= 0x00D8 && c <= 0x00F6) || (c >= 0x00F8 && c <= 0x02FF) || (c >= 0x0370 && c <= 0x037D) || (c >= 0x037F && c <= 0x1FFF)
@@ -132,7 +132,7 @@ static inline bool LEGACY_NODELETE isValidXMLNameStart(char32_t c)
 
 // https://www.w3.org/TR/xml/#NT-NameChar
 // NameChar ::= NameStartChar | "-" | "." | [0-9] | #xB7 | [#x0300-#x036F] | [#x203F-#x2040]
-static inline bool LEGACY_NODELETE isValidXMLNamePart(char32_t c)
+NODELETE static inline bool isValidXMLNamePart(char32_t c)
 {
     return isValidXMLNameStart(c) || c == '-' || c == '.' || isASCIIDigit(c) || c == 0x00B7
         || (c >= 0x0300 && c <= 0x036F) || (c >= 0x203F && c <= 0x2040);

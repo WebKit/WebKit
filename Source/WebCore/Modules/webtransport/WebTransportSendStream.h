@@ -50,7 +50,7 @@ public:
 
     void getStats(ScriptExecutionContext&, Ref<DeferredPromise>&&);
     ExceptionOr<Ref<WebTransportWriter>> getWriter(JSDOMGlobalObject&);
-    WebTransportSendGroup* LEGACY_NODELETE sendGroup();
+    NODELETE WebTransportSendGroup* sendGroup();
     ExceptionOr<void> setSendGroup(WebTransportSendGroup*);
     int64_t sendOrder() { return m_sendOrder; }
     void setSendOrder(int64_t order) { m_sendOrder = order; }

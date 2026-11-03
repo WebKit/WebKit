@@ -46,7 +46,7 @@ public:
 protected:
     explicit GPUBasedCanvasRenderingContext(CanvasBase&, CanvasRenderingContext::Type);
 
-    HTMLCanvasElement* LEGACY_NODELETE htmlCanvas() const;
+    NODELETE HTMLCanvasElement* htmlCanvas() const;
     void willUpdateCanvasContents();
 };
     

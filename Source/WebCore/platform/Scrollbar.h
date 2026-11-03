@@ -51,8 +51,8 @@ public:
     WEBCORE_EXPORT void setFrameRect(const IntRect&) final;
 
     static constexpr int pixelsPerLineStep() { return 40; }
-    WEBCORE_EXPORT static int LEGACY_NODELETE pixelsPerLineStep(int viewWidthOrHeight);
-    WEBCORE_EXPORT static void LEGACY_NODELETE setShouldUseFixedPixelsPerLineStepForTesting(bool);
+    NODELETE WEBCORE_EXPORT static int pixelsPerLineStep(int viewWidthOrHeight);
+    NODELETE WEBCORE_EXPORT static void setShouldUseFixedPixelsPerLineStepForTesting(bool);
     static float minFractionToStepWhenPaging() { return 0.8; }
     WEBCORE_EXPORT static int maxOverlapBetweenPages();
     static int pageStep(int viewWidthOrHeight, int contentWidthOrHeight) { return std::max(std::max<int>(lroundf(viewWidthOrHeight * Scrollbar::minFractionToStepWhenPaging()), lroundf(contentWidthOrHeight - Scrollbar::maxOverlapBetweenPages())), 1); }
@@ -86,7 +86,7 @@ public:
     virtual void setHoveredPart(ScrollbarPart);
     virtual void setPressedPart(ScrollbarPart);
 
-    WEBCORE_EXPORT void LEGACY_NODELETE setSteps(int lineStep, int pageStep, int pixelsPerStep = 1);
+    NODELETE WEBCORE_EXPORT void setSteps(int lineStep, int pageStep, int pixelsPerStep = 1);
     WEBCORE_EXPORT void setProportion(int visibleSize, int totalSize);
     void setPressedPos(int p) { m_pressedPos = p; }
 
@@ -163,8 +163,8 @@ protected:
     void startTimerIfNeeded(Seconds delay);
     void stopTimerIfNeeded();
     void autoscrollPressedPart(Seconds delay);
-    ScrollDirection LEGACY_NODELETE pressedPartScrollDirection();
-    ScrollGranularity LEGACY_NODELETE pressedPartScrollGranularity();
+    NODELETE ScrollDirection pressedPartScrollDirection();
+    NODELETE ScrollGranularity pressedPartScrollGranularity();
 
     WeakRef<ScrollableArea> m_scrollableArea;
     ScrollbarOrientation m_orientation;

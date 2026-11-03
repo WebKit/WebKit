@@ -42,7 +42,7 @@ public:
     DummyCredentialRequestCoordinatorClient();
     ~DummyCredentialRequestCoordinatorClient() final;
 
-    static Ref<DummyCredentialRequestCoordinatorClient> LEGACY_NODELETE create();
+    NODELETE static Ref<DummyCredentialRequestCoordinatorClient> create();
 
 private:
     void showDigitalCredentialsChooser(std::optional<FrameIdentifier>, DigitalCredentialsRawRequests&&, const DigitalCredentialsRequestData&, CompletionHandler<void(std::expected<DigitalCredentialsResponseData, ExceptionData>&&)>&&);

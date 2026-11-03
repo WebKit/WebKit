@@ -39,7 +39,7 @@ class ImageRotationSessionVT;
 
 class RealtimeOutgoingVideoSourceCocoa final : public RealtimeOutgoingVideoSource {
 public:
-    static Ref<RealtimeOutgoingVideoSourceCocoa> LEGACY_NODELETE create(Ref<MediaStreamTrackPrivate>&&);
+    NODELETE static Ref<RealtimeOutgoingVideoSourceCocoa> create(Ref<MediaStreamTrackPrivate>&&);
 
     virtual ~RealtimeOutgoingVideoSourceCocoa();
 

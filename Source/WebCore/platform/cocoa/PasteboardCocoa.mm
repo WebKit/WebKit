@@ -42,7 +42,7 @@
 namespace WebCore {
 
 #if PLATFORM(MAC)
-static NSBitmapImageFileType LEGACY_NODELETE bitmapPNGFileType()
+NODELETE static NSBitmapImageFileType bitmapPNGFileType()
 {
     return NSBitmapImageFileTypePNG;
 }

@@ -47,31 +47,31 @@ inline Node* nextSkippingChildren(const Node&);
 inline Node* nextSkippingChildren(const Node&, const Node* stayWithin);
 
 // Does a reverse pre-order traversal to find the node that comes before the current one in document order
-WEBCORE_EXPORT Node* LEGACY_NODELETE last(const ContainerNode&);
+NODELETE WEBCORE_EXPORT Node* last(const ContainerNode&);
 inline Node* previous(const Node&, const Node* stayWithin = nullptr);
 
 // Like previous, but skips children and starts with the next sibling.
-Node* LEGACY_NODELETE previousSkippingChildren(const Node&, const Node* stayWithin = nullptr);
+NODELETE Node* previousSkippingChildren(const Node&, const Node* stayWithin = nullptr);
 
 // Like next, but visits parents after their children.
-Node* LEGACY_NODELETE nextPostOrder(const Node&, const Node* stayWithin = nullptr);
+NODELETE Node* nextPostOrder(const Node&, const Node* stayWithin = nullptr);
 
 // Like previous/previousSkippingChildren, but visits parents before their children.
-Node* LEGACY_NODELETE previousPostOrder(const Node&, const Node* stayWithin = nullptr);
-Node* LEGACY_NODELETE previousSkippingChildrenPostOrder(const Node&, const Node* stayWithin = nullptr);
+NODELETE Node* previousPostOrder(const Node&, const Node* stayWithin = nullptr);
+NODELETE Node* previousSkippingChildrenPostOrder(const Node&, const Node* stayWithin = nullptr);
 
 // Pre-order traversal including the pseudo-elements.
-Node* LEGACY_NODELETE previousIncludingPseudo(const Node&, const Node* = nullptr);
-Node* LEGACY_NODELETE nextIncludingPseudo(const Node&, const Node* = nullptr);
-Node* LEGACY_NODELETE nextIncludingPseudoSkippingChildren(const Node&, const Node* = nullptr);
+NODELETE Node* previousIncludingPseudo(const Node&, const Node* = nullptr);
+NODELETE Node* nextIncludingPseudo(const Node&, const Node* = nullptr);
+NODELETE Node* nextIncludingPseudoSkippingChildren(const Node&, const Node* = nullptr);
 
 }
 
 namespace NodeTraversal {
 
-WEBCORE_EXPORT Node* LEGACY_NODELETE nextAncestorSibling(const Node&);
-WEBCORE_EXPORT Node* LEGACY_NODELETE nextAncestorSibling(const Node&, const Node* stayWithin);
-WEBCORE_EXPORT Node* LEGACY_NODELETE deepLastChild(Node&);
+NODELETE WEBCORE_EXPORT Node* nextAncestorSibling(const Node&);
+NODELETE WEBCORE_EXPORT Node* nextAncestorSibling(const Node&, const Node* stayWithin);
+NODELETE WEBCORE_EXPORT Node* deepLastChild(Node&);
 
 template <class NodeType>
 inline Node* traverseNextTemplate(NodeType& current)

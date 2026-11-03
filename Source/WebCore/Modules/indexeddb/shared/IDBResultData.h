@@ -102,19 +102,19 @@ public:
     const IDBError& error() const LIFETIME_BOUND { return m_error; }
     IDBDatabaseConnectionIdentifier databaseConnectionIdentifier() const { return *m_databaseConnectionIdentifier; }
 
-    const IDBDatabaseInfo& LEGACY_NODELETE databaseInfo() const;
-    const IDBTransactionInfo& LEGACY_NODELETE transactionInfo() const;
+    NODELETE const IDBDatabaseInfo& databaseInfo() const;
+    NODELETE const IDBTransactionInfo& transactionInfo() const;
 
     const IDBKeyData* resultKey() const LIFETIME_BOUND { return m_resultKey.get(); }
     uint64_t resultInteger() const { return m_resultInteger; }
 
-    WEBCORE_EXPORT const IDBGetResult& LEGACY_NODELETE getResult() const;
-    WEBCORE_EXPORT const IDBGetAllResult& LEGACY_NODELETE getAllResult() const;
+    NODELETE WEBCORE_EXPORT const IDBGetResult& getResult() const;
+    NODELETE WEBCORE_EXPORT const IDBGetAllResult& getAllResult() const;
 
     // NetworkProcess-internal: set by UniqueIDBDatabaseTransaction before delegate dispatch so
     // IDBStorageConnectionToClient can route per-origin work without a side map. Never encoded
     // for IPC; stays empty on the WebProcess side.
-    WEBCORE_EXPORT const ClientOrigin* LEGACY_NODELETE clientOrigin() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const ClientOrigin* clientOrigin() const LIFETIME_BOUND;
     void setClientOrigin(ClientOrigin&&);
 
     WEBCORE_EXPORT IDBResultData();

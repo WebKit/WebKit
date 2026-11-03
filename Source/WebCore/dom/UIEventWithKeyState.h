@@ -71,10 +71,10 @@ protected:
     {
     }
 
-    void LEGACY_NODELETE setModifierKeys(bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
+    NODELETE void setModifierKeys(bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
 private:
-    static OptionSet<Modifier> LEGACY_NODELETE modifiersFromInitializer(const EventModifierInit& initializer);
+    NODELETE static OptionSet<Modifier> modifiersFromInitializer(const EventModifierInit& initializer);
 
     bool isUIEventWithKeyState() const final { return true; }
 

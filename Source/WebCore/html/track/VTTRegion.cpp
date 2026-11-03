@@ -186,7 +186,7 @@ VTTRegion::RegionSetting VTTRegion::scanSettingName(VTTScanner& input)
     return None;
 }
 
-static inline bool LEGACY_NODELETE parsedEntireRun(const VTTScanner& input, const VTTScanner::Run& run)
+NODELETE static inline bool parsedEntireRun(const VTTScanner& input, const VTTScanner::Run& run)
 {
     return input.isAt(run.end()); 
 }

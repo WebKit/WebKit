@@ -60,7 +60,7 @@ class SampleBufferDisplayLayer : public ThreadSafeRefCountedAndCanMakeThreadSafe
 public:
     WEBCORE_EXPORT static RefPtr<SampleBufferDisplayLayer> create(SampleBufferDisplayLayerClient&);
     using LayerCreator = RefPtr<SampleBufferDisplayLayer> (*)(SampleBufferDisplayLayerClient&);
-    WEBCORE_EXPORT static void LEGACY_NODELETE setCreator(LayerCreator);
+    NODELETE WEBCORE_EXPORT static void setCreator(LayerCreator);
 
     virtual ~SampleBufferDisplayLayer() = default;
 

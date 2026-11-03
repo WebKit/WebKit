@@ -66,7 +66,7 @@ struct SameSizeAsElementData : public RefCounted<SameSizeAsElementData> {
 
 static_assert(sizeof(ElementData) == sizeof(SameSizeAsElementData), "element attribute data should stay small");
 
-static size_t LEGACY_NODELETE sizeForShareableElementDataWithAttributeCount(unsigned count)
+NODELETE static size_t sizeForShareableElementDataWithAttributeCount(unsigned count)
 {
     return sizeof(ShareableElementData) + sizeof(Attribute) * count;
 }
@@ -177,7 +177,7 @@ bool ElementData::isEquivalent(const ElementData* other) const
     return true;
 }
 
-Attribute* LEGACY_NODELETE UniqueElementData::findAttributeByName(const QualifiedName& name)
+NODELETE Attribute* UniqueElementData::findAttributeByName(const QualifiedName& name)
 {
     for (auto& attribute : m_attributeVector) {
         if (attribute.name().matches(name))

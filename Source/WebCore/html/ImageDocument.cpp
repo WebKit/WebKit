@@ -70,7 +70,7 @@ using namespace HTMLNames;
 #if !PLATFORM(IOS_FAMILY)
 class ImageEventListener final : public EventListener {
 public:
-    static Ref<ImageEventListener> LEGACY_NODELETE create(ImageDocument& document) { return adoptRef(*new ImageEventListener(document)); }
+    NODELETE static Ref<ImageEventListener> create(ImageDocument& document) { return adoptRef(*new ImageEventListener(document)); }
 
 private:
     explicit ImageEventListener(ImageDocument& document)
@@ -212,7 +212,7 @@ void ImageDocument::finishedParsing()
     HTMLDocument::finishedParsing();
 }
 
-inline ImageDocument& LEGACY_NODELETE ImageDocumentParser::document() const
+NODELETE inline ImageDocument& ImageDocumentParser::document() const
 {
     // Only used during parsing, so document is guaranteed to be non-null.
     ASSERT(RawDataDocumentParser::document());

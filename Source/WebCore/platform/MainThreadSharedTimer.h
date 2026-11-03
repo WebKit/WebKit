@@ -46,7 +46,7 @@ class MainThreadSharedTimer final : public SharedTimer
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MainThreadSharedTimer);
     friend class NeverDestroyed<MainThreadSharedTimer>;
 public:
-    static MainThreadSharedTimer& LEGACY_NODELETE singleton();
+    NODELETE static MainThreadSharedTimer& singleton();
 
     // Do nothing since this is a singleton.
     void ref() const { }
@@ -61,7 +61,7 @@ public:
     // need to call this from non-member functions at the moment.
     void fired();
 
-    WEBCORE_EXPORT static bool& LEGACY_NODELETE shouldSetupPowerObserver();
+    NODELETE WEBCORE_EXPORT static bool& shouldSetupPowerObserver();
     WEBCORE_EXPORT static void restartSharedTimer();
 
 private:

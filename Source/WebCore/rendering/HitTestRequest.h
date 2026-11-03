@@ -112,7 +112,7 @@ public:
 
     OptionSet<Type> type() const { return m_type; }
 
-    bool LEGACY_NODELETE isVisibleForStyle(const UsedStyle&) const;
+    NODELETE bool isVisibleForStyle(const UsedStyle&) const;
 
 private:
     OptionSet<Type> m_type;

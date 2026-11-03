@@ -118,7 +118,7 @@ public:
         return adoptRef(*new DefaultFilterOperation(representedType()));
     }
 
-    Type LEGACY_NODELETE representedType() const;
+    NODELETE Type representedType() const;
 
 private:
     bool operator==(const FilterOperation&) const override;
@@ -177,7 +177,7 @@ public:
 private:
     bool operator==(const FilterOperation&) const override;
 
-    double LEGACY_NODELETE passthroughAmount() const;
+    NODELETE double passthroughAmount() const;
 
     BasicColorMatrixFilterOperation(double amount, Type type)
         : FilterOperation(type)
@@ -210,7 +210,7 @@ public:
 private:
     bool operator==(const FilterOperation&) const override;
 
-    double LEGACY_NODELETE passthroughAmount() const;
+    NODELETE double passthroughAmount() const;
 
     BasicComponentTransferFilterOperation(double amount, Type type)
         : FilterOperation(type)

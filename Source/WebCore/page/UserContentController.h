@@ -33,7 +33,7 @@ namespace WebCore {
 
 class UserContentController final : public UserContentProvider {
 public:
-    WEBCORE_EXPORT static Ref<UserContentController> LEGACY_NODELETE create();
+    NODELETE WEBCORE_EXPORT static Ref<UserContentController> create();
     WEBCORE_EXPORT ~UserContentController();
 
     WEBCORE_EXPORT void addUserScript(DOMWrapperWorld&, std::unique_ptr<UserScript>);
@@ -53,7 +53,7 @@ private:
     void forEachUserScript(NOESCAPE const Function<void(DOMWrapperWorld&, const UserScript&)>&) const final;
     void forEachUserStyleSheet(NOESCAPE const Function<void(const UserStyleSheet&)>&) const final;
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    void LEGACY_NODELETE forEachUserMessageHandler(NOESCAPE const Function<void(const UserMessageHandlerDescriptor&)>&) const final;
+    NODELETE void forEachUserMessageHandler(NOESCAPE const Function<void(const UserMessageHandlerDescriptor&)>&) const final;
 #endif
     bool hasBuffersForWorld(const DOMWrapperWorld&) const override { return false; }
     WebKitBuffer* buffer(const DOMWrapperWorld&, const String&) const override { return nullptr; }

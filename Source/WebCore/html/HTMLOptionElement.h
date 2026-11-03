@@ -47,7 +47,7 @@ public:
     WEBCORE_EXPORT String text() const;
     void setText(String&&);
 
-    WEBCORE_EXPORT HTMLFormElement* LEGACY_NODELETE form() const;
+    NODELETE WEBCORE_EXPORT HTMLFormElement* form() const;
     RefPtr<HTMLFormElement> formForBindings() const;
 
     WEBCORE_EXPORT int index() const;
@@ -61,7 +61,7 @@ public:
     bool selectedForBindings() const;
     void setSelectedForBindings(bool);
 
-    WEBCORE_EXPORT HTMLSelectElement* LEGACY_NODELETE ownerSelectElement() const;
+    NODELETE WEBCORE_EXPORT HTMLSelectElement* ownerSelectElement() const;
     bool isRenderedWithBaseAppearance() const;
 
     WEBCORE_EXPORT String label() const;

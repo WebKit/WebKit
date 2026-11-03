@@ -185,7 +185,7 @@ void GPUCommandEncoder::resolveQuerySet(
     protect(backing())->resolveQuerySet(querySet.backing(), firstQuery, queryCount, destination.backing(), destinationOffset);
 }
 
-static WebGPU::CommandBufferDescriptor LEGACY_NODELETE convertToBacking(const std::optional<GPUCommandBufferDescriptor>& commandBufferDescriptor)
+NODELETE static WebGPU::CommandBufferDescriptor convertToBacking(const std::optional<GPUCommandBufferDescriptor>& commandBufferDescriptor)
 {
     if (!commandBufferDescriptor)
         return { };

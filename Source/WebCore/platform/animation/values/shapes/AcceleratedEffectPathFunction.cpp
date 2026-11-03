@@ -47,7 +47,7 @@ WindRule windRule(const AcceleratedEffectPathFunction& value)
 // MARK: - Path Caching
 
 struct AcceleratedEffectSVGPathTransformedByteStream {
-    bool LEGACY_NODELETE isEmpty() const
+    NODELETE bool isEmpty() const
     {
         return rawStream.isEmpty();
     }
@@ -69,7 +69,7 @@ struct AcceleratedEffectSVGPathTransformedByteStream {
 };
 
 struct AcceleratedEffectTransformedByteStreamPathPolicy : TinyLRUCachePolicy<AcceleratedEffectSVGPathTransformedByteStream, WebCore::Path> {
-    static bool LEGACY_NODELETE isKeyNull(const AcceleratedEffectSVGPathTransformedByteStream& stream)
+    NODELETE static bool isKeyNull(const AcceleratedEffectSVGPathTransformedByteStream& stream)
     {
         return stream.isEmpty();
     }

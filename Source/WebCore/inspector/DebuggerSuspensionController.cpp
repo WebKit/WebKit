@@ -55,7 +55,7 @@ struct PausedFrame {
     FrameIdentifier frameID;
 };
 
-static std::optional<PausedFrame>& LEGACY_NODELETE pausedFrame()
+NODELETE static std::optional<PausedFrame>& pausedFrame()
 {
     static NeverDestroyed<std::optional<PausedFrame>> frame;
     return frame;

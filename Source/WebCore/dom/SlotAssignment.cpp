@@ -54,12 +54,12 @@ struct SameSizeAsNamedSlotAssignment {
 
 static_assert(sizeof(NamedSlotAssignment) == sizeof(SameSizeAsNamedSlotAssignment), "NamedSlotAssignment should remain small");
 
-static const AtomString& LEGACY_NODELETE slotNameFromAttributeValue(const AtomString& value)
+NODELETE static const AtomString& slotNameFromAttributeValue(const AtomString& value)
 {
     return value == nullAtom() ? NamedSlotAssignment::defaultSlotName() : value;
 }
 
-static const AtomString& LEGACY_NODELETE slotNameFromSlotAttribute(const Node& child)
+NODELETE static const AtomString& slotNameFromSlotAttribute(const Node& child)
 {
     if (is<Text>(child))
         return NamedSlotAssignment::defaultSlotName();
@@ -401,7 +401,7 @@ void NamedSlotAssignment::willRemoveAssignedNode(Node& node, ShadowRoot&)
     InspectorInstrumentation::didChangeAssignedSlot(node);
 }
 
-const AtomString& LEGACY_NODELETE NamedSlotAssignment::slotNameForHostChild(const Node& child) const
+NODELETE const AtomString& NamedSlotAssignment::slotNameForHostChild(const Node& child) const
 {
     return slotNameFromSlotAttribute(child);
 }

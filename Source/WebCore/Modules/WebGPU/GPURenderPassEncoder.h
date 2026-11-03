@@ -58,7 +58,7 @@ public:
         return adoptRef(*new GPURenderPassEncoder(WTF::move(backing), WTF::move(label), commandEncoder, canvasColorAttachmentMask));
     }
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
     void setPipeline(const GPURenderPipeline&);
@@ -107,7 +107,7 @@ public:
     ::WebGPU::RenderPassEncoder& backing() { return m_backing; }
     const ::WebGPU::RenderPassEncoder& backing() const { return m_backing; }
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

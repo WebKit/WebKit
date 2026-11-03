@@ -444,7 +444,7 @@ void PropertyCascade::addPositionTryFallbackProperties()
     addMatch(*m_positionTryFallbackProperties, Origin::PositionFallback, IsImportant::No);
 }
 
-static auto& LEGACY_NODELETE declarationsForOrigin(const MatchResult& matchResult, PropertyCascade::Origin origin)
+NODELETE static auto& declarationsForOrigin(const MatchResult& matchResult, PropertyCascade::Origin origin)
 {
     switch (origin) {
     case PropertyCascade::Origin::UserAgent: return matchResult.userAgentDeclarations;
@@ -465,7 +465,7 @@ bool PropertyCascade::addNormalMatches(Origin origin)
     return hasImportant;
 }
 
-static bool LEGACY_NODELETE hasImportantProperties(const StyleProperties& properties)
+NODELETE static bool hasImportantProperties(const StyleProperties& properties)
 {
     for (auto property : properties) {
         if (property.isImportant())

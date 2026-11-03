@@ -77,9 +77,9 @@ public:
 
     bool isClosed() const { return m_closed; }
 
-    const String& LEGACY_NODELETE sessionId() const;
-    double LEGACY_NODELETE expiration() const;
-    Ref<MediaKeyStatusMap> LEGACY_NODELETE keyStatuses() const;
+    NODELETE const String& sessionId() const;
+    NODELETE double expiration() const;
+    NODELETE Ref<MediaKeyStatusMap> keyStatuses() const;
 
     void generateRequest(const AtomString&, const BufferSource&, Ref<DeferredPromise>&&);
     void load(const String&, Ref<DeferredPromise>&&);
@@ -99,10 +99,10 @@ public:
 private:
     MediaKeySession(Document&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
     void enqueueMessage(MediaKeyMessageType, const SharedBuffer&);
-    void LEGACY_NODELETE updateExpiration(double);
+    NODELETE void updateExpiration(double);
     void sessionClosed();
     String mediaKeysStorageDirectory() const;
-    CDMKeyGroupingStrategy LEGACY_NODELETE keyGroupingStrategy() const;
+    NODELETE CDMKeyGroupingStrategy keyGroupingStrategy() const;
 
     // CDMInstanceSessionClient
     void updateKeyStatuses(CDMInstanceSessionClient::KeyStatusVector&&) override;
@@ -112,12 +112,12 @@ private:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const override { return EventTargetInterfaceType::MediaKeySession; }
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const override;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const override;
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
     // ActiveDOMObject
-    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
+    NODELETE bool virtualHasPendingActivity() const final;
     void stop() final;
 
     // DisplayChangedObserver
@@ -127,7 +127,7 @@ private:
     // LoggerHelper
     const Logger& logger() const { return m_logger; }
     ASCIILiteral logClassName() const { return "MediaKeySession"_s; }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const;
+    NODELETE WTFLogChannel& logChannel() const;
     uint64_t logIdentifier() const { return m_logIdentifier; }
 
     const Ref<const Logger> m_logger;

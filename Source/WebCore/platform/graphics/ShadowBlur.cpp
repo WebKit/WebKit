@@ -55,7 +55,7 @@ enum {
 };
 
 #if USE(CG)
-static inline int LEGACY_NODELETE roundUpToMultipleOf32(int d)
+NODELETE static inline int roundUpToMultipleOf32(int d)
 {
     return (1 + (d >> 5)) << 5;
 }
@@ -127,7 +127,7 @@ public:
     }
 
     static ScratchBuffer& singleton() WTF_REQUIRES_LOCK(lock());
-    static Lock& LEGACY_NODELETE lock() WTF_RETURNS_LOCK(s_lock) { return s_lock; }
+    NODELETE static Lock& lock() WTF_RETURNS_LOCK(s_lock) { return s_lock; }
 
 private:
     void scheduleScratchBufferPurge()
@@ -185,7 +185,7 @@ ScratchBuffer& ScratchBuffer::singleton()
     return scratchBuffer;
 }
 
-static float LEGACY_NODELETE radiusToLegacyRadius(float radius)
+NODELETE static float radiusToLegacyRadius(float radius)
 {
     return radius > 8 ? 8 + 4 * sqrt((radius - 8) / 2) : radius;
 }
@@ -492,7 +492,7 @@ void ShadowBlur::drawShadowBuffer(GraphicsContext& graphicsContext, ImageBuffer&
     graphicsContext.fillRect(FloatRect(layerOrigin, layerSize));
 }
 
-static void LEGACY_NODELETE computeSliceSizesFromRadii(const IntSize& twiceRadius, const CornerRadii& radii, int& leftSlice, int& rightSlice, int& topSlice, int& bottomSlice)
+NODELETE static void computeSliceSizesFromRadii(const IntSize& twiceRadius, const CornerRadii& radii, int& leftSlice, int& rightSlice, int& topSlice, int& bottomSlice)
 {
     leftSlice = twiceRadius.width() + std::max(radii.topLeft().width(), radii.bottomLeft().width());
     rightSlice = twiceRadius.width() + std::max(radii.topRight().width(), radii.bottomRight().width());

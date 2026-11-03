@@ -46,22 +46,22 @@ public:
     FlexLayoutItem(RenderBox&, bool flexContainerIsHorizontalFlow, const LayoutBoxExtent& margins, bool everHadLayout, bool shouldInvalidateChildContent);
 
     // The item's content-box main size plus its main-axis border, padding and margin.
-    LayoutUnit LEGACY_NODELETE outerMainSize(LayoutUnit mainSize) const;
-    LayoutUnit LEGACY_NODELETE mainAxisMarginExtent() const;
-    LayoutUnit LEGACY_NODELETE crossAxisMarginExtent() const;
-    const Style::ComputedStyle& LEGACY_NODELETE style() const LIFETIME_BOUND;
+    NODELETE LayoutUnit outerMainSize(LayoutUnit mainSize) const;
+    NODELETE LayoutUnit mainAxisMarginExtent() const;
+    NODELETE LayoutUnit crossAxisMarginExtent() const;
+    NODELETE const Style::ComputedStyle& style() const LIFETIME_BOUND;
 
     // The item's current, laid-out geometry.
-    LayoutUnit LEGACY_NODELETE logicalWidth() const;
-    LayoutUnit LEGACY_NODELETE logicalHeight() const;
+    NODELETE LayoutUnit logicalWidth() const;
+    NODELETE LayoutUnit logicalHeight() const;
     LayoutUnit borderAndPaddingLogicalHeight() const;
     LayoutSize intrinsicSize() const;
 #if ASSERT_ENABLED
     bool needsLayout() const;
 #endif
 
-    bool LEGACY_NODELETE isTable() const;
-    bool LEGACY_NODELETE isReplaced() const;
+    NODELETE bool isTable() const;
+    NODELETE bool isReplaced() const;
 
     CheckedRef<RenderBox> renderer;
     const LayoutUnit mainAxisBorderAndPadding;
@@ -188,8 +188,8 @@ private:
     void computeFlexItemRects(const FlexLines&, FlexLayoutItems&, const PositionList& flexItemsPositionList, const LinesCrossPositionList& flexLinesCrossPositionList, const LinesCrossSizeList& flexLinesCrossSizeList, const SizeList& flexItemsCrossSizeList, LayoutUnit crossContentExtent, LayoutUnit crossExtent, LayoutUnit mainBorderBoxExtent);
 
     LayoutUnit placeFlexItems(LayoutUnit crossAxisOffset, std::span<FlexLayoutItem>, std::span<LayoutPoint> positions, LayoutUnit availableFreeSpace);
-    LayoutUnit LEGACY_NODELETE mainAxisFlippedOffsetForRow(const FlexLayoutItem&, LayoutUnit flowRelativeOffset) const;
-    void LEGACY_NODELETE setFlexItemCountsForFirstAndLastLine(const FlexLines&);
+    NODELETE LayoutUnit mainAxisFlippedOffsetForRow(const FlexLayoutItem&, LayoutUnit flowRelativeOffset) const;
+    NODELETE void setFlexItemCountsForFirstAndLastLine(const FlexLines&);
 
     FlexBaseAndHypotheticalMainSizeList computeFlexBaseAndHypotheticalMainSizes(FlexLayoutItems&);
     LayoutUnit flexBaseSizeForFlexItem(const FlexLayoutItem&);
@@ -205,13 +205,13 @@ private:
 
     bool flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const FlexLayoutItem&);
 
-    unsigned LEGACY_NODELETE numberOfAutoMarginsInMainAxis(std::span<const FlexLayoutItem>, LayoutUnit availableFreeSpace);
+    NODELETE unsigned numberOfAutoMarginsInMainAxis(std::span<const FlexLayoutItem>, LayoutUnit availableFreeSpace);
 
     LayoutUnit applyStretchAlignmentToFlexItem(const FlexLayoutItem&, LayoutUnit lineCrossAxisExtent, LayoutUnit crossContentExtent);
     LayoutUnit applyStretchMinMaxCrossSize(const FlexLayoutItem&, LayoutUnit lineCrossAxisExtent, LogicalBoxAxis, LayoutUnit crossContentExtent);
 
-    const FlexFormattingUtils& LEGACY_NODELETE flexFormattingUtils() const;
-    FlexLayoutState& LEGACY_NODELETE layoutState() const;
+    NODELETE const FlexFormattingUtils& flexFormattingUtils() const;
+    NODELETE FlexLayoutState& layoutState() const;
     const LayoutIntegration::FlexIntegrationUtils& integrationUtils() const LIFETIME_BOUND { return m_integrationUtils; }
     LayoutIntegration::FlexIntegrationUtils& integrationUtils() LIFETIME_BOUND { return m_integrationUtils; }
 

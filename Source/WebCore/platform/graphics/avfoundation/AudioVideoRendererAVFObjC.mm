@@ -76,7 +76,7 @@
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AVSampleBufferRenderSynchronizerAdditions.mm>)
 #import <WebKitAdditions/AVSampleBufferRenderSynchronizerAdditions.mm>
 #else
-static void LEGACY_NODELETE setSynchronizerScreenReserved(AVSampleBufferRenderSynchronizer *, bool) { }
+NODELETE static void setSynchronizerScreenReserved(AVSampleBufferRenderSynchronizer *, bool) { }
 #endif
 
 @interface AVSampleBufferDisplayLayer (Staging_100128644)

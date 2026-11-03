@@ -33,20 +33,20 @@ class Navigator;
 class DOMPlugin final : public RefCountedAndCanMakeWeakPtr<DOMPlugin>, public ScriptWrappable {
     WTF_MAKE_TZONE_ALLOCATED(DOMPlugin);
 public:
-    static Ref<DOMPlugin> LEGACY_NODELETE create(Navigator&, const PluginInfo&);
+    NODELETE static Ref<DOMPlugin> create(Navigator&, const PluginInfo&);
     ~DOMPlugin();
 
     const PluginInfo& info() const LIFETIME_BOUND { return m_info; }
 
-    String LEGACY_NODELETE name() const;
-    String LEGACY_NODELETE filename() const;
-    String LEGACY_NODELETE description() const;
+    NODELETE String name() const;
+    NODELETE String filename() const;
+    NODELETE String description() const;
 
-    unsigned LEGACY_NODELETE length() const;
+    NODELETE unsigned length() const;
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_mimeTypes.size(); }
-    RefPtr<DOMMimeType> LEGACY_NODELETE item(unsigned index);
-    RefPtr<DOMMimeType> LEGACY_NODELETE namedItem(const AtomString& propertyName);
+    NODELETE RefPtr<DOMMimeType> item(unsigned index);
+    NODELETE RefPtr<DOMMimeType> namedItem(const AtomString& propertyName);
     Vector<AtomString> supportedPropertyNames() const;
     bool isSupportedPropertyName(const AtomString&) const;
 

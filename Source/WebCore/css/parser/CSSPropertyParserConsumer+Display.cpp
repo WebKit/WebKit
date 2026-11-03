@@ -42,7 +42,7 @@ namespace CSSPropertyParserHelpers {
 
 using DisplayOutsideInsideMap = EnumeratedArray<DisplayOutside, EnumeratedArray<DisplayInside, std::pair<CSSValueID, CSSValueID>>>;
 
-consteval DisplayOutsideInsideMap LEGACY_NODELETE makeDisplayOutsideInsideMap()
+NODELETE consteval DisplayOutsideInsideMap makeDisplayOutsideInsideMap()
 {
     using enum DisplayOutside;
     using enum DisplayInside;

@@ -93,7 +93,7 @@ public:
 
     void addObserver(CanvasObserver&);
     void removeObserver(CanvasObserver&);
-    bool LEGACY_NODELETE hasObserver(CanvasObserver&) const;
+    NODELETE bool hasObserver(CanvasObserver&) const;
     void notifyObserversContentsWillChange(const FloatRect&);
     void notifyObserversCanvasResized();
     void notifyObserversCanvasDestroyed(); // Must be called in destruction before clearing m_context.
@@ -114,7 +114,7 @@ public:
 
     bool shouldAccelerate() const;
 
-    WEBCORE_EXPORT static void LEGACY_NODELETE setMaxCanvasAreaForTesting(std::optional<size_t>);
+    NODELETE WEBCORE_EXPORT static void setMaxCanvasAreaForTesting(std::optional<size_t>);
     [[nodiscard]] bool validateArea() const;
 
     virtual void queueTaskKeepingObjectAlive(TaskSource, Function<void(CanvasBase&)>&&) = 0;
@@ -141,7 +141,7 @@ protected:
     void removeCanvasNeedingPreparationForDisplayOrFlush();
 
 private:
-    bool LEGACY_NODELETE shouldInjectNoiseBeforeReadback() const;
+    NODELETE bool shouldInjectNoiseBeforeReadback() const;
 
     mutable IntSize m_size;
     mutable std::unique_ptr<CSSParserContext> m_cssParserContext;
@@ -161,7 +161,7 @@ private:
 #endif
 };
 
-WebCoreOpaqueRoot LEGACY_NODELETE root(CanvasBase*);
+NODELETE WebCoreOpaqueRoot root(CanvasBase*);
 
 
 inline const CSSParserContext& CanvasBase::cssParserContext() const LIFETIME_BOUND

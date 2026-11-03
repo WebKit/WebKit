@@ -46,10 +46,10 @@ public:
     bool useDefaultPosition() const { return m_useDefaultPosition; }
 
     double baseFontSizeRelativeToVideoHeight() const { return m_baseFontSizeRelativeToVideoHeight; }
-    void LEGACY_NODELETE setBaseFontSizeRelativeToVideoHeight(double);
+    NODELETE void setBaseFontSizeRelativeToVideoHeight(double);
 
     double fontSizeMultiplier() const { return m_fontSizeMultiplier; }
-    void LEGACY_NODELETE setFontSizeMultiplier(double);
+    NODELETE void setFontSizeMultiplier(double);
 
     const String& fontName() const LIFETIME_BOUND { return m_fontName; }
     void setFontName(const String& name) { m_fontName = name; }

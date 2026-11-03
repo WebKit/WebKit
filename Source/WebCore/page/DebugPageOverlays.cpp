@@ -69,9 +69,9 @@ public:
     virtual ~RegionOverlay();
 
     void recomputeRegion();
-    PageOverlay& LEGACY_NODELETE overlay() { return *m_overlay; }
+    NODELETE PageOverlay& overlay() { return *m_overlay; }
 
-    void LEGACY_NODELETE setRegionChanged() { m_regionChanged = true; }
+    NODELETE void setRegionChanged() { m_regionChanged = true; }
 
     virtual bool shouldPaintOverlayIntoLayer() const { return true; }
 
@@ -284,7 +284,7 @@ private:
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) final;
 
     FloatRect rectForSettingAtIndex(unsigned) const;
-    bool LEGACY_NODELETE valueForSetting(ASCIILiteral) const;
+    NODELETE bool valueForSetting(ASCIILiteral) const;
 
     std::optional<std::pair<RenderLayer&, GraphicsLayer&>> activeLayer() const;
     std::optional<InteractionRegion> activeRegion() const;
@@ -365,7 +365,7 @@ std::optional<std::pair<RenderLayer&, GraphicsLayer&>> InteractionRegionOverlay:
     return { { *layer, *graphicsLayer } };
 }
 
-std::optional<InteractionRegion> LEGACY_NODELETE InteractionRegionOverlay::activeRegion() const
+NODELETE std::optional<InteractionRegion> InteractionRegionOverlay::activeRegion() const
 {
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     RefPtr page = m_page;
@@ -764,7 +764,7 @@ void RegionOverlay::willMoveToPage(PageOverlay&, Page* page)
         m_overlay = nullptr;
 }
 
-void LEGACY_NODELETE RegionOverlay::didMoveToPage(PageOverlay&, Page* page)
+NODELETE void RegionOverlay::didMoveToPage(PageOverlay&, Page* page)
 {
     if (page)
         setRegionChanged();
@@ -790,12 +790,12 @@ void RegionOverlay::drawRegion(GraphicsContext& context, const Region& region, c
     }
 }
 
-bool LEGACY_NODELETE RegionOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent&)
+NODELETE bool RegionOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent&)
 {
     return false;
 }
 
-void LEGACY_NODELETE RegionOverlay::didScrollFrame(PageOverlay&, LocalFrame&)
+NODELETE void RegionOverlay::didScrollFrame(PageOverlay&, LocalFrame&)
 {
 }
 
@@ -822,7 +822,7 @@ DebugPageOverlays& DebugPageOverlays::singleton()
     return *sharedDebugOverlays;
 }
 
-static inline size_t LEGACY_NODELETE indexOf(DebugPageOverlays::RegionType regionType)
+NODELETE static inline size_t indexOf(DebugPageOverlays::RegionType regionType)
 {
     return static_cast<size_t>(regionType);
 }

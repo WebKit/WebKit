@@ -152,9 +152,9 @@ private:
 
 class MockCDMInstance : public CDMInstance, public CanMakeWeakPtr<MockCDMInstance> {
 public:
-    static Ref<MockCDMInstance> LEGACY_NODELETE create(MockCDM&);
+    NODELETE static Ref<MockCDMInstance> create(MockCDM&);
 
-    RefPtr<MockCDMFactory> LEGACY_NODELETE factory() const;
+    NODELETE RefPtr<MockCDMFactory> factory() const;
     bool distinctiveIdentifiersAllowed() const { return m_distinctiveIdentifiersAllowed; }
     bool persistentStateAllowed() const { return m_persistentStateAllowed; }
 

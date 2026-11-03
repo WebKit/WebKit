@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace Style {
 
-static bool LEGACY_NODELETE mayBeAffectedByAttributeChange(const RuleFeatureSet& features, bool isHTML, const QualifiedName& attributeName)
+NODELETE static bool mayBeAffectedByAttributeChange(const RuleFeatureSet& features, bool isHTML, const QualifiedName& attributeName)
 {
     auto& nameSet = isHTML ? features.attributeLowercaseLocalNamesInRules : features.attributeLocalNamesInRules;
     return nameSet.contains(attributeName.localName());

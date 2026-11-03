@@ -47,7 +47,7 @@ public:
 
     const String& path();
     unsigned long long size();
-    std::optional<WallTime> LEGACY_NODELETE expectedModificationTime();
+    NODELETE std::optional<WallTime> expectedModificationTime();
 
     virtual void prepareForFileAccess();
     virtual void revokeFileAccess();

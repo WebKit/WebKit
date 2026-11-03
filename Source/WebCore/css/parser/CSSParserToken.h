@@ -108,33 +108,33 @@ public:
 
     CSSParserToken(HashTokenType, StringView);
 
-    static CSSUnitType LEGACY_NODELETE stringToUnitType(StringView);
+    NODELETE static CSSUnitType stringToUnitType(StringView);
 
     WEBCORE_EXPORT bool operator==(const CSSParserToken& other) const;
 
     // Converts NumberToken to DimensionToken.
     void convertToDimensionWithUnit(CSSUnitType);
-    void LEGACY_NODELETE convertToDimensionWithUnit(StringView);
+    NODELETE void convertToDimensionWithUnit(StringView);
 
     // Converts NumberToken to PercentageToken.
-    void LEGACY_NODELETE convertToPercentage();
+    NODELETE void convertToPercentage();
 
     CSSParserTokenType type() const { return static_cast<CSSParserTokenType>(m_type); }
     StringView value() const { return { m_valueDataCharRaw, m_valueLength, m_valueIs8Bit }; }
 
-    char16_t LEGACY_NODELETE delimiter() const;
-    NumericSign LEGACY_NODELETE numericSign() const;
-    NumericValueType LEGACY_NODELETE numericValueType() const;
-    double LEGACY_NODELETE numericValue() const;
-    StringView LEGACY_NODELETE originalText() const;
+    NODELETE char16_t delimiter() const;
+    NODELETE NumericSign numericSign() const;
+    NODELETE NumericValueType numericValueType() const;
+    NODELETE double numericValue() const;
+    NODELETE StringView originalText() const;
     HashTokenType getHashTokenType() const { ASSERT(m_type == HashToken); return m_hashTokenType; }
     BlockType getBlockType() const { return static_cast<BlockType>(m_blockType); }
     CSSUnitType unitType() const { return static_cast<CSSUnitType>(m_unit); }
-    StringView LEGACY_NODELETE unitString() const;
+    NODELETE StringView unitString() const;
     CSSValueID id() const;
     CSSValueID functionId() const;
 
-    bool LEGACY_NODELETE hasStringBacking() const;
+    NODELETE bool hasStringBacking() const;
     bool tryUseStringLiteralBacking();
     bool isBackedByStringLiteral() const { return m_isBackedByStringLiteral; }
 

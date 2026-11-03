@@ -60,7 +60,7 @@ private:
     void doCleanup();
 
     // State Machine functions:
-    StateFunction LEGACY_NODELETE stateFunctionFor(SQLTransactionState) override;
+    NODELETE StateFunction stateFunctionFor(SQLTransactionState) override;
     void computeNextStateAndCleanupIfNeeded();
 
     // State functions:
@@ -70,7 +70,7 @@ private:
     void cleanupAndTerminate();
     void cleanupAfterTransactionErrorCallback();
 
-    NO_RETURN_DUE_TO_ASSERT void LEGACY_NODELETE unreachableState();
+    NODELETE NO_RETURN_DUE_TO_ASSERT void unreachableState();
 
     Ref<SQLTransaction> frontend() { return m_frontend.get().releaseNonNull(); }
 

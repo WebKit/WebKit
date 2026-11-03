@@ -102,24 +102,24 @@ public:
     WEBCORE_EXPORT void dispatchErrorEvent();
     WEBCORE_EXPORT void dispatchShowEvent();
 
-    WEBCORE_EXPORT void LEGACY_NODELETE finalize();
+    NODELETE WEBCORE_EXPORT void finalize();
 
     static Permission permission(ScriptExecutionContext&);
     static void requestPermission(Document&, RefPtr<NotificationPermissionCallback>&&, Ref<DeferredPromise>&&);
 
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
 
     WEBCORE_EXPORT NotificationData data() const;
     RefPtr<NotificationResources> resources() const { return m_resources; }
 
-    void LEGACY_NODELETE markAsShown();
+    NODELETE void markAsShown();
     void showSoon();
 
     WTF::UUID identifier() const { return m_identifier; }
 
     bool isPersistent() const { return !m_serviceWorkerRegistrationURL.isNull(); }
 
-    WEBCORE_EXPORT static void LEGACY_NODELETE setOverridePersistentNotificationMinimumLifetime(Seconds);
+    NODELETE WEBCORE_EXPORT static void setOverridePersistentNotificationMinimumLifetime(Seconds);
 
     WEBCORE_EXPORT static void ensureOnNotificationThread(ScriptExecutionContextIdentifier, WTF::UUID notificationIdentifier, Function<void(Notification*)>&&);
     WEBCORE_EXPORT static void ensureOnNotificationThread(const NotificationData&, Function<void(Notification*)>&&);
@@ -135,7 +135,7 @@ private:
     // ActiveDOMObject
     void suspend(ReasonForSuspension);
     void stop() final;
-    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
+    NODELETE bool virtualHasPendingActivity() const final;
 
     // EventTarget
     void refEventTarget() final { ref(); }

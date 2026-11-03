@@ -48,14 +48,14 @@ struct FontFamilyName {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<FontFamilyName> { CSS::FontFamilyName LEGACY_NODELETE operator()(const FontFamilyName&, const Style::ComputedStyle&); };
-template<> struct ToStyle<CSS::FontFamilyName> { FontFamilyName LEGACY_NODELETE operator()(const CSS::FontFamilyName&, const BuilderState&); };
+template<> struct ToCSS<FontFamilyName> { NODELETE CSS::FontFamilyName operator()(const FontFamilyName&, const Style::ComputedStyle&); };
+template<> struct ToStyle<CSS::FontFamilyName> { NODELETE FontFamilyName operator()(const CSS::FontFamilyName&, const BuilderState&); };
 
 template<> struct CSSValueCreation<FontFamilyName> {
     auto operator()(CSSValuePool&, const Style::ComputedStyle&, const FontFamilyName&) -> Ref<CSSValue>;
 };
 template<> struct CSSValueConversion<FontFamilyName> {
-    FontFamilyName LEGACY_NODELETE operator()(BuilderState&, const CSSFontFamilyNameValue&);
+    NODELETE FontFamilyName operator()(BuilderState&, const CSSFontFamilyNameValue&);
     auto operator()(BuilderState&, const CSSValue&) -> FontFamilyName;
 };
 

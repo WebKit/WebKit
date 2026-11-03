@@ -157,7 +157,7 @@ Vector<BezierIntersection> intersectBezierAndLine(const BezierSegment& curve, co
 }
 
 // De Casteljau's algorithm
-std::pair<BezierSegment, BezierSegment> LEGACY_NODELETE splitBezier(const BezierSegment& curve, float parameter)
+NODELETE std::pair<BezierSegment, BezierSegment> splitBezier(const BezierSegment& curve, float parameter)
 {
     auto startToControl1 = linearInterpolation(curve.start, curve.controlPoint1, parameter);
     auto control1ToControl2 = linearInterpolation(curve.controlPoint1, curve.controlPoint2, parameter);
@@ -200,13 +200,13 @@ Vector<BezierSegment> trimBezierToLine(const BezierSegment& curve, const FloatPo
 }
 
 // Inclusive overlap test, zero-area boxes (e.g. an axis-aligned line) and touching edges count as overlapping.
-static bool LEGACY_NODELETE boxesTouchOrOverlap(const FloatRect& first, const FloatRect& second)
+NODELETE static bool boxesTouchOrOverlap(const FloatRect& first, const FloatRect& second)
 {
     return first.maxX() >= second.x() && first.x() <= second.maxX()
         && first.maxY() >= second.y() && first.y() <= second.maxY();
 }
 
-static FloatRect LEGACY_NODELETE controlPointBounds(const BezierSegment& curve)
+NODELETE static FloatRect controlPointBounds(const BezierSegment& curve)
 {
     FloatRect bounds { curve.start, FloatSize { } };
     bounds.extend(curve.controlPoint1);
@@ -220,21 +220,21 @@ static FloatRect LEGACY_NODELETE controlPointBounds(const BezierSegment& curve)
 constexpr float crossingTolerance = 1.0f / 256;
 constexpr unsigned maximumCrossingDepth = 40;
 
-static FloatRect LEGACY_NODELETE monotonicBounds(const BezierSegment& curve)
+NODELETE static FloatRect monotonicBounds(const BezierSegment& curve)
 {
     FloatRect bounds { curve.start, FloatSize { } };
     bounds.extend(curve.end);
     return bounds;
 }
 
-static FloatRect LEGACY_NODELETE monotonicBounds(const Vector<BezierSegment>& curves)
+NODELETE static FloatRect monotonicBounds(const Vector<BezierSegment>& curves)
 {
     FloatRect bounds { curves.first().start, FloatSize { } };
     bounds.extend(curves.last().end);
     return bounds;
 }
 
-static bool LEGACY_NODELETE boxesCanReach(FloatRect first, const FloatRect& second)
+NODELETE static bool boxesCanReach(FloatRect first, const FloatRect& second)
 {
     first.inflate(crossingTolerance);
     return boxesTouchOrOverlap(first, second);

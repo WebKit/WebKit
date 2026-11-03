@@ -54,7 +54,7 @@ class WebGLFramebuffer final : public WebGLObject {
 public:
     virtual ~WebGLFramebuffer();
 
-    static Ref<WebGLFramebuffer> LEGACY_NODELETE createLost();
+    NODELETE static Ref<WebGLFramebuffer> createLost();
     static Ref<WebGLFramebuffer> create(WebGLRenderingContextBase&);
 #if ENABLE(WEBXR)
     static RefPtr<WebGLFramebuffer> createOpaque(WebGLRenderingContextBase&);
@@ -89,7 +89,7 @@ public:
     // Set draw buffers for this framebuffer. ANGLE handles filtering internally.
     void drawBuffers(const Vector<GCGLenum>& bufs);
 
-    GCGLenum LEGACY_NODELETE getDrawBuffer(GCGLenum);
+    NODELETE GCGLenum getDrawBuffer(GCGLenum);
 
     const Vector<GCGLenum>& getDrawBuffers() const { return m_drawBuffers; }
 
@@ -128,7 +128,7 @@ private:
     void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, GCGLenum attachment);
 
     // Check if the framebuffer is currently bound to the given target.
-    bool LEGACY_NODELETE isBound(GCGLenum target) const;
+    NODELETE bool isBound(GCGLenum target) const;
 
     void setAttachmentInternal(GCGLenum attachment, AttachmentEntry);
     // If a given attachment point for the currently bound framebuffer is not

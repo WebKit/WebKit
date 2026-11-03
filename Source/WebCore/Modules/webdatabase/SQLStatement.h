@@ -51,7 +51,7 @@ public:
     ~SQLStatement();
 
     bool execute(Database&);
-    bool LEGACY_NODELETE lastExecutionFailedDueToQuota() const;
+    NODELETE bool lastExecutionFailedDueToQuota() const;
 
     bool hasStatementCallback() const { return m_statementCallbackWrapper.hasCallback(); }
     bool hasStatementErrorCallback() const { return m_statementErrorCallbackWrapper.hasCallback(); }
@@ -60,8 +60,8 @@ public:
     void setDatabaseDeletedError();
     void setVersionMismatchedError();
 
-    SQLError* LEGACY_NODELETE sqlError() const;
-    SQLResultSet* LEGACY_NODELETE sqlResultSet() const;
+    NODELETE SQLError* sqlError() const;
+    NODELETE SQLResultSet* sqlResultSet() const;
 
 private:
     void setFailureDueToQuota();

@@ -55,10 +55,10 @@ public:
 
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::JSGlobalObject*, unsigned propertyName, JSC::PropertySlot&);
-    static bool LEGACY_NODELETE deleteProperty(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::DeletePropertySlot&);
-    static bool LEGACY_NODELETE deletePropertyByIndex(JSC::JSCell*, JSC::JSGlobalObject*, unsigned propertyName);
-    static bool LEGACY_NODELETE preventExtensions(JSC::JSObject*, JSC::JSGlobalObject*);
-    static bool LEGACY_NODELETE isExtensible(JSC::JSObject*, JSC::JSGlobalObject*);
+    NODELETE static bool deleteProperty(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::DeletePropertySlot&);
+    NODELETE static bool deletePropertyByIndex(JSC::JSCell*, JSC::JSGlobalObject*, unsigned propertyName);
+    NODELETE static bool preventExtensions(JSC::JSObject*, JSC::JSGlobalObject*);
+    NODELETE static bool isExtensible(JSC::JSObject*, JSC::JSGlobalObject*);
     static bool defineOwnProperty(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);
 
 private:
@@ -68,7 +68,7 @@ private:
     }
 
     void finishCreation(JSC::JSGlobalObject&);
-    static JSC::GCClient::IsoSubspace* LEGACY_NODELETE subspaceForImpl(JSC::VM&);
+    NODELETE static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM&);
 };
 
 } // namespace WebCore

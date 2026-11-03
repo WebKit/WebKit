@@ -114,18 +114,18 @@ struct Type {
     static constexpr Type makeFlex() { return { .flex = 1 }; }
     static constexpr Type makePercent() { return { .percent = 1 }; }
 
-    static Type LEGACY_NODELETE determineType(CSSUnitType);
-    static PercentHintValue LEGACY_NODELETE determinePercentHint(CSS::Category);
+    NODELETE static Type determineType(CSSUnitType);
+    NODELETE static PercentHintValue determinePercentHint(CSS::Category);
 
-    static std::optional<Type> LEGACY_NODELETE add(Type, Type);
+    NODELETE static std::optional<Type> add(Type, Type);
     static std::optional<Type> add(std::optional<Type> a, Type b) { if (!a) return a; return add(*a, b); }
-    static std::optional<Type> LEGACY_NODELETE multiply(Type, Type);
+    NODELETE static std::optional<Type> multiply(Type, Type);
     static std::optional<Type> multiply(std::optional<Type> a, Type b) { if (!a) return a; return multiply(*a, b); }
-    static std::optional<Type> LEGACY_NODELETE invert(Type);
+    NODELETE static std::optional<Type> invert(Type);
 
-    static std::optional<Type> LEGACY_NODELETE sameType(Type, Type);
-    static std::optional<Type> LEGACY_NODELETE consistentType(Type, Type);
-    static std::optional<Type> LEGACY_NODELETE madeConsistent(Type base, Type input);
+    NODELETE static std::optional<Type> sameType(Type, Type);
+    NODELETE static std::optional<Type> consistentType(Type, Type);
+    NODELETE static std::optional<Type> madeConsistent(Type base, Type input);
 
     static constexpr decltype(auto) allBaseTypes();
     static constexpr decltype(auto) allPotentialPercentHintTypes();
@@ -155,10 +155,10 @@ struct Type {
     };
     template<Match...> constexpr bool matchesAny(MatchingContext = { .allowsPercentHint = false }) const;
 
-    bool LEGACY_NODELETE matches(CSS::Category) const;
+    NODELETE bool matches(CSS::Category) const;
 
     // Returns the CSS::Category for Type, if there is one.
-    std::optional<CSS::Category> LEGACY_NODELETE calculationCategory() const;
+    NODELETE std::optional<CSS::Category> calculationCategory() const;
 };
 
 static_assert(sizeof(Type) == 8);

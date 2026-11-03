@@ -42,18 +42,18 @@ public:
     FormAssociatedCustomElement(HTMLMaybeFormAssociatedCustomElement&);
     virtual ~FormAssociatedCustomElement();
 
-    bool LEGACY_NODELETE isFormListedElement() const final { return true; }
-    bool LEGACY_NODELETE isValidatedFormListedElement() const final { return true; }
+    NODELETE bool isFormListedElement() const final { return true; }
+    NODELETE bool isValidatedFormListedElement() const final { return true; }
 
-    FormAssociatedElement* LEGACY_NODELETE asFormAssociatedElement() final { return this; }
-    FormListedElement* LEGACY_NODELETE asFormListedElement() final { return this; }
-    ValidatedFormListedElement* LEGACY_NODELETE asValidatedFormListedElement() final { return this; }
+    NODELETE FormAssociatedElement* asFormAssociatedElement() final { return this; }
+    NODELETE FormListedElement* asFormListedElement() final { return this; }
+    NODELETE ValidatedFormListedElement* asValidatedFormListedElement() final { return this; }
 
     HTMLElement& asHTMLElement() final { return *m_element.get(); }
     const HTMLElement& asHTMLElement() const final { return *m_element.get(); }
 
     void reset() final;
-    bool LEGACY_NODELETE isEnumeratable() const final;
+    NODELETE bool isEnumeratable() const final;
 
     void setFormValue(CustomElementFormValue&& submissionValue, std::optional<CustomElementFormValue>&& state);
     ExceptionOr<void> setValidity(ValidityStateFlags, String&& message, HTMLElement* validationAnchor);
@@ -64,7 +64,7 @@ public:
     bool computeValidity() const final;
     bool appendFormData(DOMFormData&) final;
 
-    void LEGACY_NODELETE willUpgrade();
+    NODELETE void willUpgrade();
     void didUpgrade();
 
     const AtomString& formControlType() const final;

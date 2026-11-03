@@ -34,7 +34,7 @@
 namespace WebCore {
 
 template <typename CharacterType>
-static inline size_t LEGACY_NODELETE findSlashDotDotSlash(std::span<const CharacterType> characters, size_t position)
+NODELETE static inline size_t findSlashDotDotSlash(std::span<const CharacterType> characters, size_t position)
 {
     if (characters.size() < 4)
         return notFound;
@@ -47,7 +47,7 @@ static inline size_t LEGACY_NODELETE findSlashDotDotSlash(std::span<const Charac
 }
 
 template <typename CharacterType>
-static inline size_t LEGACY_NODELETE findSlashSlash(std::span<const CharacterType> characters, size_t position)
+NODELETE static inline size_t findSlashSlash(std::span<const CharacterType> characters, size_t position)
 {
     if (characters.size() < 2)
         return notFound;
@@ -60,7 +60,7 @@ static inline size_t LEGACY_NODELETE findSlashSlash(std::span<const CharacterTyp
 }
 
 template <typename CharacterType>
-static inline size_t LEGACY_NODELETE findSlashDotSlash(std::span<const CharacterType> characters, size_t position)
+NODELETE static inline size_t findSlashDotSlash(std::span<const CharacterType> characters, size_t position)
 {
     if (characters.size() < 3)
         return notFound;
@@ -73,7 +73,7 @@ static inline size_t LEGACY_NODELETE findSlashDotSlash(std::span<const Character
 }
 
 template <typename CharacterType>
-static inline bool LEGACY_NODELETE startsWithSchemeColonSlashSlash(std::span<const CharacterType> characters)
+NODELETE static inline bool startsWithSchemeColonSlashSlash(std::span<const CharacterType> characters)
 {
     if (!isASCIIAlpha(characters[0]))
         return false;
@@ -89,7 +89,7 @@ static inline bool LEGACY_NODELETE startsWithSchemeColonSlashSlash(std::span<con
 }
 
 template <typename CharacterType>
-static inline void LEGACY_NODELETE squeezeOutNullCharacters(Vector<CharacterType, 512>& string)
+NODELETE static inline void squeezeOutNullCharacters(Vector<CharacterType, 512>& string)
 {
     size_t size = string.size();
     size_t i = 0;
@@ -109,7 +109,7 @@ static inline void LEGACY_NODELETE squeezeOutNullCharacters(Vector<CharacterType
 }
 
 template <typename CharacterType>
-static void LEGACY_NODELETE cleanSlashDotDotSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
+NODELETE static void cleanSlashDotDotSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
 {
     size_t slash = firstSlash;
     do {
@@ -129,7 +129,7 @@ static void LEGACY_NODELETE cleanSlashDotDotSlashes(Vector<CharacterType, 512>& 
 }
 
 template <typename CharacterType>
-static void LEGACY_NODELETE mergeDoubleSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
+NODELETE static void mergeDoubleSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
 {
     size_t refPos = find(path.span(), '#');
     if (!refPos || refPos == notFound)
@@ -148,7 +148,7 @@ static void LEGACY_NODELETE mergeDoubleSlashes(Vector<CharacterType, 512>& path,
 }
 
 template <typename CharacterType>
-static void LEGACY_NODELETE cleanSlashDotSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
+NODELETE static void cleanSlashDotSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
 {
     size_t slash = firstSlash;
     do {
@@ -160,7 +160,7 @@ static void LEGACY_NODELETE cleanSlashDotSlashes(Vector<CharacterType, 512>& pat
 }
 
 template <typename CharacterType>
-static inline void LEGACY_NODELETE cleanPath(Vector<CharacterType, 512>& path)
+NODELETE static inline void cleanPath(Vector<CharacterType, 512>& path)
 {
     // FIXME: Should not do this in the query or anchor part of the URL.
     size_t firstSlash = findSlashDotDotSlash(path.span(), 0);
@@ -179,13 +179,13 @@ static inline void LEGACY_NODELETE cleanPath(Vector<CharacterType, 512>& path)
 }
 
 template <typename CharacterType>
-static inline bool LEGACY_NODELETE matchLetter(CharacterType c, char lowercaseLetter)
+NODELETE static inline bool matchLetter(CharacterType c, char lowercaseLetter)
 {
     return (c | 0x20) == lowercaseLetter;
 }
 
 template <typename CharacterType>
-static inline bool LEGACY_NODELETE needsTrailingSlash(std::span<const CharacterType> characters)
+NODELETE static inline bool needsTrailingSlash(std::span<const CharacterType> characters)
 {
     if (characters.size() < 6)
         return false;
@@ -208,7 +208,7 @@ static inline bool LEGACY_NODELETE needsTrailingSlash(std::span<const CharacterT
 }
 
 template <typename CharacterType>
-static ALWAYS_INLINE SharedStringHash LEGACY_NODELETE computeSharedStringHashInline(std::span<const CharacterType> url)
+NODELETE static ALWAYS_INLINE SharedStringHash computeSharedStringHashInline(std::span<const CharacterType> url)
 {
     return AlreadyHashed::avoidDeletedValue(SuperFastHash::computeHash(url));
 }

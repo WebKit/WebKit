@@ -71,7 +71,7 @@ public:
     void scheduleTransactionStep(SQLTransaction&);
     void inProgressTransactionCompleted();
 
-    bool LEGACY_NODELETE hasPendingTransaction();
+    NODELETE bool hasPendingTransaction();
 
     bool hasPendingCreationEvent() const { return m_hasPendingCreationEvent; }
     void setHasPendingCreationEvent(bool value) { m_hasPendingCreationEvent = value; }
@@ -79,7 +79,7 @@ public:
     void didCommitWriteTransaction();
     bool didExceedQuota();
 
-    SQLTransactionCoordinator& LEGACY_NODELETE transactionCoordinator();
+    NODELETE SQLTransactionCoordinator& transactionCoordinator();
 
     // Direct support for the DOM API
     String version() const;
@@ -91,22 +91,22 @@ public:
     String stringIdentifierIsolatedCopy() const;
     String displayNameIsolatedCopy() const;
     String expectedVersionIsolatedCopy() const;
-    unsigned long long LEGACY_NODELETE estimatedSize() const;
+    NODELETE unsigned long long estimatedSize() const;
     String fileNameIsolatedCopy() const;
     DatabaseDetails details() const;
     SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
 
-    void LEGACY_NODELETE disableAuthorizer();
-    void LEGACY_NODELETE enableAuthorizer();
-    void LEGACY_NODELETE setAuthorizerPermissions(int);
-    bool LEGACY_NODELETE lastActionChangedDatabase();
-    bool LEGACY_NODELETE lastActionWasInsert();
-    void LEGACY_NODELETE resetDeletes();
-    bool LEGACY_NODELETE hadDeletes();
-    void LEGACY_NODELETE resetAuthorizer();
+    NODELETE void disableAuthorizer();
+    NODELETE void enableAuthorizer();
+    NODELETE void setAuthorizerPermissions(int);
+    NODELETE bool lastActionChangedDatabase();
+    NODELETE bool lastActionWasInsert();
+    NODELETE void resetDeletes();
+    NODELETE bool hadDeletes();
+    NODELETE void resetAuthorizer();
 
     DatabaseContext& databaseContext() { return m_databaseContext; }
-    DatabaseThread& LEGACY_NODELETE databaseThread();
+    NODELETE DatabaseThread& databaseThread();
     Document& document() { return m_document; }
     void logErrorMessage(const String& message);
 

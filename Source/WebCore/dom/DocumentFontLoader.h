@@ -44,7 +44,7 @@ public:
     DocumentFontLoader(Document&);
     ~DocumentFontLoader();
 
-    void LEGACY_NODELETE ref() const;
+    NODELETE void ref() const;
     void deref() const;
 
     RefPtr<CachedFont> cachedFont(URL&&, bool, bool, LoadedFromOpaqueSource);

@@ -54,7 +54,7 @@ public:
     SandboxFlags creationSandboxFlags() const { return m_creationSandboxFlags; }
 
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
-    WEBCORE_EXPORT ContentSecurityPolicy* LEGACY_NODELETE contentSecurityPolicy();
+    NODELETE WEBCORE_EXPORT ContentSecurityPolicy* contentSecurityPolicy();
 
     bool isSecureTransitionTo(const URL&) const;
 
@@ -89,14 +89,14 @@ public:
     const DocumentIsolationPolicy& documentIsolationPolicy() const LIFETIME_BOUND { return m_documentIsolationPolicy; }
     void setDocumentIsolationPolicy(const DocumentIsolationPolicy& documentIsolationPolicy) { m_documentIsolationPolicy = documentIsolationPolicy; }
 
-    const IntegrityPolicy* LEGACY_NODELETE integrityPolicy() const LIFETIME_BOUND;
+    NODELETE const IntegrityPolicy* integrityPolicy() const LIFETIME_BOUND;
     void setIntegrityPolicy(std::unique_ptr<IntegrityPolicy>&&);
 
-    const IntegrityPolicy* LEGACY_NODELETE integrityPolicyReportOnly() const LIFETIME_BOUND;
+    NODELETE const IntegrityPolicy* integrityPolicyReportOnly() const LIFETIME_BOUND;
     void setIntegrityPolicyReportOnly(std::unique_ptr<IntegrityPolicy>&&);
 
     virtual ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
-    void LEGACY_NODELETE setReferrerPolicy(ReferrerPolicy);
+    NODELETE void setReferrerPolicy(ReferrerPolicy);
 
     IPAddressSpace ipAddressSpace() const { return m_ipAddressSpace; }
     void setIPAddressSpace(IPAddressSpace ipAddressSpace) { m_ipAddressSpace = ipAddressSpace; }

@@ -113,7 +113,7 @@ GPURenderPipeline* InspectorShaderProgram::renderPipeline() const
 
 #if ENABLE(WEBGL)
 
-static RefPtr<WebGLShader> LEGACY_NODELETE shaderForType(WebGLProgram& program, Inspector::Protocol::Canvas::ShaderType shaderType)
+NODELETE static RefPtr<WebGLShader> shaderForType(WebGLProgram& program, Inspector::Protocol::Canvas::ShaderType shaderType)
 {
     switch (shaderType) {
     case Inspector::Protocol::Canvas::ShaderType::Fragment:

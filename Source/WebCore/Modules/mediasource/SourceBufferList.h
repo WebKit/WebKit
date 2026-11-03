@@ -57,7 +57,7 @@ public:
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     unsigned length() const { return m_list.size(); }
 
-    RefPtr<SourceBuffer> LEGACY_NODELETE item(unsigned index) const;
+    NODELETE RefPtr<SourceBuffer> item(unsigned index) const;
 
     void add(Ref<SourceBuffer>&&);
     void remove(SourceBuffer&);
@@ -73,7 +73,7 @@ public:
 
     // EventTarget interface
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::SourceBufferList; }
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
 
 private:
     explicit SourceBufferList(ScriptExecutionContext*);
@@ -86,7 +86,7 @@ private:
     Vector<Ref<SourceBuffer>> m_list;
 };
 
-WebCoreOpaqueRoot LEGACY_NODELETE root(SourceBufferList*);
+NODELETE WebCoreOpaqueRoot root(SourceBufferList*);
 
 } // namespace WebCore
 

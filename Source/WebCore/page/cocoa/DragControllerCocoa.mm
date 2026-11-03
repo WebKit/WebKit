@@ -79,7 +79,7 @@ const int DragController::DragIconBottomInset = 3;
 
 const float DragController::DragImageAlpha = 0.75f;
 
-bool LEGACY_NODELETE DragController::isCopyKeyDown(const DragData& dragData)
+NODELETE bool DragController::isCopyKeyDown(const DragData& dragData)
 {
     return dragData.flags().contains(DragApplicationFlags::IsCopyKeyDown);
 }
@@ -104,7 +104,7 @@ std::optional<DragOperation> DragController::dragOperation(const DragData& dragD
     return std::nullopt;
 }
 
-const IntSize& LEGACY_NODELETE DragController::maxDragImageSize()
+NODELETE const IntSize& DragController::maxDragImageSize()
 {
     static const IntSize maxDragImageSize(400, 400);
 

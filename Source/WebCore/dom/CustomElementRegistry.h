@@ -60,8 +60,8 @@ class QualifiedName;
 
 class CustomElementRegistry : public RefCounted<CustomElementRegistry>, public ContextDestructionObserver {
 public:
-    static Ref<CustomElementRegistry> LEGACY_NODELETE create(ScriptExecutionContext&, LocalDOMWindow&);
-    static Ref<CustomElementRegistry> LEGACY_NODELETE create(ScriptExecutionContext&);
+    NODELETE static Ref<CustomElementRegistry> create(ScriptExecutionContext&, LocalDOMWindow&);
+    NODELETE static Ref<CustomElementRegistry> create(ScriptExecutionContext&);
     ~CustomElementRegistry();
 
     // ContextDestructionObserver.
@@ -69,7 +69,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     bool isScoped() const { return !m_window; }
-    Document* LEGACY_NODELETE document() const;
+    NODELETE Document* document() const;
 
     static CustomElementRegistry* registryForElement(const Element& element)
     {
@@ -120,7 +120,7 @@ private:
     CustomElementRegistry(ScriptExecutionContext&, LocalDOMWindow&);
     CustomElementRegistry(ScriptExecutionContext&);
 
-    static WeakHashMap<Element, Ref<CustomElementRegistry>, WeakPtrImplWithEventTargetData>& LEGACY_NODELETE scopedCustomElementRegistryMap();
+    NODELETE static WeakHashMap<Element, Ref<CustomElementRegistry>, WeakPtrImplWithEventTargetData>& scopedCustomElementRegistryMap();
 
     WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_window;
     HashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;

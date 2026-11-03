@@ -49,7 +49,7 @@ class WebGLProgram;
 class WebGLTransformFeedback final : public WebGLObject {
 public:
     virtual ~WebGLTransformFeedback();
-    static Ref<WebGLTransformFeedback> LEGACY_NODELETE createLost();
+    NODELETE static Ref<WebGLTransformFeedback> createLost();
     static Ref<WebGLTransformFeedback> create(WebGL2RenderingContext&);
 
     bool isActive() const { return m_active; }
@@ -65,7 +65,7 @@ public:
     bool getBoundIndexedTransformFeedbackBuffer(GCGLuint index, RefPtr<WebGLBuffer>& outBuffer);
     bool hasBoundIndexedTransformFeedbackBuffer(const WebGLBuffer* buffer) { return m_boundIndexedTransformFeedbackBuffers.contains(buffer); }
 
-    bool LEGACY_NODELETE validateProgramForResume(WebGLProgram*) const;
+    NODELETE bool validateProgramForResume(WebGLProgram*) const;
 
     void didBind() { m_hasEverBeenBound = true; }
 
@@ -74,7 +74,7 @@ public:
 
     void unbindBuffer(const AbstractLocker&, WebGLBuffer&);
 
-    bool LEGACY_NODELETE hasEnoughBuffers(GCGLuint numRequired) const;
+    NODELETE bool hasEnoughBuffers(GCGLuint numRequired) const;
 
     void addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor&);
 

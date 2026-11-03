@@ -42,8 +42,8 @@ public:
     template<typename... Args> static Ref<PushSubscriptionOptions> create(Args&&... args) { return adoptRef(*new PushSubscriptionOptions(std::forward<Args>(args)...)); }
     ~PushSubscriptionOptions();
 
-    bool LEGACY_NODELETE userVisibleOnly() const;
-    const Vector<uint8_t>& LEGACY_NODELETE serverVAPIDPublicKey() const;
+    NODELETE bool userVisibleOnly() const;
+    NODELETE const Vector<uint8_t>& serverVAPIDPublicKey() const;
     ExceptionOr<RefPtr<JSC::ArrayBuffer>> applicationServerKey() const;
 
 private:

@@ -84,11 +84,11 @@ public:
 
     // These are always DOM compliant values.  Editing positions like [img, 0] (aka [img, before])
     // will return img->parentNode() and img->computeNodeIndex() from these functions.
-    WEBCORE_EXPORT Node* LEGACY_NODELETE containerNode() const; // null for a before/after position anchored to a node with no parent
-    Text* LEGACY_NODELETE containerText() const;
-    Element* LEGACY_NODELETE containerOrParentElement() const;
+    NODELETE WEBCORE_EXPORT Node* containerNode() const; // null for a before/after position anchored to a node with no parent
+    NODELETE Text* containerText() const;
+    NODELETE Element* containerOrParentElement() const;
 
-    int LEGACY_NODELETE computeOffsetInContainerNode() const; // O(n) for before/after-anchored positions, O(1) for parent-anchored positions
+    NODELETE int computeOffsetInContainerNode() const; // O(n) for before/after-anchored positions, O(1) for parent-anchored positions
     WEBCORE_EXPORT Position parentAnchoredEquivalent() const; // Convenience method for DOM positions that also fixes up some positions for editing
 
     // Inline O(1) access for Positions which callers know to be parent-anchored
@@ -112,11 +112,11 @@ public:
     std::pair<RenderObject*, unsigned> rendererAndOffset() const;
     std::pair<RenderText*, unsigned> resolvedTextRendererAndOffset() const;
 
-    RefPtr<Node> LEGACY_NODELETE firstNode() const;
+    NODELETE RefPtr<Node> firstNode() const;
 
     // These are convenience methods which are smart about whether the position is neighbor anchored or parent anchored
-    WEBCORE_EXPORT Node* LEGACY_NODELETE computeNodeBeforePosition() const;
-    WEBCORE_EXPORT Node* LEGACY_NODELETE computeNodeAfterPosition() const;
+    NODELETE WEBCORE_EXPORT Node* computeNodeBeforePosition() const;
+    NODELETE WEBCORE_EXPORT Node* computeNodeAfterPosition() const;
 
     Node* anchorNode() const { return m_anchorNode.get(); }
 
@@ -142,7 +142,7 @@ public:
     bool isNotNull() const { return m_anchorNode; }
     bool isOrphan() const { return m_anchorNode && !m_anchorNode->isConnected(); }
 
-    RefPtr<Element> LEGACY_NODELETE anchorElementAncestor() const;
+    NODELETE RefPtr<Element> anchorElementAncestor() const;
 
     // Move up or down the DOM by one position.
     // Offsets are computed using render text for nodes that have renderers - but note that even when
@@ -182,15 +182,15 @@ public:
     InlineBoxAndOffset inlineBoxAndOffset(Affinity) const;
     InlineBoxAndOffset inlineBoxAndOffset(Affinity, TextDirection primaryDirection) const;
 
-    TextDirection LEGACY_NODELETE primaryDirection() const;
+    NODELETE TextDirection primaryDirection() const;
 
     // Returns the number of positions that exist between two positions.
     static unsigned positionCountBetweenPositions(const Position&, const Position&);
 
     static bool hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&);
-    static bool LEGACY_NODELETE nodeIsUserSelectNone(const Node*);
-    static bool LEGACY_NODELETE nodeIsUserSelectAll(const Node*);
-    static RefPtr<Node> LEGACY_NODELETE rootUserSelectAllForNode(Node*);
+    NODELETE static bool nodeIsUserSelectNone(const Node*);
+    NODELETE static bool nodeIsUserSelectAll(const Node*);
+    NODELETE static RefPtr<Node> rootUserSelectAllForNode(Node*);
 
     void debugPosition(ASCIILiteral msg = ""_s) const;
 
@@ -202,7 +202,7 @@ public:
 
     // This is a tentative enhancement of operator== to account for different position types.
     // FIXME: Combine this function with operator==
-    WEBCORE_EXPORT bool LEGACY_NODELETE equals(const Position&) const;
+    NODELETE WEBCORE_EXPORT bool equals(const Position&) const;
 
 private:
     // For creating legacy editing positions: (Anchor type will be determined from editingIgnoresContent(node))

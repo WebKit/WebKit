@@ -80,7 +80,7 @@ public:
     FloatSize alignmentOffset() const { return m_alignmentOffset; }
     void setAlignmentOffset(FloatSize offset) { m_alignmentOffset = offset; }
 
-    WEBCORE_EXPORT FloatPoint LEGACY_NODELETE viewportRelativeLayerPosition(const FloatRect& viewportRect) const;
+    NODELETE WEBCORE_EXPORT FloatPoint viewportRelativeLayerPosition(const FloatRect& viewportRect) const;
 
     const FloatRect& viewportRectAtLastLayout() const LIFETIME_BOUND { return m_viewportRectAtLastLayout; }
     void setViewportRectAtLastLayout(const FloatRect& rect) { m_viewportRectAtLastLayout = rect; }
@@ -145,7 +145,7 @@ public:
         , m_anchorLayerOffsetAtLastLayout(WTF::move(anchorLayerOffsetAtLastLayout))
     { }
 
-    FloatSize LEGACY_NODELETE computeStickyOffset(const FloatRect& constrainingRect) const;
+    NODELETE FloatSize computeStickyOffset(const FloatRect& constrainingRect) const;
 
     const FloatSize& anchorLayerOffsetAtLastLayout() const LIFETIME_BOUND { return m_anchorLayerOffsetAtLastLayout; }
     void setAnchorLayerOffsetAtLastLayout(FloatSize offset) { m_anchorLayerOffsetAtLastLayout = offset; }
@@ -153,8 +153,8 @@ public:
     const FloatSize stickyOffsetAtLastLayout() const { return m_stickyOffsetAtLastLayout; }
     void setStickyOffsetAtLastLayout(FloatSize offset) { m_stickyOffsetAtLastLayout = offset; }
 
-    WEBCORE_EXPORT FloatPoint LEGACY_NODELETE anchorLayerPositionForConstrainingRect(const FloatRect& constrainingRect) const;
-    FloatPoint LEGACY_NODELETE anchorLayerPositionAtLastLayout() const;
+    NODELETE WEBCORE_EXPORT FloatPoint anchorLayerPositionForConstrainingRect(const FloatRect& constrainingRect) const;
+    NODELETE FloatPoint anchorLayerPositionAtLastLayout() const;
 
     float leftOffset() const { return m_leftOffset; }
     float rightOffset() const { return m_rightOffset; }
@@ -181,7 +181,7 @@ public:
 
     // Sticky extent is the smallest rectangle, in the scrolling ancestor's coordinate space, that encloses
     // the sticky box at every permissible position during its sticky travel.
-    FloatRect LEGACY_NODELETE computeStickyExtent() const;
+    NODELETE FloatRect computeStickyExtent() const;
 
     friend bool operator==(const StickyPositionViewportConstraints&, const StickyPositionViewportConstraints&) = default;
 

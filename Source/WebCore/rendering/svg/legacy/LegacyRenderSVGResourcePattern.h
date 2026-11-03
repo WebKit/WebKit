@@ -46,7 +46,7 @@ public:
     LegacyRenderSVGResourcePattern(SVGPatternElement&, Style::ComputedStyle&&);
     virtual ~LegacyRenderSVGResourcePattern();
 
-    SVGPatternElement& LEGACY_NODELETE patternElement() const;
+    NODELETE SVGPatternElement& patternElement() const;
 
     void removeAllClientsFromCache() override;
     void removeAllClientsFromCacheAndMarkForInvalidationIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers) override;

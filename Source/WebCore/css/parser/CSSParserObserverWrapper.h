@@ -42,11 +42,11 @@ public:
         return adoptRef(*new CSSParserObserverWrapper(observer));
     }
 
-    unsigned LEGACY_NODELETE startOffset(const CSSParserTokenRange&);
-    unsigned LEGACY_NODELETE previousTokenStartOffset(const CSSParserTokenRange&);
-    unsigned LEGACY_NODELETE endOffset(const CSSParserTokenRange&); // Includes trailing comments
+    NODELETE unsigned startOffset(const CSSParserTokenRange&);
+    NODELETE unsigned previousTokenStartOffset(const CSSParserTokenRange&);
+    NODELETE unsigned endOffset(const CSSParserTokenRange&); // Includes trailing comments
 
-    void LEGACY_NODELETE skipCommentsBefore(const CSSParserTokenRange&, bool leaveDirectlyBefore);
+    NODELETE void skipCommentsBefore(const CSSParserTokenRange&, bool leaveDirectlyBefore);
     void yieldCommentsBefore(const CSSParserTokenRange&);
 
     CSSParserObserver& observer() LIFETIME_BOUND { return m_observer; }

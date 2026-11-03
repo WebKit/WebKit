@@ -78,8 +78,8 @@ public:
     void removeTrack(MediaStreamTrack&);
     MediaStreamTrack* getTrackById(String);
 
-    MediaStreamTrack* LEGACY_NODELETE getFirstAudioTrack() const;
-    MediaStreamTrack* LEGACY_NODELETE getFirstVideoTrack() const;
+    NODELETE MediaStreamTrack* getFirstAudioTrack() const;
+    NODELETE MediaStreamTrack* getFirstVideoTrack() const;
 
     MediaStreamTrackVector getAudioTracks() const;
     MediaStreamTrackVector getVideoTracks() const;
@@ -98,11 +98,11 @@ public:
 
     void startProducingData();
     void stopProducingData();
-    void LEGACY_NODELETE inactivate();
+    NODELETE void inactivate();
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaStream; }
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
 
     void addTrackFromPlatform(Ref<MediaStreamTrack>&&);
 
@@ -118,7 +118,7 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_private->logger(); }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const final;
+    NODELETE WTFLogChannel& logChannel() const final;
     ASCIILiteral logClassName() const final { return "MediaStream"_s; }
 #endif
 
@@ -143,14 +143,14 @@ private:
 
     // ActiveDOMObject.
     void stop() final { inactivate(); }
-    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
+    NODELETE bool virtualHasPendingActivity() const final;
 
     void updateActiveState();
     void activityEventTimerFired();
     void setIsActive(bool);
     void statusDidChange();
 
-    Document* LEGACY_NODELETE document() const;
+    NODELETE Document* document() const;
     RefPtr<MediaSessionManagerInterface> mediaSessionManager() const;
 
     const Ref<MediaStreamPrivate> m_private;

@@ -121,8 +121,8 @@ public:
     WEBCORE_EXPORT void skipWaiting();
     bool isSkipWaitingFlagSet() const { return m_isSkipWaitingFlagSet; }
 
-    WEBCORE_EXPORT static SWServerWorker* LEGACY_NODELETE existingWorkerForIdentifier(ServiceWorkerIdentifier);
-    static HashMap<ServiceWorkerIdentifier, WeakRef<SWServerWorker>>& LEGACY_NODELETE allWorkers();
+    NODELETE WEBCORE_EXPORT static SWServerWorker* existingWorkerForIdentifier(ServiceWorkerIdentifier);
+    NODELETE static HashMap<ServiceWorkerIdentifier, WeakRef<SWServerWorker>>& allWorkers();
 
     const ServiceWorkerData& data() const LIFETIME_BOUND { return m_data; }
     ServiceWorkerContextData contextData() const;
@@ -131,25 +131,25 @@ public:
     const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const { return m_crossOriginEmbedderPolicy; }
     const RegistrableDomain& topRegistrableDomain() const LIFETIME_BOUND { return m_topSite.domain(); }
     const Site& topSite() const LIFETIME_BOUND { return m_topSite; }
-    WEBCORE_EXPORT std::optional<ScriptExecutionContextIdentifier> LEGACY_NODELETE serviceWorkerPageIdentifier() const;
+    NODELETE WEBCORE_EXPORT std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const;
 
-    bool LEGACY_NODELETE shouldPersistToDisk() const;
+    NODELETE bool shouldPersistToDisk() const;
 
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
     String userAgent() const;
 
     bool hasRouterRules() const { return !m_routes.isEmpty(); }
     WEBCORE_EXPORT std::optional<RouterSource> getRouterSource(const FetchOptions&, const ResourceRequest&) const;
-    WEBCORE_EXPORT RouterSource LEGACY_NODELETE defaultRouterSource() const;
+    NODELETE WEBCORE_EXPORT RouterSource defaultRouterSource() const;
 
-    WEBCORE_EXPORT SWServerRegistration* LEGACY_NODELETE registration() const;
+    NODELETE WEBCORE_EXPORT SWServerRegistration* registration() const;
 
     void setHasTimedOutAnyFetchTasks() { m_hasTimedOutAnyFetchTasks = true; }
     bool hasTimedOutAnyFetchTasks() const { return m_hasTimedOutAnyFetchTasks; }
     void didFailHeartBeatCheck();
     void updateAppInitiatedValue(LastNavigationWasAppInitiated);
 
-    WorkerThreadMode LEGACY_NODELETE workerThreadMode() const;
+    NODELETE WorkerThreadMode workerThreadMode() const;
 
     void incrementFunctionalEventCounter() { ++m_functionalEventCounter; }
     void decrementFunctionalEventCounter();
@@ -157,7 +157,7 @@ public:
 
     bool shouldContinue() const { return !!m_functionalEventCounter || m_isInspected; }
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE isClientActiveServiceWorker(ScriptExecutionContextIdentifier) const;
+    NODELETE WEBCORE_EXPORT bool isClientActiveServiceWorker(ScriptExecutionContextIdentifier) const;
 
     Vector<URL> importedScriptURLs() const;
     const MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>& scriptResourceMap() const LIFETIME_BOUND { return m_scriptResourceMap; }

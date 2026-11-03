@@ -171,7 +171,7 @@ static inline void populateIFCWithNewlyPlacedFloats(auto& blockRenderer, auto& p
     }
 }
 
-static inline size_t LEGACY_NODELETE remainingLinesForLineClamp(auto& inlineLayoutState)
+NODELETE static inline size_t remainingLinesForLineClamp(auto& inlineLayoutState)
 {
     // The lines we have already put on the parent's own lines (and in its earlier nested blocks) are part of the clamp's
     // budget, and the nested block has to lay out within what is left of it. A block level sibling gets this from
@@ -201,7 +201,7 @@ static inline void updateRenderTreeLineClampBeforeLayout(auto& inlineLayoutState
         renderTreeLayoutState.setLineClamp(RenderLayoutState::LineClamp { remainingLinesForLineClamp(inlineLayoutState), renderTreeLineClamp->shouldDiscardOverflow, renderTreeLineClamp->clampAfterBox, renderTreeLineClamp->isStableTextWrap, renderTreeLineClamp->hasConstrainedTextWrapContent });
 }
 
-static inline void LEGACY_NODELETE updateIFCLineClampAfterLayout(auto& inlineLayoutState, auto& renderTreeLayoutState)
+NODELETE static inline void updateIFCLineClampAfterLayout(auto& inlineLayoutState, auto& renderTreeLayoutState)
 {
     auto& parentBlockLayoutState = inlineLayoutState.parentBlockLayoutState();
 

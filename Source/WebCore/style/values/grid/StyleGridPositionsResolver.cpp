@@ -54,8 +54,8 @@ class NamedLineCollectionBase {
 public:
     NamedLineCollectionBase(const RenderGrid&, const CustomIdent& name, GridPositionSide, bool nameIsAreaName);
 
-    bool LEGACY_NODELETE hasNamedLines() const;
-    bool LEGACY_NODELETE hasExplicitNamedLines() const;
+    NODELETE bool hasNamedLines() const;
+    NODELETE bool hasExplicitNamedLines() const;
     bool contains(unsigned line) const;
 protected:
 
@@ -80,22 +80,22 @@ class NamedLineCollection : public NamedLineCollectionBase {
 public:
     NamedLineCollection(const RenderGrid&, const CustomIdent& name, GridPositionSide, bool nameIsAreaName = false);
 
-    int LEGACY_NODELETE firstPosition() const;
+    NODELETE int firstPosition() const;
 
-    unsigned LEGACY_NODELETE lastLine() const;
+    NODELETE unsigned lastLine() const;
 
 private:
-    int LEGACY_NODELETE firstExplicitPosition() const;
+    NODELETE int firstExplicitPosition() const;
 };
 
 } // namespace (anonymous)
 
-static inline bool LEGACY_NODELETE isStartSide(GridPositionSide side)
+NODELETE static inline bool isStartSide(GridPositionSide side)
 {
     return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::RowStartSide;
 }
 
-static inline GridTrackSizingDirection LEGACY_NODELETE directionFromSide(GridPositionSide side)
+NODELETE static inline GridTrackSizingDirection directionFromSide(GridPositionSide side)
 {
     return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::ColumnEndSide ? GridTrackSizingDirection::Columns : GridTrackSizingDirection::Rows;
 }
@@ -110,7 +110,7 @@ static unsigned explicitGridSizeForSide(const RenderGrid& gridContainer, GridPos
     return GridPositionsResolver::explicitGridCount(gridContainer, directionFromSide(side));
 }
 
-static inline GridPositionSide LEGACY_NODELETE transposedSide(GridPositionSide side)
+NODELETE static inline GridPositionSide transposedSide(GridPositionSide side)
 {
     switch (side) {
     case GridPositionSide::ColumnStartSide: return GridPositionSide::RowStartSide;
@@ -120,7 +120,7 @@ static inline GridPositionSide LEGACY_NODELETE transposedSide(GridPositionSide s
     }
 }
 
-static std::optional<int> LEGACY_NODELETE clampedImplicitLineForArea(const Style::ComputedStyle& style, const CustomIdent& name, int min, int max, GridTrackSizingDirection direction, bool isStartSide)
+NODELETE static std::optional<int> clampedImplicitLineForArea(const Style::ComputedStyle& style, const CustomIdent& name, int min, int max, GridTrackSizingDirection direction, bool isStartSide)
 {
     auto& areas = style.gridTemplateAreas().map.map;
     auto gridAreaIt = areas.find(name.value);
@@ -394,7 +394,7 @@ int NamedLineCollection::firstPosition() const
 }
 
 // https://drafts.csswg.org/css-grid-2/#indefinite-grid-span
-static bool LEGACY_NODELETE isIndefiniteSpan(const GridPosition& initialPosition, const GridPosition& finalPosition)
+NODELETE static bool isIndefiniteSpan(const GridPosition& initialPosition, const GridPosition& finalPosition)
 {
     if (initialPosition.isAuto())
         return !finalPosition.isSpan();

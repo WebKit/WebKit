@@ -114,7 +114,7 @@ public:
     bool isCurrent(const FontSelector&) const;
     void updateFonts(Ref<FontCascadeFonts>&&) const;
     WEBCORE_EXPORT void update(RefPtr<FontSelector>&& = nullptr) const;
-    unsigned LEGACY_NODELETE fontSelectorVersion() const;
+    NODELETE unsigned fontSelectorVersion() const;
 
     using CustomFontNotReadyAction = FontCascadeCustomFontNotReadyAction;
     WEBCORE_EXPORT FloatSize drawText(GraphicsContext&, const TextRun&, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt, CustomFontNotReadyAction = CustomFontNotReadyAction::DoNotPaintIfFontNotReady) const;
@@ -180,18 +180,18 @@ public:
     // Sets matchedPrecomposedCharacter when the font was chosen for the precomposed character that the sequence is canonically equivalent to.
     RefPtr<const Font> fontForCombiningCharacterSequence(StringView, std::optional<char32_t>& matchedPrecomposedCharacter) const;
 
-    static bool LEGACY_NODELETE isCJKIdeograph(char32_t);
-    static bool LEGACY_NODELETE isCJKIdeographOrSymbol(char32_t);
+    NODELETE static bool isCJKIdeograph(char32_t);
+    NODELETE static bool isCJKIdeographOrSymbol(char32_t);
 
     // FIXME: This is a layering violation. Platform code should not reference types in the Style namespace.
-    static bool LEGACY_NODELETE canUseGlyphDisplayList(const Style::ComputedStyle&);
+    NODELETE static bool canUseGlyphDisplayList(const Style::ComputedStyle&);
 
     // Returns (the number of opportunities, whether the last expansion is a trailing expansion)
     // If there are no opportunities, the bool will be true iff we are forbidding leading expansions.
     static std::pair<unsigned, bool> expansionOpportunityCount(StringView, TextDirection, ExpansionBehavior);
 
-    WEBCORE_EXPORT static void LEGACY_NODELETE setDisableFontSubpixelAntialiasingForTesting(bool);
-    WEBCORE_EXPORT static bool LEGACY_NODELETE shouldDisableFontSubpixelAntialiasingForTesting();
+    NODELETE WEBCORE_EXPORT static void setDisableFontSubpixelAntialiasingForTesting(bool);
+    NODELETE WEBCORE_EXPORT static bool shouldDisableFontSubpixelAntialiasingForTesting();
 
     using CodePath = FontCascadeCodePath;
     WEBCORE_EXPORT CodePath codePath(const TextRun&, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const;
@@ -220,7 +220,7 @@ private:
     void adjustSelectionRectForSimpleTextWithFixedPitch(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
     float width(CodePath, const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     WEBCORE_EXPORT float widthForSimpleTextSlow(StringView text, TextDirection, DirectionalOverride, GlyphGeometryCacheEntry*) const;
-    ALWAYS_INLINE bool LEGACY_NODELETE canHandleRunAsSimpleText(const TextRun&, unsigned from, unsigned to) const;
+    NODELETE ALWAYS_INLINE bool canHandleRunAsSimpleText(const TextRun&, unsigned from, unsigned to) const;
 
     std::optional<GlyphData> getEmphasisMarkGlyphData(const AtomString&) const;
     const Font* fontForEmphasisMark(const AtomString&) const;
@@ -233,7 +233,7 @@ private:
     void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
 
     static std::pair<unsigned, bool> expansionOpportunityCountInternal(std::span<const Latin1Character>, TextDirection, ExpansionBehavior);
-    static std::pair<unsigned, bool> LEGACY_NODELETE expansionOpportunityCountInternal(std::span<const char16_t>, TextDirection, ExpansionBehavior);
+    NODELETE static std::pair<unsigned, bool> expansionOpportunityCountInternal(std::span<const char16_t>, TextDirection, ExpansionBehavior);
 
     friend struct WidthIterator;
     friend class ComplexTextController;
@@ -247,8 +247,8 @@ public:
     }
 
     // Useful for debugging the different font rendering code paths.
-    WEBCORE_EXPORT static void LEGACY_NODELETE setForcedCodePath(Markable<CodePath>);
-    static Markable<CodePath> LEGACY_NODELETE forcedCodePath();
+    NODELETE WEBCORE_EXPORT static void setForcedCodePath(Markable<CodePath>);
+    NODELETE static Markable<CodePath> forcedCodePath();
     static Markable<CodePath> s_forcedCodePath;
 
     bool hasFontSelector() const { return !!m_fontSelector; }

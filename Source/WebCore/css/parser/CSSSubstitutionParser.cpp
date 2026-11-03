@@ -56,7 +56,7 @@ bool CSSSubstitutionParser::isValidCustomPropertyName(const CSSParserToken& toke
     return isCustomPropertyName(token.value());
 }
 
-static bool LEGACY_NODELETE isValidEnvVariableName(const CSSParserToken& token)
+NODELETE static bool isValidEnvVariableName(const CSSParserToken& token)
 {
     return token.type() == IdentToken;
 }
@@ -290,7 +290,7 @@ bool isValidEnvReference(CSSParserTokenRange range, const CSSParserContext& pars
 // An argument may not begin with <dashed-ident> <colon>, which is reserved for named arguments.
 // A brace block starts with a brace rather than the ident, so wrapping the value in {} allows it.
 // https://github.com/w3c/csswg-drafts/issues/11749
-static bool LEGACY_NODELETE startsWithReservedNamedArgument(CSSParserTokenRange range)
+NODELETE static bool startsWithReservedNamedArgument(CSSParserTokenRange range)
 {
     range.consumeWhitespace();
     if (!CSSSubstitutionParser::isValidCustomPropertyName(range.peek()))

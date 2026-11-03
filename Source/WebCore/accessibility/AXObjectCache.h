@@ -311,7 +311,7 @@ public:
     {
         return m_nodeObjectMapping.get(element);
     }
-    std::optional<AXID> LEGACY_NODELETE getAXID(RenderObject&) const;
+    NODELETE std::optional<AXID> getAXID(RenderObject&) const;
 
     void remove(RenderObject&);
     void remove(Node&);
@@ -430,7 +430,7 @@ public:
 #if PLATFORM(COCOA)
     void onFormSubmissionAttemptWithoutNavigation(HTMLFormElement&, HTMLFormControlElement* submitter);
     void onFormSubmissionWillNavigate(HTMLFormElement&);
-    WEBCORE_EXPORT bool LEGACY_NODELETE isWatchingForFormErrors() const;
+    NODELETE WEBCORE_EXPORT bool isWatchingForFormErrors() const;
 #endif
     // Called synchronously for each trusted (user-generated) click or keydown, just before the event is dispatched to the
     // page's listeners. It must run first, because pages that validate without a real form submission typically write
@@ -510,7 +510,7 @@ public:
     void deferModalChange(Element&);
     void deferMenuListValueChange(Element*);
     void deferElementAddedOrRemoved(Element*);
-    void LEGACY_NODELETE handleScrolledToAnchor(const Node& anchorNode);
+    NODELETE void handleScrolledToAnchor(const Node& anchorNode);
     void onScrollbarUpdate(ScrollView&);
     void onRemoteFrameInitialized(AXRemoteFrame&);
 
@@ -520,7 +520,7 @@ public:
     void deferAttributeChangeIfNeeded(Element&, const QualifiedName&, const AtomString&, const AtomString&);
 
     // True for the attributes in relationAttributes() (aria-labelledby, aria-owns, etc.).
-    static bool LEGACY_NODELETE isRelationAttribute(const QualifiedName&);
+    NODELETE static bool isRelationAttribute(const QualifiedName&);
     // Records that an element carries a relation attribute so the next relations rebuild includes it.
     void trackRelationAttributeElement(Element&);
 
@@ -571,13 +571,13 @@ public:
     WEBCORE_EXPORT static void setEnhancedUserInterfaceAccessibility(bool flag);
 
     static bool accessibilityEnabled();
-    WEBCORE_EXPORT static bool LEGACY_NODELETE accessibilityEnhancedUserInterfaceEnabled();
+    NODELETE WEBCORE_EXPORT static bool accessibilityEnhancedUserInterfaceEnabled();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static bool useAXThreadTextApis() { return !isMainThread(); }
     static bool shouldCreateAXThreadCompatibleMarkers() { return isIsolatedTreeEnabled(); }
 #endif
     static bool isAXTextStitchingEnabled() { return gAccessibilityTextStitchingEnabled; }
-    WEBCORE_EXPORT static bool LEGACY_NODELETE isAXThreadHitTestingEnabled();
+    NODELETE WEBCORE_EXPORT static bool isAXThreadHitTestingEnabled();
 
 #if PLATFORM(COCOA)
     static bool shouldRepostNotificationsForTests() { return gShouldRepostNotificationsForTests; }
@@ -587,7 +587,7 @@ public:
 #endif
 
     static bool forceInitialFrameCaching() { return gForceInitialFrameCaching; }
-    WEBCORE_EXPORT static void LEGACY_NODELETE setForceInitialFrameCaching(bool);
+    NODELETE WEBCORE_EXPORT static void setForceInitialFrameCaching(bool);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static bool shouldServeInitialCachedFrame();
 #endif
@@ -612,7 +612,7 @@ public:
 #endif
 
     void deferCanvasFocusPathBoundsUpdate(Element& canvasFallbackElement, HTMLCanvasElement&, FloatRect bounds);
-    std::optional<IntRect> LEGACY_NODELETE cachedBoundsForID(AXID) const;
+    NODELETE std::optional<IntRect> cachedBoundsForID(AXID) const;
 
     // Text marker utilities.
     std::optional<TextMarkerData> textMarkerDataForVisiblePosition(const VisiblePosition&, TextMarkerOrigin = static_cast<TextMarkerOrigin>(0));
@@ -700,10 +700,10 @@ public:
     // it never suppresses a later, genuine mutation of the same node.
     WEBCORE_EXPORT void deferReRenderedContent(Node&);
 
-    WEBCORE_EXPORT static void LEGACY_NODELETE setAnnouncementTranslationTimeoutForTesting(std::optional<Seconds>);
+    NODELETE WEBCORE_EXPORT static void setAnnouncementTranslationTimeoutForTesting(std::optional<Seconds>);
 
-    void LEGACY_NODELETE setTextSelectionIntent(const AXTextStateChangeIntent&);
-    void LEGACY_NODELETE setIsSynchronizingSelection(bool);
+    NODELETE void setTextSelectionIntent(const AXTextStateChangeIntent&);
+    NODELETE void setIsSynchronizingSelection(bool);
 
     // While non-std::nullopt, a focus change onto the given element will not be surfaced to assistive
     // technology. A null target suppresses a *clearing* of focus instead.
@@ -718,8 +718,8 @@ public:
     void postLiveRegionChangeNotification(AccessibilityObject&);
 
     // Testing-only: number of times a live region snapshot has been (re)computed since the last reset.
-    WEBCORE_EXPORT unsigned LEGACY_NODELETE liveRegionSnapshotBuildCount() const;
-    WEBCORE_EXPORT void LEGACY_NODELETE resetLiveRegionSnapshotBuildCount();
+    NODELETE WEBCORE_EXPORT unsigned liveRegionSnapshotBuildCount() const;
+    NODELETE WEBCORE_EXPORT void resetLiveRegionSnapshotBuildCount();
 
     void frameLoadingEventNotification(LocalFrame*, AXLoadingEvent);
 
@@ -730,10 +730,10 @@ public:
 
     AXComputedObjectAttributeCache* computedObjectAttributeCache() LIFETIME_BOUND { return m_computedObjectAttributeCache.get(); }
 
-    Document* LEGACY_NODELETE document() const;
+    NODELETE Document* document() const;
     FrameIdentifier frameID() const { return m_frameID; }
 
-    RefPtr<Page> LEGACY_NODELETE page() const;
+    NODELETE RefPtr<Page> page() const;
     WEBCORE_EXPORT IntPoint mapScreenPointToPagePoint(const IntPoint&) const;
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     std::optional<IntPoint> mapScreenPointToContentPointUsingFrameGeometry(const IntPoint&) const;
@@ -780,7 +780,7 @@ public:
     void reconcileCount(const AccessibilityObject&, bool wasCounted);
 
 #if PLATFORM(COCOA)
-    static void LEGACY_NODELETE setShouldRepostNotificationsForTests(bool);
+    NODELETE static void setShouldRepostNotificationsForTests(bool);
 #endif
 
     void deferRecomputeIsIgnoredIfNeeded(Element*);
@@ -828,7 +828,7 @@ public:
     inline void willUpdateObjectRegions();
     static bool isIsolatedTreeEnabled() { return accessibilityMode() == AccessibilityMode::AXThread; }
     WEBCORE_EXPORT static void initializeAXThreadIfNeeded();
-    WEBCORE_EXPORT static bool LEGACY_NODELETE isAXThreadInitialized();
+    NODELETE WEBCORE_EXPORT static bool isAXThreadInitialized();
     WEBCORE_EXPORT RefPtr<AXIsolatedTree> getOrCreateIsolatedTree();
     void initializeIsolatedTreeGeometry();
 
@@ -896,8 +896,8 @@ protected:
 
     // CharacterOffset functions.
     enum TraverseOption { TraverseOptionDefault = 1 << 0, TraverseOptionToNodeEnd = 1 << 1, TraverseOptionIncludeStart = 1 << 2, TraverseOptionValidateOffset = 1 << 3, TraverseOptionDoNotEnterTextControls = 1 << 4 };
-    Node* LEGACY_NODELETE nextNode(Node*) const;
-    Node* LEGACY_NODELETE previousNode(Node*) const;
+    NODELETE Node* nextNode(Node*) const;
+    NODELETE Node* previousNode(Node*) const;
     CharacterOffset traverseToOffsetInRange(const SimpleRange&, int, TraverseOption = TraverseOptionDefault, bool stayWithinRange = false);
 public:
     VisiblePosition visiblePositionFromCharacterOffset(const CharacterOffset&, AllowUserSelectNone = AllowUserSelectNone::No);
@@ -936,7 +936,7 @@ private:
     void flushPendingAnnouncements();
     void pendingAnnouncementTimeoutTimerFired();
     void scheduleAnnouncementTimeoutTimerIfNeeded();
-    static Seconds LEGACY_NODELETE announcementTranslationTimeout();
+    NODELETE static Seconds announcementTranslationTimeout();
 
     void liveRegionChangedNotificationPostTimerFired();
     void processChangedLiveRegions();
@@ -952,7 +952,7 @@ private:
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void selectedTextRangeTimerFired();
-    Seconds LEGACY_NODELETE platformSelectedTextRangeDebounceInterval() const;
+    NODELETE Seconds platformSelectedTextRangeDebounceInterval() const;
     void updateTreeSnapshotTimerFired() { processQueuedIsolatedNodeUpdates(); }
     void processQueuedIsolatedNodeUpdates();
 
@@ -1014,9 +1014,9 @@ private:
 
     // Relationships between objects.
     static Vector<QualifiedName>& relationAttributes();
-    AXRelation LEGACY_NODELETE attributeToRelationType(const QualifiedName&);
+    NODELETE AXRelation attributeToRelationType(const QualifiedName&);
     enum class AddSymmetricRelation : bool { No, Yes };
-    static AXRelation LEGACY_NODELETE symmetricRelation(AXRelation);
+    NODELETE static AXRelation symmetricRelation(AXRelation);
     bool addRelation(Element&, Element&, AXRelation);
     bool addRelation(AccessibilityObject*, AccessibilityObject*, AXRelation, AddSymmetricRelation = AddSymmetricRelation::Yes);
     bool addRelation(Element&, const QualifiedName&);

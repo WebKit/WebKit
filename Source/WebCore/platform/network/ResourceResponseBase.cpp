@@ -436,7 +436,7 @@ void ResourceResponseBase::setHTTPVersion(String&& versionText)
     // FIXME: Should invalidate or update platform response if present.
 }
 
-static bool LEGACY_NODELETE isSafeRedirectionResponseHeader(HTTPHeaderName name)
+NODELETE static bool isSafeRedirectionResponseHeader(HTTPHeaderName name)
 {
     // WebCore needs to keep location and cache related headers as it does caching.
     // We also keep CORS/ReferrerPolicy headers until CORS checks/Referrer computation are done in NetworkProcess.
@@ -465,7 +465,7 @@ static bool LEGACY_NODELETE isSafeRedirectionResponseHeader(HTTPHeaderName name)
         || name == HTTPHeaderName::TimingAllowOrigin;
 }
 
-static bool LEGACY_NODELETE isSafeCrossOriginResponseHeader(HTTPHeaderName name)
+NODELETE static bool isSafeCrossOriginResponseHeader(HTTPHeaderName name)
 {
     // All known response headers used in WebProcesses.
     return name == HTTPHeaderName::AcceptRanges

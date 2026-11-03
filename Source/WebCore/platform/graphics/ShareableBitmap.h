@@ -103,10 +103,10 @@ private:
     );
 
     static ColorSpace validateColorSpace(const ColorSpace&);
-    static CheckedUint32 LEGACY_NODELETE calculateBitsPerComponent(PixelFormat, const ColorSpace&);
-    static CheckedUint32 LEGACY_NODELETE calculateBytesPerPixel(PixelFormat, const ColorSpace&);
+    NODELETE static CheckedUint32 calculateBitsPerComponent(PixelFormat, const ColorSpace&);
+    NODELETE static CheckedUint32 calculateBytesPerPixel(PixelFormat, const ColorSpace&);
 #if USE(CG)
-    static CGBitmapInfo LEGACY_NODELETE calculateBitmapInfo(PixelFormat, bool isOpaque);
+    NODELETE static CGBitmapInfo calculateBitmapInfo(PixelFormat, bool isOpaque);
 #endif
 
     IntSize m_size;
@@ -158,7 +158,7 @@ public:
     WEBCORE_EXPORT static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&);
 
     // Create a shareable bitmap from an already existing shared memory block.
-    WEBCORE_EXPORT static RefPtr<ShareableBitmap> LEGACY_NODELETE create(const ShareableBitmapConfiguration&, Ref<SharedMemory>&&);
+    NODELETE WEBCORE_EXPORT static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&, Ref<SharedMemory>&&);
 
     // Create a shareable bitmap from a NativeImage.
 #if USE(CG)
@@ -184,8 +184,8 @@ public:
     IntSize size() const { return m_configuration.size(); }
     IntRect bounds() const { return IntRect(IntPoint(), size()); }
 
-    WEBCORE_EXPORT std::span<const uint8_t> LEGACY_NODELETE span() const LIFETIME_BOUND;
-    WEBCORE_EXPORT std::span<uint8_t> LEGACY_NODELETE mutableSpan() LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT std::span<const uint8_t> span() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT std::span<uint8_t> mutableSpan() LIFETIME_BOUND;
     size_t bytesPerRow() const { return m_configuration.bytesPerRow(); }
     size_t sizeInBytes() const { return m_configuration.sizeInBytes(); }
     const ColorSpace& colorSpace() const { return m_configuration.colorSpace(); }

@@ -54,7 +54,7 @@ double resolveLength(double value, CSS::LengthUnit, const CSSToLengthConversionD
 double resolveLengthForCalc(double value, CSS::LengthUnit, const CSSToLengthConversionData&);
 
 // Only valid for absolute length units (Px, Cm, Mm, Q, In, Pt, Pc).
-double LEGACY_NODELETE resolveLength(double value, CSS::LengthUnit, NoConversionDataRequiredToken);
+NODELETE double resolveLength(double value, CSS::LengthUnit, NoConversionDataRequiredToken);
 
 // `rootFontCascadeForUnit` is used to resolve the root font relative units (Rem, Rex, Rcap, Rch, Ric).
 // Callers that have no separate root font should pass `fontCascadeForUnit` for both.
@@ -70,8 +70,8 @@ bool equalForLengthResolution(const ComputedStyle&, const ComputedStyle&);
 
 // Utilities for common conversions.
 
-double LEGACY_NODELETE emToPxDouble(double value, const ComputedStyle&);
-double LEGACY_NODELETE emToPxDoubleZoomed(double value, const ComputedStyle&);
+NODELETE double emToPxDouble(double value, const ComputedStyle&);
+NODELETE double emToPxDoubleZoomed(double value, const ComputedStyle&);
 
 template<typename T> inline T emToPx(double value, const ComputedStyle& style)
 {

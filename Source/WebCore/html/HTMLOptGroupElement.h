@@ -39,10 +39,10 @@ public:
 
     bool isDisabledFormControl() const final;
     bool isActuallyDisabled() const final;
-    WEBCORE_EXPORT HTMLSelectElement* LEGACY_NODELETE ownerSelectElement() const;
+    NODELETE WEBCORE_EXPORT HTMLSelectElement* ownerSelectElement() const;
 
     WEBCORE_EXPORT String groupLabelText() const;
-    static HTMLOptGroupElement* LEGACY_NODELETE optGroupForLabel(const Element&);
+    NODELETE static HTMLOptGroupElement* optGroupForLabel(const Element&);
     void legendElementChanged();
 
     void updateUserAgentShadowTree() final;
@@ -67,7 +67,7 @@ private:
 
     void recalcSelectOptions();
 
-    HTMLLegendElement* LEGACY_NODELETE legendElement() const;
+    NODELETE HTMLLegendElement* legendElement() const;
 
     void invalidateShadowTree();
 

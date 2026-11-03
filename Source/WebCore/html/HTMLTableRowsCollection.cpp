@@ -43,7 +43,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTableRowsCollection);
 
-static inline void LEGACY_NODELETE assertRowIsInTable(HTMLTableElement& table, HTMLTableRowElement* row)
+NODELETE static inline void assertRowIsInTable(HTMLTableElement& table, HTMLTableRowElement* row)
 {
 #if ASSERT_ENABLED
     if (!row)
@@ -59,7 +59,7 @@ static inline void LEGACY_NODELETE assertRowIsInTable(HTMLTableElement& table, H
 #endif // not ASSERT_ENABLED
 }
 
-static inline bool LEGACY_NODELETE isInSection(HTMLTableRowElement& row, const HTMLQualifiedName& sectionTag)
+NODELETE static inline bool isInSection(HTMLTableRowElement& row, const HTMLQualifiedName& sectionTag)
 {
     // Because we know that the parent is a table or a section, it's safe to cast it to an HTMLElement
     // giving us access to the faster hasTagName overload from that class.

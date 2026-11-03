@@ -45,7 +45,7 @@ struct UnderlineOffsetArguments {
     std::optional<Style::TextUnderlineOffset> offsetOverride { };
 };
 
-static bool LEGACY_NODELETE isAncestorAndWithinBlock(const RenderBoxModelObject& ancestor, const RenderObject* child)
+NODELETE static bool isAncestorAndWithinBlock(const RenderBoxModelObject& ancestor, const RenderObject* child)
 {
     const RenderObject* object = child;
     while (object && (!object->isRenderBlock() || object->isInline())) {

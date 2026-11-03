@@ -371,8 +371,8 @@ class WEBCORE_EXPORT MediaPlayer : public MediaPlayerEnums, public ThreadSafeRef
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaPlayer, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(MediaPlayer);
 public:
-    static Ref<MediaPlayer> LEGACY_NODELETE create(MediaPlayerClient&);
-    static Ref<MediaPlayer> LEGACY_NODELETE create(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
+    NODELETE static Ref<MediaPlayer> create(MediaPlayerClient&);
+    NODELETE static Ref<MediaPlayer> create(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
     ~MediaPlayer();
 
     void invalidate();
@@ -510,7 +510,7 @@ public:
     bool playAtHostTime(const MonotonicTime&);
     bool pauseAtHostTime(const MonotonicTime&);
 
-    bool LEGACY_NODELETE preservesPitch() const;
+    NODELETE bool preservesPitch() const;
     void setPreservesPitch(bool);
 
     void setPitchCorrectionAlgorithm(PitchCorrectionAlgorithm);
@@ -531,11 +531,11 @@ public:
 
     void setVolumeLocked(bool);
 
-    double LEGACY_NODELETE volume() const;
+    NODELETE double volume() const;
     void setVolume(double);
     bool platformVolumeConfigurationRequired() const { return protect(client())->mediaPlayerPlatformVolumeConfigurationRequired(); }
 
-    bool LEGACY_NODELETE muted() const;
+    NODELETE bool muted() const;
     void setMuted(bool);
 
     bool hasClosedCaptions() const;
@@ -562,7 +562,7 @@ public:
     MovieLoadType movieLoadType() const;
 
     using MediaPlayerEnums::Preload;
-    Preload LEGACY_NODELETE preload() const;
+    NODELETE Preload preload() const;
     void setPreload(Preload);
 
     void networkStateChanged();
@@ -710,7 +710,7 @@ public:
     const ContentType& contentType() const LIFETIME_BOUND { return m_loadOptions.contentType; }
     String contentMIMEType() const;
     String contentTypeCodecs() const;
-    bool LEGACY_NODELETE contentMIMETypeWasInferredFromExtension() const;
+    NODELETE bool contentMIMETypeWasInferredFromExtension() const;
 
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
     void setShouldCheckHardwareSupport(bool);
@@ -754,8 +754,8 @@ public:
     void remoteEngineFailedToLoad();
     SecurityOriginData documentSecurityOrigin() const;
 
-    const MediaPlayerPrivateInterface* LEGACY_NODELETE playerPrivate() const;
-    MediaPlayerPrivateInterface* LEGACY_NODELETE playerPrivate();
+    NODELETE const MediaPlayerPrivateInterface* playerPrivate() const;
+    NODELETE MediaPlayerPrivateInterface* playerPrivate();
 
     DynamicRangeMode preferredDynamicRangeMode() const { return m_preferredDynamicRangeMode; }
     void setPreferredDynamicRangeMode(DynamicRangeMode);
@@ -777,7 +777,7 @@ public:
 
     void playerContentBoxRectChanged(const LayoutRect&);
 
-    String LEGACY_NODELETE lastErrorMessage() const;
+    NODELETE String lastErrorMessage() const;
 
     void renderVideoWillBeDestroyed();
 
@@ -805,7 +805,7 @@ public:
     void soundStageSizeDidChange();
 
     void setInFullscreenOrPictureInPicture(bool);
-    bool LEGACY_NODELETE isInFullscreenOrPictureInPicture() const;
+    NODELETE bool isInFullscreenOrPictureInPicture() const;
 
     PlatformVideoTarget videoTarget() const { return protect(client())->mediaPlayerVideoTarget(); }
     MediaPlayerClientIdentifier clientIdentifier() const { return protect(client())->mediaPlayerClientIdentifier(); }
@@ -821,7 +821,7 @@ public:
 #endif
 
     void setMessageClientForTesting(WeakPtr<MessageClientForTesting>);
-    MessageClientForTesting* LEGACY_NODELETE messageClientForTesting() const;
+    NODELETE MessageClientForTesting* messageClientForTesting() const;
 
     void elementIdChanged(const String&) const;
 

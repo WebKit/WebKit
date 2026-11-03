@@ -102,7 +102,7 @@ public:
     WEBCORE_EXPORT JSValueRef deserialize(JSContextRef, JSValueRef* exception);
     WEBCORE_EXPORT static Vector<uint8_t> serializeCryptoKey(const WebCore::CryptoKey&);
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE hasBlobURLs() const;
+    NODELETE WEBCORE_EXPORT bool hasBlobURLs() const;
 
     WEBCORE_EXPORT Vector<String> blobURLs() const;
     WEBCORE_EXPORT Vector<URLKeepingBlobAlive> blobHandles() const;
@@ -110,9 +110,9 @@ public:
     void writeBlobsToDiskForIndexedDB(bool isEphemeral, CompletionHandler<void(IDBValue&&)>&&);
     IDBValue writeBlobsToDiskForIndexedDBSynchronously(bool isEphemeral, JSC::VM&);
     WEBCORE_EXPORT static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&&);
-    WEBCORE_EXPORT const Vector<uint8_t>& LEGACY_NODELETE wireBytes() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const Vector<uint8_t>& wireBytes() const LIFETIME_BOUND;
 
-    WEBCORE_EXPORT size_t LEGACY_NODELETE memoryCost() const;
+    NODELETE WEBCORE_EXPORT size_t memoryCost() const;
 
     using NonSerializedDataToken = WebCore::NonSerializedDataToken;
 
@@ -121,14 +121,14 @@ public:
     WEBCORE_EXPORT Vector<ImageBufferTransferIdentifier> sinkBuffersIntoTransferHandles();
     WEBCORE_EXPORT Vector<ImageBufferTransferIdentifier> transferredImageBufferIdentifiers() const;
 
-    WEBCORE_EXPORT std::unique_ptr<Vector<JSC::ArrayBufferContents>>& LEGACY_NODELETE sharedBufferContentsArray();
-    WEBCORE_EXPORT std::optional<NonSerializedDataToken> LEGACY_NODELETE nonSerializedDataToken() const;
-    WEBCORE_EXPORT void LEGACY_NODELETE setNonSerializedDataToken(std::optional<NonSerializedDataToken>);
+    NODELETE WEBCORE_EXPORT std::unique_ptr<Vector<JSC::ArrayBufferContents>>& sharedBufferContentsArray();
+    NODELETE WEBCORE_EXPORT std::optional<NonSerializedDataToken> nonSerializedDataToken() const;
+    NODELETE WEBCORE_EXPORT void setNonSerializedDataToken(std::optional<NonSerializedDataToken>);
 
     WEBCORE_EXPORT ~SerializedScriptValue();
 
     enum class DeserializationBehavior : uint8_t { Fail, Succeed, LegacyMapToNull, LegacyMapToUndefined, LegacyMapToEmptyObject };
-    WEBCORE_EXPORT static DeserializationBehavior LEGACY_NODELETE deserializationBehavior(JSC::JSObject&);
+    NODELETE WEBCORE_EXPORT static DeserializationBehavior deserializationBehavior(JSC::JSObject&);
 
     WEBCORE_EXPORT Ref<SerializedScriptValue> clone() const;
 

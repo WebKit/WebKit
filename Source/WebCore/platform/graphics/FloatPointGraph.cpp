@@ -56,7 +56,7 @@ void FloatPointGraph::reset()
         node->reset();
 }
 
-static bool LEGACY_NODELETE findLineSegmentIntersection(const FloatPointGraph::Edge& edgeA, const FloatPointGraph::Edge& edgeB, FloatPoint& intersectionPoint)
+NODELETE static bool findLineSegmentIntersection(const FloatPointGraph::Edge& edgeA, const FloatPointGraph::Edge& edgeB, FloatPoint& intersectionPoint)
 {
     auto intersection = findIntersection(*edgeA.first, *edgeA.second, *edgeB.first, *edgeB.second);
     if (!intersection)
@@ -171,7 +171,7 @@ static FloatPointGraph::Polygon walkGraphAndExtractPolygon(FloatPointGraph::Node
     return outPoly;
 }
 
-static FloatPointGraph::Node* LEGACY_NODELETE findUnvisitedPolygonStartPoint(Vector<FloatPointGraph::Polygon>& polys)
+NODELETE static FloatPointGraph::Node* findUnvisitedPolygonStartPoint(Vector<FloatPointGraph::Polygon>& polys)
 {
     for (auto& poly : polys) {
         for (auto& edge : poly) {

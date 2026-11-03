@@ -133,8 +133,8 @@ public:
     // Clear the client, and clear the RefPtr, but leave parented.
     WEBCORE_EXPORT static void clear(RefPtr<GraphicsLayer>&);
 
-    WEBCORE_EXPORT void LEGACY_NODELETE clearClient();
-    WEBCORE_EXPORT void LEGACY_NODELETE setClient(GraphicsLayerClient&);
+    NODELETE WEBCORE_EXPORT void clearClient();
+    NODELETE WEBCORE_EXPORT void setClient(GraphicsLayerClient&);
 
     Type type() const { return m_type; }
 
@@ -152,10 +152,10 @@ public:
     WEBCORE_EXPORT virtual String debugName() const;
 
     GraphicsLayer* parent() const { return m_parent; }
-    void LEGACY_NODELETE setParent(GraphicsLayer*); // Internal use only.
+    NODELETE void setParent(GraphicsLayer*); // Internal use only.
     
     // Returns true if the layer has the given layer as an ancestor (excluding self).
-    bool LEGACY_NODELETE hasAncestor(GraphicsLayer*) const;
+    NODELETE bool hasAncestor(GraphicsLayer*) const;
     
     const Vector<Ref<GraphicsLayer>>& children() const LIFETIME_BOUND { return m_children; }
     Vector<Ref<GraphicsLayer>>& children() LIFETIME_BOUND { return m_children; }
@@ -233,11 +233,11 @@ public:
     // For platforms that move underlying platform layers on a different thread for scrolling; just update the GraphicsLayer state.
     virtual void syncBoundsOrigin(const FloatPoint& origin) { m_boundsOrigin = origin; }
 
-    WEBCORE_EXPORT const TransformationMatrix& LEGACY_NODELETE transform() const;
+    NODELETE WEBCORE_EXPORT const TransformationMatrix& transform() const;
     WEBCORE_EXPORT virtual void setTransform(const TransformationMatrix&);
     bool hasNonIdentityTransform() const { return m_transform && !m_transform->isIdentity(); }
 
-    WEBCORE_EXPORT const TransformationMatrix& LEGACY_NODELETE childrenTransform() const;
+    NODELETE WEBCORE_EXPORT const TransformationMatrix& childrenTransform() const;
     WEBCORE_EXPORT virtual void setChildrenTransform(const TransformationMatrix&);
     bool hasNonIdentityChildrenTransform() const { return m_childrenTransform && !m_childrenTransform->isIdentity(); }
 
@@ -290,7 +290,7 @@ public:
     virtual void setAppleVisualEffectData(AppleVisualEffectData effectData) { m_appleVisualEffectData = effectData; }
 #endif
 
-    bool LEGACY_NODELETE needsBackdrop() const;
+    NODELETE bool needsBackdrop() const;
 
     // The color used to paint the layer background. Pass an invalid color to remove it.
     // Note that this covers the entire layer. Use setContentsToSolidColor() if the color should
@@ -359,13 +359,13 @@ public:
     virtual void setContentsRectClipsDescendants(bool b) { m_contentsRectClipsDescendants = b; }
 
     // Used to lay out video contents within a video layer.
-    MediaPlayerVideoGravity LEGACY_NODELETE videoGravity() const;
+    NODELETE MediaPlayerVideoGravity videoGravity() const;
     WEBCORE_EXPORT virtual void setVideoGravity(MediaPlayerVideoGravity);
 
     Path shapeLayerPath() const;
     WEBCORE_EXPORT virtual void setShapeLayerPath(const Path&);
 
-    WindRule LEGACY_NODELETE shapeLayerWindRule() const;
+    NODELETE WindRule shapeLayerWindRule() const;
     WEBCORE_EXPORT virtual void setShapeLayerWindRule(WindRule);
 
     const EventRegion& eventRegion() const LIFETIME_BOUND { return m_eventRegion; }
@@ -501,7 +501,7 @@ public:
     // for example to allocate new tiles.
     virtual bool visibleRectChangeRequiresFlush(const FloatRect& /* clipRect */) const { return false; }
 
-    static FloatRect LEGACY_NODELETE adjustCoverageRectForMovement(const FloatRect& coverageRect, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect);
+    NODELETE static FloatRect adjustCoverageRectForMovement(const FloatRect& coverageRect, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect);
 
     // Return a string with a human readable form of the layer tree, If debug is true
     // pointers for the layers and timing data will be included in the returned string.
@@ -528,8 +528,8 @@ public:
     void resetTrackedRepaints();
     WEBCORE_EXPORT void addRepaintRect(const FloatRect&);
 
-    static bool LEGACY_NODELETE supportsLayerType(Type);
-    static bool LEGACY_NODELETE supportsContentsTiling();
+    NODELETE static bool supportsLayerType(Type);
+    NODELETE static bool supportsContentsTiling();
 
     WEBCORE_EXPORT void updateDebugIndicators();
 

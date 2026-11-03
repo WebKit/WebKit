@@ -41,7 +41,7 @@ public:
     static Ref<DOMException> create(const Exception&);
 
     // For DOM bindings.
-    static Ref<DOMException> LEGACY_NODELETE create(const String& message, const String& name);
+    NODELETE static Ref<DOMException> create(const String& message, const String& name);
 
     virtual ~DOMException() { }
 
@@ -57,7 +57,7 @@ public:
         LegacyCode legacyCode;
     };
 
-    WEBCORE_EXPORT static const Description& LEGACY_NODELETE description(ExceptionCode);
+    NODELETE WEBCORE_EXPORT static const Description& description(ExceptionCode);
 
     static ASCIILiteral name(ExceptionCode ec) { return description(ec).name; }
     static ASCIILiteral message(ExceptionCode ec) { return description(ec).message; }

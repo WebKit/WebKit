@@ -113,7 +113,7 @@ public:
     void willBeginPlayback();
     void willPausePlayback();
 
-    WEBCORE_EXPORT Document* LEGACY_NODELETE document() const;
+    NODELETE WEBCORE_EXPORT Document* document() const;
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     MediaSessionReadyState readyState() const { return m_readyState; };
@@ -139,7 +139,7 @@ public:
     const Logger& logger() const { return *m_logger.get(); }
 #endif
 
-    bool LEGACY_NODELETE hasObserver(MediaSessionObserver&) const;
+    NODELETE bool hasObserver(MediaSessionObserver&) const;
     WEBCORE_EXPORT void addObserver(MediaSessionObserver&);
     void removeObserver(MediaSessionObserver&);
 
@@ -153,7 +153,7 @@ public:
     void setScreenshareActive(bool isActive, DOMPromiseDeferred<void>&& promise) { updateCaptureState(isActive, WTF::move(promise), MediaProducerMediaCaptureKind::Display); }
 #endif
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE hasActionHandler(const MediaSessionAction) const;
+    NODELETE WEBCORE_EXPORT bool hasActionHandler(const MediaSessionAction) const;
 #if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
     CallToActionLabel callToActionLabel() const { return m_callToActionLabel; }
 #endif
@@ -199,7 +199,7 @@ private:
     PlatformMediaSessionMediaType presentationType() const final { return PlatformMediaSessionMediaType::DOMMediaSession; }
     void mayResumePlayback(bool shouldResume) final;
     void suspendPlayback() final;
-    bool LEGACY_NODELETE isPlaying() const final;
+    NODELETE bool isPlaying() const final;
     bool isAudible() const final { return false; }
     bool isEnded() const final;
     MediaTime mediaSessionDuration() const final;

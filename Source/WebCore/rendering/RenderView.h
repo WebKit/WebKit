@@ -72,9 +72,9 @@ public:
     LayoutUnit clientLogicalWidthForFixedPosition() const;
     LayoutUnit clientLogicalHeightForFixedPosition() const;
 
-    float LEGACY_NODELETE pageZoomFactor() const;
+    NODELETE float pageZoomFactor() const;
 
-    inline LocalFrameView& LEGACY_NODELETE frameView() const LIFETIME_BOUND; // Defined in LocalFrameViewInlines.h.
+    NODELETE inline LocalFrameView& frameView() const LIFETIME_BOUND; // Defined in LocalFrameViewInlines.h.
 
     Layout::InitialContainingBlock& initialContainingBlock() { return m_initialContainingBlock.get(); }
     const Layout::InitialContainingBlock& initialContainingBlock() const { return m_initialContainingBlock.get(); }
@@ -120,7 +120,7 @@ public:
 
     RenderSelection& selection() LIFETIME_BOUND { return m_selection; }
 
-    bool LEGACY_NODELETE printing() const;
+    NODELETE bool printing() const;
 
     Vector<FloatRect> localBorderBoxRects() const final;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
@@ -129,16 +129,16 @@ public:
 
     void updateHitTestResult(HitTestResult&, const LayoutPoint&) const override;
 
-    void LEGACY_NODELETE setPageLogicalSize(LayoutSize);
+    NODELETE void setPageLogicalSize(LayoutSize);
     LayoutUnit pageOrViewLogicalHeight() const;
 
     // This method is used to assign a page number only when pagination modes have
     // a block progression. This happens with vertical-rl books for example, but it
     // doesn't happen for normal horizontal-tb books. This is a very specialized
     // function and should not be mistaken for a general page number API.
-    unsigned LEGACY_NODELETE pageNumberForBlockProgressionOffset(int offset) const;
+    NODELETE unsigned pageNumberForBlockProgressionOffset(int offset) const;
 
-    unsigned LEGACY_NODELETE pageCount() const;
+    NODELETE unsigned pageCount() const;
 
     // FIXME: These functions are deprecated. No code should be added that uses these.
     int bestTruncatedAt() const { return m_legacyPrinting.m_bestTruncatedAt; }
@@ -159,7 +159,7 @@ public:
     void setIsInWindow(bool);
 
     WEBCORE_EXPORT RenderLayerCompositor& compositor();
-    WEBCORE_EXPORT bool LEGACY_NODELETE usesCompositing() const;
+    NODELETE WEBCORE_EXPORT bool usesCompositing() const;
 
     WEBCORE_EXPORT IntRect unscaledDocumentRect() const;
     LayoutRect unextendedBackgroundRect() const;
@@ -243,12 +243,12 @@ public:
     void unregisterPositionTryBox(const RenderBox&);
     const SingleThreadWeakHashSet<const RenderBox>& positionTryBoxes() const LIFETIME_BOUND { return m_positionTryBoxes; }
 
-    SingleThreadWeakPtr<RenderBlockFlow> LEGACY_NODELETE viewTransitionContainingBlock() const;
-    void LEGACY_NODELETE setViewTransitionContainingBlock(RenderBlockFlow& renderer);
+    NODELETE SingleThreadWeakPtr<RenderBlockFlow> viewTransitionContainingBlock() const;
+    NODELETE void setViewTransitionContainingBlock(RenderBlockFlow& renderer);
 
     void addViewTransitionGroup(const AtomString&, RenderBox&);
     void removeViewTransitionGroup(const AtomString&);
-    RenderBox* LEGACY_NODELETE viewTransitionGroupForName(const AtomString&);
+    NODELETE RenderBox* viewTransitionGroupForName(const AtomString&);
 
 protected:
     void willBeDestroyed() override;
@@ -263,7 +263,7 @@ private:
 
     void computeColumnCountAndWidth() override;
 
-    bool LEGACY_NODELETE shouldRepaint(const LayoutRect&) const;
+    NODELETE bool shouldRepaint(const LayoutRect&) const;
 
     // Returns true if we determine that the accumulated dirty rect makes up a significant fraction of viewRect.
     bool accumulateRepaintRect(IntRect dirtyRect, IntRect viewRect);
@@ -300,7 +300,7 @@ private:
     LegacyPrinting m_legacyPrinting;
     // End deprecated members.
 
-    bool LEGACY_NODELETE shouldUsePrintingLayout() const;
+    NODELETE bool shouldUsePrintingLayout() const;
 
     const std::unique_ptr<ImageQualityController> m_imageQualityController;
     std::optional<LayoutSize> m_pageLogicalSize;

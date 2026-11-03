@@ -90,7 +90,7 @@ public:
 
     Ref<MediaPromise> append(Ref<SharedBuffer>&&);
 
-    void LEGACY_NODELETE abort();
+    NODELETE void abort();
     // Overrides must call the base class.
     virtual void resetParserState();
     virtual void removedFromMediaSource();
@@ -111,26 +111,26 @@ public:
     bool evictCodedFrames(uint64_t newDataSize, const MediaTime& currentTime);
     void asyncEvictCodedFrames(uint64_t newDataSize, const MediaTime& currentTime);
     WEBCORE_EXPORT virtual size_t platformEvictionThreshold() const;
-    WEBCORE_EXPORT uint64_t LEGACY_NODELETE contentSize() const;
+    NODELETE WEBCORE_EXPORT uint64_t contentSize() const;
     void resetTimestampOffsetInTrackBuffers();
     virtual void startChangingType();
-    void LEGACY_NODELETE setTimestampOffset(const MediaTime&);
-    WEBCORE_EXPORT MediaTime LEGACY_NODELETE timestampOffset() const;
-    void LEGACY_NODELETE setAppendWindowStart(const MediaTime&);
-    void LEGACY_NODELETE setAppendWindowEnd(const MediaTime&);
-    std::pair<MediaTime, MediaTime> LEGACY_NODELETE appendWindow() const;
+    NODELETE void setTimestampOffset(const MediaTime&);
+    NODELETE WEBCORE_EXPORT MediaTime timestampOffset() const;
+    NODELETE void setAppendWindowStart(const MediaTime&);
+    NODELETE void setAppendWindowEnd(const MediaTime&);
+    NODELETE std::pair<MediaTime, MediaTime> appendWindow() const;
 
     WEBCORE_EXPORT MediaTime computeSeekTime(const SeekTarget&);
     void reenqueueMediaForTime(const MediaTime&);
     WEBCORE_EXPORT virtual void updateTrackIds(Vector<std::pair<TrackID, TrackID>>&& trackIdPairs);
 
-    WEBCORE_EXPORT void LEGACY_NODELETE setClient(SourceBufferPrivateClient&);
+    NODELETE WEBCORE_EXPORT void setClient(SourceBufferPrivateClient&);
 
-    void LEGACY_NODELETE setMediaSourceDuration(const MediaTime&);
+    NODELETE void setMediaSourceDuration(const MediaTime&);
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE isBufferFullFor(uint64_t requiredSize) const;
-    WEBCORE_EXPORT bool LEGACY_NODELETE canAppend(uint64_t requiredSize) const;
-    WEBCORE_EXPORT SourceBufferEvictionData LEGACY_NODELETE evictionData() const;
+    NODELETE WEBCORE_EXPORT bool isBufferFullFor(uint64_t requiredSize) const;
+    NODELETE WEBCORE_EXPORT bool canAppend(uint64_t requiredSize) const;
+    NODELETE WEBCORE_EXPORT SourceBufferEvictionData evictionData() const;
     WEBCORE_EXPORT Vector<PlatformTimeRanges> trackBuffersRanges() const;
 
     // Implements the SourceBuffer.buffered getter algorithm:
@@ -141,7 +141,7 @@ public:
     WEBCORE_EXPORT static PlatformTimeRanges computeBufferedRanges(const Vector<PlatformTimeRanges>& trackBufferedRanges, bool mediaSourceEnded);
 
     // Methods used by MediaSourcePrivate
-    bool LEGACY_NODELETE hasReceivedFirstInitializationSegment() const;
+    NODELETE bool hasReceivedFirstInitializationSegment() const;
 
     // Returns true if this SourceBuffer has an audio track whose buffered
     // ranges include `time`. If `excluded` is set, the track with that ID is
@@ -184,7 +184,7 @@ public:
 protected:
     WEBCORE_EXPORT explicit SourceBufferPrivate(MediaSourcePrivate&, WorkQueue&);
     MediaTime currentTime() const;
-    MediaTime LEGACY_NODELETE mediaSourceDuration() const;
+    NODELETE MediaTime mediaSourceDuration() const;
 
     WEBCORE_EXPORT void ensureOnDispatcher(Function<void()>&&) const;
     WEBCORE_EXPORT void ensureOnDispatcherSync(NOESCAPE Function<void()>&&);
@@ -223,7 +223,7 @@ protected:
     // Must be called once all samples have been processed.
     WEBCORE_EXPORT void appendCompleted(bool parsingSucceeded, Function<void()>&& = [] { });
 
-    WEBCORE_EXPORT RefPtr<SourceBufferPrivateClient> LEGACY_NODELETE client() const;
+    NODELETE WEBCORE_EXPORT RefPtr<SourceBufferPrivateClient> client() const;
 
     ThreadSafeWeakPtr<MediaSourcePrivate> m_mediaSource { nullptr };
     const Ref<WorkQueue> m_dispatcher; // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate
@@ -264,7 +264,7 @@ private:
     using OperationPromise = NativePromise<void, PlatformMediaError, WTF::PromiseOption::Default | WTF::PromiseOption::NonExclusive>;
 
     void ensureWeakOnDispatcher(Function<void(SourceBufferPrivate&)>&&);
-    MediaPromise& LEGACY_NODELETE currentAppendProcessing() const;
+    NODELETE MediaPromise& currentAppendProcessing() const;
 
     bool m_hasAudio WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get()) { false };
     bool m_hasVideo WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get()) { false };

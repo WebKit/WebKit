@@ -87,7 +87,7 @@ static AudioHardwareListener::BufferSizeRange currentDeviceSupportedBufferSizes(
 }
 
 
-static const AudioObjectPropertyAddress& LEGACY_NODELETE processIsRunningPropertyDescriptor()
+NODELETE static const AudioObjectPropertyAddress& processIsRunningPropertyDescriptor()
 {
     static const AudioObjectPropertyAddress processIsRunningProperty = {
         kAudioHardwarePropertyProcessIsRunning,
@@ -98,7 +98,7 @@ static const AudioObjectPropertyAddress& LEGACY_NODELETE processIsRunningPropert
     return processIsRunningProperty;
 }
 
-static const AudioObjectPropertyAddress& LEGACY_NODELETE outputDevicePropertyDescriptor()
+NODELETE static const AudioObjectPropertyAddress& outputDevicePropertyDescriptor()
 {
     static const AudioObjectPropertyAddress outputDeviceProperty = {
         kAudioHardwarePropertyDefaultOutputDevice,

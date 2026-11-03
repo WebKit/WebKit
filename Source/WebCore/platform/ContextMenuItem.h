@@ -197,27 +197,27 @@ public:
 
     WEBCORE_EXPORT ~ContextMenuItem();
 
-    void LEGACY_NODELETE setType(ContextMenuItemType);
-    WEBCORE_EXPORT ContextMenuItemType LEGACY_NODELETE type() const;
+    NODELETE void setType(ContextMenuItemType);
+    NODELETE WEBCORE_EXPORT ContextMenuItemType type() const;
 
-    void LEGACY_NODELETE setAction(ContextMenuAction);
-    WEBCORE_EXPORT ContextMenuAction LEGACY_NODELETE action() const;
+    NODELETE void setAction(ContextMenuAction);
+    NODELETE WEBCORE_EXPORT ContextMenuAction action() const;
 
-    void LEGACY_NODELETE setChecked(bool = true);
-    WEBCORE_EXPORT bool LEGACY_NODELETE checked() const;
+    NODELETE void setChecked(bool = true);
+    NODELETE WEBCORE_EXPORT bool checked() const;
 
-    void LEGACY_NODELETE setEnabled(bool = true);
-    WEBCORE_EXPORT bool LEGACY_NODELETE enabled() const;
+    NODELETE void setEnabled(bool = true);
+    NODELETE WEBCORE_EXPORT bool enabled() const;
 
-    void LEGACY_NODELETE setIndentationLevel(unsigned);
-    WEBCORE_EXPORT unsigned LEGACY_NODELETE indentationLevel() const;
+    NODELETE void setIndentationLevel(unsigned);
+    NODELETE WEBCORE_EXPORT unsigned indentationLevel() const;
 
     void setSubMenu(ContextMenu*);
 
     WEBCORE_EXPORT ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems, unsigned indentationLevel = 0);
     ContextMenuItem();
 
-    bool LEGACY_NODELETE isNull() const;
+    NODELETE bool isNull() const;
 
     void setTitle(String&& title) { m_title = WTF::move(title); }
     void setTitle(const String& title) { m_title = title; }

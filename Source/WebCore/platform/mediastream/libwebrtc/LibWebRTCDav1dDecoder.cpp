@@ -88,7 +88,7 @@ private:
 class ScopedDav1dData {
 public:
     ~ScopedDav1dData() { dav1d_data_unref(&m_data); }
-    Dav1dData& LEGACY_NODELETE Data() { return m_data; }
+    NODELETE Dav1dData& Data() { return m_data; }
 
 private:
     Dav1dData m_data;
@@ -97,7 +97,7 @@ private:
 class ScopedDav1dPicture {
 public:
     ~ScopedDav1dPicture() { dav1d_picture_unref(&m_picture); }
-    Dav1dPicture& LEGACY_NODELETE Picture() { return m_picture; }
+    NODELETE Dav1dPicture& Picture() { return m_picture; }
 
 private:
     Dav1dPicture m_picture;

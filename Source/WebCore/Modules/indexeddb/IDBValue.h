@@ -61,12 +61,12 @@ public:
     const Vector<String>& blobFilePaths() const LIFETIME_BOUND { return m_blobFilePaths; }
     const Vector<FileSystemHandleGlobalIdentifier>& fileSystemHandleGlobalIdentifiers() const LIFETIME_BOUND { return m_fileSystemHandleGlobalIdentifiers; }
 
-    WEBCORE_EXPORT const Vector<FileSystemHandleRecord>& LEGACY_NODELETE fileSystemHandleRecords() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT const Vector<FileSystemHandleRecord>& fileSystemHandleRecords() const LIFETIME_BOUND;
     WEBCORE_EXPORT void setFileSystemHandleRecords(Vector<FileSystemHandleRecord>&&) const;
 
     WEBCORE_EXPORT void attachStorageKeepAlive(RefPtr<FileSystemHandleStorageKeepAlive>&&) const;
 
-    size_t LEGACY_NODELETE size() const;
+    NODELETE size_t size() const;
 private:
     ThreadSafeDataBuffer m_data;
     Vector<String> m_blobURLs;

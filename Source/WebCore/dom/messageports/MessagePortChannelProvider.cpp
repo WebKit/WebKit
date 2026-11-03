@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static RefPtr<MessagePortChannelProvider>& LEGACY_NODELETE globalProvider()
+NODELETE static RefPtr<MessagePortChannelProvider>& globalProvider()
 {
     static MainThreadNeverDestroyed<RefPtr<MessagePortChannelProvider>> globalProvider;
     return globalProvider;

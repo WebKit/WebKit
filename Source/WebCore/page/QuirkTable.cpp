@@ -75,7 +75,7 @@ void Quirk::apply(QuirksData& quirksData) const
 static constexpr std::array rowFields { "bugs"_s, "comment"_s, "matches"_s, "embeddedMatches"_s, "excludeMatches"_s, "queryContains"_s, "fragmentContains"_s, "environment"_s, "available"_s, "behaviors"_s };
 static constexpr std::array behaviorFields { "id"_s, "script"_s, "userAgent"_s, "chromeCompatibilityVersion"_s, "cookieNames"_s, "elementSelector"_s, "documentSelector"_s, "secondaryURL"_s, "bugs"_s, "comment"_s };
 
-static String LEGACY_NODELETE nonEmptyString(const JSON::Value& value)
+NODELETE static String nonEmptyString(const JSON::Value& value)
 {
     auto& string = value.asString();
     return string.isEmpty() ? String { } : string;
@@ -123,7 +123,7 @@ static bool isBugReference(StringView bug)
 namespace {
 
 template<typename CharacterType>
-bool LEGACY_NODELETE isBuildConditionNameCharacter(CharacterType character)
+NODELETE bool isBuildConditionNameCharacter(CharacterType character)
 {
     return isASCIIAlphanumeric(character) || character == '_';
 }
@@ -208,7 +208,7 @@ private:
         return isEnabled(*condition);
     }
 
-    bool LEGACY_NODELETE skipOperator(Operator op)
+    NODELETE bool skipOperator(Operator op)
     {
         auto character = op == Operator::Or ? '|' : '&';
         skipWhile(m_buffer, ' ');

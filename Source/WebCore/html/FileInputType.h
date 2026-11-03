@@ -75,7 +75,7 @@ private:
     RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) final;
     enum class RequestIcon : bool { No, Yes };
     void setFiles(RefPtr<FileList>&&, RequestIcon, WasSetByJavaScript);
-    String LEGACY_NODELETE displayString() const final;
+    NODELETE String displayString() const final;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
     void showPicker() final;
     bool allowsShowPickerAcrossFrames() final;
@@ -85,7 +85,7 @@ private:
     bool receiveDroppedFiles(const DragData&) final;
 #endif
 
-    Icon* LEGACY_NODELETE icon() const final;
+    NODELETE Icon* icon() const final;
     void createShadowSubtree() final;
     void disabledStateChanged() final;
     void attributeChanged(const QualifiedName&) final;
@@ -103,7 +103,7 @@ private:
     void didCreateFileList(Ref<FileList>&&, RefPtr<Icon>&&);
     void requestIcon(const Vector<String>&);
 
-    bool LEGACY_NODELETE allowsDirectories() const;
+    NODELETE bool allowsDirectories() const;
 
     bool dirAutoUsesValue() const final;
 

@@ -69,7 +69,7 @@ public:
     static RefPtr<BackgroundFetch> createFromStore(std::span<const uint8_t>, SWServer&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
 
     String identifier() const { return m_identifier; }
-    WEBCORE_EXPORT BackgroundFetchInformation LEGACY_NODELETE information() const;
+    NODELETE WEBCORE_EXPORT BackgroundFetchInformation information() const;
     const ServiceWorkerRegistrationKey& registrationKey() const LIFETIME_BOUND { return m_registrationKey; }
     const BackgroundFetchOptions& options() const LIFETIME_BOUND { return m_options; }
 

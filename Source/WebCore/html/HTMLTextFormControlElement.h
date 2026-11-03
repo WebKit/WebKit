@@ -87,7 +87,7 @@ public:
 
     void scheduleSelectionChangeEvent();
 
-    TextFieldSelectionDirection LEGACY_NODELETE computeSelectionDirection() const;
+    NODELETE TextFieldSelectionDirection computeSelectionDirection() const;
     TextFieldSelectionDirection normalizeSelectionDirection(TextFieldSelectionDirection);
 
     std::optional<SimpleRange> selection() const;
@@ -106,8 +106,8 @@ public:
     virtual bool dirAutoUsesValue() const = 0;
 
     bool selectionChanged(bool shouldFireSelectEvent);
-    WEBCORE_EXPORT bool LEGACY_NODELETE lastChangeWasUserEdit() const;
-    bool LEGACY_NODELETE wasEverChangedByUserEdit() const;
+    NODELETE WEBCORE_EXPORT bool lastChangeWasUserEdit() const;
+    NODELETE bool wasEverChangedByUserEdit() const;
     void setInnerTextValue(String&&);
     String innerTextValue() const;
 
@@ -133,7 +133,7 @@ protected:
 
     void updateInnerTextElementEditability();
 
-    bool LEGACY_NODELETE cacheSelection(unsigned start, unsigned end, TextFieldSelectionDirection);
+    NODELETE bool cacheSelection(unsigned start, unsigned end, TextFieldSelectionDirection);
 
     void restoreCachedSelection(SelectionRevealMode, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     bool hasCachedSelection() const { return m_hasCachedSelection; }
@@ -157,7 +157,7 @@ protected:
 private:
     TextFieldSelectionDirection cachedSelectionDirection() const { return static_cast<TextFieldSelectionDirection>(m_cachedSelectionDirection); }
 
-    bool LEGACY_NODELETE isTextFormControlElement() const final { return true; }
+    NODELETE bool isTextFormControlElement() const final { return true; }
 
     void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions&) final;
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) final;
@@ -199,7 +199,7 @@ private:
     String m_textAsOfLastFormControlChangeEvent;
 };
 
-WEBCORE_EXPORT HTMLTextFormControlElement* LEGACY_NODELETE enclosingTextFormControl(const Position&);
+NODELETE WEBCORE_EXPORT HTMLTextFormControlElement* enclosingTextFormControl(const Position&);
 
 } // namespace WebCore
 

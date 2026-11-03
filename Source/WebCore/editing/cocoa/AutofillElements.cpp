@@ -38,7 +38,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AutofillElements);
 
-static inline bool LEGACY_NODELETE isAutofillableElement(Element& node)
+NODELETE static inline bool isAutofillableElement(Element& node)
 {
     auto* inputElement = dynamicDowncast<HTMLInputElement>(node);
     return inputElement && (inputElement->isTextField() || inputElement->isEmailField());

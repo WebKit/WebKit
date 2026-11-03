@@ -81,7 +81,7 @@ private:
     RefPtr<::WebGPU::PresentationContext> createPresentationContext(const WebGPUPresentationContextDescriptor&) final;
 
     RefPtr<WebGPUCompositorIntegration> createCompositorIntegration() final;
-    bool LEGACY_NODELETE isValid(const WebGPUCompositorIntegration&) const final;
+    NODELETE bool isValid(const WebGPUCompositorIntegration&) const final;
     bool isValid(const ::WebGPU::Buffer&) const final;
     bool isValid(const ::WebGPU::Adapter&) const final;
     bool isValid(const ::WebGPU::BindGroup&) const final;

@@ -84,7 +84,7 @@ RefPtr<WebGPUCompositorIntegration> WebGPUIntegrationImpl::createCompositorInteg
 }
 
 #if ENABLE(VIDEO)
-static ::WebGPU::VideoFrameRotation LEGACY_NODELETE convertToAPI(VideoFrameRotation rotation)
+NODELETE static ::WebGPU::VideoFrameRotation convertToAPI(VideoFrameRotation rotation)
 {
     switch (rotation) {
     case VideoFrameRotation::None:
@@ -110,7 +110,7 @@ struct SourceTextureFormat {
     bool hasAlpha;
 };
 
-static std::optional<SourceTextureFormat> LEGACY_NODELETE sourceTextureFormat(PixelFormat pixelFormat)
+NODELETE static std::optional<SourceTextureFormat> sourceTextureFormat(PixelFormat pixelFormat)
 {
     switch (pixelFormat) {
     case PixelFormat::RGBA8:

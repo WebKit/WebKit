@@ -51,12 +51,12 @@
 namespace WebCore {
 
 // SVG specific inputs live on the renderers and the DOM.
-static RenderSVGInlineText* LEGACY_NODELETE svgInlineText(const Layout::InlineTextBox& inlineTextBox)
+NODELETE static RenderSVGInlineText* svgInlineText(const Layout::InlineTextBox& inlineTextBox)
 {
     return dynamicDowncast<RenderSVGInlineText>(inlineTextBox.rendererForIntegration());
 }
 
-static const SVGTextContentElement* LEGACY_NODELETE textContentElement(const Layout::ElementBox& elementBox)
+NODELETE static const SVGTextContentElement* textContentElement(const Layout::ElementBox& elementBox)
 {
     // Anonymous inline boxes, like the ones for display: contents, have no element.
     auto* renderer = elementBox.rendererForIntegration();
@@ -65,36 +65,36 @@ static const SVGTextContentElement* LEGACY_NODELETE textContentElement(const Lay
     return SVGTextContentElement::elementFromRenderer(renderer);
 }
 
-static const RenderSVGTextPath* LEGACY_NODELETE svgTextPath(const Layout::ElementBox& elementBox)
+NODELETE static const RenderSVGTextPath* svgTextPath(const Layout::ElementBox& elementBox)
 {
     return dynamicDowncast<RenderSVGTextPath>(elementBox.rendererForIntegration());
 }
 
-static const Vector<SVGTextMetrics>& LEGACY_NODELETE textMetrics(const Layout::InlineTextBox& inlineTextBox)
+NODELETE static const Vector<SVGTextMetrics>& textMetrics(const Layout::InlineTextBox& inlineTextBox)
 {
     return svgInlineText(inlineTextBox)->textMetrics();
 }
 
 // Text boxes have a style with the non-inherited properties reset. The non-inherited alignment-baseline and baseline-shift
 // are properties of the parent box.
-static const Style::ComputedStyle& LEGACY_NODELETE parentBoxStyle(const Layout::InlineTextBox& inlineTextBox)
+NODELETE static const Style::ComputedStyle& parentBoxStyle(const Layout::InlineTextBox& inlineTextBox)
 {
     return inlineTextBox.parent().style();
 }
 
 static constexpr float unspecifiedValue = std::numeric_limits<float>::quiet_NaN();
 
-static bool LEGACY_NODELETE isUnspecified(float value)
+NODELETE static bool isUnspecified(float value)
 {
     return std::isnan(value);
 }
 
-static float LEGACY_NODELETE valueAt(std::span<const float> values, unsigned index)
+NODELETE static float valueAt(std::span<const float> values, unsigned index)
 {
     return values.empty() ? unspecifiedValue : values[index];
 }
 
-static float LEGACY_NODELETE valueOrZeroAt(std::span<const float> values, unsigned index)
+NODELETE static float valueOrZeroAt(std::span<const float> values, unsigned index)
 {
     auto value = valueAt(values, index);
     return isUnspecified(value) ? 0 : value;

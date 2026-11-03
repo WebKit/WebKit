@@ -64,17 +64,17 @@ public:
     unsigned length() const;
     bool isEmpty() const { return !length(); }
 
-    std::span<const Attribute> LEGACY_NODELETE attributes() const LIFETIME_BOUND;
-    const Attribute& LEGACY_NODELETE attributeAt(unsigned index) const;
-    const Attribute* LEGACY_NODELETE findAttributeByName(const QualifiedName&) const;
-    unsigned LEGACY_NODELETE findAttributeIndexByName(const QualifiedName&) const;
-    unsigned LEGACY_NODELETE findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const;
+    NODELETE std::span<const Attribute> attributes() const LIFETIME_BOUND;
+    NODELETE const Attribute& attributeAt(unsigned index) const;
+    NODELETE const Attribute* findAttributeByName(const QualifiedName&) const;
+    NODELETE unsigned findAttributeIndexByName(const QualifiedName&) const;
+    NODELETE unsigned findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const;
 
     bool hasID() const { return !m_idForStyleResolution.isNull(); }
     bool hasClass() const { return !m_classNames.isEmpty(); }
     bool hasName() const { return m_arraySizeAndFlags & s_flagHasNameAttribute; }
 
-    bool LEGACY_NODELETE isEquivalent(const ElementData* other) const;
+    NODELETE bool isEquivalent(const ElementData* other) const;
 
     bool isUnique() const { return m_arraySizeAndFlags & s_flagIsUnique; }
     static uint32_t isUniqueFlag() { return s_flagIsUnique; }
@@ -105,7 +105,7 @@ private:
         else
             m_arraySizeAndFlags &= ~flag;
     }
-    static inline uint32_t LEGACY_NODELETE arraySizeAndFlagsFromOther(const ElementData& other, bool isUnique);
+    NODELETE static inline uint32_t arraySizeAndFlagsFromOther(const ElementData& other, bool isUnique);
 
 protected:
     ElementData();
@@ -158,25 +158,25 @@ public:
 
     static constexpr ptrdiff_t attributeArrayMemoryOffset() { return OBJECT_OFFSETOF(ShareableElementData, m_attributeArray); }
 
-    std::span<Attribute> LEGACY_NODELETE attributes() { return unsafeMakeSpan(m_attributeArray, arraySize()); }
-    std::span<const Attribute> LEGACY_NODELETE attributes() const { return unsafeMakeSpan(m_attributeArray, arraySize()); }
+    NODELETE std::span<Attribute> attributes() { return unsafeMakeSpan(m_attributeArray, arraySize()); }
+    NODELETE std::span<const Attribute> attributes() const { return unsafeMakeSpan(m_attributeArray, arraySize()); }
 
     Attribute m_attributeArray[0];
 };
 
 class UniqueElementData : public ElementData {
 public:
-    static Ref<UniqueElementData> LEGACY_NODELETE create();
+    NODELETE static Ref<UniqueElementData> create();
     Ref<ShareableElementData> makeShareableCopy() const;
 
     // These functions do no error/duplicate checking.
     void addAttribute(const QualifiedName&, const AtomString&);
     void removeAttributeAt(unsigned index);
 
-    Attribute& LEGACY_NODELETE attributeAt(unsigned index);
-    Attribute* LEGACY_NODELETE findAttributeByName(const QualifiedName&);
+    NODELETE Attribute& attributeAt(unsigned index);
+    NODELETE Attribute* findAttributeByName(const QualifiedName&);
 
-    std::span<const Attribute> LEGACY_NODELETE attributes() const LIFETIME_BOUND { return m_attributeVector.span(); }
+    NODELETE std::span<const Attribute> attributes() const LIFETIME_BOUND { return m_attributeVector.span(); }
 
     UniqueElementData();
     explicit UniqueElementData(const ShareableElementData&);
@@ -224,7 +224,7 @@ inline std::span<const Attribute> ElementData::attributes() const LIFETIME_BOUND
     return uncheckedDowncast<ShareableElementData>(*this).attributes();
 }
 
-ALWAYS_INLINE const Attribute* LEGACY_NODELETE ElementData::findAttributeByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
+NODELETE ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
 {
     unsigned index = findAttributeIndexByName(name, shouldIgnoreAttributeCase);
     if (index != attributeNotFound)
@@ -232,7 +232,7 @@ ALWAYS_INLINE const Attribute* LEGACY_NODELETE ElementData::findAttributeByName(
     return nullptr;
 }
 
-SUPPRESS_NODELETE ALWAYS_INLINE unsigned LEGACY_NODELETE ElementData::findAttributeIndexByName(const QualifiedName& name) const
+NODELETE SUPPRESS_NODELETE ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const QualifiedName& name) const
 {
     auto attributes = attributeSpan();
     for (auto [i, attribute] : indexedRange(attributes)) {
@@ -244,7 +244,7 @@ SUPPRESS_NODELETE ALWAYS_INLINE unsigned LEGACY_NODELETE ElementData::findAttrib
 
 // We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
 // can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
-SUPPRESS_NODELETE ALWAYS_INLINE unsigned LEGACY_NODELETE ElementData::findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
+NODELETE SUPPRESS_NODELETE ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
 {
     auto attributes = attributeSpan();
     if (attributes.empty())
@@ -265,7 +265,7 @@ SUPPRESS_NODELETE ALWAYS_INLINE unsigned LEGACY_NODELETE ElementData::findAttrib
     return attributeNotFound;
 }
 
-SUPPRESS_NODELETE ALWAYS_INLINE const Attribute* LEGACY_NODELETE ElementData::findAttributeByName(const QualifiedName& name) const
+NODELETE SUPPRESS_NODELETE ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const QualifiedName& name) const
 {
     for (auto& attribute : attributeSpan()) {
         if (attribute.name().matches(name))
@@ -274,7 +274,7 @@ SUPPRESS_NODELETE ALWAYS_INLINE const Attribute* LEGACY_NODELETE ElementData::fi
     return nullptr;
 }
 
-inline const Attribute& LEGACY_NODELETE ElementData::attributeAt(unsigned index) const
+NODELETE inline const Attribute& ElementData::attributeAt(unsigned index) const
 {
     return attributeSpan()[index];
 }
@@ -289,7 +289,7 @@ inline void UniqueElementData::removeAttributeAt(unsigned index)
     m_attributeVector.removeAt(index);
 }
 
-inline Attribute& LEGACY_NODELETE UniqueElementData::attributeAt(unsigned index)
+NODELETE inline Attribute& UniqueElementData::attributeAt(unsigned index)
 {
     return m_attributeVector.at(index);
 }

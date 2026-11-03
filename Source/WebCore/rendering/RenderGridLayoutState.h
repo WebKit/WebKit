@@ -42,7 +42,7 @@ using ItemsLayoutRequirements = SingleThreadWeakHashMap<RenderBox, OptionSet<Ite
 class RenderGridLayoutState {
     WTF_MAKE_TZONE_ALLOCATED(RenderGridLayoutState);
 public:
-    bool LEGACY_NODELETE containsLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement) const;
+    NODELETE bool containsLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement) const;
     void setLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement);
     void clearLayoutRequirementForGridItem(const RenderBox& gridItem, ItemLayoutRequirement);
 

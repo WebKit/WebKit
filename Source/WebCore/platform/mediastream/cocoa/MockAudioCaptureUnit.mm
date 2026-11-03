@@ -58,7 +58,7 @@
 
 namespace WebCore {
 
-static inline size_t LEGACY_NODELETE alignTo16Bytes(size_t size)
+NODELETE static inline size_t alignTo16Bytes(size_t size)
 {
     return (size + 15) & ~15;
 }
@@ -95,10 +95,10 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, AtomStri
 
 class MockAudioCaptureInternalUnitState : public ThreadSafeRefCounted<MockAudioCaptureInternalUnitState> {
 public:
-    static Ref<MockAudioCaptureInternalUnitState> LEGACY_NODELETE create() { return adoptRef(*new MockAudioCaptureInternalUnitState()); }
+    NODELETE static Ref<MockAudioCaptureInternalUnitState> create() { return adoptRef(*new MockAudioCaptureInternalUnitState()); }
 
-    bool LEGACY_NODELETE isProducingData() const { return m_isProducingData; }
-    void LEGACY_NODELETE setIsProducingData(bool value) { m_isProducingData = value; }
+    NODELETE bool isProducingData() const { return m_isProducingData; }
+    NODELETE void setIsProducingData(bool value) { m_isProducingData = value; }
 
 private:
     bool m_isProducingData { false };
@@ -125,7 +125,7 @@ private:
     bool setVoiceActivityDetection(bool) final;
     bool canRenderAudio() const final { return false; }
 
-    int LEGACY_NODELETE sampleRate() const { return m_streamFormat.mSampleRate; }
+    NODELETE int sampleRate() const { return m_streamFormat.mSampleRate; }
     void tick();
 
     void generateSampleBuffers(MonotonicTime);
@@ -134,7 +134,7 @@ private:
 
     void voiceDetected();
 
-    static Seconds LEGACY_NODELETE renderInterval() { return 20_ms; }
+    NODELETE static Seconds renderInterval() { return 20_ms; }
 
     std::unique_ptr<WebAudioBufferList> m_audioBufferList;
 
@@ -208,7 +208,7 @@ void MockAudioCaptureUnit::increaseBufferSize()
     s_shouldIncreaseBufferSize = true;
 }
 
-static AudioStreamBasicDescription LEGACY_NODELETE createAudioFormat(Float64 sampleRate, UInt32 channelCount)
+NODELETE static AudioStreamBasicDescription createAudioFormat(Float64 sampleRate, UInt32 channelCount)
 {
     AudioStreamBasicDescription format;
     const int bytesPerFloat = sizeof(Float32);

@@ -44,7 +44,7 @@ static const double fadeAnimationFrameRate = 30;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PageOverlay);
 
-static PageOverlay::PageOverlayID LEGACY_NODELETE generatePageOverlayID()
+NODELETE static PageOverlay::PageOverlayID generatePageOverlayID()
 {
     static PageOverlay::PageOverlayID pageOverlayID;
     return ++pageOverlayID;

@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT static void tryCreateFromData(std::span<const uint8_t>, CompletionHandler<void(RefPtr<SVGImage>&&)>&&);
     WEBCORE_EXPORT static bool isDataDecodable(const Settings&, std::span<const uint8_t>);
 
-    bool LEGACY_NODELETE isSVGImage() const final { return true; }
+    NODELETE bool isSVGImage() const final { return true; }
 
     Page* defaultInstancePage() const;
     RenderReplaced* defaultInstanceEmbeddedSVGRoot() const;

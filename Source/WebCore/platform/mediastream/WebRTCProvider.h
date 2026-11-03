@@ -51,7 +51,7 @@ public:
     WebRTCProvider() = default;
     virtual ~WebRTCProvider() = default;
 
-    static bool LEGACY_NODELETE webRTCAvailable();
+    NODELETE static bool webRTCAvailable();
 
     virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection();
 
@@ -63,12 +63,12 @@ public:
     void setAV1Support(bool);
     void setH265Support(bool);
     void setVP9Support(bool supportsVP9Profile0, bool supportsVP9Profile2);
-    bool LEGACY_NODELETE isSupportingAV1() const;
-    bool LEGACY_NODELETE isSupportingH265() const;
-    bool LEGACY_NODELETE isSupportingVP9Profile0() const;
-    bool LEGACY_NODELETE isSupportingVP9Profile2() const;
+    NODELETE bool isSupportingAV1() const;
+    NODELETE bool isSupportingH265() const;
+    NODELETE bool isSupportingVP9Profile0() const;
+    NODELETE bool isSupportingVP9Profile2() const;
 
-    bool LEGACY_NODELETE isSupportingMDNS() const;
+    NODELETE bool isSupportingMDNS() const;
 
 #if ENABLE(WEB_RTC)
     virtual std::optional<RTCRtpCapabilities> receiverCapabilities(const String&);
@@ -79,7 +79,7 @@ public:
     virtual void clearFactory();
 
     void setPortAllocatorRange(StringView);
-    std::optional<std::pair<int, int>> LEGACY_NODELETE portAllocatorRange() const;
+    NODELETE std::optional<std::pair<int, int>> portAllocatorRange() const;
 
     virtual bool isLibWebRTCProvider() const { return false; }
     virtual bool isWebCoreLibWebRTCProvider() const { return false; }

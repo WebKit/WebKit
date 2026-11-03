@@ -46,7 +46,7 @@ class AudioNodeInput final : public AudioSummingJunction, public ThreadSafeRefCo
     WTF_MAKE_TZONE_ALLOCATED(AudioNodeInput);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioNodeInput);
 public:
-    static Ref<AudioNodeInput> LEGACY_NODELETE create(AudioNode*);
+    NODELETE static Ref<AudioNodeInput> create(AudioNode*);
 
     // AudioSummingJunction
     bool canUpdateState() override { return !node()->isMarkedForDeletion(); }
@@ -74,7 +74,7 @@ public:
 
     // bus() contains the rendered audio after pull() has been called for each time quantum.
     // Called from context's audio thread.
-    AudioBus& LEGACY_NODELETE bus() LIFETIME_BOUND;
+    NODELETE AudioBus& bus() LIFETIME_BOUND;
 
     // updateInternalBus() updates m_internalSummingBus appropriately for the number of channels.
     // This must be called when we own the context's graph lock in the audio thread at the very start or end of the render quantum.
@@ -94,7 +94,7 @@ private:
     HashSet<AudioNodeOutput*> m_disabledOutputs;
 
     // Called from context's audio thread.
-    AudioBus& LEGACY_NODELETE internalSummingBus();
+    NODELETE AudioBus& internalSummingBus();
     void sumAllConnections(AudioBus& summingBus, size_t framesToProcess);
 
     Ref<AudioBus> m_internalSummingBus;

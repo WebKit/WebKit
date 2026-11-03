@@ -182,7 +182,7 @@ Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::computeCascad
     return result;
 }
 
-static CGFloat LEGACY_NODELETE mapWeight(FontSelectionValue weight)
+NODELETE static CGFloat mapWeight(FontSelectionValue weight)
 {
     if (weight < FontSelectionValue(150))
         return kCTFontWeightUltraLight;
@@ -203,7 +203,7 @@ static CGFloat LEGACY_NODELETE mapWeight(FontSelectionValue weight)
     return kCTFontWeightBlack;
 }
 
-static CGFloat LEGACY_NODELETE mapWidth(FontSelectionValue width)
+NODELETE static CGFloat mapWidth(FontSelectionValue width)
 {
     struct PiecewisePoint {
         FontSelectionValue input;
@@ -377,7 +377,7 @@ static inline FontSelectionValue cssWeightOfSystemFontDescriptor(CTFontDescripto
     return FontSelectionValue(normalizeCTWeight(result));
 }
 
-static CTFontTextStylePlatform LEGACY_NODELETE fontPlatform()
+NODELETE static CTFontTextStylePlatform fontPlatform()
 {
 #if PLATFORM(VISION)
     if (PAL::currentUserInterfaceIdiomIsVision())

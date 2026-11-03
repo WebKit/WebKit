@@ -46,7 +46,7 @@ public:
 private:
     FontPlatformData platformDataFromCustomData(const FontDescription&, const FontCreationContext&);
 
-    SVGFontElement* LEGACY_NODELETE getSVGFontById(const AtomString&) const;
+    NODELETE SVGFontElement* getSVGFontById(const AtomString&) const;
 
     SVGFontElement* maybeInitializeExternalSVGFontElement();
     SVGFontFaceElement* firstFontFace();

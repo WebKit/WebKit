@@ -40,7 +40,7 @@ public:
     bool setFloodColor(const Color&);
 
     float floodOpacity() const { return m_floodOpacity; }
-    bool LEGACY_NODELETE setFloodOpacity(float);
+    NODELETE bool setFloodOpacity(float);
 
 #if !USE(CG) && !USE(SKIA)
     // feFlood does not perform color interpolation of any kind, so the result is always in the current

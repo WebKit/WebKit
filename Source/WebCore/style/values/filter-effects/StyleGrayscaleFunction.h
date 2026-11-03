@@ -45,7 +45,7 @@ struct Grayscale {
 
     Parameter value;
 
-    static Grayscale LEGACY_NODELETE passthroughForInterpolation();
+    NODELETE static Grayscale passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return false; }
@@ -72,7 +72,7 @@ template<> struct Evaluation<Grayscale, Ref<FilterEffect>> { auto operator()(con
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Grayscale> { Ref<FilterOperation> LEGACY_NODELETE operator()(const Grayscale&); };
+template<> struct ToPlatform<Grayscale> { NODELETE Ref<FilterOperation> operator()(const Grayscale&); };
 
 } // namespace Style
 } // namespace WebCore

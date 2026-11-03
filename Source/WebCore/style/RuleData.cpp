@@ -64,7 +64,7 @@ struct SameSizeAsRuleData {
 
 static_assert(sizeof(RuleData) == sizeof(SameSizeAsRuleData), "RuleData should stay small");
 
-static inline MatchBasedOnRuleHash LEGACY_NODELETE computeMatchBasedOnRuleHash(const CSSSelector& selector)
+NODELETE static inline MatchBasedOnRuleHash computeMatchBasedOnRuleHash(const CSSSelector& selector)
 {
     if (selector.precedingInComplexSelector())
         return MatchBasedOnRuleHash::None;
@@ -134,7 +134,7 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector& se
     return PropertyAllowlist::None;
 }
 
-static bool LEGACY_NODELETE isKeywordOrKeywordList(const CSSValue& value, CSSValueID keyword)
+NODELETE static bool isKeywordOrKeywordList(const CSSValue& value, CSSValueID keyword)
 {
     if (auto* list = dynamicDowncast<CSSValueList>(value)) {
         for (auto& item : *list) {
@@ -147,7 +147,7 @@ static bool LEGACY_NODELETE isKeywordOrKeywordList(const CSSValue& value, CSSVal
 }
 
 // ::before/::after may follow another pseudo-element, like ::part(foo)::before or ::slotted(span)::after.
-static bool LEGACY_NODELETE selectorHasBeforeOrAfterPseudoElement(const CSSSelector& selector)
+NODELETE static bool selectorHasBeforeOrAfterPseudoElement(const CSSSelector& selector)
 {
     for (auto* component = &selector; component; component = component->precedingInComplexSelector()) {
         if (component->matchesPseudoElement() && (component->pseudoElement() == CSSSelector::PseudoElement::Before || component->pseudoElement() == CSSSelector::PseudoElement::After))
@@ -157,7 +157,7 @@ static bool LEGACY_NODELETE selectorHasBeforeOrAfterPseudoElement(const CSSSelec
 }
 
 // ::before/::after only generate a box with non-'none' content, which animations and transitions can also supply.
-static PseudoElementBoxGeneration LEGACY_NODELETE computePseudoElementBoxGeneration(const CSSSelector& selector, const StyleProperties& properties)
+NODELETE static PseudoElementBoxGeneration computePseudoElementBoxGeneration(const CSSSelector& selector, const StyleProperties& properties)
 {
     if (!selectorHasBeforeOrAfterPseudoElement(selector))
         return PseudoElementBoxGeneration::NotForBeforeOrAfter;

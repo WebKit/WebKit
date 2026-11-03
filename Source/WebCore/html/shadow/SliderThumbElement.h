@@ -49,7 +49,7 @@ public:
 
     void setPositionFromValue();
     void dragFrom(const LayoutPoint&);
-    RefPtr<HTMLInputElement> LEGACY_NODELETE hostInput() const;
+    NODELETE RefPtr<HTMLInputElement> hostInput() const;
     void setPositionFromPoint(const LayoutPoint&);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -61,7 +61,7 @@ public:
 private:
     explicit SliderThumbElement(Document&);
 
-    bool LEGACY_NODELETE isSliderThumbElement() const final { return true; }
+    NODELETE bool isSliderThumbElement() const final { return true; }
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const final;
     bool isDisabledFormControl() const final;
@@ -117,7 +117,7 @@ public:
 private:
     explicit SliderContainerElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
-    bool LEGACY_NODELETE isSliderContainerElement() const final { return true; }
+    NODELETE bool isSliderContainerElement() const final { return true; }
 };
 
 } // namespace WebCore

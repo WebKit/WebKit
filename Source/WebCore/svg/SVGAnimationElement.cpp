@@ -385,7 +385,7 @@ void SVGAnimationElement::calculateKeyTimesForCalcModePaced()
     m_keyTimesForPaced = WTF::move(keyTimesForPaced);
 }
 
-static inline double LEGACY_NODELETE solveEpsilon(double duration) { return 1 / (200 * duration); }
+NODELETE static inline double solveEpsilon(double duration) { return 1 / (200 * duration); }
 
 const Vector<float>& SVGAnimationElement::keyTimes() const
 {

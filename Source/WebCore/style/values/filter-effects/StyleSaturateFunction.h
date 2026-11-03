@@ -45,7 +45,7 @@ struct Saturate {
 
     Parameter value;
 
-    static Saturate LEGACY_NODELETE passthroughForInterpolation();
+    NODELETE static Saturate passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return false; }
@@ -69,7 +69,7 @@ template<> struct ToStyle<CSS::Saturate> { auto operator()(const CSS::Saturate&,
 // MARK: - Blending
 
 template<> struct Blending<Saturate> {
-    Saturate LEGACY_NODELETE blend(const Saturate&, const Saturate&, const BlendingContext&);
+    NODELETE Saturate blend(const Saturate&, const Saturate&, const BlendingContext&);
 };
 
 // MARK: - Evaluation
@@ -78,7 +78,7 @@ template<> struct Evaluation<Saturate, Ref<FilterEffect>> { auto operator()(cons
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Saturate> { Ref<FilterOperation> LEGACY_NODELETE operator()(const Saturate&); };
+template<> struct ToPlatform<Saturate> { NODELETE Ref<FilterOperation> operator()(const Saturate&); };
 
 } // namespace Style
 } // namespace WebCore

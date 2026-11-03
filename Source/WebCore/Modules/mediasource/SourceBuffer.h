@@ -86,7 +86,7 @@ public:
 
     bool updating() const { return m_updating; }
     ExceptionOr<Ref<TimeRanges>> buffered();
-    double LEGACY_NODELETE timestampOffset() const;
+    NODELETE double timestampOffset() const;
     ExceptionOr<void> setTimestampOffset(double);
 
     VideoTrackList& videoTracks();
@@ -96,9 +96,9 @@ public:
     TextTrackList& textTracks();
     TextTrackList* textTracksIfExists() const { return m_textTracks.get(); }
 
-    double LEGACY_NODELETE appendWindowStart() const;
+    NODELETE double appendWindowStart() const;
     ExceptionOr<void> setAppendWindowStart(double);
-    double LEGACY_NODELETE appendWindowEnd() const;
+    NODELETE double appendWindowEnd() const;
     ExceptionOr<void> setAppendWindowEnd(double);
 
     ExceptionOr<void> appendBuffer(const BufferSource&);
@@ -112,12 +112,12 @@ public:
     void abortIfUpdating();
     void removedFromMediaSource();
 
-    bool LEGACY_NODELETE hasVideo() const;
+    NODELETE bool hasVideo() const;
 
     bool active() const { return m_active; }
 
     // EventTarget
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
 
     enum class AppendMode { Segments, Sequence };
     AppendMode mode() const { return m_mode; }
@@ -125,12 +125,12 @@ public:
 
     WEBCORE_EXPORT void setShouldGenerateTimestamps(bool flag);
 
-    bool LEGACY_NODELETE isBufferedDirty() const;
+    NODELETE bool isBufferedDirty() const;
     void setBufferedDirty(bool flag);
 
-    MediaTime LEGACY_NODELETE highestPresentationTimestamp() const;
+    NODELETE MediaTime highestPresentationTimestamp() const;
 
-    size_t LEGACY_NODELETE memoryCost() const;
+    NODELETE size_t memoryCost() const;
 
     void setMediaSourceEnded(bool isEnded);
     bool receivedFirstInitializationSegment() const { return m_receivedFirstInitializationSegment; }
@@ -139,10 +139,10 @@ public:
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "SourceBuffer"_s; }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const final;
+    NODELETE WTFLogChannel& logChannel() const final;
 #endif
 
-    WebCoreOpaqueRoot LEGACY_NODELETE opaqueRoot() const final;
+    NODELETE WebCoreOpaqueRoot opaqueRoot() const final;
 
     virtual bool isManaged() const { return false; }
     void memoryPressure();
@@ -161,11 +161,11 @@ private:
     void derefEventTarget() final { deref(); }
 
     // ActiveDOMObject.
-    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
+    NODELETE bool virtualHasPendingActivity() const final;
 
     Ref<MediaPromise> sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&);
     Ref<MediaPromise> sourceBufferPrivateBufferedChanged(Vector<PlatformTimeRanges>&&);
-    void LEGACY_NODELETE sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
+    NODELETE void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
     Ref<MediaPromise> sourceBufferPrivateDurationChanged(const MediaTime& duration);
     void sourceBufferPrivateDidDropSample();
     Ref<MediaPromise> sourceBufferPrivateDidAttach(SourceBufferPrivateClient::InitializationSegment&&);
@@ -190,7 +190,7 @@ private:
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const override { return EventTargetInterfaceType::SourceBuffer; }
 
-    bool LEGACY_NODELETE isRemoved() const;
+    NODELETE bool isRemoved() const;
     void scheduleEvent(const AtomString& eventName);
 
     ExceptionOr<void> appendBufferInternal(std::span<const uint8_t>);
@@ -199,7 +199,7 @@ private:
 
     void setActive(bool);
 
-    bool LEGACY_NODELETE validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
+    NODELETE bool validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
 
     uint64_t maximumBufferSize() const;
 
@@ -207,7 +207,7 @@ private:
 
     void appendError(bool);
 
-    bool LEGACY_NODELETE hasAudio() const;
+    NODELETE bool hasAudio() const;
 
     void rangeRemoval(const MediaTime&, const MediaTime&);
 
@@ -218,7 +218,7 @@ private:
     WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID);
     WEBCORE_EXPORT void setMaximumQueueDepthForTrackID(TrackID, uint64_t);
     WEBCORE_EXPORT Ref<GenericPromise> setMaximumSourceBufferSize(uint64_t);
-    WEBCORE_EXPORT size_t LEGACY_NODELETE evictableSize() const;
+    NODELETE WEBCORE_EXPORT size_t evictableSize() const;
 
     void updateBuffered();
 

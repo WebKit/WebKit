@@ -75,9 +75,9 @@ public:
     virtual ~CSSStyleSheet();
 
     CSSStyleSheet* parentStyleSheet() const final;
-    Node* LEGACY_NODELETE ownerNode() const final;
+    NODELETE Node* ownerNode() const final;
     MediaList* media() const final;
-    String LEGACY_NODELETE href() const final;
+    NODELETE String href() const final;
     String title() const final { return !m_title.isEmpty() ? m_title : String(); }
     bool disabled() const final { return m_isDisabled; }
     void setDisabled(bool) final;
@@ -97,18 +97,18 @@ public:
 
     bool wasMutated() const { return m_wasMutated; }
     bool wasConstructedByJS() const { return m_wasConstructedByJS; }
-    Document* LEGACY_NODELETE constructorDocument() const;
+    NODELETE Document* constructorDocument() const;
 
     // For CSSRuleList.
-    unsigned LEGACY_NODELETE length() const;
+    NODELETE unsigned length() const;
     CSSRule* item(unsigned index);
 
     void clearOwnerNode() final;
-    WEBCORE_EXPORT CSSImportRule* LEGACY_NODELETE ownerRule() const final;
-    URL LEGACY_NODELETE baseURL() const final;
+    NODELETE WEBCORE_EXPORT CSSImportRule* ownerRule() const final;
+    NODELETE URL baseURL() const final;
     bool isLoading() const final;
 
-    void LEGACY_NODELETE clearOwnerRule();
+    NODELETE void clearOwnerRule();
 
     void removeAdoptingTreeScope(ContainerNode&);
     void addAdoptingTreeScope(ContainerNode&);
@@ -117,7 +117,7 @@ public:
     Document* ownerDocument() const;
     Ref<CSSStyleSheet> rootStyleSheet();
     Ref<const CSSStyleSheet> rootStyleSheet() const;
-    Style::Scope* LEGACY_NODELETE styleScope();
+    NODELETE Style::Scope* styleScope();
 
     const MQ::MediaQueryList& mediaQueries() const LIFETIME_BOUND { return m_mediaQueries; }
     void setMediaQueries(MQ::MediaQueryList&&);
@@ -166,7 +166,7 @@ public:
 
     WebCoreOpaqueRoot opaqueRootForGCThread() override;
 
-    bool LEGACY_NODELETE isDetached() const;
+    NODELETE bool isDetached() const;
 
 private:
     CSSStyleSheet(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule, std::optional<bool> isOriginClean);

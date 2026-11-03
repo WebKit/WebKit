@@ -42,14 +42,14 @@ class ScrollingTreeGestureState {
 public:
     ScrollingTreeGestureState(ScrollingTree&);
 
-    void LEGACY_NODELETE receivedWheelEvent(const PlatformWheelEvent&);
+    NODELETE void receivedWheelEvent(const PlatformWheelEvent&);
 
     bool handleGestureCancel(const PlatformWheelEvent&);
 
     void nodeDidHandleEvent(ScrollingNodeID, const PlatformWheelEvent&);
     
 private:
-    void LEGACY_NODELETE clearAllNodes();
+    NODELETE void clearAllNodes();
 
     ThreadSafeWeakRef<ScrollingTree> m_scrollingTree;
     Markable<ScrollingNodeID> m_mayBeginNodeID;

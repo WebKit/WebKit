@@ -99,7 +99,7 @@ private:
     std::unique_ptr<Style::ComputedStyle> resolveStartingStyle(const ResolvedStyle&, const Styleable&, const ResolutionContext&);
     std::unique_ptr<Style::ComputedStyle> resolveAfterChangeStyleForNonAnimated(const ResolvedStyle&, const Styleable&, const ResolutionContext&);
     std::unique_ptr<Style::ComputedStyle> resolveAgainInDifferentContext(const ResolvedStyle&, const Styleable&, const Style::ComputedStyle& parentStyle,  OptionSet<PropertyCascade::PropertyType>, std::optional<BuilderPositionTryFallback>&&, const ResolutionContext&);
-    const Style::ComputedStyle& LEGACY_NODELETE parentAfterChangeStyle(const Styleable&, const ResolutionContext&) const;
+    NODELETE const Style::ComputedStyle& parentAfterChangeStyle(const Styleable&, const ResolutionContext&) const;
 
     HashSet<AnimatableCSSProperty> applyCascadeAfterAnimation(Style::ComputedStyle&, const HashMap<AnimatableCSSProperty, EnumSet<PropertyCascade::AnimationSource>>&, const MatchResult&, const Element&, const ResolutionContext&);
 
@@ -167,13 +167,13 @@ private:
     static std::optional<ResolutionType> determineResolutionType(const Element&, const Style::ComputedStyle*, DescendantsToResolve, OptionSet<Change> parentChange);
     void resetDescendantStyleRelations(Element&, DescendantsToResolve);
 
-    ResolutionContext LEGACY_NODELETE makeResolutionContext();
+    NODELETE ResolutionContext makeResolutionContext();
     ResolutionContext makeResolutionContextForPseudoElement(const ElementUpdate&, const PseudoElementIdentifier&);
-    std::optional<ResolutionContext> LEGACY_NODELETE makeResolutionContextForInheritedFirstLine(const ElementUpdate&, const Style::ComputedStyle& inheritStyle);
-    const Parent* LEGACY_NODELETE boxGeneratingParent() const LIFETIME_BOUND;
-    const Style::ComputedStyle* LEGACY_NODELETE parentBoxStyle() const LIFETIME_BOUND;
-    const Style::ComputedStyle* LEGACY_NODELETE parentBoxStyleForPseudoElement(const ElementUpdate&) const LIFETIME_BOUND;
-    const Style::ComputedStyle* LEGACY_NODELETE documentElementStyle() const;
+    NODELETE std::optional<ResolutionContext> makeResolutionContextForInheritedFirstLine(const ElementUpdate&, const Style::ComputedStyle& inheritStyle);
+    NODELETE const Parent* boxGeneratingParent() const LIFETIME_BOUND;
+    NODELETE const Style::ComputedStyle* parentBoxStyle() const LIFETIME_BOUND;
+    NODELETE const Style::ComputedStyle* parentBoxStyleForPseudoElement(const ElementUpdate&) const LIFETIME_BOUND;
+    NODELETE const Style::ComputedStyle* documentElementStyle() const;
 
     LayoutInterleavingAction updateAnchorPositioningState(Element&, const Style::ComputedStyle*);
 
@@ -247,7 +247,7 @@ private:
         bool chosen { false };
         bool isFirstTry { true };
 
-        const Style::ComputedStyle& LEGACY_NODELETE originalStyle() const;
+        NODELETE const Style::ComputedStyle& originalStyle() const;
         std::unique_ptr<Style::ComputedStyle> currentOption() const;
     };
     HashMap<WeakStyleable, PositionOptions> m_positionOptions;
@@ -260,7 +260,7 @@ private:
 
 // Integrate with the HTML5 event loop instead, see EventLoop.cpp and consumers.
 void deprecatedQueuePostResolutionCallback(Function<void()>&&);
-bool LEGACY_NODELETE postResolutionCallbacksAreSuspended();
+NODELETE bool postResolutionCallbacksAreSuspended();
 
 class PostResolutionCallbackDisabler {
 public:

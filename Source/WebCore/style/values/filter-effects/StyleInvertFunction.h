@@ -45,7 +45,7 @@ struct Invert {
 
     Parameter value;
 
-    static Invert LEGACY_NODELETE passthroughForInterpolation();
+    NODELETE static Invert passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return false; }
@@ -73,7 +73,7 @@ template<> struct Evaluation<Invert, Ref<FilterEffect>> { auto operator()(const 
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Invert> { Ref<FilterOperation> LEGACY_NODELETE operator()(const Invert&); };
+template<> struct ToPlatform<Invert> { NODELETE Ref<FilterOperation> operator()(const Invert&); };
 
 } // namespace Style
 } // namespace WebCore

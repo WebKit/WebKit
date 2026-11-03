@@ -51,8 +51,8 @@ Path path(const AcceleratedEffectInsetFunction&, const FloatRect&);
 // MARK: - Blending
 
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectInsetFunction> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectInsetFunction&, const AcceleratedEffectInsetFunction&);
-    AcceleratedEffectInsetFunction LEGACY_NODELETE blend(const AcceleratedEffectInsetFunction&, const AcceleratedEffectInsetFunction&, const BlendingContext&);
+    NODELETE bool canBlend(const AcceleratedEffectInsetFunction&, const AcceleratedEffectInsetFunction&);
+    NODELETE AcceleratedEffectInsetFunction blend(const AcceleratedEffectInsetFunction&, const AcceleratedEffectInsetFunction&, const BlendingContext&);
 };
 
 } // namespace WebCore

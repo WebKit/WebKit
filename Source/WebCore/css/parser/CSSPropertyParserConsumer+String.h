@@ -40,7 +40,7 @@ namespace CSSPropertyParserHelpers {
 // MARK: <string>
 // https://drafts.csswg.org/css-values/#strings
 
-StringView LEGACY_NODELETE consumeStringRaw(CSSParserTokenRange&);
+NODELETE StringView consumeStringRaw(CSSParserTokenRange&);
 std::optional<CSS::String> consumeUnresolvedString(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeString(CSSParserTokenRange&);
 

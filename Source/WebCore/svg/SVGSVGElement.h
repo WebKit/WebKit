@@ -62,12 +62,12 @@ public: // DOM
 
     void deselectAll();
 
-    static Ref<SVGNumber> LEGACY_NODELETE createSVGNumber();
+    NODELETE static Ref<SVGNumber> createSVGNumber();
     static Ref<SVGLength> createSVGLength();
-    static Ref<SVGAngle> LEGACY_NODELETE createSVGAngle();
-    static Ref<SVGPoint> LEGACY_NODELETE createSVGPoint();
-    static Ref<SVGMatrix> LEGACY_NODELETE createSVGMatrix();
-    static Ref<SVGRect> LEGACY_NODELETE createSVGRect();
+    NODELETE static Ref<SVGAngle> createSVGAngle();
+    NODELETE static Ref<SVGPoint> createSVGPoint();
+    NODELETE static Ref<SVGMatrix> createSVGMatrix();
+    NODELETE static Ref<SVGRect> createSVGRect();
     static Ref<SVGTransform> createSVGTransform();
     static Ref<SVGTransform> createSVGTransformFromMatrix(DOMMatrix2DInit&&);
 
@@ -76,7 +76,7 @@ public: // DOM
     void pauseAnimations();
     void unpauseAnimations();
     bool resumePausedAnimationsIfNeeded(const IntRect&);
-    bool LEGACY_NODELETE animationsPaused() const;
+    NODELETE bool animationsPaused() const;
     float getCurrentTime() const;
     void setCurrentTime(float);
     
@@ -125,7 +125,7 @@ public:
     FloatRect currentViewBoxRect() const;
     bool hasSynthesizedViewBoxForSVGImage() const;
 
-    bool LEGACY_NODELETE viewBoxDisablesPainting() const;
+    NODELETE bool viewBoxDisablesPainting() const;
 
     AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
     bool hasTransformRelatedAttributes() const final;
@@ -169,7 +169,7 @@ private:
     FloatSize computeCurrentViewportSizeExcludingZoom() const;
 
     RefPtr<SVGViewElement> findViewAnchor(StringView fragmentIdentifier) const;
-    SVGSVGElement* LEGACY_NODELETE findRootAnchor(const SVGViewElement*) const;
+    NODELETE SVGSVGElement* findRootAnchor(const SVGViewElement*) const;
     SVGSVGElement* findRootAnchor(StringView) const;
 
     const Ref<SMILTimeContainer> m_timeContainer;

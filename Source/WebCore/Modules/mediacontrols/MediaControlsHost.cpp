@@ -548,12 +548,12 @@ private:
         m_items.clear();
     }
 
-    ContextMenuContext::Type LEGACY_NODELETE contextMenuContextType() override
+    NODELETE ContextMenuContext::Type contextMenuContextType() override
     {
         return ContextMenuContext::Type::MediaControls;
     }
 
-    void LEGACY_NODELETE prepareContext(ContextMenuContext& context) override
+    NODELETE void prepareContext(ContextMenuContext& context) override
     {
         context.setMediaElementIdentifier(m_identifier);
     }
@@ -566,7 +566,7 @@ private:
 
 class MediaControlsContextMenuEventListener final : public EventListener {
 public:
-    static Ref<MediaControlsContextMenuEventListener> LEGACY_NODELETE create(Ref<MediaControlsContextMenuProvider>&& contextMenuProvider)
+    NODELETE static Ref<MediaControlsContextMenuEventListener> create(Ref<MediaControlsContextMenuProvider>&& contextMenuProvider)
     {
         return adoptRef(*new MediaControlsContextMenuEventListener(WTF::move(contextMenuProvider)));
     }

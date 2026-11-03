@@ -149,7 +149,7 @@ public:
     RefPtr<ShapeDetection::FaceDetector> createFaceDetector(const ShapeDetection::FaceDetectorOptions&) const;
     RefPtr<ShapeDetection::TextDetector> createTextDetector() const;
 
-    PlatformDisplayID LEGACY_NODELETE displayID() const override;
+    NODELETE PlatformDisplayID displayID() const override;
 #if HAVE(IOSURFACE)
     bool useIOSurfaceWebKitBehavior() const override;
 #endif

@@ -51,11 +51,11 @@ public:
 
     ~GPURenderPipeline();
 
-    static HashMap<GPURenderPipeline*, GPUDevice*>& LEGACY_NODELETE instances() WTF_REQUIRES_LOCK(instancesLock());
-    static Lock& LEGACY_NODELETE instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
+    NODELETE static HashMap<GPURenderPipeline*, GPUDevice*>& instances() WTF_REQUIRES_LOCK(instancesLock());
+    NODELETE static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
     static void willDestroyDevice(GPUDevice&);
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
     Ref<GPUBindGroupLayout> getBindGroupLayout(uint32_t index);
@@ -63,7 +63,7 @@ public:
     ::WebGPU::RenderPipeline& backing() { return m_backing; }
     const ::WebGPU::RenderPipeline& backing() const { return m_backing; }
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
     const String& vertexShaderSource() const { return m_vertexShaderModuleDescriptor.code; }
     const String& fragmentShaderSource() const { return m_fragmentShaderModuleDescriptor ? m_fragmentShaderModuleDescriptor->code : nullString(); }
     bool sharesVertexFragmentShader() const { return m_sharesVertexFragmentShader; }

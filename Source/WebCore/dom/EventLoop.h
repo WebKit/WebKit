@@ -226,7 +226,7 @@ public:
     void didAddTimer(EventLoopTimer&);
     void didRemoveTimer(EventLoopTimer&);
 
-    void LEGACY_NODELETE setScriptExecutionContext(ScriptExecutionContext&);
+    NODELETE void setScriptExecutionContext(ScriptExecutionContext&);
 
 private:
     enum class State : uint8_t { Running, Suspended, ReadyToStop, Stopped };

@@ -375,7 +375,7 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
     return { };
 }
 
-static bool LEGACY_NODELETE isValidInlineItemPositionForLine(const InlineItemPosition& inlineItemPosition, size_t lineIndex)
+NODELETE static bool isValidInlineItemPositionForLine(const InlineItemPosition& inlineItemPosition, size_t lineIndex)
 {
     // It's clearly not correct when starting position is 0 while the damaged line is not the first one.
     if (!inlineItemPosition && lineIndex)
@@ -438,7 +438,7 @@ static std::optional<InvalidatedLine> invalidatedLineByDamagedBox(const DamagedC
     return { };
 }
 
-static bool LEGACY_NODELETE startsAtRemovedBox(const InvalidatedLine& invalidatedLine, const Box& removedBox, const InlineItemList& inlineItemList)
+NODELETE static bool startsAtRemovedBox(const InvalidatedLine& invalidatedLine, const Box& removedBox, const InlineItemList& inlineItemList)
 {
     // Partial inline item building starts at the leading inline item's layout box, so that box has to stay in the tree.
     auto& startPosition = invalidatedLine.leadingInlineItemPosition;
@@ -505,7 +505,7 @@ bool InlineInvalidation::updateInlineDamage(const InvalidatedLine& invalidatedLi
     return true;
 }
 
-static bool LEGACY_NODELETE isSupportedContent(const Box& layoutBox)
+NODELETE static bool isSupportedContent(const Box& layoutBox)
 {
     return is<InlineTextBox>(layoutBox) || layoutBox.isLineBreakBox() || layoutBox.isReplacedBox() || layoutBox.isInlineBox();
 }

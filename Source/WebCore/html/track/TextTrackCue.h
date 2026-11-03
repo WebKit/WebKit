@@ -60,7 +60,7 @@ class TextTrackCueBox : public HTMLElement {
 public:
     static Ref<TextTrackCueBox> create(Document&, TextTrackCue&);
 
-    TextTrackCue* LEGACY_NODELETE getCue() const;
+    NODELETE TextTrackCue* getCue() const;
     virtual void applyCSSProperties() { }
 
     bool isTextTrackCueBox() const final { return true; }
@@ -90,9 +90,9 @@ public:
 
     void didMoveToNewDocument(Document&);
 
-    TextTrack* LEGACY_NODELETE track() const;
+    NODELETE TextTrack* track() const;
     bool containsTrackAsOpaqueRootInGCThread(JSC::AbstractSlotVisitor&) const;
-    void LEGACY_NODELETE setTrack(TextTrack*);
+    NODELETE void setTrack(TextTrack*);
 
     template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 
@@ -106,7 +106,7 @@ public:
     ExceptionOr<void> setEndTime(double);
 
     bool pauseOnExit() const { return m_pauseOnExit; }
-    void LEGACY_NODELETE setPauseOnExit(bool);
+    NODELETE void setPauseOnExit(bool);
 
     MediaTime startMediaTime() const { return m_startTime; }
     void setStartTime(const MediaTime&);
@@ -114,7 +114,7 @@ public:
     MediaTime endMediaTime() const { return m_endTime; }
     void setEndTime(const MediaTime&);
 
-    bool LEGACY_NODELETE isActive() const;
+    NODELETE bool isActive() const;
     virtual void setIsActive(bool);
 
     virtual bool isOrderedBefore(const TextTrackCue*) const;
@@ -124,7 +124,7 @@ public:
 
     enum CueType { Generic, Data, ConvertedToWebVTT, WebVTT };
     virtual CueType cueType() const { return CueType::Generic; }
-    virtual bool LEGACY_NODELETE isRenderable() const;
+    NODELETE virtual bool isRenderable() const;
 
     enum CueMatchRules { MatchAllFields, IgnoreDuration };
     bool isEqual(const TextTrackCue&, CueMatchRules) const;
@@ -141,7 +141,7 @@ public:
     String toJSONString() const;
 
     virtual void recalculateStyles() { m_displayTreeNeedsUpdate = true; }
-    virtual void LEGACY_NODELETE setFontSize(int fontSize, bool important);
+    NODELETE virtual void setFontSize(int fontSize, bool important);
     virtual void updateDisplayTree(const MediaTime&) { }
 
     unsigned cueIndex() const;

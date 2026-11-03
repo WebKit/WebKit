@@ -80,7 +80,7 @@
 
 namespace WebCore {
 
-static inline PaymentCoordinator& LEGACY_NODELETE paymentCoordinator(Document& document)
+NODELETE static inline PaymentCoordinator& paymentCoordinator(Document& document)
 {
     ASSERT(document.page());
     return document.page()->paymentCoordinator();
@@ -187,7 +187,7 @@ static ExceptionOr<Vector<ApplePayLineItem>> convertAndValidate(const Vector<Pay
     return { WTF::move(result) };
 }
 
-static ApplePaySessionPaymentRequest::ShippingType LEGACY_NODELETE convert(PaymentShippingType type)
+NODELETE static ApplePaySessionPaymentRequest::ShippingType convert(PaymentShippingType type)
 {
     switch (type) {
     case PaymentShippingType::Shipping:
@@ -225,7 +225,7 @@ ExceptionOr<void> ApplePayPaymentHandler::convertData(Document& document, JSC::J
     return { };
 }
 
-static void LEGACY_NODELETE mergePaymentOptions(const PaymentOptions& options, ApplePaySessionPaymentRequest& request)
+NODELETE static void mergePaymentOptions(const PaymentOptions& options, ApplePaySessionPaymentRequest& request)
 {
     auto requiredShippingContactFields = request.requiredShippingContactFields();
     requiredShippingContactFields.email |= options.requestPayerEmail;

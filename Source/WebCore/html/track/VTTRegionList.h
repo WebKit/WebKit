@@ -38,8 +38,8 @@ public:
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     unsigned length() const;
-    VTTRegion* LEGACY_NODELETE item(unsigned index) const;
-    VTTRegion* LEGACY_NODELETE getRegionById(const String&) const;
+    NODELETE VTTRegion* item(unsigned index) const;
+    NODELETE VTTRegion* getRegionById(const String&) const;
 
     void add(Ref<VTTRegion>&&);
     void remove(VTTRegion&);

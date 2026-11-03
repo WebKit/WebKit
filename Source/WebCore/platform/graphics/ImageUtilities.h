@@ -84,9 +84,9 @@ WEBCORE_EXPORT RefPtr<SharedBuffer> createIconDataFromBitmaps(Vector<Ref<Shareab
 
 Vector<uint8_t> encodeData(CGImageRef, const String& mimeType, std::optional<double> quality = std::nullopt);
 WEBCORE_EXPORT String encodeDataURL(CGImageRef, const String& mimeType, std::optional<double> quality = std::nullopt);
-WEBCORE_EXPORT uint8_t LEGACY_NODELETE verifyImageBufferIsBigEnough(std::span<const uint8_t> buffer);
+NODELETE WEBCORE_EXPORT uint8_t verifyImageBufferIsBigEnough(std::span<const uint8_t> buffer);
 RetainPtr<CFStringRef> utiFromImageBufferMIMEType(const String& mimeType);
-CFStringRef LEGACY_NODELETE jpegUTI();
+NODELETE CFStringRef jpegUTI();
 #endif
 
 // For the implementations, not to be called directly.

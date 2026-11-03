@@ -75,22 +75,22 @@ public:
         No,
     };
 
-    WEBCORE_EXPORT static Ref<PageOverlay> LEGACY_NODELETE create(PageOverlayClient&, OverlayType = OverlayType::View, AlwaysTileOverlayLayer = AlwaysTileOverlayLayer::No);
+    NODELETE WEBCORE_EXPORT static Ref<PageOverlay> create(PageOverlayClient&, OverlayType = OverlayType::View, AlwaysTileOverlayLayer = AlwaysTileOverlayLayer::No);
     WEBCORE_EXPORT ~PageOverlay();
 
-    WEBCORE_EXPORT PageOverlayController* LEGACY_NODELETE controller() const LIFETIME_BOUND;
+    NODELETE WEBCORE_EXPORT PageOverlayController* controller() const LIFETIME_BOUND;
 
     typedef uint64_t PageOverlayID;
     PageOverlayID pageOverlayID() const { return m_pageOverlayID; }
 
     void setPage(Page*);
-    WEBCORE_EXPORT Page* LEGACY_NODELETE page() const;
+    NODELETE WEBCORE_EXPORT Page* page() const;
 
     // Scope a Document overlay to a specific local root frame: its geometry comes from that frame's
     // view and it is hosted in that frame's own compositing tree, so sibling local roots in one
     // process (Site Isolation) each get an independent overlay. Unset keeps the page-level behavior.
-    WEBCORE_EXPORT void LEGACY_NODELETE setAssociatedFrame(LocalFrame*);
-    WEBCORE_EXPORT LocalFrame* LEGACY_NODELETE associatedFrame() const;
+    NODELETE WEBCORE_EXPORT void setAssociatedFrame(LocalFrame*);
+    NODELETE WEBCORE_EXPORT LocalFrame* associatedFrame() const;
 
     WEBCORE_EXPORT void setNeedsDisplay(const IntRect& dirtyRect);
     WEBCORE_EXPORT void setNeedsDisplay();

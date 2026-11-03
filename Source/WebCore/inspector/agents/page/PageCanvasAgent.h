@@ -57,7 +57,7 @@ private:
 
     bool matchesCurrentContext(ScriptExecutionContext*) const override;
 
-    bool LEGACY_NODELETE isSiteIsolationEnabled() const;
+    NODELETE bool isSiteIsolationEnabled() const;
 
     WeakRef<Page> m_inspectedPage;
     bool m_enabledUnderSiteIsolation { false };

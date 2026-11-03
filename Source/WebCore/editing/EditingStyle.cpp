@@ -140,7 +140,7 @@ static Ref<MutableStyleProperties> copyEditingProperties(StyleDeclarationType* s
     return style->copyProperties(std::span { editingProperties }.first(numInheritableEditingProperties));
 }
 
-static inline bool LEGACY_NODELETE isEditingProperty(CSSPropertyID id)
+NODELETE static inline bool isEditingProperty(CSSPropertyID id)
 {
     for (auto& editingProperty : editingProperties) {
         if (editingProperty == id)
@@ -301,7 +301,7 @@ public:
     }
 
 private:
-    TextDecorationChange LEGACY_NODELETE changeInStyle(const EditingStyle& style) const
+    NODELETE TextDecorationChange changeInStyle(const EditingStyle& style) const
     {
         return m_isUnderline ? style.underlineChange() : style.strikeThroughChange();
     }
@@ -347,7 +347,7 @@ public:
     bool valueIsPresentInStyle(Element&, const EditingStyle&) const override;
     void addToStyle(Element*, EditingStyle*) const override;
     virtual RefPtr<CSSValue> attributeValueAsCSSValue(Element*) const;
-    inline const QualifiedName& LEGACY_NODELETE attributeName() const { return m_attrName; }
+    NODELETE inline const QualifiedName& attributeName() const { return m_attrName; }
 
 protected:
     const QualifiedName& m_attrName; // We can store a reference because HTML attribute names are const global.
@@ -525,7 +525,7 @@ static inline Color rgbaBackgroundColorInEffect(Node* node)
     return cssValueToColor(backgroundColorInEffect(node).get());
 }
 
-static CSSValueID LEGACY_NODELETE textAlignResolvingStartAndEnd(CSSValueID textAlign, CSSValueID direction)
+NODELETE static CSSValueID textAlignResolvingStartAndEnd(CSSValueID textAlign, CSSValueID direction)
 {
     switch (textAlign) {
     case CSSValueID::Center:
@@ -1052,7 +1052,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
     return conflicts;
 }
 
-static std::span<const HTMLElementEquivalent* const> LEGACY_NODELETE htmlElementEquivalents()
+NODELETE static std::span<const HTMLElementEquivalent* const> htmlElementEquivalents()
 {
     static const auto equivalents = WTF::toArray<const HTMLElementEquivalent*>({
         new HTMLFontWeightEquivalent(HTMLNames::bTag),
@@ -1086,7 +1086,7 @@ bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement& element, Edi
     return false;
 }
 
-static std::span<const HTMLAttributeEquivalent* const> LEGACY_NODELETE htmlAttributeEquivalents()
+NODELETE static std::span<const HTMLAttributeEquivalent* const> htmlAttributeEquivalents()
 {
     static const auto equivalents = WTF::toArray<const HTMLAttributeEquivalent*>({
         // elementIsStyledSpanOrHTMLEquivalent depends on the fact each HTMLAttriuteEquivalent matches exactly one attribute
@@ -2120,7 +2120,7 @@ Ref<MutableStyleProperties> getPropertiesNotIn(StyleProperties& styleWithRedunda
     return extractPropertiesNotIn(styleWithRedundantProperties, baseStyle);
 }
 
-static bool LEGACY_NODELETE isCSSValueLength(CSSPrimitiveValue& value)
+NODELETE static bool isCSSValueLength(CSSPrimitiveValue& value)
 {
     return value.isFontIndependentLength();
 }

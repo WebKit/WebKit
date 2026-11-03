@@ -53,7 +53,7 @@ private:
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     bool setEmulatedConditionsInternal(std::optional<uint64_t> bandwidthBytesPerSecond, Seconds latency);
 #endif
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
+    NODELETE ScriptExecutionContext* scriptExecutionContext(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&);
     bool shouldForceBufferingNetworkResourceData() const { return true; }
 

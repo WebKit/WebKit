@@ -86,12 +86,12 @@ public:
     bool isFirstAfterPageBreak() const;
 
     bool hasBlockContent() const;
-    LeafBoxIterator LEGACY_NODELETE blockLevelBox() const;
+    NODELETE LeafBoxIterator blockLevelBox() const;
     inline bool hasContentfulInFlowBox() const;
 
     // Text-relative left/right
-    LeafBoxIterator LEGACY_NODELETE lineLeftmostLeafBox() const;
-    LeafBoxIterator LEGACY_NODELETE lineRightmostLeafBox() const;
+    NODELETE LeafBoxIterator lineLeftmostLeafBox() const;
+    NODELETE LeafBoxIterator lineRightmostLeafBox() const;
     // Coordinate-relative left/right
     inline LeafBoxIterator logicalLeftmostLeafBox() const;
     inline LeafBoxIterator logicalRightmostLeafBox() const;
@@ -99,8 +99,8 @@ public:
     // Leaf boxes from line-left to line-right.
     LeafBoxRange leafBoxes() const;
 
-    LineBoxIterator LEGACY_NODELETE next() const;
-    LineBoxIterator LEGACY_NODELETE previous() const;
+    NODELETE LineBoxIterator next() const;
+    NODELETE LineBoxIterator previous() const;
 
     size_t lineIndex() const { return m_lineIndex; }
 
@@ -222,7 +222,7 @@ WEBCORE_EXPORT LineBoxIterator firstLineBoxFor(const RenderBlockFlow&);
 LineBoxIterator lastLineBoxFor(const RenderBlockFlow&);
 
 inline LineBoxRange lineBoxesFor(const RenderBlockFlow&);
-LineBox LEGACY_NODELETE lineBoxFor(const LayoutIntegration::InlineContent&, size_t lineIndex);
+NODELETE LineBox lineBoxFor(const LayoutIntegration::InlineContent&, size_t lineIndex);
 
 LeafBoxIterator closestBoxForHorizontalPosition(const LineBox&, float horizontalPosition, bool editableOnly = false);
 

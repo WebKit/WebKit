@@ -59,7 +59,7 @@ public:
     //
     // This approximation is also the algorithm called for when parsing an HTML fragment.
     // https://html.spec.whatwg.org/multipage/syntax.html#parsing-html-fragments
-    void LEGACY_NODELETE updateStateFor(const AtomString& tagName);
+    NODELETE void updateStateFor(const AtomString& tagName);
 
     void setForceNullCharacterReplacement(bool);
 
@@ -158,7 +158,7 @@ private:
     bool processToken(SegmentedString&);
     bool processEntity(SegmentedString&);
 
-    void LEGACY_NODELETE parseError();
+    NODELETE void parseError();
 
     void bufferASCIICharacter(char16_t);
     void bufferCharacter(char16_t);
@@ -178,18 +178,18 @@ private:
     bool commitToCompleteEndTag(SegmentedString&);
 
     void appendToTemporaryBuffer(char16_t);
-    bool LEGACY_NODELETE temporaryBufferIs(ASCIILiteral);
+    NODELETE bool temporaryBufferIs(ASCIILiteral);
 
     // Sometimes we speculatively consume input characters and we don't know whether they represent
     // end tags or RCDATA, etc. These functions help manage these state.
-    bool LEGACY_NODELETE inEndTagBufferingState() const;
+    NODELETE bool inEndTagBufferingState() const;
     void appendToPossibleEndTag(char16_t);
     void saveEndTagNameIfNeeded();
-    bool LEGACY_NODELETE isAppropriateEndTag() const;
+    NODELETE bool isAppropriateEndTag() const;
 
-    bool LEGACY_NODELETE haveBufferedCharacterToken() const;
+    NODELETE bool haveBufferedCharacterToken() const;
 
-    bool LEGACY_NODELETE shouldSkipNullCharacters(State) const;
+    NODELETE bool shouldSkipNullCharacters(State) const;
 
     State m_state { DataState };
     bool m_forceNullCharacterReplacement { false };

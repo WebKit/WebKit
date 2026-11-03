@@ -38,7 +38,7 @@ namespace WebCore {
 namespace {
 using SnapshotBuffer = SequenceLocked<SharedTimebase::Snapshot>;
 
-SnapshotBuffer& LEGACY_NODELETE snapshotBufferIn(SharedMemory& storage)
+NODELETE SnapshotBuffer& snapshotBufferIn(SharedMemory& storage)
 {
     return spanReinterpretCast<SnapshotBuffer>(storage.mutableSpan().first(sizeof(SnapshotBuffer))).front();
 }

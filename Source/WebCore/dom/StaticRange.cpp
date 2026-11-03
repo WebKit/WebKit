@@ -51,7 +51,7 @@ Ref<StaticRange> StaticRange::create(const SimpleRange& range)
     return create(SimpleRange { range });
 }
 
-static bool LEGACY_NODELETE isDocumentTypeOrAttr(Node& node)
+NODELETE static bool isDocumentTypeOrAttr(Node& node)
 {
     switch (node.nodeType()) {
     case NodeType::Attribute:

@@ -37,13 +37,13 @@ class ComputedStyle;
 
 namespace BlockStepSizing {
 
-bool LEGACY_NODELETE childHasSupportedStyle(const Style::ComputedStyle& childStyle);
+NODELETE bool childHasSupportedStyle(const Style::ComputedStyle& childStyle);
 
-LayoutUnit LEGACY_NODELETE computeExtraSpace(LayoutUnit stepSize, LayoutUnit boxOuterSize);
+NODELETE LayoutUnit computeExtraSpace(LayoutUnit stepSize, LayoutUnit boxOuterSize);
 
 void distributeExtraSpaceToChildMargins(RenderBox& child, LayoutUnit extraSpace, WritingMode containingBlockWritingMode);
-void LEGACY_NODELETE distributeExtraSpaceToChildPadding(RenderBox& /* child */, LayoutUnit /* extraSpace */, WritingMode /* containingBlockWritingMode */);
-void LEGACY_NODELETE distributeExtraSpaceToChildContentArea(RenderBox& /* child */, LayoutUnit /* extraSpace */, WritingMode /* containingBlockWritingMode */);
+NODELETE void distributeExtraSpaceToChildPadding(RenderBox& /* child */, LayoutUnit /* extraSpace */, WritingMode /* containingBlockWritingMode */);
+NODELETE void distributeExtraSpaceToChildContentArea(RenderBox& /* child */, LayoutUnit /* extraSpace */, WritingMode /* containingBlockWritingMode */);
 
 } // namespace BlockStepSizing
 

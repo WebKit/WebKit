@@ -43,24 +43,24 @@ class MediaSourceHandle
     : public RefCounted<MediaSourceHandle> {
     WTF_MAKE_TZONE_ALLOCATED(MediaSourceHandle);
 public:
-    static Ref<MediaSourceHandle> LEGACY_NODELETE create(Ref<MediaSourceHandle>&&);
-    Ref<MediaSourceHandle> LEGACY_NODELETE detach();
+    NODELETE static Ref<MediaSourceHandle> create(Ref<MediaSourceHandle>&&);
+    NODELETE Ref<MediaSourceHandle> detach();
 
     virtual ~MediaSourceHandle();
 
     bool isDetached() const { return m_detached; }
-    bool LEGACY_NODELETE canDetach() const;
+    NODELETE bool canDetach() const;
     bool detachable() const { return m_detachable; }
 
-    void LEGACY_NODELETE setHasEverBeenAssignedAsSrcObject();
-    bool LEGACY_NODELETE hasEverBeenAssignedAsSrcObject() const;
-    bool LEGACY_NODELETE isManaged() const;
+    NODELETE void setHasEverBeenAssignedAsSrcObject();
+    NODELETE bool hasEverBeenAssignedAsSrcObject() const;
+    NODELETE bool isManaged() const;
 
     using TaskType = Function<void(MediaSource&)>;
     void ensureOnDispatcher(TaskType&&, bool forceRun = false) const;
 
-    RefPtr<MediaSourcePrivateClient> LEGACY_NODELETE mediaSourcePrivateClient() const;
-    RefPtr<MediaSourcePrivate> LEGACY_NODELETE mediaSourcePrivate() const;
+    NODELETE RefPtr<MediaSourcePrivateClient> mediaSourcePrivateClient() const;
+    NODELETE RefPtr<MediaSourcePrivate> mediaSourcePrivate() const;
 
 private:
     class SharedPrivate;
@@ -68,10 +68,10 @@ private:
 
     using DispatcherType = Function<void(TaskType, bool)>;
 
-    static Ref<MediaSourceHandle> LEGACY_NODELETE create(MediaSource&, DispatcherType&&, bool);
+    NODELETE static Ref<MediaSourceHandle> create(MediaSource&, DispatcherType&&, bool);
     MediaSourceHandle(MediaSource&, DispatcherType&&, bool);
     explicit MediaSourceHandle(MediaSourceHandle&);
-    void LEGACY_NODELETE mediaSourceDidOpen(MediaSourcePrivate&);
+    NODELETE void mediaSourceDidOpen(MediaSourcePrivate&);
     void setDetached(bool value) { m_detached = value; }
 
     const bool m_detachable;

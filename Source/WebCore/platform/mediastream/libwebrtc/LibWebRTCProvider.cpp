@@ -102,7 +102,7 @@ public:
     {
     }
 
-    void LEGACY_NODELETE setDisableNonLocalhostConnections(bool disableNonLocalhostConnections) { m_disableNonLocalhostConnections = disableNonLocalhostConnections; }
+    NODELETE void setDisableNonLocalhostConnections(bool disableNonLocalhostConnections) { m_disableNonLocalhostConnections = disableNonLocalhostConnections; }
 
     std::unique_ptr<webrtc::AsyncPacketSocket> CreateUdpSocket(const webrtc::Environment& env, const webrtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort) final
     {
@@ -148,7 +148,7 @@ static void doReleaseLogging(webrtc::LoggingSeverity severity, const char* messa
 #endif
 }
 
-static webrtc::LoggingSeverity LEGACY_NODELETE computeLogLevel(WTFLogLevel level)
+NODELETE static webrtc::LoggingSeverity computeLogLevel(WTFLogLevel level)
 {
 #if !RELEASE_LOG_DISABLED
     switch (level) {
@@ -203,7 +203,7 @@ static void initializePeerConnectionFactoryAndThreads(PeerConnectionFactoryAndTh
     ASSERT(result);
 }
 
-static inline PeerConnectionFactoryAndThreads& LEGACY_NODELETE staticFactoryAndThreads()
+NODELETE static inline PeerConnectionFactoryAndThreads& staticFactoryAndThreads()
 {
     static NeverDestroyed<PeerConnectionFactoryAndThreads> factoryAndThreads;
     return factoryAndThreads.get();

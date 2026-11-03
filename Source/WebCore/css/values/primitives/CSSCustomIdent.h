@@ -51,7 +51,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const CustomIdent&);
 
 // MARK: - Hashing
 
-void LEGACY_NODELETE add(Hasher&, const CustomIdent&);
+NODELETE void add(Hasher&, const CustomIdent&);
 
 } // namespace CSS
 } // namespace WebCore

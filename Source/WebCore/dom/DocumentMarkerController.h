@@ -72,7 +72,7 @@ public:
     WEBCORE_EXPORT void addDictationStreamingOpacityMarker(const SimpleRange&, float opacity);
     WEBCORE_EXPORT void removeAllDictationStreamingOpacityMarkers();
 
-    WEBCORE_EXPORT size_t LEGACY_NODELETE appliedGrammarTextEffectCount() const;
+    NODELETE WEBCORE_EXPORT size_t appliedGrammarTextEffectCount() const;
 
     void copyMarkers(Node& source, OffsetRange, Node& destination);
     bool hasMarkers() const;
@@ -125,7 +125,7 @@ private:
 
     using MarkerMap = HashMap<Ref<Node>, std::unique_ptr<Vector<RenderedDocumentMarker>>>;
 
-    bool LEGACY_NODELETE possiblyHasMarkers(OptionSet<DocumentMarkerType>) const;
+    NODELETE bool possiblyHasMarkers(OptionSet<DocumentMarkerType>) const;
     OptionSet<DocumentMarkerType> removeMarkersFromList(MarkerMap::iterator, OptionSet<DocumentMarkerType>, NOESCAPE const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction = nullptr);
 
     void forEachOfTypes(OptionSet<DocumentMarkerType>, NOESCAPE const Function<bool(Node&, RenderedDocumentMarker&)>&);

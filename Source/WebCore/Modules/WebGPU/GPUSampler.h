@@ -43,13 +43,13 @@ public:
         return adoptRef(*new GPUSampler(WTF::move(backing), WTF::move(label), device));
     }
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
     ::WebGPU::Sampler& backing() { return m_backing; }
     const ::WebGPU::Sampler& backing() const { return m_backing; }
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

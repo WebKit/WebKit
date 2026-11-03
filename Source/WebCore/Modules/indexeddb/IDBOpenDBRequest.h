@@ -46,7 +46,7 @@ public:
     void requestCompleted(const IDBResultData&);
     void requestBlocked(uint64_t oldVersion, uint64_t newVersion);
 
-    void LEGACY_NODELETE versionChangeTransactionDidFinish();
+    NODELETE void versionChangeTransactionDidFinish();
     void fireSuccessAfterVersionChangeCommit();
     void fireErrorAfterVersionChangeCompletion();
 

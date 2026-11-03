@@ -45,16 +45,16 @@ enum class PropertyAllowlist : uint8_t {
     FirstLine
 };
 
-PropertyAllowlist LEGACY_NODELETE propertyAllowlistForPseudoElement(PseudoElementType);
+NODELETE PropertyAllowlist propertyAllowlistForPseudoElement(PseudoElementType);
 
-bool LEGACY_NODELETE isValidHighlightStyleProperty(CSSPropertyID);
-bool LEGACY_NODELETE isValidMarkerStyleProperty(CSSPropertyID);
-bool LEGACY_NODELETE isValidFirstLetterStyleProperty(CSSPropertyID);
-bool LEGACY_NODELETE isValidFirstLineStyleProperty(CSSPropertyID);
+NODELETE bool isValidHighlightStyleProperty(CSSPropertyID);
+NODELETE bool isValidMarkerStyleProperty(CSSPropertyID);
+NODELETE bool isValidFirstLetterStyleProperty(CSSPropertyID);
+NODELETE bool isValidFirstLineStyleProperty(CSSPropertyID);
 #if ENABLE(VIDEO)
-bool LEGACY_NODELETE isValidCueStyleProperty(CSSPropertyID);
-bool LEGACY_NODELETE isValidCueSelectorStyleProperty(CSSPropertyID);
-bool LEGACY_NODELETE isValidCueBackgroundStyleProperty(CSSPropertyID);
+NODELETE bool isValidCueStyleProperty(CSSPropertyID);
+NODELETE bool isValidCueSelectorStyleProperty(CSSPropertyID);
+NODELETE bool isValidCueBackgroundStyleProperty(CSSPropertyID);
 #endif
 
 }

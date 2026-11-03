@@ -56,7 +56,7 @@ bool isAnyClick(const Event&);
 class MouseEvent : public MouseRelatedEvent {
     WTF_MAKE_TZONE_ALLOCATED(MouseEvent);
 public:
-    WEBCORE_EXPORT static Ref<MouseEvent> LEGACY_NODELETE create(
+    NODELETE WEBCORE_EXPORT static Ref<MouseEvent> create(
         const AtomString& type,
         CanBubble,
         IsCancelable,
@@ -110,7 +110,7 @@ public:
         RefPtr<EventTarget>&& relatedTarget
     );
 
-    static Ref<MouseEvent> LEGACY_NODELETE createForBindings();
+    NODELETE static Ref<MouseEvent> createForBindings();
 
     static Ref<MouseEvent> create(const AtomString& eventType, const MouseEventInit&);
 

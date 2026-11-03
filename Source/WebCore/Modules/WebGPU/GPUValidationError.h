@@ -48,7 +48,7 @@ public:
     ~GPUValidationError();
 
     Type type() const final { return Type::Validation; }
-    const String& LEGACY_NODELETE message() const LIFETIME_BOUND final;
+    NODELETE const String& message() const LIFETIME_BOUND final;
 
     WebGPUValidationError* backing() { return m_backing.get(); }
     const WebGPUValidationError* backing() const { return m_backing.get(); }

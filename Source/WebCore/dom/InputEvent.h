@@ -46,7 +46,7 @@ public:
 
     virtual ~InputEvent();
 
-    static Ref<InputEvent> LEGACY_NODELETE create(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&& view,
+    NODELETE static Ref<InputEvent> create(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&& view,
         const String& data, RefPtr<DataTransfer>&&, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
 
     static Ref<InputEvent> create(const AtomString& type, const Init& initializer)
@@ -56,7 +56,7 @@ public:
 
     const String& inputType() const LIFETIME_BOUND { return m_inputType; }
     const String& data() const LIFETIME_BOUND { return m_data; }
-    DataTransfer* LEGACY_NODELETE dataTransfer() const;
+    NODELETE DataTransfer* dataTransfer() const;
     const Vector<Ref<StaticRange>>& getTargetRanges() LIFETIME_BOUND { return m_targetRanges; }
     bool isInputMethodComposing() const { return m_isInputMethodComposing; }
 

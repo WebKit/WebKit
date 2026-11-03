@@ -78,14 +78,14 @@ public:
 
     AudioChannel* channel(unsigned channel) LIFETIME_BOUND { return m_channels[channel].get(); }
     const AudioChannel* channel(unsigned channel) const LIFETIME_BOUND { return m_channels[channel].get(); }
-    AudioChannel* LEGACY_NODELETE channelByType(unsigned type) LIFETIME_BOUND;
-    const AudioChannel* LEGACY_NODELETE channelByType(unsigned type) const LIFETIME_BOUND;
+    NODELETE AudioChannel* channelByType(unsigned type) LIFETIME_BOUND;
+    NODELETE const AudioChannel* channelByType(unsigned type) const LIFETIME_BOUND;
 
     // Number of sample-frames
     size_t length() const { return m_length; }
 
     // Reduce the number of frames available without changing the allocated memory size.
-    void LEGACY_NODELETE setLength(size_t);
+    NODELETE void setLength(size_t);
 
     // Sample-rate : 0.0 if unknown or "don't care"
     float sampleRate() const { return m_sampleRate; }
@@ -95,13 +95,13 @@ public:
     void zero();
 
     // Clears the silent flag on all channels.
-    void LEGACY_NODELETE clearSilentFlag();
+    NODELETE void clearSilentFlag();
 
     // Returns true if the silent bit is set on all channels.
-    bool LEGACY_NODELETE isSilent() const;
+    NODELETE bool isSilent() const;
 
     // Returns true if the channel count and frame-size match.
-    bool LEGACY_NODELETE topologyMatches(const AudioBus& sourceBus) const;
+    NODELETE bool topologyMatches(const AudioBus& sourceBus) const;
 
     static Ref<AudioBus> createCopy(const AudioBus& sourceBus);
 

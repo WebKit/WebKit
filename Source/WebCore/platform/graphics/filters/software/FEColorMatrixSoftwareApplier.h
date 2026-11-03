@@ -41,9 +41,9 @@ public:
 private:
     bool apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const final;
 
-    inline void LEGACY_NODELETE matrix(float& red, float& green, float& blue, float& alpha) const;
-    inline void LEGACY_NODELETE saturateAndHueRotate(float& red, float& green, float& blue) const;
-    inline void LEGACY_NODELETE luminance(float& red, float& green, float& blue, float& alpha) const;
+    NODELETE inline void matrix(float& red, float& green, float& blue, float& alpha) const;
+    NODELETE inline void saturateAndHueRotate(float& red, float& green, float& blue) const;
+    NODELETE inline void luminance(float& red, float& green, float& blue, float& alpha) const;
 
 #if USE(ACCELERATE)
     void applyPlatformAccelerated(PixelBuffer&) const;

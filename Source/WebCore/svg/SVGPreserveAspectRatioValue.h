@@ -64,13 +64,13 @@ public:
     ExceptionOr<void> setMeetOrSlice(unsigned short);
     unsigned short meetOrSlice() const { return m_meetOrSlice; }
 
-    void LEGACY_NODELETE transformRect(FloatRect& destRect, FloatRect& srcRect) const;
+    NODELETE void transformRect(FloatRect& destRect, FloatRect& srcRect) const;
 
-    AffineTransform LEGACY_NODELETE getCTM(float logicalX, float logicalY, float logicalWidth, float logicalHeight, float physicalWidth, float physicalHeight) const;
+    NODELETE AffineTransform getCTM(float logicalX, float logicalY, float logicalWidth, float logicalHeight, float physicalWidth, float physicalHeight) const;
 
     bool parse(StringView);
-    bool LEGACY_NODELETE parse(StringParsingBuffer<Latin1Character>&, bool validate);
-    bool LEGACY_NODELETE parse(StringParsingBuffer<char16_t>&, bool validate);
+    NODELETE bool parse(StringParsingBuffer<Latin1Character>&, bool validate);
+    NODELETE bool parse(StringParsingBuffer<char16_t>&, bool validate);
 
     String valueAsString() const;
 
@@ -78,7 +78,7 @@ private:
     SVGPreserveAspectRatioType m_align { SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_XMIDYMID };
     SVGMeetOrSliceType m_meetOrSlice { SVGPreserveAspectRatioValue::SVG_MEETORSLICE_MEET };
 
-    template<typename CharacterType> bool LEGACY_NODELETE parseInternal(StringParsingBuffer<CharacterType>&, bool validate);
+    template<typename CharacterType> NODELETE bool parseInternal(StringParsingBuffer<CharacterType>&, bool validate);
 };
 
 template<> struct SVGPropertyTraits<SVGPreserveAspectRatioValue> {

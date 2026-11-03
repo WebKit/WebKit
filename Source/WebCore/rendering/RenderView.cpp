@@ -1015,7 +1015,7 @@ void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-static SVGSVGElement* LEGACY_NODELETE svgSvgElementFrom(RenderElement& renderElement)
+NODELETE static SVGSVGElement* svgSvgElementFrom(RenderElement& renderElement)
 {
     if (auto* svgSvgElement = dynamicDowncast<SVGSVGElement>(renderElement.element()))
         return svgSvgElement;

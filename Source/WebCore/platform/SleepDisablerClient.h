@@ -38,6 +38,6 @@ public:
     virtual void didDestroySleepDisabler(SleepDisablerIdentifier, std::optional<PageIdentifier>) = 0;
 };
 
-WEBCORE_EXPORT std::unique_ptr<SleepDisablerClient>& LEGACY_NODELETE sleepDisablerClient();
+NODELETE WEBCORE_EXPORT std::unique_ptr<SleepDisablerClient>& sleepDisablerClient();
 
 } // namespace WebCore

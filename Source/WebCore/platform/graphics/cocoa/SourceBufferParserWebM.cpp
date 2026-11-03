@@ -248,7 +248,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMParser::VideoTrackData);
 
 constexpr uint32_t k_us_in_seconds = 1000000000;
 
-static bool LEGACY_NODELETE isWebmParserAvailable()
+NODELETE static bool isWebmParserAvailable()
 {
     return !!webm::swap;
 }
@@ -380,7 +380,7 @@ public:
         m_currentSegment = m_data.end();
     }
 
-    bool LEGACY_NODELETE rewindTo(uint64_t rewindToPosition)
+    NODELETE bool rewindTo(uint64_t rewindToPosition)
     {
         ASSERT(rewindToPosition <= m_position);
         if (rewindToPosition > m_position)
@@ -409,7 +409,7 @@ public:
     }
 
 private:
-    void LEGACY_NODELETE advanceToNextSegment()
+    NODELETE void advanceToNextSegment()
     {
         ASSERT(m_currentSegment != m_data.end());
         if (m_currentSegment == m_data.end())
@@ -446,7 +446,7 @@ public:
     bool isAudio() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kAudio; }
     bool isText() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kSubtitle; }
 
-    const webm::TrackEntry& LEGACY_NODELETE track() { return m_track; }
+    NODELETE const webm::TrackEntry& track() { return m_track; }
 
 private:
     String extractCodec(const webm::TrackEntry& track) const

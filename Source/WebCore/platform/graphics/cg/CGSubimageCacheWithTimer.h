@@ -70,7 +70,7 @@ public:
     };
 
     struct CacheHash {
-        static unsigned LEGACY_NODELETE hash(CGImageRef image, const FloatRect& rect)
+        NODELETE static unsigned hash(CGImageRef image, const FloatRect& rect)
         {
             return computeHash(image, rect.x(), rect.y(), rect.width(), rect.height());
         }
@@ -78,7 +78,7 @@ public:
         {
             return hash(key.image.get(), key.rect);
         }
-        static bool LEGACY_NODELETE equal(const CacheEntry& a, const CacheEntry& b)
+        NODELETE static bool equal(const CacheEntry& a, const CacheEntry& b)
         {
             return a.image == b.image && a.rect == b.rect;
         }
@@ -110,7 +110,7 @@ private:
     RunLoop::Timer m_timer WTF_GUARDED_BY_LOCK(m_lock);
 
     static CGSubimageCacheWithTimer& subimageCacheSingleton();
-    static bool LEGACY_NODELETE subimageCacheExists();
+    NODELETE static bool subimageCacheExists();
 };
 
 #endif // CACHE_SUBIMAGES

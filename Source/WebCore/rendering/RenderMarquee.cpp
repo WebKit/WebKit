@@ -86,7 +86,7 @@ int RenderMarquee::marqueeSpeed() const
     return result;
 }
 
-static MarqueeDirection LEGACY_NODELETE reverseDirection(MarqueeDirection direction)
+NODELETE static MarqueeDirection reverseDirection(MarqueeDirection direction)
 {
     switch (direction) {
     case MarqueeDirection::Auto:

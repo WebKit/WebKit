@@ -46,11 +46,11 @@ public:
     
     bool visualViewportIsSmallerThanLayoutViewport() const { return m_visualViewportIsSmallerThanLayoutViewport; }
 
-    FloatSize LEGACY_NODELETE viewToContentsOffset(const FloatPoint& scrollPosition) const;
+    NODELETE FloatSize viewToContentsOffset(const FloatPoint& scrollPosition) const;
 
     // Converts a point in the view coordinates events arrive in to the unscaled contents coordinates the tree
     // hit-tests in. viewToContentsOffset() can't undo the zoom on its own.
-    FloatPoint LEGACY_NODELETE viewToContentsPoint(const FloatPoint& pointInViewCoordinates, const FloatPoint& scrollPosition) const;
+    NODELETE FloatPoint viewToContentsPoint(const FloatPoint& pointInViewCoordinates, const FloatPoint& scrollPosition) const;
 
     FloatRect layoutViewport() const { return m_layoutViewport; };
     void setLayoutViewport(const FloatRect& r) { m_layoutViewport = r; };
@@ -61,8 +61,8 @@ public:
 
     // The page scale when the UI process owns it, otherwise 1. Scroll positions stay unscaled, so anything
     // converting them to layer coordinates has to apply this.
-    float LEGACY_NODELETE delegatedPageScaleFactor() const;
-    void LEGACY_NODELETE setDelegatedPageScaleFactor(float);
+    NODELETE float delegatedPageScaleFactor() const;
+    NODELETE void setDelegatedPageScaleFactor(float);
 
     // Repositions the scrolling layers after a delegated scale change, without the related-layer work
     // wasScrolledByDelegatedScrolling() has already done.
@@ -71,9 +71,9 @@ public:
     int footerHeight() const { return m_footerHeight; }
     FloatBoxExtent obscuredContentInsets() const { return m_obscuredContentInsets; }
     // The horizontal space taken up by a vertical scrollbar placed on the left, which the contents are shifted right by.
-    int LEGACY_NODELETE insetForLeftScrollbarSpace() const;
+    NODELETE int insetForLeftScrollbarSpace() const;
     // The view size less the scrollbars, in view coordinates, so unlike the layout viewport it doesn't zoom.
-    FloatSize LEGACY_NODELETE sizeForVisibleContent() const;
+    NODELETE FloatSize sizeForVisibleContent() const;
 #if HAVE(NSREFRESHCONTROLLER)
     float topScrollStretchForRefreshController() const { return m_topScrollStretchForRefreshController; }
 #endif
@@ -97,7 +97,7 @@ protected:
 
 private:
     void updateViewportForCurrentScrollPosition(std::optional<FloatRect>) override;
-    bool LEGACY_NODELETE scrollPositionAndLayoutViewportMatch(const FloatPoint& position, std::optional<FloatRect> overrideLayoutViewport) override;
+    NODELETE bool scrollPositionAndLayoutViewportMatch(const FloatPoint& position, std::optional<FloatRect> overrideLayoutViewport) override;
     FloatRect layoutViewportForScrollPosition(const FloatPoint&, float scale, ScrollBehaviorForFixedElements = ScrollBehaviorForFixedElements::StickToDocumentBounds) const;
 
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;

@@ -62,7 +62,7 @@ public:
 
         void replaceElement(HTMLStackItem&&);
 
-        bool LEGACY_NODELETE isAbove(ElementRecord&) const;
+        NODELETE bool isAbove(ElementRecord&) const;
 
         ElementRecord* next() const LIFETIME_BOUND { return m_next.get(); }
 
@@ -85,10 +85,10 @@ public:
     ElementName topElementName() const { return m_top->elementName(); }
     HTMLStackItem& topStackItem() const LIFETIME_BOUND { return m_top->stackItem(); }
 
-    ElementRecord& LEGACY_NODELETE topRecord() const LIFETIME_BOUND;
-    ElementRecord* LEGACY_NODELETE find(Element&) const LIFETIME_BOUND;
-    ElementRecord* LEGACY_NODELETE furthestBlockForFormattingElement(Element&) const LIFETIME_BOUND;
-    ElementRecord* LEGACY_NODELETE topmost(ElementName) const LIFETIME_BOUND;
+    NODELETE ElementRecord& topRecord() const LIFETIME_BOUND;
+    NODELETE ElementRecord* find(Element&) const LIFETIME_BOUND;
+    NODELETE ElementRecord* furthestBlockForFormattingElement(Element&) const LIFETIME_BOUND;
+    NODELETE ElementRecord* topmost(ElementName) const LIFETIME_BOUND;
 
     bool containsTemplateElement() const { return m_templateElementCount; }
 
@@ -114,31 +114,31 @@ public:
     void popHTMLBodyElement();
     void popAll();
 
-    static bool LEGACY_NODELETE isMathMLTextIntegrationPoint(HTMLStackItem&);
+    NODELETE static bool isMathMLTextIntegrationPoint(HTMLStackItem&);
     static bool isHTMLIntegrationPoint(HTMLStackItem&);
 
     void remove(Element&);
     void removeHTMLHeadElement(Element&);
 
-    bool LEGACY_NODELETE contains(Element&) const;
+    NODELETE bool contains(Element&) const;
 
-    bool LEGACY_NODELETE inScope(Element&) const;
-    bool LEGACY_NODELETE inScope(ElementName) const;
-    bool LEGACY_NODELETE inListItemScope(ElementName) const;
-    bool LEGACY_NODELETE inTableScope(ElementName) const;
-    bool LEGACY_NODELETE hasAnyInTableScope(std::initializer_list<ElementName> targetElements) const;
-    bool LEGACY_NODELETE inButtonScope(ElementName) const;
+    NODELETE bool inScope(Element&) const;
+    NODELETE bool inScope(ElementName) const;
+    NODELETE bool inListItemScope(ElementName) const;
+    NODELETE bool inTableScope(ElementName) const;
+    NODELETE bool hasAnyInTableScope(std::initializer_list<ElementName> targetElements) const;
+    NODELETE bool inButtonScope(ElementName) const;
 
-    bool LEGACY_NODELETE hasNumberedHeaderElementInScope() const;
+    NODELETE bool hasNumberedHeaderElementInScope() const;
 
-    bool LEGACY_NODELETE hasOnlyOneElement() const;
-    bool LEGACY_NODELETE secondElementIsHTMLBodyElement() const;
-    bool LEGACY_NODELETE hasTemplateInHTMLScope() const;
-    Element& LEGACY_NODELETE htmlElement() const;
-    Element& LEGACY_NODELETE headElement() const;
-    Element& LEGACY_NODELETE bodyElement() const;
+    NODELETE bool hasOnlyOneElement() const;
+    NODELETE bool secondElementIsHTMLBodyElement() const;
+    NODELETE bool hasTemplateInHTMLScope() const;
+    NODELETE Element& htmlElement() const;
+    NODELETE Element& headElement() const;
+    NODELETE Element& bodyElement() const;
 
-    ContainerNode& LEGACY_NODELETE rootNode() const;
+    NODELETE ContainerNode& rootNode() const;
 
 #if ENABLE(TREE_DEBUGGING)
     void show();

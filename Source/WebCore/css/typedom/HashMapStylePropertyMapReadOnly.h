@@ -33,14 +33,14 @@ namespace WebCore {
 
 class HashMapStylePropertyMapReadOnly final : public MainThreadStylePropertyMapReadOnly {
 public:
-    static Ref<HashMapStylePropertyMapReadOnly> LEGACY_NODELETE create(HashMap<AtomString, RefPtr<CSSValue>>&&);
+    NODELETE static Ref<HashMapStylePropertyMapReadOnly> create(HashMap<AtomString, RefPtr<CSSValue>>&&);
     ~HashMapStylePropertyMapReadOnly();
 
     Type type() const final { return Type::HashMap; }
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
-    String LEGACY_NODELETE shorthandPropertySerialization(CSSPropertyID) const final;
-    RefPtr<CSSValue> LEGACY_NODELETE customPropertyValue(const AtomString& property) const final;
-    unsigned LEGACY_NODELETE size() const final;
+    NODELETE String shorthandPropertySerialization(CSSPropertyID) const final;
+    NODELETE RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final;
+    NODELETE unsigned size() const final;
     Vector<StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
 
 private:

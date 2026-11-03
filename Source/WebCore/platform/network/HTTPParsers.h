@@ -80,15 +80,15 @@ enum class ClearSiteDataValue : uint8_t {
 
 enum class RangeAllowWhitespace : bool { No, Yes };
 
-bool LEGACY_NODELETE isValidReasonPhrase(const String&);
-WEBCORE_EXPORT bool LEGACY_NODELETE isValidHTTPHeaderValue(const String&);
-bool LEGACY_NODELETE isValidAcceptHeaderValue(const String&);
-bool LEGACY_NODELETE isValidLanguageHeaderValue(const String&);
+NODELETE bool isValidReasonPhrase(const String&);
+NODELETE WEBCORE_EXPORT bool isValidHTTPHeaderValue(const String&);
+NODELETE bool isValidAcceptHeaderValue(const String&);
+NODELETE bool isValidLanguageHeaderValue(const String&);
 #if USE(GLIB)
 WEBCORE_EXPORT bool isValidUserAgentHeaderValue(const String&);
 #endif
-WEBCORE_EXPORT bool LEGACY_NODELETE isValidHTTPToken(const String&);
-bool LEGACY_NODELETE isValidHTTPToken(StringView);
+NODELETE WEBCORE_EXPORT bool isValidHTTPToken(const String&);
+NODELETE bool isValidHTTPToken(StringView);
 std::optional<WallTime> parseHTTPDate(const String&);
 StringView filenameFromHTTPContentDisposition(StringView value LIFETIME_BOUND);
 WEBCORE_EXPORT String extractMIMETypeFromMediaType(const String&);

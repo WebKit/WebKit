@@ -50,7 +50,7 @@ bool SVGPathStringViewSource::moveToNextToken()
     return skipOptionalSVGSpaces(m_buffer16);
 }
 
-template <typename CharacterType> static std::optional<SVGPathSegType> LEGACY_NODELETE nextCommandHelper(StringParsingBuffer<CharacterType>& buffer, SVGPathSegType previousCommand)
+template <typename CharacterType> NODELETE static std::optional<SVGPathSegType> nextCommandHelper(StringParsingBuffer<CharacterType>& buffer, SVGPathSegType previousCommand)
 {
     // Check for remaining coordinates in the current command.
     if ((*buffer == '+' || *buffer == '-' || *buffer == '.' || isASCIIDigit(*buffer))
@@ -78,7 +78,7 @@ SVGPathSegType SVGPathStringViewSource::nextCommand(SVGPathSegType previousComma
     return *parseSVGSegmentType();
 }
 
-template<typename F> decltype(auto) LEGACY_NODELETE SVGPathStringViewSource::parse(NOESCAPE const F& functor)
+template<typename F> NODELETE decltype(auto) SVGPathStringViewSource::parse(NOESCAPE const F& functor)
 {
     if (m_is8BitSource)
         return functor(m_buffer8);

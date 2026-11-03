@@ -63,7 +63,7 @@ public:
     WEBCORE_EXPORT void remoteFrameWillGainFocus(RemoteFrame&);
     Frame* focusedFrame() const { return m_focusedFrame.get(); }
     LocalFrame* localFocusedFrame() const { return dynamicDowncast<LocalFrame>(m_focusedFrame.get()); }
-    WEBCORE_EXPORT LocalFrame* LEGACY_NODELETE focusedOrMainFrame() const;
+    NODELETE WEBCORE_EXPORT LocalFrame* focusedOrMainFrame() const;
 
     WEBCORE_EXPORT bool setInitialFocus(FocusDirection, KeyboardEvent*);
     bool advanceFocus(FocusDirection, KeyboardEvent*, bool initialFocus = false);

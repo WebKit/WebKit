@@ -57,7 +57,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioWorkletProcessor);
 
 using namespace JSC;
 
-static unsigned LEGACY_NODELETE busChannelCount(const AudioBus& bus)
+NODELETE static unsigned busChannelCount(const AudioBus& bus)
 {
     return bus.numberOfChannels();
 }
@@ -71,17 +71,17 @@ static ArrayType* getArrayAtIndex(JSArray& jsArray, JSGlobalObject& globalObject
     return item ? dynamicDowncast<ArrayType>(item) : nullptr;
 }
 
-static unsigned LEGACY_NODELETE busChannelCount(const AudioBus* bus)
+NODELETE static unsigned busChannelCount(const AudioBus* bus)
 {
     return bus ? busChannelCount(*bus) : 0;
 }
 
-static JSArray* LEGACY_NODELETE toJSArray(JSValueInWrappedObject& wrapper)
+NODELETE static JSArray* toJSArray(JSValueInWrappedObject& wrapper)
 {
     return wrapper ? dynamicDowncast<JSArray>(wrapper.getValue()) : nullptr;
 }
 
-static JSObject* LEGACY_NODELETE toJSObject(JSValueInWrappedObject& wrapper)
+NODELETE static JSObject* toJSObject(JSValueInWrappedObject& wrapper)
 {
     return wrapper ? dynamicDowncast<JSObject>(wrapper.getValue()) : nullptr;
 }

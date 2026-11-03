@@ -37,14 +37,14 @@
 namespace WebCore {
 namespace Style {
 
-static LEGACY_NODELETE TextEmphasisMark defaultTextEmphasisMark(WritingMode mode)
+NODELETE static TextEmphasisMark defaultTextEmphasisMark(WritingMode mode)
 {
     // "If only filled or open is specified, the shape keyword computes to circle in horizontal typographic modes and sesame in vertical typographic modes." - https://drafts.csswg.org/css-text-decor/#propdef-text-emphasis-style
 
     return mode.isVerticalTypographic() ? TextEmphasisMark::Sesame : TextEmphasisMark::Circle;
 }
 
-static LEGACY_NODELETE TextEmphasisStyle::Shape defaultTextEmphasisShape(WritingMode writingMode, TextEmphasisFill fill)
+NODELETE static TextEmphasisStyle::Shape defaultTextEmphasisShape(WritingMode writingMode, TextEmphasisFill fill)
 {
     return { .fill = fill, .mark = defaultTextEmphasisMark(writingMode) };
 }

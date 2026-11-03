@@ -89,7 +89,7 @@ ScriptModuleLoader::~ScriptModuleLoader()
         loader->clearClient();
 }
 
-static bool LEGACY_NODELETE isRootModule(JSC::JSValue importerModuleKey)
+NODELETE static bool isRootModule(JSC::JSValue importerModuleKey)
 {
     return importerModuleKey.isSymbol() || importerModuleKey.isUndefined();
 }

@@ -70,7 +70,7 @@ std::optional<Tree> parseAndSimplify(CSSParserTokenRange&, CSS::PropertyParserSt
 std::optional<Tree> parseAndSimplifyCalcSum(CSSParserTokenRange&, CSS::PropertyParserState&, const ParserOptions&, const SimplificationOptions&);
 
 // Returns whether the provided `CSSValueID` is one of the functions that should be parsed as a `calc()`.
-bool LEGACY_NODELETE isCalcFunction(CSSValueID function);
+NODELETE bool isCalcFunction(CSSValueID function);
 
 } // namespace CSSCalc
 } // namespace WebCore

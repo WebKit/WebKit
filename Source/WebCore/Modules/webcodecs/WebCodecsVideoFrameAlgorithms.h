@@ -35,13 +35,13 @@ VideoFrameRotation parseVideoFrameRotation(double);
 VideoFrame::Rotation addVideoFrameRotations(VideoFrame::Rotation baseRotation, bool baseFlip, VideoFrame::Rotation rotation);
 VideoFrame::Rotation combineVideoFrameRotations(const VideoFrame&, double);
 
-bool LEGACY_NODELETE isValidVideoFrameBufferInit(const WebCodecsVideoFrame::BufferInit&);
-bool LEGACY_NODELETE verifyRectOffsetAlignment(VideoPixelFormat, const DOMRectInit&);
+NODELETE bool isValidVideoFrameBufferInit(const WebCodecsVideoFrame::BufferInit&);
+NODELETE bool verifyRectOffsetAlignment(VideoPixelFormat, const DOMRectInit&);
 ExceptionOr<DOMRectInit> parseVisibleRect(const DOMRectInit&, const std::optional<DOMRectInit>&, size_t codedWidth, size_t codedHeight, VideoPixelFormat);
-size_t LEGACY_NODELETE videoPixelFormatToPlaneCount(VideoPixelFormat);
-size_t LEGACY_NODELETE videoPixelFormatToSampleByteSizePerPlane(VideoPixelFormat);
-size_t LEGACY_NODELETE videoPixelFormatToHorizontalSubSampling(VideoPixelFormat, size_t);
-size_t LEGACY_NODELETE videoPixelFormatToVerticalSubSampling(VideoPixelFormat, size_t);
+NODELETE size_t videoPixelFormatToPlaneCount(VideoPixelFormat);
+NODELETE size_t videoPixelFormatToSampleByteSizePerPlane(VideoPixelFormat);
+NODELETE size_t videoPixelFormatToHorizontalSubSampling(VideoPixelFormat, size_t);
+NODELETE size_t videoPixelFormatToVerticalSubSampling(VideoPixelFormat, size_t);
 
 struct CombinedPlaneLayout {
     size_t allocationSize { 0 };
@@ -54,9 +54,9 @@ ExceptionOr<CombinedPlaneLayout> parseVideoFrameCopyToOptions(const WebCodecsVid
 
 void initializeVisibleRectAndDisplaySize(WebCodecsVideoFrame&, const WebCodecsVideoFrame::Init&, VideoFrame::Rotation baseRotation, VideoFrame::Rotation finalRotation, const DOMRectInit&, size_t defaultDisplayWidth, size_t defaultDisplayHeight);
 
-VideoColorSpaceInit LEGACY_NODELETE videoFramePickColorSpace(const std::optional<VideoColorSpaceInit>&, VideoPixelFormat);
+NODELETE VideoColorSpaceInit videoFramePickColorSpace(const std::optional<VideoColorSpaceInit>&, VideoPixelFormat);
 
-bool LEGACY_NODELETE validateVideoFrameInit(const WebCodecsVideoFrame::Init&, size_t codedWidth, size_t codedHeight, VideoPixelFormat);
+NODELETE bool validateVideoFrameInit(const WebCodecsVideoFrame::Init&, size_t codedWidth, size_t codedHeight, VideoPixelFormat);
 
 }
 

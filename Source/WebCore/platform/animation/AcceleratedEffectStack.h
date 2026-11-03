@@ -37,9 +37,9 @@ using AcceleratedEffects = Vector<Ref<AcceleratedEffect>>;
 class WEBCORE_EXPORT AcceleratedEffectStack : public RefCounted<AcceleratedEffectStack> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(AcceleratedEffectStack, WEBCORE_EXPORT);
 public:
-    static Ref<AcceleratedEffectStack> LEGACY_NODELETE create();
+    NODELETE static Ref<AcceleratedEffectStack> create();
 
-    bool LEGACY_NODELETE hasEffects() const;
+    NODELETE bool hasEffects() const;
     const AcceleratedEffects& primaryLayerEffects() const LIFETIME_BOUND { return m_primaryLayerEffects; }
     const AcceleratedEffects& backdropLayerEffects() const LIFETIME_BOUND { return m_backdropLayerEffects; }
     void setEffects(AcceleratedEffects&&);

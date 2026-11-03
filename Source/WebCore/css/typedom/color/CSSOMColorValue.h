@@ -43,9 +43,9 @@ using RectifiedCSSColorAngle = Variant<Ref<CSSNumericValue>, Ref<CSSOMKeywordVal
 
 class CSSOMColorValue : public CSSStyleValue {
 public:
-    RefPtr<CSSOMKeywordValue> LEGACY_NODELETE colorSpace();
+    NODELETE RefPtr<CSSOMKeywordValue> colorSpace();
     RefPtr<CSSOMColorValue> to(CSSOMKeywordish);
-    static std::optional<Variant<Ref<CSSOMColorValue>, Ref<CSSStyleValue>>> LEGACY_NODELETE parse(const String&);
+    NODELETE static std::optional<Variant<Ref<CSSOMColorValue>, Ref<CSSStyleValue>>> parse(const String&);
 
     static ExceptionOr<RectifiedCSSColorPercent> rectifyCSSColorPercent(CSSColorPercent&&);
     static ExceptionOr<RectifiedCSSColorAngle> rectifyCSSColorAngle(CSSColorAngle&&);

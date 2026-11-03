@@ -70,23 +70,23 @@ public:
     void updateBeforeLayout();
     void adjustScrollPositionForAnchoring();
 
-    void LEGACY_NODELETE willDispatchScrollEvent();
-    void LEGACY_NODELETE didDispatchScrollEvent();
+    NODELETE void willDispatchScrollEvent();
+    NODELETE void didDispatchScrollEvent();
 
-    void LEGACY_NODELETE notifyChildHadSuppressingStyleChange(RenderElement&);
+    NODELETE void notifyChildHadSuppressingStyleChange(RenderElement&);
 
     bool hasAnchorElement() const { return !!m_anchorObject; }
 
     // These nest.
-    void LEGACY_NODELETE startSuppressingScrollAnchoring();
-    void LEGACY_NODELETE stopSuppressingScrollAnchoring();
+    NODELETE void startSuppressingScrollAnchoring();
+    NODELETE void stopSuppressingScrollAnchoring();
 
 private:
 
     class DisablementHeuristic {
     public:
         bool disabledByHeuristic(IntSize adjustment);
-        void LEGACY_NODELETE reset();
+        NODELETE void reset();
 
     private:
         Markable<ApproximateTime> m_nextEnablementTime;
@@ -101,7 +101,7 @@ private:
         return status == AnchorSearchStatus::Constrain || status == AnchorSearchStatus::Choose;
     }
 
-    LocalFrameView& LEGACY_NODELETE frameView() const;
+    NODELETE LocalFrameView& frameView() const;
 
     bool findPriorityCandidate(Document&);
 
@@ -111,7 +111,7 @@ private:
     AnchorSearchStatus findAnchorInOutOfFlowObjects(RenderObject&);
     AnchorSearchStatus findAnchorRecursive(RenderObject*);
 
-    RenderBox* LEGACY_NODELETE scrollableAreaBox() const;
+    NODELETE RenderBox* scrollableAreaBox() const;
 
     struct Rects {
         FloatRect boundsRelativeToScrolledContent;
@@ -125,7 +125,7 @@ private:
 
     void invalidate();
     void chooseAnchorElement(Document&, RenderBox& scrollerBox);
-    bool LEGACY_NODELETE anchoringSuppressedByStyleChange() const;
+    NODELETE bool anchoringSuppressedByStyleChange() const;
     void updateScrollableAreaRegistration();
 
     CheckedRef<ScrollableArea> m_owningScrollableArea;

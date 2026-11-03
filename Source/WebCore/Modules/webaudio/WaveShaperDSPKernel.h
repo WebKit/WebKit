@@ -51,17 +51,17 @@ public:
     void lazyInitializeOversampling();
 
     // Apply the shaping curve.
-    WEBCORE_EXPORT static void LEGACY_NODELETE processCurveWithData(std::span<const float> source, std::span<float> destination, std::span<const float> curveData);
+    NODELETE WEBCORE_EXPORT static void processCurveWithData(std::span<const float> source, std::span<float> destination, std::span<const float> curveData);
 
 private:
     bool isWaveShaperDSPKernel() const final { return true; }
 
-    void LEGACY_NODELETE processCurve(std::span<const float> source, std::span<float> destination);
+    NODELETE void processCurve(std::span<const float> source, std::span<float> destination);
     // Use up-sampling, process at the higher sample-rate, then down-sample.
     void processCurve2x(std::span<const float> source, std::span<float> destination);
     void processCurve4x(std::span<const float> source, std::span<float> destination);
 
-    bool LEGACY_NODELETE requiresTailProcessing() const final;
+    NODELETE bool requiresTailProcessing() const final;
 
     WaveShaperProcessor* waveShaperProcessor() { return downcast<WaveShaperProcessor>(processor()); }
     const WaveShaperProcessor* waveShaperProcessor() const { return downcast<WaveShaperProcessor>(processor()); }

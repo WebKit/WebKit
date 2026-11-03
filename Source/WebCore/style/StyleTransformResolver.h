@@ -55,7 +55,7 @@ public:
 
     explicit TransformResolver(TransformationMatrix&, const ComputedStyle&);
 
-    static bool LEGACY_NODELETE hasTransformRelatedProperty(const ComputedStyle&);
+    NODELETE static bool hasTransformRelatedProperty(const ComputedStyle&);
 
     static bool affectedByTransformOrigin(const ComputedStyle&);
     bool affectedByTransformOrigin() const;
@@ -68,8 +68,8 @@ public:
 
     void applyPerspective(const FloatPoint& originTranslate);
 
-    void LEGACY_NODELETE applyTransformOrigin(const FloatPoint3D& originTranslate);
-    void LEGACY_NODELETE unapplyTransformOrigin(const FloatPoint3D& originTranslate);
+    NODELETE void applyTransformOrigin(const FloatPoint3D& originTranslate);
+    NODELETE void unapplyTransformOrigin(const FloatPoint3D& originTranslate);
 
     void applyCSSTransform(const TransformOperationData&, OptionSet<Option> = allTransformOperations);
 

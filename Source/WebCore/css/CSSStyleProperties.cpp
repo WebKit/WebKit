@@ -60,7 +60,7 @@ namespace {
 
 enum class PropertyNamePrefix { None, Epub, WebKit };
 
-static inline bool LEGACY_NODELETE matchesCSSPropertyNamePrefix(const StringImpl& propertyName, ASCIILiteral prefix)
+NODELETE static inline bool matchesCSSPropertyNamePrefix(const StringImpl& propertyName, ASCIILiteral prefix)
 {
     ASSERT(toASCIILower(propertyName[0]) == prefix[0zu]);
     const size_t offset = 1;
@@ -108,12 +108,12 @@ static PropertyNamePrefix propertyNamePrefix(const StringImpl& propertyName)
     return PropertyNamePrefix::None;
 }
 
-static inline void LEGACY_NODELETE writeWebKitPrefix(std::span<char>& buffer)
+NODELETE static inline void writeWebKitPrefix(std::span<char>& buffer)
 {
     memcpySpan(consumeSpan(buffer, 8), "-webkit-"_span);
 }
 
-static inline void LEGACY_NODELETE writeEpubPrefix(std::span<char>& buffer)
+NODELETE static inline void writeEpubPrefix(std::span<char>& buffer)
 {
     memcpySpan(consumeSpan(buffer, 6), "-epub-"_span);
 }

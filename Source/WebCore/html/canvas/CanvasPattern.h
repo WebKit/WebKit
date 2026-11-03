@@ -38,7 +38,7 @@ template<typename> class ExceptionOr;
 
 class CanvasPattern : public RefCounted<CanvasPattern> {
 public:
-    static Ref<CanvasPattern> LEGACY_NODELETE create(SourceImage&&, bool repeatX, bool repeatY, bool originClean);
+    NODELETE static Ref<CanvasPattern> create(SourceImage&&, bool repeatX, bool repeatY, bool originClean);
     ~CanvasPattern();
 
     static bool parseRepetitionType(const String&, bool& repeatX, bool& repeatY);

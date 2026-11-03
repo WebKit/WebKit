@@ -73,7 +73,7 @@ public:
 
     String serviceWorkerClientInternalIdentifier(const ServiceWorkerClient&);
     void setAsInspected(bool);
-    void LEGACY_NODELETE enableConsoleMessageReporting(ScriptExecutionContext&);
+    NODELETE void enableConsoleMessageReporting(ScriptExecutionContext&);
     void logReportedConsoleMessage(ScriptExecutionContext&, const String&);
 
     String effectiveRenderingModeOfNewlyCreatedAcceleratedCanvasBuffer(ScriptExecutionContext&);

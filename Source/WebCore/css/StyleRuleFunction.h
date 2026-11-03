@@ -41,7 +41,7 @@ public:
         RefPtr<CSSVariableData> defaultValue;
     };
 
-    static Ref<StyleRuleFunction> LEGACY_NODELETE create(const AtomString& name, Vector<Parameter>&&, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&&);
+    NODELETE static Ref<StyleRuleFunction> create(const AtomString& name, Vector<Parameter>&&, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&&);
 
     Ref<StyleRuleFunction> copy() const { return adoptRef(*new StyleRuleFunction(*this)); }
 

@@ -81,14 +81,14 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAnimationAgent);
 
-static std::optional<double> LEGACY_NODELETE protocolValueForSeconds(const Seconds& seconds)
+NODELETE static std::optional<double> protocolValueForSeconds(const Seconds& seconds)
 {
     if (seconds == Seconds::infinity() || seconds == Seconds::nan())
         return std::nullopt;
     return seconds.milliseconds();
 }
 
-static std::optional<Inspector::Protocol::Animation::PlaybackDirection> LEGACY_NODELETE protocolValueForPlaybackDirection(PlaybackDirection playbackDirection)
+NODELETE static std::optional<Inspector::Protocol::Animation::PlaybackDirection> protocolValueForPlaybackDirection(PlaybackDirection playbackDirection)
 {
     switch (playbackDirection) {
     case PlaybackDirection::Normal:
@@ -105,7 +105,7 @@ static std::optional<Inspector::Protocol::Animation::PlaybackDirection> LEGACY_N
     return std::nullopt;
 }
 
-static std::optional<Inspector::Protocol::Animation::FillMode> LEGACY_NODELETE protocolValueForFillMode(FillMode fillMode)
+NODELETE static std::optional<Inspector::Protocol::Animation::FillMode> protocolValueForFillMode(FillMode fillMode)
 {
     switch (fillMode) {
     case FillMode::None:
@@ -425,7 +425,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::stopTracking()
     return { };
 }
 
-static bool LEGACY_NODELETE isDelayed(const ComputedEffectTiming& computedTiming)
+NODELETE static bool isDelayed(const ComputedEffectTiming& computedTiming)
 {
     if (!computedTiming.localTime)
         return false;

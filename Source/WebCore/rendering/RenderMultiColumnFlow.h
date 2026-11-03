@@ -42,14 +42,14 @@ public:
 
     RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }
 
-    RenderMultiColumnSet* LEGACY_NODELETE firstMultiColumnSet() const;
-    RenderMultiColumnSet* LEGACY_NODELETE lastMultiColumnSet() const;
-    RenderBox* LEGACY_NODELETE firstColumnSetOrSpanner() const;
+    NODELETE RenderMultiColumnSet* firstMultiColumnSet() const;
+    NODELETE RenderMultiColumnSet* lastMultiColumnSet() const;
+    NODELETE RenderBox* firstColumnSetOrSpanner() const;
     bool hasColumnSpanner() const { return !m_spannerMap.isEmptyIgnoringNullReferences(); }
-    static RenderBox* LEGACY_NODELETE nextColumnSetOrSpannerSiblingOf(const RenderBox*);
-    static RenderBox* LEGACY_NODELETE previousColumnSetOrSpannerSiblingOf(const RenderBox*);
+    NODELETE static RenderBox* nextColumnSetOrSpannerSiblingOf(const RenderBox*);
+    NODELETE static RenderBox* previousColumnSetOrSpannerSiblingOf(const RenderBox*);
 
-    RenderMultiColumnSpannerPlaceholder* LEGACY_NODELETE findColumnSpannerPlaceholder(const RenderBox& spanner) const;
+    NODELETE RenderMultiColumnSpannerPlaceholder* findColumnSpannerPlaceholder(const RenderBox& spanner) const;
 
     void layout() override;
 

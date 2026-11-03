@@ -50,7 +50,7 @@ namespace WebCore {
 
 class HTMLAllCollection final : public AllDescendantsCollection {
 public:
-    static Ref<HTMLAllCollection> LEGACY_NODELETE create(Document&, CollectionType);
+    NODELETE static Ref<HTMLAllCollection> create(Document&, CollectionType);
 
     std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const;
     std::optional<Variant<Ref<HTMLCollection>, Ref<Element>>> namedItemOrItems(const AtomString&) const;
@@ -69,7 +69,7 @@ public:
     }
     virtual ~HTMLAllNamedSubCollection();
 
-    bool LEGACY_NODELETE elementMatches(Element&) const;
+    NODELETE bool elementMatches(Element&) const;
 
 private:
     HTMLAllNamedSubCollection(Document&, CollectionType, const AtomString&);

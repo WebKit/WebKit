@@ -50,10 +50,10 @@ public:
     
     float length() const { return m_length; }
 
-    WEBCORE_EXPORT const FloatPoint LEGACY_NODELETE pointAtAbsoluteDistance(float) const;
-    const FloatPoint LEGACY_NODELETE pointAtRelativeDistance(float) const;
-    const FloatLine LEGACY_NODELETE extendedToBounds(const FloatRect&) const;
-    const std::optional<FloatPoint> LEGACY_NODELETE intersectionWith(const FloatLine&) const;
+    NODELETE WEBCORE_EXPORT const FloatPoint pointAtAbsoluteDistance(float) const;
+    NODELETE const FloatPoint pointAtRelativeDistance(float) const;
+    NODELETE const FloatLine extendedToBounds(const FloatRect&) const;
+    NODELETE const std::optional<FloatPoint> intersectionWith(const FloatLine&) const;
     
 private:
     FloatPoint m_start { 0, 0 };

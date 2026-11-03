@@ -44,7 +44,7 @@ namespace WebCore {
 
 class SinkReadRequest : public ReadableStreamReadRequest {
 public:
-    static Ref<SinkReadRequest> LEGACY_NODELETE create(ReadableStreamToSharedBufferSink& sink, ScriptExecutionContext& context) { return adoptRef(*new SinkReadRequest(sink, context)); }
+    NODELETE static Ref<SinkReadRequest> create(ReadableStreamToSharedBufferSink& sink, ScriptExecutionContext& context) { return adoptRef(*new SinkReadRequest(sink, context)); }
     ~SinkReadRequest() = default;
 
     JSDOMGlobalObject* globalObject() final
@@ -53,7 +53,7 @@ public:
         return context ? downcast<JSDOMGlobalObject>(context->globalObject()): nullptr;
     }
 
-    ScriptExecutionContext* LEGACY_NODELETE context() const { return m_context.get(); }
+    NODELETE ScriptExecutionContext* context() const { return m_context.get(); }
 
 private:
     SinkReadRequest(ReadableStreamToSharedBufferSink& sink, ScriptExecutionContext& context)

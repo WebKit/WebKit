@@ -149,7 +149,7 @@ public:
 private:
     void parse();
     void flushPendingCue();
-    bool LEGACY_NODELETE hasRequiredFileIdentifier(const String&);
+    NODELETE bool hasRequiredFileIdentifier(const String&);
     ParseState collectCueId(const String&);
     ParseState collectTimingsAndSettings(const String&);
     ParseState collectCueText(const String&);

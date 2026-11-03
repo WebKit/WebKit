@@ -49,19 +49,19 @@ class WebGLProgram;
 class InspectorShaderProgram final : public RefCounted<InspectorShaderProgram> {
 public:
 #if ENABLE(WEBGL)
-    static Ref<InspectorShaderProgram> LEGACY_NODELETE create(WebGLProgram&, InspectorCanvas&);
+    NODELETE static Ref<InspectorShaderProgram> create(WebGLProgram&, InspectorCanvas&);
 #endif // ENABLE(WEBGL)
-    static Ref<InspectorShaderProgram> LEGACY_NODELETE create(GPUComputePipeline&, InspectorCanvas&);
-    static Ref<InspectorShaderProgram> LEGACY_NODELETE create(GPURenderPipeline&, InspectorCanvas&);
+    NODELETE static Ref<InspectorShaderProgram> create(GPUComputePipeline&, InspectorCanvas&);
+    NODELETE static Ref<InspectorShaderProgram> create(GPURenderPipeline&, InspectorCanvas&);
 
     const String& identifier() const LIFETIME_BOUND { return m_identifier; }
     InspectorCanvas& canvas() const { return m_canvas; }
 
 #if ENABLE(WEBGL)
-    WebGLProgram* LEGACY_NODELETE program() const;
+    NODELETE WebGLProgram* program() const;
 #endif // ENABLE(WEBGL)
-    GPUComputePipeline* LEGACY_NODELETE computePipeline() const;
-    GPURenderPipeline* LEGACY_NODELETE renderPipeline() const;
+    NODELETE GPUComputePipeline* computePipeline() const;
+    NODELETE GPURenderPipeline* renderPipeline() const;
 
     String requestShaderSource(Inspector::Protocol::Canvas::ShaderType);
     void updateShader(Inspector::Protocol::Canvas::ShaderType, const String& source, CompletionHandler<void(bool)>&&);

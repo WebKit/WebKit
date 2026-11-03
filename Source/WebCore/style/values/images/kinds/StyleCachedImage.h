@@ -54,7 +54,7 @@ enum class SVGReferencingMode : uint8_t {
 class CachedImage final : public Image {
     WTF_MAKE_TZONE_ALLOCATED(CachedImage);
 public:
-    static Ref<CachedImage> LEGACY_NODELETE create(URL&&, Ref<CSSImageValue>&&, float scaleFactor = 1);
+    NODELETE static Ref<CachedImage> create(URL&&, Ref<CSSImageValue>&&, float scaleFactor = 1);
     static Ref<CachedImage> create(const URL&, const Ref<CSSImageValue>&, float scaleFactor = 1);
     static Ref<CachedImage> create(WebCore::CachedImage&, WTF::URL&& authoredURL, OptionSet<SVGReferencingMode>, float scaleFactor = 1);
     static Ref<CachedImage> copyOverridingScaleFactor(CachedImage&, float scaleFactor);
@@ -63,7 +63,7 @@ public:
     bool operator==(const Image&) const final;
     bool equals(const CachedImage&) const;
 
-    WebCore::CachedImage* LEGACY_NODELETE cachedImage() const final;
+    NODELETE WebCore::CachedImage* cachedImage() const final;
 
     WrappedImagePtr data() const final { return m_cachedImage.get(); }
 

@@ -51,13 +51,13 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BroadcastChannel);
 
 static Lock allBroadcastChannelsLock;
-static HashMap<BroadcastChannelIdentifier, ThreadSafeWeakPtr<BroadcastChannel>>& LEGACY_NODELETE allBroadcastChannels() WTF_REQUIRES_LOCK(allBroadcastChannelsLock)
+NODELETE static HashMap<BroadcastChannelIdentifier, ThreadSafeWeakPtr<BroadcastChannel>>& allBroadcastChannels() WTF_REQUIRES_LOCK(allBroadcastChannelsLock)
 {
     static NeverDestroyed<HashMap<BroadcastChannelIdentifier, ThreadSafeWeakPtr<BroadcastChannel>>> map;
     return map;
 }
 
-static HashMap<BroadcastChannelIdentifier, ScriptExecutionContextIdentifier>& LEGACY_NODELETE channelToContextIdentifier()
+NODELETE static HashMap<BroadcastChannelIdentifier, ScriptExecutionContextIdentifier>& channelToContextIdentifier()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<HashMap<BroadcastChannelIdentifier, ScriptExecutionContextIdentifier>> map;
@@ -71,7 +71,7 @@ static PartitionedSecurityOrigin partitionedSecurityOriginFromContext(ScriptExec
 
 class BroadcastChannel::MainThreadBridge : public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main>, public Identified<BroadcastChannelIdentifier> {
 public:
-    static Ref<MainThreadBridge> LEGACY_NODELETE create(BroadcastChannel& channel, const String& name)
+    NODELETE static Ref<MainThreadBridge> create(BroadcastChannel& channel, const String& name)
     {
         return adoptRef(*new MainThreadBridge(channel, name));
     }
@@ -79,7 +79,7 @@ public:
     void registerChannel();
     void unregisterChannel();
     void postMessage(Ref<SerializedScriptValue>&&);
-    void LEGACY_NODELETE detach() { m_broadcastChannel = nullptr; }
+    NODELETE void detach() { m_broadcastChannel = nullptr; }
 
     String name() const { return m_name.isolatedCopy(); }
 

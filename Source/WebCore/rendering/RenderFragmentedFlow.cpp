@@ -284,10 +284,10 @@ public:
     {
     }
 
-    const LayoutUnit& LEGACY_NODELETE lowValue() const { return m_offset; }
-    const LayoutUnit& LEGACY_NODELETE highValue() const { return m_offset; }
+    NODELETE const LayoutUnit& lowValue() const { return m_offset; }
+    NODELETE const LayoutUnit& highValue() const { return m_offset; }
 
-    void LEGACY_NODELETE collectIfNeeded(const PODInterval<LayoutUnit, SingleThreadWeakPtr<RenderFragmentContainer>>& interval)
+    NODELETE void collectIfNeeded(const PODInterval<LayoutUnit, SingleThreadWeakPtr<RenderFragmentContainer>>& interval)
     {
         if (m_result)
             return;
@@ -295,7 +295,7 @@ public:
             m_result = interval.data();
     }
 
-    RenderFragmentContainer* LEGACY_NODELETE result() const { return m_result.get(); }
+    NODELETE RenderFragmentContainer* result() const { return m_result.get(); }
 
 private:
     LayoutUnit m_offset;

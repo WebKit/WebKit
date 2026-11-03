@@ -32,7 +32,7 @@
 namespace WebCore {
 namespace URLPatternUtilities {
 
-static bool LEGACY_NODELETE literalMatchesAt(StringView input, unsigned position, StringView literal, unsigned& endPosition)
+NODELETE static bool literalMatchesAt(StringView input, unsigned position, StringView literal, unsigned& endPosition)
 {
     if (position > input.length() || literal.length() > input.length() - position)
         return false;
@@ -46,7 +46,7 @@ static bool LEGACY_NODELETE literalMatchesAt(StringView input, unsigned position
     return true;
 }
 
-static inline bool LEGACY_NODELETE isComponentDelimiter(char16_t character, StringView delimiterCodepoint)
+NODELETE static inline bool isComponentDelimiter(char16_t character, StringView delimiterCodepoint)
 {
     return !delimiterCodepoint.isEmpty() && character == delimiterCodepoint[0];
 }

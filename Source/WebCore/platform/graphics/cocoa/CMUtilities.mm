@@ -422,7 +422,7 @@ static CFStringRef convertToCMFieldDetail(PlatformVideoFieldDetail fieldDetail)
     return nullptr;
 }
 
-static std::optional<OSType> LEGACY_NODELETE pixelFormatTypeForDecodedVideo(const VideoInfo& info)
+NODELETE static std::optional<OSType> pixelFormatTypeForDecodedVideo(const VideoInfo& info)
 {
     if (!info.pixelFormat())
         return { };

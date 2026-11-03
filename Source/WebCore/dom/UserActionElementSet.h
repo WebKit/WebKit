@@ -76,7 +76,7 @@ private:
     void setFlags(Element& element, bool enable, OptionSet<Flag> flags) { enable ? setFlags(element, flags) : clearFlags(element, flags); }
     void setFlags(Element&, OptionSet<Flag>);
     void clearFlags(Element&, OptionSet<Flag>);
-    bool LEGACY_NODELETE hasFlag(const Element&, Flag) const;
+    NODELETE bool hasFlag(const Element&, Flag) const;
 
     WeakHashMap<Element, OptionSet<Flag>, WeakPtrImplWithEventTargetData> m_elements;
 };

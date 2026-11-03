@@ -37,13 +37,13 @@ class Node;
 namespace XPath {
 
 /* @return whether the given node is the root node */
-bool LEGACY_NODELETE isRootDomNode(Node*);
+NODELETE bool isRootDomNode(Node*);
 
 /* @return the 'string-value' of the given node as specified by http://www.w3.org/TR/xpath */
 String stringValue(Node&);
 
 /* @return whether the given node is a valid context node */
-bool LEGACY_NODELETE isValidContextNode(Node&);
+NODELETE bool isValidContextNode(Node&);
 
 } // namespace XPath
 

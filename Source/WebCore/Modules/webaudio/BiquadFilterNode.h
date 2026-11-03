@@ -38,7 +38,7 @@ class BiquadFilterNode final : public AudioBasicProcessorNode {
 public:
     static ExceptionOr<Ref<BiquadFilterNode>> create(BaseAudioContext& context, const BiquadFilterOptions& = { });
 
-    BiquadFilterType LEGACY_NODELETE type() const;
+    NODELETE BiquadFilterType type() const;
     void setType(BiquadFilterType);
 
     AudioParam& frequency() { return biquadProcessor()->parameter1(); }

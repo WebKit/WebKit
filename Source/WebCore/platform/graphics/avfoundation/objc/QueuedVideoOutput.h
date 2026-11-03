@@ -54,9 +54,9 @@ public:
     static RefPtr<QueuedVideoOutput> create(AVPlayerItem*, AVPlayer*);
     ~QueuedVideoOutput();
 
-    bool LEGACY_NODELETE valid();
+    NODELETE bool valid();
     void invalidate();
-    bool LEGACY_NODELETE hasImageForTime(const MediaTime&) const;
+    NODELETE bool hasImageForTime(const MediaTime&) const;
 
     struct VideoFrameEntry {
         RetainPtr<CVPixelBufferRef> pixelBuffer;

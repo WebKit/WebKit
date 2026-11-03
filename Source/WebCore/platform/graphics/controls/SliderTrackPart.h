@@ -32,8 +32,8 @@ namespace WebCore {
 
 class SliderTrackPart : public ControlPart {
 public:
-    static Ref<SliderTrackPart> LEGACY_NODELETE create(StyleAppearance);
-    WEBCORE_EXPORT static Ref<SliderTrackPart> LEGACY_NODELETE create(StyleAppearance, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios, double thumbPosition);
+    NODELETE static Ref<SliderTrackPart> create(StyleAppearance);
+    NODELETE WEBCORE_EXPORT static Ref<SliderTrackPart> create(StyleAppearance, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios, double thumbPosition);
 
     IntSize thumbSize() const { return m_thumbSize; }
     void setThumbSize(IntSize thumbSize) { m_thumbSize = thumbSize; }

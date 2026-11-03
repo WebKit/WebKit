@@ -50,7 +50,7 @@ public:
     virtual ~SubresourceLoader();
 
     void cancelIfNotFinishing();
-    bool LEGACY_NODELETE isSubresourceLoader() const final;
+    NODELETE bool isSubresourceLoader() const final;
     CachedResource* cachedResource() const final { return m_resource.get(); };
 
     WEBCORE_EXPORT const HTTPHeaderMap* originalHeaders() const;
@@ -123,7 +123,7 @@ private:
     public:
         RequestCountTracker(CachedResourceLoader&, const CachedResource&);
         RequestCountTracker(RequestCountTracker&&);
-        RequestCountTracker& LEGACY_NODELETE operator=(RequestCountTracker&&);
+        NODELETE RequestCountTracker& operator=(RequestCountTracker&&);
         ~RequestCountTracker();
     private:
         WeakPtr<CachedResourceLoader> m_cachedResourceLoader;

@@ -33,21 +33,21 @@ namespace WebCore {
 class GridSpan {
 public:
 
-    static GridSpan LEGACY_NODELETE untranslatedDefiniteGridSpan(int startLine, int endLine);
-    static GridSpan LEGACY_NODELETE translatedDefiniteGridSpan(unsigned startLine, unsigned endLine);
-    static GridSpan LEGACY_NODELETE indefiniteGridSpan();
+    NODELETE static GridSpan untranslatedDefiniteGridSpan(int startLine, int endLine);
+    NODELETE static GridSpan translatedDefiniteGridSpan(unsigned startLine, unsigned endLine);
+    NODELETE static GridSpan indefiniteGridSpan();
 
-    static GridSpan LEGACY_NODELETE stackingAxisTranslatedDefiniteGridSpan();
+    NODELETE static GridSpan stackingAxisTranslatedDefiniteGridSpan();
 
     friend bool operator==(const GridSpan&, const GridSpan&) = default;
 
-    unsigned LEGACY_NODELETE integerSpan() const;
+    NODELETE unsigned integerSpan() const;
 
-    int LEGACY_NODELETE untranslatedStartLine() const;
-    int LEGACY_NODELETE untranslatedEndLine() const;
+    NODELETE int untranslatedStartLine() const;
+    NODELETE int untranslatedEndLine() const;
 
-    unsigned LEGACY_NODELETE startLine() const;
-    unsigned LEGACY_NODELETE endLine() const;
+    NODELETE unsigned startLine() const;
+    NODELETE unsigned endLine() const;
 
     struct GridSpanIterator {
         GridSpanIterator(unsigned value)
@@ -61,22 +61,22 @@ public:
         unsigned value;
     };
 
-    GridSpanIterator LEGACY_NODELETE begin() const;
+    NODELETE GridSpanIterator begin() const;
 
-    GridSpanIterator LEGACY_NODELETE end() const;
+    NODELETE GridSpanIterator end() const;
 
-    bool LEGACY_NODELETE isTranslatedDefinite() const;
-    bool LEGACY_NODELETE isIndefinite() const;
+    NODELETE bool isTranslatedDefinite() const;
+    NODELETE bool isIndefinite() const;
 
-    void LEGACY_NODELETE translate(unsigned offset);
+    NODELETE void translate(unsigned offset);
 
     // Moves this span to be in the same coordinate space as |parent|.
     // If reverse is specified, then swaps the direction to handle RTL/LTR changes.
-    void LEGACY_NODELETE translateTo(const GridSpan& parent, bool reverse);
+    NODELETE void translateTo(const GridSpan& parent, bool reverse);
 
-    void LEGACY_NODELETE clamp(int max);
+    NODELETE void clamp(int max);
 
-    bool LEGACY_NODELETE clamp(int min, int max);
+    NODELETE bool clamp(int min, int max);
 
 private:
 

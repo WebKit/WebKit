@@ -44,13 +44,13 @@ public:
     bool operator==(const FEDisplacementMap&) const;
 
     ChannelSelectorType xChannelSelector() const { return m_xChannelSelector; }
-    bool LEGACY_NODELETE setXChannelSelector(const ChannelSelectorType);
+    NODELETE bool setXChannelSelector(const ChannelSelectorType);
 
     ChannelSelectorType yChannelSelector() const { return m_yChannelSelector; }
-    bool LEGACY_NODELETE setYChannelSelector(const ChannelSelectorType);
+    NODELETE bool setYChannelSelector(const ChannelSelectorType);
 
     float scale() const { return m_scale; }
-    bool LEGACY_NODELETE setScale(float);
+    NODELETE bool setScale(float);
 
     // §16.4: when in2 is tainted, this primitive becomes a pass-through of in.
     bool in2IsTainted() const { return m_in2IsTainted; }

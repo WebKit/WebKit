@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static std::optional<size_t> LEGACY_NODELETE getKeyLengthFromHash(CryptoAlgorithmIdentifier hash)
+NODELETE static std::optional<size_t> getKeyLengthFromHash(CryptoAlgorithmIdentifier hash)
 {
     switch (hash) {
     case CryptoAlgorithmIdentifier::SHA_1:

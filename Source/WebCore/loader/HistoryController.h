@@ -56,7 +56,7 @@ public:
     explicit HistoryController(LocalFrame&);
     ~HistoryController();
 
-    WEBCORE_EXPORT void LEGACY_NODELETE ref() const;
+    NODELETE WEBCORE_EXPORT void ref() const;
     WEBCORE_EXPORT void deref() const;
 
     WEBCORE_EXPORT void saveScrollPositionAndViewStateToItem(HistoryItem*);
@@ -78,7 +78,7 @@ public:
     void updateForClientRedirect();
     void updateForCommit();
     void updateForSameDocumentNavigation();
-    void LEGACY_NODELETE updateForFrameLoadCompleted();
+    NODELETE void updateForFrameLoadCompleted();
 
     HistoryItem* currentItem() const { return m_currentItem.get(); }
     WEBCORE_EXPORT void setCurrentItem(Ref<HistoryItem>&&);
@@ -105,7 +105,7 @@ public:
 
 private:
     friend class Page;
-    bool LEGACY_NODELETE shouldStopLoadingForHistoryItem(HistoryItem&) const;
+    NODELETE bool shouldStopLoadingForHistoryItem(HistoryItem&) const;
     void goToItem(HistoryItem&, FrameLoadType, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified, CompletionHandler<void()>&& = [] { });
     void goToItemForNavigationAPI(HistoryItem&, FrameLoadType, LocalFrame& triggeringFrame, NavigationAPIMethodTracker*);
     void goToItemShared(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&, ShouldTreatAsContinuingLoad = ShouldTreatAsContinuingLoad::No);
@@ -117,11 +117,11 @@ private:
     enum class ForNavigationAPI : bool { No, Yes };
     void recursiveSetProvisionalItem(HistoryItem&, HistoryItem*, ForNavigationAPI = ForNavigationAPI::No);
     void recursiveGoToItem(HistoryItem&, HistoryItem*, FrameLoadType, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified);
-    bool LEGACY_NODELETE isMultipartReplaceLoadTypeWithProvisionalItem(FrameLoadType);
-    bool LEGACY_NODELETE isReloadTypeWithProvisionalItem(FrameLoadType);
+    NODELETE bool isMultipartReplaceLoadTypeWithProvisionalItem(FrameLoadType);
+    NODELETE bool isReloadTypeWithProvisionalItem(FrameLoadType);
     void recursiveUpdateForCommit();
     void recursiveUpdateForSameDocumentNavigation();
-    static bool LEGACY_NODELETE itemsAreClones(HistoryItem&, HistoryItem*);
+    NODELETE static bool itemsAreClones(HistoryItem&, HistoryItem*);
     void updateBackForwardListClippedAtTarget(bool doClip, WasCreatedByJSWithoutUserInteraction = WasCreatedByJSWithoutUserInteraction::No);
     void updateCurrentItem();
     bool isFrameLoadComplete() const { return m_frameLoadComplete; }

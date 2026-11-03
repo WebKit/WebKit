@@ -40,43 +40,43 @@ public:
     WEBCORE_EXPORT WebAnimationTime(const ReducedResolutionSeconds&);
     WebAnimationTime(const CSSNumberish&);
 
-    static WebAnimationTime LEGACY_NODELETE fromMilliseconds(double);
-    WEBCORE_EXPORT static WebAnimationTime LEGACY_NODELETE fromPercentage(double);
+    NODELETE static WebAnimationTime fromMilliseconds(double);
+    NODELETE WEBCORE_EXPORT static WebAnimationTime fromPercentage(double);
 
-    WEBCORE_EXPORT std::optional<Seconds> LEGACY_NODELETE time() const;
-    WEBCORE_EXPORT std::optional<double> LEGACY_NODELETE percentage() const;
+    NODELETE WEBCORE_EXPORT std::optional<Seconds> time() const;
+    NODELETE WEBCORE_EXPORT std::optional<double> percentage() const;
 
-    bool LEGACY_NODELETE isValid() const;
-    bool LEGACY_NODELETE isInfinity() const;
-    bool LEGACY_NODELETE isZero() const;
-    bool LEGACY_NODELETE isNaN() const;
+    NODELETE bool isValid() const;
+    NODELETE bool isInfinity() const;
+    NODELETE bool isZero() const;
+    NODELETE bool isNaN() const;
 
-    WebAnimationTime LEGACY_NODELETE matchingZero() const;
-    WebAnimationTime LEGACY_NODELETE matchingEpsilon() const;
-    WebAnimationTime LEGACY_NODELETE matchingInfinity() const;
+    NODELETE WebAnimationTime matchingZero() const;
+    NODELETE WebAnimationTime matchingEpsilon() const;
+    NODELETE WebAnimationTime matchingInfinity() const;
 
-    bool LEGACY_NODELETE approximatelyEqualTo(const WebAnimationTime&) const;
-    bool LEGACY_NODELETE approximatelyLessThan(const WebAnimationTime&) const;
-    bool LEGACY_NODELETE approximatelyGreaterThan(const WebAnimationTime&) const;
+    NODELETE bool approximatelyEqualTo(const WebAnimationTime&) const;
+    NODELETE bool approximatelyLessThan(const WebAnimationTime&) const;
+    NODELETE bool approximatelyGreaterThan(const WebAnimationTime&) const;
 
-    WebAnimationTime LEGACY_NODELETE operator+(const WebAnimationTime&) const;
-    WebAnimationTime LEGACY_NODELETE operator-(const WebAnimationTime&) const;
-    double LEGACY_NODELETE operator/(const WebAnimationTime&) const;
-    WebAnimationTime& LEGACY_NODELETE operator+=(const WebAnimationTime&);
-    WebAnimationTime& LEGACY_NODELETE operator-=(const WebAnimationTime&);
+    NODELETE WebAnimationTime operator+(const WebAnimationTime&) const;
+    NODELETE WebAnimationTime operator-(const WebAnimationTime&) const;
+    NODELETE double operator/(const WebAnimationTime&) const;
+    NODELETE WebAnimationTime& operator+=(const WebAnimationTime&);
+    NODELETE WebAnimationTime& operator-=(const WebAnimationTime&);
 
     friend bool operator==(const WebAnimationTime&, const WebAnimationTime&) = default;
-    friend std::partial_ordering LEGACY_NODELETE operator<=>(const WebAnimationTime&, const WebAnimationTime&);
-    friend std::partial_ordering LEGACY_NODELETE operator<=>(const WebAnimationTime&, Seconds);
+    friend std::partial_ordering operator<=>(const WebAnimationTime&, const WebAnimationTime&);
+    friend std::partial_ordering operator<=>(const WebAnimationTime&, Seconds);
 
-    WebAnimationTime LEGACY_NODELETE operator+(const Seconds&) const;
-    WebAnimationTime LEGACY_NODELETE operator-(const Seconds&) const;
-    bool LEGACY_NODELETE operator==(const Seconds&) const;
+    NODELETE WebAnimationTime operator+(const Seconds&) const;
+    NODELETE WebAnimationTime operator-(const Seconds&) const;
+    NODELETE bool operator==(const Seconds&) const;
 
-    WebAnimationTime LEGACY_NODELETE operator*(double) const;
-    WebAnimationTime LEGACY_NODELETE operator/(double) const;
+    NODELETE WebAnimationTime operator*(double) const;
+    NODELETE WebAnimationTime operator/(double) const;
 
-    WEBCORE_EXPORT operator Seconds LEGACY_NODELETE () const;
+    NODELETE WEBCORE_EXPORT operator Seconds() const;
     operator CSSNumberish() const;
 
     void dump(TextStream&) const;
@@ -89,6 +89,9 @@ private:
     Type m_type { Type::Unknown };
     double m_value { 0 };
 };
+
+NODELETE std::partial_ordering operator<=>(const WebAnimationTime&, const WebAnimationTime&);
+NODELETE std::partial_ordering operator<=>(const WebAnimationTime&, Seconds);
 
 TextStream& operator<<(TextStream&, const WebAnimationTime&);
 

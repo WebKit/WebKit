@@ -47,17 +47,17 @@ public:
     bool setLightingColor(const Color&);
 
     float surfaceScale() const { return m_surfaceScale; }
-    bool LEGACY_NODELETE setSurfaceScale(float);
+    NODELETE bool setSurfaceScale(float);
 
     float diffuseConstant() const { return m_diffuseConstant; }
     float specularConstant() const { return m_specularConstant; }
     float specularExponent() const { return m_specularExponent; }
 
     float kernelUnitLengthX() const { return m_kernelUnitLengthX; }
-    bool LEGACY_NODELETE setKernelUnitLengthX(float);
+    NODELETE bool setKernelUnitLengthX(float);
 
     float kernelUnitLengthY() const { return m_kernelUnitLengthY; }
-    bool LEGACY_NODELETE setKernelUnitLengthY(float);
+    NODELETE bool setKernelUnitLengthY(float);
 
     LightSource& lightSource() const { return m_lightSource; }
 

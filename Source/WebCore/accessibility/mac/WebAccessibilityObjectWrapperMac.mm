@@ -1849,7 +1849,7 @@ static id handleTableSelectedRowsAttribute(WebAccessibilityObjectWrapper*, AXCor
     return selectedChildren.size() ? makeNSArray(WTF::move(selectedChildren)) : nil;
 }
 
-static id LEGACY_NODELETE handleSelectedColumnsAttribute(WebAccessibilityObjectWrapper*, AXCoreObject&)
+NODELETE static id handleSelectedColumnsAttribute(WebAccessibilityObjectWrapper*, AXCoreObject&)
 {
     return nil;
 }

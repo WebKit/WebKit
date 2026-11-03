@@ -154,7 +154,7 @@ static inline void destroyAudioBufferList(AudioBufferList* bufferList)
     fastFree(bufferList);
 }
 
-static bool LEGACY_NODELETE validateAudioBufferList(AudioBufferList* bufferList)
+NODELETE static bool validateAudioBufferList(AudioBufferList* bufferList)
 {
     if (!bufferList)
         return false;
@@ -173,7 +173,7 @@ static bool LEGACY_NODELETE validateAudioBufferList(AudioBufferList* bufferList)
     return true;
 }
 
-static OSStatus LEGACY_NODELETE readProc(void* clientData, SInt64 position, UInt32 requestCount, void* rawBuffer, UInt32* actualCount)
+NODELETE static OSStatus readProc(void* clientData, SInt64 position, UInt32 requestCount, void* rawBuffer, UInt32* actualCount)
 {
     auto* dataSpan = static_cast<std::span<const uint8_t>*>(clientData);
     auto buffer = unsafeMakeSpan(static_cast<uint8_t*>(rawBuffer), requestCount);
@@ -192,7 +192,7 @@ static OSStatus LEGACY_NODELETE readProc(void* clientData, SInt64 position, UInt
     return noErr;
 }
 
-static SInt64 LEGACY_NODELETE getSizeProc(void* clientData)
+NODELETE static SInt64 getSizeProc(void* clientData)
 {
     return static_cast<std::span<const uint8_t>*>(clientData)->size();
 }
@@ -277,11 +277,11 @@ public:
             destroyAudioBufferList(m_bufferList);
     }
 
-    explicit operator bool LEGACY_NODELETE () const { return !!m_bufferList; }
-    AudioBufferList* LEGACY_NODELETE operator->() const { return m_bufferList; }
-    operator AudioBufferList* LEGACY_NODELETE () const { return m_bufferList; }
-    AudioBufferList& LEGACY_NODELETE operator*() const { ASSERT(m_bufferList); return *m_bufferList; }
-    bool LEGACY_NODELETE isValid() const { return validateAudioBufferList(m_bufferList); }
+    NODELETE explicit operator bool() const { return !!m_bufferList; }
+    NODELETE AudioBufferList* operator->() const { return m_bufferList; }
+    NODELETE operator AudioBufferList*() const { return m_bufferList; }
+    NODELETE AudioBufferList& operator*() const { ASSERT(m_bufferList); return *m_bufferList; }
+    NODELETE bool isValid() const { return validateAudioBufferList(m_bufferList); }
 private:
     AudioBufferList* m_bufferList;
 };

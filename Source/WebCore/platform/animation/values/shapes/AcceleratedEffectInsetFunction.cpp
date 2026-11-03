@@ -39,7 +39,7 @@ namespace WebCore {
 
 struct AcceleratedEffectInsetPathPolicy : public TinyLRUCachePolicy<FloatRoundedRect, WebCore::Path> {
 public:
-    static bool LEGACY_NODELETE isKeyNull(const FloatRoundedRect& rect)
+    NODELETE static bool isKeyNull(const FloatRoundedRect& rect)
     {
         return rect.isEmpty();
     }
@@ -86,7 +86,7 @@ Path path(const AcceleratedEffectInsetFunction& value, const FloatRect& bounding
 
 // MARK: - Blending
 
-static RectEdges<float> LEGACY_NODELETE blendRectEdges(const RectEdges<float>& from, const RectEdges<float>& to, const BlendingContext& context)
+NODELETE static RectEdges<float> blendRectEdges(const RectEdges<float>& from, const RectEdges<float>& to, const BlendingContext& context)
 {
     return RectEdges<float> {
         WebCore::blendForAcceleratedEffect(from.top(), to.top(), context),
@@ -96,7 +96,7 @@ static RectEdges<float> LEGACY_NODELETE blendRectEdges(const RectEdges<float>& f
     };
 }
 
-static CornerRadii LEGACY_NODELETE blendCornerRadii(const CornerRadii& from, const CornerRadii& to, const BlendingContext& context)
+NODELETE static CornerRadii blendCornerRadii(const CornerRadii& from, const CornerRadii& to, const BlendingContext& context)
 {
     return CornerRadii {
         WebCore::blendForAcceleratedEffect(from.topLeft(), to.topLeft(), context),

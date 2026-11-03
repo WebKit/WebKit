@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-template <typename FloatType> static inline bool LEGACY_NODELETE isValidRange(const FloatType x)
+template <typename FloatType> NODELETE static inline bool isValidRange(const FloatType x)
 {
     static const FloatType max = std::numeric_limits<FloatType>::max();
     return x >= -max && x <= max;
@@ -43,7 +43,7 @@ template <typename FloatType> static inline bool LEGACY_NODELETE isValidRange(co
 // at a higher precision internally, without any unnecessary runtime cost or code
 // complexity.
 // FIXME: Can this be shared/replaced with number parsing in WTF?
-template <typename CharacterType, typename FloatType = float> static std::optional<FloatType> LEGACY_NODELETE genericParseNumber(StringParsingBuffer<CharacterType>& buffer, SuffixSkippingPolicy skip = SuffixSkippingPolicy::Skip)
+template <typename CharacterType, typename FloatType = float> NODELETE static std::optional<FloatType> genericParseNumber(StringParsingBuffer<CharacterType>& buffer, SuffixSkippingPolicy skip = SuffixSkippingPolicy::Skip)
 {
     // read the sign
     int sign = 1;
@@ -174,7 +174,7 @@ std::optional<float> parseNumber(StringView string, SuffixSkippingPolicy skip)
 
 // only used to parse largeArcFlag and sweepFlag which must be a "0" or "1"
 // and might not have any whitespace/comma after it
-template <typename CharacterType> std::optional<bool> LEGACY_NODELETE genericParseArcFlag(StringParsingBuffer<CharacterType>& buffer)
+template <typename CharacterType> NODELETE std::optional<bool> genericParseArcFlag(StringParsingBuffer<CharacterType>& buffer)
 {
     if (buffer.atEnd())
         return std::nullopt;
@@ -306,7 +306,7 @@ std::optional<HashSet<String>> parseGlyphName(StringView string)
     });
 }
 
-template<typename CharacterType> static std::optional<UnicodeRange> LEGACY_NODELETE parseUnicodeRange(std::span<const CharacterType> span)
+template<typename CharacterType> NODELETE static std::optional<UnicodeRange> parseUnicodeRange(std::span<const CharacterType> span)
 {
     StringParsingBuffer buffer { span };
     unsigned length = buffer.lengthRemaining();
@@ -411,7 +411,7 @@ std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeStri
     });
 }
 
-template <typename CharacterType> static std::optional<FloatPoint> LEGACY_NODELETE genericParseFloatPoint(StringParsingBuffer<CharacterType>& buffer)
+template <typename CharacterType> NODELETE static std::optional<FloatPoint> genericParseFloatPoint(StringParsingBuffer<CharacterType>& buffer)
 {
     auto x = parseNumber(buffer);
     if (!x)

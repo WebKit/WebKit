@@ -75,17 +75,17 @@ public:
     virtual int uniqueId() const { return m_uniqueId; }
 
 #if ENABLE(MEDIA_SOURCE)
-    SourceBuffer* LEGACY_NODELETE sourceBuffer() const;
-    void LEGACY_NODELETE setSourceBuffer(SourceBuffer*);
+    NODELETE SourceBuffer* sourceBuffer() const;
+    NODELETE void setSourceBuffer(SourceBuffer*);
 #endif
 
     void setTrackList(TrackListBase&);
     void clearTrackList();
 
-    TrackListBase* LEGACY_NODELETE trackList() const;
+    NODELETE TrackListBase* trackList() const;
 
     void setOpaqueRoot(TrackOpaqueRoot&);
-    WebCoreOpaqueRoot LEGACY_NODELETE opaqueRoot() const;
+    NODELETE WebCoreOpaqueRoot opaqueRoot() const;
 
     virtual bool enabled() const = 0;
 

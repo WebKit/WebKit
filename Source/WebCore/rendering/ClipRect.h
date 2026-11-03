@@ -60,7 +60,7 @@ public:
     void moveBy(const LayoutPoint& point) { m_rect.moveBy(point); }
     
     bool intersects(const LayoutRect&) const;
-    bool LEGACY_NODELETE intersects(const HitTestLocation&) const;
+    NODELETE bool intersects(const HitTestLocation&) const;
 
     bool isEmpty() const { return m_rect.isEmpty(); }
     bool isInfinite() const { return m_rect.isInfinite(); }

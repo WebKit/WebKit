@@ -39,7 +39,7 @@ public:
 
 class WEBCORE_EXPORT OriginAccessPatternsForWebProcess final : public OriginAccessPatterns {
 public:
-    static OriginAccessPatternsForWebProcess& LEGACY_NODELETE singleton();
+    NODELETE static OriginAccessPatternsForWebProcess& singleton();
     void allowAccessTo(const UserContentURLPattern&);
 private:
     bool anyPatternMatches(const URL&) const final;
@@ -47,11 +47,11 @@ private:
 
 class WEBCORE_EXPORT EmptyOriginAccessPatterns final : public OriginAccessPatterns {
 public:
-    static const EmptyOriginAccessPatterns& LEGACY_NODELETE singleton();
+    NODELETE static const EmptyOriginAccessPatterns& singleton();
 private:
     bool anyPatternMatches(const URL&) const final;
 };
 
-const OriginAccessPatterns& LEGACY_NODELETE originAccessPatternsForWebProcessOrEmpty();
+NODELETE const OriginAccessPatterns& originAccessPatternsForWebProcessOrEmpty();
 
 }

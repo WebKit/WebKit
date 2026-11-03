@@ -74,7 +74,7 @@ public:
     const String& search() const LIFETIME_BOUND { return m_searchComponent.patternString(); }
     const String& hash() const LIFETIME_BOUND { return m_hashComponent.patternString(); }
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE hasRegExpGroups() const;
+    NODELETE WEBCORE_EXPORT bool hasRegExpGroups() const;
     bool shouldIgnoreCase() const { return m_shouldIgnoreCase; }
 
 private:

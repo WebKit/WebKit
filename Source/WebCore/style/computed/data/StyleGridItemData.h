@@ -43,9 +43,9 @@ class GridItemData : public RefCounted<GridItemData> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(GridItemData, GridItemData);
 public:
     static Ref<GridItemData> create() { return adoptRef(*new GridItemData); }
-    Ref<GridItemData> LEGACY_NODELETE copy() const;
+    NODELETE Ref<GridItemData> copy() const;
 
-    bool LEGACY_NODELETE operator==(const GridItemData&) const;
+    NODELETE bool operator==(const GridItemData&) const;
 
 #if !LOG_DISABLED
     void dumpDifferences(TextStream&, const GridItemData&) const;

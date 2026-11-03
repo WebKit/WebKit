@@ -36,9 +36,9 @@ public:
     const CSS::CustomIdent& customIdent() const LIFETIME_BOUND { return m_customIdent; }
 
     String customCSSText(const CSS::SerializationContext&) const;
-    bool LEGACY_NODELETE equals(const CSSCustomIdentValue&) const;
-    IterationStatus LEGACY_NODELETE customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
-    bool LEGACY_NODELETE addDerivedHash(Hasher&) const;
+    NODELETE bool equals(const CSSCustomIdentValue&) const;
+    NODELETE IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
+    NODELETE bool addDerivedHash(Hasher&) const;
 
     Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 

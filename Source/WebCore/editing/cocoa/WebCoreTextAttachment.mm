@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static RetainPtr<CocoaImage>& LEGACY_NODELETE webCoreTextAttachmentMissingPlatformImageIfExists()
+NODELETE static RetainPtr<CocoaImage>& webCoreTextAttachmentMissingPlatformImageIfExists()
 {
     static NeverDestroyed<RetainPtr<CocoaImage>> missingImage;
     return missingImage.get();
@@ -57,7 +57,7 @@ CocoaImage *webCoreTextAttachmentMissingPlatformImage()
     return webCoreTextAttachmentMissingPlatformImageIfExists().get();
 }
 
-bool LEGACY_NODELETE isWebCoreTextAttachmentMissingPlatformImage(CocoaImage *image)
+NODELETE bool isWebCoreTextAttachmentMissingPlatformImage(CocoaImage *image)
 {
     return image && image == webCoreTextAttachmentMissingPlatformImageIfExists();
 }

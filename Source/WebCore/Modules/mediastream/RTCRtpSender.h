@@ -63,7 +63,7 @@ class RTCRtpSender final : public RefCounted<RTCRtpSender>
     WTF_MAKE_TZONE_ALLOCATED(RTCRtpSender);
 public:
     static Ref<RTCRtpSender> create(RTCPeerConnection&, Ref<MediaStreamTrack>&&, Ref<RTCRtpSenderBackend>&&);
-    static Ref<RTCRtpSender> LEGACY_NODELETE create(RTCPeerConnection&, String&& trackKind, Ref<RTCRtpSenderBackend>&&);
+    NODELETE static Ref<RTCRtpSender> create(RTCPeerConnection&, String&& trackKind, Ref<RTCRtpSenderBackend>&&);
     virtual ~RTCRtpSender();
 
     static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
@@ -95,12 +95,12 @@ public:
 
     void getStats(Ref<DeferredPromise>&&);
 
-    bool LEGACY_NODELETE isCreatedBy(const RTCPeerConnection&) const;
+    NODELETE bool isCreatedBy(const RTCPeerConnection&) const;
 
     RTCDTMFSender* dtmf();
     std::optional<RTCRtpTransceiverDirection> currentTransceiverDirection() const;
 
-    RefPtr<RTCRtpScriptTransform> LEGACY_NODELETE transform();
+    NODELETE RefPtr<RTCRtpScriptTransform> transform();
     ExceptionOr<void> setTransform(std::unique_ptr<RTCRtpTransform>&&);
 
     ExceptionOr<RTCEncodedStreams> createEncodedStreams(ScriptExecutionContext&);
@@ -112,7 +112,7 @@ private:
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "RTCRtpSender"_s; }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const final;
+    NODELETE WTFLogChannel& logChannel() const final;
 #endif
 
     bool m_isStopped { false };

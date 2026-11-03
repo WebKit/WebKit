@@ -42,7 +42,7 @@ class Element;
 enum class ParserContentPolicy : uint8_t;
 
 WEBCORE_EXPORT bool tryFastParsingHTMLFragment(StringView source, Document&, ContainerNode&, Element& contextElement, OptionSet<ParserContentPolicy>);
-unsigned LEGACY_NODELETE maxCachedSetInnerHTMLStringSize();
+NODELETE unsigned maxCachedSetInnerHTMLStringSize();
 
 } // namespace WebCore
 

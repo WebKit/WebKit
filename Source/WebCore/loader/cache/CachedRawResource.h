@@ -37,7 +37,7 @@ public:
 
     void setDefersLoading(bool);
 
-    void LEGACY_NODELETE setDataBufferingPolicy(DataBufferingPolicy);
+    NODELETE void setDataBufferingPolicy(DataBufferingPolicy);
 
     // FIXME: This is exposed for the InspectorInstrumentation for preflights in DocumentThreadableLoader. It's also really lame.
     std::optional<ResourceLoaderIdentifier> resourceLoaderIdentifier() const { return m_resourceLoaderIdentifier; }

@@ -65,7 +65,7 @@ class CSSViewTransitionRule final : public CSSRule {
 public:
     using ViewTransitionNavigation = WebCore::ViewTransitionNavigation;
 
-    static Ref<CSSViewTransitionRule> LEGACY_NODELETE create(StyleRuleViewTransition&, CSSStyleSheet*);
+    NODELETE static Ref<CSSViewTransitionRule> create(StyleRuleViewTransition&, CSSStyleSheet*);
     virtual ~CSSViewTransitionRule();
 
     String cssText() const final;

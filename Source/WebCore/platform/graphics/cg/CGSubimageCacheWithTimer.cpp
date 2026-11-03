@@ -40,7 +40,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CGSubimageCacheWithTimer);
 
 static Lock subimageCacheLock;
 
-static std::unique_ptr<CGSubimageCacheWithTimer>& LEGACY_NODELETE subimageCacheStorage() WTF_REQUIRES_LOCK(subimageCacheLock)
+NODELETE static std::unique_ptr<CGSubimageCacheWithTimer>& subimageCacheStorage() WTF_REQUIRES_LOCK(subimageCacheLock)
 {
     static NeverDestroyed<std::unique_ptr<CGSubimageCacheWithTimer>> cache;
     return cache.get();
@@ -69,12 +69,12 @@ struct CGSubimageRequest {
 };
 
 struct CGSubimageCacheAdder {
-    static unsigned LEGACY_NODELETE hash(const CGSubimageRequest& value)
+    NODELETE static unsigned hash(const CGSubimageRequest& value)
     {
         return CGSubimageCacheWithTimer::CacheHash::hash(value.image.get(), value.rect);
     }
 
-    static bool LEGACY_NODELETE equal(const CGSubimageCacheWithTimer::CacheEntry& a, const CGSubimageRequest& b)
+    NODELETE static bool equal(const CGSubimageCacheWithTimer::CacheEntry& a, const CGSubimageRequest& b)
     {
         return a.image == b.image && a.rect == b.rect;
     }

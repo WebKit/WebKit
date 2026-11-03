@@ -56,11 +56,11 @@ public:
     WEBCORE_EXPORT bool writeVideoFrameBuffer(webrtc::VideoFrameBuffer&, std::span<uint8_t> data);
 #endif
 
-    WEBCORE_EXPORT size_t LEGACY_NODELETE storageSize() const;
+    NODELETE WEBCORE_EXPORT size_t storageSize() const;
 
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBufferFromMemory(std::span<const uint8_t> data, CVPixelBufferPoolRef = nullptr);
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE isReadWriteSupported() const;
+    NODELETE WEBCORE_EXPORT bool isReadWriteSupported() const;
     WEBCORE_EXPORT RetainPtr<CVPixelBufferPoolRef> createCompatibleBufferPool() const;
 
     OSType bufferType() const { return m_bufferType; }

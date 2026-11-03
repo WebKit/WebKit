@@ -58,7 +58,7 @@ public:
     String dropEffect() const;
     void setDropEffect(const String&);
 
-    String LEGACY_NODELETE effectAllowed() const;
+    NODELETE String effectAllowed() const;
     void setEffectAllowed(const String&);
 
     DataTransferItemList& items(Document&);
@@ -80,9 +80,9 @@ public:
 
     void makeInvalidForSecurity() { m_storeMode = StoreMode::Invalid; }
 
-    bool LEGACY_NODELETE canReadTypes() const;
-    bool LEGACY_NODELETE canReadData() const;
-    bool LEGACY_NODELETE canWriteData() const;
+    NODELETE bool canReadTypes() const;
+    NODELETE bool canReadData() const;
+    NODELETE bool canWriteData() const;
 
     bool hasFileOfType(const String&);
     bool hasStringOfType(Document&, const String&);
@@ -106,10 +106,10 @@ public:
     void setDragHasStarted() { m_shouldUpdateDragImage = true; }
     std::pair<DragImage, IntPoint> createDragImage(const Document*) const;
     void updateDragImage(const Document*);
-    RefPtr<Element> LEGACY_NODELETE dragImageElement() const;
+    NODELETE RefPtr<Element> dragImageElement() const;
 
     void moveDragState(Ref<DataTransfer>&&);
-    bool LEGACY_NODELETE hasDragImage() const;
+    NODELETE bool hasDragImage() const;
 
     IntPoint dragLocation() const { return m_dragLocation; }
 #endif
@@ -121,7 +121,7 @@ private:
     enum class Type { CopyAndPaste, DragAndDropData, DragAndDropFiles, InputEvent };
     DataTransfer(StoreMode, std::unique_ptr<Pasteboard>, Type = Type::CopyAndPaste, String&& effectAllowed = "uninitialized"_s);
 
-    bool LEGACY_NODELETE allowsFileAccess() const;
+    NODELETE bool allowsFileAccess() const;
 
 #if ENABLE(DRAG_SUPPORT)
     bool forDrag() const { return m_type == Type::DragAndDropData || m_type == Type::DragAndDropFiles; }

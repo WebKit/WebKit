@@ -51,12 +51,12 @@ public:
     void unschedule(SVGSMILElement*, SVGElement*, const QualifiedName&);
     void notifyIntervalsChanged();
 
-    WEBCORE_EXPORT Seconds LEGACY_NODELETE animationFrameDelay() const;
+    NODELETE WEBCORE_EXPORT Seconds animationFrameDelay() const;
 
     SMILTime elapsed() const;
 
-    bool LEGACY_NODELETE isActive() const;
-    bool LEGACY_NODELETE isPaused() const;
+    NODELETE bool isActive() const;
+    NODELETE bool isPaused() const;
     bool hasAnimations() const;
 
     void begin();
@@ -69,7 +69,7 @@ public:
 private:
     SMILTimeContainer(SVGSVGElement& owner);
 
-    bool LEGACY_NODELETE isStarted() const;
+    NODELETE bool isStarted() const;
     void timerFired();
     void startTimer(SMILTime elapsed, SMILTime fireTime, SMILTime minimumDelay = 0);
     void updateAnimations(SMILTime elapsed, bool seekToTime = false);
@@ -79,7 +79,7 @@ private:
     using GroupedAnimationsMap = HashMap<ElementAttributePair, AnimationsVector>;
 
     void processScheduledAnimations(NOESCAPE const Function<void(SVGSMILElement&)>&);
-    void LEGACY_NODELETE updateDocumentOrderIndexes();
+    NODELETE void updateDocumentOrderIndexes();
     void sortByPriority(AnimationsVector& smilElements, SMILTime elapsed);
     MonotonicTime lastResumeTime() const { return m_resumeTime ? m_resumeTime : m_beginTime; }
 

@@ -50,7 +50,7 @@ public:
     static Ref<CanvasCaptureMediaStreamTrack> create(Document&, Ref<HTMLCanvasElement>&&, std::optional<double>&& frameRequestRate);
 
     HTMLCanvasElement& canvas() { return m_canvas.get(); }
-    void LEGACY_NODELETE requestFrame();
+    NODELETE void requestFrame();
 
     RefPtr<VideoFrame> grabFrame();
 
@@ -91,7 +91,7 @@ private:
         void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
         void scheduleCaptureCanvas();
         void captureCanvas();
-        void LEGACY_NODELETE requestFrameTimerFired();
+        NODELETE void requestFrameTimerFired();
         CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Canvas; }
 
         bool m_shouldEmitFrame { true };

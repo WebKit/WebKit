@@ -54,15 +54,15 @@ public:
     PlatformTimeRanges copyWithEpsilon(const MediaTime&) const;
 
     static const PlatformTimeRanges& emptyRanges();
-    static MediaTime LEGACY_NODELETE timeFudgeFactor();
+    NODELETE static MediaTime timeFudgeFactor();
 
-    MediaTime LEGACY_NODELETE start(unsigned index) const;
-    MediaTime LEGACY_NODELETE start(unsigned index, bool& valid) const;
-    MediaTime LEGACY_NODELETE end(unsigned index) const;
-    MediaTime LEGACY_NODELETE end(unsigned index, bool& valid) const;
+    NODELETE MediaTime start(unsigned index) const;
+    NODELETE MediaTime start(unsigned index, bool& valid) const;
+    NODELETE MediaTime end(unsigned index) const;
+    NODELETE MediaTime end(unsigned index, bool& valid) const;
     MediaTime duration(unsigned index) const;
-    MediaTime LEGACY_NODELETE maximumBufferedTime() const;
-    MediaTime LEGACY_NODELETE minimumBufferedTime() const;
+    NODELETE MediaTime maximumBufferedTime() const;
+    NODELETE MediaTime minimumBufferedTime() const;
 
     void invert();
     void intersectWith(const PlatformTimeRanges&);
@@ -75,7 +75,7 @@ public:
     void add(const MediaTime& start, const MediaTime& end, AddTimeRangeOption = AddTimeRangeOption::None);
     void clear();
     
-    bool LEGACY_NODELETE contain(const MediaTime&) const;
+    NODELETE bool contain(const MediaTime&) const;
     bool containWithEpsilon(const MediaTime&, const MediaTime& epsilon) const;
     bool containWithEpsilon(const PlatformTimeRanges&, const MediaTime& epsilon) const;
     // Variable-epsilon overloads: `epsilonAtTime(t)` is consulted at every
@@ -85,7 +85,7 @@ public:
     bool containWithEpsilon(const MediaTime&, NOESCAPE const Function<MediaTime(const MediaTime&)>& epsilonAtTime) const;
     bool containWithEpsilon(const PlatformTimeRanges&, NOESCAPE const Function<MediaTime(const MediaTime&)>& epsilonAtTime) const;
 
-    size_t LEGACY_NODELETE find(const MediaTime&) const;
+    NODELETE size_t find(const MediaTime&) const;
     size_t findWithEpsilon(const MediaTime&, const MediaTime& epsilon) const;
 
     MediaTime nearest(const MediaTime&) const;
@@ -148,7 +148,7 @@ private:
     PlatformTimeRanges(Vector<Range>&&);
     PlatformTimeRanges& operator-=(const Range&);
 
-    size_t LEGACY_NODELETE findLastRangeIndexBefore(const MediaTime& start, const MediaTime& end) const;
+    NODELETE size_t findLastRangeIndexBefore(const MediaTime& start, const MediaTime& end) const;
 
     Vector<Range> m_ranges;
 };

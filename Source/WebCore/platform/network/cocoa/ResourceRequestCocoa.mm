@@ -138,7 +138,7 @@ CFURLRequestRef ResourceRequest::cfURLRequest(HTTPBodyUpdatePolicy bodyPolicy) c
     return [protect(nsURLRequest(bodyPolicy)) _CFURLRequest];
 }
 
-static inline ResourceRequestCachePolicy LEGACY_NODELETE fromPlatformRequestCachePolicy(NSURLRequestCachePolicy policy)
+NODELETE static inline ResourceRequestCachePolicy fromPlatformRequestCachePolicy(NSURLRequestCachePolicy policy)
 {
     switch (policy) {
     case NSURLRequestUseProtocolCachePolicy:
@@ -152,7 +152,7 @@ static inline ResourceRequestCachePolicy LEGACY_NODELETE fromPlatformRequestCach
     }
 }
 
-static inline NSURLRequestCachePolicy LEGACY_NODELETE toPlatformRequestCachePolicy(ResourceRequestCachePolicy policy)
+NODELETE static inline NSURLRequestCachePolicy toPlatformRequestCachePolicy(ResourceRequestCachePolicy policy)
 {
     switch (policy) {
     case ResourceRequestCachePolicy::UseProtocolCachePolicy:

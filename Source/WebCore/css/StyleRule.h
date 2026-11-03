@@ -147,7 +147,7 @@ public:
     void releaseCompiledSelectors() const { m_compiledSelectors = { }; }
 #endif
 
-    static unsigned LEGACY_NODELETE averageSizeInBytes();
+    NODELETE static unsigned averageSizeInBytes();
     void setProperties(Ref<StyleProperties>&&);
 
     String debugDescription() const;
@@ -172,9 +172,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleWithNesting);
 class StyleRuleWithNesting final : public StyleRule {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleWithNesting, StyleRuleWithNesting);
 public:
-    static Ref<StyleRuleWithNesting> LEGACY_NODELETE create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
+    NODELETE static Ref<StyleRuleWithNesting> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
     static Ref<StyleRuleWithNesting> create(StyleRule&&);
-    Ref<StyleRuleWithNesting> LEGACY_NODELETE copy() const;
+    NODELETE Ref<StyleRuleWithNesting> copy() const;
     ~StyleRuleWithNesting();
 
     const Vector<Ref<StyleRuleBase>>& nestedRules() const LIFETIME_BOUND { return m_nestedRules; }
@@ -228,7 +228,7 @@ private:
 
 class StyleRuleFontPaletteValues final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleFontPaletteValues> LEGACY_NODELETE create(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&&);
+    NODELETE static Ref<StyleRuleFontPaletteValues> create(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&&);
 
     const AtomString& name() const LIFETIME_BOUND { return m_name; }
     const Vector<AtomString>& fontFamilies() const LIFETIME_BOUND { return m_fontFamilies; }
@@ -311,7 +311,7 @@ private:
 
 class StyleRuleGroup : public StyleRuleBase {
 public:
-    const Vector<Ref<StyleRuleBase>>& LEGACY_NODELETE childRules() const;
+    NODELETE const Vector<Ref<StyleRuleBase>>& childRules() const;
 
     void wrapperInsertRule(unsigned, Ref<StyleRuleBase>&&);
     void wrapperRemoveRule(unsigned);
@@ -401,7 +401,7 @@ public:
         std::optional<bool> inherits { };
         RefPtr<const CSSVariableData> initialValue { };
     };
-    static Ref<StyleRuleProperty> LEGACY_NODELETE create(Descriptor&&);
+    NODELETE static Ref<StyleRuleProperty> create(Descriptor&&);
     Ref<StyleRuleProperty> copy() const { return adoptRef(*new StyleRuleProperty(*this)); }
 
     const Descriptor& descriptor() const LIFETIME_BOUND { return m_descriptor; }
@@ -415,9 +415,9 @@ private:
 
 class StyleRuleScope final : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleScope> LEGACY_NODELETE create(CSSSelectorList&&, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&&);
+    NODELETE static Ref<StyleRuleScope> create(CSSSelectorList&&, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&&);
     ~StyleRuleScope();
-    Ref<StyleRuleScope> LEGACY_NODELETE copy() const;
+    NODELETE Ref<StyleRuleScope> copy() const;
 
     const CSSSelectorList& scopeStart() const LIFETIME_BOUND { return m_scopeStart; }
     const CSSSelectorList& scopeEnd() const LIFETIME_BOUND { return m_scopeEnd; }
@@ -425,8 +425,8 @@ public:
     const CSSSelectorList& originalScopeEnd() const LIFETIME_BOUND { return m_originalScopeEnd; }
     void setScopeStart(CSSSelectorList&& scopeStart) { m_scopeStart = WTF::move(scopeStart); }
     void setScopeEnd(CSSSelectorList&& scopeEnd) { m_scopeEnd = WTF::move(scopeEnd); }
-    WeakPtr<const StyleSheetContents> LEGACY_NODELETE styleSheetContents() const;
-    void LEGACY_NODELETE setStyleSheetContents(const StyleSheetContents&);
+    NODELETE WeakPtr<const StyleSheetContents> styleSheetContents() const;
+    NODELETE void setStyleSheetContents(const StyleSheetContents&);
 
 private:
     StyleRuleScope(CSSSelectorList&&, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&&);
@@ -444,7 +444,7 @@ private:
 
 class StyleRuleStartingStyle final : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleStartingStyle> LEGACY_NODELETE create(Vector<Ref<StyleRuleBase>>&&);
+    NODELETE static Ref<StyleRuleStartingStyle> create(Vector<Ref<StyleRuleBase>>&&);
     Ref<StyleRuleStartingStyle> copy() const { return adoptRef(*new StyleRuleStartingStyle(*this)); }
 
 private:
@@ -465,7 +465,7 @@ private:
 
 class StyleRuleNamespace final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleNamespace> LEGACY_NODELETE create(const AtomString& prefix, const AtomString& uri);
+    NODELETE static Ref<StyleRuleNamespace> create(const AtomString& prefix, const AtomString& uri);
 
     Ref<StyleRuleNamespace> copy() const { return adoptRef(*new StyleRuleNamespace(*this)); }
 

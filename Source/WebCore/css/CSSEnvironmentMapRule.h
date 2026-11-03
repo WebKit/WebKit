@@ -70,7 +70,7 @@ public:
     ~CSSEnvironmentMapRule();
 
     String cssText() const final;
-    void LEGACY_NODELETE reattach(StyleRuleBase&) final;
+    NODELETE void reattach(StyleRuleBase&) final;
     StyleRuleType styleRuleType() const final { return StyleRuleType::EnvironmentMap; }
 
     String name() const;

@@ -41,7 +41,7 @@ static constexpr size_t maximumSubstitutionTreeDepth = 128;
 // Replaces a leaf node with the result of the functor.
 
 template<typename F> static auto mapLeaves(const std::optional<Child>&, NOESCAPE const F&) -> std::optional<Child>;
-template<typename F> static Random::Fixed LEGACY_NODELETE mapLeaves(const Random::Fixed&, NOESCAPE const F&);
+template<typename F> NODELETE static Random::Fixed mapLeaves(const Random::Fixed&, NOESCAPE const F&);
 template<typename F> static auto mapLeaves(const CalcMix::Item&, NOESCAPE const F&) -> CalcMix::Item;
 template<typename F> static auto mapLeaves(const Vector<CalcMix::Item>&, NOESCAPE const F&) -> Vector<CalcMix::Item>;
 template<typename F> static auto mapLeaves(const ChildOrNone&, NOESCAPE const F&) -> ChildOrNone;
@@ -57,7 +57,7 @@ template<typename F> std::optional<Child> mapLeaves(const std::optional<Child>& 
     return { };
 }
 
-template<typename F> Random::Fixed LEGACY_NODELETE mapLeaves(const Random::Fixed& root, NOESCAPE const F&)
+template<typename F> NODELETE Random::Fixed mapLeaves(const Random::Fixed& root, NOESCAPE const F&)
 {
     return root;
 }

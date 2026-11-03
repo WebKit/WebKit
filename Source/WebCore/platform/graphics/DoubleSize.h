@@ -49,7 +49,7 @@ public:
 
 #if USE(CG)
     WEBCORE_EXPORT DoubleSize(const CGSize&);
-    WEBCORE_EXPORT operator CGSize LEGACY_NODELETE () const;
+    NODELETE WEBCORE_EXPORT operator CGSize() const;
     CGSize toCG() const { return static_cast<CGSize>(*this); }
 #endif
 

@@ -78,7 +78,7 @@ template<> struct Blending<TextShadow> {
 };
 
 template<> struct Blending<TextShadows> {
-    bool LEGACY_NODELETE canBlend(const TextShadows&, const TextShadows&, CompositeOperation);
+    NODELETE bool canBlend(const TextShadows&, const TextShadows&, CompositeOperation);
     constexpr auto requiresInterpolationForAccumulativeIteration(const TextShadows&, const TextShadows&) -> bool { return true; }
     auto blend(const TextShadows&, const TextShadows&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> TextShadows;
 };

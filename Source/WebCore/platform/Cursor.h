@@ -141,7 +141,7 @@ public:
     Cursor() = default;
     WEBCORE_EXPORT static std::optional<Cursor> fromIPCData(IPCData&&);
 
-    WEBCORE_EXPORT static const Cursor& LEGACY_NODELETE fromType(Cursor::Type);
+    NODELETE WEBCORE_EXPORT static const Cursor& fromType(Cursor::Type);
 
     WEBCORE_EXPORT Cursor(RefPtr<NativeImage>&&, const IntPoint& hotSpot);
 
@@ -186,51 +186,51 @@ private:
 
 };
 
-IntPoint LEGACY_NODELETE determineHotSpot(const IntSize& imageSize, std::optional<IntPoint> specifiedHotSpot, std::optional<IntPoint> intrinsicHotSpot = std::nullopt);
+NODELETE IntPoint determineHotSpot(const IntSize& imageSize, std::optional<IntPoint> specifiedHotSpot, std::optional<IntPoint> intrinsicHotSpot = std::nullopt);
 
-WEBCORE_EXPORT const Cursor& LEGACY_NODELETE pointerCursor();
-const Cursor& LEGACY_NODELETE crossCursor();
-WEBCORE_EXPORT const Cursor& LEGACY_NODELETE handCursor();
-const Cursor& LEGACY_NODELETE moveCursor();
-WEBCORE_EXPORT const Cursor& LEGACY_NODELETE iBeamCursor();
-const Cursor& LEGACY_NODELETE waitCursor();
-const Cursor& LEGACY_NODELETE helpCursor();
-const Cursor& LEGACY_NODELETE eastResizeCursor();
-const Cursor& LEGACY_NODELETE northResizeCursor();
-const Cursor& LEGACY_NODELETE northEastResizeCursor();
-const Cursor& LEGACY_NODELETE northWestResizeCursor();
-const Cursor& LEGACY_NODELETE southResizeCursor();
-const Cursor& LEGACY_NODELETE southEastResizeCursor();
-const Cursor& LEGACY_NODELETE southWestResizeCursor();
-const Cursor& LEGACY_NODELETE westResizeCursor();
-const Cursor& LEGACY_NODELETE northSouthResizeCursor();
-const Cursor& LEGACY_NODELETE eastWestResizeCursor();
-const Cursor& LEGACY_NODELETE northEastSouthWestResizeCursor();
-const Cursor& LEGACY_NODELETE northWestSouthEastResizeCursor();
-const Cursor& LEGACY_NODELETE columnResizeCursor();
-const Cursor& LEGACY_NODELETE rowResizeCursor();
-const Cursor& LEGACY_NODELETE middlePanningCursor();
-const Cursor& LEGACY_NODELETE eastPanningCursor();
-const Cursor& LEGACY_NODELETE northPanningCursor();
-const Cursor& LEGACY_NODELETE northEastPanningCursor();
-const Cursor& LEGACY_NODELETE northWestPanningCursor();
-const Cursor& LEGACY_NODELETE southPanningCursor();
-const Cursor& LEGACY_NODELETE southEastPanningCursor();
-const Cursor& LEGACY_NODELETE southWestPanningCursor();
-const Cursor& LEGACY_NODELETE westPanningCursor();
-const Cursor& LEGACY_NODELETE verticalTextCursor();
-const Cursor& LEGACY_NODELETE cellCursor();
-const Cursor& LEGACY_NODELETE contextMenuCursor();
-const Cursor& LEGACY_NODELETE noDropCursor();
-const Cursor& LEGACY_NODELETE notAllowedCursor();
-const Cursor& LEGACY_NODELETE progressCursor();
-const Cursor& LEGACY_NODELETE aliasCursor();
-const Cursor& LEGACY_NODELETE zoomInCursor();
-const Cursor& LEGACY_NODELETE zoomOutCursor();
-const Cursor& LEGACY_NODELETE copyCursor();
-const Cursor& LEGACY_NODELETE noneCursor();
-const Cursor& LEGACY_NODELETE grabCursor();
-const Cursor& LEGACY_NODELETE grabbingCursor();
+NODELETE WEBCORE_EXPORT const Cursor& pointerCursor();
+NODELETE const Cursor& crossCursor();
+NODELETE WEBCORE_EXPORT const Cursor& handCursor();
+NODELETE const Cursor& moveCursor();
+NODELETE WEBCORE_EXPORT const Cursor& iBeamCursor();
+NODELETE const Cursor& waitCursor();
+NODELETE const Cursor& helpCursor();
+NODELETE const Cursor& eastResizeCursor();
+NODELETE const Cursor& northResizeCursor();
+NODELETE const Cursor& northEastResizeCursor();
+NODELETE const Cursor& northWestResizeCursor();
+NODELETE const Cursor& southResizeCursor();
+NODELETE const Cursor& southEastResizeCursor();
+NODELETE const Cursor& southWestResizeCursor();
+NODELETE const Cursor& westResizeCursor();
+NODELETE const Cursor& northSouthResizeCursor();
+NODELETE const Cursor& eastWestResizeCursor();
+NODELETE const Cursor& northEastSouthWestResizeCursor();
+NODELETE const Cursor& northWestSouthEastResizeCursor();
+NODELETE const Cursor& columnResizeCursor();
+NODELETE const Cursor& rowResizeCursor();
+NODELETE const Cursor& middlePanningCursor();
+NODELETE const Cursor& eastPanningCursor();
+NODELETE const Cursor& northPanningCursor();
+NODELETE const Cursor& northEastPanningCursor();
+NODELETE const Cursor& northWestPanningCursor();
+NODELETE const Cursor& southPanningCursor();
+NODELETE const Cursor& southEastPanningCursor();
+NODELETE const Cursor& southWestPanningCursor();
+NODELETE const Cursor& westPanningCursor();
+NODELETE const Cursor& verticalTextCursor();
+NODELETE const Cursor& cellCursor();
+NODELETE const Cursor& contextMenuCursor();
+NODELETE const Cursor& noDropCursor();
+NODELETE const Cursor& notAllowedCursor();
+NODELETE const Cursor& progressCursor();
+NODELETE const Cursor& aliasCursor();
+NODELETE const Cursor& zoomInCursor();
+NODELETE const Cursor& zoomOutCursor();
+NODELETE const Cursor& copyCursor();
+NODELETE const Cursor& noneCursor();
+NODELETE const Cursor& grabCursor();
+NODELETE const Cursor& grabbingCursor();
 
 inline Cursor::Type Cursor::type() const
 {

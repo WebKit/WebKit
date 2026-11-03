@@ -48,7 +48,7 @@ enum class Symbol : uint8_t {
 
 static constexpr size_t numberOfSymbols = static_cast<size_t>(Symbol::NumberOfSymbols);
 
-static Symbol LEGACY_NODELETE symbol(UChar32 character)
+NODELETE static Symbol symbol(UChar32 character)
 {
     if (character >= 'a' && character <= 'f')
         return Symbol::HexLower;
@@ -97,20 +97,20 @@ static constexpr std::array<uint8_t, numberOfSymbols * numberOfSymbols> quantize
     158, 160, 112,  53, 167, 187, 131, 174, 182, 163, // OtherCharacter
 } };
 
-static double LEGACY_NODELETE dequantize(uint8_t quantizedWeight)
+NODELETE static double dequantize(uint8_t quantizedWeight)
 {
     static constexpr double weightScale = 0.0273696267;
     static constexpr double weightZeroPoint = -4.0833584258;
     return quantizedWeight * weightScale + weightZeroPoint;
 }
 
-static double LEGACY_NODELETE bigramWeight(Symbol first, Symbol second)
+NODELETE static double bigramWeight(Symbol first, Symbol second)
 {
     auto tableOffset = numberOfSymbols * static_cast<uint8_t>(first) + static_cast<uint8_t>(second);
     return dequantize(quantizedBigramWeights[tableOffset]);
 }
 
-static double LEGACY_NODELETE entropyScore(StringView text)
+NODELETE static double entropyScore(StringView text)
 {
     auto textLength = text.length();
     if (textLength <= 1)

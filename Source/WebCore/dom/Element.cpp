@@ -219,13 +219,13 @@ static_assert(sizeof(Element) == sizeof(SameSizeAsElement), "Element should stay
 using namespace HTMLNames;
 using namespace XMLNames;
 
-static HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<Ref<Attr>>>& LEGACY_NODELETE attrNodeListMap()
+NODELETE static HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<Ref<Attr>>>& attrNodeListMap()
 {
     static NeverDestroyed<HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<Ref<Attr>>>> map;
     return map;
 }
 
-static Vector<Ref<Attr>>* LEGACY_NODELETE attrNodeListForElement(Element& element)
+NODELETE static Vector<Ref<Attr>>* attrNodeListForElement(Element& element)
 {
     if (!element.hasSyntheticAttrChildNodes())
         return nullptr;
@@ -252,7 +252,7 @@ static void removeAttrNodeListForElement(Element& element)
     element.setHasSyntheticAttrChildNodes(false);
 }
 
-static Attr* LEGACY_NODELETE findAttrNodeInList(Vector<Ref<Attr>>& attrNodeList, const QualifiedName& name)
+NODELETE static Attr* findAttrNodeInList(Vector<Ref<Attr>>& attrNodeList, const QualifiedName& name)
 {
     for (auto& node : attrNodeList) {
         if (node->qualifiedName().matches(name))
@@ -487,7 +487,7 @@ bool Element::shouldUseInputMethod()
     return computeEditability(UserSelectAllTreatment::NotEditable, ShouldUpdateStyle::Update) != Editability::ReadOnly;
 }
 
-static bool LEGACY_NODELETE isForceEvent(const PlatformMouseEvent& platformEvent)
+NODELETE static bool isForceEvent(const PlatformMouseEvent& platformEvent)
 {
     return platformEvent.type() == PlatformEvent::Type::MouseForceChanged || platformEvent.type() == PlatformEvent::Type::MouseForceDown || platformEvent.type() == PlatformEvent::Type::MouseForceUp;
 }
@@ -1153,7 +1153,7 @@ void Element::setBeingDragged(bool value)
     document().userActionElements().setBeingDragged(*this, value);
 }
 
-inline ScrollAlignment LEGACY_NODELETE toScrollAlignmentForInlineDirection(std::optional<ScrollLogicalPosition> position, WritingMode writingMode)
+NODELETE inline ScrollAlignment toScrollAlignmentForInlineDirection(std::optional<ScrollLogicalPosition> position, WritingMode writingMode)
 {
     switch (position.value_or(ScrollLogicalPosition::Nearest)) {
     case ScrollLogicalPosition::Start: {
@@ -1196,7 +1196,7 @@ inline ScrollAlignment LEGACY_NODELETE toScrollAlignmentForInlineDirection(std::
     }
 }
 
-inline ScrollAlignment LEGACY_NODELETE toScrollAlignmentForBlockDirection(std::optional<ScrollLogicalPosition> position, WritingMode writingMode)
+NODELETE inline ScrollAlignment toScrollAlignmentForBlockDirection(std::optional<ScrollLogicalPosition> position, WritingMode writingMode)
 {
     switch (position.value_or(ScrollLogicalPosition::Start)) {
     case ScrollLogicalPosition::Start: {
@@ -1239,7 +1239,7 @@ inline ScrollAlignment LEGACY_NODELETE toScrollAlignmentForBlockDirection(std::o
     }
 }
 
-static HTMLSelectElement* LEGACY_NODELETE owningSelectElement(const Element& element)
+NODELETE static HTMLSelectElement* owningSelectElement(const Element& element)
 {
     if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(element))
         return optionElement->ownerSelectElement();
@@ -1250,7 +1250,7 @@ static HTMLSelectElement* LEGACY_NODELETE owningSelectElement(const Element& ele
     return nullptr;
 }
 
-static HTMLSelectElement* LEGACY_NODELETE listBoxSelectElement(const Element& element)
+NODELETE static HTMLSelectElement* listBoxSelectElement(const Element& element)
 {
     auto* selectElement = owningSelectElement(element);
     return selectElement && is<RenderListBox>(selectElement->renderer()) ? selectElement : nullptr;
@@ -1507,7 +1507,7 @@ void Element::scrollTo(double x, double y)
     scrollTo(ScrollToOptions { { ScrollBehavior::Auto }, x, y });
 }
 
-static double LEGACY_NODELETE localZoomForRenderer(const RenderElement& renderer)
+NODELETE static double localZoomForRenderer(const RenderElement& renderer)
 {
     // FIXME: This does the wrong thing if two opposing zooms are in effect and canceled each
     // other out, but the alternative is that we'd have to crawl up the whole render tree every
@@ -1938,7 +1938,7 @@ inline RefPtr<const SVGElement> elementWithSVGLayoutBox(const Element& element)
 // The walk stops at the SVG root: hidden containers only exist inside an SVG fragment, and
 // <foreignObject> gets no renderer at all under one (SVGForeignObjectElement::rendererIsNeeded),
 // so there is no hidden container to find above a root.
-inline bool LEGACY_NODELETE isInNonRenderedSVGSubtree(const Element& element)
+NODELETE inline bool isInNonRenderedSVGSubtree(const Element& element)
 {
     if (!element.isSVGElement())
         return false;
@@ -1957,7 +1957,7 @@ inline bool LEGACY_NODELETE isInNonRenderedSVGSubtree(const Element& element)
     return false;
 }
 
-inline bool LEGACY_NODELETE shouldObtainBoundsFromBoxModel(const Element* element)
+NODELETE inline bool shouldObtainBoundsFromBoxModel(const Element* element)
 {
     ASSERT(element);
     if (!element->renderer())
@@ -4839,7 +4839,7 @@ void Element::removeFromTopLayer()
         renderer->establishesTopLayerDidChange();
 }
 
-static PseudoElement* LEGACY_NODELETE beforeOrAfterPseudoElement(const Element& host, PseudoElementType pseudoElementSpecifier)
+NODELETE static PseudoElement* beforeOrAfterPseudoElement(const Element& host, PseudoElementType pseudoElementSpecifier)
 {
     switch (pseudoElementSpecifier) {
     case PseudoElementType::Before:

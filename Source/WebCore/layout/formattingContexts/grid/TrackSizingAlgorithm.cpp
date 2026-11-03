@@ -58,7 +58,7 @@ struct FlexTrack {
 struct InflexibleTrackState {
     BitVector inflexibleTracks;
 
-    bool LEGACY_NODELETE isFlexible(size_t trackIndex, const UnsizedTrack& track) const
+    NODELETE bool isFlexible(size_t trackIndex, const UnsizedTrack& track) const
     {
         return track.trackSizingFunction.max.isFlex()
             && !inflexibleTracks.get(trackIndex);
@@ -97,7 +97,7 @@ struct ResolveIntrinsicTrackSizesContext {
     const LayoutUnit gapSize;
 };
 
-static bool LEGACY_NODELETE isSizedUnderMinOrMaxContentConstraint(const AxisConstraint& axisConstraint)
+NODELETE static bool isSizedUnderMinOrMaxContentConstraint(const AxisConstraint& axisConstraint)
 {
     auto scenario = axisConstraint.scenario();
     return scenario == AxisConstraint::FreeSpaceScenario::MinContent
@@ -106,7 +106,7 @@ static bool LEGACY_NODELETE isSizedUnderMinOrMaxContentConstraint(const AxisCons
 
 // https://drafts.csswg.org/css-grid-1/#algo-find-fr-size
 // Step 1-3: Compute Hypothetical fr Size
-static FrSizeComponents LEGACY_NODELETE computeFRSizeComponents(const UnsizedTracks& tracks, const InflexibleTrackState& state)
+NODELETE static FrSizeComponents computeFRSizeComponents(const UnsizedTracks& tracks, const InflexibleTrackState& state)
 {
     // Sum the base sizes of the non-flexible grid tracks.
     LayoutUnit baseSizeSum = 0;
@@ -157,7 +157,7 @@ static GridItemIndexes singleSpanningItemsWithinTrack(size_t trackIndex, const T
     return nonSpanningItems;
 }
 
-static bool LEGACY_NODELETE itemCrossesFlexibleTrack(const UnsizedTracks& tracks, const WTF::Range<size_t>& span)
+NODELETE static bool itemCrossesFlexibleTrack(const UnsizedTracks& tracks, const WTF::Range<size_t>& span)
 {
     for (size_t trackIndex = span.begin(); trackIndex < span.end(); ++trackIndex) {
         if (tracks[trackIndex].trackSizingFunction.max.isFlex())
@@ -451,7 +451,7 @@ static void sizeTracksToFitNonSpanningItems(const ResolveIntrinsicTrackSizesCont
 }
 
 // https://drafts.csswg.org/css-grid-1/#algo-spanning-items
-static bool LEGACY_NODELETE hasAffectedTrackSizingFunction(const UnsizedTrack& track, AffectedTrackSizingFunction affectedTrackSizingFunction)
+NODELETE static bool hasAffectedTrackSizingFunction(const UnsizedTrack& track, AffectedTrackSizingFunction affectedTrackSizingFunction)
 {
     auto& minTrackSizingFunction = track.trackSizingFunction.min;
     auto& maxTrackSizingFunction = track.trackSizingFunction.max;
@@ -483,7 +483,7 @@ static bool LEGACY_NODELETE hasAffectedTrackSizingFunction(const UnsizedTrack& t
 // https://drafts.csswg.org/css-grid-1/#algo-spanning-flex-items
 // "...distributing space only to flexible tracks (i.e. treating all other tracks as having a fixed
 // sizing function)."
-static bool LEGACY_NODELETE isTrackAffectedForSpaceDistributionInPhase(const UnsizedTrack& track, ResolveIntrinsicTrackSizesPhase phase)
+NODELETE static bool isTrackAffectedForSpaceDistributionInPhase(const UnsizedTrack& track, ResolveIntrinsicTrackSizesPhase phase)
 {
     switch (phase) {
     case ResolveIntrinsicTrackSizesPhase::ContentSizedTracks:
@@ -812,7 +812,7 @@ static bool hasFlexTracks(const UnsizedTracks& unsizedTracks)
     });
 }
 
-static double LEGACY_NODELETE flexFactorSum(const FlexTracks& flexTracks)
+NODELETE static double flexFactorSum(const FlexTracks& flexTracks)
 {
     double total = 0.0;
     for (auto& track : flexTracks)
@@ -868,7 +868,7 @@ static double findSizeOfFr(const UnsizedTracks& tracks, const LayoutUnit availab
 
 // "... if the flexible track's flex factor is greater than one,
 // the result of dividing the track's base size by its flex factor; otherwise, the track's base size."
-static double LEGACY_NODELETE flexFractionFromTrackBaseSize(const FlexTrack& flexTrack)
+NODELETE static double flexFractionFromTrackBaseSize(const FlexTrack& flexTrack)
 {
     if (flexTrack.flexFactor.value > 1.0)
         return flexTrack.baseSize / flexTrack.flexFactor.value;

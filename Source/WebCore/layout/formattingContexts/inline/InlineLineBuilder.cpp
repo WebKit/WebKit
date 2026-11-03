@@ -136,7 +136,7 @@ static inline Vector<int32_t> computedVisualOrder(const Line::RunList& lineRuns,
     return visualOrderList;
 }
 
-static bool LEGACY_NODELETE hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size_t layoutRangeEnd, std::span<const InlineItem> inlineItemList)
+NODELETE static bool hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size_t layoutRangeEnd, std::span<const InlineItem> inlineItemList)
 {
     if (!softWrapOpportunityIndex || softWrapOpportunityIndex == layoutRangeEnd) {
         // This candidate inline content ends because the entire content ends and not because there's a soft wrap opportunity.
@@ -205,34 +205,34 @@ static TextDirection inlineBaseDirectionForLineContent(const Line::RunList& runs
 struct LineCandidate {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LineCandidate);
 
-    void LEGACY_NODELETE reset();
+    NODELETE void reset();
 
     struct InlineContent {
-        const InlineContentBreaker::ContinuousContent& LEGACY_NODELETE continuousContent() const { return m_continuousContent; }
-        InlineContentBreaker::ContinuousContent& LEGACY_NODELETE continuousContent() { return m_continuousContent; }
-        const InlineItem* LEGACY_NODELETE trailingLineBreak() const { return m_trailingLineBreak; }
-        const InlineItem* LEGACY_NODELETE trailingWordBreakOpportunity() const { return m_trailingWordBreakOpportunity; }
+        NODELETE const InlineContentBreaker::ContinuousContent& continuousContent() const { return m_continuousContent; }
+        NODELETE InlineContentBreaker::ContinuousContent& continuousContent() { return m_continuousContent; }
+        NODELETE const InlineItem* trailingLineBreak() const { return m_trailingLineBreak; }
+        NODELETE const InlineItem* trailingWordBreakOpportunity() const { return m_trailingWordBreakOpportunity; }
 
         void appendInlineItem(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0);
-        void LEGACY_NODELETE reset();
-        bool LEGACY_NODELETE isEmpty() const { return m_continuousContent.runs().isEmpty() && !trailingWordBreakOpportunity() && !trailingLineBreak(); }
+        NODELETE void reset();
+        NODELETE bool isEmpty() const { return m_continuousContent.runs().isEmpty() && !trailingWordBreakOpportunity() && !trailingLineBreak(); }
 
-        void LEGACY_NODELETE setHasTrailingSoftWrapOpportunity(bool hasTrailingSoftWrapOpportunity) { m_hasTrailingSoftWrapOpportunity = hasTrailingSoftWrapOpportunity; }
-        bool LEGACY_NODELETE hasTrailingSoftWrapOpportunity() const { return m_hasTrailingSoftWrapOpportunity; }
+        NODELETE void setHasTrailingSoftWrapOpportunity(bool hasTrailingSoftWrapOpportunity) { m_hasTrailingSoftWrapOpportunity = hasTrailingSoftWrapOpportunity; }
+        NODELETE bool hasTrailingSoftWrapOpportunity() const { return m_hasTrailingSoftWrapOpportunity; }
 
-        void LEGACY_NODELETE setTrailingSoftHyphenWidth(InlineLayoutUnit hyphenWidth) { m_continuousContent.setTrailingSoftHyphenWidth(hyphenWidth); }
+        NODELETE void setTrailingSoftHyphenWidth(InlineLayoutUnit hyphenWidth) { m_continuousContent.setTrailingSoftHyphenWidth(hyphenWidth); }
 
-        void LEGACY_NODELETE setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_continuousContent.setHangingContentWidth(logicalWidth); }
+        NODELETE void setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_continuousContent.setHangingContentWidth(logicalWidth); }
 
-        void LEGACY_NODELETE setHasTrailingClonedDecoration(bool hasClonedDecoration) { m_hasTrailingClonedDecoration = hasClonedDecoration; }
-        bool LEGACY_NODELETE hasTrailingClonedDecoration() const { return m_hasTrailingClonedDecoration; }
+        NODELETE void setHasTrailingClonedDecoration(bool hasClonedDecoration) { m_hasTrailingClonedDecoration = hasClonedDecoration; }
+        NODELETE bool hasTrailingClonedDecoration() const { return m_hasTrailingClonedDecoration; }
 
-        void LEGACY_NODELETE setMinimumRequiredWidth(InlineLayoutUnit minimumRequiredWidth) { m_continuousContent.setMinimumRequiredWidth(minimumRequiredWidth); }
+        NODELETE void setMinimumRequiredWidth(InlineLayoutUnit minimumRequiredWidth) { m_continuousContent.setMinimumRequiredWidth(minimumRequiredWidth); }
 
-        std::optional<size_t> LEGACY_NODELETE firstTextRunIndex() const { return m_firstTextRunIndex; }
-        std::optional<size_t> LEGACY_NODELETE lastTextRunIndex() const { return m_lastTextRunIndex; }
+        NODELETE std::optional<size_t> firstTextRunIndex() const { return m_firstTextRunIndex; }
+        NODELETE std::optional<size_t> lastTextRunIndex() const { return m_lastTextRunIndex; }
 
-        bool LEGACY_NODELETE isShapingCandidateByContent() const { return m_hasTextContentSpanningBoxes; }
+        NODELETE bool isShapingCandidateByContent() const { return m_hasTextContentSpanningBoxes; }
 
     private:
         InlineContentBreaker::ContinuousContent m_continuousContent;
@@ -1214,7 +1214,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, std::pai
     applyShapingIfNeeded(lineCandidate);
 }
 
-static inline InlineLayoutUnit LEGACY_NODELETE availableWidth(const Line& line, InlineLayoutUnit lineWidth, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
+NODELETE static inline InlineLayoutUnit availableWidth(const Line& line, InlineLayoutUnit lineWidth, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
 {
 #if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
     // 1. Intrinsic width contribution computation sums up floats while line breaker subtracts them.
@@ -1359,7 +1359,7 @@ bool LineBuilder::shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit float
     }
 }
 
-static bool LEGACY_NODELETE haveEnoughSpaceForFloatWithClear(const LayoutRect& floatBoxMarginBox, bool isLeftPositioned, const InlineRect& lineLogicalRect, InlineLayoutUnit contentLogicalWidth)
+NODELETE static bool haveEnoughSpaceForFloatWithClear(const LayoutRect& floatBoxMarginBox, bool isLeftPositioned, const InlineRect& lineLogicalRect, InlineLayoutUnit contentLogicalWidth)
 {
     auto adjustedLineLogicalLeft = lineLogicalRect.left();
     auto adjustedLineLogicalRight = lineLogicalRect.right();
@@ -1541,7 +1541,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
     return result;
 }
 
-static inline InlineLayoutUnit LEGACY_NODELETE lineBreakingResultContentWidth(const InlineContentBreaker::ContinuousContent::RunList& runs, const InlineContentBreaker::Result::PartialTrailingContent& trailingContent)
+NODELETE static inline InlineLayoutUnit lineBreakingResultContentWidth(const InlineContentBreaker::ContinuousContent::RunList& runs, const InlineContentBreaker::Result::PartialTrailingContent& trailingContent)
 {
     if (trailingContent.trailingRunIndex >= runs.size()) {
         ASSERT_NOT_REACHED();
@@ -1784,7 +1784,7 @@ void LineBuilder::commitCandidateContent(LineCandidate& lineCandidate, std::opti
     }
 }
 
-static const Box& LEGACY_NODELETE enclosingBoxForWrapOpportunity(const InlineItem& wrapOpportunity)
+NODELETE static const Box& enclosingBoxForWrapOpportunity(const InlineItem& wrapOpportunity)
 {
     // Inline boxes set the wrapping rules for their content and not for themselves, so the box that encloses a wrap
     // opportunity is the inline box its trailing content belongs to.
@@ -1792,7 +1792,7 @@ static const Box& LEGACY_NODELETE enclosingBoxForWrapOpportunity(const InlineIte
     return layoutBox.isInlineBox() ? layoutBox : layoutBox.parent();
 }
 
-static const InlineItem& LEGACY_NODELETE wrapOpportunityToRevertTo(const WrapOpportunityList& wrapOpportunityList)
+NODELETE static const InlineItem& wrapOpportunityToRevertTo(const WrapOpportunityList& wrapOpportunityList)
 {
     ASSERT(!wrapOpportunityList.isEmpty());
 
@@ -1813,7 +1813,7 @@ static const InlineItem& LEGACY_NODELETE wrapOpportunityToRevertTo(const WrapOpp
     return *wrapOpportunityList.last();
 }
 
-static size_t LEGACY_NODELETE inlineItemIndex(const InlineItem& inlineItem, const InlineItemRange& layoutRange, std::span<const InlineItem> inlineItemList, const std::optional<InlineTextItem>& partialLeadingTextItem)
+NODELETE static size_t inlineItemIndex(const InlineItem& inlineItem, const InlineItemRange& layoutRange, std::span<const InlineItem> inlineItemList, const std::optional<InlineTextItem>& partialLeadingTextItem)
 {
     // The partial leading text item is not part of the inline item list, but it is where the range starts.
     if (partialLeadingTextItem && &*partialLeadingTextItem == &inlineItem)

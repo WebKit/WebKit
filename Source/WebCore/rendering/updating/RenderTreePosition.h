@@ -48,7 +48,7 @@ public:
     void computeNextSibling(const Node&);
     void moveToLastChild();
     void invalidateNextSibling() { m_hasValidNextSibling = false; }
-    void LEGACY_NODELETE invalidateNextSibling(const RenderObject&);
+    NODELETE void invalidateNextSibling(const RenderObject&);
 
     RenderObject* nextSiblingRenderer(const Node&) const;
 

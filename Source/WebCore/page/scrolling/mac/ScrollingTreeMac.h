@@ -35,7 +35,7 @@ class WheelEventTestMonitor;
 
 class ScrollingTreeMac final : public ThreadedScrollingTree {
 public:
-    static Ref<ScrollingTreeMac> LEGACY_NODELETE create(AsyncScrollingCoordinator&);
+    NODELETE static Ref<ScrollingTreeMac> create(AsyncScrollingCoordinator&);
 
     void didCompletePlatformRenderingUpdate();
 

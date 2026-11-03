@@ -552,8 +552,8 @@ public:
 
     inline void setOverrideBlendMode(std::optional<BlendMode>);
 
-    inline bool LEGACY_NODELETE effectiveInert() const;
-    bool LEGACY_NODELETE effectiveInertOutOfLine() const;
+    NODELETE inline bool effectiveInert() const;
+    NODELETE bool effectiveInertOutOfLine() const;
     inline void setEffectiveInert(bool);
 
 #if ENABLE(SMART_IMAGE_RESIZER)
@@ -602,8 +602,8 @@ public:
 
     // MARK: - Text Autosizing
 
-    AutosizeStatus LEGACY_NODELETE autosizeStatus() const;
-    void LEGACY_NODELETE setAutosizeStatus(AutosizeStatus);
+    NODELETE AutosizeStatus autosizeStatus() const;
+    NODELETE void setAutosizeStatus(AutosizeStatus);
 
     // MARK: - Pseudo element/style
 
@@ -612,7 +612,7 @@ public:
     inline bool isListMarkerStyle() const;
     const AtomString& pseudoElementNameArgument() const LIFETIME_BOUND;
 
-    std::optional<PseudoElementIdentifier> LEGACY_NODELETE pseudoElementIdentifier() const;
+    NODELETE std::optional<PseudoElementIdentifier> pseudoElementIdentifier() const;
     void setPseudoElementIdentifier(std::optional<PseudoElementIdentifier>&&);
 
     inline bool hasAnyPublicPseudoStyles() const;
@@ -621,7 +621,7 @@ public:
     inline void setHasPseudoStyles(EnumSet<PseudoElementType>, PseudoElementBoxGeneration);
     inline PseudoElementBoxGeneration pseudoElementBoxGeneration() const;
 
-    Style::ComputedStyle* LEGACY_NODELETE pseudoElementStyle(const PseudoElementIdentifier&) const;
+    NODELETE Style::ComputedStyle* pseudoElementStyle(const PseudoElementIdentifier&) const;
     Style::ComputedStyle* addPseudoElementStyle(std::unique_ptr<Style::ComputedStyle>);
 
     bool hasPseudoElementStyles() const { return !m_pseudoElementStyles.isEmpty(); }
@@ -664,22 +664,22 @@ public:
     // MARK: - Fonts
 
     inline const FontCascade& fontCascade() const;
-    const FontCascade& LEGACY_NODELETE fontCascadeOutOfLine() const;
+    NODELETE const FontCascade& fontCascadeOutOfLine() const;
     WEBCORE_EXPORT FontCascade& mutableFontCascadeWithoutUpdate();
     void setFontCascade(FontCascade&&);
 
-    WEBCORE_EXPORT const FontCascadeDescription& LEGACY_NODELETE fontDescription() const;
+    NODELETE WEBCORE_EXPORT const FontCascadeDescription& fontDescription() const;
     WEBCORE_EXPORT FontCascadeDescription& mutableFontDescriptionWithoutUpdate();
     WEBCORE_EXPORT void setFontDescription(FontCascadeDescription&&);
     bool setFontDescriptionWithoutUpdate(FontCascadeDescription&&);
 
     WEBCORE_EXPORT const Font& primaryFont() const LIFETIME_BOUND;
     WEBCORE_EXPORT const FontMetrics& metricsOfPrimaryFont() const LIFETIME_BOUND;
-    std::pair<FontOrientation, NonCJKGlyphOrientation> LEGACY_NODELETE fontAndGlyphOrientation();
-    float LEGACY_NODELETE usedFontSize() const;
+    NODELETE std::pair<FontOrientation, NonCJKGlyphOrientation> fontAndGlyphOrientation();
+    NODELETE float usedFontSize() const;
     inline WebkitLocale usedLocale() const;
 
-    const LineHeight& LEGACY_NODELETE textAutosizingAdjustedLineHeight() const;
+    NODELETE const LineHeight& textAutosizingAdjustedLineHeight() const;
     void setTextAutosizingAdjustedLineHeight(LineHeight&&);
     void setLineHeightFromAnimation(LineHeight&&);
 
@@ -696,7 +696,7 @@ public:
 
     // MARK: - Used Counter Directives
 
-    const CounterDirectiveMap& LEGACY_NODELETE usedCounterDirectives() const;
+    NODELETE const CounterDirectiveMap& usedCounterDirectives() const;
     void updateUsedCounterIncrementDirectives();
     void updateUsedCounterResetDirectives();
     void updateUsedCounterSetDirectives();

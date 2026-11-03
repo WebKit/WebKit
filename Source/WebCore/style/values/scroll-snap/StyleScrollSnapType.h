@@ -74,7 +74,7 @@ private:
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<ScrollSnapType> { ScrollSnapType LEGACY_NODELETE operator()(BuilderState&, const CSSValue&); };
+template<> struct CSSValueConversion<ScrollSnapType> { NODELETE ScrollSnapType operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

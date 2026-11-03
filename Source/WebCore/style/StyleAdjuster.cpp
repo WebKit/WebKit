@@ -102,8 +102,8 @@
 #else
 namespace WebCore {
 namespace Style {
-static inline void LEGACY_NODELETE adjustForManipulationSurfaceQuirk(ComputedStyle&) { }
-static inline void LEGACY_NODELETE adjustForBoxAnnotationQuirk(ComputedStyle&) { }
+NODELETE static inline void adjustForManipulationSurfaceQuirk(ComputedStyle&) { }
+NODELETE static inline void adjustForBoxAnnotationQuirk(ComputedStyle&) { }
 } // namespace Style
 } // namespace WebCore
 #endif
@@ -187,7 +187,7 @@ static bool shouldInheritTextDecorationsInEffect(const Style::ComputedStyle& sty
     return true;
 }
 
-static bool LEGACY_NODELETE isScrollableOverflow(Overflow overflow)
+NODELETE static bool isScrollableOverflow(Overflow overflow)
 {
     return overflow == Overflow::Scroll || overflow == Overflow::Auto;
 }
@@ -334,12 +334,12 @@ OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(con
     return types;
 }
 
-static bool LEGACY_NODELETE isOverflowClipOrVisible(Overflow overflow)
+NODELETE static bool isOverflowClipOrVisible(Overflow overflow)
 {
     return overflow == Overflow::Clip || overflow == Overflow::Visible;
 }
 
-static bool LEGACY_NODELETE shouldInlinifyForRuby(const Style::ComputedStyle& style, const Style::ComputedStyle& parentBoxStyle)
+NODELETE static bool shouldInlinifyForRuby(const Style::ComputedStyle& style, const Style::ComputedStyle& parentBoxStyle)
 {
     auto parentDisplay = parentBoxStyle.display();
     auto hasRubyParent = parentDisplay == DisplayType::InlineRuby
@@ -350,7 +350,7 @@ static bool LEGACY_NODELETE shouldInlinifyForRuby(const Style::ComputedStyle& st
     return hasRubyParent && !style.hasOutOfFlowPosition() && style.floating() == Float::None;
 }
 
-static bool LEGACY_NODELETE hasUnsupportedRubyDisplay(Display display, const Element* element, const Document& document)
+NODELETE static bool hasUnsupportedRubyDisplay(Display display, const Element* element, const Document& document)
 {
     if (document.settings().cssRubyDisplayTypesInAuthorStylesEnabled())
         return false;
@@ -372,7 +372,7 @@ static bool LEGACY_NODELETE hasUnsupportedRubyDisplay(Display display, const Ele
 }
 
 // https://drafts.csswg.org/css-ruby-1/#bidi
-static UnicodeBidi LEGACY_NODELETE forceBidiIsolationForRuby(UnicodeBidi unicodeBidi)
+NODELETE static UnicodeBidi forceBidiIsolationForRuby(UnicodeBidi unicodeBidi)
 {
     switch (unicodeBidi) {
     case UnicodeBidi::Normal:
@@ -905,7 +905,7 @@ void Adjuster::adjustUsedUserSelect(Style::ComputedStyle& style) const
     style.setUsedUserSelect(value);
 }
 
-static bool LEGACY_NODELETE hasEffectiveDisplayNoneForDisplayContents(const Element& element)
+NODELETE static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
 {
     using namespace ElementNames;
 
@@ -1386,7 +1386,7 @@ std::unique_ptr<Style::ComputedStyle> Adjuster::restoreUsedDocumentElementStyleT
     return adjusted;
 }
 
-static bool LEGACY_NODELETE hasTextChild(const Element& element)
+NODELETE static bool hasTextChild(const Element& element)
 {
     for (auto* child = element.firstChild(); child; child = child->nextSibling()) {
         if (is<Text>(child))

@@ -77,14 +77,14 @@ public:
     WEBCORE_EXPORT AffineTransform(const SkMatrix&);
 #endif
 
-    void LEGACY_NODELETE setMatrix(double a, double b, double c, double d, double e, double f);
+    NODELETE void setMatrix(double a, double b, double c, double d, double e, double f);
 
-    void LEGACY_NODELETE map(double x, double y, double& x2, double& y2) const;
+    NODELETE void map(double x, double y, double& x2, double& y2) const;
 
     // Rounds the mapped point to the nearest integer value.
     WEBCORE_EXPORT IntPoint mapPoint(const IntPoint&) const;
 
-    WEBCORE_EXPORT FloatPoint LEGACY_NODELETE mapPoint(const FloatPoint&) const;
+    NODELETE WEBCORE_EXPORT FloatPoint mapPoint(const FloatPoint&) const;
 
     WEBCORE_EXPORT IntSize mapSize(const IntSize&) const;
 
@@ -94,12 +94,12 @@ public:
     // box computations but may not be what is wanted in other contexts.
     WEBCORE_EXPORT IntRect mapRect(const IntRect&) const;
 
-    WEBCORE_EXPORT FloatRect LEGACY_NODELETE mapRect(const FloatRect&) const;
-    WEBCORE_EXPORT FloatQuad LEGACY_NODELETE mapQuad(const FloatQuad&) const;
+    NODELETE WEBCORE_EXPORT FloatRect mapRect(const FloatRect&) const;
+    NODELETE WEBCORE_EXPORT FloatQuad mapQuad(const FloatQuad&) const;
 
     WEBCORE_EXPORT Region mapRegion(const Region&) const;
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE isIdentity() const;
+    NODELETE WEBCORE_EXPORT bool isIdentity() const;
 
     double a() const { return m_transform[0]; }
     void setA(double a) { m_transform[0] = a; }
@@ -114,22 +114,22 @@ public:
     double f() const { return m_transform[5]; }
     void setF(double f) { m_transform[5] = f; }
 
-    WEBCORE_EXPORT void LEGACY_NODELETE makeIdentity();
+    NODELETE WEBCORE_EXPORT void makeIdentity();
 
-    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE multiply(const AffineTransform& other);
-    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE scale(double);
-    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE scale(double sx, double sy);
-    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE scaleNonUniform(double sx, double sy); // Same as scale(sx, sy).
-    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE scale(const FloatSize&);
+    NODELETE WEBCORE_EXPORT AffineTransform& multiply(const AffineTransform& other);
+    NODELETE WEBCORE_EXPORT AffineTransform& scale(double);
+    NODELETE WEBCORE_EXPORT AffineTransform& scale(double sx, double sy);
+    NODELETE WEBCORE_EXPORT AffineTransform& scaleNonUniform(double sx, double sy); // Same as scale(sx, sy).
+    NODELETE WEBCORE_EXPORT AffineTransform& scale(const FloatSize&);
     WEBCORE_EXPORT AffineTransform& rotate(double);
     WEBCORE_EXPORT AffineTransform& rotateRadians(double);
     AffineTransform& rotateFromVector(double x, double y);
-    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE translate(double tx, double ty);
-    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE translate(const FloatPoint&);
-    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE translate(const FloatSize&);
-    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE shear(double sx, double sy);
-    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE flipX();
-    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE flipY();
+    NODELETE WEBCORE_EXPORT AffineTransform& translate(double tx, double ty);
+    NODELETE WEBCORE_EXPORT AffineTransform& translate(const FloatPoint&);
+    NODELETE WEBCORE_EXPORT AffineTransform& translate(const FloatSize&);
+    NODELETE WEBCORE_EXPORT AffineTransform& shear(double sx, double sy);
+    NODELETE WEBCORE_EXPORT AffineTransform& flipX();
+    NODELETE WEBCORE_EXPORT AffineTransform& flipY();
     WEBCORE_EXPORT AffineTransform& skew(double angleX, double angleY);
     AffineTransform& skewX(double angle);
     AffineTransform& skewY(double angle);
@@ -139,12 +139,12 @@ public:
     WEBCORE_EXPORT double xScale() const;
     WEBCORE_EXPORT double yScale() const;
 
-    bool LEGACY_NODELETE isInvertible() const; // If you call this, you're probably doing it wrong.
-    WEBCORE_EXPORT std::optional<AffineTransform> LEGACY_NODELETE inverse() const;
+    NODELETE bool isInvertible() const; // If you call this, you're probably doing it wrong.
+    NODELETE WEBCORE_EXPORT std::optional<AffineTransform> inverse() const;
 
     WEBCORE_EXPORT void blend(const AffineTransform& from, double progress, CompositeOperation = CompositeOperation::Replace);
 
-    WEBCORE_EXPORT TransformationMatrix LEGACY_NODELETE toTransformationMatrix() const;
+    NODELETE WEBCORE_EXPORT TransformationMatrix toTransformationMatrix() const;
 
     bool isIdentityOrTranslation() const
     {
@@ -193,7 +193,7 @@ public:
     }
 
 #if USE(CG)
-    WEBCORE_EXPORT operator CGAffineTransform LEGACY_NODELETE () const;
+    NODELETE WEBCORE_EXPORT operator CGAffineTransform() const;
 #endif
 
 #if USE(SKIA)
@@ -230,7 +230,7 @@ private:
     std::array<double, 6> m_transform;
 };
 
-WEBCORE_EXPORT AffineTransform LEGACY_NODELETE makeMapBetweenRects(const FloatRect& source, const FloatRect& dest);
+NODELETE WEBCORE_EXPORT AffineTransform makeMapBetweenRects(const FloatRect& source, const FloatRect& dest);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const AffineTransform&);
 

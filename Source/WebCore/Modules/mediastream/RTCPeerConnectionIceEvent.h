@@ -45,7 +45,7 @@ public:
     static Ref<RTCPeerConnectionIceEvent> create(const AtomString& type, Init&&);
     static Ref<RTCPeerConnectionIceEvent> create(CanBubble, IsCancelable, RefPtr<RTCIceCandidate>&&, String&& serverURL);
 
-    RTCIceCandidate* LEGACY_NODELETE candidate() const;
+    NODELETE RTCIceCandidate* candidate() const;
     const String& url() const LIFETIME_BOUND { return m_url; }
 
 private:

@@ -188,7 +188,7 @@ public:
     // Returns true if the accelerated compositing is enabled
     bool hasAcceleratedCompositing() const { return m_hasAcceleratedCompositing; }
 
-    bool LEGACY_NODELETE canRender3DTransforms() const;
+    NODELETE bool canRender3DTransforms() const;
 
     void willRecalcStyle();
 
@@ -200,7 +200,7 @@ public:
     void notifyFlushRequired(const GraphicsLayer*) override;
     void notifySubsequentFlushRequired(const GraphicsLayer*) override;
     void flushPendingLayerChanges(bool isFlushRoot = true);
-    void LEGACY_NODELETE setRenderingIsSuppressed(bool);
+    NODELETE void setRenderingIsSuppressed(bool);
 
     // Called when the GraphicsLayer for the given RenderLayer has flushed changes inside of flushPendingLayerChanges().
     void didChangePlatformLayerForLayer(RenderLayer&, const GraphicsLayer*);
@@ -244,13 +244,13 @@ public:
     static bool clipsCompositingDescendants(const RenderLayer&);
 
     // Whether the given layer needs an extra 'contents' layer.
-    bool LEGACY_NODELETE needsContentsCompositingLayer(const RenderLayer&) const;
+    NODELETE bool needsContentsCompositingLayer(const RenderLayer&) const;
 
     bool fixedLayerIntersectsViewport(const RenderLayer&) const;
 
-    bool LEGACY_NODELETE supportsFixedRootBackgroundCompositing() const;
+    NODELETE bool supportsFixedRootBackgroundCompositing() const;
     bool needsFixedRootBackgroundLayer(const RenderLayer&) const;
-    GraphicsLayer* LEGACY_NODELETE fixedRootBackgroundLayer() const;
+    NODELETE GraphicsLayer* fixedRootBackgroundLayer() const;
 
     void rootOrBodyStyleChanged(RenderElement&, const Style::ComputedStyle* oldStyle);
 
@@ -271,7 +271,7 @@ public:
     void establishesTopLayerWillChangeForLayer(RenderLayer&);
 
     // Get the nearest ancestor layer that has overflow or clip, but is not a stacking context
-    RenderLayer* LEGACY_NODELETE enclosingNonStackingClippingLayer(const RenderLayer&) const;
+    NODELETE RenderLayer* enclosingNonStackingClippingLayer(const RenderLayer&) const;
 
     // Repaint all composited layers.
     void repaintCompositedLayers();
@@ -279,8 +279,8 @@ public:
     // Returns true if the given layer needs it own backing store.
     bool requiresOwnBackingStore(const RenderLayer&, const RenderLayer* compositingAncestorLayer, const LayoutRect& layerCompositedBoundsInAncestor, const LayoutRect& ancestorCompositedBounds) const;
 
-    WEBCORE_EXPORT RenderLayer& LEGACY_NODELETE rootRenderLayer() const;
-    GraphicsLayer* LEGACY_NODELETE rootGraphicsLayer() const;
+    NODELETE WEBCORE_EXPORT RenderLayer& rootRenderLayer() const;
+    NODELETE GraphicsLayer* rootGraphicsLayer() const;
 
     GraphicsLayer* scrollContainerLayer() const { return m_scrollContainerLayer.get(); }
     GraphicsLayer* scrolledContentsLayer() const { return m_scrolledContentsLayer.get(); }
@@ -310,7 +310,7 @@ public:
     void invalidateEventRegionForAllFrames();
     void invalidateEventRegionForAllLayers();
     
-    void LEGACY_NODELETE layerBecameComposited(const RenderLayer&);
+    NODELETE void layerBecameComposited(const RenderLayer&);
     void layerBecameNonComposited(const RenderLayer&);
     
 #if ENABLE(VIDEO)
@@ -402,7 +402,7 @@ public:
     bool isLayerForIFrameWithScrollCoordinatedContents(const RenderLayer&) const;
     bool isLayerForPluginWithScrollCoordinatedContents(const RenderLayer&) const;
 
-    ScrollableArea* LEGACY_NODELETE scrollableAreaForScrollingNodeID(std::optional<ScrollingNodeID>) const;
+    NODELETE ScrollableArea* scrollableAreaForScrollingNodeID(std::optional<ScrollingNodeID>) const;
 
     void removeFromScrollCoordinatedLayers(RenderLayer&);
 
@@ -414,7 +414,7 @@ public:
 
     bool viewHasTransparentBackground(Color* backgroundColor = nullptr) const;
 
-    bool LEGACY_NODELETE viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint() const;
+    NODELETE bool viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint() const;
 
     bool hasNonMainLayersWithTiledBacking() const { return m_layersWithTiledBackingCount; }
 
@@ -542,7 +542,7 @@ private:
 
     FloatRect visibleRectForLayerFlushing() const;
     
-    Page& LEGACY_NODELETE page() const;
+    NODELETE Page& page() const;
 
     GraphicsLayerFactory* graphicsLayerFactory() const;
     ScrollingCoordinator* scrollingCoordinator() const;
@@ -552,14 +552,14 @@ private:
     // Non layout-dependent
     bool requiresCompositingForAnimation(RenderLayerModelObject&) const;
     bool requiresCompositingForTransform(RenderLayerModelObject&) const;
-    bool LEGACY_NODELETE requiresCompositingForBackfaceVisibility(RenderLayerModelObject&) const;
+    NODELETE bool requiresCompositingForBackfaceVisibility(RenderLayerModelObject&) const;
     bool requiresCompositingForViewTransition(RenderLayerModelObject&) const;
     bool requiresCompositingForVideo(RenderLayerModelObject&) const;
     bool requiresCompositingForCanvas(RenderLayerModelObject&) const;
-    bool LEGACY_NODELETE requiresCompositingForFilters(RenderLayerModelObject&) const;
+    NODELETE bool requiresCompositingForFilters(RenderLayerModelObject&) const;
     bool requiresCompositingForWillChange(RenderLayerModelObject&) const;
-    bool LEGACY_NODELETE requiresCompositingForModel(RenderLayerModelObject&) const;
-    bool LEGACY_NODELETE requiresCompositingForSpatialPortal(RenderLayerModelObject&) const;
+    NODELETE bool requiresCompositingForModel(RenderLayerModelObject&) const;
+    NODELETE bool requiresCompositingForSpatialPortal(RenderLayerModelObject&) const;
 
     // Layout-dependent
     bool requiresCompositingForPlugin(RenderLayerModelObject&, RequiresCompositingData&) const;
@@ -567,7 +567,7 @@ private:
     bool requiresCompositingForScrollableFrame(RequiresCompositingData&) const;
     bool requiresCompositingForPosition(RenderLayerModelObject&, const RenderLayer&, RequiresCompositingData&) const;
     bool requiresCompositingForOverflowScrolling(const RenderLayer&, RequiresCompositingData&) const;
-    bool LEGACY_NODELETE requiresCompositingForAnchorPositioning(const RenderLayer&) const;
+    NODELETE bool requiresCompositingForAnchorPositioning(const RenderLayer&) const;
     IndirectCompositingReason computeIndirectCompositingReason(const RenderLayer&, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking) const;
 
     void updateRepaintRectsAfterCompositingChange(RenderLayer&, bool wasComposited, BackingSharingState&);
@@ -616,12 +616,12 @@ private:
     // containing block chain between the given layer and its composited ancestor.
     Vector<CompositedClipData> computeAncestorClippingStack(const RenderLayer&, const RenderLayer* compositingAncestor) const;
 
-    bool LEGACY_NODELETE requiresScrollLayer(RootLayerAttachment) const;
+    NODELETE bool requiresScrollLayer(RootLayerAttachment) const;
     bool requiresHorizontalScrollbarLayer() const;
     bool requiresVerticalScrollbarLayer() const;
     bool requiresScrollCornerLayer() const;
 #if HAVE(RUBBER_BANDING)
-    bool LEGACY_NODELETE requiresOverhangAreasLayer() const;
+    NODELETE bool requiresOverhangAreasLayer() const;
     bool requiresContentShadowLayer() const;
 #endif
 
@@ -638,9 +638,9 @@ private:
     void logLayerInfo(const RenderLayer&, ASCIILiteral, int depth);
 #endif
 
-    bool LEGACY_NODELETE documentUsesTiledBacking() const;
+    NODELETE bool documentUsesTiledBacking() const;
     bool isRootFrameCompositor() const;
-    bool LEGACY_NODELETE isMainFrameCompositor() const;
+    NODELETE bool isMainFrameCompositor() const;
 
     void updateCompositingForLayerTreeAsTextDump();
 

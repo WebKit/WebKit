@@ -337,9 +337,9 @@ private:
     virtual void setLayerContentsToNativeImage(PlatformCALayer&, NativeImage&);
 
     PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
-    PlatformCALayer* LEGACY_NODELETE hostLayerForSublayers() const;
-    PlatformCALayer* LEGACY_NODELETE layerForSuperlayer() const;
-    PlatformCALayer* LEGACY_NODELETE animatedLayer(AnimatedProperty) const;
+    NODELETE PlatformCALayer* hostLayerForSublayers() const;
+    NODELETE PlatformCALayer* layerForSuperlayer() const;
+    NODELETE PlatformCALayer* animatedLayer(AnimatedProperty) const;
 
     WEBCORE_EXPORT void setTileCoverage(TileCoverage) override;
 
@@ -347,8 +347,8 @@ private:
     static bool isReplicatedRootClone(const CloneID& cloneID) { return cloneID[0U] & 1; }
 
     using LayerMap = HashMap<CloneID, Ref<PlatformCALayer>>;
-    LayerMap* LEGACY_NODELETE primaryLayerClones() const;
-    LayerMap* LEGACY_NODELETE animatedLayerClones(AnimatedProperty) const;
+    NODELETE LayerMap* primaryLayerClones() const;
+    NODELETE LayerMap* animatedLayerClones(AnimatedProperty) const;
     static void clearClones(LayerMap&);
 
     bool createAnimationFromKeyframes(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
@@ -499,7 +499,7 @@ private:
 
     bool hasCloneLayers() const { return !!m_layerClones; }
     void removeCloneLayers();
-    FloatPoint LEGACY_NODELETE positionForCloneRootLayer() const;
+    NODELETE FloatPoint positionForCloneRootLayer() const;
 
     // All these "update" methods will be called inside a BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS block.
     void updateNames();
@@ -575,7 +575,7 @@ private:
 #endif
     };
     bool ensureStructuralLayer(StructuralLayerPurpose);
-    StructuralLayerPurpose LEGACY_NODELETE structuralLayerPurpose() const;
+    NODELETE StructuralLayerPurpose structuralLayerPurpose() const;
 
     // This represents the animation of a single property. There may be multiple transform animations for
     // a single transition or keyframe animation, so index is used to distinguish these.
@@ -693,9 +693,9 @@ private:
     typedef uint64_t LayerChangeFlags;
     static ASCIILiteral layerChangeAsString(LayerChange);
     static void dumpLayerChangeFlags(TextStream&, LayerChangeFlags);
-    void LEGACY_NODELETE addUncommittedChanges(LayerChangeFlags);
+    NODELETE void addUncommittedChanges(LayerChangeFlags);
     bool hasDescendantsWithUncommittedChanges() const { return m_hasDescendantsWithUncommittedChanges; }
-    void LEGACY_NODELETE setHasDescendantsWithUncommittedChanges(bool);
+    NODELETE void setHasDescendantsWithUncommittedChanges(bool);
     enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };
     void noteLayerPropertyChanged(LayerChangeFlags, ScheduleFlushOrNot = ScheduleFlush);
     void noteSublayersChanged(ScheduleFlushOrNot = ScheduleFlush);

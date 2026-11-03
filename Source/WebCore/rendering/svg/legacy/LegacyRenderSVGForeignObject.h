@@ -36,7 +36,7 @@ public:
     LegacyRenderSVGForeignObject(SVGForeignObjectElement&, Style::ComputedStyle&&);
     virtual ~LegacyRenderSVGForeignObject();
 
-    SVGForeignObjectElement& LEGACY_NODELETE foreignObjectElement() const;
+    NODELETE SVGForeignObjectElement& foreignObjectElement() const;
 
     void paint(PaintInfo&, const LayoutPoint&) override;
 

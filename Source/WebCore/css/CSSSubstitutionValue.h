@@ -59,7 +59,7 @@ public:
     bool equals(const CSSSubstitutionValue&) const;
     String customCSSText(const CSS::SerializationContext&) const;
 
-    const CSSParserContext& LEGACY_NODELETE context() const;
+    NODELETE const CSSParserContext& context() const;
 
     const CSSVariableData& data() const { return m_data.get(); }
 

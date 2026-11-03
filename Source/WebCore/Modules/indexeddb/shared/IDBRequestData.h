@@ -57,22 +57,22 @@ public:
 
     enum IsolatedCopyTag { IsolatedCopy };
     IDBRequestData(const IDBRequestData&, IsolatedCopyTag);
-    WEBCORE_EXPORT IDBRequestData LEGACY_NODELETE isolatedCopy() const;
+    NODELETE WEBCORE_EXPORT IDBRequestData isolatedCopy() const;
 
-    IDBConnectionIdentifier LEGACY_NODELETE serverConnectionIdentifier() const;
-    WEBCORE_EXPORT IDBResourceIdentifier LEGACY_NODELETE requestIdentifier() const;
-    WEBCORE_EXPORT IDBResourceIdentifier LEGACY_NODELETE transactionIdentifier() const;
-    IDBObjectStoreIdentifier LEGACY_NODELETE objectStoreIdentifier() const;
-    std::optional<IDBIndexIdentifier> LEGACY_NODELETE indexIdentifier() const;
-    IndexedDB::IndexRecordType LEGACY_NODELETE indexRecordType() const;
-    IDBResourceIdentifier LEGACY_NODELETE cursorIdentifier() const;
-    uint64_t LEGACY_NODELETE requestedVersion() const;
-    IDBRequestData LEGACY_NODELETE isolatedCopy();
+    NODELETE IDBConnectionIdentifier serverConnectionIdentifier() const;
+    NODELETE WEBCORE_EXPORT IDBResourceIdentifier requestIdentifier() const;
+    NODELETE WEBCORE_EXPORT IDBResourceIdentifier transactionIdentifier() const;
+    NODELETE IDBObjectStoreIdentifier objectStoreIdentifier() const;
+    NODELETE std::optional<IDBIndexIdentifier> indexIdentifier() const;
+    NODELETE IndexedDB::IndexRecordType indexRecordType() const;
+    NODELETE IDBResourceIdentifier cursorIdentifier() const;
+    NODELETE uint64_t requestedVersion() const;
+    NODELETE IDBRequestData isolatedCopy();
 
 private:
     friend struct IPC::ArgumentCoder<IDBRequestData>;
     WEBCORE_EXPORT IDBRequestData(IDBConnectionIdentifier serverConnectionIdentifier, IDBResourceIdentifier requestIdentifier, IDBResourceIdentifier transactionIdentifier, std::optional<IDBResourceIdentifier>&& cursorIdentifier, std::optional<IDBObjectStoreIdentifier>, std::optional<IDBIndexIdentifier>, IndexedDB::IndexRecordType, uint64_t requestedVersion, IndexedDB::RequestType);
-    static void LEGACY_NODELETE isolatedCopy(const IDBRequestData& source, IDBRequestData& destination);
+    NODELETE static void isolatedCopy(const IDBRequestData& source, IDBRequestData& destination);
 
     IDBConnectionIdentifier m_serverConnectionIdentifier;
     IDBResourceIdentifier m_requestIdentifier;

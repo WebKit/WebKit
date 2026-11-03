@@ -66,8 +66,8 @@ public:
     void inflate(float size) { m_rect.inflate(size);  }
     void expandRadii(float size) { m_radii.expand(size); }
     void shrinkRadii(float size) { m_radii.shrink(size); }
-    void LEGACY_NODELETE inflateWithRadii(float size);
-    void LEGACY_NODELETE adjustRadii();
+    NODELETE void inflateWithRadii(float size);
+    NODELETE void adjustRadii();
 
     FloatRect topLeftCorner() const
     {
@@ -86,10 +86,10 @@ public:
         return FloatRect(m_rect.maxX() - m_radii.bottomRight().width(), m_rect.maxY() - m_radii.bottomRight().height(), m_radii.bottomRight().width(), m_radii.bottomRight().height());
     }
 
-    bool LEGACY_NODELETE isRenderable() const;
-    bool LEGACY_NODELETE xInterceptsAtY(float y, float& minXIntercept, float& maxXIntercept) const;
+    NODELETE bool isRenderable() const;
+    NODELETE bool xInterceptsAtY(float y, float& minXIntercept, float& maxXIntercept) const;
 
-    bool LEGACY_NODELETE intersectionIsRectangular(const FloatRect&) const;
+    NODELETE bool intersectionIsRectangular(const FloatRect&) const;
 
     Path path() const;
 

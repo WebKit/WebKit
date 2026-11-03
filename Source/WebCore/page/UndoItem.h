@@ -54,10 +54,10 @@ public:
     bool isValid() const { return !!m_undoManager; }
     void invalidate();
 
-    Document* LEGACY_NODELETE document() const;
+    NODELETE Document* document() const;
 
-    UndoManager* LEGACY_NODELETE undoManager() const;
-    void LEGACY_NODELETE setUndoManager(UndoManager*);
+    NODELETE UndoManager* undoManager() const;
+    NODELETE void setUndoManager(UndoManager*);
 
     const String& label() const LIFETIME_BOUND { return m_label; }
     VoidCallback& undoHandler() const { return m_undoHandler.get(); }

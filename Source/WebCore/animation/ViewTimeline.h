@@ -57,10 +57,10 @@ struct StickinessAdjustmentData {
         AfterExit
     };
 
-    float LEGACY_NODELETE entryDistanceAdjustment() const;
-    float LEGACY_NODELETE exitDistanceAdjustment() const;
-    float LEGACY_NODELETE rangeStartAdjustment() const;
-    float LEGACY_NODELETE rangeEndAdjustment() const;
+    NODELETE float entryDistanceAdjustment() const;
+    NODELETE float exitDistanceAdjustment() const;
+    NODELETE float rangeStartAdjustment() const;
+    NODELETE float rangeEndAdjustment() const;
 
     static StickinessAdjustmentData computeStickinessAdjustmentData(const StickyPositionViewportConstraints&, ScrollTimeline::ResolvedScrollDirection, float scrollContainerSize, float subjectSize, float subjectOffset);
 
@@ -73,9 +73,9 @@ struct StickinessAdjustmentData {
 class ViewTimeline final : public ScrollTimeline {
 public:
     static ExceptionOr<Ref<ViewTimeline>> create(Document&, ViewTimelineOptions&&);
-    static Ref<ViewTimeline> LEGACY_NODELETE create(const Style::ScopedName&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
+    NODELETE static Ref<ViewTimeline> create(const Style::ScopedName&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
 
-    const Element* LEGACY_NODELETE subject() const;
+    NODELETE const Element* subject() const;
     const WeakStyleable& subjectStyleable() const LIFETIME_BOUND { return m_subject; }
     void setSubject(Element*);
     void setSubject(const Styleable&);
@@ -100,7 +100,7 @@ public:
     std::pair<double, double> offsetIntervalForTimelineRangeName(Style::SingleAnimationRangeName) const;
 
     bool matchesAnonymousViewFunctionForSubject(const Style::ViewFunction&, const Style::ZoomFactor&, const Styleable&) const;
-    WebAnimationTime LEGACY_NODELETE epsilon() const;
+    NODELETE WebAnimationTime epsilon() const;
 
 private:
     ViewTimeline(const Style::ScopedName&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);

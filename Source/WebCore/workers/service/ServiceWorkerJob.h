@@ -50,7 +50,7 @@ struct ServiceWorkerRegistrationData;
 class ServiceWorkerJob final : public RefCounted<ServiceWorkerJob>, public WorkerScriptLoaderClient {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ServiceWorkerJob, WEBCORE_EXPORT);
 public:
-    static Ref<ServiceWorkerJob> LEGACY_NODELETE create(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerJobData&&);
+    NODELETE static Ref<ServiceWorkerJob> create(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerJobData&&);
     WEBCORE_EXPORT ~ServiceWorkerJob();
 
     void ref() const final { RefCounted::ref(); }
@@ -65,7 +65,7 @@ public:
     Identifier identifier() const { return m_jobData.identifier().jobIdentifier; }
 
     const ServiceWorkerJobData& data() const LIFETIME_BOUND { return m_jobData; }
-    Ref<DeferredPromise> LEGACY_NODELETE takePromise();
+    NODELETE Ref<DeferredPromise> takePromise();
 
     void fetchScriptWithContext(ScriptExecutionContext&, FetchOptions::Cache);
 
@@ -75,7 +75,7 @@ public:
 
     WEBCORE_EXPORT static ResourceError validateServiceWorkerResponse(const ServiceWorkerJobData&, const ResourceResponse&);
 
-    bool LEGACY_NODELETE isRegistering() const;
+    NODELETE bool isRegistering() const;
 
 private:
     ServiceWorkerJob(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerJobData&&);

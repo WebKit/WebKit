@@ -193,7 +193,7 @@ CSSParserToken CSSTokenizer::newline(char16_t)
 }
 
 // http://dev.w3.org/csswg/css-syntax/#check-if-two-code-points-are-a-valid-escape
-static bool LEGACY_NODELETE twoCharsAreValidEscape(char16_t first, char16_t second)
+NODELETE static bool twoCharsAreValidEscape(char16_t first, char16_t second)
 {
     return first == '\\' && !isCSSNewline(second);
 }
@@ -719,7 +719,7 @@ CSSParserToken CSSTokenizer::consumeStringTokenUntil(char16_t endingCodePoint)
 }
 
 // http://dev.w3.org/csswg/css-syntax/#non-printable-code-point
-static bool LEGACY_NODELETE isNonPrintableCodePoint(char16_t cc)
+NODELETE static bool isNonPrintableCodePoint(char16_t cc)
 {
     return cc <= '\x8' || cc == '\xb' || (cc >= '\xe' && cc <= '\x1f') || cc == '\x7f';
 }

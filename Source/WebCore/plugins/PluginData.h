@@ -73,7 +73,7 @@ public:
         AllPlugins,
         OnlyApplicationPlugins
     };
-    WEBCORE_EXPORT bool LEGACY_NODELETE supportsMimeType(const String& mimeType, const AllowedPluginTypes) const;
+    NODELETE WEBCORE_EXPORT bool supportsMimeType(const String& mimeType, const AllowedPluginTypes) const;
     WEBCORE_EXPORT bool supportsWebVisibleMimeType(const String& mimeType, const AllowedPluginTypes) const;
     WEBCORE_EXPORT bool supportsWebVisibleMimeTypeForURL(const String& mimeType, const AllowedPluginTypes, const URL&) const;
 

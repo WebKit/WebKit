@@ -47,8 +47,8 @@ public:
     void setMuted(ScriptExecutionContext&, bool);
     bool muted(ScriptExecutionContext&) const { return m_muted; }
 
-    Ref<WritableStream> LEGACY_NODELETE writable();
-    Ref<MediaStreamTrack> LEGACY_NODELETE track();
+    NODELETE Ref<WritableStream> writable();
+    NODELETE Ref<MediaStreamTrack> track();
 
 private:
     class Sink;
@@ -62,7 +62,7 @@ private:
 
         void writeVideoFrame(VideoFrame&, VideoFrameTimeMetadata);
 
-        void LEGACY_NODELETE setWritable(WritableStream&);
+        NODELETE void setWritable(WritableStream&);
 
     private:
         explicit Source(ScriptExecutionContextIdentifier);

@@ -45,7 +45,7 @@ struct Sepia {
 
     Parameter value;
 
-    static Sepia LEGACY_NODELETE passthroughForInterpolation();
+    NODELETE static Sepia passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return false; }
@@ -72,7 +72,7 @@ template<> struct Evaluation<Sepia, Ref<FilterEffect>> { auto operator()(const S
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Sepia> { Ref<FilterOperation> LEGACY_NODELETE operator()(const Sepia&); };
+template<> struct ToPlatform<Sepia> { NODELETE Ref<FilterOperation> operator()(const Sepia&); };
 
 } // namespace Style
 } // namespace WebCore

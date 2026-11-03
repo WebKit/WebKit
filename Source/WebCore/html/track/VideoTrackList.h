@@ -46,13 +46,13 @@ public:
 
     RefPtr<VideoTrack> getTrackById(const AtomString&) const;
     RefPtr<VideoTrack> getTrackById(TrackID) const;
-    int LEGACY_NODELETE selectedIndex() const;
+    NODELETE int selectedIndex() const;
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_inbandTracks.size(); }
-    VideoTrack& LEGACY_NODELETE item(unsigned) const;
-    VideoTrack* LEGACY_NODELETE itemForBindings(unsigned) const;
+    NODELETE VideoTrack& item(unsigned) const;
+    NODELETE VideoTrack* itemForBindings(unsigned) const;
     VideoTrack& lastItem() const { return item(length() - 1); }
-    VideoTrack* LEGACY_NODELETE selectedItem() const;
+    NODELETE VideoTrack* selectedItem() const;
     void append(Ref<VideoTrack>&&);
 
     // EventTarget

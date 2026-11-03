@@ -277,7 +277,7 @@ Path path(const AcceleratedEffectShapeFunction&, const FloatRect&);
 // MARK: - Blending
 
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction> {
-    bool LEGACY_NODELETE canBlend(const AcceleratedEffectShapeFunction&, const AcceleratedEffectShapeFunction&);
+    NODELETE bool canBlend(const AcceleratedEffectShapeFunction&, const AcceleratedEffectShapeFunction&);
     auto blend(const AcceleratedEffectShapeFunction&, const AcceleratedEffectShapeFunction&, const BlendingContext&) -> AcceleratedEffectShapeFunction;
 };
 

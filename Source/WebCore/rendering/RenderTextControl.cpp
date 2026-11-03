@@ -55,7 +55,7 @@ RenderTextControl::RenderTextControl(Type type, HTMLTextFormControlElement& elem
 
 RenderTextControl::~RenderTextControl() = default;
 
-HTMLTextFormControlElement& LEGACY_NODELETE RenderTextControl::textFormControlElement() const
+NODELETE HTMLTextFormControlElement& RenderTextControl::textFormControlElement() const
 {
     return downcast<HTMLTextFormControlElement>(nodeForNonAnonymous());
 }

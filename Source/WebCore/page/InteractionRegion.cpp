@@ -90,7 +90,7 @@ InteractionRegion::~InteractionRegion() = default;
 
 class InteractionRegionPathCache {
 public:
-    static InteractionRegionPathCache& LEGACY_NODELETE singleton();
+    NODELETE static InteractionRegionPathCache& singleton();
 
     std::optional<Path> get(const Image&, const IntRect&, ImageOrientation, const ImageRenditionOptions&);
     void add(const Image&, const IntRect&, ImageOrientation, const ImageRenditionOptions&, Path);
@@ -154,7 +154,7 @@ void InteractionRegion::clearCache()
     InteractionRegionPathCache::singleton().clear();
 }
 
-static bool LEGACY_NODELETE hasInteractiveCursorType(Element& element)
+NODELETE static bool hasInteractiveCursorType(Element& element)
 {
     auto* renderer = element.renderer();
     auto* style = renderer ? &renderer->style() : nullptr;
@@ -169,7 +169,7 @@ static bool LEGACY_NODELETE hasInteractiveCursorType(Element& element)
         || cursorType == CursorType::VerticalText;
 }
 
-static bool LEGACY_NODELETE shouldAllowElement(const Element& element)
+NODELETE static bool shouldAllowElement(const Element& element)
 {
     if (is<HTMLFieldSetElement>(element))
         return false;
@@ -266,7 +266,7 @@ static bool shouldAllowNonInteractiveCursorForElement(const Element& element)
     return false;
 }
 
-static bool LEGACY_NODELETE shouldGetOcclusion(const RenderElement& renderer)
+NODELETE static bool shouldGetOcclusion(const RenderElement& renderer)
 {
     if (auto* renderLayerModelObject = dynamicDowncast<RenderBox>(renderer)) {
         if (renderLayerModelObject->hasLayer() && renderLayerModelObject->layer()->isComposited())

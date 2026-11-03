@@ -81,7 +81,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> setWidth(unsigned);
     WEBCORE_EXPORT ExceptionOr<void> setHeight(unsigned);
 
-    const AtomString& LEGACY_NODELETE canvasContentForBindings() const;
+    NODELETE const AtomString& canvasContentForBindings() const;
     CanvasContent canvasContent() const;
     bool hasDrawableContent() const;
 
@@ -156,7 +156,7 @@ public:
     void setIsSnapshotting(bool isSnapshotting) { m_isSnapshotting = isSnapshotting; }
     bool isSnapshotting() const { return m_isSnapshotting; }
 
-    bool LEGACY_NODELETE isControlledByOffscreen() const;
+    NODELETE bool isControlledByOffscreen() const;
 
     void queueTaskKeepingObjectAlive(TaskSource, Function<void(CanvasBase&)>&&) final;
     void dispatchEvent(Event&) final;
@@ -207,7 +207,7 @@ private:
     mutable RefPtr<NativeImage> m_copiedImage; // For CSSCanvasValue.
 };
 
-WebCoreOpaqueRoot LEGACY_NODELETE root(HTMLCanvasElement*);
+NODELETE WebCoreOpaqueRoot root(HTMLCanvasElement*);
 
 } // namespace WebCore
 

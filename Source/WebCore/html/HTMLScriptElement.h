@@ -54,7 +54,7 @@ public:
     ExceptionOr<void> setSrc(Variant<Ref<TrustedScriptURL>, String>&&);
 
     WEBCORE_EXPORT void setAsync(bool);
-    WEBCORE_EXPORT bool LEGACY_NODELETE async() const;
+    NODELETE WEBCORE_EXPORT bool async() const;
 
     WEBCORE_EXPORT String crossOrigin() const;
 
@@ -89,7 +89,7 @@ private:
 
     ExceptionOr<void> setTextContent(ExceptionOr<String>);
 
-    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const final;
+    NODELETE bool isURLAttribute(const Attribute&) const final;
 
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const final;
 

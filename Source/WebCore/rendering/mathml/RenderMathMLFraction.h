@@ -57,11 +57,11 @@ private:
     CheckedPtr<RenderMathMLOperator> unembellishedOperator() const final;
     bool isMathContentCentered() const final { return true; }
 
-    MathMLFractionElement& LEGACY_NODELETE element() const;
+    NODELETE MathMLFractionElement& element() const;
 
-    bool LEGACY_NODELETE isValid() const;
-    RenderBox& LEGACY_NODELETE numerator() const;
-    RenderBox& LEGACY_NODELETE denominator() const;
+    NODELETE bool isValid() const;
+    NODELETE RenderBox& numerator() const;
+    NODELETE RenderBox& denominator() const;
     LayoutUnit horizontalOffset(RenderBox&, MathMLFractionElement::FractionAlignment) const;
     struct FractionParameters {
         LayoutUnit numeratorShiftUp;

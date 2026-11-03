@@ -73,7 +73,7 @@ protected:
     void paintPlatformDocumentMarkers();
 
     void paintForeground(const StyledMarkedText&);
-    bool LEGACY_NODELETE hasSynthesizedGlyph() const;
+    NODELETE bool hasSynthesizedGlyph() const;
     void paintSynthesizedGlyph();
     bool paintForegroundForShapeRange(TextPainter&);
     TextDecorationPainter createDecorationPainter(const StyledMarkedText&, const FloatRect&);
@@ -89,10 +89,10 @@ protected:
     bool computeHaveSelection() const;
     std::pair<unsigned, unsigned> selectionStartEnd() const;
     MarkedText createMarkedTextFromSelectionInBox();
-    const FontCascade& LEGACY_NODELETE fontCascade() const;
+    NODELETE const FontCascade& fontCascade() const;
     WritingMode writingMode() const { return m_style->writingMode(); }
     FloatPoint textOriginFromPaintRect(const FloatRect&) const;
-    bool LEGACY_NODELETE isInsideShapedContent() const;
+    NODELETE bool isInsideShapedContent() const;
 
     struct DecoratingBox {
         InlineIterator::InlineBoxIterator inlineBox;

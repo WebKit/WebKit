@@ -83,7 +83,7 @@ struct CSSCustomPropertySyntax {
 
     static CSSCustomPropertySyntax universal() { return { }; }
 
-    bool LEGACY_NODELETE containsUnknownType() const;
+    NODELETE bool containsUnknownType() const;
 
 private:
     template<typename CharacterType> static std::optional<Component> parseComponent(std::span<const CharacterType>);

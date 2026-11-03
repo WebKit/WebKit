@@ -67,7 +67,7 @@ public:
 
     void defaultEventHandler(Event&) final;
 
-    RenderTextControlInnerBlock* LEGACY_NODELETE renderer() const;
+    NODELETE RenderTextControlInnerBlock* renderer() const;
 
     inline void updateInnerTextElementEditability(bool isEditable)
     {

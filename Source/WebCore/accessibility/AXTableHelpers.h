@@ -44,7 +44,7 @@ class ComputedStyle;
 namespace AXTableHelpers {
 
 bool appendCaptionTextIfNecessary(Element&, Vector<AccessibilityText>&);
-bool LEGACY_NODELETE isTableRole(AccessibilityRole);
+NODELETE bool isTableRole(AccessibilityRole);
 bool isTableRowElement(Element&);
 bool isTableCellElement(Element&);
 bool hasRowRole(Element&);

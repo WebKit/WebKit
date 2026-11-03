@@ -46,11 +46,11 @@ public:
     static constexpr uint32_t componentsPerPixel(PixelFormat);
     static constexpr uint32_t bytesPerPixel(PixelFormat);
 
-    static CheckedUint32 LEGACY_NODELETE computePixelCount(const IntSize&);
-    static CheckedUint32 LEGACY_NODELETE computePixelComponentCount(PixelFormat, const IntSize&);
-    WEBCORE_EXPORT static CheckedUint32 LEGACY_NODELETE computeBufferSize(PixelFormat, const IntSize&);
+    NODELETE static CheckedUint32 computePixelCount(const IntSize&);
+    NODELETE static CheckedUint32 computePixelComponentCount(PixelFormat, const IntSize&);
+    NODELETE WEBCORE_EXPORT static CheckedUint32 computeBufferSize(PixelFormat, const IntSize&);
 
-    WEBCORE_EXPORT static bool LEGACY_NODELETE supportedPixelFormat(PixelFormat);
+    NODELETE WEBCORE_EXPORT static bool supportedPixelFormat(PixelFormat);
 
     virtual ~PixelBuffer() = default;
 
@@ -72,11 +72,11 @@ public:
     virtual Type type() const = 0;
     virtual RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const = 0;
 
-    bool LEGACY_NODELETE setRange(std::span<const uint8_t> data, size_t byteOffset);
+    NODELETE bool setRange(std::span<const uint8_t> data, size_t byteOffset);
     WEBCORE_EXPORT bool zeroRange(size_t byteOffset, size_t rangeByteLength);
     void zeroFill() { zeroRange(0, bytes().size()); }
 
-    WEBCORE_EXPORT uint8_t LEGACY_NODELETE item(size_t index) const;
+    NODELETE WEBCORE_EXPORT uint8_t item(size_t index) const;
     void set(size_t index, double value);
 
 protected:

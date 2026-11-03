@@ -184,7 +184,7 @@ void FlexIntegrationUtils::setFlexItemGeometry(const FlexLayoutItem& flexLayoutI
     flexItem->setMarginLeft(margins.left());
 }
 
-static LayoutUnit LEGACY_NODELETE resolvedAutoMargin(LayoutUnit freeSpaceForAutoMargins, unsigned numberOfAutoMargins, unsigned autoMarginIndex)
+NODELETE static LayoutUnit resolvedAutoMargin(LayoutUnit freeSpaceForAutoMargins, unsigned numberOfAutoMargins, unsigned autoMarginIndex)
 {
     return numberOfAutoMargins ? FlexFormattingUtils::evenlyDistributedFreeSpace(freeSpaceForAutoMargins, numberOfAutoMargins, autoMarginIndex) : 0_lu;
 }

@@ -40,12 +40,12 @@ namespace cbor {
 
 namespace {
 
-CBORValue::Type LEGACY_NODELETE getMajorType(uint8_t initialDataByte)
+NODELETE CBORValue::Type getMajorType(uint8_t initialDataByte)
 {
     return static_cast<CBORValue::Type>((initialDataByte & constants::kMajorTypeMask) >> constants::kMajorTypeBitShift);
 }
 
-uint8_t LEGACY_NODELETE getAdditionalInfo(uint8_t initialDataByte)
+NODELETE uint8_t getAdditionalInfo(uint8_t initialDataByte)
 {
     return initialDataByte & constants::kAdditionalInformationMask;
 }

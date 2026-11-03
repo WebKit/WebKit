@@ -70,7 +70,7 @@ struct RealNumberRenderSize {
     unsigned sizeBeforeDecimalPoint;
     unsigned sizeAfteDecimalPoint;
 
-    RealNumberRenderSize LEGACY_NODELETE max(const RealNumberRenderSize& other) const
+    NODELETE RealNumberRenderSize max(const RealNumberRenderSize& other) const
     {
         return {
             std::max(sizeBeforeDecimalPoint, other.sizeBeforeDecimalPoint),
@@ -79,7 +79,7 @@ struct RealNumberRenderSize {
     }
 };
 
-static RealNumberRenderSize LEGACY_NODELETE calculateRenderSize(const Decimal& value)
+NODELETE static RealNumberRenderSize calculateRenderSize(const Decimal& value)
 {
     ASSERT(value.isFinite());
     const unsigned sizeOfDigits = String::number(value.value().coefficient()).length();
@@ -333,32 +333,32 @@ String NumberInputType::serialize(const Decimal& value) const
     return serializeForNumberType(value);
 }
 
-static bool LEGACY_NODELETE isE(char16_t ch)
+NODELETE static bool isE(char16_t ch)
 {
     return ch == 'e' || ch == 'E';
 }
 
-static bool LEGACY_NODELETE isPlusSign(char16_t ch)
+NODELETE static bool isPlusSign(char16_t ch)
 {
     return ch == '+';
 }
 
-static bool LEGACY_NODELETE isSignPrefix(char16_t ch)
+NODELETE static bool isSignPrefix(char16_t ch)
 {
     return ch == '+' || ch == '-';
 }
 
-static bool LEGACY_NODELETE isDigit(char16_t ch)
+NODELETE static bool isDigit(char16_t ch)
 {
     return ch >= '0' && ch <= '9';
 }
 
-static bool LEGACY_NODELETE isDecimalSeparator(char16_t ch)
+NODELETE static bool isDecimalSeparator(char16_t ch)
 {
     return ch == '.';
 }
 
-static bool LEGACY_NODELETE hasTwoSignChars(const String& string)
+NODELETE static bool hasTwoSignChars(const String& string)
 {
     unsigned count = 0;
     for (unsigned i = 0; i < string.length(); ++i) {
@@ -371,12 +371,12 @@ static bool LEGACY_NODELETE hasTwoSignChars(const String& string)
     return false;
 }
 
-static bool LEGACY_NODELETE hasDecimalSeparator(const String& string)
+NODELETE static bool hasDecimalSeparator(const String& string)
 {
     return string.find('.') != notFound;
 }
 
-static bool LEGACY_NODELETE hasSignNotAfterE(const String& string)
+NODELETE static bool hasSignNotAfterE(const String& string)
 {
     for (unsigned i = 0; i < string.length(); ++i) {
         if (isSignPrefix(string[i]))

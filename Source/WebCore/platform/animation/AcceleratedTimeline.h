@@ -41,20 +41,20 @@ class AcceleratedTimeline : public RefCountedAndCanMakeWeakPtr<AcceleratedTimeli
     WTF_MAKE_TZONE_ALLOCATED(AcceleratedTimeline);
 public:
 
-    static Ref<AcceleratedTimeline> LEGACY_NODELETE create(const TimelineIdentifier&, Seconds originTime);
-    static Ref<AcceleratedTimeline> LEGACY_NODELETE create(const TimelineIdentifier&, ProgressResolutionData);
+    NODELETE static Ref<AcceleratedTimeline> create(const TimelineIdentifier&, Seconds originTime);
+    NODELETE static Ref<AcceleratedTimeline> create(const TimelineIdentifier&, ProgressResolutionData);
 
     bool isMonotonic() const { return !!originTime(); }
     bool isProgressBased() const { return !isMonotonic(); }
 
-    WEBCORE_EXPORT std::optional<Seconds> LEGACY_NODELETE originTime() const;
-    WEBCORE_EXPORT std::optional<ProgressResolutionData> LEGACY_NODELETE progressResolutionData() const;
+    NODELETE WEBCORE_EXPORT std::optional<Seconds> originTime() const;
+    NODELETE WEBCORE_EXPORT std::optional<ProgressResolutionData> progressResolutionData() const;
 
-    void LEGACY_NODELETE setProgressResolutionData(ProgressResolutionData&&);
+    NODELETE void setProgressResolutionData(ProgressResolutionData&&);
 
     // Encoding support.
     using Data = Variant<Seconds, ProgressResolutionData>;
-    WEBCORE_EXPORT static Ref<AcceleratedTimeline> LEGACY_NODELETE create(TimelineIdentifier&&, Data&&);
+    NODELETE WEBCORE_EXPORT static Ref<AcceleratedTimeline> create(TimelineIdentifier&&, Data&&);
     const TimelineIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
     const Data& data() const LIFETIME_BOUND { return m_data; }
 

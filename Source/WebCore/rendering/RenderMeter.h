@@ -34,7 +34,7 @@ public:
     RenderMeter(HTMLElement&, Style::ComputedStyle&&);
     virtual ~RenderMeter();
 
-    HTMLMeterElement* LEGACY_NODELETE meterElement() const;
+    NODELETE HTMLMeterElement* meterElement() const;
     void updateFromElement() override;
 
 private:

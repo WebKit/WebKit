@@ -74,9 +74,9 @@ public:
     }
 
     AutoscrollController();
-    RenderBox* LEGACY_NODELETE autoscrollRenderer() const;
-    bool LEGACY_NODELETE autoscrollInProgress() const;
-    bool LEGACY_NODELETE panScrollInProgress() const;
+    NODELETE RenderBox* autoscrollRenderer() const;
+    NODELETE bool autoscrollInProgress() const;
+    NODELETE bool panScrollInProgress() const;
     bool startAutoscrollForSelection(RenderObject*);
     void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
     void updateAutoscrollRenderer();

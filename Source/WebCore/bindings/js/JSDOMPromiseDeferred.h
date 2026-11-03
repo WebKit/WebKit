@@ -213,7 +213,7 @@ public:
         reject(*lexicalGlobalObject, jsValue, rejectAsHandled);
     }
 
-    JSC::JSValue LEGACY_NODELETE promise() const;
+    NODELETE JSC::JSValue promise() const;
 
     void whenSettled(Function<void()>&& callback)
     {

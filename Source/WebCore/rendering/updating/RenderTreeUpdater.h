@@ -72,7 +72,7 @@ private:
     void updateBeforeDescendants(Element&, const Style::ElementUpdate*);
     void updateAfterDescendants(Element&, const Style::ElementUpdate*);
     bool textRendererIsNeeded(const Text& textNode);
-    void LEGACY_NODELETE storePreviousRenderer(Node&);
+    NODELETE void storePreviousRenderer(Node&);
 
     void destroyAndCancelAnimationsForSubtree(RenderElement&);
 
@@ -89,8 +89,8 @@ private:
         Parent(Element&, const Style::ElementUpdate*);
     };
     Parent& parent() LIFETIME_BOUND { return m_parentStack.last(); }
-    Parent& LEGACY_NODELETE renderingParent();
-    RenderTreePosition& LEGACY_NODELETE renderTreePosition();
+    NODELETE Parent& renderingParent();
+    NODELETE RenderTreePosition& renderTreePosition();
 
     GeneratedContent& generatedContent() LIFETIME_BOUND { return m_generatedContent; }
     ViewTransition& viewTransition() LIFETIME_BOUND { return m_viewTransition; }
@@ -113,7 +113,7 @@ private:
 
     void updateRebuildRoots();
 
-    RenderView& LEGACY_NODELETE renderView();
+    NODELETE RenderView& renderView();
 
     const Ref<Document> m_document;
     std::unique_ptr<Style::Update> m_styleUpdate;

@@ -46,7 +46,7 @@ namespace WebCore {
 
 class MockMediaSample final : public MediaSample {
 public:
-    static Ref<MockMediaSample> LEGACY_NODELETE create(const MockSampleBox& box) { return adoptRef(*new MockMediaSample(box)); }
+    NODELETE static Ref<MockMediaSample> create(const MockSampleBox& box) { return adoptRef(*new MockMediaSample(box)); }
     virtual ~MockMediaSample() = default;
 
 private:
@@ -71,7 +71,7 @@ private:
     Ref<MediaSample> createNonDisplayingCopy() const override;
     Ref<MediaSample> createCopyWithAdjustedStartTime(const MediaTime& offset) const override;
 
-    unsigned LEGACY_NODELETE generation() const { return m_box.generation(); }
+    NODELETE unsigned generation() const { return m_box.generation(); }
 
     MockSampleBox m_box;
     TrackID m_id;

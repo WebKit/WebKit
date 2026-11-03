@@ -90,13 +90,13 @@ public:
     const FloatSize& bottomRight() const LIFETIME_BOUND { return m_bottomRight; }
 
     bool isZero() const { return m_topLeft.isZero() && m_topRight.isZero() && m_bottomLeft.isZero() && m_bottomRight.isZero(); }
-    bool LEGACY_NODELETE hasEvenCorners() const;
-    bool LEGACY_NODELETE isUniformCornerRadius() const; // Including no radius.
+    NODELETE bool hasEvenCorners() const;
+    NODELETE bool isUniformCornerRadius() const; // Including no radius.
 
-    WEBCORE_EXPORT void LEGACY_NODELETE scale(float factor);
-    void LEGACY_NODELETE scale(float horizontalFactor, float verticalFactor);
+    NODELETE WEBCORE_EXPORT void scale(float factor);
+    NODELETE void scale(float horizontalFactor, float verticalFactor);
     WEBCORE_EXPORT void expandEvenIfZero(float size);
-    WEBCORE_EXPORT void LEGACY_NODELETE expand(float topWidth, float bottomWidth, float leftWidth, float rightWidth);
+    NODELETE WEBCORE_EXPORT void expand(float topWidth, float bottomWidth, float leftWidth, float rightWidth);
     void expand(float size) { expand(size, size, size, size); }
     void shrink(float topWidth, float bottomWidth, float leftWidth, float rightWidth) { expand(-topWidth, -bottomWidth, -leftWidth, -rightWidth); }
     void shrink(float size) { shrink(size, size, size, size); }

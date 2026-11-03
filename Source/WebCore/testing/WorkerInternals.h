@@ -45,7 +45,7 @@ public:
 
 #if ENABLE(WEBGL)
     void simulateEventForWebGLContext(SimulatedWebGLContextEvent, WebGLRenderingContextBase&);
-    RequestedGPU LEGACY_NODELETE requestedGPU(WebGLRenderingContextBase&);
+    NODELETE RequestedGPU requestedGPU(WebGLRenderingContextBase&);
     Vector<int> webglMaxDrawingBufferSize(WebGLRenderingContextBase&);
 #endif
 

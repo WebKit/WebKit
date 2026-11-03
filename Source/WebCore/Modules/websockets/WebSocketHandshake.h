@@ -55,15 +55,15 @@ public:
     WEBCORE_EXPORT WebSocketHandshake(const URL&, const String& protocol, const String& userAgent, const String& clientOrigin, bool allowCookies, bool isAppInitiated);
     WEBCORE_EXPORT ~WebSocketHandshake();
 
-    WEBCORE_EXPORT const URL& LEGACY_NODELETE url() const;
+    NODELETE WEBCORE_EXPORT const URL& url() const;
     void setURL(const URL&);
     WEBCORE_EXPORT URL httpURLForAuthenticationAndCookies() const;
     const String host() const;
 
-    const String& LEGACY_NODELETE clientProtocol() const;
+    NODELETE const String& clientProtocol() const;
     void setClientProtocol(const String&);
 
-    bool LEGACY_NODELETE secure() const;
+    NODELETE bool secure() const;
 
     String clientLocation() const;
 
@@ -75,8 +75,8 @@ public:
     WEBCORE_EXPORT void reset();
 
     WEBCORE_EXPORT int readServerHandshake(std::span<const uint8_t> header);
-    WEBCORE_EXPORT Mode LEGACY_NODELETE mode() const;
-    WEBCORE_EXPORT String LEGACY_NODELETE failureReason() const; // Returns a string indicating the reason of failure if mode() == Failed.
+    NODELETE WEBCORE_EXPORT Mode mode() const;
+    NODELETE WEBCORE_EXPORT String failureReason() const; // Returns a string indicating the reason of failure if mode() == Failed.
 
     WEBCORE_EXPORT String serverWebSocketProtocol() const;
     WEBCORE_EXPORT String serverSetCookie() const;
@@ -85,7 +85,7 @@ public:
     String serverWebSocketAccept() const;
     WEBCORE_EXPORT String acceptedExtensions() const;
 
-    WEBCORE_EXPORT const ResourceResponse& LEGACY_NODELETE serverHandshakeResponse() const;
+    NODELETE WEBCORE_EXPORT const ResourceResponse& serverHandshakeResponse() const;
 
     WEBCORE_EXPORT void addExtensionProcessor(std::unique_ptr<WebSocketExtensionProcessor>);
 

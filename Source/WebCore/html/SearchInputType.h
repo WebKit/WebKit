@@ -92,8 +92,8 @@ private:
     bool needsContainer() const final;
     void createShadowSubtree() final;
     void removeShadowSubtree() final;
-    HTMLElement* LEGACY_NODELETE resultsButtonElement() const final;
-    HTMLElement* LEGACY_NODELETE cancelButtonElement() const final;
+    NODELETE HTMLElement* resultsButtonElement() const final;
+    NODELETE HTMLElement* cancelButtonElement() const final;
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     void didSetValueByUserEdit() final;
     bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const final;

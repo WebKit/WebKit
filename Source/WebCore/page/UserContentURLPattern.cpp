@@ -282,10 +282,10 @@ struct MatchTester {
     {
     }
 
-    bool LEGACY_NODELETE testStringFinished() const { return m_testIndex >= m_test.length(); }
-    bool LEGACY_NODELETE patternStringFinished() const { return m_patternIndex >= m_pattern.length(); }
+    NODELETE bool testStringFinished() const { return m_testIndex >= m_test.length(); }
+    NODELETE bool patternStringFinished() const { return m_patternIndex >= m_pattern.length(); }
 
-    void LEGACY_NODELETE eatWildcard()
+    NODELETE void eatWildcard()
     {
         while (!patternStringFinished()) {
             if (m_pattern[m_patternIndex] != '*')
@@ -294,7 +294,7 @@ struct MatchTester {
         }
     }
 
-    void LEGACY_NODELETE eatSameChars()
+    NODELETE void eatSameChars()
     {
         while (!patternStringFinished() && !testStringFinished()) {
             if (m_pattern[m_patternIndex] == '*')
@@ -306,7 +306,7 @@ struct MatchTester {
         }
     }
 
-    bool LEGACY_NODELETE test()
+    NODELETE bool test()
     {
         // Eat all the matching chars.
         eatSameChars();

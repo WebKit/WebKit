@@ -42,7 +42,7 @@ public:
     InlineContentConstrainer(InlineFormattingContext&, const InlineItemList&, HorizontalConstraints);
     std::optional<Vector<LayoutUnit>> computeParagraphLevelConstraints(TextWrapStyle);
 
-    static bool LEGACY_NODELETE constrainsContent(const Style::ComputedStyle&);
+    NODELETE static bool constrainsContent(const Style::ComputedStyle&);
 
 private:
     friend struct SlidingWidth;
@@ -63,7 +63,7 @@ private:
 
     void initialize();
     void updateCachedWidths();
-    void LEGACY_NODELETE checkCanConstrainInlineItems();
+    NODELETE void checkCanConstrainInlineItems();
     EntryPretty layoutSingleLineForPretty(InlineItemRange layoutRange, InlineLayoutUnit idealLineWidth, EntryPretty lastValidEntry, size_t previousBreakIndex);
 
     std::optional<Vector<LayoutUnit>> balanceRangeWithLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, size_t numberOfLines, bool isFirstChunk);
@@ -99,7 +99,7 @@ private:
 
 struct SlidingWidth {
     SlidingWidth(const InlineContentConstrainer&, const InlineItemList&, size_t start, size_t end, bool useFirstLineStyle, bool isFirstLineInChunk);
-    InlineLayoutUnit LEGACY_NODELETE width();
+    NODELETE InlineLayoutUnit width();
     void advanceStart();
     void advanceStartTo(size_t newStart);
     void advanceEnd();

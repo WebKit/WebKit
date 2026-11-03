@@ -45,13 +45,13 @@ public:
     }
     ~AudioWorkletThread();
 
-    AudioWorkletGlobalScope* LEGACY_NODELETE globalScope() const;
+    NODELETE AudioWorkletGlobalScope* globalScope() const;
 
     void clearProxies() final;
 
     // WorkerOrWorkletThread.
-    WorkerLoaderProxy* LEGACY_NODELETE workerLoaderProxy() const final;
-    WorkerDebuggerProxy* LEGACY_NODELETE workerDebuggerProxy() const final;
+    NODELETE WorkerLoaderProxy* workerLoaderProxy() const final;
+    NODELETE WorkerDebuggerProxy* workerDebuggerProxy() const final;
 
     AudioWorkletMessagingProxy* messagingProxy() { return m_messagingProxy.get(); }
 

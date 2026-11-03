@@ -45,9 +45,9 @@ public:
     virtual ~PaintRenderingContext2D();
 
     GraphicsContext* drawingContext() const;
-    AffineTransform LEGACY_NODELETE baseTransform() const;
+    NODELETE AffineTransform baseTransform() const;
 
-    CustomPaintCanvas& LEGACY_NODELETE canvas() const;
+    NODELETE CustomPaintCanvas& canvas() const;
     void replayDisplayList(GraphicsContext& target) const;
 
 protected:

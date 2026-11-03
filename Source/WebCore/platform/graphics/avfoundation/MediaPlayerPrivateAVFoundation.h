@@ -192,7 +192,7 @@ protected:
     MediaTime duration() const override;
     MediaTime currentTime() const override = 0;
     Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
-    bool LEGACY_NODELETE seeking() const;
+    NODELETE bool seeking() const;
     bool paused() const override;
     void setVolume(float) override = 0;
     bool hasClosedCaptions() const override { return m_cachedHasCaptions; }
@@ -304,7 +304,7 @@ protected:
 
     bool metaDataAvailable() const { return m_readyState >= MediaPlayer::ReadyState::HaveMetadata; }
     MediaTime maxTimeLoaded() const;
-    bool LEGACY_NODELETE isReadyForVideoSetup() const;
+    NODELETE bool isReadyForVideoSetup() const;
     virtual void setUpVideoRendering();
     virtual void tearDownVideoRendering();
     virtual bool haveBeenAskedToPaint() const { return false; }
@@ -312,7 +312,7 @@ protected:
 
     void mainThreadCallback();
     
-    void LEGACY_NODELETE invalidateCachedDuration();
+    NODELETE void invalidateCachedDuration();
 
     const String& assetURL() const LIFETIME_BOUND { return m_assetURL.string(); }
 

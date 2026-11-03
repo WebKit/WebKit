@@ -168,8 +168,8 @@ public:
     IntPoint minXMaxYCorner() const { return IntPoint(m_location.x(), m_location.y() + m_size.height()); } // typically bottomLeft
     IntPoint maxXMaxYCorner() const { return IntPoint(m_location.x() + m_size.width(), m_location.y() + m_size.height()); } // typically bottomRight
     
-    WEBCORE_EXPORT bool LEGACY_NODELETE intersects(const IntRect&) const;
-    WEBCORE_EXPORT bool LEGACY_NODELETE contains(const IntRect&) const;
+    NODELETE WEBCORE_EXPORT bool intersects(const IntRect&) const;
+    NODELETE WEBCORE_EXPORT bool contains(const IntRect&) const;
 
     // This checks to see if the rect contains x,y in the traditional sense.
     // Equivalent to checking if the rect contains a 1x1 rect below and to the right of (px,py).
@@ -177,9 +177,9 @@ public:
         { return px >= x() && px < maxX() && py >= y() && py < maxY(); }
     bool contains(const IntPoint& point) const { return contains(point.x(), point.y()); }
 
-    WEBCORE_EXPORT void LEGACY_NODELETE intersect(const IntRect&);
-    WEBCORE_EXPORT void LEGACY_NODELETE unite(const IntRect&);
-    void LEGACY_NODELETE uniteIfNonZero(const IntRect&);
+    NODELETE WEBCORE_EXPORT void intersect(const IntRect&);
+    NODELETE WEBCORE_EXPORT void unite(const IntRect&);
+    NODELETE void uniteIfNonZero(const IntRect&);
 
     void inflateX(int dx)
     {
@@ -193,16 +193,16 @@ public:
     }
     void inflate(int d) { inflateX(d); inflateY(d); }
     void inflate(IntSize size) { inflateX(size.width()); inflateY(size.height()); }
-    WEBCORE_EXPORT void LEGACY_NODELETE scale(float s);
+    NODELETE WEBCORE_EXPORT void scale(float s);
 
-    WEBCORE_EXPORT IntSize LEGACY_NODELETE differenceToPoint(const IntPoint&) const;
+    NODELETE WEBCORE_EXPORT IntSize differenceToPoint(const IntPoint&) const;
     int distanceSquaredToPoint(const IntPoint& p) const { return differenceToPoint(p).diagonalLengthSquared(); }
 
     IntRect transposedRect() const { return IntRect(m_location.transposedPoint(), m_size.transposedSize()); }
 
     // Return false if x + width or y + height overflows.
-    WEBCORE_EXPORT bool LEGACY_NODELETE isValid() const;
-    [[nodiscard]] WEBCORE_EXPORT IntRect LEGACY_NODELETE toRectWithExtentsClippedToNumericLimits() const;
+    NODELETE WEBCORE_EXPORT bool isValid() const;
+    NODELETE [[nodiscard]] WEBCORE_EXPORT IntRect toRectWithExtentsClippedToNumericLimits() const;
 
     friend bool operator==(const IntRect&, const IntRect&) = default;
 
@@ -217,7 +217,7 @@ public:
 #endif
 
 #if USE(CG)
-    WEBCORE_EXPORT operator CGRect LEGACY_NODELETE () const;
+    NODELETE WEBCORE_EXPORT operator CGRect() const;
 #endif
 
 #if USE(SKIA)

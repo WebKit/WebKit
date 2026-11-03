@@ -276,7 +276,7 @@ class PushDatabase::Storage : public ThreadSafeRefCounted<Storage, WTF::Destruct
 public:
     static Ref<Storage> create(UniqueRef<SQLiteDatabase>&& database) { return adoptRef(*new Storage(WTF::move(database))); }
 
-    SQLiteDatabase& LEGACY_NODELETE database() { return m_db; }
+    NODELETE SQLiteDatabase& database() { return m_db; }
 
     SQLiteStatementAutoResetScope cachedStatement(ASCIILiteral query);
     template<typename... Args> SQLiteStatementAutoResetScope bindStatement(ASCIILiteral query, Args&&...);
@@ -375,7 +375,7 @@ void PushDatabase::dispatchOnWorkQueue(Function<void()>&& function)
     m_queue->dispatch(WTF::move(function));
 }
 
-static std::span<const uint8_t> LEGACY_NODELETE uuidToSpan(const std::optional<WTF::UUID>& uuid)
+NODELETE static std::span<const uint8_t> uuidToSpan(const std::optional<WTF::UUID>& uuid)
 {
     if (!uuid) {
         // We store a null UUID as a zero-length blob rather than a SQL NULL. This is because the
@@ -392,7 +392,7 @@ static std::span<const uint8_t> LEGACY_NODELETE uuidToSpan(const std::optional<W
     return uuid->span();
 }
 
-static SQLValue LEGACY_NODELETE expirationTimeToValue(std::optional<EpochTimeStamp> timestamp)
+NODELETE static SQLValue expirationTimeToValue(std::optional<EpochTimeStamp> timestamp)
 {
     if (!timestamp)
         return nullptr;

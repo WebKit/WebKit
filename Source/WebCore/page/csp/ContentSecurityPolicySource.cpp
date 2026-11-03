@@ -102,7 +102,7 @@ SchemeMatchResult ContentSecurityPolicySource::schemeMatches(const URL& url) con
     return SchemeMatchResult::NoMatch;
 }
 
-static bool LEGACY_NODELETE wildcardMatches(StringView host, const String& hostWithWildcard)
+NODELETE static bool wildcardMatches(StringView host, const String& hostWithWildcard)
 {
     auto hostLength = host.length();
     auto hostWithWildcardLength = hostWithWildcard.length();

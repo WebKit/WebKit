@@ -46,9 +46,9 @@ namespace WebCore::ShapeDetection {
 // an increasing-y-goes-down coordinate system.
 // These functions perform the necessary conversions.
 
-FloatRect LEGACY_NODELETE convertRectFromVisionToWeb(const FloatSize& imageSize, const FloatRect&);
-FloatPoint LEGACY_NODELETE convertPointFromVisionToWeb(const FloatSize& imageSize, const FloatPoint&);
-FloatPoint LEGACY_NODELETE convertPointFromUnnormalizedVisionToWeb(const FloatSize& imageSize, const FloatPoint&);
+NODELETE FloatRect convertRectFromVisionToWeb(const FloatSize& imageSize, const FloatRect&);
+NODELETE FloatPoint convertPointFromVisionToWeb(const FloatSize& imageSize, const FloatPoint&);
+NODELETE FloatPoint convertPointFromUnnormalizedVisionToWeb(const FloatSize& imageSize, const FloatPoint&);
 Vector<FloatPoint> convertCornerPoints(const FloatSize& imageSize, VNRectangleObservation *);
 
 void configureRequestToUseCPUOrGPU(VNRequest *);

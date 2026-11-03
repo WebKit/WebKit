@@ -44,7 +44,7 @@ class ReadableByteStreamController;
 
 class FetchBodySource final : public RefCountedAndCanMakeWeakPtr<FetchBodySource> {
 public:
-    static Ref<FetchBodySource> LEGACY_NODELETE create(FetchBodyOwner&);
+    NODELETE static Ref<FetchBodySource> create(FetchBodyOwner&);
 
     ~FetchBodySource();
 
@@ -52,8 +52,8 @@ public:
     void close();
     void error(const Exception&);
 
-    bool LEGACY_NODELETE isPulling() const;
-    bool LEGACY_NODELETE isCancelling() const { return m_isCancelling; }
+    NODELETE bool isPulling() const;
+    NODELETE bool isCancelling() const { return m_isCancelling; }
 
     void resolvePullPromise();
     void detach();

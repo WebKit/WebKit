@@ -45,7 +45,7 @@ template<typename Keyword> concept SpecificKeyword = Detail::isSpecificKeyword<K
 
 // MARK: - Conversion
 
-template<> struct CSSValueCreation<Keyword> { Ref<CSSValue> LEGACY_NODELETE operator()(CSSValuePool&, const Keyword&); };
+template<> struct CSSValueCreation<Keyword> { NODELETE Ref<CSSValue> operator()(CSSValuePool&, const Keyword&); };
 template<> struct DeprecatedCSSOMValueCreation<Keyword> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const Keyword&); };
 
 // MARK: - Serialization
@@ -62,7 +62,7 @@ template<> struct CSSValueChildrenVisitor<Keyword> { constexpr IterationStatus o
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Keyword&);
 
-void LEGACY_NODELETE add(Hasher&, const Keyword&);
+NODELETE void add(Hasher&, const Keyword&);
 
 } // namespace CSS
 } // namespace WebCore

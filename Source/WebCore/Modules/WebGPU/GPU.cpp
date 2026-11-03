@@ -46,7 +46,7 @@ GPU::GPU(Ref<WebGPUIntegration>&& backing)
 
 GPU::~GPU() = default;
 
-static WebGPU::RequestAdapterOptions LEGACY_NODELETE convertToBacking(const std::optional<GPURequestAdapterOptions>& options)
+NODELETE static WebGPU::RequestAdapterOptions convertToBacking(const std::optional<GPURequestAdapterOptions>& options)
 {
     if (!options)
         return { std::nullopt, false };

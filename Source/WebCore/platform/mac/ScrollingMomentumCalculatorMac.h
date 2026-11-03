@@ -43,7 +43,7 @@ private:
     void destinationScrollOffsetDidChange() final;
 
     _NSScrollingMomentumCalculator *ensurePlatformMomentumCalculator();
-    bool LEGACY_NODELETE requiresMomentumScrolling();
+    NODELETE bool requiresMomentumScrolling();
     void setMomentumCalculatorDestinationOffset(FloatPoint);
 
     const RetainPtr<_NSScrollingMomentumCalculator> m_platformMomentumCalculator;

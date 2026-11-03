@@ -92,7 +92,7 @@ private:
     void externalOutputDeviceAvailableDidChange(bool) final;
     void playbackTargetPickerWasDismissed() final;
 
-    size_t LEGACY_NODELETE find(WebMediaSessionManagerClient*, PlaybackTargetClientContextIdentifier);
+    NODELETE size_t find(WebMediaSessionManagerClient*, PlaybackTargetClientContextIdentifier);
 
     void configurePlaybackTargetClients();
     void configureNewClients();

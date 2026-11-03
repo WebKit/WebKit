@@ -40,17 +40,17 @@ public:
     explicit ComputedStyle(CreateDefaultStyleTag);
     ComputedStyle(const ComputedStyle&, CloneTag);
 
-    [[nodiscard]] ComputedStyle LEGACY_NODELETE replace(ComputedStyle&&);
+    NODELETE [[nodiscard]] ComputedStyle replace(ComputedStyle&&);
 
-    static ComputedStyle& LEGACY_NODELETE defaultStyleSingleton();
+    NODELETE static ComputedStyle& defaultStyleSingleton();
 
     // MARK: - Initialization
 
-    WEBCORE_EXPORT static ComputedStyle LEGACY_NODELETE create();
+    NODELETE WEBCORE_EXPORT static ComputedStyle create();
     static std::unique_ptr<ComputedStyle> createPtr();
     static std::unique_ptr<ComputedStyle> createPtrWithRegisteredInitialValues(const Style::CustomPropertyRegistry&);
 
-    static ComputedStyle LEGACY_NODELETE clone(const ComputedStyle&);
+    NODELETE static ComputedStyle clone(const ComputedStyle&);
     static ComputedStyle cloneIncludingPseudoElements(const ComputedStyle&);
     static std::unique_ptr<ComputedStyle> clonePtr(const ComputedStyle&);
 
@@ -59,18 +59,18 @@ public:
 
     void inheritFrom(const ComputedStyle&);
     void inheritIgnoringCustomPropertiesFrom(const ComputedStyle&);
-    void LEGACY_NODELETE inheritUnicodeBidiFrom(const ComputedStyle&);
+    NODELETE void inheritUnicodeBidiFrom(const ComputedStyle&);
     inline void inheritColumnPropertiesFrom(const ComputedStyle&);
     void fastPathInheritFrom(const ComputedStyle&);
     void copyNonInheritedFrom(const ComputedStyle&);
     void copyContentFrom(const ComputedStyle&);
     void copyPseudoElementsFrom(const ComputedStyle&);
-    void LEGACY_NODELETE copyPseudoElementBitsFrom(const ComputedStyle&);
+    NODELETE void copyPseudoElementBitsFrom(const ComputedStyle&);
 
     // MARK: - Specific style change queries
 
     bool scrollAnchoringSuppressionStyleDidChange(const ComputedStyle*) const;
-    bool LEGACY_NODELETE outOfFlowPositionStyleDidChange(const ComputedStyle*) const;
+    NODELETE bool outOfFlowPositionStyleDidChange(const ComputedStyle*) const;
 
     // MARK: - Comparisons
 
@@ -78,15 +78,15 @@ public:
 
     bool inheritedEqual(const ComputedStyle&) const;
     bool nonInheritedEqual(const ComputedStyle&) const;
-    bool LEGACY_NODELETE fastPathInheritedEqual(const ComputedStyle&) const;
+    NODELETE bool fastPathInheritedEqual(const ComputedStyle&) const;
     bool nonFastPathInheritedEqual(const ComputedStyle&) const;
-    bool LEGACY_NODELETE descendantAffectingNonInheritedPropertiesEqual(const ComputedStyle&) const;
+    NODELETE bool descendantAffectingNonInheritedPropertiesEqual(const ComputedStyle&) const;
     bool borderAndBackgroundEqual(const ComputedStyle&) const;
     inline bool containerTypeAndNamesEqual(const ComputedStyle&) const;
     inline bool columnSpanEqual(const ComputedStyle&) const;
     inline bool scrollPaddingEqual(const ComputedStyle&) const;
     inline bool fontCascadeEqual(const ComputedStyle&) const;
-    bool LEGACY_NODELETE scrollSnapDataEquivalent(const ComputedStyle&) const;
+    NODELETE bool scrollSnapDataEquivalent(const ComputedStyle&) const;
 
     // MARK: - Style reset utilities
 
@@ -114,10 +114,10 @@ public:
     inline const Style::InsetEdge& logicalBottom() const LIFETIME_BOUND;
 
     // Logical Border (aggregate)
-    const BorderValue& LEGACY_NODELETE borderBefore(const WritingMode) const LIFETIME_BOUND;
-    const BorderValue& LEGACY_NODELETE borderAfter(const WritingMode) const LIFETIME_BOUND;
-    const BorderValue& LEGACY_NODELETE borderStart(const WritingMode) const LIFETIME_BOUND;
-    const BorderValue& LEGACY_NODELETE borderEnd(const WritingMode) const LIFETIME_BOUND;
+    NODELETE const BorderValue& borderBefore(const WritingMode) const LIFETIME_BOUND;
+    NODELETE const BorderValue& borderAfter(const WritingMode) const LIFETIME_BOUND;
+    NODELETE const BorderValue& borderStart(const WritingMode) const LIFETIME_BOUND;
+    NODELETE const BorderValue& borderEnd(const WritingMode) const LIFETIME_BOUND;
     inline const BorderValue& borderBefore() const LIFETIME_BOUND;
     inline const BorderValue& borderAfter() const LIFETIME_BOUND;
     inline const BorderValue& borderStart() const LIFETIME_BOUND;
@@ -153,13 +153,13 @@ public:
     WebCore::Color usedStrokeColorApplyingColorFilter() const;
     inline PointerEvents usedPointerEvents() const;
     inline UserModify usedUserModify() const;
-    WEBCORE_EXPORT UserSelect LEGACY_NODELETE usedUserSelect() const;
+    NODELETE WEBCORE_EXPORT UserSelect usedUserSelect() const;
     Style::Contain usedContain() const;
     inline TransformStyle3D usedTransformStyle3D() const;
     WebCore::Color usedScrollbarThumbColor() const;
     WebCore::Color usedScrollbarTrackColor() const;
     WebCore::Color usedAccentColor(OptionSet<StyleColorOptions>) const;
-    BlendMode LEGACY_NODELETE usedBlendMode() const;
+    NODELETE BlendMode usedBlendMode() const;
 
     // MARK: - Used background color
 
@@ -202,7 +202,7 @@ public:
     inline bool isOverflowVisible() const;
     inline bool isSkippedRootOrSkippedContent() const;
 
-    bool LEGACY_NODELETE isListItemType() const;
+    NODELETE bool isListItemType() const;
 
     inline bool specifiesColumns() const;
 
@@ -233,7 +233,7 @@ private:
 // The outline and column rule widths after the used-value rules: zero for style none (and hidden for
 // column rules), the platform focus ring width for outline-style auto. Unzoomed style values.
 // Code with a renderer reads the resolved values through UsedStyle.
-LineWidth LEGACY_NODELETE effectiveColumnRuleWidth(const ComputedStyle&);
+NODELETE LineWidth effectiveColumnRuleWidth(const ComputedStyle&);
 LineWidth effectiveOutlineWidth(const ComputedStyle&);
 // outline-offset with `inset` resolved against the effective outline width.
 WEBCORE_EXPORT UsedOutlineOffset effectiveOutlineOffset(const ComputedStyle&);

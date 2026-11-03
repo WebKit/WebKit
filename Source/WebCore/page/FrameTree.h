@@ -47,7 +47,7 @@ public:
     WEBCORE_EXPORT AtomString uniqueName() const;
     WEBCORE_EXPORT void setSpecifiedName(const AtomString&);
     WEBCORE_EXPORT void clearName();
-    WEBCORE_EXPORT Frame* LEGACY_NODELETE parent() const;
+    NODELETE WEBCORE_EXPORT Frame* parent() const;
 
     Frame* nextSibling() const { return m_nextSibling.get(); }
     Frame* previousSibling() const { return m_previousSibling.get(); }
@@ -57,38 +57,38 @@ public:
     RefPtr<Frame> firstRenderedChild() const;
     RefPtr<Frame> nextRenderedSibling() const;
 
-    LocalFrame* LEGACY_NODELETE firstLocalDescendant() const;
-    LocalFrame* LEGACY_NODELETE nextLocalSibling() const;
+    NODELETE LocalFrame* firstLocalDescendant() const;
+    NODELETE LocalFrame* nextLocalSibling() const;
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE isDescendantOf(const Frame* ancestor) const;
+    NODELETE WEBCORE_EXPORT bool isDescendantOf(const Frame* ancestor) const;
 
-    bool LEGACY_NODELETE containsRemoteFrame() const;
+    NODELETE bool containsRemoteFrame() const;
     bool containsLocalFrame() const;
     WEBCORE_EXPORT bool hasRemoteFrameAncestor() const;
     
-    WEBCORE_EXPORT Frame* LEGACY_NODELETE traverseNext(const Frame* stayWithin = nullptr) const;
-    Frame* LEGACY_NODELETE traverseNextSkippingChildren(const Frame* stayWithin = nullptr) const;
+    NODELETE WEBCORE_EXPORT Frame* traverseNext(const Frame* stayWithin = nullptr) const;
+    NODELETE Frame* traverseNextSkippingChildren(const Frame* stayWithin = nullptr) const;
     // Rendered means being the main frame or having an ownerRenderer. It may not have been parented in the Widget tree yet (see WidgetHierarchyUpdatesSuspensionScope).
     WEBCORE_EXPORT RefPtr<Frame> traverseNextRendered(const Frame* stayWithin = nullptr) const;
-    WEBCORE_EXPORT Frame* LEGACY_NODELETE traverseNext(CanWrap, DidWrap* = nullptr) const;
-    WEBCORE_EXPORT Frame* LEGACY_NODELETE traversePrevious(CanWrap, DidWrap* = nullptr) const;
+    NODELETE WEBCORE_EXPORT Frame* traverseNext(CanWrap, DidWrap* = nullptr) const;
+    NODELETE WEBCORE_EXPORT Frame* traversePrevious(CanWrap, DidWrap* = nullptr) const;
 
-    Frame* LEGACY_NODELETE traverseNextInPostOrder(CanWrap) const;
+    NODELETE Frame* traverseNextInPostOrder(CanWrap) const;
 
     WEBCORE_EXPORT void appendChild(Frame&);
     WEBCORE_EXPORT void detachFromParent();
     WEBCORE_EXPORT void removeChild(Frame&);
     WEBCORE_EXPORT void replaceChild(Frame&, Frame&);
 
-    Frame* LEGACY_NODELETE child(unsigned index) const;
-    Frame* LEGACY_NODELETE childBySpecifiedName(const AtomString& name) const;
-    WEBCORE_EXPORT Frame* LEGACY_NODELETE descendantByFrameID(FrameIdentifier) const;
+    NODELETE Frame* child(unsigned index) const;
+    NODELETE Frame* childBySpecifiedName(const AtomString& name) const;
+    NODELETE WEBCORE_EXPORT Frame* descendantByFrameID(FrameIdentifier) const;
     WEBCORE_EXPORT RefPtr<Frame> findByUniqueName(const AtomString&, Frame& activeFrame) const;
     WEBCORE_EXPORT RefPtr<Frame> findBySpecifiedName(const AtomString&, Frame& activeFrame) const;
-    WEBCORE_EXPORT unsigned LEGACY_NODELETE childCount() const;
-    unsigned LEGACY_NODELETE descendantCount() const;
-    WEBCORE_EXPORT Frame& LEGACY_NODELETE top() const;
-    unsigned LEGACY_NODELETE depth() const;
+    NODELETE WEBCORE_EXPORT unsigned childCount() const;
+    NODELETE unsigned descendantCount() const;
+    NODELETE WEBCORE_EXPORT Frame& top() const;
+    NODELETE unsigned depth() const;
 
     bool hasRemoteFrameDescendant() const { return !!m_remoteFrameDescendantCount; }
 
@@ -98,19 +98,19 @@ public:
     unsigned scopedChildCount() const;
 
 private:
-    Frame* LEGACY_NODELETE deepFirstChild() const;
-    Frame* LEGACY_NODELETE deepLastChild() const;
-    Frame* LEGACY_NODELETE nextAncestorSibling(const Frame* stayWithin) const;
+    NODELETE Frame* deepFirstChild() const;
+    NODELETE Frame* deepLastChild() const;
+    NODELETE Frame* nextAncestorSibling(const Frame* stayWithin) const;
 
-    unsigned LEGACY_NODELETE remoteFrameCountIncludingSelf() const;
+    NODELETE unsigned remoteFrameCountIncludingSelf() const;
     void adjustRemoteFrameDescendantCountForSelfAndAncestors(int delta);
 #if ASSERT_ENABLED
     unsigned remoteFrameDescendantCountSlow() const;
 #endif
 
-    RefPtr<Frame> LEGACY_NODELETE scopedChild(unsigned index, TreeScope*) const;
+    NODELETE RefPtr<Frame> scopedChild(unsigned index, TreeScope*) const;
     RefPtr<Frame> scopedChild(NOESCAPE const Function<bool(const FrameTree&)>& isMatch, TreeScope*) const;
-    unsigned LEGACY_NODELETE scopedChildCount(TreeScope*) const;
+    NODELETE unsigned scopedChildCount(TreeScope*) const;
 
     template<typename F> RefPtr<Frame> find(const AtomString& name, NOESCAPE const F& nameGetter, Frame& activeFrame) const;
 

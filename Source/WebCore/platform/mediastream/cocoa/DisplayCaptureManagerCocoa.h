@@ -33,7 +33,7 @@ namespace WebCore {
 
 class DisplayCaptureManagerCocoa final : public DisplayCaptureManager {
 public:
-    static DisplayCaptureManagerCocoa& LEGACY_NODELETE singleton();
+    NODELETE static DisplayCaptureManagerCocoa& singleton();
 
     DisplayCaptureManagerCocoa() = default;
 

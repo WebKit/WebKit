@@ -94,8 +94,8 @@ public:
 
     ExceptionOr<DOMException*> error() const;
 
-    IDBTransaction* LEGACY_NODELETE transaction() const;
-    IDBTransaction* LEGACY_NODELETE transactionForBindings() const;
+    NODELETE IDBTransaction* transaction() const;
+    NODELETE IDBTransaction* transactionForBindings() const;
     
     enum class ReadyState { Pending, Done };
     ReadyState readyState() const { return m_readyState; }
@@ -103,11 +103,11 @@ public:
     bool isDone() const { return m_readyState == ReadyState::Done; }
 
     std::optional<IDBObjectStoreIdentifier> sourceObjectStoreIdentifier() const;
-    std::optional<IDBIndexIdentifier> LEGACY_NODELETE sourceIndexIdentifier() const;
-    IndexedDB::ObjectStoreRecordType LEGACY_NODELETE requestedObjectStoreRecordType() const;
-    IndexedDB::IndexRecordType LEGACY_NODELETE requestedIndexRecordType() const;
+    NODELETE std::optional<IDBIndexIdentifier> sourceIndexIdentifier() const;
+    NODELETE IndexedDB::ObjectStoreRecordType requestedObjectStoreRecordType() const;
+    NODELETE IndexedDB::IndexRecordType requestedIndexRecordType() const;
 
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
 
     // ActiveDOMObject.
     void ref() const final { ThreadSafeRefCounted::ref(); }
@@ -134,7 +134,7 @@ public:
 
     void setTransactionOperationID(uint64_t transactionOperationID) { m_currentTransactionOperationID = transactionOperationID; }
     bool willAbortTransactionAfterDispatchingEvent() const;
-    void LEGACY_NODELETE transactionTransitionedToFinishing();
+    NODELETE void transactionTransitionedToFinishing();
     bool isEventBeingDispatched() const { return !!m_eventBeingDispatched; }
 
 protected:
@@ -160,7 +160,7 @@ private:
     EventTargetInterfaceType eventTargetInterface() const override;
 
     // ActiveDOMObject.
-    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
+    NODELETE bool virtualHasPendingActivity() const final;
     void stop() final;
 
     virtual void cancelForStop();
@@ -212,7 +212,7 @@ private:
     RefPtr<Event> m_eventBeingDispatched;
 };
 
-WebCoreOpaqueRoot LEGACY_NODELETE root(IDBRequest*);
+NODELETE WebCoreOpaqueRoot root(IDBRequest*);
 
 } // namespace WebCore
 

@@ -47,15 +47,15 @@ struct PositionAreaValue {
     constexpr PositionAreaSpan blockOrXAxis() const { return m_blockOrXAxis; }
     constexpr PositionAreaSpan inlineOrYAxis() const { return m_inlineOrYAxis; }
 
-    PositionAreaSpan LEGACY_NODELETE spanForAxis(BoxAxis physicalAxis, WritingMode containerWritingMode, WritingMode selfWritingMode) const;
-    PositionAreaSpan LEGACY_NODELETE spanForAxis(LogicalBoxAxis logicalAxis, WritingMode containerWritingMode, WritingMode selfWritingMode) const;
+    NODELETE PositionAreaSpan spanForAxis(BoxAxis physicalAxis, WritingMode containerWritingMode, WritingMode selfWritingMode) const;
+    NODELETE PositionAreaSpan spanForAxis(LogicalBoxAxis logicalAxis, WritingMode containerWritingMode, WritingMode selfWritingMode) const;
 
     // Start/end based on container's coordinate-increasing direction (RenderBox coordinates)
-    PositionAreaTrack LEGACY_NODELETE coordMatchedTrackForAxis(BoxAxis, WritingMode containerWritingMode, WritingMode selfWritingMode) const;
+    NODELETE PositionAreaTrack coordMatchedTrackForAxis(BoxAxis, WritingMode containerWritingMode, WritingMode selfWritingMode) const;
 
-    ItemPosition LEGACY_NODELETE defaultAlignmentForAxis(BoxAxis, WritingMode containerWritingMode, WritingMode selfWritingMode) const;
+    NODELETE ItemPosition defaultAlignmentForAxis(BoxAxis, WritingMode containerWritingMode, WritingMode selfWritingMode) const;
 
-    constexpr bool LEGACY_NODELETE operator==(const PositionAreaValue&) const = default;
+    NODELETE constexpr bool operator==(const PositionAreaValue&) const = default;
 
 private:
     PositionAreaSpan m_blockOrXAxis;

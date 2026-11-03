@@ -133,7 +133,7 @@ void GPURenderPipeline::updateFragmentShader(const String& source, CompletionHan
     updateShader(source, false, WTF::move(completionHandler));
 }
 
-static bool LEGACY_NODELETE isInspectorHighlightableCanvasFormat(WebGPU::TextureFormat format)
+NODELETE static bool isInspectorHighlightableCanvasFormat(WebGPU::TextureFormat format)
 {
     switch (format) {
     case WebGPU::TextureFormat::Rgba8unorm:
@@ -147,7 +147,7 @@ static bool LEGACY_NODELETE isInspectorHighlightableCanvasFormat(WebGPU::Texture
     }
 }
 
-static bool LEGACY_NODELETE usesBlendConstant(const WebGPU::BlendComponent& component)
+NODELETE static bool usesBlendConstant(const WebGPU::BlendComponent& component)
 {
     return component.srcFactor == WebGPU::BlendFactor::Constant
         || component.srcFactor == WebGPU::BlendFactor::OneMinusConstant
@@ -155,7 +155,7 @@ static bool LEGACY_NODELETE usesBlendConstant(const WebGPU::BlendComponent& comp
         || component.dstFactor == WebGPU::BlendFactor::OneMinusConstant;
 }
 
-static bool LEGACY_NODELETE usesBlendConstant(const std::optional<WebGPU::BlendState>& blendState)
+NODELETE static bool usesBlendConstant(const std::optional<WebGPU::BlendState>& blendState)
 {
     return blendState && (usesBlendConstant(blendState->color) || usesBlendConstant(blendState->alpha));
 }

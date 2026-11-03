@@ -56,7 +56,7 @@ struct CSSSelectorParserContext {
     friend bool operator==(const CSSSelectorParserContext&, const CSSSelectorParserContext&) = default;
 };
 
-void LEGACY_NODELETE add(Hasher&, const CSSSelectorParserContext&);
+NODELETE void add(Hasher&, const CSSSelectorParserContext&);
 
 } // namespace WebCore
 

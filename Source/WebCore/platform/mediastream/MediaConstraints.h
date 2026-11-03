@@ -389,7 +389,7 @@ public:
     {
     }
 
-    void LEGACY_NODELETE merge(const IntConstraint& other)
+    NODELETE void merge(const IntConstraint& other)
     {
         NumericConstraint::innerMerge(other);
     }
@@ -636,9 +636,9 @@ public:
     WEBCORE_EXPORT void set(MediaConstraintType, std::optional<StringConstraint>&&);
     void set(MediaConstraintType, const MediaConstraint&);
 
-    void LEGACY_NODELETE merge(MediaConstraintType, const IntConstraint&);
-    void LEGACY_NODELETE merge(MediaConstraintType, const DoubleConstraint&);
-    void LEGACY_NODELETE merge(MediaConstraintType, const BooleanConstraint&);
+    NODELETE void merge(MediaConstraintType, const IntConstraint&);
+    NODELETE void merge(MediaConstraintType, const DoubleConstraint&);
+    NODELETE void merge(MediaConstraintType, const BooleanConstraint&);
     void merge(MediaConstraintType, const StringConstraint&);
     void merge(MediaConstraintType, const MediaConstraint&);
 

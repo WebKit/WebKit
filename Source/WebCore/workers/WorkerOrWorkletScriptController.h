@@ -87,12 +87,12 @@ public:
     // forbidExecution()/isExecutionForbidden() to guard against reentry into JS.
     // Can be called from any thread.
     void scheduleExecutionTermination();
-    WEBCORE_EXPORT bool LEGACY_NODELETE isTerminatingExecution() const;
+    NODELETE WEBCORE_EXPORT bool isTerminatingExecution() const;
 
     // Called on Worker thread when JS exits with termination exception caused by forbidExecution() request,
     // or by Worker thread termination code to prevent future entry into JS.
-    WEBCORE_EXPORT void LEGACY_NODELETE forbidExecution();
-    bool LEGACY_NODELETE isExecutionForbidden() const;
+    NODELETE WEBCORE_EXPORT void forbidExecution();
+    NODELETE bool isExecutionForbidden() const;
 
     JSC::VM& vm() { return *m_vm; }
 

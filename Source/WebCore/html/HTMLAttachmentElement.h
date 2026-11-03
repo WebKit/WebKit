@@ -52,7 +52,7 @@ public:
     static URL archiveResourceURL(const String&);
 
     WEBCORE_EXPORT URL blobURL() const;
-    WEBCORE_EXPORT File* LEGACY_NODELETE file() const;
+    NODELETE WEBCORE_EXPORT File* file() const;
 
     enum class UpdateDisplayAttributes : bool { No, Yes };
     void setFile(RefPtr<File>&&, UpdateDisplayAttributes = UpdateDisplayAttributes::No);
@@ -71,16 +71,16 @@ public:
     void removingSteps(RemovalType, ContainerNode&) final;
 
     String ensureUniqueIdentifier();
-    AttachmentAssociatedElement* LEGACY_NODELETE associatedElement() const;
+    NODELETE AttachmentAssociatedElement* associatedElement() const;
     AttachmentAssociatedElementType associatedElementType() const;
 
-    WEBCORE_EXPORT String LEGACY_NODELETE attachmentTitle() const;
-    const AtomString& LEGACY_NODELETE attachmentSubtitle() const;
-    const AtomString& LEGACY_NODELETE attachmentActionForDisplay() const;
+    NODELETE WEBCORE_EXPORT String attachmentTitle() const;
+    NODELETE const AtomString& attachmentSubtitle() const;
+    NODELETE const AtomString& attachmentActionForDisplay() const;
     String attachmentTitleForDisplay() const;
-    const AtomString& LEGACY_NODELETE attachmentSubtitleForDisplay() const;
-    WEBCORE_EXPORT String LEGACY_NODELETE attachmentType() const;
-    String LEGACY_NODELETE attachmentPath() const;
+    NODELETE const AtomString& attachmentSubtitleForDisplay() const;
+    NODELETE WEBCORE_EXPORT String attachmentType() const;
+    NODELETE String attachmentPath() const;
     RefPtr<NativeImage> icon() const { return m_icon; }
     void requestIconIfNeededWithSize(const FloatSize&);
     void requestWideLayoutIconIfNeeded();
@@ -95,7 +95,7 @@ public:
 
     bool isWideLayout() const { return m_implementation == Implementation::WideLayout; }
     HTMLElement* wideLayoutShadowContainer() const { return m_containerElement.get(); }
-    HTMLElement* LEGACY_NODELETE wideLayoutImageElement() const;
+    NODELETE HTMLElement* wideLayoutImageElement() const;
     WEBCORE_EXPORT static String shadowUserAgentStyleSheetText();
 
     enum class HighlightState : uint8_t {
@@ -119,7 +119,7 @@ private:
     void updateSaveButton(bool);
     void updateImage();
 
-    void LEGACY_NODELETE setNeedsIconRequest();
+    NODELETE void setNeedsIconRequest();
 
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const final { return true; }

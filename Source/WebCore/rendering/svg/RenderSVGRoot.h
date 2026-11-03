@@ -43,11 +43,11 @@ public:
     RenderSVGRoot(SVGSVGElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGRoot();
 
-    SVGSVGElement& LEGACY_NODELETE svgSVGElement() const;
+    NODELETE SVGSVGElement& svgSVGElement() const;
     FloatSize computeViewportSize() const;
 
     bool isEmbeddedThroughSVGImage() const;
-    bool LEGACY_NODELETE isEmbeddedThroughFrameContainingSVGDocument() const;
+    NODELETE bool isEmbeddedThroughFrameContainingSVGDocument() const;
 
     FloatSize computeIntrinsicSize() const;
     FloatSize preferredAspectRatioAsSize() const final;
@@ -59,9 +59,9 @@ public:
     IntSize containerSize() const { return m_containerSize; }
     void setContainerSize(const IntSize& containerSize) { m_containerSize = containerSize; }
 
-    bool LEGACY_NODELETE hasRelativeDimensions() const final;
+    NODELETE bool hasRelativeDimensions() const final;
 
-    bool LEGACY_NODELETE shouldApplyViewportClip() const;
+    NODELETE bool shouldApplyViewportClip() const;
 
     FloatRect objectBoundingBox() const final
     {
@@ -84,7 +84,7 @@ public:
 
     void invalidateCachedVisualOverflowRect() final { m_cachedVisualOverflowRect = std::nullopt; }
 
-    RenderSVGViewportContainer* LEGACY_NODELETE viewportContainer() const;
+    NODELETE RenderSVGViewportContainer* viewportContainer() const;
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     AXCustomColorSVGClassifier::Characteristics axCustomColorModeCharacteristics() const { return m_axCustomColorModeCharacteristics; }
@@ -104,7 +104,7 @@ private:
     bool paintingAffectedByExternalOffset() const;
 
     // To prevent certain legacy code paths to hit assertions in debug builds, when switching off LBSE (during the teardown of the LBSE tree).
-    std::optional<FloatRect> LEGACY_NODELETE computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, const VisibleRectContext&, VisibleRectState) const final;
+    NODELETE std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, const VisibleRectContext&, VisibleRectState) const final;
 
     LayoutUnit computeReplacedLogicalWidth(IsComputingIntrinsicSize  = IsComputingIntrinsicSize::No) const final;
     LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const final;

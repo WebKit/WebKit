@@ -47,8 +47,8 @@ public:
     static Ref<AudioWorklet> create(BaseAudioContext&);
     ~AudioWorklet();
 
-    AudioWorkletMessagingProxy* LEGACY_NODELETE proxy() const;
-    BaseAudioContext* LEGACY_NODELETE audioContext() const;
+    NODELETE AudioWorkletMessagingProxy* proxy() const;
+    NODELETE BaseAudioContext* audioContext() const;
 
     void addNode(AudioWorkletNode&);
     void removeNode(AudioWorkletNode&);

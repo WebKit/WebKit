@@ -64,11 +64,11 @@ Element* deprecatedEnclosingBlockFlowElement(Node*); // Use enclosingBlock inste
 RefPtr<Element> enclosingBlock(RefPtr<Node>, EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross);
 RefPtr<Element> enclosingTableCell(const Position&);
 RefPtr<Node> enclosingEmptyListItem(const VisiblePosition&);
-RefPtr<Element> LEGACY_NODELETE enclosingAnchorElement(const Position&);
+NODELETE RefPtr<Element> enclosingAnchorElement(const Position&);
 RefPtr<Element> enclosingElementWithTag(const Position&, const QualifiedName&);
 RefPtr<Node> enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross);
-HTMLSpanElement* LEGACY_NODELETE tabSpanNode(Node*);
-HTMLSpanElement* LEGACY_NODELETE parentTabSpanNode(Node*);
+NODELETE HTMLSpanElement* tabSpanNode(Node*);
+NODELETE HTMLSpanElement* parentTabSpanNode(Node*);
 RefPtr<Element> isLastPositionBeforeTable(const VisiblePosition&); // FIXME: Strange to name this isXXX, but return an element.
 RefPtr<Element> isFirstPositionAfterTable(const VisiblePosition&); // FIXME: Strange to name this isXXX, but return an element.
 
@@ -79,8 +79,8 @@ Node* previousLeafNode(const Node*);
 WEBCORE_EXPORT int lastOffsetForEditing(const Node&);
 int caretMinOffset(const Node&);
 int caretMaxOffset(const Node&);
-unsigned LEGACY_NODELETE convertOffsetInTextFragmentToNodeOffset(const RenderObject&, unsigned offset);
-unsigned LEGACY_NODELETE convertNodeOffsetToOffsetInTextFragment(const RenderObject&, unsigned offset);
+NODELETE unsigned convertOffsetInTextFragmentToNodeOffset(const RenderObject&, unsigned offset);
+NODELETE unsigned convertNodeOffsetToOffsetInTextFragment(const RenderObject&, unsigned offset);
 
 bool hasEditableStyle(const Node&, EditableType);
 bool isEditableNode(const Node&);
@@ -94,18 +94,18 @@ bool editingIgnoresContent(const Node&);
 bool canHaveChildrenForEditing(const Node&);
 bool isAtomicNode(const Node*);
 
-bool LEGACY_NODELETE isBlock(const Node&);
-bool LEGACY_NODELETE isBlockFlowElement(const Node&);
-bool LEGACY_NODELETE isInline(const Node&);
+NODELETE bool isBlock(const Node&);
+NODELETE bool isBlockFlowElement(const Node&);
+NODELETE bool isInline(const Node&);
 bool isMailBlockquote(const Node&);
-bool LEGACY_NODELETE isRenderedTable(const Node*);
-bool LEGACY_NODELETE isTableCell(const Node&);
-bool LEGACY_NODELETE isEmptyTableCell(const Node*);
-bool LEGACY_NODELETE isTableStructureNode(const Node&);
-bool LEGACY_NODELETE isListHTMLElement(Node*);
-bool LEGACY_NODELETE isListItem(const Node&);
+NODELETE bool isRenderedTable(const Node*);
+NODELETE bool isTableCell(const Node&);
+NODELETE bool isEmptyTableCell(const Node*);
+NODELETE bool isTableStructureNode(const Node&);
+NODELETE bool isListHTMLElement(Node*);
+NODELETE bool isListItem(const Node&);
 bool isRenderedAsNonInlineTableImageOrHR(const Node*);
-bool LEGACY_NODELETE isNonTableCellHTMLBlockElement(const Node*);
+NODELETE bool isNonTableCellHTMLBlockElement(const Node*);
 
 bool isNodeVisiblyContainedWithin(Node&, const SimpleRange&);
 
@@ -224,7 +224,7 @@ bool deprecatedIsEditingWhitespace(char16_t);
 // FIXME: Can't answer this question correctly without being passed the white-space mode.
 bool deprecatedIsCollapsibleWhitespace(char16_t);
 
-bool LEGACY_NODELETE isAmbiguousBoundaryCharacter(char16_t);
+NODELETE bool isAmbiguousBoundaryCharacter(char16_t);
 
 String stringWithRebalancedWhitespace(const String&, bool startIsStartOfParagraph, bool shouldEmitNBSPbeforeEnd);
 const String& nonBreakingSpaceString();

@@ -224,7 +224,7 @@ Ref<CoreAudioCaptureUnit> CoreAudioCaptureUnit::createNonVPIOUnit()
     return adoptRef(*new CoreAudioCaptureUnit(CanEnableEchoCancellation::No));
 }
 
-static WeakHashSet<CoreAudioCaptureUnit>& LEGACY_NODELETE allCoreAudioCaptureUnits()
+NODELETE static WeakHashSet<CoreAudioCaptureUnit>& allCoreAudioCaptureUnits()
 {
     ASSERT(isMainThread());
 
@@ -249,7 +249,7 @@ void CoreAudioCaptureUnit::forEach(NOESCAPE const Function<void(CoreAudioCapture
     allCoreAudioCaptureUnits().forEach(callback);
 }
 
-static Function<void(CoreAudioCaptureUnit&)>& LEGACY_NODELETE coreAudioCaptureNewUnitCallback()
+NODELETE static Function<void(CoreAudioCaptureUnit&)>& coreAudioCaptureNewUnitCallback()
 {
     ASSERT(isMainThread());
 

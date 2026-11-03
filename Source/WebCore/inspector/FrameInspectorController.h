@@ -77,21 +77,21 @@ public:
 
     OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 
-    WEBCORE_EXPORT void LEGACY_NODELETE ref() const;
+    NODELETE WEBCORE_EXPORT void ref() const;
     WEBCORE_EXPORT void deref() const;
 
     // InspectorOverlayOwner. Anchors on the frame, which owns this controller and so the overlay.
-    void LEGACY_NODELETE overlayOwnerRef() const final { ref(); }
+    NODELETE void overlayOwnerRef() const final { ref(); }
     void overlayOwnerDeref() const final { deref(); }
-    Page* LEGACY_NODELETE overlayOwnerPage() const final;
-    LocalFrame* LEGACY_NODELETE overlayOwnerFrame() const final;
-    InspectorBackendClient* LEGACY_NODELETE overlayOwnerBackendClient() const final;
+    NODELETE Page* overlayOwnerPage() const final;
+    NODELETE LocalFrame* overlayOwnerFrame() const final;
+    NODELETE InspectorBackendClient* overlayOwnerBackendClient() const final;
     Vector<size_t> overlayOwnerFlexLineStarts(const RenderObject&) const final;
 
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
 
     // True when this frame's own overlay holds the highlight state, not the page overlay.
-    WEBCORE_EXPORT bool LEGACY_NODELETE hasOverlayContentToDraw() const;
+    NODELETE WEBCORE_EXPORT bool hasOverlayContentToDraw() const;
 
     WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel&, bool isAutomaticInspection = false, bool immediatelyPause = false);
     WEBCORE_EXPORT void disconnectFrontend(Inspector::FrontendChannel&);
@@ -109,7 +109,7 @@ public:
 
     // Unlike debugger(), this is null while the frame's debugger exists but nothing is debugging
     // the frame yet. Callers that hand the debugger to a global object need this narrower answer.
-    JSC::Debugger* LEGACY_NODELETE attachedDebugger() const;
+    NODELETE JSC::Debugger* attachedDebugger() const;
 
     // InspectorEnvironment
     bool developerExtrasEnabled() const override;

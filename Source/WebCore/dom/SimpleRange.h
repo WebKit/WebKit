@@ -84,34 +84,34 @@ template<typename ...T> auto makeSimpleRange(T&& ...arguments) -> decltype(makeS
 WEBCORE_EXPORT std::optional<SimpleRange> makeRangeSelectingNode(Node&);
 WEBCORE_EXPORT SimpleRange makeRangeSelectingNodeContents(Node&);
 
-template<TreeType = Tree> Node* LEGACY_NODELETE commonInclusiveAncestor(const SimpleRange&);
+template<TreeType = Tree> NODELETE Node* commonInclusiveAncestor(const SimpleRange&);
 
-template<TreeType = Tree> bool LEGACY_NODELETE contains(const SimpleRange&, const BoundaryPoint&);
-template<TreeType = Tree> bool contains(const SimpleRange&, const std::optional<BoundaryPoint>&);
-template<TreeType = Tree> bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
+template<TreeType = Tree> NODELETE bool contains(const SimpleRange&, const BoundaryPoint&);
+template<TreeType = Tree> NODELETE bool contains(const SimpleRange&, const std::optional<BoundaryPoint>&);
+template<TreeType = Tree> NODELETE bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
 template<TreeType = Tree> bool contains(const SimpleRange&, const Node&);
 
-template<> WEBCORE_EXPORT bool contains<ComposedTree>(const SimpleRange&, const std::optional<BoundaryPoint>&);
+template<> NODELETE WEBCORE_EXPORT bool contains<ComposedTree>(const SimpleRange&, const std::optional<BoundaryPoint>&);
 
-WEBCORE_EXPORT bool contains(TreeType, const SimpleRange& outerRange, const SimpleRange& innerRange);
+NODELETE WEBCORE_EXPORT bool contains(TreeType, const SimpleRange& outerRange, const SimpleRange& innerRange);
 WEBCORE_EXPORT bool contains(TreeType, const SimpleRange&, const Node&);
-WEBCORE_EXPORT bool contains(TreeType, const SimpleRange&, const BoundaryPoint&);
+NODELETE WEBCORE_EXPORT bool contains(TreeType, const SimpleRange&, const BoundaryPoint&);
 
-template<TreeType = Tree> bool intersects(const SimpleRange&, const SimpleRange&);
+template<TreeType = Tree> NODELETE bool intersects(const SimpleRange&, const SimpleRange&);
 template<TreeType = Tree> bool intersects(const SimpleRange&, const Node&);
 
-WEBCORE_EXPORT bool intersectsForTesting(TreeType, const SimpleRange&, const SimpleRange&);
+NODELETE WEBCORE_EXPORT bool intersectsForTesting(TreeType, const SimpleRange&, const SimpleRange&);
 WEBCORE_EXPORT bool intersectsForTesting(TreeType, const SimpleRange&, const Node&);
 
 // Returns equivalent if point is in range.
-template<TreeType = Tree> std::partial_ordering treeOrder(const SimpleRange&, const BoundaryPoint&);
-template<TreeType = Tree> std::partial_ordering treeOrder(const BoundaryPoint&, const SimpleRange&);
+template<TreeType = Tree> NODELETE std::partial_ordering treeOrder(const SimpleRange&, const BoundaryPoint&);
+template<TreeType = Tree> NODELETE std::partial_ordering treeOrder(const BoundaryPoint&, const SimpleRange&);
 
 struct OffsetRange {
     unsigned start { 0 };
     unsigned end { 0 };
 };
-OffsetRange LEGACY_NODELETE characterDataOffsetRange(const SimpleRange&, const Node&);
+NODELETE OffsetRange characterDataOffsetRange(const SimpleRange&, const Node&);
 
 // FIXME: Start of functions that are deprecated since they silently default to ComposedTree.
 

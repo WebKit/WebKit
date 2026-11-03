@@ -35,12 +35,12 @@ namespace WebCore {
 class WebGLSync final : public WebGLObject {
 public:
     virtual ~WebGLSync();
-    static Ref<WebGLSync> LEGACY_NODELETE createLost();
+    NODELETE static Ref<WebGLSync> createLost();
     static Ref<WebGLSync> create(WebGLRenderingContextBase&);
 
     void updateCache(WebGLRenderingContextBase&);
-    GCGLint LEGACY_NODELETE getCachedResult(GCGLenum pname) const;
-    bool LEGACY_NODELETE isSignaled() const;
+    NODELETE GCGLint getCachedResult(GCGLenum pname) const;
+    NODELETE bool isSignaled() const;
     void scheduleAllowCacheUpdate(WebGLRenderingContextBase&);
 
     bool isUsable() const { return object() && !isDeleted(); }

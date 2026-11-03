@@ -149,7 +149,7 @@ static OptionSet<AcceleratedEffectProperty> acceleratedPropertyFromCSSProperty(A
     }
 }
 
-static CSSPropertyID LEGACY_NODELETE cssPropertyFromAcceleratedProperty(AcceleratedEffectProperty property)
+NODELETE static CSSPropertyID cssPropertyFromAcceleratedProperty(AcceleratedEffectProperty property)
 {
     switch (property) {
     case AcceleratedEffectProperty::Opacity:

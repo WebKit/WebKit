@@ -48,12 +48,12 @@ public:
     WorkerGlobalScope& wrapped() const { return m_wrapped; }
 
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue);
-    static bool LEGACY_NODELETE supportsRichSourceInfo(const JSC::JSGlobalObject*);
-    static bool LEGACY_NODELETE shouldInterruptScript(const JSC::JSGlobalObject*);
-    static bool LEGACY_NODELETE shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
+    NODELETE static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
+    NODELETE static bool shouldInterruptScript(const JSC::JSGlobalObject*);
+    NODELETE static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
     static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
-    static JSC::ScriptExecutionStatus LEGACY_NODELETE scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
-    static void LEGACY_NODELETE reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
+    NODELETE static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
+    NODELETE static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
 
 protected:
     JSWorkerGlobalScopeBase(JSC::VM&, JSC::Structure*, Ref<WorkerGlobalScope>&&);

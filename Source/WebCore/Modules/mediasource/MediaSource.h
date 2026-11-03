@@ -78,7 +78,7 @@ class MediaSource
 {
     WTF_MAKE_TZONE_ALLOCATED(MediaSource);
 public:
-    static void LEGACY_NODELETE setRegistry(URLRegistry*);
+    NODELETE static void setRegistry(URLRegistry*);
     static MediaSource* lookup(const String& url) { return s_registry ? downcast<MediaSource>(s_registry->lookup(url)) : nullptr; }
 
     static Ref<MediaSource> create(ScriptExecutionContext&, MediaSourceInit&&);
@@ -106,7 +106,7 @@ public:
     enum class EndOfStreamError { Network, Decode };
     void streamEndedWithError(std::optional<EndOfStreamError>);
 
-    bool LEGACY_NODELETE attachToElement(WeakPtr<HTMLMediaElement>&&);
+    NODELETE bool attachToElement(WeakPtr<HTMLMediaElement>&&);
     void elementIsShuttingDown();
     void detachFromElement();
     PlatformTimeRanges seekable();
@@ -121,8 +121,8 @@ public:
     ReadyState readyState() const;
     ExceptionOr<void> endOfStream(std::optional<EndOfStreamError>);
 
-    Ref<SourceBufferList> LEGACY_NODELETE sourceBuffers() const;
-    Ref<SourceBufferList> LEGACY_NODELETE activeSourceBuffers() const;
+    NODELETE Ref<SourceBufferList> sourceBuffers() const;
+    NODELETE Ref<SourceBufferList> activeSourceBuffers() const;
     ExceptionOr<Ref<SourceBuffer>> addSourceBuffer(const String& type);
     ExceptionOr<void> removeSourceBuffer(SourceBuffer&);
     static bool isTypeSupported(ScriptExecutionContext&, const String& type);
@@ -134,7 +134,7 @@ public:
 #endif
     bool detachable() const { return m_detachable; }
 
-    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
+    NODELETE ScriptExecutionContext* scriptExecutionContext() const final;
 
     static bool contentTypeShouldGenerateTimestamps(const ContentType&);
 
@@ -142,18 +142,18 @@ public:
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "MediaSource"_s; }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const final;
+    NODELETE WTFLogChannel& logChannel() const final;
     void setLogIdentifier(uint64_t);
 
     Ref<Logger> logger(ScriptExecutionContext&);
-    void LEGACY_NODELETE didLogMessage(const WTFLogChannel&, WTFLogLevel, std::optional<WTFLogLocation>, Vector<JSONLogValue>&&) final;
+    NODELETE void didLogMessage(const WTFLogChannel&, WTFLogLevel, std::optional<WTFLogLocation>, Vector<JSONLogValue>&&) final;
 #endif
 
     virtual bool isManaged() const { return false; }
     virtual bool streaming() const { return false; }
     void memoryPressure();
 
-    void LEGACY_NODELETE setAsSrcObject(bool);
+    NODELETE void setAsSrcObject(bool);
 
     // Called by SourceBuffer.
     void sourceBufferBufferedChanged();
@@ -168,7 +168,7 @@ public:
     void addTextTrackMirrorToElement(Ref<InbandTextTrackPrivate>&&);
     void addVideoTrackMirrorToElement(Ref<VideoTrackPrivate>&&, bool selected);
 
-    Ref<MediaSourcePrivateClient> LEGACY_NODELETE client() const;
+    NODELETE Ref<MediaSourcePrivateClient> client() const;
 
 protected:
     MediaSource(ScriptExecutionContext&, MediaSourceInit&&);
@@ -189,7 +189,7 @@ private:
 
     // ActiveDOMObject.
     void stop() final;
-    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
+    NODELETE bool virtualHasPendingActivity() const final;
 
     static bool isTypeSupported(ScriptExecutionContext&, const String& type, Vector<ContentType>&& contentTypesRequiringHardwareSupport);
 

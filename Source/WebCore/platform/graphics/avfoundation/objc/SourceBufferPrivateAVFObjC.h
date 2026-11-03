@@ -90,15 +90,15 @@ public:
 
     void didProvideContentKeyRequestIdentifierForTrackID(Ref<SharedBuffer>&&, TrackID);
 
-    bool LEGACY_NODELETE hasSelectedVideo() const;
+    NODELETE bool hasSelectedVideo() const;
 
     void videoTrackDidChangeSelected(TrackID, bool selected);
     void audioTrackDidChangeEnabled(TrackID, bool enabled);
 
-    FloatSize LEGACY_NODELETE naturalSize();
+    NODELETE FloatSize naturalSize();
     void flushAndReenqueueVideo();
 
-    bool LEGACY_NODELETE needsVideoLayer() const;
+    NODELETE bool needsVideoLayer() const;
 
 #if (ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)) || ENABLE(LEGACY_ENCRYPTED_MEDIA)
     bool waitingForKey() const final { return m_waitingForKey; }
@@ -108,7 +108,7 @@ public:
     void flush();
 
     using TrackIdentifier = TracksRendererManager::TrackIdentifier;
-    std::optional<TrackIdentifier> LEGACY_NODELETE trackIdentifierFor(TrackID) const;
+    NODELETE std::optional<TrackIdentifier> trackIdentifierFor(TrackID) const;
 
     void setVideoRenderer(bool);
 
@@ -156,14 +156,14 @@ private:
     void appendCompleted(bool);
     void destroyRendererTracks();
 
-    bool LEGACY_NODELETE isEnabledVideoTrackID(TrackID) const;
-    bool LEGACY_NODELETE isTextTrack(TrackID) const;
+    NODELETE bool isEnabledVideoTrackID(TrackID) const;
+    NODELETE bool isTextTrack(TrackID) const;
 
-    bool LEGACY_NODELETE hasTrackIdentifierFor(TrackID) const;
+    NODELETE bool hasTrackIdentifierFor(TrackID) const;
     void removeTrackID(TrackID);
 
     RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> player() const;
-    bool LEGACY_NODELETE canEnqueueSample(TrackID, const MediaSampleAVFObjC&);
+    NODELETE bool canEnqueueSample(TrackID, const MediaSampleAVFObjC&);
     bool trackIsBlocked(TrackID) const;
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
@@ -180,7 +180,7 @@ private:
 
     void ensureWeakOnDispatcher(Function<void(SourceBufferPrivateAVFObjC&)>&&);
     void callOnMainThreadWithPlayer(Function<void(MediaPlayerPrivateMediaSourceAVFObjC&)>&&);
-    AudioVideoRenderer& LEGACY_NODELETE renderer() const;
+    NODELETE AudioVideoRenderer& renderer() const;
 
     StdUnorderedMap<TrackID, RefPtr<VideoTrackPrivate>> m_videoTracks WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     StdUnorderedMap<TrackID, RefPtr<AudioTrackPrivate>> m_audioTracks WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());

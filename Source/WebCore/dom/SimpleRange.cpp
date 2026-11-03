@@ -84,7 +84,7 @@ OffsetRange characterDataOffsetRange(const SimpleRange& range, const Node& node)
         &node == range.end.container.ptr() ? range.end.offset : std::numeric_limits<unsigned>::max() };
 }
 
-static RefPtr<Node> LEGACY_NODELETE firstIntersectingNode(const SimpleRange& range)
+NODELETE static RefPtr<Node> firstIntersectingNode(const SimpleRange& range)
 {
     if (range.start.container->isCharacterDataNode())
         return range.start.container.ptr();
@@ -93,7 +93,7 @@ static RefPtr<Node> LEGACY_NODELETE firstIntersectingNode(const SimpleRange& ran
     return NodeTraversal::nextSkippingChildren(range.start.container);
 }
 
-static RefPtr<Node> LEGACY_NODELETE nodePastLastIntersectingNode(const SimpleRange& range)
+NODELETE static RefPtr<Node> nodePastLastIntersectingNode(const SimpleRange& range)
 {
     if (range.end.container->isCharacterDataNode())
         return NodeTraversal::nextSkippingChildren(range.end.container);
@@ -102,7 +102,7 @@ static RefPtr<Node> LEGACY_NODELETE nodePastLastIntersectingNode(const SimpleRan
     return NodeTraversal::nextSkippingChildren(range.end.container);
 }
 
-static RefPtr<Node> LEGACY_NODELETE firstIntersectingNodeWithDeprecatedZeroOffsetStartQuirk(const SimpleRange& range)
+NODELETE static RefPtr<Node> firstIntersectingNodeWithDeprecatedZeroOffsetStartQuirk(const SimpleRange& range)
 {
     if (range.start.container->isCharacterDataNode())
         return range.start.container.ptr();
@@ -150,7 +150,7 @@ void IntersectingNodeIterator::enforceEndInvariant()
     }
 }
 
-template<TreeType treeType> Node* LEGACY_NODELETE commonInclusiveAncestor(const SimpleRange& range)
+template<TreeType treeType> NODELETE Node* commonInclusiveAncestor(const SimpleRange& range)
 {
     return commonInclusiveAncestor<treeType>(range.start.container, range.end.container);
 }
@@ -313,7 +313,7 @@ template<TreeType treeType> bool contains(const Node& outer, const Node& inner)
     return false;
 }
 
-template<> bool LEGACY_NODELETE contains<Tree>(const Node& outer, const Node& inner)
+template<> NODELETE bool contains<Tree>(const Node& outer, const Node& inner)
 {
     // We specialize here because we want to take advantage of optimizations in Node::isDescendantOf.
     return outer.contains(inner);

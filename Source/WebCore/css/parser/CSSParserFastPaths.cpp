@@ -218,7 +218,7 @@ static RefPtr<CSSValue> parseSimpleLengthValue(StringView string, CSSParserMode 
 // Returns the number of characters which form a valid double
 // and are terminated by the given terminator character
 template <typename CharacterType>
-static size_t LEGACY_NODELETE checkForValidDouble(std::span<const CharacterType> string, char terminator)
+NODELETE static size_t checkForValidDouble(std::span<const CharacterType> string, char terminator)
 {
     size_t length = string.size();
     if (length < 1)
@@ -250,7 +250,7 @@ static size_t LEGACY_NODELETE checkForValidDouble(std::span<const CharacterType>
 // Returns the number of characters consumed for parsing a valid double
 // terminated by the given terminator character
 template <typename CharacterType>
-static size_t LEGACY_NODELETE parseDouble(std::span<const CharacterType> string, char terminator, double& value)
+NODELETE static size_t parseDouble(std::span<const CharacterType> string, char terminator, double& value)
 {
     size_t length = checkForValidDouble(string, terminator);
     if (!length)
@@ -286,7 +286,7 @@ static size_t LEGACY_NODELETE parseDouble(std::span<const CharacterType> string,
 }
 
 template <typename CharacterType>
-static std::optional<uint8_t> LEGACY_NODELETE parseColorIntOrPercentage(std::span<const CharacterType>& string, std::optional<char> consumableTerminator, CSSUnitType& expectedUnitType)
+NODELETE static std::optional<uint8_t> parseColorIntOrPercentage(std::span<const CharacterType>& string, std::optional<char> consumableTerminator, CSSUnitType& expectedUnitType)
 {
     auto current = string;
     double localValue = 0;
@@ -354,7 +354,7 @@ static std::optional<uint8_t> LEGACY_NODELETE parseColorIntOrPercentage(std::spa
 }
 
 template <typename CharacterType>
-static inline bool LEGACY_NODELETE isTenthAlpha(std::span<const CharacterType> string)
+NODELETE static inline bool isTenthAlpha(std::span<const CharacterType> string)
 {
     // "0.X"
     if (string.size() == 3 && string[0] == '0' && string[1] == '.' && isASCIIDigit(string[2]))
@@ -368,7 +368,7 @@ static inline bool LEGACY_NODELETE isTenthAlpha(std::span<const CharacterType> s
 }
 
 template <typename CharacterType>
-static inline std::optional<uint8_t> LEGACY_NODELETE parseRGBAlphaValue(std::span<const CharacterType>& string, char terminator)
+NODELETE static inline std::optional<uint8_t> parseRGBAlphaValue(std::span<const CharacterType>& string, char terminator)
 {
     skipWhile<isASCIIWhitespace>(string);
 
@@ -414,7 +414,7 @@ static inline std::optional<uint8_t> LEGACY_NODELETE parseRGBAlphaValue(std::spa
 }
 
 template <typename CharacterType>
-static inline bool LEGACY_NODELETE mightBeRGBA(std::span<const CharacterType> characters)
+NODELETE static inline bool mightBeRGBA(std::span<const CharacterType> characters)
 {
     if (characters.size() < 5)
         return false;
@@ -426,7 +426,7 @@ static inline bool LEGACY_NODELETE mightBeRGBA(std::span<const CharacterType> ch
 }
 
 template <typename CharacterType>
-static inline bool LEGACY_NODELETE mightBeRGB(std::span<const CharacterType> characters)
+NODELETE static inline bool mightBeRGB(std::span<const CharacterType> characters)
 {
     if (characters.size() < 4)
         return false;
@@ -437,7 +437,7 @@ static inline bool LEGACY_NODELETE mightBeRGB(std::span<const CharacterType> cha
 }
 
 template <typename CharacterType>
-static inline bool LEGACY_NODELETE mightBeHSLA(std::span<const CharacterType> characters)
+NODELETE static inline bool mightBeHSLA(std::span<const CharacterType> characters)
 {
     if (characters.size() < 5)
         return false;
@@ -449,7 +449,7 @@ static inline bool LEGACY_NODELETE mightBeHSLA(std::span<const CharacterType> ch
 }
 
 template <typename CharacterType>
-static inline bool LEGACY_NODELETE mightBeHSL(std::span<const CharacterType> characters)
+NODELETE static inline bool mightBeHSL(std::span<const CharacterType> characters)
 {
     if (characters.size() < 4)
         return false;
@@ -459,7 +459,7 @@ static inline bool LEGACY_NODELETE mightBeHSL(std::span<const CharacterType> cha
         && isASCIIAlphaCaselessEqual(characters[2], 'l');
 }
 
-static std::optional<SRGBA<uint8_t>> LEGACY_NODELETE finishParsingHexColor(uint32_t value, unsigned length)
+NODELETE static std::optional<SRGBA<uint8_t>> finishParsingHexColor(uint32_t value, unsigned length)
 {
     switch (length) {
     case 3: {
@@ -486,7 +486,7 @@ static std::optional<SRGBA<uint8_t>> LEGACY_NODELETE finishParsingHexColor(uint3
 }
 
 template<typename CharacterType>
-static std::optional<SRGBA<uint8_t>> LEGACY_NODELETE parseHexColorInternal(std::span<const CharacterType> characters)
+NODELETE static std::optional<SRGBA<uint8_t>> parseHexColorInternal(std::span<const CharacterType> characters)
 {
     if (characters.size() != 3 && characters.size() != 4 && characters.size() != 6 && characters.size() != 8)
         return std::nullopt;

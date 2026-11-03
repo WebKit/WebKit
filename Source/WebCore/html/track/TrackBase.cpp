@@ -135,7 +135,7 @@ TrackListBase* TrackBase::trackList() const
 }
 
 // See: https://tools.ietf.org/html/bcp47#section-2.1
-static bool LEGACY_NODELETE isValidBCP47LanguageTag(const String& languageTag)
+NODELETE static bool isValidBCP47LanguageTag(const String& languageTag)
 {
     auto const length = languageTag.length();
 

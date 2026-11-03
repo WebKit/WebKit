@@ -51,7 +51,7 @@ public:
     FidoHidMessage(FidoHidMessage&& that) = default;
     FidoHidMessage& operator=(FidoHidMessage&& other) = default;
 
-    bool LEGACY_NODELETE messageComplete() const;
+    NODELETE bool messageComplete() const;
     Vector<uint8_t> getMessagePayload() const;
     // Pop front of queue with next packet.
     Vector<uint8_t> popNextPacket();
@@ -59,7 +59,7 @@ public:
     // response value.
     bool addContinuationPacket(const Vector<uint8_t>&);
 
-    size_t LEGACY_NODELETE numPackets() const;
+    NODELETE size_t numPackets() const;
     uint32_t channelId() const { return m_channelId; }
     FidoHidDeviceCommand cmd() const { return m_cmd; }
     const Deque<std::unique_ptr<FidoHidPacket>>& getPacketsForTesting() const LIFETIME_BOUND { return m_packets; }

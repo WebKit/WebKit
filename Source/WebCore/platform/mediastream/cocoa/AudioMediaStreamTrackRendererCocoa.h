@@ -59,7 +59,7 @@ private:
     void setVolume(float) final;
     void setAudioOutputDevice(const String&) final;
 
-    void LEGACY_NODELETE reset();
+    NODELETE void reset();
     void setRegisteredDataSource(RefPtr<AudioSampleDataSource>&&);
 
     BaseAudioMediaStreamTrackRendererUnit& rendererUnit();

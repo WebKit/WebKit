@@ -49,7 +49,7 @@ template<typename CSSType> static bool styleImageIsUncacheable(const CSSType& va
 }
 
 template<> struct StyleImageIsUncacheable<GradientColorInterpolationMethod> {
-    constexpr bool LEGACY_NODELETE operator()(const auto&) { return false; }
+    NODELETE constexpr bool operator()(const auto&) { return false; }
 };
 
 template<> struct StyleImageIsUncacheable<Color> {
@@ -57,7 +57,7 @@ template<> struct StyleImageIsUncacheable<Color> {
 };
 
 template<CSSValueID C> struct StyleImageIsUncacheable<Constant<C>> {
-    constexpr bool LEGACY_NODELETE operator()(const auto&) { return false; }
+    NODELETE constexpr bool operator()(const auto&) { return false; }
 };
 
 template<UnitEnum CSSType> struct StyleImageIsUncacheable<CSSType> {
@@ -69,7 +69,7 @@ template<NumericRaw CSSType> struct StyleImageIsUncacheable<CSSType> {
 };
 
 template<Calc CSSType> struct StyleImageIsUncacheable<CSSType> {
-    constexpr bool LEGACY_NODELETE operator()(const auto& value) { return value.requiresConversionData(); }
+    NODELETE constexpr bool operator()(const auto& value) { return value.requiresConversionData(); }
 };
 
 template<OptionalLike CSSType> struct StyleImageIsUncacheable<CSSType> {

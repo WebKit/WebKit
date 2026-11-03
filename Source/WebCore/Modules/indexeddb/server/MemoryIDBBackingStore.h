@@ -48,7 +48,7 @@ public:
     WEBCORE_EXPORT ~MemoryIDBBackingStore();
 
     IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) final;
-    uint64_t LEGACY_NODELETE databaseVersion() final;
+    NODELETE uint64_t databaseVersion() final;
     void setDatabaseInfo(const IDBDatabaseInfo&);
     bool hasObjectStore(IDBObjectStoreIdentifier objectStoreIdentifier) { return !!infoForObjectStore(objectStoreIdentifier); }
     MemoryObjectStore* objectStoreForName(const String& name) const;
@@ -82,7 +82,7 @@ private:
     IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData&, IDBGetResult& outResult) final;
 
     IDBObjectStoreInfo* infoForObjectStore(IDBObjectStoreIdentifier) final;
-    void LEGACY_NODELETE deleteBackingStore() final;
+    NODELETE void deleteBackingStore() final;
 
     bool supportsSimultaneousReadWriteTransactions() final { return true; }
     bool isEphemeral() final { return true; }
@@ -97,7 +97,7 @@ private:
 
     RefPtr<MemoryObjectStore> takeObjectStoreByIdentifier(IDBObjectStoreIdentifier);
 
-    void LEGACY_NODELETE close() final;
+    NODELETE void close() final;
 
     void registerObjectStore(Ref<MemoryObjectStore>&&);
     void unregisterObjectStore(MemoryObjectStore&);

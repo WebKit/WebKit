@@ -90,7 +90,7 @@ public:
     void setIsInPlacedTree(bool value) { m_isInPlacedTree = value; }
 #endif
 
-    bool LEGACY_NODELETE shouldPaint() const;
+    NODELETE bool shouldPaint() const;
 
     bool paintsFloat() const { return m_paintsFloat; }
     void setPaintsFloat(bool paintsFloat) { m_paintsFloat = paintsFloat; }
@@ -106,7 +106,7 @@ public:
         return LayoutSize(m_frameRect.location().x() + m_marginOffset.width(), m_frameRect.location().y() + m_marginOffset.height());
     }
     LayoutSize marginOffset() const { ASSERT(isPlaced()); return m_marginOffset; }
-    LayoutSize LEGACY_NODELETE translationOffsetToAncestor() const;
+    NODELETE LayoutSize translationOffsetToAncestor() const;
 
 private:
     friend FloatingObjects;
@@ -163,7 +163,7 @@ public:
     void clear();
     FloatingObject* add(std::unique_ptr<FloatingObject>);
     void remove(FloatingObject*);
-    void LEGACY_NODELETE addPlacedObject(FloatingObject*);
+    NODELETE void addPlacedObject(FloatingObject*);
     void removePlacedObject(FloatingObject*);
     void place(FloatingObject&, const LayoutRect& frameRect, LayoutSize marginOffset);
     void setHorizontalWritingMode(bool b = true) { m_horizontalWritingMode = b; }
@@ -187,9 +187,9 @@ private:
     const RenderBlockFlow& renderer() const { ASSERT(m_renderer); return *m_renderer; }
     void computePlacedFloatsTree();
     const FloatingObjectTree* placedFloatsTree();
-    void LEGACY_NODELETE increaseObjectsCount(FloatingObjectType);
-    void LEGACY_NODELETE decreaseObjectsCount(FloatingObjectType);
-    FloatingObjectInterval LEGACY_NODELETE intervalForFloatingObject(FloatingObject*);
+    NODELETE void increaseObjectsCount(FloatingObjectType);
+    NODELETE void decreaseObjectsCount(FloatingObjectType);
+    NODELETE FloatingObjectInterval intervalForFloatingObject(FloatingObject*);
 
     FloatingObjectSet m_set;
     std::unique_ptr<FloatingObjectTree> m_placedFloatsTree;

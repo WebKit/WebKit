@@ -34,12 +34,12 @@ namespace WebCore {
 class SpeechRecognitionResultList final : public RefCounted<SpeechRecognitionResultList> {
     WTF_MAKE_TZONE_ALLOCATED(SpeechRecognitionResultList);
 public:
-    static Ref<SpeechRecognitionResultList> LEGACY_NODELETE create();
-    static Ref<SpeechRecognitionResultList> LEGACY_NODELETE create(Vector<Ref<SpeechRecognitionResult>>&&);
+    NODELETE static Ref<SpeechRecognitionResultList> create();
+    NODELETE static Ref<SpeechRecognitionResultList> create(Vector<Ref<SpeechRecognitionResult>>&&);
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     size_t length() const { return m_list.size(); }
-    SpeechRecognitionResult* LEGACY_NODELETE item(uint64_t index) const;
+    NODELETE SpeechRecognitionResult* item(uint64_t index) const;
 
     void add(SpeechRecognitionResult&);
 

@@ -64,17 +64,17 @@ public:
     NavigatorUAData& userAgentData() const;
     
 #if ENABLE(NAVIGATOR_STANDALONE)
-    bool LEGACY_NODELETE standalone() const;
+    NODELETE bool standalone() const;
 #endif
 
-    int LEGACY_NODELETE maxTouchPoints() const;
+    NODELETE int maxTouchPoints() const;
 
     WEBCORE_EXPORT GPU* gpu();
 
-    Page* LEGACY_NODELETE page();
+    NODELETE Page* page();
 
-    const Document* LEGACY_NODELETE document() const;
-    Document* LEGACY_NODELETE document();
+    NODELETE const Document* document() const;
+    NODELETE Document* document();
 
     void setAppBadge(ScriptExecutionContext&, std::optional<unsigned long long>, Ref<DeferredPromise>&&);
     void clearAppBadge(ScriptExecutionContext&, Ref<DeferredPromise>&&);

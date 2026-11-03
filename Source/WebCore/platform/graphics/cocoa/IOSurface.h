@@ -171,10 +171,10 @@ public:
     WEBCORE_EXPORT ~IOSurface();
 
     WEBCORE_EXPORT static IntSize maximumSize();
-    WEBCORE_EXPORT static void LEGACY_NODELETE setMaximumSize(IntSize);
+    NODELETE WEBCORE_EXPORT static void setMaximumSize(IntSize);
 
     WEBCORE_EXPORT static size_t bytesPerRowAlignment();
-    WEBCORE_EXPORT static void LEGACY_NODELETE setBytesPerRowAlignment(size_t);
+    NODELETE WEBCORE_EXPORT static void setBytesPerRowAlignment(size_t);
 
     WEBCORE_EXPORT WTF::MachSendRight createSendRight() const;
 
@@ -192,7 +192,7 @@ public:
     // Passed in context is the context through which the contents was drawn.
     WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> = nullptr);
 
-    WEBCORE_EXPORT static Name LEGACY_NODELETE nameForRenderingPurpose(RenderingPurpose);
+    NODELETE WEBCORE_EXPORT static Name nameForRenderingPurpose(RenderingPurpose);
     Name name() const { return m_name; }
 
 #ifdef __OBJC__
@@ -240,7 +240,7 @@ public:
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
     WEBCORE_EXPORT void setContentEDRHeadroom(float);
-    WEBCORE_EXPORT std::optional<float> LEGACY_NODELETE contentEDRHeadroom() const;
+    NODELETE WEBCORE_EXPORT std::optional<float> contentEDRHeadroom() const;
     WEBCORE_EXPORT void loadContentEDRHeadroom();
 #endif
 
@@ -281,7 +281,7 @@ private:
         size_t bitsPerComponent;
     };
 
-    BitmapConfiguration LEGACY_NODELETE bitmapConfiguration() const;
+    NODELETE BitmapConfiguration bitmapConfiguration() const;
 
     std::optional<UsedFormat> m_format;
     std::optional<ColorSpace> m_colorSpace;

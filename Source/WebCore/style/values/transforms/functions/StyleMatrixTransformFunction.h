@@ -36,9 +36,9 @@ namespace Style {
 
 class MatrixTransformFunction final : public TransformFunctionBase {
 public:
-    static Ref<const MatrixTransformFunction> LEGACY_NODELETE createIdentity();
-    static Ref<const MatrixTransformFunction> LEGACY_NODELETE create(Number<>, Number<>, Number<>, Number<>, Number<>, Number<>);
-    static Ref<const MatrixTransformFunction> LEGACY_NODELETE create(const TransformationMatrix&);
+    NODELETE static Ref<const MatrixTransformFunction> createIdentity();
+    NODELETE static Ref<const MatrixTransformFunction> create(Number<>, Number<>, Number<>, Number<>, Number<>, Number<>);
+    NODELETE static Ref<const MatrixTransformFunction> create(const TransformationMatrix&);
 
     Ref<const TransformFunctionBase> clone() const override;
     Ref<TransformOperation> toPlatform(const FloatSize&, ZoomFactor) const override;

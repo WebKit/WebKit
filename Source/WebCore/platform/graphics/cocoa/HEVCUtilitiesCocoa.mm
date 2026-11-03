@@ -130,7 +130,7 @@ std::optional<PlatformMediaCapabilitiesInfo> validateHEVCParameters(const HEVCPa
     return info;
 }
 
-static CMVideoCodecType LEGACY_NODELETE codecType(DoViParameters::Codec codec)
+NODELETE static CMVideoCodecType codecType(DoViParameters::Codec codec)
 {
     switch (codec) {
     case DoViParameters::Codec::AVC1:
@@ -219,7 +219,7 @@ static RetainPtr<CMFormatDescriptionRef> createHEVCFormatDescriptionFromParamete
     return adoptCF(rawDescription);
 }
 
-static bool LEGACY_NODELETE hevcAnnexBVpsIsFollowedBySpsAndPps(std::span<const uint8_t> data, const Vector<NaluIndex>& naluIndices, size_t vpsIndex)
+NODELETE static bool hevcAnnexBVpsIsFollowedBySpsAndPps(std::span<const uint8_t> data, const Vector<NaluIndex>& naluIndices, size_t vpsIndex)
 {
     if (vpsIndex + 2 >= naluIndices.size())
         return false;

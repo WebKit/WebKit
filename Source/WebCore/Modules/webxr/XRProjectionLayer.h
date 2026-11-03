@@ -71,7 +71,7 @@ public:
 
     std::optional<float> fixedFoveation() const;
     void setFixedFoveation(std::optional<float>);
-    WebXRRigidTransform* LEGACY_NODELETE deltaPose() const;
+    NODELETE WebXRRigidTransform* deltaPose() const;
     void setDeltaPose(WebXRRigidTransform*);
 
     void setViewport(size_t viewIndex, const IntRect&);

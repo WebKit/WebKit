@@ -37,7 +37,7 @@ class HTMLInputElement;
 
 class AccessibilitySlider final : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilitySlider> LEGACY_NODELETE create(AXID, RenderObject&, AXObjectCache&);
+    NODELETE static Ref<AccessibilitySlider> create(AXID, RenderObject&, AXObjectCache&);
     virtual ~AccessibilitySlider() = default;
 
     bool isAccessibilitySliderInstance() const final { return true; }
@@ -45,7 +45,7 @@ public:
 private:
     explicit AccessibilitySlider(AXID, RenderObject&, AXObjectCache&);
 
-    HTMLInputElement* LEGACY_NODELETE inputElement() const;
+    NODELETE HTMLInputElement* inputElement() const;
     RefPtr<AccessibilityObject> elementAccessibilityHitTest(const IntPoint&) const final;
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::Slider; }

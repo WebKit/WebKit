@@ -211,7 +211,7 @@ bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)
     return enabled;
 }
 
-static inline bool LEGACY_NODELETE shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage(Page* page)
+NODELETE static inline bool shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage(Page* page)
 {
     // See <rdar://problem/5479443>. We don't think that page can ever be NULL
     // in this case, but if it is, we've gotten into a lexicalGlobalObject where we may have

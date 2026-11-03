@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-static NSURLCredentialPersistence LEGACY_NODELETE toNSURLCredentialPersistence(CredentialPersistence persistence)
+NODELETE static NSURLCredentialPersistence toNSURLCredentialPersistence(CredentialPersistence persistence)
 {
     switch (persistence) {
     case CredentialPersistence::None:
@@ -43,7 +43,7 @@ static NSURLCredentialPersistence LEGACY_NODELETE toNSURLCredentialPersistence(C
     return NSURLCredentialPersistenceNone;
 }
 
-static CredentialPersistence LEGACY_NODELETE toCredentialPersistence(NSURLCredentialPersistence persistence)
+NODELETE static CredentialPersistence toCredentialPersistence(NSURLCredentialPersistence persistence)
 {
     switch (persistence) {
     case NSURLCredentialPersistenceNone:

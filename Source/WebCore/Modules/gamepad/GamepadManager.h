@@ -44,7 +44,7 @@ class GamepadManager : public GamepadProviderClient {
     WTF_MAKE_NONCOPYABLE(GamepadManager);
     friend class NeverDestroyed<GamepadManager>;
 public:
-    static GamepadManager& LEGACY_NODELETE singleton();
+    NODELETE static GamepadManager& singleton();
 
     // Do nothing since this is a singleton.
     void ref() const final { }

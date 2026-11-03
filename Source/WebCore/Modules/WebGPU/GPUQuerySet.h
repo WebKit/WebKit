@@ -45,7 +45,7 @@ public:
         return adoptRef(*new GPUQuerySet(WTF::move(backing), descriptor, device));
     }
 
-    String LEGACY_NODELETE label() const;
+    NODELETE String label() const;
     void setLabel(String&&);
 
     void destroy();
@@ -53,10 +53,10 @@ public:
     ::WebGPU::QuerySet& backing() { return m_backing; }
     const ::WebGPU::QuerySet& backing() const { return m_backing; }
 
-    GPUQueryType LEGACY_NODELETE type() const;
-    GPUSize32Out LEGACY_NODELETE count() const;
+    NODELETE GPUQueryType type() const;
+    NODELETE GPUSize32Out count() const;
 
-    GPUDevice* LEGACY_NODELETE device() const;
+    NODELETE GPUDevice* device() const;
 
     bool hasActiveInspectorCanvasCallTracer() const;
 

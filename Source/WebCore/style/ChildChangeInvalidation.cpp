@@ -39,7 +39,7 @@
 
 namespace WebCore::Style {
 
-static bool LEGACY_NODELETE elementIsEmptyForCSS(const Element& element)
+NODELETE static bool elementIsEmptyForCSS(const Element& element)
 {
     for (auto* node = element.firstChild(); node; node = node->nextSibling()) {
         if (is<Element>(*node))
@@ -52,7 +52,7 @@ static bool LEGACY_NODELETE elementIsEmptyForCSS(const Element& element)
     return true;
 }
 
-static bool LEGACY_NODELETE isInsertionForStyle(const ContainerNode::ChildChange& childChange)
+NODELETE static bool isInsertionForStyle(const ContainerNode::ChildChange& childChange)
 {
     switch (childChange.type) {
     case ContainerNode::ChildChange::Type::ElementMovedInto:
@@ -64,7 +64,7 @@ static bool LEGACY_NODELETE isInsertionForStyle(const ContainerNode::ChildChange
     }
 }
 
-static bool LEGACY_NODELETE isElementRemovalForStyle(const ContainerNode::ChildChange& childChange)
+NODELETE static bool isElementRemovalForStyle(const ContainerNode::ChildChange& childChange)
 {
     return childChange.type == ContainerNode::ChildChange::Type::ElementRemoved || childChange.type == ContainerNode::ChildChange::Type::ElementMovedFrom;
 }
@@ -79,7 +79,7 @@ bool ChildChangeInvalidation::emptyStateMayChange() const
     return isInsertionForStyle(m_childChange) == wasEmpty;
 }
 
-static bool LEGACY_NODELETE isSiblingHasRelation(const MatchElement& matchElement)
+NODELETE static bool isSiblingHasRelation(const MatchElement& matchElement)
 {
     if (!matchElement.hasRelation)
         return false;
@@ -270,7 +270,7 @@ void ChildChangeInvalidation::invalidateForHasAfterMutation()
     invalidateForHasSiblings(matchingHasSelectors, MutationPhase::After);
 }
 
-static bool LEGACY_NODELETE needsDescendantTraversal(const RuleFeatureSet& features)
+NODELETE static bool needsDescendantTraversal(const RuleFeatureSet& features)
 {
     // With the bundled MatchElement representation, any :has() with hasRelation=Descendant or SiblingDescendant
     // needs descendant traversal. Since we don't have per-value tracking for hasRelation,

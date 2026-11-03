@@ -44,9 +44,9 @@ static constexpr std::array<uint8_t, 3> Version { 0x02, 0x01, 0x00 };
 static const unsigned char InitialOctet = 0x00;
 static const size_t MaxLengthInOneByte = 128;
 
-size_t LEGACY_NODELETE bytesUsedToEncodedLength(uint8_t);
-size_t LEGACY_NODELETE extraBytesNeededForEncodedLength(size_t);
+NODELETE size_t bytesUsedToEncodedLength(uint8_t);
+NODELETE size_t extraBytesNeededForEncodedLength(size_t);
 void addEncodedASN1Length(Vector<uint8_t>&, size_t);
-size_t LEGACY_NODELETE bytesNeededForEncodedLength(size_t);
+NODELETE size_t bytesNeededForEncodedLength(size_t);
 
 } // namespace WebCore

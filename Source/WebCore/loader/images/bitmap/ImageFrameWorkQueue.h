@@ -51,7 +51,7 @@ public:
         }
     };
 
-    static Ref<ImageFrameWorkQueue> LEGACY_NODELETE create(BitmapImageSource&);
+    NODELETE static Ref<ImageFrameWorkQueue> create(BitmapImageSource&);
 
     void start();
     void dispatch(const Request&);

@@ -35,13 +35,13 @@ class Navigator;
 class DOMPluginArray final : public ScriptWrappable, public RefCounted<DOMPluginArray> {
     WTF_MAKE_TZONE_ALLOCATED(DOMPluginArray);
 public:
-    static Ref<DOMPluginArray> LEGACY_NODELETE create(Navigator&, Vector<Ref<DOMPlugin>>&& = { }, Vector<Ref<DOMPlugin>>&& = { });
+    NODELETE static Ref<DOMPluginArray> create(Navigator&, Vector<Ref<DOMPlugin>>&& = { }, Vector<Ref<DOMPlugin>>&& = { });
     ~DOMPluginArray();
 
-    unsigned LEGACY_NODELETE length() const;
+    NODELETE unsigned length() const;
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
-    RefPtr<DOMPlugin> LEGACY_NODELETE item(unsigned index);
-    RefPtr<DOMPlugin> LEGACY_NODELETE namedItem(const AtomString& propertyName);
+    NODELETE RefPtr<DOMPlugin> item(unsigned index);
+    NODELETE RefPtr<DOMPlugin> namedItem(const AtomString& propertyName);
     Vector<AtomString> supportedPropertyNames() const;
     bool isSupportedPropertyName(const AtomString&) const;
 

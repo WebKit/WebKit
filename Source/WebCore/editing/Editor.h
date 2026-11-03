@@ -209,14 +209,14 @@ public:
         AsQuotation = 1 << 2,
     };
 
-    WEBCORE_EXPORT EditorClient* LEGACY_NODELETE client() const;
+    NODELETE WEBCORE_EXPORT EditorClient* client() const;
     WEBCORE_EXPORT TextCheckerClient* textChecker() const;
 
     CompositeEditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
 
-    Document& LEGACY_NODELETE document() const;
+    NODELETE Document& document() const;
 
-    WEBCORE_EXPORT void LEGACY_NODELETE ref() const;
+    NODELETE WEBCORE_EXPORT void ref() const;
     WEBCORE_EXPORT void deref() const;
 
     void handleKeyboardEvent(KeyboardEvent&);
@@ -237,7 +237,7 @@ public:
     WEBCORE_EXPORT bool canCopy() const;
     WEBCORE_EXPORT bool canDelete() const;
     WEBCORE_EXPORT bool canSmartCopyOrDelete();
-    bool LEGACY_NODELETE shouldSmartDelete();
+    NODELETE bool shouldSmartDelete();
     bool canCopyFont() const;
 
     enum class FromMenuOrKeyBinding : bool { No, Yes };
@@ -473,7 +473,7 @@ public:
     PAL::KillRing& killRing() const LIFETIME_BOUND { return m_killRing; }
     SpellChecker& spellChecker() const { return m_spellChecker; }
 
-    EditingBehavior LEGACY_NODELETE behavior() const;
+    NODELETE EditingBehavior behavior() const;
 
     WEBCORE_EXPORT std::optional<SimpleRange> selectedRange();
 
@@ -527,7 +527,7 @@ public:
     bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, Affinity, bool stillSelecting) const;
     WEBCORE_EXPORT unsigned countMatchesForText(const String&, const std::optional<SimpleRange>&, FindOptions, unsigned limit, bool markMatches, Vector<SimpleRange>*);
     WEBCORE_EXPORT unsigned markAllMatchesForText(const String&, FindOptions, unsigned limit);
-    WEBCORE_EXPORT void LEGACY_NODELETE textMatchMarkersWereCleared();
+    NODELETE WEBCORE_EXPORT void textMatchMarkersWereCleared();
     bool markedTextMatchesAreHighlighted() const;
     WEBCORE_EXPORT void setMarkedTextMatchesAreHighlighted(bool);
 
@@ -585,7 +585,7 @@ public:
     WEBCORE_EXPORT void toggleSmartLists();
 #endif
 
-    WEBCORE_EXPORT bool LEGACY_NODELETE isAlternativeTextUIActive() const;
+    NODELETE WEBCORE_EXPORT bool isAlternativeTextUIActive() const;
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT bool isSmartListsEnabled();
@@ -612,7 +612,7 @@ public:
     static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
     static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
 
-    static bool LEGACY_NODELETE writingSuggestionsSupportsSuffix();
+    NODELETE static bool writingSuggestionsSupportsSuffix();
 #endif
 
 #if PLATFORM(MAC)
@@ -669,8 +669,8 @@ public:
     WritingSuggestionData* writingSuggestionData() const LIFETIME_BOUND { return m_writingSuggestionData.get(); }
     bool isInsertingTextForWritingSuggestion() const { return m_isInsertingTextForWritingSuggestion; }
 
-    RenderBoxModelObject* LEGACY_NODELETE writingSuggestionRenderer() const;
-    void LEGACY_NODELETE setWritingSuggestionRenderer(RenderBoxModelObject&);
+    NODELETE RenderBoxModelObject* writingSuggestionRenderer() const;
+    NODELETE void setWritingSuggestionRenderer(RenderBoxModelObject&);
 
     WEBCORE_EXPORT void closeTyping();
 

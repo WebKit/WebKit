@@ -132,8 +132,8 @@ public:
     bool backgroundLayerPaintsFixedRootBackground() const { return m_backgroundLayerPaintsFixedRootBackground; }
 
     bool hasSVGPaintOrderSegments() const { return !m_svgPaintOrderSegments.isEmpty(); }
-    GraphicsLayer* LEGACY_NODELETE svgSegmentLayerAfterCompositedChild(const RenderLayer&) const;
-    std::optional<WTF::Range<unsigned>> LEGACY_NODELETE svgSegmentRangeForGraphicsLayer(const GraphicsLayer&) const;
+    NODELETE GraphicsLayer* svgSegmentLayerAfterCompositedChild(const RenderLayer&) const;
+    NODELETE std::optional<WTF::Range<unsigned>> svgSegmentRangeForGraphicsLayer(const GraphicsLayer&) const;
 
 #if USE(SYSTEM_PREVIEW) && ENABLE(MODEL_PROCESS)
     GraphicsLayer* systemPreviewBadgeLayer() const { return m_systemPreviewBadgeLayer.get(); }
@@ -142,7 +142,7 @@ public:
     bool needsRepaintOnCompositedScroll() const;
 
     bool requiresBackgroundLayer() const { return m_requiresBackgroundLayer; }
-    void LEGACY_NODELETE setRequiresBackgroundLayer(bool);
+    NODELETE void setRequiresBackgroundLayer(bool);
 
     bool hasScrollingLayer() const { return m_scrollContainerLayer != nullptr; }
     GraphicsLayer* scrollContainerLayer() const { return m_scrollContainerLayer.get(); }
@@ -181,7 +181,7 @@ public:
 
     bool hasMaskLayer() const { return m_maskLayer; }
 
-    WEBCORE_EXPORT GraphicsLayer* LEGACY_NODELETE parentForSublayers() const;
+    NODELETE WEBCORE_EXPORT GraphicsLayer* parentForSublayers() const;
     GraphicsLayer* childForSuperlayers() const;
     GraphicsLayer* childForSuperlayersExcludingViewTransitions() const;
 
@@ -213,13 +213,13 @@ public:
     void transformRelatedPropertyDidChange();
 
 #if ENABLE(THREADED_ANIMATIONS)
-    const AcceleratedEffectStack* LEGACY_NODELETE acceleratedEffectStack() const;
+    NODELETE const AcceleratedEffectStack* acceleratedEffectStack() const;
     void updateAcceleratedEffectsAndBaseValues(HashSet<Ref<AcceleratedTimeline>>&);
 #endif
 
-    WEBCORE_EXPORT LayoutRect LEGACY_NODELETE compositedBounds() const;
+    NODELETE WEBCORE_EXPORT LayoutRect compositedBounds() const;
     // Returns true if changed.
-    bool LEGACY_NODELETE setCompositedBounds(const LayoutRect&);
+    NODELETE bool setCompositedBounds(const LayoutRect&);
     // Returns true if changed.
     bool updateCompositedBounds();
     
@@ -230,7 +230,7 @@ public:
     void updateEventRegion();
     
     bool needsEventRegionUpdate() const { return m_needsEventRegionUpdate; }
-    void LEGACY_NODELETE setNeedsEventRegionUpdate(bool needsUpdate = true);
+    NODELETE void setNeedsEventRegionUpdate(bool needsUpdate = true);
 #endif
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
@@ -419,7 +419,7 @@ private:
 
     void setBackgroundLayerPaintsFixedRootBackground(bool);
 
-    LayoutSize LEGACY_NODELETE contentOffsetInCompositingLayer() const;
+    NODELETE LayoutSize contentOffsetInCompositingLayer() const;
     LayoutSize offsetRelativeToRendererOriginForDescendantLayers() const;
     
     void ensureClippingStackLayers(LayerAncestorClippingStack&);
@@ -446,7 +446,7 @@ private:
 #endif
 
     // Return the opacity value that this layer should use for compositing.
-    float LEGACY_NODELETE compositingOpacity(float rendererOpacity) const;
+    NODELETE float compositingOpacity(float rendererOpacity) const;
     Color rendererBackgroundColor() const;
 
     bool isMainFrameRenderViewLayer() const;
@@ -490,11 +490,11 @@ private:
     
     void paintDebugOverlays(const GraphicsLayer*, GraphicsContext&);
 
-    static CSSPropertyID LEGACY_NODELETE graphicsLayerToCSSProperty(AnimatedProperty);
-    static AnimatedProperty LEGACY_NODELETE cssToGraphicsLayerProperty(CSSPropertyID);
+    NODELETE static CSSPropertyID graphicsLayerToCSSProperty(AnimatedProperty);
+    NODELETE static AnimatedProperty cssToGraphicsLayerProperty(CSSPropertyID);
 
     bool canIssueSetNeedsDisplay() const { return !paintsIntoWindow() && !paintsIntoCompositedAncestor(); }
-    float LEGACY_NODELETE pixelSnappingScaleFactor() const;
+    NODELETE float pixelSnappingScaleFactor() const;
     LayoutRect computeParentGraphicsLayerRect(const RenderLayer* compositedAncestor) const;
     LayoutRect computePrimaryGraphicsLayerRect(const RenderLayer* compositedAncestor, const LayoutRect& parentGraphicsLayerRect) const;
 

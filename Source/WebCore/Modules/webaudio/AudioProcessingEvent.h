@@ -41,7 +41,7 @@ public:
         return adoptRef(*new AudioProcessingEvent(WTF::move(inputBuffer), WTF::move(outputBuffer), playbackTime));
     }
     
-    static Ref<AudioProcessingEvent> LEGACY_NODELETE create(const AtomString&, AudioProcessingEventInit&&);
+    NODELETE static Ref<AudioProcessingEvent> create(const AtomString&, AudioProcessingEventInit&&);
     
     virtual ~AudioProcessingEvent();
 

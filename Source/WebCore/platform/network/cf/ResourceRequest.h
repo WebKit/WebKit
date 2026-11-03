@@ -95,14 +95,14 @@ public:
     bool encodingRequiresPlatformData() const { return m_httpBody || m_nsRequest; }
     WEBCORE_EXPORT NSURLRequest *nsURLRequest(HTTPBodyUpdatePolicy) const;
 
-    WEBCORE_EXPORT static CFStringRef LEGACY_NODELETE isUserInitiatedKey();
+    NODELETE WEBCORE_EXPORT static CFStringRef isUserInitiatedKey();
     WEBCORE_EXPORT ResourceRequestPlatformData getResourceRequestPlatformData() const;
     WEBCORE_EXPORT ResourceRequestData getRequestDataToSerialize() const;
     WEBCORE_EXPORT CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const;
     void setStorageSession(CFURLStorageSessionRef);
 
-    WEBCORE_EXPORT static bool LEGACY_NODELETE httpPipeliningEnabled();
-    WEBCORE_EXPORT static void LEGACY_NODELETE setHTTPPipeliningEnabled(bool);
+    NODELETE WEBCORE_EXPORT static bool httpPipeliningEnabled();
+    NODELETE WEBCORE_EXPORT static void setHTTPPipeliningEnabled(bool);
 
     static bool resourcePrioritiesEnabled() { return true; }
 

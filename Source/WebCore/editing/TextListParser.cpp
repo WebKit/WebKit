@@ -58,7 +58,7 @@ namespace WebCore {
 // MARK: Helpers
 
 template<typename Character>
-constexpr std::optional<int> LEGACY_NODELETE consumeNumber(StringParsingBuffer<Character>& input)
+NODELETE constexpr std::optional<int> consumeNumber(StringParsingBuffer<Character>& input)
 {
     static constexpr size_t maximumNumberOfDigits = 3;
 
@@ -76,7 +76,7 @@ constexpr std::optional<int> LEGACY_NODELETE consumeNumber(StringParsingBuffer<C
 }
 
 template<typename Character>
-void LEGACY_NODELETE skipToEnd(StringParsingBuffer<Character>& input)
+NODELETE void skipToEnd(StringParsingBuffer<Character>& input)
 {
     input.advanceBy(input.lengthRemaining());
 }

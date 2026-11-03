@@ -96,8 +96,8 @@ public:
 
     inline const BorderValue& borderAdjoiningTableStart() const LIFETIME_BOUND;
     inline const BorderValue& borderAdjoiningTableEnd() const LIFETIME_BOUND;
-    const BorderValue& LEGACY_NODELETE borderAdjoiningStartCell(const RenderTableCell&) const LIFETIME_BOUND;
-    const BorderValue& LEGACY_NODELETE borderAdjoiningEndCell(const RenderTableCell&) const LIFETIME_BOUND;
+    NODELETE const BorderValue& borderAdjoiningStartCell(const RenderTableCell&) const LIFETIME_BOUND;
+    NODELETE const BorderValue& borderAdjoiningEndCell(const RenderTableCell&) const LIFETIME_BOUND;
 
     CellStruct& cellAt(unsigned row,  unsigned col) LIFETIME_BOUND;
     const CellStruct& cellAt(unsigned row, unsigned col) const LIFETIME_BOUND;
@@ -124,10 +124,10 @@ public:
     inline LayoutUnit outerBorderBottom(const WritingMode) const;
 
     unsigned numRows() const;
-    unsigned LEGACY_NODELETE numColumns() const;
+    NODELETE unsigned numColumns() const;
     void recalcCells();
     void recalcCellsIfNeeded();
-    void LEGACY_NODELETE removeRedundantColumns();
+    NODELETE void removeRedundantColumns();
 
     bool needsCellRecalc() const { return m_needsCellRecalc; }
     void setNeedsCellRecalc();
@@ -176,11 +176,11 @@ private:
     Color rowGroupBorderColor(CSSPropertyID borderColor) const;
     void paintRowGroupBorder(const PaintInfo&, bool antialias, LayoutRect, BoxSide, CSSPropertyID borderColor, BorderStyle, BorderStyle tableBorderStyle);
     void paintRowGroupBorderIfRequired(const PaintInfo&, const LayoutPoint& paintOffset, unsigned row, unsigned col, BoxSide, RenderTableCell* = 0);
-    LayoutUnit LEGACY_NODELETE offsetLeftForRowGroupBorder(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row);
+    NODELETE LayoutUnit offsetLeftForRowGroupBorder(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row);
 
-    LayoutUnit LEGACY_NODELETE offsetTopForRowGroupBorder(RenderTableCell*, BoxSide borderSide, unsigned row);
-    LayoutUnit LEGACY_NODELETE verticalRowGroupBorderHeight(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row);
-    LayoutUnit LEGACY_NODELETE horizontalRowGroupBorderWidth(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row, unsigned column);
+    NODELETE LayoutUnit offsetTopForRowGroupBorder(RenderTableCell*, BoxSide borderSide, unsigned row);
+    NODELETE LayoutUnit verticalRowGroupBorderHeight(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row);
+    NODELETE LayoutUnit horizontalRowGroupBorderWidth(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row, unsigned column);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override { return { }; }
 
@@ -192,10 +192,10 @@ private:
 
     void relayoutCellIfFlexed(RenderTableCell&, int rowIndex, int rowHeight);
     
-    LayoutUnit LEGACY_NODELETE rowLogicalHeight(unsigned row) const;
+    NODELETE LayoutUnit rowLogicalHeight(unsigned row) const;
 
-    void LEGACY_NODELETE distributeExtraLogicalHeightToPercentRows(LayoutUnit& extraLogicalHeight, int totalPercent);
-    void LEGACY_NODELETE distributeExtraLogicalHeightToAutoRows(LayoutUnit& extraLogicalHeight, unsigned autoRowsCount);
+    NODELETE void distributeExtraLogicalHeightToPercentRows(LayoutUnit& extraLogicalHeight, int totalPercent);
+    NODELETE void distributeExtraLogicalHeightToAutoRows(LayoutUnit& extraLogicalHeight, unsigned autoRowsCount);
     void distributeRemainingExtraLogicalHeight(LayoutUnit& extraLogicalHeight);
 
     bool hasOverflowingCell() const;
@@ -205,7 +205,7 @@ private:
     CellSpan fullTableColumnSpan() const { return CellSpan(0, table()->columns().size()); }
 
     // Flip the rect so it aligns with the coordinates used by the rowPos and columnPos vectors.
-    LayoutRect LEGACY_NODELETE logicalRectForWritingModeAndDirection(const LayoutRect&) const;
+    NODELETE LayoutRect logicalRectForWritingModeAndDirection(const LayoutRect&) const;
 
     CellSpan dirtiedRows(const LayoutRect& repaintRect) const;
     CellSpan dirtiedColumns(const LayoutRect& repaintRect) const;

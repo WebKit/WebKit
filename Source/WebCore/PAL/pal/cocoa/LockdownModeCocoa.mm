@@ -61,7 +61,7 @@ bool isLockdownModeEnabled()
     return false;
 }
 
-static std::optional<bool>& LEGACY_NODELETE isLockdownModeEnabledForCurrentProcessCached()
+NODELETE static std::optional<bool>& isLockdownModeEnabledForCurrentProcessCached()
 {
     static NeverDestroyed<std::optional<bool>> cachedIsLockdownModeEnabledForCurrentProcess;
     return cachedIsLockdownModeEnabledForCurrentProcess;

@@ -44,7 +44,7 @@ public:
 
     ~DatasetDOMStringMap();
 
-    void LEGACY_NODELETE ref();
+    NODELETE void ref();
     void deref();
 
     bool isSupportedPropertyName(const String& name) const;

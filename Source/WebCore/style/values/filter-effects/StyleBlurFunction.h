@@ -47,7 +47,7 @@ struct Blur {
 
     Parameter value;
 
-    static Blur LEGACY_NODELETE passthroughForInterpolation();
+    NODELETE static Blur passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return true; }
@@ -57,14 +57,14 @@ struct Blur {
 
     IntOutsets calculateOutsets(ZoomFactor) const;
 
-    bool LEGACY_NODELETE operator==(const Blur&) const = default;
+    NODELETE bool operator==(const Blur&) const = default;
 };
 using BlurFunction = FunctionNotation<CSSValueID::Blur, Blur>;
 DEFINE_TYPE_WRAPPER_GET(Blur, value);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<Blur> { CSS::Blur LEGACY_NODELETE operator()(const Blur&, const Style::ComputedStyle&); };
+template<> struct ToCSS<Blur> { NODELETE CSS::Blur operator()(const Blur&, const Style::ComputedStyle&); };
 template<> struct ToStyle<CSS::Blur> { auto operator()(const CSS::Blur&, const BuilderState&) -> Blur; };
 
 // MARK: - Evaluation
@@ -73,7 +73,7 @@ template<> struct Evaluation<Blur, Ref<FilterEffect>> { auto operator()(const Bl
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Blur> { Ref<FilterOperation> LEGACY_NODELETE operator()(const Blur&, const Style::ComputedStyle&); };
+template<> struct ToPlatform<Blur> { NODELETE Ref<FilterOperation> operator()(const Blur&, const Style::ComputedStyle&); };
 
 } // namespace Style
 } // namespace WebCore

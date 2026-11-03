@@ -130,7 +130,7 @@ static Position nextLineCandidatePosition(Node* node, const VisiblePosition& vis
     return Position();
 }
 
-static bool LEGACY_NODELETE isTextOrLineBreakBox(InlineIterator::LeafBoxIterator box)
+NODELETE static bool isTextOrLineBreakBox(InlineIterator::LeafBoxIterator box)
 {
     return box && (box->isText() || box->renderer().isBR());
 }
@@ -1481,7 +1481,7 @@ VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection dire
     return direction == TextDirection::LTR ? logicalEndOfLine(c, reachedBoundary) : logicalStartOfLine(c, reachedBoundary);
 }
 
-static bool LEGACY_NODELETE directionIsDownstream(SelectionDirection direction)
+NODELETE static bool directionIsDownstream(SelectionDirection direction)
 {
     if (direction == SelectionDirection::Backward)
         return false;

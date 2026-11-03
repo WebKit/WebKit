@@ -78,14 +78,14 @@ private:
     void updatePlaceholderText() final;
     bool isEmptyValue() const final { return value()->isEmpty(); }
 
-    bool LEGACY_NODELETE isOptionalFormControl() const final { return !isRequiredFormControl(); }
-    bool LEGACY_NODELETE isRequiredFormControl() const final { return isRequired(); }
+    NODELETE bool isOptionalFormControl() const final { return !isRequiredFormControl(); }
+    NODELETE bool isRequiredFormControl() const final { return isRequired(); }
 
     void defaultEventHandler(Event&) final;
     
     void subtreeHasChanged() final;
 
-    bool LEGACY_NODELETE isEnumeratable() const final { return true; }
+    NODELETE bool isEnumeratable() const final { return true; }
     bool isLabelable() const final { return true; }
 
     bool isInteractiveContent() const final { return true; }
@@ -101,11 +101,11 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
-    bool LEGACY_NODELETE supportsBaseAppearance(StyleAppearance) const final;
+    NODELETE bool supportsBaseAppearance(StyleAppearance) const final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool appendFormData(DOMFormData&) final;
     void reset() final;
-    bool LEGACY_NODELETE hasCustomFocusLogic() const final { return true; }
+    NODELETE bool hasCustomFocusLogic() const final { return true; }
     int defaultTabIndex() const final { return 0; }
     bool isMouseFocusable() const final { return isFocusable(); }
     bool isKeyboardFocusable(const FocusEventData&) const final { return isFocusable(); }

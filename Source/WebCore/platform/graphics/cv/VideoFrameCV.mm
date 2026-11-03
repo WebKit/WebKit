@@ -78,7 +78,7 @@ static std::span<const uint8_t> copyToCVPixelBufferPlane(CVPixelBufferRef pixelB
     return source;
 }
 
-static vImage_Buffer LEGACY_NODELETE makeVImageBuffer8888(std::span<uint8_t> data, size_t width, size_t height, size_t rowBytes)
+NODELETE static vImage_Buffer makeVImageBuffer8888(std::span<uint8_t> data, size_t width, size_t height, size_t rowBytes)
 {
     constexpr size_t bytesPerPixel = 4;
     size_t minRowBytes = 0;

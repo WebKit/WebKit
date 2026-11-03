@@ -50,16 +50,16 @@ public:
     AuthenticatorGetInfoResponse(AuthenticatorGetInfoResponse&& that) = default;
     AuthenticatorGetInfoResponse& operator=(AuthenticatorGetInfoResponse&& other) = default;
 
-    AuthenticatorGetInfoResponse& LEGACY_NODELETE setMaxMsgSize(uint32_t);
+    NODELETE AuthenticatorGetInfoResponse& setMaxMsgSize(uint32_t);
     AuthenticatorGetInfoResponse& setPinProtocols(StdSet<PINUVAuthProtocol>&&);
     AuthenticatorGetInfoResponse& setExtensions(Vector<String>&&);
-    AuthenticatorGetInfoResponse& LEGACY_NODELETE setOptions(AuthenticatorSupportedOptions&&);
+    NODELETE AuthenticatorGetInfoResponse& setOptions(AuthenticatorSupportedOptions&&);
     AuthenticatorGetInfoResponse& setTransports(Vector<WebCore::AuthenticatorTransport>&&);
-    AuthenticatorGetInfoResponse& LEGACY_NODELETE setRemainingDiscoverableCredentials(uint32_t);
-    AuthenticatorGetInfoResponse& LEGACY_NODELETE setMinPINLength(uint32_t);
+    NODELETE AuthenticatorGetInfoResponse& setRemainingDiscoverableCredentials(uint32_t);
+    NODELETE AuthenticatorGetInfoResponse& setMinPINLength(uint32_t);
 
-    AuthenticatorGetInfoResponse& LEGACY_NODELETE setMaxCredentialCountInList(uint32_t);
-    AuthenticatorGetInfoResponse& LEGACY_NODELETE setMaxCredentialIDLength(uint32_t);
+    NODELETE AuthenticatorGetInfoResponse& setMaxCredentialCountInList(uint32_t);
+    NODELETE AuthenticatorGetInfoResponse& setMaxCredentialIDLength(uint32_t);
 
     const StdSet<ProtocolVersion>& versions() const LIFETIME_BOUND { return m_versions; }
     const Vector<uint8_t>& aaguid() const LIFETIME_BOUND { return m_aaguid; }

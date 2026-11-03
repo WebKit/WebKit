@@ -133,7 +133,7 @@ public:
 
     const ResourceResponse& resourceResponse() const LIFETIME_BOUND { return m_response; }
 
-    size_t LEGACY_NODELETE memoryCost() const;
+    NODELETE size_t memoryCost() const;
 
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) override;

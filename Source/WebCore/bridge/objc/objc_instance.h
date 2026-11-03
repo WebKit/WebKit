@@ -54,8 +54,8 @@ public:
     ObjectStructPtr getObject() const LIFETIME_BOUND { return _instance.get(); }
     
     JSValue stringValue(JSGlobalObject*) const;
-    JSValue LEGACY_NODELETE numberValue(JSGlobalObject*) const;
-    JSValue LEGACY_NODELETE booleanValue() const;
+    NODELETE JSValue numberValue(JSGlobalObject*) const;
+    NODELETE JSValue booleanValue() const;
 
     static bool isInStringValue();
 

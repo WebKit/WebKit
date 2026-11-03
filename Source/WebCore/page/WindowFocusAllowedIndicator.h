@@ -35,7 +35,7 @@ public:
     WindowFocusAllowedIndicator();
     ~WindowFocusAllowedIndicator();
 
-    static bool LEGACY_NODELETE windowFocusAllowed();
+    NODELETE static bool windowFocusAllowed();
 
 private:
     bool m_previousWindowFocusAllowed;

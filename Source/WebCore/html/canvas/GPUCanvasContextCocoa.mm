@@ -61,7 +61,7 @@ namespace WebCore {
 
 class GPUDisplayBufferDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
 public:
-    static Ref<GPUDisplayBufferDisplayDelegate> LEGACY_NODELETE create(bool isOpaque = true, float contentsScale = 1)
+    NODELETE static Ref<GPUDisplayBufferDisplayDelegate> create(bool isOpaque = true, float contentsScale = 1)
     {
         return adoptRef(*new GPUDisplayBufferDisplayDelegate(isOpaque, contentsScale));
     }
@@ -82,7 +82,7 @@ public:
         } else
             layer.clearContents();
     }
-    GraphicsLayerCompositingCoordinatesOrientation LEGACY_NODELETE orientation() const final
+    NODELETE GraphicsLayerCompositingCoordinatesOrientation orientation() const final
     {
         return GraphicsLayerCompositingCoordinatesOrientation::TopDown;
     }
@@ -98,17 +98,17 @@ public:
 
         m_displayBuffer = MachSendRight { displayBuffer };
     }
-    void LEGACY_NODELETE setContentsFormat(ContentsFormat contentsFormat)
+    NODELETE void setContentsFormat(ContentsFormat contentsFormat)
     {
         m_contentsFormat = contentsFormat;
     }
-    ContentsFormat LEGACY_NODELETE contentsFormat() const { return m_contentsFormat; }
-    bool LEGACY_NODELETE isOpaque() const { return m_isOpaque; }
-    void LEGACY_NODELETE setOpaque(bool opaque)
+    NODELETE ContentsFormat contentsFormat() const { return m_contentsFormat; }
+    NODELETE bool isOpaque() const { return m_isOpaque; }
+    NODELETE void setOpaque(bool opaque)
     {
         m_isOpaque = opaque;
     }
-    bool LEGACY_NODELETE hasExtendedRange() const
+    NODELETE bool hasExtendedRange() const
     {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
         return m_contentsFormat == ContentsFormat::RGBA16F;
@@ -133,7 +133,7 @@ struct ScreenHeadroom {
     float maxEDRHeadroom { 1.f };
     bool suppressEDR { false };
 
-    friend bool LEGACY_NODELETE operator==(const ScreenHeadroom&, const ScreenHeadroom&) = default;
+    NODELETE friend bool operator==(const ScreenHeadroom&, const ScreenHeadroom&) = default;
 };
 
 static ScreenHeadroom gatherScreenHeadroom()
@@ -150,7 +150,7 @@ static ScreenHeadroom gatherScreenHeadroom()
 
 class GPUOffMainThreadScreenHeadroom final : public ThreadSafeRefCounted<GPUOffMainThreadScreenHeadroom> {
 public:
-    static Ref<GPUOffMainThreadScreenHeadroom> LEGACY_NODELETE create() { return adoptRef(*new GPUOffMainThreadScreenHeadroom); }
+    NODELETE static Ref<GPUOffMainThreadScreenHeadroom> create() { return adoptRef(*new GPUOffMainThreadScreenHeadroom); }
 
     // Screen properties are only available on the main thread, but this must never wait on it: the main
     // thread can itself be blocked on the calling worker, e.g. while terminating it. Returns the last
@@ -196,7 +196,7 @@ std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas, G
     return context;
 }
 
-static GPUPresentationContextDescriptor LEGACY_NODELETE presentationContextDescriptor(GPUCompositorIntegration& compositorIntegration)
+NODELETE static GPUPresentationContextDescriptor presentationContextDescriptor(GPUCompositorIntegration& compositorIntegration)
 {
     return GPUPresentationContextDescriptor {
         compositorIntegration,
@@ -392,7 +392,7 @@ void GPUCanvasContextCocoa::didUpdateCanvasSizeProperties(bool)
     }
 }
 
-static PixelFormat LEGACY_NODELETE readbackPixelFormat(PixelFormat format)
+NODELETE static PixelFormat readbackPixelFormat(PixelFormat format)
 {
     // ImageBufferCGBitmapBackend only supports BGRA8 and RGBA16F.
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
@@ -556,7 +556,7 @@ static ColorSpace toWebCoreColorSpace(const PredefinedColorSpace& colorSpace, co
     return ColorSpace::SRGB();
 }
 
-static WebGPU::TextureFormat LEGACY_NODELETE computeTextureFormat(GPUTextureFormat format, GPUCanvasToneMappingMode toneMappingMode)
+NODELETE static WebGPU::TextureFormat computeTextureFormat(GPUTextureFormat format, GPUCanvasToneMappingMode toneMappingMode)
 {
     // Force Bgra8unorm to both: clamp color values to SDR, and opt out of CALayer HDR.
     if (format == GPUTextureFormat::Rgba16float && toneMappingMode == GPUCanvasToneMappingMode::Standard)
@@ -565,7 +565,7 @@ static WebGPU::TextureFormat LEGACY_NODELETE computeTextureFormat(GPUTextureForm
     return WebCore::convertToBacking(format);
 }
 
-static bool LEGACY_NODELETE isSupportedContextFormat(GPUTextureFormat format)
+NODELETE static bool isSupportedContextFormat(GPUTextureFormat format)
 {
     return format == GPUTextureFormat::Bgra8unorm || format == GPUTextureFormat::Rgba8unorm || format == GPUTextureFormat::Rgba16float;
 }

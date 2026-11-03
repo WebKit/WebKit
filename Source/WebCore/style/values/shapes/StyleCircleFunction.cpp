@@ -42,7 +42,7 @@ namespace Style {
 
 struct CirclePathPolicy final : public TinyLRUCachePolicy<FloatRect, WebCore::Path> {
 public:
-    static bool LEGACY_NODELETE isKeyNull(const FloatRect& rect)
+    NODELETE static bool isKeyNull(const FloatRect& rect)
     {
         return rect.isEmpty();
     }

@@ -112,7 +112,7 @@ SUPPRESS_NODELETE std::span<const IntSize> RealtimeVideoCaptureSource::standardV
 }
 
 template <typename ValueType>
-static void LEGACY_NODELETE updateMinMax(ValueType& min, ValueType& max, ValueType value)
+NODELETE static void updateMinMax(ValueType& min, ValueType& max, ValueType value)
 {
     min = std::min<ValueType>(min, value);
     max = std::max<ValueType>(max, value);
@@ -212,20 +212,20 @@ bool RealtimeVideoCaptureSource::supportsCaptureSize(std::optional<int> width, s
     return false;
 }
 
-static bool LEGACY_NODELETE shouldUsePreset(const VideoPreset& current, const VideoPreset& candidate, bool shouldPreferPowerEfficiency)
+NODELETE static bool shouldUsePreset(const VideoPreset& current, const VideoPreset& candidate, bool shouldPreferPowerEfficiency)
 {
     if (shouldPreferPowerEfficiency && candidate.isEfficient() && !current.isEfficient())
         return true;
     return candidate.size().width() <= current.size().width() && candidate.size().height() <= current.size().height() && candidate.isEfficient();
 }
 
-static bool LEGACY_NODELETE isPresetEfficient(const std::optional<VideoPreset>& preset)
+NODELETE static bool isPresetEfficient(const std::optional<VideoPreset>& preset)
 {
     return preset && preset->isEfficient();
 }
 
 enum PresetToUse : uint8_t { Exact, AspectRatio, Resize };
-static PresetToUse LEGACY_NODELETE computePresetToUse(const std::optional<VideoPreset>& exactSizePreset, const std::optional<VideoPreset>& aspectRatioPreset, const std::optional<VideoPreset>& resizePreset, bool shouldPreferPowerEfficiency)
+NODELETE static PresetToUse computePresetToUse(const std::optional<VideoPreset>& exactSizePreset, const std::optional<VideoPreset>& aspectRatioPreset, const std::optional<VideoPreset>& resizePreset, bool shouldPreferPowerEfficiency)
 {
     if (exactSizePreset && (!shouldPreferPowerEfficiency || exactSizePreset->isEfficient() || (!isPresetEfficient(aspectRatioPreset) && !isPresetEfficient(resizePreset))))
         return PresetToUse::Exact;
@@ -234,14 +234,14 @@ static PresetToUse LEGACY_NODELETE computePresetToUse(const std::optional<VideoP
     return PresetToUse::Resize;
 }
 
-static inline double LEGACY_NODELETE frameRateFromPreset(const VideoPreset& preset, double currentFrameRate)
+NODELETE static inline double frameRateFromPreset(const VideoPreset& preset, double currentFrameRate)
 {
     auto minFrameRate = preset.minFrameRate();
     auto maxFrameRate = preset.maxFrameRate();
     return currentFrameRate >= minFrameRate && currentFrameRate <= maxFrameRate ? currentFrameRate : maxFrameRate;
 }
 
-static inline double LEGACY_NODELETE zoomFromPreset(const VideoPreset& preset, double currentZoom)
+NODELETE static inline double zoomFromPreset(const VideoPreset& preset, double currentZoom)
 {
     if (currentZoom < preset.minZoom())
         return preset.minZoom();

@@ -37,7 +37,7 @@ public:
     RenderFrame(HTMLFrameElement&, Style::ComputedStyle&&);
     virtual ~RenderFrame();
 
-    HTMLFrameElement& LEGACY_NODELETE frameElement() const;
+    NODELETE HTMLFrameElement& frameElement() const;
     FrameEdgeInfo edgeInfo() const;
 
     void updateFromElement() final;

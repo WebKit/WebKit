@@ -62,16 +62,16 @@ public:
     ~PointerLockController();
     void requestPointerLock(Element* target, PointerLockOptions&&, Ref<DeferredPromise>&&);
 
-    WEBCORE_EXPORT void LEGACY_NODELETE ref() const;
+    NODELETE WEBCORE_EXPORT void ref() const;
     WEBCORE_EXPORT void deref() const;
 
     void requestPointerUnlock();
     void requestPointerUnlockAndForceCursorVisible();
     void elementWasRemoved(Element&);
     void documentDetached(Document&);
-    bool LEGACY_NODELETE isLocked() const;
-    WEBCORE_EXPORT bool LEGACY_NODELETE lockPending() const;
-    WEBCORE_EXPORT Element* LEGACY_NODELETE element() const;
+    NODELETE bool isLocked() const;
+    NODELETE WEBCORE_EXPORT bool lockPending() const;
+    NODELETE WEBCORE_EXPORT Element* element() const;
 
     WEBCORE_EXPORT void didAcquirePointerLock();
     WEBCORE_EXPORT void didNotAcquirePointerLock();

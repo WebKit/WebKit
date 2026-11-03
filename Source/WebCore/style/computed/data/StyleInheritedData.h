@@ -51,7 +51,7 @@ public:
     void dumpDifferences(TextStream&, const InheritedData&) const;
 #endif
 
-    bool LEGACY_NODELETE fastPathInheritedEqual(const InheritedData&) const;
+    NODELETE bool fastPathInheritedEqual(const InheritedData&) const;
     bool nonFastPathInheritedEqual(const InheritedData&) const;
     void fastPathInheritFrom(const InheritedData&);
 

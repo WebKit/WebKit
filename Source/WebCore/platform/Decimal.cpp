@@ -60,7 +60,7 @@ public:
 
     SpecialValueHandler(const Decimal& lhs, const Decimal& rhs);
     HandleResult handle();
-    Decimal LEGACY_NODELETE value() const;
+    NODELETE Decimal value() const;
 
 private:
     enum Result {
@@ -79,7 +79,7 @@ SpecialValueHandler::SpecialValueHandler(const Decimal& lhs, const Decimal& rhs)
 {
 }
 
-SpecialValueHandler::HandleResult LEGACY_NODELETE SpecialValueHandler::handle()
+NODELETE SpecialValueHandler::HandleResult SpecialValueHandler::handle()
 {
     if (m_lhs.isFinite() && m_rhs.isFinite())
         return BothFinite;
@@ -120,7 +120,7 @@ Decimal SpecialValueHandler::value() const
     }
 }
 
-static int LEGACY_NODELETE countDigits(uint64_t x)
+NODELETE static int countDigits(uint64_t x)
 {
     int numberOfDigits = 0;
     for (uint64_t powerOfTen = 1; x >= powerOfTen; powerOfTen *= 10) {
@@ -131,7 +131,7 @@ static int LEGACY_NODELETE countDigits(uint64_t x)
     return numberOfDigits;
 }
 
-static uint64_t LEGACY_NODELETE scaleDown(uint64_t x, int n)
+NODELETE static uint64_t scaleDown(uint64_t x, int n)
 {
     ASSERT(n >= 0);
     while (n > 0 && x) {
@@ -141,7 +141,7 @@ static uint64_t LEGACY_NODELETE scaleDown(uint64_t x, int n)
     return x;
 }
 
-static uint64_t LEGACY_NODELETE scaleUp(uint64_t x, int n)
+NODELETE static uint64_t scaleUp(uint64_t x, int n)
 {
     ASSERT(n >= 0);
     ASSERT(n < Decimal::Precision);
@@ -430,7 +430,7 @@ Decimal::AlignedOperands Decimal::alignOperands(const Decimal& lhs, const Decima
     return alignedOperands;
 }
 
-static bool LEGACY_NODELETE isMultiplePowersOfTen(uint64_t coefficient, int n)
+NODELETE static bool isMultiplePowersOfTen(uint64_t coefficient, int n)
 {
     return !coefficient || !(coefficient % scaleUp(1, n));
 }

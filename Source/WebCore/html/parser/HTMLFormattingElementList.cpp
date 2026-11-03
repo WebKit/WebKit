@@ -135,7 +135,7 @@ void HTMLFormattingElementList::clearToLastMarker()
     }
 }
 
-static bool LEGACY_NODELETE itemsHaveMatchingNames(const HTMLStackItem& a, const HTMLStackItem& b)
+NODELETE static bool itemsHaveMatchingNames(const HTMLStackItem& a, const HTMLStackItem& b)
 {
     if (a.elementName() != b.elementName())
         return false;

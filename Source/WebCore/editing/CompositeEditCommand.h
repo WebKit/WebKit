@@ -102,7 +102,7 @@ private:
 
     String label() const final;
     void didRemoveFromUndoManager() final { }
-    bool LEGACY_NODELETE areRootEditabledElementsConnected();
+    NODELETE bool areRootEditabledElementsConnected();
 
     const Ref<Document> m_document;
     VisibleSelection m_startingSelection;
@@ -120,7 +120,7 @@ public:
 
     void apply();
     bool isFirstCommand(EditCommand* command) { return !m_commands.isEmpty() && m_commands.first() == command; }
-    EditCommandComposition* LEGACY_NODELETE composition() const;
+    NODELETE EditCommandComposition* composition() const;
     Ref<EditCommandComposition> ensureComposition();
 
     virtual bool isTypingCommand() const;
@@ -176,7 +176,7 @@ protected:
     void prepareWhitespaceAtPositionForSplit(Position&);
     void replaceCollapsibleWhitespaceWithNonBreakingSpaceIfNeeded(const VisiblePosition&);
     RefPtr<Text> textNodeForRebalance(const Position&) const;
-    bool LEGACY_NODELETE shouldRebalanceLeadingWhitespaceFor(const String&) const;
+    NODELETE bool shouldRebalanceLeadingWhitespaceFor(const String&) const;
     void removeNodeAttribute(Element&, const QualifiedName& attribute);
     void removeChildrenInRange(Node&, unsigned from, unsigned to);
     virtual void removeNode(Node&, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable);
