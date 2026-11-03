@@ -34,19 +34,19 @@ xfo_test({
 });
 
 xfo_test({
-  url: `./support/nested.py?origin=http://{{hosts[alt][]}}:{{ports[http][0]}}&value=SAMEORIGIN`,
+  url: `./support/nested.py?origin=http://{{domains[www]}}:{{ports[http][0]}}&value=SAMEORIGIN`,
   check: "failed message",
   message: `SAMEORIGIN blocks cross-origin nested in same-origin framing`
 });
 
 xfo_test({
-  url: `http://{{hosts[alt][]}}:{{ports[http][0]}}/x-frame-options/support/nested.py?origin=http://{{host}}:{{ports[http][0]}}&value=SAMEORIGIN`,
+  url: `http://{{domains[www]}}:{{ports[http][0]}}/x-frame-options/support/nested.py?origin=http://{{host}}:{{ports[http][0]}}&value=SAMEORIGIN`,
   check: "failed message",
   message: `SAMEORIGIN blocks same-origin nested in cross-origin framing`
 });
 
 xfo_test({
-  url: `http://{{hosts[alt][]}}:{{ports[http][0]}}/x-frame-options/support/nested.py?origin=http://{{hosts[alt][]}}:{{ports[http][0]}}&value=SAMEORIGIN`,
+  url: `http://{{domains[www]}}:{{ports[http][0]}}/x-frame-options/support/nested.py?origin=http://{{domains[www]}}:{{ports[http][0]}}&value=SAMEORIGIN`,
   check: "failed message",
   message: `SAMEORIGIN blocks cross-origin nested in cross-origin framing`
 });

@@ -1,5 +1,5 @@
 var httpHostMain = '{{domains[]}}'; //name of the server that this page must accessed over port 80
-var httpHostAlias = '{{hosts[alt][]}}'; //another hostname (must be a subdomain so document.domain can be set to a higher domain) that accesses the same content, over HTTP
+var httpHostAlias = '{{domains[www]}}'; //another hostname (must be a subdomain so document.domain can be set to a higher domain) that accesses the same content, over HTTP
 var httpsHostAlias = httpHostAlias; //another hostname (can be same as httpHostAlias) that accesses the same content, over HTTPS port
 var httpPortAlias = {{ports[http][0]}}; //another port that accesses the same content on the current hostname, over HTTP
 //XXX HTTPS

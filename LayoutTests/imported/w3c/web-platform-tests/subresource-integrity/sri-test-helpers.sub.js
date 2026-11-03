@@ -10,7 +10,7 @@
 // the port if it's not port 80 or 443, since the user agent will elide the
 // ports in those cases.
 const main_domain = '{{domains[]}}';
-const www_domain = '{{hosts[alt][]}}';
+const www_domain = '{{domains[www]}}';
 const default_port = (location.protocol === 'https:') ? '{{ports[https][0]}}' :
                                                         '{{ports[http][0]}}';
 
