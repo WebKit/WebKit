@@ -264,8 +264,7 @@ SQLiteIDBBackingStore::SQLiteIDBBackingStore(const IDBDatabaseIdentifier& identi
 
 SQLiteIDBBackingStore::~SQLiteIDBBackingStore()
 {
-    if (m_sqliteDB)
-        closeSQLiteDB();
+    closeSQLiteDB();
 }
 
 static IDBError createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
@@ -3055,6 +3054,11 @@ void SQLiteIDBBackingStore::close()
 
 void SQLiteIDBBackingStore::closeSQLiteDB()
 {
+    // Transactions roll back through the database and unregister their cursors, so they must be
+    // destroyed before either goes away.
+    m_transactions.clear();
+    ASSERT(m_cursors.isEmpty());
+
     for (size_t i = 0; i < static_cast<int>(SQL::Invalid); ++i)
         m_cachedStatements[i] = nullptr;
 
