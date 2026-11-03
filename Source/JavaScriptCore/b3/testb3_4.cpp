@@ -2658,6 +2658,76 @@ void testPhiFoldInBlockReachedOnlyByRetreatingEdge(bool swapArms)
     CHECK_EQ(compileAndRun<int32_t>(proc, 42), 42);
 }
 
+void testPhiFoldInputFromMergedBlock(bool swapArms)
+{
+    // As in testPhiFoldInBlockReachedOnlyByRetreatingEdge, #join may be visited before its
+    // reachability is known. @p then folds within the walk only if the owner of @x strictly dominates
+    // #join. #entry is merged into root before the walk, so the owner of @x must be root by then.
+    // Once @p folds, Sub(@p, @x) is 0 and the Check goes away in the same reduceStrength run.
+    //
+    //   root:
+    //     Jump(#entry)
+    //   entry:
+    //     @x = Mul(arg, arg), Upsilon(0, ^i), Branch(arg, #q, #s), arms swapped if swapArms
+    //   s:
+    //     Upsilon(@x, ^p), Branch(0, #join, #exit)
+    //   q:
+    //     Upsilon(@x, ^p), Jump(#join)
+    //   join:
+    //     @p = Phi(), @i = Phi(), Check(Sub(@p, @x)), @nextI = Add(@i, 1), Upsilon(@nextI, ^i)
+    //     Branch(LessThan(@nextI, @p), #q, #exit)
+    //   exit:
+    //     Return(@x)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* entry = proc.addBlock();
+    BasicBlock* s = proc.addBlock();
+    BasicBlock* q = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+    Value* argument = cCallArgumentValues<int32_t>(proc, root)[0];
+
+    root->setSuccessors(FrequentedBlock(entry));
+    root->appendNew<Value>(proc, Jump, Origin());
+
+    Value* x = entry->appendNew<Value>(proc, Mul, Origin(), argument, argument);
+    UpsilonValue* initialI = entry->appendNew<UpsilonValue>(proc, Origin(), entry->appendNew<Const32Value>(proc, Origin(), 0));
+    if (swapArms)
+        entry->setSuccessors(FrequentedBlock(s), FrequentedBlock(q));
+    else
+        entry->setSuccessors(FrequentedBlock(q), FrequentedBlock(s));
+    entry->appendNew<Value>(proc, Branch, Origin(), argument);
+
+    UpsilonValue* sP = s->appendNew<UpsilonValue>(proc, Origin(), x);
+    s->setSuccessors(FrequentedBlock(join), FrequentedBlock(exit));
+    s->appendNew<Value>(proc, Branch, Origin(), s->appendNew<Const32Value>(proc, Origin(), 0));
+
+    UpsilonValue* qP = q->appendNew<UpsilonValue>(proc, Origin(), x);
+    q->setSuccessors(FrequentedBlock(join));
+    q->appendNew<Value>(proc, Jump, Origin());
+
+    Value* p = join->appendNew<Value>(proc, Phi, Int32, Origin());
+    Value* i = join->appendNew<Value>(proc, Phi, Int32, Origin());
+    sP->setPhi(p);
+    qP->setPhi(p);
+    initialI->setPhi(i);
+    setReturn42Generator(join->appendNew<CheckValue>(proc, Check, Origin(), join->appendNew<Value>(proc, Sub, Origin(), p, x)));
+    Value* nextI = join->appendNew<Value>(proc, Add, Origin(), i, join->appendNew<Const32Value>(proc, Origin(), 1));
+    join->appendNew<UpsilonValue>(proc, Origin(), nextI, i);
+    join->setSuccessors(FrequentedBlock(q), FrequentedBlock(exit));
+    join->appendNew<Value>(proc, Branch, Origin(), join->appendNew<Value>(proc, LessThan, Origin(), nextI, p));
+
+    exit->appendNew<Value>(proc, Return, Origin(), x);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(valueCount(proc, Phi), 1u);
+    CHECK_EQ(valueCount(proc, Check), 0u);
+    validate(proc);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 42), 42 * 42);
+}
+
 void testPhiFoldDeadLoopHeaderEnteredFromRoot()
 {
     // Root's Branch folds away its edge into #header, leaving #latch as #header's only predecessor.

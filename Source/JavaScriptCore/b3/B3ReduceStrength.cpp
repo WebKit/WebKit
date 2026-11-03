@@ -692,6 +692,7 @@ public:
             m_enteredFromReachableBlock.clearAll();
             m_enteredFromReachableBlock.ensureSize(m_proc.size());
             m_valueForConstant.clear();
+            m_proc.resetValueOwners(); // Used by Phi folding.
 
             m_dominators = &m_proc.dominators(); // Recompute if necessary.
             m_layeredCSE.clear();

@@ -38,7 +38,7 @@ SwitchValue::~SwitchValue() = default;
 
 BasicBlock* SwitchValue::fallThrough(const BasicBlock* owner)
 {
-    ASSERT(hasFallThrough());
+    ASSERT(hasFallThrough(owner));
     BasicBlock* fallThrough = owner->successor(owner->numSuccessors() - 1).block();
     ASSERT(fallThrough == owner->fallThrough().block());
     return fallThrough;

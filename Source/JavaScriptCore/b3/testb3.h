@@ -1002,6 +1002,7 @@ void testPhiFoldEqualConstantFromBackEdge();
 void testPhiFoldDeadLoopWithStalePredecessor();
 void testPhiFoldInBlockReachedOnlyByRetreatingEdge(bool swapArms);
 void testPhiFoldConstantInBlockReachedOnlyByRetreatingEdge(bool swapArms);
+void testPhiFoldInputFromMergedBlock(bool swapArms);
 void testPhiFoldDeadLoopHeaderEnteredFromRoot();
 void testPhiFoldLoopPhiTrivialAfterLatch();
 void testBranchNotEqualFoldPtr(intptr_t value);

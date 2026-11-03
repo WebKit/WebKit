@@ -769,6 +769,8 @@ void run(const TestConfig* config)
     RUN(testPhiFoldInBlockReachedOnlyByRetreatingEdge(true));
     RUN(testPhiFoldConstantInBlockReachedOnlyByRetreatingEdge(false));
     RUN(testPhiFoldConstantInBlockReachedOnlyByRetreatingEdge(true));
+    RUN(testPhiFoldInputFromMergedBlock(false));
+    RUN(testPhiFoldInputFromMergedBlock(true));
     RUN(testPhiFoldDeadLoopHeaderEnteredFromRoot());
     RUN(testPhiFoldLoopPhiTrivialAfterLatch());
     RUN(testBranchNotEqualFoldPtr(42));
