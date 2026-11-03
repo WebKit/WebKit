@@ -34,6 +34,7 @@
 #import <wtf/OptionSet.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/Vector.h>
+#import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
 // Conversions between the WebGPU C API (webgpu.h) and the WebGPU C++ API: enums, flags, strings and
@@ -59,6 +60,19 @@ inline String fromAPI(WGPUStringView string)
     if (string.length == WGPU_STRLEN)
         return String::fromUTF8(string.data);
     return String::fromUTF8(unsafeMakeSpan(string.data, string.length));
+}
+
+// Literals have static storage, so the view can borrow them freely.
+inline WGPUStringView toAPI(ASCIILiteral literal)
+{
+    return { literal.characters(), literal.length() };
+}
+
+// The view borrows the UTF-8 string.
+inline WGPUStringView toAPI(const UTF8CString& string LIFETIME_BOUND)
+{
+    auto characters = byteCast<char>(string.span());
+    return { characters.data(), characters.size() };
 }
 
 // Associates a chainable extension struct with its sType tag. Specialize for each struct

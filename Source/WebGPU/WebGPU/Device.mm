@@ -31,6 +31,8 @@
 #import "BindGroup.h"
 #import "BindGroupLayout.h"
 #import "Buffer.h"
+#import "CAPIInstance.h"
+#import "CAPIObjectState.h"
 #import "CommandEncoder.h"
 #import "ComputePipeline.h"
 #import "MetalSPI.h"
@@ -413,15 +415,21 @@ void Device::makeInvalid()
 
 void Device::loseTheDevice(WebGPU::DeviceLostReason reason)
 {
+    loseTheDevice(reason, "Device lost."_s);
+}
+
+void Device::loseTheDevice(WebGPU::DeviceLostReason reason, String&& message)
+{
     m_device = nil;
 
     m_adapter->makeInvalid();
+    // As in webgpu.h, the device is lost before its device-lost callback is called.
+    m_isLost = true;
 
     if (m_deviceLostCallback)
-        m_deviceLostCallback(reason, "Device lost."_s);
+        m_deviceLostCallback(reason, WTF::move(message));
 
     protect(m_defaultQueue)->makeInvalid();
-    m_isLost = true;
 }
 
 static void setOwnerWithIdentity(id<MTLResourceSPI> resource, auto webProcessID)
@@ -1227,15 +1235,17 @@ void Device::makeSubmitInvalidClearingEncoders(TrackedResourceContainer& command
 static constexpr auto invalidComputePipelineDescriptorMessage = "GPUComputePipelineDescriptor has no shader module"_s;
 static constexpr auto invalidRenderPipelineDescriptorMessage = "GPURenderPipelineDescriptor has no shader module or an invalid enum value or color write mask bit"_s;
 
-void LEGACY_NODELETE wgpuDeviceAddRef(WGPUDevice device)
+void wgpuDeviceAddRef(WGPUDevice device)
 {
-    WebGPU::Metal::fromAPI(device).ref();
+    WebGPU::CAPI::addReference(protect(WebGPU::fromAPI(device)));
 }
 
+// As in webgpu.h, releasing the last reference destroys the device, also when its objects still
+// reference it.
 void wgpuDeviceRelease(WGPUDevice device)
 {
     @autoreleasepool {
-        WebGPU::Metal::fromAPI(device).deref();
+        WebGPU::CAPI::releaseReference(protect(WebGPU::fromAPI(device)));
     }
 }
 
@@ -1337,11 +1347,17 @@ static void createComputePipelineAsync(WGPUDevice device, const WGPUComputePipel
 WGPUFuture wgpuDeviceCreateComputePipelineAsync(WGPUDevice device, const WGPUComputePipelineDescriptor* descriptor, WGPUCreateComputePipelineAsyncCallbackInfo callbackInfo)
 {
     @autoreleasepool {
-        WebGPU::Metal::CAPIFuture future { protect(WebGPU::Metal::fromAPI(device))->instance() };
+        WebGPU::CAPI::Future future { WebGPU::CAPI::findInstance(protect(WebGPU::fromAPI(device))).get(), callbackInfo.mode, [callbackInfo] {
+            callbackInfo.callback(WGPUCreatePipelineAsyncStatus_CallbackCancelled, nullptr, WebGPU::Metal::toAPI("Instance dropped"_s), callbackInfo.userdata1, callbackInfo.userdata2);
+        } };
         createComputePipelineAsync(device, *descriptor, [callbackInfo, future](WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, String&& message) {
-            auto utf8 = message.utf8();
-            callbackInfo.callback(status, pipeline, WebGPU::Metal::toAPI(utf8), callbackInfo.userdata1, callbackInfo.userdata2);
-            future.complete();
+            bool wasCalled = future.complete([&] {
+                auto utf8 = message.utf8();
+                callbackInfo.callback(status, pipeline, WebGPU::Metal::toAPI(utf8), callbackInfo.userdata1, callbackInfo.userdata2);
+            });
+            // The pipeline of a cancelled callback is not handed out.
+            if (!wasCalled && pipeline)
+                WebGPU::fromAPI(pipeline).deref();
         });
         return future.future();
     }
@@ -1415,11 +1431,17 @@ static void createRenderPipelineAsync(WGPUDevice device, const WGPURenderPipelin
 WGPUFuture wgpuDeviceCreateRenderPipelineAsync(WGPUDevice device, const WGPURenderPipelineDescriptor* descriptor, WGPUCreateRenderPipelineAsyncCallbackInfo callbackInfo)
 {
     @autoreleasepool {
-        WebGPU::Metal::CAPIFuture future { protect(WebGPU::Metal::fromAPI(device))->instance() };
+        WebGPU::CAPI::Future future { WebGPU::CAPI::findInstance(protect(WebGPU::fromAPI(device))).get(), callbackInfo.mode, [callbackInfo] {
+            callbackInfo.callback(WGPUCreatePipelineAsyncStatus_CallbackCancelled, nullptr, WebGPU::Metal::toAPI("Instance dropped"_s), callbackInfo.userdata1, callbackInfo.userdata2);
+        } };
         createRenderPipelineAsync(device, *descriptor, [callbackInfo, future](WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, String&& message) {
-            auto utf8 = message.utf8();
-            callbackInfo.callback(status, pipeline, WebGPU::Metal::toAPI(utf8), callbackInfo.userdata1, callbackInfo.userdata2);
-            future.complete();
+            bool wasCalled = future.complete([&] {
+                auto utf8 = message.utf8();
+                callbackInfo.callback(status, pipeline, WebGPU::Metal::toAPI(utf8), callbackInfo.userdata1, callbackInfo.userdata2);
+            });
+            // The pipeline of a cancelled callback is not handed out.
+            if (!wasCalled && pipeline)
+                WebGPU::fromAPI(pipeline).deref();
         });
         return future.future();
     }
@@ -1475,6 +1497,26 @@ void wgpuDeviceDestroy(WGPUDevice device)
     }
 }
 
+// For testing, as in Dawn. The reasons that the C++ API does not have are WGPUDeviceLostReason_Unknown.
+void wgpuDeviceForceLoss(WGPUDevice device, WGPUDeviceLostReason type, WGPUStringView message)
+{
+    @autoreleasepool {
+        Ref protectedDevice = WebGPU::Metal::fromAPI(device);
+        if (protectedDevice->isLost())
+            return;
+        protectedDevice->loseTheDevice(WebGPU::Metal::fromAPI(type).value_or(WebGPU::DeviceLostReason::Unknown), WebGPU::Metal::fromAPI(message));
+    }
+}
+
+// The future of the device-lost callback of the WGPUDeviceDescriptor, which completes once the
+// callback has been called.
+WGPUFuture wgpuDeviceGetLostFuture(WGPUDevice device)
+{
+    @autoreleasepool {
+        return WebGPU::CAPI::lostFuture(protect(WebGPU::fromAPI(device)));
+    }
+}
+
 // The chained structs of limits are not filled in.
 WGPUStatus wgpuDeviceGetLimits(WGPUDevice device, WGPULimits* limits)
 {
@@ -1490,7 +1532,10 @@ WGPUStatus wgpuDeviceGetLimits(WGPUDevice device, WGPULimits* limits)
 WGPUAdapter wgpuDeviceGetAdapter(WGPUDevice device)
 {
     @autoreleasepool {
-        return WebGPU::Metal::releaseToAPI(Ref { WebGPU::Metal::fromAPI(device).adapter() });
+        Ref apiDevice = WebGPU::fromAPI(device);
+        Ref adapter = apiDevice->adapter();
+        WebGPU::CAPI::didHandOutAdapter(adapter, WebGPU::CAPI::findInstance(apiDevice.get()).get());
+        return WebGPU::Metal::releaseToAPI(WTF::move(adapter));
     }
 }
 
@@ -1524,16 +1569,19 @@ WGPUFuture wgpuDevicePopErrorScope(WGPUDevice device, WGPUPopErrorScopeCallbackI
 {
     @autoreleasepool {
         Ref protectedDevice = WebGPU::Metal::fromAPI(device);
-        WebGPU::Metal::CAPIFuture future { protectedDevice->instance() };
+        WebGPU::CAPI::Future future { WebGPU::CAPI::findInstance(protectedDevice.get()).get(), callbackInfo.mode, [callbackInfo] {
+            callbackInfo.callback(WGPUPopErrorScopeStatus_CallbackCancelled, WGPUErrorType_NoError, WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
+        } };
         protectedDevice->popErrorScope([callbackInfo, future](bool succeeded, std::optional<WebGPU::Error>&& error) {
-            if (error) {
-                auto message = error->message.utf8();
-                callbackInfo.callback(WGPUPopErrorScopeStatus_Success, WebGPU::Metal::toAPI(error), WebGPU::Metal::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
-            } else if (succeeded)
-                callbackInfo.callback(WGPUPopErrorScopeStatus_Success, WGPUErrorType_NoError, WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
-            else
-                callbackInfo.callback(WGPUPopErrorScopeStatus_Error, WGPUErrorType_NoError, WebGPU::Metal::toAPI("popErrorScope() failed validation."_s), callbackInfo.userdata1, callbackInfo.userdata2);
-            future.complete();
+            future.complete([&] {
+                if (error) {
+                    auto message = error->message.utf8();
+                    callbackInfo.callback(WGPUPopErrorScopeStatus_Success, WebGPU::Metal::toAPI(error), WebGPU::Metal::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
+                } else if (succeeded)
+                    callbackInfo.callback(WGPUPopErrorScopeStatus_Success, WGPUErrorType_NoError, WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
+                else
+                    callbackInfo.callback(WGPUPopErrorScopeStatus_Error, WGPUErrorType_NoError, WebGPU::Metal::toAPI("popErrorScope() failed validation."_s), callbackInfo.userdata1, callbackInfo.userdata2);
+            });
         });
         return future.future();
     }

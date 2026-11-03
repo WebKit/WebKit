@@ -27,6 +27,7 @@
 
 #import "ASTInterpolateAttribute.h"
 #import "CallGraph.h"
+#import "Device.h"
 #import "WGSL.h"
 #import <WebGPU/WebGPUCpp.h>
 #import <variant>
@@ -111,7 +112,7 @@ public:
     const WGSL::Reflection::EntryPointInformation* entryPointInformation(const String&) const;
     id<MTLLibrary> library() const { return m_library; }
 
-    Device& device() const { return m_device; }
+    Device& device() const final { return m_device; }
     const String& LEGACY_NODELETE defaultVertexEntryPoint() const;
     const String& LEGACY_NODELETE defaultFragmentEntryPoint() const;
     const String& LEGACY_NODELETE defaultComputeEntryPoint() const;

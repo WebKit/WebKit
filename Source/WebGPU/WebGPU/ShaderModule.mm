@@ -31,6 +31,8 @@
 #import "ASTFunction.h"
 #import "ASTStructure.h"
 #import "ASTStructureMember.h"
+#import "CAPIInstance.h"
+#import "CAPIObjectState.h"
 #import "Device.h"
 #import "PipelineLayout.h"
 #import "Types.h"
@@ -1212,10 +1214,14 @@ static void getCompilationInfo(WGPUShaderModule shaderModule, CompletionHandler<
 WGPUFuture wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallbackInfo callbackInfo)
 {
     @autoreleasepool {
-        WebGPU::Metal::CAPIFuture future { WebGPU::Metal::fromAPI(shaderModule).device().instance() };
+        Ref protectedShaderModule = WebGPU::Metal::fromAPI(shaderModule);
+        WebGPU::CAPI::Future future { WebGPU::CAPI::findInstance(protect(protectedShaderModule->device())).get(), callbackInfo.mode, [callbackInfo] {
+            callbackInfo.callback(WGPUCompilationInfoRequestStatus_CallbackCancelled, nullptr, callbackInfo.userdata1, callbackInfo.userdata2);
+        } };
         getCompilationInfo(shaderModule, [callbackInfo, future](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
-            callbackInfo.callback(status, &compilationInfo, callbackInfo.userdata1, callbackInfo.userdata2);
-            future.complete();
+            future.complete([&] {
+                callbackInfo.callback(status, &compilationInfo, callbackInfo.userdata1, callbackInfo.userdata2);
+            });
         });
         return future.future();
     }
