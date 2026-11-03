@@ -88,7 +88,6 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     mode = document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode;
     isHTMLDocument = document.isHTMLDocument();
     hasDocumentSecurityOrigin = sheetBaseURL.isNull() || protect(document.securityOrigin())->canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton());
-    webkitMediaTextTrackDisplayQuirkEnabled = document.quirks().needsWebKitMediaTextTrackDisplayQuirk();
     marginTrimInlineSupportsQuirkEnabled = document.quirks().needsMarginTrimInlineSupportsQuirk();
 }
 
@@ -189,7 +188,6 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.cssTextTransformMathAutoEnabled,
         context.cssFontSynthesisStyleObliqueOnlyEnabled,
         context.cssInternalAutoBaseParsingEnabled,
-        context.webkitMediaTextTrackDisplayQuirkEnabled,
         context.marginTrimInlineSupportsQuirkEnabled,
         context.cssMathDepthEnabled,
         context.openPseudoClassEnabled,

@@ -44,7 +44,6 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
     , htmlEnhancedSelectEnabled(context.htmlEnhancedSelectEnabled)
     , targetTextPseudoElementEnabled(context.targetTextPseudoElementEnabled)
     , cssAppearanceBaseEnabled(context.cssAppearanceBaseEnabled)
-    , webkitMediaTextTrackDisplayQuirkEnabled(context.webkitMediaTextTrackDisplayQuirkEnabled)
     , openPseudoClassEnabled(context.openPseudoClassEnabled)
 {
 }
@@ -60,7 +59,6 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     , htmlEnhancedSelectEnabled(document.settings().htmlEnhancedSelectEnabled())
     , targetTextPseudoElementEnabled(document.settings().targetTextPseudoElementEnabled())
     , cssAppearanceBaseEnabled(document.settings().cssAppearanceBaseEnabled())
-    , webkitMediaTextTrackDisplayQuirkEnabled(document.quirks().needsWebKitMediaTextTrackDisplayQuirk())
     , openPseudoClassEnabled(document.settings().openPseudoClassEnabled())
 {
 }
@@ -77,7 +75,6 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
         context.htmlEnhancedSelectEnabled,
         context.targetTextPseudoElementEnabled,
         context.cssAppearanceBaseEnabled,
-        context.webkitMediaTextTrackDisplayQuirkEnabled,
         context.openPseudoClassEnabled
     );
     add(hasher, context.mode, bits);

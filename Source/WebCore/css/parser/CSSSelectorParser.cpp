@@ -887,18 +887,15 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
     else {
         selector = MutableCSSSelector::parsePseudoElementSelector(token.value(), m_context);
 #if ENABLE(VIDEO)
-        if (m_context.webkitMediaTextTrackDisplayQuirkEnabled
-            && token.type() == IdentToken
+        if (token.type() == IdentToken
             && selector
             && selector->match() == CSSSelector::Match::PseudoElement
             && selector->pseudoElement() == CSSSelector::PseudoElement::UserAgentPart
             && selector->value() == UserAgentParts::webkitMediaTextTrackDisplay()) {
-            // This quirk will convert a `::-webkit-media-text-track-display` selector
-            // into a `::-webkit-media-text-track-container` selector, so
-            // that websites which were previously using that selector to move cues
-            // with transform:translateY() rules can continue to do so, without hitting
-            // the PropertyAllowList::Cue restriction.
-            selector->setValue(UserAgentParts::webkitMediaTextTrackContainer());
+            // This will convert a `::-webkit-media-text-track-display` selector into a
+            // `::cue` selector, so that websites which were previously using that selector
+            // to move cues with transform:translateY() rules can continue to do so.
+            selector->setValue(UserAgentParts::cue());
         }
 
         // Treat the ident version of cue as PseudoElement::UserAgentPart.

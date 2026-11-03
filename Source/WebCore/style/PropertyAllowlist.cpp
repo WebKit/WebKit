@@ -398,6 +398,7 @@ bool isValidCueStyleProperty(CSSPropertyID id)
     case CSSPropertyID::StrokeLinecap:
     case CSSPropertyID::StrokeColor:
     case CSSPropertyID::StrokeWidth:
+    case CSSPropertyID::Transform:
         return true;
     default:
         break;

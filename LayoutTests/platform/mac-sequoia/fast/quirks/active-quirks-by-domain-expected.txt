@@ -284,7 +284,6 @@ https://www.iheart.com/
         script: document.cookie = 'app=listen:60; path=/; domain=.iheart.com';
 https://www.imdb.com/
     NeedsChromeMediaControlsPseudoElementQuirk
-    NeedsWebKitMediaTextTrackDisplayQuirk
     NeedsZeroMaxTouchPointsQuirk
 https://www.instagram.com/
     NeedsInstagramResizingReelsQuirk
@@ -355,7 +354,7 @@ https://www.nba.com/
 https://www.nfl.com/
     ShouldSuppressHLSSubtitles
 https://www.nhl.com/
-    NeedsWebKitMediaTextTrackDisplayQuirk
+    (none)
 https://www.nytimes.com/
     (none)
 https://www.pandora.com/
@@ -392,7 +391,6 @@ https://soylent.com/
 https://open.spotify.com/
     NeedsBodyScrollbarWidthNoneDisabledQuirk
     NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk
-    NeedsWebKitMediaTextTrackDisplayQuirk
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldBlockAudiblePlaybackWhileAudioIsPlaying
     ShouldDeferIntersectionObserversDuringResize

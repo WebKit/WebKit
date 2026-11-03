@@ -727,7 +727,6 @@
             "matches": ["*://*.imdb.com/*"],
             "behaviors": [
                 { "id": "NeedsChromeMediaControlsPseudoElementQuirk", "bugs": ["rdar://137991466"] },
-                { "id": "NeedsWebKitMediaTextTrackDisplayQuirk", "bugs": ["rdar://137012134"] },
                 { "id": "NeedsZeroMaxTouchPointsQuirk", "bugs": ["rdar://162684936"] }
             ]
         },
@@ -980,10 +979,6 @@
             "behaviors": [{ "id": "ShouldSuppressHLSSubtitles" }]
         },
         {
-            "matches": ["*://*.nhl.com/*"],
-            "behaviors": [{ "id": "NeedsWebKitMediaTextTrackDisplayQuirk" }]
-        },
-        {
             "bugs": ["rdar://5976384"],
             "matches": ["*://*.nytimes.com/*"],
             "available": "iOS || vision",
@@ -1095,7 +1090,6 @@
                 { "id": "NeedsBodyScrollbarWidthNoneDisabledQuirk" },
                 { "id": "ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor" },
                 { "id": "ShouldLimitHLSPlaybackRate" },
-                { "id": "NeedsWebKitMediaTextTrackDisplayQuirk" },
                 { "id": "ShouldDeferIntersectionObserversDuringResize" },
                 { "id": "ShouldBlockAudiblePlaybackWhileAudioIsPlaying" },
                 { "id": "NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk" }
