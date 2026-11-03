@@ -2846,6 +2846,9 @@ webkit.org/b/310095 imported/w3c/web-platform-tests/webrtc/simulcast/screenshare
 
 webkit.org/b/314659 webrtc/getDisplayMedia-pc-resolution.html [ Pass Failure Timeout ]
 
+# Flaky on the bots, but consistently pass locally.
+http/wpt/webrtc/script-transform-oversized-frame.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
