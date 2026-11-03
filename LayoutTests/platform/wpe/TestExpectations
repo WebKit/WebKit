@@ -1100,7 +1100,7 @@ webkit.org/b/309633 [ arm64 ] fast/text/hyphenate-locale.html [ Failure ]
 
 webkit.org/b/309634 [ arm64 ] http/tests/xmlhttprequest/binary-x-user-defined.html [ Failure ]
 
-webkit.org/b/313803 webkit.org/b/309635 [ arm64 ] webgl/2.0.y/conformance2/textures/video/tex-2d-r8-red-unsigned_byte.html [ Timeout ]
+webkit.org/b/313803 webkit.org/b/309635 [ arm64 ] webgl/2.0.y/conformance2/textures/video/tex-2d-r8-red-unsigned_byte.html [ Pass Timeout ]
 
 webkit.org/b/309636 [ arm64 ] webgl/tex-2d-video-no-change-wrap.html [ Pass Failure ]
 
@@ -1311,3 +1311,14 @@ webkit.org/b/329530 imported/w3c/web-platform-tests/html/canvas/element/manual/d
 webkit.org/b/328381 imported/w3c/web-platform-tests/svg/text/scripted/range-getboundingclientrect-scaled.html [ Failure ]
 
 imported/w3c/web-platform-tests/svg/coordinate-systems/viewBox-fractional-valid.html [ ImageOnlyFailure ]
+
+webkit.org/b/329966 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https.html [ Crash Failure Pass Timeout ]
+webkit.org/b/329966 [ x86_64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Pass Timeout ]
+
+webkit.org/b/329967 [ arm64 ] fast/forms/time/time-editable-components/time-editable-components-keyboard-events.html [ Failure ]
+
+webkit.org/b/329968 [ arm64 ] media/track/texttrackcue/texttrackcue-adopt-node-display-tree-crash.html [ Pass Timeout ]
+
+webkit.org/b/329972 [ arm64 ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Timeout ]
+
+webkit.org/b/310411 [ arm64 ] fast/events/site-isolation/event-timing-back-forward-cache-duration.html [ Pass Failure ]
