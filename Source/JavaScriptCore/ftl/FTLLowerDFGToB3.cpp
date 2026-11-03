@@ -10669,8 +10669,17 @@ IGNORE_CLANG_WARNINGS_END
         else if (m_node->child1().useKind() == SetObjectUse)
             speculateSetObject(m_node->child1());
 
-        bool fastSpreadProven = m_graph.canDoFastSpread(m_node, m_state.forNode(m_node->child1()));
-        bool fastSpreadWithStructureCheck = !fastSpreadProven && m_graph.canDoFastSpreadWithStructureCheck(m_node);
+        // Same two decisions the pre-fix code made, so everything downstream is shared verbatim.
+        constexpr bool canSpeculate = true;
+        Graph::ProtocolWatchResult arrayWatch = Graph::ProtocolWatchResult::Unwatchable;
+        // The structures a RequiresSemanticStructureCheck operand must be narrowed to, which is every
+        // realm the operand's proven structures belong to rather than just the semantic origin's.
+        RegisteredStructureSet arrayStructuresToCheck;
+        if (m_node->child1().useKind() == ArrayUse)
+            std::tie(arrayWatch, arrayStructuresToCheck) = m_graph.tryWatchArrayIteratorProtocol(m_node->child1().node(), m_state.forNode(m_node->child1()), canSpeculate);
+
+        bool fastSpreadProven = arrayWatch == Graph::ProtocolWatchResult::Proven;
+        bool fastSpreadWithStructureCheck = arrayWatch == Graph::ProtocolWatchResult::RequiresSemanticStructureCheck;
 
         if (fastSpreadProven || fastSpreadWithStructureCheck) {
             LBasicBlock indexingTypeCheck = fastSpreadWithStructureCheck ? m_out.newBlock() : nullptr;
@@ -10687,14 +10696,15 @@ IGNORE_CLANG_WARNINGS_END
             LBasicBlock lastNext = nullptr;
 
             if (fastSpreadWithStructureCheck) {
-                JSGlobalObject* childGlobalObject = m_graph.globalObjectFor(m_node->child1()->origin.semantic);
                 LValue structureID = m_out.load32(argument, m_heaps.JSCell_structureID);
-                constexpr size_t numShapes = std::size(Graph::originalArrayShapesForSpread);
-                for (size_t i = 0; i < numShapes; ++i) {
-                    RegisteredStructure registered = m_graph.registerStructure(childGlobalObject->originalArrayStructureForIndexingType(Graph::originalArrayShapesForSpread[i]));
-                    bool isLast = (i + 1 == numShapes);
+                Vector<RegisteredStructure, 8> structures;
+                arrayStructuresToCheck.forEach([&](RegisteredStructure registered) {
+                    structures.append(registered);
+                });
+                for (size_t i = 0; i < structures.size(); ++i) {
+                    bool isLast = (i + 1 == structures.size());
                     LBasicBlock nextCompare = isLast ? slowPath : m_out.newBlock();
-                    m_out.branch(m_out.equal(structureID, weakStructureID(registered)),
+                    m_out.branch(m_out.equal(structureID, weakStructureID(structures[i])),
                         unsure(indexingTypeCheck), unsure(nextCompare));
                     if (!isLast)
                         m_out.appendTo(nextCompare);
@@ -10802,25 +10812,27 @@ IGNORE_CLANG_WARNINGS_END
             LBasicBlock slowPath = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
-            // Guard: route prototype-mutated or own-Symbol.iterator Sets to slowPath.
-            // The check can be folded when an upstream CheckStructure has already
-            // proven that the operand carries the original Set structure.
-            // FixupPhase arms the Set iterator protocol watchpoint on m_node->child1(), so
-            // child1's global object must be used.
-            JSGlobalObject* childGlobalObject = m_graph.globalObjectFor(m_node->child1()->origin.semantic);
-            Structure* originalSetStructure = childGlobalObject->setStructureConcurrently();
-            if (!originalSetStructure)
+            // The inline path below walks the Set's storage directly, bypassing Symbol.iterator, so
+            // it is only valid where the iteration protocol has been proven non-observable. Anything
+            // else goes to slowPath, which performs the authoritative
+            // isIteratorProtocolFastAndNonObservable check.
+            auto [setWatch, setStructureToCheck] = m_graph.tryWatchSetIteratorProtocol(m_node->child1().node(), m_state.forNode(m_node->child1()), canSpeculate);
+            switch (setWatch) {
+            case Graph::ProtocolWatchResult::Unwatchable:
                 m_out.jump(slowPath);
-            else {
-                RegisteredStructure registeredSetStructure = m_graph.registerStructure(originalSetStructure);
-                if (m_state.forNode(m_node->child1()).m_structure.isSubsetOf(RegisteredStructureSet { registeredSetStructure }))
-                    m_out.jump(storageCheck);
-                else {
-                    LValue structureID = m_out.load32(argument, m_heaps.JSCell_structureID);
-                    m_out.branch(m_out.notEqual(structureID,
-                        weakStructureID(registeredSetStructure)),
-                        rarely(slowPath), usually(storageCheck));
-                }
+                break;
+
+            case Graph::ProtocolWatchResult::RequiresSemanticStructureCheck: {
+                LValue structureID = m_out.load32(argument, m_heaps.JSCell_structureID);
+                m_out.branch(m_out.notEqual(structureID,
+                    weakStructureID(setStructureToCheck)),
+                    rarely(slowPath), usually(storageCheck));
+                break;
+            }
+
+            case Graph::ProtocolWatchResult::Proven:
+                m_out.jump(storageCheck);
+                break;
             }
             LBasicBlock lastNext = m_out.appendTo(storageCheck, obsoleteCheck);
 

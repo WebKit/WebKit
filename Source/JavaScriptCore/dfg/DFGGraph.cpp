@@ -2098,52 +2098,125 @@ bool Graph::willCatchExceptionInMachineFrame(CodeOrigin codeOrigin, CodeOrigin& 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool Graph::canDoFastSpread(Node* node, const AbstractValue& value)
+static bool isWatchingAllArrayIteratorProtocolWatchpointsForAllocation(Graph* graph, JSGlobalObject* realm)
 {
-    // The parameter 'value' is the AbstractValue for child1 (the thing being spread).
-    ASSERT(node->op() == Spread);
+    return realm
+        && graph->isWatchingGlobalObjectWatchpoint(realm, realm->arrayPrototypeChainIsSaneWatchpointSet(), LinkerIR::Type::ArrayPrototypeChainIsSaneWatchpointSet)
+        && graph->isWatchingGlobalObjectWatchpoint(realm, realm->arrayIteratorProtocolWatchpointSet(), LinkerIR::Type::ArrayIteratorProtocolWatchpointSet)
+        && graph->isWatchingGlobalObjectWatchpoint(realm, realm->havingABadTimeWatchpointSet(), LinkerIR::Type::HavingABadTimeWatchpointSet);
+}
 
+bool Graph::isWatchingAllArrayIteratorProtocolWatchpointsForAllocation(Node* allocation)
+{
+    ASSERT(allocation->op() == CreateRest || allocation->op() == NewArrayBuffer);
+    return DFG::isWatchingAllArrayIteratorProtocolWatchpointsForAllocation(this, globalObjectFor(allocation->origin.semantic));
+}
+
+std::pair<Graph::ProtocolWatchResult, RegisteredStructureSet> Graph::tryWatchArrayIteratorProtocol(Node* iterable, const AbstractValue& arrayIterable, bool canSpeculate)
+{
     if (m_plan.isUnlinked())
-        return false;
+        return { ProtocolWatchResult::Unwatchable, { } };
 
-    if (node->child1().useKind() != ArrayUse) {
-        // Note: we only speculate on ArrayUse when we've set up the necessary watchpoints
-        // to prove that the iteration protocol is non-observable starting from ArrayPrototype.
-        return false;
-    }
-
-    // FIXME: We should add profiling of the incoming operand to Spread
-    // so we can speculate in such a way that we guarantee that this
-    // function would return true:
+    // FIXME: We should add profiling of the incoming operand to Spread so we can speculate in such a
+    // way that we guarantee reaching Proven rather than RequiresSemanticStructureCheck:
     // https://bugs.webkit.org/show_bug.cgi?id=171198
 
-    if (!value.m_structure.isFinite())
-        return false;
+    // A clear value means this code is unreachable but has not been pruned yet, so there is nothing
+    // to prove anything about.
+    if (arrayIterable.isClear())
+        return { ProtocolWatchResult::Unwatchable, { } };
 
-    JSGlobalObject* globalObject = globalObjectFor(node->child1()->origin.semantic);
-    ArrayPrototype* arrayPrototype = globalObject->arrayPrototype();
-    bool allGood = true;
-    value.m_structure.forEach([&] (RegisteredStructure structure) {
-        allGood &= structure->realm() == globalObject 
-            && structure->hasMonoProto()
-            && structure->storedPrototype() == arrayPrototype
-            && !structure->isDictionary()
-            && structure->getConcurrently(m_vm.propertyNames->iteratorSymbol.impl()) == invalidOffset
-            && !structure->mayInterceptIndexedAccesses();
-    });
+    if (!arrayIterable.isType(SpecArray))
+        return { ProtocolWatchResult::Unwatchable, { } };
 
-    return allGood;
+    if (!arrayIterable.m_structure.isClear() && arrayIterable.m_structure.isFinite()) {
+        bool allGood = true;
+        // FIXME: Express these per-structure conditions as an ObjectPropertyConditionSet and watch it
+        // through watchConditions() instead. Rewriting the conditions by hand for every protocol is
+        // error prone, especially if the set of conditions ever changes.
+        arrayIterable.m_structure.forEach([&](const RegisteredStructure& structure) {
+            ASSERT(structure->typeInfo().type() == ArrayType);
+            // A set spanning several realms is fine so long as every one of them is watched.
+            JSGlobalObject* realm = structure->realm();
+            allGood &= realm
+                && structure->hasMonoProto()
+                && structure->storedPrototype() == realm->arrayPrototype()
+                && !structure->isDictionary()
+                && !structure->mayInterceptIndexedAccesses()
+                && structure->getConcurrently(m_vm.propertyNames->iteratorSymbol.impl()) == invalidOffset
+                && DFG::isWatchingAllArrayIteratorProtocolWatchpointsForAllocation(this, realm);
+        });
+
+        if (allGood)
+            return { ProtocolWatchResult::Proven, { } };
+    }
+
+    if (canSpeculate) {
+        JSGlobalObject* realm = globalObjectFor(iterable->origin.semantic);
+        if (DFG::isWatchingAllArrayIteratorProtocolWatchpointsForAllocation(this, realm)) {
+            RegisteredStructureSet structures;
+            for (IndexingType indexingType : originalArrayShapesForSpread)
+                structures.add(registerStructure(realm->originalArrayStructureForIndexingType(indexingType)));
+            return { ProtocolWatchResult::RequiresSemanticStructureCheck, structures };
+        }
+    }
+
+    return { ProtocolWatchResult::Unwatchable, { } };
 }
 
-bool Graph::canDoFastSpreadWithStructureCheck(Node* node)
+std::pair<Graph::ProtocolWatchResult, RegisteredStructure> Graph::tryWatchSetIteratorProtocol(Node* iterable, const AbstractValue& setIterable, bool canSpeculate)
 {
-    ASSERT(node->op() == Spread);
-
     if (m_plan.isUnlinked())
-        return false;
+        return { ProtocolWatchResult::Unwatchable, { } };
 
-    return node->child1().useKind() == ArrayUse;
+    if (setIterable.isClear())
+        return { ProtocolWatchResult::Unwatchable, { } };
+
+    if (!setIterable.isType(SpecSetObject))
+        return { ProtocolWatchResult::Unwatchable, { } };
+
+    auto isWatchingAllSetIteratorProtocolWatchpoints = [&](JSGlobalObject* realm) {
+        return realm
+            && isWatchingGlobalObjectWatchpoint(realm, realm->setIteratorProtocolWatchpointSet(), LinkerIR::Type::SetIteratorProtocolWatchpointSet)
+            // FIXME: Is this necessary? Why would set iterator care about indexed getters on a prototype?
+            && isWatchingGlobalObjectWatchpoint(realm, realm->havingABadTimeWatchpointSet(), LinkerIR::Type::HavingABadTimeWatchpointSet);
+    };
+
+    if (!setIterable.m_structure.isClear() && setIterable.m_structure.isFinite()) {
+        bool allGood = true;
+        // FIXME: Express these per-structure conditions as an ObjectPropertyConditionSet and watch it
+        // through watchConditions() instead. Rewriting the conditions by hand for every protocol is
+        // error prone, especially if the set of conditions ever changes.
+        setIterable.m_structure.forEach([&](const RegisteredStructure& structure) {
+            ASSERT(structure->typeInfo().type() == JSSetType);
+            // A set spanning several realms is fine so long as every one of them is watched.
+            JSGlobalObject* realm = structure->realm();
+            // Read Set.prototype off the realm's primordial Set structure: the JSGlobalObject
+            // accessor for it resolves a LazyClassStructure, which is main-thread only.
+            Structure* originalSetStructure = realm ? realm->setStructureConcurrently() : nullptr;
+            allGood &= originalSetStructure
+                && isWatchingAllSetIteratorProtocolWatchpoints(realm)
+                && structure->hasMonoProto()
+                && structure->storedPrototype() == originalSetStructure->storedPrototype()
+                && !structure->isDictionary()
+                && structure->getConcurrently(m_vm.propertyNames->iteratorSymbol.impl()) == invalidOffset;
+        });
+
+        if (allGood)
+            return { ProtocolWatchResult::Proven, { } };
+    }
+
+    if (canSpeculate) {
+        JSGlobalObject* realm = globalObjectFor(iterable->origin.semantic);
+        if (isWatchingAllSetIteratorProtocolWatchpoints(realm)) {
+            if (Structure* originalSetStructure = realm->setStructureConcurrently())
+                return { ProtocolWatchResult::RequiresSemanticStructureCheck, registerStructure(originalSetStructure) };
+        }
+    }
+
+    return { ProtocolWatchResult::Unwatchable, { } };
 }
+
 
 bool Graph::isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(const AbstractValue& value)
 {

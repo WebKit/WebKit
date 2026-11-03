@@ -116,11 +116,18 @@ private:
 
                 case Spread:
                     if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
-                        // We check ArrayUse here because ArrayUse indicates that the iterator
-                        // protocol for Arrays is non-observable by user code (e.g, it hasn't
-                        // been changed).
+                        // In order to eliminate the Spread we have to know the iteration protocol is
+                        // not observable. The ArrayUse kind does not prove that, only that the child
+                        // is an Array object.
+                        //
+                        // Watching the realm of the allocation is sufficient to prove the protocol is
+                        // intact. Elimination only happens on allocations that never escape and this
+                        // pass is particularly conservative with what it means to escape. If we ever
+                        // supported PutById/Offset we would have to be more careful.
                         if (node->child1().useKind() == ArrayUse) {
-                            if ((node->child1()->op() == CreateRest || node->child1()->op() == NewArrayBuffer) && m_candidates.contains(node->child1().node()))
+                            if ((node->child1()->op() == CreateRest || node->child1()->op() == NewArrayBuffer)
+                                && m_candidates.contains(node->child1().node())
+                                && m_graph.isWatchingAllArrayIteratorProtocolWatchpointsForAllocation(node->child1().node()))
                                 m_candidates.add(node, AvailabilityMap { });
                         }
                     }
@@ -371,7 +378,7 @@ private:
 
                 case NewArrayWithSpread: {
                     BitVector* bitVector = node->bitVector();
-                    bool isWatchingHavingABadTimeWatchpoint = m_graph.isWatchingHavingABadTimeWatchpoint(node); 
+                    bool isWatchingHavingABadTimeWatchpoint = m_graph.isWatchingHavingABadTimeWatchpoint(node);
                     for (unsigned i = 0; i < node->numChildren(); i++) {
                         Edge child = m_graph.varArgChild(node, i);
                         bool dontEscape;
@@ -379,7 +386,8 @@ private:
                             dontEscape = child->op() == Spread
                                 && child->child1().useKind() == ArrayUse
                                 && (child->child1()->op() == CreateRest || child->child1()->op() == NewArrayBuffer)
-                                && isWatchingHavingABadTimeWatchpoint;
+                                && isWatchingHavingABadTimeWatchpoint
+                                && m_graph.isWatchingAllArrayIteratorProtocolWatchpointsForAllocation(child->child1().node());
                         } else
                             dontEscape = false;
 
@@ -391,7 +399,17 @@ private:
                 }
 
                 case Spread: {
-                    bool isOK = node->child1().useKind() == ArrayUse && (node->child1()->op() == CreateRest || node->child1()->op() == NewArrayBuffer);
+                    // In order to eliminate the Spread we have to know the iteration protocol is
+                    // not observable. The ArrayUse kind does not prove that, only that the child
+                    // is an Array object.
+                    //
+                    // Watching the realm of the allocation is sufficient to prove the protocol is
+                    // intact. Elimination only happens on allocations that never escape and this
+                    // pass is particularly conservative with what it means to escape. If we ever
+                    // supported PutById/Offset we would have to be more careful.
+                    bool isOK = node->child1().useKind() == ArrayUse
+                        && (node->child1()->op() == CreateRest || node->child1()->op() == NewArrayBuffer)
+                        && m_graph.isWatchingAllArrayIteratorProtocolWatchpointsForAllocation(node->child1().node());
                     if (!isOK)
                         escape(node->child1(), node);
                     break;

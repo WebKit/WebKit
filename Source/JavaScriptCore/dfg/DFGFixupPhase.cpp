@@ -2063,21 +2063,11 @@ private:
         }
 
         case Spread: {
-            // Note: We care about performing the protocol on our child's global object, not necessarily ours.
-            
-            watchHavingABadTime(node->child1().node());
-
-            // When we go down the fast path, we don't consult the prototype chain, so we must prove
-            // that it doesn't contain any indexed properties, and that any holes will result in
-            // jsUndefined().
-            if (node->child1()->shouldSpeculateArray()
-                && m_graph.isWatchingArrayPrototypeChainIsSaneWatchpoint(node->child1().node())
-                && m_graph.isWatchingArrayIteratorProtocolWatchpoint(node->child1().node())
-                && m_graph.isWatchingHavingABadTimeWatchpoint(node->child1().node()))
+            // Note: This is only speculating the operand is an Array/Set respectively. This gates
+            // optimizations that elide the iterator protocol but don't guarantee it can be.
+            if (node->child1()->shouldSpeculateArray())
                 fixEdge<ArrayUse>(node->child1());
-            else if (node->child1()->shouldSpeculateSetObject()
-                && m_graph.isWatchingSetIteratorProtocolWatchpoint(node->child1().node())
-                && m_graph.isWatchingHavingABadTimeWatchpoint(node->child1().node()))
+            else if (node->child1()->shouldSpeculateSetObject())
                 fixEdge<SetObjectUse>(node->child1());
             else
                 fixEdge<CellUse>(node->child1());
