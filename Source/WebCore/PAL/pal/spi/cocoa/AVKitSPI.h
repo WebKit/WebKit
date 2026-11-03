@@ -618,3 +618,40 @@ typedef NS_ENUM(NSInteger, AVPlayerControllerTimeControlStatus) {
 NS_ASSUME_NONNULL_END
 
 #endif // PLATFORM(APPLETV)
+
+#if HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER) && PLATFORM(IOS_FAMILY)
+
+#if USE(APPLE_INTERNAL_SDK) || !PLATFORM(APPLETV)
+
+#import <AVKit/AVLegibleMediaOptionsMenuController.h>
+
+#else
+
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
+typedef NS_OPTIONS(NSInteger, AVLegibleMediaOptionsMenuContents) {
+    AVLegibleMediaOptionsMenuContentsLegible = 1 << 0,
+    AVLegibleMediaOptionsMenuContentsCaptionAppearance = 1 << 1,
+    AVLegibleMediaOptionsMenuContentsAll = (AVLegibleMediaOptionsMenuContentsLegible | AVLegibleMediaOptionsMenuContentsCaptionAppearance)
+};
+
+@class AVLegibleMediaOptionsMenuController;
+
+@protocol AVLegibleMediaOptionsMenuControllerDelegate <NSObject>
+@optional
+- (void)legibleMenuController:(AVLegibleMediaOptionsMenuController *)menuController didRequestCaptionPreviewForProfileID:(NSString *)profileID;
+- (void)legibleMenuControllerDidRequestStoppingSubtitleCaptionPreview:(AVLegibleMediaOptionsMenuController *)menuController;
+@end
+
+@interface AVLegibleMediaOptionsMenuController : NSObject
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithPlayer:(nullable AVPlayer *)player NS_DESIGNATED_INITIALIZER;
+- (nullable UIMenu *)menuWithContents:(AVLegibleMediaOptionsMenuContents)contents;
+@property (nonatomic, weak) id<AVLegibleMediaOptionsMenuControllerDelegate> delegate;
+@end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
+
+#endif // USE(APPLE_INTERNAL_SDK) || !PLATFORM(APPLETV)
+
+#endif // HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER) && PLATFORM(IOS_FAMILY)

@@ -293,7 +293,7 @@ static constexpr double maximumHLSPlaybackRate = 2;
 static constexpr auto mediaSourceBlobProtocol = "blob"_s;
 #endif
 
-#if ENABLE(REMOVE_ALL_RESTRICTIONS_ON_AUDIBILITY_CHANGE)
+#if PLATFORM(APPLETV)
 static constexpr MediaElementSession::BehaviorRestrictions restrictionsToRemoveOnAudibilityChange = MediaElementSession::AllRestrictions;
 #else
 static constexpr MediaElementSession::BehaviorRestrictions restrictionsToRemoveOnAudibilityChange = MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager;
@@ -775,7 +775,7 @@ void HTMLMediaElement::initializeMediaSession()
     }
 #endif
 
-#if ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
+#if PLATFORM(APPLETV)
     if (document->settings().requiresPageVisibilityForVideoToBeNowPlaying())
         mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageVisibilityForVideoToBeNowPlaying);
 #endif

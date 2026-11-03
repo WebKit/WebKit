@@ -29,6 +29,10 @@
 #include <WebCore/SettingsBase.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(APPLETV)
+#include <pal/system/ios/Device.h>
+#endif
+
 #if PLATFORM(COCOA)
 #include "DefaultWebBrowserChecks.h"
 #include "NetworkSoftLink.h"
@@ -79,8 +83,8 @@ bool defaultShouldPrintBackgrounds()
 
 SUPPRESS_NODELETE bool defaultVideoFullscreenRequiresElementFullscreen()
 {
-#if USE(APPLE_INTERNAL_SDK)
-    if (videoFullscreenRequiresElementFullscreenFromAdditions())
+#if PLATFORM(APPLETV)
+    if (PAL::deviceClassIsHomeView())
         return true;
 #endif
 
@@ -345,15 +349,10 @@ SUPPRESS_NODELETE bool defaultDeviceOrientationPermissionAPIEnabled()
 }
 #endif
 
-#if ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
+#if PLATFORM(APPLETV)
 bool defaultRequiresPageVisibilityForVideoToBeNowPlaying()
 {
-#if USE(APPLE_INTERNAL_SDK)
-    if (requiresPageVisibilityForVideoToBeNowPlayingFromAdditions())
-        return true;
-#endif
-
-    return false;
+    return PAL::deviceClassIsHomeView();
 }
 #endif
 
