@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="600" height="200">
-    <meta name="fuzzy" content="maxDifference=0-15; totalPixels=0-1599" />
+    <meta xmlns="http://www.w3.org/1999/xhtml" name="fuzzy" content="maxDifference=0-15; totalPixels=0-1599" />
     <style>
         svg {
             border: 1px solid black;

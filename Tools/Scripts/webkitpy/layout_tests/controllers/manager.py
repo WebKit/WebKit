@@ -52,6 +52,7 @@ from webkitcorepy.string_utils import pluralize
 
 from webkitpy.common.net import results_database
 from webkitpy.common.iteration_compatibility import iteritems, itervalues
+from webkitpy.common.system import path
 from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
@@ -62,7 +63,9 @@ from webkitpy.layout_tests.models import (
     test_results,
     test_run_results,
 )
-from webkitpy.layout_tests.models.test_input import TestInput
+from webkitpy.layout_tests.models.server_routing import ServerType
+from webkitpy.layout_tests.models.test import Test
+from webkitpy.layout_tests.models.test_input import ReferenceInput, TestInput
 from webkitpy.layout_tests.models.test_run_results import (
     INTERRUPTED_EXIT_STATUS,
     TestRunResults,
@@ -283,7 +286,7 @@ class Manager(object):
         # Create a sorted list of test files so the subset chunk,
         # if used, contains alphabetically consecutive tests.
         if self._options.order == 'natural':
-            tests_to_run.sort(key=lambda x: self._port.test_key(x.test_path))
+            tests_to_run.sort()
         elif self._options.order == 'random':
             random.shuffle(tests_to_run)
 
@@ -316,15 +319,83 @@ class Manager(object):
             should_run_pixel_test = True
 
         expectations = self._expectations[(self._current_driver_name, device_type)]
+        url = self._compute_test_url(test_file)
+        reference_inputs = ()
+        if test_file.reference_files:
+            reference_inputs = tuple(
+                ReferenceInput(reference=ref, url=self._compute_reference_url(ref, test_file))
+                for ref in test_file.reference_files
+            )
+
         return TestInput(
             test_file,
+            url=url,
+            reference_inputs=reference_inputs,
             timeout=timeout,
             is_slow=test_is_slow,
-            needs_servers=test_file.needs_any_server,
             should_dump_jsconsolelog_in_stderr=should_dump_jsconsolelog_in_stderr,
             should_run_pixel_test=should_run_pixel_test,
             expected_results=frozenset(expectations.filtered_expectations_for_test(test_file.test_path, self._options.pixel_tests or bool(test_file.reference_files), self._options.world_leaks)),
         )
+
+    def _compute_test_url(self, test_file):
+        """Compute the full URL for a test."""
+        additional_header = self._options.additional_header
+        cross_origin = bool(additional_header and 'runInCrossOriginFrame=true' in additional_header)
+        return self._compute_url_for_test_name(test_file, cross_origin=cross_origin)
+
+    def _compute_reference_url(self, reference, test_file):
+        """Compute the full URL for a reference file.
+
+        References use the same server as their parent test.
+        """
+        ref_test_name = self._port.relative_test_filename(reference.path)
+        ref_test = Test(ref_test_name, served_by=test_file.served_by, protocol=test_file.protocol)
+        return self._compute_url_for_test_name(ref_test)
+
+    def _compute_url_for_test_name(self, test, cross_origin=False):
+        """Compute the URL for a test.
+
+        A test to be embedded in a cross-origin frame must be loaded over HTTP,
+        so when cross_origin is set, tests that would be loaded from file://
+        (including http/tests/local) are served by Apache instead. This mirrors
+        the legacy Driver.is_http_test() behavior."""
+        # Sort by test_file_dir specificity (deeper wins) so that more-specific
+        # routes shadow less-specific ones regardless of their order in the table.
+        routes = sorted(self._port.test_routes(), key=lambda r: r.test_file_dir.count("/"), reverse=True)
+        for route in routes:
+            if not test.test_path.startswith(route.test_file_dir + "/"):
+                continue
+            rel_path = test.test_path[len(route.test_file_dir) + 1:]
+            if route.server_type & ServerType.WPT:
+                url_path = route.url_base.lstrip("/") + rel_path
+                localhost_only = route.url_base != "/"
+                return self._wpt_path_to_uri(url_path, test, localhost_only)
+            if route.server_type & ServerType.HTTP:
+                if rel_path.startswith("local/") and not cross_origin:
+                    break
+                return self._http_test_path_to_uri(rel_path, test)
+            break
+
+        if cross_origin:
+            return "http://127.0.0.1:8000/root/" + test.test_path
+        return path.abspath_to_uri(self._port.host.platform, self._port.abspath_for_test(test.test_path))
+
+    def _wpt_path_to_uri(self, url_path, test, localhost_only=False):
+        """Convert a WPT URL path to a full URL, selecting the right base URL."""
+        if test.protocol == "h2":
+            return self._port.web_platform_test_server_base_h2_url(localhost_only=localhost_only) + url_path
+        elif test.protocol == "https":
+            return self._port.web_platform_test_server_base_https_url(localhost_only=localhost_only) + url_path
+        else:
+            return self._port.web_platform_test_server_base_http_url(localhost_only=localhost_only) + url_path
+
+    def _http_test_path_to_uri(self, rel_path, test):
+        """Convert an HTTP test relative path to a full URL."""
+        secure = test.protocol == 'https'
+        scheme = 'https' if secure else 'http'
+        port = 8443 if secure else 8000
+        return "%s://127.0.0.1:%d/%s" % (scheme, port, rel_path)
 
     def _test_is_slow(self, test_file, device_type):
         if self._expectations[(self._current_driver_name, device_type)].model().has_modifier(test_file, test_expectations.SLOW):

@@ -994,8 +994,6 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/snap-fling-in-large-area.htm
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/initial-snap-matches-scroll.html [ Failure ]
 
-imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html [ Failure ]
-
 webkit.org/b/273196 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-combinations.html [ Failure ]
 
 fast/scrolling/gtk/repeated-mouse-wheel-smooth.html [ Pass Timeout ]

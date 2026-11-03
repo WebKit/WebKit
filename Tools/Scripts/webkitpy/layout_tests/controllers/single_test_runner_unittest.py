@@ -20,16 +20,22 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import unittest
+from types import SimpleNamespace
+from unittest import mock
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.layout_tests import run_webkit_tests
+from webkitpy.layout_tests.controllers import single_test_runner
+from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.layout_tests.controllers.single_test_runner import SingleTestRunner
 from webkitpy.layout_tests.models import test_expectations
-from webkitpy.layout_tests.models.test_input import Test, TestInput
+from webkitpy.layout_tests.models import test_failures
+from webkitpy.layout_tests.models.test import Reference
+from webkitpy.layout_tests.models.test_input import ReferenceInput, Test, TestInput
 from webkitpy.layout_tests.run_webkit_tests import parse_args
 from webkitpy.port.driver import DriverOutput
-from webkitpy.port.test import TestPort
+from webkitpy.port.test import TestPort, add_unit_tests_to_mock_filesystem
 
 
 class TimeoutRecordingDriver:
@@ -67,19 +73,18 @@ class SingleTestRunnerTest(unittest.TestCase):
 
     def _add_file(self, port, file_path, contents):
         filesystem = port.host.filesystem
-        file_dir, file_name = os.path.split(file_path)
-        dirname = filesystem.join(port.layout_tests_dir(), file_dir)
+        dirname = filesystem.join(port.layout_tests_dir(), filesystem.dirname(file_path))
         filesystem.maybe_make_directory(dirname)
-        filesystem.write_binary_file(filesystem.join(dirname, file_name), contents)
+        filesystem.write_binary_file(filesystem.join(dirname, filesystem.basename(file_path)), contents)
 
-    def _make_test_runner(self, test_name):
-        host = MockHost()
+    def _make_test_runner(self, test_name, fuzzy=None, test=None, host=None):
+        host = host or MockHost()
         port = TestPort(host)
         driver = TestDriver()
         results_directory = 'layout-test-results'
         worker_name = ''
 
-        test_input = TestInput(Test(test_name))
+        test_input = TestInput(test or Test(test_name, fuzzy=fuzzy))
         return SingleTestRunner(port, port._options, results_directory, worker_name, driver, test_input, True)
 
     def _run_with_expected_failure_time_out(self, expected_results, outputs, baseline=b'PASS\n', extra_args=()):
@@ -155,49 +160,136 @@ class SingleTestRunnerTest(unittest.TestCase):
         timeouts, _ = self._run_with_expected_failure_time_out({test_expectations.FAIL}, [DriverOutput('FAIL\n', None, None, None, test_time=1)], baseline=None, extra_args=['--no-new-test-results'])
         self.assertEqual(timeouts, ['6000'])
 
+    def test_save_baseline_data_rebaselining_uses_test_model_path(self):
+        # When rebaselining, the output directory for a new .txt baseline
+        # comes from test.expected_text_path, which the finder may have
+        # resolved to an existing .webarchive baseline rather than a .txt
+        # one -- the directory should still be correct either way.
+        host = MockHost()
+        options, _ = run_webkit_tests.parse_args([])
+        port = TestPort(host, options=options)
+        fs = port.host.filesystem
+        expected_dir = fs.join(port.layout_tests_dir(), 'platform/test-mac-leopard/passes')
+        test = Test(
+            'passes/text.html',
+            expected_text_path=fs.join(expected_dir, 'text-expected.webarchive'),
+        )
+        runner = SingleTestRunner(
+            port, port._options, 'layout-test-results', '', TestDriver(), TestInput(test), True
+        )
+        runner._driver.host = host
+
+        runner._save_baseline_data(b'new text', '.txt', rebaselining=True)
+
+        self.assertIn(fs.join(expected_dir, 'text-expected.txt'), fs.written_files)
+
+    def test_save_baseline_data_rebaselining_maps_each_extension_to_its_own_path(self):
+        host = MockHost()
+        options, _ = run_webkit_tests.parse_args([])
+        port = TestPort(host, options=options)
+        fs = port.host.filesystem
+        d = port.layout_tests_dir()
+        dirs = {
+            '.txt': fs.join(d, 'platform/test-mac-leopard/txt-dir'),
+            '.png': fs.join(d, 'platform/test-mac-leopard/png-dir'),
+            '.wav': fs.join(d, 'platform/test-mac-leopard/wav-dir'),
+        }
+        test = Test(
+            'passes/text.html',
+            expected_text_path=fs.join(dirs['.txt'], 'text-expected.txt'),
+            expected_image_path=fs.join(dirs['.png'], 'text-expected.png'),
+            expected_audio_path=fs.join(dirs['.wav'], 'text-expected.wav'),
+        )
+        for extension, expected_dir in dirs.items():
+            with self.subTest(extension=extension):
+                runner = SingleTestRunner(
+                    port, port._options, 'layout-test-results', '', TestDriver(), TestInput(test), True
+                )
+                runner._driver.host = host
+                runner._save_baseline_data(b'new data', extension, rebaselining=True)
+                self.assertIn(fs.join(expected_dir, 'text-expected' + extension), fs.written_files)
+
+    def test_save_baseline_data_rebaselining_without_existing_baseline(self):
+        host = MockHost()
+        options, _ = run_webkit_tests.parse_args([])
+        port = TestPort(host, options=options)
+        fs = port.host.filesystem
+        runner = SingleTestRunner(
+            port, port._options, 'layout-test-results', '', TestDriver(), TestInput(Test('passes/text.html')), True
+        )
+        runner._driver.host = host
+
+        runner._save_baseline_data(b'new text', '.txt', rebaselining=True)
+
+        self.assertIn(fs.join(port.layout_tests_dir(), 'passes/text-expected.txt'), fs.written_files)
+
     def test_fuzzy_matching_values(self):
-        single_test_runner = self._make_test_runner('fuzzy-test.html')
-        self._add_file(single_test_runner._port, 'fuzzy-test.html', b'<html><head><meta name=fuzzy content="maxDifference=15;totalPixels=300">')
+        fuzzy = {None: [[15, 15], [300, 300]]}
+        single_test_runner = self._make_test_runner('fuzzy-test.html', fuzzy=fuzzy)
         fuzzy_data = single_test_runner._fuzzy_tolerance_for_reference('/test.checkout/LayoutTests/fuzzy-test-expected.html')
         self.assertEqual(fuzzy_data, {'max_difference': [15, 15], 'total_pixels': [300, 300]})
 
     def test_fuzzy_matching_values_for_ref(self):
         test_name = 'fuzzy-test.html'
-        single_test_runner = self._make_test_runner(test_name)
-        self._add_file(single_test_runner._port, test_name, """<html><head>
-            <meta name=fuzzy content="maxDifference=15;totalPixels=300">
-            <meta name=fuzzy content="reference.html:maxDifference=5-8;totalPixels=78-84">
-        """)
+        fuzzy = {
+            None: [[15, 15], [300, 300]],
+            '/test.checkout/LayoutTests/reference.html': [[5, 8], [78, 84]],
+        }
+        single_test_runner = self._make_test_runner(test_name, fuzzy=fuzzy)
         fuzzy_data = single_test_runner._fuzzy_tolerance_for_reference('/test.checkout/LayoutTests/reference.html')
         self.assertEqual(fuzzy_data, {'max_difference': [5, 8], 'total_pixels': [78, 84]})
 
-    def test_fuzzy_matching_values_for_relative_path_ref(self):
-        test_name = 'fast/borders/fuzzy-test.html'
-        single_test_runner = self._make_test_runner(test_name)
-        self._add_file(single_test_runner._port, test_name, """<html><head>
-            <meta name=fuzzy content="maxDifference=15;totalPixels=300">
-            <meta name=fuzzy content="../resources/common-ref.html:maxDifference=5-8;totalPixels=78-84">
-        """)
-        self._add_file(single_test_runner._port, 'fast/resources/common-ref.html', b'')
-        fuzzy_data = single_test_runner._fuzzy_tolerance_for_reference('/test.checkout/LayoutTests/fast/resources/common-ref.html')
-        self.assertEqual(fuzzy_data, {'max_difference': [5, 8], 'total_pixels': [78, 84]})
+    def _assert_discovered_fuzzy_reaches_runner(self, test_path, files, per_reference):
+        """Discover a reftest with the finder, then check the tolerance the
+        runner looks up for the test's reference is the one from the test's
+        metadata -- neither the default nor zero."""
+        host = MockHost()
+        add_unit_tests_to_mock_filesystem(host.filesystem)
+        port = TestPort(host)
+        fs = host.filesystem
+        for rel_path, contents in files.items():
+            path = fs.join(port.layout_tests_dir(), rel_path)
+            fs.maybe_make_directory(fs.dirname(path))
+            fs.write_text_file(path, contents)
+        finder = LayoutTestFinder(fs, port.layout_tests_dir(), port.baseline_search_path(), test_routes=port.test_routes())
 
-    def test_fuzzy_matching_values_for_xml_document(self):
-        test_name = 'fuzzy-test.svg'
-        single_test_runner = self._make_test_runner(test_name)
-        self._add_file(single_test_runner._port, test_name, """<svg width="340" height="140" xmlns="http://www.w3.org/2000/svg" xmlns:html="http://www.w3.org/1999/xhtml">
-            <html:meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-2"/>
-        """)
-        fuzzy_data = single_test_runner._fuzzy_tolerance_for_reference('/test.checkout/LayoutTests/fuzzy-test-expected.svg')
-        self.assertEqual(fuzzy_data, {'max_difference': [0, 1], 'total_pixels': [0, 2]})
+        (test,) = list(finder.get_tests([test_path]))
+        runner = self._make_test_runner(test.test_path, test=test, host=host)
+
+        default = {'max_difference': [15, 15], 'total_pixels': [300, 300]}
+        self.assertNotEqual(per_reference, default)
+        self.assertEqual(runner._fuzzy_tolerance_for_reference(test.reference_files[0].path), per_reference)
+        self.assertEqual(runner._fuzzy_tolerance_for_reference(fs.join(port.layout_tests_dir(), 'unrelated-ref.html')), default)
+
+    FUZZY_METAS = (
+        '<meta name=fuzzy content="maxDifference=15;totalPixels=300">'
+        '<meta name=fuzzy content="%s:maxDifference=5-8;totalPixels=78-84">'
+    )
+
+    def test_discovered_non_wpt_fuzzy_reaches_runner(self):
+        self._assert_discovered_fuzzy_reaches_runner(
+            'fast/borders/fuzzy-test.html',
+            {
+                'fast/borders/fuzzy-test.html': '<html><head><link rel=match href="fuzzy-test-expected.html">' + self.FUZZY_METAS % 'fuzzy-test-expected.html',
+                'fast/borders/fuzzy-test-expected.html': '<html></html>',
+            },
+            {'max_difference': [5, 8], 'total_pixels': [78, 84]},
+        )
+
+    def test_discovered_wpt_fuzzy_reaches_runner(self):
+        self._assert_discovered_fuzzy_reaches_runner(
+            'imported/w3c/web-platform-tests/foo/fuzzy-test.html',
+            {
+                'imported/w3c/web-platform-tests/foo/fuzzy-test.html': '<html><head><link rel=match href="wpt-ref.html">' + self.FUZZY_METAS % 'wpt-ref.html',
+                'imported/w3c/web-platform-tests/foo/wpt-ref.html': '<html></html>',
+            },
+            {'max_difference': [5, 8], 'total_pixels': [78, 84]},
+        )
 
     def test_fuzzy_matching_values_no_common_data(self):
         test_name = 'fast/borders/fuzzy-test.html'
-        single_test_runner = self._make_test_runner(test_name)
-        self._add_file(single_test_runner._port, test_name, """<html><head>
-            <meta name=fuzzy content="../resources/common-ref.html:maxDifference=5-8;totalPixels=78-84">
-        """)
-
+        fuzzy = {'/test.checkout/LayoutTests/fast/resources/common-ref.html': [[5, 8], [78, 84]]}
+        single_test_runner = self._make_test_runner(test_name, fuzzy=fuzzy)
         fuzzy_data = single_test_runner._fuzzy_tolerance_for_reference('/test.checkout/LayoutTests/reference.html')
         self.assertEqual(fuzzy_data, {'max_difference': [0, 0], 'total_pixels': [0, 0]})
 
@@ -215,85 +307,82 @@ class SingleTestRunnerTest(unittest.TestCase):
         self.assertFalse(SingleTestRunner._test_passes_fuzzy_matching({'max_difference': [5, 7], 'total_pixels': [10, 12]}, {'max_difference': 9, 'total_pixels': 11}))
         self.assertFalse(SingleTestRunner._test_passes_fuzzy_matching({'max_difference': [5, 7], 'total_pixels': [10, 12]}, {'max_difference': 6, 'total_pixels': 13}))
 
-    def _fuzzy_metadata_from_test_with_contents(self, test_contents):
-        test_path = '/test.checkout/LayoutTests/fuzzy-test.html'
-        runner = self._make_test_runner(test_path)
-        self._add_file(runner._port, test_path, test_contents)
-        return runner._fuzzy_metadata_for_file(test_path)
+    def test_run_reftest_uses_reference_urls_from_test_input(self):
+        class RecordingDriver:
+            def __init__(self):
+                self.driver_inputs = []
 
-    def test_simple_fuzzy_data(self):
-        """ Tests basic form of fuzzy_metadata()"""
+            def run_test(self, driver_input, stop_when_done):
+                self.driver_inputs.append(driver_input)
+                return DriverOutput('', b'image', 'hash', '')
 
-        test_html = b"""<html><head>
-<link rel="match" href="green-box-ref.xht" />
-<meta name=fuzzy content="maxDifference = 15 ; totalPixels = 300">
-</head>
-<body>CONTENT OF TEST</body></html>
-"""
-        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
+            def stop(self):
+                """do nothing"""
 
-        expected_fuzzy = {None: [[15, 15], [300, 300]]}
-        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
+        runner = self._make_test_runner('http/tests/foo/test.html')
+        d = runner._port.layout_tests_dir()
+        reference = Reference('==', runner._port.host.filesystem.join(d, 'http/tests/foo/ref.html'))
+        runner._test_input = TestInput(
+            Test('http/tests/foo/test.html', reference_files=(reference,)),
+            url='http://127.0.0.1:8000/foo/test.html',
+            reference_inputs=(ReferenceInput(reference, 'http://127.0.0.1:8000/foo/ref.html'),),
+        )
+        runner._options.additional_header = None
+        runner._driver = RecordingDriver()
 
-    def test_nameless_fuzzy_data(self):
-        """ Tests fuzzy_metadata() in short form"""
+        runner._run_reftest()
 
-        test_html = b"""<html><head>
-<link rel="match" href="green-box-ref.xht" />
-<meta name=fuzzy content=" 15 ; 300 ">
-</head>
-<body>CONTENT OF TEST</body></html>
-"""
-        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
-        expected_fuzzy = {None: [[15, 15], [300, 300]]}
-        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
+        self.assertEqual(
+            [(i.test_name, i.url) for i in runner._driver.driver_inputs],
+            [
+                ('http/tests/foo/test.html', 'http://127.0.0.1:8000/foo/test.html'),
+                ('http/tests/foo/ref.html', 'http://127.0.0.1:8000/foo/ref.html'),
+            ],
+        )
 
-    def test_range_fuzzy_data(self):
-        """ Tests fuzzy_metadata() in range form"""
+    def test_run_reftest_counts_the_time_of_each_comparison_once(self):
+        class ImageDriver:
+            def run_test(self, driver_input, stop_when_done):
+                return DriverOutput('', b'image', 'hash', '')
 
-        test_html = b"""<html><head>
-<link rel="match" href="green-box-ref.xht" />
-<meta name=fuzzy content="maxDifference=5-15;totalPixels =  200 - 300 ">
-</head>
-<body>CONTENT OF TEST</body></html>
-"""
-        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
+            def stop(self):
+                """do nothing"""
 
-        expected_fuzzy = {None: [[5, 15], [200, 300]]}
-        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
+        # (relation, whether the comparison has failures, run time) in the order
+        # the references are run: mismatches first, then matches. The loop
+        # stops at a mismatch that fails and at a match that passes.
+        for name, comparisons, total in (
+            ('a failing match is the last comparison', [('==', True, 2.0)], 2.0),
+            ('a passing mismatch is the last comparison', [('!=', False, 2.0)], 2.0),
+            ('every comparison runs', [('!=', False, 1.0), ('==', True, 2.0), ('==', True, 4.0)], 7.0),
+            ('a failing mismatch stops the loop', [('!=', True, 1.0), ('==', False, 2.0)], 1.0),
+            ('a passing match stops the loop', [('!=', False, 1.0), ('==', True, 2.0), ('==', False, 4.0), ('==', False, 8.0)], 7.0),
+        ):
+            with self.subTest(name):
+                runner = self._make_test_runner('foo/test.html')
+                d = runner._port.layout_tests_dir()
+                join = runner._port.host.filesystem.join
+                references = tuple(Reference(relation, join(d, 'foo/ref-%d.html' % i)) for i, (relation, _, _) in enumerate(comparisons))
+                runner._test_input = TestInput(Test('foo/test.html', reference_files=references), url='http://127.0.0.1:8000/foo/test.html')
+                runner._options.additional_header = None
+                runner._driver = ImageDriver()
+                results = iter(
+                    SimpleNamespace(failures=[test_failures.FailureReftestMismatch()] if failed else [], test_run_time=time, has_stderr=False, pid=None)
+                    for _, failed, time in comparisons
+                )
+                with mock.patch.object(runner, '_compare_output_with_reference', side_effect=lambda *args: next(results)), \
+                        mock.patch.object(single_test_runner.test_result_writer, 'write_test_result'):
+                    result = runner._run_reftest()
+                self.assertEqual(result.test_run_time, total)
 
-    def test_nameless_range_fuzzy_data(self):
-        """ Tests fuzzy_metadata() in short range form"""
+    def test_driver_input_passes_test_input_url_through(self):
+        # The URL (including any cross-origin rewrite) is computed by Manager;
+        # SingleTestRunner must not alter it.
+        runner = self._make_test_runner('fast/foo.html')
+        url = 'file:///layout-tests/fast/foo.html'
+        runner._test_input = TestInput(Test('fast/foo.html'), url=url)
+        runner._options.additional_header = 'runInCrossOriginFrame=true'
 
-        test_html = b"""<html><head>
-<link rel="match" href="green-box-ref.xht" />
-<meta name=fuzzy content="5-15;  200 - 300 ">
-</head>
-<body>CONTENT OF TEST</body></html>
-"""
-        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
-
-        expected_fuzzy = {None: [[5, 15], [200, 300]]}
-        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
-
-    def test_per_ref_fuzzy_data(self):
-        """ Tests fuzzy_metadata() with values for difference reference files"""
-
-        test_html = b"""<html><head>
-<link rel="match" href="green-box-ref.xht" />
-<link rel="match" href="close-match-ref.html" />
-<link rel="match" href="worse-match-ref.html" />
-<meta name=fuzzy content="5-15;200-300 ">
-<meta name=fuzzy content="close-match-ref.html:5;20">
-<meta name=fuzzy content="worse-match-ref.html: 15;30">
-</head>
-<body>CONTENT OF TEST</body></html>
-"""
-        actual_fuzzy = self._fuzzy_metadata_from_test_with_contents(test_html)
-
-        expected_fuzzy = {
-            None: [[5, 15], [200, 300]],
-            'close-match-ref.html': [[5, 5], [20, 20]],
-            'worse-match-ref.html': [[15, 15], [30, 30]]
-        }
-        self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
+        driver_input = runner._driver_input()
+        self.assertEqual(driver_input.url, url)
+        self.assertEqual(driver_input.additional_header, 'runInCrossOriginFrame=true')

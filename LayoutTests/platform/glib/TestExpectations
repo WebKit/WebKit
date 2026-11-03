@@ -962,6 +962,15 @@ storage/filesystemaccess/ [ Pass ]
 imported/w3c/web-platform-tests/storage/ [ Pass ]
 storage/storagemanager/ [ Pass ]
 
+# These generated WPT variants (.any.worker/.any.serviceworker/.any.sharedworker/
+# .window.html etc.) had no on-disk importer stub, so they were invisible to the
+# old finder and have never run before. The new manifest-based finder discovers
+# them for the first time as of this branch; none have been individually
+# triaged for pass/fail yet. Bulk-skipped pending per-test triage, rather than
+# landing them as unexpected failures/crashes on the bots.
+# TODO: file a tracking bug for triaging this batch, and reference it here.
+imported/w3c/web-platform-tests/storage/storagemanager-persist-persisted-match.https.any.worker.html [ Skip ]
+
 # display-p3 canvas and ImageData enabled for WebKitGTK/WPEWebKit since 319168@main.
 fast/canvas/canvas-color-space-display-p3-ImageData.html [ Pass ]
 fast/canvas/gradient-into-p3-canvas.html [ Pass ]
@@ -3005,28 +3014,11 @@ imported/w3c/web-platform-tests/webrtc/RTCDataChannel-worker-GC.html [ Skip ] # 
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-currentTime.https.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-track-settings.tentative.html [ Failure ]
 
-# The last promise test here fails because webrtcbin doesn't rely on a singleton signaling thread.
-# See also comments in:
-# https://github.com/web-platform-tests/wpt/commit/9833e981ddad9411990c4767fcdafbc1dbe61791
-# GLib baselines updated accordingly. The RTCRtpParameters-transactionId.html baselines can't be updated
-# because the transactionId mentioned in test failures is not stable across test runs.
-imported/w3c/web-platform-tests/webrtc/RTCRtpSender-setParameters.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-transactionId.html [ Failure ]
-
 imported/w3c/web-platform-tests/webrtc/protocol/ [ Pass ]
-imported/w3c/web-platform-tests/webrtc/protocol/bundle.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/protocol/rtp-payloadtypes.html [ Failure ]
-
-# Our video encoder is not enforcing video resolution capping based on the configured H.264 level.
-# See also: https://en.wikipedia.org/wiki/Advanced_Video_Coding#Levels
-webkit.org/b/301687 imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html [ Failure ]
-
-imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-codecs.html [ Failure ]
 
 # Simulcast support is not complete yet.
 imported/w3c/web-platform-tests/webrtc/simulcast [ Pass ]
 imported/w3c/web-platform-tests/webrtc/simulcast/h264.https.html [ Pass Crash Failure ]
-imported/w3c/web-platform-tests/webrtc/simulcast/negotiation-encodings.https.html [ Failure ]
 
 imported/w3c/web-platform-tests/webrtc/simulcast/vp8.https.html [ Failure ] # Timeout
 
