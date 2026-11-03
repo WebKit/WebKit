@@ -99,12 +99,12 @@ class VertexArrayWgpu : public VertexArrayImpl
 
     uint32_t calculateAdjustedIndexCount(gl::PrimitiveMode mode,
                                          bool primitiveRestartEnabled,
-                                         gl::DrawElementsType destDrawElementsTypeOrInvalid,
+                                         gl::DrawElementsType sourceDrawElementsTypeOrInvalid,
                                          GLsizei count,
                                          const uint8_t *srcIndexData);
 
     angle::Result calculateStagingBufferSize(ContextWgpu *contextWgpu,
-                                             bool srcDestDrawElementsTypeEqual,
+                                             bool copyLineLoopIndicesOnGpu,
                                              bool primitiveRestartEnabled,
                                              IndexDataNeedsStreaming indexDataNeedsStreaming,
                                              gl::DrawElementsType destDrawElementsTypeOrInvalid,
@@ -125,6 +125,7 @@ class VertexArrayWgpu : public VertexArrayImpl
                                         GLsizei adjustedCount,
                                         const void *indices,
                                         bool primitiveRestartEnabled,
+                                        bool copyLineLoopIndicesOnGpu,
                                         uint8_t *stagingData,
                                         size_t destIndexBufferSize,
                                         std::optional<gl::IndexRange> indexRange,
