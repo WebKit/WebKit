@@ -22,6 +22,7 @@
 #if USE(LIBWEBRTC) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
+#include "GUniquePtrGStreamer.h"
 #include "RealtimeOutgoingAudioSource.h"
 
 #include <gst/audio/audio.h>

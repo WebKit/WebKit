@@ -24,6 +24,7 @@
 
 #include "AudioSampleFormat.h"
 #include "GStreamerCommon.h"
+#include "GUniquePtrGStreamer.h"
 #include "MediaSampleGStreamer.h"
 #include "SharedBuffer.h"
 #include "WebCodecsAudioDataAlgorithms.h"
