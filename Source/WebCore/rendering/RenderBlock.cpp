@@ -1856,7 +1856,7 @@ void RenderBlock::removeOutOfFlowBoxes(const RenderElement* newContainingBlockCa
                 auto isAbsolutePositioned = renderer.isAbsolutelyPositioned();
                 // During style change we can't tell which ancestor is going to be the final containing block, so let's just mark the new candidate dirty.
                 auto* newContainingBlock = containingBlock();
-                for (; newContainingBlock && (isAbsolutePositioned ? !newContainingBlock->canContainAbsolutelyPositionedObjects() : newContainingBlock->canContainFixedPositionObjects()); newContainingBlock = newContainingBlock->containingBlock()) { }
+                for (; newContainingBlock && (isAbsolutePositioned ? !newContainingBlock->canContainAbsolutelyPositionedObjects() : !newContainingBlock->canContainFixedPositionObjects()); newContainingBlock = newContainingBlock->containingBlock()) { }
                 if (newContainingBlock)
                     newContainingBlock->setNeedsLayout();
             };
