@@ -1963,7 +1963,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (CGSize)_sizeToContentAutoSizeMaximumSize
 {
-    return _page->minimumSizeForAutoLayout();
+    return _page->sizeToContentAutoSizeMaximumSize();
 }
 
 - (void)_setSizeToContentAutoSizeMaximumSize:(CGSize)size
