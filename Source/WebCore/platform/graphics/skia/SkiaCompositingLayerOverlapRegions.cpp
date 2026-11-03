@@ -28,7 +28,7 @@
 #include "config.h"
 #include "SkiaCompositingLayerOverlapRegions.h"
 
-#if USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
+#if USE(COORDINATED_GRAPHICS) && USE(SKIA)
 #include "FloatRect.h"
 #include "LayoutRect.h"
 #include "Polygon4D.h"
@@ -160,4 +160,4 @@ IntRect layerPlaneClipBounds(const TransformationMatrix& deviceToLayer, const Fl
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
+#endif // USE(COORDINATED_GRAPHICS) && USE(SKIA)

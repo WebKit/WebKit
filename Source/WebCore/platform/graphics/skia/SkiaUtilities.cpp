@@ -86,19 +86,6 @@ sk_sp<SkImage> rewrapImageForContext(GrDirectContext* grContext, const SkImage& 
     return SkImages::BorrowTextureFrom(grContext, backendTexture, kTopLeft_GrSurfaceOrigin, image.colorType(), image.alphaType(), image.refColorSpace());
 }
 
-std::optional<unsigned> retrieveGLTextureID(const SkImage& image)
-{
-    GrBackendTexture backendTexture;
-    if (!SkImages::GetBackendTextureFromImage(&image, &backendTexture, false))
-        return std::nullopt;
-
-    GrGLTextureInfo textureInfo;
-    if (!GrBackendTextures::GetGLTextureInfo(backendTexture, &textureInfo))
-        return std::nullopt;
-
-    return textureInfo.fID;
-}
-
 static std::unique_ptr<GLFence> createFenceAfterFlush(GrDirectContext* grContext)
 {
     auto& glDisplay = PlatformDisplay::sharedDisplay().glDisplay();
@@ -113,21 +100,9 @@ static std::unique_ptr<GLFence> createFenceAfterFlush(GrDirectContext* grContext
     return nullptr;
 }
 
-std::unique_ptr<GLFence> flushAndSubmitSurfaceWithFence(GrDirectContext* grContext, SkSurface* surface)
-{
-    grContext->flush(surface);
-    return createFenceAfterFlush(grContext);
-}
-
-std::unique_ptr<GLFence> flushAndSubmitImageWithFence(GrDirectContext* grContext, const sk_sp<SkImage>& image)
+static std::unique_ptr<GLFence> flushAndSubmitImageWithFence(GrDirectContext* grContext, const sk_sp<SkImage>& image)
 {
     grContext->flush(image);
-    return createFenceAfterFlush(grContext);
-}
-
-std::unique_ptr<GLFence> flushAndSubmitWithFence(GrDirectContext* grContext)
-{
-    grContext->flush();
     return createFenceAfterFlush(grContext);
 }
 

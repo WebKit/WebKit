@@ -31,7 +31,6 @@
 #include <WebCore/DisplayUpdate.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntSize.h>
-#include <WebCore/TextureMapperDamageVisualizer.h>
 #include <atomic>
 #include <optional>
 #include <wtf/Atomics.h>

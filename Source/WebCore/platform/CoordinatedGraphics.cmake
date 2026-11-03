@@ -46,12 +46,8 @@ if (USE_TEXTURE_MAPPER)
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreTile.cpp
         platform/graphics/texmap/coordinated/CoordinatedImageBackingStoreTextureMapper.cpp
-        platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferDMABufTextureMapper.cpp
-        platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferExternalOES.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferNativeImage.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferRGB.cpp
-        platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferVideoTextureMapper.cpp
-        platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferYUV.cpp
     )
 
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS

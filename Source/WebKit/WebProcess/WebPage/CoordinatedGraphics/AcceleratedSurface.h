@@ -132,10 +132,6 @@ public:
     void didRenderFrame(TargetContents = TargetContents::Valid);
     void sendFrame();
 
-#if USE(TEXTURE_MAPPER)
-    void clear(const OptionSet<WebCore::CompositionReason>&);
-#endif
-
     std::optional<SkColor> skiaClearColor(const OptionSet<WebCore::CompositionReason>&);
 
 #if ENABLE(DAMAGE_TRACKING)
@@ -165,7 +161,6 @@ private:
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
     bool hardwareAccelerationEnabled() const { return m_hardwareAccelerationEnabled; }
 #endif
-    bool useSkia() const { return m_useSkia; }
     bool isOpaque() const;
     std::optional<WebCore::Color> backgroundColor();
 
@@ -483,7 +478,6 @@ private:
 
     const WeakRef<WebPage> m_webPage;
     Function<void()> m_frameCompleteHandler;
-    bool m_useSkia { false };
     uint64_t m_id { 0 };
     RenderingPurpose m_renderingPurpose { RenderingPurpose::Composited };
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)

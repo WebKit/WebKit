@@ -27,7 +27,7 @@
 #include "config.h"
 #include "CoordinatedPlatformLayerBufferVideo.h"
 
-#if USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER) && ENABLE(VIDEO) && USE(GSTREAMER)
+#if USE(COORDINATED_GRAPHICS) && ENABLE(VIDEO) && USE(GSTREAMER)
 #include "CoordinatedPlatformLayerBufferSkiaImage.h"
 #include "GLFence.h"
 #include "ImageOrientation.h"
@@ -421,4 +421,4 @@ void CoordinatedPlatformLayerBufferVideo::createSkiaImageForYUVGLMemory(std::uni
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER) && ENABLE(VIDEO) && USE(GSTREAMER)
+#endif // USE(COORDINATED_GRAPHICS) && ENABLE(VIDEO) && USE(GSTREAMER)

@@ -383,18 +383,6 @@ static String vblankMonitorType(const DisplayVBlankMonitor& monitor)
     return monitor.type() == DisplayVBlankMonitor::Type::Timer ? "Timer"_s : "DRM"_s;
 }
 
-static String threadedRenderingInfo(const RenderProcessInfo& info)
-{
-    if (!info.cpuPaintingThreadsCount && !info.gpuPaintingThreadsCount)
-        return "Disabled"_s;
-
-    if (info.cpuPaintingThreadsCount)
-        return makeString("CPU ("_s, info.cpuPaintingThreadsCount, " threads)"_s);
-
-    ASSERT(info.gpuPaintingThreadsCount);
-    return makeString("GPU ("_s, info.gpuPaintingThreadsCount, " threads)"_s);
-}
-
 #if USE(LIBDRM)
 static String supportedBufferFormats(const RenderProcessInfo& info, JSON::Array& jsonArray)
 {
@@ -796,7 +784,8 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
         addTableRow(hardwareAccelerationObject, "DMA-BUF memory-mapped GPU buffers"_s, info.memoryMappedGPUBufferSupported ? "Yes"_s : "No"_s);
 #endif
 
-        addTableRow(hardwareAccelerationObject, "Threaded rendering"_s, threadedRenderingInfo(info));
+        if (info.paintingThreadsCount)
+            addTableRow(hardwareAccelerationObject, "Threaded rendering"_s, makeString(info.paintingThreadsCount, " threads"_s));
         addTableRow(hardwareAccelerationObject, "MSAA"_s, info.msaaSampleCount ? makeString(info.msaaSampleCount, " samples"_s) : String("Disabled"_s));
 
 #if USE(LIBDRM)

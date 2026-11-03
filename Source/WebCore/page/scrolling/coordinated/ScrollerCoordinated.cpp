@@ -29,30 +29,20 @@
 #include "ScrollerCoordinated.h"
 
 #if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
-#include "BitmapTexturePool.h"
 #include "CoordinatedPlatformLayer.h"
+#include "CoordinatedPlatformLayerBufferSkiaDeferredImage.h"
 #include "FontRenderOptions.h"
-#include "GLContext.h"
-#include "GLFence.h"
 #include "GraphicsContextSkia.h"
 #include "PlatformDisplay.h"
 #include "ScrollerImpAdwaita.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkSurface.h>
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#include <wtf/TZoneMallocInlines.h>
-
-#if USE(TEXTURE_MAPPER)
-#include "CoordinatedPlatformLayerBufferRGB.h"
-#else
-#include "CoordinatedPlatformLayerBufferSkiaDeferredImage.h"
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/private/chromium/GrDeferredDisplayList.h>
 #include <skia/private/chromium/GrDeferredDisplayListRecorder.h>
 #include <skia/private/chromium/GrSurfaceCharacterization.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -143,34 +133,6 @@ void ScrollerCoordinated::updateValues()
     auto frameRect = enclosingIntRect(FloatRect(state.frameRect.x() * contentsScale, state.frameRect.y() * contentsScale,
         state.frameRect.width() * contentsScale, state.frameRect.height() * contentsScale));
 
-#if USE(TEXTURE_MAPPER)
-    auto& display = PlatformDisplay::sharedDisplay();
-    auto* glContext = display.skiaGLContext();
-    if (!glContext)
-        return;
-
-    auto* grContext = display.skiaGrContext();
-    ASSERT(grContext);
-    GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
-
-    Ref texture = BitmapTexturePool::singleton().acquireTexture(frameRect.size(), { BitmapTexture::Flags::SupportsAlpha });
-    auto surface = texture->createSkiaSurface(grContext);
-    if (!surface)
-        return;
-
-    auto* canvas = surface->getCanvas();
-    if (!canvas)
-        return;
-
-    canvas->clear(SK_ColorTRANSPARENT);
-
-    GraphicsContextSkia context(*canvas, RenderingMode::Accelerated, RenderingPurpose::DOM);
-    context.scale(contentsScale);
-    scrollerImp->paint(context, state.frameRect, state);
-
-    grContext->flushAndSubmit(surface.get(), GLFence::isSupported(display.glDisplay()) ? GrSyncCpu::kNo : GrSyncCpu::kYes);
-    auto buffer = CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), { TextureMapperFlags::ShouldBlend }, GLFence::create(display.glDisplay()));
-#else
     const auto& threadSafeGrContext = hostLayer->threadSafeGrContext();
     if (!threadSafeGrContext)
         return;
@@ -195,7 +157,6 @@ void ScrollerCoordinated::updateValues()
     recordingContext.endRecording();
 
     auto buffer = CoordinatedPlatformLayerBufferSkiaDeferredImage::create(ddlRecorder.detach());
-#endif
 
     Locker layerLocker { hostLayer->lock() };
     hostLayer->setContentsRect(state.frameRect);

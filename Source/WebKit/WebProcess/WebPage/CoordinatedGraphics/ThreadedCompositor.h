@@ -49,14 +49,9 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
 
-#if USE(TEXTURE_MAPPER)
-#include <WebCore/TextureMapperDamageVisualizer.h>
-#endif
-
 class SkCanvas;
 
 namespace WebCore {
-class TextureMapper;
 class TransformationMatrix;
 }
 
@@ -115,9 +110,7 @@ public:
 
     void releaseMemory(WTF::Critical);
 
-#if !USE(TEXTURE_MAPPER)
     sk_sp<GrContextThreadSafeProxy> threadSafeGrContext() const { return m_threadSafeGrContext; }
-#endif
 
 private:
     ThreadedCompositor(WebPage&, LayerTreeHost&, CoordinatedSceneState&);
@@ -131,11 +124,6 @@ private:
     void flushCompositingState(const OptionSet<WebCore::CompositionReason>&);
     void renderLayerTree();
     TargetContents paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
-#if USE(TEXTURE_MAPPER)
-    void paintToTextureMapper(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
-#else
-    TargetContents paintToSkiaCanvas(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
-#endif
     void frameComplete();
 
     void didCompositeRunLoopObserverFired();
@@ -159,12 +147,7 @@ private:
     CheckedPtr<LayerTreeHost> m_layerTreeHost;
     RefPtr<AcceleratedSurface> m_surface;
     RefPtr<CoordinatedSceneState> m_sceneState;
-#if USE(TEXTURE_MAPPER)
-    std::unique_ptr<WebCore::GLContext> m_context;
-    bool m_flipY { false };
-#else
     sk_sp<GrContextThreadSafeProxy> m_threadSafeGrContext;
-#endif
 
     int m_maxTextureSize { 0 };
     std::atomic<unsigned> m_suspendedCount { 0 };
@@ -194,9 +177,6 @@ private:
     } m_attributes;
 
     RunLoop::Timer m_renderTimer;
-#if USE(TEXTURE_MAPPER)
-    std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
-#endif
 
     struct {
         bool exposesFPS { false };
@@ -219,11 +199,7 @@ private:
 #if ENABLE(DAMAGE_TRACKING)
     struct {
         std::optional<OptionSet<DamagePropagationFlags>> flags;
-#if USE(TEXTURE_MAPPER)
-        std::unique_ptr<WebCore::TextureMapperDamageVisualizer> visualizer;
-#else
         bool showAccumulatedDamageOverlay { false };
-#endif
         std::atomic<bool> shouldNotifyFrameDamageForTesting { false };
     } m_damage;
 #endif

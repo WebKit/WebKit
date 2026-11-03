@@ -48,11 +48,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/TZoneMallocInlines.h>
 
 #if USE(COORDINATED_GRAPHICS)
-#if USE(TEXTURE_MAPPER)
-#include "CoordinatedPlatformLayerBufferNativeImage.h"
-#else
 #include "CoordinatedPlatformLayerBufferSkiaImage.h"
-#endif
 #include "GraphicsLayerContentsDisplayDelegateCoordinated.h"
 #endif
 
@@ -220,9 +216,6 @@ void ImageBufferSkiaAcceleratedBackend::replayCanvasRecordingContextIfNeeded()
     auto* surfaceCanvas = m_surface->getCanvas();
     auto surfaceSaveCount = surfaceCanvas->getSaveCount();
 
-#if USE(TEXTURE_MAPPER)
-    ASSERT(!recording->hasFences());
-#endif
     recording->picture()->playback(surfaceCanvas);
 
     // Undo unbalanced saves from the picture playback on the surface canvas.
@@ -272,13 +265,8 @@ void ImageBufferSkiaAcceleratedBackend::prepareForDisplay()
 
     ASSERT(grContext == PlatformDisplay::sharedDisplay().skiaGrContext());
 
-#if USE(TEXTURE_MAPPER)
-    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(),
-        SkiaUtilities::flushAndSubmitSurfaceWithFence(grContext, m_surface.get())));
-#else
     if (auto threadSafeGrContext = m_layerContentsDisplayDelegate->threadSafeGrContext())
         m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferSkiaImage::create(image->platformImage(), threadSafeGrContext));
-#endif
 
     // Re-enable recording mode for subsequent drawing operations.
     // This allows batching to occur again after each prepareForDisplay() cycle.

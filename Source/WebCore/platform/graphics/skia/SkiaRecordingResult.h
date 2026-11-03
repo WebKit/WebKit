@@ -43,14 +43,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-#if USE(TEXTURE_MAPPER)
-using SkiaImageToFenceMap = HashMap<const SkImage*, std::unique_ptr<GLFence>>;
-#endif
-
 struct SkiaRecordingData {
-#if USE(TEXTURE_MAPPER)
-    SkiaImageToFenceMap imageToFenceMap;
-#endif
     Vector<Ref<SkiaImageAtlasLayout>> atlasLayouts;
     unsigned imageSetFingerprint { 0 };
 };
@@ -59,11 +52,6 @@ class SkiaRecordingResult final : public ThreadSafeRefCounted<SkiaRecordingResul
 public:
     ~SkiaRecordingResult();
     static Ref<SkiaRecordingResult> create(sk_sp<SkPicture>&&, SkiaRecordingData&&, const IntRect& recordRect, RenderingMode, bool contentsOpaque, float contentsScale);
-
-#if USE(TEXTURE_MAPPER)
-    void waitForFenceIfNeeded(const SkImage&);
-    bool hasFences();
-#endif
 
     const sk_sp<SkPicture>& picture() const LIFETIME_BOUND { return m_picture; }
     const IntRect& recordRect() const LIFETIME_BOUND { return m_recordRect; }
@@ -89,10 +77,6 @@ private:
     SkiaRecordingResult(sk_sp<SkPicture>&&, SkiaRecordingData&&, const IntRect& recordRect, RenderingMode, bool contentsOpaque, float contentsScale);
 
     sk_sp<SkPicture> m_picture;
-#if USE(TEXTURE_MAPPER)
-    SkiaImageToFenceMap m_imageToFenceMap WTF_GUARDED_BY_LOCK(m_imageToFenceMapLock);
-    Lock m_imageToFenceMapLock;
-#endif
     Vector<Ref<SkiaImageAtlasLayout>> m_atlasLayouts;
     unsigned m_imageSetFingerprint { 0 };
     Vector<Ref<SkiaGPUAtlas>> m_gpuAtlases;

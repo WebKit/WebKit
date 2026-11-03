@@ -41,10 +41,6 @@
 #include <drm_fourcc.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
-#if USE(TEXTURE_MAPPER)
-#include "TextureMapperFlags.h"
-#endif
-
 namespace WebCore {
 
 bool GraphicsContextGLGBM::checkRequirements()
@@ -285,22 +281,12 @@ void GraphicsContextGLGBM::prepareForDisplay()
 
     RELEASE_ASSERT(m_layerContentsDisplayDelegate);
     std::unique_ptr<CoordinatedPlatformLayerBuffer> buffer;
-#if USE(TEXTURE_MAPPER)
-    OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
-    if (contextAttributes().alpha)
-        flags.add(TextureMapperFlags::ShouldBlend);
-    if (fenceFD)
-        buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*displayBuffer.dmabuf()), flags, WTF::move(fenceFD));
-    else
-        buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*displayBuffer.dmabuf()), flags, WTF::move(fence));
-#else
     auto alphaMode = contextAttributes().alpha ? CoordinatedPlatformLayerBuffer::AlphaMode::Premultiplied : CoordinatedPlatformLayerBuffer::AlphaMode::Opaque;
     auto origin = CoordinatedPlatformLayerBuffer::Origin::BottomLeft;
     if (fenceFD)
         buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*displayBuffer.dmabuf()), alphaMode, origin, WTF::move(fenceFD), m_layerContentsDisplayDelegate->threadSafeGrContext());
     else
         buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*displayBuffer.dmabuf()), alphaMode, origin, WTF::move(fence), m_layerContentsDisplayDelegate->threadSafeGrContext());
-#endif
     m_layerContentsDisplayDelegate->setDisplayBuffer(WTF::move(buffer));
 }
 

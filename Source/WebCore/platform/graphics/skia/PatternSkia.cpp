@@ -51,12 +51,8 @@ sk_sp<SkShader> Pattern::createPlatformPattern(const SkSamplingOptions& sampling
     if (!platformImage)
         return nullptr;
 
-#if USE(TEXTURE_MAPPER)
-    ASSERT_UNUSED(threadSafeGrContext, !threadSafeGrContext);
-#else
     if (threadSafeGrContext)
         platformImage = SkiaUtilities::createPromiseImageIfNeeded(platformImage, threadSafeGrContext);
-#endif
 
     return platformImage->makeShader(repeatX() ? SkTileMode::kRepeat : SkTileMode::kDecal, repeatY() ? SkTileMode::kRepeat : SkTileMode::kDecal, samplingOptions, patternSpaceTransform());
 }

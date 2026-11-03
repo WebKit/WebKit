@@ -40,7 +40,6 @@
 #if USE(SKIA)
 #include "GLContext.h"
 #include "PlatformDisplay.h"
-#include "SkiaUtilities.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkPixmap.h> // NOLINT
@@ -78,11 +77,15 @@ CoordinatedPlatformLayerBufferNativeImage::CoordinatedPlatformLayerBufferNativeI
     RELEASE_ASSERT(grContext);
     grContext->flushAndSubmit(GLFence::isSupported(display.glDisplay()) ? GrSyncCpu::kNo : GrSyncCpu::kYes);
 
-    auto textureID = SkiaUtilities::retrieveGLTextureID(*image);
-    if (!textureID)
+    GrBackendTexture backendTexture;
+    if (!SkImages::GetBackendTextureFromImage(image.get(), &backendTexture, false))
         return;
 
-    lazyInitialize(m_buffer, CoordinatedPlatformLayerBufferRGB::create(*textureID, m_image->size(), m_flags, GLFence::create(display.glDisplay())));
+    GrGLTextureInfo textureInfo;
+    if (!GrBackendTextures::GetGLTextureInfo(backendTexture, &textureInfo))
+        return;
+
+    lazyInitialize(m_buffer, CoordinatedPlatformLayerBufferRGB::create(textureInfo.fID, m_image->size(), m_flags, GLFence::create(display.glDisplay())));
 #endif
 }
 
