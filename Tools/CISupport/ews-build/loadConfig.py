@@ -35,6 +35,8 @@ from buildbot.changes.filter import ChangeFilter
 from datetime import datetime, timezone
 from twisted.internet import defer
 
+from Shared.utils import getWorkerPassword
+
 from .factories import (APITestsFactory, BindingsFactory, BuildFactory, Factory, GTKBuildFactory,
                         GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCBuildO3AndTestsFactory, JSCTestsFactory, MergeQueueFactory, SafeMergeQueueFactory, StressTestFactory,
                         StyleFactory, TestFactory, tvOSBuildFactory, WPEBuildFactory, GTK3GCCBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory, PlayStationBuildFactory,
@@ -84,7 +86,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True,
     checkWorkersAndBuildersForConsistency(config, config['workers'], config['builders'])
     checkValidSchedulers(config, config['schedulers'])
 
-    c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password'), max_builds=worker.get('max_builds', 1)) for worker in config['workers']]
+    c['workers'] = [Worker(worker['name'], getWorkerPassword(worker['name'], passwords, is_test_mode_enabled), max_builds=worker.get('max_builds', 1)) for worker in config['workers']]
     if is_test_mode_enabled:
         c['workers'].append(Worker('local-worker', 'password', max_builds=1))
 
