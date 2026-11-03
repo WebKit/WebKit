@@ -9975,6 +9975,10 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didCommitLoadForFrame: frameID=%" PRIu64 ", isMainFrame=%d", frameID.toUInt64(), frame->isMainFrame());
 
+    // The web process may have cleared the main frame's name at commit, see shouldClearWindowName().
+    if (frame->isMainFrame() && frameInfo.frameName != frame->frameName() && protect(preferences())->siteIsolationEnabled() && &frame->process() == WebProcessProxy::fromConnection(connection).ptr())
+        setFrameNameAndNotifyOtherProcesses(connection, *frame, frameInfo.frameName);
+
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID && (navigation = m_navigationState->navigation(*navigationID))) {
@@ -22241,12 +22245,17 @@ void WebPageProxy::frameNameChanged(IPC::Connection& connection, WebCore::FrameI
     if (&frame->process() != WebProcessProxy::fromConnection(connection).ptr())
         return;
 
-    frame->setSpecifiedName(frameName);
+    setFrameNameAndNotifyOtherProcesses(connection, *frame, frameName);
+}
+
+void WebPageProxy::setFrameNameAndNotifyOtherProcesses(IPC::Connection& connection, WebFrameProxy& frame, const String& frameName)
+{
+    frame.setSpecifiedName(frameName);
 
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (!webProcess.hasConnection() || &webProcess.connection() == &connection)
             return;
-        webProcess.send(Messages::WebPage::FrameNameWasChangedInAnotherProcess(frameID, frameName), pageID);
+        webProcess.send(Messages::WebPage::FrameNameWasChangedInAnotherProcess(frame.frameID(), frameName), pageID);
     });
 }
 

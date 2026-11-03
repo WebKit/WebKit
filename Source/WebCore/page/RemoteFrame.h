@@ -110,7 +110,7 @@ public:
     void addResourceTimingFromChild(ResourceTiming&&);
 
     String debugDescription() const final;
-    const SecurityOrigin& frameDocumentSecurityOriginOrOpaque() const;
+    WEBCORE_EXPORT const SecurityOrigin& frameDocumentSecurityOriginOrOpaque() const;
     bool LEGACY_NODELETE frameDocumentIsSandboxedOrigin() const;
 
 private:

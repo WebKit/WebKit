@@ -3926,6 +3926,7 @@ private:
     void updateTextIndicatorFromFrame(WebCore::FrameIdentifier, RefPtr<WebCore::TextIndicator>&&);
 
     void frameNameChanged(IPC::Connection&, WebCore::FrameIdentifier, const String& frameName);
+    void setFrameNameAndNotifyOtherProcesses(IPC::Connection&, WebFrameProxy&, const String& frameName);
 
 #if ENABLE(GAMEPAD)
     void recentGamepadAccessStateChanged(PAL::HysteresisState);

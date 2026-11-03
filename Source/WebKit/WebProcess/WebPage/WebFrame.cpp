@@ -565,6 +565,15 @@ void WebFrame::updateSandboxFlags(SandboxFlags sandboxFlags)
         provisionalFrame->updateSandboxFlags(sandboxFlags, Frame::NotifyUIProcess::No);
 }
 
+static bool shouldClearWindowNameOnReplacement(const WebCore::RemoteFrame& remoteFrame, const WebCore::LocalFrame& localFrame)
+{
+    if (!remoteFrame.isMainFrame() || remoteFrame.opener())
+        return false;
+
+    RefPtr document = localFrame.document();
+    return !document || !protect(document->securityOrigin())->isSameOriginAs(protect(remoteFrame.frameDocumentSecurityOriginOrOpaque()));
+}
+
 void WebFrame::commitProvisionalFrame()
 {
     RefPtr localFrame = std::exchange(m_provisionalFrame, nullptr);
@@ -601,7 +610,8 @@ void WebFrame::commitProvisionalFrame()
 
     m_coreFrame = localFrame.get();
     remoteFrame->setView(nullptr);
-    localFrame->tree().setSpecifiedName(remoteFrame->tree().specifiedName());
+    if (!shouldClearWindowNameOnReplacement(*remoteFrame, *localFrame))
+        localFrame->tree().setSpecifiedName(remoteFrame->tree().specifiedName());
 
     if (ownerRenderer)
         ownerRenderer->setWidget(localFrame->view());

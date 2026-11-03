@@ -1116,6 +1116,48 @@ TEST(SiteIsolation, NavigationAfterWindowOpen)
         Util::spinRunLoop();
 }
 
+TEST(SiteIsolation, CrossSiteNavigationOfPageWithPopupClearsWindowName)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+        { "/apple"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server);
+    pid_t openerPid = [opener.webView _webProcessIdentifier];
+    EXPECT_WK_STREQ([opener.webView objectByEvaluatingJavaScript:@"window.name = 'opener-name'; window.name"], "opener-name");
+    EXPECT_WK_STREQ([opened.webView objectByEvaluatingJavaScript:@"window.name = 'opened-name'; window.name"], "opened-name");
+
+    [opener.webView evaluateJavaScript:@"location.href = 'https://apple.com/apple'" completionHandler:nil];
+    [opener.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE([opener.webView _webProcessIdentifier], openerPid);
+    EXPECT_WK_STREQ([opener.webView objectByEvaluatingJavaScript:@"window.name"], "");
+
+    [opened.webView evaluateJavaScript:@"location.href = 'https://apple.com/apple'" completionHandler:nil];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([opened.webView objectByEvaluatingJavaScript:@"window.name"], "opened-name");
+}
+
+TEST(SiteIsolation, CrossSiteNavigationOfPageWithPopupClearsWindowNameInOtherProcesses)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+        { "/apple"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server);
+    [opener.webView objectByEvaluatingJavaScript:@"window.name = 'opener-name'"];
+    [opened.webView objectByEvaluatingJavaScript:@"window.name = 'opened-name'"];
+    EXPECT_TRUE([[opener.webView objectByEvaluatingJavaScript:@"window.open('', 'opened-name') === w"] boolValue]);
+
+    [opener.webView evaluateJavaScript:@"location.href = 'https://apple.com/apple'" completionHandler:nil];
+    [opener.navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([opener.webView objectByEvaluatingJavaScript:@"window.name"], "");
+    EXPECT_FALSE([[opened.webView objectByEvaluatingJavaScript:@"window.open('', 'opener-name') === window.opener"] boolValue]);
+}
+
 TEST(SiteIsolation, CrossSiteIframeWithPendingNavigationIsRemovedWhenMainFrameCommitsInAnotherProcess)
 {
     HTTPServer server({
