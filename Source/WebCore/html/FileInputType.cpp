@@ -40,6 +40,7 @@
 #include "HTMLNames.h"
 #include "Icon.h"
 #include "InputTypeNames.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "LocalizedStrings.h"
@@ -49,7 +50,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "UserAgentParts.h"
-#include "UserGestureIndicator.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -164,8 +165,11 @@ void FileInputType::handleDOMActivateEvent(Event& event)
     if (element()->isDisabledFormControl())
         return;
 
-    if (!UserGestureIndicator::processingUserGesture())
+    RefPtr window = element()->document().window();
+    if (!window || !window->consumeTransientActivation()) {
+        protect(element()->document())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "File chooser dialog can only be shown with a user activation."_s);
         return;
+    }
 
     showPicker();
     event.setDefaultHandled();

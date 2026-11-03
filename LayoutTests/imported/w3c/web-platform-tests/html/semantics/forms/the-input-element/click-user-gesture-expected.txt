@@ -1,3 +1,5 @@
+OPEN FILE PANEL
+OPEN FILE PANEL
 
 PASS input[type=color] click() does not throw when user activation is active
 PASS input[type=date] click() does not throw when user activation is active
@@ -9,7 +11,7 @@ PASS input[type=week] click() does not throw when user activation is active
 FAIL input[type=color] click() consumes user activation assert_false: expected false got true
 FAIL input[type=date] click() consumes user activation assert_false: expected false got true
 FAIL input[type=datetime-local] click() consumes user activation assert_false: expected false got true
-FAIL input[type=file] click() consumes user activation assert_false: expected false got true
+PASS input[type=file] click() consumes user activation
 FAIL input[type=month] click() consumes user activation assert_false: expected false got true
 FAIL input[type=time] click() consumes user activation assert_false: expected false got true
 FAIL input[type=week] click() consumes user activation assert_false: expected false got true
