@@ -544,8 +544,10 @@ void TestController::initializeWebProcessAccessibility()
 
     // Allow all accessibility authentication requests for testing, so that
     // site-isolated iframe web content processes can be accessed by AX clients
-    // without requiring TCC accessibility permission.
-    WKContextSetAllowAXAuthenticationForTesting(m_context.get(), true);
+    // without requiring TCC accessibility permission. A test that denies them
+    // may do so before enabling client accessibility mode.
+    if (!m_didDenyAXAuthenticationForTesting)
+        [(WKProcessPool *)m_context.get() _setAXAuthenticationModeForTesting:_WKAXAuthenticationTestingModeAllow];
 
     // Reduce the messaging timeout. Occasionally an accessibility client request goes to
     // a web content process before it's ready to serve that request on the AX thread, causing
@@ -599,6 +601,29 @@ void TestController::setHasFakePaymentUIForTesting(bool hasFakePaymentUI)
 #else
     UNUSED_PARAM(hasFakePaymentUI);
 #endif
+}
+
+void TestController::setAXAuthenticationDeniedForTesting(bool denied)
+{
+    [(WKProcessPool *)m_context.get() _setAXAuthenticationModeForTesting:denied ? _WKAXAuthenticationTestingModeDeny : _WKAXAuthenticationTestingModeAllow];
+    if (denied)
+        m_didDenyAXAuthenticationForTesting = true;
+}
+
+void TestController::resetAXAuthenticationModeForTesting()
+{
+    [(WKProcessPool *)m_context.get() _setAXAuthenticationModeForTesting:_WKAXAuthenticationTestingModeDefault];
+}
+
+void TestController::terminateWebContentProcessesIfAXAuthenticationWasDenied()
+{
+    // A web content process remembers its first answer for an accessibility client, so later tests
+    // mustn't reuse a process that was told to deny this one.
+    if (!std::exchange(m_didDenyAXAuthenticationForTesting, false))
+        return;
+
+    [(WKProcessPool *)m_context.get() _terminateAllWebContentProcesses];
+    reattachPageToWebProcess();
 }
 
 } // namespace WTR

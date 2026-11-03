@@ -1546,6 +1546,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
 #if PLATFORM(MAC)
     handleAXRemoveNotificationListener();
+    resetAXAuthenticationModeForTesting();
 #endif
 
     for (auto& auxiliaryWebView : std::exchange(m_auxiliaryWebViews, { }))

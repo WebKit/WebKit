@@ -169,6 +169,17 @@ WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+#if !USE(APPLE_INTERNAL_SDK) || PLATFORM(MACCATALYST)
+typedef CF_ENUM(CFIndex, AXControlComputerAccessType)
+{
+    AXControlComputerAccessTypeAccessibility = 0,
+    AXControlComputerAccessTypeEvents,
+    AXControlComputerAccessTypeListenEvents,
+    AXControlComputerAccessTypeScreenCapture,
+    AXControlComputerAccessTypeRemoteDesktop,
+};
+#endif
+
 #if PLATFORM(MAC)
 inline std::span<const uint8_t> AXTextMarkerGetByteSpan(AXTextMarkerRef marker)
 {

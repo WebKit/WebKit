@@ -322,11 +322,6 @@ void WKContextSetDisableFontSubpixelAntialiasingForTesting(WKContextRef contextR
     protect(WebKit::toImpl(contextRef))->setDisableFontSubpixelAntialiasingForTesting(disable);
 }
 
-void WKContextSetAllowAXAuthenticationForTesting(WKContextRef contextRef, bool allow)
-{
-    protect(WebKit::toImpl(contextRef))->setAllowAXAuthenticationForTesting(allow);
-}
-
 void WKContextSetAdditionalPluginsDirectory(WKContextRef contextRef, WKStringRef pluginsDirectory)
 {
     UNUSED_PARAM(contextRef);

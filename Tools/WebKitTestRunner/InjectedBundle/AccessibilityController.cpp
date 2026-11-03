@@ -103,6 +103,15 @@ void AccessibilityController::setClientAccessibilityMode(bool flag)
     }
 }
 
+void AccessibilityController::setClientAccessibilityAuthenticationDenied(bool denied)
+{
+#if PLATFORM(MAC)
+    postSynchronousMessage("SetAXAuthenticationDeniedForTesting", denied);
+#else
+    UNUSED_PARAM(denied);
+#endif
+}
+
 void AccessibilityController::makeWindowObject(JSContextRef context)
 {
     setGlobalObjectProperty(context, "accessibilityController", this);

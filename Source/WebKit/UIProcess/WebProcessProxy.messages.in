@@ -90,7 +90,8 @@ messages -> WebProcessProxy WantsDispatchMessage {
     SystemBeep()
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    IsAXAuthenticated(struct WebKit::CoreIPCAuditToken auditToken) -> (bool authenticated) Synchronous
+    # The decision is opaque to WebKit; WebKitAdditions defines its values.
+    RequestAXAuthenticationDecision(struct WebKit::CoreIPCAuditToken requester) -> (uint32_t decision) Synchronous
 #endif
 
     AccessibilityModeDidChange(enum:uint8_t WebCore::AccessibilityMode mode)

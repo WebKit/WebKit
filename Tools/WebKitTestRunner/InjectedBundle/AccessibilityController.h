@@ -68,6 +68,9 @@ public:
 
     // Client accessibility mode - uses AXUIElement APIs instead of internal accessibility objects
     void setClientAccessibilityMode(bool);
+    // Makes the UI process deny accessibility authentication for web content processes that ask it,
+    // such as the processes of site-isolated iframes.
+    void setClientAccessibilityAuthenticationDenied(bool);
     bool clientAccessibilityModeEnabled() const { return m_enableClientAccessibilityMode; }
 
     RefPtr<OpaqueJSString> platformName();

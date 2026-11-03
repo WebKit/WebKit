@@ -1,0 +1,60 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<button>Before</button>
+
+<button>After</button>
+
+<script>
+var output = "This test ensures that an accessibility client can't reach the content of a site-isolated iframe when the UI process denies it access.\n\n";
+
+function treeContains(element, test) {
+    if (!element || !element.role)
+        return false;
+    if (test(element))
+        return true;
+    for (let i = 0; i < element.childrenCount; i++) {
+        if (treeContains(element.childAtIndex(i), test))
+            return true;
+    }
+    return false;
+}
+
+const isAfterButton = (element) => element.role.includes("Button") && element.title.includes("After");
+const isHeading = (element) => element.role.includes("Heading");
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    // Deny access before the iframe's process exists, since it remembers its first answer for a client.
+    accessibilityController.setClientAccessibilityAuthenticationDenied(true);
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        const iframe = document.createElement("iframe");
+        const loaded = new Promise(resolve => iframe.onload = resolve);
+        iframe.src = "http://localhost:8000/site-isolation/resources/iframe.html";
+        document.body.insertBefore(iframe, document.querySelectorAll("button")[1]);
+        await loaded;
+        await waitForElements([isAfterButton]);
+
+        // When access is allowed, the iframe's heading is reachable well within this time.
+        let headingReachable = false;
+        for (let i = 0; i < 40 && !headingReachable; i++) {
+            await new Promise(resolve => setTimeout(resolve, 25));
+            headingReachable = treeContains(accessibilityController.rootElement, isHeading);
+        }
+
+        output += "Main frame button reachable: " + treeContains(accessibilityController.rootElement, isAfterButton) + "\n";
+        output += "Iframe heading reachable: " + headingReachable + "\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

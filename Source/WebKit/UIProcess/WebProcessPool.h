@@ -634,8 +634,9 @@ public:
     void initializeAccessibilityIfNecessary();
 #endif
 
-    void setAllowAXAuthenticationForTesting(bool allow) { m_allowAXAuthenticationForTesting = allow; }
-    bool allowAXAuthenticationForTesting() const { return m_allowAXAuthenticationForTesting; }
+    enum class AXAuthenticationTestingMode : uint8_t { Default, Allow, Deny };
+    void setAXAuthenticationTestingMode(AXAuthenticationTestingMode mode) { m_axAuthenticationTestingMode = mode; }
+    AXAuthenticationTestingMode axAuthenticationTestingMode() const { return m_axAuthenticationTestingMode; }
 
     void setPLTResourceDelayInterval(Seconds interval) { m_pltResourceDelayInterval = interval; }
     Seconds pltResourceDelayInterval() const { return m_pltResourceDelayInterval; }
@@ -1102,7 +1103,7 @@ private:
 #endif
 
     bool m_hasReceivedAXRequestInUIProcess { false };
-    bool m_allowAXAuthenticationForTesting { false };
+    AXAuthenticationTestingMode m_axAuthenticationTestingMode { AXAuthenticationTestingMode::Default };
     bool m_suppressEDR { false };
 
     Seconds m_pltResourceDelayInterval { 100_ms };

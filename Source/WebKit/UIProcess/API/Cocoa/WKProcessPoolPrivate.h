@@ -51,6 +51,12 @@ typedef NS_ENUM(NSInteger, _WKWebContentProcessState) {
     _WKWebContentProcessStateActive,
 } WK_API_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2));
 
+typedef NS_ENUM(NSInteger, _WKAXAuthenticationTestingMode) {
+    _WKAXAuthenticationTestingModeDefault,
+    _WKAXAuthenticationTestingModeAllow,
+    _WKAXAuthenticationTestingModeDeny,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 WK_CLASS_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2))
 @interface _WKProcessInfo : NSObject
 @property (nonatomic, readonly) pid_t pid;
@@ -150,6 +156,8 @@ WK_CLASS_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2))
 - (size_t)_serviceWorkerProcessCount WK_API_AVAILABLE(macos(10.14), ios(12.0));
 - (void)_isJITDisabledInAllRemoteWorkerProcesses:(void(^)(BOOL))completionHandler;
 - (void)_makeNextWebProcessLaunchFailForTesting WK_API_AVAILABLE(macos(10.14), ios(12.0));
+// Overrides the answer when a web content process asks whether an assistive technology may access it.
+- (void)_setAXAuthenticationModeForTesting:(_WKAXAuthenticationTestingMode)mode WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 - (NSUInteger)_maximumSuspendedPageCount WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 - (NSUInteger)_processCacheCapacity WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 - (NSUInteger)_processCacheSize WK_API_AVAILABLE(macos(10.15), ios(13.0));
