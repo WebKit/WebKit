@@ -161,9 +161,20 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     };
     if ((rootContainer.isFlexItemIncludingDeprecated() || rootContainer.isGridItem()) && rootContainer.isAnonymous() && hasPercentageBlockSizeContent())
         return BlockAvoidanceReason::RootIsAnonymousFlexOrGridItem;
-    // FIXME: Percentage block sizes inside a table cell, which resolve against the height the row gives it, and only once it has one
-    // (RenderBox::computePercentageLogicalHeight, RenderTableSection::relayoutCellIfFlexed).
-    if (rootContainer.isRenderTableCell() && hasPercentageBlockSizeContent())
+    // FIXME: Stretch and calc-size() block sizes inside a table cell, which resolve against its available block size (RenderBox::availableLogicalHeightUsing).
+    auto hasStretchOrCalcSizeBlockSizeContent = [&] {
+        for (CheckedRef descendant : descendantsOfType<RenderBox>(rootContainer)) {
+            CheckedRef style = descendant->style();
+            auto writingMode = descendant->writingMode();
+            auto isStretchOrCalcSize = [](auto& size) {
+                return size.isStretch() || size.isCalcSize();
+            };
+            if (!descendant->isOutOfFlowPositioned() && (isStretchOrCalcSize(style->logicalHeight(writingMode)) || isStretchOrCalcSize(style->logicalMinHeight(writingMode)) || isStretchOrCalcSize(style->logicalMaxHeight(writingMode))))
+                return true;
+        }
+        return false;
+    };
+    if (rootContainer.isRenderTableCell() && hasStretchOrCalcSizeBlockSizeContent())
         return BlockAvoidanceReason::RootIsTableCell;
     // FIXME: horizontal-bt, whose inline content the inline formatting context places from the border and padding at the top, its block-end
     // side (BoxGeometryUpdater::formattingContextConstraints).

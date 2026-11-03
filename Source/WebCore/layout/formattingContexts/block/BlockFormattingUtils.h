@@ -79,9 +79,12 @@ public:
     // percentageBasis (css-values-5 §11.1, like RenderBox::resolveCalcSizeContentSize). Box-sizing decides whether `size` and the result
     // are border box or content box sizes.
     static LayoutUnit calcSizeBorderBoxSize(const Style::UnevaluatedCalcSize&, const Style::ComputedStyle&, LayoutUnit basisBorderBoxSize, LayoutUnit borderAndPadding, LayoutUnit percentageBasis);
+    // A table cell gives the percentage and calc() block sizes of its children their border box, and percentages that look through one of its
+    // children to it resolve as auto (RenderBox::computePercentageLogicalHeight).
+    enum class ContainingBlockIsTableCell : bool { No, Yes };
     // CSS 2.2 §10.6.3 (block-level, non-replaced elements in normal flow) with min/max-height (§10.7), and the stretch-fit block size for
     // stretch (css-sizing-4 §6.1).
-    static LayoutUnit borderBoxBlockSize(const RenderBox&, LayoutUnit borderAndPaddingBlockSize, std::optional<LayoutUnit> intrinsicContentBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
+    static LayoutUnit borderBoxBlockSize(const RenderBox&, LayoutUnit borderAndPaddingBlockSize, std::optional<LayoutUnit> intrinsicContentBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode, ContainingBlockIsTableCell = ContainingBlockIsTableCell::No);
     // The border box block size a preferred aspect ratio gives an auto block size, from the inline size and within the min and max block sizes
     // (css-sizing-4 §5.1, like RenderBox::blockSizeFromAspectRatio), which is definite. With the block size of the content, an auto min block
     // size is the automatic minimum block size: the content's, capped by the max block size, unless the box is a scroll container. None without
@@ -103,7 +106,7 @@ public:
     // The min-content, max-content and fit-content block sizes of a block container are its automatic block size (css-sizing-3 §2.1, §3.2), and a
     // percentage block size behaves as auto when the block size of the containing block is not definite (CSS 2.2 §10.5).
     static bool blockSizeBehavesAsAuto(const Style::PreferredSize& blockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize);
-    static std::optional<LayoutUnit> definiteContentBoxBlockSize(const RenderBox&, const BoxGeometry&, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
+    static std::optional<LayoutUnit> definiteContentBoxBlockSize(const RenderBox&, const BoxGeometry&, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode, ContainingBlockIsTableCell = ContainingBlockIsTableCell::No);
 };
 
 }
