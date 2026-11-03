@@ -8611,8 +8611,6 @@ webkit.org/b/299567 editing/text-iterator/hidden-textarea-selection-quirk.html [
 
 webkit.org/b/299501 http/tests/site-isolation/focus-tab-navigation-activeElement.html [ Pass Failure ]
 
-webkit.org/b/300946 http/tests/site-isolation/key-events.html [ Pass Failure ]
-
 # https://bugs.webkit.org/show_bug.cgi?id=301131 [ iOS 26 ] 6x tests (layout-tests) are constant text failures 
 fast/html/details-no-summary4.html [ Pass Failure ]
 fast/html/details-open-javascript.html [ Pass Failure ]
