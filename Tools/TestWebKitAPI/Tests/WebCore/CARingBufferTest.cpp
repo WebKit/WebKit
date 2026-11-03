@@ -178,6 +178,53 @@ TEST_F(CARingBufferTest, SmallBufferListForFetch)
     EXPECT_LE(bufferList().mBuffers[0].mDataByteSize, listDataByteSizeBeforeFetch);
 }
 
+TEST_F(CARingBufferTest, StoreWithShortSourceKeepsUnwrittenFramesSilent)
+{
+    const size_t capacity = 1024;
+    const size_t storedFrames = 160;
+    const size_t writtenFrames = 154;
+
+    setup(16000, 1, CAAudioStreamDescription::PCMFormat::Float32, true, capacity);
+
+    std::array<float, storedFrames> sourceBuffer;
+    for (size_t i = 0; i < storedFrames; i++)
+        sourceBuffer[i] = 0.25;
+    std::array<float, storedFrames> readBuffer;
+
+    size_t notSilentFrames = 0;
+    for (int iteration = 0; iteration < 64; iteration++) {
+        {
+            Vector<Vector<uint8_t>> dirtyBuffers;
+            for (int i = 0; i < 16; i++) {
+                Vector<uint8_t> dirtyBuffer;
+                dirtyBuffer.grow(capacity * sizeof(float));
+                dirtyBuffer.fill(0xFF);
+                dirtyBuffers.append(WTF::move(dirtyBuffer));
+            }
+        }
+
+        auto ringBuffer = InProcessCARingBuffer::allocate(description(), capacity);
+        ASSERT_TRUE(ringBuffer);
+
+        setListDataBuffer(sourceBuffer);
+        bufferList().mBuffers[0].mDataByteSize = writtenFrames * description().bytesPerFrame();
+        EXPECT_EQ(ringBuffer->store(&bufferList(), storedFrames, 0), CARingBuffer::Error::Ok);
+        EXPECT_EQ(ringBuffer->getFetchTimeBounds(), makeBounds(0, storedFrames));
+
+        readBuffer.fill(1);
+        setListDataBuffer(readBuffer);
+        ringBuffer->fetch(&bufferList(), storedFrames, 0);
+
+        for (size_t i = 0; i < writtenFrames; i++)
+            EXPECT_EQ(readBuffer[i], 0.25) << "Written frame differs at index " << i;
+        for (size_t i = writtenFrames; i < storedFrames; i++) {
+            if (readBuffer[i])
+                notSilentFrames++;
+        }
+    }
+    EXPECT_EQ(notSilentFrames, 0u);
+}
+
 TEST_F(CARingBufferTest, FetchTimeBoundsInMiddleCorrect)
 {
     const size_t capacity = 32;

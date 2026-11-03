@@ -327,6 +327,7 @@ std::unique_ptr<InProcessCARingBuffer> InProcessCARingBuffer::allocate(const Web
         return nullptr;
     }
     buffer.grow(sizeForBuffers);
+    buffer.fill(0);
     std::unique_ptr<InProcessCARingBuffer> result { new InProcessCARingBuffer { bytesPerFrame, frameCount, numChannelStreams, WTF::move(buffer) } };
     result->initialize();
     return result;
