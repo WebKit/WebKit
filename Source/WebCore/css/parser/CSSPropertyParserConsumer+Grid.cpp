@@ -245,6 +245,8 @@ std::optional<CSS::GridLineNames> consumeUnresolvedGridLineNames(CSSParserTokenR
     if (range.consumeIncludingWhitespace().type() != RightBracketToken)
         return std::nullopt;
 
+    lineNames.value.shrinkToFit();
+
     guard.commit();
     return CSS::GridLineNames { WTF::move(lineNames) };
 }
@@ -272,6 +274,8 @@ std::optional<CSS::GridTrackList> consumeUnresolvedGridExplicitTrackList(CSSPars
         if (auto lineNames = consumeUnresolvedGridLineNames(range, state); lineNames && !lineNames->isEmpty())
             trackList.value.append(Track { WTF::move(*lineNames) });
     } while (!range.atEnd() && range.peek().type() != DelimiterToken);
+
+    trackList.value.shrinkToFit();
 
     guard.commit();
     return CSS::GridTrackList { WTF::move(trackList) };
@@ -335,6 +339,8 @@ static std::optional<GridNameRepeatFunctionResult> consumeUnresolvedGridNameRepe
         repeated.value.append(WTF::move(*gridLineNames));
     } while (!args.atEnd());
 
+    repeated.value.shrinkToFit();
+
     guard.commit();
     return GridNameRepeatFunctionResult {
         .value = CSS::GridNameRepeatFunction {
@@ -387,6 +393,8 @@ static std::optional<CSS::GridSubgrid> consumeUnresolvedGridSubgrid(CSSParserTok
         } else
             return std::nullopt;
     }
+
+    entries.value.shrinkToFit();
 
     guard.commit();
     return CSS::GridSubgrid { WTF::move(entries) };
@@ -815,6 +823,8 @@ static std::optional<GridTrackOrFixedOrAutoRepeatResult> consumeGridTrackOrFixed
         );
     }
 
+    repeated.value.shrinkToFit();
+
     guard.commit();
     return GridTrackOrFixedOrAutoRepeatResult {
         .value = CSS::GridTrackRepeatFunction {
@@ -890,6 +900,8 @@ std::optional<CSS::GridTemplateList> consumeUnresolvedGridTemplateList(CSSParser
     if (hasConsumedAutoRepeat && hasConsumedNonFixed)
         return std::nullopt;
 
+    trackList.value.shrinkToFit();
+
     guard.commit();
     return CSS::GridTemplateList { CSS::GridTrackList { WTF::move(trackList) } };
 }
@@ -964,6 +976,8 @@ std::optional<CSS::GridTrackSizes> consumeUnresolvedGridTrackSizes(CSSParserToke
             return std::nullopt;
         trackSizes.value.append(WTF::move(*trackSize));
     } while (!range.atEnd() && range.peek().type() != DelimiterToken);
+
+    trackSizes.value.shrinkToFit();
 
     guard.commit();
     return CSS::GridTrackSizes { WTF::move(trackSizes) };

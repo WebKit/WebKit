@@ -1657,6 +1657,8 @@ inline bool PropertyParserCustom::consumeGridTemplateShorthand(CSSParserTokenRan
             templateRowsTrackList.value.value.append(CSS::GridTrackList::Track { *lineNames });
     } while (!range.atEnd() && !(range.peek().type() == DelimiterToken && range.peek().delimiter() == '/'));
 
+    templateRowsTrackList.value.value.shrinkToFit();
+
     RefPtr<CSSValue> templateColumnsValue;
     if (!range.atEnd()) {
         if (!consumeSlashIncludingWhitespace(range))
