@@ -1378,6 +1378,23 @@ bool WebExtension::hasStaticInjectedContent()
     return !m_staticInjectedContents.isEmpty();
 }
 
+bool WebExtension::InjectedContentData::matchesURL(const URL& url) const
+{
+    // FIXME: <https://webkit.org/b/246492> Add support for exclude globs.
+    for (auto& excludeMatchPattern : excludeMatchPatterns) {
+        if (excludeMatchPattern->matchesURL(url))
+            return false;
+    }
+
+    // FIXME: <https://webkit.org/b/246492> Add support for include globs.
+    for (auto& includeMatchPattern : includeMatchPatterns) {
+        if (includeMatchPattern->matchesURL(url))
+            return true;
+    }
+
+    return false;
+}
+
 Vector<String> WebExtension::InjectedContentData::expandedIncludeMatchPatternStrings() const
 {
     Vector<String> result;

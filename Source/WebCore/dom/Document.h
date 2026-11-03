@@ -75,6 +75,7 @@
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakListHashSet.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -739,6 +740,9 @@ public:
 
     ExtensionStyleSheets* extensionStyleSheetsIfExists() { return m_extensionStyleSheets.get(); }
     inline ExtensionStyleSheets& extensionStyleSheets(); // Defined in DocumentInlines.h.
+
+    // Returns true the first time a user script with this world and URL is recorded for this document.
+    bool recordInjectedUserScript(const DOMWrapperWorld&, const URL&);
 
     const Style::CustomPropertyRegistry& LEGACY_NODELETE customPropertyRegistry() const;
     const CSSCounterStyleRegistry& LEGACY_NODELETE counterStyleRegistry() const;
@@ -2438,6 +2442,7 @@ private:
 
     const UniqueRef<Style::DocumentScope> m_styleScope;
     const std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;
+    std::unique_ptr<SingleThreadWeakHashMap<DOMWrapperWorld, HashSet<String>>> m_injectedUserScripts;
     const RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<FormController> m_formController;

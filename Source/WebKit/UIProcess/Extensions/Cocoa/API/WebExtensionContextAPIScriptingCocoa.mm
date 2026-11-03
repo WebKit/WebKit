@@ -252,6 +252,7 @@ void WebExtensionContext::scriptingRegisterContentScripts(const Vector<WebExtens
         }
 
         addInjectedContent(injectedContents);
+        addTemporaryInjectedContent(injectedContents);
 
         completionHandler({ });
     });
@@ -300,6 +301,7 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
 
             registeredScript->updateParameters(parameters);
             registeredScript->removeUserScriptsAndStyleSheets(scriptID);
+            removeTemporaryInjectedContent(scriptID);
 
             auto injectedContent = injectedContentsMap.get(scriptID);
             registeredScript->updateInjectedContent(injectedContent);
@@ -307,6 +309,7 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
         }
 
         addInjectedContent(injectedContents);
+        addTemporaryInjectedContent(injectedContents);
 
         completionHandler({ });
     });
@@ -356,6 +359,8 @@ void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>
         for (auto& scriptID : borrow(ids)) {
             if (RefPtr registeredScript = m_registeredScriptsMap.take(scriptID))
                 registeredScript->removeUserScriptsAndStyleSheets(scriptID);
+
+            removeTemporaryInjectedContent(scriptID);
         }
 
         completionHandler({ });

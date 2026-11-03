@@ -716,14 +716,9 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     [_extensionController didChangeTabProperties:WKWebExtensionTabChangedPropertiesLoading forTab:self];
 }
 
-- (void)_webView:(WKWebView *)webView navigationDidFinishDocumentLoad:(WKNavigation *)navigation
-{
-    [_extensionController didChangeTabProperties:WKWebExtensionTabChangedPropertiesTitle | WKWebExtensionTabChangedPropertiesURL forTab:self];
-}
-
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    [_extensionController didChangeTabProperties:WKWebExtensionTabChangedPropertiesLoading forTab:self];
+    [_extensionController didChangeTabProperties:WKWebExtensionTabChangedPropertiesLoading | WKWebExtensionTabChangedPropertiesTitle | WKWebExtensionTabChangedPropertiesURL forTab:self];
 }
 
 - (WKWebView *)webViewForWebExtensionContext:(WKWebExtensionContext *)context

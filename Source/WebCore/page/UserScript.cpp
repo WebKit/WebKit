@@ -89,7 +89,7 @@ static void removeSourceString(const String& string)
     sourceStrings().remove(string);
 }
 
-UserScript::UserScript(String&& source, URL&& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, UserContentMatchParentFrame matchParentFrame)
+UserScript::UserScript(String&& source, URL&& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, UserContentMatchParentFrame matchParentFrame, std::optional<PageIdentifier> pageID)
     : m_source(internedSourceString(source))
     , m_url(url.isEmpty() ? generateUserScriptUniqueURL() : WTF::move(url))
     , m_allowlist(WTF::move(allowlist))
@@ -97,6 +97,7 @@ UserScript::UserScript(String&& source, URL&& url, Vector<String>&& allowlist, V
     , m_injectionTime(injectionTime)
     , m_injectedFrames(injectedFrames)
     , m_matchParentFrame(matchParentFrame)
+    , m_pageID(pageID)
 {
 }
 
