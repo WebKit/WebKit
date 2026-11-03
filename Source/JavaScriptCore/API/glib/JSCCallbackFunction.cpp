@@ -117,13 +117,13 @@ JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thi
     auto parameterCount = m_parameters ? m_parameters->size() : 1;
     if (addInstance)
         parameterCount++;
-    auto values = unsafeMakeSpan(static_cast<GValue*>(g_alloca(sizeof(GValue) * parameterCount)), parameterCount);
-    zeroSpan(values);
+    Vector<GValue, 8> values(parameterCount);
+    zeroSpan(values.mutableSpan());
 
     size_t firstParameter = 0;
     if (addInstance) {
-        g_value_init(values.data(), G_TYPE_POINTER);
-        g_value_set_pointer(values.data(), instance);
+        g_value_init(values.mutableSpan().data(), G_TYPE_POINTER);
+        g_value_set_pointer(values.mutableSpan().data(), instance);
         firstParameter = 1;
     }
     if (m_parameters) {
@@ -146,7 +146,7 @@ JSValueRef JSCCallbackFunction::call(JSContextRef callerContext, JSObjectRef thi
         g_value_init(&returnValue, m_returnType);
 
     if (!*exception)
-        g_closure_invoke(m_closure.get(), m_returnType != G_TYPE_NONE ? &returnValue : nullptr, parameterCount, values.data(), nullptr);
+        g_closure_invoke(m_closure.get(), m_returnType != G_TYPE_NONE ? &returnValue : nullptr, parameterCount, values.mutableSpan().data(), nullptr);
 
     for (size_t i = 0; i < parameterCount; ++i)
         g_value_unset(&values[i]);
@@ -188,8 +188,8 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
         g_value_unset(&dummyValue);
     } else {
         auto parameterCount = m_parameters ? m_parameters->size() : 1;
-        auto values = unsafeMakeSpan(static_cast<GValue*>(g_alloca(sizeof(GValue) * parameterCount)), parameterCount);
-        zeroSpan(values);
+        Vector<GValue, 8> values(parameterCount);
+        zeroSpan(values.mutableSpan());
 
         if (m_parameters) {
             auto argumentsSpan = unsafeMakeSpan(arguments, argumentCount);
@@ -199,12 +199,12 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
             auto* parameters = g_ptr_array_new_full(argumentCount, g_object_unref);
             for (auto& argument : unsafeMakeSpan(arguments, argumentCount))
                 g_ptr_array_add(parameters, jscContextGetOrCreateValue(context.get(), argument).leakRef());
-            g_value_init(values.data(), G_TYPE_PTR_ARRAY);
-            g_value_take_boxed(values.data(), parameters);
+            g_value_init(values.mutableSpan().data(), G_TYPE_PTR_ARRAY);
+            g_value_take_boxed(values.mutableSpan().data(), parameters);
         }
 
         if (!*exception)
-            g_closure_invoke(m_closure.get(), &returnValue, parameterCount, values.data(), nullptr);
+            g_closure_invoke(m_closure.get(), &returnValue, parameterCount, values.mutableSpan().data(), nullptr);
 
         for (size_t i = 0; i < parameterCount; ++i)
             g_value_unset(&values[i]);

@@ -223,7 +223,9 @@ if (COMPILER_IS_GCC_OR_CLANG)
     if (NOT WTF_CPU_ARM)
         WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wcast-align)
     endif ()
-    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wformat-security
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wvla
+                                         -Walloca
+                                         -Wformat-security
                                          -Wmissing-format-attribute
                                          -Wpointer-arith
                                          -Wundef)

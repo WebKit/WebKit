@@ -31,13 +31,12 @@
 #import "WebCoreThreadInternal.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/Vector.h>
 
 static inline void _FillRectsUsingOperation(CGContextRef context, std::span<const CGRect> rects, CGCompositeOperation op)
 {
-    auto integralRects = unsafeMakeSpan(reinterpret_cast<CGRect *>(alloca(sizeof(CGRect) * rects.size())), rects.size());
-    
-    assert(integralRects.data());
-    
+    Vector<CGRect, 16> integralRects(rects.size());
+
     for (size_t i = 0; i < rects.size(); ++i) {
         integralRects[i] = CGRectApplyAffineTransform (rects[i], CGContextGetCTM(context));
         integralRects[i] = CGRectIntegral (integralRects[i]);
@@ -45,7 +44,7 @@ static inline void _FillRectsUsingOperation(CGContextRef context, std::span<cons
     }
     CGCompositeOperation oldOp = CGContextGetCompositeOperation(context);
     CGContextSetCompositeOperation(context, op);
-    CGContextFillRects(context, integralRects.data(), rects.size());
+    CGContextFillRects(context, integralRects.span().data(), integralRects.size());
     CGContextSetCompositeOperation(context, oldOp);
 }
 
