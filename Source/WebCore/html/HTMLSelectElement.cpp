@@ -418,7 +418,7 @@ bool HTMLSelectElement::usesMenuList() const
     return true;
 #elif PLATFORM(MAC)
     if (m_multiple)
-        return m_size == 1 && document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled() && document().settings().htmlEnhancedSelectMultipleDropdownBoxEnabled();
+        return m_size == 1 && document().settings().htmlEnhancedSelectMultipleDropdownBoxEnabled();
     return m_size <= 1;
 #else
     return !m_multiple && m_size <= 1;
@@ -899,9 +899,16 @@ bool HTMLSelectElement::isMouseFocusable() const
     return HTMLFormControlElement::isMouseFocusable();
 }
 
+bool HTMLSelectElement::canHaveBaseAppearance() const
+{
+    if (m_multiple && usesMenuList())
+        return document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled();
+    return true;
+}
+
 bool HTMLSelectElement::supportsBaseAppearance(StyleAppearance appearance) const
 {
-    return appearance == StyleAppearance::Base || appearance == StyleAppearance::BaseSelect;
+    return (appearance == StyleAppearance::Base || appearance == StyleAppearance::BaseSelect) && canHaveBaseAppearance();
 }
 
 RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
@@ -1863,9 +1870,10 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
 {
     auto oldBoxType = boxType();
     bool oldMultiple = m_multiple;
+    bool couldHaveBaseAppearance = canHaveBaseAppearance();
     int oldSelectedIndex = selectedIndex();
     setSizeAndMultiple(m_size, !value.isNull());
-    if (oldBoxType != boxType())
+    if (oldBoxType != boxType() || couldHaveBaseAppearance != canHaveBaseAppearance())
         invalidateStyleAndRenderersForSubtree();
     if (oldMultiple != m_multiple) {
         if (oldSelectedIndex >= 0)

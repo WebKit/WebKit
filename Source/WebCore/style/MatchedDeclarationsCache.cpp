@@ -33,6 +33,7 @@
 #include "CSSFontSelector.h"
 #include "DocumentInlines.h"
 #include "FontCascade.h"
+#include "HTMLSelectElement.h"
 #include "NodeDocument.h"
 #include "PseudoElementIdentifier.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -84,6 +85,9 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const Style::
         return false;
     // attr() value depends on the element it is being applied to.
     if (style.hasAttrContent())
+        return false;
+    // So does -internal-auto-base() where a select's attributes rule out base appearance.
+    if (auto* select = dynamicDowncast<HTMLSelectElement>(element); select && !select->canHaveBaseAppearance())
         return false;
     if (style.zoom() != Style::ComputedStyle::initialZoom())
         return false;

@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=false HTMLEnhancedSelectMultipleDropdownBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+/* Each rule is matched by two selects, which come in a different order for each. */
+.single-first, .single-first::picker(select) { appearance: base-select; }
+.multiple-first, .multiple-first::picker(select) { appearance: base-select; }
+</style>
+</head>
+<body>
+<select size="1" class="single-first" id="singleFirst"><option>One</option><option>Two</option></select>
+<select multiple size="1" class="single-first" id="multipleSecond"><option>One</option><option selected>Two</option></select>
+<select multiple size="1" class="multiple-first" id="multipleFirst"><option>One</option><option selected>Two</option></select>
+<select size="1" class="multiple-first" id="singleSecond"><option>One</option><option>Two</option></select>
+<select multiple size="1" id="nativeMultiple"><option>One</option><option selected>Two</option></select>
+<select size="1" id="nativeSingle"><option>One</option><option>Two</option></select>
+<script>
+jsTestIsAsync = true;
+
+// The user agent stylesheet gives these different values for base and native appearance.
+const properties = ["display", "cursor", "white-space", "border-top-left-radius", "font-family", "font-size", "padding-left"];
+
+function differences(select, other)
+{
+    const style = getComputedStyle(select);
+    const otherStyle = getComputedStyle(other);
+    return properties.filter(property => style.getPropertyValue(property) !== otherStyle.getPropertyValue(property))
+        .map(property => `${property}: ${style.getPropertyValue(property)} vs. ${otherStyle.getPropertyValue(property)}`).join("; ");
+}
+
+function pickerOf(select)
+{
+    return internals.shadowRoot(select).querySelector("[popover]");
+}
+
+addEventListener("load", async () => {
+    description("Tests that without HTMLEnhancedSelectMultipleAndListBoxEnabled, appearance: base-select behaves as auto for a select element with the multiple attribute and a size of 1, and that such a select does not share a style with one without multiple that has the same declarations.");
+
+    shouldBeTrue("differences(singleFirst, nativeSingle) != ''");
+    shouldBeEqualToString("getComputedStyle(multipleFirst).appearance", "base-select");
+
+    debug("\nAfter a select with base appearance:");
+    shouldBeEqualToString("differences(multipleSecond, nativeMultiple)", "");
+
+    debug("\nBefore a select with base appearance:");
+    shouldBeEqualToString("differences(multipleFirst, nativeMultiple)", "");
+    shouldBeEqualToString("differences(singleSecond, singleFirst)", "");
+
+    debug("\nSetting multiple, which does not change the box type:");
+    singleFirst.multiple = true;
+    shouldBeEqualToString("differences(singleFirst, nativeMultiple)", "");
+    singleFirst.multiple = false;
+    shouldBeEqualToString("differences(singleFirst, singleSecond)", "");
+
+    debug("\nActivating it opens the native menu, not the picker:");
+    await UIHelper.activateElement(multipleFirst);
+    shouldBeTrue("internals.isSelectPopupVisible(multipleFirst)");
+    shouldBeFalse("pickerOf(multipleFirst).matches(':popover-open')");
+    if (internals.isSelectPopupVisible(multipleFirst) && !pickerOf(multipleFirst).matches(":popover-open")) {
+        await UIHelper.waitForMenuToShow();
+        await new Promise(resolve => testRunner.runUIScript("uiController.dismissFormAccessoryView()", resolve));
+        await UIHelper.waitForMenuToHide();
+    }
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

@@ -99,6 +99,7 @@ public:
 
     bool LEGACY_NODELETE usesMenuList() const;
     bool LEGACY_NODELETE isSingleSelectDropdownBox() const;
+    bool LEGACY_NODELETE canHaveBaseAppearance() const;
 
     using OptionOrOptGroupElement = Variant<Ref<HTMLOptionElement>, Ref<HTMLOptGroupElement>>;
     using HTMLElementOrInt = Variant<Ref<HTMLElement>, int>;

@@ -1,0 +1,26 @@
+Tests that without HTMLEnhancedSelectMultipleAndListBoxEnabled, appearance: base-select behaves as auto for a select element with the multiple attribute and a size of 1, and that such a select does not share a style with one without multiple that has the same declarations.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS differences(singleFirst, nativeSingle) != '' is true
+PASS getComputedStyle(multipleFirst).appearance is "base-select"
+
+After a select with base appearance:
+PASS differences(multipleSecond, nativeMultiple) is ""
+
+Before a select with base appearance:
+PASS differences(multipleFirst, nativeMultiple) is ""
+PASS differences(singleSecond, singleFirst) is ""
+
+Setting multiple, which does not change the box type:
+PASS differences(singleFirst, nativeMultiple) is ""
+PASS differences(singleFirst, singleSecond) is ""
+
+Activating it opens the native menu, not the picker:
+PASS internals.isSelectPopupVisible(multipleFirst) is true
+PASS pickerOf(multipleFirst).matches(':popover-open') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
