@@ -23,6 +23,7 @@
 #include "PatternAttributes.h"
 #include "RenderSVGResourcePaintServer.h"
 #include "SVGPatternElement.h"
+#include <wtf/WeakHashMap.h>
 
 class Pattern;
 
@@ -66,8 +67,8 @@ protected:
 
     std::optional<PatternAttributes> m_attributes;
 
-    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, Ref<ImageBuffer>> m_imageMap;
-    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, AffineTransform> m_tileImageTransformMap;
+    SingleThreadWeakHashMap<const RenderLayerModelObject, Ref<ImageBuffer>> m_imageMap;
+    SingleThreadWeakHashMap<const RenderLayerModelObject, AffineTransform> m_tileImageTransformMap;
 };
 
 }
