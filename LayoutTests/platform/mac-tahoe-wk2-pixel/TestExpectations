@@ -1,0 +1,13 @@
+# This TestExpectations file applies to pixel test runs with --tolerance=0 against the legacy SVG engine
+#
+#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-tahoe-wk2-pixel \
+#                       --pixel-tests --tolerance=0 css3/masking imported/w3c/web-platform-tests/svg svg
+#
+# See platform/mac-tahoe-wk2-lbse-text/TestExpectations for the expectations of the Layer-Based SVG Engine (LBSE).
+
+# Scaled image draws depend on test order
+# Apparently CoreGraphics accelerated contexts in the GPU process round a few pixels of a scaled image
+# differently, depending on what test ran before. If on the same worker svg/custom/group-opacity.svg
+# ran before, these tests differ from their baselines in a few pixels. No idea why.
+svg/hixie/perf/004.xml                                                 [ Pass ImageOnlyFailure ]
+svg/wicd/test-rightsizing-b.xhtml                                      [ Pass ImageOnlyFailure ]
