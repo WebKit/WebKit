@@ -91,6 +91,7 @@ struct OutOfFlowContainingBlock {
     LayoutUnit paddingBoxBlockStart;
     LayoutUnit inlineSize;
     LayoutUnit blockSize;
+    std::optional<LayoutRect> scrollableContainingBlock { };
 };
 
 // A block-level box in the inline content of a block container (CSS 2.2 §9.2.1.1), which the block formatting context lays out when the
@@ -118,9 +119,9 @@ public:
     BlockLevelBoxInInlineContent layoutBlockLevelBoxInInlineContent(const RenderBox&, LayoutUnit lineLogicalTop, size_t lineCount, BlockLayoutResult&);
     // The min-content and max-content inline sizes of the content of a block container (css-sizing-3 §5.1).
     IntrinsicWidthConstraints computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const;
-    // An out-of-flow box and its content, in its containing block that has its size (css-position-3 §4). The box establishes an independent
-    // formatting context for its content.
-    BlockLayoutResult layoutOutOfFlowBox(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&);
+    // An out-of-flow box and its content, in its containing block that has its size (css-position-3 §4), and against its default anchor
+    // (css-anchor-position-1 §3). The box establishes an independent formatting context for its content.
+    BlockLayoutResult layoutOutOfFlowBox(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&, const std::optional<OutOfFlowGeometry::DefaultAnchor>&);
 
 private:
     void layoutBlockItems(const Vector<BlockItem>&, BlockLayoutResult&);
@@ -130,7 +131,7 @@ private:
     void handleInlineContent(const RenderBox& blockContainer, BlockLayoutResult&);
     void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);
     void layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState);
-    BlockLayoutResult layoutOutOfFlowIndependentFormattingContext(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&);
+    BlockLayoutResult layoutOutOfFlowIndependentFormattingContext(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&, const std::optional<OutOfFlowGeometry::DefaultAnchor>&);
     void handleOutOfFlowBox(const RenderBox&, BlockLayoutResult&);
 
     ContainingBlockState containingBlockStateForRoot(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry) const;
