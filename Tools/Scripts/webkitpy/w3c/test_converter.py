@@ -69,13 +69,17 @@ class _W3CTestConverter(HTMLParser):
         self.converted_data = []
         self.converted_properties = []
         self.in_style_tag = False
-        self.style_data = []
         self.filename = filename
         self.reference_support_info = reference_support_info
         self.reference_file_renames = reference_file_renames
         self.webkit_test_runner_options = webkit_test_runner_options
         self.has_started = False
         self._modified = False
+        self._source = ''
+        self._line_offsets = [0]
+        self._pending_source_text = None
+        self._copied_up_to = 0
+        self._style_start = None
 
         # These settings might vary between WebKit and Blink
         css_property_file = self.path_from_webkit_root('Source', 'WebCore', 'css', 'CSSProperties.json')
@@ -196,42 +200,91 @@ class _W3CTestConverter(HTMLParser):
             self._modified = True
             self.converted_data[-1] = self.converted_data[-1] + self.webkit_test_runner_options
 
+    # HTMLParser reports end tags, references, comments, declarations, processing instructions,
+    # and style contents normalized, and, depending on the Python version, might not report some
+    # malformed or unfinished markup at all. So copy those from the source: getpos() gives where
+    # each construct starts, and the next one, or the end of the input, is where it ends.
+    def feed(self, data):
+        self._line_offsets.extend(len(self._source) + match.end() for match in re.finditer('\n', data))
+        self._source += data
+        HTMLParser.feed(self, data)
+
+    def close(self):
+        HTMLParser.close(self)
+        if self.in_style_tag:
+            self.converted_data.append(self.convert_style_data(self._source[self._style_start:]))
+            self.in_style_tag = False
+            self._copied_up_to = len(self._source)
+        self._copy_source_text_up_to(len(self._source))
+
+    def _source_position(self):
+        line, column = self.getpos()
+        return self._line_offsets[line - 1] + column
+
+    def _copy_source_text_up_to(self, position):
+        if self._pending_source_text is not None:
+            index, start = self._pending_source_text
+            self.converted_data[index] = self._source[start:position] + self.converted_data[index]
+            self._pending_source_text = None
+        elif position > self._copied_up_to and not self.in_style_tag:
+            self.converted_data.append(self._source[self._copied_up_to:position])
+        self._copied_up_to = max(self._copied_up_to, position)
+
+    def _start_construct(self):
+        position = self._source_position()
+        self._copy_source_text_up_to(position)
+        return position
+
+    def _append_source_text(self, start=None):
+        if start is None:
+            start = self._start_construct()
+        self._pending_source_text = (len(self.converted_data), start)
+        self.converted_data.append('')
+
     def handle_starttag(self, tag, attrs):
+        start = self._start_construct()
+        self._copied_up_to = start + len(self.get_starttag_text())
         if tag == 'style':
             self.in_style_tag = True
+            self._style_start = self._copied_up_to
         self.convert_attributes_if_needed(tag, attrs)
         self.add_webkit_test_runner_options_if_needed()
 
     def handle_endtag(self, tag):
-        if tag == 'style':
-            self.converted_data.append(self.convert_style_data(''.join(self.style_data)))
+        start = self._start_construct()
+        if tag == 'style' and self.in_style_tag:
+            self.converted_data.append(self.convert_style_data(self._source[self._style_start:start]))
             self.in_style_tag = False
-            self.style_data = []
-        self.converted_data.extend(['</', tag, '>'])
+        self._append_source_text(start)
 
     def handle_startendtag(self, tag, attrs):
+        start = self._start_construct()
+        self._copied_up_to = start + len(self.get_starttag_text())
         self.convert_attributes_if_needed(tag, attrs)
 
     def handle_data(self, data):
-        if self.in_style_tag:
-            self.style_data.append(data)
-        else:
+        start = self._start_construct()
+        if not self.in_style_tag:
             self.converted_data.append(data)
+            self._copied_up_to = start + len(data)
 
     def handle_entityref(self, name):
-        self.converted_data.extend(['&', name, ';'])
+        self._append_source_text()
 
     def handle_charref(self, name):
-        self.converted_data.extend(['&#', name, ';'])
+        self._append_source_text()
 
     def handle_comment(self, data):
-        self.converted_data.extend(['<!--', data, '-->'])
+        self._append_source_text()
         self.add_webkit_test_runner_options_if_needed()
 
     def handle_decl(self, decl):
-        self.converted_data.extend(['<!', decl, '>'])
+        self._append_source_text()
         self.add_webkit_test_runner_options_if_needed()
 
+    def unknown_decl(self, data):
+        self._append_source_text()
+
     def handle_pi(self, data):
-        self.converted_data.extend(['<?', data, '>'])
+        self._append_source_text()
         self.add_webkit_test_runner_options_if_needed()
