@@ -27,15 +27,12 @@
 
 #pragma once
 
-#include "FloatSizeHash.h"
 #include "StyleGeneratedImage.h"
+#include "StyleGeneratedImageCache.h"
 #include "StyleGradient.h"
-#include <wtf/HashMap.h>
 
 namespace WebCore {
 namespace Style {
-
-struct AppleColorFilter;
 
 class GradientImage final : public GeneratedImage {
 public:
@@ -72,15 +69,12 @@ private:
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
 
-    // The platform gradient for one size, and the buffer a tiled draw rasterized it into.
-    class CachedGradient;
-    CachedGradient* cachedGradient(FloatSize, const AppleColorFilter&);
-    void evictCachedGradient(CachedGradient&);
+    using CachedGradient = GeneratedImageCacheEntry<WebCore::Gradient>;
     Ref<WebCore::Gradient> gradientForSize(const RenderElement&, FloatSize, bool isForFirstLine, CachedGradient*&) const;
 
     Gradient m_gradient;
     bool m_stopsAreCacheable { false };
-    HashMap<FloatSize, Vector<std::unique_ptr<CachedGradient>, 1>> m_gradients;
+    mutable GeneratedImageCache<WebCore::Gradient> m_gradients;
 };
 
 } // namespace Style

@@ -19200,6 +19200,7 @@
 		BC1777702F42418A00E318C5 /* StyleFilterImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleFilterImage.cpp; sourceTree = "<group>"; };
 		BC1777712F42418A00E318C5 /* StyleGeneratedImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleGeneratedImage.h; sourceTree = "<group>"; };
 		BC1777722F42418A00E318C5 /* StyleGeneratedImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleGeneratedImage.cpp; sourceTree = "<group>"; };
+		14070CA4E22BDE1099169BE2 /* StyleGeneratedImageCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleGeneratedImageCache.h; sourceTree = "<group>"; };
 		BC1777732F42418A00E318C5 /* StyleGradientImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleGradientImage.h; sourceTree = "<group>"; };
 		23E0FEABA2D79B1892BCCE18 /* StyleMeshGradientImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleMeshGradientImage.cpp; sourceTree = "<group>"; };
 		0BFDDBDACD1084D68932CD0C /* StyleMeshGradientImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleMeshGradientImage.h; sourceTree = "<group>"; };
@@ -37496,6 +37497,7 @@
 				BC17776F2F42418A00E318C5 /* StyleFilterImage.h */,
 				BC1777722F42418A00E318C5 /* StyleGeneratedImage.cpp */,
 				BC1777712F42418A00E318C5 /* StyleGeneratedImage.h */,
+				14070CA4E22BDE1099169BE2 /* StyleGeneratedImageCache.h */,
 				BC1777742F42418A00E318C5 /* StyleGradientImage.cpp */,
 				BC1777732F42418A00E318C5 /* StyleGradientImage.h */,
 				1401B330E419558F99500E10 /* StyleImage.cpp */,
