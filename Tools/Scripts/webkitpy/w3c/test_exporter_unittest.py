@@ -34,6 +34,12 @@ from webkitcorepy import mocks as wkmocks, run, testing, OutputCapture
 from webkitscmpy import mocks as mocks
 
 
+class WPTGit(mocks.local.Git):
+    # web-platform-tests' default branch is master, and the exporter resets to origin/master
+    def __init__(self, *args, default_branch='master', **kwargs):
+        super().__init__(*args, default_branch=default_branch, **kwargs)
+
+
 class TestExporterTest(testing.PathTestCase):
     maxDiff = None
     BUGZILLA_URL = 'https://bugs.example.com'
@@ -69,7 +75,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -146,7 +152,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -254,7 +260,7 @@ class TestExporterTest(testing.PathTestCase):
     def test_export_dry_run(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -297,7 +303,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -322,7 +328,7 @@ class TestExporterTest(testing.PathTestCase):
             )
 
     def test_export_no_git_commit(self):
-        with mocks.local.Git(self.path), patch(
+        with WPTGit(self.path), patch(
             'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
         ):
             host = TestExporterTest.MyMockHost()
@@ -333,7 +339,7 @@ class TestExporterTest(testing.PathTestCase):
             self.assertIn('--git-commit', str(context.exception))
 
     def test_export_no_bugzilla_issue_in_commit(self):
-        with mocks.local.Git(self.path) as git_mock, patch(
+        with WPTGit(self.path) as git_mock, patch(
             'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
         ), patch(
             'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
@@ -352,7 +358,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -408,7 +414,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -463,7 +469,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -542,7 +548,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -625,7 +631,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -703,7 +709,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -745,7 +751,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -786,7 +792,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -824,7 +830,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -859,7 +865,7 @@ class TestExporterTest(testing.PathTestCase):
     def test_export_case_mismatch(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -908,7 +914,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -968,7 +974,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -1032,7 +1038,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -1109,7 +1115,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -1162,7 +1168,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -1215,7 +1221,7 @@ class TestExporterTest(testing.PathTestCase):
             BUGS_EXAMPLE_COM_PASSWORD='password',
         )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -1240,7 +1246,7 @@ class TestExporterTest(testing.PathTestCase):
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '-d', self.path])
         with OutputCapture(level=logging.INFO), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -1262,7 +1268,7 @@ class TestExporterTest(testing.PathTestCase):
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '-d', self.path])
         with OutputCapture(level=logging.INFO), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -1281,7 +1287,7 @@ class TestExporterTest(testing.PathTestCase):
         host = TestExporterTest.MyMockHost()
         host.filesystem.maybe_make_directory(self.path)
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '-d', self.path])
-        with mocks.local.Git(self.path) as git_mock, patch(
+        with WPTGit(self.path) as git_mock, patch(
             'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
         ), patch(
             'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
@@ -1299,7 +1305,7 @@ class TestExporterTest(testing.PathTestCase):
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '-d', self.path])
         with mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
             'webkit-export': dict(color='00000', description=''),
-        }) as wpt_remote, mocks.local.Git(
+        }) as wpt_remote, WPTGit(
             self.path,
             remote='https://{}'.format(wpt_remote.remote)
         ) as git_mock, patch(
@@ -1335,7 +1341,7 @@ diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/heade
 +change to any.sharedworker
 """
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '-d', self.path])
-        with mocks.local.Git(self.path) as git_mock, patch(
+        with WPTGit(self.path) as git_mock, patch(
             'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
         ), patch(
             'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
@@ -1356,7 +1362,7 @@ diff --git a/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/
 +change to expected-mismatch
 """
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '-d', self.path])
-        with mocks.local.Git(self.path) as git_mock, patch(
+        with WPTGit(self.path) as git_mock, patch(
             'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
         ), patch(
             'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
@@ -1385,7 +1391,7 @@ diff --git a/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-spac
 +change to expected xhtml
 """
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '-d', self.path])
-        with mocks.local.Git(self.path) as git_mock, patch(
+        with WPTGit(self.path) as git_mock, patch(
             'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
         ), patch(
             'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
@@ -1406,7 +1412,7 @@ diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/w3c-i
 +change to w3c import
 """
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '-d', self.path])
-        with mocks.local.Git(self.path) as git_mock, patch(
+        with WPTGit(self.path) as git_mock, patch(
             'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
         ), patch(
             'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
@@ -1443,7 +1449,7 @@ diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/heade
 +change to any.serviceworker-module
 """
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '-d', self.path])
-        with mocks.local.Git(self.path) as git_mock, patch(
+        with WPTGit(self.path) as git_mock, patch(
             'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
         ), patch(
             'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
