@@ -151,8 +151,17 @@ if (!$ninja) {
     chomp($ninja = `which ninja 2>/dev/null` || `xcrun -f ninja 2>/dev/null`);
 }
 my @jobs = $ENV{WK_UNIFIED_SOURCES_MEMBER_JOBS} ? ('-j', $ENV{WK_UNIFIED_SOURCES_MEMBER_JOBS}) : ();
-exec($ninja, '--quiet', @jobs, '-f', "$membersFolder/build.ninja");
+my @quiet = ninjaVersionAtLeast($ninja, 1, 11) ? ('--quiet') : ();
+exec($ninja, @quiet, @jobs, '-f', "$membersFolder/build.ninja");
 die("exec ninja: $!\n");
+
+sub ninjaVersionAtLeast {
+    my ($ninja, $wantedMajor, $wantedMinor) = @_;
+    open(my $pipe, '-|', $ninja, '--version') or return 0;
+    my ($major, $minor) = (<$pipe> // '') =~ /^(\d+)\.(\d+)/;
+    close($pipe);
+    return defined($major) && ($major > $wantedMajor || ($major == $wantedMajor && $minor >= $wantedMinor));
+}
 
 sub shellQuote {
     my ($s) = @_;
