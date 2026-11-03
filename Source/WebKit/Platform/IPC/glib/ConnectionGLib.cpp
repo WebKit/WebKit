@@ -374,7 +374,23 @@ void Connection::platformOpen()
     });
 }
 
-bool Connection::hasPendingOutgoingMessage() const
+auto Connection::platformCreateOutgoingMessage(UniqueRef<Encoder>&& encoder) -> std::optional<OutgoingMessage>
+{
+    return WTF::move(encoder);
+}
+
+bool Connection::platformCanSendOutgoingMessages() const
+{
+    return true;
+}
+
+auto Connection::platformSendOutgoingMessage(OutgoingMessage& message) -> PlatformSendResult
+{
+    sendOutgoingMessage(WTF::move(message));
+    return PlatformSendResult::Done;
+}
+
+bool Connection::platformHasMessageInFlight() const
 {
 #if OS(ANDROID)
     return m_hasPendingOutputMessage || !m_outgoingHardwareBuffers.isEmpty();

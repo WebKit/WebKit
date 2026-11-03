@@ -680,10 +680,30 @@ private:
     void processIncomingMessage(UniqueRef<Decoder>);
     void processIncomingSyncReply(UniqueRef<Decoder>);
 
-    bool LEGACY_NODELETE hasPendingOutgoingMessage() const WTF_REQUIRES_CAPABILITY(m_connectionQueue.get());
-    void sendOutgoingMessages();
-    void didFinishSendingOutgoingMessage() WTF_EXCLUDES_LOCK(m_outgoingMessagesLock);
-    bool sendOutgoingMessage(UniqueRef<Encoder>&&);
+#if PLATFORM(COCOA)
+    using OutgoingMessage = UniqueRef<MachMessage>;
+#else
+    using OutgoingMessage = UniqueRef<Encoder>;
+#endif
+
+    enum class PlatformSendResult : uint8_t {
+        Done, // Sent, dropped, or handed off to finish later (see platformHasMessageInFlight()).
+        ReceiverIsFull, // Not sent; stays first in the queue until sendOutgoingMessages() runs.
+        ReceiverIsGone, // Receiver is gone; queued messages are dropped and the connection closes.
+    };
+
+    // Implemented by each platform. platformCreateOutgoingMessage() is called on any thread, and the others on the
+    // connection queue.
+    static std::optional<OutgoingMessage> platformCreateOutgoingMessage(UniqueRef<Encoder>&&);
+    PlatformSendResult platformSendOutgoingMessage(OutgoingMessage&);
+    bool platformCanSendOutgoingMessages() const;
+    // True while an accepted message is still completing asynchronously (Windows OVERLAPPED write,
+    // GLib G_IO_OUT).
+    bool LEGACY_NODELETE platformHasMessageInFlight() const;
+
+    void sendOutgoingMessages() WTF_EXCLUDES_LOCK(m_outgoingMessagesLock);
+    bool hasUnsentMessages() const WTF_REQUIRES_LOCK(m_outgoingMessagesLock);
+    void clearOutgoingMessages() WTF_EXCLUDES_LOCK(m_outgoingMessagesLock);
     void connectionDidClose();
 
     // Called on the connection run loop.
@@ -780,13 +800,14 @@ private:
     Deque<UniqueRef<Decoder>> m_incomingMessages WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
     MessageReceiveQueueMap m_receiveQueues WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
 
-    // Outgoing messages.
     Lock m_outgoingMessagesLock;
-    Deque<UniqueRef<Encoder>> m_outgoingMessages WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
+    Deque<OutgoingMessage> m_outgoingMessages WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
     Condition m_outgoingMessagesEmptyCondition WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
-    // m_hasOutgoingMessages == !m_outgoingMessages.isEmpty() + possible current message
-    // being manipulated for send + possible platform pending messages.
-    bool m_hasOutgoingMessages WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock) { false };
+    // True while a message popped from m_outgoingMessages is inside platformSendOutgoingMessage()
+    // or still in flight, so flushSentMessages() does not return early.
+    bool m_sendInProgress WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock) { false };
+    // A message was dropped because the receiver is gone. flushSentMessages() can't succeed anymore.
+    bool m_receiverIsGone WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock) { false };
 
     Condition m_waitForMessageCondition;
     Lock m_waitForMessageLock;
@@ -832,6 +853,7 @@ private:
 #if USE(UNIX_DOMAIN_SOCKETS)
     // Called on the connection queue.
     void readyReadHandler();
+    bool sendOutgoingMessage(UniqueRef<Encoder>&&);
     bool sendOutputMessage(UnixMessage&&);
 
     Vector<uint8_t> m_readBuffer;
@@ -867,7 +889,6 @@ private:
     // Called on the connection queue.
     void receiveSourceEventHandler();
     void initializeSendSource();
-    void resumeSendSource();
     void cancelReceiveSource();
     void cancelSendSource();
 
@@ -876,8 +897,6 @@ private:
 
     mach_port_t m_receivePort { MACH_PORT_NULL };
     OSObjectPtr<dispatch_source_t> m_receiveSource;
-
-    std::unique_ptr<MachMessage> m_pendingOutgoingMachMessage WTF_GUARDED_BY_CAPABILITY(m_connectionQueue.get());
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
     std::atomic<bool> m_didRequestProcessTermination { false };
@@ -888,6 +907,7 @@ private:
     void writeEventHandler();
     void invokeReadEventHandler();
     void invokeWriteEventHandler();
+    bool sendOutgoingMessage(UniqueRef<Encoder>&&);
 
     class EventListener {
     public:

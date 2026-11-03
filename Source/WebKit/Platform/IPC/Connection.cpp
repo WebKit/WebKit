@@ -517,7 +517,7 @@ Error Connection::flushSentMessages(Timeout timeout)
     do {
         if (!isValid())
             return Error::InvalidConnection;
-        if (!m_hasOutgoingMessages)
+        if (!hasUnsentMessages())
             return Error::NoError;
         m_outgoingMessagesEmptyCondition.waitUntil(m_outgoingMessagesLock, timeout.deadline());
     } while (!timeout.didTimeOut());
@@ -544,6 +544,7 @@ void Connection::invalidate()
 
     m_connectionQueue->dispatch([protectedThis = Ref { *this }]() mutable {
         protectedThis->platformInvalidate();
+        protectedThis->clearOutgoingMessages();
     });
 }
 
@@ -646,6 +647,10 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
     else if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply))
         encoder->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC);
 
+    auto message = platformCreateOutgoingMessage(WTF::move(encoder));
+    if (!message)
+        return Error::FailedToEncodeMessageArguments;
+
     bool shouldDispatchMessageSend;
     size_t outgoingMessagesCount;
     bool shouldNotifyOfQueueGrowingLarge;
@@ -655,15 +660,14 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
     {
         Locker locker { m_outgoingMessagesLock };
         shouldDispatchMessageSend = m_outgoingMessages.isEmpty();
-        m_outgoingMessages.append(WTF::move(encoder));
-        m_hasOutgoingMessages = true;
+        m_outgoingMessages.append(WTF::move(*message));
         outgoingMessagesCount = m_outgoingMessages.size();
         shouldNotifyOfQueueGrowingLarge = m_outgoingMessageQueueIsGrowingLargeCallback && outgoingMessagesCount > largeOutgoingMessageQueueCountThreshold && (MonotonicTime::now() - m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime) >= largeOutgoingMessageQueueTimeThreshold;
         if (shouldNotifyOfQueueGrowingLarge) {
             outgoingMessageQueueIsGrowingLargeCallback = m_outgoingMessageQueueIsGrowingLargeCallback;
             HashCountedSet<ASCIILiteral> outgoingMessageNameCounts;
-            for (auto& encoder : m_outgoingMessages) {
-                auto name = description(encoder->messageName());
+            for (auto& message : m_outgoingMessages) {
+                auto name = description(message->messageName());
                 auto result = outgoingMessageNameCounts.add(name);
                 auto count = result.iterator->value;
                 if (count > maxOutgoingMessageNameCount) {
@@ -1273,12 +1277,7 @@ void Connection::connectionDidClose()
     }
     m_waitForMessageCondition.notifyAll();
 
-    {
-        Locker locker { m_outgoingMessagesLock };
-        m_outgoingMessages.clear();
-        m_hasOutgoingMessages = false;
-        m_outgoingMessagesEmptyCondition.notifyAll();
-    }
+    clearOutgoingMessages();
 
     if (m_didCloseOnConnectionWorkQueueCallback)
         m_didCloseOnConnectionWorkQueueCallback(this);
@@ -1290,42 +1289,55 @@ void Connection::sendOutgoingMessages()
 {
     assertIsCurrent(m_connectionQueue.get());
 
-    if (!m_isConnected)
-        return;
+    // Declared before the locker, so that the dropped messages are destroyed after
+    // m_outgoingMessagesLock is released. Destroying a message makes syscalls.
+    Deque<OutgoingMessage> droppedMessages;
+    Locker locker { m_outgoingMessagesLock };
+    // The platform finishes sending a message it took on the connection queue, and then calls this.
+    m_sendInProgress = platformHasMessageInFlight();
+    while (m_isConnected && !m_sendInProgress && platformCanSendOutgoingMessages() && !m_outgoingMessages.isEmpty()) {
+        // Only the connection queue sends, so the message can be sent without m_outgoingMessagesLock.
+        auto message = m_outgoingMessages.takeFirst();
+        m_sendInProgress = true;
+        auto result = [&] {
+            DropLockForScope unlocker { locker };
+            return platformSendOutgoingMessage(message);
+        }();
+        m_sendInProgress = platformHasMessageInFlight();
 
-    while (true) {
-        std::unique_ptr<Encoder> message;
-
-        {
-            Locker locker { m_outgoingMessagesLock };
-            if (hasPendingOutgoingMessage())
-                return;
-            if (m_outgoingMessages.isEmpty()) {
-                m_hasOutgoingMessages = false;
-                m_outgoingMessagesEmptyCondition.notifyAll();
-                return;
-            }
-            message = m_outgoingMessages.takeFirst().moveToUniquePtr();
-            // Note: Even when this maknes  m_outgoingMessages empty,  m_hasOutgoingMessages == true guards
-            // that the flush waiter know that flush is not done. We can remove m_hasOutgoingMessages when we are
-            // able to unpack m_outgoingMessages to future, MachMessage/UnixMessage/WinMessage m_pendingOutgoingMessage.
+        if (result == PlatformSendResult::ReceiverIsFull) {
+            m_outgoingMessages.prepend(WTF::move(message));
+            break;
         }
-
-        if (!sendOutgoingMessage(makeUniqueRefFromNonNullUniquePtr(WTF::move(message)))) {
-            didFinishSendingOutgoingMessage();
-            return;
+        if (result == PlatformSendResult::ReceiverIsGone) {
+            // No queued message can be sent anymore either, so drop them all. This releases the send rights
+            // that they carry. For example, a queued InitializeConnection message carries the send right to this
+            // connection's receive port, and this connection only gets the no-senders notification that closes
+            // it once that send right is released.
+            m_receiverIsGone = true;
+            droppedMessages = std::exchange(m_outgoingMessages, { });
+            droppedMessages.prepend(WTF::move(message));
         }
     }
+
+    if (!hasUnsentMessages())
+        m_outgoingMessagesEmptyCondition.notifyAll();
 }
 
-void Connection::didFinishSendingOutgoingMessage()
+bool Connection::hasUnsentMessages() const
 {
-    assertIsCurrent(m_connectionQueue.get());
+    return !m_outgoingMessages.isEmpty() || m_sendInProgress || m_receiverIsGone;
+}
 
+void Connection::clearOutgoingMessages()
+{
+    // Declared before the locker, so that the dropped messages are destroyed after
+    // m_outgoingMessagesLock is released. Destroying a message makes syscalls.
+    Deque<OutgoingMessage> droppedMessages;
     Locker locker { m_outgoingMessagesLock };
-    m_hasOutgoingMessages = !m_outgoingMessages.isEmpty() || hasPendingOutgoingMessage();
-    if (!m_hasOutgoingMessages)
-        m_outgoingMessagesEmptyCondition.notifyAll();
+    droppedMessages = std::exchange(m_outgoingMessages, { });
+    m_sendInProgress = false;
+    m_outgoingMessagesEmptyCondition.notifyAll();
 }
 
 void Connection::dispatchSyncMessage(Decoder& decoder)
