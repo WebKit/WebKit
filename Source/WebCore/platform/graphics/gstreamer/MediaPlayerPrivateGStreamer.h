@@ -718,7 +718,7 @@ private:
     RefPtr<GStreamerQuirksManager> m_quirksManagerForTesting;
     HashMap<const GStreamerQuirk*, std::unique_ptr<GStreamerQuirkBase::GStreamerQuirkState>> m_quirkStates;
 
-    std::optional<VideoFrameGStreamer::Info> m_videoInfo;
+    std::optional<VideoFrameGStreamer::Info> m_videoInfo WTF_GUARDED_BY_LOCK(m_sampleMutex);
     RefPtr<PadProbeHandle<MediaPlayerPrivateGStreamer>> m_videoFrameInputProbe WTF_GUARDED_BY_LOCK(m_decoderConfigurationLock);
     RefPtr<PadProbeHandle<MediaPlayerPrivateGStreamer>> m_videoFrameOutputProbe WTF_GUARDED_BY_LOCK(m_decoderConfigurationLock);
 
