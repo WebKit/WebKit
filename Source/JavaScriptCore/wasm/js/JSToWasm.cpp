@@ -621,8 +621,8 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
 
             jit.loadValue(jsParam, scratchGPR);
             slowPath.append(jit.branchIfNotNumber(scratchGPR, DoNotHaveTagRegisters));
-            auto isInt32 = jit.branchIfInt32(scratchGPR);
-            jit.unboxDouble(scratchGPR, scratchGPR, scratchFPR);
+            auto isInt32 = jit.branchIfInt32(scratchGPR, DoNotHaveTagRegisters);
+            jit.unboxDouble(scratchGPR, stackLimitGPR, scratchFPR, DoNotHaveTagRegisters);
             if (argumentType(i).isF32())
                 jit.convertDoubleToFloat(scratchFPR, scratchFPR);
             auto done = jit.jump();

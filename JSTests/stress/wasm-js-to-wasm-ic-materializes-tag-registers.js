@@ -36,7 +36,7 @@ function section(id, content) {
     return [id, ...leb(content.length), ...content];
 }
 
-const I64 = 0x7e, EXTERNREF = 0x6f, FUNCREF = 0x70;
+const I64 = 0x7e, F32 = 0x7d, F64 = 0x7c, EXTERNREF = 0x6f, FUNCREF = 0x70;
 
 // (func (export "callee") (param T) (result T) local.get 0)
 function buildCallee(type) {
@@ -138,4 +138,24 @@ test("funcref", FUNCREF, someFuncref, [
     [undefined, invalidFuncref],
     [13.37, invalidFuncref],
     [true, invalidFuncref],
+]);
+
+// The f32/f64 arms: branchIfInt32 picks int32 vs. double conversion, then unboxDouble.
+// With a stale numberTagRegister, doubles are converted as int32s and int32s are unboxed as doubles.
+test("f32", F32, 0.5, [
+    [0, "0"],
+    [1, "1"],
+    [2, "2"],
+    [-7, "-7"],
+    [1.5, "1.5"],
+    [-2.25, "-2.25"],
+]);
+
+test("f64", F64, 0.5, [
+    [0, "0"],
+    [1, "1"],
+    [2, "2"],
+    [-7, "-7"],
+    [1.5, "1.5"],
+    [13.37, "13.37"],
 ]);
