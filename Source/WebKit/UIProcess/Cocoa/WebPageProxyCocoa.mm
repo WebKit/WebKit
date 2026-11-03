@@ -115,6 +115,8 @@
 #import <pal/spi/mac/QuarantineSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Borrow.h>
+#import <wtf/Box.h>
+#import <wtf/CallbackAggregator.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cf/VectorCF.h>
@@ -1952,7 +1954,18 @@ void WebPageProxy::createTextIndicatorForElementWithID(const String& elementID, 
         return;
     }
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::CreateTextIndicatorForElementWithID(elementID), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    auto mainFrameProcessResult = Box<RefPtr<WebCore::TextIndicator>>::create();
+    auto otherProcessesResult = Box<RefPtr<WebCore::TextIndicator>>::create();
+    Ref aggregator = CallbackAggregator::create([mainFrameProcessResult, otherProcessesResult, completionHandler = WTF::move(completionHandler)] mutable {
+        completionHandler(*mainFrameProcessResult ? WTF::move(*mainFrameProcessResult) : WTF::move(*otherProcessesResult));
+    });
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        auto result = &process == &legacyMainFrameProcess() ? mainFrameProcessResult : otherProcessesResult;
+        process.sendWithAsyncReply(Messages::WebPage::CreateTextIndicatorForElementWithID(elementID), [aggregator, result](RefPtr<WebCore::TextIndicator>&& textIndicator) {
+            if (textIndicator && !*result)
+                *result = WTF::move(textIndicator);
+        }, pageID);
+    });
 }
 
 void WebPageProxy::setTextIndicatorFromFrame(FrameIdentifier frameID, RefPtr<WebCore::TextIndicator>&& textIndicator, WebCore::TextIndicatorLifetime lifetime)
