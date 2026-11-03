@@ -60,6 +60,7 @@ private:
     FloatSize computeViewportSize() const;
 
     void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
+    void updateSupplementalTransform() final;
     void updateLayerTransform() final;
     bool needsHasSVGTransformFlags() const final;
 

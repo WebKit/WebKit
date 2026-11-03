@@ -90,7 +90,7 @@ void RenderSVGImage::layout()
 
     setCurrentSVGLayoutRect({ SVGContainerLayout::layoutLocationRelativeToContainer(*this), enclosingLayoutRect(m_objectBoundingBox).size() });
 
-    updateLayerTransform();
+    updateTransform();
     updateCachedVisualOverflowRect();
 
     repainter.repaintAfterLayout();

@@ -43,7 +43,7 @@ private:
     NODELETE SVGGraphicsElement& graphicsElement() const;
 
     void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
-    void updateLayerTransform() final;
+    void updateSupplementalTransform() final;
     bool needsHasSVGTransformFlags() const final;
 
     AffineTransform m_supplementalTransform;

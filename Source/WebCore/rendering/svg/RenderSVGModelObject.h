@@ -63,8 +63,7 @@ public:
 
     inline SVGElement& element() const;
 
-    AffineTransform nominalTransform() const { return m_cachedNominalTransform.value_or(AffineTransform()); }
-    void updateCachedNominalTransform();
+    void updateCachedNominalTransform() final;
 
     LayoutRect currentSVGLayoutRect() const { return m_layoutRect; }
     void setCurrentSVGLayoutRect(const LayoutRect& layoutRect) { m_layoutRect = layoutRect; }
@@ -149,12 +148,12 @@ protected:
     };
     mutable std::optional<CachedVisualOverflowRects> m_cachedVisualOverflowRect;
 
-    void updateLayerTransform() override;
-
 private:
     NODELETE LayoutSize cachedSizeForOverflowClip() const;
 
     bool isInsideSVGResourceContainer() const;
+
+    std::optional<AffineTransform> cachedNominalTransform() const final { return m_cachedNominalTransform; }
 
     LayoutRect m_layoutRect;
     std::optional<AffineTransform> m_cachedNominalTransform;

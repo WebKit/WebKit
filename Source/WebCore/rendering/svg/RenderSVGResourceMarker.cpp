@@ -86,20 +86,23 @@ void RenderSVGResourceMarker::updateFromStyle()
         setHasNonVisibleOverflow();
 }
 
+void RenderSVGResourceMarker::updateSupplementalTransform()
+{
+    Ref markerElement = this->markerElement();
+    if (markerElement->hasAttribute(SVGNames::viewBoxAttr) && !markerElement->hasEmptyViewBox()) {
+        auto viewportSize = this->viewportSize();
+        m_supplementalTransform = markerElement->viewBoxToViewTransform(viewportSize.width(), viewportSize.height());
+    } else
+        m_supplementalTransform.makeIdentity();
+}
+
 void RenderSVGResourceMarker::updateLayerTransform()
 {
-    Ref useMarkerElement = markerElement();
-    auto viewportSize = this->viewportSize();
-
-    m_supplementalTransform.makeIdentity();
-
-    if (useMarkerElement->hasAttribute(SVGNames::viewBoxAttr)) {
-        // An empty viewBox disables the rendering -- dirty the visible descendant status!
-        if (useMarkerElement->hasEmptyViewBox()) {
-            if (hasLayer())
-                layer()->dirtyVisibleContentStatus();
-        } else if (auto viewBoxTransform = useMarkerElement->viewBoxToViewTransform(viewportSize.width(), viewportSize.height()); !viewBoxTransform.isIdentity())
-            m_supplementalTransform = viewBoxTransform;
+    // An empty viewBox disables the rendering -- dirty the visible descendant status!
+    if (hasLayer()) {
+        Ref markerElement = this->markerElement();
+        if (markerElement->hasAttribute(SVGNames::viewBoxAttr) && markerElement->hasEmptyViewBox())
+            layer()->dirtyVisibleContentStatus();
     }
 
     RenderSVGContainer::updateLayerTransform();

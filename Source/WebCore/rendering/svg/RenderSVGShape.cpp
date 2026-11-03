@@ -152,7 +152,7 @@ void RenderSVGShape::layout()
         m_cachedVisualOverflowRect = std::nullopt;
     }
 
-    updateLayerTransform();
+    updateTransform();
     updateCachedVisualOverflowRect();
 
     repainter.repaintAfterLayout();

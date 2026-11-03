@@ -64,6 +64,7 @@ private:
 
     void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
     LayoutRect overflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const final;
+    void updateSupplementalTransform() final;
     void updateLayerTransform() final;
     bool needsHasSVGTransformFlags() const final { return true; }
 

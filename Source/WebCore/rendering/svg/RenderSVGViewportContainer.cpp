@@ -138,7 +138,7 @@ inline AffineTransform viewBoxToViewTransform(const SVGSVGElement& svgSVGElement
     return svgSVGElement.viewBoxToViewTransform(viewportSize.width(), viewportSize.height());
 }
 
-void RenderSVGViewportContainer::updateLayerTransform()
+void RenderSVGViewportContainer::updateSupplementalTransform()
 {
     Ref useSVGSVGElement = svgSVGElement();
     auto viewportSize = this->viewportSize();
@@ -173,16 +173,22 @@ void RenderSVGViewportContainer::updateLayerTransform()
     } else if (!m_viewport.location().isZero())
         m_supplementalTransform.translate(m_viewport.location());
 
-    // An empty viewBox disables painting -- dirty the visible descendant status!
-    if (useSVGSVGElement->viewBoxDisablesPainting()) {
-        if (hasLayer())
-            layer()->dirtyVisibleContentStatus();
-    } else if (auto viewBoxTransform = viewBoxToViewTransform(useSVGSVGElement, viewportSize); !viewBoxTransform.isIdentity()) {
+    if (useSVGSVGElement->viewBoxDisablesPainting())
+        return;
+
+    if (auto viewBoxTransform = viewBoxToViewTransform(useSVGSVGElement, viewportSize); !viewBoxTransform.isIdentity()) {
         if (m_supplementalTransform.isIdentity())
             m_supplementalTransform = viewBoxTransform;
         else
             m_supplementalTransform.multiply(viewBoxTransform);
     }
+}
+
+void RenderSVGViewportContainer::updateLayerTransform()
+{
+    // An empty viewBox disables painting -- dirty the visible descendant status!
+    if (hasLayer() && protect(svgSVGElement())->viewBoxDisablesPainting())
+        layer()->dirtyVisibleContentStatus();
 
     RenderSVGContainer::updateLayerTransform();
 }

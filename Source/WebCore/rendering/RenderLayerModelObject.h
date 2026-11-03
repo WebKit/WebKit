@@ -147,6 +147,7 @@ public:
     NODELETE TransformationMatrix* layerTransform() const;
 
     virtual void updateLayerTransform();
+    void updateTransform();
     virtual void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const = 0;
     void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox) const;
 
@@ -170,6 +171,8 @@ public:
 
     // Nominal transform: the element's transform relative to nominalSVGLayoutLocation(), used for painting and layers.
     AffineTransform computeNominalTransform() const;
+    AffineTransform nominalTransform() const;
+    virtual void updateCachedNominalTransform() { }
 
     AffineTransform computeRendererTransform() const;
 
@@ -184,6 +187,9 @@ protected:
     void createLayer();
     void willBeDestroyed() override;
 
+    virtual std::optional<AffineTransform> cachedNominalTransform() const { return std::nullopt; }
+    virtual void updateSupplementalTransform() { }
+
     virtual void updateFromStyle() { }
 
 private:
@@ -191,7 +197,6 @@ private:
     void removeOnlyThisLayerWithRepaint();
 
     std::optional<AffineTransform> nominalTransformBeforeStyleChange(const Style::ComputedStyle& oldStyle) const;
-    AffineTransform computeNominalTransformAfterStyleChange() const;
     bool markSVGTextForRelayoutIfScaleChanged(const AffineTransform& previousTransform, const AffineTransform& currentTransform);
 
     RenderSVGResourceMarker* svgMarkerResourceFromStyle(const Style::SVGMarkerResource&) const;

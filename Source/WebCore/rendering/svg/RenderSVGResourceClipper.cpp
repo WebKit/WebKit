@@ -277,7 +277,7 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
 
         auto testPoint = point;
         if (svgChild->isTransformed()) {
-            auto childTransform = svgChild->hasLayer() ? svgChild->computeNominalTransform() : svgChild->nominalTransform();
+            auto childTransform = svgChild->nominalTransform();
             auto inverseTransform = childTransform.inverse();
             if (!inverseTransform)
                 continue;

@@ -124,14 +124,6 @@ void RenderSVGText::updateCachedNominalTransform()
     m_cachedNominalTransform = computeNominalTransform();
 }
 
-void RenderSVGText::updateTransform()
-{
-    ASSERT(document().settings().layerBasedSVGEngineEnabled());
-    updateLayerTransform();
-    if (!hasLayer())
-        updateCachedNominalTransform();
-}
-
 void RenderSVGText::layout()
 {
     auto isLayerBasedSVGEngineEnabled = [&]() {

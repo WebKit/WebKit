@@ -71,12 +71,10 @@ public:
 
     void updatePositionAndOverflow(const FloatRect&);
 
-    AffineTransform nominalTransform() const { return m_cachedNominalTransform; }
-    void updateCachedNominalTransform();
+    void updateCachedNominalTransform() final;
 
 private:
     void graphicsElement() const = delete;
-    void updateTransform();
 
     ASCIILiteral renderName() const override { return "RenderSVGText"_s; }
 
@@ -104,6 +102,8 @@ private:
     const AffineTransform& localToParentTransform() const LIFETIME_BOUND override { return m_localTransform; }
     // FIXME: [LBSE] End code only needed for legacy SVG engine.
 
+    std::optional<AffineTransform> cachedNominalTransform() const final { return m_cachedNominalTransform; }
+
     float strokeInflation(float strokeWidth) const;
     void updateVisualOverflow();
 
@@ -114,7 +114,7 @@ private:
     bool m_needsTextMetricsUpdate : 1 { false };
     bool m_hasPerformedLayout : 1 { false }; // Needed to distinguish between when we perform a full pass of layout and everHadLayout (which can be set be content visibility for skipped content).
     AffineTransform m_localTransform; // FIXME: [LBSE] Only needed for legacy SVG engine.
-    AffineTransform m_cachedNominalTransform;
+    std::optional<AffineTransform> m_cachedNominalTransform;
     FloatRect m_objectBoundingBox;
     mutable std::optional<LayoutRect> m_cachedVisualOverflowRect;
     mutable SVGPaintServerCache m_svgPaintServerCache;

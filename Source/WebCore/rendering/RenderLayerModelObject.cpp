@@ -232,6 +232,7 @@ void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style:
         setHasReflection(false);
 
         removeOnlyThisLayerWithRepaint();
+        updateCachedNominalTransform();
         if (s_wasFloating && isFloating())
             setChildNeedsLayout();
         if (s_wasTransformed)
@@ -248,7 +249,7 @@ void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style:
     }
 
     if (previousSVGTransform)
-        markSVGTextForRelayoutIfScaleChanged(*previousSVGTransform, computeNominalTransformAfterStyleChange());
+        markSVGTextForRelayoutIfScaleChanged(*previousSVGTransform, nominalTransform());
 
     bool newStyleIsViewportConstrained = style().hasViewportConstrainedPosition();
     bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
@@ -328,6 +329,16 @@ TransformationMatrix* RenderLayerModelObject::layerTransform() const
     if (hasLayer())
         return layer()->transform();
     return nullptr;
+}
+
+void RenderLayerModelObject::updateTransform()
+{
+    ASSERT(document().settings().layerBasedSVGEngineEnabled());
+    updateSupplementalTransform();
+    if (hasLayer())
+        updateLayerTransform();
+    else
+        updateCachedNominalTransform();
 }
 
 void RenderLayerModelObject::updateLayerTransform()
@@ -817,7 +828,7 @@ void RenderLayerModelObject::updateTransformAndRepaintForSVGAfterAttributeChange
     auto refreshTransform = [&]() -> std::pair<AffineTransform, AffineTransform> {
         if (isLayered) {
             auto previousTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
-            updateLayerTransform();
+            updateTransform();
             auto currentTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
             if (previousTransform.isIdentity() && !currentTransform.isIdentity())
                 layer()->forceStackingContextIfNeeded();
@@ -826,7 +837,7 @@ void RenderLayerModelObject::updateTransformAndRepaintForSVGAfterAttributeChange
         }
         if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(this)) {
             auto previousTransform = svgModel->nominalTransform();
-            svgModel->updateCachedNominalTransform();
+            updateTransform();
             return { previousTransform, svgModel->nominalTransform() };
         }
         // Caching it now would feed updateScaledFont() a reference box that is only final after layout.
@@ -913,25 +924,7 @@ std::optional<AffineTransform> RenderLayerModelObject::nominalTransformBeforeSty
         && oldStyle.scale() == style().scale() && oldStyle.rotate() == style().rotate())
         return std::nullopt;
 
-    if (auto* transform = layerTransform())
-        return transform->toAffineTransform();
-
-    if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(*this))
-        return svgModel->nominalTransform();
-
-    return AffineTransform();
-}
-
-AffineTransform RenderLayerModelObject::computeNominalTransformAfterStyleChange() const
-{
-    if (auto* transform = layerTransform())
-        return transform->toAffineTransform();
-
-    if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(*this))
-        return svgModel->computeNominalTransform();
-
-    ASSERT(isRenderSVGRoot());
-    return AffineTransform();
+    return nominalTransform();
 }
 
 void RenderLayerModelObject::invalidateCachedSVGBoundingBoxesOfAncestors() const
@@ -1035,6 +1028,16 @@ AffineTransform RenderLayerModelObject::computeNominalTransform() const
     CheckedRef style = this->style();
     applyTransform(transform, style, transformReferenceBoxRect(style), Style::TransformResolver::allTransformOperations);
     return transform.toAffineTransform();
+}
+
+AffineTransform RenderLayerModelObject::nominalTransform() const
+{
+    if (hasLayer()) {
+        if (auto* transform = layerTransform())
+            return transform->toAffineTransform();
+        return { };
+    }
+    return cachedNominalTransform().value_or(AffineTransform());
 }
 
 AffineTransform RenderLayerModelObject::computeRendererTransform() const

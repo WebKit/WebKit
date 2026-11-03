@@ -33,10 +33,7 @@ public:
         if (m_renderer->hasLayer() || m_renderer->transformReferenceBoxIsSVGViewport())
             m_transformReferenceBox = m_renderer->transformReferenceBoxRect();
 
-        // Always call updateLayerTransform(), even without a layer. SVG renderers
-        // (e.g. RenderSVGViewportContainer) compute supplemental transforms (viewBox,
-        // zoom, pan) in their override, which are needed by applyTransform() during painting.
-        m_renderer->updateLayerTransform();
+        m_renderer->updateTransform();
     }
 
     ~SVGTransformLayoutScope()
@@ -44,7 +41,7 @@ public:
         if (m_renderer->transformReferenceBoxRect() == m_transformReferenceBox)
             return;
 
-        m_renderer->updateLayerTransform();
+        m_renderer->updateTransform();
     }
 
 private:

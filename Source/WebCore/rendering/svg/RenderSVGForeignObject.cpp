@@ -118,7 +118,7 @@ void RenderSVGForeignObject::layout()
     ASSERT(!needsLayout());
 
     setLocation(enclosingLayoutRect(m_viewport).location());
-    updateLayerTransform();
+    updateTransform();
 
     repainter.repaintAfterLayout();
 }

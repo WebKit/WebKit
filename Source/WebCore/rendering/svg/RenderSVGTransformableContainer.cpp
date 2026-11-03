@@ -82,11 +82,9 @@ bool RenderSVGTransformableContainer::needsHasSVGTransformFlags() const
     return graphicsElement->hasTransformRelatedAttributes() || associatedUseElement(graphicsElement);
 }
 
-void RenderSVGTransformableContainer::updateLayerTransform()
+void RenderSVGTransformableContainer::updateSupplementalTransform()
 {
     m_supplementalTransform = AffineTransform::makeTranslation(additionalContainerTranslation());
-
-    RenderSVGContainer::updateLayerTransform();
 }
 
 void RenderSVGTransformableContainer::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const

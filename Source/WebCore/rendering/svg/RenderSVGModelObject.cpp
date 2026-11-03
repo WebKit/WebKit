@@ -425,16 +425,4 @@ void RenderSVGModelObject::paintSVGOutline(PaintInfo& paintInfo, const LayoutPoi
     paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, borderBoxRectEquivalent().size()));
 }
 
-void RenderSVGModelObject::updateLayerTransform()
-{
-    // Transform-origin depends on box size, so we need to update the layer transform after layout.
-    if (hasLayer()) {
-        m_cachedNominalTransform = std::nullopt;
-        RenderLayerModelObject::updateLayerTransform();
-        return;
-    }
-    // Subclasses compute their supplemental transform before calling this, so refresh the cache.
-    updateCachedNominalTransform();
-}
-
 } // namespace WebCore

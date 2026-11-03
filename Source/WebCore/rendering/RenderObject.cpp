@@ -79,7 +79,6 @@
 #include "RenderSVGBlock.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGModelObject.h"
-#include "RenderSVGText.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTableRow.h"
 #include "RenderTextControl.h"
@@ -1686,12 +1685,7 @@ void RenderObject::getTransformFromContainer(const LayoutSize& offsetInContainer
     if (hasLayer() && (layer = downcast<RenderLayerModelObject>(*this).layer()) && layer->transform())
         transform.multiply(layer->currentTransform());
     else if (document().settings().layerBasedSVGEngineEnabled() && isSVGLayerAwareRenderer()) {
-        AffineTransform svgTransform;
-        if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(*this))
-            svgTransform = svgModelObject->nominalTransform();
-        else if (auto* svgText = dynamicDowncast<RenderSVGText>(*this))
-            svgTransform = svgText->nominalTransform();
-        if (!svgTransform.isIdentity())
+        if (auto svgTransform = downcast<RenderLayerModelObject>(*this).nominalTransform(); !svgTransform.isIdentity())
             transform.multiply(TransformationMatrix(svgTransform));
     }
 
