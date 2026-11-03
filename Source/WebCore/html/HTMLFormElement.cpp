@@ -143,6 +143,9 @@ Node::NeedsPostConnectionSteps HTMLFormElement::insertionSteps(InsertionType ins
 void HTMLFormElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     Ref root = traverseToRootNode(); // Do not rely on rootNode() because our IsInTreeScope is outdated.
+
+    HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);
+
     auto listedElements = copyListedElementsVector();
     for (auto& listedElement : listedElements)
         listedElement->formOwnerRemovedFromTree(root);
@@ -151,7 +154,6 @@ void HTMLFormElement::removingSteps(RemovalType removalType, ContainerNode& oldP
     });
     for (auto& imageElement : imageElements)
         imageElement->formOwnerRemovedFromTree(root);
-    HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument)
       m_controlsCollection = nullptr; // Avoid leaks since HTMLCollection has a back Ref to this element.
 }

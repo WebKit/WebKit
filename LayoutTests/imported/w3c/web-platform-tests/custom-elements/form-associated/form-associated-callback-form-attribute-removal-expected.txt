@@ -1,0 +1,5 @@
+
+PASS Removing the first of two forms with the ID a form attribute refers to calls formAssociatedCallback once, with the second form
+PASS Removing an element containing the first of two forms with the ID a form attribute refers to calls formAssociatedCallback once, with the second form
+PASS Removing the only form with the ID a form attribute refers to calls formAssociatedCallback once, with null
+
