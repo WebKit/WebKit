@@ -36,6 +36,7 @@
 #include "PixelBuffer.h"
 #include "PixelBufferConformerCV.h"
 #include "ProcessIdentity.h"
+#include "WebRTCProvider.h"
 #include <Accelerate/Accelerate.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/CheckedArithmetic.h>
@@ -235,6 +236,10 @@ RefPtr<VideoFrame> VideoFrame::createBGRX(std::span<const uint8_t> span, size_t 
 RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_t width, size_t height, const ComputedPlaneLayout& layoutY, const ComputedPlaneLayout& layoutU, const ComputedPlaneLayout& layoutV, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
 #if USE(LIBWEBRTC)
+    ASSERT(WebRTCProvider::webRTCAvailable());
+    if (!WebRTCProvider::webRTCAvailable())
+        return nullptr;
+
     // Plane offsets must step over the full coded plane heights (layout*.sourceHeight), not the
     // visible output height, otherwise a frame whose codedHeight exceeds visibleRect.height (e.g.
     // a 1920x1088 frame cropped to 1920x1080) reads the chroma planes from the wrong offset.
@@ -267,6 +272,10 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_
 RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size_t width, size_t height, const ComputedPlaneLayout& layoutY, const ComputedPlaneLayout& layoutU, const ComputedPlaneLayout& layoutV, const ComputedPlaneLayout& layoutA, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
 #if USE(LIBWEBRTC)
+    ASSERT(WebRTCProvider::webRTCAvailable());
+    if (!WebRTCProvider::webRTCAvailable())
+        return nullptr;
+
     size_t offsetLayoutU = layoutY.sourceLeftBytes + layoutY.sourceWidthBytes * layoutY.sourceHeight;
     size_t offsetLayoutV = offsetLayoutU + layoutU.sourceLeftBytes + layoutU.sourceWidthBytes * layoutU.sourceHeight;
     size_t offsetLayoutA = offsetLayoutV + layoutV.sourceLeftBytes + layoutV.sourceWidthBytes * layoutV.sourceHeight;

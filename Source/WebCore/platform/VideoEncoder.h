@@ -87,6 +87,9 @@ public:
     virtual void reset() = 0;
     virtual void close() = 0;
 
+private:
+    static bool isVPXSupported();
+
     static CreatorFunction s_customCreator;
 };
 

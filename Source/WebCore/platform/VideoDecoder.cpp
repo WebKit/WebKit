@@ -90,24 +90,27 @@ String VideoDecoder::fourCCToCodecString(uint32_t fourCC)
 void VideoDecoder::createLocalDecoder(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
 {
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
-    if (codecName == "vp8"_s) {
-        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP8, config, WTF::move(callback), WTF::move(outputCallback));
-        return;
-    }
-    if (codecName.startsWith("vp09.00"_s)) {
-        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9, config, WTF::move(callback), WTF::move(outputCallback));
-        return;
-    }
-    if (codecName.startsWith("vp09.02"_s)) {
-        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9_P2, config, WTF::move(callback), WTF::move(outputCallback));
-        return;
-    }
+    ASSERT(isVPXSupported());
+    if (isVPXSupported()) {
+        if (codecName == "vp8"_s) {
+            LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP8, config, WTF::move(callback), WTF::move(outputCallback));
+            return;
+        }
+        if (codecName.startsWith("vp09.00"_s)) {
+            LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9, config, WTF::move(callback), WTF::move(outputCallback));
+            return;
+        }
+        if (codecName.startsWith("vp09.02"_s)) {
+            LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9_P2, config, WTF::move(callback), WTF::move(outputCallback));
+            return;
+        }
 #if ENABLE(AV1)
-    if (codecName.startsWith("av01."_s)) {
-        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::AV1, config, WTF::move(callback), WTF::move(outputCallback));
-        return;
-    }
+        if (codecName.startsWith("av01."_s)) {
+            LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::AV1, config, WTF::move(callback), WTF::move(outputCallback));
+            return;
+        }
 #endif
+    }
 #elif USE(GSTREAMER)
     GStreamerVideoDecoder::create(codecName, config, WTF::move(callback), WTF::move(outputCallback));
     return;

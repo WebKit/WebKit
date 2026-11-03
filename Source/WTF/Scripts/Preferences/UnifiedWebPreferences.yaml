@@ -4127,7 +4127,7 @@ MediaRecorderEnabled:
   defaultValue:
     default: false
     WebKit:
-      "PLATFORM(COCOA)": true
+      "USE(LIBWEBRTC)": WebKit::defaultPeerConnectionEnabledAvailable()
       "USE(GSTREAMER)": true
       default: false
   sharedPreferenceForWebProcess: true
