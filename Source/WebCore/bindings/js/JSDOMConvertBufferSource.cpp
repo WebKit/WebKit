@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSDOMConvertBufferSource.h"
 
+#include "WebCoreTypedArrayController.h"
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 
 namespace WebCore {
@@ -63,6 +64,32 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
     // The JSArrayBuffer::create function will register the wrapper in finishCreation.
     return JSC::JSArrayBuffer::create(JSC::getVM(lexicalGlobalObject), globalObject->arrayBufferStructure(buffer.sharingMode()), &buffer);
+}
+
+void cacheArrayBufferViewWrapper(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ArrayBufferView& view, JSC::JSArrayBufferView& wrapper)
+{
+    Ref world = currentWorld(lexicalGlobalObject);
+    if (!world->isNormal()) {
+        world->cacheArrayBufferViewWrapper(view, wrapper);
+        return;
+    }
+
+    if (view.m_wrapper)
+        return;
+
+    view.m_wrapper = JSC::Weak<JSC::JSArrayBufferView>(&wrapper, downcast<WebCoreTypedArrayController>(*lexicalGlobalObject.vm().m_typedArrayController).viewWrapperOwner(), &view);
+}
+
+JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSGlobalObject* globalObject, JSC::ArrayBufferView& view)
+{
+    Ref world = currentWorld(*lexicalGlobalObject);
+    if (auto* wrapper = world->isNormal() ? view.m_wrapper.get() : world->arrayBufferViewWrapper(view))
+        return wrapper;
+
+    auto* wrapper = view.wrap(lexicalGlobalObject, globalObject);
+    if (wrapper)
+        cacheArrayBufferViewWrapper(*lexicalGlobalObject, view, *wrapper);
+    return wrapper;
 }
 
 }

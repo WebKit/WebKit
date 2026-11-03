@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/TypedArrayType.h>
+#include <JavaScriptCore/Weak.h>
 #include <algorithm>
 #include <limits.h>
 #include <wtf/CheckedArithmetic.h>
@@ -208,6 +209,9 @@ protected:
     using BaseAddress = CagedPtr<Gigacage::Primitive, void>;
     // This is the address of the ArrayBuffer's storage, plus the byte offset.
     BaseAddress m_baseAddress;
+
+public:
+    Weak<JSArrayBufferView> m_wrapper;
 
 private:
     friend class ArrayBuffer;

@@ -1,0 +1,5 @@
+
+PASS ImageData constructed from an array returns that array as its data
+PASS ImageData constructed from an array keeps its data's properties through garbage collection
+PASS ImageData created by a canvas keeps its data's properties through garbage collection
+

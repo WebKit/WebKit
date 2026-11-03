@@ -239,6 +239,10 @@ void WebCodecsAudioDecoder::isConfigSupported(ScriptExecutionContext& context, W
         return;
     }
 
+    // https://w3c.github.io/webcodecs/#clone-configuration
+    if (config.description)
+        config.description = BufferSource { config.description->span() };
+
     if (!AudioDecoder::isCodecSupported(config.codec)) {
         promise->template resolve<IDLDictionary<WebCodecsAudioDecoderSupport>>(WebCodecsAudioDecoderSupport { false, WTF::move(config) });
         return;
