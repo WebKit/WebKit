@@ -1,0 +1,15 @@
+
+Choice
+Tapping a transparent form control layered over its label should highlight the label. To test manually, tap the empty area of the box; the highlight should cover the whole rounded box.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS highlightRect.left <= labelRect.left is true
+PASS highlightRect.top <= labelRect.top is true
+PASS highlightRect.left + highlightRect.width >= labelRect.right is true
+PASS highlightRect.top + highlightRect.height >= labelRect.bottom is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

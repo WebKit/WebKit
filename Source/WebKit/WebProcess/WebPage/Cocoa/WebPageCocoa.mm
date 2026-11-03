@@ -127,6 +127,7 @@
 #import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NodeDocument.h>
 #import <WebCore/NodeHTMLConverter.h>
+#import <WebCore/NodeList.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/NowPlayingInfo.h>
@@ -3812,6 +3813,20 @@ void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID
         updatedNode = area->imageElement();
         if (!updatedNode)
             return;
+    }
+
+    // Pages often stack an invisible form control over a label to make the whole label clickable.
+    // Highlight the label the user sees instead of the control.
+    if (RefPtr control = dynamicDowncast<HTMLElement>(*updatedNode); control && control->isLabelable() && isTransparentOrFullyClipped(*control)) {
+        if (RefPtr labels = control->labels()) {
+            for (unsigned i = 0; i < labels->length(); ++i) {
+                RefPtr label = labels->item(i);
+                if (label->renderer() && !isTransparentOrFullyClipped(*label)) {
+                    updatedNode = WTF::move(label);
+                    break;
+                }
+            }
+        }
     }
 
 #if ENABLE(PDF_PLUGIN)
