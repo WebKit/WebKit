@@ -384,6 +384,13 @@ struct _WebKitWebViewBasePrivate {
     bool isBeingDragged;
     bool pageGrabbedTouch;
 
+    // Synthesized touches bypass the GTK gestures, so their taps are recognized separately.
+    struct SyntheticTap {
+        IntPoint location;
+        unsigned modifiers { 0 };
+    };
+    std::optional<SyntheticTap> syntheticTap;
+
     std::unique_ptr<PointerLockManager> pointerLockManager;
 
     Vector<CompletionHandler<void()>> nextPresentationUpdateCallbacks;
@@ -2232,6 +2239,13 @@ static unsigned modifiersForSynthesizedEvent(GdkEvent* event)
     return modifiers;
 }
 
+static void webkitWebViewBaseSynthesizeTap(WebKitWebViewBase* webViewBase, unsigned button, unsigned buttons, double x, double y, unsigned modifiers, int clickCount)
+{
+    webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Motion, 0, 0, x, y, modifiers, clickCount, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes, SyntheticClickType::OneFingerTap);
+    webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Press, button, buttons, x, y, modifiers, clickCount, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes, SyntheticClickType::OneFingerTap);
+    webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Release, button, 0, x, y, modifiers, clickCount, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes, SyntheticClickType::OneFingerTap);
+}
+
 static void webkitWebViewBaseTouchRelease(WebKitWebViewBase* webViewBase, int nPress, double x, double y, GtkGesture* gesture)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -2251,9 +2265,7 @@ static void webkitWebViewBaseTouchRelease(WebKitWebViewBase* webViewBase, int nP
     }
 
     unsigned modifiers = modifiersForSynthesizedEvent(gtk_event_controller_get_current_event(GTK_EVENT_CONTROLLER(gesture)));
-    webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Motion, 0, 0, x, y, modifiers, nPress, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes);
-    webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Press, button, buttons, x, y, modifiers, nPress, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes);
-    webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Release, button, 0, x, y, modifiers, nPress, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes);
+    webkitWebViewBaseSynthesizeTap(webViewBase, button, buttons, x, y, modifiers, nPress);
 }
 
 static void webkitWebViewBaseTouchDragBegin(WebKitWebViewBase* webViewBase, gdouble startX, gdouble startY, GtkGesture* gesture)
@@ -3202,7 +3214,7 @@ static inline PointerID primaryPointerForType(const String& pointerType)
     return mousePointerID;
 }
 
-void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, MouseEventType type, unsigned button, unsigned short buttons, int x, int y, unsigned modifiers, int clickCount, const String& pointerType, PlatformMouseEvent::IsTouch isTouchEvent)
+void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, MouseEventType type, unsigned button, unsigned short buttons, int x, int y, unsigned modifiers, int clickCount, const String& pointerType, PlatformMouseEvent::IsTouch isTouchEvent, SyntheticClickType syntheticClickType)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->dialog)
@@ -3301,7 +3313,7 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
 
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent::create(webEventType, webEventButton, webEventButtons, DoublePoint(x, y),
         widgetRootCoords(GTK_WIDGET(webViewBase), x, y), clickCount, toWebKitModifiers(modifiers), movementDelta,
-        primaryPointerForType(pointerType), pointerType.isNull() ? mousePointerEventType() : pointerType, isTouchEvent));
+        primaryPointerForType(pointerType), pointerType.isNull() ? mousePointerEventType() : pointerType, isTouchEvent, static_cast<WebMouseEventSyntheticClickType>(syntheticClickType)));
 }
 
 void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEventType type, unsigned keyval, unsigned modifiers, ShouldTranslateKeyboardState shouldTranslate)
@@ -3513,12 +3525,25 @@ void webkitWebViewBaseSynthesizeTouchEvent(WebKitWebViewBase* webViewBase, Touch
         break;
     }
 
+    if (points.size() != 1 || type == TouchEventType::Cancel)
+        priv->syntheticTap = std::nullopt;
+    else if (type == TouchEventType::Start)
+        priv->syntheticTap = WebKitWebViewBasePrivate::SyntheticTap { IntPoint(points[0].x, points[0].y), modifiers };
+    else if (type == TouchEventType::Move && priv->syntheticTap && gtk_drag_check_threshold(GTK_WIDGET(webViewBase), priv->syntheticTap->location.x(), priv->syntheticTap->location.y(), points[0].x, points[0].y))
+        priv->syntheticTap = std::nullopt;
+
     auto touchPoints = points.map([widget = GTK_WIDGET(webViewBase)](const SyntheticTouchPoint& point) -> WebPlatformTouchPoint {
         auto rootCoords = widgetRootCoords(widget, point.x, point.y);
         return WebPlatformTouchPoint(point.id, toWebPlatformTouchPointState(point.state), DoublePoint(rootCoords.x(), rootCoords.y()), DoublePoint(point.x, point.y));
     });
 
     priv->pageProxy->handleTouchEvent(nullptr, NativeWebTouchEvent::create(webEventType, toWebKitModifiers(modifiers), WTF::move(touchPoints)));
+}
+
+void webkitWebViewBaseSynthesizedTouchEndWasNotHandled(WebKitWebViewBase* webViewBase)
+{
+    if (auto tap = std::exchange(webViewBase->priv->syntheticTap, std::nullopt))
+        webkitWebViewBaseSynthesizeTap(webViewBase, GDK_BUTTON_PRIMARY, GDK_BUTTON1_MASK, tap->location.x(), tap->location.y(), tap->modifiers, 1);
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
@@ -3536,6 +3561,7 @@ void webkitWebViewBasePageGrabbedTouch(WebKitWebViewBase* webViewBase)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     priv->pageGrabbedTouch = true;
+    priv->syntheticTap = std::nullopt;
     gtk_gesture_set_state(priv->touchGestureGroup, GTK_EVENT_SEQUENCE_DENIED);
 }
 

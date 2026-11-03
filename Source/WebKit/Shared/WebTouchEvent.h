@@ -272,7 +272,7 @@ public:
     void mergeMovedTouchPointsFrom(const WebTouchEvent&);
 #endif
 
-#if USE(LIBWPE) || ENABLE(WPE_PLATFORM)
+#if PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     virtual bool isNativeWebTouchEvent() const { return false; }
 #endif
 

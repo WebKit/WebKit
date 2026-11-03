@@ -55,7 +55,7 @@ Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(const WebCore::DoublePoint&
     return adoptRef(*new NativeWebMouseEvent(WebEventFactory::createWebMouseEvent(position), nullptr));
 }
 
-Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(WebEventType type, WebMouseEventButton button, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize> delta, WebCore::PointerID pointerId, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent)
+Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(WebEventType type, WebMouseEventButton button, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize> delta, WebCore::PointerID pointerId, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent, WebMouseEventSyntheticClickType syntheticClickType)
 {
     return adoptRef(*new NativeWebMouseEvent(WebMouseEventInit {
         { type, modifiers, MonotonicTime::now() },
@@ -71,7 +71,7 @@ Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(WebEventType type, WebMouse
             .force = 0,
             .inputSource = WebEventInputSource::UserDriven,
             .canInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes,
-            .syntheticClickType = WebMouseEventSyntheticClickType::NoTap,
+            .syntheticClickType = syntheticClickType,
             .isTouchEvent = isTouchEvent,
             .pointerId = pointerId,
             .pointerType = pointerType,

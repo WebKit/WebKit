@@ -73,7 +73,7 @@ public:
     static Ref<NativeWebMouseEvent> create(const NativeWebMouseEvent&);
     static Ref<NativeWebMouseEvent> create(GdkEvent*, int, std::optional<WebCore::FloatSize>);
     static Ref<NativeWebMouseEvent> create(GdkEvent*, const WebCore::DoublePoint&, int, std::optional<WebCore::FloatSize>);
-    static Ref<NativeWebMouseEvent> create(WebEventType, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize>, WebCore::PointerID, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent);
+    static Ref<NativeWebMouseEvent> create(WebEventType, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize>, WebCore::PointerID, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap);
     static Ref<NativeWebMouseEvent> create(const WebCore::DoublePoint&);
 #elif PLATFORM(IOS_FAMILY)
     static Ref<NativeWebMouseEvent> create(::WebEvent *);
