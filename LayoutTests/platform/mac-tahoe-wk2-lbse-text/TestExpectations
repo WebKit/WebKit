@@ -69,7 +69,6 @@ svg/as-image/svg-as-image-pattern-scale.html                             [ Pass 
 svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop.html [ Pass ImageOnlyFailure ]
 
 # 2) Other flakiness (SMIL animations, filters)
-svg/W3C-SVG-1.1/filters-light-04-f.svg                           [ Pass ImageOnlyFailure ]
 svg/animations/attributeNameAndAttributeTypeMismatch.html        [ Pass ImageOnlyFailure ]
 svg/animations/avoid-calculating-for-non-animating-elements.html [ Pass ImageOnlyFailure ]
 
