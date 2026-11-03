@@ -34,8 +34,11 @@
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/MarkedVector.h>
 #include <JavaScriptCore/TopExceptionScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalReadableStreamDefaultReader);
 
 static ExceptionOr<JSC::JSValue> invokeReadableStreamDefaultReaderFunction(JSC::JSGlobalObject& globalObject, const JSC::Identifier& identifier, const JSC::MarkedArgumentBuffer& arguments)
 {

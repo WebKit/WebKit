@@ -46,6 +46,7 @@
 #include "StyleOriginatedAnimation.h"
 #include "WebAnimationTypes.h"
 #include <ranges>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(THREADED_ANIMATIONS)
 #include "AcceleratedEffectStackUpdater.h"
@@ -54,6 +55,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentTimeline);
 
 Ref<DocumentTimeline> DocumentTimeline::create(Document& document)
 {

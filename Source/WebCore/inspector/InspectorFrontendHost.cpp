@@ -84,6 +84,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/JSONValues.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
@@ -96,11 +97,14 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorFrontendHost);
+
 using namespace Inspector;
 using ValueOrException = std::expected<JSC::JSValue, ExceptionDetails>;
 
 #if ENABLE(CONTEXT_MENUS)
 class FrontendMenuProvider : public ContextMenuProvider {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FrontendMenuProvider);
 public:
     static Ref<FrontendMenuProvider> create(InspectorFrontendHost* frontendHost, JSC::JSGlobalObject* globalObject, JSC::JSObject* frontendApiObject, const Vector<ContextMenuItem>& items)
     {

@@ -44,6 +44,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
 
@@ -60,6 +61,7 @@ enum class WorkerThreadMode : bool;
 enum class WorkerType : bool;
 
 class SWServerWorker : public RefCountedAndCanMakeWeakPtr<SWServerWorker> {
+    WTF_MAKE_TZONE_ALLOCATED(SWServerWorker);
 public:
     template <typename... Args> static Ref<SWServerWorker> create(Args&&... args)
     {

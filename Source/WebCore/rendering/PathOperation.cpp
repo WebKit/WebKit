@@ -35,8 +35,17 @@
 #include "SVGPathFromElement.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReferencePathOperation);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShapePathOperation);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BoxPathOperation);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RayPathOperation);
 
 PathOperation::~PathOperation() = default;
 

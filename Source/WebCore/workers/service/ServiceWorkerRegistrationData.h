@@ -30,6 +30,7 @@
 #include <WebCore/ServiceWorkerRegistrationKey.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/ServiceWorkerUpdateViaCache.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WallTime.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ namespace WebCore {
 enum class ServiceWorkerUpdateViaCache : uint8_t;
 
 struct ServiceWorkerRegistrationData {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ServiceWorkerRegistrationData);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ServiceWorkerRegistrationData);
 
     ServiceWorkerRegistrationKey key;
     ServiceWorkerRegistrationIdentifier identifier;

@@ -31,6 +31,7 @@
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/ServiceWorkerClientType.h>
 #include <WebCore/ServiceWorkerTypes.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -42,7 +43,7 @@ enum class AdvancedPrivacyProtections : uint16_t;
 enum class LastNavigationWasAppInitiated : bool { No, Yes };
 
 struct ServiceWorkerClientData {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ServiceWorkerClientData);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ServiceWorkerClientData);
 
     ScriptExecutionContextIdentifier identifier;
     ServiceWorkerClientType type;

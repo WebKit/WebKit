@@ -34,8 +34,11 @@
 #include "DocumentResourceLoader.h"
 #include "Settings.h"
 #include "WorkerOrWorkletGlobalScope.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedScriptFetcher);
 
 Ref<CachedScriptFetcher> CachedScriptFetcher::create(const AtomString& charset)
 {

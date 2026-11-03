@@ -25,10 +25,12 @@
 #include "SVGTransform.h"
 #include "SVGTransformValue.h"
 #include "SVGValuePropertyList.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGTransformList final : public SVGValuePropertyList<SVGTransform> {
+    WTF_MAKE_TZONE_ALLOCATED(SVGTransformList);
     friend class SVGViewSpec;
     using Base = SVGValuePropertyList<SVGTransform>;
 

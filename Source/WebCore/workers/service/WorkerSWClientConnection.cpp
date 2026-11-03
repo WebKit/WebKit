@@ -44,9 +44,12 @@
 #include "WorkerFetchResult.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerSWClientConnection);
 
 WorkerSWClientConnection::WorkerSWClientConnection(WorkerGlobalScope& scope)
     : m_thread(scope.thread())

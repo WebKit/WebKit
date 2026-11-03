@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -34,6 +35,7 @@ namespace WebCore {
 class WebCoreOpaqueRoot;
 
 class WorkerLocation : public RefCounted<WorkerLocation> {
+    WTF_MAKE_TZONE_ALLOCATED(WorkerLocation);
 public:
     static Ref<WorkerLocation> create(URL&& url, String&& origin) { return adoptRef(*new WorkerLocation(WTF::move(url), WTF::move(origin))); }
 

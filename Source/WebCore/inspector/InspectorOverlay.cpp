@@ -86,6 +86,10 @@
 
 namespace WebCore {
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(InspectorOverlayHighlight::Config);
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(InspectorOverlay::Grid);
+
 using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorOverlay);

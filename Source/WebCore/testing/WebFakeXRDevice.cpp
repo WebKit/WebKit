@@ -45,6 +45,10 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FakeXRView);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebFakeXRDevice);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SimulatedXRDevice);
 
 static constexpr Seconds FakeXRFrameTime = 15_ms;

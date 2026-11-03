@@ -21,8 +21,11 @@
 #include "XMLSerializer.h"
 
 #include "markup.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XMLSerializer);
 
 String XMLSerializer::serializeToString(Node& node)
 {

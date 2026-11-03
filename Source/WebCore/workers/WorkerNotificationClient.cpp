@@ -34,9 +34,12 @@
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/VMManager.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerNotificationClient);
 
 Ref<WorkerNotificationClient> WorkerNotificationClient::create(WorkerGlobalScope& workerScope)
 {

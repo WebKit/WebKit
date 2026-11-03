@@ -33,6 +33,7 @@
 #include "FloatRoundedRect.h"
 #include "LayoutShape.h"
 #include "RenderStyleConstants.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -52,6 +53,7 @@ struct BoxShapeGeometry {
 BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType, const RenderBox&);
 
 class BoxLayoutShape final : public LayoutShape {
+    WTF_MAKE_TZONE_ALLOCATED(BoxLayoutShape);
 public:
     BoxLayoutShape(const FloatRoundedRect& bounds, Vector<FloatPoint>&& contour = { })
         : m_bounds(bounds)

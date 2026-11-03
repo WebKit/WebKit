@@ -31,6 +31,7 @@
 #include "TransformationMatrix.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,6 +40,7 @@ namespace WebCore {
 // with TransformState. There are some minor differences (like the way NODELETE translate() works slightly
 // differently than move()) so care has to be taken when this is done.
 class HitTestingTransformState : public RefCounted<HitTestingTransformState> {
+    WTF_MAKE_TZONE_ALLOCATED(HitTestingTransformState);
 public:
     static Ref<HitTestingTransformState> create(const FloatPoint& p, const FloatQuad& quad, const FloatQuad& area)
     {

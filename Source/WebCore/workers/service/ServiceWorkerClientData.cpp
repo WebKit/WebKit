@@ -35,8 +35,11 @@
 #include "SWClientConnection.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ServiceWorkerClientData);
 
 static ServiceWorkerClientFrameType toServiceWorkerClientFrameType(ScriptExecutionContext& context)
 {

@@ -82,6 +82,7 @@
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
@@ -93,6 +94,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorCanvas);
 
 using namespace Inspector;
 

@@ -22,6 +22,7 @@
 
 #include <wtf/Platform.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRef.h>
@@ -62,6 +63,7 @@ struct SupportedPluginIdentifier {
 
 // FIXME: merge with PluginDatabase in the future
 class PluginData : public RefCounted<PluginData> {
+    WTF_MAKE_TZONE_ALLOCATED(PluginData);
 public:
     static Ref<PluginData> create(Page& page) { return adoptRef(*new PluginData(page)); }
 

@@ -844,6 +844,7 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, SWServerReg
 }
 
 class RefreshImportedScriptsHandler : public RefCounted<RefreshImportedScriptsHandler> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RefreshImportedScriptsHandler);
 public:
     using Callback = CompletionHandler<void(Vector<std::pair<URL, ScriptBuffer>>&&)>;
     static Ref<RefreshImportedScriptsHandler> create(size_t expectedItems, Callback&& callback) { return adoptRef(*new RefreshImportedScriptsHandler(expectedItems, WTF::move(callback))); }

@@ -39,8 +39,11 @@
 #include "SWClientConnection.h"
 #include "ServiceWorkerProvider.h"
 #include "ServiceWorkerRegistration.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchManager);
 
 BackgroundFetchManager::BackgroundFetchManager(ServiceWorkerRegistration& registration)
     : m_identifier(registration.identifier())

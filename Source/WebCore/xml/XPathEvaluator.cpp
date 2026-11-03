@@ -32,8 +32,11 @@
 #include "XPathExpression.h"
 #include "XPathResult.h"
 #include "XPathUtil.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XPathEvaluator);
 
 ExceptionOr<Ref<XPathExpression>> XPathEvaluator::createExpression(const String& expression, RefPtr<XPathNSResolver>&& resolver)
 {

@@ -64,6 +64,7 @@ private:
     NODELETE void setIteratorToIndex(unsigned);
 
     struct Impl : public RefCounted<Impl> {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(Impl, WEBCORE_EXPORT);
         static Ref<Impl> create()
         {
             return adoptRef(*new Impl);

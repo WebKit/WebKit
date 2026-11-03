@@ -27,6 +27,7 @@
 
 #include "AbstractLineBuilder.h"
 #include "InlineContentCache.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Layout {
@@ -36,7 +37,7 @@ struct CandidateTextContent;
 struct TextOnlyLineBreakResult;
 
 class TextOnlySimpleLineBuilder final : public AbstractLineBuilder {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TextOnlySimpleLineBuilder);
+    WTF_MAKE_TZONE_ALLOCATED(TextOnlySimpleLineBuilder);
 public:
     TextOnlySimpleLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&, bool isFirstFormattedLine) final;

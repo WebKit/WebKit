@@ -37,8 +37,11 @@
 #include "ExceptionOr.h"
 #include "FileReaderLoader.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileReaderSync);
 
 FileReaderSync::FileReaderSync() = default;
 

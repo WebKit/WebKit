@@ -30,8 +30,11 @@
 #include "FetchRequest.h"
 #include "JSDOMConvertInterface.h"
 #include "JSFetchResponse.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchRecord);
 
 BackgroundFetchRecord::BackgroundFetchRecord(ScriptExecutionContext& context, BackgroundFetchRecordInformation&& information)
     : m_responseReadyPromise(makeUniqueRef<ResponseReadyPromise>())

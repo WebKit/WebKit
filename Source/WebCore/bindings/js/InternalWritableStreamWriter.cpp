@@ -34,8 +34,11 @@
 #include <JavaScriptCore/CallData.h>
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/MarkedVector.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalWritableStreamWriter);
 
 static ExceptionOr<JSC::JSValue> invokeWritableStreamWriterFunction(JSC::JSGlobalObject& globalObject, const JSC::Identifier& identifier, const JSC::MarkedArgumentBuffer& arguments)
 {

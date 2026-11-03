@@ -31,8 +31,11 @@
 #include <JavaScriptCore/IteratorOperations.h>
 #include <JavaScriptCore/JSPromise.h>
 #include <JavaScriptCore/TopExceptionScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMAsyncIterator);
 
 ExceptionOr<Ref<DOMAsyncIterator>> DOMAsyncIterator::create(JSDOMGlobalObject& globalObject, JSC::JSValue iterable)
 {

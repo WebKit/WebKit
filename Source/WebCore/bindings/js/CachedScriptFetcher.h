@@ -31,6 +31,7 @@
 #include <WebCore/RequestPriority.h>
 #include <WebCore/ResourceLoadPriority.h>
 #include <WebCore/ResourceLoaderOptions.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,6 +44,7 @@ enum class FetchOptionsDestination : uint8_t;
 // FIXME(webkit.org/b/324910): rename CachedScriptFetch to reflect that
 // it can fetch more than just scripts.
 class CachedScriptFetcher : public JSC::ScriptFetcher {
+    WTF_MAKE_TZONE_ALLOCATED(CachedScriptFetcher);
 public:
     static constexpr ASCIILiteral defaultCrossOriginModeForModule { "anonymous"_s };
 

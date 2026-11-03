@@ -26,10 +26,13 @@
 #include "config.h"
 #include "SVGPointList.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGPointList);
 
 SVGPointList::SVGPointList() = default;
 

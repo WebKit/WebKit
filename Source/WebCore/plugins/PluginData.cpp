@@ -30,8 +30,11 @@
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "PluginInfoProvider.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PluginData);
 
 #if PLATFORM(COCOA)
 static inline bool isBuiltInPDFPlugIn(const PluginInfo& plugin)

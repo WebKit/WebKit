@@ -35,8 +35,11 @@
 #include "RequestAnimationFrameCallback.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerAnimationController);
 
 Ref<WorkerAnimationController> WorkerAnimationController::create(WorkerGlobalScope& workerGlobalScope)
 {

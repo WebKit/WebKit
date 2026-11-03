@@ -35,8 +35,11 @@
 #include "ScriptExecutionContext.h"
 #include "ScriptExecutionContextInlines.h"
 #include "XMLHttpRequestProgressEvent.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XMLHttpRequestProgressEventThrottle);
 
 const Seconds XMLHttpRequestProgressEventThrottle::minimumProgressEventDispatchingInterval { 50_ms }; // 50 ms per specification.
 

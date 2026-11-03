@@ -26,10 +26,12 @@
 #pragma once
 
 #include <JavaScriptCore/InjectedScriptHost.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebInjectedScriptHost final : public Inspector::InjectedScriptHost {
+    WTF_MAKE_TZONE_ALLOCATED(WebInjectedScriptHost);
 public:
     static Ref<WebInjectedScriptHost> create() { return adoptRef(*new WebInjectedScriptHost); }
 

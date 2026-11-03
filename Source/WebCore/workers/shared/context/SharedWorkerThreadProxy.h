@@ -33,6 +33,7 @@
 #include <WebCore/WorkerObjectProxy.h>
 #include <WebCore/WorkerOptions.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
@@ -46,7 +47,7 @@ struct WorkerFetchResult;
 struct WorkerInitializationData;
 
 class SharedWorkerThreadProxy final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SharedWorkerThreadProxy, WTF::DestructionThread::Main>, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy, public CanMakeThreadSafeCheckedPtr<SharedWorkerThreadProxy> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SharedWorkerThreadProxy);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SharedWorkerThreadProxy, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SharedWorkerThreadProxy);
 public:
     template<typename... Args> static Ref<SharedWorkerThreadProxy> create(Args&&... args) { return adoptRef(*new SharedWorkerThreadProxy(std::forward<Args>(args)...)); }

@@ -28,12 +28,14 @@
 
 #include <WebCore/XPathValue.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 template<typename> class ExceptionOr;
 
 class XPathResult : public RefCounted<XPathResult> {
+    WTF_MAKE_TZONE_ALLOCATED(XPathResult);
 public:
     enum XPathResultType {
         ANY_TYPE = 0,

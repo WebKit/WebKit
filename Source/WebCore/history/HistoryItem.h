@@ -80,6 +80,7 @@ protected:
 };
 
 class HistoryItem : public RefCountedAndCanMakeWeakPtr<HistoryItem> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HistoryItem, WEBCORE_EXPORT);
 public:
     using Client = HistoryItemClient;
     static Ref<HistoryItem> create(Client& client, const String& urlString = { }, const String& title = { }, const String& alternateTitle = { }, std::optional<BackForwardItemIdentifier> itemID = { }, std::optional<BackForwardFrameItemIdentifier> frameItemID = { })

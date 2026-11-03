@@ -33,10 +33,13 @@
 #include "ContentExtensionsBackend.h"
 #include "Document.h"
 #include "StyleSheetContents.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace ContentExtensions {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentExtensionStyleSheet);
 
 ContentExtensionStyleSheet::ContentExtensionStyleSheet(Document& document)
     : m_styleSheet(CSSStyleSheet::create(StyleSheetContents::create(contentExtensionCSSParserContext()), document))

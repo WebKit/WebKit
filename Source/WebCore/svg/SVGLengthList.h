@@ -27,10 +27,12 @@
 
 #include "SVGLength.h"
 #include "SVGValuePropertyList.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGLengthList final : public SVGValuePropertyList<SVGLength> {
+    WTF_MAKE_TZONE_ALLOCATED(SVGLengthList);
     using Base = SVGValuePropertyList<SVGLength>;
     using Base::Base;
 

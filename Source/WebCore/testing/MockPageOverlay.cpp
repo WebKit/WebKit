@@ -32,8 +32,11 @@
 #include "LocalFrame.h"
 #include "PageOverlayController.h"
 #include "PlatformMouseEvent.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockPageOverlay);
 
 Ref<MockPageOverlay> MockPageOverlay::create(PageOverlay* overlay)
 {

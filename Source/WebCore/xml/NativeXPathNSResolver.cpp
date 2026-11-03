@@ -29,9 +29,12 @@
 #include "CommonAtomStrings.h"
 #include "Node.h"
 #include "XMLNames.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeXPathNSResolver);
 
 NativeXPathNSResolver::NativeXPathNSResolver(Ref<Node>&& node)
     : m_node(WTF::move(node))

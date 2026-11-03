@@ -43,6 +43,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(InspectorOverlayLabel::Content);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorOverlayLabel);
 
 static constexpr float labelPadding = 4;

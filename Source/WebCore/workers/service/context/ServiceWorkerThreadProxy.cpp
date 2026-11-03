@@ -55,9 +55,12 @@
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerThreadProxy);
 
 static inline IDBClient::IDBConnectionProxy* idbConnectionProxy(Document& document)
 {

@@ -31,8 +31,11 @@
 #include "RectangleLayoutShape.h"
 
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RectangleLayoutShape);
 
 NODELETE static inline float ellipseXIntercept(float y, float rx, float ry)
 {

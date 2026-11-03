@@ -34,8 +34,11 @@
 #include <JavaScriptCore/JSCellInlines.h>
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/TopExceptionScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InternalWritableStream);
 
 static ExceptionOr<JSC::JSValue> invokeWritableStreamFunction(JSC::JSGlobalObject& globalObject, const JSC::Identifier& identifier, const JSC::MarkedArgumentBuffer& arguments)
 {

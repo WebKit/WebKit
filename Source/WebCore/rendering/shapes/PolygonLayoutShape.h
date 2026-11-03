@@ -32,6 +32,7 @@
 #include <WebCore/FloatPolygon.h>
 #include <WebCore/LayoutShape.h>
 #include <WebCore/ShapeInterval.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -68,6 +69,7 @@ private:
 void uniteEdgeExcludedInterval(FloatShapeInterval&, const FloatPoint& vertex1, const FloatPoint& vertex2, float y1, float y2, float shapeMargin);
 
 class PolygonLayoutShape : public LayoutShape {
+    WTF_MAKE_TZONE_ALLOCATED(PolygonLayoutShape);
     WTF_MAKE_NONCOPYABLE(PolygonLayoutShape);
 public:
     PolygonLayoutShape(Vector<FloatPoint>&& vertices, float borderBoxLogicalWidth)

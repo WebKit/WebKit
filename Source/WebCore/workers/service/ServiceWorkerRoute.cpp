@@ -34,8 +34,11 @@
 #include "URLPatternInit.h"
 #include "URLPatternOptions.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ServiceWorkerRouteCondition);
 
 // https://w3c.github.io/ServiceWorker/#count-router-inner-conditions
 std::optional<size_t> countRouterInnerConditions(const ServiceWorkerRouteCondition& routeCondition, size_t result, size_t depth)

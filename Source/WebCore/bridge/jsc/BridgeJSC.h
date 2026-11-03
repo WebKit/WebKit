@@ -83,6 +83,7 @@ public:
 };
 
 class Instance : public RefCounted<Instance> {
+    WTF_MAKE_TZONE_ALLOCATED(Instance);
 public:
     WEBCORE_EXPORT Instance(RefPtr<RootObject>&&);
 

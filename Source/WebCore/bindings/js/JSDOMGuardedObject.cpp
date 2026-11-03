@@ -29,8 +29,11 @@
 #include "JSDOMGlobalObjectInlines.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/WeakInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMGuardedObject);
 using namespace JSC;
 
 JSDOMGlobalObject* DOMGuardedObject::globalObject() const { return m_globalObject.get(); }

@@ -27,10 +27,12 @@
 
 #include "SVGNumber.h"
 #include "SVGValuePropertyList.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGNumberList final : public SVGValuePropertyList<SVGNumber> {
+    WTF_MAKE_TZONE_ALLOCATED(SVGNumberList);
     using Base = SVGValuePropertyList<SVGNumber>;
 
 public:

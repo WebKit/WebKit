@@ -44,10 +44,13 @@
 #include "UnplacedGridItem.h"
 #include "UsedTrackSizes.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 namespace Layout {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GridFormattingContext);
 
 GridFormattingContext::GridFormattingContext(const ElementBox& gridBox, LayoutState& layoutState)
     : m_gridBox(gridBox)

@@ -28,6 +28,7 @@
 #include "SWClientConnection.h"
 #include <wtf/Forward.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,6 +38,7 @@ class WorkerThread;
 struct CookieChangeSubscription;
 
 class WorkerSWClientConnection final : public SWClientConnection {
+    WTF_MAKE_TZONE_ALLOCATED(WorkerSWClientConnection);
 public:
     static Ref<WorkerSWClientConnection> create(WorkerGlobalScope& scope) { return adoptRef(*new WorkerSWClientConnection { scope }); }
     ~WorkerSWClientConnection();

@@ -33,6 +33,7 @@
 #include "DOMHighResTimeStamp.h"
 #include "PlatformScreen.h"
 #include "Timer.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -42,6 +43,7 @@ class WeakPtrImplWithEventTargetData;
 class WorkerGlobalScope;
 
 class WorkerAnimationController final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WorkerAnimationController>, public ActiveDOMObject {
+    WTF_MAKE_TZONE_ALLOCATED(WorkerAnimationController);
 public:
     static Ref<WorkerAnimationController> create(WorkerGlobalScope&);
     ~WorkerAnimationController();

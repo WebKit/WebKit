@@ -29,6 +29,7 @@
 #include "JSDOMPromiseDeferredForward.h"
 #include "ServiceWorkerTypes.h"
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ class FetchRequest;
 class ServiceWorkerRegistration;
 
 class BackgroundFetchManager : public RefCountedAndCanMakeWeakPtr<BackgroundFetchManager> {
+    WTF_MAKE_TZONE_ALLOCATED(BackgroundFetchManager);
 public:
     static Ref<BackgroundFetchManager> create(ServiceWorkerRegistration& registration) { return adoptRef(*new BackgroundFetchManager(registration)); }
     ~BackgroundFetchManager();

@@ -29,6 +29,7 @@
 #include <WebCore/InlineDisplayContent.h>
 #include <wtf/HashMap.h>
 #include <wtf/IteratorRange.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -63,7 +64,7 @@ namespace LayoutIntegration {
 class LineLayout;
 
 class InlineContent : public CanMakeSingleThreadWeakPtr<InlineContent> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InlineContent);
+    WTF_MAKE_TZONE_ALLOCATED(InlineContent);
 public:
     InlineContent(const RenderBlockFlow& formattingContextRoot);
 

@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/TypedArrayController.h>
 #include <JavaScriptCore/WeakHandleOwner.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
 namespace JSC {
@@ -36,6 +37,7 @@ class WeakHandleOwner;
 namespace WebCore {
 
 class WebCoreTypedArrayController final : public JSC::TypedArrayController {
+    WTF_MAKE_TZONE_ALLOCATED(WebCoreTypedArrayController);
 public:
     WebCoreTypedArrayController(bool allowAtomicsWait);
     virtual ~WebCoreTypedArrayController();

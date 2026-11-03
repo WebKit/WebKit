@@ -39,6 +39,7 @@
 #include "Worker.h"
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(PAYMENT_REQUEST)
 #include "JSPaymentRequest.h"
@@ -48,6 +49,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInjectedScriptHost);
 
 using namespace JSC;
 

@@ -32,10 +32,13 @@
 #include "Node.h"
 #include "UserGestureEmulationScope.h"
 #include "VoidCallback.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAuditDOMObject);
 
 using namespace Inspector;
 

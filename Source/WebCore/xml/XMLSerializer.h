@@ -22,6 +22,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -29,6 +30,7 @@ class Node;
 
 // FIXME: This object has no state, so it seems a waste to allocate and reference count it.
 class XMLSerializer : public RefCounted<XMLSerializer> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(XMLSerializer, WEBCORE_EXPORT);
 public:
     static Ref<XMLSerializer> create() { return adoptRef(*new XMLSerializer); }
 

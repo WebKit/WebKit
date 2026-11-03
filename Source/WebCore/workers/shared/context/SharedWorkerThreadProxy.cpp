@@ -56,9 +56,12 @@
 #include "WorkerFetchResult.h"
 #include "WorkerInitializationData.h"
 #include "WorkerThread.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedWorkerThreadProxy);
 
 NODELETE static HashMap<ScriptExecutionContextIdentifier, ThreadSafeWeakPtr<SharedWorkerThreadProxy>>& allSharedWorkerThreadProxies()
 {

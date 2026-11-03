@@ -61,6 +61,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XMLParserContext);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(XMLDocumentParser);
 
 using namespace HTMLNames;

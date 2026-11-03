@@ -32,10 +32,12 @@
 #pragma once
 
 #include "JSEventListener.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class JSErrorHandler final : public JSEventListener {
+    WTF_MAKE_TZONE_ALLOCATED(JSErrorHandler);
 public:
     static Ref<JSErrorHandler> create(JSC::JSObject& listener, JSC::JSObject& wrapper, bool isAttribute, DOMWrapperWorld&);
     virtual ~JSErrorHandler();

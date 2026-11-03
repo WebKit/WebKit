@@ -33,10 +33,12 @@
 #include "FloatSize.h"
 #include "LayoutShape.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class RectangleLayoutShape final : public LayoutShape {
+    WTF_MAKE_TZONE_ALLOCATED(RectangleLayoutShape);
 public:
     RectangleLayoutShape(const FloatRect& bounds, const FloatSize& radii, float borderBoxLogicalWidth)
         : m_bounds(bounds)

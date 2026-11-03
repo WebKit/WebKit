@@ -34,8 +34,11 @@
 #include "RenderView.h"
 #include "StylePreferredSize.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AutoTableLayout);
 
 AutoTableLayout::AutoTableLayout(RenderTable* table)
     : TableLayout(table)

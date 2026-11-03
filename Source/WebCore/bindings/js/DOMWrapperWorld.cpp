@@ -30,8 +30,11 @@
 #include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/WeakInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMWrapperWorld);
 using namespace JSC;
 
 DOMWrapperWorld::DOMWrapperWorld(JSC::VM& vm, Type type, const String& name)

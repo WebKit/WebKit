@@ -22,6 +22,7 @@
 #include "PluginData.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -30,6 +31,7 @@ class DOMPlugin;
 class Navigator;
 
 class DOMMimeType : public RefCounted<DOMMimeType> {
+    WTF_MAKE_TZONE_ALLOCATED(DOMMimeType);
 public:
     NODELETE static Ref<DOMMimeType> create(Navigator&, const MimeClassInfo&, DOMPlugin&);
     ~DOMMimeType();

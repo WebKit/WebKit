@@ -28,6 +28,7 @@
 #include "ExceptionOr.h"
 #include "JSDOMGuardedObject.h"
 #include <JavaScriptCore/JSObject.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class JSGlobalObject;
@@ -38,6 +39,7 @@ namespace WebCore {
 class InternalReadableStream;
 
 class InternalReadableStreamDefaultReader final : public DOMGuarded<JSC::JSObject> {
+    WTF_MAKE_TZONE_ALLOCATED(InternalReadableStreamDefaultReader);
 public:
     static ExceptionOr<Ref<InternalReadableStreamDefaultReader>> create(JSDOMGlobalObject&, InternalReadableStream&);
 

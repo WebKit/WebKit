@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DOMPromiseProxy.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -36,6 +37,7 @@ class FetchResponse;
 class ScriptExecutionContext;
 
 class BackgroundFetchRecord : public RefCounted<BackgroundFetchRecord> {
+    WTF_MAKE_TZONE_ALLOCATED(BackgroundFetchRecord);
 public:
     static Ref<BackgroundFetchRecord> create(ScriptExecutionContext& context, BackgroundFetchRecordInformation&& information) { return adoptRef(*new BackgroundFetchRecord(context, WTF::move(information))); }
 

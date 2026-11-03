@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ class Node;
 template<typename> class ExceptionOr;
 
 class InspectorAuditAccessibilityObject : public RefCounted<InspectorAuditAccessibilityObject> {
+    WTF_MAKE_TZONE_ALLOCATED(InspectorAuditAccessibilityObject);
 public:
     static Ref<InspectorAuditAccessibilityObject> create(Inspector::InspectorAuditAgent& auditAgent)
     {

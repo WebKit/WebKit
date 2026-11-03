@@ -47,8 +47,11 @@
 #include <JavaScriptCore/VMEntryScopeInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSErrorHandler);
 using namespace JSC;
 
 inline JSErrorHandler::JSErrorHandler(JSObject& listener, JSObject& wrapper, bool isAttribute, DOMWrapperWorld& world)

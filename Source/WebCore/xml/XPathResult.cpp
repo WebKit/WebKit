@@ -33,8 +33,11 @@
 #include "XPathEvaluator.h"
 #include <JavaScriptCore/SlotVisitorMacros.h>
 #include <wtf/Locker.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XPathResult);
 
 XPathResult::XPathResult(Document& document, const XPath::Value& value)
     : m_value(value)

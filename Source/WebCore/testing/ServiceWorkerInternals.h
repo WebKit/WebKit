@@ -31,6 +31,7 @@
 #include "ServiceWorkerIdentifier.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -44,6 +45,7 @@ class ServiceWorkerClient;
 template<typename IDLType> class DOMPromiseDeferred;
 
 class WEBCORE_TESTSUPPORT_EXPORT ServiceWorkerInternals : public RefCountedAndCanMakeWeakPtr<ServiceWorkerInternals> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ServiceWorkerInternals, WEBCORE_TESTSUPPORT_EXPORT);
 public:
     static Ref<ServiceWorkerInternals> create(ServiceWorkerGlobalScope& globalScope, ServiceWorkerIdentifier identifier) { return adoptRef(*new ServiceWorkerInternals { globalScope, identifier }); }
     ~ServiceWorkerInternals();

@@ -28,10 +28,12 @@
 
 #include <JavaScriptCore/JSPromise.h>
 #include <WebCore/JSDOMGuardedObject.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DOMPromise : public DOMGuarded<JSC::JSPromise> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DOMPromise, WEBCORE_EXPORT);
 public:
     static Ref<DOMPromise> create(JSDOMGlobalObject& globalObject, JSC::JSPromise& promise)
     {

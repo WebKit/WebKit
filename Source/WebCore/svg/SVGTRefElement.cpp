@@ -50,6 +50,7 @@ Ref<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Documen
 }
 
 class SVGTRefTargetEventListener final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGTRefTargetEventListener);
 public:
     NODELETE static Ref<SVGTRefTargetEventListener> create(SVGTRefElement& trefElement)
     {

@@ -28,8 +28,11 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PathLayoutShape);
 
 LayoutRect PathLayoutShape::shapeMarginLogicalBoundingBox() const
 {

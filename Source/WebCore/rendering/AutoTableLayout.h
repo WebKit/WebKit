@@ -24,6 +24,7 @@
 #include "LayoutUnit.h"
 #include "StylePreferredSize.h"
 #include "TableLayout.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -32,6 +33,7 @@ class RenderTable;
 class RenderTableCell;
 
 class AutoTableLayout final : public TableLayout {
+    WTF_MAKE_TZONE_ALLOCATED(AutoTableLayout);
 public:
     explicit AutoTableLayout(RenderTable*);
     NODELETE virtual ~AutoTableLayout();

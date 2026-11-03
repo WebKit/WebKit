@@ -30,6 +30,7 @@
 #include "DocumentTimelineOptions.h"
 #include "Timer.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -49,6 +50,7 @@ struct CustomAnimationOptions;
 
 class DocumentTimeline final : public AnimationTimeline
 {
+    WTF_MAKE_TZONE_ALLOCATED(DocumentTimeline);
 public:
     static Ref<DocumentTimeline> create(Document&);
     static Ref<DocumentTimeline> create(Document&, DocumentTimelineOptions&&);

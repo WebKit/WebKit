@@ -67,6 +67,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CommandLineAPIHost);
+
 using namespace JSC;
 using namespace Inspector;
 

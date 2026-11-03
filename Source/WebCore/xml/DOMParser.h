@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
@@ -31,6 +32,7 @@ class TrustedHTML;
 template<typename> class ExceptionOr;
 
 class DOMParser : public RefCounted<DOMParser> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DOMParser, WEBCORE_EXPORT);
 public:
     NODELETE static Ref<DOMParser> create(Document& contextDocument);
     ~DOMParser();

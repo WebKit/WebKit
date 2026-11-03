@@ -27,10 +27,13 @@
 #include "SVGStringList.h"
 
 #include "SVGParserUtilities.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGStringList);
 
 void SVGStringList::setFromCommaSeparatedTokens(StringView string)
 {

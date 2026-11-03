@@ -29,12 +29,14 @@
 #include "JSDOMGuardedObject.h"
 #include "JSDOMPromise.h"
 #include <JavaScriptCore/JSObject.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WritableStream;
 
 class InternalWritableStreamWriter final : public DOMGuarded<JSC::JSObject> {
+    WTF_MAKE_TZONE_ALLOCATED(InternalWritableStreamWriter);
 public:
     static Ref<InternalWritableStreamWriter> create(JSDOMGlobalObject& globalObject, JSC::JSObject& writer)
     {

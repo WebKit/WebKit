@@ -27,12 +27,14 @@
 
 #include "ActiveDOMObject.h"
 #include "EventLoop.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WorkerOrWorkletGlobalScope;
 
 class WorkerEventLoop final : public EventLoop, private ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(WorkerEventLoop);
 public:
     static Ref<WorkerEventLoop> create(WorkerOrWorkletGlobalScope&);
 
