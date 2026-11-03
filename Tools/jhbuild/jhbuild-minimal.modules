@@ -55,11 +55,11 @@
   <repository type="tarball" name="ftp.gnome.org"
       href="http://ftp.gnome.org"/>
 
-  <!-- meson 0.62.2 required to build gstreamer-1.22.7 -->
+  <!-- meson >= 1.4.0 required to build gstreamer-1.28.8 -->
   <if condition-set="require-meson">
     <distutils id="meson" python3="1">
       <branch module="mesonbuild/meson"
-              tag="0.62.2"
+              tag="1.4.2"
               repo="github.com"/>
     </distutils>
   </if>
