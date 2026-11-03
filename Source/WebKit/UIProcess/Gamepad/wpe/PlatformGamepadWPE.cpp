@@ -61,7 +61,10 @@ PlatformGamepadWPE::PlatformGamepadWPE(WPEGamepad* gamepad, unsigned index)
         m_supportedEffectTypes.add(GamepadHapticEffectType::DualRumble);
 
     g_signal_connect_swapped(m_gamepad.get(), "button-event", G_CALLBACK(+[](PlatformGamepadWPE* gamepad, WPEGamepadButton button, gboolean isPressed) {
-        gamepad->buttonEvent(static_cast<size_t>(button), isPressed);
+        gamepad->buttonEvent(static_cast<size_t>(button), isPressed ? 1.0 : 0.0);
+    }), this);
+    g_signal_connect_swapped(m_gamepad.get(), "analog-button-event", G_CALLBACK(+[](PlatformGamepadWPE* gamepad, WPEGamepadButton button, gdouble value) {
+        gamepad->buttonEvent(static_cast<size_t>(button), value);
     }), this);
     g_signal_connect_swapped(m_gamepad.get(), "axis-event", G_CALLBACK(+[](PlatformGamepadWPE* gamepad, WPEGamepadAxis axis, gdouble value) {
         gamepad->axisEvent(static_cast<size_t>(axis), value);
@@ -73,11 +76,11 @@ PlatformGamepadWPE::~PlatformGamepadWPE()
     g_signal_handlers_disconnect_by_data(m_gamepad.get(), this);
 }
 
-void PlatformGamepadWPE::buttonEvent(size_t button, bool isPressed)
+void PlatformGamepadWPE::buttonEvent(size_t button, double value)
 {
     m_lastUpdateTime = MonotonicTime::now();
-    m_buttonValues[button].setValue(isPressed ? 1.0 : 0.0);
-    GamepadProviderWPE::singleton().notifyInput(*this, isPressed ? GamepadProviderWPE::ShouldMakeGamepadsVisible::Yes : GamepadProviderWPE::ShouldMakeGamepadsVisible::No);
+    m_buttonValues[button].setValue(value);
+    GamepadProviderWPE::singleton().notifyInput(*this, value ? GamepadProviderWPE::ShouldMakeGamepadsVisible::Yes : GamepadProviderWPE::ShouldMakeGamepadsVisible::No);
 }
 
 void PlatformGamepadWPE::axisEvent(size_t axis, double value)

@@ -31,6 +31,7 @@
 #include "PlatformGamepad.h"
 
 #include <libmanette.h>
+#include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
@@ -69,12 +70,24 @@ public:
         DPadRight,
         Mode,
     };
+    // Part of the axis bound to a button: "aN" (Full), "+aN" (Positive) or "-aN" (Negative).
+    enum class AxisRange : uint8_t {
+        Full,
+        Positive,
+        Negative,
+    };
+    struct AnalogButton {
+        StandardGamepadButton button;
+        AxisRange range;
+        bool inverted; // trailing '~'
+    };
 
     ManetteGamepad(ManetteDevice*, unsigned index);
     virtual ~ManetteGamepad();
 
     void absoluteAxisChanged(ManetteDevice*, StandardGamepadAxis, double value);
-    void buttonPressedOrReleased(ManetteDevice*, StandardGamepadButton, bool pressed);
+    void buttonPressedOrReleased(ManetteDevice*, StandardGamepadButton, double value);
+    Vector<AnalogButton, 2> analogButtonsForEvent(ManetteEvent*) const;
 
 private:
     const Vector<SharedGamepadValue>& axisValues() const LIFETIME_BOUND final { return m_axisValues; }
@@ -84,6 +97,7 @@ private:
     void effectDelayTimerFired();
     void effectDurationTimerFired();
     void startRumble(const GamepadEffectParameters&);
+    void parseAnalogButtons();
 
     GRefPtr<ManetteDevice> m_device;
 
@@ -93,6 +107,7 @@ private:
     RunLoop::Timer m_effectDurationTimer;
     CompletionHandler<void(bool)> m_effectCompletionHandler;
     GamepadEffectParameters m_pendingEffectParameters;
+    HashMap<uint16_t, Vector<AnalogButton, 2>, IntHash<uint16_t>, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>> m_analogButtons; // hardware index -> buttons
 };
 
 } // namespace WebCore

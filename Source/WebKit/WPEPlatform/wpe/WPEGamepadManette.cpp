@@ -27,15 +27,35 @@
 #include "WPEGamepadManette.h"
 
 #include <linux/input-event-codes.h>
-#include <optional>
+#include <wtf/HashMap.h>
+#include <wtf/MathExtras.h>
+#include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/StringToIntegerConversion.h>
+#include <wtf/text/StringView.h>
 
 static constexpr size_t wpeGamepadAxisCount = static_cast<size_t>(WPE_GAMEPAD_AXIS_RIGHT_Y) + 1;
 static constexpr size_t wpeGamepadButtonCount = static_cast<size_t>(WPE_GAMEPAD_BUTTON_CENTER_CLUSTER_CENTER) + 1;
 
+// Part of the axis bound to a button: "aN" (Full), "+aN" (Positive) or "-aN" (Negative).
+enum class AxisRange : uint8_t {
+    Full,
+    Positive,
+    Negative,
+};
+
+struct AnalogButton {
+    WPEGamepadButton button;
+    AxisRange range;
+    bool inverted; // trailing '~'
+};
+
 struct _WPEGamepadManettePrivate {
     GRefPtr<ManetteDevice> device;
+    HashMap<uint16_t, Vector<AnalogButton, 2>, IntHash<uint16_t>, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>> analogButtons; // hardware index -> buttons
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(WPEGamepadManette, wpe_gamepad_manette, WPE_TYPE_GAMEPAD, WPEGamepad)
@@ -133,17 +153,113 @@ static WPEGamepadAxis wpeGamepadAxis(uint16_t axis)
     return static_cast<WPEGamepadAxis>(axis % wpeGamepadAxisCount);
 }
 
+static void wpeGamepadManetteParseAnalogButtons(WPEGamepadManette* gamepad)
+{
+    auto* priv = gamepad->priv;
+    priv->analogButtons.clear();
+#if LIBMANETTE_CHECK_VERSION(0, 2, 8)
+    GUniquePtr<char> mapping(manette_device_get_mapping(priv->device.get()));
+    if (!mapping)
+        return;
+
+    GUniquePtr<char*> entries(g_strsplit(mapping.get(), ",", -1));
+    for (const char* entryCString : span(entries)) {
+        auto entry = StringView::fromLatin1(entryCString);
+        WPEGamepadButton button;
+        if (entry.startsWith("lefttrigger:"_s))
+            button = WPE_GAMEPAD_BUTTON_LEFT_SHOULDER_BACK;
+        else if (entry.startsWith("righttrigger:"_s))
+            button = WPE_GAMEPAD_BUTTON_RIGHT_SHOULDER_BACK;
+        else
+            continue;
+
+        // Source can be "a2", "+a2", "-a2" or "a2~"; only axis sources are analog.
+        auto source = entry.substring(entry.find(':') + 1);
+        auto range = AxisRange::Full;
+        if (source.startsWith('+'))
+            range = AxisRange::Positive;
+        else if (source.startsWith('-'))
+            range = AxisRange::Negative;
+        if (range != AxisRange::Full)
+            source = source.substring(1);
+        if (!source.startsWith('a'))
+            continue; // e.g. "b6": trigger is a digital button on this device
+
+        auto index = parseIntegerAllowingTrailingJunk<uint16_t>(source.substring(1));
+        if (!index)
+            continue;
+
+        bool inverted = source.endsWith('~');
+        // The same axis can be bound to several buttons, e.g. "lefttrigger:+a3,righttrigger:-a3".
+        auto& buttonsForAxis = priv->analogButtons.add(*index, Vector<AnalogButton, 2> { }).iterator->value;
+        buttonsForAxis.append({ button, range, inverted });
+    }
+#endif
+}
+
+static Vector<AnalogButton, 2> wpeGamepadManetteAnalogButtons(WPEGamepadManette* gamepad, ManetteEvent* event)
+{
+    if (manette_event_get_hardware_type(event) != EV_ABS)
+        return { }; // digital button (bN)
+
+    uint16_t code = manette_event_get_hardware_code(event);
+    if (code >= ABS_HAT0X && code <= ABS_HAT3Y)
+        return { }; // D-pad from a hat (hN.M)
+
+    return gamepad->priv->analogButtons.get(manette_event_get_hardware_index(event));
+}
+
+static double wpeGamepadManetteAnalogButtonPressure(const AnalogButton& analogButton, double value)
+{
+    // value is in [-1, 1]; pressure is in [0, 1].
+    double pressure = 0;
+    switch (analogButton.range) {
+    case AxisRange::Full:
+        pressure = (value + 1) / 2;
+        break;
+    case AxisRange::Positive:
+        pressure = std::max(value, 0.);
+        break;
+    case AxisRange::Negative:
+        pressure = std::max(-value, 0.);
+        break;
+    }
+    return clampTo(analogButton.inverted ? 1 - pressure : pressure, 0., 1.);
+}
+
 static void wpeGamepadManetteStartInputMonitor(WPEGamepad* gamepad)
 {
     auto* priv = WPE_GAMEPAD_MANETTE(gamepad)->priv;
 
+    wpeGamepadManetteParseAnalogButtons(WPE_GAMEPAD_MANETTE(gamepad));
+
+    g_signal_connect_object(priv->device.get(), "event", G_CALLBACK(+[](WPEGamepad* gamepad, ManetteEvent* event) {
+        auto analogButtons = wpeGamepadManetteAnalogButtons(WPE_GAMEPAD_MANETTE(gamepad), event);
+        if (analogButtons.isEmpty())
+            return; // not an analog button (e.g. a stick axis)
+
+        uint16_t axis;
+        double value;
+        if (!manette_event_get_absolute(event, &axis, &value))
+            return;
+
+        // The same axis can be split between two buttons, e.g. "lefttrigger:+a3,righttrigger:-a3".
+        for (auto& analogButton : analogButtons)
+            wpe_gamepad_analog_button_event(gamepad, analogButton.button, wpeGamepadManetteAnalogButtonPressure(analogButton, value));
+    }), gamepad, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->device.get(), "button-press-event", G_CALLBACK(+[](WPEGamepad* gamepad, ManetteEvent* event) {
+        if (!wpeGamepadManetteAnalogButtons(WPE_GAMEPAD_MANETTE(gamepad), event).isEmpty())
+            return; // handled from the raw "event" with the analog value
+
         uint16_t button;
         if (!manette_event_get_button(event, &button))
             return;
         wpe_gamepad_button_event(gamepad, wpeGamepadButton(button), TRUE);
     }), gamepad, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->device.get(), "button-release-event", G_CALLBACK(+[](WPEGamepad* gamepad, ManetteEvent* event) {
+        if (!wpeGamepadManetteAnalogButtons(WPE_GAMEPAD_MANETTE(gamepad), event).isEmpty())
+            return; // handled from the raw "event" with the analog value
+
         uint16_t button;
         if (!manette_event_get_button(event, &button))
             return;
