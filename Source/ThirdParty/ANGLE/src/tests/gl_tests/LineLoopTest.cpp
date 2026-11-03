@@ -377,6 +377,73 @@ TEST_P(LineLoopTest, LineLoopUIntIndexBufferNoBlend)
     runTestNoBlend(GL_UNSIGNED_INT, buf, reinterpret_cast<const void *>(sizeof(GLuint)));
 }
 
+// Line loop test with unsigned short indices in an index buffer, with odd and even counts at
+// offsets that are and are not multiples of 4. Draws each line loop and the same lines as a line
+// strip, and checks that the pixels are the same. Also checks that a clear after the line loop is
+// not lost.
+TEST_P(LineLoopTest, LineLoopUShortIndexBufferOffsetsAndCounts)
+{
+    static const GLfloat positions[] = {-0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f};
+
+    glDisable(GL_BLEND);
+    glUseProgram(mProgram);
+    glEnableVertexAttribArray(mPositionLocation);
+    glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, positions);
+    glUniform4f(mColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+
+    struct Case
+    {
+        GLsizei count;
+        size_t offset;
+    };
+    for (const Case &testCase : {Case{3, 2}, Case{3, 4}, Case{4, 0}, Case{4, 4}})
+    {
+        SCOPED_TRACE(testCase.count);
+        SCOPED_TRACE(testCase.offset);
+
+        // The loop 1, 2, 3 or 0, 1, 2, 3 at the offset, after indices of vertices that do not
+        // exist.
+        std::vector<GLushort> indices(testCase.offset / sizeof(GLushort), 9);
+        std::vector<GLushort> stripIndices;
+        for (GLsizei index = 0; index < testCase.count; ++index)
+        {
+            indices.push_back(static_cast<GLushort>(4 - testCase.count + index));
+            stripIndices.push_back(indices.back());
+        }
+        stripIndices.push_back(stripIndices.front());
+        indices.push_back(9);
+        indices.push_back(9);
+
+        std::vector<GLColor> expectedPixels(getWindowWidth() * getWindowHeight());
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawElements(GL_LINE_STRIP, static_cast<GLsizei>(stripIndices.size()), GL_UNSIGNED_SHORT,
+                       stripIndices.data());
+        glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                     expectedPixels.data());
+        ASSERT_GL_NO_ERROR();
+
+        GLBuffer indexBuffer;
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLushort), indices.data(),
+                     GL_STATIC_DRAW);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawElements(GL_LINE_LOOP, testCase.count, GL_UNSIGNED_SHORT,
+                       reinterpret_cast<const void *>(testCase.offset));
+        std::vector<GLColor> renderedPixels(getWindowWidth() * getWindowHeight());
+        glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                     renderedPixels.data());
+        ASSERT_GL_NO_ERROR();
+        EXPECT_EQ(expectedPixels, renderedPixels);
+
+        glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    }
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
 // Test that drawing elements between line loop arrays using the same array buffer does not result
 // in incorrect rendering.
 TEST_P(LineLoopTest, DrawTriangleElementsBetweenArrays)
@@ -459,6 +526,68 @@ TEST_P(LineLoopTest, SimpleDrawArrays)
                 << "Expected pixel at " << x << ", " << y << " to be " << expectedPixels[idx]
                 << std::endl;
         }
+    }
+}
+
+// Tests a line loop with many client memory indices and the vertices in a buffer, so that only the
+// indices are streamed. Confirms the draw is the same as the equivalent line strip.
+TEST_P(LineLoopTest, ManyClientMemoryIndicesWithVertexBuffer)
+{
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
+    ignoreD3D11SDKLayersWarnings();
+
+    static const GLfloat positions[] = {-0.5f, -0.5f, -0.5f, 0.5f,  0.5f,
+                                        0.5f,  0.5f,  -0.5f, -0.5f, -0.5f};
+
+    // The indices go around the square many times, so the line loop draws the same square as the
+    // line strip.
+    constexpr size_t kIndexCount = 65536;
+    std::vector<GLubyte> ubyteIndices(kIndexCount);
+    std::vector<GLushort> ushortIndices(kIndexCount);
+    std::vector<GLuint> uintIndices(kIndexCount);
+    for (size_t i = 0; i < kIndexCount; ++i)
+    {
+        ubyteIndices[i]  = static_cast<GLubyte>(i % 4);
+        ushortIndices[i] = static_cast<GLushort>(i % 4);
+        uintIndices[i]   = static_cast<GLuint>(i % 4);
+    }
+
+    std::vector<GLColor> expectedPixels(getWindowWidth() * getWindowHeight());
+    std::vector<GLColor> renderedPixels(getWindowWidth() * getWindowHeight());
+
+    GLBuffer arrayBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+    glDisable(GL_BLEND);
+    glUseProgram(mProgram);
+    glEnableVertexAttribArray(mPositionLocation);
+    glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glUniform4f(mColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_LINE_STRIP, 0, 5);
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                 expectedPixels.data());
+    ASSERT_GL_NO_ERROR();
+    ASSERT_NE(0, std::count(expectedPixels.begin(), expectedPixels.end(), GLColor::blue));
+
+    std::vector<std::pair<GLenum, const void *>> draws = {
+        {GL_UNSIGNED_BYTE, ubyteIndices.data()}, {GL_UNSIGNED_SHORT, ushortIndices.data()}};
+    if (getClientMajorVersion() >= 3 || IsGLExtensionEnabled("GL_OES_element_index_uint"))
+    {
+        draws.push_back({GL_UNSIGNED_INT, uintIndices.data()});
+    }
+
+    for (const auto &[indexType, indices] : draws)
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawElements(GL_LINE_LOOP, kIndexCount, indexType, indices);
+        glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                     renderedPixels.data());
+        ASSERT_GL_NO_ERROR();
+
+        EXPECT_TRUE(expectedPixels == renderedPixels) << "index type " << indexType;
     }
 }
 
@@ -1181,6 +1310,116 @@ void main()
     }
 }
 
+// Tests that a line loop with primitive restart and GL_UNSIGNED_BYTE indices draws the same as the
+// equivalent line strips.
+TEST_P(LineLoopPrimitiveRestartTest, LineLoopWithPrimitiveRestartUByteIndices)
+{
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    glUseProgram(program);
+    GLint positionLocation = glGetAttribLocation(program, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, positionLocation);
+
+    // clang-format off
+    constexpr auto loopVertices = std::to_array<GLfloat>({
+        // first loop
+        -0.8f, -0.8f, -0.2f, -0.8f, -0.2f, -0.2f, -0.8f, -0.2f,
+        // second loop
+        0.2f, 0.2f, 0.8f, 0.2f, 0.8f, 0.8f, 0.2f, 0.8f,
+    });
+
+    constexpr auto stripVertices = std::to_array<GLfloat>({
+        // first strip
+        -0.8f, -0.8f, -0.2f, -0.8f, -0.2f, -0.2f, -0.8f, -0.2f, -0.8f, -0.8f,
+        // second strip
+        0.2f, 0.2f, 0.8f, 0.2f, 0.8f, 0.8f, 0.2f, 0.8f, 0.2f, 0.2f,
+    });
+
+    constexpr auto lineLoopWithRestartIndices = std::to_array<GLubyte>({
+        // first loop
+        0, 1, 2, 3, 0xff,
+        // second loop
+        4, 5, 6, 7,
+    });
+    // clang-format on
+
+    std::vector<GLColor> expectedPixels(getWindowWidth() * getWindowHeight());
+    std::vector<GLColor> renderedPixels(getWindowWidth() * getWindowHeight());
+
+    GLBuffer stripVertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, stripVertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(stripVertices), stripVertices.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_LINE_STRIP, 0, 5);
+    glDrawArrays(GL_LINE_STRIP, 5, 5);
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                 expectedPixels.data());
+    ASSERT_GL_NO_ERROR();
+    ASSERT_NE(0, std::count(expectedPixels.begin(), expectedPixels.end(), GLColor::red));
+
+    GLBuffer loopVertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, loopVertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(loopVertices), loopVertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(lineLoopWithRestartIndices),
+                 lineLoopWithRestartIndices.data(), GL_STATIC_DRAW);
+
+    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawElements(GL_LINE_LOOP, lineLoopWithRestartIndices.size(), GL_UNSIGNED_BYTE, nullptr);
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                 renderedPixels.data());
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_TRUE(expectedPixels == renderedPixels);
+}
+
+// Tests that glDrawArrays with a line loop draws the same as the equivalent line strip when primitive
+// restart is enabled, which applies only to glDrawElements.
+TEST_P(LineLoopPrimitiveRestartTest, LineLoopDrawArraysWithPrimitiveRestartEnabled)
+{
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    glUseProgram(program);
+    GLint positionLocation = glGetAttribLocation(program, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, positionLocation);
+
+    // clang-format off
+    constexpr auto stripVertices = std::to_array<GLfloat>({
+        -0.8f, -0.8f, 0.8f, -0.8f, 0.8f, 0.8f, -0.8f, 0.8f, -0.8f, -0.8f,
+    });
+    // clang-format on
+
+    std::vector<GLColor> expectedPixels(getWindowWidth() * getWindowHeight());
+    std::vector<GLColor> renderedPixels(getWindowWidth() * getWindowHeight());
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(stripVertices), stripVertices.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_LINE_STRIP, 0, 5);
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                 expectedPixels.data());
+    ASSERT_GL_NO_ERROR();
+    ASSERT_NE(0, std::count(expectedPixels.begin(), expectedPixels.end(), GLColor::red));
+
+    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_LINE_LOOP, 0, 4);
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                 renderedPixels.data());
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_TRUE(expectedPixels == renderedPixels);
+}
+
 // Tests that drawing an element buffer with primitive restart indices only
 // does not crash.
 TEST_P(LineLoopPrimitiveRestartTest, PrimitiveRestartRestartOnlyIndicesNoCrash)
@@ -1198,6 +1437,144 @@ TEST_P(LineLoopPrimitiveRestartTest, PrimitiveRestartRestartOnlyIndicesNoCrash)
     glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
     glDrawElements(GL_LINE_LOOP, 0x800, GL_UNSIGNED_SHORT, 0);
     ASSERT_GL_NO_ERROR();
+}
+
+// Tests that a line loop with primitive restart and the vertices in client memory draws the same
+// as the equivalent line strips, with the indices both in a buffer and in client memory.
+TEST_P(LineLoopPrimitiveRestartTest, LineLoopWithPrimitiveRestartClientMemoryVertices)
+{
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    glUseProgram(program);
+    GLint positionLocation = glGetAttribLocation(program, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, positionLocation);
+
+    // clang-format off
+    constexpr auto loopVertices = std::to_array<GLfloat>({
+        // first loop
+        -0.8f, -0.8f, -0.2f, -0.8f, -0.2f, -0.2f, -0.8f, -0.2f,
+        // second loop
+        0.2f, 0.2f, 0.8f, 0.2f, 0.8f, 0.8f, 0.2f, 0.8f,
+    });
+
+    constexpr auto stripVertices = std::to_array<GLfloat>({
+        // first strip
+        -0.8f, -0.8f, -0.2f, -0.8f, -0.2f, -0.2f, -0.8f, -0.2f, -0.8f, -0.8f,
+        // second strip
+        0.2f, 0.2f, 0.8f, 0.2f, 0.8f, 0.8f, 0.2f, 0.8f, 0.2f, 0.2f,
+    });
+
+    constexpr auto lineLoopWithRestartIndices = std::to_array<GLuint>({
+        // first loop
+        0, 1, 2, 3, 0xffffffff,
+        // second loop
+        4, 5, 6, 7,
+    });
+    // clang-format on
+
+    std::vector<GLColor> expectedPixels(getWindowWidth() * getWindowHeight());
+    std::vector<GLColor> renderedPixels(getWindowWidth() * getWindowHeight());
+
+    GLBuffer stripVertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, stripVertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(stripVertices), stripVertices.data(), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_LINE_STRIP, 0, 5);
+    glDrawArrays(GL_LINE_STRIP, 5, 5);
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                 expectedPixels.data());
+    ASSERT_GL_NO_ERROR();
+    ASSERT_NE(0, std::count(expectedPixels.begin(), expectedPixels.end(), GLColor::red));
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, loopVertices.data());
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(lineLoopWithRestartIndices),
+                 lineLoopWithRestartIndices.data(), GL_STATIC_DRAW);
+
+    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawElements(GL_LINE_LOOP, lineLoopWithRestartIndices.size(), GL_UNSIGNED_INT, nullptr);
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                 renderedPixels.data());
+    ASSERT_GL_NO_ERROR();
+    EXPECT_TRUE(expectedPixels == renderedPixels) << "indices in a buffer";
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawElements(GL_LINE_LOOP, lineLoopWithRestartIndices.size(), GL_UNSIGNED_INT,
+                   lineLoopWithRestartIndices.data());
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE,
+                 renderedPixels.data());
+    ASSERT_GL_NO_ERROR();
+    EXPECT_TRUE(expectedPixels == renderedPixels) << "indices in client memory";
+}
+
+// Tests that a line loop of only primitive restart indices draws nothing, and that the draws after
+// it draw, with each index type and with the indices in a buffer and in client memory.
+TEST_P(LineLoopPrimitiveRestartTest, RestartOnlyIndicesThenDraw)
+{
+    ANGLE_GL_PROGRAM(redProgram, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    ANGLE_GL_PROGRAM(greenProgram, essl3_shaders::vs::Simple(), essl3_shaders::fs::Green());
+    const GLint positionLocation = glGetAttribLocation(redProgram, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, positionLocation);
+
+    constexpr auto vertices = std::to_array<GLfloat>({-1, -1, 1, -1, 1, 1, -1, 1});
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
+
+    constexpr std::array<GLubyte, 4> kUnsignedByteIndices   = {0xFF, 0xFF, 0xFF, 0xFF};
+    constexpr std::array<GLushort, 4> kUnsignedShortIndices = {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
+    constexpr std::array<GLuint, 4> kUnsignedIntIndices     = {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+                                                               0xFFFFFFFF};
+    const std::array<std::pair<GLenum, const void *>, 3> kIndices = {{
+        {GL_UNSIGNED_BYTE, kUnsignedByteIndices.data()},
+        {GL_UNSIGNED_SHORT, kUnsignedShortIndices.data()},
+        {GL_UNSIGNED_INT, kUnsignedIntIndices.data()},
+    }};
+
+    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+    GLBuffer indexBuffer;
+    for (const auto &[type, indices] : kIndices)
+    {
+        for (bool clientMemory : {false, true})
+        {
+            SCOPED_TRACE(testing::Message()
+                         << "type: " << type << ", indices in client memory: " << clientMemory);
+            glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            glUseProgram(redProgram);
+            glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+            glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+            glEnableVertexAttribArray(positionLocation);
+            const size_t indicesSize = 4 * (type == GL_UNSIGNED_BYTE    ? sizeof(GLubyte)
+                                            : type == GL_UNSIGNED_SHORT ? sizeof(GLushort)
+                                                                        : sizeof(GLuint));
+            if (clientMemory)
+            {
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+                glDrawElements(GL_LINE_LOOP, 4, type, indices);
+            }
+            else
+            {
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
+                glDrawElements(GL_LINE_LOOP, 4, type, nullptr);
+            }
+            ASSERT_GL_NO_ERROR();
+            EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::blue);
+
+            drawQuad(greenProgram, essl3_shaders::PositionAttrib(), 0.5f);
+            ASSERT_GL_NO_ERROR();
+            EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+        }
+    }
 }
 
 class LineLoopPrimitiveRestartXfbTest : public ANGLETest<>

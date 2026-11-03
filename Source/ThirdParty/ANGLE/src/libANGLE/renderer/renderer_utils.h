@@ -475,6 +475,40 @@ void StreamEmulatedLineLoopIndices(gl::DrawElementsType glIndexType,
                                    uint8_t *outPtr,
                                    bool shouldConvertUint8);
 
+// Triangle fans are emulated with triangle lists: the fan v0, v1, ..., vn becomes the triangles
+// (v2, v0, v1), (v3, v0, v2), ..., (vn, v0, vn-1). Each triangle keeps the winding of the fan's
+// triangle (v0, vk-1, vk), and starts with vk, which is the provoking vertex of the triangle in GL,
+// as the flat shading of the APIs that emulate triangle fans uses the first vertex.
+//
+// The count can be larger than 32-bit indices can index, so it is 64-bit.
+inline uint64_t GetTriangleFanIndexCount(GLsizei indexCount)
+{
+    return indexCount > 2 ? 3 * static_cast<uint64_t>(indexCount - 2) : 0;
+}
+
+// Writes the triangle list indices for a triangle fan to outPtr, GetTriangleFanIndexCount()
+// indices. Returns the number of indices written.
+template <typename In, typename Out>
+size_t CopyTriangleFanIndices(GLsizei indexCount, const uint8_t *srcPtr, uint8_t *outPtr)
+{
+    const In *inIndices = reinterpret_cast<const In *>(srcPtr);
+    Out *outIndices     = reinterpret_cast<Out *>(outPtr);
+    for (GLsizei curIndex = 2; curIndex < indexCount; curIndex++)
+    {
+        ANGLE_UNSAFE_TODO(*(outIndices++) = static_cast<Out>(inIndices[curIndex]));
+        ANGLE_UNSAFE_TODO(*(outIndices++) = static_cast<Out>(inIndices[0]));
+        ANGLE_UNSAFE_TODO(*(outIndices++) = static_cast<Out>(inIndices[curIndex - 1]));
+    }
+    return static_cast<size_t>(outIndices - reinterpret_cast<Out *>(outPtr));
+}
+
+// Writes the triangle list indices for a triangle fan of indexCount indices of glIndexType to
+// outPtr. 8-bit indices are converted to 16-bit indices. Returns the number of indices written.
+size_t StreamEmulatedTriangleFanIndices(gl::DrawElementsType glIndexType,
+                                        GLsizei indexCount,
+                                        const uint8_t *srcPtr,
+                                        uint8_t *outPtr);
+
 void GetSamplePosition(GLsizei sampleCount, size_t index, GLfloat *xy);
 
 angle::Result MultiDrawArraysGeneral(ContextImpl *contextImpl,
