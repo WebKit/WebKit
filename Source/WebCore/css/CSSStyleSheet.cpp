@@ -75,6 +75,16 @@ private:
 
     CSSStyleSheet* LEGACY_NODELETE styleSheet() const final { return m_styleSheet.get(); }
 
+    // CSSStyleSheet::item() lazily creates the child wrappers, so it must not be reached from the
+    // GC marker threads; the sheet is the list's opaque root anyway.
+    WebCoreOpaqueRoot opaqueRootForGCThread() const final
+    {
+        SUPPRESS_UNCOUNTED_LOCAL CSSStyleSheet* styleSheet = m_styleSheet.get();
+        if (!styleSheet)
+            return WebCoreOpaqueRoot { nullptr };
+        return styleSheet->opaqueRootForGCThread();
+    }
+
     SingleThreadWeakPtr<CSSStyleSheet> m_styleSheet;
 };
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleSheetCSSRuleList);
@@ -342,6 +352,8 @@ unsigned CSSStyleSheet::length() const
 
 CSSRule* CSSStyleSheet::item(unsigned index)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
+
     unsigned ruleCount = length();
     if (index >= ruleCount)
         return nullptr;
