@@ -36,7 +36,7 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
-#include "HTMLVideoElement.h"
+#include "HTMLMediaElement.h"
 #endif
 
 #if ENABLE(MODEL_ELEMENT)
@@ -72,7 +72,7 @@ private:
             else if (RefPtr element = dynamicDowncast<HTMLIFrameElement>(entry->target()))
                 element->lazyLoadIntersectionCallbackInvoked(entry->isIntersecting());
 #if ENABLE(VIDEO)
-            else if (RefPtr element = dynamicDowncast<HTMLVideoElement>(entry->target()))
+            else if (RefPtr element = dynamicDowncast<HTMLMediaElement>(entry->target()))
                 element->lazyLoadIntersectionCallbackInvoked(entry->isIntersecting());
 #endif
 #if ENABLE(MODEL_ELEMENT)
@@ -104,8 +104,22 @@ void LazyLoadElementObserver::observe(Element& element)
 
 void LazyLoadElementObserver::unobserve(Element& element, Document& document)
 {
-    if (auto& observer = document.lazyLoadElementObserver().m_observer)
+    CheckedPtr lazyLoadObserver = document.lazyLoadElementObserverIfExists();
+    if (!lazyLoadObserver)
+        return;
+    if (RefPtr observer = lazyLoadObserver->m_observer)
         observer->unobserve(element);
+}
+
+void LazyLoadElementObserver::unobserveIfLazyLoadOnly(Element& element, Document& document)
+{
+#if ENABLE(VIDEO)
+    // A <video> stays observed for its whole lifetime to drive accelerated rendering teardown
+    // (311380@main), so a finished poster load must not detach it.
+    if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(element); mediaElement && mediaElement->tracksViewportIntersection())
+        return;
+#endif
+    unobserve(element, document);
 }
 
 IntersectionObserver* LazyLoadElementObserver::intersectionObserver(Document& document)
@@ -120,11 +134,6 @@ IntersectionObserver* LazyLoadElementObserver::intersectionObserver(Document& do
         lazyInitialize(m_observer, observer.releaseReturnValue());
     }
     return m_observer.get();
-}
-
-bool LazyLoadElementObserver::isObserved(Element& element) const
-{
-    return m_observer && m_observer->isObserving(protect(element));
 }
 
 }
