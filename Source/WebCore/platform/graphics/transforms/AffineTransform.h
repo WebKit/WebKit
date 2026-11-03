@@ -70,7 +70,7 @@ public:
     constexpr AffineTransform(std::span<const double, 6>);
 
 #if USE(CG)
-    WEBCORE_EXPORT AffineTransform(const CGAffineTransform&);
+    NODELETE WEBCORE_EXPORT AffineTransform(const CGAffineTransform&);
 #endif
 
 #if USE(SKIA)

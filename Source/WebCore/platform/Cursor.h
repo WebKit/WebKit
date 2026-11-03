@@ -150,7 +150,7 @@ public:
     WEBCORE_EXPORT Cursor(RefPtr<NativeImage>&&, const IntPoint& hotSpot, float imageScaleFactor);
 #endif
 
-    explicit Cursor(Type);
+    NODELETE explicit Cursor(Type);
 
     WEBCORE_EXPORT IPCData ipcData() const;
 

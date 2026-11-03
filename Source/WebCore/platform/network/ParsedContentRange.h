@@ -36,7 +36,7 @@ public:
     static constexpr int64_t unknownLength = std::numeric_limits<int64_t>::max();
 
     WEBCORE_EXPORT explicit ParsedContentRange(const String&);
-    WEBCORE_EXPORT ParsedContentRange(int64_t firstBytePosition, int64_t lastBytePosition, int64_t instanceLength);
+    NODELETE WEBCORE_EXPORT ParsedContentRange(int64_t firstBytePosition, int64_t lastBytePosition, int64_t instanceLength);
     ParsedContentRange() = default;
 
     bool isValid() const { return m_instanceLength != invalidLength; }

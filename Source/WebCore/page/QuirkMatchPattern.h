@@ -93,7 +93,7 @@ public:
     friend bool operator==(const QuirkMatchPattern& a, const QuirkMatchPattern& b) { return a.m_string == b.m_string; }
 
 private:
-    QuirkMatchPattern(String&&, UserContentURLPattern&&, bool matchesAnyPublicSuffix);
+    NODELETE QuirkMatchPattern(String&&, UserContentURLPattern&&, bool matchesAnyPublicSuffix);
 
     String m_string;
 

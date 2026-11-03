@@ -43,9 +43,9 @@ class ImageFrame {
 public:
     enum class Caching { Metadata, MetadataAndImage };
 
-    ImageFrame();
+    NODELETE ImageFrame();
     ImageFrame(Ref<NativeImage>&&);
-    ImageFrame(const ImageFrame&);
+    NODELETE ImageFrame(const ImageFrame&);
 
     ~ImageFrame();
 

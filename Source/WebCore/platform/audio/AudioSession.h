@@ -163,7 +163,7 @@ public:
 
 protected:
     friend class NeverDestroyed<AudioSession>;
-    AudioSession();
+    NODELETE AudioSession();
 
     virtual Ref<SetActivePromise> tryToSetActiveInternal(bool);
     NODELETE void setActive(bool);

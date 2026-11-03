@@ -36,9 +36,9 @@ namespace WebCore {
 
 class ContentType {
 public:
-    WEBCORE_EXPORT explicit ContentType(String&& type);
-    WEBCORE_EXPORT explicit ContentType(const String& type);
-    WEBCORE_EXPORT ContentType(const String& type, bool); // Use by the IPC serializer.
+    NODELETE WEBCORE_EXPORT explicit ContentType(String&& type);
+    NODELETE WEBCORE_EXPORT explicit ContentType(const String& type);
+    NODELETE WEBCORE_EXPORT ContentType(const String& type, bool); // Use by the IPC serializer.
     ContentType() = default;
 
     WEBCORE_EXPORT static ContentType fromURL(const WTF::URL&);

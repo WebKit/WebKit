@@ -40,7 +40,7 @@ public:
         SegmentAtLength,
     };
 
-    PathTraversalState(Action, float desiredLength = 0);
+    NODELETE PathTraversalState(Action, float desiredLength = 0);
 
 public:
     bool processPathElement(PathElement::Type, std::span<const FloatPoint>);

@@ -52,7 +52,7 @@ class AudioDSPKernelProcessor : public AudioProcessor, public CanMakeThreadSafeC
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioDSPKernelProcessor);
 public:
     // numberOfChannels may be later changed if object is not yet in an "initialized" state
-    AudioDSPKernelProcessor(float sampleRate, unsigned numberOfChannels);
+    NODELETE AudioDSPKernelProcessor(float sampleRate, unsigned numberOfChannels);
     virtual ~AudioDSPKernelProcessor();
 
     // Subclasses create the appropriate type of processing kernel here.

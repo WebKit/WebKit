@@ -36,13 +36,13 @@ NODELETE WEBCORE_EXPORT bool operator==(const AudioStreamBasicDescription&, cons
 class WEBCORE_EXPORT CAAudioStreamDescription final : public AudioStreamDescription {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(CAAudioStreamDescription, WEBCORE_EXPORT);
 public:
-    CAAudioStreamDescription(const AudioStreamBasicDescription&);
+    NODELETE CAAudioStreamDescription(const AudioStreamBasicDescription&);
     enum class IsInterleaved : bool {
         No,
         Yes
     };
-    CAAudioStreamDescription(double sampleRate, uint32_t channels, PCMFormat, IsInterleaved);
-    ~CAAudioStreamDescription();
+    NODELETE CAAudioStreamDescription(double sampleRate, uint32_t channels, PCMFormat, IsInterleaved);
+    NODELETE ~CAAudioStreamDescription();
 
     const PlatformDescription& platformDescription() const LIFETIME_BOUND final;
 

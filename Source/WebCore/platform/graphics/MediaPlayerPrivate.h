@@ -54,7 +54,7 @@ enum class MediaPlaybackTargetType : uint8_t;
 // virtual ref()/deref() methods. See NullMediaPlayerPrivate for an example.
 class MediaPlayerPrivateInterface : public AbstractRefCounted {
 public:
-    WEBCORE_EXPORT MediaPlayerPrivateInterface();
+    NODELETE WEBCORE_EXPORT MediaPlayerPrivateInterface();
     WEBCORE_EXPORT virtual ~MediaPlayerPrivateInterface();
 
     virtual constexpr MediaPlayerType mediaPlayerType() const = 0;

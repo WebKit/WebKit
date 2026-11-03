@@ -86,7 +86,7 @@ public:
 #else
     explicit SharedMemoryHandle(const SharedMemoryHandle&) = default;
 #endif
-    WEBCORE_EXPORT SharedMemoryHandle(SharedMemoryHandle::Type&&, uint64_t);
+    NODELETE WEBCORE_EXPORT SharedMemoryHandle(SharedMemoryHandle::Type&&, uint64_t);
 
     SharedMemoryHandle& operator=(SharedMemoryHandle&&) = default;
 

@@ -58,7 +58,7 @@ class CDMFactoryClearKey final : public CDMFactory {
 public:
     NODELETE static CDMFactoryClearKey& singleton();
 
-    virtual ~CDMFactoryClearKey();
+    NODELETE virtual ~CDMFactoryClearKey();
 
     // Do nothing since this is a singleton object.
     void ref() const final { }

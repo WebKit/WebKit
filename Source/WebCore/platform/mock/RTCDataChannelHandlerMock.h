@@ -36,7 +36,7 @@ namespace WebCore {
 class RTCDataChannelHandlerMock final : public RTCDataChannelHandler, public TimerEventBasedMock {
     WTF_MAKE_TZONE_ALLOCATED(RTCDataChannelHandlerMock);
 public:
-    RTCDataChannelHandlerMock(const String&, const RTCDataChannelInit&);
+    NODELETE RTCDataChannelHandlerMock(const String&, const RTCDataChannelInit&);
 
 private:
     void setClient(RTCDataChannelHandlerClient&, std::optional<ScriptExecutionContextIdentifier>) final;

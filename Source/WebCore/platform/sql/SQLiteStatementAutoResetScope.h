@@ -36,9 +36,9 @@ class SQLiteStatementAutoResetScope {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteStatementAutoResetScope, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(SQLiteStatementAutoResetScope);
 public:
-    WEBCORE_EXPORT SQLiteStatementAutoResetScope();
-    WEBCORE_EXPORT explicit SQLiteStatementAutoResetScope(CheckedPtr<SQLiteStatement>&&);
-    WEBCORE_EXPORT SQLiteStatementAutoResetScope(SQLiteStatementAutoResetScope&&);
+    NODELETE WEBCORE_EXPORT SQLiteStatementAutoResetScope();
+    NODELETE WEBCORE_EXPORT explicit SQLiteStatementAutoResetScope(CheckedPtr<SQLiteStatement>&&);
+    NODELETE WEBCORE_EXPORT SQLiteStatementAutoResetScope(SQLiteStatementAutoResetScope&&);
     NODELETE WEBCORE_EXPORT SQLiteStatementAutoResetScope& operator=(SQLiteStatementAutoResetScope&&);
     WEBCORE_EXPORT ~SQLiteStatementAutoResetScope();
 

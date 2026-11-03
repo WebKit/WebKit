@@ -193,7 +193,7 @@ class ContextMenuItem {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ContextMenuItem, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, ContextMenu* subMenu = nullptr);
-    WEBCORE_EXPORT ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, bool enabled, bool checked, unsigned indentationLevel = 0);
+    NODELETE WEBCORE_EXPORT ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, bool enabled, bool checked, unsigned indentationLevel = 0);
 
     WEBCORE_EXPORT ~ContextMenuItem();
 
@@ -215,7 +215,7 @@ public:
     void setSubMenu(ContextMenu*);
 
     WEBCORE_EXPORT ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems, unsigned indentationLevel = 0);
-    ContextMenuItem();
+    NODELETE ContextMenuItem();
 
     NODELETE bool isNull() const;
 

@@ -58,7 +58,7 @@ public:
         : m_location(location), m_size(size) { }
     LayoutRect(const IntRect& rect) : m_location(rect.location()), m_size(rect.size()) { }
     
-    WEBCORE_EXPORT explicit LayoutRect(const FloatRect&); // don't do this implicitly since it's lossy
+    NODELETE WEBCORE_EXPORT explicit LayoutRect(const FloatRect&); // don't do this implicitly since it's lossy
 
     LayoutPoint location() const { return m_location; }
     LayoutSize size() const { return m_size; }

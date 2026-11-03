@@ -39,8 +39,8 @@ class ScrollAnimationKeyboard final: public ScrollAnimation {
     WTF_MAKE_TZONE_ALLOCATED(ScrollAnimationKeyboard);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollAnimationKeyboard);
 public:
-    ScrollAnimationKeyboard(ScrollAnimationClient&);
-    virtual ~ScrollAnimationKeyboard();
+    NODELETE ScrollAnimationKeyboard(ScrollAnimationClient&);
+    NODELETE virtual ~ScrollAnimationKeyboard();
 
     bool startKeyboardScroll(const KeyboardScroll&);
 

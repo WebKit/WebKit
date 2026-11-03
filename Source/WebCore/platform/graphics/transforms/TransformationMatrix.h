@@ -129,7 +129,7 @@ public:
     {
     }
 
-    WEBCORE_EXPORT TransformationMatrix(const AffineTransform&);
+    NODELETE WEBCORE_EXPORT TransformationMatrix(const AffineTransform&);
 
     NODELETE WEBCORE_EXPORT static TransformationMatrix fromQuaternion(const Quaternion&);
 
@@ -402,15 +402,15 @@ public:
     }
 
 #if USE(CA)
-    WEBCORE_EXPORT TransformationMatrix(const CATransform3D&);
+    NODELETE WEBCORE_EXPORT TransformationMatrix(const CATransform3D&);
     NODELETE WEBCORE_EXPORT operator CATransform3D() const;
 #endif
 #if USE(CG)
-    WEBCORE_EXPORT TransformationMatrix(const CGAffineTransform&);
+    NODELETE WEBCORE_EXPORT TransformationMatrix(const CGAffineTransform&);
     NODELETE WEBCORE_EXPORT operator CGAffineTransform() const;
 #endif
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT TransformationMatrix(const simd_float4x4&);
+    NODELETE WEBCORE_EXPORT TransformationMatrix(const simd_float4x4&);
     NODELETE WEBCORE_EXPORT operator simd_float4x4() const;
 
     WEBCORE_EXPORT static TransformationMatrix makeLookAt(simd_float3, simd_float3);

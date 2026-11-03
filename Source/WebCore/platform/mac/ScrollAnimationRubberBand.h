@@ -35,8 +35,8 @@ class ScrollAnimationRubberBand final: public ScrollAnimation {
     WTF_MAKE_TZONE_ALLOCATED(ScrollAnimationRubberBand);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollAnimationRubberBand);
 public:
-    ScrollAnimationRubberBand(ScrollAnimationClient&);
-    virtual ~ScrollAnimationRubberBand();
+    NODELETE ScrollAnimationRubberBand(ScrollAnimationClient&);
+    NODELETE virtual ~ScrollAnimationRubberBand();
 
     // targetOffset is the scroll offset when the animation has finished (i.e. scrolled to an edge).
     // The optional targetOverscroll parameter specifies where the animation should snap to,

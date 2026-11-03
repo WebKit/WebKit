@@ -75,8 +75,8 @@ public:
     IntRect(int x, int y, int width, int height)
         : m_location(IntPoint(x, y)), m_size(IntSize(width, height)) { }
 
-    WEBCORE_EXPORT explicit IntRect(const FloatRect&); // don't do this implicitly since it's lossy
-    WEBCORE_EXPORT explicit IntRect(const LayoutRect&); // don't do this implicitly since it's lossy
+    NODELETE WEBCORE_EXPORT explicit IntRect(const FloatRect&); // don't do this implicitly since it's lossy
+    NODELETE WEBCORE_EXPORT explicit IntRect(const LayoutRect&); // don't do this implicitly since it's lossy
         
     IntPoint location() const { return m_location; }
     IntSize size() const { return m_size; }

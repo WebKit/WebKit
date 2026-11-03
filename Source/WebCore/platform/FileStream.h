@@ -40,7 +40,7 @@ namespace WebCore {
 class FileStream {
     WTF_MAKE_TZONE_ALLOCATED(FileStream);
 public:
-    FileStream();
+    NODELETE FileStream();
     ~FileStream();
 
     // Gets the size of a file. Also validates if the file has been changed or not if the expected modification time is provided, i.e. non-zero.

@@ -45,7 +45,7 @@ public:
 class WEBCORE_EXPORT NowPlayingManager : public RemoteCommandListenerClient {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(NowPlayingManager, WEBCORE_EXPORT);
 public:
-    NowPlayingManager();
+    NODELETE NowPlayingManager();
     ~NowPlayingManager();
 
     void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final;

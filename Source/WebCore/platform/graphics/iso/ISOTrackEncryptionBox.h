@@ -33,7 +33,7 @@ namespace WebCore {
 class WEBCORE_EXPORT ISOTrackEncryptionBox final : public ISOFullBox {
 public:
     ISOTrackEncryptionBox();
-    ~ISOTrackEncryptionBox();
+    NODELETE ~ISOTrackEncryptionBox();
 
     static FourCC boxTypeName() { return std::span { "tenc" }; }
 

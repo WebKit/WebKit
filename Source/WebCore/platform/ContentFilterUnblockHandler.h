@@ -58,12 +58,12 @@ public:
     ContentFilterUnblockHandler() = default;
     WEBCORE_EXPORT ContentFilterUnblockHandler(String unblockURLHost, UnblockRequesterFunction&&);
 #if HAVE(WEBCONTENTRESTRICTIONS)
-    ContentFilterUnblockHandler(const URL& evaluatedURL);
+    NODELETE ContentFilterUnblockHandler(const URL& evaluatedURL);
 #elif HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     ContentFilterUnblockHandler(String unblockURLHost, RetainPtr<WebFilterEvaluator>);
 #endif
 
-    WEBCORE_EXPORT ContentFilterUnblockHandler(
+    NODELETE WEBCORE_EXPORT ContentFilterUnblockHandler(
         String&& unblockURLHost,
         URL&& unreachableURL,
 #if HAVE(WEBCONTENTRESTRICTIONS)

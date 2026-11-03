@@ -123,7 +123,7 @@ class InProcessCARingBuffer final : public CARingBuffer {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(InProcessCARingBuffer, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static std::unique_ptr<InProcessCARingBuffer> allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount);
-    WEBCORE_EXPORT ~InProcessCARingBuffer();
+    NODELETE WEBCORE_EXPORT ~InProcessCARingBuffer();
 
     TimeBoundsBuffer& timeBoundsBufferForTesting() LIFETIME_BOUND { return timeBoundsBuffer(); }
 

@@ -35,7 +35,7 @@ namespace WebCore {
 class FloatPlane3D {
     WTF_MAKE_TZONE_ALLOCATED(FloatPlane3D);
 public:
-    FloatPlane3D(const FloatPoint3D&, const FloatPoint3D&);
+    NODELETE FloatPlane3D(const FloatPoint3D&, const FloatPoint3D&);
 
     const FloatPoint3D& normal() const LIFETIME_BOUND { return m_normal; }
 

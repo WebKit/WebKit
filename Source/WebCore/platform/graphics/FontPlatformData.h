@@ -309,11 +309,11 @@ public:
         float m_maximumValue;
     };
 
-    FontPlatformData(WTF::HashTableDeletedValueType);
-    FontPlatformData();
+    NODELETE FontPlatformData(WTF::HashTableDeletedValueType);
+    NODELETE FontPlatformData();
 
-    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::Auto, const FontMetricsOverrides& = { }, const FontCustomPlatformData* = nullptr);
-    FontPlatformData(const FontMetadata&, const FontCustomPlatformData* = nullptr);
+    NODELETE FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::Auto, const FontMetricsOverrides& = { }, const FontCustomPlatformData* = nullptr);
+    NODELETE FontPlatformData(const FontMetadata&, const FontCustomPlatformData* = nullptr);
 
 #if USE(CORE_TEXT)
     WEBCORE_EXPORT FontPlatformData(RetainPtr<CTFontRef>&&, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::Auto, const FontMetricsOverrides& = { }, const FontCustomPlatformData* = nullptr);

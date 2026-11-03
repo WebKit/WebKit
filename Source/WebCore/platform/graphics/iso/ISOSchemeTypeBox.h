@@ -32,7 +32,7 @@ namespace WebCore {
 class ISOSchemeTypeBox final : public ISOFullBox {
 public:
     WEBCORE_EXPORT ISOSchemeTypeBox();
-    WEBCORE_EXPORT virtual ~ISOSchemeTypeBox();
+    NODELETE WEBCORE_EXPORT virtual ~ISOSchemeTypeBox();
 
     static FourCC boxTypeName() { return std::span { "schm" }; }
 

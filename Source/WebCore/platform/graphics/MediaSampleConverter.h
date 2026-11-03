@@ -38,7 +38,7 @@ class TrackInfo;
 class MediaSampleConverter final {
     WTF_MAKE_TZONE_ALLOCATED(MediaSampleConverter);
 public:
-    WEBCORE_EXPORT MediaSampleConverter();
+    NODELETE WEBCORE_EXPORT MediaSampleConverter();
     WEBCORE_EXPORT ~MediaSampleConverter();
 
     enum class SetTrackInfo : bool {

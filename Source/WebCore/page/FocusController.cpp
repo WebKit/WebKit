@@ -229,9 +229,9 @@ private:
     NODELETE Node* nextSiblingInScope(const Node&) const;
     NODELETE Node* previousSiblingInScope(const Node&) const;
 
-    explicit FocusNavigationScope(TreeScope&);
-    explicit FocusNavigationScope(HTMLSlotElement&, SlotKind);
-    explicit FocusNavigationScope(Element&);
+    NODELETE explicit FocusNavigationScope(TreeScope&);
+    NODELETE explicit FocusNavigationScope(HTMLSlotElement&, SlotKind);
+    NODELETE explicit FocusNavigationScope(Element&);
 
     const RefPtr<ContainerNode> m_treeScopeRootNode;
     const RefPtr<HTMLSlotElement> m_slotElement;

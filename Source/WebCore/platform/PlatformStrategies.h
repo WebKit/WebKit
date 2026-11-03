@@ -49,7 +49,7 @@ public:
 #endif
 
 protected:
-    WEBCORE_EXPORT PlatformStrategies();
+    NODELETE WEBCORE_EXPORT PlatformStrategies();
     WEBCORE_EXPORT virtual ~PlatformStrategies();
 
 private:

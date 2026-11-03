@@ -55,7 +55,7 @@ namespace {
 
 class BlobResourceSynchronousLoader : public ResourceHandleClient {
 public:
-    BlobResourceSynchronousLoader(ResourceError&, ResourceResponse&, Vector<uint8_t>&);
+    NODELETE BlobResourceSynchronousLoader(ResourceError&, ResourceResponse&, Vector<uint8_t>&);
 
     void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&, CompletionHandler<void()>&&) final;
     void didFail(ResourceHandle*, const ResourceError&) final;

@@ -39,7 +39,7 @@ class FETurbulenceCoreImageApplier final : public FilterEffectConcreteApplier<FE
 
 public:
     FETurbulenceCoreImageApplier(const FETurbulence&);
-    ~FETurbulenceCoreImageApplier();
+    NODELETE ~FETurbulenceCoreImageApplier();
 
     static bool supportsCoreImageRendering(const FETurbulence&);
 

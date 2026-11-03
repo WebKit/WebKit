@@ -42,7 +42,7 @@ public:
     Client& client() { return m_client; }
 
 protected:
-    SystemSleepListener(Client&);
+    NODELETE SystemSleepListener(Client&);
 
     Client& m_client;
 };

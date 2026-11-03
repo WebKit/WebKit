@@ -47,7 +47,7 @@ public:
     Vector<Color> colorsForDarkBackground() const;
 
 private:
-    OpenTypeCPAL(std::span<const uint8_t> colorRecordIndices, std::span<const uint8_t> colorRecords, size_t numberOfPalettes, size_t numberOfEntries, std::optional<size_t> firstPaletteForLightBackground, std::optional<size_t> firstPaletteForDarkBackground);
+    NODELETE OpenTypeCPAL(std::span<const uint8_t> colorRecordIndices, std::span<const uint8_t> colorRecords, size_t numberOfPalettes, size_t numberOfEntries, std::optional<size_t> firstPaletteForLightBackground, std::optional<size_t> firstPaletteForDarkBackground);
 
     std::span<const uint8_t> m_colorRecordIndices;
     std::span<const uint8_t> m_colorRecords;

@@ -61,9 +61,9 @@ public:
     NODELETE WEBCORE_EXPORT NonPlatformData nonPlatformData() const;
 
 protected:
-    WEBCORE_EXPORT CredentialBase();
-    WEBCORE_EXPORT CredentialBase(const String& user, const String& password, CredentialPersistence);
-    CredentialBase(const Credential& original, CredentialPersistence);
+    NODELETE WEBCORE_EXPORT CredentialBase();
+    NODELETE WEBCORE_EXPORT CredentialBase(const String& user, const String& password, CredentialPersistence);
+    NODELETE CredentialBase(const Credential& original, CredentialPersistence);
 
     static bool platformCompare(const Credential&, const Credential&) { return true; }
 

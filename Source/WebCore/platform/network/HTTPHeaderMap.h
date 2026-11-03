@@ -136,7 +136,7 @@ public:
     };
     typedef HTTPHeaderMapConstIterator const_iterator;
 
-    WEBCORE_EXPORT HTTPHeaderMap();
+    NODELETE WEBCORE_EXPORT HTTPHeaderMap();
     WEBCORE_EXPORT HTTPHeaderMap(CommonHeadersVector&&, UncommonHeadersVector&&);
 
     // Gets a copy of the data suitable for passing to another thread.

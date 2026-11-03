@@ -41,14 +41,14 @@ public:
     constexpr DoubleSize() = default;
     constexpr DoubleSize(double width, double height)
         : m_width(width), m_height(height) { }
-    explicit DoubleSize(const FloatSize&&);
+    NODELETE explicit DoubleSize(const FloatSize&&);
 
     constexpr double width() const { return m_width; }
     constexpr double height() const { return m_height; }
 
 
 #if USE(CG)
-    WEBCORE_EXPORT DoubleSize(const CGSize&);
+    NODELETE WEBCORE_EXPORT DoubleSize(const CGSize&);
     NODELETE WEBCORE_EXPORT operator CGSize() const;
     CGSize toCG() const { return static_cast<CGSize>(*this); }
 #endif

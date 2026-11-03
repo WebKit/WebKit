@@ -130,7 +130,7 @@ public:
     virtual void clearCodecsConnectionForTesting() { }
 
 protected:
-    LibWebRTCProvider();
+    NODELETE LibWebRTCProvider();
 
     webrtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, webrtc::NetworkManager&, webrtc::PacketSocketFactory&, webrtc::PeerConnectionInterface::RTCConfiguration&&, std::unique_ptr<webrtc::AsyncDnsResolverFactoryInterface>&&);
 

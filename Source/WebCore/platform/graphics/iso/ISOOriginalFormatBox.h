@@ -31,8 +31,8 @@ namespace WebCore {
 
 class ISOOriginalFormatBox final : public ISOBox {
 public:
-    WEBCORE_EXPORT ISOOriginalFormatBox();
-    WEBCORE_EXPORT virtual ~ISOOriginalFormatBox();
+    NODELETE WEBCORE_EXPORT ISOOriginalFormatBox();
+    NODELETE WEBCORE_EXPORT virtual ~ISOOriginalFormatBox();
 
     static FourCC boxTypeName() { return std::span { "frma" }; }
 

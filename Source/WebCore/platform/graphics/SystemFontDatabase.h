@@ -78,7 +78,7 @@ public:
     void invalidate();
 
 protected:
-    SystemFontDatabase();
+    NODELETE SystemFontDatabase();
 
 private:
     friend class FontCache;

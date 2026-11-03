@@ -34,7 +34,7 @@ public:
     WEBCORE_EXPORT ISOFairPlayStreamingInfoBox();
     WEBCORE_EXPORT ISOFairPlayStreamingInfoBox(const ISOFairPlayStreamingInfoBox&);
     ISOFairPlayStreamingInfoBox(ISOFairPlayStreamingInfoBox&&);
-    WEBCORE_EXPORT ~ISOFairPlayStreamingInfoBox();
+    NODELETE WEBCORE_EXPORT ~ISOFairPlayStreamingInfoBox();
 
     static FourCC boxTypeName() { return std::span { "fpsi" }; }
 
@@ -55,7 +55,7 @@ public:
     WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestInfoBox();
     WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestInfoBox(const ISOFairPlayStreamingKeyRequestInfoBox&);
     ISOFairPlayStreamingKeyRequestInfoBox(ISOFairPlayStreamingKeyRequestInfoBox&&);
-    WEBCORE_EXPORT ~ISOFairPlayStreamingKeyRequestInfoBox();
+    NODELETE WEBCORE_EXPORT ~ISOFairPlayStreamingKeyRequestInfoBox();
 
     static FourCC boxTypeName() { return std::span { "fkri" }; }
 
@@ -77,7 +77,7 @@ public:
     WEBCORE_EXPORT ISOFairPlayStreamingKeyAssetIdBox();
     WEBCORE_EXPORT ISOFairPlayStreamingKeyAssetIdBox(const ISOFairPlayStreamingKeyAssetIdBox&);
     WEBCORE_EXPORT ISOFairPlayStreamingKeyAssetIdBox(ISOFairPlayStreamingKeyAssetIdBox&&);
-    WEBCORE_EXPORT ~ISOFairPlayStreamingKeyAssetIdBox();
+    NODELETE WEBCORE_EXPORT ~ISOFairPlayStreamingKeyAssetIdBox();
 
     ISOFairPlayStreamingKeyAssetIdBox& operator=(const ISOFairPlayStreamingKeyAssetIdBox&) = default;
     ISOFairPlayStreamingKeyAssetIdBox& operator=(ISOFairPlayStreamingKeyAssetIdBox&&) = default;
@@ -100,7 +100,7 @@ public:
     WEBCORE_EXPORT ISOFairPlayStreamingKeyContextBox();
     WEBCORE_EXPORT ISOFairPlayStreamingKeyContextBox(const ISOFairPlayStreamingKeyContextBox&);
     WEBCORE_EXPORT ISOFairPlayStreamingKeyContextBox(ISOFairPlayStreamingKeyContextBox&&);
-    WEBCORE_EXPORT ~ISOFairPlayStreamingKeyContextBox();
+    NODELETE WEBCORE_EXPORT ~ISOFairPlayStreamingKeyContextBox();
 
     ISOFairPlayStreamingKeyContextBox& operator=(const ISOFairPlayStreamingKeyContextBox&) = default;
     ISOFairPlayStreamingKeyContextBox& operator=(ISOFairPlayStreamingKeyContextBox&&) = default;
@@ -123,7 +123,7 @@ public:
     WEBCORE_EXPORT ISOFairPlayStreamingKeyVersionListBox();
     WEBCORE_EXPORT ISOFairPlayStreamingKeyVersionListBox(const ISOFairPlayStreamingKeyVersionListBox&);
     WEBCORE_EXPORT ISOFairPlayStreamingKeyVersionListBox(ISOFairPlayStreamingKeyVersionListBox&&);
-    WEBCORE_EXPORT ~ISOFairPlayStreamingKeyVersionListBox();
+    NODELETE WEBCORE_EXPORT ~ISOFairPlayStreamingKeyVersionListBox();
 
     ISOFairPlayStreamingKeyVersionListBox& operator=(const ISOFairPlayStreamingKeyVersionListBox&) = default;
     ISOFairPlayStreamingKeyVersionListBox& operator=(ISOFairPlayStreamingKeyVersionListBox&&) = default;
@@ -146,7 +146,7 @@ public:
     WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestBox();
     WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestBox(const ISOFairPlayStreamingKeyRequestBox&);
     WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestBox(ISOFairPlayStreamingKeyRequestBox&&);
-    WEBCORE_EXPORT ~ISOFairPlayStreamingKeyRequestBox();
+    NODELETE WEBCORE_EXPORT ~ISOFairPlayStreamingKeyRequestBox();
 
     static FourCC boxTypeName() { return std::span { "fpsk" }; }
 
@@ -178,7 +178,7 @@ private:
 class ISOFairPlayStreamingInitDataBox final : public ISOBox {
 public:
     WEBCORE_EXPORT ISOFairPlayStreamingInitDataBox();
-    WEBCORE_EXPORT ~ISOFairPlayStreamingInitDataBox();
+    NODELETE WEBCORE_EXPORT ~ISOFairPlayStreamingInitDataBox();
 
     static FourCC boxTypeName() { return std::span { "fpsd" }; }
 

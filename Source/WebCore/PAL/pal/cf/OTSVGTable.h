@@ -29,10 +29,10 @@
 namespace PAL {
 
 struct OTSVGTable {
-    OTSVGTable();
+    NODELETE OTSVGTable();
     OTSVGTable(CFDataRef svgTable, unsigned unitsPerEm, CGFloat fontSize);
     OTSVGTable(const OTSVGTable&) = delete;
-    OTSVGTable(OTSVGTable&&);
+    NODELETE OTSVGTable(OTSVGTable&&);
     ~OTSVGTable();
 
     OTSVGTable& operator=(const OTSVGTable&) = delete;

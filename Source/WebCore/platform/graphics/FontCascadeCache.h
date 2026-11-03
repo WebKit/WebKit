@@ -206,8 +206,8 @@ namespace WebCore {
 // use the rules for font family names instead of using straight string comparison.
 class FontFamilyName {
 public:
-    FontFamilyName();
-    FontFamilyName(const AtomString&);
+    NODELETE FontFamilyName();
+    NODELETE FontFamilyName(const AtomString&);
     NODELETE const AtomString& string() const;
     friend void add(Hasher&, const FontFamilyName&);
 

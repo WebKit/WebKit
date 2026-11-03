@@ -91,7 +91,7 @@ public:
 
 protected:
     ProtectionSpaceBase() = default;
-    WEBCORE_EXPORT ProtectionSpaceBase(const String& host, int port, ServerType, const String& realm, AuthenticationScheme);
+    NODELETE WEBCORE_EXPORT ProtectionSpaceBase(const String& host, int port, ServerType, const String& realm, AuthenticationScheme);
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     ProtectionSpaceBase(WTF::HashTableDeletedValueType) : m_isHashTableDeletedValue(true) { }

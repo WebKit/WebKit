@@ -51,9 +51,9 @@ public:
         BlurShadow
     };
 
-    ShadowBlur();
-    ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color&, bool shadowsIgnoreTransforms = false);
-    ShadowBlur(const GraphicsDropShadow&, bool shadowsIgnoreTransforms = false);
+    NODELETE ShadowBlur();
+    NODELETE ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color&, bool shadowsIgnoreTransforms = false);
+    NODELETE ShadowBlur(const GraphicsDropShadow&, bool shadowsIgnoreTransforms = false);
 
     void setShadowValues(const FloatSize&, const FloatSize& , const Color&, bool ignoreTransforms = false);
 

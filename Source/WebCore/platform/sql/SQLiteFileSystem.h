@@ -102,7 +102,7 @@ public:
 
 private:
     // do not instantiate this class
-    SQLiteFileSystem();
+    NODELETE SQLiteFileSystem();
 }; // class SQLiteFileSystem
 
 } // namespace WebCore

@@ -60,7 +60,7 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<MediaRecorderPrivateWriter> create(String type, MediaRecorderPrivateWriterListener&);
     WEBCORE_EXPORT static std::unique_ptr<MediaRecorderPrivateWriter> create(MediaRecorderContainerType, MediaRecorderPrivateWriterListener&);
 
-    WEBCORE_EXPORT MediaRecorderPrivateWriter();
+    NODELETE WEBCORE_EXPORT MediaRecorderPrivateWriter();
     WEBCORE_EXPORT virtual ~MediaRecorderPrivateWriter();
 
     virtual bool segmentsMustStartWithKeyframe() const = 0;

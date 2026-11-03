@@ -58,7 +58,7 @@ enum CacheStoragePolicy {
 
 class ResourceHandleClient {
 public:
-    WEBCORE_EXPORT ResourceHandleClient();
+    NODELETE WEBCORE_EXPORT ResourceHandleClient();
     WEBCORE_EXPORT virtual ~ResourceHandleClient();
 
     virtual void didSendData(ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }

@@ -58,7 +58,7 @@ public:
         RHSIsInfinity,
     };
 
-    SpecialValueHandler(const Decimal& lhs, const Decimal& rhs);
+    NODELETE SpecialValueHandler(const Decimal& lhs, const Decimal& rhs);
     HandleResult handle();
     NODELETE Decimal value() const;
 

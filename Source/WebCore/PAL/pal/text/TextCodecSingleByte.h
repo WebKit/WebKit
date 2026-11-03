@@ -37,7 +37,7 @@ public:
     static void registerCodecs(TextCodecRegistrar);
 
     enum class Encoding : uint8_t;
-    explicit TextCodecSingleByte(Encoding);
+    NODELETE explicit TextCodecSingleByte(Encoding);
 
 private:
     String decode(std::span<const uint8_t>, bool flush, bool stopOnError, bool& sawError) final;

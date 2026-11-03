@@ -29,7 +29,7 @@ namespace WebCore {
 
 class GraphicsLayerTransform {
 public:
-    WEBCORE_EXPORT GraphicsLayerTransform();
+    NODELETE WEBCORE_EXPORT GraphicsLayerTransform();
     NODELETE void setPosition(const FloatPoint&);
     NODELETE void setSize(const FloatSize&);
     NODELETE void setAnchorPoint(const FloatPoint3D&);

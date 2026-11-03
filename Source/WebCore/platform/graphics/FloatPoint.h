@@ -57,7 +57,7 @@ class FloatPoint {
 public:
     constexpr FloatPoint() = default;
     constexpr FloatPoint(float x, float y) : m_x(x), m_y(y) { }
-    WEBCORE_EXPORT FloatPoint(const IntPoint&);
+    NODELETE WEBCORE_EXPORT FloatPoint(const IntPoint&);
     explicit FloatPoint(const FloatSize& size) : m_x(size.width()), m_y(size.height()) { }
     explicit FloatPoint(const DoublePoint& point)
         : m_x(static_cast<float>(point.x())), m_y(static_cast<float>(point.y())) { }
@@ -183,7 +183,7 @@ public:
     }
 
 #if USE(CG)
-    WEBCORE_EXPORT FloatPoint(const CGPoint&);
+    NODELETE WEBCORE_EXPORT FloatPoint(const CGPoint&);
     NODELETE WEBCORE_EXPORT operator CGPoint() const;
 #endif
 

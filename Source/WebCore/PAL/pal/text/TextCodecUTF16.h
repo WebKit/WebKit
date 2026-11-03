@@ -37,7 +37,7 @@ public:
     static void registerEncodingNames(EncodingNameRegistrar);
     static void registerCodecs(TextCodecRegistrar);
 
-    explicit TextCodecUTF16(bool littleEndian);
+    NODELETE explicit TextCodecUTF16(bool littleEndian);
 
 private:
     void stripByteOrderMark() final { m_shouldStripByteOrderMark = true; }

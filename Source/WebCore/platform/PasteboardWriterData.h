@@ -39,7 +39,7 @@ class SharedBuffer;
 
 class PasteboardWriterData final {
 public:
-    WEBCORE_EXPORT PasteboardWriterData();
+    NODELETE WEBCORE_EXPORT PasteboardWriterData();
     WEBCORE_EXPORT ~PasteboardWriterData();
 
     NODELETE WEBCORE_EXPORT bool isEmpty() const;
@@ -50,7 +50,7 @@ public:
     };
 
     struct WebContent {
-        WebContent();
+        NODELETE WebContent();
         WEBCORE_EXPORT ~WebContent();
 
 #if PLATFORM(COCOA)

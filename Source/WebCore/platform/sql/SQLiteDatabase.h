@@ -53,7 +53,7 @@ class SQLiteDatabase final : public CanMakeThreadSafeCheckedPtr<SQLiteDatabase> 
 
     friend class SQLiteTransaction;
 public:
-    WEBCORE_EXPORT SQLiteDatabase();
+    NODELETE WEBCORE_EXPORT SQLiteDatabase();
     WEBCORE_EXPORT ~SQLiteDatabase();
 
     static constexpr ASCIILiteral inMemoryPath() { return ":memory:"_s; }

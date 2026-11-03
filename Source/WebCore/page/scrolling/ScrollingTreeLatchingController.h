@@ -45,7 +45,7 @@ public:
         OptionSet<WheelEventProcessingSteps> processingSteps;
     };
 
-    ScrollingTreeLatchingController();
+    NODELETE ScrollingTreeLatchingController();
 
     void receivedWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, bool allowLatching);
 

@@ -865,7 +865,7 @@ public:
     WEBCORE_EXPORT virtual ~ChromeClient();
 
 protected:
-    WEBCORE_EXPORT ChromeClient();
+    NODELETE WEBCORE_EXPORT ChromeClient();
 };
 
 } // namespace WebCore

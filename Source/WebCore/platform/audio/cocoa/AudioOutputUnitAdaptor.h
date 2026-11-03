@@ -41,7 +41,7 @@ public:
 
 class AudioOutputUnitAdaptor {
 public:
-    WEBCORE_EXPORT AudioOutputUnitAdaptor(AudioUnitRenderer&);
+    NODELETE WEBCORE_EXPORT AudioOutputUnitAdaptor(AudioUnitRenderer&);
     WEBCORE_EXPORT ~AudioOutputUnitAdaptor();
 
     WEBCORE_EXPORT void configure(float hardwareSampleRate, unsigned numberOfOutputChannels);

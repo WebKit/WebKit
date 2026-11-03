@@ -69,7 +69,7 @@ public:
 
     static constexpr double minimumShrinkToFitWidthWhenPreferringHorizontalScrolling = 820;
 
-    WEBCORE_EXPORT ViewportConfiguration();
+    NODELETE WEBCORE_EXPORT ViewportConfiguration();
 
     const Parameters& defaultConfiguration() const LIFETIME_BOUND { return m_defaultConfiguration; }
     NODELETE WEBCORE_EXPORT void setDefaultConfiguration(const Parameters&);

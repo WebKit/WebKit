@@ -36,7 +36,7 @@ class AuthenticationChallenge;
 
 class AuthenticationChallengeBase {
 public:
-    WEBCORE_EXPORT AuthenticationChallengeBase();
+    NODELETE WEBCORE_EXPORT AuthenticationChallengeBase();
     WEBCORE_EXPORT AuthenticationChallengeBase(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error);
 
     NODELETE WEBCORE_EXPORT unsigned previousFailureCount() const;

@@ -54,7 +54,7 @@ public:
 #endif
 
 protected:
-    WEBCORE_EXPORT VideoPresentationLayerProvider();
+    NODELETE WEBCORE_EXPORT VideoPresentationLayerProvider();
 
 private:
     RetainPtr<CocoaView> m_layerHostView;

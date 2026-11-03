@@ -74,7 +74,7 @@ public:
         : m_location(FloatPoint(x, y)), m_size(FloatSize(width, height)) { }
     constexpr FloatRect(const FloatPoint& topLeft, const FloatPoint& bottomRight)
         : m_location(topLeft), m_size(FloatSize(bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.y())) { }
-    WEBCORE_EXPORT FloatRect(const IntRect&);
+    NODELETE WEBCORE_EXPORT FloatRect(const IntRect&);
 
     NODELETE static FloatRect narrowPrecision(double x, double y, double width, double height);
 
@@ -233,7 +233,7 @@ public:
     constexpr FloatRect transposedRect() const { return FloatRect(m_location.transposedPoint(), m_size.transposedSize()); }
 
 #if USE(CG)
-    WEBCORE_EXPORT FloatRect(const CGRect&);
+    NODELETE WEBCORE_EXPORT FloatRect(const CGRect&);
     NODELETE WEBCORE_EXPORT operator CGRect() const;
 #endif
 

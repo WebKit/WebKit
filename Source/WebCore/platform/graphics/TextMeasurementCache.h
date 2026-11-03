@@ -48,7 +48,7 @@ struct TextShapingContext {
     bool hasWordSpacingOrLetterSpacing { false };
     bool hasTextSpacing { false };
 
-    TextShapingContext(const FontCascade&);
+    NODELETE TextShapingContext(const FontCascade&);
 };
 
 namespace TextMeasurementCacheDefaults {

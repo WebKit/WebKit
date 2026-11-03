@@ -40,7 +40,7 @@ class ScrollAnimationKinetic final : public ScrollAnimation {
 private:
     class PerAxisData {
     public:
-        PerAxisData(double lower, double upper, double initialOffset, double initialVelocity);
+        NODELETE PerAxisData(double lower, double upper, double initialOffset, double initialVelocity);
 
         double offset() { return m_offset; }
         double velocity() { return m_velocity; }
@@ -60,8 +60,8 @@ private:
     };
 
 public:
-    ScrollAnimationKinetic(ScrollAnimationClient&);
-    virtual ~ScrollAnimationKinetic();
+    NODELETE ScrollAnimationKinetic(ScrollAnimationClient&);
+    NODELETE virtual ~ScrollAnimationKinetic();
 
     bool startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& velocity, const FloatSize& previousVelocity, bool mayHScroll, bool mayVScroll);
     bool retargetActiveAnimation(const FloatPoint& newOffset) final;

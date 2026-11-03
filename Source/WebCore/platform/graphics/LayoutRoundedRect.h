@@ -87,9 +87,9 @@ class LayoutRoundedRect {
 public:
     using Radii = LayoutRoundedRectRadii;
 
-    WEBCORE_EXPORT explicit LayoutRoundedRect(const LayoutRect&, const Radii& = Radii());
-    LayoutRoundedRect(LayoutUnit, LayoutUnit, LayoutUnit width, LayoutUnit height);
-    WEBCORE_EXPORT LayoutRoundedRect(const LayoutRect&, const LayoutSize& topLeft, const LayoutSize& topRight, const LayoutSize& bottomLeft, const LayoutSize& bottomRight);
+    NODELETE WEBCORE_EXPORT explicit LayoutRoundedRect(const LayoutRect&, const Radii& = Radii());
+    NODELETE LayoutRoundedRect(LayoutUnit, LayoutUnit, LayoutUnit width, LayoutUnit height);
+    NODELETE WEBCORE_EXPORT LayoutRoundedRect(const LayoutRect&, const LayoutSize& topLeft, const LayoutSize& topRight, const LayoutSize& bottomLeft, const LayoutSize& bottomRight);
 
     const LayoutRect& rect() const LIFETIME_BOUND { return m_rect; }
     const Radii& radii() const LIFETIME_BOUND { return m_radii; }

@@ -184,7 +184,7 @@ public:
     }
 
 #if USE(CG)
-    WEBCORE_EXPORT explicit FloatSize(const CGSize&); // don't do this implicitly since it's lossy
+    NODELETE WEBCORE_EXPORT explicit FloatSize(const CGSize&); // don't do this implicitly since it's lossy
     NODELETE WEBCORE_EXPORT operator CGSize() const;
 #endif
 

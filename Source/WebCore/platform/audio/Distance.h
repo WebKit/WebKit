@@ -45,7 +45,7 @@ enum class DistanceModelType {
 class DistanceEffect final {
     WTF_MAKE_TZONE_ALLOCATED(DistanceEffect);
 public:
-    DistanceEffect();
+    NODELETE DistanceEffect();
 
     // Returns scalar gain for the given distance the current distance model is used
     double gain(double distance) const;

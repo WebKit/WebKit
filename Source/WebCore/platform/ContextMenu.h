@@ -41,7 +41,7 @@ class ContextMenu {
     WTF_MAKE_TZONE_ALLOCATED(ContextMenu);
     WTF_MAKE_NONCOPYABLE(ContextMenu);
 public:
-    ContextMenu();
+    NODELETE ContextMenu();
 
     void setItems(const Vector<ContextMenuItem>& items) { m_items = items; }
     const Vector<ContextMenuItem>& items() const LIFETIME_BOUND { return m_items; }

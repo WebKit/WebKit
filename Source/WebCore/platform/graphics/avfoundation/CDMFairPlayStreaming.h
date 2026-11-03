@@ -42,7 +42,7 @@ class CDMFactoryFairPlayStreaming final : public CDMFactory {
 public:
     NODELETE static CDMFactoryFairPlayStreaming& singleton();
 
-    virtual ~CDMFactoryFairPlayStreaming();
+    NODELETE virtual ~CDMFactoryFairPlayStreaming();
 
     // Do nothing since this is a singleton object.
     void ref() const final { }

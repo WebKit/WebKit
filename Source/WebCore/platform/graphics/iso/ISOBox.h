@@ -40,10 +40,10 @@ class SharedBuffer;
 class ISOBox {
     WTF_MAKE_TZONE_ALLOCATED(ISOBox);
 public:
-    WEBCORE_EXPORT ISOBox();
-    WEBCORE_EXPORT ISOBox(FourCC boxType);
-    WEBCORE_EXPORT ISOBox(const ISOBox&);
-    WEBCORE_EXPORT ISOBox(ISOBox&&);
+    NODELETE WEBCORE_EXPORT ISOBox();
+    NODELETE WEBCORE_EXPORT ISOBox(FourCC boxType);
+    NODELETE WEBCORE_EXPORT ISOBox(const ISOBox&);
+    NODELETE WEBCORE_EXPORT ISOBox(ISOBox&&);
     WEBCORE_EXPORT virtual ~ISOBox();
 
     ISOBox& operator=(const ISOBox&) = default;
@@ -136,10 +136,10 @@ protected:
 
 class ISOFullBox : public ISOBox {
 public:
-    WEBCORE_EXPORT ISOFullBox();
-    WEBCORE_EXPORT ISOFullBox(FourCC boxType, uint8_t version, uint32_t flags);
-    WEBCORE_EXPORT ISOFullBox(const ISOFullBox&);
-    WEBCORE_EXPORT ISOFullBox(ISOFullBox&&);
+    NODELETE WEBCORE_EXPORT ISOFullBox();
+    NODELETE WEBCORE_EXPORT ISOFullBox(FourCC boxType, uint8_t version, uint32_t flags);
+    NODELETE WEBCORE_EXPORT ISOFullBox(const ISOFullBox&);
+    NODELETE WEBCORE_EXPORT ISOFullBox(ISOFullBox&&);
 
     uint8_t version() const { return m_version; }
     void setVersion(uint8_t version) { m_version = version; }

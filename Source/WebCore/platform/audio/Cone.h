@@ -39,7 +39,7 @@ namespace WebCore {
 class ConeEffect final {
     WTF_MAKE_TZONE_ALLOCATED(ConeEffect);
 public:
-    ConeEffect();
+    NODELETE ConeEffect();
 
     // Returns scalar gain for the given source/listener positions/orientations
     double gain(FloatPoint3D sourcePosition, FloatPoint3D sourceOrientation, FloatPoint3D listenerPosition) const;

@@ -35,7 +35,7 @@ class AbsolutePositionConstraints {
     WTF_MAKE_TZONE_ALLOCATED(AbsolutePositionConstraints);
 public:
     AbsolutePositionConstraints() = default;
-    WEBCORE_EXPORT AbsolutePositionConstraints(const FloatSize&, const FloatPoint&);
+    NODELETE WEBCORE_EXPORT AbsolutePositionConstraints(const FloatSize&, const FloatPoint&);
 
     friend bool operator==(const AbsolutePositionConstraints&, const AbsolutePositionConstraints&) = default;
 

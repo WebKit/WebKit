@@ -52,7 +52,7 @@ public:
         Variant<String, Ref<SharedBuffer>> platformData;
     };
 
-    WEBCORE_EXPORT PasteboardCustomData();
+    NODELETE WEBCORE_EXPORT PasteboardCustomData();
     WEBCORE_EXPORT PasteboardCustomData(String&& origin, Vector<Entry>&&);
     WEBCORE_EXPORT PasteboardCustomData(PasteboardCustomData&&);
     WEBCORE_EXPORT PasteboardCustomData(const PasteboardCustomData&);

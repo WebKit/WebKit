@@ -1221,7 +1221,7 @@ public:
 
     class Client {
     public:
-        WEBCORE_EXPORT Client();
+        NODELETE WEBCORE_EXPORT Client();
         WEBCORE_EXPORT virtual ~Client();
         virtual void forceContextLost() = 0;
         virtual void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, std::span<const char8_t> message) = 0;

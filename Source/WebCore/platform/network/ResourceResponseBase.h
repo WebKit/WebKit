@@ -246,7 +246,7 @@ protected:
         AllFields
     };
 
-    WEBCORE_EXPORT ResourceResponseBase();
+    NODELETE WEBCORE_EXPORT ResourceResponseBase();
     WEBCORE_EXPORT ResourceResponseBase(URL&&, String&& mimeType, long long expectedLength, String&& textEncodingName);
 
     WEBCORE_EXPORT void lazyInit(InitLevel) const;

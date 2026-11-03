@@ -42,7 +42,7 @@ public:
     Type type() const { return m_type; }
 
 protected:
-    PAL_EXPORT SleepDisabler(const String&, Type);
+    NODELETE PAL_EXPORT SleepDisabler(const String&, Type);
     Type m_type;
 };
 

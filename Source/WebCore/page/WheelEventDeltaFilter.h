@@ -36,7 +36,7 @@ class PlatformWheelEvent;
 
 class WheelEventDeltaFilter {
 public:
-    WheelEventDeltaFilter();
+    NODELETE WheelEventDeltaFilter();
     virtual ~WheelEventDeltaFilter();
 
     WEBCORE_EXPORT static std::unique_ptr<WheelEventDeltaFilter> create();
@@ -60,7 +60,7 @@ protected:
 class BasicWheelEventDeltaFilter final : public WheelEventDeltaFilter {
     WTF_MAKE_TZONE_ALLOCATED(BasicWheelEventDeltaFilter);
 public:
-    BasicWheelEventDeltaFilter();
+    NODELETE BasicWheelEventDeltaFilter();
     void updateFromEvent(const PlatformWheelEvent&) final;
 
 private:

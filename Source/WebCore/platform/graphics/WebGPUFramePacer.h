@@ -34,7 +34,7 @@ namespace WebCore {
 
 class WebGPUFramePacer {
 public:
-    WEBCORE_EXPORT WebGPUFramePacer();
+    NODELETE WEBCORE_EXPORT WebGPUFramePacer();
 
     WEBCORE_EXPORT void setDisplayNominalFramesPerSecond(FramesPerSecond);
 

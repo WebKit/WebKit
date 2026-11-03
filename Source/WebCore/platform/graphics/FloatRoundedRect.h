@@ -48,10 +48,10 @@ class Path;
 class FloatRoundedRect {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(FloatRoundedRect, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT explicit FloatRoundedRect(const FloatRect& = FloatRect(), const CornerRadii& = CornerRadii());
-    WEBCORE_EXPORT FloatRoundedRect(const FloatRect&, const FloatSize& topLeft, const FloatSize& topRight, const FloatSize& bottomLeft, const FloatSize& bottomRight);
-    explicit FloatRoundedRect(const LayoutRoundedRect&);
-    FloatRoundedRect(float x, float y, float width, float height);
+    NODELETE WEBCORE_EXPORT explicit FloatRoundedRect(const FloatRect& = FloatRect(), const CornerRadii& = CornerRadii());
+    NODELETE WEBCORE_EXPORT FloatRoundedRect(const FloatRect&, const FloatSize& topLeft, const FloatSize& topRight, const FloatSize& bottomLeft, const FloatSize& bottomRight);
+    NODELETE explicit FloatRoundedRect(const LayoutRoundedRect&);
+    NODELETE FloatRoundedRect(float x, float y, float width, float height);
 
     const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
     const CornerRadii& radii() const LIFETIME_BOUND { return m_radii; }

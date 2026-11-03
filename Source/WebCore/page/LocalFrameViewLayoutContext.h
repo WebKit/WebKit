@@ -364,7 +364,7 @@ private:
 class ListItemExcludedMarkerScope {
 public:
     ListItemExcludedMarkerScope(LocalFrameViewLayoutContext&, RenderListOutsideMarker&);
-    ~ListItemExcludedMarkerScope();
+    NODELETE ~ListItemExcludedMarkerScope();
 
 private:
     const CheckedRef<LocalFrameViewLayoutContext> m_layoutContext;

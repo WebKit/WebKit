@@ -56,7 +56,7 @@ public:
 
     ImageRotationSessionVT(AffineTransform&&, FloatSize, IsCGImageCompatible, ShouldUseIOSurface = ShouldUseIOSurface::Yes);
     ImageRotationSessionVT(const RotationProperties&, FloatSize, IsCGImageCompatible, ShouldUseIOSurface = ShouldUseIOSurface::Yes);
-    WEBCORE_EXPORT explicit ImageRotationSessionVT(ShouldUseIOSurface = ShouldUseIOSurface::Yes);
+    NODELETE WEBCORE_EXPORT explicit ImageRotationSessionVT(ShouldUseIOSurface = ShouldUseIOSurface::Yes);
 
     const std::optional<AffineTransform>& transform() const LIFETIME_BOUND { return m_transform; }
     const RotationProperties& rotationProperties() const LIFETIME_BOUND { return m_rotationProperties; }

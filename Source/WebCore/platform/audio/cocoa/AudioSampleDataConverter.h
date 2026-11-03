@@ -40,7 +40,7 @@ class PlatformAudioData;
 class AudioSampleDataConverter {
     WTF_MAKE_TZONE_ALLOCATED(AudioSampleDataConverter);
 public:
-    AudioSampleDataConverter();
+    NODELETE AudioSampleDataConverter();
     ~AudioSampleDataConverter();
 
     OSStatus setFormats(const CAAudioStreamDescription& inputDescription, const CAAudioStreamDescription& outputDescription);

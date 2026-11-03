@@ -38,7 +38,7 @@ class MenuListButtonMac final : public ControlMac {
     WTF_MAKE_TZONE_ALLOCATED(MenuListButtonMac);
 public:
     MenuListButtonMac(MenuListButtonPart&, ControlFactoryMac&);
-    ~MenuListButtonMac();
+    NODELETE ~MenuListButtonMac();
 
 private:
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;

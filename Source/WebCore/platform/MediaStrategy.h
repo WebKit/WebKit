@@ -90,7 +90,7 @@ public:
 #endif
 
 protected:
-    MediaStrategy();
+    NODELETE MediaStrategy();
     virtual ~MediaStrategy();
     bool m_mockMediaSourceEnabled { false };
 

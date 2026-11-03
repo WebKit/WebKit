@@ -568,7 +568,7 @@ private:
 class ScrollTypeScope {
 public:
     WEBCORE_EXPORT ScrollTypeScope(ScrollableArea&, ScrollType);
-    WEBCORE_EXPORT ~ScrollTypeScope();
+    NODELETE WEBCORE_EXPORT ~ScrollTypeScope();
 
     NODELETE void restore();
 

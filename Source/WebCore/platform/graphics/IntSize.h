@@ -63,7 +63,7 @@ class IntSize {
 public:
     constexpr IntSize() = default;
     constexpr IntSize(int width, int height) : m_width(width), m_height(height) { }
-    WEBCORE_EXPORT explicit IntSize(const FloatSize&); // don't do this implicitly since it's lossy
+    NODELETE WEBCORE_EXPORT explicit IntSize(const FloatSize&); // don't do this implicitly since it's lossy
 
     constexpr int width() const { return m_width; }
     constexpr int height() const { return m_height; }
@@ -167,7 +167,7 @@ public:
     friend constexpr bool operator==(const IntSize&, const IntSize&) = default;
 
 #if USE(CG)
-    WEBCORE_EXPORT explicit IntSize(const CGSize&); // don't do this implicitly since it's lossy
+    NODELETE WEBCORE_EXPORT explicit IntSize(const CGSize&); // don't do this implicitly since it's lossy
     NODELETE WEBCORE_EXPORT operator CGSize() const;
 #endif
 
