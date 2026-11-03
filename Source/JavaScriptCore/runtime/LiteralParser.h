@@ -217,6 +217,7 @@ private:
         TokenType next();
         TokenType nextMaybeIdentifier();
         TokenType nextAfterValue();
+        TokenType nextValueStart();
         bool consumeColon();
         CharType peek() const { return m_ptr < m_end ? *m_ptr : CharType { }; }
         TokenType nextString();
