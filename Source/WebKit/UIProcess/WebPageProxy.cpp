@@ -9663,8 +9663,20 @@ RefPtr<FrameState> WebPageProxy::frameStateForBackForwardChildFrame(WebFrameProx
     return frameState;
 }
 
+static bool isBackForwardItemIdentifierForPage(const std::optional<BackForwardItemIdentifier>& identifier, WebPageProxyIdentifier pageID)
+{
+    if (!identifier)
+        return true;
+
+    RefPtr item = WebBackForwardListItem::itemForID(*identifier);
+    return !item || item->pageID() == pageID;
+}
+
 void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& process, WebFrameProxy& frame, NavigationActionData&& navigationActionData, CompletionHandler<void(PolicyDecision&&)>&& originalCompletionHandler)
 {
+    MESSAGE_CHECK_COMPLETION(process, isBackForwardItemIdentifierForPage(navigationActionData.targetBackForwardItemIdentifier, identifier()), originalCompletionHandler(PolicyDecision { isNavigatingToAppBoundDomain() }));
+    MESSAGE_CHECK_COMPLETION(process, isBackForwardItemIdentifierForPage(navigationActionData.sourceBackForwardItemIdentifier, identifier()), originalCompletionHandler(PolicyDecision { isNavigatingToAppBoundDomain() }));
+
     RefPtr<FrameState> frameStateForBackForwardNavigation;
     if (protect(preferences())->useUIProcessForBackForwardItemLoading() && navigationActionData.navigationType == WebCore::NavigationType::BackForward && navigationActionData.targetBackForwardItemIdentifier) {
         if (RefPtr frameState = frameStateForBackForwardChildFrame(frame, *navigationActionData.targetBackForwardItemIdentifier)) {
@@ -19358,9 +19370,16 @@ Vector<Ref<WebProcessProxy>> WebPageProxy::activeRemoteFrameProcesses() const
     return processes;
 }
 
+// When enabled, resolves a WebContent-supplied identifier through the page's own list.
+// When disabled, falls back to the process-global map.
+static RefPtr<WebBackForwardListItem> backForwardItemForIdentifierFromWebContent(WebBackForwardList& list, BackForwardItemIdentifier itemID)
+{
+    return list.itemForID(itemID);
+}
+
 void WebPageProxy::didCacheBackForwardItem(BackForwardItemIdentifier itemID, CompletionHandler<void(bool)>&& completionHandler)
 {
-    RefPtr item = WebBackForwardListItem::itemForID(itemID);
+    RefPtr item = backForwardItemForIdentifierFromWebContent(backForwardList(), itemID);
     if (!item) {
         WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "didCacheBackForwardItem: unknown itemID %" PUBLIC_LOG_STRING, itemID.toString().utf8().data());
         return completionHandler(false);
@@ -19429,7 +19448,7 @@ void WebPageProxy::didEvictBackForwardItem(BackForwardItemIdentifier itemID)
     // WP-initiated eviction (capacity / expiration). Idempotent: drop our entry
     // if any. UI→WP discard IPCs are NOT sent because the WP that informed us
     // has already evicted on its side.
-    RefPtr item = WebBackForwardListItem::itemForID(itemID);
+    RefPtr item = backForwardItemForIdentifierFromWebContent(backForwardList(), itemID);
     if (!item || !item->backForwardCacheEntry())
         return;
     protect(backForwardCache())->removeEntry(*item);
@@ -19441,7 +19460,7 @@ void WebPageProxy::didTakeBackForwardItemForRestoration(BackForwardItemIdentifie
     // immediately after BackForwardCache::take() succeeds, ahead of any
     // DidCacheBackForwardItem for the outgoing page in the same load. Drops
     // the UI-side entry.
-    RefPtr item = WebBackForwardListItem::itemForID(itemID);
+    RefPtr item = backForwardItemForIdentifierFromWebContent(backForwardList(), itemID);
     if (!item) {
         WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "didTakeBackForwardItemForRestoration: unknown itemID %" PUBLIC_LOG_STRING, itemID.toString().utf8().data());
         return;
@@ -19460,7 +19479,7 @@ void WebPageProxy::didTakeBackForwardItemForRestoration(BackForwardItemIdentifie
 
 void WebPageProxy::discardBackForwardCacheEntry(BackForwardItemIdentifier itemID)
 {
-    RefPtr item = WebBackForwardListItem::itemForID(itemID);
+    RefPtr item = backForwardItemForIdentifierFromWebContent(backForwardList(), itemID);
     if (!item || !item->backForwardCacheEntry())
         return;
     protect(backForwardCache())->removeEntry(*item);

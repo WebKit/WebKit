@@ -96,8 +96,14 @@ WebBackForwardListItem* WebBackForwardList::itemForID(BackForwardItemIdentifier 
     if (!m_page)
         return nullptr;
 
-    ASSERT(!WebBackForwardListItem::itemForID(identifier) || WebBackForwardListItem::itemForID(identifier)->pageID() == m_page->identifier());
-    return WebBackForwardListItem::itemForID(identifier);
+    auto* item = WebBackForwardListItem::itemForID(identifier);
+    if (!item)
+        return nullptr;
+
+    if (item->pageID() != m_page->identifier())
+        return nullptr;
+
+    return item;
 }
 
 void WebBackForwardList::pageClosed()
