@@ -87,6 +87,7 @@ using namespace ARM64Registers;
 
 #define PROBE_FIRST_GPREG_OFFSET (4 * PTR_SIZE)
 
+#define ARM64_INSTRUCTION_SIZE 4
 #define GPREG_SIZE 8
 #define PROBE_CPU_X0_OFFSET (PROBE_FIRST_GPREG_OFFSET + (0 * GPREG_SIZE))
 #define PROBE_CPU_X1_OFFSET (PROBE_FIRST_GPREG_OFFSET + (1 * GPREG_SIZE))
@@ -254,6 +255,7 @@ static_assert(sizeof(Probe::State) == PROBE_SIZE, "Probe::State's size matches c
 // Conditions for using ldp and stp.
 static_assert(PROBE_CPU_PC_OFFSET == PROBE_CPU_SP_OFFSET + GPREG_SIZE, "PROBE_CPU_SP_OFFSET and PROBE_CPU_PC_OFFSET must be adjacent");
 static_assert(!(PROBE_SIZE_PLUS_EXTRAS & 0xf), "PROBE_SIZE_PLUS_EXTRAS should be 16 byte aligned"); // the Probe::State copying code relies on this.
+static_assert(ARM64_INSTRUCTION_SIZE == ARM64Assembler::instructionSize);
 
 #undef PROBE_OFFSETOF
 
@@ -384,7 +386,7 @@ __asm__(
     "stp       x28, x29, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X28_OFFSET) "]" "\n"
     "stp       x5,  x26, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n" // Save values lr and sp (original sp value computed into x26 above).
 
-    "add       x30, x30, #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n" // The PC after the probe is at 2 instructions past the return point.
+    "add       x30, x30, #" STRINGIZE_VALUE_OF(2 * ARM64_INSTRUCTION_SIZE) "\n" // The PC after the probe is at 2 instructions past the return point.
 #if CPU(ARM64E)
     "movz      x27, #" STRINGIZE_VALUE_OF(JIT_PROBE_PC_PTR_TAG) "\n"
     "pacib     x30, x27" "\n"
@@ -540,7 +542,7 @@ __asm__(
     "brk       #" STRINGIZE_VALUE_OF(WTF_FATAL_CRASH_CODE) "\n"
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDone) ":" "\n"
 #endif
-    "sub       x27, x27, #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n" // The return point PC is at 2 instructions before the end of the probe.
+    "sub       x27, x27, #" STRINGIZE_VALUE_OF(2 * ARM64_INSTRUCTION_SIZE) "\n" // The return point PC is at 2 instructions before the end of the probe.
 #if CPU(ARM64E)
     "movz      x28, #" STRINGIZE_VALUE_OF(JIT_PROBE_PC_PTR_TAG) "\n"
     "pacib     x27, x28" "\n"
@@ -603,10 +605,13 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
     move(TrustedImmPtr(reinterpret_cast<void*>(function)), x24);
     move(TrustedImmPtr(arg), x25);
     call(x26, OperationPtrTag);
+    size_t returnPointOffset = m_assembler.buffer().codeSize();
 
     // ctiMasmProbeTrampoline should have restored every register except for lr and the sp.
     load64(Address(sp, offsetof(LRRestorationRecord, lr)), lr);
     add64(TrustedImm32(sizeof(LRRestorationRecord)), sp);
+    // ctiMasmProbeTrampoline computes the probe's pc as 2 instructions past the return point.
+    ASSERT_UNUSED(returnPointOffset, m_assembler.buffer().codeSize() - returnPointOffset == 2 * ARM64Assembler::instructionSize);
     JIT_COMMENT(*this, "First non-probe instruction");
 }
 

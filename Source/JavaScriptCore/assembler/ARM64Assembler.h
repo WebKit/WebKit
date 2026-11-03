@@ -3878,16 +3878,12 @@ public:
 
     static void replaceWithJump(void* where, void* to)
     {
-        intptr_t offset = branchDisplacement(where, to);
-
 #if ENABLE(JUMP_ISLANDS)
-        if (!isInt<26>(offset)) {
+        if (!canEmitJump(where, to))
             to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(where, to);
-            offset = branchDisplacement(where, to);
-        }
 #endif
 
-        int insn = unconditionalBranchImmediate(false, offset);
+        int insn = unconditionalBranchImmediate(false, branchDisplacement(where, to));
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
         performJITMemcpy<jitMemcpyRepatchAtomic>(where, &insn, sizeof(int));
         cacheFlush(where, sizeof(int));
@@ -3979,9 +3975,16 @@ public:
     template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
     static void relinkJump(void* from, void* to)
     {
+        // A patchable conditional branch may be rewritten as two instructions, and no write order keeps it correct for a thread running it midway.
+        static_assert(!(*repatch).contains(RepatchingFlag::Atomic));
+        bool mayRewritePreviousInstruction = disassembleNop(from);
         relinkJumpOrCall<BranchType_JMP, noFlush(repatch)>(reinterpret_cast<int*>(from), reinterpret_cast<const int*>(from), to);
-        if constexpr ((*repatch).contains(RepatchingFlag::Flush))
-            flushJump(from);
+        if constexpr ((*repatch).contains(RepatchingFlag::Flush)) {
+            if (mayRewritePreviousInstruction)
+                cacheFlush(reinterpret_cast<int*>(from) - 1, 2 * sizeof(int));
+            else
+                flushJump(from);
+        }
     }
 
     template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
@@ -3995,7 +3998,10 @@ public:
     template<RepatchingInfo repatch = jitMemcpyRepatchFlush>
     static void relinkTailCall(void* from, void* to)
     {
-        relinkJump<repatch>(from, to);
+        ASSERT(!disassembleNop(from));
+        linkJumpOrCall<BranchType_JMP, noFlush(repatch)>(reinterpret_cast<int*>(from), reinterpret_cast<const int*>(from), to);
+        if constexpr ((*repatch).contains(RepatchingFlag::Flush))
+            flushTailCall(from);
     }
 
     static void flushJump(void* from)
@@ -4016,7 +4022,7 @@ public:
 #if ENABLE(JUMP_ISLANDS)
     static void* prepareForAtomicRelinkJumpConcurrently(void* from, void* to)
     {
-        if (isInt<26>(branchDisplacement(from, to)))
+        if (canEmitJump(from, to))
             return to;
 
         return ExecutableAllocator::singleton().getJumpIslandToConcurrently(from, to);
@@ -4133,7 +4139,7 @@ public:
                     relative += delta;
                 }
 
-                if (isInt<14>(relative))
+                if (isInt<16>(relative))
                     return LinkJumpTestBitDirect;
 
                 return LinkJumpTestBit;
@@ -4204,7 +4210,7 @@ public:
         return (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(from)) >> 2;
     }
 
-    static ALWAYS_INLINE bool canEmitJump(void* from, void* to)
+    static ALWAYS_INLINE bool canEmitJump(const void* from, const void* to)
     {
         return isInt<26>(branchDisplacement(from, to));
     }
@@ -4262,19 +4268,17 @@ protected:
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
         assertIsNotTagged(to);
         assertIsNotTagged(fromInstruction);
-        intptr_t offset = branchDisplacement(fromInstruction, to);
 
 #if ENABLE(JUMP_ISLANDS)
-        if (!isInt<26>(offset)) {
+        if (!canEmitJump(fromInstruction, to)) {
             if constexpr (!(*repatch).contains(RepatchingFlag::Memcpy))
                 to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(std::bit_cast<void*>(fromInstruction), to);
             else
                 to = ExecutableAllocator::singleton().getJumpIslandToUsingMemcpy(std::bit_cast<void*>(fromInstruction), to);
-            offset = branchDisplacement(fromInstruction, to);
         }
 #endif
 
-        int insn = unconditionalBranchImmediate(isCall, offset);
+        int insn = unconditionalBranchImmediate(isCall, branchDisplacement(fromInstruction, to));
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
         machineCodeCopy<repatch>(from, &insn, sizeof(int));
     }
@@ -4372,9 +4376,6 @@ protected:
                 ASSERT_UNUSED(op01, !op01);
                 ASSERT(type == BranchType_JMP);
 
-                if (imm19 == 8)
-                    condition = invert(condition);
-
                 linkConditionalBranch<IndirectBranch, repatch>(condition, from - 1, fromInstruction - 1, to);
                 return;
             }
@@ -4385,9 +4386,6 @@ protected:
             bool isCompareAndBranchImmediate = disassembleCompareAndBranchImmediate(from - 1, opSize, op, imm19, rt);
 
             if (isCompareAndBranchImmediate) {
-                if (imm19 == 8)
-                    op = !op;
-
                 linkCompareAndBranch<IndirectBranch, repatch>(op ? ConditionNE : ConditionEQ, opSize == Datasize_64, rt, from - 1, fromInstruction - 1, to);
                 return;
             }
@@ -4397,9 +4395,6 @@ protected:
             bool isTestAndBranchImmediate = disassembleTestAndBranchImmediate(from - 1, op, bitNumber, imm14, rt);
 
             if (isTestAndBranchImmediate) {
-                if (imm14 == 8)
-                    op = !op;
-
                 linkTestAndBranch<IndirectBranch, repatch>(op ? ConditionNE : ConditionEQ, bitNumber, rt, from - 1, fromInstruction - 1, to);
                 return;
             }

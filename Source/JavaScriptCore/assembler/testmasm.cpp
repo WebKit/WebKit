@@ -5031,6 +5031,130 @@ static void testPushToSaveAddress()
     }
 }
 
+static void testRepatchConditionalJump()
+{
+    enum class Kind { Condition, CompareAndBranch, TestBit };
+    auto test = [](Kind kind, bool farAlternate) {
+        CCallHelpers jit;
+        emitFunctionPrologue(jit);
+
+        CCallHelpers::PatchableJump jump;
+        switch (kind) {
+        case Kind::Condition:
+            jump = jit.patchableBranch32(CCallHelpers::Equal, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(1));
+            break;
+        case Kind::CompareAndBranch:
+            jump = jit.patchableBranch32(CCallHelpers::NotEqual, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(0));
+            break;
+        case Kind::TestBit:
+            jump = jit.patchableBranchTest32(CCallHelpers::NonZero, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(1));
+            break;
+        }
+        CCallHelpers::Label afterJump = jit.label();
+        jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+        auto doneFromFallThrough = jit.jump();
+        // Makes the branch's offset exactly 8 instructions: the patchable jump (2), the move and jump (2), and these 4 nops.
+        // Relinking must not treat that offset specially.
+        for (unsigned i = 0; i < 4; ++i)
+            jit.nop();
+        CCallHelpers::Label target = jit.label();
+        jit.move(CCallHelpers::TrustedImm32(2), GPRInfo::returnValueGPR);
+        auto doneFromTarget = jit.jump();
+        // Over 1MB away, beyond the reach of every conditional branch form, so relinking must use an inverted branch over a B.
+        if (farAlternate) {
+            for (unsigned i = 0; i < MB / sizeof(uint32_t); ++i)
+                jit.nop();
+        }
+        CCallHelpers::Label alternate = jit.label();
+        jit.move(CCallHelpers::TrustedImm32(3), GPRInfo::returnValueGPR);
+        doneFromFallThrough.link(&jit);
+        doneFromTarget.link(&jit);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+        jump.m_jump.linkTo(target, &jit);
+
+        LinkBuffer linkBuffer(jit, nullptr);
+        CodeLocationJump<JSInternalPtrTag> jumpLocation(linkBuffer.locationOf<JSInternalPtrTag>(jump));
+        auto afterJumpLocation = linkBuffer.locationOf<JSInternalPtrTag>(afterJump);
+        auto targetLocation = linkBuffer.locationOf<JSInternalPtrTag>(target);
+        auto alternateLocation = linkBuffer.locationOf<JSInternalPtrTag>(alternate);
+        auto code = FINALIZE_CODE(linkBuffer, JSEntryPtrTag, nullptr, "testmasm compilation");
+
+        CHECK_EQ(targetLocation.dataLocation<uint8_t*>() - afterJumpLocation.dataLocation<uint8_t*>(), 24);
+        if (farAlternate)
+            CHECK_EQ(alternateLocation.dataLocation<uint8_t*>() - afterJumpLocation.dataLocation<uint8_t*>() > static_cast<ptrdiff_t>(MB), true);
+        CHECK_EQ(invoke<int>(code, 1), 2);
+        CHECK_EQ(invoke<int>(code, 0), 1);
+
+        CCallHelpers::repatchJump(jumpLocation, alternateLocation);
+        CHECK_EQ(invoke<int>(code, 1), 3);
+        CHECK_EQ(invoke<int>(code, 0), 1);
+
+        CCallHelpers::repatchJump(jumpLocation, targetLocation);
+        CHECK_EQ(invoke<int>(code, 1), 2);
+        CHECK_EQ(invoke<int>(code, 0), 1);
+    };
+
+    for (bool farAlternate : { false, true }) {
+        for (Kind kind : { Kind::Condition, Kind::CompareAndBranch, Kind::TestBit })
+            test(kind, farAlternate);
+    }
+}
+
+static void testTestBitBranchCompaction()
+{
+    // A test-bit branch reaches +-32KB, so one that jumps over 16KB should be compacted to a single TBZ / TBNZ.
+    auto compileWithDistance = [](unsigned nops, size_t& codeSize) {
+        CCallHelpers jit;
+        emitFunctionPrologue(jit);
+        jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::argumentGPR1);
+        auto jump = jit.branchTest32(CCallHelpers::NonZero, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(1 << 3));
+        jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::argumentGPR1);
+        for (unsigned i = 0; i < nops; ++i)
+            jit.nop();
+        jump.link(&jit);
+        jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+        LinkBuffer linkBuffer(jit, nullptr);
+        codeSize = linkBuffer.size();
+        return FINALIZE_CODE(linkBuffer, JSEntryPtrTag, nullptr, "testmasm compilation");
+    };
+
+    size_t nearSize = 0;
+    size_t farSize = 0;
+    constexpr unsigned nops = 16 * KB / sizeof(uint32_t);
+    auto nearCode = compileWithDistance(0, nearSize);
+    auto farCode = compileWithDistance(nops, farSize);
+    CHECK_EQ(farSize - nearSize, nops * sizeof(uint32_t));
+
+    for (auto& code : { nearCode, farCode }) {
+        CHECK_EQ(invoke<int>(code, 1 << 3), 1);
+        CHECK_EQ(invoke<int>(code, 0), 0);
+    }
+}
+
+static void testProbePCIsFirstInstructionAfterProbe()
+{
+    void* probePC = nullptr;
+    CCallHelpers jit;
+    emitFunctionPrologue(jit);
+    jit.probeDebug([&](Probe::Context& context) {
+        probePC = untagCodePtr<JITProbePCPtrTag>(context.cpu.pc());
+    });
+    CCallHelpers::Label afterProbe = jit.label();
+    jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
+    emitFunctionEpilogue(jit);
+    jit.ret();
+
+    LinkBuffer linkBuffer(jit, nullptr);
+    void* afterProbeLocation = linkBuffer.locationOf<JSInternalPtrTag>(afterProbe).dataLocation();
+    auto code = FINALIZE_CODE(linkBuffer, JSEntryPtrTag, nullptr, "testmasm compilation");
+
+    CHECK_EQ(invoke<int>(code), 42);
+    CHECK_EQ(probePC, afterProbeLocation);
+}
+
 #endif // CPU(ARM64)
 
 void testLoadStorePair32()
@@ -9762,6 +9886,9 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testBaseIndexExtendInEffectiveAddressAndLoadAcq());
     RUN(testLoadFromAbsoluteAddressIntoMemoryTempRegister());
     RUN(testPushToSaveAddress());
+    RUN(testRepatchConditionalJump());
+    RUN(testTestBitBranchCompaction());
+    RUN(testProbePCIsFirstInstructionAfterProbe());
 #endif
 
 #if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
