@@ -97,6 +97,18 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
 
     PasteboardImage pasteboardImage;
 
+<<<<<<< HEAD
+=======
+    RefPtr<Image> image;
+    CachedImage* cachedImage = nullptr;
+    getImage(imageElement, image, cachedImage);
+    if (!image)
+        return;
+    ASSERT(cachedImage);
+
+    RefPtr protectedCachedImage { cachedImage };
+
+>>>>>>> 6c20207af56e ([WebCore] Potential use-after-free of the cachedImage in Editor::writeImageToPasteboard)
     auto imageSourceURL = protect(imageElement.document())->encodingParseURL(imageElement.imageSourceURL());
 
     auto pasteboardImageURL = url.isEmpty() ? imageSourceURL : url;

@@ -240,6 +240,8 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     if (RetainPtr tiffData = image->adapter().tiffRepresentation(ImageDrawDescriptor { renderImage->concreteObjectSizeForPasteboard() }))
         pasteboardImage.dataInTIFFFormat = SharedBuffer::create(tiffData.get());
 
+    RefPtr protectedCachedImage { cachedImage };
+
     if (!pasteboard.isStatic())
         pasteboardImage.dataInWebArchiveFormat = imageInWebArchiveFormat(imageElement);
 
