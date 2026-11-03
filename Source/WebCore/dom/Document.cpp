@@ -1107,6 +1107,17 @@ CachedResourceLoader& Document::ensureCachedResourceLoader()
     return *m_cachedResourceLoader;
 }
 
+bool Document::recordInjectedUserScript(const DOMWrapperWorld& world, const URL& url)
+{
+    // Most documents never run a user script, so only create this when one does.
+    if (!m_injectedUserScripts)
+        m_injectedUserScripts = makeUnique<SingleThreadWeakHashMap<DOMWrapperWorld, HashSet<String>>>();
+
+    return m_injectedUserScripts->ensure(world, [] {
+        return HashSet<String> { };
+    }).iterator->value.add(url.string()).isNewEntry;
+}
+
 ExtensionStyleSheets& Document::ensureExtensionStyleSheets()
 {
     ASSERT(m_constructionDidFinish);

@@ -75,6 +75,7 @@
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakListHashSet.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -756,6 +757,8 @@ public:
     NODELETE const Style::CustomPropertyRegistry& customPropertyRegistry() const;
     NODELETE const CSSCounterStyleRegistry& counterStyleRegistry() const;
     NODELETE CSSCounterStyleRegistry& counterStyleRegistry();
+    // Returns true the first time a user script with this world and URL is recorded for this document.
+    bool recordInjectedUserScript(const DOMWrapperWorld&, const URL&);
 
     WEBCORE_EXPORT const CSSParserContext& cssParserContext() const LIFETIME_BOUND;
     void invalidateCachedCSSParserContext();
@@ -2453,6 +2456,7 @@ private:
 
     const UniqueRef<Style::DocumentScope> m_styleScope;
     const std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;
+    std::unique_ptr<SingleThreadWeakHashMap<DOMWrapperWorld, HashSet<String>>> m_injectedUserScripts;
     const RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<FormController> m_formController;

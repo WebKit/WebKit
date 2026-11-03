@@ -189,6 +189,8 @@ public:
         Vector<String> includeGlobPatternStrings;
         Vector<String> excludeGlobPatternStrings;
 
+        bool matchesURL(const URL&) const;
+
         Vector<String> expandedIncludeMatchPatternStrings() const;
         Vector<String> expandedExcludeMatchPatternStrings() const;
     };

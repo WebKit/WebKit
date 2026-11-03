@@ -79,6 +79,7 @@ NSNotificationName const _WKWebExtensionContextDeniedPermissionMatchPatternsWere
 
 NSString * const _WKWebExtensionContextNotificationUserInfoKeyPermissions = @"permissions";
 NSString * const _WKWebExtensionContextNotificationUserInfoKeyMatchPatterns = @"matchPatterns";
+NSString * const _WKWebExtensionContextNotificationUserInfoKeyTab = @"tab";
 
 #undef _WKWebExtensionContext
 @implementation _WKWebExtensionContext

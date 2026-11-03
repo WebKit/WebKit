@@ -627,8 +627,12 @@ bool WebExtensionContext::removeGrantedPermissionMatchPatterns(MatchPatternSet& 
             continue;
 
         for (auto& pattern : matchPatternsToRemove) {
-            if (temporaryPattern->matchesPattern(pattern))
+            if (temporaryPattern->matchesPattern(pattern)) {
                 tab->setTemporaryPermissionMatchPattern(nullptr);
+                removeInjectedContent(tab);
+                temporaryPermissionMatchPatternsDidChange(PermissionNotification::GrantedPermissionMatchPatternsWereRemoved, MatchPatternSet { *temporaryPattern }, tab);
+                break;
+            }
         }
     }
 #endif
@@ -1234,23 +1238,8 @@ WebExtensionContext::InjectedContentVector WebExtensionContext::injectedContents
 bool WebExtensionContext::hasInjectedContentForURL(const URL& url)
 {
     for (auto& injectedContent : injectedContents()) {
-        // FIXME: <https://webkit.org/b/246492> Add support for exclude globs.
-        bool isExcluded = false;
-        for (auto& excludeMatchPattern : injectedContent.excludeMatchPatterns) {
-            if (excludeMatchPattern->matchesURL(url)) {
-                isExcluded = true;
-                break;
-            }
-        }
-
-        if (isExcluded)
-            continue;
-
-        // FIXME: <https://webkit.org/b/246492> Add support for include globs.
-        for (auto& includeMatchPattern : injectedContent.includeMatchPatterns) {
-            if (includeMatchPattern->matchesURL(url))
-                return true;
-        }
+        if (injectedContent.matchesURL(url))
+            return true;
     }
 
     return false;
@@ -1352,23 +1341,27 @@ API::ContentWorld& WebExtensionContext::toContentWorld(WebExtensionContentWorldT
 
 void WebExtensionContext::addInjectedContent(const InjectedContentVector& injectedContents, WebExtensionMatchPattern& pattern)
 {
+    auto& originInjectedScripts = m_injectedScriptsPerPatternMap.add(pattern, UserScriptVector { }).iterator->value;
+    auto& originInjectedStyleSheets = m_injectedStyleSheetsPerPatternMap.add(pattern, UserStyleSheetVector { }).iterator->value;
+
+    addInjectedContent(injectedContents, pattern, originInjectedScripts, originInjectedStyleSheets, nullptr);
+}
+
+void WebExtensionContext::addInjectedContent(const InjectedContentVector& injectedContents, WebExtensionMatchPattern& pattern, const TabInjectionTarget& injectionTarget)
+{
+    auto& tabContent = m_temporaryInjectedContentPerTabMap.add(injectionTarget.tabIdentifier, TabInjectedContent { }).iterator->value;
+
+    addInjectedContent(injectedContents, pattern, tabContent.userScripts, tabContent.userStyleSheets, injectionTarget.page.ptr(), &tabContent);
+}
+
+void WebExtensionContext::addInjectedContent(const InjectedContentVector& injectedContents, WebExtensionMatchPattern& pattern, UserScriptVector& originInjectedScripts, UserStyleSheetVector& originInjectedStyleSheets, RefPtr<WebPageProxy> page, TabInjectedContent* tabContent)
+{
     if (!safeToInjectContent())
         return;
 
     OptionSet<WebExtensionMatchPattern::Options> expandOptions;
     if (m_hasAccessToFileURLs)
         expandOptions.add(WebExtensionMatchPattern::Options::AllowFileScheme);
-
-    auto scriptAddResult = m_injectedScriptsPerPatternMap.ensure(pattern, [&] {
-        return UserScriptVector { };
-    });
-
-    auto styleSheetAddResult = m_injectedStyleSheetsPerPatternMap.ensure(pattern, [&] {
-        return UserStyleSheetVector { };
-    });
-
-    auto& originInjectedScripts = scriptAddResult.iterator->value;
-    auto& originInjectedStyleSheets = styleSheetAddResult.iterator->value;
 
     HashSet<String> baseExcludeMatchPatternsSet;
 
@@ -1460,13 +1453,22 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
 
             auto scriptString = scriptStringResult.value();
 
-            Ref userScript = API::UserScript::create(WebCore::UserScript { WTF::move(scriptString), URL { m_baseURL, scriptPath }, Vector { includeMatchPatterns }, Vector { excludeMatchPatterns }, injectionTime, injectedFrames, matchParentFrame }, executionWorld);
+            Ref userScript = API::UserScript::create(WebCore::UserScript { WTF::move(scriptString), URL { m_baseURL, scriptPath }, Vector { includeMatchPatterns }, Vector { excludeMatchPatterns }, injectionTime, injectedFrames, matchParentFrame }, executionWorld, page.get());
             originInjectedScripts.append(userScript);
 
-            for (Ref userContentController : userContentControllers)
-                userContentController->addUserScript(userScript, InjectUserScriptImmediately::Yes);
+            // Content for an activeTab grant only applies to the page the grant was given for, while other content is added to every controller.
+            if (page)
+                page->userContentController().addUserScript(userScript, InjectUserScriptImmediately::Yes);
+            else {
+                for (Ref userContentController : userContentControllers)
+                    userContentController->addUserScript(userScript, InjectUserScriptImmediately::Yes);
+            }
 
-            if (isRegisteredScript) {
+            // If temporary, keep track of the registered script for the tab.
+            bool isTemporaryRegisteredScript = isRegisteredScript && tabContent;
+            if (isTemporaryRegisteredScript)
+                tabContent->registeredUserScripts.add(scriptID, UserScriptVector { }).iterator->value.append(userScript);
+            else if (isRegisteredScript) {
                 RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
                 ASSERT(registeredScript);
                 if (!registeredScript)
@@ -1485,13 +1487,24 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
 
             auto styleSheetString = localizedResourceString(styleSheetStringResult.value(), "text/css"_s);
 
-            Ref userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { WTF::move(styleSheetString), URL { m_baseURL, styleSheetPath }, Vector { includeMatchPatterns }, Vector { excludeMatchPatterns }, injectedFrames, matchParentFrame, styleLevel, std::nullopt }, executionWorld);
+            // A style sheet for an activeTab grant belongs to one page, and has to be reapplied to that page's later documents, like after a reload.
+            bool persistsAcrossDocuments = !!page;
+
+            Ref userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { WTF::move(styleSheetString), URL { m_baseURL, styleSheetPath }, Vector { includeMatchPatterns }, Vector { excludeMatchPatterns }, injectedFrames, matchParentFrame, styleLevel, std::nullopt, persistsAcrossDocuments }, executionWorld, page.get());
             originInjectedStyleSheets.append(userStyleSheet);
 
-            for (Ref userContentController : userContentControllers)
-                userContentController->addUserStyleSheet(userStyleSheet);
+            if (page)
+                page->userContentController().addUserStyleSheet(userStyleSheet);
+            else {
+                for (Ref userContentController : userContentControllers)
+                    userContentController->addUserStyleSheet(userStyleSheet);
+            }
 
-            if (isRegisteredScript) {
+            // If temporary, keep track of the registered stylesheet for the tab.
+            bool isTemporaryRegisteredScript = isRegisteredScript && tabContent;
+            if (isTemporaryRegisteredScript)
+                tabContent->registeredUserStyleSheets.add(scriptID, UserStyleSheetVector { }).iterator->value.append(userStyleSheet);
+            else if (isRegisteredScript) {
                 RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
                 ASSERT(registeredScript);
                 if (!registeredScript)
@@ -1562,6 +1575,43 @@ void WebExtensionContext::removeInjectedContent()
     m_injectedStyleSheetsPerPatternMap.clear();
 }
 
+void WebExtensionContext::removeTemporaryInjectedContent(const String& scriptID)
+{
+    for (auto& entry : m_temporaryInjectedContentPerTabMap) {
+        auto& tabContent = entry.value;
+
+        auto userScripts = tabContent.registeredUserScripts.take(scriptID);
+        auto userStyleSheets = tabContent.registeredUserStyleSheets.take(scriptID);
+        removeInjectedContent(userScripts, userStyleSheets);
+
+        tabContent.userScripts.removeAllMatching([&](auto& userScript) {
+            return userScripts.containsIf([&](auto& removedUserScript) {
+                return removedUserScript.ptr() == userScript.ptr();
+            });
+        });
+
+        tabContent.userStyleSheets.removeAllMatching([&](auto& userStyleSheet) {
+            return userStyleSheets.containsIf([&](auto& removedUserStyleSheet) {
+                return removedUserStyleSheet.ptr() == userStyleSheet.ptr();
+            });
+        });
+    }
+}
+
+void WebExtensionContext::removeAllInjectedContent()
+{
+    if (!isLoaded())
+        return;
+
+    // Content for tabs with a temporary grant is only removed here, when unloading, so changing the content for patterns leaves it alone.
+    for (auto& entry : m_temporaryInjectedContentPerTabMap)
+        removeInjectedContent(entry.value.userScripts, entry.value.userStyleSheets);
+
+    m_temporaryInjectedContentPerTabMap.clear();
+
+    removeInjectedContent();
+}
+
 void WebExtensionContext::removeInjectedContent(const MatchPatternSet& removedMatchPatterns)
 {
     if (!isLoaded())
@@ -1584,16 +1634,30 @@ void WebExtensionContext::removeInjectedContent(WebExtensionMatchPattern& patter
     const Vector originInjectedScripts = m_injectedScriptsPerPatternMap.take(pattern);
     const Vector originInjectedStyleSheets = m_injectedStyleSheetsPerPatternMap.take(pattern);
 
-    if (originInjectedScripts.isEmpty() && originInjectedStyleSheets.isEmpty())
+    removeInjectedContent(originInjectedScripts, originInjectedStyleSheets);
+}
+
+void WebExtensionContext::removeInjectedContent(WebExtensionTab& tab)
+{
+    if (!isLoaded())
+        return;
+
+    auto tabContent = m_temporaryInjectedContentPerTabMap.take(tab.identifier());
+    removeInjectedContent(tabContent.userScripts, tabContent.userStyleSheets);
+}
+
+void WebExtensionContext::removeInjectedContent(const UserScriptVector& userScripts, const UserStyleSheetVector& userStyleSheets)
+{
+    if (userScripts.isEmpty() && userStyleSheets.isEmpty())
         return;
 
     // Use all user content controllers in case the extension was briefly allowed in private browsing
     // and content was injected into any of those content controllers.
     for (Ref userContentController : extensionController()->allUserContentControllers()) {
-        for (auto& userScript : originInjectedScripts)
+        for (auto& userScript : userScripts)
             userContentController->removeUserScript(userScript);
 
-        for (auto& userStyleSheet : originInjectedStyleSheets)
+        for (auto& userStyleSheet : userStyleSheets)
             userContentController->removeUserStyleSheet(userStyleSheet);
     }
 }
