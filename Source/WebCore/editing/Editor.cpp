@@ -4753,8 +4753,7 @@ static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Posit
             enclosingLists.append(WTF::move(ancestor));
     }
 
-    Vector<TextList> textLists;
-    textLists.reserveInitialCapacity(enclosingLists.size());
+    Vector<TextList> textLists(ReserveCapacityTag { }, enclosingLists.size());
     for (auto iterator = enclosingLists.rbegin(); iterator != enclosingLists.rend(); ++iterator) {
         Ref list = *iterator;
         RefPtr orderedList = dynamicDowncast<HTMLOListElement>(list);

@@ -78,8 +78,7 @@ TransformOperations blend(const TransformOperations& from, const TransformOperat
     if (context.compositeOperation == CompositeOperation::Add) {
         ASSERT(context.progress == 1.0);
 
-        Vector<Ref<TransformOperation>> operations;
-        operations.reserveInitialCapacity(from.size() + to.size());
+        Vector<Ref<TransformOperation>> operations(ReserveCapacityTag { }, from.size() + to.size());
         for (auto& fromOperation : from)
             operations.append(fromOperation);
         for (auto& toOperation : to)
@@ -114,8 +113,7 @@ TransformOperations blend(const TransformOperations& from, const TransformOperat
     unsigned toOperationCount = to.size();
     unsigned maxOperationCount = std::max(fromOperationCount, toOperationCount);
 
-    Vector<Ref<TransformOperation>> operations;
-    operations.reserveInitialCapacity(maxOperationCount);
+    Vector<Ref<TransformOperation>> operations(ReserveCapacityTag { }, maxOperationCount);
 
     for (unsigned i = 0; i < maxOperationCount; i++) {
         RefPtr<TransformOperation> fromOperation = (i < fromOperationCount) ? from[i].ptr() : nullptr;

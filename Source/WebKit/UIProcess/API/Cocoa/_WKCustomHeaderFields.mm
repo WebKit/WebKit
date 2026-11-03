@@ -62,8 +62,7 @@
 
 - (void)setFields:(NSDictionary<NSString *, NSString *> *)fields
 {
-    Vector<WebCore::HTTPHeaderField> vector;
-    vector.reserveInitialCapacity(fields.count);
+    Vector<WebCore::HTTPHeaderField> vector(ReserveCapacityTag { }, fields.count);
     [fields enumerateKeysAndObjectsUsingBlock:makeBlockPtr([&](id key, id value, BOOL* stop) {
         if (auto field = WebCore::HTTPHeaderField::create((NSString *)key, (NSString *)value); field && startsWithLettersIgnoringASCIICase(field->name(), "x-"_s))
             vector.append(WTF::move(*field));

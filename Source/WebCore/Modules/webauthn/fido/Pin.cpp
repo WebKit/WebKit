@@ -329,8 +329,7 @@ static Vector<uint8_t> encryptForProtocol(PINUVAuthProtocol protocol, const Cryp
         auto result = CryptoAlgorithmAESCBC::platformEncrypt(params, key, plaintext, CryptoAlgorithmAESCBC::Padding::No);
         ASSERT(!result.hasException());
 
-        Vector<uint8_t> output;
-        output.reserveInitialCapacity(iv.size() + result.returnValue().size());
+        Vector<uint8_t> output(ReserveCapacityTag { }, iv.size() + result.returnValue().size());
         output.append(std::span { iv });
         output.appendVector(result.releaseReturnValue());
         return output;
@@ -445,8 +444,7 @@ std::optional<SetPinRequest> SetPinRequest::tryCreate(PINUVAuthProtocol protocol
     auto coseKey = encodeCOSEPublicKey(rawPublicKeyResult.returnValue());
 
     const size_t minPaddedPinLength = 64;
-    Vector<uint8_t> paddedPin;
-    paddedPin.reserveInitialCapacity(minPaddedPinLength);
+    Vector<uint8_t> paddedPin(ReserveCapacityTag { }, minPaddedPinLength);
     paddedPin.append(inputPin.utf8().span());
     for (int i = paddedPin.size(); i < 64; i++)
         paddedPin.append('\0');

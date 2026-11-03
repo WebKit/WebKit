@@ -421,8 +421,7 @@ void Clipboard::ItemWriter::didSetAllData()
         return;
     }
 
-    Vector<PasteboardCustomData> customData;
-    customData.reserveInitialCapacity(dataToWrite.size());
+    Vector<PasteboardCustomData> customData(ReserveCapacityTag { }, dataToWrite.size());
     for (auto&& data : WTF::move(dataToWrite)) {
         if (!data) {
             reject();

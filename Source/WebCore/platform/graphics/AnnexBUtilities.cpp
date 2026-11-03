@@ -71,8 +71,7 @@ Vector<NaluIndex> findNaluIndices(std::span<const uint8_t> buffer)
 
 Vector<uint8_t> parseRbsp(std::span<const uint8_t> data)
 {
-    Vector<uint8_t> out;
-    out.reserveInitialCapacity(data.size());
+    Vector<uint8_t> out(ReserveCapacityTag { }, data.size());
     for (size_t i = 0; i < data.size();) {
         if (data.size() - i >= 3 && !data[i] && !data[i + 1] && data[i + 2] == 3) {
             out.append(data[i++]);
@@ -93,8 +92,7 @@ Vector<uint8_t> annexBToLengthPrefixed(std::span<const uint8_t> data, std::span<
             totalSize += sizeof(uint32_t) + index.payloadSize;
     }
 
-    Vector<uint8_t> result;
-    result.reserveInitialCapacity(totalSize);
+    Vector<uint8_t> result(ReserveCapacityTag { }, totalSize);
     for (auto& index : naluIndices) {
         if (!index.payloadSize)
             continue;

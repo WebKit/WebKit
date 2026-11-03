@@ -57,8 +57,7 @@ void TextExtractionCache::add(const String& url, Vector<TextExtractionLineConten
 
 Vector<String> TextExtractionCache::contextWindowBefore(const Vector<TextExtractionLineContent>& lines, unsigned targetIndex)
 {
-    Vector<String> window;
-    window.reserveInitialCapacity(contextLineCount);
+    Vector<String> window(ReserveCapacityTag { }, contextLineCount);
     for (unsigned offset = contextLineCount; offset >= 1; --offset) {
         if (offset > targetIndex)
             window.append(emptyString());
@@ -71,8 +70,7 @@ Vector<String> TextExtractionCache::contextWindowBefore(const Vector<TextExtract
 Vector<String> TextExtractionCache::contextWindowAfter(const Vector<TextExtractionLineContent>& lines, unsigned targetIndex)
 {
     unsigned lineCount = lines.size();
-    Vector<String> window;
-    window.reserveInitialCapacity(contextLineCount);
+    Vector<String> window(ReserveCapacityTag { }, contextLineCount);
     for (unsigned offset = 1; offset <= contextLineCount; ++offset) {
         unsigned index = targetIndex + offset;
         if (index >= lineCount)

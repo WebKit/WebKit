@@ -129,8 +129,7 @@ std::unique_ptr<Plane> Plane::create(int fd, Type type, drmModePlane* plane, boo
     if (!typeProperty.first || typeProperty.second != static_cast<uint64_t>(type))
         return nullptr;
 
-    Vector<Format> formats;
-    formats.reserveInitialCapacity(plane->count_formats);
+    Vector<Format> formats(ReserveCapacityTag { }, plane->count_formats);
     bool useFallback = true;
     if (modifiersSupported) {
         auto blobID = drmPropertyForName(fd, properties.get(), "IN_FORMATS");
@@ -146,8 +145,7 @@ std::unique_ptr<Plane> Plane::create(int fd, Type type, drmModePlane* plane, boo
                 RELEASE_ASSERT(plane->count_formats == formatModifierBlob->count_formats);
 
                 for (uint32_t i = 0; i < formatModifierBlob->count_formats; ++i) {
-                    Vector<uint64_t> modifiers;
-                    modifiers.reserveInitialCapacity(formatModifierBlob->count_modifiers);
+                    Vector<uint64_t> modifiers(ReserveCapacityTag { }, formatModifierBlob->count_modifiers);
 
                     for (uint32_t j = 0; j < formatModifierBlob->count_modifiers; ++j) {
                         struct drm_format_modifier* modifier = &blobModifiers[j];

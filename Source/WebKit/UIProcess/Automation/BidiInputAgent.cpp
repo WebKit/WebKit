@@ -550,8 +550,7 @@ static std::expected<Vector<Action>, String> processInputSourceActionSequence(Bi
     if (!actionItems)
         return makeUnexpected("'actions' must be an array"_s);
 
-    Vector<Action> actions;
-    actions.reserveInitialCapacity(actionItems->length());
+    Vector<Action> actions(ReserveCapacityTag { }, actionItems->length());
     for (auto& actionItemValue : *actionItems) {
         RefPtr actionItem = actionItemValue->asObject();
         if (!actionItem)
@@ -835,8 +834,7 @@ static Inspector::CommandResult<Vector<SimulatedInputKeyFrame>> keyFramesForActi
 // https://w3c.github.io/webdriver/#dfn-dispatch-tick-actions
 static Inspector::CommandResult<Vector<SimulatedInputKeyFrame>> keyFramesForUndoActions(BidiInputState& state, Vector<Action>&& undoActions)
 {
-    ActionsByTick ticks;
-    ticks.reserveInitialCapacity(undoActions.size());
+    ActionsByTick ticks(ReserveCapacityTag { }, undoActions.size());
     for (auto& action : borrow(undoActions)) {
         Vector<Action> tick;
         tick.append(WTF::move(action));

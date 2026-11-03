@@ -244,8 +244,7 @@ struct ChildRepresentation {
 
 static Vector<ChildRepresentation, 16> generateSortedChildrenMap(const Children& children)
 {
-    Vector<ChildRepresentation, 16> sortedChildrenMap;
-    sortedChildrenMap.reserveInitialCapacity(children.size());
+    Vector<ChildRepresentation, 16> sortedChildrenMap(ReserveCapacityTag { }, children.size());
 
     for (size_t i = 0; i < children.size(); ++i)
         sortedChildrenMap.append(ChildRepresentation { .index = i, .sortPriority = sortPriority(children[i]) });

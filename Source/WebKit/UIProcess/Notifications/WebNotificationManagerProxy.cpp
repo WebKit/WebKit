@@ -148,8 +148,7 @@ void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage)
 
 void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, const Vector<WTF::UUID>& pageNotificationIDs)
 {
-    Vector<WebNotificationIdentifier> globalNotificationIDs;
-    globalNotificationIDs.reserveInitialCapacity(m_globalNotificationMap.size());
+    Vector<WebNotificationIdentifier> globalNotificationIDs(ReserveCapacityTag { }, m_globalNotificationMap.size());
 
     // We always check page identity.
     // If the set of notification IDs is non-empty, we also check that.

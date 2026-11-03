@@ -124,8 +124,7 @@ void SocketStreamHandleImpl::platformSendHandshake(std::span<const uint8_t> data
     size_t bytesWritten = 0;
     if (m_state == Open) {
         // Unfortunately, we need to send the data in one buffer or else the handshake fails.
-        Vector<uint8_t> sendData;
-        sendData.reserveInitialCapacity(data.size() + cookieData.size());
+        Vector<uint8_t> sendData(ReserveCapacityTag { }, data.size() + cookieData.size());
         sendData.append(data);
         sendData.appendVector(cookieData);
 

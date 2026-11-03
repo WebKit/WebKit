@@ -62,8 +62,7 @@ OSREntryExpectedValues::OSREntryExpectedValues(const FixedOperands<AbstractValue
     , m_numberOfLocals(values.numberOfLocals())
 {
     unsigned numberOfOperands = m_numberOfArguments + m_numberOfLocals;
-    Vector<uint8_t> bytes;
-    bytes.reserveInitialCapacity(numberOfOperands);
+    Vector<uint8_t> bytes(ReserveCapacityTag { }, numberOfOperands);
     for (unsigned index = 0; index < numberOfOperands; ++index) {
         const AbstractValue& value = values[index];
         if (value.isBytecodeTop()) {

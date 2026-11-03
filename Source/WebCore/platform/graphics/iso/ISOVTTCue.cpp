@@ -54,8 +54,7 @@ private:
         if (characterCount > bytesRemaining)
             return false;
 
-        Vector<Latin1Character> characters;
-        characters.reserveInitialCapacity(static_cast<size_t>(characterCount));
+        Vector<Latin1Character> characters(ReserveCapacityTag { }, static_cast<size_t>(characterCount));
         while (characterCount--) {
             int8_t character = 0;
             if (!checkedRead<int8_t>(character, view, localOffset, BigEndian))

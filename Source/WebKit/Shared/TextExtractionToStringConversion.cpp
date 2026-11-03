@@ -637,8 +637,7 @@ public:
         }
 
         if (m_lines.size() > 1) {
-            Vector<TextExtractionAggregatedLine> unduplicatedLines;
-            unduplicatedLines.reserveInitialCapacity(m_lines.size());
+            Vector<TextExtractionAggregatedLine> unduplicatedLines(ReserveCapacityTag { }, m_lines.size());
             for (auto& line : borrow(m_lines)) {
                 if (unduplicatedLines.isEmpty() || unduplicatedLines.last().textForClient != line.textForClient)
                     unduplicatedLines.append(WTF::move(line));

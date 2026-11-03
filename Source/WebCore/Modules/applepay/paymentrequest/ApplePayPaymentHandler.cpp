@@ -177,8 +177,7 @@ static ExceptionOr<ApplePayLineItem> convertAndValidate(const PaymentItem& item,
 
 static ExceptionOr<Vector<ApplePayLineItem>> convertAndValidate(const Vector<PaymentItem>& lineItems, const String& expectedCurrency)
 {
-    Vector<ApplePayLineItem> result;
-    result.reserveInitialCapacity(lineItems.size());
+    Vector<ApplePayLineItem> result(ReserveCapacityTag { }, lineItems.size());
     for (auto& lineItem : lineItems) {
         auto convertedLineItem = convertAndValidate(lineItem, expectedCurrency);
         if (convertedLineItem.hasException())

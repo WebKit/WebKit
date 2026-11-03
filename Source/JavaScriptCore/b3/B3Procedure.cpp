@@ -287,16 +287,14 @@ void Procedure::dump(PrintStream& out) const
 
 Vector<BasicBlock*> Procedure::blocksInPreOrder()
 {
-    Vector<BasicBlock*> result;
-    result.reserveInitialCapacity(size());
+    Vector<BasicBlock*> result(ReserveCapacityTag { }, size());
     appendNodesInOrder(cfg(), GraphOrder::PreOrder, result);
     return result;
 }
 
 Vector<BasicBlock*> Procedure::blocksInPostOrder()
 {
-    Vector<BasicBlock*> result;
-    result.reserveInitialCapacity(size());
+    Vector<BasicBlock*> result(ReserveCapacityTag { }, size());
     appendNodesInOrder(cfg(), GraphOrder::PostOrder, result);
     return result;
 }

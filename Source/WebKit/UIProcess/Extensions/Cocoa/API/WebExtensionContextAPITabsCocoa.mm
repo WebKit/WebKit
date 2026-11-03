@@ -621,8 +621,7 @@ void WebExtensionContext::tabsMove(Vector<WebExtensionTabIdentifier> tabIdentifi
         return;
     }
 
-    Vector<Ref<WebExtensionTab>> tabs;
-    tabs.reserveInitialCapacity(tabIdentifiers.size());
+    Vector<Ref<WebExtensionTab>> tabs(ReserveCapacityTag { }, tabIdentifiers.size());
 
     for (auto& tabIdentifier : borrow(tabIdentifiers)) {
         if (RefPtr tab = getTab(tabIdentifier))
@@ -724,8 +723,7 @@ void WebExtensionContext::tabsMove(Vector<WebExtensionTabIdentifier> tabIdentifi
 
 void WebExtensionContext::tabsRemove(Vector<WebExtensionTabIdentifier> tabIdentifiers, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    Vector<Ref<WebExtensionTab>> tabs;
-    tabs.reserveInitialCapacity(tabIdentifiers.size());
+    Vector<Ref<WebExtensionTab>> tabs(ReserveCapacityTag { }, tabIdentifiers.size());
 
     for (auto& tabIdentifier : borrow(tabIdentifiers)) {
         if (RefPtr tab = getTab(tabIdentifier))

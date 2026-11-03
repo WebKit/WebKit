@@ -1168,8 +1168,7 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
 
 static Vector<WebCore::AuthenticatorTransport> toAuthenticatorTransports(NSArray<NSString *> *ascTransports)
 {
-    Vector<WebCore::AuthenticatorTransport> transports;
-    transports.reserveInitialCapacity(ascTransports.count);
+    Vector<WebCore::AuthenticatorTransport> transports(ReserveCapacityTag { }, ascTransports.count);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *ascTransport : ascTransports) {
         if ([ascTransport isEqualToString:@"usb"])

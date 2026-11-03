@@ -42,8 +42,7 @@ struct GPUDeviceDescriptor : public GPUObjectDescriptorBase {
     {
         // An entry whose value is explicitly undefined requests nothing, so drop it rather than
         // letting the backing layer reject it as an unsupported limit.
-        Vector<KeyValuePair<String, uint64_t>> specifiedLimits;
-        specifiedLimits.reserveInitialCapacity(requiredLimits.size());
+        Vector<KeyValuePair<String, uint64_t>> specifiedLimits(ReserveCapacityTag { }, requiredLimits.size());
         for (auto& requiredLimit : requiredLimits) {
             if (auto* value = std::get_if<uint64_t>(&requiredLimit.value))
                 specifiedLimits.append({ requiredLimit.key, *value });

@@ -83,8 +83,7 @@ template<typename T> static ExceptionOr<Ref<CSSNumericValue>> convertToException
 
 static ExceptionOr<Vector<Ref<CSSNumericValue>>> reifyMathExpressions(const CSSCalc::Children& nodes)
 {
-    Vector<Ref<CSSNumericValue>> values;
-    values.reserveInitialCapacity(nodes.size());
+    Vector<Ref<CSSNumericValue>> values(ReserveCapacityTag { }, nodes.size());
     for (auto& node : nodes) {
         CSS_NUMERIC_RETURN_IF_EXCEPTION(value, CSSNumericValue::reifyMathExpression(node));
         values.append(WTF::move(value));
@@ -307,8 +306,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::mul(FixedVector<CSSNumberish>
 
 ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::div(FixedVector<CSSNumberish>&& values)
 {
-    Vector<Ref<CSSNumericValue>> invertedValues;
-    invertedValues.reserveInitialCapacity(values.size());
+    Vector<Ref<CSSNumericValue>> invertedValues(ReserveCapacityTag { }, values.size());
     for (auto&& value : WTF::move(values)) {
         CSS_NUMERIC_RETURN_IF_EXCEPTION(inverted, invert(rectifyNumberish(WTF::move(value))));
         invertedValues.append(WTF::move(inverted));
@@ -429,8 +427,7 @@ ExceptionOr<Ref<CSSUnitValue>> CSSNumericValue::to(CSSUnitType unit)
 ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
 {
     UNUSED_PARAM(units);
-    Vector<CSSUnitType> parsedUnits;
-    parsedUnits.reserveInitialCapacity(units.size());
+    Vector<CSSUnitType> parsedUnits(ReserveCapacityTag { }, units.size());
     for (auto& unit : units) {
         auto parsedUnit = CSSUnitValue::parseUnit(unit);
         if (parsedUnit == CSSUnitType::Unknown)
@@ -441,8 +438,7 @@ ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
     if (!sumValue)
         return Exception { ExceptionCode::TypeError, "Could not create a sum value"_s };
 
-    Vector<Ref<CSSNumericValue>> values;
-    values.reserveInitialCapacity(sumValue->size());
+    Vector<Ref<CSSNumericValue>> values(ReserveCapacityTag { }, sumValue->size());
     for (auto& addend : *sumValue) {
         auto cssUnitValue = createCSSUnitValueFromAddend(addend);
         if (!cssUnitValue)

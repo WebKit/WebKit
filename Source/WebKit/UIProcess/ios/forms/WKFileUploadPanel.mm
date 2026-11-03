@@ -480,8 +480,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    Vector<String> filenames;
-    filenames.reserveInitialCapacity(count);
+    Vector<String> filenames(ReserveCapacityTag { }, count);
     for (NSURL *fileURL in fileURLs)
         filenames.append(String::fromUTF8(fileURL.fileSystemRepresentation));
 

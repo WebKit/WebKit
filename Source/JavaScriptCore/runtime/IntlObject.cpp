@@ -1828,8 +1828,7 @@ static JSArray* availableCollations(JSGlobalObject* globalObject)
         return { };
     }
 
-    Vector<String, 1> elements;
-    elements.reserveInitialCapacity(count + 2);
+    Vector<String, 1> elements(ReserveCapacityTag { }, count + 2);
     // ICU ~69 has a bug that does not report "emoji" and "eor" for collation when using ucol_getKeywordValues.
     // https://github.com/unicode-org/icu/commit/24778dfc9bf67f431509361a173a33a1ab860b5d
     elements.append("emoji"_s);
@@ -1931,8 +1930,7 @@ static JSArray* availableNumberingSystems(JSGlobalObject* globalObject)
         return { };
     }
 
-    Vector<String, 1> elements;
-    elements.reserveInitialCapacity(count);
+    Vector<String, 1> elements(ReserveCapacityTag { }, count);
     for (int32_t index = 0; index < count; ++index) {
         int32_t length = 0;
         const char* name = uenum_next(enumeration.get(), &length, &status);
@@ -2116,8 +2114,7 @@ static const Vector<TimeZoneEntry>& intlAvailableTimeZoneEntries()
         // Step 3: materialize the combined entries vector — primaries first, aliases after,
         // each region sorted. Build a name→index map so we can resolve each alias's
         // primary-name reference into a TimeZoneID.
-        Vector<TimeZoneEntry> combined;
-        combined.reserveInitialCapacity(primaryNames.size() + aliases.size());
+        Vector<TimeZoneEntry> combined(ReserveCapacityTag { }, primaryNames.size() + aliases.size());
         UncheckedKeyHashMap<String, TimeZoneID> nameToIndex;
         for (auto& name : primaryNames) {
             String identifier = reuseOrCreateImmortal(WTF::move(name));
@@ -2244,8 +2241,7 @@ static JSArray* availablePrimaryTimeZoneIdentifiers(JSGlobalObject* globalObject
 {
     const auto& entries = intlAvailableTimeZoneEntries();
     unsigned primaryCount = primaryTimeZoneCount;
-    Vector<String> primaries;
-    primaries.reserveInitialCapacity(primaryCount);
+    Vector<String> primaries(ReserveCapacityTag { }, primaryCount);
     for (unsigned i = 0; i < primaryCount; ++i)
         primaries.append(entries[i].identifier);
     return createArrayFromStringVector(globalObject, primaries);

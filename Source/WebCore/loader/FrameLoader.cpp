@@ -3511,8 +3511,7 @@ void FrameLoader::detachChildren()
     // allow loading of subframes at this point.
     SubframeLoadingDisabler subframeLoadingDisabler(protect(m_frame->document()).get());
 
-    Vector<Ref<LocalFrame>, 16> childrenToDetach;
-    childrenToDetach.reserveInitialCapacity(m_frame->tree().childCount());
+    Vector<Ref<LocalFrame>, 16> childrenToDetach(ReserveCapacityTag { }, m_frame->tree().childCount());
     for (RefPtr child = m_frame->tree().lastChild(); child; child = child->tree().previousSibling()) {
         if (RefPtr localChild = dynamicDowncast<LocalFrame>(child))
             childrenToDetach.append(localChild.releaseNonNull());

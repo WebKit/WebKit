@@ -71,8 +71,7 @@ PaymentSetupFeatures::PaymentSetupFeatures(RetainPtr<NSArray>&& platformFeatures
 
 PaymentSetupFeatures::operator Vector<Ref<WebCore::ApplePaySetupFeature>>() const
 {
-    Vector<Ref<WebCore::ApplePaySetupFeature>> features;
-    features.reserveInitialCapacity([m_platformFeatures count]);
+    Vector<Ref<WebCore::ApplePaySetupFeature>> features(ReserveCapacityTag { }, [m_platformFeatures count]);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL PKPaymentSetupFeature *platformFeature in m_platformFeatures.get()) {
         if (WebCore::ApplePaySetupFeature::supportsFeature(platformFeature))

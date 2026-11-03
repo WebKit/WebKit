@@ -259,14 +259,12 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
     SET_NSURLREQUESTDATA(httpMethod, NSString, CoreIPCString);
 
     if (RetainPtr headerFields = dynamic_objc_cast<NSDictionary>(dict.get()[@"headerFields"])) {
-        Vector<CoreIPCNSURLRequestData::HeaderField> vector;
-        vector.reserveInitialCapacity(headerFields.get().count);
+        Vector<CoreIPCNSURLRequestData::HeaderField> vector(ReserveCapacityTag { }, headerFields.get().count);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL id key in headerFields.get()) {
             RetainPtr<id> value = [headerFields objectForKey:key];
             if (RetainPtr valueArray = dynamic_objc_cast<NSArray>(value.get())) {
-                Vector<String> valueVector;
-                valueVector.reserveInitialCapacity(valueArray.get().count);
+                Vector<String> valueVector(ReserveCapacityTag { }, valueArray.get().count);
                 // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
                 for (SUPPRESS_UNRETAINED_LOCAL id item in valueArray.get()) {
                     if (RetainPtr nsString = dynamic_objc_cast<NSString>(item))
@@ -330,8 +328,7 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
     SET_NSURLREQUESTDATA_PRIMITIVE(allowOnlyPartitionedCookies, NSNumber, bool);
 
     if (RetainPtr contentDispositionEncodingFallbackArray = dynamic_objc_cast<NSArray>(dict.get()[@"contentDispositionEncodingFallbackArray"])) {
-        Vector<CoreIPCNumber> vector;
-        vector.reserveInitialCapacity(contentDispositionEncodingFallbackArray.get().count);
+        Vector<CoreIPCNumber> vector(ReserveCapacityTag { }, contentDispositionEncodingFallbackArray.get().count);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL id element in contentDispositionEncodingFallbackArray.get()) {
             if (RetainPtr number = dynamic_objc_cast<NSNumber>(element))

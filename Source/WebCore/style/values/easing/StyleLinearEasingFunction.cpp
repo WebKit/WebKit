@@ -62,8 +62,7 @@ template<typename Resolver> static Ref<TimingFunction> createTimingFunctionWithR
         std::optional<double> input { std::nullopt };
     };
 
-    Vector<PendingPoint> points;
-    points.reserveInitialCapacity(function->stops.size());
+    Vector<PendingPoint> points(ReserveCapacityTag { }, function->stops.size());
 
     // 1. Let function be a new linear easing function.
     // NOTE: This is implicit.
@@ -125,8 +124,7 @@ template<typename Resolver> static Ref<TimingFunction> createTimingFunctionWithR
     }
 
     // 5. For runs of items in function’s points that have a null input, assign a number to the input by linearly interpolating between the closest previous and next points that have a non-null input.
-    Vector<LinearTimingFunction::Point> resolvedPoints;
-    resolvedPoints.reserveInitialCapacity(points.size());
+    Vector<LinearTimingFunction::Point> resolvedPoints(ReserveCapacityTag { }, points.size());
 
     std::optional<size_t> missingInputRunStart;
     for (size_t i = 0; i <= points.size(); ++i) {

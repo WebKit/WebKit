@@ -213,8 +213,7 @@ void CacheStorageCache::retrieveRecords(const Vector<CacheStorageRecordInformati
     
     m_store->readRecords(targetRecordInfos, [options = WTF::move(options), callback = WTF::move(callback)](auto&& cacheStorageRecords) mutable {
         using namespace WebCore::DOMCacheEngine;
-        Vector<CrossThreadRecord> result;
-        result.reserveInitialCapacity(cacheStorageRecords.size());
+        Vector<CrossThreadRecord> result(ReserveCapacityTag { }, cacheStorageRecords.size());
         for (auto&& cacheStorageRecord : borrow(cacheStorageRecords)) {
             if (!cacheStorageRecord)
                 continue;

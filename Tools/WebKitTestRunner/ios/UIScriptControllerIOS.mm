@@ -244,8 +244,7 @@ static Vector<String> parseModifierArray(JSContextRef context, JSValueRef arrayV
         return { };
     JSObjectRef array = const_cast<JSObjectRef>(arrayValue);
     unsigned length = arrayLength(context, array);
-    Vector<String> modifiers;
-    modifiers.reserveInitialCapacity(length);
+    Vector<String> modifiers(ReserveCapacityTag { }, length);
     for (unsigned i = 0; i < length; ++i)
         modifiers.append(toWTFString(context, JSObjectGetPropertyAtIndex(context, array, i, nullptr)));
     return modifiers;

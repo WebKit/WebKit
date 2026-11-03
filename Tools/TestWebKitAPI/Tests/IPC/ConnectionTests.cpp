@@ -2054,8 +2054,7 @@ protected:
     template<typename MakeMessage>
     Vector<double> sendMessages(uint64_t firstDestinationID, uint64_t count, NOESCAPE const MakeMessage& makeMessage)
     {
-        Vector<double> sendDurations;
-        sendDurations.reserveInitialCapacity(count);
+        Vector<double> sendDurations(ReserveCapacityTag { }, count);
         for (uint64_t destinationID = firstDestinationID; destinationID < firstDestinationID + count; ++destinationID) {
             auto message = makeMessage();
             auto start = MonotonicTime::now();
@@ -2134,8 +2133,7 @@ TEST_P(ConnectionSendBenchmark, DISABLED_SmallMessagesOneAtATime)
     ASSERT_NO_FATAL_FAILURE(openForBenchmark());
     constexpr uint64_t messageCount = 10000;
     expectMessagesOneAtATime(messageCount);
-    Vector<double> sendDurations;
-    sendDurations.reserveInitialCapacity(messageCount);
+    Vector<double> sendDurations(ReserveCapacityTag { }, messageCount);
     auto start = readCounters();
     for (uint64_t i = 0; i < messageCount; ++i) {
         sendDurations.appendVector(sendMessages(i, 1, smallMessage));
@@ -2243,8 +2241,7 @@ TEST_P(ConnectionSendBenchmark, DISABLED_SyncRoundTrips)
 {
     ASSERT_NO_FATAL_FAILURE(openForBenchmark());
     constexpr uint64_t messageCount = 10000;
-    Vector<double> roundTripDurations;
-    roundTripDurations.reserveInitialCapacity(messageCount);
+    Vector<double> roundTripDurations(ReserveCapacityTag { }, messageCount);
     auto start = readCounters();
     for (uint64_t i = 0; i < messageCount; ++i) {
         auto roundTripStart = MonotonicTime::now();

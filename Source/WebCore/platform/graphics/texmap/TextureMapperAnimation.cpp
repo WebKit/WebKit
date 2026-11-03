@@ -55,8 +55,7 @@ static FilterOperations applyFilterAnimation(const FilterOperations& from, const
     size_t toSize = to.size();
     size_t size = std::max(fromSize, toSize);
 
-    Vector<Ref<FilterOperation>> operations;
-    operations.reserveInitialCapacity(size);
+    Vector<Ref<FilterOperation>> operations(ReserveCapacityTag { }, size);
 
     for (size_t i = 0; i < size; i++) {
         RefPtr<FilterOperation> fromOp = (i < fromSize) ? from[i].ptr() : nullptr;

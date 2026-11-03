@@ -41,8 +41,7 @@ std::optional<VertexState> ConvertToBackingContext::convertToBacking(const ::Web
     if (!base)
         return std::nullopt;
 
-    Vector<std::optional<VertexBufferLayout>> buffers;
-    buffers.reserveInitialCapacity(vertexState.buffers.size());
+    Vector<std::optional<VertexBufferLayout>> buffers(ReserveCapacityTag { }, vertexState.buffers.size());
     for (const auto& buffer : vertexState.buffers) {
         if (buffer) {
             auto convertedBuffer = convertToBacking(*buffer);

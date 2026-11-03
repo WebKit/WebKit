@@ -491,8 +491,7 @@ void PDFDiscretePresentationController::startTransitionAnimation(PageTransitionS
     auto transitionDuration = defaultTransitionDuration;
 
     auto transformAnimationValueForTranslation = [](double keyTime, FloatSize offset) {
-        Vector<Ref<TransformOperation>> operations;
-        operations.reserveInitialCapacity(1);
+        Vector<Ref<TransformOperation>> operations(ReserveCapacityTag { }, 1);
         operations.append(TranslateTransformOperation::create(offset.width(), offset.height(), 0, TransformOperationType::Translate));
 
         return makeUnique<GraphicsLayerTransformAnimationValue>(keyTime, TransformOperations { WTF::move(operations) }, nullptr);

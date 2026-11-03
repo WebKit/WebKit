@@ -190,8 +190,7 @@ std::expected<std::pair<String, Vector<IntSize>>, ImageDecodingError> utiAndAvai
     if (imageDecoder->repetitionCount() != RepetitionCountNone && frameCount > 1)
         return makeUnexpected(ImageDecodingError::UnsupportedType);
 
-    Vector<IntSize> sizes;
-    sizes.reserveInitialCapacity(frameCount);
+    Vector<IntSize> sizes(ReserveCapacityTag { }, frameCount);
     for (size_t index = 0; index < frameCount; ++index)
         sizes.append(imageDecoder->frameSizeAtIndex(index));
 

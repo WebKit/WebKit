@@ -84,8 +84,7 @@ bool ISOTrackEncryptionBox::parsePayload(const ByteView& view, unsigned& offset)
         if (!checkedRead<int8_t>(defaultConstantIVSize, view, offset, BigEndian) || defaultConstantIVSize < 0)
             return false;
 
-        Vector<uint8_t> defaultConstantIV;
-        defaultConstantIV.reserveInitialCapacity(defaultConstantIVSize);
+        Vector<uint8_t> defaultConstantIV(ReserveCapacityTag { }, defaultConstantIVSize);
         while (defaultConstantIVSize--) {
             int8_t character = 0;
             if (!checkedRead<int8_t>(character, view, offset, BigEndian))

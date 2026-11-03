@@ -209,8 +209,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportSpki() const
 
     // SEQUENCE, length, SEQUENCE, length, OID, Bit String (Initial octet prepended)
     size_t totalSize = 1 + 1 + 1 + 1 + 5 + 1 + 1 + 1 + keySize;
-    Vector<uint8_t> result;
-    result.reserveInitialCapacity(totalSize);
+    Vector<uint8_t> result(ReserveCapacityTag { }, totalSize);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize - 2);
     result.append(SequenceMark);
@@ -318,8 +317,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportPkcs8() const
 
     // SEQUENCE, length, version SEQUENCE, length, OID, Octet String Octet String
     size_t totalSize = 1 + 1 + 3 + 1 + 1 + 5 + 1 + 1 + 1 + 1 + keySize;
-    Vector<uint8_t> result;
-    result.reserveInitialCapacity(totalSize);
+    Vector<uint8_t> result(ReserveCapacityTag { }, totalSize);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize - 2);
 

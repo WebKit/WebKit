@@ -108,8 +108,7 @@ FormControlState FileInputType::saveFormControlState() const
 
     auto length = Checked<size_t>(m_fileList->files().size()) * Checked<size_t>(2) + Checked<size_t>(1);
 
-    Vector<AtomString> stateVector;
-    stateVector.reserveInitialCapacity(length);
+    Vector<AtomString> stateVector(ReserveCapacityTag { }, length);
     for (auto& file : m_fileList->files()) {
         stateVector.append(AtomString { file->path() });
         stateVector.append(AtomString { file->name() });

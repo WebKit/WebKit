@@ -258,8 +258,7 @@ ExceptionOr<void> MediaSession::setPlaylist(ScriptExecutionContext& context, Vec
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    Vector<Ref<MediaMetadata>> resolvedPlaylist;
-    resolvedPlaylist.reserveInitialCapacity(playlist.size());
+    Vector<Ref<MediaMetadata>> resolvedPlaylist(ReserveCapacityTag { }, playlist.size());
 
     for (auto& entry : playlist) {
         auto resolvedEntry = MediaMetadata::create(context, { entry->metadata() });
@@ -605,8 +604,7 @@ static Vector<URL> fallbackArtwork(DocumentLoader* loader)
     if (!size)
         return { };
 
-    Vector<URL> images;
-    images.reserveInitialCapacity(size);
+    Vector<URL> images(ReserveCapacityTag { }, size);
     for (const auto& icon : loader->linkIcons()) {
         if (icon.url.protocolIsInHTTPFamily())
             images.append(icon.url);

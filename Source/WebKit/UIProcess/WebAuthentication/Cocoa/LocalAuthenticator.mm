@@ -296,8 +296,7 @@ LocalAuthenticator::LocalAuthenticator(Ref<LocalConnection>&& connection)
 std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> LocalAuthenticator::getExistingCredentials(const String& rpId)
 {
     RetainPtr sortedAttributesArray = m_connection->getExistingCredentials(rpId);
-    Vector<Ref<AuthenticatorAssertionResponse>> result;
-    result.reserveInitialCapacity([sortedAttributesArray count]);
+    Vector<Ref<AuthenticatorAssertionResponse>> result(ReserveCapacityTag { }, [sortedAttributesArray count]);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *attributes in sortedAttributesArray.get()) {
         auto decodedResponse = cbor::CBORReader::read(makeVector(protect(checked_objc_cast<NSData>(attributes[(id)kSecAttrApplicationTag])).get()));

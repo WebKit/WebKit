@@ -2124,8 +2124,7 @@ inline Vector<WGPUCompilationMessage> toAPI(const WebGPU::CompilationInfo& compi
     messageStorage.clear();
     for (auto& message : compilationInfo.messages)
         messageStorage.append(message.message.utf8());
-    Vector<WGPUCompilationMessage> result;
-    result.reserveInitialCapacity(compilationInfo.messages.size());
+    Vector<WGPUCompilationMessage> result(ReserveCapacityTag { }, compilationInfo.messages.size());
     for (auto [i, message] : indexedRange(compilationInfo.messages)) {
         auto utf8 = byteCast<char>(messageStorage[i].span());
         result.append(WGPUCompilationMessage {

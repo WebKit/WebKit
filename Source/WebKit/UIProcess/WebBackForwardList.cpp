@@ -532,8 +532,7 @@ void WebBackForwardList::clear()
             didRemoveItem(m_entries[i]);
     }
 
-    Vector<Ref<WebBackForwardListItem>> removedItems;
-    removedItems.reserveInitialCapacity(size - 1);
+    Vector<Ref<WebBackForwardListItem>> removedItems(ReserveCapacityTag { }, size - 1);
     for (size_t i = 0; i < size; ++i) {
         if (m_currentIndex && i != *m_currentIndex)
             removedItems.append(WTF::move(m_entries[i]));
@@ -1170,8 +1169,7 @@ Ref<WebKit::WebBackForwardListItem> createItemFromState(const WebKit::BackForwar
 
 Vector<Ref<WebKit::WebBackForwardListItem>> createItemsFromState(const WebKit::BackForwardListState& state, WebKit::WebPageProxyIdentifier pageIdentifier)
 {
-    Vector<Ref<WebKit::WebBackForwardListItem>> items;
-    items.reserveInitialCapacity(state.items.size());
+    Vector<Ref<WebKit::WebBackForwardListItem>> items(ReserveCapacityTag { }, state.items.size());
     for (auto& itemState : borrow(state.items))
         items.append(createItemFromState(itemState, pageIdentifier));
     return items;

@@ -60,8 +60,7 @@ XrResult OpenXRInput::initialize(OpenXRSystemProperties&& systemProperties)
     }
 
     OpenXRInputSource::SuggestedBindings bindings;
-    Vector<XrActionSet> actionSets;
-    actionSets.reserveInitialCapacity(m_inputSources.size());
+    Vector<XrActionSet> actionSets(ReserveCapacityTag { }, m_inputSources.size());
     for (const auto& inputSource : m_inputSources) {
         inputSource->suggestBindings(bindings);
         actionSets.append(inputSource->actionSet());
@@ -84,8 +83,7 @@ XrResult OpenXRInput::initialize(OpenXRSystemProperties&& systemProperties)
 
 Vector<PlatformXR::FrameData::InputSource> OpenXRInput::collectInputSources(const XrFrameState& frameState, XrSpace space) const
 {
-    Vector<XrActiveActionSet> actionSets;
-    actionSets.reserveInitialCapacity(m_inputSources.size());
+    Vector<XrActiveActionSet> actionSets(ReserveCapacityTag { }, m_inputSources.size());
     for (const auto& input : m_inputSources)
         actionSets.append(XrActiveActionSet { input->actionSet(), XR_NULL_PATH });
 
@@ -94,8 +92,7 @@ Vector<PlatformXR::FrameData::InputSource> OpenXRInput::collectInputSources(cons
     syncInfo.activeActionSets = actionSets.span().data();
     CHECK_XRCMD(xrSyncActions(m_session, &syncInfo));
 
-    Vector<PlatformXR::FrameData::InputSource> result;
-    result.reserveInitialCapacity(m_inputSources.size());
+    Vector<PlatformXR::FrameData::InputSource> result(ReserveCapacityTag { }, m_inputSources.size());
     for (auto& input : m_inputSources) {
         if (auto data = input->collectInputSource(space, frameState))
             result.append(*data);

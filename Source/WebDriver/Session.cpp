@@ -2435,8 +2435,7 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
 
                     unsigned stickyModifiers = 0;
                     auto textLength = text.length();
-                    Vector<KeyboardInteraction> interactions;
-                    interactions.reserveInitialCapacity(textLength);
+                    Vector<KeyboardInteraction> interactions(ReserveCapacityTag { }, textLength);
                     for (unsigned i = 0; i < textLength; ++i) {
                         auto key = text[i];
                         KeyboardInteraction interaction;

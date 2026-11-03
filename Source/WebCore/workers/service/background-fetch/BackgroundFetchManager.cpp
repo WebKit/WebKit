@@ -68,8 +68,7 @@ static ExceptionOr<Vector<Ref<FetchRequest>>> buildBackgroundFetchRequests(Scrip
         },
         [&context](Vector<BackgroundFetchManager::RequestInfo>&& requestInfos) -> ExceptionOr<Vector<Ref<FetchRequest>>> {
             std::optional<Exception> exception;
-            Vector<Ref<FetchRequest>> requests;
-            requests.reserveInitialCapacity(requestInfos.size());
+            Vector<Ref<FetchRequest>> requests(ReserveCapacityTag { }, requestInfos.size());
             for (auto& requestInfo : requestInfos) {
                 auto result = FetchRequest::create(context, WTF::move(requestInfo), { });
                 if (result.hasException())

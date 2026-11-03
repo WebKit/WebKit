@@ -133,11 +133,9 @@ DisplayListData::DisplayListData(Vector<Vector<DisplayListDataItem>>&& displayLi
 
 RefPtr<const DisplayList::DisplayList> DisplayListData::createDisplayList() const
 {
-    Vector<Ref<const DisplayList::DisplayList>> displayLists;
-    displayLists.reserveInitialCapacity(m_displayLists.size());
+    Vector<Ref<const DisplayList::DisplayList>> displayLists(ReserveCapacityTag { }, m_displayLists.size());
     for (auto& items : m_displayLists) {
-        Vector<DisplayList::Item> result;
-        result.reserveInitialCapacity(items.size());
+        Vector<DisplayList::Item> result(ReserveCapacityTag { }, items.size());
         for (auto& item : items) {
             bool isValid = WTF::switchOn(item,
                 [&](const DrawDisplayListAtIndex& item) {

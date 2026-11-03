@@ -983,8 +983,7 @@ AXTextMarkerRange AccessibilityObject::textMarkerRange() const
 
 Vector<BoundaryPoint> AccessibilityObject::previousLineStartBoundaryPoints(const VisiblePosition& startingPosition, const SimpleRange& targetRange, unsigned positionsToRetrieve) const
 {
-    Vector<BoundaryPoint> boundaryPoints;
-    boundaryPoints.reserveInitialCapacity(positionsToRetrieve);
+    Vector<BoundaryPoint> boundaryPoints(ReserveCapacityTag { }, positionsToRetrieve);
 
     std::optional<VisiblePosition> lastPosition = startingPosition;
     for (unsigned i = 0; i < positionsToRetrieve; i++) {
@@ -1302,11 +1301,9 @@ static SimpleRange rangeFromTextOperationRange(const TextOperationRange& textOpe
 
 Vector<String> AccessibilityObject::performTextOperation(const AccessibilityTextOperation& operation)
 {
-    Vector<TextOperationRange> textOperationRanges;
-    textOperationRanges.reserveInitialCapacity(operation.textRanges.size());
+    Vector<TextOperationRange> textOperationRanges(ReserveCapacityTag { }, operation.textRanges.size());
 
-    Vector<String> result;
-    result.reserveInitialCapacity(operation.textRanges.size());
+    Vector<String> result(ReserveCapacityTag { }, operation.textRanges.size());
 
     if (operation.textRanges.isEmpty())
         return result;

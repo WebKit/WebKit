@@ -221,8 +221,7 @@ Vector<TextRun> GraphicsContext::visuallyOrderedSubruns(const TextRun& run)
         return { };
     }
 
-    Vector<TextRun> subruns;
-    subruns.reserveInitialCapacity(runCount);
+    Vector<TextRun> subruns(ReserveCapacityTag { }, runCount);
     for (int32_t visualIndex = 0; visualIndex < runCount; ++visualIndex) {
         int32_t start = 0;
         int32_t length = 0;

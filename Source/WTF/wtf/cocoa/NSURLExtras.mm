@@ -190,8 +190,7 @@ static RetainPtr<NSData> dataWithUserTypedString(NSString *string)
     if (outBytesCapacity.hasOverflowed())
         return nil;
     
-    Vector<char> outBytes;
-    outBytes.reserveInitialCapacity(outBytesCapacity);
+    Vector<char> outBytes(ReserveCapacityTag { }, outBytesCapacity);
     for (auto c : inBytes) {
         if (c <= 0x20 || c >= 0x7f)
             outBytes.appendList({ '%', upperNibbleToASCIIHexDigit(c), lowerNibbleToASCIIHexDigit(c) });

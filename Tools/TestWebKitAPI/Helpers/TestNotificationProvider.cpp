@@ -199,8 +199,7 @@ bool TestNotificationProvider::simulateMultipleNotificationsClose()
             notificationsByManager.add(manager, Vector<WKRetainPtr<WKUInt64Ref>> { }).iterator->value.append(adoptWK(WKUInt64Create(identifier)));
 
         for (auto& [manager, identifiers] : notificationsByManager) {
-            Vector<WKTypeRef> notificationIDs;
-            notificationIDs.reserveInitialCapacity(identifiers.size());
+            Vector<WKTypeRef> notificationIDs(ReserveCapacityTag { }, identifiers.size());
             for (auto& identifier : identifiers)
                 notificationIDs.append(identifier.get());
 

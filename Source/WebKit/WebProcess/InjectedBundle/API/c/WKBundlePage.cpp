@@ -403,8 +403,7 @@ void WKBundlePageReplaceStringMatches(WKBundlePageRef pageRef, WKArrayRef matchI
 {
     RefPtr matchIndices = WebKit::toImpl(matchIndicesRef);
 
-    Vector<uint32_t> indices;
-    indices.reserveInitialCapacity(matchIndices->size());
+    Vector<uint32_t> indices(ReserveCapacityTag { }, matchIndices->size());
 
     auto numberOfMatchIndices = matchIndices->size();
     for (size_t i = 0; i < numberOfMatchIndices; ++i) {

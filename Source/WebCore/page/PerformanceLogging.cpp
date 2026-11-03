@@ -58,8 +58,7 @@ static ASCIILiteral toString(PerformanceLogging::PointOfInterest poi)
 
 Vector<std::pair<ASCIILiteral, size_t>> PerformanceLogging::memoryUsageStatistics(ShouldIncludeExpensiveComputations includeExpensive)
 {
-    Vector<std::pair<ASCIILiteral, size_t>> stats;
-    stats.reserveInitialCapacity(32);
+    Vector<std::pair<ASCIILiteral, size_t>> stats(ReserveCapacityTag { }, 32);
 
     stats.append(std::pair { "page_count"_s, Page::nonUtilityPageCount() });
     stats.append(std::pair { "backforward_cache_page_count"_s, BackForwardCache::singleton().pageCount() });

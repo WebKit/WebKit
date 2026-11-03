@@ -134,11 +134,9 @@ GradientRendererCG::Gradient GradientRendererCG::makeGradient(ColorInterpolation
     auto numberOfStops = stops.size();
 
     static constexpr auto reservedStops = 3;
-    Vector<CGFloat, reservedStops> locations;
-    locations.reserveInitialCapacity(numberOfStops);
+    Vector<CGFloat, reservedStops> locations(ReserveCapacityTag { }, numberOfStops);
 
-    Vector<CGFloat, 4 * reservedStops> colorComponents;
-    colorComponents.reserveInitialCapacity(numberOfStops * 4);
+    Vector<CGFloat, 4 * reservedStops> colorComponents(ReserveCapacityTag { }, numberOfStops * 4);
 
     RetainPtr cgColorSpace = [&] () -> CGColorSpaceRef {
         if (m_colorSpace) {

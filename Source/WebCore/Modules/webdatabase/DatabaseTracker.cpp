@@ -747,8 +747,7 @@ void DatabaseTracker::deleteDatabasesModifiedSince(WallTime time)
 {
     for (auto& origin : origins()) {
         Vector<String> databaseNames = this->databaseNames(origin);
-        Vector<String> databaseNamesToDelete;
-        databaseNamesToDelete.reserveInitialCapacity(databaseNames.size());
+        Vector<String> databaseNamesToDelete(ReserveCapacityTag { }, databaseNames.size());
         for (const auto& databaseName : databaseNames) {
             auto fullPath = fullPathForDatabase(origin, databaseName, false);
 

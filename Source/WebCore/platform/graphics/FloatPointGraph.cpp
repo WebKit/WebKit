@@ -231,8 +231,7 @@ std::pair<FloatPointGraph, Vector<FloatPointGraph::Polygon>> FloatPointGraph::po
 
     FloatPointGraph graph;
 
-    Vector<Polygon> rectPolygons;
-    rectPolygons.reserveInitialCapacity(sortedRects.size());
+    Vector<Polygon> rectPolygons(ReserveCapacityTag { }, sortedRects.size());
 
     for (auto& rect : sortedRects) {
         bool isContained = false;

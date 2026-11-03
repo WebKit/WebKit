@@ -119,8 +119,7 @@ LayoutUnit FlexLayout::mainAxisAvailableSpace() const
 
 FlexLayoutItems FlexLayout::buildFlexLayoutItems(RelayoutChildren relayoutChildren, const FlexLayoutConstraints& constraints)
 {
-    FlexLayoutItems flexLayoutItems;
-    flexLayoutItems.reserveInitialCapacity(m_flexItems.size());
+    FlexLayoutItems flexLayoutItems(ReserveCapacityTag { }, m_flexItems.size());
     auto contentBoxLogicalWidth = flexBox().contentBoxLogicalWidth();
     for (auto& renderer : m_flexItems) {
         // buildFlexItemList has just collected these from the container's children, so none of them is gone.

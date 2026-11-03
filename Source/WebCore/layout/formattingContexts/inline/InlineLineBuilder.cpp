@@ -92,11 +92,9 @@ static inline StringBuilder toString(const Line::RunList& runs)
 
 static inline Vector<int32_t> computedVisualOrder(const Line::RunList& lineRuns, Vector<int32_t>& visualOrderList)
 {
-    Vector<UBiDiLevel> runLevels;
-    runLevels.reserveInitialCapacity(lineRuns.size());
+    Vector<UBiDiLevel> runLevels(ReserveCapacityTag { }, lineRuns.size());
 
-    Vector<size_t> runIndexOffsetMap;
-    runIndexOffsetMap.reserveInitialCapacity(lineRuns.size());
+    Vector<size_t> runIndexOffsetMap(ReserveCapacityTag { }, lineRuns.size());
     size_t numberOfOpaqueRuns = 0;
     for (size_t i = 0, accumulatedOffset = 0; i < lineRuns.size(); ++i) {
         if (lineRuns[i].bidiLevel() == InlineItem::opaqueBidiLevel) {

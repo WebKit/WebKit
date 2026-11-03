@@ -171,8 +171,7 @@ void NodeSet::sort() const
     sortBlock(0, nodeCount, parentMatrix, containsAttributeNodes);
 
     // It is not possible to just assign the result to m_nodes, because some nodes may get dereferenced and destroyed.
-    Vector<Ref<Node>> sortedNodes;
-    sortedNodes.reserveInitialCapacity(nodeCount);
+    Vector<Ref<Node>> sortedNodes(ReserveCapacityTag { }, nodeCount);
     for (unsigned i = 0; i < nodeCount; ++i)
         sortedNodes.append(WTF::move(parentMatrix[i][0]));
 
@@ -205,8 +204,7 @@ void NodeSet::traversalSort() const
             containsAttributeNodes = true;
     }
 
-    Vector<Ref<Node>> sortedNodes;
-    sortedNodes.reserveInitialCapacity(nodeCount);
+    Vector<Ref<Node>> sortedNodes(ReserveCapacityTag { }, nodeCount);
 
     for (RefPtr node = findRootNode(m_nodes.first().ptr()); node; node = NodeTraversal::next(*node)) {
         if (nodes.contains(*node))

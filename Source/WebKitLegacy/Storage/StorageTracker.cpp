@@ -349,8 +349,7 @@ Vector<SecurityOriginData> StorageTracker::origins()
 
     Locker locker { m_originSetMutex };
 
-    Vector<SecurityOriginData> result;
-    result.reserveInitialCapacity(m_originSet.size());
+    Vector<SecurityOriginData> result(ReserveCapacityTag { }, m_originSet.size());
     for (auto& identifier : m_originSet) {
         auto origin = SecurityOriginData::fromDatabaseIdentifier(identifier);
         if (!origin) {

@@ -553,8 +553,7 @@ RefPtr<BackgroundFetch> BackgroundFetch::createFromStore(std::span<const uint8_t
     if (!recordSize)
         return nullptr;
 
-    Vector<Ref<Record>> records;
-    records.reserveInitialCapacity(*recordSize);
+    Vector<Ref<Record>> records(ReserveCapacityTag { }, *recordSize);
 
     for (uint64_t index = 0; index < *recordSize; ++index) {
         std::optional<WebCore::ResourceRequest> internalRequest;

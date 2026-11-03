@@ -313,8 +313,7 @@ static std::optional<LayoutUnit> fixedMaxTrackSizingFunctionSum(const WTF::Range
 // This is only computed when the grid container is being sized under a min-/max-content constraint.
 static Vector<LayoutUnit> limitedContentContributions(const Vector<LayoutUnit>& contentContributions, const Vector<std::optional<LayoutUnit>>& fixedMaxTrackSizingFunctionSums, const Vector<LayoutUnit>& minimumContributions)
 {
-    Vector<LayoutUnit> limitedContributions;
-    limitedContributions.reserveInitialCapacity(contentContributions.size());
+    Vector<LayoutUnit> limitedContributions(ReserveCapacityTag { }, contentContributions.size());
     for (auto [index, contribution] : WTF::indexedRange(contentContributions)) {
         auto limitedContribution = contribution;
         if (auto fixedMaxSum = fixedMaxTrackSizingFunctionSums[index])

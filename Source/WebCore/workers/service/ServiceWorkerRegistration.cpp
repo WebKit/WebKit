@@ -368,8 +368,7 @@ void ServiceWorkerRegistration::addCookieChangeSubscriptions(Vector<CookieStoreG
         return;
     }
 
-    Vector<CookieChangeSubscription> cookieChangeSubscriptions;
-    cookieChangeSubscriptions.reserveInitialCapacity(subscriptions.size());
+    Vector<CookieChangeSubscription> cookieChangeSubscriptions(ReserveCapacityTag { }, subscriptions.size());
     for (auto& subscription : subscriptions) {
         // FIXME: Fall back to scope url since spec does not specify an alternative and WPT layout tests expect this behavior (https://github.com/WICG/cookie-store/issues/236).
         String url;
@@ -396,8 +395,7 @@ void ServiceWorkerRegistration::removeCookieChangeSubscriptions(Vector<CookieSto
         return;
     }
 
-    Vector<CookieChangeSubscription> cookieChangeSubscriptions;
-    cookieChangeSubscriptions.reserveInitialCapacity(subscriptions.size());
+    Vector<CookieChangeSubscription> cookieChangeSubscriptions(ReserveCapacityTag { }, subscriptions.size());
     for (auto& subscription : subscriptions) {
         // FIXME: Fall back to scope url since spec does not specify an alternative and WPT layout tests expect this behavior (https://github.com/WICG/cookie-store/issues/236).
         String url;

@@ -128,8 +128,7 @@ static const size_t kMaximumDeviceIdentifierSeedSize = 20;
     if (!parent)
         return;
 
-    Vector<RetainPtr<AVContentKeyRequest>> requests;
-    requests.reserveInitialCapacity(keyRequests.count);
+    Vector<RetainPtr<AVContentKeyRequest>> requests(ReserveCapacityTag { }, keyRequests.count);
     [keyRequests enumerateObjectsUsingBlock:[&](AVContentKeyRequest* request, NSUInteger, BOOL*) {
         requests.append(request);
     }];
@@ -1358,8 +1357,7 @@ RetainPtr<NSDictionary> CDMInstanceSessionFairPlayStreamingAVFObjC::optionsForKe
         return @{ };
 
     auto options = adoptNS([[NSMutableDictionary alloc] init]);
-    Vector<uint8_t> seedData;
-    seedData.reserveInitialCapacity(mediaKeysHashSeedString.length());
+    Vector<uint8_t> seedData(ReserveCapacityTag { }, mediaKeysHashSeedString.length());
     for (auto character : mediaKeysHashSeedString.span8()) {
         if (isASCIIHexDigit(character))
             seedData.append(toASCIIHexValue(character));

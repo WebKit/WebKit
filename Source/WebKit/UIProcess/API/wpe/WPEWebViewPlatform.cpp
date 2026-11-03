@@ -332,8 +332,7 @@ void ViewPlatform::toplevelStateChanged(WPEToplevelState previousState, WPETople
 #if ENABLE(DEVELOPER_MODE)
 static Vector<WebKit::WebPlatformTouchPoint> platformTouchPoints(const Vector<WPETouchPoint>& touchPoints)
 {
-    Vector<WebPlatformTouchPoint> points;
-    points.reserveInitialCapacity(touchPoints.size());
+    Vector<WebPlatformTouchPoint> points(ReserveCapacityTag { }, touchPoints.size());
     for (const auto& touchPoint : touchPoints) {
         WebCore::IntPoint position(touchPoint.x, touchPoint.y);
         WebPlatformTouchPoint::State state = WebPlatformTouchPoint::State::Stationary;
@@ -382,8 +381,7 @@ Vector<WebKit::WebPlatformTouchPoint> ViewPlatform::touchPointsForEvent(WPEEvent
         RELEASE_ASSERT_NOT_REACHED();
     };
 
-    Vector<WebPlatformTouchPoint> points;
-    points.reserveInitialCapacity(m_touchEvents.size());
+    Vector<WebPlatformTouchPoint> points(ReserveCapacityTag { }, m_touchEvents.size());
     for (const auto& it : m_touchEvents) {
         auto* currentEvent = it.value.get();
         double x, y;

@@ -6705,8 +6705,7 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 
     std::ranges::sort(highlights);
 
-    Vector<WebCore::CompositionHighlight> mergedHighlights;
-    mergedHighlights.reserveInitialCapacity(highlights.size());
+    Vector<WebCore::CompositionHighlight> mergedHighlights(ReserveCapacityTag { }, highlights.size());
     for (auto& highlight : highlights) {
         if (mergedHighlights.isEmpty() || mergedHighlights.last().backgroundColor != highlight.backgroundColor || mergedHighlights.last().foregroundColor != highlight.foregroundColor)
             mergedHighlights.append(highlight);

@@ -281,8 +281,7 @@ Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieve
 
     auto availableInputs = [m_audioSession availableInputs];
 
-    Vector<AVAudioSessionCaptureDevice> newAudioDevices;
-    newAudioDevices.reserveInitialCapacity(availableInputs.count);
+    Vector<AVAudioSessionCaptureDevice> newAudioDevices(ReserveCapacityTag { }, availableInputs.count);
     for (AVAudioSessionPortDescription *portDescription in availableInputs) {
         auto device = AVAudioSessionCaptureDevice::createInput(portDescription, currentInput);
         newAudioDevices.append(WTF::move(device));

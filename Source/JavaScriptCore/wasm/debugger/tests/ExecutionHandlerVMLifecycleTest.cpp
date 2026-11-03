@@ -223,8 +223,7 @@ static void testFullLifecycleRace()
     waitForVMsConstruction(1);
 
     // Cycling VMs: continuously construct → run JS → destroy until doneTesting.
-    Vector<RefPtr<Thread>> cyclingThreads;
-    cyclingThreads.reserveInitialCapacity(NUM_VMS);
+    Vector<RefPtr<Thread>> cyclingThreads(ReserveCapacityTag { }, NUM_VMS);
     for (unsigned i = 0; i < NUM_VMS; ++i)
         cyclingThreads.append(Thread::create(LIFECYCLE_THREAD_NAME, vmFullLifecycleTask));
 

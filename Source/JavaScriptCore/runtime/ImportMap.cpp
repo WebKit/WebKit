@@ -423,8 +423,7 @@ static Vector<AtomString> findURLPrefixes(String specifier)
         position = specifier.find(slash, position);
     }
 
-    Vector<AtomString> result;
-    result.reserveInitialCapacity(positions.size());
+    Vector<AtomString> result(ReserveCapacityTag { }, positions.size());
     for (size_t& pos : positions)
         result.append(AtomString(specifier.substring(0, pos)));
 

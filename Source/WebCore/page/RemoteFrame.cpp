@@ -176,8 +176,7 @@ void RemoteFrame::frameDetached()
 
 void RemoteFrame::detachLocalDescendants()
 {
-    Vector<Ref<Frame>> children;
-    children.reserveInitialCapacity(tree().childCount());
+    Vector<Ref<Frame>> children(ReserveCapacityTag { }, tree().childCount());
     for (RefPtr child = tree().lastChild(); child; child = child->tree().previousSibling())
         children.append(*child);
     for (auto& child : children) {

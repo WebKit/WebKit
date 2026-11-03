@@ -586,8 +586,7 @@ Vector<String> CaptionUserPreferencesMediaAF::preferredLanguages() const
     if (!captionLanguages.size())
         return preferredLanguages;
 
-    Vector<String> captionAndPreferredLanguages;
-    captionAndPreferredLanguages.reserveInitialCapacity(captionLanguages.size() + preferredLanguages.size());
+    Vector<String> captionAndPreferredLanguages(ReserveCapacityTag { }, captionLanguages.size() + preferredLanguages.size());
     captionAndPreferredLanguages.appendVector(WTF::move(captionLanguages));
     captionAndPreferredLanguages.appendVector(WTF::move(preferredLanguages));
     return captionAndPreferredLanguages;

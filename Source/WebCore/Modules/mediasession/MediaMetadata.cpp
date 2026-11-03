@@ -167,8 +167,7 @@ void MediaMetadata::setAlbum(const String& album)
 ExceptionOr<void> MediaMetadata::setArtwork(ScriptExecutionContext& context, Vector<MediaImage>&& artwork)
 {
     ASSERT(!m_defaultImages.size());
-    Vector<MediaImage> resolvedArtwork;
-    resolvedArtwork.reserveInitialCapacity(artwork.size());
+    Vector<MediaImage> resolvedArtwork(ReserveCapacityTag { }, artwork.size());
     for (auto& image : artwork) {
         auto resolvedSrc = context.parseURL(image.src);
         if (!resolvedSrc.isValid())

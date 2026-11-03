@@ -97,8 +97,7 @@ SubresourceInfo::SubresourceInfo(const Key& key, const WebCore::ResourceRequest&
 
 static Vector<SubresourceInfo> makeSubresourceInfoVector(const Vector<std::unique_ptr<SubresourceLoad>>& subresourceLoads, Vector<SubresourceInfo>* previousSubresources)
 {
-    Vector<SubresourceInfo> result;
-    result.reserveInitialCapacity(subresourceLoads.size());
+    Vector<SubresourceInfo> result(ReserveCapacityTag { }, subresourceLoads.size());
     
     HashMap<Key, unsigned> previousMap;
     if (previousSubresources) {

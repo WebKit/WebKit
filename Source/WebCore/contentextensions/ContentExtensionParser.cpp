@@ -52,8 +52,7 @@ static bool LEGACY_NODELETE containsOnlyASCIIWithNoUppercase(const String& domai
     
 static std::expected<Vector<String>, std::error_code> getStringList(const JSON::Array& array)
 {
-    Vector<String> strings;
-    strings.reserveInitialCapacity(array.length());
+    Vector<String> strings(ReserveCapacityTag { }, array.length());
     for (auto& value : array) {
         String string = value->asString();
         if (string.isEmpty())
@@ -69,8 +68,7 @@ static std::expected<Vector<String>, std::error_code> getDomainList(const JSON::
     if (!domains)
         return domains;
     
-    Vector<String> regexes;
-    regexes.reserveInitialCapacity(domains->size());
+    Vector<String> regexes(ReserveCapacityTag { }, domains->size());
     for (auto& domain : *domains) {
         // Domains should be punycode encoded lower case.
         if (!containsOnlyASCIIWithNoUppercase(domain))

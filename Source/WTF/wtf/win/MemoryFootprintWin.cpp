@@ -43,8 +43,7 @@ namespace WTF {
 static std::optional<size_t> memoryFootprintFromWorkingSetEx()
 {
     constexpr size_t batchSize = 16 * 1024;
-    Vector<PSAPI_WORKING_SET_EX_INFORMATION> batch;
-    batch.reserveInitialCapacity(batchSize);
+    Vector<PSAPI_WORKING_SET_EX_INFORMATION> batch(ReserveCapacityTag { }, batchSize);
 
     size_t pageSize = 0;
     size_t numberOfPrivateResidentPages = 0;

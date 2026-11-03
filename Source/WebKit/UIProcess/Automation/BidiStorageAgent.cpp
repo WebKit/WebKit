@@ -157,8 +157,7 @@ void BidiStorageAgent::getCookies(RefPtr<JSON::Object>&& optionalFilter, RefPtr<
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
 
     resolvedCookieStore->cookies([callback = WTF::move(callback), filter = CookieFilter::fromProtocol(optionalFilter), partitionKey = WTF::move(partitionKey)](Vector<WebCore::Cookie>&& cookiesList) mutable {
-        Vector<WebCore::Cookie> matchingCookies;
-        matchingCookies.reserveInitialCapacity(cookiesList.size());
+        Vector<WebCore::Cookie> matchingCookies(ReserveCapacityTag { }, cookiesList.size());
 
         for (const auto& cookie : borrow(cookiesList)) {
             if (filter.matches(cookie))

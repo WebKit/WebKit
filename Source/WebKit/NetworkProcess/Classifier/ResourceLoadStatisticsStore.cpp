@@ -783,8 +783,7 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(ASCIILiteral action, 
         return;
     }
 
-    Vector<RegistrableDomain> batch;
-    batch.reserveInitialCapacity(maxNumberOfDomainsInOneLogStatement);
+    Vector<RegistrableDomain> batch(ReserveCapacityTag { }, maxNumberOfDomainsInOneLogStatement);
 #if !RELEASE_LOG_DISABLED
     auto batchNumber = 1;
     unsigned numberOfBatches = std::ceil(domains.size() / static_cast<float>(maxNumberOfDomainsInOneLogStatement));
@@ -2014,8 +2013,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsStore::ensurePrevalentResourcesF
     if (!debugModeEnabled())
         return { };
 
-    Vector<RegistrableDomain> primaryDomainsToBlock;
-    primaryDomainsToBlock.reserveInitialCapacity(2);
+    Vector<RegistrableDomain> primaryDomainsToBlock(ReserveCapacityTag { }, 2);
 
     auto transactionScope = beginTransactionIfNecessary();
 

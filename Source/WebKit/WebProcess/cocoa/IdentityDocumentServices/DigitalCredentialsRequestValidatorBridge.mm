@@ -77,8 +77,7 @@ static Vector<WebCore::CertificateInfo> buildRequestAuthentications(WKIdentityDo
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSArray<WKIdentityDocumentPresentmentRequestAuthenticationCertificate *> *certificateChain in mobileDocumentRequest.authenticationCertificates) {
 
-        Vector<RetainPtr<SecCertificateRef>> certificateChainVector;
-        certificateChainVector.reserveInitialCapacity(certificateChain.count);
+        Vector<RetainPtr<SecCertificateRef>> certificateChainVector(ReserveCapacityTag { }, certificateChain.count);
 
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL WKIdentityDocumentPresentmentRequestAuthenticationCertificate *certificate in certificateChain)
@@ -118,8 +117,7 @@ static WebCore::ISO18013DocumentRequest buildDocumentRequest(WKIdentityDocumentP
     }
 
     if (individualDocumentRequest.issuerIdentifiers && [individualDocumentRequest.issuerIdentifiers count] > 0) {
-        Vector<WebCore::X509SubjectKeyIdentifier> issuerIdentifiers;
-        issuerIdentifiers.reserveInitialCapacity([individualDocumentRequest.issuerIdentifiers count]);
+        Vector<WebCore::X509SubjectKeyIdentifier> issuerIdentifiers(ReserveCapacityTag { }, [individualDocumentRequest.issuerIdentifiers count]);
 
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL NSData *data in individualDocumentRequest.issuerIdentifiers)

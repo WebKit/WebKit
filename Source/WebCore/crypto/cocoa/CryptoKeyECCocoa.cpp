@@ -270,8 +270,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
     // SEQUENCE + length(1) + OID id-ecPublicKey + OID secp256r1/OID secp384r1/OID secp521r1 + BIT STRING + length(?) + InitialOctet + Key size
     size_t totalSize = sizeof(IdEcPublicKey) + oid.size() + bytesNeededForEncodedLength(keySize + 1) + keySize + 4;
 
-    Vector<uint8_t> result;
-    result.reserveInitialCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
+    Vector<uint8_t> result(ReserveCapacityTag { }, totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
     result.append(SequenceMark);
@@ -379,8 +378,7 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
     // VERSION + SEQUENCE + length(1) + OID id-ecPublicKey + OID secp256r1/OID secp384r1/OID secp521r1 + OCTET STRING + length(?) + privateKeySize
     size_t totalSize = sizeof(Version) + sizeof(IdEcPublicKey) + oid.size() + bytesNeededForEncodedLength(privateKeySize) + privateKeySize + 3;
 
-    Vector<uint8_t> result;
-    result.reserveInitialCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
+    Vector<uint8_t> result(ReserveCapacityTag { }, totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
     result.append(std::span { Version });

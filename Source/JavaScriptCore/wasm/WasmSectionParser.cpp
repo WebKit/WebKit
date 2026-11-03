@@ -1086,8 +1086,7 @@ auto SectionParser::parseRecursionGroup(uint32_t position) -> PartialResult
     ASSERT(m_typeSection.recursionGroupInformation.inRecursionGroup);
     for (uint32_t i = 0; i < typeCount; ++i)
         projections.append(m_typeSection.createProjection(recursionGroup, i));
-    Vector<Ref<const RTT>> candidateRTTs;
-    candidateRTTs.reserveInitialCapacity(typeCount);
+    Vector<Ref<const RTT>> candidateRTTs(ReserveCapacityTag { }, typeCount);
     for (uint32_t i = 0; i < typeCount; ++i) {
         m_typeSection.registerCanonicalRTT(*projections[i]);
         candidateRTTs.append(Ref { *projections[i]->rtt() });

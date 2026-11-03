@@ -80,8 +80,7 @@ bool DOMTokenList::contains(const AtomString& token) const
 inline ExceptionOr<void> DOMTokenList::addInternal(std::span<const AtomString> newTokens)
 {
     // This is usually called with a single token.
-    Vector<AtomString, 1> uniqueNewTokens;
-    uniqueNewTokens.reserveInitialCapacity(newTokens.size());
+    Vector<AtomString, 1> uniqueNewTokens(ReserveCapacityTag { }, newTokens.size());
 
     auto& tokens = this->tokens();
 

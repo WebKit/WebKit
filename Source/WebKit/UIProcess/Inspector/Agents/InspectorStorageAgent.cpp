@@ -173,8 +173,7 @@ void InspectorStorageAgent::getCookies(RefPtr<JSON::Object>&& filter, RefPtr<JSO
 
     Ref<API::HTTPCookieStore> store = cookieStore.value();
     store->cookies([callback = WTF::move(callback), filter = CookieFilter::fromProtocol(filter), partitionKey = partitionKey.value()](Vector<WebCore::Cookie>&& cookiesList) mutable {
-        Vector<WebCore::Cookie> matchingCookies;
-        matchingCookies.reserveInitialCapacity(cookiesList.size());
+        Vector<WebCore::Cookie> matchingCookies(ReserveCapacityTag { }, cookiesList.size());
         for (const auto& cookie : borrow(cookiesList)) {
             if (filter.matches(cookie))
                 matchingCookies.append(cookie);
@@ -276,8 +275,7 @@ void InspectorStorageAgent::deleteCookies(RefPtr<JSON::Object>&& filter, RefPtr<
 
     Ref<API::HTTPCookieStore> store = cookieStore.value();
     store->cookies([store, callback = WTF::move(callback), filter = CookieFilter::fromProtocol(filter), partitionKey = partitionKey.value()](Vector<WebCore::Cookie>&& fetchedCookies) mutable {
-        Vector<WebCore::Cookie> toDelete;
-        toDelete.reserveInitialCapacity(fetchedCookies.size());
+        Vector<WebCore::Cookie> toDelete(ReserveCapacityTag { }, fetchedCookies.size());
         for (auto& cookie : borrow(fetchedCookies)) {
             if (filter.matches(cookie))
                 toDelete.append(cookie);

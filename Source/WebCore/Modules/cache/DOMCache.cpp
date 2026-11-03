@@ -283,8 +283,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
     if (!scriptExecutionContext) [[unlikely]]
         return;
 
-    Vector<Ref<FetchRequest>> requests;
-    requests.reserveInitialCapacity(infos.size());
+    Vector<Ref<FetchRequest>> requests(ReserveCapacityTag { }, infos.size());
     for (auto& info : infos) {
         bool ignoreMethod = false;
         auto requestOrException = requestFromInfo(WTF::move(info), ignoreMethod);

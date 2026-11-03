@@ -300,8 +300,7 @@ public:
         if (m_rect.isEmpty())
             return { };
 
-        Rects result;
-        result.reserveInitialCapacity(size());
+        Rects result(ReserveCapacityTag { }, size());
         for (const auto& rect : *this)
             result.append(rect);
         return result;
@@ -319,8 +318,7 @@ public:
         if (size() <= 1 || m_mode != Mode::Rectangles || m_rects.cellSize.isEmpty())
             return rects();
 
-        Rects paintRects;
-        paintRects.reserveInitialCapacity(size());
+        Rects paintRects(ReserveCapacityTag { }, size());
         for (const auto& rect : *this) {
             const auto paintRect = intersection(rect, m_rect);
             if (!paintRect.isEmpty())

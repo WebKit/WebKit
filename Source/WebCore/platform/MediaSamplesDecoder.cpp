@@ -483,8 +483,7 @@ Ref<MediaSamplesDecoder::DecodePromise> MediaSamplesDecoder::decodeOnQueue(Media
 
     if (RefPtr videoDecoder = m_videoDecoder) {
         int64_t firstSequence = m_nextSequence;
-        Vector<Ref<VideoDecoder::DecodePromise>> promises;
-        promises.reserveInitialCapacity(block.size());
+        Vector<Ref<VideoDecoder::DecodePromise>> promises(ReserveCapacityTag { }, block.size());
         for (auto& item : block) {
             int64_t sequence = m_nextSequence++;
             auto metadata = item;
@@ -503,8 +502,7 @@ Ref<MediaSamplesDecoder::DecodePromise> MediaSamplesDecoder::decodeOnQueue(Media
     }
 
     RefPtr audioDecoder = m_audioDecoder;
-    Vector<Ref<AudioDecoder::DecodePromise>> promises;
-    promises.reserveInitialCapacity(block.size());
+    Vector<Ref<AudioDecoder::DecodePromise>> promises(ReserveCapacityTag { }, block.size());
     for (auto& item : block) {
         auto [trimAtStart, trimAtEnd] = item.trimInterval;
         auto startTime = item.presentationTime - trimAtStart;

@@ -264,8 +264,7 @@ void BinarySwitch::build(unsigned start, bool hardStart, unsigned end)
         if (BinarySwitchInternal::verbose)
             dataLog("allConsecutive = ", allConsecutive, "\n");
         
-        Vector<unsigned, 8> localCaseIndices;
-        localCaseIndices.reserveInitialCapacity(size);
+        Vector<unsigned, 8> localCaseIndices(ReserveCapacityTag { }, size);
         for (unsigned i = 0; i < size; ++i)
             localCaseIndices.append(start + i);
         

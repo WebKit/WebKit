@@ -65,8 +65,7 @@ Vector<uint8_t> encodeES256PublicKeyAsCBOR(Vector<uint8_t>&& x, Vector<uint8_t>&
 
 Vector<uint8_t> buildAttestedCredentialData(const Vector<uint8_t>& aaguid, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& coseKey)
 {
-    Vector<uint8_t> attestedCredentialData;
-    attestedCredentialData.reserveInitialCapacity(aaguidLength + credentialIdLengthLength + credentialId.size() + coseKey.size());
+    Vector<uint8_t> attestedCredentialData(ReserveCapacityTag { }, aaguidLength + credentialIdLengthLength + credentialId.size() + coseKey.size());
 
     // aaguid
     ASSERT(aaguid.size() == aaguidLength);
@@ -104,8 +103,7 @@ cbor::CBORValue::MapValue buildCredentialDescriptor(const Vector<uint8_t>& crede
 
 Vector<uint8_t> buildAuthData(const String& rpId, const uint8_t flags, const uint32_t counter, const Vector<uint8_t>& optionalAttestedCredentialData)
 {
-    Vector<uint8_t> authData;
-    authData.reserveInitialCapacity(rpIdHashLength + flagsLength + signCounterLength + optionalAttestedCredentialData.size());
+    Vector<uint8_t> authData(ReserveCapacityTag { }, rpIdHashLength + flagsLength + signCounterLength + optionalAttestedCredentialData.size());
 
     // RP ID hash
     authData.appendVector(produceRpIdHash(rpId));
@@ -187,8 +185,7 @@ Vector<uint8_t> buildClientDataJsonHash(const ArrayBuffer& clientDataJson)
 
 Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_t>& y)
 {
-    Vector<uint8_t> rawKey;
-    rawKey.reserveInitialCapacity(1 + x.size() + y.size());
+    Vector<uint8_t> rawKey(ReserveCapacityTag { }, 1 + x.size() + y.size());
     rawKey.append(0x04);
     rawKey.appendVector(x);
     rawKey.appendVector(y);

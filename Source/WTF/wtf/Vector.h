@@ -760,8 +760,7 @@ public:
     template<typename SizedRange, typename MapFunction>
     static Vector map(SizedRange&& range, NOESCAPE const MapFunction& mapFunction)
     {
-        Vector result;
-        result.reserveInitialCapacity(std::size(range));
+        Vector result(ReserveCapacityTag { }, std::size(range));
         for (auto&& item : range)
             result.unsafeAppendWithoutCapacityCheck(mapFunction(std::forward<decltype(item)>(item)));
         return result;
@@ -1895,8 +1894,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 template<typename ResultVector>
 inline ResultVector Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::map(NOESCAPE const std::invocable<const T&> auto& mapFunction) const
 {
-    ResultVector result;
-    result.reserveInitialCapacity(size());
+    ResultVector result(ReserveCapacityTag { }, size());
     for (size_t i = 0; i < size(); ++i)
         result.unsafeAppendWithoutCapacityCheck(mapFunction(at(i)));
     return result;
@@ -2108,8 +2106,7 @@ Vector<typename CompactMapTraits<typename std::invoke_result<const MapFunction&,
     using DestinationItemType = typename CompactMapTraits<ResultItemType>::ItemType;
     using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
 
-    DestinationVectorType result;
-    result.reserveInitialCapacity(containerSize(source));
+    DestinationVectorType result(ReserveCapacityTag { }, containerSize(source));
     CompactMapper<MapFunction, DestinationVectorType, SourceType>::compactMap(result, std::forward<SourceType>(source), mapFunction);
     return result;
 }
@@ -2122,8 +2119,7 @@ Vector<typename CompactMapTraits<typename std::invoke_result<const MapFunction&,
     using DestinationItemType = typename CompactMapTraits<ResultItemType>::ItemType;
     using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
 
-    DestinationVectorType result;
-    result.reserveInitialCapacity(containerSize(source));
+    DestinationVectorType result(ReserveCapacityTag { }, containerSize(source));
     CompactMapper<MapFunction, DestinationVectorType, SourceType&>::compactMap(result, source, mapFunction);
     return result;
 }
@@ -2168,8 +2164,7 @@ Vector<typename FlatMapper<MapFunction, SourceType>::DestinationItemType> flatMa
 template<typename DestinationVector, typename Collection>
 inline auto copyToVectorSpecialization(const Collection& collection) -> DestinationVector
 {
-    DestinationVector result;
-    result.reserveInitialCapacity(std::size(collection));
+    DestinationVector result(ReserveCapacityTag { }, std::size(collection));
     for (auto&& item : collection)
         result.unsafeAppendWithoutCapacityCheck(item);
     return result;

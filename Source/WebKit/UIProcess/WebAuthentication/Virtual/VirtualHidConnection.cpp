@@ -142,8 +142,7 @@ void VirtualHidConnection::parseRequest()
     case FidoHidDeviceCommand::kInit: {
         m_nonce = m_requestMessage->getMessagePayload();
         ASSERT(m_nonce.size() == kHidInitNonceLength);
-        Vector<uint8_t> payload;
-        payload.reserveInitialCapacity(kHidInitResponseSize);
+        Vector<uint8_t> payload(ReserveCapacityTag { }, kHidInitResponseSize);
         payload.appendVector(m_nonce);
         size_t writePosition = payload.size();
         payload.grow(kHidInitResponseSize);

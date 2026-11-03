@@ -357,8 +357,7 @@ static WebKitNetworkProxyMode parseProxyCapabilities(const Inspector::RemoteInsp
         auto ignoreAddressListUTF8 = WTF::map(proxy.ignoreAddressList, [](const String& ignoreAddress) {
             return ignoreAddress.utf8();
         });
-        Vector<const char*> ignoreAddressList;
-        ignoreAddressList.reserveInitialCapacity(ignoreAddressListUTF8.size() + 1);
+        Vector<const char*> ignoreAddressList(ReserveCapacityTag { }, ignoreAddressListUTF8.size() + 1);
         for (const auto& ignoreAddress : ignoreAddressListUTF8)
             ignoreAddressList.append(ignoreAddress.legacyCStringPointer());
         ignoreAddressList.append(nullptr);

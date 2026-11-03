@@ -37,8 +37,7 @@ namespace WebKit::WebGPU {
 
 std::optional<RenderPassDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::RenderPassDescriptor& renderPassDescriptor)
 {
-    Vector<std::optional<RenderPassColorAttachment>> colorAttachments;
-    colorAttachments.reserveInitialCapacity(renderPassDescriptor.colorAttachments.size());
+    Vector<std::optional<RenderPassColorAttachment>> colorAttachments(ReserveCapacityTag { }, renderPassDescriptor.colorAttachments.size());
     for (const auto& colorAttachment : renderPassDescriptor.colorAttachments) {
         if (colorAttachment) {
             auto backingColorAttachment = convertToBacking(*colorAttachment);

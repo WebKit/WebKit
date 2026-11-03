@@ -47,8 +47,7 @@ void WKContextMenuListenerUseContextMenuItems(WKContextMenuListenerRef listenerR
 #if ENABLE(CONTEXT_MENUS)
     RefPtr<API::Array> array = toImpl(arrayRef);
     size_t newSize = array ? array->size() : 0;
-    Vector<Ref<WebContextMenuItem>> items;
-    items.reserveInitialCapacity(newSize);
+    Vector<Ref<WebContextMenuItem>> items(ReserveCapacityTag { }, newSize);
     for (size_t i = 0; i < newSize; ++i) {
         RefPtr item = array->at<WebContextMenuItem>(i);
         if (!item)

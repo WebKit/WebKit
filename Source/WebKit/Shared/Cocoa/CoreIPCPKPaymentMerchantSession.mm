@@ -88,8 +88,7 @@ CoreIPCPKPaymentMerchantSession::CoreIPCPKPaymentMerchantSession(PKPaymentMercha
         data.operationalAnalyticsIdentifier = WTF::move(operationalAnalyticsIdentifier);
 
     if (RetainPtr signedFields = dynamic_objc_cast<NSArray>([dictionary.get() objectForKey:@"signedFields"])) {
-        Vector<RetainPtr<NSString>> result;
-        result.reserveInitialCapacity([signedFields.get() count]);
+        Vector<RetainPtr<NSString>> result(ReserveCapacityTag { }, [signedFields.get() count]);
         for (id item in signedFields.get()) {
             if ([item isKindOfClass:NSString.class])
                 result.append(item);

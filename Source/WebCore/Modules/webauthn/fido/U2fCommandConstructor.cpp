@@ -47,8 +47,7 @@ namespace {
 
 static Vector<uint8_t> constructU2fRegisterCommand(std::span<const uint8_t> applicationParameter, std::span<const uint8_t> challengeParameter)
 {
-    Vector<uint8_t> data;
-    data.reserveInitialCapacity(kU2fChallengeParamLength + kU2fApplicationParamLength);
+    Vector<uint8_t> data(ReserveCapacityTag { }, kU2fChallengeParamLength + kU2fApplicationParamLength);
     data.append(challengeParameter);
     data.append(applicationParameter);
 
@@ -66,8 +65,7 @@ static std::optional<Vector<uint8_t>> constructU2fSignCommand(const Vector<uint8
     if (keyHandle.byteLength() > kMaxKeyHandleLength)
         return std::nullopt;
 
-    Vector<uint8_t> data;
-    data.reserveInitialCapacity(kU2fChallengeParamLength + kU2fApplicationParamLength + 1 + keyHandle.byteLength());
+    Vector<uint8_t> data(ReserveCapacityTag { }, kU2fChallengeParamLength + kU2fApplicationParamLength + 1 + keyHandle.byteLength());
     data.appendVector(challengeParameter);
     data.appendVector(applicationParameter);
     data.append(static_cast<uint8_t>(keyHandle.byteLength()));

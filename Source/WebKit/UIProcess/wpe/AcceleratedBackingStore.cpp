@@ -129,8 +129,7 @@ void AcceleratedBackingStore::notifyBufferConfigurationIfNeeded()
 
     m_targetBufferCount.reset();
 
-    Vector<WPEBuffer*, 2> buffers;
-    buffers.reserveInitialCapacity(m_buffers.size());
+    Vector<WPEBuffer*, 2> buffers(ReserveCapacityTag { }, m_buffers.size());
     for (auto& value : m_buffers.values())
         buffers.append(value.get());
 
@@ -140,8 +139,7 @@ void AcceleratedBackingStore::notifyBufferConfigurationIfNeeded()
 
 void AcceleratedBackingStore::didCreateDMABufBuffer(uint64_t id, WebCore::DMABufBufferAttributes&& dmaBufAttributes, RendererBufferFormat::Usage usage)
 {
-    Vector<int> fileDescriptors;
-    fileDescriptors.reserveInitialCapacity(dmaBufAttributes.fds.size());
+    Vector<int> fileDescriptors(ReserveCapacityTag { }, dmaBufAttributes.fds.size());
     for (auto& fd : dmaBufAttributes.fds)
         fileDescriptors.append(fd.release());
     GRefPtr<WPEBuffer> buffer = adoptGRef(WPE_BUFFER(wpe_buffer_dma_buf_new(wpe_view_get_display(m_wpeView.get()), dmaBufAttributes.size.width(), dmaBufAttributes.size.height(), dmaBufAttributes.fourcc.value, dmaBufAttributes.fds.size(), fileDescriptors.mutableSpan().data(), dmaBufAttributes.offsets.mutableSpan().data(), dmaBufAttributes.strides.mutableSpan().data(), dmaBufAttributes.modifier)));

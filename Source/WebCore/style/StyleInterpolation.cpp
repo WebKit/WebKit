@@ -142,8 +142,7 @@ static std::optional<CustomProperty::ValueList> interpolateSyntaxValueLists(cons
     if (from.values.size() != to.values.size())
         return std::nullopt;
 
-    Vector<CustomProperty::Value> interpolatedSyntaxValues;
-    interpolatedSyntaxValues.reserveInitialCapacity(from.values.size());
+    Vector<CustomProperty::Value> interpolatedSyntaxValues(ReserveCapacityTag { }, from.values.size());
     for (auto [fromValue, toValue] : zippedRange(from.values, to.values)) {
         auto interpolatedSyntaxValue = interpolateSyntaxValues(fromStyle, toStyle, fromValue, toValue, context);
         if (!interpolatedSyntaxValue)

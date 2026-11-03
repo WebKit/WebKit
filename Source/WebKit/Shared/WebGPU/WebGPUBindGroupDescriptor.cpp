@@ -39,8 +39,7 @@ std::optional<BindGroupDescriptor> ConvertToBackingContext::convertToBacking(con
 {
     auto identifier = convertToBacking(protect(bindGroupDescriptor.layout).get());
 
-    Vector<BindGroupEntry> entries;
-    entries.reserveInitialCapacity(bindGroupDescriptor.entries.size());
+    Vector<BindGroupEntry> entries(ReserveCapacityTag { }, bindGroupDescriptor.entries.size());
     for (const auto& entry : bindGroupDescriptor.entries) {
         auto convertedEntry = convertToBacking(entry);
         if (!convertedEntry)

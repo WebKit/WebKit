@@ -1913,8 +1913,7 @@ CommandResult<void> WebAutomationSession::setUserInputForCurrentJavaScriptPrompt
 
 CommandResult<void> WebAutomationSession::setFilesToSelectForFileUpload(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, Ref<JSON::Array>&& filenames, RefPtr<JSON::Array>&& fileContents)
 {
-    Vector<String> newFileList;
-    newFileList.reserveInitialCapacity(filenames->length());
+    Vector<String> newFileList(ReserveCapacityTag { }, filenames->length());
 
     bool mismatchedFileLengthsDetected = fileContents && fileContents->length() != filenames->length();
     SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(mismatchedFileLengthsDetected, InternalError, "The parameters 'filenames' and 'fileContents' must have equal length."_s);
@@ -1950,8 +1949,7 @@ void WebAutomationSession::setFilesForInputFileUpload(const Inspector::Protocol:
     bool frameNotFound = false;
     auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(frameNotFound, WindowNotFound);
-    Vector<String> newFileList;
-    newFileList.reserveInitialCapacity(filenames->length());
+    Vector<String> newFileList(ReserveCapacityTag { }, filenames->length());
     for (size_t i = 0; i < filenames->length(); ++i) {
         auto filename = filenames->get(i)->asString();
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!filename, InternalError, "The parameter 'filenames' contains a non-string value."_s);

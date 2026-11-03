@@ -355,8 +355,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
     size_t totalSize = sizeof(RSAOIDHeader) + bytesNeededForEncodedLength(keySize + 1) + keySize + 2;
 
     // Per https://tools.ietf.org/html/rfc5280#section-4.1. subjectPublicKeyInfo.
-    Vector<uint8_t> result;
-    result.reserveInitialCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
+    Vector<uint8_t> result(ReserveCapacityTag { }, totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
     result.append(std::span { RSAOIDHeader });
@@ -417,8 +416,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
     size_t totalSize = sizeof(Version) + sizeof(RSAOIDHeader) + bytesNeededForEncodedLength(keySize) + keySize + 1;
 
     // Per https://tools.ietf.org/html/rfc5208#section-5. PrivateKeyInfo.
-    Vector<uint8_t> result;
-    result.reserveInitialCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
+    Vector<uint8_t> result(ReserveCapacityTag { }, totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
     result.append(std::span { Version });

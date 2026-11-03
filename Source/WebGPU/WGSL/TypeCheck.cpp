@@ -782,8 +782,7 @@ Result<void> TypeChecker::visit(AST::Function& function)
         CHECK(visit(attribute));
     }
 
-    Vector<const Type*> parameters;
-    parameters.reserveInitialCapacity(function.parameters().size());
+    Vector<const Type*> parameters(ReserveCapacityTag { }, function.parameters().size());
     for (auto& parameter : function.parameters()) {
         CHECK(visitAttributes(parameter.attributes()));
         UNWRAP(parameterType, resolve(parameter.typeName()));
@@ -2234,8 +2233,7 @@ Result<const Type*> TypeChecker::chooseOverload(ASCIILiteral kind, const SourceS
     if (!overload)
         return { nullptr };
 
-    Vector<const Type*> valueArguments;
-    valueArguments.reserveInitialCapacity(callArguments.size());
+    Vector<const Type*> valueArguments(ReserveCapacityTag { }, callArguments.size());
     for (unsigned i = 0; i < callArguments.size(); ++i) {
         UNWRAP(type, infer(callArguments[i], m_maxEvaluation));
         valueArguments.append(type);

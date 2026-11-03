@@ -290,8 +290,7 @@ static SamplingData makeSamplingData(ColorInterpolationMethod colorInterpolation
     if (!hasOne)
         totalNumberOfStops++;
 
-    Vector<StopSample> stopsIS;
-    stopsIS.reserveInitialCapacity(totalNumberOfStops);
+    Vector<StopSample> stopsIS(ReserveCapacityTag { }, totalNumberOfStops);
 
     if (!hasZero)
         stopsIS.append({ 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f } });

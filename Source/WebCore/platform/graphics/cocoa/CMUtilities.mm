@@ -112,8 +112,7 @@ static Vector<std::pair<FourCC, Ref<SharedBuffer>>> parseExtensionAtomsDictionar
     Vector<const void*, 1> keys(extensionCount);
     Vector<const void*, 1> values(extensionCount);
     CFDictionaryGetKeysAndValues(atomDictionary, keys.mutableSpan().data(), values.mutableSpan().data());
-    Vector<std::pair<FourCC, Ref<SharedBuffer>>> result;
-    result.reserveInitialCapacity(extensionCount - indexStart);
+    Vector<std::pair<FourCC, Ref<SharedBuffer>>> result(ReserveCapacityTag { }, extensionCount - indexStart);
     // Per CMFormatDescription.h, each value is either a CFData payload or a CFArray
     // of CFData (multiple atoms of the same FourCC). Expand arrays into multiple
     // entries sharing a FourCC.
@@ -882,10 +881,8 @@ std::expected<RetainPtr<CMSampleBufferRef>, ASCIILiteral> toCMSampleBuffer(const
         completeBlockBuffers = adoptCF(rawBlockBuffer);
     }
 
-    Vector<CMSampleTimingInfo> packetTimings;
-    packetTimings.reserveInitialCapacity(samples.size());
-    Vector<size_t> packetSizes;
-    packetSizes.reserveInitialCapacity(samples.size());
+    Vector<CMSampleTimingInfo> packetTimings(ReserveCapacityTag { }, samples.size());
+    Vector<size_t> packetSizes(ReserveCapacityTag { }, samples.size());
     auto cumulativeTrimDurationAtStart = MediaTime::zeroTime();
     auto cumulativeTrimDurationAtEnd = MediaTime::zeroTime();
     for (auto& sample : samples) {
@@ -1047,8 +1044,7 @@ UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cm
     };
 
     if (info && info->codecName() == kAudioFormatLinearPCM) {
-        MediaSamplesBlock::SamplesVector sample;
-        sample.reserveInitialCapacity(1);
+        MediaSamplesBlock::SamplesVector sample(ReserveCapacityTag { }, 1);
         sample.append(mediaSampleItemForSample(MediaSampleAVFObjC::create(cmSample, info->trackID()), trimDurationAtStart, trimDurationAtEnd));
         return makeUniqueRef<MediaSamplesBlock>(info.get(), WTF::move(sample));
     }
@@ -1452,8 +1448,7 @@ RetainPtr<CMSampleBufferRef> copySampleBufferForRange(CMSampleBufferRef sampleBu
         return nullptr;
     RetainPtr subBlock = adoptCF(rawSubBlock);
 
-    Vector<size_t> sampleSizes;
-    sampleSizes.reserveInitialCapacity(static_cast<size_t>(range.length));
+    Vector<size_t> sampleSizes(ReserveCapacityTag { }, static_cast<size_t>(range.length));
     for (CFIndex i = 0; i < range.length; ++i) {
         const auto& desc = packetDescs[range.location + i];
         if (desc.mStartOffset < 0)

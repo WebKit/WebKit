@@ -135,8 +135,7 @@ void WebKitSetEndBackgroundTaskBlock(EndBackgroundTaskBlock endBlock)
 
 CGPathRef WebKitCreatePathWithShrinkWrappedRects(NSArray* cgRects, CGFloat radius)
 {
-    Vector<FloatRect> rects;
-    rects.reserveInitialCapacity([cgRects count]);
+    Vector<FloatRect> rects(ReserveCapacityTag { }, [cgRects count]);
 
     for (NSValue *rectValue in cgRects) {
         CGRect cgRect;

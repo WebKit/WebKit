@@ -63,8 +63,7 @@ Vector<uint8_t> quotedPrintableEncode(const Vector<uint8_t>& input)
 
 Vector<uint8_t> quotedPrintableEncode(std::span<const uint8_t> input)
 {
-    Vector<uint8_t> out;
-    out.reserveInitialCapacity(input.size());
+    Vector<uint8_t> out(ReserveCapacityTag { }, input.size());
     size_t currentLineLength = 0;
     for (size_t i = 0; i < input.size(); ++i) {
         bool isLastCharacter = (i == input.size() - 1);

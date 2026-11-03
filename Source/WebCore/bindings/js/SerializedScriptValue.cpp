@@ -4601,8 +4601,7 @@ Vector<String> SerializedScriptValue::blobURLs() const
 
 Vector<FileSystemHandleGlobalIdentifier> SerializedScriptValue::fileSystemHandleGlobalIdentifiers() const
 {
-    Vector<FileSystemHandleGlobalIdentifier> result;
-    result.reserveInitialCapacity(m_internals->fileSystemHandleKeepAlives.size());
+    Vector<FileSystemHandleGlobalIdentifier> result(ReserveCapacityTag { }, m_internals->fileSystemHandleKeepAlives.size());
     for (auto& keepAlive : m_internals->fileSystemHandleKeepAlives) {
         if (auto identifier = keepAlive.globalIdentifier())
             result.append(*identifier);

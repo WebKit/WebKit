@@ -142,8 +142,7 @@ RefPtr<MediaStream> MediaStream::clone()
     if (!document)
         return nullptr;
 
-    Vector<Ref<MediaStreamTrack>> clonedTracks;
-    clonedTracks.reserveInitialCapacity(m_tracks.size());
+    Vector<Ref<MediaStreamTrack>> clonedTracks(ReserveCapacityTag { }, m_tracks.size());
     for (Ref track : m_tracks) {
         if (auto clone = track->clone())
             clonedTracks.append(clone.releaseNonNull());

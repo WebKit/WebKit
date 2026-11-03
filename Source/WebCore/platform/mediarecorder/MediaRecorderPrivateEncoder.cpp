@@ -1004,8 +1004,7 @@ Ref<GenericPromise> MediaRecorderPrivateEncoder::flushPendingData(const MediaTim
 
     LOG(MediaStream, "MediaRecorderPrivateEncoder::FlushPendingData upTo:%f", currentTime.toDouble());
 
-    Vector<Ref<GenericPromise>> promises;
-    promises.reserveInitialCapacity(size_t(!!m_videoEncoder) + size_t(!!m_audioConverter) + 1);
+    Vector<Ref<GenericPromise>> promises(ReserveCapacityTag { }, size_t(!!m_videoEncoder) + size_t(!!m_audioConverter) + 1);
     promises.append(encodePendingVideoFrames(currentTime));
     if (m_videoEncoder)
         promises.append(Ref { *m_videoEncoder }->flush());

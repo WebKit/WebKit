@@ -801,8 +801,7 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
     if (actionElements.isEmpty())
         return { };
 
-    Vector<CustomActionData> result;
-    result.reserveInitialCapacity(actionElements.size());
+    Vector<CustomActionData> result(ReserveCapacityTag { }, actionElements.size());
 
     for (Ref actionElement : actionElements) {
         // Per the spec, action targets must have an accessible name.

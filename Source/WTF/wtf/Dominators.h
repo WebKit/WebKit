@@ -225,8 +225,7 @@ public:
         if constexpr (childOrder == DominatorTreeChildOrder::Any)
             walk([&](Node block) -> const auto& { return m_data[block].idomKids; });
         else {
-            Vector<Node> postOrder;
-            postOrder.reserveInitialCapacity(m_graph.numNodes());
+            Vector<Node> postOrder(ReserveCapacityTag { }, m_graph.numNodes());
             appendNodesInOrder(m_graph, GraphOrder::PostOrder, postOrder);
             // Three children is the common case: a diamond head dominates both arms and the join.
             auto children = m_graph.template newMap<Vector<Node, 3>>();

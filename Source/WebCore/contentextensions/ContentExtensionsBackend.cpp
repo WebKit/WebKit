@@ -137,8 +137,7 @@ auto ContentExtensionsBackend::actionsFromContentRuleList(const ContentExtension
 
     const auto& universalActions = contentExtension.universalActions();
     if (auto totalActionCount = actionLocations.size() + universalActions.size()) {
-        Vector<uint32_t> vector;
-        vector.reserveInitialCapacity(totalActionCount);
+        Vector<uint32_t> vector(ReserveCapacityTag { }, totalActionCount);
         vector.appendContainerWithMapping(actionLocations, [](uint64_t actionLocation) {
             return static_cast<uint32_t>(actionLocation);
         });

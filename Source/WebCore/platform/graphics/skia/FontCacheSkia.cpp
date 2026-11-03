@@ -162,8 +162,7 @@ Vector<String> FontCache::systemFontFamilies()
 {
     auto& manager = fontManager();
     int count = manager.countFamilies();
-    Vector<String> fontFamilies;
-    fontFamilies.reserveInitialCapacity(count);
+    Vector<String> fontFamilies(ReserveCapacityTag { }, count);
     for (int i = 0; i < count; ++i) {
         SkString familyName;
         manager.getFamilyName(i, &familyName);
@@ -398,8 +397,7 @@ Vector<hb_feature_t> FontCache::computeFeatures(const FontDescription& fontDescr
     if (featuresToBeApplied.isEmpty())
         return { };
 
-    Vector<hb_feature_t> features;
-    features.reserveInitialCapacity(featuresToBeApplied.size());
+    Vector<hb_feature_t> features(ReserveCapacityTag { }, featuresToBeApplied.size());
     for (const auto& iter : featuresToBeApplied)
         features.append({ HB_TAG(iter.key[0], iter.key[1], iter.key[2], iter.key[3]), static_cast<uint32_t>(iter.value), 0, static_cast<unsigned>(-1) });
     return features;

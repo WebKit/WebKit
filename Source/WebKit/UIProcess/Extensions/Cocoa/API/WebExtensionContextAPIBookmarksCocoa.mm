@@ -60,8 +60,7 @@ static Vector<WebExtensionBookmarksParameters> createParametersFromProtocolObjec
     if (!bookmarkNodes.count)
         return { };
 
-    Vector<WebExtensionBookmarksParameters> parameters;
-    parameters.reserveInitialCapacity(bookmarkNodes.count);
+    Vector<WebExtensionBookmarksParameters> parameters(ReserveCapacityTag { }, bookmarkNodes.count);
 
     for (id<_WKWebExtensionBookmark> bookmark in bookmarkNodes) {
         auto parametersOptional = createParametersFromProtocolObject(bookmark, context);
@@ -93,8 +92,7 @@ static Vector<WebExtensionBookmarksParameters> createShallowParametersFromProtoc
     if (!bookmarkNodes)
         return { };
 
-    Vector<WebExtensionBookmarksParameters> parameters;
-    parameters.reserveInitialCapacity(bookmarkNodes.count);
+    Vector<WebExtensionBookmarksParameters> parameters(ReserveCapacityTag { }, bookmarkNodes.count);
 
     for (id<_WKWebExtensionBookmark> bookmark in bookmarkNodes) {
         WebExtensionBookmarksParameters node;
@@ -416,8 +414,7 @@ void WebExtensionContext::bookmarksGetRecent(uint64_t count, CompletionHandler<v
             return a.dateAdded > b.dateAdded;
         });
 
-        Vector<WebExtensionBookmarksParameters> recentBookmarks;
-        recentBookmarks.reserveInitialCapacity(std::min(static_cast<size_t>(count), allBookmarksParameters.size()));
+        Vector<WebExtensionBookmarksParameters> recentBookmarks(ReserveCapacityTag { }, std::min(static_cast<size_t>(count), allBookmarksParameters.size()));
 
         for (const auto& bookmarkParams : allBookmarksParameters) {
             if (recentBookmarks.size() >= count)

@@ -51,8 +51,7 @@ static Vector<Style::GridTrackSize> trackSizesWithAutoRepetitions(const Style::G
     auto insertionPoint = gridTemplateList.autoRepeatInsertionPoint;
     ASSERT(insertionPoint <= gridTemplateListSizes.size());
 
-    Vector<Style::GridTrackSize> trackSizes;
-    trackSizes.reserveInitialCapacity(gridTemplateListSizes.size() + autoRepeatTracksCount);
+    Vector<Style::GridTrackSize> trackSizes(ReserveCapacityTag { }, gridTemplateListSizes.size() + autoRepeatTracksCount);
     trackSizes.append(gridTemplateListSizes.span().first(insertionPoint));
     for (auto autoRepeatTrackIndex : std::views::iota(0uz, autoRepeatTracksCount))
         trackSizes.append(autoRepeatSizes[autoRepeatTrackIndex % autoRepeatSizes.size()]);

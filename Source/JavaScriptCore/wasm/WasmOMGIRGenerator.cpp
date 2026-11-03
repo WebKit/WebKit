@@ -5950,8 +5950,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
         Width width { Width64 };
     };
 
-    Vector<ShuffleEntry> entries;
-    entries.reserveInitialCapacity(calleeSaves.registerCount() + functionSignature.argumentCount() + 1);
+    Vector<ShuffleEntry> entries(ReserveCapacityTag { }, calleeSaves.registerCount() + functionSignature.argumentCount() + 1);
 
     for (const auto& regAtOffset : calleeSaves) {
         // Don't restore wasmBoundsCheckingSizeRegister since we may have set it when checking for

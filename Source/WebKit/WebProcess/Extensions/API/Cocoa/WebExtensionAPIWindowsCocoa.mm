@@ -293,8 +293,7 @@ bool WebExtensionAPIWindows::parseWindowCreateOptions(NSDictionary *options, Web
 
         parameters.tabs = { WTF::move(tabParameters) };
     } else if (NSArray *urls = objectForKey<NSArray>(options, urlKey, true)) {
-        Vector<WebExtensionTabParameters> tabs;
-        tabs.reserveInitialCapacity(urls.count);
+        Vector<WebExtensionTabParameters> tabs(ReserveCapacityTag { }, urls.count);
 
         for (NSString *url in urls) {
             WebExtensionTabParameters tabParameters;

@@ -253,8 +253,7 @@ inline void AtomHTMLToken::initializeAttributes(const HTMLToken::AttributeList& 
     if (!size)
         return;
 
-    Vector<AtomStringImpl*, 8> addedAttributes;
-    addedAttributes.reserveInitialCapacity(size);
+    Vector<AtomStringImpl*, 8> addedAttributes(ReserveCapacityTag { }, size);
 
     m_attributes = WTF::compactMap(attributes, [&](auto& attribute) -> std::optional<Attribute> {
         if (attribute.name.isEmpty())

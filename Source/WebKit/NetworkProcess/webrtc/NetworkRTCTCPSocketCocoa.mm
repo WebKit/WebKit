@@ -202,8 +202,7 @@ Vector<uint8_t> NetworkRTCTCPSocketCocoa::createMessageBuffer(std::span<const ui
         if (messageLengths->messageLengthWithPadding < data.size())
             return { };
 
-        Vector<uint8_t> buffer;
-        buffer.reserveInitialCapacity(messageLengths->messageLengthWithPadding);
+        Vector<uint8_t> buffer(ReserveCapacityTag { }, messageLengths->messageLengthWithPadding);
         buffer.append(data);
         for (size_t cptr = 0 ; cptr < messageLengths->messageLengthWithPadding - data.size(); ++cptr)
             buffer.append(0);
@@ -211,8 +210,7 @@ Vector<uint8_t> NetworkRTCTCPSocketCocoa::createMessageBuffer(std::span<const ui
     }
 
     // Prepend length.
-    Vector<uint8_t> buffer;
-    buffer.reserveInitialCapacity(data.size() + 2);
+    Vector<uint8_t> buffer(ReserveCapacityTag { }, data.size() + 2);
     buffer.appendList({ (data.size() >> 8) & 0xFF, data.size() & 0xFF });
     buffer.append(data);
     return buffer;

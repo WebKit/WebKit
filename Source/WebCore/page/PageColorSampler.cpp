@@ -392,8 +392,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(LocalFra
     }
 
     using PairType = std::pair<Color, unsigned>;
-    Vector<PairType> colorsByDescendingFrequency;
-    colorsByDescendingFrequency.reserveInitialCapacity(colorDistribution.size());
+    Vector<PairType> colorsByDescendingFrequency(ReserveCapacityTag { }, colorDistribution.size());
     for (auto& [color, count] : colorDistribution)
         colorsByDescendingFrequency.append({ color, count });
 

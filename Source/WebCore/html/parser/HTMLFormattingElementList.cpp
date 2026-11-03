@@ -185,8 +185,7 @@ void HTMLFormattingElementList::ensureNoahsArkCondition(HTMLStackItem& newItem)
         return;
 
     // We pre-allocate and re-use this second vector to save one malloc per attribute that we verify.
-    Vector<const HTMLStackItem*> remainingCandidates;
-    remainingCandidates.reserveInitialCapacity(candidates.size());
+    Vector<const HTMLStackItem*> remainingCandidates(ReserveCapacityTag { }, candidates.size());
 
     for (auto& attribute : newItem.attributes()) {
         for (auto* candidate : candidates) {

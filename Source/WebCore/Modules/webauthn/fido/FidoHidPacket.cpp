@@ -93,8 +93,7 @@ FidoHidInitPacket::FidoHidInitPacket(uint32_t channelId, FidoHidDeviceCommand cm
 
 Vector<uint8_t> FidoHidInitPacket::getSerializedData() const
 {
-    Vector<uint8_t> serialized;
-    serialized.reserveInitialCapacity(kHidPacketSize);
+    Vector<uint8_t> serialized(ReserveCapacityTag { }, kHidPacketSize);
     serialized.append((m_channelId >> 24) & 0xff);
     serialized.append((m_channelId >> 16) & 0xff);
     serialized.append((m_channelId >> 8) & 0xff);
@@ -143,8 +142,7 @@ FidoHidContinuationPacket::FidoHidContinuationPacket(const uint32_t channelId, c
 
 Vector<uint8_t> FidoHidContinuationPacket::getSerializedData() const
 {
-    Vector<uint8_t> serialized;
-    serialized.reserveInitialCapacity(kHidPacketSize);
+    Vector<uint8_t> serialized(ReserveCapacityTag { }, kHidPacketSize);
     serialized.append((m_channelId >> 24) & 0xff);
     serialized.append((m_channelId >> 16) & 0xff);
     serialized.append((m_channelId >> 8) & 0xff);

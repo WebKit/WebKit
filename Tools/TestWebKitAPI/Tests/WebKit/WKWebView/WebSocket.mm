@@ -61,8 +61,7 @@ TEST(WebSocket, LongMessageNoDeflate)
                 for (size_t i = headerSize; i < expectedReceiveSize; i++)
                     EXPECT_EQ(received[i] ^ mask[(i - headerSize) % maskingKeySize], 'x');
 
-                Vector<uint8_t> bytesToSend;
-                bytesToSend.reserveInitialCapacity(twoMegabytes + headerSizeWithLargePayloadLength);
+                Vector<uint8_t> bytesToSend(ReserveCapacityTag { }, twoMegabytes + headerSizeWithLargePayloadLength);
                 bytesToSend.append(fin | textFrame);
                 bytesToSend.append(payloadLengthIndicatingLargeExtendedPayloadLength);
                 for (size_t i = 0; i < 8; i++)

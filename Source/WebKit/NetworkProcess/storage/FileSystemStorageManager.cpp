@@ -329,8 +329,7 @@ std::optional<Vector<WebCore::FileSystemHandleRecord>> FileSystemStorageManager:
 {
     ASSERT(!RunLoop::isMain());
 
-    Vector<WebCore::FileSystemHandleRecord> records;
-    records.reserveInitialCapacity(identifiers.size());
+    Vector<WebCore::FileSystemHandleRecord> records(ReserveCapacityTag { }, identifiers.size());
     for (auto& identifier : identifiers) {
         auto record = lookupHandle(identifier);
         if (!record)

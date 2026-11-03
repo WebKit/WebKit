@@ -38,8 +38,7 @@ using WebCore::areValidWebTransportHeaders;
 
 static Vector<KeyValuePair<String, String>> makeHeaders(std::initializer_list<std::pair<ASCIILiteral, ASCIILiteral>> pairs)
 {
-    Vector<KeyValuePair<String, String>> headers;
-    headers.reserveInitialCapacity(pairs.size());
+    Vector<KeyValuePair<String, String>> headers(ReserveCapacityTag { }, pairs.size());
     for (auto& pair : pairs)
         headers.constructAndAppend(String(pair.first), String(pair.second));
     return headers;

@@ -2145,8 +2145,7 @@ void CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndexSlow(const OpCatch&
 
     auto nextOffset = instructions().at(bytecodeIndex).next().offset();
     FastBitVector liveLocals = bytecodeLiveness.getLivenessInfoAtInstruction(this, BytecodeIndex(nextOffset));
-    Vector<VirtualRegister> liveOperands;
-    liveOperands.reserveInitialCapacity(liveLocals.bitCount());
+    Vector<VirtualRegister> liveOperands(ReserveCapacityTag { }, liveLocals.bitCount());
     liveLocals.forEachSetBit([&] (unsigned liveLocal) {
         liveOperands.append(virtualRegisterForLocal(liveLocal));
     });

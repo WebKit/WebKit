@@ -441,8 +441,7 @@ RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents& cookieContents)
 
 Vector<uint8_t> createOpusPrivateData(const AudioStreamBasicDescription& description, uint16_t preSkip)
 {
-    Vector<uint8_t> magicCookie;
-    magicCookie.reserveInitialCapacity(19);
+    Vector<uint8_t> magicCookie(ReserveCapacityTag { }, 19);
     magicCookie.append("OpusHead"_span);
     // Set Opus version.
     magicCookie.append(1);

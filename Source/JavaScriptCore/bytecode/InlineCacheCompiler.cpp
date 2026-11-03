@@ -4874,8 +4874,7 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
     // to be unmutated. For sure, we want it to hang onto any data structures that may be referenced
     // from the code of the current stub (aka previous).
     Vector<WatchpointSet*, 8> additionalWatchpointSets;
-    Vector<Ref<AccessCase>, 16> cases;
-    cases.reserveInitialCapacity(poly.m_list.size());
+    Vector<Ref<AccessCase>, 16> cases(ReserveCapacityTag { }, poly.m_list.size());
     unsigned srcIndex = 0;
     for (auto& someCase : poly.m_list) {
         [&] () {

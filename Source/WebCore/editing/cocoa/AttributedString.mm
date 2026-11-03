@@ -582,8 +582,7 @@ static std::optional<AttributedString::AttributeValue> extractArray(NSArray *arr
     if (!arrayLength)
         return { { { Vector<String>() } } };
     if ([array[0] isKindOfClass:NSString.class]) {
-        Vector<String> result;
-        result.reserveInitialCapacity(arrayLength);
+        Vector<String> result(ReserveCapacityTag { }, arrayLength);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL id element in array) {
             if (RetainPtr string = dynamic_objc_cast<NSString>(element))
@@ -594,8 +593,7 @@ static std::optional<AttributedString::AttributeValue> extractArray(NSArray *arr
         return { { { WTF::move(result) } } };
     }
     if ([array[0] isKindOfClass:NSNumber.class]) {
-        Vector<double> result;
-        result.reserveInitialCapacity(arrayLength);
+        Vector<double> result(ReserveCapacityTag { }, arrayLength);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL id element in array) {
             if ([element isKindOfClass:NSNumber.class])

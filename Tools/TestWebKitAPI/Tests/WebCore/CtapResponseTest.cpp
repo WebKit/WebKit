@@ -330,8 +330,7 @@ Vector<uint8_t> getTestSignResponse()
 Vector<uint8_t> getTestCorruptedSignResponse(size_t length)
 {
     ASSERT(length < sizeof(TestData::kTestU2fSignResponse));
-    Vector<uint8_t> testCorruptedSignResponse;
-    testCorruptedSignResponse.reserveInitialCapacity(length);
+    Vector<uint8_t> testCorruptedSignResponse(ReserveCapacityTag { }, length);
     testCorruptedSignResponse.append(std::span { TestData::kTestU2fSignResponse }.first(length));
     return testCorruptedSignResponse;
 }
@@ -345,8 +344,7 @@ BufferSource getTestCredentialRawIdBytes()
 // Return a malformed U2fRegisterResponse.
 Vector<uint8_t> getTestU2fRegisterResponse(size_t prefixSize, const uint8_t appendix[], size_t appendixSize)
 {
-    Vector<uint8_t> result;
-    result.reserveInitialCapacity(prefixSize + appendixSize);
+    Vector<uint8_t> result(ReserveCapacityTag { }, prefixSize + appendixSize);
     result.append(std::span { TestData::kTestU2fRegisterResponse }.first(prefixSize));
     result.append(std::span { appendix, appendixSize });
     return result;

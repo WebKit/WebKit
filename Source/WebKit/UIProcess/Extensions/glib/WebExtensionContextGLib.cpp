@@ -448,8 +448,7 @@ void WebExtensionContext::saveBackgroundPageListenersToStorage()
     RELEASE_LOG_DEBUG(Extensions, "Saving %u background content event listeners to storage", m_backgroundContentEventListeners.size());
 
     ASSERT(m_state);
-    Vector<int> listeners;
-    listeners.reserveInitialCapacity(m_backgroundContentEventListeners.size());
+    Vector<int> listeners(ReserveCapacityTag { }, m_backgroundContentEventListeners.size());
     for (auto& entry : m_backgroundContentEventListeners)
         listeners.append(static_cast<int>(entry.key));
     std::ranges::sort(listeners);

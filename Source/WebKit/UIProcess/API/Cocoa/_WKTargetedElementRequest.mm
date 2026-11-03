@@ -77,8 +77,7 @@
     if (!(self = [self init]))
         return nil;
 
-    WebCore::TargetedElementSelectors selectorsForElement;
-    selectorsForElement.reserveInitialCapacity(nsSelectorsForElement.count);
+    WebCore::TargetedElementSelectors selectorsForElement(ReserveCapacityTag { }, nsSelectorsForElement.count);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSSet<NSString *> *nsSelectors in nsSelectorsForElement) {
         HashSet<String> selectors;

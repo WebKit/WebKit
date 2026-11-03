@@ -216,8 +216,7 @@ static Vector<hb_feature_t, 4> fontFeatures(const FontCascade& font, const FontP
     for (auto& feature : font.fontDescription().featureSettings())
         featuresToBeApplied.set(feature.tag(), feature.value());
 
-    Vector<hb_feature_t, 4> features;
-    features.reserveInitialCapacity(featuresToBeApplied.size());
+    Vector<hb_feature_t, 4> features(ReserveCapacityTag { }, featuresToBeApplied.size());
     for (auto& iter : featuresToBeApplied) {
         auto& tag = iter.key;
         features.append({ HB_TAG(tag[0], tag[1], tag[2], tag[3]), static_cast<uint32_t>(iter.value), 0, static_cast<unsigned>(-1) });

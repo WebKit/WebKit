@@ -53,8 +53,7 @@ static Vector<PackedRect> shelfNextFitAlgorithm(std::span<const IntSize> sizes, 
         return sizes[a].unclampedArea() > sizes[b].unclampedArea();
     });
 
-    Vector<PackedRect> result;
-    result.reserveInitialCapacity(sizes.size());
+    Vector<PackedRect> result(ReserveCapacityTag { }, sizes.size());
 
     int shelfY = 0;
     int shelfX = 0;
@@ -144,8 +143,7 @@ static Vector<PackedRect> maxRectsAlgorithm(std::span<const IntSize> sizes, cons
     constexpr int maxInteger = std::numeric_limits<int>::max();
     constexpr size_t maxSize = std::numeric_limits<size_t>::max();
 
-    Vector<PackedRect> result;
-    result.reserveInitialCapacity(sizes.size());
+    Vector<PackedRect> result(ReserveCapacityTag { }, sizes.size());
 
     for (size_t index : sortedIndices) {
         const auto& size = sizes[index];

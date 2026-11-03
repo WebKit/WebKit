@@ -546,8 +546,7 @@ protected:
         }
 
         // Reverse-post-order seed so the backward dataflow processes a block after its successors.
-        Vector<unsigned, 64> worklist;
-        worklist.reserveInitialCapacity(numActiveBlocks);
+        Vector<unsigned, 64> worklist(ReserveCapacityTag { }, numActiveBlocks);
         BitVector dirtyBlocks(numNodes);
         appendNodeIndicesInOrder(m_cfg, GraphOrder::PostOrder, dirtyBlocks, worklist);
         worklist.reverse();

@@ -250,8 +250,7 @@ FormControlState FormAssociatedCustomElement::saveFormControlState() const
 
     return WTF::switchOn(m_state,
         [&](const Ref<DOMFormData>& state) {
-            FormControlState savedState;
-            savedState.reserveInitialCapacity(state->items().size() * 2);
+            FormControlState savedState(ReserveCapacityTag { }, state->items().size() * 2);
 
             for (const auto& item : state->items()) {
                 WTF::switchOn(item.data,

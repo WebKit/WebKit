@@ -353,8 +353,7 @@ void SessionHost::sendEvent(const JSON::Object& event)
 
     auto payload = event.toJSONString().utf8();
     auto size = static_cast<uint32_t>(payload.length());
-    Vector<uint8_t> message;
-    message.reserveInitialCapacity(messageHeaderSize + size);
+    Vector<uint8_t> message(ReserveCapacityTag { }, messageHeaderSize + size);
     message.appendList({ static_cast<uint8_t>(size >> 24), static_cast<uint8_t>(size >> 16), static_cast<uint8_t>(size >> 8), static_cast<uint8_t>(size) });
     message.append(byteCast<uint8_t>(payload.span()));
 

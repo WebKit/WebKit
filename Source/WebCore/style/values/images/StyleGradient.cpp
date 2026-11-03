@@ -594,8 +594,7 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
                 // accordingly, first generating the repeated stops in the [0, first-offset] range, then adding
                 // the original stops, and finally generating the repeated stops in the [last-offset, maxExtent]
                 // range. The resulting Vector is then moved in to replace the original stops.
-                Vector<ResolvedGradientStop> generatedStops;
-                generatedStops.reserveInitialCapacity(checkedNumberOfGeneratedStops.value());
+                Vector<ResolvedGradientStop> generatedStops(ReserveCapacityTag { }, checkedNumberOfGeneratedStops.value());
 
                 if (numberOfGeneratedStopsBeforeFirst > 0) {
                     float currOffset = *stops.first().offset;

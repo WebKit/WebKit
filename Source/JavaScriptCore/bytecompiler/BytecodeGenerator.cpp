@@ -4622,8 +4622,7 @@ void BytecodeGenerator::endSwitch(const Vector<Ref<Label>, 8>& labels, Expressio
         jumpTable.m_min = INT32_MAX;
         jumpTable.m_isList = true;
 
-        Vector<int32_t> branchOffsets;
-        branchOffsets.reserveInitialCapacity(labels.size() * 2);
+        Vector<int32_t> branchOffsets(ReserveCapacityTag { }, labels.size() * 2);
         UncheckedKeyHashSet<GenericHashKey<int32_t>> alreadyHandled;
 
         for (uint32_t i = 0; i < labels.size(); ++i) {

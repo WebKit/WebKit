@@ -293,8 +293,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
 
 static Vector<GRefPtr<GstElementFactory>> findCompatibleFactories(GList* list, const GRefPtr<GstCaps>& caps, GstPadDirection direction, std::optional<Vector<String>> disallowedList)
 {
-    Vector<GRefPtr<GstElementFactory>> results;
-    results.reserveInitialCapacity(g_list_length(list));
+    Vector<GRefPtr<GstElementFactory>> results(ReserveCapacityTag { }, g_list_length(list));
     for (; list; list = g_list_next(list)) {
         auto factory = GST_ELEMENT_FACTORY_CAST(list->data);
         const auto templates = gst_element_factory_get_static_pad_templates(factory);

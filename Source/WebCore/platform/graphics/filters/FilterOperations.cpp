@@ -119,8 +119,7 @@ FilterOperations FilterOperations::blend(const FilterOperations& to, const Blend
     if (context.compositeOperation == CompositeOperation::Add) {
         ASSERT(context.progress == 1.0);
 
-        Vector<Ref<FilterOperation>> operations;
-        operations.reserveInitialCapacity(size() + to.size());
+        Vector<Ref<FilterOperation>> operations(ReserveCapacityTag { }, size() + to.size());
 
         operations.appendVector(m_operations);
         operations.appendVector(to.m_operations);
@@ -137,8 +136,7 @@ FilterOperations FilterOperations::blend(const FilterOperations& to, const Blend
     auto toSize = to.m_operations.size();
     auto size = std::max(fromSize, toSize);
 
-    Vector<Ref<FilterOperation>> operations;
-    operations.reserveInitialCapacity(size);
+    Vector<Ref<FilterOperation>> operations(ReserveCapacityTag { }, size);
 
     for (size_t i = 0; i < size; ++i) {
         RefPtr<FilterOperation> fromOp = (i < fromSize) ? m_operations[i].ptr() : nullptr;

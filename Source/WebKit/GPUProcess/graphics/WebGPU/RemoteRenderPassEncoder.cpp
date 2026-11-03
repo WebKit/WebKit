@@ -195,8 +195,7 @@ void RemoteRenderPassEncoder::endOcclusionQuery()
 
 void RemoteRenderPassEncoder::executeBundles(Vector<WebGPUIdentifier>&& renderBundles)
 {
-    Vector<Ref<::WebGPU::RenderBundle>> convertedBundles;
-    convertedBundles.reserveInitialCapacity(renderBundles.size());
+    Vector<Ref<::WebGPU::RenderBundle>> convertedBundles(ReserveCapacityTag { }, renderBundles.size());
     for (WebGPUIdentifier identifier : renderBundles) {
         auto convertedBundle = protect(m_objectHeap)->convertRenderBundleFromBacking(identifier);
         ASSERT(convertedBundle);

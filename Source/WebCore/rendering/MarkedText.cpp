@@ -74,8 +74,7 @@ Vector<MarkedText> MarkedText::subdivide(const Vector<MarkedText>& markedTexts, 
     });
 
     // 3. Compute intersection.
-    Vector<MarkedText> result;
-    result.reserveInitialCapacity(numberOfMarkedTexts);
+    Vector<MarkedText> result(ReserveCapacityTag { }, numberOfMarkedTexts);
     HashSet<CheckedPtr<const MarkedText>> processedMarkedTexts;
     unsigned offsetSoFar = offsets[0].value;
     for (unsigned i = 1; i < numberOfOffsets; ++i) {
@@ -224,8 +223,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
         }
     };
 
-    Vector<MarkedText> markedTexts;
-    markedTexts.reserveInitialCapacity(markers.size());
+    Vector<MarkedText> markedTexts(ReserveCapacityTag { }, markers.size());
 
     // Give any document markers that touch this run a chance to draw before the text has been drawn.
     // Note end() points at the last char, not one past it like endOffset and ranges do.
@@ -372,8 +370,7 @@ Vector<MarkedText> MarkedText::collectForDictationStreamingOpacity(const RenderT
     if (markers.isEmpty())
         return { };
 
-    Vector<MarkedText> result;
-    result.reserveInitialCapacity(markers.size());
+    Vector<MarkedText> result(ReserveCapacityTag { }, markers.size());
     for (auto& marker : markers) {
         auto [clampedStart, clampedEnd] = selectableRange.clamp(marker->startOffset(), marker->endOffset());
         if (clampedStart < clampedEnd)

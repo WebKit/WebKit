@@ -69,8 +69,7 @@ const SocketConnection::MessageHandlers& SessionHost::messageHandlers()
             GUniqueOutPtr<GVariantIter> iter;
             g_variant_get(parameters, "(ta(tsssb))", &connectionID, &iter.outPtr());
             size_t targetCount = g_variant_iter_n_children(iter.get());
-            Vector<SessionHost::Target> targetList;
-            targetList.reserveInitialCapacity(targetCount);
+            Vector<SessionHost::Target> targetList(ReserveCapacityTag { }, targetCount);
             guint64 targetID;
             const char* type;
             const char* name;

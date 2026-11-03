@@ -88,8 +88,7 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
         return Exception { ExceptionCode::NotSupportedError };
 
     HashSet<String> uniqueProtocols;
-    Vector<String> escapedProtocols;
-    escapedProtocols.reserveInitialCapacity(options.protocols.size());
+    Vector<String> escapedProtocols(ReserveCapacityTag { }, options.protocols.size());
     for (auto& protocol : options.protocols) {
         auto escapedProtocol = RFC8941::escapeString(protocol);
         if (!escapedProtocol || escapedProtocol->isEmpty() || escapedProtocol->length() > 512)

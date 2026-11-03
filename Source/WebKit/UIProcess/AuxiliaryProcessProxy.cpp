@@ -740,8 +740,7 @@ void AuxiliaryProcessProxy::didChangeThrottleState(ProcessThrottleState state)
 
     if (!isNowSuspended && !m_messagesToSendOnResume.isEmpty()) {
         using PairType = std::pair<unsigned, std::unique_ptr<IPC::Encoder>>;
-        Vector<PairType> indexMessagePairs;
-        indexMessagePairs.reserveInitialCapacity(m_messagesToSendOnResume.size());
+        Vector<PairType> indexMessagePairs(ReserveCapacityTag { }, m_messagesToSendOnResume.size());
 
         for (auto& indexMessagePair : m_messagesToSendOnResume.values())
             indexMessagePairs.append(WTF::move(indexMessagePair));

@@ -137,10 +137,8 @@ sk_sp<SkShader> Gradient::shader(float globalAlpha, const AffineTransform& gradi
 {
     auto interpolation = toSkiaInterpolation(colorInterpolationMethod());
 
-    Vector<SkColor4f, 8> colors;
-    colors.reserveInitialCapacity(stops().size());
-    Vector<SkScalar, 8> positions;
-    positions.reserveInitialCapacity(stops().size());
+    Vector<SkColor4f, 8> colors(ReserveCapacityTag { }, stops().size());
+    Vector<SkScalar, 8> positions(ReserveCapacityTag { }, stops().size());
     auto fillStops = [&](const GradientColorStops::StopVector& stops) {
         if (stops.isEmpty()) {
             positions.append(webCoreDoubleToSkScalar(0));

@@ -152,8 +152,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)setAdditionalReadAccessAllowedURLs:(NSArray<NSURL *> *)additionalReadAccessAllowedURLs
 {
-    Vector<String> paths;
-    paths.reserveInitialCapacity(additionalReadAccessAllowedURLs.count);
+    Vector<String> paths(ReserveCapacityTag { }, additionalReadAccessAllowedURLs.count);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSURL *url in additionalReadAccessAllowedURLs) {
         if (!url.isFileURL)

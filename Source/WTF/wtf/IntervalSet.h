@@ -92,8 +92,7 @@ public:
             size_t numNodes = (numEntries + maxPerNode - 1) / maxPerNode;
             size_t base = numEntries / numNodes;
             size_t remainder = numEntries % numNodes;
-            Vector<NodeRef, 16> level;
-            level.reserveInitialCapacity(numNodes);
+            Vector<NodeRef, 16> level(ReserveCapacityTag { }, numNodes);
             for (size_t i = 0, first = 0; i < numNodes; ++i) {
                 size_t count = base + (i < remainder);
                 level.append(makeNode(first, count));

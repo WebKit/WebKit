@@ -975,8 +975,7 @@ NSString* Device::addPipelineLayouts(Vector<Vector<ResolvedBindGroupLayoutEntry>
 
 Ref<PipelineLayout> Device::generatePipelineLayout(const Vector<Vector<ResolvedBindGroupLayoutEntry>>& bindGroupEntries)
 {
-    Vector<Ref<WebGPU::BindGroupLayout>> bindGroupLayouts;
-    bindGroupLayouts.reserveInitialCapacity(bindGroupEntries.size());
+    Vector<Ref<WebGPU::BindGroupLayout>> bindGroupLayouts(ReserveCapacityTag { }, bindGroupEntries.size());
     for (auto& entries : bindGroupEntries) {
         auto layoutEntries = entries;
         auto bindGroupLayout = createBindGroupLayout("getBindGroup() generated layout"_s, WTF::move(layoutEntries), true);

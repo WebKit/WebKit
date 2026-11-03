@@ -43,8 +43,7 @@ using PolygonZY = Vector<FloatPoint, 5>;
 
 static inline PolygonZY projectPolygonToZYPlane(const Polygon4D& polygon)
 {
-    PolygonZY projected;
-    projected.reserveInitialCapacity(polygon.numberOfVertices());
+    PolygonZY projected(ReserveCapacityTag { }, polygon.numberOfVertices());
     for (unsigned i = 0; i < polygon.numberOfVertices(); ++i) {
         const auto& vertex = polygon.vertexAt(i);
         projected.append({ static_cast<float>(vertex.z), static_cast<float>(vertex.y) });

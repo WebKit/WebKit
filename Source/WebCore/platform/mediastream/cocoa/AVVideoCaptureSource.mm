@@ -533,8 +533,7 @@ static bool isZoomSupported(const Vector<VideoPreset>& presets)
 
 static Vector<MeteringMode> supportedWhiteBalanceModes(AVCaptureDevice* device)
 {
-    Vector<MeteringMode> whiteBalanceModes;
-    whiteBalanceModes.reserveInitialCapacity(3);
+    Vector<MeteringMode> whiteBalanceModes(ReserveCapacityTag { }, 3);
 
     if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeLocked])
         whiteBalanceModes.append(MeteringMode::Manual);

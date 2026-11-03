@@ -1110,8 +1110,7 @@ void drawLinesForText(GraphicsContextCairo& platformContext, const FloatPoint& p
     Color modifiedColor = color;
     FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(platformContext, point, lineSegments.back().end, printing, modifiedColor, strokeThickness);
 
-    Vector<FloatRect, 4> dashBounds;
-    dashBounds.reserveInitialCapacity(lineSegments.size());
+    Vector<FloatRect, 4> dashBounds(ReserveCapacityTag { }, lineSegments.size());
     for (const auto& lineSegment : lineSegments)
         dashBounds.append(FloatRect(FloatPoint(bounds.x() + lineSegment.begin, bounds.y()), FloatSize(lineSegment.length(), bounds.height())));
 

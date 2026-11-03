@@ -102,8 +102,7 @@ AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleR
         return;
     }
 
-    Vector<Ref<Float32Array>> channels;
-    channels.reserveInitialCapacity(numberOfChannels);
+    Vector<Ref<Float32Array>> channels(ReserveCapacityTag { }, numberOfChannels);
 
     for (unsigned i = 0; i < numberOfChannels; ++i) {
         RefPtr channelDataArray = Float32Array::tryCreate(m_originalLength);
@@ -134,8 +133,7 @@ AudioBuffer::AudioBuffer(AudioBus& bus)
     }
 
     // Copy audio data from the bus to the Float32Arrays we manage.
-    Vector<Ref<Float32Array>> channels;
-    channels.reserveInitialCapacity(numberOfChannels);
+    Vector<Ref<Float32Array>> channels(ReserveCapacityTag { }, numberOfChannels);
     for (unsigned i = 0; i < numberOfChannels; ++i) {
         RefPtr channelDataArray = Float32Array::tryCreate(m_originalLength);
         if (!channelDataArray) {

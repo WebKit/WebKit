@@ -451,8 +451,7 @@ template<typename Op> static std::optional<Child> simplifyForMinMax(Op& root, co
     if (combinedChildrenSize == 1)
         return { WTF::move(root.children[0]) };
 
-    Vector<Child> combinedChildren;
-    combinedChildren.reserveInitialCapacity(combinedChildrenSize);
+    Vector<Child> combinedChildren(ReserveCapacityTag { }, combinedChildrenSize);
 
     for (size_t i = 0; i < root.children.size(); ++i) {
         WTF::switchOn(root.children[i],
@@ -682,8 +681,7 @@ std::optional<Child> simplify(Sum& root, const SimplificationOptions& options)
         }
     }
 
-    Vector<Child> combinedChildren;
-    combinedChildren.reserveInitialCapacity(combinedChildrenSize);
+    Vector<Child> combinedChildren(ReserveCapacityTag { }, combinedChildrenSize);
 
     for (size_t i = 0; i < root.children.size(); ++i) {
         WTF::switchOn(root.children[i],
@@ -1016,8 +1014,7 @@ std::optional<Child> simplify(Clamp& root, const SimplificationOptions& options)
     }
 
     auto convertToMin = [&] -> std::optional<Child> {
-        Vector<Child> newChildren;
-        newChildren.reserveInitialCapacity(2);
+        Vector<Child> newChildren(ReserveCapacityTag { }, 2);
         newChildren.append(WTF::move(root.val));
         newChildren.append(get<Child>(WTF::move(root.max)));
 
@@ -1030,8 +1027,7 @@ std::optional<Child> simplify(Clamp& root, const SimplificationOptions& options)
     };
 
     auto convertToMax = [&] -> std::optional<Child> {
-        Vector<Child> newChildren;
-        newChildren.reserveInitialCapacity(2);
+        Vector<Child> newChildren(ReserveCapacityTag { }, 2);
         newChildren.append(get<Child>(WTF::move(root.min)));
         newChildren.append(WTF::move(root.val));
 
@@ -1502,8 +1498,7 @@ std::optional<Child> simplify(CalcMix& root, const SimplificationOptions& option
             if (!newNumberOfChildren)
                 return zeroValueMatchingChild(root.children[0]);
 
-            Vector<CalcMix::Item> newChildren;
-            newChildren.reserveInitialCapacity(newNumberOfChildren);
+            Vector<CalcMix::Item> newChildren(ReserveCapacityTag { }, newNumberOfChildren);
             for (auto& item : root.children) {
                 // Skip any known zero weights.
                 if (item.weight && item.weight->isKnownZero())

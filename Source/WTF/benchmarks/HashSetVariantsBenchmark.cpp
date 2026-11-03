@@ -153,8 +153,7 @@ template<> WTF::String makeKey<WTF::String>(unsigned i)
 template<typename T>
 WTF::Vector<T> makeKeys(unsigned n)
 {
-    WTF::Vector<T> v;
-    v.reserveInitialCapacity(n);
+    WTF::Vector<T> v(ReserveCapacityTag { }, n);
     for (unsigned i = 0; i < n; ++i)
         v.append(makeKey<T>(i));
     return v;

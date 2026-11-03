@@ -365,8 +365,7 @@ static String attributesOfElements(Vector<Ref<AccessibilityUIElement>>& elements
 
 static Vector<Ref<AccessibilityUIElement>> elementsVector(const Vector<Ref<WebCore::AccessibilityObjectAtspi>>& wrappers)
 {
-    Vector<Ref<AccessibilityUIElement>> elements;
-    elements.reserveInitialCapacity(wrappers.size());
+    Vector<Ref<AccessibilityUIElement>> elements(ReserveCapacityTag { }, wrappers.size());
     for (auto& wrapper : wrappers)
         elements.append(AccessibilityUIElementAtspi::create(wrapper.ptr()));
     return elements;

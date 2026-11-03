@@ -1893,8 +1893,7 @@ static void webkitWebViewBaseCancelTouchSequences(WebKitWebViewBase* webViewBase
     if (priv->touchEvents.isEmpty())
         return;
 
-    Vector<WebPlatformTouchPoint> touchPoints;
-    touchPoints.reserveInitialCapacity(priv->touchEvents.size());
+    Vector<WebPlatformTouchPoint> touchPoints(ReserveCapacityTag { }, priv->touchEvents.size());
     GtkWidget* widget = GTK_WIDGET(webViewBase);
     for (const auto& it : priv->touchEvents)
         appendTouchEvent(widget, touchPoints, it.value.get(), WebPlatformTouchPoint::State::Cancelled);

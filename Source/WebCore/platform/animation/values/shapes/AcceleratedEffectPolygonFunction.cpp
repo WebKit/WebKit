@@ -84,8 +84,7 @@ static Vector<FloatPoint> blendVertices(const Vector<FloatPoint>& from, const Ve
 {
     ASSERT(from.size() == to.size());
 
-    Vector<FloatPoint> result;
-    result.reserveInitialCapacity(from.size());
+    Vector<FloatPoint> result(ReserveCapacityTag { }, from.size());
     for (auto&& [fromVertex, toVertex] : zippedRange(from, to))
         result.append(WebCore::blendForAcceleratedEffect(fromVertex, toVertex, context));
     return result;

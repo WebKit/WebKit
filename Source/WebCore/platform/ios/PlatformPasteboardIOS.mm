@@ -740,8 +740,7 @@ int PlatformPasteboard::count() const
 Vector<String> PlatformPasteboard::allStringsForType(const String& type) const
 {
     auto numberOfItems = count();
-    Vector<String> strings;
-    strings.reserveInitialCapacity(numberOfItems);
+    Vector<String> strings(ReserveCapacityTag { }, numberOfItems);
     for (int index = 0; index < numberOfItems; ++index) {
         String value = readString(index, type);
         if (!value.isEmpty())

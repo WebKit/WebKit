@@ -107,8 +107,7 @@ static std::optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vect
 
     // Retrieve MPI data of the resulting r and s integers. They are concatenated into
     // a single buffer, properly accounting for integers that don't match the key in size.
-    Vector<uint8_t> signature;
-    signature.reserveInitialCapacity(keySizeInBytes * 2);
+    Vector<uint8_t> signature(ReserveCapacityTag { }, keySizeInBytes * 2);
 
     if (!extractECDSASignatureInteger(signature, signatureSexp, "r"_s, keySizeInBytes)
         || !extractECDSASignatureInteger(signature, signatureSexp, "s"_s, keySizeInBytes))

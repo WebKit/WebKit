@@ -2252,8 +2252,7 @@ void AXObjectCache::notificationPostTimerFired()
     m_pendingLayoutCompleteObjectIDs.clear();
 
     // Filter out the notifications that are not going to be posted to platform clients.
-    Vector<std::pair<Ref<AccessibilityObject>, AXNotificationWithData>> notificationsToPost;
-    notificationsToPost.reserveInitialCapacity(notifications.size());
+    Vector<std::pair<Ref<AccessibilityObject>, AXNotificationWithData>> notificationsToPost(ReserveCapacityTag { }, notifications.size());
     for (auto& note : notifications) {
         Ref noteObject = note.first;
         if (noteObject->isDetached() || !noteObject->axObjectCache())
@@ -8066,8 +8065,7 @@ Vector<Ref<AccessibilityObject>> AXObjectCache::formFieldObjects(Element& contai
         return is_lt(treeOrder<ComposedTree>(a.get(), b.get()));
     });
 
-    Vector<Ref<AccessibilityObject>> objects;
-    objects.reserveInitialCapacity(fields.size());
+    Vector<Ref<AccessibilityObject>> objects(ReserveCapacityTag { }, fields.size());
     for (Ref field : fields) {
         if (RefPtr object = getOrCreate(field.get()); object && !object->isIgnored())
             objects.append(object.releaseNonNull());

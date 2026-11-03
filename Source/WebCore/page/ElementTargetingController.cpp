@@ -320,8 +320,7 @@ static inline String computeTagAndClassSelector(Element& element)
         return emptyString();
 
     Ref classList = element.classList();
-    Vector<String> classes;
-    classes.reserveInitialCapacity(classList->length());
+    Vector<String> classes(ReserveCapacityTag { }, classList->length());
     for (unsigned i = 0; i < std::min<unsigned>(maximumNumberOfClasses, classList->length()); ++i)
         classes.append(classList->item(i));
 
@@ -354,8 +353,7 @@ static String selectorForElementRecursive(Element& element, ElementSelectorCache
     if (auto selector = cache.get(element))
         return *selector;
 
-    Vector<String> selectors;
-    selectors.reserveInitialCapacity(5);
+    Vector<String> selectors(ReserveCapacityTag { }, 5);
     if (auto selector = computeIDSelector(element); !selector.isEmpty())
         selectors.append(WTF::move(selector));
 
@@ -515,8 +513,7 @@ static Vector<Vector<String>> selectorsForTarget(Element& element, ElementSelect
             return { };
     }
 
-    Vector<String> selectors;
-    selectors.reserveInitialCapacity(5);
+    Vector<String> selectors(ReserveCapacityTag { }, 5);
 
     // First, try to compute a selector using only the target element and its attributes.
     if (auto selector = computeIDSelector(element); !selector.isEmpty())
@@ -1307,8 +1304,7 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
 
     RefPtr onlyMainElement = findOnlyMainElement(*bodyElement);
     auto candidates = [&] {
-        Vector<Ref<Element>> elements;
-        elements.reserveInitialCapacity(nodes.size());
+        Vector<Ref<Element>> elements(ReserveCapacityTag { }, nodes.size());
         for (auto& node : nodes) {
             if (RefPtr element = dynamicDowncast<Element>(node); element && isTargetCandidate(*element, onlyMainElement.get(), innerElement.get()))
                 elements.append(element.releaseNonNull());
@@ -1428,8 +1424,7 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
     m_recentAdjustmentClientRectsCleanUpTimer.restart();
 
     ElementSelectorCache cache;
-    Vector<TargetedElementInfo> results;
-    results.reserveInitialCapacity(targets.size());
+    Vector<TargetedElementInfo> results(ReserveCapacityTag { }, targets.size());
     for (auto iterator = targets.rbegin(); iterator != targets.rend(); ++iterator) {
         if (auto info = targetedElementInfo(*iterator, IsNearbyTarget::No, cache, m_adjustedElements)) {
             results.append(WTF::move(*info));
@@ -1573,8 +1568,7 @@ bool ElementTargetingController::adjustVisibility(Vector<TargetedElementAdjustme
     m_repeatedAdjustmentClientRegion.unite(intersect(m_adjustmentClientRegion, newAdjustmentRegion));
     m_adjustmentClientRegion.unite(newAdjustmentRegion);
 
-    Vector<Ref<Element>> elements;
-    elements.reserveInitialCapacity(adjustments.size());
+    Vector<Ref<Element>> elements(ReserveCapacityTag { }, adjustments.size());
     for (auto& [identifiers, selectors] : adjustments) {
         auto [nodeID, documentID] = identifiers;
         RefPtr element = dynamicDowncast<Element>(Node::fromIdentifier(nodeID));
@@ -2034,8 +2028,7 @@ uint64_t ElementTargetingController::numberOfVisibilityAdjustmentRects()
 
     recomputeAdjustedElementsIfNeeded();
 
-    Vector<FloatRect> clientRects;
-    clientRects.reserveInitialCapacity(m_adjustedElements.computeSize());
+    Vector<FloatRect> clientRects(ReserveCapacityTag { }, m_adjustedElements.computeSize());
 
     unsigned numberOfParentedEmptyOrNonRenderedElements = 0;
     for (Ref element : m_adjustedElements) {

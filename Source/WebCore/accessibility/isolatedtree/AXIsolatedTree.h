@@ -906,8 +906,7 @@ inline Vector<Ref<AXCoreObject>> AXIsolatedTree::objectsForIDs(const U& axIDs)
 {
     AX_ASSERT(!isMainThread());
 
-    Vector<Ref<AXCoreObject>> result;
-    result.reserveInitialCapacity(axIDs.size());
+    Vector<Ref<AXCoreObject>> result(ReserveCapacityTag { }, axIDs.size());
     for (const auto& axID : axIDs) {
         if (RefPtr object = objectForID(axID))
             result.append(object.releaseNonNull());

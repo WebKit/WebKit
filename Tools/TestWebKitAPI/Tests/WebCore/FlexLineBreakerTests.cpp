@@ -35,8 +35,7 @@ using WebCore::LayoutUnit;
 
 static Vector<LayoutUnit> itemSizes(std::initializer_list<int> values)
 {
-    Vector<LayoutUnit> sizes;
-    sizes.reserveInitialCapacity(values.size());
+    Vector<LayoutUnit> sizes(ReserveCapacityTag { }, values.size());
     for (auto value : values)
         sizes.append(LayoutUnit(value));
     return sizes;
@@ -44,8 +43,7 @@ static Vector<LayoutUnit> itemSizes(std::initializer_list<int> values)
 
 static void expectLineBreaks(const Vector<size_t>& actual, std::initializer_list<size_t> expected)
 {
-    Vector<size_t> expectedBreaks;
-    expectedBreaks.reserveInitialCapacity(expected.size());
+    Vector<size_t> expectedBreaks(ReserveCapacityTag { }, expected.size());
     for (auto value : expected)
         expectedBreaks.append(value);
     EXPECT_EQ(expectedBreaks, actual);

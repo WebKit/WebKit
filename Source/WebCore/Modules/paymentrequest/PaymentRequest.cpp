@@ -311,8 +311,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
     if (methodData.isEmpty())
         return Exception { ExceptionCode::TypeError, "At least one payment method is required."_s };
 
-    Vector<Method> serializedMethodData;
-    serializedMethodData.reserveInitialCapacity(methodData.size());
+    Vector<Method> serializedMethodData(ReserveCapacityTag { }, methodData.size());
     HashSet<String> seenMethodIDs;
     for (auto& paymentMethod : methodData) {
         auto identifier = convertAndValidatePaymentMethodIdentifier(paymentMethod.supportedMethods);

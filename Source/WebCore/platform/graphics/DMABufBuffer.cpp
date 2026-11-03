@@ -128,8 +128,7 @@ static std::optional<Vector<EGLAttrib>> buildEGLAttributesForDMABuf(const DMABuf
     static constexpr unsigned modifierAttributeCount = 4;
     static constexpr unsigned colorSpaceAttributeCount = 4;
 
-    Vector<EGLAttrib> eglAttributes;
-    eglAttributes.reserveInitialCapacity(baseAttributeCount + planeCount * (planeAttributeCount + (hasModifiers ? modifierAttributeCount : 0)) + (hasColorSpaceHint ? colorSpaceAttributeCount : 0) + 1);
+    Vector<EGLAttrib> eglAttributes(ReserveCapacityTag { }, baseAttributeCount + planeCount * (planeAttributeCount + (hasModifiers ? modifierAttributeCount : 0)) + (hasColorSpaceHint ? colorSpaceAttributeCount : 0) + 1);
 
     eglAttributes.appendList<EGLAttrib>({
         EGL_WIDTH, static_cast<EGLAttrib>(dmaBufAttributes.size.width()),

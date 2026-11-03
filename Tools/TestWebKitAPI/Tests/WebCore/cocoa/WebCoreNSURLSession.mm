@@ -257,8 +257,7 @@ TEST_F(WebCoreNSURLSessionTest, RangeResponseDeliversLastByteAtChunkBoundary)
     constexpr uint64_t expectedLength = rangeEnd + 1; // 100 bytes.
     constexpr size_t totalLength = 132;
 
-    Vector<uint8_t> resourceBytes;
-    resourceBytes.reserveInitialCapacity(totalLength);
+    Vector<uint8_t> resourceBytes(ReserveCapacityTag { }, totalLength);
     for (size_t i = 0; i < totalLength; ++i)
         resourceBytes.append(static_cast<uint8_t>(i & 0xFF));
 

@@ -4848,8 +4848,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         return;
     }
 
-    Vector<WebCore::TextManipulationItem> coreItems;
-    coreItems.reserveInitialCapacity(items.count);
+    Vector<WebCore::TextManipulationItem> coreItems(ReserveCapacityTag { }, items.count);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL _WKTextManipulationItem *wkItem in items) {
         Vector<WebCore::TextManipulationToken> coreTokens(wkItem.tokens.count, [&](size_t i) {
@@ -5422,8 +5421,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
 - (void)_createIconDataFromImageData:(NSData *)imageData withLengths:(NSArray<NSNumber *> *)lengths completionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
-    Vector<unsigned> targetLengths;
-    targetLengths.reserveInitialCapacity(lengths.count);
+    Vector<unsigned> targetLengths(ReserveCapacityTag { }, lengths.count);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSNumber *length in lengths) {
         if (unsigned lengthValue = length.unsignedIntValue)
@@ -7076,8 +7074,7 @@ static inline OptionSet<WebKit::FindOptions> LEGACY_NODELETE toFindOptions(_WKFi
 
 static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKTargetedElementInfo *> *wkElements)
 {
-    Vector<Ref<API::TargetedElementInfo>> elements;
-    elements.reserveInitialCapacity(wkElements.count);
+    Vector<Ref<API::TargetedElementInfo>> elements(ReserveCapacityTag { }, wkElements.count);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL _WKTargetedElementInfo *element in wkElements)
         elements.append(protect(*element->_info));
@@ -7335,8 +7332,7 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
 {
 #if PLATFORM(MAC)
     RetainPtr allItems = [[self _activePopupButtonCell] itemArray];
-    Vector<String> itemTitles;
-    itemTitles.reserveInitialCapacity([allItems count]);
+    Vector<String> itemTitles(ReserveCapacityTag { }, [allItems count]);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSMenuItem *item in allItems.get()) {
         if (!item.enabled)

@@ -79,8 +79,7 @@ Vector<uint8_t> createESDescriptor(std::span<const uint8_t> audioSpecificConfig)
     size_t totalSize = 1 + 1 + esDescriptorContentSize; // ES_DescrTag + Length + content
 
     // Pre-allocate the vector with the exact size needed
-    Vector<uint8_t> esDescriptor;
-    esDescriptor.reserveInitialCapacity(totalSize);
+    Vector<uint8_t> esDescriptor(ReserveCapacityTag { }, totalSize);
 
     // Calculate the size of DecoderConfigDescriptor content
     // DecoderConfigDescriptor structure:
@@ -245,8 +244,7 @@ static std::optional<Vector<AudioChannelLabel>> webAudioReorderedChannelLabels(s
         }
     });
 
-    Vector<std::pair<WebAudioChannel, AudioChannelLabel>> channels;
-    channels.reserveInitialCapacity(descriptions.size());
+    Vector<std::pair<WebAudioChannel, AudioChannelLabel>> channels(ReserveCapacityTag { }, descriptions.size());
     for (auto& description : descriptions) {
         auto channel = webAudioChannel(description.mChannelLabel, surroundsAreSides);
         if (!channel)

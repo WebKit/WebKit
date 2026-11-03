@@ -82,8 +82,7 @@ std::expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(c
         auto array = value->asArray();
         if (!array)
             return makeUnexpected(ContentExtensionError::JSONModifyHeadersNotArray);
-        Vector<ModifyHeaderInfo> vector;
-        vector.reserveInitialCapacity(array->length());
+        Vector<ModifyHeaderInfo> vector(ReserveCapacityTag { }, array->length());
         for (auto& value : *array) {
             auto info = ModifyHeaderInfo::parse(value.get());
             if (!info)
@@ -696,8 +695,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
         auto removeParametersArray = removeParametersValue->asArray();
         if (!removeParametersArray)
             return makeUnexpected(ContentExtensionError::JSONRemoveParametersNotStringArray);
-        Vector<String> removeParametersVector;
-        removeParametersVector.reserveInitialCapacity(removeParametersArray->length());
+        Vector<String> removeParametersVector(ReserveCapacityTag { }, removeParametersArray->length());
         for (auto& parameter : *removeParametersArray) {
             if (parameter.get().type() != JSON::Value::Type::String)
                 return makeUnexpected(ContentExtensionError::JSONRemoveParametersNotStringArray);
@@ -710,8 +708,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
         auto addOrReplaceParametersArray = addOrReplaceParametersValue->asArray();
         if (!addOrReplaceParametersArray)
             return makeUnexpected(ContentExtensionError::JSONAddOrReplaceParametersNotArray);
-        Vector<QueryKeyValue> keyValues;
-        keyValues.reserveInitialCapacity(addOrReplaceParametersArray->length());
+        Vector<QueryKeyValue> keyValues(ReserveCapacityTag { }, addOrReplaceParametersArray->length());
         for (auto& queryKeyValue : *addOrReplaceParametersArray) {
             auto keyValue = QueryKeyValue::parse(queryKeyValue.get());
             if (!keyValue)

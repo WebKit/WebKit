@@ -305,8 +305,7 @@ RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
         if (data.size() < static_cast<size_t>(length) * 2)
             return false;
 
-        Vector<char16_t> buffer;
-        buffer.reserveInitialCapacity(length);
+        Vector<char16_t> buffer(ReserveCapacityTag { }, length);
         for (size_t i = 0; i < length; i++) {
             uint16_t ch;
             if (!readLittleEndian(data, ch))
@@ -345,8 +344,7 @@ RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
             return false;
 
         size_t size = static_cast<size_t>(size64);
-        Vector<IDBKeyData> array;
-        array.reserveInitialCapacity(size);
+        Vector<IDBKeyData> array(ReserveCapacityTag { }, size);
 
         for (size_t i = 0; i < size; ++i) {
             IDBKeyData keyData;

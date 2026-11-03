@@ -1828,8 +1828,7 @@ void TreeResolver::sortPositionOptionsIfNeeded(PositionOptions& options, const S
             PositionOption option;
             LayoutUnit containingBlockSize;
         };
-        Vector<SortingOption> optionsForSorting;
-        optionsForSorting.reserveInitialCapacity(options.optionStyles.size());
+        Vector<SortingOption> optionsForSorting(ReserveCapacityTag { }, options.optionStyles.size());
 
         for (size_t i = 1; i < options.optionStyles.size(); ++i) {
             auto constraints = PositionedLayoutConstraints { *box, *options.optionStyles[i].style, boxAxis };

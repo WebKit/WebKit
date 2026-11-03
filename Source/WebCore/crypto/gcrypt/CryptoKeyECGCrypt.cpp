@@ -161,8 +161,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifi
         return nullptr;
 
     // Construct the Vector that represents the EC point in uncompressed format.
-    Vector<uint8_t> q;
-    q.reserveInitialCapacity(curveUncompressedPointSize(curve));
+    Vector<uint8_t> q(ReserveCapacityTag { }, curveUncompressedPointSize(curve));
     q.append(std::span { CryptoConstants::s_ecUncompressedFormatLeadingByte });
     q.appendVector(x);
     q.appendVector(y);
@@ -185,8 +184,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
         return nullptr;
 
     // Construct the Vector that represents the EC point in uncompressed format.
-    Vector<uint8_t> q;
-    q.reserveInitialCapacity(curveUncompressedPointSize(curve));
+    Vector<uint8_t> q(ReserveCapacityTag { }, curveUncompressedPointSize(curve));
     q.append(std::span { CryptoConstants::s_ecUncompressedFormatLeadingByte });
     q.appendVector(x);
     q.appendVector(y);

@@ -264,10 +264,8 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
         return Exception { ExceptionCode::TypeError, "layout size is invalid"_s };
 
     size_t minAllocationSize = 0;
-    Vector<ComputedPlaneLayout> computedLayouts;
-    computedLayouts.reserveInitialCapacity(planeCount);
-    Vector<size_t> endOffsets;
-    endOffsets.reserveInitialCapacity(planeCount);
+    Vector<ComputedPlaneLayout> computedLayouts(ReserveCapacityTag { }, planeCount);
+    Vector<size_t> endOffsets(ReserveCapacityTag { }, planeCount);
     for (size_t i = 0; i < planeCount; ++i) {
         size_t pixelSampleCount = sampleCountPerPixel(format, i);
 

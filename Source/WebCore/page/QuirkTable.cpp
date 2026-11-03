@@ -87,8 +87,7 @@ static std::optional<Vector<String>> nonEmptyStrings(JSON::Value& value)
     if (!array || !array->length())
         return std::nullopt;
 
-    Vector<String> strings;
-    strings.reserveInitialCapacity(array->length());
+    Vector<String> strings(ReserveCapacityTag { }, array->length());
     for (auto& element : *array) {
         auto string = nonEmptyString(element);
         if (string.isNull())
@@ -459,8 +458,7 @@ Vector<QuirkBehavior> QuirkTableParser::parseBehaviors(const JSON::Object& row, 
         return { };
     }
 
-    Vector<QuirkBehavior> behaviors;
-    behaviors.reserveInitialCapacity(values->length());
+    Vector<QuirkBehavior> behaviors(ReserveCapacityTag { }, values->length());
     QuirkBitSet seenIDs;
     for (auto [index, value] : WTF::indexedRange(*values)) {
         auto behavior = parseBehavior(value, rowLocation, index);

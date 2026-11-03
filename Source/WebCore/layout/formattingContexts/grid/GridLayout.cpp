@@ -61,8 +61,7 @@ auto computeGridItemRects = [](const PlacedGridItems& placedGridItems, const Bor
     const BorderBoxPositions& blockAxisPositions, const UsedInlineSizes& usedInlineSizes, const UsedBlockSizes& usedBlockSizes,
     const Vector<UsedMargins>& usedInlineMargins, const Vector<UsedMargins>& usedBlockMargins)
 {
-    GridItemRects gridItemRects;
-    gridItemRects.reserveInitialCapacity(placedGridItems.size());
+    GridItemRects gridItemRects(ReserveCapacityTag { }, placedGridItems.size());
 
     for (size_t gridItemIndex = 0; gridItemIndex < placedGridItems.size(); ++gridItemIndex) {
         auto borderBoxRect = LayoutRect { inlineAxisPositions[gridItemIndex], blockAxisPositions[gridItemIndex],
@@ -191,8 +190,7 @@ GridItemRects GridLayout::layout(const PlacedGridItems& placedGridItems, const T
 BorderBoxPositions GridLayout::performInlineAxisSelfAlignment(const PlacedGridItems& placedGridItems, const Vector<UsedMargins>& inlineMargins, const UsedInlineSizes& borderBoxSizes,
     const Vector<LayoutUnit>& gridAreasInlineSizeList, const Vector<std::optional<LayoutUnit>>& baselineAlignedMarginBoxPositions)
 {
-    BorderBoxPositions borderBoxPositions;
-    borderBoxPositions.reserveInitialCapacity(placedGridItems.size());
+    BorderBoxPositions borderBoxPositions(ReserveCapacityTag { }, placedGridItems.size());
 
     auto& formattingContextWritingMode = formattingContext().writingMode();
     for (size_t gridItemIndex = 0; gridItemIndex < placedGridItems.size(); ++gridItemIndex) {
@@ -228,8 +226,7 @@ BorderBoxPositions GridLayout::performInlineAxisSelfAlignment(const PlacedGridIt
 BorderBoxPositions GridLayout::performBlockAxisSelfAlignment(const PlacedGridItems& placedGridItems, const Vector<UsedMargins>& blockMargins, const UsedBlockSizes& borderBoxSizes,
     const Vector<LayoutUnit>& gridAreasBlockSizeList, const Vector<std::optional<LayoutUnit>>& baselineAlignedMarginBoxPositions)
 {
-    BorderBoxPositions borderBoxPositions;
-    borderBoxPositions.reserveInitialCapacity(placedGridItems.size());
+    BorderBoxPositions borderBoxPositions(ReserveCapacityTag { }, placedGridItems.size());
 
     auto& formattingContextWritingMode = formattingContext().writingMode();
     for (size_t gridItemIndex = 0; gridItemIndex < placedGridItems.size(); ++gridItemIndex) {
@@ -283,10 +280,8 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
     const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions) const
 {
     auto gridItemsCount = placedGridItems.size();
-    UsedInlineSizes usedInlineSizes;
-    usedInlineSizes.reserveInitialCapacity(gridItemsCount);
-    UsedBlockSizes usedBlockSizes;
-    usedBlockSizes.reserveInitialCapacity(gridItemsCount);
+    UsedInlineSizes usedInlineSizes(ReserveCapacityTag { }, gridItemsCount);
+    UsedBlockSizes usedBlockSizes(ReserveCapacityTag { }, gridItemsCount);
 
     auto& formattingContext = this->formattingContext();
     auto& integrationUtils = formattingContext.integrationUtils();

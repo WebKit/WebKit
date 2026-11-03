@@ -187,8 +187,7 @@ void SpeechRecognition::didFindNoMatch()
 
 void SpeechRecognition::didReceiveResult(Vector<SpeechRecognitionResultData>&& resultDatas)
 {
-    Vector<Ref<SpeechRecognitionResult>> allResults;
-    allResults.reserveInitialCapacity(m_finalResults.size() + resultDatas.size());
+    Vector<Ref<SpeechRecognitionResult>> allResults(ReserveCapacityTag { }, m_finalResults.size() + resultDatas.size());
     allResults.appendVector(m_finalResults);
 
     auto firstChangedIndex = allResults.size();

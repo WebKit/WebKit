@@ -49,8 +49,7 @@ CoreIPCPKPaymentSetupFeature::CoreIPCPKPaymentSetupFeature(PKPaymentSetupFeature
     CoreIPCPKPaymentSetupFeatureData data;
 
     if (RetainPtr identifiersSet = dynamic_objc_cast<NSSet>([dictionary.get() objectForKey:@"identifiers"])) {
-        Vector<RetainPtr<NSString>> identifiersVector;
-        identifiersVector.reserveInitialCapacity([identifiersSet.get() count]);
+        Vector<RetainPtr<NSString>> identifiersVector(ReserveCapacityTag { }, [identifiersSet.get() count]);
         for (NSString *identifier in identifiersSet.get()) {
             if ([identifier isKindOfClass:NSString.class])
                 identifiersVector.append(identifier);

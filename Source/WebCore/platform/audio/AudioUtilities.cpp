@@ -196,8 +196,7 @@ Vector<uint8_t> createFLACMagicCookie(std::span<const uint8_t> description)
         0, 0, 0, 0, // version and flags
         lastMetadataBlockFlag | streamInfoType, 0, 0, streamInfoSize // STREAMINFO block header
     };
-    Vector<uint8_t> cookie;
-    cookie.reserveInitialCapacity(boxSize);
+    Vector<uint8_t> cookie(ReserveCapacityTag { }, boxSize);
     cookie.append(std::span { header });
     cookie.append(streamInfo);
     return cookie;
@@ -215,8 +214,7 @@ Vector<uint8_t> flacDescriptionFromFLACMagicCookie(std::span<const uint8_t> cook
         return { };
 
     auto metadataBlocks = cookie.subspan(boxHeaderSize, boxSize - boxHeaderSize);
-    Vector<uint8_t> description;
-    description.reserveInitialCapacity(4 + metadataBlocks.size());
+    Vector<uint8_t> description(ReserveCapacityTag { }, 4 + metadataBlocks.size());
     description.append("fLaC"_span8);
     description.append(metadataBlocks);
     return description;

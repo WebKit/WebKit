@@ -89,8 +89,7 @@ static ExceptionOr<Vector<uint8_t>> signEd25519(const Vector<uint8_t>& sk, size_
 
     // Retrieve MPI data of the resulting r and s integers. They are concatenated into
     // a single buffer, properly accounting for integers that don't match the key in size.
-    Vector<uint8_t> signature;
-    signature.reserveInitialCapacity(64);
+    Vector<uint8_t> signature(ReserveCapacityTag { }, 64);
 
     if (!extractEDDSASignatureInteger(signature, signatureSexp, "r"_s, keySizeInBytes)
         || !extractEDDSASignatureInteger(signature, signatureSexp, "s"_s, keySizeInBytes))

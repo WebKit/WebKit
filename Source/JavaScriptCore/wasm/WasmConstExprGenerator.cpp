@@ -58,8 +58,7 @@ public:
 
     std::expected<uint64_t, String> run(std::span<const uint8_t> bytes, uint32_t maxStackHeight)
     {
-        Vector<ConstExprValue, 16> stack;
-        stack.reserveInitialCapacity(maxStackHeight);
+        Vector<ConstExprValue, 16> stack(ReserveCapacityTag { }, maxStackHeight);
         auto push = [&](ConstExprValue value) ALWAYS_INLINE_LAMBDA {
             stack.append(value);
         };

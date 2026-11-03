@@ -180,8 +180,7 @@ WebExtensionWindow::TabVector WebExtensionWindow::tabs() const
     if (!tabs.count)
         return { };
 
-    TabVector result;
-    result.reserveInitialCapacity(tabs.count);
+    TabVector result(ReserveCapacityTag { }, tabs.count);
 
     for (id tab in tabs)
         result.append(extensionContext->getOrCreateTab(checked_objc_cast<WKWebExtensionTab>(tab)));

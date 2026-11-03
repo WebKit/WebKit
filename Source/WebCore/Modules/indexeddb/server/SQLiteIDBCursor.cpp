@@ -124,8 +124,7 @@ void SQLiteIDBCursor::currentData(IDBGetResult& result, const std::optional<IDBK
         return;
     }
 
-    Vector<IDBCursorRecord> prefetchedRecords;
-    prefetchedRecords.reserveInitialCapacity(m_fetchedRecords.size() - 1);
+    Vector<IDBCursorRecord> prefetchedRecords(ReserveCapacityTag { }, m_fetchedRecords.size() - 1);
     bool isFirst = true;
     for (auto& record : m_fetchedRecords) {
         if (record.isTerminalRecord())

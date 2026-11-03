@@ -240,8 +240,7 @@ RetainPtr<NSArray> CookieStorageSession::cookiesForURL(const URL& firstParty, co
 
 Vector<Cookie> CookieStorageSession::nsCookiesToCookieVector(NSArray *nsCookies, NOESCAPE const Function<bool(NSHTTPCookie *)>& filter)
 {
-    Vector<Cookie> cookies;
-    cookies.reserveInitialCapacity(nsCookies.count);
+    Vector<Cookie> cookies(ReserveCapacityTag { }, nsCookies.count);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *nsCookie in nsCookies) {
         @autoreleasepool {

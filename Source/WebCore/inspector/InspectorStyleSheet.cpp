@@ -440,8 +440,7 @@ void StyleSheetHandler::endRuleBody(unsigned offset)
             bool isStyleRule = (rule->type == StyleRuleType::Style);
             unsigned bodyStart = rule->ruleBodyRange.start;
 
-            Vector<unsigned> childStarts;
-            childStarts.reserveInitialCapacity(rule->childRules.size());
+            Vector<unsigned> childStarts(ReserveCapacityTag { }, rule->childRules.size());
             for (auto& child : rule->childRules)
                 childStarts.append(child->ruleHeaderRange.start);
 

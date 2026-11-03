@@ -203,8 +203,7 @@ void BarcodeDetectorImpl::detect(const NativeImage& image, CompletionHandler<voi
     }
 
     auto imageSize = image.size();
-    Vector<DetectedBarcode> results;
-    results.reserveInitialCapacity(request.get().results.count);
+    Vector<DetectedBarcode> results(ReserveCapacityTag { }, request.get().results.count);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL VNBarcodeObservation *observation in request.get().results) {
         results.append({

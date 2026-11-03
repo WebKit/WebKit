@@ -714,8 +714,7 @@ void AXFormActivityMonitor::report()
         // Unknown for a field that has no accessibility object to ask.
         std::optional<bool> isEmptyOrInvalid;
     };
-    Vector<FieldInfo> fieldInfo;
-    fieldInfo.reserveInitialCapacity(fields.size());
+    Vector<FieldInfo> fieldInfo(ReserveCapacityTag { }, fields.size());
     for (auto& field : fields) {
         auto rect = field->boundsInRootViewSpace();
         if (rect.isEmpty())
@@ -761,8 +760,7 @@ void AXFormActivityMonitor::report()
         bool isErrorColored;
     };
 
-    Vector<MessageInfo> messageInfo;
-    messageInfo.reserveInitialCapacity(candidates.size());
+    Vector<MessageInfo> messageInfo(ReserveCapacityTag { }, candidates.size());
     for (size_t candidateIndex = 0; candidateIndex < candidates.size(); ++candidateIndex) {
         auto& candidate = candidates[candidateIndex];
         RefPtr errorElement = candidate.element.get();

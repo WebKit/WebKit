@@ -3683,8 +3683,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         for (auto& catchTarget : targets) {
             auto& target = resolveControlRef(catchTarget.target).controlData;
 
-            Stack results;
-            results.reserveInitialCapacity(target.branchTargetArity());
+            Stack results(ReserveCapacityTag { }, target.branchTargetArity());
             if (catchTarget.type == CatchKind::Catch || catchTarget.type == CatchKind::CatchRef) {
                 for (unsigned arg = 0; arg < catchTarget.exceptionSignature->argumentCount(); ++arg) {
                     ExpressionType exp;

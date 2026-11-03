@@ -793,8 +793,7 @@ TEST_F(StrongSetTest, ForEachStrongHandleSkipsEmptySlots)
 TEST_F(StrongSetTest, StrongHandlesSurviveGCAcrossBlocks)
 {
     constexpr unsigned count = StrongBlock::capacity + 100;
-    Vector<Strong<JSC::JSString>> handles;
-    handles.reserveInitialCapacity(count);
+    Vector<Strong<JSC::JSString>> handles(ReserveCapacityTag { }, count);
     for (unsigned i = 0; i < count; ++i)
         handles.append(Strong<JSC::JSString>(vm(), jsString(vm(), String::number(i))));
 

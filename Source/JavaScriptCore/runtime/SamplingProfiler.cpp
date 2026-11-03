@@ -456,8 +456,7 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
             if (wasValidWalk && walkSize) {
                 if (sReportStats)
                     sNumTotalStackTraces++;
-                Vector<UnprocessedStackFrame> stackTrace;
-                stackTrace.reserveInitialCapacity(walkSize + !!shouldAppendTopFrameAsCCode);
+                Vector<UnprocessedStackFrame> stackTrace(ReserveCapacityTag { }, walkSize + !!shouldAppendTopFrameAsCCode);
                 if (shouldAppendTopFrameAsCCode)
                     stackTrace.append(UnprocessedStackFrame { machinePC });
                 stackTrace.appendRange(m_currentFrames.begin(), m_currentFrames.begin() + walkSize);

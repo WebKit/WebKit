@@ -938,8 +938,7 @@ auto AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction>::blend(const
     }
 
     auto blendedCommands = [&] {
-        Vector<AcceleratedEffectShapeFunction::Command> commands;
-        commands.reserveInitialCapacity(from.commands.size());
+        Vector<AcceleratedEffectShapeFunction::Command> commands(ReserveCapacityTag { }, from.commands.size());
         for (auto&& [commandFrom, commandTo] : zippedRange(from.commands, to.commands))
             commands.append(WebCore::blendForAcceleratedEffect(commandFrom, commandTo, context));
         return commands;

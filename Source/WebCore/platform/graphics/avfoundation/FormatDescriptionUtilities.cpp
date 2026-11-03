@@ -422,8 +422,7 @@ static std::optional<ExtrinsicOriginSource> toExtrinsicOriginSource(CFStringRef 
 
 static Vector<CameraCalibration> toCameraCalibrationDataLensCollection(CFArrayRef array)
 {
-    Vector<CameraCalibration> collection;
-    collection.reserveInitialCapacity(CFArrayGetCount(array));
+    Vector<CameraCalibration> collection(ReserveCapacityTag { }, CFArrayGetCount(array));
 
     for (RetainPtr dictionary : makeVector<RetainPtr<CFDictionaryRef>, CFDictionaryRef>(array)) {
         RetainPtr lensAlgorithmKind = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(dictionary.get(), PAL::kCMFormatDescriptionCameraCalibration_LensAlgorithmKind));

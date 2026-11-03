@@ -151,8 +151,7 @@ static Ref<Inspector::Protocol::CSS::Font> buildObjectForFont(const Font& font)
 
 static RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CharacterRange>> buildCharacterRanges(const CharacterSet& characters)
 {
-    Vector<char32_t> sortedCharacters;
-    sortedCharacters.reserveInitialCapacity(characters.size());
+    Vector<char32_t> sortedCharacters(ReserveCapacityTag { }, characters.size());
     for (auto character : characters)
         sortedCharacters.append(character);
     std::sort(sortedCharacters.begin(), sortedCharacters.end());
@@ -249,8 +248,7 @@ private:
         if (from >= to)
             return;
 
-        Vector<unsigned> glyphIndexes;
-        glyphIndexes.reserveInitialCapacity(glyphBuffer.size());
+        Vector<unsigned> glyphIndexes(ReserveCapacityTag { }, glyphBuffer.size());
         for (unsigned i = 0; i < glyphBuffer.size(); ++i) {
             if (auto offset = glyphBuffer.checkedStringOffsetAt(i, run.length()); offset && unsignedCast(*offset) < to)
                 glyphIndexes.append(i);

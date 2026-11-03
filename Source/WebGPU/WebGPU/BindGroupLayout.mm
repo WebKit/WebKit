@@ -206,8 +206,7 @@ RefPtr<WebGPU::BindGroupLayout> Device::createBindGroupLayout(const WebGPU::Bind
     if (!isValid())
         return BindGroupLayout::createInvalid(*this);
 
-    Vector<ResolvedBindGroupLayoutEntry> entries;
-    entries.reserveInitialCapacity(descriptor.entries.size());
+    Vector<ResolvedBindGroupLayoutEntry> entries(ReserveCapacityTag { }, descriptor.entries.size());
     for (auto& entry : descriptor.entries) {
         auto entryBindingLayout = bindingLayout(entry);
         if (!entryBindingLayout) {

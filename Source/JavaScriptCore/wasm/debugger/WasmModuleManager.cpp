@@ -91,8 +91,7 @@ void ModuleManager::notifyLibraryRequeryComplete()
 Vector<uint32_t> ModuleManager::unnotifiedInstanceIds() const
 {
     Locker locker { m_lock };
-    Vector<uint32_t> result;
-    result.reserveInitialCapacity(m_unnotifiedInstanceIds.size());
+    Vector<uint32_t> result(ReserveCapacityTag { }, m_unnotifiedInstanceIds.size());
     for (uint32_t id : m_unnotifiedInstanceIds)
         result.append(id);
     std::sort(result.begin(), result.end());
@@ -171,8 +170,7 @@ String ModuleManager::generateLibrariesXML() const
     };
 
     // Report libraries in instance-id order so the list LLDB sees is stable across requeries.
-    Vector<std::pair<uint32_t, RefPtr<InstanceAnchor>>> liveInstances;
-    liveInstances.reserveInitialCapacity(m_instanceIdToInstance.size());
+    Vector<std::pair<uint32_t, RefPtr<InstanceAnchor>>> liveInstances(ReserveCapacityTag { }, m_instanceIdToInstance.size());
     for (const auto& pair : m_instanceIdToInstance) {
         if (RefPtr<InstanceAnchor> anchor = pair.value.get())
             liveInstances.append({ pair.key, WTF::move(anchor) });

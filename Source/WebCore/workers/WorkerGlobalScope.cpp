@@ -409,8 +409,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<Variant<Ref
 {
     ASSERT(contentSecurityPolicy());
 
-    Vector<String> urlStrings;
-    urlStrings.reserveInitialCapacity(urls.size());
+    Vector<String> urlStrings(ReserveCapacityTag { }, urls.size());
     for (auto&& entry : urls) {
         auto stringValueHolder = WTF::switchOn(entry,
             [this](const String& str) -> ExceptionOr<String> {
@@ -432,8 +431,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<Variant<Ref
     if (m_workerType == WorkerType::Module)
         return Exception { ExceptionCode::TypeError, "importScripts cannot be used if worker type is \"module\""_s };
 
-    Vector<URLKeepingBlobAlive> completedURLs;
-    completedURLs.reserveInitialCapacity(urls.size());
+    Vector<URLKeepingBlobAlive> completedURLs(ReserveCapacityTag { }, urls.size());
     for (auto& entry : urlStrings) {
         URL url = parseURL(entry);
         if (!url.isValid())
