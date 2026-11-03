@@ -374,7 +374,7 @@ void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayou
 BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition)
 {
     auto geometry = computeBorderAndPadding(root, containingBlock.inlineSize);
-    auto outOfFlowGeometry = OutOfFlowGeometry { root, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.box->writingMode() }, staticPosition, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
+    auto outOfFlowGeometry = OutOfFlowGeometry { root, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.box->writingMode(), containingBlock.box->hasPotentiallyScrollableOverflow() }, staticPosition, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
     auto [inlineAxis, blockAxis] = [&] -> std::pair<OutOfFlowGeometry::AxisGeometry, OutOfFlowGeometry::AxisGeometry> {
         if (root.isRenderReplaced() || root.isRenderOrLegacyRenderSVGRoot()) {
             // From its natural size and aspect ratio (CSS 2.2 §10.3.8, §10.6.5).
@@ -415,7 +415,7 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
     auto result = BlockLayoutResult { };
     CheckedRef box = downcast<RenderBlockFlow>(outOfFlowBox);
     auto geometry = computeBorderAndPadding(box, containingBlock.inlineSize);
-    auto outOfFlowGeometry = OutOfFlowGeometry { box, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.box->writingMode() }, staticPosition, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
+    auto outOfFlowGeometry = OutOfFlowGeometry { box, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.box->writingMode(), containingBlock.box->hasPotentiallyScrollableOverflow() }, staticPosition, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
 
     auto contentInlineSizes = outOfFlowGeometry.hasFitContentInlineSize() ? std::optional { computeIntrinsicInlineSizes(box) } : std::nullopt;
     auto inlineAxis = outOfFlowGeometry.computeInlineAxisGeometry(contentInlineSizes);

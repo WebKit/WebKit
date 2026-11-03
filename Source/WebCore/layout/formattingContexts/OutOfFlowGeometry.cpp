@@ -27,6 +27,7 @@
 #include "OutOfFlowGeometry.h"
 
 #include "RenderBox.h"
+#include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -59,10 +60,43 @@ std::pair<LayoutUnit, LayoutUnit> OutOfFlowGeometry::insetModifiedContainingBloc
     return { rangeStart, rangeEnd };
 }
 
-// The geometry of one axis: auto margins (§4.4) and the alignment of the margin box (§4.5) in the inset-modified containing block.
-auto OutOfFlowGeometry::computeAxisGeometry(Axis axis, const AxisValues& values, LayoutUnit borderBoxSize) -> AxisGeometry
+// The self-alignment property in the axis, in which auto behaves as normal (css-align-3 §6.1). With both insets auto, it only applies in the
+// inline axis of a box whose parent is a block container, where auto takes the parent's justify-items, and aligns the box from its static
+// position (css-align-3 §6.1.4, PositionedLayoutConstraints::shouldAlignStaticPositionInInlineAxis).
+StyleSelfAlignmentData OutOfFlowGeometry::selfAlignment(Axis axis, bool usesStaticPosition) const
 {
-    auto [insetStart, insetEnd, marginStart, marginEnd, containingBlockSize, borderAndPadding, staticPosition, staticPositionIsMarginBoxEnd, staticPositionAlignment] = values;
+    CheckedRef style = this->style();
+    if (!usesStaticPosition)
+        return axis == Axis::Inline ? style->justifySelf().resolve() : style->alignSelf().resolve();
+    CheckedPtr parent = m_box->parent();
+    if (axis == Axis::Block || !parent || !parent->isBlockContainer())
+        return { ItemPosition::Normal };
+    auto alignment = style->justifySelf().resolve(&parent->style());
+    return alignment.isNormalStretchOrLegacy() ? StyleSelfAlignmentData { ItemPosition::Normal } : alignment;
+}
+
+// Where self-alignment puts the margin box in the inset-modified containing block. Unless the alignment is unsafe, a margin box that
+// overflows it stays inside the containing block where it can, at the start side last, except past the end sides of a scroll container
+// (css-align-3 §4.4, PositionedLayoutConstraints::resolveAlignmentShift).
+LayoutUnit OutOfFlowGeometry::alignmentOffset(Axis axis, const AxisValues& values, LayoutUnit rangeStart, LayoutUnit rangeEnd, LayoutUnit freeSpace) const
+{
+    auto& alignment = values.selfAlignment;
+    auto offset = StyleSelfAlignmentData::adjustmentFromStartEdge(freeSpace, alignment.position(), axis == Axis::Inline ? LogicalBoxAxis::Inline : LogicalBoxAxis::Block, m_containingBlock.writingMode, m_box->writingMode());
+    if (freeSpace >= 0 || alignment.isNormal() || alignment.overflow() == OverflowAlignment::Unsafe)
+        return offset;
+    auto spaceAtEnd = std::max(0_lu, values.containingBlockSize - rangeEnd) + freeSpace - offset;
+    if (spaceAtEnd < 0 && !m_containingBlock.isScrollContainer)
+        offset += spaceAtEnd;
+    auto spaceAtStart = std::max(0_lu, rangeStart) + offset;
+    if (spaceAtStart < 0)
+        offset -= spaceAtStart;
+    return offset;
+}
+
+// The geometry of one axis: auto margins (§4.4) and the alignment of the margin box (§4.5) in the inset-modified containing block.
+auto OutOfFlowGeometry::computeAxisGeometry(Axis axis, const AxisValues& values, LayoutUnit borderBoxSize) const -> AxisGeometry
+{
+    auto [insetStart, insetEnd, marginStart, marginEnd, containingBlockSize, borderAndPadding, staticPosition, staticPositionIsMarginBoxEnd, staticPositionAlignment, selfAlignment] = values;
     auto [rangeStart, rangeEnd] = insetModifiedContainingBlock(values);
     borderBoxSize = std::max(borderAndPadding, borderBoxSize);
 
@@ -83,10 +117,16 @@ auto OutOfFlowGeometry::computeAxisGeometry(Axis axis, const AxisValues& values,
         else
             usedMarginEnd = remainingSpace;
     }
-    // The margin box aligns with the edge of the stronger inset, the start one when neither is auto.
     auto marginBoxSize = usedMarginStart + borderBoxSize + usedMarginEnd;
-    auto alignsWithEnd = !insetStart && (insetEnd || staticPositionIsMarginBoxEnd);
-    auto marginBoxStart = alignsWithEnd ? rangeEnd - marginBoxSize : rangeStart;
+    auto marginBoxStart = [&] {
+        // The self-alignment property aligns it when neither the insets nor the margins are auto, and from the static position (selfAlignment).
+        auto usesStaticPosition = !insetStart && !insetEnd;
+        if ((insetStart && insetEnd && marginStart && marginEnd) || (usesStaticPosition && !selfAlignment.isNormal()))
+            return rangeStart + alignmentOffset(axis, values, rangeStart, rangeEnd, rangeEnd - rangeStart - marginBoxSize);
+        // Otherwise the margin box aligns with the edge of the stronger inset, the start one when neither is auto.
+        auto alignsWithEnd = !insetStart && (insetEnd || staticPositionIsMarginBoxEnd);
+        return alignsWithEnd ? rangeEnd - marginBoxSize : rangeStart;
+    }();
     // The size comes from the inset-modified containing block at the start of the static-position rectangle, as on the render tree path,
     // which lays the box out again at the aligned position (FlexLayout::setStaticPositionForPositionedLayout).
     if (!insetStart && !insetEnd && staticPositionAlignment) {
@@ -125,7 +165,8 @@ auto OutOfFlowGeometry::inlineAxisValues() const -> AxisValues
     return {
         inset(style->insetStart(writingMode)), inset(style->insetEnd(writingMode)),
         margin(style->marginStart(writingMode)), margin(style->marginEnd(writingMode)),
-        m_containingBlock.inlineSize, m_inlineAxisBorderAndPadding, m_staticPosition.inlinePosition, m_staticPosition.inlinePositionIsMarginBoxEnd, m_staticPosition.inlineAlignment
+        m_containingBlock.inlineSize, m_inlineAxisBorderAndPadding, m_staticPosition.inlinePosition, m_staticPosition.inlinePositionIsMarginBoxEnd, m_staticPosition.inlineAlignment,
+        selfAlignment(Axis::Inline, style->insetStart(writingMode).isAuto() && style->insetEnd(writingMode).isAuto())
     };
 }
 
@@ -143,7 +184,8 @@ auto OutOfFlowGeometry::blockAxisValues() const -> AxisValues
     return {
         inset(style->insetBefore(writingMode)), inset(style->insetAfter(writingMode)),
         margin(style->marginBefore(writingMode)), margin(style->marginAfter(writingMode)),
-        m_containingBlock.blockSize, m_blockAxisBorderAndPadding, m_staticPosition.blockPosition, false, m_staticPosition.blockAlignment
+        m_containingBlock.blockSize, m_blockAxisBorderAndPadding, m_staticPosition.blockPosition, false, m_staticPosition.blockAlignment,
+        selfAlignment(Axis::Block, style->insetBefore(writingMode).isAuto() && style->insetAfter(writingMode).isAuto())
     };
 }
 
@@ -169,7 +211,10 @@ bool OutOfFlowGeometry::hasFitContentInlineSize() const
 {
     CheckedRef style = this->style();
     auto writingMode = m_containingBlock.writingMode;
-    return style->logicalWidth(writingMode).isAuto() && (style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto());
+    if (!style->logicalWidth(writingMode).isAuto())
+        return false;
+    auto justifySelf = style->justifySelf().resolve();
+    return style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto() || !(justifySelf.isNormal() || justifySelf.isStretch());
 }
 
 auto OutOfFlowGeometry::computeInlineAxisGeometry(std::optional<IntrinsicWidthConstraints> contentInlineSizes) const -> AxisGeometry
@@ -200,8 +245,8 @@ std::optional<LayoutUnit> OutOfFlowGeometry::definiteBorderBoxBlockSize(const Ax
     auto& maximumBlockSize = style->logicalMaxHeight(writingMode);
     if (auto& blockSize = style->logicalHeight(writingMode); blockSize.isSpecified())
         return clamp(borderBoxSizeFor(blockSize, values.containingBlockSize, values.borderAndPadding), minimumBlockSize, maximumBlockSize, values.containingBlockSize, values.borderAndPadding);
-    // With neither inset auto, the automatic size is the stretch-fit size (§4.3).
-    if (values.insetStart && values.insetEnd) {
+    // With neither inset auto, the automatic size is the stretch-fit size when align-self is normal or stretch (§4.3).
+    if (values.insetStart && values.insetEnd && (values.selfAlignment.isNormal() || values.selfAlignment.isStretch())) {
         auto stretchFitSize = values.containingBlockSize - *values.insetStart - *values.insetEnd - values.marginStart.value_or(0_lu) - values.marginEnd.value_or(0_lu);
         return clamp(stretchFitSize, minimumBlockSize, maximumBlockSize, values.containingBlockSize, values.borderAndPadding);
     }
