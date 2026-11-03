@@ -2016,7 +2016,6 @@ imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022.svg [ Imag
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/svg/path/distance/pathlength-circle-mutating.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/painting/svg-percent-stroke-width-viewbox-update.html [ ImageOnlyFailure ]
 
 webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html [ Pass Failure ]
 

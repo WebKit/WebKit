@@ -73,7 +73,6 @@ svg/animations/attributeNameAndAttributeTypeMismatch.html        [ Pass ImageOnl
 svg/animations/avoid-calculating-for-non-animating-elements.html [ Pass ImageOnlyFailure ]
 
 # 3) Unknown origin
-imported/w3c/web-platform-tests/svg/painting/svg-percent-stroke-width-viewbox-update.html [ Pass ImageOnlyFailure ]
 svg/carto.net/scrollbar.svg                                                               [ Pass Failure ]
 svg/carto.net/slider.svg                                                                  [ Pass Failure ]
 svg/custom/hit-test-path-stroke.svg                                                       [ Pass ImageOnlyFailure ]
