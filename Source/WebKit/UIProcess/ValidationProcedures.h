@@ -27,6 +27,7 @@
 
 #include "Untrusted.h"
 #include "WebFrameProxy.h"
+#include "WebGeolocationManagerProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/ClientOrigin.h>
@@ -243,6 +244,30 @@ private:
     WeakPtr<const WebPageProxy> m_page;
 };
 
+class ProcessIsGeolocationWatcher : public IPC::CanValidateUntrusted<ProcessIsGeolocationWatcher> {
+public:
+    explicit ProcessIsGeolocationWatcher(const WebGeolocationManagerProxy& proxy, const WebProcessProxy& process)
+        : m_proxy(proxy)
+        , m_process(process)
+    {
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::RegistrableDomain& registrableDomain) const
+    {
+        Ref proxy = m_proxy;
+        RefPtr process = m_process;
+        if (!process)
+            return IPC::ValidationFailure::Ignore;
+        if (!proxy->webProcessHasStartedUpdatingLocation(registrableDomain, *process))
+            return IPC::ValidationFailure::Terminate;
+        return std::nullopt;
+    }
+
+private:
+    Ref<const WebGeolocationManagerProxy> m_proxy;
+    WeakPtr<const WebProcessProxy> m_process;
+};
+
 } // namespace WebKit
 
 namespace IPC {
@@ -257,5 +282,6 @@ template<> struct IsValidationProcedureFor<WebKit::ProcessCommittedClientOrigin,
 template<> struct IsValidationProcedureFor<WebKit::ProcessCommittedStorageClientOrigin, WebCore::ClientOrigin> : std::true_type { };
 
 template<> struct IsValidationProcedureFor<WebKit::ProcessHostsFrameInPage, WebCore::FrameIdentifier> : std::true_type { };
+template<> struct IsValidationProcedureFor<WebKit::ProcessIsGeolocationWatcher, WebCore::RegistrableDomain> : std::true_type { };
 
 } // namespace IPC

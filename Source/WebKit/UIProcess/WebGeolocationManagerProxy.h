@@ -78,6 +78,8 @@ public:
     void webProcessIsGoingAway(WebProcessProxy&);
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&) const;
 
+    bool webProcessHasStartedUpdatingLocation(const WebCore::RegistrableDomain&, const WebProcessProxy&) const;
+
 private:
     explicit WebGeolocationManagerProxy(WebProcessPool*);
 

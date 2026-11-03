@@ -102,6 +102,13 @@ std::optional<SharedPreferencesForWebProcess> WebGeolocationManagerProxy::shared
     return WebProcessProxy::fromConnection(connection)->sharedPreferencesForWebProcess();
 }
 
+bool WebGeolocationManagerProxy::webProcessHasStartedUpdatingLocation(const WebCore::RegistrableDomain& registrableDomain, const WebProcessProxy& proxy) const
+{
+    if (auto it = m_perDomainData.find(registrableDomain); it != m_perDomainData.end())
+        return it->value->watchers.contains(proxy);
+    return false;
+}
+
 void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPosition* position)
 {
     for (auto& [registrableDomain, perDomainData] : m_perDomainData) {
@@ -170,8 +177,9 @@ void WebGeolocationManagerProxy::startUpdatingWithProxy(WebProcessProxy& proxy, 
 
 void WebGeolocationManagerProxy::stopUpdating(IPC::Connection& connection, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain)
 {
-    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(registrableDomain, untrustedDomain, ProcessSpeaksForDomain);
-    stopUpdatingWithProxy(WebProcessProxy::fromConnection(connection), registrableDomain);
+    Ref proxy = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK(connection, registrableDomain, untrustedDomain, ProcessIsGeolocationWatcher { *this, proxy.get() });
+    stopUpdatingWithProxy(proxy, registrableDomain);
 }
 
 void WebGeolocationManagerProxy::stopUpdatingWithProxy(WebProcessProxy& proxy, const WebCore::RegistrableDomain& registrableDomain)
@@ -199,10 +207,11 @@ void WebGeolocationManagerProxy::stopUpdatingWithProxy(WebProcessProxy& proxy, c
         m_perDomainData.remove(it);
 }
 
-void WebGeolocationManagerProxy::setEnableHighAccuracy(IPC::Connection& connection, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedDomain, bool enabled)
+void WebGeolocationManagerProxy::setEnableHighAccuracy(IPC::Connection& connection, IPC::Untrusted<WebCore::RegistrableDomain>&& untrustedRegistrableDomain, bool enabled)
 {
-    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(registrableDomain, untrustedDomain, ProcessSpeaksForDomain);
-    setEnableHighAccuracyWithProxy(WebProcessProxy::fromConnection(connection), registrableDomain, enabled);
+    Ref proxy = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK(connection, registrableDomain, untrustedRegistrableDomain, ProcessIsGeolocationWatcher { *this, proxy.get() });
+    setEnableHighAccuracyWithProxy(proxy, registrableDomain, enabled);
 }
 
 void WebGeolocationManagerProxy::setEnableHighAccuracyWithProxy(WebProcessProxy& proxy, const WebCore::RegistrableDomain& registrableDomain, bool enabled)
