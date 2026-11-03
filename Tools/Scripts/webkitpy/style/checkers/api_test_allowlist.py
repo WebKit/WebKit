@@ -22,56 +22,72 @@
 
 import re
 
+from webkitexpectationspy.parser import ExpectationParser
+from webkitexpectationspy.suites.api_tests import APITestSuite
+from webkitpy.style.checkers.common import TabChecker
+
 # Valid entry format: BINARY.SUITE or BINARY.SUITE.TESTCASE
 # BINARY is like TestWTF, TestWebKitAPI, TestIPC, TestWGSL
 # SUITE can contain slashes for parametrized tests
 # TESTCASE is the individual test name
 _ENTRY_PATTERN = re.compile(r'^(Test\w+)\.([^.]+(?:/[^.]+)*)(?:\.(.+))?$')
 
+_UNGATED = (frozenset(), ())
+
 
 class APITestAllowlistChecker(object):
     """Processes api_tests/allowlist.txt to enforce allowlist conventions."""
 
+    categories = set([
+        'api-test-allowlist/duplicate',
+        'api-test-allowlist/format',
+        'api-test-allowlist/order',
+        'api-test-allowlist/redundant',
+    ])
+
     def __init__(self, file_path, handle_style_error):
         self.file_path = file_path
         self.handle_style_error = handle_style_error
+        self._tab_checker = TabChecker(file_path, handle_style_error)
 
-    def check(self, lines):
-        seen = set()
-        suites = set()
-        prev_entry = ""
+    def check(self, lines, line_numbers=None):
+        self._tab_checker.check(lines)
 
-        for line_number, line in enumerate(lines, 1):
-            line = line.rstrip('\n\r')
-            stripped = line.strip()
-
-            # Skip empty lines and comments
-            if not stripped or stripped.startswith('#'):
+        entries = []
+        parsed_lines = ExpectationParser(APITestSuite()).parse(self.file_path, '\n'.join(lines))
+        for line_number, (entry, warnings) in enumerate(parsed_lines, 1):
+            for warning in warnings:
+                self.handle_style_error(line_number, 'api-test-allowlist/format', 5, warning.error)
+            if entry is None:
                 continue
 
-            # Check for valid format
-            match = _ENTRY_PATTERN.match(stripped)
-            if not match:
-                self.handle_style_error(line_number, 'api-test-allowlist/format', 5, f"Invalid entry format: '{stripped}' (expected BINARY.SUITE or BINARY.SUITE.TESTCASE)")
-                continue
-
-            binary, suite, testcase = match.groups()
-            suite_key = f'{binary}.{suite}'
-
-            # Check for duplicates
-            if stripped in seen:
-                self.handle_style_error(line_number, 'api-test-allowlist/duplicate', 5, f"Duplicate entry: '{stripped}'")
-            seen.add(stripped)
-
-            # Track suites (entries without testcase)
-            if testcase is None:
-                suites.add(suite_key)
+            entry_text = lines[line_number - 1].split('#')[0].strip()
+            pattern = entry.test_pattern
+            if not _ENTRY_PATTERN.match(pattern):
+                self.handle_style_error(line_number, 'api-test-allowlist/format', 5, f"Invalid entry format: '{entry_text}' (expected BINARY.SUITE or BINARY.SUITE.TESTCASE)")
+            elif '*' in pattern:
+                self.handle_style_error(line_number, 'api-test-allowlist/format', 5, f"Wildcard entries match no tests: '{entry_text}'")
+            elif not entry_text.endswith(pattern):
+                self.handle_style_error(line_number, 'api-test-allowlist/format', 5, f"Allowlist entries take no expectations or modifiers: '{entry_text}'")
             else:
-                # Check if suite is already listed (redundant entry)
-                if suite_key in suites:
-                    self.handle_style_error(line_number, 'api-test-allowlist/redundant', 5, f"Redundant entry: '{stripped}' (suite '{suite_key}' already listed)")
+                entries.append((line_number, entry_text, (entry.configurations, entry.version_specifiers), pattern))
 
-            # Check alphabetical order
-            if stripped < prev_entry:
-                self.handle_style_error(line_number, 'api-test-allowlist/order', 5, f"Entry not in alphabetical order: '{stripped}' should come before '{prev_entry}'")
-            prev_entry = stripped
+        listed = {}
+        for _, entry_text, gate, pattern in entries:
+            listed.setdefault((gate, pattern), entry_text)
+
+        seen = set()
+        previous_pattern_by_gate = {}
+        for line_number, entry_text, gate, pattern in entries:
+            suite_key = pattern.rsplit('.', 1)[0]
+            covering_entries = [listed[key] for key in [(_UNGATED, pattern), (_UNGATED, suite_key), (gate, suite_key)] if key != (gate, pattern) and key in listed]
+            if (gate, pattern) in seen:
+                self.handle_style_error(line_number, 'api-test-allowlist/duplicate', 5, f"Duplicate entry: '{entry_text}'")
+            elif covering_entries:
+                self.handle_style_error(line_number, 'api-test-allowlist/redundant', 5, f"Redundant entry: '{entry_text}' ('{covering_entries[0]}' already covers it)")
+            seen.add((gate, pattern))
+
+            previous_pattern = previous_pattern_by_gate.get(gate, '')
+            if pattern < previous_pattern:
+                self.handle_style_error(line_number, 'api-test-allowlist/order', 5, f"Entry not in alphabetical order: '{pattern}' should come before '{previous_pattern}'")
+            previous_pattern_by_gate[gate] = pattern
