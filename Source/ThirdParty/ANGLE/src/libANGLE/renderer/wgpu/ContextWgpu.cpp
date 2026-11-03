@@ -194,17 +194,19 @@ void ContextWgpu::setVertexAttribute(size_t attribIndex, webgpu::PackedVertexAtt
 
 void ContextWgpu::invalidateVertexBuffer(size_t slot)
 {
-    if (mCurrentRenderPipelineAllAttributes[slot])
-    {
-        mDirtyBits.set(DIRTY_BIT_VERTEX_BUFFERS);
-        mDirtyVertexBuffers.set(slot);
-    }
+    mDirtyBits.set(DIRTY_BIT_VERTEX_BUFFERS);
+    mDirtyVertexBuffers.set(slot);
 }
 
 void ContextWgpu::invalidateVertexBuffers()
 {
     mDirtyBits.set(DIRTY_BIT_VERTEX_BUFFERS);
-    mDirtyVertexBuffers = mCurrentRenderPipelineAllAttributes;
+    mDirtyVertexBuffers.set();
+}
+
+void ContextWgpu::invalidateVertexBufferSlots()
+{
+    mVertexBufferSlotsDirty = true;
 }
 
 void ContextWgpu::invalidateIndexBuffer()
@@ -886,6 +888,7 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
                 break;
             case gl::state::DIRTY_BIT_VERTEX_ARRAY_BINDING:
                 invalidateCurrentRenderPipeline();
+                invalidateVertexBufferSlots();
                 break;
             case gl::state::DIRTY_BIT_DRAW_INDIRECT_BUFFER_BINDING:
                 break;
@@ -895,6 +898,8 @@ angle::Result ContextWgpu::syncState(const gl::Context *context,
             case gl::state::DIRTY_BIT_PROGRAM_EXECUTABLE:
                 updatePipelineColorMasks();
                 invalidateCurrentRenderPipeline();
+                // The vertex buffer slots are assigned to the attributes that the program uses.
+                invalidateVertexBufferSlots();
                 iter.setLaterBit(gl::state::DIRTY_BIT_TEXTURE_BINDINGS);
                 break;
             case gl::state::DIRTY_BIT_SAMPLER_BINDINGS:
@@ -1251,17 +1256,24 @@ angle::Result ContextWgpu::setupDraw(const gl::Context *context,
         mDirtyBits.set(DIRTY_BIT_BIND_GROUPS);
     }
 
-    const void *adjustedIndicesPtr = indices;
-    if (mState.areClientArraysEnabled())
+    VertexArrayWgpu *vertexArrayWgpu = GetImplAs<VertexArrayWgpu>(mState.getVertexArray());
+    if (mVertexBufferSlotsDirty)
     {
-        VertexArrayWgpu *vertexArrayWgpu = GetImplAs<VertexArrayWgpu>(mState.getVertexArray());
-        // Pass in original indexTypeOrInvalid into syncClientArrays because the method will need to
-        // determine if the original draw call was a DrawElements or DrawArrays call.
-        ANGLE_TRY(vertexArrayWgpu->syncClientArrays(
-            context, mState.getProgramExecutable()->getActiveAttribLocationsMask(), mode,
-            firstVertexOrInvalid, vertexOrIndexCount, instanceCount, indexTypeOrInvalid, indices,
-            baseVertex, mState.isPrimitiveRestartEnabled(), &adjustedIndicesPtr, indexCountOut));
+        ANGLE_TRY(vertexArrayWgpu->updateVertexBufferSlots(
+            this, mState.getProgramExecutable()->getActiveAttribLocationsMask()));
+        mVertexBufferSlotsDirty = false;
     }
+
+    const void *adjustedIndicesPtr = indices;
+    // Streaming is also needed when client arrays are disabled, for indices and attributes that
+    // WebGPU cannot read from their buffers. Pass in original indexTypeOrInvalid into
+    // syncClientArrays because the method will need to determine if the original draw call was a
+    // DrawElements or DrawArrays call. Primitive restart applies only to DrawElements calls.
+    const bool primitiveRestartEnabled = mState.isPrimitiveRestartEnabled() &&
+                                         indexTypeOrInvalid != gl::DrawElementsType::InvalidEnum;
+    ANGLE_TRY(vertexArrayWgpu->syncClientArrays(
+        context, mode, firstVertexOrInvalid, vertexOrIndexCount, instanceCount, indexTypeOrInvalid,
+        indices, baseVertex, primitiveRestartEnabled, &adjustedIndicesPtr, indexCountOut));
 
     bool reAddDirtyIndexBufferBit = false;
     if (dstIndexTypeOrInvalid != gl::DrawElementsType::InvalidEnum)
@@ -1339,13 +1351,12 @@ angle::Result ContextWgpu::setupDraw(const gl::Context *context,
             }
         }
 
+        mDirtyBits.reset();
         if (reAddDirtyIndexBufferBit)
         {
             // Re-add the index buffer dirty bit for a future indexed draw call.
-            mDirtyBits.reset(DIRTY_BIT_INDEX_BUFFER);
+            mDirtyBits.set(DIRTY_BIT_INDEX_BUFFER);
         }
-
-        mDirtyBits.reset();
     }
 
     return angle::Result::Continue;
@@ -1363,9 +1374,6 @@ angle::Result ContextWgpu::handleDirtyRenderPipelineDesc(DirtyBits::Iterator *di
     {
         dirtyBitsIterator->setLaterBit(DIRTY_BIT_RENDER_PIPELINE_BINDING);
     }
-    mCurrentRenderPipelineAllAttributes =
-        executable->getExecutable()->getActiveAttribLocationsMask();
-
     return angle::Result::Continue;
 }
 
@@ -1501,7 +1509,7 @@ angle::Result ContextWgpu::handleDirtyRenderPass(DirtyBits::Iterator *dirtyBitsI
     FramebufferWgpu *drawFramebufferWgpu = webgpu::GetImpl(mState.getDrawFramebuffer());
     ANGLE_TRY(drawFramebufferWgpu->startNewRenderPass(this));
     dirtyBitsIterator->setLaterBits(mNewRenderPassDirtyBits);
-    mDirtyVertexBuffers = mCurrentRenderPipelineAllAttributes;
+    mDirtyVertexBuffers.set();
     return angle::Result::Continue;
 }
 
@@ -1509,16 +1517,10 @@ angle::Result ContextWgpu::handleDirtyVertexBuffers(const gl::AttributesMask &sl
                                                     DirtyBits::Iterator *dirtyBitsIterator)
 {
     VertexArrayWgpu *vertexArrayWgpu = GetImplAs<VertexArrayWgpu>(mState.getVertexArray());
-    for (size_t slot : slots)
+    for (size_t slot : slots & vertexArrayWgpu->getUsedVertexBufferSlots())
     {
         const VertexBufferWithOffset &buffer = vertexArrayWgpu->getVertexBuffer(slot);
-        if (!buffer.buffer)
-        {
-            // Missing default attribute support
-            ASSERT(!mState.getVertexArray()->getVertexAttribute(slot).enabled);
-            UNIMPLEMENTED();
-            continue;
-        }
+        ASSERT(buffer.buffer);
         if (buffer.buffer->getMappedState())
         {
             ANGLE_TRY(buffer.buffer->unmap());
