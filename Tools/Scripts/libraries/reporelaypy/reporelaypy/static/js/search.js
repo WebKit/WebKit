@@ -22,16 +22,38 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 const COMMIT_URL = 'https://commits.webkit.org/';
-const VALID_REF_RE = /^[a-zA-Z0-9\/\.\@-]+$/;
+const VALID_REF_RE = /^[a-zA-Z0-9\.\@-][a-zA-Z0-9\/\.\@-]*$/;
 
-function ErrorMessage(message) {
-    return `<div class="text small failed"> ${message} </div>`;
+function CreateElement(tag, {className, href, target, text} = {}, children = []) {
+    const element = document.createElement(tag);
+    if (className)
+        element.className = className;
+    if (href)
+        element.href = href;
+    if (target)
+        element.target = target;
+    if (text)
+        element.textContent = text;
+    element.append(...children);
+    return element;
+}
+
+function ErrorMessage(...lines) {
+    const children = [];
+    for (const line of lines) {
+        children.push(line, document.createElement('br'));
+    }
+    return CreateElement('div', {className: 'text small failed'}, children);
+}
+
+function EncodeRef(ref) {
+    return ref.split('/').map(encodeURIComponent).join('/');
 }
 
 async function GetCommit(commit) {
-    const response = await fetch(`/${commit}/json`);
+    const response = await fetch(`/${EncodeRef(commit)}/json`);
     if (!response.ok) {
-        throw new RangeError(`Could not find ${commit}.<br>Please fix any typos or check if this commit exists.`);
+        throw new RangeError(`Could not find ${commit}.`);
     } else {
         const commitObj = await response.json();
         return commitObj;
@@ -59,10 +81,10 @@ function ValidateCommitFormat() {
     const message = document.getElementById(`${this.name}Message`)
 
     if (VALID_REF_RE.test(commitRep) || !commitRep) {
-        message.innerHTML = '';
+        message.replaceChildren();
         document.getElementById(this.id).classList.remove('invalid');
     } else {
-        message.innerHTML = `<div class="text small failed">${commitRep} is not a valid commit format</div>`;
+        message.replaceChildren(CreateElement('div', {className: 'text small failed', text: `${commitRep} is not a valid commit format`}));
         document.getElementById(this.id).classList.add('invalid');
     }
 }
@@ -73,9 +95,9 @@ async function GenerateCompareLink(validateCommits=false) {
     const message = document.getElementById('compareMessage');
 
     if (!VALID_REF_RE.test(commitOne)) {
-        message.innerHTML = ErrorMessage(`${commitOne} is not a valid commit format<br>`);
+        message.replaceChildren(ErrorMessage(`${commitOne} is not a valid commit format`));
     } else if (!VALID_REF_RE.test(commitTwo)) {
-        message.innerHTML = ErrorMessage(`${commitTwo} is not a valid commit format<br>`);
+        message.replaceChildren(ErrorMessage(`${commitTwo} is not a valid commit format`));
     } else if (validateCommits == true) {
         try {
             const commitOneData = await GetCommit(commitOne);
@@ -83,7 +105,10 @@ async function GenerateCompareLink(validateCommits=false) {
             return COMMIT_URL + 'compare/' + commitOneData.identifier + '...' + commitTwoData.identifier;
         } catch (error) {
             console.error(error);
-            message.innerHTML = ErrorMessage(`${error.message}<br>`);
+            if (error instanceof RangeError)
+                message.replaceChildren(ErrorMessage(error.message, 'Please fix any typos or check if this commit exists.'));
+            else
+                message.replaceChildren(ErrorMessage(error.message));
         }
     } else {
         return COMMIT_URL + 'compare/' + commitOne + '...' + commitTwo;
@@ -99,7 +124,7 @@ async function CopyCompareLink() {
                 const compareLink = await GenerateCompareLink();
                 if (compareLink) {
                     const message = document.getElementById('compareMessage');
-                    message.innerHTML = `Copied to clipboard!`;
+                    message.textContent = 'Copied to clipboard!';
                     resolve(compareLink);
                 }
             })
@@ -109,7 +134,7 @@ async function CopyCompareLink() {
     const formattedLink = await GenerateCompareLink(true);
     if (formattedLink) {
         const message = document.getElementById('compareMessage');
-        message.innerHTML = message.innerHTML + `<br><a href="${formattedLink}"> ${formattedLink} </a>`;
+        message.append(document.createElement('br'), CreateElement('a', {href: formattedLink, text: ` ${formattedLink} `}));
     }
 }
 
@@ -124,36 +149,36 @@ function FindCommit() {
     const commit = document.getElementById('commitSearch').value;
     const message = document.getElementById('searchMessage');
     if (!commit) {
-        message.innerHTML = ErrorMessage(`Must provide a commit identifier<br>`);
+        message.replaceChildren(ErrorMessage('Must provide a commit identifier'));
+        return;
+    }
+    if (!VALID_REF_RE.test(commit)) {
+        message.replaceChildren(ErrorMessage(`${commit} is not a valid commit format`));
         return;
     }
 
-    fetch(`/${commit}/json`).then(response => {
+    fetch(`/${EncodeRef(commit)}/json`).then(response => {
         if (!response.ok) {
-            message.innerHTML = ErrorMessage(`Could not find ${commit}.<br>Please fix any typos or check if this commit exists.<br>`);
+            message.replaceChildren(ErrorMessage(`Could not find ${commit}.`, 'Please fix any typos or check if this commit exists.'));
         } else {
             response.json().then(data => {
-                const hash = data.hash;
-                const identifier = data.identifier;
-                let title = '';
-                let author = '';
+                const content = CreateElement('div', {className: 'content'}, [
+                    CreateElement('a', {href: COMMIT_URL + EncodeRef(commit), target: '_blank', text: ` ${data.identifier} `}),
+                    ` (${data.hash})`,
+                ]);
                 if (data.author) {
-                    author = `<p> Author: ${data.author.name} &lt;<a href="${data.author.emails[0]}">${data.author.emails[0]}</a>&gt; </p>`;
+                    const email = data.author.emails?.[0];
+                    const author = CreateElement('p', {}, [` Author: ${data.author.name} `]);
+                    if (email)
+                        author.append('<', CreateElement('a', {href: `mailto:${email}`, text: email}), '> ');
+                    content.append(author);
                 }
                 if (data.message) {
-                    title = `<p> ${data.message.split('\n')[0]}</p>`;
+                    content.append(CreateElement('p', {text: ` ${data.message.split('\n')[0]}`}));
                 }
-                message.innerHTML = `
-<div class="col-8">
-    <div class="section article">
-        <div class="content">
-            <a href="${COMMIT_URL + commit}" target="_blank"> ${identifier} </a> (${hash})
-            ${author}
-            ${title}
-        </div>
-    </div>
-</div>
-`
+                message.replaceChildren(CreateElement('div', {className: 'col-8'}, [
+                    CreateElement('div', {className: 'section article'}, [content]),
+                ]));
             }).catch(error => {
                 console.error(error);
             });
