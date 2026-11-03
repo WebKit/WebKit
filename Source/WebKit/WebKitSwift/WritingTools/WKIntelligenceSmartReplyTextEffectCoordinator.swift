@@ -64,7 +64,7 @@ extension WKIntelligenceSmartReplyTextEffectCoordinator {
     private struct ReplacementOperationRequest {
         let processedRange: Range<Int>
         let characterDelta: Int
-        let operation: (() async -> Void)
+        let operation: (@concurrent () async -> Void)
     }
 
     @nonobjc
@@ -79,7 +79,7 @@ extension WKIntelligenceSmartReplyTextEffectCoordinator {
     // suggestions, they first need to all be flushed out and invoked so that the state is not incomplete, and then
     // the acceptance/rejection can properly occur.
     @nonobjc
-    final private var onFlushCompletion: (() async -> Void)? = nil
+    final private var onFlushCompletion: (@concurrent () async -> Void)? = nil
 
     @nonobjc
     final private var processedRangeOffset = 0
@@ -307,7 +307,9 @@ extension WKIntelligenceSmartReplyTextEffectCoordinator: PlatformIntelligenceTex
 // MARK: Misc. helper functions
 
 /// Converts a block with a completion handler into an async block.
-private func async(_ block: @MainActor @Sendable @escaping (@MainActor @Sendable @escaping () -> Void) -> Void) -> (() async -> Void) {
+private func async(
+    _ block: @MainActor @Sendable @escaping (@MainActor @Sendable @escaping () -> Void) -> Void
+) -> (@concurrent () async -> Void) {
     { @MainActor in
         await withCheckedContinuation { continuation in
             block(continuation.resume)

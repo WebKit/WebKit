@@ -30,11 +30,13 @@ import Foundation
 @objc
 @implementation
 extension CredentialUpdaterShim {
+    @concurrent
     class func signalUnknownCredential(withRelyingPartyIdentifier relyingPartyIdentifier: String, credentialID: Data) async throws {
         try await ASCredentialDataManager()
             .reportUnknownPublicKeyCredential(relyingPartyIdentifier: relyingPartyIdentifier, credentialID: credentialID)
     }
 
+    @concurrent
     class func signalAllAcceptedCredentials(
         withRelyingPartyIdentifier relyingPartyIdentifier: String,
         userHandle: Data,
@@ -48,6 +50,7 @@ extension CredentialUpdaterShim {
             )
     }
 
+    @concurrent
     class func signalCurrentUserDetails(
         withRelyingPartyIdentifier relyingPartyIdentifier: String,
         userHandle: Data,

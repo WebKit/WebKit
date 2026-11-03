@@ -29,6 +29,7 @@ import struct Swift.String
 final class GoogleTestsController: TestRunner {
     static let shared = GoogleTestsController()
 
+    @MainActor
     func run(with configuration: Configuration) async throws -> (status: Bool, didRunAnyTest: Bool) {
         let arguments = Self.parseArguments(configuration: configuration)
         return unsafe withUnsafeMutableCStyleArguments(arguments) { argc, argv in

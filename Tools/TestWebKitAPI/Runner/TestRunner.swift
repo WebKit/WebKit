@@ -27,6 +27,7 @@ import struct Swift.String
 protocol TestRunner {
     typealias Configuration = TestRunnerConfiguration
 
+    @concurrent
     func run(with configuration: Configuration) async throws -> (status: Bool, didRunAnyTest: Bool)
 }
 

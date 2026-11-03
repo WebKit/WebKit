@@ -98,7 +98,7 @@ struct TestURLSchemeHandler: URLSchemeHandler, Sendable {
                 yieldDataAndFinish()
 
             case .async:
-                Task {
+                Task { @concurrent in
                     try? await Task.sleep(for: delays.beforeYield)
                     yieldResponse()
 
