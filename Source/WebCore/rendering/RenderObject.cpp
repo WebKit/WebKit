@@ -732,15 +732,11 @@ RenderBlock* RenderObject::containingBlockForPositionType(PositionType positionT
 
     if (positionType == PositionType::Absolute) {
         auto containingBlockForAbsolutePosition = [&] {
-            if (renderer.isInlineBox() && renderer.style().position() == PositionType::Relative) {
-                // A relatively positioned inline box forwards its absolute positioned descendants to
-                // its nearest non-anonymous containing block (to avoid having positioned objects list in inline boxes).
-                return renderer.parent() ? renderer.parent()->nearestNonAnonymousContainingBlockIncludingSelf() : nullptr;
-            }
             CheckedPtr ancestor = renderer.parent();
             while (ancestor && !ancestor->canContainAbsolutelyPositionedObjects())
                 ancestor = ancestor->parent();
-            // Make sure we only return non-anonymous RenderBlock as containing block.
+            // Make sure we only return non-anonymous RenderBlock as containing block (e.g. a relatively positioned inline box
+            // forwards its absolute positioned descendants to its nearest non-anonymous containing block).
             return ancestor ? ancestor->nearestNonAnonymousContainingBlockIncludingSelf() : nullptr;
         };
         return containingBlockForAbsolutePosition();

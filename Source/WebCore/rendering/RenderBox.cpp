@@ -4303,7 +4303,7 @@ LayoutRange RenderBox::containingBlockRangeForPositioned(const RenderBoxModelObj
         }
     }
 
-    // Inline containing blocks are formed by relatively-positioned inline boxes.
+    // Inline containing blocks are formed by positioned (e.g. relative, sticky) inline boxes and by inline boxes with (backdrop-)filter.
     if (container.isInlineBox()) {
         return isContainerInlineAxis
             ? LayoutRange(startEdge, container.paddingBoxLogicalWidth())
