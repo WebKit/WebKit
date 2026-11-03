@@ -36,6 +36,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RunLoop.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -656,6 +657,40 @@ TEST(MouseEventTests, MouseMoveNotForwardedWhenCoveredByOverlay)
     [observer mouseMoved:eventOnWebView.get()];
     [webView waitForPendingMouseEvents];
     EXPECT_GE([[webView objectByEvaluatingJavaScript:@"moveCount"] intValue], 1);
+}
+
+TEST(MouseEventTests, PendingMouseEventCallbacksRunOnClose)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+
+    __block bool didProcessMouseEvents = false;
+    [webView mouseMoveToPoint:NSMakePoint(100, 100) withFlags:0];
+    [webView _doAfterProcessingAllPendingMouseEvents:^{
+        didProcessMouseEvents = true;
+    }];
+    EXPECT_FALSE(didProcessMouseEvents);
+
+    [webView _close];
+    EXPECT_TRUE(didProcessMouseEvents);
+}
+
+TEST(MouseEventTests, PendingMouseEventCallbacksRunOnWebProcessTermination)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+
+    __block bool didProcessMouseEvents = false;
+    // The second event stays queued behind the first, which is already sent.
+    [webView mouseMoveToPoint:NSMakePoint(100, 100) withFlags:0];
+    [webView mouseMoveToPoint:NSMakePoint(200, 200) withFlags:0];
+    [webView _doAfterProcessingAllPendingMouseEvents:^{
+        didProcessMouseEvents = true;
+    }];
+    EXPECT_FALSE(didProcessMouseEvents);
+
+    [webView _killWebContentProcessAndResetState];
+    EXPECT_TRUE(didProcessMouseEvents);
 }
 
 } // namespace TestWebKitAPI

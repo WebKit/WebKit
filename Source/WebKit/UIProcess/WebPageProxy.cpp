@@ -2077,6 +2077,9 @@ void WebPageProxy::close()
 
     resetState(ResetStateReason::PageInvalidated);
 
+    internals().mouseEventQueue.clear();
+    flushPendingMouseEventCallbacks();
+
     Ref process = m_legacyMainFrameProcess;
     Ref processPool = m_configuration->processPool();
     processPool->backForwardCache().removeEntriesForPage(*this);
@@ -16106,6 +16109,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     internals().coalescedMouseEvents.clear();
     internals().remoteFrameMouseEventTimeoutTimer.stop();
     internals().lastFrameHandlingMouseMove = std::nullopt;
+    flushPendingMouseEventCallbacks();
     internals().keyEventQueue.clear();
     if (m_wheelEventCoalescer)
         m_wheelEventCoalescer->clear();

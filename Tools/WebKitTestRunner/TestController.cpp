@@ -611,6 +611,8 @@ void TestController::Callbacks::notifyListeners()
 void TestController::closeOtherPage(WKPageRef page, PlatformWebView* view)
 {
     WKPageClose(page);
+    if (m_targetView == view)
+        m_targetView = nullptr;
     auto index = m_auxiliaryWebViews.findIf([view](auto& auxiliaryWebView) { return auxiliaryWebView.ptr() == view; });
     if (index != notFound)
         m_auxiliaryWebViews.removeAt(index);
@@ -1479,6 +1481,7 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
         WKPageSetPageNavigationClient(m_mainWebView->page(), nullptr);
         WKPageClose(m_mainWebView->page());
 
+        m_targetView = nullptr;
         m_mainWebView = nullptr;
         m_createdOtherPage = false;
     }
@@ -1549,6 +1552,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     resetAXAuthenticationModeForTesting();
 #endif
 
+    m_targetView = nullptr;
     for (auto& auxiliaryWebView : std::exchange(m_auxiliaryWebViews, { }))
         WKPageClose(auxiliaryWebView->page());
 
