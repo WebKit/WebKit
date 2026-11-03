@@ -169,7 +169,7 @@ std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserToke
     return Feature {
         .name = featureName,
         .syntax = Syntax::Plain,
-        .rightComparison = Comparison { op, WTF::move(value) }
+        .rightComparison = Comparison { op, Box<Value>::create(WTF::move(*value)) }
     };
 }
 
@@ -224,7 +224,7 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
             return { };
         }
 
-        return Comparison { *op, WTF::move(value) };
+        return Comparison { *op, Box<Value>::create(WTF::move(*value)) };
     };
 
     auto consumeRightComparison = [&]() -> std::optional<Comparison> {
@@ -237,7 +237,7 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
             return { };
         }
 
-        return Comparison { *op, WTF::move(value) };
+        return Comparison { *op, Box<Value>::create(WTF::move(*value)) };
     };
 
     auto leftComparison = consumeLeftComparison();
@@ -272,7 +272,7 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
 bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const FeatureSchema& schema)
 {
     auto isValid = [&] {
-        auto validateValue = [&](std::optional<Value>& value) -> bool {
+        auto validateValue = [&](Box<Value>& value) -> bool {
             if (!value)
                 return false;
 
@@ -322,7 +322,7 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
                         );
                         if (resolved < 0)
                             return false;
-                        value = CSS::Ratio { resolved, 1.0 };
+                        value = Box<Value>::create(CSS::Ratio { resolved, 1.0 });
                         return true;
                     },
                     [&](const CSS::Number<>& number) {
@@ -336,7 +336,7 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
                         );
                         if (resolved < 0)
                             return false;
-                        value = CSS::Ratio { resolved, 1.0 };
+                        value = Box<Value>::create(CSS::Ratio { resolved, 1.0 });
                         return true;
                     },
                     [](const auto&) {

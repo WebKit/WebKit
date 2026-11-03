@@ -80,7 +80,7 @@ void collectCustomPropertyNames(const MQ::Feature& feature, HashSet<AtomString>&
         }
     };
 
-    auto collectFromValue = [&](const std::optional<MQ::Value>& value) {
+    auto collectFromValue = [&](const Box<MQ::Value>& value) {
         if (!value)
             return;
         if (auto* customProperty = std::get_if<Ref<CSSCustomPropertyValue>>(&*value))
