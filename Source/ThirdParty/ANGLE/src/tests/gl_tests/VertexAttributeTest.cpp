@@ -6252,6 +6252,362 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(32, 32, GLColor::red);
 }
 
+// A draw with a vertex attribute offset past the end of its buffer (undefined behavior in ES)
+// must not lose the work that is recorded with it: verify that a clear, a draw and a readback
+// that follow it are still done.
+TEST_P(VertexAttributeTest, OutOfBoundsOffsetKeepsLaterWork)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    glUseProgram(program);
+
+    GLint posLoc = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLoc);
+
+    const GLfloat vertices[] = {
+        -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+    };
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(posLoc);
+
+    // Draw with an offset far past the end of the buffer.
+    glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const void *>(1024));
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::red);
+}
+
+// Tests indexed draws and draws whose indices or attributes the backend may need to stream, such
+// as attributes in client memory, attributes in formats that the backend needs to convert, and
+// 8-bit indices.
+class IndexedDrawStreamingTest : public ANGLETest<>
+{
+  protected:
+    IndexedDrawStreamingTest()
+    {
+        setWindowWidth(16);
+        setWindowHeight(16);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+
+    static constexpr size_t kVertexCount                              = 6;
+    static constexpr std::array<GLfloat, 2 * kVertexCount> kPositions = {
+        -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+    };
+
+    // Draws green where the attribute a_value of the vertices is 2 + x + 2 * y, where (x, y) is the
+    // position of the vertex in a_position, and red elsewhere.
+    void createProgram()
+    {
+        constexpr char kVS[] = R"(attribute vec2 a_position;
+attribute float a_value;
+varying vec4 v_color;
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    v_color = abs(a_value - (2.0 + a_position.x + 2.0 * a_position.y)) < 0.01
+        ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+        constexpr char kFS[] = R"(precision mediump float;
+varying vec4 v_color;
+void main()
+{
+    gl_FragColor = v_color;
+})";
+
+        mProgram.makeRaster(kVS, kFS);
+        ASSERT_TRUE(mProgram.valid());
+        glUseProgram(mProgram);
+        mPositionLocation = glGetAttribLocation(mProgram, "a_position");
+        mValueLocation    = glGetAttribLocation(mProgram, "a_value");
+        ASSERT_NE(-1, mPositionLocation);
+        ASSERT_NE(-1, mValueLocation);
+    }
+
+    // Sets up the position in a buffer, and a_value in client memory or in a buffer.
+    void setupAttribs(bool valueInClientMemory)
+    {
+        for (size_t vertex = 0; vertex < kVertexCount; ++vertex)
+        {
+            mValues[vertex] = 2.0f + kPositions[2 * vertex] + 2.0f * kPositions[2 * vertex + 1];
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, mPositionBuffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(kPositions), kPositions.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glEnableVertexAttribArray(mPositionLocation);
+
+        if (valueInClientMemory)
+        {
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glVertexAttribPointer(mValueLocation, 1, GL_FLOAT, GL_FALSE, 0, mValues.data());
+        }
+        else
+        {
+            glBindBuffer(GL_ARRAY_BUFFER, mValueBuffer);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(mValues), mValues.data(), GL_STATIC_DRAW);
+            glVertexAttribPointer(mValueLocation, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
+        }
+        glEnableVertexAttribArray(mValueLocation);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    void clear()
+    {
+        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    void checkGreen()
+    {
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+    }
+
+    // Draws with 8-bit indices and then with 16-bit indices from one element array buffer, at
+    // offsets that are not multiples of 4. The bytes around the indices are indices of vertices
+    // that do not exist.
+    void drawUnsignedByteThenUnsignedShortIndices()
+    {
+        constexpr size_t kUnsignedByteOffset  = 3;
+        constexpr size_t kUnsignedShortOffset = 10;
+        std::array<GLubyte, 24> indexData;
+        indexData.fill(0xAA);
+        for (size_t index = 0; index < kVertexCount; ++index)
+        {
+            indexData[kUnsignedByteOffset + index] = static_cast<GLubyte>(kVertexCount - 1 - index);
+            const GLushort unsignedShortIndex      = static_cast<GLushort>(index);
+            memcpy(indexData.data() + kUnsignedShortOffset + index * sizeof(GLushort),
+                   &unsignedShortIndex, sizeof(unsignedShortIndex));
+        }
+        GLBuffer indexBuffer;
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData.data(), GL_STATIC_DRAW);
+
+        for (int draw = 0; draw < 2; ++draw)
+        {
+            SCOPED_TRACE(draw);
+            clear();
+            glDrawElements(GL_TRIANGLES, kVertexCount, GL_UNSIGNED_BYTE,
+                           reinterpret_cast<const void *>(kUnsignedByteOffset));
+            checkGreen();
+
+            clear();
+            glDrawElements(GL_TRIANGLES, kVertexCount, GL_UNSIGNED_SHORT,
+                           reinterpret_cast<const void *>(kUnsignedShortOffset));
+            checkGreen();
+        }
+    }
+
+    // Draws a line loop with indices from an element array buffer, which streams them, then the
+    // lower left triangle of the quad with glDrawArrays, then the quad as triangles with other
+    // indices from the same buffer, which do not stream. In ES contexts, the draws are in the same
+    // render pass.
+    void drawLineLoopThenArraysThenTriangles()
+    {
+        constexpr size_t kLineLoopOffset = 12;
+        std::array<GLushort, 10> indices = {0, 1, 2, 3, 4, 5, 0, 1, 2, 3};
+        GLBuffer indexBuffer;
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices.data(), GL_STATIC_DRAW);
+
+        clear();
+        glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT,
+                       reinterpret_cast<const void *>(kLineLoopOffset));
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, kVertexCount, GL_UNSIGNED_SHORT, nullptr);
+        checkGreen();
+    }
+
+    GLProgram mProgram;
+    GLint mPositionLocation = -1;
+    GLint mValueLocation    = -1;
+    GLBuffer mPositionBuffer;
+    GLBuffer mValueBuffer;
+    std::array<GLfloat, kVertexCount> mValues = {};
+};
+
+class WebGLIndexedDrawStreamingTest : public IndexedDrawStreamingTest
+{
+  protected:
+    WebGLIndexedDrawStreamingTest()
+    {
+        setWebGLCompatibilityEnabled(true);
+        setClientArraysEnabled(false);
+    }
+};
+
+// Draws twice with indices from a buffer and an attribute in client memory.
+TEST_P(IndexedDrawStreamingTest, DrawElementsWithClientMemoryAttribute)
+{
+    createProgram();
+    setupAttribs(true);
+    constexpr std::array<GLushort, kVertexCount> kIndices = {0, 1, 2, 3, 4, 5};
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndices), kIndices.data(), GL_STATIC_DRAW);
+    for (int draw = 0; draw < 2; ++draw)
+    {
+        SCOPED_TRACE(draw);
+        clear();
+        glDrawElements(GL_TRIANGLES, kVertexCount, GL_UNSIGNED_SHORT, nullptr);
+        checkGreen();
+    }
+}
+
+// Draws twice with glDrawArrays and an attribute in client memory while an element array buffer is
+// bound.
+TEST_P(IndexedDrawStreamingTest, DrawArraysWithClientMemoryAttribute)
+{
+    createProgram();
+    setupAttribs(true);
+    constexpr std::array<GLushort, kVertexCount> kIndices = {0, 1, 2, 3, 4, 5};
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndices), kIndices.data(), GL_STATIC_DRAW);
+    for (int draw = 0; draw < 2; ++draw)
+    {
+        SCOPED_TRACE(draw);
+        clear();
+        glDrawArrays(GL_TRIANGLES, 0, kVertexCount);
+        checkGreen();
+    }
+}
+
+// Draws with 8-bit and 16-bit indices from one buffer.
+TEST_P(IndexedDrawStreamingTest, UnsignedByteThenUnsignedShortIndices)
+{
+    createProgram();
+    setupAttribs(false);
+    drawUnsignedByteThenUnsignedShortIndices();
+}
+
+// Draws with 8-bit and 16-bit indices from one buffer, with client arrays disabled.
+TEST_P(WebGLIndexedDrawStreamingTest, UnsignedByteThenUnsignedShortIndices)
+{
+    createProgram();
+    setupAttribs(false);
+    drawUnsignedByteThenUnsignedShortIndices();
+}
+
+// Draws with glDrawArrays after a line loop that copied its indices from a buffer that is still
+// mapped after glBufferData.
+TEST_P(IndexedDrawStreamingTest, LineLoopThenDrawArrays)
+{
+    createProgram();
+    setupAttribs(false);
+    constexpr std::array<GLushort, 4> kIndices = {0, 1, 2, 3};
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndices), kIndices.data(), GL_STATIC_DRAW);
+
+    clear();
+    glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, nullptr);
+    glDrawArrays(GL_TRIANGLES, 0, kVertexCount);
+    checkGreen();
+}
+
+// Draws triangles with indices from a buffer after a line loop that streamed other indices from it
+// and a glDrawArrays.
+TEST_P(IndexedDrawStreamingTest, LineLoopThenDrawArraysThenTriangles)
+{
+    createProgram();
+    setupAttribs(false);
+    drawLineLoopThenArraysThenTriangles();
+}
+
+// Draws triangles with indices from a buffer after a line loop that streamed other indices from it
+// and a glDrawArrays, with client arrays disabled.
+TEST_P(WebGLIndexedDrawStreamingTest, LineLoopThenDrawArraysThenTriangles)
+{
+    createProgram();
+    setupAttribs(false);
+    drawLineLoopThenArraysThenTriangles();
+}
+
+// Draws with an attribute whose format the backend may need to convert, with client arrays
+// disabled.
+TEST_P(WebGLIndexedDrawStreamingTest, AttributeWithThreeBytes)
+{
+    constexpr char kVS[] = R"(attribute vec2 a_position;
+attribute vec3 a_bytes;
+varying vec4 v_color;
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    vec3 expectedBytes = vec3((a_position.x + 1.0) * 50.0, (a_position.y + 1.0) * 60.0, 70.0) / 255.0;
+    bool ok = all(lessThan(abs(a_bytes - expectedBytes), vec3(0.001)));
+    v_color = ok ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    constexpr char kFS[] = R"(precision mediump float;
+varying vec4 v_color;
+void main()
+{
+    gl_FragColor = v_color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    const GLint positionLocation = glGetAttribLocation(program, "a_position");
+    const GLint bytesLocation    = glGetAttribLocation(program, "a_bytes");
+    ASSERT_NE(-1, positionLocation);
+    ASSERT_NE(-1, bytesLocation);
+
+    std::array<GLubyte, 4 * kVertexCount> bytes = {};
+    for (size_t vertex = 0; vertex < kVertexCount; ++vertex)
+    {
+        bytes[4 * vertex]     = static_cast<GLubyte>((kPositions[2 * vertex] + 1.0f) * 50.0f);
+        bytes[4 * vertex + 1] = static_cast<GLubyte>((kPositions[2 * vertex + 1] + 1.0f) * 60.0f);
+        bytes[4 * vertex + 2] = 70;
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, mPositionBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(kPositions), kPositions.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mValueBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(bytes), bytes.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(bytesLocation, 3, GL_UNSIGNED_BYTE, GL_TRUE, 4, nullptr);
+    glEnableVertexAttribArray(bytesLocation);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr std::array<GLushort, kVertexCount> kIndices = {5, 4, 3, 2, 1, 0};
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndices), kIndices.data(), GL_STATIC_DRAW);
+
+    for (int draw = 0; draw < 2; ++draw)
+    {
+        SCOPED_TRACE(draw);
+        clear();
+        glDrawArrays(GL_TRIANGLES, 0, kVertexCount);
+        checkGreen();
+
+        clear();
+        glDrawElements(GL_TRIANGLES, kVertexCount, GL_UNSIGNED_SHORT, nullptr);
+        checkGreen();
+    }
+}
+
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(IndexedDrawStreamingTest, ES3_WEBGPU());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(WebGLIndexedDrawStreamingTest, ES3_WEBGPU());
+
 // VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/40096758
 #if !defined(__APPLE__)
 #    define EMULATED_VAO_CONFIGS                                          \

@@ -917,10 +917,16 @@ angle::Result BufferHelper::readDataImmediate(ContextWgpu *context,
         ANGLE_TRY(unmap());
     }
 
+    // The copy starts at the offset rounded down to the copy alignment.
+    size_t safeCopyOffset   = rx::roundDownPow2(offset, webgpu::kBufferCopyToBufferAlignment);
+    size_t offsetAdjustment = offset - safeCopyOffset;
+    size_t copySize = roundUpPow2(size + offsetAdjustment, webgpu::kBufferCopyToBufferAlignment);
+
     // Create a staging buffer just big enough for this copy but aligned for both copying and
     // mapping.
     const size_t stagingBufferSize = roundUpPow2(
-        size, std::max(webgpu::kBufferCopyToBufferAlignment, webgpu::kBufferMapOffsetAlignment));
+        copySize,
+        std::max(webgpu::kBufferCopyToBufferAlignment, webgpu::kBufferMapOffsetAlignment));
 
     ANGLE_TRY(result->buffer.initBuffer(
         mProcTable, context->getDisplay()->getDevice(), stagingBufferSize,
@@ -929,9 +935,6 @@ angle::Result BufferHelper::readDataImmediate(ContextWgpu *context,
     // Copy the source buffer to staging and flush the commands
     webgpu::CommandEncoderHandle commandEncoder;
     ANGLE_TRY(context->getCurrentCommandEncoder(reason, &commandEncoder));
-    size_t safeCopyOffset   = rx::roundDownPow2(offset, webgpu::kBufferCopyToBufferAlignment);
-    size_t offsetAdjustment = offset - safeCopyOffset;
-    size_t copySize = roundUpPow2(size + offsetAdjustment, webgpu::kBufferCopyToBufferAlignment);
     mProcTable->commandEncoderCopyBufferToBuffer(commandEncoder.get(), mBuffer.get(),
                                                  safeCopyOffset, result->buffer.getBuffer().get(),
                                                  0, copySize);
