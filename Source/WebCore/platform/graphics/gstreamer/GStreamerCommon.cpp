@@ -1272,6 +1272,67 @@ GstElement* /* (transfer floating) */ createPlatformAudioSink(const String& role
     return audioSink;
 }
 
+#if ENABLE(MEDIA_STREAM)
+std::pair<String, GRefPtr<GstDevice>> gstResolveAudioOutputDevice(const String& deviceId)
+{
+    auto resolvedId = deviceId;
+    if (resolvedId == "default"_s) {
+        const auto& devices = GStreamerAudioCaptureDeviceManager::singleton().speakerDevices();
+        if (!devices.isEmpty()) [[likely]] {
+            const auto idx = devices.findIf([](const CaptureDevice& device) {
+                return device.isDefault();
+            });
+            resolvedId = idx == notFound ? devices.first().persistentId() : devices[idx].persistentId();
+        }
+    }
+    GRefPtr<GstDevice> device;
+    if (auto captureDevice = GStreamerAudioCaptureDeviceManager::singleton().gstreamerDeviceWithUID(resolvedId))
+        device = captureDevice->device();
+    return { resolvedId, device };
+}
+
+bool gstApplyAudioSinkDevice(GstElement* audioSink, const GRefPtr<GstDevice>& device, const String& deviceId)
+{
+    bool changed = false;
+
+    // Handle mixer-based audio sink: switch the mixer pipeline.
+    if (WEBKIT_IS_AUDIO_SINK(audioSink))
+        return webkitAudioSinkSetDevice(audioSink, deviceId, device);
+
+    if (GST_IS_BIN(audioSink)) {
+        for (auto* element : GstIteratorAdaptor<GstElement>(gst_bin_iterate_sinks(GST_BIN_CAST(audioSink)))) {
+            if (gstApplyAudioSinkDevice(element, device, deviceId))
+                changed = true;
+        }
+        return changed;
+    }
+
+    if (gstElementFactoryEquals(audioSink, "fakeaudiosink"_s) || gstElementFactoryEquals(audioSink, "fakesink"_s)) {
+#if ENABLE(DEVELOPER_MODE)
+        // Testing bots have fakeaudiosink upranked to run layout tests, so in that case consider the change done.
+        GST_DEBUG_OBJECT(audioSink, "Found fake sink, considering the change done for testing.");
+        return true;
+#else
+        GST_WARNING_OBJECT(audioSink, "Skipped unexpected fake sink, your audio configuration may have issues.");
+        return changed;
+#endif
+    }
+
+    GRefPtr<GstDevice> resolvedDevice = device;
+    if (!resolvedDevice) {
+        resolvedDevice = gstResolveAudioOutputDevice("default"_s).second;
+        if (!resolvedDevice) {
+            GST_WARNING_OBJECT(audioSink, "No default audio output device found, your audio configuration may have issues.");
+            return changed;
+        }
+    }
+
+    changed = !!gst_device_reconfigure_element(resolvedDevice.get(), audioSink);
+    GST_DEBUG_OBJECT(audioSink, "%s element '%s' with device %s<%p>.", changed ? "Reconfigured" : "Skipped", GST_ELEMENT_NAME(audioSink), GST_OBJECT_NAME(resolvedDevice.get()), resolvedDevice.get());
+    return changed;
+}
+#endif
+
 bool webkitGstSetElementStateSynchronously(GstElement* pipeline, GstState targetState, NOESCAPE const Function<bool(GstMessage*)>& messageHandler)
 {
     GST_DEBUG_OBJECT(pipeline, "Setting state to %s", gst_state_get_name(targetState));

@@ -1659,7 +1659,7 @@ GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
 #if ENABLE(MEDIA_STREAM)
     auto deviceId = player->audioOutputDeviceId();
     if (!deviceId.isEmpty()) {
-        auto [resolvedId, device] = resolveAudioOutputDevice(deviceId);
+        auto [resolvedId, device] = gstResolveAudioOutputDevice(deviceId);
         if (device)
             audioSink = createPlatformAudioSink(role, resolvedId, device);
     }
@@ -5068,58 +5068,6 @@ void MediaPlayerPrivateGStreamer::checkPlayingConsistency()
     }
 }
 
-#if ENABLE(MEDIA_STREAM)
-std::pair<String, GRefPtr<GstDevice>> MediaPlayerPrivateGStreamer::resolveAudioOutputDevice(const String& deviceId)
-{
-    auto resolvedId = deviceId;
-    if (resolvedId == "default"_s) {
-        const auto& devices = GStreamerAudioCaptureDeviceManager::singleton().speakerDevices();
-        if (!devices.isEmpty()) [[likely]] {
-            const auto idx = devices.findIf([](const CaptureDevice& device) {
-                return device.isDefault();
-            });
-            resolvedId = idx == notFound ? devices.first().persistentId() : devices[idx].persistentId();
-        }
-    }
-    GRefPtr<GstDevice> device;
-    if (auto captureDevice = GStreamerAudioCaptureDeviceManager::singleton().gstreamerDeviceWithUID(resolvedId))
-        device = captureDevice->device();
-    return { resolvedId, device };
-}
-#endif
-
-bool MediaPlayerPrivateGStreamer::applyAudioSinkDevice(GstElement* audioSink, const GRefPtr<GstDevice>& device, const String& deviceId)
-{
-    bool changed = false;
-
-    // Handle mixer-based audio sink: switch the mixer pipeline.
-    if (WEBKIT_IS_AUDIO_SINK(audioSink))
-        return webkitAudioSinkSetDevice(audioSink, deviceId, device);
-
-    if (GST_IS_BIN(audioSink)) {
-        for (auto* element : GstIteratorAdaptor<GstElement>(gst_bin_iterate_sinks(GST_BIN_CAST(audioSink)))) {
-            if (applyAudioSinkDevice(element, device, deviceId))
-                changed = true;
-        }
-        return changed;
-    }
-
-    if (gstElementFactoryEquals(audioSink, "fakeaudiosink"_s) || gstElementFactoryEquals(audioSink, "fakesink"_s)) {
-#if ENABLE(DEVELOPER_MODE)
-        // Testing bots have fakeaudiosink upranked to run layout tests, so in that case consider the change done.
-        GST_DEBUG_OBJECT(pipeline(), "Found fake sink, considering the change done for testing.");
-        return true;
-#else
-        GST_WARNING_OBJECT(pipeline(), "Skipped unexpected fake sink, your audio configuration may have issues.");
-        return changed;
-#endif
-    }
-
-    changed = !!gst_device_reconfigure_element(device.get(), audioSink);
-    GST_DEBUG_OBJECT(pipeline(), "%s element '%s' with device %s<%p>.", changed ? "Reconfigured" : "Skipped", GST_ELEMENT_NAME(audioSink), GST_OBJECT_NAME(device.get()), device.get());
-    return changed;
-}
-
 void MediaPlayerPrivateGStreamer::audioOutputDeviceChanged()
 {
 #if ENABLE(MEDIA_STREAM)
@@ -5137,14 +5085,14 @@ void MediaPlayerPrivateGStreamer::audioOutputDeviceChanged()
     bool changed = false;
 
     if (deviceId.isEmpty()) {
-        // No device set, route back to default pipeline.
-        changed = applyAudioSinkDevice(sink, { }, { });
+        // No device set, route back to the default output device.
+        changed = gstApplyAudioSinkDevice(sink, { }, { });
     } else {
-        auto [resolvedId, device] = resolveAudioOutputDevice(deviceId);
+        auto [resolvedId, device] = gstResolveAudioOutputDevice(deviceId);
         if (device) {
             auto deviceName = GMallocString::unsafeAdoptFromUTF8(gst_device_get_display_name(device.get()));
             GST_DEBUG_OBJECT(pipeline(), "Switching to %s<%p>, output '%s'.", GST_OBJECT_NAME(device.get()), device.get(), deviceName.utf8());
-            changed = applyAudioSinkDevice(sink, device, resolvedId);
+            changed = gstApplyAudioSinkDevice(sink, device, resolvedId);
         } else
             GST_WARNING_OBJECT(pipeline(), "Could not obtain GstDevice for '%s'.", resolvedId.utf8());
     }
