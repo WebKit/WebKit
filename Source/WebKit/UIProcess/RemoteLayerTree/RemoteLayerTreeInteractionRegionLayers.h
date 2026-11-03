@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-void updateLayersForInteractionRegions(RemoteLayerTreeNode&);
+void updateLayersForInteractionRegions(RemoteLayerTreeNode&, RemoteLayerTreeHost* = nullptr);
 
 } // namespace WebKit
 

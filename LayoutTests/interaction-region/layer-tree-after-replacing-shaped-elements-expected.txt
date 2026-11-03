@@ -1,0 +1,104 @@
+Shaped elements:
+
+(CALayer tree root
+  (layer bounds [x: 0 y: 0 width: 800 height: 100])
+  (layer position [x: 400 y: 63])
+  (sublayers
+    (
+      (layer bounds [x: 0 y: 0 width: 0 height: 0])
+      (sublayers
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 100 height: 100])
+          (layer position [x: 50 y: 50])
+          (layer cornerRadius 16))
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 100 height: 100])
+          (layer position [x: 150 y: 50])
+          (layer cornerRadius 14)
+          (layer masked corners 5))
+        (
+          (type 0)
+          (mask
+            (frame [x: 0 y: 0 width: 100 height: 100]))
+          (layer bounds [x: 0 y: 0 width: 100 height: 100])
+          (layer position [x: 250 y: 50]))))))
+After replacing them with plain elements:
+
+(CALayer tree root
+  (layer bounds [x: 0 y: 0 width: 800 height: 60])
+  (layer position [x: 400 y: 43])
+  (sublayers
+    (
+      (layer bounds [x: 0 y: 0 width: 0 height: 0])
+      (sublayers
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 150 height: 60])
+          (layer position [x: 75 y: 30]))
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 150 height: 60])
+          (layer position [x: 225 y: 30]))
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 150 height: 60])
+          (layer position [x: 375 y: 30]))))))
+After replacing those with shaped elements again:
+
+(CALayer tree root
+  (layer bounds [x: 0 y: 0 width: 800 height: 100])
+  (layer position [x: 400 y: 63])
+  (sublayers
+    (
+      (layer bounds [x: 0 y: 0 width: 0 height: 0])
+      (sublayers
+        (
+          (type 0)
+          (mask
+            (frame [x: 0 y: 0 width: 100 height: 100]))
+          (layer bounds [x: 0 y: 0 width: 100 height: 100])
+          (layer position [x: 50 y: 50]))
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 100 height: 100])
+          (layer position [x: 150 y: 50])
+          (layer cornerRadius 16))
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 100 height: 100])
+          (layer position [x: 250 y: 50])
+          (layer cornerRadius 14)
+          (layer masked corners 5))))))
+After inserting a plain element first:
+
+(CALayer tree root
+  (layer bounds [x: 0 y: 0 width: 800 height: 100])
+  (layer position [x: 400 y: 63])
+  (sublayers
+    (
+      (layer bounds [x: 0 y: 0 width: 0 height: 0])
+      (sublayers
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 150 height: 60])
+          (layer position [x: 75 y: 30]))
+        (
+          (type 0)
+          (mask
+            (frame [x: 0 y: 0 width: 100 height: 100]))
+          (layer bounds [x: 0 y: 0 width: 100 height: 100])
+          (layer position [x: 200 y: 50]))
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 100 height: 100])
+          (layer position [x: 300 y: 50])
+          (layer cornerRadius 16))
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 100 height: 100])
+          (layer position [x: 400 y: 50])
+          (layer cornerRadius 14)
+          (layer masked corners 5))))))
+

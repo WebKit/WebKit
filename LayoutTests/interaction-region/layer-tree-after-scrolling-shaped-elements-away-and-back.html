@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+    #test {
+        will-change: opacity;
+    }
+    .shape {
+        float: left;
+        background: blue;
+        width: 100px;
+        height: 100px;
+        cursor: pointer;
+    }
+    .radius {
+        border-radius: 16px;
+    }
+    .partial-radius {
+        border-radius: 14px 0 0 14px;
+    }
+    .non-uniform-radius {
+        border-radius: 10px 11px 12px 13px;
+    }
+    .plain {
+        width: 150px;
+        height: 60px;
+    }
+    .spacer {
+        clear: both;
+        height: 5000px;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<section id="test">
+    <div class="shape radius"></div>
+    <div class="shape partial-radius"></div>
+    <div class="shape non-uniform-radius"></div>
+    <div class="spacer"></div>
+    <div id="bottom">
+        <div class="shape plain"></div>
+        <div class="shape plain"></div>
+        <div class="shape plain"></div>
+    </div>
+    <div class="spacer"></div>
+</section>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function count(tree, pattern)
+{
+    return (tree.match(pattern) || []).length;
+}
+
+async function regionLayers(element)
+{
+    const tree = await UIHelper.getCALayerTreeForCompositedElement(element);
+    return {
+        all: count(tree, /\(type 0\)/g),
+        radius: count(tree, /\(layer cornerRadius 16\)/g),
+        maskedCorners: count(tree, /\(layer masked corners /g),
+        masks: count(tree, /\(mask/g),
+        plain: count(tree, /\(layer bounds \[x: 0 y: 0 width: 150 height: 60\]\)/g),
+    };
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    const results = document.createElement("pre");
+    document.body.appendChild(results);
+    const log = line => results.textContent += line + "\n";
+    const expect = (condition, message) => log(`${condition ? "PASS" : "FAIL"}: ${message}`);
+    const describe = layers => `${layers.all} region layers: ${layers.radius} rounded, ${layers.maskedCorners} with masked corners, ${layers.masks} with a mask, ${layers.plain} plain`;
+    const testEl = document.getElementById("test");
+
+    await UIHelper.animationFrame();
+    await UIHelper.ensureStablePresentationUpdate();
+    let layers = await regionLayers(testEl);
+    expect(layers.all == 3 && layers.radius == 1 && layers.maskedCorners == 1 && layers.masks == 1 && !layers.plain, `at the top, only the three shaped elements have region layers (${describe(layers)}).`);
+
+    // Scrolling the shaped elements out of view and the plain ones into view lets the plain ones
+    // take over the shaped elements' region layers. They must not keep a mask or rounded corners.
+    await UIHelper.scrollTo(0, document.getElementById("bottom").offsetTop - 100);
+    await UIHelper.ensurePresentationUpdate();
+    layers = await regionLayers(testEl);
+    expect(layers.all == 3 && layers.plain == 3 && !layers.radius && !layers.maskedCorners && !layers.masks, `at the bottom, only the three plain elements have region layers, with no mask or rounded corners (${describe(layers)}).`);
+
+    await UIHelper.scrollTo(0, 0);
+    await UIHelper.ensurePresentationUpdate();
+    layers = await regionLayers(testEl);
+    expect(layers.all == 3 && layers.radius == 1 && layers.maskedCorners == 1 && layers.masks == 1 && !layers.plain, `back at the top, the shaped elements have their shapes again (${describe(layers)}).`);
+
+    testEl.remove();
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
