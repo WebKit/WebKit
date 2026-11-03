@@ -55,6 +55,7 @@ public:
     virtual ~RemoteDeviceProxy();
 
     RemoteAdapterProxy& parent() const { return m_parent; }
+    RemoteAdapterProxy& adapter() const final { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
     // Called by RemoteGPUProxy, which implements the device commands that take WebCore sources.

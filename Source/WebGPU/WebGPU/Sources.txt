@@ -25,6 +25,8 @@ Adapter.mm
 BindGroup.mm
 BindGroupLayout.mm
 Buffer.mm
+CAPIInstance.mm
+CAPIObjectState.mm
 CommandBuffer.mm
 CommandEncoder.mm
 CommandsMixin.mm
