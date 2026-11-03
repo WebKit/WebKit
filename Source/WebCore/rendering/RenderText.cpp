@@ -60,6 +60,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SelectionGeometry.h"
 #include "Settings.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "Text.h"
 #include "TextResourceDecoder.h"
