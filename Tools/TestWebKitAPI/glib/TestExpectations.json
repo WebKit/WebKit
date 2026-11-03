@@ -36,9 +36,6 @@
             "/webkit/WebKitAccessibility/value/basic": {
                 "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/273682"}}
             },
-            "/webkit/WebKitAccessibility/accessible/list-markers": {
-                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/273682"}}
-            },
             "/webkit/WebKitAccessibility/accessible/state": {
                 "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/273682"}}
             },
@@ -52,12 +49,6 @@
                 "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/279009"}}
             },
             "/webkit/WebKitAccessibility/accessible/state-changed/focus": {
-                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/279009"}}
-            },
-            "/webkit/WebKitAccessibility/component/hit-test": {
-                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/279009"}}
-            },
-            "/webkit/WebKitAccessibility/component/scroll-to": {
                 "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/279009"}}
             },
             "/webkit/WebKitAccessibility/text/basic": {
@@ -85,9 +76,6 @@
                 "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/279009"}}
             },
             "/webkit/WebKitAccessibility/action/basic": {
-                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/279009"}}
-            },
-            "/webkit/WebKitAccessibility/image/basic": {
                 "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/279009"}}
             },
             "/webkit/WebKitAccessibility/table/basic": {
