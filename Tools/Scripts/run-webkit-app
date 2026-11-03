@@ -51,7 +51,7 @@ die "Did not specify an application to open (e.g. run-webkit-app AppName).\n" un
 checkBuild();
 
 my $appPath = shift(@ARGV);
-if (isIOSWebKit()) {
+if (isEmbeddedWebKit()) {
     exit exitStatus(runIOSWebKitApp($appPath));
 }
 my $isExecutable = -f $appPath && -x $appPath;

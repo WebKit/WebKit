@@ -1834,7 +1834,7 @@ sub builtDylibPathForName
 
         return "";
     }
-    if (isIOSWebKit()) {
+    if (isEmbeddedWebKit()) {
         return "$configurationProductDir/$libraryName.framework/$libraryName";
     }
     if (isAppleCocoaWebKit()) {
@@ -2221,6 +2221,12 @@ sub isVisionOSWebKit()
 sub isEmbeddedWebKit()
 {
     return isIOSWebKit() || isTVOSWebKit() || isWatchOSWebKit() || isVisionOSWebKit();
+}
+
+# The embedded platforms whose apps runIOSWebKitApp() can launch in the simulator.
+sub canRunWebKitAppInSimulator()
+{
+    return isIOSWebKit() || isVisionOSWebKit();
 }
 
 sub isAppleWebKit()
@@ -3713,6 +3719,9 @@ Options specific to macOS:
 Options specific to iOS:
   --iphone-simulator                Run the app in an iPhone Simulator
   --ipad-simulator                  Run the app in an iPad Simulator
+
+Options specific to visionOS:
+  --visionos-simulator              Run the app in an Apple Vision Pro Simulator
 EOF
 
     exit(1);
@@ -3786,13 +3795,8 @@ sub setupIOSWebKitEnvironment($)
 
 sub iosSimulatorApplicationsPath()
 {
-    my $output = `xcrun simctl list runtimes iOS --json`;
-    my $runtimes = decode_json($output)->{runtimes};
-    if (!$runtimes) {
-        die "No iOS simulator runtimes found";
-    }
-    my $runtimePath = @$runtimes[0]->{runtimeRoot};
-    return File::Spec->catdir($runtimePath, "Applications");
+    # Use the runtime the simulator device is created on, so system apps come from the runtime that boots.
+    return File::Spec->catdir(simulatorRuntimeRecord()->{runtimeRoot}, "Applications");
 }
 
 sub installedMobileSafariBundle()
@@ -3810,7 +3814,7 @@ sub mobileSafariBundle()
     determineConfigurationProductDir();
 
     # Use MobileSafari.app in product directory if present.
-    if (isIOSWebKit() && -d "$configurationProductDir/MobileSafari.app") {
+    if (-d "$configurationProductDir/MobileSafari.app") {
         return "$configurationProductDir/MobileSafari.app";
     }
     return installedMobileSafariBundle();
@@ -3820,7 +3824,7 @@ sub mobileMiniBrowserBundle()
 {
     determineConfigurationProductDir();
 
-    if (isIOSWebKit() && -d "$configurationProductDir/MobileMiniBrowser.app") {
+    if (-d "$configurationProductDir/MobileMiniBrowser.app") {
         return "$configurationProductDir/MobileMiniBrowser.app";
     }
     return installedMobileMiniBrowserBundle();
@@ -3835,7 +3839,7 @@ sub swiftBrowserBundle()
 {
     determineConfigurationProductDir();
 
-    if (isIOSWebKit() && -d "$configurationProductDir/SwiftBrowser.app") {
+    if (-d "$configurationProductDir/SwiftBrowser.app") {
         return "$configurationProductDir/SwiftBrowser.app";
     }
     return installedSwiftBrowserBundle();
@@ -3950,7 +3954,7 @@ sub iosSimulatorDeviceByUDID($)
     return undef;
 }
 
-sub simulatorRuntime()
+sub simulatorRuntimeRecord()
 {
     die "Can't find a simulator runtime because the selected SDK isn't a simulator SDK" if !willUseSimulatorSDK();
     my $platformName = sdkPlatformOSName();
@@ -3960,17 +3964,33 @@ sub simulatorRuntime()
     my $output = `xcrun --sdk $sdk simctl list runtimes $platformName --json` or die "Failed to run find simulator runtime";
     for my $runtime (@{decode_json($output)->{runtimes}}) {
         if ($runtime->{version} eq $xcodeSDKVersion) {
-            return $runtime->{identifier};
+            return $runtime;
         }
         if ($runtime->{version} =~ /^$xcodeSDKVersion/) {
             my $runtime_version = $runtime->{version};
             my $runtime_id = $runtime->{identifier};
             warn "WARNING: Fuzzy-matched $platformName SDK version $xcodeSDKVersion to runtime $runtime_id with version $runtime_version.";
-            return $runtime_id;
+            return $runtime;
         }
     }
 
     die "No $platformName simulator runtime matches SDK version $xcodeSDKVersion";
+}
+
+sub simulatorRuntime()
+{
+    return simulatorRuntimeRecord()->{identifier};
+}
+
+sub simulatorDeviceTypeForName($$)
+{
+    my ($deviceTypeName, $runtime) = @_;
+
+    for my $deviceType (@{$runtime->{supportedDeviceTypes}}) {
+        return $deviceType->{identifier} if $deviceType->{name} eq $deviceTypeName;
+    }
+
+    die "Simulator runtime $runtime->{identifier} doesn't support a device type named \"$deviceTypeName\"";
 }
 
 sub findOrCreateSimulatorForIOSDevice($)
@@ -3979,8 +3999,10 @@ sub findOrCreateSimulatorForIOSDevice($)
     my $simulatorName;
     my $simulatorDeviceType;
 
-    # These should match the DEFAULT_DEVICE_TYPES in webkitpy/port/ios_simulator.py.
-    if (simulatorIdiom() eq "iPad") {
+    # These should match the DEFAULT_DEVICE_TYPES in webkitpy/port/ios_simulator.py and webkitpy/port/visionos_simulator.py.
+    if (willUseVisionSimulatorSDK()) {
+        $simulatorName = "Apple Vision Pro " . $simulatorNameSuffix;
+    } elsif (simulatorIdiom() eq "iPad") {
         $simulatorName = "iPad (9th generation) " . $simulatorNameSuffix;
         $simulatorDeviceType = "com.apple.CoreSimulator.SimDeviceType.iPad-9th-generation";
     } else {
@@ -3990,7 +4012,10 @@ sub findOrCreateSimulatorForIOSDevice($)
 
     my $simulatedDevice = iosSimulatorDeviceByName($simulatorName);
     return $simulatedDevice if $simulatedDevice;
-    return createiOSSimulatorDevice($simulatorName, $simulatorDeviceType, simulatorRuntime());
+    my $runtime = simulatorRuntimeRecord();
+    # The identifier behind this name differs between visionOS runtimes (e.g. Apple-Vision-Pro, Apple-Vision-Pro-4K).
+    $simulatorDeviceType //= simulatorDeviceTypeForName("Apple Vision Pro", $runtime);
+    return createiOSSimulatorDevice($simulatorName, $simulatorDeviceType, $runtime->{identifier});
 }
 
 sub isIOSSimulatorSystemInstalledApp($)
@@ -4052,7 +4077,7 @@ sub runIOSWebKitAppInSimulator($;$)
             # Restore the system-installed app in the simulator device corresponding to $appBundle as it
             # was previously overwritten with a custom built version of the app.
             # FIXME: Only restore the system-installed version of the app instead of erasing all contents and settings.
-            print "Quitting iOS Simulator...\n";
+            print "Quitting Simulator...\n";
             shutDownIOSSimulatorDevice($simulatedDevice);
             print "Erasing contents and settings for simulator device \"$simulatedDevice->{name}\".\n";
             exitStatus(system("xcrun", "--sdk", "iphonesimulator", "simctl", "erase", $simulatedDeviceUDID)) == 0 or die;
@@ -4061,14 +4086,14 @@ sub runIOSWebKitAppInSimulator($;$)
         #        $simulatedDeviceUDID may have been booted using the simctl command line tool. If $simulatedDeviceUDID
         #        was booted using simctl then we should shutdown the device and launch iOS Simulator to boot it again.
         if (!isSimulatorDeviceBooted($simulatedDeviceUDID)) {
-            print "Launching iOS Simulator...\n";
+            print "Launching Simulator...\n";
             relaunchIOSSimulator($simulatedDevice);
         }
     } else {
         # FIXME: We should killall(1) any running instances of $appBundle before installing it to ensure
         #        that simctl launch opens the latest installed version of the app. For now we quit and
         #        launch the iOS Simulator again to ensure there are no running instances of $appBundle.
-        print "Quitting and launching iOS Simulator...\n";
+        print "Quitting and launching Simulator...\n";
         relaunchIOSSimulator($simulatedDevice);
 
         print "Installing $appBundle.\n";
@@ -4101,13 +4126,9 @@ sub runIOSWebKitAppInSimulator($;$)
 sub runIOSWebKitApp($)
 {
     my ($appBundle) = @_;
-    if (willUseIOSDeviceSDK()) {
-        die "Only running Safari in iOS Simulator is supported now.";
-    }
-    if (willUseIOSSimulatorSDK()) {
-        return runIOSWebKitAppInSimulator($appBundle);
-    }
-    die "Not using an iOS SDK."
+    die "Not using an iOS or visionOS SDK." if !canRunWebKitAppInSimulator();
+    die "Only running apps in the simulator is supported now." if !willUseSimulatorSDK();
+    return runIOSWebKitAppInSimulator($appBundle);
 }
 
 sub commandLineArgumentsForRestrictedEnvironmentVariables($)
@@ -4220,7 +4241,7 @@ sub debugSafari
 
 sub runSafari
 {
-    if (isIOSWebKit()) {
+    if (canRunWebKitAppInSimulator()) {
         return runIOSWebKitApp(mobileSafariBundle());
     }
 
@@ -4240,7 +4261,7 @@ sub runMiniBrowser
     if (isAppleMacWebKit()) {
         return runMacWebKitApp(File::Spec->catfile(productDir(), "MiniBrowser.app", "Contents", "MacOS", "MiniBrowser"));
     }
-    if (isIOSWebKit()) {
+    if (canRunWebKitAppInSimulator()) {
         return runIOSWebKitApp(mobileMiniBrowserBundle());
     }
     return 1;
@@ -4260,7 +4281,7 @@ sub runSwiftBrowser
     if (isAppleMacWebKit()) {
         return runMacWebKitApp(File::Spec->catfile(productDir(), "SwiftBrowser.app", "Contents", "MacOS", "SwiftBrowser"));
     }
-    if (isIOSWebKit()) {
+    if (canRunWebKitAppInSimulator()) {
         return runIOSWebKitApp(swiftBrowserBundle());
     }
     return 1;
