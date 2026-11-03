@@ -2009,6 +2009,10 @@ public:
         uint32_t key = keyForConstant(baseValue) & maskTable[baseValue & 3];
         if (key > baseValue)
             key = key - baseValue;
+        // addPtr / subPtr apply both halves sign-extended, so their int32 sum must not overflow.
+        int64_t value1 = static_cast<int64_t>(static_cast<int32_t>(baseValue)) - static_cast<int32_t>(key);
+        if (value1 != static_cast<int32_t>(value1))
+            key ^= 0x80000000;
         return BlindedImm32(baseValue - key, key);
     }
     

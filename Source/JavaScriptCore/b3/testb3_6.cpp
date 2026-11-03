@@ -51,6 +51,19 @@ void testBitAndSExt32(int32_t value, int64_t mask)
     CHECK_EQ(compileAndRun<int64_t>(proc, value), (static_cast<int64_t>(value) & mask));
 }
 
+void testBitAndSExt32WithOtherUse(int32_t value, int64_t mask)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    root->clearSuccessors();
+    Value* extended = root->appendNew<Value>(proc, SExt32, Origin(), arguments[0]);
+    Value* masked = root->appendNew<Value>(proc, BitAnd, Origin(), extended, root->appendNew<Const64Value>(proc, Origin(), mask));
+    root->appendNew<Value>(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Origin(), masked, extended));
+
+    CHECK_EQ(compileAndRun<int64_t>(proc, value), (static_cast<int64_t>(value) & mask) + static_cast<int64_t>(value));
+}
+
 void testBasicSelect()
 {
     Procedure proc;

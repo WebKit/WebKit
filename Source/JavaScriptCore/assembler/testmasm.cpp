@@ -408,9 +408,143 @@ static void testBranch32()
 }
 
 #if CPU(X86_64) || CPU(ARM64)
+static int compare64ForTest(CCallHelpers::RelationalCondition cond, int64_t left, int64_t right)
+{
+    switch (cond) {
+    case CCallHelpers::LessThan:
+        return left < right;
+    case CCallHelpers::LessThanOrEqual:
+        return left <= right;
+    case CCallHelpers::GreaterThan:
+        return left > right;
+    case CCallHelpers::GreaterThanOrEqual:
+        return left >= right;
+    case CCallHelpers::Below:
+        return static_cast<uint64_t>(left) < static_cast<uint64_t>(right);
+    case CCallHelpers::BelowOrEqual:
+        return static_cast<uint64_t>(left) <= static_cast<uint64_t>(right);
+    case CCallHelpers::Above:
+        return static_cast<uint64_t>(left) > static_cast<uint64_t>(right);
+    case CCallHelpers::AboveOrEqual:
+        return static_cast<uint64_t>(left) >= static_cast<uint64_t>(right);
+    case CCallHelpers::Equal:
+        return left == right;
+    case CCallHelpers::NotEqual:
+        return left != right;
+    }
+    return 0;
+}
+
+static void testCompare64WithImm32()
+{
+    // These immediates do not fit an add / sub immediate, so they are materialized in a register.
+    static constexpr int32_t immediates[] = { -5000, -0x123456, std::numeric_limits<int32_t>::min(), 0x123456, std::numeric_limits<int32_t>::max() };
+    static constexpr CCallHelpers::RelationalCondition conditions[] = {
+        CCallHelpers::LessThan, CCallHelpers::LessThanOrEqual, CCallHelpers::GreaterThan, CCallHelpers::GreaterThanOrEqual,
+        CCallHelpers::Below, CCallHelpers::BelowOrEqual, CCallHelpers::Above, CCallHelpers::AboveOrEqual,
+        CCallHelpers::Equal, CCallHelpers::NotEqual,
+    };
+
+    for (int32_t immediate : immediates) {
+        int64_t leftValues[] = { 0, 1, -1, immediate, static_cast<int64_t>(immediate) - 1, static_cast<int64_t>(immediate) + 1, static_cast<int64_t>(static_cast<uint32_t>(immediate)), std::numeric_limits<int64_t>::min(), std::numeric_limits<int64_t>::max() };
+        for (auto cond : conditions) {
+            auto branch = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                auto taken = jit.branch64(cond, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(immediate));
+                jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+                auto done = jit.jump();
+                taken.link(&jit);
+                jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+                done.link(&jit);
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            auto select = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::argumentGPR1);
+                jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::argumentGPR2);
+                jit.moveConditionally64(cond, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(immediate), GPRInfo::argumentGPR1, GPRInfo::argumentGPR2, GPRInfo::returnValueGPR);
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+#if CPU(ARM64)
+            auto selectDouble = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.move64ToDouble(CCallHelpers::TrustedImm64(1), FPRInfo::fpRegT1);
+                jit.move64ToDouble(CCallHelpers::TrustedImm64(0), FPRInfo::fpRegT2);
+                jit.moveDoubleConditionally64(cond, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(immediate), FPRInfo::fpRegT1, FPRInfo::fpRegT2, FPRInfo::fpRegT0);
+                jit.moveDoubleTo64(FPRInfo::fpRegT0, GPRInfo::returnValueGPR);
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+#endif
+            for (int64_t left : leftValues) {
+                int expected = compare64ForTest(cond, left, immediate);
+                CHECK_EQ(invoke<int>(branch, left), expected);
+                CHECK_EQ(invoke<int64_t>(select, left), expected);
+#if CPU(ARM64)
+                CHECK_EQ(invoke<int64_t>(selectDouble, left), expected);
+#endif
+            }
+        }
+    }
+}
+#endif
+
+#if CPU(X86_64) || CPU(ARM64)
+static void testBranchAddSub64WithImm32()
+{
+    // These immediates do not fit an add / sub immediate, so they are materialized in a register.
+    static constexpr int32_t immediates[] = { -5000, -0x123456, std::numeric_limits<int32_t>::min(), 0x123456 };
+    static constexpr int64_t leftValues[] = { 0, 1, -1, 5000, 0x123456, std::numeric_limits<int64_t>::min(), std::numeric_limits<int64_t>::max() };
+
+    for (int32_t immediate : immediates) {
+        auto add = compile([=](CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            auto overflow = jit.branchAdd64(CCallHelpers::Overflow, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(immediate), GPRInfo::argumentGPR1);
+            jit.store64(GPRInfo::argumentGPR1, CCallHelpers::Address(GPRInfo::argumentGPR2));
+            jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+            auto done = jit.jump();
+            overflow.link(&jit);
+            jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+            done.link(&jit);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        auto sub = compile([=](CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            auto overflow = jit.branchSub64(CCallHelpers::Overflow, GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(immediate), GPRInfo::argumentGPR1);
+            jit.store64(GPRInfo::argumentGPR1, CCallHelpers::Address(GPRInfo::argumentGPR2));
+            jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+            auto done = jit.jump();
+            overflow.link(&jit);
+            jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+            done.link(&jit);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        for (int64_t left : leftValues) {
+            int64_t result = 0;
+            int64_t expected = 0;
+            bool overflowed = __builtin_add_overflow(left, static_cast<int64_t>(immediate), &expected);
+            CHECK_EQ(invoke<int>(add, left, static_cast<int64_t>(0), &result), overflowed);
+            if (!overflowed)
+                CHECK_EQ(result, expected);
+
+            overflowed = __builtin_sub_overflow(left, static_cast<int64_t>(immediate), &expected);
+            CHECK_EQ(invoke<int>(sub, left, static_cast<int64_t>(0), &result), overflowed);
+            if (!overflowed)
+                CHECK_EQ(result, expected);
+        }
+    }
+}
+#endif
+
+#if CPU(X86_64) || CPU(ARM64)
 static void testBranchTest64WithImm32Mask()
 {
-    static constexpr int32_t masks[] = { 5, 0x12345, -2, 1, -1, 0x40000000 };
+    static constexpr int32_t masks[] = { 5, 0x12345, -2, 1, -1, 0x40000000, std::numeric_limits<int32_t>::min() };
     static constexpr int64_t values[] = { 0, 1, 4, 5, 0x100000000LL, 0x80000000LL, -1, std::numeric_limits<int64_t>::min(), 0x12340, 0x7ffffffffffffffeLL };
     static constexpr CCallHelpers::ResultCondition conditions[] = { CCallHelpers::Zero, CCallHelpers::NonZero, CCallHelpers::Signed, CCallHelpers::PositiveOrZero };
 
@@ -477,6 +611,188 @@ static void testBranchTest64WithImm32Mask()
                 });
                 CHECK_EQ(invoke<int>(testAbsoluteAddressAfterLoad), expected);
             }
+        }
+    }
+}
+#endif
+
+#if CPU(X86_64) || CPU(ARM64)
+static void testBranchTest32WithNarrowMask()
+{
+    static constexpr int32_t masks[] = { 0x1, 0x7f, 0x80, 0xff, 0x8000, 0xff00, 0x800000, std::numeric_limits<int32_t>::min() };
+    static constexpr int32_t values[] = { 0, 0x7f, 0x80, 0xff, 0x8000, 0x800000, std::numeric_limits<int32_t>::min(), -1 };
+    static constexpr CCallHelpers::ResultCondition conditions[] = { CCallHelpers::Zero, CCallHelpers::NonZero, CCallHelpers::Signed, CCallHelpers::PositiveOrZero };
+
+    auto expectedResult = [](CCallHelpers::ResultCondition cond, int32_t value, int32_t mask) -> int {
+        int32_t result = value & mask;
+        switch (cond) {
+        case CCallHelpers::Zero:
+            return !result;
+        case CCallHelpers::NonZero:
+            return !!result;
+        case CCallHelpers::Signed:
+            return result < 0;
+        case CCallHelpers::PositiveOrZero:
+            return result >= 0;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        return 0;
+    };
+
+    for (int32_t mask : masks) {
+        for (auto cond : conditions) {
+            auto emitResult = [](CCallHelpers& jit, CCallHelpers::Jump taken) {
+                jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+                auto done = jit.jump();
+                taken.link(&jit);
+                jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+                done.link(&jit);
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            };
+            // returnValueGPR is a byte-addressable register on x86_64, so a narrow mask can be tested with testb.
+            auto branchRegister = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+                emitResult(jit, jit.branchTest32(cond, GPRInfo::returnValueGPR, CCallHelpers::TrustedImm32(mask)));
+            });
+            auto branchAddress = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                emitResult(jit, jit.branchTest32(cond, CCallHelpers::Address(GPRInfo::argumentGPR0, 4), CCallHelpers::TrustedImm32(mask)));
+            });
+            auto testRegister = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+                jit.test32(cond, GPRInfo::returnValueGPR, CCallHelpers::TrustedImm32(mask), GPRInfo::returnValueGPR);
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            auto testAddress = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.test32(cond, CCallHelpers::Address(GPRInfo::argumentGPR0, 4), CCallHelpers::TrustedImm32(mask), GPRInfo::returnValueGPR);
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            for (int32_t value : values) {
+                int expected = expectedResult(cond, value, mask);
+                int32_t memory[2] = { 0, value };
+                CHECK_EQ(invoke<int>(branchRegister, value), expected);
+                CHECK_EQ(invoke<int>(branchAddress, memory), expected);
+                CHECK_EQ(invoke<int>(testRegister, value), expected);
+                CHECK_EQ(invoke<int>(testAddress, memory), expected);
+            }
+        }
+    }
+}
+#endif
+
+#if CPU(X86_64) || CPU(ARM64)
+static void testAddSubPtrWithImm32()
+{
+    static constexpr int32_t immediates[] = { std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max(), 0x7f000000, 0x01000000, -0x01000000, -0x12345678 };
+    static constexpr int64_t initialValues[] = { 0, -1, 0x123456789abcLL };
+
+    {
+        static constexpr unsigned keys = 4096;
+        static constexpr int32_t splitImmediates[] = { std::numeric_limits<int32_t>::min(), std::numeric_limits<int32_t>::max(), 0x7f000000, -0x12345678, -1, 0x7fffff00, -0x7fffff00, 0x40000000, -0x40000000 };
+        CCallHelpers jit;
+        for (int32_t immediate : splitImmediates) {
+            for (unsigned i = 0; i < keys; ++i) {
+                auto blinded = jit.additionBlindedConstant(CCallHelpers::Imm32(immediate));
+                CHECK_EQ(static_cast<int64_t>(blinded.value1.m_value) + static_cast<int64_t>(blinded.value2.m_value), static_cast<int64_t>(immediate));
+            }
+        }
+    }
+
+    // Whether an Imm32 is blinded is decided at random per emission, so emit each operation many times.
+    static constexpr unsigned repetitions = 64;
+    for (int32_t immediate : immediates) {
+        auto add = compile([=](CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            for (unsigned i = 0; i < repetitions; ++i)
+                jit.addPtr(CCallHelpers::Imm32(immediate), GPRInfo::argumentGPR0);
+            jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        auto sub = compile([=](CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            for (unsigned i = 0; i < repetitions; ++i)
+                jit.subPtr(CCallHelpers::Imm32(immediate), GPRInfo::argumentGPR0);
+            jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        uint64_t delta = static_cast<uint64_t>(static_cast<int64_t>(immediate)) * repetitions;
+        for (int64_t value : initialValues) {
+            CHECK_EQ(invoke<uint64_t>(add, value), static_cast<uint64_t>(value) + delta);
+            CHECK_EQ(invoke<uint64_t>(sub, value), static_cast<uint64_t>(value) - delta);
+        }
+    }
+}
+#endif
+
+#if CPU(X86_64) || CPU(ARM64)
+static void testBranch64AbsoluteAddressWithStackPointer()
+{
+    static int64_t memory;
+    static constexpr int32_t deltas[] = { -16, 0, 16 };
+    static constexpr CCallHelpers::RelationalCondition conditions[] = {
+        CCallHelpers::Below, CCallHelpers::BelowOrEqual, CCallHelpers::Above, CCallHelpers::AboveOrEqual,
+        CCallHelpers::LessThan, CCallHelpers::GreaterThan, CCallHelpers::Equal, CCallHelpers::NotEqual,
+    };
+
+    for (int32_t delta : deltas) {
+        for (auto cond : conditions) {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.move(MacroAssembler::stackPointerRegister, GPRInfo::regT0);
+                jit.addPtr(CCallHelpers::TrustedImm32(delta), GPRInfo::regT0);
+                jit.store64(GPRInfo::regT0, &memory);
+                auto taken = jit.branch64(cond, CCallHelpers::AbsoluteAddress(&memory), MacroAssembler::stackPointerRegister);
+                jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+                auto done = jit.jump();
+                taken.link(&jit);
+                jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+                done.link(&jit);
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            constexpr int64_t stackPointer = 0x10000;
+            CHECK_EQ(invoke<int>(test), compare64ForTest(cond, stackPointer + delta, stackPointer));
+        }
+    }
+}
+#endif
+
+#if CPU(X86_64)
+static void testBranchAdd64AddressBaseIsDest()
+{
+    static constexpr int64_t memoryValues[] = { 0, 1, 0x100000000LL, -0x100000000LL, 0x123456789abcLL, std::numeric_limits<int64_t>::max() };
+    static constexpr int64_t addends[] = { 0, 1, -1, 0x7fffffff };
+    static constexpr int64_t overflowSentinel = 0x5a5a;
+
+    auto test = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        auto overflow = jit.branchAdd64(CCallHelpers::Overflow, CCallHelpers::Address(GPRInfo::argumentGPR0, 8), GPRInfo::argumentGPR1, GPRInfo::argumentGPR0);
+        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+        auto done = jit.jump();
+        overflow.link(&jit);
+        jit.move(CCallHelpers::TrustedImm64(overflowSentinel), GPRInfo::returnValueGPR);
+        done.link(&jit);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (int64_t memoryValue : memoryValues) {
+        for (int64_t addend : addends) {
+            int64_t memory[2] = { 0, memoryValue };
+            int64_t expected = 0;
+            if (__builtin_add_overflow(memoryValue, addend, &expected))
+                expected = overflowSentinel;
+            CHECK_EQ(invoke<int64_t>(test, memory, addend), expected);
         }
     }
 }
@@ -9729,7 +10045,12 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 
 #if CPU(X86_64) || CPU(ARM64)
     RUN(testBranch64());
+    RUN(testCompare64WithImm32());
+    RUN(testBranchAddSub64WithImm32());
     RUN(testBranchTest64WithImm32Mask());
+    RUN(testBranchTest32WithNarrowMask());
+    RUN(testAddSubPtrWithImm32());
+    RUN(testBranch64AbsoluteAddressWithStackPointer());
     RUN(testOr32ImmToAddress());
     RUN(testAdd64RegisterToAddress());
     RUN(testClearBit64());
@@ -9757,6 +10078,10 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testSub64Imm64());
     RUN(testSub64ArgImm64());
 
+#endif
+
+#if CPU(X86_64)
+    RUN(testBranchAdd64AddressBaseIsDest());
 #endif
 
     RUN(testLoadAcq8SignedExtendTo32_Address_RegisterID());

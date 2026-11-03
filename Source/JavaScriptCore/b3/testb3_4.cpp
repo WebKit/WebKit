@@ -4040,6 +4040,34 @@ void addSExtTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& t
     RUN(testBitAndSExt32(42, 0xffff00000000llu));
     RUN(testBitAndSExt32(-1, 0xffff00000000llu));
     RUN(testBitAndSExt32(0x80000000, 0xffff00000000llu));
+    RUN(testBitAndSExt32(-1, 0xff));
+    RUN(testBitAndSExt32(-1, 0x80000000));
+    RUN(testBitAndSExt32(-1, 0xffffffff));
+    RUN(testBitAndSExt32(-42, 0xff));
+    RUN(testBitAndSExt32(-42, 0x80000000));
+    RUN(testBitAndSExt32(-42, 0xffffffff));
+    RUN(testBitAndSExt32(0x7fffffff, 0xff));
+    RUN(testBitAndSExt32(0x7fffffff, 0x80000000));
+    RUN(testBitAndSExt32(0x7fffffff, 0xffffffff));
+    RUN(testBitAndSExt32(0x80000000, 0xff));
+    RUN(testBitAndSExt32(0x80000000, 0x80000000));
+    RUN(testBitAndSExt32(0x80000000, 0xffffffff));
+    RUN(testBitAndSExt32WithOtherUse(-1, 0xf));
+    RUN(testBitAndSExt32WithOtherUse(-1, 0xff));
+    RUN(testBitAndSExt32WithOtherUse(-1, 0x80000000));
+    RUN(testBitAndSExt32WithOtherUse(-1, 0xffffffff));
+    RUN(testBitAndSExt32WithOtherUse(-42, 0xf));
+    RUN(testBitAndSExt32WithOtherUse(-42, 0xff));
+    RUN(testBitAndSExt32WithOtherUse(-42, 0x80000000));
+    RUN(testBitAndSExt32WithOtherUse(-42, 0xffffffff));
+    RUN(testBitAndSExt32WithOtherUse(0x7fffffff, 0xf));
+    RUN(testBitAndSExt32WithOtherUse(0x7fffffff, 0xff));
+    RUN(testBitAndSExt32WithOtherUse(0x7fffffff, 0x80000000));
+    RUN(testBitAndSExt32WithOtherUse(0x7fffffff, 0xffffffff));
+    RUN(testBitAndSExt32WithOtherUse(0x80000000, 0xf));
+    RUN(testBitAndSExt32WithOtherUse(0x80000000, 0xff));
+    RUN(testBitAndSExt32WithOtherUse(0x80000000, 0x80000000));
+    RUN(testBitAndSExt32WithOtherUse(0x80000000, 0xffffffff));
 }
 
 #endif // ENABLE(B3_JIT)

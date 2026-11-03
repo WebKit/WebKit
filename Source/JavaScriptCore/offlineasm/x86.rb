@@ -1421,7 +1421,7 @@ class Instruction
         when "bblt"
             handleX86IntBranch("jl", :byte)
         when "bblteq"
-            handleX86IntBranch("jlteq", :byte)
+            handleX86IntBranch("jle", :byte)
         when "btis"
             handleX86BranchTest("js", :int)
         when "btps"

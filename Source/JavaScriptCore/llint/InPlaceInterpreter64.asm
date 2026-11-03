@@ -218,7 +218,7 @@ end
 
 macro argumINTDispatch()
     loadbAndAdvance(MC, argumINTTmp)
-    bbgteq argumINTTmp, (constexpr IPInt::ArgumINTBytecode::NumOpcodes), _ipint_argument_dispatch_err
+    bbaeq argumINTTmp, (constexpr IPInt::ArgumINTBytecode::NumOpcodes), _ipint_argument_dispatch_err
     lshiftp (constexpr (WTF::fastLog2(JSC::IPInt::alignArgumInt))), argumINTTmp
 if ARM64 or ARM64E or X86_64
     pcrtoaddr _argumINT_begin, argumINTDsp

@@ -3024,7 +3024,7 @@ public:
 
     void moveConditionallyTest32(ResultCondition cond, RegisterID testReg, TrustedImm32 mask, RegisterID src, RegisterID dest)
     {
-        test32(testReg, mask);
+        test32(cond, testReg, mask);
         cmov(x86Condition(cond), src, dest);
     }
 
@@ -3033,7 +3033,7 @@ public:
         ASSERT(isInvertible(cond));
         ASSERT_WITH_MESSAGE(cond != Overflow, "TEST does not set the Overflow Flag.");
 
-        test32(testReg, mask);
+        test32(cond, testReg, mask);
 
         if (thenCase != dest && elseCase != dest) {
             move(elseCase, dest);
@@ -3051,7 +3051,7 @@ public:
         ASSERT(isInvertible(cond));
         ASSERT_WITH_MESSAGE(cond != Overflow, "TEST does not set the Overflow Flag.");
 
-        test32(testReg, mask);
+        test32(cond, testReg, mask);
 
         if (elseCase == dest) {
             moveWithoutClobberingFlags(thenCase, scratchRegister());
@@ -3281,17 +3281,22 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    void test32(RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
+    void test32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
-        if (mask.m_value == -1)
+        int32_t byteMask = byteMaskForTest32(cond);
+        if (mask.m_value == -1) {
             m_assembler.testl_rr(reg, reg);
-        else if (!(mask.m_value & ~0xff) && reg < X86Registers::esp) { // Using esp and greater as a byte register yields the upper half of the 16 bit registers ax, cx, dx and bx, e.g. esp, register 4, is actually ah.
+            return;
+        }
+        // Using esp and greater as a byte register yields the upper half of the 16 bit registers ax, cx, dx and bx, e.g. esp, register 4, is actually ah.
+        if (!(mask.m_value & ~byteMask) && reg < X86Registers::esp) {
             if (mask.m_value == 0xff)
                 m_assembler.testb_rr(reg, reg);
             else
                 m_assembler.testb_i8r(mask.m_value, reg);
-        } else
-            m_assembler.testl_i32r(mask.m_value, reg);
+            return;
+        }
+        m_assembler.testl_i32r(mask.m_value, reg);
     }
 
     Jump branch(ResultCondition cond)
@@ -3301,13 +3306,13 @@ public:
 
     Jump branchTest32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
-        test32(reg, mask);
+        test32(cond, reg, mask);
         return branch(cond);
     }
 
     Jump branchTest32(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        generateTest32(address, mask);
+        generateTest32(cond, address, mask);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
@@ -3653,7 +3658,7 @@ public:
 
     void test32(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
-        generateTest32(address, mask);
+        generateTest32(cond, address, mask);
         set32(x86Condition(cond), dest);
     }
 
@@ -3665,7 +3670,7 @@ public:
 
     void test32(ResultCondition cond, RegisterID reg, TrustedImm32 mask, RegisterID dest)
     {
-        test32(reg, mask);
+        test32(cond, reg, mask);
         set32(x86Condition(cond), dest);
     }
 
@@ -4790,15 +4795,22 @@ protected:
     }
 
 private:
-    ALWAYS_INLINE void generateTest32(Address address, TrustedImm32 mask = TrustedImm32(-1))
+    // A byte-wide TEST takes the sign flag from bit 7 of that byte, which only the top byte shares with the 32-bit result.
+    static constexpr int32_t byteMaskForTest32(ResultCondition cond)
     {
+        return (cond == Zero || cond == NonZero) ? 0xff : 0x7f;
+    }
+
+    ALWAYS_INLINE void generateTest32(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        int32_t byteMask = byteMaskForTest32(cond);
         if (mask.m_value == -1)
             m_assembler.cmpl_im(0, address.offset, address.base);
-        else if (!(mask.m_value & ~0xff))
+        else if (!(mask.m_value & ~byteMask))
             m_assembler.testb_im(mask.m_value, address.offset, address.base);
-        else if (!(mask.m_value & ~0xff00))
+        else if (!(mask.m_value & ~(byteMask << 8)))
             m_assembler.testb_im(mask.m_value >> 8, address.offset + 1, address.base);
-        else if (!(mask.m_value & ~0xff0000))
+        else if (!(mask.m_value & ~(byteMask << 16)))
             m_assembler.testb_im(mask.m_value >> 16, address.offset + 2, address.base);
         else if (!(mask.m_value & ~0xff000000))
             m_assembler.testb_im(mask.m_value >> 24, address.offset + 3, address.base);
@@ -6902,6 +6914,12 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
+    Jump branchAdd64(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        move(src, dest);
+        return branchAdd64(cond, imm, dest);
+    }
+
     Jump branchAdd64(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
     {
         if (src1 == dest)
@@ -6915,7 +6933,7 @@ public:
         if (op2 == dest)
             return branchAdd64(cond, op1, dest);
         if (op1.base == dest) {
-            load32(op1, dest);
+            load64(op1, dest);
             return branchAdd64(cond, op2, dest);
         }
         move(op2, dest);

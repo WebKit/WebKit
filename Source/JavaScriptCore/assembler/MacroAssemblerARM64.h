@@ -4508,7 +4508,7 @@ public:
             else
                 m_assembler.cmn<64>(left, u12, shift);
         } else {
-            moveToCachedReg(right, dataMemoryTempRegister());
+            moveToCachedReg(TrustedImm64(right.m_value), dataMemoryTempRegister());
             m_assembler.cmp<64>(left, dataTempRegister);
         }
         m_assembler.csel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
@@ -4639,7 +4639,7 @@ public:
             else
                 m_assembler.cmn<64>(left, u12, shift);
         } else {
-            moveToCachedReg(right, dataMemoryTempRegister());
+            moveToCachedReg(TrustedImm64(right.m_value), dataMemoryTempRegister());
             m_assembler.cmp<64>(left, dataTempRegister);
         }
         m_assembler.fcsel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
@@ -4783,7 +4783,7 @@ public:
             else
                 m_assembler.cmn<64>(left, u12, shift);
         } else {
-            moveToCachedReg(right, dataMemoryTempRegister());
+            moveToCachedReg(TrustedImm64(right.m_value), dataMemoryTempRegister());
             m_assembler.cmp<64>(left, dataTempRegister);
         }
         return Jump(makeBranch(cond));
@@ -4827,8 +4827,8 @@ public:
 
     Jump branch64(RelationalCondition cond, AbsoluteAddress left, RegisterID right)
     {
-        load64(left.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
-        return branch64(cond, dataTempRegister, right);
+        load64(left.m_ptr, getCachedMemoryTempRegisterIDAndInvalidate());
+        return branch64(cond, memoryTempRegister, right);
     }
 
     Jump branch64(RelationalCondition cond, Address left, RegisterID right)
@@ -4933,6 +4933,11 @@ public:
         }
     }
 
+    void test32(ResultCondition, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        test32(reg, mask);
+    }
+
     Jump branch(ResultCondition cond)
     {
         return Jump(makeBranch(cond));
@@ -4993,7 +4998,7 @@ public:
             if ((cond == Zero) || (cond == NonZero))
                 return Jump(makeCompareAndBranch<64>(static_cast<ZeroCondition>(cond), reg));
             m_assembler.tst<64>(reg, reg);
-        } else if (hasOneBitSet(mask.m_value) && ((cond == Zero) || (cond == NonZero)))
+        } else if (hasOneBitSet(static_cast<int64_t>(mask.m_value)) && ((cond == Zero) || (cond == NonZero)))
             return Jump(makeTestBitAndBranch(reg, getLSBSet(mask.m_value), static_cast<ZeroCondition>(cond)));
         else {
             LogicalImmediate logicalImm = LogicalImmediate::create64(mask.m_value);
@@ -5239,7 +5244,7 @@ public:
             return Jump(makeBranch(cond));
         }
 
-        move(imm, getCachedDataTempRegisterIDAndInvalidate());
+        signExtend32ToPtr(imm, getCachedDataTempRegisterIDAndInvalidate());
         return branchAdd64(cond, op1, dataTempRegister, dest);
     }
 
@@ -5385,7 +5390,7 @@ public:
             return Jump(makeBranch(cond));
         }
 
-        move(imm, getCachedDataTempRegisterIDAndInvalidate());
+        signExtend32ToPtr(imm, getCachedDataTempRegisterIDAndInvalidate());
         return branchSub64(cond, op1, dataTempRegister, dest);
     }
 

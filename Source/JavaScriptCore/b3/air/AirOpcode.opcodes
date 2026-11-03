@@ -953,10 +953,10 @@ arm64: InsertBitField32 U:G:32, U:G:32, U:G:32, UZD:G:32
 arm64: InsertBitField64 U:G:64, U:G:32, U:G:32, UD:G:64
     Tmp, Imm, Imm, Tmp
 
-arm64: ClearBitField32 U:G:32, U:G:32, ZD:G:32
+arm64: ClearBitField32 U:G:32, U:G:32, UZD:G:32
     Imm, Imm, Tmp
 
-arm64: ClearBitField64 U:G:32, U:G:32, D:G:64
+arm64: ClearBitField64 U:G:32, U:G:32, UD:G:64
     Imm, Imm, Tmp
 
 arm64: ClearBitsWithMask32 U:G:32, U:G:32, ZD:G:32

@@ -48,6 +48,7 @@
 #include <wtf/NumberOfCores.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdMap.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFProcess.h>
 #include <wtf/text/StringCommon.h>
@@ -88,6 +89,16 @@ Lock crashLock;
         crashLock.lock();                                               \
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #x); \
         CRASH();                                                        \
+    } while (false)
+
+#define CHECK_EQ(x, y) do { \
+        auto checkEqLeft = (x); \
+        auto checkEqRight = (y); \
+        if (checkEqLeft == checkEqRight) \
+            break; \
+        crashLock.lock(); \
+        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, toUTF8CString(#x " == " #y, " (" #x " == ", checkEqLeft, ", " #y " == ", checkEqRight, ")").legacyCStringPointer()); \
+        CRASH(); \
     } while (false)
 
 std::unique_ptr<Compilation> compile(B3::Procedure& proc)
@@ -1974,6 +1985,34 @@ void testX86VMULSDBaseIndexNeedRex()
 #endif // #if CPU(X86_64)
 
 #if CPU(ARM64)
+void testClearBitFieldPreservesOtherBits()
+{
+    {
+        B3::Procedure proc;
+        Code& code = proc.code();
+        BasicBlock* root = code.addBlock();
+        Tmp tmp = code.newTmp(GP);
+        root->append(Move, nullptr, Arg::bigImm(0x12345678), tmp);
+        root->append(ClearBitField32, nullptr, Arg::imm(4), Arg::imm(8), tmp);
+        root->append(Move, nullptr, tmp, Tmp(GPRInfo::returnValueGPR));
+        root->append(Ret32, nullptr, Tmp(GPRInfo::returnValueGPR));
+        CHECK_EQ(compileAndRun<uint32_t>(proc), 0x12345008U);
+    }
+    {
+        B3::Procedure proc;
+        Code& code = proc.code();
+        BasicBlock* root = code.addBlock();
+        Tmp tmp = code.newTmp(GP);
+        root->append(Move, nullptr, Arg::bigImm(0x123456789abcdef0), tmp);
+        root->append(ClearBitField64, nullptr, Arg::imm(8), Arg::imm(16), tmp);
+        root->append(Move, nullptr, tmp, Tmp(GPRInfo::returnValueGPR));
+        root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+        CHECK_EQ(compileAndRun<uint64_t>(proc), 0x123456789a0000f0ULL);
+    }
+}
+#endif // CPU(ARM64)
+
+#if CPU(ARM64)
 void testInvalidateCachedTempRegisters()
 {
     B3::Procedure proc;
@@ -3412,6 +3451,7 @@ void run(const char* filter)
 
 #if CPU(ARM64)
     RUN(testInvalidateCachedTempRegisters());
+    RUN(testClearBitFieldPreservesOtherBits());
 #endif
 
     RUN(testArgumentRegPinned());
