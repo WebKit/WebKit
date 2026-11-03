@@ -16,6 +16,7 @@ angle_end2end_tests_sources = [
   "egl_tests/EGLContextSharingTest.cpp",
   "egl_tests/EGLCreateContextAttribsTest.cpp",
   "egl_tests/EGLDebugTest.cpp",
+  "egl_tests/EGLDeviceWebGPUTest.cpp",
   "egl_tests/EGLDisplaySelectionTest.cpp",
   "egl_tests/EGLDisplayTest.cpp",
   "egl_tests/EGLLockSurface3Test.cpp",

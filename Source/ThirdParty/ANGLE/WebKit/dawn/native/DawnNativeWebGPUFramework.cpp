@@ -35,6 +35,7 @@ const DawnProcTable &GetProcs()
         DawnProcTable procs { };
         procs.createInstance = wgpuCreateInstance;
         procs.getProcAddress = wgpuGetProcAddress;
+        procs.adapterGetFeatures = wgpuAdapterGetFeatures;
         procs.adapterGetInfo = wgpuAdapterGetInfo;
         procs.adapterGetInstance = wgpuAdapterGetInstance;
         procs.adapterGetLimits = wgpuAdapterGetLimits;
@@ -110,6 +111,7 @@ const DawnProcTable &GetProcs()
         procs.deviceCreateTexture = wgpuDeviceCreateTexture;
         procs.deviceDestroy = wgpuDeviceDestroy;
         procs.deviceGetAdapter = wgpuDeviceGetAdapter;
+        procs.deviceGetFeatures = wgpuDeviceGetFeatures;
         procs.deviceGetLimits = wgpuDeviceGetLimits;
         procs.deviceGetQueue = wgpuDeviceGetQueue;
         procs.deviceHasFeature = wgpuDeviceHasFeature;
@@ -194,6 +196,7 @@ const DawnProcTable &GetProcs()
         procs.shaderModuleSetLabel = wgpuShaderModuleSetLabel;
         procs.shaderModuleAddRef = wgpuShaderModuleAddRef;
         procs.shaderModuleRelease = wgpuShaderModuleRelease;
+        procs.supportedFeaturesFreeMembers = wgpuSupportedFeaturesFreeMembers;
         procs.surfaceConfigure = wgpuSurfaceConfigure;
         procs.surfaceGetCapabilities = wgpuSurfaceGetCapabilities;
         procs.surfaceGetCurrentTexture = wgpuSurfaceGetCurrentTexture;
