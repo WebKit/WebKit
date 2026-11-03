@@ -10002,7 +10002,9 @@ TEST(SiteIsolation, UnresponsiveProcessKeydown)
     [webView objectByEvaluatingJavaScript:@"iframe1.focus()" inFrame:[webView mainFrame].info];
     [webView typeCharacter:' '];
 
-    Util::runFor(4_s);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return navigationDelegate.get().didBecomeUnresponsive;
+    }));
 
     [webView sendClicksAtPoint:NSMakePoint(50, 50) numberOfClicks:1];
 
@@ -10093,13 +10095,14 @@ TEST(SiteIsolation, UnresponsiveProcessDies)
     EXPECT_NE([webView mainFrame].info._processIdentifier, childFramePID);
 
     [webView sendClicksAtPoint:[webView convertPoint:CGPointMake(50, 50) toView:nil] numberOfClicks:1];
-    Util::runFor(3500_ms);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return navigationDelegate.get().didBecomeUnresponsive;
+    }));
 
-    EXPECT_TRUE(navigationDelegate.get().didBecomeUnresponsive);
     kill(childFramePID, 9);
-
-    Util::runFor(100_ms);
-    EXPECT_TRUE(navigationDelegate.get().didBecomeResponsive);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return navigationDelegate.get().didBecomeResponsive;
+    }));
 }
 
 static bool waitForMainFrameMouseDown(TestWKWebView *webView, unsigned maxAttempts)
@@ -11751,7 +11754,6 @@ TEST(SiteIsolation, Events)
         { "/iframe"_s, { eventListeners } }
     }, HTTPServer::Protocol::HttpsProxy);
 
-    __block bool receivedLastExpectedMessage = false;
     __block bool receivedResize = false;
     __block RetainPtr<NSMutableArray<NSString *>> webkitMessages = adoptNS([NSMutableArray new]);
     __block RetainPtr<NSMutableArray<NSString *>> exampleMessages = adoptNS([NSMutableArray new]);
@@ -11770,18 +11772,21 @@ TEST(SiteIsolation, Events)
         completionHandler();
         if ([message isEqualToString:@"resize"] && [host isEqualToString:@"webkit.org"])
             receivedResize = true;
-        if ([message isEqualToString:@"pageshow"] && [frame.securityOrigin.host isEqualToString:@"apple.com"])
-            receivedLastExpectedMessage = true;
     };
 
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
     webView.get().UIDelegate = delegate.get();
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_TRUE(Util::waitFor(^{
+        return [webkitMessages containsObject:@"pagereveal"];
+    }));
     [webView evaluateJavaScript:@"wk.height = 75" completionHandler:nil];
     Util::run(&receivedResize);
     [webView evaluateJavaScript:@"window.location = 'https://apple.com/iframe'" inFrame:[webView firstChildFrame] completionHandler:nil];
-    Util::run(&receivedLastExpectedMessage);
+    EXPECT_TRUE(Util::waitFor(^{
+        return [appleMessages containsObject:@"pagereveal"] && [webkitMessages containsObject:@"pageswap"];
+    }));
     Util::runFor(Seconds(0.1));
 
     NSArray *expectedExampleMessages = @[
@@ -12062,9 +12067,14 @@ TEST(SiteIsolation, SharedProcessMainFrameNotReusedAfterCrash)
     EXPECT_NE(crashedSharedProcess, [openerView mainFrame].info._processIdentifier);
     EXPECT_EQ(crashedSharedProcess, [openedView mainFrame].info._processIdentifier);
 
+    __block bool openedViewProcessTerminated = false;
+    openedNavigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        openedViewProcessTerminated = true;
+    };
     kill(crashedSharedProcess, SIGKILL);
-    while (processStillRunning(crashedSharedProcess))
-        Util::spinRunLoop();
+    EXPECT_TRUE(Util::waitFor(^{
+        return openedViewProcessTerminated;
+    }));
 
     // The dead shared process must not be handed to the main frame of the reloaded window.
     [openedView reload];
@@ -13438,6 +13448,13 @@ TEST(SiteIsolation, WKFrameInfo_isSameFrame)
 }
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
+static bool waitForDragEnd(TestWKWebView *webView, WKFrameInfo *frame)
+{
+    return Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.events.some(event => event.startsWith('dragend:'))" inFrame:frame] boolValue];
+    });
+}
+
 TEST(SiteIsolation, DragSourceEndedAtCoordinateTransformation)
 {
     static constexpr ASCIILiteral mainframeHTML = "<script>"
@@ -13479,6 +13496,7 @@ TEST(SiteIsolation, DragSourceEndedAtCoordinateTransformation)
     [webView waitForNextPresentationUpdate];
     [simulator runFrom:CGPointMake(300, 300) to:CGPointMake(350, 350)];
 
+    EXPECT_TRUE(waitForDragEnd(webView.get(), nil));
     RetainPtr<NSArray<NSString *>> events = [webView objectByEvaluatingJavaScript:@"window.events"];
     EXPECT_GT([events count], 0U);
 
@@ -13555,6 +13573,7 @@ TEST(SiteIsolation, DragSourceEndedAtCoordinateTransformationNested)
     [webView waitForNextPresentationUpdate];
     [simulator runFrom:CGPointMake(204, 204) to:CGPointMake(300, 300)];
 
+    EXPECT_TRUE(waitForDragEnd(webView.get(), [webView firstChildFrame]));
     RetainPtr<NSArray<NSString *>> events = [webView objectByEvaluatingJavaScript:@"window.events" inFrame:[webView firstChildFrame]];
     EXPECT_GT([events count], 0U);
 
@@ -19126,6 +19145,13 @@ TEST(SiteIsolation, UserGesture)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "did not throw");
 }
 
+static bool waitForHistoryTraversalToFinish(WKWebView *webView, NSString *urlString)
+{
+    return Util::waitFor([&] {
+        return ![webView isLoading] && [webView.backForwardList.currentItem.URL.absoluteString isEqualToString:urlString];
+    });
+}
+
 TEST(SiteIsolation, CrossProcessHistoryTraversalCoalesce)
 {
     constexpr auto pageWithIframes = "<iframe src='https://webkit.org/x'></iframe><iframe src='https://apple.com/x'></iframe>"_s;
@@ -19168,9 +19194,7 @@ TEST(SiteIsolation, CrossProcessHistoryTraversalCoalesce)
     [webView evaluateJavaScript:@"history.back()" inFrame:childFrames[1].info completionHandler:nil];
 
     // A split traversal settles in two navigations, so wait for the deterministic destination.
-    int spins = 0;
-    while (![[[webView URL] absoluteString] isEqualToString:@"https://example.com/a"] && spins++ < 100)
-        TestWebKitAPI::Util::runFor(0.1_s);
+    EXPECT_TRUE(waitForHistoryTraversalToFinish(webView.get(), @"https://example.com/a"));
 
     EXPECT_TRUE(didFinishCount == 1u || didFinishCount == 2u);
     EXPECT_WK_STREQ(@"https://example.com/a", [[webView URL] absoluteString]);
@@ -19222,9 +19246,7 @@ TEST(SiteIsolation, CrossProcessHistoryTraversalCoalesceWithSharedProcess)
     [webView evaluateJavaScript:@"history.back()" inFrame:childFrames[1].info completionHandler:nil];
 
     // A split traversal settles in two navigations, so wait for the deterministic destination.
-    int spins = 0;
-    while (![[[webView URL] absoluteString] isEqualToString:@"https://example.com/a"] && spins++ < 100)
-        TestWebKitAPI::Util::runFor(0.1_s);
+    EXPECT_TRUE(waitForHistoryTraversalToFinish(webView.get(), @"https://example.com/a"));
 
     EXPECT_TRUE(didFinishCount == 1u || didFinishCount == 2u);
     EXPECT_WK_STREQ(@"https://example.com/a", [[webView URL] absoluteString]);
@@ -19259,9 +19281,7 @@ TEST(SiteIsolation, CrossProcessHistoryTraversalGoMinus2)
 
     [webView evaluateJavaScript:@"history.go(-2)" completionHandler:nil];
 
-    int spins = 0;
-    while (![[[webView URL] absoluteString] isEqualToString:@"https://example.com/a"] && spins++ < 100)
-        TestWebKitAPI::Util::runFor(0.1_s);
+    EXPECT_TRUE(waitForHistoryTraversalToFinish(webView.get(), @"https://example.com/a"));
 
     EXPECT_WK_STREQ(@"https://example.com/a", [[webView URL] absoluteString]);
     EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)0);
@@ -19339,9 +19359,7 @@ TEST(SiteIsolation, CrossProcessHistoryTraversalSameFrameBackTwice)
     [webView evaluateJavaScript:@"history.back()" inFrame:childFrames[0].info completionHandler:nil];
     [webView evaluateJavaScript:@"history.back()" inFrame:childFrames[0].info completionHandler:nil];
 
-    int spins = 0;
-    while (![[[webView URL] absoluteString] isEqualToString:@"https://example.com/a"] && spins++ < 100)
-        TestWebKitAPI::Util::runFor(0.1_s);
+    EXPECT_TRUE(waitForHistoryTraversalToFinish(webView.get(), @"https://example.com/a"));
 
     EXPECT_WK_STREQ(@"https://example.com/a", [[webView URL] absoluteString]);
     EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)0);

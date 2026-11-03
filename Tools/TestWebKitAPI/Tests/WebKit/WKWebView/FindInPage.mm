@@ -1140,7 +1140,9 @@ TEST(WebKit, ScrollToFoundRangeInNonScrollableIframe)
     RetainPtr ranges = textRangesForQueryString(webView.get(), @"Bottom");
     [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
 
-    TestWebKitAPI::Util::runFor(500_ms);
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"document.getElementById('frame').contentWindow.scrollY"] isEqualToString:@"768"];
+    }));
     EXPECT_WK_STREQ("768", [webView stringByEvaluatingJavaScript:@"document.getElementById('frame').contentWindow.scrollY"]);
 }
 

@@ -10217,6 +10217,16 @@ TEST(ProcessSwap, ReuseProcessAfterNavigatingFromAboutPage)
     EXPECT_EQ(pid1, pid2);
 }
 
+static bool waitForProcessExitWithoutSpinningRunLoop(pid_t pid)
+{
+    for (unsigned i = 0; i < 100; ++i) {
+        if (kill(pid, 0) && errno == ESRCH)
+            return true;
+        WTF::sleep(100_ms);
+    }
+    return false;
+}
+
 // The WebProcess cache cannot be enabled on devices with too little RAM so we need to disable
 // tests relying on it on iOS. The WebProcess cache is disabled by default on iOS anyway.
 #if !PLATFORM(IOS_FAMILY)
@@ -10263,11 +10273,13 @@ TEST(WebProcessCache, ReusedCrashedCachedWebProcess)
 
     crashCount = 0;
     done = false;
-    kill([webView2 _webProcessIdentifier], 9);
+    auto webView2PID = [webView2 _webProcessIdentifier];
+    kill(webView2PID, 9);
     kill(cachedProcessPID, 9);
 
     // Intentional hang to delay processing of crash notifications.
-    sleep(1);
+    EXPECT_TRUE(waitForProcessExitWithoutSpinningRunLoop(webView2PID));
+    EXPECT_TRUE(waitForProcessExitWithoutSpinningRunLoop(cachedProcessPID));
 
     // View should reload due to crash.
     TestWebKitAPI::Util::run(&done);
@@ -10369,7 +10381,8 @@ TEST(WebProcessCache, ReusedCrashedBackForwardSuspendedWebProcess)
     kill(firstWebProcessPID, 9);
 
     // Intentional hang to delay processing of crash notifications.
-    sleep(1);
+    EXPECT_TRUE(waitForProcessExitWithoutSpinningRunLoop(secondWebProcessPID));
+    EXPECT_TRUE(waitForProcessExitWithoutSpinningRunLoop(firstWebProcessPID));
 
     // View should reload due to crash.
     TestWebKitAPI::Util::run(&done);
