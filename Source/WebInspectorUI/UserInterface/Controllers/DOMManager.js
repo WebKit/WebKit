@@ -794,6 +794,15 @@ WI.DOMManager = class DOMManager extends WI.Object
         return DOMManager.supportsEventListenerBreakpoints() && !eventListener.owningTarget;
     }
 
+    static scriptForEventListener(eventListener)
+    {
+        // Resolve a listener's script on its owning target, using the main-frame fallback for listeners
+        // delivered on the page target, as with stack traces delivered on that target.
+        // FIXME: <https://webkit.org/b/326433> Resolve handler scripts owned by other frame targets in the same process.
+        let target = eventListener.owningTarget || WI.assumingMainTarget();
+        return WI.debuggerManager.scriptForStackTraceIdentifier(eventListener.location.scriptId, target, {deliveredOnTarget: true});
+    }
+
     static supportsEditingUserAgentShadowTrees({frontendOnly, target} = {})
     {
         target = target || InspectorBackend;

@@ -147,6 +147,23 @@ function test() {
     });
 
     suite.addTestCase({
+        name: "ListenerScripts",
+        description: "A listener's script is looked up on the target that delivered it, because the page target owns no scripts and script ids collide across processes.",
+        async test() {
+            let mainFrameTarget = await waitForFrameTargetForURLContaining("event-listeners-routing-frame-target.html");
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame's target.");
+
+            let mainScript = WI.DOMManager.scriptForEventListener(mainListener);
+            InspectorTest.expectThat(mainScript?.target === mainFrameTarget, "Page listener's script should belong to the main frame target.");
+            InspectorTest.expectThat(mainScript?.url?.includes("event-listeners-routing-frame-target.html"), "Page listener's script should be the page's script.");
+
+            let frameScript = WI.DOMManager.scriptForEventListener(frameListener);
+            InspectorTest.expectThat(frameScript?.target === frameTarget, "Frame listener's script should belong to the frame target.");
+            InspectorTest.expectThat(frameScript?.url?.includes("event-listeners-frame.html"), "Frame listener's script should be the frame's script.");
+        }
+    });
+
+    suite.addTestCase({
         name: "DisableFrameListener",
         description: "Disabling a frame listener goes to the frame target and leaves the page listener that has the same id alone.",
         async test() {

@@ -273,7 +273,7 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         if (!this._eventListener.location)
             return functionName;
 
-        var sourceCode = WI.debuggerManager.scriptForIdentifier(this._eventListener.location.scriptId, WI.mainTarget);
+        let sourceCode = WI.DOMManager.scriptForEventListener(this._eventListener);
         if (!sourceCode)
             return functionName;
 

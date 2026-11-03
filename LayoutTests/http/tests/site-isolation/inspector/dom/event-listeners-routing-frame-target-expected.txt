@@ -24,6 +24,13 @@ PASS: Page listener should resolve to the page node.
 PASS: Frame listener should record the frame target.
 PASS: Frame listener should resolve to the frame node, not a page node with the same raw id.
 
+-- Running test case: ListenerScripts
+PASS: Should find the main frame's target.
+PASS: Page listener's script should belong to the main frame target.
+PASS: Page listener's script should be the page's script.
+PASS: Frame listener's script should belong to the frame target.
+PASS: Frame listener's script should be the frame's script.
+
 -- Running test case: DisableFrameListener
 PASS: Baseline: page handler should fire.
 PASS: Baseline: frame handler should fire.
