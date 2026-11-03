@@ -229,24 +229,25 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     ASSERT(m_isConnected);
     ASSERT(!m_pendingOutgoingMachMessage);
 
-    auto [result, retryableMessage] = MachMessage::sendEncoder(WTF::move(encoder), m_sendPort);
-    switch (result) {
+    auto message = MachMessage::create(WTF::move(encoder));
+    if (!message) {
+#if ENABLE(IPC_TESTING_API)
+        if (m_ignoreInvalidMessageForTesting)
+            return true; // The message is dropped, but the connection can still send.
+#endif
+        cancelSendSource();
+        return false;
+    }
+
+    switch (message->send(m_sendPort)) {
     case MachMessage::SendResult::Success:
         return true;
 
     case MachMessage::SendResult::Timeout:
         // The message is sent again when the destination has room for it.
-        m_pendingOutgoingMachMessage = WTF::move(retryableMessage);
+        m_pendingOutgoingMachMessage = WTF::move(message);
         return false;
 
-    case MachMessage::SendResult::InvalidEncoder:
-#if ENABLE(IPC_TESTING_API)
-        if (m_ignoreInvalidMessageForTesting)
-            return true; // The message is dropped, but the connection can still send.
-#endif
-        [[fallthrough]];
-
-    case MachMessage::SendResult::OutOfMemory:
     case MachMessage::SendResult::InvalidDestinationPort:
         cancelSendSource();
         return false;
@@ -293,7 +294,7 @@ void Connection::resumeSendSource()
     assertIsCurrent(m_connectionQueue.get());
 
     if (auto message = std::exchange(m_pendingOutgoingMachMessage, nullptr)) {
-        switch (message->send()) {
+        switch (message->send(m_sendPort)) {
         case MachMessage::SendResult::Success:
             break;
 
@@ -302,14 +303,6 @@ void Connection::resumeSendSource()
             m_pendingOutgoingMachMessage = WTF::move(message);
             break;
 
-        case MachMessage::SendResult::InvalidEncoder:
-#if ENABLE(IPC_TESTING_API)
-            if (m_ignoreInvalidMessageForTesting)
-                break; // The message is dropped, but the connection can still send.
-#endif
-            [[fallthrough]];
-
-        case MachMessage::SendResult::OutOfMemory:
         case MachMessage::SendResult::InvalidDestinationPort:
             cancelSendSource();
             return;

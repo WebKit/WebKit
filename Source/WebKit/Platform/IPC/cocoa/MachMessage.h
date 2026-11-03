@@ -33,6 +33,7 @@
 #include <mach/message.h>
 #include <memory>
 #include <wtf/FastMalloc.h>
+#include <wtf/MmapSpan.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueRef.h>
 
@@ -40,11 +41,11 @@ namespace IPC {
 
 class Decoder;
 
-// A mach message that the kernel returned from a send that failed after it had copied the message in,
-// i.e. from a Mach pseudo receive. Such a message owns everything it names -- a reference to the
-// destination, the port rights of its attachments and a mapping of its body -- and sending it again as
-// it is, with send(), is the only way to deliver it. Messages that are sent without failing this way
-// never need an instance: sendEncoder() builds and sends them without one.
+// A Mach message built from an Encoder and owning all Mach resources it references:
+// - Before send(): attachment send rights and the Encoder's out-of-line MmapSpan (if any).
+// - After a timed-out send() (pseudo-receive): a send right to the destination port, attachment
+//   send rights, and a kernel-allocated mapping of any out-of-line body.
+// Destroying an unsent or timed-out message releases everything it owns.
 class MachMessage {
     WTF_MAKE_NONCOPYABLE(MachMessage);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MachMessage);
@@ -54,27 +55,17 @@ public:
     enum class SendResult : uint8_t {
         Success, // The message was sent.
         Timeout, // The destination had no room for the message. Sending it again as it is can send it.
-        InvalidDestinationPort, // The destination does not receive messages anymore.
-        InvalidEncoder, // The encoder holds more than a mach message can carry, so no message was built.
-        OutOfMemory, // The message could not be built or kept for a retry, so it was dropped.
+        InvalidDestinationPort, // The destination does not receive messages anymore. The message is unchanged.
     };
 
-    struct SendEncoderResult {
-        SendResult result;
-        // The message, set when the result is Timeout: the kernel returned it, and sending it again with
-        // send() is the only way to deliver it.
-        std::unique_ptr<MachMessage> retryableMessage;
-    };
+    // Returns nullptr if the encoder has more than maxAttachmentCount attachments.
+    static std::unique_ptr<MachMessage> create(UniqueRef<Encoder>&&);
 
     ~MachMessage();
 
-    // Sends `encoder` to `destination` as a mach message, returns a message to retry or a failure.
-    // Always consumes the encoder.
-    static SendEncoderResult sendEncoder(UniqueRef<Encoder>&&, mach_port_t destination, Timeout = Timeout::now());
-
-    // Sends the message as it is. Releases the message resources on success, and retains them for
-    // another retry otherwise.
-    SendResult send(Timeout = Timeout::now());
+    // Sends the message to `destination`. If a prior send() timed out, `destination` must match the
+    // original destination port (or the port must now be MACH_PORT_DEAD).
+    SendResult send(mach_port_t destination, Timeout = Timeout::now());
 
     enum class ReceiveResult : uint8_t {
         NoMessage,
@@ -89,13 +80,20 @@ public:
     ReceiverName messageReceiverName() const { return receiverName(messageName()); }
     MessageName messageName() const { return m_messageName; }
 
-private:
-    MachMessage(MessageName);
+    bool wasReturnedFromSend() const { return m_state == State::TimedOut; }
 
-    static std::unique_ptr<MachMessage> adoptPseudoReceived(MessageName, std::span<const std::byte>);
+private:
+    MachMessage(MessageName, MmapSpan<uint8_t>&& outOfLineBody);
+
+    enum class State : uint8_t {
+        NotSent, // mach_msg() was not called, or it failed with MACH_SEND_INVALID_DEST.
+        TimedOut, // mach_msg() failed with MACH_SEND_TIMED_OUT and copied the message back out.
+        Sent, // mach_msg() succeeded.
+    };
 
     MessageName m_messageName;
-    bool m_shouldDestroy { true };
+    State m_state { State::NotSent };
+    MmapSpan<uint8_t> m_outOfLineBody;
     mach_msg_header_t m_messageHeader[];
 };
 

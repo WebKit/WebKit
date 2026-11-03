@@ -45,7 +45,7 @@ namespace TestWebKitAPI {
 namespace {
 
 // Sends to and receives from a port owned by this process, so that the mach message that
-// MachMessage::sendEncoder() builds is the one MachMessage::receiveDecoder() decodes.
+// MachMessage::create() builds is the one MachMessage::receiveDecoder() decodes.
 class MachMessageTest : public ::testing::Test {
 public:
     void SetUp() override
@@ -132,6 +132,24 @@ public:
         return encoder;
     }
 
+    struct CreateAndSendResult {
+        IPC::MachMessage::SendResult result;
+        // Set when the result is Timeout: the message that the kernel returned, to be sent again.
+        std::unique_ptr<IPC::MachMessage> retryableMessage;
+    };
+
+    // Builds a message from `encoder` and sends it to `destination`, as Connection does. Only for encoders that
+    // create() accepts.
+    static CreateAndSendResult createAndSend(UniqueRef<IPC::Encoder>&& encoder, mach_port_t destination)
+    {
+        auto message = IPC::MachMessage::create(WTF::move(encoder));
+        RELEASE_ASSERT(message);
+        auto result = message->send(destination);
+        if (result != IPC::MachMessage::SendResult::Timeout)
+            message = nullptr;
+        return { result, WTF::move(message) };
+    }
+
 protected:
     mach_port_t m_port { MACH_PORT_NULL };
     mach_port_t m_attachmentPort { MACH_PORT_NULL };
@@ -150,13 +168,13 @@ constexpr size_t testBodyEncodedSize = 152;
 // MachMessage sends every attachment as a port descriptor of its own, however many there are. These are the
 // counts past which that could go wrong: past 127, an earlier version sent the attachments as an out-of-line
 // array of ports instead, which the kernel does not let a sandboxed process send, and past the attachments that
-// fit messageStorageSize together with a test body, the message no longer fits the storage that MachMessage sends
-// from and receives into without allocating.
+// fit messageStorageSize together with a test body, the message no longer fits the storage that receiveDecoder()
+// receives into without allocating.
 constexpr size_t manyAttachmentCount = 128;
 constexpr size_t largeMessageAttachmentCount = (messageStorageSize - sizeof(mach_msg_header_t) - sizeof(mach_msg_body_t) - testBodyEncodedSize) / sizeof(mach_msg_port_descriptor_t) + 1;
 
 // A message built by hand, so that receiveDecoder() can be given the messages a sender could send rather than
-// only the ones sendEncoder() builds, and received by hand, so that a test can inspect the descriptors
+// only the ones create() builds, and received by hand, so that a test can inspect the descriptors
 // the kernel copied out instead of letting receiveDecoder() adopt them and destroy the message.
 class RawMessage {
     WTF_MAKE_NONCOPYABLE(RawMessage);
@@ -243,7 +261,7 @@ TEST_F(MachMessageTest, ReceiveWithoutMessageIsNoMessage)
 TEST_F(MachMessageTest, SendReceiveInlineBody)
 {
     auto body = makeBody(128);
-    auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(makeEncoder(body), m_port);
+    auto [result, retryableMessage] = createAndSend(makeEncoder(body), m_port);
     ASSERT_EQ(result, IPC::MachMessage::SendResult::Success);
     EXPECT_FALSE(!!retryableMessage);
 
@@ -262,7 +280,7 @@ TEST_F(MachMessageTest, SendReceiveInlineBody)
 TEST_F(MachMessageTest, SendReceiveOutOfLineBody)
 {
     auto body = makeBody(100 * KB);
-    auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(makeEncoder(body), m_port);
+    auto [result, retryableMessage] = createAndSend(makeEncoder(body), m_port);
     ASSERT_EQ(result, IPC::MachMessage::SendResult::Success);
     EXPECT_FALSE(!!retryableMessage);
 
@@ -282,7 +300,7 @@ TEST_F(MachMessageTest, SendReceiveAttachment)
     auto body = makeBody(128);
     auto encoder = makeEncoder(body);
     encoder.get() << MachSendRight::create(m_attachmentPort);
-    auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(encoder), m_port);
+    auto [result, retryableMessage] = createAndSend(WTF::move(encoder), m_port);
     ASSERT_EQ(result, IPC::MachMessage::SendResult::Success);
     EXPECT_FALSE(!!retryableMessage);
 
@@ -307,7 +325,7 @@ TEST_F(MachMessageTest, SendReceiveNullAttachment)
     auto body = makeBody(128);
     auto encoder = makeEncoder(body);
     encoder.get() << MachSendRight { };
-    auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(encoder), m_port);
+    auto [result, retryableMessage] = createAndSend(WTF::move(encoder), m_port);
     ASSERT_EQ(result, IPC::MachMessage::SendResult::Success);
     EXPECT_FALSE(!!retryableMessage);
 
@@ -334,7 +352,7 @@ TEST_F(MachMessageTest, SendReceiveNullAttachmentAmongManyAttachments)
     encoder.get() << MachSendRight { };
     for (size_t i = 1; i < attachmentCount; ++i)
         encoder.get() << MachSendRight::create(m_attachmentPort);
-    auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(encoder), m_port);
+    auto [result, retryableMessage] = createAndSend(WTF::move(encoder), m_port);
     ASSERT_EQ(result, IPC::MachMessage::SendResult::Success);
     EXPECT_FALSE(!!retryableMessage);
 
@@ -364,7 +382,7 @@ TEST_F(MachMessageTest, SendRetryAfterTimedOutSucceeds)
     setQueueLength(m_port, 1);
 
     auto firstBody = makeBody(128);
-    auto [firstResult, firstRetryableMessage] = IPC::MachMessage::sendEncoder(makeEncoder(firstBody), m_port);
+    auto [firstResult, firstRetryableMessage] = createAndSend(makeEncoder(firstBody), m_port);
     ASSERT_EQ(firstResult, IPC::MachMessage::SendResult::Success);
     ASSERT_FALSE(!!firstRetryableMessage);
 
@@ -375,7 +393,7 @@ TEST_F(MachMessageTest, SendRetryAfterTimedOutSucceeds)
         auto secondEncoder = makeEncoder(secondBody);
         secondEncoder.get() << MachSendRight::create(m_attachmentPort);
         auto destinationSendRights = sendRightCount(m_port);
-        auto [secondResult, secondRetryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(secondEncoder), m_port);
+        auto [secondResult, secondRetryableMessage] = createAndSend(WTF::move(secondEncoder), m_port);
         ASSERT_EQ(secondResult, IPC::MachMessage::SendResult::Timeout);
         ASSERT_TRUE(!!secondRetryableMessage);
         // The kernel returned the message holding a reference to the destination.
@@ -390,7 +408,7 @@ TEST_F(MachMessageTest, SendRetryAfterTimedOutSucceeds)
         EXPECT_TRUE(*firstDecodedBody == firstBody);
 
         // The retry sends the message that the timed out send returned.
-        ASSERT_EQ(secondRetryableMessage->send(), IPC::MachMessage::SendResult::Success);
+        ASSERT_EQ(secondRetryableMessage->send(m_port), IPC::MachMessage::SendResult::Success);
         // Sending the message transferred the reference to the destination that the kernel had returned,
         // instead of leaking it and keeping the destination alive.
         EXPECT_EQ(sendRightCount(m_port), destinationSendRights);
@@ -411,7 +429,7 @@ TEST_F(MachMessageTest, SendRetryAfterTimedOutSucceeds)
     // fails. The retry has to send that mapping, because the encoder is gone by then.
     {
         auto fillerBody = makeBody(128);
-        auto [fillerResult, fillerRetryableMessage] = IPC::MachMessage::sendEncoder(makeEncoder(fillerBody), m_port);
+        auto [fillerResult, fillerRetryableMessage] = createAndSend(makeEncoder(fillerBody), m_port);
         ASSERT_EQ(fillerResult, IPC::MachMessage::SendResult::Success);
         ASSERT_FALSE(!!fillerRetryableMessage);
 
@@ -420,7 +438,7 @@ TEST_F(MachMessageTest, SendRetryAfterTimedOutSucceeds)
         auto largeEncoder = makeEncoder(largeBody);
         largeEncoder.get() << MachSendRight::create(m_attachmentPort);
         auto destinationSendRights = sendRightCount(m_port);
-        auto [largeResult, largeRetryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(largeEncoder), m_port);
+        auto [largeResult, largeRetryableMessage] = createAndSend(WTF::move(largeEncoder), m_port);
         ASSERT_EQ(largeResult, IPC::MachMessage::SendResult::Timeout);
         ASSERT_TRUE(!!largeRetryableMessage);
         EXPECT_EQ(sendRightCount(m_port), destinationSendRights + 1);
@@ -433,7 +451,7 @@ TEST_F(MachMessageTest, SendRetryAfterTimedOutSucceeds)
         ASSERT_TRUE(!!fillerDecodedBody);
         EXPECT_TRUE(*fillerDecodedBody == fillerBody);
 
-        ASSERT_EQ(largeRetryableMessage->send(), IPC::MachMessage::SendResult::Success);
+        ASSERT_EQ(largeRetryableMessage->send(m_port), IPC::MachMessage::SendResult::Success);
         EXPECT_EQ(sendRightCount(m_port), destinationSendRights);
 
         received = IPC::MachMessage::receiveDecoder(m_port);
@@ -468,19 +486,19 @@ TEST_F(MachMessageTest, SendRetryDoesNotLeakSendRightsAcrossManyCycles)
     constexpr unsigned iterations = 500;
     for (unsigned i = 0; i < iterations; ++i) {
         // Fill the queue of the destination, so that the next send times out.
-        auto [fillerResult, fillerRetryableMessage] = IPC::MachMessage::sendEncoder(makeEncoder({ }), m_port);
+        auto [fillerResult, fillerRetryableMessage] = createAndSend(makeEncoder({ }), m_port);
         ASSERT_EQ(fillerResult, IPC::MachMessage::SendResult::Success);
         ASSERT_FALSE(!!fillerRetryableMessage);
 
         auto encoder = makeEncoder(body);
         encoder.get() << MachSendRight::create(m_attachmentPort);
-        auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(encoder), m_port);
+        auto [result, retryableMessage] = createAndSend(WTF::move(encoder), m_port);
         ASSERT_EQ(result, IPC::MachMessage::SendResult::Timeout);
         ASSERT_TRUE(!!retryableMessage);
 
         // Make room in the queue, then send the message that the timed out send returned.
         ASSERT_TRUE(!!IPC::MachMessage::receiveDecoder(m_port));
-        ASSERT_EQ(retryableMessage->send(), IPC::MachMessage::SendResult::Success);
+        ASSERT_EQ(retryableMessage->send(m_port), IPC::MachMessage::SendResult::Success);
 
         auto received = IPC::MachMessage::receiveDecoder(m_port);
         ASSERT_TRUE(!!received);
@@ -501,13 +519,12 @@ TEST_F(MachMessageTest, SendRetryDoesNotLeakSendRightsAcrossManyCycles)
     EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
 }
 
-// The retry path for a message too large for the storage that MachMessage sends from without allocating,
-// so that the message the kernel returns from the timed out send is in allocated storage. Repeated, so that
-// a right leaked per message accumulates into something a single cycle could not tell from an off-by-one.
+// The retry path for a message with many attachments. Repeated, so that a right leaked per message accumulates
+// into something a single cycle could not tell from an off-by-one.
 TEST_F(MachMessageTest, SendRetryOfLargeMessageDoesNotLeakSendRights)
 {
     constexpr size_t attachmentCount = 1000;
-    static_assert(attachmentCount >= largeMessageAttachmentCount, "The message is sent from allocated storage.");
+    static_assert(attachmentCount >= largeMessageAttachmentCount, "The message is received into allocated storage.");
     constexpr unsigned iterations = 50;
 
     setQueueLength(m_port, 1);
@@ -517,7 +534,7 @@ TEST_F(MachMessageTest, SendRetryOfLargeMessageDoesNotLeakSendRights)
 
     for (unsigned i = 0; i < iterations; ++i) {
         // Fill the queue of the destination, so that the next send times out.
-        auto [fillerResult, fillerRetryableMessage] = IPC::MachMessage::sendEncoder(makeEncoder({ }), m_port);
+        auto [fillerResult, fillerRetryableMessage] = createAndSend(makeEncoder({ }), m_port);
         ASSERT_EQ(fillerResult, IPC::MachMessage::SendResult::Success) << "iteration " << i;
         ASSERT_FALSE(!!fillerRetryableMessage) << "iteration " << i;
 
@@ -525,7 +542,7 @@ TEST_F(MachMessageTest, SendRetryOfLargeMessageDoesNotLeakSendRights)
         for (size_t j = 0; j < attachmentCount; ++j)
             encoder.get() << MachSendRight::create(m_attachmentPort);
 
-        auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(encoder), m_port);
+        auto [result, retryableMessage] = createAndSend(WTF::move(encoder), m_port);
         ASSERT_EQ(result, IPC::MachMessage::SendResult::Timeout) << "iteration " << i;
         ASSERT_TRUE(!!retryableMessage) << "iteration " << i;
         // The kernel returned the message holding a reference to the destination, and holding the
@@ -535,7 +552,7 @@ TEST_F(MachMessageTest, SendRetryOfLargeMessageDoesNotLeakSendRights)
 
         // Make room in the queue, then send the message that the timed out send returned.
         ASSERT_TRUE(!!IPC::MachMessage::receiveDecoder(m_port)) << "iteration " << i;
-        ASSERT_EQ(retryableMessage->send(), IPC::MachMessage::SendResult::Success) << "iteration " << i;
+        ASSERT_EQ(retryableMessage->send(m_port), IPC::MachMessage::SendResult::Success) << "iteration " << i;
         // Sending the message transferred the reference to the destination that the kernel had returned,
         // instead of leaking it and keeping the destination alive.
         ASSERT_EQ(sendRightCount(m_port), destinationSendRights) << "iteration " << i;
@@ -562,7 +579,7 @@ TEST_F(MachMessageTest, SendRetryOfLargeMessageDoesNotLeakSendRights)
     EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
 }
 
-// More attachments than the inline message storage holds, so that the message is built on the heap. Every
+// More attachments than the inline message storage holds, so that the message is received into allocated storage. Every
 // attachment is a port descriptor of its own however many there are, because an out-of-line array of port
 // names is not a form that can be sent.
 TEST_F(MachMessageTest, SendReceiveManyAttachments)
@@ -575,7 +592,7 @@ TEST_F(MachMessageTest, SendReceiveManyAttachments)
     for (size_t i = 0; i < attachmentCount; ++i)
         encoder.get() << MachSendRight::create(m_attachmentPort);
 
-    auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(encoder), m_port);
+    auto [result, retryableMessage] = createAndSend(WTF::move(encoder), m_port);
     ASSERT_EQ(result, IPC::MachMessage::SendResult::Success);
     EXPECT_FALSE(!!retryableMessage);
 
@@ -596,8 +613,8 @@ TEST_F(MachMessageTest, SendReceiveManyAttachments)
     EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
 }
 
-// As many attachments as fit the storage that MachMessage sends from and receives into without allocating, together
-// with the inline body.
+// As many attachments as fit the storage that receiveDecoder() receives into without allocating, together with the
+// inline body.
 TEST_F(MachMessageTest, SendReceiveLargestMessageInStorage)
 {
     constexpr size_t attachmentCount = largeMessageAttachmentCount - 1;
@@ -609,7 +626,7 @@ TEST_F(MachMessageTest, SendReceiveLargestMessageInStorage)
     for (size_t i = 0; i < attachmentCount; ++i)
         encoder.get() << MachSendRight::create(m_attachmentPort);
 
-    auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(encoder), m_port);
+    auto [result, retryableMessage] = createAndSend(WTF::move(encoder), m_port);
     ASSERT_EQ(result, IPC::MachMessage::SendResult::Success);
     EXPECT_FALSE(!!retryableMessage);
 
@@ -641,7 +658,7 @@ TEST_F(MachMessageTest, SendReceiveAttachmentsInEncodedOrder)
     auto encoder = makeEncoder(body);
     encoder.get() << MachSendRight::create(m_attachmentPort);
     encoder.get() << MachSendRight::create(otherPort);
-    auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(encoder), m_port);
+    auto [result, retryableMessage] = createAndSend(WTF::move(encoder), m_port);
     ASSERT_EQ(result, IPC::MachMessage::SendResult::Success);
     EXPECT_FALSE(!!retryableMessage);
 
@@ -662,8 +679,8 @@ TEST_F(MachMessageTest, SendReceiveAttachmentsInEncodedOrder)
     deallocatePort(otherPort);
 }
 
-// One attachment more than fit the storage that MachMessage sends from and receives into without allocating,
-// so that the message is sent from and received into allocated storage.
+// One attachment more than fit the storage that receiveDecoder() receives into without allocating, so that the
+// message is received into allocated storage.
 TEST_F(MachMessageTest, SendReceiveLargeMessage)
 {
     constexpr size_t attachmentCount = largeMessageAttachmentCount;
@@ -682,7 +699,7 @@ TEST_F(MachMessageTest, SendReceiveLargeMessage)
     for (size_t i = 0; i < attachmentCount; ++i)
         encoder.get() << MachSendRight::create(portFor(i));
 
-    auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(encoder), m_port);
+    auto [result, retryableMessage] = createAndSend(WTF::move(encoder), m_port);
     ASSERT_EQ(result, IPC::MachMessage::SendResult::Success);
     EXPECT_FALSE(!!retryableMessage);
 
@@ -716,7 +733,7 @@ TEST_F(MachMessageTest, SendReceiveMaxAttachments)
     for (size_t i = 0; i < attachmentCount; ++i)
         encoder.get() << MachSendRight::create(m_attachmentPort);
 
-    auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(encoder), m_port);
+    auto [result, retryableMessage] = createAndSend(WTF::move(encoder), m_port);
     ASSERT_EQ(result, IPC::MachMessage::SendResult::Success);
     EXPECT_FALSE(!!retryableMessage);
 
@@ -736,26 +753,6 @@ TEST_F(MachMessageTest, SendReceiveMaxAttachments)
         }
         EXPECT_EQ(decodedCount, attachmentCount);
     }
-    EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
-}
-
-// The platform takes at most IPC_KMSG_MAX_OOL_PORT_COUNT (16383) ports in one message. A message with more
-// than that cannot be sent at all, and there is no fallback that would make it smaller.
-TEST_F(MachMessageTest, SendTooManyAttachmentsFails)
-{
-    constexpr size_t attachmentCount = IPC::MachMessage::maxAttachmentCount + 1;
-    auto attachmentSendRights = sendRightCount(m_attachmentPort);
-
-    auto encoder = makeEncoder(makeBody(128));
-    for (size_t i = 0; i < attachmentCount; ++i)
-        encoder.get() << MachSendRight::create(m_attachmentPort);
-    ASSERT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights + attachmentCount);
-
-    auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(encoder), m_port);
-    EXPECT_EQ(result, IPC::MachMessage::SendResult::InvalidEncoder);
-    EXPECT_FALSE(!!retryableMessage);
-    // Nothing was sent, so nothing arrives.
-    EXPECT_FALSE(!!IPC::MachMessage::receiveDecoder(m_port));
     EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
 }
 
@@ -923,7 +920,7 @@ TEST_F(MachMessageTest, SendToDeadPortFails)
 
     auto encoder = makeEncoder(body);
     encoder.get() << MachSendRight::create(m_attachmentPort);
-    auto [result, retryableMessage] = IPC::MachMessage::sendEncoder(WTF::move(encoder), deadPort);
+    auto [result, retryableMessage] = createAndSend(WTF::move(encoder), deadPort);
     EXPECT_EQ(result, IPC::MachMessage::SendResult::InvalidDestinationPort);
     EXPECT_FALSE(!!retryableMessage);
 
@@ -931,6 +928,233 @@ TEST_F(MachMessageTest, SendToDeadPortFails)
     EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
     // The destination right was the sender's, so dropping the message left it alone.
     EXPECT_EQ(sendRightCount(deadPort), deadPortSendRights);
+    mach_port_deallocate(mach_task_self(), deadPort);
+}
+
+// A message built with create() is only sent when send() is called, to the destination it is given then.
+TEST_F(MachMessageTest, CreatedMessageIsSentLater)
+{
+    auto body = makeBody(128);
+    auto attachmentSendRights = sendRightCount(m_attachmentPort);
+    auto destinationSendRights = sendRightCount(m_port);
+
+    auto encoder = makeEncoder(body);
+    encoder.get() << MachSendRight::create(m_attachmentPort);
+    auto message = IPC::MachMessage::create(WTF::move(encoder));
+    ASSERT_TRUE(!!message);
+    EXPECT_EQ(message->messageName(), testMessageName);
+    EXPECT_FALSE(message->wasReturnedFromSend());
+    // Nothing was sent yet, and the message holds the attachment.
+    EXPECT_FALSE(!!IPC::MachMessage::receiveDecoder(m_port));
+    EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights + 1);
+
+    ASSERT_EQ(message->send(m_port), IPC::MachMessage::SendResult::Success);
+    message = nullptr;
+    EXPECT_EQ(sendRightCount(m_port), destinationSendRights);
+
+    {
+        auto received = IPC::MachMessage::receiveDecoder(m_port);
+        ASSERT_TRUE(!!received);
+        auto decoder = WTF::move(received.value());
+        EXPECT_EQ(decoder->messageName(), testMessageName);
+        auto decodedBody = decoder->decode<Vector<uint8_t>>();
+        ASSERT_TRUE(!!decodedBody);
+        EXPECT_TRUE(*decodedBody == body);
+        auto sendRight = decoder->decode<MachSendRight>();
+        ASSERT_TRUE(!!sendRight);
+        EXPECT_EQ(sendRight->sendRight(), m_attachmentPort);
+    }
+    EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
+}
+
+// An out-of-line body points into the buffer of the encoder, which create() consumes. The message keeps the buffer
+// until the body has been sent.
+TEST_F(MachMessageTest, CreatedMessageKeepsOutOfLineBody)
+{
+    auto body = makeBody(64 * KB);
+    auto message = IPC::MachMessage::create(makeEncoder(body));
+    ASSERT_TRUE(!!message);
+    ASSERT_EQ(message->send(m_port), IPC::MachMessage::SendResult::Success);
+    message = nullptr;
+
+    auto received = IPC::MachMessage::receiveDecoder(m_port);
+    ASSERT_TRUE(!!received);
+    auto decoder = WTF::move(received.value());
+    auto decodedBody = decoder->decode<Vector<uint8_t>>();
+    ASSERT_TRUE(!!decodedBody);
+    EXPECT_TRUE(*decodedBody == body);
+}
+
+// A body that is in the encoder's inline buffer is copied into the message, even when the attachments make the
+// message too large to be sent without allocating, so that the message doesn't point into the encoder that
+// create() consumes.
+TEST_F(MachMessageTest, CreatedMessageWithManyAttachmentsAndSmallBody)
+{
+    constexpr size_t attachmentCount = largeMessageAttachmentCount + 50;
+    auto body = makeBody(16);
+    auto attachmentSendRights = sendRightCount(m_attachmentPort);
+
+    auto encoder = makeEncoder(body);
+    for (size_t i = 0; i < attachmentCount; ++i)
+        encoder.get() << MachSendRight::create(m_attachmentPort);
+    auto message = IPC::MachMessage::create(WTF::move(encoder));
+    ASSERT_TRUE(!!message);
+    ASSERT_EQ(message->send(m_port), IPC::MachMessage::SendResult::Success);
+    message = nullptr;
+
+    {
+        auto received = IPC::MachMessage::receiveDecoder(m_port);
+        ASSERT_TRUE(!!received);
+        auto decoder = WTF::move(received.value());
+        auto decodedBody = decoder->decode<Vector<uint8_t>>();
+        ASSERT_TRUE(!!decodedBody);
+        EXPECT_TRUE(*decodedBody == body);
+        for (size_t i = 0; i < attachmentCount; ++i) {
+            auto sendRight = decoder->decode<MachSendRight>();
+            ASSERT_TRUE(!!sendRight) << "attachment " << i;
+            ASSERT_EQ(sendRight->sendRight(), m_attachmentPort) << "attachment " << i;
+        }
+    }
+    EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
+}
+
+// The platform takes at most IPC_KMSG_MAX_OOL_PORT_COUNT (16383) ports in one message. create() refuses an encoder
+// with more attachments than that, and releases them with the encoder.
+TEST_F(MachMessageTest, CreateWithTooManyAttachmentsFails)
+{
+    constexpr size_t attachmentCount = IPC::MachMessage::maxAttachmentCount + 1;
+    auto attachmentSendRights = sendRightCount(m_attachmentPort);
+
+    auto encoder = makeEncoder(makeBody(128));
+    for (size_t i = 0; i < attachmentCount; ++i)
+        encoder.get() << MachSendRight::create(m_attachmentPort);
+    EXPECT_FALSE(!!IPC::MachMessage::create(WTF::move(encoder)));
+    EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
+}
+
+// A message that was never sent owns the rights of its attachments and the buffer of its out-of-line body, but not
+// its destination.
+TEST_F(MachMessageTest, DestroyingUnsentMessageReleasesWhatItOwns)
+{
+    auto attachmentSendRights = sendRightCount(m_attachmentPort);
+    auto destinationSendRights = sendRightCount(m_port);
+
+    auto encoder = makeEncoder(makeBody(64 * KB));
+    encoder.get() << MachSendRight::create(m_attachmentPort);
+    auto message = IPC::MachMessage::create(WTF::move(encoder));
+    ASSERT_TRUE(!!message);
+    EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights + 1);
+    message = nullptr;
+
+    EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
+    EXPECT_EQ(sendRightCount(m_port), destinationSendRights);
+    EXPECT_FALSE(!!IPC::MachMessage::receiveDecoder(m_port));
+}
+
+// A message built with create() that times out is the message that the kernel returned, and is sent again as it
+// is, as often as it takes.
+TEST_F(MachMessageTest, CreatedMessageThatTimedOutIsSentAgain)
+{
+    setQueueLength(m_port, 1);
+    auto [fillerResult, fillerRetryableMessage] = createAndSend(makeEncoder({ }), m_port);
+    ASSERT_EQ(fillerResult, IPC::MachMessage::SendResult::Success);
+
+    auto body = makeBody(64 * KB);
+    auto attachmentSendRights = sendRightCount(m_attachmentPort);
+    auto destinationSendRights = sendRightCount(m_port);
+    auto encoder = makeEncoder(body);
+    encoder.get() << MachSendRight::create(m_attachmentPort);
+    auto message = IPC::MachMessage::create(WTF::move(encoder));
+    ASSERT_TRUE(!!message);
+
+    ASSERT_EQ(message->send(m_port), IPC::MachMessage::SendResult::Timeout);
+    EXPECT_TRUE(message->wasReturnedFromSend());
+    // The kernel returned the message holding a reference to the destination, and the attachment.
+    EXPECT_EQ(sendRightCount(m_port), destinationSendRights + 1);
+    EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights + 1);
+
+    // A second timeout leaves the message as it was.
+    ASSERT_EQ(message->send(m_port), IPC::MachMessage::SendResult::Timeout);
+    EXPECT_EQ(sendRightCount(m_port), destinationSendRights + 1);
+    EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights + 1);
+
+    // Make room in the queue, and send the message again.
+    ASSERT_TRUE(!!IPC::MachMessage::receiveDecoder(m_port));
+    ASSERT_EQ(message->send(m_port), IPC::MachMessage::SendResult::Success);
+    message = nullptr;
+    EXPECT_EQ(sendRightCount(m_port), destinationSendRights);
+
+    {
+        auto received = IPC::MachMessage::receiveDecoder(m_port);
+        ASSERT_TRUE(!!received);
+        auto decoder = WTF::move(received.value());
+        auto decodedBody = decoder->decode<Vector<uint8_t>>();
+        ASSERT_TRUE(!!decodedBody);
+        EXPECT_TRUE(*decodedBody == body);
+        auto sendRight = decoder->decode<MachSendRight>();
+        ASSERT_TRUE(!!sendRight);
+        EXPECT_EQ(sendRight->sendRight(), m_attachmentPort);
+    }
+    EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
+}
+
+// A message that the kernel returned owns a reference to its destination, the rights of its attachments and a mapping
+// of its body, and destroying it releases all of them.
+TEST_F(MachMessageTest, DestroyingMessageThatTimedOutReleasesWhatItOwns)
+{
+    setQueueLength(m_port, 1);
+    auto [fillerResult, fillerRetryableMessage] = createAndSend(makeEncoder({ }), m_port);
+    ASSERT_EQ(fillerResult, IPC::MachMessage::SendResult::Success);
+
+    auto attachmentSendRights = sendRightCount(m_attachmentPort);
+    auto destinationSendRights = sendRightCount(m_port);
+    auto encoder = makeEncoder(makeBody(64 * KB));
+    encoder.get() << MachSendRight::create(m_attachmentPort);
+    auto message = IPC::MachMessage::create(WTF::move(encoder));
+    ASSERT_TRUE(!!message);
+    ASSERT_EQ(message->send(m_port), IPC::MachMessage::SendResult::Timeout);
+    message = nullptr;
+
+    EXPECT_EQ(sendRightCount(m_port), destinationSendRights);
+    EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
+    // Only the filler message was sent.
+    ASSERT_TRUE(!!IPC::MachMessage::receiveDecoder(m_port));
+    EXPECT_FALSE(!!IPC::MachMessage::receiveDecoder(m_port));
+}
+
+// A send to a port whose receive right is gone leaves a message built with create() as it was, so it can still be
+// sent to another destination.
+TEST_F(MachMessageTest, CreatedMessageSentToDeadPortIsUnchanged)
+{
+    auto body = makeBody(64 * KB);
+    mach_port_t deadPort = allocatePortWithSendRight();
+    mach_port_mod_refs(mach_task_self(), deadPort, MACH_PORT_RIGHT_RECEIVE, -1);
+    auto deadPortSendRights = sendRightCount(deadPort);
+    auto attachmentSendRights = sendRightCount(m_attachmentPort);
+
+    auto encoder = makeEncoder(body);
+    encoder.get() << MachSendRight::create(m_attachmentPort);
+    auto message = IPC::MachMessage::create(WTF::move(encoder));
+    ASSERT_TRUE(!!message);
+    EXPECT_EQ(message->send(deadPort), IPC::MachMessage::SendResult::InvalidDestinationPort);
+    EXPECT_FALSE(message->wasReturnedFromSend());
+    EXPECT_EQ(sendRightCount(deadPort), deadPortSendRights);
+    EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights + 1);
+
+    ASSERT_EQ(message->send(m_port), IPC::MachMessage::SendResult::Success);
+    message = nullptr;
+    {
+        auto received = IPC::MachMessage::receiveDecoder(m_port);
+        ASSERT_TRUE(!!received);
+        auto decoder = WTF::move(received.value());
+        auto decodedBody = decoder->decode<Vector<uint8_t>>();
+        ASSERT_TRUE(!!decodedBody);
+        EXPECT_TRUE(*decodedBody == body);
+        auto sendRight = decoder->decode<MachSendRight>();
+        ASSERT_TRUE(!!sendRight);
+        EXPECT_EQ(sendRight->sendRight(), m_attachmentPort);
+    }
+    EXPECT_EQ(sendRightCount(m_attachmentPort), attachmentSendRights);
     mach_port_deallocate(mach_task_self(), deadPort);
 }
 
