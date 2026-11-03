@@ -59,7 +59,6 @@ enum class BlockAvoidanceReason : uint8_t {
     NotABlockFormattingContextRoot,
     RootIsRenderView,
     RootHasListMarker,
-    RootIsTableCell,
     RootIsMultiColumnFlow,
     RootIsFieldset,
     RootIsMarquee,
@@ -161,21 +160,6 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     };
     if ((rootContainer.isFlexItemIncludingDeprecated() || rootContainer.isGridItem()) && rootContainer.isAnonymous() && hasPercentageBlockSizeContent())
         return BlockAvoidanceReason::RootIsAnonymousFlexOrGridItem;
-    // FIXME: Stretch and calc-size() block sizes inside a table cell, which resolve against its available block size (RenderBox::availableLogicalHeightUsing).
-    auto hasStretchOrCalcSizeBlockSizeContent = [&] {
-        for (CheckedRef descendant : descendantsOfType<RenderBox>(rootContainer)) {
-            CheckedRef style = descendant->style();
-            auto writingMode = descendant->writingMode();
-            auto isStretchOrCalcSize = [](auto& size) {
-                return size.isStretch() || size.isCalcSize();
-            };
-            if (!descendant->isOutOfFlowPositioned() && (isStretchOrCalcSize(style->logicalHeight(writingMode)) || isStretchOrCalcSize(style->logicalMinHeight(writingMode)) || isStretchOrCalcSize(style->logicalMaxHeight(writingMode))))
-                return true;
-        }
-        return false;
-    };
-    if (rootContainer.isRenderTableCell() && hasStretchOrCalcSizeBlockSizeContent())
-        return BlockAvoidanceReason::RootIsTableCell;
     // FIXME: horizontal-bt, whose inline content the inline formatting context places from the border and padding at the top, its block-end
     // side (BoxGeometryUpdater::formattingContextConstraints).
     if (rootContainer.writingMode().isHorizontal() && rootContainer.writingMode().isBlockFlipped())
@@ -819,8 +803,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "root: render view"_s;
     case BlockAvoidanceReason::RootHasListMarker:
         return "root: list item with a marker"_s;
-    case BlockAvoidanceReason::RootIsTableCell:
-        return "root: table cell in quirks mode or with percentage heights"_s;
     case BlockAvoidanceReason::RootIsMultiColumnFlow:
         return "root: multi-column flow"_s;
     case BlockAvoidanceReason::RootIsFieldset:
