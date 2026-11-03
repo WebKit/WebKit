@@ -32,6 +32,10 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <wtf/RetainPtr.h>
 
+@interface WKWebView (TitlebarTapScrollsToTop)
+- (void)_scrollToTopForTitlebarTap;
+@end
+
 @interface TitlebarSeparatorTestWKWebView : TestWKWebView
 - (id<NSScrollViewSeparatorTrackingAdapter>)separatorTrackingAdapter;
 @end
@@ -184,6 +188,24 @@ TEST(WKWebViewTitlebarSeparatorTests, ParentWhileScrolled)
 
     auto separatorTrackingAdapter = (id<NSScrollViewSeparatorTrackingAdapter>)webView.get();
     EXPECT_TRUE([separatorTrackingAdapter hasScrolledContentsUnderTitlebar]);
+}
+
+TEST(WKWebViewTitlebarSeparatorTests, ScrollToTopForTitlebarTap)
+{
+    RetainPtr webView = adoptNS([[TitlebarSeparatorTestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView stringByEvaluatingJavaScript:@"scrollTo(0, 1000)"];
+    [webView waitForNextPresentationUpdate];
+
+    auto separatorTrackingAdapter = [webView separatorTrackingAdapter];
+    EXPECT_TRUE([separatorTrackingAdapter hasScrolledContentsUnderTitlebar]);
+    EXPECT_TRUE([webView respondsToSelector:@selector(_scrollToTopForTitlebarTap)]);
+
+    [webView _scrollToTopForTitlebarTap];
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return ![separatorTrackingAdapter hasScrolledContentsUnderTitlebar];
+    }));
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue], 0);
 }
 
 #endif // PLATFORM(MAC)

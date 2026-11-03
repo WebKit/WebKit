@@ -1198,6 +1198,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _impl->hasScrolledContentsUnderTitlebar();
 }
 
+- (void)_scrollToTopForTitlebarTap
+{
+    [self _scrollToEdge:_WKRectEdgeTop animated:YES];
+}
+
 - (BOOL)respondsToSelector:(SEL)selector
 {
 #if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
