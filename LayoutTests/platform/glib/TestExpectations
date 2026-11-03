@@ -2848,6 +2848,7 @@ webkit.org/b/314659 webrtc/getDisplayMedia-pc-resolution.html [ Pass Failure Tim
 
 # Flaky on the bots, but consistently pass locally.
 http/wpt/webrtc/script-transform-oversized-frame.html [ Pass Failure ]
+webrtc/audio-replaceTrack-ringbuffer-uaf.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
