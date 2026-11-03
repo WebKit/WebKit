@@ -273,7 +273,8 @@ void CSSStyleSheet::forEachStyleScope(NOESCAPE const Function<void(Style::Scope&
         apply(*scope);
         return;
     }
-    for (Ref treeScope : m_adoptingTreeScopes)
+
+    for (const auto& treeScope : copyToVectorOf<Ref<ContainerNode>>(m_adoptingTreeScopes))
         apply(styleScopeFor(treeScope));
 }
 
