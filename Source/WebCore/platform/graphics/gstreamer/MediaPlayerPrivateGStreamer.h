@@ -258,7 +258,12 @@ public:
         return m_quirkStates.get(owner);
     }
 
-    void setLiveStream(bool isLiveStream) { m_isLiveStream = isLiveStream; }
+    void setLiveStream(bool isLiveStream)
+    {
+        if (m_hasAdaptiveDemuxer)
+            return;
+        m_isLiveStream = isLiveStream;
+    }
 
     bool requiresVideoSinkCapsNotifications() const;
     void videoSinkCapsChanged(GstPad*);
@@ -401,8 +406,10 @@ protected:
     bool m_didErrorOccur { false };
     mutable bool m_isEndReached { false };
     mutable std::optional<bool> m_isLiveStream;
+    bool m_hasAdaptiveDemuxer { false };
 
     bool isSeamlessSeekingEnabled() const;
+    void updateLiveStreamFromDuration();
     bool m_isSegmentSeekAllowed { true };
 
     // Must reflect whether the last successfull call to gst_element_set_state() was for PLAYING.
