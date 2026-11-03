@@ -128,7 +128,6 @@ private:
 
     void clipRoundedRect(const FloatRoundedRect&) final { }
     void clipOutRoundedRect(const FloatRoundedRect&) final { }
-    void clipToImageBuffer(ImageBuffer&, const FloatRect&) final { }
     void clipToNativeImage(const NativeImage&, const FloatRect&) final { }
 
     void fillRect(const FloatRect&, Gradient&) final { }

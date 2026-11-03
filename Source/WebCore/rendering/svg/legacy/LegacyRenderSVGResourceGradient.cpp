@@ -27,6 +27,7 @@
 #include "GradientAttributes.h"
 #include "GraphicsContext.h"
 #include "LegacyRenderSVGResourceGradientInlines.h"
+#include "NativeImage.h"
 #include "RenderSVGText.h"
 #include "SVGRenderingContext.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -255,12 +256,11 @@ void TextGradientClipper::postApplyResource(RenderElement& renderer, GraphicsCon
 
     GraphicsContextStateSaver stateSaver(*context);
 
-    SVGRenderingContext::clipToImageBuffer(*context, targetRect, scale, m_imageBuffer, false);
+    RefPtr maskImage = ImageBuffer::sinkIntoNativeImage(std::exchange(m_imageBuffer, nullptr));
+    SVGRenderingContext::clipToNativeImage(*context, targetRect, scale, maskImage, false);
 
     context->setFillGradient(WTF::move(gradient), userspaceTransform);
     context->fillRect(targetRect);
-
-    m_imageBuffer = nullptr;
 }
 
 class TextGradientCompositor : public GradientApplier {

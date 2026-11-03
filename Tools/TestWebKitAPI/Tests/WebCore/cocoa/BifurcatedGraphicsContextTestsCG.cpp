@@ -293,33 +293,6 @@ TEST(BifurcatedGraphicsContextTests, ApplyDeviceScaleFactor)
     EXPECT_EQ(primaryCTM.yScale(), 2);
 }
 
-TEST(BifurcatedGraphicsContextTests, ClipToImageBuffer)
-{
-    Ref primaryContext = RecorderImpl::create({ }, FloatRect(0, 0, contextWidth, contextHeight), { });
-    Ref secondaryContext = RecorderImpl::create({ }, FloatRect(0, 0, contextWidth, contextHeight), { });
-
-    BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
-
-    auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
-    ctx.clipToImageBuffer(*imageBuffer, { 0, 0, 100, 100 });
-
-    auto runTest = [&] (const DisplayList& displayList) {
-        EXPECT_FALSE(displayList.items().empty());
-        bool sawClipToNativeImage = false;
-
-        for (auto& item : displayList.items()) {
-            if (std::holds_alternative<ClipToNativeImage>(item))
-                sawClipToNativeImage = true;
-        }
-
-        EXPECT_TRUE(sawClipToNativeImage);
-    };
-
-    // Ensure that both contexts have clip-to-native-image commands.
-    runTest(primaryContext->takeDisplayList());
-    runTest(secondaryContext->takeDisplayList());
-}
-
 TEST(BifurcatedGraphicsContextTests, ClipToNativeImage)
 {
     Ref primaryContext = RecorderImpl::create({ }, FloatRect(0, 0, contextWidth, contextHeight), { });

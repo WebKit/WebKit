@@ -1128,14 +1128,6 @@ void GraphicsContextCG::clipTransformedPath(const AffineTransform& pathTransform
     CGContextSetCTM(context, ctm);
 }
 
-void GraphicsContextCG::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
-{
-    auto nativeImage = imageBuffer.createNativeImageReference();
-    if (!nativeImage)
-        return;
-    clipToNativeImage(*nativeImage, destRect);
-}
-
 void GraphicsContextCG::clipToNativeImage(const NativeImage& nativeImage, const FloatRect& destRect)
 {
     // FIXME: This image needs to be grayscale to be used as an alpha mask here.

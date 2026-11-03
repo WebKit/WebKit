@@ -172,14 +172,6 @@ void RecorderImpl::clipOutRoundedRect(const FloatRoundedRect& clipRect)
     m_items.append(ClipOutRoundedRect(clipRect));
 }
 
-void RecorderImpl::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
-{
-    // Record the buffer contents as they are now. The buffer may be drawn to or destroyed before the
-    // display list is replayed.
-    if (RefPtr image = imageBuffer.copyNativeImage())
-        clipToNativeImage(*image, destinationRect);
-}
-
 void RecorderImpl::clipToNativeImage(const NativeImage& image, const FloatRect& destinationRect)
 {
     updateStateForClipToImage(destinationRect);

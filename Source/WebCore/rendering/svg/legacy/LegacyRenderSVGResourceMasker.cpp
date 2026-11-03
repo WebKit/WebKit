@@ -89,39 +89,38 @@ auto LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
             drawColorSpace = ColorSpace::LinearSRGB();
         }
         // FIXME (149470): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks alpha masking, though.
-        maskerData->maskImage = context->createScaledImageBuffer(decoratedBounds, scale, maskColorSpace, RenderingMode::Unaccelerated);
-        if (!maskerData->maskImage)
+        RefPtr maskImageBuffer = context->createScaledImageBuffer(decoratedBounds, scale, maskColorSpace, RenderingMode::Unaccelerated);
+        if (!maskImageBuffer)
             return { };
 
-        if (!drawContentIntoMaskImage(maskerData, drawColorSpace, &renderer))
-            maskerData->maskImage = nullptr;
+        if (drawContentIntoMaskImage(*maskImageBuffer, drawColorSpace, &renderer))
+            maskerData->maskImage = ImageBuffer::sinkIntoNativeImage(WTF::move(maskImageBuffer));
     }
 
     if (!maskerData->maskImage)
         return { };
 
-    SVGRenderingContext::clipToImageBuffer(*context, decoratedBounds, scale, maskerData->maskImage, missingMaskerData);
+    SVGRenderingContext::clipToNativeImage(*context, decoratedBounds, scale, maskerData->maskImage, missingMaskerData);
     return { ApplyResult::ResourceApplied };
 }
 
-bool LegacyRenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, const ColorSpace& colorSpace, RenderObject* object)
+bool LegacyRenderSVGResourceMasker::drawContentIntoMaskImage(ImageBuffer& maskImage, const ColorSpace& colorSpace, RenderObject* object)
 {
-    RefPtr maskImage = maskerData->maskImage;
-    auto& maskImageContext = maskImage->context();
+    auto& maskImageContext = maskImage.context();
     auto objectBoundingBox = object->objectBoundingBox();
 
     if (!drawContentIntoContext(maskImageContext, objectBoundingBox))
         return false;
 
 #if !USE(CG) && !USE(SKIA)
-    maskImage->transformToColorSpace(colorSpace);
+    maskImage.transformToColorSpace(colorSpace);
 #else
     UNUSED_PARAM(colorSpace);
 #endif
 
     // Create the luminance mask.
     if (style().maskType() == MaskType::Luminance)
-        maskImage->convertToLuminanceMask();
+        maskImage.convertToLuminanceMask();
 
     return true;
 }
