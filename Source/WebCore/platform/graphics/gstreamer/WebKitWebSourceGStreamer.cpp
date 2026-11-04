@@ -58,6 +58,8 @@ using namespace WebCore;
 // the download task resumes.
 #define LOW_QUEUE_THRESHOLD 2 * 1024 * 1024
 
+enum class WebKitWebSrcLoadError : uint8_t { None, Read, Failed };
+
 struct WebKitWebSrcPrivate {
 
     ThreadSafeWeakPtr<WebCore::MediaPlayerPrivateGStreamer> player;
@@ -98,6 +100,13 @@ struct WebKitWebSrcPrivate {
         uint64_t totalDownloadedBytes { 0 };
         bool doesHaveEOS { false }; // Set both when we reach stopPosition and on errors (including on responseReceived).
         bool isDownloadSuspended { false }; // Set to true from the network handler when the high water level is reached.
+
+        // Load errors are recorded here from the main-thread resource-client callbacks and turned into a
+        // GST_ELEMENT_ERROR by create() on the streaming thread. Posting the message from the main thread
+        // would run the downstream bin's synchronous message handler there, and that thread is the one that
+        // delivers data to every WebKitWebSrc, so a demuxer holding a lock across a request would deadlock.
+        WebKitWebSrcLoadError pendingError { WebKitWebSrcLoadError::None };
+        GUniquePtr<char> pendingErrorMessage;
 
         // Obtained by means of GstContext queries before making the first HTTP request, unless it
         // was explicitely set using webKitWebSrcSetResourceLoader() by the playbin source-setup
@@ -274,6 +283,8 @@ static void webkitWebSrcReset([[maybe_unused]] WebKitWebSrc* src, DataMutexLocke
     // Reset request state. Any previous request has been cancelled at this point.
     members->wasResponseReceived = false;
     members->doesHaveEOS = false;
+    members->pendingError = WebKitWebSrcLoadError::None;
+    members->pendingErrorMessage = nullptr;
     members->downloadStartTime = WallTime::nan();
     members->totalDownloadedBytes = 0; // Resetted for each request, used to estimate download speed.
     members->pendingHttpHeadersMessage = nullptr;
@@ -455,6 +466,16 @@ static void stopLoaderIfNeeded([[maybe_unused]] WebKitWebSrc* src, DataMutexLock
     members->resource->shutdown();
 }
 
+static GstFlowReturn webKitWebSrcPostPendingError(WebKitWebSrc* src, DataMutexLocker<WebKitWebSrcPrivate::StreamingMembers>& members)
+{
+    const char* message = members->pendingErrorMessage ? members->pendingErrorMessage.get() : "Load failed";
+    if (members->pendingError == WebKitWebSrcLoadError::Failed)
+        GST_ELEMENT_ERROR(src, RESOURCE, FAILED, ("%s", message), (nullptr));
+    else
+        GST_ELEMENT_ERROR(src, RESOURCE, READ, ("%s", message), (nullptr));
+    return GST_FLOW_ERROR;
+}
+
 static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
 {
     ASSERT(!isMainThread());
@@ -497,11 +518,14 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
 
     // Wait for the response headers.
     members->responseCondition.wait(members.mutex(), [&] () {
-        return members->wasResponseReceived || members->isFlushing;
+        return members->wasResponseReceived || members->isFlushing || members->pendingError != WebKitWebSrcLoadError::None;
     });
 
     if (members->isFlushing)
         return GST_FLOW_FLUSHING;
+
+    if (members->pendingError != WebKitWebSrcLoadError::None)
+        return webKitWebSrcPostPendingError(src, members);
 
     if (members->pendingCaps) {
         GST_DEBUG_OBJECT(src, "Setting caps: %" GST_PTR_FORMAT, members->pendingCaps.get());
@@ -1074,7 +1098,9 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     members->pendingHttpHeadersEvent = adoptGRef(gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_STICKY, httpHeaders.release()));
 
     if (response.httpStatusCode() >= httpStatus400BadRequest) {
-        GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received %d HTTP error code", m_requestNumber, response.httpStatusCode()), (nullptr));
+        members->pendingErrorMessage = GUniquePtr<char>(g_strdup_printf("R%u: Received %d HTTP error code", m_requestNumber, response.httpStatusCode()));
+        members->pendingError = WebKitWebSrcLoadError::Read;
+        members->wasResponseReceived = true;
         members->doesHaveEOS = true;
         members->responseCondition.notifyOne();
         completionHandler(ShouldContinuePolicyCheck::No);
@@ -1085,7 +1111,9 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         // Seeking ... we expect a 206 == PARTIAL_CONTENT
         if (response.httpStatusCode() != httpStatus206PartialContent) {
             // Range request completely failed.
-            GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received unexpected %d HTTP status code for range request", m_requestNumber, response.httpStatusCode()), (nullptr));
+            members->pendingErrorMessage = GUniquePtr<char>(g_strdup_printf("R%u: Received unexpected %d HTTP status code for range request", m_requestNumber, response.httpStatusCode()));
+            members->pendingError = WebKitWebSrcLoadError::Read;
+            members->wasResponseReceived = true;
             members->doesHaveEOS = true;
             members->responseCondition.notifyOne();
             completionHandler(ShouldContinuePolicyCheck::No);
@@ -1221,7 +1249,8 @@ void CachedResourceStreamingClient::accessControlCheckFailed(PlatformMediaResour
     if (members->requestNumber != m_requestNumber)
         return;
 
-    GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: %s", m_requestNumber, error.localizedDescription().utf8().legacyCStringPointer()), (nullptr));
+    members->pendingErrorMessage = GUniquePtr<char>(SAFE_G_STRDUP_PRINTF("R%u: %s", m_requestNumber, error.localizedDescription().utf8()));
+    members->pendingError = WebKitWebSrcLoadError::Read;
     members->doesHaveEOS = true;
     members->responseCondition.notifyOne();
 }
@@ -1239,7 +1268,8 @@ void CachedResourceStreamingClient::loadFailed(PlatformMediaResource&, const Res
 
     if (!error.isCancellation()) {
         GST_ERROR_OBJECT(src.get(), "R%u: Have failure: %s", m_requestNumber, error.localizedDescription().utf8());
-        GST_ELEMENT_ERROR(src.get(), RESOURCE, FAILED, ("R%u: %s", m_requestNumber, error.localizedDescription().utf8().legacyCStringPointer()), (nullptr));
+        members->pendingErrorMessage = GUniquePtr<char>(SAFE_G_STRDUP_PRINTF("R%u: %s", m_requestNumber, error.localizedDescription().utf8()));
+        members->pendingError = WebKitWebSrcLoadError::Failed;
     } else
         GST_LOG_OBJECT(src.get(), "R%u: Request cancelled: %s", m_requestNumber, error.localizedDescription().utf8());
 
