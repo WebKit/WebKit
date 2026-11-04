@@ -9492,6 +9492,60 @@ static void testARM64SIMDStackPointerBaseEncoding()
     CHECK_ARM64_ENCODING(0x4d0093e0U, st1<32>(q0, sp, 3));
 }
 
+// disassembleAddSubtractImmediate is protected; expose it so the tests can call it directly.
+class TestableARM64Assembler : public ARM64Assembler {
+public:
+    using ARM64Assembler::disassembleAddSubtractImmediate;
+    using ARM64Assembler::Datasize;
+    using ARM64Assembler::AddOp;
+};
+
+// Verifies that disassembleAddSubtractImmediate recovers every field of an ADD/SUB (immediate)
+// instruction, including all 12 bits of the imm12 field.
+static void testARM64AddSubtractImmediateDecoding()
+{
+    using namespace ARM64Registers;
+
+    auto checkDecode = [](uint32_t insn, int sf, int op, int setFlags, int shift, int imm12, MacroAssembler::RegisterID rn, MacroAssembler::RegisterID rd) {
+        TestableARM64Assembler::Datasize decodedSf;
+        TestableARM64Assembler::AddOp decodedOp;
+        ARM64Assembler::SetFlags decodedSetFlags;
+        int decodedShift;
+        int decodedImm12;
+        MacroAssembler::RegisterID decodedRn;
+        MacroAssembler::RegisterID decodedRd;
+        CHECK_EQ(TestableARM64Assembler::disassembleAddSubtractImmediate(&insn, decodedSf, decodedOp, decodedSetFlags, decodedShift, decodedImm12, decodedRn, decodedRd), true);
+        CHECK_EQ(static_cast<int>(decodedSf), sf);
+        CHECK_EQ(static_cast<int>(decodedOp), op);
+        CHECK_EQ(static_cast<int>(decodedSetFlags), setFlags);
+        CHECK_EQ(decodedShift, shift);
+        CHECK_EQ(decodedImm12, imm12);
+        CHECK_EQ(decodedRn, rn);
+        CHECK_EQ(decodedRd, rd);
+    };
+
+    // Round trips through the assembler's own encoder. The immediates exercise every imm12
+    // bit position, including bits 10 and 11.
+    for (int imm : { 0, 1, 0x3ff, 0x400, 0x401, 0x7ff, 0x800, 0xc00, 0xfff }) {
+        // add x0, x1, #imm
+        checkDecode(encodeARM64Instruction([&](ARM64Assembler& a) {
+            a.add<64>(x0, x1, UInt12(imm));
+        }), 1, 0, 0, 0, imm, x1, x0);
+        // subs w2, w3, #imm, lsl #12
+        checkDecode(encodeARM64Instruction([&](ARM64Assembler& a) {
+            a.sub<32, ARM64Assembler::S>(x2, x3, UInt12(imm), 12);
+        }), 0, 1, 1, 1, imm, x3, x2);
+    }
+
+    // SP is legal in the Rn and Rd fields when flags are not set; Rd 31 means XZR when they are.
+    checkDecode(encodeARM64Instruction([](ARM64Assembler& a) {
+        a.add<64>(sp, sp, UInt12(16));
+    }), 1, 0, 0, 0, 16, sp, sp);
+    checkDecode(encodeARM64Instruction([](ARM64Assembler& a) {
+        a.cmp<64>(x1, UInt12(0x42));
+    }), 1, 1, 1, 0, 0x42, x1, zr);
+}
+
 // Test half-precision FMOV encoding (cmode=0b1110, op=1)
 // Verifies that 16-bit, 32-bit, and 64-bit FMOV use correct encodings
 static void testFMovHalfPrecisionEncoding()
@@ -10322,6 +10376,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testARM64SmovEncoding());
     RUN(testARM64SIMDShiftAndTableEncoding());
     RUN(testARM64SIMDStackPointerBaseEncoding());
+    RUN(testARM64AddSubtractImmediateDecoding());
 #endif
 
     RUN(testGPRInfoConsistency());

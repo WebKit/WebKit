@@ -4419,7 +4419,7 @@ protected:
         op = static_cast<AddOp>((insn >> 30) & 1);
         S = static_cast<SetFlags>((insn >> 29) & 1);
         shift = (insn >> 22) & 3;
-        imm12 = (insn >> 10) & 0x3ff;
+        imm12 = (insn >> 10) & 0xfff;
         rn = disassembleXOrSp((insn >> 5) & 0x1f);
         rd = disassembleXOrZrOrSp(S, insn & 0x1f);
         return (insn & 0x1f000000) == 0x11000000;
