@@ -14,6 +14,7 @@ User Guide
    finding
    reports-and-charts
    tips
+   markdown
    preferences
    extensions
 

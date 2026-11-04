@@ -144,6 +144,14 @@ if (typeof Node == 'undefined') {
     };
 }
 
+/* Returns the text to quote when replying to a comment. Markdown comments are
+ * displayed as rendered HTML, so their original text is kept in an attribute.
+ */
+function getCommentSource(element) {
+    var source = element.getAttribute('data-markdown-source');
+    return source !== null ? source : getText(element);
+}
+
 /* Concatenates all text from element's childNodes. This is used
  * instead of innerHTML because we want the actual text (and
  * innerText is non-standard).

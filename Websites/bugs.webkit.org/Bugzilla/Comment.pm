@@ -43,12 +43,14 @@ use constant DB_COLUMNS => qw(
     already_wrapped
     type
     extra_data
+    is_markdown
 );
 
 use constant UPDATE_COLUMNS => qw(
     isprivate
     type
     extra_data
+    is_markdown
 );
 
 use constant DB_TABLE => 'longdescs';
@@ -65,6 +67,7 @@ use constant VALIDATORS => {
     work_time   => \&_check_work_time,
     thetext     => \&_check_thetext,
     isprivate   => \&_check_isprivate,
+    is_markdown => \&Bugzilla::Object::check_boolean,
     extra_data  => \&_check_extra_data,
     type        => \&_check_type,
 };
@@ -181,6 +184,8 @@ sub body        { return $_[0]->{'thetext'};   }
 sub bug_id      { return $_[0]->{'bug_id'};    }
 sub creation_ts { return $_[0]->{'bug_when'};  }
 sub is_private  { return $_[0]->{'isprivate'}; }
+sub is_markdown { return $_[0]->{'is_markdown'}; }
+
 sub work_time   {
     # Work time is returned as a string (see bug 607909)
     return 0 if $_[0]->{'work_time'} + 0 == 0;
@@ -282,6 +287,7 @@ sub body_full {
 sub set_is_private  { $_[0]->set('isprivate',  $_[1]); }
 sub set_type        { $_[0]->set('type',       $_[1]); }
 sub set_extra_data  { $_[0]->set('extra_data', $_[1]); }
+sub set_is_markdown { $_[0]->set('is_markdown', $_[1]); }
 
 sub add_tag {
     my ($self, $tag) = @_;
@@ -530,6 +536,10 @@ C<string> Time spent as related to this comment.
 
 C<boolean> Comment is marked as private.
 
+=item C<is_markdown>
+
+C<boolean> Whether this comment needs L<Markdown|Bugzilla::Markdown> rendering to be applied.
+
 =item C<already_wrapped>
 
 If this comment is stored in the database word-wrapped, this will be C<1>.
@@ -624,6 +634,16 @@ A string, the full text of the comment as it would be displayed to an end-user.
 =back
 
 =cut
+
+=head2 Modifiers
+
+=over
+
+=item C<set_is_markdown>
+
+Sets whether this comment needs L<Markdown|Bugzilla::Markdown> rendering to be applied.
+
+=back
 
 =head1 B<Methods in need of POD>
 

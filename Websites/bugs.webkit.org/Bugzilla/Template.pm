@@ -218,7 +218,7 @@ sub quoteUrls {
     my $safe_protocols = SAFE_URL_REGEXP();
     $text =~ s~\b($safe_protocols)
               ~($tmp = html_quote($1)) &&
-               ($things[$count++] = "<a rel=\"nofollow\" href=\"$tmp\">$tmp</a>") &&
+               ($things[$count++] = "<a href=\"$tmp\" rel=\"nofollow\">$tmp</a>") &&
                ("\x{FDD2}" . ($count-1) . "\x{FDD3}")
               ~egox;
 
@@ -563,11 +563,14 @@ sub _concatenate_js {
     my $cgi_path   = bz_locations()->{cgi_path};
     my $skins_path = bz_locations()->{assetsdir};
 
-    # build minified files
-    my @minified;
+    # build minified files. The cache keys include each file's mtime so that
+    # an edited file is minified again instead of being served stale.
+    my (@minified, @keys);
     foreach my $source (@$sources) {
         next unless -e "$cgi_path/$files{$source}";
-        my $file = $skins_path . '/' . md5_hex($source) . '.js';
+        my $key = $source . '?' . _mtime("$cgi_path/$files{$source}");
+        push @keys, $key;
+        my $file = $skins_path . '/' . md5_hex($key) . '.js';
         if (!-e $file) {
             my $content = read_text("$cgi_path/$files{$source}");
 
@@ -584,7 +587,7 @@ sub _concatenate_js {
     }
 
     # concat files
-    my $file = $skins_path . '/' . md5_hex(join(' ', @$sources)) . '.js';
+    my $file = $skins_path . '/' . md5_hex(join(' ', @keys)) . '.js';
     if (!-e $file) {
         my $content = '';
         foreach my $source (@minified) {
@@ -854,6 +857,26 @@ sub create {
                            },
                            1
                          ],
+
+            markdown => [ sub {
+                  my ($context, $bug, $comment, $user) = @_;
+                  return sub {
+                      my $text = shift;
+                      return unless $text;
+                      if (Bugzilla->feature('markdown')
+                          && ((ref($comment) eq 'HASH' && $comment->{is_markdown})
+                              || (ref($comment) eq 'Bugzilla::Comment' && $comment->is_markdown)))
+                      {
+                          return Bugzilla->markdown->render_html($text, $bug);
+                      }
+                      # $comment may be a plain hash (the preview), which
+                      # quoteUrls can't use.
+                      return quoteUrls($text, $bug,
+                                       blessed($comment) ? $comment : undef, $user);
+                  };
+              },
+              1
+            ],
 
             bug_link => [ sub {
                               my ($context, $bug, $options) = @_;

@@ -2192,7 +2192,7 @@ form .field-container {
     margin: 0;
 }
 
-#comment, .bz_comment, #attachment_table {
+#comment, #comment_preview, .bz_comment, #attachment_table {
     margin-block-end: 1rem;
 }
 
@@ -2393,6 +2393,12 @@ table.attachment_entry {
     content: "\25B6";
 }
 
+.bz_comment_text blockquote {
+    border-inline-start: 3px solid var(--horizontal-rule-color);
+    margin-inline-start: 1rem;
+    padding-inline-start: 1rem;
+}
+
 .bz_comment_text span.quote {
     color: var(--syntax-color-keyword);
     white-space: pre-wrap;
@@ -2417,6 +2423,11 @@ table.attachment_entry {
     white-space: pre-wrap;
 }
 
+.bz_comment_text:not(.markdown) {
+    font-family: "SF Mono", monospace;
+    font-size-adjust: 0.53;
+}
+
 .bz_comment_text p {
     margin: 0;
     margin-block-end: 1rem;
@@ -2432,6 +2443,59 @@ table.attachment_entry {
     border-radius: 0.3rem;
     box-sizing: border-box;
     padding: 0.5rem;
+}
+
+.bz_comment_text.markdown :not(pre) > code {
+    background-color: var(--code-background-color);
+    border: 1px solid var(--code-border-color);
+    border-radius: 0.3rem;
+    font-family: "SF Mono", monospace;
+    font-size-adjust: 0.45;
+    padding: 0.1rem 0.3rem;
+}
+
+/* The #comments selector outranks skins that force pre-wrap on comments. */
+.bz_comment_text.markdown,
+#comments .bz_comment_text.markdown {
+    white-space: normal;
+}
+
+.bz_comment_text.markdown :where(h1, h2, h3, h4, h5, h6) {
+    color: var(--text-color-heading);
+    text-align: left;
+    margin: 0.5rem 0;
+}
+
+.bz_comment_text.markdown :where(h1, h2, h3, h4, h5, h6):not(:first-child) {
+    margin-top: 3rem;
+}
+
+.bz_comment_text.markdown h1 {
+    font-size: 2.5rem;
+}
+
+.bz_comment_text.markdown h2 {
+    font-size: var(--font-size-xlarge);
+}
+
+.bz_comment_text.markdown h3 {
+    font-size: var(--font-size-large);
+}
+
+.bz_comment_text.markdown :where(h4, h5, h6) {
+    font-size: var(--font-size-medium);
+}
+
+.bz_comment_text.markdown h4 {
+    font-weight: 900;
+}
+
+.bz_comment_text.markdown h5 {
+    font-weight: 700;
+}
+
+.bz_comment_text.markdown h6 {
+    color: var(--text-color-coolgray);
 }
 
 /** Attachment page **/
@@ -3030,3 +3094,27 @@ ul.tree .bz_closed a:link {
     }
 
 }
+
+/* highlight.js token colors for fenced code blocks (see js/highlight.min.js).
+   These reuse the --syntax-color-* palette, which already has dark mode values. */
+.hljs-comment, .hljs-quote { color: var(--syntax-color-comment); font-style: italic; }
+.hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-doctag,
+.hljs-name, .hljs-tag { color: var(--syntax-color-keyword); }
+.hljs-string, .hljs-regexp, .hljs-addition { color: var(--syntax-color-string); }
+.hljs-number, .hljs-symbol, .hljs-bullet { color: var(--syntax-color-number); }
+.hljs-title, .hljs-section, .hljs-variable, .hljs-template-variable,
+.hljs-selector-id, .hljs-selector-class { color: var(--syntax-color-identifier); }
+.hljs-type, .hljs-class .hljs-title { color: var(--syntax-color-keyword-type); }
+.hljs-built_in { color: var(--syntax-color-builtin); }
+.hljs-attr, .hljs-attribute { color: var(--syntax-color-attribute); }
+.hljs-meta { color: var(--syntax-color-preprocessor); }
+.hljs-deletion { color: var(--syntax-color-attribute-value); }
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: bold; }
+
+/* HTML and XML: red attribute values and green comments. highlight.js marks
+   the code element with the language class from the fence. */
+code.hljs.language-html .hljs-tag .hljs-string,
+code.hljs.language-xml .hljs-tag .hljs-string { color: var(--syntax-color-attribute-value); }
+code.hljs.language-html .hljs-comment,
+code.hljs.language-xml .hljs-comment { color: var(--syntax-color-xml-comment); }

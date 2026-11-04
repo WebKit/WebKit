@@ -87,6 +87,7 @@ foreach my $include_path (@include_paths) {
             wrap_comment => sub { return $_ },
             none      => sub { return $_ } ,
             ics       => [ sub { return sub { return $_; } }, 1] ,
+            markdown => sub { return $_ } ,
         },
     }
     );
