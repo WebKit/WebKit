@@ -1,0 +1,3 @@
+
+PASS releaseLock() should not deadlock when it triggers a garbage collection
+

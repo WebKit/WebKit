@@ -1,0 +1,9 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--slowPathAllocsBetweenGCs=10 ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+test(() => {
+    for (let i = 0; i < 200; ++i)
+        new ReadableStream().getReader().releaseLock();
+}, "releaseLock() should not deadlock when it triggers a garbage collection");
+</script>

@@ -170,15 +170,21 @@ ExceptionOr<void> ReadableStreamDefaultReader::releaseLock(JSDOMGlobalObject& gl
         Locker locker { m_streamLock };
         if (!m_stream)
             return { };
+    }
 
-        if (RefPtr internalReader = this->internalDefaultReader()) {
-            auto result = internalReader->releaseLock();
-            if (!result.hasException()) {
-                RefPtr stream = std::exchange(m_stream, nullptr);
-                stream->setDefaultReader(nullptr);
-            }
+    if (RefPtr internalReader = this->internalDefaultReader()) {
+        auto result = internalReader->releaseLock();
+        if (result.hasException())
             return result;
+
+        RefPtr<ReadableStream> stream;
+        {
+            Locker locker { m_streamLock };
+            stream = std::exchange(m_stream, nullptr);
         }
+        if (stream)
+            stream->setDefaultReader(nullptr);
+        return result;
     }
 
     genericRelease(globalObject);
