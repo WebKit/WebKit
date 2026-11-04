@@ -2619,6 +2619,7 @@ private:
 #endif
 
     void endPrintingImmediately();
+    void updatePrintingLayerTreeFreezeState();
 
 #if ENABLE(META_VIEWPORT)
     bool shouldEnableViewportBehaviorsForResizableWindows() const;
@@ -3152,6 +3153,7 @@ private:
     RefPtr<WebCore::PrintContext> m_printContext;
     bool m_inActivePrintContextAccessScope { false };
     bool m_shouldEndPrintingImmediately { false };
+    HashSet<WebCore::FrameIdentifier> m_printingFramesFromOtherProcesses;
 
     class PrintContextAccessScope {
     public:

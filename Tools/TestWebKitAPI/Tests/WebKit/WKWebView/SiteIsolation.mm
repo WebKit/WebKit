@@ -20808,6 +20808,51 @@ TEST(SiteIsolation, EndPrintingIsRoutedToTheFrameThatStartedPrinting)
     }));
 }
 
+TEST(SiteIsolation, PrintingSuspendsRenderingInCrossSiteFrame)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://b.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "subframe"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
+    RetainPtr<WKFrameInfo> subframe = [webView mainFrame].childFrames.firstObject.info;
+    EXPECT_NE([mainFrame _processIdentifier], [subframe _processIdentifier]);
+
+    startCountingAnimationFrames(webView.get(), subframe.get());
+    expectAnimationFrameCountToIncrease(webView.get(), subframe.get());
+
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:[mainFrame _handle] completionHandler:^{
+        computedPages = true;
+    }];
+    Util::run(&computedPages);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.matchMedia('print').matches" inFrame:subframe.get()] boolValue];
+    }));
+
+    // A rendering update in the subframe's process would paint the on-screen layers in print mode.
+    auto countWhilePrinting = animationFrameCount(webView.get(), subframe.get());
+    Util::runFor(0.5_s);
+    EXPECT_EQ(animationFrameCount(webView.get(), subframe.get()), countWhilePrinting);
+
+    __block bool endedPrinting = false;
+    [webView _endPrintingForTesting:^{
+        endedPrinting = true;
+    }];
+    Util::run(&endedPrinting);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return ![[webView objectByEvaluatingJavaScript:@"window.matchMedia('print').matches" inFrame:subframe.get()] boolValue];
+    }));
+    expectAnimationFrameCountToIncrease(webView.get(), subframe.get());
+}
+
 #if HAVE(PDFKIT)
 
 // UIKit prints on the main thread and blocks it until the document has been drawn. The frames hosted in

@@ -7480,7 +7480,7 @@ void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
     }
     RefPtr printContext = m_printContext;
 
-    freezeLayerTree(LayerTreeFreezeReason::Printing);
+    updatePrintingLayerTreeFreezeState();
 
     auto computedPageSize = printContext->computedPageSize(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight), printInfo.margin);
 
@@ -7491,7 +7491,7 @@ void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
     // See <rdar://problem/49731211> for cases of this happening.
     printContext = m_printContext;
     if (!printContext) {
-        unfreezeLayerTree(LayerTreeFreezeReason::Printing);
+        updatePrintingLayerTreeFreezeState();
         return;
     }
 
@@ -7522,12 +7522,24 @@ void WebPage::endPrintingImmediately()
     RELEASE_ASSERT(!m_inActivePrintContextAccessScope);
     m_shouldEndPrintingImmediately = false;
 
-    unfreezeLayerTree(LayerTreeFreezeReason::Printing);
-
     if (m_printContext) {
         m_printContext = nullptr;
         protect(corePage())->dispatchAfterPrintEvent();
     }
+
+    updatePrintingLayerTreeFreezeState();
+}
+
+void WebPage::updatePrintingLayerTreeFreezeState()
+{
+    bool shouldFreeze = m_printContext || !m_printingFramesFromOtherProcesses.isEmpty();
+    if (shouldFreeze == m_layerTreeFreezeReasons.contains(LayerTreeFreezeReason::Printing))
+        return;
+
+    if (shouldFreeze)
+        freezeLayerTree(LayerTreeFreezeReason::Printing);
+    else
+        unfreezeLayerTree(LayerTreeFreezeReason::Printing);
 }
 
 void WebPage::computePagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&& completionHandler)
@@ -11848,12 +11860,19 @@ void WebPage::updateOpener(WebCore::FrameIdentifier frameID, std::optional<WebCo
 
 void WebPage::setFramePrinting(WebCore::FrameIdentifier frameID, bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize shouldAdjustViewSize)
 {
+    if (!printing && m_printingFramesFromOtherProcesses.remove(frameID))
+        updatePrintingLayerTreeFreezeState();
+
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
     RefPtr coreFrame = frame->coreFrame();
     if (!coreFrame)
         return;
+
+    if (printing && is<LocalFrame>(*coreFrame) && m_printingFramesFromOtherProcesses.add(frameID).isNewEntry)
+        updatePrintingLayerTreeFreezeState();
+
     coreFrame->setPrinting(printing, pageSize, originalPageSize, maximumShrinkRatio, shouldAdjustViewSize, WebCore::Frame::NotifyUIProcess::No);
 }
 
