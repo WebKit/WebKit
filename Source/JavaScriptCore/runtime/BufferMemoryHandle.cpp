@@ -249,9 +249,11 @@ BufferMemoryHandle::BufferMemoryHandle(void* memory, size_t size, size_t mappedC
     , m_initial(initial)
     , m_maximum(maximum)
 {
-    if (sharingMode == MemorySharingMode::Default && mode == MemoryMode::BoundsChecking)
-        ASSERT(mappedCapacity == size);
-    else {
+    if (sharingMode == MemorySharingMode::Default && mode == MemoryMode::BoundsChecking) {
+        // A mapping is made in whole OS pages, so a wasm memory whose own pages are smaller is mapped
+        // past its exact size. The excess is reserved for growth and is never wasm-visible.
+        ASSERT(mappedCapacity >= size);
+    } else {
 #if ENABLE(WEBASSEMBLY)
         Wasm::activateSignalingMemory();
 #endif
@@ -304,7 +306,10 @@ BufferMemoryHandle::~BufferMemoryHandle()
         case MemoryMode::BoundsChecking: {
             switch (m_sharingMode) {
             case MemorySharingMode::Default: {
-                freeVirtualPagesUnlessNullBasePointer(memory, m_size);
+                ASSERT(m_mappedCapacity || !m_size);
+                // What was mapped is what must be released; m_size may be smaller, and may have moved
+                // since, when the memory's own pages are smaller than an OS page.
+                freeVirtualPagesUnlessNullBasePointer(memory, m_mappedCapacity);
                 break;
             }
             case MemorySharingMode::Shared: {
@@ -329,7 +334,7 @@ BufferMemoryHandle::~BufferMemoryHandle()
     }
 }
 
-void BufferMemoryHandle::replaceAllocatedMemory(void* newMemory, size_t newSize)
+void BufferMemoryHandle::replaceAllocatedMemory(void* newMemory, size_t newSize, size_t newMappedCapacity)
 {
     RELEASE_ASSERT(m_sharingMode == MemorySharingMode::Default);
     RELEASE_ASSERT(m_mode == MemoryMode::BoundsChecking);
@@ -337,14 +342,16 @@ void BufferMemoryHandle::replaceAllocatedMemory(void* newMemory, size_t newSize)
 
     void* oldMemory = memory();
     size_t oldSize = size();
+    size_t oldMappedCapacity = mappedCapacity();
     ASSERT(newSize >= oldSize);
+    ASSERT(newMappedCapacity >= newSize);
 
     m_memory = CagedMemory(newMemory);
-    m_mappedCapacity = newSize;
+    m_mappedCapacity = newMappedCapacity;
     updateSize(newSize);
 
     BufferMemoryManager::singleton().freePhysicalBytes(oldSize);
-    freeVirtualPagesUnlessNullBasePointer(oldMemory, oldSize);
+    freeVirtualPagesUnlessNullBasePointer(oldMemory, oldMappedCapacity);
 }
 
 // FIXME: ARM64E clang has a bug and inlining this function makes optimizer run forever.

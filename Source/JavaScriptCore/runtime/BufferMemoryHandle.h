@@ -178,7 +178,7 @@ public:
     void registerInstance(JSWebAssemblyInstance&);
 #endif
 
-    void replaceAllocatedMemory(void* newMemory, size_t newSize);
+    void replaceAllocatedMemory(void* newMemory, size_t newSize, size_t newMappedCapacity);
 
 private:
     using CagedMemory = CagedPtr<Gigacage::Primitive, void>;

@@ -244,12 +244,16 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
         if (!initialBytes)
             return adoptRef(new Memory(initial, maximum, MemorySharingMode::Default, addressType, log2PageSize, WTF::move(growSuccessCallback)));
 
-        void* slowMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, initialBytes);
+        // Mappings are made in whole OS pages, so a memory whose own pages are smaller is mapped past
+        // its exact size. The wasm-visible size stays exact, because that is what bounds checks use;
+        // the excess is headroom that growth can take without allocating.
+        const size_t initialMappedBytes = roundUpToMultipleOf(WTF::pageSize(), static_cast<size_t>(initialBytes));
+        void* slowMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, initialMappedBytes);
         if (!slowMemory) {
             BufferMemoryManager::singleton().freePhysicalBytes(initialBytes);
             return nullptr;
         }
-        return Memory::create(adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, initialBytes, initial, maximum, MemorySharingMode::Default, MemoryMode::BoundsChecking)), addressType, log2PageSize, WTF::move(growSuccessCallback));
+        return Memory::create(adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, initialMappedBytes, initial, maximum, MemorySharingMode::Default, MemoryMode::BoundsChecking)), addressType, log2PageSize, WTF::move(growSuccessCallback));
     }
     case MemorySharingMode::Shared: {
         // FIXME: A shared memory's reservation and its growth both work in OS pages, via
@@ -404,6 +408,25 @@ std::expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
     RELEASE_ASSERT(desiredSize > size());
     switch (mode()) {
     case MemoryMode::BoundsChecking: {
+        // Growing within the mapping needs no allocator call: those bytes are already mapped, and
+        // only this memory's own size kept them from being wasm-visible. They are zero already,
+        // since the mapping was zeroed and nothing may write past size(); zeroing them again keeps
+        // that from being load-bearing, so a write that escapes the bounds check cannot be read back
+        // through a later grow.
+        if (desiredSize <= mappedCapacity()) {
+            const size_t extraBytes = desiredSize - size();
+            bool allocationSuccess = tryAllocate(vm,
+                [&] -> BufferMemoryResult::Kind {
+                    return BufferMemoryManager::singleton().tryAllocatePhysicalBytes(extraBytes);
+                });
+            if (!allocationSuccess)
+                return makeUnexpected(GrowFailReason::OutOfMemory);
+
+            zeroSpan(unsafeMakeSpan(static_cast<uint8_t*>(basePointer()) + size(), extraBytes));
+            m_handle->updateSize(desiredSize);
+            return success();
+        }
+
         bool allocationSuccess = tryAllocate(vm,
             [&] () -> BufferMemoryResult::Kind {
                 return BufferMemoryManager::singleton().tryAllocatePhysicalBytes(desiredSize);
@@ -413,14 +436,15 @@ std::expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
 
         RELEASE_ASSERT(maximum().bytes() != 0);
 
-        void* newMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, desiredSize);
+        const size_t desiredMappedSize = roundUpToMultipleOf(WTF::pageSize(), desiredSize);
+        void* newMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, desiredMappedSize);
         if (!newMemory) {
             BufferMemoryManager::singleton().freePhysicalBytes(desiredSize);
             return makeUnexpected(GrowFailReason::OutOfMemory);
         }
 
-        memcpySpan(unsafeMakeSpan(static_cast<uint8_t*>(newMemory), desiredSize), m_handle->mutableSpan());
-        m_handle->replaceAllocatedMemory(newMemory, desiredSize);
+        memcpySpan(unsafeMakeSpan(static_cast<uint8_t*>(newMemory), desiredMappedSize), m_handle->mutableSpan());
+        m_handle->replaceAllocatedMemory(newMemory, desiredSize, desiredMappedSize);
 
         ASSERT(basePointer() == newMemory);
         return success();

@@ -81,3 +81,26 @@ for (const log2PageSize of [0, 16, undefined]) {
     assert.throws(() => buffer.resize(0), RangeError, "Cannot shrink WebAssembly memory");
     assert.eq(memory.buffer.byteLength, before);
 }
+
+// A resize past the OS pages a small-page memory is mapped into reallocates, so the contents have
+// to be carried across and the newly exposed bytes left zero.
+{
+    const initial = 100;
+    const resized = 50000;
+    const memory = exportedMemory(limits(initial, 0, 100000));
+    const buffer = memory.toResizableBuffer();
+    new Uint8Array(memory.buffer).fill(0x77);
+
+    buffer.resize(resized);
+
+    const bytes = new Uint8Array(memory.buffer);
+    assert.eq(bytes.length, resized);
+    let preserved = 0;
+    for (let i = 0; i < initial; ++i)
+        preserved += bytes[i] === 0x77;
+    assert.eq(preserved, initial);
+    let grown = 0;
+    for (let i = initial; i < resized; ++i)
+        grown += bytes[i];
+    assert.eq(grown, 0);
+}
