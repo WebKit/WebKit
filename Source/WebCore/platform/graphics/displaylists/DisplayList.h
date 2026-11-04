@@ -51,6 +51,7 @@ public:
     {
         return adoptRef(*new DisplayList(WTF::move(items)));
     }
+    WEBCORE_EXPORT static RefPtr<const DisplayList> createResolvingResources(Vector<Item>&&, std::span<const Ref<const FontBase>> fonts, std::span<const Ref<const DisplayList>> displayLists);
     WEBCORE_EXPORT ~DisplayList();
 
     std::span<const Item> items() const LIFETIME_BOUND { return m_items.span(); }

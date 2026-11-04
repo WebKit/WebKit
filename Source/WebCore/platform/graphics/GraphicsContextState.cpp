@@ -37,6 +37,26 @@ GraphicsContextState::GraphicsContextState(const ChangeFlags& changeFlags, Inter
 {
 }
 
+GraphicsContextState::GraphicsContextState(ChangeFlags changeFlags, SourceBrush&& fillBrush, WindRule fillRule, SourceBrush&& strokeBrush, float strokeThickness, StrokeStyle strokeStyle, const CompositeMode& compositeMode, std::optional<GraphicsDropShadow>&& dropShadow, std::optional<GraphicsStyle>&& style, float alpha, InterpolationQuality imageInterpolationQuality, TextDrawingModeFlags textDrawingMode, bool shouldAntialias, bool shouldSmoothFonts, bool shouldSubpixelQuantizeFonts, bool shadowsIgnoreTransforms)
+    : m_fillBrush(WTF::move(fillBrush))
+    , m_strokeBrush(WTF::move(strokeBrush))
+    , m_changeFlags(changeFlags)
+    , m_strokeThickness(strokeThickness)
+    , m_fillRule(fillRule)
+    , m_strokeStyle(strokeStyle)
+    , m_compositeMode(compositeMode)
+    , m_dropShadow(WTF::move(dropShadow))
+    , m_style(WTF::move(style))
+    , m_alpha(alpha)
+    , m_imageInterpolationQuality(imageInterpolationQuality)
+    , m_textDrawingMode(textDrawingMode)
+    , m_shouldAntialias(shouldAntialias)
+    , m_shouldSmoothFonts(shouldSmoothFonts)
+    , m_shouldSubpixelQuantizeFonts(shouldSubpixelQuantizeFonts)
+    , m_shadowsIgnoreTransforms(shadowsIgnoreTransforms)
+{
+}
+
 void GraphicsContextState::repurpose(Purpose purpose)
 {
     if (purpose == Purpose::Initial)

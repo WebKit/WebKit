@@ -42,6 +42,40 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayList);
 DisplayList::DisplayList(Vector<Item>&& items)
     : m_items(WTF::move(items))
 {
+    ASSERT(std::ranges::all_of(m_items, [](auto& item) {
+        return isResolved(item);
+    }));
+}
+
+RefPtr<const DisplayList> DisplayList::createResolvingResources(Vector<Item>&& items, std::span<const Ref<const FontBase>> fonts, std::span<const Ref<const DisplayList>> displayLists)
+{
+    for (auto& item : items) {
+        bool isValid = WTF::switchOn(item,
+            [&](DrawDisplayList& item) {
+                if (item.isResolved())
+                    return true;
+                if (item.displayListIndex() >= displayLists.size())
+                    return false;
+                item.setDisplayList(displayLists[item.displayListIndex()].copyRef());
+                return true;
+            },
+            [&](DrawGlyphs& item) {
+                if (item.glyphs().size() != item.advances().size())
+                    return false;
+                if (item.isResolved())
+                    return true;
+                if (item.fontIndex() >= fonts.size())
+                    return false;
+                item.setFont(fonts[item.fontIndex()].copyRef());
+                return true;
+            },
+            [](auto&) {
+                return true;
+            });
+        if (!isValid || !isResolved(item))
+            return nullptr;
+    }
+    return create(WTF::move(items));
 }
 
 DisplayList::~DisplayList()

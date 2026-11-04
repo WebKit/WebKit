@@ -191,6 +191,8 @@ void applyItem(GraphicsContext&, const AffineTransform& baseTransform, ControlFa
 
 bool shouldDumpItem(const Item&, OptionSet<AsTextFlag>);
 
+WEBCORE_EXPORT bool isResolved(const Item&);
+
 WEBCORE_EXPORT void dumpItem(TextStream&, const Item&, OptionSet<AsTextFlag>);
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Item&);

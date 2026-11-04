@@ -69,6 +69,16 @@ bool shouldDumpItem(const Item& item, OptionSet<AsTextFlag> flags)
     );
 }
 
+bool isResolved(const Item& item)
+{
+    return WTF::switchOn(item, [](const auto& item) {
+        if constexpr (requires { item.isResolved(); })
+            return item.isResolved();
+        else
+            return true;
+    });
+}
+
 void dumpItem(TextStream& ts, const Item& item, OptionSet<AsTextFlag> flags)
 {
     WTF::switchOn(item, [&]<typename ItemType> (const ItemType& item) {

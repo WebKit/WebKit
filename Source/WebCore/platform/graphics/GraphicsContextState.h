@@ -71,6 +71,8 @@ public:
 
     WEBCORE_EXPORT GraphicsContextState(const ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
 
+    WEBCORE_EXPORT GraphicsContextState(ChangeFlags, SourceBrush&& fillBrush, WindRule, SourceBrush&& strokeBrush, float strokeThickness, StrokeStyle, const CompositeMode&, std::optional<GraphicsDropShadow>&&, std::optional<GraphicsStyle>&&, float alpha, InterpolationQuality, TextDrawingModeFlags, bool shouldAntialias, bool shouldSmoothFonts, bool shouldSubpixelQuantizeFonts, bool shadowsIgnoreTransforms);
+
     // The initial state for a context that knows nothing about the state of the context its output
     // will be applied to. Every property is indeterminate, so every setter is observed.
     static GraphicsContextState initialIndeterminate()

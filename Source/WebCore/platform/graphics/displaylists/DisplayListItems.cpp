@@ -292,12 +292,15 @@ void DrawFilteredImageBuffer::dump(TextStream& ts, OptionSet<AsTextFlag> flags) 
 
 void DrawGlyphs::apply(GraphicsContext& context) const
 {
-    context.drawGlyphsImmediate(m_font, m_glyphs.span(), m_advances.span(), m_localAnchor, m_fontSmoothingMode);
+    RELEASE_ASSERT(isResolved());
+    context.drawGlyphsImmediate(std::get<Ref<const FontBase>>(m_font), m_glyphs.span(), m_advances.span(), m_localAnchor, m_fontSmoothingMode);
 }
 
 void DrawGlyphs::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
     // FIXME: dump more stuff.
+    if (auto* fontIndex = std::get_if<uint64_t>(&m_font))
+        ts.dumpProperty("font-index"_s, *fontIndex);
     ts.dumpProperty("local-anchor"_s, localAnchor());
     ts.dumpProperty("font-smoothing-mode"_s, fontSmoothingMode());
     ts.dumpProperty("length"_s, length());
@@ -323,20 +326,37 @@ DrawDisplayList::DrawDisplayList(Ref<const DisplayList>&& displayList)
 {
 }
 
+DrawDisplayList::DrawDisplayList(uint64_t displayListIndex)
+    : m_displayList(displayListIndex)
+{
+}
+
 DrawDisplayList::~DrawDisplayList() = default;
 
 Ref<const DisplayList> DrawDisplayList::displayList() const
 {
-    return m_displayList;
+    auto* displayList = std::get_if<Ref<const DisplayList>>(&m_displayList);
+    RELEASE_ASSERT(displayList);
+    return *displayList;
+}
+
+void DrawDisplayList::setDisplayList(Ref<const DisplayList>&& displayList)
+{
+    m_displayList = WTF::move(displayList);
 }
 
 void DrawDisplayList::apply(GraphicsContext& context, ControlFactory& controlFactory) const
 {
-    return context.drawDisplayList(m_displayList, controlFactory);
+    RELEASE_ASSERT(isResolved());
+    return context.drawDisplayList(std::get<Ref<const DisplayList>>(m_displayList), controlFactory);
 }
 
 void DrawDisplayList::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
+    if (auto* displayListIndex = std::get_if<uint64_t>(&m_displayList)) {
+        ts.dumpProperty("display-list-index"_s, *displayListIndex);
+        return;
+    }
     Ref displayList = this->displayList();
     ts.dumpProperty("display-list"_s, displayList);
 }

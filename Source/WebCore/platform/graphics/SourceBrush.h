@@ -42,6 +42,13 @@ public:
     {
     }
 
+    SourceBrush(const Color& color, std::optional<SourceBrushLogicalGradient>&& gradient)
+        : m_color(color)
+    {
+        if (gradient)
+            m_patternGradient = WTF::move(*gradient);
+    }
+
     // Color should be stored in the variant, in place of std::monospace. Currently a lot of code
     // queries the color unconditionally, color is accessible unconditionally, returning incorrect
     // but defined data.
@@ -57,6 +64,13 @@ public:
 
     WEBCORE_EXPORT void setGradient(Ref<Gradient>&&, const AffineTransform& spaceTransform = { });
     WEBCORE_EXPORT void setPattern(Ref<Pattern>&&);
+
+    std::optional<SourceBrushLogicalGradient> logicalGradient() const
+    {
+        if (auto* gradient = std::get_if<SourceBrushLogicalGradient>(&m_patternGradient))
+            return SourceBrushLogicalGradient { gradient->gradient.copyRef(), gradient->spaceTransform };
+        return std::nullopt;
+    }
 
     bool isVisible() const { return hasPatternOrGradient() || m_color.isVisible(); }
 

@@ -216,4 +216,18 @@ inline float y(const GlyphBufferOrigin& origin)
 
 #endif // #if USE(CG)
 
+inline Vector<GlyphBufferAdvance> makeGlyphBufferAdvances(const Vector<FloatSize>& sizes)
+{
+    return sizes.map([](auto& size) {
+        return makeGlyphBufferAdvance(size);
+    });
+}
+
+inline Vector<FloatSize> sizes(const Vector<GlyphBufferAdvance>& advances)
+{
+    return advances.map([](auto& advance) {
+        return size(advance);
+    });
+}
+
 }

@@ -29,12 +29,15 @@
 
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
+#include <WebCore/FontCustomPlatformData.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
 
-struct DrawDisplayListAtIndex {
-    uint64_t index { 0 };
+struct DisplayListDataFont {
+    WebCore::FontInternalAttributes attributes;
+    WebCore::FontPlatformDataAttributes platformData;
+    std::optional<uint64_t> customFontIndex;
 };
 
 using DisplayListDataItem = Variant
@@ -50,21 +53,27 @@ using DisplayListDataItem = Variant
     , WebCore::DisplayList::ClipPath
     , WebCore::DisplayList::ClipTransformedPath
     , WebCore::DisplayList::ConcatenateCTM
+    , WebCore::DisplayList::DrawControlPart
     , WebCore::DisplayList::DrawDotsForDocumentMarker
     , WebCore::DisplayList::DrawEllipse
+    , WebCore::DisplayList::DrawFilteredImageBuffer
     , WebCore::DisplayList::DrawFocusRingPath
     , WebCore::DisplayList::DrawFocusRingRects
-    , DrawDisplayListAtIndex
+    , WebCore::DisplayList::DrawGlyphs
+    , WebCore::DisplayList::DrawDisplayList
     , WebCore::DisplayList::DrawLine
     , WebCore::DisplayList::DrawLinesForText
     , WebCore::DisplayList::DrawPath
     , WebCore::DisplayList::DrawRect
+    , WebCore::DisplayList::DrawSystemImage
     , WebCore::DisplayList::EndTransparencyLayer
     , WebCore::DisplayList::FillCompositedRect
     , WebCore::DisplayList::FillEllipse
     , WebCore::DisplayList::FillPath
     , WebCore::DisplayList::FillRect
     , WebCore::DisplayList::FillRectWithColor
+    , WebCore::DisplayList::FillRectWithGradient
+    , WebCore::DisplayList::FillRectWithGradientAndSpaceTransform
     , WebCore::DisplayList::FillRectWithRoundedHole
     , WebCore::DisplayList::FillRoundedRect
     , WebCore::DisplayList::ResetClip
@@ -79,6 +88,7 @@ using DisplayListDataItem = Variant
     , WebCore::DisplayList::SetLineDash
     , WebCore::DisplayList::SetLineJoin
     , WebCore::DisplayList::SetMiterLimit
+    , WebCore::DisplayList::SetState
     , WebCore::DisplayList::StrokeEllipse
     , WebCore::DisplayList::StrokePath
     , WebCore::DisplayList::StrokeRect
@@ -98,14 +108,18 @@ public:
     // Placeholders are drawn into the result, so whatever they draw has to be ready.
     static std::optional<DisplayListData> create(const WebCore::DisplayList::DisplayList&);
 
-    explicit DisplayListData(Vector<Vector<DisplayListDataItem>>&&);
+    DisplayListData(Vector<WebCore::FontCustomPlatformSerializedData>&& customFonts, Vector<DisplayListDataFont>&&, Vector<Vector<DisplayListDataItem>>&& bottomUpDisplayLists);
 
-    const Vector<Vector<DisplayListDataItem>>& displayLists() const LIFETIME_BOUND { return m_displayLists; }
+    const Vector<WebCore::FontCustomPlatformSerializedData>& customFonts() const LIFETIME_BOUND { return m_customFonts; }
+    const Vector<DisplayListDataFont>& fonts() const LIFETIME_BOUND { return m_fonts; }
+    const Vector<Vector<DisplayListDataItem>>& bottomUpDisplayLists() const LIFETIME_BOUND { return m_bottomUpDisplayLists; }
 
-    RefPtr<const WebCore::DisplayList::DisplayList> createDisplayList() const;
+    RefPtr<const WebCore::DisplayList::DisplayList> createDisplayList(bool shouldUseLockdownFontParser) &&;
 
 private:
-    Vector<Vector<DisplayListDataItem>> m_displayLists;
+    Vector<WebCore::FontCustomPlatformSerializedData> m_customFonts;
+    Vector<DisplayListDataFont> m_fonts;
+    Vector<Vector<DisplayListDataItem>> m_bottomUpDisplayLists;
 };
 
 } // namespace WebKit
