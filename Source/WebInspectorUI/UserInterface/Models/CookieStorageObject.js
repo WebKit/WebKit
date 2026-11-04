@@ -66,9 +66,9 @@ WI.CookieStorageObject = class CookieStorageObject
         return this._host;
     }
 
-    // Under Site Isolation cookies are read through the "Storage" domain, which reads the authoritative
-    // NetworkProcess store and so sees the out-of-process cross-origin iframe cookies the legacy in-process
-    // Page cookie commands cannot. Otherwise the legacy Page path is used, leaving non-Site-Isolation
+    // Under Site Isolation cookies are read through the "Storage" domain, which asks every process hosting a frame of
+    // the inspected page for the cookies its frames can access and so sees the out-of-process cross-origin iframe
+    // cookies the legacy in-process Page cookie commands cannot. Otherwise the legacy Page path is used, leaving non-Site-Isolation
     // sessions unchanged. Callers use these accessors and methods and never touch a specific agent/target.
 
     get canGetCookies()
@@ -101,8 +101,8 @@ WI.CookieStorageObject = class CookieStorageObject
     getCookies()
     {
         if (this._useStorageDomain) {
-            // No filter: fetch the full authoritative store; filterCookiesForHost buckets by host. Partition
-            // "context" targets the inspected page's data store.
+            // No filter: fetch every cookie the inspected page's frames can access; filterCookiesForHost buckets by host.
+            // Partition "context" targets the inspected page's data store.
             return WI.backendTarget.StorageAgent.getCookies.invoke({partition: {type: "context"}}).then((payload) => payload.cookies);
         }
 
@@ -124,8 +124,9 @@ WI.CookieStorageObject = class CookieStorageObject
     deleteCookie(cookie)
     {
         if (this._useStorageDomain) {
-            // Storage.deleteCookies is filter-based; target this one cookie by its identity fields.
-            let filter = {name: cookie.name};
+            // Storage.deleteCookies is filter-based; target this one cookie by its identity fields. The partition
+            // keeps an unpartitioned cookie and a partitioned cookie with the same name/domain/path apart.
+            let filter = {name: cookie.name, partitionKey: cookie.partitionKey || ""};
             if (cookie.domain)
                 filter.domain = cookie.domain;
             if (cookie.path)

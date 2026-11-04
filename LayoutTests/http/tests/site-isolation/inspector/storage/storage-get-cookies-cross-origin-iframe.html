@@ -10,7 +10,7 @@ function addCrossOriginIframeThatSetsCookie() {
     let iframe = document.createElement("iframe");
     iframe.name = "cookie-frame";
     // Cross-origin => separate WebContent process under Site Isolation. The iframe's own script
-    // sets a cookie for a path the parent process never fetches.
+    // sets a cookie for its host, which the parent process never fetches from.
     iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/storage/resources/set-cookie-via-script.html`;
     document.body.appendChild(iframe);
 }
@@ -21,7 +21,7 @@ function test()
 
     suite.addTestCase({
         name: "SiteIsolation.Storage.getCookies.CrossOriginIframe",
-        description: "A cookie set by script inside a cross-origin iframe (a separate WebContent process under Site Isolation) must be visible via Storage.getCookies, which reads the authoritative NetworkProcess store, and must NOT be visible via the in-process Page.getCookies, which can only find cookies for URLs the inspected page's process already knows about.",
+        description: "A cookie set by script inside a cross-origin iframe (a separate WebContent process under Site Isolation) must be visible via Storage.getCookies, which also asks the iframe's own process for the cookies its frames can access, and must NOT be visible via the in-process Page.getCookies, which can only find cookies for URLs the inspected page's process already knows about.",
         async test() {
             await WI.backendTarget.StorageAgent.enable();
             await InspectorTest.evaluateInPage(`if (window.testRunner) testRunner.setAlwaysAcceptCookies(true);`);
@@ -56,8 +56,8 @@ function test()
                 InspectorTest.expectEqual(cookie.value, "PASS", "Cross-origin cookie value should be 'PASS'.");
 
             // Negative control: Page.getCookies runs in the inspected page's process and looks up
-            // cookies only for URLs that process knows as resources. It has no resource URL for the
-            // private-scope path, so it must not see this cookie. If it did, the iframe would not
+            // cookies only for URLs that process knows as resources. It has no resource URL on the
+            // iframe's host, so it must not see this cookie. If it did, the iframe would not
             // be out-of-process and the test would not be exercising the Site Isolation path.
             let {cookies: pageCookies} = await WI.pageTarget.PageAgent.getCookies();
             let pageCookie = pageCookies.find((c) => c.name === "CrossOriginScriptCookie");

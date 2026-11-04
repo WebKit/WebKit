@@ -1,0 +1,134 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossSiteIframe() {
+    let crossSiteHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.src = `http://${crossSiteHost}:8000/site-isolation/inspector/storage/resources/blank-frame.html`;
+    iframe.onload = () => TestPage.dispatchEventToFrontend("CrossSiteIframeLoaded");
+    document.body.appendChild(iframe);
+}
+
+// Each cookie's path is the script's own path, so only the subresource URL matches it, not any frame's document URL.
+function loadCookieSettingScript(host, name) {
+    let path = "/site-isolation/inspector/storage/resources/set-cookie.py";
+    let script = document.createElement("script");
+    script.src = `http://${host}:8000${path}?name=${name}&value=x&path=${path}`;
+    script.onload = script.onerror = () => TestPage.dispatchEventToFrontend("CookieSettingScriptLoaded");
+    document.body.appendChild(script);
+}
+
+function setThirdPartyCookieBlocking(blockAll) {
+    testRunner.setStatisticsShouldBlockThirdPartyCookies(blockAll, () => {
+        TestPage.dispatchEventToFrontend("ThirdPartyCookieBlockingChanged");
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Storage.Cookies.ScopedToInspectedPage");
+
+    const crossSiteHost = "localhost";
+    const topSiteHost = "127.0.0.1";
+
+    async function setThirdPartyCookieBlocking(blockAll) {
+        await Promise.all([
+            InspectorTest.awaitEvent("ThirdPartyCookieBlockingChanged"),
+            InspectorTest.evaluateInPage(`setThirdPartyCookieBlocking(${blockAll})`),
+        ]);
+    }
+
+    async function loadCookieSettingScript(host, name) {
+        await Promise.all([
+            InspectorTest.awaitEvent("CookieSettingScriptLoaded"),
+            InspectorTest.evaluateInPage(`loadCookieSettingScript("${host}", "${name}")`),
+        ]);
+    }
+
+    async function cookieNames() {
+        let {cookies} = await WI.backendTarget.StorageAgent.getCookies();
+        return new Set(cookies.map((cookie) => cookie.name));
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Storage.Cookies.ScopedToInspectedPage.Setup",
+        description: "Add a cross-site iframe and seed cookies for the top site, the iframe's site, and a site that is not on the page.",
+        async test() {
+            await WI.backendTarget.StorageAgent.enable();
+            await InspectorTest.evaluateInPage(`if (window.testRunner) testRunner.setAlwaysAcceptCookies(true);`);
+            await setThirdPartyCookieBlocking(false);
+
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            let iframeLoadedPromise = InspectorTest.awaitEvent("CrossSiteIframeLoaded");
+            InspectorTest.evaluateInPage("addCrossSiteIframe()");
+            let frameTarget = (await targetAddedPromise).data.target;
+            InspectorTest.expectThat(frameTarget instanceof WI.FrameTarget, "Cross-site iframe should be its own Frame Target (out-of-process).");
+
+            // Cookies are scoped by each frame's committed URL, and the first TargetAdded is dispatched before the
+            // iframe navigates, so wait for its load.
+            await iframeLoadedPromise;
+
+            // Storage.setCookie is intentionally not scoped, so it can seed any site.
+            await WI.backendTarget.StorageAgent.setCookie({name: "CrossSiteCookie", value: "x", domain: crossSiteHost, path: "/"});
+            await WI.backendTarget.StorageAgent.setCookie({name: "CrossSiteLaxCookie", value: "x", domain: crossSiteHost, path: "/", sameSite: "Lax"});
+            await WI.backendTarget.StorageAgent.setCookie({name: "TopSiteLaxCookie", value: "x", domain: topSiteHost, path: "/", sameSite: "Lax"});
+            await WI.backendTarget.StorageAgent.setCookie({name: "PathScopedTopSiteCookie", value: "x", domain: topSiteHost, path: "/never/loaded/"});
+            await WI.backendTarget.StorageAgent.setCookie({name: "OffPageCookie", value: "x", domain: "webkit.org", path: "/"});
+            await loadCookieSettingScript(topSiteHost, "SameSiteSubresourceCookie");
+            await loadCookieSettingScript(crossSiteHost, "CrossSiteSubresourceCookie");
+            InspectorTest.log("Seeded cookies.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Storage.Cookies.ScopedToInspectedPage.NotBlocked",
+        description: "Without third-party cookie blocking the iframe's cookies are accessible, except SameSite=Lax/Strict ones. As without Site Isolation, a cookie is returned only if a frame's document or loaded subresource URL matches it, so a path no frame loaded and a site not in the frame tree are not returned. Under Site Isolation only same-site subresource URLs are looked up.",
+        async test() {
+            let names = await cookieNames();
+            InspectorTest.expectThat(names.has("CrossSiteCookie"), "Cross-site iframe's cookie should be returned when not blocked.");
+            InspectorTest.expectFalse(names.has("PathScopedTopSiteCookie"), "Top site's cookie for a path no frame loaded should not be returned.");
+            InspectorTest.expectFalse(names.has("OffPageCookie"), "Cookie for a site not in the frame tree should not be returned.");
+            InspectorTest.expectFalse(names.has("CrossSiteLaxCookie"), "Cross-site iframe's SameSite=Lax cookie should not be returned.");
+            InspectorTest.expectThat(names.has("TopSiteLaxCookie"), "Top site's SameSite=Lax cookie should be returned.");
+            InspectorTest.expectThat(names.has("SameSiteSubresourceCookie"), "Cookie matched only by a same-site subresource's URL should be returned.");
+            InspectorTest.expectFalse(names.has("CrossSiteSubresourceCookie"), "Cookie matched only by a cross-site subresource's URL should not be returned.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Storage.Cookies.ScopedToInspectedPage.BlockAll",
+        description: "With all third-party cookies blocked the cross-site iframe can't read its cookies, so neither can the inspector list them.",
+        async test() {
+            await setThirdPartyCookieBlocking(true);
+
+            let names = await cookieNames();
+            InspectorTest.expectFalse(names.has("CrossSiteCookie"), "Blocked cross-site iframe's cookie should not be returned.");
+            InspectorTest.expectThat(names.has("TopSiteLaxCookie"), "Top site's cookie should still be returned.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Storage.Cookies.ScopedToInspectedPage.DeleteCannotReachHiddenCookie",
+        description: "Storage.deleteCookies only considers cookies the page can access, so it must not delete a cookie the inspector doesn't list.",
+        async test() {
+            await WI.backendTarget.StorageAgent.deleteCookies({name: "CrossSiteCookie"});
+
+            await setThirdPartyCookieBlocking(false);
+
+            let names = await cookieNames();
+            InspectorTest.expectThat(names.has("CrossSiteCookie"), "Hidden cookie should survive a delete issued while it was hidden.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that under Site Isolation Storage.getCookies and Storage.deleteCookies are scoped to the cookies the inspected page can access.</p>
+</body>
+</html>

@@ -1,6 +1,6 @@
 {
     "domain": "Storage",
-    "description": "Query and modify storage (cookies for now) under Site Isolation. Backed by the NetworkProcess-owned cookie store via API::HTTPCookieStore, so cross-origin iframe cookies are visible. The flat read also surfaces partitioned (CHIPS) cookies, each labeled with its partitionKey.",
+    "description": "Query and modify storage (cookies for now) under Site Isolation. Reads and deletes are scoped to the cookies the inspected page's frames can access, as Page.getCookies does without Site Isolation: for each frame, including cross-origin iframes in other processes, the cookies its document would send to its own URL and to its loaded same-site subresources' URLs, each labeled with its partitionKey. setCookie is not scoped.",
     "debuggableTypes": ["web-page"],
     "targetTypes": ["web-page"],
     "types": [
@@ -37,7 +37,8 @@
                 { "name": "domain", "type": "string", "optional": true, "description": "The domain of the cookie." },
                 { "name": "path", "type": "string", "optional": true, "description": "The path of the cookie." },
                 { "name": "httpOnly", "type": "boolean", "optional": true, "description": "If the cookie is HTTP only." },
-                { "name": "secure", "type": "boolean", "optional": true, "description": "If the cookie is secure." }
+                { "name": "secure", "type": "boolean", "optional": true, "description": "If the cookie is secure." },
+                { "name": "partitionKey", "type": "string", "optional": true, "description": "The partition of the cookie. An empty string matches only unpartitioned cookies." }
             ]
         },
         {

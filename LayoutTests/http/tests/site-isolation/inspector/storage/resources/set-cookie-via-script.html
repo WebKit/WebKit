@@ -6,11 +6,11 @@
 <body>
 <script>
 // Runs inside the cross-origin iframe, which is a separate WebContent process under Site Isolation.
-// Set a cookie from script for a path the parent frame never requests any resource from, so the
+// The cookie is for the iframe's host, which the parent frame never requests any resource from, so the
 // parent's process has no cached-resource URL that would match it. The in-process Page.getCookies
 // looks cookies up by the parent process's known resource URLs, so it cannot discover this cookie;
-// Storage.getCookies reads the authoritative NetworkProcess store and sees it regardless.
-document.cookie = "CrossOriginScriptCookie=PASS; path=/site-isolation/inspector/storage/private-scope/";
+// Storage.getCookies also asks the iframe's process, whose document URL matches it.
+document.cookie = "CrossOriginScriptCookie=PASS; path=/";
 </script>
 </body>
 </html>
