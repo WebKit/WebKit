@@ -195,8 +195,10 @@ private:
     IntRect transformedRect(const FloatRect&) const;
     IntRect transformedRectIncludingFuture(const FloatRect&) const;
     void updateGeometry(float pageScaleFactor, const FloatPoint&);
+#if USE(TEXTURE_MAPPER)
     void updateBackdropFilters();
     void updateBackdropFiltersRect();
+#endif
     void updateAnimations();
     void updateVisibleRect(const FloatRect&);
     void updateIndicators();
@@ -237,8 +239,8 @@ private:
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_contentsDisplayDelegate;
     RefPtr<NativeImage> m_contentsImage;
     Color m_contentsColor;
-    RefPtr<CoordinatedPlatformLayer> m_backdropLayer;
 #if USE(TEXTURE_MAPPER)
+    RefPtr<CoordinatedPlatformLayer> m_backdropLayer;
     TextureMapperAnimations m_animations;
 #else
     AcceleratedAnimations m_animations;

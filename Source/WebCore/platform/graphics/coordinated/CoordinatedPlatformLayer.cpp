@@ -706,6 +706,7 @@ void CoordinatedPlatformLayer::setReplica(CoordinatedPlatformLayer* replica)
     notifyCompositionRequired();
 }
 
+#if USE(TEXTURE_MAPPER)
 void CoordinatedPlatformLayer::setBackdrop(CoordinatedPlatformLayer* backdrop)
 {
     assertIsHeld(m_lock);
@@ -723,6 +724,19 @@ void CoordinatedPlatformLayer::notifyBackdropFiltersChanged()
     damageWholeLayer();
     notifyCompositionRequired();
 }
+#else
+void CoordinatedPlatformLayer::setBackdropFilters(const FilterOperations& filters)
+{
+    assertIsHeld(m_lock);
+    if (m_backdropFilters == filters)
+        return;
+
+    m_backdropFilters = filters;
+    m_pendingChanges.add(Change::Backdrop);
+    damageWholeLayer();
+    notifyCompositionRequired();
+}
+#endif
 
 void CoordinatedPlatformLayer::setBackdropRect(const FloatRoundedRect& backdropRect)
 {
@@ -961,10 +975,12 @@ void CoordinatedPlatformLayer::updateContents(bool affectedByTransformAnimation)
         }
     }
 
+#if USE(TEXTURE_MAPPER)
     if (m_backdrop) {
         Locker locker { m_backdrop->lock() };
         m_backdrop->updateContents(affectedByTransformAnimation);
     }
+#endif
 }
 
 void CoordinatedPlatformLayer::purgeBackingStores()
@@ -1438,17 +1454,9 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
             m_pendingChanges.remove(Change::Replica);
         }
 
-        // FIXME: stop creating a layer for backdrop filters when switching to SkiaCompositingLayer.
-        if (m_pendingChanges.contains(Change::Backdrop) && !m_backdrop) {
-            layer.setBackdropFilters(FilterOperations());
+        if (m_pendingChanges.contains(Change::Backdrop)) {
+            layer.setBackdropFilters(m_backdropFilters);
             m_pendingChanges.remove(Change::Backdrop);
-        } else if (m_backdrop) {
-            Locker locker { m_backdrop->lock() };
-            if (m_pendingChanges.contains(Change::Backdrop) || m_backdrop->m_pendingChanges.contains(Change::Filters)) {
-                layer.setBackdropFilters(m_backdrop->m_filters);
-                m_pendingChanges.remove(Change::Backdrop);
-                m_backdrop->m_pendingChanges.remove(Change::Filters);
-            }
         }
 
         if (m_pendingChanges.contains(Change::BackdropRect)) {

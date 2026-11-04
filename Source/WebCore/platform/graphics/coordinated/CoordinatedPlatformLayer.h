@@ -173,8 +173,12 @@ public:
     void setMask(CoordinatedPlatformLayer*) WTF_REQUIRES_LOCK(m_lock);
     CoordinatedPlatformLayer* mask() const WTF_REQUIRES_LOCK(m_lock);
     void setReplica(CoordinatedPlatformLayer*) WTF_REQUIRES_LOCK(m_lock);
+#if USE(TEXTURE_MAPPER)
     void setBackdrop(CoordinatedPlatformLayer*) WTF_REQUIRES_LOCK(m_lock);
     void notifyBackdropFiltersChanged() WTF_REQUIRES_LOCK(m_lock);
+#else
+    void setBackdropFilters(const FilterOperations&) WTF_REQUIRES_LOCK(m_lock);
+#endif
     void setBackdropRect(const FloatRoundedRect&) WTF_REQUIRES_LOCK(m_lock);
     void setBackdropShapePath(const Path&) WTF_REQUIRES_LOCK(m_lock);
     void setIsBackdropRoot(bool) WTF_REQUIRES_LOCK(m_lock);
@@ -348,7 +352,11 @@ private:
     FilterOperations m_filters WTF_GUARDED_BY_LOCK(m_lock);
     RefPtr<CoordinatedPlatformLayer> m_mask WTF_GUARDED_BY_LOCK(m_lock);
     RefPtr<CoordinatedPlatformLayer> m_replica WTF_GUARDED_BY_LOCK(m_lock);
+#if USE(TEXTURE_MAPPER)
     RefPtr<CoordinatedPlatformLayer> m_backdrop WTF_GUARDED_BY_LOCK(m_lock);
+#else
+    FilterOperations m_backdropFilters WTF_GUARDED_BY_LOCK(m_lock);
+#endif
     FloatRoundedRect m_backdropRect WTF_GUARDED_BY_LOCK(m_lock);
     Path m_backdropShapePath WTF_GUARDED_BY_LOCK(m_lock);
     bool m_isBackdropRoot WTF_GUARDED_BY_LOCK(m_lock) { false };
