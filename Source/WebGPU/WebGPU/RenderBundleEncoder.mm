@@ -307,13 +307,13 @@ static std::span<T> makeSpanFromBuffer(id<MTLBuffer> buffer, size_t byteOffset =
     return unsafeMakeSpan(static_cast<T*>(buffer.contents), (bufferLength - byteOffset) / sizeof(T));
 }
 
-static void initializeFragmentDynamicOffsetsHeader(id<MTLBuffer> buffer, size_t index, uint32_t sampleMask)
+static void initializeFragmentDynamicOffsetsHeader(id<MTLBuffer> buffer, size_t index, float minDepth, float maxDepth, uint32_t sampleMask)
 {
     static_assert(sizeof(float) == sizeof(uint32_t));
     auto floats = makeSpanFromBuffer<float>(buffer).subspan(index, RenderBundleEncoder::startIndexForFragmentDynamicOffsets);
     auto words = makeSpanFromBuffer<uint32_t>(buffer).subspan(index, RenderBundleEncoder::startIndexForFragmentDynamicOffsets);
-    floats[0] = 0.f;
-    floats[1] = 1.f;
+    floats[0] = minDepth;
+    floats[1] = maxDepth;
     words[2] = sampleMask;
 }
 
@@ -440,7 +440,8 @@ bool RenderBundleEncoder::executePreDrawCommands(bool needsValidationLayerWorkar
     }
 
     if (m_dynamicOffsetsFragmentBuffer && fragmentDynamicOffsetCount) {
-        initializeFragmentDynamicOffsetsHeader(m_dynamicOffsetsFragmentBuffer, fragmentDynamicOffset / sizeof(uint32_t), m_sampleMask);
+        initializeFragmentDynamicOffsetsHeader(m_dynamicOffsetsFragmentBuffer, fragmentDynamicOffset / sizeof(uint32_t), m_minDepth, m_maxDepth, m_sampleMask);
+        // updateMinMaxDepths always patches offset 0, and replaying into a pass never hands this list to an ICB to be cleared.
         if (fragmentDynamicOffset && !renderPassEncoder)
             m_fragmentDynamicOffsetsHeaderOffsets.append(fragmentDynamicOffset);
     }
@@ -1046,7 +1047,7 @@ void RenderBundleEncoder::endCurrentICB()
     if (!m_dynamicOffsetsFragmentBuffer) {
         m_dynamicOffsetsFragmentBuffer = device->safeCreateBuffer(std::max<uint64_t>(m_fragmentDynamicOffset, RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float)));
         RELEASE_ASSERT(makeSpanFromBuffer<float>(m_dynamicOffsetsFragmentBuffer).size());
-        initializeFragmentDynamicOffsetsHeader(m_dynamicOffsetsFragmentBuffer, 0, m_sampleMask);
+        initializeFragmentDynamicOffsetsHeader(m_dynamicOffsetsFragmentBuffer, 0, m_minDepth, m_maxDepth, m_sampleMask);
         if (!addResource(m_resources, m_dynamicOffsetsFragmentBuffer, MTLRenderStageFragment))
             return;
     }
@@ -1188,14 +1189,18 @@ bool RenderBundleEncoder::isValid() const
     return !!m_icbDescriptor;
 }
 
-void RenderBundleEncoder::replayCommands(RenderPassEncoder& renderPassEncoder)
+void RenderBundleEncoder::replayCommands(RenderPassEncoder& renderPassEncoder, float minDepth, float maxDepth)
 {
     if (!renderPassEncoder.renderCommandEncoder() || !isValid() || !m_device->isValid())
         return;
 
     m_renderPassEncoder = renderPassEncoder;
+    m_minDepth = minDepth;
+    m_maxDepth = maxDepth;
     endCurrentICB();
     m_renderPassEncoder = nullptr;
+    m_minDepth = 0.f;
+    m_maxDepth = 1.f;
     m_currentPipelineState = nil;
     m_depthStencilState = nil;
     m_bindGroupDynamicOffsets = BindGroupDynamicOffsetsContainer();

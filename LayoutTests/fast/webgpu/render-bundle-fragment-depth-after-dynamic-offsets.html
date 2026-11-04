@@ -48,11 +48,11 @@ async function main() {
         return { layouts: layouts.get(dynamicOffsetCount), bindGroups: bindGroups.get(dynamicOffsetCount) };
     }
 
-    async function render({ dynamicOffsetCounts, depthRange = [0, 1], pastFarPlane = false, replayCommands = false }) {
+    async function render({ dynamicOffsetCounts, depthRange = [0, 1], pastFarPlane = false, replayCommands = false, depthCompares = ['greater', 'greater-equal', 'equal'], cullModes = ['none', 'none', 'none'] }) {
         const draws = [
-            { entryPoint: 'plain', depthCompare: 'greater', writeMask: GPUColorWrite.RED },
-            { entryPoint: pastFarPlane ? 'pastFarPlane' : 'sameDepth', depthCompare: 'greater-equal', writeMask: GPUColorWrite.GREEN },
-            { entryPoint: 'plain', depthCompare: 'equal', writeMask: GPUColorWrite.BLUE },
+            { entryPoint: 'plain', depthCompare: depthCompares[0], cullMode: cullModes[0], writeMask: GPUColorWrite.RED },
+            { entryPoint: pastFarPlane ? 'pastFarPlane' : 'sameDepth', depthCompare: depthCompares[1], cullMode: cullModes[1], writeMask: GPUColorWrite.GREEN },
+            { entryPoint: 'plain', depthCompare: depthCompares[2], cullMode: cullModes[2], writeMask: GPUColorWrite.BLUE },
         ];
         let bundleEncoder = device.createRenderBundleEncoder({ colorFormats: [format], depthStencilFormat: depthFormat });
         draws.forEach((draw, i) => {
@@ -61,6 +61,7 @@ async function main() {
                 layout: device.createPipelineLayout({ bindGroupLayouts: layouts }),
                 vertex: { module, entryPoint: pastFarPlane ? 'vsFar' : 'vs' },
                 fragment: { module, entryPoint: draw.entryPoint, targets: [{ format, writeMask: draw.writeMask }] },
+                primitive: { cullMode: draw.cullMode },
                 depthStencil: { format: depthFormat, depthWriteEnabled: true, depthCompare: draw.depthCompare },
                 multisample: replayCommands ? { count: 1, mask: 0x7fffffff } : { count: 1 },
             });
@@ -102,7 +103,9 @@ async function main() {
         noOffsetsAfterTwo: await render({ dynamicOffsetCounts: [2, 0, 0] }),
         oneOffset: await render({ dynamicOffsetCounts: [1, 1, 1] }),
         viewportDepthRange: await render({ dynamicOffsetCounts: [2, 2, 2], depthRange: [0.25, 0.75], pastFarPlane: true }),
+        viewportDepthRangeSplitByCullMode: await render({ dynamicOffsetCounts: [2, 2, 2], depthRange: [0.25, 0.75], pastFarPlane: true, depthCompares: ['greater-equal', 'greater-equal', 'greater-equal'], cullModes: ['none', 'back', 'back'] }),
         replayedCommands: await render({ dynamicOffsetCounts: [2, 2, 2], replayCommands: true }),
+        replayedViewportDepthRange: await render({ dynamicOffsetCounts: [2, 2, 2], depthRange: [0.25, 0.75], pastFarPlane: true, replayCommands: true }),
     };
     for (let name of Object.keys(results))
         shouldBeEqualToString('results.' + name, '255,255,255');
