@@ -47,8 +47,6 @@ struct PaintInfo;
 struct RenderBoxOverridingSizes;
 
 
-enum class StretchingMode { Normal, Explicit };
-
 enum class IsComputingIntrinsicSize : bool { No, Yes };
 
 class RenderBox : public RenderBoxModelObject {
