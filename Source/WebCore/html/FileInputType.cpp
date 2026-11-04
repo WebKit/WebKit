@@ -313,12 +313,7 @@ FileChooserSettings FileInputType::fileChooserSettings() const
 #if ENABLE(MEDIA_CAPTURE)
     settings.mediaCaptureType = element->mediaCaptureType();
 #endif
-
-    // Unlike contentsToRootView(), this crosses remote frame boundaries, in process.
-    if (CheckedPtr renderer = element->renderer()) {
-        if (RefPtr view = element->document().view())
-            settings.elementRectInMainFrameViewCoordinates = enclosingIntRect(view->convertToRootViewAcrossIsolatedFrames(view->contentsToView(FloatRect { renderer->absoluteBoundingBoxRect() })));
-    }
+    settings.elementRectInMainFrameViewCoordinates = element->boundingBoxInMainFrameViewCoordinates();
 
     return settings;
 }
