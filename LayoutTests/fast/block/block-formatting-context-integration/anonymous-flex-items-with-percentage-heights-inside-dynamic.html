@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px monospace; }
+.p { background: lightblue; width: 30px; display: inline-block; vertical-align: top; }
+.c { margin: 3px; width: 200px; border: 1px solid; }
+</style>
+<button id="button" style="height: 60px">text <span class="p" style="height: 50%">ib</span></button>
+<div class="c" id="box" style="display: -webkit-box; height: 80px">text <span class="p" style="height: 50%">box</span></div>
+<div class="c" style="display: -webkit-box; height: 80px">text <span class="p" id="child" style="height: 50%">child</span></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("button").style.height = "90px";
+document.getElementById("box").style.height = "40px";
+document.getElementById("child").style.height = "75%";
+</script>

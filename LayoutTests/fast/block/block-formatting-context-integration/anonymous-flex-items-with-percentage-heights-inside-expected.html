@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px monospace; }
+.p { background: lightblue; width: 30px; display: inline-block; vertical-align: top; }
+img { background: green; width: 10px; }
+.c { margin: 3px; width: 200px; border: 1px solid; }
+</style>
+<button style="height: 60px">text <span class="p" style="height: 50%">ib</span></button>
+<button style="height: 60px; display: block">block <img style="height: 50%"></button>
+<button>auto <span class="p" style="height: 50%">ib</span></button>
+<button style="height: 60px; box-sizing: content-box; padding: 5px">pad <span class="p" style="height: 50%">ib</span></button>
+<div class="c" style="display: -webkit-box; height: 80px">text <span class="p" style="height: 50%">box</span></div>
+<div class="c" style="display: -webkit-box; -webkit-box-orient: vertical; height: 80px">text <span class="p" style="height: 50%">vertical</span></div>
+<div class="c" style="display: -webkit-box; height: 80px">text <img style="height: 50%"></div>
+<div class="c" style="display: -webkit-box; height: 80px">text <span class="p" style="height: 50%"><span class="p" style="height: 50%; background: pink">in</span></span></div>
+<div class="c" style="display: -webkit-box">text <span class="p" style="height: 50%">auto box</span><div style="height: 50px; width: 5px"></div></div>
