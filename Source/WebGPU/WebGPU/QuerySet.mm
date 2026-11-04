@@ -126,7 +126,7 @@ void QuerySet::setOverrideLocation(QuerySet&, uint32_t, uint32_t)
 
 void QuerySet::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
-    CommandEncoder::trackEncoder(commandEncoder, m_commandEncoders);
+    commandEncoder.trackEncoderForQuerySet(*this, m_commandEncoders);
     commandEncoder.addBuffer(m_visibilityBuffer);
     commandEncoder.addBuffer(m_timestampBufferWithOffset.buffer);
     if (isDestroyed())

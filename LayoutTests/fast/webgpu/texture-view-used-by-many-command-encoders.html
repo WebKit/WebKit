@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGPU: long-lived GPUTextureViews used by many command encoders</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+const viewCount = 4;
+const submitCount = 100;
+const drainEvery = 4;
+const sampledTexel = [10, 200, 30, 255];
+
+const shaderCode = `
+    @group(0) @binding(0) var t: texture_2d<f32>;
+    @vertex fn vs(@builtin(vertex_index) i: u32) -> @builtin(position) vec4f {
+        var p = array<vec2f, 3>(vec2f(-1, -1), vec2f(3, -1), vec2f(-1, 3));
+        return vec4f(p[i], 0.5, 1);
+    }
+    @fragment fn fs(@builtin(position) q: vec4f) -> @location(0) vec4f {
+        return textureLoad(t, vec2i(q.xy), 0);
+    }`;
+
+let devicePromise;
+
+async function createDevice()
+{
+    const adapter = await navigator.gpu.requestAdapter();
+    assert_true(adapter !== null, "Failed to get GPU adapter");
+    const device = await adapter.requestDevice();
+    assert_true(device !== null, "Failed to get GPU device");
+    return device;
+}
+
+function getDevice()
+{
+    if (!devicePromise)
+        devicePromise = createDevice();
+    return devicePromise;
+}
+
+async function createScenario(device, usage)
+{
+    const texture = device.createTexture({
+        size: [4, 4], format: 'rgba8unorm',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST,
+    });
+    const views = Array.from({ length: viewCount }, () => texture.createView());
+
+    if (usage == 'attachment') {
+        return {
+            texture,
+            readbackTexture: texture,
+            expectedTexel: [submitCount - 1, 0, 0, 255],
+            recordPass(encoder, index, iteration)
+            {
+                encoder.beginRenderPass({
+                    colorAttachments: [{ view: views[index], loadOp: 'clear', storeOp: 'store', clearValue: [(iteration % 256) / 255, 0, 0, 1] }],
+                }).end();
+            },
+        };
+    }
+
+    const texels = new Uint8Array(4 * 4 * 4);
+    for (let i = 0; i < texels.length; ++i)
+        texels[i] = sampledTexel[i % 4];
+    device.queue.writeTexture({ texture }, texels, { bytesPerRow: 16 }, [4, 4]);
+
+    const module = device.createShaderModule({ code: shaderCode });
+    const pipeline = await device.createRenderPipelineAsync({
+        layout: 'auto',
+        vertex: { module, entryPoint: 'vs' },
+        fragment: { module, entryPoint: 'fs', targets: [{ format: 'rgba8unorm' }] },
+    });
+    const renderTarget = device.createTexture({ size: [4, 4], format: 'rgba8unorm', usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+    const renderTargetView = renderTarget.createView();
+    const bindGroups = views.map(view => device.createBindGroup({ layout: pipeline.getBindGroupLayout(0), entries: [{ binding: 0, resource: view }] }));
+    return {
+        texture,
+        readbackTexture: renderTarget,
+        expectedTexel: sampledTexel,
+        recordPass(encoder, index)
+        {
+            const pass = encoder.beginRenderPass({
+                colorAttachments: [{ view: renderTargetView, loadOp: 'clear', storeOp: 'store', clearValue: [0, 0, 0, 0] }],
+            });
+            pass.setPipeline(pipeline);
+            pass.setBindGroup(0, bindGroups[index]);
+            pass.draw(3);
+            pass.end();
+        },
+    };
+}
+
+async function settle(device)
+{
+    await device.queue.onSubmittedWorkDone();
+    await device.queue.onSubmittedWorkDone();
+}
+
+async function submitManyEncoders(device, scenario)
+{
+    for (let i = 0; i < submitCount; ++i) {
+        const encoder = device.createCommandEncoder();
+        for (let j = 0; j < viewCount; ++j)
+            scenario.recordPass(encoder, j, i);
+        device.queue.submit([encoder.finish()]);
+        if (i % drainEvery == drainEvery - 1)
+            await device.queue.onSubmittedWorkDone();
+    }
+    await settle(device);
+}
+
+async function readTexel(device, texture)
+{
+    const buffer = device.createBuffer({ size: 256, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
+    const encoder = device.createCommandEncoder();
+    encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow: 256 }, [1, 1]);
+    device.queue.submit([encoder.finish()]);
+    await buffer.mapAsync(GPUMapMode.READ);
+    const texel = Array.from(new Uint8Array(buffer.getMappedRange(), 0, 4));
+    buffer.unmap();
+    buffer.destroy();
+    return texel;
+}
+
+async function submitPendingCommandBufferAfterManyEncoders(device, scenario, destroyTexture)
+{
+    const encoder = device.createCommandEncoder();
+    scenario.recordPass(encoder, 0, 0);
+    const pending = encoder.finish();
+
+    await submitManyEncoders(device, scenario);
+
+    if (destroyTexture)
+        scenario.texture.destroy();
+
+    device.pushErrorScope('validation');
+    device.queue.submit([pending]);
+    return device.popErrorScope();
+}
+
+const usages = [
+    { usage: 'attachment', description: 'as a color attachment' },
+    { usage: 'bindGroup', description: 'through a GPUBindGroup' },
+];
+
+for (const { usage, description } of usages) {
+    promise_test(async t => {
+        const device = await getDevice();
+        const scenario = await createScenario(device, usage);
+
+        device.pushErrorScope('validation');
+        await submitManyEncoders(device, scenario);
+        assert_array_equals(await readTexel(device, scenario.readbackTexture), scenario.expectedTexel, "texel after the last command encoder");
+        assert_equals(await device.popErrorScope(), null, "validation error");
+    }, `Long-lived GPUTextureViews used ${description} keep working across many command encoders`);
+
+    promise_test(async t => {
+        const device = await getDevice();
+        const scenario = await createScenario(device, usage);
+
+        const error = await submitPendingCommandBufferAfterManyEncoders(device, scenario, false);
+        assert_equals(error, null, "validation error");
+    }, `A command buffer recorded before many other command encoders used the same GPUTextureViews ${description} still submits`);
+
+    promise_test(async t => {
+        const device = await getDevice();
+        const scenario = await createScenario(device, usage);
+
+        const error = await submitPendingCommandBufferAfterManyEncoders(device, scenario, true);
+        assert_true(error instanceof GPUValidationError, "submitting after GPUTexture.destroy() should fail validation");
+    }, `GPUTexture.destroy() still invalidates a command buffer recorded before many other command encoders used the same GPUTextureViews ${description}`);
+}
+</script>
+</body>
+</html>

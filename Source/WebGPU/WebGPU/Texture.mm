@@ -3349,7 +3349,7 @@ RefPtr<WebGPU::TextureView> Texture::createView(const std::optional<WebGPU::Text
         renderExtent = computeRenderExtent({ m_width, m_height, m_depthOrArrayLayers }, descriptor->baseMipLevel);
 
     auto result = TextureView::create(texture, sampledTexture, *descriptor, renderExtent, *this, device.get());
-    m_textureViews.append(result);
+    m_textureViews.add(result.get());
     return result;
 }
 
@@ -3634,10 +3634,8 @@ void Texture::destroy()
         m_texture = protect(m_device)->placeholderTexture(format());
     m_destroyed = true;
     if (!m_canvasBacking) {
-        for (auto& weakView : m_textureViews) {
-            if (RefPtr view = weakView.get())
-                view->destroy();
-        }
+        for (Ref view : m_textureViews.values())
+            view->destroy();
         for (Ref bindGroup : m_bindGroups.values())
             bindGroup->releaseDestroyedResources();
         m_bindGroups.clear();

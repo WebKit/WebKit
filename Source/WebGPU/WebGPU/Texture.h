@@ -206,7 +206,7 @@ private:
     using ClearedToZeroContainer = HashMap<uint32_t, ClearedToZeroInnerContainer, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     ClearedToZeroContainer m_clearedToZero;
     HashCountedSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_provisionalClears;
-    Vector<ThreadSafeWeakPtr<TextureView>> m_textureViews;
+    ThreadSafeWeakHashSet<TextureView> m_textureViews;
     mutable ThreadSafeWeakHashSet<BindGroup> m_bindGroups;
     mutable ThreadSafeWeakHashSet<RenderBundle> m_renderBundles;
     bool m_destroyed { false };

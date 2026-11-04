@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGPU: long-lived GPUQuerySets used by many command encoders</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+const querySetCount = 4;
+const submitCount = 100;
+const drainEvery = 4;
+
+let devicePromise;
+
+async function createDevice()
+{
+    const adapter = await navigator.gpu.requestAdapter();
+    assert_true(adapter !== null, "Failed to get GPU adapter");
+    const device = await adapter.requestDevice();
+    assert_true(device !== null, "Failed to get GPU device");
+    return device;
+}
+
+function getDevice()
+{
+    if (!devicePromise)
+        devicePromise = createDevice();
+    return devicePromise;
+}
+
+function createScenario(device)
+{
+    const texture = device.createTexture({ size: [4, 4], format: 'rgba8unorm', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    const view = texture.createView();
+    const querySets = Array.from({ length: querySetCount }, () => device.createQuerySet({ type: 'occlusion', count: 1 }));
+    return {
+        querySets,
+        recordPass(encoder, index)
+        {
+            const pass = encoder.beginRenderPass({
+                colorAttachments: [{ view, loadOp: 'clear', storeOp: 'store', clearValue: [0, 0, 0, 1] }],
+                occlusionQuerySet: querySets[index],
+            });
+            pass.beginOcclusionQuery(0);
+            pass.endOcclusionQuery();
+            pass.end();
+        },
+    };
+}
+
+async function settle(device)
+{
+    await device.queue.onSubmittedWorkDone();
+    await device.queue.onSubmittedWorkDone();
+}
+
+async function submitManyEncoders(device, scenario)
+{
+    for (let i = 0; i < submitCount; ++i) {
+        const encoder = device.createCommandEncoder();
+        for (let j = 0; j < querySetCount; ++j)
+            scenario.recordPass(encoder, j);
+        device.queue.submit([encoder.finish()]);
+        if (i % drainEvery == drainEvery - 1)
+            await device.queue.onSubmittedWorkDone();
+    }
+    await settle(device);
+}
+
+async function submitPendingCommandBufferAfterManyEncoders(device, scenario, destroyQuerySet)
+{
+    const encoder = device.createCommandEncoder();
+    scenario.recordPass(encoder, 0);
+    const pending = encoder.finish();
+
+    await submitManyEncoders(device, scenario);
+
+    if (destroyQuerySet)
+        scenario.querySets[0].destroy();
+
+    device.pushErrorScope('validation');
+    device.queue.submit([pending]);
+    return device.popErrorScope();
+}
+
+promise_test(async t => {
+    const device = await getDevice();
+    const scenario = createScenario(device);
+
+    device.pushErrorScope('validation');
+    await submitManyEncoders(device, scenario);
+    assert_equals(await device.popErrorScope(), null, "validation error");
+}, 'Long-lived GPUQuerySets used by occlusion queries keep working across many command encoders');
+
+promise_test(async t => {
+    const device = await getDevice();
+    const scenario = createScenario(device);
+
+    const error = await submitPendingCommandBufferAfterManyEncoders(device, scenario, false);
+    assert_equals(error, null, "validation error");
+}, 'A command buffer recorded before many other command encoders used the same GPUQuerySets still submits');
+
+promise_test(async t => {
+    const device = await getDevice();
+    const scenario = createScenario(device);
+
+    const error = await submitPendingCommandBufferAfterManyEncoders(device, scenario, true);
+    assert_true(error instanceof GPUValidationError, "submitting after GPUQuerySet.destroy() should fail validation");
+}, 'GPUQuerySet.destroy() still invalidates a command buffer recorded before many other command encoders used the same GPUQuerySets');
+</script>
+</body>
+</html>

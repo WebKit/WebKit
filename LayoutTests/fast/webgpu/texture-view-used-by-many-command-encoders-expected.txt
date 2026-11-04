@@ -1,0 +1,8 @@
+
+PASS Long-lived GPUTextureViews used as a color attachment keep working across many command encoders
+PASS A command buffer recorded before many other command encoders used the same GPUTextureViews as a color attachment still submits
+PASS GPUTexture.destroy() still invalidates a command buffer recorded before many other command encoders used the same GPUTextureViews as a color attachment
+PASS Long-lived GPUTextureViews used through a GPUBindGroup keep working across many command encoders
+PASS A command buffer recorded before many other command encoders used the same GPUTextureViews through a GPUBindGroup still submits
+PASS GPUTexture.destroy() still invalidates a command buffer recorded before many other command encoders used the same GPUTextureViews through a GPUBindGroup
+
