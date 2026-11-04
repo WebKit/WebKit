@@ -334,8 +334,7 @@ auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit
         auto autoInlineSize = [&] {
             if (aspectRatioBorderBoxInlineSize)
                 return *aspectRatioBorderBoxInlineSize;
-            // An auto inline size fits the content of a box justify-self aligns.
-            if (isAlignedByJustifySelf(box, containingBlockStyle)) {
+            if (autoInlineSizeFitsContent(box, containingBlockStyle)) {
                 ASSERT(contentInlineSizes);
                 return std::min(std::max(contentInlineSizes->minimum + borderAndPaddingInlineSize, stretchFitInlineSize), contentInlineSizes->maximum + borderAndPaddingInlineSize);
             }
@@ -420,6 +419,28 @@ bool BlockFormattingUtils::isAlignedByJustifySelf(const RenderBox& box, const St
 {
     CheckedRef style = box.style();
     return !box.isAnonymous() && !style->justifySelf().resolve(&containingBlockStyle).isNormalStretchOrLegacy();
+}
+
+bool BlockFormattingUtils::autoInlineSizeFitsContent(const RenderBox& box, const Style::ComputedStyle& containingBlockStyle)
+{
+    if (isAlignedByJustifySelf(box, containingBlockStyle))
+        return true;
+    // FIXME: The direction of a marquee is not mapped to its writing mode (RenderBox::sizesLogicalWidthToFitContent).
+    if (!box.parent()->isHTMLMarquee())
+        return false;
+    switch (box.parent()->style().marqueeDirection()) {
+    case MarqueeDirection::Auto:
+    case MarqueeDirection::Forward:
+    case MarqueeDirection::Backward:
+    case MarqueeDirection::Left:
+    case MarqueeDirection::Right:
+        return true;
+    case MarqueeDirection::Up:
+    case MarqueeDirection::Down:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 LayoutUnit BlockFormattingUtils::justifySelfOffset(const RenderBox& box, LayoutUnit borderBoxInlineSize, LayoutUnit marginStart, LayoutUnit marginEnd, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle)
