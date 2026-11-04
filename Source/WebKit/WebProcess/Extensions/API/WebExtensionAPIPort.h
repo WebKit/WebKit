@@ -141,7 +141,7 @@ private:
     void remove();
 
 #if PLATFORM(COCOA)
-    void fireMessageEventIfNeeded(id message, bool userGesture);
+    void fireMessageEventIfNeeded(JSStringRef messageJSON, bool userGesture);
 #endif
 
     WebExtensionContentWorldType m_targetContentWorldType;

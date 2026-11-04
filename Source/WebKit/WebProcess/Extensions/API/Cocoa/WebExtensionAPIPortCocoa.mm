@@ -166,7 +166,7 @@ void WebExtensionAPIPort::disconnect()
     remove();
 }
 
-void WebExtensionAPIPort::fireMessageEventIfNeeded(id message, bool userGesture)
+void WebExtensionAPIPort::fireMessageEventIfNeeded(JSStringRef messageJSON, bool userGesture)
 {
     if (isDisconnected() || isQuarantined() || !m_onMessage || m_onMessage->listeners().isEmpty())
         return;
@@ -187,7 +187,7 @@ void WebExtensionAPIPort::fireMessageEventIfNeeded(id message, bool userGesture)
         }
 
         listener->call(
-            toJSValueRef(globalContext, message),
+            fromMessageJSON(globalContext, messageJSON),
             toJS(globalContext, this)
         );
     }
@@ -243,14 +243,14 @@ void WebExtensionContextProxy::dispatchPortMessageEvent(std::optional<WebPagePro
     if (ports.isEmpty())
         return;
 
-    id message = parseJSON(messageJSON.createNSString().get(), { JSONOptions::FragmentsAllowed });
+    RefPtr messageString = toJSString(messageJSON);
 
     for (Ref port : ports) {
         // Don't send the message to other ports in the same page as the sender.
         if (sendingPageProxyIdentifier && sendingPageProxyIdentifier == port->owningPageProxyIdentifier())
             continue;
 
-        port->fireMessageEventIfNeeded(message, userGesture);
+        port->fireMessageEventIfNeeded(messageString.get(), userGesture);
     }
 }
 

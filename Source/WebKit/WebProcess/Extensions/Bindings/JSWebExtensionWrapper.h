@@ -211,6 +211,7 @@ JSValueRef fromArray(JSContextRef, Vector<size_t>&&);
 JSValueRef fromArray(JSContextRef, Vector<String>&&);
 
 JSValueRef fromJSON(JSContextRef, RefPtr<JSON::Value>);
+JSValueRef fromMessageJSON(JSContextRef, JSStringRef messageJSON);
 JSValueRef fromObject(JSContextRef, HashMap<String, Protected<JSValueRef>>&&);
 
 JSValueRef toJSValueRef(JSContextRef, const String&, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);

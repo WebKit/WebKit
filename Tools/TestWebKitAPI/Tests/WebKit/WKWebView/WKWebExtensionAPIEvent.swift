@@ -40,6 +40,15 @@ struct WKWebExtensionAPIEventTests {
         ],
     ]
 
+    private let eventAlarmsManifest: [String: Any] = [
+        "manifest_version": 3,
+        "background": [
+            "scripts": ["background.js"],
+            "persistent": false,
+        ],
+        "permissions": ["alarms"],
+    ]
+
     @Test
     func errors() async throws {
         let backgroundScript = """
@@ -70,6 +79,68 @@ struct WKWebExtensionAPIEventTests {
             """
 
         let manager = try loadWebExtension(manifest: eventManifest, resources: ["background.js": backgroundScript])
+        try await manager.run()
+    }
+
+    @Test
+    func addingSameListenerRepeatedlyRegistersItOnce() async throws {
+        let backgroundScript = """
+            let callCount = 0
+            function listener() { ++callCount }
+
+            for (let i = 0; i < 1000; ++i)
+                browser.alarms.onAlarm.addListener(listener)
+
+            // Registered after the repeated listener, so it runs after every call to it in the same dispatch.
+            browser.alarms.onAlarm.addListener(() => {
+                browser.test.assertEq(callCount, 1, 'Repeated addListener calls with the same function should register it once')
+                browser.test.notifyPass()
+            })
+
+            browser.alarms.create('repeatedListener', { delayInMinutes: 100 / 1000 / 60 })
+            """
+
+        let manager = try loadWebExtension(manifest: eventAlarmsManifest, resources: ["background.js": backgroundScript])
+        try await manager.run()
+    }
+
+    @Test
+    func removingRepeatedlyAddedListenerRemovesIt() async throws {
+        let backgroundScript = """
+            function listener() { }
+
+            browser.alarms.onAlarm.addListener(listener)
+            browser.alarms.onAlarm.addListener(listener)
+            browser.alarms.onAlarm.addListener(listener)
+            browser.test.assertTrue(browser.alarms.onAlarm.hasListener(listener), 'Should have listener')
+
+            browser.alarms.onAlarm.removeListener(listener)
+            browser.test.assertFalse(browser.alarms.onAlarm.hasListener(listener), 'A single removeListener should remove the listener')
+
+            browser.test.notifyPass()
+            """
+
+        let manager = try loadWebExtension(manifest: eventAlarmsManifest, resources: ["background.js": backgroundScript])
+        try await manager.run()
+    }
+
+    @Test
+    func distinctListenersAreAllCalled() async throws {
+        let backgroundScript = """
+            let callCount = 0
+
+            for (let i = 0; i < 3; ++i)
+                browser.alarms.onAlarm.addListener(() => { ++callCount })
+
+            browser.alarms.onAlarm.addListener(() => {
+                browser.test.assertEq(callCount, 3, 'Distinct listener functions should each be called')
+                browser.test.notifyPass()
+            })
+
+            browser.alarms.create('distinctListeners', { delayInMinutes: 100 / 1000 / 60 })
+            """
+
+        let manager = try loadWebExtension(manifest: eventAlarmsManifest, resources: ["background.js": backgroundScript])
         try await manager.run()
     }
 }

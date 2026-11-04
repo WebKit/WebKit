@@ -149,6 +149,9 @@ void WebExtensionAPIEvent::invokeListenersWithArgument(id argument1, id argument
 
 void WebExtensionAPIEvent::addListener(WebCore::FrameIdentifier frameIdentifier, RefPtr<WebExtensionCallbackHandler> listener)
 {
+    if (hasListener(listener))
+        return;
+
     m_frameIdentifier = frameIdentifier;
     m_listeners.append(listener);
 

@@ -979,6 +979,76 @@ TEST(WKWebExtensionAPIRuntime, TabsConnectSenderWindowIdFromPopup)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIRuntime, PortPostMessageDeliversEachValueOnceToRepeatedListener)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.runtime.onConnect.addListener((port) => {",
+        @"  const received = []",
+        @"  function listener(message) { received.push(message) }",
+
+        @"  for (let i = 0; i < 100; ++i)",
+        @"    port.onMessage.addListener(listener)",
+
+        @"  let messageCount = 0",
+
+        // Registered after the repeated listener, so it runs after every call to it for the same message.
+        @"  port.onMessage.addListener(() => {",
+        @"    if (++messageCount < 2)",
+        @"      return",
+
+        @"    browser.test.assertEq(received.length, 2, 'Repeated addListener calls with the same function should register it once')",
+        @"    browser.test.assertDeepEq(received[0], { value: 1, list: [ 'a', 2, true ] }, 'Should receive the object')",
+        @"    browser.test.assertEq(received[1], 'text', 'Should receive a top-level string')",
+
+        @"    browser.test.notifyPass()",
+        @"  })",
+        @"})",
+
+        @"browser.test.sendMessage('Content Ready')"
+    ]);
+
+    auto *popupScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const [activeTab] = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"  const port = browser.tabs.connect(activeTab.id)",
+
+        @"  port.postMessage({ value: 1, list: [ 'a', 2, true ] })",
+        @"  port.postMessage('text')",
+        @"})()"
+    ]);
+
+    auto manager = Util::loadExtension(runtimePopupContentScriptManifest, @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript,
+        @"popup.html": @"<script type='module' src='popup.js'></script>",
+        @"popup.js": popupScript,
+    });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager runUntilTestMessage:@"Content Ready"];
+
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *) { };
+
+    [manager.get().context performActionForTab:manager.get().defaultTab];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWhileBackgroundIsLoading)
 {
     // A content script sends runtime.sendMessage while the non-persistent background content

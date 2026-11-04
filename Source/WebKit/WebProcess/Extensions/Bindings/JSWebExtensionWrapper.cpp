@@ -385,6 +385,18 @@ JSValueRef fromJSON(JSContextRef context, RefPtr<JSON::Value> value)
     return JSValueMakeUndefined(context);
 }
 
+JSValueRef fromMessageJSON(JSContextRef context, JSStringRef messageJSON)
+{
+    if (!context)
+        return nullptr;
+
+    if (!messageJSON)
+        return JSValueMakeUndefined(context);
+
+    JSValueRef value = JSValueMakeFromJSONString(context, messageJSON);
+    return value ?: JSValueMakeUndefined(context);
+}
+
 JSValueRef fromArray(JSContextRef context, Vector<Protected<JSValueRef>>&& array)
 {
     if (!context)

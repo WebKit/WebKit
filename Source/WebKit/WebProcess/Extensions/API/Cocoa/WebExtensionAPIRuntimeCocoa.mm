@@ -167,7 +167,7 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEventOnceBackgroundServiceW
         return;
     }
 
-    id message = parseJSON(messageJSON.createNSString().get(), JSONOptions::FragmentsAllowed);
+    RefPtr messageString = toJSString(messageJSON);
     auto sourceContentWorldType = senderParameters.contentWorldType;
 
     auto callbackAggregator = ReplyCallbackAggregator::create([completionHandler = WTF::move(completionHandler)](JSValue *replyMessage, IsDefaultReply defaultReply) mutable {
@@ -221,7 +221,7 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEventOnceBackgroundServiceW
             // with a signature to translate the JS function arguments. Having the block capture
             // callbackAggregatorWrapper ensures that callbackAggregator remains in scope.
             auto senderInfo = toWebAPI(listener->globalContext(), senderParameters);
-            auto returnValue = listener->call(toJSValueRef(listener->globalContext(), message), senderInfo, toJSValueRef(listener->globalContext(), ^(JSValue *replyMessage) {
+            auto returnValue = listener->call(fromMessageJSON(listener->globalContext(), messageString.get()), senderInfo, toJSValueRef(listener->globalContext(), ^(JSValue *replyMessage) {
                 protect(callbackAggregatorWrapper.get().aggregator).get()(replyMessage, IsDefaultReply::No);
             }));
 
