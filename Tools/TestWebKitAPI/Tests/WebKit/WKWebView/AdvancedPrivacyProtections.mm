@@ -1371,6 +1371,8 @@ TEST(AdvancedPrivacyProtections, AddNoiseToWebAudioAPIs)
     };
 
     checkFingerprintForNoise(@"testOscillatorCompressor");
+    checkFingerprintForNoise(@"testOscillatorCompressorAfterCopyToChannel");
+    checkFingerprintForNoise(@"testOscillatorCompressorAfterCopyToChannelAtOffset");
     checkFingerprintForNoise(@"testOscillatorCompressorWorklet");
     checkFingerprintForNoise(@"testOscillatorCompressorAnalyzer");
     checkFingerprintForNoise(@"testLoopingOscillatorCompressorBiquadFilter");
