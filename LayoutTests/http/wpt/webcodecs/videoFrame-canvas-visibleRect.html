@@ -1,0 +1,82 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebCodecsVideoFrameRotationEnabled=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+// A VideoFrame's canvas image is its visible rectangle at its display size, of which drawImage()'s and
+// createImageBitmap()'s source rectangles select a part. The source picture is 4x4 in four colors:
+// red top left, green top right, blue bottom left, white bottom right.
+const source = new OffscreenCanvas(4, 4);
+const sourceContext = source.getContext("2d");
+for (const [x, y, color] of [[0, 0, "#f00"], [2, 0, "#0f0"], [0, 2, "#00f"], [2, 2, "#fff"]]) {
+    sourceContext.fillStyle = color;
+    sourceContext.fillRect(x, y, 2, 2);
+}
+
+const names = { "255,0,0,255": "red", "0,255,0,255": "green", "0,0,255,255": "blue", "255,255,255,255": "white", "0,0,0,0": "none" };
+
+// The color of each pixel of `width` x `height` after `draw` paints a transparent canvas, row by row.
+function pixels(width, height, draw)
+{
+    const canvas = new OffscreenCanvas(width, height);
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    context.imageSmoothingEnabled = false;
+    draw(context);
+    const data = context.getImageData(0, 0, width, height).data;
+    const rows = [];
+    for (let y = 0; y < height; ++y) {
+        const row = [];
+        for (let x = 0; x < width; ++x) {
+            const pixel = Array.from(data.slice((y * width + x) * 4, (y * width + x + 1) * 4));
+            row.push(names[pixel.join(",")] ?? pixel.join(","));
+        }
+        rows.push(row.join(" "));
+    }
+    return rows;
+}
+
+const whole = new VideoFrame(source, { timestamp: 0 });
+const topHalf = new VideoFrame(whole, { visibleRect: { x: 0, y: 0, width: 4, height: 2 } });
+const rightHalf = new VideoFrame(whole, { visibleRect: { x: 2, y: 0, width: 2, height: 4 } });
+
+test(() => {
+    assert_array_equals(pixels(4, 2, (context) => context.drawImage(topHalf, 0, 0)), ["red red green green", "red red green green"]);
+}, "drawImage() draws the visible rectangle");
+
+test(() => {
+    const scaled = new VideoFrame(topHalf, { displayWidth: 8, displayHeight: 4 });
+    assert_array_equals(pixels(8, 4, (context) => context.drawImage(scaled, 0, 0)), Array(4).fill("red red red red green green green green"));
+}, "drawImage() draws the visible rectangle at the display size");
+
+test(() => {
+    assert_array_equals(pixels(4, 2, (context) => context.drawImage(whole, 0, 0, 4, 2, 0, 0, 4, 2)), ["red red green green", "red red green green"]);
+}, "drawImage() draws the source rectangle");
+
+test(() => {
+    assert_array_equals(pixels(2, 2, (context) => context.drawImage(rightHalf, 0, 2, 2, 2, 0, 0, 2, 2)), ["white white", "white white"]);
+}, "drawImage() takes the source rectangle within the visible rectangle");
+
+test(() => {
+    assert_array_equals(pixels(4, 2, (context) => context.drawImage(rightHalf, 0, 0, 4, 2, 0, 0, 4, 2)), ["green green none none", "green green none none"]);
+}, "drawImage() draws nothing of a source rectangle past the visible rectangle");
+
+test(() => {
+    const rotated = new VideoFrame(topHalf, { rotation: 90 });
+    assert_equals(rotated.rotation, 90);
+    assert_array_equals(pixels(2, 4, (context) => context.drawImage(rotated, 0, 0)), ["red red", "red red", "green green", "green green"]);
+}, "drawImage() draws the visible rectangle of a rotated frame");
+
+promise_test(async () => {
+    const bitmap = await createImageBitmap(whole, 0, 0, 4, 2);
+    assert_array_equals(pixels(4, 2, (context) => context.drawImage(bitmap, 0, 0)), ["red red green green", "red red green green"]);
+}, "createImageBitmap() crops to the source rectangle");
+
+promise_test(async () => {
+    const bitmap = await createImageBitmap(rightHalf);
+    assert_array_equals(pixels(2, 4, (context) => context.drawImage(bitmap, 0, 0)), ["green green", "green green", "white white", "white white"]);
+}, "createImageBitmap() takes the visible rectangle");
+
+promise_test(async () => {
+    const bitmap = await createImageBitmap(rightHalf, 0, 2, 2, 2);
+    assert_array_equals(pixels(2, 2, (context) => context.drawImage(bitmap, 0, 0)), ["white white", "white white"]);
+}, "createImageBitmap() takes the source rectangle within the visible rectangle");
+</script>

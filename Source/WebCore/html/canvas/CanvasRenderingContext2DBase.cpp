@@ -1974,7 +1974,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CSSStyleImageValue& im
 }
 
 #if ENABLE(WEB_CODECS)
-ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& frame, const FloatRect&, const FloatRect& dstRect)
+ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& frame, const FloatRect& srcRect, const FloatRect& dstRect)
 {
     // Let usability be the result of checking the usability of image.
     auto usability = checkUsability(frame);
@@ -1985,8 +1985,18 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
     if (usability.returnValue() == CanvasImageSourceUsability::Bad)
         return { };
 
+    if (!srcRect.width() || !srcRect.height())
+        return { };
+
+    auto normalizedSrcRect = normalizeRect(srcRect);
+    auto normalizedDstRect = normalizeRect(dstRect);
+    if (normalizedSrcRect.isEmpty() || normalizedDstRect.isEmpty())
+        return { };
+
     auto* context = effectiveDrawingContext();
     if (!context)
+        return { };
+    if (!hasInvertibleTransform()) [[unlikely]]
         return { };
 
     RefPtr scriptContext = protect(canvasBase())->scriptExecutionContext();
@@ -1997,7 +2007,6 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
     if (!internalFrame)
         return { };
 
-    auto normalizedDstRect = normalizeRect(dstRect);
     // FIXME: Can we avoid post-processing in any cases?
     if (rectContainsCanvas(normalizedDstRect))
         willUpdateEntireContents();
@@ -2011,8 +2020,15 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
 #endif
     };
 
-    // FIXME: Add support for srcRect
-    context->drawVideoFrame(*internalFrame, dstRect, ShouldDiscardAlpha::No, options);
+    // The frame's canvas image is its visible rectangle at its display size, of which the source rectangle selects a
+    // part: the whole frame is drawn where that puts it, clipped to the image and the destination.
+    GraphicsContextStateSaver stateSaver(*context);
+    context->clip(normalizedDstRect);
+    context->translate(normalizedDstRect.location());
+    context->scale(FloatSize(normalizedDstRect.width() / normalizedSrcRect.width(), normalizedDstRect.height() / normalizedSrcRect.height()));
+    context->translate(-normalizedSrcRect.location());
+    context->clip(FloatRect { { }, size(frame) });
+    context->drawVideoFrame(*internalFrame, frame.renderingRect(*internalFrame), ShouldDiscardAlpha::No, options);
 
     return { };
 }
