@@ -98,6 +98,7 @@ class WebDriverTestRunnerW3C(object):
             # The tests compare the platformName capability with this. Like wptrunner, use the OS name as mozinfo has it
             # (mac, linux, win), which WdspecExecutor maps to the WebDriver name.
             executor = WebDriverW3CExecutor(self._driver, self._server, self._env, self._port.get_option('timeout'), self._expectations, self._port.host.platform.os_name)
+            executor.collect(tests)
             executor.setup()
             executor.warm_up()
             restart_count = 0

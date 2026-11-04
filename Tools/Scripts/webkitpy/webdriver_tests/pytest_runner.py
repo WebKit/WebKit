@@ -229,7 +229,7 @@ class SubtestDeselector(object):
             config.hook.pytest_deselected(items=deselected)
 
 
-def collect(directory, args, ignore_param=None):
+def collect(paths, args, ignore_param=None):
     collect_recorder = CollectRecorder(ignore_param)
     with open(os.devnull, 'w') as f:
         with contextlib.redirect_stdout(f):
@@ -237,7 +237,7 @@ def collect(directory, args, ignore_param=None):
                 cmd = ['--collect-only',
                        '--basetemp', cache_directory]
                 cmd.extend(args)
-                cmd.append(directory)
+                cmd.extend(paths)
                 pytest.main(cmd, plugins=[collect_recorder])
     return collect_recorder.tests
 
