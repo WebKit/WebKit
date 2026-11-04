@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px monospace; }
+.cb { position: relative; width: 150px; height: 90px; border: 1px solid; margin: 3px; display: inline-block; vertical-align: top; }
+.a { position: absolute; background: lightblue; }
+</style>
+<div class="cb"><div class="a" style="aspect-ratio: 2; width: 60px">width</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2; height: 30px">height</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2; height: 50%">pct height</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2; top: 10px; bottom: 10px">block insets</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2; left: 10px; right: 10px">inline insets</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2; inset: 5px">all insets</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2">no insets</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 4; width: 60px">overflowing content that wraps a lot</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2; height: 30px; max-width: 40px">max-width</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2; left: 0; right: 0; min-height: 80px">min-height</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 1; height: 20px">longwordthatisverylong</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2; height: 30px; min-width: 20px">min-width</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2; width: 60px; padding: 4px; box-sizing: border-box">bp border-box</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: auto 2; width: 60px; padding: 4px; box-sizing: border-box">auto ratio</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2; width: 60px"><div style="height: 50%; background: green; width: 10px"></div></div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2; height: 30px; display: flex">flex</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2; width: 60px; display: grid">grid</div></div>
+<div class="cb"><div class="a" style="aspect-ratio: 2; width: 60px; height: 10px">both</div></div>
+<div class="cb" style="writing-mode: vertical-rl"><div class="a" style="aspect-ratio: 2; width: 30px">vrl</div></div>

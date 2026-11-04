@@ -294,7 +294,7 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
 static bool decidesItsOwnInlineSize(const RenderBox& box, WritingMode writingMode)
 {
     return is<RenderTable>(box) || box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot() || box.sizesLogicalWidthToFitContent() || BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode)
-        || box.writingMode().isOrthogonal(writingMode);
+        || box.writingMode().isOrthogonal(writingMode) || box.style().aspectRatio().hasRatio();
 }
 
 // Everything that belongs to the block formatting context is computed here: the margins, the position, the containing block and, for a box
@@ -382,14 +382,14 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingCo
             return { outOfFlowGeometry.computeReplacedInlineAxisGeometry(borderBoxSize.width()), outOfFlowGeometry.computeReplacedBlockAxisGeometry(borderBoxSize.height()) };
         }
         auto contentInlineSizes = std::optional<IntrinsicWidthConstraints> { };
-        if (outOfFlowGeometry.hasFitContentInlineSize())
+        if (outOfFlowGeometry.needsContentInlineSizes())
             contentInlineSizes = LayoutIntegration::BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes(root, geometry.horizontalBorderAndPadding());
         auto inlineAxis = outOfFlowGeometry.computeInlineAxisGeometry(contentInlineSizes);
         auto borderBoxBlockSize = outOfFlowGeometry.definiteContentBoxBlockSize().transform([&](auto contentBoxBlockSize) {
             return contentBoxBlockSize + geometry.verticalBorderAndPadding();
         });
         auto borderBoxSize = integrationUtils().layoutOutOfFlowIndependentFormattingContext(root, inlineAxis.borderBoxSize, borderBoxBlockSize);
-        return { inlineAxis, outOfFlowGeometry.computeBlockAxisGeometry(borderBoxSize.height() - geometry.verticalBorderAndPadding()) };
+        return { inlineAxis, outOfFlowGeometry.computeBlockAxisGeometry(borderBoxSize.height() - geometry.verticalBorderAndPadding(), inlineAxis.borderBoxSize) };
     }();
     geometry.setContentBoxWidth(inlineAxis.borderBoxSize - geometry.horizontalBorderAndPadding());
     geometry.setHorizontalMargin({ inlineAxis.marginStart, inlineAxis.marginEnd });
@@ -417,12 +417,12 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
     auto geometry = computeBorderAndPadding(box, containingBlock.inlineSize);
     auto outOfFlowGeometry = OutOfFlowGeometry { box, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.box->writingMode(), containingBlock.box->hasPotentiallyScrollableOverflow(), containingBlock.scrollableContainingBlock }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
 
-    auto contentInlineSizes = outOfFlowGeometry.hasFitContentInlineSize() ? std::optional { computeIntrinsicInlineSizes(box) } : std::nullopt;
+    auto contentInlineSizes = outOfFlowGeometry.needsContentInlineSizes() ? std::optional { computeIntrinsicInlineSizes(box) } : std::nullopt;
     auto inlineAxis = outOfFlowGeometry.computeInlineAxisGeometry(contentInlineSizes);
     geometry.setContentBoxWidth(inlineAxis.borderBoxSize - geometry.horizontalBorderAndPadding());
     geometry.setHorizontalMargin({ inlineAxis.marginStart, inlineAxis.marginEnd });
     geometry.setLeft(containingBlock.paddingBoxInlineStart + inlineAxis.borderBoxStart);
-    auto contentBoxBlockSize = outOfFlowGeometry.definiteContentBoxBlockSize();
+    auto contentBoxBlockSize = outOfFlowGeometry.definiteContentBoxBlockSize(inlineAxis.borderBoxSize);
 
     auto intrinsicContentBlockSize = LayoutUnit { };
     if (box->firstChild()) {
@@ -442,7 +442,7 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
     if (box->shouldApplySizeContainment())
         intrinsicContentBlockSize = box->explicitIntrinsicInnerLogicalHeight().value_or(0_lu);
 
-    auto blockAxis = outOfFlowGeometry.computeBlockAxisGeometry(intrinsicContentBlockSize);
+    auto blockAxis = outOfFlowGeometry.computeBlockAxisGeometry(intrinsicContentBlockSize, inlineAxis.borderBoxSize);
     geometry.setContentBoxHeight(blockAxis.borderBoxSize - geometry.verticalBorderAndPadding());
     geometry.setVerticalMargin({ blockAxis.marginStart, blockAxis.marginEnd });
     geometry.setTop(containingBlock.paddingBoxBlockStart + blockAxis.borderBoxStart);

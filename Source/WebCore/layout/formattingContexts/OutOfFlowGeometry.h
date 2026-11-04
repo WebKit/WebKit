@@ -96,12 +96,14 @@ public:
     OutOfFlowGeometry(const RenderBox&, const ContainingBlock&, const StaticPosition&, const std::optional<DefaultAnchor>&, LayoutUnit inlineAxisBorderAndPadding, LayoutUnit blockAxisBorderAndPadding);
 
     // An auto inline size is the fit-content size when an inset in the inline axis is auto or justify-self is neither normal nor stretch
-    // (css-position-3 §4.3), which takes the min-content and max-content inline sizes of the content (css-sizing-3 §5.1).
-    bool hasFitContentInlineSize() const;
+    // (css-position-3 §4.3), which takes the min-content and max-content inline sizes of the content (css-sizing-3 §5.1). So does the
+    // automatic minimum inline size of a box whose preferred aspect ratio gives its inline size (css-sizing-4 §5.1).
+    bool needsContentInlineSizes() const;
     AxisGeometry computeInlineAxisGeometry(std::optional<IntrinsicWidthConstraints> contentInlineSizes = { }) const;
-    // The content box block size when it does not depend on the content, which percentages inside the box resolve against.
-    std::optional<LayoutUnit> definiteContentBoxBlockSize() const;
-    AxisGeometry computeBlockAxisGeometry(LayoutUnit intrinsicContentBlockSize) const;
+    // The content box block size when it does not depend on the content, which percentages inside the box resolve against; with a
+    // preferred aspect ratio, from the border box inline size.
+    std::optional<LayoutUnit> definiteContentBoxBlockSize(std::optional<LayoutUnit> borderBoxInlineSize = { }) const;
+    AxisGeometry computeBlockAxisGeometry(LayoutUnit intrinsicContentBlockSize, LayoutUnit borderBoxInlineSize) const;
     // A replaced element's own formatting context decides its border box size, from its natural size and aspect ratio (CSS 2.2 §10.3.8,
     // §10.6.5); this places that border box.
     AxisGeometry computeReplacedInlineAxisGeometry(LayoutUnit borderBoxSize) const;
@@ -109,6 +111,9 @@ public:
 
 private:
     enum class Axis : bool { Inline, Block };
+    // The axis whose automatic size a preferred aspect ratio gives from the size in the other axis (css-position-3 §4.3).
+    std::optional<Axis> ratioDependentAxis() const;
+    bool hasFitContentInlineSize() const;
     struct AxisValues {
         std::optional<LayoutUnit> insetStart;
         std::optional<LayoutUnit> insetEnd;
@@ -133,7 +138,7 @@ private:
     std::optional<std::pair<LayoutUnit, LayoutUnit>> defaultAnchorRange(Axis) const;
     std::pair<LayoutUnit, LayoutUnit> containingBlockRange(Axis) const;
     AxisValues axisValues(Axis) const;
-    std::optional<LayoutUnit> definiteBorderBoxBlockSize(const AxisValues&) const;
+    std::optional<LayoutUnit> definiteBorderBoxBlockSize(const AxisValues&, std::optional<LayoutUnit> borderBoxInlineSize = { }) const;
     template<typename SizeType> LayoutUnit borderBoxSizeFor(const SizeType&, LayoutUnit containingBlockSize, LayoutUnit borderAndPadding) const;
     template<typename MinimumSizeType, typename MaximumSizeType> LayoutUnit clamp(LayoutUnit borderBoxSize, const MinimumSizeType&, const MaximumSizeType&, LayoutUnit containingBlockSize, LayoutUnit borderAndPadding) const;
     const Style::ComputedStyle& style() const;
