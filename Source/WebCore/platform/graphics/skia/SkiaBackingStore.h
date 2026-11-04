@@ -55,7 +55,9 @@ public:
     bool requiresStrictSourceConstraint(SkSamplingOptions sampling) const { return sampling.filter == SkFilterMode::kLinear && m_hasPaddedTiles; }
 
     void update(const FloatSize&, float scale, CoordinatedBackingStoreProxy::Update&&);
-    void processPendingTileUpdates();
+
+    enum class ProcessHiddenTiles : bool { No, Yes };
+    bool processPendingTileUpdates(ProcessHiddenTiles, const Function<bool()>& shouldStopProcessingTiles = nullptr);
 
     void paintToCanvas(SkCanvas&, const SkPaint&, const SkiaDamageRegion* = nullptr);
     void appendImageSetEntries(SkCanvas&, const SkMatrix& ctm, size_t matrixIndex, float opacity, bool enableAntialias, Vector<SkCanvas::ImageSetEntry>& images, const SkiaDamageRegion* = nullptr) const;
@@ -77,12 +79,15 @@ private:
 
         ~Tile() = default;
 
+        void setIsVisible(bool isVisible) { m_isVisible = isVisible; }
+
         void scheduleUpdate(const IntRect& dirtyRect, const IntRect& tileRect, CoordinatedTileBuffer&);
-        void processPendingUpdateIfNeeded();
+        bool processPendingUpdateIfNeeded(ProcessHiddenTiles, const Function<bool()>& shouldStopProcessingTiles);
 
         const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
         sk_sp<SkImage> image() const;
         bool isPadded() const;
+        bool hasPendingUpdates() const;
 
         // Logical region to sample from image() - smaller than the image for padded super-tiled textures.
         SkRect imageSourceRect() const;
@@ -98,6 +103,7 @@ private:
         };
 
         float m_scale { 1. };
+        bool m_isVisible { false };
         FloatRect m_rect;
         Vector<Update> m_pendingUpdates;
         sk_sp<SkSurface> m_surface;

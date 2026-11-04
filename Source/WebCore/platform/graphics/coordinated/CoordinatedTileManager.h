@@ -72,15 +72,35 @@ public:
     static unsigned numberOfPaintingThreads();
 
     const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext() const;
+
+    void didStartRenderingUpdate(uint64_t renderingUpdateID) { m_currentRenderingUpdate = renderingUpdateID; }
+    void didFinishRenderingUpdate();
+    uint64_t currentRenderingUpdate() const { return m_currentRenderingUpdate; }
+
+    void didChangePaintingTaskPriorities() { m_paintingTaskQueueNeedsUpdate = true; }
+
     Ref<SkiaRecordingResult> record(const GraphicsLayerCoordinated&, const IntRect& recordRect, bool contentsOpaque, float contentsScale, unsigned dirtyTilesCount);
-    Ref<CoordinatedTileBuffer> scheduleReplay(const GraphicsLayerCoordinated&, const Ref<SkiaRecordingResult>&, const IntRect& tileRect, const IntRect& dirtyRect);
+    Ref<CoordinatedTileBuffer> scheduleReplay(const GraphicsLayerCoordinated&, const Ref<SkiaRecordingResult>&, const IntRect& tileRect, const IntRect& dirtyRect, unsigned distance);
 #elif USE(CAIRO)
     Ref<CoordinatedTileBuffer> schedulePaint(GraphicsLayerCoordinated&, const IntRect& dirtyRect, bool contentsOpaque, float contentsScale);
 #endif
 
 private:
 #if USE(SKIA)
+    struct PaintingTaskPriority {
+        friend bool operator<(const PaintingTaskPriority& a, const PaintingTaskPriority& b)
+        {
+            if (a.distance != b.distance)
+                return a.distance > b.distance;
+            return a.sequence > b.sequence;
+        }
+
+        unsigned distance { 0 };
+        uint64_t sequence { 0 };
+    };
+
     struct PaintingTask {
+        PaintingTaskPriority priority;
         Ref<CoordinatedPlatformLayer> layer;
         Ref<CoordinatedTileBuffer> buffer;
         Ref<SkiaRecordingResult> recording;
@@ -91,6 +111,9 @@ private:
     const std::unique_ptr<SkiaPaintingEngine> m_paintingEngine;
     Lock m_paintingTaskQueueLock;
     Vector<PaintingTask> m_paintingTaskQueue WTF_GUARDED_BY_LOCK(m_paintingTaskQueueLock);
+    uint64_t m_currentRenderingUpdate { 0 };
+    uint64_t m_nextTaskSequence { 0 };
+    bool m_paintingTaskQueueNeedsUpdate { false };
 
     // Keep the worker pool as last member to ensure it's destroyed first.
     const Ref<WorkerPool> m_paintingWorkerPool;

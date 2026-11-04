@@ -81,6 +81,9 @@ public:
         virtual int maxTextureSize() const = 0;
         virtual void willPaintTile() = 0;
         virtual void didPaintTile() = 0;
+#if USE(SKIA)
+        virtual void didPaintPreRenderedTile(CoordinatedPlatformLayer&) = 0;
+#endif
     };
 
     static Ref<CoordinatedPlatformLayer> create();
@@ -209,9 +212,14 @@ public:
     void flushPositionChanges(const OptionSet<CompositionReason>&);
     void flushCompositingState(const OptionSet<CompositionReason>&);
 
+#if USE(CAIRO)
     bool hasPendingTilesCreation() const { assertIsMainThread(); return m_pendingTilesCreation; }
+#endif
     bool hasPendingBackingStoreTileUpdates() const;
     void processPendingBackingStoreTileUpdates();
+#if USE(SKIA)
+    bool processPendingBackingStoreTileUpdatesIncludingPreRendered(const Function<bool()>& shouldStopProcessingTiles);
+#endif
     bool isCompositionRequiredOrOngoing() const;
     void requestComposition(CompositionReason);
     RunLoop* compositingRunLoop() const;
@@ -219,6 +227,7 @@ public:
 
     void willPaintTile();
     void didPaintTile();
+    void didPaintPreRenderedTile();
     void waitUntilPaintingFinished();
 
 private:
@@ -297,7 +306,9 @@ private:
 
     // Accessed only from the main thread.
     bool m_drawsContent WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
+#if USE(CAIRO)
     bool m_pendingTilesCreation WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
+#endif
     bool m_needsTilesUpdate WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
     FloatRect m_visibleRect WTF_GUARDED_BY_CAPABILITY(mainThread);
     IntRect m_transformedVisibleRect WTF_GUARDED_BY_CAPABILITY(mainThread);

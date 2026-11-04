@@ -41,6 +41,7 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/ImageDecoderTests.cpp
 
     Tests/WebCore/glib/BitmapTexturePool.cpp
+    Tests/WebCore/glib/CoordinatedTileBuffer.cpp
     Tests/WebCore/glib/Damage.cpp
     Tests/WebCore/glib/GraphicsContextGLCoordinated.cpp
     Tests/WebCore/glib/RunLoopObserver.cpp

@@ -83,6 +83,7 @@ public:
     void preferredBufferFormatsDidChange();
 #endif
     void pendingTilesDidChange();
+    void preRenderedTilesDidChange();
 
     void setSize(const WebCore::IntSize&, float);
     void requestCompositionForRenderingUpdate(Function<void()>&&);
