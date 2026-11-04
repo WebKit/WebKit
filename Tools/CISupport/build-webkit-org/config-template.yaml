@@ -6,7 +6,7 @@
     },
     "mac_tahoe_aws": {
       "first": 10002,
-      "worker": { "platform": "mac-tahoe", "os": "macOS Tahoe 26.6-25G72", "device": "Mac16,11", "xcode": "Xcode 26.5-17F42", "fleet": "aws" }
+      "worker": { "platform": "mac-tahoe", "os": "macOS Golden Gate 27.2-26B123", "device": "Mac16,11", "xcode": "Xcode 27.0-27A266a", "fleet": "aws" }
     },
     "mac_sequoia_aircloud": {
       "first": 10100,
@@ -14,7 +14,7 @@
     },
     "mac_golden_gate_aircloud": {
       "first": 10200,
-      "worker": { "platform": "mac-golden-gate", "os": "macOS Golden Gate 27.0-26A428", "device": "Mac16,11", "xcode": "Xcode 27.0-27A266a", "fleet": "air-cloud" }
+      "worker": { "platform": "mac-golden-gate", "os": "macOS Golden Gate 27.2-26B123", "device": "Mac16,11", "xcode": "Xcode 27.0-27A266a", "fleet": "air-cloud" }
     }
   }
 }
@@ -34,6 +34,7 @@
                   { "name": "bot674", "platform": "mac-golden-gate" },
                   { "name": "bot687", "platform": "mac-golden-gate" },
                   { "name": "bot688", "platform": "mac-golden-gate" },
+                  { "name": "bot105", "platform": "mac-golden-gate" },
 
                   { "name": "bot611", "platform": "*" },
                   { "name": "bot612", "platform": "*" },
@@ -56,7 +57,6 @@
 
                   { "name": "bot2000", "platform": "mac-tahoe" },
                   { "name": "bot2001", "platform": "mac-tahoe" },
-                  { "name": "bot105", "platform": "mac-tahoe" },
                   { "name": "bot132", "platform": "mac-tahoe" },
                   { "name": "bot178", "platform": "mac-tahoe", "notes": "Macmini8,1 on Sequoia building for Tahoe" },
                   { "name": "bot184", "platform": "mac-tahoe", "notes": "Macmini8,1 on Sequoia building for Tahoe" },
@@ -93,31 +93,31 @@
                   { "name": "bot304", "platform": "ios-26" },
                   { "name": "bot2004", "platform": "ios-26" },
                   { "name": "bot2005", "platform": "ios-26" },
-                  { "name": "bot305", "platform": "ios-simulator-26" },
-                  { "name": "bot306", "platform": "ios-simulator-26" },
-                  { "name": "bot307", "platform": "ios-simulator-26" },
-                  { "name": "bot308", "platform": "ios-simulator-26" },
-                  { "name": "bot651", "platform": "ios-simulator-26" },
-                  { "name": "bot652", "platform": "ios-simulator-26" },
-                  { "name": "bot653", "platform": "ios-simulator-26" },
-                  { "name": "bot667", "platform": "ios-simulator-26"},
-                  { "name": "bot664", "platform": "ios-simulator-26"},
-                  { "name": "bot2002", "platform": "ios-simulator-26"},
-                  { "name": "bot2003", "platform": "ios-simulator-26"},
+                  { "name": "bot305", "platform": "ios-simulator-27" },
+                  { "name": "bot306", "platform": "ios-simulator-27" },
+                  { "name": "bot307", "platform": "ios-simulator-27" },
+                  { "name": "bot308", "platform": "ios-simulator-27" },
+                  { "name": "bot651", "platform": "ios-simulator-27" },
+                  { "name": "bot652", "platform": "ios-simulator-27" },
+                  { "name": "bot653", "platform": "ios-simulator-27" },
+                  { "name": "bot667", "platform": "ios-simulator-27"},
+                  { "name": "bot664", "platform": "ios-simulator-27"},
+                  { "name": "bot2002", "platform": "ios-simulator-27"},
+                  { "name": "bot2003", "platform": "ios-simulator-27"},
 
-                  { "name": "bot134", "platform": "visionos-simulator-26" },
-                  { "name": "bot135", "platform": "visionos-simulator-26" },
-                  { "name": "bot137", "platform": "visionos-simulator-26" },
-                  { "name": "bot138", "platform": "visionos-26" },
-                  { "name": "bot139", "platform": "visionos-simulator-26" },
-                  { "name": "bot140", "platform": "visionos-simulator-26" },
-                  { "name": "bot143", "platform": "visionos-simulator-26" },
-                  { "name": "bot144", "platform": "visionos-simulator-26" },
+                  { "name": "bot134", "platform": "visionos-simulator-27" },
+                  { "name": "bot135", "platform": "visionos-simulator-27" },
+                  { "name": "bot137", "platform": "visionos-simulator-27" },
+                  { "name": "bot138", "platform": "visionos-27" },
+                  { "name": "bot139", "platform": "visionos-simulator-27" },
+                  { "name": "bot140", "platform": "visionos-simulator-27" },
+                  { "name": "bot143", "platform": "visionos-simulator-27" },
+                  { "name": "bot144", "platform": "visionos-simulator-27" },
 
-                  { "name": "bot609", "platform": "watchos-26" },
-                  { "name": "bot672", "platform": "watchos-simulator-26" },
-                  { "name": "bot607", "platform": "tvos-26" },
-                  { "name": "bot608", "platform": "tvos-simulator-26" },
+                  { "name": "bot609", "platform": "watchos-27" },
+                  { "name": "bot672", "platform": "watchos-simulator-27" },
+                  { "name": "bot607", "platform": "tvos-27" },
+                  { "name": "bot608", "platform": "tvos-simulator-27" },
 
                   { "template": "mac_tahoe_aircloud", "count": 2 },
                   { "template": "mac_tahoe_aws", "count": 1 },
@@ -254,6 +254,10 @@
                   "platform": "mac-golden-gate", "configuration": "debug", "architectures": ["arm64"],
                   "workernames": ["bot258"]
                   },
+                  { "name": "Apple-Golden-Gate-AppleSilicon-O3-Debug-JSC-BuildAndTest", "factory": "BuildO3AndJSCTestsFactory",
+                  "platform": "mac-golden-gate", "configuration": "debug", "architectures": ["arm64"],
+                  "workernames": ["bot105"]
+                  },
                   { "name": "Apple-Golden-Gate-Debug-WK2-Site-Isolation-Tree-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-golden-gate", "configuration": "debug", "architectures": ["arm64"],
                   "additionalArguments": ["--no-retry-failures", "--site-isolation-enabled-by-default"],
@@ -362,53 +366,49 @@
                     "platform": "mac-sequoia", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                     "workernames": ["bot603"]
                   },
-                  { "name": "Apple-Tahoe-AppleSilicon-O3-Debug-JSC-BuildAndTest", "factory": "BuildO3AndJSCTestsFactory",
-                    "platform": "mac-tahoe", "configuration": "debug", "architectures": ["arm64"],
-                    "workernames": ["bot105"]
-                  },
                   {
                     "name": "Apple-iOS-26-Release-Build", "factory": "BuildFactory",
                     "platform": "ios-26", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["bot304"]
                   },
                   {
-                    "name": "Apple-iOS-26-Simulator-Release-Build", "factory": "BuildFactory",
-                    "platform": "ios-simulator-26", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "triggers": ["ios-simulator-26-release-tests-wk2", "ipados-simulator-26-release-tests-wk2", "ios-simulator-26-release-tests-wk2-site-isolation-tree"],
+                    "name": "Apple-iOS-27-Simulator-Release-Build", "factory": "BuildFactory",
+                    "platform": "ios-simulator-27", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                    "triggers": ["ios-simulator-27-release-tests-wk2", "ipados-simulator-27-release-tests-wk2", "ios-simulator-27-release-tests-wk2-site-isolation-tree"],
                     "workernames": ["bot305", "bot306"]
                   },
                   {
-                    "name": "Apple-iOS-26-Simulator-Debug-Build", "factory": "BuildFactory",
-                    "platform": "ios-simulator-26", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "triggers": ["ios-simulator-26-debug-tests-wk2", "ipados-simulator-26-debug-tests-wk2"],
+                    "name": "Apple-iOS-27-Simulator-Debug-Build", "factory": "BuildFactory",
+                    "platform": "ios-simulator-27", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                    "triggers": ["ios-simulator-27-debug-tests-wk2", "ipados-simulator-27-debug-tests-wk2"],
                     "workernames": ["bot307", "bot308"]
                   },
                   {
-                    "name": "Apple-iOS-26-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "ios-simulator-26", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
+                    "name": "Apple-iOS-27-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "ios-simulator-27", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
                     "additionalArguments": ["--no-retry-failures", "--child-processes=6"],
                     "workernames": ["bot651", "bot652"]
                   },
-                  { "name": "Apple-iOS-26-Simulator-Release-WK2-Site-Isolation-Tree-Tests", "factory": "TestLayoutAndAPIOnlyFactory",
-                  "platform": "ios-simulator-26", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
+                  { "name": "Apple-iOS-27-Simulator-Release-WK2-Site-Isolation-Tree-Tests", "factory": "TestLayoutAndAPIOnlyFactory",
+                  "platform": "ios-simulator-27", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
                   "additionalArguments": ["--no-retry-failures", "--site-isolation-enabled-by-default", "--child-processes=6"],
                   "workernames": ["bot2002", "bot2003"]
                   },
                   {
-                    "name": "Apple-iOS-26-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "ios-simulator-26", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
+                    "name": "Apple-iOS-27-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "ios-simulator-27", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
                     "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
                     "workernames": ["bot653"]
                   },
                   {
-                    "name": "Apple-iPadOS-26-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "ios-simulator-26", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
+                    "name": "Apple-iPadOS-27-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "ios-simulator-27", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
                     "additionalArguments": ["--no-retry-failures", "--child-processes=6" ],
                     "workernames": ["bot667"]
                   },
                   {
-                    "name": "Apple-iPadOS-26-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "ios-simulator-26", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
+                    "name": "Apple-iPadOS-27-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "ios-simulator-27", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
                     "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
                     "workernames": ["bot664"]
                   },
@@ -418,52 +418,52 @@
                     "workernames": ["bot2004", "bot2005"]
                   },
                   {
-                    "name": "Apple-visionOS-26-Release-Build", "factory": "BuildFactory",
-                    "platform": "visionos-26", "configuration": "release", "architectures": ["arm64"],
+                    "name": "Apple-visionOS-27-Release-Build", "factory": "BuildFactory",
+                    "platform": "visionos-27", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["bot138"]
                   },
                   {
-                    "name": "Apple-visionOS-26-Simulator-Release-Build", "factory": "BuildFactory",
-                    "platform": "visionos-simulator-26", "configuration": "release", "architectures": ["arm64"],
-                    "triggers": ["visionos-simulator-26-release-tests-wk2"],
+                    "name": "Apple-visionOS-27-Simulator-Release-Build", "factory": "BuildFactory",
+                    "platform": "visionos-simulator-27", "configuration": "release", "architectures": ["arm64"],
+                    "triggers": ["visionos-simulator-27-release-tests-wk2"],
                     "workernames": ["bot134"]
                   },
                   {
-                    "name": "Apple-visionOS-26-Simulator-Debug-Build", "factory": "BuildFactory",
-                    "platform": "visionos-simulator-26", "configuration": "debug", "architectures": ["arm64"],
-                    "triggers": ["visionos-simulator-26-debug-tests-wk2"],
+                    "name": "Apple-visionOS-27-Simulator-Debug-Build", "factory": "BuildFactory",
+                    "platform": "visionos-simulator-27", "configuration": "debug", "architectures": ["arm64"],
+                    "triggers": ["visionos-simulator-27-debug-tests-wk2"],
                     "workernames": ["bot135", "bot137"]
                   },
                   {
-                    "name": "Apple-visionOS-26-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "visionos-simulator-26", "configuration": "release", "architectures": ["arm64"], "device_model": "visionpro",
+                    "name": "Apple-visionOS-27-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "visionos-simulator-27", "configuration": "release", "architectures": ["arm64"], "device_model": "visionpro",
                     "additionalArguments": ["--no-retry-failures", "--child-processes=1"],
                     "workernames": ["bot139", "bot140"]
                   },
                   {
-                    "name": "Apple-visionOS-26-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "visionos-simulator-26", "configuration": "debug", "architectures": ["arm64"], "device_model": "visionpro",
+                    "name": "Apple-visionOS-27-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "visionos-simulator-27", "configuration": "debug", "architectures": ["arm64"], "device_model": "visionpro",
                     "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=1"],
                     "workernames": ["bot143", "bot144"]
                   },
                   {
-                    "name": "Apple-tvOS-26-Release-Build", "factory": "BuildFactory",
-                    "platform": "tvos-26", "configuration": "release", "architectures": ["arm64"],
+                    "name": "Apple-tvOS-27-Release-Build", "factory": "BuildFactory",
+                    "platform": "tvos-27", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["bot607"]
                   },
                   {
-                    "name": "Apple-tvOS-Simulator-26-Release-Build", "factory": "BuildFactory",
-                    "platform": "tvos-simulator-26", "configuration": "release", "architectures": ["arm64"],
+                    "name": "Apple-tvOS-Simulator-27-Release-Build", "factory": "BuildFactory",
+                    "platform": "tvos-simulator-27", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["bot608"]
                   },
                   {
-                    "name": "Apple-watchOS-26-Release-Build", "factory": "BuildFactory",
-                    "platform": "watchos-26", "configuration": "release", "architectures": ["arm64_32", "arm64"],
+                    "name": "Apple-watchOS-27-Release-Build", "factory": "BuildFactory",
+                    "platform": "watchos-27", "configuration": "release", "architectures": ["arm64_32", "arm64"],
                     "workernames": ["bot609"]
                   },
                   {
-                    "name": "Apple-watchOS-Simulator-26-Release-Build", "factory": "BuildFactory",
-                    "platform": "watchos-simulator-26", "configuration": "release", "architectures": ["arm64"],
+                    "name": "Apple-watchOS-Simulator-27-Release-Build", "factory": "BuildFactory",
+                    "platform": "watchos-simulator-27", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["bot672"]
                   },
                   {
@@ -733,7 +733,7 @@
                     "builderNames": ["WPE-Linux-ARM64-bit-Release-v254-BuildAndTest", "WPE-Linux-RPi4-64bits-Mesa-Release-v254-Perf-Build"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "mac-golden-gate", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-Golden-Gate-Release-Build", "Apple-Golden-Gate-Debug-Build", "Apple-Golden-Gate-LLINT-CLoop-BuildAndTest"]
+                  "builderNames": ["Apple-Golden-Gate-Release-Build", "Apple-Golden-Gate-Debug-Build", "Apple-Golden-Gate-LLINT-CLoop-BuildAndTest", "Apple-Golden-Gate-AppleSilicon-O3-Debug-JSC-BuildAndTest"]
                   },
                   { "type": "Triggerable", "name": "golden-gate-release-applesilicon-tests-wk2",
                   "builderNames": ["Apple-Golden-Gate-Release-AppleSilicon-WK2-Tests"]
@@ -757,7 +757,7 @@
                   "builderNames": ["Apple-Golden-Gate-Debug-WK2-Site-Isolation-Tree-Tests"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "mac-tahoe", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-Tahoe-Release-Build", "Apple-Tahoe-Debug-Build", "Apple-Tahoe-Safer-CPP-Checks", "Apple-Tahoe-AppleSilicon-O3-Debug-JSC-BuildAndTest"]
+                  "builderNames": ["Apple-Tahoe-Release-Build", "Apple-Tahoe-Debug-Build", "Apple-Tahoe-Safer-CPP-Checks"]
                   },
                   { "type": "Triggerable", "name": "tahoe-release-tests-wk2",
                   "builderNames": ["Apple-Tahoe-Release-WK2-Tests"]
@@ -804,47 +804,47 @@
                   { "type": "PlatformSpecificScheduler", "platform": "ios-26", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-iOS-26-Release-Build", "Apple-iOS-26-Safer-CPP-Checks"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-26", "branch": "main", "treeStableTimer": 45.0,
-                    "builderNames": ["Apple-iOS-26-Simulator-Release-Build", "Apple-iOS-26-Simulator-Debug-Build"]
+                  { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-27", "branch": "main", "treeStableTimer": 45.0,
+                    "builderNames": ["Apple-iOS-27-Simulator-Release-Build", "Apple-iOS-27-Simulator-Debug-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "visionos-26", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-visionOS-26-Release-Build"]
+                  { "type": "PlatformSpecificScheduler", "platform": "visionos-27", "branch": "main", "treeStableTimer": 45.0,
+                  "builderNames": ["Apple-visionOS-27-Release-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "visionos-simulator-26", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-visionOS-26-Simulator-Release-Build", "Apple-visionOS-26-Simulator-Debug-Build"]
+                  { "type": "PlatformSpecificScheduler", "platform": "visionos-simulator-27", "branch": "main", "treeStableTimer": 45.0,
+                  "builderNames": ["Apple-visionOS-27-Simulator-Release-Build", "Apple-visionOS-27-Simulator-Debug-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "tvos-26", "branch": "main", "treeStableTimer": 45.0,
-                    "builderNames": ["Apple-tvOS-26-Release-Build"]
+                  { "type": "PlatformSpecificScheduler", "platform": "tvos-27", "branch": "main", "treeStableTimer": 45.0,
+                    "builderNames": ["Apple-tvOS-27-Release-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-26", "branch": "main", "treeStableTimer": 45.0,
-                    "builderNames": ["Apple-tvOS-Simulator-26-Release-Build"]
+                  { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-27", "branch": "main", "treeStableTimer": 45.0,
+                    "builderNames": ["Apple-tvOS-Simulator-27-Release-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "watchos-26", "branch": "main", "treeStableTimer": 45.0,
-                    "builderNames": ["Apple-watchOS-26-Release-Build"]
+                  { "type": "PlatformSpecificScheduler", "platform": "watchos-27", "branch": "main", "treeStableTimer": 45.0,
+                    "builderNames": ["Apple-watchOS-27-Release-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-26", "branch": "main", "treeStableTimer": 45.0,
-                    "builderNames": ["Apple-watchOS-Simulator-26-Release-Build"]
+                  { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-27", "branch": "main", "treeStableTimer": 45.0,
+                    "builderNames": ["Apple-watchOS-Simulator-27-Release-Build"]
                   },
-                  { "type": "Triggerable", "name": "ios-simulator-26-release-tests-wk2",
-                    "builderNames": ["Apple-iOS-26-Simulator-Release-WK2-Tests"]
+                  { "type": "Triggerable", "name": "ios-simulator-27-release-tests-wk2",
+                    "builderNames": ["Apple-iOS-27-Simulator-Release-WK2-Tests"]
                   },
-                  { "type": "Triggerable", "name": "ios-simulator-26-release-tests-wk2-site-isolation-tree",
-                    "builderNames": ["Apple-iOS-26-Simulator-Release-WK2-Site-Isolation-Tree-Tests"]
+                  { "type": "Triggerable", "name": "ios-simulator-27-release-tests-wk2-site-isolation-tree",
+                    "builderNames": ["Apple-iOS-27-Simulator-Release-WK2-Site-Isolation-Tree-Tests"]
                   },
-                  { "type": "Triggerable", "name": "ios-simulator-26-debug-tests-wk2",
-                    "builderNames": ["Apple-iOS-26-Simulator-Debug-WK2-Tests"]
+                  { "type": "Triggerable", "name": "ios-simulator-27-debug-tests-wk2",
+                    "builderNames": ["Apple-iOS-27-Simulator-Debug-WK2-Tests"]
                   },
-                  { "type": "Triggerable", "name": "ipados-simulator-26-release-tests-wk2",
-                    "builderNames": ["Apple-iPadOS-26-Simulator-Release-WK2-Tests"]
+                  { "type": "Triggerable", "name": "ipados-simulator-27-release-tests-wk2",
+                    "builderNames": ["Apple-iPadOS-27-Simulator-Release-WK2-Tests"]
                   },
-                  { "type": "Triggerable", "name": "ipados-simulator-26-debug-tests-wk2",
-                    "builderNames": ["Apple-iPadOS-26-Simulator-Debug-WK2-Tests"]
+                  { "type": "Triggerable", "name": "ipados-simulator-27-debug-tests-wk2",
+                    "builderNames": ["Apple-iPadOS-27-Simulator-Debug-WK2-Tests"]
                   },
-                  { "type": "Triggerable", "name": "visionos-simulator-26-release-tests-wk2",
-                  "builderNames": ["Apple-visionOS-26-Simulator-Release-WK2-Tests"]
+                  { "type": "Triggerable", "name": "visionos-simulator-27-release-tests-wk2",
+                  "builderNames": ["Apple-visionOS-27-Simulator-Release-WK2-Tests"]
                   },
-                  { "type": "Triggerable", "name": "visionos-simulator-26-debug-tests-wk2",
-                  "builderNames": ["Apple-visionOS-26-Simulator-Debug-WK2-Tests"]
+                  { "type": "Triggerable", "name": "visionos-simulator-27-debug-tests-wk2",
+                  "builderNames": ["Apple-visionOS-27-Simulator-Debug-WK2-Tests"]
                   },
                   { "type": "Triggerable", "name": "gtk-linux-64-release-tests",
                     "builderNames": ["GTK-Linux-64-bit-Release-Tests"]

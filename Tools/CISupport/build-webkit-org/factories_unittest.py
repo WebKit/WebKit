@@ -194,6 +194,20 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'webkit-jsc-cloop-test'
         ],
+        'Apple-Golden-Gate-AppleSilicon-O3-Debug-JSC-BuildAndTest': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'prune-coresymbolicationd-cache-if-too-large',
+            'set-o3-optimization-level',
+            'compile-jsc',
+            'jscore-test'
+        ],
         'Apple-Golden-Gate-Debug-WK2-Site-Isolation-Tree-Tests': [
             'configure-build',
             'configuration',
@@ -559,20 +573,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'test262-test'
         ],
-        'Apple-Tahoe-AppleSilicon-O3-Debug-JSC-BuildAndTest': [
-            'configure-build',
-            'configuration',
-            'clean-and-update-working-directory',
-            'checkout-specific-revision',
-            'show-identifier',
-            'kill-old-processes',
-            'delete-WebKitBuild-directory',
-            'delete-stale-build-files',
-            'prune-coresymbolicationd-cache-if-too-large',
-            'set-o3-optimization-level',
-            'compile-jsc',
-            'jscore-test'
-        ],
         'Apple-Sequoia-AppleSilicon-Release-JSC-Tests': [
             'configure-build',
             'configuration',
@@ -612,7 +612,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-iOS-26-Simulator-Release-Build': [
+        'Apple-iOS-27-Simulator-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -624,7 +624,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'trigger'
         ],
-        'Apple-iOS-26-Simulator-Debug-Build': [
+        'Apple-iOS-27-Simulator-Debug-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -636,7 +636,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'trigger'
         ],
-        'Apple-iOS-26-Simulator-Release-WK2-Tests': [
+        'Apple-iOS-27-Simulator-Release-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -661,7 +661,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iOS-26-Simulator-Release-WK2-Site-Isolation-Tree-Tests': [
+        'Apple-iOS-27-Simulator-Release-WK2-Site-Isolation-Tree-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -680,7 +680,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'set-permissions',
             'run-api-tests'
         ],
-        'Apple-iOS-26-Simulator-Debug-WK2-Tests': [
+        'Apple-iOS-27-Simulator-Debug-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -724,7 +724,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'install-metal-toolchain',
             'scan-build'
         ],
-        'Apple-iPadOS-26-Simulator-Release-WK2-Tests': [
+        'Apple-iPadOS-27-Simulator-Release-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -749,7 +749,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iPadOS-26-Simulator-Debug-WK2-Tests': [
+        'Apple-iPadOS-27-Simulator-Debug-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -774,7 +774,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-visionOS-26-Release-Build': [
+        'Apple-visionOS-27-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -785,7 +785,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-visionOS-26-Simulator-Release-Build': [
+        'Apple-visionOS-27-Simulator-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -797,7 +797,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'trigger'
         ],
-        'Apple-visionOS-26-Simulator-Debug-Build': [
+        'Apple-visionOS-27-Simulator-Debug-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -809,7 +809,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'trigger'
         ],
-        'Apple-visionOS-26-Simulator-Release-WK2-Tests': [
+        'Apple-visionOS-27-Simulator-Release-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -833,7 +833,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-visionOS-26-Simulator-Debug-WK2-Tests': [
+        'Apple-visionOS-27-Simulator-Debug-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -857,7 +857,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-tvOS-26-Release-Build': [
+        'Apple-tvOS-27-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -868,7 +868,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-tvOS-Simulator-26-Release-Build': [
+        'Apple-tvOS-Simulator-27-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -879,7 +879,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-watchOS-26-Release-Build': [
+        'Apple-watchOS-27-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -890,7 +890,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-watchOS-Simulator-26-Release-Build': [
+        'Apple-watchOS-Simulator-27-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',

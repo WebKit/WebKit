@@ -51,13 +51,13 @@ def _should_file_trigger_build(target_platform, file):
         "mac-tahoe",
         "mac-golden-gate",
         "ios-26",
-        "ios-simulator-26",
-        "visionos-26",
-        "visionos-simulator-26",
-        "tvos-26",
-        "tvos-simulator-26",
-        "watchos-26",
-        "watchos-simulator-26",
+        "ios-simulator-27",
+        "visionos-27",
+        "visionos-simulator-27",
+        "tvos-27",
+        "tvos-simulator-27",
+        "watchos-27",
+        "watchos-simulator-27",
     ))
 
     directories = [

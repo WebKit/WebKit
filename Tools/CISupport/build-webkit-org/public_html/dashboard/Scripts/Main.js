@@ -219,6 +219,21 @@ function documentReady()
         ringImage.title = platform.readableName;
         cell.appendChild(ringImage);
 
+        var separatorIndex = platform.readableName.indexOf(" ");
+        var platformLabel = document.createElement("div");
+        platformLabel.classList.add("platform-label");
+        var familyLabel = document.createElement("span");
+        familyLabel.classList.add("platform-family");
+        familyLabel.textContent = separatorIndex === -1 ? platform.readableName : platform.readableName.substring(0, separatorIndex);
+        platformLabel.appendChild(familyLabel);
+        if (separatorIndex !== -1) {
+            var versionLabel = document.createElement("span");
+            versionLabel.classList.add("platform-version");
+            versionLabel.textContent = platform.readableName.substring(separatorIndex + 1);
+            platformLabel.appendChild(versionLabel);
+        }
+        cell.appendChild(platformLabel);
+
         row.appendChild(cell);
 
         cell = document.createElement("td");

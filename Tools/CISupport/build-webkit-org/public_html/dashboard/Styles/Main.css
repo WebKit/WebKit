@@ -173,6 +173,29 @@ table.queue-grid td.logo img.ring {
     left: 18px;
 }
 
+table.queue-grid td.logo div.platform-label {
+    width: 160px;
+    margin: 182px 0 16px 18px;
+    font-size: 22px;
+    line-height: 26px;
+    color: rgb(145, 135, 95);
+    text-align: center;
+}
+
+table.queue-grid td.logo div.platform-label span {
+    display: block;
+}
+
+table.queue-grid td.logo span.platform-family {
+    font-family: "HelveticaNeue", "Helvetica Neue", sans-serif;
+    font-weight: normal;
+}
+
+table.queue-grid td.logo span.platform-version {
+    font-family: "HelveticaNeue-UltraLight", sans-serif;
+    font-weight: normal;
+}
+
 table.queue-grid td.logo img.logo {
     width: 144px;
     height: 144px;
@@ -183,9 +206,9 @@ table.queue-grid td.logo img.logo {
     clip-path: circle(72px at center);
 }
 
-table.queue-grid tr.platform.ios-simulator-26 img.logo {
+table.queue-grid tr.platform.ios-simulator-27 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/IOS26Simulator.png);
+    content: url(../Images/IOS27Simulator.png);
 }
 
 table.queue-grid tr.platform.ios-26 img.logo {
@@ -193,34 +216,34 @@ table.queue-grid tr.platform.ios-26 img.logo {
     content: url(../Images/IOS26.png);
 }
 
-table.queue-grid tr.platform.visionos-simulator-26 img.logo {
+table.queue-grid tr.platform.visionos-simulator-27 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/visionOS26Simulator.png);
+    content: url(../Images/visionOS27Simulator.png);
 }
 
-table.queue-grid tr.platform.visionos-26 img.logo {
+table.queue-grid tr.platform.visionos-27 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/visionOS26.png);
+    content: url(../Images/visionOS27.png);
 }
 
-table.queue-grid tr.platform.tvos-simulator-26 img.logo {
+table.queue-grid tr.platform.tvos-simulator-27 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/TvOS26Simulator.png);
+    content: url(../Images/tvOS27Simulator.png);
 }
 
-table.queue-grid tr.platform.tvos-26 img.logo {
+table.queue-grid tr.platform.tvos-27 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/TvOS26.png);
+    content: url(../Images/tvOS27.png);
 }
 
-table.queue-grid tr.platform.watchos-simulator-26 img.logo {
+table.queue-grid tr.platform.watchos-simulator-27 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/WatchOSSimulator26.png);
+    content: url(../Images/WatchOS27Simulator.png);
 }
 
-table.queue-grid tr.platform.watchos-26 img.logo {
+table.queue-grid tr.platform.watchos-27 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/WatchOS26.png);
+    content: url(../Images/watchOS27.png);
 }
 
 table.queue-grid tr.platform.macos-sonoma img.logo {
