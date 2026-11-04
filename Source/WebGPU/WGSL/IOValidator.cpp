@@ -516,6 +516,23 @@ void IOValidator::validateStructIO(ShaderStage stage, const Types::Struct& struc
         }
 
         if (auto location = member.location()) {
+            if (auto blendSrc = member.blendSrc()) {
+                if (stage != ShaderStage::Fragment || direction != Direction::Output) [[unlikely]] {
+                    error(span, "@blend_src can only be used for fragment shader output"_s);
+                    return;
+                }
+
+                // The @blend_src(0) and @blend_src(1) members share @location(0), so only
+                // count the location once.
+                if (*blendSrc) {
+                    Locations blendSrcLocations;
+                    validateLocationIO(span, type, stage, *location, blendSrcLocations);
+                    if (hasError()) [[unlikely]]
+                        return;
+                    continue;
+                }
+            }
+
             validateLocationIO(span, type, stage, *location, locations);
             if (hasError()) [[unlikely]]
                 return;

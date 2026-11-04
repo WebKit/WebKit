@@ -319,6 +319,7 @@ public:
     void visit(AST::Attribute&) override;
     void visit(AST::BuiltinAttribute&) override;
     void visit(AST::LocationAttribute&) override;
+    void visit(AST::BlendSrcAttribute&) override;
     void visit(AST::StageAttribute&) override;
     void visit(AST::GroupAttribute&) override;
     void visit(AST::BindingAttribute&) override;
@@ -1716,6 +1717,14 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
             break;
         }
     }
+}
+
+void FunctionDefinitionWriter::visit(AST::BlendSrcAttribute& blendSrc)
+{
+    // @blend_src is only valid on fragment outputs, where it selects the blending unit input
+    // for @location(0): [[color(0)]] [[index(0)]] or [[color(0)]] [[index(1)]].
+    if (m_structRole.has_value() && *m_structRole == AST::StructureRole::FragmentOutput)
+        m_body.append("[[index("_s, blendSrc.blendSrc().constantValue()->integerValue(), ")]]"_s);
 }
 
 void FunctionDefinitionWriter::visit(AST::WorkgroupSizeAttribute&)

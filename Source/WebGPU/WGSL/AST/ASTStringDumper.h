@@ -48,6 +48,7 @@ public:
 
     // Attribute
     void visit(BindingAttribute&) override;
+    void visit(BlendSrcAttribute&) override;
     void visit(BuiltinAttribute&) override;
     void visit(GroupAttribute&) override;
     void visit(LocationAttribute&) override;

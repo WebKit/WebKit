@@ -33,6 +33,7 @@
 #include "ASTAttribute.h"
 #include "ASTBinaryExpression.h"
 #include "ASTBindingAttribute.h"
+#include "ASTBlendSrcAttribute.h"
 #include "ASTBoolLiteral.h"
 #include "ASTBreakStatement.h"
 #include "ASTBuiltinAttribute.h"

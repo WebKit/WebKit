@@ -122,6 +122,7 @@ static Vector<WebGPU::FeatureName> baseFeatures(id<MTLDevice> device, const Hard
     features.append(WebGPU::FeatureName::Float32Blendable);
 
     features.append(WebGPU::FeatureName::ClipDistances);
+    features.append(WebGPU::FeatureName::DualSourceBlending);
     features.append(WebGPU::FeatureName::DepthClipControl);
     features.append(WebGPU::FeatureName::Depth32floatStencil8);
 

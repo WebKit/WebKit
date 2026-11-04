@@ -91,6 +91,13 @@ void StringDumper::visit(BindingAttribute& binding)
     m_out.print(")");
 }
 
+void StringDumper::visit(BlendSrcAttribute& blendSrc)
+{
+    m_out.print("@blend_src(");
+    visit(blendSrc.blendSrc());
+    m_out.print(")");
+}
+
 void StringDumper::visit(BuiltinAttribute& builtin)
 {
     m_out.print("@builtin(", builtin.builtin(), ")");

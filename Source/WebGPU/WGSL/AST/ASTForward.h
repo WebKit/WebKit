@@ -36,6 +36,7 @@ class ConstAssert;
 class Attribute;
 class AlignAttribute;
 class BindingAttribute;
+class BlendSrcAttribute;
 class BuiltinAttribute;
 class ConstAttribute;
 class DiagnosticAttribute;

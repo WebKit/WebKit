@@ -107,6 +107,10 @@ enum class BlendFactor : uint8_t {
     SrcAlphaSaturated,
     Constant,
     OneMinusConstant,
+    Src1,
+    OneMinusSrc1,
+    Src1Alpha,
+    OneMinusSrc1Alpha,
 };
 
 enum class BlendOperation : uint8_t {

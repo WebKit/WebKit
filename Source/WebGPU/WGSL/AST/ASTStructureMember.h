@@ -54,6 +54,7 @@ public:
     bool invariant() const { return m_invariant; }
     std::optional<Builtin> builtin() const { return m_builtin; }
     std::optional<unsigned> location() const { return m_location; }
+    std::optional<unsigned> blendSrc() const { return m_blendSrc; }
     std::optional<Interpolation> interpolation() const { return m_interpolation; }
 
     unsigned offset() const { return m_offset; }
@@ -86,6 +87,7 @@ private:
     std::optional<unsigned> m_size;
     std::optional<Builtin> m_builtin;
     std::optional<unsigned> m_location;
+    std::optional<unsigned> m_blendSrc;
     std::optional<Interpolation> m_interpolation;
 };
 

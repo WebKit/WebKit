@@ -44,6 +44,10 @@ enum class GPUBlendFactor : uint8_t {
     SrcAlphaSaturated,
     Constant,
     OneMinusConstant,
+    Src1,
+    OneMinusSrc1,
+    Src1Alpha,
+    OneMinusSrc1Alpha,
 };
 
 inline ::WebGPU::BlendFactor convertToBacking(GPUBlendFactor blendFactor)
@@ -75,6 +79,14 @@ inline ::WebGPU::BlendFactor convertToBacking(GPUBlendFactor blendFactor)
         return ::WebGPU::BlendFactor::Constant;
     case GPUBlendFactor::OneMinusConstant:
         return ::WebGPU::BlendFactor::OneMinusConstant;
+    case GPUBlendFactor::Src1:
+        return ::WebGPU::BlendFactor::Src1;
+    case GPUBlendFactor::OneMinusSrc1:
+        return ::WebGPU::BlendFactor::OneMinusSrc1;
+    case GPUBlendFactor::Src1Alpha:
+        return ::WebGPU::BlendFactor::Src1Alpha;
+    case GPUBlendFactor::OneMinusSrc1Alpha:
+        return ::WebGPU::BlendFactor::OneMinusSrc1Alpha;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

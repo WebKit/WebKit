@@ -137,6 +137,7 @@ namespace WGSL {
 
 #define ENUM_Extension(value) \
     value(ClipDistances, clip_distances, 1 << 0) \
+    value(DualSourceBlending, dual_source_blending, 1 << 4) \
     value(F16, f16, 1 << 1) \
     value(PrimitiveIndex, primitive_index, 1 << 2) \
     value(Subgroups, subgroups, 1 << 3) \

@@ -65,6 +65,7 @@ private:
 
     void validateInterpolation(const SourceSpan&, const std::optional<AST::Interpolation>&, const std::optional<unsigned>&);
     void validateInvariant(const SourceSpan&, const std::optional<Builtin>&, bool);
+    void validateBlendSrc(AST::Structure&);
 
     void validateAlignment(const SourceSpan&, AddressSpace, const Type*);
 
@@ -404,6 +405,12 @@ void AttributeValidator::validateAlignment(const SourceSpan& span, AddressSpace 
 void AttributeValidator::visit(AST::Structure& structure)
 {
     AST::Visitor::visit(structure);
+    if (hasError()) [[unlikely]]
+        return;
+
+    validateBlendSrc(structure);
+    if (hasError()) [[unlikely]]
+        return;
 
     structure.m_hasSizeOrAlignmentAttributes = std::exchange(m_hasSizeOrAlignmentAttributes, false);
 
@@ -493,6 +500,28 @@ void AttributeValidator::visit(AST::StructureMember& member)
         if (parseLocation(nullptr, member.m_location, attribute, member.type().inferredType()))
             continue;
 
+        if (auto* blendSrcAttribute = dynamicDowncast<AST::BlendSrcAttribute>(attribute)) {
+            if (!m_shaderModule.enabledExtensions().contains(Extension::DualSourceBlending)) [[unlikely]] {
+                error(attribute.span(), "@blend_src requires the 'dual_source_blending' extension to be enabled"_s);
+                return;
+            }
+
+            auto& constantValue = blendSrcAttribute->blendSrc().constantValue();
+            if (!constantValue) [[unlikely]] {
+                error(attribute.span(), "@blend_src constant value is missing"_s);
+                return;
+            }
+
+            auto blendSrcValue = constantValue->integerValue();
+            if (blendSrcValue < 0 || blendSrcValue > 1) [[unlikely]] {
+                error(attribute.span(), "@blend_src value must be either 0 or 1"_s);
+                return;
+            }
+
+            update(attribute.span(), member.m_blendSrc, static_cast<unsigned>(blendSrcValue));
+            continue;
+        }
+
         if (auto* sizeAttribute = dynamicDowncast<AST::SizeAttribute>(attribute)) {
             m_hasSizeOrAlignmentAttributes = true;
 
@@ -568,6 +597,49 @@ void AttributeValidator::visit(AST::StructureMember& member)
         return;
 
     AST::Visitor::visit(member);
+}
+
+void AttributeValidator::validateBlendSrc(AST::Structure& structure)
+{
+    // If any member of a structure uses @blend_src, the structure must contain exactly two members
+    // with a @location attribute: one with @location(0) @blend_src(0) and another with
+    // @location(0) @blend_src(1), and both must have the same type.
+    AST::StructureMember* blendSrc0 = nullptr;
+    AST::StructureMember* blendSrc1 = nullptr;
+    unsigned locationCount = 0;
+    for (auto& member : structure.members()) {
+        if (member.location())
+            ++locationCount;
+
+        auto blendSrc = member.blendSrc();
+        if (!blendSrc)
+            continue;
+
+        if (!member.location() || *member.location()) [[unlikely]] {
+            error(member.span(), "@blend_src can only be used on a structure member with @location(0)"_s);
+            return;
+        }
+
+        auto*& blendSrcMember = *blendSrc ? blendSrc1 : blendSrc0;
+        if (blendSrcMember) [[unlikely]] {
+            error(member.span(), "@blend_src("_s, *blendSrc, ") appears multiple times in structure '"_s, structure.name(), '\'');
+            return;
+        }
+        blendSrcMember = &member;
+    }
+
+    if (!blendSrc0 && !blendSrc1)
+        return;
+
+    if (!blendSrc0 || !blendSrc1 || locationCount != 2) [[unlikely]] {
+        error(structure.span(), "structure '"_s, structure.name(), "' uses @blend_src, so it must contain exactly two members with @location: @location(0) @blend_src(0) and @location(0) @blend_src(1)"_s);
+        return;
+    }
+
+    if (blendSrc0->type().inferredType() != blendSrc1->type().inferredType()) [[unlikely]] {
+        error(structure.span(), "the members with @blend_src(0) and @blend_src(1) in structure '"_s, structure.name(), "' must have the same type"_s);
+        return;
+    }
 }
 
 void AttributeValidator::visit(AST::CompoundStatement& statement)

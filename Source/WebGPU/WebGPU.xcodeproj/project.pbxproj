@@ -109,6 +109,7 @@
 		33EA188627BC26DF00A1DD52 /* ASTCallExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188527BC26DF00A1DD52 /* ASTCallExpression.h */; };
 		3A12AEAA28FCE94C00C1B975 /* ASTBuiltinAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9028FCE94A00C1B975 /* ASTBuiltinAttribute.h */; };
 		3A12AEAC28FCE94C00C1B975 /* ASTLocationAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9228FCE94A00C1B975 /* ASTLocationAttribute.h */; };
+		DD7A1E312F00000100C0FFEE /* ASTBlendSrcAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7A1E302F00000100C0FFEE /* ASTBlendSrcAttribute.h */; };
 		3A12AEAD28FCE94C00C1B975 /* ASTPhonyStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9328FCE94A00C1B975 /* ASTPhonyStatement.h */; };
 		3A12AEAF28FCE94C00C1B975 /* ASTIfStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9528FCE94B00C1B975 /* ASTIfStatement.h */; };
 		3A12AEB028FCE94C00C1B975 /* ASTForStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9628FCE94B00C1B975 /* ASTForStatement.h */; };
@@ -474,6 +475,7 @@
 		33EA188527BC26DF00A1DD52 /* ASTCallExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTCallExpression.h; sourceTree = "<group>"; };
 		3A12AE9028FCE94A00C1B975 /* ASTBuiltinAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBuiltinAttribute.h; sourceTree = "<group>"; };
 		3A12AE9228FCE94A00C1B975 /* ASTLocationAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTLocationAttribute.h; sourceTree = "<group>"; };
+		DD7A1E302F00000100C0FFEE /* ASTBlendSrcAttribute.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTBlendSrcAttribute.h; sourceTree = "<group>"; };
 		3A12AE9328FCE94A00C1B975 /* ASTPhonyStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTPhonyStatement.h; sourceTree = "<group>"; };
 		3A12AE9528FCE94B00C1B975 /* ASTIfStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTIfStatement.h; sourceTree = "<group>"; };
 		3A12AE9628FCE94B00C1B975 /* ASTForStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTForStatement.h; sourceTree = "<group>"; };
@@ -908,6 +910,7 @@
 				3AD0D23C2988F3AA0080D728 /* ASTBinaryExpression.cpp */,
 				3AD0D23D2988F3AA0080D728 /* ASTBinaryExpression.h */,
 				3A12AEA728FCE94C00C1B975 /* ASTBindingAttribute.h */,
+				DD7A1E302F00000100C0FFEE /* ASTBlendSrcAttribute.h */,
 				3A12AED028FCFC5500C1B975 /* ASTBoolLiteral.h */,
 				3A12AE9F28FCE94B00C1B975 /* ASTBreakStatement.h */,
 				97835C9429F7D85A00939EBA /* ASTBuilder.cpp */,
@@ -1088,6 +1091,7 @@
 				33EA186A27BC1BE600A1DD52 /* ASTAttribute.h in Headers */,
 				3AD0D23F2988F3AB0080D728 /* ASTBinaryExpression.h in Headers */,
 				3A12AEC128FCE94C00C1B975 /* ASTBindingAttribute.h in Headers */,
+				DD7A1E312F00000100C0FFEE /* ASTBlendSrcAttribute.h in Headers */,
 				3A12AED628FCFC5600C1B975 /* ASTBoolLiteral.h in Headers */,
 				3A12AEB928FCE94C00C1B975 /* ASTBreakStatement.h in Headers */,
 				97835C9329F7C9C600939EBA /* ASTBuilder.h in Headers */,

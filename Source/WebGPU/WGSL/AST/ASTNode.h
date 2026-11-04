@@ -37,6 +37,7 @@ enum class NodeKind : uint8_t {
     // Attribute
     AlignAttribute,
     BindingAttribute,
+    BlendSrcAttribute,
     BuiltinAttribute,
     ConstAttribute,
     DiagnosticAttribute,

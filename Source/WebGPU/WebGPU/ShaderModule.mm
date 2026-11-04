@@ -454,6 +454,9 @@ ShaderModule::FragmentOutputs ShaderModule::parseFragmentReturnType(const WGSL::
         if (!member.location() || member.builtin())
             continue;
 
+        if (member.blendSrc())
+            populateShaderModuleState(entryPoint.originalName).usesDualSourceBlending = true;
+
         auto location = *member.location();
         fragmentOutputs.add(location, metalDataTypeForStructMember(member.type().inferredType()));
     }
@@ -560,6 +563,13 @@ bool ShaderModule::usesFragDepth(const String& entryPoint) const
 {
     if (auto state = shaderModuleState(entryPoint))
         return state->usesFragDepth;
+    return false;
+}
+
+bool ShaderModule::usesDualSourceBlending(const String& entryPoint) const
+{
+    if (auto state = shaderModuleState(entryPoint))
+        return state->usesDualSourceBlending;
     return false;
 }
 

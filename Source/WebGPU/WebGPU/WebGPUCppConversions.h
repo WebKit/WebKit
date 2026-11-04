@@ -166,6 +166,14 @@ constexpr std::optional<WebGPU::BlendFactor> fromAPI(WGPUBlendFactor value)
         return WebGPU::BlendFactor::Constant;
     case WGPUBlendFactor_OneMinusConstant:
         return WebGPU::BlendFactor::OneMinusConstant;
+    case WGPUBlendFactor_Src1:
+        return WebGPU::BlendFactor::Src1;
+    case WGPUBlendFactor_OneMinusSrc1:
+        return WebGPU::BlendFactor::OneMinusSrc1;
+    case WGPUBlendFactor_Src1Alpha:
+        return WebGPU::BlendFactor::Src1Alpha;
+    case WGPUBlendFactor_OneMinusSrc1Alpha:
+        return WebGPU::BlendFactor::OneMinusSrc1Alpha;
     default:
         return std::nullopt;
     }
@@ -200,6 +208,14 @@ constexpr WGPUBlendFactor toAPI(WebGPU::BlendFactor value)
         return WGPUBlendFactor_Constant;
     case WebGPU::BlendFactor::OneMinusConstant:
         return WGPUBlendFactor_OneMinusConstant;
+    case WebGPU::BlendFactor::Src1:
+        return WGPUBlendFactor_Src1;
+    case WebGPU::BlendFactor::OneMinusSrc1:
+        return WGPUBlendFactor_OneMinusSrc1;
+    case WebGPU::BlendFactor::Src1Alpha:
+        return WGPUBlendFactor_Src1Alpha;
+    case WebGPU::BlendFactor::OneMinusSrc1Alpha:
+        return WGPUBlendFactor_OneMinusSrc1Alpha;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

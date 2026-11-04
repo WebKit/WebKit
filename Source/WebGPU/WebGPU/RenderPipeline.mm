@@ -91,7 +91,33 @@ static MTLBlendFactor LEGACY_NODELETE blendFactor(WebGPU::BlendFactor factor)
         return MTLBlendFactorSourceAlpha;
     case WebGPU::BlendFactor::SrcAlphaSaturated:
         return MTLBlendFactorSourceAlphaSaturated;
+    case WebGPU::BlendFactor::Src1:
+        return MTLBlendFactorSource1Color;
+    case WebGPU::BlendFactor::OneMinusSrc1:
+        return MTLBlendFactorOneMinusSource1Color;
+    case WebGPU::BlendFactor::Src1Alpha:
+        return MTLBlendFactorSource1Alpha;
+    case WebGPU::BlendFactor::OneMinusSrc1Alpha:
+        return MTLBlendFactorOneMinusSource1Alpha;
     }
+}
+
+static bool usesSecondBlendSource(WebGPU::BlendFactor factor)
+{
+    switch (factor) {
+    case WebGPU::BlendFactor::Src1:
+    case WebGPU::BlendFactor::OneMinusSrc1:
+    case WebGPU::BlendFactor::Src1Alpha:
+    case WebGPU::BlendFactor::OneMinusSrc1Alpha:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool usesSecondBlendSource(const WebGPU::BlendComponent& component)
+{
+    return usesSecondBlendSource(component.srcFactor) || usesSecondBlendSource(component.dstFactor);
 }
 
 static MTLColorWriteMask LEGACY_NODELETE colorWriteMask(OptionSet<WebGPU::ColorWrite> mask)
@@ -1524,6 +1550,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
 
     bool usesFragDepth = false;
     bool usesSampleMask = false;
+    bool usesDualSourceBlending = false;
     bool hasAtLeastOneColorTarget = false;
     const ShaderModule::FragmentOutputs* fragmentReturnTypes { nullptr };
     const ShaderModule::FragmentInputs* fragmentInputs { nullptr };
@@ -1544,6 +1571,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
         const auto& fragmentEntryPoint = fragmentDescriptor.stage.entryPoint.isNull() ? fragmentModule->defaultFragmentEntryPoint() : fragmentDescriptor.stage.entryPoint;
         usesFragDepth = fragmentModule->usesFragDepth(fragmentEntryPoint);
         usesSampleMask = fragmentModule->usesSampleMaskInOutput(fragmentEntryPoint);
+        usesDualSourceBlending = fragmentModule->usesDualSourceBlending(fragmentEntryPoint);
 
         fragmentInputs = fragmentModule->fragmentInputsForEntryPoint(fragmentEntryPoint);
         fragmentReturnTypes = fragmentModule->fragmentReturnTypeForEntryPoint(fragmentEntryPoint);
@@ -1598,6 +1626,14 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
                 };
                 if (!validateBlend(alphaBlend) || !validateBlend(colorBlend))
                     return callback(returnInvalidRenderPipeline(*this, isAsync, "Blend states are not valid"_s));
+                if (usesSecondBlendSource(alphaBlend) || usesSecondBlendSource(colorBlend)) {
+                    if (!hasFeature(WebGPU::FeatureName::DualSourceBlending))
+                        return callback(returnInvalidRenderPipeline(*this, isAsync, "Blend factor uses the second blend source but the dual-source-blending feature is not enabled"_s));
+                    if (fragmentDescriptor.targets.size() != 1)
+                        return callback(returnInvalidRenderPipeline(*this, isAsync, "Blend factor uses the second blend source but there is more than one color target"_s));
+                    if (!usesDualSourceBlending)
+                        return callback(returnInvalidRenderPipeline(*this, isAsync, "Blend factor uses the second blend source but the fragment shader does not use @blend_src"_s));
+                }
                 mtlColorAttachment.alphaBlendOperation = blendOperation(alphaBlend.operation);
                 mtlColorAttachment.sourceAlphaBlendFactor = blendFactor(alphaBlend.srcFactor);
                 mtlColorAttachment.destinationAlphaBlendFactor = blendFactor(alphaBlend.dstFactor);
@@ -1606,7 +1642,8 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
                 mtlColorAttachment.sourceRGBBlendFactor = blendFactor(colorBlend.srcFactor);
                 mtlColorAttachment.destinationRGBBlendFactor = blendFactor(colorBlend.dstFactor);
                 auto readsAlphaFactor = [](WebGPU::BlendFactor factor) {
-                    return factor == WebGPU::BlendFactor::SrcAlpha || factor == WebGPU::BlendFactor::OneMinusSrcAlpha || factor == WebGPU::BlendFactor::SrcAlphaSaturated;
+                    return factor == WebGPU::BlendFactor::SrcAlpha || factor == WebGPU::BlendFactor::OneMinusSrcAlpha || factor == WebGPU::BlendFactor::SrcAlphaSaturated
+                        || factor == WebGPU::BlendFactor::Src1Alpha || factor == WebGPU::BlendFactor::OneMinusSrc1Alpha;
                 };
                 readsAlpha = readsAlphaFactor(colorBlend.srcFactor) || readsAlphaFactor(colorBlend.dstFactor);
             } else

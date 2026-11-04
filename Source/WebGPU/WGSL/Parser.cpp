@@ -435,7 +435,7 @@ Result<void> Parser<Lexer>::parseEnableDirective()
         CONSUME_TYPE_NAMED(identifier, Identifier);
         auto* extension = parseExtension(identifier.ident);
         if (!extension)
-            FAIL("Expected 'clip_distances', 'f16', 'primitive_index', or 'subgroups'"_s);
+            FAIL("Expected 'clip_distances', 'dual_source_blending', 'f16', 'primitive_index', or 'subgroups'"_s);
         m_shaderModule.enabledExtensions().add(*extension);
 
         if (current().type != TokenType::Comma)
@@ -703,6 +703,15 @@ Result<std::optional<AST::Attribute::Ref>> Parser<Lexer>::parseAttribute()
             consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(LocationAttribute, WTF::move(location));
+    }
+
+    if (ident.ident == "blend_src"_s) {
+        CONSUME_TYPE(ParenLeft);
+        PARSE(blendSrc, Expression);
+        if (current().type  == TokenType::Comma)
+            consume();
+        CONSUME_TYPE(ParenRight);
+        RETURN_ARENA_NODE(BlendSrcAttribute, WTF::move(blendSrc));
     }
 
     if (ident.ident == "builtin"_s) {

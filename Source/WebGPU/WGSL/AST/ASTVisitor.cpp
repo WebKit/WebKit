@@ -122,6 +122,9 @@ void Visitor::visit(Attribute& attribute)
     case AST::NodeKind::BindingAttribute:
         checkErrorAndVisit(uncheckedDowncast<AST::BindingAttribute>(attribute));
         break;
+    case AST::NodeKind::BlendSrcAttribute:
+        checkErrorAndVisit(uncheckedDowncast<AST::BlendSrcAttribute>(attribute));
+        break;
     case AST::NodeKind::BuiltinAttribute:
         checkErrorAndVisit(uncheckedDowncast<AST::BuiltinAttribute>(attribute));
         break;
@@ -180,6 +183,11 @@ void Visitor::visit(AST::ConstAttribute&)
 void Visitor::visit(AST::DiagnosticAttribute& attribute)
 {
     visit(attribute.diagnostic());
+}
+
+void Visitor::visit(AST::BlendSrcAttribute& attribute)
+{
+    visit(attribute.blendSrc());
 }
 
 void Visitor::visit(AST::BuiltinAttribute&)

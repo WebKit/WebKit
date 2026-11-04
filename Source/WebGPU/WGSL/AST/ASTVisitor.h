@@ -62,6 +62,7 @@ public:
     virtual void visit(AST::Attribute&);
     virtual void visit(AST::AlignAttribute&);
     virtual void visit(AST::BindingAttribute&);
+    virtual void visit(AST::BlendSrcAttribute&);
     virtual void visit(AST::BuiltinAttribute&);
     virtual void visit(AST::ConstAttribute&);
     virtual void visit(AST::DiagnosticAttribute&);

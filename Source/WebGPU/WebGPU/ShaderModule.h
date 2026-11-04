@@ -133,6 +133,7 @@ public:
     bool usesSampleMaskInInput(const String&) const;
     bool usesSampleMaskInOutput(const String&) const;
     bool usesFragDepth(const String&) const;
+    bool usesDualSourceBlending(const String&) const;
     bool usesPrimitiveIndexInInput(const String&) const;
     bool usesSubgroupInvocationIdInInput(const String&) const;
     bool usesSubgroupSizeInInput(const String&) const;
@@ -177,6 +178,7 @@ private:
         bool usesSampleMaskInInput { false };
         bool usesSampleMaskInOutput { false };
         bool usesFragDepth { false };
+        bool usesDualSourceBlending { false };
         bool usesPrimitiveIndexInInput { false };
         bool usesSubgroupInvocationIdInInput { false };
         bool usesSubgroupSizeInInput { false };

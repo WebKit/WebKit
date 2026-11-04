@@ -93,6 +93,7 @@ set(wgslc_HEADERS
     AST/ASTAttribute.h
     AST/ASTBinaryExpression.h
     AST/ASTBindingAttribute.h
+    AST/ASTBlendSrcAttribute.h
     AST/ASTBoolLiteral.h
     AST/ASTBreakStatement.h
     AST/ASTBuilder.h
