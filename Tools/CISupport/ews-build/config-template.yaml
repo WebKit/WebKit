@@ -61,6 +61,13 @@ templates:
       device: Mac16,11
       xcode: Xcode 26.5-17F42
       fleet: aws
+  mac-golden-gate-aws:
+    worker:
+      platform: '*'
+      os: macOS Golden Gate 27.0-26A428
+      device: Mac16,11
+      xcode: Xcode 27.0-27A266a
+      fleet: aws
   playstation:
     worker:
       platform: playstation
@@ -335,6 +342,7 @@ workers:
       - {name: ews2010, template: tahoe-m4pro}
       - {template: mac-sequoia-aircloud, prefix: ews, first: 2011, count: 5}
       - {template: mac-tahoe-aws, prefix: ews, first: 3000, count: 41}
+      - {name: ews3041, template: mac-golden-gate-aws}
     each(w):
       $if: "'template' in w"
       then:
@@ -381,7 +389,10 @@ builders:
     icon: testOnly
     factory: ServicesFactory
     platform: '*'
-    workernames: {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'webkit-misc'\").name"}}
+    workernames:
+      $flatten:
+        - {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'webkit-misc'\").name"}}
+        - {$map: {$eval: "range(0, 1)"}, each(i): {$eval: "pop(workers, \"tag == 'mac-golden-gate-aws'\").name"}}
   - name: GTK-Build-EWS
     shortname: gtk
     icon: buildOnly
