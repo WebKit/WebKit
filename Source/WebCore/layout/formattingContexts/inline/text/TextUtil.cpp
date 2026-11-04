@@ -38,6 +38,7 @@
 #include "Latin1TextIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutInlineTextBox.h"
+#include "RenderBlock.h"
 #include "RenderBox.h"
 #include "RenderGlyph.h"
 #include "RenderText.h"
@@ -93,6 +94,44 @@ std::optional<TextDirection> TextUtil::overridingDirection(const RenderText& ren
     });
 }
 
+TabSize TextUtil::tabSize(const Style::ComputedStyle& style, const Style::ComputedStyle& blockContainerStyle)
+{
+    // A <number> is a multiple of the advance of the space character of the preserved tab's nearest block container
+    // ancestor, so an inline box with a font of its own does not scale the tab stops.
+    // https://drafts.csswg.org/css-text-3/#tab-size-property
+    // FIXME: Include the block container's letter-spacing and word-spacing in the space advance.
+    if (auto spaces = style.tabSize().trySpaces()) {
+        // Not the primary font's space advance: the primary font may have no glyph for U+0020, in which case it
+        // reports the advance of .notdef while the space is rendered with a fallback font.
+        CheckedRef fontCascade = blockContainerStyle.fontCascade();
+        RefPtr spaceFont = fontCascade->glyphDataForCharacter(space, false).font.get();
+        return { spaces->value * (spaceFont ? *spaceFont : fontCascade->primaryFont()).spaceWidth(), LengthValueType };
+    }
+    return Style::toPlatform(style.tabSize(), style.usedZoomForLength());
+}
+
+TabSize TextUtil::tabSize(const InlineTextBox& inlineTextBox)
+{
+    CheckedPtr ancestor = &inlineTextBox.parent();
+    while (ancestor->isInlineBox())
+        ancestor = &ancestor->parent();
+
+    CheckedRef style = inlineTextBox.style();
+    CheckedRef blockContainerStyle = ancestor->style();
+    return tabSize(style, blockContainerStyle);
+}
+
+TabSize TextUtil::tabSize(const RenderText& renderText, const Style::ComputedStyle& style)
+{
+    // Collapsible white space has no tab to measure, so spare this hot path the containing block lookup.
+    if (style.collapseWhiteSpace() || !style.tabSize().isSpaces())
+        return Style::toPlatform(style.tabSize(), style.usedZoomForLength());
+
+    CheckedPtr blockContainer = renderText.containingBlock();
+    CheckedRef blockContainerStyle = blockContainer ? blockContainer->style() : style;
+    return tabSize(style, blockContainerStyle);
+}
+
 InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft, UseTrailingWhitespaceMeasuringOptimization useTrailingWhitespaceMeasuringOptimization, TextSpacing::SpacingState spacingState, GlyphOverflow* glyphOverflow)
 {
     if (from == to)
@@ -131,7 +170,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
         CheckedRef style = inlineTextBox.style();
         auto run = WebCore::TextRun { StringView(text).substring(from, to - from), contentLogicalLeft, { }, ExpansionBehavior::defaultBehavior(), direction, directionalOverride == DirectionalOverride::Yes };
         if (!style->collapseWhiteSpace() && !style->tabSize().isZero())
-            run.setTabSize(true, Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
+            run.setTabSize(true, tabSize(inlineTextBox));
         // FIXME: consider moving this to TextRun ctor
         run.setTextSpacingState(spacingState);
         width = fontCascade.width(run, { }, glyphOverflow);
