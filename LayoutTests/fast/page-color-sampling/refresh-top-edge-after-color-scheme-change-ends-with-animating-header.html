@@ -1,0 +1,106 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=false pageTopColorSamplingEnabled=false useFlexibleViewport=true obscuredInset.top=50 ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+    color-scheme: light;
+}
+
+:root.dark {
+    color-scheme: dark;
+}
+
+body, html {
+    font-family: system-ui;
+    margin: 0;
+}
+
+@keyframes pulse {
+    from { outline-offset: 0px; }
+    to { outline-offset: 4px; }
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    z-index: 100;
+    background-color: rgb(255, 99, 71);
+    outline: 2px solid transparent;
+    animation: pulse 100ms infinite alternate linear;
+}
+
+:root.dark header {
+    background-color: rgb(0, 128, 0);
+}
+
+.click-target {
+    position: absolute;
+    top: 150px;
+    left: 100px;
+    width: 100px;
+    height: 200px;
+    z-index: 2000;
+}
+
+.tall {
+    height: 2000px;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+// A header with an animation that never ends repaints all the time. The top edge is refreshed after a color scheme
+// change, but only for a short time, so it must not stay open to every later change of the header.
+jsTestIsAsync = true;
+
+// Longer than the time during which the top edge may be refreshed after a color scheme change.
+const refreshWindow = 1200;
+
+async function interactWithPage()
+{
+    // On iOS, a tap only counts as user interaction if something on the page handles the click.
+    const target = document.querySelector(".click-target");
+    const clicked = new Promise(resolve => target.addEventListener("click", resolve, { once: true }));
+    await UIHelper.activateElement(target);
+    await clicked;
+}
+
+async function topEdgeColorAfterUpdate()
+{
+    await UIHelper.ensurePresentationUpdate();
+    return (await UIHelper.fixedContainerEdgeColors()).top;
+}
+
+addEventListener("load", async () => {
+    await UIHelper.setObscuredInsets(50, 0, 0, 0);
+    const root = document.documentElement;
+    const header = document.querySelector("header");
+
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(255, 99, 71)");
+
+    await interactWithPage();
+
+    root.classList.add("dark");
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(0, 128, 0)");
+
+    await UIHelper.delayFor(refreshWindow);
+    header.style.backgroundColor = "rgb(255, 255, 0)";
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(0, 128, 0)");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<header></header>
+<div class="tall"></div>
+<div class="click-target"></div>
+</body>
+</html>

@@ -993,6 +993,8 @@ public:
     WEBCORE_EXPORT bool canSampleTopFixedContainerEdge() const;
     const FixedContainerEdges& fixedContainerEdges() const LIFETIME_BOUND { return m_fixedContainerEdgesAndElements.first; }
     NODELETE Element* lastFixedContainer(BoxSide) const;
+    void refreshTopFixedContainerEdgeAfterColorSchemeChange();
+    void refreshTopFixedContainerEdgeAfterColorSchemeChange(const Element& changedElement);
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     void invalidateColorsSampledFromPaintedContent();
@@ -1492,6 +1494,8 @@ private:
 
     void updateValidationMessages();
 
+    RefPtr<Element> topFixedContainerToRefresh();
+
     struct Navigation {
         RegistrableDomain domain;
         FrameLoadType type;
@@ -1873,6 +1877,13 @@ private:
 #endif
 
     std::pair<UniqueRef<FixedContainerEdges>, WeakElementEdges> m_fixedContainerEdgesAndElements;
+    // The container that the top edge was last sampled from, while its color may still be refreshed after a color scheme change.
+    struct TopFixedContainerRefresh {
+        WeakPtr<Element, WeakPtrImplWithEventTargetData> container;
+        MonotonicTime deadline;
+        bool isSettling { false };
+    };
+    TopFixedContainerRefresh m_topFixedContainerRefresh;
     bool m_userHasInteractedSinceLastPageLoad { false };
     bool m_userHasInteractedSinceLastPageLoadExcludingForcedUserGestures { false };
 

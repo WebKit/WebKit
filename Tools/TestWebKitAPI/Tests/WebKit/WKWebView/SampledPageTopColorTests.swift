@@ -44,6 +44,7 @@ private import AppKit
 #endif
 
 private let tomato = makeSRGBColor(red: 1, green: 99.0 / 255.0, blue: 71.0 / 255.0)
+private let blue = makeSRGBColor(red: 0, green: 0, blue: 1)
 
 private func makeSRGBColor(red: CGFloat, green: CGFloat, blue: CGFloat) -> CocoaColor {
     #if WTF_PLATFORM_IOS_FAMILY
@@ -85,6 +86,25 @@ private func makeWebViewForTopFixedContainerSampling() throws -> TestWKWebView {
     return webView
 }
 
+// The header is tomato in the light color scheme and blue in the dark one. It has a child because an empty fixed
+// element with a light-dark() background isn't sampled.
+private func colorSchemeHeaderPageHTML(rootColorScheme: String) -> String {
+    """
+    <!DOCTYPE html>
+    <html style='color-scheme: \(rootColorScheme)'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <style>
+        html, body { margin: 0; width: 100%; height: 100%; }
+        .tall { height: 4000px; }
+        header { position: fixed; top: 0; left: 0; width: 100%; height: 100px; background: light-dark(tomato, blue); }
+    </style>
+    <body>
+        <header><div></div></header>
+        <div class='tall'></div>
+    </body>
+    """
+}
+
 @MainActor
 struct SampledPageTopColorTests {
     @Test
@@ -117,6 +137,69 @@ struct SampledPageTopColorTests {
         #expect(!didUpdateColor)
         #expect(compareColors(webView._sampledTopFixedPositionContentColor, tomato))
     }
+
+    @Test
+    func colorSchemeChangeRefreshesTopEdgeAfterUserInteraction() async throws {
+        let webView = try makeWebViewForTopFixedContainerSampling()
+
+        try await webView.load(html: colorSchemeHeaderPageHTML(rootColorScheme: "light"))
+        try await waitForCondition("the initial top fixed-position color to be sampled") {
+            compareColors(webView._sampledTopFixedPositionContentColor, tomato)
+        }
+
+        await webView.click(at: CGPoint(x: 400, y: 300))
+
+        // After user interaction, a plain style change of the header doesn't change the color.
+        do {
+            let colorUpdated = Mutex(false)
+            let observation = webView.observe(\._sampledTopFixedPositionContentColor) { _, _ in
+                colorUpdated.withLock { $0 = true }
+            }
+            defer { observation.invalidate() }
+
+            try await webView.evaluateJavaScriptWithoutUserGesture("document.querySelector('header').style.backgroundColor = 'green'")
+            await webView.nextPresentationUpdate()
+            await webView.nextPresentationUpdate()
+
+            let didUpdateColor = colorUpdated.withLock { $0 }
+            #expect(!didUpdateColor)
+            #expect(compareColors(webView._sampledTopFixedPositionContentColor, tomato))
+        }
+
+        try await webView.evaluateJavaScriptWithoutUserGesture("document.querySelector('header').style.removeProperty('background-color')")
+        await webView.nextPresentationUpdate()
+
+        // A change of color scheme does, as it is still the same header.
+        try await webView.evaluateJavaScriptWithoutUserGesture("document.documentElement.style.colorScheme = 'dark'")
+        try await waitForCondition("the sampled top fixed-position color to refresh to blue") {
+            compareColors(webView._sampledTopFixedPositionContentColor, blue)
+        }
+
+        #expect(webView._fixedContainerEdges.contains(.top))
+    }
+
+    #if WTF_PLATFORM_MAC
+    @Test
+    func appearanceChangeRefreshesTopEdgeAfterUserInteraction() async throws {
+        let webView = try makeWebViewForTopFixedContainerSampling()
+        webView.appearance = NSAppearance(named: .aqua)
+
+        try await webView.load(html: colorSchemeHeaderPageHTML(rootColorScheme: "light dark"))
+        try await waitForCondition("the initial top fixed-position color to be sampled") {
+            compareColors(webView._sampledTopFixedPositionContentColor, tomato)
+        }
+
+        await webView.click(at: CGPoint(x: 400, y: 300))
+
+        // The page supports both color schemes, so nothing in its own style changes with the appearance of the system.
+        webView.appearance = NSAppearance(named: .darkAqua)
+        try await waitForCondition("the sampled top fixed-position color to refresh to blue") {
+            compareColors(webView._sampledTopFixedPositionContentColor, blue)
+        }
+
+        #expect(webView._fixedContainerEdges.contains(.top))
+    }
+    #endif // WTF_PLATFORM_MAC
 }
 
 #endif // ENABLE_CONTENT_INSET_BACKGROUND_FILL && (WTF_PLATFORM_MAC || WTF_PLATFORM_IOS || WTF_PLATFORM_MACCATALYST || WTF_PLATFORM_VISION)
