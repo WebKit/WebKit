@@ -7,6 +7,5 @@ ftl/FTLOSRExitHandle.cpp
 ftl/FTLPatchpointExceptionHandle.cpp
 jit/JITSizeStatistics.cpp
 runtime/CachedTypes.cpp
-[ iOS ] runtime/SamplingProfiler.cpp
 wasm/WasmCalleeGroup.cpp
 wasm/WasmTable.cpp
