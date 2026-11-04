@@ -3294,9 +3294,6 @@ webkit.org/b/319956 imported/w3c/web-platform-tests/html/canvas/element/manual/i
 webkit.org/b/319956 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-serializable.html [ Failure ]
 webkit.org/b/319956 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-transfer.html [ Failure ]
 
-# These are skipped globally as they only work with the web-platform.test domain.
-imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/ [ Pass ]
-
 # This test times out only in mac-wk1, WPE and GTK.
 imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-order.html [ Skip ]
 

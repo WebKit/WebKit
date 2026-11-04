@@ -7048,16 +7048,6 @@ webkit.org/b/263923 animations/transition-and-animation-2.html [ Failure Pass ]
 
 # -- Navigation API -- #
 
-# These cross-window needs --allowed-host=www1.localhost, so tested manually.
-imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/click-crossdocument-crossorigin-sameorigindomain.sub.html [ Skip ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/click-samedocument-crossorigin-sameorigindomain.sub.html [ Skip ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/location-crossdocument-crossorigin-sameorigindomain.sub.html [ Skip ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/location-samedocument-crossorigin-sameorigindomain.sub.html [ Skip ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/open-crossdocument-crossorigin-sameorigindomain.sub.html [ Skip ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/open-samedocument-crossorigin-sameorigindomain.sub.html [ Skip ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/submit-crossdocument-crossorigin-sameorigindomain.sub.html [ Skip ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/submit-samedocument-crossorigin-sameorigindomain.sub.html [ Skip ]
-
 # General flakes, almost exclusively on mac-wk2-stress.
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-intercept-rejected.html [ Crash Pass ]
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/ [ Failure Pass ]
