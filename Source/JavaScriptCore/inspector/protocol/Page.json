@@ -163,7 +163,7 @@
         {
             "name": "overrideSetting",
             "description": "Allows the frontend to override the inspected page's settings.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "setting", "$ref": "Setting" },
                 { "name": "value", "type": "boolean", "optional": true, "description": "Value to override the setting with. If this value is not provided, the override is removed. Overrides are removed when Web Inspector closes/disconnects." }

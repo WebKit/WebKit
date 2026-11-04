@@ -27,6 +27,18 @@ function test() {
         return committedEvent.data.target;
     }
 
+    // Like WI.DeviceSettingsManager, send the override to the WebPage target too, which forwards it to cross-origin frames' processes.
+    async function overrideAuthorAndUserStylesEnabled(value) {
+        let commandArguments = {setting: InspectorBackend.Enum.Page.Setting.AuthorAndUserStylesEnabled};
+        if (value !== undefined)
+            commandArguments.value = value;
+
+        await Promise.all([
+            PageAgent.overrideSetting.invoke(commandArguments),
+            WI.backendTarget.PageAgent.overrideSetting.invoke(commandArguments),
+        ]);
+    }
+
     async function getComputedColorInTarget(target) {
         // Wait for the iframe document to fully load before checking computed styles.
         await target.RuntimeAgent.evaluate.invoke({
@@ -62,7 +74,7 @@ function test() {
         description: "Overriding AuthorAndUserStylesEnabled to false and reloading should disable styles in the cross-origin iframe.",
         async test() {
             InspectorTest.log("Overriding AuthorAndUserStylesEnabled to false...");
-            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.AuthorAndUserStylesEnabled, false);
+            await overrideAuthorAndUserStylesEnabled(false);
 
             InspectorTest.log("Reloading...");
             await InspectorTest.reloadPage();
@@ -83,7 +95,7 @@ function test() {
         description: "Removing the override and reloading should restore author styles in both frames.",
         async test() {
             InspectorTest.log("Removing AuthorAndUserStylesEnabled override...");
-            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.AuthorAndUserStylesEnabled);
+            await overrideAuthorAndUserStylesEnabled();
 
             InspectorTest.log("Reloading...");
             await InspectorTest.reloadPage();

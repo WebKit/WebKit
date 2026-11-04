@@ -60,6 +60,8 @@ messages -> WebInspectorBackend {
     # UIProcess ProxyingPageAgent, so this never reaches the per-process InspectorPageAgent; each
     # process instead draws in its own frame's coordinate space.
     SetShowPaintRects(bool show)
+    # Fan out Page.overrideSetting the same way. `setting` is the Page.Setting protocol name.
+    SetSettingOverride(String setting, std::optional<bool> value)
 
     # Fan out Page.setBootstrapScript from the UIProcess ProxyingPageAgent, so frames in processes
     # the page target doesn't reach (cross-origin subframes under Site Isolation) run it too.

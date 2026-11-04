@@ -35,6 +35,7 @@
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <utility>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -125,6 +126,8 @@ public:
     void setShowPaintRects(bool);
     void setBootstrapScript(const String&);
 
+    void setSettingOverride(const String& setting, std::optional<bool>);
+
     // Set up / tear down every per-frame instrumentation agent for a frame. Callers
     // don't need to know which agents are frame-scoped; each helper no-ops unless its
     // domain is enabled.
@@ -179,6 +182,7 @@ private:
     // only on the first (process, page) registration).
     bool m_showPaintRects { false };
     String m_bootstrapScript;
+    HashSet<String> m_overriddenSettings;
 };
 
 } // namespace WebKit

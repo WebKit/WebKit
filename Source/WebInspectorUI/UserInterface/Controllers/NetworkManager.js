@@ -267,6 +267,10 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             // ProxyingPageAgent is live.
             this._requestAggregatedResourceTree();
 
+            // Replay the Page setting overrides to the ProxyingPageAgent, which fans them out to every process.
+            WI.layerTreeManager?.initializeBackendTargetForSiteIsolation(WI.backendTarget);
+            WI.deviceSettingsManager?.initializeBackendTargetForSiteIsolation(WI.backendTarget);
+
             if (this._bootstrapScript && this._bootstrapScriptEnabledSetting.value && WI.backendTarget?.hasCommand("Page.setBootstrapScript"))
                 WI.backendTarget.PageAgent.setBootstrapScript(this._bootstrapScript.content);
         }
@@ -289,6 +293,17 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     get localResourceOverrides() { return this._localResourceOverrides; }
     get bootstrapScript() { return this._bootstrapScript; }
     get enabledPageForSiteIsolation() { return this._enabledPageForSiteIsolation; }
+
+    get pageAgentTargets()
+    {
+        let targets = WI.targets;
+
+        // `WI.targets` excludes the WebPage target, whose ProxyingPageAgent forwards Page commands to cross-origin frames' processes under Site Isolation.
+        if (this._enabledPageForSiteIsolation && WI.backendTarget && !targets.includes(WI.backendTarget))
+            targets = [...targets, WI.backendTarget];
+
+        return targets;
+    }
 
     get frames()
     {
@@ -1936,13 +1951,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     _setBootstrapScriptSource(source)
     {
-        let targets = WI.targets;
-
-        // `WI.targets` excludes the WebPage target, whose ProxyingPageAgent forwards the script to cross-origin frames' processes under Site Isolation.
-        if (this._enabledPageForSiteIsolation && WI.backendTarget && !targets.includes(WI.backendTarget))
-            targets = [...targets, WI.backendTarget];
-
-        for (let target of targets) {
+        for (let target of this.pageAgentTargets) {
             // COMPATIBILITY (iOS 13.0): Page.setBootstrapScript did not exist yet.
             if (target.hasCommand("Page.setBootstrapScript"))
                 target.PageAgent.setBootstrapScript(source);
