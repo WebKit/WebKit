@@ -91,6 +91,7 @@
 #import "WebEventFactory.h"
 #import "WebFrameProxy.h"
 #import "WebInspectorUIProxy.h"
+#import "WebPageInspectorController.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
@@ -125,6 +126,8 @@
 #import <WebCore/FontAttributeChanges.h>
 #import <WebCore/FontAttributes.h>
 #import <WebCore/FrameIdentifier.h>
+#import <WebCore/GraphicsContextCG.h>
+#import <WebCore/IOSurface.h>
 #import <WebCore/ImageAdapter.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LoaderNSURLExtras.h>
@@ -682,6 +685,98 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 - (BOOL)isFlipped
 {
     return YES;
+}
+
+@end
+
+@interface WKInspectorFrameHighlightView : NSView
+- (instancetype)initWithFrame:(NSRect)frame page:(WebKit::WebPageProxy&)page;
+- (void)pageGeometryMayHaveChanged;
+@end
+
+@implementation WKInspectorFrameHighlightView {
+    WeakPtr<WebKit::WebPageProxy> _page;
+    std::optional<WebCore::InspectorOverlay::PageGeometry> _drawnPageGeometry;
+}
+
+- (instancetype)initWithFrame:(NSRect)frame page:(WebKit::WebPageProxy&)page
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+
+    _page = page;
+    [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [self setLayerContentsRedrawPolicy:NSViewLayerContentsRedrawDuringViewResize];
+    return self;
+}
+
+- (BOOL)isFlipped
+{
+    return YES;
+}
+
+- (NSView *)hitTest:(NSPoint)point
+{
+    return nil;
+}
+
+- (BOOL)isAccessibilityElement
+{
+    return NO;
+}
+
+- (BOOL)wantsUpdateLayer
+{
+    return YES;
+}
+
+// Drawn into an IOSurface through its CG context, as web content draws its layers, because the context of
+// drawRect: antialiases the thin dashed lines of grid and flex gaps differently from the page highlight.
+- (void)updateLayer
+{
+    RefPtr page { _page };
+    RetainPtr window { [self window] };
+    if (!page || !window)
+        return;
+
+    auto scale { [window backingScaleFactor] };
+    RetainPtr colorSpace { [window colorSpace] ?: [NSColorSpace sRGBColorSpace] };
+    auto surface { WebCore::IOSurface::create(nullptr, WebCore::expandedIntSize(WebCore::FloatSize { [self bounds].size }.scaled(scale)), WebCore::ColorSpace { [colorSpace CGColorSpace] }, WebCore::IOSurface::Name::LayerBacking) };
+    if (!surface)
+        return;
+
+    auto& inspectorController { page->inspectorController() };
+    auto pageGeometry { inspectorController.frameHighlightPageGeometry() };
+    _drawnPageGeometry = pageGeometry;
+
+    RetainPtr cgContext { surface->createPlatformContext() };
+    {
+        WebCore::GraphicsContextCG context { cgContext.get() };
+        context.clearRect({ { }, surface->size() });
+        context.translate(0, surface->size().height());
+        context.scale({ static_cast<float>(scale), static_cast<float>(-scale) });
+        context.clip({ { }, pageGeometry.viewportSize });
+
+        for (auto& [processID, highlight] : inspectorController.frameHighlights().values())
+            WebCore::InspectorOverlay::drawFrameHighlight(context, highlight, pageGeometry);
+    }
+    CGContextFlush(cgContext.get());
+
+    [[self layer] setContentsScale:scale];
+    [[self layer] setContents:protect(surface->asLayerContents()).get()];
+}
+
+- (void)viewDidChangeBackingProperties
+{
+    [super viewDidChangeBackingProperties];
+    [self setNeedsDisplay:YES];
+}
+
+- (void)pageGeometryMayHaveChanged
+{
+    RefPtr page { _page };
+    if (page && page->inspectorController().frameHighlightPageGeometry() != _drawnPageGeometry)
+        [self setNeedsDisplay:YES];
 }
 
 @end
@@ -1861,6 +1956,26 @@ void WebViewImpl::removePDFHUD(PDFPluginIdentifier identifier)
 {
     if (RetainPtr hud = _pdfHUDViews.take(identifier))
         [hud removeFromSuperview];
+}
+
+void WebViewImpl::frameInspectorHighlightsDidChange()
+{
+    if (m_page->inspectorController().frameHighlights().isEmpty()) {
+        [std::exchange(m_inspectorFrameHighlightView, nil) removeFromSuperview];
+        return;
+    }
+
+    if (!m_inspectorFrameHighlightView) {
+        m_inspectorFrameHighlightView = adoptNS([[WKInspectorFrameHighlightView alloc] initWithFrame:[m_view.get() bounds] page:m_page.get()]);
+        [m_view.get() addSubview:m_inspectorFrameHighlightView.get() positioned:NSWindowAbove relativeTo:m_layerHostingView.get()];
+    }
+
+    [m_inspectorFrameHighlightView setNeedsDisplay:YES];
+}
+
+void WebViewImpl::frameInspectorHighlightPageGeometryMayHaveChanged()
+{
+    [m_inspectorFrameHighlightView pageGeometryMayHaveChanged];
 }
 
 void WebViewImpl::removeAllPDFHUDs()

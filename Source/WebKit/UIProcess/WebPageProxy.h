@@ -926,6 +926,11 @@ public:
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
     void frameDidPauseForDebugger(IPC::Connection&, WebCore::FrameIdentifier);
     void frameDidContinueForDebugger(IPC::Connection&, WebCore::FrameIdentifier);
+#if PLATFORM(MAC)
+    void showFrameInspectorHighlight(IPC::Connection&, WebCore::FrameIdentifier, WebCore::InspectorOverlayHighlight&&);
+    void hideFrameInspectorHighlight(IPC::Connection&, WebCore::FrameIdentifier);
+    RetainPtr<NSDictionary> frameInspectorHighlightsForTesting() const;
+#endif
 
     void getAllFrames(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&&);
     void getAllFrameTreesForSiteIsolationTesting(CompletionHandler<void(Vector<FrameTreeNodeData>&&)>&&);
