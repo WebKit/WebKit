@@ -115,7 +115,8 @@ bool WebCookieJar::isEligibleForCache(WebFrame& frame, const URL& firstPartyForC
     if (resourceDomain.isEmpty())
         return false;
 
-    return frame.isMainFrame() || RegistrableDomain { firstPartyForCookies } == resourceDomain;
+    // A main frame can still be third-party because an about:blank popup opened by a third-party iframe inherits its opener's first party and cookie URL.
+    return RegistrableDomain { firstPartyForCookies } == resourceDomain;
 }
 
 static WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking(const WebFrame* frame)
