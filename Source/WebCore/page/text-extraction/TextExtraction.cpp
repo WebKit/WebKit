@@ -741,6 +741,47 @@ static String normalizedLabelText(Element& element, IncludeAssociatedLabels incl
     return { };
 }
 
+static String svgAltText(SVGSVGElement& svg)
+{
+    if (auto altText = normalizeText(svg.attributeWithoutSynchronization(HTMLNames::aria_labelAttr)); !altText.isEmpty())
+        return altText;
+
+    if (RefPtr title = childrenOfType<SVGTitleElement>(svg).first())
+        return normalizeText(title->textContent());
+
+    return { };
+}
+
+static constexpr auto minimumDataAttributeHintLength = 6;
+static constexpr auto maximumDataAttributeHintLength = 39;
+static constexpr auto maximumDataAttributeHintCandidates = 5;
+
+static Vector<std::pair<String, String>> dataAttributeHintCandidates(const Element& element)
+{
+    Vector<std::pair<String, String>> candidates;
+    if (!element.hasAttributes())
+        return candidates;
+
+    for (auto& attribute : element.attributes()) {
+        auto& name = attribute.localName();
+        if (!name.startsWith("data-"_s))
+            continue;
+
+        auto value = normalizeText(attribute.value());
+        if (value.length() < minimumDataAttributeHintLength || value.length() > maximumDataAttributeHintLength)
+            continue;
+
+        if (!StringEntropyHelpers::isProbablyHumanReadable(value))
+            continue;
+
+        candidates.append({ name, WTF::move(value) });
+        if (candidates.size() >= maximumDataAttributeHintCandidates)
+            break;
+    }
+
+    return candidates;
+}
+
 enum class SkipExtraction : bool {
     Self,
     SelfAndSubtree
@@ -895,18 +936,10 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
     }
 
     if (RefPtr svg = dynamicDowncast<SVGSVGElement>(element)) {
-        auto altText = normalizeText(element->attributeWithoutSynchronization(HTMLNames::aria_labelAttr));
-        if (altText.isEmpty()) {
-            for (Ref title : childrenOfType<SVGTitleElement>(*svg)) {
-                altText = normalizeText(title->textContent());
-                break;
-            }
-        }
-
         return { ImageItemData {
             .completedSource = { },
             .shortenedName = { },
-            .altText = WTF::move(altText),
+            .altText = svgAltText(*svg),
         } };
     }
 
@@ -1570,6 +1603,8 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
     if (item) {
         item->visualBlockContainerNumber = context.currentVisualBlockContainerNumber();
         item->isDisabled = isDisabledControlItem(node, item->data);
+        if (RefPtr button = dynamicDowncast<HTMLButtonElement>(node))
+            item->dataAttributeCandidates = dataAttributeHintCandidates(*button);
     }
 
     ASSERT_IMPLIES(isScrollable, item);
@@ -2863,6 +2898,27 @@ static bool hasNoRenderedTextOrLabeledChild(Element& element)
     return true;
 }
 
+static bool hasSingleUnlabeledIconChild(Element& element)
+{
+    RefPtr<Element> icon;
+    for (Ref child : childrenOfType<Element>(element)) {
+        if (icon)
+            return false;
+        icon = child.ptr();
+    }
+
+    if (!icon || !icon->attributeWithoutSynchronization(HTMLNames::titleAttr).isEmpty())
+        return false;
+
+    if (RefPtr image = dynamicDowncast<HTMLImageElement>(icon))
+        return normalizeText(image->altText()).isEmpty();
+
+    if (RefPtr svg = dynamicDowncast<SVGSVGElement>(icon))
+        return svgAltText(*svg).isEmpty();
+
+    return false;
+}
+
 static String textDescription(Element& element, Vector<String>& stringsToValidate, bool isTargetElement = true)
 {
     StringBuilder description;
@@ -2957,6 +3013,14 @@ static String textDescription(Element& element, Vector<String>& stringsToValidat
         if (!humanReadableClassNames.isEmpty()) {
             auto classOrClasses = humanReadableClassNames.size() > 1 ? " with classes "_s : " with class "_s;
             description.append(makeString(classOrClasses, wrapWithDoubleQuotes(makeStringByJoining(humanReadableClassNames, " "_s))));
+            needsParentContext = false;
+        }
+    }
+
+    if (needsParentContext && !hasAccessibleName && is<HTMLButtonElement>(element) && hasSingleUnlabeledIconChild(element) && hasNoRenderedTextOrLabeledChild(element)) {
+        if (auto candidates = dataAttributeHintCandidates(element); !candidates.isEmpty()) {
+            auto& [name, value] = candidates.first();
+            description.append(makeString(" with "_s, name, ' ', wrapWithDoubleQuotes(value)));
             needsParentContext = false;
         }
     }

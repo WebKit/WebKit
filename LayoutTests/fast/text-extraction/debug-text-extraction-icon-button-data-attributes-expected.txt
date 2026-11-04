@@ -1,0 +1,29 @@
+root
+    label='Unlabeled svg button'
+        button uid=… data-test-id=user-settings-dropdown-menu
+    label='Unlabeled image button'
+        button uid=… data-testid=close-dialog-button
+    label='Best scoring data attribute'
+        button uid=… data-label-key=notification-settings
+    label='Labeled button'
+        button uid=… label=Notifications
+    label='Titled button'
+        button uid=… title=Search
+    label='Svg with title'
+        button uid=…
+            image uid=… alt='Delete account'
+    label='Image with alt text'
+        button uid=…
+            image uid=… alt=Profile
+    label='Recognized class'
+        button uid=… class=settings-button
+    label='Text and icon'
+        button uid=… 'Settings'
+    label='Two icons'
+        button uid=…
+    label='Button role on a div'
+        uid=… role=button
+    label='Opaque value'
+        button uid=…
+    label='Overly long value'
+        button uid=…

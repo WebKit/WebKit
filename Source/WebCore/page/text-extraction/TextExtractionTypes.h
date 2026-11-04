@@ -241,6 +241,7 @@ struct Item {
     bool hasLineThrough { false };
     bool isVisuallyClickable { false };
     bool isDisabled { false };
+    Vector<std::pair<String, String>> dataAttributeCandidates { };
 
     template<typename T> bool hasData() const
     {

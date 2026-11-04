@@ -1,0 +1,74 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<div aria-label="Unlabeled svg button">
+    <button class="txkz4s0" type="button" data-test-id="user-settings-dropdown-menu"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></button>
+</div>
+<div aria-label="Unlabeled image button">
+    <button data-testid="close-dialog-button"><img src="../images/resources/green-256x256.jpg" width="16" height="16"></button>
+</div>
+<div aria-label="Best scoring data attribute">
+    <button data-tracking="nav_1x7qz_item" data-label-key="notification-settings"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></button>
+</div>
+<div aria-label="Labeled button">
+    <button aria-label="Notifications" data-test-id="notifications-bell-button"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></button>
+</div>
+<div aria-label="Titled button">
+    <button title="Search" data-test-id="global-search-button"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></button>
+</div>
+<div aria-label="Svg with title">
+    <button data-test-id="delete-account-button"><svg width="16" height="16"><title>Delete account</title><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></button>
+</div>
+<div aria-label="Image with alt text">
+    <button data-testid="profile-avatar-button"><img src="../images/resources/green-256x256.jpg" width="16" height="16" alt="Profile"></button>
+</div>
+<div aria-label="Recognized class">
+    <button class="settings-button" data-test-id="user-settings-dropdown-menu"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></button>
+</div>
+<div aria-label="Text and icon">
+    <button data-test-id="user-settings-dropdown-menu"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg>Settings</button>
+</div>
+<div aria-label="Two icons">
+    <button data-test-id="user-settings-dropdown-menu"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></button>
+</div>
+<div aria-label="Button role on a div">
+    <div role="button" tabindex="0" data-test-id="user-settings-dropdown-menu"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></div>
+</div>
+<div aria-label="Opaque value">
+    <button data-hash="x8f2k1q"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></button>
+</div>
+<div aria-label="Overly long value">
+    <button data-test-id="account-settings-dropdown-menu-toggle-button"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></button>
+</div>
+
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        normalize: true,
+        nodeIdentifierInclusion: "interactive",
+        includeAccessibilityAttributes: true,
+    });
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

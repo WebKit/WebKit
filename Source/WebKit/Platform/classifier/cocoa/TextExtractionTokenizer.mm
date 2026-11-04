@@ -134,15 +134,20 @@ static Vector<String> tokenize(StringView input)
 
 bool TextExtractionTokenizer::isMostlyRecognized(StringView input)
 {
+    return recognizedFraction(input) > 0.5;
+}
+
+std::optional<double> TextExtractionTokenizer::recognizedFraction(StringView input)
+{
     ASSERT(RunLoop::isMain());
 
     loadEmbeddingsIfNeeded();
     if (m_embeddings.isEmpty())
-        return false;
+        return std::nullopt;
 
     const auto tokens = tokenize(input);
     if (tokens.isEmpty())
-        return false;
+        return std::nullopt;
 
     size_t totalLength = 0;
     size_t recognizedLength = 0;
@@ -157,7 +162,7 @@ bool TextExtractionTokenizer::isMostlyRecognized(StringView input)
         }
     }
 
-    return recognizedLength * 2 > totalLength;
+    return static_cast<double>(recognizedLength) / totalLength;
 }
 
 } // namespace WebKit

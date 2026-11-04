@@ -48,6 +48,7 @@ public:
     void prewarm();
 
     bool isMostlyRecognized(StringView);
+    std::optional<double> recognizedFraction(StringView);
 
 private:
     TextExtractionTokenizer() = default;

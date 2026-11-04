@@ -1199,16 +1199,13 @@ static Ref<JSON::Array> eventListenerTypesToJSONArray(OptionSet<TextExtraction::
     return result;
 }
 
-static std::pair<Vector<String>, String> recognizedClassesAndIdForItem(const TextExtraction::Item& item)
+static bool itemLacksLabelingAttributes(const TextExtraction::Item& item)
 {
-    if (item.classNames.isEmpty() && item.idAttribute.isEmpty())
-        return { };
-
     if (!item.title.isEmpty())
-        return { };
+        return false;
 
     if (!item.ariaAttributes.isEmpty() || !item.clientAttributes.isEmpty())
-        return { };
+        return false;
 
     bool hasLabelingData = WTF::switchOn(item.data,
         [](const TextExtraction::TextFormControlData& data) {
@@ -1240,17 +1237,28 @@ static std::pair<Vector<String>, String> recognizedClassesAndIdForItem(const Tex
             return false;
         });
     if (hasLabelingData)
-        return { };
+        return false;
 
     if (item.children.size() > 1)
-        return { };
+        return false;
 
     if (item.children.size() == 1) {
         if (auto* textData = std::get_if<TextExtraction::TextItemData>(&item.children[0].data)) {
             if (textData->content.trim(isASCIIWhitespace).length() > 2)
-                return { };
+                return false;
         }
     }
+
+    return true;
+}
+
+static std::pair<Vector<String>, String> recognizedClassesAndIdForItem(const TextExtraction::Item& item)
+{
+    if (item.classNames.isEmpty() && item.idAttribute.isEmpty())
+        return { };
+
+    if (!itemLacksLabelingAttributes(item))
+        return { };
 
 #if PLATFORM(COCOA)
     auto& tokenizer = TextExtractionTokenizer::singleton();
@@ -1271,6 +1279,42 @@ static std::pair<Vector<String>, String> recognizedClassesAndIdForItem(const Tex
     return { WTF::move(classes), WTF::move(idValue) };
 #else
     return { };
+#endif
+}
+
+static bool isUninformativeImage(const TextExtraction::Item&, const TextExtraction::Item& parent, const TextExtraction::Item* previousSibling, const TextExtractionAggregator&);
+
+static std::optional<std::pair<String, String>> recognizedDataAttributeForItem(const TextExtraction::Item& item, const TextExtractionAggregator& aggregator)
+{
+    if (item.dataAttributeCandidates.isEmpty())
+        return std::nullopt;
+
+    if (item.dataAs<TextExtraction::ContainerType>() != TextExtraction::ContainerType::Button || !item.accessibilityRole.isEmpty())
+        return std::nullopt;
+
+    if (!itemLacksLabelingAttributes(item))
+        return std::nullopt;
+
+    if (item.children.size() != 1 || !isUninformativeImage(item.children[0], item, nullptr, aggregator))
+        return std::nullopt;
+
+#if PLATFORM(COCOA)
+    auto& tokenizer = TextExtractionTokenizer::singleton();
+
+    std::optional<std::pair<String, String>> bestCandidate;
+    double bestFraction = 0.5;
+    for (auto& candidate : item.dataAttributeCandidates) {
+        auto fraction = tokenizer.recognizedFraction(candidate.second);
+        if (!fraction || *fraction <= bestFraction)
+            continue;
+
+        bestFraction = *fraction;
+        bestCandidate = candidate;
+    }
+
+    return bestCandidate;
+#else
+    return std::nullopt;
 #endif
 }
 
@@ -1644,6 +1688,13 @@ static TextExtractionParts partsForItem(const TextExtraction::Item& item, const 
             auto token = makeString("id="_s, quoteValue(idValue, streamlined));
             parts.append(token);
             cachedParts.append(WTF::move(token));
+        }
+        if (classes.isEmpty() && idValue.isEmpty()) {
+            if (auto dataAttribute = recognizedDataAttributeForItem(item, aggregator)) {
+                auto token = makeString(dataAttribute->first, '=', quoteValue(redactedAndEscaped(aggregator, dataAttribute->second), streamlined));
+                parts.append(token);
+                cachedParts.append(WTF::move(token));
+            }
         }
     }
 

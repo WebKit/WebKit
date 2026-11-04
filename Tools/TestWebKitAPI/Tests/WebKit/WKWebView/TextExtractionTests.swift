@@ -603,6 +603,31 @@ struct TextExtractionTests {
     }
 
     @Test
+    func interactionDescriptionUsesDataAttributeForUnlabeledIconButton() async throws {
+        try await webView.load(
+            html: """
+                <div><button class='txkz4s0' data-test-id='user-settings-dropdown-menu'><svg width='16' height='16'></svg></button><span>Account</span></div>\
+                <div><button aria-label='Notifications' data-test-id='notifications-bell-button'><svg width='16' height='16'></svg></button></div>
+                """
+        )
+
+        let debugText = try await webView.debugText()
+        let settingsButtonID = try #require(extractNodeIdentifier(debugText, "user-settings-dropdown-menu"))
+        let notificationsButtonID = try #require(extractNodeIdentifier(debugText, "Notifications"))
+        #expect(!debugText.contains("notifications-bell-button"))
+
+        let interaction = _WKTextExtractionInteraction(action: .click)
+
+        interaction.nodeIdentifier = settingsButtonID
+        var expected = "Click on button with data-test-id “user-settings-dropdown-menu” before rendered text “Account”"
+        #expect(try await interaction.debugDescription(in: webView) == expected)
+
+        interaction.nodeIdentifier = notificationsButtonID
+        expected = "Click on button labeled “Notifications”"
+        #expect(try await interaction.debugDescription(in: webView) == expected)
+    }
+
+    @Test
     func interactionDescriptionAndSearchTextForLabellessIcons() async throws {
         try await webView.load(
             html: """

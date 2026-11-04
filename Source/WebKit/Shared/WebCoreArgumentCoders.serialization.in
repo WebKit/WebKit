@@ -5254,6 +5254,7 @@ header: <WebCore/TextExtractionTypes.h>
     bool hasLineThrough;
     bool isVisuallyClickable;
     bool isDisabled;
+    Vector<std::pair<String, String>> dataAttributeCandidates;
 };
 
 header: <WebCore/TextExtractionTypes.h>
