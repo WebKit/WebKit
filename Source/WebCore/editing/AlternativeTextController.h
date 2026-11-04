@@ -120,7 +120,6 @@ private:
     NODELETE EditorClient* editorClient();
     
     TextCheckerClient* textChecker();
-    FloatRect rootViewRectForRange(const SimpleRange&) const;
     FloatRect mainFrameViewRectForRange(const SimpleRange&) const;
     void markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(EditCommand*);
 

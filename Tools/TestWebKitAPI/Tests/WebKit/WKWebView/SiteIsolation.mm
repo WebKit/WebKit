@@ -4625,6 +4625,142 @@ TEST(SiteIsolation, CorrectionPanelAnchorInScrolledCrossOriginIframeWithScrolled
     );
 }
 
+static NSRect triggerDictationAlternativesAndCaptureAnchorRect(TestWKWebView<NSTextInputClient> *webView, WKFrameInfo *frame)
+{
+    didShowCorrectionPanelIndicator = false;
+    capturedCorrectionPanelAnchorRect = NSZeroRect;
+
+    auto evaluate = [webView, frame](NSString *script) {
+        if (frame)
+            [webView objectByEvaluatingJavaScript:script inFrame:frame];
+        else
+            [webView objectByEvaluatingJavaScript:script];
+    };
+
+    evaluate(@"getSelection().setPosition(document.body)");
+    RetainPtr alternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:@"hello" alternativeStrings:@[ @"yellow" ]]);
+    RetainPtr string = adoptNS([[NSMutableAttributedString alloc] initWithString:@"hello world"]);
+    [string addAttribute:NSTextAlternativesAttributeName value:alternatives.get() range:NSMakeRange(0, 5)];
+    [webView insertText:string.get() replacementRange:NSMakeRange(NSNotFound, 0)];
+    [webView waitForNextPresentationUpdate];
+
+    // Establish an old selection in a different word so respondToChangedSelection fires below.
+    evaluate(@"getSelection().setPosition(document.body.firstChild, 8)");
+    [webView waitForNextPresentationUpdate];
+
+    // End-of-word for the caret in "hello" is offset 5, matching the dictation alternatives marker's endOffset.
+    evaluate(@"getSelection().setPosition(document.body.firstChild, 2)");
+
+    Util::runFor(&didShowCorrectionPanelIndicator, 3_s);
+    return capturedCorrectionPanelAnchorRect;
+}
+
+static void checkDictationAlternativesAnchorInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, void (^prepareBeforeTyping)(TestWKWebView<NSTextInputClient> *, WKFrameInfo *) = nil)
+{
+    HTTPServer server({
+        { "/control"_s, { "<body contenteditable style='margin: 100px 0 0 100px; font-family: monospace; font-size: 24px; width: 500px;'></body>"_s } },
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    InstanceMethodSwizzler showIndicatorSwizzler {
+        NSSpellChecker.sharedSpellChecker.class,
+        @selector(showCorrectionIndicatorOfType:primaryString:alternativeStrings:forStringInRect:view:completionHandler:),
+        reinterpret_cast<IMP>(swizzledShowCorrectionIndicatorCapturingAnchorRect)
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/control"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    NSRect controlRect = triggerDictationAlternativesAndCaptureAnchorRect(webView.get(), nil);
+    EXPECT_TRUE(didShowCorrectionPanelIndicator);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrameInfo = [webView firstChildFrame];
+
+    // focus() is a no-op for cross-origin non-main-frame iframes without a user gesture; retry
+    // until the child frame reports itself as focused.
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:nil];
+    while (![childFrameInfo _isFocused])
+        childFrameInfo = [webView firstChildFrame];
+
+    if (prepareBeforeTyping)
+        prepareBeforeTyping(webView.get(), childFrameInfo.get());
+
+    NSRect rect = triggerDictationAlternativesAndCaptureAnchorRect(webView.get(), childFrameInfo.get());
+
+    // If the anchor rect were left in the iframe's local root-view coordinates instead of being
+    // converted to main-frame view coordinates, this would not match the control's on-screen position.
+    EXPECT_TRUE(didShowCorrectionPanelIndicator);
+    EXPECT_NEAR(rect.origin.x, controlRect.origin.x, 2);
+    EXPECT_NEAR(rect.origin.y, controlRect.origin.y, 2);
+}
+
+TEST(SiteIsolation, DictationAlternativesAnchorInCrossOriginIframe)
+{
+    checkDictationAlternativesAnchorInCrossOriginIframe(
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        defaultCrossOriginIframeEditableBodyHTML
+    );
+}
+
+TEST(SiteIsolation, DictationAlternativesAnchorInCrossOriginIframeWithScrolledMainFrame)
+{
+    checkDictationAlternativesAnchorInCrossOriginIframe(
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        defaultCrossOriginIframeEditableBodyHTML,
+        ^(TestWKWebView<NSTextInputClient> *webView, WKFrameInfo *) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 400;
+            }));
+            [webView waitForNextPresentationUpdate];
+        }
+    );
+}
+
+TEST(SiteIsolation, DictationAlternativesAnchorInScrolledCrossOriginIframe)
+{
+    checkDictationAlternativesAnchorInCrossOriginIframe(
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        tallCrossOriginIframeEditableBodyHTML,
+        ^(TestWKWebView<NSTextInputClient> *webView, WKFrameInfo *childFrameInfo) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:childFrameInfo] intValue] == 500;
+            }));
+            [webView waitForNextPresentationUpdate];
+        }
+    );
+}
+
+TEST(SiteIsolation, DictationAlternativesAnchorInScrolledCrossOriginIframeWithScrolledMainFrame)
+{
+    checkDictationAlternativesAnchorInCrossOriginIframe(
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        tallCrossOriginIframeEditableBodyHTML,
+        ^(TestWKWebView<NSTextInputClient> *webView, WKFrameInfo *childFrameInfo) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 400;
+            }));
+            [webView waitForNextPresentationUpdate];
+
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:childFrameInfo] intValue] == 500;
+            }));
+            [webView waitForNextPresentationUpdate];
+        }
+    );
+}
+
 static bool shouldReportBadGrammar = false;
 static RetainPtr<NSString> stringForGrammarReview;
 static BlockPtr<void(NSInteger, NSArray<NSTextCheckingResult *> *)> grammarReviewCompletionHandler;
