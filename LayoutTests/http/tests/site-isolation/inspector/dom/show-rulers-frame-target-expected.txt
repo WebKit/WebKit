@@ -1,0 +1,46 @@
+Tests that Page.setShowRulers marks a highlighted node in a cross-site iframe, whose highlight the UI process draws.
+
+
+
+== Running test suite: SiteIsolation.DOM.ShowRulersFrameTarget
+-- Running test case: Setup
+PASS: Should find the frame target for the cross-site iframe.
+PASS: Should find the frame target for the small cross-site iframe.
+PASS: The cross-site iframes should not use the page target.
+
+-- Running test case: RulersFromPageSetting
+PASS: Should draw the rulers along the top and left edges.
+PASS: Should draw guide lines from the node to the edges of the page's viewport.
+PASS: Should label the page's visual viewport size.
+PASS: Main frame's overlay should leave its ruler bars out.
+
+-- Running test case: PageHighlightKeepsDrawingWhileSuppressed
+PASS: Page's overlay should still draw the main frame node's box.
+PASS: Main frame's overlay should leave its ruler bars out.
+
+-- Running test case: GridOnlyFrameOverlayKeepsPageRulers
+PASS: Should stop drawing the node highlight.
+PASS: Grid overlay should draw without nodes or quads.
+PASS: Grid overlay alone should not draw rulers.
+PASS: Main frame's overlay should not leave its ruler bars out.
+
+-- Running test case: TwoFrameHighlightsOneRulerSet
+PASS: Should draw guide lines for the nodes of both iframes.
+PASS: Should draw exactly one set of ruler bars.
+PASS: Main frame's overlay should leave its ruler bars out.
+
+-- Running test case: RulersFollowPageSettingOff
+PASS: Main frame's overlay should leave its ruler bars out.
+PASS: Should draw no rulers or guide lines.
+PASS: Main frame's overlay should not leave its ruler bars out.
+
+-- Running test case: HighlightRulersStillDrawnByUIProcess
+PASS: Should draw the rulers along the top and left edges.
+PASS: Should draw guide lines from the node to the edges of the page's viewport.
+PASS: Should label the page's visual viewport size.
+PASS: Main frame's overlay should leave its ruler bars out.
+
+-- Running test case: NoHighlightKeepsPagePath
+PASS: UI process should draw nothing without a highlight.
+PASS: Main frame's overlay should not leave its ruler bars out.
+

@@ -579,6 +579,25 @@ void WebInspectorBackendClient::setShowPaintRects(bool show)
         inspector->showPaintRectsChanged(show);
 }
 
+void WebInspectorBackendClient::showRulersChanged(bool show)
+{
+#if PLATFORM(MAC)
+    // Only the UI process needs the page-wide ruler state, and only under Site Isolation, where it
+    // draws rulers for frame highlights.
+    RefPtr page = m_page;
+    RefPtr corePage = page ? page->corePage() : nullptr;
+    if (!corePage || !corePage->settings().siteIsolationEnabled())
+        return;
+
+    if (RefPtr inspector = page->inspector())
+        inspector->showRulersChanged(show);
+#else
+    // FIXME: <https://webkit.org/b/333384> Frame highlights are still drawn in the frame's process here,
+    // which does not get the page-wide ruler state, so they have no guide lines under Site Isolation.
+    UNUSED_PARAM(show);
+#endif
+}
+
 void WebInspectorBackendClient::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     RefPtr page = m_page.get();

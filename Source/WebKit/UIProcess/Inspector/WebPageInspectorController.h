@@ -136,6 +136,20 @@ public:
     void clearFrameHighlight(WebCore::FrameIdentifier);
     const FrameHighlights& frameHighlights() const LIFETIME_BOUND { return m_frameHighlights; }
     WebCore::InspectorOverlay::PageGeometry frameHighlightPageGeometry() const;
+
+    // The page-wide ruler toggle from Page.setShowRulers, forwarded by the main frame's process. It
+    // belongs to the inspector session, so it is kept across main frame process changes.
+    void setShowRulers(bool);
+    // Forgets the suppression last sent to the main frame's process, so the next update resends it.
+    void resetPageRulersSuppression();
+
+    struct FrameHighlightDrawing {
+        const WebCore::InspectorOverlayHighlight* highlight { nullptr };
+        WebCore::InspectorOverlay::FrameHighlightGeometry geometry;
+    };
+    // Draws every frame highlight with its guide lines, then one set of ruler bars over the union of
+    // their exclusions. Reports the bars on the first highlight that gets rulers.
+    Vector<FrameHighlightDrawing> drawFrameHighlights(WebCore::GraphicsContext&, const WebCore::InspectorOverlay::PageGeometry&) const;
 #endif
 
 private:
@@ -156,6 +170,14 @@ private:
     void clearFrameHighlightNotFromProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
     void clearAllFrameHighlights();
     void frameHighlightsDidChange();
+    // Clears the ruler toggle and the last sent suppression when the inspector session ends.
+    void resetPageRulers();
+    // Whether a frame highlight's nodes get rulers, guide lines and the viewport size label. Grid and
+    // flex overlays alone have no node bounds to mark and never draw rulers here.
+    bool frameHighlightShowRulers(const WebCore::InspectorOverlayHighlight&) const;
+    // Whether this process draws ruler bars for a frame highlight, so the page's own bars stay off.
+    bool pageRulersSuppressed() const;
+    void updatePageRulersSuppression();
 #endif
 
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
@@ -183,6 +205,9 @@ private:
 
 #if PLATFORM(MAC)
     FrameHighlights m_frameHighlights;
+    bool m_showRulers { false };
+    // std::nullopt after a main frame process change, so the next update resends the current value.
+    std::optional<bool> m_lastSentPageRulersSuppression;
 #endif
 };
 
