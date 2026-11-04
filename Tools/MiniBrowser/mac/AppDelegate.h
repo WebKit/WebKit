@@ -61,6 +61,7 @@
 @property (readonly, nonatomic) SettingsController *settingsController;
 @property (readonly, nonatomic) WKPreferences *defaultPreferences;
 @property (readonly, nonatomic) BOOL automationAcceptsInsecureCertificates;
+@property (readonly, nonatomic) NSSet<BrowserWindowController *> *browserWindowControllers;
 
 @end
 

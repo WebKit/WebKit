@@ -162,6 +162,9 @@ static const int testFooterBannerHeight = 58;
 
     _WKSessionState *_sessionStateToRestoreWhenInspectorLoads;
 
+    // The window whose page opened this one with an opener, i.e. this page has JavaScript access back to it.
+    __weak WK2BrowserWindowController *_openerController;
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 270000
     NSRefreshController *_refreshController;
 #endif
@@ -335,6 +338,12 @@ static NSRect frameForWindowFeatures(WKWindowFeatures *features, NSWindow *windo
 {
     [urlText setStringValue:[self addProtocolIfNecessary:urlText.stringValue]];
     NSURL *url = [NSURL _webkit_URLWithUserTypedString:urlText.stringValue];
+
+    // WebKit puts a page that the app navigates to another site in a new browsing context group, which cuts its
+    // opener. Comparing hosts is close enough to comparing sites here.
+    if (![url.host isEqualToString:_webView.URL.host])
+        _openerController = nil;
+
     [_webView loadURL:url];
 }
 
@@ -871,6 +880,8 @@ static BOOL areEssentiallyEqual(double a, double b)
 - (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
     WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration windowFeatures:windowFeatures];
+    if (navigationAction._hasOpener)
+        controller->_openerController = self;
     [controller.window makeKeyAndOrderFront:self];
 
     [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
@@ -1318,6 +1329,13 @@ static BOOL responseIsAttachment(NSURLResponse *response)
     configuration.preferences = [configuration.preferences copy];
     configuration.preferences._siteIsolationEnabled = NO;
 
+    // A page that another page opened has that page as its related web view, which would put the new window in the
+    // opener's browsing context group and process, where Site Isolation is on.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    configuration._relatedWebView = nil;
+#pragma clang diagnostic pop
+
     WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration];
     [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
     [controller.window makeKeyAndOrderFront:nil];
@@ -1326,10 +1344,40 @@ static BOOL responseIsAttachment(NSURLResponse *response)
     controller->_sessionStateToRestoreWhenInspectorLoads = [_webView _sessionState];
     [controller->_webView._inspector show];
 
+    // The windows that this page opened can't reach the new window, so close them rather than leave them looking
+    // connected to it.
+    for (WK2BrowserWindowController *openedController in self._browserWindowControllersOpenedWithOpener)
+        [openedController.window close];
+
     // Avoid closing this window, and with it this inspector, from inside one of the inspector's own callbacks.
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.window close];
     });
+}
+
+- (NSArray<WK2BrowserWindowController *> *)_browserWindowControllersOpenedWithOpener
+{
+    NSSet<BrowserWindowController *> *browserWindowControllers = [[NSApplication sharedApplication] browserAppDelegate].browserWindowControllers;
+    NSMutableArray<WK2BrowserWindowController *> *openedControllers = [NSMutableArray array];
+    NSMutableArray<WK2BrowserWindowController *> *openersToVisit = [NSMutableArray arrayWithObject:self];
+    while (openersToVisit.count) {
+        WK2BrowserWindowController *opener = openersToVisit.lastObject;
+        [openersToVisit removeLastObject];
+
+        for (BrowserWindowController *browserWindowController in browserWindowControllers) {
+            if (![browserWindowController isKindOfClass:WK2BrowserWindowController.class])
+                continue;
+
+            WK2BrowserWindowController *controller = (WK2BrowserWindowController *)browserWindowController;
+            if (controller->_openerController != opener)
+                continue;
+
+            [openedControllers addObject:controller];
+            [openersToVisit addObject:controller];
+        }
+    }
+
+    return openedControllers;
 }
 
 - (void)inspectorFrontendLoaded:(_WKInspector *)inspector

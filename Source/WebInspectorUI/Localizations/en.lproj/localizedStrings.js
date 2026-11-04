@@ -1443,7 +1443,7 @@ localizedStrings["Render Pipeline %d"] = "Render Pipeline %d";
 /* Section title for text grouped by rendered font. */
 localizedStrings["Rendered Text @ Font Details Sidebar Section"] = "Rendered Text";
 localizedStrings["Rendering Frames"] = "Rendering Frames";
-localizedStrings["Reopens only this page with Site Isolation off. New windows that this page opens also have Site Isolation off."] = "Reopens only this page with Site Isolation off. New windows that this page opens also have Site Isolation off.";
+localizedStrings["Reopens this page with Site Isolation off and closes the pop-ups that can still reach it."] = "Reopens this page with Site Isolation off and closes the pop-ups that can still reach it.";
 localizedStrings["Repeating Conic Gradient"] = "Repeating Conic Gradient";
 localizedStrings["Repeating Linear Gradient"] = "Repeating Linear Gradient";
 localizedStrings["Repeating Radial Gradient"] = "Repeating Radial Gradient";

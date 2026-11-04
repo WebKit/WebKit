@@ -2046,7 +2046,7 @@ WI._updateSiteIsolationBanner = function()
 
     WI._siteIsolationBanner = new WI.BannerView(WI.UIString("Some Web Inspector features don't work with Site Isolation yet"), {
         actionButtonMessage: shouldShowActionButton ? WI.UIString("Reload Page Without Site Isolation") : null,
-        actionButtonToolTip: shouldShowActionButton ? WI.UIString("Reopens only this page with Site Isolation off. New windows that this page opens also have Site Isolation off.") : null,
+        actionButtonToolTip: shouldShowActionButton ? WI.UIString("Reopens this page with Site Isolation off and closes the pop-ups that can still reach it.") : null,
         showDismissButton: true,
     });
     WI._siteIsolationBannerShowsActionButton = shouldShowActionButton;

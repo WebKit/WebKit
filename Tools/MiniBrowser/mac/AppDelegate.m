@@ -550,6 +550,11 @@ static NSNumber *_currentBadge;
     [_browserWindowControllers removeObject:window.windowController];
 }
 
+- (NSSet<BrowserWindowController *> *)browserWindowControllers
+{
+    return [_browserWindowControllers copy];
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     WebHistory *webHistory = [[WebHistory alloc] init];
