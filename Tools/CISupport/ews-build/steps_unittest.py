@@ -10241,6 +10241,26 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('comment_text', 'merge-queue failed to commit PR to repository. To retry, remove any blocking labels and re-apply merge-queue label')
         return rc
 
+    def test_failure_pr_retry_clears_build_summary(self):
+        self.setup_step(PushCommitToWebKitRepo())
+        self.setProperty('github.number', '1234')
+        self.setProperty('remote', 'origin')
+        self.setProperty('build_summary', 'Ignored pre-existing failure: test.html')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        log_environ=False,
+                        env=dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password'),
+                        command=['git', 'push', 'origin', 'HEAD:main'])
+            .log('stdio', stdout='Unexpected failure')
+            .exit(2),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
+        self.expect_property('retry_count', 1)
+        self.expect_property('build_summary', '')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.run_step()
+
 
 class TestDetermineLabelOwner(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -12568,6 +12588,43 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
             ).exit(1),
         )
         self.expect_outcome(result=FAILURE, state_string='Failed to canonicalize commit')
+        return self.run_step()
+
+    def test_failure_rebase_conflict(self):
+        self.setup_step(Canonicalize())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('remote', 'origin')
+        self.setProperty('build_summary', 'Ignored pre-existing failure: test.html')
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm .git/identifiers.json || true'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'checkout', '--progress', 'eng/pull-request-branch'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'pull', 'origin', 'main', '--rebase'],
+            ).exit(1)
+            .log('stdio', stdout='CONFLICT (content): Merge conflict in Source/WebCore/platform/ScrollingEffectsController.h\n'),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to canonicalize commit')
+        self.expect_property('build_summary', '')
         return self.run_step()
 
     def test_failure_changes_already_landed(self):

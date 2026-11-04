@@ -7054,6 +7054,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
             self.build.addStepsAfterCurrentStep(steps_to_add)
 
         else:
+            self.setProperty('build_summary', '')
             retry_count = int(self.getProperty('retry_count', 0))
             if retry_count < self.MAX_RETRY:
                 self.setProperty('retry_count', retry_count + 1)
@@ -7821,6 +7822,9 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
         rc = yield super().run()
+
+        if rc == FAILURE:
+            self.setProperty('build_summary', '')
 
         if rc == FAILURE and self.verify_commit_count_command and self.last_command == self.verify_commit_count_command:
             pr_number = self.getProperty('github.number')
