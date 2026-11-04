@@ -27,8 +27,11 @@
 #include "SecurityOriginPolicy.h"
 
 #include "SecurityOrigin.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SecurityOriginPolicy);
 
 Ref<SecurityOriginPolicy> SecurityOriginPolicy::create(Ref<SecurityOrigin>&& securityOrigin)
 {

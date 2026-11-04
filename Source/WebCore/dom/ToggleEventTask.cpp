@@ -30,8 +30,11 @@
 #include "TaskSource.h"
 #include "ToggleEvent.h"
 #include "NodeInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ToggleEventTask);
 
 Ref<ToggleEventTask> ToggleEventTask::create(Element& element)
 {

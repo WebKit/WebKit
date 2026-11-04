@@ -44,6 +44,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleOriginatedAnimation.h"
 #include "VisibleSelection.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -52,6 +53,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentVisibilityDocumentState);
 
 class ContentVisibilityIntersectionObserverCallback final : public IntersectionObserverCallback {
+    WTF_MAKE_TZONE_ALLOCATED(ContentVisibilityIntersectionObserverCallback);
 public:
     static Ref<ContentVisibilityIntersectionObserverCallback> create(Document& document)
     {
@@ -82,6 +84,8 @@ private:
         return invoke(thisObserver, entries, observer);
     }
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentVisibilityIntersectionObserverCallback);
 
 void ContentVisibilityDocumentState::observe(Element& element)
 {

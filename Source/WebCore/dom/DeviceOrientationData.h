@@ -29,10 +29,12 @@
 #include <wtf/Platform.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DeviceOrientationData : public RefCounted<DeviceOrientationData> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DeviceOrientationData, WEBCORE_EXPORT);
 public:
     static Ref<DeviceOrientationData> create()
     {

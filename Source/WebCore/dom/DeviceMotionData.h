@@ -28,10 +28,12 @@
 #include <optional>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DeviceMotionData : public RefCounted<DeviceMotionData> {
+    WTF_MAKE_TZONE_ALLOCATED(DeviceMotionData);
 public:
     class Acceleration : public RefCounted<DeviceMotionData::Acceleration> {
     public:

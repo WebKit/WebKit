@@ -42,8 +42,11 @@
 #include "ScriptWrappableInlines.h"
 #include "StringCallback.h"
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DataTransferItem);
 
 Ref<DataTransferItem> DataTransferItem::create(WeakPtr<DataTransferItemList>&& list, const String& type, Kind kind)
 {

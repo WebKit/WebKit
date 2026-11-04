@@ -28,10 +28,12 @@
 #include "MessagePortChannelProvider.h"
 #include "MessagePortChannelRegistry.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MessagePortChannelProviderImpl final : public MessagePortChannelProvider, public RefCounted<MessagePortChannelProviderImpl> {
+    WTF_MAKE_TZONE_ALLOCATED(MessagePortChannelProviderImpl);
 public:
     NODELETE static Ref<MessagePortChannelProviderImpl> create();
     ~MessagePortChannelProviderImpl() final;

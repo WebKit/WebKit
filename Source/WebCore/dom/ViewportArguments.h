@@ -30,6 +30,7 @@
 #include <WebCore/FloatSize.h>
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -71,7 +72,7 @@ struct ViewportAttributes {
 };
 
 struct ViewportArguments {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ViewportArguments);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ViewportArguments);
 
     enum class Type : uint8_t {
         // These are ordered in increasing importance.

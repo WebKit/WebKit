@@ -36,10 +36,13 @@
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ViewportArguments);
 
 typedef Function<void(ViewportErrorCode, StringView, StringView)> InternalViewportErrorHandler;
 

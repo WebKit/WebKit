@@ -30,8 +30,11 @@
 #include "DOMException.h"
 
 #include "Exception.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMException);
 
 // This array needs to be kept in sync with the ExceptionCode enumeration.
 // http://heycam.github.io/webidl/#idl-DOMException-error-names

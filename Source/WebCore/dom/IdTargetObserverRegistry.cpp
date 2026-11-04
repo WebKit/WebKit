@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(IdTargetObserverRegistry::ObserverSet);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IdTargetObserverRegistry);
 
 IdTargetObserverRegistry::IdTargetObserverRegistry() = default;
