@@ -35,6 +35,13 @@ namespace WPE {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WaylandCursor);
 
+static int32_t cursorBufferScale(struct wl_surface* surface, double scale)
+{
+    if (wl_surface_get_version(surface) < WL_SURFACE_SET_BUFFER_SCALE_SINCE_VERSION)
+        return 1;
+    return std::max<int32_t>(1, scale);
+}
+
 WaylandCursor::WaylandCursor(WPEDisplayWayland* display)
     : m_display(display)
     , m_surface(wl_compositor_create_surface(wpe_display_wayland_get_wl_compositor(m_display)))
@@ -55,10 +62,12 @@ void WaylandCursor::setFromName(UTF8CStringView name, double scale)
     if (!m_theme)
         return;
 
-    if (m_name == name)
+    int32_t bufferScale = cursorBufferScale(m_surface, scale);
+    if (m_name == name && m_bufferScale == bufferScale)
         return;
 
     m_name = UTF8CString { name.span() };
+    m_bufferScale = bufferScale;
     if (m_name == "none"_s) {
         m_cursorChanged = true;
         update();
@@ -68,20 +77,20 @@ void WaylandCursor::setFromName(UTF8CStringView name, double scale)
     }
 
     // FIXME: support animated cursors.
-    const auto& cursor = m_theme->cursor(name, scale, 1);
+    const auto& cursor = m_theme->cursor(name, bufferScale, 1);
     if (cursor.isEmpty()) {
         g_warning("Cursor %s not found in theme", name.utf8());
         return;
     }
 
-    m_hotspot.x = cursor[0].hotspotX;
-    m_hotspot.y = cursor[0].hotspotY;
+    m_hotspot.x = cursor[0].hotspotX / bufferScale;
+    m_hotspot.y = cursor[0].hotspotY / bufferScale;
     m_cursorChanged = true;
     update();
 
     wl_surface_attach(m_surface, cursor[0].buffer, 0, 0);
     if (wl_surface_get_version(m_surface) >= WL_SURFACE_SET_BUFFER_SCALE_SINCE_VERSION)
-        wl_surface_set_buffer_scale(m_surface, scale);
+        wl_surface_set_buffer_scale(m_surface, bufferScale);
     wl_surface_damage(m_surface, 0, 0, cursor[0].width, cursor[0].height);
     wl_surface_commit(m_surface);
 }
@@ -89,11 +98,12 @@ void WaylandCursor::setFromName(UTF8CStringView name, double scale)
 void WaylandCursor::setFromBuffer(struct wl_buffer* buffer, uint32_t width, uint32_t height, uint32_t hotspotX, uint32_t hotspotY, double scale)
 {
     // FIXME: use wp_viewport for fractional scales and sizes that aren't a multiple of the scale.
-    int32_t bufferScale = 1;
-    if (std::trunc(scale) == scale && !(width % static_cast<uint32_t>(scale)) && !(height % static_cast<uint32_t>(scale)))
-        bufferScale = scale;
+    int32_t bufferScale = std::trunc(scale) == scale ? cursorBufferScale(m_surface, scale) : 1;
+    if (width % static_cast<uint32_t>(bufferScale) || height % static_cast<uint32_t>(bufferScale))
+        bufferScale = 1;
 
     m_name = { };
+    m_bufferScale = bufferScale;
     m_hotspot.x = hotspotX / bufferScale;
     m_hotspot.y = hotspotY / bufferScale;
     m_cursorChanged = true;
