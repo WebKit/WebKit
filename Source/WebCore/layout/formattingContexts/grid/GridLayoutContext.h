@@ -31,7 +31,7 @@
 namespace WebCore {
 namespace Layout {
 
-struct GridLayoutState {
+struct GridLayoutContext {
     const GridLayoutConstraints gridLayoutConstraints;
     const StyleContentAlignmentData usedJustifyContent;
     const StyleContentAlignmentData usedAlignContent;

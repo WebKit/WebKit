@@ -39,7 +39,7 @@ class ComputedStyle;
 namespace Layout {
 
 struct GridAreaSizes;
-struct GridLayoutState;
+struct GridLayoutContext;
 struct UsedMargins;
 
 class GridLayout {
@@ -47,7 +47,7 @@ public:
     NODELETE GridLayout(const GridFormattingContext&);
 
     GridItemRects layout(const PlacedGridItems&, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions,
-        const UsedTrackSizes&, const GridLayoutState&);
+        const UsedTrackSizes&, const GridLayoutContext&);
 
 private:
 

@@ -32,11 +32,11 @@
 namespace WebCore {
 namespace Layout {
 
-struct GridLayoutState;
+struct GridLayoutContext;
 
 class GridSizer {
 public:
-    NODELETE GridSizer(const GridFormattingContext&, const GridLayoutState&);
+    NODELETE GridSizer(const GridFormattingContext&, const GridLayoutContext&);
 
     // Runs step 1 of the grid sizing algorithm alone. When no grid item's inline-axis contributions
     // depend on the available space in the block axis, steps 2-4 cannot change the column sizes, so
@@ -53,10 +53,10 @@ private:
     TrackSizes sizeRowTracks(const PlacedGridItems&, const TrackSizes& columnSizes, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions) const;
 
     const GridFormattingContext& formattingContext() const LIFETIME_BOUND { return m_gridFormattingContext; }
-    const GridLayoutState& layoutState() const LIFETIME_BOUND { return m_gridLayoutState; }
+    const GridLayoutContext& layoutContext() const LIFETIME_BOUND { return m_gridLayoutContext; }
 
     const GridFormattingContext& m_gridFormattingContext;
-    const GridLayoutState& m_gridLayoutState;
+    const GridLayoutContext& m_gridLayoutContext;
 };
 
 } // namespace Layout

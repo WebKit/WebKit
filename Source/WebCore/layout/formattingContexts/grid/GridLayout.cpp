@@ -28,7 +28,7 @@
 
 #include "GridAreaLines.h"
 #include "GridItemRect.h"
-#include "GridLayoutState.h"
+#include "GridLayoutContext.h"
 #include "GridLayoutUtils.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
@@ -160,12 +160,12 @@ static Vector<std::optional<LayoutUnit>> computeBaselineAlignedMarginBoxPosition
 }
 
 GridItemRects GridLayout::layout(const PlacedGridItems& placedGridItems, const TrackSizingFunctionsList& columnTrackSizingFunctionsList,
-    const TrackSizingFunctionsList& rowTrackSizingFunctionsList, const UsedTrackSizes& usedTrackSizes, const GridLayoutState& gridLayoutState)
+    const TrackSizingFunctionsList& rowTrackSizingFunctionsList, const UsedTrackSizes& usedTrackSizes, const GridLayoutContext& gridLayoutContext)
 {
     auto& formattingContext = this->formattingContext();
 
     CheckedRef formattingContextRootStyle = formattingContext.root().style();
-    auto gridAreaSizes = computeGridAreaSizes(placedGridItems, gridLayoutState.usedColumnGap, gridLayoutState.usedRowGap, usedTrackSizes);
+    auto gridAreaSizes = computeGridAreaSizes(placedGridItems, gridLayoutContext.usedColumnGap, gridLayoutContext.usedRowGap, usedTrackSizes);
 
     auto [ usedInlineSizes, usedBlockSizes ] = layoutGridItems(placedGridItems, gridAreaSizes, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
 
@@ -177,9 +177,9 @@ GridItemRects GridLayout::layout(const PlacedGridItems& placedGridItems, const T
     // After a grid container’s grid tracks have been sized, and the dimensions of all grid items
     // are finalized, grid items can be aligned within their grid areas.
     auto inlineAxisBaselineAlignedMarginBoxPositions = computeBaselineAlignedMarginBoxPositions(placedGridItems, LogicalBoxAxis::Inline, usedInlineMargins, usedInlineSizes,
-        gridAreaSizes.inlineSizes, usedTrackSizes.columnSizes, gridLayoutState.collapsedColumnTracksList, gridLayoutState.usedColumnGap, formattingContext.integrationUtils());
+        gridAreaSizes.inlineSizes, usedTrackSizes.columnSizes, gridLayoutContext.collapsedColumnTracksList, gridLayoutContext.usedColumnGap, formattingContext.integrationUtils());
     auto blockAxisBaselineAlignedMarginBoxPositions = computeBaselineAlignedMarginBoxPositions(placedGridItems, LogicalBoxAxis::Block, usedBlockMargins, usedBlockSizes,
-        gridAreaSizes.blockSizes, usedTrackSizes.rowSizes, gridLayoutState.collapsedRowTracksList, gridLayoutState.usedRowGap, formattingContext.integrationUtils());
+        gridAreaSizes.blockSizes, usedTrackSizes.rowSizes, gridLayoutContext.collapsedRowTracksList, gridLayoutContext.usedRowGap, formattingContext.integrationUtils());
 
     auto inlineAxisPositions = performInlineAxisSelfAlignment(placedGridItems, usedInlineMargins, usedInlineSizes, gridAreaSizes.inlineSizes, inlineAxisBaselineAlignedMarginBoxPositions);
     auto blockAxisPositions = performBlockAxisSelfAlignment(placedGridItems, usedBlockMargins, usedBlockSizes, gridAreaSizes.blockSizes, blockAxisBaselineAlignedMarginBoxPositions);
