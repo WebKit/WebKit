@@ -1972,6 +1972,9 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
         case JSC::Debugger::PausedAtEndOfProgram:
             // Pause was just stepping. Nothing to report.
             break;
+        case JSC::Debugger::PausedAtDefaultClassConstructor:
+            // The pause reason and data were already set when the special breakpoint was scheduled.
+            break;
         case JSC::Debugger::PausedAfterAwait:
             // We should not have preserved the pause reason and data.
             ASSERT(!m_pauseData);

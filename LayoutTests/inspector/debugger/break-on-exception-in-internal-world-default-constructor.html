@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+window.internals?.evaluateInWorldIgnoringException("testInternalWorld", "0");
+
+window.addEventListener("message", function pageMessage(event) {
+    TestPage.dispatchEventToFrontend(event.data);
+});
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.InternalWorld.AllExceptions");
+
+    const sourceURL = "//# sourceURL=InternalWorldScript.js";
+
+    suite.addTestCase({
+        name: "Debugger.InternalWorld.AllExceptions.ClassWithoutConstructor",
+        description: "A break on exceptions that an exception in an internal world arms should not pause in the default constructor of a class that follows it.",
+        async setup() {
+            WI.debuggerManager.allExceptionsBreakpoint.disabled = false;
+        },
+        async test() {
+            let context = WI.networkManager.mainFrame.executionContextList.contexts.find((context) => {
+                return context.type === WI.ExecutionContext.Type.Internal && context.name === "testInternalWorld";
+            });
+
+            let pauseCount = 0;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                ++pauseCount;
+                WI.debuggerManager.resume();
+            });
+
+            let postMessagePromise = InspectorTest.awaitEvent("internal-program-complete");
+            await context.target.RuntimeAgent.evaluate.invoke({
+                contextId: context.id,
+                expression: `${sourceURL}
+                    try { throw new Error("internal"); } catch (error) { }
+                    class WithoutConstructor { }
+                    globalThis.withoutConstructor = new WithoutConstructor();
+                    setTimeout("window.postMessage('internal-program-complete', '*');\\n${sourceURL}");
+                `,
+            });
+            await postMessagePromise;
+
+            InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
+
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+        async teardown() {
+            WI.debuggerManager.allExceptionsBreakpoint.disabled = true;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that an exception in a script of an internal world does not leave a break that pauses in the default constructor of a class.</p>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/breakpoint-options-utilities.js"></script>
+<script>
+class DefinedBefore { }
+class DerivedBase { constructor() { this.base = 1; } }
+class DerivedDefaultBefore extends DerivedBase { }
+class TriggerSymbolicBreakpoint { }
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SymbolicBreakpoint");
+
+    function addTestCase({name, symbol, definition = "", trigger, notTopFunctionName}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                let pauseCount = 0;
+                let constructed;
+                let topFunctionName;
+                let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, async (event) => {
+                    ++pauseCount;
+
+                    let callFrame = WI.debuggerManager.activeCallFrame;
+                    if (!callFrame) {
+                        topFunctionName = "(no call frame)";
+                        await WI.debuggerManager.resume();
+                        return;
+                    }
+
+                    topFunctionName = callFrame.functionName;
+                    let {result} = await callFrame.target.DebuggerAgent.evaluateOnCallFrame.invoke({
+                        callFrameId: callFrame.id,
+                        expression: `typeof globalThis.constructedInstance`,
+                    });
+                    constructed = result.value !== "undefined";
+
+                    await WI.debuggerManager.resume();
+                });
+
+                InspectorTest.log("Adding breakpoint...");
+                let breakpoint = new WI.SymbolicBreakpoint(symbol);
+                WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+
+                if (definition)
+                    await InspectorTest.evaluateInPage(definition);
+
+                InspectorTest.log("Triggering breakpoint...");
+                await InspectorTest.evaluateInPage(trigger);
+                await InspectorTest.evaluateInPage(`delete globalThis.constructedInstance`);
+
+                InspectorTest.expectEqual(pauseCount, 1, "Should pause.");
+                InspectorTest.expectFalse(constructed, "Should pause before the class has been constructed.");
+                if (notTopFunctionName)
+                    InspectorTest.expectNotEqual(topFunctionName, notTopFunctionName, `Should not pause in ${notTopFunctionName}.`);
+
+                breakpoint.remove();
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "SymbolicBreakpoint.Construct.DefaultConstructor.DefinedAfterBreakpoint",
+        symbol: "Foo",
+        definition: `class Foo { }`,
+        trigger: `globalThis.constructedInstance = new Foo`,
+    });
+
+    addTestCase({
+        name: "SymbolicBreakpoint.Construct.DefaultConstructor.DefinedBeforeBreakpoint",
+        symbol: "DefinedBefore",
+        trigger: `globalThis.constructedInstance = new DefinedBefore`,
+    });
+
+    addTestCase({
+        name: "SymbolicBreakpoint.Construct.DefaultConstructor.DerivedClass",
+        symbol: "DerivedDefaultBefore",
+        trigger: `globalThis.constructedInstance = new DerivedDefaultBefore`,
+        notTopFunctionName: "DerivedBase",
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        testCaseNamePrefix: "Construct.DefaultConstructor.",
+        createBreakpoint() {
+            let breakpoint = new WI.SymbolicBreakpoint("TriggerSymbolicBreakpoint");
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            return breakpoint;
+        },
+        triggerBreakpoint() {
+            return InspectorTest.evaluateInPage(`new TriggerSymbolicBreakpoint`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a symbolic breakpoint on a class without a constructor pauses when the class is constructed, and follows the breakpoint options.</p>
+</body>
+</html>
