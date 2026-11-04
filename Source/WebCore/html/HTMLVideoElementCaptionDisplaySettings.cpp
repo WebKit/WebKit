@@ -148,7 +148,7 @@ void HTMLVideoElementCaptionDisplaySettings::showCaptionDisplaySettings(HTMLVide
     ResolvedCaptionDisplaySettingsOptions resolvedOptions;
     if (options) {
         if (RefPtr anchorElement = dynamicDowncast<Element>(options->anchorNode.get()))
-            resolvedOptions.anchorBounds = anchorElement->boundingBoxInRootViewCoordinates();
+            resolvedOptions.anchorBounds = anchorElement->boundingBoxInMainFrameViewCoordinates();
         if (!options->positionArea.isEmpty())
             parsePositionAreaString(options->positionArea, resolvedOptions);
     }
@@ -172,15 +172,15 @@ void HTMLVideoElementCaptionDisplaySettings::showCaptionDisplaySettings(HTMLVide
 
             if (RefPtr currentEvent = JSDOMWindowBase->currentEvent()) {
                 if (RefPtr mouseEvent = dynamicDowncast<MouseEvent>(currentEvent))
-                    return locationToRect(mouseEvent->locationInRootViewCoordinates());
+                    return locationToRect(mouseEvent->locationInMainFrameViewCoordinates());
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(TOUCH_EVENTS)
                 if (RefPtr touchEvent = dynamicDowncast<TouchEvent>(currentEvent))
-                    return locationToRect(touchEvent->locationInRootViewCoordinates());
+                    return locationToRect(touchEvent->locationInMainFrameViewCoordinates());
 #endif
 
                 if (RefPtr currentElement = downcast<Element>(currentEvent->currentTarget()))
-                    return currentElement->boundingBoxInRootViewCoordinates();
+                    return currentElement->boundingBoxInMainFrameViewCoordinates();
             }
 
             RefPtr frameView = frame->view();
@@ -189,7 +189,7 @@ void HTMLVideoElementCaptionDisplaySettings::showCaptionDisplaySettings(HTMLVide
 
             auto position = frame->eventHandler().lastKnownMousePosition();
             if (!position.isZero())
-                return locationToRect(position);
+                return locationToRect(frameView->contentsToMainFrameView(frameView->windowToContents(FloatPoint { position })));
 
             return std::nullopt;
         }();

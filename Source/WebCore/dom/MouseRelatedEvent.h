@@ -60,6 +60,7 @@ public:
     double pageX() const override;
     double pageY() const override;
     WEBCORE_EXPORT DoublePoint locationInRootViewCoordinates() const;
+    DoublePoint locationInMainFrameViewCoordinates() const;
 
     // Page point in "absolute" coordinates (i.e. post-zoomed, page-relative coords,
     // usable with RenderObject::absoluteToLocal).

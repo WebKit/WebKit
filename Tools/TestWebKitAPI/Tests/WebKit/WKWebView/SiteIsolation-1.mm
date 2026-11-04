@@ -3078,6 +3078,136 @@ TEST(SiteIsolation, CaptionDisplaySettingsPreviewInCrossSiteIframe)
 
 #if PLATFORM(MAC)
 
+static bool didShowCaptionDisplaySettingsMenu = false;
+static NSPoint capturedCaptionDisplaySettingsMenuLocation = NSZeroPoint;
+
+using CaptionDisplaySettingsTestBlock = void (^)(TestWKWebView *, WKFrameInfo *);
+
+static NSPoint loadAndCaptureCaptionDisplaySettingsMenuLocation(TestWKWebView *webView, TestNavigationDelegate *navigationDelegate, NSString *url, CaptionDisplaySettingsTestBlock prepare, CaptionDisplaySettingsTestBlock showCaptionDisplaySettings)
+{
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrame = [webView firstChildFrame];
+
+    if (prepare)
+        prepare(webView, childFrame.get());
+
+    didShowCaptionDisplaySettingsMenu = false;
+    capturedCaptionDisplaySettingsMenuLocation = NSZeroPoint;
+    showCaptionDisplaySettings(webView, childFrame.get());
+    EXPECT_TRUE(Util::runFor(&didShowCaptionDisplaySettingsMenu, 5_s));
+    return capturedCaptionDisplaySettingsMenuLocation;
+}
+
+static void checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, NSPoint expectedLocation, CaptionDisplaySettingsTestBlock showCaptionDisplaySettings, CaptionDisplaySettingsTestBlock prepare = nil)
+{
+    HTTPServer server({
+        { "/control"_s, { makeStringByReplacingAll(mainframeHTML, "domain2.com"_s, "domain1.com"_s) } },
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"CaptionDisplaySettingsEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+
+    InstanceMethodSwizzler popUpSwizzler {
+        [NSMenu class],
+        @selector(popUpMenuPositioningItem:atLocation:inView:),
+        imp_implementationWithBlock(^(NSMenu *, NSMenuItem *, NSPoint location, NSView *) {
+            capturedCaptionDisplaySettingsMenuLocation = location;
+            didShowCaptionDisplaySettingsMenu = true;
+            return NO;
+        })
+    };
+
+    // The control page uses a same-origin iframe, which is in the main frame's process.
+    NSPoint controlLocation = loadAndCaptureCaptionDisplaySettingsMenuLocation(webView.get(), navigationDelegate.get(), @"https://domain1.com/control", prepare, showCaptionDisplaySettings);
+    EXPECT_NEAR(controlLocation.x, expectedLocation.x, 1);
+    EXPECT_NEAR(controlLocation.y, expectedLocation.y, 1);
+
+    NSPoint location = loadAndCaptureCaptionDisplaySettingsMenuLocation(webView.get(), navigationDelegate.get(), @"https://domain1.com/mainframe", prepare, showCaptionDisplaySettings);
+
+    // If the anchor bounds were left in the iframe's local root-view coordinates instead of being
+    // converted to main-frame view coordinates, the menu would be offset by the iframe's position.
+    EXPECT_NEAR(location.x, expectedLocation.x, 1);
+    EXPECT_NEAR(location.y, expectedLocation.y, 1);
+}
+
+static ASCIILiteral captionDisplaySettingsMainFrameHTML = "<body style='margin: 0'><iframe style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s;
+static ASCIILiteral captionDisplaySettingsSubframeHTML = "<body style='margin: 0'><div id='target' style='position: absolute; left: 10px; top: 20px; width: 30px; height: 40px;'></div><video id='video'></video></body>"_s;
+
+// "bottom right" places the menu at the bottom-right corner of the anchor bounds regardless of the menu's size.
+static NSString * const showCaptionDisplaySettingsScript = @"video.showCaptionDisplaySettings({ positionArea: 'bottom right' }); true";
+
+// The bottom-right corner of #target: the iframe's offset (100, 100) plus the target's (10, 20) and size (30, 40).
+static constexpr NSPoint captionDisplaySettingsTargetBottomRightInWebView { 140, 160 };
+
+// A point inside the iframe, in window coordinates, and the same point in the (flipped) web view's coordinates.
+static constexpr NSPoint captionDisplaySettingsMousePointInWindow { 300, 350 };
+static constexpr NSPoint captionDisplaySettingsMousePointInWebView { 300, 250 };
+
+TEST(SiteIsolation, CaptionDisplaySettingsAnchorNodeInCrossOriginIframe)
+{
+    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(captionDisplaySettingsMainFrameHTML, captionDisplaySettingsSubframeHTML, captionDisplaySettingsTargetBottomRightInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+        [webView objectByEvaluatingJavaScript:@"video.showCaptionDisplaySettings({ anchorNode: target, positionArea: 'bottom right' }); true" inFrame:childFrame];
+    });
+}
+
+TEST(SiteIsolation, CaptionDisplaySettingsAnchorNodeInScrolledCrossOriginIframeWithScrolledMainFrame)
+{
+    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(
+        "<body style='margin: 0; height: 2000px'><iframe style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        "<body style='margin: 0; height: 2000px'><div id='target' style='position: absolute; left: 10px; top: 520px; width: 30px; height: 40px;'></div><video id='video'></video></body>"_s,
+        captionDisplaySettingsTargetBottomRightInWebView,
+        ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+            [webView objectByEvaluatingJavaScript:@"video.showCaptionDisplaySettings({ anchorNode: target, positionArea: 'bottom right' }); true" inFrame:childFrame];
+        },
+        ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 400;
+            }));
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrame];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:childFrame] intValue] == 500;
+            }));
+            [webView waitForNextPresentationUpdate];
+        }
+    );
+}
+
+TEST(SiteIsolation, CaptionDisplaySettingsEventTargetInCrossOriginIframe)
+{
+    // Without an anchor node, the target of the current non-mouse event is used as the anchor.
+    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(captionDisplaySettingsMainFrameHTML, captionDisplaySettingsSubframeHTML, captionDisplaySettingsTargetBottomRightInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"target.addEventListener('custom', () => { %@ }); target.dispatchEvent(new Event('custom')); true", showCaptionDisplaySettingsScript] inFrame:childFrame];
+    });
+}
+
+TEST(SiteIsolation, CaptionDisplaySettingsMouseEventLocationInCrossOriginIframe)
+{
+    // Without an anchor node, the location of the current mouse event is used as the anchor.
+    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(captionDisplaySettingsMainFrameHTML, captionDisplaySettingsSubframeHTML, captionDisplaySettingsMousePointInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"addEventListener('mousedown', () => { %@ }); true", showCaptionDisplaySettingsScript] inFrame:childFrame];
+        [webView mouseDownAtPoint:captionDisplaySettingsMousePointInWindow simulatePressure:NO];
+        [webView mouseUpAtPoint:captionDisplaySettingsMousePointInWindow];
+    });
+}
+
+TEST(SiteIsolation, CaptionDisplaySettingsLastKnownMousePositionInCrossOriginIframe)
+{
+    // Without an anchor node or a current event, the last known mouse position is used as the anchor.
+    checkCaptionDisplaySettingsMenuLocationInCrossOriginIframe(captionDisplaySettingsMainFrameHTML, captionDisplaySettingsSubframeHTML, captionDisplaySettingsMousePointInWebView, ^(TestWKWebView *webView, WKFrameInfo *childFrame) {
+        [webView objectByEvaluatingJavaScript:@"window.didReceiveMouseMove = false; addEventListener('mousemove', () => { didReceiveMouseMove = true; }); true" inFrame:childFrame];
+        [webView mouseMoveToPoint:NSMakePoint(10, 10) withFlags:0];
+        [webView mouseMoveToPoint:captionDisplaySettingsMousePointInWindow withFlags:0];
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [[webView objectByEvaluatingJavaScript:@"didReceiveMouseMove" inFrame:childFrame] boolValue];
+        }));
+        [webView objectByEvaluatingJavaScript:showCaptionDisplaySettingsScript inFrame:childFrame];
+    });
+}
+
 TEST(SiteIsolation, TranslatePopoverInCrossOriginIframe)
 {
     static constexpr NSRect iframeFrame { { 100, 120 }, { 400, 300 } };

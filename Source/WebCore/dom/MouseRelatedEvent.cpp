@@ -285,6 +285,14 @@ DoublePoint MouseRelatedEvent::locationInRootViewCoordinates() const
     return m_absoluteLocation;
 }
 
+DoublePoint MouseRelatedEvent::locationInMainFrameViewCoordinates() const
+{
+    if (RefPtr frameView = frameViewFromWindowProxy(protect(view())))
+        return frameView->contentsToMainFrameView(FloatPoint { m_absoluteLocation });
+
+    return m_absoluteLocation;
+}
+
 int MouseRelatedEvent::layerX()
 {
     if (!m_hasCachedRelativePosition)
