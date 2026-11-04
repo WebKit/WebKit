@@ -29,6 +29,7 @@
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/Observer.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/StringHash.h>
@@ -49,6 +50,7 @@ struct FontEventClient : public AbstractRefCountedAndCanMakeWeakPtr<FontEventCli
 };
 
 class CSSFontFaceSet final : public RefCounted<CSSFontFaceSet>, public CSSFontFaceClient {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontFaceSet);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

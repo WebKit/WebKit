@@ -24,6 +24,7 @@
 #include <array>
 #include <ranges>
 #include <wtf/MallocSpan.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -31,6 +32,7 @@ static constexpr size_t CSSValueListBuilderInlineCapacity = 4;
 using CSSValueListBuilder = Vector<Ref<CSSValue>, CSSValueListBuilderInlineCapacity>;
 
 class CSSValueContainingVector : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSValueContainingVector);
 public:
     unsigned size() const { return m_size; }
     const CSSValue& operator[](unsigned index) const LIFETIME_BOUND;

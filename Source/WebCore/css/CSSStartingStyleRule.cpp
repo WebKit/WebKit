@@ -27,8 +27,11 @@
 #include "CSSStartingStyleRule.h"
 
 #include "StyleRule.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSStartingStyleRule);
 
 CSSStartingStyleRule::CSSStartingStyleRule(StyleRuleStartingStyle& rule, CSSStyleSheet* parent)
     : CSSGroupingRule(rule, parent)

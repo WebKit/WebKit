@@ -120,6 +120,7 @@ private:
 NODELETE void add(Hasher&, const CSSSelectorList&);
 
 class RefCountedCSSSelectorList : public RefCounted<RefCountedCSSSelectorList> {
+    WTF_MAKE_TZONE_ALLOCATED(RefCountedCSSSelectorList);
 public:
     static Ref<RefCountedCSSSelectorList> create(CSSSelectorList&& selectorList) { return adoptRef(*new RefCountedCSSSelectorList(WTF::move(selectorList))); }
 

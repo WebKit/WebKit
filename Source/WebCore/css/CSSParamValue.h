@@ -27,6 +27,7 @@
 
 #include <WebCore/CSSLinkParameter.h>
 #include <WebCore/CSSValue.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class CSSVariableData;
 // <param()> = param( <dashed-ident> , <declaration-value>? )
 // https://drafts.csswg.org/css-link-params/#funcdef-param
 class CSSParamValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSParamValue);
 public:
     static Ref<CSSParamValue> create(CSS::ParamFunction parameter)
     {

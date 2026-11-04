@@ -40,8 +40,11 @@
 #include "StyleScope.h"
 #include <ranges>
 #include <wtf/KeyValuePair.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ComputedStylePropertyMapReadOnly);
 
 Ref<ComputedStylePropertyMapReadOnly> ComputedStylePropertyMapReadOnly::create(Element& element)
 {

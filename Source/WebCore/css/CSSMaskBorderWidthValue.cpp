@@ -27,8 +27,11 @@
 #include "CSSMaskBorderWidthValue.h"
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSMaskBorderWidthValue);
 
 CSSMaskBorderWidthValue::CSSMaskBorderWidthValue(CSS::MaskBorderWidth&& widths)
     : CSSValue(ClassType::MaskBorderWidth)

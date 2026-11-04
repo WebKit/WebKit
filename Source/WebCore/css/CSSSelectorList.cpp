@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RefCountedCSSSelectorList);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSSelectorList);
 
 CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)

@@ -27,6 +27,7 @@
 
 #include "CSSColor.h"
 #include "CSSColorDescriptors.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -37,7 +38,7 @@ namespace CSS {
 // https://drafts.csswg.org/css-color-5/#relative-alpha
 
 struct RelativeAlphaColor {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RelativeAlphaColor);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(RelativeAlphaColor);
 
     using Descriptor = AlphaDescriptor;
     using Alpha = GetCSSColorParseTypeWithCalcAndSymbolsComponentResult<Descriptor, 0>;

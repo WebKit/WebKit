@@ -30,6 +30,7 @@
 #include <WebCore/WritingMode.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 
@@ -38,6 +39,7 @@ namespace WebCore {
 class StyleRuleCounterStyle;
 
 class CSSRegisteredCounterStyle : public RefCountedAndCanMakeWeakPtr<CSSRegisteredCounterStyle> {
+    WTF_MAKE_TZONE_ALLOCATED(CSSRegisteredCounterStyle);
 public:
     static Ref<CSSRegisteredCounterStyle> create(const CSSCounterStyleDescriptors&, bool isPredefinedCounterStyle);
     static Ref<CSSRegisteredCounterStyle> create(const Style::SymbolsFunction&);

@@ -27,10 +27,12 @@
 
 #include "CSSContent.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSContentValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSContentValue);
 public:
     static Ref<CSSContentValue> create(CSS::Content&&);
     ~CSSContentValue();

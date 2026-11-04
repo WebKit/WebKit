@@ -34,9 +34,14 @@
 #include "CSSURLValue.h"
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleEnvironmentMap);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSEnvironmentMapRule);
 
 static std::optional<EnvironmentMapFormat> toEnvironmentMapFormat(const CSSValue* format)
 {

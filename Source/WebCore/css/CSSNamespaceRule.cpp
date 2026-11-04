@@ -28,9 +28,12 @@
 
 #include "CSSMarkup.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSNamespaceRule);
 
 CSSNamespaceRule::CSSNamespaceRule(StyleRuleNamespace& namespaceRule, CSSStyleSheet* parent)
     : CSSRule(parent)

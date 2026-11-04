@@ -27,10 +27,12 @@
 
 #include "CSSBorderImageSlice.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSBorderImageSliceValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSBorderImageSliceValue);
 public:
     static Ref<CSSBorderImageSliceValue> create(CSS::BorderImageSlice&&);
     ~CSSBorderImageSliceValue();

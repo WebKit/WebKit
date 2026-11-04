@@ -27,8 +27,11 @@
 #include "CSSMaskBorderOutsetValue.h"
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSMaskBorderOutsetValue);
 
 CSSMaskBorderOutsetValue::CSSMaskBorderOutsetValue(CSS::MaskBorderOutset&& outsets)
     : CSSValue(ClassType::MaskBorderOutset)

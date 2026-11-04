@@ -26,10 +26,12 @@
 
 #include "CSSCustomIdent.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSCustomIdentValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSCustomIdentValue);
 public:
     static Ref<CSSCustomIdentValue> create(CSS::CustomIdent);
 

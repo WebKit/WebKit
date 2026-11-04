@@ -31,12 +31,14 @@
 #include "CSSPrimitiveValue.h"
 #include "RenderStyleConstants.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // Class containing the value of a scroll() function, as used in animation-timeline:
 // https://drafts.csswg.org/scroll-animations-1/#funcdef-scroll.
 class CSSScrollValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSScrollValue);
 public:
     static Ref<CSSScrollValue> create()
     {

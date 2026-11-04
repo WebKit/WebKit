@@ -31,11 +31,13 @@
 
 #include "CSSParserObserver.h"
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class CSSParserObserverWrapper : public RefCountedAndCanMakeWeakPtr<CSSParserObserverWrapper> {
+    WTF_MAKE_TZONE_ALLOCATED(CSSParserObserverWrapper);
 public:
     static Ref<CSSParserObserverWrapper> create(CSSParserObserver& observer)
     {

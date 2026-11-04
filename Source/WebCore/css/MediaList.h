@@ -23,6 +23,7 @@
 #include <WebCore/MediaQuery.h>
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -37,6 +38,7 @@ class CSSStyleSheet;
 template<typename> class ExceptionOr;
 
 class MediaList final : public RefCounted<MediaList> {
+    WTF_MAKE_TZONE_ALLOCATED(MediaList);
 public:
     static Ref<MediaList> create(CSSStyleSheet* parentSheet)
     {

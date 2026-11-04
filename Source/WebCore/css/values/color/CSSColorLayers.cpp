@@ -31,9 +31,12 @@
 #include "CSSPlatformColorResolutionState.h"
 #include "ColorSerialization.h"
 #include "StyleKeyword+Mappings.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace CSS {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ColorLayers);
 
 WebCore::Color createColor(const ColorLayers& value, PlatformColorResolutionState& state)
 {

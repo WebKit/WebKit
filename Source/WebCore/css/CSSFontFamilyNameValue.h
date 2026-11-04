@@ -26,10 +26,12 @@
 
 #include "CSSFontFamilyName.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSFontFamilyNameValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontFamilyNameValue);
 public:
     static Ref<CSSFontFamilyNameValue> create(CSS::FontFamilyName);
 

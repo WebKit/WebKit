@@ -27,10 +27,12 @@
 
 #include "CSSQuotes.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSQuotesValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSQuotesValue);
 public:
     static Ref<CSSQuotesValue> create(CSS::Quotes&&);
     ~CSSQuotesValue();

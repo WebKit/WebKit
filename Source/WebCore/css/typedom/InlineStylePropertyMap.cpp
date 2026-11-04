@@ -32,8 +32,11 @@
 #include "StyleAttributeMutationScope.h"
 #include "StylePropertiesInlines.h"
 #include "StyledElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineStylePropertyMap);
 
 Ref<InlineStylePropertyMap> InlineStylePropertyMap::create(StyledElement& element)
 {

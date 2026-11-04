@@ -27,8 +27,11 @@
 #include "CSSOffsetRotateValue.h"
 
 #include "CSSValuePool.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSOffsetRotateValue);
 
 String CSSOffsetRotateValue::customCSSText(const CSS::SerializationContext& context) const
 {

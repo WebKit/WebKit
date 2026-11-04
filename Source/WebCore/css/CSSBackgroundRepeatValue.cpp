@@ -27,10 +27,13 @@
 #include "CSSBackgroundRepeatValue.h"
 
 #include "CSSValueKeywords.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSBackgroundRepeatValue);
 
 CSSBackgroundRepeatValue::CSSBackgroundRepeatValue(CSSValueID xValue, CSSValueID yValue)
     : CSSValue(ClassType::BackgroundRepeat)

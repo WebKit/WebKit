@@ -32,8 +32,11 @@
 #include "CSSTransformListValue.h"
 
 #include "DeprecatedCSSOMValueList.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSTransformListValue);
 
 CSSTransformListValue::CSSTransformListValue(CSSValueListBuilder builder)
     : CSSValueContainingVector(ClassType::TransformList, ValueSeparator::Space, WTF::move(builder))

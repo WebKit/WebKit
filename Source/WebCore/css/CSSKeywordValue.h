@@ -26,10 +26,12 @@
 
 #include <WebCore/CSSKeyword.h>
 #include <WebCore/CSSValue.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSKeywordValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSKeywordValue);
 public:
     NODELETE static inline Ref<CSSKeywordValue> create(CSS::Keyword); // Defined in CSSValuePool.h
     NODELETE static inline Ref<CSSKeywordValue> create(CSSValueID); // Defined in CSSValuePool.h

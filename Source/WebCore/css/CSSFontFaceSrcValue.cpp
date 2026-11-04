@@ -36,10 +36,15 @@
 #include "FontCustomPlatformData.h"
 #include "SVGFontFaceElement.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontFaceSrcLocalValue);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontFaceSrcResourceValue);
 
 CSSFontFaceSrcLocalValue::CSSFontFaceSrcLocalValue(AtomString&& fontFaceName)
     : CSSValue(ClassType::FontFaceSrcLocal)

@@ -27,9 +27,12 @@
 #include "HTMLStyleElement.h"
 #include "ShadowRoot.h"
 #include "StyleDocumentScope.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleSheetList);
 
 using namespace HTMLNames;
 

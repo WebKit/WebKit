@@ -22,6 +22,7 @@
 #pragma once
 
 #include <WebCore/CSSRule.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -30,6 +31,7 @@ class CSSStyleSheet;
 class StyleRulePage;
 
 class CSSPageRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPageRule);
 public:
     static Ref<CSSPageRule> create(StyleRulePage& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSPageRule(rule, sheet)); }
 

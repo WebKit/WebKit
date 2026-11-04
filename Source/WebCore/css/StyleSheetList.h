@@ -22,6 +22,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -36,6 +37,7 @@ class CSSStyleSheet;
 class WeakPtrImplWithEventTargetData;
 
 class StyleSheetList final : public RefCounted<StyleSheetList> {
+    WTF_MAKE_TZONE_ALLOCATED(StyleSheetList);
 public:
     static Ref<StyleSheetList> create(Document& document) { return adoptRef(*new StyleSheetList(document)); }
     static Ref<StyleSheetList> create(ShadowRoot& shadowRoot) { return adoptRef(*new StyleSheetList(shadowRoot)); }

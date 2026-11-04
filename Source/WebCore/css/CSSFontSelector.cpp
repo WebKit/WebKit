@@ -55,9 +55,12 @@
 #include <wtf/OrderedHashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontSelector);
 
 using namespace WebKitFontFamilyNames;
 

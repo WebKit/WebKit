@@ -32,12 +32,15 @@
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSRegisteredCounterStyle);
 
 // https://www.w3.org/TR/css-counter-styles-3/#cyclic-system
 String CSSRegisteredCounterStyle::counterForSystemCyclic(int value) const

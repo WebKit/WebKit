@@ -26,11 +26,13 @@
 #pragma once
 
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class DeprecatedCSSOMCounter final : public RefCounted<DeprecatedCSSOMCounter> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DeprecatedCSSOMCounter);
 public:
     static Ref<DeprecatedCSSOMCounter> create(String identifier, String separator, String listStyleType)
     {

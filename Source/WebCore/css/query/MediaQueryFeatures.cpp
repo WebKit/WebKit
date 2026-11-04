@@ -46,11 +46,14 @@
 #include "Theme.h"
 #include "ViewportSegments.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::MQ {
 namespace Features {
 
 struct BooleanSchema : public FeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(BooleanSchema);
     using ValueFunction = Function<bool(const FeatureEvaluationContext&)>;
 
     BooleanSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
@@ -70,7 +73,10 @@ private:
     ValueFunction valueFunction;
 };
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(BooleanSchema);
+
 struct IntegerSchema : public FeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(IntegerSchema);
     using ValueFunction = Function<int(const FeatureEvaluationContext&)>;
 
     IntegerSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
@@ -90,7 +96,10 @@ private:
     ValueFunction valueFunction;
 };
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(IntegerSchema);
+
 struct NumberSchema : public FeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(NumberSchema);
     using ValueFunction = Function<double(const FeatureEvaluationContext&)>;
 
     NumberSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
@@ -110,7 +119,10 @@ private:
     ValueFunction valueFunction;
 };
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(NumberSchema);
+
 struct LengthSchema : public FeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(LengthSchema);
     using ValueFunction = Function<LayoutUnit(const FeatureEvaluationContext&)>;
 
     LengthSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
@@ -130,7 +142,10 @@ private:
     ValueFunction valueFunction;
 };
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(LengthSchema);
+
 struct RatioSchema : public FeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(RatioSchema);
     using ValueFunction = Function<FloatSize(const FeatureEvaluationContext&)>;
 
     RatioSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
@@ -150,7 +165,10 @@ private:
     ValueFunction valueFunction;
 };
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RatioSchema);
+
 struct ResolutionSchema : public FeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ResolutionSchema);
     using ValueFunction = Function<float(const FeatureEvaluationContext&)>;
 
     ResolutionSchema(const AtomString& name, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
@@ -170,9 +188,12 @@ private:
     ValueFunction valueFunction;
 };
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ResolutionSchema);
+
 using MatchingIdentifiers = Vector<CSSValueID, 1>;
 
 struct IdentifierSchema : public FeatureSchema {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(IdentifierSchema);
     using ValueFunction = Function<MatchingIdentifiers(const FeatureEvaluationContext&)>;
 
     IdentifierSchema(const AtomString& name, FixedVector<CSSValueID>&& valueIdentifiers, OptionSet<MediaQueryDynamicDependency> dependencies, ValueFunction&& valueFunction)
@@ -195,6 +216,8 @@ struct IdentifierSchema : public FeatureSchema {
 private:
     ValueFunction valueFunction;
 };
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(IdentifierSchema);
 
 static float deviceScaleFactor(const FeatureEvaluationContext& context)
 {

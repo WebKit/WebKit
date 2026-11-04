@@ -27,10 +27,12 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class CSSPaintSize : public RefCounted<CSSPaintSize> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CSSPaintSize);
 public:
     static Ref<CSSPaintSize> create(double width, double height)
     {

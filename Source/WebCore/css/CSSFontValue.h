@@ -21,6 +21,7 @@
 #pragma once
 
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -28,6 +29,7 @@ class CSSValue;
 class CSSValueList;
 
 class CSSFontValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontValue);
 public:
     static Ref<CSSFontValue> create()
     {

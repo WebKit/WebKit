@@ -29,11 +29,13 @@
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace CSSCalc {
 
 class RandomCachingKeyMap final : public RefCounted<RandomCachingKeyMap> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RandomCachingKeyMap);
 public:
     static Ref<RandomCachingKeyMap> create()
     {

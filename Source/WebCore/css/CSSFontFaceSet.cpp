@@ -43,8 +43,11 @@
 #include "StyleProperties.h"
 #include <ranges>
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontFaceSet);
 
 CSSFontFaceSet::CSSFontFaceSet(CSSFontSelector* owningFontSelector)
     : m_owningFontSelector(owningFontSelector)

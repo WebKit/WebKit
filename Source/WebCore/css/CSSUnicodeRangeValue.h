@@ -27,10 +27,12 @@
 
 #include "CSSValue.h"
 #include <unicode/umachine.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSUnicodeRangeValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSUnicodeRangeValue);
 public:
     static Ref<CSSUnicodeRangeValue> create(char32_t from, char32_t to)
     {

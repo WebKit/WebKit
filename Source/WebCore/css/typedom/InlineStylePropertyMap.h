@@ -26,6 +26,7 @@
 #pragma once
 
 #include "StylePropertyMap.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -33,6 +34,7 @@ namespace WebCore {
 class WeakPtrImplWithEventTargetData;
 
 class InlineStylePropertyMap final : public StylePropertyMap {
+    WTF_MAKE_TZONE_ALLOCATED(InlineStylePropertyMap);
 public:
     NODELETE static Ref<InlineStylePropertyMap> create(StyledElement&);
 

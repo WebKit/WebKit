@@ -27,9 +27,12 @@
 #include "DeprecatedCSSOMValueList.h"
 
 #include "CSSValueList.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeprecatedCSSOMValueList);
 
 Ref<DeprecatedCSSOMValueList> DeprecatedCSSOMValueList::create(DeprecatedCSSOMValueListBuilder&& values, CSSValue::ValueSeparator separator, CSSStyleDeclaration& owner)
 {

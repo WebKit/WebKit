@@ -28,8 +28,11 @@
 
 #include "Document.h"
 #include <JavaScriptCore/ConsoleMessage.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleMedia);
 
 StyleMedia::StyleMedia(LocalDOMWindow& window)
     : LocalDOMWindowProperty(&window)

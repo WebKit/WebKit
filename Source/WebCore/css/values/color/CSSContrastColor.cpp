@@ -29,9 +29,12 @@
 #include "CSSContrastColorResolver.h"
 #include "CSSPlatformColorResolutionState.h"
 #include "ColorSerialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace CSS {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(ContrastColor);
 
 bool ContrastColor::operator==(const ContrastColor&) const = default;
 

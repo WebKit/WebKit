@@ -28,6 +28,7 @@
 
 #include "CSSCustomIdent.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ namespace WebCore {
 // anchor reference rather than a separator between two independent values, so this is deliberately
 // not a CSSValuePair.
 class CSSPinnedAnchorNameValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPinnedAnchorNameValue);
 public:
     static Ref<CSSPinnedAnchorNameValue> create(CSS::CustomIdent name, CSS::CustomIdent attachment);
 

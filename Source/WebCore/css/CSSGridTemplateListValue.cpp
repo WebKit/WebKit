@@ -28,8 +28,11 @@
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSGridTemplateListValue);
 
 Ref<CSSGridTemplateListValue> CSSGridTemplateListValue::create(CSS::GridTemplateList list)
 {

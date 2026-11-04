@@ -26,10 +26,12 @@
 
 #include "CSSBoxShadowProperty.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSBoxShadowPropertyValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSBoxShadowPropertyValue);
 public:
     static Ref<CSSBoxShadowPropertyValue> create(CSS::BoxShadowProperty);
 

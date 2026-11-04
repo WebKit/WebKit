@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSRule.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,6 +34,7 @@ class CSSFunctionDescriptors;
 class StyleRuleFunctionDeclarations;
 
 class CSSFunctionDeclarations final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFunctionDeclarations);
 public:
     static Ref<CSSFunctionDeclarations> create(StyleRuleFunctionDeclarations& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSFunctionDeclarations(rule, sheet)); };
 

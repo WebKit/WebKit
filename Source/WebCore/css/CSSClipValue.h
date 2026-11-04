@@ -27,10 +27,12 @@
 
 #include "CSSClip.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSClipValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSClipValue);
 public:
     NODELETE static Ref<CSSClipValue> create(CSS::Clip&&);
     ~CSSClipValue();

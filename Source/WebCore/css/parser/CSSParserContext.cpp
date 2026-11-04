@@ -36,8 +36,11 @@
 #include "Page.h"
 #include "Settings.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(CSSParserContext);
 
 const CSSParserContext& strictCSSParserContext()
 {

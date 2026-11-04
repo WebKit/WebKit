@@ -28,8 +28,13 @@
 
 #include "MutableStyleProperties.h"
 #include "StylePropertiesInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleFunction);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleRuleFunctionDeclarations);
 
 Ref<StyleRuleFunction> StyleRuleFunction::create(const AtomString& name, Vector<Parameter>&& parameters, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&& rules)
 {

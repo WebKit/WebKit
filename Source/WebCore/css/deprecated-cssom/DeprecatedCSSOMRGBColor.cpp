@@ -26,8 +26,11 @@
 #include "DeprecatedCSSOMRGBColor.h"
 
 #include "CSSPrimitiveNumericTypes+DeprecatedCSSOMValueCreation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeprecatedCSSOMRGBColor);
 
 NODELETE static Ref<DeprecatedCSSOMPrimitiveValue> createWrapperForColorComponent(double number, CSSStyleDeclaration& owner)
 {

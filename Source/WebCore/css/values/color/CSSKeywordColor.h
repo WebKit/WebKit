@@ -27,6 +27,7 @@
 
 #include <WebCore/CSSValueTypes.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ struct PlatformColorResolutionState;
 enum class ColorType : uint8_t;
 
 struct KeywordColor {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(KeywordColor);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(KeywordColor);
 
     CSSValueID valueID;
 

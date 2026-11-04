@@ -28,6 +28,7 @@
 #include "Element.h"
 #include "MainThreadStylePropertyMapReadOnly.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ class Element;
 class WeakPtrImplWithEventTargetData;
 
 class ComputedStylePropertyMapReadOnly final : public MainThreadStylePropertyMapReadOnly {
+    WTF_MAKE_TZONE_ALLOCATED(ComputedStylePropertyMapReadOnly);
 public:
     NODELETE static Ref<ComputedStylePropertyMapReadOnly> create(Element&);
 

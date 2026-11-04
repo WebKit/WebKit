@@ -32,11 +32,16 @@
 #include "config.h"
 #include "CSSPropertySourceData.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(CSSStyleSourceData);
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(CSSRuleSourceData);
 
 SourceRange::SourceRange()
     : start(0)
