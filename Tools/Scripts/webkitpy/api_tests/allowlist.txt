@@ -691,12 +691,10 @@ TestWebKitAPI.WKWebExtensionAPITabs.CreateWithFileURLIsRejected
 TestWebKitAPI.WKWebExtensionAPITabs.CreateWithFileURLWhenFileAccessIsAllowed
 TestWebKitAPI.WKWebExtensionAPITabs.CreateWithJavaScriptURLIsRejected
 TestWebKitAPI.WKWebExtensionAPITabs.CreateWithMailtoURL
-TestWebKitAPI.WKWebExtensionAPITabs.TabStatus
 TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventOmitsUnchangedProperties
 TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventReportsRapidToggles
 TestWebKitAPI.WKWebExtensionAPITabs.WindowType
 TestWebKitAPI.WKWebExtensionAPITest
-TestWebKitAPI.WKWebExtensionAPIWebNavigation.UpdateTabDuringCommittedEvent
 TestWebKitAPI.WKWebExtensionAPIWindowsTests/createTypeEnum()
 TestWebKitAPI.WKWebExtensionAPIWindowsTests/windowStateEnum()
 TestWebKitAPI.WKWebExtensionAPIWindowsTests/windowTypeEnum()
@@ -4034,12 +4032,6 @@ TestWebKitAPI.WKProcessPool.PrewarmedProcessCrash
 TestWebKitAPI.WKProcessPool.TryUsingPrewarmedProcessThatJustCrashed
 TestWebKitAPI.WKProcessPool.WarmInitialProcess
 TestWebKitAPI.WKUserContentController.FireUserTextInputEvent
-TestWebKitAPI.WKWebExtensionAPICookiesTests/getAll()
-TestWebKitAPI.WKWebExtensionAPICookiesTests/getAllIncognito()
-TestWebKitAPI.WKWebExtensionAPICookiesTests/getAllIncognitoWithPrivateAccess()
-TestWebKitAPI.WKWebExtensionAPICookiesTests/getAllWithFilters()
-TestWebKitAPI.WKWebExtensionAPICookiesTests/getCookie()
-TestWebKitAPI.WKWebExtensionAPICookiesTests/setCookie()
 TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/basicRuleConversion()
 TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/basicValidRuleParsing()
 TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/blockedLoadInPrivateBrowsingTest()
@@ -4050,12 +4042,7 @@ TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/emptyDomains()
 TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/emptyResourceTypes()
 TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/excludedResourceTypeForAllowAllRequests()
 TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/getEnabledRulesets()
-TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/highPriorityStaticRedirectFavoredOverLowPrioritySessionRedirect()
-TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/higherPriorityNoOpRedirectSuppressesLowerPriorityRedirect()
-TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/highestPriorityRedirectWinsRegardlessOfDeclarationOrder()
 TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/isRegexSupported()
-TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/lastDeclaredRedirectWinsAmongEqualPriority()
-TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/lowerPriorityRedirectDoesNotComposeOntoWinner()
 TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/mainFrameResourceRuleConversion()
 TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/migrateDeclarativeNetRequestDataToNewFormat()
 TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/noResourceTypeForAllowAllRequests()
@@ -4112,42 +4099,24 @@ TestWebKitAPI.WKWebExtensionAPIDevTools.InspectedWindowReload
 TestWebKitAPI.WKWebExtensionAPIDevTools.MessagePassingFromPanelToDevToolsBackground
 TestWebKitAPI.WKWebExtensionAPIDevTools.MessagePassingToBackground
 TestWebKitAPI.WKWebExtensionAPIDevTools.PanelsThemeName
-TestWebKitAPI.WKWebExtensionAPINotifications
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/apisUnavailableWhenManifestDoesNotRequest()
-TestWebKitAPI.WKWebExtensionAPIOffscreenTests/backgroundServiceWorkerKeepsExtensionAPIsWhenReloadedInNewProcess()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/clientsMatchAllUsedAsHasDocumentGuard()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/closeDocument()
-TestWebKitAPI.WKWebExtensionAPIOffscreenTests/closeDocumentWithoutOneOpenFails()
-TestWebKitAPI.WKWebExtensionAPIOffscreenTests/createAndHasDocument()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/createDocumentFails()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/createDocumentTwiceFails()
-TestWebKitAPI.WKWebExtensionAPIOffscreenTests/documentContentLoads()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/hasDocumentFalseByDefault()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenAPIAvailableWhenManifestRequests()
-TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenCreateDocumentArgumentValidation()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentAPIAvailability()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentVisibleToClientsMatchAllAfterBackgroundContentReloads()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/sendMessageToDocument()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/tabAndOffscreenDocumentVisibleToClientsMatchAll()
 TestWebKitAPI.WKWebExtensionAPIOffscreenTests/windowCloseFromDocumentClosesDocument()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/acceptPermissionsDenyMatchPatternsRequest()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/acceptPermissionsRequest()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allHostsAndURLsHostPermissions()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allHostsAndURLsOptionalAndHostPermissions()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allHostsAndURLsOptionalHostPermissions()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allHostsHostPermissions()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allHostsOptionalHostPermissions()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allURLsHostPermissions()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allURLsOptionalHostPermissions()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/basics()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/corsFailureFromPageDoesNotPromptExtension()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/corsUsingFetchWithPermissions()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/corsUsingFetchWithoutGrantingPermission()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/corsUsingFetchWithoutPermissions()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/corsUsingXHRWithPermissions()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/corsUsingXHRWithoutGrantingPermission()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/corsUsingXHRWithoutPermissions()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/cspExtensionModeNotAppliedToWebPageSubframe()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/denyPermissionsRequest()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/errors()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/filePatternPermissionGatedByFlag()
@@ -4156,40 +4125,24 @@ TestWebKitAPI.WKWebExtensionAPIPermissionsTests/grantOnlySomeMatchPatterns()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/grantOnlySomePermissions()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/grantingFilePatternRequiresFlag()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/hasAccessToFileURLsDefaultsToNo()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/implicitAllHostsAndURLsPermissions()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/requestAllURLsMatchPattern()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/requestMatchPatternsOnly()
 TestWebKitAPI.WKWebExtensionAPIPermissionsTests/requestPermissionsOnly()
-TestWebKitAPI.WKWebExtensionAPIPermissionsTests/validMatchPatterns()
-TestWebKitAPI.WKWebExtensionAPIStorage
-TestWebKitAPI.WKWebExtensionAPITabs.ConnectWithUserGesture
 TestWebKitAPI.WKWebExtensionAPITabs.ConnectWithoutUserGesture
-TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptWithUserGesture
-TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptWithoutUserGesture
-TestWebKitAPI.WKWebExtensionAPITabs.InsertCSSInAllFramesWithCrossSiteFrame
 TestWebKitAPI.WKWebExtensionAPITabs.MoveBetweenPrivateAndNonPrivateFails
 TestWebKitAPI.WKWebExtensionAPITabs.MoveDelegateErrorIsPropagated
-TestWebKitAPI.WKWebExtensionAPITabs.MoveErrors
 TestWebKitAPI.WKWebExtensionAPITabs.MoveMultiWindowGroupErrorIsPropagated
 TestWebKitAPI.WKWebExtensionAPITabs.MoveMultipleTabsReturnsArray
-TestWebKitAPI.WKWebExtensionAPITabs.MoveOverflowIndexClampsToEnd
 TestWebKitAPI.WKWebExtensionAPITabs.MovePrivateTabsAllowed
-TestWebKitAPI.WKWebExtensionAPITabs.MoveSingleTabInSingleWindow
-TestWebKitAPI.WKWebExtensionAPITabs.MoveSingleTabToEndOfWindow
 TestWebKitAPI.WKWebExtensionAPITabs.MoveToAnotherWindow
-TestWebKitAPI.WKWebExtensionAPITabs.MoveToCurrentIndexReturnsTab
 TestWebKitAPI.WKWebExtensionAPITabs.MoveToOrFromPopupWindowFails
 TestWebKitAPI.WKWebExtensionAPITabs.MoveWithoutWindowIdGroupsTabsByWindow
-TestWebKitAPI.WKWebExtensionAPITabs.PortPostMessageGestureFromContentScriptIsNotPropagated
 TestWebKitAPI.WKWebExtensionAPITabs.PortPostMessageWithUserGesture
 TestWebKitAPI.WKWebExtensionAPITabs.PortPostMessageWithoutUserGesture
-TestWebKitAPI.WKWebExtensionAPITabs.RemoveMultipleInvalidTabs
-TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithUserGesture
 TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithoutUserGesture
 TestWebKitAPI.WKWebExtensionAPIWebNavigation.EmptyFilterMatchesEverything
 TestWebKitAPI.WKWebExtensionAPIWebNavigation.URLFilterMatchesOnePredicate
 TestWebKitAPI.WKWebExtensionAPIWebNavigation.URLFilterTestMatchAllPredicates
-TestWebKitAPI.WKWebExtensionAPIWebRequest
 TestWebKitAPI.WKWebExtensionAPIWebRequest.Initialization
 TestWebKitAPI.WKWebExtensionAPIWebRequest.ResourceTypesMatch
 TestWebKitAPI.WKWebExtensionAPIWebRequest.TabIDMatch
@@ -6414,11 +6367,22 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPIActionTests/windowOpenOpensInNewWindow()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIActionTests/windowSpecificActionProperties()
 [ ios ] TestWebKitAPI.WKWebExtensionAPICommandsTests/performKeyCommand()
+[ ios ] TestWebKitAPI.WKWebExtensionAPICookiesTests/getAll()
+[ ios ] TestWebKitAPI.WKWebExtensionAPICookiesTests/getAllIncognito()
+[ ios ] TestWebKitAPI.WKWebExtensionAPICookiesTests/getAllIncognitoWithPrivateAccess()
+[ ios ] TestWebKitAPI.WKWebExtensionAPICookiesTests/getAllWithFilters()
+[ ios ] TestWebKitAPI.WKWebExtensionAPICookiesTests/getCookie()
+[ ios ] TestWebKitAPI.WKWebExtensionAPICookiesTests/setCookie()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/blockedLoadTest()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/dynamicRules()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/getDynamicRules()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/getMatchedRules()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/getSessionRules()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/highPriorityStaticRedirectFavoredOverLowPrioritySessionRedirect()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/higherPriorityNoOpRedirectSuppressesLowerPriorityRedirect()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/highestPriorityRedirectWinsRegardlessOfDeclarationOrder()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/lastDeclaredRedirectWinsAmongEqualPriority()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/lowerPriorityRedirectDoesNotComposeOntoWinner()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/mainFrameAllowAllRequests()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/modifyHeadersRule()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/modifyHeadersRuleWithoutHostAccessPermission()
@@ -6438,12 +6402,32 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDevTools.Basics
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDevTools.PortMessagePassingFromPanelToBackground
 [ ios ] TestWebKitAPI.WKWebExtensionAPIMenus
+[ ios ] TestWebKitAPI.WKWebExtensionAPINotifications
+[ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/backgroundServiceWorkerKeepsExtensionAPIsWhenReloadedInNewProcess()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/closeDocumentWithoutOneOpenFails()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/createAndHasDocument()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/documentContentLoads()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenCreateDocumentArgumentValidation()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentImmediatelyVisibleToClientsMatchAllWhenWokenByTabMessage()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentRemovedFromClientsMatchAllAfterClose()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIOffscreenTests/offscreenDocumentVisibleToClientsMatchAll()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/acceptPermissionsDenyMatchPatternsRequest()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allHostsAndURLsHostPermissions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allHostsAndURLsOptionalAndHostPermissions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allHostsAndURLsOptionalHostPermissions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allHostsHostPermissions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allHostsOptionalHostPermissions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allURLsHostPermissions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/allURLsOptionalHostPermissions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/basics()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/clipboardWrite()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/clipboardWriteWithRequest()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/clipboardWriteWithoutPermission()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/corsUsingFetchWithPermissions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/corsUsingXHRWithPermissions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/cspExtensionModeNotAppliedToWebPageSubframe()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/implicitAllHostsAndURLsPermissions()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIPermissionsTests/validMatchPatterns()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIRuntime
 [ ios ] TestWebKitAPI.WKWebExtensionAPIRuntime.ConnectFromContentScript
 [ ios ] TestWebKitAPI.WKWebExtensionAPIRuntime.ConnectFromContentScriptWithImmediateMessage
@@ -6522,6 +6506,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPIScripting.UpdateContentScripts
 [ ios ] TestWebKitAPI.WKWebExtensionAPIScripting.UpdateContentScriptsWithMinimalParametersShouldNotCrash
 [ ios ] TestWebKitAPI.WKWebExtensionAPIScripting.World
+[ ios ] TestWebKitAPI.WKWebExtensionAPIStorage
 [ ios ] TestWebKitAPI.WKWebExtensionAPIStorage.Clear
 [ ios ] TestWebKitAPI.WKWebExtensionAPIStorage.Errors
 [ ios ] TestWebKitAPI.WKWebExtensionAPIStorage.Get
@@ -6549,6 +6534,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ConnectToSpecificFrame
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ConnectToSubframe
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ConnectWithMultipleListeners
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ConnectWithUserGesture
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Create
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.CreateTabsOverflowIndex
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.CreateTabsZeroIndex
@@ -6566,6 +6552,8 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptJSONTypes
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptWithDocumentId
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptWithFrameId
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptWithUserGesture
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptWithoutUserGesture
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Get
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.GetCurrentFromBackgroundPage
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.GetCurrentFromOptionsPage
@@ -6576,9 +6564,16 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.HighlightedEvent
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.InsertAndRemoveCSSInAllFrames
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.InsertAndRemoveCSSInMainFrame
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.InsertCSSInAllFramesWithCrossSiteFrame
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.MoveErrors
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.MoveOverflowIndexClampsToEnd
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.MoveSingleTabInSingleWindow
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.MoveSingleTabToEndOfWindow
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.MoveToCurrentIndexReturnsTab
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.MovedEvent
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.PortDisconnect
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.PortDisconnectWithMultipleListeners
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.PortPostMessageGestureFromContentScriptIsNotPropagated
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Query
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.QueryWithAccessPrompt
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.QueryWithCurrentWindow
@@ -6586,6 +6581,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.QueryWithPrivateAccess
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Reload
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Remove
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.RemoveMultipleInvalidTabs
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.RemoveMultipleTabs
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.RemovedEvent
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ReplacedEvent
@@ -6599,7 +6595,9 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithAsyncPromiseReply
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithAsyncReply
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithPromiseReply
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithUserGesture
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithoutReply
+[ ios ] TestWebKitAPI.WKWebExtensionAPITabs.TabStatus
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.ToggleReaderMode
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.UnsupportedMV3APIs
 [ ios ] TestWebKitAPI.WKWebExtensionAPITabs.Update
@@ -6626,6 +6624,8 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.GetFrameWithSubframe
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.RemoveListenerDuringEvent
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.URLKeyTypeChecking
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.UpdateTabDuringCommittedEvent
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.AllEventsFired
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.AllowedFilter
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.BeforeRequestEvent
@@ -8002,7 +8002,6 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/navigationOpensInNewTab()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/pageAction()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/popoverCloseNotificationCallsClosePopup()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/presentPopupForAction()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setDefaultActionProperties()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconMultipleSizes()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconMultipleSizesRelative()
@@ -8011,109 +8010,75 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconSymbolIconsDictionary()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconSymbolSinglePath()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconThrowsWithNoValidVariants()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithAnySizeVariantAndSVGDataURL()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithBadDataURL()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithBadImageData()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithBadPath()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithDataURL()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithImageData()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithImageDataAndVariants()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithMixedValidAndInvalidVariants()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithMultipleDataURLs()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithMultipleImageDataSizes()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithNullImageData()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithNullPath()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithNullVariants()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithSymbolVariants()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/setIconWithVariants()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/subframeNavigation()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/tabSpecificActionProperties()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/updateTabFromPopupPage()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/windowOpenOpensInNewWindow()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIActionTests/windowSpecificActionProperties()
-[ mac ] TestWebKitAPI.WKWebExtensionAPICookiesTests/removeCookie()
-[ mac ] TestWebKitAPI.WKWebExtensionAPICookiesTests/removeCookieNotFound()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/blockedLoadTest()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/dynamicRules()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/getDynamicRules()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/getSessionRules()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/mainFrameAllowAllRequests()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/modifyHeadersRule()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/modifyHeadersRuleWithoutHostAccessPermission()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/modifyHeadersRuleWithoutHostPermission()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/ownRulesOnlyApplyToBackgroundPage()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/ownRulesOnlyApplyToOffscreenDocument()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/ownRulesOnlyApplyToPopupPage()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/ownRulesOnlyApplyToServiceWorker()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/redirectRule()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/redirectRuleWithEnhancedSecurity()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/redirectRuleWithoutHostAccessPermission()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/redirectRuleWithoutHostPermission()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/removeAllContentRuleListsDoesNotRemoveWebExtensionRuleLists()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/removeSessionRules()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequestTests/sessionRules()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDevTools.Basics
-[ mac ] TestWebKitAPI.WKWebExtensionAPIDevTools.StorageAccessLevel
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ActionSubmenus
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ActionSubmenusUpdate
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ClearMenuItemIconVariantsWithEmpty
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ClearMenuItemIconVariantsWithNull
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ClickedMenuItemAndPermissionsRequest
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ContextMenusNamespace
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ContextType
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.CreateMenuWithDeprecatedKeys
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.Errors
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ItemType
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MacActiveTabContextMenuItems
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MacAudioContextMenuItems
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MacContextMenuItems
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MacEditableContextMenuItems
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MacFrameContextMenuItems
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MacImageContextMenuItems
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MacLinkContextMenuItems
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MacSelectionContextMenuItems
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MacURLPatternContextMenuItems
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MacVideoContextMenuItems
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuCreateWithVariousIds
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemProperties
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemPropertiesUpdate
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithAnySizeVariantAndSVGDataURL
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithIconVariants
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithImageDataVariants
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithMixedValidAndInvalidIconVariants
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithSymbolImageIcon
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithSymbolImageIconVariants
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.MenuItemWithWithNoValidVariants
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.OnClick
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.OnClickAfterUpdate
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.RadioItemGrouping
-[ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.RemoveAfterBackgroundPageReload
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.ToggleCheckboxMenuItems
 [ mac ] TestWebKitAPI.WKWebExtensionAPIMenus.UpdateMenuItemWithIconVariants
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.ConnectFromContentScriptInPopupSubframe
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.ConnectFromPopup
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.ConnectFromWebPageWithWrongIdentifier
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.APIsAvailableWhenPermissionGranted
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.ClickedEvent
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.CreateAcceptsUnsupportedTypeAsBasic
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.CreateArgumentValidation
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.CreateGeneratesIdentifierWhenOmitted
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.CreateOmitsSubtitleAndButtonsWhenNotProvided
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.CreateRejectsWhenBrowserReportsError
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.EventsIgnoreUntrackedNotifications
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.GetAllReturnsCreatedNotificationIdentifiers
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.GetPermissionLevelRejectsWhenBrowserReportsError
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.GetPermissionLevelReturnsDeniedWhenDelegateDenies
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.GetPermissionLevelReturnsGrantedWhenDelegateAllows
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.UpdateDoesNotRequireCreateKeys
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.UpdateMergesSuppliedFieldsAndRePresentsThroughDelegate
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.UpdateRejectsWhenBrowserReportsError
+[ mac ] TestWebKitAPI.WKWebExtensionAPINotifications.UpdateReturnsFalseForUnknownIdentifier
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.ConnectNative
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.ConnectNativeWithInvalidMessage
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.ConnectNativeWithUndefinedMessage
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.GetBackgroundPageForServiceWorker
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.GetBackgroundPageFromBackground
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.GetBackgroundPageFromPopup
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.GetBackgroundPageFromTab
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.GetDocumentId
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.GetFrameId
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.GetManifest
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.GetPlatformInfo
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.GetURL
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.GetVersion
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.Id
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.InstalledEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.LastError
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.LastErrorClearedAfterCallback
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.LastErrorFromContentScript
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.LastErrorNullInCallbackOnSuccess
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.LastErrorSetInCallbackOnFailure
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.MessageSenderWindowIdFromContentScript
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.MessageSenderWindowIdFromPopup
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.OnInstalledReason
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.OpenOptionsPage
@@ -8121,159 +8086,88 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.OpenOptionsPageMatchesExistingTabIgnoringFragment
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.PlatformArch
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.PlatformOs
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.PortDisconnectFromContentScript
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.PortMessageWithEmptyContainers
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.PortMutateListenersDuringDispatch
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.PortSenderWindowIdFromContentScript
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.Reload
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageFromContentScript
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageFromContentScriptInPopupSubframe
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageFromContentScriptWhileBackgroundIsLoading
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageFromContentScriptWithAsyncPromiseReply
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageFromContentScriptWithAsyncReply
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageFromContentScriptWithNoReply
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageFromContentScriptWithPromiseReply
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageFromSubframe
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageFromWebPage
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageFromWebPageWithTabFrameAndAsyncReply
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageFromWebPageWithWrongIdentifier
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageGestureFromContentScriptIsNotPropagated
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageGestureFromPopupIsPropagated
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageWithEmptyContainers
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageWithNaNValue
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageWithTabFrameAndAsyncReply
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendMessageWithoutUserGestureFromContentScript
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendNativeMessage
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SendNativeMessageWithInvalidReply
 [ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.SetUninstallURL
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.StartupEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPIRuntime.TabsSendMessageSenderWindowIdFromPopup
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.CSSAuthorOrigin
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.CSSUserOrigin
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ContentScriptsAndStyleSheetsWithManyMatchPatterns
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ContentScriptsRespectDeniedMatchPatterns
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ErrorsCSS
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ErrorsExecuteScript
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ErrorsRegisteredContentScript
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScript
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScriptJSONTypes
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScriptResultDoesNotAliasEmptyContainers
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScriptWithDocumentIds
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScriptWithFrameIds
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScriptWithUserGesture
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecuteScriptWithoutUserGesture
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.ExecutionWorld
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.GetContentScripts
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InjectExtensionScriptElementWithStrictDynamicReportOnlyCSP
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InjectScriptWithTrustedTypesCSP
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InjectedOnlyOnce
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InsertAndRemoveCSS
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InsertAndRemoveCSSWithFrameIds
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.InsertCSSInAllFramesWithCrossSiteFrame
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.IsolatedWorld
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.MainWorld
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.MatchAboutBlank
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.MatchOriginAsFallbackWithAboutBlank
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.MatchOriginAsFallbackWithBlob
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.MatchOriginAsFallbackWithData
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RegisterContentScripts
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RegisterContentScriptsMatchOriginAsFallback
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RegisterContentScriptsWithCSSAuthorOrigin
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RegisterContentScriptsWithCSSUserOrigin
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RegisteredScriptExcludeMatches
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RemoveAllUserScriptsDoesNotRemoveWebExtensionScripts
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.RemoveAllUserStyleSheetsDoesNotRemoveWebExtensionStyleSheets
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.UnregisterContentScripts
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.UpdateContentScripts
 [ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.UpdateContentScriptsWithMinimalParametersShouldNotCrash
-[ mac ] TestWebKitAPI.WKWebExtensionAPIScripting.World
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.Clear
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.Errors
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.Get
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.GetBytesInUseWhenEmpty
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.GetDoesNotAliasEmptyArrays
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.GetDoesNotAliasEmptyContainersAcrossKeys
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.GetDoesNotAliasEmptyContainersInSessionStorage
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.GetDoesNotAliasEmptyObjects
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.GetDoesNotAliasNestedEmptyContainers
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.GetExceedsMaximumDataSize
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.GetKeys
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.GetWithDefaultValue
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.GetWithDefaultValuesDoesNotAliasEmptyContainers
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.OnChangedDoesNotAliasEmptyContainers
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.Remove
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.Set
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.SetCustomObject
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.SetExceedsMaximumDataSize
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.StorageAreaOnChanged
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.StorageFromSubframe
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.StorageOnChanged
+[ mac ] TestWebKitAPI.WKWebExtensionAPIStorage.UndefinedProperties
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ActivatedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ActiveTabRemovedWithDeniedPermissions
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ActiveTabWithDeniedPermissions
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CSSAuthorOrigin
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CSSUserOrigin
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CaptureVisibleTab
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Connect
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ConnectToSpecificDocument
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ConnectToSpecificFrame
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ConnectToSubframe
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ConnectWithMultipleListeners
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Create
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CreateTabsOverflowIndex
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CreateTabsZeroIndex
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CreateWithRelativeURL
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CreateWithSpecifiedOptions
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.CreatedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.DetachAndAttachFromWindowIDNone
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.DetachAndAttachToWindowIDNone
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.DetachedAndAttachedEvent
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.DetectLanguage
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Duplicate
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.DuplicateWithOptions
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Errors
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScript
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptJSONTypes
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptWithDocumentId
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ExecuteScriptWithFrameId
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Get
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.GetCurrentFromBackgroundPage
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.GetCurrentFromOptionsPage
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.GetSelected
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.GoBack
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.GoForward
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.HighlightedAlsoActivatesTab
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.HighlightedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.InsertAndRemoveCSSInAllFrames
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.InsertAndRemoveCSSInMainFrame
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.MovedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.PortDisconnect
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.PortDisconnectWithMultipleListeners
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Query
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.QueryWithAccessPrompt
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.QueryWithCurrentWindow
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.QueryWithPermissionBypass
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.QueryWithPrivateAccess
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Reload
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Remove
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.RemoveMultipleTabs
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.RemovedEvent
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ReplacedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessage
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageBackAndForwardNavigation
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageFromBackgroundPageToFullPageExtensionContent
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageFromBackgroundToOpenedWindow
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageFromBackgroundToSpecificDocument
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageFromBackgroundToSpecificFrame
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageFromBackgroundToSubframe
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithAsyncPromiseReply
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithAsyncReply
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithPromiseReply
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.SendMessageWithoutReply
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.ToggleReaderMode
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.UnsupportedMV3APIs
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Update
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.UpdateWithoutTabId
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEvent
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.UpdatedEventWithoutPrivateAccess
-[ mac ] TestWebKitAPI.WKWebExtensionAPITabs.UserGestureWithoutActiveTab
 [ mac ] TestWebKitAPI.WKWebExtensionAPITabs.Zoom
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.AllEventsFired
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.AllowedFilter
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.BeforeNavigateEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.CommittedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.CompletedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.DOMContentLoadedEvent
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.DeniedFilter
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.DocumentIdAcrossEvents
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.ErrorOccurred
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.ErrorOccurredEventDuringProvisionalLoad
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.Errors
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.EventListenerRegistration
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.GetAllFrames
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.GetFrameWithMainFrame
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.GetFrameWithSubframe
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.RemoveListenerDuringEvent
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWebNavigation.URLKeyTypeChecking
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequest.BeforeRequestEventForSidebarSubframe
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequest.EventListenerRegistration
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequest.ManifestV2NonPersistent
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequest.ManifestV2Persistent
+[ mac ] TestWebKitAPI.WKWebExtensionAPIWebRequest.ResourceType
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/create()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createIncognitoWithPrivateAccess()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createIncognitoWithoutPrivateAccess()
@@ -8284,20 +8178,15 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createWithRelativeURL()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createWithRelativeURLs()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createdEvent()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/errors()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/focusChangedEvent()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getAll()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getAllWithPrivateAccess()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getCurrent()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getCurrentFromOptionsPage()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getCurrentWindowAfterTabMove()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getLastFocused()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getLastFocusedWithPrivateAccess()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getLastFocusedWithoutPrivateAccess()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/remove()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removeListenerDuringEvent()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removeUnsupported()
-[ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removedEvent()
 [ mac ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/update()
 [ mac ] TestWebKitAPI.WKWebExtensionContext.CallingMissingBrowserAPIInBackground
 [ mac ] TestWebKitAPI.WKWebExtensionContext.CommandsParsing
@@ -8324,29 +8213,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ mac ] TestWebKitAPI.WKWebExtensionContext.UncaughtScriptErrorInServiceWorkerBackground
 [ mac ] TestWebKitAPI.WKWebExtensionContext.UnhandledPromiseRejectionInBackground
 [ mac ] TestWebKitAPI.WKWebExtensionContext.UnhandledPromiseRejectionInServiceWorkerBackground
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.AboutBlankChildOfHostPermittedFrameSeesItsCookies
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.BroadcastChannelIsUnpartitionedInHostPermittedFrame
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.CacheStorageIsUnpartitionedInHostPermittedFrame
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.CrossSiteNavigationOfHostPermittedFrameDoesNotSendStrictCookies
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.DedicatedWorkerOfHostPermittedFrameIsUnpartitioned
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.FileSystemIsUnpartitionedInHostPermittedFrame
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.HostPermissionWithPathAppliesToWholeSite
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.IndexedDBIsUnpartitionedInHostPermittedFrame
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.LocalStorageIsUnpartitionedInHostPermittedFrame
 [ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.NonExtensionPageDoesNotGiveSubframesUnpartitionedAccess
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectIntoHostPermittedFrameIsUnpartitioned
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectIntoHostPermittedFrameIsUnpartitionedWithSiteIsolation
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectOutOfHostPermittedFrameIsPartitioned
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.RedirectOutOfHostPermittedFrameIsPartitionedWithSiteIsolation
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteCookiesAreSentToHostPermittedFrame
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteCookiesAreSentToHostPermittedFrameWithSiteIsolation
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteNavigationOfHostPermittedFrameSendsStrictCookies
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteNavigationToOtherHostOfHostPermittedFrameIsUnpartitioned
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SameSiteNavigationToOtherHostOfHostPermittedFrameIsUnpartitionedWithSiteIsolation
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.ServiceWorkerControlsHostPermittedFrame
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SessionStorageIsUnpartitionedInHostPermittedFrame
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.SharedWorkerOfHostPermittedFrameIsUnpartitioned
-[ mac ] TestWebKitAPI.WKWebExtensionUnpartitionedStorage.WebLocksAreUnpartitionedInHostPermittedFrame
 [ mac ] TestWebKitAPI.WKWebView.AlwaysShowsScroller
 [ mac ] TestWebKitAPI.WKWebView.AuxiliaryWindowsShareLocalStorage
 [ mac ] TestWebKitAPI.WKWebView.CheckMediaPlaybackExists
