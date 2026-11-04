@@ -83,6 +83,7 @@
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
 #include "ScriptTrackingPrivacyCategory.h"
+#include "SharedBuffer.h"
 #include "StereoPannerNode.h"
 #include "StereoPannerOptions.h"
 #include "WaveShaperNode.h"
@@ -320,14 +321,15 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
 
     if (!m_audioDecoder)
         m_audioDecoder = makeUnique<AsyncAudioDecoder>();
+    Vector<uint8_t> audioDataCopy;
+    if (!audioDataCopy.tryAppend(audioData->span())) {
+        promise->reject(Exception { ExceptionCode::QuotaExceededError, "Not enough memory to decode the audio data"_s });
+        return;
+    }
 
-    audioData->pin();
-
-    auto p = m_audioDecoder->decodeAsync(audioData.copyRef(), sampleRate());
-    p->whenSettled(RunLoop::currentSingleton(), [audioData = WTF::move(audioData), activity = makePendingActivity(*this), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback), promise = WTF::move(promise)] (DecodingTaskPromise::Result&& result) mutable {
-        activity->object().queueTaskKeepingObjectAlive(activity->object(), TaskSource::InternalAsyncTask, [audioData = WTF::move(audioData), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback), promise = WTF::move(promise), result = WTF::move(result)](auto&) mutable {
-
-            audioData->unpin();
+    auto p = m_audioDecoder->decodeAsync(SharedBuffer::create(WTF::move(audioDataCopy)), sampleRate());
+    p->whenSettled(RunLoop::currentSingleton(), [activity = makePendingActivity(*this), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback), promise = WTF::move(promise)] (DecodingTaskPromise::Result&& result) mutable {
+        activity->object().queueTaskKeepingObjectAlive(activity->object(), TaskSource::InternalAsyncTask, [successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback), promise = WTF::move(promise), result = WTF::move(result)](auto&) mutable {
 
             if (!result) {
                 promise->reject(WTF::move(result.error()));
