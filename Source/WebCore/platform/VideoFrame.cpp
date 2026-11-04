@@ -68,15 +68,13 @@ Ref<VideoFrame> VideoFrame::updateTimestamp(MediaTime mediaTime, ShouldCloneWith
     return updatedVideoFrame;
 }
 
+#if PLATFORM(COCOA)
 bool VideoFrame::is10bits() const
 {
-#if PLATFORM(COCOA)
     auto pixelFormat = this->pixelFormat();
     return pixelFormat == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange || pixelFormat == kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
-#else
-    return false;
-#endif
 }
+#endif
 
 #if !PLATFORM(COCOA) && !USE(GSTREAMER)
 RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage&)
@@ -132,7 +130,14 @@ RefPtr<NativeImage> VideoFrame::copyNativeImage() const
     // FIXME: Add support.
     return nullptr;
 }
-#endif // !PLATFORM(COCOA)
+
+bool VideoFrame::is10bits() const
+{
+    // FIXME: Add support.
+    return false;
+}
+
+#endif // !PLATFORM(COCOA) && !USE(GSTREAMER)
 
 }
 

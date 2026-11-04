@@ -732,6 +732,12 @@ RefPtr<NativeImage> VideoFrame::copyNativeImage() const
     return NativeImage::create(image->image());
 }
 
+bool VideoFrame::is10bits() const
+{
+    auto& gstFrame = downcast<VideoFrameGStreamer>(*this);
+    return GST_VIDEO_FORMAT_INFO_DEPTH(gstFrame.info().finfo, 0) == 10;
+}
+
 GRefPtr<GstSample> VideoFrameGStreamer::resizedSample(const IntSize& destinationSize)
 {
     return convert(static_cast<GstVideoFormat>(pixelFormat()), destinationSize);
