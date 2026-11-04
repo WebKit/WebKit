@@ -317,8 +317,7 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
             usedBlockSizes.append(usedBlockSize);
         } else {
             integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, { }, gridAreaInlineSize, gridAreaBlockSize);
-            // The item's padding in its box geometry is resolved against the grid container rather than
-            // the grid area, so only take the content box size from it.
+            // Add the border and padding sums to the content box height the item's layout produced.
             usedBlockSizes.append(formattingContext.geometryForGridItem(gridItem.layoutBox()).contentBoxHeight() + blockBorderAndPadding);
         }
     }
