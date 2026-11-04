@@ -1,0 +1,18 @@
+<style>
+    #inline {
+        color: green;
+    }
+</style>
+<script>
+function adopt(text)
+{
+    let sheet = new CSSStyleSheet();
+    sheet.replaceSync(text);
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+}
+
+adopt("#onload { color: orange; }");
+</script>
+<p id="inline">Styled by a style tag.</p>
+<p id="onload">Styled by a sheet adopted before the inspector attached.</p>
+<p id="selected">Styled by a sheet adopted while its styles are shown.</p>
