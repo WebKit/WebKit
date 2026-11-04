@@ -389,7 +389,7 @@ NODELETE static UnicodeBidi forceBidiIsolationForRuby(UnicodeBidi unicodeBidi)
     return UnicodeBidi::Isolate;
 }
 
-static bool shouldTreatAutoZIndexAsZero(const Style::ComputedStyle& style)
+bool Adjuster::shouldTreatAutoZIndexAsZero(const Style::ComputedStyle& style)
 {
     return !style.opacity().isOpaque()
         || style.hasTransformRelatedProperty()
@@ -570,7 +570,7 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
         // must be positioned for z-index to apply to them.
         if (element && element->document().settings().layerBasedSVGEngineEnabled()) {
             if (auto* svgElement = dynamicDowncast<SVGElement>(*element); svgElement && svgElement->isOutermostSVGSVGElement())
-                return style.position() == PositionType::Static;
+                return style.position() == PositionType::Static && !parentBoxStyle.display().isFlexibleBoxIncludingDeprecatedOrGridFormattingContextBox();
 
             return false;
         }
