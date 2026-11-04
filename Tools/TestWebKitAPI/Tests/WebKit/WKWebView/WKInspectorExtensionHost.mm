@@ -51,8 +51,6 @@
 
 TEST(WKInspectorExtensionHost, RegisterExtension)
 {
-    resetGlobalState();
-
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -101,8 +99,6 @@ TEST(WKInspectorExtensionHost, RegisterExtension)
 
 TEST(WKInspectorExtensionHost, UnregisterExtension)
 {
-    resetGlobalState();
-
     RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);

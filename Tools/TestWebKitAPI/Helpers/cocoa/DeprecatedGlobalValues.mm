@@ -44,3 +44,13 @@ WKScriptMessage *getNextMessage()
 
     return scriptMessages.takeFirst().autorelease();
 }
+
+void resetCocoaGlobalState()
+{
+    lastScriptMessage = nil;
+    sharedURLSchemeHandler = nil;
+    sharedInspectorExtension = nil;
+    sharedExtensionTabIdentifier = nil;
+    [receivedMessages removeAllObjects];
+    scriptMessages.clear();
+}
