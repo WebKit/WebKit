@@ -470,6 +470,15 @@ void InlineContentBuilder::computeOverflowFromBoxes(InlineContent& inlineContent
             lineInkOverflowRect.inflate(leadingOverflow, { }, trailingOverflow, { });
         }
 
+        if (line.hasEllipsis()) {
+            // "If any part of the block overflow ellipsis overflows, it is treated as scrollable overflow"
+            // https://drafts.csswg.org/css-overflow-4/#block-ellipsis
+            if (auto ellipsis = inlineContent.displayContent().lineEllipsis(lineIndex); ellipsis && ellipsis->type == InlineDisplay::Line::Ellipsis::Type::Block) {
+                lineScrollableOverflowRect.unite(ellipsis->visualRect);
+                lineInkOverflowRect.unite(ellipsis->visualRect);
+            }
+        }
+
         line.setScrollableOverflow(lineScrollableOverflowRect);
         line.setInkOverflow(lineInkOverflowRect);
         line.setFirstBoxIndex(firstBoxIndex);
