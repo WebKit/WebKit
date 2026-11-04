@@ -166,6 +166,7 @@ public:
 
     bool animatesMotionPath() const;
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
+    IntOutsets computeExtentOfFilterAnimation() const;
     bool forceLayoutIfNeeded();
 
     enum class Accelerated : bool { No, Yes };
@@ -230,6 +231,7 @@ private:
     void addPendingAcceleratedAction(AcceleratedAction);
     void updateAcceleratedActions();
     void setAnimatedPropertiesInStyle(Style::ComputedStyle&, const ComputedEffectTiming&) const;
+    template<typename KeyframeMatches, typename Functor> bool forEachKeyframeStyle(const KeyframeMatches&, const Functor&) const;
     const TimingFunction* timingFunctionForKeyframeAtIndex(size_t) const;
     const TimingFunction* timingFunctionForBlendingKeyframe(const BlendingKeyframe&) const;
     Ref<const GraphicsLayerAnimation> backingAnimationForCompositedRenderer();

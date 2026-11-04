@@ -5809,6 +5809,8 @@ bool RenderLayer::getOverlapBoundsIncludingChildrenAccountingForTransformAnimati
     auto boundsFlags = additionalFlags | (defaultCalculateLayerBoundsFlags() - IncludeSelfTransform);
 
     bounds = calculateLayerBounds(this, LayoutSize(), boundsFlags);
+    if (m_backing)
+        bounds.expand(toLayoutBoxExtent(m_backing->filterAnimationOutsets()));
 
     LayoutRect animatedBounds = bounds;
     if (auto styleable = Styleable::fromRenderer(renderer())) {
@@ -5835,7 +5837,7 @@ FloatRect RenderLayer::absoluteBoundingBoxForPainting() const
 
 LayoutRect RenderLayer::overlapBounds() const
 {
-    if (overlapBoundsIncludeChildren())
+    if (overlapBoundsIncludeChildren() || (m_backing && !m_backing->filterAnimationOutsets().isZero()))
         return calculateLayerBounds(this, { }, { UseLocalClipRectExcludingCompositingIfPossible, IncludeFilterOutsets, UseFragmentBoxesExcludingCompositing });
 
     return localBoundingBox();
@@ -5960,8 +5962,12 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     for (auto* childLayer : normalFlowLayers())
         computeLayersUnion(*childLayer);
 
-    if (flags.contains(IncludeFilterOutsets) || (flags.contains(IncludePaintedFilterOutsets) && shouldPaintWithFilters(flags & IncludeCompositedDescendants ? PaintBehavior::FlattenCompositingLayers : OptionSet<PaintBehavior>())))
-        unionBounds.expand(toLayoutBoxExtent(filterOutsets()));
+    if (flags.contains(IncludeFilterOutsets) || (flags.contains(IncludePaintedFilterOutsets) && shouldPaintWithFilters(flags & IncludeCompositedDescendants ? PaintBehavior::FlattenCompositingLayers : OptionSet<PaintBehavior>()))) {
+        auto outsets = filterOutsets();
+        if (flags.contains(IncludeFilterOutsets) && m_backing)
+            outsets = max(outsets, m_backing->filterAnimationOutsets());
+        unionBounds.expand(toLayoutBoxExtent(outsets));
+    }
 
     if ((flags & IncludeSelfTransform) && paintsWithTransform(PaintBehavior::Normal)) {
         TransformationMatrix* affineTrans = transform();

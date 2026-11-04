@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/BoxExtents.h>
 #include <WebCore/BoxSides.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatPoint3D.h>
@@ -33,6 +34,7 @@
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/ScrollingCoordinator.h>
+#include <wtf/HashMap.h>
 #include <wtf/Platform.h>
 #include <wtf/Range.h>
 #include <wtf/TZoneMalloc.h>
@@ -207,10 +209,12 @@ public:
     void contentChanged(ContentChangeType, const std::optional<FloatRect>&);
 
     // Interface to start and finish animations.
-    bool startAnimation(double timeOffset, const GraphicsLayerAnimation&, const BlendingKeyframes&);
+    bool startAnimation(double timeOffset, const GraphicsLayerAnimation&, const BlendingKeyframes&, const IntOutsets& filterAnimationOutsets);
     void animationPaused(double timeOffset, const String& name);
     void animationFinished(const String& name);
     void transformRelatedPropertyDidChange();
+
+    const IntOutsets& filterAnimationOutsets() const { return m_filterAnimationOutsets; }
 
 #if ENABLE(THREADED_ANIMATIONS)
     NODELETE const AcceleratedEffectStack* acceleratedEffectStack() const;
@@ -481,6 +485,7 @@ private:
 
     bool shouldClipCompositedBounds() const;
     static IntOutsets intersectClipsSampledByFilters(const RenderLayer&, const RenderLayer& rootLayer, LayoutRect& clipRect);
+    void updateFilterAnimationOutsets();
 
     bool hasTiledBackingFlatteningLayer() const { return (m_childContainmentLayer && m_isFrameLayerWithTiledBacking); }
     GraphicsLayer* tileCacheFlatteningLayer() const { return m_isFrameLayerWithTiledBacking ? m_childContainmentLayer.get() : nullptr; }
@@ -551,6 +556,12 @@ private:
     LayoutRect m_compositedBounds;
     LayoutSize m_subpixelOffsetFromRenderer; // This is the subpixel distance between the primary graphics layer and the associated renderer's bounds.
     LayoutSize m_compositedBoundsOffsetFromGraphicsLayer; // This is the subpixel distance between the primary graphics layer and the render layer bounds.
+
+    HashMap<String, IntOutsets> m_filterAnimationOutsetsByName;
+#if ENABLE(THREADED_ANIMATIONS)
+    IntOutsets m_filterAnimationOutsetsFromAcceleratedEffects;
+#endif
+    IntOutsets m_filterAnimationOutsets;
 
     Markable<ScrollingNodeID> m_viewportConstrainedNodeID;
     Markable<ScrollingNodeID> m_scrollingNodeID;

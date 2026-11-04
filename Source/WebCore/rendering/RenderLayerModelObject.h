@@ -86,7 +86,7 @@ public:
 
     NODELETE bool shouldPlaceVerticalScrollbarOnLeft() const;
 
-    bool startAnimation(double timeOffset, const GraphicsLayerAnimation&, const BlendingKeyframes&) override;
+    bool startAnimation(double timeOffset, const GraphicsLayerAnimation&, const BlendingKeyframes&, const IntOutsets& filterAnimationOutsets) override;
     void animationPaused(double timeOffset, const BlendingKeyframes&) override;
     void animationFinished(const BlendingKeyframes&) override;
     void transformRelatedPropertyDidChange() override;

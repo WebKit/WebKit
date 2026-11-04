@@ -2532,7 +2532,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
             return RunningAccelerated::Prevented;
 
         if (!m_hasImplicitKeyframeForAcceleratedProperty)
-            return renderer->startAnimation(timeOffset(), backingAnimationForCompositedRenderer(), m_blendingKeyframes) ? RunningAccelerated::Yes : RunningAccelerated::Failed;
+            return renderer->startAnimation(timeOffset(), backingAnimationForCompositedRenderer(), m_blendingKeyframes, computeExtentOfFilterAnimation()) ? RunningAccelerated::Yes : RunningAccelerated::Failed;
 
         // We need to resolve all animations up to this point to ensure any forward-filling
         // effect is accounted for when computing the "from" value for the accelerated animation.
@@ -2553,7 +2553,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
         BlendingKeyframes explicitKeyframes(m_blendingKeyframes.identifier());
         explicitKeyframes.copyKeyframes(m_blendingKeyframes);
         explicitKeyframes.fillImplicitKeyframes(*this, *underlyingStyle);
-        return renderer->startAnimation(timeOffset(), backingAnimationForCompositedRenderer(), explicitKeyframes) ? RunningAccelerated::Yes : RunningAccelerated::Failed;
+        return renderer->startAnimation(timeOffset(), backingAnimationForCompositedRenderer(), explicitKeyframes, computeExtentOfFilterAnimation()) ? RunningAccelerated::Yes : RunningAccelerated::Failed;
     };
 
     for (const auto& action : pendingAcceleratedActions) {
@@ -2664,6 +2664,53 @@ const Style::ComputedStyle& KeyframeEffect::currentStyle() const
     return Style::ComputedStyle::defaultStyleSingleton();
 }
 
+template<typename KeyframeMatches, typename Functor>
+bool KeyframeEffect::forEachKeyframeStyle(const KeyframeMatches& keyframeMatches, const Functor& function) const
+{
+    CheckedPtr unanimatedStyle = [&] -> const Style::ComputedStyle* {
+        if (auto target = targetStyleable()) {
+            if (auto* lastStyleChangeEventStyle = target->lastStyleChangeEventStyle())
+                return lastStyleChangeEventStyle;
+        }
+        if (auto* renderer = this->renderer())
+            return &renderer->style();
+        return nullptr;
+    }();
+    if (!unanimatedStyle)
+        return false;
+
+    bool visitedFromKeyframe = false;
+    bool visitedToKeyframe = false;
+    for (const auto& keyframe : m_blendingKeyframes) {
+        if (!keyframeMatches(keyframe))
+            continue;
+
+        auto offset = keyframe.offset();
+        if (std::isnan(offset))
+            return false;
+
+        if (!offset)
+            visitedFromKeyframe = true;
+        if (offset == 1.0)
+            visitedToKeyframe = true;
+
+        auto blendedStyleForKeyframe = Style::ComputedStyle::clonePtr(*unanimatedStyle);
+
+        ComputedEffectTiming computedTiming;
+        computedTiming.currentIteration = 0;
+        computedTiming.progress = offset;
+
+        setAnimatedPropertiesInStyle(*blendedStyleForKeyframe, computedTiming);
+
+        if (!function(*blendedStyleForKeyframe))
+            return false;
+    }
+
+    if (!visitedFromKeyframe || !visitedToKeyframe)
+        return function(*unanimatedStyle);
+    return true;
+}
+
 bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
 {
     ASSERT(animatablePropertiesContainTransformRelatedProperty(m_blendingKeyframes.properties()));
@@ -2678,16 +2725,8 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
 
     auto rendererBox = snapRectToDevicePixels(box->borderBoxRect(), protect(box->document())->deviceScaleFactor());
     TransformOperationData transformOperationData(rendererBox, box);
+
     LayoutRect cumulativeBounds;
-
-    CheckedPtr unanimatedStyle = [&]() {
-        if (auto target = targetStyleable()) {
-            if (auto* lastStyleChangeEventStyle = target->lastStyleChangeEventStyle())
-                return lastStyleChangeEventStyle;
-        }
-        return &box->style();
-    }();
-
     auto addStyleToCumulativeBounds = [&](const Style::ComputedStyle& style) {
         auto keyframeBounds = bounds;
 
@@ -2718,40 +2757,31 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
         return true;
     };
 
-    bool computedBoundsForFromKeyframe = false;
-    bool computedBoundsForToKeyframe = false;
-    for (const auto& keyframe : m_blendingKeyframes) {
-        if (!animatablePropertiesContainTransformRelatedProperty(keyframe.properties()))
-            continue;
-
-        auto offset = keyframe.offset();
-        if (std::isnan(offset))
-            return false;
-
-        if (!offset)
-            computedBoundsForFromKeyframe = true;
-        if (offset == 1.0)
-            computedBoundsForToKeyframe = true;
-
-        auto blendedStyleForKeyframe = Style::ComputedStyle::clonePtr(*unanimatedStyle);
-
-        ComputedEffectTiming computedTiming;
-        computedTiming.currentIteration = 0;
-        computedTiming.progress = offset;
-
-        setAnimatedPropertiesInStyle(*blendedStyleForKeyframe, computedTiming);
-
-        if (!addStyleToCumulativeBounds(*blendedStyleForKeyframe))
-            return false;
-    }
-
-    if (!computedBoundsForFromKeyframe || !computedBoundsForToKeyframe) {
-        if (!addStyleToCumulativeBounds(*unanimatedStyle))
-            return false;
-    }
+    auto animatesTransform = [](const BlendingKeyframe& keyframe) {
+        return animatablePropertiesContainTransformRelatedProperty(keyframe.properties());
+    };
+    if (!forEachKeyframeStyle(animatesTransform, addStyleToCumulativeBounds))
+        return false;
 
     bounds = cumulativeBounds;
     return true;
+}
+
+IntOutsets KeyframeEffect::computeExtentOfFilterAnimation() const
+{
+    IntOutsets outsets;
+    if (!m_blendingKeyframes.containsProperty(CSSPropertyID::Filter))
+        return outsets;
+
+    auto animatesFilter = [](const BlendingKeyframe& keyframe) {
+        return keyframe.animatesProperty(CSSPropertyID::Filter);
+    };
+    forEachKeyframeStyle(animatesFilter, [&](const Style::ComputedStyle& style) {
+        if (auto styleOutsets = style.filter().calculateOutsets(style.usedZoomForLength()))
+            outsets = max(outsets, *styleOutsets);
+        return true;
+    });
+    return outsets;
 }
 
 bool KeyframeEffect::requiresPseudoElement() const

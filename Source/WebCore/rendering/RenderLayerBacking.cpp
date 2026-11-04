@@ -949,10 +949,12 @@ static IntOutsets filterSamplingOutsets(const RenderLayer& layer)
     if (auto* backing = layer.backing(); backing && !filter.isNone() && !backing->canCompositeFilters())
         return { };
 
-    if (!filter.hasFilterThatMovesPixels())
-        return { };
-
-    return clampedFilterSamplingOutsets(renderer.computeFilterOutsets()).xyFlippedCopy();
+    IntOutsets outsets;
+    if (auto* backing = layer.backing())
+        outsets = backing->filterAnimationOutsets();
+    if (filter.hasFilterThatMovesPixels())
+        outsets = max(outsets, renderer.computeFilterOutsets());
+    return clampedFilterSamplingOutsets(outsets).xyFlippedCopy();
 }
 
 static void expandClipRectByFilterSamplingOutsets(LayoutRect& clipRect, const IntOutsets& outsets)
@@ -1000,6 +1002,24 @@ void RenderLayerBacking::updateFilters(const Style::ComputedStyle& style)
     bool hasReferenceFilter = style.filter().hasReferenceFilter();
     m_canCompositeFilters = m_graphicsLayer->setFilters(hasReferenceFilter ? FilterOperations { } : Style::toPlatform(style.filter(), style)) && !hasReferenceFilter;
     m_graphicsLayer->setFilterSamplingOutsets(filterSamplingOutsets(m_owningLayer));
+}
+
+void RenderLayerBacking::updateFilterAnimationOutsets()
+{
+    IntOutsets outsets;
+    for (auto& animationOutsets : m_filterAnimationOutsetsByName.values())
+        outsets = max(outsets, animationOutsets);
+#if ENABLE(THREADED_ANIMATIONS)
+    outsets = max(outsets, m_filterAnimationOutsetsFromAcceleratedEffects);
+#endif
+    if (outsets == m_filterAnimationOutsets)
+        return;
+
+    m_filterAnimationOutsets = outsets;
+    m_graphicsLayer->setFilterSamplingOutsets(filterSamplingOutsets(m_owningLayer));
+    m_owningLayer.setDescendantsNeedUpdateBackingAndHierarchyTraversal();
+    m_owningLayer.setSubsequentLayersNeedCompositingRequirementsTraversal();
+    compositor().scheduleCompositingLayerUpdate();
 }
 
 void RenderLayerBacking::updateBackdropFilters(const Style::ComputedStyle& style)
@@ -5150,7 +5170,7 @@ void RenderLayerBacking::verifyNotPainting()
 }
 #endif
 
-bool RenderLayerBacking::startAnimation(double timeOffset, const GraphicsLayerAnimation& animation, const BlendingKeyframes& keyframes)
+bool RenderLayerBacking::startAnimation(double timeOffset, const GraphicsLayerAnimation& animation, const BlendingKeyframes& keyframes, const IntOutsets& filterAnimationOutsets)
 {
     if (renderer().capturedInViewTransition())
         return false;
@@ -5231,7 +5251,8 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const GraphicsLayerAn
     if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
         didAnimate = true;
 
-    if (hasFilter && m_graphicsLayer->addAnimation(filterVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
+    bool didAnimateFilter = hasFilter && m_graphicsLayer->addAnimation(filterVector, &animation, keyframes.acceleratedAnimationName(), timeOffset);
+    if (didAnimateFilter)
         didAnimate = true;
 
     if (hasBackdropFilter && m_graphicsLayer->addAnimation(backdropFilterVector, &animation, keyframes.acceleratedAnimationName(), timeOffset))
@@ -5241,6 +5262,12 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const GraphicsLayerAn
         m_owningLayer.setNeedsPostLayoutCompositingUpdate();
         m_owningLayer.setNeedsCompositingGeometryUpdate();
     }
+
+    if (didAnimateFilter && !filterAnimationOutsets.isZero()) {
+        m_filterAnimationOutsetsByName.set(keyframes.acceleratedAnimationName(), filterAnimationOutsets);
+        updateFilterAnimationOutsets();
+    } else if (m_filterAnimationOutsetsByName.remove(keyframes.acceleratedAnimationName()))
+        updateFilterAnimationOutsets();
 
     return didAnimate;
 }
@@ -5289,6 +5316,7 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
     OptionSet<AcceleratedEffectProperty> replacedAcceleratedProperties;
 
     AcceleratedEffects acceleratedEffects;
+    Vector<std::pair<Ref<AcceleratedEffect>, Ref<KeyframeEffect>>> filterEffects;
     HashSet<Ref<AcceleratedTimeline>> effectTimelines;
     if (auto* effectStack = target->keyframeEffectStack()) {
         if (effectStack->allowsAcceleration()) {
@@ -5344,6 +5372,8 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
                         disallowedAcceleratedProperties.add(AcceleratedEffectProperty::BackdropFilter);
                     hasEffectAffectingBackdropFilter = true;
                 }
+                if (acceleratedProperties.contains(AcceleratedEffectProperty::Filter))
+                    filterEffects.append(std::pair { acceleratedEffect, Ref { *effect } });
                 effectTimelines.add(Ref { *acceleratedEffect->timeline() });
                 acceleratedEffects.append(WTF::move(acceleratedEffect));
             }
@@ -5415,7 +5445,18 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
             effect->makeForwardsFilling();
     }
 
+    IntOutsets filterAnimationOutsetsFromAcceleratedEffects;
+    for (auto& [acceleratedEffect, effect] : filterEffects) {
+        if (!acceleratedEffect->animatedProperties().contains(AcceleratedEffectProperty::Filter))
+            continue;
+        if (acceleratedEffects.containsIf([&](auto& remainingEffect) { return remainingEffect.ptr() == acceleratedEffect.ptr(); }))
+            filterAnimationOutsetsFromAcceleratedEffects = max(filterAnimationOutsetsFromAcceleratedEffects, effect->computeExtentOfFilterAnimation());
+    }
+
     m_graphicsLayer->setAcceleratedEffectsAndBaseValues(WTF::move(acceleratedEffects), WTF::move(baseValues));
+
+    m_filterAnimationOutsetsFromAcceleratedEffects = filterAnimationOutsetsFromAcceleratedEffects;
+    updateFilterAnimationOutsets();
 
     if (!renderer.view().needsLayout() && !m_owningLayer.normalFlowListDirty() && !m_owningLayer.zOrderListsDirty())
         updateAnimationExtent();
@@ -5435,6 +5476,8 @@ void RenderLayerBacking::animationFinished(const String& animationName)
     m_graphicsLayer->removeAnimation(animationName, std::nullopt);
     m_owningLayer.setNeedsPostLayoutCompositingUpdate();
     m_owningLayer.setNeedsCompositingGeometryUpdate();
+    if (m_filterAnimationOutsetsByName.remove(animationName))
+        updateFilterAnimationOutsets();
 }
 
 void RenderLayerBacking::transformRelatedPropertyDidChange()

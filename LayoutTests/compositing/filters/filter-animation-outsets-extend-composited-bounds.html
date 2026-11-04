@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>A filter animation must grow the composited bounds of descendants by its largest keyframe outsets only while it runs</title>
+<style>
+@keyframes pulse-blur {
+    from { filter: blur(0px); }
+    50% { filter: blur(30px); }
+    to { filter: blur(0px); }
+}
+.clip {
+    position: relative;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+}
+.filtered {
+    position: absolute;
+    top: 0;
+    left: -100px;
+    width: 200px;
+    height: 100px;
+    animation: pulse-blur 1000s step-end forwards;
+}
+.box {
+    width: 90px;
+    height: 90px;
+    border: 5px solid green;
+    will-change: transform;
+}
+</style>
+</head>
+<body>
+<div class="clip">
+    <div class="filtered">
+        <div class="box"></div>
+    </div>
+</div>
+<p>While running:</p>
+<pre id="running"></pre>
+<p>After finishing:</p>
+<pre id="finished"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function nextFrames()
+{
+    return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+window.onload = async () => {
+    await nextFrames();
+    const running = internals.layerTreeAsText(document);
+
+    document.querySelector(".filtered").getAnimations()[0].finish();
+    await nextFrames();
+    const finished = internals.layerTreeAsText(document);
+
+    document.getElementById("running").textContent = running;
+    document.getElementById("finished").textContent = finished;
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

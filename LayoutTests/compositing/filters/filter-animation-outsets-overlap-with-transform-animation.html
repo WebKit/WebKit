@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<style>
+@keyframes blur { from, to { filter: blur(0px); } 50% { filter: blur(30px); } }
+@keyframes move { from { transform: translateY(0px); } to { transform: translateY(20px); } }
+div { position: absolute; top: 0; width: 100px; height: 100px; background: green; }
+#filtered { animation: blur 1000s step-end, move 1000s step-end; }
+#sibling { left: 150px; }
+</style>
+<div id="filtered"></div>
+<div id="sibling"></div>
+<pre id="log"></pre>
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+
+function logSiblingComposited(when)
+{
+    let composited = true;
+    try {
+        internals.layerIDForElement(sibling);
+    } catch {
+        composited = false;
+    }
+    log.textContent += `Sibling composited ${when}: ${composited}\n`;
+}
+
+const nextFrames = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+onload = async () => {
+    await nextFrames();
+    logSiblingComposited("while the filter animation runs");
+    filtered.getAnimations().forEach(animation => animation.finish());
+    await nextFrames();
+    logSiblingComposited("after the filter animation finished");
+    testRunner.notifyDone();
+};
+</script>

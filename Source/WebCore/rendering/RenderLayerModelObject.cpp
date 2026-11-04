@@ -296,11 +296,11 @@ bool RenderLayerModelObject::shouldPlaceVerticalScrollbarOnLeft() const
 #endif
 }
 
-bool RenderLayerModelObject::startAnimation(double timeOffset, const GraphicsLayerAnimation& animation, const BlendingKeyframes& keyframes)
+bool RenderLayerModelObject::startAnimation(double timeOffset, const GraphicsLayerAnimation& animation, const BlendingKeyframes& keyframes, const IntOutsets& filterAnimationOutsets)
 {
     if (!layer() || !layer()->backing())
         return false;
-    return layer()->backing()->startAnimation(timeOffset, animation, keyframes);
+    return layer()->backing()->startAnimation(timeOffset, animation, keyframes, filterAnimationOutsets);
 }
 
 void RenderLayerModelObject::animationPaused(double timeOffset, const BlendingKeyframes& keyframes)
