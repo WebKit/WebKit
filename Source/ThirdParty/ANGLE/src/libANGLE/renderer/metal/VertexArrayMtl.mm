@@ -622,16 +622,31 @@ angle::Result VertexArrayMtl::syncDirtyAttrib(const gl::Context *glContext,
                 (binding.getStride() < format.actualAngleFormat().pixelBytes) ||
                 (binding.getStride() % mtl::kVertexAttribBufferStrideAlignment) != 0;
 
-            unsigned srcFormatSize = format.actualAngleFormat().pixelBytes;
+            // Count source vertices with the GL attribute's type size, which is
+            // the basis the front-end uses for
+            // VertexAttribute::mCachedElementLimit. The actual Metal format is
+            // wider whenever the format needs conversion, eg.
+            // R10G10B10A2_SSCALED (4 bytes) is emulated as R32G32B32A32_FLOAT
+            // (16 bytes), so using it under-counts the vertices the source
+            // buffer holds.
+            unsigned srcFormatSize =
+                static_cast<unsigned>(gl::ComputeVertexAttributeTypeSize(attrib));
             size_t numVertices = GetVertexCount(bufferMtl, binding, srcFormatSize);
             if (numVertices == 0)
             {
                 // Out of bound buffer access, can return any values.
                 // See KHR_robust_buffer_access_behavior.
-                mCurrentArrayBuffers[attribIndex]       = bufferMtl;
-                mCurrentArrayBufferFormats[attribIndex] = &format;
+                // Metal does not implement this format expansion, and the
+                // buffer cannot hold even one vertex, so leave the attribute
+                // unbound and let setupDraw() supply the default attribute
+                // value instead of fetching past the end of the buffer.
+                mCurrentArrayBuffers[attribIndex]            = nullptr;
+                mCurrentArrayInlineDataPointers[attribIndex] = nullptr;
+                mCurrentArrayInlineDataSizes[attribIndex]    = 0;
+                mCurrentArrayBufferFormats[attribIndex] =
+                    &contextMtl->getVertexFormat(angle::FormatID::NONE, false);
                 mCurrentArrayBufferOffsets[attribIndex] = 0;
-                mCurrentArrayBufferStrides[attribIndex] = 16;
+                mCurrentArrayBufferStrides[attribIndex] = 0;
             }
             else if (needConversion)
             {
