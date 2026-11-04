@@ -374,6 +374,7 @@
 #include <wtf/CoroutineUtilities.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RunLoop.h>
+#include <wtf/SaturatingArithmetic.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
@@ -7574,8 +7575,20 @@ void WebPage::paintRemoteFrameContents(FrameIdentifier frameID, const IntRect& r
     // A frame can be painted more than once, as one straddling a page break is when printing. Each
     // placeholder draws the frame where it was painted, under the clip it was painted with, so the
     // frame records once, covering every part that was painted.
-    m_remoteSnapshotState->recorder->drawSnapshotFrame(frameID);
-    m_remoteSnapshotState->paintedFrameRects.add(frameID, IntRect { }).iterator->value.unite(rect);
+    // The frame's process applies its own scroll position (see drawFrameToSnapshot()). The one that this process has
+    // for the RemoteFrameView lags behind it, so draw the placeholder and pass the rect relative to the frame's visible
+    // content.
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    RefPtr remoteFrame = webFrame ? webFrame->coreRemoteFrame() : nullptr;
+    RefPtr remoteFrameView = remoteFrame ? remoteFrame->view() : nullptr;
+    auto scrollPosition = remoteFrameView ? remoteFrameView->scrollPosition() : IntPoint { };
+    {
+        GraphicsContextStateSaver stateSaver(context);
+        context.translate(scrollPosition.x(), scrollPosition.y());
+        m_remoteSnapshotState->recorder->drawSnapshotFrame(frameID);
+    }
+    IntRect rectRelativeToVisibleContent { { saturatingDifference(rect.x(), scrollPosition.x()), saturatingDifference(rect.y(), scrollPosition.y()) }, rect.size() };
+    m_remoteSnapshotState->paintedFrameRects.add(frameID, IntRect { }).iterator->value.unite(rectRelativeToVisibleContent);
 #else
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(rect);
@@ -7607,8 +7620,8 @@ bool WebPage::recordRemoteSnapshot(RemoteSnapshotIdentifier snapshotIdentifier, 
     // resolved. Dispatched even while the UI process is blocked waiting for the snapshot, since that
     // process is the one that asks the frame's process to record it.
     Ref parentProcessConnection = *WebProcess::singleton().parentProcessConnection();
-    for (auto& [paintedFrameID, rect] : m_remoteSnapshotState->paintedFrameRects)
-        parentProcessConnection->send(Messages::WebProcessProxy::DrawFrameToSnapshot(paintedFrameID, rect, snapshotIdentifier, renderingMode), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    for (auto& [paintedFrameID, rectRelativeToVisibleContent] : m_remoteSnapshotState->paintedFrameRects)
+        parentProcessConnection->send(Messages::WebProcessProxy::DrawFrameToSnapshot(paintedFrameID, rectRelativeToVisibleContent, snapshotIdentifier, renderingMode), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 
     remoteRenderingBackend->sinkSnapshotRecorderIntoSnapshotFrame(WTF::move(m_remoteSnapshotState->recorder), frameIdentifier, Ref { m_remoteSnapshotState->callback }->chain());
     m_remoteSnapshotState = std::nullopt;
@@ -7653,7 +7666,7 @@ void WebPage::drawToSnapshot(const std::optional<FloatRect>& rect, bool allowTra
 #endif
 }
 
-void WebPage::drawFrameToSnapshot(FrameIdentifier frameID, const IntRect& rect, RemoteSnapshotIdentifier snapshotIdentifier, RenderingMode renderingMode)
+void WebPage::drawFrameToSnapshot(FrameIdentifier frameID, const IntRect& rectRelativeToVisibleContent, RemoteSnapshotIdentifier snapshotIdentifier, RenderingMode renderingMode)
 {
 #if ENABLE(GPU_PROCESS)
     ASSERT(m_page->settings().siteIsolationEnabled());
@@ -7672,17 +7685,25 @@ void WebPage::drawFrameToSnapshot(FrameIdentifier frameID, const IntRect& rect, 
         return;
     }
 
-    bool recorded = recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Frame, renderingMode, rect, { }, MainRunLoopSuccessCallbackAggregator::create([](bool) { }), [&](GraphicsContext& context) {
+    bool recorded = recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Frame, renderingMode, rectRelativeToVisibleContent, { }, MainRunLoopSuccessCallbackAggregator::create([](bool) { }), [&](GraphicsContext& context) {
         LocalFrameView::SelectionInSnapshot shouldPaintSelection = LocalFrameView::IncludeSelection;
         LocalFrameView::CoordinateSpaceForSnapshot coordinateSpace = LocalFrameView::DocumentCoordinates;
 
-        frameView->paintContentsForSnapshot(context, rect, nullptr, shouldPaintSelection, coordinateSpace);
+        // Map the rect into the document with the frame's current scroll position (see paintRemoteFrameContents()),
+        // as ScrollView::paint() does. Layout can change it.
+        frameView->updateLayoutAndStyleIfNeededRecursive();
+        auto scrollPosition = frameView->scrollPosition();
+        GraphicsContextStateSaver stateSaver(context);
+        context.translate(-scrollPosition.x(), -scrollPosition.y());
+        IntRect documentRect { { saturatingSum(rectRelativeToVisibleContent.x(), scrollPosition.x()), saturatingSum(rectRelativeToVisibleContent.y(), scrollPosition.y()) }, rectRelativeToVisibleContent.size() };
+
+        frameView->paintContentsForSnapshot(context, documentRect, nullptr, shouldPaintSelection, coordinateSpace);
     });
     if (!recorded)
         abandon();
 #else
     UNUSED_PARAM(frameID);
-    UNUSED_PARAM(rect);
+    UNUSED_PARAM(rectRelativeToVisibleContent);
     UNUSED_PARAM(snapshotIdentifier);
 #endif
 }

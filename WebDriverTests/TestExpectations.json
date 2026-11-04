@@ -2689,7 +2689,7 @@
     "imported/w3c/webdriver/tests/classic/take_element_screenshot/iframe.py": {
         "subtests": {
             "test_frame_element": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/226134"}}
+                "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/226134"}}
             },
             "test_source_origin[cross_origin]": {
                 "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/205994"}}

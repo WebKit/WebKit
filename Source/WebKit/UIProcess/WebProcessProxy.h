@@ -789,7 +789,7 @@ private:
 #if ENABLE(GPU_PROCESS)
     void createGPUProcessConnection(GPUProcessConnectionIdentifier, IPC::Connection::Handle&&);
     void gpuProcessConnectionDidBecomeUnresponsive(GPUProcessConnectionIdentifier);
-    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect&, RemoteSnapshotIdentifier, WebCore::RenderingMode);
+    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect& rectRelativeToVisibleContent, RemoteSnapshotIdentifier, WebCore::RenderingMode);
 #endif
 
 #if HAVE(IOSURFACE)
