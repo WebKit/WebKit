@@ -118,7 +118,7 @@ function(GENERATE_BINDINGS target)
     foreach (f ${_abs_input_files} ${_abs_supplemental_files} ${_abs_included_files})
         set(include_content "${include_content}${f}\n")
     endforeach ()
-    file(WRITE ${included_idl_files_list} ${include_content})
+    file(CONFIGURE OUTPUT ${included_idl_files_list} CONTENT "${include_content}" @ONLY)
 
     set(args
         --defines ${arg_FEATURES}
