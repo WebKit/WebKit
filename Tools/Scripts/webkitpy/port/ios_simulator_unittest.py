@@ -158,6 +158,24 @@ class IOSSimulatorTest(ios_testcase.IOSTest):
             '/mock-checkout/LayoutTests/platform/wk2',
         ])
 
+    def test_api_test_expectations_files_with_apple_additions(self):
+        # 'ios' and 'ios-<version>' map to the same internal platform, as do 'ios-simulator' and 'ios-simulator-<version>'.
+        # Each internal file should only be listed once.
+        with port_testcase.bind_mock_apple_additions():
+            port = self.make_port()
+            major_os_version = port.device_version().major
+            files = port.api_test_expectations_files()
+
+        self.assertEqual(files, [
+            '/mock-checkout/TestExpectations/apitests',
+            '/mock-checkout/TestExpectations/platform/ios/apitests',
+            f'/additional_testing_path/APITestExpectationsForUnreleasedSoftware/ios-add-ios{major_os_version}/apitests',
+            f'/mock-checkout/TestExpectations/platform/ios-{major_os_version}/apitests',
+            '/mock-checkout/TestExpectations/platform/ios-simulator/apitests',
+            f'/additional_testing_path/APITestExpectationsForUnreleasedSoftware/ios-add-ios{major_os_version}-simulator/apitests',
+            f'/mock-checkout/TestExpectations/platform/ios-simulator-{major_os_version}/apitests',
+        ])
+
     def test_layout_searchpath_wih_device_type(self):
         port = self.make_port(port_name='ios-simulator-wk2')
         major_os_version = port._options.version.split('.')[0]

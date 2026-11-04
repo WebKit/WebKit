@@ -1384,7 +1384,12 @@ class Port(object):
             if internal_name and port_config.apple_additions():
                 internal_path = self._apple_api_test_expectations_path(internal_name)
                 if internal_path:
-                    files.append(self._filesystem.join(internal_path, 'apitests'))
+                    # Only list each internal file once, since several cascade entries can map
+                    # to the same internal platform (e.g. 'mac' and 'mac-<version>'), and multiple
+                    # loads would report every expectation as a duplicate of itself.
+                    internal_file = self._filesystem.join(internal_path, 'apitests')
+                    if internal_file not in files:
+                        files.append(internal_file)
 
         return files
 
