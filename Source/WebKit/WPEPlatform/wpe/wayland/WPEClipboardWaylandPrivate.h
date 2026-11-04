@@ -28,3 +28,4 @@
 #include "WPEClipboardWayland.h"
 
 void wpeClipboardWaylandInvalidate(WPEClipboardWayland*);
+void wpeClipboardWaylandSeatChanged(WPEClipboardWayland*);
