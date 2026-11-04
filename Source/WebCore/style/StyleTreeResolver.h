@@ -128,6 +128,7 @@ private:
         OptionSet<Change> changes;
         DescendantsToResolve descendantsToResolve { DescendantsToResolve::None };
         bool didPushScope { false };
+        bool didPushEnclosingScope { false };
         bool resolvedFirstLineAndLetterChild { false };
         bool needsUpdateQueryContainerDependentStyle { false };
         IsInDisplayNoneTree isInDisplayNoneTree { IsInDisplayNoneTree::No };
@@ -151,6 +152,7 @@ private:
 
     void pushScope(ShadowRoot&);
     void pushEnclosingScope();
+    void popEnclosingScope();
     void popScope();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
