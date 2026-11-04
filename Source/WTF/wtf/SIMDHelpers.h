@@ -227,6 +227,11 @@ ALWAYS_INLINE void store4x(simde_uint64x2x4_t value, uint64_t* ptr)
     return simde_vst4q_u64(ptr, value);
 }
 
+ALWAYS_INLINE uint64_t loadAndSaturateNarrowToU64(const uint16_t* ptr)
+{
+    return simde_vget_lane_u64(simde_vreinterpret_u64_u8(simde_vqmovn_u16(load(ptr))), 0);
+}
+
 ALWAYS_INLINE uint16_t sum(simde_uint8x16_t value)
 {
     return simde_vaddlvq_u8(value);

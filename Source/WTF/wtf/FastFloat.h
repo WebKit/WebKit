@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <array>
+#include <cfloat>
 #include <optional>
 #include <span>
 #include <unicode/utypes.h>
@@ -40,5 +42,27 @@ WTF_EXPORT_PRIVATE double parseFixedDouble(std::span<const char16_t> string, siz
 
 WTF_EXPORT_PRIVATE std::optional<double> parseJSONDouble(std::span<const Latin1Character> string, size_t& parsedLength);
 WTF_EXPORT_PRIVATE std::optional<double> parseJSONDouble(std::span<const char16_t> string, size_t& parsedLength);
+
+WTF_EXPORT_PRIVATE double parseJSONDoubleFromDigitsSlow(uint64_t mantissa, int64_t exponent);
+
+// Requires a mantissa of at most |digitCount| <= 19 significant digits. The result is mantissa * 10^exponent.
+ALWAYS_INLINE double parseJSONDoubleFromDigits(uint64_t mantissa, int64_t exponent, size_t digitCount)
+{
+    // Fifteen digits are always below 2^53. Unlike the mantissa, the digit count is known before the
+    // mantissa is computed, and it does not alternate between full precision doubles of 16 and 17 digits.
+    constexpr size_t maxDigitsOfExactInteger = 15;
+    // With extended precision intermediates, as on x87, the operation would be rounded twice.
+    constexpr bool roundsOnceToDouble = FLT_EVAL_METHOD >= 0 && FLT_EVAL_METHOD <= 1;
+    if (roundsOnceToDouble && digitCount <= maxDigitsOfExactInteger && exponent >= -22 && exponent <= 22) {
+        // Both operands are exact, so one correctly rounded operation gives the correctly rounded result.
+        static constexpr std::array<double, 23> exactPowersOfTen {
+            1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11,
+            1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18, 1e19, 1e20, 1e21, 1e22,
+        };
+        double value = static_cast<double>(mantissa);
+        return exponent < 0 ? value / exactPowersOfTen[-exponent] : value * exactPowersOfTen[exponent];
+    }
+    return parseJSONDoubleFromDigitsSlow(mantissa, exponent);
+}
 
 } // namespace WTF
