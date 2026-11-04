@@ -118,6 +118,7 @@ public:
         PausedForDebuggerStatement,
         PausedAfterBlackboxedScript,
         PausedAfterAwait,
+        PausedAtDefaultClassConstructor,
     };
     ReasonForPause reasonForPause() const { return m_reasonForPause; }
     BreakpointID pausingBreakpointID() const { return m_pausingBreakpointID; }
