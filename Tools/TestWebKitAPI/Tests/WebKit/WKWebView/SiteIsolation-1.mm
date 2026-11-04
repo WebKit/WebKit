@@ -1719,6 +1719,18 @@ TEST(SiteIsolation, AccessibilityRectsEnclosingSelectionOffsetInCrossOriginIfram
     expectRectInPositionedCrossOriginIframe(firstRect);
 }
 
+// Each process reports the text inputs in its own frames, and the UI process lists them in whatever order the
+// replies arrive, so sort them to give tests a stable order.
+static RetainPtr<NSArray<_WKTextInputContext *>> textInputContextsSortedByX(TestWKWebView *webView, CGRect rect)
+{
+    RetainPtr contexts = [webView synchronouslyRequestTextInputContextsInRect:rect];
+    return [contexts sortedArrayUsingComparator:^NSComparisonResult(_WKTextInputContext *a, _WKTextInputContext *b) {
+        if (CGRectGetMinX(a.boundingRect) == CGRectGetMinX(b.boundingRect))
+            return NSOrderedSame;
+        return CGRectGetMinX(a.boundingRect) < CGRectGetMinX(b.boundingRect) ? NSOrderedAscending : NSOrderedDescending;
+    }];
+}
+
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
 
 TEST(SiteIsolation, DocumentEditingContextInCrossOriginIframe)
@@ -1753,9 +1765,10 @@ TEST(SiteIsolation, DocumentEditingContextForTextInputOutsideFocusedCrossOriginI
 
     auto [webView, navigationDelegate, childFrame] = webViewWithFocusedCrossOriginIframe(server);
 
-    // A request that names a text input has to go to that input's process, not to the focused iframe's.
-    RetainPtr textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
-    ASSERT_GE([textInputContexts count], 1U);
+    // A request that names a text input has to go to that input's process, not to the focused iframe's. The
+    // iframe's body is editable too, and the main frame's input is the context to its left.
+    RetainPtr textInputContexts = textInputContextsSortedByX(webView.get(), [webView bounds]);
+    ASSERT_EQ(2U, [textInputContexts count]);
 
     RetainPtr request = adoptNS([[UIWKDocumentRequest alloc] init]);
     [request setFlags:UIWKDocumentRequestText];
@@ -1887,16 +1900,6 @@ TEST(SiteIsolation, RequestTextInputContextsInRectCoveringCrossOriginIframe)
     NSArray<_WKTextInputContext *> *contexts = synchronouslyRequestTextInputContextsInRect(webView.get(), [webView bounds]);
 
     EXPECT_EQ(1UL, [contexts count]);
-}
-
-static RetainPtr<NSArray<_WKTextInputContext *>> textInputContextsSortedByX(TestWKWebView *webView, CGRect rect)
-{
-    RetainPtr contexts = [webView synchronouslyRequestTextInputContextsInRect:rect];
-    return [contexts sortedArrayUsingComparator:^NSComparisonResult(_WKTextInputContext *a, _WKTextInputContext *b) {
-        if (CGRectGetMinX(a.boundingRect) == CGRectGetMinX(b.boundingRect))
-            return NSOrderedSame;
-        return CGRectGetMinX(a.boundingRect) < CGRectGetMinX(b.boundingRect) ? NSOrderedAscending : NSOrderedDescending;
-    }];
 }
 
 TEST(SiteIsolation, RequestTextInputContextsInRectCoveringOffsetCrossOriginIframes)
