@@ -24,7 +24,7 @@ from flask import abort, jsonify
 from resultsdbpy.controller.commit_controller import uuid_range_for_query, HasCommitContext
 from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.controller.configuration_controller import configuration_for_query
-from resultsdbpy.controller.suite_controller import time_range_for_query
+from resultsdbpy.controller.suite_controller import sub_suite_for_query, time_range_for_query
 from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query, boolean_query
 
 
@@ -46,7 +46,7 @@ class FailureController(HasCommitContext):
         branch=None, begin=None, end=None,
         begin_query_time=None, end_query_time=None,
         unexpected=None, collapsed=None,
-        limit=None, **kwargs
+        limit=None, sub_suite=None, **kwargs
     ):
         AssertRequest.is_type(['GET'])
         AssertRequest.query_kwargs_empty(**kwargs)
@@ -57,6 +57,7 @@ class FailureController(HasCommitContext):
 
         if not suite:
             abort(400, description='No suite specified')
+        sub_suite = sub_suite_for_query(sub_suite)
 
         with self.failure_context:
             query_dict = dict(
@@ -64,7 +65,7 @@ class FailureController(HasCommitContext):
                 configurations=configurations, recent=recent,
                 branch=branch[0], begin=begin, end=end,
                 begin_query_time=begin_query_time, end_query_time=end_query_time,
-                limit=limit, unexpected=unexpected, collapsed=collapsed,
+                limit=limit, unexpected=unexpected, collapsed=collapsed, sub_suite=sub_suite,
             )
             num_specified_commits = sum([1 if element else 0 for element in [begin, end]])
             num_specified_timestamps = sum([1 if element else 0 for element in [begin_query_time, end_query_time]])

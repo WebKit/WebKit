@@ -52,7 +52,7 @@ class SuiteView(HasCommitContext):
         self, suite=None, configurations=None, recent=None,
         branch=None, begin=None, end=None,
         begin_query_time=None, end_query_time=None,
-        limit=None, **kwargs
+        limit=None, sub_suite=None, **kwargs
     ):
         AssertRequest.is_type(['GET'])
         AssertRequest.query_kwargs_empty(**kwargs)
@@ -67,7 +67,7 @@ class SuiteView(HasCommitContext):
             for suites_for_config in suites_by_configuration.values():
                 for s in suites_for_config:
                     candidate_suites.add(s)
-            return sorted([s for s in candidate_suites if not suite or s in suite])
+            return sorted(candidate_suites)
 
     @SiteMenu.render_with_site_menu()
     def results(self, **kwargs):

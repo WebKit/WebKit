@@ -260,3 +260,32 @@ const DASHBOARD_QUERY = JSON.parse('[{"title": "Main Build", "suite": "Build"}, 
 
 export {XCODE_CLOUD_SUITES, DEFAULT_ARCHITECTURE, TESTS_LIMITS, SUITES_LIMITS, COMMITS_LIMITS, DASHBOARD_QUERY}''',
         )
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_suites_sub_suite(self, client, **kwargs):
+        self.assertEqual(client.get(f'{self.URL}/suites?suite=api-tests&sub_suite=api-tests/TestWebKitAPI').status_code, 200)
+        self.assertEqual(client.get(f'{self.URL}/suites?suite=api-tests&sub_suites=api-tests/TestWebKitAPI').status_code, 400)
+
+
+class SuitesPageUnittest(FlaskTestCase, WaitForDockerTestCase):
+    KEYSPACE = 'suites_page_unittest_keyspace'
+
+    @classmethod
+    def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True))
+            MockModelFactory.add_mock_results(model)
+            MockModelFactory.add_mock_results(model, suite='api-tests')
+            api_routes = APIRoutes(model=model, import_name=__name__)
+            app.register_blueprint(api_routes)
+            app.register_blueprint(ViewRoutes(model=model, controller=api_routes, import_name=__name__))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_suites_lists_every_suite(self, client, **kwargs):
+        for query in ['', '?suite=api-tests', '?suite=']:
+            response = client.get(f'{self.URL}/suites{query}')
+            self.assertEqual(response.status_code, 200)
+            self.assertIn('''const SUITES = JSON.parse('["api-tests", "layout-tests"]');''', response.text)

@@ -297,6 +297,7 @@ class _InvestigateDrawer {
         this.suite = null;
         this.agregate = null;
         this.data = [];
+        this.subSuite = null;
 
         this.willFilterExpected = false;
 
@@ -403,6 +404,8 @@ class _InvestigateDrawer {
         }
         if (branch)
             params.branch = [branch];
+        if (this.subSuite)
+            params.sub_suite = [this.subSuite];
 
         // Leave members that differ between the aggregated runs unset so every matching run is returned
         const queryConfiguration = Configuration.combine(...this.data.map(datum => datum.configuration));
