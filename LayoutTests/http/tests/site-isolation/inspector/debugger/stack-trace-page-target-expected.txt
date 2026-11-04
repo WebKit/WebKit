@@ -5,8 +5,8 @@ Test that a stack trace delivered on the page target resolves scripts owned by t
 == Running test suite: SiteIsolation.Debugger.StackTracePageTarget
 -- Running test case: SiteIsolation.Debugger.StackTracePageTarget.ResolvesMainFrameScript
 PASS: Should find the main frame's target.
-PASS: Animation backtrace should contain the eval'd function.
-PASS: Animation backtrace should be resolved against the page target.
+PASS: Stack trace should contain the eval'd function.
+PASS: Stack trace should be resolved against the page target.
 PASS: The eval'd function's frame should not be treated as native code.
 PASS: The eval'd function's frame should have a source location.
 PASS: The eval'd function's script should have no URL, so only its identifier can resolve it.
