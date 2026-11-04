@@ -25,20 +25,50 @@
 
 #pragma once
 
-#include "GridLayoutConstraints.h"
+#include "GridFormattingContext.h"
+#include "GridItemPlacer.h"
+#include "GridTypeAliases.h"
+#include "PlacedGridItem.h"
 #include "StyleContentAlignmentData.h"
+#include "StyleGridTrackSize.h"
+#include "StyleGridTrackSizes.h"
+#include "TrackSizingFunctions.h"
+#include <wtf/BitVector.h>
 
 namespace WebCore {
 namespace Layout {
 
+// Everything that precedes track sizing in https://drafts.csswg.org/css-grid-1/#layout-algorithm: the grid definition,
+// the placement of the grid items and the inputs to the track sizing algorithm. It is built once per layout() or
+// computeIntrinsicWidths() call and does not change afterwards. It is the same for both intrinsic sizing scenarios,
+// so the intrinsic width computation builds one and sizes it under both. The size constraints
+// are not part of it: each sizing pass gets its own.
 struct GridLayoutContext {
-    const GridLayoutConstraints gridLayoutConstraints;
-    const StyleContentAlignmentData usedJustifyContent;
-    const StyleContentAlignmentData usedAlignContent;
+    const LogicalGridItems logicalGridItems;
+    const GridDefinition gridDefinition;
+    const LeadingImplicitTracks leadingImplicitTracks;
+    const GridItemPlacementResult placementResult;
+    const PlacedGridItems placedGridItems;
     const LayoutUnit usedColumnGap;
     const LayoutUnit usedRowGap;
+    const StyleContentAlignmentData usedJustifyContent;
+    const StyleContentAlignmentData usedAlignContent;
     const BitVector collapsedColumnTracksList;
     const BitVector collapsedRowTracksList;
+    const TrackSizingFunctionsList columnTrackSizingFunctions;
+    const TrackSizingFunctionsList rowTrackSizingFunctions;
+
+    // The row track sizes as specified, before their percentages were treated as auto. Only set when the block axis'
+    // percentages were treated as auto and the input asked to keep them. layout() sizes the rows a second time against the resulting container size.
+    struct SpecifiedRows {
+        Vector<Style::GridTrackSize> trackSizes;
+        Style::GridTrackSizes autoRows;
+        bool hasPercentages { false };
+    };
+    const std::optional<SpecifiedRows> specifiedRows;
+
+    // Only needed when the rows are sized a second time, so it is built on demand.
+    TrackSizingFunctionsList rowTrackSizingFunctionsAsSpecified() const;
 };
 
 } // namespace Layout

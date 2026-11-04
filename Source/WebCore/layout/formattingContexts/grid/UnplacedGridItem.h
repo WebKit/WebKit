@@ -108,7 +108,7 @@ private:
     GridPosition m_columnPosition;
     GridPosition m_rowPosition;
 
-    friend class GridFormattingContext;
+    friend class GridLayoutContextBuilder;
 };
 
 // https://drafts.csswg.org/css-grid-1/#auto-placement-algo

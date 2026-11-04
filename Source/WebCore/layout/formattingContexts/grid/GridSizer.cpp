@@ -36,9 +36,10 @@
 namespace WebCore {
 namespace Layout {
 
-GridSizer::GridSizer(const GridFormattingContext& gridFormattingContext, const GridLayoutContext& gridLayoutContext)
+GridSizer::GridSizer(const GridFormattingContext& gridFormattingContext, const GridLayoutContext& gridLayoutContext, const GridLayoutConstraints& layoutConstraints)
     : m_gridFormattingContext(gridFormattingContext)
     , m_gridLayoutContext(gridLayoutContext)
+    , m_layoutConstraints(layoutConstraints)
 {
 }
 
@@ -100,7 +101,7 @@ static std::optional<LayoutUnit> gridAreaBlockSizeForColumnSizing(const PlacedGr
 
 Vector<std::optional<LayoutUnit>> GridSizer::rowSizesForFirstIterationColumnSizing(const TrackSizingFunctionsList& rowTrackSizingFunctionsList) const
 {
-    auto& blockAxisConstraint = layoutContext().gridLayoutConstraints.blockAxis;
+    auto& blockAxisConstraint = layoutConstraints().blockAxis;
     std::optional<LayoutUnit> blockAxisAvailableSpace = blockAxisConstraint.scenario() == AxisConstraint::FreeSpaceScenario::Definite
         ? std::optional(blockAxisConstraint.availableSpace())
         : std::nullopt;
@@ -114,7 +115,7 @@ TrackSizes GridSizer::sizeColumnTracks(const PlacedGridItems& placedGridItems, c
     const TrackSizingFunctionsList& rowTrackSizingFunctionsList) const
 {
     auto& layoutContext = this->layoutContext();
-    auto& layoutConstraints = layoutContext.gridLayoutConstraints;
+    auto& layoutConstraints = this->layoutConstraints();
 
     auto columnTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
         auto usedInlineBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), { }).first;
@@ -138,14 +139,14 @@ TrackSizes GridSizer::sizeRowTracks(const PlacedGridItems& placedGridItems, cons
 
     auto rowTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
         auto gridAreaInlineSize = GridLayoutUtils::gridAreaDimensionSize(gridItem.columnStartLine(), gridItem.columnEndLine(), columnSizes, layoutContext.usedColumnGap);
-        auto gridAreaMaximumInlineSize = GridLayoutUtils::gridAreaMaximumSize(gridItem.columnStartLine(), gridItem.columnEndLine(), columnTrackSizingFunctionsList, layoutContext.usedColumnGap, layoutContext.gridLayoutConstraints.inlineAxis);
+        auto gridAreaMaximumInlineSize = GridLayoutUtils::gridAreaMaximumSize(gridItem.columnStartLine(), gridItem.columnEndLine(), columnTrackSizingFunctionsList, layoutContext.usedColumnGap, layoutConstraints().inlineAxis);
         auto usedBlockBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), gridAreaInlineSize).second;
         return { gridItem, gridItem.blockAxisSizes(), usedBlockBorderAndPadding, GridLayoutUtils::usedMarginsForAxis(gridItem, gridItem.blockAxisSizes()),
             { gridItem.rowStartLine(), gridItem.rowEndLine() }, gridAreaInlineSize, gridAreaMaximumInlineSize };
     });
 
     return TrackSizingAlgorithm::sizeTracks(rowTrackSizingItems, rowTrackSizingFunctionsList,
-        layoutContext.gridLayoutConstraints.blockAxis, GridItemSizingFunctions::blockAxis(formattingContext()),
+        layoutConstraints().blockAxis, GridItemSizingFunctions::blockAxis(formattingContext()),
         layoutContext.usedRowGap, layoutContext.collapsedRowTracksList, layoutContext.usedAlignContent);
 }
 

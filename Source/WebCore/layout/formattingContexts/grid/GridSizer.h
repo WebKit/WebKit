@@ -26,6 +26,7 @@
 #pragma once
 
 #include "GridFormattingContext.h"
+#include "GridLayoutConstraints.h"
 #include "GridTypeAliases.h"
 #include "UsedTrackSizes.h"
 
@@ -36,7 +37,7 @@ struct GridLayoutContext;
 
 class GridSizer {
 public:
-    NODELETE GridSizer(const GridFormattingContext&, const GridLayoutContext&);
+    GridSizer(const GridFormattingContext&, const GridLayoutContext&, const GridLayoutConstraints&);
 
     // Runs step 1 of the grid sizing algorithm alone. When no grid item's inline-axis contributions
     // depend on the available space in the block axis, steps 2-4 cannot change the column sizes, so
@@ -54,9 +55,11 @@ private:
 
     const GridFormattingContext& formattingContext() const LIFETIME_BOUND { return m_gridFormattingContext; }
     const GridLayoutContext& layoutContext() const LIFETIME_BOUND { return m_gridLayoutContext; }
+    const GridLayoutConstraints& layoutConstraints() const LIFETIME_BOUND { return m_layoutConstraints; }
 
     const GridFormattingContext& m_gridFormattingContext;
     const GridLayoutContext& m_gridLayoutContext;
+    const GridLayoutConstraints m_layoutConstraints;
 };
 
 } // namespace Layout

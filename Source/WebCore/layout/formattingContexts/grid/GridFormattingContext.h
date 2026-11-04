@@ -137,8 +137,6 @@ public:
     IntrinsicWidths computeIntrinsicWidths(const AutoRepeatConstraint& inlineAxisAutoRepeatConstraint, const AutoRepeatConstraint& blockAxisAutoRepeatConstraint);
     IntrinsicWidthSizingPath intrinsicWidthSizingPath() const { return m_intrinsicWidthSizingPath; }
 
-    PlacedGridItems constructPlacedGridItems(const GridAreas&) const;
-
     const ElementBox& root() const { return m_gridBox; }
 
     const IntegrationUtils& integrationUtils() const LIFETIME_BOUND { return m_integrationUtils; }
@@ -169,8 +167,6 @@ private:
     const LayoutState& layoutState() const LIFETIME_BOUND { return m_globalLayoutState; }
     BoxGeometry& geometryForGridItem(const ElementBox&) LIFETIME_BOUND;
     void setGridItemGeometries(const GridItemRects&);
-
-    const Style::ComputedStyle& gridContainerStyle() const LIFETIME_BOUND { return m_gridBox->style(); }
 
     const CheckedRef<const ElementBox> m_gridBox;
     const CheckedRef<LayoutState> m_globalLayoutState;

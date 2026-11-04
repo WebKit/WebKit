@@ -4390,6 +4390,7 @@
 		A52460C22FF48CE4003567A5 /* GridSizeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460C02FF48CE4003567A5 /* GridSizeTypes.h */; };
 		A52460C52FF48CE4003567A5 /* GridItemPlacer.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460C32FF48CE4003567A5 /* GridItemPlacer.h */; };
 		A52460C82FF48CE4003567A5 /* GridSizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460C62FF48CE4003567A5 /* GridSizer.h */; };
+		A5C1D0032FA1000100AB1C01 /* GridLayoutContextBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C1D0012FA1000100AB1C01 /* GridLayoutContextBuilder.h */; };
 		A52460D32FF48CE4003567A5 /* ExplicitGridResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460D12FF48CE4003567A5 /* ExplicitGridResolver.h */; };
 		94AB35CEF142463CAD7A2493 /* AutoRepeatResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = EBD4AFB8325542EAA0BF5C81 /* AutoRepeatResolver.h */; };
 		A52460D52FF48CE4003567A5 /* ExplicitGridTrackSizes.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460D42FF48CE4003567A5 /* ExplicitGridTrackSizes.h */; };
@@ -17578,6 +17579,8 @@
 		A52460C32FF48CE4003567A5 /* GridItemPlacer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridItemPlacer.h; sourceTree = "<group>"; };
 		A52460C42FF48CE4003567A5 /* GridItemPlacer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GridItemPlacer.cpp; sourceTree = "<group>"; };
 		A52460C62FF48CE4003567A5 /* GridSizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridSizer.h; sourceTree = "<group>"; };
+		A5C1D0012FA1000100AB1C01 /* GridLayoutContextBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridLayoutContextBuilder.h; sourceTree = "<group>"; };
+		A5C1D0022FA1000100AB1C01 /* GridLayoutContextBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GridLayoutContextBuilder.cpp; sourceTree = "<group>"; };
 		A52460C72FF48CE4003567A5 /* GridSizer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GridSizer.cpp; sourceTree = "<group>"; };
 		A52460D12FF48CE4003567A5 /* ExplicitGridResolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExplicitGridResolver.h; sourceTree = "<group>"; };
 		A52460D22FF48CE4003567A5 /* ExplicitGridResolver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExplicitGridResolver.cpp; sourceTree = "<group>"; };
@@ -34586,6 +34589,8 @@
 				A585CC3F2E566A7800A69390 /* GridLayout.h */,
 				A5AC7CAC2F4E9AC700981859 /* GridLayoutConstraints.h */,
 				A5CE23262F35106900179F07 /* GridLayoutContext.h */,
+				A5C1D0022FA1000100AB1C01 /* GridLayoutContextBuilder.cpp */,
+				A5C1D0012FA1000100AB1C01 /* GridLayoutContextBuilder.h */,
 				A5AFABC22E8C5D4900485152 /* GridLayoutUtils.cpp */,
 				A5AFABC12E8C5D4900485152 /* GridLayoutUtils.h */,
 				A52460C72FF48CE4003567A5 /* GridSizer.cpp */,
@@ -46157,6 +46162,7 @@
 				A585CC452E566A7800A69390 /* GridLayout.h in Headers */,
 				A5AC7CAD2F4E9AC700981859 /* GridLayoutConstraints.h in Headers */,
 				A5CE23272F35106E00179F07 /* GridLayoutContext.h in Headers */,
+				A5C1D0032FA1000100AB1C01 /* GridLayoutContextBuilder.h in Headers */,
 				A5AFABC32E8C5D5000485152 /* GridLayoutUtils.h in Headers */,
 				A52460C82FF48CE4003567A5 /* GridSizer.h in Headers */,
 				A52460C22FF48CE4003567A5 /* GridSizeTypes.h in Headers */,
