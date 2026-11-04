@@ -29,6 +29,7 @@
 #include "BlockFormattingUtils.h"
 #include "BlockIntegrationUtils.h"
 #include "BlockItemsBuilder.h"
+#include "BlockStepSizing.h"
 #include "Element.h"
 #include "OutOfFlowGeometry.h"
 #include "RenderBlockFlow.h"
@@ -262,17 +263,35 @@ BlockLevelBoxInInlineContent BlockFormattingContext::layoutBlockLevelBoxInInline
     };
 }
 
+// block-step-size rounds the margin box block size up to a multiple of the step, the extra space going to the margins (css-rhythm-1 §2,
+// RenderBlockFlow::performBlockStepSizing). Only the margin box insertion is supported, as on the render tree path.
+static std::optional<LayoutUnit> blockStepSize(const RenderBox& box)
+{
+    CheckedRef style = box.style();
+    auto blockStepSize = style->blockStepSize().tryLength();
+    if (!blockStepSize || !BlockStepSizing::childHasSupportedStyle(style.get()))
+        return { };
+    return Style::evaluate<LayoutUnit>(*blockStepSize, style->usedZoomForLength());
+}
+
 void BlockFormattingContext::handleIndependentFormattingContextRoot(const RenderBox& box, BlockLayoutResult& result)
 {
-    auto rootState = computeContainingBlockStateAtBlockStart(box);
-    // Its margins do not collapse with its children's, nor through it, even when it is empty (CSS 2.2 §8.3.1).
-    resolveBorderBoxLogicalTops(rootState);
+    auto rootState = containingBlockStateAtBlockStart(box);
+    // Its margins do not collapse with its children's, nor through it, even when it is empty (CSS 2.2 §8.3.1). With a block step, they
+    // collapse once the block size is known, which its content, in a formatting context of its own, does not depend on the position for.
+    auto stepSize = blockStepSize(box);
+    if (!stepSize) {
+        m_blockLayoutState.marginCollapse().startBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last(), rootState.geometry.marginBefore());
+        resolveBorderBoxLogicalTops(rootState);
+    }
 
+    auto contentBlockSize = std::optional<LayoutUnit> { };
     CheckedPtr root = dynamicDowncast<RenderBlockFlow>(box);
-    if (!root || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*root))
+    if (!root || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*root)) {
         layoutIndependentFormattingContextThroughRenderTree(box, rootState);
-    else if (!root->firstChild())
-        handleEmptyEditableContent(box, rootState);
+        contentBlockSize = rootState.geometry.contentBoxHeight();
+    } else if (!root->firstChild())
+        contentBlockSize = BlockFormattingUtils::emptyEditableContentBlockSize(box);
     else {
         LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(*root);
         // Its content is in a formatting context of its own; a block formatting context gets a block layout state of its own.
@@ -280,9 +299,21 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
         auto horizontalConstraints = HorizontalConstraints { rootState.inlineRange.min(), rootState.inlineRange.size() };
         auto rootResult = BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, rootState.borderAndPaddingBefore }, rootState.contentBoxBlockSize, rootState.fillAvailableBlockSize, rootState.replacedElementAvailableBlockSize, rootState.relayoutChildren }, rootState.geometry);
         result.boxes.appendVector(WTF::move(rootResult.boxes));
-        m_blockLayoutState.marginCollapse().resetAdjoiningMargins(rootState.contentBoxLogicalTop() + rootResult.intrinsicContentBlockSize);
+        contentBlockSize = rootResult.intrinsicContentBlockSize;
         result.outOfFlowBoxes.appendVector(WTF::move(rootResult.outOfFlowBoxes));
     }
+
+    if (stepSize) {
+        auto& geometry = rootState.geometry;
+        if (!rootState.isLaidOutThroughRenderTree)
+            computeBlockSize(box, contentBlockSize.value_or(0_lu), m_blockLayoutState.containingBlockStates().last(), geometry);
+        auto halfExtraSpace = BlockStepSizing::computeExtraSpace(*stepSize, geometry.marginBefore() + geometry.borderBoxHeight() + geometry.marginAfter()) / 2;
+        geometry.setVerticalMargin({ geometry.marginBefore() + halfExtraSpace, geometry.marginAfter() + halfExtraSpace });
+        m_blockLayoutState.marginCollapse().startBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last(), geometry.marginBefore());
+        resolveBorderBoxLogicalTops(rootState);
+    }
+    if (contentBlockSize)
+        m_blockLayoutState.marginCollapse().resetAdjoiningMargins(rootState.contentBoxLogicalTop() + *contentBlockSize);
     m_blockLayoutState.marginCollapse().endBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last());
     placeInContainingBlock(box, WTF::move(rootState), result);
 }
@@ -324,7 +355,6 @@ void BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree
     computeLogicalLeft(box, containingBlockState, geometry);
     boxState.borderAndPaddingBefore = geometry.borderAndPaddingBefore();
     boxState.isLaidOutThroughRenderTree = true;
-    m_blockLayoutState.marginCollapse().resetAdjoiningMargins(boxState.contentBoxLogicalTop() + geometry.contentBoxHeight());
 }
 
 void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayoutResult& result)
@@ -799,15 +829,20 @@ ConstraintsForInlineContent BlockFormattingContext::constraintsForInlineContent(
     return { { horizontalConstraints, blockContainerState.borderAndPaddingBefore }, visualLeft, borderBoxSize };
 }
 
-ContainingBlockState BlockFormattingContext::computeContainingBlockStateAtBlockStart(const RenderBox& box)
+ContainingBlockState BlockFormattingContext::containingBlockStateAtBlockStart(const RenderBox& box) const
 {
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
     auto geometry = computeBorderAndPadding(box, containingBlockState.inlineRange.size());
     computeInlineSizeAndMargins(box, containingBlockState, geometry);
     computeLogicalLeft(box, containingBlockState, geometry);
+    return containingBlockStateFor(box, geometry, containingBlockState);
+}
+
+ContainingBlockState BlockFormattingContext::computeContainingBlockStateAtBlockStart(const RenderBox& box)
+{
+    auto blockContainerState = containingBlockStateAtBlockStart(box);
     // FIXME: Clearance separates the block-start margin from the margins before it (CSS 2.2 §9.5.2).
-    auto blockContainerState = containingBlockStateFor(box, geometry, containingBlockState);
-    m_blockLayoutState.marginCollapse().startBlockContainer(blockContainerState, containingBlockState, geometry.marginBefore());
+    m_blockLayoutState.marginCollapse().startBlockContainer(blockContainerState, m_blockLayoutState.containingBlockStates().last(), blockContainerState.geometry.marginBefore());
     return blockContainerState;
 }
 
