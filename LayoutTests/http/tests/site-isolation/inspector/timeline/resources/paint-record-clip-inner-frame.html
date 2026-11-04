@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<body style="margin: 0">
+<div id="box" style="position: absolute; left: 10px; top: 10px; background-color: green"></div>
+<script>
+// The query string is the size of the box, like "?37x23", so that the test can tell which frame painted it.
+const [width, height] = location.search.substring(1).split("x");
+const box = document.getElementById("box");
+box.style.width = `${width}px`;
+box.style.height = `${height}px`;
+
+// Keep repainting the box so that the test can record a Paint timeline record for it.
+let iteration = 0;
+setInterval(() => {
+    box.style.backgroundColor = (++iteration % 2) ? "blue" : "green";
+}, 30);
+</script>
+</body>

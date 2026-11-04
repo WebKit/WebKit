@@ -317,8 +317,8 @@ void PageTimelineAgent::didPaint(RenderObject& renderer, const LayoutRect& clipR
 
     ASSERT(entry->type == TimelineRecordType::Paint);
 
-    auto clipQuadInRootView = protect(renderer.view().frameView())->contentsToRootView(renderer.localToAbsoluteQuad({ clipRect }));
-    entry->data = TimelineRecordFactory::createPaintData(clipQuadInRootView);
+    auto clipQuadInMainFrameView = protect(renderer.view().frameView())->contentsToMainFrameView(renderer.localToAbsoluteQuad({ clipRect }));
+    entry->data = TimelineRecordFactory::createPaintData(clipQuadInMainFrameView);
 
     if (auto nodeId = nodeIdForRenderer(renderer))
         TimelineRecordFactory::appendNodeId(entry->data.get(), nodeId);

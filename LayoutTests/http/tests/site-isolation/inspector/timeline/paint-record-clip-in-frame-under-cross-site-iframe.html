@@ -1,0 +1,71 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    // Each innermost frame repeatedly repaints a box at (10, 10), whose size identifies which frame it's in.
+    // Its frame is at (20, 30) in a middle frame, which is at the position below in this page.
+    const cases = [
+        {description: "same-site", width: 41, height: 19, expectedX: 450 + 20 + 10, expectedY: 150 + 30 + 10},
+        {description: "cross-site", width: 37, height: 23, expectedX: 100 + 20 + 10, expectedY: 150 + 30 + 10},
+    ];
+
+    function awaitCapturingState(state) {
+        return new Promise((resolve) => {
+            let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, () => {
+                if (WI.timelineManager.capturingState !== state)
+                    return;
+                WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+                resolve();
+            });
+        });
+    }
+
+    function paintRecordForBox(timeline, {width, height}) {
+        return timeline.records.find((record) => record.eventType === WI.LayoutTimelineRecord.EventType.Paint
+            && record.quad && Math.abs(record.quad.width - width) <= 1 && Math.abs(record.quad.height - height) <= 1);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.PaintRecordClipInFrameUnderCrossSiteIFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.PaintRecordClip",
+        description: "The clip of a Paint record should be in the main frame's coordinates, even for a frame in the main frame's process whose parent is a cross-site iframe.",
+        async test() {
+            WI.timelineManager.enabledTimelineTypes = [WI.TimelineRecord.Type.Layout];
+
+            let capturingStarted = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            const newRecording = true;
+            WI.timelineManager.startCapturing(newRecording);
+            await capturingStarted;
+
+            let timeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Layout);
+            for (let i = 0; i < 100 && !cases.every((testCase) => paintRecordForBox(timeline, testCase)); ++i)
+                await new Promise((resolve) => setTimeout(resolve, 50));
+
+            let capturingStopped = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            WI.timelineManager.stopCapturing();
+            await capturingStopped;
+
+            for (let testCase of cases) {
+                let record = paintRecordForBox(timeline, testCase);
+                InspectorTest.expectThat(record, `Should have a Paint record for the box in the ${testCase.description} frame.`);
+                if (!record)
+                    continue;
+
+                let topLeft = record.quad.points[0];
+                InspectorTest.expectEqual(`${Math.round(topLeft.x)}, ${Math.round(topLeft.y)}`, `${testCase.expectedX}, ${testCase.expectedY}`, `The Paint record's clip for the box in the ${testCase.description} frame should be at its position in the page.`);
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body style="margin: 0" onload="runTest()">
+<p style="position: absolute; top: 0; margin: 0">Test that the clip of a Paint timeline record is in the main frame's coordinates for a frame in the main frame's process under a cross-site iframe.</p>
+<!-- localhost is a different site from 127.0.0.1, so this middle frame is in another process, but the innermost frame, from 127.0.0.1, is in this page's process. -->
+<iframe style="position: absolute; left: 100px; top: 150px; width: 300px; height: 250px; border: none" src="http://localhost:8000/site-isolation/inspector/timeline/resources/paint-record-clip-middle-frame.html?37x23"></iframe>
+<iframe style="position: absolute; left: 450px; top: 150px; width: 300px; height: 250px; border: none" src="http://127.0.0.1:8000/site-isolation/inspector/timeline/resources/paint-record-clip-middle-frame.html?41x19"></iframe>
+</body>
