@@ -4025,6 +4025,16 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
         self.assertEqual(self.build.results, SUCCESS)
 
     @defer.inlineCallbacks
+    def test_set_build_summary_fails_a_build_with_stress_mode_failures(self):
+        self.setup_step(SetBuildSummary())
+        self.setProperty('build_summary', RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE)
+        self.setProperty('force_build_success', True)
+        self.build.results = SUCCESS
+        self.expect_outcome(result=SUCCESS)
+        yield self.run_step()
+        self.assertEqual(self.build.results, FAILURE)
+
+    @defer.inlineCallbacks
     def test_set_build_summary_keeps_a_cancelled_build_cancelled(self):
         self.setup_step(SetBuildSummary())
         self.setProperty('build_summary', 'Passed layout tests')
@@ -4352,6 +4362,16 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: None)
         self.patch(RunWebKitTestsRedTree, 'evaluateResult', lambda s, r: r)
         step.evaluateCommand(FAILURE)
+        self.assertEqual(self.getProperty('build_summary'), RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE)
+
+    def test_success_keep_stress_mode_failure(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', [])
+        self.setProperty('first_run_flakies', [])
+        self.setProperty('build_summary', RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE)
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: None)
+        self.patch(RunWebKitTestsRedTree, 'evaluateResult', lambda s, r: r)
+        self.get_nth_step(0).evaluateCommand(SUCCESS)
         self.assertEqual(self.getProperty('build_summary'), RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE)
 
     def test_failures_all_pre_existing_in_results_db_with_flakies_then_go_to_analyze_results(self):
@@ -5949,6 +5969,21 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.assertFalse('Test name: <a href="https://github.com/WebKit/WebKit/blob/main/LayoutTests/preexisting-test/pre-existent/failure.html">preexisting-test/pre-existent/failure.html</a>' in self._emails_list[0])
         self.assertTrue('Subject: Info about 1 pre-existent failure at' in self._emails_list[1])
         self.assertTrue('preexisting-test/pre-existent/failure.html' in self._emails_list[1])
+        return step_result
+
+    def test_pre_existent_failures_keep_stress_mode_failure(self):
+        self.configureStep()
+        self.configureCommonProperties()
+        self.setProperty('build_summary', RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE)
+        self.setProperty('first_run_failures', ["test/pre-existent/failure.html"])
+        self.setProperty('first_run_flakies', [])
+        self.setProperty('with_change_repeat_failures_results_nonflaky_failures', ["test/pre-existent/failure.html"])
+        self.setProperty('with_change_repeat_failures_results_flakies', [])
+        self.setProperty('without_change_repeat_failures_results_nonflaky_failures', ["test/pre-existent/failure.html"])
+        self.setProperty('without_change_repeat_failures_results_flakies', [])
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        step_result = self.run_step()
+        self.assertEqual(self.getProperty('build_summary'), RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE)
         return step_result
 
     def test_pre_existent_flakies(self):

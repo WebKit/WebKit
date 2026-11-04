@@ -5128,7 +5128,8 @@ class RunWebKitTestsRedTree(RunWebKitTests):
             message = 'Passed layout tests'
             self.descriptionDone = message
             self.build.results = SUCCESS
-            self.setProperty('build_summary', message)
+            if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in self.getProperty('build_summary', ''):
+                self.setProperty('build_summary', message)
         else:
             # We have a failure return code but not a list of failed or flaky tests, so we can't run the repeat steps.
             # If we are on the last retry then run the whole layout tests without patch.
@@ -5353,8 +5354,8 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
     def report_success(self):
         self.build.results = SUCCESS
         self.descriptionDone = 'Passed layout tests'
-        message = ''
-        self.setProperty('build_summary', message)
+        if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in self.getProperty('build_summary', ''):
+            self.setProperty('build_summary', '')
         return SUCCESS
 
     def report_infrastructure_issue_and_maybe_retry_build(self, message):
