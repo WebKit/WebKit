@@ -6252,6 +6252,169 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(32, 32, GLColor::red);
 }
 
+// Tests vertex attributes whose WebGPU vertex formats have large values: the 32-bit integer formats
+// and the packed 10_10_10_2 format.
+class IntegerVertexAttributeTest : public ANGLETest<>
+{
+  protected:
+    IntegerVertexAttributeTest()
+    {
+        setWindowWidth(16);
+        setWindowHeight(16);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+};
+
+// Draws with ivec4, uvec4, int and uint attributes from 32-bit integers in buffers.
+TEST_P(IntegerVertexAttributeTest, ThirtyTwoBitIntegers)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec2 a_position;
+in ivec4 a_int4;
+in uvec4 a_uint4;
+in int a_int;
+in uint a_uint;
+out vec4 v_color;
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    bool ok = a_int4 == ivec4(-1, 2, -3, 400000) && a_uint4 == uvec4(5u, 6u, 7u, 0x80000000u) &&
+              a_int == -9 && a_uint == 0xFFFFFFFFu;
+    v_color = ok ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+in vec4 v_color;
+out vec4 color;
+void main()
+{
+    color = v_color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    constexpr std::array<GLfloat, 12> kPositions = {
+        -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+    };
+    GLBuffer positionBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(kPositions), kPositions.data(), GL_STATIC_DRAW);
+    const GLint positionLocation = glGetAttribLocation(program, "a_position");
+    ASSERT_NE(-1, positionLocation);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    // Each vertex has an ivec4, a uvec4, an int and a uint.
+    struct Element
+    {
+        GLint int4[4];
+        GLuint uint4[4];
+        GLint int1;
+        GLuint uint1;
+    };
+    std::array<Element, 6> elements;
+    for (Element &element : elements)
+    {
+        element = {{-1, 2, -3, 400000}, {5, 6, 7, 0x80000000u}, -9, 0xFFFFFFFFu};
+    }
+    GLBuffer integerBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, integerBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(elements), elements.data(), GL_STATIC_DRAW);
+    struct IntegerAttrib
+    {
+        const char *name;
+        GLint size;
+        GLenum type;
+        size_t offset;
+    };
+    for (const IntegerAttrib &attrib :
+         {IntegerAttrib{"a_int4", 4, GL_INT, offsetof(Element, int4)},
+          IntegerAttrib{"a_uint4", 4, GL_UNSIGNED_INT, offsetof(Element, uint4)},
+          IntegerAttrib{"a_int", 1, GL_INT, offsetof(Element, int1)},
+          IntegerAttrib{"a_uint", 1, GL_UNSIGNED_INT, offsetof(Element, uint1)}})
+    {
+        const GLint location = glGetAttribLocation(program, attrib.name);
+        ASSERT_NE(-1, location) << attrib.name;
+        glVertexAttribIPointer(location, attrib.size, attrib.type, sizeof(Element),
+                               reinterpret_cast<const void *>(attrib.offset));
+        glEnableVertexAttribArray(location);
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+}
+
+// Draws with a normalized GL_UNSIGNED_INT_2_10_10_10_REV attribute.
+TEST_P(IntegerVertexAttributeTest, NormalizedUnsignedInt2101010Rev)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec2 a_position;
+in vec4 a_packed;
+out vec4 v_color;
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    bool ok = all(lessThan(abs(a_packed - vec4(1.0, 0.0, 512.0 / 1023.0, 1.0)), vec4(0.01)));
+    v_color = ok ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+in vec4 v_color;
+out vec4 color;
+void main()
+{
+    color = v_color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    constexpr std::array<GLfloat, 12> kPositions = {
+        -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+    };
+    GLBuffer positionBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(kPositions), kPositions.data(), GL_STATIC_DRAW);
+    const GLint positionLocation = glGetAttribLocation(program, "a_position");
+    ASSERT_NE(-1, positionLocation);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    // x = 1023, y = 0, z = 512, w = 3.
+    constexpr GLuint kPacked = 1023u | (0u << 10) | (512u << 20) | (3u << 30);
+    std::array<GLuint, 6> packedData;
+    packedData.fill(kPacked);
+    GLBuffer packedBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, packedBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(packedData), packedData.data(), GL_STATIC_DRAW);
+    const GLint packedLocation = glGetAttribLocation(program, "a_packed");
+    ASSERT_NE(-1, packedLocation);
+    glVertexAttribPointer(packedLocation, 4, GL_UNSIGNED_INT_2_10_10_10_REV, GL_TRUE, 0, nullptr);
+    glEnableVertexAttribArray(packedLocation);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+}
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(IntegerVertexAttributeTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND(IntegerVertexAttributeTest, ES3_WEBGPU());
+
 // VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/40096758
 #if !defined(__APPLE__)
 #    define EMULATED_VAO_CONFIGS                                          \

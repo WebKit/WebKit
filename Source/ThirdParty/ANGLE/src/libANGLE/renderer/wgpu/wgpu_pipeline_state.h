@@ -102,7 +102,9 @@ struct PackedDepthStencilState final
 constexpr size_t kPackedDepthStencilStateSize = sizeof(PackedDepthStencilState);
 static_assert(kPackedDepthStencilStateSize == 24, "Size mismatch");
 
-constexpr uint32_t kVertexFormatBitCount = 5;
+// WGPUVertexFormat values go up to 0x29 (WGPUVertexFormat_Unorm8x4BGRA).
+constexpr uint32_t kVertexFormatBitCount = 6;
+static_assert(WGPUVertexFormat_Unorm8x4BGRA < (1u << kVertexFormatBitCount));
 
 // A maximum offset of 4096 covers almost every Vulkan driver on desktop (80%) and mobile (99%). The
 // next highest values to meet native drivers are 16 bits or 32 bits.
@@ -118,7 +120,7 @@ struct PackedVertexAttribute final
     uint16_t offset : kAttributeOffsetMaxBits;
     uint16_t enabled : 1;
     uint8_t format : kVertexFormatBitCount;
-    uint8_t pad1 : 3;
+    uint8_t pad1 : 2;
     uint8_t shaderLocation;
     uint16_t stride : kVertexAttributeStrideBits;
 };
