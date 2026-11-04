@@ -70,8 +70,7 @@ private:
     // Messages.
     void releaseVideoFrame(RemoteVideoFrameWriteReference&&);
 #if PLATFORM(COCOA)
-    void getVideoFrameBuffer(RemoteVideoFrameReadReference&&, bool canSendIOSurface);
-    void pixelBuffer(RemoteVideoFrameReadReference&&, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&&);
+    void getVideoFrameBuffer(RemoteVideoFrameReadReference&&);
     void convertFrameBuffer(SharedVideoFrame&&, bool shouldApplyRotation, CompletionHandler<void(WebCore::ColorSpace)>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);

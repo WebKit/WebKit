@@ -36,7 +36,6 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <notify.h>
 #import <objc/runtime.h>
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
@@ -202,120 +201,10 @@ TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
     EXPECT_TRUE([webView _isPlayingAudio]);
 }
 
-TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessary)
-{
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
-        return;
-
-    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
-    [webView synchronouslyLoadTestPageNamed:@"simple"];
-
-    TestWebKitAPI::Util::spinRunLoop(10);
-
-    EXPECT_EQ([configuration.get().processPool _gpuProcessIdentifier], 0);
-}
-
-TEST(GPUProcess, GPUProcessForDOMRenderingCarriesOverFromRelatedPage)
-{
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
-        return;
-
-    RetainPtr<WKWebViewConfiguration> configuration;
-    RetainPtr<TestWKWebView> originalWebView;
-    {
-        configuration = adoptNS([WKWebViewConfiguration new]);
-        WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
-
-        originalWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
-        [originalWebView synchronouslyLoadTestPageNamed:@"simple"];
-    }
-
-    RetainPtr<TestWKWebView> newWebView;
-    {
-        RetainPtr newPreferences = adoptNS([[configuration preferences] copy]);
-        WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)newPreferences.get(), false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
-        [configuration setPreferences:newPreferences.get()];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        [configuration _setRelatedWebView:originalWebView.get()];
-        ALLOW_DEPRECATED_DECLARATIONS_END
-
-        newWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
-        [newWebView synchronouslyLoadTestPageNamed:@"simple"];
-    }
-
-    [originalWebView stringByEvaluatingJavaScript:@"document.body.style.backgroundColor = 'red';"];
-    [originalWebView waitForNextPresentationUpdate];
-
-    [newWebView stringByEvaluatingJavaScript:@"document.body.style.backgroundColor = 'green';"];
-    [newWebView waitForNextPresentationUpdate];
-}
-
-TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessarySVG)
-{
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
-        return;
-
-    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
-    [webView synchronouslyLoadHTMLString:@"<img src='enormous.svg'></img>"];
-
-    TestWebKitAPI::Util::spinRunLoop(10);
-
-    EXPECT_EQ([configuration.get().processPool _gpuProcessIdentifier], 0);
-}
-
-TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessaryMediaFeatureDetection)
-{
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
-        return;
-
-    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
-    [webView synchronouslyLoadTestPageNamed:@"simple"];
-
-    __block bool done = false;
-    [webView evaluateJavaScript:@"!!document.createElement('audio').canPlayType" completionHandler:^(id result, NSError *error) {
-        EXPECT_TRUE(!error);
-        EXPECT_TRUE([result boolValue]);
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-
-    done = false;
-    [webView evaluateJavaScript:@"!!document.createElement('video').canPlayType" completionHandler:^(id result, NSError *error) {
-        EXPECT_TRUE(!error);
-        EXPECT_TRUE([result boolValue]);
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-
-    TestWebKitAPI::Util::spinRunLoop(10);
-
-    // This should not have launched a GPUProcess.
-    EXPECT_EQ([configuration.get().processPool _gpuProcessIdentifier], 0);
-}
-
 TEST(GPUProcess, DoNotLeakConnectionAfterClosingWebPage)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     [webView synchronouslyLoadTestPageNamed:@"canvas-image-data"];
@@ -333,7 +222,6 @@ TEST(GPUProcess, LegacyCDM)
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     [webView synchronouslyLoadTestPageNamed:@"simple"];
@@ -616,249 +504,6 @@ TEST(GPUProcess, CanvasBasicCrashHandling)
     TestWebKitAPI::Util::run(&done);
 }
 
-static void runMemoryPressureExitTest(Function<void(WKWebView *)>&& loadTestPageSynchronously, Function<void(WKWebViewConfiguration *)>&& updateConfiguration = [](WKWebViewConfiguration *) { })
-{
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
-        return;
-
-    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureAudioInGPUProcessEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("WebRTCPlatformCodecsInGPUProcessEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
-
-    updateConfiguration(configuration.get());
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
-    loadTestPageSynchronously(webView.get());
-
-    // A GPUProcess should get launched.
-    while (![configuration.get().processPool _gpuProcessIdentifier])
-        TestWebKitAPI::Util::runFor(0.1_s);
-    auto gpuProcessPID = [configuration.get().processPool _gpuProcessIdentifier];
-
-    // Simulate memory pressure (notifyutil -p org.WebKit.lowMemory).
-    notify_post("org.WebKit.lowMemory");
-
-    // Make sure the GPUProcess does not exit since it is still needed.
-    TestWebKitAPI::Util::runFor(0.5_s);
-    EXPECT_EQ(gpuProcessPID, [configuration.get().processPool _gpuProcessIdentifier]);
-
-    // Navigate to another page that no longer requires the GPUProcess.
-    [webView synchronouslyLoadTestPageNamed:@"simple"];
-    TestWebKitAPI::Util::runFor(0.5_s);
-
-    // The GPUProcess should exit on memory pressure.
-    do {
-        // Simulate memory pressure (notifyutil -p org.WebKit.lowMemory).
-        notify_post("org.WebKit.lowMemory");
-        TestWebKitAPI::Util::runFor(0.1_s);
-    } while ([configuration.get().processPool _gpuProcessIdentifier]);
-
-    // The GPUProcess should not relaunch.
-    TestWebKitAPI::Util::runFor(0.5_s);
-    EXPECT_EQ(0, [configuration.get().processPool _gpuProcessIdentifier]);
-}
-
-TEST(GPUProcess, ExitsUnderMemoryPressureCanvasCase)
-{
-    runMemoryPressureExitTest([](WKWebView *webView) {
-        [webView synchronouslyLoadHTMLString:testCanvasPage];
-
-        __block bool done = false;
-        [webView evaluateJavaScript:@"context.fillStyle = '#00FF00'; context.fillRect(0, 0, 400, 400);" completionHandler:^(id result, NSError *error) {
-            EXPECT_TRUE(!error);
-            done = true;
-        }];
-        TestWebKitAPI::Util::run(&done);
-        done = false;
-        [webView evaluateJavaScript:@"context.getImageData(0, 0, 400, 400).width" completionHandler:^(id result, NSError *error) {
-            EXPECT_TRUE(!error);
-            done = true;
-        }];
-        TestWebKitAPI::Util::run(&done);
-    });
-}
-
-// FIXME when rdar://154212960 is resolved.
-#if PLATFORM(IOS)
-TEST(GPUProcess, DISABLED_ExitsUnderMemoryPressureVideoCase)
-#else
-TEST(GPUProcess, ExitsUnderMemoryPressureVideoCase)
-#endif
-{
-    runMemoryPressureExitTest([](WKWebView *webView) {
-        [webView synchronouslyLoadTestPageNamed:@"large-videos-with-audio"];
-
-        __block bool done = false;
-        [webView evaluateJavaScript:@"document.getElementsByTagName('video')[0].play() && true" completionHandler:^(id result, NSError *error) {
-            EXPECT_TRUE(!error);
-            done = true;
-        }];
-        TestWebKitAPI::Util::run(&done);
-    });
-}
-
-#if ENABLE(MEDIA_STREAM)
-static bool waitUntilCaptureState(WKWebView *webView, _WKMediaCaptureStateDeprecated expectedState)
-{
-    NSTimeInterval end = [[NSDate date] timeIntervalSinceReferenceDate] + 10;
-    do {
-        if ([webView _mediaCaptureState] == expectedState)
-            return true;
-
-        TestWebKitAPI::Util::spinRunLoop(1);
-
-        if ([[NSDate date] timeIntervalSinceReferenceDate] > end)
-            break;
-    } while (true);
-
-    return false;
-}
-
-#if PLATFORM(MAC)
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=237854 is disabled for IOS
-TEST(GPUProcess, ExitsUnderMemoryPressureGetUserMediaAudioCase)
-{
-    runMemoryPressureExitTest([](WKWebView *webView) {
-        RetainPtr delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
-        webView.UIDelegate = delegate.get();
-
-        [webView loadTestPageNamed:@"getUserMedia"];
-        EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateDeprecatedActiveCamera));
-        [webView stringByEvaluatingJavaScript:@"captureAudio(true)"];
-    }, [](WKWebViewConfiguration* configuration) {
-        auto preferences = configuration.preferences;
-        preferences._mediaCaptureRequiresSecureConnection = NO;
-        configuration._mediaCaptureEnabled = YES;
-        preferences._mockCaptureDevicesEnabled = YES;
-        preferences._getUserMediaRequiresFocus = NO;
-    });
-}
-#endif
-
-// FIXME when rdar://142288846 is resolved.
-#if PLATFORM(IOS)
-TEST(GPUProcess, DISABLED_ExitsUnderMemoryPressureGetUserMediaVideoCase)
-#else
-TEST(GPUProcess, ExitsUnderMemoryPressureGetUserMediaVideoCase)
-#endif
-{
-    runMemoryPressureExitTest([](WKWebView *webView) {
-        RetainPtr delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
-        webView.UIDelegate = delegate.get();
-
-        [webView loadTestPageNamed:@"getUserMedia"];
-        EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateDeprecatedActiveCamera));
-        [webView stringByEvaluatingJavaScript:@"captureVideo(true)"];
-    }, [](WKWebViewConfiguration* configuration) {
-        auto preferences = configuration.preferences;
-        preferences._mediaCaptureRequiresSecureConnection = NO;
-        configuration._mediaCaptureEnabled = YES;
-        preferences._mockCaptureDevicesEnabled = YES;
-        preferences._getUserMediaRequiresFocus = NO;
-    });
-}
-
-// FIXME when rdar://141566093 is resolved.
-#if PLATFORM(IOS)
-TEST(GPUProcess, DISABLED_ExitsUnderMemoryPressureWebRTCCase)
-#else
-TEST(GPUProcess, ExitsUnderMemoryPressureWebRTCCase)
-#endif
-{
-    runMemoryPressureExitTest([](WKWebView *webView) {
-        RetainPtr delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
-        webView.UIDelegate = delegate.get();
-
-        [webView loadTestPageNamed:@"getUserMedia"];
-        EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateDeprecatedActiveCamera));
-        [webView stringByEvaluatingJavaScript:@"captureVideo(true)"];
-        [webView stringByEvaluatingJavaScript:@"createConnection()"];
-    }, [](WKWebViewConfiguration* configuration) {
-        auto preferences = configuration.preferences;
-        preferences._mediaCaptureRequiresSecureConnection = NO;
-        configuration._mediaCaptureEnabled = YES;
-        preferences._mockCaptureDevicesEnabled = YES;
-        preferences._getUserMediaRequiresFocus = NO;
-    });
-}
-#endif // ENABLE(MEDIA_STREAM)
-
-// FIXME when rdar://155548126 is resolved.
-#if PLATFORM(IOS)
-TEST(GPUProcess, DISABLED_ExitsUnderMemoryPressureWebAudioCase)
-#else
-TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioCase)
-#endif
-{
-    runMemoryPressureExitTest([](WKWebView *webView) {
-        [webView synchronouslyLoadTestPageNamed:@"audio-context-playing"];
-
-        // evaluateJavaScript gives us the user gesture we need to reliably start audio playback on all platforms.
-        __block bool done = false;
-        [webView callAsyncJavaScript:@"return startPlaying()" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
-            EXPECT_TRUE(!error);
-            done = true;
-        }];
-        TestWebKitAPI::Util::run(&done);
-    });
-}
-
-TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioNonRenderingAudioContext)
-{
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
-        return;
-
-    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
-    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
-    [webView synchronouslyLoadTestPageNamed:@"audio-context-playing"];
-
-    // evaluateJavaScript gives us the user gesture we need to reliably start audio playback on all platforms.
-    __block bool done = false;
-    [webView callAsyncJavaScript:@"return startPlaying()" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
-        EXPECT_TRUE(!error);
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-
-    // A GPUProcess should get launched.
-    while (![configuration.get().processPool _gpuProcessIdentifier])
-        TestWebKitAPI::Util::runFor(0.1_s);
-    auto gpuProcessPID = [configuration.get().processPool _gpuProcessIdentifier];
-
-    // Simulate memory pressure (notifyutil -p org.WebKit.lowMemory).
-    notify_post("org.WebKit.lowMemory");
-
-    // Make sure the GPUProcess does not exit since it is still needed.
-    TestWebKitAPI::Util::runFor(0.5_s);
-    EXPECT_EQ(gpuProcessPID, [configuration.get().processPool _gpuProcessIdentifier]);
-
-    // Suspend audio rendering.
-    [webView evaluateJavaScript:@"context.suspend() && true" completionHandler:^(id result, NSError *error) {
-        EXPECT_TRUE(!error);
-        done = true;
-    }];
-
-    // The GPUProcess should exit on memory pressure.
-    do {
-        // Simulate memory pressure (notifyutil -p org.WebKit.lowMemory).
-        notify_post("org.WebKit.lowMemory");
-        TestWebKitAPI::Util::runFor(0.1_s);
-    } while ([configuration.get().processPool _gpuProcessIdentifier]);
-
-    // The GPUProcess should not relaunch.
-    TestWebKitAPI::Util::runFor(0.5_s);
-    EXPECT_EQ(0, [configuration.get().processPool _gpuProcessIdentifier]);
-}
-
 TEST(GPUProcess, ValidateWebAudioMediaProcessingAssertion)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -897,12 +542,10 @@ TEST(GPUProcess, ValidateWebAudioMediaProcessingAssertion)
     EXPECT_TRUE([configuration.get().processPool _hasAudibleMediaActivity]);
 }
 
-#if ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
 TEST(GPUProcess, ReuseBetweenProcessPools)
 {
     auto loadBlankViewAndWaitForGPUProcess = []() -> pid_t {
         RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-        WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
 
         RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
@@ -925,6 +568,5 @@ TEST(GPUProcess, ReuseBetweenProcessPools)
 
     EXPECT_EQ(firstGPUProcessPID, secondGPUProcessPID);
 }
-#endif // ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
 
 } // namespace TestWebKitAPI

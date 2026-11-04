@@ -36,6 +36,7 @@
 #include <wtf/WorkQueue.h>
 
 #if PLATFORM(COCOA)
+#include <WebCore/CVUtilities.h>
 #include <WebCore/ColorSpaceCG.h>
 #include <WebCore/ImageRotationSessionVT.h>
 #include <WebCore/PixelBufferConformerCV.h>
@@ -108,7 +109,7 @@ void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReferenc
 }
 
 #if PLATFORM(COCOA)
-void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReference&& read, bool canSendIOSurface)
+void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReference&& read)
 {
     assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
 
@@ -122,26 +123,10 @@ void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReferen
         buffer = m_sharedVideoFrameWriter.writeBuffer(protect(videoFrame->pixelBuffer()).get(),
             [&](auto& semaphore) { connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameSemaphore { semaphore }, 0); },
             [&](SharedMemory::Handle&& handle) { connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameMemory { WTF::move(handle) }, 0); },
-            canSendIOSurface);
+            false);
         // FIXME: We should ASSERT(result) once we support enough pixel buffer types.
     }
     connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewVideoFrameBuffer { identifier, WTF::move(buffer) }, 0);
-}
-
-void RemoteVideoFrameObjectHeap::pixelBuffer(RemoteVideoFrameReadReference&& read, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&& completionHandler)
-{
-    assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
-
-    auto videoFrame = get(WTF::move(read));
-    if (!videoFrame) {
-        ASSERT_IS_TESTING_IPC();
-        completionHandler(nullptr);
-        return;
-    }
-
-    RetainPtr pixelBuffer = videoFrame->pixelBuffer();
-    ASSERT(pixelBuffer);
-    completionHandler(WTF::move(pixelBuffer));
 }
 
 void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVideoFrame, bool shouldApplyRotation, CompletionHandler<void(WebCore::ColorSpace)>&& callback)

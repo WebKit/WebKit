@@ -301,7 +301,9 @@ struct WebPageCreationParameters {
     bool shouldCaptureAudioInUIProcess { false };
     bool shouldCaptureVideoInUIProcess { false };
     bool shouldCaptureDisplayInUIProcess { false };
+#if !PLATFORM(COCOA)
     bool shouldRenderDOMInGPUProcess { false };
+#endif
 #if ENABLE(APP_BOUND_DOMAINS)
     bool limitsNavigationsToAppBoundDomains { false };
 #endif

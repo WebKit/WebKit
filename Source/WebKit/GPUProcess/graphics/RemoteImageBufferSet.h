@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "IPCEvent.h"
-#include "ImageBufferSet.h"
 #include "ImageBufferSetIdentifier.h"
 #include "PrepareBackingStoreBuffersData.h"
 #include "RemoteGraphicsContextIdentifier.h"
@@ -48,7 +47,7 @@ namespace WebKit {
 class RemoteImageBufferGraphicsContext;
 class RemoteRenderingBackend;
 
-class RemoteImageBufferSet : public IPC::StreamMessageReceiver, public ImageBufferSet {
+class RemoteImageBufferSet : public IPC::StreamMessageReceiver {
 public:
     static Ref<RemoteImageBufferSet> create(ImageBufferSetIdentifier, RemoteGraphicsContextIdentifier, RemoteRenderingBackend&);
     ~RemoteImageBufferSet();
@@ -73,6 +72,10 @@ private:
     void startListeningForIPC();
     IPC::StreamConnectionWorkQueue& LEGACY_NODELETE workQueue() const;
 
+    // Tries to swap one of the existing back buffers to the new front buffer, if any are
+    // not currently in-use.
+    SwapBuffersDisplayRequirement swapBuffersForDisplay(bool hasEmptyDirtyRegion, bool supportsPartialRepaint);
+
     // IPC::StreamMessageReceiver
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -91,8 +94,14 @@ private:
         return pixelFormatIsOpaque(m_configuration.bufferFormat.pixelFormat);
     }
 
+    const ImageBufferSetIdentifier m_identifier;
     const RemoteGraphicsContextIdentifier m_contextIdentifier;
     const Ref<RemoteRenderingBackend> m_renderingBackend;
+    RefPtr<WebCore::ImageBuffer> m_frontBuffer;
+    RefPtr<WebCore::ImageBuffer> m_backBuffer;
+    RefPtr<WebCore::ImageBuffer> m_secondaryBackBuffer;
+    std::optional<WebCore::IntRect> m_previouslyPaintedRect;
+    bool m_frontBufferIsCleared { false };
     RemoteImageBufferSetConfiguration m_configuration;
     IPC::ScopedActiveMessageReceiveQueue<RemoteImageBufferGraphicsContext> m_context;
 

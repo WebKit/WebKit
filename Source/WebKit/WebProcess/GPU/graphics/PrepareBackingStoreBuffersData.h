@@ -30,6 +30,7 @@
 #include "BufferIdentifierSet.h"
 #include "ImageBufferBackendHandle.h"
 #include "ImageBufferSetIdentifier.h"
+#include <WebCore/FloatRect.h>
 #include <WebCore/Region.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 
@@ -44,6 +45,10 @@ enum class SwapBuffersDisplayRequirement : uint8_t {
     NeedsNormalDisplay,
     NeedsNoDisplay
 };
+
+using PaintRectList = Vector<WebCore::FloatRect, 5>;
+
+PaintRectList computePaintingRects(const WebCore::Region& dirtyRegion, float resolutionScale);
 
 struct ImageBufferSetPrepareBufferForDisplayInputData {
     ImageBufferSetIdentifier remoteBufferSet;

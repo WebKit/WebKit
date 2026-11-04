@@ -323,10 +323,6 @@ bool defaultPopoverAttributeEnabled()
 
 bool defaultUseGPUProcessForDOMRenderingEnabled()
 {
-#if ENABLE(GPU_PROCESS_BY_DEFAULT) && ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
-    return true;
-#endif
-
 #if USE(GRAPHICS_LAYER_WC)
     return true;
 #endif

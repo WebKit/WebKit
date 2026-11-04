@@ -33,7 +33,6 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
-#include "WebProcess.h"
 #include <WebCore/CVUtilities.h>
 #include <WebCore/RealtimeIncomingVideoSourceCocoa.h>
 #include <WebCore/VideoFrameCV.h>
@@ -125,21 +124,13 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
     if (!m_pixelBuffer && m_videoFrameObjectHeapProxy) {
         auto videoFrameObjectHeapProxy = std::exchange(m_videoFrameObjectHeapProxy, nullptr);
 
-        bool canSendSync = isMainRunLoop(); // FIXME: we should be able to sendSync from other threads too.
-        bool canUseIOSurface = !WebProcess::singleton().shouldUseRemoteRenderingForWebGL();
-        if (!canUseIOSurface || !canSendSync) {
-            Ref protectedThis { *this };
-            BinarySemaphore semaphore;
-            videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, canUseIOSurface, [&protectedThis, &semaphore](auto pixelBuffer) {
-                protectedThis->m_pixelBuffer = WTF::move(pixelBuffer);
-                semaphore.signal();
-            });
-            semaphore.wait();
-        } else {
-            auto sendResult = m_connection->sendSync(Messages::RemoteVideoFrameObjectHeap::PixelBuffer(newReadReference()), 0, defaultTimeout);
-            if (sendResult.succeeded())
-                std::tie(m_pixelBuffer) = sendResult.takeReply();
-        }
+        Ref protectedThis { *this };
+        BinarySemaphore semaphore;
+        videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, [&protectedThis, &semaphore](auto pixelBuffer) {
+            protectedThis->m_pixelBuffer = WTF::move(pixelBuffer);
+            semaphore.signal();
+        });
+        semaphore.wait();
     }
     // FIXME: Some code paths do not like empty pixel buffers.
     if (!m_pixelBuffer)

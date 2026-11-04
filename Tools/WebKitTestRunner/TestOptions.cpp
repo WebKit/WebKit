@@ -45,14 +45,6 @@ static constexpr bool mediaSourceEnabledValue = false;
 static constexpr bool mediaSourceEnabledValue = true;
 #endif
 
-#if ENABLE(GPU_PROCESS)
-#if ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
-static constexpr bool fullGPUProcessEnabledValue = true;
-#else
-static constexpr bool fullGPUProcessEnabledValue = false;
-#endif
-#endif
-
 #if ENABLE(UNIFIED_PDF)
 #if ENABLE(UNIFIED_PDF_BY_DEFAULT)
 static constexpr bool unifiedPDFEnabledValue = true;
@@ -160,11 +152,11 @@ const TestFeatures& TestOptions::defaults()
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
             { "VP9DecoderEnabled", false },
 #endif
-#if ENABLE(GPU_PROCESS)
-            { "UseGPUProcessForDOMRenderingEnabled", fullGPUProcessEnabledValue },
+#if ENABLE(GPU_PROCESS) && !PLATFORM(COCOA)
+            { "UseGPUProcessForDOMRenderingEnabled", false },
 #endif
-#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && !PLATFORM(WIN)
-            { "UseGPUProcessForWebGLEnabled", fullGPUProcessEnabledValue },
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && !PLATFORM(WIN) && !PLATFORM(COCOA)
+            { "UseGPUProcessForWebGLEnabled", false },
 #endif
         };
         features.stringWebPreferenceFeatures = {

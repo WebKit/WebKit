@@ -1650,8 +1650,12 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         m_webProcessCache->updateCapacity(*this);
 
 #if ENABLE(GPU_PROCESS)
+#if PLATFORM(COCOA)
+    ensureGPUProcess();
+#else
     if (pagePreference->useGPUProcessForDOMRenderingEnabled())
         ensureGPUProcess();
+#endif
 
     if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated()) {
         gpuProcess->updatePreferences(*process);
