@@ -227,7 +227,7 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
             return WI.assumingMainTarget();
 
         // Under Site Isolation, frame targets report the script records, while the page target reports only
-        // page-level data, such as garbage collections and microtasks.
+        // page-level data, such as garbage collections.
         return targets.find((target) => target.type === WI.TargetType.Frame)
             || targets.find((target) => !this.representedObject.imported && target === WI.mainTarget)
             || targets[0];

@@ -1,0 +1,27 @@
+Test that under Site Isolation, two frames in one process each get their own JavaScript samples, also when one of them is removed during the recording.
+
+
+== Running test suite: SiteIsolation.Timeline.SameProcessFramesScriptProfiler
+-- Running test case: SiteIsolation.Timeline.SameProcessFramesScriptProfiler.Samples
+PASS: Should find the same-origin iframe target.
+PASS: The same-origin iframe should be in the main frame's process.
+PASS: Both frame targets started tracking.
+PASS: Capturing stopped.
+PASS: Samples from the main frame target should include mainFrameWork.
+PASS: Samples from the main frame target should not include iframeWork.
+PASS: Samples from the iframe target should include iframeWork.
+PASS: Samples from the iframe target should not include mainFrameWork.
+
+-- Running test case: SiteIsolation.Timeline.SameProcessFramesScriptProfiler.OneFrameSampling
+PASS: Samples from the iframe target should include iframeWork.
+PASS: Samples from the iframe target should not include mainFrameWork.
+
+-- Running test case: SiteIsolation.Timeline.SameProcessFramesScriptProfiler.FrameRemoved
+PASS: Both frame targets started tracking.
+PASS: The iframe target should be removed.
+PASS: Capturing stopped.
+PASS: Samples from the main frame target should include mainFrameWork, which ran before the iframe was removed.
+PASS: Samples from the main frame target should include mainFrameWorkAfterRemoval, which ran after the iframe was removed.
+PASS: Samples from the main frame target should not include iframeWork.
+PASS: The page target should report no samples, including the samples left by the removed iframe.
+
