@@ -39,12 +39,26 @@
             buildForRunning = "YES"
             buildForProfiling = "YES"
             buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "932F5BE30822A1C700736975"
                BuildableName = "All"
                BlueprintName = "All"
+               ReferencedContainer = "container:Source/JavaScriptCore/JavaScriptCore.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "932F5B3E0822A1C700736975"
+               BuildableName = "JavaScriptCore.framework"
+               BlueprintName = "JavaScriptCore"
                ReferencedContainer = "container:Source/JavaScriptCore/JavaScriptCore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -242,6 +256,20 @@
                BuildableName = "lldbWebKitTester (Platform filters)"
                BlueprintName = "lldbWebKitTester (Platform filters)"
                ReferencedContainer = "container:Tools/lldb/lldbWebKitTester/lldbWebKitTester.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "0974C6E6408C3673A30DC17A"
+               BuildableName = "minidriver (Platform filters)"
+               BlueprintName = "minidriver (Platform filters)"
+               ReferencedContainer = "container:Source/WebDriver/minidriver.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
