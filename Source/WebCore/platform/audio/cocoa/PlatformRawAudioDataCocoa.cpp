@@ -143,9 +143,32 @@ RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(Ref<SharedBuffer>&& so
     return PlatformRawAudioDataCocoa::create(MediaSampleAVFObjC::create(sample, 0));
 }
 
+// Without a known layout, two channels are the front left and right, and other channels are discrete.
+static MediaChannelLayout channelLayoutForSample(const MediaSampleAVFObjC& sample)
+{
+    RetainPtr format = PAL::CMSampleBufferGetFormatDescription(RetainPtr { sample.sampleBuffer() });
+    const auto* asbd = format ? PAL::CMAudioFormatDescriptionGetStreamBasicDescription(format) : nullptr;
+    if (!asbd || !asbd->mChannelsPerFrame)
+        return { .kind = MediaChannelLayout::Kind::Discrete };
+    uint32_t numberOfChannels = asbd->mChannelsPerFrame;
+
+    size_t layoutSize = 0;
+    const auto* layout = PAL::CMAudioFormatDescriptionGetChannelLayout(format, &layoutSize);
+    if (layout && layoutSize >= offsetof(AudioChannelLayout, mChannelDescriptions)
+        && layoutSize >= offsetof(AudioChannelLayout, mChannelDescriptions) + sizeof(AudioChannelDescription) * static_cast<size_t>(layout->mNumberChannelDescriptions)) {
+        if (auto channelLayout = mediaChannelLayoutFromChannelLayout(*layout); channelLayout && channelLayout->isValid(numberOfChannels))
+            return *channelLayout;
+    }
+
+    if (numberOfChannels == 2)
+        return { .kind = MediaChannelLayout::Kind::Positional, .mask = webAudioChannelBit(WebAudioChannel::FrontLeft) | webAudioChannelBit(WebAudioChannel::FrontRight) };
+    return { .kind = MediaChannelLayout::Kind::Discrete };
+}
+
 PlatformRawAudioDataCocoa::PlatformRawAudioDataCocoa(Ref<MediaSampleAVFObjC>&& sample)
     : m_sample(WTF::move(sample))
     , m_description(asbd())
+    , m_channelLayout(channelLayoutForSample(m_sample))
 {
 }
 

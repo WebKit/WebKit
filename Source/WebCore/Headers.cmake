@@ -2185,6 +2185,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/LowPowerModeNotifier.h
     platform/MIMETypeRegistry.h
     platform/MainThreadSharedTimer.h
+    platform/MediaChannelLayout.h
     platform/MediaDescription.h
     platform/MediaPromiseTypes.h
     platform/MediaSample.h

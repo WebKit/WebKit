@@ -554,6 +554,21 @@ struct PassthroughUserData {
 // has gone wrong during decoding and we're done processing the packet.
 const uint32_t kNoMoreDataErr = 'MOAR';
 
+static bool isOggLayout(AudioChannelLayoutTag layoutTag)
+{
+    switch (layoutTag) {
+    case kAudioChannelLayoutTag_Ogg_3_0:
+    case kAudioChannelLayoutTag_Ogg_4_0:
+    case kAudioChannelLayoutTag_Ogg_5_0:
+    case kAudioChannelLayoutTag_Ogg_5_1:
+    case kAudioChannelLayoutTag_Ogg_6_1:
+    case kAudioChannelLayoutTag_Ogg_7_1:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static OSStatus passthroughInputDataCallback(AudioConverterRef, UInt32* numDataPackets, AudioBufferList* data, AudioStreamPacketDescription** packetDesc, void* inUserData)
 {
     ASSERT(numDataPackets && data && inUserData);
@@ -616,8 +631,11 @@ std::optional<size_t> AudioFileReader::decodeData(AudioBufferList& bufferList, s
     if (magicCookie && magicCookieSize)
         PAL::AudioConverterSetProperty(converter, kAudioConverterDecompressionMagicCookie, magicCookieSize, magicCookie);
 
-    if (auto* formatListItem = PAL::CMAudioFormatDescriptionGetRichestDecodableFormat(formatDescription.get()))
-        setWebAudioChannelOrderIfNeeded(converter, formatListItem->mChannelLayoutTag, outFormat.mChannelsPerFrame, ChannelReorderPolicy::OggLayoutsOnly);
+    // WebAudio API requires the channels to be ordered as per https://webaudio.github.io/web-audio-api/#ChannelOrdering.
+    // However WebKit has been returning the codec's channel order for as long as WebAudio has been supported and
+    // sites have adopted workarounds. To avoid breaking existing behaviour, only the Ogg layouts are reordered.
+    if (auto* formatListItem = PAL::CMAudioFormatDescriptionGetRichestDecodableFormat(formatDescription.get()); formatListItem && isOggLayout(formatListItem->mChannelLayoutTag))
+        setWebAudioChannelOrderIfNeeded(converter, formatListItem->mChannelLayoutTag, outFormat.mChannelsPerFrame);
 
     AudioBufferListHolder decodedBufferList(inFormat.mChannelsPerFrame);
     if (!decodedBufferList) {

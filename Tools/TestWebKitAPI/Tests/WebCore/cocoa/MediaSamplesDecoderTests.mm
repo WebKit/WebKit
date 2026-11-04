@@ -325,6 +325,44 @@ TEST(MediaSamplesDecoder, CanDecodeMultichannelOpus)
     EXPECT_EQ(downcast<AudioInfo>(*opus).channels(), 6u);
     EXPECT_TRUE(MediaSamplesDecoder::canDecode(*opus, allowedFilters));
 }
+
+TEST(MediaSamplesDecoder, DecodeMultichannelOpusChannelLayout)
+{
+    auto blocks = parseWebMAudioFile(@"opus-5.1");
+    ASSERT_FALSE(blocks.isEmpty());
+    ASSERT_TRUE(blocks[0]->info());
+
+    auto createPromise = MediaSamplesDecoder::create(*blocks[0]->info(), allowedFilters);
+    auto createResult = settle(createPromise.get());
+    ASSERT_TRUE(createResult);
+    Ref decoder = WTF::move(*createResult);
+
+    // 5.1 is decoded in Web Audio order: FL FR FC LFE BL BR.
+    constexpr MediaChannelLayout expectedLayout { .kind = MediaChannelLayout::Kind::Positional, .mask = 0x3F };
+    size_t decodedBlocks = 0;
+    auto check = [&](Vector<MediaSamplesBlock>&& outputs) {
+        for (auto& output : outputs) {
+            auto* info = dynamicDowncast<AudioInfo>(output.info());
+            ASSERT_TRUE(info);
+            EXPECT_EQ(info->channels(), 6u);
+            EXPECT_EQ(info->channelLayout(), expectedLayout);
+            ++decodedBlocks;
+        }
+    };
+
+    for (auto& block : blocks) {
+        auto decodePromise = decoder->decode(WTF::move(block.get()));
+        auto decodeResult = settle(decodePromise.get());
+        ASSERT_TRUE(decodeResult);
+        check(WTF::move(*decodeResult));
+    }
+    auto drainPromise = decoder->drain();
+    auto drainResult = settle(drainPromise.get());
+    ASSERT_TRUE(drainResult);
+    check(WTF::move(*drainResult));
+
+    EXPECT_GT(decodedBlocks, 0u);
+}
 #endif
 
 TEST(MediaSamplesDecoder, CanDecodeRejectsUnsupportedTracks)
