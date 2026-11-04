@@ -597,7 +597,7 @@ void InspectorDOMAgent::discardBindings()
     m_childrenRequested.clear();
 }
 
-NODELETE static RefPtr<Element> elementToPushForStyleable(const Styleable& styleable)
+RefPtr<Element> InspectorDOMAgent::elementToPushForStyleable(const Styleable& styleable)
 {
     auto& element = styleable.element;
     // FIXME: We want to get rid of PseudoElement.
@@ -770,7 +770,11 @@ Ref<Inspector::Protocol::DOM::Styleable> InspectorDOMAgent::pushStyleablePathToF
 {
     RefPtr element = elementToPushForStyleable(styleable);
     auto nodeId = pushNodePathToFrontend(errorString, protect(element ? element.get() : &styleable.element));
+    return buildObjectForStyleable(nodeId, styleable);
+}
 
+Ref<Inspector::Protocol::DOM::Styleable> InspectorDOMAgent::buildObjectForStyleable(Inspector::Protocol::DOM::NodeId nodeId, const Styleable& styleable)
+{
     auto protocolStyleable = Inspector::Protocol::DOM::Styleable::create()
         .setNodeId(nodeId)
         .release();
