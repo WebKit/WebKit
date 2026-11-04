@@ -64,8 +64,8 @@ public:
     EnvironmentVariables& environmentVariables() const LIFETIME_BOUND;
 
     struct LayoutDependencyUpdateContext {
-        HashSet<CheckedRef<const Element>> invalidatedContainers;
-        HashSet<CheckedRef<const Element>> invalidatedAnchorPositioned;
+        WeakHashSet<const Element, WeakPtrImplWithEventTargetData> invalidatedContainers;
+        WeakHashSet<const Element, WeakPtrImplWithEventTargetData> invalidatedAnchorPositioned;
 #if ENABLE(SMART_IMAGE_RESIZER)
         bool didUpdateForSmartImageResizer { false };
 #endif
