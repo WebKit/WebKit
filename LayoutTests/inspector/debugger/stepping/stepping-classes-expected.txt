@@ -228,7 +228,7 @@ PASS: Should have used all steps.
 
 -- Running test case: Debugger.stepping.ClassDefaultConstructor
 EXPRESSION: setTimeout(entryClassDefaultConstructor)
-STEPS: over, in, in, out, out, resume
+STEPS: over, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryClassDefaultConstructor:66:5
      62    }
@@ -250,10 +250,6 @@ PAUSE AT entryClassDefaultConstructor:67:5
      69    function entryClassGetterSetter() {
 
 ACTION: step-in
-PAUSE AT Child2:1:23
---- Source Unavailable ---
-
-ACTION: step-in
 PAUSE AT Base:18:9
      14    class Base {
      15        constructor()
@@ -262,10 +258,6 @@ PAUSE AT Base:18:9
      18        }
      19
      20        baseMethod()
-
-ACTION: step-out
-PAUSE AT Child2:1:40
---- Source Unavailable ---
 
 ACTION: step-out
 PAUSE AT entryClassDefaultConstructor:68:2

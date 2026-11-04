@@ -679,3 +679,52 @@ PAUSE AT testInnerFunction:68:2
 
 RESUMED
 
+-- Running test case: Debugger.stepInto.defaultConstructor
+PAUSED (debugger-statement)
+PAUSE AT testDefaultConstructor:75:5
+     71    class WithoutConstructor { }
+     72
+     73    function testDefaultConstructor() {
+ ->  74        |debugger;
+     75        let before = 1;
+     76        new WithoutConstructor();
+     77        let after = 2;
+
+PAUSE AT testDefaultConstructor:76:5
+     72
+     73    function testDefaultConstructor() {
+     74        debugger;
+ ->  75        |let before = 1;
+     76        new WithoutConstructor();
+     77        let after = 2;
+     78    }
+
+PAUSE AT testDefaultConstructor:77:5
+     73    function testDefaultConstructor() {
+     74        debugger;
+     75        let before = 1;
+ ->  76        |new WithoutConstructor();
+     77        let after = 2;
+     78    }
+     79
+
+PAUSE AT testDefaultConstructor:78:5
+     74        debugger;
+     75        let before = 1;
+     76        new WithoutConstructor();
+ ->  77        |let after = 2;
+     78    }
+     79
+     80    function test()
+
+PAUSE AT testDefaultConstructor:79:2
+     75        let before = 1;
+     76        new WithoutConstructor();
+     77        let after = 2;
+ ->  78    }|
+     79
+     80    function test()
+     81    {
+
+RESUMED
+

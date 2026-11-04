@@ -114,3 +114,56 @@ PAUSE AT testDeclarations:56:5
 
 RESUMED
 
+-- Running test case: Debugger.stepOut.defaultConstructor
+PAUSED (debugger-statement)
+PAUSE AT Base:66:9
+     62
+     63    class Base {
+     64        constructor() {
+ ->  65            |debugger;
+     66        }
+     67    }
+     68
+
+PAUSE AT testDefaultConstructor:74:5
+     70
+     71    function testDefaultConstructor() {
+     72        let derived = new Derived;
+ ->  73        |let after = 1;
+     74    }
+     75
+     76    class Parent {
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.defaultConstructorInChain
+PAUSED (debugger-statement)
+PAUSE AT Parent:79:9
+     75
+     76    class Parent {
+     77        constructor() {
+ ->  78            |debugger;
+     79        }
+     80    }
+     81
+
+PAUSE AT Child:88:9
+     84    class Child extends Middle {
+     85        constructor() {
+     86            super();
+ ->  87            |let afterSuper = 1;
+     88        }
+     89    }
+     90
+
+PAUSE AT testDefaultConstructorInChain:94:5
+     90
+     91    function testDefaultConstructorInChain() {
+     92        let child = new Child;
+ ->  93        |let after = 1;
+     94    }
+     95
+     96    function test()
+
+RESUMED
+

@@ -17,3 +17,23 @@ PASS: Should pause in Global Code.
 PASS: Should pause in pageMessage.
 -- Running test teardown.
 
+-- Running test setup.
+-- Running test case: Debugger.InternalWorld.PauseAtNextStatement.ClassWithoutConstructor
+PASS: Should pause in pageMessage.
+-- Running test teardown.
+
+-- Running test setup.
+-- Running test case: Debugger.InternalWorld.PauseAtNextStatement.ClassWithPrivateFields
+PASS: Should pause in pageMessage.
+-- Running test teardown.
+
+-- Running test setup.
+-- Running test case: Debugger.InternalWorld.PauseAtNextStatement.DerivedClassWithoutConstructor
+PASS: Should pause in pageMessage.
+-- Running test teardown.
+
+-- Running test setup.
+-- Running test case: Debugger.InternalWorld.PauseAtNextStatement.FunctionConstructor
+PASS: Should pause in pageMessage.
+-- Running test teardown.
+

@@ -69,6 +69,15 @@ function testInnerFunction() {
 
 // ---------
 
+class WithoutConstructor { }
+
+function testDefaultConstructor() {
+    debugger;
+    let before = 1;
+    new WithoutConstructor();
+    let after = 2;
+}
+
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("Debugger.stepInto");
@@ -143,6 +152,12 @@ function test()
         name: "Debugger.stepInto.innerFunction",
         description: "step-into should step out of a function to its caller.",
         expression: "setTimeout(testInnerFunction)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepInto.defaultConstructor",
+        description: "step-into should not step into the default constructor of a class.",
+        expression: "setTimeout(testDefaultConstructor)",
     });
 
     loadMainPageContent().then(() => {

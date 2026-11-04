@@ -20,7 +20,7 @@ function test()
         }
     }
 
-    function addTestCase({name, description, sourceURL, pauseForInternalScripts, expectedFunctionName}) {
+    function addTestCase({name, description, sourceURL, code = "", pauseForInternalScripts, expectedFunctionName}) {
         suite.addTestCase({
             name,
             description,
@@ -37,6 +37,7 @@ function test()
                 let evaluatePromise = context.target.RuntimeAgent.evaluate.invoke({
                     contextId: context.id,
                     expression: `${sourceURL}
+                        ${code}
                         setTimeout("window.postMessage('internal-program-complete', '*');\\n${sourceURL}");
                     `,
                 });
@@ -74,6 +75,42 @@ function test()
         name: "Debugger.InternalWorld.PauseAtNextStatement.ScriptWithoutURL",
         description: "Pausing at the next statement should skip a script without a URL in an internal world.",
         sourceURL: "",
+        pauseForInternalScripts: false,
+        expectedFunctionName: "pageMessage",
+    });
+
+    addTestCase({
+        name: "Debugger.InternalWorld.PauseAtNextStatement.ClassWithoutConstructor",
+        description: "Pausing at the next statement should skip the default constructor of a class in an internal world.",
+        sourceURL: "//# sourceURL=InternalWorldScript.js",
+        code: `class WithoutConstructor { } globalThis.withoutConstructor = new WithoutConstructor();`,
+        pauseForInternalScripts: false,
+        expectedFunctionName: "pageMessage",
+    });
+
+    addTestCase({
+        name: "Debugger.InternalWorld.PauseAtNextStatement.ClassWithPrivateFields",
+        description: "Pausing at the next statement should skip the default constructor of a class with private fields in an internal world.",
+        sourceURL: "//# sourceURL=InternalWorldScript.js",
+        code: `class WithPrivateFields { #field = []; } globalThis.withPrivateFields = new WithPrivateFields();`,
+        pauseForInternalScripts: false,
+        expectedFunctionName: "pageMessage",
+    });
+
+    addTestCase({
+        name: "Debugger.InternalWorld.PauseAtNextStatement.DerivedClassWithoutConstructor",
+        description: "Pausing at the next statement should skip the default constructor of a derived class in an internal world.",
+        sourceURL: "//# sourceURL=InternalWorldScript.js",
+        code: `class Base { constructor() { this.base = 1; } } class Derived extends Base { } globalThis.derived = new Derived();`,
+        pauseForInternalScripts: false,
+        expectedFunctionName: "pageMessage",
+    });
+
+    addTestCase({
+        name: "Debugger.InternalWorld.PauseAtNextStatement.FunctionConstructor",
+        description: "Pausing at the next statement should skip a function that a script in an internal world creates with the Function constructor.",
+        sourceURL: "//# sourceURL=InternalWorldScript.js",
+        code: `new Function("return 2")();`,
         pauseForInternalScripts: false,
         expectedFunctionName: "pageMessage",
     });

@@ -61,6 +61,39 @@ function testDeclarations() {
 
 // ---------
 
+class Base {
+    constructor() {
+        debugger;
+    }
+}
+
+class Derived extends Base { }
+
+function testDefaultConstructor() {
+    let derived = new Derived;
+    let after = 1;
+}
+
+class Parent {
+    constructor() {
+        debugger;
+    }
+}
+
+class Middle extends Parent { }
+
+class Child extends Middle {
+    constructor() {
+        super();
+        let afterSuper = 1;
+    }
+}
+
+function testDefaultConstructorInChain() {
+    let child = new Child;
+    let after = 1;
+}
+
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("Debugger.stepOut");
@@ -129,6 +162,18 @@ function test()
         name: "Debugger.stepOut.declarations",
         description: "step-out should leave a function.",
         expression: "setTimeout(testDeclarations)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOut.defaultConstructor",
+        description: "step-out should leave a constructor that is called from the default constructor of a derived class.",
+        expression: "setTimeout(testDefaultConstructor)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOut.defaultConstructorInChain",
+        description: "step-out should leave a constructor that is called through the default constructor of a class between two constructors.",
+        expression: "setTimeout(testDefaultConstructorInChain)",
     });
 
     loadMainPageContent().then(() => {

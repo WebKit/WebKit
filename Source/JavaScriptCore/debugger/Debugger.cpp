@@ -1045,6 +1045,12 @@ Debugger::BlackboxFlags Debugger::blackboxFlagsAtPosition(SourceID sourceID, con
     return relevantBlackboxFlags;
 }
 
+static bool isExecutingBuiltinDefaultClassConstructor(CallFrame* callFrame)
+{
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    return codeBlock && codeBlock->unlinkedCodeBlock()->isBuiltinDefaultClassConstructor();
+}
+
 void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
 {
     VM& vm = m_vm;
@@ -1065,6 +1071,9 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
 
     BlackboxFlags relevantBlackboxFlags = blackboxFlagsAtPosition(sourceID, position);
     if (relevantBlackboxFlags.contains(BlackboxFlag::Ignore))
+        return;
+
+    if (isExecutingBuiltinDefaultClassConstructor(m_currentCallFrame))
         return;
 
     bool afterBlackboxedScript = m_afterBlackboxedScript;

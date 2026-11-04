@@ -83,7 +83,7 @@ static JSC::Debugger::BlackboxRange LEGACY_NODELETE blackboxRange(const JSC::Deb
 {
     return {
         { OrdinalNumber::fromZeroBasedInt(script.startLine), OrdinalNumber::fromZeroBasedInt(script.startColumn) },
-        { OrdinalNumber::fromZeroBasedInt(script.endLine), OrdinalNumber::fromZeroBasedInt(script.endColumn) },
+        { OrdinalNumber::fromZeroBasedInt(script.endLine), OrdinalNumber::fromZeroBasedInt(script.endColumn + 1) },
     };
 }
 
