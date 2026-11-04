@@ -304,7 +304,7 @@ String Stringifier::stringify(JSGlobalObject& globalObject, JSValue value, JSVal
     }
     if (stringifyResult != StringifySucceeded) [[unlikely]]
         RELEASE_AND_RETURN(scope, { });
-    RELEASE_AND_RETURN(scope, result.toString());
+    RELEASE_AND_RETURN(scope, WTF::move(result).toString());
 }
 
 ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue baseValue, const PropertyNameForFunctionCall& propertyName)

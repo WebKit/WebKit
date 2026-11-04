@@ -74,7 +74,8 @@ public:
     void appendSubstring(const String&, unsigned offset, unsigned length = String::MaxLength);
     WTF_EXPORT_PRIVATE void appendQuotedJSONString(const String&);
 
-    const String& toString() LIFETIME_BOUND;
+    const String& toString() & LIFETIME_BOUND;
+    String toString() && { toString(); auto string = WTF::move(m_string); clear(); return string; }
     const String& toStringPreserveCapacity() const LIFETIME_BOUND;
     AtomString toAtomString() const;
 
@@ -233,7 +234,7 @@ inline void StringBuilder::appendSubstring(const String& string, unsigned offset
     append(StringView { string }.substring(offset, length));
 }
 
-inline const String& StringBuilder::toString() LIFETIME_BOUND
+inline const String& StringBuilder::toString() & LIFETIME_BOUND
 {
     if (m_string.isNull()) {
         shrinkToFit();

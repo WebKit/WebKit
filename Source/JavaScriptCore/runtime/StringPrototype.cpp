@@ -2774,7 +2774,7 @@ static JSString* createHTML(JSGlobalObject* globalObject, JSValue thisValue, ASC
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
-    RELEASE_AND_RETURN(scope, jsString(vm, result.toString()));
+    RELEASE_AND_RETURN(scope, jsString(vm, WTF::move(result).toString()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncAnchor, (JSGlobalObject* globalObject, CallFrame* callFrame))

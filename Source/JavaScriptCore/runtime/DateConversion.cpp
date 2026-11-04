@@ -101,7 +101,7 @@ String formatDateTime(PlainGregorianDateTime t, DateTimeFormat format, bool asUT
         }
     }
 
-    return builder.toString().impl();
+    return WTF::move(builder).toString();
 }
 
 } // namespace JSC
