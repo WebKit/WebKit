@@ -547,7 +547,7 @@ bool JSArray::setLengthWithArrayStorage(JSGlobalObject* globalObject, unsigned n
 bool JSArray::fastFill(VM& vm, unsigned startIndex, unsigned endIndex, JSValue value)
 {
     if (isCopyOnWrite(indexingMode()))
-        convertFromCopyOnWrite(vm);
+        convertFromCopyOnWrite(vm, /* additionalLength */ 0);
 
     IndexingType type = indexingType();
     if (!(type & IsArray) || hasAnyArrayStorage(type))
@@ -895,7 +895,7 @@ bool JSArray::fastCopyWithin(JSGlobalObject* globalObject, uint64_t from64, uint
         return false;
 
     if (isCopyOnWrite(indexingMode()))
-        convertFromCopyOnWrite(vm);
+        convertFromCopyOnWrite(vm, /* additionalLength */ 0);
 
     auto type = this->indexingType();
     switch (type) {
@@ -1173,7 +1173,7 @@ bool JSArray::appendMemcpy(JSGlobalObject* globalObject, VM& vm, unsigned startI
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (isCopyOnWrite(indexingMode()))
-        convertFromCopyOnWrite(vm);
+        convertFromCopyOnWrite(vm, /* additionalLength */ 0);
 
     IndexingType type = indexingType();
     bool allowPromotion = false;
@@ -1326,7 +1326,7 @@ bool JSArray::setLength(JSGlobalObject* globalObject, unsigned newLength, bool t
     case CopyOnWriteArrayWithContiguous:
         if (newLength == butterfly->publicLength())
             return true;
-        convertFromCopyOnWrite(vm);
+        convertFromCopyOnWrite(vm, /* additionalLength */ 0);
         butterfly = this->butterfly();
         [[fallthrough]];
 

@@ -3231,7 +3231,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             if (static_cast<unsigned>(argumentCountIncludingThis) >= MIN_SPARSE_ARRAY_INDEX)
                 return CallOptimizationResult::DidNothing;
 
-            ArrayMode arrayMode = getArrayMode(Array::Write);
+            ArrayMode arrayMode = getArrayMode(Array::Read);
+            if (arrayMode.type() != Array::Int32 && arrayMode.type() != Array::Double && arrayMode.type() != Array::Contiguous)
+                arrayMode = getArrayMode(Array::Write);
             if (!arrayMode.isJSArray())
                 return CallOptimizationResult::DidNothing;
 
