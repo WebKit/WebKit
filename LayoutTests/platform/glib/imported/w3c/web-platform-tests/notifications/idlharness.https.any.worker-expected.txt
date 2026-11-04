@@ -28,7 +28,6 @@ PASS Notification interface: attribute tag
 FAIL Notification interface: attribute image assert_true: The prototype object must have a property "image" expected true got false
 PASS Notification interface: attribute icon
 FAIL Notification interface: attribute badge assert_true: The prototype object must have a property "badge" expected true got false
-FAIL Notification interface: attribute vibrate assert_true: The prototype object must have a property "vibrate" expected true got false
 FAIL Notification interface: attribute timestamp assert_true: The prototype object must have a property "timestamp" expected true got false
 FAIL Notification interface: attribute renotify assert_true: The prototype object must have a property "renotify" expected true got false
 PASS Notification interface: attribute silent
@@ -54,7 +53,6 @@ PASS Notification interface: notification must inherit property "tag" with the p
 FAIL Notification interface: notification must inherit property "image" with the proper type assert_inherits: property "image" not found in prototype chain
 PASS Notification interface: notification must inherit property "icon" with the proper type
 FAIL Notification interface: notification must inherit property "badge" with the proper type assert_inherits: property "badge" not found in prototype chain
-FAIL Notification interface: notification must inherit property "vibrate" with the proper type assert_inherits: property "vibrate" not found in prototype chain
 FAIL Notification interface: notification must inherit property "timestamp" with the proper type assert_inherits: property "timestamp" not found in prototype chain
 FAIL Notification interface: notification must inherit property "renotify" with the proper type assert_inherits: property "renotify" not found in prototype chain
 PASS Notification interface: notification must inherit property "silent" with the proper type

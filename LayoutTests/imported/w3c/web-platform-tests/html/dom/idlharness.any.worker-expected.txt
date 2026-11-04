@@ -11,6 +11,8 @@ PASS Partial interface Element: original interface defined
 PASS Partial interface Element: member names are unique
 PASS Partial interface ShadowRoot: original interface defined
 PASS Partial interface ShadowRoot: member names are unique
+PASS Partial interface mixin NonDocumentTypeChildNode: original interface mixin defined
+PASS Partial interface mixin NonDocumentTypeChildNode: member names are unique
 PASS Partial interface Range: original interface defined
 PASS Partial interface Range: member names are unique
 PASS Partial interface mixin NavigatorID: original interface mixin defined
@@ -81,18 +83,20 @@ PASS Partial interface Document[2]: original interface defined
 PASS Partial interface Document[2]: member names are unique
 PASS Partial interface Window: original interface defined
 PASS Partial interface Window: member names are unique
-PASS Partial interface UIEvent: member names are unique
 PASS Partial interface MouseEvent: member names are unique
+PASS Partial interface UIEvent: member names are unique
 PASS Partial interface UIEvent[2]: member names are unique
 PASS Partial dictionary UIEventInit: member names are unique
 PASS Document includes GlobalEventHandlers: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
 PASS HTMLElement includes ElementContentEditable: member names are unique
-PASS HTMLElement includes HTMLOrSVGElement: member names are unique
+PASS HTMLElement includes HTMLOrSVGOrMathMLElement: member names are unique
 PASS HTMLLinkElement includes LinkStyle: member names are unique
 PASS HTMLStyleElement includes LinkStyle: member names are unique
 PASS HTMLBodyElement includes WindowEventHandlers: member names are unique
+PASS HTMLAnchorElement includes HyperlinkElementUtils: member names are unique
 PASS HTMLAnchorElement includes HTMLHyperlinkElementUtils: member names are unique
+PASS HTMLAreaElement includes HyperlinkElementUtils: member names are unique
 PASS HTMLAreaElement includes HTMLHyperlinkElementUtils: member names are unique
 PASS HTMLInputElement includes PopoverTargetAttributes: member names are unique
 PASS HTMLButtonElement includes PopoverTargetAttributes: member names are unique
@@ -157,6 +161,8 @@ PASS Window includes WindowSessionStorage: member names are unique
 PASS Window includes WindowLocalStorage: member names are unique
 PASS HTMLFrameSetElement includes WindowEventHandlers: member names are unique
 PASS Element includes ARIAMixin: member names are unique
+PASS Element includes ARIANotifyMixin: member names are unique
+PASS Document includes ARIANotifyMixin: member names are unique
 PASS Document includes NonElementParentNode: member names are unique
 PASS DocumentFragment includes NonElementParentNode: member names are unique
 PASS Document includes DocumentOrShadowRoot: member names are unique
@@ -165,7 +171,9 @@ PASS Document includes ParentNode: member names are unique
 PASS DocumentFragment includes ParentNode: member names are unique
 PASS Element includes ParentNode: member names are unique
 PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS CharacterData includes NonDocumentTypeChildNode: member names are unique
 PASS Element includes ChildNode: member names are unique
+PASS CharacterData includes ChildNode: member names are unique
 PASS Element includes Slottable: member names are unique
 PASS Document includes XPathEvaluatorBase: member names are unique
 PASS HTMLElement includes ElementCSSInlineStyle: member names are unique
@@ -434,6 +442,25 @@ PASS DataTransfer interface: existence and properties of interface object
 PASS DataTransferItemList interface: existence and properties of interface object
 PASS DataTransferItem interface: existence and properties of interface object
 PASS DragEvent interface: existence and properties of interface object
+PASS Origin interface: existence and properties of interface object
+PASS Origin interface object length
+PASS Origin interface object name
+PASS Origin interface: existence and properties of interface prototype object
+PASS Origin interface: existence and properties of interface prototype object's "constructor" property
+PASS Origin interface: existence and properties of interface prototype object's @@unscopables property
+PASS Origin interface: operation from(any)
+PASS Origin interface: attribute opaque
+PASS Origin interface: operation isSameOrigin(Origin)
+PASS Origin interface: operation isSameSite(Origin)
+PASS Origin must be primary interface of new Origin()
+PASS Stringification of new Origin()
+PASS Origin interface: new Origin() must inherit property "from(any)" with the proper type
+PASS Origin interface: calling from(any) on new Origin() with too few arguments must throw TypeError
+PASS Origin interface: new Origin() must inherit property "opaque" with the proper type
+PASS Origin interface: new Origin() must inherit property "isSameOrigin(Origin)" with the proper type
+PASS Origin interface: calling isSameOrigin(Origin) on new Origin() with too few arguments must throw TypeError
+PASS Origin interface: new Origin() must inherit property "isSameSite(Origin)" with the proper type
+PASS Origin interface: calling isSameSite(Origin) on new Origin() with too few arguments must throw TypeError
 PASS Window interface: existence and properties of interface object
 PASS BarProp interface: existence and properties of interface object
 PASS Location interface: existence and properties of interface object
@@ -477,6 +504,7 @@ FAIL PromiseRejectionEvent interface: attribute promise assert_throws_js: gettin
 PASS PromiseRejectionEvent interface: attribute reason
 PASS DOMParser interface: existence and properties of interface object
 PASS XMLSerializer interface: existence and properties of interface object
+PASS Sanitizer interface: existence and properties of interface object
 PASS Navigator interface: existence and properties of interface object
 PASS PluginArray interface: existence and properties of interface object
 PASS MimeTypeArray interface: existence and properties of interface object
@@ -572,7 +600,6 @@ PASS MessagePort interface: operation postMessage(any, sequence<object>)
 PASS MessagePort interface: operation postMessage(any, optional StructuredSerializeOptions)
 PASS MessagePort interface: operation start()
 PASS MessagePort interface: operation close()
-FAIL MessagePort interface: attribute onclose assert_true: The prototype object must have a property "onclose" expected true got false
 PASS MessagePort interface: attribute onmessage
 PASS MessagePort interface: attribute onmessageerror
 PASS BroadcastChannel interface: existence and properties of interface object

@@ -98,6 +98,8 @@ PASS SpeechRecognitionResult interface: existence and properties of interface pr
 PASS SpeechRecognitionResult interface: attribute length
 PASS SpeechRecognitionResult interface: operation item(unsigned long)
 PASS SpeechRecognitionResult interface: attribute isFinal
+FAIL SpeechRecognitionResult interface: attribute speechStartTime assert_true: The prototype object must have a property "speechStartTime" expected true got false
+FAIL SpeechRecognitionResult interface: attribute speechEndTime assert_true: The prototype object must have a property "speechEndTime" expected true got false
 PASS SpeechRecognitionResultList interface: existence and properties of interface object
 PASS SpeechRecognitionResultList interface object length
 PASS SpeechRecognitionResultList interface object name

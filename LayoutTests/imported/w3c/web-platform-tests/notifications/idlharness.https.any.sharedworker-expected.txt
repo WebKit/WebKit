@@ -28,7 +28,6 @@ FAIL Notification interface: attribute tag assert_own_property: self does not ha
 FAIL Notification interface: attribute image assert_own_property: self does not have own property "Notification" expected property "Notification" missing
 FAIL Notification interface: attribute icon assert_own_property: self does not have own property "Notification" expected property "Notification" missing
 FAIL Notification interface: attribute badge assert_own_property: self does not have own property "Notification" expected property "Notification" missing
-FAIL Notification interface: attribute vibrate assert_own_property: self does not have own property "Notification" expected property "Notification" missing
 FAIL Notification interface: attribute timestamp assert_own_property: self does not have own property "Notification" expected property "Notification" missing
 FAIL Notification interface: attribute renotify assert_own_property: self does not have own property "Notification" expected property "Notification" missing
 FAIL Notification interface: attribute silent assert_own_property: self does not have own property "Notification" expected property "Notification" missing
@@ -54,7 +53,6 @@ FAIL Notification interface: notification must inherit property "tag" with the p
 FAIL Notification interface: notification must inherit property "image" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: notification"
 FAIL Notification interface: notification must inherit property "icon" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: notification"
 FAIL Notification interface: notification must inherit property "badge" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: notification"
-FAIL Notification interface: notification must inherit property "vibrate" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: notification"
 FAIL Notification interface: notification must inherit property "timestamp" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: notification"
 FAIL Notification interface: notification must inherit property "renotify" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: notification"
 FAIL Notification interface: notification must inherit property "silent" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: notification"

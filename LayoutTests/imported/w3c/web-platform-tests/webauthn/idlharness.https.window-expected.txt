@@ -55,6 +55,14 @@ PASS Partial dictionary AuthenticationExtensionsClientOutputs[5]: original dicti
 PASS Partial dictionary AuthenticationExtensionsClientOutputs[5]: member names are unique
 PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON[5]: original dictionary defined
 PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON[5]: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientInputs[6]: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientInputs[6]: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientInputsJSON[6]: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientInputsJSON[6]: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientOutputs[6]: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientOutputs[6]: member names are unique
+PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON[6]: original dictionary defined
+PASS Partial dictionary AuthenticationExtensionsClientOutputsJSON[6]: member names are unique
 PASS Partial dictionary CredentialRequestOptions[2]: member names are unique
 PASS Partial dictionary CredentialCreationOptions[2]: member names are unique
 PASS Partial dictionary CredentialRequestOptions[3]: member names are unique

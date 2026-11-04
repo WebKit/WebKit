@@ -72,6 +72,7 @@ PASS Request interface: operation bytes()
 PASS Request interface: operation formData()
 PASS Request interface: operation json()
 PASS Request interface: operation text()
+FAIL Request interface: operation textStream() assert_own_property: interface prototype object missing non-static operation expected property "textStream" missing
 PASS Request must be primary interface of new Request('about:blank')
 PASS Stringification of new Request('about:blank')
 PASS Request interface: new Request('about:blank') must inherit property "method" with the proper type
@@ -99,6 +100,7 @@ PASS Request interface: new Request('about:blank') must inherit property "bytes(
 PASS Request interface: new Request('about:blank') must inherit property "formData()" with the proper type
 PASS Request interface: new Request('about:blank') must inherit property "json()" with the proper type
 PASS Request interface: new Request('about:blank') must inherit property "text()" with the proper type
+FAIL Request interface: new Request('about:blank') must inherit property "textStream()" with the proper type assert_inherits: property "textStream" not found in prototype chain
 PASS Response interface: existence and properties of interface object
 PASS Response interface object length
 PASS Response interface object name
@@ -124,6 +126,7 @@ PASS Response interface: operation bytes()
 PASS Response interface: operation formData()
 PASS Response interface: operation json()
 PASS Response interface: operation text()
+FAIL Response interface: operation textStream() assert_own_property: interface prototype object missing non-static operation expected property "textStream" missing
 PASS Response must be primary interface of new Response()
 PASS Stringification of new Response()
 PASS Response interface: new Response() must inherit property "error()" with the proper type
@@ -147,6 +150,7 @@ PASS Response interface: new Response() must inherit property "bytes()" with the
 PASS Response interface: new Response() must inherit property "formData()" with the proper type
 PASS Response interface: new Response() must inherit property "json()" with the proper type
 PASS Response interface: new Response() must inherit property "text()" with the proper type
+FAIL Response interface: new Response() must inherit property "textStream()" with the proper type assert_inherits: property "textStream" not found in prototype chain
 FAIL FetchLaterResult interface: existence and properties of interface object assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
 FAIL FetchLaterResult interface object length assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
 FAIL FetchLaterResult interface object name assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing

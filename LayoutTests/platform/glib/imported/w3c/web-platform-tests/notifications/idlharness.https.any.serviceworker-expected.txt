@@ -28,7 +28,6 @@ PASS Notification interface: attribute tag
 FAIL Notification interface: attribute image assert_true: The prototype object must have a property "image" expected true got false
 PASS Notification interface: attribute icon
 FAIL Notification interface: attribute badge assert_true: The prototype object must have a property "badge" expected true got false
-FAIL Notification interface: attribute vibrate assert_true: The prototype object must have a property "vibrate" expected true got false
 FAIL Notification interface: attribute timestamp assert_true: The prototype object must have a property "timestamp" expected true got false
 FAIL Notification interface: attribute renotify assert_true: The prototype object must have a property "renotify" expected true got false
 PASS Notification interface: attribute silent

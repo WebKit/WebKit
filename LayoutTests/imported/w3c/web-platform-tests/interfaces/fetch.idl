@@ -30,6 +30,7 @@ interface mixin Body {
   [NewObject] Promise<FormData> formData();
   [NewObject] Promise<any> json();
   [NewObject] Promise<USVString> text();
+  [NewObject] ReadableStream textStream();
 };
 typedef (Request or USVString) RequestInfo;
 
@@ -77,7 +78,7 @@ dictionary RequestInit {
   any window; // can only be set to null
 };
 
-enum RequestDestination { "", "audio", "audioworklet", "document", "embed", "font", "frame", "iframe", "image", "json", "manifest", "object", "paintworklet", "report", "script", "sharedworker", "style",  "track", "video", "worker", "xslt" };
+enum RequestDestination { "", "audio", "audioworklet", "document", "embed", "font", "frame", "iframe", "image", "json", "manifest", "object", "paintworklet", "report", "script", "sharedworker", "style", "text", "track", "video", "worker", "xslt" };
 enum RequestMode { "navigate", "same-origin", "no-cors", "cors" };
 enum RequestCredentials { "omit", "same-origin", "include" };
 enum RequestCache { "default", "no-store", "reload", "no-cache", "force-cache", "only-if-cached" };
@@ -85,7 +86,8 @@ enum RequestRedirect { "follow", "error", "manual" };
 enum RequestDuplex { "half" };
 enum RequestPriority { "high", "low", "auto" };
 
-[Exposed=(Window,Worker)]interface Response {
+[Exposed=(Window,Worker)]
+interface Response {
   constructor(optional BodyInit? body = null, optional ResponseInit init = {});
 
   [NewObject] static Response error();
@@ -127,5 +129,5 @@ interface FetchLaterResult {
 };
 
 partial interface Window {
-  [NewObject] FetchLaterResult fetchLater(RequestInfo input, optional DeferredRequestInit init = {});
+  [NewObject, SecureContext] FetchLaterResult fetchLater(RequestInfo input, optional DeferredRequestInit init = {});
 };
