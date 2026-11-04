@@ -19345,8 +19345,12 @@ void WebPageProxy::didRestoreScrollPosition()
         pageClient->didRestoreScrollPosition();
 }
 
-void WebPageProxy::getLoadDecisionForIcons(const HashMap<CallbackID, WebCore::LinkIcon>& icons)
+void WebPageProxy::getLoadDecisionForIcons(IPC::Connection& connection, const Vector<std::pair<CallbackID, WebCore::LinkIcon>>& icons)
 {
+    HashSet<CallbackID> loadIdentifiers;
+    for (auto& icon : borrow(icons))
+        MESSAGE_CHECK_BASE(loadIdentifiers.add(icon.first).isNewEntry, connection);
+
 #if PLATFORM(COCOA)
     for (const auto& [loadIdentifier, icon] : icons) {
         m_iconLoadingClient->getLoadDecisionForIcon(icon, [this, protectedThis = Ref { *this }, loadIdentifier] (CompletionHandler<void(API::Data*)>&& callback) {
@@ -19370,15 +19374,14 @@ void WebPageProxy::getLoadDecisionForIcons(const HashMap<CallbackID, WebCore::Li
         });
     }
 #else
-    m_iconLoadingClient->getLoadDecisionForIcons(icons, [this, icons, protectedThis = Ref { *this }] (HashSet<CallbackID>&& iconIdentifiers) {
-        if (iconIdentifiers.isEmpty() || !hasRunningProcess())
+    m_iconLoadingClient->getLoadDecisionForIcons(icons, [this, icons = icons, protectedThis = Ref { *this }](HashSet<CallbackID>&& iconIdentifiers) mutable {
+        if (!hasRunningProcess())
             return;
 
-        for (const auto& loadIdentifier : icons.keys()) {
+        for (auto& [loadIdentifier, icon] : icons) {
             if (!iconIdentifiers.contains(loadIdentifier))
                 sendWithAsyncReply(Messages::WebPage::DidGetLoadDecisionForIcon(false, loadIdentifier), [](auto) { });
             else {
-                LinkIcon icon = icons.get(loadIdentifier);
                 sendWithAsyncReply(Messages::WebPage::DidGetLoadDecisionForIcon(true, loadIdentifier), [weakThis = WeakPtr { *this }, loadIdentifier, icon = WTF::move(icon)](const IPC::SharedBufferReference& iconData) mutable {
                     if (RefPtr protectedThis = weakThis.get())
                         protectedThis->m_iconLoadingClient->iconLoaded(loadIdentifier, icon, iconData.isNull() ? nullptr : API::Data::create(iconData.span()).ptr());

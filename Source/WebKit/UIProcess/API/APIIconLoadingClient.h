@@ -48,7 +48,7 @@ public:
         completionHandler(nullptr);
     }
 #else
-    virtual void getLoadDecisionForIcons(const HashMap<WebKit::CallbackID, WebCore::LinkIcon>&, CompletionHandler<void(HashSet<WebKit::CallbackID>&&)>&& completionHandler)
+    virtual void getLoadDecisionForIcons(const Vector<std::pair<WebKit::CallbackID, WebCore::LinkIcon>>&, CompletionHandler<void(HashSet<WebKit::CallbackID>&&)>&& completionHandler)
     {
         completionHandler({ });
     }

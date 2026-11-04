@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    void getLoadDecisionForIcons(const HashMap<WebKit::CallbackID, WebCore::LinkIcon>& icons, CompletionHandler<void(HashSet<WebKit::CallbackID>&&)>&& completionHandler) override
+    void getLoadDecisionForIcons(const Vector<std::pair<WebKit::CallbackID, WebCore::LinkIcon>>& icons, CompletionHandler<void(HashSet<WebKit::CallbackID>&&)>&& completionHandler) override
     {
         m_pendingIcons.clear();
         webkitWebViewGetLoadDecisionForIcons(m_webView, icons, [this, weakWebView = GWeakPtr { m_webView }, completionHandler = WTF::move(completionHandler)](HashSet<CallbackID>&& loadIdentifiers) mutable {

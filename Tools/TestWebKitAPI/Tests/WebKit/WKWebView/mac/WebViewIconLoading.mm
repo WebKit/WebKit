@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,13 @@ static constexpr auto defaultFaviconHTML =
 static constexpr auto customFaviconHTML =
 "<head>" \
 "<link rel=\"icon\" href=\"custom.ico\">" \
+"</head>"_s;
+
+static constexpr auto multipleFaviconsHTML =
+"<head>" \
+"<link rel=\"icon\" href=\"favicon.ico\">" \
+"<link rel=\"icon\" href=\"custom.ico\">" \
+"<link rel=\"icon\" sizes=\"32x32\" href=\"sized.ico\">" \
 "</head>"_s;
 
 static const ASCIILiteral* currentMainHTML;
@@ -91,7 +98,7 @@ static NSImage *imageFromData(NSData *data)
     if ([self.request.URL.path hasSuffix:@"main"]) {
         resourceData = mainResourceData();
         response = adoptNS([[NSURLResponse alloc] initWithURL:self.request.URL MIMEType:@"text/html" expectedContentLength:-1 textEncodingName:nil]);
-    } else if ([self.request.URL.path hasSuffix:@"favicon.ico"]) {
+    } else if ([self.request.URL.path hasSuffix:@"favicon.ico"] || [self.request.URL.path hasSuffix:@"sized.ico"]) {
         resourceData = defaultFaviconData();
         response = adoptNS([[NSURLResponse alloc] initWithURL:self.request.URL MIMEType:@"image/png" expectedContentLength:-1 textEncodingName:nil]);
     } else if ([self.request.URL.path hasSuffix:@"custom.ico"]) {
@@ -226,6 +233,28 @@ TEST(WebKitLegacy, IconLoadingDelegateCustomFirst)
         EXPECT_TRUE([[frameLoadDelegate->receivedIcon.get() TIFFRepresentation] isEqual:[imageFromData(defaultFaviconData()) TIFFRepresentation]]);
         EXPECT_TRUE([[webView.get().mainFrameIcon TIFFRepresentation] isEqual:[imageFromData(defaultFaviconData()) TIFFRepresentation]]);
         EXPECT_FALSE([[frameLoadDelegate->receivedIcon.get() TIFFRepresentation] isEqual:[imageFromData(customFaviconData()) TIFFRepresentation]]);
+    }
+
+    [NSURLProtocol unregisterClass:[IconLoadingProtocol class]];
+}
+
+TEST(WebKitLegacy, IconLoadingDelegateMultipleFavicons)
+{
+    [NSURLProtocol registerClass:[IconLoadingProtocol class]];
+
+    messageReceived = false;
+    currentMainHTML = &multipleFaviconsHTML;
+    @autoreleasepool {
+        RetainPtr webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+        RetainPtr frameLoadDelegate = adoptNS([[IconLoadingFrameLoadDelegate alloc] init]);
+
+        webView.get().frameLoadDelegate = frameLoadDelegate.get();
+        [webView.get().mainFrame loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://testserver/3/main"]]];
+
+        Util::run(&messageReceived);
+
+        // WebKit 1 loads the smallest favicon and the last declared of those.
+        EXPECT_TRUE([[frameLoadDelegate->receivedIcon.get() TIFFRepresentation] isEqual:[imageFromData(customFaviconData()) TIFFRepresentation]]);
     }
 
     [NSURLProtocol unregisterClass:[IconLoadingProtocol class]];
