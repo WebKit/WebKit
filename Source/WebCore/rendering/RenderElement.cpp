@@ -50,6 +50,7 @@
 #include "InlineWalker.h"
 #include "InspectorInstrumentation.h"
 #include "LayoutElementBox.h"
+#include "LayoutIntegrationBoxTreeUpdater.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
 #include "LocalFrameViewLayoutContext.h"
@@ -147,11 +148,12 @@ NODELETE static Visibility visibilityIncludingForceHidden(const Style::ComputedS
 
 inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, Style::ComputedStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
     : RenderObject(type, elementOrDocument, flags, typeSpecificFlags)
-    , Layout::ElementBox(WTF::move(style))
+    , Layout::ElementBox(WTF::move(style), LayoutIntegration::BoxTreeUpdater::elementAttributes(*this))
     , m_firstChild(nullptr)
     , m_lastChild(nullptr)
 {
     ASSERT(RenderObject::isRenderElement());
+    ASSERT(&RenderObject::layoutBox() == &layoutBox());
 }
 
 RenderElement::RenderElement(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
@@ -581,6 +583,7 @@ void RenderElement::initializeStyle()
 
     styleWillChange(Style::DifferenceResult::NewStyle, style());
     m_hasInitializedStyle = true;
+    LayoutIntegration::BoxTreeUpdater::updateFirstLineStyleState(*this);
     styleDidChange(Style::DifferenceResult::NewStyle, nullptr);
 
     // We shouldn't have any text children that would need styleDidChange at this point.
@@ -631,6 +634,8 @@ void RenderElement::setStyle(Style::ComputedStyle&& style, Style::DifferenceResu
     styleWillChange(diff, style);
     auto oldStyle = mutableStyle().replace(WTF::move(style));
     bool detachedFromParent = !parent();
+    // Also on equal style changes, since the first-line style of an inline box can change with them. Text reads it below.
+    LayoutIntegration::BoxTreeUpdater::updateFirstLineStyleState(*this);
 
     // Text renderers inherit from their parent.
     bool hasTextChildren = false;
@@ -698,6 +703,10 @@ RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> chil
     child->setParent(this);
     if (CheckedPtr textChild = dynamicDowncast<RenderText>(*child))
         textChild->inheritStyleFromParent();
+    else if (CheckedPtr element = dynamicDowncast<RenderElement>(*child); element && element->isAnonymousBlock()) {
+        // An anonymous block uses the first-line style of its parent.
+        LayoutIntegration::BoxTreeUpdater::updateFirstLineStyleState(*element);
+    }
 
     if (m_firstChild == beforeChild)
         m_firstChild = child.get();
@@ -1247,11 +1256,6 @@ void RenderElement::styleDidChange(Style::Difference diff, const Style::Computed
         LOG_WITH_STREAM(ScrollAnchoring, stream << "RenderElement::styleDidChange: scroll anchoring suppression style change on " << *this);
         setScrollAnchoringSuppressionStyleChanged(true);
     }
-
-    // FIXME: First line change on the block comes in as equal on inline boxes.
-    auto needsLayoutBoxStyleUpdate = (diff >= Style::DifferenceResult::Repaint || (isInlineBox() && &style() != &firstLineStyle())) && LayoutIntegration::BoxTreeUpdater::isLaidOutByIntegration(*this);
-    if (needsLayoutBoxStyleUpdate)
-        LayoutIntegration::LineLayout::updateStyle(*this);
 }
 
 void RenderElement::dirtyEnclosingLayerSVGChildrenIfNeeded()

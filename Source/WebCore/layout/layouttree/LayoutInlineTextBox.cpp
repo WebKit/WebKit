@@ -32,7 +32,7 @@ namespace WebCore {
 namespace Layout {
 
 InlineTextBox::InlineTextBox(Style::ComputedStyle&& style)
-    : Box(WTF::move(style), Box::InlineTextBoxFlag)
+    : Box(WTF::move(style), { NodeType::Text, IsAnonymous::Yes }, Box::InlineTextBoxFlag)
 {
 }
 

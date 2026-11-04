@@ -78,7 +78,6 @@ void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
             inlineFormattingContextRoot->inlineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, inlineFormattingContextRoot->style());
         if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_inner))
             lineLayout->styleWillChange(*m_inner, m_inner->style(), Style::DifferenceResult::Layout);
-        LayoutIntegration::LineLayout::updateStyle(*m_inner);
     }
 }
 

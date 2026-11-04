@@ -201,6 +201,17 @@ NODELETE static const InlineDisplay::Line& lastLineWithInflowContent(const Inlin
     return lines.first();
 }
 
+// Either the first anonymous block box child or a simple anonymous block container (e.g. a flex item).
+static bool isAnonymousTextIndentCandidate(const RenderBlockFlow& root)
+{
+    if (!root.isAnonymousBlock())
+        return false;
+    if (root.isBlockBox())
+        return !root.parent() || root.parent()->firstChild() == &root;
+    // E.g. flex and grid items are not block boxes (they are block containers though).
+    return root.isBlockContainer();
+}
+
 LineLayout::LineLayout(RenderBlockFlow& flow)
     : m_rootLayoutBox(&flow.layoutBox())
     , m_document(flow.document())
@@ -208,7 +219,7 @@ LineLayout::LineLayout(RenderBlockFlow& flow)
     , m_boxGeometryUpdater(flow.view().layoutState(), rootLayoutBox())
 {
     rootLayoutBox().setIsInlineIntegrationRoot(true);
-    BoxTreeUpdater { flow }.build();
+    rootLayoutBox().setIsAnonymousTextIndentCandidateForIntegration(isAnonymousTextIndentCandidate(flow));
 }
 
 LineLayout::~LineLayout()
@@ -246,6 +257,7 @@ LineLayout::~LineLayout()
     m_lineDamage = { };
 
     BoxTreeUpdater { rootRenderer }.tearDown();
+    rootLayoutBox().setIsAnonymousTextIndentCandidateForIntegration(false);
     rootLayoutBox().setIsInlineIntegrationRoot(false);
     m_rootLayoutBox = nullptr;
 }
@@ -352,11 +364,6 @@ void LineLayout::updateFormattingContextGeometries(LayoutUnit availableLogicalWi
     m_boxGeometryUpdater.setFormattingContextRootGeometry(availableLogicalWidth);
     m_inlineContentConstraints = m_boxGeometryUpdater.formattingContextConstraints(availableLogicalWidth);
     m_boxGeometryUpdater.setFormattingContextContentGeometry(m_inlineContentConstraints->horizontal().logicalWidth, { });
-}
-
-void LineLayout::updateStyle(const RenderElement& renderer)
-{
-    BoxTreeUpdater::updateStyle(renderer);
 }
 
 bool LineLayout::rootStyleWillChange(const RenderBlockFlow& root, const Style::ComputedStyle& newStyle)
@@ -1695,7 +1702,6 @@ bool LineLayout::insertedIntoTree(RenderObject& child)
         return false;
     }
 
-    BoxTreeUpdater { flow() }.insert(child);
     CheckedRef childLayoutBox = child.layoutBox();
     if (flow().isRenderSVGText()) {
         // SVG text is always fully laid out.

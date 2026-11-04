@@ -191,21 +191,21 @@ public:
     NODELETE bool isPaddingApplicable() const;
     NODELETE bool isOverflowVisible() const;
 
-    void setFirstLineStyle(std::unique_ptr<Style::ComputedStyle>&&);
     // Always inlined so that RenderElement::style() costs the same in debug builds.
     ALWAYS_INLINE const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
-    // Text uses the first-line style of its parent when the parent has one.
+    // From the renderer. Text uses the first-line style of its parent when the parent has one.
     NODELETE const Style::ComputedStyle& firstLineStyle() const LIFETIME_BOUND
     {
         if (m_mayHaveFirstLineStyle) [[unlikely]]
-            return firstLineStyleForText();
-        return hasBoxRareData() && boxRareData().firstLineStyle ? *boxRareData().firstLineStyle : m_style;
+            return firstLineStyleSlowCase();
+        return m_style;
     }
     WritingMode writingMode() const { return style().writingMode(); }
 
     void setIsInlineIntegrationRoot(bool value) { m_isInlineIntegrationRoot = value; }
     void setIsGridIntegrationRoot(bool value) { m_isGridIntegrationRoot = value; }
     void setIsAnonymousTextIndentCandidateForIntegration(bool value) { m_isAnonymousTextIndentCandidateForIntegration = value; }
+    bool mayHaveFirstLineStyle() const { return m_mayHaveFirstLineStyle; }
     void setMayHaveFirstLineStyle(bool value) { m_mayHaveFirstLineStyle = value; }
 
     NODELETE const LayoutShape* shape() const;
@@ -216,8 +216,6 @@ public:
     // Null only for the initial containing block. Defined in RenderText.h.
     inline RenderObject* rendererForIntegration() const;
 
-    void setElementAttributes(ElementAttributes);
-
     NODELETE UsedStyle usedStyle() const;
     NODELETE UsedStyle firstLineUsedStyle() const;
 
@@ -225,7 +223,7 @@ public:
     void clearFormattingContextData();
 
 protected:
-    Box(Style::ComputedStyle&&, EnumSet<BaseTypeFlag>);
+    Box(Style::ComputedStyle&&, ElementAttributes, EnumSet<BaseTypeFlag>);
     ~Box();
 
     ALWAYS_INLINE Style::ComputedStyle& mutableStyle() LIFETIME_BOUND { return m_style; }
@@ -239,7 +237,6 @@ private:
     public:
         BoxRareData() = default;
 
-        std::unique_ptr<Style::ComputedStyle> firstLineStyle;
         RefPtr<const LayoutShape> shape;
     };
 
@@ -250,7 +247,7 @@ private:
     bool hasBoxRareData() const { return m_hasRareData; }
     void setHasRareData(bool hasRareData) { m_hasRareData = hasRareData; }
     NODELETE const BoxRareData& boxRareData() const;
-    NODELETE const Style::ComputedStyle& firstLineStyleForText() const LIFETIME_BOUND;
+    NODELETE const Style::ComputedStyle& firstLineStyleSlowCase() const LIFETIME_BOUND;
     Box::BoxRareData& boxRareData();
     BoxRareData& ensureBoxRareData();
     void removeBoxRareData();
@@ -271,7 +268,7 @@ private:
     bool m_isInlineIntegrationRoot : 1 { false };
     bool m_isGridIntegrationRoot : 1 { false };
     bool m_isAnonymousTextIndentCandidateForIntegration : 1 { false }; // Either first anonymous block box child or simple anonymous block container (e.g flex item).
-    // Text only. Set when the parent may have a first-line style. Use of first-line styles is rare.
+    // Set when the box may have a first-line style, or for text, its parent. Use of first-line styles is rare.
     bool m_mayHaveFirstLineStyle : 1 { false };
 
     Style::ComputedStyle m_style;

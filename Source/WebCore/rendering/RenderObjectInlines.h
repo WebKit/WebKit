@@ -68,9 +68,7 @@ inline TreeScope& RenderObject::treeScopeForSVGReferences() const
 
 inline CheckedRef<const Style::ComputedStyle> RenderObject::firstLineStyle() const
 {
-    if (isRenderText())
-        return layoutBox().firstLineStyle();
-    return downcast<RenderElement>(*this).firstLineStyle();
+    return layoutBox().firstLineStyle();
 }
 
 inline Page& RenderObject::page() const

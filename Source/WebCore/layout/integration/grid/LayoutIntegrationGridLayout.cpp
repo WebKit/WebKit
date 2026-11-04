@@ -49,7 +49,6 @@ GridLayout::GridLayout(RenderGrid& renderGrid)
     , m_layoutState(renderGrid.view().layoutState())
 {
     gridBox().setIsGridIntegrationRoot(true);
-    BoxTreeUpdater { renderGrid }.build();
 }
 
 GridLayout::~GridLayout()

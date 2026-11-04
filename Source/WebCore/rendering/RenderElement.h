@@ -108,8 +108,6 @@ public:
     const Style::ComputedStyle& style() const LIFETIME_BOUND { return Layout::ElementBox::style(); }
     const Style::ComputedStyle* parentStyle() const LIFETIME_BOUND { return !RenderObject::m_parent ? nullptr : &RenderObject::m_parent->style(); }
     NODELETE const Style::ComputedStyle& firstLineStyle() const LIFETIME_BOUND;
-    // False when firstLineStyle() is style().
-    inline bool mayHaveFirstLineStyle() const;
 
     // FIXME: Style shouldn't be mutated.
     Style::ComputedStyle& mutableStyle() LIFETIME_BOUND { return Layout::ElementBox::mutableStyle(); }

@@ -36,11 +36,10 @@ namespace Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InitialContainingBlock);
 
-InitialContainingBlock::InitialContainingBlock(RenderView& renderView, Style::ComputedStyle&& style, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle)
-    : ElementBox(WTF::move(style), Box::InitialContainingBlockFlag)
+InitialContainingBlock::InitialContainingBlock(RenderView& renderView, Style::ComputedStyle&& style)
+    : ElementBox(WTF::move(style), { NodeType::GenericElement, IsAnonymous::No }, Box::InitialContainingBlockFlag)
     , m_renderView(renderView)
 {
-    setFirstLineStyle(WTF::move(firstLineStyle));
 }
 
 InitialContainingBlock::~InitialContainingBlock() = default;

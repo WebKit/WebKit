@@ -493,7 +493,7 @@ void RenderText::inheritStyleFromParent()
     style.inheritUnicodeBidiFrom(parentStyle);
     // Text lengths resolve like the lengths of the content it is in.
     style.setUseSVGZoomRulesForLength(parentStyle->useSVGZoomRulesForLength());
-    auto mayHaveFirstLineStyle = parentRenderer->mayHaveFirstLineStyle();
+    auto mayHaveFirstLineStyle = parentRenderer->layoutBox().mayHaveFirstLineStyle();
     setMayHaveFirstLineStyle(mayHaveFirstLineStyle);
     // Measuring depends on the first-line font. It can change with the parent style or with a move to another parent,
     // which doesn't send styleDidChange.

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<style>
+.first-line::first-line { font-size: 40px; }
+</style>
+<div id="block" class="first-line"><span id="inline">first <span id="nested">line</span></span></div>
+<div><span id="reference">first <span id="referenceNested">line</span></span></div>
+<pre id="log"></pre>
+<script>
+window.testRunner?.dumpAsText();
+
+function size(element)
+{
+    const rect = element.getBoundingClientRect();
+    return `${rect.width}x${rect.height}`;
+}
+
+function check(description, expectFirstLineStyle)
+{
+    const matchesReference = size(inline) == size(reference) && size(nested) == size(referenceNested);
+    if (matchesReference != expectFirstLineStyle) {
+        log.textContent += `PASS ${description}\n`;
+        return;
+    }
+    log.textContent += `FAIL ${description}: ${size(inline)} ${size(nested)}, reference ${size(reference)} ${size(referenceNested)}\n`;
+}
+
+check("::first-line applies to the inline boxes", true);
+block.classList.remove("first-line");
+check("::first-line removed", false);
+block.classList.add("first-line");
+check("::first-line added back", true);
+</script>

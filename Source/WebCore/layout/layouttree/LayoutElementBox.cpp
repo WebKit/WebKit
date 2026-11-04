@@ -27,13 +27,14 @@
 #include "LayoutElementBox.h"
 
 #include "RenderElement.h"
+#include "RenderListOutsideMarker.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace Layout {
 
-ElementBox::ElementBox(Style::ComputedStyle&& style, EnumSet<BaseTypeFlag> baseTypeFlags)
-    : Box(WTF::move(style), baseTypeFlags | ElementBoxFlag)
+ElementBox::ElementBox(Style::ComputedStyle&& style, ElementAttributes elementAttributes, EnumSet<BaseTypeFlag> baseTypeFlags)
+    : Box(WTF::move(style), elementAttributes, baseTypeFlags | ElementBoxFlag)
 {
 }
 
@@ -104,12 +105,18 @@ bool ElementBox::hasOutOfFlowChild() const
     return !!firstOutOfFlowChild();
 }
 
-void ElementBox::setIsListMarkerImage(IsListMarkerImage isListMarkerImage)
+bool ElementBox::isListMarkerImage() const
+{
+    CheckedPtr listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(rendererForIntegration());
+    return listMarkerRenderer && listMarkerRenderer->isImage();
+}
+
+void ElementBox::setListMarkerLayoutBounds(std::pair<float, float> layoutBounds)
 {
     ASSERT(isListMarkerBox());
     if (!m_replacedData)
         m_replacedData = makeUnique<ReplacedData>();
-    m_replacedData->isListMarkerImage = isListMarkerImage == IsListMarkerImage::Yes;
+    m_replacedData->layoutBounds = layoutBounds;
 }
 
 bool ElementBox::hasIntrinsicWidth() const

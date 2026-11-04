@@ -38,22 +38,17 @@ namespace LayoutIntegration {
 class InlineContent;
 #endif
 
-// The box tree is the render tree. This keeps the data boxes copy from their renderers current while a LineLayout or
-// GridLayout refers to them. The root flags are set and cleared by the root's own LineLayout or GridLayout.
+// The box tree is the render tree, and the boxes get their data from their renderers. The root state is set and cleared
+// by the root's own LineLayout or GridLayout. This clears what a formatting context stored on its boxes.
 class BoxTreeUpdater {
 public:
     NODELETE BoxTreeUpdater(RenderBlock&);
     NODELETE ~BoxTreeUpdater();
 
-    // Initializes the boxes of the formatting context content. The root box too, unless it is content of another live formatting context.
-    void build();
     // Clears what the formatting context stored on its boxes. Text content that waited for the inline items goes in.
     void tearDown();
 
-    static void updateStyle(const RenderElement&);
-
-    // Partial invalidation in an inline formatting context.
-    void insert(RenderObject& child);
+    // Partial removal in an inline formatting context.
     void remove(RenderObject& child);
 
     // The renderer is content of a formatting context whose root has a live LineLayout or GridLayout. Constant time, except
@@ -67,12 +62,13 @@ public:
     // Simplified measuring also depends on the style.
     static void updateSimplifiedMeasuring(RenderText&);
 
+    // From the renderer type, which is set up before the layout box.
+    static Layout::Box::ElementAttributes elementAttributes(const RenderObject&);
+    // Whether the box may have a first-line style. Changes with the style, and for anonymous blocks, with the parent.
+    static void updateFirstLineStyleState(RenderElement&);
+
 private:
     Layout::ElementBox& rootLayoutBox();
-
-    static void initializeLayoutBox(RenderElement&);
-    void initializeInlineContent(const RenderElement&);
-    void initializeGridContent();
 
     RenderBlock& m_rootRenderer;
 };

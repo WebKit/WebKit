@@ -81,8 +81,6 @@ public:
 
     std::optional<LayoutRect> updateOverflow();
 
-    static void updateStyle(const RenderElement&);
-
     // Partial invalidation.
     bool insertedIntoTree(RenderObject& child);
     bool removedFromTree(RenderObject& child);

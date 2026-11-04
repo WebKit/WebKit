@@ -40,8 +40,6 @@ namespace Layout {
 
 class ElementBox : public Box {
 public:
-    enum class IsListMarkerImage : bool { No, Yes };
-
     // The render tree children, without excluded list markers. RenderView's box is the only child of the initial containing block.
     // Defined in RenderElement.h.
     inline const Box* firstChild() const;
@@ -73,12 +71,11 @@ public:
     NODELETE LayoutUnit intrinsicRatio() const;
     NODELETE bool hasAspectRatio() const;
 
-    void setIsListMarkerImage(IsListMarkerImage);
-
-    bool isListMarkerImage() const { return m_replacedData && m_replacedData->isListMarkerImage; }
+    // From the renderer.
+    bool isListMarkerImage() const;
 
     // FIXME: This is temporary until after list marker content is accessible by IFC (webkit.org/b/294342)
-    void setListMarkerLayoutBounds(std::pair<float, float> layoutBounds) { m_replacedData->layoutBounds = layoutBounds; }
+    void setListMarkerLayoutBounds(std::pair<float, float>);
     std::pair<float, float> layoutBoundsForListMarker() const { return m_replacedData ? m_replacedData->layoutBounds : std::pair<float, float>(); }
 
     // FIXME: This doesn't belong.
@@ -88,7 +85,7 @@ public:
     inline RenderElement* rendererForIntegration() const;
 
 protected:
-    explicit ElementBox(Style::ComputedStyle&&, EnumSet<BaseTypeFlag> = { });
+    ElementBox(Style::ComputedStyle&&, ElementAttributes, EnumSet<BaseTypeFlag> = { });
     ~ElementBox();
 
 private:
@@ -99,7 +96,6 @@ private:
     struct ReplacedData {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReplacedData);
 
-        bool isListMarkerImage { false };
         std::pair<float, float> layoutBounds;
 
         std::optional<LayoutSize> intrinsicSize;
