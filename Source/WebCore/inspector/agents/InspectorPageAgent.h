@@ -95,7 +95,7 @@ public:
 #endif
     Inspector::Protocol::ErrorStringOr<void> setShowPaintRects(bool);
     Inspector::Protocol::ErrorStringOr<void> setEmulatedMedia(const String&);
-    Inspector::Protocol::ErrorStringOr<String> snapshotNode(Inspector::Protocol::DOM::NodeId);
+    void snapshotNode(Inspector::Protocol::DOM::NodeId, const String& targetId, Ref<SnapshotNodeCallback>&&);
     void snapshotRect(int x, int y, int width, int height, Inspector::Protocol::Page::CoordinateSystem, Ref<SnapshotRectCallback>&&);
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
     void archive(Ref<ArchiveCallback>&&);

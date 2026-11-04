@@ -491,6 +491,12 @@ void PageInspectorController::inspect(Node* node)
     CheckedRef { ensureDOMAgent() }->inspect(node);
 }
 
+RefPtr<Node> PageInspectorController::nodeForId(int nodeId) const
+{
+    CheckedPtr domAgent = m_domAgent;
+    return domAgent ? domAgent->nodeForId(nodeId) : nullptr;
+}
+
 bool PageInspectorController::enabled() const
 {
     // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
