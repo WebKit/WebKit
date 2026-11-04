@@ -1061,6 +1061,11 @@ if (WebKit_PRIVATE_FRAMEWORK_HEADERS)
     endif ()
 endif ()
 
+# PlatformCocoa.cmake migrates WebCore and WebKitLegacy headers in beside these.
+if (TARGET WebKit_MigrateHeaders)
+    add_dependencies(WebKit_MigrateHeaders WebKit_CopyHeaders WebKit_CopyPrivateHeaders)
+endif ()
+
 # Helper macro which wraps the generate-message-receiver.py script
 #   _output_source is a list name which will contain generated sources.(eg. WebKit_SOURCES)
 #   _inputs are messages.in files to generate.
@@ -1629,7 +1634,7 @@ if (APPLE AND USE_LIBWEBRTC)
     add_dependencies(WebKit webrtc)
 endif ()
 
-if (SWIFT_REQUIRED AND WEBKIT_SDK_IS_MACOS)
+if (SWIFT_REQUIRED AND WEBKIT_PLATFORM_MAC)
     WEBKIT_ADD_SWIFT_PREWARM(WebKit SwiftPrewarmMac.swift)
 endif ()
 

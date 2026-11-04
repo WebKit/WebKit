@@ -167,7 +167,7 @@ set_source_files_properties(
     COMPILE_FLAGS "-fobjc-arc -include ${CMAKE_CURRENT_SOURCE_DIR}/Helpers/TestWebKitAPIPrefix.h"
     SKIP_PRECOMPILE_HEADERS ON)
 
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
     list(APPEND TestWTF_SOURCES Tests/WTF/bmalloc/MAR.cpp)
     list(APPEND TestWTF_LIBRARIES "-framework Carbon" "-framework Cocoa")
 endif ()
@@ -243,7 +243,7 @@ list(APPEND TestWebCore_SOURCES
 list(APPEND TestWebCore_LIBRARIES
     ${QUARTZCORE_LIBRARY}
 )
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
     list(APPEND TestWebCore_LIBRARIES "-framework Cocoa")
 endif ()
 
@@ -259,7 +259,7 @@ list(APPEND TestWebKitLegacy_LIBRARIES
     WebKit
 )
 
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
     list(APPEND TestWebKitLegacy_SOURCES
         Tests/WebKitLegacy/mac/AccessingPastedImage.mm
         Tests/WebKitLegacy/mac/ClosingWebView.mm
@@ -298,7 +298,7 @@ set(TestWebKit_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/TestWebKi
 list(APPEND TestWebKit_UNIFIED_SOURCE_LIST_FILES
     "SourcesCocoa.txt"
 )
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
     list(APPEND TestWebKit_UNIFIED_SOURCE_LIST_FILES "SourcesMac.txt")
 endif ()
 
@@ -415,7 +415,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WebPage/EnhancedSecurityTests.swift
 )
 
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
     list(APPEND TestWebKit_SOURCES
         ${TOOLS_DIR}/TestRunnerShared/mac/SyntheticNSEvent.mm
 
@@ -552,7 +552,7 @@ list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
     ${WebKit_DERIVED_SOURCES_DIR}/IPC
     ${WEBKIT_DIR}/Platform/cocoa
 )
-if (NOT WEBKIT_SDK_IS_MACOS)
+if (NOT WEBKIT_PLATFORM_MAC)
     list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
         ${TESTWEBKITAPI_DIR}/Helpers/ios
         ${TESTWEBKITAPI_DIR}/Tests/WebCore/ios
@@ -572,7 +572,7 @@ list(APPEND TestWebKit_LIBRARIES
     WebCoreTestSupport
     WebKitLegacy
 )
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
     list(APPEND TestWebKit_LIBRARIES
         "-framework AuthenticationServices"
         "-framework Carbon"
@@ -583,20 +583,29 @@ if (WEBKIT_SDK_IS_MACOS)
 else ()
     list(APPEND TestWebKit_LIBRARIES
         "-framework AVKit"
-        "-framework BrowserEngineKit"
         "-framework GameController"
         "-framework MobileCoreServices"
         "-framework PDFKit"
         "-framework UIKit"
     )
+    if (NOT WEBKIT_SDK_IS_MACCATALYST)
+        list(APPEND TestWebKit_LIBRARIES "-framework BrowserEngineKit")
+    endif ()
     target_link_options(TestWebKit PRIVATE "LINKER:-delay_framework,CoreTelephony")
 endif ()
 
 target_link_options(TestWebKit PRIVATE
     "LINKER:-weak_framework,WritingTools"
 )
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
     target_link_options(TestWebKit PRIVATE "LINKER:-weak_framework,WritingToolsUI")
+endif ()
+
+# WebKit.h leaves out WebKitLegacy.h on Mac Catalyst, as config.h's Xcode path
+# accounts for.
+if (WEBKIT_SDK_IS_MACCATALYST)
+    target_compile_options(TestWebKit PRIVATE
+        "$<$<COMPILE_LANGUAGE:OBJC,OBJCXX>:SHELL:-include WebKit/WebKit.h -include WebKit/WebKitLegacy.h>")
 endif ()
 
 set_source_files_properties(
@@ -668,7 +677,7 @@ if (ENABLE_WEBGPU)
     )
 
     list(APPEND TestWGSL_LIBRARIES "-framework Metal")
-    if (WEBKIT_SDK_IS_MACOS)
+    if (WEBKIT_PLATFORM_MAC)
         list(APPEND TestWGSL_LIBRARIES "-framework Carbon")
     endif ()
 
@@ -879,7 +888,7 @@ list(APPEND TestWebKit_SOURCES
 
 # FIXME: Needs the Swift overlay in WKUserContentController.swift, which the iOS
 # WebKit module can't build yet: it needs the C++ interop the macOS build uses.
-if (NOT WEBKIT_SDK_IS_MACOS)
+if (NOT WEBKIT_PLATFORM_MAC)
     list(REMOVE_ITEM TestWebKit_SOURCES Tests/WebKit/WebPage/UserContentControllerTests.swift)
 endif ()
 
@@ -905,7 +914,7 @@ target_sources(TestWebKitAPIInjectedBundle PRIVATE
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/PasteboardNotifications_Bundle.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/cocoa/InjectedBundleAppleEvent_Bundle.cpp
 )
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
     target_sources(TestWebKitAPIInjectedBundle PRIVATE
         ${TESTWEBKITAPI_DIR}/Helpers/cocoa/TestNSBundleExtras.m
         ${TESTWEBKITAPI_DIR}/InjectedBundle/mac/InjectedBundleControllerMac.mm
@@ -951,7 +960,7 @@ target_link_libraries(TestWebKitAPIInjectedBundle PRIVATE
     WebKit
     "-framework Foundation"
 )
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
     target_link_libraries(TestWebKitAPIInjectedBundle PRIVATE "-framework Cocoa")
 endif ()
 
@@ -1029,7 +1038,7 @@ target_include_directories(TestWebKitAPIWebProcessPlugIn PRIVATE
 target_compile_options(TestWebKitAPIWebProcessPlugIn PRIVATE -Wno-deprecated-declarations)
 
 # PlatformUtilities.h tests WK_HAVE_C_SPI, which config.h only defines for macOS.
-if (NOT WEBKIT_SDK_IS_MACOS)
+if (NOT WEBKIT_PLATFORM_MAC)
     target_compile_options(TestWebKitAPIWebProcessPlugIn PRIVATE -Wno-undef)
 endif ()
 
@@ -1057,6 +1066,14 @@ set_target_properties(TestWebKitAPIWebProcessPlugIn PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/WebProcessPlugIn-Info.plist"
 )
 
+if (WEBKIT_SDK_IS_MACCATALYST)
+    set(_twkapi_main_bundle_resources_dir "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI.app/Contents/Resources")
+    set_target_properties(TestWebKitAPIWebProcessPlugIn PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY "${_twkapi_main_bundle_resources_dir}")
+else ()
+    set(_twkapi_main_bundle_resources_dir "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}")
+endif ()
+
 # Same rationale as TestWebKitAPIInjectedBundle: WebCoreTestSupport references
 # WTF symbols that the hosting WebContent process provides.
 target_link_options(TestWebKitAPIWebProcessPlugIn PRIVATE "LINKER:-undefined,dynamic_lookup")
@@ -1067,7 +1084,7 @@ target_link_libraries(TestWebKitAPIWebProcessPlugIn PRIVATE
     WebKit::gtest
     "-framework Foundation"
 )
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
     target_link_libraries(TestWebKitAPIWebProcessPlugIn PRIVATE "-framework Cocoa")
 endif ()
 
@@ -1085,7 +1102,7 @@ add_dependencies(TestWebKit TestWebKitAPIWebProcessPlugIn)
 # (e.g. WKWebExtension.mm) load entire subdirectories as nested bundles via
 # URLForResource:withExtension:@"", which requires web-extension/, *.appex/,
 # and *.mlmodelc/ to retain their layout.
-set(_resources_bundle_dir "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPIResources.bundle")
+set(_resources_bundle_dir "${_twkapi_main_bundle_resources_dir}/TestWebKitAPIResources.bundle")
 if (WEBKIT_SDK_IS_MACOS)
     set(_resources_info_plist "${_resources_bundle_dir}/Contents/Info.plist")
     set(_resources_dir "${_resources_bundle_dir}/Contents/Resources")
@@ -1246,7 +1263,7 @@ list(APPEND TestIPC_LIBRARIES
     "-framework Security"
     "-framework UniformTypeIdentifiers"
 )
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
     list(APPEND TestIPC_LIBRARIES
         "-framework Cocoa"
     )

@@ -1,4 +1,4 @@
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
 
 add_definitions(-DJSC_API_AVAILABLE\\\(...\\\)=)
 

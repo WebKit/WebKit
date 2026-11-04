@@ -237,7 +237,9 @@ list(APPEND PAL_UNIFIED_SOURCE_LIST_FILES
     "SourcesMac.txt"
 )
 
-else ()
+endif ()
+
+if (WEBKIT_SDK_IS_IOS_FAMILY)
 
 
 list(APPEND PAL_PUBLIC_HEADERS

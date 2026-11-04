@@ -2709,7 +2709,7 @@ if (APPLE)
         "-framework Foundation"
         "-framework VideoToolbox"
     )
-    if (WEBKIT_SDK_IS_MACOS)
+    if (WEBKIT_PLATFORM_MAC)
         # audio_device_mac.cc and audio_mixer_manager_mac.cc are macOS-only and
         # call into the CoreAudio HAL and AudioConverter.
         target_link_libraries(webrtc "-framework AudioToolbox" "-framework CoreAudio")

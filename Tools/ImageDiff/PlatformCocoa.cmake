@@ -1,4 +1,4 @@
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
 
 find_package(Apple REQUIRED COMPONENTS CoreFoundation CoreGraphics CoreServices CoreText ImageIO)
 

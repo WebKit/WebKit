@@ -36,7 +36,11 @@ list(APPEND ANGLEGLESv2_LIBRARIES
 
 if (WEBKIT_SDK_IS_MACOS)
     find_library(IOKIT_LIBRARY IOKit)
-    find_library(QUARTZ_LIBRARY Quartz)
+    if (WEBKIT_PLATFORM_MAC)
+        find_library(QUARTZ_LIBRARY Quartz)
+    else ()
+        find_library(QUARTZ_LIBRARY QuartzCore)
+    endif ()
 
     list(APPEND ANGLE_SOURCES
         ${libangle_gpu_info_util_mac_sources}

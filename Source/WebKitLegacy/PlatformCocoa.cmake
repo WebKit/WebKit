@@ -14,7 +14,7 @@ find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
 if (WEBKIT_SDK_IS_IOS_FAMILY)
     list(APPEND WebKitLegacy_PRIVATE_LIBRARIES ${UIKIT_LIBRARY})
 endif ()
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
     list(APPEND WebKitLegacy_PRIVATE_LIBRARIES ${SECURITYINTERFACE_LIBRARY})
 endif ()
 
@@ -109,7 +109,7 @@ list(APPEND WebKitLegacy_SOURCES
     ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesExperimentalFeatures.mm
 )
 
-if (WEBKIT_SDK_IS_MACOS)
+if (WEBKIT_PLATFORM_MAC)
 list(APPEND WebKitLegacy_SOURCES
     mac/Misc/WebNSEventExtras.m
     mac/Misc/WebNSWindowExtras.m
@@ -244,12 +244,17 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
 target_compile_options(WebKitLegacy PRIVATE
     "$<$<COMPILE_LANGUAGE:OBJC>:-std=gnu99>")
 
-WEBKIT_PROCESS_INFO_PLIST(${WEBKITLEGACY_DIR}/mac/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
+if (NOT WEBKIT_SDK_IS_MACOS)
+    WEBKIT_PROCESS_INFO_PLIST(${WEBKITLEGACY_DIR}/mac/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist)
 
-set(WebKitLegacy_POST_BUILD_COMMAND
-    ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKitLegacy.framework/Info.plist
-)
+    set(WebKitLegacy_POST_BUILD_COMMAND
+        ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy-Info.plist
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKitLegacy.framework/Info.plist
+    )
+else ()
+    set_target_properties(WebKitLegacy PROPERTIES
+        MACOSX_FRAMEWORK_INFO_PLIST ${WEBKITLEGACY_DIR}/mac/Info.plist)
+endif ()
 set_target_properties(WebKitLegacy PROPERTIES
     INSTALL_NAME_DIR "${WebKitLegacy_INSTALL_NAME_DIR}"
 )
@@ -1175,6 +1180,9 @@ foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
 endforeach ()
 
 set(_wkl_fw "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKitLegacy.framework")
+if (WEBKIT_SDK_IS_MACOS)
+    string(APPEND _wkl_fw "/Versions/A")
+endif ()
 file(MAKE_DIRECTORY "${_wkl_fw}")
 file(MAKE_DIRECTORY "${_wkl_fw}/Modules")
 

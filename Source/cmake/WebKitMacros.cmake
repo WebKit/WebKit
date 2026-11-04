@@ -1272,6 +1272,7 @@ function(webkit_generate_platform_feature_defines_file)
     if (CMAKE_OSX_SYSROOT)
         list(APPEND _clang_cmd "-isysroot" "${CMAKE_OSX_SYSROOT}"
             "-F" "${CMAKE_BINARY_DIR}"
+            ${WEBKIT_SDK_SYSTEM_SEARCH_FLAGS}
             "-iframework" "${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks")
     endif ()
     if (CMAKE_OSX_ARCHITECTURES)
@@ -1334,7 +1335,7 @@ function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)
     )
     # iOS WebKit_Internal headers gate textual #imports behind this macro that
     # trip strict cross-module-import-visibility checks (bug 312083).
-    if (NOT WEBKIT_SDK_IS_IOS_FAMILY)
+    if (WEBKIT_SDK_IS_MACOS)
         list(APPEND _flags -DWK_SUPPORTS_SWIFT_OBJCXX_INTEROP=1)
     endif ()
     # -fexperimental-bounds-safety-attributes belongs to this hash-normalizing
@@ -1372,6 +1373,7 @@ function(_webkit_generate_platform_swift_args _target _resp_path)
         "${_depfile}" "${_resp_path}" "${WTF_FRAMEWORK_HEADERS_DIR}")
     if (CMAKE_OSX_SYSROOT)
         list(APPEND _clang_cmd "-isysroot" "${CMAKE_OSX_SYSROOT}"
+            ${WEBKIT_SDK_SYSTEM_SEARCH_FLAGS}
             "-iframework" "${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks")
     endif ()
     if (CMAKE_Swift_COMPILER_TARGET)
