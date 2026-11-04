@@ -412,7 +412,7 @@ bool HTMLSelectElement::valueMissing() const
     return firstSelectionIndex < 0 || (!firstSelectionIndex && hasPlaceholderLabelOption());
 }
 
-bool HTMLSelectElement::usesMenuList() const
+bool HTMLSelectElement::couldBeNativeDropdownBox() const
 {
 #if PLATFORM(IOS_FAMILY)
     return true;
@@ -447,7 +447,7 @@ auto HTMLSelectElement::boxType(const Style::ComputedStyle* style) const -> BoxT
 {
     if (document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled() && hasBaseAppearance(style ? style : existingComputedStyle()))
         return preferredSize() == 1 ? BoxType::DropdownBox : BoxType::ListBox;
-    return usesMenuList() ? BoxType::DropdownBox : BoxType::ListBox;
+    return couldBeNativeDropdownBox() ? BoxType::DropdownBox : BoxType::ListBox;
 }
 
 bool HTMLSelectElement::isDropdownBox(const Style::ComputedStyle* style) const
@@ -901,7 +901,7 @@ bool HTMLSelectElement::isMouseFocusable() const
 
 bool HTMLSelectElement::canHaveBaseAppearance() const
 {
-    if (m_multiple && usesMenuList())
+    if (m_multiple && couldBeNativeDropdownBox())
         return document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled();
     return true;
 }
@@ -1497,7 +1497,7 @@ void HTMLSelectElement::dispatchChangeEventForMenuList()
 void HTMLSelectElement::scrollToSelection()
 {
 #if !PLATFORM(IOS_FAMILY)
-    if (usesMenuList())
+    if (couldBeNativeDropdownBox())
         return;
 
     if (CheckedPtr renderer = dynamicDowncast<RenderListBox>(this->renderer()))
@@ -2528,7 +2528,7 @@ void HTMLSelectElement::showPopup()
     if (isOpen())
         return;
 
-    if (!renderer() || !usesMenuList())
+    if (!renderer() || !couldBeNativeDropdownBox())
         return;
 
     RefPtr frame = document().frame();
@@ -2546,7 +2546,7 @@ void HTMLSelectElement::showPopup()
 
     // A :open rule can rebuild the renderer, which also hides the popup.
     CheckedPtr renderer = this->renderer();
-    if (!renderer || !usesMenuList())
+    if (!renderer || !couldBeNativeDropdownBox())
         return;
     setPopupIsVisible(true);
     if (!m_popup)
@@ -3112,7 +3112,7 @@ FontSelector* HTMLSelectElement::fontSelector() const
 
 HostWindow* HTMLSelectElement::hostWindow() const
 {
-    if (renderer() && usesMenuList())
+    if (renderer() && couldBeNativeDropdownBox())
         return renderer()->hostWindow();
     return nullptr;
 }

@@ -138,7 +138,7 @@ using PseudoClassesSet = UncheckedKeyHashSet<CSSSelector::PseudoClass, IntHash<C
     v(operationMatchesActiveViewTransitionPseudoClass) \
     v(operationMatchesSelectPreferredSizeOnePseudoClass) \
     v(operationMatchesSelectPopoverPseudoClass) \
-    v(operationMatchesUsesMenulistPseudoClass) \
+    v(operationMatchesSelectCouldBeNativeDropdownBoxPseudoClass) \
     v(operationIsUserInvalid) \
     v(operationIsUserValid) \
     v(operationMatchesEvenLessGoodPseudoClass) \
@@ -300,7 +300,7 @@ static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesM
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesActiveViewTransitionPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesSelectPreferredSizeOnePseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesSelectPopoverPseudoClass, bool, (const Element&));
-static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesUsesMenulistPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesSelectCouldBeNativeDropdownBoxPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserInvalid, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserValid, bool, (const Element&));
 
@@ -1098,10 +1098,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesSelectPopoverPseudoClass, bool
     return matchesSelectPopoverPseudoClass(element);
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesUsesMenulistPseudoClass, bool, (const Element& element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesSelectCouldBeNativeDropdownBoxPseudoClass, bool, (const Element& element))
 {
-    COUNT_SELECTOR_OPERATION(operationMatchesUsesMenulistPseudoClass);
-    return matchesUsesMenulistPseudoClass(element);
+    COUNT_SELECTOR_OPERATION(operationMatchesSelectCouldBeNativeDropdownBoxPseudoClass);
+    return matchesSelectCouldBeNativeDropdownBoxPseudoClass(element);
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesSelectPreferredSizeOnePseudoClass, bool, (const Element& element))
@@ -1299,8 +1299,8 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesSelectPopoverPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 
-    case CSSSelector::PseudoClass::InternalUsesMenulist:
-        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesUsesMenulistPseudoClass));
+    case CSSSelector::PseudoClass::InternalSelectCouldBeNativeDropdownBox:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesSelectCouldBeNativeDropdownBoxPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoClass::InternalSelectPreferredSizeOne:

@@ -50,11 +50,11 @@
             "conditional": "ENABLE(FULLSCREEN_API)"
         },
         "-internal-media-document": {},
+        "-internal-select-could-be-native-dropdown-box": {},
         "-internal-select-popover": {},
         "-internal-select-preferred-size-one": {
             "comment": "Preferred size because box type (list box, dropdown) depends on appearance."
         },
-        "-internal-uses-menulist": {},
         "-webkit-any": {
             "argument": "required",
             "comment": "Alias of :is() with different specificity rules.",
