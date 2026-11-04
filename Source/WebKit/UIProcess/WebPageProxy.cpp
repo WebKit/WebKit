@@ -16552,6 +16552,9 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.shouldForceSiteIsolationAlwaysOnForTesting = WebPreferences::forcedSiteIsolationAlwaysOnForTesting();
     parameters.shouldEnableNetworkInstrumentation = inspectorController().isNetworkInstrumentationEnabled();
     parameters.shouldEnablePageInstrumentation = inspectorController().isPageInstrumentationEnabled();
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    parameters.imageAnimationEnabledOverride = m_imageAnimationEnabledOverride;
+#endif
 
     // Each SharedMemoryHandle serializes as a Mach port descriptor; the shared-memory send fallback cannot
     // reduce the descriptor count, so log when it grows large (see MACH_SEND_TOO_LARGE CreateWebPage crashes).
@@ -21057,6 +21060,7 @@ void WebPageProxy::beginEnhancedSecurityLinkCheck(const URL& url, API::Navigatio
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void WebPageProxy::pauseAllAnimations(CompletionHandler<void()>&& completionHandler)
 {
+    m_imageAnimationEnabledOverride = false;
     if (!hasRunningProcess()) {
         completionHandler();
         return;
@@ -21070,6 +21074,7 @@ void WebPageProxy::pauseAllAnimations(CompletionHandler<void()>&& completionHand
 
 void WebPageProxy::playAllAnimations(CompletionHandler<void()>&& completionHandler)
 {
+    m_imageAnimationEnabledOverride = true;
     if (!hasRunningProcess()) {
         completionHandler();
         return;
