@@ -1,0 +1,9 @@
+Tests that an exception in a script of an internal world does not leave a break that pauses in the default constructor of a class.
+
+
+== Running test suite: Debugger.InternalWorld.AllExceptions
+-- Running test setup.
+-- Running test case: Debugger.InternalWorld.AllExceptions.ClassWithoutConstructor
+PASS: Should not pause.
+-- Running test teardown.
+

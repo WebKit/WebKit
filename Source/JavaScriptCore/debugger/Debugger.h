@@ -118,6 +118,7 @@ public:
         PausedForDebuggerStatement,
         PausedAfterBlackboxedScript,
         PausedAfterAwait,
+        PausedAtDefaultClassConstructor,
     };
     ReasonForPause reasonForPause() const { return m_reasonForPause; }
     BreakpointID pausingBreakpointID() const { return m_pausingBreakpointID; }
@@ -239,6 +240,7 @@ public:
         virtual void breakpointActionSound(BreakpointActionID) { }
         virtual void breakpointActionProbe(JSGlobalObject*, BreakpointActionID, unsigned /* batchId */, unsigned /* sampleId */, JSValue /* result */) { }
         virtual void didDeferBreakpointPause(BreakpointID) { }
+        virtual void didNotPauseForSpecialBreakpoint(BreakpointID) { }
     };
 
     JS_EXPORT_PRIVATE void addObserver(Observer&);
@@ -344,6 +346,7 @@ private:
 
     NODELETE bool canDispatchFunctionToObservers() const;
     void dispatchFunctionToObservers(Function<void(Observer&)>);
+    void dispatchDidNotPauseForSpecialBreakpoint(Breakpoint&);
 
     VM& m_vm;
     UncheckedKeyHashSet<JSGlobalObject*> m_globalObjects;

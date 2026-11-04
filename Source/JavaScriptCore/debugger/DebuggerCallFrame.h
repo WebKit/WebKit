@@ -40,6 +40,10 @@ namespace JSC {
 
 class DebuggerScope;
 class Exception;
+class FunctionExecutable;
+
+// A builtin default class constructor runs from a private source that is never sent to the debugger's client, so it is reported as the start of its class.
+FunctionExecutable* builtinDefaultClassConstructorExecutable(CallFrame*);
 
 class DebuggerCallFrame : public RefCounted<DebuggerCallFrame> {
 public:
