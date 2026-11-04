@@ -97,7 +97,8 @@ Structure* StructureCache::emptyObjectStructureConcurrently(JSObject* prototype,
 Structure* StructureCache::emptyStructureForPrototypeFromBaseStructure(JSGlobalObject* globalObject, JSObject* prototype, Structure* baseStructure, ShouldCacheStructure shouldCacheStructure)
 {
     // We currently do not have inline capacity static analysis for subclasses and all internal function constructors have a default inline capacity of 0.
-    IndexingType indexingType = baseStructure->indexingType();
+    // Subclass instances are the same kind of exotic object as the base, so they must also report that they may intercept indexed accesses.
+    IndexingType indexingType = baseStructure->indexingModeIncludingHistory() & AllWritableArrayTypesAndHistory;
     if (prototype->anyObjectInChainMayInterceptIndexedAccesses() && hasIndexedProperties(indexingType))
         indexingType = (indexingType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
 
