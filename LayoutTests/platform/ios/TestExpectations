@@ -9912,9 +9912,7 @@ imported/w3c/web-platform-tests/remote-playback/disable-remote-playback-watch-av
 imported/w3c/web-platform-tests/remote-playback/cancel-watch-availability.html [ Crash ] # rdar://178339690
 imported/w3c/web-platform-tests/remote-playback/disable-remote-playback-prompt-throws.html [ Crash ] # rdar://178339690
 
-imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/mixed-content-cors.https.sub.html [ Crash ] # rdar://178339848
 imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/audio-upgrade.https.sub.html [ Crash ] # rdar://178339848
-imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/video-upgrade.https.sub.html [ Crash ] # rdar://178339848
 
 imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/audio-tag.https.html [ Crash ] # rdar://178339863
 imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/video-tag.https.html [ Crash ] # rdar://178339863

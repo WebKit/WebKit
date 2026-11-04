@@ -27,7 +27,9 @@ async function doOggTest(test, contentType)
     if (!result.supported)
         return;
 
-    const response = await fetch("resources/ogg-file.py?contentType=${contentType}");
+    await validateAudioPlayback(`resources/ogg-file.py?contentType=${contentType}`);
+
+    const response = await fetch(`resources/ogg-file.py?contentType=${contentType}`);
     const blob = await response.blob();
     const blobUrl = URL.createObjectURL(blob);
     test.add_cleanup(() => URL.revokeObjectURL(blobUrl));
