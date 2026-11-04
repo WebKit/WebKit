@@ -151,6 +151,11 @@ public:
     }
 
     std::optional<Attachment> takeLastAttachment();
+    bool hasAttachments() const { return !m_attachments.isEmpty(); }
+
+    // Rewinds to the first argument so that the message can be decoded again, for example when a stream message
+    // is deferred. The attachments that have been taken are not restored.
+    void rewindToArguments();
 
     void addIndexOfDecodingFailure(uint32_t indexOfObjectFailingDecoding) { m_indicesOfObjectsFailingDecoding.append(indexOfObjectFailingDecoding); }
     const Vector<uint32_t>& indicesOfObjectsFailingDecoding() const LIFETIME_BOUND { return m_indicesOfObjectsFailingDecoding; }
@@ -160,6 +165,7 @@ private:
 
     std::span<const uint8_t> m_buffer;
     std::span<const uint8_t>::iterator m_bufferPosition;
+    size_t m_argumentsOffset { 0 };
     BufferDeallocator m_bufferDeallocator;
 
     Vector<Attachment> m_attachments;

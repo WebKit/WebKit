@@ -32,6 +32,7 @@
 #include "StreamServerConnection.h"
 #include "Helpers/Test.h"
 #include "Helpers/Utilities.h"
+#include "ThreadSafeObjectHeap.h"
 #include <atomic>
 #include <optional>
 #include <wtf/Lock.h>
@@ -1134,6 +1135,413 @@ INSTANTIATE_TEST_SUITE_P(StreamServerConnectionTests,
     StreamServerDidRunOutOfMessagesTest,
     testing::Values(1, 10, 999, 1000, 1001, 2000),
     TestParametersToStringFormatter());
+
+struct MockStreamTestMessageWithValue {
+    using Arguments = std::tuple<uint64_t>;
+    static constexpr bool isSync = false;
+    static constexpr bool isStreamEncodable = true;
+    static constexpr bool isStreamBatched = false;
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCStreamTester_EmptyMessage; }
+    template<typename Encoder> void encode(Encoder& encoder) { encoder << value; }
+    uint64_t value;
+};
+
+// Sent out of stream.
+struct MockStreamTestMessageWithValueNotStreamEncodable {
+    using Arguments = std::tuple<uint64_t>;
+    static constexpr bool isSync = false;
+    static constexpr bool isStreamEncodable = false;
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCStreamTester_EmptyMessage; }
+    template<typename Encoder> void encode(Encoder& encoder) { encoder << value; }
+    uint64_t value;
+};
+
+// Sent out of stream, with an attachment after the value.
+struct MockStreamTestMessageWithValueAndAttachment {
+    static constexpr bool isSync = false;
+    static constexpr bool isStreamEncodable = false;
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCStreamTester_EmptyMessage; }
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << value;
+        encoder << WTF::move(semaphore);
+    }
+    uint64_t value;
+    IPC::Semaphore semaphore;
+};
+
+enum class WaitedObjectIdentifierType { };
+using WaitedObjectIdentifier = AtomicObjectIdentifier<WaitedObjectIdentifierType>;
+class WaitedObject : public ThreadSafeRefCounted<WaitedObject> {
+public:
+    static Ref<WaitedObject> create(uint64_t value) { return adoptRef(*new WaitedObject(value)); }
+    uint64_t value() const { return m_value; }
+
+private:
+    explicit WaitedObject(uint64_t value)
+        : m_value(value)
+    {
+    }
+    const uint64_t m_value;
+};
+
+using WaitedObjectHeap = IPC::ThreadSafeObjectHeap<WaitedObjectIdentifier, RefPtr<WaitedObject>>;
+
+// Stream connections whose message handlers wait for each other without blocking their work queue. The
+// handled messages of all connections are recorded in one log, in the order they are handled.
+class StreamWaitingMessageTest : public ::testing::Test, public StreamConnectionTestBase {
+public:
+    void SetUp() override
+    {
+        setupBase();
+        m_otherServerQueue = IPC::StreamConnectionWorkQueue::create("StreamWaitingMessageTest other work queue"_s);
+    }
+
+    void TearDown() override
+    {
+        for (auto& connection : m_connections)
+            closeConnection(*connection);
+        m_otherServerQueue->stopAndWaitForCompletion();
+        teardownBase();
+    }
+
+protected:
+    // Returns false if the message is deferred.
+    using MessageHandler = Function<bool(IPC::StreamServerConnection&, uint64_t value)>;
+
+    struct TestConnection {
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(TestConnection);
+        uint64_t tag { 0 };
+        RefPtr<IPC::StreamConnectionWorkQueue> queue;
+        RefPtr<IPC::StreamClientConnection> clientConnection;
+        RefPtr<MockStreamClientConnectionClient> mockClientReceiver;
+        RefPtr<IPC::StreamServerConnection> serverConnection;
+        RefPtr<MockStreamServerConnectionClient> mockServerReceiver;
+    };
+
+    static TestObjectIdentifier defaultDestinationID()
+    {
+        return ObjectIdentifier<TestObjectIdentifierTag>(77);
+    }
+
+    static uint64_t entry(uint64_t tag, uint64_t index)
+    {
+        return (tag << 32) | index;
+    }
+
+    IPC::StreamConnectionWorkQueue& otherServerQueue()
+    {
+        return *m_otherServerQueue;
+    }
+
+    // The connections are run in the order they are opened.
+    TestConnection& openConnection(uint64_t tag, IPC::StreamConnectionWorkQueue& queue, MessageHandler&& handler = nullptr)
+    {
+        auto connectionPair = IPC::StreamClientConnection::create(17, defaultTimeout);
+        RELEASE_ASSERT(!!connectionPair);
+        auto [clientConnection, serverConnectionHandle] = WTF::move(*connectionPair);
+        auto connection = makeUnique<TestConnection>();
+        connection->tag = tag;
+        connection->queue = &queue;
+        connection->clientConnection = WTF::move(clientConnection);
+        connection->mockClientReceiver = MockStreamClientConnectionClient::create();
+        connection->clientConnection->open(*connection->mockClientReceiver);
+        connection->serverConnection = IPC::StreamServerConnection::tryCreate(WTF::move(serverConnectionHandle), { });
+        RELEASE_ASSERT(connection->serverConnection);
+        connection->mockServerReceiver = MockStreamServerConnectionClient::create();
+        connection->mockServerReceiver->setAsyncMessageHandler([this, handler = WTF::move(handler)](IPC::StreamServerConnection& connection, IPC::Decoder& decoder) {
+            auto value = decoder.decode<uint64_t>().value_or(0);
+            if (handler && !handler(connection, value)) {
+                connection.markCurrentlyDispatchedMessageAsDeferred();
+                return true;
+            }
+            Locker locker { m_logLock };
+            m_log.append(value);
+            return true;
+        });
+        queue.dispatch([serverConnection = connection->serverConnection, mockServerReceiver = connection->mockServerReceiver, protectedQueue = Ref { queue }] {
+            serverConnection->open(*mockServerReceiver, protectedQueue);
+            serverConnection->startReceivingMessages(*mockServerReceiver, IPC::receiverName(MockStreamTestMessage1::name()), defaultDestinationID().toUInt64());
+        });
+        barrier(queue);
+        m_connections.append(WTF::move(connection));
+        return *m_connections.last();
+    }
+
+    void closeConnection(TestConnection& connection)
+    {
+        connection.clientConnection->invalidate();
+        connection.queue->dispatch([&] {
+            connection.serverConnection->stopReceivingMessages(IPC::receiverName(MockStreamTestMessage1::name()), defaultDestinationID().toUInt64());
+            connection.serverConnection->invalidate();
+        });
+        barrier(*connection.queue);
+        EXPECT_TRUE(connection.mockClientReceiver->checkMessages());
+        EXPECT_TRUE(connection.mockServerReceiver->checkMessages());
+    }
+
+    static void barrier(IPC::StreamConnectionWorkQueue& queue)
+    {
+        BinarySemaphore semaphore;
+        queue.dispatch([&] {
+            semaphore.signal();
+        });
+        semaphore.wait();
+    }
+
+    void block(IPC::StreamConnectionWorkQueue& queue)
+    {
+        BinarySemaphore didBlock;
+        queue.dispatch([&] {
+            didBlock.signal();
+            m_unblock.wait();
+        });
+        didBlock.wait();
+    }
+
+    void unblock()
+    {
+        m_unblock.signal();
+    }
+
+    static void send(TestConnection& connection, uint64_t index)
+    {
+        EXPECT_EQ(connection.clientConnection->send(MockStreamTestMessageWithValue { entry(connection.tag, index) }, defaultDestinationID()), IPC::Error::NoError);
+    }
+
+    static void sendOutOfStream(TestConnection& connection, uint64_t index)
+    {
+        EXPECT_EQ(connection.clientConnection->send(MockStreamTestMessageWithValueNotStreamEncodable { entry(connection.tag, index) }, defaultDestinationID()), IPC::Error::NoError);
+    }
+
+    Vector<uint64_t> log()
+    {
+        Locker locker { m_logLock };
+        return m_log;
+    }
+
+    bool waitForLogSize(size_t size)
+    {
+        return Util::waitFor([&] {
+            Locker locker { m_logLock };
+            return m_log.size() >= size;
+        });
+    }
+
+    // A handler that reads the object of `readReference` from `m_heap` for the message `index`, and records what it read.
+    MessageHandler readObjectHandler(uint64_t tag, uint64_t index, IPC::ObjectIdentifierReadReference<WaitedObjectIdentifier> readReference)
+    {
+        return [this, readMessage = entry(tag, index), readReference](IPC::StreamServerConnection& connection, uint64_t value) {
+            if (value != readMessage)
+                return true;
+            auto read = readReference;
+            auto object = m_heap.read(connection, WTF::move(read));
+            if (!object)
+                return false;
+            m_readObject = *object ? (*object)->value() : 0;
+            return true;
+        };
+    }
+
+    // A handler that adds `object` to `m_heap` for the message `index`.
+    MessageHandler addObjectHandler(uint64_t tag, uint64_t index, IPC::ObjectIdentifierReference<WaitedObjectIdentifier> reference, uint64_t object)
+    {
+        return [this, addMessage = entry(tag, index), reference, object](IPC::StreamServerConnection&, uint64_t value) {
+            if (value == addMessage)
+                EXPECT_TRUE(m_heap.add(reference, WaitedObject::create(object)));
+            return true;
+        };
+    }
+
+    WaitedObjectHeap m_heap;
+    IPC::ObjectIdentifierReferenceTracker<WaitedObjectIdentifier> m_referenceTracker { WaitedObjectIdentifier::generate() };
+    std::atomic<uint64_t> m_readObject { 0 };
+    RefPtr<IPC::StreamConnectionWorkQueue> m_otherServerQueue;
+    Vector<std::unique_ptr<TestConnection>> m_connections;
+    BinarySemaphore m_unblock;
+    Lock m_logLock;
+    Vector<uint64_t> m_log WTF_GUARDED_BY_LOCK(m_logLock);
+};
+
+TEST_F(StreamWaitingMessageTest, DeferredMessageIsDispatchedAgainWhenWokenUp)
+{
+    std::atomic<bool> canHandle { false };
+    std::atomic<unsigned> dispatchCount { 0 };
+    auto& waiting = openConnection(1, serverQueue(), [&](IPC::StreamServerConnection& connection, uint64_t value) {
+        if (value != entry(1, 0))
+            return true;
+        ++dispatchCount;
+        EXPECT_TRUE(connection.canCurrentlyDispatchedMessageWait());
+        return canHandle.load();
+    });
+    auto& other = openConnection(2, serverQueue());
+    send(waiting, 0);
+    send(waiting, 1);
+    send(other, 0);
+    EXPECT_TRUE(waitForLogSize(1));
+    barrier(serverQueue());
+    barrier(serverQueue());
+    // The deferred message holds back the messages after it, but not the other connection.
+    EXPECT_EQ(log(), Vector<uint64_t>({ entry(2, 0) }));
+    EXPECT_GE(dispatchCount.load(), 1u);
+    canHandle = true;
+    serverQueue().wakeUp();
+    EXPECT_TRUE(waitForLogSize(3));
+    EXPECT_EQ(log(), Vector<uint64_t>({ entry(2, 0), entry(1, 0), entry(1, 1) }));
+}
+
+TEST_F(StreamWaitingMessageTest, DeferredOutOfStreamMessageIsDecodedAgainWhenWokenUp)
+{
+    std::atomic<bool> canHandle { false };
+    std::atomic<unsigned> dispatchCount { 0 };
+    auto& waiting = openConnection(1, serverQueue(), [&](IPC::StreamServerConnection& connection, uint64_t value) {
+        if (value != entry(1, 1))
+            return true;
+        ++dispatchCount;
+        EXPECT_TRUE(connection.canCurrentlyDispatchedMessageWait());
+        return canHandle.load();
+    });
+    auto& other = openConnection(2, serverQueue());
+    send(waiting, 0);
+    sendOutOfStream(waiting, 1);
+    send(waiting, 2);
+    sendOutOfStream(waiting, 3);
+    send(other, 0);
+    EXPECT_TRUE(waitForLogSize(2));
+    barrier(serverQueue());
+    barrier(serverQueue());
+    // The deferred message holds back the messages after it, also the other out-of-stream messages.
+    EXPECT_EQ(log(), Vector<uint64_t>({ entry(1, 0), entry(2, 0) }));
+    EXPECT_GE(dispatchCount.load(), 1u);
+    unsigned dispatchCountBeforeWakeUp = dispatchCount;
+    canHandle = true;
+    serverQueue().wakeUp();
+    EXPECT_TRUE(waitForLogSize(5));
+    // The message is decoded again from the start of its arguments.
+    EXPECT_EQ(log(), Vector<uint64_t>({ entry(1, 0), entry(2, 0), entry(1, 1), entry(1, 2), entry(1, 3) }));
+    EXPECT_GT(dispatchCount.load(), dispatchCountBeforeWakeUp);
+}
+
+TEST_F(StreamWaitingMessageTest, OutOfStreamMessageWithAttachmentsCannotWait)
+{
+    std::atomic<bool> didDispatch { false };
+    std::atomic<bool> canWait { true };
+    auto& connection = openConnection(1, serverQueue(), [&](IPC::StreamServerConnection& connection, uint64_t value) {
+        if (value == entry(1, 0)) {
+            canWait = connection.canCurrentlyDispatchedMessageWait();
+            didDispatch = true;
+        }
+        return true;
+    });
+    EXPECT_EQ(connection.clientConnection->send(MockStreamTestMessageWithValueAndAttachment { entry(1, 0), IPC::Semaphore { } }, defaultDestinationID()), IPC::Error::NoError);
+    EXPECT_TRUE(waitForLogSize(1));
+    EXPECT_TRUE(didDispatch.load());
+    // Decoding the message again would need the attachments that the arguments took.
+    EXPECT_FALSE(canWait.load());
+}
+
+TEST_F(StreamWaitingMessageTest, HeapReadWaitsForObjectAddedOnSameWorkQueue)
+{
+    auto readReference = m_referenceTracker.read();
+    auto& consumer = openConnection(1, serverQueue(), readObjectHandler(1, 0, readReference));
+    auto& producer = openConnection(2, serverQueue(), addObjectHandler(2, 0, m_referenceTracker.add(), 42));
+    block(serverQueue());
+    send(consumer, 0);
+    send(consumer, 1);
+    send(producer, 0);
+    unblock();
+    EXPECT_TRUE(waitForLogSize(3));
+    // The consumer runs first, so it reads before the producer adds the object.
+    EXPECT_EQ(log(), Vector<uint64_t>({ entry(2, 0), entry(1, 0), entry(1, 1) }));
+    EXPECT_EQ(m_readObject.load(), 42u);
+}
+
+TEST_F(StreamWaitingMessageTest, HeapReadWaitsForObjectAddedOnOtherWorkQueue)
+{
+    auto readReference = m_referenceTracker.read();
+    auto& consumer = openConnection(1, serverQueue(), readObjectHandler(1, 0, readReference));
+    auto& producer = openConnection(2, otherServerQueue(), addObjectHandler(2, 0, m_referenceTracker.add(), 42));
+    block(otherServerQueue());
+    send(consumer, 0);
+    send(consumer, 1);
+    send(producer, 0);
+    barrier(serverQueue());
+    barrier(serverQueue());
+    EXPECT_TRUE(log().isEmpty());
+    unblock();
+    EXPECT_TRUE(waitForLogSize(3));
+    EXPECT_EQ(log(), Vector<uint64_t>({ entry(2, 0), entry(1, 0), entry(1, 1) }));
+    EXPECT_EQ(m_readObject.load(), 42u);
+}
+
+TEST_F(StreamWaitingMessageTest, HeapReadOfObjectThatIsNeverAddedKeepsWaiting)
+{
+    auto readReference = m_referenceTracker.read();
+    auto& consumer = openConnection(1, serverQueue(), readObjectHandler(1, 0, readReference));
+    auto& other = openConnection(2, serverQueue());
+    send(consumer, 0);
+    send(consumer, 1);
+    // The other connection keeps running while the consumer waits.
+    send(other, 0);
+    EXPECT_TRUE(waitForLogSize(1));
+    // Clearing the heap wakes up the work queue, but the object is still not added.
+    m_heap.clear();
+    send(other, 1);
+    EXPECT_TRUE(waitForLogSize(2));
+    barrier(serverQueue());
+    barrier(serverQueue());
+    EXPECT_EQ(log(), Vector<uint64_t>({ entry(2, 0), entry(2, 1) }));
+}
+
+TEST_F(StreamWaitingMessageTest, HeapDoesNotKeepWorkQueueOfTornDownConnectionAlive)
+{
+    RefPtr queue = IPC::StreamConnectionWorkQueue::create("StreamWaitingMessageTest torn down work queue"_s);
+    ThreadSafeWeakPtr<IPC::StreamConnectionWorkQueue> weakQueue { *queue };
+    auto reference = m_referenceTracker.add();
+    auto readReference = m_referenceTracker.read();
+    std::atomic<unsigned> dispatchCount { 0 };
+    auto& consumer = openConnection(1, *queue, [&](IPC::StreamServerConnection& connection, uint64_t) {
+        ++dispatchCount;
+        auto read = readReference;
+        return !!m_heap.read(connection, WTF::move(read));
+    });
+    send(consumer, 0);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return dispatchCount.load() >= 1;
+    }));
+    closeConnection(consumer);
+    m_connections.removeFirstMatching([&](auto& connection) {
+        return connection.get() == &consumer;
+    });
+    queue->stopAndWaitForCompletion();
+    queue = nullptr;
+    // The message is still deferred, waiting for the object.
+    EXPECT_TRUE(log().isEmpty());
+    EXPECT_FALSE(weakQueue.get());
+    // Adding the object does not wake up the destroyed work queue.
+    EXPECT_TRUE(m_heap.add(reference, WaitedObject::create(42)));
+}
+
+TEST_F(StreamWaitingMessageTest, HeapReadInSyncMessageDoesNotWait)
+{
+    auto& consumer = openConnection(1, serverQueue());
+    auto readReference = m_referenceTracker.read();
+    consumer.mockServerReceiver->setSyncMessageHandler([&](IPC::StreamServerConnection& connection, IPC::Decoder& decoder) {
+        EXPECT_TRUE(!!decoder.decode<uint32_t>());
+        EXPECT_FALSE(connection.canCurrentlyDispatchedMessageWait());
+        auto read = readReference;
+        auto object = m_heap.read(connection, WTF::move(read));
+        // The handler of a sync message cannot defer it, so the read does not wait.
+        EXPECT_TRUE(!!object);
+        connection.sendSyncReply<MockSyncMessage>(decoder.syncRequestID(), object && *object ? static_cast<uint32_t>((*object)->value()) : 0u);
+        return true;
+    });
+    auto result = consumer.clientConnection->sendSync(MockSyncMessage { 7 }, defaultDestinationID());
+    ASSERT_TRUE(result.succeeded());
+    auto [reply] = result.reply();
+    EXPECT_EQ(reply, 0u);
+}
 
 }
 

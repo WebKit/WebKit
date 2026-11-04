@@ -94,6 +94,11 @@ RefPtr<NativeImage> RemoteSharedResourceCache::readNativeImage(RemoteNativeImage
     return m_nativeImages.read(WTF::move(read), timeout);
 }
 
+std::optional<RefPtr<NativeImage>> RemoteSharedResourceCache::readNativeImage(IPC::StreamServerConnection& connection, RemoteNativeImageReadReference&& read)
+{
+    return m_nativeImages.read(connection, WTF::move(read));
+}
+
 void RemoteSharedResourceCache::releaseNativeImage(RemoteNativeImageWriteReference&& write)
 {
     m_nativeImages.remove(WTF::move(write));
