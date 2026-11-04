@@ -1188,6 +1188,8 @@ void InspectorNetworkAgent::searchOtherRequests(const JSC::Yarr::RegularExpressi
 {
     Vector<NetworkResourcesData::ResourceData*> resources = m_resourcesData->resources();
     for (auto* resourceData : resources) {
+        if (resourceData->url().isNull())
+            continue;
         // Skip resources already reported by the page agent's cached-resource search to avoid duplicate results.
         if (alreadySearchedURLs.contains(resourceData->url()))
             continue;

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerFailedRequest() {
+    fetch("resources/does-not-exist.txt").catch(() => { }).finally(() => {
+        TestPage.dispatchEventToFrontend("RequestFinished");
+    });
+}
+
+function test()
+{
+    function sanitizeURL(url) {
+        return url.replace(/^.*?LayoutTests\//, "");
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Page.searchInResources.RequestWithoutResponse");
+
+    suite.addTestCase({
+        name: "Page.searchInResources.RequestWithoutResponse",
+        description: "Searching should not crash when a network request never received a response.",
+        async test() {
+            await Promise.all([
+                InspectorTest.awaitEvent("RequestFinished"),
+                InspectorTest.evaluateInPage("triggerFailedRequest()"),
+            ]);
+
+            let {result} = await WI.networkManager.resourceSearchTarget.PageAgent.searchInResources("search-string");
+            InspectorTest.expectThat(Array.isArray(result), "Should return an array of results.");
+            for (let {url, matchesCount} of result.sort((a, b) => a.url.localeCompare(b.url)))
+                InspectorTest.log(`FOUND: ${sanitizeURL(url)} (${matchesCount})`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Page.searchInResources does not crash when the network agent is tracking a request that never received a response.</p>
+</body>
+</html>

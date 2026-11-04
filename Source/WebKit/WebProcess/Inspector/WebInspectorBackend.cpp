@@ -424,6 +424,7 @@ void WebInspectorBackend::disableNetworkInstrumentation()
 
     m_frameNetworkAgentProxies.clear();
     m_networkInstrumentationEnabled = false;
+    CheckedRef { m_resourceDataStore }->clear();
 
     // Reset latched Network overrides so nothing persists past inspection. The caching flag lives
     // on the Page and would otherwise stay disabled with no inspector attached. Mirrors
@@ -653,7 +654,7 @@ void WebInspectorBackend::searchInFramesAndRequests(Vector<WebCore::FrameIdentif
 
     CheckedRef resourceDataStore = m_resourceDataStore.get();
     resourceDataStore->forEach([&](const BackendResourceDataStore::ResourceData& entry) {
-        if (!entry.hasContent() || entry.base64Encoded())
+        if (!entry.hasContent() || entry.base64Encoded() || entry.url().isNull())
             return;
         // Skip entries already emitted by the cached-resource walk to avoid double-counting
         // (e.g. a stylesheet is both a CachedResource and a buffered data-store entry).

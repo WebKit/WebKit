@@ -1,0 +1,8 @@
+Tests that Page.searchInResources does not crash when the network agent is tracking a request that never received a response.
+
+
+== Running test suite: Page.searchInResources.RequestWithoutResponse
+-- Running test case: Page.searchInResources.RequestWithoutResponse
+PASS: Should return an array of results.
+FOUND: inspector/page/searchInResources-request-without-response.html (1)
+
