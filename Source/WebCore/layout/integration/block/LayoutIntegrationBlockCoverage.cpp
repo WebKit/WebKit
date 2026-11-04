@@ -89,7 +89,6 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasOrthogonalFlow,
     ContentHasSizingKeyword,
     ContentHasStretchBlockSize,
-    ContentHasAspectRatio,
     ContentHasUnmeasurableIntrinsicInlineSize,
     ContentHasQuirksModePercentageHeight,
     ContentHasNestedQuirkContainer,
@@ -483,16 +482,13 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
         || !(style->maxWidth().isNone() || isSupportedSize(style->maxWidth())) || !(style->maxHeight().isNone() || isSupportedSize(style->maxHeight())))
         return BlockAvoidanceReason::ContentHasSizingKeyword;
     // An auto inline size with an auto inset, or with justify-self other than normal and stretch, is the fit-content size (css-position-3 §4.3),
-    // from the inline sizes of the content.
+    // from the inline sizes of the content, and so is the automatic minimum of one a preferred aspect ratio gives (css-sizing-4 §5.1).
     auto writingMode = outOfFlowBox.writingMode();
     auto justifySelf = style->justifySelf().resolve();
-    auto hasFitContentInlineSize = style->logicalWidth(writingMode).isAuto() && (style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto() || !(justifySelf.isNormal() || justifySelf.isStretch()));
+    auto needsContentInlineSizes = style->logicalWidth(writingMode).isAuto() && (style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto() || !(justifySelf.isNormal() || justifySelf.isStretch()) || style->aspectRatio().hasRatio());
     // The render tree measures a leaf container (BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes).
-    if (hasFitContentInlineSize && !isLeafContainer && !canComputeContentInlineSizes(downcast<RenderBlockFlow>(outOfFlowBox)))
+    if (needsContentInlineSizes && !isLeafContainer && !canComputeContentInlineSizes(downcast<RenderBlockFlow>(outOfFlowBox)))
         return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
-    // FIXME: The automatic size a preferred aspect ratio gives in the other axis (css-sizing-4 §5.1).
-    if (style->aspectRatio().hasRatio())
-        return BlockAvoidanceReason::ContentHasAspectRatio;
     return { };
 }
 
@@ -562,11 +558,11 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     auto writingMode = box.writingMode();
     // The block formatting context decides the inline size from lengths, percentages, calc() and stretch, the stretch-fit inline size
     // (BlockFormattingUtils::inlineSizeAndMargins); the box's own formatting context resolves the min-content, max-content and fit-content
-    // keywords with its intrinsic sizes. A calc-size() goes with its basis. A replaced element's own formatting context takes its aspect ratio
-    // into account (CSS 2.2 §10.3.4). It resolves a stretch block size against the block size of the containing block the block formatting
+    // keywords with its intrinsic sizes. A calc-size() goes with its basis. The box's own formatting context decides the inline size from a
+    // preferred aspect ratio, a replaced element's natural one included (CSS 2.2 §10.3.4, css-sizing-4 §5.1). It resolves a stretch block size against the block size of the containing block the block formatting
     // context gives it (RenderBox::isBlockSizeResolvableForStretch).
-    // FIXME: The other sizing keywords, the keywords of a replaced element, the -webkit-fill-available block sizes, which read the containing
-    // block's renderer, and a preferred aspect ratio.
+    // FIXME: The other sizing keywords, the keywords of a replaced element, and the -webkit-fill-available block sizes, which read the
+    // containing block's renderer.
     auto isReplaced = box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot();
     auto isSupportedInlineSize = [&](auto& size) {
         return size.isSpecified() || (size.isIntrinsicOrStretch() && !isReplaced);
@@ -580,8 +576,6 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
         return BlockAvoidanceReason::ContentHasSizingKeyword;
     if (isFillAvailable(style->logicalHeight(writingMode)) || isFillAvailable(style->logicalMinHeight(writingMode)) || isFillAvailable(style->logicalMaxHeight(writingMode)))
         return BlockAvoidanceReason::ContentHasStretchBlockSize;
-    if (style->aspectRatio().hasRatio() && !isReplaced)
-        return BlockAvoidanceReason::ContentHasAspectRatio;
     // The block-step-size rounding of the margin box is the parent's job on the render tree path (RenderBlockFlow::performBlockStepSizing).
     if (!style->blockStepSize().isNone())
         return BlockAvoidanceReason::ContentHasBlockStepSize;
@@ -861,8 +855,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "sizing keyword or calc-size()"_s;
     case BlockAvoidanceReason::ContentHasStretchBlockSize:
         return "stretch block size"_s;
-    case BlockAvoidanceReason::ContentHasAspectRatio:
-        return "aspect-ratio"_s;
     case BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize:
         return "intrinsic size of unmeasurable content"_s;
     case BlockAvoidanceReason::ContentHasQuirksModePercentageHeight:

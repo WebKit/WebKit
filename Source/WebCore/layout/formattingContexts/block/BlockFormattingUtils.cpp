@@ -258,6 +258,11 @@ std::optional<LayoutUnit> BlockFormattingUtils::aspectRatioBorderBoxInlineSize(c
     return aspectRatioBorderBoxInlineSizeFor(style.get(), *blockSize, horizontalBorderAndPadding, verticalBorderAndPadding);
 }
 
+std::optional<LayoutUnit> BlockFormattingUtils::aspectRatioBorderBoxInlineSize(const RenderBox& box, LayoutUnit borderBoxBlockSize, LayoutUnit horizontalBorderAndPadding, LayoutUnit verticalBorderAndPadding)
+{
+    return aspectRatioBorderBoxInlineSizeFor(box.style(), borderBoxBlockSize, horizontalBorderAndPadding, verticalBorderAndPadding);
+}
+
 bool BlockFormattingUtils::hasAspectRatioAutomaticMinimumInlineSize(const RenderBox& box, std::optional<LayoutUnit> aspectRatioBorderBoxInlineSize, WritingMode writingMode)
 {
     CheckedRef style = box.style();
