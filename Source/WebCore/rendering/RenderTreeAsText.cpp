@@ -857,7 +857,7 @@ String externalRepresentation(LocalFrame* frame, OptionSet<RenderAsTextFlag> beh
 
     Ref printContext = PrintContext::create(frame);
     if (behavior.contains(RenderAsTextFlag::PrintingMode))
-        printContext->begin(renderer->borderBoxWidth());
+        printContext->beginWithPageSizeInCSSPixels(renderer->borderBoxWidth());
 
     return externalRepresentation(*renderer, behavior);
 }

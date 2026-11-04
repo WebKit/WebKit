@@ -72,6 +72,9 @@ public:
     // This function can be called multiple times to apply new print options without going back to screen mode.
     WEBCORE_EXPORT void begin(float width, float height = 0);
 
+    // Used by layout tests.
+    WEBCORE_EXPORT void beginWithPageSizeInCSSPixels(float width, float height = 0);
+
     // FIXME: eliminate width argument.
     WEBCORE_EXPORT void spoolPage(GraphicsContext& ctx, int pageNumber, float width);
 

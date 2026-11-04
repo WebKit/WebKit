@@ -17,9 +17,15 @@ function test()
     createBlockWithRatioToPageHeight("secondPage", 0.6);
 
     numberOfPagesShouldBe(2);
-    numberOfPagesShouldBe(1, 1000, 10000);
 
-    document.body.removeChild(document.getElementById("sandbox"));
+    var sandbox = document.getElementById("sandbox");
+    sandbox.replaceChildren();
+    var tallPage = printingPage({ width: 1000, height: 10000 });
+    tallPage.block("firstTallPage", 0.6);
+    tallPage.block("secondTallPage", 0.6);
+    tallPage.numberOfPagesShouldBe(2);
+
+    document.body.removeChild(sandbox);
 }
 
 var successfullyParsed = true;

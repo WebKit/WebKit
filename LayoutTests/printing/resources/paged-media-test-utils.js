@@ -10,32 +10,82 @@ function appendResult(result)
     _results += '<br>' + result;
 }
 
+// Matches the Internals.idl and DumpRenderTree defaults.
+var defaultPrintingPageSize = { width: 800, height: 600 };
+
+function printingPage(pageSize)
+{
+    var width = pageSize ? pageSize.width : defaultPrintingPageSize.width;
+    var height = pageSize ? pageSize.height : defaultPrintingPageSize.height;
+
+    // Like LocalFrame::resizePageRectsKeepingRatio().
+    var pageHeight = Math.floor(Math.fround(Math.floor(width) * Math.fround(height / width)));
+
+    function ratioToPageHeightToPixels(heightInRatioToPageHeight)
+    {
+        return Math.floor(pageHeight * heightInRatioToPageHeight);
+    }
+
+    return {
+        block: function(id, heightInRatioToPageHeight)
+        {
+            var element = document.createElement("div");
+            element.id = id;
+            element.style.height = ratioToPageHeightToPixels(heightInRatioToPageHeight) + "px";
+            document.getElementById("sandbox").appendChild(element);
+            return element;
+        },
+
+        lines: function(id, childLines)
+        {
+            var element = document.createElement("div");
+            element.id = id;
+            for (var i = 0; i < childLines; ++i) {
+                element.appendChild(document.createTextNode("line" + i));
+                element.appendChild(document.createElement("br"));
+            }
+            // Make sure that one page has about 20 lines.
+            element.style.lineHeight = ratioToPageHeightToPixels(0.05) + "px";
+            document.getElementById("sandbox").appendChild(element);
+            return element;
+        },
+
+        numberOfPagesShouldBe: function(expectedNumberOfPages)
+        {
+            var actualNumberOfPages = internals.numberOfPages(width, height);
+            if (actualNumberOfPages == expectedNumberOfPages)
+                appendResult('PASS: number of pages is ' + actualNumberOfPages);
+            else {
+                appendResult('FAIL: expected number of pages is ' + expectedNumberOfPages + '. Was ' + actualNumberOfPages);
+                _errored = true;
+            }
+        },
+
+        pageNumberShouldBe: function(id, expectedPageNumber)
+        {
+            var actualPageNumber = internals.pageNumber(document.getElementById(id), width, height);
+            if (actualPageNumber == expectedPageNumber)
+                appendResult('PASS: page number of "' + id + '" is ' + actualPageNumber);
+            else {
+                appendResult('FAIL: expected page number of "' + id + '" is ' + expectedPageNumber + '. Was ' + actualPageNumber);
+                _errored = true;
+            }
+        },
+    };
+}
+
+var defaultPrintingPage = printingPage();
+
 function pageNumberForElementShouldBe(id, expectedPageNumber)
 {
-    var actualPageNumber = internals.pageNumber(document.getElementById(id));
-    if (actualPageNumber == expectedPageNumber)
-        appendResult('PASS: page number of "' + id + '" is ' + actualPageNumber);
-    else {
-        appendResult('FAIL: expected page number of "' + id + '" is ' + expectedPageNumber + '. Was ' + actualPageNumber);
-        _errored = true;
-    }
+    defaultPrintingPage.pageNumberShouldBe(id, expectedPageNumber);
 }
 
 function numberOfPagesShouldBe(expectedNumberOfPages, pageWidthInPixels, pageHeightInPixels)
 {
     // pageWidthInPixels and pageHeightInPixels can be omitted. If omitted, 800x600 is used.
-    var actualNumberOfPages;
-    if (pageWidthInPixels && pageHeightInPixels)
-        actualNumberOfPages = internals.numberOfPages(pageWidthInPixels, pageHeightInPixels);
-    else
-        actualNumberOfPages = internals.numberOfPages();
-
-    if (actualNumberOfPages == expectedNumberOfPages)
-        appendResult('PASS: number of pages is ' + actualNumberOfPages);
-    else {
-        appendResult('FAIL: expected number of pages is ' + expectedNumberOfPages + '. Was ' + actualNumberOfPages);
-        _errored = true;
-    }
+    var pageSize = pageWidthInPixels && pageHeightInPixels ? { width: pageWidthInPixels, height: pageHeightInPixels } : null;
+    printingPage(pageSize).numberOfPagesShouldBe(expectedNumberOfPages);
 }
 
 function runPrintingTest(testFunction)
@@ -60,33 +110,28 @@ function runPrintingTest(testFunction)
     output.appendChild(resultElement);
 }
 
-function ratioToPageHeightToPixels(heightInRatioToPageHeight)
-{
-  // The default 800x600 page is laid out at 1066x799px
-  var pageWidthInPixels = Math.floor(800 * 4 / 3);
-  var pageHeightInPixels = Math.floor(pageWidthInPixels * 600 / 800);
-  return Math.floor(pageHeightInPixels * heightInRatioToPageHeight);
-}
-
 function createBlockWithRatioToPageHeight(id, heightInRatioToPageHeight)
 {
-    var element = document.createElement("div");
-    element.id = id;
-    element.style.height = ratioToPageHeightToPixels(heightInRatioToPageHeight) + "px";
-    document.getElementById("sandbox").appendChild(element);
-    return element;
+    return defaultPrintingPage.block(id, heightInRatioToPageHeight);
 }
 
 function createBlockWithNumberOfLines(id, childLines)
 {
-    var element = document.createElement("div");
-    element.id = id;
-    for (var i = 0; i < childLines; ++i) {
-        element.appendChild(document.createTextNode("line" + i));
-        element.appendChild(document.createElement("br"));
-    }
-    // Make sure that one page has about 20 lines.
-    element.style.lineHeight = ratioToPageHeightToPixels(0.05) + "px";
-    document.getElementById("sandbox").appendChild(element);
-    return element;
+    return defaultPrintingPage.lines(id, childLines);
+}
+
+// Truncated, like Document::pageSizeAndMarginsInPixels().
+function cssPixelsFromInches(inches)
+{
+    return Math.trunc(inches * 96);
+}
+
+function cssPixelsFromMillimeters(millimeters)
+{
+    return Math.trunc(millimeters * 96 / 25.4);
+}
+
+function cssPixelsFromPoints(points)
+{
+    return Math.trunc(points * 96 / 72);
 }

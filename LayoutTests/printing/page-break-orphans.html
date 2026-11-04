@@ -29,6 +29,7 @@ function test()
     pageNumberForElementShouldBe("page1-2", 1);
 
     pageNumberForElementShouldBe("page3", 3);
+    // FIXME: Fails when the lines fill the rest of the page exactly (webkit.org/b/329689).
     pageNumberForElementShouldBe("page4", 4);
 
     pageNumberForElementShouldBe("page5-1", 5);

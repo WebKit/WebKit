@@ -34,6 +34,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "NodeDocument.h"
+#include "RenderObjectDocument.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -232,6 +233,19 @@ void PrintContext::begin(float width, float height)
     frame->setPrinting(true, minLayoutSize, originalPageSize, maximumShrinkFactor() / minimumShrinkFactor(), AdjustViewSize::Yes);
 }
 
+void PrintContext::beginWithPageSizeInCSSPixels(float width, float height)
+{
+    if (!frame())
+        return;
+
+    Ref frame = *this->frame();
+    m_isPrinting = true;
+
+    FloatSize pageSize { width, height };
+    FloatSize layoutSize = frame->resizePageRectsKeepingRatio(pageSize, pageSize);
+    frame->setPrinting(true, layoutSize, pageSize, maximumShrinkFactor() / minimumShrinkFactor(), AdjustViewSize::Yes);
+}
+
 float PrintContext::computeAutomaticScaleFactor(const FloatSize& availablePaperSize)
 {
     if (!frame())
@@ -321,26 +335,29 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
 {
     // Make sure the element is not freed during the layout.
     RefPtr<Element> elementRef(element);
-    protect(element->document())->updateLayout();
+
+    RefPtr frame = element->document().frame();
+    if (!frame)
+        return -1;
+
+    Ref printContext = PrintContext::create(frame.get());
+    if (!printContext->beginAndComputePageRectsWithPageSize(*frame, pageSizeInPixels))
+        return -1;
 
     CheckedPtr box = enclosingBoxModelObject(element->renderer());
     if (!box)
         return -1;
 
-    RefPtr frame = element->document().frame();
-    FloatRect pageRect(FloatPoint(0, 0), pageSizeInPixels);
-    Ref printContext = PrintContext::create(frame.get());
-    printContext->begin(pageRect.width(), pageRect.height());
-    FloatSize scaledPageSize = pageSizeInPixels;
-    scaledPageSize.scale(protect(frame->view())->contentsSize().width() / pageRect.width());
-    printContext->computePageRectsWithPageSize(scaledPageSize, false);
-
-    int top = roundToInt(box->offsetTop());
-    int left = roundToInt(box->offsetLeft());
-    size_t pageNumber = 0;
-    for (; pageNumber < printContext->pageCount(); pageNumber++) {
-        const IntRect& page = printContext->pageRect(pageNumber);
-        if (page.x() <= left && left < page.maxX() && page.y() <= top && top < page.maxY())
+    auto boxRect = box->absoluteBoundingBoxRect();
+    auto point = boxRect.location();
+    if (auto writingMode = box->view().writingMode(); writingMode.isBlockFlipped()) {
+        if (writingMode.isHorizontal())
+            point.setY(boxRect.maxY() - 1);
+        else
+            point.setX(boxRect.maxX() - 1);
+    }
+    for (size_t pageNumber = 0; pageNumber < printContext->pageCount(); ++pageNumber) {
+        if (printContext->pageRect(pageNumber).contains(point))
             return pageNumber;
     }
     return -1;
@@ -389,7 +406,7 @@ String PrintContext::pageProperty(LocalFrame* frame, const String& propertyName,
 
     RefPtr document = frame->document();
     Ref printContext = PrintContext::create(frame);
-    printContext->begin(800); // Any width is OK here.
+    printContext->beginWithPageSizeInCSSPixels(800); // Any width is OK here.
     document->updateLayout();
     auto style = protect(document->styleScope().resolver())->styleForPage(pageNumber);
 
@@ -460,9 +477,13 @@ bool PrintContext::beginAndComputePageRectsWithPageSize(LocalFrame& frame, const
 
     protect(frame.document())->updateLayout();
 
-    begin(pageSizeInPixels.width(), pageSizeInPixels.height());
+    beginWithPageSizeInCSSPixels(pageSizeInPixels.width(), pageSizeInPixels.height());
+    RefPtr view = frame.view();
+    if (!view)
+        return false;
+
     // Account for shrink-to-fit, rounding like begin() does.
-    FloatSize scaledPageSize = frame.resizePageRectsKeepingRatio(pageSizeInPixels, FloatSize(protect(frame.view())->contentsSize()));
+    FloatSize scaledPageSize = frame.resizePageRectsKeepingRatio(pageSizeInPixels, FloatSize(view->contentsSize()));
     computePageRectsWithPageSize(scaledPageSize, false);
 
     return true;

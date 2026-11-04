@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; }
+.box { inline-size: 200px; block-size: 100px; }
+.tall { inline-size: 200px; block-size: 1100px; }
+.page-break { break-before: page; }
+.positioned { position: relative; }
+</style>
+<script src="resources/paged-media-test-utils.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function test()
+{
+    // Forced breaks, so the page numbers don't depend on the page size.
+    for (const writingMode of ["horizontal-tb", "vertical-rl", "vertical-lr"]) {
+        document.documentElement.style.writingMode = writingMode;
+        appendResult(writingMode + ":");
+        numberOfPagesShouldBe(5);
+        pageNumberForElementShouldBe("first", 0);
+        pageNumberForElementShouldBe("wrapper", 1);
+        // Their offsetParent is the wrapper.
+        pageNumberForElementShouldBe("inWrapper", 2);
+        pageNumberForElementShouldBe("inlineInWrapper", 2);
+        pageNumberForElementShouldBe("emptyAtBreak", 3);
+        // Crosses into page 4.
+        pageNumberForElementShouldBe("tall", 3);
+    }
+    document.documentElement.style.writingMode = "";
+    document.body.removeChild(document.getElementById("sandbox"));
+}
+</script>
+</head>
+<body onload="runPrintingTest(test)">
+<p>Tests that an element's page number comes from its position in the document, even inside a positioned element, and is the page that the element starts on.</p>
+<div id="sandbox">
+    <div id="first" class="box"></div>
+    <div id="wrapper" class="page-break positioned">
+        <div class="box"></div>
+        <div id="inWrapper" class="box page-break"><span id="inlineInWrapper">text</span></div>
+    </div>
+    <div id="emptyAtBreak" class="page-break"></div>
+    <div id="tall" class="tall"></div>
+</div>
+</body>
+</html>

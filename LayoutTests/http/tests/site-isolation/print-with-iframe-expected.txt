@@ -1,8 +1,8 @@
-layer at (0,0) size 1066x170
-  RenderView at (0,0) size 1066x170
-layer at (0,0) size 1066x170
-  RenderBlock {HTML} at (0,0) size 1066x170
-    RenderBody {BODY} at (8,8) size 1050x154 [bgcolor=#0000FF]
+layer at (0,0) size 800x170
+  RenderView at (0,0) size 800x170
+layer at (0,0) size 800x170
+  RenderBlock {HTML} at (0,0) size 800x170
+    RenderBody {BODY} at (8,8) size 784x154 [bgcolor=#0000FF]
       RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 300x150
   RenderIFrame {IFRAME} at (0,0) size 300x150

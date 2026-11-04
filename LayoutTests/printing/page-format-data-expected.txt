@@ -50,6 +50,8 @@ Test 10cm
 PASS internals.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4) is mmSize(100, 100) + pxMargins(1, 2, 3, 4)
 Test 20cm x 30cm
 PASS internals.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4) is mmSize(200, 300) + pxMargins(1, 2, 3, 4)
+Test 100pt 200pt
+PASS internals.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4) is ptSize(100, 200) + pxMargins(1, 2, 3, 4)
 Test 10000px 20000px
 PASS internals.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4) is '(10000, 20000)' + pxMargins(1, 2, 3, 4)
 Test invalid page size: -10cm
