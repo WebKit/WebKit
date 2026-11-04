@@ -35,8 +35,11 @@
 #include "HTMLSpanElement.h"
 #include "NodeDocument.h"
 #include "NodeInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReplaceNodeWithSpanCommand);
 
 ReplaceNodeWithSpanCommand::ReplaceNodeWithSpanCommand(Ref<HTMLElement>&& element)
     : SimpleEditCommand(element->document())

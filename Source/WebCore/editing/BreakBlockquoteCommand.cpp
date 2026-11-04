@@ -38,8 +38,11 @@
 #include "PositionInlines.h"
 #include "RenderListItem.h"
 #include "Text.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BreakBlockquoteCommand);
 
 using namespace HTMLNames;
 

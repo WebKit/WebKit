@@ -27,10 +27,12 @@
 
 #include "ApplyBlockElementCommand.h"
 #include "EditAction.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class IndentOutdentCommand : public ApplyBlockElementCommand {
+    WTF_MAKE_TZONE_ALLOCATED(IndentOutdentCommand);
 public:
     enum class IndentType : uint8_t { Indent, Outdent };
     static Ref<IndentOutdentCommand> create(Ref<Document>&& document, IndentType type)

@@ -30,8 +30,11 @@
 #include "DocumentFragment.h"
 #include "NodeDocument.h"
 #include "ReplaceSelectionCommand.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MoveSelectionCommand);
 
 MoveSelectionCommand::MoveSelectionCommand(Ref<DocumentFragment>&& fragment, const Position& position, bool smartInsert, bool smartDelete)
     : CompositeEditCommand(position.anchorNode()->document())

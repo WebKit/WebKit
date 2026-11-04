@@ -26,10 +26,12 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MergeIdenticalElementsCommand : public SimpleEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(MergeIdenticalElementsCommand);
 public:
     static Ref<MergeIdenticalElementsCommand> create(Ref<Element>&& element1, Ref<Element>&& element2)
     {

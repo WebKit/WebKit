@@ -26,12 +26,14 @@
 #pragma once
 
 #include "EditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Text;
 
 class InsertIntoTextNodeCommand : public SimpleEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(InsertIntoTextNodeCommand);
 public:
     static Ref<InsertIntoTextNodeCommand> create(Ref<Text>&& node, unsigned offset, const String& text, AllowPasswordEcho allowPasswordEcho = AllowPasswordEcho::Yes, EditAction editingAction = EditAction::Insert)
     {

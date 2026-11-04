@@ -38,8 +38,11 @@
 #include "StaticRange.h"
 #include "TextIterator.h"
 #include "markup.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReplaceRangeWithTextCommand);
 
 ReplaceRangeWithTextCommand::ReplaceRangeWithTextCommand(const SimpleRange& rangeToBeReplaced, const String& text)
     : CompositeEditCommand(rangeToBeReplaced.start.document(), EditAction::InsertReplacement)

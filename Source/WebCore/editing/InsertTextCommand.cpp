@@ -43,9 +43,12 @@
 #include "TextIterator.h"
 #include "TextListParser.h"
 #include "VisibleUnits.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InsertTextCommand);
 
 InsertTextCommand::InsertTextCommand(Ref<Document>&& document, const String& text, AllowPasswordEcho allowPasswordEcho, bool selectInsertedText, RebalanceType rebalanceType, EditAction editingAction)
     : CompositeEditCommand(WTF::move(document), editingAction)

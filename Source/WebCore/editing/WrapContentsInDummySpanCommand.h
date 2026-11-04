@@ -26,12 +26,14 @@
 #pragma once
 
 #include "EditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class HTMLElement;
 
 class WrapContentsInDummySpanCommand : public SimpleEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(WrapContentsInDummySpanCommand);
 public:
     static Ref<WrapContentsInDummySpanCommand> create(Element& element)
     {

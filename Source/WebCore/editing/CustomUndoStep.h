@@ -27,6 +27,7 @@
 
 #include "UndoStep.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ class Document;
 class UndoItem;
 
 class CustomUndoStep final : public UndoStep {
+    WTF_MAKE_TZONE_ALLOCATED(CustomUndoStep);
 public:
     static Ref<CustomUndoStep> create(UndoItem& item)
     {

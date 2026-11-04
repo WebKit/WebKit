@@ -26,10 +26,12 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SimplifyMarkupCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(SimplifyMarkupCommand);
 public:
     static Ref<SimplifyMarkupCommand> create(Ref<Document>&& document, Node* firstNode, Node* nodeAfterLast)
     {

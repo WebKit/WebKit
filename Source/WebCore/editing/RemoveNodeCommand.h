@@ -26,10 +26,12 @@
 #pragma once
 
 #include "EditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class RemoveNodeCommand : public SimpleEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(RemoveNodeCommand);
 public:
     static Ref<RemoveNodeCommand> create(Ref<Node>&& node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction = EditAction::Unspecified)
     {

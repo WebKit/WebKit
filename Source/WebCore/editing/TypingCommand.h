@@ -29,10 +29,12 @@
 #include "SimpleRange.h"
 #include "TextInsertionBaseCommand.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TypingCommand final : public TextInsertionBaseCommand {
+    WTF_MAKE_TZONE_ALLOCATED(TypingCommand);
 public:
     enum class Type : uint8_t {
         DeleteSelection,
