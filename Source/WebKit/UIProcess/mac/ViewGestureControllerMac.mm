@@ -222,6 +222,11 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
 
     LOG_WITH_STREAM(ViewGestures, stream << "ViewGestureController::didCollectGeometryForSmartMagnificationGesture - gesture location " << gestureLocationInViewCoordinates << " absoluteTargetRect " << absoluteTargetRect);
 
+    if (page->delegatesScalingToUIProcess()) {
+        absoluteTargetRect.scale(currentScaleFactor);
+        visibleContentRect.scale(currentScaleFactor);
+    }
+
     auto unscaledTargetRect = absoluteTargetRect;
 
     // If there was no usable element under the cursor, we'll scale towards the cursor instead.

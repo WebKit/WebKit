@@ -1,0 +1,2 @@
+Zoomed in: true
+Double tap on the same element zoomed back out: true

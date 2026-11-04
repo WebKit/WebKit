@@ -96,7 +96,9 @@ private:
     // anchored by the scroll position instead.
     void applyDelegatedZoomToLayer(double scale, WebCore::FloatPoint originInVisibleRect);
     void animateDelegatedZoomSnapBack(double fromScale, WebCore::FloatPoint fromLayerPosition, double toScale, WebCore::FloatPoint originInVisibleRect);
+    void didFinishDelegatedZoomSnapBack();
     bool hasDelegatedZoomSnapAnimation() const;
+    void reassertDelegatedZoom(double scaleToApply);
     void removeDelegatedZoomFromLayer();
     void commitDelegatedZoom(double scale, WebCore::FloatPoint originInVisibleRect);
 
@@ -199,6 +201,7 @@ private:
     std::optional<double> m_delegatedZoomAppliedScale;
     std::optional<WebCore::FloatPoint> m_delegatedZoomAppliedLayerPosition;
     unsigned m_commitsSinceCommittingDelegatedZoom { 0 };
+    double m_pageScaleFactorFromLastCommit { 1 };
     // In case the presentation update callback never arrives. Deliberately generous, since releasing the scale
     // too early is the bug we're guarding against.
     static constexpr unsigned maxCommitsToHoldDelegatedZoomScale { 60 };
