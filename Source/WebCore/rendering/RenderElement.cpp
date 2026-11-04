@@ -2863,7 +2863,7 @@ void RenderElement::establishesTopLayerWillChange()
 
     // Remove from the current containing block's out-of-flow list. The renderer will be
     // re-inserted into the correct containing block's list during the next layout.
-    RenderBlock::removeOutOfFlowBox(*renderBox);
+    RenderBoxModelObject::removeOutOfFlowBox(*renderBox);
     if (CheckedPtr parent = RenderObject::containingBlockForPositionType(PositionType::Static, *renderBox))
         parent->setChildNeedsLayout();
     renderBox->setNeedsLayout();
@@ -2889,7 +2889,7 @@ void RenderElement::markRendererDirtyAfterTopLayerChange(RenderElement* renderer
     if (!renderBox->isOutOfFlowPositioned())
         return;
 
-    RenderBlock::removeOutOfFlowBox(*renderBox);
+    RenderBoxModelObject::removeOutOfFlowBox(*renderBox);
     // This is to make sure we insert the box to the correct containing block list during static position computation.
     renderBox->parent()->setChildNeedsLayout();
     newContainingBlock->setChildNeedsLayout();

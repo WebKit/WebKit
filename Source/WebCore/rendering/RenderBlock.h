@@ -39,7 +39,6 @@ class ScrollbarUpdateScope;
 struct PaintInfo;
 struct RenderBlockRareData;
 
-using TrackedRendererListHashSet = SingleThreadWeakListHashSet<RenderBox>;
 
 enum CaretType { CursorCaret, DragCaret };
 enum class RelayoutChildren : bool { No, Yes };
@@ -72,17 +71,6 @@ public:
 
     virtual void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu);
 
-    void addOutOfFlowBox(RenderBox&);
-    static void removeOutOfFlowBox(const RenderBox&);
-    enum class ContainingBlockState : bool { NewContainingBlock, SameContainingBlock };
-    void removeOutOfFlowBoxes(const RenderElement*, ContainingBlockState = ContainingBlockState::SameContainingBlock);
-
-    NODELETE TrackedRendererListHashSet* outOfFlowBoxes() const LIFETIME_BOUND;
-    bool hasOutOfFlowBoxes() const
-    {
-        auto* renderers = outOfFlowBoxes();
-        return renderers && !renderers->isEmptyIgnoringNullReferences();
-    }
     void addPercentHeightDescendant(RenderBox&);
     static void removePercentHeightDescendant(RenderBox&);
     NODELETE TrackedRendererListHashSet* percentHeightDescendants() const LIFETIME_BOUND;
@@ -108,7 +96,6 @@ public:
     NODELETE bool hasMarginBeforeQuirk(const RenderBox& child) const;
     NODELETE bool hasMarginAfterQuirk(const RenderBox& child) const;
 
-    void markOutOfFlowBoxesForLayout(MarkingBehavior = MarkingBehavior::ContainingBlockChain);
     void markForPaginationRelayoutIfNeeded() override;
     
     // FIXME-BLOCKFLOW: Remove virtualizaion when all of the line layout code has been moved out of RenderBlock

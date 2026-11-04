@@ -972,6 +972,190 @@ void RenderBoxModelObject::applyTransform(TransformationMatrix&, const Style::Co
     ASSERT_NOT_REACHED();
 }
 
+class OutOfFlowDescendantsMap {
+public:
+    void addDescendant(const RenderBoxModelObject& containingBlock, RenderBox& outOfFlowDescendant)
+    {
+        // Protect against double insert where a descendant would end up with multiple containing blocks.
+        auto previousContainingBlock = m_containerMap.get(outOfFlowDescendant);
+        if (previousContainingBlock && previousContainingBlock != &containingBlock) {
+            if (auto* descendants = m_descendantsMap.get(*previousContainingBlock))
+                descendants->remove(outOfFlowDescendant);
+        }
+
+        auto& descendants = m_descendantsMap.ensure(containingBlock, [] {
+            return makeUnique<TrackedRendererListHashSet>();
+        }).iterator->value;
+
+        auto isNewEntry = false;
+        if (!is<RenderView>(containingBlock) || descendants->isEmptyIgnoringNullReferences())
+            isNewEntry = descendants->add(outOfFlowDescendant).isNewEntry;
+        else if (outOfFlowDescendant.isFixedPositioned() || isInTopLayerOrBackdrop(outOfFlowDescendant.style(), outOfFlowDescendant.element()))
+            isNewEntry = descendants->appendOrMoveToLast(outOfFlowDescendant).isNewEntry;
+        else {
+            auto ensureLayoutDependentBoxPosition = [&] {
+                // RenderView is a special containing block as it may hold both absolute and fixed positioned containing blocks.
+                // When a fixed positioned box is also a descendant of an absolute positioned box anchored to the RenderView,
+                // we have to make sure that the absolute positioned box is inserted before the fixed box to follow
+                // block layout dependency.
+                for (auto it = descendants->begin(); it != descendants->end(); ++it) {
+                    if (it->isFixedPositioned()) {
+                        isNewEntry = descendants->insertBefore(it, outOfFlowDescendant).isNewEntry;
+                        return;
+                    }
+                }
+                isNewEntry = descendants->appendOrMoveToLast(outOfFlowDescendant).isNewEntry;
+            };
+            ensureLayoutDependentBoxPosition();
+        }
+
+        if (!isNewEntry) {
+            ASSERT(m_containerMap.contains(outOfFlowDescendant));
+            return;
+        }
+        m_containerMap.set(outOfFlowDescendant, containingBlock);
+    }
+
+    void removeDescendant(const RenderBox& outOfFlowDescendant)
+    {
+        auto containingBlock = m_containerMap.take(outOfFlowDescendant);
+        if (!containingBlock)
+            return;
+
+        auto descendantsIterator = m_descendantsMap.find(*containingBlock.get());
+        ASSERT(descendantsIterator != m_descendantsMap.end());
+        if (descendantsIterator == m_descendantsMap.end())
+            return;
+
+        auto& descendants = descendantsIterator->value;
+        ASSERT(descendants->contains(const_cast<RenderBox&>(outOfFlowDescendant)));
+
+        descendants->remove(const_cast<RenderBox&>(outOfFlowDescendant));
+        if (descendants->isEmptyIgnoringNullReferences())
+            m_descendantsMap.remove(descendantsIterator);
+    }
+
+    void removeContainingBlock(const RenderBoxModelObject& containingBlock)
+    {
+        auto descendants = m_descendantsMap.take(containingBlock);
+        if (!descendants)
+            return;
+
+        for (auto& renderer : *descendants)
+            m_containerMap.remove(renderer);
+    }
+
+    NODELETE TrackedRendererListHashSet* positionedRenderers(const RenderBoxModelObject& containingBlock) const
+    {
+        return m_descendantsMap.get(containingBlock);
+    }
+
+private:
+    using DescendantsMap = SingleThreadWeakHashMap<const RenderBoxModelObject, std::unique_ptr<TrackedRendererListHashSet>>;
+    using ContainerMap = SingleThreadWeakHashMap<const RenderBox, SingleThreadWeakPtr<const RenderBoxModelObject>>;
+
+    DescendantsMap m_descendantsMap;
+    ContainerMap m_containerMap;
+};
+
+NODELETE static OutOfFlowDescendantsMap& outOfFlowDescendantsMap()
+{
+    static NeverDestroyed<OutOfFlowDescendantsMap> mapForOutOfFlowDescendants;
+    return mapForOutOfFlowDescendants;
+}
+
+TrackedRendererListHashSet* RenderBoxModelObject::outOfFlowBoxes() const
+{
+    return outOfFlowDescendantsMap().positionedRenderers(*this);
+}
+
+void RenderBoxModelObject::addOutOfFlowBox(RenderBox& outOfFlowBox)
+{
+    ASSERT(outOfFlowBox.isOutOfFlowPositioned());
+    ASSERT(!isAnonymousBlock());
+
+    outOfFlowBox.clearGridAreaContentSize();
+
+    if (outOfFlowBox.isRenderFragmentedFlow())
+        return;
+    // FIXME: Find out if we can do this as part of outOfFlowBox.setChildNeedsLayout(MarkingBehavior::OnlyThis)
+    if (outOfFlowBox.needsLayout()) {
+        // We should turn this bit on only while in layout.
+        ASSERT(outOfFlowChildNeedsLayout() || view().frameView().layoutContext().isInLayout());
+        setOutOfFlowChildNeedsLayoutBit(true);
+    }
+    outOfFlowDescendantsMap().addDescendant(*this, outOfFlowBox);
+}
+
+void RenderBoxModelObject::removeOutOfFlowBox(const RenderBox& rendererToRemove)
+{
+    outOfFlowDescendantsMap().removeDescendant(rendererToRemove);
+}
+
+static inline void markRendererAndParentForLayout(RenderBox& renderer)
+{
+    renderer.setChildNeedsLayout(MarkingBehavior::OnlyThis);
+    if (renderer.shouldInvalidateContentWidths())
+        renderer.invalidateContentLogicalWidths(MarkingBehavior::OnlyThis);
+    auto* parentBlock = RenderObject::containingBlockForPositionType(PositionType::Static, renderer);
+    if (!parentBlock) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    // Parent has to be mark for layout to run static positioning on the out-of-flow content.
+    parentBlock->setChildNeedsLayout();
+}
+
+void RenderBoxModelObject::removeOutOfFlowBoxes(const RenderElement* newContainingBlockCandidate, ContainingBlockState containingBlockState)
+{
+    auto* outOfFlowDescendants = outOfFlowBoxes();
+    if (!outOfFlowDescendants)
+        return;
+
+    Vector<CheckedRef<RenderBox>, 16> renderersToRemove;
+    if (!newContainingBlockCandidate) {
+        // We don't form containing block for these boxes anymore (either through style change or internal render tree shuffle)
+        for (auto& renderer : *outOfFlowDescendants) {
+            renderersToRemove.append(renderer);
+
+            markRendererAndParentForLayout(renderer);
+            auto markNewContainingBlockForLayout = [&] {
+                auto isAbsolutePositioned = renderer.isAbsolutelyPositioned();
+                // During style change we can't tell which ancestor is going to be the final containing block, so let's just mark the new candidate dirty.
+                auto* newContainingBlock = containingBlock();
+                for (; newContainingBlock && (isAbsolutePositioned ? !newContainingBlock->canContainAbsolutelyPositionedObjects() : !newContainingBlock->canContainFixedPositionObjects()); newContainingBlock = newContainingBlock->containingBlock()) { }
+                if (newContainingBlock)
+                    newContainingBlock->setNeedsLayout();
+            };
+            markNewContainingBlockForLayout();
+        }
+    } else if (containingBlockState == ContainingBlockState::NewContainingBlock) {
+        // Some of the positioned boxes are getting transferred over to newContainingBlockCandidate.
+        for (auto& renderer : *outOfFlowDescendants) {
+            if (!renderer.isDescendantOf(newContainingBlockCandidate))
+                continue;
+            renderersToRemove.append(renderer);
+            markRendererAndParentForLayout(renderer);
+        }
+    } else {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    for (auto& renderer : renderersToRemove)
+        removeOutOfFlowBox(renderer);
+}
+
+void RenderBoxModelObject::markOutOfFlowBoxesForLayout(MarkingBehavior markingBehavior)
+{
+    auto* outOfFlowDescendants = outOfFlowBoxes();
+    if (!outOfFlowDescendants)
+        return;
+
+    for (auto& descendant : *outOfFlowDescendants)
+        descendant.setChildNeedsLayout(markingBehavior);
+}
+
 bool RenderBoxModelObject::requiresLayer() const
 {
     return isPositioned() || createsGroup() || requiresRenderingConsolidationForViewTransition() || hasRunningAcceleratedAnimations() || style().willChange().canCreateStackingContext();
@@ -995,14 +1179,14 @@ void RenderBoxModelObject::removeOutOfFlowBoxesIfNeededOnStyleChange(const Style
 
     if ((wasContainingBlockForFixedContent && !isContainingBlockForFixedContent) || (wasContainingBlockForAbsoluteContent && !isContainingBlockForAbsoluteContent)) {
         // We are no longer the containing block for out-of-flow descendants.
-        containingBlockForOutOfFlowBoxes->removeOutOfFlowBoxes({ }, RenderBlock::ContainingBlockState::NewContainingBlock);
+        containingBlockForOutOfFlowBoxes->removeOutOfFlowBoxes({ }, ContainingBlockState::NewContainingBlock);
     }
 
     if (!wasContainingBlockForFixedContent && isContainingBlockForFixedContent) {
         // We are a new containing block for all out-of-flow boxes. Find first ancestor that has our fixed positioned boxes and remove them.
         // They will be inserted into our positioned objects list during their static position layout.
         if (CheckedPtr containingBlock = RenderObject::containingBlockForPositionType(PositionType::Fixed, *this))
-            containingBlock->removeOutOfFlowBoxes(this, RenderBlock::ContainingBlockState::NewContainingBlock);
+            containingBlock->removeOutOfFlowBoxes(this, ContainingBlockState::NewContainingBlock);
     }
 
     if (!wasContainingBlockForAbsoluteContent && isContainingBlockForAbsoluteContent) {
@@ -1010,7 +1194,7 @@ void RenderBoxModelObject::removeOutOfFlowBoxesIfNeededOnStyleChange(const Style
         // Remove our absolutely positioned descendants from their current containing block.
         // They will be inserted into our positioned objects list during layout.
         if (CheckedPtr containingBlock = RenderObject::containingBlockForPositionType(PositionType::Absolute, *this))
-            containingBlock->removeOutOfFlowBoxes(this, RenderBlock::ContainingBlockState::NewContainingBlock);
+            containingBlock->removeOutOfFlowBoxes(this, ContainingBlockState::NewContainingBlock);
     }
 }
 

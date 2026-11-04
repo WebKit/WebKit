@@ -27,6 +27,7 @@
 #include <WebCore/LayoutRect.h>
 #include <WebCore/RectEdges.h>
 #include <WebCore/RenderLayerModelObject.h>
+#include <wtf/WeakListHashSet.h>
 
 namespace WebCore {
 
@@ -43,6 +44,7 @@ class GraphicsContext;
 class Image;
 class ImageBuffer;
 class ImageSizingContext;
+class RenderBox;
 class RenderTextFragment;
 class StickyPositionViewportConstraints;
 class TransformationMatrix;
@@ -61,6 +63,7 @@ enum class InterpolationQuality : uint8_t;
 
 using BoxSideSet = EnumSet<BoxSide>;
 using BorderEdges = RectEdges<BorderEdge>;
+using TrackedRendererListHashSet = SingleThreadWeakListHashSet<RenderBox>;
 
 // This class is the base for all objects that adhere to the CSS box model as described
 // at http://www.w3.org/TR/CSS21/box.html
@@ -224,6 +227,18 @@ public:
     RenderBlock* containingBlockForAutoHeightDetection(const Style::MinimumSize& logicalHeight) const;
     RenderBlock* containingBlockForAutoHeightDetection(const Style::MaximumSize& logicalHeight) const;
 
+    // Out-of-flow boxes this renderer is the containing block for.
+    void addOutOfFlowBox(RenderBox&);
+    static void removeOutOfFlowBox(const RenderBox&);
+    enum class ContainingBlockState : bool { NewContainingBlock, SameContainingBlock };
+    void removeOutOfFlowBoxes(const RenderElement*, ContainingBlockState = ContainingBlockState::SameContainingBlock);
+    NODELETE TrackedRendererListHashSet* outOfFlowBoxes() const LIFETIME_BOUND;
+    bool hasOutOfFlowBoxes() const
+    {
+        auto* renderers = outOfFlowBoxes();
+        return renderers && !renderers->isEmptyIgnoringNullReferences();
+    }
+    void markOutOfFlowBoxesForLayout(MarkingBehavior = MarkingBehavior::ContainingBlockChain);
     void removeOutOfFlowBoxesIfNeededOnStyleChange(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle);
 
 

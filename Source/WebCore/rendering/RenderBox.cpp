@@ -291,7 +291,7 @@ void RenderBox::removeFloatingOrOutOfFlowChildFromBlockLists()
         return removeFloatingAndInvalidateForLayout();
 
     if (isOutOfFlowPositioned())
-        return RenderBlock::removeOutOfFlowBox(*this);
+        return RenderBoxModelObject::removeOutOfFlowBox(*this);
 
     ASSERT_NOT_REACHED();
 }
