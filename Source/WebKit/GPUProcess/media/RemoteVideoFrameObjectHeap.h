@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 #include "Connection.h"
 #include "RemoteVideoFrameProxy.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "ThreadSafeObjectHeap.h"
 #include "WorkQueueMessageReceiver.h"
 
@@ -60,6 +61,9 @@ public:
     void stopListeningForIPC(Ref<RemoteVideoFrameObjectHeap>&&) { close(); }
     void lowMemoryHandler();
 
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess);
+
 private:
     explicit RemoteVideoFrameObjectHeap(Ref<IPC::Connection>&&);
 
@@ -88,6 +92,7 @@ private:
     std::unique_ptr<WebCore::ImageRotationSessionVT> m_imageRotationSession WTF_GUARDED_BY_LOCK(m_pixelBufferConformerLock);
 #endif
     bool m_isClosed { false };
+    SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
 };
 
 }
