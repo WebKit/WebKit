@@ -1046,7 +1046,7 @@ void WebPage::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, 
 {
     m_page->dragController().insertDroppedImagePlaceholdersAtCaret(imageSizes);
     auto placeholderRects = m_page->dragController().droppedImagePlaceholders().map([&] (auto& element) {
-        return rootViewBounds(element);
+        return mainFrameViewBounds(element);
     });
 
     auto imagePlaceholderRange = m_page->dragController().droppedImagePlaceholderRange();
@@ -1488,23 +1488,6 @@ static std::optional<SimpleRange> rangeAtWordBoundaryForPosition(LocalFrame* fra
     if (!(base < extent))
         std::swap(base, extent);
     return makeSimpleRange(base, extent);
-}
-
-IntRect WebPage::rootViewBounds(const Node& node)
-{
-    RefPtr frame = node.document().frame();
-    if (!frame)
-        return { };
-
-    RefPtr view = frame->view();
-    if (!view)
-        return { };
-
-    CheckedPtr renderer = node.renderer();
-    if (!renderer)
-        return { };
-
-    return view->contentsToRootView(renderer->absoluteBoundingBoxRect());
 }
 
 IntRect WebPage::mainFrameViewBounds(const Node& node)

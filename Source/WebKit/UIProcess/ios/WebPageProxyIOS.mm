@@ -1298,8 +1298,9 @@ void WebPageProxy::requestAdditionalItemsForDragSession(std::optional<WebCore::F
 
 void WebPageProxy::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, CompletionHandler<void(const Vector<IntRect>&, RefPtr<WebCore::TextIndicator>)>&& completionHandler)
 {
+    // The placeholders are inserted at the drop caret, which is in the process of the frame under the drop.
     if (hasRunningProcess())
-        protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::InsertDroppedImagePlaceholders(imageSizes), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+        sendWithAsyncReplyToProcessContainingFrame(internals().currentDragTargetFrameID, Messages::WebPage::InsertDroppedImagePlaceholders(imageSizes), Messages::WebPage::InsertDroppedImagePlaceholders::Reply { WTF::move(completionHandler) });
     else
         completionHandler({ }, nullptr);
 }

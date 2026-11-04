@@ -2015,7 +2015,6 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     // This excludes layout overflow, includes borders.
-    static WebCore::IntRect rootViewBounds(const WebCore::Node&);
     static WebCore::IntRect mainFrameViewBounds(const WebCore::Node&);
 
     void setSceneIdentifier(String&&);

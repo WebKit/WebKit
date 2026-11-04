@@ -32,6 +32,7 @@
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/cocoa/FindInPageUtilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/NSItemProviderAdditions.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestDownloadDelegate.h"
@@ -11996,6 +11997,64 @@ TEST(SiteIsolation, DropTextOnContentEditableInCrossOriginSubframe)
     [simulator runFrom:CGPointMake(250, 150) to:CGPointMake(250, 150)];
 
     EXPECT_WK_STREQ("Hello", [webView stringByEvaluatingJavaScript:@"editor.textContent" inFrame:[webView firstChildFrame]]);
+}
+
+static void checkDropPreviewForImagePlaceholderInIframe(ASCIILiteral iframeOrigin)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { makeString("<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'><iframe style='position: absolute; left: 100px; top: 150px; width: 300px; height: 300px; border: none;' src='"_s, iframeOrigin, "/subframe'></iframe></body>"_s) } },
+        { "/subframe"_s, { "<body style='margin: 0'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 500, 500));
+    [webView _setEditable:YES];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    // Dropping an image with a preferred presentation size into an editable web view inserts a placeholder
+    // for it, and the drop preview is retargeted to the placeholder.
+    RetainPtr imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
+    RetainPtr item = adoptNS([[NSItemProvider alloc] init]);
+    [item registerDataRepresentationForTypeIdentifier:UTTypePNG.identifier withData:imageData.get() loadingDelay:0.5];
+    [item setPreferredPresentationSize:CGSizeMake(100, 100)];
+    [item setSuggestedName:@"green"];
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    // Don't use DropAnimationShouldFinishBeforeHandlingDrop: it ends the drop animation after a round trip
+    // to the main frame's process, which can be before the placeholders' bounds arrive from the iframe's process.
+    [simulator setExternalItemProviders:@[ item.get() ]];
+    [simulator runFrom:CGPointMake(150, 200) to:CGPointMake(150, 200)];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"document.querySelectorAll('img').length" inFrame:childFrame.get()] intValue]);
+    // The whole web view is editable, so a placeholder inserted in the wrong frame could end up in the main frame.
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"document.querySelectorAll('img').length"] intValue]);
+
+    ASSERT_EQ(1U, [simulator delayedDropPreviews].count);
+    id delayedPreview = [simulator delayedDropPreviews].firstObject;
+    ASSERT_TRUE([delayedPreview isKindOfClass:UITargetedDragPreview.class]);
+
+    // The iframe is at (100, 150) in the main frame, which isn't scrolled or zoomed, so the image's bounds in
+    // the content view are its bounds in the iframe offset by that.
+    RetainPtr<NSArray> imageRectInIframe = [webView objectByEvaluatingJavaScript:@"(() => { const rect = document.querySelector('img').getBoundingClientRect(); return [rect.x, rect.y, rect.width, rect.height]; })()" inFrame:childFrame.get()];
+    auto imageRectInContentView = CGRectMake(100 + [[imageRectInIframe objectAtIndex:0] doubleValue], 150 + [[imageRectInIframe objectAtIndex:1] doubleValue], [[imageRectInIframe objectAtIndex:2] doubleValue], [[imageRectInIframe objectAtIndex:3] doubleValue]);
+    EXPECT_FALSE(CGRectIsEmpty(imageRectInContentView));
+
+    UIDragPreviewTarget *target = [(UITargetedDragPreview *)delayedPreview target];
+    EXPECT_EQ(target.container, (UIView *)[webView textInputContentView]);
+    EXPECT_NEAR(target.center.x, CGRectGetMidX(imageRectInContentView), 1);
+    EXPECT_NEAR(target.center.y, CGRectGetMidY(imageRectInContentView), 1);
+}
+
+TEST(SiteIsolation, DropPreviewForImagePlaceholderInSameSiteIframe)
+{
+    checkDropPreviewForImagePlaceholderInIframe("https://domain1.com"_s);
+}
+
+TEST(SiteIsolation, DropPreviewForImagePlaceholderInCrossOriginIframe)
+{
+    checkDropPreviewForImagePlaceholderInIframe("https://domain2.com"_s);
 }
 #endif
 

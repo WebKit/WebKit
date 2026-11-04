@@ -380,6 +380,8 @@ public:
     WebCore::IntRect currentDragCaretEditableElementRect;
     WebCore::IntRect currentDragCaretRect;
     WebCore::DragHandlingMethod currentDragHandlingMethod { WebCore::DragHandlingMethod::None };
+    // The frame that handled the most recent drag controller action, after it was forwarded to any remote frame.
+    std::optional<WebCore::FrameIdentifier> currentDragTargetFrameID;
 #endif
 
     RefPtr<WebColorPicker> colorPicker;
