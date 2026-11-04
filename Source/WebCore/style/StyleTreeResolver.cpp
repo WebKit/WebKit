@@ -152,7 +152,21 @@ void TreeResolver::pushScope(ShadowRoot& shadowRoot)
 void TreeResolver::pushEnclosingScope()
 {
     ASSERT(scope().enclosingScope);
-    m_scopeStack.append(protect(*scope().enclosingScope));
+    Ref shadowScope = scope();
+    Ref enclosingScope = *shadowScope->enclosingScope;
+    m_scopeStack.append(enclosingScope.copyRef());
+
+    // Descendants of slotted elements are resolved in the enclosing scope, but their flat tree ancestors
+    // include the size query containers of the shadow tree. Hand those over until the slot is popped.
+    enclosingScope->selectorMatchingState.containerQueryEvaluationState.sizeQueryContainers.swap(shadowScope->selectorMatchingState.containerQueryEvaluationState.sizeQueryContainers);
+}
+
+void TreeResolver::popEnclosingScope()
+{
+    Ref enclosingScope = scope();
+    popScope();
+    ASSERT(scope().enclosingScope == enclosingScope.ptr());
+    enclosingScope->selectorMatchingState.containerQueryEvaluationState.sizeQueryContainers.swap(scope().selectorMatchingState.containerQueryEvaluationState.sizeQueryContainers);
 }
 
 void TreeResolver::popScope()
@@ -1175,7 +1189,7 @@ void TreeResolver::pushParent(Element& element, const Style::ComputedStyle& styl
         parent.didPushScope = true;
     } else if (RefPtr slot = dynamicDowncast<HTMLSlotElement>(element); slot && slot->assignedNodes()) {
         pushEnclosingScope();
-        parent.didPushScope = true;
+        parent.didPushEnclosingScope = true;
     }
 
     parent.needsUpdateQueryContainerDependentStyle = m_parentStack.last().needsUpdateQueryContainerDependentStyle || element.needsUpdateQueryContainerDependentStyle();
@@ -1197,6 +1211,8 @@ void TreeResolver::popParent()
 
     if (parent().didPushScope)
         popScope();
+    else if (parent().didPushEnclosingScope)
+        popEnclosingScope();
 
     scope().selectorMatchingState.selectorFilter.popParent();
 
