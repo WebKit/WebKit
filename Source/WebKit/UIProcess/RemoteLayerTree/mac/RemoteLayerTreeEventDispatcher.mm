@@ -577,6 +577,7 @@ void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
     ASSERT(ScrollingThread::isCurrentThread());
     ASSERT(m_scrollingTreeLock.isLocked());
 
+    m_needsMainThreadFlush = m_delayedRenderingUpdateDetectionTimer && m_delayedRenderingUpdateDetectionTimer->isActive();
     if (m_delayedRenderingUpdateDetectionTimer)
         m_delayedRenderingUpdateDetectionTimer->stop();
 
@@ -602,6 +603,7 @@ void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
 
     if (!becameIdle) {
         m_state = SynchronizationState::Desynchronized;
+        m_needsMainThreadFlush = false;
         // At this point we know the main thread is taking too long in the rendering update,
         // so we give up trying to sync with the main thread and update layers here on the scrolling thread.
         // Dispatch to allow for the scrolling thread to handle any outstanding wheel events before we commit layers.
@@ -679,11 +681,12 @@ void RemoteLayerTreeEventDispatcher::renderingUpdateComplete()
 {
     ASSERT(isMainRunLoop());
 
+    bool appliedAnimatedValues = false;
 #if ENABLE(THREADED_ANIMATIONS)
     // We only want to update scroll-driven animations in this situation
     // as time-based animations will always be udpated from the scrolling
     // following a call to didRefreshDisplay().
-    updateAnimations(AnimationStacksToUpdate::ProgressBasedOnly);
+    appliedAnimatedValues = updateAnimations(AnimationStacksToUpdate::ProgressBasedOnly);
 #endif
 
     Locker locker { m_scrollingTreeLock };
@@ -691,7 +694,23 @@ void RemoteLayerTreeEventDispatcher::renderingUpdateComplete()
     if (m_state == SynchronizationState::InRenderingUpdate)
         m_stateCondition.notifyOne();
 
+    if (appliedAnimatedValues)
+        m_needsMainThreadFlush = true;
+
     m_state = SynchronizationState::Idle;
+}
+
+void RemoteLayerTreeEventDispatcher::flushMainThreadTransactionIfNeeded()
+{
+    ASSERT(isMainRunLoop());
+
+    {
+        Locker locker { m_scrollingTreeLock };
+        if (!std::exchange(m_needsMainThreadFlush, false))
+            return;
+    }
+
+    [CATransaction flush];
 }
 
 #if ENABLE(THREADED_ANIMATIONS)
@@ -765,7 +784,7 @@ RefPtr<const RemoteAnimationTimeline> RemoteLayerTreeEventDispatcher::timeline(c
     return nullptr;
 }
 
-void RemoteLayerTreeEventDispatcher::updateAnimations(AnimationStacksToUpdate animationStacksToUpdate)
+bool RemoteLayerTreeEventDispatcher::updateAnimations(AnimationStacksToUpdate animationStacksToUpdate)
 {
     ASSERT(isMainRunLoop() || ScrollingThread::isCurrentThread());
     Locker lock { m_animationLock };
@@ -778,11 +797,14 @@ void RemoteLayerTreeEventDispatcher::updateAnimations(AnimationStacksToUpdate an
     if (m_monotonicTimelineRegistry && animationStacksToUpdate == AnimationStacksToUpdate::All)
         m_monotonicTimelineRegistry->advanceCurrentTime(MonotonicTime::now());
 
+    bool appliedEffects = false;
     auto animationStacks = std::exchange(m_animationStacks, { });
     for (auto [layerID, currentAnimationStack] : animationStacks) {
         Ref animationStack = currentAnimationStack;
-        if (animationStacksToUpdate == AnimationStacksToUpdate::All || animationStack->hasProgressBasedAnimations())
+        if (animationStacksToUpdate == AnimationStacksToUpdate::All || animationStack->hasProgressBasedAnimations()) {
             animationStack->applyEffects();
+            appliedEffects = true;
+        }
 
         // We can clear the effect stack if it's empty, but the previous
         // call to applyEffects() is important so that the base values
@@ -790,6 +812,8 @@ void RemoteLayerTreeEventDispatcher::updateAnimations(AnimationStacksToUpdate an
         if (!animationStack->isEmpty())
             m_animationStacks.set(layerID, WTF::move(animationStack));
     }
+
+    return appliedEffects;
 }
 
 RefPtr<const RemoteAnimationStack> RemoteLayerTreeEventDispatcher::animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
