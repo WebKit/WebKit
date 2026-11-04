@@ -3706,18 +3706,18 @@ void WebPage::didHandleTapAsHover(Node& nodeRespondingToClick)
     Ref document = nodeRespondingToClick.document();
     if (element == document->documentElement() || element == document->bodyOrFrameset())
         element = nullptr;
-    std::optional<IntRect> bounds;
+    std::optional<IntRect> boundsInMainFrameView;
     if (element) {
-        bounds = element->boundingBoxInRootViewCoordinates();
-        if (coversMostOfTheViewport(*element, *bounds)) {
+        if (coversMostOfTheViewport(*element, element->boundingBoxInRootViewCoordinates())) {
             WEBPAGE_RELEASE_LOG(ViewGestures, "didHandleTapAsHover: not tracking the element whose click was handled as hover because it covers most of the viewport");
             element = nullptr;
-            bounds = std::nullopt;
-        } else
+        } else {
             WEBPAGE_RELEASE_LOG(ViewGestures, "didHandleTapAsHover: tracking the element whose click was handled as hover");
+            boundsInMainFrameView = element->boundingBoxInMainFrameViewCoordinates();
+        }
     }
     m_elementHoverActivatedByClick = element.get();
-    send(Messages::WebPageProxy::SetHoverActivatedByClickBounds(bounds));
+    send(Messages::WebPageProxy::SetHoverActivatedByClickBounds(boundsInMainFrameView));
 #else
     UNUSED_PARAM(nodeRespondingToClick);
 #endif
@@ -4006,10 +4006,9 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
         bool clickChangedImage = hitNode.get() != imageThatMayZoomInPlace.get() || zoomStateForImage(*imageThatMayZoomInPlace) != imageZoomStateBeforeClick;
         if (hitNode && clickChangedImage) {
             m_elementHoverActivatedByClick = imageThatMayZoomInPlace.get();
-            auto bounds = imageThatMayZoomInPlace->boundingBoxInRootViewCoordinates();
-            if (!coversMostOfTheViewport(*imageThatMayZoomInPlace, bounds) && isHoverActivatedByClick(*hitNode, roundedAdjustedPoint)) {
+            if (!coversMostOfTheViewport(*imageThatMayZoomInPlace, imageThatMayZoomInPlace->boundingBoxInRootViewCoordinates()) && isHoverActivatedByClick(*hitNode, roundedAdjustedPoint)) {
                 WEBPAGE_RELEASE_LOG(ViewGestures, "completeSyntheticClick: tracking an image that stayed under the click location after the click");
-                send(Messages::WebPageProxy::SetHoverActivatedByClickBounds(bounds));
+                send(Messages::WebPageProxy::SetHoverActivatedByClickBounds(imageThatMayZoomInPlace->boundingBoxInMainFrameViewCoordinates()));
             } else
                 m_elementHoverActivatedByClick = nullptr;
         }

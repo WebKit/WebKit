@@ -148,6 +148,11 @@ extension WebPage {
         backingWebView._clickHighlightColorForTesting
     }
 
+    /// The bounds of the element whose click was handled as hover, in view coordinates, or `.zero` if there is none.
+    public var hoverActivatedByClickBounds: CGRect {
+        backingWebView._hoverActivatedByClickBoundsForTesting
+    }
+
     /// Sends a left mouse-down NSEvent to the web view at the given location.
     ///
     /// - Parameter location: The location in window coordinates.

@@ -2769,7 +2769,7 @@ void WebChromeClient::showCaptionDisplaySettings(HTMLMediaElement& element, cons
 void WebChromeClient::didFinishContentChangeObserving(WebCore::LocalFrame& frame, WebCore::ContentChange observedContentChange)
 {
     if (RefPtr page = m_page.get())
-        page->didFinishContentChangeObserving(frame.frameID(), observedContentChange);
+        page->didFinishContentChangeObserving(frame.rootFrame().frameID(), observedContentChange);
 }
 #endif
 
