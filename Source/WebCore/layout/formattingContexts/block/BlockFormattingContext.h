@@ -141,6 +141,7 @@ private:
     void computeInlineSizeAndMargins(const RenderBox&, const ContainingBlockState&, BoxGeometry&) const;
     void computeLogicalLeft(const RenderBox&, const ContainingBlockState&, BoxGeometry&) const;
     ConstraintsForInlineContent constraintsForInlineContent(const RenderBox& blockContainer, const ContainingBlockState& blockContainerState) const;
+    ContainingBlockState containingBlockStateAtBlockStart(const RenderBox&) const;
     ContainingBlockState computeContainingBlockStateAtBlockStart(const RenderBox&);
     std::optional<LayoutUnit> stretchFitBorderBoxBlockSize(const RenderBox&, const BoxGeometry&, const ContainingBlockState&) const;
     void computeBlockSize(const RenderBox&, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState&, BoxGeometry&) const;
