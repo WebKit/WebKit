@@ -27,4 +27,4 @@ layer at (18,270) size 764x200
   RenderBlock (relative positioned) {DIV} at (10,262) size 764x200
     RenderText {#text} at (0,0) size 0x0
 layer at (18,270) size 50x90
-  RenderImage {IMG} at (0,0) size 50x90 [bgcolor=#0000FF]
+  RenderImage {IMG} at (0,-1) size 50x91 [bgcolor=#0000FF]
