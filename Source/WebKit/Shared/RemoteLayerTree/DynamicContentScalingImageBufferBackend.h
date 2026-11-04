@@ -49,6 +49,7 @@ public:
     std::optional<ImageBufferBackendHandle> createBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const final;
 
     void releaseGraphicsContext() final;
+    bool hasGraphicsContext() const final { return !!m_context; }
 
     bool canMapBackingStore() const final;
 

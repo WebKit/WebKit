@@ -342,6 +342,11 @@ void ImageBufferIOSurfaceBackend::releaseGraphicsContext()
     m_platformContext = nullptr;
 }
 
+bool ImageBufferIOSurfaceBackend::hasGraphicsContext() const
+{
+    return !!m_context;
+}
+
 bool ImageBufferIOSurfaceBackend::setVolatile()
 {
     if (m_surface->isInUse())
