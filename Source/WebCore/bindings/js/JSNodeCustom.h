@@ -81,7 +81,7 @@ void createNodeWrapperInDocumentRealmSlowCase(Node&, Document&);
 
 inline void willCreatePossiblyOrphanedTreeByRemoval(Node& root)
 {
-    if (!root.wrapper() && root.hasChildNodes())
+    if (!root.wrapper() && (root.hasChildNodes() || root.shadowRoot()))
         createNodeWrapperInDocumentRealmSlowCase(root, protect(root.document()));
 }
 

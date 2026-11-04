@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<!-- Scenario A: the host has no light DOM children at all, so hasChildNodes() is false. Script
+     holds a node *inside* the shadow tree, so observabilityOfRemovedNode() does report
+     MaybeObservableByRefPtr for it and only the hasChildNodes() gate can block the keep-alive. -->
+<div id="containerA"><div><template shadowrootmode="open"><x-inner-a></x-inner-a></template></div><img src="does-not-exist-a.png"></div>
+
+<!-- Scenario B: the host has a light DOM child, so hasChildNodes() is true and the gate would pass.
+     Script holds only the ShadowRoot itself, and nothing else in the removed subtree is referenced
+     from JS, so the only node that could report MaybeObservableByRefPtr is the ShadowRoot. -->
+<div id="containerB"><div><template shadowrootmode="open"><x-inner-b></x-inner-b></template><span></span></div><img src="does-not-exist-b.png"></div>
+
+<!-- Control C: no shadow root anywhere. Script holds a light DOM child of the removed host. -->
+<div id="containerC"><div><span></span></div><img src="does-not-exist-c.png"></div>
+
+<pre id="log"></pre>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/gc.js"></script>
+<script>
+jsTestIsAsync = true;
+
+description('This tests removing a shadow host element while there is a strong reference to a node within its shadow tree');
+
+// Capture references without ever naming any of the three hosts in JS. Reading ShadowRoot.host (or
+// reaching a host any other way) before the removal creates a JS wrapper for it, which both fails
+// willCreatePossiblyOrphanedTreeByRemoval()'s !root.wrapper() gate and keeps the host alive by
+// itself. Either one masks the bug, so nothing below touches a host until after the removal.
+let innerElementA = null;
+let shadowRootA = null;
+let shadowRootB = null;
+const lightChildC = document.querySelector('#containerC span');
+
+customElements.define('x-inner-a', class extends HTMLElement {
+    connectedCallback() {
+        innerElementA = this;
+        shadowRootA = this.getRootNode();
+    }
+});
+
+customElements.define('x-inner-b', class extends HTMLElement {
+    connectedCallback() {
+        shadowRootB = this.getRootNode();
+    }
+});
+
+const results = [];
+
+function check(name, actual, expected)
+{
+    results.push(`${actual === expected ? 'PASS' : 'FAIL'}: ${name} (expected ${expected}, got ${actual})`);
+}
+
+function describe(node)
+{
+    if (node === null)
+        return 'null';
+    if (node === shadowRootA || node === shadowRootB)
+        return 'the shadow root';
+    if (node instanceof ShadowRoot)
+        return 'some other shadow root';
+    if (node instanceof Element)
+        return `<${node.localName}>`;
+    return String(node);
+}
+
+shouldNotBe('innerElementA', 'null');
+shouldBeTrue('shadowRootA instanceof ShadowRoot');
+shouldBeTrue('shadowRootB instanceof ShadowRoot');
+shouldBeTrue('lightChildC instanceof Element');
+
+// Drop scenario B's reference into the shadow tree so that the ShadowRoot is the only node in the
+// removed subtree that anything outside of it references.
+shadowRootB.replaceChildren();
+
+document.getElementById('containerA').textContent = '';
+document.getElementById('containerB').textContent = '';
+document.getElementById('containerC').textContent = '';
+
+gc();
+
+setTimeout(() => {
+    gc();
+
+    shouldNotBe('shadowRootA.host', 'null');
+    shouldNotBe('innerElementA.getRootNode({composed: true})', 'shadowRootA');
+    shouldBe('innerElementA.getRootNode({composed: true})', 'shadowRootA.host');
+
+    shouldNotBe('shadowRootB.host', 'null');
+    shouldNotBe('shadowRootB.getRootNode({composed: true})', 'shadowRootB');
+    shouldBe('shadowRootB.getRootNode({composed: true})', 'shadowRootB.host');
+
+    shouldBeTrue('lightChildC.parentNode instanceof Element');
+    shouldBe('lightChildC.getRootNode({composed: true})', 'lightChildC.parentNode');
+
+    finishJSTest();
+}, 0);
+</script>
+</body>
+</html>
