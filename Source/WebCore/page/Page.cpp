@@ -60,6 +60,7 @@
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DOMTimer.h"
+#include "DataURLDecoder.h"
 #include "DatabaseProvider.h"
 #include "DebugOverlayRegions.h"
 #include "DebugPageOverlays.h"
@@ -240,7 +241,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/TextStream.h>
@@ -3143,14 +3143,14 @@ void Page::userStyleSheetLocationChanged()
     m_userStyleSheet = String();
     m_userStyleSheetModificationTime = std::nullopt;
 
-    // Data URLs with base64-encoded UTF-8 style sheets are common. We can process them
-    // synchronously and avoid using a loader. 
-    if (url.protocolIsData() && url.string().startsWith("data:text/css;charset=utf-8;base64,"_s)) {
+    if (url.protocolIsData()) {
         m_didLoadUserStyleSheet = true;
 
-        String styleSheetAsBase64 = base64DecodeToString(PAL::decodeURLEscapeSequences(StringView(url.string()).substring(35)), { Base64DecodeOption::ValidatePadding, Base64DecodeOption::IgnoreWhitespace });
-        if (!styleSheetAsBase64.isNull())
-            m_userStyleSheet = styleSheetAsBase64;
+        if (auto result = DataURLDecoder::decode(url)) {
+            Ref decoder = TextResourceDecoder::create(TextResourceDecoder::ContentType::CSS, PAL::UTF8Encoding());
+            decoder->setEncoding(result->charset, TextResourceDecoder::EncodingSource::HTTPHeader);
+            m_userStyleSheet = decoder->decodeAndFlush(result->data.span());
+        }
     }
 
     forEachDocument([] (Document& document) {

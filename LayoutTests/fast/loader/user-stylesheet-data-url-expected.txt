@@ -1,0 +1,9 @@
+
+PASS Uppercase media type and base64 indicator
+PASS Base64 without a charset parameter
+PASS Percent-encoded
+PASS No media type
+PASS Fragment
+PASS UTF-8
+PASS Non-UTF-8 charset parameter
+
