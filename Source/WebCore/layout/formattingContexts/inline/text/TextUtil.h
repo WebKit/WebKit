@@ -91,6 +91,8 @@ public:
     };
     static WordBreakLeft breakWord(const InlineTextBox&, size_t start, size_t length, InlineLayoutUnit width, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft, const FontCascade&);
     static WordBreakLeft breakWord(const InlineTextItem&, const FontCascade&, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
+    // For text that is not inline content, e.g. the block ellipsis.
+    static WordBreakLeft breakWord(StringView, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, const FontCascade&);
 
     static bool mayBreakInBetween(const InlineTextItem& previousInlineItem, const InlineTextItem& nextInlineItem);
     static unsigned findNextBreakablePosition(CachedLineBreakIteratorFactory&, unsigned startPosition, const Style::ComputedStyle&);
@@ -114,6 +116,8 @@ public:
 
     static size_t firstUserPerceivedCharacterLength(const InlineTextItem&);
     static size_t firstUserPerceivedCharacterLength(const InlineTextBox&, size_t startPosition, size_t length);
+    static size_t firstUserPerceivedCharacterLength(StringView);
+    static size_t lastUserPerceivedCharacterLength(StringView);
     static TextDirection directionForTextContent(StringView);
 
     static bool hasHangablePunctuationStart(const InlineTextItem&, const Style::ComputedStyle&);

@@ -282,22 +282,24 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextItem& inlineTextItem
     return breakWord(protect(inlineTextItem.inlineTextBox()), inlineTextItem.start(), inlineTextItem.length(), textWidth, availableWidth, contentLogicalLeft, fontCascade);
 }
 
-TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, size_t startPosition, size_t length, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft, const FontCascade& fontCascade)
+// Measures the text with widthOfRange(from, to), where from and to are positions in the text.
+template<typename WidthOfRange>
+static TextUtil::WordBreakLeft breakWord(StringView text, size_t startPosition, size_t length, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, bool canUseSimpleFontCodePath, bool canUseSimplifiedContentMeasuring, const FontCascade& fontCascade, NOESCAPE const WidthOfRange& widthOfRange)
 {
     ASSERT(availableWidth >= 0);
     ASSERT(length);
-    auto& text = inlineTextBox.content();
 
     if (!textWidth) [[unlikely]] {
         ASSERT_NOT_REACHED();
         return { };
     }
 
-    if (inlineTextBox.canUseSimpleFontCodePath()) {
+    if (canUseSimpleFontCodePath) {
 
         auto findBreakingPositionInSimpleText = [&] {
             auto userPerceivedCharacterBoundaryAlignedIndex = [&] (auto index) -> size_t {
-                if (text.is8Bit())
+                // The end of the text is a boundary.
+                if (text.is8Bit() || index >= text.length())
                     return index;
                 auto alignedStartIndex = index;
                 U16_SET_CP_START(text, startPosition, alignedStartIndex);
@@ -305,50 +307,50 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
                 return alignedStartIndex;
             };
 
-            auto trySimplifiedBreakingPosition = [&] (auto start) -> std::optional<WordBreakLeft> {
-                auto mayUseSimplifiedBreakingPositionForFixedPitch = fontCascade.isFixedPitch() && inlineTextBox.canUseSimplifiedContentMeasuring();
+            auto trySimplifiedBreakingPosition = [&](auto start) -> std::optional<TextUtil::WordBreakLeft> {
+                auto mayUseSimplifiedBreakingPositionForFixedPitch = fontCascade.isFixedPitch() && canUseSimplifiedContentMeasuring;
                 if (!mayUseSimplifiedBreakingPositionForFixedPitch)
                     return { };
                 // FIXME: Check if we could bring webkit.org/b/221581 back for system monospace fonts.
                 auto monospaceCharacterWidth = fontCascade.widthOfSpaceString();
                 size_t estimatedCharacterCount = floorf(availableWidth / monospaceCharacterWidth);
                 auto end = userPerceivedCharacterBoundaryAlignedIndex(std::min(start + estimatedCharacterCount, start + length - 1));
-                auto underflowWidth = TextUtil::width(inlineTextBox, fontCascade, start, end, contentLogicalLeft);
+                auto underflowWidth = widthOfRange(start, end);
                 if (underflowWidth > availableWidth || underflowWidth + monospaceCharacterWidth < availableWidth) {
                     // This does not look like a real fixed pitch font. Let's just fall back to regular bisect.
                     // In some edge cases (float precision) using monospaceCharacterWidth here may produce an incorrect off-by-one visual overflow.
                     return { };
                 }
-                return { WordBreakLeft { end - start, underflowWidth } };
+                return { TextUtil::WordBreakLeft { end - start, underflowWidth } };
             };
             if (auto leftSide = trySimplifiedBreakingPosition(startPosition))
                 return *leftSide;
 
-            auto tryEstimateBreakingPosition = [&] (auto start) -> std::optional<WordBreakLeft> {
+            auto tryEstimateBreakingPosition = [&](auto start) -> std::optional<TextUtil::WordBreakLeft> {
                 // Determine if the breaking position can be found within the range of [-1, 1] by using the average width of the characters.
                 auto averageCharacterWidth = InlineLayoutUnit { textWidth / length };
                 size_t candidateLength = availableWidth / averageCharacterWidth;
                 auto candidateEnd = userPerceivedCharacterBoundaryAlignedIndex(start + candidateLength);
                 if (candidateEnd <= start || candidateEnd >= start + length)
                     return { };
-                auto contentWidthAtCandidatePosition = TextUtil::width(inlineTextBox, fontCascade, start, candidateEnd, contentLogicalLeft);
+                auto contentWidthAtCandidatePosition = widthOfRange(start, candidateEnd);
                 if (contentWidthAtCandidatePosition == availableWidth)
-                    return { WordBreakLeft { candidateEnd - start, contentWidthAtCandidatePosition } };
+                    return { TextUtil::WordBreakLeft { candidateEnd - start, contentWidthAtCandidatePosition } };
 
                 if (contentWidthAtCandidatePosition > availableWidth) {
                     // Overshot.
                     if (auto adjustedCandidateEnd = userPerceivedCharacterBoundaryAlignedIndex(candidateEnd - 1); adjustedCandidateEnd > start) {
-                        auto adjustedContentWidth = TextUtil::width(inlineTextBox, fontCascade, start, adjustedCandidateEnd, contentLogicalLeft);
+                        auto adjustedContentWidth = widthOfRange(start, adjustedCandidateEnd);
                         if (adjustedContentWidth <= availableWidth)
-                            return { WordBreakLeft { adjustedCandidateEnd - start, adjustedContentWidth } };
+                            return { TextUtil::WordBreakLeft { adjustedCandidateEnd - start, adjustedContentWidth } };
                     }
                 } else if (auto adjustedCandidateEnd = userPerceivedCharacterBoundaryAlignedIndex(candidateEnd + 1); adjustedCandidateEnd < start + length) {
                     // Undershot.
-                    auto adjustedContentWidth = TextUtil::width(inlineTextBox, fontCascade, start, adjustedCandidateEnd, contentLogicalLeft);
+                    auto adjustedContentWidth = widthOfRange(start, adjustedCandidateEnd);
                     if (adjustedContentWidth > availableWidth)
-                        return { WordBreakLeft { candidateEnd - start, contentWidthAtCandidatePosition } };
+                        return { TextUtil::WordBreakLeft { candidateEnd - start, contentWidthAtCandidatePosition } };
                     if (adjustedContentWidth == availableWidth)
-                        return { WordBreakLeft { adjustedCandidateEnd - start, adjustedContentWidth } };
+                        return { TextUtil::WordBreakLeft { adjustedCandidateEnd - start, adjustedContentWidth } };
                 }
                 return { };
             };
@@ -376,7 +378,7 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
                 auto middle = userPerceivedCharacterBoundaryAlignedIndex(std::midpoint(left, right));
                 ASSERT(middle >= left && middle < right);
                 auto endOfMiddleCharacter = nextUserPerceivedCharacterIndex(middle);
-                auto width = TextUtil::width(inlineTextBox, fontCascade, startPosition, endOfMiddleCharacter, contentLogicalLeft);
+                auto width = widthOfRange(startPosition, endOfMiddleCharacter);
                 if (width < availableWidth) {
                     left = endOfMiddleCharacter;
                     leftSideWidth = width;
@@ -389,15 +391,15 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
                 }
             }
             RELEASE_ASSERT(right >= startPosition);
-            return WordBreakLeft { right - startPosition, leftSideWidth };
+            return TextUtil::WordBreakLeft { right - startPosition, leftSideWidth };
         };
         return findBreakingPositionInSimpleText();
     }
 
-    auto graphemeClusterIterator = NonSharedCharacterBreakIterator { StringView { text }.substring(startPosition, length) };
+    auto graphemeClusterIterator = NonSharedCharacterBreakIterator { text.substring(startPosition, length) };
     auto leftSide = TextUtil::WordBreakLeft { };
     for (auto clusterStartPosition = ubrk_next(graphemeClusterIterator); clusterStartPosition != UBRK_DONE; clusterStartPosition = ubrk_next(graphemeClusterIterator)) {
-        auto width = TextUtil::width(inlineTextBox, fontCascade, startPosition, startPosition + clusterStartPosition, contentLogicalLeft);
+        auto width = widthOfRange(startPosition, startPosition + clusterStartPosition);
         if (width > availableWidth)
             return leftSide;
         leftSide = { static_cast<size_t>(clusterStartPosition), width };
@@ -405,6 +407,23 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
     // This content is not supposed to fit availableWidth.
     ASSERT_NOT_REACHED();
     return leftSide;
+}
+
+TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, size_t startPosition, size_t length, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft, const FontCascade& fontCascade)
+{
+    return Layout::breakWord(inlineTextBox.content(), startPosition, length, textWidth, availableWidth, inlineTextBox.canUseSimpleFontCodePath(), inlineTextBox.canUseSimplifiedContentMeasuring(), fontCascade, [&](size_t from, size_t to) {
+        return TextUtil::width(inlineTextBox, fontCascade, from, to, contentLogicalLeft);
+    });
+}
+
+TextUtil::WordBreakLeft TextUtil::breakWord(StringView text, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, const FontCascade& fontCascade)
+{
+    auto canUseSimpleFontCodePath = text.is8Bit() || FontCascade::characterRangeCodePath(text.span16()) == FontCascade::CodePath::Simple;
+    return Layout::breakWord(text, 0, text.length(), textWidth, availableWidth, canUseSimpleFontCodePath, false, fontCascade, [&](size_t from, size_t to) -> InlineLayoutUnit {
+        if (from == to)
+            return { };
+        return fontCascade.width(TextRun { text.substring(from, to - from) });
+    });
 }
 
 bool TextUtil::mayBreakInBetween(const InlineTextItem& previousInlineItem, const InlineTextItem& nextInlineItem)
@@ -681,6 +700,26 @@ size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextBox& inlineTe
     if (nextPosition == UBRK_DONE)
         return length;
     return nextPosition - startPosition;
+}
+
+size_t TextUtil::firstUserPerceivedCharacterLength(StringView text)
+{
+    RELEASE_ASSERT(!text.isEmpty());
+    auto graphemeClustersIterator = NonSharedCharacterBreakIterator { text };
+    auto nextPosition = ubrk_following(graphemeClustersIterator, 0);
+    if (nextPosition == UBRK_DONE)
+        return text.length();
+    return nextPosition;
+}
+
+size_t TextUtil::lastUserPerceivedCharacterLength(StringView text)
+{
+    RELEASE_ASSERT(!text.isEmpty());
+    auto graphemeClustersIterator = NonSharedCharacterBreakIterator { text };
+    auto previousPosition = ubrk_preceding(graphemeClustersIterator, text.length());
+    if (previousPosition == UBRK_DONE)
+        return text.length();
+    return text.length() - previousPosition;
 }
 
 size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextItem& inlineTextItem)
