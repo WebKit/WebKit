@@ -1,0 +1,23 @@
+
+PASS .outer 1
+PASS .outer 2
+PASS .outer 3
+PASS .outer 4
+PASS .outer 5
+PASS .outer 6
+PASS .outer 7
+Column flexbox with an unresolvable height: 100%. The flexed item is sized by aspect-ratio, and its specified height is overridden by the 0% flex-basis, so the percentage resolves against the flexed size:
+
+Same, with an auto width stretched to the definite width of the column:
+
+Same, with a max-height that clamps the flexed size:
+
+Same, with a stretch flex-basis, which is content against the unresolvable height:
+
+Same, with a calc() flex-basis containing a percentage:
+
+Same, with an auto flex-basis and a percentage height:
+
+Same, without aspect-ratio. The specified height is overridden by the 0% flex-basis, so the percentage does not resolve:
+
+

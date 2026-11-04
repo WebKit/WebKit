@@ -90,6 +90,7 @@ public:
     NODELETE const Style::PreferredSize& preferredMainSizeLengthForFlexItem(const FlexLayoutItem&) const LIFETIME_BOUND;
     NODELETE const Style::MinimumSize& minMainSizeLengthForFlexItem(const FlexLayoutItem&) const LIFETIME_BOUND;
     NODELETE const Style::MaximumSize& maxMainSizeLengthForFlexItem(const FlexLayoutItem&) const LIFETIME_BOUND;
+    NODELETE static const Style::PreferredSize& preferredCrossSizeLengthForFlexItem(const RenderBox& flexItem LIFETIME_BOUND);
     NODELETE const Style::PreferredSize& preferredCrossSizeLengthForFlexItem(const FlexLayoutItem&) const LIFETIME_BOUND;
     NODELETE const Style::MinimumSize& minCrossSizeLengthForFlexItem(const FlexLayoutItem&) const LIFETIME_BOUND;
     NODELETE const Style::MaximumSize& maxCrossSizeLengthForFlexItem(const FlexLayoutItem&) const LIFETIME_BOUND;
@@ -113,7 +114,7 @@ public:
     static bool flexItemHasAspectRatio(const RenderBox& flexItem);
     static bool flexItemHasAspectRatio(const FlexLayoutItem&);
     static bool canResolveFullyConstrainedLogicalHeight(const RenderFlexibleBox&);
-    bool flexItemHasComputableAspectRatio(const FlexLayoutItem&) const;
+    static bool flexItemHasComputableAspectRatio(const RenderBox& flexItem);
     bool needToStretchFlexItemLogicalHeight(const FlexLayoutItem&) const;
     static LayoutUnit innerCrossSizeForFlexItem(const RenderBox& flexItem);
     LayoutUnit innerCrossSizeForFlexItem(const FlexLayoutItem&) const;
@@ -159,7 +160,6 @@ private:
     LayoutUnit usedMainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
     NODELETE static const Style::PreferredSize& preferredMainSizeLengthForFlexItem(const RenderBox& flexItem LIFETIME_BOUND);
     NODELETE static const Style::MinimumSize& minMainSizeLengthForFlexItem(const RenderBox& flexItem LIFETIME_BOUND);
-    NODELETE static const Style::PreferredSize& preferredCrossSizeLengthForFlexItem(const RenderBox& flexItem LIFETIME_BOUND);
     static bool useContentBasedMinimumSize(const RenderBox& flexItem);
 
     const RenderFlexibleBox& flexBox() const LIFETIME_BOUND { return m_flexBox; }

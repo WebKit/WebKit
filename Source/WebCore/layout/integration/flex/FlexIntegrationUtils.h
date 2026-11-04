@@ -83,7 +83,11 @@ public:
     template<typename SizeType> static bool flexItemMainSizeIsDefinite(const RenderBox&, const SizeType&, const FlexLayoutState*);
     template<typename SizeType> static bool canResolvePercentAgainstContainerBlockSize(const RenderBox&, const SizeType&, RenderBox::UpdatePercentageHeightDescendants, const FlexLayoutState*);
     static bool canResolvePercentAgainstContainerBlockSize(const RenderBox&, RenderBox::UpdatePercentageHeightDescendants, const FlexLayoutState*);
+    // Whether the container's block size is definite as it applies to this item; absent when the item is one the
+    // container cannot answer for and the renderer has to be asked instead.
     NODELETE static std::optional<bool> isFlexBoxBlockSizeDefiniteForFlexItem(const RenderBox&, const FlexLayoutState*);
+    template<typename SizeType> static bool flexItemCrossSizeIsDefinite(const RenderBox&, const SizeType&, const FlexLayoutState*);
+    static bool flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const RenderBox&, const FlexLayoutState*);
     template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(const FlexLayoutItem&, const SizeType&, LayoutUnit mainAxisSizeForLengthResolution);
     LayoutUnit resolveCalcSizeMainAxisExtentForFlexItem(const FlexLayoutItem&, const Style::UnevaluatedCalcSize&, LayoutUnit keywordMainAxisExtent, LayoutUnit mainAxisSizeForLengthResolution);
     LayoutUnit maxContentMainAxisExtentForFlexItem(const FlexLayoutItem&);
@@ -93,9 +97,6 @@ public:
     LayoutUnit constrainFlexItemLogicalHeightByMinMax(const FlexLayoutItem&, LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
     LayoutUnit constrainFlexItemLogicalWidthByMinMax(const FlexLayoutItem&, LayoutUnit logicalWidth, LayoutUnit availableWidth) const;
     template<typename SizeType> std::optional<LayoutUnit> computePercentageLogicalHeightForFlexItem(const FlexLayoutItem&, const SizeType&) const;
-    // Whether the container's block size is definite as it applies to this item; absent when the item is one the
-    // container cannot answer for and the renderer has to be asked instead.
-    NODELETE std::optional<bool> isFlexBoxBlockSizeDefiniteForFlexItem(const FlexLayoutItem&) const;
     bool isComputingIntrinsicLogicalWidths() const;
     template<typename SizeType> std::optional<LayoutUnit> computeLogicalHeightUsingForFlexItem(const FlexLayoutItem&, const SizeType&) const;
     template<typename SizeType> LayoutUnit computeLogicalWidthUsingForFlexItem(const FlexLayoutItem&, const SizeType&, LayoutUnit availableWidth) const;

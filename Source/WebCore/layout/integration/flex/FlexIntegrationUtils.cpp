@@ -490,6 +490,47 @@ template bool FlexIntegrationUtils::flexItemMainSizeIsDefinite<Style::MinimumSiz
 template bool FlexIntegrationUtils::flexItemMainSizeIsDefinite<Style::MaximumSize>(const RenderBox&, const Style::MaximumSize&, const FlexLayoutState*);
 template bool FlexIntegrationUtils::flexItemMainSizeIsDefinite<Style::PreferredSize>(const RenderBox&, const Style::PreferredSize&, const FlexLayoutState*);
 
+template<typename SizeType> bool FlexIntegrationUtils::flexItemCrossSizeIsDefinite(const RenderBox& flexItem, const SizeType& size, const FlexLayoutState* flexLayoutState)
+{
+    if constexpr (!std::same_as<SizeType, Style::MaximumSize>) {
+        if (size.isAuto())
+            return false;
+    }
+
+    // Stretch is definite in the same cases as percentages, i.e. when the
+    // container's cross size is definite. We use a dummy percentage for stretch
+    // since computePercentageLogicalHeight evaluates the value as a percentage.
+    auto crossSizeIsDefinite = [&](const auto& sizeForPercentageComputation) {
+        if (!FlexFormattingUtils::mainAxisIsFlexItemInlineAxis(flexItem)) {
+            CheckedRef flexBox = downcast<RenderFlexibleBox>(*flexItem.parent());
+            return !flexBox->layoutContext().isComputingIntrinsicLogicalWidthFor(flexBox);
+        }
+        if (auto isDefinite = isFlexBoxBlockSizeDefiniteForFlexItem(flexItem, flexLayoutState))
+            return *isDefinite;
+        return bool(flexItem.computePercentageLogicalHeight(sizeForPercentageComputation));
+    };
+
+    if (size.isPercentOrCalculated())
+        return crossSizeIsDefinite(size);
+
+    if (size.isStretch())
+        return crossSizeIsDefinite(Style::PreferredSize { 0_css_percentage });
+
+    // FIXME: Support other intrinsic sizes (min-content, max-content, fit-content) here.
+    // Requires updating computeMainSizeFromAspectRatioUsing.
+    return size.isFixed();
+}
+
+template bool FlexIntegrationUtils::flexItemCrossSizeIsDefinite<Style::MinimumSize>(const RenderBox&, const Style::MinimumSize&, const FlexLayoutState*);
+template bool FlexIntegrationUtils::flexItemCrossSizeIsDefinite<Style::MaximumSize>(const RenderBox&, const Style::MaximumSize&, const FlexLayoutState*);
+template bool FlexIntegrationUtils::flexItemCrossSizeIsDefinite<Style::PreferredSize>(const RenderBox&, const Style::PreferredSize&, const FlexLayoutState*);
+
+bool FlexIntegrationUtils::flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const RenderBox& flexItem, const FlexLayoutState* flexLayoutState)
+{
+    return FlexFormattingUtils::flexItemHasComputableAspectRatio(flexItem)
+        && (flexItemCrossSizeIsDefinite(flexItem, FlexFormattingUtils::preferredCrossSizeLengthForFlexItem(flexItem), flexLayoutState) || FlexFormattingUtils::hasDefiniteCrossSizeForFlexItem(flexItem));
+}
+
 template<typename SizeType>
 std::optional<LayoutUnit> FlexIntegrationUtils::computeMainAxisExtentForFlexItem(const FlexLayoutItem& flexLayoutItem, const SizeType& size, LayoutUnit mainAxisSizeForLengthResolution)
 {
@@ -669,11 +710,6 @@ template<typename SizeType> std::optional<LayoutUnit> FlexIntegrationUtils::comp
 template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem<Style::PreferredSize>(const FlexLayoutItem&, const Style::PreferredSize&) const;
 template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem<Style::MinimumSize>(const FlexLayoutItem&, const Style::MinimumSize&) const;
 template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogicalHeightForFlexItem<Style::MaximumSize>(const FlexLayoutItem&, const Style::MaximumSize&) const;
-
-std::optional<bool> FlexIntegrationUtils::isFlexBoxBlockSizeDefiniteForFlexItem(const FlexLayoutItem& flexLayoutItem) const
-{
-    return isFlexBoxBlockSizeDefiniteForFlexItem(flexLayoutItem.renderer.get(), &m_flexLayoutState);
-}
 
 bool FlexIntegrationUtils::isComputingIntrinsicLogicalWidths() const
 {

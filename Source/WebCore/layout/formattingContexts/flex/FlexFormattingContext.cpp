@@ -1101,37 +1101,12 @@ LayoutUnit FlexFormattingContext::adjustFlexItemSizeForAspectRatioCrossAxisMinAn
 
 template<typename SizeType> bool FlexFormattingContext::flexItemCrossSizeIsDefinite(const FlexLayoutItem& flexLayoutItem, const SizeType& size)
 {
-    if constexpr (!std::same_as<SizeType, Style::MaximumSize>) {
-        if (size.isAuto())
-            return false;
-    }
-
-    // Stretch is definite in the same cases as percentages, i.e. when the
-    // container's cross size is definite. We use a dummy percentage for stretch
-    // since computePercentageLogicalHeight evaluates the value as a percentage.
-    auto crossSizeIsDefinite = [&](const auto& sizeForPercentageComputation) {
-        if (!flexLayoutItem.mainAxisIsInlineAxis)
-            return !integrationUtils().isComputingIntrinsicLogicalWidths();
-        if (auto isDefinite = integrationUtils().isFlexBoxBlockSizeDefiniteForFlexItem(flexLayoutItem))
-            return *isDefinite;
-        return bool(integrationUtils().computePercentageLogicalHeightForFlexItem(flexLayoutItem, sizeForPercentageComputation));
-    };
-
-    if (size.isPercentOrCalculated())
-        return crossSizeIsDefinite(size);
-
-    if (size.isStretch())
-        return crossSizeIsDefinite(Style::PreferredSize { 0_css_percentage });
-
-    // FIXME: Support other intrinsic sizes (min-content, max-content, fit-content) here.
-    // Requires updating computeMainSizeFromAspectRatioUsing.
-    return size.isFixed();
+    return LayoutIntegration::FlexIntegrationUtils::flexItemCrossSizeIsDefinite(flexLayoutItem.renderer.get(), size, &m_layoutState);
 }
 
 bool FlexFormattingContext::flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const FlexLayoutItem& flexLayoutItem)
 {
-    return flexFormattingUtils().flexItemHasComputableAspectRatio(flexLayoutItem)
-        && (flexItemCrossSizeIsDefinite(flexLayoutItem, flexFormattingUtils().preferredCrossSizeLengthForFlexItem(flexLayoutItem)) || flexFormattingUtils().hasDefiniteCrossSizeForFlexItem(flexLayoutItem));
+    return LayoutIntegration::FlexIntegrationUtils::flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(flexLayoutItem.renderer.get(), &m_layoutState);
 }
 
 unsigned FlexFormattingContext::numberOfAutoMarginsInMainAxis(std::span<const FlexLayoutItem> flexLayoutItems, LayoutUnit availableFreeSpace)

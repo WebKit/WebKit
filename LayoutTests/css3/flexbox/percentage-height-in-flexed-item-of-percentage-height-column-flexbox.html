@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<title>CSS Flexbox: percentage height inside an aspect-ratio flexed item of a column flexbox with a percentage height</title>
+
+<style>
+.outer {
+  display: flex;
+  width: 400px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flexed {
+  flex: 1 1 0%;
+  width: 400px;
+}
+
+.percentage {
+  height: 100%;
+  background-color: green;
+}
+</style>
+
+<link rel="help" href="https://drafts.csswg.org/css-flexbox/#definite-sizes">
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
+
+<body onload="checkLayout('.outer')">
+<div id=log></div>
+
+<p>Column flexbox with an unresolvable height: 100%. The flexed item is sized by aspect-ratio, and its specified height is overridden by the 0% flex-basis, so the percentage resolves against the flexed size:</p>
+<div class="outer">
+  <div class="column" style="height: 100%;">
+    <div class="flexed" style="height: 300px; aspect-ratio: 16 / 9;" data-expected-height="225">
+      <div class="percentage" data-expected-height="225"></div>
+    </div>
+  </div>
+</div>
+
+<p>Same, with an auto width stretched to the definite width of the column:</p>
+<div class="outer">
+  <div class="column" style="height: 100%; width: 400px;">
+    <div class="flexed" style="height: 300px; aspect-ratio: 16 / 9; width: auto;" data-expected-height="225">
+      <div class="percentage" data-expected-height="225"></div>
+    </div>
+  </div>
+</div>
+
+<p>Same, with a max-height that clamps the flexed size:</p>
+<div class="outer">
+  <div class="column" style="height: 100%;">
+    <div class="flexed" style="height: 300px; aspect-ratio: 16 / 9; max-height: 100px;" data-expected-height="100">
+      <div class="percentage" data-expected-height="100"></div>
+    </div>
+  </div>
+</div>
+
+<p>Same, with a stretch flex-basis, which is content against the unresolvable height:</p>
+<div class="outer">
+  <div class="column" style="height: 100%;">
+    <div class="flexed" style="height: 300px; aspect-ratio: 16 / 9; flex-basis: stretch;" data-expected-height="225">
+      <div class="percentage" data-expected-height="225"></div>
+    </div>
+  </div>
+</div>
+
+<p>Same, with a calc() flex-basis containing a percentage:</p>
+<div class="outer">
+  <div class="column" style="height: 100%;">
+    <div class="flexed" style="height: 300px; aspect-ratio: 16 / 9; flex-basis: calc(0% + 0px);" data-expected-height="225">
+      <div class="percentage" data-expected-height="225"></div>
+    </div>
+  </div>
+</div>
+
+<p>Same, with an auto flex-basis and a percentage height:</p>
+<div class="outer">
+  <div class="column" style="height: 100%;">
+    <div class="flexed" style="height: 50%; aspect-ratio: 16 / 9; flex-basis: auto;" data-expected-height="225">
+      <div class="percentage" data-expected-height="225"></div>
+    </div>
+  </div>
+</div>
+
+<p>Same, without aspect-ratio. The specified height is overridden by the 0% flex-basis, so the percentage does not resolve:</p>
+<div class="outer">
+  <div class="column" style="height: 100%; min-height: 500px;">
+    <div class="flexed" style="height: 300px;" data-expected-height="500">
+      <div class="percentage" data-expected-height="0"></div>
+    </div>
+  </div>
+</div>
+</body>

@@ -380,12 +380,11 @@ bool FlexFormattingUtils::canResolveFullyConstrainedLogicalHeight(const RenderFl
     return flexBox.hasFullyConstrainedLogicalHeight() && containingBlock->hasDefiniteLogicalHeight();
 }
 
-bool FlexFormattingUtils::flexItemHasComputableAspectRatio(const FlexLayoutItem& flexLayoutItem) const
+bool FlexFormattingUtils::flexItemHasComputableAspectRatio(const RenderBox& flexItem)
 {
-    CheckedRef flexItem = flexLayoutItem.renderer;
     if (!flexItemHasAspectRatio(flexItem))
         return false;
-    return flexItem->preferredAspectRatioAsSize().aspectRatioDouble() > 0;
+    return flexItem.preferredAspectRatioAsSize().aspectRatioDouble() > 0;
 }
 
 bool FlexFormattingUtils::needToStretchFlexItemLogicalHeight(const FlexLayoutItem& flexLayoutItem) const
