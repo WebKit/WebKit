@@ -349,7 +349,7 @@ private:
     // first columns and then rows.
     class StateMachine {
     public:
-        StateMachine(GridTrackSizingAlgorithm&);
+        NODELETE StateMachine(GridTrackSizingAlgorithm&);
         ~StateMachine();
 
     private:

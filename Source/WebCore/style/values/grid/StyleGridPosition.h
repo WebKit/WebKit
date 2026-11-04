@@ -89,9 +89,9 @@ struct GridPosition {
     using Span = GridPositionSpan;
 
     GridPosition(CSS::Keyword::Auto) { }
-    WEBCORE_EXPORT GridPosition(Explicit&&);
-    WEBCORE_EXPORT GridPosition(Span&&);
-    GridPosition(CustomIdent&&);
+    NODELETE WEBCORE_EXPORT GridPosition(Explicit&&);
+    NODELETE WEBCORE_EXPORT GridPosition(Span&&);
+    NODELETE GridPosition(CustomIdent&&);
 
     bool isAuto() const { return m_type == GridPositionType::Auto; }
     bool isExplicit() const { return m_type == GridPositionType::Explicit; }

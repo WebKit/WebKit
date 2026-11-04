@@ -74,7 +74,7 @@ struct RenderGeometryMapStep {
 class RenderGeometryMap {
     WTF_MAKE_NONCOPYABLE(RenderGeometryMap);
 public:
-    explicit RenderGeometryMap(OptionSet<MapCoordinatesMode> = MapCoordinatesMode::UseTransforms);
+    NODELETE explicit RenderGeometryMap(OptionSet<MapCoordinatesMode> = MapCoordinatesMode::UseTransforms);
     ~RenderGeometryMap();
 
     OptionSet<MapCoordinatesMode> mapCoordinatesFlags() const { return m_mapCoordinatesFlags; }

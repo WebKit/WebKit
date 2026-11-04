@@ -41,7 +41,7 @@ class RenderTreeBuilder;
 class RenderTreeBuilder::Table {
     WTF_MAKE_TZONE_ALLOCATED(Table);
 public:
-    Table(RenderTreeBuilder&);
+    NODELETE Table(RenderTreeBuilder&);
 
     RenderElement& findOrCreateParentForChild(RenderTableRow& parent, const RenderObject& child, RenderObject*& beforeChild);
     RenderElement& findOrCreateParentForChild(RenderTableSection& parent, const RenderObject& child, RenderObject*& beforeChild);

@@ -58,7 +58,7 @@ class EventRegionContext final : public RegionContext {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventRegionContext);
 public:
     WEBCORE_EXPORT explicit EventRegionContext(EventRegion&);
-    WEBCORE_EXPORT virtual ~EventRegionContext();
+    NODELETE WEBCORE_EXPORT virtual ~EventRegionContext();
 
     bool isEventRegionContext() const final { return true; }
 

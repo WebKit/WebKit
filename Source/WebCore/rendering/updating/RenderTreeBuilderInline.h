@@ -33,7 +33,7 @@ namespace WebCore {
 class RenderTreeBuilder::Inline {
     WTF_MAKE_TZONE_ALLOCATED(Inline);
 public:
-    Inline(RenderTreeBuilder&);
+    NODELETE Inline(RenderTreeBuilder&);
 
     void attach(RenderBoxModelObject& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 

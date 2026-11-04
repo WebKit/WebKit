@@ -54,7 +54,7 @@ public:
 
     SVGPreserveAspectRatioValue() = default;
     SVGPreserveAspectRatioValue(StringView);
-    WEBCORE_EXPORT SVGPreserveAspectRatioValue(SVGPreserveAspectRatioType, SVGMeetOrSliceType);
+    NODELETE WEBCORE_EXPORT SVGPreserveAspectRatioValue(SVGPreserveAspectRatioType, SVGMeetOrSliceType);
 
     bool operator==(const SVGPreserveAspectRatioValue&) const = default;
 

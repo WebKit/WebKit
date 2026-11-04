@@ -39,7 +39,7 @@ class RenderBlockFlow;
 class LegacyLineClampUpdater {
 public:
     LegacyLineClampUpdater(RenderBlock& lineClampContainer);
-    ~LegacyLineClampUpdater();
+    NODELETE ~LegacyLineClampUpdater();
 
     struct ClampedContent {
         LayoutUnit contentHeight;

@@ -1331,7 +1331,7 @@ class RenderObject::SetLayoutNeededForbiddenScope {
 public:
     explicit SetLayoutNeededForbiddenScope(const RenderObject&, bool isForbidden = true);
 #if ASSERT_ENABLED
-    ~SetLayoutNeededForbiddenScope();
+    NODELETE ~SetLayoutNeededForbiddenScope();
 private:
     CheckedRef<const RenderObject> m_renderObject;
     bool m_preexistingForbidden;

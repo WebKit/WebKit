@@ -62,9 +62,9 @@ struct ShapeOutside {
 
     ShapeOutside(CSS::Keyword::None) { }
     ShapeOutside(Shape&&);
-    ShapeOutside(ShapeBox&&);
-    ShapeOutside(ShapeAndShapeBox&&);
-    ShapeOutside(Image&&);
+    NODELETE ShapeOutside(ShapeBox&&);
+    NODELETE ShapeOutside(ShapeAndShapeBox&&);
+    NODELETE ShapeOutside(Image&&);
 
     bool isNone() const { return !m_value; }
 

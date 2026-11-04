@@ -48,7 +48,7 @@ public:
     {
     }
 
-    SVGRenderingContext(SVGRenderingContext&&);
+    NODELETE SVGRenderingContext(SVGRenderingContext&&);
     SVGRenderingContext(const SVGRenderingContext&) = delete;
 
     SVGRenderingContext(RenderElement& object, PaintInfo& paintinfo, NeedsGraphicsContextSave needsGraphicsContextSave = DontSaveGraphicsContext)

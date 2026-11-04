@@ -90,7 +90,7 @@ struct RenderBlockFlowRareData {
     WTF_MAKE_NONCOPYABLE(RenderBlockFlowRareData);
 public:
     RenderBlockFlowRareData(const RenderBlockFlow&);
-    ~RenderBlockFlowRareData();
+    NODELETE ~RenderBlockFlowRareData();
 
     static LayoutUnit positiveMarginBeforeDefault(const RenderBlock& block)
     {
@@ -171,7 +171,7 @@ public:
     public:
         enum class IgnoreScrollbarForAfterMargin : bool { No, Yes };
         MarginInfo(const RenderBlockFlow&, IgnoreScrollbarForAfterMargin = IgnoreScrollbarForAfterMargin::Yes);
-        MarginInfo(bool canCollapseWithChildren, bool canCollapseMarginBeforeWithChildren, bool canCollapseMarginAfterWithChildren, bool quirkContainer, bool atBeforeSideOfBlock, bool atAfterSideOfBlock,  bool hasMarginBeforeQuirk, bool hasMarginAfterQuirk, bool determinedMarginBeforeQuirk, LayoutUnit positiveMargin, LayoutUnit negativeMargin, LayoutUnit marginBeforeWithClearance);
+        NODELETE MarginInfo(bool canCollapseWithChildren, bool canCollapseMarginBeforeWithChildren, bool canCollapseMarginAfterWithChildren, bool quirkContainer, bool atBeforeSideOfBlock, bool atAfterSideOfBlock,  bool hasMarginBeforeQuirk, bool hasMarginAfterQuirk, bool determinedMarginBeforeQuirk, LayoutUnit positiveMargin, LayoutUnit negativeMargin, LayoutUnit marginBeforeWithClearance);
         MarginInfo() = default;
 
         void setAtBeforeSideOfBlock(bool atBeforeSideOfBlock) { m_atBeforeSideOfBlock = atBeforeSideOfBlock; }

@@ -36,7 +36,7 @@ class RenderButton;
 class RenderTreeBuilder::FormControls {
     WTF_MAKE_TZONE_ALLOCATED(FormControls);
 public:
-    FormControls(RenderTreeBuilder&);
+    NODELETE FormControls(RenderTreeBuilder&);
 
     void attach(RenderButton& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 

@@ -31,7 +31,7 @@ class RenderObject;
 class LegacyRenderSVGResourceSolidColor final : public LegacyRenderSVGResource {
     WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceSolidColor);
 public:
-    LegacyRenderSVGResourceSolidColor();
+    NODELETE LegacyRenderSVGResourceSolidColor();
     virtual ~LegacyRenderSVGResourceSolidColor();
 
     void removeAllClientsFromCache() override { }

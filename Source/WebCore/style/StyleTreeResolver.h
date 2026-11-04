@@ -139,8 +139,8 @@ private:
         bool didAXUpdateTextColorSubtree { false };
 #endif
 
-        Parent(Document&);
-        Parent(Element&, const Style::ComputedStyle&, OptionSet<Change>, DescendantsToResolve, IsInDisplayNoneTree);
+        NODELETE Parent(Document&);
+        NODELETE Parent(Element&, const Style::ComputedStyle&, OptionSet<Change>, DescendantsToResolve, IsInDisplayNoneTree);
     };
 
     Scope& scope() { return m_scopeStack.last(); }

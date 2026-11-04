@@ -35,7 +35,7 @@ class RenderHTMLCanvas;
 class RenderTreeBuilder::Canvas {
     WTF_MAKE_TZONE_ALLOCATED(Canvas);
 public:
-    Canvas(RenderTreeBuilder&);
+    NODELETE Canvas(RenderTreeBuilder&);
 
     void attach(RenderHTMLCanvas& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 

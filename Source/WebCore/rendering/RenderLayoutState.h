@@ -187,8 +187,8 @@ private:
 class LayoutStateDisabler {
     WTF_MAKE_NONCOPYABLE(LayoutStateDisabler);
 public:
-    LayoutStateDisabler(LocalFrameViewLayoutContext&);
-    ~LayoutStateDisabler();
+    NODELETE LayoutStateDisabler(LocalFrameViewLayoutContext&);
+    NODELETE ~LayoutStateDisabler();
 
 private:
     LocalFrameViewLayoutContext& m_context;
@@ -235,7 +235,7 @@ public:
         RevealedWhenFound = 1 << 2
     };
     ContentVisibilityOverrideScope(LocalFrameViewLayoutContext&, OptionSet<OverrideType>);
-    ~ContentVisibilityOverrideScope();
+    NODELETE ~ContentVisibilityOverrideScope();
 
 private:
     const CheckedRef<LocalFrameViewLayoutContext> m_layoutContext;

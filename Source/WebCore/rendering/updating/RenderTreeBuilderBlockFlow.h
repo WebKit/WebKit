@@ -35,7 +35,7 @@ class RenderBlockFlow;
 class RenderTreeBuilder::BlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(BlockFlow);
 public:
-    BlockFlow(RenderTreeBuilder&);
+    NODELETE BlockFlow(RenderTreeBuilder&);
 
     void attach(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     void moveAllChildrenIncludingFloats(RenderBlockFlow& from, RenderBlock& to, RenderTreeBuilder::NormalizeAfterInsertion);

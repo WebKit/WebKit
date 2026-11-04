@@ -41,7 +41,7 @@ class RenderSVGText;
 class RenderTreeBuilder::SVG {
     WTF_MAKE_TZONE_ALLOCATED(SVG);
 public:
-    SVG(RenderTreeBuilder&);
+    NODELETE SVG(RenderTreeBuilder&);
 
     void updateAfterDescendants(RenderSVGRoot&);
 

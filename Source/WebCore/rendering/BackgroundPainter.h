@@ -45,7 +45,7 @@ enum BaseBackgroundColorUsage {
 };
 
 struct BackgroundImageGeometry {
-    BackgroundImageGeometry(const LayoutRect& destinationRect, const LayoutSize& tileSizeWithoutPixelSnapping, const LayoutSize& tileSize, const LayoutSize& phase, const LayoutSize& spaceSize, bool fixedAttachment);
+    NODELETE BackgroundImageGeometry(const LayoutRect& destinationRect, const LayoutSize& tileSizeWithoutPixelSnapping, const LayoutSize& tileSize, const LayoutSize& phase, const LayoutSize& spaceSize, bool fixedAttachment);
 
     LayoutSize relativePhase() const
     {

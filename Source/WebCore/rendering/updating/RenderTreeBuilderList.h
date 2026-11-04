@@ -36,7 +36,7 @@ class RenderListOutsideMarker;
 class RenderTreeBuilder::List {
     WTF_MAKE_TZONE_ALLOCATED(List);
 public:
-    List(RenderTreeBuilder&);
+    NODELETE List(RenderTreeBuilder&);
 
     void updateItemMarker(RenderListItem&);
 

@@ -46,7 +46,7 @@ enum class ShadowStyle : bool;
 class InlineBoxPainter {
 public:
     InlineBoxPainter(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&, PaintInfo&, const LayoutPoint& paintOffset);
-    ~InlineBoxPainter();
+    NODELETE ~InlineBoxPainter();
 
     void paint();
 

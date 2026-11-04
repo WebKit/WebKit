@@ -39,7 +39,7 @@ class RenderMathMLFencedOperator;
 class RenderTreeBuilder::MathML {
     WTF_MAKE_TZONE_ALLOCATED(MathML);
 public:
-    MathML(RenderTreeBuilder&);
+    NODELETE MathML(RenderTreeBuilder&);
 
     void attach(RenderMathMLFenced& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 

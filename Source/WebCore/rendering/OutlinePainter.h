@@ -37,7 +37,7 @@ struct BorderRadius;
 
 class OutlinePainter {
 public:
-    OutlinePainter(const PaintInfo&);
+    NODELETE OutlinePainter(const PaintInfo&);
 
     void paintOutline(const RenderElement&, const LayoutRect& paintRect) const;
     void paintOutline(const RenderBoxModelObject&, const LayoutPoint& paintOffset) const;

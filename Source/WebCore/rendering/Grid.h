@@ -119,7 +119,7 @@ class GridIterator {
 public:
     // |direction| is the direction that is fixed to |fixedTrackIndex| so e.g
     // GridIterator(m_grid, ForColumns, 1) will walk over the rows of the 2nd column.
-    GridIterator(const Grid&, Style::GridTrackSizingDirection, unsigned fixedTrackIndex, unsigned varyingTrackIndex = 0);
+    NODELETE GridIterator(const Grid&, Style::GridTrackSizingDirection, unsigned fixedTrackIndex, unsigned varyingTrackIndex = 0);
 
     NODELETE static GridIterator createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer, GridSpan subgridSpanInOuter);
 

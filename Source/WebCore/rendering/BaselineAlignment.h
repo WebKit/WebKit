@@ -64,7 +64,7 @@ struct BaselineAlignment {
 class BaselineGroup {
     WTF_MAKE_TZONE_ALLOCATED(BaselineGroup);
 public:
-    BaselineGroup(FlowDirection, ItemPosition preference);
+    NODELETE BaselineGroup(FlowDirection, ItemPosition preference);
 
     // Determines whether a baseline-sharing group is compatible with an alignment subject,
     // based on its 'block-flow' and 'baseline-preference'
@@ -93,7 +93,7 @@ private:
 class BaselineAlignmentState {
     WTF_MAKE_TZONE_ALLOCATED(BaselineAlignmentState);
 public:
-    BaselineAlignmentState(LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode);
+    NODELETE BaselineAlignmentState(LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode);
 
     // Returns the index of the baseline-sharing group the subject belongs to, creating one if none is compatible.
     size_t sharedGroupIndex(WritingMode alignmentSubjectWritingMode, ItemPosition preference) const;

@@ -34,7 +34,7 @@ class RenderTableCell;
 class AutoTableLayout final : public TableLayout {
 public:
     explicit AutoTableLayout(RenderTable*);
-    virtual ~AutoTableLayout();
+    NODELETE virtual ~AutoTableLayout();
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths(TableIntrinsics) override;
     LayoutUnit scaledWidthFromPercentColumns() const override { return m_scaledWidthFromPercentColumns; }

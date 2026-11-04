@@ -82,7 +82,7 @@ private:
 
     enum GridSpanType { UntranslatedDefinite, TranslatedDefinite, Indefinite };
 
-    GridSpan(int startLine, int endLine, GridSpanType);
+    NODELETE GridSpan(int startLine, int endLine, GridSpanType);
 
     int m_startLine;
     int m_endLine;

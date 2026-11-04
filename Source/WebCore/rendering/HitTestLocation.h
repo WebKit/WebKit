@@ -30,16 +30,16 @@ class HitTestLocation {
 public:
     enum class RectBased : bool { No, Yes };
 
-    WEBCORE_EXPORT HitTestLocation();
-    HitTestLocation(const LayoutPoint&);
+    NODELETE WEBCORE_EXPORT HitTestLocation();
+    NODELETE HitTestLocation(const LayoutPoint&);
     HitTestLocation(const FloatPoint&, const FloatQuad&, RectBased = RectBased::Yes);
 
-    WEBCORE_EXPORT HitTestLocation(const LayoutRect&);
+    NODELETE WEBCORE_EXPORT HitTestLocation(const LayoutRect&);
 
     // Make a copy the HitTestLocation in a new region by applying given offset to internal point and area.
     HitTestLocation(const HitTestLocation&, const LayoutSize& offset);
-    WEBCORE_EXPORT HitTestLocation(const HitTestLocation&);
-    WEBCORE_EXPORT ~HitTestLocation();
+    NODELETE WEBCORE_EXPORT HitTestLocation(const HitTestLocation&);
+    NODELETE WEBCORE_EXPORT ~HitTestLocation();
     NODELETE HitTestLocation& operator=(const HitTestLocation&);
 
     const LayoutPoint& point() const LIFETIME_BOUND { return m_point; }

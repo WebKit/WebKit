@@ -51,7 +51,7 @@ private:
 class TextBoxTrimStartDisabler {
 public:
     TextBoxTrimStartDisabler(const RenderBox&);
-    ~TextBoxTrimStartDisabler();
+    NODELETE ~TextBoxTrimStartDisabler();
 
 private:
     CheckedPtr<const RenderBox> m_renderBox;

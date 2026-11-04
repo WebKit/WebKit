@@ -36,7 +36,7 @@ class RenderTextFragment;
 class RenderTreeBuilder::FirstLetter {
     WTF_MAKE_TZONE_ALLOCATED(FirstLetter);
 public:
-    explicit FirstLetter(RenderTreeBuilder&);
+    NODELETE explicit FirstLetter(RenderTreeBuilder&);
 
     void updateAfterDescendants(RenderBlock&);
     void cleanupOnDestroy(RenderTextFragment&);

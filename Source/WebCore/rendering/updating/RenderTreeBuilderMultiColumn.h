@@ -36,7 +36,7 @@ class RenderMultiColumnFlow;
 class RenderTreeBuilder::MultiColumn {
     WTF_MAKE_TZONE_ALLOCATED(MultiColumn);
 public:
-    MultiColumn(RenderTreeBuilder&);
+    NODELETE MultiColumn(RenderTreeBuilder&);
 
     void updateAfterDescendants(RenderBlockFlow&);
     // Some renderers (column spanners) are moved out of the flow thread to live among column

@@ -35,7 +35,7 @@ class RenderBlockFlow;
 class RenderTreeBuilder::Block {
     WTF_MAKE_TZONE_ALLOCATED(Block);
 public:
-    Block(RenderTreeBuilder&);
+    NODELETE Block(RenderTreeBuilder&);
 
     void attach(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 

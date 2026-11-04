@@ -157,7 +157,7 @@ using PseudoClassInvalidationKey = std::tuple<unsigned, uint8_t, AtomString>;
 using RuleFeatureVector = Vector<RuleFeature>;
 
 struct SelectorDeduplicationKey {
-    SelectorDeduplicationKey(const CSSSelector&);
+    NODELETE SelectorDeduplicationKey(const CSSSelector&);
 
     const CSSSelector* selector;
     unsigned cachedHash;

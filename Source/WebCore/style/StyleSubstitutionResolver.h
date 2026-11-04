@@ -55,7 +55,7 @@ class SubstitutionResolver {
 public:
     // The registration is that of the custom property whose value is being resolved, if any. It is
     // used to validate first-valid() candidates against the target syntax.
-    explicit SubstitutionResolver(Builder&, const CSSRegisteredCustomProperty* = nullptr);
+    NODELETE explicit SubstitutionResolver(Builder&, const CSSRegisteredCustomProperty* = nullptr);
 
     RefPtr<CSSValue> substituteAndParse(const CSSSubstitutionValue&, CSSPropertyID);
     RefPtr<CSSValue> substituteAndParseShorthand(const CSSShorthandSubstitutionValue&, CSSPropertyID);
