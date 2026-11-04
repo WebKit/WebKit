@@ -33,6 +33,7 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
+#import <wtf/RefPtr.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
@@ -54,11 +55,17 @@ class PipelineLayout;
 class ShaderModule final : public WebGPU::ShaderModule {
     WTF_MAKE_TZONE_ALLOCATED(ShaderModule);
 
-    using CheckResult = Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck, std::monostate>;
+    // The AST of a valid module lives in m_ast, which can be released and rebuilt from m_source.
+    struct ValidCheck {
+        Vector<WGSL::Warning> warnings;
+    };
+    using CheckResult = Variant<ValidCheck, WGSL::FailedCheck, std::monostate>;
 public:
-    static Ref<ShaderModule> create(Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
+    static Ref<ShaderModule> create(WGSL::SuccessfulCheck&& successfulCheck, String&& source, WGSL::Configuration&& configuration, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
     {
-        return adoptRef(*new ShaderModule(WTF::move(checkResult), WTF::move(pipelineLayoutHints), WTF::move(entryPointInformation), library, device));
+        Ref shaderModule = adoptRef(*new ShaderModule(WTF::move(successfulCheck), WTF::move(source), WTF::move(configuration), WTF::move(pipelineLayoutHints), WTF::move(entryPointInformation), library, device));
+        shaderModule->releaseASTIfUnused();
+        return shaderModule;
     }
     static Ref<ShaderModule> createInvalid(Device& device, CheckResult&& checkResult = std::monostate { })
     {
@@ -70,14 +77,35 @@ public:
     void compilationInfo(CompletionHandler<void(WebGPU::CompilationInfo&&)>&&) final;
     void setLabel(String&&) final;
 
-    bool isValid() const final { return std::holds_alternative<WGSL::SuccessfulCheck>(m_checkResult); }
+    bool isValid() const final { return std::holds_alternative<ValidCheck>(m_checkResult); }
 
     static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);
     static id<MTLLibrary> createLibrary(id<MTLDevice>, const String& msl, String&& label, NSError **, WGSL::DeviceState&&);
     static id<MTLLibrary> createLibrary(id<MTLDevice>, NSString *msl, NSString *label, NSError **, const WGSL::DeviceState&);
     static void createLibraryAsync(id<MTLDevice>, NSString *msl, NSString *label, const WGSL::DeviceState&, CompletionHandler<void(id<MTLLibrary>, NSError *)>&&);
 
-    WGSL::ShaderModule* ast() const;
+    class ASTHandle {
+        WTF_MAKE_NONCOPYABLE(ASTHandle);
+    public:
+        ASTHandle() = default;
+        ASTHandle(ASTHandle&&);
+        ASTHandle& operator=(ASTHandle&&);
+        ~ASTHandle();
+
+        WGSL::ShaderModule* get() const { return m_ast; }
+        WGSL::ShaderModule& operator*() const { ASSERT(m_ast); return *m_ast; }
+        WGSL::ShaderModule* operator->() const { ASSERT(m_ast); return m_ast; }
+        explicit operator bool() const { return !!m_ast; }
+
+    private:
+        friend class ShaderModule;
+        ASTHandle(const ShaderModule&, WGSL::ShaderModule&);
+
+        RefPtr<const ShaderModule> m_shaderModule;
+        WGSL::ShaderModule* m_ast { nullptr };
+    };
+
+    ASTHandle ast() const;
 
     const PipelineLayout* pipelineLayoutHint(const String&) const;
     const WGSL::Reflection::EntryPointInformation* entryPointInformation(const String&) const;
@@ -111,12 +139,19 @@ public:
     uint32_t clipDistancesCount(const String&) const;
 
 private:
-    ShaderModule(Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, Device&);
+    ShaderModule(WGSL::SuccessfulCheck&&, String&& source, WGSL::Configuration&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, Device&);
     ShaderModule(Device&, CheckResult&&);
 
-    CheckResult convertCheckResult(Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&);
+    void releaseASTIfUnused() const;
 
     const CheckResult m_checkResult;
+    // A module can be kept alive for a long time before it is used to create a pipeline, and its
+    // AST is many times the size of its source, so the AST only exists while the module is being
+    // created or a pipeline is being created from it.
+    const String m_source;
+    const std::optional<WGSL::Configuration> m_configuration;
+    mutable std::unique_ptr<WGSL::ShaderModule> m_ast;
+    mutable unsigned m_astHandleCount { 0 };
     const HashMap<String, Ref<PipelineLayout>> m_pipelineLayoutHints;
     const HashMap<String, WGSL::Reflection::EntryPointInformation> m_entryPointInformation;
     const id<MTLLibrary> m_library { nil }; // This is only non-null if we could compile the module early.

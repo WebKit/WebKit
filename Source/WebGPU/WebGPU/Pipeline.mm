@@ -65,8 +65,9 @@ std::optional<PreparedLibrary> prepareLibrary(const ShaderModule& shaderModule, 
         }
     }
 
-    auto* ast = shaderModule.ast();
-    RELEASE_ASSERT(ast);
+    auto ast = shaderModule.ast();
+    if (!ast)
+        return std::nullopt;
 
     std::optional<WGSL::PipelineLayout> wgslPipelineLayout { std::nullopt };
     if (pipelineLayout && pipelineLayout->numberOfBindGroupLayouts())

@@ -109,7 +109,7 @@ void ShaderModule::createLibraryAsync(id<MTLDevice> device, NSString *msl, NSStr
     }).get()];
 }
 
-static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, std::span<const WebGPU::ShaderModuleCompilationHint> suppliedHints, String&& label)
+static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, WGSL::SuccessfulCheck&& successfulCheck, String&& source, WGSL::Configuration&& configuration, std::span<const WebGPU::ShaderModuleCompilationHint> suppliedHints, String&& label)
 {
     HashMap<String, Ref<PipelineLayout>> hints;
     HashMap<String, WGSL::PipelineLayout*> wgslHints;
@@ -127,7 +127,7 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, Variant<WGS
         wgslHints.add(hintKey, WTF::move(convertedPipelineLayout));
     }
 
-    auto& shaderModule = std::get<WGSL::SuccessfulCheck>(checkResult).ast;
+    auto& shaderModule = successfulCheck.ast;
     auto prepareResult = WGSL::prepare(shaderModule, wgslHints);
     if (std::holds_alternative<WGSL::Error>(prepareResult))
         return nullptr;
@@ -147,7 +147,7 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, Variant<WGS
     });
     if (!library)
         return nullptr;
-    return ShaderModule::create(WTF::move(checkResult), WTF::move(hints), WTF::move(result.entryPoints), library, device);
+    return ShaderModule::create(WTF::move(successfulCheck), WTF::move(source), WTF::move(configuration), WTF::move(hints), WTF::move(result.entryPoints), library, device);
 }
 
 static String featureName(WebGPU::FeatureName feature)
@@ -213,16 +213,16 @@ static const HashSet<String> buildFeatureSet(const Vector<WebGPU::FeatureName>& 
     return result;
 }
 
-static Ref<ShaderModule> handleShaderSuccessOrFailure(WebGPU::Metal::Device &object, Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck> &checkResult, const WebGPU::ShaderModuleDescriptor &descriptor)
+static Ref<ShaderModule> handleShaderSuccessOrFailure(WebGPU::Metal::Device &object, Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck> &checkResult, const WebGPU::ShaderModuleDescriptor &descriptor, WGSL::Configuration&& configuration)
 {
-    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
+    if (auto* successfulCheck = std::get_if<WGSL::SuccessfulCheck>(&checkResult)) {
         if (!descriptor.hints.empty()) {
             // FIXME: re-enable early compilation later on once deferred compilation is fully implemented
             // https://bugs.webkit.org/show_bug.cgi?id=254258
             UNUSED_PARAM(earlyCompileShaderModule);
         }
 
-        return ShaderModule::create(WTF::move(checkResult), { }, { }, nil, object);
+        return ShaderModule::create(WTF::move(*successfulCheck), String { descriptor.code }, WTF::move(configuration), { }, { }, nil, object);
     }
 
     auto& failedCheck = std::get<WGSL::FailedCheck>(checkResult);
@@ -241,25 +241,19 @@ RefPtr<WebGPU::ShaderModule> Device::createShaderModule(const WebGPU::ShaderModu
         return ShaderModule::createInvalid(*this);
 
     auto supportedFeatures = buildFeatureSet(m_capabilities.features);
-    auto checkResult = WGSL::staticCheck(descriptor.code, std::nullopt, WGSL::Configuration {
+    WGSL::Configuration configuration {
         .maxBuffersPlusVertexBuffersForVertexStage = maxBuffersPlusVertexBuffersForVertexStage(),
         .maxBuffersForFragmentStage = maxBuffersForFragmentStage(),
         .maxBuffersForComputeStage = maxBuffersForComputeStage(),
         .maximumCombinedWorkgroupVariablesSize = limits().maxComputeWorkgroupStorageSize,
         .supportedFeatures = WTF::move(supportedFeatures)
-    });
+    };
+    auto checkResult = WGSL::staticCheck(descriptor.code, std::nullopt, configuration);
 
-    return handleShaderSuccessOrFailure(*this, checkResult, descriptor);
+    return handleShaderSuccessOrFailure(*this, checkResult, descriptor, WTF::move(configuration));
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ShaderModule);
-
-auto ShaderModule::convertCheckResult(Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult) -> CheckResult
-{
-    return WTF::switchOn(WTF::move(checkResult), [](auto&& check) -> CheckResult {
-        return std::forward<decltype(check)>(check);
-    });
-}
 
 static MTLDataType LEGACY_NODELETE metalDataTypeFromPrimitive(const WGSL::Types::Primitive *primitiveType, int vectorSize = 1)
 {
@@ -691,71 +685,71 @@ ShaderModule::FragmentInputs ShaderModule::parseFragmentInputs(const WGSL::AST::
     return result;
 }
 
-ShaderModule::ShaderModule(Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
-    : m_checkResult(convertCheckResult(WTF::move(checkResult)))
+ShaderModule::ShaderModule(WGSL::SuccessfulCheck&& successfulCheck, String&& source, WGSL::Configuration&& configuration, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
+    : m_checkResult(ValidCheck { WTF::move(successfulCheck.warnings) })
+    , m_source(WTF::move(source))
+    , m_configuration(WTF::move(configuration))
+    , m_ast(successfulCheck.ast.moveToUniquePtr())
     , m_pipelineLayoutHints(WTF::move(pipelineLayoutHints))
     , m_entryPointInformation(WTF::move(entryPointInformation))
     , m_library(library)
     , m_device(device)
 {
     bool allowVertexDefault = true, allowFragmentDefault = true, allowComputeDefault = true;
-    if (std::holds_alternative<WGSL::SuccessfulCheck>(m_checkResult)) {
-        auto& check = std::get<WGSL::SuccessfulCheck>(m_checkResult);
-        for (auto& entryPoint : check.ast->callGraph().entrypoints()) {
-            switch (entryPoint.stage) {
-            case WGSL::ShaderStage::Vertex: {
-                m_stageInTypesForEntryPoint.add(entryPoint.originalName, parseStageIn(entryPoint.function));
-                if (auto expression = entryPoint.function.maybeReturnType()) {
-                    if (auto* inferredType = expression->inferredType()) {
-                        m_vertexReturnTypeForEntryPoint.add(entryPoint.originalName, parseVertexReturnType(*inferredType));
+    for (auto& entryPoint : m_ast->callGraph().entrypoints()) {
+        switch (entryPoint.stage) {
+        case WGSL::ShaderStage::Vertex: {
+            m_stageInTypesForEntryPoint.add(entryPoint.originalName, parseStageIn(entryPoint.function));
+            if (auto expression = entryPoint.function.maybeReturnType()) {
+                if (auto* inferredType = expression->inferredType()) {
+                    m_vertexReturnTypeForEntryPoint.add(entryPoint.originalName, parseVertexReturnType(*inferredType));
 
-                        // Check for @builtin(clip_distances) in vertex output
-                        if (auto* returnStruct = std::get_if<WGSL::Types::Struct>(inferredType)) {
-                            for (auto& member : returnStruct->structure.members()) {
-                                if (member.builtin() && *member.builtin() == WGSL::Builtin::ClipDistances) {
-                                    // Extract the array size from array<f32, N>
-                                    if (auto* arrayType = std::get_if<WGSL::Types::Array>(member.type().inferredType())) {
-                                        if (auto* size = std::get_if<unsigned>(&arrayType->size))
-                                            populateShaderModuleState(entryPoint.originalName).clipDistancesCount = *size;
-                                    }
-                                    break;
+                    // Check for @builtin(clip_distances) in vertex output
+                    if (auto* returnStruct = std::get_if<WGSL::Types::Struct>(inferredType)) {
+                        for (auto& member : returnStruct->structure.members()) {
+                            if (member.builtin() && *member.builtin() == WGSL::Builtin::ClipDistances) {
+                                // Extract the array size from array<f32, N>
+                                if (auto* arrayType = std::get_if<WGSL::Types::Array>(member.type().inferredType())) {
+                                    if (auto* size = std::get_if<unsigned>(&arrayType->size))
+                                        populateShaderModuleState(entryPoint.originalName).clipDistancesCount = *size;
                                 }
+                                break;
                             }
                         }
                     }
                 }
-                if (!allowVertexDefault || m_defaultVertexEntryPoint.length()) {
-                    allowVertexDefault = false;
-                    m_defaultVertexEntryPoint = emptyString();
-                    continue;
-                }
-                m_defaultVertexEntryPoint = entryPoint.originalName;
-            } break;
-            case WGSL::ShaderStage::Fragment: {
-                m_fragmentInputsForEntryPoint.add(entryPoint.originalName, parseFragmentInputs(entryPoint.function, entryPoint.originalName));
-                if (auto expression = entryPoint.function.maybeReturnType()) {
-                    if (auto* inferredType = expression->inferredType())
-                        m_fragmentReturnTypeForEntryPoint.add(entryPoint.originalName, parseFragmentReturnType(*inferredType, entryPoint));
-                }
-                if (!allowFragmentDefault || m_defaultFragmentEntryPoint.length()) {
-                    allowFragmentDefault = false;
-                    m_defaultFragmentEntryPoint = emptyString();
-                    continue;
-                }
-                m_defaultFragmentEntryPoint = entryPoint.originalName;
-            } break;
-            case WGSL::ShaderStage::Compute: {
-                if (!allowComputeDefault || m_defaultComputeEntryPoint.length()) {
-                    allowComputeDefault = false;
-                    m_defaultComputeEntryPoint = emptyString();
-                    continue;
-                }
-                m_defaultComputeEntryPoint = entryPoint.originalName;
-            } break;
-            default:
-                ASSERT_NOT_REACHED();
-                break;
             }
+            if (!allowVertexDefault || m_defaultVertexEntryPoint.length()) {
+                allowVertexDefault = false;
+                m_defaultVertexEntryPoint = emptyString();
+                continue;
+            }
+            m_defaultVertexEntryPoint = entryPoint.originalName;
+        } break;
+        case WGSL::ShaderStage::Fragment: {
+            m_fragmentInputsForEntryPoint.add(entryPoint.originalName, parseFragmentInputs(entryPoint.function, entryPoint.originalName));
+            if (auto expression = entryPoint.function.maybeReturnType()) {
+                if (auto* inferredType = expression->inferredType())
+                    m_fragmentReturnTypeForEntryPoint.add(entryPoint.originalName, parseFragmentReturnType(*inferredType, entryPoint));
+            }
+            if (!allowFragmentDefault || m_defaultFragmentEntryPoint.length()) {
+                allowFragmentDefault = false;
+                m_defaultFragmentEntryPoint = emptyString();
+                continue;
+            }
+            m_defaultFragmentEntryPoint = entryPoint.originalName;
+        } break;
+        case WGSL::ShaderStage::Compute: {
+            if (!allowComputeDefault || m_defaultComputeEntryPoint.length()) {
+                allowComputeDefault = false;
+                m_defaultComputeEntryPoint = emptyString();
+                continue;
+            }
+            m_defaultComputeEntryPoint = entryPoint.originalName;
+        } break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
         }
     }
 }
@@ -825,8 +819,8 @@ static void appendMessages(Vector<WebGPU::CompilationMessage>& result, const Mes
 void ShaderModule::compilationInfo(CompletionHandler<void(WebGPU::CompilationInfo&&)>&& callback)
 {
     WebGPU::CompilationInfo compilationInfo;
-    WTF::switchOn(m_checkResult, [&](const WGSL::SuccessfulCheck& successfulCheck) {
-        appendMessages(compilationInfo.messages, { successfulCheck.warnings, WebGPU::CompilationMessageType::Warning });
+    WTF::switchOn(m_checkResult, [&](const ValidCheck& validCheck) {
+        appendMessages(compilationInfo.messages, { validCheck.warnings, WebGPU::CompilationMessageType::Warning });
     }, [&](const WGSL::FailedCheck& failedCheck) {
         appendMessages(compilationInfo.messages, { failedCheck.errors, WebGPU::CompilationMessageType::Error });
         appendMessages(compilationInfo.messages, { failedCheck.warnings, WebGPU::CompilationMessageType::Warning });
@@ -1081,16 +1075,64 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
     return { .bindGroupLayouts = bindGroupLayouts };
 }
 
-WGSL::ShaderModule* ShaderModule::ast() const
+ShaderModule::ASTHandle::ASTHandle(const ShaderModule& shaderModule, WGSL::ShaderModule& ast)
+    : m_shaderModule(&shaderModule)
+    , m_ast(&ast)
 {
-    return WTF::switchOn(m_checkResult, [&](const WGSL::SuccessfulCheck& successfulCheck) -> WGSL::ShaderModule* {
-        return successfulCheck.ast.ptr();
-    }, [&](const WGSL::FailedCheck&) -> WGSL::ShaderModule* {
-        return nullptr;
-    }, [](std::monostate) -> WGSL::ShaderModule* {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    });
+    ++shaderModule.m_astHandleCount;
+}
+
+ShaderModule::ASTHandle::ASTHandle(ASTHandle&& other)
+    : m_shaderModule(WTF::move(other.m_shaderModule))
+    , m_ast(std::exchange(other.m_ast, nullptr))
+{
+}
+
+auto ShaderModule::ASTHandle::operator=(ASTHandle&& other) -> ASTHandle&
+{
+    ASTHandle moved(WTF::move(other));
+    std::swap(m_shaderModule, moved.m_shaderModule);
+    std::swap(m_ast, moved.m_ast);
+    return *this;
+}
+
+ShaderModule::ASTHandle::~ASTHandle()
+{
+    RefPtr shaderModule = std::exchange(m_shaderModule, nullptr);
+    if (!shaderModule)
+        return;
+
+    ASSERT(shaderModule->m_astHandleCount);
+    if (!--shaderModule->m_astHandleCount)
+        shaderModule->releaseASTIfUnused();
+}
+
+auto ShaderModule::ast() const -> ASTHandle
+{
+    if (!isValid())
+        return { };
+
+    if (!m_ast) {
+        // The source passed this exact check when the module was created, so it passes again.
+        auto checkResult = WGSL::staticCheck(m_source, std::nullopt, *m_configuration);
+        auto* successfulCheck = std::get_if<WGSL::SuccessfulCheck>(&checkResult);
+        if (!successfulCheck) {
+            ASSERT_NOT_REACHED();
+            return { };
+        }
+        m_ast = successfulCheck->ast.moveToUniquePtr();
+    }
+    return { *this, *m_ast };
+}
+
+void ShaderModule::releaseASTIfUnused() const
+{
+    if (m_astHandleCount)
+        return;
+
+    // The reflection data of an early compiled module points into its AST.
+    if (m_entryPointInformation.isEmpty())
+        m_ast = nullptr;
 }
 
 const PipelineLayout* ShaderModule::pipelineLayoutHint(const String& name) const

@@ -96,6 +96,9 @@ void Device::createComputePipeline(const WebGPU::ComputePipelineDescriptor& desc
 
     if (!shaderModule->isValid() || &shaderModule->device() != this || !pipelineLayout)
         return callback(returnInvalidComputePipeline(*this, isAsync));
+    auto ast = shaderModule->ast();
+    if (!ast)
+        return callback(returnInvalidComputePipeline(*this, isAsync));
 
     if (!isValidToUseWithDevice(*pipelineLayout, *this))
         return callback(returnInvalidComputePipeline(*this, isAsync, @"GPUDevice.createComputePipeline: Pipeline layout is invalid"));
@@ -119,7 +122,7 @@ void Device::createComputePipeline(const WebGPU::ComputePipelineDescriptor& desc
     if (entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
         return callback(returnInvalidComputePipeline(*this, isAsync));
 
-    auto evaluatedSize = metalSize(*shaderModule->ast(), computeInformation.workgroupSize, wgslConstantValues);
+    auto evaluatedSize = metalSize(*ast, computeInformation.workgroupSize, wgslConstantValues);
     if (!evaluatedSize)
         return callback(returnInvalidComputePipeline(*this, isAsync, @"Failed to evaluate overrides"));
     auto size = *evaluatedSize;

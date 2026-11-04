@@ -1492,9 +1492,11 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
     std::optional<PreparedLibrary> preparedVertexLibrary;
     std::optional<PreparedLibrary> preparedFragmentLibrary;
     ShaderModule::VertexStageIn shaderLocations;
+    ShaderModule::ASTHandle vertexAST;
     {
         Ref vertexModule = metal(descriptor.vertex.stage.module.get());
-        if (!vertexModule->isValid() || !vertexModule->ast())
+        vertexAST = vertexModule->ast();
+        if (!vertexModule->isValid() || !vertexAST)
             return callback(returnInvalidRenderPipeline(*this, isAsync, "Vertex module is not valid"_s));
         if (&vertexModule->device() != this)
             return callback(returnInvalidRenderPipeline(*this, isAsync, "Vertex module was created with a different device"_s));
@@ -1527,18 +1529,18 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
     const ShaderModule::FragmentInputs* fragmentInputs { nullptr };
     uint32_t colorAttachmentCount = 0;
     RefPtr<ShaderModule> fragmentModule;
+    ShaderModule::ASTHandle fragmentAST;
     if (descriptor.fragment) {
         const auto& fragmentDescriptor = *descriptor.fragment;
 
         fragmentModule = &metal(fragmentDescriptor.stage.module.get());
-        if (!fragmentModule->isValid() || !fragmentModule->ast())
+        fragmentAST = fragmentModule->ast();
+        if (!fragmentModule->isValid() || !fragmentAST)
             return callback(returnInvalidRenderPipeline(*this, isAsync, "Fragment module is invalid"_s));
 
         if (&fragmentModule->device() != this)
             return callback(returnInvalidRenderPipeline(*this, isAsync, "Fragment module was created with a different device"_s));
 
-        auto fragmentShaderModule = fragmentModule->ast();
-        RELEASE_ASSERT(fragmentShaderModule);
         const auto& fragmentEntryPoint = fragmentDescriptor.stage.entryPoint.isNull() ? fragmentModule->defaultFragmentEntryPoint() : fragmentDescriptor.stage.entryPoint;
         usesFragDepth = fragmentModule->usesFragDepth(fragmentEntryPoint);
         usesSampleMask = fragmentModule->usesSampleMaskInOutput(fragmentEntryPoint);
