@@ -2783,12 +2783,11 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
     auto classifiers = elementClass.split('/');
 
     // In GStreamer 1.20 and older urisourcebin mishandles source elements with dynamic pads. This
-    // is not an issue in 1.22. Streams parsing is not needed for MediaStream cases because we do it
-    // upfront for incoming WebRTC MediaStreams. It is however needed for MSE, otherwise decodebin3
-    // might not auto-plug hardware decoders.
+    // is not an issue in 1.22. Streams parsing is needed, otherwise decodebin3 might not auto-plug
+    // hardware decoders, specially in versions older than 1.24.13 and 1.26.1.
     bool isBlob = m_url.protocolIs("blob"_s);
     if (gst_check_version(1, 22, 0) && startsWith(name.span(), "urisourcebin"_s) && (isBlob || isMediaSource() || isMediaStreamPlayer()))
-        g_object_set(element, "use-buffering", FALSE, "parse-streams", !isMediaStreamPlayer(), nullptr);
+        g_object_set(element, "use-buffering", FALSE, "parse-streams", TRUE, nullptr);
 
     if (startsWith(name.span(), "parsebin"_s))
         configureParsebin(element);
