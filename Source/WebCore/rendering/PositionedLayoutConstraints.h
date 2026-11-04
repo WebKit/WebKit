@@ -42,7 +42,6 @@ public:
     void computeInsets();
 
     NODELETE static bool usesStaticPosition(const Style::ComputedStyle&, LogicalBoxAxis, bool isHorizontalWritingMode);
-    static LayoutSize containingBlockOffsetForNonStaticAxes(const RenderBoxModelObject& container, const Style::ComputedStyle& outOfFlowBoxStyle);
 
     /*** The following are available without calling computeInsets(). ***/
 

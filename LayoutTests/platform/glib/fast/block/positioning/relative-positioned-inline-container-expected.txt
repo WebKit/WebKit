@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600 layerType: background only
 layer at (8,26) size 100x100
-  RenderBlock (positioned) zI: -1 {DIV} at (0,18) size 100x100 [bgcolor=#008000]
+  RenderBlock (positioned) zI: -1 {DIV} at (0,17) size 100x101 [bgcolor=#008000]
 layer at (0,0) size 800x600 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584

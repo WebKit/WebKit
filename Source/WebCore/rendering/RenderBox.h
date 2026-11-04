@@ -506,7 +506,7 @@ public:
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     LayoutRect firstFragmentBorderBoxRect() const override;
 
-    NODELETE LayoutPoint flipForWritingModeForChild(const RenderBox& child, const LayoutPoint&) const;
+    NODELETE LayoutPoint flipForWritingModeForChild(const RenderBox& child, const LayoutPoint&) const final;
     NODELETE LayoutUnit flipForWritingMode(LayoutUnit position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
     NODELETE LayoutPoint flipForWritingMode(const LayoutPoint&) const;
     NODELETE LayoutSize flipForWritingMode(const LayoutSize&) const;
@@ -670,10 +670,11 @@ protected:
     bool overflowChangesMayAffectLayout() const final;
     virtual std::pair<LayoutUnit, LayoutUnit> computeIntrinsicKeywordLogicalWidths() const { return computeIntrinsicLogicalWidths(); }
 
+    void addOverflowWithRendererOffset(const RenderBox&, LayoutSize, OptionSet<ComputeOverflowOptions> = { });
+
 private:
     bool isBlockSizeResolvableForStretch() const;
 
-    void addOverflowWithRendererOffset(const RenderBox&, LayoutSize, OptionSet<ComputeOverflowOptions> = { });
     void addMarginBoxOverflow(const RenderBox&, LayoutSize offsetFromThis, OptionSet<ComputeOverflowOptions>);
 
     void updateShapeOutsideInfoAfterStyleChange(const Style::ComputedStyle&, const Style::ComputedStyle* oldStyle, Style::Difference);

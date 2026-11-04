@@ -2653,11 +2653,20 @@ LayoutSize RenderBox::offsetFromContainer(const RenderElement& container, const 
 {
     auto offset = RenderBoxModelObject::offsetFromContainer(container, point, offsetDependsOnPoint);
 
+    if (isOutOfFlowPositioned() && container.isInlineBox()) {
+        // An out-of-flow box is only mapped to an inline box when the inline box is its containing block. The box is positioned relative
+        // to the border box of the inline box's first fragment, which is in the coordinate space of the inline box's own containing block.
+        auto& inlineBox = downcast<RenderBoxModelObject>(container);
+        auto borderBoxRect = LayoutRect { location() + toLayoutSize(inlineBox.firstFragmentBorderBoxRectFromBlockStart().location()), borderBoxSize() };
+        if (inlineBox.writingMode().isBlockFlipped()) {
+            if (CheckedPtr containingBlock = inlineBox.containingBlock())
+                containingBlock->flipForWritingMode(borderBoxRect);
+        }
+        return offset + toLayoutSize(borderBoxRect.location());
+    }
+
     if (!isInline() || isBlockLevelReplacedOrAtomicInline())
         offset += topLeftLocationOffset();
-
-    if (isAbsolutelyPositioned() && container.isInlineBox() && container.canContainAbsolutelyPositionedObjects())
-        offset += PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(downcast<RenderBoxModelObject>(container), style());
 
     return offset;
 }
@@ -5295,6 +5304,12 @@ void RenderBox::flipForWritingMode(RepaintRects& rects) const
 LayoutPoint RenderBox::topLeftLocationWithFlipping() const
 {
     ASSERT(view().frameView().hasFlippedBlockRenderers());
+
+    if (isOutOfFlowPositioned()) {
+        // A box positioned relative to an inline box flips within the inline box.
+        if (CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(container()); inlineBox && inlineBox->isInlineBox())
+            return inlineBox->flipForWritingModeForChild(*this, location());
+    }
 
     auto* containerBlock = containingBlock();
     if (!containerBlock || containerBlock == this)
