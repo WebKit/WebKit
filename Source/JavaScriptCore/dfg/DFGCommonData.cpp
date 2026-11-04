@@ -55,7 +55,7 @@ inline UncheckedKeyHashMap<void*, CodeBlock*>& pcCodeBlockMap() WTF_REQUIRES_LOC
     return pcCodeBlockMap;
 }
 
-bool CommonData::invalidateLinkedCode()
+bool CommonData::invalidateLinkedCode(Profiler::JettisonReason reason)
 {
     if (m_isUnlinked) {
         ASSERT(m_jumpReplacements.isEmpty());
@@ -73,8 +73,17 @@ bool CommonData::invalidateLinkedCode()
         m_hasVMTrapsBreakpointsInstalled = false;
     }
 
-    for (unsigned i = m_jumpReplacements.size(); i--;)
-        m_jumpReplacements[i].fire();
+    // The GC jettisons for a dead weak reference only once it has found the CodeBlock unreachable,
+    // so it is on no stack and can no longer be entered. Debug builds verify that by crashing on entry.
+    if (reason == Profiler::JettisonDueToWeakReference) {
+#if ASSERT_ENABLED
+        for (auto& jumpReplacement : m_jumpReplacements)
+            jumpReplacement.installCrash();
+#endif
+    } else {
+        for (unsigned i = m_jumpReplacements.size(); i--;)
+            m_jumpReplacements[i].fire();
+    }
 
     m_isStillValid = false;
     return true;

@@ -41,6 +41,7 @@ public:
     
     void fire();
     void installVMTrapBreakpoint();
+    void installCrash();
     void* dataLocation() const LIFETIME_BOUND { return m_source.dataLocation(); }
 
 private:

@@ -2386,7 +2386,8 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
             jitData->invalidate();
         }
         if (!jitCode()->isUnlinked()) {
-            if (!jitCode()->dfgCommon()->invalidateLinkedCode()) {
+            ASSERT(reason != Profiler::JettisonDueToWeakReference || (vm.heap.currentThreadIsDoingGCWork() && !vm.heap.isMarked(this)));
+            if (!jitCode()->dfgCommon()->invalidateLinkedCode(reason)) {
                 // We've already been invalidated.
                 RELEASE_ASSERT(this != replacement() || (vm.heap.currentThreadIsDoingGCWork() && !vm.heap.isMarked(ownerExecutable())));
                 return;

@@ -52,6 +52,13 @@ void JumpReplacement::installVMTrapBreakpoint()
 #endif
 }
 
+void JumpReplacement::installCrash()
+{
+    dataLogLnIf(Options::dumpDisassembly(),
+        "Inserting crash at ", RawPointer(m_source.dataLocation()));
+    MacroAssembler::replaceWithVMHalt(m_source);
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

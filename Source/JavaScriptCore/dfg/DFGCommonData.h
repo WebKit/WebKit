@@ -95,7 +95,7 @@ public:
     
     void shrinkToFit();
     
-    bool invalidateLinkedCode(); // Returns true if we did invalidate, or false if the code block was already invalidated.
+    bool invalidateLinkedCode(Profiler::JettisonReason); // Returns true if we did invalidate, or false if the code block was already invalidated.
     bool hasInstalledVMTrapsBreakpoints() const { return m_isStillValid && m_hasVMTrapsBreakpointsInstalled; }
     void installVMTrapBreakpoints(CodeBlock* owner);
 
