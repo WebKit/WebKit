@@ -213,7 +213,6 @@ RTCStatsReport::OutboundRtpStreamStats RTCStatsReport::OutboundRtpStreamStats::c
         rtcStats.retransmitted_bytes_sent ? std::optional { *rtcStats.retransmitted_bytes_sent } : std::nullopt,
         rtcStats.rtx_ssrc ? std::optional { *rtcStats.rtx_ssrc } : std::nullopt,
         rtcStats.target_bitrate ? std::optional { *rtcStats.target_bitrate } : std::nullopt,
-        rtcStats.total_encoded_bytes_target ? std::optional { *rtcStats.total_encoded_bytes_target } : std::nullopt,
         rtcStats.frame_width ? std::optional { *rtcStats.frame_width } : std::nullopt,
         rtcStats.frame_height ? std::optional { *rtcStats.frame_height } : std::nullopt,
         rtcStats.frames_per_second ? std::optional { *rtcStats.frames_per_second } : std::nullopt,

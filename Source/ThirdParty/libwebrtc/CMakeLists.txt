@@ -195,6 +195,7 @@ set(webrtc_SOURCES
     Source/third_party/rnnoise/src/rnn_vad_weights.cc
 
     $<TARGET_OBJECTS:libsrtp>
+    $<TARGET_OBJECTS:sframe>
     $<TARGET_OBJECTS:vpx>
 )
 
@@ -298,7 +299,6 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/api/video/corruption_detection/frame_instrumentation_data.cc
     Source/webrtc/api/video/corruption_detection/frame_instrumentation_data_reader.cc
     Source/webrtc/api/video/corruption_detection/frame_instrumentation_evaluation.cc
-    Source/webrtc/api/video/corruption_detection/frame_instrumentation_generator.cc
     Source/webrtc/api/video/corruption_detection/frame_instrumentation_generator_factory.cc
     Source/webrtc/api/video/encoded_frame.cc
     Source/webrtc/api/video/encoded_image.cc
@@ -398,7 +398,6 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/call/version.cc
     Source/webrtc/call/video_receive_stream.cc
     Source/webrtc/call/video_send_stream.cc
-    Source/webrtc/common_audio/allocation_counter.cc
     Source/webrtc/common_audio/audio_converter.cc
     Source/webrtc/common_audio/audio_util.cc
     Source/webrtc/common_audio/channel_buffer.cc
@@ -413,7 +412,7 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/common_audio/resampler/sinusoidal_linear_chirp_source.cc
     Source/webrtc/common_audio/ring_buffer.c
     Source/webrtc/common_audio/signal_processing/auto_corr_to_refl_coef.c
-    Source/webrtc/common_audio/signal_processing/auto_correlation.c
+    Source/webrtc/common_audio/signal_processing/auto_correlation.cc
     Source/webrtc/common_audio/signal_processing/copy_set_operations.c
     Source/webrtc/common_audio/signal_processing/cross_correlation.c
     Source/webrtc/common_audio/signal_processing/division_operations.c
@@ -921,6 +920,7 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_packetizer_av1.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_packetizer_h265.cc
+    Source/webrtc/modules/rtp_rtcp/source/rtp_packetizer_sframe.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_rtcp_impl2.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_sender.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_sender_audio.cc
@@ -945,6 +945,11 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_raw.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_vp8.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_vp9.cc
+    Source/webrtc/modules/sframe/sframe_context_factory.cc
+    Source/webrtc/modules/sframe/sframe_decrypt_error_reporter.cc
+    Source/webrtc/modules/sframe/sframe_decryptor.cc
+    Source/webrtc/modules/sframe/sframe_encryptor.cc
+    Source/webrtc/modules/sframe/synchronized_sframe_encryptor.cc
     Source/webrtc/modules/third_party/fft/fft.c
     Source/webrtc/modules/third_party/g711/g711.c
     Source/webrtc/modules/third_party/g722/g722_decode.c
@@ -1227,6 +1232,7 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/rtc_base/experiments/quality_scaler_settings.cc
     Source/webrtc/rtc_base/experiments/quality_scaling_experiment.cc
     Source/webrtc/rtc_base/experiments/rate_control_settings.cc
+    Source/webrtc/rtc_base/experiments/retransmit_flushed_packets_settings.cc
     Source/webrtc/rtc_base/experiments/struct_parameters_parser.cc
     Source/webrtc/rtc_base/fake_clock.cc
     Source/webrtc/rtc_base/fake_ssl_identity.cc
@@ -2682,6 +2688,8 @@ set(webrtc_INCLUDE_DIRECTORIES PRIVATE
     Source/third_party/opus/src/include
     Source/third_party/opus/src/silk
     Source/third_party/opus/src/silk/float
+    Source/third_party/sframe
+    Source/third_party/sframe/src/include
     Source/webrtc
     Source/webrtc/common_audio/resampler/include
     Source/webrtc/common_audio/signal_processing/include
@@ -2817,6 +2825,31 @@ target_include_directories(libsrtp PRIVATE
     Source/third_party/libsrtp/config
     Source/third_party/libsrtp/crypto/include
     Source/third_party/libsrtp/include
+)
+
+# sframe package compilation
+set(sframe_SOURCES
+    Source/third_party/sframe/src/src/crypto.cpp
+    Source/third_party/sframe/src/src/crypto_boringssl.cpp
+    Source/third_party/sframe/src/src/header.cpp
+    Source/third_party/sframe/src/src/result.cpp
+    Source/third_party/sframe/src/src/sframe.cpp
+)
+
+add_library(sframe OBJECT ${sframe_SOURCES})
+
+target_compile_options(sframe PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:-std=c++2b>")
+target_compile_definitions(sframe PRIVATE BORINGSSL)
+
+if (BORINGSSL_PREFIX)
+    target_compile_definitions(sframe PRIVATE BORINGSSL_PREFIX=${BORINGSSL_PREFIX})
+    target_compile_options(sframe PRIVATE "$<$<COMPILE_LANGUAGE:C,CXX>:-U__PRAGMA_REDEFINE_EXTNAME>")
+endif ()
+
+target_include_directories(sframe PRIVATE
+    Source/third_party/boringssl/src/include
+    Source/third_party/sframe
+    Source/third_party/sframe/src/include
 )
 
 if (APPLE)
