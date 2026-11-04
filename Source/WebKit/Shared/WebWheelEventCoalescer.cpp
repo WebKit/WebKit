@@ -49,13 +49,11 @@ bool WebWheelEventCoalescer::canCoalesce(const WebWheelEvent& a, const WebWheelE
         return false;
     if (a.granularity() != b.granularity())
         return false;
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     if (a.phase() != b.phase())
         return false;
     if (a.momentumPhase() != b.momentumPhase())
         return false;
-#endif
-#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     if (a.hasPreciseScrollingDeltas() != b.hasPreciseScrollingDeltas())
         return false;
 #endif
