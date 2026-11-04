@@ -260,3 +260,9 @@ const DASHBOARD_QUERY = JSON.parse('[{"title": "Main Build", "suite": "Build"}, 
 
 export {XCODE_CLOUD_SUITES, DEFAULT_ARCHITECTURE, TESTS_LIMITS, SUITES_LIMITS, COMMITS_LIMITS, DASHBOARD_QUERY}''',
         )
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_suites_sub_suite(self, client, **kwargs):
+        self.assertEqual(client.get(f'{self.URL}/suites?suite=api-tests&sub_suite=api-tests/TestWebKitAPI').status_code, 200)
+        self.assertEqual(client.get(f'{self.URL}/suites?suite=api-tests&sub_suites=api-tests/TestWebKitAPI').status_code, 400)

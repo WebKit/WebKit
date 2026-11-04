@@ -45,7 +45,7 @@ class APIRoutes(AuthedBlueprint):
         self.commit_controller = CommitController(commit_context=model.commit_context)
         self.upload_controller = UploadController(commit_controller=self.commit_controller, upload_context=model.upload_context)
 
-        self.suite_controller = SuiteController(suite_context=model.suite_context)
+        self.suite_controller = SuiteController(suite_context=model.suite_context, sub_suite_context=model.sub_suite_context)
         self.test_controller = TestController(test_context=model.test_context)
         self.failure_controller = FailureController(failure_context=model.failure_context)
 
@@ -76,6 +76,7 @@ class APIRoutes(AuthedBlueprint):
         self.add_url_rule('/upload/process', 'process', self.upload_controller.process, methods=('POST',))
         self.add_url_rule('/suites', 'suites', self.upload_controller.suites, methods=('GET',))
         self.add_url_rule('/<path:suite>/tests', 'tests-in-suite', self.test_controller.list_tests, methods=('GET',))
+        self.add_url_rule('/<path:suite>/sub-suites', 'sub-suites-in-suite', self.suite_controller.list_sub_suites, methods=('GET',))
 
         self.add_url_rule('/results/<path:suite>', 'suite-results', self.suite_controller.find_run_results, methods=('GET',))
         self.add_url_rule('/results/<path:suite>/<path:test>', 'test-results', self.test_controller.find_test_result, methods=('GET',))

@@ -34,7 +34,7 @@ import {CommitBank} from '/assets/js/commit.js';
 import {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, escapeHTML} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js';
 import {SUITES_LIMITS} from '/assets/js/constants.js';
-import {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider, CommitRepresentation, CommitSearchBar} from '/assets/js/drawer.js';
+import {Drawer, BranchSelector, SubSuiteSelector, subSuitesInAddress, ConfigurationSelectors, LimitSlider, CommitRepresentation, CommitSearchBar} from '/assets/js/drawer.js';
 import {InvestigateDrawer} from '/assets/js/investigate.js';
 import {Legend, TimelineFromEndpoint} from '/assets/js/timeline.js';
 import {ToolTip} from '/assets/js/tooltip.js';
@@ -68,13 +68,8 @@ class MainView {
         });
         this.latestDispatch = Date.now();
         this.children = {};
-
-        SUITES.forEach((suite) => {
-            this.children[suite] = new TimelineFromEndpoint('api/results/' + suite, {
-                suite,
-                searchEvent: onCommitSearch
-            });
-        });
+        this.cards = {};
+        this.makeCards(SUITES);
     }
     unpackSuites(suitesJson) {
         if (suitesJson.error)
@@ -88,15 +83,26 @@ class MainView {
         });
 
         let sortedSuites = [...suites].sort();
+        this.makeCards(sortedSuites);
+        return sortedSuites;
+    }
+    makeCards(suites) {
         Object.keys(this.children).forEach(key => {this.children[key].teardown();});
         this.children = {};
-        sortedSuites.forEach((suite) => {
-            this.children[suite] = new TimelineFromEndpoint('api/results/' + suite, {
-                suite,
-                searchEvent: onCommitSearch
+        this.cards = {};
+        const picked = subSuitesInAddress(suites);
+        this.pickedSuites = [...picked.keys()];
+        suites.forEach((suite) => {
+            this.cards[suite] = (picked.get(suite) || [null]).map(subSuite => {
+                const title = subSuite ? `${suite} › ${subSuite}` : suite;
+                this.children[title] = new TimelineFromEndpoint('api/results/' + suite, {
+                    suite,
+                    subSuite,
+                    searchEvent: onCommitSearch
+                });
+                return title;
             });
         });
-        return sortedSuites;
     }
     reload() {
         let params = queryToParams(document.URL.split('?')[1]);
@@ -155,12 +161,13 @@ class MainView {
     }
     render(suites) {
         let children = this.children;
-        return suites.map(suite => {
+        const pickedFirst = [...this.pickedSuites, ...suites.filter(suite => !this.pickedSuites.includes(suite))];
+        return pickedFirst.flatMap(suite => this.cards[suite]).map(title => {
             return `<div class="section">
                     <div class="header">
-                        <div class="title">${escapeHTML(suite)}</div>
+                        <div class="title">${escapeHTML(title)}</div>
                     </div>
-                    ${children[suite]}
+                    ${children[title]}
                 </div><br>`;
         }).join('');
     }
@@ -190,6 +197,7 @@ ${Drawer([
         CommitBank.reload();
         view.reload();
     }),
+    SubSuiteSelector(SUITES, () => {view.reload()}),
     ConfigurationSelectors(() => {view.reload()}),
     CommitRepresentation(() => {
         view.ref.setState(view.ref.state);

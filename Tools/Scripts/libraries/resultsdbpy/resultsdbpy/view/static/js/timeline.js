@@ -380,7 +380,7 @@ function combineResults() {
 }
 
 class TimelineFromEndpoint {
-    constructor(endpoint, {suite = null, test = null, viewport = null, searchEvent = null}) {
+    constructor(endpoint, {suite = null, test = null, subSuite = null, viewport = null, searchEvent = null}) {
         this.endpoint = endpoint;
         this.displayAllCommits = true;
 
@@ -396,6 +396,7 @@ class TimelineFromEndpoint {
         // Suite and test can often be implied by the endpoint, but doing so is more confusing then helpful
         this.suite = suite;
         this.test = test;
+        this.subSuite = subSuite;
 
         this.updates = [];
         this.xaxisUpdates = [];
@@ -498,6 +499,9 @@ class TimelineFromEndpoint {
         delete sharedParams.test;
         delete sharedParams.repository_id;
         delete sharedParams.condensed;
+        delete sharedParams.sub_suite;
+        if (this.subSuite)
+            sharedParams.sub_suite = [this.subSuite];
 
         let newConfigs = Configuration.fromQuery();
         if (!deepCompare(newConfigs, this.configurations)) {
@@ -1038,6 +1042,7 @@ class TimelineFromEndpoint {
                     agregateData[key] = data[key];
                 });
                 agregateData['configuration'] = new Configuration(partialConfiguration);
+                InvestigateDrawer.subSuite = self.subSuite;
                 ToolTip.unset();
                 InvestigateDrawer.expand(self.suite, agregateData, allData);
             }

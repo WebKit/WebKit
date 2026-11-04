@@ -52,7 +52,7 @@ class SuiteView(HasCommitContext):
         self, suite=None, configurations=None, recent=None,
         branch=None, begin=None, end=None,
         begin_query_time=None, end_query_time=None,
-        limit=None, **kwargs
+        limit=None, sub_suite=None, **kwargs
     ):
         AssertRequest.is_type(['GET'])
         AssertRequest.query_kwargs_empty(**kwargs)
