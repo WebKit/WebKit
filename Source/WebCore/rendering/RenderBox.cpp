@@ -2653,11 +2653,20 @@ LayoutSize RenderBox::offsetFromContainer(const RenderElement& container, const 
 {
     auto offset = RenderBoxModelObject::offsetFromContainer(container, point, offsetDependsOnPoint);
 
+    if (isOutOfFlowPositioned() && container.isInlineBox()) {
+        // The container of an out-of-flow box is only an inline box when it is its containing block. The box is positioned relative to
+        // the border box of the inline box's first fragment, which is in the coordinate space of the inline box's own containing block.
+        auto& inlineBox = downcast<RenderBoxModelObject>(container);
+        auto borderBoxRect = LayoutRect { location() + toLayoutSize(inlineBox.firstFragmentBorderBoxRectFromBlockStart().location()), borderBoxSize() };
+        if (inlineBox.writingMode().isBlockFlipped()) {
+            if (CheckedPtr containingBlock = inlineBox.containingBlock())
+                containingBlock->flipForWritingMode(borderBoxRect);
+        }
+        return offset + toLayoutSize(borderBoxRect.location());
+    }
+
     if (!isInline() || isBlockLevelReplacedOrAtomicInline())
         offset += topLeftLocationOffset();
-
-    if (isAbsolutelyPositioned() && container.isInlineBox() && container.canContainAbsolutelyPositionedObjects())
-        offset += PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(downcast<RenderBoxModelObject>(container), style());
 
     return offset;
 }
@@ -5295,6 +5304,17 @@ void RenderBox::flipForWritingMode(RepaintRects& rects) const
 LayoutPoint RenderBox::topLeftLocationWithFlipping() const
 {
     ASSERT(view().frameView().hasFlippedBlockRenderers());
+
+    if (isOutOfFlowPositioned()) {
+        // A box positioned relative to an inline box flips within the border box of the inline box's first fragment.
+        if (CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(container()); inlineBox && inlineBox->isInlineBox()) {
+            auto writingMode = inlineBox->writingMode();
+            if (!writingMode.isBlockFlipped())
+                return location();
+            auto borderBoxSize = inlineBox->firstFragmentBorderBoxRect().size();
+            return writingMode.isHorizontal() ? LayoutPoint { x(), borderBoxSize.height() - borderBoxHeight() - y() } : LayoutPoint { borderBoxSize.width() - borderBoxWidth() - x(), y() };
+        }
+    }
 
     auto* containerBlock = containingBlock();
     if (!containerBlock || containerBlock == this)
