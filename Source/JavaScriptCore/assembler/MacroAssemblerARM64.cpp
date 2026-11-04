@@ -281,7 +281,7 @@ struct IncomingProbeRecord {
 static_assert(IN_X24_OFFSET == offsetof(IncomingProbeRecord, x24), "IN_X24_OFFSET is incorrect");
 static_assert(IN_X25_OFFSET == offsetof(IncomingProbeRecord, x25), "IN_X25_OFFSET is incorrect");
 static_assert(IN_X26_OFFSET == offsetof(IncomingProbeRecord, x26), "IN_X26_OFFSET is incorrect");
-static_assert(IN_X30_OFFSET == offsetof(IncomingProbeRecord, x30), "IN_X23_OFFSET is incorrect");
+static_assert(IN_X30_OFFSET == offsetof(IncomingProbeRecord, x30), "IN_X30_OFFSET is incorrect");
 static_assert(IN_X27_OFFSET == offsetof(IncomingProbeRecord, x27), "IN_X27_OFFSET is incorrect");
 static_assert(IN_SIZE == sizeof(IncomingProbeRecord), "IN_SIZE is incorrect");
 static_assert(!(sizeof(IncomingProbeRecord) & 0xf), "IncomingProbeStack must be 16-byte aligned");

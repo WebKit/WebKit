@@ -5473,6 +5473,34 @@ static void testProbePCIsFirstInstructionAfterProbe()
 
 #endif // CPU(ARM64)
 
+static void testProbeStackSetFlushesStraddlingWrite()
+{
+    // The probe writes context.stack() changes into a shadow copy of the stack page and
+    // flushes whole dirty chunks back when the probe returns. A write that starts mid-chunk
+    // spans two chunks, so its tail must flush too.
+    struct TwoWords {
+        uint64_t lo;
+        uint64_t hi;
+    };
+
+    auto code = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.sub64(CCallHelpers::TrustedImm32(64), MacroAssembler::stackPointerRegister);
+        for (unsigned i = 0; i < 64 / 8; ++i)
+            jit.store64(CCallHelpers::TrustedImm32(0), CCallHelpers::Address(MacroAssembler::stackPointerRegister, i * 8));
+        jit.probeDebug([](Probe::Context& context) {
+            auto straddling = static_cast<uint8_t*>(context.cpu.sp()) + 24;
+            context.stack().set<TwoWords>(straddling, TwoWords { 0, 0x99aabbccddeeff00ULL });
+        });
+        jit.load64(CCallHelpers::Address(MacroAssembler::stackPointerRegister, 32), GPRInfo::returnValueGPR);
+        jit.add64(CCallHelpers::TrustedImm32(64), MacroAssembler::stackPointerRegister);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    CHECK_EQ(invoke<uint64_t>(code), 0x99aabbccddeeff00ULL);
+}
+
 void testLoadStorePair32()
 {
     constexpr uint32_t initialValue = 0x55aabb80u;
@@ -10379,6 +10407,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testARM64AddSubtractImmediateDecoding());
 #endif
 
+    RUN(testProbeStackSetFlushesStraddlingWrite());
     RUN(testGPRInfoConsistency());
 
     if (tasks.isEmpty())

@@ -73,14 +73,11 @@ public:
     template<typename T>
     void set(void* logicalAddress, T value)
     {
-        if constexpr (sizeof(T) <= s_chunkSize)
-            m_dirtyBits |= dirtyBitFor(logicalAddress);
-        else {
-            size_t numberOfChunks = roundUpToMultipleOf<sizeof(T)>(s_chunkSize) / s_chunkSize;
-            uint8_t* dirtyAddress = static_cast<uint8_t*>(logicalAddress);
-            for (size_t i = 0; i < numberOfChunks; ++i, dirtyAddress += s_chunkSize)
-                m_dirtyBits |= dirtyBitFor(dirtyAddress);
-        }
+        uint8_t* first = static_cast<uint8_t*>(logicalAddress);
+        uint8_t* last = first + sizeof(T) - 1;
+        ASSERT(baseAddressFor(first) == baseAddressFor(last));
+        for (uint8_t* chunk = static_cast<uint8_t*>(chunkAddressFor(first)); chunk <= last; chunk += s_chunkSize)
+            m_dirtyBits |= dirtyBitFor(chunk);
         void* to = physicalAddressFor(logicalAddress);
         std::memcpy(to, &value, sizeof(T)); // Use std::memcpy to avoid strict aliasing issues.
     }
