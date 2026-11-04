@@ -187,6 +187,18 @@ TEST(FocusWebView, AdvanceFocusRelinquishToChrome)
     EXPECT_FALSE(textField.get().didSeeKeyDownEvent);
 }
 
+static void focusView(TestWKWebView *webView)
+{
+#if PLATFORM(IOS_FAMILY)
+    [webView focusInWindow];
+#else
+    [webView focus];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.hasFocus()"] boolValue];
+    }));
+#endif
+}
+
 TEST(FocusWebView, MultipleFrames)
 {
     auto exampleHTML = "<body>"
@@ -217,9 +229,7 @@ TEST(FocusWebView, MultipleFrames)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
-#if PLATFORM(IOS_FAMILY)
-    [webView focusInWindow];
-#endif
+    focusView(webView);
     [webView evaluateJavaScript:@""
         "let i = document.getElementById('input');"
         "i.addEventListener('focusin', (e) => {"
@@ -268,9 +278,7 @@ static void runFocusNavigationIntoFrameWithNestedRemoteFrameTest(bool siteIsolat
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
     [navigationDelegate waitForDidFinishNavigation];
-#if PLATFORM(IOS_FAMILY)
-    [webView focusInWindow];
-#endif
+    focusView(webView);
 
     [webView evaluateJavaScript:@""
         "document.getElementById('mainInput').addEventListener('focusin', () => alert('mainInput focused'));"
@@ -327,9 +335,7 @@ TEST(FocusWebView, MultipleFramesSomeUnfocusable)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     [navigationDelegate waitForDidFinishNavigation];
-#if PLATFORM(IOS_FAMILY)
-    [webView focusInWindow];
-#endif
+    focusView(webView);
     [webView evaluateJavaScript:@""
         "let i = document.getElementById('input');"
         "i.addEventListener('focusin', (e) => {"
