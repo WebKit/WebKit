@@ -1,0 +1,10 @@
+<model id="model">
+    <source src="../../resources/cube.usdz"/>
+</model>
+<script>
+    document.getElementById("model").ready.then(() => {
+        window.parent.postMessage("ready", "*");
+    }, (error) => {
+        window.parent.postMessage("error: " + error, "*");
+    });
+</script>

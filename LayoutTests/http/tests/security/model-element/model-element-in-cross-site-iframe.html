@@ -1,0 +1,10 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<script>
+    if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+    addEventListener("message", (e) => {
+        alert("postMessage received: " + e.data);
+        testRunner.notifyDone();
+    });
+</script>
+<iframe src="http://localhost:8000/security/model-element/resources/model-in-iframe.html"></iframe>
+This test passes if the model in the cross-site iframe becomes ready.

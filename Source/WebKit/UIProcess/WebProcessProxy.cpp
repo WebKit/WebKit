@@ -1718,7 +1718,7 @@ void WebProcessProxy::createModelProcessConnection(IPC::Connection::Handle&& con
 
 void WebProcessProxy::modelProcessDidFinishLaunching()
 {
-    for (auto& page : m_pageMap.values())
+    for (Ref page : pages())
         page->modelProcessDidFinishLaunching();
 }
 
@@ -1726,7 +1726,7 @@ void WebProcessProxy::modelProcessExited(ProcessTerminationReason reason)
 {
     WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "modelProcessExited: reason=%" PUBLIC_LOG_STRING, processTerminationReasonToString(reason).characters());
 
-    for (auto& page : m_pageMap.values())
+    for (Ref page : pages())
         page->modelProcessExited(reason);
 }
 
