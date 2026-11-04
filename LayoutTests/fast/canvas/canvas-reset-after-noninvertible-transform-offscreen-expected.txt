@@ -1,0 +1,16 @@
+Resetting a 2D OffscreenCanvas context (reset(), or setting the canvas width) must restore an invertible identity transform, even if the transform was non-invertible before the reset.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+reset():
+PASS pixel is [255,0,0,255]
+PASS pixel is [255,0,0,255]
+
+Setting the canvas width to its current value:
+PASS pixel is [255,0,0,255]
+PASS pixel is [255,0,0,255]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

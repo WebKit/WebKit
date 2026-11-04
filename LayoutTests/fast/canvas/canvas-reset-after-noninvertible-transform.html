@@ -45,11 +45,6 @@ function createCanvasContext()
     return canvas.getContext("2d");
 }
 
-function createOffscreenCanvasContext()
-{
-    return new OffscreenCanvas(100, 100).getContext("2d");
-}
-
 debug("reset():");
 checkDrawingAfterReset(createCanvasContext, context => context.reset());
 
@@ -67,14 +62,6 @@ checkDrawingAfterReset(createCanvasContext, context => context.canvas.width = co
 debug("");
 debug("Changing the canvas height:");
 checkDrawingAfterReset(createCanvasContext, context => context.canvas.height = 50);
-
-debug("");
-debug("OffscreenCanvas reset():");
-checkDrawingAfterReset(createOffscreenCanvasContext, context => context.reset());
-
-debug("");
-debug("Setting the OffscreenCanvas width to its current value:");
-checkDrawingAfterReset(createOffscreenCanvasContext, context => context.canvas.width = context.canvas.width);
 </script>
 </body>
 </html>

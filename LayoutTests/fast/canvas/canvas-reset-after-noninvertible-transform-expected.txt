@@ -18,14 +18,6 @@ PASS pixel is [255,0,0,255]
 Changing the canvas height:
 PASS pixel is [255,0,0,255]
 PASS pixel is [255,0,0,255]
-
-OffscreenCanvas reset():
-PASS pixel is [255,0,0,255]
-PASS pixel is [255,0,0,255]
-
-Setting the OffscreenCanvas width to its current value:
-PASS pixel is [255,0,0,255]
-PASS pixel is [255,0,0,255]
 PASS successfullyParsed is true
 
 TEST COMPLETE
