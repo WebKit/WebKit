@@ -35,6 +35,7 @@
 #include "ScrollAnimationSmooth.h"
 #include "ScrollExtents.h"
 #include "ScrollableArea.h"
+#include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -190,6 +191,8 @@ void ScrollingEffectsController::stopAnimatedScroll()
 bool ScrollingEffectsController::startMomentumScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, NOESCAPE const Function<FloatPoint(const FloatPoint&)>& destinationModifier)
 {
     if (m_currentAnimation) {
+        // Replacing a running animation is a handoff, not the end of scrolling, so don't end scroll snapping.
+        SetForScope isReplacingAnimation(m_isReplacingMomentumAnimation, true);
         protect(m_currentAnimation)->stop();
         if (!is<ScrollAnimationMomentum>(m_currentAnimation.get()))
             m_currentAnimation = nullptr;
@@ -200,6 +203,11 @@ bool ScrollingEffectsController::startMomentumScrollWithInitialVelocity(const Fl
 
     bool started = protect(downcast<ScrollAnimationMomentum>(*m_currentAnimation))->startAnimatedScrollWithInitialVelocity(initialOffset, initialVelocity, initialDelta, destinationModifier);
     LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::startMomentumScrollWithInitialVelocity() - animation " << *m_currentAnimation << " initialVelocity " << initialVelocity << " initialDelta " << initialDelta << " started " << started);
+
+    if (!started && usesScrollSnap() && m_isAnimatingScrollSnap) {
+        m_scrollSnapState->transitionToDestinationReachedState();
+        stopScrollSnapAnimation();
+    }
     return started;
 }
 
@@ -555,7 +563,7 @@ void ScrollingEffectsController::scrollAnimationDidEnd(ScrollAnimation& animatio
 {
     LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " scrollAnimationDidEnd " << animation);
 
-    if (usesScrollSnap() && m_isAnimatingScrollSnap) {
+    if (usesScrollSnap() && m_isAnimatingScrollSnap && !m_isReplacingMomentumAnimation) {
         m_scrollSnapState->transitionToDestinationReachedState();
         stopScrollSnapAnimation();
     }
