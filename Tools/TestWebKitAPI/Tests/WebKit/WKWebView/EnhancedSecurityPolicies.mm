@@ -353,6 +353,43 @@ static void runHttpFragmentNavigation(bool useSiteIsolation)
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpFragmentNavigation)
 
+static void runHttpClientFragmentLoad(bool useSiteIsolation)
+{
+    auto pageBody = "<script>"
+        "alert('insecure-page');"
+        "window.onhashchange = () => alert('after-fragment-navigation');"
+        "</script>"_s;
+
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, { pageBody } },
+        { "http://insecure.example.internal/#fragment"_s, { pageBody } },
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, useSiteIsolation);
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/", {
+        { "insecure-page"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+
+    [webView objectByEvaluatingJavaScript:@"window.reloadMarker = 'alive'"];
+    pid_t pidBefore = [webView _webProcessIdentifier];
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/#fragment", {
+        { "after-fragment-navigation"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+
+    // We need to allow a moment for the reload to happen, if it is going to.
+    TestWebKitAPI::Util::runFor(0.5_s);
+
+    EXPECT_WK_STREQ([webView URL].absoluteString, @"http://insecure.example.internal/#fragment");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"window.reloadMarker || 'reloaded'"], "alive");
+
+    EXPECT_EQ([webView _provisionalWebProcessIdentifier], 0);
+    EXPECT_EQ(pidBefore, [webView _webProcessIdentifier]);
+    EXPECT_EQ(plaintextServer.totalRequests(), 1u);
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpClientFragmentLoad)
+
 static void runHttpLoadWithCOOP(bool useSiteIsolation)
 {
     HTTPServer plaintextServer({
