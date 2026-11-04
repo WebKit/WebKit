@@ -16,14 +16,26 @@
   _Pragma("clang diagnostic push")             \
       _Pragma("clang diagnostic ignored \"-Wframe-larger-than=\"")
 #define RTC_POP_IGNORING_WFRAME_LARGER_THAN() _Pragma("clang diagnostic pop")
+#define RTC_PUSH_IGNORING_WDEPRECATED_DECLARATIONS() \
+  _Pragma("clang diagnostic push")                   \
+      _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+#define RTC_POP_IGNORING_WDEPRECATED_DECLARATIONS() \
+  _Pragma("clang diagnostic pop")
 #elif __GNUC__
 #define RTC_PUSH_IGNORING_WFRAME_LARGER_THAN() \
   _Pragma("GCC diagnostic push")               \
       _Pragma("GCC diagnostic ignored \"-Wframe-larger-than=\"")
 #define RTC_POP_IGNORING_WFRAME_LARGER_THAN() _Pragma("GCC diagnostic pop")
+#define RTC_PUSH_IGNORING_WDEPRECATED_DECLARATIONS() \
+  _Pragma("GCC diagnostic push")                     \
+      _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+#define RTC_POP_IGNORING_WDEPRECATED_DECLARATIONS() \
+  _Pragma("GCC diagnostic pop")
 #else
 #define RTC_PUSH_IGNORING_WFRAME_LARGER_THAN()
 #define RTC_POP_IGNORING_WFRAME_LARGER_THAN()
+#define RTC_PUSH_IGNORING_WDEPRECATED_DECLARATIONS()
+#define RTC_POP_IGNORING_WDEPRECATED_DECLARATIONS()
 #endif
 
 #endif  // RTC_BASE_SYSTEM_IGNORE_WARNINGS_H_

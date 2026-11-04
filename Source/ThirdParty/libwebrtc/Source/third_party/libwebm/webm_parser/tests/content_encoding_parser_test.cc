@@ -45,16 +45,20 @@ TEST_F(ContentEncodingParserTest, DefaultParse) {
 
 TEST_F(ContentEncodingParserTest, DefaultValues) {
   SetReaderData({
-      0x50, 0x31,  // ID = 0x5031 (ContentEncodingOrder).
+      0x50,
+      0x31,  // ID = 0x5031 (ContentEncodingOrder).
       0x80,  // Size = 0.
 
-      0x50, 0x32,  // ID = 0x5032 (ContentEncodingScope).
+      0x50,
+      0x32,  // ID = 0x5032 (ContentEncodingScope).
       0x80,  // Size = 0.
 
-      0x50, 0x33,  // ID = 0x5033 (ContentEncodingType).
+      0x50,
+      0x33,  // ID = 0x5033 (ContentEncodingType).
       0x80,  // Size = 0.
 
-      0x50, 0x35,  // ID = 0x5035 (ContentEncryption).
+      0x50,
+      0x35,  // ID = 0x5035 (ContentEncryption).
       0x80,  // Size = 0.
   });
 

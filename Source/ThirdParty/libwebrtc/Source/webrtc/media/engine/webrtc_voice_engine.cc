@@ -75,6 +75,7 @@
 #include "call/payload_type_picker.h"
 #include "call/rtp_config.h"
 #include "call/rtp_transport_controller_send_interface.h"
+#include "call/sframe_options.h"
 #include "media/base/audio_source.h"
 #include "media/base/codec.h"
 #include "media/base/media_channel.h"
@@ -89,6 +90,7 @@
 #include "modules/audio_mixer/audio_mixer_impl.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "modules/sframe/sframe_encryption_config.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/dscp.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
@@ -851,7 +853,7 @@ class WebRtcVoiceSendChannel::WebRtcAudioSendStream : public AudioSource::Sink {
       uint32_t ssrc,
       const std::string& mid,
       const std::string& c_name,
-      const std::string track_id,
+      const std::string& track_id,
       const std::optional<AudioSendStream::Config::SendCodecSpec>&
           send_codec_spec,
       bool extmap_allow_mixed,
@@ -863,7 +865,8 @@ class WebRtcVoiceSendChannel::WebRtcAudioSendStream : public AudioSource::Sink {
       Call* call,
       Transport* send_transport,
       const scoped_refptr<AudioEncoderFactory>& encoder_factory,
-      const CryptoOptions& crypto_options)
+      const CryptoOptions& crypto_options,
+      const SframeSendOptions& sframe_options)
       : env_(env),
         adaptive_ptime_config_(env_.field_trials()),
         call_(call),
@@ -884,6 +887,7 @@ class WebRtcVoiceSendChannel::WebRtcAudioSendStream : public AudioSource::Sink {
     config_.encoder_factory = encoder_factory;
     config_.track_id = track_id;
     config_.crypto_options = crypto_options;
+    config_.sframe_options = sframe_options;
     config_.rtcp_report_interval_ms = rtcp_report_interval_ms;
     rtp_parameters_.encodings[0].ssrc = ssrc;
     rtp_parameters_.rtcp.cname = c_name;
@@ -933,15 +937,6 @@ class WebRtcVoiceSendChannel::WebRtcAudioSendStream : public AudioSource::Sink {
     ReconfigureAudioSendStream(nullptr);
   }
 
-  void SetMid(const std::string& mid) {
-    RTC_DCHECK_RUN_ON(&worker_thread_checker_);
-    if (config_.rtp.mid == mid) {
-      return;
-    }
-    config_.rtp.mid = mid;
-    ReconfigureAudioSendStream(nullptr);
-  }
-
   void SetRtcpMode(RtcpMode mode) {
     bool reduced_size = mode == RtcpMode::kReducedSize;
     if (rtp_parameters_.rtcp.reduced_size == reduced_size) {
@@ -956,7 +951,13 @@ class WebRtcVoiceSendChannel::WebRtcAudioSendStream : public AudioSource::Sink {
   void SetFrameEncryptor(
       scoped_refptr<FrameEncryptorInterface> frame_encryptor) {
     RTC_DCHECK_RUN_ON(&worker_thread_checker_);
-    config_.frame_encryptor = frame_encryptor;
+    config_.frame_encryptor = std::move(frame_encryptor);
+    ReconfigureAudioSendStream(nullptr);
+  }
+
+  void UpdateSframeOptions(const SframeSendOptions& options) {
+    RTC_DCHECK_RUN_ON(&worker_thread_checker_);
+    config_.sframe_options = options;
     ReconfigureAudioSendStream(nullptr);
   }
 
@@ -1375,7 +1376,7 @@ bool WebRtcVoiceSendChannel::SetSenderParameters(
     auto rtp_parameters = send_stream->rtp_parameters();
     if (rtp_parameters.encodings[0].codec) {
       auto matched_codec =
-          absl::c_find_if(params.codecs, [&](auto negotiated_codec) {
+          absl::c_find_if(params.codecs, [&](const auto& negotiated_codec) {
             return negotiated_codec.MatchesRtpCodec(
                 *rtp_parameters.encodings[0].codec);
           });
@@ -1435,10 +1436,7 @@ bool WebRtcVoiceSendChannel::SetSenderParameters(
   }
 
   if (!params.mid.empty()) {
-    mid_ = params.mid;
-    for (auto& it : send_streams_) {
-      it.second->SetMid(params.mid);
-    }
+    SetMid(params.mid);
   }
 
   if (send_codec_spec_ && !SetMaxSendBitrate(params.max_bandwidth_bps)) {
@@ -1450,6 +1448,17 @@ bool WebRtcVoiceSendChannel::SetSenderParameters(
     it.second->SetRtcpMode(rtcp_mode_);
   }
   return SetOptions(params.options);
+}
+
+void WebRtcVoiceSendChannel::SetMid(absl::string_view mid) {
+  RTC_DCHECK_RUN_ON(worker_thread_);
+  if (mid_ == mid) {
+    return;
+  }
+  // Send streams pass the MID to their RTP module at creation, after which it
+  // can't change.
+  RTC_DCHECK(send_streams_.empty());
+  mid_ = std::string(mid);
 }
 
 std::optional<Codec> WebRtcVoiceSendChannel::GetSendCodec() const {
@@ -1665,7 +1674,8 @@ bool WebRtcVoiceSendChannel::AddSendStream(const StreamParams& sp) {
       env_, ssrc, mid_, sp.cname, sp.id, send_codec_spec_, ExtmapAllowMixed(),
       send_rtp_extensions_, rtcp_cc_ack_type_, max_send_bitrate_bps_,
       audio_config_.rtcp_report_interval_ms, audio_network_adaptor_config,
-      call_, transport(), engine()->encoder_factory(), crypto_options_);
+      call_, transport(), engine()->encoder_factory(), crypto_options_,
+      sframe_options_);
   send_streams_.insert(std::make_pair(ssrc, stream));
   if (ssrc_list_changed_callback_) {
     std::set<uint32_t> ssrcs_in_use;
@@ -1749,8 +1759,21 @@ void WebRtcVoiceSendChannel::SetFrameEncryptor(
 
 void WebRtcVoiceSendChannel::EnableSframe() {
   RTC_DCHECK_RUN_ON(worker_thread_);
+  if (sframe_options_.required) {
+    return;
+  }
+
   sframe_options_.required = true;
-  // TODO(bugs.webrtc.org/479862368): Propagate Sframe options to the streams.
+
+  for (auto& [ssrc, stream] : send_streams_) {
+    stream->UpdateSframeOptions(sframe_options_);
+  }
+}
+
+void WebRtcVoiceSendChannel::SetSframeEncryptionConfig(
+    SframeEncryptionConfig /* sframe_encryption_config */) {
+  RTC_DCHECK_RUN_ON(worker_thread_);
+  // TODO(bugs.webrtc.org/479862368): Pass the encryptor to the send stream.
 }
 
 bool WebRtcVoiceSendChannel::InsertDtmf(uint32_t ssrc,
@@ -2067,7 +2090,7 @@ RTCError WebRtcVoiceSendChannel::SetRtpSendParameters(
       RTC_LOG(LS_VERBOSE) << "Trying to change codec to "
                           << parameters.encodings[0].codec->name;
       auto matched_codec =
-          absl::c_find_if(send_codecs_, [&](auto negotiated_codec) {
+          absl::c_find_if(send_codecs_, [&](const auto& negotiated_codec) {
             return negotiated_codec.MatchesRtpCodec(
                 *parameters.encodings[0].codec);
           });
@@ -2208,7 +2231,8 @@ class WebRtcVoiceReceiveChannel::WebRtcAudioReceiveStream {
   void SetDepacketizerToDecoderFrameTransformer(
       scoped_refptr<FrameTransformerInterface> frame_transformer) {
     RTC_DCHECK_RUN_ON(&worker_thread_checker_);
-    stream_->SetDepacketizerToDecoderFrameTransformer(frame_transformer);
+    stream_->SetDepacketizerToDecoderFrameTransformer(
+        std::move(frame_transformer));
   }
 
  private:
@@ -2382,7 +2406,7 @@ bool WebRtcVoiceReceiveChannel::SetRecvCodecs(
                         << existing->second.name;
       return false;
     }
-    decoder_map.insert({codec.id, std::move(format)});
+    decoder_map.emplace(codec.id, std::move(format));
   }
 
   if (decoder_map == decoder_map_) {
@@ -2663,7 +2687,7 @@ void WebRtcVoiceReceiveChannel::SetFrameDecryptor(
   }
   // Handle unsignaled frame decryptors.
   if (ssrc == 0) {
-    unsignaled_frame_decryptor_ = frame_decryptor;
+    unsignaled_frame_decryptor_ = std::move(frame_decryptor);
   }
 }
 

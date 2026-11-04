@@ -31,7 +31,6 @@ use crate::{
     Methods,
     abort_on_panic,
     alerts::AlertDescription,
-    check_tls_error,
     connection::{
         Client,
         Server,
@@ -47,7 +46,7 @@ use crate::{
     credentials::TlsCredential,
     errors::{
         Error,
-        IoError,
+        TlsErrorReason,
         TlsRetryReason, //
     }, //
 };
@@ -102,6 +101,32 @@ impl<R, M> TlsConnection<R, M>
 where
     M: HasTlsConnectionMethod,
 {
+    fn translate_lifecycle_result(&mut self, rc: c_int) -> Result<Option<TlsRetryReason>, Error> {
+        let code = unsafe {
+            // Safety: inspecting the last error on an existing valid connection.
+            bssl_sys::SSL_get_error(self.ptr(), rc)
+        };
+        match code {
+            // Handshake or alert transmission completed cleanly; here it returns `Ok(None)` to indicate
+            // that no further progress or retry is required.
+            bssl_sys::SSL_ERROR_NONE => Ok(None),
+
+            // TODO(crbug.com/42290000): This should be handled within the library.
+            // A `close_notify` received mid-handshake or during fatal alert sending means the peer closed
+            // the connection before completing the handshake, which is a terminal error.
+            bssl_sys::SSL_ERROR_ZERO_RETURN => {
+                Err(Error::TlsReason(TlsErrorReason::Sslv3AlertCloseNotify))
+            }
+
+            // The handshake paused due to pending network I/O or an asynchronous callback such as private
+            // key operations.
+            // Returning `Ok(Some(reason))` preserves the exact suspension reason so the caller or async
+            // reactor can resolve it before driving the handshake again.
+            _ if let Ok(reason) = TlsRetryReason::try_from(code) => Ok(Some(reason)),
+            _ => Err(self.extract_tls_error(code)),
+        }
+    }
+
     /// Send fatal alert.
     ///
     /// This would usually lead to termination of the connection.
@@ -109,14 +134,11 @@ where
         &mut self,
         alert: AlertDescription,
     ) -> Result<Option<TlsRetryReason>, Error> {
-        let ret = check_tls_error!(self.ptr(), {
+        let rc = unsafe {
             // Safety: `self.0` is still a valid handle and `alert` is valid by construction.
             bssl_sys::SSL_send_fatal_alert(self.ptr(), alert as u8)
-        });
-        if let Some(err) = self.take_io_err() {
-            return Err(Error::Io(IoError::Transport(err)));
-        }
-        Ok(ret)
+        };
+        self.translate_lifecycle_result(rc)
     }
 
     /// Send fatal alert asynchronously.
@@ -169,12 +191,11 @@ where
     /// otherwise, `Ok(Some(reason))` is returned and the suspension `reason` must be resolved first
     /// before this method can make progress again.
     pub fn do_handshake(&mut self) -> Result<Option<TlsRetryReason>, Error> {
-        let conn = self.ptr();
-        let ret = check_tls_error!(conn, bssl_sys::SSL_do_handshake(conn));
-        if let Some(err) = self.take_io_err() {
-            return Err(Error::Io(IoError::Transport(err)));
-        }
-        Ok(ret)
+        let rc = unsafe {
+            // Safety: driving the handshake on a valid connection handle.
+            bssl_sys::SSL_do_handshake(self.ptr())
+        };
+        self.translate_lifecycle_result(rc)
     }
 }
 
@@ -251,11 +272,7 @@ where
         if matches!(rc, 0 | 1) {
             return Ok(None);
         }
-        let ret = check_tls_error!(self.ptr(), rc);
-        if let Some(err) = self.take_io_err() {
-            return Err(Error::Io(IoError::Transport(err)));
-        }
-        Ok(ret)
+        self.translate_lifecycle_result(rc)
     }
 }
 
@@ -302,7 +319,7 @@ where
     }
 }
 
-bssl_macros::bssl_enum! {
+bssl_crypto::bssl_enum! {
     enum InfoCallbackConnectionState : i32 {
         ReadAlert = bssl_sys::SSL_CB_READ_ALERT as i32,
         WriteAlert = bssl_sys::SSL_CB_WRITE_ALERT as i32,

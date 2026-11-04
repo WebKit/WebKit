@@ -112,6 +112,10 @@ void RunLoop::FakeSocketServer::WakeUp() {
   }
 }
 
+bool RunLoop::FakeSocketServer::CanCreateSockets() const {
+  return custom_ss_ != nullptr && custom_ss_->CanCreateSockets();
+}
+
 Socket* absl_nullable RunLoop::FakeSocketServer::CreateSocket(int family,
                                                               int type) {
   if (custom_ss_) {

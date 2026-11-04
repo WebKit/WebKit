@@ -30,7 +30,8 @@
 using namespace bssl;
 
 static UniquePtr<EvpPkeyCtx> evp_pkey_ctx_new(
-    EvpPkey *pkey, const EVP_PKEY_ALG *alg, const EVP_PKEY_CTX_METHOD *pmeth) {
+    const EvpPkey *pkey, const EVP_PKEY_ALG *alg,
+    const EVP_PKEY_CTX_METHOD *pmeth) {
   assert(pkey != nullptr || alg != nullptr);
   UniquePtr<EvpPkeyCtx> ret = MakeUnique<EvpPkeyCtx>();
   if (!ret) {
@@ -49,7 +50,7 @@ static UniquePtr<EvpPkeyCtx> evp_pkey_ctx_new(
   return ret;
 }
 
-EVP_PKEY_CTX *EVP_PKEY_CTX_new(EVP_PKEY *pkey, ENGINE *e) {
+EVP_PKEY_CTX *EVP_PKEY_CTX_new(const EVP_PKEY *pkey, ENGINE *e) {
   auto *pkey_impl = FromOpaque(pkey);
   if (pkey_impl == nullptr || pkey_impl->ameth == nullptr) {
     OPENSSL_PUT_ERROR(EVP, ERR_R_PASSED_NULL_PARAMETER);
@@ -151,7 +152,7 @@ EVP_PKEY_CTX *EVP_PKEY_CTX_dup(EVP_PKEY_CTX *ctx) {
   return ret.release();
 }
 
-EVP_PKEY *EVP_PKEY_CTX_get0_pkey(EVP_PKEY_CTX *ctx) {
+EVP_PKEY *EVP_PKEY_CTX_get0_pkey(const EVP_PKEY_CTX *ctx) {
   auto *impl = FromOpaque(ctx);
   return impl->pkey.get();
 }
@@ -315,7 +316,7 @@ int EVP_PKEY_derive_init(EVP_PKEY_CTX *ctx) {
   return 1;
 }
 
-int EVP_PKEY_derive_set_peer(EVP_PKEY_CTX *ctx, EVP_PKEY *peer) {
+int EVP_PKEY_derive_set_peer(EVP_PKEY_CTX *ctx, const EVP_PKEY *peer) {
   auto *impl = FromOpaque(ctx);
   if (!impl || !impl->pmeth ||
       !(impl->pmeth->derive || impl->pmeth->encrypt || impl->pmeth->decrypt) ||
@@ -330,7 +331,8 @@ int EVP_PKEY_derive_set_peer(EVP_PKEY_CTX *ctx, EVP_PKEY *peer) {
     return 0;
   }
 
-  int ret = impl->pmeth->ctrl(impl, EVP_PKEY_CTRL_PEER_KEY, 0, peer);
+  int ret = impl->pmeth->ctrl(impl, EVP_PKEY_CTRL_PEER_KEY, 0,
+                              const_cast<EVP_PKEY *>(peer));
 
   if (ret <= 0) {
     return 0;
@@ -357,7 +359,7 @@ int EVP_PKEY_derive_set_peer(EVP_PKEY_CTX *ctx, EVP_PKEY *peer) {
   }
 
   impl->peerkey = UpRef(FromOpaque(peer));
-  ret = impl->pmeth->ctrl(impl, EVP_PKEY_CTRL_PEER_KEY, 1, peer);
+  ret = impl->pmeth->ctrl(impl, EVP_PKEY_CTRL_PEER_KEY, 1, impl->peerkey.get());
   if (ret <= 0) {
     impl->peerkey = nullptr;
     return 0;

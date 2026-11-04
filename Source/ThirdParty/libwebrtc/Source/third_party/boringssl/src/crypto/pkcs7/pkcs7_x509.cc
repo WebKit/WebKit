@@ -177,7 +177,9 @@ int PKCS7_get_PEM_CRLs(STACK_OF(X509_CRL) *out_crls, BIO *pem_bio) {
   return ret;
 }
 
-static int pkcs7_bundle_certificates_cb(CBB *out, void *arg) {
+namespace {
+
+int pkcs7_bundle_certificates_cb(CBB *out, void *arg) {
   auto *certs = static_cast<const STACK_OF(X509) *>(arg);
   size_t i;
   CBB certificates;
@@ -203,6 +205,8 @@ static int pkcs7_bundle_certificates_cb(CBB *out, void *arg) {
   return CBB_flush_asn1_set_of(&certificates) && CBB_flush(out);
 }
 
+}  // namespace
+
 int PKCS7_bundle_certificates(CBB *out, const STACK_OF(X509) *certs) {
   return pkcs7_add_signed_data(
       out, /*signed_data_version=*/1,
@@ -210,7 +214,9 @@ int PKCS7_bundle_certificates(CBB *out, const STACK_OF(X509) *certs) {
       /*signer_infos_cb=*/nullptr, const_cast<STACK_OF(X509) *>(certs));
 }
 
-static int pkcs7_bundle_crls_cb(CBB *out, void *arg) {
+namespace {
+
+int pkcs7_bundle_crls_cb(CBB *out, void *arg) {
   auto *crls = static_cast<const STACK_OF(X509_CRL) *>(arg);
   size_t i;
   CBB crl_data;
@@ -236,6 +242,8 @@ static int pkcs7_bundle_crls_cb(CBB *out, void *arg) {
   return CBB_flush_asn1_set_of(&crl_data) && CBB_flush(out);
 }
 
+}  // namespace
+
 int PKCS7_bundle_CRLs(CBB *out, const STACK_OF(X509_CRL) *crls) {
   return pkcs7_add_signed_data(
       out, /*signed_data_version=*/1,
@@ -243,7 +251,9 @@ int PKCS7_bundle_CRLs(CBB *out, const STACK_OF(X509_CRL) *crls) {
       /*signer_infos_cb=*/nullptr, const_cast<STACK_OF(X509_CRL) *>(crls));
 }
 
-static PKCS7 *pkcs7_new(CBS *cbs) {
+namespace {
+
+PKCS7 *pkcs7_new(CBS *cbs) {
   CBS copy = *cbs, copy2 = *cbs;
   PKCS7 *ret = New<PKCS7>();
   if (ret == nullptr) {
@@ -285,6 +295,8 @@ err:
   PKCS7_free(ret);
   return nullptr;
 }
+
+}  // namespace
 
 PKCS7 *d2i_PKCS7(PKCS7 **out, const uint8_t **inp, size_t len) {
   CBS cbs;
@@ -372,7 +384,9 @@ int PKCS7_type_is_enveloped(const PKCS7 *p7) { return 0; }
 int PKCS7_type_is_signed(const PKCS7 *p7) { return 1; }
 int PKCS7_type_is_signedAndEnveloped(const PKCS7 *p7) { return 0; }
 
-static bool digest_sign_update(EVP_MD_CTX *ctx, BIO *data) {
+namespace {
+
+bool digest_sign_update(EVP_MD_CTX *ctx, BIO *data) {
   for (;;) {
     uint8_t buf[4096];
     const int n = BIO_read(data, buf, sizeof(buf));
@@ -384,15 +398,13 @@ static bool digest_sign_update(EVP_MD_CTX *ctx, BIO *data) {
   }
 }
 
-namespace {
 struct signer_info_data {
-  X509 *sign_cert = nullptr;
+  const X509 *sign_cert = nullptr;
   ScopedEVP_MD_CTX sign_ctx;
   bool use_key_id = false;
 };
-}  // namespace
 
-static int write_signer_digest_algos(CBB *digest_algos_set, void *arg) {
+int write_signer_digest_algos(CBB *digest_algos_set, void *arg) {
   auto *si_data = static_cast<struct signer_info_data *>(arg);
   // https://www.rfc-editor.org/rfc/rfc5754.html#section-2
   // "Implementations MUST generate SHA2 AlgorithmIdentifiers with absent
@@ -405,7 +417,7 @@ static int write_signer_digest_algos(CBB *digest_algos_set, void *arg) {
 // https://www.rfc-editor.org/rfc/rfc2315.html#section-9.2 and
 // https://www.rfc-editor.org/rfc/rfc5652.html#section-5.3 to `out`. It returns
 // one on success or zero on error.
-static int write_signer_info(CBB *out, void *arg) {
+int write_signer_info(CBB *out, void *arg) {
   auto *si_data = static_cast<struct signer_info_data *>(arg);
 
   uint64_t version = si_data->use_key_id ? 3u : 1u;
@@ -472,9 +484,11 @@ static int write_signer_info(CBB *out, void *arg) {
   return 1;
 }
 
-int bssl::pkcs7_add_external_signature(CBB *out, X509 *sign_cert, EVP_PKEY *key,
-                                       const EVP_MD *md, BIO *data,
-                                       bool use_key_id) {
+}  // namespace
+
+int bssl::pkcs7_add_external_signature(CBB *out, const X509 *sign_cert,
+                                       const EVP_PKEY *key, const EVP_MD *md,
+                                       BIO *data, bool use_key_id) {
   signer_info_data si_data;
   si_data.use_key_id = use_key_id;
   si_data.sign_cert = sign_cert;
@@ -494,8 +508,8 @@ int bssl::pkcs7_add_external_signature(CBB *out, X509 *sign_cert, EVP_PKEY *key,
       /*cert_crl_cb=*/nullptr, write_signer_info, &si_data);
 }
 
-PKCS7 *PKCS7_sign(X509 *sign_cert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
-                  BIO *data, int flags) {
+PKCS7 *PKCS7_sign(const X509 *sign_cert, const EVP_PKEY *pkey,
+                  const STACK_OF(X509) *certs, BIO *data, int flags) {
   ScopedCBB cbb;
   if (!CBB_init(cbb.get(), 2048)) {
     return nullptr;

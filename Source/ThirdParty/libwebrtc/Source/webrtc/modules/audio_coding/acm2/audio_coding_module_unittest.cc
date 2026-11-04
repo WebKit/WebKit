@@ -639,7 +639,7 @@ class AcmSenderBitExactnessOldApi : public ::testing::Test,
           payload_checksum_->Finish(checksum_view.data(), checksum_view.size());
           return checksum_view.size();
         });
-    checksum_string = hex_encode(checksum_result);
+    checksum_string = HexEncode(checksum_result);
     ExpectChecksumEq(payload_checksum_ref, checksum_string);
 
     // Verify number of packets produced.

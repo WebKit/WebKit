@@ -56,7 +56,7 @@ RtpParameters CreateRtpParametersWithOneEncoding() {
   return parameters;
 }
 
-RtpParameters CreateRtpParametersWithEncodings(StreamParams sp) {
+RtpParameters CreateRtpParametersWithEncodings(const StreamParams& sp) {
   std::vector<uint32_t> primary_ssrcs;
   sp.GetPrimarySsrcs(&primary_ssrcs);
   size_t encoding_count = primary_ssrcs.size();
@@ -73,7 +73,7 @@ RtpParameters CreateRtpParametersWithEncodings(StreamParams sp) {
   }
 
   RtpParameters parameters;
-  parameters.encodings = encodings;
+  parameters.encodings = std::move(encodings);
   parameters.rtcp.cname = sp.cname;
   return parameters;
 }
@@ -103,20 +103,34 @@ RTCError CheckScalabilityModeValues(const RtpParameters& rtp_parameters,
 
   for (size_t i = 0; i < rtp_parameters.encodings.size(); ++i) {
     if (rtp_parameters.encodings[i].codec) {
-      bool codecFound = false;
+      bool codec_found = false;
+      bool scalability_mode_supported = false;
       for (const Codec& codec : send_codecs) {
         if (IsSameRtpCodecIgnoringLevel(codec,
-                                        *rtp_parameters.encodings[i].codec) &&
-            SupportsMode(codec, rtp_parameters.encodings[i].scalability_mode)) {
-          codecFound = true;
-          send_codec = codec;
-          break;
+                                        *rtp_parameters.encodings[i].codec)) {
+          codec_found = true;
+          if (SupportsMode(codec,
+                           rtp_parameters.encodings[i].scalability_mode)) {
+            scalability_mode_supported = true;
+            send_codec = codec;
+            break;
+          }
         }
       }
-      if (!codecFound) {
+      if (!codec_found) {
+        return RTC_LOG_ERROR(RTCError(RTCErrorType::INVALID_MODIFICATION)
+                             << "Attempted to use an unsupported codec "
+                             << rtp_parameters.encodings[i].codec->name
+                             << " for encodings[" << i << "].");
+      }
+      if (!scalability_mode_supported) {
+        RTC_DCHECK(rtp_parameters.encodings[i].scalability_mode.has_value());
         return RTC_LOG_ERROR(
             RTCError(RTCErrorType::INVALID_MODIFICATION)
-            << "Attempted to use an unsupported codec for layer " << i);
+            << "Attempted to use an unsupported scalabilityMode '"
+            << *rtp_parameters.encodings[i].scalability_mode << "' for codec "
+            << rtp_parameters.encodings[i].codec->name << " in encodings[" << i
+            << "].");
       }
     }
     if (rtp_parameters.encodings[i].scalability_mode) {
@@ -270,7 +284,8 @@ RTCError CheckRtpParametersValues(const RtpParameters& rtp_parameters,
     }
   }
 
-  return CheckScalabilityModeValues(rtp_parameters, send_codecs, send_codec);
+  return CheckScalabilityModeValues(rtp_parameters, send_codecs,
+                                    std::move(send_codec));
 }
 
 RTCError CheckRtpParametersInvalidModificationAndValues(
@@ -321,8 +336,8 @@ RTCError CheckRtpParametersInvalidModificationAndValues(
         << "Attempted to set RtpParameters with modified SSRC");
   }
 
-  return CheckRtpParametersValues(rtp_parameters, send_codecs, send_codec,
-                                  field_trials);
+  return CheckRtpParametersValues(rtp_parameters, send_codecs,
+                                  std::move(send_codec), field_trials);
 }
 
 CompositeMediaEngine::CompositeMediaEngine(

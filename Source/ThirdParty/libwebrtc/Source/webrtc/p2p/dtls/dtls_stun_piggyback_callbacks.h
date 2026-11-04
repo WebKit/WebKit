@@ -61,7 +61,7 @@ class DtlsStunPiggybackCallbacks {
   void recv_data(std::optional<std::span<uint8_t>> data,
                  std::optional<std::vector<uint32_t>> acks) {
     RTC_DCHECK(recv_data_);
-    return recv_data_(data, acks);
+    return recv_data_(data, std::move(acks));
   }
 
   bool empty() const { return send_data_ == nullptr; }

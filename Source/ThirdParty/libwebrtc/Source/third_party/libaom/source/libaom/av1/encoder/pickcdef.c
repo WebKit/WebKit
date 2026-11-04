@@ -813,11 +813,15 @@ void av1_pick_cdef_from_qp(AV1_COMMON *const cm, int skip_cdef,
                     : predicted_uv_f1 * CDEF_SEC_STRENGTHS + predicted_uv_f2;
 
   // mbmi->cdef_strength is already set in the encoding stage. We don't need to
-  // set it again here.
+  // set it again here, unless the first strength is 0 too.
   if (skip_cdef) {
     cdef_info->cdef_strengths[1] = 0;
     cdef_info->cdef_uv_strengths[1] = 0;
-    return;
+    if (cdef_info->cdef_strengths[0] || cdef_info->cdef_uv_strengths[0]) return;
+    // Both strengths are 0, so signal only one. This saves the per block
+    // strength index and lets the decoder skip CDEF for the frame.
+    cdef_info->cdef_bits = 0;
+    cdef_info->nb_cdef_strengths = 1;
   }
 
   const CommonModeInfoParams *const mi_params = &cm->mi_params;
@@ -910,7 +914,7 @@ void av1_cdef_search(AV1_COMP *cpi) {
   uint64_t best_rd = UINT64_MAX;
   CdefInfo *const cdef_info = &cm->cdef_info;
   int sb_count = cdef_search_ctx->sb_count;
-  uint64_t(*mse[2])[TOTAL_STRENGTHS];
+  uint64_t (*mse[2])[TOTAL_STRENGTHS];
   mse[0] = cdef_search_ctx->mse[0];
   mse[1] = cdef_search_ctx->mse[1];
   /* Calculate the maximum number of bits required to signal CDEF strengths at

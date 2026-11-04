@@ -236,13 +236,6 @@ inline uint32_t reduce_partial(uint32_t x) {
 // `uint32_t`.
 inline uint16_t reduce(uint32_t x) { return reduce_once(reduce_partial(x)); }
 
-inline void scalar_zero(scalar *out) { OPENSSL_memset(out, 0, sizeof(*out)); }
-
-template <int RANK>
-inline void vector_zero(vector<RANK> *out) {
-  OPENSSL_memset(out->v, 0, sizeof(scalar) * RANK);
-}
-
 // In place number theoretic transform of a given scalar.
 // Note that MLKEM's kPrime 3329 does not have a 512th root of unity, so this
 // transform leaves off the last iteration of the usual FFT code, with the 128
@@ -376,19 +369,75 @@ inline void scalar_sub(scalar *lhs, const scalar *rhs) {
 // 3329 does not have a 512th root of unity, this means we have to interpret
 // the 2*ith and (2*i+1)th entries of the scalar as elements of GF(3329)[X]/(X^2
 // - 17^(2*bitreverse(i)+1)) The value of 17^(2*bitreverse(i)+1) mod 3329 is
-// stored in the precomputed `kModRoots` table. Note that our Barrett transform
-// only allows us to multiply two reduced numbers together, so we need some
-// intermediate reduction steps, even if an uint64_t could hold 3 multiplied
-// numbers.
-inline void scalar_mult(scalar *out, const scalar *lhs, const scalar *rhs) {
+// stored in the precomputed `kModRoots` table.
+//
+// Writing the two elements as a0 + a1*X and b0 + b1*X, and the root as zeta,
+// their product is (a0*b0 + a1*(b1*zeta)) + (a0*b1 + a1*b0)*X. Products are
+// only ever needed as terms of a sum, in matrix-vector and inner products, so
+// they are computed lazily:
+//
+// - b1*zeta mod kPrime only depends on the right-hand side, which is shared by
+//   every row of a matrix-vector product. It is computed once per scalar and
+//   stored in a `scalar_mulcache`. This is the "asymmetric multiplication" of
+//   https://eprint.iacr.org/2021/986.
+// - The terms are summed in a `scalar_accumulator` without any modular
+//   reduction, and the sum is reduced once, at the end.
+
+// scalar_mulcache holds, for a scalar b, b[2*i+1] * kModRoots[i] mod kPrime.
+struct scalar_mulcache {
+  // On every function entry and exit, 0 <= c < kPrime.
+  uint16_t c[DEGREE / 2];
+};
+
+template <int RANK>
+struct vector_mulcache {
+  scalar_mulcache v[RANK];
+};
+
+inline void scalar_mulcache_compute(scalar_mulcache *out, const scalar *b) {
   for (int i = 0; i < DEGREE / 2; i++) {
-    uint32_t real_real = (uint32_t)lhs->c[2 * i] * rhs->c[2 * i];
-    uint32_t img_img = (uint32_t)lhs->c[2 * i + 1] * rhs->c[2 * i + 1];
-    uint32_t real_img = (uint32_t)lhs->c[2 * i] * rhs->c[2 * i + 1];
-    uint32_t img_real = (uint32_t)lhs->c[2 * i + 1] * rhs->c[2 * i];
-    out->c[2 * i] =
-        reduce(real_real + (uint32_t)reduce(img_img) * kModRoots[i]);
-    out->c[2 * i + 1] = reduce(img_real + real_img);
+    out->c[i] = reduce(uint32_t{b->c[2 * i + 1]} * kModRoots[i]);
+  }
+}
+
+template <int RANK>
+inline void vector_mulcache_compute(vector_mulcache<RANK> *out,
+                                    const vector<RANK> *b) {
+  for (int i = 0; i < RANK; i++) {
+    scalar_mulcache_compute(&out->v[i], &b->v[i]);
+  }
+}
+
+// scalar_accumulator holds a sum of products of scalars, not reduced mod
+// kPrime.
+struct scalar_accumulator {
+  uint32_t c[DEGREE];
+};
+
+// Scalars are fully reduced, so each product adds at most 2 * (kPrime - 1)^2 to
+// each element of a `scalar_accumulator`. Sums have at most RANK1024 terms, so
+// the elements never overflow.
+static_assert(uint64_t{RANK1024} * 2 * (kPrime - 1) * (kPrime - 1) <=
+              UINT32_MAX);
+
+// scalar_mult_accumulate adds `lhs * rhs` to `acc`. `rhs_cache` must have been
+// computed from `rhs`.
+inline void scalar_mult_accumulate(scalar_accumulator *acc, const scalar *lhs,
+                                   const scalar *rhs,
+                                   const scalar_mulcache *rhs_cache) {
+  for (int i = 0; i < DEGREE / 2; i++) {
+    const uint32_t lhs_real = lhs->c[2 * i];
+    const uint32_t lhs_img = lhs->c[2 * i + 1];
+    acc->c[2 * i] += lhs_real * rhs->c[2 * i] + lhs_img * rhs_cache->c[i];
+    acc->c[2 * i + 1] += lhs_real * rhs->c[2 * i + 1] + lhs_img * rhs->c[2 * i];
+  }
+}
+
+// scalar_from_accumulator sets `out` to `acc` mod kPrime.
+inline void scalar_from_accumulator(scalar *out,
+                                    const scalar_accumulator *acc) {
+  for (int i = 0; i < DEGREE; i++) {
+    out->c[i] = reduce(acc->c[i]);
   }
 }
 
@@ -401,39 +450,39 @@ inline void vector_add(vector<RANK> *lhs, const vector<RANK> *rhs) {
 
 template <int RANK>
 inline void matrix_mult(vector<RANK> *out, const matrix<RANK> *m,
-                        const vector<RANK> *a) {
-  vector_zero(out);
+                        const vector<RANK> *a,
+                        const vector_mulcache<RANK> *a_cache) {
   for (int i = 0; i < RANK; i++) {
+    scalar_accumulator acc = {};
     for (int j = 0; j < RANK; j++) {
-      scalar product;
-      scalar_mult(&product, &m->v[i][j], &a->v[j]);
-      scalar_add(&out->v[i], &product);
+      scalar_mult_accumulate(&acc, &m->v[i][j], &a->v[j], &a_cache->v[j]);
     }
+    scalar_from_accumulator(&out->v[i], &acc);
   }
 }
 
 template <int RANK>
 inline void matrix_mult_transpose(vector<RANK> *out, const matrix<RANK> *m,
-                           const vector<RANK> *a) {
-  vector_zero(out);
+                                  const vector<RANK> *a,
+                                  const vector_mulcache<RANK> *a_cache) {
   for (int i = 0; i < RANK; i++) {
+    scalar_accumulator acc = {};
     for (int j = 0; j < RANK; j++) {
-      scalar product;
-      scalar_mult(&product, &m->v[j][i], &a->v[j]);
-      scalar_add(&out->v[i], &product);
+      scalar_mult_accumulate(&acc, &m->v[j][i], &a->v[j], &a_cache->v[j]);
     }
+    scalar_from_accumulator(&out->v[i], &acc);
   }
 }
 
 template <int RANK>
 inline void scalar_inner_product(scalar *out, const vector<RANK> *lhs,
-                          const vector<RANK> *rhs) {
-  scalar_zero(out);
+                                 const vector<RANK> *rhs,
+                                 const vector_mulcache<RANK> *rhs_cache) {
+  scalar_accumulator acc = {};
   for (int i = 0; i < RANK; i++) {
-    scalar product;
-    scalar_mult(&product, &lhs->v[i], &rhs->v[i]);
-    scalar_add(out, &product);
+    scalar_mult_accumulate(&acc, &lhs->v[i], &rhs->v[i], &rhs_cache->v[i]);
   }
+  scalar_from_accumulator(out, &acc);
 }
 
 inline void scalar_from_keccak_block_vartime(scalar *out, int *done,
@@ -1088,11 +1137,13 @@ inline void decrypt_cpa(uint8_t out[32], const private_key<RANK> *priv,
   vector_decode<du>(&u, ciphertext);
   vector_decompress(&u, du);
   vector_ntt(&u);
+  vector_mulcache<RANK> u_cache;
+  vector_mulcache_compute(&u_cache, &u);
   scalar v;
   scalar_decode<dv>(&v, ciphertext + compressed_vector_size(RANK));
   scalar_decompress(&v, dv);
   scalar mask;
-  scalar_inner_product(&mask, &priv->s, &u);
+  scalar_inner_product(&mask, &priv->s, &u, &u_cache);
   scalar_inverse_ntt(&mask);
   scalar_sub(&v, &mask);
   scalar_compress(&v, 1);
@@ -1141,7 +1192,9 @@ void mlkem_generate_key_external_seed_no_self_test(
   vector<RANK> error;
   vector_generate_secret_eta_2(&error, &counter, sigma);
   vector_ntt(&error);
-  matrix_mult_transpose(&priv->pub.t, &priv->pub.m, &priv->s);
+  vector_mulcache<RANK> s_cache;
+  vector_mulcache_compute(&s_cache, &priv->s);
+  matrix_mult_transpose(&priv->pub.t, &priv->pub.m, &priv->s, &s_cache);
   vector_add(&priv->pub.t, &error);
   // t is part of the public key and thus is public.
   CONSTTIME_DECLASSIFY(&priv->pub.t, sizeof(priv->pub.t));
@@ -1180,6 +1233,8 @@ void encrypt_cpa(uint8_t *out, const mlkem::public_key<RANK> *pub,
   mlkem::vector<RANK> secret;
   vector_generate_secret_eta_2(&secret, &counter, randomness);
   vector_ntt(&secret);
+  mlkem::vector_mulcache<RANK> secret_cache;
+  vector_mulcache_compute(&secret_cache, &secret);
   mlkem::vector<RANK> error;
   vector_generate_secret_eta_2(&error, &counter, randomness);
   uint8_t input[33];
@@ -1188,11 +1243,11 @@ void encrypt_cpa(uint8_t *out, const mlkem::public_key<RANK> *pub,
   mlkem::scalar scalar_error;
   scalar_centered_binomial_distribution_eta_2_with_prf(&scalar_error, input);
   mlkem::vector<RANK> u;
-  matrix_mult(&u, &pub->m, &secret);
+  matrix_mult(&u, &pub->m, &secret, &secret_cache);
   vector_inverse_ntt(&u);
   vector_add(&u, &error);
   mlkem::scalar v;
-  scalar_inner_product(&v, &pub->t, &secret);
+  scalar_inner_product(&v, &pub->t, &secret, &secret_cache);
   scalar_inverse_ntt(&v);
   scalar_add(&v, &scalar_error);
   mlkem::scalar expanded_message;

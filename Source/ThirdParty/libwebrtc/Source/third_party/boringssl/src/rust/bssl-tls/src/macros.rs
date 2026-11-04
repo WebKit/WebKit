@@ -12,21 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// Safety: use this macro only when `$tls` refers to `*mut SSL` with exclusive access.
-#[doc(hidden)]
-#[macro_export]
-macro_rules! check_tls_error {
-    ($tls:expr, $e:expr) => {
-        unsafe {
-            // Safety: we have exclusive access to the connection state.
-            match ::bssl_sys::SSL_get_error($tls, $e) {
-                0 => None,
-                rc => Some($crate::errors::Error::extract_tls_err(rc)?),
-            }
-        }
-    };
-}
-
 /// Extract library error per BoringSSL specification.
 #[doc(hidden)]
 #[macro_export]
@@ -34,7 +19,10 @@ macro_rules! check_lib_error {
     ($e:expr) => {
         match $e {
             1 => {}
-            _ => return Err($crate::errors::Error::extract_lib_err()),
+            _ => {
+                let err = $crate::errors::Error::extract_lib_err_or_unknown();
+                return Err(err);
+            }
         }
     };
 }

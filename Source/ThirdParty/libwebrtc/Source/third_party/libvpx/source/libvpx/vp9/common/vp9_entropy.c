@@ -1059,7 +1059,7 @@ static void adapt_coef_probs(VP9_COMMON *cm, TX_SIZE tx_size,
   vp9_coeff_probs_model *const probs = cm->fc->coef_probs[tx_size];
   const vp9_coeff_probs_model *const pre_probs = pre_fc->coef_probs[tx_size];
   vp9_coeff_count_model *counts = cm->counts.coef[tx_size];
-  unsigned int(*eob_counts)[REF_TYPES][COEF_BANDS][COEFF_CONTEXTS] =
+  unsigned int (*eob_counts)[REF_TYPES][COEF_BANDS][COEFF_CONTEXTS] =
       cm->counts.eob_branch[tx_size];
   int i, j, k, l, m;
 

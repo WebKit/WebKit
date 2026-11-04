@@ -31,6 +31,10 @@ extern "C" {
 // MD5_DIGEST_LENGTH is the length of an MD5 digest.
 #define MD5_DIGEST_LENGTH 16
 
+// MD5_STATE_MAX_BYTES is the maximum length, in bytes, of a marshaled `MD5_CTX`
+// state.
+#define MD5_STATE_MAX_BYTES (16 + 8 + MD5_CBLOCK - 1)
+
 // MD5_Init initialises `md5` and returns one.
 OPENSSL_EXPORT int MD5_Init(MD5_CTX *md5);
 
@@ -46,6 +50,22 @@ OPENSSL_EXPORT int MD5_Final(uint8_t out[MD5_DIGEST_LENGTH], MD5_CTX *md5);
 // There must be at least `MD5_DIGEST_LENGTH` bytes of space in `out`.
 OPENSSL_EXPORT uint8_t *MD5(const uint8_t *data, size_t len,
                             uint8_t out[MD5_DIGEST_LENGTH]);
+
+// MD5_marshal_state serializes the intermediate hash state in `md5` into `out`,
+// sets `*out_len` to the number of bytes written (at most
+// `MD5_STATE_MAX_BYTES`), and returns one. `md5` is not modified. The
+// serialized format is guaranteed to be backward- and forward-compatible across
+// versions of BoringSSL.
+OPENSSL_EXPORT int MD5_marshal_state(const MD5_CTX *md5,
+                                     uint8_t out[MD5_STATE_MAX_BYTES],
+                                     size_t *out_len);
+
+// MD5_parse_state deserializes `in_len` bytes from `in` (in the format produced
+// by `MD5_marshal_state`) into `md5` and returns one. If `in` is malformed, it
+// returns zero and leaves `md5` unmodified. The serialized format is guaranteed
+// to be backward- and forward-compatible across versions of BoringSSL.
+OPENSSL_EXPORT int MD5_parse_state(MD5_CTX *md5, const uint8_t *in,
+                                   size_t in_len);
 
 // MD5_Transform is a low-level function that performs a single, MD5 block
 // transformation using the state from `md5` and 64 bytes from `block`.

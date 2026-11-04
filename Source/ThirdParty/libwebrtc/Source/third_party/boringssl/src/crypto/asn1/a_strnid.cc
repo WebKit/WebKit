@@ -38,16 +38,96 @@ DEFINE_LHASH_OF(ASN1_STRING_TABLE)
 
 BSSL_NAMESPACE_END
 
-static LHASH_OF(ASN1_STRING_TABLE) *string_tables = nullptr;
-static StaticMutex string_tables_lock;
-
 void ASN1_STRING_set_default_mask(unsigned long mask) {}
 
 unsigned long ASN1_STRING_get_default_mask() { return B_ASN1_UTF8STRING; }
 
 int ASN1_STRING_set_default_mask_asc(const char *p) { return 1; }
 
-static const ASN1_STRING_TABLE *asn1_string_table_get(int nid);
+// Now the tables and helper functions for the string table:
+
+// See RFC 5280.
+#define ub_name 32768
+#define ub_common_name 64
+#define ub_locality_name 128
+#define ub_state_name 128
+#define ub_organization_name 64
+#define ub_organization_unit_name 64
+#define ub_email_address 128
+#define ub_serial_number 64
+
+namespace {
+
+LHASH_OF(ASN1_STRING_TABLE) *string_tables = nullptr;
+StaticMutex string_tables_lock;
+
+// This table must be kept in NID order
+
+const ASN1_STRING_TABLE tbl_standard[] = {
+    {NID_commonName, 1, ub_common_name, DIRSTRING_TYPE, 0},
+    {NID_countryName, 2, 2, B_ASN1_PRINTABLESTRING, STABLE_NO_MASK},
+    {NID_localityName, 1, ub_locality_name, DIRSTRING_TYPE, 0},
+    {NID_stateOrProvinceName, 1, ub_state_name, DIRSTRING_TYPE, 0},
+    {NID_organizationName, 1, ub_organization_name, DIRSTRING_TYPE, 0},
+    {NID_organizationalUnitName, 1, ub_organization_unit_name, DIRSTRING_TYPE,
+     0},
+    {NID_pkcs9_emailAddress, 1, ub_email_address, B_ASN1_IA5STRING,
+     STABLE_NO_MASK},
+    {NID_pkcs9_unstructuredName, 1, -1, PKCS9STRING_TYPE, 0},
+    {NID_pkcs9_challengePassword, 1, -1, PKCS9STRING_TYPE, 0},
+    {NID_pkcs9_unstructuredAddress, 1, -1, DIRSTRING_TYPE, 0},
+    {NID_givenName, 1, ub_name, DIRSTRING_TYPE, 0},
+    {NID_surname, 1, ub_name, DIRSTRING_TYPE, 0},
+    {NID_initials, 1, ub_name, DIRSTRING_TYPE, 0},
+    {NID_serialNumber, 1, ub_serial_number, B_ASN1_PRINTABLESTRING,
+     STABLE_NO_MASK},
+    {NID_friendlyName, -1, -1, B_ASN1_BMPSTRING, STABLE_NO_MASK},
+    {NID_name, 1, ub_name, DIRSTRING_TYPE, 0},
+    {NID_dnQualifier, -1, -1, B_ASN1_PRINTABLESTRING, STABLE_NO_MASK},
+    {NID_domainComponent, 1, -1, B_ASN1_IA5STRING, STABLE_NO_MASK},
+    {NID_ms_csp_name, -1, -1, B_ASN1_BMPSTRING, STABLE_NO_MASK}};
+
+int table_cmp(const ASN1_STRING_TABLE *a, const ASN1_STRING_TABLE *b) {
+  if (a->nid < b->nid) {
+    return -1;
+  }
+  if (a->nid > b->nid) {
+    return 1;
+  }
+  return 0;
+}
+
+int table_cmp_void(const void *a, const void *b) {
+  return table_cmp(reinterpret_cast<const ASN1_STRING_TABLE *>(a),
+                   reinterpret_cast<const ASN1_STRING_TABLE *>(b));
+}
+
+uint32_t table_hash(const ASN1_STRING_TABLE *tbl) {
+  return OPENSSL_hash32(&tbl->nid, sizeof(tbl->nid));
+}
+
+const ASN1_STRING_TABLE *asn1_string_table_get(int nid) {
+  ASN1_STRING_TABLE key;
+  key.nid = nid;
+  const ASN1_STRING_TABLE *tbl = reinterpret_cast<ASN1_STRING_TABLE *>(
+      bsearch(&key, tbl_standard, std::size(tbl_standard),
+              sizeof(ASN1_STRING_TABLE), table_cmp_void));
+  if (tbl != nullptr) {
+    return tbl;
+  }
+
+  string_tables_lock.LockRead();
+  if (string_tables != nullptr) {
+    tbl = lh_ASN1_STRING_TABLE_retrieve(string_tables, &key);
+  }
+  string_tables_lock.UnlockRead();
+  // Note returning `tbl` without the lock is only safe because
+  // `ASN1_STRING_TABLE_add` cannot modify or delete existing entries. If we
+  // wish to support that, this function must copy the result under a lock.
+  return tbl;
+}
+
+}  // namespace
 
 // The following function generates an ASN1_STRING based on limits in a
 // table. Frequently the types and length of an ASN1_STRING are restricted by
@@ -75,84 +155,6 @@ ASN1_STRING *ASN1_STRING_set_by_NID(ASN1_STRING **out, const unsigned char *in,
     return nullptr;
   }
   return *out;
-}
-
-// Now the tables and helper functions for the string table:
-
-// See RFC 5280.
-#define ub_name 32768
-#define ub_common_name 64
-#define ub_locality_name 128
-#define ub_state_name 128
-#define ub_organization_name 64
-#define ub_organization_unit_name 64
-#define ub_email_address 128
-#define ub_serial_number 64
-
-// This table must be kept in NID order
-
-static const ASN1_STRING_TABLE tbl_standard[] = {
-    {NID_commonName, 1, ub_common_name, DIRSTRING_TYPE, 0},
-    {NID_countryName, 2, 2, B_ASN1_PRINTABLESTRING, STABLE_NO_MASK},
-    {NID_localityName, 1, ub_locality_name, DIRSTRING_TYPE, 0},
-    {NID_stateOrProvinceName, 1, ub_state_name, DIRSTRING_TYPE, 0},
-    {NID_organizationName, 1, ub_organization_name, DIRSTRING_TYPE, 0},
-    {NID_organizationalUnitName, 1, ub_organization_unit_name, DIRSTRING_TYPE,
-     0},
-    {NID_pkcs9_emailAddress, 1, ub_email_address, B_ASN1_IA5STRING,
-     STABLE_NO_MASK},
-    {NID_pkcs9_unstructuredName, 1, -1, PKCS9STRING_TYPE, 0},
-    {NID_pkcs9_challengePassword, 1, -1, PKCS9STRING_TYPE, 0},
-    {NID_pkcs9_unstructuredAddress, 1, -1, DIRSTRING_TYPE, 0},
-    {NID_givenName, 1, ub_name, DIRSTRING_TYPE, 0},
-    {NID_surname, 1, ub_name, DIRSTRING_TYPE, 0},
-    {NID_initials, 1, ub_name, DIRSTRING_TYPE, 0},
-    {NID_serialNumber, 1, ub_serial_number, B_ASN1_PRINTABLESTRING,
-     STABLE_NO_MASK},
-    {NID_friendlyName, -1, -1, B_ASN1_BMPSTRING, STABLE_NO_MASK},
-    {NID_name, 1, ub_name, DIRSTRING_TYPE, 0},
-    {NID_dnQualifier, -1, -1, B_ASN1_PRINTABLESTRING, STABLE_NO_MASK},
-    {NID_domainComponent, 1, -1, B_ASN1_IA5STRING, STABLE_NO_MASK},
-    {NID_ms_csp_name, -1, -1, B_ASN1_BMPSTRING, STABLE_NO_MASK}};
-
-static int table_cmp(const ASN1_STRING_TABLE *a, const ASN1_STRING_TABLE *b) {
-  if (a->nid < b->nid) {
-    return -1;
-  }
-  if (a->nid > b->nid) {
-    return 1;
-  }
-  return 0;
-}
-
-static int table_cmp_void(const void *a, const void *b) {
-  return table_cmp(reinterpret_cast<const ASN1_STRING_TABLE *>(a),
-                   reinterpret_cast<const ASN1_STRING_TABLE *>(b));
-}
-
-static uint32_t table_hash(const ASN1_STRING_TABLE *tbl) {
-  return OPENSSL_hash32(&tbl->nid, sizeof(tbl->nid));
-}
-
-static const ASN1_STRING_TABLE *asn1_string_table_get(int nid) {
-  ASN1_STRING_TABLE key;
-  key.nid = nid;
-  const ASN1_STRING_TABLE *tbl = reinterpret_cast<ASN1_STRING_TABLE *>(
-      bsearch(&key, tbl_standard, std::size(tbl_standard),
-              sizeof(ASN1_STRING_TABLE), table_cmp_void));
-  if (tbl != nullptr) {
-    return tbl;
-  }
-
-  string_tables_lock.LockRead();
-  if (string_tables != nullptr) {
-    tbl = lh_ASN1_STRING_TABLE_retrieve(string_tables, &key);
-  }
-  string_tables_lock.UnlockRead();
-  // Note returning `tbl` without the lock is only safe because
-  // `ASN1_STRING_TABLE_add` cannot modify or delete existing entries. If we
-  // wish to support that, this function must copy the result under a lock.
-  return tbl;
 }
 
 int ASN1_STRING_TABLE_add(int nid, long minsize, long maxsize,

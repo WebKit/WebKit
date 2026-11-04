@@ -73,7 +73,7 @@ rtc_library("frame_instrumentation_generator_factory") {
     "frame_instrumentation_generator_factory.h",
   ]
   deps = [
-    ":frame_instrumentation_generator_header",  # keep
+    ":frame_instrumentation_generator",
     "..:video_frame",
     "../../../video/corruption_detection:frame_instrumentation_generator_impl",
     "../../environment",
@@ -81,7 +81,7 @@ rtc_library("frame_instrumentation_generator_factory") {
   ]
 }
 
-rtc_library("frame_instrumentation_generator_header") {
+rtc_library("frame_instrumentation_generator") {
   visibility = [ "*" ]
   sources = [ "frame_instrumentation_generator.h" ]
   deps = [
@@ -91,25 +91,8 @@ rtc_library("frame_instrumentation_generator_header") {
   ]
 }
 
-# Legacy target including both header and implementation.
-# TODO: bugs.webrtc.org/358039777 - Remove once downstream usage is gone.
-rtc_library("frame_instrumentation_generator") {
-  visibility = [ "*" ]
-  sources = [
-    "frame_instrumentation_generator.cc",
-    "frame_instrumentation_generator.h",
-  ]
-  deps = [
-    ":frame_instrumentation_data",
-    ":frame_instrumentation_generator_factory",
-    "..:encoded_image",
-    "..:video_frame",
-  ]
-}
-
 if (rtc_include_tests) {
-  rtc_library("corruption_detection_unittests") {
-    testonly = true
+  rtc_cc_test("corruption_detection_settings_generator_unittest") {
     sources = [ "corruption_detection_settings_generator_unittest.cc" ]
     deps = [
       ":corruption_detection_settings_generator",
@@ -118,8 +101,7 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_library("frame_instrumentation_data_unittest") {
-    testonly = true
+  rtc_cc_test("frame_instrumentation_data_unittest") {
     sources = [ "frame_instrumentation_data_unittest.cc" ]
 
     deps = [
@@ -128,8 +110,7 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_library("frame_instrumentation_data_reader_unittest") {
-    testonly = true
+  rtc_cc_test("frame_instrumentation_data_reader_unittest") {
     sources = [ "frame_instrumentation_data_reader_unittest.cc" ]
 
     deps = [
@@ -140,8 +121,7 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_library("frame_instrumentation_evaluation_unittest") {
-    testonly = true
+  rtc_cc_test("frame_instrumentation_evaluation_unittest") {
     sources = [ "frame_instrumentation_evaluation_unittest.cc" ]
     deps = [
       ":frame_instrumentation_data",

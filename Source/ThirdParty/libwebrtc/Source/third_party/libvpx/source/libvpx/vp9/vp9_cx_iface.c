@@ -260,6 +260,9 @@ static vpx_codec_err_t validate_config(vpx_codec_alg_priv_t *ctx,
 
   if (cfg->ss_number_layers * cfg->ts_number_layers > VPX_MAX_LAYERS)
     ERROR("ss_number_layers * ts_number_layers is out of range");
+  if ((cfg->ss_number_layers > 1 || cfg->ts_number_layers > 1) &&
+      cfg->g_pass != VPX_RC_ONE_PASS)
+    ERROR("SVC is only supported for one-pass encoding.");
   if (cfg->ts_number_layers > 1) {
     unsigned int sl, tl;
     for (sl = 1; sl < cfg->ss_number_layers; ++sl) {
@@ -315,50 +318,16 @@ static vpx_codec_err_t validate_config(vpx_codec_alg_priv_t *ctx,
     if (cfg->rc_twopass_stats_in.sz % packet_sz)
       ERROR("rc_twopass_stats_in.sz indicates truncated packet.");
 
-    if (cfg->ss_number_layers > 1 || cfg->ts_number_layers > 1) {
-      int i;
-      int n_packets_per_layer[VPX_SS_MAX_LAYERS] = { 0 };
+    if (cfg->rc_twopass_stats_in.sz < 2 * packet_sz)
+      ERROR("rc_twopass_stats_in requires at least two packets.");
 
-      stats = cfg->rc_twopass_stats_in.buf;
-      for (i = 0; i < n_packets; ++i) {
-        const int layer_id = (int)stats[i].spatial_layer_id;
-        if (layer_id >= 0 && layer_id < (int)cfg->ss_number_layers) {
-          ++n_packets_per_layer[layer_id];
-        }
-      }
+    stats =
+        (const FIRSTPASS_STATS *)cfg->rc_twopass_stats_in.buf + n_packets - 1;
 
-      for (i = 0; i < (int)cfg->ss_number_layers; ++i) {
-        unsigned int layer_id;
-        if (n_packets_per_layer[i] < 2) {
-          ERROR(
-              "rc_twopass_stats_in requires at least two packets for each "
-              "layer.");
-        }
-
-        stats = (const FIRSTPASS_STATS *)cfg->rc_twopass_stats_in.buf +
-                n_packets - cfg->ss_number_layers + i;
-        layer_id = (int)stats->spatial_layer_id;
-
-        const double count_rounded = stats->count + 0.5;
-        if (layer_id >= cfg->ss_number_layers ||
-            !isfinite((float)stats->count) || stats->count < 0.0 ||
-            count_rounded > (double)INT_MAX ||
-            (int)count_rounded != n_packets_per_layer[layer_id] - 1)
-          ERROR("rc_twopass_stats_in missing EOS stats packet");
-      }
-    } else {
-      if (cfg->rc_twopass_stats_in.sz < 2 * packet_sz)
-        ERROR("rc_twopass_stats_in requires at least two packets.");
-
-      stats =
-          (const FIRSTPASS_STATS *)cfg->rc_twopass_stats_in.buf + n_packets - 1;
-
-      const double count_rounded = stats->count + 0.5;
-      if (!isfinite((float)stats->count) || stats->count < 0.0 ||
-          count_rounded > (double)INT_MAX ||
-          (int)count_rounded != n_packets - 1)
-        ERROR("rc_twopass_stats_in missing EOS stats packet");
-    }
+    const double count_rounded = stats->count + 0.5;
+    if (!isfinite((float)stats->count) || stats->count < 0.0 ||
+        count_rounded > (double)INT_MAX || (int)count_rounded != n_packets - 1)
+      ERROR("rc_twopass_stats_in missing EOS stats packet");
   }
 #endif  // !CONFIG_REALTIME_ONLY
 
@@ -1737,9 +1706,17 @@ static vpx_codec_err_t ctrl_set_reference(vpx_codec_alg_priv_t *ctx,
   if (frame != NULL) {
     YV12_BUFFER_CONFIG sd;
 
+    if (frame->img.planes[VPX_PLANE_Y] == NULL ||
+        frame->img.planes[VPX_PLANE_U] == NULL ||
+        frame->img.planes[VPX_PLANE_V] == NULL) {
+      return VPX_CODEC_INVALID_PARAM;
+    }
+
     image2yuvconfig(&frame->img, &sd);
-    vp9_set_reference_enc(ctx->cpi, ref_frame_to_vp9_reframe(frame->frame_type),
-                          &sd);
+    if (vp9_set_reference_enc(
+            ctx->cpi, ref_frame_to_vp9_reframe(frame->frame_type), &sd)) {
+      return VPX_CODEC_ERROR;
+    }
     return VPX_CODEC_OK;
   }
   return VPX_CODEC_INVALID_PARAM;
@@ -1752,9 +1729,17 @@ static vpx_codec_err_t ctrl_copy_reference(vpx_codec_alg_priv_t *ctx,
   if (frame != NULL) {
     YV12_BUFFER_CONFIG sd;
 
+    if (frame->img.planes[VPX_PLANE_Y] == NULL ||
+        frame->img.planes[VPX_PLANE_U] == NULL ||
+        frame->img.planes[VPX_PLANE_V] == NULL) {
+      return VPX_CODEC_INVALID_PARAM;
+    }
+
     image2yuvconfig(&frame->img, &sd);
-    vp9_copy_reference_enc(ctx->cpi,
-                           ref_frame_to_vp9_reframe(frame->frame_type), &sd);
+    if (vp9_copy_reference_enc(
+            ctx->cpi, ref_frame_to_vp9_reframe(frame->frame_type), &sd)) {
+      return VPX_CODEC_ERROR;
+    }
     return VPX_CODEC_OK;
   }
   return VPX_CODEC_INVALID_PARAM;
@@ -1913,6 +1898,24 @@ static vpx_codec_err_t ctrl_set_svc_layer_id(vpx_codec_alg_priv_t *ctx,
       data->spatial_layer_id >= (int)ctx->cfg.ss_number_layers) {
     return VPX_CODEC_INVALID_PARAM;
   }
+  // Validate temporal_layer_id and every temporal_layer_id_per_spatial[]
+  // entry before storing any of them. Both are later used to index
+  // svc.layer_context[] (VPX_MAX_LAYERS entries) in
+  // vp9_one_pass_svc_start_layer(); an out-of-range value causes an
+  // out-of-bounds access during encoding. Validating up front also leaves
+  // svc unchanged when the input is rejected.
+  if (data->temporal_layer_id < 0 ||
+      data->temporal_layer_id >= (int)ctx->cfg.ts_number_layers) {
+    return VPX_CODEC_INVALID_PARAM;
+  }
+  for (sl = 0; sl < cpi->svc.number_spatial_layers; ++sl) {
+    if (data->temporal_layer_id_per_spatial[sl] < 0 ||
+        data->temporal_layer_id_per_spatial[sl] >=
+            (int)ctx->cfg.ts_number_layers) {
+      return VPX_CODEC_INVALID_PARAM;
+    }
+  }
+
   svc->spatial_layer_to_encode = data->spatial_layer_id;
   svc->first_spatial_layer_to_encode = data->spatial_layer_id;
   // TODO(jianj): Deprecated to be removed.
@@ -1921,11 +1924,6 @@ static vpx_codec_err_t ctrl_set_svc_layer_id(vpx_codec_alg_priv_t *ctx,
   for (sl = 0; sl < cpi->svc.number_spatial_layers; ++sl) {
     svc->temporal_layer_id_per_spatial[sl] =
         data->temporal_layer_id_per_spatial[sl];
-  }
-  // Checks on valid temporal_layer_id input.
-  if (svc->temporal_layer_id < 0 ||
-      svc->temporal_layer_id >= (int)ctx->cfg.ts_number_layers) {
-    return VPX_CODEC_INVALID_PARAM;
   }
 
   return VPX_CODEC_OK;
@@ -2006,6 +2004,13 @@ static vpx_codec_err_t ctrl_set_svc_ref_frame_config(vpx_codec_alg_priv_t *ctx,
   VP9_COMP *const cpi = ctx->cpi;
   vpx_svc_ref_frame_config_t *data = va_arg(args, vpx_svc_ref_frame_config_t *);
   int sl;
+  for (sl = 0; sl < cpi->svc.number_spatial_layers; ++sl) {
+    if (data->lst_fb_idx[sl] < 0 || data->lst_fb_idx[sl] >= REF_FRAMES ||
+        data->gld_fb_idx[sl] < 0 || data->gld_fb_idx[sl] >= REF_FRAMES ||
+        data->alt_fb_idx[sl] < 0 || data->alt_fb_idx[sl] >= REF_FRAMES) {
+      return VPX_CODEC_INVALID_PARAM;
+    }
+  }
   cpi->svc.use_set_ref_frame_config = 1;
   for (sl = 0; sl < cpi->svc.number_spatial_layers; ++sl) {
     cpi->svc.update_buffer_slot[sl] = data->update_buffer_slot[sl];

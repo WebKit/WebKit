@@ -34,12 +34,12 @@ class Input;
 // diagnosing the error.
 class OPENSSL_EXPORT CertErrorParams {
  public:
-  CertErrorParams();
+  CertErrorParams() = default;
 
   CertErrorParams(const CertErrorParams &) = delete;
   CertErrorParams &operator=(const CertErrorParams &) = delete;
 
-  virtual ~CertErrorParams();
+  virtual ~CertErrorParams() = default;
 
   // Creates a representation of this parameter as a string, which may be
   // used for pretty printing the error.

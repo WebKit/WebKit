@@ -69,10 +69,10 @@ static void decomp_tx(uint8_t (*const txa)[2 /* txsz, step */][32 /* y */][32 /*
             rep_macro(txa[0][0][y], 0, lw); \
             rep_macro(txa[1][0][y], 0, lh); \
             txa[0][1][y][0] = t_dim->w; \
-        }
+        } \
+        rep_macro(txa[1][1][0], 0, t_dim->h);
         case_set_upto16(t_dim->lw);
 #undef set_ctx
-        dav1d_memset_pow2[t_dim->lw](txa[1][1][0], t_dim->h);
     }
 }
 
@@ -256,6 +256,21 @@ static void mask_edges_chroma(uint16_t (*const masks)[32][2][2],
     dav1d_memset_likely_pow2(l, twl4c, ch4);
 }
 
+static void fill_levelcache_block(uint8_t (*level_cache_ptr)[4],
+                                  const ptrdiff_t b_stride,
+                                  const int bw, const int bh,
+                                  const unsigned v0,
+                                  const unsigned v1)
+{
+    union alias16 v = (union alias16) { .u8 = { v0, v1 }};
+
+    for (int y = 0; y < bh; y++) {
+        for (int x = 0; x < bw; x++)
+            ((union alias16 *) &level_cache_ptr[x][0])->u16 = v.u16;
+        level_cache_ptr += b_stride;
+    }
+}
+
 void dav1d_create_lf_mask_intra(Av1Filter *const lflvl,
                                 uint8_t (*const level_cache)[4],
                                 const ptrdiff_t b4_stride,
@@ -278,14 +293,9 @@ void dav1d_create_lf_mask_intra(Av1Filter *const lflvl,
 
     if (bw4 && bh4) {
         uint8_t (*level_cache_ptr)[4] = level_cache + by * b4_stride + bx;
-        for (int y = 0; y < bh4; y++) {
-            for (int x = 0; x < bw4; x++) {
-                level_cache_ptr[x][0] = filter_level[0][0][0];
-                level_cache_ptr[x][1] = filter_level[1][0][0];
-            }
-            level_cache_ptr += b4_stride;
-        }
 
+        fill_levelcache_block(level_cache_ptr, b4_stride, bw4, bh4,
+                              filter_level[0][0][0], filter_level[1][0][0]);
         mask_edges_intra(lflvl->filter_y, by4, bx4, bw4, bh4, ytx, ay, ly);
     }
 
@@ -306,14 +316,10 @@ void dav1d_create_lf_mask_intra(Av1Filter *const lflvl,
 
     uint8_t (*level_cache_ptr)[4] =
         level_cache + (by >> ss_ver) * b4_stride + (bx >> ss_hor);
-    for (int y = 0; y < cbh4; y++) {
-        for (int x = 0; x < cbw4; x++) {
-            level_cache_ptr[x][2] = filter_level[2][0][0];
-            level_cache_ptr[x][3] = filter_level[3][0][0];
-        }
-        level_cache_ptr += b4_stride;
-    }
 
+    fill_levelcache_block((uint8_t(*)[4]) &level_cache_ptr[0][2], b4_stride,
+                          cbw4, cbh4, filter_level[2][0][0],
+                          filter_level[3][0][0]);
     mask_edges_chroma(lflvl->filter_uv, cby4, cbx4, cbw4, cbh4, 0, uvtx,
                       auv, luv, ss_hor, ss_ver);
 }
@@ -341,14 +347,9 @@ void dav1d_create_lf_mask_inter(Av1Filter *const lflvl,
 
     if (bw4 && bh4) {
         uint8_t (*level_cache_ptr)[4] = level_cache + by * b4_stride + bx;
-        for (int y = 0; y < bh4; y++) {
-            for (int x = 0; x < bw4; x++) {
-                level_cache_ptr[x][0] = filter_level[0][0][0];
-                level_cache_ptr[x][1] = filter_level[1][0][0];
-            }
-            level_cache_ptr += b4_stride;
-        }
 
+        fill_levelcache_block(level_cache_ptr, b4_stride, bw4, bh4,
+                              filter_level[0][0][0], filter_level[1][0][0]);
         mask_edges_inter(lflvl->filter_y, by4, bx4, bw4, bh4, skip,
                          max_ytx, tx_masks, ay, ly);
     }
@@ -370,14 +371,10 @@ void dav1d_create_lf_mask_inter(Av1Filter *const lflvl,
 
     uint8_t (*level_cache_ptr)[4] =
         level_cache + (by >> ss_ver) * b4_stride + (bx >> ss_hor);
-    for (int y = 0; y < cbh4; y++) {
-        for (int x = 0; x < cbw4; x++) {
-            level_cache_ptr[x][2] = filter_level[2][0][0];
-            level_cache_ptr[x][3] = filter_level[3][0][0];
-        }
-        level_cache_ptr += b4_stride;
-    }
 
+    fill_levelcache_block((uint8_t(*)[4]) &level_cache_ptr[0][2], b4_stride,
+                          cbw4, cbh4, filter_level[2][0][0],
+                          filter_level[3][0][0]);
     mask_edges_chroma(lflvl->filter_uv, cby4, cbx4, cbw4, cbh4, skip, uvtx,
                       auv, luv, ss_hor, ss_ver);
 }

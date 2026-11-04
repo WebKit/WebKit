@@ -12,6 +12,13 @@
 
 #include "libyuv/row.h"
 
+// Note: every register written by an inline asm block (vector, general
+// purpose, mask/predicate, "cc" for flags and "memory" for stores) must be
+// listed in its clobber list, even when the ABI treats it as caller-saved.
+// With LTO/LTCG the compiler may keep values live in any register across the
+// asm statement, and other OS ABIs (e.g. Windows) differ in which registers
+// are callee-saved. List "memory" first, then "cc", then registers.
+
 #if !defined(LIBYUV_DISABLE_LSX) && defined(__loongarch_sx)
 #include "libyuv/loongson_intrinsics.h"
 
@@ -319,6 +326,20 @@ void ARGBMirrorRow_LSX(const uint8_t* src, uint8_t* dst, int width) {
     __lsx_vst(src0, dst, 16);
     dst += 32;
     src -= 32;
+  }
+}
+
+void CopyRow_LSX(const uint8_t* src, uint8_t* dst, int width) {
+  int x;
+  int len = width / 32;
+  __m128i src0, src1;
+
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, src, 0, src, 16, src0, src1);
+    __lsx_vst(src0, dst, 0);
+    __lsx_vst(src1, dst, 16);
+    src += 32;
+    dst += 32;
   }
 }
 
@@ -2279,7 +2300,7 @@ void RAWToRGB24Row_LSX(const uint8_t* src_raw, uint8_t* dst_rgb24, int width) {
     src2 = __lsx_vld(src_raw, 32);
     DUP2_ARG3(__lsx_vshuf_b, src1, src0, shuf0, src1, src0, shuf1, dst0, dst1);
     dst2 = __lsx_vshuf_b(src1, src2, shuf2);
-    dst1 = __lsx_vinsgr2vr_b(dst1, src_raw[32], 0x0E);
+    dst1 = __lsx_vextrins_b(dst1, src2, 0xE0);
     __lsx_vst(dst0, dst_rgb24, 0);
     __lsx_vst(dst1, dst_rgb24, 16);
     __lsx_vst(dst2, dst_rgb24, 32);
@@ -2637,7 +2658,8 @@ void ARGBToYMatrixRow_LSX(const uint8_t* src_argb,
         "+&r"(dst_y),     // %1
         "+&r"(width)      // %2
       : "r"(c)
-      : "memory");
+      : "memory", "$vr0", "$vr1", "$vr2", "$vr3", "$vr4", "$vr5", "$vr6",
+        "$vr7", "$vr8", "$vr9", "$vr10", "$vr11", "$vr12", "$vr13", "$vr20");
 }
 
 void RGBToYMatrixRow_LSX(const uint8_t* src_rgba,
@@ -2688,7 +2710,9 @@ void RGBToYMatrixRow_LSX(const uint8_t* src_rgba,
         "+&r"(width)      // %2
       : "r"(c),           // %3
         "r"(shuff)        // %4
-      : "memory");
+      : "memory", "$vr0", "$vr1", "$vr2", "$vr3", "$vr4", "$vr5", "$vr6",
+        "$vr7", "$vr8", "$vr9", "$vr10", "$vr12", "$vr13", "$vr14", "$vr15",
+        "$vr16", "$vr17");
 }
 
 // undef for unified sources build

@@ -30,6 +30,7 @@ LOCAL_SRC_FILES := \
     source/rotate_gcc.cc        \
     source/rotate_neon.cc       \
     source/rotate_neon64.cc     \
+    source/rotate_rvv.cc        \
     source/rotate_win.cc        \
     source/row_any.cc           \
     source/row_common.cc        \

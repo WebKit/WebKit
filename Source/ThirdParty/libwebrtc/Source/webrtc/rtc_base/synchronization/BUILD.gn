@@ -41,10 +41,7 @@ rtc_source_set("mutex") {
 }
 
 rtc_library("sequence_checker_internal") {
-  visibility = [
-    "../../api:rtc_api_unittests",
-    "../../api:sequence_checker",
-  ]
+  visibility = [ "../../api:*" ]
   sources = [
     "sequence_checker_internal.cc",
     "sequence_checker_internal.h",
@@ -68,22 +65,26 @@ rtc_library("yield_policy") {
 }
 
 if (rtc_include_tests && rtc_enable_google_benchmarks) {
-  rtc_library("synchronization_unittests") {
-    testonly = true
-    sources = [
-      "mutex_unittest.cc",
-      "yield_policy_unittest.cc",
-    ]
+  rtc_cc_test("mutex_unittest") {
+    sources = [ "mutex_unittest.cc" ]
     deps = [
       ":mutex",
       ":yield",
-      ":yield_policy",
       "..:macromagic",
       "..:rtc_event",
       "..:threading",
       "../../api/units:time_delta",
       "../../test:test_support",
       "//third_party/google_benchmark",
+    ]
+  }
+
+  rtc_cc_test("yield_policy_unittest") {
+    sources = [ "yield_policy_unittest.cc" ]
+    deps = [
+      ":yield_policy",
+      "..:rtc_event",
+      "../../test:test_support",
     ]
   }
 

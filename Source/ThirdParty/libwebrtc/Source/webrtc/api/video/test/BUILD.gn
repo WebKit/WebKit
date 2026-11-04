@@ -8,28 +8,82 @@
 
 import("../../../webrtc.gni")
 
-rtc_library("rtc_api_video_unittests") {
-  testonly = true
-  sources = [
-    "color_space_unittest.cc",
-    "i210_buffer_unittest.cc",
-    "i410_buffer_unittest.cc",
-    "i422_buffer_unittest.cc",
-    "i444_buffer_unittest.cc",
-    "nv12_buffer_unittest.cc",
-    "video_adaptation_counters_unittest.cc",
-    "video_bitrate_allocation_unittest.cc",
-  ]
-  deps = [
-    "..:video_adaptation",
-    "..:video_bitrate_allocation",
-    "..:video_frame",
-    "..:video_frame_i010",
-    "..:video_rtp_headers",
-    "../..:scoped_refptr",
-    "../../../test:frame_utils",
-    "../../../test:test_support",
-  ]
+if (rtc_include_tests) {
+  rtc_cc_test("color_space_unittest") {
+    sources = [ "color_space_unittest.cc" ]
+    deps = [
+      "..:video_rtp_headers",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("i210_buffer_unittest") {
+    sources = [ "i210_buffer_unittest.cc" ]
+    deps = [
+      "..:video_frame",
+      "..:video_frame_i010",
+      "../..:scoped_refptr",
+      "../../../test:frame_utils",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("i410_buffer_unittest") {
+    sources = [ "i410_buffer_unittest.cc" ]
+    deps = [
+      "..:video_frame",
+      "..:video_frame_i010",
+      "../..:scoped_refptr",
+      "../../../test:frame_utils",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("i422_buffer_unittest") {
+    sources = [ "i422_buffer_unittest.cc" ]
+    deps = [
+      "..:video_frame",
+      "../..:scoped_refptr",
+      "../../../test:frame_utils",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("i444_buffer_unittest") {
+    sources = [ "i444_buffer_unittest.cc" ]
+    deps = [
+      "..:video_frame",
+      "../..:scoped_refptr",
+      "../../../test:frame_utils",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("nv12_buffer_unittest") {
+    sources = [ "nv12_buffer_unittest.cc" ]
+    deps = [
+      "..:video_frame",
+      "../..:scoped_refptr",
+      "../../../test:frame_utils",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("video_adaptation_counters_unittest") {
+    sources = [ "video_adaptation_counters_unittest.cc" ]
+    deps = [
+      "..:video_adaptation",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("video_bitrate_allocation_unittest") {
+    sources = [ "video_bitrate_allocation_unittest.cc" ]
+    deps = [
+      "..:video_bitrate_allocation",
+      "../../../test:test_support",
+    ]
+  }
 }
 
 rtc_source_set("mock_recordable_encoded_frame") {

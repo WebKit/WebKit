@@ -58,9 +58,9 @@ impl<Io: io::Read + Send, R: PollFor<Io> + Send> AbstractReader for StdIoWithRea
         mut async_ctx: Option<&mut Context<'_>>,
         buffer: &mut [u8],
     ) -> AbstractSocketResult {
+        debug_assert!(!buffer.is_empty());
         loop {
             let res = match <Io as io::Read>::read(&mut self.io, buffer) {
-                Ok(0) if !buffer.is_empty() => return AbstractSocketResult::EndOfStream,
                 Ok(bytes) => return AbstractSocketResult::Ok(bytes),
                 Err(e) => retry_on_interrupt!(e),
             };
@@ -84,6 +84,7 @@ impl<Io: io::Write + Send, R: PollFor<Io> + Send> AbstractWriter for StdIoWithRe
         mut async_ctx: Option<&mut Context<'_>>,
         buffer: &[u8],
     ) -> AbstractSocketResult {
+        debug_assert!(!buffer.is_empty());
         loop {
             let res = match <Io as io::Write>::write(&mut self.io, buffer) {
                 Ok(bytes) => return AbstractSocketResult::Ok(bytes),
@@ -129,15 +130,10 @@ impl<Io: io::Read + io::Write + Send, R: PollFor<Io> + Send> AbstractSocket
 
 /// Translates a `std::io::Error` into an `AbstractSocketResult`.
 pub(crate) fn translate_stdio_err(err: io::Error) -> AbstractSocketResult {
-    match err.kind() {
-        io::ErrorKind::WouldBlock => AbstractSocketResult::Retry,
-        io::ErrorKind::ConnectionReset
-        | io::ErrorKind::ConnectionRefused
-        | io::ErrorKind::ConnectionAborted
-        | io::ErrorKind::BrokenPipe
-        | io::ErrorKind::NotConnected
-        | io::ErrorKind::UnexpectedEof => AbstractSocketResult::EndOfStream,
-        _ => AbstractSocketResult::Err(Box::new(err)),
+    if matches!(err.kind(), io::ErrorKind::WouldBlock) {
+        AbstractSocketResult::Retry
+    } else {
+        AbstractSocketResult::Err(Box::new(err))
     }
 }
 

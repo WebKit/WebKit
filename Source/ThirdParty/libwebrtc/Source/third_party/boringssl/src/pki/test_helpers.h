@@ -23,6 +23,7 @@
 #include <vector>
 
 #include <gtest/gtest.h>
+#include "certificate_policies.h"
 #include "input.h"
 #include "parsed_certificate.h"
 #include "simple_path_builder_delegate.h"
@@ -90,9 +91,6 @@ template <size_t N>
 // Test cases are comprised of all the parameters to certificate
 // verification, as well as the expected outputs.
 struct VerifyCertChainTest {
-  VerifyCertChainTest();
-  ~VerifyCertChainTest();
-
   // The chain of certificates (with the zero-th being the target).
   ParsedCertificateList chain;
 
@@ -107,7 +105,7 @@ struct VerifyCertChainTest {
 
   InitialExplicitPolicy initial_explicit_policy = InitialExplicitPolicy::kFalse;
 
-  std::set<der::Input> user_initial_policy_set;
+  std::set<der::Input> user_initial_policy_set = {der::Input(kAnyPolicyOid)};
 
   InitialPolicyMappingInhibit initial_policy_mapping_inhibit =
       InitialPolicyMappingInhibit::kFalse;

@@ -57,8 +57,28 @@ bool ResamplerHelper::MaybeResample(int desired_sample_rate_hz,
     }
   }
 
+  // The resampler's delay is shorter than a frame, so a muted frame that
+  // follows a muted frame resamples to silence. Frames rejected above don't
+  // reach the resampler and don't count.
+  const bool previous_frame_muted = last_frame_muted_;
+  last_frame_muted_ = audio_frame->muted();
+  const bool silent = audio_frame->muted() && previous_frame_muted;
+
+  if (need_resampling && silent) {
+    // Keep the frame muted instead of resampling silence. Audio after it is
+    // still resampled as if after silence: the resampler's last input was a
+    // muted frame, or the resampler gets primed with silence below.
+    audio_frame->SetSampleRateAndChannelSize(desired_sample_rate_hz);
+    return true;
+  }
+
   if (need_resampling && !resampled_last_output_frame_) {
     // Prime the resampler with the last frame.
+    if (previous_frame_muted) {
+      // `last_audio_buffer_` holds zeros only up to the size of the muted
+      // frame it stored last, and this frame can be larger.
+      absl::c_fill(last_audio_buffer_, 0);
+    }
     InterleavedView<const int16_t> src(last_audio_buffer_.data(),
                                        audio_frame->samples_per_channel(),
                                        audio_frame->num_channels());
@@ -78,7 +98,6 @@ bool ResamplerHelper::MaybeResample(int desired_sample_rate_hz,
     audio_frame->SetSampleRateAndChannelSize(desired_sample_rate_hz);
     InterleavedView<int16_t> dst = audio_frame->mutable_data(
         audio_frame->samples_per_channel(), audio_frame->num_channels());
-    // TODO(tommi): Don't resample muted audio frames.
     resampler_.Resample(src, dst);
     resampled_last_output_frame_ = true;
   } else {

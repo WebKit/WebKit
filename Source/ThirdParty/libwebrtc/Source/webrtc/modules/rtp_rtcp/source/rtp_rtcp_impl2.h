@@ -120,16 +120,11 @@ class ModuleRtpRtcpImpl2 final : public RtpRtcpInterface,
   // Get start timestamp.
   uint32_t StartTimestamp() const override;
 
-  // Configure start timestamp, default is a random number.
-  void SetStartTimestamp(uint32_t timestamp) override;
-
   uint16_t SequenceNumber() const override;
 
   // Set SequenceNumber, default is a random number.
   void SetSequenceNumber(uint16_t seq) override;
 
-  void SetRtpState(const RtpState& rtp_state) override;
-  void SetRtxState(const RtpState& rtp_state) override;
   RtpState GetRtpState() const override;
   RtpState GetRtxState() const override;
 
@@ -142,16 +137,10 @@ class ModuleRtpRtcpImpl2 final : public RtpRtcpInterface,
   // RtpRtcpInterface::Configuration::local_media_ssrc.
   uint32_t local_media_ssrc() const;
 
-  void SetMid(absl::string_view mid) override;
-
   RTCPSender::FeedbackState GetFeedbackState();
 
-  void SetRtxSendStatus(int mode) override;
   int RtxSendStatus() const override;
   std::optional<uint32_t> RtxSsrc() const override;
-
-  void SetRtxSendPayloadType(int payload_type,
-                             int associated_payload_type) override;
 
   std::optional<uint32_t> FlexfecSsrc() const override;
 

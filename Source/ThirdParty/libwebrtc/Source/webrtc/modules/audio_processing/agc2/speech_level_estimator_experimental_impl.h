@@ -19,19 +19,21 @@
 namespace webrtc {
 class ApmDataDumper;
 
-// Active speech level estimator that detects background speakers to avoid
-// adapting to secondary speech or corrupting the tracked target speaker level.
+// Active speech level estimator that differentiates background speakers and
+// low-activity segments to avoid adapting to secondary speech or corrupting the
+// tracked target speaker level.
 //
 // Once the estimator reaches confidence on the primary speaker's level,
-// background speakers are detected in two ways:
-// 1. Level drop: If accumulated reliable speech is quieter than the tracked
-//    level by at least `background_speaker_offset_dbfs`, it is classified as a
-//    background speaker and the tracked level is retained.
-// 2. Low activity / sporadic speech: A primary speaker typically triggers the
-//    VAD consistently, whereas a distant speaker tends to produce fragmented,
-//    sporadic bursts. If accumulating the required speech frames exceeds
-//    `kMaxTimeToUpdateMs`, the activity is assumed to originate from a
-//    background speaker, resetting accumulation and flagging background speech.
+// target speaker inactivity is detected in two ways:
+// 1. Level drop (background speaker): If accumulated reliable speech is
+//    quieter than the tracked level by at least
+//    `background_speaker_offset_dbfs`, it is classified as a background speaker
+//    and the tracked level is retained.
+// 2. Low-activity segment: A primary speaker typically triggers the VAD
+//    consistently, whereas a distant speaker or pauses between speech segments
+//    produce sporadic bursts. If accumulating the required speech frames
+//    exceeds `kMaxTimeToUpdateMs`, accumulation is reset and the segment is
+//    flagged as low activity.
 class SpeechLevelEstimatorExperimentalImpl : public SpeechLevelEstimator {
  public:
   static constexpr float kDefaultBackgroundSpeakerOffsetDbfs = 7.0f;
@@ -54,8 +56,12 @@ class SpeechLevelEstimatorExperimentalImpl : public SpeechLevelEstimator {
   float GetLevelDbfs() const override { return level_dbfs_; }
   // Returns true if the estimator is confident on its current estimate.
   bool IsConfident() const override { return is_confident_; }
-  // Returns true if the current speech is classified as a background speaker.
-  bool IsBackgroundSpeaker() const override { return is_background_speaker_; }
+  // Returns true if the target speaker is actively speaking.
+  // Returns false if speech is classified as a background speaker or if
+  // speech activity is too sporadic to reliably update the target level.
+  bool IsTargetSpeakerActive() const override {
+    return !is_background_speaker_ && !low_activity_segment_;
+  }
   // Returns the threshold offset in dBFS for background speaker detection.
   float GetBackgroundSpeakerOffsetDbfs() const {
     return background_speaker_offset_dbfs_;
@@ -91,6 +97,7 @@ class SpeechLevelEstimatorExperimentalImpl : public SpeechLevelEstimator {
   float level_dbfs_;
   bool is_confident_;
   bool is_background_speaker_;
+  bool low_activity_segment_;
   int num_adjacent_speech_frames_;
   int num_frames_in_current_update_window_;
   float tracking_level_dbfs_;

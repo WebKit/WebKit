@@ -57,12 +57,13 @@ rtc_library("windows_version") {
   ]
 }
 
-rtc_library("windows_version_unittest") {
-  testonly = true
-  sources = [ "windows_version_unittest.cc" ]
-  deps = [
-    ":windows_version",
-    "..:logging",
-    "../../test:test_support",
-  ]
+if (rtc_include_tests && is_win) {
+  rtc_cc_test("windows_version_unittest") {
+    sources = [ "windows_version_unittest.cc" ]
+    deps = [
+      ":windows_version",
+      "..:logging",
+      "../../test:test_support",
+    ]
+  }
 }

@@ -30,6 +30,8 @@
 
 BSSL_NAMESPACE_BEGIN
 
+namespace {
+
 // A ByDirEntry tracks state for a single directory, notably the starting suffix
 // for CRL lookups.
 class ByDirEntry {
@@ -53,7 +55,8 @@ class ByDirEntry {
 
   int GetCRLSuffix(uint32_t hash) const {
     MutexReadLock lock(&lock_);
-    auto it = std::lower_bound(crl_suffixes_.begin(), crl_suffixes_.end(), hash);
+    auto it =
+        std::lower_bound(crl_suffixes_.begin(), crl_suffixes_.end(), hash);
     if (it == crl_suffixes_.end() || it->hash != hash) {
       return 0;
     }
@@ -62,7 +65,8 @@ class ByDirEntry {
 
   bool UpdateCRLSuffix(uint32_t hash, int suffix) {
     MutexWriteLock lock(&lock_);
-    auto it = std::lower_bound(crl_suffixes_.begin(), crl_suffixes_.end(), hash);
+    auto it =
+        std::lower_bound(crl_suffixes_.begin(), crl_suffixes_.end(), hash);
     if (it != crl_suffixes_.end() && it->hash == hash) {
       it->suffix = std::max(suffix, it->suffix);
       return true;
@@ -94,40 +98,7 @@ struct ByDir {
   Vector<UniquePtr<ByDirEntry>> dirs;
 };
 
-static int dir_ctrl(X509_LOOKUP *ctx, int cmd, const char *argp, long argl,
-                    char **ret);
-static int new_dir(X509_LOOKUP *lu);
-static void free_dir(X509_LOOKUP *lu);
-static int add_cert_dir(ByDir *ctx, const char *dir, int type);
-static int get_cert_by_subject(X509_LOOKUP *xl, int type, const X509_NAME *name,
-                               X509_OBJECT *ret);
-static const X509_LOOKUP_METHOD x509_dir_lookup = {
-    new_dir,              // new
-    free_dir,             // free
-    dir_ctrl,             // ctrl
-    get_cert_by_subject,  // get_by_subject
-};
-
-static int dir_ctrl(X509_LOOKUP *ctx, int cmd, const char *argp, long argl,
-                    char **retp) {
-  ByDir *ld = reinterpret_cast<ByDir *>(ctx->method_data);
-  switch (cmd) {
-    case X509_L_ADD_DIR:
-      if (argl == X509_FILETYPE_DEFAULT) {
-        const char *dir = getenv(X509_get_default_cert_dir_env());
-        if (!add_cert_dir(ld, dir ? dir : X509_get_default_cert_dir(),
-                          X509_FILETYPE_PEM)) {
-          OPENSSL_PUT_ERROR(X509, X509_R_LOADING_CERT_DIR);
-          return 0;
-        }
-        return 1;
-      }
-      return add_cert_dir(ld, argp, (int)argl);
-  }
-  return 0;
-}
-
-static int new_dir(X509_LOOKUP *lu) {
+int new_dir(X509_LOOKUP *lu) {
   ByDir *a = New<ByDir>();
   if (a == nullptr) {
     return 0;
@@ -136,7 +107,7 @@ static int new_dir(X509_LOOKUP *lu) {
   return 1;
 }
 
-static void free_dir(X509_LOOKUP *lu) {
+void free_dir(X509_LOOKUP *lu) {
   Delete(reinterpret_cast<ByDir *>(lu->method_data));
 }
 
@@ -146,7 +117,7 @@ static void free_dir(X509_LOOKUP *lu) {
 #define DIR_HASH_SEPARATOR ':'
 #endif
 
-static int add_cert_dir(ByDir *ctx, const char *inp, int type) {
+int add_cert_dir(ByDir *ctx, const char *inp, int type) {
   if (inp == nullptr || !*inp) {
     OPENSSL_PUT_ERROR(X509, X509_R_INVALID_DIRECTORY);
     return 0;
@@ -180,8 +151,27 @@ static int add_cert_dir(ByDir *ctx, const char *inp, int type) {
   return 1;
 }
 
-static int get_cert_by_subject(X509_LOOKUP *xl, int type, const X509_NAME *name,
-                               X509_OBJECT *ret) {
+int dir_ctrl(X509_LOOKUP *ctx, int cmd, const char *argp, long argl,
+             char **retp) {
+  ByDir *ld = reinterpret_cast<ByDir *>(ctx->method_data);
+  switch (cmd) {
+    case X509_L_ADD_DIR:
+      if (argl == X509_FILETYPE_DEFAULT) {
+        const char *dir = getenv(X509_get_default_cert_dir_env());
+        if (!add_cert_dir(ld, dir ? dir : X509_get_default_cert_dir(),
+                          X509_FILETYPE_PEM)) {
+          OPENSSL_PUT_ERROR(X509, X509_R_LOADING_CERT_DIR);
+          return 0;
+        }
+        return 1;
+      }
+      return add_cert_dir(ld, argp, (int)argl);
+  }
+  return 0;
+}
+
+int get_cert_by_subject(X509_LOOKUP *xl, int type, const X509_NAME *name,
+                        X509_OBJECT *ret) {
   if (name == nullptr) {
     return 0;
   }
@@ -289,6 +279,15 @@ static int get_cert_by_subject(X509_LOOKUP *xl, int type, const X509_NAME *name,
 
   return 0;
 }
+
+const X509_LOOKUP_METHOD x509_dir_lookup = {
+    new_dir,              // new
+    free_dir,             // free
+    dir_ctrl,             // ctrl
+    get_cert_by_subject,  // get_by_subject
+};
+
+}  // namespace
 
 BSSL_NAMESPACE_END
 

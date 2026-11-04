@@ -301,7 +301,6 @@ class PeerConnectionUsageHistogramTest : public ::testing::Test {
       std::unique_ptr<NetworkManager> network_manager) {
     PeerConnectionFactoryDependencies pcf_deps;
     pcf_deps.network_thread = Thread::Current();
-    pcf_deps.worker_thread = Thread::Current();
     pcf_deps.signaling_thread = Thread::Current();
     pcf_deps.socket_factory = &vss_;
     if (network_manager != nullptr) {

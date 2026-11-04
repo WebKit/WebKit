@@ -1373,10 +1373,7 @@ secg-scheme 14 3 : dhSinglePass-cofactorDH-sha512kdf-scheme
 
  : HKDF : hkdf
 
-# OIDs for initial experimentation from draft-ietf-plants-merkle-tree-certs.
-# id-alg TBD : alg-mtcProof
-1 3 6 1 4 1 44363 47 0 : alg-mtcProof-draft
-# id-pkix 25 TBD : rdna-trustAnchorID
-1 3 6 1 4 1 44363 47 1 : rdna-trustAnchorID-draft
-# id-pe TBD : pe-mtcCertificationAuthority
-1 3 6 1 4 1 44363 47 2 : pe-mtcCertificationAuthority-draft
+# OIDs from draft-ietf-plants-merkle-tree-certs-07.
+id-alg 67 : alg-mtcProof
+id-pkix 25 3 : rdna-trustAnchorID
+id-pe 38 : pe-mtcCertificationAuthority-SHA256

@@ -845,8 +845,6 @@ CreateOutboundRTPStreamStatsFromVideoSenderInfo(
   outbound_video->total_encode_time =
       static_cast<double>(video_sender_info.total_encode_time_ms) /
       kNumMillisecsPerSec;
-  outbound_video->total_encoded_bytes_target =
-      video_sender_info.total_encoded_bytes_target;
   if (video_sender_info.send_frame_width > 0) {
     outbound_video->frame_width =
         static_cast<uint32_t>(video_sender_info.send_frame_width);
@@ -1134,8 +1132,7 @@ scoped_refptr<RTCStatsReport> RTCStatsCollector::CreateReportFilteredBySelector(
     if (sender_selector) {
       // Find outbound-rtp(s) of the sender using ssrc lookup.
       RtpParameters parameters =
-          sender_selector->GetParametersInternal(/*may_use_cache=*/true,
-                                                 /*with_all_layers=*/false);
+          sender_selector->GetParametersInternal(/*with_all_layers=*/false);
       std::vector<RtpEncodingParameters>& encodings = parameters.encodings;
       for (const auto* outbound_rtp :
            report->GetStatsOfType<RTCOutboundRtpStreamStats>()) {

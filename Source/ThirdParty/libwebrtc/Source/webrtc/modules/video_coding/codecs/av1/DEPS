@@ -2,3 +2,9 @@ include_rules = [
   "+third_party/libaom",
   "+third_party/dav1d",
 ]
+
+specific_include_rules = {
+  "libaom_av1_encoder_v2_unittest\\.cc": [
+    "+third_party/libgav1",
+  ],
+}

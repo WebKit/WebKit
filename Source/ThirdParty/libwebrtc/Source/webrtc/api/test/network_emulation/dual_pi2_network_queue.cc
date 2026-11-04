@@ -9,7 +9,9 @@
  */
 #include "api/test/network_emulation/dual_pi2_network_queue.h"
 
+#include <algorithm>
 #include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <queue>
 
@@ -25,11 +27,10 @@
 namespace webrtc {
 
 DualPi2NetworkQueue::DualPi2NetworkQueue(const Config& config)
-    : config_(config),
-      step_threshold_(config.link_rate.IsInfinite()
-                          ? DataSize::Infinity()
-                          : config_.target_delay * config_.link_rate * 2),
-      random_(config.seed) {
+    : config_(config), random_(config.seed) {
+  RTC_DCHECK_GE(config_.c_protection, 0);
+  RTC_DCHECK_LE(config_.c_protection, 100);
+  ResetCProtectionCredit();
   sequence_checker_.Detach();
 }
 
@@ -53,63 +54,67 @@ bool DualPi2NetworkQueue::EnqueuePacket(const PacketInFlightInfo& packet_info) {
 
   if (packet_info.ecn == EcnMarking::kNotEct ||
       packet_info.ecn == EcnMarking::kEct0) {
-    bool take_action = ShouldTakeAction(classic_drop_probability());
-    if (!take_action) {
-      total_queued_size_ += packet_info.packet_size();
-      classic_queue_.push(packet_info);
-      return true;
+    if (HasStandingQueueBacklog() &&
+        random_.Rand<double>() < classic_drop_probability()) {
+      RTC_DLOG(LS_WARNING)
+          << "DualPi2NetworkQueue::EnqueuePacket: Dropping classic packet "
+          << packet_info.packet_id << ". Classic drop probability is "
+          << classic_drop_probability()
+          << " L4S queue size: " << l4s_queue_.size()
+          << " classic queue size: " << classic_queue_.size();
+      return false;
     }
-    RTC_DLOG(LS_WARNING)
-        << "DualPi2NetworkQueue::EnqueuePacket: Dropping classic packet "
-        << packet_info.packet_id << ". Classic drop probability is "
-        << classic_drop_probability()
-        << " L4S queue size: " << l4s_queue_.size()
-        << " classic queue size: " << classic_queue_.size();
-
-    return false;
+    classic_queue_.push(packet_info);
+    return true;
   }
   RTC_DCHECK(packet_info.ecn == EcnMarking::kEct1 ||
              packet_info.ecn == EcnMarking::kCe);
-  total_queued_size_ += packet_info.packet_size();
-  bool take_action = ShouldTakeAction(l4s_marking_probability());
-  if (take_action) {
-    PacketInFlightInfo ce_packet_info(packet_info);
-    ce_packet_info.ecn = EcnMarking::kCe;
-    l4s_queue_.push(ce_packet_info);
-  } else {
-    l4s_queue_.push(packet_info);
-  }
+  l4s_queue_.push(packet_info);
   return true;
 }
 
 std::optional<PacketInFlightInfo> DualPi2NetworkQueue::PeekNextPacket() const {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  if (!l4s_queue_.empty()) {
-    return l4s_queue_.front();
+  if (empty()) {
+    return std::nullopt;
   }
-  if (!classic_queue_.empty()) {
-    return classic_queue_.front();
-  }
-  return std::nullopt;
+  return ShouldDequeueFromClassicQueue() ? classic_queue_.front()
+                                         : l4s_queue_.front();
 }
 
 std::optional<PacketInFlightInfo> DualPi2NetworkQueue::DequeuePacket(
     Timestamp time_now) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  std::queue<PacketInFlightInfo>& queue =
-      l4s_queue_.empty() ? classic_queue_ : l4s_queue_;
-  if (queue.empty()) {
+  if (empty()) {
     return std::nullopt;
   }
 
+  const bool dequeue_classic = ShouldDequeueFromClassicQueue();
+  std::queue<PacketInFlightInfo>& queue =
+      dequeue_classic ? classic_queue_ : l4s_queue_;
+
   PacketInFlightInfo packet_info = queue.front();
-  UpdateBaseMarkingProbability(time_now, time_now - packet_info.send_time());
-  queue.pop();
-  total_queued_size_ -= packet_info.packet_size();
-  if (packet_info.ecn == EcnMarking::kEct1 &&
-      ShouldTakeAction(l4s_marking_probability())) {
-    packet_info.ecn = EcnMarking::kCe;
+  if (!l4s_queue_.empty() && !classic_queue_.empty()) {
+    if (dequeue_classic) {
+      c_protection_credit_ -=
+          packet_info.packet_size().bytes() * (100 - config_.c_protection);
+    } else {
+      c_protection_credit_ +=
+          packet_info.packet_size().bytes() * config_.c_protection;
+    }
+  } else {
+    ResetCProtectionCredit();
   }
+
+  UpdateBaseMarkingProbability(time_now);
+  TimeDelta sojourn_time = time_now - packet_info.send_time();
+  if (packet_info.ecn == EcnMarking::kEct1 && HasStandingQueueBacklog()) {
+    if (sojourn_time > config_.step_threshold ||
+        random_.Rand<double>() < l4s_marking_probability()) {
+      packet_info.ecn = EcnMarking::kCe;
+    }
+  }
+  queue.pop();
   return packet_info;
 }
 
@@ -118,13 +123,14 @@ bool DualPi2NetworkQueue::empty() const {
   return classic_queue_.empty() && l4s_queue_.empty();
 }
 
-void DualPi2NetworkQueue::UpdateBaseMarkingProbability(Timestamp time_now,
-                                                       TimeDelta sojourn_time) {
+void DualPi2NetworkQueue::UpdateBaseMarkingProbability(Timestamp time_now) {
   if (time_now - config_.probability_update_interval <
       last_probability_update_time_) {
     return;
   }
   last_probability_update_time_ = time_now;
+  TimeDelta sojourn_time =
+      std::max(l4s_queue_delay(time_now), classic_queue_delay(time_now));
   TimeDelta proportional_update =
       config_.alpha * (sojourn_time - config_.target_delay);
   TimeDelta integral_update =
@@ -143,11 +149,34 @@ void DualPi2NetworkQueue::UpdateBaseMarkingProbability(Timestamp time_now,
                        << base_marking_probability_;
 }
 
-bool DualPi2NetworkQueue::ShouldTakeAction(double marking_probability) {
-  if (total_queued_size_ > step_threshold_) {
-    return true;
+TimeDelta DualPi2NetworkQueue::l4s_queue_delay(Timestamp time_now) const {
+  return l4s_queue_.empty() ? TimeDelta::Zero()
+                            : time_now - l4s_queue_.front().send_time();
+}
+
+TimeDelta DualPi2NetworkQueue::classic_queue_delay(Timestamp time_now) const {
+  return classic_queue_.empty() ? TimeDelta::Zero()
+                                : time_now - classic_queue_.front().send_time();
+}
+
+bool DualPi2NetworkQueue::HasStandingQueueBacklog() const {
+  return l4s_queue_.size() + classic_queue_.size() >=
+         config_.min_backlog_packets;
+}
+
+bool DualPi2NetworkQueue::ShouldDequeueFromClassicQueue() const {
+  if (l4s_queue_.empty()) {
+    return !classic_queue_.empty();
   }
-  return random_.Rand<double>() < marking_probability;
+  if (classic_queue_.empty()) {
+    return false;
+  }
+  return c_protection_credit_ >= 0;
+}
+
+void DualPi2NetworkQueue::ResetCProtectionCredit() {
+  constexpr int64_t kAssumedMtuBytes = 1500;
+  c_protection_credit_ = -kAssumedMtuBytes * (100 - config_.c_protection);
 }
 
 }  // namespace webrtc

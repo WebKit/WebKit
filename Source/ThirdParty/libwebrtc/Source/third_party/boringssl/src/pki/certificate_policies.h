@@ -65,11 +65,6 @@ struct PolicyQualifierInfo {
 };
 
 struct OPENSSL_EXPORT PolicyInformation {
-  PolicyInformation();
-  ~PolicyInformation();
-  PolicyInformation(const PolicyInformation &);
-  PolicyInformation(PolicyInformation &&);
-
   der::Input policy_oid;
   std::vector<PolicyQualifierInfo> policy_qualifiers;
 };

@@ -16,15 +16,18 @@
 #include <memory>
 #include <optional>
 #include <span>
+#include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
 #include "api/audio/audio_frame.h"
+#include "api/audio/audio_mixer.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/call/audio_sink.h"
 #include "api/call/transport.h"
 #include "api/crypto/crypto_options.h"
+#include "api/frame_transformer_interface.h"
 #include "api/make_ref_counted.h"
 #include "api/rtp_packet_infos.h"
 #include "api/scoped_refptr.h"
@@ -43,6 +46,7 @@
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/string_encode.h"
+#include "system_wrappers/include/metrics.h"
 #include "system_wrappers/include/ntp_time.h"
 #include "test/create_test_environment.h"
 #include "test/gmock.h"
@@ -57,6 +61,7 @@ namespace {
 using ::testing::NiceMock;
 using ::testing::NotNull;
 using ::testing::Return;
+using ::testing::SizeIs;
 using ::testing::Test;
 
 constexpr uint32_t kLocalSsrc = kFallbackRtcpSsrcForAudio;
@@ -157,11 +162,7 @@ class ChannelReceiveTest : public Test {
     } else {
       RTC_LOG(LS_ERROR) << "Unexpected RTCP packet generated";
       RTC_LOG(LS_ERROR) << "Packet content "
-                        << hex_encode_with_delimiter(
-                               absl::string_view(
-                                   reinterpret_cast<char*>(packet.data()[0]),
-                                   packet.size()),
-                               ' ');
+                        << HexEncodeWithDelimiter(packet, ' ');
     }
   }
 
@@ -286,6 +287,37 @@ TEST_F(ChannelReceiveTest, SettingFrameTransformerMultipleTimes) {
   channel->SetDepacketizerToDecoderFrameTransformer(mock_frame_transformer);
 }
 
+TEST_F(ChannelReceiveTest, TransformsAndInsertsTransformedFrame) {
+  auto channel = CreateTestChannelReceive();
+
+  scoped_refptr<MockFrameTransformer> mock_frame_transformer =
+      make_ref_counted<MockFrameTransformer>();
+  scoped_refptr<TransformedFrameCallback> callback;
+  EXPECT_CALL(*mock_frame_transformer, RegisterTransformedFrameCallback)
+      .WillOnce([&](scoped_refptr<TransformedFrameCallback> cb) {
+        callback = std::move(cb);
+      });
+  channel->SetDepacketizerToDecoderFrameTransformer(mock_frame_transformer);
+  ASSERT_TRUE(callback);
+
+  channel->StartPlayout();
+
+  EXPECT_CALL(*mock_frame_transformer, Transform)
+      .WillOnce([&](std::unique_ptr<TransformableFrameInterface> frame) {
+        callback->OnTransformedFrame(std::move(frame));
+      });
+
+  channel->OnRtpPacket(CreateRtpPacket());
+  time_controller_.AdvanceTime(TimeDelta::Zero());
+
+  AudioFrame audio_frame;
+  EXPECT_EQ(channel->GetAudioFrameWithInfo(kSampleRateHz, &audio_frame),
+            AudioMixer::Source::AudioFrameInfo::kNormal);
+  // Proves that the transformed payload reached NetEq.
+  ASSERT_THAT(audio_frame.packet_infos_, SizeIs(1));
+  EXPECT_EQ(audio_frame.packet_infos_[0].ssrc(), kLocalSsrc);
+}
+
 TEST_F(ChannelReceiveTest, LogsReceivedPacketToEventLog) {
   auto channel = CreateTestChannelReceive();
 
@@ -293,6 +325,26 @@ TEST_F(ChannelReceiveTest, LogsReceivedPacketToEventLog) {
 
   EXPECT_CALL(log_, LogProxy);
   channel->OnRtpPacket(packet);
+}
+
+TEST_F(ChannelReceiveTest, DropsPacketsWithPayloadTypeNoLongerNegotiated) {
+  auto channel = CreateTestChannelReceive();  // Negotiates PCMA (PT 8).
+  channel->SetReceiveCodecs({{0, {"PCMU", kSampleRateHz, 1}}});
+
+  // Receive statistics are kept per remote SSRC.
+  RtpPacketReceived pcmu_packet = CreateRtpPacket();
+  pcmu_packet.SetSsrc(kRemoteSsrc);
+  pcmu_packet.SetPayloadType(0);
+  pcmu_packet.SetSequenceNumber(1);
+  channel->OnRtpPacket(pcmu_packet);
+  ASSERT_EQ(channel->GetRTCPStatistics().packets_received, 1);
+
+  // PCMA is no longer negotiated, so its packets are dropped.
+  RtpPacketReceived pcma_packet = CreateRtpPacket();
+  pcma_packet.SetSsrc(kRemoteSsrc);
+  pcma_packet.SetSequenceNumber(2);
+  channel->OnRtpPacket(pcma_packet);
+  EXPECT_EQ(channel->GetRTCPStatistics().packets_received, 1);
 }
 
 TEST_F(ChannelReceiveTest, GetPlayoutRtpTimestamp) {
@@ -336,6 +388,30 @@ TEST_F(ChannelReceiveTest, GetPlayoutRtpTimestamp) {
   EXPECT_FALSE(channel->GetPlayoutRtpTimestamp().has_value());
 }
 
+TEST_F(ChannelReceiveTest, RecordsJitterBufferDelayHistogramsEvery100Frames) {
+  metrics::Reset();
+  auto channel = CreateTestChannelReceive();
+  // Some ADM implementations require PlayoutDelay() to be called on a specific
+  // thread, so it must not be called on the audio thread.
+  EXPECT_CALL(*audio_device_module_, PlayoutDelay).Times(0);
+
+  AudioFrame audio_frame;
+  for (int i = 0; i < 99; ++i) {
+    channel->GetAudioFrameWithInfo(kSampleRateHz, &audio_frame);
+  }
+  EXPECT_METRIC_EQ(
+      metrics::NumSamples("WebRTC.Audio.TargetJitterBufferDelayMs"), 0);
+  EXPECT_METRIC_EQ(
+      metrics::NumSamples("WebRTC.Audio.ReceiverJitterBufferDelayMs"), 0);
+
+  // The 100th frame records the histograms directly, without posting a task.
+  channel->GetAudioFrameWithInfo(kSampleRateHz, &audio_frame);
+  EXPECT_METRIC_EQ(
+      metrics::NumSamples("WebRTC.Audio.TargetJitterBufferDelayMs"), 1);
+  EXPECT_METRIC_EQ(
+      metrics::NumSamples("WebRTC.Audio.ReceiverJitterBufferDelayMs"), 1);
+}
+
 TEST_F(ChannelReceiveTest, AudioSinkReceivesPacketInfos) {
   class TestAudioSink : public AudioSinkInterface {
    public:
@@ -365,6 +441,40 @@ TEST_F(ChannelReceiveTest, AudioSinkReceivesPacketInfos) {
   EXPECT_THAT(sink.last_packet_infos_[0].csrcs(),
               ::testing::ElementsAre(1111, 2222));
 }
+
+// Parameterized on the sample rate requested by the mixer. With a rate other
+// than kSampleRateHz, the NetEq output is resampled.
+class ChannelReceiveOutputRateTest : public ChannelReceiveTest,
+                                     public ::testing::WithParamInterface<int> {
+};
+
+TEST_P(ChannelReceiveOutputRateTest, ReportsMutedNetEqOutputAsMuted) {
+  const int mixer_sample_rate_hz = GetParam();
+  auto channel = CreateTestChannelReceive();
+  channel->StartPlayout();
+  channel->OnRtpPacket(CreateRtpPacket());
+
+  // Once the packet has been played out, NetEq fades out and then enters the
+  // muted state. Pull up to 5 seconds of 10 ms frames.
+  AudioFrame audio_frame;
+  bool muted = false;
+  for (int i = 0; i < 500 && !muted; ++i) {
+    muted =
+        channel->GetAudioFrameWithInfo(mixer_sample_rate_hz, &audio_frame) ==
+        AudioMixer::Source::AudioFrameInfo::kMuted;
+  }
+  EXPECT_TRUE(muted);
+  // When resampling, the first muted NetEq frame can still hold the
+  // resampler's tail of the audio before it, so it is reported as normal and
+  // only the next one as muted.
+  const bool resampling = mixer_sample_rate_hz != kSampleRateHz;
+  EXPECT_EQ(channel->GetDecodingCallStatistics().decoded_muted_output,
+            resampling ? 2 : 1);
+}
+
+INSTANTIATE_TEST_SUITE_P(All,
+                         ChannelReceiveOutputRateTest,
+                         ::testing::Values(kSampleRateHz, 48000));
 
 }  // namespace
 }  // namespace voe

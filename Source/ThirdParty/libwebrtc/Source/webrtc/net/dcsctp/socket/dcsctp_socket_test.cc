@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
@@ -129,6 +130,21 @@ MATCHER_P(IsSack, properties, "") {
   std::optional<SackChunk> chunk = SackChunk::Parse(arg.data);
   if (!chunk.has_value()) {
     *result_listener << "The chunk didn't parse as a sack chunk";
+    return false;
+  }
+
+  return ExplainMatchResult(properties, *chunk, result_listener);
+}
+
+MATCHER_P(IsForwardTsn, properties, "") {
+  if (arg.type != ForwardTsnChunk::kType) {
+    *result_listener << "the chunk is not a forward-tsn chunk";
+    return false;
+  }
+
+  std::optional<ForwardTsnChunk> chunk = ForwardTsnChunk::Parse(arg.data);
+  if (!chunk.has_value()) {
+    *result_listener << "The chunk didn't parse as a forward-tsn chunk";
     return false;
   }
 
@@ -799,10 +815,24 @@ TEST(DcSctpSocketTest, T2ShutdownTimerExpiresResendsShutdownAck) {
   EXPECT_EQ(a.socket.state(), SocketState::kShuttingDown);
   EXPECT_EQ(z.socket.state(), SocketState::kShuttingDown);
 
-  // Advance time to trigger timer expiry, which makes A resend SHUTDOWN_ACK.
-  AdvanceTime(a, z, a.options.rto_initial.ToTimeDelta());
+  for (int i = 0; i < *a.options.max_retransmissions; ++i) {
+    // Advance time to trigger timer expiry, which makes A resend SHUTDOWN_ACK.
+    AdvanceTime(a, z, a.options.rto_initial.ToTimeDelta() * (1 << i));
+    EXPECT_THAT(a.cb.ConsumeSentPacket(),
+                HasChunks(ElementsAre(IsChunkType(ShutdownAckChunk::kType))));
+    EXPECT_TRUE(a.cb.ConsumeSentPacket().empty());
+  }
+
+  // The last expiry makes it abort the connection.
+  EXPECT_CALL(a.cb, OnAborted(ErrorKind::kTooManyRetries, _)).Times(1);
+  AdvanceTime(a, z,
+              a.options.rto_initial.ToTimeDelta() *
+                  (1 << *a.options.max_retransmissions));
+
+  EXPECT_EQ(a.socket.state(), SocketState::kClosed);
   EXPECT_THAT(a.cb.ConsumeSentPacket(),
-              HasChunks(ElementsAre(IsChunkType(ShutdownAckChunk::kType))));
+              HasChunks(ElementsAre(IsChunkType(AbortChunk::kType))));
+  EXPECT_TRUE(a.cb.ConsumeSentPacket().empty());
 }
 
 TEST(DcSctpSocketTest, ShutdownResendsShutdownAckWhenInShutdownAckSent) {
@@ -2249,6 +2279,32 @@ TEST(DcSctpSocketTest, RetransmissionMetricsAreSetForFastRetransmit) {
   EXPECT_EQ(a.socket.GetMetrics()->rtx_bytes_count, expected_data_size);
 }
 
+TEST(DcSctpSocketTest, RetransmitsLostPacketOnlyOnceInLargeBurst) {
+  SocketUnderTest a("A");
+  SocketUnderTest z("Z");
+  ConnectSockets(a, z);
+
+  // A message large enough that many packets are still in flight when the
+  // second packet is detected as lost and fast retransmitted. The SACKs for
+  // those in-flight packets reach A before the retransmission reaches Z, and
+  // they must not cause the lost packet to be retransmitted again.
+  std::vector<uint8_t> payload(kLargeMessageSize);
+  a.socket.Send(DcSctpMessage(StreamID(1), PPID(53), payload), kSendOptions);
+
+  // Receive first packet, drop second, receive the rest in order.
+  z.socket.ReceivePacket(a.cb.ConsumeSentPacket());
+  a.cb.ConsumeSentPacket();
+  ExchangeMessagesAndAdvanceTime(a, z);
+
+  EXPECT_THAT(
+      z.cb.ConsumeReceivedMessage(),
+      Optional(Property(&DcSctpMessage::payload, SizeIs(payload.size()))));
+  EXPECT_EQ(a.socket.GetMetrics()->rtx_packets_count, 1u);
+  EXPECT_EQ(
+      a.socket.GetMetrics()->rtx_bytes_count,
+      RoundDownTo4(DcSctpOptions::kMaxSafeMTUSize - SctpPacket::kHeaderSize));
+}
+
 TEST(DcSctpSocketTest, RetransmissionMetricsAreSetForNormalRetransmit) {
   SocketUnderTest a("A");
   SocketUnderTest z("Z");
@@ -2936,6 +2992,194 @@ TEST(DcSctpSocketTest, LifecycleEventsForExpiredMessageWithLifetimeLimit) {
   EXPECT_THAT(GetReceivedMessagePpids(z), IsEmpty());
 }
 
+TEST(DcSctpSocketTest,
+     DoesNotRetransmitExpiredMessageBehindUnacknowledgedReliableMessageOnRto) {
+  SocketUnderTest a("A");
+  SocketUnderTest z("Z");
+  ConnectSockets(a, z);
+
+  std::vector<uint8_t> payload(kSmallMessageSize);
+  a.socket.Send(DcSctpMessage(StreamID(1), PPID(51), payload),
+                {
+                    .lifecycle_id = LifecycleId(1),
+                });
+  a.socket.Send(DcSctpMessage(StreamID(2), PPID(52), payload),
+                {
+                    .lifetime = DurationMs(50),
+                    .lifecycle_id = LifecycleId(2),
+                });
+
+  // Both initial packets are lost.
+  EXPECT_THAT(a.cb.ConsumeSentPacket(),
+              HasChunks(ElementsAre(
+                  IsDataChunk(Property(&DataChunk::ppid, PPID(51))))));
+  EXPECT_THAT(a.cb.ConsumeSentPacket(),
+              HasChunks(ElementsAre(
+                  IsDataChunk(Property(&DataChunk::ppid, PPID(52))))));
+
+  // Let T3-rtx expire (after the second message's 50ms lifetime has elapsed).
+  AdvanceTime(a, z, a.options.rto_initial.ToTimeDelta());
+
+  // Only the first (reliable) message should be retransmitted; the second
+  // message has expired even though a FORWARD-TSN cannot be sent for it yet.
+  std::vector<uint8_t> rtx_packet = a.cb.ConsumeSentPacket();
+  EXPECT_THAT(rtx_packet, HasChunks(ElementsAre(IsDataChunk(
+                              Property(&DataChunk::ppid, PPID(51))))));
+  EXPECT_THAT(a.cb.ConsumeSentPacket(), IsEmpty());
+
+  EXPECT_CALL(a.cb, OnLifecycleMessageDelivered(LifecycleId(1)));
+  EXPECT_CALL(a.cb, OnLifecycleEnd(LifecycleId(1)));
+  EXPECT_CALL(a.cb, OnLifecycleMessageExpired(LifecycleId(2),
+                                              /*maybe_delivered=*/true));
+  EXPECT_CALL(a.cb, OnLifecycleEnd(LifecycleId(2)));
+
+  z.socket.ReceivePacket(rtx_packet);
+  ExchangeMessages(a, z);
+  AdvanceTime(a, z, a.options.delayed_ack_max_timeout.ToTimeDelta());
+  ExchangeMessages(a, z);
+
+  EXPECT_THAT(GetReceivedMessagePpids(z), ElementsAre(51));
+}
+
+TEST(DcSctpSocketTest,
+     DoesNotFastRetransmitExpiredMessageBehindUnacknowledgedReliableMessage) {
+  SocketUnderTest a("A");
+  SocketUnderTest z("Z");
+  ConnectSockets(a, z);
+
+  std::vector<uint8_t> payload(kSmallMessageSize);
+  a.socket.Send(DcSctpMessage(StreamID(1), PPID(51), payload),
+                {
+                    .lifecycle_id = LifecycleId(1),
+                });
+  a.socket.Send(DcSctpMessage(StreamID(2), PPID(52), payload),
+                {
+                    .lifetime = DurationMs(50),
+                    .lifecycle_id = LifecycleId(2),
+                });
+  a.socket.Send(DcSctpMessage(StreamID(3), PPID(53), payload), {});
+  a.socket.Send(DcSctpMessage(StreamID(4), PPID(54), payload), {});
+  a.socket.Send(DcSctpMessage(StreamID(5), PPID(55), payload), {});
+
+  // First two packets (PPID 51 and 52) are lost.
+  EXPECT_THAT(a.cb.ConsumeSentPacket(),
+              HasChunks(ElementsAre(
+                  IsDataChunk(Property(&DataChunk::ppid, PPID(51))))));
+  EXPECT_THAT(a.cb.ConsumeSentPacket(),
+              HasChunks(ElementsAre(
+                  IsDataChunk(Property(&DataChunk::ppid, PPID(52))))));
+
+  std::vector<uint8_t> packet3 = a.cb.ConsumeSentPacket();
+  std::vector<uint8_t> packet4 = a.cb.ConsumeSentPacket();
+  std::vector<uint8_t> packet5 = a.cb.ConsumeSentPacket();
+
+  // Advance time past the second message's 50ms lifetime, but before
+  // `rto_initial` (500ms) so T3-rtx does not fire.
+  AdvanceTime(a, z, TimeDelta::Millis(100));
+
+  // Deliver packets 3, 4, 5 and feed the resulting 3 SACKs back to `a` to
+  // trigger fast retransmit via 3 miss indications.
+  z.socket.ReceivePacket(packet3);
+  a.socket.ReceivePacket(z.cb.ConsumeSentPacket());
+  z.socket.ReceivePacket(packet4);
+  a.socket.ReceivePacket(z.cb.ConsumeSentPacket());
+  z.socket.ReceivePacket(packet5);
+  a.socket.ReceivePacket(z.cb.ConsumeSentPacket());
+
+  // Only the first (reliable) message should be fast-retransmitted; the second
+  // message has expired and no FORWARD-TSN can be sent yet.
+  std::vector<uint8_t> fast_rtx_packet = a.cb.ConsumeSentPacket();
+  EXPECT_THAT(fast_rtx_packet, HasChunks(ElementsAre(IsDataChunk(
+                                   Property(&DataChunk::ppid, PPID(51))))));
+  EXPECT_THAT(a.cb.ConsumeSentPacket(), IsEmpty());
+
+  EXPECT_CALL(a.cb, OnLifecycleMessageDelivered(LifecycleId(1)));
+  EXPECT_CALL(a.cb, OnLifecycleEnd(LifecycleId(1)));
+  EXPECT_CALL(a.cb, OnLifecycleMessageExpired(LifecycleId(2),
+                                              /*maybe_delivered=*/true));
+  EXPECT_CALL(a.cb, OnLifecycleEnd(LifecycleId(2)));
+
+  z.socket.ReceivePacket(fast_rtx_packet);
+  ExchangeMessages(a, z);
+  AdvanceTime(a, z, a.options.delayed_ack_max_timeout.ToTimeDelta());
+  ExchangeMessages(a, z);
+
+  EXPECT_THAT(GetReceivedMessagePpids(z), ElementsAre(53, 54, 55, 51));
+}
+
+// Returns the TSN of the (single) DATA chunk in `packet`.
+TSN GetDataChunkTsn(std::span<const uint8_t> packet) {
+  std::optional<SctpPacket> parsed = SctpPacket::Parse(packet, kDefaultOptions);
+  EXPECT_TRUE(parsed.has_value());
+  EXPECT_THAT(parsed->descriptors(), SizeIs(1));
+  std::optional<DataChunk> chunk =
+      DataChunk::Parse(parsed->descriptors()[0].data);
+  EXPECT_TRUE(chunk.has_value());
+  return chunk->tsn();
+}
+
+TEST(DcSctpSocketTest, OnlyRateLimitsDuplicateForwardTsn) {
+  SocketUnderTest a("A");
+  SocketUnderTest z("Z");
+  ConnectSockets(a, z);
+
+  std::vector<uint8_t> payload(kSmallMessageSize);
+  auto send_unreliable = [&](int ppid) {
+    a.socket.Send(DcSctpMessage(StreamID(1), PPID(ppid), payload),
+                  {.max_retransmissions = 0});
+    return a.cb.ConsumeSentPacket();
+  };
+  // Delivers `packet` to `z`, and the resulting SACK back to `a`.
+  auto deliver_and_sack = [&](std::vector<uint8_t> packet) {
+    z.socket.ReceivePacket(std::move(packet));
+    a.socket.ReceivePacket(z.cb.ConsumeSentPacket());
+  };
+
+  // The first message is lost. Three following messages are delivered, and the
+  // SACKs generated for them will mark the first one as lost and abandoned.
+  TSN lost_tsn1 = GetDataChunkTsn(send_unreliable(51));
+  std::vector<uint8_t> packet52 = send_unreliable(52);
+  std::vector<uint8_t> packet53 = send_unreliable(53);
+  std::vector<uint8_t> packet54 = send_unreliable(54);
+  // Let some time pass, so that a non-zero RTT is measured.
+  AdvanceTime(a, z, TimeDelta::Millis(50));
+  deliver_and_sack(std::move(packet52));
+  deliver_and_sack(std::move(packet53));
+  deliver_and_sack(std::move(packet54));
+
+  std::vector<uint8_t> forward_tsn1 = a.cb.ConsumeSentPacket();
+  EXPECT_THAT(forward_tsn1,
+              HasChunks(ElementsAre(IsForwardTsn(
+                  Property(&ForwardTsnChunk::new_cumulative_tsn, lost_tsn1)))));
+  z.socket.ReceivePacket(forward_tsn1);
+  ExchangeMessages(a, z);
+
+  // Without advancing time (i.e. within the FORWARD-TSN rate limiting
+  // interval), lose another message. The FORWARD-TSN for it advances the
+  // cumulative TSN, so it must be sent immediately.
+  TSN lost_tsn2 = GetDataChunkTsn(send_unreliable(55));
+  deliver_and_sack(send_unreliable(56));
+  deliver_and_sack(send_unreliable(57));
+  deliver_and_sack(send_unreliable(58));
+
+  EXPECT_THAT(a.cb.ConsumeSentPacket(),
+              HasChunks(ElementsAre(IsForwardTsn(
+                  Property(&ForwardTsnChunk::new_cumulative_tsn, lost_tsn2)))));
+
+  // That FORWARD-TSN was lost. A duplicate is not sent until the rate limiting
+  // interval has passed.
+  deliver_and_sack(send_unreliable(59));
+  EXPECT_THAT(a.cb.ConsumeSentPacket(), IsEmpty());
+
+  AdvanceTime(a, z, TimeDelta::Millis(200));
+  a.socket.Send(DcSctpMessage(StreamID(1), PPID(60), payload),
+                {.max_retransmissions = 0});
+  EXPECT_THAT(a.cb.ConsumeSentPacket(),
+              HasChunks(ElementsAre(
+                  IsForwardTsn(Property(&ForwardTsnChunk::new_cumulative_tsn,
+                                        lost_tsn2)),
+                  IsDataChunk(Property(&DataChunk::ppid, PPID(60))))));
+}
 TEST_P(DcSctpSocketParametrizedTest, ExposesTheNumberOfNegotiatedStreams) {
   DcSctpOptions options_a = {
       .announced_maximum_incoming_streams = 12,

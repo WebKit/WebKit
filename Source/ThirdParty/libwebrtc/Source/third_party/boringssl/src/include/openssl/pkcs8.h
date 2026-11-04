@@ -204,7 +204,7 @@ OPENSSL_EXPORT int PKCS12_verify_mac(const PKCS12 *p12, const char *password,
 // an error to specify both an alias on `cert` and a non-NULL `name`
 // parameter.
 OPENSSL_EXPORT PKCS12 *PKCS12_create(const char *password, const char *name,
-                                     const EVP_PKEY *pkey, X509 *cert,
+                                     const EVP_PKEY *pkey, const X509 *cert,
                                      const STACK_OF(X509) *chain, int key_nid,
                                      int cert_nid, int iterations,
                                      int mac_iterations, int key_type);

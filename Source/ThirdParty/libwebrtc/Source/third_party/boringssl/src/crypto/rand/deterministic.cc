@@ -14,8 +14,10 @@
 
 #include <openssl/rand.h>
 
+// IWYU pragma: begin_keep
 #include "../bcm_support.h"
 #include "internal.h"
+// IWYU pragma: end_keep
 
 #if defined(OPENSSL_RAND_DETERMINISTIC)
 
@@ -28,13 +30,17 @@
 
 using namespace bssl;
 
+namespace {
+
 // g_num_calls is the number of calls to `CRYPTO_sysrand` that have occurred.
 //
 // This is intentionally not thread-safe. If the fuzzer mode is ever used in a
 // multi-threaded program, replace this with a thread-local. (A mutex would not
 // be deterministic.)
-static uint64_t g_num_calls = 0;
-static StaticMutex g_num_calls_lock;
+uint64_t g_num_calls = 0;
+StaticMutex g_num_calls_lock;
+
+}  // namespace
 
 void RAND_reset_for_fuzzing() { g_num_calls = 0; }
 

@@ -31,64 +31,35 @@
 
 using namespace bssl;
 
-static int v3_check_critical(const char **value);
-static int v3_check_generic(const char **value);
-static X509_EXTENSION *do_ext_nconf(const CONF *conf, const X509V3_CTX *ctx,
-                                    int ext_nid, int crit, const char *value);
-static X509_EXTENSION *v3_generic_extension(const char *ext, const char *value,
-                                            int crit, int type,
-                                            const X509V3_CTX *ctx);
-static X509_EXTENSION *do_ext_i2d(const X509V3_EXT_METHOD *method, int ext_nid,
-                                  int crit, void *ext_struc);
-static unsigned char *generic_asn1(const char *value, const X509V3_CTX *ctx,
-                                   size_t *ext_len);
+namespace {
 
-X509_EXTENSION *X509V3_EXT_nconf(const CONF *conf, const X509V3_CTX *ctx,
-                                 const char *name, const char *value) {
-  // If omitted, fill in an empty `X509V3_CTX`.
-  X509V3_CTX ctx_tmp;
-  if (ctx == nullptr) {
-    X509V3_set_ctx(&ctx_tmp, nullptr, nullptr, nullptr, nullptr, 0);
-    X509V3_set_nconf(&ctx_tmp, conf);
-    ctx = &ctx_tmp;
+X509_EXTENSION *do_ext_i2d(const X509V3_EXT_METHOD *method, int ext_nid,
+                           int crit, void *ext_struc) {
+  // Convert the extension's internal representation to DER.
+  unsigned char *ext_der = nullptr;
+  int ext_len = ASN1_item_i2d(reinterpret_cast<ASN1_VALUE *>(ext_struc),
+                              &ext_der, ASN1_ITEM_ptr(method->it));
+  if (ext_len < 0) {
+    return nullptr;
   }
 
-  int crit = v3_check_critical(&value);
-  int ext_type = v3_check_generic(&value);
-  if (ext_type != 0) {
-    return v3_generic_extension(name, value, crit, ext_type, ctx);
+  ASN1_OCTET_STRING *ext_oct = ASN1_OCTET_STRING_new();
+  if (ext_oct == nullptr) {
+    OPENSSL_free(ext_der);
+    return nullptr;
   }
-  X509_EXTENSION *ret = do_ext_nconf(conf, ctx, OBJ_sn2nid(name), crit, value);
-  if (!ret) {
-    OPENSSL_PUT_ERROR(X509V3, X509V3_R_ERROR_IN_EXTENSION);
-    ERR_add_error_data(4, "name=", name, ", value=", value);
-  }
-  return ret;
-}
+  ASN1_STRING_set0(ext_oct, ext_der, ext_len);
 
-X509_EXTENSION *X509V3_EXT_nconf_nid(const CONF *conf, const X509V3_CTX *ctx,
-                                     int ext_nid, const char *value) {
-  // If omitted, fill in an empty `X509V3_CTX`.
-  X509V3_CTX ctx_tmp;
-  if (ctx == nullptr) {
-    X509V3_set_ctx(&ctx_tmp, nullptr, nullptr, nullptr, nullptr, 0);
-    X509V3_set_nconf(&ctx_tmp, conf);
-    ctx = &ctx_tmp;
-  }
-
-  int crit = v3_check_critical(&value);
-  int ext_type = v3_check_generic(&value);
-  if (ext_type != 0) {
-    return v3_generic_extension(OBJ_nid2sn(ext_nid), value, crit, ext_type,
-                                ctx);
-  }
-  return do_ext_nconf(conf, ctx, ext_nid, crit, value);
+  X509_EXTENSION *ext =
+      X509_EXTENSION_create_by_NID(nullptr, ext_nid, crit, ext_oct);
+  ASN1_OCTET_STRING_free(ext_oct);
+  return ext;
 }
 
 // CONF *conf:  Config file
 // char *value:  Value
-static X509_EXTENSION *do_ext_nconf(const CONF *conf, const X509V3_CTX *ctx,
-                                    int ext_nid, int crit, const char *value) {
+X509_EXTENSION *do_ext_nconf(const CONF *conf, const X509V3_CTX *ctx,
+                             int ext_nid, int crit, const char *value) {
   const X509V3_EXT_METHOD *method;
   X509_EXTENSION *ext;
   const STACK_OF(CONF_VALUE) *nval;
@@ -156,42 +127,8 @@ static X509_EXTENSION *do_ext_nconf(const CONF *conf, const X509V3_CTX *ctx,
   return ext;
 }
 
-static X509_EXTENSION *do_ext_i2d(const X509V3_EXT_METHOD *method, int ext_nid,
-                                  int crit, void *ext_struc) {
-  // Convert the extension's internal representation to DER.
-  unsigned char *ext_der = nullptr;
-  int ext_len = ASN1_item_i2d(reinterpret_cast<ASN1_VALUE *>(ext_struc),
-                              &ext_der, ASN1_ITEM_ptr(method->it));
-  if (ext_len < 0) {
-    return nullptr;
-  }
-
-  ASN1_OCTET_STRING *ext_oct = ASN1_OCTET_STRING_new();
-  if (ext_oct == nullptr) {
-    OPENSSL_free(ext_der);
-    return nullptr;
-  }
-  ASN1_STRING_set0(ext_oct, ext_der, ext_len);
-
-  X509_EXTENSION *ext =
-      X509_EXTENSION_create_by_NID(nullptr, ext_nid, crit, ext_oct);
-  ASN1_OCTET_STRING_free(ext_oct);
-  return ext;
-}
-
-// Given an internal structure, nid and critical flag create an extension
-
-X509_EXTENSION *X509V3_EXT_i2d(int ext_nid, int crit, void *ext_struc) {
-  const X509V3_EXT_METHOD *method;
-  if (!(method = X509V3_EXT_get_nid(ext_nid))) {
-    OPENSSL_PUT_ERROR(X509V3, X509V3_R_UNKNOWN_EXTENSION);
-    return nullptr;
-  }
-  return do_ext_i2d(method, ext_nid, crit, ext_struc);
-}
-
 // Check the extension string for critical flag
-static int v3_check_critical(const char **value) {
+int v3_check_critical(const char **value) {
   const char *p = *value;
   if ((strlen(p) < 9) || strncmp(p, "critical,", 9)) {
     return 0;
@@ -205,7 +142,7 @@ static int v3_check_critical(const char **value) {
 }
 
 // Check extension string for generic extension and return the type
-static int v3_check_generic(const char **value) {
+int v3_check_generic(const char **value) {
   int gen_type = 0;
   const char *p = *value;
   if ((strlen(p) >= 4) && !strncmp(p, "DER:", 4)) {
@@ -225,10 +162,26 @@ static int v3_check_generic(const char **value) {
   return gen_type;
 }
 
+unsigned char *generic_asn1(const char *value, const X509V3_CTX *ctx,
+                            size_t *ext_len) {
+  ASN1_TYPE *typ = ASN1_generate_v3(value, ctx);
+  if (typ == nullptr) {
+    return nullptr;
+  }
+  unsigned char *ext_der = nullptr;
+  int len = i2d_ASN1_TYPE(typ, &ext_der);
+  ASN1_TYPE_free(typ);
+  if (len < 0) {
+    return nullptr;
+  }
+  *ext_len = len;
+  return ext_der;
+}
+
 // Create a generic extension: for now just handle DER type
-static X509_EXTENSION *v3_generic_extension(const char *ext, const char *value,
-                                            int crit, int gen_type,
-                                            const X509V3_CTX *ctx) {
+X509_EXTENSION *v3_generic_extension(const char *ext, const char *value,
+                                     int crit, int gen_type,
+                                     const X509V3_CTX *ctx) {
   UniquePtr<ASN1_OBJECT> obj(OBJ_txt2obj(ext, 0));
   if (obj == nullptr) {
     OPENSSL_PUT_ERROR(X509V3, X509V3_R_EXTENSION_NAME_ERROR);
@@ -266,20 +219,59 @@ static X509_EXTENSION *v3_generic_extension(const char *ext, const char *value,
   return X509_EXTENSION_create_by_OBJ(nullptr, obj.get(), crit, oct.get());
 }
 
-static unsigned char *generic_asn1(const char *value, const X509V3_CTX *ctx,
-                                   size_t *ext_len) {
-  ASN1_TYPE *typ = ASN1_generate_v3(value, ctx);
-  if (typ == nullptr) {
+}  // namespace
+
+X509_EXTENSION *X509V3_EXT_nconf(const CONF *conf, const X509V3_CTX *ctx,
+                                 const char *name, const char *value) {
+  // If omitted, fill in an empty `X509V3_CTX`.
+  X509V3_CTX ctx_tmp;
+  if (ctx == nullptr) {
+    X509V3_set_ctx(&ctx_tmp, nullptr, nullptr, nullptr, nullptr, 0);
+    X509V3_set_nconf(&ctx_tmp, conf);
+    ctx = &ctx_tmp;
+  }
+
+  int crit = v3_check_critical(&value);
+  int ext_type = v3_check_generic(&value);
+  if (ext_type != 0) {
+    return v3_generic_extension(name, value, crit, ext_type, ctx);
+  }
+  X509_EXTENSION *ret = do_ext_nconf(conf, ctx, OBJ_sn2nid(name), crit, value);
+  if (!ret) {
+    OPENSSL_PUT_ERROR(X509V3, X509V3_R_ERROR_IN_EXTENSION);
+    ERR_add_error_data(4, "name=", name, ", value=", value);
+  }
+  return ret;
+}
+
+X509_EXTENSION *X509V3_EXT_nconf_nid(const CONF *conf, const X509V3_CTX *ctx,
+                                     int ext_nid, const char *value) {
+  // If omitted, fill in an empty `X509V3_CTX`.
+  X509V3_CTX ctx_tmp;
+  if (ctx == nullptr) {
+    X509V3_set_ctx(&ctx_tmp, nullptr, nullptr, nullptr, nullptr, 0);
+    X509V3_set_nconf(&ctx_tmp, conf);
+    ctx = &ctx_tmp;
+  }
+
+  int crit = v3_check_critical(&value);
+  int ext_type = v3_check_generic(&value);
+  if (ext_type != 0) {
+    return v3_generic_extension(OBJ_nid2sn(ext_nid), value, crit, ext_type,
+                                ctx);
+  }
+  return do_ext_nconf(conf, ctx, ext_nid, crit, value);
+}
+
+// Given an internal structure, nid and critical flag create an extension
+
+X509_EXTENSION *X509V3_EXT_i2d(int ext_nid, int crit, void *ext_struc) {
+  const X509V3_EXT_METHOD *method;
+  if (!(method = X509V3_EXT_get_nid(ext_nid))) {
+    OPENSSL_PUT_ERROR(X509V3, X509V3_R_UNKNOWN_EXTENSION);
     return nullptr;
   }
-  unsigned char *ext_der = nullptr;
-  int len = i2d_ASN1_TYPE(typ, &ext_der);
-  ASN1_TYPE_free(typ);
-  if (len < 0) {
-    return nullptr;
-  }
-  *ext_len = len;
-  return ext_der;
+  return do_ext_i2d(method, ext_nid, crit, ext_struc);
 }
 
 // This is the main function: add a bunch of extensions based on a config

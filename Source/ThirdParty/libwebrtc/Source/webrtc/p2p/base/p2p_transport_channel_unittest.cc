@@ -5910,9 +5910,8 @@ TEST_F(P2PTransportChannelTest,
                                  Eq(IceGatheringState::kIceGatheringComplete)),
               IsRtcOk());
   EXPECT_EQ(1u, ep1_ch1()->ports().size());
-  // Add a plain remote host candidate and three remote mDNS candidates with the
-  // host, srflx and relay types. Note that the candidates differ in their
-  // ports.
+  // Add a plain remote host candidate and remote mDNS candidates with the host,
+  // srflx and relay types. Note that the candidates differ in their ports.
   Candidate host_candidate = CreateUdpCandidate(
       IceCandidateType::kHost, "1.1.1.1", 1 /* port */, 0 /* priority */);
   ep1_ch1()->AddRemoteCandidate(host_candidate);
@@ -5927,6 +5926,17 @@ TEST_F(P2PTransportChannelTest,
   mdns_candidates.push_back(CreateUdpCandidate(IceCandidateType::kRelay,
                                                "example.local", 4 /* port */,
                                                0 /* priority */));
+  // DNS names are case-insensitive and may be written in fully qualified form,
+  // with a trailing dot. Such names are resolved using mDNS as well.
+  mdns_candidates.push_back(CreateUdpCandidate(IceCandidateType::kHost,
+                                               "example.local.", 5 /* port */,
+                                               0 /* priority */));
+  mdns_candidates.push_back(CreateUdpCandidate(IceCandidateType::kHost,
+                                               "EXAMPLE.LOCAL", 6 /* port */,
+                                               0 /* priority */));
+  mdns_candidates.push_back(CreateUdpCandidate(IceCandidateType::kHost,
+                                               "Example.Local.", 7 /* port */,
+                                               0 /* priority */));
   // We just resolve the hostname to 1.1.1.1, and add the candidates with this
   // address directly to simulate the process of adding remote candidates with
   // the name resolution.
@@ -5939,7 +5949,7 @@ TEST_F(P2PTransportChannelTest,
   }
 
   // All remote candidates should have been successfully added.
-  EXPECT_EQ(4u, ep1_ch1()->remote_candidates().size());
+  EXPECT_EQ(1u + mdns_candidates.size(), ep1_ch1()->remote_candidates().size());
 
   // Expect that there is no connection paired with any mDNS candidate.
   ASSERT_EQ(1u, ep1_ch1()->connections().size());
@@ -5947,6 +5957,44 @@ TEST_F(P2PTransportChannelTest,
   EXPECT_EQ(
       "1.1.1.1:1",
       ep1_ch1()->connections()[0]->remote_candidate().address().ToString());
+  DestroyChannels();
+}
+
+// Test that the address of a remote candidate with an mDNS name is concealed in
+// the candidate pair stats, also when the name is written in fully qualified
+// form (with a trailing dot) or in a different case. Such names are resolved
+// using mDNS as well.
+TEST_F(P2PTransportChannelTest, RemoteMdnsCandidatesSanitizedInStats) {
+  ConfigureEndpoints(OPEN, OPEN, kOnlyLocalPorts, kOnlyLocalPorts);
+  GetEndpoint(0)->cd1().set_ch(CreateChannel(0, ICE_CANDIDATE_COMPONENT_DEFAULT,
+                                             kIceParams[0], kIceParams[1]));
+  ep1_ch1()->MaybeStartGathering();
+  ASSERT_THAT(MediumWait().Until([&] { return ep1_ch1()->gathering_state(); },
+                                 Eq(IceGatheringState::kIceGatheringComplete)),
+              IsRtcOk());
+  ASSERT_EQ(1u, ep1_ch1()->ports().size());
+
+  const std::vector<absl::string_view> mdns_names = {
+      "example.local", "example.local.", "EXAMPLE.LOCAL", "Example.Local."};
+  int port = 1;
+  for (absl::string_view mdns_name : mdns_names) {
+    Candidate candidate = CreateUdpCandidate(IceCandidateType::kHost, mdns_name,
+                                             port++, 0 /* priority */);
+    // Resolve the hostname to 1.1.1.1 and add the candidate with this address
+    // directly to simulate adding a remote candidate with name resolution.
+    SocketAddress resolved_address(candidate.address());
+    resolved_address.SetResolvedIP(0x1111);  // 1.1.1.1
+    candidate.set_address(resolved_address);
+    ep1_ch1()->AddRemoteCandidate(candidate);
+  }
+
+  IceTransportStats ice_transport_stats;
+  ASSERT_TRUE(ep1_ch1()->GetStats(&ice_transport_stats));
+  ASSERT_EQ(mdns_names.size(), ice_transport_stats.connection_infos.size());
+  for (const auto& connection_info : ice_transport_stats.connection_infos) {
+    const SocketAddress& address = connection_info.remote_candidate.address();
+    EXPECT_TRUE(address.IsUnresolvedIP()) << address.hostname();
+  }
   DestroyChannels();
 }
 

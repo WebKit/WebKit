@@ -55,6 +55,17 @@ and compiler compatibility.
 
 1.  **Feature Macros**: Use the `HAS_` macros in `include/libyuv/row.h` to
     enable or disable specific instruction set extensions.
+2.  **Inline asm clobbers (all architectures)**: Every register written by an
+    inline asm block must be listed in its clobber list: vector registers,
+    general purpose registers, mask/predicate registers, `"cc"` when flags
+    are set (`subs`, `cmp`, `whilelt`, ...) and `"memory"` when the block
+    stores. Declare them even if the ABI treats them as caller-saved: with
+    LTO/LTCG the compiler may keep values live in any register across the
+    asm, and other OS ABIs (e.g. Windows) differ in which registers are
+    callee-saved. Never remove a clobber because it "is not needed by the
+    ABI". Use real register names, not numbers (`"v22"`, not `"22"`). Order
+    the list `"memory"` first (when stores occur), then `"cc"` (on
+    architectures with flags), then registers.
 
 ### x86 Architectures (32-bit and 64-bit)
 
@@ -63,6 +74,10 @@ and compiler compatibility.
 2.  **MSVC Intrinsics (`row_win.cc`)**: When converting `row_gcc.cc` to
     `row_win.cc`, use `_mm512_permutex2var_epi8`, not `_mm512_permi2var_epi8`
     intrinsic.
+3.  **Clobber names**: Always declare vector clobbers as `"xmmN"`, never
+    `"ymmN"` or `"zmmN"`, including for AVX2 and AVX512 code. Clang for
+    Windows must preserve xmm6-xmm15 and does not save them when they are
+    declared as ymm or zmm.
 
 ### AArch64
 

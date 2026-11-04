@@ -12,7 +12,8 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <vector>
+#include <cstring>
+#include <utility>
 
 #include "api/environment/environment.h"
 #include "api/rtp_headers.h"
@@ -65,23 +66,23 @@ RtpPacketSimulator::SimulateRtpPacketReceived(
   // Payload and padding.
   size_t payload_size = logged_packet.total_length -
                         logged_packet.header_length - header.paddingLength;
-  std::vector<uint8_t> payload(payload_size, 0u);  // Zero initialize.
+  uint8_t* payload = rtp_packet.AllocatePayload(payload_size);
+  std::memset(payload, 0, payload_size);  // Zero initialize.
   bool has_rtx_osn = logged_packet.rtx_original_sequence_number.has_value();
   if (has_rtx_osn) {
-    if (payload.size() < kRtxHeaderSize) {
+    if (payload_size < kRtxHeaderSize) {
       RTC_LOG(LS_WARNING) << "Packet was logged with RTX OSN, but payload size "
                              "could not fit it";
     } else {
       // Storing the RTX OSN in-band is required for downstream handling of the
       // packets.
       uint16_t rtx_osn = *logged_packet.rtx_original_sequence_number;
-      ByteWriter<uint16_t>::WriteBigEndian(payload.data(), rtx_osn);
+      ByteWriter<uint16_t>::WriteBigEndian(payload, rtx_osn);
     }
   }
-  rtp_packet.SetPayload(payload);
   rtp_packet.SetPadding(header.paddingLength);
 
-  return {.rtp_packet = rtp_packet, .has_rtx_osn = has_rtx_osn};
+  return {.rtp_packet = std::move(rtp_packet), .has_rtx_osn = has_rtx_osn};
 }
 
 }  // namespace webrtc::video_timing_simulator

@@ -31,23 +31,24 @@
 #include <openssl/bn.h>
 #include <openssl/bytestring.h>
 #include <openssl/crypto.h>
+#include <openssl/curve25519.h>
 #include <openssl/dh.h>
 #include <openssl/digest.h>
 #include <openssl/dsa.h>
 #include <openssl/ec.h>
 #include <openssl/err.h>
+#include <openssl/hpke.h>
 #include <openssl/mlkem.h>
 #include <openssl/obj.h>
 #include <openssl/rsa.h>
+#include <openssl/sha.h>
 #include <openssl/xwing.h>
 
 #include "../bytestring/internal.h"
-#include "../fipsmodule/bcm_interface.h"
 #include "../test/der_trailing_data.h"
 #include "../test/file_test.h"
 #include "../test/test_util.h"
 #include "../test/wycheproof_util.h"
-#include "internal.h"
 
 
 BSSL_NAMESPACE_BEGIN
@@ -846,6 +847,214 @@ bool TestDerive(FileTest *t, const KeyMap *key_map, EVP_PKEY *key,
   return true;
 }
 
+// KemTestState holds the values read from a KEM test vector, along with the
+// output buffers for the operations under test.
+struct KemTestState {
+  size_t expected_ciphertext_len = 0;
+  size_t expected_secret_len = 0;
+  bool should_test_encapsulate = false;
+  bool should_test_decapsulate = false;
+
+  std::vector<uint8_t> ciphertext, secret, decapsulated_secret;
+  size_t ciphertext_size = 0;
+  size_t secret_size = 0;
+
+  // Fields populated for test vectors providing entropy for deterministic
+  // encapsulate.
+  bool has_encap_entropy = false;
+  std::vector<uint8_t> entropy, expected_ciphertext, expected_secret;
+
+  void ResizeOutputBuffers(std::optional<size_t> new_ciphertext_len,
+                           std::optional<size_t> new_secret_len,
+                           bool resize_decap_buffer_only = false) {
+    if (new_ciphertext_len) {
+      ciphertext_size = *new_ciphertext_len;
+      ciphertext.resize(ciphertext_size);
+    }
+    if (new_secret_len) {
+      secret_size = *new_secret_len;
+      if (!resize_decap_buffer_only) {
+        secret.resize(secret_size);
+      }
+      decapsulated_secret.resize(secret_size);
+    }
+  }
+
+  // Reset clears the output buffers and re-reads the values from the test
+  // vector file, so that the operation may be repeated.
+  bool Reset(FileTest *t) {
+    ResizeOutputBuffers(0, 0);
+
+    if (should_test_decapsulate && !should_test_encapsulate) {
+      if (!t->GetBytes(&ciphertext, "Input") ||
+          (!t->HasAttribute("DecapsulateFail") &&
+           !t->GetBytes(&secret, "Output"))) {
+        return false;
+      }
+    }
+    if (should_test_encapsulate && t->HasAttribute("Entropy")) {
+      has_encap_entropy = true;
+      if (!t->GetBytes(&entropy, "Entropy") ||
+          !t->GetBytes(&expected_ciphertext, "Ciphertext") ||
+          !t->GetBytes(&expected_secret, "Secret")) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void CheckDecapsulateResult(FileTest *t, int result) {
+    if (t->HasAttribute("DecapsulateFail")) {
+      EXPECT_EQ(result, 0);
+      ERR_clear_error();
+      return;
+    }
+    EXPECT_EQ(result, 1);
+    // The correct output size was written out.
+    EXPECT_EQ(secret_size, expected_secret_len);
+    decapsulated_secret.resize(secret_size);
+    EXPECT_EQ(Bytes(secret), Bytes(decapsulated_secret));
+  }
+};
+
+// TestEVPKem tests encapsulation and/or decapsulation using the `EVP_KEM`
+// interface. `expected_ciphertext_len` and `expected_secret_len` are `kem`'s
+// parameters, known to the caller independently of `kem` itself.
+bool TestEVPKem(FileTest *t, const EVP_KEM *kem, EVP_PKEY *pkey,
+                bool encapsulate, bool decapsulate,
+                size_t expected_ciphertext_len, size_t expected_secret_len) {
+  KemTestState state;
+  state.expected_ciphertext_len = expected_ciphertext_len;
+  state.expected_secret_len = expected_secret_len;
+  state.should_test_encapsulate = encapsulate;
+  state.should_test_decapsulate = decapsulate;
+  if (!state.Reset(t)) {
+    return false;
+  }
+
+  EXPECT_EQ(EVP_KEM_ciphertext_len(kem), expected_ciphertext_len);
+  EXPECT_EQ(EVP_KEM_secret_len(kem), expected_secret_len);
+
+  const auto test_kem_encap = [&](const auto invoke_encap,
+                                  bool check_encap_output) {
+    state.ciphertext.resize(state.ciphertext_size);
+
+    // Passing the wrong sizes fails (even if larger than required).
+    state.ResizeOutputBuffers(expected_ciphertext_len - 1, expected_secret_len);
+    EXPECT_EQ(invoke_encap(), 0);
+    EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_EVP,
+                            EVP_R_INVALID_CIPHERTEXT_LENGTH));
+    ERR_clear_error();
+    state.ResizeOutputBuffers(expected_ciphertext_len + 1, expected_secret_len);
+    EXPECT_EQ(invoke_encap(), 0);
+    EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_EVP,
+                            EVP_R_INVALID_CIPHERTEXT_LENGTH));
+    ERR_clear_error();
+    state.ResizeOutputBuffers(expected_ciphertext_len, expected_secret_len - 1);
+    EXPECT_EQ(invoke_encap(), 0);
+    EXPECT_TRUE(
+        ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_INVALID_SECRET_LENGTH));
+    ERR_clear_error();
+    state.ResizeOutputBuffers(expected_ciphertext_len, expected_secret_len + 1);
+    EXPECT_EQ(invoke_encap(), 0);
+    EXPECT_TRUE(
+        ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_INVALID_SECRET_LENGTH));
+    ERR_clear_error();
+
+    // Only the correct sizes are accepted.
+    state.ResizeOutputBuffers(expected_ciphertext_len, expected_secret_len);
+    EXPECT_EQ(invoke_encap(), 1);
+
+    if (check_encap_output) {
+      EXPECT_EQ(Bytes(state.ciphertext), Bytes(state.expected_ciphertext));
+      EXPECT_EQ(Bytes(state.secret), Bytes(state.expected_secret));
+    }
+  };
+
+  const auto test_kem_decap = [&]() {
+    // Passing the wrong sizes fails (even if larger than required).
+    state.ResizeOutputBuffers(std::nullopt, expected_secret_len - 1, true);
+    EXPECT_EQ(
+        EVP_KEM_decap(kem, state.decapsulated_secret.data(),
+                      state.decapsulated_secret.size(), state.ciphertext.data(),
+                      state.ciphertext.size(), pkey),
+        0);
+    EXPECT_TRUE(
+        ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_INVALID_SECRET_LENGTH));
+    ERR_clear_error();
+    state.ResizeOutputBuffers(std::nullopt, expected_secret_len + 1, true);
+    EXPECT_EQ(
+        EVP_KEM_decap(kem, state.decapsulated_secret.data(),
+                      state.decapsulated_secret.size(), state.ciphertext.data(),
+                      state.ciphertext.size(), pkey),
+        0);
+    EXPECT_TRUE(
+        ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_INVALID_SECRET_LENGTH));
+    ERR_clear_error();
+
+    state.ResizeOutputBuffers(std::nullopt, expected_secret_len, true);
+    state.CheckDecapsulateResult(
+        t,
+        EVP_KEM_decap(kem, state.decapsulated_secret.data(),
+                      state.decapsulated_secret.size(), state.ciphertext.data(),
+                      state.ciphertext.size(), pkey));
+  };
+
+  if (encapsulate) {
+    test_kem_encap(
+        [&]() {
+          return EVP_KEM_encap(kem, state.ciphertext.data(),
+                               state.ciphertext.size(), state.secret.data(),
+                               state.secret.size(), pkey);
+        },
+        /*check_encap_output=*/false);
+  }
+  if (decapsulate) {
+    test_kem_decap();
+  }
+
+  // Repeat the test using the provided external entropy.
+  if (state.has_encap_entropy) {
+    if (!state.Reset(t)) {
+      return false;
+    }
+    state.ResizeOutputBuffers(expected_ciphertext_len, expected_secret_len);
+
+    // Test that the entropy must be the right length.
+    const size_t original_entropy_len = state.entropy.size();
+    EXPECT_FALSE(EVP_KEM_encap_external_entropy_for_testing(
+        kem, state.ciphertext.data(), state.ciphertext.size(),
+        state.secret.data(), state.secret.size(), pkey, state.entropy.data(),
+        state.entropy.size() - 1));
+    EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_EVP,
+                            EVP_R_INVALID_ENTROPY_LENGTH));
+    ERR_clear_error();
+    state.entropy.resize(original_entropy_len + 1);
+    EXPECT_FALSE(EVP_KEM_encap_external_entropy_for_testing(
+        kem, state.ciphertext.data(), state.ciphertext.size(),
+        state.secret.data(), state.secret.size(), pkey, state.entropy.data(),
+        state.entropy.size()));
+    EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_EVP,
+                            EVP_R_INVALID_ENTROPY_LENGTH));
+    ERR_clear_error();
+    state.entropy.resize(original_entropy_len);
+
+    test_kem_encap(
+        [&]() {
+          return EVP_KEM_encap_external_entropy_for_testing(
+              kem, state.ciphertext.data(), state.ciphertext.size(),
+              state.secret.data(), state.secret.size(), pkey,
+              state.entropy.data(), state.entropy.size());
+        },
+        /*check_encap_output=*/true);
+    if (decapsulate) {
+      test_kem_decap();
+    }
+  }
+
+  return true;
+}
+
 // Tests encapsulation and/or decapsulation. If performing both, this checks
 // that the output of encapsulation is successfully decapsulated to the same
 // shared secret value. If only performing decapsulation, this reads ciphertext
@@ -888,53 +1097,16 @@ bool TestKem(FileTest *t, EVP_PKEY *pkey, bool copy_ctx, bool encapsulate,
     return false;
   }
 
+  KemTestState state;
+  state.expected_ciphertext_len = expected_ciphertext_len;
+  state.expected_secret_len = expected_secret_len;
+  state.should_test_encapsulate = encapsulate;
+  state.should_test_decapsulate = decapsulate;
+
   bssl::UniquePtr<EVP_PKEY_CTX> ctx;
-  std::vector<uint8_t> ciphertext, secret, decapsulated_secret;
-  size_t ciphertext_size, secret_size;
-
-  // Fields populated for test vectors providing entropy for deterministic
-  // encapsulate.
-  bool has_encap_entropy = false;
-  std::vector<uint8_t> entropy, expected_ciphertext, expected_secret;
-
-  const auto resize_output_buffers =
-      [&](std::optional<size_t> new_ciphertext_len,
-          std::optional<size_t> new_secret_len,
-          bool resize_decap_buffer_only = false) {
-        if (new_ciphertext_len) {
-          ciphertext_size = *new_ciphertext_len;
-          ciphertext.resize(ciphertext_size);
-        }
-        if (new_secret_len) {
-          secret_size = *new_secret_len;
-          if (!resize_decap_buffer_only) {
-            secret.resize(secret_size);
-          }
-          decapsulated_secret.resize(secret_size);
-        }
-      };
-
   const auto reset_test_state = [&]() -> bool {
     ctx.reset(EVP_PKEY_CTX_new(pkey, nullptr));
-    resize_output_buffers(0, 0);
-
-    // Read values from the test vector file.
-    if (decapsulate && !encapsulate) {
-      if (!t->GetBytes(&ciphertext, "Input") ||
-          (!t->HasAttribute("DecapsulateFail") &&
-           !t->GetBytes(&secret, "Output"))) {
-        return false;
-      }
-    }
-    if (encapsulate && t->HasAttribute("Entropy")) {
-      has_encap_entropy = true;
-      if (!t->GetBytes(&entropy, "Entropy") ||
-          !t->GetBytes(&expected_ciphertext, "Ciphertext") ||
-          !t->GetBytes(&expected_secret, "Secret")) {
-        return false;
-      }
-    }
-    return true;
+    return state.Reset(t);
   };
 
   if (!reset_test_state()) {
@@ -950,45 +1122,34 @@ bool TestKem(FileTest *t, EVP_PKEY *pkey, bool copy_ctx, bool encapsulate,
     }
 
     // Test the mode that writes the output size.
-    EXPECT_EQ(EVP_PKEY_encapsulate(ctx.get(), nullptr, &ciphertext_size,
-                                   nullptr, &secret_size),
+    EXPECT_EQ(EVP_PKEY_encapsulate(ctx.get(), nullptr, &state.ciphertext_size,
+                                   nullptr, &state.secret_size),
               1);
-    EXPECT_EQ(ciphertext_size, expected_ciphertext_len);
-    EXPECT_EQ(secret_size, expected_secret_len);
+    EXPECT_EQ(state.ciphertext_size, expected_ciphertext_len);
+    EXPECT_EQ(state.secret_size, expected_secret_len);
 
     // If insufficient space is supplied, the function will fail.
-    resize_output_buffers(ciphertext_size - 1, secret_size - 1);
-    EXPECT_EQ(
-        EVP_PKEY_encapsulate(ctx.get(), ciphertext.data(), &ciphertext_size,
-                             secret.data(), &secret_size),
-        0);
+    state.ResizeOutputBuffers(state.ciphertext_size - 1, state.secret_size - 1);
+    EXPECT_EQ(EVP_PKEY_encapsulate(ctx.get(), state.ciphertext.data(),
+                                   &state.ciphertext_size, state.secret.data(),
+                                   &state.secret_size),
+              0);
     EXPECT_TRUE(
         ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_BUFFER_TOO_SMALL));
     ERR_clear_error();
 
     // Test the mode that actually performs the operation.
-    resize_output_buffers(expected_ciphertext_len + 1, expected_secret_len + 1);
-    EXPECT_EQ(
-        EVP_PKEY_encapsulate(ctx.get(), ciphertext.data(), &ciphertext_size,
-                             secret.data(), &secret_size),
-        1);
+    state.ResizeOutputBuffers(expected_ciphertext_len + 1,
+                              expected_secret_len + 1);
+    EXPECT_EQ(EVP_PKEY_encapsulate(ctx.get(), state.ciphertext.data(),
+                                   &state.ciphertext_size, state.secret.data(),
+                                   &state.secret_size),
+              1);
     // The correct output sizes are written out.
-    EXPECT_EQ(ciphertext_size, expected_ciphertext_len);
-    EXPECT_EQ(secret_size, expected_secret_len);
-    resize_output_buffers(ciphertext_size, secret_size);
+    EXPECT_EQ(state.ciphertext_size, expected_ciphertext_len);
+    EXPECT_EQ(state.secret_size, expected_secret_len);
+    state.ResizeOutputBuffers(state.ciphertext_size, state.secret_size);
   }
-
-  const auto check_decapsulate_result = [&](int result) {
-    if (t->HasAttribute("DecapsulateFail")) {
-      EXPECT_EQ(result, 0);
-      return;
-    }
-    EXPECT_EQ(result, 1);
-    // The correct output size was written out.
-    EXPECT_EQ(secret_size, expected_secret_len);
-    decapsulated_secret.resize(secret_size);
-    EXPECT_EQ(Bytes(secret), Bytes(decapsulated_secret));
-  };
 
   // Perform decapsulation.
   if (decapsulate) {
@@ -1000,148 +1161,34 @@ bool TestKem(FileTest *t, EVP_PKEY *pkey, bool copy_ctx, bool encapsulate,
     }
 
     // Test the mode that writes the output size.
-    secret_size = 0;
-    EXPECT_EQ(EVP_PKEY_decapsulate(ctx.get(), nullptr, &secret_size,
-                                   ciphertext.data(), ciphertext.size()),
-              1);
-    EXPECT_EQ(secret_size, expected_secret_len);
+    state.secret_size = 0;
+    EXPECT_EQ(
+        EVP_PKEY_decapsulate(ctx.get(), nullptr, &state.secret_size,
+                             state.ciphertext.data(), state.ciphertext.size()),
+        1);
+    EXPECT_EQ(state.secret_size, expected_secret_len);
 
     // If insufficient space is supplied, the function will fail.
-    resize_output_buffers(std::nullopt, secret_size - 1, true);
-    EXPECT_EQ(EVP_PKEY_decapsulate(ctx.get(), decapsulated_secret.data(),
-                                   &secret_size, ciphertext.data(),
-                                   ciphertext.size()),
+    state.ResizeOutputBuffers(std::nullopt, state.secret_size - 1, true);
+    EXPECT_EQ(EVP_PKEY_decapsulate(ctx.get(), state.decapsulated_secret.data(),
+                                   &state.secret_size, state.ciphertext.data(),
+                                   state.ciphertext.size()),
               0);
     EXPECT_TRUE(
         ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_BUFFER_TOO_SMALL));
     ERR_clear_error();
 
     // Test the mode that actually performs the operation.
-    resize_output_buffers(std::nullopt, secret_size + 1, true);
-    check_decapsulate_result(EVP_PKEY_decapsulate(
-        ctx.get(), decapsulated_secret.data(), &secret_size, ciphertext.data(),
-        ciphertext.size()));
+    state.ResizeOutputBuffers(std::nullopt, state.secret_size + 1, true);
+    state.CheckDecapsulateResult(
+        t, EVP_PKEY_decapsulate(ctx.get(), state.decapsulated_secret.data(),
+                                &state.secret_size, state.ciphertext.data(),
+                                state.ciphertext.size()));
   }
 
   // Repeat everything the EVP_KEM way, which is simpler.
-  if (!reset_test_state()) {
-    return false;
-  }
-
-  EXPECT_EQ(EVP_KEM_ciphertext_len(alg_info.kem), expected_ciphertext_len);
-  EXPECT_EQ(EVP_KEM_secret_len(alg_info.kem), expected_secret_len);
-
-  const auto test_kem_encap = [&](const auto invoke_encap,
-                                  bool check_encap_output) {
-    ciphertext.resize(ciphertext_size);
-
-    // Passing the wrong sizes fails (even if larger than required).
-    resize_output_buffers(expected_ciphertext_len - 1, expected_secret_len);
-    EXPECT_EQ(invoke_encap(), 0);
-    EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_EVP,
-                            EVP_R_INVALID_CIPHERTEXT_LENGTH));
-    ERR_clear_error();
-    resize_output_buffers(expected_ciphertext_len + 1, expected_secret_len);
-    EXPECT_EQ(invoke_encap(), 0);
-    EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_EVP,
-                            EVP_R_INVALID_CIPHERTEXT_LENGTH));
-    ERR_clear_error();
-    resize_output_buffers(expected_ciphertext_len, expected_secret_len - 1);
-    EXPECT_EQ(invoke_encap(), 0);
-    EXPECT_TRUE(
-        ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_INVALID_SECRET_LENGTH));
-    ERR_clear_error();
-    resize_output_buffers(expected_ciphertext_len, expected_secret_len + 1);
-    EXPECT_EQ(invoke_encap(), 0);
-    EXPECT_TRUE(
-        ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_INVALID_SECRET_LENGTH));
-    ERR_clear_error();
-
-    // Only the correct sizes are accepted.
-    resize_output_buffers(expected_ciphertext_len, expected_secret_len);
-    EXPECT_EQ(invoke_encap(), 1);
-
-    if (check_encap_output) {
-      EXPECT_EQ(Bytes(ciphertext), Bytes(expected_ciphertext));
-      EXPECT_EQ(Bytes(secret), Bytes(expected_secret));
-    }
-  };
-
-  const auto test_kem_decap = [&]() {
-    // Passing the wrong sizes fails (even if larger than required).
-    resize_output_buffers(std::nullopt, expected_secret_len - 1, true);
-    EXPECT_EQ(EVP_KEM_decap(alg_info.kem, decapsulated_secret.data(),
-                            decapsulated_secret.size(), ciphertext.data(),
-                            ciphertext.size(), pkey),
-              0);
-    EXPECT_TRUE(
-        ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_INVALID_SECRET_LENGTH));
-    ERR_clear_error();
-    resize_output_buffers(std::nullopt, expected_secret_len + 1, true);
-    EXPECT_EQ(EVP_KEM_decap(alg_info.kem, decapsulated_secret.data(),
-                            decapsulated_secret.size(), ciphertext.data(),
-                            ciphertext.size(), pkey),
-              0);
-    EXPECT_TRUE(
-        ErrorEquals(ERR_get_error(), ERR_LIB_EVP, EVP_R_INVALID_SECRET_LENGTH));
-    ERR_clear_error();
-
-    resize_output_buffers(std::nullopt, expected_secret_len, true);
-    check_decapsulate_result(EVP_KEM_decap(
-        alg_info.kem, decapsulated_secret.data(), decapsulated_secret.size(),
-        ciphertext.data(), ciphertext.size(), pkey));
-  };
-
-  if (encapsulate) {
-    test_kem_encap(
-        [&]() {
-          return EVP_KEM_encap(alg_info.kem, ciphertext.data(),
-                               ciphertext.size(), secret.data(), secret.size(),
-                               pkey);
-        },
-        /*check_encap_output=*/false);
-  }
-  if (decapsulate) {
-    test_kem_decap();
-  }
-
-  // Repeat the test using the provided external entropy.
-  if (has_encap_entropy) {
-    if (!reset_test_state()) {
-      return false;
-    }
-    resize_output_buffers(expected_ciphertext_len, expected_secret_len);
-
-    // Test that the entropy must be the right length.
-    const size_t original_entropy_len = entropy.size();
-    EXPECT_FALSE(EVP_KEM_encap_external_entropy_for_testing(
-        alg_info.kem, ciphertext.data(), ciphertext.size(), secret.data(),
-        secret.size(), pkey, entropy.data(), entropy.size() - 1));
-    EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_EVP,
-                            EVP_R_INVALID_ENTROPY_LENGTH));
-    ERR_clear_error();
-    entropy.resize(original_entropy_len + 1);
-    EXPECT_FALSE(EVP_KEM_encap_external_entropy_for_testing(
-        alg_info.kem, ciphertext.data(), ciphertext.size(), secret.data(),
-        secret.size(), pkey, entropy.data(), entropy.size()));
-    EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_EVP,
-                            EVP_R_INVALID_ENTROPY_LENGTH));
-    ERR_clear_error();
-    entropy.resize(original_entropy_len);
-
-    test_kem_encap(
-        [&]() {
-          return EVP_KEM_encap_external_entropy_for_testing(
-              alg_info.kem, ciphertext.data(), ciphertext.size(), secret.data(),
-              secret.size(), pkey, entropy.data(), entropy.size());
-        },
-        /*check_encap_output=*/true);
-    if (decapsulate) {
-      test_kem_decap();
-    }
-  }
-
-  return true;
+  return TestEVPKem(t, alg_info.kem, pkey, encapsulate, decapsulate,
+                    expected_ciphertext_len, expected_secret_len);
 }
 
 bool TestEVPOperation(FileTest *t, const KeyMap *key_map, EVP_PKEY *key,
@@ -1151,7 +1198,7 @@ bool TestEVPOperation(FileTest *t, const KeyMap *key_map, EVP_PKEY *key,
   int (*key_op)(EVP_PKEY_CTX *ctx, uint8_t *out, size_t *out_len,
                 const uint8_t *in, size_t in_len) = nullptr;
   int (*md_op_init)(EVP_MD_CTX *ctx, EVP_PKEY_CTX **pctx, const EVP_MD *type,
-                    ENGINE *e, EVP_PKEY *pkey) = nullptr;
+                    ENGINE *e, const EVP_PKEY *pkey) = nullptr;
   bool is_verify = false;
   if (t->GetType() == "Decrypt") {
     key_op_init = EVP_PKEY_decrypt_init;
@@ -1362,10 +1409,71 @@ bool TestEVP(FileTest *t, KeyMap *key_map) {
   return true;
 }
 
-void RunEVPTests(const char *path) {
+// The DHKEMs are only defined in the context of HPKE and are not natural KEMs
+// on the X25519 and P-256 key types, so they are tested here separately.
+bool TestDHKEM(FileTest *t, KeyMap *key_map) {
+  if (t->GetType() == "Key") {
+    return ImportKey(t, key_map);
+  }
+
+  bool encapsulate, decapsulate;
+  if (t->GetType() == "Encapsulate") {
+    encapsulate = true;
+    decapsulate = false;
+  } else if (t->GetType() == "EncapsulateDecapsulate") {
+    encapsulate = true;
+    decapsulate = true;
+  } else if (t->GetType() == "Decapsulate") {
+    encapsulate = false;
+    decapsulate = true;
+  } else {
+    ADD_FAILURE() << "Unknown test " << t->GetType();
+    return false;
+  }
+
+  std::string kem_name;
+  if (!t->GetAttribute(&kem_name, "KEM")) {
+    return false;
+  }
+  const EVP_KEM *kem;
+  size_t expected_ciphertext_len, expected_secret_len;
+  if (kem_name == "DHKEM-X25519-HKDF-SHA256") {
+    kem = EVP_kem_dhkem_x25519_hkdf_sha256();
+    // The encapsulated key is an X25519 public value and the shared secret is
+    // the output of HKDF-SHA256.
+    expected_ciphertext_len = X25519_PUBLIC_VALUE_LEN;
+    expected_secret_len = SHA256_DIGEST_LENGTH;
+  } else if (kem_name == "DHKEM-P256-HKDF-SHA256") {
+    kem = EVP_kem_dhkem_p256_hkdf_sha256();
+    // The encapsulated key is an uncompressed P-256 point: a one-byte prefix
+    // followed by two 32-byte coordinates. The shared secret is the output of
+    // HKDF-SHA256.
+    expected_ciphertext_len = 1 + 2 * 32;
+    expected_secret_len = SHA256_DIGEST_LENGTH;
+  } else {
+    ADD_FAILURE() << "Unknown KEM: " << kem_name;
+    return false;
+  }
+
+  auto keys = FindKeys(key_map, t->GetParameter());
+  if (keys.empty()) {
+    return false;
+  }
+  for (const SourceAndKey *key : keys) {
+    SCOPED_TRACE(key->source);
+    if (!TestEVPKem(t, kem, key->pkey.get(), encapsulate, decapsulate,
+                    expected_ciphertext_len, expected_secret_len)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void RunFileTests(const char *path,
+                  bool (*test_func)(FileTest *t, KeyMap *key_map)) {
   KeyMap key_map;
   FileTestGTest(path, [&](FileTest *t) {
-    bool result = TestEVP(t, &key_map);
+    bool result = test_func(t, &key_map);
     if (t->HasAttribute("Error")) {
       ASSERT_FALSE(result) << "Operation unexpectedly succeeded.";
       uint32_t err = ERR_peek_error();
@@ -1377,11 +1485,17 @@ void RunEVPTests(const char *path) {
   });
 }
 
+void RunEVPTests(const char *path) { RunFileTests(path, TestEVP); }
+
 TEST(EVPTest, GeneralTestVectors) {
   RunEVPTests("crypto/evp/test/evp_tests.txt");
 }
 
 TEST(EVPTest, DHTestVectors) { RunEVPTests("crypto/evp/test/dh_tests.txt"); }
+
+TEST(EVPTest, DHKEMTestVectors) {
+  RunFileTests("crypto/evp/test/dhkem_tests.txt", TestDHKEM);
+}
 
 TEST(EVPTest, ECTestVectors) { RunEVPTests("crypto/evp/test/ec_tests.txt"); }
 

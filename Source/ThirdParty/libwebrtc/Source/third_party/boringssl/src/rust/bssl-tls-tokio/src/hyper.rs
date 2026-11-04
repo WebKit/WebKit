@@ -165,17 +165,10 @@ fn hyper_async_read<T: Read>(
     ctx: &mut Context<'_>,
     buffer: &mut [u8],
 ) -> AbstractSocketResult {
-    let buffer_len = buffer.len();
     let mut buf = hyper::rt::ReadBuf::new(buffer);
     loop {
         return match this.as_mut().poll_read(ctx, buf.unfilled()) {
-            Poll::Ready(Ok(())) => {
-                if buf.filled().is_empty() && buffer_len > 0 {
-                    AbstractSocketResult::EndOfStream
-                } else {
-                    AbstractSocketResult::Ok(buf.filled().len())
-                }
-            }
+            Poll::Ready(Ok(())) => AbstractSocketResult::Ok(buf.filled().len()),
             Poll::Pending => AbstractSocketResult::Retry,
             Poll::Ready(Err(e)) => {
                 if e.kind() == io::ErrorKind::Interrupted {
@@ -194,15 +187,7 @@ fn hyper_async_write<T: Write>(
 ) -> AbstractSocketResult {
     loop {
         return match this.as_mut().poll_write(ctx, buffer) {
-            Poll::Ready(Ok(bytes)) => {
-                if buffer.is_empty() {
-                    AbstractSocketResult::Ok(0)
-                } else if bytes == 0 {
-                    AbstractSocketResult::EndOfStream
-                } else {
-                    AbstractSocketResult::Ok(bytes)
-                }
-            }
+            Poll::Ready(Ok(bytes)) => AbstractSocketResult::Ok(bytes),
             Poll::Pending => AbstractSocketResult::Retry,
             Poll::Ready(Err(e)) => {
                 if e.kind() == io::ErrorKind::Interrupted {
@@ -285,7 +270,7 @@ impl<Role, S: Unpin> Read for TlsStream<Role, S> {
         {
             Ok(Some(status)) => status,
             Ok(None) => return Poll::Pending,
-            Err(e) => return Poll::Ready(Err(io::Error::other(e))),
+            Err(e) => return Poll::Ready(Err(crate::map_tls_err(e))),
         };
         match status {
             IoStatus::Ok(bytes) => {
@@ -296,7 +281,6 @@ impl<Role, S: Unpin> Read for TlsStream<Role, S> {
                 }
                 Poll::Ready(Ok(()))
             }
-            IoStatus::EndOfStream => Poll::Ready(Ok(())),
             _ => Poll::Ready(Err(io::Error::other("Unexpected I/O status"))),
         }
     }
@@ -311,11 +295,10 @@ impl<Role, S: Unpin> Write for TlsStream<Role, S> {
         let status = match self.conn.inner.as_pin_mut().async_poll_write(buf, cx) {
             Ok(Some(status)) => status,
             Ok(None) => return Poll::Pending,
-            Err(e) => return Poll::Ready(Err(io::Error::other(e))),
+            Err(e) => return Poll::Ready(Err(crate::map_tls_err(e))),
         };
         match status {
             IoStatus::Ok(bytes) => Poll::Ready(Ok(bytes)),
-            IoStatus::EndOfStream => Poll::Ready(Ok(0)),
             _ => Poll::Ready(Err(io::Error::other("Unexpected I/O status"))),
         }
     }
@@ -324,11 +307,10 @@ impl<Role, S: Unpin> Write for TlsStream<Role, S> {
         let status = match self.conn.inner.as_pin_mut().async_poll_flush(cx) {
             Ok(Some(status)) => status,
             Ok(None) => return Poll::Pending,
-            Err(e) => return Poll::Ready(Err(io::Error::other(e))),
+            Err(e) => return Poll::Ready(Err(crate::map_tls_err(e))),
         };
         match status {
             IoStatus::Ok(_) => Poll::Ready(Ok(())),
-            IoStatus::EndOfStream => Poll::Ready(Ok(())),
             _ => Poll::Ready(Err(io::Error::other("Unexpected I/O status"))),
         }
     }

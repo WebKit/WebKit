@@ -879,6 +879,9 @@ typedef struct SetOffsetsLoc {
 //! Maximum number of estimated RD Cost records for compound average.
 #define TOP_COMP_AVG_EST_RD_COUNT 5
 
+//! Maximum number of estimated RD Cost records for smooth interintra.
+#define TOP_SMOOTH_INTERINTRA_RD_COUNT 2
+
 /*! \brief Encoder's parameters related to the current coding block.
  *
  * This struct contains most of the information the encoder needs to encode the
@@ -1359,6 +1362,10 @@ typedef struct macroblock {
   /**@{*/
   //! Variance of the source frame.
   unsigned int source_variance;
+  //! Sub-block local variance energy difference.
+  int sub_block_energy_diff;
+  //! Cached block size for sub-block local variance energy difference.
+  BLOCK_SIZE sub_block_energy_bsize;
   //! Flag to indicate coding block is zero sad.
   int block_is_zero_sad;
   //! Flag to indicate superblock ME in variance partition is determined to be
@@ -1378,6 +1385,9 @@ typedef struct macroblock {
   //! Flag to indicate if a fixed partition should be used, only if the
   // speed feature rt_sf->use_fast_fixed_part is enabled.
   int sb_force_fixed_part;
+  //! Reference already copied into the current superblock when its row
+  // started, or NONE_FRAME. Only set for skip segment superblocks.
+  MV_REFERENCE_FRAME sb_copied_ref;
   //! SSE of the current predictor.
   unsigned int pred_sse[REF_FRAMES];
   //! Prediction for ML based partition.
@@ -1431,6 +1441,9 @@ typedef struct macroblock {
 
   /*!\brief Array of best estimated RD Costs of compound average. */
   int64_t top_comp_avg_est_rd[TOP_COMP_AVG_EST_RD_COUNT];
+
+  /*!\brief Array of best estimated RD Costs of smooth interintra. */
+  int64_t top_smooth_interintra_rd[TOP_SMOOTH_INTERINTRA_RD_COUNT];
 
 #if CONFIG_PARTITION_SEARCH_ORDER
   /*!\brief Pointer to RD_STATS structure to be used in

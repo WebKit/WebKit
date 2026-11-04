@@ -43,7 +43,7 @@ fn stdio() {
         // Use `std::io::Write::write_all`
         server_conn.write_all(b"Oh yeah definitely!").unwrap();
         server_conn.established().unwrap().sync_shutdown().unwrap();
-        // Second shutdown poll.
+        // Calling shutdown the second time does not do anything.
         server_conn.established().unwrap().sync_shutdown().unwrap();
     });
 
@@ -53,7 +53,10 @@ fn stdio() {
     // Use `std::io::Read::read_exact`
     client_conn.read_exact(&mut message).unwrap();
     assert_eq!(message, *b"Oh yeah definitely!");
-    client_conn.established().unwrap().sync_shutdown().unwrap();
+    let mut message = [0; 1];
+    // We might race with the peer closing, so let's just try to read something
+    // out and we do not care the status of the read in the end.
+    let _ = client_conn.read(&mut message);
     thread.join().unwrap();
 }
 
@@ -120,4 +123,48 @@ fn high_level_sync() -> Result<(), crate::errors::Error> {
     server_thread.join().unwrap();
 
     Ok(())
+}
+
+#[cfg(unix)]
+#[test]
+fn abrupt_transport_eof_is_unexpected_eof() {
+    use std::io::Read;
+
+    use crate::ReceiveBuffer;
+    use crate::errors::{Error, IoError};
+    use crate::io::sync_io::{NoAsync, StdIoWithReactor};
+
+    let (mut server_conn, mut client_conn) = dumb_server_client().unwrap();
+
+    let (server_rx, server_tx) = std::io::pipe().unwrap();
+    let (client_rx, client_tx) = std::io::pipe().unwrap();
+    let server_rx = StdIoWithReactor::new(server_rx, NoAsync);
+    let server_tx = StdIoWithReactor::new(server_tx, NoAsync);
+    let client_rx = StdIoWithReactor::new(client_rx, NoAsync);
+    let client_tx = StdIoWithReactor::new(client_tx, NoAsync);
+
+    server_conn.set_split_io(client_rx, server_tx).unwrap();
+    client_conn.set_split_io(server_rx, client_tx).unwrap();
+
+    let thread = std::thread::spawn(move || {
+        server_conn.accept().unwrap();
+        // Drop the server connection abruptly without sending close_notify.
+        drop(server_conn);
+    });
+
+    client_conn.connect().unwrap();
+    thread.join().unwrap();
+
+    // At the connection level, `sync_read` must report `Err(Error::Io(IoError::EndOfStream))`,
+    // not `Ok(IoStatus::EndOfStream)`.
+    let mut buf = [0u8; 16];
+    let mut recv_buf = ReceiveBuffer::new(&mut buf);
+    assert!(matches!(
+        client_conn.poll_read(&mut recv_buf),
+        Err(Error::Io(IoError::EndOfStream))
+    ));
+
+    // Through `std::io::Read`, this translates into `io::ErrorKind::UnexpectedEof`.
+    let err = Read::read(&mut client_conn, &mut buf).unwrap_err();
+    assert_eq!(err.kind(), std::io::ErrorKind::UnexpectedEof);
 }

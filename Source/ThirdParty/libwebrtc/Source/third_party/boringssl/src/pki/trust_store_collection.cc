@@ -18,9 +18,6 @@
 
 BSSL_NAMESPACE_BEGIN
 
-TrustStoreCollection::TrustStoreCollection() = default;
-TrustStoreCollection::~TrustStoreCollection() = default;
-
 void TrustStoreCollection::AddTrustStore(TrustStore *store) {
   BSSL_CHECK(store);
   stores_.push_back(store);

@@ -95,30 +95,38 @@ rtc_library("network_queue") {
     "../../../rtc_base:logging",
     "../../../rtc_base:random",
     "../../transport:ecn_marking",
-    "../../units:data_rate",
     "../../units:data_size",
     "../../units:time_delta",
     "../../units:timestamp",
   ]
 }
 
-rtc_library("network_queue_unittests") {
-  sources = [
-    "dual_pi2_network_queue_unittest.cc",
-    "leaky_bucket_network_queue_unittest.cc",
-  ]
+if (rtc_include_tests) {
+  rtc_cc_test("dual_pi2_network_queue_unittest") {
+    sources = [ "dual_pi2_network_queue_unittest.cc" ]
+    deps = [
+      ":network_queue",
+      "../..:simulated_network_api",
+      "../../../test:test_support",
+      "../../transport:ecn_marking",
+      "../../units:data_size",
+      "../../units:time_delta",
+      "../../units:timestamp",
+    ]
+  }
 
-  testonly = true
-  deps = [
-    ":network_queue",
-    "../..:simulated_network_api",
-    "../../../test:test_support",
-    "../../transport:ecn_marking",
-    "../../units:data_rate",
-    "../../units:data_size",
-    "../../units:time_delta",
-    "../../units:timestamp",
-  ]
+  rtc_cc_test("leaky_bucket_network_queue_unittest") {
+    sources = [ "leaky_bucket_network_queue_unittest.cc" ]
+    deps = [
+      ":network_queue",
+      "../..:simulated_network_api",
+      "../../../test:test_support",
+      "../../transport:ecn_marking",
+      "../../units:data_size",
+      "../../units:time_delta",
+      "../../units:timestamp",
+    ]
+  }
 }
 
 rtc_library("token_bucket_network_behavior_config") {

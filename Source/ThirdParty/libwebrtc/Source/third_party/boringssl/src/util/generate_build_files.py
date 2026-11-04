@@ -92,14 +92,6 @@ class Android(object):
       self.PrintDefaults(blueprint, 'boringssl_ssl_test_sources', files['ssl_test'])
       self.PrintDefaults(blueprint, 'libpki_sources', files['pki'])
 
-    # Legacy Android.mk format, only used by Trusty in new branches
-    with open('sources.mk', 'w+') as makefile:
-      makefile.write(self.header)
-      makefile.write('\n')
-      self.PrintVariableSection(makefile, 'crypto_sources', files['crypto'])
-      self.PrintVariableSection(makefile, 'crypto_sources_asm',
-                                files['crypto_asm'])
-
   def PrintDefaults(self, blueprint, name, files, asm_files=[], data=[]):
     """Print a cc_defaults section from a list of C files and optionally assembly outputs"""
     name = f'{TARGET_PREFIX}{name}'
@@ -155,49 +147,6 @@ class Android(object):
     # use the variable listed in the CMake perlasm line, available in
     # ExtractPerlAsmFromCMakeFile.
     return filter(lambda p: ("/crypto/fipsmodule/" in p) == want_bcm, asm)
-
-
-class AndroidCMake(object):
-
-  def __init__(self):
-    self.header = LicenseHeader("#") + """
-# This file is created by generate_build_files.py. Do not edit manually.
-# To specify a custom path prefix, set BORINGSSL_ROOT before including this
-# file, or use list(TRANSFORM ... PREPEND) from CMake 3.12.
-
-"""
-
-  def PrintVariableSection(self, out, name, files):
-    out.write('set(%s\n' % name)
-    for f in sorted(files):
-      # Ideally adding the prefix would be the caller's job, but
-      # list(TRANSFORM ... PREPEND) is only available starting CMake 3.12. When
-      # sources.cmake is the source of truth, we can ask Android to either write
-      # a CMake function or update to 3.12.
-      out.write('  ${BORINGSSL_ROOT}%s\n' % f)
-    out.write(')\n')
-
-  def WriteFiles(self, files):
-    # The Android emulator uses a custom CMake buildsystem.
-    #
-    # TODO(crbug.com/boringssl/542): Move our various source lists into
-    # sources.cmake and have Android consume that directly.
-    with open('android-sources.cmake', 'w+') as out:
-      out.write(self.header)
-
-      self.PrintVariableSection(out, 'crypto_sources', files['crypto'])
-      self.PrintVariableSection(out, 'crypto_sources_asm', files['crypto_asm'])
-      self.PrintVariableSection(out, 'crypto_sources_nasm',
-                                files['crypto_nasm'])
-      self.PrintVariableSection(out, 'ssl_sources', files['ssl'])
-      self.PrintVariableSection(out, 'tool_sources', files['tool'])
-      self.PrintVariableSection(out, 'test_support_sources',
-                                files['test_support'])
-      self.PrintVariableSection(out, 'crypto_test_sources',
-                                files['crypto_test'])
-      self.PrintVariableSection(out, 'crypto_test_data',
-                                files['crypto_test_data'])
-      self.PrintVariableSection(out, 'ssl_test_sources', files['ssl_test'])
 
 
 class Bazel(object):
@@ -668,7 +617,6 @@ def main(platforms):
 
 ALL_PLATFORMS = {
     'android': Android,
-    'android-cmake': AndroidCMake,
     'bazel': Bazel,
     'cmake': CMake,
     'eureka': Eureka,

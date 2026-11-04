@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_CMS_H
 #define OPENSSL_HEADER_CMS_H
 
-#include <openssl/base.h>   // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
 
 #include <openssl/stack.h>
 
@@ -69,8 +69,9 @@ DECLARE_STACK_OF(X509)
 // incomplete. `data` will then be ignored and should be NULL. The caller can
 // then continue configuring it and finalizing it with `CMS_final`. Otherwise,
 // the object will be finalized with `data` and `flags` passed to `CMS_final`.
-OPENSSL_EXPORT CMS_ContentInfo *CMS_sign(X509 *signcert, EVP_PKEY *pkey,
-                                         STACK_OF(X509) *certs, BIO *data,
+OPENSSL_EXPORT CMS_ContentInfo *CMS_sign(const X509 *signcert,
+                                         const EVP_PKEY *pkey,
+                                         const STACK_OF(X509) *certs, BIO *data,
                                          uint32_t flags);
 
 // CMS_ContentInfo_free releases memory associated with `cms`.
@@ -102,7 +103,8 @@ OPENSSL_EXPORT void CMS_ContentInfo_free(CMS_ContentInfo *cms);
 // Subsequent calls will fail. Additionally, only RSA keys are currently
 // supported for `pkey`.
 OPENSSL_EXPORT CMS_SignerInfo *CMS_add1_signer(CMS_ContentInfo *cms,
-                                               X509 *signcert, EVP_PKEY *pkey,
+                                               const X509 *signcert,
+                                               const EVP_PKEY *pkey,
                                                const EVP_MD *md,
                                                uint32_t flags);
 

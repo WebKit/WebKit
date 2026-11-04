@@ -47,7 +47,7 @@ struct EVP_PKEY_ALG_EC : public EVP_PKEY_ALG {
 extern const EVP_PKEY_ASN1_METHOD ec_asn1_meth;
 extern const EVP_PKEY_CTX_METHOD ec_pkey_meth;
 
-static int eckey_pub_encode(CBB *out, const EvpPkey *key) {
+int eckey_pub_encode(CBB *out, const EvpPkey *key) {
   const EC_KEY *ec_key = reinterpret_cast<const EC_KEY *>(key->pkey);
   const EC_GROUP *group = EC_KEY_get0_group(ec_key);
   const EC_POINT *public_key = EC_KEY_get0_public_key(ec_key);
@@ -71,9 +71,9 @@ static int eckey_pub_encode(CBB *out, const EvpPkey *key) {
   return 1;
 }
 
-static bssl::evp_decode_result_t eckey_pub_decode(const EVP_PKEY_ALG *alg,
-                                                  EvpPkey *out, CBS *params,
-                                                  CBS *key) {
+bssl::evp_decode_result_t eckey_pub_decode(const EVP_PKEY_ALG *alg,
+                                           EvpPkey *out, CBS *params,
+                                           CBS *key) {
   const auto *ec_alg = static_cast<const EVP_PKEY_ALG_EC *>(alg);
   if (ec_alg->ec_group == nullptr) {
     return evp_decode_unsupported;
@@ -107,7 +107,7 @@ static bssl::evp_decode_result_t eckey_pub_decode(const EVP_PKEY_ALG *alg,
   return evp_decode_ok;
 }
 
-static bool eckey_pub_equal(const EvpPkey *a, const EvpPkey *b) {
+bool eckey_pub_equal(const EvpPkey *a, const EvpPkey *b) {
   const EC_KEY *a_ec = reinterpret_cast<const EC_KEY *>(a->pkey);
   const EC_KEY *b_ec = reinterpret_cast<const EC_KEY *>(b->pkey);
   const EC_GROUP *group = EC_KEY_get0_group(b_ec);
@@ -116,9 +116,9 @@ static bool eckey_pub_equal(const EvpPkey *a, const EvpPkey *b) {
   return EC_POINT_cmp(group, pa, pb, nullptr) == 0;
 }
 
-static bssl::evp_decode_result_t eckey_priv_decode(const EVP_PKEY_ALG *alg,
-                                                   EvpPkey *out, CBS *params,
-                                                   CBS *key) {
+bssl::evp_decode_result_t eckey_priv_decode(const EVP_PKEY_ALG *alg,
+                                            EvpPkey *out, CBS *params,
+                                            CBS *key) {
   const auto *ec_alg = static_cast<const EVP_PKEY_ALG_EC *>(alg);
   if (ec_alg->ec_group == nullptr) {
     return evp_decode_unsupported;
@@ -149,7 +149,7 @@ static bssl::evp_decode_result_t eckey_priv_decode(const EVP_PKEY_ALG *alg,
   return evp_decode_ok;
 }
 
-static int eckey_priv_encode(CBB *out, const EvpPkey *key) {
+int eckey_priv_encode(CBB *out, const EvpPkey *key) {
   const EC_KEY *ec_key = reinterpret_cast<const EC_KEY *>(key->pkey);
 
   // Omit the redundant copy of the curve name. This contradicts RFC 5915 but
@@ -176,8 +176,8 @@ static int eckey_priv_encode(CBB *out, const EvpPkey *key) {
   return 1;
 }
 
-static int eckey_set1_tls_encodedpoint(EvpPkey *pkey, const uint8_t *in,
-                                       size_t len) {
+int eckey_set1_tls_encodedpoint(EvpPkey *pkey, const uint8_t *in,
+                                size_t len) {
   EC_KEY *ec_key = reinterpret_cast<EC_KEY *>(pkey->pkey);
   if (ec_key == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_NO_KEY_SET);
@@ -187,8 +187,8 @@ static int eckey_set1_tls_encodedpoint(EvpPkey *pkey, const uint8_t *in,
   return EC_KEY_oct2key(ec_key, in, len, nullptr);
 }
 
-static size_t eckey_get1_tls_encodedpoint(const EvpPkey *pkey,
-                                          uint8_t **out_ptr) {
+size_t eckey_get1_tls_encodedpoint(const EvpPkey *pkey,
+                                   uint8_t **out_ptr) {
   const EC_KEY *ec_key = reinterpret_cast<const EC_KEY *>(pkey->pkey);
   if (ec_key == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_NO_KEY_SET);
@@ -199,12 +199,12 @@ static size_t eckey_get1_tls_encodedpoint(const EvpPkey *pkey,
                         nullptr);
 }
 
-static int int_ec_size(const EvpPkey *pkey) {
+int int_ec_size(const EvpPkey *pkey) {
   const EC_KEY *ec_key = reinterpret_cast<const EC_KEY *>(pkey->pkey);
   return ECDSA_size(ec_key);
 }
 
-static int ec_bits(const EvpPkey *pkey) {
+int ec_bits(const EvpPkey *pkey) {
   const EC_KEY *ec_key = reinterpret_cast<const EC_KEY *>(pkey->pkey);
   const EC_GROUP *group = EC_KEY_get0_group(ec_key);
   if (group == nullptr) {
@@ -214,12 +214,12 @@ static int ec_bits(const EvpPkey *pkey) {
   return EC_GROUP_order_bits(group);
 }
 
-static int ec_missing_parameters(const EvpPkey *pkey) {
+int ec_missing_parameters(const EvpPkey *pkey) {
   const EC_KEY *ec_key = reinterpret_cast<const EC_KEY *>(pkey->pkey);
   return ec_key == nullptr || EC_KEY_get0_group(ec_key) == nullptr;
 }
 
-static int ec_copy_parameters(EvpPkey *to, const EvpPkey *from) {
+int ec_copy_parameters(EvpPkey *to, const EvpPkey *from) {
   const EC_KEY *from_key = reinterpret_cast<const EC_KEY *>(from->pkey);
   if (from_key == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_NO_KEY_SET);
@@ -239,7 +239,7 @@ static int ec_copy_parameters(EvpPkey *to, const EvpPkey *from) {
   return EC_KEY_set_group(reinterpret_cast<EC_KEY *>(to->pkey), group);
 }
 
-static bool ec_equal_parameters(const EvpPkey *a, const EvpPkey *b) {
+bool ec_equal_parameters(const EvpPkey *a, const EvpPkey *b) {
   const EC_KEY *a_ec = reinterpret_cast<const EC_KEY *>(a->pkey);
   const EC_KEY *b_ec = reinterpret_cast<const EC_KEY *>(b->pkey);
   if (a_ec == nullptr || b_ec == nullptr) {
@@ -254,22 +254,22 @@ static bool ec_equal_parameters(const EvpPkey *a, const EvpPkey *b) {
   return EC_GROUP_cmp(group_a, group_b, nullptr) == 0;
 }
 
-static void int_ec_free(EvpPkey *pkey) {
+void int_ec_free(EvpPkey *pkey) {
   EC_KEY_free(reinterpret_cast<EC_KEY *>(pkey->pkey));
   pkey->pkey = nullptr;
 }
 
-static int eckey_opaque(const EvpPkey *pkey) {
+int eckey_opaque(const EvpPkey *pkey) {
   const EC_KEY *ec_key = reinterpret_cast<const EC_KEY *>(pkey->pkey);
   return EC_KEY_is_opaque(ec_key);
 }
 
-static bool eckey_pub_present(const EvpPkey *pkey) {
+bool eckey_pub_present(const EvpPkey *pkey) {
   const EC_KEY *ec_key = reinterpret_cast<const EC_KEY *>(pkey->pkey);
   return EC_KEY_get0_public_key(ec_key) != nullptr;
 }
 
-static bool eckey_pub_copy(EvpPkey *out, const EvpPkey *pkey) {
+bool eckey_pub_copy(EvpPkey *out, const EvpPkey *pkey) {
   const EC_KEY *ec_key = reinterpret_cast<const EC_KEY *>(pkey->pkey);
   const EC_POINT *public_key = EC_KEY_get0_public_key(ec_key);
   if (public_key == nullptr) {
@@ -287,7 +287,7 @@ static bool eckey_pub_copy(EvpPkey *out, const EvpPkey *pkey) {
   return true;
 }
 
-static bool eckey_priv_present(const EvpPkey *pkey) {
+bool eckey_priv_present(const EvpPkey *pkey) {
   const EC_KEY *ec_key = reinterpret_cast<const EC_KEY *>(pkey->pkey);
   return EC_KEY_get0_private_key(ec_key) != nullptr;
 }
@@ -337,7 +337,7 @@ struct EC_PKEY_CTX {
   const EC_GROUP *gen_group = nullptr;
 };
 
-static int pkey_ec_init(EvpPkeyCtx *ctx, const EVP_PKEY_ALG *alg) {
+int pkey_ec_init(EvpPkeyCtx *ctx, const EVP_PKEY_ALG *alg) {
   EC_PKEY_CTX *dctx = New<EC_PKEY_CTX>();
   if (!dctx) {
     return 0;
@@ -352,7 +352,7 @@ static int pkey_ec_init(EvpPkeyCtx *ctx, const EVP_PKEY_ALG *alg) {
   return 1;
 }
 
-static int pkey_ec_copy(EvpPkeyCtx *dst, EvpPkeyCtx *src) {
+int pkey_ec_copy(EvpPkeyCtx *dst, EvpPkeyCtx *src) {
   if (!pkey_ec_init(dst, nullptr)) {
     return 0;
   }
@@ -364,12 +364,12 @@ static int pkey_ec_copy(EvpPkeyCtx *dst, EvpPkeyCtx *src) {
   return 1;
 }
 
-static void pkey_ec_cleanup(EvpPkeyCtx *ctx) {
+void pkey_ec_cleanup(EvpPkeyCtx *ctx) {
   Delete(reinterpret_cast<EC_PKEY_CTX *>(ctx->data));
 }
 
-static int pkey_ec_sign(EvpPkeyCtx *ctx, uint8_t *sig, size_t *siglen,
-                        const uint8_t *tbs, size_t tbslen) {
+int pkey_ec_sign(EvpPkeyCtx *ctx, uint8_t *sig, size_t *siglen,
+                 const uint8_t *tbs, size_t tbslen) {
   const EC_KEY *ec = reinterpret_cast<EC_KEY *>(ctx->pkey->pkey);
   if (!sig) {
     *siglen = ECDSA_size(ec);
@@ -387,13 +387,13 @@ static int pkey_ec_sign(EvpPkeyCtx *ctx, uint8_t *sig, size_t *siglen,
   return 1;
 }
 
-static int pkey_ec_verify(EvpPkeyCtx *ctx, const uint8_t *sig, size_t siglen,
-                          const uint8_t *tbs, size_t tbslen) {
+int pkey_ec_verify(EvpPkeyCtx *ctx, const uint8_t *sig, size_t siglen,
+                   const uint8_t *tbs, size_t tbslen) {
   const EC_KEY *ec_key = reinterpret_cast<EC_KEY *>(ctx->pkey->pkey);
   return ECDSA_verify(0, tbs, tbslen, sig, siglen, ec_key);
 }
 
-static int pkey_ec_derive(EvpPkeyCtx *ctx, uint8_t *key, size_t *keylen) {
+int pkey_ec_derive(EvpPkeyCtx *ctx, uint8_t *key, size_t *keylen) {
   if (!ctx->pkey || !ctx->peerkey) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_KEYS_NOT_SET);
     return 0;
@@ -421,7 +421,7 @@ static int pkey_ec_derive(EvpPkeyCtx *ctx, uint8_t *key, size_t *keylen) {
   return 1;
 }
 
-static int pkey_ec_ctrl(EvpPkeyCtx *ctx, int type, int p1, void *p2) {
+int pkey_ec_ctrl(EvpPkeyCtx *ctx, int type, int p1, void *p2) {
   EC_PKEY_CTX *dctx = reinterpret_cast<EC_PKEY_CTX *>(ctx->data);
 
   switch (type) {
@@ -457,7 +457,7 @@ static int pkey_ec_ctrl(EvpPkeyCtx *ctx, int type, int p1, void *p2) {
   }
 }
 
-static int pkey_ec_keygen(EvpPkeyCtx *ctx, EvpPkey *pkey) {
+int pkey_ec_keygen(EvpPkeyCtx *ctx, EvpPkey *pkey) {
   EC_PKEY_CTX *dctx = reinterpret_cast<EC_PKEY_CTX *>(ctx->data);
   const EC_GROUP *group = dctx->gen_group;
   if (group == nullptr) {
@@ -477,7 +477,7 @@ static int pkey_ec_keygen(EvpPkeyCtx *ctx, EvpPkey *pkey) {
   return 1;
 }
 
-static int pkey_ec_paramgen(EvpPkeyCtx *ctx, EvpPkey *pkey) {
+int pkey_ec_paramgen(EvpPkeyCtx *ctx, EvpPkey *pkey) {
   EC_PKEY_CTX *dctx = reinterpret_cast<EC_PKEY_CTX *>(ctx->data);
   if (dctx->gen_group == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_NO_PARAMETERS_SET);
@@ -543,12 +543,8 @@ const EVP_PKEY_ALG *bssl::evp_pkey_ec_no_curve() {
   return &kAlg;
 }
 
-int EVP_PKEY_set1_EC_KEY(EVP_PKEY *pkey, EC_KEY *key) {
-  if (EVP_PKEY_assign_EC_KEY(pkey, key)) {
-    EC_KEY_up_ref(key);
-    return 1;
-  }
-  return 0;
+int EVP_PKEY_set1_EC_KEY(EVP_PKEY *pkey, const EC_KEY *key) {
+  return EVP_PKEY_assign_EC_KEY(pkey, EC_KEY_dup_ref(key));
 }
 
 int EVP_PKEY_assign_EC_KEY(EVP_PKEY *pkey, EC_KEY *key) {

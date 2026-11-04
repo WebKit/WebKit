@@ -51,22 +51,28 @@ TEST_F(SimpleTagParserTest, DefaultParse) {
 
 TEST_F(SimpleTagParserTest, DefaultValues) {
   SetReaderData({
-      0x45, 0xA3,  // ID = 0x45A3 (TagName).
+      0x45,
+      0xA3,  // ID = 0x45A3 (TagName).
       0x80,  // Size = 0.
 
-      0x44, 0x7A,  // ID = 0x447A (TagLanguage).
+      0x44,
+      0x7A,  // ID = 0x447A (TagLanguage).
       0x80,  // Size = 0.
 
-      0x44, 0x84,  // ID = 0x4484 (TagDefault).
+      0x44,
+      0x84,  // ID = 0x4484 (TagDefault).
       0x80,  // Size = 0.
 
-      0x44, 0x87,  // ID = 0x4487 (TagString).
+      0x44,
+      0x87,  // ID = 0x4487 (TagString).
       0x80,  // Size = 0.
 
-      0x44, 0x85,  // ID = 0x4485 (TagBinary).
+      0x44,
+      0x85,  // ID = 0x4485 (TagBinary).
       0x80,  // Size = 0.
 
-      0x67, 0xC8,  // ID = 0x67C8 (SimpleTag).
+      0x67,
+      0xC8,  // ID = 0x67C8 (SimpleTag).
       0x80,  // Size = 0.
   });
 
@@ -187,16 +193,19 @@ TEST_F(SimpleTagParserTest, ExceedMaxRecursionDepth) {
   ResetParser(1);
 
   SetReaderData({
-      0x67, 0xC8,  // ID = 0x67C8 (SimpleTag).
+      0x67,
+      0xC8,  // ID = 0x67C8 (SimpleTag).
       0x80,  // Size = 0.
   });
   ParseAndVerify();
 
   SetReaderData({
-      0x67, 0xC8,  // ID = 0x67C8 (SimpleTag).
+      0x67,
+      0xC8,  // ID = 0x67C8 (SimpleTag).
       0x83,  // Size = 3.
 
-      0x67, 0xC8,  // ID = 0x67C8 (SimpleTag).
+      0x67,
+      0xC8,  // ID = 0x67C8 (SimpleTag).
       0x80,  //   Size = 0.
   });
   ParseAndExpectResult(Status::kExceededRecursionDepthLimit);

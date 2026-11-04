@@ -119,10 +119,10 @@ static void copy_mem64x64(const uint8_t *src, int src_stride, uint8_t *dst,
                           int dst_stride) {
   copy_mem32x32(src, src_stride, dst, dst_stride);
   copy_mem32x32(src + 32, src_stride, dst + 32, dst_stride);
-  copy_mem32x32(src + src_stride * 32, src_stride, dst + src_stride * 32,
+  copy_mem32x32(src + src_stride * 32, src_stride, dst + dst_stride * 32,
                 dst_stride);
   copy_mem32x32(src + src_stride * 32 + 32, src_stride,
-                dst + src_stride * 32 + 32, dst_stride);
+                dst + dst_stride * 32 + 32, dst_stride);
 }
 
 static void copy_block(const uint8_t *y, const uint8_t *u, const uint8_t *v,

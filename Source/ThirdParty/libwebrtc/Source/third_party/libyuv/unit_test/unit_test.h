@@ -69,6 +69,15 @@ static inline bool SizeValid(int src_width,
   return true;
 }
 
+#ifdef LIBYUV_MSAN
+#define align_buffer_page_end(var, size)                                   \
+  uint8_t* var = NULL;                                                     \
+  uint8_t* var##_mem =                                                     \
+      reinterpret_cast<uint8_t*>(calloc(1, ((size) + 4095 + 63) & ~4095)); \
+  if (var##_mem)                                                           \
+  var = reinterpret_cast<uint8_t*>(                                        \
+      (intptr_t)(var##_mem + (((size) + 4095 + 63) & ~4095) - (size)) & ~63)
+#else
 #define align_buffer_page_end(var, size)                                \
   uint8_t* var = NULL;                                                  \
   uint8_t* var##_mem =                                                  \
@@ -76,11 +85,23 @@ static inline bool SizeValid(int src_width,
   if (var##_mem)                                                        \
   var = reinterpret_cast<uint8_t*>(                                     \
       (intptr_t)(var##_mem + (((size) + 4095 + 63) & ~4095) - (size)) & ~63)
+#endif
 
 #define free_aligned_buffer_page_end(var) \
   free(var##_mem);                        \
   var = NULL
 
+#ifdef LIBYUV_MSAN
+#define align_buffer_page_end_16(var, size)                                    \
+  uint16_t* var = NULL;                                                        \
+  uint8_t* var##_mem =                                                         \
+      reinterpret_cast<uint8_t*>(calloc(1, ((size) * 2 + 4095 + 63) & ~4095)); \
+  if (var##_mem)                                                               \
+  var = reinterpret_cast<uint16_t*>(                                           \
+      (intptr_t)(var##_mem + (((size) * 2 + 4095 + 63) & ~4095) -              \
+                 (size) * 2) &                                                 \
+      ~63)
+#else
 #define align_buffer_page_end_16(var, size)                                 \
   uint16_t* var = NULL;                                                     \
   uint8_t* var##_mem =                                                      \
@@ -90,6 +111,7 @@ static inline bool SizeValid(int src_width,
       (intptr_t)(var##_mem + (((size) * 2 + 4095 + 63) & ~4095) -           \
                  (size) * 2) &                                              \
       ~63)
+#endif
 
 #define free_aligned_buffer_page_end_16(var) \
   free(var##_mem);                           \

@@ -316,7 +316,7 @@ where
         methods.server_cert_cb = Some(Box::new(cb) as _);
         unsafe {
             // Safety: we only install our own vtable.
-            bssl_sys::SSL_set_cert_cb(
+            bssl_sys::SSL_set_cert_cb_ex(
                 conn,
                 Some(select_cert_cb::<super::methods::RustConnectionMethods<M>, M>),
                 core::ptr::null_mut(),
@@ -341,7 +341,7 @@ where
         methods.client_cert_cb = Some(Box::new(cb) as _);
         unsafe {
             // Safety: we only install our own vtable.
-            bssl_sys::SSL_set_cert_cb(
+            bssl_sys::SSL_set_cert_cb_ex(
                 conn,
                 Some(select_cert_cb::<super::methods::RustConnectionMethods<M>, M>),
                 core::ptr::null_mut(),

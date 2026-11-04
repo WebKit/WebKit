@@ -511,5 +511,62 @@ TEST(CongestionControlFeedbackGeneratorTest,
   EXPECT_EQ(number_of_feedback_packets, 40);
 }
 
+TEST(CongestionControlFeedbackGeneratorTest,
+     FeedbackSentEveryMaxTimeBetweenFeedbackWhenSendBweIsZero) {
+  MockFunction<void(std::vector<std::unique_ptr<rtcp::RtcpPacket>>)>
+      rtcp_sender;
+  SimulatedClock clock(123456);
+
+  // Enable 5% feedback fraction limit via field trial
+  CongestionControlFeedbackGenerator generator(
+      CreateTestEnvironment({.field_trials =
+                                 "WebRTC-RFC8888CongestionControlFeedback/"
+                                 "feedback_fraction:0.05/",
+                             .time = &clock}),
+      rtcp_sender.AsStdFunction());
+
+  generator.OnSendBandwidthEstimateChanged(
+      DataRate::Zero(),
+      /*is_bandwidth_limited=*/true,
+      /*transport_overhead=*/DataSize::Bytes(42));
+
+  int number_of_feedback_packets = 0;
+  Timestamp last_feedback_time = Timestamp::MinusInfinity();
+  EXPECT_CALL(rtcp_sender, Call)
+      .WillRepeatedly(
+          [&](std::vector<std::unique_ptr<rtcp::RtcpPacket>> rtcp_packets) {
+            ASSERT_THAT(rtcp_packets, SizeIs(1));
+            number_of_feedback_packets++;
+            if (last_feedback_time.IsFinite()) {
+              EXPECT_EQ(clock.CurrentTime() - last_feedback_time,
+                        TimeDelta::Millis(250));
+            }
+            last_feedback_time = clock.CurrentTime();
+          });
+
+  Timestamp start_time = clock.CurrentTime();
+  Timestamp last_process_time = clock.CurrentTime();
+  TimeDelta time_to_next_process = generator.Process(clock.CurrentTime());
+  uint16_t rtp_sequence_number = 0;
+
+  // Receive 1 packet every 10 ms for 1 second.
+  while (clock.CurrentTime() < start_time + TimeDelta::Seconds(1)) {
+    if ((clock.CurrentTime() - start_time).ms() % 10 == 0) {
+      generator.OnReceivedPacket(CreatePacket(clock.CurrentTime(),
+                                              /*marker=*/true, /*ssrc=*/1234,
+                                              rtp_sequence_number++));
+    }
+
+    if (clock.CurrentTime() >= last_process_time + time_to_next_process) {
+      last_process_time = clock.CurrentTime();
+      time_to_next_process = generator.Process(clock.CurrentTime());
+    }
+    clock.AdvanceTime(TimeDelta::Millis(1));
+  }
+
+  // 1000ms / 250ms = 4 feedback packets.
+  EXPECT_EQ(number_of_feedback_packets, 4);
+}
+
 }  // namespace
 }  // namespace webrtc

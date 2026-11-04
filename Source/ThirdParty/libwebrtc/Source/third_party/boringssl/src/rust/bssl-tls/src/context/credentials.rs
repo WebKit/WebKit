@@ -260,7 +260,7 @@ impl<M: SupportedMode> TlsContextBuilder<M> {
         methods.client_cert_cb = Some(Box::new(cb) as _);
         unsafe {
             // Safety: we only install our own vtable.
-            bssl_sys::SSL_CTX_set_cert_cb(
+            bssl_sys::SSL_CTX_set_cert_cb_ex(
                 ctx,
                 Some(select_cert_cb::<RustContextMethods<M>, M>),
                 null_mut(),
@@ -279,7 +279,7 @@ impl<M: SupportedMode> TlsContextBuilder<M> {
         methods.server_cert_cb = Some(Box::new(cb) as _);
         unsafe {
             // Safety: we only install our own vtable.
-            bssl_sys::SSL_CTX_set_cert_cb(
+            bssl_sys::SSL_CTX_set_cert_cb_ex(
                 ctx,
                 Some(select_cert_cb::<RustContextMethods<M>, M>),
                 null_mut(),

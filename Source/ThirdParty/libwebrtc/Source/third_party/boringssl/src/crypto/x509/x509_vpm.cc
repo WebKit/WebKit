@@ -30,13 +30,15 @@ using namespace bssl;
 
 // X509_VERIFY_PARAM functions
 
+namespace {
+
 #define SET_HOST 0
 #define ADD_HOST 1
 
-static void str_free(char *s) { OPENSSL_free(s); }
+void str_free(char *s) { OPENSSL_free(s); }
 
-static int int_x509_param_set_hosts(X509_VERIFY_PARAM *param, int mode,
-                                    const char *name, size_t namelen) {
+int int_x509_param_set_hosts(X509_VERIFY_PARAM *param, int mode,
+                             const char *name, size_t namelen) {
   char *copy;
 
   if (name == nullptr || namelen == 0) {
@@ -78,27 +80,7 @@ static int int_x509_param_set_hosts(X509_VERIFY_PARAM *param, int mode,
   return 1;
 }
 
-X509_VERIFY_PARAM *X509_VERIFY_PARAM_new() {
-  X509_VERIFY_PARAM *param = New<X509_VERIFY_PARAM>();
-  if (!param) {
-    return nullptr;
-  }
-  param->depth = -1;
-  return param;
-}
-
-void X509_VERIFY_PARAM_free(X509_VERIFY_PARAM *param) {
-  if (param == nullptr) {
-    return;
-  }
-  sk_ASN1_OBJECT_pop_free(param->policies, ASN1_OBJECT_free);
-  sk_OPENSSL_STRING_pop_free(param->hosts, str_free);
-  OPENSSL_free(param->email);
-  OPENSSL_free(param->ip);
-  Delete(param);
-}
-
-static bool should_copy(bool dest_is_set, bool src_is_set, bool prefer_src) {
+bool should_copy(bool dest_is_set, bool src_is_set, bool prefer_src) {
   if (prefer_src) {
     // We prefer the source, so as long as there is a value to copy, copy it.
     return src_is_set;
@@ -109,8 +91,7 @@ static bool should_copy(bool dest_is_set, bool src_is_set, bool prefer_src) {
 }
 
 template <typename T>
-static void copy_int_param(T *dest, const T *src, T default_val,
-                           bool prefer_src) {
+void copy_int_param(T *dest, const T *src, T default_val, bool prefer_src) {
   static_assert(std::is_integral_v<T>);
   if (should_copy(*dest != default_val, *src != default_val, prefer_src)) {
     *dest = *src;
@@ -120,9 +101,8 @@ static void copy_int_param(T *dest, const T *src, T default_val,
 // x509_verify_param_merge merges fields from `src` to `dest`. If both `src` and
 // `dest` have some field set, `prefer_src` determines whether `src` or `dest`'s
 // version is used.
-static int x509_verify_param_merge(X509_VERIFY_PARAM *dest,
-                                   const X509_VERIFY_PARAM *src,
-                                   bool prefer_src) {
+int x509_verify_param_merge(X509_VERIFY_PARAM *dest,
+                            const X509_VERIFY_PARAM *src, bool prefer_src) {
   if (src == nullptr) {
     return 1;
   }
@@ -183,22 +163,8 @@ static int x509_verify_param_merge(X509_VERIFY_PARAM *dest,
   return 1;
 }
 
-int X509_VERIFY_PARAM_inherit(X509_VERIFY_PARAM *dest,
-                              const X509_VERIFY_PARAM *src) {
-  // Prefer the destination. That is, this function only changes unset
-  // parameters in `dest`.
-  return x509_verify_param_merge(dest, src, /*prefer_src=*/false);
-}
-
-int X509_VERIFY_PARAM_set1(X509_VERIFY_PARAM *to,
-                           const X509_VERIFY_PARAM *from) {
-  // Prefer the source. That is, values in `to` are only preserved if they were
-  // unset in `from`.
-  return x509_verify_param_merge(to, from, /*prefer_src=*/true);
-}
-
-static int int_x509_param_set1(char **pdest, size_t *pdestlen, const char *src,
-                               size_t srclen) {
+int int_x509_param_set1(char **pdest, size_t *pdestlen, const char *src,
+                        size_t srclen) {
   void *tmp;
   if (src == nullptr || srclen == 0) {
     // Unlike OpenSSL, we do not allow an empty string to disable previously
@@ -219,6 +185,106 @@ static int int_x509_param_set1(char **pdest, size_t *pdestlen, const char *src,
     *pdestlen = srclen;
   }
   return 1;
+}
+
+const X509_VERIFY_PARAM kDefaultParam = {
+    /*check_time=*/0,
+    /*flags=*/0,
+    /*purpose=*/0,
+    /*trust=*/0,
+    /*depth=*/100,
+    /*policies=*/nullptr,
+    /*hosts=*/nullptr,
+    /*hostflags=*/0,
+    /*email=*/nullptr,
+    /*emaillen=*/0,
+    /*ip=*/nullptr,
+    /*iplen=*/0,
+    /*poison=*/0,
+};
+
+const X509_VERIFY_PARAM kSMIMESignParam = {
+    /*check_time=*/0,
+    /*flags=*/0,
+    /*purpose=*/X509_PURPOSE_SMIME_SIGN,
+    /*trust=*/X509_TRUST_EMAIL,
+    /*depth=*/-1,
+    /*policies=*/nullptr,
+    /*hosts=*/nullptr,
+    /*hostflags=*/0,
+    /*email=*/nullptr,
+    /*emaillen=*/0,
+    /*ip=*/nullptr,
+    /*iplen=*/0,
+    /*poison=*/0,
+};
+
+const X509_VERIFY_PARAM kSSLClientParam = {
+    /*check_time=*/0,
+    /*flags=*/0,
+    /*purpose=*/X509_PURPOSE_SSL_CLIENT,
+    /*trust=*/X509_TRUST_SSL_CLIENT,
+    /*depth=*/-1,
+    /*policies=*/nullptr,
+    /*hosts=*/nullptr,
+    /*hostflags=*/0,
+    /*email=*/nullptr,
+    /*emaillen=*/0,
+    /*ip=*/nullptr,
+    /*iplen=*/0,
+    /*poison=*/0,
+};
+
+const X509_VERIFY_PARAM kSSLServerParam = {
+    /*check_time=*/0,
+    /*flags=*/0,
+    /*purpose=*/X509_PURPOSE_SSL_SERVER,
+    /*trust=*/X509_TRUST_SSL_SERVER,
+    /*depth=*/-1,
+    /*policies=*/nullptr,
+    /*hosts=*/nullptr,
+    /*hostflags=*/0,
+    /*email=*/nullptr,
+    /*emaillen=*/0,
+    /*ip=*/nullptr,
+    /*iplen=*/0,
+    /*poison=*/0,
+};
+
+}  // namespace
+
+X509_VERIFY_PARAM *X509_VERIFY_PARAM_new() {
+  X509_VERIFY_PARAM *param = New<X509_VERIFY_PARAM>();
+  if (!param) {
+    return nullptr;
+  }
+  param->depth = -1;
+  return param;
+}
+
+void X509_VERIFY_PARAM_free(X509_VERIFY_PARAM *param) {
+  if (param == nullptr) {
+    return;
+  }
+  sk_ASN1_OBJECT_pop_free(param->policies, ASN1_OBJECT_free);
+  sk_OPENSSL_STRING_pop_free(param->hosts, str_free);
+  OPENSSL_free(param->email);
+  OPENSSL_free(param->ip);
+  Delete(param);
+}
+
+int X509_VERIFY_PARAM_inherit(X509_VERIFY_PARAM *dest,
+                              const X509_VERIFY_PARAM *src) {
+  // Prefer the destination. That is, this function only changes unset
+  // parameters in `dest`.
+  return x509_verify_param_merge(dest, src, /*prefer_src=*/false);
+}
+
+int X509_VERIFY_PARAM_set1(X509_VERIFY_PARAM *to,
+                           const X509_VERIFY_PARAM *from) {
+  // Prefer the source. That is, values in `to` are only preserved if they were
+  // unset in `from`.
+  return x509_verify_param_merge(to, from, /*prefer_src=*/true);
 }
 
 int X509_VERIFY_PARAM_set_flags(X509_VERIFY_PARAM *param, unsigned long flags) {
@@ -363,70 +429,6 @@ int X509_VERIFY_PARAM_set1_ip_asc(X509_VERIFY_PARAM *param, const char *ipasc) {
 int X509_VERIFY_PARAM_get_depth(const X509_VERIFY_PARAM *param) {
   return param->depth;
 }
-
-static const X509_VERIFY_PARAM kDefaultParam = {
-    /*check_time=*/0,
-    /*flags=*/0,
-    /*purpose=*/0,
-    /*trust=*/0,
-    /*depth=*/100,
-    /*policies=*/nullptr,
-    /*hosts=*/nullptr,
-    /*hostflags=*/0,
-    /*email=*/nullptr,
-    /*emaillen=*/0,
-    /*ip=*/nullptr,
-    /*iplen=*/0,
-    /*poison=*/0,
-};
-
-static const X509_VERIFY_PARAM kSMIMESignParam = {
-    /*check_time=*/0,
-    /*flags=*/0,
-    /*purpose=*/X509_PURPOSE_SMIME_SIGN,
-    /*trust=*/X509_TRUST_EMAIL,
-    /*depth=*/-1,
-    /*policies=*/nullptr,
-    /*hosts=*/nullptr,
-    /*hostflags=*/0,
-    /*email=*/nullptr,
-    /*emaillen=*/0,
-    /*ip=*/nullptr,
-    /*iplen=*/0,
-    /*poison=*/0,
-};
-
-static const X509_VERIFY_PARAM kSSLClientParam = {
-    /*check_time=*/0,
-    /*flags=*/0,
-    /*purpose=*/X509_PURPOSE_SSL_CLIENT,
-    /*trust=*/X509_TRUST_SSL_CLIENT,
-    /*depth=*/-1,
-    /*policies=*/nullptr,
-    /*hosts=*/nullptr,
-    /*hostflags=*/0,
-    /*email=*/nullptr,
-    /*emaillen=*/0,
-    /*ip=*/nullptr,
-    /*iplen=*/0,
-    /*poison=*/0,
-};
-
-static const X509_VERIFY_PARAM kSSLServerParam = {
-    /*check_time=*/0,
-    /*flags=*/0,
-    /*purpose=*/X509_PURPOSE_SSL_SERVER,
-    /*trust=*/X509_TRUST_SSL_SERVER,
-    /*depth=*/-1,
-    /*policies=*/nullptr,
-    /*hosts=*/nullptr,
-    /*hostflags=*/0,
-    /*email=*/nullptr,
-    /*emaillen=*/0,
-    /*ip=*/nullptr,
-    /*iplen=*/0,
-    /*poison=*/0,
-};
 
 const X509_VERIFY_PARAM *bssl::X509_VERIFY_PARAM_lookup(const char *name) {
   if (strcmp(name, "default") == 0) {

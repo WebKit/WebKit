@@ -31,6 +31,7 @@
 #include "modules/pacing/prioritized_packet_queue.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "rtc_base/experiments/retransmit_flushed_packets_settings.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -282,6 +283,10 @@ class PacingController {
   bool include_overhead_;
 
   int circuit_breaker_threshold_;
+
+  // TODO(bugs.webrtc.org/564720400): Either remove or make permanent once
+  // experiment is concluded.
+  const RetransmitFlushedPacketsSettings retransmit_flushed_packets_settings_;
 };
 }  // namespace webrtc
 

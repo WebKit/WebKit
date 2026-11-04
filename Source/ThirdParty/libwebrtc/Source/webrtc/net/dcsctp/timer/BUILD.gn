@@ -49,13 +49,9 @@ rtc_library("task_queue_timeout") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("dcsctp_timer_unittests") {
-    testonly = true
-
-    defines = []
+  rtc_cc_test("task_queue_timeout_test") {
     deps = [
       ":task_queue_timeout",
-      ":timer",
       "../../../api/task_queue",
       "../../../api/task_queue/test:mock_task_queue_base",
       "../../../api/units:time_delta",
@@ -66,9 +62,18 @@ if (rtc_include_tests) {
       "../public:socket",
       "../public:types",
     ]
-    sources = [
-      "task_queue_timeout_test.cc",
-      "timer_test.cc",
+    sources = [ "task_queue_timeout_test.cc" ]
+  }
+
+  rtc_cc_test("timer_test") {
+    deps = [
+      ":timer",
+      "../../../api/task_queue",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../test:test_support",
+      "../public:types",
     ]
+    sources = [ "timer_test.cc" ]
   }
 }

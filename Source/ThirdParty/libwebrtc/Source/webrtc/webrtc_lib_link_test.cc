@@ -90,8 +90,8 @@ void TestCase2RegularFactory() {
   CreateSomeMediaDeps(media_deps);
 
   auto peer_connection_factory = CreatePeerConnectionFactory(
-      Thread::Current(), Thread::Current(), Thread::Current(),
-      std::move(media_deps.adm), std::move(media_deps.audio_encoder_factory),
+      Thread::Current(), Thread::Current(), std::move(media_deps.adm),
+      std::move(media_deps.audio_encoder_factory),
       std::move(media_deps.audio_decoder_factory),
       std::move(media_deps.video_encoder_factory),
       std::move(media_deps.video_decoder_factory), nullptr, nullptr);

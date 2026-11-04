@@ -59,6 +59,12 @@ OPENSSL_EXPORT void CRYPTO_BUFFER_POOL_free(CRYPTO_BUFFER_POOL *pool);
 // used concurrently.
 OPENSSL_EXPORT int CRYPTO_BUFFER_POOL_up_ref(CRYPTO_BUFFER_POOL *pool);
 
+// CRYPTO_BUFFER_POOL_dup_ref increments the reference count of `pool` and
+// returns the same handle. It does not mutate `pool` for thread-safety purposes
+// and may be used concurrently.
+OPENSSL_EXPORT CRYPTO_BUFFER_POOL *CRYPTO_BUFFER_POOL_dup_ref(
+    const CRYPTO_BUFFER_POOL *pool);
+
 // CRYPTO_BUFFER_new returns a `CRYPTO_BUFFER` containing a copy of `data`, or
 // else NULL on error. If `pool` is not NULL then the returned value may be a
 // reference to a previously existing `CRYPTO_BUFFER` that contained the same
@@ -124,9 +130,9 @@ extern "C++" {
 BSSL_NAMESPACE_BEGIN
 
 BORINGSSL_MAKE_DELETER(CRYPTO_BUFFER_POOL, CRYPTO_BUFFER_POOL_free)
-BORINGSSL_MAKE_UP_REF(CRYPTO_BUFFER_POOL, CRYPTO_BUFFER_POOL_up_ref)
+BORINGSSL_MAKE_UP_REF(CRYPTO_BUFFER_POOL, CRYPTO_BUFFER_POOL_dup_ref)
 BORINGSSL_MAKE_DELETER(CRYPTO_BUFFER, CRYPTO_BUFFER_free)
-BORINGSSL_MAKE_UP_REF(CRYPTO_BUFFER, CRYPTO_BUFFER_up_ref)
+BORINGSSL_MAKE_UP_REF(CRYPTO_BUFFER, CRYPTO_BUFFER_dup_ref)
 
 BSSL_NAMESPACE_END
 

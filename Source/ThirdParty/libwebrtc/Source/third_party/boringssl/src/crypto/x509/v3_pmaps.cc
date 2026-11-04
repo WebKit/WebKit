@@ -25,29 +25,6 @@
 
 using namespace bssl;
 
-static void *v2i_POLICY_MAPPINGS(const X509V3_EXT_METHOD *method,
-                                 const X509V3_CTX *ctx,
-                                 const STACK_OF(CONF_VALUE) *nval);
-static STACK_OF(CONF_VALUE) *i2v_POLICY_MAPPINGS(
-    const X509V3_EXT_METHOD *method, void *pmps, STACK_OF(CONF_VALUE) *extlist);
-
-const X509V3_EXT_METHOD bssl::v3_policy_mappings = {
-    NID_policy_mappings,
-    0,
-    ASN1_ITEM_ref(POLICY_MAPPINGS),
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr,
-    i2v_POLICY_MAPPINGS,
-    v2i_POLICY_MAPPINGS,
-    nullptr,
-    nullptr,
-    nullptr,
-};
-
 ASN1_SEQUENCE(POLICY_MAPPING) = {
     ASN1_SIMPLE(POLICY_MAPPING, issuerDomainPolicy, ASN1_OBJECT),
     ASN1_SIMPLE(POLICY_MAPPING, subjectDomainPolicy, ASN1_OBJECT),
@@ -59,8 +36,11 @@ ASN1_ITEM_TEMPLATE_END(POLICY_MAPPINGS)
 
 IMPLEMENT_ASN1_ALLOC_FUNCTIONS(POLICY_MAPPING)
 
-static STACK_OF(CONF_VALUE) *i2v_POLICY_MAPPINGS(
-    const X509V3_EXT_METHOD *method, void *a, STACK_OF(CONF_VALUE) *ext_list) {
+namespace {
+
+STACK_OF(CONF_VALUE) *i2v_POLICY_MAPPINGS(const X509V3_EXT_METHOD *method,
+                                          void *a,
+                                          STACK_OF(CONF_VALUE) *ext_list) {
   const POLICY_MAPPINGS *pmaps = reinterpret_cast<POLICY_MAPPINGS *>(a);
   for (size_t i = 0; i < sk_POLICY_MAPPING_num(pmaps); i++) {
     const POLICY_MAPPING *pmap = sk_POLICY_MAPPING_value(pmaps, i);
@@ -72,9 +52,9 @@ static STACK_OF(CONF_VALUE) *i2v_POLICY_MAPPINGS(
   return ext_list;
 }
 
-static void *v2i_POLICY_MAPPINGS(const X509V3_EXT_METHOD *method,
-                                 const X509V3_CTX *ctx,
-                                 const STACK_OF(CONF_VALUE) *nval) {
+void *v2i_POLICY_MAPPINGS(const X509V3_EXT_METHOD *method,
+                          const X509V3_CTX *ctx,
+                          const STACK_OF(CONF_VALUE) *nval) {
   POLICY_MAPPINGS *pmaps = sk_POLICY_MAPPING_new_null();
   if (pmaps == nullptr) {
     return nullptr;
@@ -108,3 +88,22 @@ err:
   sk_POLICY_MAPPING_pop_free(pmaps, POLICY_MAPPING_free);
   return nullptr;
 }
+
+}  // namespace
+
+const X509V3_EXT_METHOD bssl::v3_policy_mappings = {
+    NID_policy_mappings,
+    0,
+    ASN1_ITEM_ref(POLICY_MAPPINGS),
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    i2v_POLICY_MAPPINGS,
+    v2i_POLICY_MAPPINGS,
+    nullptr,
+    nullptr,
+    nullptr,
+};

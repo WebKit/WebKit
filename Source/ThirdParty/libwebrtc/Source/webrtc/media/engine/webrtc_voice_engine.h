@@ -63,6 +63,7 @@
 #include "media/base/media_engine.h"
 #include "media/base/stream_params.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "modules/sframe/sframe_encryption_config.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/network/sent_packet.h"
 #include "rtc_base/network_route.h"
@@ -220,6 +221,7 @@ class WebRtcVoiceSendChannel final : public MediaChannelUtil,
   const AudioOptions& options() const { return options_; }
 
   bool SetSenderParameters(const AudioSenderParameter& params) override;
+  void SetMid(absl::string_view mid) override;
   RtpParameters GetRtpSendParameters(uint32_t ssrc) const override;
   absl::AnyInvocable<RtpParameters(uint32_t)> GetRtpSendParametersCallback()
       const override;
@@ -244,6 +246,9 @@ class WebRtcVoiceSendChannel final : public MediaChannelUtil,
   void SetFrameEncryptor(
       uint32_t ssrc,
       scoped_refptr<FrameEncryptorInterface> frame_encryptor) override;
+
+  void SetSframeEncryptionConfig(
+      SframeEncryptionConfig sframe_encryption_config) override;
 
   void EnableSframe() override;
 

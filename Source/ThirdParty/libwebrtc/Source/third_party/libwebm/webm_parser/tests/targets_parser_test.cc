@@ -38,13 +38,16 @@ TEST_F(TargetsParserTest, DefaultParse) {
 
 TEST_F(TargetsParserTest, DefaultValues) {
   SetReaderData({
-      0x68, 0xCA,  // ID = 0x68CA (TargetTypeValue).
+      0x68,
+      0xCA,  // ID = 0x68CA (TargetTypeValue).
       0x80,  // Size = 0.
 
-      0x63, 0xCA,  // ID = 0x63CA (TargetType).
+      0x63,
+      0xCA,  // ID = 0x63CA (TargetType).
       0x80,  // Size = 0.
 
-      0x63, 0xC5,  // ID = 0x63C5 (TagTrackUID).
+      0x63,
+      0xC5,  // ID = 0x63C5 (TagTrackUID).
       0x80,  // Size = 0.
   });
 
@@ -65,19 +68,24 @@ TEST_F(TargetsParserTest, DefaultValues) {
 
 TEST_F(TargetsParserTest, CustomValues) {
   SetReaderData({
-      0x68, 0xCA,  // ID = 0x68CA (TargetTypeValue).
+      0x68,
+      0xCA,  // ID = 0x68CA (TargetTypeValue).
       0x81,  // Size = 1.
       0x00,  // Body (value = 0).
 
-      0x63, 0xCA,  // ID = 0x63CA (TargetType).
+      0x63,
+      0xCA,  // ID = 0x63CA (TargetType).
       0x82,  // Size = 2.
-      0x48, 0x69,  // Body (value = "Hi").
+      0x48,
+      0x69,  // Body (value = "Hi").
 
-      0x63, 0xC5,  // ID = 0x63C5 (TagTrackUID).
+      0x63,
+      0xC5,  // ID = 0x63C5 (TagTrackUID).
       0x81,  // Size = 1.
       0x01,  // Body (value = 1).
 
-      0x63, 0xC5,  // ID = 0x63C5 (TagTrackUID).
+      0x63,
+      0xC5,  // ID = 0x63C5 (TagTrackUID).
       0x81,  // Size = 1.
       0x02,  // Body (value = 2).
   });

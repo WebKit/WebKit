@@ -329,15 +329,20 @@ const TestData fixed_lacing = {
     // Data.
     {
         0x81,  // Track number = 1.
-        0x00, 0x00,  // Timecode = 0.
+        0x00,
+        0x00,  // Timecode = 0.
         0x84,  // Flags = key_frame | fixed_lacing.
         0x03,  // Lace count - 1 = 3 (4 frames).
 
         // Lace data (4 frames).
-        0x00, 0x00,  // Frame 0.
-        0x01, 0x01,  // Frame 1.
-        0x02, 0x02,  // Frame 2.
-        0x03, 0x03,  // Frame 3.
+        0x00,
+        0x00,  // Frame 0.
+        0x01,
+        0x01,  // Frame 1.
+        0x02,
+        0x02,  // Frame 2.
+        0x03,
+        0x03,  // Frame 3.
     },
 
     // Expected results.
@@ -358,12 +363,16 @@ const TestData fixed_lacing = {
 const TestData no_lacing = {
     // Data.
     {
-        0x40, 0x01,  // Track number = 1.
-        0x00, 0x00,  // Timecode = 0.
+        0x40,
+        0x01,  // Track number = 1.
+        0x00,
+        0x00,  // Timecode = 0.
         0x80,  // Flags = key_frame.
 
         // Lace data (1 frame).
-        0x00, 0x00, 0x00,  // Frame 0.
+        0x00,
+        0x00,
+        0x00,  // Frame 0.
     },
 
     // Expected results.
@@ -634,12 +643,14 @@ class BasicBlockParserTest : public ElementParserTest<T, id> {
   void TestInvalidFixedLaceSizes() {
     SetReaderData({
         0x81,  // Track number = 1.
-        0x00, 0x00,  // Timecode = 0.
+        0x00,
+        0x00,  // Timecode = 0.
         0x84,  // Flags = key_frame | fixed_lacing.
         0x01,  // Lace count - 1 = 1 (2 frames).
 
         // Lace data (2 frames).
-        0x00, 0x00,  // Frame 0.
+        0x00,
+        0x00,  // Frame 0.
         0x01,  // Frame 1 (invalid: inconsistent frame size).
     });
 

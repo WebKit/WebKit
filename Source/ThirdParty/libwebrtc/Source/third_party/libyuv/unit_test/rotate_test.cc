@@ -864,7 +864,7 @@ TEST_F(LibYUVRotateTest, I410Rotate270_Opt) {
 
 #if defined(ENABLE_ROW_TESTS)
 
-TEST_F(LibYUVRotateTest, Transpose4x4_Test) {
+TEST_F(LibYUVRotateTest, TransposeWx4_32_Test) {
   // dst width and height
   const int width = 4;
   const int height = 4;
@@ -880,26 +880,26 @@ TEST_F(LibYUVRotateTest, Transpose4x4_Test) {
   memset(dst_pixels_c, 1, width * height * 4);
   memset(dst_pixels_opt, 2, width * height * 4);
 
-  Transpose4x4_32_C((const uint8_t*)src_pixels, height * 4,
+  TransposeWx4_32_C((const uint8_t*)src_pixels, height * 4,
                     (uint8_t*)dst_pixels_c, width * 4, width);
 
   const int benchmark_iterations =
       (benchmark_iterations_ * benchmark_width_ * benchmark_height_ + 15) /
       (4 * 4);
   for (int i = 0; i < benchmark_iterations; ++i) {
-#if defined(HAS_TRANSPOSE4X4_32_NEON)
+#if defined(HAS_TRANSPOSEWX4_32_NEON)
     if (TestCpuFlag(kCpuHasNEON)) {
-      Transpose4x4_32_NEON((const uint8_t*)src_pixels, height * 4,
+      TransposeWx4_32_NEON((const uint8_t*)src_pixels, height * 4,
                            (uint8_t*)dst_pixels_opt, width * 4, width);
     } else
-#elif defined(HAS_TRANSPOSE4X4_32_SSE2)
+#elif defined(HAS_TRANSPOSEWX4_32_SSE2)
     if (TestCpuFlag(kCpuHasSSE2)) {
-      Transpose4x4_32_SSE2((const uint8_t*)src_pixels, height * 4,
+      TransposeWx4_32_SSE2((const uint8_t*)src_pixels, height * 4,
                            (uint8_t*)dst_pixels_opt, width * 4, width);
     } else
 #endif
     {
-      Transpose4x4_32_C((const uint8_t*)src_pixels, height * 4,
+      TransposeWx4_32_C((const uint8_t*)src_pixels, height * 4,
                         (uint8_t*)dst_pixels_opt, width * 4, width);
     }
   }
@@ -912,7 +912,7 @@ TEST_F(LibYUVRotateTest, Transpose4x4_Test) {
   }
 }
 
-TEST_F(LibYUVRotateTest, Transpose4x4_Opt) {
+TEST_F(LibYUVRotateTest, TransposeWx4_32_Opt) {
   // dst width and height
   const int width = ((benchmark_width_ * benchmark_height_ + 3) / 4 + 3) & ~3;
   const int height = 4;
@@ -924,26 +924,23 @@ TEST_F(LibYUVRotateTest, Transpose4x4_Opt) {
   memset(dst_pixels_c, 1, width * height * 4);
   memset(dst_pixels_opt, 2, width * height * 4);
 
-  Transpose4x4_32_C((const uint8_t*)src_pixels, height * 4,
+  TransposeWx4_32_C((const uint8_t*)src_pixels, height * 4,
                     (uint8_t*)dst_pixels_c, width * 4, width);
 
   for (int i = 0; i < benchmark_iterations_; ++i) {
-#if defined(HAS_TRANSPOSE4X4_32_NEON)
+#if defined(HAS_TRANSPOSEWX4_32_NEON)
     if (TestCpuFlag(kCpuHasNEON)) {
-      Transpose4x4_32_NEON((const uint8_t*)src_pixels, height * 4,
+      TransposeWx4_32_NEON((const uint8_t*)src_pixels, height * 4,
                            (uint8_t*)dst_pixels_opt, width * 4, width);
     } else
-#elif defined(HAS_TRANSPOSE4X4_32_AVX2)
-    if (TestCpuFlag(kCpuHasAVX2)) {
-      Transpose4x4_32_AVX2((const uint8_t*)src_pixels, height * 4,
-                           (uint8_t*)dst_pixels_opt, width * 4, width);
-    } else if (TestCpuFlag(kCpuHasSSE2)) {
-      Transpose4x4_32_SSE2((const uint8_t*)src_pixels, height * 4,
+#elif defined(HAS_TRANSPOSEWX4_32_SSE2)
+    if (TestCpuFlag(kCpuHasSSE2)) {
+      TransposeWx4_32_SSE2((const uint8_t*)src_pixels, height * 4,
                            (uint8_t*)dst_pixels_opt, width * 4, width);
     } else
 #endif
     {
-      Transpose4x4_32_C((const uint8_t*)src_pixels, height * 4,
+      TransposeWx4_32_C((const uint8_t*)src_pixels, height * 4,
                         (uint8_t*)dst_pixels_opt, width * 4, width);
     }
   }

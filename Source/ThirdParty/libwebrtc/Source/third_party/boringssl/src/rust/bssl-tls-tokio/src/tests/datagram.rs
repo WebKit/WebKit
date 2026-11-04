@@ -14,7 +14,6 @@
 
 #![cfg(unix)]
 
-use std::mem::MaybeUninit;
 use std::time::Duration;
 
 use bssl_tls::{
@@ -101,33 +100,32 @@ async fn async_dtls_ping_pong(
     let task = tokio::spawn(async move {
         drive_async_dtls_handshake(&mut server_conn).await?;
 
-        let mut buf = [MaybeUninit::uninit(); 21];
-        let mut message = ReceiveBuffer::new_uninit(&mut buf);
-        let mut read_bytes = 0;
-        while read_bytes < 21 {
+        let mut buf = [0u8; 21];
+        let expected = b"BoringSSL is awesome!";
+        loop {
+            let mut message = ReceiveBuffer::new(&mut buf);
             match async_dtls_recv(&mut server_conn, &mut message).await? {
-                IoStatus::Ok(n) => read_bytes += n,
-                IoStatus::EndOfStream => break,
-                _ => {}
+                IoStatus::Ok(n) if n == expected.len() => break,
+                _ => continue,
             }
         }
-        assert_eq!(message.filled(), b"BoringSSL is awesome!");
+        assert_eq!(&buf, expected);
         async_dtls_send(&mut server_conn, b"Oh yeah definitely!").await?;
         Ok::<_, Error>(())
     });
 
     drive_async_dtls_handshake(&mut client_conn).await?;
     async_dtls_send(&mut client_conn, b"BoringSSL is awesome!").await?;
-    let mut buf = [MaybeUninit::uninit(); 19];
-    let mut message = ReceiveBuffer::new_uninit(&mut buf);
-    while message.remaining() > 0 {
+    let mut buf = [0u8; 19];
+    let expected = b"Oh yeah definitely!";
+    loop {
+        let mut message = ReceiveBuffer::new(&mut buf);
         match async_dtls_recv(&mut client_conn, &mut message).await? {
-            IoStatus::Ok(_) => {}
-            IoStatus::EndOfStream => break,
-            _ => {}
+            IoStatus::Ok(n) if n == expected.len() => break,
+            _ => continue,
         }
     }
-    assert_eq!(message.filled(), b"Oh yeah definitely!");
+    assert_eq!(&buf, expected);
     task.await.unwrap()?;
     Ok(())
 }

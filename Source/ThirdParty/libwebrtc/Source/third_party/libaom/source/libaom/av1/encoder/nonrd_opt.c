@@ -320,8 +320,12 @@ void av1_block_yrd(MACROBLOCK *x, RD_STATS *this_rdc, int *skippable,
   }
 
   // If skippable is set, rate gets clobbered later.
-  this_rdc->rate <<= (2 + AV1_PROB_COST_SHIFT);
-  this_rdc->rate += (eob_cost << AV1_PROB_COST_SHIFT);
+  // Clamp to INT_MAX / 2 to avoid the INT_MAX invalid-rate sentinel and leave
+  // headroom for mode, MV, and chroma rate costs added by callers.
+  const int64_t block_rate =
+      ((int64_t)this_rdc->rate << (2 + AV1_PROB_COST_SHIFT)) +
+      ((int64_t)eob_cost << AV1_PROB_COST_SHIFT);
+  this_rdc->rate = (int)AOMMIN(block_rate, INT_MAX / 2);
 }
 
 // Explicitly enumerate the cases so the compiler can generate SIMD for the
@@ -455,8 +459,10 @@ void av1_block_yrd_idtx(MACROBLOCK *x, const uint8_t *const pred_buf,
     }
   }
   // If skippable is set, rate gets clobbered later.
-  this_rdc->rate <<= (2 + AV1_PROB_COST_SHIFT);
-  this_rdc->rate += (eob_cost << AV1_PROB_COST_SHIFT);
+  const int64_t block_rate =
+      ((int64_t)this_rdc->rate << (2 + AV1_PROB_COST_SHIFT)) +
+      ((int64_t)eob_cost << AV1_PROB_COST_SHIFT);
+  this_rdc->rate = (int)AOMMIN(block_rate, INT_MAX / 2);
 }
 
 int64_t av1_model_rd_for_sb_uv(AV1_COMP *cpi, BLOCK_SIZE plane_bsize,
@@ -664,7 +670,8 @@ void av1_estimate_block_intra(int plane, int block, int row, int col,
   p->src.buf = src_buf_base;
   pd->dst.buf = dst_buf_base;
   assert(args->rdc->rate != INT_MAX && args->rdc->dist != INT64_MAX);
-  args->rdc->rate += this_rdc.rate;
+  args->rdc->rate =
+      (int)AOMMIN((int64_t)args->rdc->rate + this_rdc.rate, INT_MAX / 2);
   args->rdc->dist += this_rdc.dist;
 }
 

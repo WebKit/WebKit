@@ -53,6 +53,12 @@ class SocketServer : public SocketFactory {
   // Causes the current wait (if one is in progress) to wake up.
   virtual void WakeUp() = 0;
 
+  // Returns true if sockets created by this socket server are functional, i.e.
+  // their events are delivered on the thread that uses this socket server.
+  // Such a thread can serve as the network thread. May be called on any
+  // thread.
+  virtual bool CanCreateSockets() const { return false; }
+
   // A network binder will bind the created sockets to a network.
   // It is only used in PhysicalSocketServer.
   void set_network_binder(NetworkBinderInterface* binder) {

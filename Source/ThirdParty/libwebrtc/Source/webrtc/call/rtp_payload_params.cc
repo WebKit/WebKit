@@ -451,6 +451,12 @@ void RtpPayloadParams::GenericToGeneric(int64_t frame_id,
   last_frame_id_[0][0] = frame_id;
 }
 
+// H264ToGeneric() and Vp8ToGeneric() only check the temporal index against
+// kMaxTemporalStreams, which is sufficient as long as `last_frame_id_` can
+// hold that many temporal layers.
+static_assert(kMaxTemporalStreams <=
+              RtpGenericFrameDescriptor::kMaxTemporalLayers);
+
 void RtpPayloadParams::H264ToGeneric(const CodecSpecificInfoH264& h264_info,
                                      int64_t frame_id,
                                      bool is_keyframe,
@@ -458,7 +464,7 @@ void RtpPayloadParams::H264ToGeneric(const CodecSpecificInfoH264& h264_info,
   const int temporal_index =
       h264_info.temporal_idx != kNoTemporalIdx ? h264_info.temporal_idx : 0;
 
-  if (temporal_index >= RtpGenericFrameDescriptor::kMaxTemporalLayers) {
+  if (temporal_index >= int{kMaxTemporalStreams}) {
     RTC_LOG(LS_WARNING) << "Temporal and/or spatial index is too high to be "
                            "used with generic frame descriptor.";
     return;
@@ -471,7 +477,6 @@ void RtpPayloadParams::H264ToGeneric(const CodecSpecificInfoH264& h264_info,
   generic.temporal_index = temporal_index;
 
   // Generate decode target indications.
-  RTC_DCHECK_LT(temporal_index, kMaxTemporalStreams);
   generic.decode_target_indications.resize(kMaxTemporalStreams);
   auto it = std::fill_n(generic.decode_target_indications.begin(),
                         temporal_index, DecodeTargetIndication::kNotPresent);
@@ -525,7 +530,7 @@ void RtpPayloadParams::Vp8ToGeneric(const CodecSpecificInfoVP8& vp8_info,
   const int temporal_index =
       vp8_header.temporalIdx != kNoTemporalIdx ? vp8_header.temporalIdx : 0;
 
-  if (temporal_index >= RtpGenericFrameDescriptor::kMaxTemporalLayers ||
+  if (temporal_index >= int{kMaxTemporalStreams} ||
       spatial_index >= RtpGenericFrameDescriptor::kMaxSpatialLayers) {
     RTC_LOG(LS_WARNING) << "Temporal and/or spatial index is too high to be "
                            "used with generic frame descriptor.";
@@ -540,7 +545,6 @@ void RtpPayloadParams::Vp8ToGeneric(const CodecSpecificInfoVP8& vp8_info,
   generic.temporal_index = temporal_index;
 
   // Generate decode target indications.
-  RTC_DCHECK_LT(temporal_index, kMaxTemporalStreams);
   generic.decode_target_indications.resize(kMaxTemporalStreams);
   auto it = std::fill_n(generic.decode_target_indications.begin(),
                         temporal_index, DecodeTargetIndication::kNotPresent);

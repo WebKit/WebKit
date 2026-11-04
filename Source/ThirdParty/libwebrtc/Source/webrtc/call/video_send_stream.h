@@ -98,7 +98,6 @@ class VideoSendStream {
     EncodedImage::Psnr psnr_sum;
     uint64_t psnr_measurements = 0;
     uint64_t total_encode_time_ms = 0;
-    uint64_t total_encoded_bytes_target = 0;
     uint32_t huge_frames_sent = 0;
     std::optional<ScalabilityMode> scalability_mode;
     // The target bitrate is what we tell the encoder to produce. What the
@@ -118,8 +117,6 @@ class VideoSendStream {
     uint32_t frames_encoded = 0;
     // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-totalencodetime
     uint64_t total_encode_time_ms = 0;
-    // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-totalencodedbytestarget
-    uint64_t total_encoded_bytes_target = 0;
     uint32_t frames = 0;
     uint32_t frames_dropped_by_capturer = 0;
     uint32_t frames_dropped_by_bad_timestamp = 0;

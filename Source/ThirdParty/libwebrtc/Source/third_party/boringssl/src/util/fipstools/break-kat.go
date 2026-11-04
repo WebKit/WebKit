@@ -118,7 +118,7 @@ func main() {
 		os.Remove(outFile)
 	}
 
-	for _, test := range []string{"ECDSA_PWCT", "RSA_PWCT", "MLDSA_PWCT", "MLKEM_PWCT", "SLHDSA_PWCT"} {
+	for _, test := range []string{"ECDSA_PWCT", "RSA_PWCT", "MLDSA_PWCT", "MLKEM_PWCT", "SLHDSA_PWCT", "JITTER_RCT", "JITTER_APT"} {
 		fmt.Printf("\n### Running test for %q\n\n", test)
 
 		cmd := exec.Command("./" + inPath)

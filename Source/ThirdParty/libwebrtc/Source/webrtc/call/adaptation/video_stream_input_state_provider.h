@@ -27,7 +27,7 @@ class VideoStreamInputStateProvider {
 
   void OnHasInputChanged(bool has_input);
   void OnFrameSizeObserved(int frame_size_pixels);
-  void OnEncoderSettingsChanged(EncoderSettings encoder_settings);
+  void OnEncoderSettingsChanged(const EncoderSettings& encoder_settings);
 
   virtual VideoStreamInputState InputState();
 

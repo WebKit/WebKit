@@ -38,17 +38,16 @@ namespace {
 // Prefix for domain separation to denote a Merkle Tree leaf or interior node.
 constexpr uint8_t kMTCLeafDomainSeparator[] = {0x00};
 constexpr uint8_t kMTCNodeDomainSeparator[] = {0x01};
-// DER encoding of AlgorithmIdentifier for alg-mtcProof-draft with absent
-// parameters.
-//   SEQUENCE (12 bytes) {
-//     OBJECT IDENTIFIER 1.3.6.1.4.1.44363.47.0 (10 bytes)
+// DER encoding of AlgorithmIdentifier for alg-mtcProof with absent parameters.
+//   SEQUENCE (10 bytes) {
+//     OBJECT IDENTIFIER 1.3.6.1.5.5.7.6.67 (8 bytes)
 //   }
 constexpr uint8_t kMTCAlgorithmIdentifier[] = {
     0x30,  // SEQUENCE tag
-    12,    // tag + len + OID bytes
+    10,    // tag + len + OID bytes
     0x06,  // OBJECT tag
-    10,    // OID length
-    OBJ_ENC_alg_mtcProof_draft,
+    8,     // OID length
+    OBJ_ENC_alg_mtcProof,
 };
 // MTCLogEntryType enum value for tbs_cert_entry.
 constexpr uint8_t kMTCLogEntryTypeTBSCertEntry[] = {0x00, 0x01};
@@ -64,6 +63,8 @@ constexpr uint8_t kASCIIOIDPrefix[16] = {'o', 'i', 'd', '/', '1', '.',
                                          '4', '.', '1', '.'};
 // DER encoded OID component found in trust anchor IDs for issuance logs.
 constexpr uint8_t kEncOIDLogs = 0x00;
+// draft-ietf-tls-trust-anchor-ids-06 limits trust anchor IDs to 32 bytes.
+constexpr size_t kMaxTrustAnchorIdBytes = 32;
 
 constexpr CBS_ASN1_TAG kTBSVersionTag =
     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 0;
@@ -88,8 +89,16 @@ inline bool lsb(uint64_t n) { return n & 1; }
 
 // is_mtc_proof returns whether `algor` is an mtcProof AlgorithmIdentifier.
 bool is_mtc_proof(const X509_ALGOR *algor) {
-  return OBJ_obj2nid(algor->algorithm) == NID_alg_mtcProof_draft &&
+  return OBJ_obj2nid(algor->algorithm) == NID_alg_mtcProof &&
          algor->parameter == nullptr;
+}
+
+// is_mtc_serial_valid returns whether `serial` is within
+// (mtcMinSerial..mtcMaxSerial), which implies the log number is > 0.
+bool is_mtc_serial_valid(uint64_t serial) {
+  // mtcMinSerial is 2^48. mtcMaxSerial is 2^64-1, the largest number
+  // representable as uint64_t, so is not checked explicitly.
+  return serial >> 48;
 }
 
 // Returns the first hash value (of size `log_hash_size`) remaining in
@@ -135,8 +144,32 @@ bool DigestUpdateNextASN1Element(EVP_MD_CTX *ctx, CBS *cbs) {
   return EVP_DigestUpdate(ctx, CBS_data(&element), CBS_len(&element));
 }
 
+// CheckMTCLogEntryExtensions returns whether `extensions` is a well-formed list
+// of MTCLogEntryExtension structures, sorted in strictly ascending order by
+// extension type (see section 5.2.1). No extension types are currently
+// recognized, so the contents are otherwise ignored (see section 12.5).
+bool CheckMTCLogEntryExtensions(CBS extensions) {
+  std::optional<uint16_t> prev_type;
+  while (CBS_len(&extensions) > 0) {
+    uint16_t type;
+    CBS data;
+    if (!CBS_get_u16(&extensions, &type) ||
+        !CBS_get_u16_length_prefixed(&extensions, &data)) {
+      OPENSSL_PUT_ERROR(X509, X509_R_INVALID_MTC_PROOF);
+      return false;
+    }
+    if (prev_type.has_value() && *prev_type >= type) {
+      OPENSSL_PUT_ERROR(X509, X509_R_INVALID_MTC_PROOF);
+      return false;
+    }
+    prev_type = type;
+  }
+  return true;
+}
+
 // MTCCACosigner represents a Merkle Tree CA and its corresponding CA cosigner
 // (see draft-ietf-plants-merkle-tree-certs, section 5.5).
+// Only id-pe-mtcCertificationAuthority-SHA256 is supported.
 class MTCCACosigner {
  public:
   MTCCACosigner() = default;
@@ -150,62 +183,59 @@ class MTCCACosigner {
   bool Init(const X509 *x509, const EVP_PKEY *pkey) {
     // Get and parse the MTCCertificationAuthority extension (see section 5.5).
     int ext_index =
-        X509_get_ext_by_NID(x509, NID_pe_mtcCertificationAuthority_draft, -1);
+        X509_get_ext_by_NID(x509, NID_pe_mtcCertificationAuthority_SHA256, -1);
     const X509_EXTENSION *ext = X509_get_ext(x509, ext_index);
     if (ext == nullptr || !X509_EXTENSION_get_critical(ext)) {
       OPENSSL_PUT_ERROR(X509, X509_R_INVALID_MTC_CA);
       return false;
     }
     const ASN1_STRING *value = X509_EXTENSION_get_data(ext);
-    CBS ext_value;
+    CBS ext_value, seq;
     CBS_init(&ext_value, ASN1_STRING_get0_data(value),
              ASN1_STRING_length(value));
-
-    CBS seq, log_hash;
-    if (!CBS_get_asn1(&ext_value, &seq, CBS_ASN1_SEQUENCE) ||         //
-        !CBS_get_asn1_element(&seq, &log_hash, CBS_ASN1_SEQUENCE) ||  //
-        !x509_parse_algorithm(&seq, cosign_sigalg_.get()) ||          //
-        !CBS_get_asn1_uint64(&seq, &min_serial_) ||                   //
-        !CBS_get_asn1_uint64(&seq, &max_serial_) ||                   //
+    if (!CBS_get_asn1(&ext_value, &seq, CBS_ASN1_SEQUENCE) ||  //
+        CBS_len(&ext_value) != 0 ||                            //
+        !x509_parse_algorithm(&seq, cosign_sigalg_.get()) ||   //
+        !CBS_get_asn1_uint64(&seq, &min_serial_) ||            //
+        !CBS_get_asn1_uint64(&seq, &max_serial_) ||            //
         CBS_len(&seq) != 0) {
       OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
       return false;
     }
-    log_hash_ = EVP_parse_digest_algorithm(&log_hash);
-    if (log_hash_ == nullptr) {
+    if (!is_mtc_serial_valid(min_serial_) ||
+        !is_mtc_serial_valid(max_serial_)) {
+      OPENSSL_PUT_ERROR(X509, X509_R_INVALID_MTC_CA);
       return false;
     }
-    if (CBS_len(&log_hash) != 0) {
-      OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
-      return false;
-    }
-
     // Extract the CA ID from the subject (see section 5.1).
     const X509_NAME *subject = X509_get_subject_name(x509);
     int tai_index =
-        X509_NAME_get_index_by_NID(subject, NID_rdna_trustAnchorID_draft, -1);
+        X509_NAME_get_index_by_NID(subject, NID_rdna_trustAnchorID, -1);
     if (tai_index < 0 || X509_NAME_entry_count(subject) != 1) {
       OPENSSL_PUT_ERROR(X509, X509_R_INVALID_MTC_CA);
       return false;
     }
-    // For initial experimentation, the attribute's value is a UTF8String
-    // containing the trust anchor ID's ASCII representation.
-    const ASN1_STRING *tai_ascii =
+    const ASN1_STRING *tai =
         X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subject, tai_index));
-    if (ASN1_STRING_type(tai_ascii) != V_ASN1_UTF8STRING) {
+    // RELATIVE-OID has no dedicated ASN1_STRING representation, so the value
+    // is stored as V_ASN1_OTHER containing the entire element.
+    if (ASN1_STRING_type(tai) != V_ASN1_OTHER) {
       OPENSSL_PUT_ERROR(X509, X509_R_WRONG_TYPE);
       return false;
     }
-    std::string_view tai_ascii_str = BytesAsStringView(
-        Span(ASN1_STRING_get0_data(tai_ascii), ASN1_STRING_length(tai_ascii)));
-    ScopedCBB ca_id_enc;
-    if (!CBB_init(ca_id_enc.get(), 64) ||
-        !CBB_add_asn1_relative_oid_from_text(
-            ca_id_enc.get(), tai_ascii_str.data(), tai_ascii_str.size())) {
+    CBS tai_elem, tai_relative_oid;
+    CBS_init(&tai_elem, ASN1_STRING_get0_data(tai), ASN1_STRING_length(tai));
+    if (!CBS_get_asn1(&tai_elem, &tai_relative_oid, CBS_ASN1_RELATIVE_OID) ||
+        CBS_len(&tai_elem) != 0 ||
+        !CBS_is_valid_asn1_relative_oid(&tai_relative_oid)) {
       OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_OBJECT_ENCODING);
       return false;
     }
-    if (!CBBFinishArray(ca_id_enc.get(), &ca_id_enc_oid_)) {
+    if (CBS_len(&tai_relative_oid) > kMaxTrustAnchorIdBytes) {
+      OPENSSL_PUT_ERROR(X509, X509_R_INVALID_MTC_CA);
+      return false;
+    }
+    if (!ca_id_enc_oid_.CopyFrom(tai_relative_oid)) {
       OPENSSL_PUT_ERROR(X509, ERR_R_INTERNAL_ERROR);
       return false;
     }
@@ -215,7 +245,9 @@ class MTCCACosigner {
   }
 
   bool IsSerialInRange(uint64_t serial) const {
-    return min_serial_ <= serial && serial <= max_serial_;
+    bool ok = min_serial_ <= serial && serial <= max_serial_;
+    assert(!ok || is_mtc_serial_valid(serial));
+    return ok;
   }
 
   // Constructs CosignedMessage and computes signature.
@@ -248,7 +280,7 @@ class MTCCACosigner {
     return trust_anchor_id == ca_id_enc_oid_;
   }
 
-  const EVP_MD *log_hash() const { return log_hash_; }
+  const EVP_MD *log_hash() const { return EVP_sha256(); }
 
  private:
   // WriteTaiAscii concatenates the trust anchor ID prefix with the CA ID as a
@@ -256,9 +288,9 @@ class MTCCACosigner {
   // OID components from `oid_suffix`, and writes the ASCII string
   // representation of the full trust anchor ID to `out`.
   bool WriteTaiAscii(CBB *out, Span<const uint64_t> oid_suffix = {}) const {
-    // Trust anchor IDs are constrained to 256 bytes by spec (and are typically
-    // much shorter).
-    uint8_t id[256];
+    // Trust anchor IDs such as the CA ID are limited to 32 bytes by spec, but
+    // `oid_suffix` may add additional bytes.
+    uint8_t id[2 * kMaxTrustAnchorIdBytes];
     CBB id_cbb;
     if (!CBB_init_fixed(&id_cbb, id, sizeof(id)) ||
         !CBB_add_bytes(&id_cbb, ca_id_enc_oid_.data(), ca_id_enc_oid_.size())) {
@@ -301,21 +333,20 @@ class MTCCACosigner {
   // 5.1 and 5.4), in the form of a DER-encoded relative OID. This does not
   // include any framing, only the element's contents.
   Array<uint8_t> ca_id_enc_oid_;
-  // Log hash algorithm.
-  const EVP_MD *log_hash_ = nullptr;
   // Public key of the CA cosigner.
   UniquePtr<EVP_PKEY> cosign_pubkey_;
   // Signature algorithm for CA cosigner signatures.
   ScopedX509Algor cosign_sigalg_;
-  // Min and max allowed serial number, (0..2^64-1).
+  // Min and max allowed serial number, both (2^48 .. 2^64-1).
   uint64_t min_serial_ = 0u;
   uint64_t max_serial_ = 0u;
 };
 
 }  // namespace
 
+// Only id-pe-mtcCertificationAuthority-SHA256 is supported.
 bool x509_is_merkle_tree_ca(const X509 *x509) {
-  return X509_get_ext_by_NID(x509, NID_pe_mtcCertificationAuthority_draft,
+  return X509_get_ext_by_NID(x509, NID_pe_mtcCertificationAuthority_SHA256,
                              -1) >= 0;
 }
 
@@ -420,9 +451,12 @@ int x509_verify_mtc(const X509 *x509, const EVP_PKEY *pkey,
       !CBS_get_u48(&mtc_proof, &subtree_start) ||
       !CBS_get_u48(&mtc_proof, &subtree_end) ||
       !CBS_get_u16_length_prefixed(&mtc_proof, &inclusion_proof) ||
-      !CBS_get_u16_length_prefixed(&mtc_proof, &signatures) ||
+      !CBS_get_u24_length_prefixed(&mtc_proof, &signatures) ||
       CBS_len(&mtc_proof) != 0) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
+    return 0;
+  }
+  if (!CheckMTCLogEntryExtensions(extensions)) {
     return 0;
   }
 
@@ -434,8 +468,7 @@ int x509_verify_mtc(const X509 *x509, const EVP_PKEY *pkey,
   while (CBS_len(&signatures) > 0) {
     if (!CBS_get_u8_length_prefixed(&signatures, &cosigner_id) ||
         CBS_len(&cosigner_id) == 0 ||
-        !CBS_get_u16_length_prefixed(&signatures, &signature) ||
-        CBS_len(&signature) == 0) {
+        !CBS_get_u16_length_prefixed(&signatures, &signature)) {
       OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
       return 0;
     }
@@ -496,12 +529,9 @@ int x509_verify_mtc(const X509 *x509, const EVP_PKEY *pkey,
     return 0;
   }
   // `index` is the least significant 48 bits of `serial`.
-  uint64_t index = serial & ((uint64_t{1} << 48) - 1);
-  uint64_t log_number = serial >> 48;
-  if (log_number == 0) {
-    OPENSSL_PUT_ERROR(X509, X509_R_INVALID_PARAMETER);
-    return 0;
-  }
+  const uint64_t index = serial & ((uint64_t{1} << 48) - 1);
+  const uint64_t log_number = serial >> 48;
+  assert(is_mtc_serial_valid(serial));
 
   // The TBSCertificate's `signature` field must match the expected MTC
   // signature algorithm identifier.
@@ -544,9 +574,13 @@ int x509_verify_mtc(const X509 *x509, const EVP_PKEY *pkey,
   }
   uint8_t spki_digest[EVP_MAX_MD_SIZE];
   unsigned int spki_digest_len;
+  // The short-form DER length can only encode lengths up to 127 (0x7f). The MTC
+  // spec permits longer hash lengths up to 255 (0xff), which would require a
+  // long-form length, but no `EVP_MD` currently outputs more than 127 bytes, so
+  // reject them here instead of supporting both short and long encoding forms.
   if (!EVP_Digest(CBS_data(&spki), CBS_len(&spki), spki_digest,
                   &spki_digest_len, issuer_mtc_ca.log_hash(), nullptr) ||
-      spki_digest_len == 0 || spki_digest_len > 0xff) {
+      spki_digest_len == 0 || spki_digest_len > 0x7f) {
     OPENSSL_PUT_ERROR(X509, ERR_R_INTERNAL_ERROR);
     return 0;
   }

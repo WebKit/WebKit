@@ -73,6 +73,7 @@ class RunLoop {
     void SetMessageQueue(Thread* absl_nullable queue) override;
     bool Wait(webrtc::TimeDelta max_wait_duration, bool process_io) override;
     void WakeUp() override;
+    bool CanCreateSockets() const override;
 
     Socket* absl_nullable CreateSocket(int family, int type) override;
 

@@ -34,25 +34,25 @@ namespace {
 
 extern const EVP_PKEY_CTX_METHOD dh_pkey_meth;
 
-static void dh_free(EvpPkey *pkey) {
+void dh_free(EvpPkey *pkey) {
   DH_free(reinterpret_cast<DH *>(pkey->pkey));
   pkey->pkey = nullptr;
 }
 
-static int dh_size(const EvpPkey *pkey) {
+int dh_size(const EvpPkey *pkey) {
   return DH_size(reinterpret_cast<const DH *>(pkey->pkey));
 }
 
-static int dh_bits(const EvpPkey *pkey) {
+int dh_bits(const EvpPkey *pkey) {
   return DH_bits(reinterpret_cast<const DH *>(pkey->pkey));
 }
 
-static int dh_param_missing(const EvpPkey *pkey) {
+int dh_param_missing(const EvpPkey *pkey) {
   const DH *dh = reinterpret_cast<const DH *>(pkey->pkey);
   return dh == nullptr || DH_get0_p(dh) == nullptr || DH_get0_g(dh) == nullptr;
 }
 
-static int dh_param_copy(EvpPkey *to, const EvpPkey *from) {
+int dh_param_copy(EvpPkey *to, const EvpPkey *from) {
   if (dh_param_missing(from)) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_MISSING_PARAMETERS);
     return 0;
@@ -81,7 +81,7 @@ static int dh_param_copy(EvpPkey *to, const EvpPkey *from) {
   return 1;
 }
 
-static bool dh_param_equal(const EvpPkey *a, const EvpPkey *b) {
+bool dh_param_equal(const EvpPkey *a, const EvpPkey *b) {
   if (dh_param_missing(a) || dh_param_missing(b)) {
     return false;
   }
@@ -94,7 +94,7 @@ static bool dh_param_equal(const EvpPkey *a, const EvpPkey *b) {
          BN_cmp(DH_get0_g(a_dh), DH_get0_g(b_dh)) == 0;
 }
 
-static bool dh_pub_equal(const EvpPkey *a, const EvpPkey *b) {
+bool dh_pub_equal(const EvpPkey *a, const EvpPkey *b) {
   if (!dh_param_equal(a, b)) {
     return false;
   }
@@ -104,12 +104,12 @@ static bool dh_pub_equal(const EvpPkey *a, const EvpPkey *b) {
   return BN_cmp(DH_get0_pub_key(a_dh), DH_get0_pub_key(b_dh)) == 0;
 }
 
-static bool dh_has_pub(const EvpPkey *pk) {
+bool dh_has_pub(const EvpPkey *pk) {
   const DH *pk_dh = reinterpret_cast<const DH *>(pk->pkey);
   return DH_get0_pub_key(pk_dh) != nullptr;
 }
 
-static bool dh_pub_copy(EvpPkey *out, const EvpPkey *pk) {
+bool dh_pub_copy(EvpPkey *out, const EvpPkey *pk) {
   const DH *pk_dh = reinterpret_cast<const DH *>(pk->pkey);
   const BIGNUM *public_key = DH_get0_pub_key(pk_dh);
   if (public_key == nullptr) {
@@ -128,12 +128,12 @@ static bool dh_pub_copy(EvpPkey *out, const EvpPkey *pk) {
   return true;
 }
 
-static bool dh_has_priv(const EvpPkey *pk) {
+bool dh_has_priv(const EvpPkey *pk) {
   const DH *pk_dh = reinterpret_cast<const DH *>(pk->pkey);
   return DH_get0_priv_key(pk_dh) != nullptr;
 }
 
-static const EVP_PKEY_ASN1_METHOD dh_asn1_meth = {
+const EVP_PKEY_ASN1_METHOD dh_asn1_meth = {
     /*pkey_id=*/EVP_PKEY_DH,
     /*oid=*/{0},
     /*oid_len=*/0,
@@ -167,7 +167,7 @@ struct DH_PKEY_CTX {
   bool pad = false;
 };
 
-static int pkey_dh_init(EvpPkeyCtx *ctx, const EVP_PKEY_ALG *) {
+int pkey_dh_init(EvpPkeyCtx *ctx, const EVP_PKEY_ALG *) {
   DH_PKEY_CTX *dctx = New<DH_PKEY_CTX>();
   if (dctx == nullptr) {
     return 0;
@@ -177,7 +177,7 @@ static int pkey_dh_init(EvpPkeyCtx *ctx, const EVP_PKEY_ALG *) {
   return 1;
 }
 
-static int pkey_dh_copy(EvpPkeyCtx *dst, EvpPkeyCtx *src) {
+int pkey_dh_copy(EvpPkeyCtx *dst, EvpPkeyCtx *src) {
   if (!pkey_dh_init(dst, nullptr)) {
     return 0;
   }
@@ -188,11 +188,11 @@ static int pkey_dh_copy(EvpPkeyCtx *dst, EvpPkeyCtx *src) {
   return 1;
 }
 
-static void pkey_dh_cleanup(EvpPkeyCtx *ctx) {
+void pkey_dh_cleanup(EvpPkeyCtx *ctx) {
   Delete(reinterpret_cast<DH_PKEY_CTX *>(ctx->data));
 }
 
-static int pkey_dh_keygen(EvpPkeyCtx *ctx, EvpPkey *pkey) {
+int pkey_dh_keygen(EvpPkeyCtx *ctx, EvpPkey *pkey) {
   DH *dh = DH_new();
   if (dh == nullptr || !EVP_PKEY_assign_DH(pkey, dh)) {
     DH_free(dh);
@@ -207,7 +207,7 @@ static int pkey_dh_keygen(EvpPkeyCtx *ctx, EvpPkey *pkey) {
   return DH_generate_key(dh);
 }
 
-static int pkey_dh_derive(EvpPkeyCtx *ctx, uint8_t *out, size_t *out_len) {
+int pkey_dh_derive(EvpPkeyCtx *ctx, uint8_t *out, size_t *out_len) {
   DH_PKEY_CTX *dctx = reinterpret_cast<DH_PKEY_CTX *>(ctx->data);
   if (ctx->pkey == nullptr || ctx->peerkey == nullptr) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_KEYS_NOT_SET);
@@ -248,7 +248,7 @@ static int pkey_dh_derive(EvpPkeyCtx *ctx, uint8_t *out, size_t *out_len) {
   return 1;
 }
 
-static int pkey_dh_ctrl(EvpPkeyCtx *ctx, int type, int p1, void *p2) {
+int pkey_dh_ctrl(EvpPkeyCtx *ctx, int type, int p1, void *p2) {
   DH_PKEY_CTX *dctx = reinterpret_cast<DH_PKEY_CTX *>(ctx->data);
   switch (type) {
     case EVP_PKEY_CTRL_PEER_KEY:
@@ -288,12 +288,8 @@ const EVP_PKEY_CTX_METHOD dh_pkey_meth = {
 
 }  // namespace
 
-int EVP_PKEY_set1_DH(EVP_PKEY *pkey, DH *key) {
-  if (EVP_PKEY_assign_DH(pkey, key)) {
-    DH_up_ref(key);
-    return 1;
-  }
-  return 0;
+int EVP_PKEY_set1_DH(EVP_PKEY *pkey, const DH *key) {
+  return EVP_PKEY_assign_DH(pkey, DH_dup_ref(key));
 }
 
 int EVP_PKEY_assign_DH(EVP_PKEY *pkey, DH *key) {

@@ -41,6 +41,7 @@ class FakeNetworkSocketServer : public SocketServer {
   void SetMessageQueue(Thread* thread) override;
   bool Wait(webrtc::TimeDelta max_wait_duration, bool process_io) override;
   void WakeUp() override;
+  bool CanCreateSockets() const override { return true; }
 
  protected:
   friend class FakeNetworkSocket;

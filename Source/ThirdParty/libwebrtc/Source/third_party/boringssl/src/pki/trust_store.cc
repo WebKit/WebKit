@@ -18,6 +18,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <memory>
 #include <optional>
 #include <string>
 #include <utility>
@@ -197,7 +198,29 @@ MTCAnchor::MTCAnchor(Span<const uint8_t> ca_id,
                      SignatureAlgorithm ca_signature_algorithm,
                      UniquePtr<CRYPTO_BUFFER> ca_key,
                      std::vector<LogTrustedSubtrees> log_trusted_subtrees)
-    : ca_id_(ca_id.begin(), ca_id.end()),
+    : MTCAnchor(Token(), kPlants04, ca_id, ca_signature_algorithm,
+                std::move(ca_key), std::move(log_trusted_subtrees)) {}
+
+std::shared_ptr<const MTCAnchor> MTCAnchor::CreatePlants07(
+    Span<const uint8_t> ca_id, SignatureAlgorithm ca_signature_algorithm,
+    UniquePtr<CRYPTO_BUFFER> ca_key,
+    std::vector<LogTrustedSubtrees> log_trusted_subtrees) {
+  std::shared_ptr<const MTCAnchor> mtc_anchor = std::make_shared<MTCAnchor>(
+      Token(), kPlants07, ca_id, ca_signature_algorithm, std::move(ca_key),
+      std::move(log_trusted_subtrees));
+  if (!mtc_anchor->IsValid()) {
+    return nullptr;
+  }
+  return mtc_anchor;
+}
+
+MTCAnchor::MTCAnchor(Token, MtcSpecVersion spec_version,
+                     Span<const uint8_t> ca_id,
+                     SignatureAlgorithm ca_signature_algorithm,
+                     UniquePtr<CRYPTO_BUFFER> ca_key,
+                     std::vector<LogTrustedSubtrees> log_trusted_subtrees)
+    : spec_version_(spec_version),
+      ca_id_(ca_id.begin(), ca_id.end()),
       ca_signature_algorithm_(ca_signature_algorithm),
       ca_key_(std::move(ca_key)),
       trusted_subtrees_(std::move(log_trusted_subtrees)) {
@@ -325,27 +348,48 @@ void MTCAnchor::CreateSyntheticCert(bssl::Span<const uint8_t> ca_id) {
   BSSL_CHECK(CBB_add_asn1(&subject_seq, &subject_set, CBS_ASN1_SET));
   BSSL_CHECK(CBB_add_asn1(&subject_set, &subject_log, CBS_ASN1_SEQUENCE));
 
-  // Section 5.1: Use OID 1.3.6.1.4.1.44363.47.1 as the attribute type for the
-  // CA ID's name. Note that this is the early experimentation OID in the
-  // draft rather than the real value of `id-rdna-trustAnchorID`.
-  static uint8_t tai_attr_oid[] = {0x2b, 0x06, 0x01, 0x04, 0x01,
-                                   0x82, 0xda, 0x4b, 0x2f, 0x01};
-  BSSL_CHECK(CBB_add_asn1_element(&subject_log, CBS_ASN1_OBJECT, tai_attr_oid,
-                                  sizeof(tai_attr_oid)));
+  if (spec_version() == kPlants04) {
+    // Section 5.1: Use OID 1.3.6.1.4.1.44363.47.1 as the attribute type for the
+    // CA ID's name. Note that this is the early experimentation OID in the
+    // draft rather than the real value of `id-rdna-trustAnchorID`.
+    static const uint8_t tai_attr_oid[] = {0x2b, 0x06, 0x01, 0x04, 0x01,
+                                           0x82, 0xda, 0x4b, 0x2f, 0x01};
+    BSSL_CHECK(CBB_add_asn1_element(&subject_log, CBS_ASN1_OBJECT, tai_attr_oid,
+                                    sizeof(tai_attr_oid)));
 
-  // Section 5.1's note for initial experimentation also says to use UTF8String
-  // to represent the attribute's value rather than RELATIVE-OID.
+    // Section 5.1's note for initial experimentation also says to use
+    // UTF8String to represent the attribute's value rather than RELATIVE-OID.
 
-  //  Convert the relative OID `ca_id` to a string. This can fail.
-  CBS ca_id_oid(ca_id);
-  bssl::UniquePtr<char> ca_id_text(CBS_asn1_relative_oid_to_text(&ca_id_oid));
-  if (!ca_id_text) {
-    return;
+    //  Convert the relative OID `ca_id` to a string. This can fail.
+    CBS ca_id_oid(ca_id);
+    bssl::UniquePtr<char> ca_id_text(CBS_asn1_relative_oid_to_text(&ca_id_oid));
+    if (!ca_id_text) {
+      return;
+    }
+    BSSL_CHECK(CBB_add_asn1_element(
+        &subject_log, CBS_ASN1_UTF8STRING,
+        reinterpret_cast<const uint8_t *>(ca_id_text.get()),
+        strlen(ca_id_text.get())));
+  } else {
+    // A CA ID determines a PKIX distinguished name (Section 4.1.2.4 of
+    // [RFC5280]) that can be used in the issuer or subject field of an X.509
+    // TBSCertificate. This distinguished name has a single relative
+    // distinguished name, which has a single attribute. The attribute has type
+    // id-rdna-trustAnchorID, defined below:
+    //
+    // id-rdna-trustAnchorID OBJECT IDENTIFIER ::= {
+    //     iso(1) identified-organization(3) dod(6) internet(1) security(5)
+    //     mechanisms(5) pkix(7) rdna(25) 3 }
+    static const uint8_t tai_attr_oid[] = {0x2b, 0x06, 0x01, 0x05,
+                                           0x05, 0x07, 0x19, 0x03};
+    BSSL_CHECK(CBB_add_asn1_element(&subject_log, CBS_ASN1_OBJECT, tai_attr_oid,
+                                    sizeof(tai_attr_oid)));
+
+    // The attribute's value is a RELATIVE-OID containing the trust anchor ID's
+    // ASN.1 representation.
+    BSSL_CHECK(CBB_add_asn1_element(&subject_log, CBS_ASN1_RELATIVE_OID,
+                                    ca_id.data(), ca_id.size()));
   }
-  BSSL_CHECK(
-      CBB_add_asn1_element(&subject_log, CBS_ASN1_UTF8STRING,
-                           reinterpret_cast<const uint8_t *>(ca_id_text.get()),
-                           strlen(ca_id_text.get())));
 
   // subjectPublicKeyInfo
   BSSL_CHECK(CBB_add_asn1_element(&tbs_cert, CBS_ASN1_SEQUENCE, nullptr, 0));
@@ -363,12 +407,6 @@ void MTCAnchor::CreateSyntheticCert(bssl::Span<const uint8_t> ca_id) {
       ParseCertificateOptions{}, nullptr);
 }
 
-TrustAnchor::TrustAnchor(CertificateTrust trust)
-    : TrustAnchor(trust, nullptr) {}
-TrustAnchor::TrustAnchor(CertificateTrust trust,
-                         std::shared_ptr<const bssl::MTCAnchor> mtc_anchor)
-    : trust_(trust), mtc_anchor_(mtc_anchor) {}
-
 void TrustAnchor::OverrideCertTrust(CertificateTrust new_trust) {
   trust_ = new_trust;
 }
@@ -378,8 +416,6 @@ CertificateTrust TrustAnchor::CertTrust() const { return trust_; }
 std::shared_ptr<const MTCAnchor> TrustAnchor::MTCAnchor() const {
   return mtc_anchor_;
 }
-
-TrustStore::TrustStore() = default;
 
 std::shared_ptr<const MTCAnchor> TrustStore::GetTrustedMTCIssuerOf(
     const ParsedCertificate *cert) {

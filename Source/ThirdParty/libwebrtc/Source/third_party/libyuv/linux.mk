@@ -32,9 +32,11 @@ LOCAL_OBJ_FILES := \
 	source/rotate_argb.o       \
 	source/rotate_common.o     \
 	source/rotate_gcc.o        \
+	source/rotate_lasx.o       \
 	source/rotate_lsx.o        \
 	source/rotate_neon.o       \
 	source/rotate_neon64.o     \
+	source/rotate_rvv.o        \
 	source/rotate_win.o        \
 	source/row_any.o           \
 	source/row_common.o        \

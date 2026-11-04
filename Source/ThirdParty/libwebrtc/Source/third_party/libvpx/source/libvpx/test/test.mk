@@ -186,6 +186,9 @@ LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += vp9_tokenize_test.cc
 LIBVPX_TEST_SRCS-yes                   += vp9_intrapred_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_DECODER) += vp9_decrypt_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_DECODER) += vp9_thread_test.cc
+ifeq ($(CONFIG_VP9_DECODER)$(CONFIG_VP9_POSTPROC),yesyes)
+LIBVPX_TEST_SRCS-yes                   += mfqe_test.cc
+endif
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += avg_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += comp_avg_pred_test.cc
 LIBVPX_TEST_SRCS-$(CONFIG_VP9_ENCODER) += dct16x16_test.cc

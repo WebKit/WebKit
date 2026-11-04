@@ -7041,8 +7041,8 @@ static const NN_CONFIG av1_simple_motion_search_prune_rect_nn_config_8 = {
 #undef NUM_LAYER_0_UNITS_8
 #undef NUM_LOGITS_8
 
-static const NN_CONFIG
-    *const av1_simple_motion_search_prune_rect_nn_config[5] = {
+static const NN_CONFIG *const
+    av1_simple_motion_search_prune_rect_nn_config[5] = {
       &av1_simple_motion_search_prune_rect_nn_config_128,
       &av1_simple_motion_search_prune_rect_nn_config_64,
       &av1_simple_motion_search_prune_rect_nn_config_32,

@@ -571,10 +571,13 @@ int asn1_object_cmp(const ASN1_OBJECT *const *a, const ASN1_OBJECT *const *b) {
 
 int X509_policy_check(const STACK_OF(X509) *certs,
                       const STACK_OF(ASN1_OBJECT) *user_policies,
-                      unsigned long flags, X509 **out_current_cert) {
-  *out_current_cert = nullptr;
+                      unsigned long flags, int *out_error_depth) {
+  *out_error_depth = 0;
 
   // Skip policy checking if the chain is just the trust anchor.
+  //
+  // TODO(crbug.com/525688038): Apply trust anchor constraints. See RFC 5937 and
+  // ApplyTrustAnchorConstraints from verify_certificate_chain.cc.
   const size_t num_certs = sk_X509_num(certs);
   if (num_certs <= 1) {
     return X509_V_OK;
@@ -593,6 +596,7 @@ int X509_policy_check(const STACK_OF(X509) *certs,
     X509 *cert = sk_X509_value(certs, i);
     uint32_t ex_flags = X509_get_extension_flags(cert);
     if (ex_flags & EXFLAG_INVALID) {
+      *out_error_depth = static_cast<int>(i);
       return X509_V_ERR_OUT_OF_MEM;
     }
     const bool is_self_issued = (ex_flags & EXFLAG_SI) != 0;
@@ -610,17 +614,19 @@ int X509_policy_check(const STACK_OF(X509) *certs,
     const int any_policy_allowed =
         inhibit_any_policy > 0 || (i > 0 && is_self_issued);
     if (!process_certificate_policies(cert, &*level, any_policy_allowed)) {
-      *out_current_cert = cert;
+      *out_error_depth = static_cast<int>(i);
       return X509_V_ERR_INVALID_POLICY_EXTENSION;
     }
 
     // RFC 5280, section 6.1.3, step (f).
     if (explicit_policy == 0 && level->is_empty()) {
+      *out_error_depth = static_cast<int>(i);
       return X509_V_ERR_NO_EXPLICIT_POLICY;
     }
 
     // Insert the completed level into the list.
     if (!levels.Push(*std::exchange(level, std::nullopt))) {
+      *out_error_depth = static_cast<int>(i);
       return X509_V_ERR_OUT_OF_MEM;
     }
     level = std::nullopt;
@@ -631,7 +637,7 @@ int X509_policy_check(const STACK_OF(X509) *certs,
       // RFC 5280, section 6.1.4, steps (a) and (b).
       level = process_policy_mappings(cert, &levels.back(), policy_mapping > 0);
       if (!level.has_value()) {
-        *out_current_cert = cert;
+        *out_error_depth = static_cast<int>(i);
         return X509_V_ERR_INVALID_POLICY_EXTENSION;
       }
     }
@@ -653,7 +659,7 @@ int X509_policy_check(const STACK_OF(X509) *certs,
     }
     if (!process_policy_constraints(cert, &explicit_policy, &policy_mapping,
                                     &inhibit_any_policy)) {
-      *out_current_cert = cert;
+      *out_error_depth = static_cast<int>(i);
       return X509_V_ERR_INVALID_POLICY_EXTENSION;
     }
   }

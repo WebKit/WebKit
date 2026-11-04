@@ -19,8 +19,8 @@
 
 #define REINTERPRET_NEON(u, to_sz, to_count, from_sz, from_count, n, q)     \
   static AOM_FORCE_INLINE u##int##to_sz##x##to_count##x##n##_t              \
-      aom_reinterpret##q##_##u##to_sz##_##u##from_sz##_x##n(                \
-          const u##int##from_sz##x##from_count##x##n##_t src) {             \
+  aom_reinterpret##q##_##u##to_sz##_##u##from_sz##_x##n(                    \
+      const u##int##from_sz##x##from_count##x##n##_t src) {                 \
     u##int##to_sz##x##to_count##x##n##_t ret;                               \
     for (int i = 0; i < (n); ++i) {                                         \
       ret.val[i] = vreinterpret##q##_##u##to_sz##_##u##from_sz(src.val[i]); \

@@ -40,6 +40,7 @@
 #include "api/rtp_parameters.h"
 #include "api/rtp_receiver_interface.h"
 #include "api/scoped_refptr.h"
+#include "api/sframe/sframe_decryptor_interface.h"
 #include "api/sframe/sframe_encryptor_interface.h"
 #include "api/sframe/sframe_types.h"
 #include "api/task_queue/task_queue_base.h"
@@ -68,6 +69,8 @@
 #include "media/base/stream_params.h"
 #include "media/base/test_utils.h"
 #include "media/engine/fake_webrtc_call.h"
+#include "modules/sframe/sframe_encryption_config.h"
+#include "modules/sframe/sframe_media_encryptor_interface.h"
 #include "p2p/base/p2p_constants.h"
 #include "p2p/dtls/dtls_transport_internal.h"
 #include "p2p/dtls/fake_dtls_transport.h"
@@ -78,6 +81,7 @@
 #include "pc/encoded_video_frame_injector.h"
 #include "pc/local_audio_source.h"
 #include "pc/media_stream.h"
+#include "pc/rtp_receiver_proxy.h"
 #include "pc/rtp_sender.h"
 #include "pc/rtp_transport_internal.h"
 #include "pc/scoped_operations_batcher.h"
@@ -85,6 +89,7 @@
 #include "pc/video_rtp_receiver.h"
 #include "pc/video_track.h"
 #include "rtc_base/checks.h"  // IWYU pragma: keep
+#include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/unique_id_generator.h"
 #include "test/create_test_environment.h"
@@ -116,6 +121,7 @@ class MockSetStreamsObserver : public RtpSenderBase::SetStreamsObserver {
 
 
 using ::testing::ContainerEq;
+using ::testing::MockFunction;
 using RidList = std::vector<std::string>;
 
 class MockVideoMediaSendChannel : public FakeVideoMediaSendChannel {
@@ -142,9 +148,15 @@ class MockVideoMediaSendChannel : public FakeVideoMediaSendChannel {
     last_encoder_factory_override_ = nullptr;
   }
 
+  void SetSframeEncryptionConfig(
+      SframeEncryptionConfig sframe_encryption_config) override {
+    last_set_sframe_encryption_config_ = std::move(sframe_encryption_config);
+  }
+
   scoped_refptr<FrameEncryptorInterface> last_set_frame_encryptor_;
   std::unique_ptr<VideoEncoderFactory> last_encoder_factory_override_;
   bool reset_encoder_factory_called_ = false;
+  std::optional<SframeEncryptionConfig> last_set_sframe_encryption_config_;
 };
 
 class MockVoiceMediaSendChannel : public FakeVoiceMediaSendChannel {
@@ -365,6 +377,19 @@ class RtpSenderReceiverTest
           /*init_send_encodings=*/{}, /*simulcast_rejected=*/false,
           /*initial_simulcast_layers=*/{});
     });
+  }
+
+  // Creates a sender that accepts Sframe and has no track, leaving the send
+  // SSRC unassigned until SetSsrc() runs. Empty encodings keep SetSsrc() out of
+  // the parameter path, which expects a send stream on the media channel.
+  void CreateVideoRtpSenderWithSframe() {
+    video_rtp_sender_ = VideoRtpSender::Create(
+        CreateTestEnvironment(), signaling_thread_, worker_thread_.get(),
+        /*id=*/"", /*set_streams_observer=*/nullptr,
+        []() -> RTCError { return RTCError::OK(); }, video_media_send_channel(),
+        /*init_send_encodings=*/{}, /*simulcast_rejected=*/false,
+        /*initial_simulcast_layers=*/{});
+    video_rtp_sender_->set_init_send_encodings({});
   }
 
   void DestroyAudioRtpSender() {
@@ -647,6 +672,21 @@ class RtpSenderReceiverTest
                size_t layer_count = 1) {
     ScopedOperationsBatcher worker_tasks(worker_thread_.get());
     worker_tasks.AddWithFinalizer(sender.SetSsrcTask(ssrc, layer_count));
+  }
+
+  // Expects `sender` to return the parameters that `media_channel` reports for
+  // `ssrc`, from its cache, i.e. without a blocking call.
+  void ExpectParametersFromCache(const RtpSenderInternal& sender,
+                                 MediaSendChannelInterface* media_channel,
+                                 uint32_t ssrc) {
+    RtpParameters parameters;
+    {
+      RTC_DCHECK_DISALLOW_THREAD_BLOCKING_CALLS();
+      parameters = sender.GetParametersInternal(/*with_all_layers=*/false);
+    }
+    EXPECT_EQ(parameters, worker_thread_->BlockingCall([&] {
+      return media_channel->GetRtpSendParameters(ssrc);
+    }));
   }
 
   test::RunLoop run_loop_;
@@ -2107,6 +2147,132 @@ TEST_F(RtpSenderReceiverTest,
   DestroyVideoRtpSender();
 }
 
+// The parameters that are read back after SetParametersAsync() has applied
+// them, are used to populate the cache.
+TEST_F(RtpSenderReceiverTest, SetParametersAsyncPopulatesCachedParameters) {
+  CreateVideoRtpSender();
+
+  RtpParameters params = video_rtp_sender_->GetParameters();
+  ASSERT_EQ(1u, params.encodings.size());
+  params.encodings[0].max_bitrate_bps = 100000;
+  std::optional<RTCError> result;
+  video_rtp_sender_->SetParametersAsync(params, [&](RTCError error) {
+    result = std::move(error);
+    run_loop_.Quit();
+  });
+  run_loop_.Run();
+  ASSERT_TRUE(result.has_value());
+  EXPECT_TRUE(result->ok());
+
+  RtpParameters cached_params;
+  {
+    // The parameters must be served from the cache.
+    RTC_DCHECK_DISALLOW_THREAD_BLOCKING_CALLS();
+    cached_params = video_rtp_sender_->GetParametersInternal();
+  }
+  ASSERT_EQ(1u, cached_params.encodings.size());
+  EXPECT_EQ(cached_params.encodings[0].max_bitrate_bps, 100000);
+
+  DestroyVideoRtpSender();
+}
+
+// The completion of SetParametersAsync() must not overwrite the cache with
+// parameters that are older than the parameters of the media channel. Here the
+// parameters are set again with a blocking call before the completion has run.
+TEST_F(RtpSenderReceiverTest,
+       SetParametersAsyncCompletionDoesNotOverwriteNewerParameters) {
+  CreateVideoRtpSender();
+
+  RtpParameters params = video_rtp_sender_->GetParameters();
+  ASSERT_EQ(1u, params.encodings.size());
+  params.encodings[0].max_bitrate_bps = 100000;
+  std::optional<RTCError> async_result;
+  video_rtp_sender_->SetParametersAsync(
+      params, [&](RTCError error) { async_result = std::move(error); });
+
+  // The worker thread applies the asynchronous operation before this one, but
+  // the completion of the asynchronous operation runs on this thread after
+  // this call returns.
+  params.encodings[0].max_bitrate_bps = 200000;
+  EXPECT_TRUE(video_rtp_sender_->SetParameters(params).ok());
+
+  FlushWorker();
+  ASSERT_TRUE(async_result.has_value());
+  EXPECT_TRUE(async_result->ok());
+
+  RtpParameters channel_params = worker_thread_->BlockingCall([&] {
+    return video_media_send_channel()->GetRtpSendParameters(kVideoSsrc);
+  });
+  ASSERT_EQ(1u, channel_params.encodings.size());
+  EXPECT_EQ(channel_params.encodings[0].max_bitrate_bps, 200000);
+  EXPECT_EQ(video_rtp_sender_->GetParametersInternal(), channel_params);
+  EXPECT_EQ(video_rtp_sender_->GetParameters(), channel_params);
+
+  DestroyVideoRtpSender();
+}
+
+// The completion of SetParametersAsync() must not populate the cache with the
+// parameters of the send stream that the sender was attached to when the
+// operation was started, if the sender has been attached to a different send
+// stream since.
+TEST_F(RtpSenderReceiverTest, SetParametersAsyncCompletionAfterSsrcChange) {
+  CreateVideoRtpSender();
+
+  RtpParameters params = video_rtp_sender_->GetParameters();
+  ASSERT_EQ(1u, params.encodings.size());
+  params.encodings[0].max_bitrate_bps = 100000;
+  std::optional<RTCError> async_result;
+  video_rtp_sender_->SetParametersAsync(
+      params, [&](RTCError error) { async_result = std::move(error); });
+
+  SetSsrc(kVideoSsrc2, *video_rtp_sender_);
+
+  FlushWorker();
+  ASSERT_TRUE(async_result.has_value());
+  EXPECT_TRUE(async_result->ok());
+
+  RtpParameters channel_params = worker_thread_->BlockingCall([&] {
+    return video_media_send_channel()->GetRtpSendParameters(kVideoSsrc2);
+  });
+  ASSERT_EQ(1u, channel_params.encodings.size());
+  EXPECT_EQ(channel_params.encodings[0].ssrc, kVideoSsrc2);
+  EXPECT_EQ(video_rtp_sender_->GetParametersInternal(), channel_params);
+  EXPECT_EQ(video_rtp_sender_->GetParameters(), channel_params);
+
+  DestroyVideoRtpSender();
+}
+
+// The parameters are read back when the sender is attached to a send stream,
+// also when there are no init parameters to apply.
+TEST_F(RtpSenderReceiverTest, SetSsrcPopulatesCachedParameters) {
+  CreateVideoRtpSender();
+  // The init parameters were applied to `kVideoSsrc`.
+  SetSsrc(kVideoSsrc2, *video_rtp_sender_);
+  ExpectParametersFromCache(*video_rtp_sender_, video_media_send_channel(),
+                            kVideoSsrc2);
+  DestroyVideoRtpSender();
+}
+
+// The parameters are read back after SetVideoSend(), which can change them.
+TEST_F(RtpSenderReceiverTest,
+       VideoSenderContentHintChangePopulatesCachedParameters) {
+  CreateVideoRtpSender();
+  video_track_->set_content_hint(VideoTrackInterface::ContentHint::kDetailed);
+  ExpectParametersFromCache(*video_rtp_sender_, video_media_send_channel(),
+                            kVideoSsrc);
+  DestroyVideoRtpSender();
+}
+
+// The parameters are read back after SetAudioSend().
+TEST_F(RtpSenderReceiverTest,
+       AudioSenderTrackEnabledChangePopulatesCachedParameters) {
+  CreateAudioRtpSender();
+  audio_track_->set_enabled(false);
+  ExpectParametersFromCache(*audio_rtp_sender_, voice_media_send_channel(),
+                            kAudioSsrc);
+  DestroyAudioRtpSender();
+}
+
 TEST_F(RtpSenderReceiverTest, VideoSenderDetectTransactionIdModification) {
   CreateVideoRtpSender();
 
@@ -2744,18 +2910,16 @@ INSTANTIATE_TEST_SUITE_P(
 
 TEST_F(RtpSenderReceiverTest, AudioSenderCreateSframeEncryptorInvokesCallback) {
   bool callback_called = false;
-  worker_thread_->BlockingCall([&]() {
-    audio_rtp_sender_ = AudioRtpSender::Create(
-        CreateTestEnvironment(), signaling_thread_, worker_thread_.get(),
-        /*id=*/"", nullptr, nullptr,
-        [&callback_called]() -> RTCError {
-          callback_called = true;
-          return RTCError::OK();
-        },
-        nullptr);
-  });
+  audio_rtp_sender_ = AudioRtpSender::Create(
+      CreateTestEnvironment(), signaling_thread_, worker_thread_.get(),
+      /*id=*/"", nullptr, nullptr,
+      [&callback_called]() -> RTCError {
+        callback_called = true;
+        return RTCError::OK();
+      },
+      nullptr);
 
-  SframeEncryptorInit options{SframeMode::kPerFrame,
+  SframeEncryptorInit options{SframeMode::kPerPacket,
                               SframeCipherSuite::kAes128GcmSha256_128};
   audio_rtp_sender_->CreateSframeEncryptorOrError(options);
   EXPECT_TRUE(callback_called);
@@ -2763,17 +2927,15 @@ TEST_F(RtpSenderReceiverTest, AudioSenderCreateSframeEncryptorInvokesCallback) {
 
 TEST_F(RtpSenderReceiverTest, VideoSenderCreateSframeEncryptorInvokesCallback) {
   bool callback_called = false;
-  worker_thread_->BlockingCall([&]() {
-    video_rtp_sender_ = VideoRtpSender::Create(
-        CreateTestEnvironment(), signaling_thread_, worker_thread_.get(),
-        /*id=*/"", nullptr,
-        [&callback_called]() -> RTCError {
-          callback_called = true;
-          return RTCError::OK();
-        },
-        nullptr, /*init_send_encodings=*/{},
-        /*simulcast_rejected=*/false, /*initial_simulcast_layers=*/{});
-  });
+  video_rtp_sender_ = VideoRtpSender::Create(
+      CreateTestEnvironment(), signaling_thread_, worker_thread_.get(),
+      /*id=*/"", nullptr,
+      [&callback_called]() -> RTCError {
+        callback_called = true;
+        return RTCError::OK();
+      },
+      nullptr, /*init_send_encodings=*/{},
+      /*simulcast_rejected=*/false, /*initial_simulcast_layers=*/{});
 
   SframeEncryptorInit options{SframeMode::kPerFrame,
                               SframeCipherSuite::kAes128GcmSha256_128};
@@ -2783,16 +2945,14 @@ TEST_F(RtpSenderReceiverTest, VideoSenderCreateSframeEncryptorInvokesCallback) {
 
 TEST_F(RtpSenderReceiverTest,
        SenderCreateSframeEncryptorPropagatesCallbackError) {
-  worker_thread_->BlockingCall([&]() {
-    audio_rtp_sender_ = AudioRtpSender::Create(
-        CreateTestEnvironment(), signaling_thread_, worker_thread_.get(),
-        /*id=*/"", nullptr, nullptr,
-        []() -> RTCError {
-          return RTCError(RTCErrorType::UNSUPPORTED_OPERATION,
-                          "Rejected for testing");
-        },
-        nullptr);
-  });
+  audio_rtp_sender_ = AudioRtpSender::Create(
+      CreateTestEnvironment(), signaling_thread_, worker_thread_.get(),
+      /*id=*/"", nullptr, nullptr,
+      []() -> RTCError {
+        return RTCError(RTCErrorType::UNSUPPORTED_OPERATION,
+                        "Rejected for testing");
+      },
+      nullptr);
 
   SframeEncryptorInit options{SframeMode::kPerFrame,
                               SframeCipherSuite::kAes128GcmSha256_128};
@@ -2804,18 +2964,148 @@ TEST_F(RtpSenderReceiverTest,
 
 TEST_F(RtpSenderReceiverTest,
        SenderCreateSframeEncryptorFailsWithNullCallback) {
-  worker_thread_->BlockingCall([&]() {
-    audio_rtp_sender_ = AudioRtpSender::Create(
-        CreateTestEnvironment(), signaling_thread_, worker_thread_.get(),
-        /*id=*/"", nullptr, nullptr,
-        /*enable_sframe_at_owner=*/nullptr, nullptr);
-  });
+  audio_rtp_sender_ = AudioRtpSender::Create(
+      CreateTestEnvironment(), signaling_thread_, worker_thread_.get(),
+      /*id=*/"", nullptr, nullptr,
+      /*enable_sframe_at_owner=*/nullptr, nullptr);
 
   SframeEncryptorInit options{SframeMode::kPerFrame,
                               SframeCipherSuite::kAes128GcmSha256_128};
   auto result = audio_rtp_sender_->CreateSframeEncryptorOrError(options);
   EXPECT_FALSE(result.ok());
   EXPECT_EQ(result.error().type(), RTCErrorType::INTERNAL_ERROR);
+}
+
+TEST_F(RtpSenderReceiverTest, SenderCreateSframeEncryptorFailsWhenStopped) {
+  CreateVideoRtpSenderWithSframe();
+  video_rtp_sender_->Stop();
+
+  SframeEncryptorInit options{SframeMode::kPerFrame,
+                              SframeCipherSuite::kAes128GcmSha256_128};
+  auto result = video_rtp_sender_->CreateSframeEncryptorOrError(options);
+  EXPECT_FALSE(result.ok());
+  EXPECT_EQ(result.error().type(), RTCErrorType::INVALID_STATE);
+}
+
+TEST_F(RtpSenderReceiverTest, VideoSenderPushesSframeEncryptorToMediaChannel) {
+  auto mock_channel = std::make_unique<MockVideoMediaSendChannel>(
+      VideoOptions(), network_thread_.get());
+  MockVideoMediaSendChannel* mock_channel_ptr = mock_channel.get();
+  // RtpSenderReceiverTest takes ownership of the channel.
+  video_media_send_channel_ = std::move(mock_channel);
+
+  CreateVideoRtpSenderWithSframe();
+  SetSsrc(kVideoSsrc, *video_rtp_sender_);
+
+  SframeEncryptorInit options{SframeMode::kPerFrame,
+                              SframeCipherSuite::kAes128GcmSha256_128};
+  auto result = video_rtp_sender_->CreateSframeEncryptorOrError(options);
+  ASSERT_TRUE(result.ok());
+  EXPECT_NE(result.value().get(), nullptr);
+  FlushWorker();
+  ASSERT_TRUE(mock_channel_ptr->last_set_sframe_encryption_config_.has_value());
+  EXPECT_NE(mock_channel_ptr->last_set_sframe_encryption_config_->encryptor,
+            nullptr);
+  EXPECT_EQ(mock_channel_ptr->last_set_sframe_encryption_config_->mode,
+            options.mode);
+}
+
+// The application may create the encryptor before the local description has
+// assigned a send SSRC. The encryptor is then handed over right away and
+// pushed again once the SSRC is known.
+TEST_F(RtpSenderReceiverTest, SetSsrcPropagatesSframeEncryptor) {
+  auto mock_channel = std::make_unique<MockVideoMediaSendChannel>(
+      VideoOptions(), network_thread_.get());
+  MockVideoMediaSendChannel* mock_channel_ptr = mock_channel.get();
+  video_media_send_channel_ = std::move(mock_channel);
+
+  CreateVideoRtpSenderWithSframe();
+
+  SframeEncryptorInit options{SframeMode::kPerPacket,
+                              SframeCipherSuite::kAes128GcmSha256_128};
+  auto result = video_rtp_sender_->CreateSframeEncryptorOrError(options);
+  ASSERT_TRUE(result.ok());
+  FlushWorker();
+
+  ASSERT_TRUE(mock_channel_ptr->last_set_sframe_encryption_config_.has_value());
+  scoped_refptr<SframeMediaEncryptorInterface> encryptor =
+      mock_channel_ptr->last_set_sframe_encryption_config_->encryptor;
+  ASSERT_NE(encryptor, nullptr);
+  mock_channel_ptr->last_set_sframe_encryption_config_.reset();
+
+  SetSsrc(kVideoSsrc, *video_rtp_sender_);
+  ASSERT_TRUE(mock_channel_ptr->last_set_sframe_encryption_config_.has_value());
+  EXPECT_EQ(mock_channel_ptr->last_set_sframe_encryption_config_->encryptor,
+            encryptor);
+  EXPECT_EQ(mock_channel_ptr->last_set_sframe_encryption_config_->mode,
+            options.mode);
+}
+
+TEST_F(RtpSenderReceiverTest,
+       SframeEncryptorHandleSharesContextWithMediaThreads) {
+  auto mock_channel = std::make_unique<MockVideoMediaSendChannel>(
+      VideoOptions(), network_thread_.get());
+  MockVideoMediaSendChannel* mock_channel_ptr = mock_channel.get();
+  video_media_send_channel_ = std::move(mock_channel);
+
+  CreateVideoRtpSenderWithSframe();
+  SetSsrc(kVideoSsrc, *video_rtp_sender_);
+
+  SframeEncryptorInit options{SframeMode::kPerFrame,
+                              SframeCipherSuite::kAes128GcmSha256_128};
+  auto result = video_rtp_sender_->CreateSframeEncryptorOrError(options);
+  ASSERT_TRUE(result.ok());
+
+  const std::vector<uint8_t> key_material(16, 0xab);
+  EXPECT_TRUE(
+      result.value()->SetEncryptionKey(/*key_id=*/1, key_material).ok());
+
+  ASSERT_TRUE(mock_channel_ptr->last_set_sframe_encryption_config_.has_value());
+  scoped_refptr<SframeMediaEncryptorInterface> encryptor =
+      mock_channel_ptr->last_set_sframe_encryption_config_->encryptor;
+  ASSERT_NE(encryptor, nullptr);
+  const std::vector<uint8_t> frame = {0x01, 0x02, 0x03};
+  std::vector<uint8_t> encrypted_frame(
+      encryptor->GetMaxCiphertextByteSize(frame.size()));
+  worker_thread_->BlockingCall([&] {
+    EXPECT_TRUE(encryptor
+                    ->Encrypt(frame, /*additional_data=*/{},
+                              std::span<uint8_t>(encrypted_frame))
+                    .ok());
+  });
+  // Video frames are encrypted on the encoder or frame transformer queue, which
+  // is neither the signaling nor the worker thread.
+  TaskQueueForTest encoder_queue("EncoderQueue");
+  encoder_queue.SendTask([&] {
+    EXPECT_TRUE(encryptor->Encrypt(frame, {}, encrypted_frame).ok());
+  });
+}
+
+TEST_F(RtpSenderReceiverTest, ReplacingSframeEncryptorUpdatesConfiguration) {
+  auto mock_channel = std::make_unique<MockVideoMediaSendChannel>(
+      VideoOptions(), network_thread_.get());
+  MockVideoMediaSendChannel* mock_channel_ptr = mock_channel.get();
+  video_media_send_channel_ = std::move(mock_channel);
+  CreateVideoRtpSenderWithSframe();
+  SetSsrc(kVideoSsrc, *video_rtp_sender_);
+
+  scoped_refptr<SframeMediaEncryptorInterface> previous_encryptor;
+  for (SframeMode mode : {SframeMode::kPerFrame, SframeMode::kPerPacket}) {
+    SframeEncryptorInit options{mode, SframeCipherSuite::kAes128GcmSha256_128};
+    RTCErrorOr<scoped_refptr<SframeEncryptorInterface>> result =
+        video_rtp_sender_->CreateSframeEncryptorOrError(options);
+    ASSERT_TRUE(result.ok());
+    FlushWorker();
+
+    ASSERT_TRUE(
+        mock_channel_ptr->last_set_sframe_encryption_config_.has_value());
+    const SframeEncryptionConfig& encryption =
+        *mock_channel_ptr->last_set_sframe_encryption_config_;
+    EXPECT_NE(encryption.encryptor, nullptr);
+    EXPECT_NE(encryption.encryptor, previous_encryptor);
+    EXPECT_EQ(encryption.mode, mode);
+    previous_encryptor = encryption.encryptor;
+  }
 }
 
 TEST_F(RtpSenderReceiverTest,
@@ -2829,7 +3119,7 @@ TEST_F(RtpSenderReceiverTest,
       });
 
   receiver->CreateSframeDecryptorOrError(
-      SframeCipherSuite::kAes128GcmSha256_128);
+      SframeCipherSuite::kAes128GcmSha256_128, [](SframeDecryptError) {});
   EXPECT_TRUE(callback_called);
 }
 
@@ -2844,8 +3134,34 @@ TEST_F(RtpSenderReceiverTest,
       });
 
   receiver->CreateSframeDecryptorOrError(
-      SframeCipherSuite::kAes128GcmSha256_128);
+      SframeCipherSuite::kAes128GcmSha256_128, [](SframeDecryptError) {});
   EXPECT_TRUE(callback_called);
+}
+
+TEST_F(RtpSenderReceiverTest,
+       ReceiverCreateSframeDecryptorAcceptsMoveOnlyErrorCallbackThroughProxy) {
+  bool owner_callback_called = false;
+  scoped_refptr<VideoRtpReceiver> receiver = make_ref_counted<VideoRtpReceiver>(
+      worker_thread_.get(), kVideoTrackId, std::vector<std::string>(),
+      /*enable_sframe_at_owner=*/[&owner_callback_called]() -> RTCError {
+        owner_callback_called = true;
+        return RTCError::OK();
+      });
+  scoped_refptr<RtpReceiverInterface> proxy = RtpReceiverProxy::Create(
+      Thread::Current(), worker_thread_.get(), receiver);
+  auto error_callback = std::make_unique<MockFunction<void()>>();
+  EXPECT_CALL(*error_callback, Call).Times(0);
+
+  RTCErrorOr<scoped_refptr<SframeDecryptorInterface>> result =
+      proxy->CreateSframeDecryptorOrError(
+          SframeCipherSuite::kAes128GcmSha256_128,
+          [error_callback = std::move(error_callback)](SframeDecryptError) {
+            error_callback->Call();
+          });
+
+  EXPECT_TRUE(owner_callback_called);
+  ASSERT_FALSE(result.ok());
+  EXPECT_EQ(result.error().type(), RTCErrorType::UNSUPPORTED_OPERATION);
 }
 
 TEST_F(RtpSenderReceiverTest,
@@ -2857,8 +3173,9 @@ TEST_F(RtpSenderReceiverTest,
                         "Rejected for testing");
       });
 
-  auto result = receiver->CreateSframeDecryptorOrError(
-      SframeCipherSuite::kAes128GcmSha256_128);
+  RTCErrorOr<scoped_refptr<SframeDecryptorInterface>> result =
+      receiver->CreateSframeDecryptorOrError(
+          SframeCipherSuite::kAes128GcmSha256_128, [](SframeDecryptError) {});
   EXPECT_FALSE(result.ok());
   EXPECT_EQ(result.error().type(), RTCErrorType::UNSUPPORTED_OPERATION);
   EXPECT_STREQ(result.error().message(), "Rejected for testing");
@@ -2870,8 +3187,9 @@ TEST_F(RtpSenderReceiverTest,
       worker_thread_.get(), kAudioTrackId, std::vector<std::string>(),
       /*enable_sframe_at_owner=*/nullptr);
 
-  auto result = receiver->CreateSframeDecryptorOrError(
-      SframeCipherSuite::kAes128GcmSha256_128);
+  RTCErrorOr<scoped_refptr<SframeDecryptorInterface>> result =
+      receiver->CreateSframeDecryptorOrError(
+          SframeCipherSuite::kAes128GcmSha256_128, [](SframeDecryptError) {});
   EXPECT_FALSE(result.ok());
   EXPECT_EQ(result.error().type(), RTCErrorType::INTERNAL_ERROR);
 }

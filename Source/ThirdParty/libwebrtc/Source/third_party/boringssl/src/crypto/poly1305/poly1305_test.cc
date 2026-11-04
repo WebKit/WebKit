@@ -25,15 +25,14 @@
 #include "../test/abi_test.h"
 #include "../test/file_test.h"
 #include "../test/test_util.h"
-#include "internal.h"
+#include "internal.h"  // IWYU pragma: keep
 
 
 BSSL_NAMESPACE_BEGIN
 namespace {
 
-static void TestSIMD(unsigned excess, const std::vector<uint8_t> &key,
-                     const std::vector<uint8_t> &in,
-                     const std::vector<uint8_t> &mac) {
+void TestSIMD(unsigned excess, const std::vector<uint8_t> &key,
+              const std::vector<uint8_t> &in, const std::vector<uint8_t> &mac) {
   poly1305_state state;
   CRYPTO_poly1305_init(&state, key.data());
 

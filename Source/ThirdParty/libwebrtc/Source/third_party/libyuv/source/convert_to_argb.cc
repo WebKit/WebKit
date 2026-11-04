@@ -104,6 +104,14 @@ static int NV16ToARGB(const uint8_t* src_y,
     NV12ToARGBRow = NV12ToARGBRow_RVV;
   }
 #endif
+#if defined(HAS_NV12TOARGBROW_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD)) {
+    NV12ToARGBRow = NV12ToARGBRow_Any_WASMSIMD;
+    if (IS_ALIGNED(width, 8)) {
+      NV12ToARGBRow = NV12ToARGBRow_WASMSIMD;
+    }
+  }
+#endif
 
   for (y = 0; y < height; ++y) {
     NV12ToARGBRow(src_y, src_uv, dst_argb, &kYuvI601Constants, width);

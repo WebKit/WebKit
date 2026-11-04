@@ -25,13 +25,18 @@ use std::{
 
 use crate::{
     ReceiveBuffer,
+    config::ProtocolVersion,
     connection::{
         Client,
         Server,
         TlsConnection, //
     },
     context::TlsContextBuilder,
-    credentials::{Certificate, TlsCredential, TlsCredentialBuilder},
+    credentials::{
+        Certificate,
+        TlsCredential,
+        TlsCredentialBuilder, //
+    },
     errors::Error,
     io::{
         AbstractReader,
@@ -39,7 +44,7 @@ use crate::{
         AbstractSocketResult,
         AbstractWriter,
         IoStatus, //
-    }, //
+    },
 };
 
 use bssl_x509::{
@@ -49,7 +54,7 @@ use bssl_x509::{
     store::{
         X509Store,
         X509StoreBuilder, //
-    },
+    }, //
 };
 use futures::future::join;
 
@@ -87,6 +92,11 @@ pub(crate) const P256_SERVER_KEY_DER: &[u8] =
 //  11:d=3  hl=2 l=   6 prim: PRINTABLESTRING   :TestCA
 pub(crate) const TEST_CA_DN: &[u8] = b"\x30\x11\x31\x0f\x30\x0d\x06\x03\x55\x04\x03\x13\x06TestCA";
 
+fn add_certificate_store(ctx: &mut TlsContextBuilder) {
+    let cert_store = load_trust_store(Trust::SslServer);
+    ctx.with_certificate_store(&cert_store);
+}
+
 /// Dumb server-client pair that does no certificate verification.
 fn dumb_server_client() -> Result<(TlsConnection<Server>, TlsConnection<Client>), Error> {
     let mut server_ctx_builder = TlsContextBuilder::new_tls();
@@ -95,8 +105,7 @@ fn dumb_server_client() -> Result<(TlsConnection<Server>, TlsConnection<Client>)
     let server_conn = server_ctx.new_server_connection().build();
 
     let mut client_ctx_builder = TlsContextBuilder::new_tls();
-    let cert_store = load_trust_store(Trust::SslServer);
-    client_ctx_builder.with_certificate_store(&cert_store);
+    add_certificate_store(&mut client_ctx_builder);
     let client_ctx = client_ctx_builder.build();
     let client_conn = client_ctx.new_client_connection().build();
 
@@ -120,32 +129,35 @@ fn sync_ping_pong<
         let mut message = [MaybeUninit::uninit(); 21];
         let mut message = ReceiveBuffer::new_uninit(&mut message);
         assert!(matches!(
-            server_conn.sync_read(&mut message)?,
+            server_conn.poll_read(&mut message)?,
             IoStatus::Ok(21)
         ));
         assert_eq!(*message, *b"BoringSSL is awesome!");
-        server_conn.sync_write(b"Oh yeah definitely!")?;
+        server_conn.poll_write(b"Oh yeah definitely!")?;
         server_conn.established().unwrap().sync_shutdown()?;
         // Consume the peer's `close_notify` before this end of the transport is dropped.
         // Otherwise, the connection may block or reset from unconsumed data.
         let mut eof = [MaybeUninit::uninit(); 1];
         let mut eof = ReceiveBuffer::new_uninit(&mut eof);
         // We do not care if the connection was torn down or not.
-        let _ = server_conn.sync_read(&mut eof);
+        let _ = server_conn.poll_read(&mut eof);
         Ok::<_, Error>(())
     });
 
     client_conn.connect()?;
     assert!(!client_conn.is_in_handshake());
-    client_conn.sync_write(b"BoringSSL is awesome!")?;
+    client_conn.poll_write(b"BoringSSL is awesome!")?;
     let mut message = [MaybeUninit::uninit(); 19];
     let mut message = ReceiveBuffer::new_uninit(&mut message);
     assert!(matches!(
-        client_conn.sync_read(&mut message)?,
+        client_conn.poll_read(&mut message)?,
         IoStatus::Ok(19)
     ));
     assert_eq!(*message, *b"Oh yeah definitely!");
-    client_conn.established().unwrap().sync_shutdown()?;
+    client_conn
+        .established()
+        .expect("connection should still be established")
+        .sync_shutdown()?;
     thread.join().unwrap()?;
 
     Ok(())
@@ -461,8 +473,8 @@ fn test_async() -> Result<(), Error> {
                     .await
                     .unwrap()
                 {
+                    IoStatus::Ok(0) => break,
                     IoStatus::Ok(n) => read_bytes += n,
-                    IoStatus::EndOfStream => break,
                     _ => {}
                 }
             }
@@ -532,5 +544,40 @@ fn test_async_shutdown() -> Result<(), Error> {
 
     executor.run(test_future);
 
+    Ok(())
+}
+
+#[test]
+fn protocol_version_config() {
+    let mut ctx = TlsContextBuilder::new_tls();
+    assert!(
+        ctx.with_min_protocol(Some(ProtocolVersion::Dtls12))
+            .is_err()
+    );
+}
+
+#[test]
+#[allow(deprecated)]
+fn legacy_tls_versions() -> Result<(), Error> {
+    for version in [
+        crate::config::ProtocolVersion::Tls1,
+        crate::config::ProtocolVersion::Tls11,
+    ] {
+        let mut server_ctx_builder = TlsContextBuilder::new_tls();
+        server_ctx_builder.with_credential(load_x509_credential())?;
+        server_ctx_builder.with_min_protocol(Some(version))?;
+        let server_ctx = server_ctx_builder.build();
+        let server_conn = server_ctx.new_server_connection().build();
+
+        let mut client_ctx_builder = TlsContextBuilder::new_tls();
+        add_certificate_store(&mut client_ctx_builder);
+        client_ctx_builder
+            .with_min_protocol(Some(version))?
+            .with_max_protocol(Some(version))?;
+        let client_ctx = client_ctx_builder.build();
+        let client_conn = client_ctx.new_client_connection().build();
+
+        run_async_handshake(client_conn, server_conn)?;
+    }
     Ok(())
 }

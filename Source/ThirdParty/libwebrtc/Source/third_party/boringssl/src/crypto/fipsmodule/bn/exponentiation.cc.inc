@@ -376,29 +376,6 @@ static void copy_to_prebuf(const BIGNUM *b, int top, BN_ULONG *table, int idx,
   (void)ret;
 }
 
-static int copy_from_prebuf(BIGNUM *b, int top, const BN_ULONG *table, int idx,
-                            int window) {
-  if (!bn_wexpand(b, top)) {
-    return 0;
-  }
-
-  OPENSSL_memset(b->d, 0, sizeof(BN_ULONG) * top);
-  const int width = 1 << window;
-  for (int i = 0; i < width; i++, table += top) {
-    // Use a value barrier to prevent Clang from adding a branch when `i != idx`
-    // and making this copy not constant time. Clang is still allowed to learn
-    // that `mask` is constant across the inner loop, so this won't inhibit any
-    // vectorization it might do.
-    BN_ULONG mask = value_barrier_w(constant_time_eq_int(i, idx));
-    for (int j = 0; j < top; j++) {
-      b->d[j] |= table[j] & mask;
-    }
-  }
-
-  b->width = top;
-  return 1;
-}
-
 // Window sizes optimized for fixed window size modular exponentiation
 // algorithm (BN_mod_exp_mont_consttime).
 //
@@ -408,6 +385,57 @@ static int copy_from_prebuf(BIGNUM *b, int top, const BN_ULONG *table, int idx,
 #define BN_window_bits_for_ctime_exponent_size(b) \
   ((b) > 937 ? 6 : (b) > 306 ? 5 : (b) > 89 ? 4 : (b) > 22 ? 3 : 1)
 #define BN_MAX_MOD_EXP_CTIME_WINDOW (6)
+
+static int copy_from_prebuf(BIGNUM *b, int top, const BN_ULONG *table, int idx,
+                            int window) {
+  if (!bn_wexpand(b, top)) {
+    return 0;
+  }
+
+  assert(window > 0 && window <= BN_MAX_MOD_EXP_CTIME_WINDOW);
+
+  // Compute the selection masks up front. The value barrier prevents Clang
+  // from adding a branch when `i != idx` and making this copy not constant
+  // time.
+  const int width = 1 << window;
+  BN_ULONG masks[1 << BN_MAX_MOD_EXP_CTIME_WINDOW];
+  for (int i = 0; i < width; i++) {
+    masks[i] = value_barrier_w(constant_time_eq_int(i, idx));
+  }
+
+  // Every table entry is read for every limb, independent of `idx`. The output
+  // is accumulated a few limbs at a time in registers. Updating `b->d` once per
+  // table entry instead adds a store-to-load dependency to every iteration,
+  // which the compiler cannot remove because `b->d` may alias `table`.
+  BN_ULONG *const d = b->d;
+  int j = 0;
+  for (; j + 4 <= top; j += 4) {
+    BN_ULONG a0 = 0, a1 = 0, a2 = 0, a3 = 0;
+    const BN_ULONG *t = table + j;
+    for (int i = 0; i < width; i++, t += top) {
+      BN_ULONG m = masks[i];
+      a0 |= t[0] & m;
+      a1 |= t[1] & m;
+      a2 |= t[2] & m;
+      a3 |= t[3] & m;
+    }
+    d[j] = a0;
+    d[j + 1] = a1;
+    d[j + 2] = a2;
+    d[j + 3] = a3;
+  }
+  for (; j < top; j++) {
+    BN_ULONG a = 0;
+    const BN_ULONG *t = table + j;
+    for (int i = 0; i < width; i++, t += top) {
+      a |= *t & masks[i];
+    }
+    d[j] = a;
+  }
+
+  b->width = top;
+  return 1;
+}
 
 // This variant of `BN_mod_exp_mont` uses fixed windows and fixed memory access
 // patterns to protect secret exponents (cf. the hyper-threading timing attacks

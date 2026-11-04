@@ -46,17 +46,32 @@
 
 use alloc::vec::Vec;
 use core::{
-    ffi::{c_char, c_int, c_void},
+    ffi::{
+        c_char,
+        c_int,
+        c_void, //
+    },
     mem::transmute,
     panic::AssertUnwindSafe,
-    ptr::{NonNull, null_mut},
+    ptr::{
+        NonNull,
+        null_mut, //
+    }, //
 };
 
-use bssl_crypto::{FfiSlice, cbb_to_buffer};
-use bssl_macros::bssl_enum;
+use bssl_crypto::bssl_enum;
+use bssl_crypto::{
+    FfiSlice,
+    cbb_to_buffer, //
+};
 
-use crate::ffi::abort_on_panic;
-use crate::{errors::PkiError, ffi::Bio};
+use crate::{
+    errors::PkiError,
+    ffi::{
+        Bio,
+        abort_on_panic, //
+    }, //
+};
 
 bssl_enum! {
     /// EVP public key algorithm types.
@@ -143,6 +158,21 @@ impl PrivateKey {
                 Some(write_password::<'a, F>),
                 &raw mut password_callback as _,
             )
+        };
+        NonNull::new(evp_pkey)
+            .map(Self)
+            .ok_or_else(PkiError::extract_lib_err)
+    }
+
+    /// Parse a DER-encoded PKCS#8 `PrivateKeyInfo` or algorithm-specific key into a [`PrivateKey`].
+    pub fn from_der(der: &[u8]) -> Result<Self, PkiError> {
+        let mut bio = Bio::from_bytes(der)?;
+        let evp_pkey = unsafe {
+            // Safety:
+            // - `bio` is a valid memory BIO initialized from `der`.
+            // - the second parameter `a` is null, so BoringSSL allocates and returns a new
+            //   `EVP_PKEY`.
+            bssl_sys::d2i_PrivateKey_bio(bio.ptr(), null_mut())
         };
         NonNull::new(evp_pkey)
             .map(Self)

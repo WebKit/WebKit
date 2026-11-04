@@ -28,8 +28,6 @@ BSSL_NAMESPACE_BEGIN
 struct PkitsTestInfo {
   // Default construction results in the "default settings".
   PkitsTestInfo();
-  PkitsTestInfo(const PkitsTestInfo &other);
-  ~PkitsTestInfo();
 
   // Sets `initial_policy_set` to the specified policies. The
   // policies are described as comma-separated symbolic strings like

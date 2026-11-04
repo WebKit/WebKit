@@ -180,6 +180,46 @@ TEST(AomImageTest, AomImgFlipOneRow) {
   aom_img_free(img);
 }
 
+TEST(AomImageTest, AomImgSetRectRejectsFlipped) {
+  static constexpr aom_img_fmt_t kFormats[] = {
+    AOM_IMG_FMT_YV12,   AOM_IMG_FMT_I420,   AOM_IMG_FMT_NV12,
+    AOM_IMG_FMT_I42016, AOM_IMG_FMT_YV1216,
+  };
+
+  for (const aom_img_fmt_t format : kFormats) {
+    SCOPED_TRACE(format);
+    aom_image_t *img = aom_img_alloc(nullptr, format, 4, 4, 1);
+    ASSERT_NE(img, nullptr);
+
+    // An ordinary crop is valid before flipping.
+    ASSERT_EQ(aom_img_set_rect(img, 2, 2, 2, 2, 0), 0);
+    EXPECT_EQ(img->d_w, 2u);
+    EXPECT_EQ(img->d_h, 2u);
+    ASSERT_EQ(aom_img_set_rect(img, 0, 0, 4, 4, 0), 0);
+
+    aom_img_flip(img);
+    const unsigned char *const flipped_planes[] = { img->planes[AOM_PLANE_Y],
+                                                    img->planes[AOM_PLANE_U],
+                                                    img->planes[AOM_PLANE_V] };
+    EXPECT_EQ(aom_img_set_rect(img, 2, 2, 2, 2, 0), -1);
+    EXPECT_EQ(img->d_w, 4u);
+    EXPECT_EQ(img->d_h, 4u);
+    for (int plane = AOM_PLANE_Y; plane <= AOM_PLANE_V; ++plane) {
+      EXPECT_EQ(img->planes[plane], flipped_planes[plane]);
+    }
+
+    // Flipping back permits changing the viewport again.
+    aom_img_flip(img);
+    EXPECT_GT(img->stride[AOM_PLANE_Y], 0);
+    const unsigned char *const unflipped_y_plane = img->planes[AOM_PLANE_Y];
+    EXPECT_EQ(aom_img_set_rect(img, 2, 2, 2, 2, 0), 0);
+    EXPECT_NE(img->planes[AOM_PLANE_Y], unflipped_y_plane);
+    EXPECT_EQ(img->d_w, 2u);
+    EXPECT_EQ(img->d_h, 2u);
+    aom_img_free(img);
+  }
+}
+
 TEST(AomImageTest, AomImgFlipOddHeight) {
   static constexpr aom_img_fmt_t kFormats[] = {
     AOM_IMG_FMT_YV12,   AOM_IMG_FMT_I420,   AOM_IMG_FMT_NV12,

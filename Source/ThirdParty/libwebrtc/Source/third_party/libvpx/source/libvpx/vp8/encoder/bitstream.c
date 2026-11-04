@@ -685,12 +685,12 @@ static int independent_coef_context_savings(VP8_COMP *cpi) {
       int k = 0;
       unsigned int prev_coef_count_sum[MAX_ENTROPY_TOKENS] = { 0 };
       int prev_coef_savings[MAX_ENTROPY_TOKENS] = { 0 };
-      const unsigned int(*probs)[MAX_ENTROPY_TOKENS];
+      const unsigned int (*probs)[MAX_ENTROPY_TOKENS];
       /* Calculate new probabilities given the constraint that
        * they must be equal over the prev coef contexts
        */
 
-      probs = (const unsigned int(*)[MAX_ENTROPY_TOKENS])x->coef_counts[i][j];
+      probs = (const unsigned int (*)[MAX_ENTROPY_TOKENS])x->coef_counts[i][j];
 
       /* Reset to default probabilities at key frames */
       if (cpi->common.frame_type == KEY_FRAME) {

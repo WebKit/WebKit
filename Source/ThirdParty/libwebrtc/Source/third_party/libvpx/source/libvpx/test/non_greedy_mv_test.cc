@@ -47,7 +47,7 @@ static void read_in_local_var(const char *filename, int *rows_ptr,
 
   fscanf(input, "%d,%d\n", rows_ptr, cols_ptr);
 
-  *M_ptr = (int(*)[MF_LOCAL_STRUCTURE_SIZE])malloc(
+  *M_ptr = (int (*)[MF_LOCAL_STRUCTURE_SIZE])malloc(
       (*rows_ptr) * (*cols_ptr) * MF_LOCAL_STRUCTURE_SIZE * sizeof(int_type));
 
   for (idx = 0; idx < (*rows_ptr) * (*cols_ptr); ++idx) {
@@ -133,7 +133,7 @@ TEST(non_greedy_mv, smooth_mf) {
   MV *smooth_mf = nullptr;
   MV *estimation = nullptr;
   MV *ground_truth = nullptr;
-  int(*local_var)[MF_LOCAL_STRUCTURE_SIZE] = nullptr;
+  int (*local_var)[MF_LOCAL_STRUCTURE_SIZE] = nullptr;
   int rows = 0, cols = 0;
 
   int alpha = 100, max_iter = 100;
@@ -169,8 +169,8 @@ TEST(non_greedy_mv, local_var) {
   const char *gt_local_var_file = "non_greedy_mv_test_files/localVar_16x16.txt";
   const char *search_mf_file = "non_greedy_mv_test_files/exhaust_16x16.txt";
   BLOCK_SIZE bsize = BLOCK_16X16;
-  int(*gt_local_var)[MF_LOCAL_STRUCTURE_SIZE] = nullptr;
-  int(*est_local_var)[MF_LOCAL_STRUCTURE_SIZE] = nullptr;
+  int (*gt_local_var)[MF_LOCAL_STRUCTURE_SIZE] = nullptr;
+  int (*est_local_var)[MF_LOCAL_STRUCTURE_SIZE] = nullptr;
   YV12_BUFFER_CONFIG ref_frame, cur_frame;
   int rows, cols;
   MV *search_mf;
@@ -183,7 +183,7 @@ TEST(non_greedy_mv, local_var) {
   read_in_mf(search_mf_file, &rows, &cols, &search_mf);
 
   fn.sdf = vpx_sad16x16;
-  est_local_var = (int(*)[MF_LOCAL_STRUCTURE_SIZE])malloc(
+  est_local_var = (int (*)[MF_LOCAL_STRUCTURE_SIZE])malloc(
       rows * cols * MF_LOCAL_STRUCTURE_SIZE * sizeof(int_type));
   vp9_get_local_structure(&cur_frame, &ref_frame, search_mf, &fn, rows, cols,
                           bsize, est_local_var);

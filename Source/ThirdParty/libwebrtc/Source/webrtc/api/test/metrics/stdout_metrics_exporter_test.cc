@@ -9,6 +9,11 @@
  */
 #include "api/test/metrics/stdout_metrics_exporter.h"
 
+#include <cstdio>
+#include <fstream>
+#include <ios>
+#include <iterator>
+#include <limits>
 #include <map>
 #include <string>
 #include <vector>
@@ -18,12 +23,14 @@
 #include "api/units/timestamp.h"
 #include "test/gtest.h"
 #include "test/test_flags.h"
+#include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 namespace test {
 namespace {
 
-using ::testing::TestWithParam;
+constexpr double kNan = std::numeric_limits<double>::quiet_NaN();
+constexpr double kInfinity = std::numeric_limits<double>::infinity();
 
 std::map<std::string, std::string> DefaultMetadata() {
   return std::map<std::string, std::string>{{"key", "value"}};
@@ -42,6 +49,24 @@ Metric PsnrForTestFoo(double mean, double stddev) {
                 .test_case = "foo",
                 .time_series = Metric::TimeSeries{},
                 .stats = Metric::Stats{.mean = mean, .stddev = stddev}};
+}
+
+std::string ReadFileAsString(const std::string& filename) {
+  std::ifstream infile(filename, std::ios_base::binary);
+  return std::string(std::istreambuf_iterator<char>(infile),
+                     std::istreambuf_iterator<char>());
+}
+
+// Exports `metric` to a temporary file and returns what was printed.
+std::string ExportAndReadOutput(const Metric& metric) {
+  const std::string filename =
+      TempFilename(OutputPath(), "stdout_metrics_exporter_test");
+  FILE* output = fopen(filename.c_str(), "wb");
+  EXPECT_TRUE(StdoutMetricsExporter(output).Export({&metric, 1}));
+  fclose(output);
+  std::string printed = ReadFileAsString(filename);
+  EXPECT_TRUE(RemoveFile(filename));
+  return printed;
 }
 
 class StdoutMetricsExporterTest : public ::testing::Test {
@@ -246,6 +271,25 @@ TEST(StdoutMetricsExporterNumberFormatTest,
       "{mean=-15, stddev=-0.99999999} Unitless (BiggerIsBetter)\n";
   EXPECT_TRUE(exporter.Export(std::vector<Metric>{metric}));
   EXPECT_EQ(expected, testing::internal::GetCapturedStdout());
+}
+
+TEST(StdoutMetricsExporterNumberFormatTest, NanIsPrintedAsNan) {
+  EXPECT_EQ(ExportAndReadOutput(PsnrForTestFoo(kNan, kNan)),
+            "RESULT: foo / psnr= {mean=nan, stddev=nan} Unitless "
+            "(BiggerIsBetter)\n");
+}
+
+TEST(StdoutMetricsExporterNumberFormatTest, InfinityIsPrintedAsInf) {
+  EXPECT_EQ(ExportAndReadOutput(PsnrForTestFoo(kInfinity, -kInfinity)),
+            "RESULT: foo / psnr= {mean=inf, stddev=-inf} Unitless "
+            "(BiggerIsBetter)\n");
+}
+
+TEST(StdoutMetricsExporterNumberFormatTest,
+     NumberOutsideOfInt64RangeIsPrintedInScientificNotation) {
+  EXPECT_EQ(ExportAndReadOutput(PsnrForTestFoo(1e19, -1e19)),
+            "RESULT: foo / psnr= {mean=1e+19, stddev=-1e+19} Unitless "
+            "(BiggerIsBetter)\n");
 }
 
 }  // namespace

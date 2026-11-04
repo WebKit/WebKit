@@ -391,6 +391,17 @@ static void update_zeromv_cnt(const AV1_COMP *const cpi,
   }
 }
 
+// Returns true when the pixels of this block already match its prediction,
+// because its whole skip superblock was copied from the reference up front.
+static bool is_prediction_copied(const MACROBLOCK *x, const MB_MODE_INFO *mbmi,
+                                 int seg_skip) {
+  if (!seg_skip || x->sb_copied_ref == NONE_FRAME) return false;
+
+  return !has_second_ref(mbmi) && !is_interintra_pred(mbmi) &&
+         mbmi->ref_frame[0] == x->sb_copied_ref &&
+         mbmi->motion_mode == SIMPLE_TRANSLATION && mbmi->mv[0].as_int == 0;
+}
+
 static void encode_superblock(const AV1_COMP *const cpi, TileDataEnc *tile_data,
                               ThreadData *td, TokenExtra **t, RUN_TYPE dry_run,
                               BLOCK_SIZE bsize, int *rate) {
@@ -466,14 +477,17 @@ static void encode_superblock(const AV1_COMP *const cpi, TileDataEnc *tile_data,
     }
     // Predicted sample of inter mode (for Luma plane) cannot be reused if
     // nonrd_check_partition_split speed feature is enabled, Since in such cases
-    // the buffer may not contain the predicted sample of best mode.
+    // the buffer may not contain the predicted sample of best mode. Skipped
+    // segment blocks are picked without building a prediction.
     const int start_plane =
         (x->reuse_inter_pred && (!cpi->sf.rt_sf.nonrd_check_partition_split) &&
-         cm->seq_params->bit_depth == AOM_BITS_8)
+         !seg_skip && cm->seq_params->bit_depth == AOM_BITS_8)
             ? 1
             : 0;
-    av1_enc_build_inter_predictor(cm, xd, mi_row, mi_col, NULL, bsize,
-                                  start_plane, av1_num_planes(cm) - 1);
+    if (!is_prediction_copied(x, mbmi, seg_skip)) {
+      av1_enc_build_inter_predictor(cm, xd, mi_row, mi_col, NULL, bsize,
+                                    start_plane, av1_num_planes(cm) - 1);
+    }
     if (mbmi->motion_mode == OBMC_CAUSAL) {
       assert(cpi->oxcf.motion_mode_cfg.enable_obmc);
       av1_build_obmc_inter_predictors_sb(cm, xd);
@@ -2333,12 +2347,10 @@ static void pick_sb_modes_nonrd(AV1_COMP *const cpi, TileDataEnc *tile_data,
     start_timing(cpi, nonrd_pick_inter_mode_sb_time);
 #endif
     if (seg_skip) {
-      x->force_zeromv_skip_for_blk = 1;
-      // TODO(marpan): Consider adding a function for nonrd:
-      // av1_nonrd_pick_inter_mode_sb_seg_skip(), instead of setting
-      // x->force_zeromv_skip flag and entering av1_nonrd_pick_inter_mode_sb().
+      av1_nonrd_pick_inter_mode_sb_seg_skip(cpi, x, rd_cost, bsize, ctx);
+    } else {
+      av1_nonrd_pick_inter_mode_sb(cpi, tile_data, x, rd_cost, bsize, ctx);
     }
-    av1_nonrd_pick_inter_mode_sb(cpi, tile_data, x, rd_cost, bsize, ctx);
 #if CONFIG_COLLECT_COMPONENT_TIMING
     end_timing(cpi, nonrd_pick_inter_mode_sb_time);
 #endif
@@ -2819,6 +2831,7 @@ static void direct_partition_merging(AV1_COMP *cpi, ThreadData *td,
   MB_MODE_INFO **this_mi = mib;
   BLOCK_SIZE orig_bsize = this_mi[0]->bsize;
   const PARTITION_TYPE orig_partition = this_mi[0]->partition;
+  const uint8_t orig_num_proj_ref = this_mi[0]->num_proj_ref;
 
   this_mi[0]->bsize = bsize;
   this_mi[0]->partition = PARTITION_NONE;
@@ -2864,6 +2877,7 @@ static void direct_partition_merging(AV1_COMP *cpi, ThreadData *td,
                                        mi_col, this_mi[0]->bsize);
     find_predictors(cpi, x, ref_frame, frame_mv, yv12_mb, this_mi[0]->bsize,
                     force_skip_low_temp_var, skip_pred_mv, &use_scaled_ref);
+    this_mi[0]->num_proj_ref = orig_num_proj_ref;
   } else {
     struct scale_factors *sf = get_ref_scale_factors(cm, ref_frame);
     const int is_scaled = av1_is_scaled(sf);

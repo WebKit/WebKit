@@ -59,6 +59,8 @@
 #include "p2p/test/fake_port_allocator.h"
 #include "pc/connection_context.h"
 #include "pc/test/fake_audio_capture_module.h"
+#include "pc/test/fake_rtc_certificate_generator.h"
+#include "pc/test/fake_video_track_renderer.h"
 #include "pc/test/fake_video_track_source.h"
 #include "rtc_base/event.h"
 #include "rtc_base/internal/default_socket_server.h"
@@ -73,12 +75,6 @@
 #include "test/gtest.h"
 #include "test/run_loop.h"
 #include "test/testsupport/file_utils.h"
-
-#ifdef WEBRTC_ANDROID
-#include "pc/test/android_test_initializer.h"
-#endif
-#include "pc/test/fake_rtc_certificate_generator.h"
-#include "pc/test/fake_video_track_renderer.h"
 
 namespace webrtc {
 namespace {
@@ -150,14 +146,11 @@ class PeerConnectionFactoryTest : public ::testing::Test {
 
  private:
   void SetUp() override {
-#ifdef WEBRTC_ANDROID
-    InitializeAndroidObjects();
-#endif
     // Use fake audio device module since we're only testing the interface
     // level, and using a real one could make tests flaky e.g. when run in
     // parallel.
     factory_ = CreatePeerConnectionFactory(
-        Thread::Current(), Thread::Current(), Thread::Current(),
+        Thread::Current(), Thread::Current(),
         scoped_refptr<AudioDeviceModule>(FakeAudioCaptureModule::Create()),
         CreateBuiltinAudioEncoderFactory(), CreateBuiltinAudioDecoderFactory(),
         std::make_unique<VideoEncoderFactoryTemplate<
@@ -283,15 +276,10 @@ class PeerConnectionFactoryTest : public ::testing::Test {
 // for a PeerConnectionFactory unit test.
 // See https://bugs.chromium.org/p/webrtc/issues/detail?id=7806 for details.
 TEST(PeerConnectionFactoryTestInternal, DISABLED_CreatePCUsingInternalModules) {
-#ifdef WEBRTC_ANDROID
-  InitializeAndroidObjects();
-#endif
-
   scoped_refptr<PeerConnectionFactoryInterface> factory(
       CreatePeerConnectionFactory(
-          nullptr /* network_thread */, nullptr /* worker_thread */,
-          nullptr /* signaling_thread */, nullptr /* default_adm */,
-          CreateBuiltinAudioEncoderFactory(),
+          nullptr /* network_thread */, nullptr /* signaling_thread */,
+          nullptr /* default_adm */, CreateBuiltinAudioEncoderFactory(),
           CreateBuiltinAudioDecoderFactory(),
           nullptr /* video_encoder_factory */,
           nullptr /* video_decoder_factory */, nullptr /* audio_mixer */,
@@ -734,7 +722,6 @@ TEST(PeerConnectionFactoryDependenciesTest, RepeatMediaEngineInitialization) {
   PeerConnectionFactoryDependencies pcf_dependencies;
   pcf_dependencies.adm = adm;
   pcf_dependencies.signaling_thread = Thread::Current();
-  pcf_dependencies.worker_thread = Thread::Current();
   pcf_dependencies.network_thread = Thread::Current();
   pcf_dependencies.env = CreateTestEnvironment();
   EnableMediaWithDefaults(pcf_dependencies);
@@ -773,7 +760,6 @@ TEST(PeerConnectionFactoryDependenciesTest,
   pcf_dependencies.adm = FakeAudioCaptureModule::Create();
   pcf_dependencies.audio_processing_builder = std::move(ap_factory);
   pcf_dependencies.signaling_thread = Thread::Current();
-  pcf_dependencies.worker_thread = Thread::Current();
   pcf_dependencies.network_thread = Thread::Current();
   pcf_dependencies.env = CreateTestEnvironment();
   EnableMediaWithDefaults(pcf_dependencies);
@@ -817,6 +803,19 @@ TEST(ConnectionContextTest,
   ASSERT_THAT(context, NotNull());
   EXPECT_THAT(context->network_thread(), NotNull());
   EXPECT_EQ(context->worker_thread(), context->network_thread());
+}
+
+TEST(ConnectionContextTest, SuppliedNetworkThreadIsUsedAsWorkerThread) {
+  Environment env = CreateTestEnvironment();
+  std::unique_ptr<Thread> network_thread = Thread::CreateWithSocketServer();
+  network_thread->Start();
+  PeerConnectionFactoryDependencies dependencies;
+  dependencies.signaling_thread = Thread::Current();
+  dependencies.network_thread = network_thread.get();
+  auto context = ConnectionContext::Create(env, &dependencies);
+  ASSERT_THAT(context, NotNull());
+  EXPECT_EQ(context->network_thread(), network_thread.get());
+  EXPECT_EQ(context->worker_thread(), network_thread.get());
 }
 
 }  // namespace

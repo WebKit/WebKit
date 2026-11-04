@@ -24,6 +24,7 @@
 #include "api/scoped_refptr.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/ref_counted_object.h"
+#include "rtc_base/span_helpers.h"
 
 namespace webrtc {
 
@@ -42,6 +43,17 @@ CopyOnWriteBuffer::CopyOnWriteBuffer() : offset_(0), size_(0) {
   RTC_DCHECK(IsConsistent());
 }
 
+CopyOnWriteBuffer::CopyOnWriteBuffer(std::span<const uint8_t> data,
+                                     size_t capacity)
+    : buffer_(CreateBuffer(/*capacity=*/std::max(data.size(), capacity))),
+      offset_(0),
+      size_(data.size()) {
+  if (!data.empty()) {
+    std::ranges::copy(data, buffer_->data().begin());
+  }
+  RTC_DCHECK(IsConsistent());
+}
+
 CopyOnWriteBuffer::CopyOnWriteBuffer(const CopyOnWriteBuffer& buf)
     : buffer_(buf.buffer_), offset_(buf.offset_), size_(buf.size_) {}
 
@@ -53,7 +65,7 @@ CopyOnWriteBuffer::CopyOnWriteBuffer(CopyOnWriteBuffer&& buf) noexcept
 }
 
 CopyOnWriteBuffer::CopyOnWriteBuffer(absl::string_view s)
-    : CopyOnWriteBuffer(s.data(), s.length()) {}
+    : CopyOnWriteBuffer(AsUint8Span(s)) {}
 
 CopyOnWriteBuffer::CopyOnWriteBuffer(size_t size)
     : buffer_(CreateBuffer(/*capacity=*/size)), offset_(0), size_(size) {

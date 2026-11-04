@@ -19,6 +19,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/functional/any_invocable.h"
 #include "api/call/audio_sink.h"
 #include "api/make_ref_counted.h"
 #include "api/media_stream_interface.h"
@@ -32,6 +33,7 @@
 #include "api/units/timestamp.h"
 #include "media/base/media_channel.h"
 #include "pc/test/mock_voice_media_receive_channel_interface.h"
+#include "rtc_base/event.h"
 #include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -119,6 +121,74 @@ TEST_F(AudioRtpReceiverTest, VolumesSetBeforeStartingAreRespected) {
 
   auto setup_task = receiver_->GetSetupForMediaChannel(kSsrc);
   worker_thread_->BlockingCall([&]() { std::move(setup_task)(); });
+}
+
+// Tests that a volume that is set while the track is disabled is applied when
+// the track is enabled again.
+TEST_F(AudioRtpReceiverTest, VolumeSetWhileTrackDisabledIsAppliedWhenEnabled) {
+  receiver_->track()->set_enabled(true);
+  SetMediaChannel(&receive_channel_);
+  EXPECT_CALL(receive_channel_, SetOutputVolume(kSsrc, kDefaultVolume));
+  auto setup_task = receiver_->GetSetupForMediaChannel(kSsrc);
+  worker_thread_->BlockingCall([&]() { std::move(setup_task)(); });
+
+  EXPECT_CALL(receive_channel_, SetOutputVolume(kSsrc, kVolumeMuted));
+  receiver_->track()->set_enabled(false);
+  receiver_->OnSetVolume(kVolume);
+  // Flush the worker thread.
+  worker_thread_->BlockingCall([] {});
+
+  EXPECT_CALL(receive_channel_, SetOutputVolume(kSsrc, kVolume));
+  receiver_->track()->set_enabled(true);
+  // Flush the worker thread.
+  worker_thread_->BlockingCall([] {});
+}
+
+// Tests that OnSetVolume() does not wait for the worker thread.
+TEST_F(AudioRtpReceiverTest, SetVolumeDoesNotWaitForWorkerThread) {
+  receiver_->track()->set_enabled(true);
+  SetMediaChannel(&receive_channel_);
+  EXPECT_CALL(receive_channel_, SetOutputVolume(kSsrc, kDefaultVolume));
+  auto setup_task = receiver_->GetSetupForMediaChannel(kSsrc);
+  worker_thread_->BlockingCall([&]() { std::move(setup_task)(); });
+
+  // Keep the worker thread busy until OnSetVolume() has returned.
+  Event worker_busy;
+  Event set_volume_returned;
+  bool returned_while_busy = false;
+  worker_thread_->PostTask([&] {
+    worker_busy.Set();
+    returned_while_busy = set_volume_returned.Wait(TimeDelta::Seconds(5));
+  });
+  ASSERT_TRUE(worker_busy.Wait(TimeDelta::Seconds(5)));
+
+  EXPECT_CALL(receive_channel_, SetOutputVolume(kSsrc, kVolume));
+  receiver_->OnSetVolume(kVolume);
+  set_volume_returned.Set();
+  // Flush the worker thread.
+  worker_thread_->BlockingCall([] {});
+  EXPECT_TRUE(returned_while_busy);
+}
+
+// Tests that a volume that is set on another thread than the signaling thread,
+// as done by the Android and Objective-C SDKs, is applied.
+TEST_F(AudioRtpReceiverTest, VolumeSetOnOtherThreadIsApplied) {
+  receiver_->track()->set_enabled(true);
+  SetMediaChannel(&receive_channel_);
+  EXPECT_CALL(receive_channel_, SetOutputVolume(kSsrc, kDefaultVolume));
+  auto setup_task = receiver_->GetSetupForMediaChannel(kSsrc);
+  worker_thread_->BlockingCall([&]() { std::move(setup_task)(); });
+
+  EXPECT_CALL(receive_channel_, SetOutputVolume(kSsrc, kVolume));
+  std::unique_ptr<Thread> other_thread = Thread::Create();
+  other_thread->Start();
+  other_thread->BlockingCall(
+      [&] { receiver_->audio_track()->GetSource()->SetVolume(kVolume); });
+
+  // Deliver the volume to the receiver on the signaling thread, then flush the
+  // worker thread.
+  loop_.Flush();
+  worker_thread_->BlockingCall([] {});
 }
 
 TEST(AudioRtpReceiver, PropagatesPacketInfosToTrackSink) {
@@ -328,6 +398,66 @@ TEST_F(AudioRtpReceiverSourceTrackerTest, ObserverTeardownStopsNotifications) {
                               Timestamp::Millis(120));
 
   EXPECT_EQ(observer.source_changed_count(), 1);
+}
+
+// Tests the SSRC state that the receiver maintains on the signaling thread.
+// No media channel is set, so the worker thread part of a setup is a no-op.
+class AudioRtpReceiverSsrcTest : public ::testing::Test {
+ protected:
+  AudioRtpReceiverSsrcTest()
+      : worker_thread_(Thread::Create()),
+        receiver_(make_ref_counted<AudioRtpReceiver>(
+            worker_thread_.get(),
+            std::string(),
+            std::vector<std::string>(),
+            /*enable_sframe_at_owner=*/nullptr)) {
+    worker_thread_->Start();
+  }
+
+  void RunOnWorkerThread(absl::AnyInvocable<void() &&> task) {
+    worker_thread_->BlockingCall([&] { std::move(task)(); });
+  }
+
+  test::RunLoop loop_;
+  std::unique_ptr<Thread> worker_thread_;
+  scoped_refptr<AudioRtpReceiver> receiver_;
+};
+
+// When the receiver is set up for unsignaled streams again (e.g. on
+// renegotiation), the media channel may keep the existing unsignaled stream, in
+// which case there's no new first packet notification. So the SSRC that the
+// receiver was bound to must be kept.
+TEST_F(AudioRtpReceiverSsrcTest,
+       KeepsUnsignaledSsrcWhenSetUpAsUnsignaledAgain) {
+  RunOnWorkerThread(receiver_->GetSetupForUnsignaledMediaChannel());
+  EXPECT_FALSE(receiver_->has_signaled_ssrc_s());
+  EXPECT_EQ(receiver_->ssrc_s(), std::nullopt);
+
+  receiver_->SetUnsignaledSsrc_s(kSsrc);
+  EXPECT_EQ(receiver_->ssrc_s(), kSsrc);
+
+  RunOnWorkerThread(receiver_->GetSetupForUnsignaledMediaChannel());
+  EXPECT_FALSE(receiver_->has_signaled_ssrc_s());
+  EXPECT_EQ(receiver_->ssrc_s(), kSsrc);
+}
+
+TEST_F(AudioRtpReceiverSsrcTest,
+       SignaledSsrcTakesPrecedenceOverUnsignaledSsrc) {
+  constexpr uint32_t kSignaledSsrc = kSsrc + 1;
+  constexpr uint32_t kNewUnsignaledSsrc = kSsrc + 2;
+  RunOnWorkerThread(receiver_->GetSetupForUnsignaledMediaChannel());
+  receiver_->SetUnsignaledSsrc_s(kSsrc);
+
+  RunOnWorkerThread(receiver_->GetSetupForMediaChannel(kSignaledSsrc));
+  EXPECT_TRUE(receiver_->has_signaled_ssrc_s());
+  EXPECT_EQ(receiver_->ssrc_s(), kSignaledSsrc);
+
+  // When set up for unsignaled streams again, the receiver can be bound to a
+  // new unsignaled stream.
+  RunOnWorkerThread(receiver_->GetSetupForUnsignaledMediaChannel());
+  EXPECT_FALSE(receiver_->has_signaled_ssrc_s());
+  receiver_->SetUnsignaledSsrc_s(kNewUnsignaledSsrc);
+  EXPECT_EQ(receiver_->ssrc_s(), kNewUnsignaledSsrc);
 }
 
 }  // namespace webrtc

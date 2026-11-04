@@ -253,13 +253,6 @@ bool ParseAndAddDistributionPoint(
 
 }  // namespace
 
-ParsedTbsCertificate::ParsedTbsCertificate() = default;
-
-ParsedTbsCertificate::ParsedTbsCertificate(ParsedTbsCertificate &&other) =
-    default;
-
-ParsedTbsCertificate::~ParsedTbsCertificate() = default;
-
 bool VerifySerialNumber(der::Input value, bool warnings_only,
                         CertErrors *errors) {
   // If `warnings_only` was set to true, the exact same errors will be logged,
@@ -909,11 +902,6 @@ bool ParseAuthorityInfoAccessURIs(
   return true;
 }
 
-ParsedDistributionPoint::ParsedDistributionPoint() = default;
-ParsedDistributionPoint::ParsedDistributionPoint(
-    ParsedDistributionPoint &&other) = default;
-ParsedDistributionPoint::~ParsedDistributionPoint() = default;
-
 bool ParseCrlDistributionPoints(
     der::Input extension_value,
     std::vector<ParsedDistributionPoint> *distribution_points) {
@@ -945,13 +933,6 @@ bool ParseCrlDistributionPoints(
 
   return true;
 }
-
-ParsedAuthorityKeyIdentifier::ParsedAuthorityKeyIdentifier() = default;
-ParsedAuthorityKeyIdentifier::~ParsedAuthorityKeyIdentifier() = default;
-ParsedAuthorityKeyIdentifier::ParsedAuthorityKeyIdentifier(
-    ParsedAuthorityKeyIdentifier &&other) = default;
-ParsedAuthorityKeyIdentifier &ParsedAuthorityKeyIdentifier::operator=(
-    ParsedAuthorityKeyIdentifier &&other) = default;
 
 bool ParseAuthorityKeyIdentifier(
     der::Input extension_value,

@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_DH_H
 #define OPENSSL_HEADER_DH_H
 
-#include <openssl/base.h>   // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
 
 #if defined(__cplusplus)
 extern "C" {
@@ -48,6 +48,11 @@ OPENSSL_EXPORT void DH_free(DH *dh);
 // DH_up_ref increments the reference count of `dh` and returns one. It does not
 // mutate `dh` for thread-safety purposes and may be used concurrently.
 OPENSSL_EXPORT int DH_up_ref(DH *dh);
+
+// DH_dup_ref increments the reference count of `dh` and returns the same
+// handle. It does not mutate `dh` for thread-safety purposes and may be used
+// concurrently.
+OPENSSL_EXPORT DH *DH_dup_ref(const DH *dh);
 
 
 // Properties.
@@ -317,7 +322,7 @@ extern "C++" {
 BSSL_NAMESPACE_BEGIN
 
 BORINGSSL_MAKE_DELETER(DH, DH_free)
-BORINGSSL_MAKE_UP_REF(DH, DH_up_ref)
+BORINGSSL_MAKE_UP_REF(DH, DH_dup_ref)
 
 BSSL_NAMESPACE_END
 

@@ -16,6 +16,7 @@
 #include <list>
 #include <memory>
 #include <span>
+#include <utility>
 
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
@@ -24,6 +25,7 @@
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/transport/stun.h"
+#include "api/units/time_delta.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/port.h"
 #include "p2p/base/port_interface.h"
@@ -50,13 +52,13 @@ class TCPConnection;
 // call this TCPPort::OnReadPacket (3 arg) to dispatch to a connection.
 class TCPPort : public Port {
  public:
-  static std::unique_ptr<TCPPort> Create(const PortParametersRef& args,
+  static std::unique_ptr<TCPPort> Create(PortParametersRef args,
                                          uint16_t min_port,
                                          uint16_t max_port,
                                          bool allow_listen) {
     // Using `new` to access a non-public constructor.
     return absl::WrapUnique(
-        new TCPPort(args, min_port, max_port, allow_listen));
+        new TCPPort(std::move(args), min_port, max_port, allow_listen));
   }
 
   ~TCPPort() override;
@@ -76,7 +78,7 @@ class TCPPort : public Port {
   ProtocolType GetProtocol() const override;
 
  protected:
-  TCPPort(const PortParametersRef& args,
+  TCPPort(PortParametersRef args,
           uint16_t min_port,
           uint16_t max_port,
           bool allow_listen);
@@ -110,7 +112,7 @@ class TCPPort : public Port {
 
   void OnReadyToSend(AsyncPacketSocket* socket);
 
-  bool allow_listen_;
+  const bool allow_listen_;
   std::unique_ptr<AsyncListenSocket> listen_socket_;
   // Options to be applied to accepted sockets.
   // TODO(bugs.webrtc:13065): Configure connect/accept in the same way, but
@@ -139,10 +141,9 @@ class TCPConnection : public Connection {
 
   AsyncPacketSocket* socket() { return socket_.get(); }
 
-  // Allow test cases to overwrite the default timeout period.
-  int reconnection_timeout() const { return reconnection_timeout_; }
-  void set_reconnection_timeout(int timeout_in_ms) {
-    reconnection_timeout_ = timeout_in_ms;
+  TimeDelta reconnection_timeout() const { return reconnection_timeout_; }
+  void SetReconnectionTimeoutForTesting(TimeDelta timeout) {
+    reconnection_timeout_ = timeout;
   }
 
  protected:
@@ -194,8 +195,7 @@ class TCPConnection : public Connection {
   // will terminate the newly created connection.
   bool pretending_to_be_writable_;
 
-  // Allow test case to overwrite the default timeout period.
-  int reconnection_timeout_;
+  TimeDelta reconnection_timeout_;
 
   ScopedTaskSafety network_safety_;
 };

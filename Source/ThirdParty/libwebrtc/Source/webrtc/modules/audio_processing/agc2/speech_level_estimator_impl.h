@@ -34,9 +34,9 @@ class SpeechLevelEstimatorImpl : public SpeechLevelEstimator {
   float GetLevelDbfs() const override { return level_dbfs_; }
   // Returns true if the estimator is confident on its current estimate.
   bool IsConfident() const override { return is_confident_; }
-  // Returns false because this implementation does not detect background
-  // speakers.
-  bool IsBackgroundSpeaker() const override { return false; }
+  // Returns true because this implementation does not differentiate background
+  // speakers or low-activity segments.
+  bool IsTargetSpeakerActive() const override { return true; }
 
   void Reset() override;
 

@@ -156,7 +156,7 @@ func extractCommentLines(lines []string, lineNo int) (comment []string, rest []s
 		restLineNo++
 	}
 
-	err = errors.New("hit EOF in comment")
+	err = fmt.Errorf("hit EOF in comment on line %d", restLineNo)
 	return
 }
 
@@ -442,7 +442,7 @@ func (config *Config) parseHeader(path string) (*HeaderFile, error) {
 	}
 
 	if len(lines) == 0 || lines[0] != "extern \"C\" {" {
-		return nil, errors.New("no extern \"C\" found after C++ guard")
+		return nil, fmt.Errorf("no extern \"C\" found after C++ guard on line %d", lineNo)
 	}
 	lineNo += 2
 	lines = lines[2:]
@@ -469,7 +469,7 @@ func (config *Config) parseHeader(path string) (*HeaderFile, error) {
 
 		if len(rest) > 0 && len(rest[0]) == 0 {
 			if len(rest) < 2 || len(rest[1]) != 0 {
-				return nil, errors.New("preamble comment should be followed by two blank lines")
+				return nil, fmt.Errorf("preamble comment should be followed by two blank lines on line %d", restLineNo)
 			}
 			header.Preamble = comment
 			lineNo = restLineNo + 2
@@ -484,7 +484,7 @@ func (config *Config) parseHeader(path string) (*HeaderFile, error) {
 	for {
 		// Start of a section.
 		if len(lines) == 0 {
-			return nil, errors.New("unexpected end of file")
+			return nil, fmt.Errorf("unexpected end of file on line %d", lineNo)
 		}
 		line := lines[0]
 		if line == cppGuard {

@@ -647,6 +647,9 @@ TEST(ASN1Test, ASN1Type) {
       // [UNIVERSAL 128] { `00` }
       // Unknown universal tags are parsed as `V_ASN1_OTHER`.
       {V_ASN1_OTHER, {0x1f, 0x81, 0x00, 0x01, 0x00}},
+      // RELATIVE-OID { 32473.1 }
+      // RELATIVE-OID has no dedicated `ASN1_TYPE` representation.
+      {V_ASN1_OTHER, {0x0d, 0x04, 0x81, 0xfd, 0x59, 0x01}},
   };
   for (const auto &t : kTests) {
     SCOPED_TRACE(Bytes(t.der));
@@ -710,6 +713,7 @@ TEST(ASN1Test, ASN1Type) {
       {0x26, 0x00},  // [OBJECT IDENTIFIER CONSTRUCTED] {}
       {0x2a, 0x00},  // [ENUMERATED CONSTRUCTED] {}
       {0x2c, 0x00},  // [UTF8String CONSTRUCTED] {}
+      {0x2d, 0x00},  // [RELATIVE-OID CONSTRUCTED] {}
       {0x3c, 0x00},  // [UniversalString CONSTRUCTED] {}
       {0x3e, 0x00},  // [BMPString CONSTRUCTED] {}
       // Supported constructed types should be rejected if primitive.
@@ -723,6 +727,9 @@ TEST(ASN1Test, ASN1Type) {
       {0x0a, 0x02, 0x00, 0x00},  // ENUMERATED { `0000` }
       {0x06, 0x00},              // OBJECT_IDENTIFIER { }
       {0x06, 0x01, 0xff},        // OBJECT_IDENTIFIER { `ff` }
+      {0x0d, 0x00},              // RELATIVE-OID { }
+      {0x0d, 0x01, 0xff},        // RELATIVE-OID { `ff` }
+      {0x0d, 0x02, 0x80, 0x01},  // RELATIVE-OID { `8001` }
       {0x03, 0x01, 0xff},        // BIT_STRING { `ff` }
       {0x05, 0x01, 0xff},        // NULL { `ff` }
       {0x01, 0x00},              // BOOLEAN {}

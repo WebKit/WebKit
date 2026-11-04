@@ -62,11 +62,11 @@
 #include <openssl/base.h>
 
 #include "cert_error_id.h"
+#include "cert_error_params.h"
 #include "parsed_certificate.h"
 
 BSSL_NAMESPACE_BEGIN
 
-class CertErrorParams;
 class CertPathErrors;
 
 // CertError represents either an error or a warning.
@@ -75,13 +75,6 @@ struct OPENSSL_EXPORT CertError {
     SEVERITY_HIGH,
     SEVERITY_WARNING,
   };
-
-  CertError();
-  CertError(Severity severity, CertErrorId id,
-            std::unique_ptr<CertErrorParams> params);
-  CertError(CertError &&other);
-  CertError &operator=(CertError &&);
-  ~CertError();
 
   // Pretty-prints the error and its parameters.
   std::string ToDebugString() const;
@@ -95,10 +88,9 @@ struct OPENSSL_EXPORT CertError {
 // add and inspect errors.
 class OPENSSL_EXPORT CertErrors {
  public:
-  CertErrors();
-  CertErrors(CertErrors &&other);
-  CertErrors &operator=(CertErrors &&);
-  ~CertErrors();
+  CertErrors() = default;
+  CertErrors(CertErrors &&other) = default;
+  CertErrors &operator=(CertErrors &&) = default;
 
   // Adds an error/warning. `params` may be null.
   void Add(CertError::Severity severity, CertErrorId id,
@@ -137,11 +129,6 @@ class OPENSSL_EXPORT CertErrors {
 // of the certificate relative to its chain.
 class OPENSSL_EXPORT CertPathErrors {
  public:
-  CertPathErrors();
-  CertPathErrors(CertPathErrors &&other);
-  CertPathErrors &operator=(CertPathErrors &&);
-  ~CertPathErrors();
-
   // Gets a bucket to put errors in for `cert_index`. This will lookup and
   // return the existing error bucket if one exists, or create a new one for the
   // specified index. It is expected that `cert_index` is the corresponding

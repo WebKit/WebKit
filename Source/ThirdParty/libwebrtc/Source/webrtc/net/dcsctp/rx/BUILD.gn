@@ -57,6 +57,7 @@ rtc_library("interleaved_reassembly_streams") {
     "interleaved_reassembly_streams.h",
   ]
 }
+
 rtc_library("traditional_reassembly_streams") {
   deps = [
     ":reassembly_streams",
@@ -131,5 +132,70 @@ if (rtc_include_tests) {
       "reassembly_queue_test.cc",
       "traditional_reassembly_streams_test.cc",
     ]
+  }
+
+  rtc_cc_test("data_tracker_test") {
+    deps = [
+      ":data_tracker",
+      "../../../api/task_queue",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../test:test_support",
+      "../common:handover_testing",
+      "../common:internal_types",
+      "../packet:chunk",
+      "../public:socket",
+      "../timer",
+    ]
+    sources = [ "data_tracker_test.cc" ]
+  }
+
+  rtc_cc_test("interleaved_reassembly_streams_test") {
+    deps = [
+      ":interleaved_reassembly_streams",
+      ":reassembly_streams",
+      "../../../test:test_support",
+      "../common:handover_testing",
+      "../common:internal_types",
+      "../common:sequence_numbers",
+      "../packet:chunk",
+      "../packet:data",
+      "../public:socket",
+      "../public:types",
+      "../testing:data_generator",
+    ]
+    sources = [ "interleaved_reassembly_streams_test.cc" ]
+  }
+
+  rtc_cc_test("reassembly_queue_test") {
+    deps = [
+      ":reassembly_queue",
+      "../../../test:test_support",
+      "../common:handover_testing",
+      "../common:internal_types",
+      "../packet:chunk",
+      "../packet:data",
+      "../public:socket",
+      "../public:types",
+      "../testing:data_generator",
+    ]
+    sources = [ "reassembly_queue_test.cc" ]
+  }
+
+  rtc_cc_test("traditional_reassembly_streams_test") {
+    deps = [
+      ":reassembly_streams",
+      ":traditional_reassembly_streams",
+      "../../../test:test_support",
+      "../common:handover_testing",
+      "../common:internal_types",
+      "../common:sequence_numbers",
+      "../packet:chunk",
+      "../packet:data",
+      "../public:socket",
+      "../public:types",
+      "../testing:data_generator",
+    ]
+    sources = [ "traditional_reassembly_streams_test.cc" ]
   }
 }

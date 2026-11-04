@@ -163,10 +163,10 @@ std::unique_ptr<NetEqInput> CreateNetEqEventLogInput(
   }
   // Pick the first SSRC if none was provided.
   ssrc = ssrc.value_or(*parsed_log.incoming_audio_ssrcs().begin());
-  auto streams = parsed_log.incoming_rtp_packets_by_ssrc();
+  const auto& streams = parsed_log.incoming_rtp_packets_by_ssrc();
   auto stream =
       std::find_if(streams.begin(), streams.end(),
-                   [ssrc](auto stream) { return stream.ssrc == ssrc; });
+                   [ssrc](const auto& stream) { return stream.ssrc == ssrc; });
   if (stream == streams.end()) {
     return nullptr;
   }

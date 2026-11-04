@@ -608,7 +608,7 @@ typedef struct VP9_COMP {
   YV12_BUFFER_CONFIG scaled_source;
   YV12_BUFFER_CONFIG *unscaled_last_source;
   YV12_BUFFER_CONFIG scaled_last_source;
-#ifdef ENABLE_KF_DENOISE
+#if defined(ENABLE_KF_DENOISE) || CONFIG_VP9_TEMPORAL_DENOISING
   YV12_BUFFER_CONFIG raw_unscaled_source;
   YV12_BUFFER_CONFIG raw_scaled_source;
 #endif

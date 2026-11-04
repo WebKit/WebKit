@@ -1145,5 +1145,60 @@ TEST(ScreamControllerTest, PacingRateUpdatesOnStreamsConfigChange) {
                 PacerConfig::kDefaultTimeInterval);
 }
 
+void TestClampsRefWindowOnFirstCongestionWhenStartingRateIsHigh(
+    bool send_as_ect1) {
+  SimulatedClock clock(Timestamp::Seconds(1'234));
+  Environment env = CreateTestEnvironment({.time = &clock});
+  NetworkControllerConfig config(env);
+  config.constraints.starting_rate = DataRate::KilobitsPerSec(300);
+  config.constraints.min_data_rate = DataRate::KilobitsPerSec(20);
+  config.constraints.max_data_rate = DataRate::KilobitsPerSec(1000);
+  config.stream_based_config.max_total_allocated_bitrate =
+      DataRate::KilobitsPerSec(1000);
+  ScreamNetworkController scream_controller(config);
+  scream_controller.OnNetworkAvailability(
+      {.at_time = clock.CurrentTime(), .network_available = true});
+
+  // RTT is 200ms (100ms one-way delay), link capacity is 30 kbps.
+  CcFeedbackGenerator feedback_generator({
+      .network_config = {.queue_delay_ms = 100,
+                         .link_capacity = DataRate::KilobitsPerSec(30)},
+      .send_as_ect1 = send_as_ect1,
+      .packet_size = DataSize::Bytes(150),
+  });
+
+  TimeDelta rtt = TimeDelta::Millis(200);
+  Timestamp start_time = clock.CurrentTime();
+  DataRate target_rate = config.constraints.starting_rate.value();
+  while (target_rate > DataRate::KilobitsPerSec(60) &&
+         clock.CurrentTime() - start_time < 10 * rtt) {
+    TransportPacketsFeedback feedback =
+        feedback_generator.ProcessUntilNextFeedback(
+            target_rate, clock, [&](const SentPacket& packet) {
+              scream_controller.OnSentPacket(packet);
+            });
+    NetworkControlUpdate update =
+        scream_controller.OnTransportPacketsFeedback(feedback);
+    if (update.target_rate.has_value()) {
+      target_rate = update.target_rate->target_rate;
+    }
+  }
+  EXPECT_LE(target_rate, DataRate::KilobitsPerSec(60));
+  EXPECT_GE(target_rate, DataRate::KilobitsPerSec(20));
+  EXPECT_LE(clock.CurrentTime() - start_time, 2 * rtt);
+}
+
+TEST(ScreamControllerTest,
+     ClampsRefWindowOnFirstDelayCongestionWhenStartingRateIsHigh) {
+  TestClampsRefWindowOnFirstCongestionWhenStartingRateIsHigh(
+      /*send_as_ect1=*/false);
+}
+
+TEST(ScreamControllerTest,
+     ClampsRefWindowOnFirstCeCongestionWhenStartingRateIsHigh) {
+  TestClampsRefWindowOnFirstCongestionWhenStartingRateIsHigh(
+      /*send_as_ect1=*/true);
+}
+
 }  // namespace
 }  // namespace webrtc

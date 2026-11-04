@@ -230,7 +230,7 @@ class RenderingSimulatorStream : public RtcEventLogDriver::StreamInterface {
     RenderingSimulator::Stream stream = collector_.GetStream();
     if (!stream.IsEmpty()) {
       RTC_DCHECK_NE(stream.ssrc, 0u);
-      results_.streams.push_back(stream);
+      results_.streams.push_back(std::move(stream));
     }
   }
 
@@ -245,7 +245,8 @@ class RenderingSimulatorStream : public RtcEventLogDriver::StreamInterface {
 
 }  // namespace
 
-RenderingSimulator::RenderingSimulator(Config config) : config_(config) {}
+RenderingSimulator::RenderingSimulator(Config config)
+    : config_(std::move(config)) {}
 
 RenderingSimulator::~RenderingSimulator() = default;
 

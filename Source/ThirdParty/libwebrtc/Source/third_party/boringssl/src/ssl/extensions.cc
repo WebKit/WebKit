@@ -348,7 +348,7 @@ bool tls12_add_verify_sigalgs(const SSL_HANDSHAKE *hs, CBB *out) {
 }
 
 bool tls12_check_peer_sigalg(const SSL_HANDSHAKE *hs, uint8_t *out_alert,
-                             uint16_t sigalg, EVP_PKEY *pkey) {
+                             uint16_t sigalg, const EVP_PKEY *pkey) {
   // The peer must have selected an algorithm that is consistent with its public
   // key, the TLS version, and what we advertised.
   Span<const uint16_t> sigalgs = tls12_get_verify_sigalgs(hs);
@@ -1029,7 +1029,7 @@ static bool ext_sigalgs_add_clienthello(const SSL_HANDSHAKE *hs, CBB *out,
     return false;
   }
   // Add a fake signature algorithm. See RFC 8701.
-  if (hs->ssl->ctx->grease_sigalgs_enabled &&
+  if (hs->ssl->ctx->grease_enabled &&
       !CBB_add_u16(&sigalgs_cbb,
                    ssl_get_grease_value(hs, ssl_grease_signature_algorithm))) {
     return false;
@@ -2953,12 +2953,17 @@ static bool ext_server_padding_parse_serverhello(SSL_HANDSHAKE *hs,
 //
 // https://datatracker.ietf.org/doc/draft-ietf-tls-trust-anchor-ids/
 
+bool ssl_is_valid_trust_anchor_id(Span<const uint8_t> id) {
+  CBS cbs = id;
+  return id.size() <= 32 && CBS_is_valid_asn1_relative_oid(&cbs);
+}
+
 bool ssl_is_valid_trust_anchor_list(Span<const uint8_t> in) {
   CBS ids = in;
   while (CBS_len(&ids) > 0) {
     CBS id;
-    if (!CBS_get_u8_length_prefixed(&ids, &id) ||  //
-        CBS_len(&id) == 0) {
+    if (!CBS_get_u8_length_prefixed(&ids, &id) ||
+        !ssl_is_valid_trust_anchor_id(id)) {
       return false;
     }
   }

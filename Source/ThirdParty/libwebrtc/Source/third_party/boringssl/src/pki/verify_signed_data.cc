@@ -24,7 +24,6 @@
 #include <openssl/rsa.h>
 #include <openssl/sha2.h>
 
-#include "cert_errors.h"
 #include "input.h"
 #include "parse_values.h"
 #include "parser.h"
@@ -48,7 +47,7 @@ constexpr uint32_t VerifyCacheKeyVersion = 1;
 std::string SignatureVerifyCacheKey(std::string_view algorithm_name,
                                     der::Input signed_data,
                                     der::Input signature_value_bytes,
-                                    EVP_PKEY *public_key) {
+                                    const EVP_PKEY *public_key) {
   SHA256_CTX s_ctx;
   bssl::ScopedCBB public_key_cbb;
   uint8_t digest[SHA256_DIGEST_LENGTH];
@@ -171,7 +170,7 @@ bool ParsePublicKey(der::Input public_key_spki,
 
 bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
                       const der::BitString &signature_value,
-                      EVP_PKEY *public_key, SignatureVerifyCache *cache) {
+                      const EVP_PKEY *public_key, SignatureVerifyCache *cache) {
   int expected_pkey_id = 1;
   const EVP_MD *digest = nullptr;
   bool is_rsa_pss = false;
@@ -239,6 +238,7 @@ bool VerifySignedData(SignatureAlgorithm algorithm, der::Input signed_data,
       break;
 
     case SignatureAlgorithm::kMtcProofDraftPlants04:
+    case SignatureAlgorithm::kMtcProof:
       // This function can't verify MTC proofs.
       return false;
 

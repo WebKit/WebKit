@@ -23,16 +23,13 @@
 
 
 #include "cert_error_id.h"
+#include "input.h"
 
 BSSL_NAMESPACE_BEGIN
 
 class CertErrors;
 
 OPENSSL_EXPORT extern const CertErrorId kFailedParsingGeneralName;
-
-namespace der {
-class Input;
-}  // namespace der
 
 // Bitfield values for the GeneralName types defined in RFC 5280. The ordering
 // and exact values are not important, but match the order from the RFC for
@@ -64,9 +61,6 @@ struct OPENSSL_EXPORT GeneralNames {
     IP_ADDRESS_ONLY,
     IP_ADDRESS_AND_NETMASK,
   };
-
-  GeneralNames();
-  ~GeneralNames();
 
   // Create a GeneralNames object representing the DER-encoded
   // `general_names_tlv`. The returned object may reference data from

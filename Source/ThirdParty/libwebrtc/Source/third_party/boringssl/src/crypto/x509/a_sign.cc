@@ -31,7 +31,7 @@
 using namespace bssl;
 
 int ASN1_item_sign(const ASN1_ITEM *it, X509_ALGOR *algor1, X509_ALGOR *algor2,
-                   ASN1_BIT_STRING *signature, void *asn, EVP_PKEY *pkey,
+                   ASN1_BIT_STRING *signature, void *asn, const EVP_PKEY *pkey,
                    const EVP_MD *type) {
   if (signature->type != V_ASN1_BIT_STRING) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_WRONG_TYPE);

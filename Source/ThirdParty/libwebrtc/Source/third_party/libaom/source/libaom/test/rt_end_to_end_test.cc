@@ -16,8 +16,11 @@
 
 #include "gtest/gtest.h"
 
+#include "config/aom_config.h"
+
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
+#include "test/i420_video_source.h"
 #include "test/util.h"
 #include "test/y4m_video_source.h"
 #include "test/yuv_video_source.h"
@@ -205,4 +208,44 @@ AV1_INSTANTIATE_TEST_SUITE(RTEndToEndTestThreaded,
                            ::testing::Values<unsigned int>(0, 3),
                            ::testing::Range(2, 6), ::testing::Range(1, 5),
                            ::testing::Range(1, 5));
+
+#if !CONFIG_REALTIME_ONLY
+// Keeps warped motion and OBMC at their defaults, so motion mode symbols are
+// coded.
+class RTMotionModeTest : public ::libaom_test::CodecTestWithParam<int>,
+                         public ::libaom_test::EncoderTest {
+ protected:
+  RTMotionModeTest() : EncoderTest(GET_PARAM(0)), cpu_used_(GET_PARAM(1)) {}
+  ~RTMotionModeTest() override = default;
+
+  void SetUp() override {
+    InitializeConfig(::libaom_test::kRealTime);
+    cfg_.g_threads = 1;
+    cfg_.rc_end_usage = AOM_CBR;
+    cfg_.rc_target_bitrate = 150;
+  }
+
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
+    if (video->frame() == 0) {
+      encoder->Control(AOME_SET_CPUUSED, cpu_used_);
+      encoder->Control(AV1E_SET_TUNE_CONTENT, AOM_CONTENT_DEFAULT);
+      // Partition merging only runs on frames without CDF updates.
+      encoder->Control(AV1E_SET_CDF_UPDATE_MODE, 0);
+    }
+  }
+
+  int cpu_used_;
+};
+
+// A rejected partition merge must not change the motion mode inputs of the
+// block it tried to merge.
+TEST_P(RTMotionModeTest, RejectedMergeKeepsEncoderDecoderMatch) {
+  ::libaom_test::I420VideoSource video("niklas_640_480_30.yuv", 640, 480, 30, 1,
+                                       0, 100);
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+}
+
+AV1_INSTANTIATE_TEST_SUITE(RTMotionModeTest, ::testing::Values(8));
+#endif  // !CONFIG_REALTIME_ONLY
 }  // namespace

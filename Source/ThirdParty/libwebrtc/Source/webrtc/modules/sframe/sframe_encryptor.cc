@@ -17,32 +17,28 @@
 #include "api/make_ref_counted.h"
 #include "api/rtc_error.h"
 #include "api/scoped_refptr.h"
-#include "api/sequence_checker.h"
 #include "api/sframe/sframe_types.h"
 #include "modules/sframe/sframe_context_factory.h"
+#include "rtc_base/race_checker.h"
 #include "third_party/sframe/src/include/sframe/result.h"
 #include "third_party/sframe/src/include/sframe/sframe.h"
 
 namespace webrtc {
 
 scoped_refptr<SframeEncryptor> SframeEncryptor::Create(
-    SframeMode mode,
     SframeCipherSuite cipher_suite) {
-  return make_ref_counted<SframeEncryptor>(mode, cipher_suite);
+  return make_ref_counted<SframeEncryptor>(cipher_suite);
 }
 
-SframeEncryptor::SframeEncryptor(SframeMode mode,
-                                 SframeCipherSuite cipher_suite)
-    : sequence_checker_(SequenceChecker::kDetached),
-      mode_(mode),
-      context_(CreateSframeContext(cipher_suite)) {}
+SframeEncryptor::SframeEncryptor(SframeCipherSuite cipher_suite)
+    : context_(CreateSframeContext(cipher_suite)) {}
 
 SframeEncryptor::~SframeEncryptor() = default;
 
 RTCError SframeEncryptor::SetEncryptionKey(
     uint64_t key_id,
     std::span<const uint8_t> key_material) {
-  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  RTC_DCHECK_RUNS_SERIALIZED(&access_checker_);
   sframe::Result<void> result = context_->add_key(
       key_id, sframe::KeyUsage::protect,
       sframe::input_bytes(key_material.data(), key_material.size()));
@@ -67,7 +63,7 @@ RTCErrorOr<size_t> SframeEncryptor::Encrypt(
     std::span<const uint8_t> frame,
     std::span<const uint8_t> additional_data,
     std::span<uint8_t> encrypted_frame) {
-  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  RTC_DCHECK_RUNS_SERIALIZED(&access_checker_);
   if (!active_key_id_) {
     return RTCError::InvalidState("Sframe encryption key not set");
   }

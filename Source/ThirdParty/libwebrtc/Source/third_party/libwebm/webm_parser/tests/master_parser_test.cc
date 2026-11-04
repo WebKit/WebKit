@@ -81,7 +81,8 @@ TEST_F(MasterParserTest, IndefiniteUnknownChild) {
   SetReaderData({
       0x80,  // ID = 0x80 (unknown).
       0xFF,  // Size = unknown.
-      0x00, 0x00,  // Body.
+      0x00,
+      0x00,  // Body.
   });
 
   EXPECT_CALL(callback_, OnElementBegin(_, _)).Times(0);
@@ -94,7 +95,8 @@ TEST_F(MasterParserTest, ChildOverflow) {
   SetReaderData({
       0xEC,  // ID = 0xEC (Void).
       0x82,  // Size = 2.
-      0x00, 0x00,  // Body.
+      0x00,
+      0x00,  // Body.
   });
 
   EXPECT_CALL(callback_, OnElementBegin(_, _)).Times(0);
@@ -187,11 +189,13 @@ TEST_F(MasterParserTest, DefaultActionIsRead) {
 // Unrecognized children should be skipped over.
 TEST_F(MasterParserTest, UnknownChildren) {
   SetReaderData({
-      0x40, 0x00,  // ID = 0x4000 (unknown).
+      0x40,
+      0x00,  // ID = 0x4000 (unknown).
       0x80,  // Size = 0.
 
       0x80,  // ID = 0x80 (unknown).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
   });
 
   EXPECT_CALL(callback_, OnVoid(_, _, _)).Times(0);
@@ -305,9 +309,21 @@ TEST_F(MasterParserTest, UnknownSizeToFileEnd) {
 // Parsing one byte at a time is okay.
 TEST_F(MasterParserTest, IncrementalParse) {
   SetReaderData({
-      0x1A, 0x45, 0xDF, 0xA3,  // ID = 0x1A45DFA3 (EBML).
-      0x08, 0x00, 0x00, 0x00, 0x06,  // Size = 6.
-      0x01, 0x02, 0x03, 0x04, 0x05, 0x06,  // Body.
+      0x1A,
+      0x45,
+      0xDF,
+      0xA3,  // ID = 0x1A45DFA3 (EBML).
+      0x08,
+      0x00,
+      0x00,
+      0x00,
+      0x06,  // Size = 6.
+      0x01,
+      0x02,
+      0x03,
+      0x04,
+      0x05,
+      0x06,  // Body.
   });
 
   const ElementMetadata metadata = {Id::kEbml, 9, 6, 0};

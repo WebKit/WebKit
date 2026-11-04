@@ -48,45 +48,25 @@ using namespace bssl;
 #define ASN1_GEN_FORMAT_HEX 3
 #define ASN1_GEN_FORMAT_BITLIST 4
 
+namespace {
+
 // generate_v3 converts `str` into an ASN.1 structure and writes the result to
 // `cbb`. It returns one on success and zero on error. `depth` bounds recursion,
 // and `format` specifies the current format modifier.
 //
 // If `tag` is non-zero, the structure is implicitly tagged with `tag`. `tag`
 // must not have the constructed bit set.
-static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
-                       CBS_ASN1_TAG tag, int format, int depth);
+int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
+                CBS_ASN1_TAG tag, int format, int depth);
 
-static int bitstr_cb(const char *elem, size_t len, void *bitstr);
-
-ASN1_TYPE *bssl::ASN1_generate_v3(const char *str, const X509V3_CTX *cnf) {
-  ScopedCBB cbb;
-  if (!CBB_init(cbb.get(), 0) ||  //
-      !generate_v3(cbb.get(), str, cnf, /*tag=*/0, ASN1_GEN_FORMAT_ASCII,
-                   /*depth=*/0)) {
-    return nullptr;
-  }
-
-  // While not strictly necessary to avoid a DoS (we rely on any super-linear
-  // checks being performed internally), cap the overall output to
-  // `ASN1_GEN_MAX_OUTPUT` so the externally-visible behavior is consistent.
-  if (CBB_len(cbb.get()) > ASN1_GEN_MAX_OUTPUT) {
-    OPENSSL_PUT_ERROR(ASN1, ASN1_R_TOO_LONG);
-    return nullptr;
-  }
-
-  const uint8_t *der = CBB_data(cbb.get());
-  return d2i_ASN1_TYPE(nullptr, &der, CBB_len(cbb.get()));
-}
-
-static int cbs_str_equal(const CBS *cbs, const char *str) {
+int cbs_str_equal(const CBS *cbs, const char *str) {
   return CBS_len(cbs) == strlen(str) &&
          OPENSSL_memcmp(CBS_data(cbs), str, strlen(str)) == 0;
 }
 
 // parse_tag decodes a tag specifier in `cbs`. It returns the tag on success or
 // zero on error.
-static CBS_ASN1_TAG parse_tag(const CBS *cbs) {
+CBS_ASN1_TAG parse_tag(const CBS *cbs) {
   CBS copy = *cbs;
   uint64_t num;
   if (!CBS_get_u64_decimal(&copy, &num) || num > CBS_ASN1_TAG_NUMBER_MASK) {
@@ -132,9 +112,8 @@ static CBS_ASN1_TAG parse_tag(const CBS *cbs) {
   return tag_class | (CBS_ASN1_TAG)num;
 }
 
-static int generate_wrapped(CBB *cbb, const char *str, const X509V3_CTX *cnf,
-                            CBS_ASN1_TAG tag, int padding, int format,
-                            int depth) {
+int generate_wrapped(CBB *cbb, const char *str, const X509V3_CTX *cnf,
+                     CBS_ASN1_TAG tag, int padding, int format, int depth) {
   CBB child;
   return CBB_add_asn1(cbb, &child, tag) &&
          (!padding || CBB_add_u8(&child, 0)) &&
@@ -142,8 +121,33 @@ static int generate_wrapped(CBB *cbb, const char *str, const X509V3_CTX *cnf,
          CBB_flush(cbb);
 }
 
-static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
-                       CBS_ASN1_TAG tag, int format, int depth) {
+int bitstr_cb(const char *elem, size_t len, void *bitstr) {
+  CBS cbs;
+  CBS_init(&cbs, (const uint8_t *)elem, len);
+  uint64_t bitnum;
+  if (!CBS_get_u64_decimal(&cbs, &bitnum) || CBS_len(&cbs) != 0 ||
+      // Cap the highest allowed bit so this mechanism cannot be used to create
+      // extremely large allocations with short inputs. The highest named bit in
+      // RFC 5280 is 8, so 256 should give comfortable margin but still only
+      // allow a 32-byte allocation.
+      //
+      // We do not consider this function to be safe with untrusted inputs (even
+      // without bugs, it is prone to string injection vulnerabilities), so DoS
+      // is not truly a concern, but the limit is necessary to keep fuzzing
+      // effective.
+      bitnum > 256) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_NUMBER);
+    return 0;
+  }
+  if (!ASN1_BIT_STRING_set_bit(reinterpret_cast<ASN1_BIT_STRING *>(bitstr),
+                               (int)bitnum, 1)) {
+    return 0;
+  }
+  return 1;
+}
+
+int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
+                CBS_ASN1_TAG tag, int format, int depth) {
   assert((tag & CBS_ASN1_CONSTRUCTED) == 0);
   if (depth > ASN1_GEN_MAX_DEPTH) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_ILLEGAL_NESTED_TAGGING);
@@ -514,27 +518,24 @@ static int generate_v3(CBB *cbb, const char *str, const X509V3_CTX *cnf,
   }
 }
 
-static int bitstr_cb(const char *elem, size_t len, void *bitstr) {
-  CBS cbs;
-  CBS_init(&cbs, (const uint8_t *)elem, len);
-  uint64_t bitnum;
-  if (!CBS_get_u64_decimal(&cbs, &bitnum) || CBS_len(&cbs) != 0 ||
-      // Cap the highest allowed bit so this mechanism cannot be used to create
-      // extremely large allocations with short inputs. The highest named bit in
-      // RFC 5280 is 8, so 256 should give comfortable margin but still only
-      // allow a 32-byte allocation.
-      //
-      // We do not consider this function to be safe with untrusted inputs (even
-      // without bugs, it is prone to string injection vulnerabilities), so DoS
-      // is not truly a concern, but the limit is necessary to keep fuzzing
-      // effective.
-      bitnum > 256) {
-    OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_NUMBER);
-    return 0;
+}  // namespace
+
+ASN1_TYPE *bssl::ASN1_generate_v3(const char *str, const X509V3_CTX *cnf) {
+  ScopedCBB cbb;
+  if (!CBB_init(cbb.get(), 0) ||  //
+      !generate_v3(cbb.get(), str, cnf, /*tag=*/0, ASN1_GEN_FORMAT_ASCII,
+                   /*depth=*/0)) {
+    return nullptr;
   }
-  if (!ASN1_BIT_STRING_set_bit(reinterpret_cast<ASN1_BIT_STRING *>(bitstr),
-                               (int)bitnum, 1)) {
-    return 0;
+
+  // While not strictly necessary to avoid a DoS (we rely on any super-linear
+  // checks being performed internally), cap the overall output to
+  // `ASN1_GEN_MAX_OUTPUT` so the externally-visible behavior is consistent.
+  if (CBB_len(cbb.get()) > ASN1_GEN_MAX_OUTPUT) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_TOO_LONG);
+    return nullptr;
   }
-  return 1;
+
+  const uint8_t *der = CBB_data(cbb.get());
+  return d2i_ASN1_TYPE(nullptr, &der, CBB_len(cbb.get()));
 }

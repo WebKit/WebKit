@@ -231,11 +231,6 @@ bool ParseCertificatePoliciesExtensionImpl(
 
 }  // namespace
 
-PolicyInformation::PolicyInformation() = default;
-PolicyInformation::~PolicyInformation() = default;
-PolicyInformation::PolicyInformation(const PolicyInformation &) = default;
-PolicyInformation::PolicyInformation(PolicyInformation &&) = default;
-
 bool ParseCertificatePoliciesExtension(der::Input extension_value,
                                        std::vector<PolicyInformation> *policies,
                                        CertErrors *errors) {

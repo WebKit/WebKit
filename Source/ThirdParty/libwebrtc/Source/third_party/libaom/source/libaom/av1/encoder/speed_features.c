@@ -1206,6 +1206,7 @@ static void set_good_speed_features_framesize_independent(
     sf->inter_sf.prune_comp_using_best_single_mode_ref = 2;
     sf->inter_sf.use_dist_wtd_comp_flag = DIST_WTD_COMP_DISABLED;
     sf->inter_sf.enable_comp_wedge_search_using_model_rd = 1;
+    sf->inter_sf.skip_interintra_using_top_smooth_rd_lvl = 1;
 
     sf->interp_sf.use_interp_filter = 1;
     sf->interp_sf.skip_model_rd_uv = 1;
@@ -1231,6 +1232,7 @@ static void set_good_speed_features_framesize_independent(
 
     // TODO(any, yunqing): move this feature to speed 0.
     sf->tpl_sf.skip_alike_starting_mv = 1;
+    sf->tpl_sf.allow_compound_pred = 0;
   }
 
   if (speed >= 2) {
@@ -1265,6 +1267,7 @@ static void set_good_speed_features_framesize_independent(
     sf->inter_sf.inter_mode_txfm_breakout = boosted ? 0 : 1;
     sf->inter_sf.alt_ref_search_fp = 1;
     sf->inter_sf.prune_single_ref = boosted ? 1 : 2;
+    sf->inter_sf.skip_interintra_using_top_smooth_rd_lvl = 2;
 
     sf->interp_sf.adaptive_interp_filter_search = 1;
 
@@ -1282,8 +1285,6 @@ static void set_good_speed_features_framesize_independent(
     sf->lpf_sf.prune_sgr_based_on_wiener = 1;
     sf->lpf_sf.disable_loop_restoration_chroma = boosted ? 0 : 1;
 
-    // TODO(any): Re-evaluate this feature set to 1 in speed 2.
-    sf->tpl_sf.allow_compound_pred = 0;
     sf->tpl_sf.prune_ref_frames_in_tpl = 1;
 
     sf->tx_sf.prune_inter_tx_split_rd_eval_lvl = 2;
@@ -1463,7 +1464,7 @@ static void set_good_speed_features_framesize_independent(
     sf->tpl_sf.prune_starting_mv = 3;
     sf->tpl_sf.use_y_only_rate_distortion = 1;
     sf->tpl_sf.subpel_force_stop = FULL_PEL;
-    sf->tpl_sf.gop_length_decision_method = 2;
+    sf->tpl_sf.gop_length_decision_method = 1;
     sf->tpl_sf.use_sad_for_mode_decision = 2;
 
     sf->winner_mode_sf.dc_blk_pred_level = 2;
@@ -1497,7 +1498,7 @@ static void set_good_speed_features_framesize_independent(
 
     sf->mv_sf.simple_motion_subpel_force_stop = FULL_PEL;
 
-    sf->tpl_sf.gop_length_decision_method = 3;
+    sf->tpl_sf.gop_length_decision_method = 2;
 
     sf->rd_sf.perform_coeff_opt = is_boosted_arf2_bwd_type ? 6 : 8;
 
@@ -1738,18 +1739,18 @@ static void set_rt_speed_feature_framesize_dependent(const AV1_COMP *const cpi,
     sf->rt_sf.frame_level_mode_cost_update = false;
 
     // Compound mode enabling.
-    if (rtc_ref->ref_frame_comp[0] || rtc_ref->ref_frame_comp[1] ||
-        rtc_ref->ref_frame_comp[2]) {
-      sf->rt_sf.use_comp_ref_nonrd = 1;
-      sf->rt_sf.ref_frame_comp_nonrd[0] =
-          rtc_ref->ref_frame_comp[0] && rtc_ref->reference[GOLDEN_FRAME - 1];
-      sf->rt_sf.ref_frame_comp_nonrd[1] =
-          rtc_ref->ref_frame_comp[1] && rtc_ref->reference[LAST2_FRAME - 1];
-      sf->rt_sf.ref_frame_comp_nonrd[2] =
-          rtc_ref->ref_frame_comp[2] && rtc_ref->reference[ALTREF_FRAME - 1];
-    } else {
-      sf->rt_sf.use_comp_ref_nonrd = 0;
-    }
+    sf->rt_sf.ref_frame_comp_nonrd[0] = rtc_ref->ref_frame_comp[0] &&
+                                        rtc_ref->reference[LAST_FRAME - 1] &&
+                                        rtc_ref->reference[GOLDEN_FRAME - 1];
+    sf->rt_sf.ref_frame_comp_nonrd[1] = rtc_ref->ref_frame_comp[1] &&
+                                        rtc_ref->reference[LAST_FRAME - 1] &&
+                                        rtc_ref->reference[LAST2_FRAME - 1];
+    sf->rt_sf.ref_frame_comp_nonrd[2] = rtc_ref->ref_frame_comp[2] &&
+                                        rtc_ref->reference[LAST_FRAME - 1] &&
+                                        rtc_ref->reference[ALTREF_FRAME - 1];
+    sf->rt_sf.use_comp_ref_nonrd = sf->rt_sf.ref_frame_comp_nonrd[0] ||
+                                   sf->rt_sf.ref_frame_comp_nonrd[1] ||
+                                   sf->rt_sf.ref_frame_comp_nonrd[2];
 
     if (cpi->svc.number_spatial_layers > 1 ||
         cpi->svc.number_temporal_layers > 1)
@@ -2131,7 +2132,6 @@ static void set_rt_speed_features_framesize_independent(AV1_COMP *cpi,
     sf->rt_sf.use_comp_ref_nonrd = 1;
     sf->rt_sf.ref_frame_comp_nonrd[2] = 1;  // LAST_ALTREF
     sf->tx_sf.intra_tx_size_search_init_depth_sqr = 2;
-    sf->part_sf.partition_search_type = VAR_BASED_PARTITION;
     sf->part_sf.max_intra_bsize = BLOCK_32X32;
 
     sf->mv_sf.search_method = FAST_DIAMOND;
@@ -2268,7 +2268,7 @@ static inline void init_fp_sf(FIRST_PASS_SPEED_FEATURES *fp_sf) {
 }
 
 static inline void init_tpl_sf(TPL_SPEED_FEATURES *tpl_sf) {
-  tpl_sf->gop_length_decision_method = 1;
+  tpl_sf->gop_length_decision_method = 0;
   tpl_sf->prune_intra_modes = 0;
   tpl_sf->prune_starting_mv = 0;
   tpl_sf->reduce_first_step_size = 0;
@@ -2424,6 +2424,7 @@ static inline void init_inter_sf(INTER_MODE_SPEED_FEATURES *inter_sf) {
   inter_sf->skip_cmp_using_top_cmp_avg_est_rd_lvl = 0;
   inter_sf->skip_interinter_wedge_search_based_on_mse = 0;
   inter_sf->enable_comp_wedge_search_using_model_rd = 0;
+  inter_sf->skip_interintra_using_top_smooth_rd_lvl = 0;
   set_txfm_rd_gate_level(inter_sf->txfm_rd_gate_level, 0);
 }
 
@@ -2644,8 +2645,8 @@ static inline void init_rt_sf(REAL_TIME_SPEED_FEATURES *rt_sf) {
   rt_sf->skip_newmv_mode_sad_screen = 0;
 }
 
-static fractional_mv_step_fp
-    *const fractional_mv_search[SUBPEL_SEARCH_METHODS] = {
+static fractional_mv_step_fp *const
+    fractional_mv_search[SUBPEL_SEARCH_METHODS] = {
       av1_find_best_sub_pixel_tree,             // SUBPEL_TREE = 0
       av1_find_best_sub_pixel_tree_pruned,      // SUBPEL_TREE_PRUNED = 1
       av1_find_best_sub_pixel_tree_pruned_more  // SUBPEL_TREE_PRUNED_MORE = 2

@@ -34,6 +34,7 @@
 #include "modules/desktop_capture/screen_capture_frame_queue.h"
 #include "modules/desktop_capture/screen_capturer_helper.h"
 #include "modules/desktop_capture/shared_desktop_frame.h"
+#include "modules/desktop_capture/shared_memory.h"
 
 namespace webrtc {
 
@@ -61,6 +62,8 @@ class ScreenCapturerX11 : public DesktopCapturer,
 
   // DesktopCapturer interface.
   void Start(Callback* delegate) override;
+  void SetSharedMemoryFactory(
+      std::unique_ptr<SharedMemoryFactory> shared_memory_factory) override;
   void CaptureFrame() override;
   bool GetSourceList(SourceList* sources) override;
   bool SelectSource(SourceId id) override;
@@ -98,6 +101,7 @@ class ScreenCapturerX11 : public DesktopCapturer,
   Clock& clock_;
 
   Callback* callback_ = nullptr;
+  std::unique_ptr<SharedMemoryFactory> shared_memory_factory_;
 
   // X11 graphics context.
   GC gc_ = nullptr;

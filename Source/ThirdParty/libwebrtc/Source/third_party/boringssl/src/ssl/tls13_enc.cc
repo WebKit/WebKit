@@ -68,11 +68,7 @@ bool tls13_init_key_schedule(SSL_HANDSHAKE *hs, Span<const uint8_t> psk) {
     return false;
   }
 
-  // Handback includes the whole handshake transcript, so we cannot free the
-  // transcript buffer in the handback case.
-  if (!hs->handback) {
-    hs->transcript.FreeBuffer();
-  }
+  hs->transcript.FreeBuffer();
   return hkdf_extract_to_secret(hs, hs->transcript, psk);
 }
 

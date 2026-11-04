@@ -73,12 +73,15 @@
 // This example does not special case any error return codes. If there was
 // an error, a descriptive message is printed and the program exits. With
 // few exceptions, vpx_codec functions return an enumerated error status,
-// with the value `0` indicating success.
+// with the value `0` indicating success. VP8 may return success for a
+// corrupted frame, so the VP8D_GET_FRAME_CORRUPTED control is checked after
+// every decode.
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "vpx/vp8dx.h"
 #include "vpx/vpx_decoder.h"
 
 #include "../tools_common.h"
@@ -124,10 +127,14 @@ int main(int argc, char **argv) {
     vpx_codec_iter_t iter = NULL;
     vpx_image_t *img = NULL;
     size_t frame_size = 0;
+    int corrupted = 0;
     const unsigned char *frame =
         vpx_video_reader_get_frame(reader, &frame_size);
     if (vpx_codec_decode(&codec, frame, (unsigned int)frame_size, NULL, 0))
       die_codec(&codec, "Failed to decode frame.");
+    if (vpx_codec_control(&codec, VP8D_GET_FRAME_CORRUPTED, &corrupted))
+      die_codec(&codec, "Failed to get frame corrupted state.");
+    if (corrupted) die("Frame %d is corrupted.", frame_cnt);
 
     while ((img = vpx_codec_get_frame(&codec, &iter)) != NULL) {
       vpx_img_write(img, outfile);

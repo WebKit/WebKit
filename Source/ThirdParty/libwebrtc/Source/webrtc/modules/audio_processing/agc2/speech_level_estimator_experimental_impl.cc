@@ -19,6 +19,8 @@
 namespace webrtc {
 namespace {
 
+constexpr int kFramesPerUpdate = 100;
+
 float ClampLevelEstimateDbfs(float level_estimate_dbfs) {
   return SafeClamp<float>(level_estimate_dbfs, -90.0f, 30.0f);
 }
@@ -46,18 +48,18 @@ SpeechLevelEstimatorExperimentalImpl::SpeechLevelEstimatorExperimentalImpl(
       max_frames_to_update_(max_time_to_update_ms / kFrameDurationMs),
       level_dbfs_(initial_speech_level_dbfs_),
       is_confident_(false),
-      is_background_speaker_(false) {
+      is_background_speaker_(false),
+      low_activity_segment_(false) {
   RTC_DCHECK(apm_data_dumper_);
   RTC_DCHECK_GE(adjacent_speech_frames_threshold_, 1);
   RTC_DCHECK_GT(background_speaker_offset_dbfs_, 0.0f);
   RTC_DCHECK_GT(max_time_to_update_ms_, 0);
+  RTC_DCHECK_GT(max_frames_to_update_, kFramesPerUpdate);
   Reset();
 }
 
 void SpeechLevelEstimatorExperimentalImpl::Update(float rms_dbfs,
                                                   float speech_probability) {
-  constexpr int kFramesPerUpdate = 100;
-
   if (speech_probability < kVadConfidenceThreshold) {
     // Not a speech frame. Reset to the last reliable state.
     preliminary_state_ = reliable_state_;
@@ -75,6 +77,7 @@ void SpeechLevelEstimatorExperimentalImpl::Update(float rms_dbfs,
       reliable_state_ = preliminary_state_;
 
       if (reliable_state_.num_frames >= kFramesPerUpdate) {
+        low_activity_segment_ = false;
         // The reliable state has enough frames to update the speech level
         // estimation.
         const float reliable_level_dbfs = ClampLevelEstimateDbfs(
@@ -99,11 +102,11 @@ void SpeechLevelEstimatorExperimentalImpl::Update(float rms_dbfs,
     num_frames_in_current_update_window_++;
     // Low activity: a target speaker triggers the VAD frequently, whereas
     // sporadic bursts that time out before accumulating enough reliable frames
-    // are assumed to come from a distant background speaker.
+    // are treated as low-activity segments.
     if (num_frames_in_current_update_window_ >= max_frames_to_update_) {
       ResetLevelEstimatorState();
       num_adjacent_speech_frames_ = 0;
-      is_background_speaker_ = true;
+      low_activity_segment_ = true;
     }
   }
 
@@ -117,6 +120,7 @@ void SpeechLevelEstimatorExperimentalImpl::Reset() {
   tracking_level_dbfs_ = initial_speech_level_dbfs_;
   is_confident_ = false;
   is_background_speaker_ = false;
+  low_activity_segment_ = false;
 }
 
 void SpeechLevelEstimatorExperimentalImpl::ResetLevelEstimatorState() {
@@ -134,6 +138,8 @@ void SpeechLevelEstimatorExperimentalImpl::DumpDebugData() const {
   apm_data_dumper_->DumpRaw("agc2_speech_level_is_confident", is_confident_);
   apm_data_dumper_->DumpRaw("agc2_speech_level_is_background_speaker",
                             is_background_speaker_);
+  apm_data_dumper_->DumpRaw("agc2_speech_level_is_low_activity_segment",
+                            low_activity_segment_);
   apm_data_dumper_->DumpRaw(
       "agc2_adaptive_level_estimator_num_adjacent_speech_frames",
       num_adjacent_speech_frames_);

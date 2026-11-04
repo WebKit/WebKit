@@ -42,19 +42,19 @@ extern const EVP_PKEY_CTX_METHOD xwing_pkey_meth;
 // This is the length of `eseed` in draft-connolly-cfrg-xwing-kem-06.
 constexpr size_t kXwingEncapEntropyBytes = 64;
 
-static void xwing_free(EvpPkey *pkey) {
+void xwing_free(EvpPkey *pkey) {
   Delete(reinterpret_cast<XWING_KEY *>(pkey->pkey));
 }
 
-static bool xwing_pub_equal(const EvpPkey *a, const EvpPkey *b) {
+bool xwing_pub_equal(const EvpPkey *a, const EvpPkey *b) {
   const XWING_KEY *a_key = reinterpret_cast<const XWING_KEY *>(a->pkey);
   const XWING_KEY *b_key = reinterpret_cast<const XWING_KEY *>(b->pkey);
   return OPENSSL_memcmp(a_key->pub, b_key->pub, XWING_PUBLIC_KEY_BYTES) == 0;
 }
 
-static bool xwing_pub_present(const EvpPkey *) { return true; }
+bool xwing_pub_present(const EvpPkey *) { return true; }
 
-static bool xwing_pub_copy(EvpPkey *out, const EvpPkey *pkey) {
+bool xwing_pub_copy(EvpPkey *out, const EvpPkey *pkey) {
   const XWING_KEY *pkey_xwing = reinterpret_cast<const XWING_KEY *>(pkey->pkey);
   auto public_copy = MakeUnique<XWING_KEY>();
   if (public_copy == nullptr) {
@@ -66,12 +66,12 @@ static bool xwing_pub_copy(EvpPkey *out, const EvpPkey *pkey) {
   return true;
 }
 
-static bool xwing_priv_present(const EvpPkey *pk) {
+bool xwing_priv_present(const EvpPkey *pk) {
   const XWING_KEY *key = reinterpret_cast<const XWING_KEY *>(pk->pkey);
   return key->has_private;
 }
 
-static int xwing_set_priv_seed(EvpPkey *pkey, const uint8_t *in, size_t len) {
+int xwing_set_priv_seed(EvpPkey *pkey, const uint8_t *in, size_t len) {
   auto key = MakeUnique<XWING_KEY>();
   if (key == nullptr) {
     return 0;
@@ -88,8 +88,7 @@ static int xwing_set_priv_seed(EvpPkey *pkey, const uint8_t *in, size_t len) {
   return 1;
 }
 
-static int xwing_get_priv_seed(const EvpPkey *pkey, uint8_t *out,
-                               size_t *out_len) {
+int xwing_get_priv_seed(const EvpPkey *pkey, uint8_t *out, size_t *out_len) {
   const XWING_KEY *key = reinterpret_cast<const XWING_KEY *>(pkey->pkey);
   if (key == nullptr || !key->has_private) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_NOT_A_PRIVATE_KEY);
@@ -113,7 +112,7 @@ static int xwing_get_priv_seed(const EvpPkey *pkey, uint8_t *out,
   return 1;
 }
 
-static int xwing_set_pub_raw(EvpPkey *pkey, const uint8_t *in, size_t len) {
+int xwing_set_pub_raw(EvpPkey *pkey, const uint8_t *in, size_t len) {
   if (len != XWING_PUBLIC_KEY_BYTES) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
     return 0;
@@ -128,8 +127,7 @@ static int xwing_set_pub_raw(EvpPkey *pkey, const uint8_t *in, size_t len) {
   return 1;
 }
 
-static int xwing_get_pub_raw(const EvpPkey *pkey, uint8_t *out,
-                             size_t *out_len) {
+int xwing_get_pub_raw(const EvpPkey *pkey, uint8_t *out, size_t *out_len) {
   if (out == nullptr) {
     *out_len = XWING_PUBLIC_KEY_BYTES;
     return 1;
@@ -144,16 +142,14 @@ static int xwing_get_pub_raw(const EvpPkey *pkey, uint8_t *out,
   return 1;
 }
 
-static int xwing_size(const EvpPkey *pkey) { return XWING_CIPHERTEXT_BYTES; }
+int xwing_size(const EvpPkey *pkey) { return XWING_CIPHERTEXT_BYTES; }
 
-static int xwing_bits(const EvpPkey *pkey) {
-  return XWING_PUBLIC_KEY_BYTES * 8;
-}
+int xwing_bits(const EvpPkey *pkey) { return XWING_PUBLIC_KEY_BYTES * 8; }
 
 // X-Wing has no parameters to copy.
-static int pkey_xwing_copy_ctx(EvpPkeyCtx *dst, EvpPkeyCtx *src) { return 1; }
+int pkey_xwing_copy_ctx(EvpPkeyCtx *dst, EvpPkeyCtx *src) { return 1; }
 
-static int pkey_xwing_keygen(EvpPkeyCtx *ctx, EvpPkey *pkey) {
+int pkey_xwing_keygen(EvpPkeyCtx *ctx, EvpPkey *pkey) {
   auto key = MakeUnique<XWING_KEY>();
   if (key == nullptr || !XWING_generate_key(key->pub, &key->priv)) {
     OPENSSL_PUT_ERROR(EVP, ERR_R_INTERNAL_ERROR);
@@ -164,8 +160,8 @@ static int pkey_xwing_keygen(EvpPkeyCtx *ctx, EvpPkey *pkey) {
   return 1;
 }
 
-static int xwing_kem_encap(Span<uint8_t> out_ciphertext,
-                           Span<uint8_t> out_secret, const EVP_PKEY *peer_key) {
+int xwing_kem_encap(const EVP_KEM *kem, Span<uint8_t> out_ciphertext,
+                    Span<uint8_t> out_secret, const EVP_PKEY *peer_key) {
   if (out_ciphertext.size() != XWING_CIPHERTEXT_BYTES) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_INVALID_CIPHERTEXT_LENGTH);
     return 0;
@@ -180,10 +176,11 @@ static int xwing_kem_encap(Span<uint8_t> out_ciphertext,
                      peer_pubkey->pub);
 }
 
-static int xwing_kem_encap_external_entropy(Span<uint8_t> out_ciphertext,
-                                            Span<uint8_t> out_secret,
-                                            const EVP_PKEY *peer_key,
-                                            Span<const uint8_t> entropy) {
+int xwing_kem_encap_external_entropy(const EVP_KEM *kem,
+                                     Span<uint8_t> out_ciphertext,
+                                     Span<uint8_t> out_secret,
+                                     const EVP_PKEY *peer_key,
+                                     Span<const uint8_t> entropy) {
   if (out_ciphertext.size() != XWING_CIPHERTEXT_BYTES) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_INVALID_CIPHERTEXT_LENGTH);
     return 0;
@@ -202,9 +199,8 @@ static int xwing_kem_encap_external_entropy(Span<uint8_t> out_ciphertext,
                                       peer_pubkey->pub, entropy.data());
 }
 
-static int xwing_kem_decap(Span<uint8_t> out_secret,
-                           Span<const uint8_t> ciphertext,
-                           const EVP_PKEY *key) {
+int xwing_kem_decap(const EVP_KEM *kem, Span<uint8_t> out_secret,
+                    Span<const uint8_t> ciphertext, const EVP_PKEY *key) {
   const XWING_KEY *priv = reinterpret_cast<XWING_KEY *>(FromOpaque(key)->pkey);
   if (priv == nullptr || !priv->has_private) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_NOT_A_PRIVATE_KEY);
@@ -223,11 +219,12 @@ static int xwing_kem_decap(Span<uint8_t> out_secret,
   return XWING_decap(out_secret.data(), ciphertext.data(), &priv->priv);
 }
 
-static const EVP_KEM xwing_evp_kem = {
+const EVP_KEM xwing_evp_kem = {
     EVP_PKEY_XWING,                     //
     XWING_CIPHERTEXT_BYTES,             //
     XWING_SHARED_SECRET_BYTES,          //
     kXwingEncapEntropyBytes,            //
+    /*check_key=*/nullptr,              //
     &xwing_kem_encap,                   //
     &xwing_kem_encap_external_entropy,  //
     &xwing_kem_decap,                   //

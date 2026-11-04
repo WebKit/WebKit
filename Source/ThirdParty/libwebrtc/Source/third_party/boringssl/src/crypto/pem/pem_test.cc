@@ -50,7 +50,7 @@ TEST(PEMTest, NoRC4) {
       ErrorEquals(ERR_get_error(), ERR_LIB_PEM, PEM_R_UNSUPPORTED_ENCRYPTION));
 }
 
-static std::vector<uint8_t> DecodePEMBytes(const char *pem) {
+std::vector<uint8_t> DecodePEMBytes(const char *pem) {
   bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(pem, -1));
   char *name, *header;
   uint8_t *data;

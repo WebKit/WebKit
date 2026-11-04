@@ -42,15 +42,19 @@ TEST_F(AudioParserTest, DefaultParse) {
 TEST_F(AudioParserTest, DefaultValues) {
   SetReaderData({
       0xB5,  // ID = 0x85 (SamplingFrequency).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
 
-      0x78, 0xB5,  // ID = 0x78B5 (OutputSamplingFrequency).
+      0x78,
+      0xB5,  // ID = 0x78B5 (OutputSamplingFrequency).
       0x80,  // Size = 0.
 
       0x9F,  // ID = 0x9F (Channels).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
 
-      0x62, 0x64,  // ID = 0x6264 (BitDepth).
+      0x62,
+      0x64,  // ID = 0x6264 (BitDepth).
       0x80,  // Size = 0.
   });
 
@@ -111,7 +115,10 @@ TEST_F(AudioParserTest, AbsentOutputSamplingFrequency) {
   SetReaderData({
       0xB5,  // ID = 0x85 (SamplingFrequency).
       0x84,  // Size = 4.
-      0x3F, 0x80, 0x00, 0x00,  // Body (value = 1.0f).
+      0x3F,
+      0x80,
+      0x00,
+      0x00,  // Body (value = 1.0f).
   });
 
   ParseAndVerify();
@@ -135,10 +142,17 @@ TEST_F(AudioParserTest, DefaultOutputSamplingFrequency) {
   SetReaderData({
       0xB5,  // ID = 0x85 (SamplingFrequency).
       0x84,  // Size = 4.
-      0x3F, 0x80, 0x00, 0x00,  // Body (value = 1.0f).
+      0x3F,
+      0x80,
+      0x00,
+      0x00,  // Body (value = 1.0f).
 
-      0x78, 0xB5,  // ID = 0x78B5 (OutputSamplingFrequency).
-      0x10, 0x00, 0x00, 0x00,  // Size = 0.
+      0x78,
+      0xB5,  // ID = 0x78B5 (OutputSamplingFrequency).
+      0x10,
+      0x00,
+      0x00,
+      0x00,  // Size = 0.
   });
 
   ParseAndVerify();

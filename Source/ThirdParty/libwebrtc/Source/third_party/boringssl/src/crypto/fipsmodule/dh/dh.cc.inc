@@ -353,6 +353,13 @@ int DH_up_ref(DH *dh) {
   return 1;
 }
 
+DH *DH_dup_ref(const DH *dh) {
+  if (dh == nullptr) {
+    return nullptr;
+  }
+  return FromOpaque(dh)->DupRefInternal();
+}
+
 DH *DH_get_rfc7919_2048() {
   // This is the prime from https://tools.ietf.org/html/rfc7919#appendix-A.1,
   // which is specifically approved for FIPS in appendix D of SP 800-56Ar3.

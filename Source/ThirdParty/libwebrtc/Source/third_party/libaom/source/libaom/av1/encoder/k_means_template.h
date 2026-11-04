@@ -70,8 +70,8 @@ void RENAME_C(av1_calc_indices)(const int16_t *data, const int16_t *centroids,
   }
 }
 
-static void RENAME(calc_centroids)(const int16_t *data, int16_t *centroids,
-                                   const uint8_t *indices, int n, int k) {
+void RENAME_C(av1_calc_centroids)(const int16_t *data, int16_t *centroids,
+                                  const uint8_t *indices, int n, int k) {
   int i, j;
   int count[PALETTE_MAX_SIZE] = { 0 };
   int centroids_sum[AV1_K_MEANS_DIM * PALETTE_MAX_SIZE];
@@ -125,7 +125,13 @@ void RENAME(av1_k_means)(const int16_t *data, int16_t *centroids,
     prev_l = l;
     l = (l == 1) ? 0 : 1;
 
-    RENAME(calc_centroids)(data, meta_centroids[l], meta_indices[prev_l], n, k);
+#if AV1_K_MEANS_DIM == 1
+    av1_calc_centroids_dim1(data, meta_centroids[l], meta_indices[prev_l], n,
+                            k);
+#else
+    av1_calc_centroids_dim2(data, meta_centroids[l], meta_indices[prev_l], n,
+                            k);
+#endif
     if (!memcmp(meta_centroids[l], meta_centroids[prev_l],
                 sizeof(centroids[0]) * k * AV1_K_MEANS_DIM)) {
       break;

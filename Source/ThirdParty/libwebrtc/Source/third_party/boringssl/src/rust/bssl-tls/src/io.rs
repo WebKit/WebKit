@@ -171,22 +171,6 @@ impl RustBio {
     pub fn take_io_err(&mut self) -> Option<Box<dyn core::error::Error + Send + Sync>> {
         self.io_err.take()
     }
-
-    fn transform_result(
-        &mut self,
-        res: AbstractSocketResult,
-        reason_on_retry: TlsRetryReason,
-    ) -> IoStatus {
-        match res {
-            AbstractSocketResult::Ok(bytes) => IoStatus::Ok(bytes),
-            AbstractSocketResult::Retry => IoStatus::Retry(reason_on_retry),
-            AbstractSocketResult::EndOfStream => IoStatus::EndOfStream,
-            AbstractSocketResult::Err(e) => {
-                self.io_err = Some(e);
-                IoStatus::Err
-            }
-        }
-    }
 }
 
 /// An exclusively owned handle to a BIO constructed by this crate.
@@ -245,29 +229,23 @@ unsafe fn rust_bio_data<'a>(bio: *mut bssl_sys::BIO) -> &'a RustBio {
     unsafe { &*(data as *const RustBio) }
 }
 
-/// I/O Status of the possibly pending operation.
+/// TLS-level I/O Status of the possibly pending operation.
 #[derive(Debug, Clone, Copy)]
 pub enum IoStatus {
     /// Successfully performed I/O of bytes at certain size.
+    /// `bssl-tls` uses `Ok(0)` to signal end-of-stream.
     Ok(usize),
-    /// There is no more data to read or write.
-    EndOfStream,
     /// I/O operation should be retried with the exactly same buffers when applicable.
     Retry(TlsRetryReason),
-    /// There is no backing socket.
-    Empty,
-    /// I/O operation has failed.
-    Err,
 }
 
 /// Result of operating an [`AbstractSocket`].
 pub enum AbstractSocketResult {
     /// I/O completed by committing some amount of bytes.
+    /// Use `Ok(0)` to signal end-of-stream.
     Ok(usize),
     /// I/O is pending completion; the I/O operation should be invoked again with the same parameter.
     Retry,
-    /// I/O is impossible because the stream has ended.
-    EndOfStream,
     /// I/O operation failed.
     Err(Box<dyn core::error::Error + Send + Sync>),
 }
@@ -285,6 +263,11 @@ pub trait AbstractReader: Send {
 /// Abstract writer.
 pub trait AbstractWriter: Send {
     /// Write data to the socket.
+    ///
+    /// If this function returns [`AbstractSocketResult::Ok(0)`], the library will translate it into
+    /// a **transport error**.
+    /// If this function returns [`AbstractSocketResult::Ok(n)`] with `n > buffer.len()`, the
+    /// library will translate it into a **transport error**.
     fn write(&mut self, async_ctx: Option<&mut Context<'_>>, buffer: &[u8])
     -> AbstractSocketResult;
     /// Flush the socket.
@@ -333,7 +316,7 @@ fn get_bio_method() -> *const bssl_sys::BIO_METHOD {
         unsafe {
             // Safety: all the following calls are simple assignments to the vtable entries.
             bssl_sys::BIO_meth_set_read(vtable, Some(rust_bio_read));
-            bssl_sys::BIO_meth_set_write(vtable, Some(rust_bio_write));
+            bssl_sys::BIO_meth_set_write_ex(vtable, Some(rust_bio_write));
             bssl_sys::BIO_meth_set_ctrl(vtable, Some(rust_bio_ctrl));
             bssl_sys::BIO_meth_set_create(vtable, Some(rust_bio_create));
             bssl_sys::BIO_meth_set_destroy(vtable, Some(rust_bio_destroy));
@@ -352,6 +335,7 @@ unsafe extern "C" fn rust_bio_read(
         // Safety: `bio` is valid as witnessed by the C callback contract.
         bssl_sys::BIO_clear_retry_flags(bio);
     }
+    debug_assert!(buf_len > 0, "BoringSSL BIO misbehaved");
     let rust_bio = unsafe {
         // Safety: `bio` is still valid and so is the `RustBio` which we have exclusive access to.
         rust_bio_data_mut(bio)
@@ -374,48 +358,58 @@ unsafe extern "C" fn rust_bio_read(
         // Safety: `buffer` and `len` are sanitised and initialised for the right memory region.
         bssl_crypto::zeroize_mut_byteslice(buffer as *mut u8, len)
     };
+    let io_err = rust_bio.take_io_err();
     let work = {
         let Some(reader) = rust_bio.get_reader() else {
             return -1;
         };
-        move || reader.read(async_ctx.as_mut(), buf)
+        move || {
+            let _ = io_err;
+            reader.read(async_ctx.as_mut(), buf)
+        }
     };
     let res = abort_on_panic(work);
-    match rust_bio.transform_result(res, TlsRetryReason::WantRead) {
-        IoStatus::Ok(bytes) => {
-            if let Ok(bytes) = c_int::try_from(bytes) {
-                // Here the `bytes` read out from the transport as reported by the application does
-                // not necessary stay in-bound, it could be application error or active exploit.
-                // Therefore, we can fully trust that the application behaves well.
-                // In order to not break `libssl` we can cap the number of writes written.
-                return bytes.min(buf_len);
-            }
-            -1
-        }
-        IoStatus::EndOfStream => {
+    match res {
+        AbstractSocketResult::Ok(0) => {
             rust_bio.read_eos = true;
-            -1
+            0
         }
-        IoStatus::Retry(_) => {
+        AbstractSocketResult::Ok(bytes) => {
+            // TODO: rewrite this after landing BIO_read_ex
+            if let Ok(bytes) = c_int::try_from(bytes)
+                && bytes <= buf_len
+            {
+                bytes
+            } else {
+                rust_bio.io_err = Some("AbstractReader misbehaved".into());
+                -1
+            }
+        }
+        AbstractSocketResult::Retry => {
             unsafe {
                 // Safety: `bio` is still valid now.
                 bssl_sys::BIO_set_retry_read(bio);
             }
             -1
         }
-        IoStatus::Empty | IoStatus::Err => -1,
+        AbstractSocketResult::Err(e) => {
+            rust_bio.io_err = Some(e);
+            -1
+        }
     }
 }
 
 unsafe extern "C" fn rust_bio_write(
     bio: *mut bssl_sys::BIO,
     buffer: *const c_char,
-    buf_len: c_int,
+    buf_len: usize,
+    out_len: *mut usize,
 ) -> c_int {
     unsafe {
         // Safety: `bio` is valid as witnessed by the C callback contract.
         bssl_sys::BIO_clear_retry_flags(bio);
     }
+    debug_assert!(buf_len > 0, "BoringSSL BIO misbehaved");
     let rust_bio = unsafe {
         // Safety: `bio` is still valid and so is the `RustBio` which we have exclusive access to.
         rust_bio_data_mut(bio)
@@ -423,9 +417,6 @@ unsafe extern "C" fn rust_bio_write(
     if rust_bio.write_eos {
         return 0;
     }
-    let Ok(len) = usize::try_from(buf_len) else {
-        return -1;
-    };
     let waker = rust_bio.waker.clone();
     let mut async_ctx = if let Some(waker) = &waker {
         Some(Context::from_waker(waker))
@@ -433,40 +424,50 @@ unsafe extern "C" fn rust_bio_write(
         None
     };
     let buf = unsafe {
-        // Safety:
-        // - `buffer` and `len` are sanitised and initialised for the right memory region.
-        // - in `libssl` context, `buffer` is an allocation generated by BoringSSL.
-        u8::from_ffi_ptr(buffer as *const u8, len)
+        // Safety: `buffer` is an allocation generated by BoringSSL of length `buf_len`.
+        u8::from_ffi_ptr(buffer as *const u8, buf_len)
     };
+    // We must pre-emptively take out `io_err` so that it is not dropped outside the catch-unwind.
+    let io_err = rust_bio.io_err.take();
     let work = {
         let Some(writer) = rust_bio.get_writer() else {
-            return -1;
+            return 0;
         };
-        move || writer.write(async_ctx.as_mut(), buf)
+        move || {
+            let _ = io_err;
+            writer.write(async_ctx.as_mut(), buf)
+        }
     };
     let res = abort_on_panic(work);
-    match rust_bio.transform_result(res, TlsRetryReason::WantWrite) {
-        IoStatus::Ok(bytes) => {
-            if let Ok(bytes) = c_int::try_from(bytes) {
-                // Here the `bytes` sent out to the transport as reported by the application does
-                // not necessary stay in-bound, it could be application error or active exploit.
-                // Therefore, we can fully trust that the application behaves well.
-                return bytes.min(buf_len);
-            }
-            -1
-        }
-        IoStatus::EndOfStream => {
+    match res {
+        AbstractSocketResult::Ok(0) => {
             rust_bio.write_eos = true;
+            rust_bio.io_err = Some("unexpected zero-length write".into());
             0
         }
-        IoStatus::Retry(_) => {
+        AbstractSocketResult::Ok(bytes) => {
+            if bytes <= buf_len {
+                unsafe {
+                    // Safety: `out_len` must be valid per BoringSSL invariant.
+                    *out_len = bytes;
+                }
+                1
+            } else {
+                rust_bio.io_err = Some("AbstractWriter misbehaved".into());
+                0
+            }
+        }
+        AbstractSocketResult::Retry => {
             unsafe {
                 // Safety: `bio` is still valid now.
                 bssl_sys::BIO_set_retry_write(bio);
             }
-            -1
+            0
         }
-        IoStatus::Empty | IoStatus::Err => -1,
+        AbstractSocketResult::Err(e) => {
+            rust_bio.io_err = Some(e);
+            0
+        }
     }
 }
 
@@ -495,20 +496,19 @@ unsafe fn rust_bio_flush(bio: *mut bssl_sys::BIO) -> c_long {
         move || writer.flush(async_ctx.as_mut())
     };
     let res = abort_on_panic(work);
-    match rust_bio.transform_result(res, TlsRetryReason::WantWrite) {
-        IoStatus::Ok(_) => 1,
-        IoStatus::Retry(_) => {
+    match res {
+        AbstractSocketResult::Ok(_) => 1,
+        AbstractSocketResult::Retry => {
             unsafe {
                 // Safety: `bio` is still valid now.
                 bssl_sys::BIO_set_retry_write(bio);
             }
             0
         }
-        IoStatus::EndOfStream => {
-            rust_bio.write_eos = true;
+        AbstractSocketResult::Err(e) => {
+            rust_bio.io_err = Some(e);
             0
         }
-        IoStatus::Empty | IoStatus::Err => 0,
     }
 }
 

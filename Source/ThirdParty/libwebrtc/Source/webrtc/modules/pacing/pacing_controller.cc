@@ -97,7 +97,8 @@ PacingController::PacingController(Clock* clock,
       queue_time_limit_(configuration.queue_time_limit),
       account_for_audio_(false),
       include_overhead_(false),
-      circuit_breaker_threshold_(1 << 16) {
+      circuit_breaker_threshold_(1 << 16),
+      retransmit_flushed_packets_settings_(field_trials) {
   if (!drain_large_queues_) {
     RTC_LOG(LS_WARNING) << "Pacer queues will not be drained,"
                            "pushback experiment must be enabled.";
@@ -206,16 +207,22 @@ void PacingController::EnqueuePacket(std::unique_ptr<RtpPacketToSend> packet) {
     // First packet of a keyframe (and no keyframe packets currently in the
     // queue). Flush any pending packets currently in the queue for that stream
     // in order to get the new keyframe out as quickly as possible.
-    const int packets_before = packet_queue_.SizeInPackets();
-    packet_queue_.RemovePacketsForSsrc(packet->Ssrc());
-    const int discarded = packets_before - packet_queue_.SizeInPackets();
-    if (discarded > 0) {
+    std::vector<std::unique_ptr<RtpPacketToSend>> flushed_packets =
+        packet_queue_.RemovePacketsForSsrc(packet->Ssrc());
+    if (!flushed_packets.empty()) {
       // Note that this can truncate a picture that has only been partially
       // sent, in which case the receiver never sees the end of that picture.
-      RTC_LOG(LS_INFO) << "Pacer: discarded " << discarded
+      RTC_LOG(LS_INFO) << "Pacer: discarded " << flushed_packets.size()
                        << " queued packets for ssrc " << packet->Ssrc()
                        << " on key frame with rtp timestamp "
                        << packet->Timestamp();
+      if (retransmit_flushed_packets_settings_.is_enabled()) {
+        for (auto& flushed_packet : flushed_packets) {
+          flushed_packet->set_allow_sending(false);
+          packet_sender_->SendPacket(std::move(flushed_packet),
+                                     PacedPacketInfo());
+        }
+      }
     }
     std::optional<uint32_t> rtx_ssrc =
         packet_sender_->GetRtxSsrcForMedia(packet->Ssrc());

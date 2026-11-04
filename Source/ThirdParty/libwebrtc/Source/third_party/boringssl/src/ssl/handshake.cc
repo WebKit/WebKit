@@ -54,7 +54,6 @@ SSL_HANDSHAKE::SSL_HANDSHAKE(SSLImpl *ssl_arg)
       ticket_expected(false),
       extended_master_secret(false),
       pending_private_key_op(false),
-      handback(false),
       cert_compression_negotiated(false),
       apply_jdk11_workaround(false),
       can_release_private_key(false),
@@ -617,21 +616,6 @@ int ssl_run_handshake(SSL_HANDSHAKE *hs, bool *out_early_return) {
         ssl->s3->rwstate = SSL_ERROR_PENDING_CERTIFICATE;
         hs->wait = ssl_hs_ok;
         return -1;
-
-      case ssl_hs_handoff:
-        ssl->s3->rwstate = SSL_ERROR_HANDOFF;
-        hs->wait = ssl_hs_ok;
-        return -1;
-
-      case ssl_hs_handback: {
-        int ret = ssl->method->flush(ssl);
-        if (ret <= 0) {
-          return ret;
-        }
-        ssl->s3->rwstate = SSL_ERROR_HANDBACK;
-        hs->wait = ssl_hs_handback;
-        return -1;
-      }
 
         // The following cases are associated with callback APIs which expect to
         // be called each time the state machine runs. Thus they set `hs->wait`

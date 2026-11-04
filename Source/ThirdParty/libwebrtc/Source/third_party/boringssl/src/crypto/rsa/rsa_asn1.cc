@@ -35,7 +35,9 @@
 
 using namespace bssl;
 
-static int parse_integer(CBS *cbs, UniquePtr<BIGNUM> *out) {
+namespace {
+
+int parse_integer(CBS *cbs, UniquePtr<BIGNUM> *out) {
   assert(*out == nullptr);
   out->reset(BN_new());
   if (*out == nullptr) {
@@ -44,7 +46,7 @@ static int parse_integer(CBS *cbs, UniquePtr<BIGNUM> *out) {
   return BN_parse_asn1_unsigned(cbs, out->get());
 }
 
-static int marshal_integer(CBB *cbb, const BIGNUM *bn) {
+int marshal_integer(CBB *cbb, const BIGNUM *bn) {
   if (bn == nullptr) {
     // An RSA object may be missing some components.
     OPENSSL_PUT_ERROR(RSA, RSA_R_VALUE_MISSING);
@@ -53,15 +55,17 @@ static int marshal_integer(CBB *cbb, const BIGNUM *bn) {
   return BN_marshal_asn1(cbb, bn);
 }
 
+}  // namespace
+
 RSA *RSA_parse_public_key(CBS *cbs) {
   RSAImpl *ret = FromOpaque(RSA_new());
   if (ret == nullptr) {
     return nullptr;
   }
   CBS child;
-  if (!CBS_get_asn1(cbs, &child, CBS_ASN1_SEQUENCE) ||
-      !parse_integer(&child, &ret->n) ||
-      !parse_integer(&child, &ret->e) ||
+  if (!CBS_get_asn1(cbs, &child, CBS_ASN1_SEQUENCE) ||  //
+      !parse_integer(&child, &ret->n) ||                //
+      !parse_integer(&child, &ret->e) ||                //
       CBS_len(&child) != 0) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_BAD_ENCODING);
     RSA_free(ret);
@@ -92,9 +96,9 @@ RSA *RSA_public_key_from_bytes(const uint8_t *in, size_t in_len) {
 int RSA_marshal_public_key(CBB *cbb, const RSA *rsa) {
   CBB child;
   const RSAImpl *impl = FromOpaque(rsa);
-  if (!CBB_add_asn1(cbb, &child, CBS_ASN1_SEQUENCE) ||
-      !marshal_integer(&child, impl->n.get()) ||
-      !marshal_integer(&child, impl->e.get()) ||  //
+  if (!CBB_add_asn1(cbb, &child, CBS_ASN1_SEQUENCE) ||  //
+      !marshal_integer(&child, impl->n.get()) ||        //
+      !marshal_integer(&child, impl->e.get()) ||        //
       !CBB_flush(cbb)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_ENCODE_ERROR);
     return 0;
@@ -106,8 +110,8 @@ int RSA_public_key_to_bytes(uint8_t **out_bytes, size_t *out_len,
                             const RSA *rsa) {
   CBB cbb;
   CBB_zero(&cbb);
-  if (!CBB_init(&cbb, 0) ||
-      !RSA_marshal_public_key(&cbb, rsa) ||
+  if (!CBB_init(&cbb, 0) ||                  //
+      !RSA_marshal_public_key(&cbb, rsa) ||  //
       !CBB_finish(&cbb, out_bytes, out_len)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_ENCODE_ERROR);
     CBB_cleanup(&cbb);
@@ -116,9 +120,13 @@ int RSA_public_key_to_bytes(uint8_t **out_bytes, size_t *out_len,
   return 1;
 }
 
+namespace {
+
 // kVersionTwoPrime is the value of the version field for a two-prime
 // RSAPrivateKey structure (RFC 8017).
 static const uint64_t kVersionTwoPrime = 0;
+
+}  // namespace
 
 RSA *RSA_parse_private_key(CBS *cbs) {
   RSAImpl *ret = FromOpaque(RSA_new());
@@ -139,13 +147,13 @@ RSA *RSA_parse_private_key(CBS *cbs) {
     goto err;
   }
 
-  if (!parse_integer(&child, &ret->n) ||
-      !parse_integer(&child, &ret->e) ||
-      !parse_integer(&child, &ret->d) ||
-      !parse_integer(&child, &ret->p) ||
-      !parse_integer(&child, &ret->q) ||
-      !parse_integer(&child, &ret->dmp1) ||
-      !parse_integer(&child, &ret->dmq1) ||
+  if (!parse_integer(&child, &ret->n) ||     //
+      !parse_integer(&child, &ret->e) ||     //
+      !parse_integer(&child, &ret->d) ||     //
+      !parse_integer(&child, &ret->p) ||     //
+      !parse_integer(&child, &ret->q) ||     //
+      !parse_integer(&child, &ret->dmp1) ||  //
+      !parse_integer(&child, &ret->dmq1) ||  //
       !parse_integer(&child, &ret->iqmp)) {
     goto err;
   }
@@ -182,16 +190,16 @@ RSA *RSA_private_key_from_bytes(const uint8_t *in, size_t in_len) {
 int RSA_marshal_private_key(CBB *cbb, const RSA *rsa) {
   const RSAImpl *impl = FromOpaque(rsa);
   CBB child;
-  if (!CBB_add_asn1(cbb, &child, CBS_ASN1_SEQUENCE) ||
-      !CBB_add_asn1_uint64(&child, kVersionTwoPrime) ||
-      !marshal_integer(&child, impl->n.get()) ||
-      !marshal_integer(&child, impl->e.get()) ||
-      !marshal_integer(&child, impl->d.get()) ||
-      !marshal_integer(&child, impl->p.get()) ||
-      !marshal_integer(&child, impl->q.get()) ||
-      !marshal_integer(&child, impl->dmp1.get()) ||
-      !marshal_integer(&child, impl->dmq1.get()) ||
-      !marshal_integer(&child, impl->iqmp.get()) ||  //
+  if (!CBB_add_asn1(cbb, &child, CBS_ASN1_SEQUENCE) ||   //
+      !CBB_add_asn1_uint64(&child, kVersionTwoPrime) ||  //
+      !marshal_integer(&child, impl->n.get()) ||         //
+      !marshal_integer(&child, impl->e.get()) ||         //
+      !marshal_integer(&child, impl->d.get()) ||         //
+      !marshal_integer(&child, impl->p.get()) ||         //
+      !marshal_integer(&child, impl->q.get()) ||         //
+      !marshal_integer(&child, impl->dmp1.get()) ||      //
+      !marshal_integer(&child, impl->dmq1.get()) ||      //
+      !marshal_integer(&child, impl->iqmp.get()) ||      //
       !CBB_flush(cbb)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_ENCODE_ERROR);
     return 0;
@@ -203,8 +211,8 @@ int RSA_private_key_to_bytes(uint8_t **out_bytes, size_t *out_len,
                              const RSA *rsa) {
   CBB cbb;
   CBB_zero(&cbb);
-  if (!CBB_init(&cbb, 0) ||
-      !RSA_marshal_private_key(&cbb, rsa) ||
+  if (!CBB_init(&cbb, 0) ||                   //
+      !RSA_marshal_private_key(&cbb, rsa) ||  //
       !CBB_finish(&cbb, out_bytes, out_len)) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_ENCODE_ERROR);
     CBB_cleanup(&cbb);
@@ -255,6 +263,8 @@ RSA *RSAPrivateKey_dup(const RSA *rsa) {
   return ret;
 }
 
+namespace {
+
 static const uint8_t kPSSParamsSHA256[] = {
     0x30, 0x34, 0xa0, 0x0f, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48,
     0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0xa1, 0x1c, 0x30,
@@ -275,6 +285,8 @@ static const uint8_t kPSSParamsSHA512[] = {
     0x1a, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01,
     0x08, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03,
     0x04, 0x02, 0x03, 0x05, 0x00, 0xa2, 0x03, 0x02, 0x01, 0x40};
+
+}  // namespace
 
 const EVP_MD *bssl::rsa_pss_params_get_md(rsa_pss_params_t params) {
   switch (params) {
@@ -310,9 +322,13 @@ int bssl::rsa_marshal_pss_params(CBB *cbb, rsa_pss_params_t params) {
   return CBB_add_bytes(cbb, bytes.data(), bytes.size());
 }
 
+namespace {
+
 // 1.2.840.113549.1.1.8
 static const uint8_t kMGF1OID[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
                                    0x0d, 0x01, 0x01, 0x08};
+
+}  // namespace
 
 int bssl::rsa_parse_pss_params(CBS *cbs, rsa_pss_params_t *out,
                                int allow_explicit_trailer) {

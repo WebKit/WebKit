@@ -26,6 +26,8 @@
 
 using namespace bssl;
 
+namespace {
+
 // 1.2.840.113549.1.7.1
 static const uint8_t kPKCS7Data[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
                                      0x0d, 0x01, 0x07, 0x01};
@@ -33,6 +35,8 @@ static const uint8_t kPKCS7Data[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
 // 1.2.840.113549.1.7.2
 static const uint8_t kPKCS7SignedData[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
                                            0x0d, 0x01, 0x07, 0x02};
+
+}  // namespace
 
 // pkcs7_parse_header reads the non-certificate/non-CRL prefix of a PKCS#7
 // SignedData blob from `cbs` and sets `*out` to point to the rest of the
@@ -132,7 +136,9 @@ err:
   return ret;
 }
 
-static int pkcs7_bundle_raw_certificates_cb(CBB *out, void *arg) {
+namespace {
+
+int pkcs7_bundle_raw_certificates_cb(CBB *out, void *arg) {
   const STACK_OF(CRYPTO_BUFFER) *certs =
       reinterpret_cast<const STACK_OF(CRYPTO_BUFFER) *>(arg);
   CBB certificates;
@@ -154,6 +160,8 @@ static int pkcs7_bundle_raw_certificates_cb(CBB *out, void *arg) {
   // `certificates` is an implicitly-tagged SET OF.
   return CBB_flush_asn1_set_of(&certificates) && CBB_flush(out);
 }
+
+}  // namespace
 
 int PKCS7_bundle_raw_certificates(CBB *out,
                                   const STACK_OF(CRYPTO_BUFFER) *certs) {

@@ -269,30 +269,19 @@ int av1_get_active_map(AV1_COMP *cpi, unsigned char *new_map_16x16, int rows,
   const CommonModeInfoParams *const mi_params = &cpi->common.mi_params;
   if (rows == mi_params->mb_rows && cols == mi_params->mb_cols &&
       new_map_16x16) {
-    unsigned char *const seg_map_8x8 = cpi->enc_seg.map;
+    const unsigned char *const active_map_4x4 = cpi->active_map.map;
     const int mi_rows = mi_params->mi_rows;
     const int mi_cols = mi_params->mi_cols;
-    const int row_scale = mi_size_high_log2[BLOCK_16X16];
-    const int col_scale = mi_size_wide_log2[BLOCK_16X16];
     assert(mi_rows % 2 == 0);
     assert(mi_cols % 2 == 0);
 
     memset(new_map_16x16, !cpi->active_map.enabled, rows * cols);
     if (cpi->active_map.enabled) {
-      for (int r = 0; r < (mi_rows >> row_scale); ++r) {
-        for (int c = 0; c < (mi_cols >> col_scale); ++c) {
-          // Cyclic refresh segments are considered active despite not having
-          // AM_SEGMENT_ID_ACTIVE
-          uint8_t temp = 0;
-          temp |= seg_map_8x8[(2 * r + 0) * mi_cols + (2 * c + 0)] !=
-                  AM_SEGMENT_ID_INACTIVE;
-          temp |= seg_map_8x8[(2 * r + 0) * mi_cols + (2 * c + 1)] !=
-                  AM_SEGMENT_ID_INACTIVE;
-          temp |= seg_map_8x8[(2 * r + 1) * mi_cols + (2 * c + 0)] !=
-                  AM_SEGMENT_ID_INACTIVE;
-          temp |= seg_map_8x8[(2 * r + 1) * mi_cols + (2 * c + 1)] !=
-                  AM_SEGMENT_ID_INACTIVE;
-          new_map_16x16[r * cols + c] |= temp;
+      // enc_seg.map holds the coded segment ids, so read the map as set.
+      for (int r = 0; r < mi_rows; r += 4) {
+        for (int c = 0; c < mi_cols; c += 4) {
+          new_map_16x16[(r >> 2) * cols + (c >> 2)] =
+              active_map_4x4[r * mi_cols + c] != AM_SEGMENT_ID_INACTIVE;
         }
       }
     }
@@ -1036,6 +1025,8 @@ void av1_change_config(struct AV1_COMP *cpi, const AV1EncoderConfig *oxcf,
     }
   }
 
+  cm->tiles.large_scale = oxcf->tile_cfg.enable_large_scale_tile;
+  cm->tiles.single_tile_decoding = oxcf->tile_cfg.enable_single_tile_decoding;
   features->interp_filter =
       oxcf->tile_cfg.enable_large_scale_tile ? EIGHTTAP_REGULAR : SWITCHABLE;
   features->switchable_motion_mode = is_switchable_motion_mode_allowed(
@@ -1053,6 +1044,8 @@ void av1_change_config(struct AV1_COMP *cpi, const AV1EncoderConfig *oxcf,
   int last_height = cm->height;
   cm->width = frm_dim_cfg->width;
   cm->height = frm_dim_cfg->height;
+  cm->superres_upscaled_width = frm_dim_cfg->width;
+  cm->superres_upscaled_height = frm_dim_cfg->height;
 
   if (cm->width > cpi->data_alloc_width ||
       cm->height > cpi->data_alloc_height || is_sb_size_changed) {
@@ -1124,7 +1117,17 @@ void av1_change_config(struct AV1_COMP *cpi, const AV1EncoderConfig *oxcf,
   assert(!oxcf->tool_cfg.enable_global_motion);
   cpi->alloc_pyramid = false;
 #else
-  cpi->alloc_pyramid = oxcf->tool_cfg.enable_global_motion;
+  // Global motion needs an image pyramid in every source and reference frame
+  // buffer, but pyramids are only allocated while global motion is enabled.
+  // Once the first frame has been received (creating the lookahead), some
+  // buffers may lack pyramids, so global motion can be disabled but not
+  // enabled. Check the primary compressor, which is always updated first, so
+  // that all compressors sharing these buffers (including any created after
+  // the first frame) agree.
+  if (cpi->ppi->lookahead != NULL && !cpi->ppi->cpi->alloc_pyramid) {
+    cpi->oxcf.tool_cfg.enable_global_motion = false;
+  }
+  cpi->alloc_pyramid = cpi->oxcf.tool_cfg.enable_global_motion;
 #endif  // CONFIG_REALTIME_ONLY
 }
 
@@ -2506,11 +2509,18 @@ static void init_motion_estimation(AV1_COMP *cpi) {
   const int aligned_width = (cm->width + 7) & ~7;
   const int y_stride =
       aom_calc_y_stride(aligned_width, cpi->oxcf.border_in_pixels);
+  // cpi->ppi->lookahead->buf is a multi-slot buffer, so buf[0] may not be
+  // the current frame's slot and can retain an old stride after a frame resize
+  // in av1_lookahead_push(). During av1_encode(), cpi->unscaled_source points
+  // to the current frame's lookahead buffer entry (frame_input->source).
+  const int lookahead_y_stride = cpi->unscaled_source != NULL
+                                     ? cpi->unscaled_source->y_stride
+                                     : cpi->ppi->lookahead->buf[0].img.y_stride;
   const int y_stride_src = ((cpi->oxcf.frm_dim_cfg.width != cm->width ||
                              cpi->oxcf.frm_dim_cfg.height != cm->height) ||
                             av1_superres_scaled(cm))
                                ? y_stride
-                               : cpi->ppi->lookahead->buf->img.y_stride;
+                               : lookahead_y_stride;
   int fpf_y_stride =
       cm->cur_frame != NULL ? cm->cur_frame->buf.y_stride : y_stride;
 
@@ -2519,8 +2529,13 @@ static void init_motion_estimation(AV1_COMP *cpi) {
   const int should_update =
       !mv_search_params->search_site_cfg[SS_CFG_SRC][DIAMOND].stride ||
       !mv_search_params->search_site_cfg[SS_CFG_LOOKAHEAD][DIAMOND].stride ||
+      !mv_search_params->search_site_cfg[SS_CFG_FPF][DIAMOND].stride ||
       (y_stride !=
-       mv_search_params->search_site_cfg[SS_CFG_SRC][DIAMOND].stride);
+       mv_search_params->search_site_cfg[SS_CFG_SRC][DIAMOND].stride) ||
+      (y_stride_src !=
+       mv_search_params->search_site_cfg[SS_CFG_LOOKAHEAD][DIAMOND].stride) ||
+      (fpf_y_stride !=
+       mv_search_params->search_site_cfg[SS_CFG_FPF][DIAMOND].stride);
 
   if (!should_update) {
     return;
@@ -2540,9 +2555,8 @@ static void init_motion_estimation(AV1_COMP *cpi) {
   av1_init_motion_fpf(&mv_search_params->search_site_cfg[SS_CFG_FPF][DIAMOND],
                       fpf_y_stride);
   for (SEARCH_METHODS i = NSTEP; i < NUM_DISTINCT_SEARCH_METHODS; i++) {
-    memcpy(&mv_search_params->search_site_cfg[SS_CFG_FPF][i],
-           &mv_search_params->search_site_cfg[SS_CFG_FPF][DIAMOND],
-           sizeof(search_site_config));
+    mv_search_params->search_site_cfg[SS_CFG_FPF][i] =
+        mv_search_params->search_site_cfg[SS_CFG_FPF][DIAMOND];
   }
 }
 
@@ -2719,7 +2733,7 @@ void av1_set_frame_size(AV1_COMP *cpi, int width, int height) {
   if (!is_stat_generation_stage(cpi)) av1_init_cdef_worker(cpi);
 
 #if !CONFIG_REALTIME_ONLY
-  if (is_restoration_used(cm)) {
+  if (cm->seq_params->enable_restoration) {
     for (int i = 0; i < num_planes; ++i)
       cm->rst_info[i].frame_restoration_type = RESTORE_NONE;
 
@@ -2775,7 +2789,8 @@ static inline int extend_borders_mt(const AV1_COMP *cpi,
     // of the current and above superblock row is complete.
     case MOD_LPF: return 0;
     case MOD_CDEF:
-      return is_cdef_used(cm) && !cpi->ppi->rtc_ref.non_reference_frame &&
+      return is_cdef_used(cm) && !cm->features.allow_intrabc &&
+             !cpi->ppi->rtc_ref.non_reference_frame &&
              !is_restoration_used(cm) && !av1_superres_scaled(cm);
     case MOD_LR:
       return is_restoration_used(cm) &&
@@ -4038,14 +4053,20 @@ static inline int selective_disable_cdf_rtc(const AV1_COMP *cpi) {
   // For single layer.
   if (cpi->svc.number_spatial_layers == 1 &&
       cpi->svc.number_temporal_layers == 1) {
+    const CYCLIC_REFRESH *const cr = cpi->cyclic_refresh;
     // Don't disable on intra_only, scene change (high_source_sad = 1),
     // or resized frame. To avoid quality loss force enable at
     // for ~30 frames after key or scene/slide change, and
     // after 8 frames since last update if frame_source_sad > 0.
+    // The cyclic refresh counter only advances on frames that apply
+    // cyclic refresh. An active map can keep cyclic refresh off for the
+    // whole stream, so use frames_since_scene_change then.
     if (frame_is_intra_only(cm) || is_frame_resize_pending(cpi) ||
         rc->high_source_sad || rc->frames_since_key < 30 ||
         (cpi->oxcf.q_cfg.aq_mode == CYCLIC_REFRESH_AQ &&
-         cpi->cyclic_refresh->counter_encode_maxq_scene_change < 30) ||
+         (cr->apply_cyclic_refresh || !cpi->active_map.enabled
+              ? cr->counter_encode_maxq_scene_change
+              : rc->frames_since_scene_change) < 30) ||
         (cpi->frames_since_last_update > 8 && cpi->rc.frame_source_sad > 0))
       return 0;
     else
@@ -4477,11 +4498,15 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size, uint8_t *dest,
   av1_dump_filtered_recon_frames(cpi);
 #endif  // DUMP_RECON_FRAMES
 
-  if (cm->seg.enabled) {
-    if (cm->seg.update_map == 0 && cm->last_frame_seg_map) {
-      memcpy(cm->cur_frame->seg_map, cm->last_frame_seg_map,
-             cm->cur_frame->mi_cols * cm->cur_frame->mi_rows *
-                 sizeof(*cm->cur_frame->seg_map));
+  if (cm->seg.enabled && cm->seg.update_map == 0) {
+    const size_t seg_map_size = cm->cur_frame->mi_cols *
+                                cm->cur_frame->mi_rows *
+                                sizeof(*cm->cur_frame->seg_map);
+    // Without a previous map the decoder uses segment 0 everywhere.
+    if (cm->last_frame_seg_map) {
+      memcpy(cm->cur_frame->seg_map, cm->last_frame_seg_map, seg_map_size);
+    } else {
+      memset(cm->cur_frame->seg_map, 0, seg_map_size);
     }
   }
 
@@ -5757,6 +5782,7 @@ int av1_init_parallel_frame_context(const AV1_COMP_DATA *const first_cpi_data,
         int src_index = gf_group->src_offset[i];
         struct lookahead_entry *prev_source = av1_lookahead_peek(
             ppi->lookahead, src_index - 1, cur_cpi->compressor_stage);
+        assert(prev_source != NULL);
         // Save timestamps of prev frame.
         cur_cpi->time_stamps.prev_ts_start = prev_source->ts_start;
         cur_cpi->time_stamps.prev_ts_end = prev_source->ts_end;
@@ -5951,14 +5977,21 @@ static void rtc_set_updates_ref_frame_config(
     ExtRefreshFrameFlagsInfo *const ext_refresh_frame_flags,
     RTC_REF *const rtc_ref) {
   ext_refresh_frame_flags->update_pending = 1;
-  ext_refresh_frame_flags->last_frame = rtc_ref->refresh[rtc_ref->ref_idx[0]];
-  ext_refresh_frame_flags->golden_frame = rtc_ref->refresh[rtc_ref->ref_idx[3]];
+  // The ref_idx[] entries of references that are not in use are don't-cares
+  // for the application, and often all point to the same slot, which may be
+  // the one being refreshed. Only classify a refresh as an update of a
+  // particular reference (which e.g. makes rate control treat the frame as a
+  // golden or altref update) if that reference is in use.
+  ext_refresh_frame_flags->last_frame =
+      rtc_ref->reference[0] && rtc_ref->refresh[rtc_ref->ref_idx[0]];
+  ext_refresh_frame_flags->golden_frame =
+      rtc_ref->reference[3] && rtc_ref->refresh[rtc_ref->ref_idx[3]];
   ext_refresh_frame_flags->bwd_ref_frame =
-      rtc_ref->refresh[rtc_ref->ref_idx[4]];
+      rtc_ref->reference[4] && rtc_ref->refresh[rtc_ref->ref_idx[4]];
   ext_refresh_frame_flags->alt2_ref_frame =
-      rtc_ref->refresh[rtc_ref->ref_idx[5]];
+      rtc_ref->reference[5] && rtc_ref->refresh[rtc_ref->ref_idx[5]];
   ext_refresh_frame_flags->alt_ref_frame =
-      rtc_ref->refresh[rtc_ref->ref_idx[6]];
+      rtc_ref->reference[6] && rtc_ref->refresh[rtc_ref->ref_idx[6]];
   rtc_ref->non_reference_frame = 1;
   for (int i = 0; i < REF_FRAMES; i++) {
     if (rtc_ref->refresh[i] == 1) {

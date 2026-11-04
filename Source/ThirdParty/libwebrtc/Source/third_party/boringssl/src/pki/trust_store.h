@@ -152,7 +152,16 @@ class OPENSSL_EXPORT MTCAnchor {
  public:
   enum MtcSpecVersion {
     // draft-ietf-plants-merkle-tree-certs-04
-    kPlants04
+    kPlants04,
+
+    // draft-ietf-plants-merkle-tree-certs-07
+    kPlants07
+  };
+
+  class Token {
+   private:
+    explicit Token() = default;
+    friend MTCAnchor;
   };
 
   // Create an MTCAnchor with spec version kPlants04 for a trusted CA with
@@ -166,20 +175,39 @@ class OPENSSL_EXPORT MTCAnchor {
             UniquePtr<CRYPTO_BUFFER> ca_key,
             std::vector<LogTrustedSubtrees> log_trusted_subtrees);
 
+  // Create an MTCAnchor with spec version kPlants07 for a trusted CA with
+  // `ca_id` containing the DER encoding of the relative OID of the CA's ID.
+  // `ca_signature_algorithm` and `ca_key` configure the CA cosigner key.
+  // `ca_key` should be a DER-encoded SubjectPublicKeyInfo.
+  // The `log_trusted_subtrees` must be sorted by log number, and each
+  // `trusted_subtrees` within must be sorted by their subtree ranges.
+  // Returns nullptr on error.
+  static std::shared_ptr<const MTCAnchor> CreatePlants07(
+      Span<const uint8_t> ca_id, SignatureAlgorithm ca_signature_algorithm,
+      UniquePtr<CRYPTO_BUFFER> ca_key,
+      std::vector<LogTrustedSubtrees> log_trusted_subtrees);
+
+  // This constructor is conceptually private, but needs to be public for
+  // make_shared to work. Uses the "passkey idiom" to prevent callers outside
+  // of the class from calling it.
+  // Outside callers should use the Create* static method(s).
+  MTCAnchor(Token, MtcSpecVersion spec_version, Span<const uint8_t> ca_id,
+            SignatureAlgorithm ca_signature_algorithm,
+            UniquePtr<CRYPTO_BUFFER> ca_key,
+            std::vector<LogTrustedSubtrees> log_trusted_subtrees);
+
   // Returns whether this MTCAnchor represents a valid anchor. This function
   // exists because the c'tor inputs could be invalid.
+  // TODO(mattm): remove public constructor and remove or private the IsValid
+  // method.
   bool IsValid() const;
 
-  MtcSpecVersion spec_version() const { return kPlants04; }
-  Span<const uint8_t> ca_id() const {
-    return ca_id_;
-  }
+  MtcSpecVersion spec_version() const { return spec_version_; }
+  Span<const uint8_t> ca_id() const { return ca_id_; }
   SignatureAlgorithm ca_signature_algorithm() const {
     return ca_signature_algorithm_;
   }
-  const CRYPTO_BUFFER* ca_key() const {
-    return ca_key_.get();
-  }
+  const CRYPTO_BUFFER *ca_key() const { return ca_key_.get(); }
   // TODO(nharper): Move this function to TrustAnchor.
   der::Input NormalizedSubject() const;
   // TODO(nharper): Remove this function in favor of TrustAnchor's version.
@@ -194,6 +222,7 @@ class OPENSSL_EXPORT MTCAnchor {
  private:
   void CreateSyntheticCert(Span<const uint8_t> ca_id);
 
+  MtcSpecVersion spec_version_;
   std::vector<uint8_t> ca_id_;
   SignatureAlgorithm ca_signature_algorithm_;
   UniquePtr<CRYPTO_BUFFER> ca_key_;
@@ -231,9 +260,10 @@ class OPENSSL_EXPORT TrustAnchor {
   TrustAnchor() = default;
 
   // Creates a TrustAnchor with no associated MTCAnchor.
-  explicit TrustAnchor(CertificateTrust trust);
+  explicit TrustAnchor(CertificateTrust trust) : TrustAnchor(trust, nullptr) {}
   TrustAnchor(CertificateTrust trust,
-              std::shared_ptr<const MTCAnchor> mtc_anchor);
+              std::shared_ptr<const MTCAnchor> mtc_anchor)
+      : trust_(trust), mtc_anchor_(std::move(mtc_anchor)) {}
 
   // TODO(nharper): Temporarily add ParsedCertificate member and accessor.
 
@@ -260,7 +290,7 @@ class OPENSSL_EXPORT TrustAnchor {
 // trustedness of certificates.
 class OPENSSL_EXPORT TrustStore : public CertIssuerSource {
  public:
-  TrustStore();
+  TrustStore() = default;
 
   TrustStore(const TrustStore &) = delete;
   TrustStore &operator=(const TrustStore &) = delete;

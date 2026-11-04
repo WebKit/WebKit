@@ -58,9 +58,10 @@ PROXY_SECONDARY_CONSTMETHOD0(scoped_refptr<FrameDecryptorInterface>,
 PROXY_SECONDARY_METHOD1(void,
                         SetFrameTransformer,
                         scoped_refptr<FrameTransformerInterface>)
-PROXY_METHOD1(RTCErrorOr<scoped_refptr<SframeDecryptorInterface>>,
+PROXY_METHOD2(RTCErrorOr<scoped_refptr<SframeDecryptorInterface>>,
               CreateSframeDecryptorOrError,
-              SframeCipherSuite)
+              SframeCipherSuite,
+              SframeDecryptErrorCallback)
 #if defined(WEBRTC_WEBKIT_BUILD)
 PROXY_METHOD0(void, GenerateKeyFrame)
 #endif

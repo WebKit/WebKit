@@ -53,13 +53,14 @@ void OutstandingData::Item::Ack() {
 }
 
 OutstandingData::Item::NackAction OutstandingData::Item::Nack(
+    Timestamp now,
     bool retransmit_now) {
   ack_state_ = AckState::kNacked;
   ++nack_count_;
   if (!should_be_retransmitted() && !is_abandoned() &&
       (retransmit_now || nack_count_ >= kNumberOfNacksForRetransmission)) {
     // Nacked enough times - it's considered lost.
-    if (num_retransmissions_ < *max_retransmissions_) {
+    if (num_retransmissions_ < *max_retransmissions_ && !has_expired(now)) {
       lifecycle_ = Lifecycle::kToBeRetransmitted;
       return NackAction::kRetransmit;
     }
@@ -69,12 +70,13 @@ OutstandingData::Item::NackAction OutstandingData::Item::Nack(
   return NackAction::kNothing;
 }
 
-void OutstandingData::Item::MarkAsRetransmitted() {
+void OutstandingData::Item::MarkAsRetransmitted(UnwrappedTSN next_tsn) {
   lifecycle_ = Lifecycle::kActive;
   ack_state_ = AckState::kUnacked;
 
   nack_count_ = 0;
   ++num_retransmissions_;
+  retransmission_boundary_tsn_ = next_tsn;
 }
 
 void OutstandingData::Item::Abandon() {
@@ -141,6 +143,7 @@ void OutstandingData::AckChunk(AckInfo& ack_info,
 }
 
 OutstandingData::AckInfo OutstandingData::HandleSack(
+    Timestamp now,
     UnwrappedTSN cumulative_tsn_ack,
     std::span<const SackChunk::GapAckBlock> gap_ack_blocks,
     bool is_in_fast_recovery) {
@@ -155,8 +158,9 @@ OutstandingData::AckInfo OutstandingData::HandleSack(
   AckGapBlocks(cumulative_tsn_ack, gap_ack_blocks, ack_info);
 
   // NACK and possibly mark for retransmit chunks that weren't acked.
-  NackBetweenAckBlocks(cumulative_tsn_ack, gap_ack_blocks, is_in_fast_recovery,
-                       cumulative_tsn_ack_advanced, ack_info);
+  NackBetweenAckBlocks(now, cumulative_tsn_ack, gap_ack_blocks,
+                       is_in_fast_recovery, cumulative_tsn_ack_advanced,
+                       ack_info);
 
   RTC_DCHECK(IsConsistent());
   return ack_info;
@@ -226,6 +230,7 @@ void OutstandingData::AckGapBlocks(
 }
 
 void OutstandingData::NackBetweenAckBlocks(
+    Timestamp now,
     UnwrappedTSN cumulative_tsn_ack,
     std::span<const SackChunk::GapAckBlock> gap_ack_blocks,
     bool is_in_fast_recovery,
@@ -260,9 +265,27 @@ void OutstandingData::NackBetweenAckBlocks(
          tsn < cur_block_first_acked && tsn <= max_tsn_to_nack &&
          tsn < next_tsn();
          tsn = tsn.next_value()) {
-      ack_info.has_packet_loss |=
-          NackItem(tsn, /*retransmit_now=*/false,
-                   /*do_fast_retransmit=*/!is_in_fast_recovery);
+      // https://tools.ietf.org/html/rfc4960#section-7.2.4
+      // "Mark the DATA chunk(s) as being fast retransmitted and thus
+      // ineligible for a subsequent Fast Retransmit."
+      // A chunk that has been retransmitted may be reported as missing by
+      // SACKs that the peer generated before the retransmission reached it.
+      // Those are not miss indications for the retransmitted chunk.
+      if (!GetItem(tsn).IsMissIndication(ack_info.highest_tsn_acked)) {
+        continue;
+      }
+      // https://tools.ietf.org/html/rfc4960#section-7.2.4
+      // "3) Determine how many of the earliest (i.e., lowest TSN) DATA chunks
+      // marked for retransmission will fit into a single packet [...]
+      // Retransmit those K DATA chunks in a single packet. When a Fast
+      // Retransmit is being performed, the sender SHOULD ignore the value of
+      // cwnd and SHOULD NOT delay retransmission for this single packet."
+      // This applies to every chunk that reaches the miss indication threshold,
+      // regardless of if the endpoint is already in fast recovery or not. Only
+      // the cwnd/ssthresh adjustment (step 2) is skipped while in fast
+      // recovery.
+      ack_info.has_packet_loss |= NackItem(now, tsn, /*retransmit_now=*/false,
+                                           /*do_fast_retransmit=*/true);
     }
     prev_block_last_acked = UnwrappedTSN::AddTo(cumulative_tsn_ack, block.end);
   }
@@ -273,7 +296,8 @@ void OutstandingData::NackBetweenAckBlocks(
   // NACKing.
 }
 
-bool OutstandingData::NackItem(UnwrappedTSN tsn,
+bool OutstandingData::NackItem(Timestamp now,
+                               UnwrappedTSN tsn,
                                bool retransmit_now,
                                bool do_fast_retransmit) {
   Item& item = GetItem(tsn);
@@ -283,7 +307,7 @@ bool OutstandingData::NackItem(UnwrappedTSN tsn,
   }
   bool was_outstanding = item.is_outstanding();
 
-  Item::NackAction action = item.Nack(retransmit_now);
+  Item::NackAction action = item.Nack(now, retransmit_now);
 
   if (was_outstanding && !item.is_outstanding()) {
     unacked_payload_bytes_ -= item.data().size();
@@ -303,7 +327,10 @@ bool OutstandingData::NackItem(UnwrappedTSN tsn,
       RTC_DLOG(LS_VERBOSE) << *tsn.Wrap() << " marked for retransmission";
       break;
     case Item::NackAction::kAbandon:
-      RTC_DLOG(LS_VERBOSE) << *tsn.Wrap() << " Nacked, resulted in abandoning";
+      RTC_DLOG(LS_VERBOSE) << *tsn.Wrap() << " Nacked, resulted in abandoning ("
+                           << (item.has_expired(now) ? "expired"
+                                                     : "max retransmissions")
+                           << ")";
       AbandonAllFor(item);
       break;
   }
@@ -327,7 +354,7 @@ void OutstandingData::AbandonAllFor(const Item& item) {
                      item.data().is_unordered);
     UnwrappedTSN tsn = next_tsn();
     Item& added_item = outstanding_data_.emplace_back(
-        item.message_id(), std::move(message_end), Timestamp::Zero(),
+        tsn, item.message_id(), std::move(message_end), Timestamp::Zero(),
         MaxRetransmits(0), Timestamp::PlusInfinity(), LifecycleId::NotSet());
 
     // The added chunk shouldn't be included in `unacked_bytes`, so set it
@@ -361,11 +388,13 @@ void OutstandingData::AbandonAllFor(const Item& item) {
 }
 
 std::vector<std::pair<TSN, Data>> OutstandingData::ExtractChunksThatCanFit(
+    Timestamp now,
     std::set<UnwrappedTSN>& chunks,
     size_t max_size) {
   std::vector<std::pair<TSN, Data>> result;
 
-  for (auto it = chunks.begin(); it != chunks.end();) {
+  for (auto it = chunks.begin();
+       it != chunks.end() && max_size > data_chunk_header_size_;) {
     UnwrappedTSN tsn = *it;
     Item& item = GetItem(tsn);
     RTC_DCHECK(item.should_be_retransmitted());
@@ -373,9 +402,17 @@ std::vector<std::pair<TSN, Data>> OutstandingData::ExtractChunksThatCanFit(
     RTC_DCHECK(!item.is_abandoned());
     RTC_DCHECK(!item.is_acked());
 
+    if (item.has_expired(now)) {
+      RTC_DLOG(LS_VERBOSE) << "Marking chunk " << *tsn.Wrap() << " and message "
+                           << *item.data().mid << " as expired";
+      AbandonAllFor(item);
+      it = chunks.upper_bound(tsn);
+      continue;
+    }
+
     size_t serialized_size = GetSerializedChunkSize(item.data());
     if (serialized_size <= max_size) {
-      item.MarkAsRetransmitted();
+      item.MarkAsRetransmitted(next_tsn());
       result.emplace_back(tsn.Wrap(), item.data().Clone());
       max_size -= serialized_size;
       unacked_payload_bytes_ += item.data().size();
@@ -385,18 +422,15 @@ std::vector<std::pair<TSN, Data>> OutstandingData::ExtractChunksThatCanFit(
     } else {
       ++it;
     }
-    // No point in continuing if the packet is full.
-    if (max_size <= data_chunk_header_size_) {
-      break;
-    }
   }
   return result;
 }
 
 std::vector<std::pair<TSN, Data>>
-OutstandingData::GetChunksToBeFastRetransmitted(size_t max_size) {
+OutstandingData::GetChunksToBeFastRetransmitted(Timestamp now,
+                                                size_t max_size) {
   std::vector<std::pair<TSN, Data>> result =
-      ExtractChunksThatCanFit(to_be_fast_retransmitted_, max_size);
+      ExtractChunksThatCanFit(now, to_be_fast_retransmitted_, max_size);
 
   // https://datatracker.ietf.org/doc/html/rfc4960#section-7.2.4
   // "Those TSNs marked for retransmission due to the Fast-Retransmit algorithm
@@ -415,10 +449,14 @@ OutstandingData::GetChunksToBeFastRetransmitted(size_t max_size) {
 }
 
 std::vector<std::pair<TSN, Data>> OutstandingData::GetChunksToBeRetransmitted(
+    Timestamp now,
     size_t max_size) {
   // Chunks scheduled for fast retransmission must be sent first.
   RTC_DCHECK(to_be_fast_retransmitted_.empty());
-  return ExtractChunksThatCanFit(to_be_retransmitted_, max_size);
+  std::vector<std::pair<TSN, Data>> result =
+      ExtractChunksThatCanFit(now, to_be_retransmitted_, max_size);
+  RTC_DCHECK(IsConsistent());
+  return result;
 }
 
 void OutstandingData::ExpireOutstandingChunks(Timestamp now) {
@@ -434,7 +472,8 @@ void OutstandingData::ExpireOutstandingChunks(Timestamp now) {
     } else if (item.is_nacked() && item.has_expired(now)) {
       tsns_to_expire.push_back(tsn);
     } else {
-      // A non-expired chunk. No need to iterate any further.
+      // A non-expired chunk means there's no need to continue as no
+      // FORWARD-TSN can be sent past this point anyway.
       break;
     }
   }
@@ -443,10 +482,12 @@ void OutstandingData::ExpireOutstandingChunks(Timestamp now) {
     // The item is retrieved by TSN, as AbandonAllFor may have modified
     // `outstanding_data_` and invalidated iterators from the first loop.
     Item& item = GetItem(tsn_to_expire);
-    RTC_DLOG(LS_WARNING) << "Marking nacked chunk " << *tsn_to_expire.Wrap()
-                         << " and message " << *item.data().mid
-                         << " as expired";
-    AbandonAllFor(item);
+    if (!item.is_abandoned()) {
+      RTC_DLOG(LS_VERBOSE) << "Marking nacked chunk " << *tsn_to_expire.Wrap()
+                           << " and message " << *item.data().mid
+                           << " as expired";
+      AbandonAllFor(item);
+    }
   }
   RTC_DCHECK(IsConsistent());
 }
@@ -469,7 +510,7 @@ std::optional<UnwrappedTSN> OutstandingData::Insert(
   unacked_packet_bytes_ += chunk_size;
   ++unacked_items_;
   UnwrappedTSN tsn = next_tsn();
-  Item& item = outstanding_data_.emplace_back(message_id, data.Clone(),
+  Item& item = outstanding_data_.emplace_back(tsn, message_id, data.Clone(),
                                               time_sent, max_retransmissions,
                                               expires_at, lifecycle_id);
 
@@ -488,7 +529,7 @@ std::optional<UnwrappedTSN> OutstandingData::Insert(
   return tsn;
 }
 
-void OutstandingData::NackAll() {
+void OutstandingData::NackAll(Timestamp now) {
   UnwrappedTSN tsn = last_cumulative_tsn_ack_;
   // A two-pass algorithm is needed, as NackItem will invalidate iterators.
   std::vector<UnwrappedTSN> tsns_to_nack;
@@ -500,7 +541,7 @@ void OutstandingData::NackAll() {
   }
 
   for (UnwrappedTSN tsn_to_nack : tsns_to_nack) {
-    NackItem(tsn_to_nack, /*retransmit_now=*/true,
+    NackItem(now, tsn_to_nack, /*retransmit_now=*/true,
              /*do_fast_retransmit=*/false);
   }
 
@@ -677,7 +718,7 @@ void OutstandingData::RestoreFromState(webrtc::Timestamp now,
               Data::IsEnd(msg.is_end), IsUnordered(msg.is_unordered));
     size_t chunk_size = GetSerializedChunkSize(data);
     Item& item = outstanding_data_.emplace_back(
-        OutgoingMessageId(msg.message_id), std::move(data),
+        tsn, OutgoingMessageId(msg.message_id), std::move(data),
         now - webrtc::TimeDelta::Millis(msg.time_since_sent_ms),
         MaxRetransmits(msg.max_retransmissions),
         msg.expires_in_ms.has_value()

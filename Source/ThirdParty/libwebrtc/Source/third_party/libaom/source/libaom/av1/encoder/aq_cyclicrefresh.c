@@ -165,7 +165,7 @@ void av1_cyclic_reset_segment_skip(const AV1_COMP *cpi, MACROBLOCK *const x,
 
   assert(cm->seg.enabled);
 
-  if (!cr->skip_over4x4 && !cpi->roi.reference_enabled) {
+  if (!cr->skip_over4x4 && cm->seg.update_map && !cm->seg.segid_preskip) {
     mbmi->segment_id =
         av1_get_spatial_seg_pred(cm, xd, &cdf_num, cr->skip_over4x4);
     if (prev_segment_id != mbmi->segment_id) {
@@ -584,6 +584,16 @@ void av1_cyclic_refresh_setup(AV1_COMP *const cpi) {
       unsigned char *const seg_map = cpi->enc_seg.map;
       memset(seg_map, 0, cm->mi_params.mi_rows * cm->mi_params.mi_cols);
       av1_disable_segmentation(&cm->seg);
+    } else if (segfeature_active(seg, CR_SEGMENT_ID_BOOST1, SEG_LVL_ALT_Q) ||
+               segfeature_active(seg, CR_SEGMENT_ID_BOOST2, SEG_LVL_ALT_Q) ||
+               (cm->prev_frame &&
+                (segfeature_active(&cm->prev_frame->seg, CR_SEGMENT_ID_BOOST1,
+                                   SEG_LVL_ALT_Q) ||
+                 segfeature_active(&cm->prev_frame->seg, CR_SEGMENT_ID_BOOST2,
+                                   SEG_LVL_ALT_Q)))) {
+      av1_disable_segfeature(seg, CR_SEGMENT_ID_BOOST1, SEG_LVL_ALT_Q);
+      av1_disable_segfeature(seg, CR_SEGMENT_ID_BOOST2, SEG_LVL_ALT_Q);
+      seg->update_data = 1;
     }
     if (frame_is_intra_only(cm) || scene_change_detected ||
         cpi->ppi->rtc_ref.bias_recovery_frame) {
@@ -669,13 +679,9 @@ int av1_cyclic_refresh_get_rdmult(const CYCLIC_REFRESH *cr) {
   return cr->rdmult;
 }
 
-int av1_cyclic_refresh_disable_lf_cdef(AV1_COMP *const cpi) {
+int av1_cyclic_refresh_disable_lf(AV1_COMP *const cpi) {
   CYCLIC_REFRESH *const cr = cpi->cyclic_refresh;
   const int qindex = cpi->common.quant_params.base_qindex;
-  if (cpi->active_map.enabled &&
-      cpi->rc.percent_blocks_inactive >
-          cpi->sf.rt_sf.thresh_active_maps_skip_lf_cdef)
-    return 1;
   if (cpi->rc.frames_since_key > 30 && cr->percent_refresh > 0 &&
       cr->counter_encode_maxq_scene_change > 300 / cr->percent_refresh &&
       cpi->rc.frame_source_sad < 1000 &&

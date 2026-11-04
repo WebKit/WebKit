@@ -25,37 +25,17 @@
 
 using namespace bssl;
 
-static void *v2i_EXTENDED_KEY_USAGE(const X509V3_EXT_METHOD *method,
-                                    const X509V3_CTX *ctx,
-                                    const STACK_OF(CONF_VALUE) *nval);
-static STACK_OF(CONF_VALUE) *i2v_EXTENDED_KEY_USAGE(
-    const X509V3_EXT_METHOD *method, void *eku, STACK_OF(CONF_VALUE) *extlist);
-
-const X509V3_EXT_METHOD bssl::v3_ext_ku = {
-    NID_ext_key_usage,
-    0,
-    ASN1_ITEM_ref(EXTENDED_KEY_USAGE),
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr,
-    nullptr,
-    i2v_EXTENDED_KEY_USAGE,
-    v2i_EXTENDED_KEY_USAGE,
-    nullptr,
-    nullptr,
-    nullptr,
-};
-
 ASN1_ITEM_TEMPLATE(EXTENDED_KEY_USAGE) = ASN1_EX_TEMPLATE_TYPE(
     ASN1_TFLG_SEQUENCE_OF, 0, EXTENDED_KEY_USAGE, ASN1_OBJECT)
 ASN1_ITEM_TEMPLATE_END(EXTENDED_KEY_USAGE)
 
 IMPLEMENT_ASN1_FUNCTIONS_const(EXTENDED_KEY_USAGE)
 
-static STACK_OF(CONF_VALUE) *i2v_EXTENDED_KEY_USAGE(
-    const X509V3_EXT_METHOD *method, void *a, STACK_OF(CONF_VALUE) *ext_list) {
+namespace {
+
+STACK_OF(CONF_VALUE) *i2v_EXTENDED_KEY_USAGE(const X509V3_EXT_METHOD *method,
+                                             void *a,
+                                             STACK_OF(CONF_VALUE) *ext_list) {
   const EXTENDED_KEY_USAGE *eku =
       reinterpret_cast<const EXTENDED_KEY_USAGE *>(a);
   for (size_t i = 0; i < sk_ASN1_OBJECT_num(eku); i++) {
@@ -67,9 +47,9 @@ static STACK_OF(CONF_VALUE) *i2v_EXTENDED_KEY_USAGE(
   return ext_list;
 }
 
-static void *v2i_EXTENDED_KEY_USAGE(const X509V3_EXT_METHOD *method,
-                                    const X509V3_CTX *ctx,
-                                    const STACK_OF(CONF_VALUE) *nval) {
+void *v2i_EXTENDED_KEY_USAGE(const X509V3_EXT_METHOD *method,
+                             const X509V3_CTX *ctx,
+                             const STACK_OF(CONF_VALUE) *nval) {
   EXTENDED_KEY_USAGE *extku = sk_ASN1_OBJECT_new_null();
   if (extku == nullptr) {
     return nullptr;
@@ -95,3 +75,22 @@ static void *v2i_EXTENDED_KEY_USAGE(const X509V3_EXT_METHOD *method,
 
   return extku;
 }
+
+}  // namespace
+
+const X509V3_EXT_METHOD bssl::v3_ext_ku = {
+    NID_ext_key_usage,
+    0,
+    ASN1_ITEM_ref(EXTENDED_KEY_USAGE),
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    i2v_EXTENDED_KEY_USAGE,
+    v2i_EXTENDED_KEY_USAGE,
+    nullptr,
+    nullptr,
+    nullptr,
+};

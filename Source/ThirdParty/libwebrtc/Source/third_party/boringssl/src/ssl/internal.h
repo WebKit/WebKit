@@ -883,13 +883,13 @@ UniquePtr<EVP_PKEY> ssl_parse_peer_subject_public_key_info(
 
 // ssl_pkey_supports_algorithm returns whether `pkey` may be used to sign
 // `sigalg`.
-bool ssl_pkey_supports_algorithm(const SSLImpl *ssl, EVP_PKEY *pkey,
+bool ssl_pkey_supports_algorithm(const SSLImpl *ssl, const EVP_PKEY *pkey,
                                  uint16_t sigalg, bool is_verify);
 
 // ssl_public_key_verify verifies that the `signature` is valid for the public
 // key `pkey` and input `in`, using the signature algorithm `sigalg`.
 bool ssl_public_key_verify(SSLImpl *ssl, Span<const uint8_t> signature,
-                           uint16_t sigalg, EVP_PKEY *pkey,
+                           uint16_t sigalg, const EVP_PKEY *pkey,
                            Span<const uint8_t> in);
 
 
@@ -1465,14 +1465,6 @@ enum class SSLCredentialType {
   kRawPublicKey,
 };
 
-struct SSLTrustAnchorRange {
-  Array<uint8_t> base;
-  uint64_t min = 0;
-  uint64_t max = 0;
-
-  bool Contains(Span<const uint8_t> id) const;
-};
-
 class SSLCredential : public ssl_credential_st,
                       public RefCounted<SSLCredential> {
  public:
@@ -1599,9 +1591,9 @@ class SSLCredential : public ssl_credential_st,
   // chain in `chain`.
   Array<uint8_t> trust_anchor_id;
 
-  // trust_anchor_group_inclusions describes trust anchor groups that also match
+  // trust_anchor_group_patterns describes trust anchor groups that also match
   // this credential.
-  Vector<SSLTrustAnchorRange> trust_anchor_group_inclusions;
+  Vector<Array<uint8_t>> trust_anchor_group_patterns;
 
   CRYPTO_EX_DATA ex_data;
 
@@ -1616,6 +1608,11 @@ class SSLCredential : public ssl_credential_st,
   friend RefCounted;
   ~SSLCredential();
 };
+
+// ssl_trust_anchor_pattern_matches_id returns whether `pattern`, a trust anchor
+// ID pattern, matches `id`, a trust anchor ID.
+bool ssl_trust_anchor_pattern_matches_id(Span<const uint8_t> pattern,
+                                         Span<const uint8_t> id);
 
 // ssl_get_full_credential_list computes `hs`'s full credential list, including
 // the legacy credential. On success, it writes it to `*out` and returns true.
@@ -1698,8 +1695,6 @@ enum ssl_hs_wait_t {
   ssl_hs_read_message,
   ssl_hs_flush,
   ssl_hs_certificate_selection_pending,
-  ssl_hs_handoff,
-  ssl_hs_handback,
   ssl_hs_x509_lookup,
   ssl_hs_private_key_operation,
   ssl_hs_pending_session,
@@ -1722,61 +1717,6 @@ enum ssl_grease_index_t {
   ssl_grease_ech_config_id,
   ssl_grease_signature_algorithm,
   ssl_grease_last_index = ssl_grease_signature_algorithm,
-};
-
-enum tls12_server_hs_state_t {
-  state12_start_accept = 0,
-  state12_read_client_hello,
-  state12_read_client_hello_after_ech,
-  state12_cert_callback,
-  state12_tls13,
-  state12_select_parameters,
-  state12_send_server_hello,
-  state12_send_server_certificate,
-  state12_send_server_key_exchange,
-  state12_send_server_hello_done,
-  state12_read_client_certificate,
-  state12_verify_client_certificate,
-  state12_read_client_key_exchange,
-  state12_read_client_certificate_verify,
-  state12_read_change_cipher_spec,
-  state12_process_change_cipher_spec,
-  state12_read_next_proto,
-  state12_read_channel_id,
-  state12_read_client_finished,
-  state12_send_server_finished,
-  state12_finish_server_handshake,
-  state12_done,
-};
-
-enum tls13_server_hs_state_t {
-  state13_select_parameters = 0,
-  state13_select_session,
-  state13_send_hello_retry_request,
-  state13_read_second_client_hello,
-  state13_send_server_hello,
-  state13_send_server_certificate_verify,
-  state13_send_server_finished,
-  state13_send_half_rtt_ticket,
-  state13_read_second_client_flight,
-  state13_process_end_of_early_data,
-  state13_read_client_encrypted_extensions,
-  state13_read_client_certificate,
-  state13_read_client_certificate_verify,
-  state13_read_channel_id,
-  state13_read_client_finished,
-  state13_send_new_session_ticket,
-  state13_done,
-};
-
-// handback_t lists the points in the state machine where a handback can occur.
-// These are the different points at which key material is no longer needed.
-enum handback_t {
-  handback_after_session_resumption = 0,
-  handback_after_ecdhe = 1,
-  handback_after_handshake = 2,
-  handback_tls13 = 3,
-  handback_max_value = handback_tls13,
 };
 
 // SSL_HANDSHAKE_HINTS contains handshake hints for a connection. See
@@ -2123,12 +2063,6 @@ struct SSL_HANDSHAKE {
   // in progress.
   bool pending_private_key_op : 1;
 
-  // handback indicates that a server should pause the handshake after
-  // finishing operations that require private key material, in such a way that
-  // `SSL_get_error` returns `SSL_ERROR_HANDBACK`.  It is set by
-  // `SSL_apply_handoff`.
-  bool handback : 1;
-
   // cert_compression_negotiated is true iff `cert_compression_alg_id` is valid.
   bool cert_compression_negotiated : 1;
 
@@ -2424,8 +2358,11 @@ bool ssl_get_local_application_settings(const SSL_HANDSHAKE *hs,
 bool ssl_negotiate_alps(SSL_HANDSHAKE *hs, uint8_t *out_alert,
                         const SSL_CLIENT_HELLO *client_hello);
 
+// ssl_is_valid_trust_anchor_id returns whether `in` is a valid trust anchor ID.
+bool ssl_is_valid_trust_anchor_id(Span<const uint8_t> id);
+
 // ssl_is_valid_trust_anchor_list returns whether `in` is a valid trust anchor
-// identifiers list.
+// ID list.
 bool ssl_is_valid_trust_anchor_list(Span<const uint8_t> in);
 
 struct SSLExtension {
@@ -2574,7 +2511,7 @@ bool tls12_add_verify_sigalgs(const SSL_HANDSHAKE *hs, CBB *out);
 // signature from `pkey`. It returns true on success and false on error, setting
 // `*out_alert` to an alert to send.
 bool tls12_check_peer_sigalg(const SSL_HANDSHAKE *hs, uint8_t *out_alert,
-                             uint16_t sigalg, EVP_PKEY *pkey);
+                             uint16_t sigalg, const EVP_PKEY *pkey);
 
 
 // Underdocumented functions.
@@ -3624,12 +3561,6 @@ struct SSL_CONFIG {
   // session space. Only effective on the server side.
   bool retain_only_sha256_of_client_certs : 1;
 
-  // handoff indicates that a server should stop after receiving the
-  // ClientHello and pause the handshake in such a way that `SSL_get_error`
-  // returns `SSL_ERROR_HANDOFF`. This is copied in `SSL_new` from the `SSL_CTX`
-  // element of the same name and may be cleared if the handoff is declined.
-  bool handoff : 1;
-
   // shed_handshake_config indicates that the handshake config (this object!)
   // should be freed after the handshake completes.
   bool shed_handshake_config : 1;
@@ -3738,7 +3669,7 @@ const EVP_MD *ssl_session_get_digest(const SSLSession *session);
 // on the peer's certificate type) or a valid SHA-256 hash thereof.
 bool ssl_session_has_peer_cred(const SSLSession *session);
 
-void ssl_set_session(SSLImpl *ssl, SSLSession *session);
+void ssl_set_session(SSLImpl *ssl, const SSLSession *session);
 
 // ssl_get_session implements `SSL_get_session`.
 SSLSession *ssl_get_session(const SSLImpl *ssl);
@@ -4258,11 +4189,6 @@ class SSLContext : public ssl_ctx_st, public RefCounted<SSLContext> {
   // grease_enabled is whether GREASE (RFC 8701) is enabled.
   bool grease_enabled : 1;
 
-  // grease_sigalgs_enabled controls whether GREASE signature algorithms may be
-  // sent.
-  // TODO(crbug.com/526597789): Fold into `grease_enabled` once deployed safely.
-  bool grease_sigalgs_enabled : 1;
-
   // permute_extensions is whether to permute extensions when sending messages.
   bool permute_extensions : 1;
 
@@ -4273,11 +4199,6 @@ class SSLContext : public ssl_ctx_st, public RefCounted<SSLContext> {
   // false_start_allowed_without_alpn is whether False Start (if
   // `SSL_MODE_ENABLE_FALSE_START` is enabled) is allowed without ALPN.
   bool false_start_allowed_without_alpn : 1;
-
-  // handoff indicates that a server should stop after receiving the
-  // ClientHello and pause the handshake in such a way that `SSL_get_error`
-  // returns `SSL_ERROR_HANDOFF`.
-  bool handoff : 1;
 
   // If enable_early_data is true, early data can be sent and accepted.
   bool enable_early_data : 1;

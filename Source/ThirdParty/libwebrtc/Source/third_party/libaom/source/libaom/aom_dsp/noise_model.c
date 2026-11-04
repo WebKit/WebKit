@@ -222,7 +222,7 @@ int aom_noise_strength_lut_init(aom_noise_strength_lut_t *lut, int num_points) {
   if (!lut) return 0;
   if (num_points <= 0) return 0;
   lut->num_points = 0;
-  lut->points = (double(*)[2])aom_malloc(num_points * sizeof(*lut->points));
+  lut->points = (double (*)[2])aom_malloc(num_points * sizeof(*lut->points));
   if (!lut->points) return 0;
   lut->num_points = num_points;
   memset(lut->points, 0, sizeof(*lut->points) * num_points);
@@ -724,7 +724,7 @@ int aom_noise_model_init(aom_noise_model_t *model,
     }
   }
   model->n = n;
-  model->coords = (int(*)[2])aom_malloc(sizeof(*model->coords) * n);
+  model->coords = (int (*)[2])aom_malloc(sizeof(*model->coords) * n);
   if (!model->coords) {
     aom_noise_model_free(model);
     return 0;
@@ -777,7 +777,7 @@ void aom_noise_model_free(aom_noise_model_t *model) {
 // entry (possibly downsampled) for (x, y) in the alt_data (e.g., luma).
 #define EXTRACT_AR_ROW(INT_TYPE, suffix)                                   \
   static double extract_ar_row_##suffix(                                   \
-      int(*coords)[2], int num_coords, const INT_TYPE *const data,         \
+      int (*coords)[2], int num_coords, const INT_TYPE *const data,        \
       const INT_TYPE *const denoised, int stride, int sub_log2[2],         \
       const INT_TYPE *const alt_data, const INT_TYPE *const alt_denoised,  \
       int alt_stride, int x, int y, double *buffer) {                      \
@@ -1216,7 +1216,7 @@ int aom_noise_model_get_grain_parameters(aom_noise_model_t *const noise_model,
   film_grain->num_cb_points = scaling_points[1].num_points;
   film_grain->num_cr_points = scaling_points[2].num_points;
 
-  int(*film_grain_scaling[3])[2] = {
+  int (*film_grain_scaling[3])[2] = {
     film_grain->scaling_points_y,
     film_grain->scaling_points_cb,
     film_grain->scaling_points_cr,

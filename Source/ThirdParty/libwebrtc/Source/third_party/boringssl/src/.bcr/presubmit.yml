@@ -6,7 +6,7 @@ matrix: &matrix
   linux_platforms:
     - debian11
     - ubuntu2204
-  bazel: [7.x, 8.x, rolling]
+  bazel: [8.x, 9.x, rolling]
 tasks:
   verify_targets_on_linux:
     name: Verify build targets on Linux
@@ -25,7 +25,7 @@ tasks:
   # Work around https://github.com/bazelbuild/bazel/issues/10472
   verify_targets_on_macos:
     name: Verify build targets on macOS
-    platform: macos
+    platform: macos_arm64
     bazel: ${{ bazel }}
     build_targets: *build_targets
     build_flags: &macos_workaround
@@ -54,7 +54,7 @@ bcr_test_module:
     # Work around https://github.com/bazelbuild/bazel/issues/10472
     run_test_module_on_macos:
       name: Run test module on macOS
-      platform: macos
+      platform: macos_arm64
       bazel: ${{ bazel }}
       build_targets:
         - //...

@@ -18,6 +18,7 @@
 #include <openssl/digest.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
+#include <openssl/nid.h>
 #include <openssl/obj.h>
 #include <openssl/stack.h>
 #include <openssl/x509.h>
@@ -43,29 +44,132 @@ struct x509_purpose_st {
   ((FromOpaque(x)->ex_flags & EXFLAG_XKUSAGE) && \
    !(FromOpaque(x)->ex_xkusage & (usage)))
 
-static int check_ca(const X509 *x);
-static int check_purpose_ssl_client(const X509_PURPOSE *xp, const X509 *x,
-                                    int ca);
-static int check_purpose_ssl_server(const X509_PURPOSE *xp, const X509 *x,
-                                    int ca);
-static int check_purpose_ns_ssl_server(const X509_PURPOSE *xp, const X509 *x,
-                                       int ca);
-static int check_purpose_smime_sign(const X509_PURPOSE *xp, const X509 *x,
-                                    int ca);
-static int check_purpose_smime_encrypt(const X509_PURPOSE *xp, const X509 *x,
-                                       int ca);
-static int check_purpose_crl_sign(const X509_PURPOSE *xp, const X509 *x,
-                                  int ca);
-static int check_purpose_timestamp_sign(const X509_PURPOSE *xp, const X509 *x,
-                                        int ca);
-static int no_check(const X509_PURPOSE *xp, const X509 *x, int ca);
+namespace {
+
+int setup_crldp(const X509 *x) {
+  int j;
+  auto *impl = FromOpaque(x);
+  impl->crldp.reset(reinterpret_cast<STACK_OF(DIST_POINT) *>(
+      X509_get_ext_d2i(x, NID_crl_distribution_points, &j, nullptr)));
+  if (impl->crldp == nullptr && j != -1) {
+    return 0;
+  }
+  return 1;
+}
+
+// check_ca returns one if `x` should be considered a CA certificate and zero
+// otherwise.
+int check_ca(const X509 *x) {
+  // keyUsage if present should allow cert signing
+  if (ku_reject(x, X509v3_KU_KEY_CERT_SIGN)) {
+    return 0;
+  }
+  // Version 1 certificates are considered CAs and don't have extensions.
+  const auto *impl = FromOpaque(x);
+  if ((impl->ex_flags & V1_ROOT) == V1_ROOT) {
+    return 1;
+  }
+  // Otherwise, it's only a CA if basicConstraints says so.
+  return ((impl->ex_flags & EXFLAG_BCONS) && (impl->ex_flags & EXFLAG_CA));
+}
+
+// check_purpose returns one if `x` is a valid part of a certificate path for
+// extended key usage `required_xku` and at least one of key usages in
+// `required_kus`. `ca` indicates whether `x` is a CA or end-entity certificate.
+int check_purpose(const X509 *x, int ca, int required_xku, int required_kus) {
+  // Check extended key usage on the entire chain.
+  if (required_xku != 0 && xku_reject(x, required_xku)) {
+    return 0;
+  }
+
+  // Check key usages only on the end-entity certificate.
+  return ca || !ku_reject(x, required_kus);
+}
+
+int check_purpose_ssl_client(const X509_PURPOSE *xp, const X509 *x, int ca) {
+  // We need to do digital signatures or key agreement.
+  //
+  // TODO(davidben): We do not implement any TLS client certificate modes based
+  // on key agreement.
+  return check_purpose(x, ca, XKU_SSL_CLIENT,
+                       X509v3_KU_DIGITAL_SIGNATURE | X509v3_KU_KEY_AGREEMENT);
+}
+
+// Key usage needed for TLS/SSL server: digital signature, encipherment or
+// key agreement. The ssl code can check this more thoroughly for individual
+// key types.
+#define X509v3_KU_TLS                                         \
+  (X509v3_KU_DIGITAL_SIGNATURE | X509v3_KU_KEY_ENCIPHERMENT | \
+   X509v3_KU_KEY_AGREEMENT)
+
+int check_purpose_ssl_server(const X509_PURPOSE *xp, const X509 *x, int ca) {
+  return check_purpose(x, ca, XKU_SSL_SERVER, X509v3_KU_TLS);
+}
+
+int check_purpose_ns_ssl_server(const X509_PURPOSE *xp, const X509 *x, int ca) {
+  // We need to encipher or Netscape complains.
+  return check_purpose(x, ca, XKU_SSL_SERVER, X509v3_KU_KEY_ENCIPHERMENT);
+}
+
+int check_purpose_smime_sign(const X509_PURPOSE *xp, const X509 *x, int ca) {
+  return check_purpose(x, ca, XKU_SMIME,
+                       X509v3_KU_DIGITAL_SIGNATURE | X509v3_KU_NON_REPUDIATION);
+}
+
+int check_purpose_smime_encrypt(const X509_PURPOSE *xp, const X509 *x, int ca) {
+  return check_purpose(x, ca, XKU_SMIME, X509v3_KU_KEY_ENCIPHERMENT);
+}
+
+int check_purpose_crl_sign(const X509_PURPOSE *xp, const X509 *x, int ca) {
+  return check_purpose(x, ca, /*required_xku=*/0, X509v3_KU_CRL_SIGN);
+}
+
+int check_purpose_timestamp_sign(const X509_PURPOSE *xp, const X509 *x,
+                                 int ca) {
+  if (ca) {
+    return 1;
+  }
+
+  // Check the optional key usage field:
+  // if Key Usage is present, it must be one of digitalSignature
+  // and/or nonRepudiation (other values are not consistent and shall
+  // be rejected).
+  const auto *impl = FromOpaque(x);
+  if ((impl->ex_flags & EXFLAG_KUSAGE) &&
+      ((impl->ex_kusage &
+        ~(X509v3_KU_NON_REPUDIATION | X509v3_KU_DIGITAL_SIGNATURE)) ||
+       !(impl->ex_kusage &
+         (X509v3_KU_NON_REPUDIATION | X509v3_KU_DIGITAL_SIGNATURE)))) {
+    return 0;
+  }
+
+  // Only time stamp key usage is permitted and it's required.
+  //
+  // TODO(davidben): Should we check EKUs up the chain like the other cases?
+  if (!(impl->ex_flags & EXFLAG_XKUSAGE) || impl->ex_xkusage != XKU_TIMESTAMP) {
+    return 0;
+  }
+
+  // Extended Key Usage MUST be critical
+  int i_ext = X509_get_ext_by_NID(x, NID_ext_key_usage, -1);
+  if (i_ext >= 0) {
+    const X509_EXTENSION *ext = X509_get_ext(x, i_ext);
+    if (!X509_EXTENSION_get_critical(ext)) {
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
+int no_check(const X509_PURPOSE *xp, const X509 *x, int ca) { return 1; }
 
 // X509_TRUST_NONE is not a valid `X509_TRUST_*` constant. It is used by
 // `X509_PURPOSE_ANY` to indicate that it has no corresponding trust type and
 // cannot be used with `X509_STORE_CTX_set_purpose`.
 #define X509_TRUST_NONE (-1)
 
-static const X509_PURPOSE xstandard[] = {
+const X509_PURPOSE xstandard[] = {
     {X509_PURPOSE_SSL_CLIENT, X509_TRUST_SSL_CLIENT, check_purpose_ssl_client,
      "sslclient"},
     {X509_PURPOSE_SSL_SERVER, X509_TRUST_SSL_SERVER, check_purpose_ssl_server,
@@ -86,7 +190,9 @@ static const X509_PURPOSE xstandard[] = {
      "timestampsign"},
 };
 
-int X509_check_purpose(X509 *x, int id, int ca) {
+}  // namespace
+
+int X509_check_purpose(const X509 *x, int id, int ca) {
   // This differs from OpenSSL, which uses -1 to indicate a fatal error and 0 to
   // indicate an invalid certificate. BoringSSL uses 0 for both.
   if (!x509v3_cache_extensions(x)) {
@@ -142,46 +248,11 @@ int X509_supported_extension(const X509_EXTENSION *ex) {
          nid == NID_policy_constraints ||    //
          nid == NID_name_constraints ||      //
          nid == NID_policy_mappings ||       //
-         nid == NID_inhibit_any_policy ||
-         nid == NID_pe_mtcCertificationAuthority_draft;
+         nid == NID_inhibit_any_policy ||    //
+         nid == NID_pe_mtcCertificationAuthority_SHA256;
 }
 
-static int setup_dp(X509 *x, DIST_POINT *dp) {
-  if (!dp->distpoint || (dp->distpoint->type != 1)) {
-    return 1;
-  }
-  X509_NAME *iname = nullptr;
-  for (size_t i = 0; i < sk_GENERAL_NAME_num(dp->CRLissuer); i++) {
-    GENERAL_NAME *gen = sk_GENERAL_NAME_value(dp->CRLissuer, i);
-    if (gen->type == GEN_DIRNAME) {
-      iname = gen->d.directoryName;
-      break;
-    }
-  }
-  if (!iname) {
-    iname = X509_get_issuer_name(x);
-  }
-
-  return DIST_POINT_set_dpname(dp->distpoint, iname);
-}
-
-static int setup_crldp(X509 *x) {
-  int j;
-  auto *impl = FromOpaque(x);
-  impl->crldp.reset(reinterpret_cast<STACK_OF(DIST_POINT) *>(
-      X509_get_ext_d2i(x, NID_crl_distribution_points, &j, nullptr)));
-  if (impl->crldp == nullptr && j != -1) {
-    return 0;
-  }
-  for (size_t i = 0; i < sk_DIST_POINT_num(impl->crldp.get()); i++) {
-    if (!setup_dp(x, sk_DIST_POINT_value(impl->crldp.get(), i))) {
-      return 0;
-    }
-  }
-  return 1;
-}
-
-int bssl::x509v3_cache_extensions(X509 *x) {
+int bssl::x509v3_cache_extensions(const X509 *x) {
   BASIC_CONSTRAINTS *bs;
   ASN1_BIT_STRING *usage;
   EXTENDED_KEY_USAGE *extusage;
@@ -348,134 +419,20 @@ int bssl::x509v3_cache_extensions(X509 *x) {
   return (impl->ex_flags & EXFLAG_INVALID) == 0;
 }
 
-// check_ca returns one if `x` should be considered a CA certificate and zero
-// otherwise.
-static int check_ca(const X509 *x) {
-  // keyUsage if present should allow cert signing
-  if (ku_reject(x, X509v3_KU_KEY_CERT_SIGN)) {
-    return 0;
-  }
-  // Version 1 certificates are considered CAs and don't have extensions.
-  const auto *impl = FromOpaque(x);
-  if ((impl->ex_flags & V1_ROOT) == V1_ROOT) {
-    return 1;
-  }
-  // Otherwise, it's only a CA if basicConstraints says so.
-  return ((impl->ex_flags & EXFLAG_BCONS) && (impl->ex_flags & EXFLAG_CA));
-}
-
 int X509_check_ca(const X509 *x) {
-  if (!x509v3_cache_extensions(const_cast<X509*>(x))) {
+  if (!x509v3_cache_extensions(x)) {
     return 0;
   }
   return check_ca(x);
 }
-
-// check_purpose returns one if `x` is a valid part of a certificate path for
-// extended key usage `required_xku` and at least one of key usages in
-// `required_kus`. `ca` indicates whether `x` is a CA or end-entity certificate.
-static int check_purpose(const X509 *x, int ca, int required_xku,
-                         int required_kus) {
-  // Check extended key usage on the entire chain.
-  if (required_xku != 0 && xku_reject(x, required_xku)) {
-    return 0;
-  }
-
-  // Check key usages only on the end-entity certificate.
-  return ca || !ku_reject(x, required_kus);
-}
-
-static int check_purpose_ssl_client(const X509_PURPOSE *xp, const X509 *x,
-                                    int ca) {
-  // We need to do digital signatures or key agreement.
-  //
-  // TODO(davidben): We do not implement any TLS client certificate modes based
-  // on key agreement.
-  return check_purpose(x, ca, XKU_SSL_CLIENT,
-                       X509v3_KU_DIGITAL_SIGNATURE | X509v3_KU_KEY_AGREEMENT);
-}
-
-// Key usage needed for TLS/SSL server: digital signature, encipherment or
-// key agreement. The ssl code can check this more thoroughly for individual
-// key types.
-#define X509v3_KU_TLS                                         \
-  (X509v3_KU_DIGITAL_SIGNATURE | X509v3_KU_KEY_ENCIPHERMENT | \
-   X509v3_KU_KEY_AGREEMENT)
-
-static int check_purpose_ssl_server(const X509_PURPOSE *xp, const X509 *x,
-                                    int ca) {
-  return check_purpose(x, ca, XKU_SSL_SERVER, X509v3_KU_TLS);
-}
-
-static int check_purpose_ns_ssl_server(const X509_PURPOSE *xp, const X509 *x,
-                                       int ca) {
-  // We need to encipher or Netscape complains.
-  return check_purpose(x, ca, XKU_SSL_SERVER, X509v3_KU_KEY_ENCIPHERMENT);
-}
-
-static int check_purpose_smime_sign(const X509_PURPOSE *xp, const X509 *x,
-                                    int ca) {
-  return check_purpose(x, ca, XKU_SMIME,
-                       X509v3_KU_DIGITAL_SIGNATURE | X509v3_KU_NON_REPUDIATION);
-}
-
-static int check_purpose_smime_encrypt(const X509_PURPOSE *xp, const X509 *x,
-                                       int ca) {
-  return check_purpose(x, ca, XKU_SMIME, X509v3_KU_KEY_ENCIPHERMENT);
-}
-
-static int check_purpose_crl_sign(const X509_PURPOSE *xp, const X509 *x,
-                                  int ca) {
-  return check_purpose(x, ca, /*required_xku=*/0, X509v3_KU_CRL_SIGN);
-}
-
-static int check_purpose_timestamp_sign(const X509_PURPOSE *xp, const X509 *x,
-                                        int ca) {
-  if (ca) {
-    return 1;
-  }
-
-  // Check the optional key usage field:
-  // if Key Usage is present, it must be one of digitalSignature
-  // and/or nonRepudiation (other values are not consistent and shall
-  // be rejected).
-  const auto *impl = FromOpaque(x);
-  if ((impl->ex_flags & EXFLAG_KUSAGE) &&
-      ((impl->ex_kusage &
-        ~(X509v3_KU_NON_REPUDIATION | X509v3_KU_DIGITAL_SIGNATURE)) ||
-       !(impl->ex_kusage &
-         (X509v3_KU_NON_REPUDIATION | X509v3_KU_DIGITAL_SIGNATURE)))) {
-    return 0;
-  }
-
-  // Only time stamp key usage is permitted and it's required.
-  //
-  // TODO(davidben): Should we check EKUs up the chain like the other cases?
-  if (!(impl->ex_flags & EXFLAG_XKUSAGE) || impl->ex_xkusage != XKU_TIMESTAMP) {
-    return 0;
-  }
-
-  // Extended Key Usage MUST be critical
-  int i_ext = X509_get_ext_by_NID(x, NID_ext_key_usage, -1);
-  if (i_ext >= 0) {
-    const X509_EXTENSION *ext = X509_get_ext(x, i_ext);
-    if (!X509_EXTENSION_get_critical(ext)) {
-      return 0;
-    }
-  }
-
-  return 1;
-}
-
-static int no_check(const X509_PURPOSE *xp, const X509 *x, int ca) { return 1; }
 
 int X509_check_issued(const X509 *issuer, const X509 *subject) {
   if (X509_NAME_cmp(X509_get_subject_name(issuer),
                     X509_get_issuer_name(subject))) {
     return X509_V_ERR_SUBJECT_ISSUER_MISMATCH;
   }
-  if (!x509v3_cache_extensions(const_cast<X509 *>(issuer)) ||
-      !x509v3_cache_extensions(const_cast<X509 *>(subject))) {
+  if (!x509v3_cache_extensions(issuer) ||
+      !x509v3_cache_extensions(subject)) {
     return X509_V_ERR_UNSPECIFIED;
   }
 
@@ -528,7 +485,7 @@ int bssl::X509_check_akid(const X509 *issuer, const AUTHORITY_KEYID *akid) {
   return X509_V_OK;
 }
 
-uint32_t X509_get_extension_flags(X509 *x) {
+uint32_t X509_get_extension_flags(const X509 *x) {
   // Ignore the return value. On failure, `impl->ex_flags` will include
   // `EXFLAG_INVALID`.
   x509v3_cache_extensions(x);
@@ -536,7 +493,7 @@ uint32_t X509_get_extension_flags(X509 *x) {
   return impl->ex_flags;
 }
 
-uint32_t X509_get_key_usage(X509 *x) {
+uint32_t X509_get_key_usage(const X509 *x) {
   if (!x509v3_cache_extensions(x)) {
     return 0;
   }
@@ -550,7 +507,7 @@ uint32_t X509_get_key_usage(X509 *x) {
   return UINT32_MAX;
 }
 
-uint32_t X509_get_extended_key_usage(X509 *x) {
+uint32_t X509_get_extended_key_usage(const X509 *x) {
   if (!x509v3_cache_extensions(x)) {
     return 0;
   }
@@ -563,7 +520,7 @@ uint32_t X509_get_extended_key_usage(X509 *x) {
   return UINT32_MAX;
 }
 
-const ASN1_OCTET_STRING *X509_get0_subject_key_id(X509 *x509) {
+const ASN1_OCTET_STRING *X509_get0_subject_key_id(const X509 *x509) {
   if (!x509v3_cache_extensions(x509)) {
     return nullptr;
   }
@@ -571,7 +528,7 @@ const ASN1_OCTET_STRING *X509_get0_subject_key_id(X509 *x509) {
   return impl->skid.get();
 }
 
-const ASN1_OCTET_STRING *X509_get0_authority_key_id(X509 *x509) {
+const ASN1_OCTET_STRING *X509_get0_authority_key_id(const X509 *x509) {
   if (!x509v3_cache_extensions(x509)) {
     return nullptr;
   }
@@ -579,7 +536,7 @@ const ASN1_OCTET_STRING *X509_get0_authority_key_id(X509 *x509) {
   return impl->akid != nullptr ? impl->akid->keyid : nullptr;
 }
 
-const GENERAL_NAMES *X509_get0_authority_issuer(X509 *x509) {
+const GENERAL_NAMES *X509_get0_authority_issuer(const X509 *x509) {
   if (!x509v3_cache_extensions(x509)) {
     return nullptr;
   }
@@ -587,7 +544,7 @@ const GENERAL_NAMES *X509_get0_authority_issuer(X509 *x509) {
   return impl->akid != nullptr ? impl->akid->issuer : nullptr;
 }
 
-const ASN1_INTEGER *X509_get0_authority_serial(X509 *x509) {
+const ASN1_INTEGER *X509_get0_authority_serial(const X509 *x509) {
   auto *impl = FromOpaque(x509);
   if (!x509v3_cache_extensions(impl)) {
     return nullptr;
@@ -595,7 +552,7 @@ const ASN1_INTEGER *X509_get0_authority_serial(X509 *x509) {
   return impl->akid != nullptr ? impl->akid->serial : nullptr;
 }
 
-long X509_get_pathlen(X509 *x509) {
+long X509_get_pathlen(const X509 *x509) {
   auto *impl = FromOpaque(x509);
   if (!x509v3_cache_extensions(x509) || (impl->ex_flags & EXFLAG_BCONS) == 0) {
     return -1;

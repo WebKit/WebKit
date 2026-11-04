@@ -373,7 +373,7 @@ func (hs *serverHandshakeState) readClientHello() error {
 		return fmt.Errorf("tls: client included signature_algorithms before TLS 1.2")
 	}
 
-	if config.Bugs.ExpectGREASE && !containsSigAlgsGREASE(hs.clientHello.signatureAlgorithms) {
+	if config.Bugs.ExpectGREASE && !containsGREASE(hs.clientHello.signatureAlgorithms) {
 		return fmt.Errorf("tls: no GREASE signature_algorithms value found")
 	}
 

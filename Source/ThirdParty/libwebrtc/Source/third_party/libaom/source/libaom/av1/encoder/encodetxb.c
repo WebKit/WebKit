@@ -62,6 +62,7 @@ void av1_alloc_txb_buf(AV1_COMP *cpi) {
   // TODO(jingning): This should be further reduced.
   CHECK_MEM_ERROR(cm, cpi->coeff_buffer_base,
                   aom_malloc(sizeof(*cpi->coeff_buffer_base) * size));
+  cpi->coeff_buffer_stride = num_sb_cols;
   if (sizeof(*coeff_buf_pool->tcoeff) > SIZE_MAX / num_tcoeffs) {
     aom_internal_error(cm->error, AOM_CODEC_ERROR,
                        "A multiplication would overflow size_t");
@@ -105,6 +106,7 @@ void av1_free_txb_buf(AV1_COMP *cpi) {
   CoeffBufferPool *coeff_buf_pool = &cpi->coeff_buffer_pool;
   aom_free(cpi->coeff_buffer_base);
   cpi->coeff_buffer_base = NULL;
+  cpi->coeff_buffer_stride = 0;
   aom_free(coeff_buf_pool->tcoeff);
   coeff_buf_pool->tcoeff = NULL;
   aom_free(coeff_buf_pool->eobs);
@@ -908,12 +910,7 @@ CB_COEFF_BUFFER *av1_get_cb_coeff_buffer(const struct AV1_COMP *cpi, int mi_row,
                                          int mi_col) {
   const AV1_COMMON *const cm = &cpi->common;
   const int mib_size_log2 = cm->seq_params->mib_size_log2;
-  int mi_cols = cm->mi_params.mi_cols;
-  if (cpi->oxcf.frm_dim_cfg.forced_max_frame_width) {
-    mi_cols = size_in_mi(cpi->oxcf.frm_dim_cfg.forced_max_frame_width);
-  }
-  const int stride = CEIL_POWER_OF_TWO(mi_cols, cm->seq_params->mib_size_log2);
-  const int offset =
-      (mi_row >> mib_size_log2) * stride + (mi_col >> mib_size_log2);
+  const int offset = (mi_row >> mib_size_log2) * cpi->coeff_buffer_stride +
+                     (mi_col >> mib_size_log2);
   return cpi->coeff_buffer_base + offset;
 }

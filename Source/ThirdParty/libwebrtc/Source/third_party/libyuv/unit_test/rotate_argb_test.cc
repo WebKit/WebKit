@@ -12,6 +12,7 @@
 
 #include "../unit_test/unit_test.h"
 #include "libyuv/cpu_id.h"
+#include "libyuv/planar_functions.h"
 #include "libyuv/rotate_argb.h"
 
 namespace libyuv {
@@ -117,6 +118,20 @@ TEST_F(LibYUVRotateTest, ARGBRotate270_Opt) {
   ARGBTestRotate(benchmark_width_, benchmark_height_, benchmark_height_,
                  benchmark_width_, kRotate270, benchmark_iterations_,
                  disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, ARGBRotate90_Odd) {
+  ARGBTestRotate(benchmark_width_ + 1, benchmark_height_ + 1,
+                 benchmark_height_ + 1, benchmark_width_ + 1, kRotate90,
+                 benchmark_iterations_, disable_cpu_flags_,
+                 benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, ARGBRotate270_Odd) {
+  ARGBTestRotate(benchmark_width_ + 1, benchmark_height_ + 1,
+                 benchmark_height_ + 1, benchmark_width_ + 1, kRotate270,
+                 benchmark_iterations_, disable_cpu_flags_,
+                 benchmark_cpu_info_);
 }
 
 static void TestRotatePlane(int src_width,
@@ -249,15 +264,15 @@ static void TestRotatePlane_16(int src_width,
   int src_plane_size = src_stride * abs(src_height);
   align_buffer_page_end_16(src, src_plane_size);
   for (int i = 0; i < src_plane_size; ++i) {
-    src[i] = fastrand() & 0xff;
+    src[i] = fastrand() & 0xffff;
   }
 
   int dst_stride = dst_width;
   int dst_plane_size = dst_stride * dst_height;
   align_buffer_page_end_16(dst_c, dst_plane_size);
   align_buffer_page_end_16(dst_opt, dst_plane_size);
-  memset(dst_c, 2, dst_plane_size);
-  memset(dst_opt, 3, dst_plane_size);
+  memset(dst_c, 2, dst_plane_size * 2);
+  memset(dst_opt, 3, dst_plane_size * 2);
 
   MaskCpuFlags(disable_cpu_flags);  // Disable all CPU optimization.
   RotatePlane_16(src, src_stride, dst_c, dst_stride, src_width, src_height,
@@ -329,6 +344,98 @@ TEST_F(LibYUVRotateTest, RotatePlane270_16_Odd) {
                      benchmark_height_ + 1, benchmark_width_ + 1, kRotate270,
                      benchmark_iterations_, disable_cpu_flags_,
                      benchmark_cpu_info_);
+}
+
+static void TestRotatePlane16_SplitMergeUV(int src_width,
+                                           int src_height,
+                                           int dst_width,
+                                           int dst_height,
+                                           libyuv::RotationMode mode,
+                                           int benchmark_cpu_info) {
+  if (src_width < 1) {
+    src_width = 1;
+  }
+  if (src_height < 1) {
+    src_height = 1;
+  }
+  if (dst_width < 1) {
+    dst_width = 1;
+  }
+  if (dst_height < 1) {
+    dst_height = 1;
+  }
+  const int src_pixels = src_width * src_height;
+  const int dst_pixels = dst_width * dst_height;
+  align_buffer_page_end(src_16, src_pixels * 2);
+  align_buffer_page_end(dst_16, dst_pixels * 2);
+  align_buffer_page_end(ref_16, dst_pixels * 2);
+  align_buffer_page_end(src_lo, src_pixels);
+  align_buffer_page_end(src_hi, src_pixels);
+  align_buffer_page_end(dst_lo, dst_pixels);
+  align_buffer_page_end(dst_hi, dst_pixels);
+  for (int i = 0; i < src_pixels * 2; ++i) {
+    src_16[i] = fastrand() & 0xff;
+  }
+  memset(dst_16, 2, dst_pixels * 2);
+  memset(ref_16, 3, dst_pixels * 2);
+
+  MaskCpuFlags(benchmark_cpu_info);
+  SplitUVPlane(src_16, src_width * 2, src_lo, src_width, src_hi, src_width,
+               src_width, src_height);
+  RotatePlane(src_lo, src_width, dst_lo, dst_width, src_width, src_height,
+              mode);
+  RotatePlane(src_hi, src_width, dst_hi, dst_width, src_width, src_height,
+              mode);
+  MergeUVPlane(dst_lo, dst_width, dst_hi, dst_width, ref_16, dst_width * 2,
+               dst_width, dst_height);
+
+  I410Rotate(reinterpret_cast<const uint16_t*>(src_16), src_width,
+             reinterpret_cast<const uint16_t*>(src_16), src_width,
+             reinterpret_cast<const uint16_t*>(src_16), src_width,
+             reinterpret_cast<uint16_t*>(dst_16), dst_width,
+             reinterpret_cast<uint16_t*>(dst_16), dst_width,
+             reinterpret_cast<uint16_t*>(dst_16), dst_width, src_width,
+             src_height, mode);
+
+  EXPECT_EQ(0, memcmp(ref_16, dst_16, dst_pixels * 2));
+
+  free_aligned_buffer_page_end(dst_hi);
+  free_aligned_buffer_page_end(dst_lo);
+  free_aligned_buffer_page_end(src_hi);
+  free_aligned_buffer_page_end(src_lo);
+  free_aligned_buffer_page_end(ref_16);
+  free_aligned_buffer_page_end(dst_16);
+  free_aligned_buffer_page_end(src_16);
+}
+
+TEST_F(LibYUVRotateTest, RotatePlane16_SplitMergeUV_Opt) {
+  TestRotatePlane16_SplitMergeUV(benchmark_width_, benchmark_height_,
+                                 benchmark_width_, benchmark_height_, kRotate0,
+                                 benchmark_cpu_info_);
+  TestRotatePlane16_SplitMergeUV(benchmark_width_, benchmark_height_,
+                                 benchmark_height_, benchmark_width_, kRotate90,
+                                 benchmark_cpu_info_);
+  TestRotatePlane16_SplitMergeUV(benchmark_width_, benchmark_height_,
+                                 benchmark_width_, benchmark_height_,
+                                 kRotate180, benchmark_cpu_info_);
+  TestRotatePlane16_SplitMergeUV(benchmark_width_, benchmark_height_,
+                                 benchmark_height_, benchmark_width_,
+                                 kRotate270, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, RotatePlane16_SplitMergeUV_Odd) {
+  TestRotatePlane16_SplitMergeUV(benchmark_width_ + 3, benchmark_height_ + 5,
+                                 benchmark_width_ + 3, benchmark_height_ + 5,
+                                 kRotate0, benchmark_cpu_info_);
+  TestRotatePlane16_SplitMergeUV(benchmark_width_ + 3, benchmark_height_ + 5,
+                                 benchmark_height_ + 5, benchmark_width_ + 3,
+                                 kRotate90, benchmark_cpu_info_);
+  TestRotatePlane16_SplitMergeUV(benchmark_width_ + 3, benchmark_height_ + 5,
+                                 benchmark_width_ + 3, benchmark_height_ + 5,
+                                 kRotate180, benchmark_cpu_info_);
+  TestRotatePlane16_SplitMergeUV(benchmark_width_ + 3, benchmark_height_ + 5,
+                                 benchmark_height_ + 5, benchmark_width_ + 3,
+                                 kRotate270, benchmark_cpu_info_);
 }
 
 }  // namespace libyuv

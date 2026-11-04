@@ -29,8 +29,7 @@ rtc_library("repeating_task") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("repeating_task_unittests") {
-    testonly = true
+  rtc_cc_test("repeating_task_unittest") {
     sources = [ "repeating_task_unittest.cc" ]
     deps = [
       ":repeating_task",

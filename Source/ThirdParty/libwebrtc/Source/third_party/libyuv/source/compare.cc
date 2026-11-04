@@ -31,6 +31,7 @@ extern "C" {
 LIBYUV_API
 uint32_t HashDjb2(const uint8_t* src, uint64_t count, uint32_t seed) {
   const int kBlockSize = 1 << 15;  // 32768;
+  int simd_size = 16;  // SIMD for multiple of 16, and C for remainder.
   int remainder;
   uint32_t (*HashDjb2_SSE)(const uint8_t* src, int count, uint32_t seed) =
       HashDjb2_C;
@@ -42,11 +43,23 @@ uint32_t HashDjb2(const uint8_t* src, uint64_t count, uint32_t seed) {
 #if defined(HAS_HASHDJB2_AVX2)
   if (TestCpuFlag(kCpuHasAVX2)) {
     HashDjb2_SSE = HashDjb2_AVX2;
+    simd_size = 32;
   }
 #endif
 #if defined(HAS_HASHDJB2_NEON)
   if (TestCpuFlag(kCpuHasNEON)) {
     HashDjb2_SSE = HashDjb2_NEON;
+  }
+#endif
+#if defined(HAS_HASHDJB2_AVX512BW)
+  if (TestCpuFlag(kCpuHasAVX512BW)) {
+    HashDjb2_SSE = HashDjb2_AVX512BW;
+    simd_size = 1;  // Any count.
+  }
+#endif
+#if defined(HAS_HASHDJB2_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD)) {
+    HashDjb2_SSE = HashDjb2_WASMSIMD;
   }
 #endif
 
@@ -55,13 +68,13 @@ uint32_t HashDjb2(const uint8_t* src, uint64_t count, uint32_t seed) {
     src += kBlockSize;
     count -= kBlockSize;
   }
-  remainder = (int)count & ~15;
+  remainder = (int)count & ~(simd_size - 1);
   if (remainder) {
     seed = HashDjb2_SSE(src, remainder, seed);
     src += remainder;
     count -= remainder;
   }
-  remainder = (int)count & 15;
+  remainder = (int)count & (simd_size - 1);
   if (remainder) {
     seed = HashDjb2_C(src, remainder, seed);
   }
@@ -130,9 +143,8 @@ uint64_t ComputeHammingDistance(const uint8_t* src_a,
                                 const uint8_t* src_b,
                                 int count) {
   const int kBlockSize = 1 << 15;  // 32768;
-  const int kSimdSize = 64;
-  // SIMD for multiple of 64, and C for remainder
-  int remainder = count & (kBlockSize - 1) & ~(kSimdSize - 1);
+  int simd_size = 64;  // SIMD for multiple of 64, and C for remainder.
+  int remainder;
   uint64_t diff = 0;
   int i;
   uint32_t (*HammingDistance)(const uint8_t* src_a, const uint8_t* src_b,
@@ -162,6 +174,18 @@ uint64_t ComputeHammingDistance(const uint8_t* src_a,
     HammingDistance = HammingDistance_AVX2;
   }
 #endif
+#if defined(HAS_HAMMINGDISTANCE_AVX512BW)
+  if (TestCpuFlag(kCpuHasAVX512BW)) {
+    HammingDistance = HammingDistance_AVX512BW;
+    simd_size = 1;  // Any count.
+  }
+#endif
+#if defined(HAS_HAMMINGDISTANCE_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD)) {
+    HammingDistance = HammingDistance_WASMSIMD;
+  }
+#endif
+  remainder = count & (kBlockSize - 1) & ~(simd_size - 1);
 
 #ifdef _OPENMP
 #pragma omp parallel for reduction(+ : diff)
@@ -176,7 +200,7 @@ uint64_t ComputeHammingDistance(const uint8_t* src_a,
     src_a += remainder;
     src_b += remainder;
   }
-  remainder = count & (kSimdSize - 1);
+  remainder = count & (simd_size - 1);
   if (remainder) {
     diff += HammingDistance_C(src_a, src_b, remainder);
   }
@@ -192,7 +216,8 @@ uint64_t ComputeSumSquareError(const uint8_t* src_a,
   // Up to 65536 of those can be summed and remain within a uint32_t.
   // After each block of 65536 pixels, accumulate into a uint64_t.
   const int kBlockSize = 65536;
-  int remainder = count & (kBlockSize - 1) & ~31;
+  int simd_size = 32;  // SIMD for multiple of 32, and C for remainder.
+  int remainder;
   uint64_t sse = 0;
   int i;
   uint32_t (*SumSquareError)(const uint8_t* src_a, const uint8_t* src_b,
@@ -219,6 +244,18 @@ uint64_t ComputeSumSquareError(const uint8_t* src_a,
     SumSquareError = SumSquareError_AVX2;
   }
 #endif
+#if defined(HAS_SUMSQUAREERROR_AVX512BW)
+  if (TestCpuFlag(kCpuHasAVX512BW)) {
+    SumSquareError = SumSquareError_AVX512BW;
+    simd_size = 1;  // Any count.
+  }
+#endif
+#if defined(HAS_SUMSQUAREERROR_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD)) {
+    SumSquareError = SumSquareError_WASMSIMD;
+  }
+#endif
+  remainder = count & (kBlockSize - 1) & ~(simd_size - 1);
 #ifdef _OPENMP
 #pragma omp parallel for reduction(+ : sse)
 #endif
@@ -232,7 +269,7 @@ uint64_t ComputeSumSquareError(const uint8_t* src_a,
     src_a += remainder;
     src_b += remainder;
   }
-  remainder = count & 31;
+  remainder = count & (simd_size - 1);
   if (remainder) {
     sse += SumSquareError_C(src_a, src_b, remainder);
   }

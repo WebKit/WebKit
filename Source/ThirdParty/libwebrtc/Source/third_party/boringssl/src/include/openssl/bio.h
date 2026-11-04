@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_BIO_H
 #define OPENSSL_HEADER_BIO_H
 
-#include <openssl/base.h>   // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
 
 #include <stdio.h>  // For FILE
 
@@ -64,6 +64,10 @@ OPENSSL_EXPORT void BIO_vfree(BIO *bio);
 
 // BIO_up_ref increments the reference count of `bio` and returns one.
 OPENSSL_EXPORT int BIO_up_ref(BIO *bio);
+
+// BIO_dup_ref increments the reference count of `bio` and returns the same
+// handle.
+OPENSSL_EXPORT BIO *BIO_dup_ref(const BIO *bio);
 
 
 // Basic I/O.
@@ -613,18 +617,20 @@ OPENSSL_EXPORT int BIO_do_connect(BIO *bio);
 
 #define BIO_CTRL_DGRAM_QUERY_MTU 40  // as kernel for current MTU
 
-#define BIO_CTRL_DGRAM_SET_MTU 42 /* set cached value for  MTU. want to use
-                                     this if asking the kernel fails */
+#define BIO_CTRL_DGRAM_SET_MTU                 \
+  42 /* set cached value for  MTU. want to use \
+        this if asking the kernel fails */
 
-#define BIO_CTRL_DGRAM_MTU_EXCEEDED 43 /* check whether the MTU was exceed in
-                                          the previous write operation. */
+#define BIO_CTRL_DGRAM_MTU_EXCEEDED         \
+  43 /* check whether the MTU was exceed in \
+        the previous write operation. */
 
 // BIO_CTRL_DGRAM_SET_NEXT_TIMEOUT is unsupported as it is unused by consumers
 // and depends on `timeval`, which is not 2038-clean on all platforms.
 
-#define BIO_CTRL_DGRAM_GET_PEER           46
+#define BIO_CTRL_DGRAM_GET_PEER 46
 
-#define BIO_CTRL_DGRAM_GET_FALLBACK_MTU   47
+#define BIO_CTRL_DGRAM_GET_FALLBACK_MTU 47
 
 
 // BIO Pairs.
@@ -1031,7 +1037,7 @@ extern "C++" {
 BSSL_NAMESPACE_BEGIN
 
 BORINGSSL_MAKE_DELETER(BIO, BIO_free)
-BORINGSSL_MAKE_UP_REF(BIO, BIO_up_ref)
+BORINGSSL_MAKE_UP_REF(BIO, BIO_dup_ref)
 BORINGSSL_MAKE_DELETER(BIO_METHOD, BIO_meth_free)
 
 BSSL_NAMESPACE_END

@@ -41,7 +41,6 @@ class ProtectionBitrateCalculatorTest : public ::testing::Test {
       *sent_fec_rate_bps = fec_rate_bps_;
       return 0;
     }
-    void SetRetransmissionMode(int /* retransmission_mode */) override {}
 
     uint32_t fec_rate_bps_ = 0;
     uint32_t nack_rate_bps_ = 0;

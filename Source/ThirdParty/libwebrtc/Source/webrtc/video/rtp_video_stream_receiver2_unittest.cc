@@ -684,7 +684,7 @@ TEST_F(RtpVideoStreamReceiver2Test,
 
 TEST_F(RtpVideoStreamReceiver2Test, GenericKeyFrame) {
   RtpPacketReceived rtp_packet;
-  CopyOnWriteBuffer data({'1', '2', '3', '4'});
+  CopyOnWriteBuffer data("1234");
   rtp_packet.SetPayloadType(kPayloadType);
   rtp_packet.SetSequenceNumber(1);
   RTPVideoHeader video_header =
@@ -713,7 +713,7 @@ TEST_F(RtpVideoStreamReceiver2Test, PacketInfoIsPropagatedIntoVideoFrames) {
   extension_map.Register<AbsoluteCaptureTimeExtension>(kId0);
   RtpPacketReceived rtp_packet(&extension_map);
   rtp_packet.SetPayloadType(kPayloadType);
-  CopyOnWriteBuffer data({'1', '2', '3', '4'});
+  CopyOnWriteBuffer data("1234");
   rtp_packet.SetSequenceNumber(1);
   rtp_packet.SetTimestamp(1);
   rtp_packet.SetSsrc(kSsrc);
@@ -743,7 +743,7 @@ TEST_F(RtpVideoStreamReceiver2Test,
   RtpPacketReceived rtp_packet(&extension_map);
   rtp_packet.SetPayloadType(kPayloadType);
 
-  CopyOnWriteBuffer data({'1', '2', '3', '4'});
+  CopyOnWriteBuffer data("1234");
   uint16_t sequence_number = 1;
   uint32_t rtp_timestamp = 1;
   rtp_packet.SetSequenceNumber(sequence_number);
@@ -916,6 +916,45 @@ TEST_F(RtpVideoStreamReceiver2Test,
   // reordering event into a stream reset.
   inject(30'000, 80'000, /*keyframe=*/false);
   inject(60'002, 96'000, /*keyframe=*/false);
+  EXPECT_THAT(rtcp_packet_parser_.pli()->num_packets(), Eq(0));
+}
+
+// The packet with the newest sequence number does not necessarily have the
+// newest RTP timestamp. A keyframe with an already received RTP timestamp and a
+// sequence number far behind the newest one must not end the receive epoch,
+// since it would then be delivered again with a new frame id.
+TEST_F(RtpVideoStreamReceiver2Test,
+       DoesNotResetForKeyframeWithAlreadyReceivedTimestamp) {
+  const CopyOnWriteBuffer data("1234");
+  mock_on_complete_frame_callback_.AppendExpectedBitstream(data);
+
+  auto inject = [&](uint16_t seq, uint32_t rtp_timestamp, bool keyframe) {
+    RtpPacketReceived rtp_packet;
+    rtp_packet.SetPayloadType(kPayloadType);
+    rtp_packet.SetSequenceNumber(seq);
+    rtp_packet.SetTimestamp(rtp_timestamp);
+    rtp_packet.SetSsrc(kSsrc);
+    rtp_video_stream_receiver_->OnReceivedPayloadDataForTesting(
+        data, rtp_packet,
+        GetGenericVideoHeader(keyframe ? VideoFrameType::kVideoFrameKey
+                                       : VideoFrameType::kVideoFrameDelta));
+  };
+
+  std::vector<uint32_t> complete_frame_timestamps;
+  EXPECT_CALL(mock_on_complete_frame_callback_, DoOnCompleteFrame)
+      .WillRepeatedly([&](EncodedFrame* frame) {
+        complete_frame_timestamps.push_back(frame->RtpTimestamp());
+        rtp_video_stream_receiver_->FrameDecoded(frame->Id());
+      });
+
+  inject(60'000, 90'000, /*keyframe=*/true);
+  // The newest sequence number arrives with an older RTP timestamp.
+  inject(60'001, 87'000, /*keyframe=*/false);
+  // A copy of the first keyframe, far behind the newest sequence number.
+  inject(57'000, 90'000, /*keyframe=*/true);
+  inject(60'002, 93'000, /*keyframe=*/false);
+
+  EXPECT_THAT(complete_frame_timestamps, ElementsAre(90'000, 87'000, 93'000));
   EXPECT_THAT(rtcp_packet_parser_.pli()->num_packets(), Eq(0));
 }
 
@@ -1135,7 +1174,7 @@ TEST_F(RtpVideoStreamReceiver2Test,
 TEST_F(RtpVideoStreamReceiver2Test, GenericKeyFrameBitstreamError) {
   RtpPacketReceived rtp_packet;
   rtp_packet.SetPayloadType(kPayloadType);
-  CopyOnWriteBuffer data({'1', '2', '3', '4'});
+  CopyOnWriteBuffer data("1234");
   rtp_packet.SetSequenceNumber(1);
   RTPVideoHeader video_header =
       GetGenericVideoHeader(VideoFrameType::kVideoFrameKey);
@@ -1239,7 +1278,7 @@ TEST_P(RtpVideoStreamReceiver2TestH264, OutOfBandFmtpSpsPps) {
   video_header.is_last_packet_in_frame = true;
   video_header.codec = kVideoCodecH264;
   video_header.frame_type = VideoFrameType::kVideoFrameKey;
-  CopyOnWriteBuffer data({'1', '2', '3'});
+  CopyOnWriteBuffer data("123");
   mock_on_complete_frame_callback_.AppendExpectedBitstream(kH264StartCode);
   mock_on_complete_frame_callback_.AppendExpectedBitstream(data);
   // IDR frames without SPS/PPS are not returned by
@@ -1335,7 +1374,7 @@ INSTANTIATE_TEST_SUITE_P(PaddingInMediaStreamAndH26xPacketBuffer,
 TEST_P(RtpVideoStreamReceiver2TestPadding, PaddingInMediaStream) {
   RtpPacketReceived rtp_packet;
   RTPVideoHeader video_header = GetDefaultH264VideoHeader();
-  CopyOnWriteBuffer data({'1', '2', '3'});
+  CopyOnWriteBuffer data("123");
   rtp_packet.SetPayloadType(kPayloadType);
   rtp_packet.SetSequenceNumber(2);
   video_header.is_first_packet_in_frame = true;
@@ -1428,7 +1467,7 @@ TEST_P(RtpVideoStreamReceiver2TestPadding, EmptyPaddingInMediaStream) {
 TEST_F(RtpVideoStreamReceiver2Test, RequestKeyframeIfFirstFrameIsDelta) {
   RtpPacketReceived rtp_packet;
   rtp_packet.SetPayloadType(kPayloadType);
-  CopyOnWriteBuffer data({'1', '2', '3', '4'});
+  CopyOnWriteBuffer data("1234");
   rtp_packet.SetSequenceNumber(1);
   RTPVideoHeader video_header =
       GetGenericVideoHeader(VideoFrameType::kVideoFrameDelta);
@@ -1443,7 +1482,7 @@ TEST_F(RtpVideoStreamReceiver2Test, RequestKeyframeWhenPacketBufferGetsFull) {
 
   RtpPacketReceived rtp_packet;
   rtp_packet.SetPayloadType(kPayloadType);
-  CopyOnWriteBuffer data({'1', '2', '3', '4'});
+  CopyOnWriteBuffer data("1234");
   RTPVideoHeader video_header =
       GetGenericVideoHeader(VideoFrameType::kVideoFrameDelta);
   // Incomplete frames so that the packet buffer is filling up.
@@ -1991,7 +2030,7 @@ TEST_F(RtpVideoStreamReceiver2Test, TransformFrame) {
 
   RtpPacketReceived rtp_packet;
   rtp_packet.SetPayloadType(kPayloadType);
-  CopyOnWriteBuffer data({'1', '2', '3', '4'});
+  CopyOnWriteBuffer data("1234");
   rtp_packet.SetSequenceNumber(1);
   RTPVideoHeader video_header =
       GetGenericVideoHeader(VideoFrameType::kVideoFrameKey);
@@ -2027,7 +2066,7 @@ TEST_F(RtpVideoStreamReceiver2Test, TransformFrameWithAbsoluteCaptureTime) {
   extension_map.Register<AbsoluteCaptureTimeExtension>(kId0);
   RtpPacketReceived rtp_packet(&extension_map);
   rtp_packet.SetPayloadType(kPayloadType);
-  CopyOnWriteBuffer data({'1', '2', '3', '4'});
+  CopyOnWriteBuffer data("1234");
   rtp_packet.SetSequenceNumber(1);
 
   Timestamp capture_time = Timestamp::Millis(1234);
@@ -2088,7 +2127,7 @@ INSTANTIATE_TEST_SUITE_P(PlayoutDelay,
                          Values(DefaultBehavior(), OverridePlayoutDelay()));
 
 TEST_P(RtpVideoStreamReceiver2TestPlayoutDelay, PlayoutDelay) {
-  CopyOnWriteBuffer payload_data({'1', '2', '3', '4'});
+  CopyOnWriteBuffer payload_data("1234");
   RtpHeaderExtensionMap extension_map;
   extension_map.Register<PlayoutDelayLimits>(RtpHeaderExtensionId(1));
   RtpPacketToSend packet_to_send(&extension_map);

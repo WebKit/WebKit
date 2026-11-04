@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_PKCS7_H
 #define OPENSSL_HEADER_PKCS7_H
 
-#include <openssl/base.h>   // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
 
 #include <openssl/stack.h>
 
@@ -59,8 +59,8 @@ OPENSSL_EXPORT int PKCS7_bundle_raw_certificates(
 
 // PKCS7_bundle_certificates behaves like `PKCS7_bundle_raw_certificates` but
 // takes `X509` objects as input.
-OPENSSL_EXPORT int PKCS7_bundle_certificates(
-    CBB *out, const STACK_OF(X509) *certs);
+OPENSSL_EXPORT int PKCS7_bundle_certificates(CBB *out,
+                                             const STACK_OF(X509) *certs);
 
 // PKCS7_get_CRLs parses a PKCS#7, SignedData structure from `cbs` and appends
 // the included CRLs to `out_crls`. It returns one on success and zero on error.
@@ -144,8 +144,7 @@ typedef struct {
 
 // d2i_PKCS7 parses a BER-encoded, PKCS#7 signed data ContentInfo structure from
 // `len` bytes at `*inp`, as described in `d2i_SAMPLE`.
-OPENSSL_EXPORT PKCS7 *d2i_PKCS7(PKCS7 **out, const uint8_t **inp,
-                                size_t len);
+OPENSSL_EXPORT PKCS7 *d2i_PKCS7(PKCS7 **out, const uint8_t **inp, size_t len);
 
 // d2i_PKCS7_bio behaves like `d2i_PKCS7` but reads the input from `bio`.  If
 // the length of the object is indefinite the full contents of `bio` are read.
@@ -215,8 +214,9 @@ OPENSSL_EXPORT int PKCS7_type_is_signedAndEnveloped(const PKCS7 *p7);
 //
 // Note this function only implements a subset of the corresponding OpenSSL
 // function. It is provided for backwards compatibility only.
-OPENSSL_EXPORT PKCS7 *PKCS7_sign(X509 *sign_cert, EVP_PKEY *pkey,
-                                 STACK_OF(X509) *certs, BIO *data, int flags);
+OPENSSL_EXPORT PKCS7 *PKCS7_sign(const X509 *sign_cert, const EVP_PKEY *pkey,
+                                 const STACK_OF(X509) *certs, BIO *data,
+                                 int flags);
 
 
 #if defined(__cplusplus)

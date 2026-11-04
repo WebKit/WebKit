@@ -24,6 +24,20 @@
 
 using namespace bssl;
 
+namespace {
+
+X509_EXTENSION *delete_ext(STACK_OF(X509_EXTENSION) **exts, int loc) {
+  X509_EXTENSION *ext = X509v3_delete_ext(*exts, loc);
+  // Empty extension lists are omitted.
+  if (*exts != nullptr && sk_X509_EXTENSION_num(*exts) == 0) {
+    sk_X509_EXTENSION_pop_free(*exts, X509_EXTENSION_free);
+    *exts = nullptr;
+  }
+  return ext;
+}
+
+}  // namespace
+
 int X509_CRL_get_ext_count(const X509_CRL *x) {
   return X509v3_get_ext_count(x->crl->extensions);
 }
@@ -43,16 +57,6 @@ int X509_CRL_get_ext_by_critical(const X509_CRL *x, int crit, int lastpos) {
 
 X509_EXTENSION *X509_CRL_get_ext(const X509_CRL *x, int loc) {
   return X509v3_get_ext(x->crl->extensions, loc);
-}
-
-static X509_EXTENSION *delete_ext(STACK_OF(X509_EXTENSION) **exts, int loc) {
-  X509_EXTENSION *ext = X509v3_delete_ext(*exts, loc);
-  // Empty extension lists are omitted.
-  if (*exts != nullptr && sk_X509_EXTENSION_num(*exts) == 0) {
-    sk_X509_EXTENSION_pop_free(*exts, X509_EXTENSION_free);
-    *exts = nullptr;
-  }
-  return ext;
 }
 
 X509_EXTENSION *X509_CRL_delete_ext(X509_CRL *x, int loc) {

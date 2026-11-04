@@ -135,6 +135,13 @@ class RefCounted {
     // ref-count variable.
     CRYPTO_refcount_inc(&references_);
   }
+
+  // Only the implementations of `FOO_dup_ref` should call these.
+  Derived *DupRefInternal() const {
+    UpRefInternal();
+    return const_cast<Derived *>(static_cast<const Derived *>(this));
+  }
+
   bool DecRefInternal() {
     if (CRYPTO_refcount_dec_and_test_zero(&references_)) {
       Derived *d = static_cast<Derived *>(this);

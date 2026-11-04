@@ -310,8 +310,8 @@ SdpMungingType DetermineCodecModification(
   MediaType media_type = last_created_media_description->type();
   // Validate codecs. We should have bailed out earlier if codecs were added
   // or removed.
-  auto last_created_codecs = last_created_media_description->codecs();
-  auto codecs_to_set = media_description_to_set->codecs();
+  const auto& last_created_codecs = last_created_media_description->codecs();
+  const auto& codecs_to_set = media_description_to_set->codecs();
   if (last_created_codecs.size() == codecs_to_set.size()) {
     for (size_t i = 0; i < last_created_codecs.size(); i++) {
       if (last_created_codecs[i] == codecs_to_set[i]) {

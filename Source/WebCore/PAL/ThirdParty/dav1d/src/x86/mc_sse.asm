@@ -8474,7 +8474,9 @@ ALIGN function_align
     mova [rsp+gprsize+0x50], m5
     psrld                m4, 16
     psrld                m5, 16
+%if notcpuflag(sse4)
     mova                m10, blendmask
+%endif
     BLENDHWDW            m4, m0 ; 6
     BLENDHWDW            m5, m1 ; 8
 %if ARCH_X86_64

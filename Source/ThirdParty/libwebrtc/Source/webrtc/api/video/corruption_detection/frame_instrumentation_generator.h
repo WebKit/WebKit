@@ -12,12 +12,10 @@
 #define API_VIDEO_CORRUPTION_DETECTION_FRAME_INSTRUMENTATION_GENERATOR_H_
 
 #include <cstdint>
-#include <memory>
 #include <optional>
 
 #include "api/video/corruption_detection/frame_instrumentation_data.h"
 #include "api/video/encoded_image.h"
-#include "api/video/video_codec_type.h"
 #include "api/video/video_frame.h"
 
 namespace webrtc {
@@ -30,10 +28,6 @@ namespace webrtc {
 // not.
 class FrameInstrumentationGenerator {
  public:
-  // TODO: bugs.webrtc.org/358039777 - Remove once downstream usage is gone.
-  static std::unique_ptr<FrameInstrumentationGenerator> Create(
-      VideoCodecType video_codec_type);
-
   virtual ~FrameInstrumentationGenerator() = default;
 
   virtual void OnCapturedFrame(VideoFrame frame) = 0;

@@ -25,13 +25,33 @@ using namespace bssl;
 
 // OCSP extensions and a couple of CRL entry extensions
 
-static int i2r_ocsp_acutoff(const X509V3_EXT_METHOD *method, void *nonce,
-                            BIO *out, int indent);
+namespace {
 
-static int i2r_ocsp_nocheck(const X509V3_EXT_METHOD *method, void *nocheck,
-                            BIO *out, int indent);
-static void *s2i_ocsp_nocheck(const X509V3_EXT_METHOD *method,
-                              const X509V3_CTX *ctx, const char *str);
+int i2r_ocsp_acutoff(const X509V3_EXT_METHOD *method, void *cutoff, BIO *bp,
+                     int ind) {
+  if (BIO_printf(bp, "%*s", ind, "") <= 0) {
+    return 0;
+  }
+  if (!ASN1_GENERALIZEDTIME_print(
+          bp, reinterpret_cast<ASN1_GENERALIZEDTIME *>(cutoff))) {
+    return 0;
+  }
+  return 1;
+}
+
+// Nocheck is just a single NULL. Don't print anything and always set it
+
+int i2r_ocsp_nocheck(const X509V3_EXT_METHOD *method, void *nocheck, BIO *out,
+                     int indent) {
+  return 1;
+}
+
+void *s2i_ocsp_nocheck(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
+                       const char *str) {
+  return ASN1_NULL_new();
+}
+
+}  // namespace
 
 const X509V3_EXT_METHOD bssl::v3_crl_invdate = {
     NID_invalidity_date,
@@ -66,27 +86,3 @@ const X509V3_EXT_METHOD bssl::v3_ocsp_nocheck = {
     nullptr,
     nullptr,
 };
-
-static int i2r_ocsp_acutoff(const X509V3_EXT_METHOD *method, void *cutoff,
-                            BIO *bp, int ind) {
-  if (BIO_printf(bp, "%*s", ind, "") <= 0) {
-    return 0;
-  }
-  if (!ASN1_GENERALIZEDTIME_print(
-          bp, reinterpret_cast<ASN1_GENERALIZEDTIME *>(cutoff))) {
-    return 0;
-  }
-  return 1;
-}
-
-// Nocheck is just a single NULL. Don't print anything and always set it
-
-static int i2r_ocsp_nocheck(const X509V3_EXT_METHOD *method, void *nocheck,
-                            BIO *out, int indent) {
-  return 1;
-}
-
-static void *s2i_ocsp_nocheck(const X509V3_EXT_METHOD *method,
-                              const X509V3_CTX *ctx, const char *str) {
-  return ASN1_NULL_new();
-}

@@ -255,10 +255,12 @@ class VideoReceiveStream2
 
   void UpdateHistograms();
   void ConfigureCodecs() RTC_RUN_ON(worker_sequence_checker_);
-  // Registers new decoders with the internal VideoReceiver2 database and
-  // deregisters any external decoder instances from `old_decoders` whose
-  // payload type or video format is no longer present in `new_decoders`.
-  void RegisterCodecsOnReceiver(const std::vector<Decoder>& old_decoders,
+  // Applies the difference between `old_decoders` and `new_decoders` to the
+  // internal VideoReceiver2 database. Removed or updated decoders, including
+  // their external decoder instances, are deregistered and added or updated
+  // decoders are registered. Unchanged decoders are left as is. Returns true if
+  // an external decoder instance was deregistered.
+  bool RegisterCodecsOnReceiver(const std::vector<Decoder>& old_decoders,
                                 const std::vector<Decoder>& new_decoders);
   std::vector<RtpVideoStreamReceiver2::ReceiveCodec> GetReceiveCodecConfig()
       const RTC_RUN_ON(worker_sequence_checker_);

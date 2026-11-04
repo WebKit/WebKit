@@ -84,8 +84,20 @@ void EVP_MD_CTX_free(EVP_MD_CTX *ctx) {
 void EVP_MD_CTX_destroy(EVP_MD_CTX *ctx) { EVP_MD_CTX_free(ctx); }
 
 int EVP_DigestFinalXOF(EVP_MD_CTX *ctx, uint8_t *out, size_t len) {
-  OPENSSL_PUT_ERROR(DIGEST, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
-  return 0;
+  if (!EVP_DigestSqueeze(ctx, out, len)) {
+    return 0;
+  }
+  EVP_MD_CTX_cleanse(ctx);
+  return 1;
+}
+
+int EVP_DigestSqueeze(EVP_MD_CTX *ctx, unsigned char *out, size_t len) {
+  if (ctx->digest->squeeze == nullptr) {
+    OPENSSL_PUT_ERROR(DIGEST, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+    return 0;
+  }
+  ctx->digest->squeeze(ctx, out, len);
+  return 1;
 }
 
 uint32_t EVP_MD_meth_get_flags(const EVP_MD *md) { return EVP_MD_flags(md); }

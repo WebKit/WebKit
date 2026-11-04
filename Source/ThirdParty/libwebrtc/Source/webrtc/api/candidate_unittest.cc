@@ -15,9 +15,11 @@
 #include <string>
 #include <utility>
 
+#include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "api/rtc_error.h"
 #include "p2p/base/p2p_constants.h"
+#include "rtc_base/crc32.h"
 #include "rtc_base/network_constants.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/ssl_fingerprint.h"
@@ -119,6 +121,21 @@ TEST(CandidateTest, Foundation) {
   ASSERT_NE(prev_protocol, c.relay_protocol());
   c.ComputeFoundation(c.address(), 1);
   EXPECT_NE(foundation1, c.foundation());
+}
+
+// The foundation must not be computable from values that are known to the
+// remote peer, such as the tie-breaker, which is sent in connectivity checks.
+// Otherwise the base address, which may be hidden behind an mDNS name, could be
+// recovered from the foundation by brute force.
+TEST(CandidateTest, FoundationDoesNotRevealBaseAddress) {
+  constexpr uint64_t kTieBreaker = 8677615914584738137u;
+  Candidate c;
+  c.set_protocol("udp");
+  c.ComputeFoundation(SocketAddress("192.168.1.42", 1234), kTieBreaker);
+  EXPECT_FALSE(c.foundation().empty());
+  // The foundation used to be the CRC32 of the following string.
+  EXPECT_NE(c.foundation(), absl::StrCat(ComputeCrc32(absl::StrCat(
+                                "host", "192.168.1.42", "udp", kTieBreaker))));
 }
 
 TEST(CandidateTest, ToCandidateAttribute) {

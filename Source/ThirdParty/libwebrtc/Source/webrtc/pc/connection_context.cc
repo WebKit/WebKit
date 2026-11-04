@@ -25,7 +25,6 @@
 #include "pc/media_factory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/internal/default_socket_server.h"
-#include "rtc_base/logging.h"
 #include "rtc_base/network.h"
 #include "rtc_base/socket_factory.h"
 #include "rtc_base/socket_server.h"
@@ -106,9 +105,7 @@ ConnectionContext::ConnectionContext(
       network_thread_(MaybeStartNetworkThread(dependencies->network_thread,
                                               owned_socket_factory_,
                                               owned_network_thread_)),
-      worker_thread_(dependencies->worker_thread != nullptr
-                         ? dependencies->worker_thread
-                         : network_thread_),
+      worker_thread_(network_thread_),
       signaling_thread_(MaybeWrapThread(dependencies->signaling_thread,
                                         wraps_current_thread_)),
       media_engine_(
@@ -129,19 +126,6 @@ ConnectionContext::ConnectionContext(
   RTC_DCHECK(worker_thread_ != nullptr);
   RTC_DCHECK(!(default_network_manager_ && network_monitor_factory_))
       << "You can't set both network_manager and network_monitor_factory.";
-
-  if (dependencies->worker_thread != nullptr &&
-      dependencies->worker_thread != network_thread_) {
-    RTC_LOG(LS_ERROR)
-        << "\n"
-        << "***************************************************************\n"
-        << "* DEPRECATION: A worker thread distinct from the network      *\n"
-        << "* thread is configured. Support for a separate worker thread  *\n"
-        << "* is being removed. Applications must stop supplying          *\n"
-        << "* PeerConnectionFactoryDependencies::worker_thread.           *\n"
-        << "* PSA: https://groups.google.com/g/discuss-webrtc/c/Fs_Hd5XNJh0\n"
-        << "***************************************************************";
-  }
 
   signaling_thread_->AllowInvokesToThread(worker_thread());
   signaling_thread_->AllowInvokesToThread(network_thread_);

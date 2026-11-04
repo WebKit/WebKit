@@ -16,9 +16,6 @@
 
 BSSL_NAMESPACE_BEGIN
 
-CertIssuerSourceStatic::CertIssuerSourceStatic() = default;
-CertIssuerSourceStatic::~CertIssuerSourceStatic() = default;
-
 void CertIssuerSourceStatic::AddCert(
     std::shared_ptr<const ParsedCertificate> cert) {
   intermediates_.insert(std::make_pair(

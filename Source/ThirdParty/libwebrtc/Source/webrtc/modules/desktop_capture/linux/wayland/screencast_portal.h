@@ -24,6 +24,7 @@
 #include "modules/portal/pipewire_utils.h"
 #include "modules/portal/portal_guard.h"
 #include "modules/portal/portal_request_response.h"
+#include "modules/portal/screencast_persist_mode.h"
 #include "modules/portal/xdg_session_details.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -57,20 +58,7 @@ class RTC_EXPORT ScreenCastPortal
     kMetadata = 0b100
   };
 
-  // Values are set based on persist mode property in
-  // xdg-desktop-portal/screencast
-  // https://github.com/flatpak/xdg-desktop-portal/blob/main/data/org.freedesktop.portal.ScreenCast.xml
-  enum class PersistMode : uint32_t {
-    // Do not allow to restore stream
-    kDoNotPersist = 0b00,
-    // The restore token is valid as long as the application is alive. It's
-    // stored in memory and revoked when the application closes its DBus
-    // connection
-    kTransient = 0b01,
-    // The restore token is stored in disk and is valid until the user manually
-    // revokes it
-    kPersistent = 0b10
-  };
+  using PersistMode = xdg_portal::ScreenCastPersistMode;
 
   // Interface that must be implemented by the ScreenCastPortal consumers.
   class PortalNotifier {
@@ -125,6 +113,7 @@ class RTC_EXPORT ScreenCastPortal
 
   // ScreenCast specific methods for stream restoration
   void SetPersistMode(ScreenCastPortal::PersistMode mode);
+  ScreenCastPortal::PersistMode persist_mode() const { return persist_mode_; }
   void SetRestoreToken(const std::string& token);
   std::string RestoreToken() const;
 

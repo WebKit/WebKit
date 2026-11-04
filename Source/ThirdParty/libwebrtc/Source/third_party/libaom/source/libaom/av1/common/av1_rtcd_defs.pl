@@ -409,6 +409,11 @@ if (aom_config("CONFIG_AV1_ENCODER") eq "yes") {
   add_proto qw/void av1_calc_indices_dim2/, "const int16_t *data, const int16_t *centroids, uint8_t *indices, int64_t *total_dist, int n, int k";
   specialize qw/av1_calc_indices_dim2 sse2 avx2 neon/;
 
+  add_proto qw/void av1_calc_centroids_dim1/, "const int16_t *data, int16_t *centroids, const uint8_t *indices, int n, int k";
+  specialize qw/av1_calc_centroids_dim1 sse2 avx2 neon/;
+
+  add_proto qw/void av1_calc_centroids_dim2/, "const int16_t *data, int16_t *centroids, const uint8_t *indices, int n, int k";
+
   # ENCODEMB INVOKE
   if (aom_config("CONFIG_AV1_HIGHBITDEPTH") eq "yes") {
     add_proto qw/int64_t av1_highbd_block_error/, "const tran_low_t *coeff, const tran_low_t *dqcoeff, intptr_t block_size, int64_t *ssz, int bd";

@@ -2140,7 +2140,6 @@ bssl::UniquePtr<SSL_CTX> TestConfig::SetupCtx(SSL_CTX *old_ctx) const {
 
   if (enable_grease) {
     SSL_CTX_set_grease_enabled(ssl_ctx.get(), 1);
-    SSL_CTX_set_grease_sigalgs_enabled(ssl_ctx.get(), 1);
   }
 
   if (permute_extensions) {

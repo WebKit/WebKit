@@ -65,6 +65,15 @@ class AudioDeviceModule : public RefCountInterface {
     uint64_t total_capture_samples_count = 0;
   };
 
+  // Minimum, average, and maximum audio capture frame processing times in
+  // nanoseconds accumulated over the interval since the previous call to
+  // GetAndResetCaptureProcessingTimeStats().
+  struct ProcessingTimeStats {
+    int32_t min_processing_time_ns = 0;
+    int32_t avg_processing_time_ns = 0;
+    int32_t max_processing_time_ns = 0;
+  };
+
  public:
   // Retrieve the currently utilized audio layer
   virtual int32_t ActiveAudioLayer(AudioLayer* audioLayer) const = 0;
@@ -167,6 +176,14 @@ class AudioDeviceModule : public RefCountInterface {
   // Used to generate RTC stats. If not implemented, RTCAudioPlayoutStats will
   // not be present in the stats.
   virtual std::optional<Stats> GetStats() const { return std::nullopt; }
+
+  // Returns and resets the accumulated audio capture frame processing time
+  // stats since the last call. Returns std::nullopt if not implemented or if no
+  // frames were recorded since the last call.
+  virtual std::optional<ProcessingTimeStats>
+      GetAndResetCaptureProcessingTimeStats() {
+    return std::nullopt;
+  }
 
 // Only supported on iOS.
 #if defined(WEBRTC_IOS)

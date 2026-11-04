@@ -74,7 +74,16 @@ ModuleRtpRtcpImpl2::RtpSenderContext::RtpSenderContext(
           env,
           config,
           &packet_history,
-          config.paced_sender ? config.paced_sender : &non_paced_sender) {}
+          config.paced_sender ? config.paced_sender : &non_paced_sender) {
+  // `packet_generator` has already read the start timestamp and the ack state
+  // from the same configuration.
+  if (config.rtp_state.has_value()) {
+    sequencer.SetRtpState(*config.rtp_state);
+  }
+  if (config.rtx_rtp_state.has_value()) {
+    sequencer.set_rtx_sequence_number(config.rtx_rtp_state->sequence_number);
+  }
+}
 
 ModuleRtpRtcpImpl2::ModuleRtpRtcpImpl2(
     const Environment& env,
@@ -151,18 +160,8 @@ ModuleRtpRtcpImpl2::~ModuleRtpRtcpImpl2() {
   rtt_update_task_.Stop();
 }
 
-void ModuleRtpRtcpImpl2::SetRtxSendStatus(int mode) {
-  rtp_sender_->packet_generator.SetRtxStatus(mode);
-}
-
 int ModuleRtpRtcpImpl2::RtxSendStatus() const {
   return rtp_sender_ ? rtp_sender_->packet_generator.RtxStatus() : kRtxOff;
-}
-
-void ModuleRtpRtcpImpl2::SetRtxSendPayloadType(int payload_type,
-                                               int associated_payload_type) {
-  rtp_sender_->packet_generator.SetRtxPayloadType(payload_type,
-                                                  associated_payload_type);
 }
 
 std::optional<uint32_t> ModuleRtpRtcpImpl2::RtxSsrc() const {
@@ -196,13 +195,6 @@ uint32_t ModuleRtpRtcpImpl2::StartTimestamp() const {
   return rtp_sender_->packet_generator.TimestampOffset();
 }
 
-// Configure start timestamp, default is a random number.
-void ModuleRtpRtcpImpl2::SetStartTimestamp(const uint32_t timestamp) {
-  rtcp_sender_.SetTimestampOffset(timestamp);
-  rtp_sender_->packet_generator.SetTimestampOffset(timestamp);
-  rtp_sender_->packet_sender.SetTimestampOffset(timestamp);
-}
-
 uint16_t ModuleRtpRtcpImpl2::SequenceNumber() const {
   RTC_DCHECK_RUN_ON(&rtp_sender_->sequencing_checker);
   return rtp_sender_->sequencer.media_sequence_number();
@@ -215,20 +207,6 @@ void ModuleRtpRtcpImpl2::SetSequenceNumber(const uint16_t seq_num) {
     rtp_sender_->sequencer.set_media_sequence_number(seq_num);
     rtp_sender_->packet_history.Clear();
   }
-}
-
-void ModuleRtpRtcpImpl2::SetRtpState(const RtpState& rtp_state) {
-  RTC_DCHECK_RUN_ON(&rtp_sender_->sequencing_checker);
-  rtp_sender_->packet_generator.SetRtpState(rtp_state);
-  rtp_sender_->sequencer.SetRtpState(rtp_state);
-  rtcp_sender_.SetTimestampOffset(rtp_state.start_timestamp);
-  rtp_sender_->packet_sender.SetTimestampOffset(rtp_state.start_timestamp);
-}
-
-void ModuleRtpRtcpImpl2::SetRtxState(const RtpState& rtp_state) {
-  RTC_DCHECK_RUN_ON(&rtp_sender_->sequencing_checker);
-  rtp_sender_->packet_generator.SetRtxRtpState(rtp_state);
-  rtp_sender_->sequencer.set_rtx_sequence_number(rtp_state.sequence_number);
 }
 
 RtpState ModuleRtpRtcpImpl2::GetRtpState() const {
@@ -254,14 +232,6 @@ uint32_t ModuleRtpRtcpImpl2::local_media_ssrc() const {
   RTC_DCHECK_RUN_ON(&rtcp_thread_checker_);
   RTC_DCHECK_EQ(rtcp_receiver_.local_media_ssrc(), rtcp_sender_.SSRC());
   return rtcp_receiver_.local_media_ssrc();
-}
-
-void ModuleRtpRtcpImpl2::SetMid(absl::string_view mid) {
-  if (rtp_sender_) {
-    rtp_sender_->packet_generator.SetMid(mid);
-  }
-  // TODO(bugs.webrtc.org/4050): If we end up supporting the MID SDES item for
-  // RTCP, this will need to be passed down to the RTCPSender also.
 }
 
 // TODO(pbos): Handle media and RTX streams separately (separate RTCP

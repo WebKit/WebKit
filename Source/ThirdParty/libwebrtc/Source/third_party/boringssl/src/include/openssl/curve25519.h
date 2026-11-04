@@ -15,7 +15,8 @@
 #ifndef OPENSSL_HEADER_CURVE25519_H
 #define OPENSSL_HEADER_CURVE25519_H
 
-#include <openssl/base.h>   // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
+#include <openssl/sha2.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -163,10 +164,11 @@ enum spake2_role_t {
 // bound into the protocol. For example MAC addresses, hostnames, usernames
 // etc. These values are not exposed and can avoid context-confusion attacks
 // when a password is shared between several devices.
-OPENSSL_EXPORT SPAKE2_CTX *SPAKE2_CTX_new(
-    enum spake2_role_t my_role,
-    const uint8_t *my_name, size_t my_name_len,
-    const uint8_t *their_name, size_t their_name_len);
+OPENSSL_EXPORT SPAKE2_CTX *SPAKE2_CTX_new(enum spake2_role_t my_role,
+                                          const uint8_t *my_name,
+                                          size_t my_name_len,
+                                          const uint8_t *their_name,
+                                          size_t their_name_len);
 
 // SPAKE2_CTX_free frees `ctx` and all the resources that it has allocated.
 OPENSSL_EXPORT void SPAKE2_CTX_free(SPAKE2_CTX *ctx);
@@ -219,6 +221,75 @@ OPENSSL_EXPORT int SPAKE2_process_msg(SPAKE2_CTX *ctx, uint8_t *out_key,
                                       size_t their_msg_len);
 
 
+// CPace.
+//
+// See https://datatracker.ietf.org/doc/draft-irtf-cfrg-cpace/
+
+// The role that a party plays in the CPACE key agreement protocol.
+enum cpace_role_t {
+  // This role corresponds to the party A in the specification.
+  cpace_role_initiator,
+  // This role corresponds to the party B in the specification.
+  cpace_role_responder,
+};
+
+// CPACE_CTX_new returns a newly-allocated `CPACE_CTX` object that implements
+// one side of the CPace protocol, or nullptr on error. This function implements
+// CPACE-X25519-SHA512 in initiator-responder mode, acting as `role` and with
+// `password` as the password-related string (PRS).
+//
+// `channel_id` and `session_id` are the channel identifier (CI) and session
+// identifier (sid) values, respectively. Both values must match for the
+// exchange to proceed. `assoc_data` is the cleartext associated data (ADa or
+// ADb) to be sent to the peer. These values may be empty if not used. See
+// Section 4.1 of draft-irtf-cfrg-cpace-21 for details.
+//
+// The application-level identities of each party in the protocol should be
+// incorporated into either `channel_id` or each party's respective `assoc_data`
+// values. See Section 10.1 of draft-irtf-cfrg-cpace-21.
+//
+// Once a `CPACE_CTX` is successfully created, the caller should call
+// `CPACE_generate_msg` to generate the message to send to the peer.
+OPENSSL_EXPORT CPACE_CTX *CPACE_CTX_new(
+    enum cpace_role_t role, const uint8_t *password, size_t password_len,
+    const uint8_t *channel_id, size_t channel_id_len, const uint8_t *assoc_data,
+    size_t assoc_data_len, const uint8_t *session_id, size_t session_id_len);
+
+// CPACE_CTX_free frees `ctx` and all the resources that it has allocated.
+OPENSSL_EXPORT void CPACE_CTX_free(CPACE_CTX *ctx);
+
+#define CPACE_MSG_LEN 32
+#define CPACE_SHARED_SECRET_LEN 64
+
+// CPACE_generate_msg generates the message to be sent to the peer. On success,
+// it writes the message to `out_msg` and returns one. Otherwise, it returns
+// zero. `ctx` must have been allocated by `CPACE_CTX_new`, with no subsequent
+// functions called on it.
+//
+// `out_msg` only contains the Ya or Yb value. It does not include ADa or ADb.
+// On success, the caller should separately send `out_msg` and their
+// `assoc_data` value to the peer. It is the caller's responsibility to send
+// `assoc_data` together with `out_msg`. After receiving the peer's reply, the
+// caller should call `CPACE_process_msg` to complete the protocol.
+OPENSSL_EXPORT int CPACE_generate_msg(CPACE_CTX *ctx,
+                                      uint8_t out_msg[CPACE_MSG_LEN]);
+
+// CPACE_process_msg processes `msg` and `peer_assoc_data` from the peer and
+// computes the shared secret, or intermediate session key (ISK). On success, it
+// writes the secret to `out_shared_secret` and returns one; it also writes a
+// derived session ID if `out_sid` is not NULL. Otherwise, it returns zero.
+// `ctx` must have successfully been passed to `CPACE_generate_msg`, with no
+// subsequent functions called on it.
+//
+// `msg` should contain the peer's Ya or Yb value, and `peer_assoc_data` the
+// peer's ADa or ADb value.
+OPENSSL_EXPORT int CPACE_process_msg(
+    CPACE_CTX *ctx, const uint8_t in_msg[CPACE_MSG_LEN],
+    const uint8_t *peer_assoc_data, size_t peer_assoc_data_len,
+    uint8_t shared_secret[CPACE_SHARED_SECRET_LEN],
+    uint8_t sid_out[SHA512_DIGEST_LENGTH]);
+
+
 #if defined(__cplusplus)
 }  // extern C
 
@@ -226,6 +297,7 @@ extern "C++" {
 
 BSSL_NAMESPACE_BEGIN
 
+BORINGSSL_MAKE_DELETER(CPACE_CTX, CPACE_CTX_free)
 BORINGSSL_MAKE_DELETER(SPAKE2_CTX, SPAKE2_CTX_free)
 
 BSSL_NAMESPACE_END

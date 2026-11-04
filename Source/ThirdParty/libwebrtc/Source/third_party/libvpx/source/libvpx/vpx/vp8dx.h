@@ -75,7 +75,12 @@ enum vp8_dec_control_id {
    */
   VP8D_GET_LAST_REF_UPDATES = VP8_DECODER_CTRL_ID_START,
 
-  /** check if the indicated frame is corrupted */
+  /** check if the last decoded frame is corrupted. For VP8,
+   * vpx_codec_decode() may return VPX_CODEC_OK for a corrupted frame, so this
+   * must be checked after every decode. This happens when data is missing
+   * from the last token partition, whose size is implicit, or when the frame
+   * references a corrupted frame.
+   */
   VP8D_GET_FRAME_CORRUPTED,
 
   /** control function to get info on which reference frames were used

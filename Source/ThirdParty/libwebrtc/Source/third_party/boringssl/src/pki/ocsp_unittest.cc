@@ -22,6 +22,7 @@
 
 #include "encode_values.h"
 #include "parsed_certificate.h"
+#include "signature_algorithm.h"
 #include "string_util.h"
 #include "test_helpers.h"
 
@@ -82,6 +83,12 @@ const TestParams kTestParams[] = {
      OCSPVerifyResult::PROVIDED},
     {"ocsp_sign_bad_indirect.pem", OCSPRevocationStatus::UNKNOWN,
      OCSPVerifyResult::PROVIDED},
+    {"ocsp_sign_bad_indirect_critical_extension.pem",
+     OCSPRevocationStatus::UNKNOWN, OCSPVerifyResult::PROVIDED},
+    {"ocsp_sign_bad_indirect_wrong_issuer.pem", OCSPRevocationStatus::UNKNOWN,
+     OCSPVerifyResult::PROVIDED},
+    {"ocsp_sign_bad_indirect_expired.pem", OCSPRevocationStatus::UNKNOWN,
+     OCSPVerifyResult::PROVIDED},
     {"ocsp_extra_certs.pem", OCSPRevocationStatus::GOOD,
      OCSPVerifyResult::PROVIDED},
     {"has_version.pem", OCSPRevocationStatus::GOOD, OCSPVerifyResult::PROVIDED},
@@ -139,7 +146,7 @@ const TestParams kTestParams[] = {
      OCSPVerifyResult::NO_MATCHING_RESPONSE},
 };
 
-// Parameterised test name generator for tests depending on RenderTextBackend.
+// Parameterised test name generator for tests depending on TestParams.
 struct PrintTestName {
   std::string operator()(const testing::TestParamInfo<TestParams> &info) const {
     std::string_view name(info.param.file_name);
@@ -192,6 +199,136 @@ TEST_P(CheckOCSPTest, FromFile) {
 
   EXPECT_EQ(der::Input(encoded_request),
             der::Input(StringAsBytes(request_data)));
+}
+
+struct TestDelegateParams {
+  const char *file_name;
+  std::set<SignatureAlgorithm> allowed_sig_algs;
+  OCSPRevocationStatus expected_revocation_status;
+  OCSPVerifyResult::ResponseStatus expected_response_status;
+};
+
+class CheckOCSPDelegateTest
+    : public ::testing::TestWithParam<TestDelegateParams> {};
+
+const TestDelegateParams kTestDelegateParams[] = {
+    // Tests that the delegate is used for the policy on the OCSP response
+    // signature algorithm.
+    {"good_response.pem",
+     {SignatureAlgorithm::kRsaPkcs1Sha1},
+     OCSPRevocationStatus::GOOD,
+     OCSPVerifyResult::PROVIDED},
+    {"good_response.pem",
+     {SignatureAlgorithm::kRsaPkcs1Sha256},
+     OCSPRevocationStatus::UNKNOWN,
+     OCSPVerifyResult::PROVIDED},
+    {"good_response_sha256.pem",
+     {SignatureAlgorithm::kRsaPkcs1Sha1},
+     OCSPRevocationStatus::UNKNOWN,
+     OCSPVerifyResult::PROVIDED},
+    {"good_response_sha256.pem",
+     {SignatureAlgorithm::kRsaPkcs1Sha256},
+     OCSPRevocationStatus::GOOD,
+     OCSPVerifyResult::PROVIDED},
+
+    // Tests that the delegate is used for the policy on the authorized
+    // responder verification.
+    //
+    // The ocsp_sign_indirect.pem uses SHA-1 for the OCSP response signature,
+    // and SHA-256 for the authorized responder certificate's signature. If
+    // both algorithms are allowed, it should verify successfully. If SHA-256
+    // is not allowed, the authorized responder certificate should be rejected
+    // during the certificate verification.
+    {"ocsp_sign_indirect.pem",
+     {SignatureAlgorithm::kRsaPkcs1Sha1, SignatureAlgorithm::kRsaPkcs1Sha256},
+     OCSPRevocationStatus::GOOD,
+     OCSPVerifyResult::PROVIDED},
+    {"ocsp_sign_indirect.pem",
+     {SignatureAlgorithm::kRsaPkcs1Sha1},
+     OCSPRevocationStatus::UNKNOWN,
+     OCSPVerifyResult::PROVIDED},
+};
+
+// Parameterised test name generator for tests depending on TestDelegateParams.
+struct PrintTestDelegateName {
+  std::string operator()(
+      const testing::TestParamInfo<TestDelegateParams> &info) const {
+    std::string_view file_name(info.param.file_name);
+    // Strip ".pem" from the end as GTest names cannot contain period.
+    file_name.remove_suffix(4);
+    std::string name = std::string(file_name);
+    for (SignatureAlgorithm sig_alg : info.param.allowed_sig_algs) {
+      name += "SigAlg";
+      name += std::to_string(static_cast<int>(sig_alg));
+    }
+    return name;
+  }
+};
+
+INSTANTIATE_TEST_SUITE_P(All, CheckOCSPDelegateTest,
+                         ::testing::ValuesIn(kTestDelegateParams),
+                         PrintTestDelegateName());
+
+// A delegate that only allows a specified set of signature algorithms.
+//
+// Derived from SimplePathBuilderDelegate just so that the test doesn't need to
+// add no-op implementations of all the other methods on the
+// VerifyCertificateChainDelegate interface. The actual
+// IsSignatureAlgorithmAcceptable method is overridden so the DigestPolicy given
+// to SimplePathBuilderDelegate doesn't actually matter.
+class SigAlgCheckerDelegate : public SimplePathBuilderDelegate {
+ public:
+  SigAlgCheckerDelegate(std::set<SignatureAlgorithm> allowed_sig_algs)
+      : SimplePathBuilderDelegate(
+            1024, SimplePathBuilderDelegate::DigestPolicy::kStrong),
+        allowed_sig_algs_(std::move(allowed_sig_algs)) {}
+
+  bool IsSignatureAlgorithmAcceptable(SignatureAlgorithm signature_algorithm,
+                                      CertErrors *errors) override {
+    return allowed_sig_algs_.find(signature_algorithm) !=
+           allowed_sig_algs_.end();
+  }
+
+ private:
+  std::set<SignatureAlgorithm> allowed_sig_algs_;
+};
+
+
+TEST_P(CheckOCSPDelegateTest, FromFile) {
+  const TestDelegateParams &params = GetParam();
+
+  SigAlgCheckerDelegate delegate(params.allowed_sig_algs);
+
+  std::string ocsp_data;
+  std::string ca_data;
+  std::string cert_data;
+  std::string request_data;
+  const PemBlockMapping mappings[] = {
+      {"OCSP RESPONSE", &ocsp_data},
+      {"CA CERTIFICATE", &ca_data},
+      {"CERTIFICATE", &cert_data},
+      {"OCSP REQUEST", &request_data},
+  };
+
+  ASSERT_TRUE(ReadTestDataFromPemFile(GetFilePath(params.file_name), mappings));
+
+  // Mar 5 00:00:00 2017 GMT
+  int64_t kVerifyTime = 1488672000;
+
+  std::shared_ptr<const ParsedCertificate> cert = ParseCertificate(cert_data);
+  ASSERT_TRUE(cert);
+  std::shared_ptr<const ParsedCertificate> issuer = ParseCertificate(ca_data);
+  ASSERT_TRUE(issuer);
+
+
+  // Test that CheckOCSP() works.
+  OCSPVerifyResult::ResponseStatus response_status;
+  OCSPRevocationStatus revocation_status =
+      CheckOCSP(ocsp_data, cert, issuer, kVerifyTime, kOCSPAgeOneWeek,
+                &delegate, &response_status);
+
+  EXPECT_EQ(params.expected_revocation_status, revocation_status);
+  EXPECT_EQ(params.expected_response_status, response_status);
 }
 
 std::string_view kGetURLTestParams[] = {

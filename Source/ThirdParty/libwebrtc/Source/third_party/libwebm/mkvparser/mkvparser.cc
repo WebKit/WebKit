@@ -4551,7 +4551,7 @@ void Track::Info::Clear() {
 }
 
 int Track::Info::CopyStr(char* Info::* str, Info& dst_) const {
-  if (str == static_cast<char * Info::*>(NULL))
+  if (str == static_cast<char* Info::*>(NULL))
     return -1;
 
   char*& dst = dst_.*str;

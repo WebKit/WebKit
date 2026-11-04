@@ -151,6 +151,28 @@ TEST(EncoderStreamFactory, SimulcastScaleResolutionDownToUnrestricted) {
                           Resolution{.width = 1280, .height = 720}));
 }
 
+TEST(EncoderStreamFactory,
+     SimulcastScaleResolutionDownToWithUnalignedResolution) {
+  // When `scale_resolution_down_to` is specified, the input resolution should
+  // not be normalized to a multiple of `2^(number_of_streams - 1)`.
+  FieldTrials field_trials = CreateTestFieldTrials();
+  VideoEncoderConfig encoder_config;
+  encoder_config.number_of_streams = 3;
+  encoder_config.simulcast_layers.resize(3);
+  encoder_config.simulcast_layers[0].scale_resolution_down_to = {
+      .width = 513, .height = 1025};
+  encoder_config.simulcast_layers[1].scale_resolution_down_to = {
+      .width = 513, .height = 1025};
+  encoder_config.simulcast_layers[2].scale_resolution_down_to = {
+      .width = 513, .height = 1025};
+  auto streams = CreateEncoderStreams(
+      field_trials, {.width = 513, .height = 1025}, encoder_config);
+  EXPECT_THAT(GetStreamResolutions(streams),
+              ElementsAre(Resolution{.width = 513, .height = 1025},
+                          Resolution{.width = 513, .height = 1025},
+                          Resolution{.width = 513, .height = 1025}));
+}
+
 TEST(EncoderStreamFactory, SimulcastScaleResolutionDownToWith360pRestriction) {
   FieldTrials field_trials = CreateTestFieldTrials();
   VideoSourceRestrictions restrictions(

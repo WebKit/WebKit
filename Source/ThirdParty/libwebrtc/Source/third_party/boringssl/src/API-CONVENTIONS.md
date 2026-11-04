@@ -70,6 +70,15 @@ BoringSSL allocates memory via `OPENSSL_malloc`, found in `mem.h`. Use
 functions will fail gracefully on allocation error, but it is recommended to use
 a `malloc` implementation that `abort`s on failure.
 
+To re-iterate the POSIX standard, `OPENSSL_malloc` will satisfy the following
+post-conditions.
+
+- The allocated memory is suitably aligned for any type that fits into the
+  requested size or less.
+- The bytes delimited from the beginning of the allocation pointed at by the
+  pointer until `size` bytes after the pointer, exclusive, are valid for write.
+- `size` must have been no more than `PTRDIFF_MAX` bytes.
+
 
 ## Pointers and slices
 

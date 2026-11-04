@@ -41,7 +41,7 @@ static int uses_prehash(EVP_PKEY_CTX *pctx, enum evp_sign_verify_t op) {
 }
 
 static int do_sigver_init(EVP_MD_CTX *ctx, EVP_PKEY_CTX **out_pctx,
-                          const EVP_MD *type, ENGINE *e, EVP_PKEY *pkey,
+                          const EVP_MD *type, ENGINE *e, const EVP_PKEY *pkey,
                           enum evp_sign_verify_t op) {
   UniquePtr<EVP_PKEY_CTX> pctx(EVP_PKEY_CTX_new(pkey, e));
   if (pctx == nullptr) {
@@ -84,12 +84,12 @@ static int do_sigver_init(EVP_MD_CTX *ctx, EVP_PKEY_CTX **out_pctx,
 }
 
 int EVP_DigestSignInit(EVP_MD_CTX *ctx, EVP_PKEY_CTX **pctx, const EVP_MD *type,
-                       ENGINE *e, EVP_PKEY *pkey) {
+                       ENGINE *e, const EVP_PKEY *pkey) {
   return do_sigver_init(ctx, pctx, type, e, pkey, evp_sign);
 }
 
 int EVP_DigestVerifyInit(EVP_MD_CTX *ctx, EVP_PKEY_CTX **pctx,
-                         const EVP_MD *type, ENGINE *e, EVP_PKEY *pkey) {
+                         const EVP_MD *type, ENGINE *e, const EVP_PKEY *pkey) {
   return do_sigver_init(ctx, pctx, type, e, pkey, evp_verify);
 }
 
@@ -143,8 +143,7 @@ int EVP_DigestSignFinal(EVP_MD_CTX *ctx, uint8_t *out_sig,
   }
 }
 
-int EVP_DigestVerifyFinal(EVP_MD_CTX *ctx, const uint8_t *sig,
-                          size_t sig_len) {
+int EVP_DigestVerifyFinal(EVP_MD_CTX *ctx, const uint8_t *sig, size_t sig_len) {
   if (!uses_prehash(ctx->pctx, evp_verify)) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
     return 0;

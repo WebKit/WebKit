@@ -19,8 +19,8 @@
 #include <openssl/crypto.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
-#include <openssl/pkcs8.h>
 #include <openssl/mem.h>
+#include <openssl/pkcs8.h>
 #include <openssl/span.h>
 #include <openssl/stack.h>
 #include <openssl/x509.h>
@@ -29,15 +29,17 @@
 #include "../test/test_util.h"
 
 
+BSSL_NAMESPACE_BEGIN
+namespace {
+
 // kPassword is the password shared by most of the sample PKCS#12 files.
 static const char kPassword[] = "foo";
 
 // kUnicodePassword is the password for unicode_password.p12
 static const char kUnicodePassword[] = "Hello, 世界";
 
-static void TestImpl(const char *name, bssl::Span<const uint8_t> der,
-                     const char *password,
-                     const char *friendly_name) {
+void TestImpl(const char *name, bssl::Span<const uint8_t> der,
+              const char *password, const char *friendly_name) {
   SCOPED_TRACE(name);
   bssl::UniquePtr<STACK_OF(X509)> certs(sk_X509_new_null());
   ASSERT_TRUE(certs);
@@ -61,7 +63,7 @@ static void TestImpl(const char *name, bssl::Span<const uint8_t> der,
   }
 }
 
-static void TestCompat(bssl::Span<const uint8_t> der) {
+void TestCompat(bssl::Span<const uint8_t> der) {
   bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(der.data(), der.size()));
   ASSERT_TRUE(bio);
 
@@ -129,14 +131,16 @@ TEST(PKCS12Test, TestNoEncryption) {
   // no_encryption.p12 is a PKCS#12 file with neither the key or certificate is
   // encrypted. It was generated with:
   //
-  //   openssl pkcs12 -export -inkey ecdsa_p256_key.pem -in ecdsa_p256_cert.pem -keypbe NONE -certpbe NONE -password pass:foo
+  //   openssl pkcs12 -export -inkey ecdsa_p256_key.pem -in ecdsa_p256_cert.pem
+  //   -keypbe NONE -certpbe NONE -password pass:foo
   std::string data = GetTestData("crypto/pkcs8/test/no_encryption.p12");
   TestImpl("kNoEncryption", bssl::StringAsBytes(data), kPassword, nullptr);
 }
 
 TEST(PKCS12Test, TestEmptyPassword) {
   // Generated with
-  //   openssl pkcs12 -export -inkey ecdsa_p256_key.pem -in ecdsa_p256_cert.pem -password pass:  
+  //   openssl pkcs12 -export -inkey ecdsa_p256_key.pem -in ecdsa_p256_cert.pem
+  //   -password pass:
   std::string data = GetTestData("crypto/pkcs8/test/empty_password.p12");
   TestImpl("EmptyPassword (empty password)", bssl::StringAsBytes(data), "",
            nullptr);
@@ -161,7 +165,8 @@ TEST(PKCS12Test, TestEmptyPassword) {
 
 TEST(PKCS12Test, TestNullPassword) {
   // Generated with
-  //   openssl pkcs12 -export -inkey ecdsa_p256_key.pem -in ecdsa_p256_cert.pem -password pass:
+  //   openssl pkcs12 -export -inkey ecdsa_p256_key.pem -in ecdsa_p256_cert.pem
+  //   -password pass:
   // But with OpenSSL patched to pass NULL into PKCS12_create and
   // PKCS12_set_mac.
   std::string data = GetTestData("crypto/pkcs8/test/null_password.p12");
@@ -173,7 +178,8 @@ TEST(PKCS12Test, TestNullPassword) {
 
 TEST(PKCS12Test, TestUnicode) {
   // Generated with
-  //   openssl pkcs12 -export -inkey ecdsa_p256_key.pem -in ecdsa_p256_cert.pem -password pass:"Hello, 世界"
+  //   openssl pkcs12 -export -inkey ecdsa_p256_key.pem -in ecdsa_p256_cert.pem
+  //   -password pass:"Hello, 世界"
   std::string data = GetTestData("crypto/pkcs8/test/unicode_password.p12");
   TestImpl("Unicode", bssl::StringAsBytes(data), kUnicodePassword, nullptr);
 }
@@ -184,7 +190,7 @@ TEST(PKCS12Test, TestWindowsCompat) {
 }
 
 // kTestKey is a test P-256 key.
-static const uint8_t kTestKey[] = {
+const uint8_t kTestKey[] = {
     0x30, 0x81, 0x87, 0x02, 0x01, 0x00, 0x30, 0x13, 0x06, 0x07, 0x2a, 0x86,
     0x48, 0xce, 0x3d, 0x02, 0x01, 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d,
     0x03, 0x01, 0x07, 0x04, 0x6d, 0x30, 0x6b, 0x02, 0x01, 0x01, 0x04, 0x20,
@@ -199,7 +205,7 @@ static const uint8_t kTestKey[] = {
     0x2d, 0x4b, 0xcf, 0x72, 0x22, 0xc1};
 
 // kTestCert is a certificate for `kTestKey`.
-static const uint8_t kTestCert[] = {
+const uint8_t kTestCert[] = {
     0x30, 0x82, 0x01, 0xcf, 0x30, 0x82, 0x01, 0x76, 0xa0, 0x03, 0x02, 0x01,
     0x02, 0x02, 0x09, 0x00, 0xd9, 0x4c, 0x04, 0xda, 0x49, 0x7d, 0xbf, 0xeb,
     0x30, 0x09, 0x06, 0x07, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x04, 0x01, 0x30,
@@ -241,7 +247,7 @@ static const uint8_t kTestCert[] = {
     0x15, 0x5e, 0xe6, 0x1f, 0x32, 0x52, 0x61, 0x5e, 0x75, 0xc9, 0x14};
 
 // kTestCert2 is a different test certificate.
-static const uint8_t kTestCert2[] = {
+const uint8_t kTestCert2[] = {
     0x30, 0x82, 0x02, 0x65, 0x30, 0x82, 0x01, 0xeb, 0xa0, 0x03, 0x02, 0x01,
     0x02, 0x02, 0x09, 0x00, 0xdf, 0xbf, 0x2e, 0xe6, 0xe9, 0x0f, 0x0c, 0x4d,
     0x30, 0x09, 0x06, 0x07, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x04, 0x01, 0x30,
@@ -295,22 +301,22 @@ static const uint8_t kTestCert2[] = {
     0x6e, 0xcb, 0xa9, 0x4a, 0x30, 0x73, 0x23, 0x27, 0x23, 0x54, 0x12, 0x8b,
     0x75, 0x1c, 0x2d, 0x36, 0x0f};
 
-static bssl::UniquePtr<X509> LoadX509(bssl::Span<const uint8_t> der) {
+bssl::UniquePtr<X509> LoadX509(bssl::Span<const uint8_t> der) {
   const uint8_t *ptr = der.data();
   return bssl::UniquePtr<X509>(d2i_X509(nullptr, &ptr, der.size()));
 }
 
-static bssl::UniquePtr<EVP_PKEY> LoadPrivateKey(bssl::Span<const uint8_t> der) {
+bssl::UniquePtr<EVP_PKEY> LoadPrivateKey(bssl::Span<const uint8_t> der) {
   CBS cbs = der;
   return bssl::UniquePtr<EVP_PKEY>(EVP_parse_private_key(&cbs));
 }
 
-static void TestRoundTrip(const char *password, const char *name,
-                          bssl::Span<const uint8_t> key_der,
-                          bssl::Span<const uint8_t> cert_der,
-                          std::vector<bssl::Span<const uint8_t>> chain_der,
-                          int key_nid, int cert_nid, int iterations,
-                          int mac_iterations) {
+void TestRoundTrip(const char *password, const char *name,
+                   bssl::Span<const uint8_t> key_der,
+                   bssl::Span<const uint8_t> cert_der,
+                   std::vector<bssl::Span<const uint8_t>> chain_der,
+                   int key_nid, int cert_nid, int iterations,
+                   int mac_iterations) {
   bssl::UniquePtr<EVP_PKEY> key;
   if (!key_der.empty()) {
     key = LoadPrivateKey(key_der);
@@ -453,27 +459,25 @@ TEST(PKCS12Test, RoundTrip) {
                 /*iterations=*/100, /*mac_iterations=*/100);
 }
 
-static bssl::UniquePtr<EVP_PKEY> MakeTestKey() {
+bssl::UniquePtr<EVP_PKEY> MakeTestKey() {
   bssl::UniquePtr<EC_KEY> ec_key(
       EC_KEY_new_by_curve_name(NID_X9_62_prime256v1));
-  if (!ec_key ||
-      !EC_KEY_generate_key(ec_key.get())) {
+  if (!ec_key || !EC_KEY_generate_key(ec_key.get())) {
     return nullptr;
   }
   bssl::UniquePtr<EVP_PKEY> evp_pkey(EVP_PKEY_new());
-  if (!evp_pkey ||
-      !EVP_PKEY_assign_EC_KEY(evp_pkey.get(), ec_key.release())) {
+  if (!evp_pkey || !EVP_PKEY_assign_EC_KEY(evp_pkey.get(), ec_key.release())) {
     return nullptr;
   }
   return evp_pkey;
 }
 
-static bssl::UniquePtr<X509> MakeTestCert(EVP_PKEY *key) {
+bssl::UniquePtr<X509> MakeTestCert(EVP_PKEY *key) {
   bssl::UniquePtr<X509> x509(X509_new());
   if (!x509) {
     return nullptr;
   }
-  X509_NAME* subject = X509_get_subject_name(x509.get());
+  X509_NAME *subject = X509_get_subject_name(x509.get());
   if (!X509_gmtime_adj(X509_get_notBefore(x509.get()), 0) ||
       !X509_gmtime_adj(X509_get_notAfter(x509.get()), 60 * 60 * 24) ||
       !X509_NAME_add_entry_by_txt(subject, "CN", MBSTRING_ASC,
@@ -487,8 +491,8 @@ static bssl::UniquePtr<X509> MakeTestCert(EVP_PKEY *key) {
   return x509;
 }
 
-static bool PKCS12CreateVector(std::vector<uint8_t> *out, EVP_PKEY *pkey,
-                               const std::vector<X509 *> &certs) {
+bool PKCS12CreateVector(std::vector<uint8_t> *out, EVP_PKEY *pkey,
+                        const std::vector<X509 *> &certs) {
   bssl::UniquePtr<STACK_OF(X509)> chain(sk_X509_new_null());
   if (!chain) {
     return false;
@@ -516,9 +520,9 @@ static bool PKCS12CreateVector(std::vector<uint8_t> *out, EVP_PKEY *pkey,
   return i2d_PKCS12(p12.get(), &ptr) == len;
 }
 
-static void ExpectPKCS12Parse(bssl::Span<const uint8_t> in,
-                              EVP_PKEY *expect_key, X509 *expect_cert,
-                              const std::vector<X509 *> &expect_ca_certs) {
+void ExpectPKCS12Parse(bssl::Span<const uint8_t> in, EVP_PKEY *expect_key,
+                       X509 *expect_cert,
+                       const std::vector<X509 *> &expect_ca_certs) {
   bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(in.data(), in.size()));
   ASSERT_TRUE(bio);
 
@@ -679,3 +683,6 @@ TEST(PKCS12Test, MissingContent) {
     EXPECT_FALSE(PKCS12_get_key_and_certs(&key, certs.get(), &cbs, ""));
   }
 }
+
+}  // namespace
+BSSL_NAMESPACE_END

@@ -31,6 +31,7 @@
 #include <openssl/ec.h>
 #include <openssl/ec_key.h>
 #include <openssl/err.h>
+#include <openssl/hpke.h>
 #include <openssl/params.h>
 #include <openssl/pkcs8.h>
 #include <openssl/rsa.h>
@@ -1983,6 +1984,54 @@ TEST(EVPExtraTest, ReconfigureMDContext) {
       }
     }
   }
+}
+
+TEST(EVPExtraTest, DhkemWrongKeyType) {
+  UniquePtr<EVP_PKEY> x25519_key(EVP_PKEY_generate_from_alg(EVP_pkey_x25519()));
+  ASSERT_TRUE(x25519_key);
+  UniquePtr<EVP_PKEY> p256_key(EVP_PKEY_generate_from_alg(EVP_pkey_ec_p256()));
+  ASSERT_TRUE(p256_key);
+
+  // An X25519 key is not usable with DHKEM(P-256) and vice versa.
+  const struct {
+    const EVP_KEM *kem;
+    EVP_PKEY *key;
+  } kTests[] = {
+      {EVP_kem_dhkem_p256_hkdf_sha256(), x25519_key.get()},
+      {EVP_kem_dhkem_x25519_hkdf_sha256(), p256_key.get()},
+  };
+  for (const auto &test : kTests) {
+    std::vector<uint8_t> ciphertext(EVP_KEM_ciphertext_len(test.kem));
+    std::vector<uint8_t> secret(EVP_KEM_secret_len(test.kem));
+    EXPECT_FALSE(EVP_KEM_encap(test.kem, ciphertext.data(), ciphertext.size(),
+                               secret.data(), secret.size(), test.key));
+    EXPECT_TRUE(
+        ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_UNSUPPORTED_ALGORITHM}}));
+
+    EXPECT_FALSE(EVP_KEM_decap(test.kem, secret.data(), secret.size(),
+                               ciphertext.data(), ciphertext.size(), test.key));
+    EXPECT_TRUE(
+        ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_UNSUPPORTED_ALGORITHM}}));
+  }
+}
+
+TEST(EVPExtraTest, DhkemWrongCurve) {
+  // `EVP_KEM` matches on the key type, which does not distinguish EC curves,
+  // so DHKEM(P-256) must itself reject a key on another curve.
+  const EVP_KEM *kem = EVP_kem_dhkem_p256_hkdf_sha256();
+  UniquePtr<EVP_PKEY> p384_key(EVP_PKEY_generate_from_alg(EVP_pkey_ec_p384()));
+  ASSERT_TRUE(p384_key);
+
+  std::vector<uint8_t> ciphertext(EVP_KEM_ciphertext_len(kem));
+  std::vector<uint8_t> secret(EVP_KEM_secret_len(kem));
+  EXPECT_FALSE(EVP_KEM_encap(kem, ciphertext.data(), ciphertext.size(),
+                             secret.data(), secret.size(), p384_key.get()));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_UNSUPPORTED_ALGORITHM}}));
+
+  EXPECT_FALSE(EVP_KEM_decap(kem, secret.data(), secret.size(),
+                             ciphertext.data(), ciphertext.size(),
+                             p384_key.get()));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EVP, EVP_R_UNSUPPORTED_ALGORITHM}}));
 }
 
 }  // namespace

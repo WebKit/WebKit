@@ -1,3 +1,23 @@
+yyyy-mm-dd next version
+  This release is ABI compatible with the last release.
+
+2026-10-06 v3.15.2
+  This release is ABI compatible with the last release. See
+  https://aomedia.googlesource.com/aom/+log/v3.15.1..v3.15.2 for all the
+  commits in this release.
+
+  - Bug Fixes
+    * Bug 42302352: A larger frame is forced to be a key frame.
+    * Bug 555350218: libaom encoder allows frame width/height to be
+      different from max frame width/height when
+      reduced_still_picture_header is 1.
+    * Bug oss-fuzz:559019046: libaom:av1_enc_fuzzer: Bad-cast to
+      PixelLevelGradientInfocompute_gradient_info_sb in
+      av1_encode_sb_row.
+    * Bug oss-fuzz:566951534: Integer-overflow in linsolve_wiener.
+    * Bug 568044446: Fix stale search_site_config in IntraBC motion
+      search. Fix y_stride_src in init_motion_estimation().
+
 2026-09-21 v3.15.1
   This release is ABI compatible with the last release. See
   https://aomedia.googlesource.com/aom/+log/v3.15.0..v3.15.1 for all the

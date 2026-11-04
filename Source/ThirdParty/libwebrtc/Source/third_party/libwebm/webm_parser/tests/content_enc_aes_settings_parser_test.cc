@@ -36,7 +36,8 @@ TEST_F(ContentEncAesSettingsParserTest, DefaultParse) {
 
 TEST_F(ContentEncAesSettingsParserTest, DefaultValues) {
   SetReaderData({
-      0x47, 0xE8,  // ID = 0x47E8 (AESSettingsCipherMode).
+      0x47,
+      0xE8,  // ID = 0x47E8 (AESSettingsCipherMode).
       0x80,  // Size = 0.
   });
 
@@ -51,7 +52,8 @@ TEST_F(ContentEncAesSettingsParserTest, DefaultValues) {
 
 TEST_F(ContentEncAesSettingsParserTest, CustomValues) {
   SetReaderData({
-      0x47, 0xE8,  // ID = 0x47E8 (AESSettingsCipherMode).
+      0x47,
+      0xE8,  // ID = 0x47E8 (AESSettingsCipherMode).
       0x81,  // Size = 1.
       0x00,  // Body (value = 0).
   });

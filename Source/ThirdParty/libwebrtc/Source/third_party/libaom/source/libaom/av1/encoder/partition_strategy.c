@@ -1334,7 +1334,7 @@ void av1_ml_prune_4_partition(AV1_COMP *const cpi, MACROBLOCK *const x,
   const int mi_col = blk_params.mi_col;
   const BLOCK_SIZE bsize = blk_params.bsize;
 
-  int64_t(*rect_part_rd)[SUB_PARTITIONS_RECT] = part_state->rect_part_rd;
+  int64_t (*rect_part_rd)[SUB_PARTITIONS_RECT] = part_state->rect_part_rd;
   int64_t *split_rd = part_state->split_rd;
   if (ext_ml_model_decision_after_part_ab(
           cpi, x, bsize, part_ctx, best_rd, rect_part_rd, split_rd,

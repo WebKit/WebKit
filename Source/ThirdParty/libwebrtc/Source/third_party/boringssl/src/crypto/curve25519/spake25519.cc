@@ -112,7 +112,9 @@ if __name__ == "__main__":
     printtable(Mtable, "kSpakeMSmallPrecomp")
 */
 
-static const uint8_t kSpakeNSmallPrecomp[15 * 2 * 32] = {
+namespace {
+
+const uint8_t kSpakeNSmallPrecomp[15 * 2 * 32] = {
     0x20, 0x1b, 0xc5, 0xb3, 0x43, 0x17, 0x71, 0x10, 0x44, 0x1e, 0x73, 0xb3,
     0xae, 0x3f, 0xbf, 0x9f, 0xf5, 0x44, 0xc8, 0x13, 0x8f, 0xd1, 0x01, 0xc2,
     0x8a, 0x1a, 0x6d, 0xea, 0x4d, 0x00, 0x5d, 0x6e, 0x10, 0xe3, 0xdf, 0x0a,
@@ -195,7 +197,7 @@ static const uint8_t kSpakeNSmallPrecomp[15 * 2 * 32] = {
     0x72, 0x46, 0x04, 0x07, 0xf2, 0x5b, 0xf4, 0x07, 0xd1, 0xf4, 0x59, 0x71,
 };
 
-static const uint8_t kSpakeMSmallPrecomp[15 * 2 * 32] = {
+const uint8_t kSpakeMSmallPrecomp[15 * 2 * 32] = {
     0xc8, 0xa6, 0x63, 0xc5, 0x97, 0xf1, 0xee, 0x40, 0xab, 0x62, 0x42, 0xee,
     0x25, 0x6f, 0x32, 0x6c, 0x75, 0x2c, 0xa7, 0xd3, 0xbd, 0x32, 0x3b, 0x1e,
     0x11, 0x9c, 0xbd, 0x04, 0xa9, 0x78, 0x6f, 0x45, 0x5a, 0xda, 0x7e, 0x4b,
@@ -278,6 +280,8 @@ static const uint8_t kSpakeMSmallPrecomp[15 * 2 * 32] = {
     0xa6, 0x76, 0x81, 0x28, 0xb2, 0x65, 0xe8, 0x47, 0x14, 0xc6, 0x39, 0x06,
 };
 
+}  // namespace
+
 SPAKE2_CTX *SPAKE2_CTX_new(enum spake2_role_t my_role, const uint8_t *my_name,
                            size_t my_name_len, const uint8_t *their_name,
                            size_t their_name_len) {
@@ -310,9 +314,11 @@ void SPAKE2_CTX_free(SPAKE2_CTX *ctx) {
   Delete(ctx);
 }
 
+namespace {
+
 // left_shift_3 sets `n` to `n`*8, where `n` is represented in little-endian
 // order.
-static void left_shift_3(uint8_t n[32]) {
+void left_shift_3(uint8_t n[32]) {
   uint8_t carry = 0;
   unsigned i;
 
@@ -323,32 +329,32 @@ static void left_shift_3(uint8_t n[32]) {
   }
 }
 
-namespace {
 typedef struct {
   BN_ULONG words[32 / sizeof(BN_ULONG)];
 } scalar;
-}  // namespace
 
 // kOrder is the order of the prime-order subgroup of curve25519.
-static const scalar kOrder = {
+const scalar kOrder = {
     {TOBN(0x5812631a, 0x5cf5d3ed), TOBN(0x14def9de, 0xa2f79cd6),
      TOBN(0x00000000, 0x00000000), TOBN(0x10000000, 0x00000000)}};
 
 // scalar_cmov copies `src` to `dest` if `mask` is all ones.
-static void scalar_cmov(scalar *dest, const scalar *src, crypto_word_t mask) {
+void scalar_cmov(scalar *dest, const scalar *src, crypto_word_t mask) {
   bn_select_words(dest->words, mask, src->words, dest->words,
                   std::size(dest->words));
 }
 
 // scalar_double sets `s` to `2×s`.
-static void scalar_double(scalar *s) {
+void scalar_double(scalar *s) {
   bn_add_words(s->words, s->words, s->words, std::size(s->words));
 }
 
 // scalar_add sets `dest` to `dest` plus `src`.
-static void scalar_add(scalar *dest, const scalar *src) {
+void scalar_add(scalar *dest, const scalar *src) {
   bn_add_words(dest->words, dest->words, src->words, std::size(dest->words));
 }
+
+}  // namespace
 
 int SPAKE2_generate_msg(SPAKE2_CTX *ctx, uint8_t *out, size_t *out_len,
                         size_t max_out_len, const uint8_t *password,
@@ -451,8 +457,10 @@ int SPAKE2_generate_msg(SPAKE2_CTX *ctx, uint8_t *out, size_t *out_len,
   return 1;
 }
 
-static void update_with_length_prefix(SHA512_CTX *sha, const uint8_t *data,
-                                      const size_t len) {
+namespace {
+
+void update_with_length_prefix(SHA512_CTX *sha, const uint8_t *data,
+                               const size_t len) {
   uint8_t len_le[8];
   size_t l = len;
   unsigned i;
@@ -465,6 +473,8 @@ static void update_with_length_prefix(SHA512_CTX *sha, const uint8_t *data,
   SHA512_Update(sha, len_le, sizeof(len_le));
   SHA512_Update(sha, data, len);
 }
+
+}  // namespace
 
 int SPAKE2_process_msg(SPAKE2_CTX *ctx, uint8_t *out_key, size_t *out_key_len,
                        size_t max_out_key_len, const uint8_t *their_msg,

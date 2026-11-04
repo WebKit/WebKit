@@ -40,6 +40,7 @@ use super::{
 use crate::{
     CertCallback,
     abort_on_panic,
+    alerts::AlertDescription,
     config::ProtocolVersion,
     connection::methods::waker_data_from_ssl,
     context::TlsContext, //
@@ -53,8 +54,12 @@ pub enum CertificateSelectionResult {
     /// Certificate selection is pending (e.g. waiting for async operation).
     /// The handshake will be paused and can be retried later.
     Pending,
-    /// Certificate selection failed. The handshake will be aborted.
+    /// Certificate selection failed. The handshake will be aborted with an
+    /// `internal_error` alert.
     Error,
+    /// Certificate selection failed. The handshake will be aborted with the
+    /// specified alert.
+    ErrorWithAlert(AlertDescription),
 }
 
 /// Server certificate selection.
@@ -87,6 +92,7 @@ pub trait ClientCertificateSelector<M>: Send + Sync {
 pub(crate) unsafe extern "C" fn select_cert_cb<M: CertCallback<Mode>, Mode>(
     ssl: *mut bssl_sys::SSL,
     _ctx: *mut c_void,
+    out_alert: *mut u8,
 ) -> c_int {
     let is_server = unsafe {
         // Safety: `ssl` is still valid by BoringSSL invariant.
@@ -120,6 +126,14 @@ pub(crate) unsafe extern "C" fn select_cert_cb<M: CertCallback<Mode>, Mode>(
             CertificateSelectionResult::Success => 1,
             CertificateSelectionResult::Pending => -1,
             CertificateSelectionResult::Error => 0,
+            CertificateSelectionResult::ErrorWithAlert(alert) => {
+                unsafe {
+                    // Safety: per BoringSSL contract, this out pointer must be valid to write the
+                    // alert value into.
+                    out_alert.write(alert as u8);
+                }
+                0
+            }
         }
     } else {
         let ctx = ClientCertificateSelectionContext::new(ssl);
@@ -130,6 +144,14 @@ pub(crate) unsafe extern "C" fn select_cert_cb<M: CertCallback<Mode>, Mode>(
             CertificateSelectionResult::Success => 1,
             CertificateSelectionResult::Pending => -1,
             CertificateSelectionResult::Error => 0,
+            CertificateSelectionResult::ErrorWithAlert(alert) => {
+                unsafe {
+                    // Safety: per BoringSSL contract, this out pointer must be valid to write the
+                    // alert value into.
+                    out_alert.write(alert as u8);
+                }
+                0
+            }
         }
     }
 }
@@ -180,7 +202,7 @@ impl<'a, M> ServerCertificateSelectionContext<'a, M> {
     }
 }
 
-bssl_macros::bssl_enum! {
+bssl_crypto::bssl_enum! {
     /// Requested certificate types defined in [RFC 5246] §7.4.4.
     ///
     /// [RFC 5246]: <https://datatracker.ietf.org/doc/html/rfc5246#section-7.4.4>

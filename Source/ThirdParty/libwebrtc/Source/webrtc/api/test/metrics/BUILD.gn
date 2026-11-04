@@ -25,27 +25,6 @@ group("metrics") {
   }
 }
 
-if (rtc_include_tests) {
-  group("metrics_unittests") {
-    testonly = true
-
-    deps = [
-      ":global_metrics_logger_and_exporter_test",
-      ":metrics_accumulator_test",
-      ":metrics_logger_test",
-      ":print_result_proxy_metrics_exporter_test",
-      ":stdout_metrics_exporter_test",
-    ]
-
-    if (rtc_enable_protobuf) {
-      deps += [
-        ":chrome_perf_dashboard_metrics_exporter_test",
-        ":metrics_set_proto_file_exporter_test",
-      ]
-    }
-  }
-}
-
 rtc_library("metric") {
   visibility = [ "*" ]
   sources = [
@@ -111,6 +90,7 @@ if (!build_with_chromium) {
     deps = [
       ":metric",
       ":metrics_exporter",
+      "../../../rtc_base:safe_conversions",
       "../../../rtc_base:stringutils",
       "../../../test:test_flags",
       "//third_party/abseil-cpp/absl/flags:flag",
@@ -195,8 +175,7 @@ rtc_library("global_metrics_logger_and_exporter") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("metrics_logger_test") {
-    testonly = true
+  rtc_cc_test("metrics_logger_test") {
     sources = [ "metrics_logger_test.cc" ]
     deps = [
       ":metric",
@@ -208,8 +187,7 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_library("metrics_accumulator_test") {
-    testonly = true
+  rtc_cc_test("metrics_accumulator_test") {
     sources = [ "metrics_accumulator_test.cc" ]
     deps = [
       ":metric",
@@ -219,12 +197,12 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_library("stdout_metrics_exporter_test") {
-    testonly = true
+  rtc_cc_test("stdout_metrics_exporter_test") {
     sources = [ "stdout_metrics_exporter_test.cc" ]
     deps = [
       ":metric",
       ":stdout_metrics_exporter",
+      "../../../test:fileutils",
       "../../../test:test_flags",
       "../../../test:test_support",
       "../../units:timestamp",
@@ -232,8 +210,7 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_library("print_result_proxy_metrics_exporter_test") {
-    testonly = true
+  rtc_cc_test("print_result_proxy_metrics_exporter_test") {
     sources = [ "print_result_proxy_metrics_exporter_test.cc" ]
     deps = [
       ":metric",
@@ -243,8 +220,7 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_library("global_metrics_logger_and_exporter_test") {
-    testonly = true
+  rtc_cc_test("global_metrics_logger_and_exporter_test") {
     sources = [ "global_metrics_logger_and_exporter_test.cc" ]
     deps = [
       ":global_metrics_logger_and_exporter",
@@ -257,8 +233,7 @@ if (rtc_include_tests) {
   }
 
   if (rtc_enable_protobuf) {
-    rtc_library("metrics_set_proto_file_exporter_test") {
-      testonly = true
+    rtc_cc_test("metrics_set_proto_file_exporter_test") {
       sources = [ "metrics_set_proto_file_exporter_test.cc" ]
       deps = [
         ":metric",
@@ -271,8 +246,7 @@ if (rtc_include_tests) {
       ]
     }
 
-    rtc_library("chrome_perf_dashboard_metrics_exporter_test") {
-      testonly = true
+    rtc_cc_test("chrome_perf_dashboard_metrics_exporter_test") {
       sources = [ "chrome_perf_dashboard_metrics_exporter_test.cc" ]
       deps = [
         ":chrome_perf_dashboard_metrics_exporter",

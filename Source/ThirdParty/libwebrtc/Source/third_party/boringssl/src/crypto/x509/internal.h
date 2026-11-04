@@ -61,7 +61,7 @@ class X509Pubkey : public X509_pubkey_st {
 int x509_parse_public_key(CBS *cbs, X509_PUBKEY *out,
                           Span<const EVP_PKEY_ALG *const> algs);
 int x509_marshal_public_key(CBB *cbb, const X509_PUBKEY *in);
-int x509_pubkey_set1(X509_PUBKEY *key, EVP_PKEY *pkey);
+int x509_pubkey_set1(X509_PUBKEY *key, const EVP_PKEY *pkey);
 
 // X509_PUBKEY is an `ASN1_ITEM` whose ASN.1 type is SubjectPublicKeyInfo and C
 // type is `X509_PUBKEY*`.
@@ -170,18 +170,18 @@ class X509Impl : public x509_st, public RefCounted<X509Impl> {
   UniquePtr<CRYPTO_BUFFER> buf;
   CRYPTO_EX_DATA ex_data;
   // These contain copies of various extension values
-  long ex_pathlen = -1;
-  uint32_t ex_flags = 0;
-  uint32_t ex_kusage = 0;
-  uint32_t ex_xkusage = 0;
-  UniquePtr<ASN1_OCTET_STRING> skid;
-  UniquePtr<AUTHORITY_KEYID> akid;
-  UniquePtr<STACK_OF(DIST_POINT)> crldp;
-  UniquePtr<STACK_OF(GENERAL_NAME)> altname;
-  UniquePtr<NAME_CONSTRAINTS> nc;
-  unsigned char cert_hash[SHA256_DIGEST_LENGTH] = {};
+  mutable long ex_pathlen = -1;
+  mutable uint32_t ex_flags = 0;
+  mutable uint32_t ex_kusage = 0;
+  mutable uint32_t ex_xkusage = 0;
+  mutable UniquePtr<ASN1_OCTET_STRING> skid;
+  mutable UniquePtr<AUTHORITY_KEYID> akid;
+  mutable UniquePtr<STACK_OF(DIST_POINT)> crldp;
+  mutable UniquePtr<STACK_OF(GENERAL_NAME)> altname;
+  mutable UniquePtr<NAME_CONSTRAINTS> nc;
+  mutable unsigned char cert_hash[SHA256_DIGEST_LENGTH] = {};
   bssl::X509_CERT_AUX *aux = nullptr;
-  Mutex lock;
+  mutable Mutex lock;
 
  private:
   friend RefCounted;
@@ -263,22 +263,6 @@ DECLARE_ASN1_FUNCTIONS_const(X509_CRL_INFO)
 
 BSSL_NAMESPACE_END
 
-// Values in idp_flags field
-// IDP present
-#define IDP_PRESENT 0x1
-// IDP values inconsistent
-#define IDP_INVALID 0x2
-// onlyuser true
-#define IDP_ONLYUSER 0x4
-// onlyCA true
-#define IDP_ONLYCA 0x8
-// onlyattr true
-#define IDP_ONLYATTR 0x10
-// indirectCRL true
-#define IDP_INDIRECT 0x20
-// onlysomereasons present
-#define IDP_REASONS 0x40
-
 struct X509_crl_st {
   // actual signature
   bssl::X509_CRL_INFO *crl;
@@ -289,8 +273,6 @@ struct X509_crl_st {
   // Copies of various extensions
   AUTHORITY_KEYID *akid;
   ISSUING_DIST_POINT *idp;
-  // Convenient breakdown of IDP
-  int idp_flags;
   unsigned char crl_hash[SHA256_DIGEST_LENGTH];
 } /* X509_CRL */;
 
@@ -416,18 +398,12 @@ struct x509_store_ctx_st {
   // Callbacks for various operations
   X509_STORE_CTX_verify_cb verify_cb;  // error callback
 
-  // The following is built up
-  int last_untrusted;     // index of last untrusted cert
   STACK_OF(X509) *chain;  // chain of X509s - built up and trusted
 
   // When something goes wrong, this is why
   int error_depth;
   int error;
   X509 *current_cert;
-  X509_CRL *current_crl;  // current CRL
-
-  X509 *current_crl_issuer;  // issuer of current CRL
-  int current_crl_score;     // score of current CRL
 
   CRYPTO_EX_DATA ex_data;
 } /* X509_STORE_CTX */;
@@ -446,7 +422,7 @@ int X509_CERT_AUX_print(BIO *bp, X509_CERT_AUX *x, int indent);
 // `NID_rsassaPss`) and key `pkey`. It returns one on success and zero on
 // error.
 int x509_rsa_pss_to_ctx(EVP_MD_CTX *ctx, const X509_ALGOR *sigalg,
-                        EVP_PKEY *pkey);
+                        const EVP_PKEY *pkey);
 
 // x509_rsa_pss_to_ctx sets `algor` to the signature algorithm parameters for
 // `ctx`, which must have been configured for an RSA-PSS signing operation. It
@@ -472,20 +448,20 @@ int x509_digest_sign_algorithm(EVP_MD_CTX *ctx, X509_ALGOR *algor);
 // have been initialised with `EVP_MD_CTX_init`. It returns one on success, or
 // zero on error.
 int x509_digest_verify_init(EVP_MD_CTX *ctx, const X509_ALGOR *sigalg,
-                            EVP_PKEY *pkey);
+                            const EVP_PKEY *pkey);
 
 // x509_verify_signature verifies a `signature` using `sigalg` and `pkey` over
 // `in`. It returns one if the signature is valid and zero on error.
 int x509_verify_signature(const X509_ALGOR *sigalg,
                           const ASN1_BIT_STRING *signature,
-                          Span<const uint8_t> in, EVP_PKEY *pkey);
+                          Span<const uint8_t> in, const EVP_PKEY *pkey);
 
 // x509_verify_signature_bytes behaves like `x509_verify_signature` but takes in
 // a span containing the signature bytes (without ASN.1 headers). It returns one
 // if the signature is valid and zero on error.
 int x509_verify_signature_bytes(const X509_ALGOR *sigalg,
                                 Span<const uint8_t> signature,
-                                Span<const uint8_t> in, EVP_PKEY *pkey);
+                                Span<const uint8_t> in, const EVP_PKEY *pkey);
 
 // x509_sign_to_bit_string signs `in` using `ctx` and saves the result in `out`.
 // It returns the length of the signature on success and zero on error.
@@ -499,12 +475,11 @@ int x509_sign_to_bit_string(EVP_MD_CTX *ctx, ASN1_BIT_STRING *out,
 // the user-initial-policy-set. If `user_policies` is NULL or empty, it is
 // interpreted as anyPolicy. `flags` is a set of `X509_V_FLAG_*` values to
 // apply. It returns `X509_V_OK` on success and `X509_V_ERR_*` on error. It
-// additionally sets `*out_current_cert` to the certificate where the error
-// occurred. If the function succeeded, or the error applies to the entire
-// chain, it sets `*out_current_cert` to NULL.
+// additionally sets `*out_error_depth` to the index of certificate where the
+// error occurred.
 int X509_policy_check(const STACK_OF(X509) *certs,
                       const STACK_OF(ASN1_OBJECT) *user_policies,
-                      unsigned long flags, X509 **out_current_cert);
+                      unsigned long flags, int *out_error_depth);
 
 // x509_check_issued_with_callback calls `X509_check_issued`, but allows the
 // verify callback to override the result. It returns one on success and zero on
@@ -545,7 +520,7 @@ OPENSSL_EXPORT int x509v3_looks_like_dns_name(const unsigned char *in,
 // x509v3_cache_extensions fills in a number of fields relating to X.509
 // extensions in `x`. It returns one on success and zero if some extensions were
 // invalid.
-OPENSSL_EXPORT int x509v3_cache_extensions(X509 *x);
+OPENSSL_EXPORT int x509v3_cache_extensions(const X509 *x);
 
 // x509v3_a2i_ipadd decodes `ipasc` as an IPv4 or IPv6 address. IPv6 addresses
 // use colon-separated syntax while IPv4 addresses use dotted decimal syntax. If
@@ -625,10 +600,7 @@ STACK_OF(CONF_VALUE) *X509V3_parse_list(const char *line);
 // GENERAL_NAME_cmp returns zero if `a` and `b` are equal and a non-zero
 // value otherwise. Note this function does not provide a comparison suitable
 // for sorting.
-//
-// This function is exported for testing.
-OPENSSL_EXPORT int GENERAL_NAME_cmp(const GENERAL_NAME *a,
-                                    const GENERAL_NAME *b);
+int GENERAL_NAME_cmp(const GENERAL_NAME *a, const GENERAL_NAME *b);
 
 // X509_VERIFY_PARAM_lookup returns a pre-defined `X509_VERIFY_PARAM` named by
 // `name`, or NULL if no such name is defined.
@@ -650,9 +622,6 @@ int X509_is_valid_trust_id(int trust);
 
 int X509_PURPOSE_get_trust(const X509_PURPOSE *xp);
 
-// TODO(https://crbug.com/boringssl/695): Remove this.
-int DIST_POINT_set_dpname(DIST_POINT_NAME *dpn, X509_NAME *iname);
-
 // x509_parse_name parses a DER-encoded, X.509 Name from `cbs` and writes the
 // result to `*out`. It returns one on success and zero on error.
 int x509_parse_name(CBS *cbs, X509_NAME *out);
@@ -670,7 +639,7 @@ int x509_name_copy(X509_NAME *dst, const X509_NAME *src);
 // Merkle Tree Certificate (MTC) verification functions.
 
 // x509_is_merkle_tree_ca returns whether `x509` contains an extension of type
-// id-pe-mtcCertificationAuthority.
+// id-pe-mtcCertificationAuthority-SHA256.
 bool x509_is_merkle_tree_ca(const X509 *x509);
 
 // x509_evaluate_mtc_subtree_inclusion_proof carries out the procedure in

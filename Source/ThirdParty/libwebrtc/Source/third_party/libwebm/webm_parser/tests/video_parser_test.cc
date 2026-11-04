@@ -379,18 +379,24 @@ TEST_F(VideoParserTest, AbsentDisplaySize) {
 TEST_F(VideoParserTest, DefaultDisplaySize) {
   SetReaderData({
       0xB0,  // ID = 0xB0 (PixelWidth).
-      0x40, 0x01,  // Size = 1.
+      0x40,
+      0x01,  // Size = 1.
       0x01,  // Body (value = 1).
 
       0xBA,  // ID = 0xBA (PixelHeight).
-      0x40, 0x01,  // Size = 1.
+      0x40,
+      0x01,  // Size = 1.
       0x02,  // Body (value = 2).
 
-      0x54, 0xB0,  // ID = 0x54B0 (DisplayWidth).
-      0x40, 0x00,  // Size = 0.
+      0x54,
+      0xB0,  // ID = 0x54B0 (DisplayWidth).
+      0x40,
+      0x00,  // Size = 0.
 
-      0x54, 0xBA,  // ID = 0x54BA (DisplayHeight).
-      0x40, 0x00,  // Size = 0.
+      0x54,
+      0xBA,  // ID = 0x54BA (DisplayHeight).
+      0x40,
+      0x00,  // Size = 0.
   });
 
   ParseAndVerify();

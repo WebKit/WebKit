@@ -297,6 +297,7 @@ class VirtualSocketServer : public SocketServer {
   void SetMessageQueue(Thread* queue) override;
   bool Wait(TimeDelta max_wait_duration, bool process_io) override;
   void WakeUp() override;
+  bool CanCreateSockets() const override { return true; }
 
   void SetDelayOnAddress(const SocketAddress& address, int delay_ms) {
     delay_by_ip_[address.ipaddr()] = delay_ms;

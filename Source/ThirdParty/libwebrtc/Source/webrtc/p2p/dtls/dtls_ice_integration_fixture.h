@@ -566,6 +566,11 @@ class Base {
         ep.env, ep.ice_transport, crypto_options,
         ep.config.max_protocol_version);
 
+    // No SDP exchange in this fixture; stand in for JsepTransport's call.
+    if (ep.config.dtls_in_stun) {
+      ep.dtls->MaybeStartDtlsInStun();
+    }
+
     if (ice_lite_agent) {
       ep.dtls->SetFakeIceLite();
     }

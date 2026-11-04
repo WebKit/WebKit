@@ -33,7 +33,7 @@ using namespace bssl;
 
 int bssl::x509_verify_signature(const X509_ALGOR *sigalg,
                                 const ASN1_BIT_STRING *signature,
-                                Span<const uint8_t> in, EVP_PKEY *pkey) {
+                                Span<const uint8_t> in, const EVP_PKEY *pkey) {
   if (signature->type == V_ASN1_BIT_STRING &&
       ASN1_BIT_STRING_unused_bits(signature) != 0) {
     OPENSSL_PUT_ERROR(X509, X509_R_INVALID_BIT_STRING_BITS_LEFT);
@@ -46,7 +46,8 @@ int bssl::x509_verify_signature(const X509_ALGOR *sigalg,
 
 int bssl::x509_verify_signature_bytes(const X509_ALGOR *sigalg,
                                       Span<const uint8_t> signature,
-                                      Span<const uint8_t> in, EVP_PKEY *pkey) {
+                                      Span<const uint8_t> in,
+                                      const EVP_PKEY *pkey) {
   if (!pkey) {
     OPENSSL_PUT_ERROR(X509, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
@@ -66,7 +67,7 @@ int bssl::x509_verify_signature_bytes(const X509_ALGOR *sigalg,
 
 int ASN1_item_verify(const ASN1_ITEM *it, const X509_ALGOR *sigalg,
                      const ASN1_BIT_STRING *signature, void *asn,
-                     EVP_PKEY *pkey) {
+                     const EVP_PKEY *pkey) {
   uint8_t *in = nullptr;
   int in_len = ASN1_item_i2d(reinterpret_cast<ASN1_VALUE *>(asn), &in, it);
   if (in_len < 0) {

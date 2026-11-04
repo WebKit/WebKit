@@ -17,6 +17,7 @@
 #include <optional>
 #include <span>
 #include <utility>
+#include <vector>
 
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
@@ -29,6 +30,7 @@
 #include "modules/rtp_rtcp/include/flexfec_sender.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/packet_sequencer.h"
 #include "modules/rtp_rtcp/source/rtp_header_extension_size.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_history.h"
@@ -49,7 +51,9 @@ using ::testing::AllOf;
 using ::testing::Eq;
 using ::testing::Field;
 using ::testing::InSequence;
+using ::testing::IsNull;
 using ::testing::NiceMock;
+using ::testing::NotNull;
 
 constexpr Timestamp kStartTime = Timestamp::Millis(123456789);
 constexpr int kDefaultPayloadType = 100;
@@ -508,6 +512,140 @@ TEST_F(RtpSenderEgressTest, PutsRetransmittablePacketsInHistory) {
   auto packet_sequence_number = packet->SequenceNumber();
   sender->SendPacket(std::move(packet), PacedPacketInfo());
   EXPECT_TRUE(packet_history_.GetPacketState(packet_sequence_number));
+}
+
+TEST_F(RtpSenderEgressTest, PacketWithAllowSendingFalseNotSentToNetwork) {
+  std::unique_ptr<RtpSenderEgress> sender = CreateRtpSenderEgress();
+
+  std::unique_ptr<RtpPacketToSend> packet = BuildRtpPacket();
+  packet->set_allow_retransmission(true);
+  packet->set_allow_sending(false);
+
+  // Transport and observer should NOT receive the packet.
+  EXPECT_CALL(transport_, SentRtp).Times(0);
+  EXPECT_CALL(send_packet_observer_, OnSendPacket).Times(0);
+
+  sender->SendPacket(std::move(packet), PacedPacketInfo());
+
+  EXPECT_FALSE(transport_.last_packet().has_value());
+}
+
+TEST_F(RtpSenderEgressTest,
+       PacketWithAllowSendingFalseStoredInHistoryWithDelayedRetransmission) {
+  std::unique_ptr<RtpSenderEgress> sender = CreateRtpSenderEgress();
+  const TimeDelta kRtt = TimeDelta::Millis(100);
+  packet_history_.SetRtt(kRtt);
+  packet_history_.SetStorePacketsStatus(
+      RtpPacketHistory::StorageMode::kStoreAndCull, 10);
+
+  std::unique_ptr<RtpPacketToSend> packet = BuildRtpPacket();
+  packet->set_allow_retransmission(true);
+  packet->set_allow_sending(false);
+  packet->set_transport_sequence_number(42);
+  const uint16_t packet_sequence_number = packet->SequenceNumber();
+
+  sender->SendPacket(std::move(packet), PacedPacketInfo());
+
+  // Before 2 * RTT, retransmission is not allowed.
+  time_controller_.AdvanceTime(2 * kRtt - TimeDelta::Millis(1));
+  EXPECT_FALSE(packet_history_.GetPacketState(packet_sequence_number));
+  EXPECT_THAT(packet_history_.GetPacketAndMarkAsPending(packet_sequence_number),
+              IsNull());
+
+  // At/after 2 * RTT, retransmission IS allowed.
+  time_controller_.AdvanceTime(TimeDelta::Millis(1));
+  EXPECT_TRUE(packet_history_.GetPacketState(packet_sequence_number));
+  std::unique_ptr<RtpPacketToSend> retransmit =
+      packet_history_.GetPacketAndMarkAsPending(packet_sequence_number);
+  ASSERT_THAT(retransmit, NotNull());
+  EXPECT_THAT(retransmit->SequenceNumber(), packet_sequence_number);
+  EXPECT_THAT(retransmit->allow_sending(), true);
+  EXPECT_THAT(retransmit->HasExtension<AbsoluteSendTime>(), false);
+  EXPECT_THAT(retransmit->HasExtension<TransportSequenceNumber>(), false);
+
+  // Send the retransmitted packet and verify it is sent to the network.
+  retransmit->set_packet_type(RtpPacketMediaType::kRetransmission);
+  retransmit->set_retransmitted_sequence_number(packet_sequence_number);
+  EXPECT_CALL(transport_, SentRtp);
+  sender->SendPacket(std::move(retransmit), PacedPacketInfo());
+  EXPECT_TRUE(transport_.last_packet().has_value());
+}
+
+TEST_F(RtpSenderEgressTest,
+       PacketWithAllowSendingFalseUsesDefaultRttIfNoneSet) {
+  std::unique_ptr<RtpSenderEgress> sender = CreateRtpSenderEgress();
+  packet_history_.SetStorePacketsStatus(
+      RtpPacketHistory::StorageMode::kStoreAndCull, 10);
+
+  std::unique_ptr<RtpPacketToSend> packet = BuildRtpPacket();
+  packet->set_allow_retransmission(true);
+  packet->set_allow_sending(false);
+  const uint16_t packet_sequence_number = packet->SequenceNumber();
+
+  sender->SendPacket(std::move(packet), PacedPacketInfo());
+
+  // Before 2 * kDefaultRtt (400ms), retransmission is not allowed.
+  time_controller_.AdvanceTime(2 * RtpPacketHistory::kDefaultRtt -
+                               TimeDelta::Millis(1));
+  EXPECT_FALSE(packet_history_.GetPacketState(packet_sequence_number));
+  EXPECT_THAT(packet_history_.GetPacketAndMarkAsPending(packet_sequence_number),
+              IsNull());
+
+  // At/after 2 * kDefaultRtt, retransmission is allowed.
+  time_controller_.AdvanceTime(TimeDelta::Millis(1));
+  std::unique_ptr<RtpPacketToSend> retransmitted_packet =
+      packet_history_.GetPacketAndMarkAsPending(packet_sequence_number);
+  ASSERT_THAT(retransmitted_packet, NotNull());
+  EXPECT_EQ(retransmitted_packet->SequenceNumber(), packet_sequence_number);
+  EXPECT_TRUE(retransmitted_packet->allow_sending());
+}
+
+TEST_F(
+    RtpSenderEgressTest,
+    NonPacedPacketSenderDoesNotIncrementTransportSeqWhenAllowSendingIsFalse) {
+  header_extensions_.RegisterByUri(kTransportSequenceNumberExtensionId,
+                                   TransportSequenceNumber::Uri());
+  std::unique_ptr<RtpSenderEgress> sender = CreateRtpSenderEgress();
+  packet_history_.SetStorePacketsStatus(
+      RtpPacketHistory::StorageMode::kStoreAndCull, 10);
+
+  PacketSequencer sequencer(kSsrc, kRtxSsrc,
+                            /*require_marker_before_media_padding=*/false,
+                            &env_.clock());
+  sequencer.set_media_sequence_number(kStartSequenceNumber);
+  RtpSenderEgress::NonPacedPacketSender non_paced_sender(
+      *time_controller_.GetMainThread(), sender.get(), &sequencer);
+
+  std::unique_ptr<RtpPacketToSend> untransmitted_packet = BuildRtpPacket();
+  untransmitted_packet->set_allow_retransmission(true);
+  untransmitted_packet->set_allow_sending(false);
+
+  EXPECT_CALL(transport_, SentRtp).Times(0);
+  std::vector<std::unique_ptr<RtpPacketToSend>> packets;
+  packets.push_back(std::move(untransmitted_packet));
+  non_paced_sender.EnqueuePackets(std::move(packets));
+
+  time_controller_.AdvanceTime(2 * RtpPacketHistory::kDefaultRtt);
+  std::unique_ptr<RtpPacketToSend> stored_packet =
+      packet_history_.GetPacketAndMarkAsPending(kStartSequenceNumber);
+  ASSERT_THAT(stored_packet, NotNull());
+
+  // Enqueue a normal packet and verify the transport sequence number starts at
+  // 1 (was not incremented for the untransmitted packet).
+  std::unique_ptr<RtpPacketToSend> transmitted_packet = BuildRtpPacket();
+  transmitted_packet->set_allow_sending(true);
+
+  EXPECT_CALL(transport_, SentRtp);
+  packets.clear();
+  packets.push_back(std::move(transmitted_packet));
+  non_paced_sender.EnqueuePackets(std::move(packets));
+
+  ASSERT_TRUE(transport_.last_packet().has_value());
+  EXPECT_EQ(transport_.last_packet()->packet.SequenceNumber(),
+            kStartSequenceNumber + 1);
+  EXPECT_EQ(
+      transport_.last_packet()->packet.GetExtension<TransportSequenceNumber>(),
+      1u);
 }
 
 TEST_F(RtpSenderEgressTest, DoesNotPutNonMediaInHistory) {

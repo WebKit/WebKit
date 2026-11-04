@@ -35,14 +35,75 @@
 
 using namespace bssl;
 
-static ExDataClass g_ex_data_class;
+namespace {
 
-static constexpr CBS_ASN1_TAG kVersionTag =
+ExDataClass g_ex_data_class;
+
+constexpr CBS_ASN1_TAG kVersionTag =
     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 0;
-static constexpr CBS_ASN1_TAG kIssuerUIDTag = CBS_ASN1_CONTEXT_SPECIFIC | 1;
-static constexpr CBS_ASN1_TAG kSubjectUIDTag = CBS_ASN1_CONTEXT_SPECIFIC | 2;
-static constexpr CBS_ASN1_TAG kExtensionsTag =
+constexpr CBS_ASN1_TAG kIssuerUIDTag = CBS_ASN1_CONTEXT_SPECIFIC | 1;
+constexpr CBS_ASN1_TAG kSubjectUIDTag = CBS_ASN1_CONTEXT_SPECIFIC | 2;
+constexpr CBS_ASN1_TAG kExtensionsTag =
     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 3;
+
+UniquePtr<X509> x509_parse(CBS *cbs) {
+  CBS cert;
+  if (!CBS_get_asn1_element(cbs, &cert, CBS_ASN1_SEQUENCE)) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
+    return nullptr;
+  }
+
+  UniquePtr<CRYPTO_BUFFER> buf(CRYPTO_BUFFER_new_from_CBS(&cert, nullptr));
+  if (buf == nullptr) {
+    return nullptr;
+  }
+  return UniquePtr<X509>(X509_parse_from_buffer(buf.get()));
+}
+
+int x509_marshal(CBB *cbb, const X509 *x509) {
+  CBB cert;
+  auto *impl = FromOpaque(x509);
+  return CBB_add_asn1(cbb, &cert, CBS_ASN1_SEQUENCE) &&
+         x509_marshal_tbs_cert(&cert, x509) &&
+         x509_marshal_algorithm(&cert, impl->sig_alg.get()) &&
+         asn1_marshal_bit_string(&cert, impl->signature.get(), /*tag=*/0) &&
+         CBB_flush(cbb);
+}
+
+// Serialize trusted certificate to *pp or just return the required buffer
+// length if pp == NULL.  We ultimately want to avoid modifying *pp in the
+// error path, but that depends on similar hygiene in lower-level functions.
+// Here we avoid compounding the problem.
+int i2d_x509_aux_internal(const X509 *a, unsigned char **pp) {
+  int length, tmplen;
+  unsigned char *start = pp != nullptr ? *pp : nullptr;
+
+  assert(pp == nullptr || *pp != nullptr);
+
+  // This might perturb *pp on error, but fixing that belongs in i2d_X509()
+  // not here.  It should be that if a == NULL length is zero, but we check
+  // both just in case.
+  length = i2d_X509(a, pp);
+  if (length <= 0 || a == nullptr) {
+    return length;
+  }
+
+  auto *impl = FromOpaque(a);
+  if (impl->aux != nullptr) {
+    tmplen = i2d_X509_CERT_AUX(impl->aux, pp);
+    if (tmplen < 0) {
+      if (start != nullptr) {
+        *pp = start;
+      }
+      return tmplen;
+    }
+    length += tmplen;
+  }
+
+  return length;
+}
+
+}  // namespace
 
 X509Impl::X509Impl() : RefCounted(CheckSubClass()) {
   CRYPTO_new_ex_data(&ex_data);
@@ -65,7 +126,7 @@ void X509_free(X509 *x509) {
   impl->DecRefInternal();
 }
 
-X509 *X509_parse_with_algorithms(CRYPTO_BUFFER *buf,
+X509 *X509_parse_with_algorithms(const CRYPTO_BUFFER *buf,
                                  const EVP_PKEY_ALG *const *algs,
                                  size_t num_algs) {
   UniquePtr<X509Impl> ret(FromOpaque(X509_new()));
@@ -179,23 +240,9 @@ X509 *X509_parse_with_algorithms(CRYPTO_BUFFER *buf,
   return ret.release();
 }
 
-X509 *X509_parse_from_buffer(CRYPTO_BUFFER *buf) {
+X509 *X509_parse_from_buffer(const CRYPTO_BUFFER *buf) {
   auto algs = GetDefaultEVPAlgorithms();
   return X509_parse_with_algorithms(buf, algs.data(), algs.size());
-}
-
-static UniquePtr<X509> x509_parse(CBS *cbs) {
-  CBS cert;
-  if (!CBS_get_asn1_element(cbs, &cert, CBS_ASN1_SEQUENCE)) {
-    OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
-    return nullptr;
-  }
-
-  UniquePtr<CRYPTO_BUFFER> buf(CRYPTO_BUFFER_new_from_CBS(&cert, nullptr));
-  if (buf == nullptr) {
-    return nullptr;
-  }
-  return UniquePtr<X509>(X509_parse_from_buffer(buf.get()));
 }
 
 int bssl::x509_marshal_tbs_cert(CBB *cbb, const X509 *x509) {
@@ -280,16 +327,6 @@ int bssl::x509_get_or_marshal_tbs_cert(CBS *out, Array<uint8_t> *scratch,
   return 1;
 }
 
-static int x509_marshal(CBB *cbb, const X509 *x509) {
-  CBB cert;
-  auto *impl = FromOpaque(x509);
-  return CBB_add_asn1(cbb, &cert, CBS_ASN1_SEQUENCE) &&
-         x509_marshal_tbs_cert(&cert, x509) &&
-         x509_marshal_algorithm(&cert, impl->sig_alg.get()) &&
-         asn1_marshal_bit_string(&cert, impl->signature.get(), /*tag=*/0) &&
-         CBB_flush(cbb);
-}
-
 X509 *d2i_X509(X509 **out, const uint8_t **inp, long len) {
   return D2IFromCBS(out, inp, len, x509_parse);
 }
@@ -328,10 +365,10 @@ int X509_up_ref(X509 *x) {
 }
 
 X509 *X509_dup_ref(const X509 *x) {
-  auto *x_ref = const_cast<X509 *>(x);
-  // We know that this call always returns one.
-  X509_up_ref(x_ref);
-  return x_ref;
+  if (x == nullptr) {
+    return nullptr;
+  }
+  return FromOpaque(x)->DupRefInternal();
 }
 
 int X509_get_ex_new_index(long argl, void *argp, CRYPTO_EX_unused *unused,
@@ -385,39 +422,6 @@ err:
     }
   }
   return nullptr;
-}
-
-// Serialize trusted certificate to *pp or just return the required buffer
-// length if pp == NULL.  We ultimately want to avoid modifying *pp in the
-// error path, but that depends on similar hygiene in lower-level functions.
-// Here we avoid compounding the problem.
-static int i2d_x509_aux_internal(const X509 *a, unsigned char **pp) {
-  int length, tmplen;
-  unsigned char *start = pp != nullptr ? *pp : nullptr;
-
-  assert(pp == nullptr || *pp != nullptr);
-
-  // This might perturb *pp on error, but fixing that belongs in i2d_X509()
-  // not here.  It should be that if a == NULL length is zero, but we check
-  // both just in case.
-  length = i2d_X509(a, pp);
-  if (length <= 0 || a == nullptr) {
-    return length;
-  }
-
-  auto *impl = FromOpaque(a);
-  if (impl->aux != nullptr) {
-    tmplen = i2d_X509_CERT_AUX(impl->aux, pp);
-    if (tmplen < 0) {
-      if (start != nullptr) {
-        *pp = start;
-      }
-      return tmplen;
-    }
-    length += tmplen;
-  }
-
-  return length;
 }
 
 // Serialize trusted certificate to *pp, or just return the required buffer

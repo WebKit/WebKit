@@ -212,7 +212,7 @@ void RtcEventLogDriver::OnLoggedVideoRecvConfig(
                      << " (simulated_ts=" << env_.clock().CurrentTime() << ")";
     if (auto it = streams_.find(ssrc); it != streams_.end()) {
       if (config_.reuse_streams) {
-        // TODO(b/384950328): Support changing RTX SSRCs on the fly?
+        // TODO: b/384950328 - Remove unused `reuse_streams` option.
         RTC_LOG(LS_WARNING)
             << "Stream for ssrc=" << ssrc << " already existed. Reusing it."
             << " (simulated_ts=" << env_.clock().CurrentTime() << ")";
@@ -222,6 +222,10 @@ void RtcEventLogDriver::OnLoggedVideoRecvConfig(
             << "Stream for ssrc=" << ssrc << " already existed. Overwriting it."
             << " (simulated_ts=" << env_.clock().CurrentTime() << ")";
         it->second->Close();
+        absl::erase_if(receiving_streams_,
+                       [old_stream = it->second.get()](const auto& kv) {
+                         return kv.second == old_stream;
+                       });
       }
     }
     std::unique_ptr<StreamInterface> stream =
@@ -239,7 +243,7 @@ void RtcEventLogDriver::OnLoggedVideoRecvConfig(
 
 void RtcEventLogDriver::OnLoggedRtpPacketIncoming(
     const webrtc::LoggedRtpPacketIncoming& packet) {
-  HandleEvent(packet.log_time(), [this, packet]() {
+  HandleEvent(packet.log_time(), [this, &packet]() {
     RTC_DCHECK_RUN_ON(simulator_queue_.get());
     uint32_t ssrc = packet.rtp.header.ssrc;
     if (auto it = receiving_streams_.find(ssrc);
@@ -260,7 +264,7 @@ void RtcEventLogDriver::OnLoggedRtpPacketIncoming(
 
 void RtcEventLogDriver::OnLoggedRtcpPacketSenderReportOutgoing(
     const LoggedRtcpPacketSenderReport& packet) {
-  HandleEvent(packet.log_time(), [this, packet]() {
+  HandleEvent(packet.log_time(), [this, &packet]() {
     RTC_DCHECK_RUN_ON(simulator_queue_.get());
     rtt_simulator_->OnOutgoingSenderReport(packet);
   });
@@ -268,7 +272,7 @@ void RtcEventLogDriver::OnLoggedRtcpPacketSenderReportOutgoing(
 
 void RtcEventLogDriver::OnLoggedRtcpPacketExtendedReportsOutgoing(
     const LoggedRtcpPacketExtendedReports& packet) {
-  HandleEvent(packet.log_time(), [this, packet]() {
+  HandleEvent(packet.log_time(), [this, &packet]() {
     RTC_DCHECK_RUN_ON(simulator_queue_.get());
     rtt_simulator_->OnOutgoingExtendedReports(packet);
   });
@@ -276,7 +280,7 @@ void RtcEventLogDriver::OnLoggedRtcpPacketExtendedReportsOutgoing(
 
 void RtcEventLogDriver::OnLoggedRtcpPacketSenderReportIncoming(
     const LoggedRtcpPacketSenderReport& packet) {
-  HandleEvent(packet.log_time(), [this, packet]() {
+  HandleEvent(packet.log_time(), [this, &packet]() {
     RTC_DCHECK_RUN_ON(simulator_queue_.get());
     rtt_simulator_->OnIncomingSenderReport(packet);
   });
@@ -284,7 +288,7 @@ void RtcEventLogDriver::OnLoggedRtcpPacketSenderReportIncoming(
 
 void RtcEventLogDriver::OnLoggedRtcpPacketReceiverReportIncoming(
     const LoggedRtcpPacketReceiverReport& packet) {
-  HandleEvent(packet.log_time(), [this, packet]() {
+  HandleEvent(packet.log_time(), [this, &packet]() {
     RTC_DCHECK_RUN_ON(simulator_queue_.get());
     rtt_simulator_->OnIncomingReceiverReport(packet);
   });
@@ -292,7 +296,7 @@ void RtcEventLogDriver::OnLoggedRtcpPacketReceiverReportIncoming(
 
 void RtcEventLogDriver::OnLoggedRtcpPacketExtendedReportsIncoming(
     const LoggedRtcpPacketExtendedReports& packet) {
-  HandleEvent(packet.log_time(), [this, packet]() {
+  HandleEvent(packet.log_time(), [this, &packet]() {
     RTC_DCHECK_RUN_ON(simulator_queue_.get());
     rtt_simulator_->OnIncomingExtendedReports(packet);
   });

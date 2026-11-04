@@ -124,8 +124,8 @@ static int decode_coefs(const MACROBLOCKD *xd, PLANE_TYPE type,
   const vpx_prob(*coef_probs)[COEFF_CONTEXTS][UNCONSTRAINED_NODES] =
       fc->coef_probs[tx_size][type][ref];
   const vpx_prob *prob;
-  unsigned int(*coef_counts)[COEFF_CONTEXTS][UNCONSTRAINED_NODES + 1];
-  unsigned int(*eob_branch_count)[COEFF_CONTEXTS];
+  unsigned int (*coef_counts)[COEFF_CONTEXTS][UNCONSTRAINED_NODES + 1];
+  unsigned int (*eob_branch_count)[COEFF_CONTEXTS];
   uint8_t token_cache[32 * 32];
   const uint8_t *band_translate = get_band_translate(tx_size);
   const int dq_shift = (tx_size == TX_32X32);

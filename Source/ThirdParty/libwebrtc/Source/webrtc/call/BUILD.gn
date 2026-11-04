@@ -18,6 +18,7 @@ rtc_library("version") {
 
 rtc_source_set("sframe_options") {
   sources = [ "sframe_options.h" ]
+  deps = [ "../modules/sframe:sframe_encryption_config" ]
 }
 
 rtc_library("call_interfaces") {
@@ -44,6 +45,7 @@ rtc_library("call_interfaces") {
     ":audio_sender_interface",
     ":receive_stream_interface",
     ":rtp_interfaces",
+    ":sframe_options",
     ":video_receive_stream_api",
     ":video_send_stream_api",
     "../api:fec_controller_api",
@@ -116,6 +118,7 @@ rtc_library("rtp_interfaces") {
     "rtp_transport_controller_send_interface.h",
   ]
   deps = [
+    ":sframe_options",
     "../api:fec_controller_api",
     "../api:frame_transformer_interface",
     "../api:network_state_predictor_api",
@@ -814,11 +817,13 @@ if (rtc_include_tests) {
         ":rtp_sender",
         ":video_send_stream_api",
         "../api:bitrate_allocation",
+        "../api:fec_controller_api",
         "../api:field_trials",
         "../api:frame_transformer_interface",
         "../api:make_ref_counted",
         "../api:mock_frame_transformer",
         "../api:rtp_header_extension_id",
+        "../api:rtp_headers",
         "../api:rtp_parameters",
         "../api:scoped_refptr",
         "../api:transport_api",
@@ -1082,9 +1087,7 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_library("fake_network_pipe_unittests") {
-    testonly = true
-
+  rtc_cc_test("fake_network_pipe_unittest") {
     sources = [ "fake_network_pipe_unittest.cc" ]
     deps = [
       ":fake_network",

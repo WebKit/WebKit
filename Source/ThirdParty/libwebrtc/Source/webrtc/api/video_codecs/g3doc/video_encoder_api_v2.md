@@ -452,12 +452,17 @@ struct FrameEncodeSettings {
   frame (`FrameType`).
 - **`temporal_id`**: The temporal ID for this frame. Must be set to 0 for
   keyframes. Provided as input for the CBR rate controller.
-- **`spatial_id`**: The spatial ID for this frame.
+- **`spatial_id`**: The spatial ID for this frame. The `FrameEncodeSettings` of
+  a temporal unit must be ordered by strictly increasing spatial ID, i.e. there
+  is at most one frame per spatial layer and lower layers come first.
 - **`resolution`**: The resolution to encode the frame at. Note that any
   reference buffer used for prediction must have a resolution that is a multiple
   of the supported scaling factors.
 - **`reference_buffers`**: List of reference buffer slots the encoder is allowed
-  to reference when encoding this frame. It may choose to use only a subset.
+  to reference when encoding this frame. It may choose to use only a subset. The
+  list is in order of preference, most useful (typically the most recently
+  updated) first, and encoders that favor some references over others should
+  follow that order.
 - **`update_buffer`**: Which buffer that the encoded frame should be placed in.
   For keyframes and startframes this must be set.
 - **`effort_level`**: Indicates the amount of effort the encoder should spend

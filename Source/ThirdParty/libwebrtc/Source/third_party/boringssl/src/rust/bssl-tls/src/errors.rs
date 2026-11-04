@@ -16,10 +16,8 @@
 
 use alloc::boxed::Box;
 use core::{
-    any::Any,
     ffi::{
         CStr,
-        c_int,
         c_uint, //
     },
     fmt::{
@@ -30,8 +28,10 @@ use core::{
     }, //
 };
 
-use bssl_macros::bssl_enum;
-use bssl_sys::LibCode;
+use bssl_crypto::{
+    LibCode,
+    bssl_enum, //
+};
 use bssl_x509::errors::{
     PemReason,
     PkiError, //
@@ -57,7 +57,17 @@ pub enum Error {
     /// PKI errors
     Pki(PkiError),
     /// Unknown error which should be reported as bug
-    Unknown(Box<dyn Any + Send + Sync>),
+    Unknown(UnknownError),
+}
+
+/// Unknown error that should be reported as bug
+#[derive(Debug)]
+pub struct UnknownError(pub(crate) &'static str);
+
+impl Display for UnknownError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        f.write_str(self.0)
+    }
 }
 
 impl From<PkiError> for Error {
@@ -68,49 +78,49 @@ impl From<PkiError> for Error {
 
 impl Error {
     #[allow(irrefutable_let_patterns)]
-    fn extract_err_from_code(packed_error: c_uint) -> Self {
+    fn extract_err_from_code(packed_error: c_uint) -> Option<Self> {
+        if packed_error == 0 {
+            return None;
+        }
         let lib = unsafe {
             // Safety: extracting error source does not have side-effect and only access static data.
             bssl_sys::ERR_GET_LIB(packed_error)
         };
         let Ok(lib) = i32::try_from(lib) else {
-            return Self::Library(packed_error, None, None);
+            return Some(Self::Library(packed_error, None, None));
         };
         let Ok(lib) = LibCode::try_from(lib) else {
-            return Self::Library(packed_error, None, None);
+            return Some(Self::Library(packed_error, None, None));
         };
         let reason = unsafe {
             // Safety: extracting error reason does not have side-effect and only access static data.
             bssl_sys::ERR_GET_REASON(packed_error)
         };
         let Ok(reason) = i32::try_from(reason) else {
-            return Self::Library(packed_error, Some(lib), None);
+            return Some(Self::Library(packed_error, Some(lib), None));
         };
         let ret_unknown_reason = || Self::Library(packed_error, Some(lib), Some(reason));
-        match lib {
+        let error = match lib {
             LibCode::Ssl => {
                 let Ok(reason) = TlsErrorReason::try_from(reason) else {
-                    return ret_unknown_reason();
+                    return Some(ret_unknown_reason());
                 };
                 Self::TlsReason(reason)
             }
             LibCode::Pem => {
                 let Ok(reason) = PemReason::try_from(reason) else {
-                    return ret_unknown_reason();
+                    return Some(ret_unknown_reason());
                 };
                 Self::PemReason(reason)
             }
             _ => Self::Library(packed_error, Some(lib), Some(reason)),
-        }
+        };
+        Some(error)
     }
 
-    fn is_trivial(&self) -> bool {
-        matches!(self, Self::Library(0, _, _))
-    }
-
-    pub(crate) fn extract_lib_err() -> Self {
+    pub(crate) fn extract_lib_err() -> Option<Self> {
         let packed_error = unsafe {
-            // Safety: extracting error code does not have side-effect
+            // Safety: extracting error code does not have side-effect.
             bssl_sys::ERR_get_error()
         };
         let error = Self::extract_err_from_code(packed_error);
@@ -121,21 +131,10 @@ impl Error {
         error
     }
 
-    pub(crate) fn extract_tls_err(code: c_int) -> Result<TlsRetryReason, Self> {
-        let lib_err = Self::extract_lib_err();
-        if code == bssl_sys::SSL_ERROR_SSL {
-            return Err(lib_err);
-        }
-        if let Ok(reason) = TlsRetryReason::try_from(code) {
-            return Ok(reason);
-        }
-        if lib_err.is_trivial() {
-            Err(Self::Unknown(Box::new(alloc::format!(
-                "unknown tls error ({code})"
-            ))))
-        } else {
-            Err(lib_err)
-        }
+    /// Like [`Self::extract_lib_err`] but for callers that expect no fallback errors this function
+    /// also fills in a default error asserting that the error is unknown.
+    pub(crate) fn extract_lib_err_or_unknown() -> Self {
+        Self::extract_lib_err().unwrap_or_else(|| Self::Unknown(UnknownError("unknown error")))
     }
 }
 
@@ -180,7 +179,7 @@ impl Display for Error {
             Error::Quic(err) => Display::fmt(err, f),
             Error::Io(err) => Display::fmt(err, f),
             Error::Pki(err) => Display::fmt(err, f),
-            Error::Unknown(err) => err.fmt(f),
+            Error::Unknown(err) => write!(f, "{err:?}"),
         }
     }
 }
@@ -734,8 +733,6 @@ bssl_enum! {
         WantWrite = bssl_sys::SSL_ERROR_WANT_WRITE as i32,
         /// Pending certificate look-up.
         PendingCertificateLookup = bssl_sys::SSL_ERROR_WANT_X509_LOOKUP as i32,
-        /// Syscall failed.
-        Syscall = bssl_sys::SSL_ERROR_SYSCALL as i32,
         /// Pending session.
         /// Caller may retry the last operation when the session lookup is ready.
         PendingSession = bssl_sys::SSL_ERROR_PENDING_SESSION as i32,
@@ -748,8 +745,6 @@ bssl_enum! {
         /// Pending ticket.
         /// Caller may retry the last operation when the ticket decryption is ready.
         PendingTicket = bssl_sys::SSL_ERROR_PENDING_TICKET as i32,
-        /// End of stream, due to peer close_notify.
-        PeerCloseNotify = bssl_sys::SSL_ERROR_ZERO_RETURN as i32,
         /// Want to (re)connect.
         /// Caller may retry the last operation when the transport becomes ready.
         WantConnect = bssl_sys::SSL_ERROR_WANT_CONNECT as i32,
@@ -775,7 +770,6 @@ impl Display for TlsRetryReason {
             TlsRetryReason::WantRead => f.write_str("want to read"),
             TlsRetryReason::WantWrite => f.write_str("want to write"),
             TlsRetryReason::PendingCertificateLookup => f.write_str("pending certificate lookup"),
-            TlsRetryReason::Syscall => f.write_str("syscall error"),
             TlsRetryReason::PendingSession => f.write_str("pending session"),
             TlsRetryReason::PendingCertificate => f.write_str("pending certificate"),
             TlsRetryReason::PendingTicket => f.write_str("pending ticket"),
@@ -787,7 +781,6 @@ impl Display for TlsRetryReason {
             }
             TlsRetryReason::EarlyDataRejected => f.write_str("early data rejected"),
             TlsRetryReason::HandshakeHintsReady => f.write_str("handshake hints ready"),
-            TlsRetryReason::PeerCloseNotify => f.write_str("peer close notify"),
         }
     }
 }
@@ -802,15 +795,17 @@ impl Display for QuicError {
     }
 }
 
-/// I/O errors
+/// Transport I/O errors
 #[derive(Debug)]
 pub enum IoError {
     /// Buffer sizes are too long.
     TooLong,
-    /// Reached the end of stream.
+    /// Reached the end of stream of the transport.
     EndOfStream,
     /// Error during I/O operation in the underlying transport.
     Transport(Box<dyn core::error::Error + Send + Sync>),
+    /// The underlying transport is unconfigured.
+    Unconfigured,
 }
 
 impl Display for IoError {
@@ -818,6 +813,7 @@ impl Display for IoError {
         match self {
             IoError::TooLong => f.write_str("data too long"),
             IoError::EndOfStream => f.write_str("end of stream"),
+            IoError::Unconfigured => f.write_str("transport is unconfigured"),
             IoError::Transport(e) => write!(f, "transport: {e}"),
         }
     }

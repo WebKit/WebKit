@@ -44,6 +44,10 @@ struct env_md_st {
   // final completes the hash and writes `md_size` bytes of digest to `out`.
   void (*final)(EVP_MD_CTX *ctx, uint8_t *out);
 
+  // squeeze writes the `out_len` bytes of digest to `out`.
+  // It is only applicable to extendable output functions.
+  void (*squeeze)(EVP_MD_CTX *ctx, uint8_t *out, size_t out_len);
+
   // block_size contains the hash's native block size.
   unsigned block_size;
 

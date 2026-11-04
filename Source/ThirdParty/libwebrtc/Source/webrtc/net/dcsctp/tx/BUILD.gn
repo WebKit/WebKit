@@ -187,4 +187,97 @@ if (rtc_include_tests) {
       "stream_scheduler_test.cc",
     ]
   }
+
+  rtc_cc_test("outstanding_data_test") {
+    deps = [
+      ":outstanding_data",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../common:math",
+      "../common:sequence_numbers",
+      "../packet:chunk",
+      "../public:socket",
+      "../public:types",
+      "../testing:data_generator",
+      "../testing:testing_macros",
+    ]
+    sources = [ "outstanding_data_test.cc" ]
+  }
+
+  rtc_cc_test("retransmission_error_counter_test") {
+    deps = [
+      ":retransmission_error_counter",
+      "../../../test:test_support",
+      "../public:types",
+    ]
+    sources = [ "retransmission_error_counter_test.cc" ]
+  }
+
+  rtc_cc_test("retransmission_queue_test") {
+    deps = [
+      ":mock_send_queue",
+      ":retransmission_queue",
+      ":send_queue",
+      "../../../api/task_queue",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../test:test_support",
+      "../common:handover_testing",
+      "../common:internal_types",
+      "../common:math",
+      "../packet:chunk",
+      "../packet:data",
+      "../public:socket",
+      "../public:types",
+      "../socket:mock_callbacks",
+      "../testing:data_generator",
+      "../testing:testing_macros",
+      "../timer",
+    ]
+    sources = [ "retransmission_queue_test.cc" ]
+  }
+
+  rtc_cc_test("retransmission_timeout_test") {
+    deps = [
+      ":retransmission_timeout",
+      "../../../api/units:time_delta",
+      "../../../test:test_support",
+      "../public:types",
+    ]
+    sources = [ "retransmission_timeout_test.cc" ]
+  }
+
+  rtc_cc_test("rr_send_queue_test") {
+    deps = [
+      ":rr_send_queue",
+      ":send_queue",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../packet:data",
+      "../public:socket",
+      "../public:types",
+      "../socket:mock_callbacks",
+      "../testing:testing_macros",
+    ]
+    sources = [ "rr_send_queue_test.cc" ]
+  }
+
+  rtc_cc_test("stream_scheduler_test") {
+    deps = [
+      ":send_queue",
+      ":stream_scheduler",
+      "../../../api/units:timestamp",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../packet:chunk",
+      "../packet:data",
+      "../packet:sctp_packet",
+      "../public:types",
+    ]
+    sources = [ "stream_scheduler_test.cc" ]
+  }
 }

@@ -42,12 +42,12 @@ constexpr uint16_t kMaxOldPayloadPaddingSequenceNumber = 1 << 13;
 RtpPacketHistory::StoredPacket::StoredPacket(
     std::unique_ptr<RtpPacketToSend> packet,
     Timestamp send_time,
-    uint64_t insert_order)
+    uint64_t insert_order,
+    Timestamp earliest_allowed_retransmission)
     : packet_(std::move(packet)),
-      pending_transmission_(false),
+      earliest_allowed_retransmission_(earliest_allowed_retransmission),
       send_time_(send_time),
-      insert_order_(insert_order),
-      times_retransmitted_(0) {}
+      insert_order_(insert_order) {}
 
 RtpPacketHistory::StoredPacket::StoredPacket(StoredPacket&&) = default;
 RtpPacketHistory::StoredPacket& RtpPacketHistory::StoredPacket::operator=(
@@ -62,6 +62,7 @@ RtpPacketHistory::RtpPacketHistory(const Environment& env,
                                    PaddingMode padding_mode)
     : clock_(&env.clock()),
       padding_mode_(padding_mode),
+      retransmit_flushed_packets_settings_(env.field_trials()),
       number_to_store_(0),
       mode_(StorageMode::kDisabled),
       rtt_(TimeDelta::MinusInfinity()),
@@ -109,6 +110,13 @@ void RtpPacketHistory::PutRtpPacket(std::unique_ptr<RtpPacketToSend> packet,
   RTC_DCHECK(packet->allow_retransmission());
   CullOldPackets();
 
+  Timestamp earliest_allowed_retransmission = Timestamp::MinusInfinity();
+  if (!packet->allow_sending()) {
+    TimeDelta rtt = rtt_ >= TimeDelta::Zero() ? rtt_ : kDefaultRtt;
+    earliest_allowed_retransmission =
+        send_time + retransmit_flushed_packets_settings_.rtt_multiplier() * rtt;
+  }
+
   // Store packet.
   const uint16_t rtp_seq_no = packet->SequenceNumber();
   int packet_index = GetPacketIndex(rtp_seq_no);
@@ -146,7 +154,8 @@ void RtpPacketHistory::PutRtpPacket(std::unique_ptr<RtpPacketToSend> packet,
   }
 
   packet_history_[packet_index] =
-      StoredPacket(std::move(packet), send_time, packets_inserted_++);
+      StoredPacket(std::move(packet), send_time, packets_inserted_++,
+                   earliest_allowed_retransmission);
 }
 
 std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPacketAndMarkAsPending(
@@ -186,6 +195,7 @@ std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPacketAndMarkAsPending(
       encapsulate(*packet->packet_);
   if (encapsulated_packet) {
     packet->pending_transmission_ = true;
+    encapsulated_packet->set_allow_sending(true);
   }
 
   return encapsulated_packet;
@@ -234,8 +244,11 @@ bool RtpPacketHistory::GetPacketState(uint16_t sequence_number) const {
 
 bool RtpPacketHistory::VerifyRtt(
     const RtpPacketHistory::StoredPacket& packet) const {
-  if (packet.times_retransmitted() > 0 &&
-      clock_->CurrentTime() - packet.send_time() < rtt_) {
+  const Timestamp now = clock_->CurrentTime();
+  if (now < packet.earliest_allowed_retransmission()) {
+    return false;
+  }
+  if (packet.times_retransmitted() > 0 && now - packet.send_time() < rtt_) {
     // This packet has already been retransmitted once, and the time since
     // that even is lower than on RTT. Ignore request as this packet is
     // likely already in the network pipe.
@@ -261,7 +274,12 @@ std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPayloadPaddingPacket(
   }
   if (padding_mode_ == PaddingMode::kRecentLargePacket &&
       large_payload_packet_) {
-    return encapsulate(*large_payload_packet_);
+    std::unique_ptr<RtpPacketToSend> padding_packet =
+        encapsulate(*large_payload_packet_);
+    if (padding_packet != nullptr) {
+      padding_packet->set_allow_sending(true);
+    }
+    return padding_packet;
   }
 
   StoredPacket* best_packet = nullptr;
@@ -293,6 +311,7 @@ std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPayloadPaddingPacket(
     return nullptr;
   }
 
+  padding_packet->set_allow_sending(true);
   best_packet->set_send_time(clock_->CurrentTime());
   best_packet->IncrementTimesRetransmitted();
   return padding_packet;

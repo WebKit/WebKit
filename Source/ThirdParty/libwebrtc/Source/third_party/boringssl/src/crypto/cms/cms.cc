@@ -56,8 +56,9 @@ class CMSContentInfo : public CMS_ContentInfo_st {
 
 BSSL_NAMESPACE_END
 
-CMS_ContentInfo *CMS_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
-                          BIO *data, uint32_t flags) {
+CMS_ContentInfo *CMS_sign(const X509 *signcert, const EVP_PKEY *pkey,
+                          const STACK_OF(X509) *certs, BIO *data,
+                          uint32_t flags) {
   // We only support external signatures and do not support embedding
   // certificates in SignedData.
   if ((flags & CMS_DETACHED) == 0 || sk_X509_num(certs) != 0) {
@@ -88,8 +89,8 @@ CMS_ContentInfo *CMS_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 void CMS_ContentInfo_free(CMS_ContentInfo *cms) { Delete(FromOpaque(cms)); }
 
-CMS_SignerInfo *CMS_add1_signer(CMS_ContentInfo *cms, X509 *signcert,
-                                EVP_PKEY *pkey, const EVP_MD *md,
+CMS_SignerInfo *CMS_add1_signer(CMS_ContentInfo *cms, const X509 *signcert,
+                                const EVP_PKEY *pkey, const EVP_MD *md,
                                 uint32_t flags) {
   auto *impl = FromOpaque(cms);
   if (  // Already finalized.

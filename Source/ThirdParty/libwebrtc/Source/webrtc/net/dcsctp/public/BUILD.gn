@@ -81,17 +81,19 @@ rtc_library("utils") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("dcsctp_public_unittests") {
-    testonly = true
-
+  rtc_cc_test("mock_dcsctp_socket_test") {
     deps = [
       ":mocks",
+      "../../../test:test_support",
+    ]
+    sources = [ "mock_dcsctp_socket_test.cc" ]
+  }
+
+  rtc_cc_test("types_test") {
+    deps = [
       ":types",
       "../../../test:test_support",
     ]
-    sources = [
-      "mock_dcsctp_socket_test.cc",
-      "types_test.cc",
-    ]
+    sources = [ "types_test.cc" ]
   }
 }

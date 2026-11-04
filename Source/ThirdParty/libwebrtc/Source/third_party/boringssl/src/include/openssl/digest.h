@@ -48,6 +48,33 @@ OPENSSL_EXPORT const EVP_MD *EVP_blake2b256(void);
 // MD5 and SHA-1, as used in TLS 1.1 and below.
 OPENSSL_EXPORT const EVP_MD *EVP_md5_sha1(void);
 
+// SHA-3 family of digest functions.
+//
+// WARNING: Prefer to use SHA-2 (e.g. `EVP_sha256`) over SHA-3. Despite being a
+// newer hash function, SHA-3 performs poorly and should only be used when
+// necessary for interoperability with existing systems.
+
+OPENSSL_EXPORT const EVP_MD *EVP_sha3_256(void);
+OPENSSL_EXPORT const EVP_MD *EVP_sha3_384(void);
+OPENSSL_EXPORT const EVP_MD *EVP_sha3_512(void);
+
+// SHAKE256 functions.
+//
+// These EVP_MD objects are extendable-output functions (XOFs), meaning they can
+// return arbitrarily many bytes of output. See `EVP_DigestSqueeze`.
+
+// EVP_turboshake256 is TurboSHAKE extendable output function.
+OPENSSL_EXPORT const EVP_MD *EVP_turboshake256(void);
+
+// EVP_shake256 is SHAKE256 extendable-output function.
+//
+// WARNING: SHAKE is slow. Prefer SHA-2, or TurboSHAKE (`EVP_turboshake256`) if
+// an XOF is needed.
+OPENSSL_EXPORT const EVP_MD *EVP_shake256(void);
+
+
+// Digest lookup functions.
+
 // EVP_get_digestbynid returns an `EVP_MD` for the given NID, or NULL if no
 // such digest is known.
 OPENSSL_EXPORT const EVP_MD *EVP_get_digestbynid(int nid);
@@ -127,7 +154,7 @@ OPENSSL_EXPORT int EVP_DigestUpdate(EVP_MD_CTX *ctx, const void *data,
 
 // EVP_MAX_MD_BLOCK_SIZE is the largest digest block size supported, in
 // bytes.
-#define EVP_MAX_MD_BLOCK_SIZE 128  // SHA-512 is the longest so far.
+#define EVP_MAX_MD_BLOCK_SIZE 136  // SHA3-256 is the longest so far.
 
 // EVP_DigestFinal_ex finishes the digest in `ctx` and writes the output to
 // `md_out`. `EVP_MD_CTX_size` bytes are written, which is at most
@@ -142,6 +169,15 @@ OPENSSL_EXPORT int EVP_DigestFinal_ex(EVP_MD_CTX *ctx, uint8_t *md_out,
 // `EVP_MD_CTX_cleanup` is called on `ctx` before returning.
 OPENSSL_EXPORT int EVP_DigestFinal(EVP_MD_CTX *ctx, uint8_t *md_out,
                                    unsigned int *out_size);
+
+// EVP_DigestSqueeze writes len bytes of output from `ctx` to `out` and returns
+// one. This operation is only implemented if `ctx` was initialized with an
+// extendable-output function, which can return arbitrarily long outputs. If
+// not, this function returns zero. This function may be repeated to split its
+// output over multiple calls. Doing so will give the same output as
+// concatenating the calls into a single call.
+OPENSSL_EXPORT int EVP_DigestSqueeze(EVP_MD_CTX *ctx, unsigned char *out,
+                                     size_t len);
 
 // EVP_Digest performs a complete hashing operation in one call. It hashes `len`
 // bytes from `data` and writes the digest to `md_out`. `EVP_MD_CTX_size` bytes
@@ -301,8 +337,9 @@ OPENSSL_EXPORT EVP_MD_CTX *EVP_MD_CTX_create(void);
 // EVP_MD_CTX_destroy calls `EVP_MD_CTX_free`.
 OPENSSL_EXPORT void EVP_MD_CTX_destroy(EVP_MD_CTX *ctx);
 
-// EVP_DigestFinalXOF returns zero and adds an error to the error queue.
-// BoringSSL does not support any XOF digests.
+// EVP_DigestFinalXOF behaves like `EVP_DigestSqueeze` but calls
+// `EVP_MD_CTX_cleanup` after being called, so it is not possible to call it
+// multiple times.
 OPENSSL_EXPORT int EVP_DigestFinalXOF(EVP_MD_CTX *ctx, uint8_t *out,
                                       size_t len);
 
@@ -344,9 +381,9 @@ OPENSSL_EXPORT int EVP_Q_digest(OSSL_LIB_CTX *libctx, const char *name,
 struct evp_md_pctx_ops;
 
 // EVP_MAX_MD_DATA_SIZE is a private constant which specifies the size of the
-// largest digest state. SHA-512 and BLAKE2b are joint-largest. Consuming code
-// only uses this via the `EVP_MD_CTX` type.
-#define EVP_MAX_MD_DATA_SIZE 208
+// largest digest state. SHA3-256 is the largest. Consuming code only uses this
+// via the `EVP_MD_CTX` type.
+#define EVP_MAX_MD_DATA_SIZE 240
 
 // env_md_ctx_st is typoed ("evp" -> "env"), but the typo comes from OpenSSL
 // and some consumers forward-declare these structures so we're leaving it

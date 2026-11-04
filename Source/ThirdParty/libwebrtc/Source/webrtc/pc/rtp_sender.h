@@ -49,6 +49,7 @@
 #include "media/base/audio_source.h"
 #include "media/base/codec.h"
 #include "media/base/media_channel.h"
+#include "modules/sframe/sframe_encryption_config.h"
 #include "pc/dtmf_sender.h"
 #include "pc/encoded_audio_frame_injector.h"
 #include "pc/encoded_video_frame_injector.h"
@@ -108,8 +109,7 @@ class RtpSenderInternal : public RtpSenderInterface {
 
   // `GetParameters` and `SetParameters` operate with a transactional model.
   // Allow access to get/set parameters without invalidating transaction id.
-  virtual RtpParameters GetParametersInternal(bool may_use_cache,
-                                              bool with_all_layers) const = 0;
+  virtual RtpParameters GetParametersInternal(bool with_all_layers) const = 0;
   virtual RTCError SetParametersInternal(const RtpParameters& parameters,
                                          SetParametersCallback,
                                          bool blocking) = 0;
@@ -174,7 +174,6 @@ class RtpSenderBase : public RtpSenderInternal, public ObserverInterface {
   // `GetParameters` and `SetParameters` operate with a transactional model.
   // Allow access to get/set parameters without invalidating transaction id.
   RtpParameters GetParametersInternal(
-      bool may_use_cache = true,
       bool with_all_layers = false) const override;
   RTCError SetParametersInternal(const RtpParameters& parameters,
                                  SetParametersCallback callback = nullptr,
@@ -284,10 +283,19 @@ class RtpSenderBase : public RtpSenderInternal, public ObserverInterface {
   void SetObserver(RtpSenderObserverInterface* observer) override;
 
  protected:
+  // Resets `cached_parameters_`. Used by operations that change, or may
+  // change, the parameters of the media channel without reading them back
+  // while this thread is blocked.
   void InvalidateCache() {
     RTC_DCHECK_RUN_ON(signaling_thread_);
     cached_parameters_.reset();
+    ++cache_generation_;
   }
+
+  // Sets `cached_parameters_` to `parameters`, which must have been read from
+  // the media channel while this thread was blocked waiting for them, i.e.
+  // after any change that this thread has requested has been applied.
+  void UpdateCache(RtpParameters parameters);
 
   // If `set_streams_observer` is not null, it is invoked when SetStreams()
   // is called. `set_streams_observer` is not owned by this object. If not
@@ -360,8 +368,20 @@ class RtpSenderBase : public RtpSenderInternal, public ObserverInterface {
 
   std::vector<std::string> stream_ids_;
   RtpParameters init_parameters_;
+  // The parameters of the media channel for `ssrc_`, cached on the signaling
+  // thread to avoid blocking calls to the worker thread. Operations that
+  // change the parameters of the media channel either update the cache with
+  // the resulting parameters (see `UpdateCache()`) or invalidate it (see
+  // `InvalidateCache()`). `GetParametersInternal()` populates an empty cache.
   mutable std::optional<RtpParameters> cached_parameters_
       RTC_GUARDED_BY(signaling_thread_);
+  // Incremented by `InvalidateCache()` and `UpdateCache()`. The completion of
+  // a non-blocking `SetParametersInternal()` call delivers parameters that
+  // were read on the worker thread before the completion was posted. Those
+  // only populate the cache if the cache is empty and the generation hasn't
+  // changed since the call was made, i.e. if no other operation has changed
+  // the parameters in the meantime.
+  uint64_t cache_generation_ RTC_GUARDED_BY(signaling_thread_) = 0;
   std::vector<Codec> send_codecs_;
 
   // TODO(tommi): Several member variables in this class (ssrc_, stopped_, etc)
@@ -406,6 +426,10 @@ class RtpSenderBase : public RtpSenderInternal, public ObserverInterface {
 
   absl::AnyInvocable<RTCError()> enable_sframe_at_owner_
       RTC_GUARDED_BY(signaling_thread_);
+
+  std::optional<SframeEncryptionConfig> sframe_encryption_config_
+      RTC_GUARDED_BY(worker_thread_);
+
 #if !defined(WEBRTC_WEBKIT_BUILD)
   virtual RTCError GenerateKeyFrame(const std::vector<std::string>& rids) = 0;
 #endif

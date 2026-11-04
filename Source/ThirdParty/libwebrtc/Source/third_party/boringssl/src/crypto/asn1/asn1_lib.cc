@@ -280,6 +280,7 @@ int ASN1_STRING_set(ASN1_STRING *str, const void *_data, ossl_ssize_t len_s) {
 }
 
 void ASN1_STRING_set0(ASN1_STRING *str, void *data, int len) {
+  BSSL_CHECK(len >= 0);
   OPENSSL_free(str->data);
   str->data = reinterpret_cast<uint8_t *>(data);
   str->length = len;
@@ -360,6 +361,8 @@ int ASN1_STRING_cmp(const ASN1_STRING *a, const ASN1_STRING *b) {
 }
 
 int ASN1_STRING_length(const ASN1_STRING *str) { return str->length; }
+
+size_t ASN1_STRING_get_length(const ASN1_STRING *str) { return str->length; }
 
 int ASN1_STRING_type(const ASN1_STRING *str) { return str->type; }
 

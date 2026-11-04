@@ -39,9 +39,6 @@ dependencies = [
 [[package]]
 name = "bssl-sys"
 version = "0.1.0"
-dependencies = [
- "bssl-macros",
-]
 
 [[package]]
 name = "bssl-tls"
@@ -49,7 +46,6 @@ version = "0.1.0"
 dependencies = [
  "bitflags",
  "bssl-crypto",
- "bssl-macros",
  "bssl-sys",
  "bssl-x509",
  "futures",
@@ -77,7 +73,6 @@ version = "0.1.0"
 dependencies = [
  "bitflags",
  "bssl-crypto",
- "bssl-macros",
  "bssl-sys",
 ]
 

@@ -132,7 +132,6 @@ AudioSendStream::AudioSendStream(
                       audio_state,
                       rtp_transport,
                       bitrate_allocator,
-                      suspended_rtp_state,
                       voe::CreateChannelSend(env,
                                              config.send_transport,
                                              rtcp_rtt_stats,
@@ -141,6 +140,8 @@ AudioSendStream::AudioSendStream(
                                              config.rtp.extmap_allow_mixed,
                                              config.rtcp_report_interval_ms,
                                              config.rtp.ssrc,
+                                             suspended_rtp_state,
+                                             config.rtp.mid,
                                              config.frame_transformer,
                                              rtp_transport)) {}
 
@@ -150,7 +151,6 @@ AudioSendStream::AudioSendStream(
     const scoped_refptr<webrtc::AudioState>& audio_state,
     RtpTransportControllerSendInterface* rtp_transport,
     BitrateAllocatorInterface* bitrate_allocator,
-    const std::optional<RtpState>& suspended_rtp_state,
     std::unique_ptr<voe::ChannelSendInterface> channel_send)
     : env_(env),
       allocate_audio_without_feedback_(
@@ -167,8 +167,7 @@ AudioSendStream::AudioSendStream(
           !env_.field_trials().IsDisabled("WebRTC-Audio-PriorityBitrate")),
       bitrate_allocator_(bitrate_allocator),
       rtp_transport_(rtp_transport),
-      rtp_rtcp_module_(channel_send_->GetRtpRtcp()),
-      suspended_rtp_state_(suspended_rtp_state) {
+      rtp_rtcp_module_(channel_send_->GetRtpRtcp()) {
   RTC_LOG(LS_INFO) << "AudioSendStream: " << config.rtp.ssrc;
   RTC_DCHECK(audio_state_);
   RTC_DCHECK(channel_send_);
@@ -243,9 +242,7 @@ void AudioSendStream::ConfigureStream(
   RTC_DCHECK(first_time ||
              old_config.send_transport == new_config.send_transport);
   RTC_DCHECK(first_time || old_config.rtp.ssrc == new_config.rtp.ssrc);
-  if (suspended_rtp_state_ && first_time) {
-    rtp_rtcp_module_->SetRtpState(*suspended_rtp_state_);
-  }
+  RTC_DCHECK(first_time || old_config.rtp.mid == new_config.rtp.mid);
   if (first_time || old_config.rtp.c_name != new_config.rtp.c_name) {
     channel_send_->SetRTCP_CNAME(new_config.rtp.c_name);
   }
@@ -253,6 +250,10 @@ void AudioSendStream::ConfigureStream(
   // Enable the frame encryptor if a new frame encryptor has been provided.
   if (first_time || new_config.frame_encryptor != old_config.frame_encryptor) {
     channel_send_->SetFrameEncryptor(new_config.frame_encryptor);
+  }
+
+  if (first_time || new_config.sframe_options != old_config.sframe_options) {
+    channel_send_->SetSframeOptions(new_config.sframe_options);
   }
 
   if (first_time ||
@@ -313,11 +314,9 @@ void AudioSendStream::ConfigureStream(
     channel_send_->RegisterSenderCongestionControlObjects(rtp_transport_);
   }
   // MID RTP header extension.
-  if ((first_time || new_ids.mid != old_ids.mid ||
-       new_config.rtp.mid != old_config.rtp.mid) &&
-      new_ids.mid.IsSet() && !new_config.rtp.mid.empty()) {
+  if ((first_time || new_ids.mid != old_ids.mid) && new_ids.mid.IsSet() &&
+      !new_config.rtp.mid.empty()) {
     rtp_rtcp_module_->RegisterRtpHeaderExtension(RtpMid::Uri(), new_ids.mid);
-    rtp_rtcp_module_->SetMid(new_config.rtp.mid);
   }
 
   if (first_time || new_ids.abs_capture_time != old_ids.abs_capture_time) {

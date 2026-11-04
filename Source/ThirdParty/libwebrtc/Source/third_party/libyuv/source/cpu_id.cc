@@ -492,6 +492,12 @@ static SAFEBUFFERS int GetCpuFlags(void) {
   cpu_info = RiscvCpuCaps("/proc/cpuinfo");
   cpu_info |= kCpuHasRISCV;
 #endif  // __riscv
+#if defined(__wasm__)
+  cpu_info = kCpuHasWASM;
+#if !defined(LIBYUV_DISABLE_WASM) && defined(__wasm_simd128__)
+  cpu_info |= kCpuHasWASMSIMD;
+#endif
+#endif  // __wasm__
   cpu_info |= kCpuInitialized;
   return cpu_info;
 }

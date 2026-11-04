@@ -118,7 +118,7 @@ class VideoStreamEncoderResourceManager::InitialFrameDropper {
   explicit InitialFrameDropper(
       scoped_refptr<QualityScalerResource> quality_scaler_resource,
       const FieldTrialsView& field_trials)
-      : quality_scaler_resource_(quality_scaler_resource),
+      : quality_scaler_resource_(std::move(quality_scaler_resource)),
         quality_scaler_settings_(field_trials),
         has_seen_first_bwe_drop_(false),
         set_start_bitrate_(DataRate::Zero()),
@@ -213,7 +213,7 @@ class VideoStreamEncoderResourceManager::InitialFrameDropper {
       }
     }
     last_adaptation_counters_ = adaptation_counters;
-    last_active_flags_ = active_flags;
+    last_active_flags_ = std::move(active_flags);
     last_input_width_ = codec.width;
     last_input_height_ = codec.height;
     single_active_stream_pixels_ =
@@ -401,7 +401,7 @@ void VideoStreamEncoderResourceManager::AddResource(
   std::tie(std::ignore, inserted) = resources_.emplace(resource, reason);
   RTC_DCHECK(inserted) << "Resource " << resource->Name()
                        << " already was inserted";
-  adaptation_processor_->AddResource(resource);
+  adaptation_processor_->AddResource(std::move(resource));
 }
 
 void VideoStreamEncoderResourceManager::RemoveResource(

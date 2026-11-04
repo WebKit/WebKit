@@ -2652,6 +2652,110 @@ TEST_F(PacingControllerTest, FlushesPacketsOnKeyFrames) {
   pacer->ProcessPackets();
 }
 
+TEST_F(PacingControllerTest,
+       FlushedPacketsSentWithAllowSendingFalseWhenEnabled) {
+  const uint32_t kSsrc = 12345;
+  const uint32_t kRtxSsrc = 12346;
+
+  FieldTrials trials =
+      CreateTestFieldTrials("WebRTC-RetransmitFlushedPackets/Enabled/");
+  NiceMock<MockPacketSender> callback;
+  EXPECT_CALL(callback, GetRtxSsrcForMedia(kSsrc))
+      .WillRepeatedly(Return(kRtxSsrc));
+  PacingController pacer(&clock_, &callback, trials);
+  pacer.SetPacerConfig(
+      PacerConfig::Create(clock_.CurrentTime(), kTargetRate, DataRate::Zero()));
+
+  // Enqueue two video packets.
+  pacer.EnqueuePacket(BuildPacket(RtpPacketMediaType::kVideo, kSsrc,
+                                  /*sequence_number=*/1, /*capture_time_ms=*/1,
+                                  /*size_bytes=*/100));
+  pacer.EnqueuePacket(BuildPacket(RtpPacketMediaType::kVideo, kSsrc,
+                                  /*sequence_number=*/2, /*capture_time_ms=*/1,
+                                  /*size_bytes=*/100));
+  EXPECT_EQ(pacer.QueueSizePackets(), 2u);
+
+  // When keyframe is enqueued, the previous 2 packets should be flushed,
+  // marked as allow_sending == false, and passed to callback.SendPacket.
+  std::vector<std::unique_ptr<RtpPacketToSend>> flushed_packets;
+  EXPECT_CALL(callback, SendPacket)
+      .WillRepeatedly([&](std::unique_ptr<RtpPacketToSend> packet,
+                          const PacedPacketInfo& /* cluster_info */) {
+        flushed_packets.push_back(std::move(packet));
+      });
+
+  auto keyframe_packet =
+      BuildPacket(RtpPacketMediaType::kVideo, kSsrc,
+                  /*sequence_number=*/3, /*capture_time_ms=*/2,
+                  /*size_bytes=*/1000);
+  keyframe_packet->set_is_key_frame(true);
+  keyframe_packet->set_first_packet_of_frame(true);
+  pacer.EnqueuePacket(std::move(keyframe_packet));
+
+  EXPECT_THAT(
+      flushed_packets,
+      ElementsAre(
+          Pointee(AllOf(Property(&RtpPacketToSend::allow_sending, false),
+                        Property(&RtpPacketToSend::SequenceNumber, 1))),
+          Pointee(AllOf(Property(&RtpPacketToSend::allow_sending, false),
+                        Property(&RtpPacketToSend::SequenceNumber, 2)))));
+  EXPECT_EQ(pacer.QueueSizePackets(), 1u);
+
+  // The remaining packet in queue should be the keyframe packet, which is
+  // allowed to be sent.
+  EXPECT_CALL(
+      callback,
+      SendPacket(AllOf(Pointee(Property(&RtpPacketToSend::allow_sending, true)),
+                       Pointee(Property(&RtpPacketToSend::SequenceNumber, 3))),
+                 _));
+  AdvanceTimeUntil(pacer.NextSendTime());
+  pacer.ProcessPackets();
+}
+
+TEST_F(PacingControllerTest, FlushedPacketsDroppedWhenDisabled) {
+  const uint32_t kSsrc = 12345;
+  const uint32_t kRtxSsrc = 12346;
+
+  NiceMock<MockPacketSender> callback;
+  EXPECT_CALL(callback, GetRtxSsrcForMedia(kSsrc))
+      .WillRepeatedly(Return(kRtxSsrc));
+  PacingController pacer(&clock_, &callback, trials_);
+  pacer.SetPacerConfig(
+      PacerConfig::Create(clock_.CurrentTime(), kTargetRate, DataRate::Zero()));
+
+  // Enqueue two video packets.
+  pacer.EnqueuePacket(BuildPacket(RtpPacketMediaType::kVideo, kSsrc,
+                                  /*sequence_number=*/1, /*capture_time_ms=*/1,
+                                  /*size_bytes=*/100));
+  pacer.EnqueuePacket(BuildPacket(RtpPacketMediaType::kVideo, kSsrc,
+                                  /*sequence_number=*/2, /*capture_time_ms=*/1,
+                                  /*size_bytes=*/100));
+  EXPECT_EQ(pacer.QueueSizePackets(), 2u);
+
+  // When keyframe is enqueued with trial disabled, flushed packets must NOT be
+  // passed to callback.SendPacket (they are silently dropped).
+  EXPECT_CALL(callback, SendPacket).Times(0);
+
+  auto keyframe_packet =
+      BuildPacket(RtpPacketMediaType::kVideo, kSsrc,
+                  /*sequence_number=*/3, /*capture_time_ms=*/2,
+                  /*size_bytes=*/1000);
+  keyframe_packet->set_is_key_frame(true);
+  keyframe_packet->set_first_packet_of_frame(true);
+  pacer.EnqueuePacket(std::move(keyframe_packet));
+
+  EXPECT_EQ(pacer.QueueSizePackets(), 1u);
+
+  // The remaining packet in queue is the keyframe packet.
+  EXPECT_CALL(
+      callback,
+      SendPacket(AllOf(Pointee(Property(&RtpPacketToSend::allow_sending, true)),
+                       Pointee(Property(&RtpPacketToSend::SequenceNumber, 3))),
+                 _));
+  AdvanceTimeUntil(pacer.NextSendTime());
+  pacer.ProcessPackets();
+}
+
 TEST_F(PacingControllerTest, CanControlQueueSizeUsingTtl) {
   const uint32_t kSsrc = 54321;
   uint16_t sequence_number = 1234;

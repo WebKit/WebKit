@@ -356,45 +356,45 @@ typedef struct ASN1_EXTERN_FUNCS_st {
 
 // IMPLEMENT_EXTERN_ASN1_PARSE_NEW implements an `ASN1_ITEM` for a type whose
 // parse function returns a new object.
-#define IMPLEMENT_EXTERN_ASN1_PARSE_NEW(name, new_func, free_func, tag,        \
-                                        parse_func, marshal_func)              \
-  static int name##_new_cb(ASN1_VALUE **pval, const ASN1_ITEM *it) {           \
-    name *obj = new_func();                                                    \
-    if (obj == nullptr) {                                                      \
-      return 0;                                                                \
-    }                                                                          \
-    asn1_store_ptr(pval, obj);                                                 \
-    return 1;                                                                  \
-  }                                                                            \
-                                                                               \
-  static void name##_free_cb(ASN1_VALUE **pval, const ASN1_ITEM *it) {         \
-    free_func(asn1_load_ptr_as<name>(pval));                                   \
-    asn1_store_ptr(pval, nullptr);                                             \
-  }                                                                            \
-                                                                               \
-  static int name##_parse_cb(ASN1_VALUE **pval, CBS *cbs, const ASN1_ITEM *it, \
-                             int opt) {                                        \
-    if (opt && !CBS_peek_asn1_tag(cbs, (tag))) {                               \
-      return 1;                                                                \
-    }                                                                          \
-                                                                               \
-    bssl::UniquePtr<name> ret = parse_func(cbs);                               \
-    if (ret == nullptr) {                                                      \
-      return 0;                                                                \
-    }                                                                          \
-    name##_free_cb(pval, it);                                                  \
-    asn1_store_ptr(pval, ret.release());                                       \
-    return 1;                                                                  \
-  }                                                                            \
-                                                                               \
-  static int name##_marshal_cb(CBB *cbb, ASN1_VALUE **pval,                    \
-                               const ASN1_ITEM *it) {                          \
-    return marshal_func(cbb, asn1_load_ptr_as<name>(pval));                    \
-  }                                                                            \
-                                                                               \
-  static const ASN1_EXTERN_FUNCS name##_extern_funcs = {                       \
-      name##_new_cb, name##_free_cb, name##_parse_cb, name##_marshal_cb};      \
-                                                                               \
+#define IMPLEMENT_EXTERN_ASN1_PARSE_NEW(name, new_func, free_func, tag,     \
+                                        parse_func, marshal_func)           \
+  namespace {                                                               \
+  int name##_new_cb(ASN1_VALUE **pval, const ASN1_ITEM *it) {               \
+    name *obj = new_func();                                                 \
+    if (obj == nullptr) {                                                   \
+      return 0;                                                             \
+    }                                                                       \
+    asn1_store_ptr(pval, obj);                                              \
+    return 1;                                                               \
+  }                                                                         \
+                                                                            \
+  void name##_free_cb(ASN1_VALUE **pval, const ASN1_ITEM *it) {             \
+    free_func(asn1_load_ptr_as<name>(pval));                                \
+    asn1_store_ptr(pval, nullptr);                                          \
+  }                                                                         \
+                                                                            \
+  int name##_parse_cb(ASN1_VALUE **pval, CBS *cbs, const ASN1_ITEM *it,     \
+                      int opt) {                                            \
+    if (opt && !CBS_peek_asn1_tag(cbs, (tag))) {                            \
+      return 1;                                                             \
+    }                                                                       \
+                                                                            \
+    bssl::UniquePtr<name> ret = parse_func(cbs);                            \
+    if (ret == nullptr) {                                                   \
+      return 0;                                                             \
+    }                                                                       \
+    name##_free_cb(pval, it);                                               \
+    asn1_store_ptr(pval, ret.release());                                    \
+    return 1;                                                               \
+  }                                                                         \
+                                                                            \
+  int name##_marshal_cb(CBB *cbb, ASN1_VALUE **pval, const ASN1_ITEM *it) { \
+    return marshal_func(cbb, asn1_load_ptr_as<name>(pval));                 \
+  }                                                                         \
+                                                                            \
+  const ASN1_EXTERN_FUNCS name##_extern_funcs = {                           \
+      name##_new_cb, name##_free_cb, name##_parse_cb, name##_marshal_cb};   \
+  }                                                                         \
   IMPLEMENT_EXTERN_ASN1(name, name##_extern_funcs)
 
 // IMPLEMENT_EXTERN_ASN1_PARSE_INTO implements an `ASN1_ITEM` for a type whose
@@ -402,14 +402,15 @@ typedef struct ASN1_EXTERN_FUNCS_st {
 #define IMPLEMENT_EXTERN_ASN1_PARSE_INTO(name, new_func, free_func, tag, \
                                          parse_func, marshal_func)       \
                                                                          \
-  static bssl::UniquePtr<name> name##_parse_new(CBS *cbs) {              \
+  namespace {                                                            \
+  bssl::UniquePtr<name> name##_parse_new(CBS *cbs) {                     \
     bssl::UniquePtr<name> ret(new_func());                               \
     if (ret == nullptr || !parse_func(cbs, ret.get())) {                 \
       return 0;                                                          \
     }                                                                    \
     return ret;                                                          \
   }                                                                      \
-                                                                         \
+  }                                                                      \
   IMPLEMENT_EXTERN_ASN1_PARSE_NEW(name, new_func, free_func, tag,        \
                                   name##_parse_new, marshal_func)
 

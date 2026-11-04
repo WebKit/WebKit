@@ -22,26 +22,17 @@
 #include <openssl/span.h>
 
 #include "cert_errors.h"
+#include "encode_values.h"
 #include "extended_key_usage.h"
 #include "parsed_certificate.h"
 #include "revocation_util.h"
+#include "simple_path_builder_delegate.h"
 #include "string_util.h"
+#include "verify_certificate_chain.h"
 #include "verify_name_match.h"
 #include "verify_signed_data.h"
 
 BSSL_NAMESPACE_BEGIN
-
-OCSPCertID::OCSPCertID() = default;
-OCSPCertID::~OCSPCertID() = default;
-
-OCSPSingleResponse::OCSPSingleResponse() = default;
-OCSPSingleResponse::~OCSPSingleResponse() = default;
-
-OCSPResponseData::OCSPResponseData() = default;
-OCSPResponseData::~OCSPResponseData() = default;
-
-OCSPResponse::OCSPResponse() = default;
-OCSPResponse::~OCSPResponse() = default;
 
 // CertID ::= SEQUENCE {
 //    hashAlgorithm           AlgorithmIdentifier,
@@ -655,25 +646,34 @@ std::shared_ptr<const ParsedCertificate> OCSPParseCertificate(
 //
 // TODO(eroman): No revocation checks are done (see id-pkix-ocsp-nocheck in the
 //     spec). extension).
-//
-// TODO(eroman): Not all properties of the certificate are verified, only the
-//     signature and EKU. Can full RFC 5280 validation be used, or are there
-//     compatibility concerns?
 [[nodiscard]] bool VerifyAuthorizedResponderCert(
-    const ParsedCertificate *responder_certificate,
-    const ParsedCertificate *issuer_certificate) {
+    const std::shared_ptr<const ParsedCertificate> &responder_certificate,
+    const std::shared_ptr<const ParsedCertificate> &issuer_certificate,
+    int64_t verify_time_epoch_seconds,
+    VerifyCertificateChainDelegate *delegate) {
+  CertPathErrors errors;
+  TrustAnchor issuer_trust(CertificateTrust::ForTrustAnchor());
+  der::GeneralizedTime verify_time;
+  if (!der::EncodePosixTimeAsGeneralizedTime(verify_time_epoch_seconds,
+                                             &verify_time)) {
+    return false;
+  }
   // The Authorized Responder must be directly signed by the issuer of the
-  // certificate being checked.
-  // TODO(eroman): Must check the signature algorithm against policy.
-  if (!responder_certificate->signature_algorithm().has_value() ||
-      !VerifySignedData(*responder_certificate->signature_algorithm(),
-                        responder_certificate->tbs_certificate_tlv(),
-                        responder_certificate->signature_value(),
-                        issuer_certificate->tbs().spki_tlv,
-                        /*cache=*/nullptr)) {
+  // certificate being checked. Use the RFC 5280 chain verifier to ensure that
+  // all relevant verification checks are done.
+  VerifyCertificateChain(
+      {responder_certificate, issuer_certificate}, issuer_trust, delegate,
+      verify_time, KeyPurpose::ANY_EKU, InitialExplicitPolicy::kFalse,
+      /*user_initial_policy_set=*/{}, InitialPolicyMappingInhibit::kFalse,
+      InitialAnyPolicyInhibit::kFalse,
+      /*user_constrained_policy_set=*/nullptr, &errors);
+  if (errors.ContainsHighSeverityErrors()) {
     return false;
   }
 
+  // TODO(mattm): maybe add a KeyPurpose::OCSP_SIGNING_STRICT to
+  // VerifyCertificateChain instead of checking it as a separate step?
+  //
   // The Authorized Responder must include the value id-kp-OCSPSigning as
   // part of the extended key usage extension.
   if (!responder_certificate->has_extended_key_usage()) {
@@ -690,11 +690,18 @@ std::shared_ptr<const ParsedCertificate> OCSPParseCertificate(
 }
 
 [[nodiscard]] bool VerifyOCSPResponseSignatureGivenCert(
-    const OCSPResponse &response, const ParsedCertificate *cert) {
-  // TODO(eroman): Must check the signature algorithm against policy.
+    const OCSPResponse &response, const ParsedCertificate *cert,
+    VerifyCertificateChainDelegate *delegate) {
+  // Check the signature algorithm against policy.
+  CertErrors unused_errors;
+  if (!delegate->IsSignatureAlgorithmAcceptable(response.signature_algorithm,
+                                                &unused_errors)) {
+    return false;
+  }
+
   return VerifySignedData(response.signature_algorithm, response.data,
                           response.signature, cert->tbs().spki_tlv,
-                          /*cache=*/nullptr);
+                          delegate->GetVerifyCache());
 }
 
 // Verifies that the OCSP response has a valid signature using
@@ -702,14 +709,17 @@ std::shared_ptr<const ParsedCertificate> OCSPParseCertificate(
 // `issuer_certificate` for OCSP signing.
 [[nodiscard]] bool VerifyOCSPResponseSignature(
     const OCSPResponse &response, const OCSPResponseData &response_data,
-    const ParsedCertificate *issuer_certificate) {
+    const std::shared_ptr<const ParsedCertificate> &issuer_certificate,
+    int64_t verify_time_epoch_seconds,
+    VerifyCertificateChainDelegate *delegate) {
   // In order to verify the OCSP signature, a valid responder matching the OCSP
   // Responder ID must be located (RFC 6960, 4.2.2.2). The responder is allowed
   // to be either the certificate issuer or a delegated authority directly
   // signed by the issuer.
   if (CheckResponderIDMatchesCertificate(response_data.responder_id,
-                                         issuer_certificate) &&
-      VerifyOCSPResponseSignatureGivenCert(response, issuer_certificate)) {
+                                         issuer_certificate.get()) &&
+      VerifyOCSPResponseSignatureGivenCert(response, issuer_certificate.get(),
+                                           delegate)) {
     return true;
   }
 
@@ -735,15 +745,16 @@ std::shared_ptr<const ParsedCertificate> OCSPParseCertificate(
 
     // If the certificate isn't a valid Authorized Responder certificate, keep
     // looking.
-    if (!VerifyAuthorizedResponderCert(cur_responder_certificate.get(),
-                                       issuer_certificate)) {
+    if (!VerifyAuthorizedResponderCert(cur_responder_certificate,
+                                       issuer_certificate,
+                                       verify_time_epoch_seconds, delegate)) {
       continue;
     }
 
     // If the certificate signed this OCSP response, have found a match.
     // Otherwise keep looking.
-    if (VerifyOCSPResponseSignatureGivenCert(response,
-                                             cur_responder_certificate.get())) {
+    if (VerifyOCSPResponseSignatureGivenCert(
+            response, cur_responder_certificate.get(), delegate)) {
       return true;
     }
   }
@@ -880,11 +891,10 @@ OCSPRevocationStatus GetRevocationStatusForCert(
 }
 
 OCSPRevocationStatus CheckOCSP(
-    std::string_view raw_response, std::string_view certificate_der,
-    const ParsedCertificate *certificate,
-    std::string_view issuer_certificate_der,
-    const ParsedCertificate *issuer_certificate,
+    std::string_view raw_response, const ParsedCertificate *certificate,
+    const std::shared_ptr<const ParsedCertificate> &issuer_certificate,
     int64_t verify_time_epoch_seconds, std::optional<int64_t> max_age_seconds,
+    VerifyCertificateChainDelegate *delegate,
     OCSPVerifyResult::ResponseStatus *response_details) {
   *response_details = OCSPVerifyResult::NOT_CHECKED;
 
@@ -937,18 +947,6 @@ OCSPRevocationStatus CheckOCSP(
     return OCSPRevocationStatus::UNKNOWN;
   }
 
-  std::shared_ptr<const ParsedCertificate> parsed_certificate;
-  std::shared_ptr<const ParsedCertificate> parsed_issuer_certificate;
-  if (!certificate) {
-    parsed_certificate = OCSPParseCertificate(StringAsBytes(certificate_der));
-    certificate = parsed_certificate.get();
-  }
-  if (!issuer_certificate) {
-    parsed_issuer_certificate =
-        OCSPParseCertificate(StringAsBytes(issuer_certificate_der));
-    issuer_certificate = parsed_issuer_certificate.get();
-  }
-
   if (!certificate || !issuer_certificate) {
     *response_details = OCSPVerifyResult::NOT_CHECKED;
     return OCSPRevocationStatus::UNKNOWN;
@@ -965,14 +963,14 @@ OCSPRevocationStatus CheckOCSP(
   // Look through all of the OCSPSingleResponses for a match (based on CertID
   // and time).
   OCSPRevocationStatus status = GetRevocationStatusForCert(
-      response_data, certificate, issuer_certificate, verify_time_epoch_seconds,
-      max_age_seconds, response_details);
+      response_data, certificate, issuer_certificate.get(),
+      verify_time_epoch_seconds, max_age_seconds, response_details);
 
   // Check that the OCSP response has a valid signature. It must either be
   // signed directly by the issuing certificate, or a valid authorized
   // responder.
-  if (!VerifyOCSPResponseSignature(response, response_data,
-                                   issuer_certificate)) {
+  if (!VerifyOCSPResponseSignature(response, response_data, issuer_certificate,
+                                   verify_time_epoch_seconds, delegate)) {
     return OCSPRevocationStatus::UNKNOWN;
   }
 
@@ -986,19 +984,33 @@ OCSPRevocationStatus CheckOCSP(
     std::string_view issuer_certificate_der, int64_t verify_time_epoch_seconds,
     std::optional<int64_t> max_age_seconds,
     OCSPVerifyResult::ResponseStatus *response_details) {
-  return CheckOCSP(raw_response, certificate_der, nullptr,
-                   issuer_certificate_der, nullptr, verify_time_epoch_seconds,
-                   max_age_seconds, response_details);
+  std::shared_ptr<const ParsedCertificate> parsed_certificate =
+      OCSPParseCertificate(StringAsBytes(certificate_der));
+  std::shared_ptr<const ParsedCertificate> parsed_issuer_certificate =
+      OCSPParseCertificate(StringAsBytes(issuer_certificate_der));
+  // Use a default delegate that matches the previous behavior of allowing
+  // SHA-1. (This doesn't actually need a PathBuilderDelegate, but there isn't
+  // a SimpleVerifyCertificateChainDelegate.)
+  // TODO(mattm): tighten the default allowed sigalgs?
+  SimplePathBuilderDelegate default_verify_delegate(
+      /*min_rsa_modulus_length_bits=*/1024,
+      SimplePathBuilderDelegate::DigestPolicy::kWeakAllowSha1);
+
+  return CheckOCSP(raw_response, parsed_certificate.get(),
+                   parsed_issuer_certificate, verify_time_epoch_seconds,
+                   max_age_seconds, &default_verify_delegate, response_details);
 }
 
 OCSPRevocationStatus CheckOCSP(
-    std::string_view raw_response, const ParsedCertificate *certificate,
-    const ParsedCertificate *issuer_certificate,
+    std::string_view raw_response,
+    const std::shared_ptr<const ParsedCertificate> &certificate,
+    const std::shared_ptr<const ParsedCertificate> &issuer_certificate,
     int64_t verify_time_epoch_seconds, std::optional<int64_t> max_age_seconds,
+    VerifyCertificateChainDelegate *delegate,
     OCSPVerifyResult::ResponseStatus *response_details) {
-  return CheckOCSP(raw_response, std::string_view(), certificate,
-                   std::string_view(), issuer_certificate,
-                   verify_time_epoch_seconds, max_age_seconds,
+  BSSL_CHECK(delegate);
+  return CheckOCSP(raw_response, certificate.get(), issuer_certificate,
+                   verify_time_epoch_seconds, max_age_seconds, delegate,
                    response_details);
 }
 

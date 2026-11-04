@@ -174,6 +174,7 @@ rtc_source_set("media_channel") {
     "../api/video_codecs:video_codecs_api",
     "../common_video",
     "../modules/rtp_rtcp:rtp_rtcp_format",
+    "../modules/sframe:sframe_encryption_config",
     "../rtc_base:async_packet_socket",
     "../rtc_base:buffer",
     "../rtc_base:checks",
@@ -483,6 +484,7 @@ rtc_library("rtc_audio_video") {
     "../modules/audio_mixer:audio_mixer_impl",
     "../modules/rtp_rtcp",
     "../modules/rtp_rtcp:rtp_rtcp_format",
+    "../modules/sframe:sframe_encryption_config",
     "../modules/video_coding/svc:scalability_mode_util",
     "../rtc_base:callback_list",
     "../rtc_base:checks",
@@ -724,6 +726,7 @@ if (rtc_include_tests) {
       "../modules/audio_processing",
       "../modules/rtp_rtcp",
       "../modules/rtp_rtcp:rtp_rtcp_format",
+      "../modules/sframe:sframe_encryption_config",
       "../modules/video_coding:video_codec_interface",
       "../modules/video_coding:video_coding_utility",
       "../modules/video_coding/svc:scalability_mode_util",
@@ -775,100 +778,231 @@ if (rtc_include_tests) {
   }
 
   if (!build_with_chromium) {
-    rtc_media_unittests_resources = [
-      "../resources/media/captured-320x240-2s-48.frames",
-      "../resources/media/faces.1280x720_P420.yuv",
-      "../resources/media/faces_I400.jpg",
-      "../resources/media/faces_I411.jpg",
-      "../resources/media/faces_I420.jpg",
-      "../resources/media/faces_I422.jpg",
-      "../resources/media/faces_I444.jpg",
-    ]
-
-    if (is_ios) {
-      bundle_data("rtc_media_unittests_bundle_data") {
-        testonly = true
-        sources = rtc_media_unittests_resources
-        outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
-      }
+    rtc_cc_test("codec_comparators_unittest") {
+      sources = [ "base/codec_comparators_unittest.cc" ]
+      deps = [
+        ":codec",
+        ":media_constants",
+        "../api:rtp_parameters",
+        "../api/audio_codecs:audio_codecs_api",
+        "../api/video_codecs:scalability_mode",
+        "../api/video_codecs:video_codecs_api",
+        "../test:test_support",
+      ]
     }
 
-    rtc_test("rtc_media_unittests") {
-      testonly = true
-
-      defines = []
+    rtc_cc_test("codec_list_unittest") {
+      sources = [ "base/codec_list_unittest.cc" ]
       deps = [
-        ":audio_source",
         ":codec",
         ":codec_list",
+        "../api:rtc_error",
+        "../api:rtp_parameters",
+        "../api/video_codecs:video_codecs_api",
+        "../rtc_base:checks",
+        "../test:test_support",
+      ]
+    }
+
+    rtc_cc_test("codec_unittest") {
+      sources = [ "base/codec_unittest.cc" ]
+      deps = [
+        ":codec",
+        ":media_constants",
+        "../api:rtp_parameters",
+        "../api/video_codecs:video_codecs_api",
+        "../modules/video_coding:webrtc_h264",
+        "../test:test_support",
+        "//third_party/abseil-cpp/absl/strings",
+      ]
+    }
+
+    rtc_cc_test("media_engine_unittest") {
+      sources = [ "base/media_engine_unittest.cc" ]
+      deps = [
+        ":codec",
+        ":media_engine",
+        "../api:field_trials_view",
+        "../api:rtc_error",
+        "../api:rtp_header_extension_id",
+        "../api:rtp_parameters",
+        "../api:rtp_transceiver_direction",
+        "../api:scoped_refptr",
+        "../api/audio:audio_device",
+        "../api/video_codecs:scalability_mode",
+        "../api/video_codecs:video_codecs_api",
+        "../call:call_interfaces",
+        "../rtc_base/system:file_wrapper",
+        "../test:test_support",
+      ]
+    }
+
+    rtc_cc_test("rtp_utils_unittest") {
+      sources = [ "base/rtp_utils_unittest.cc" ]
+      deps = [
+        ":rtc_media_tests_utils",
+        ":rtp_utils",
+        "../test:test_support",
+      ]
+    }
+
+    rtc_cc_test("sdp_video_format_utils_unittest") {
+      sources = [ "base/sdp_video_format_utils_unittest.cc" ]
+      deps = [
+        ":rtc_sdp_video_format_utils",
+        "../api:rtp_parameters",
+        "../test:test_support",
+      ]
+    }
+
+    rtc_cc_test("stream_params_unittest") {
+      sources = [ "base/stream_params_unittest.cc" ]
+      deps = [
+        ":rtc_media_tests_utils",
+        ":stream_params",
+        "../rtc_base:unique_id_generator",
+        "../test:test_support",
+      ]
+    }
+
+    rtc_cc_test("turn_utils_unittest") {
+      sources = [ "base/turn_utils_unittest.cc" ]
+      deps = [
+        ":turn_utils",
+        "../test:test_support",
+      ]
+    }
+
+    rtc_cc_test("internal_decoder_factory_unittest") {
+      sources = [ "engine/internal_decoder_factory_unittest.cc" ]
+      deps = [
+        ":media_constants",
+        ":rtc_internal_video_codecs",
+        "../api/environment",
+        "../api/video_codecs:video_codecs_api",
+        "../test:create_test_environment",
+        "../test:test_support",
+      ]
+    }
+
+    rtc_cc_test("internal_encoder_factory_unittest") {
+      sources = [ "engine/internal_encoder_factory_unittest.cc" ]
+      defines = []
+      if (enable_libaom) {
+        defines += [ "RTC_USE_LIBAOM_AV1_ENCODER" ]
+      }
+      deps = [
+        ":media_constants",
+        ":rtc_internal_video_codecs",
+        "../api/video_codecs:video_codecs_api",
+        "../test:create_test_environment",
+        "../test:test_support",
+      ]
+    }
+
+    rtc_cc_test("simulcast_encoder_adapter_unittest") {
+      sources = [ "engine/simulcast_encoder_adapter_unittest.cc" ]
+      deps = [
+        ":rtc_internal_video_codecs",
+        ":rtc_simulcast_encoder_adapter",
+        "../api:create_simulcast_test_fixture_api",
+        "../api:fec_controller_api",
+        "../api:field_trials",
+        "../api:make_ref_counted",
+        "../api:mock_video_bitrate_allocator",
+        "../api:mock_video_decoder",
+        "../api:mock_video_encoder",
+        "../api:rtp_parameters",
+        "../api:scoped_refptr",
+        "../api:simulcast_test_fixture_api",
+        "../api/environment",
+        "../api/task_queue",
+        "../api/test/video:function_video_factory",
+        "../api/units:data_rate",
+        "../api/units:timestamp",
+        "../api/video:encoded_image",
+        "../api/video:video_bitrate_allocation",
+        "../api/video:video_bitrate_allocator",
+        "../api/video:video_codec_constants",
+        "../api/video:video_frame",
+        "../api/video:video_frame_type",
+        "../api/video:video_rtp_headers",
+        "../api/video_codecs:scalability_mode",
+        "../api/video_codecs:video_codecs_api",
+        "../modules/video_coding:simulcast_test_fixture_impl",
+        "../modules/video_coding:video_codec_interface",
+        "../modules/video_coding:video_coding_utility",
+        "../modules/video_coding:webrtc_vp8",
+        "../rtc_base:checks",
+        "../rtc_base:cpu_info",
+        "../rtc_base:macromagic",
+        "../rtc_base:rtc_event",
+        "../rtc_base/synchronization:mutex",
+        "../test:create_test_environment",
+        "../test:create_test_field_trials",
+        "../test:run_loop",
+        "../test:test_support",
+        "//third_party/abseil-cpp/absl/container:inlined_vector",
+        "//third_party/abseil-cpp/absl/functional:any_invocable",
+      ]
+    }
+
+    rtc_cc_test("webrtc_media_engine_unittest") {
+      sources = [ "engine/webrtc_media_engine_unittest.cc" ]
+      deps = [
+        ":rtc_audio_video",
+        "../api:field_trials",
+        "../api:rtp_header_extension_id",
+        "../api:rtp_parameters",
+        "../test:create_test_field_trials",
+        "../test:test_support",
+        "//third_party/abseil-cpp/absl/strings:string_view",
+      ]
+    }
+
+    rtc_cc_test("webrtc_video_engine_unittest") {
+      sources = [ "engine/webrtc_video_engine_unittest.cc" ]
+      deps = [
+        ":codec",
         ":fake_video_renderer",
         ":media_channel",
         ":media_constants",
         ":media_engine",
         ":rid_description",
         ":rtc_audio_video",
-        ":rtc_internal_video_codecs",
         ":rtc_media_config",
         ":rtc_media_tests_utils",
-        ":rtc_sdp_video_format_utils",
-        ":rtc_simulcast_encoder_adapter",
-        ":rtp_utils",
         ":stream_params",
-        ":turn_utils",
-        "../api:audio_options_api",
-        "../api:call_api",
-        "../api:create_simulcast_test_fixture_api",
-        "../api:fec_controller_api",
         "../api:field_trials",
-        "../api:field_trials_view",
         "../api:make_ref_counted",
         "../api:mock_encoder_selector",
         "../api:mock_video_bitrate_allocator",
         "../api:mock_video_bitrate_allocator_factory",
         "../api:mock_video_codec_factory",
-        "../api:mock_video_decoder",
-        "../api:mock_video_encoder",
         "../api:payload_type",
         "../api:priority",
-        "../api:ref_count",
         "../api:rtc_error",
         "../api:rtp_header_extension_id",
         "../api:rtp_headers",
         "../api:rtp_packet_info",
         "../api:rtp_parameters",
-        "../api:rtp_transceiver_direction",
         "../api:scoped_refptr",
-        "../api:simulcast_test_fixture_api",
+        "../api:sframe_types",
         "../api:transport_api",
-        "../api:video_track_source_constraints",
-        "../api/audio:audio_device",
-        "../api/audio:audio_processing",
-        "../api/audio:builtin_audio_processing_builder",
-        "../api/audio_codecs:audio_codecs_api",
-        "../api/audio_codecs:builtin_audio_decoder_factory",
-        "../api/audio_codecs:builtin_audio_encoder_factory",
         "../api/crypto:options",
         "../api/environment",
-        "../api/task_queue",
         "../api/test/video:function_video_factory",
         "../api/transport:bitrate_settings",
-        "../api/transport:datagram_transport_interface",
-        "../api/transport:ecn_marking",
         "../api/transport/rtp:rtp_source",
-        "../api/units:data_rate",
         "../api/units:time_delta",
         "../api/units:timestamp",
         "../api/video:builtin_video_bitrate_allocator_factory",
-        "../api/video:encoded_image",
         "../api/video:recordable_encoded_frame",
         "../api/video:resolution",
-        "../api/video:video_bitrate_allocation",
-        "../api/video:video_bitrate_allocator",
         "../api/video:video_bitrate_allocator_factory",
         "../api/video:video_codec_constants",
         "../api/video:video_common",
         "../api/video:video_frame",
-        "../api/video:video_frame_type",
         "../api/video:video_rtp_headers",
         "../api/video_codecs:scalability_mode",
         "../api/video_codecs:video_codecs_api",
@@ -883,43 +1017,23 @@ if (rtc_include_tests) {
         "../api/video_codecs:video_encoder_factory_template_libvpx_vp9_adapter",
         "../api/video_codecs:video_encoder_factory_template_open_h264_adapter",
         "../call:call_interfaces",
-        "../call:payload_type_picker",
+        "../call:sframe_options",
         "../call:video_receive_stream_api",
         "../call:video_send_stream_api",
         "../common_video",
-        "../modules/audio_device:mock_audio_device",
-        "../modules/audio_mixer:audio_mixer_impl",
-        "../modules/audio_processing:mocks",
         "../modules/rtp_rtcp",
         "../modules/rtp_rtcp:rtp_rtcp_format",
-        "../modules/video_coding:simulcast_test_fixture_impl",
-        "../modules/video_coding:video_codec_interface",
-        "../modules/video_coding:video_coding_utility",
-        "../modules/video_coding:webrtc_h264",
-        "../modules/video_coding:webrtc_vp8",
+        "../modules/sframe:sframe_encryption_config",
+        "../modules/sframe:sframe_encryptor",
         "../modules/video_coding/svc:scalability_mode_util",
-        "../net/dcsctp/public:types",
-        "../p2p:p2p_test_utils",
         "../rtc_base:async_packet_socket",
-        "../rtc_base:byte_order",
         "../rtc_base:checks",
         "../rtc_base:copy_on_write_buffer",
-        "../rtc_base:cpu_info",
         "../rtc_base:dscp",
-        "../rtc_base:macromagic",
-        "../rtc_base:rtc_event",
         "../rtc_base:safe_conversions",
         "../rtc_base:socket",
-        "../rtc_base:socket_address",
         "../rtc_base:threading",
-        "../rtc_base:timeutils",
-        "../rtc_base:unique_id_generator",
         "../rtc_base/experiments:min_video_bitrate_experiment",
-        "../rtc_base/network:received_packet",
-        "../rtc_base/synchronization:mutex",
-        "../rtc_base/system:file_wrapper",
-        "../system_wrappers",
-        "../test:audio_codec_mocks",
         "../test:create_test_environment",
         "../test:create_test_field_trials",
         "../test:fake_video_codecs",
@@ -932,59 +1046,119 @@ if (rtc_include_tests) {
         "../video/config:streams_config",
         "//third_party/abseil-cpp/absl/algorithm:container",
         "//third_party/abseil-cpp/absl/container:inlined_vector",
-        "//third_party/abseil-cpp/absl/functional:any_invocable",
-        "//third_party/abseil-cpp/absl/functional:bind_front",
         "//third_party/abseil-cpp/absl/strings",
         "//third_party/abseil-cpp/absl/strings:string_view",
       ]
+    }
 
-      if (enable_libaom) {
-        defines += [ "RTC_USE_LIBAOM_AV1_ENCODER" ]
+    if (!is_ios) {
+      rtc_cc_test("webrtc_voice_engine_unittest") {
+        sources = [ "engine/webrtc_voice_engine_unittest.cc" ]
+        deps = [
+          ":audio_source",
+          ":codec",
+          ":media_channel",
+          ":media_constants",
+          ":media_engine",
+          ":rtc_audio_video",
+          ":rtc_media_config",
+          ":rtc_media_tests_utils",
+          ":stream_params",
+          "../api:audio_options_api",
+          "../api:call_api",
+          "../api:make_ref_counted",
+          "../api:payload_type",
+          "../api:priority",
+          "../api:ref_count",
+          "../api:rtc_error",
+          "../api:rtp_header_extension_id",
+          "../api:rtp_headers",
+          "../api:rtp_packet_info",
+          "../api:rtp_parameters",
+          "../api:scoped_refptr",
+          "../api:transport_api",
+          "../api/audio:audio_processing",
+          "../api/audio:builtin_audio_processing_builder",
+          "../api/audio_codecs:audio_codecs_api",
+          "../api/audio_codecs:builtin_audio_decoder_factory",
+          "../api/audio_codecs:builtin_audio_encoder_factory",
+          "../api/crypto:options",
+          "../api/environment",
+          "../api/transport:bitrate_settings",
+          "../api/units:timestamp",
+          "../call:call_interfaces",
+          "../call:payload_type_picker",
+          "../modules/audio_device:mock_audio_device",
+          "../modules/audio_mixer:audio_mixer_impl",
+          "../modules/audio_processing:mocks",
+          "../modules/rtp_rtcp:rtp_rtcp_format",
+          "../rtc_base:byte_order",
+          "../rtc_base:checks",
+          "../rtc_base:copy_on_write_buffer",
+          "../rtc_base:dscp",
+          "../rtc_base:safe_conversions",
+          "../test:audio_codec_mocks",
+          "../test:create_test_environment",
+          "../test:run_loop",
+          "../test:test_support",
+          "//third_party/abseil-cpp/absl/strings",
+          "//third_party/abseil-cpp/absl/strings:string_view",
+        ]
       }
+    }
 
-      sources = [
-        "base/codec_comparators_unittest.cc",
-        "base/codec_list_unittest.cc",
-        "base/codec_unittest.cc",
-        "base/media_engine_unittest.cc",
-        "base/rtp_utils_unittest.cc",
-        "base/sdp_video_format_utils_unittest.cc",
-        "base/stream_params_unittest.cc",
-        "base/turn_utils_unittest.cc",
-        "engine/internal_decoder_factory_unittest.cc",
-        "engine/internal_encoder_factory_unittest.cc",
-        "engine/simulcast_encoder_adapter_unittest.cc",
-        "engine/webrtc_media_engine_unittest.cc",
-        "engine/webrtc_video_engine_unittest.cc",
+    if (rtc_build_dcsctp) {
+      rtc_cc_test("dcsctp_transport_unittest") {
+        sources = [ "sctp/dcsctp_transport_unittest.cc" ]
+        deps = [
+          ":rtc_data_dcsctp_transport",
+          "../api:priority",
+          "../api:rtc_error",
+          "../api/environment",
+          "../api/transport:datagram_transport_interface",
+          "../api/transport:ecn_marking",
+          "../net/dcsctp/public:mocks",
+          "../net/dcsctp/public:socket",
+          "../net/dcsctp/public:types",
+          "../p2p:p2p_test_utils",
+          "../rtc_base:copy_on_write_buffer",
+          "../rtc_base:socket_address",
+          "../rtc_base:threading",
+          "../rtc_base/network:received_packet",
+          "../system_wrappers",
+          "../test:create_test_environment",
+          "../test:run_loop",
+          "../test:test_support",
+          "//third_party/abseil-cpp/absl/functional:bind_front",
+        ]
+      }
+    }
+
+    rtc_test_suite("rtc_media_unittests") {
+      tests = [
+        ":codec_comparators_unittest",
+        ":codec_list_unittest",
+        ":codec_unittest",
+        ":internal_decoder_factory_unittest",
+        ":internal_encoder_factory_unittest",
+        ":media_engine_unittest",
+        ":rtp_utils_unittest",
+        ":sdp_video_format_utils_unittest",
+        ":simulcast_encoder_adapter_unittest",
+        ":stream_params_unittest",
+        ":turn_utils_unittest",
+        ":webrtc_media_engine_unittest",
+        ":webrtc_video_engine_unittest",
       ]
 
       # TODO(kthelgason): Reenable this test on iOS.
       # See bugs.webrtc.org/5569
       if (!is_ios) {
-        sources += [ "engine/webrtc_voice_engine_unittest.cc" ]
-      }
-
-      if (rtc_opus_support_120ms_ptime) {
-        defines += [ "WEBRTC_OPUS_SUPPORT_120MS_PTIME=1" ]
-      } else {
-        defines += [ "WEBRTC_OPUS_SUPPORT_120MS_PTIME=0" ]
-      }
-
-      data = rtc_media_unittests_resources
-
-      if (is_ios) {
-        deps += [ ":rtc_media_unittests_bundle_data" ]
+        tests += [ ":webrtc_voice_engine_unittest" ]
       }
 
       if (rtc_build_dcsctp) {
-        sources += [ "sctp/dcsctp_transport_unittest.cc" ]
-        deps += [
-          ":rtc_data_dcsctp_transport",
-          "../net/dcsctp/public:factory",
-          "../net/dcsctp/public:mocks",
-          "../net/dcsctp/public:socket",
-          "../test:run_loop",
-        ]
+        tests += [ ":dcsctp_transport_unittest" ]
       }
     }
   }

@@ -20,28 +20,71 @@
 #include <openssl/sha2.h>
 
 #include "../../internal.h"
+#include "../bcm_interface.h"
 #include "../keccak/internal.h"
 #include "./thash.h"
 
 
 using namespace bssl;
 
-// Internal thash function used by F, H, and T_l for SHA-256 based parameter
-// sets (Section 11.2, pages 44-46)
+void bssl::slhdsa_hash_ctx_init(const slh_dsa_config *config,
+                                slhdsa_hash_ctx *hash_ctx,
+                                const uint8_t *pk_seed) {
+  hash_ctx->pk_seed = pk_seed;
+  if (config->hash_type != SLH_DSA_HASH_SHA2_256) {
+    return;
+  }
+  // Absorb PK.seed || toByte(0, 64 - n), which is exactly one SHA-256 block.
+  BSSL_CHECK(config->hash_block_bytes == SHA256_CBLOCK);
+  BSSL_CHECK(config->n <= SHA256_CBLOCK);
+  uint8_t block[SHA256_CBLOCK] = {0};
+  OPENSSL_memcpy(block, pk_seed, config->n);
+  BCM_sha256_init(&hash_ctx->sha256_seeded);
+  BCM_sha256_update(&hash_ctx->sha256_seeded, block, sizeof(block));
+}
+
+// Internal thash function used by F, H, T_l, and PRF for SHA-256 based
+// parameter sets (Section 11.2, pages 44-46). Every input starts with the same
+// block, PK.seed || toByte(0, 64 - n), so this resumes from the state that
+// `slhdsa_hash_ctx_init` precomputed after that block.
 static void slhdsa_thash_sha256(const slh_dsa_config *config, uint8_t *output,
                                 const uint8_t *input, size_t input_blocks,
-                                const uint8_t *pk_seed, uint8_t addr[32]) {
+                                const slhdsa_hash_ctx *hash_ctx,
+                                uint8_t addr[32]) {
   BSSL_CHECK(config->hash_type == SLH_DSA_HASH_SHA2_256);
-  SHA256_CTX sha256;
-  SHA256_Init(&sha256);
+  const size_t input_len = input_blocks * config->n;
+  const size_t msg_len = SLHDSA_ADDR_COMPRESSED_BYTES + input_len;
 
-  uint8_t zeros[SLHDSA_MAX_HASH_BLOCK_BYTES] = {0};
-  BSSL_CHECK(config->hash_block_bytes <= sizeof(zeros));
-  BSSL_CHECK(config->hash_block_bytes >= config->n);
-  SHA256_Update(&sha256, pk_seed, config->n);
-  SHA256_Update(&sha256, zeros, config->hash_block_bytes - config->n);
+  // For F, H, and PRF, ADRSc || input fits in a single block together with the
+  // SHA-256 padding: a 0x80 byte and the 64-bit message length. Finish those
+  // with one compression function call, skipping the overhead of the generic
+  // SHA256_Update and SHA256_Final logic. This branch only depends on public
+  // parameters.
+  if (msg_len + 1 + 8 <= SHA256_CBLOCK) {
+    uint8_t block[SHA256_CBLOCK] = {0};
+    OPENSSL_memcpy(block, addr, SLHDSA_ADDR_COMPRESSED_BYTES);
+    OPENSSL_memcpy(block + SLHDSA_ADDR_COMPRESSED_BYTES, input, input_len);
+    block[msg_len] = 0x80;
+    // The message length, in bits, includes the precomputed first block.
+    CRYPTO_store_u64_be(block + SHA256_CBLOCK - 8,
+                        (uint64_t{SHA256_CBLOCK} + msg_len) * 8);
+
+    uint32_t state[8];
+    OPENSSL_memcpy(state, hash_ctx->sha256_seeded.h, sizeof(state));
+    BCM_sha256_transform_blocks(state, block, 1);
+
+    static_assert(SLHDSA_MAX_N <= SHA256_DIGEST_LENGTH, "n is too large");
+    uint8_t hash[SHA256_DIGEST_LENGTH];
+    for (size_t i = 0; i < 8; i++) {
+      CRYPTO_store_u32_be(hash + 4 * i, state[i]);
+    }
+    OPENSSL_memcpy(output, hash, config->n);
+    return;
+  }
+
+  SHA256_CTX sha256 = hash_ctx->sha256_seeded;
   SHA256_Update(&sha256, addr, SLHDSA_ADDR_COMPRESSED_BYTES);
-  SHA256_Update(&sha256, input, input_blocks * config->n);
+  SHA256_Update(&sha256, input, input_len);
 
   uint8_t hash[SLHDSA_MAX_DIGEST_SIZE];
   SHA256_Final(hash, &sha256);
@@ -66,13 +109,15 @@ static void slhdsa_thash_shake(const slh_dsa_config *config, uint8_t *output,
 
 static void slhdsa_thash_dispatch(const slh_dsa_config *config, uint8_t *output,
                                   const uint8_t *input, size_t input_blocks,
-                                  const uint8_t *pk_seed, uint8_t addr[32]) {
+                                  const slhdsa_hash_ctx *hash_ctx,
+                                  uint8_t addr[32]) {
   switch (config->hash_type) {
     case SLH_DSA_HASH_SHA2_256:
-      slhdsa_thash_sha256(config, output, input, input_blocks, pk_seed, addr);
+      slhdsa_thash_sha256(config, output, input, input_blocks, hash_ctx, addr);
       return;
     case SLH_DSA_HASH_SHAKE_256:
-      slhdsa_thash_shake(config, output, input, input_blocks, pk_seed, addr);
+      slhdsa_thash_shake(config, output, input, input_blocks, hash_ctx->pk_seed,
+                         addr);
       return;
   }
   BSSL_CHECK(false);
@@ -260,9 +305,10 @@ void bssl::slhdsa_thash_hmsg(const slh_dsa_config *config, uint8_t *output,
 
 // Implements PRF function (Section 4.1, page 11 and Section 11.2, pages 44-46)
 static void slhdsa_thash_prf_sha256(const slh_dsa_config *config,
-                                    uint8_t *output, const uint8_t *pk_seed,
+                                    uint8_t *output,
+                                    const slhdsa_hash_ctx *hash_ctx,
                                     const uint8_t *sk_seed, uint8_t addr[32]) {
-  slhdsa_thash_sha256(config, output, sk_seed, 1, pk_seed, addr);
+  slhdsa_thash_sha256(config, output, sk_seed, 1, hash_ctx, addr);
 }
 
 static void slhdsa_thash_prf_shake(const slh_dsa_config *config,
@@ -280,14 +326,14 @@ static void slhdsa_thash_prf_shake(const slh_dsa_config *config,
 }
 
 void bssl::slhdsa_thash_prf(const slh_dsa_config *config, uint8_t *output,
-                            const uint8_t *pk_seed, const uint8_t *sk_seed,
-                            uint8_t addr[32]) {
+                            const slhdsa_hash_ctx *hash_ctx,
+                            const uint8_t *sk_seed, uint8_t addr[32]) {
   switch (config->hash_type) {
     case SLH_DSA_HASH_SHA2_256:
-      slhdsa_thash_prf_sha256(config, output, pk_seed, sk_seed, addr);
+      slhdsa_thash_prf_sha256(config, output, hash_ctx, sk_seed, addr);
       return;
     case SLH_DSA_HASH_SHAKE_256:
-      slhdsa_thash_prf_shake(config, output, pk_seed, sk_seed, addr);
+      slhdsa_thash_prf_shake(config, output, hash_ctx->pk_seed, sk_seed, addr);
       return;
   }
   BSSL_CHECK(false);
@@ -296,31 +342,31 @@ void bssl::slhdsa_thash_prf(const slh_dsa_config *config, uint8_t *output,
 // Implements T_l function for WOTS+ public key compression (Section 4.1, page
 // 11 and Section 11.2, pages 44-46)
 void bssl::slhdsa_thash_tl(const slh_dsa_config *config, uint8_t *output,
-                           const uint8_t *input, const uint8_t *pk_seed,
-                           uint8_t addr[32]) {
-  slhdsa_thash_dispatch(config, output, input, slhdsa_wots_len(config), pk_seed,
-                        addr);
+                           const uint8_t *input,
+                           const slhdsa_hash_ctx *hash_ctx, uint8_t addr[32]) {
+  slhdsa_thash_dispatch(config, output, input, slhdsa_wots_len(config),
+                        hash_ctx, addr);
 }
 
 // Implements H function (Section 4.1, page 11 and Section 11.2, pages 44-46)
 void bssl::slhdsa_thash_h(const slh_dsa_config *config, uint8_t *output,
-                          const uint8_t *input, const uint8_t *pk_seed,
-                          uint8_t addr[32]) {
-  slhdsa_thash_dispatch(config, output, input, 2, pk_seed, addr);
+                          const uint8_t *input,
+                          const slhdsa_hash_ctx *hash_ctx, uint8_t addr[32]) {
+  slhdsa_thash_dispatch(config, output, input, 2, hash_ctx, addr);
 }
 
 // Implements F function (Section 4.1, page 11 and Section 11.2, pages 44-46)
 void bssl::slhdsa_thash_f(const slh_dsa_config *config, uint8_t *output,
-                          const uint8_t *input, const uint8_t *pk_seed,
-                          uint8_t addr[32]) {
-  slhdsa_thash_dispatch(config, output, input, 1, pk_seed, addr);
+                          const uint8_t *input,
+                          const slhdsa_hash_ctx *hash_ctx, uint8_t addr[32]) {
+  slhdsa_thash_dispatch(config, output, input, 1, hash_ctx, addr);
 }
 
 // Implements T_k function for FORS public key compression (Section 4.1, page 11
 // and Section 11.2, pages 44-46)
 void bssl::slhdsa_thash_tk(const slh_dsa_config *config, uint8_t *output,
-                           const uint8_t *input, const uint8_t *pk_seed,
-                           uint8_t addr[32]) {
-  slhdsa_thash_dispatch(config, output, input, config->fors_trees, pk_seed,
+                           const uint8_t *input,
+                           const slhdsa_hash_ctx *hash_ctx, uint8_t addr[32]) {
+  slhdsa_thash_dispatch(config, output, input, config->fors_trees, hash_ctx,
                         addr);
 }

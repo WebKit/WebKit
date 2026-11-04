@@ -29,7 +29,6 @@
 #include "api/video/video_rotation.h"
 #include "call/rtp_config.h"
 #include "common_video/generic_frame_descriptor/generic_frame_info.h"
-#include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
@@ -557,8 +556,7 @@ TEST_F(RtpPayloadParamsVp8ToGenericTest, TooHighTemporalIndex) {
   encoded_image.set_frame_type(VideoFrameType::kVideoFrameDelta);
   CodecSpecificInfo codec_info;
   codec_info.codecType = kVideoCodecVP8;
-  codec_info.codecSpecific.VP8.temporalIdx =
-      RtpGenericFrameDescriptor::kMaxTemporalLayers;
+  codec_info.codecSpecific.VP8.temporalIdx = kMaxTemporalStreams;
   codec_info.codecSpecific.VP8.layerSync = false;
 
   RTPVideoHeader header =
@@ -1400,8 +1398,7 @@ TEST_F(RtpPayloadParamsH264ToGenericTest, TooHighTemporalIndex) {
   encoded_image.set_frame_type(VideoFrameType::kVideoFrameDelta);
   CodecSpecificInfo codec_info;
   codec_info.codecType = kVideoCodecH264;
-  codec_info.codecSpecific.H264.temporal_idx =
-      RtpGenericFrameDescriptor::kMaxTemporalLayers;
+  codec_info.codecSpecific.H264.temporal_idx = kMaxTemporalStreams;
   codec_info.codecSpecific.H264.base_layer_sync = false;
 
   RTPVideoHeader header =

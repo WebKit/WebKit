@@ -13,6 +13,7 @@
 
 #include "../unit_test/unit_test.h"
 #include "libyuv/cpu_id.h"
+#include "libyuv/scale.h"
 #include "libyuv/scale_uv.h"
 
 namespace libyuv {
@@ -244,6 +245,124 @@ TEST_F(LibYUVScaleTest, UVTest4x) {
 
   free_aligned_buffer_page_end(dest_pixels);
   free_aligned_buffer_page_end(orig_pixels);
+}
+
+// Box filtering an interleaved UV plane has to produce the same bytes as box
+// filtering the U and V planes separately, which is the path I420 takes.
+// C and SIMD agreeing is not enough here: before ScaleUVBox existed both
+// point sampled, so this compares against an independent implementation.
+static int UVTestBoxAgainstPlanes(int src_width,
+                                  int src_height,
+                                  int dst_width,
+                                  int dst_height,
+                                  int cpu_info) {
+  if (!SizeValid(src_width, src_height, dst_width, dst_height)) {
+    return 0;
+  }
+  int64_t src_uv_plane_size = src_width * src_height * 2LL;
+  int64_t src_plane_size = src_width * src_height * 1LL;
+  int64_t dst_uv_plane_size = dst_width * dst_height * 2LL;
+  int64_t dst_plane_size = dst_width * dst_height * 1LL;
+
+  align_buffer_page_end(src_uv, src_uv_plane_size);
+  align_buffer_page_end(src_u, src_plane_size);
+  align_buffer_page_end(src_v, src_plane_size);
+  align_buffer_page_end(dst_uv, dst_uv_plane_size);
+  align_buffer_page_end(dst_u, dst_plane_size);
+  align_buffer_page_end(dst_v, dst_plane_size);
+  if (!src_uv || !src_u || !src_v || !dst_uv || !dst_u || !dst_v) {
+    printf("Skipped.  Alloc failed " FILELINESTR(__FILE__, __LINE__) "\n");
+    return 0;
+  }
+  MemRandomize(src_uv, src_uv_plane_size);
+  memset(dst_uv, 123, dst_uv_plane_size);
+  for (int i = 0; i < src_width * src_height; ++i) {
+    src_u[i] = src_uv[i * 2 + 0];
+    src_v[i] = src_uv[i * 2 + 1];
+  }
+
+  MaskCpuFlags(cpu_info);
+  UVScale(src_uv, src_width * 2, src_width, src_height, dst_uv, dst_width * 2,
+          dst_width, dst_height, kFilterBox);
+  ScalePlane(src_u, src_width, src_width, src_height, dst_u, dst_width,
+             dst_width, dst_height, kFilterBox);
+  ScalePlane(src_v, src_width, src_width, src_height, dst_v, dst_width,
+             dst_width, dst_height, kFilterBox);
+
+  int max_diff = 0;
+  for (int i = 0; i < dst_width * dst_height; ++i) {
+    int du = Abs(dst_uv[i * 2 + 0] - dst_u[i]);
+    int dv = Abs(dst_uv[i * 2 + 1] - dst_v[i]);
+    if (du > max_diff) {
+      max_diff = du;
+    }
+    if (dv > max_diff) {
+      max_diff = dv;
+    }
+  }
+
+  free_aligned_buffer_page_end(dst_v);
+  free_aligned_buffer_page_end(dst_u);
+  free_aligned_buffer_page_end(dst_uv);
+  free_aligned_buffer_page_end(src_v);
+  free_aligned_buffer_page_end(src_u);
+  free_aligned_buffer_page_end(src_uv);
+  return max_diff;
+}
+
+// Chroma dimensions, ie half the frame sizes named in the comments.
+// max_diff is 0 for everything ScaleUVBox handles. The 1/2 and 1/4 fast paths
+// predate it and keep their own rounding, so 1/4 is allowed to drift by one.
+#define TEST_BOXPLANE(name, swidth, sheight, dwidth, dheight, max_diff)     \
+  TEST_F(LibYUVScaleTest, UVScaleBoxMatchesPlane##name) {                   \
+    int diff_c = UVTestBoxAgainstPlanes(swidth, sheight, dwidth, dheight,   \
+                                        disable_cpu_flags_);                \
+    ASSERT_LE(diff_c, max_diff);                                            \
+    int diff_opt = UVTestBoxAgainstPlanes(swidth, sheight, dwidth, dheight, \
+                                          benchmark_cpu_info_);             \
+    ASSERT_LE(diff_opt, max_diff);                                          \
+  }
+
+TEST_BOXPLANE(By2, 960, 540, 480, 270, 0)         /* 1080p to 960x540 */
+TEST_BOXPLANE(By3, 960, 540, 320, 180, 0)         /* 1080p to 640x360 */
+TEST_BOXPLANE(By3Rounded, 640, 360, 214, 120, 0)  /* 720p to 427x240 */
+TEST_BOXPLANE(By4, 960, 540, 240, 135, 1)         /* ScaleUVDown4Box */
+TEST_BOXPLANE(By3_75, 960, 540, 256, 144, 0)      /* 1080p to 512x288 */
+TEST_BOXPLANE(By6, 640, 360, 106, 60, 0)          /* 720p to 213x120 */
+TEST_BOXPLANE(By8, 640, 360, 80, 45, 0)           /* 720p to 160x90 */
+TEST_BOXPLANE(OddTail, 33, 17, 7, 5, 0)           /* not a multiple of 8 wide */
+TEST_BOXPLANE(Tiny, 80, 60, 3, 2, 0)              /* dst below one SIMD group */
+#undef TEST_BOXPLANE
+
+// A box filter has to read the whole box. Every 3x3 block here is 255 except
+// for its top left pixel, so point sampling the block origin yields 0 while
+// the box average is 8 * 255 * (65536 / 9) >> 16 = 226.
+TEST_F(LibYUVScaleTest, UVScaleBoxAverages) {
+  const int kSrcWidth = 48;
+  const int kSrcHeight = 24;
+  const int kDstWidth = kSrcWidth / 3;
+  const int kDstHeight = kSrcHeight / 3;
+  align_buffer_page_end(src_uv, kSrcWidth * kSrcHeight * 2);
+  align_buffer_page_end(dst_uv, kDstWidth * kDstHeight * 2);
+
+  memset(src_uv, 255, kSrcWidth * kSrcHeight * 2);
+  for (int y = 0; y < kSrcHeight; y += 3) {
+    for (int x = 0; x < kSrcWidth; x += 3) {
+      src_uv[(y * kSrcWidth + x) * 2 + 0] = 0;
+      src_uv[(y * kSrcWidth + x) * 2 + 1] = 0;
+    }
+  }
+  memset(dst_uv, 123, kDstWidth * kDstHeight * 2);
+
+  UVScale(src_uv, kSrcWidth * 2, kSrcWidth, kSrcHeight, dst_uv, kDstWidth * 2,
+          kDstWidth, kDstHeight, kFilterBox);
+
+  for (int i = 0; i < kDstWidth * kDstHeight * 2; ++i) {
+    ASSERT_EQ(226, dst_uv[i]) << "at " << i;
+  }
+
+  free_aligned_buffer_page_end(dst_uv);
+  free_aligned_buffer_page_end(src_uv);
 }
 
 }  // namespace libyuv

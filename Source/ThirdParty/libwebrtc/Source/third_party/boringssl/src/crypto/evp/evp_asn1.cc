@@ -380,8 +380,7 @@ int i2d_RSA_PUBKEY(const RSA *rsa, uint8_t **outp) {
   }
 
   UniquePtr<EVP_PKEY> pkey(EVP_PKEY_new());
-  if (pkey == nullptr ||
-      !EVP_PKEY_set1_RSA(pkey.get(), const_cast<RSA *>(rsa))) {
+  if (pkey == nullptr || !EVP_PKEY_set1_RSA(pkey.get(), rsa)) {
     return -1;
   }
 
@@ -404,8 +403,7 @@ int i2d_DSA_PUBKEY(const DSA *dsa, uint8_t **outp) {
   }
 
   UniquePtr<EVP_PKEY> pkey(EVP_PKEY_new());
-  if (pkey == nullptr ||
-      !EVP_PKEY_set1_DSA(pkey.get(), const_cast<DSA *>(dsa))) {
+  if (pkey == nullptr || !EVP_PKEY_set1_DSA(pkey.get(), dsa)) {
     return -1;
   }
 
@@ -430,8 +428,7 @@ int i2d_EC_PUBKEY(const EC_KEY *ec_key, uint8_t **outp) {
   }
 
   UniquePtr<EVP_PKEY> pkey(EVP_PKEY_new());
-  if (pkey == nullptr ||
-      !EVP_PKEY_set1_EC_KEY(pkey.get(), const_cast<EC_KEY *>(ec_key))) {
+  if (pkey == nullptr || !EVP_PKEY_set1_EC_KEY(pkey.get(), ec_key)) {
     return -1;
   }
 

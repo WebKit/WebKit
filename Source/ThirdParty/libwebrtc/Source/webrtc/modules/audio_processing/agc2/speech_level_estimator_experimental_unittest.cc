@@ -161,7 +161,7 @@ TEST(GainController2SpeechLevelEstimatorExperimental,
   RunOnConstantLevel(kFramesPerUpdate, level_estimator.level_rms_dbfs,
                      kMaxSpeechProbability, *level_estimator.estimator);
   ASSERT_TRUE(level_estimator.estimator->IsConfident());
-  EXPECT_FALSE(level_estimator.estimator->IsBackgroundSpeaker());
+  EXPECT_TRUE(level_estimator.estimator->IsTargetSpeakerActive());
   const float confident_level_dbfs = level_estimator.estimator->GetLevelDbfs();
 
   // Present a quieter background speaker below the offset threshold.
@@ -175,14 +175,14 @@ TEST(GainController2SpeechLevelEstimatorExperimental,
                      kMaxSpeechProbability, *level_estimator.estimator);
 
   // The background speaker should be detected and estimated level retained.
-  EXPECT_TRUE(level_estimator.estimator->IsBackgroundSpeaker());
+  EXPECT_FALSE(level_estimator.estimator->IsTargetSpeakerActive());
   EXPECT_NEAR(level_estimator.estimator->GetLevelDbfs(), confident_level_dbfs,
               kLevelToleranceDbfs);
 
-  // When the primary speaker speaks again, background speaker flag is cleared.
+  // When the primary speaker speaks again, target speaker is active again.
   RunOnConstantLevel(kFramesPerUpdate, level_estimator.level_rms_dbfs,
                      kMaxSpeechProbability, *level_estimator.estimator);
-  EXPECT_FALSE(level_estimator.estimator->IsBackgroundSpeaker());
+  EXPECT_TRUE(level_estimator.estimator->IsTargetSpeakerActive());
   EXPECT_NEAR(level_estimator.estimator->GetLevelDbfs(), confident_level_dbfs,
               kLevelToleranceDbfs);
 }
@@ -231,26 +231,26 @@ TEST(GainController2SpeechLevelEstimatorExperimental,
                      kMaxSpeechProbability, *level_estimator.estimator);
 
   // Wait long enough for the timeout since reliable speech accumulation began
-  // to trigger a state reset and flag a background speaker.
+  // to trigger a state reset and flag low activity.
   RunOnConstantLevel(kMaxFramesToUpdate, new_speaker_level_dbfs,
                      kNoSpeechProbability, *level_estimator.estimator);
-  EXPECT_TRUE(level_estimator.estimator->IsBackgroundSpeaker());
+  EXPECT_FALSE(level_estimator.estimator->IsTargetSpeakerActive());
 
   // Accumulate another half of the required frames. Because the earlier frames
   // expired, the estimator should not yet reach `kFramesPerUpdate` and must
-  // retain `confident_level_dbfs` and the background speaker flag.
+  // retain `confident_level_dbfs` and the low activity flag.
   RunOnConstantLevel(kFramesPerUpdate / 2, new_speaker_level_dbfs,
                      kMaxSpeechProbability, *level_estimator.estimator);
-  EXPECT_TRUE(level_estimator.estimator->IsBackgroundSpeaker());
+  EXPECT_FALSE(level_estimator.estimator->IsTargetSpeakerActive());
   EXPECT_NEAR(level_estimator.estimator->GetLevelDbfs(), confident_level_dbfs,
               kLevelToleranceDbfs);
 
   // Providing the remaining half of the required frames within the new window
-  // reaches `kFramesPerUpdate`, clears the background speaker flag, and updates
+  // reaches `kFramesPerUpdate`, clears the low activity flag, and updates
   // the level.
   RunOnConstantLevel(kFramesPerUpdate / 2, new_speaker_level_dbfs,
                      kMaxSpeechProbability, *level_estimator.estimator);
-  EXPECT_FALSE(level_estimator.estimator->IsBackgroundSpeaker());
+  EXPECT_TRUE(level_estimator.estimator->IsTargetSpeakerActive());
   EXPECT_NEAR(level_estimator.estimator->GetLevelDbfs(), new_speaker_level_dbfs,
               kLevelToleranceDbfs);
 }
@@ -283,7 +283,7 @@ TEST(GainController2SpeechLevelEstimatorExperimental,
                        kNoSpeechProbability, *level_estimator.estimator);
   }
 
-  EXPECT_TRUE(level_estimator.estimator->IsBackgroundSpeaker());
+  EXPECT_FALSE(level_estimator.estimator->IsTargetSpeakerActive());
   EXPECT_NEAR(level_estimator.estimator->GetLevelDbfs(), confident_level_dbfs,
               kLevelToleranceDbfs);
 }
