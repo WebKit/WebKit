@@ -305,7 +305,8 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 {
     BOOL shouldAddComma = NO;
     NSMutableString *description = [NSMutableString string];
-    for (NSNumber *identifier in _touchIdentifiers.get()) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSNumber *identifier in _touchIdentifiers.get()) {
         [description appendFormat:@"%@%u", (shouldAddComma ? @", " : @""), [identifier unsignedIntValue]];
         shouldAddComma = YES;
     }
@@ -335,7 +336,8 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 {
     BOOL shouldAddComma = NO;
     NSMutableString *description = [NSMutableString string];
-    for (NSNumber *phase in _touchPhases.get()) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSNumber *phase in _touchPhases.get()) {
         [description appendFormat:@"%@%@", (shouldAddComma ? @", " : @""), [self _touchPhaseDescription:static_cast<WebEventTouchPhaseType>([phase unsignedIntValue])]];
         shouldAddComma = YES;
     }

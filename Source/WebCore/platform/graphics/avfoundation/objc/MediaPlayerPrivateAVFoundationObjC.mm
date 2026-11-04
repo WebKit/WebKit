@@ -3458,7 +3458,8 @@ static RetainPtr<NSString> externalDeviceDisplayNameForPlayer(AVPlayer *player)
         return nil;
 
     RetainPtr<NSString> displayName = nil;
-    for (NSDictionary *pickableRoute in (__bridge NSArray *)pickableRoutes.get()) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *pickableRoute in (__bridge NSArray *)pickableRoutes.get()) {
         if (![pickableRoute[AVController_RouteDescriptionKey_RouteCurrentlyPicked] boolValue])
             continue;
 
@@ -3473,7 +3474,8 @@ static RetainPtr<NSString> externalDeviceDisplayNameForPlayer(AVPlayer *player)
 
         // In cases where a route with that name already exists, prefix the name with the model.
         BOOL includeLocalizedDeviceModelName = NO;
-        for (NSDictionary *otherRoute in (__bridge NSArray *)pickableRoutes.get()) {
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *otherRoute in (__bridge NSArray *)pickableRoutes.get()) {
             if (otherRoute == pickableRoute)
                 continue;
 

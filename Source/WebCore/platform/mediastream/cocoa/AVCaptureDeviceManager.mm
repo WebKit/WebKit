@@ -300,7 +300,8 @@ void AVCaptureDeviceManager::setUserPreferredCamera(CompletionHandler<void()>&& 
     if ([PAL::getAVCaptureDeviceClassSingleton() respondsToSelector:@selector(setUserPreferredCamera:)]) {
         m_dispatchQueue->dispatch([callback = WTF::move(callback)]() mutable {
             auto currentDevices = AVCaptureDeviceManager::singleton().currentCameras();
-            for (AVCaptureDevice *platformDevice in currentDevices.get()) {
+            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+            for (SUPPRESS_UNRETAINED_LOCAL AVCaptureDevice *platformDevice in currentDevices.get()) {
                 if (isVideoDevice(platformDevice) && [platformDevice position] == AVCaptureDevicePositionFront) {
                     [PAL::getAVCaptureDeviceClassSingleton() setUserPreferredCamera:platformDevice];
                     break;

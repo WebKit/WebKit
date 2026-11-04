@@ -1,5 +1,4 @@
 StyleBuilderGenerated.cpp
-[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
 css/CSSStyleProperties.cpp
 dom/Attr.cpp
 dom/ComposedTreeIterator.h
@@ -41,9 +40,6 @@ layout/integration/inline/LayoutIntegrationInlineContentPainter.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
 layout/layouttree/FormattingContextBoxIterator.h
 layout/layouttree/LayoutContainingBlockChainIterator.h
-[ iOS ] page/cocoa/ContentChangeObserver.cpp
-[ iOS ] page/ios/EventHandlerIOS.mm
-[ iOS ] platform/ios/WebCoreMotionManager.mm
 [ macOS ] rendering/AccessibilityRegionContext.cpp
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp

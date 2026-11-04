@@ -166,7 +166,8 @@ WorkerGlobalScope::~WorkerGlobalScope()
     m_crypto = nullptr;
 
     // Notify proxy that we are going away. This can free the WorkerThread object and the proxy, so do not access them after this.
-    if (auto* workerReportingProxy = thread()->workerReportingProxy())
+    // FIXME: A CheckedPtr cannot be used here since the proxy may get destroyed on the main thread before it goes out of scope.
+    if (SUPPRESS_UNCHECKED_LOCAL auto* workerReportingProxy = thread()->workerReportingProxy())
         workerReportingProxy->workerGlobalScopeDestroyed();
 }
 

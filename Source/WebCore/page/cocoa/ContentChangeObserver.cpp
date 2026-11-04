@@ -240,7 +240,7 @@ bool ContentChangeObserver::isConsideredActionableContent(const Element& candida
 
 ContentChangeObserver::ContentChangeObserver(Document& document)
     : m_document(document)
-    , m_contentObservationTimer([this] { Ref { *this }->completeDurationBasedContentObservation(); })
+    , m_contentObservationTimer(*this, &ContentChangeObserver::completeDurationBasedContentObservation)
 {
 }
 
@@ -310,16 +310,18 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
     LOG_WITH_STREAM(ContentObservation, stream << "didFinishTransition: transition finished (" << &element << ").");
 
     // isConsideredActionableContent may trigger style update through Node::computeEditability. Let's adjust the state in the next runloop.
-    callOnMainThread([weakThis = WeakPtr { *this }, targetElement = WeakPtr { element }] {
-        if (!weakThis || !targetElement)
+    callOnMainThread([weakThis = WeakPtr { *this }, weakTargetElement = WeakPtr { element }] {
+        RefPtr protectedThis = weakThis;
+        RefPtr targetElement = weakTargetElement;
+        if (!protectedThis || !targetElement)
             return;
         if (isVisuallyHidden(*targetElement)) {
-            weakThis->adjustObservedState(Event::EndedTransitionButFinalStyleIsNotDefiniteYet);
+            protectedThis->adjustObservedState(Event::EndedTransitionButFinalStyleIsNotDefiniteYet);
             return;
         }
-        if (weakThis->isConsideredActionableContent(*targetElement, ElementHadRenderer::Yes))
-            weakThis->elementDidBecomeVisible(*targetElement);
-        weakThis->adjustObservedState(Event::CompletedTransition);
+        if (protectedThis->isConsideredActionableContent(*targetElement, ElementHadRenderer::Yes))
+            protectedThis->elementDidBecomeVisible(*targetElement);
+        protectedThis->adjustObservedState(Event::CompletedTransition);
     });
 }
 

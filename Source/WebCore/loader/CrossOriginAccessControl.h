@@ -28,6 +28,7 @@
 
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/ReferrerPolicy.h>
+#include <WebCore/ReportingClient.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <wtf/Forward.h>
@@ -50,7 +51,6 @@ class SecurityOrigin;
 
 struct CrossOriginEmbedderPolicy;
 struct DocumentIsolationPolicy;
-struct ReportingClient;
 struct ResourceLoaderOptions;
 
 enum class CrossOriginEmbedderPolicyValue : bool;

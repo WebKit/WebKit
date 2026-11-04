@@ -497,7 +497,8 @@ static void _WAKCopyWrapper(const void *value, void *context)
 
     if (!_drawsOwnDescendants) {
         NSArray *subViews = [self subviews];
-        for (WAKView *subView in subViews) {
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL WAKView *subView in subViews) {
             NSRect childDirtyRect = [self convertRect:dirtyRect toView:subView];
             [subView _drawRect:CGRectIntegral(childDirtyRect) context:context lockFocus:YES];
         }

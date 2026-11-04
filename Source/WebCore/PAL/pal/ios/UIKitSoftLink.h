@@ -32,6 +32,7 @@
 
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @class CUICatalog;
 
@@ -95,6 +96,9 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIGraphicsPushContext, void, (CGContex
 #define UIGraphicsPushContext PAL::softLink_UIKit_UIGraphicsPushContext
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIImagePNGRepresentation, NSData *, (UIImage *image), (image))
 #define UIImagePNGRepresentation PAL::softLink_UIKit_UIImagePNGRepresentation
+
+SPECIALIZE_OBJC_TYPE_TRAITS(UIColor, PAL::getUIColorClassSingleton())
+SPECIALIZE_OBJC_TYPE_TRAITS(UIImageSymbolConfiguration, PAL::getUIImageSymbolConfigurationClassSingleton())
 
 #endif
 

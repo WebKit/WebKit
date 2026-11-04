@@ -166,8 +166,8 @@ void PreviewConverter::iterateClients(NOESCAPE T&& callback)
     auto clientsCopy { m_clients };
     auto protectedThis { Ref { *this } };
 
-    for (auto& client : clientsCopy) {
-        if (client && hasClient(*client))
+    for (auto& weakClient : clientsCopy) {
+        if (RefPtr client = weakClient; client && hasClient(*client))
             callback(*client);
     }
 }

@@ -11,11 +11,6 @@ dom/MutationObserver.cpp
 [ iOS ] dom/Node.cpp
 dom/ShadowRoot.cpp
 dom/ViewTransition.cpp
-[ iOS ] loader/ios/LegacyPreviewLoader.mm
-[ iOS ] page/Quirks.cpp
-[ iOS ] page/WebKitNamespace.cpp
-[ iOS ] page/cocoa/ContentChangeObserver.cpp
-[ iOS ] platform/PreviewConverter.cpp
 rendering/BackgroundPainter.cpp
 rendering/LayerAncestorClippingStack.cpp
 rendering/MarkedText.cpp

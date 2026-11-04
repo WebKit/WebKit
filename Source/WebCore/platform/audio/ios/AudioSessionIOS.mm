@@ -205,7 +205,7 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, Mode newMode, RouteS
         return;
     }
 
-    NSString *categoryString;
+    RetainPtr<NSString> categoryString;
     AVAudioSessionCategoryOptions options = 0;
 
 #if PLATFORM(IOS_FAMILY_SIMULATOR)

@@ -66,6 +66,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/SetForScope.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
 #import "ContentChangeObserver.h"
@@ -321,9 +322,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
 static bool findViewInSubviews(NSView *superview, NSView *target)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    NSEnumerator *e = [[superview subviews] objectEnumerator];
-    NSView *subview;
-    while ((subview = [e nextObject])) {
+    for (RetainPtr subview : makeVector<RetainPtr<NSView>>([superview subviews])) {
         if (subview == target || findViewInSubviews(subview, target)) {
             return true;
         }
@@ -438,7 +437,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
         RefPtr frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             return false;
-        auto [result, _] = frameView->frame().eventHandler().handleWheelEvent(wheelEvent, processingSteps);
+        auto [result, _] = protect(frameView->frame().eventHandler())->handleWheelEvent(wheelEvent, processingSteps);
         return result.wasHandled();
     }
 

@@ -227,7 +227,7 @@ inline static RetainPtr<NSParagraphStyle> reconstructStyle(const ParagraphStyle&
 
     for (const auto& item : style.textTables) {
         tables.ensure(item.thisID, [&] {
-            RetainPtr table = adoptNS([PlatformNSTextTable new]);
+            RetainPtr table = checked_objc_cast<NSTextTable>(adoptNS([PlatformNSTextTable new]));
             [table setNumberOfColumns:item.numberOfColumns];
             [table setLayoutAlgorithm:reconstructNSTextTableLayoutAlgorithm(item.layout)];
             [table setCollapsesBorders:item.collapsesBorders];
@@ -280,7 +280,7 @@ inline static RetainPtr<NSParagraphStyle> reconstructStyle(const ParagraphStyle&
 
     if (!style.textTabs.isEmpty()) {
         for (const auto& item : style.textTabs)
-            [mutableStyle addTabStop:adoptNS([[PlatformNSTextTab alloc] initWithTextAlignment:reconstructNSTextAlignment(item.alignment) location:item.location options:@{ }]).get()];
+            [mutableStyle addTabStop:checked_objc_cast<NSTextTab>(adoptNS([[PlatformNSTextTab alloc] initWithTextAlignment:reconstructNSTextAlignment(item.alignment) location:item.location options:@{ }]))];
     }
 
     return mutableStyle;
@@ -832,31 +832,31 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
 {
     if (CFGetTypeID((CFTypeRef)value) == CGColorGetTypeID())
         return { { AttributedString::ColorFromCGColor  { Color::createAndPreserveColorSpace((CGColorRef) value) } } };
-    if (auto* number = dynamic_objc_cast<NSNumber>(value))
-        return { { { number.doubleValue } } };
-    if (auto* string = dynamic_objc_cast<NSString>(value))
+    if (RetainPtr number = dynamic_objc_cast<NSNumber>(value))
+        return { { { [number doubleValue] } } };
+    if (RetainPtr string = dynamic_objc_cast<NSString>(value))
         return { { { String { string } } } };
-    if (auto* url = dynamic_objc_cast<NSURL>(value))
+    if (RetainPtr url = dynamic_objc_cast<NSURL>(value))
         return { { { URL { url } } } };
-    if (auto* array = dynamic_objc_cast<NSArray>(value))
+    if (RetainPtr array = dynamic_objc_cast<NSArray>(value))
         return extractArray(array);
-    if (auto* date = dynamic_objc_cast<NSDate>(value))
-        return { { { protect(date) } } };
-    if (auto* shadow = dynamic_objc_cast<NSShadow>(value))
-        return { { { protect(shadow) } } };
+    if (RetainPtr date = dynamic_objc_cast<NSDate>(value))
+        return { { { WTF::move(date) } } };
+    if (RetainPtr shadow = dynamic_objc_cast<NSShadow>(value))
+        return { { { WTF::move(shadow) } } };
     if ([value isKindOfClass:PlatformNSParagraphStyle]) {
-        auto style = static_cast<NSParagraphStyle *>(value);
+        RetainPtr style = static_cast<NSParagraphStyle *>(value);
         return { { extractParagraphStyle(style, tableIDs, tableBlockIDs, listIDs) } };
     }
-    if (auto* intent = dynamic_objc_cast<NSPresentationIntent>(value))
-        return { { { protect(intent) } } };
+    if (RetainPtr intent = dynamic_objc_cast<NSPresentationIntent>(value))
+        return { { { WTF::move(intent) } } };
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     if ([value isKindOfClass:PlatformNSAdaptiveImageGlyph]) {
         auto attachment = static_cast<NSAdaptiveImageGlyph *>(value);
         return { { toMultiRepresentationHEICAttachmentData(attachment) } };
     }
 #endif
-    if (auto* attachment = dynamic_objc_cast<NSTextAttachment>(value)) {
+    if (RetainPtr attachment = dynamic_objc_cast<NSTextAttachment>(value)) {
         if (isWebCoreTextAttachmentMissingPlatformImage(static_cast<CocoaImage*>(retainPtr([attachment image]).get())))
             return { { TextAttachmentMissingImage() } };
         TextAttachmentFileWrapper textAttachment;

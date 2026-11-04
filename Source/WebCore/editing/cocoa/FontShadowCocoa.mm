@@ -28,6 +28,7 @@
 
 #import "ColorCocoa.h"
 #import "ColorMac.h"
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <pal/ios/UIKitSoftLink.h>
@@ -51,7 +52,7 @@ RetainPtr<NSShadow> FontShadow::createShadow() const
 FontShadow fontShadowFromNSShadow(NSShadow *shadow)
 {
     return {
-        colorFromCocoaColor(retainPtr(shadow.shadowColor).get()),
+        colorFromCocoaColor(checked_objc_cast<CocoaColor>(protect(shadow.shadowColor))),
         FloatSize(shadow.shadowOffset),
         shadow.shadowBlurRadius,
     };

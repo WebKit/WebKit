@@ -55,6 +55,7 @@
 #import <wtf/Vector.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cf/CFRunLoopSPI.h>
 #import <wtf/spi/cocoa/objcSPI.h>
 #import <wtf/spi/darwin/ReasonSPI.h>
@@ -297,7 +298,8 @@ static void SendDelegateMessage(RetainPtr<NSInvocation>&& invocation)
 
         while (!delegateHandled) {
             if (!delegateCondition.waitFor(delegateLock, DelegateWaitInterval)) {
-                id delegateInformation;
+                // -[NSInvocation getArgument:atIndex:] needs raw storage; the value is only logged below.
+                SUPPRESS_UNRETAINED_LOCAL id delegateInformation;
                 if ([[delegateInvocation() target] isKindOfClass:[NSNotificationCenter class]])
                     [delegateInvocation() getArgument:&delegateInformation atIndex:0];
                 else
@@ -458,10 +460,10 @@ void WebThreadCallDelegate(NSInvocation* invocation)
 void WebThreadPostNotification(NSString* name, id object, id userInfo)
 {
     if (pthread_main_np())
-        [[NSNotificationCenter defaultCenter] postNotificationName:name object:object userInfo:userInfo];
+        [[NSNotificationCenter defaultCenter] postNotificationName:name object:object userInfo:checked_objc_cast<NSDictionary>(userInfo)];
     else {
         RunLoop::mainSingleton().dispatch([name = retainPtr(name), object = retainPtr(object), userInfo = retainPtr(userInfo)] {
-            [[NSNotificationCenter defaultCenter] postNotificationName:name.get() object:object.get() userInfo:userInfo.get()];
+            [[NSNotificationCenter defaultCenter] postNotificationName:name.get() object:object.get() userInfo:checked_objc_cast<NSDictionary>(userInfo)];
         });
     }
 }
@@ -530,7 +532,8 @@ static void WebRunLoopUnlockInternal(AutoreleasePoolOperation poolOperation)
 {
     ASSERT(sAsyncDelegates());
     if ([sAsyncDelegates() count]) {
-        for (NSInvocation* invocation in sAsyncDelegates().get())
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL NSInvocation* invocation in sAsyncDelegates().get())
             SendDelegateMessage(invocation);
         [sAsyncDelegates() removeAllObjects];
     }

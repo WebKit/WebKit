@@ -367,7 +367,8 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
         return nil;
 
     auto itemProvider = adoptNS([NSItemProvider new]);
-    for (id<WebItemProviderRegistrar> representation in _representations.get())
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL id<WebItemProviderRegistrar> representation in _representations.get())
         [representation registerItemProvider:itemProvider.get()];
     [itemProvider setSuggestedName:self.suggestedName];
 #if !PLATFORM(MACCATALYST)
@@ -547,7 +548,8 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 {
     NSMutableSet<NSString *> *allTypes = [NSMutableSet set];
     NSMutableArray<NSString *> *allTypesInOrder = [NSMutableArray array];
-    for (NSItemProvider *provider in _itemProviders.get()) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSItemProvider *provider in _itemProviders.get()) {
         for (NSString *typeIdentifier in provider.registeredTypeIdentifiers) {
             if ([allTypes containsObject:typeIdentifier])
                 continue;
@@ -637,12 +639,13 @@ static NSArray<Class<NSItemProviderReading>> *allLoadableClasses()
     return @[ [PAL::getUIColorClassSingleton() class], [PAL::getUIImageClassSingleton() class], [NSURL class], [NSString class], [NSAttributedString class] ];
 }
 
-static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outTypeIdentifierToLoad)
+static Class classForTypeIdentifier(NSString *typeIdentifier, RetainPtr<NSString>& outTypeIdentifierToLoad)
 {
     outTypeIdentifierToLoad = typeIdentifier;
 
     // First, try to load a platform NSItemProviderReading-conformant object as-is.
-    for (Class<NSItemProviderReading> loadableClass in allLoadableClasses()) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL Class<NSItemProviderReading> loadableClass in allLoadableClasses()) {
         if ([[loadableClass readableTypeIdentifiersForItemProvider] containsObject:typeIdentifier])
             return loadableClass;
     }
@@ -670,7 +673,7 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
         if (!provider)
             return;
 
-        NSString *typeIdentifierToLoad;
+        RetainPtr<NSString> typeIdentifierToLoad;
         RetainPtr readableClass = classForTypeIdentifier(pasteboardType, typeIdentifierToLoad);
         if (!readableClass)
             return;
@@ -727,7 +730,8 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
 - (NSInteger)numberOfFiles
 {
     NSInteger numberOfFiles = 0;
-    for (NSItemProvider *itemProvider in _itemProviders.get()) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSItemProvider *itemProvider in _itemProviders.get()) {
 #if !PLATFORM(MACCATALYST)
         // First, check if the source has explicitly indicated that this item should or should not be treated as an attachment.
         if (itemProvider.preferredPresentationStyle == UIPreferredPresentationStyleInline)
@@ -796,7 +800,8 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     BOOL containsFile = itemProvider.web_containsFileURLAndFileUploadContent;
     BOOL containsFlatRTFD = [registeredTypeIdentifiers containsObject:UTTypeFlatRTFD.identifier];
     // First, search for the highest fidelity supported type or the highest fidelity generic content type.
-    for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
         if (containsFlatRTFD && [registeredTypeIdentifier isEqualToString:UTTypeRTFD.identifier]) {
             // In the case where attachments are enabled and we're accepting all types of content using attachment
             // elements as a fallback representation, if the source writes attributed strings to the pasteboard with
@@ -821,7 +826,8 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     // For compatibility with DataTransfer APIs, additionally load web-exposed types. Since this is the only chance to
     // fault in any data at all, we need to load up front any information that the page may ask for later down the line.
     RetainPtr customPasteboardDataUTI = @(PasteboardCustomData::cocoaType().characters());
-    for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
         RetainPtr utType = [UTType typeWithIdentifier:registeredTypeIdentifier];
         if ([registeredTypeIdentifier isEqualToString:highestFidelityContentType]
             || [registeredTypeIdentifier isEqualToString:highestFidelitySupportedType]
@@ -850,7 +856,8 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     // First, figure out which item providers we want to try and load files from.
     BOOL foundAnyDataToLoad = NO;
     RetainPtr<WebItemProviderPasteboard> protectedSelf = self;
-    for (NSItemProvider *itemProvider in _itemProviders.get()) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSItemProvider *itemProvider in _itemProviders.get()) {
         NSArray<NSString *> *typeIdentifiersToLoad = [protectedSelf typeIdentifiersToLoad:itemProvider];
         foundAnyDataToLoad |= typeIdentifiersToLoad.count;
         [loadResults addObject:[WebItemProviderLoadResult loadResultWithItemProvider:itemProvider typesToLoad:typeIdentifiersToLoad]];

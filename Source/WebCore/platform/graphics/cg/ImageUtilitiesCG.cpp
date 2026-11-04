@@ -291,24 +291,15 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #else
     // FIXME: Add Windows support for all the supported UTIs when a way to convert from MIMEType to UTI reliably is found.
     // For now, only support PNG, JPEG, and GIF. See <rdar://problem/6095286>.
-    static CFStringRef kUTTypePNG;
-    static CFStringRef kUTTypeGIF;
-
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        kUTTypePNG = CFSTR("public.png");
-        kUTTypeGIF = CFSTR("com.compuserve.gif");
-    });
-
     if (equalLettersIgnoringASCIICase(mimeType, "image/png"_s))
-        return kUTTypePNG;
+        return CFSTR("public.png");
     if (equalLettersIgnoringASCIICase(mimeType, "image/jpeg"_s) || equalLettersIgnoringASCIICase(mimeType, "image/jpg"_s))
         return jpegUTI();
     if (equalLettersIgnoringASCIICase(mimeType, "image/gif"_s))
-        return kUTTypeGIF;
+        return CFSTR("com.compuserve.gif");
 
     ASSERT_NOT_REACHED();
-    return kUTTypePNG;
+    return CFSTR("public.png");
 #endif
 ALLOW_DEPRECATED_DECLARATIONS_END
 }

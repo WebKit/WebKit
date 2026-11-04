@@ -217,8 +217,8 @@ static const double kGravity = 9.80665;
         CMAcceleration accel = newAcceleration.acceleration;
 
         auto motionClients = copyToVector(m_deviceMotionClients);
-        for (auto& client : motionClients) {
-            if (client)
+        for (auto& weakClient : motionClients) {
+            if (CheckedPtr client = weakClient)
                 client->motionChanged(0, 0, 0, accel.x * kGravity, accel.y * kGravity, accel.z * kGravity, std::nullopt, std::nullopt, std::nullopt);
         }
     });
@@ -238,8 +238,8 @@ static const double kGravity = 9.80665;
         CMRotationRate rotationRate = newMotion.rotationRate;
 
         auto motionClients = copyToVector(m_deviceMotionClients);
-        for (auto& client : motionClients) {
-            if (client)
+        for (auto& weakClient : motionClients) {
+            if (CheckedPtr client = weakClient)
                 client->motionChanged(userAccel.x * kGravity, userAccel.y * kGravity, userAccel.z * kGravity, totalAccel.x * kGravity, totalAccel.y * kGravity, totalAccel.z * kGravity, rad2deg(rotationRate.x), rad2deg(rotationRate.y), rad2deg(rotationRate.z));
         }
 
@@ -318,8 +318,8 @@ static const double kGravity = 9.80665;
         double heading = (m_headingAvailable && newHeading) ? newHeading.magneticHeading : 0;
         double headingAccuracy = (m_headingAvailable && newHeading) ? newHeading.headingAccuracy : -1;
 
-        for (auto& orientationClient : orientationClients) {
-            if (orientationClient)
+        for (auto& weakOrientationClient : orientationClients) {
+            if (CheckedPtr orientationClient = weakOrientationClient)
                 orientationClient->orientationChanged(alpha, beta, gamma, heading, headingAccuracy);
         }
     });

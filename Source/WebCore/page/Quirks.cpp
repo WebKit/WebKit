@@ -436,7 +436,7 @@ bool Quirks::shouldOpenAsAboutBlank(const String& stringToOpen) const
         return false;
 
     auto openerURL = protect(m_document)->url();
-    if (!m_document->frame() || !m_document->frame()->loader().userAgent(openerURL).contains("Macintosh"_s))
+    if (!m_document->frame() || !protect(m_document->frame()->loader())->userAgent(openerURL).contains("Macintosh"_s))
         return false;
 
     URL urlToOpen { URL { }, stringToOpen };

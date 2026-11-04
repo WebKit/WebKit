@@ -126,7 +126,8 @@ NSString *createTemporaryFileForQuickLook(NSString *fileName)
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
-    NSError *error;
+    // NSError out-parameters are autoreleased and can't be a RetainPtr.
+    SUPPRESS_UNRETAINED_LOCAL NSError *error { nil };
     if (![fileManager setAttributes:temporaryDirectoryAttributesSingleton() ofItemAtPath:downloadDirectory error:&error]) {
         LOG_ERROR("Failed to set attribute NSFileProtectionCompleteUnlessOpen on directory %@ with error: %@.", downloadDirectory.get(), error.localizedDescription);
         return nil;

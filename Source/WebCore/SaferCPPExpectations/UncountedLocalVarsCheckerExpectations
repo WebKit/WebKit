@@ -1,4 +1,3 @@
-[ iOS ] editing/cocoa/NodeHTMLConverter.mm
 rendering/RenderCounter.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerCompositor.cpp

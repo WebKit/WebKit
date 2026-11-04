@@ -166,7 +166,7 @@ void VideoPresentationInterfaceIOS::ensurePipPlacardIsShowing()
         [pipPlacard setBackgroundColor:protect(blackUIColor())];
         [pipPlacard setTranslatesAutoresizingMaskIntoConstraints:NO];
 
-        RetainPtr image = [[[PAL::getUIImageClassSingleton() systemImageNamed:@"pip"] imageWithTintColor:greyColor renderingMode:UIImageRenderingModeAlwaysOriginal] imageWithConfiguration:[PAL::getUIImageSymbolConfigurationClassSingleton() configurationWithWeight:UIImageSymbolWeightThin]];
+        RetainPtr image = [[[PAL::getUIImageClassSingleton() systemImageNamed:@"pip"] imageWithTintColor:greyColor renderingMode:UIImageRenderingModeAlwaysOriginal] imageWithConfiguration:checked_objc_cast<UIImageSymbolConfiguration>([PAL::getUIImageSymbolConfigurationClassSingleton() configurationWithWeight:UIImageSymbolWeightThin])];
 
         RetainPtr imageView = adoptNS([PAL::allocUIImageViewInstance() initWithImage:image.get()]);
         [imageView setContentMode:UIViewContentModeScaleAspectFit];

@@ -411,7 +411,8 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
 #if PLATFORM(IOS_FAMILY)
                 NSString *faceName = [fontName substringFromIndex:(dividingRange.location + dividingRange.length)];
                 NSArray *familyMemberFaceNames = [PlatformFontClass fontNamesForFamilyName:familyName];
-                for (NSString *familyMemberFaceName in familyMemberFaceNames) {
+                // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+                for (SUPPRESS_UNRETAINED_LOCAL NSString *familyMemberFaceName in familyMemberFaceNames) {
                     if ([familyMemberFaceName compare:faceName options:NSCaseInsensitiveSearch] == NSOrderedSame) {
                         font = [PlatformFontClass fontWithName:familyMemberFaceName size:size];
                         break;
@@ -1048,14 +1049,14 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
     }
 
     if (blockElement) {
-        Element& coreBlockElement = *blockElement;
+        Ref coreBlockElement = *blockElement;
         RetainPtr<NSMutableParagraphStyle> paragraphStyle = adoptNS([defaultParagraphStyle() mutableCopy]);
         unsigned heading = 0;
         if (RefPtr headingElement = dynamicDowncast<HTMLHeadingElement>(coreBlockElement))
             heading = headingElement->level();
-        else if (!m_readsAllPresentationIntents && coreBlockElement.hasTagName(blockquoteTag) && _topPresentationIntent)
+        else if (!m_readsAllPresentationIntents && coreBlockElement->hasTagName(blockquoteTag) && _topPresentationIntent)
             [attrs setObject:_topPresentationIntent.get() forKey:NSPresentationIntentAttributeName];
-        bool isParagraph = coreBlockElement.hasTagName(pTag) || coreBlockElement.hasTagName(liTag) || heading || coreBlockElement.hasTagName(blockquoteTag);
+        bool isParagraph = coreBlockElement->hasTagName(pTag) || coreBlockElement->hasTagName(liTag) || heading || coreBlockElement->hasTagName(blockquoteTag);
 
         String textAlign = _caches->propertyValueForNode(coreBlockElement, CSSPropertyID::TextAlign);
         if (textAlign.length()) {
@@ -1992,12 +1993,12 @@ void HTMLConverter::_addTableForElement(Element *tableElement)
 
     if (tableElement) {
         ASSERT(tableElement);
-        Element& coreTableElement = *tableElement;
+        Ref coreTableElement = *tableElement;
 
-        RetainPtr cellSpacing = coreTableElement.getAttribute(cellspacingAttr).createNSString();
+        RetainPtr cellSpacing = coreTableElement->getAttribute(cellspacingAttr).createNSString();
         if (cellSpacing && [cellSpacing length] > 0 && ![cellSpacing hasSuffix:@"%"])
             cellSpacingVal = [cellSpacing floatValue];
-        RetainPtr cellPadding = coreTableElement.getAttribute(cellpaddingAttr).createNSString();
+        RetainPtr cellPadding = coreTableElement->getAttribute(cellpaddingAttr).createNSString();
         if (cellPadding && [cellPadding length] > 0 && ![cellPadding hasSuffix:@"%"])
             cellPaddingVal = [cellPadding floatValue];
 
@@ -2165,7 +2166,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
             if (url)
                 retval = !_addAttachmentForElement(element, url.get(), isBlockLevel, NO);
         }
-    } else if (auto* frameElement = dynamicDowncast<HTMLFrameElementBase>(element)) {
+    } else if (RefPtr frameElement = dynamicDowncast<HTMLFrameElementBase>(element)) {
         if (RefPtr contentDocument = frameElement->contentDocument()) {
             _traverseNode(*contentDocument, depth + 1, true /* embedded */);
             retval = NO;
@@ -2326,8 +2327,8 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range, NSPresent
                         else
                             break;
                     }
-                    [newStyle addTabStop:adoptNS([[PlatformNSTextTab alloc] initWithType:NSLeftTabStopType location:markerLocation]).get()];
-                    [newStyle addTabStop:adoptNS([[PlatformNSTextTab alloc] initWithTextAlignment:NSTextAlignmentNatural location:listLocation options:@{ }]).get()];
+                    [newStyle addTabStop:checked_objc_cast<NSTextTab>(adoptNS([[PlatformNSTextTab alloc] initWithType:NSLeftTabStopType location:markerLocation]))];
+                    [newStyle addTabStop:checked_objc_cast<NSTextTab>(adoptNS([[PlatformNSTextTab alloc] initWithTextAlignment:NSTextAlignmentNatural location:listLocation options:@{ }]))];
                     [_attrStr addAttribute:NSParagraphStyleAttributeName value:newStyle.get() range:paragraphRange];
 
                     idx = NSMaxRange(paragraphRange);
