@@ -1221,10 +1221,10 @@ void LocalDOMWindow::print()
         return;
 
     if (auto* loader = frame->loader().activeDocumentLoader(); loader && loader->isLoading()) {
-        m_shouldPrintWhenFinishedLoading = true;
+        m_shouldPrintWhenLoaded = true;
         return;
     }
-    m_shouldPrintWhenFinishedLoading = false;
+    m_shouldPrintWhenLoaded = false;
     page->chrome().print(*frame);
 }
 
@@ -2635,10 +2635,10 @@ void LocalDOMWindow::releaseEvents()
     // Not implemented.
 }
 
-void LocalDOMWindow::finishedLoading()
+void LocalDOMWindow::runPrintWhenLoadedSteps()
 {
-    if (m_shouldPrintWhenFinishedLoading) {
-        m_shouldPrintWhenFinishedLoading = false;
+    if (m_shouldPrintWhenLoaded) {
+        m_shouldPrintWhenLoaded = false;
         if (RefPtr loader = frame()->loader().activeDocumentLoader(); !loader || loader->mainDocumentError().isNull())
             print();
     }

@@ -1551,7 +1551,7 @@ void DocumentLoader::checkLoadComplete()
         return;
 
     ASSERT(this == frameLoader()->activeDocumentLoader());
-    protect(protect(*m_frame)->document()->window())->finishedLoading();
+    protect(protect(*m_frame)->document()->window())->runPrintWhenLoadedSteps();
 }
 
 void DocumentLoader::applyPoliciesToSettings()

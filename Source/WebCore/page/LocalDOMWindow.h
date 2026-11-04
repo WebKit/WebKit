@@ -293,7 +293,7 @@ public:
     NODELETE void captureEvents();
     NODELETE void releaseEvents();
 
-    void finishedLoading();
+    void runPrintWhenLoadedSteps();
 
     // EventTiming API
     PerformanceEventTimingCandidate initializeEventTiming(Event&, EventType);
@@ -439,7 +439,7 @@ private:
     void getPushPermissionState(DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&) final;
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
 
-    bool m_shouldPrintWhenFinishedLoading { false };
+    bool m_shouldPrintWhenLoaded { false };
     bool m_suspendedForDocumentSuspension { false };
     bool m_isSuspendingObservers { false };
     std::optional<bool> m_canShowModalDialogOverride;
