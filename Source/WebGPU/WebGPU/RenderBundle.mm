@@ -96,10 +96,10 @@ void RenderBundle::setLabel(String&& label)
     m_renderBundlesResources.firstObject.indirectCommandBuffer.label = label.createNSString().get();
 }
 
-void RenderBundle::replayCommands(RenderPassEncoder& renderPassEncoder) const
+void RenderBundle::replayCommands(RenderPassEncoder& renderPassEncoder, float minDepth, float maxDepth) const
 {
     if (RefPtr renderBundleEncoder = m_renderBundleEncoder)
-        renderBundleEncoder->replayCommands(renderPassEncoder);
+        renderBundleEncoder->replayCommands(renderPassEncoder, minDepth, maxDepth);
 }
 
 bool RenderBundle::requiresCommandReplay() const
