@@ -233,6 +233,7 @@ template<typename T, typename E> struct AsyncReplyError<std::expected<T, E>> {
 class Decoder;
 class MachMessage;
 class UnixMessage;
+enum class MachMessageSendResult : uint8_t;
 class WorkQueueMessageReceiverBase;
 
 // Sync message sender is expected to hold this instance alive as long as the reply() is being
@@ -628,6 +629,12 @@ public:
     static void LEGACY_NODELETE forceEnableSignposts();
 #endif
 
+    // Lets threads send messages themselves, instead of queuing them for the connection queue, when
+    // they can. Off by default, and only has an effect on Cocoa platforms.
+    static void enableSendOnCallingThread();
+    static bool sendOnCallingThreadEnabled();
+    static void setSendOnCallingThreadEnabledForTesting(bool);
+
     static bool LEGACY_NODELETE shouldCrashOnMessageCheckFailure();
     static void LEGACY_NODELETE setShouldCrashOnMessageCheckFailure(bool);
 
@@ -680,6 +687,13 @@ private:
     void processIncomingMessage(UniqueRef<Decoder>);
     void processIncomingSyncReply(UniqueRef<Decoder>);
 
+#if ENABLE(UNFAIR_LOCK)
+    // Threads wait for the lock while another thread sends a message, so it should donate their priority.
+    using SendLock = UnfairLock;
+#else
+    using SendLock = Lock;
+#endif
+
 #if PLATFORM(COCOA)
     using OutgoingMessage = UniqueRef<MachMessage>;
 #else
@@ -692,18 +706,31 @@ private:
         ReceiverIsGone, // Receiver is gone; queued messages are dropped and the connection closes.
     };
 
-    // Implemented by each platform. platformCreateOutgoingMessage() is called on any thread, and the others on the
-    // connection queue.
     static std::optional<OutgoingMessage> platformCreateOutgoingMessage(UniqueRef<Encoder>&&);
-    PlatformSendResult platformSendOutgoingMessage(OutgoingMessage&);
-    bool platformCanSendOutgoingMessages() const;
+#if PLATFORM(COCOA)
+    PlatformSendResult platformSendOutgoingMessage(OutgoingMessage&) WTF_REQUIRES_LOCK(m_sendLock);
+    PlatformSendResult didSendMachMessage(MachMessageSendResult) WTF_REQUIRES_LOCK(m_sendLock);
+#else
+    PlatformSendResult platformSendOutgoingMessage(OutgoingMessage&) WTF_EXCLUDES_LOCK(m_sendLock);
+#endif
+    bool platformCanSendOutgoingMessages() const WTF_REQUIRES_LOCK(m_sendLock);
     // True while an accepted message is still completing asynchronously (Windows OVERLAPPED write,
     // GLib G_IO_OUT).
     bool LEGACY_NODELETE platformHasMessageInFlight() const;
 
-    void sendOutgoingMessages() WTF_EXCLUDES_LOCK(m_outgoingMessagesLock);
-    bool hasUnsentMessages() const WTF_REQUIRES_LOCK(m_outgoingMessagesLock);
-    void clearOutgoingMessages() WTF_EXCLUDES_LOCK(m_outgoingMessagesLock);
+#if PLATFORM(COCOA)
+    bool canSendOnCallingThread(std::optional<ThreadQOS>) const;
+    bool trySendOnCallingThread(OutgoingMessage&) WTF_REQUIRES_LOCK(m_sendLock);
+#endif
+
+    void sendOutgoingMessages() WTF_EXCLUDES_LOCK(m_sendLock);
+    // Sends the first outgoing message without m_sendLock, and takes it off the queue unless the
+    // receiver is full.
+    PlatformSendResult sendFirstOutgoingMessage(Locker<SendLock>&) WTF_REQUIRES_LOCK(m_sendLock);
+    bool hasUnsentMessages() const WTF_REQUIRES_LOCK(m_sendLock);
+    // Drops the outgoing messages, and the messages sent from now on, because the receiver is gone.
+    void markReceiverGone() WTF_REQUIRES_LOCK(m_sendLock);
+    void clearOutgoingMessages() WTF_EXCLUDES_LOCK(m_sendLock);
     void connectionDidClose();
 
     // Called on the connection run loop.
@@ -777,10 +804,11 @@ private:
     bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage { false };
     bool m_shouldExitOnSyncMessageSendFailure { false };
     DidCloseOnConnectionWorkQueueCallback m_didCloseOnConnectionWorkQueueCallback { nullptr };
-    Box<OutgoingMessageQueueIsGrowingLargeCallback> m_outgoingMessageQueueIsGrowingLargeCallback WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
-    MonotonicTime m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
+    Box<OutgoingMessageQueueIsGrowingLargeCallback> m_outgoingMessageQueueIsGrowingLargeCallback WTF_GUARDED_BY_LOCK(m_sendLock);
+    MonotonicTime m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime WTF_GUARDED_BY_LOCK(m_sendLock);
 
     const Ref<WorkQueue> m_connectionQueue;
+    const ThreadQOS m_connectionQueueQOS;
     bool m_isConnected { false };
 
     unsigned m_inSendSyncCount { 0 };
@@ -800,14 +828,24 @@ private:
     Deque<UniqueRef<Decoder>> m_incomingMessages WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
     MessageReceiveQueueMap m_receiveQueues WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
 
-    Lock m_outgoingMessagesLock;
-    Deque<OutgoingMessage> m_outgoingMessages WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
-    Condition m_outgoingMessagesEmptyCondition WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
+    // m_sendLock guards the outgoing messages and the state that the platform sends them with. On
+    // Cocoa, a thread only sends a message itself if no message is queued, and holds m_sendLock for
+    // the duration of the mach_msg() call. The connection queue drops it while it sends a queued
+    // message, but only takes the message off the queue once it has been sent, so that no thread
+    // sends ahead of it. On other platforms, it is dropped for the duration of the syscall that
+    // sends a message, because that code can close the connection, which takes m_sendLock. No other
+    // lock of the connection is taken, and no client code runs, while it is held.
+    mutable SendLock m_sendLock;
+    Deque<OutgoingMessage> m_outgoingMessages WTF_GUARDED_BY_LOCK(m_sendLock);
+    Condition m_outgoingMessagesEmptyCondition WTF_GUARDED_BY_LOCK(m_sendLock);
+#if !PLATFORM(COCOA)
     // True while a message popped from m_outgoingMessages is inside platformSendOutgoingMessage()
     // or still in flight, so flushSentMessages() does not return early.
-    bool m_sendInProgress WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock) { false };
-    // A message was dropped because the receiver is gone. flushSentMessages() can't succeed anymore.
-    bool m_receiverIsGone WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock) { false };
+    bool m_sendInProgress WTF_GUARDED_BY_LOCK(m_sendLock) { false };
+#endif
+    // The receiver is gone. Messages are dropped instead of queued, and flushSentMessages() can't succeed
+    // anymore.
+    bool m_receiverIsGone WTF_GUARDED_BY_LOCK(m_sendLock) { false };
 
     Condition m_waitForMessageCondition;
     Lock m_waitForMessageLock;
@@ -888,12 +926,14 @@ private:
 #elif OS(DARWIN)
     // Called on the connection queue.
     void receiveSourceEventHandler();
-    void initializeSendSource();
+    void initializeSendSource() WTF_EXCLUDES_LOCK(m_sendLock);
     void cancelReceiveSource();
-    void cancelSendSource();
+    void cancelSendSource() WTF_REQUIRES_LOCK(m_sendLock);
 
-    mach_port_t m_sendPort { MACH_PORT_NULL };
-    OSObjectPtr<dispatch_source_t> m_sendSource;
+    mach_port_t m_sendPort WTF_GUARDED_BY_LOCK(m_sendLock) { MACH_PORT_NULL };
+    // Non-null while connected to a live send port (until the receiver is gone or the connection is
+    // invalidated).
+    OSObjectPtr<dispatch_source_t> m_sendSource WTF_GUARDED_BY_LOCK(m_sendLock);
 
     mach_port_t m_receivePort { MACH_PORT_NULL };
     OSObjectPtr<dispatch_source_t> m_receiveSource;

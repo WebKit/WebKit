@@ -2418,6 +2418,26 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
     });
 }
 
+static void enableIPCSendOnCallingThread()
+{
+    IPC::Connection::enableSendOnCallingThread();
+
+    for (Ref process : WebProcessProxy::allProcesses()) {
+        if (process->canSendMessage())
+            process->send(Messages::AuxiliaryProcess::EnableIPCSendOnCallingThread(), 0);
+    }
+    for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
+        networkProcess->send(Messages::AuxiliaryProcess::EnableIPCSendOnCallingThread(), 0);
+#if ENABLE(GPU_PROCESS)
+    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->send(Messages::AuxiliaryProcess::EnableIPCSendOnCallingThread(), 0);
+#endif
+#if ENABLE(MODEL_PROCESS)
+    if (RefPtr modelProcess = ModelProcessProxy::singletonIfCreated())
+        modelProcess->send(Messages::AuxiliaryProcess::EnableIPCSendOnCallingThread(), 0);
+#endif
+}
+
 bool WebProcessPool::hasAnyProcessPoolUsedSiteIsolation()
 {
     return s_hasAnyProcessPoolUsedSiteIsolation;
@@ -2447,7 +2467,11 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     bool siteIsolationEnabled = protect(page.preferences())->siteIsolationEnabled();
     if (siteIsolationEnabled && !m_hasUsedSiteIsolation) {
         m_hasUsedSiteIsolation = true;
-        s_hasAnyProcessPoolUsedSiteIsolation = true;
+        if (!s_hasAnyProcessPoolUsedSiteIsolation) {
+            s_hasAnyProcessPoolUsedSiteIsolation = true;
+            // FIXME(rdar://188839922): Enable this always, not only when Site Isolation is enabled.
+            enableIPCSendOnCallingThread();
+        }
         m_webProcessCache->updateCapacity(*this);
     }
 

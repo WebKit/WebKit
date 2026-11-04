@@ -39,6 +39,7 @@ struct AuxiliaryProcessCreationParameters {
     bool shouldEnableIPCSignposts { false };
     bool shouldEnableStreamingIPCSignposts { false };
 #endif
+    bool shouldEnableIPCSendOnCallingThread { false };
 };
 
 } // namespace WebKit

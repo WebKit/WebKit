@@ -45,6 +45,58 @@ void PrintTo(ConnectionTestDirection value, ::std::ostream* o)
         *o << "Unknown";
 }
 
+void PrintTo(ConnectionTestSendingThread value, ::std::ostream* o)
+{
+    switch (value) {
+    case ConnectionTestSendingThread::CallingThread:
+        *o << "SendingOnCallingThread";
+        return;
+    case ConnectionTestSendingThread::ConnectionQueue:
+        *o << "SendingOnConnectionQueue";
+        return;
+    }
+    *o << "Unknown";
+}
+
+std::string ConnectionTestABBAParametersToStringFormatter::operator()(const testing::TestParamInfo<ConnectionTestABBA::ParamType>& info) const
+{
+    auto name = testing::PrintToString(std::get<0>(info.param));
+    if (std::get<1>(info.param) != defaultConnectionTestSendingThread)
+        name += testing::PrintToString(std::get<1>(info.param));
+    return name;
+}
+
+ConnectionTestSendingThreadScope::ConnectionTestSendingThreadScope(ConnectionTestSendingThread sendingThread)
+    : m_savedSendOnCallingThreadEnabled(IPC::Connection::sendOnCallingThreadEnabled())
+{
+    // Sending on the calling thread is off by default. The QoS chooses how the main thread sends
+    // its messages, in both modes, so the tests run with it on.
+    IPC::Connection::setSendOnCallingThreadEnabledForTesting(true);
+#if PLATFORM(COCOA)
+    // The connection queues run at the default QoS.
+    m_savedQOSClass = qos_class_self();
+    auto qosClass = sendingThread == ConnectionTestSendingThread::CallingThread ? QOS_CLASS_USER_INTERACTIVE : QOS_CLASS_UTILITY;
+    EXPECT_EQ(pthread_set_qos_class_self_np(qosClass, 0), 0);
+#else
+    ASSERT_UNUSED(sendingThread, sendingThread == ConnectionTestSendingThread::ConnectionQueue);
+#endif
+}
+
+ConnectionTestSendingThreadScope::~ConnectionTestSendingThreadScope()
+{
+    IPC::Connection::setSendOnCallingThreadEnabledForTesting(m_savedSendOnCallingThreadEnabled);
+#if PLATFORM(COCOA)
+    // A thread can't go back to having no QoS class, so give it the QoS the main thread started with instead, or the
+    // default QoS.
+    auto qosClass = m_savedQOSClass;
+    if (qosClass == QOS_CLASS_UNSPECIFIED)
+        qosClass = qos_class_main();
+    if (qosClass == QOS_CLASS_UNSPECIFIED)
+        qosClass = QOS_CLASS_DEFAULT;
+    EXPECT_EQ(pthread_set_qos_class_self_np(qosClass, 0), 0);
+#endif
+}
+
 void ConnectionTestBase::setupBase()
 {
     WTF::initializeMainThread();

@@ -81,6 +81,7 @@ static void clearNoSenderNotifications(mach_port_t port)
 void Connection::platformInvalidate()
 {
     assertIsCurrent(m_connectionQueue.get());
+    Locker locker { m_sendLock };
 
     if (!m_isConnected) {
         if (MACH_PORT_VALID(m_sendPort)) {
@@ -136,6 +137,7 @@ void Connection::cancelReceiveSource()
 
 void Connection::platformInitialize(Identifier&& identifier)
 {
+    Locker locker { m_sendLock };
     if (m_isServer) {
         RELEASE_ASSERT(MACH_PORT_VALID(identifier.port)); // Caller error. MACH_DEAD_NAME does not make sense, as we do not transfer receive rights.
         m_receivePort = identifier.port;
@@ -155,7 +157,12 @@ void Connection::platformInitialize(Identifier&& identifier)
 void Connection::platformOpen()
 {
     if (m_isServer) {
-        ASSERT(!m_sendPort);
+#if ASSERT_ENABLED
+        {
+            Locker locker { m_sendLock };
+            ASSERT(!m_sendPort);
+        }
+#endif
         // Client passed m_receivePort. Call Client::didClose() when there are no senders to that port.
         requestNoSenderNotifications(m_receivePort);
     } else {
@@ -182,14 +189,12 @@ void Connection::platformOpen()
         requestNoSenderNotifications(m_receivePort);
 
         initializeSendSource();
-        if (m_sendPort != MACH_PORT_DEAD) {
-            auto encoder = makeUniqueRef<Encoder>(MessageName::InitializeConnection, 0);
-            encoder.get() << WTF::move(serverSendRight);
-            sendMessage(WTF::move(encoder), { });
-        }
-        // When send port is already dead, the serverSendRight goes out of scope and triggers
-        // MACH_NOTIFY_NO_SENDERS. This way the connectionDidClose logic will be invoked for
-        // dead-on-arrival connections.
+        // Send the message unconditionally. If the receiver is gone, the message is dropped, which
+        // releases serverSendRight and triggers MACH_NOTIFY_NO_SENDERS, so that connectionDidClose()
+        // runs.
+        auto encoder = makeUniqueRef<Encoder>(MessageName::InitializeConnection, 0);
+        encoder.get() << WTF::move(serverSendRight);
+        sendMessage(WTF::move(encoder), { });
     }
 
     // Change the message queue length for the receive port.
@@ -218,7 +223,9 @@ void Connection::platformOpen()
 
 bool Connection::platformCanSendOutgoingMessages() const
 {
-    return MACH_PORT_VALID(m_sendPort);
+    // m_isConnected is only used on the connection queue and when opening. Whether the send source exists is what says
+    // whether the connection can send, with m_sendLock held, on any thread.
+    return !!m_sendSource;
 }
 
 bool Connection::platformHasMessageInFlight() const
@@ -239,23 +246,50 @@ auto Connection::platformCreateOutgoingMessage(UniqueRef<Encoder>&& encoder) -> 
 
 auto Connection::platformSendOutgoingMessage(OutgoingMessage& message) -> PlatformSendResult
 {
-    ASSERT(m_isConnected);
+    assertIsHeld(m_sendLock);
+    ASSERT(m_sendSource);
 
-    switch (message->send(m_sendPort)) {
-    case MachMessage::SendResult::Success:
+    return didSendMachMessage(message->send(m_sendPort));
+}
+
+auto Connection::sendFirstOutgoingMessage(Locker<SendLock>& locker) -> PlatformSendResult
+{
+    assertIsCurrent(m_connectionQueue.get());
+    ASSERT(m_sendSource);
+
+    // While m_sendLock is dropped, other threads can append to m_outgoingMessages, which can move
+    // its storage, so hold onto the message itself. The message stays first in the queue, a thread
+    // only sends directly when no message is queued, and only the connection queue sends queued
+    // messages, so neither the message nor m_sendPort and m_sendSource change meanwhile.
+    auto& message = m_outgoingMessages.first().get();
+    auto sendPort = m_sendPort;
+    // FIXME (rdar://188839922): Send with m_sendLock held, as a direct send does.
+    auto sendResult = [&] {
+        DropLockForScope unlocker { locker };
+        return message.send(sendPort);
+    }();
+
+    auto result = didSendMachMessage(sendResult);
+    // A message that the receiver had no room for stays first, and markReceiverGone() drops the
+    // message if the receiver is gone.
+    if (result == PlatformSendResult::Done)
+        m_outgoingMessages.removeFirst();
+    return result;
+}
+
+auto Connection::didSendMachMessage(MachMessageSendResult result) -> PlatformSendResult
+{
+    switch (result) {
+    case MachMessageSendResult::Success:
         return PlatformSendResult::Done;
 
-    case MachMessage::SendResult::Timeout:
+    case MachMessageSendResult::Timeout:
         return PlatformSendResult::ReceiverIsFull;
 
-    case MachMessage::SendResult::InvalidDestinationPort:
-        // The other end has destroyed the receive right to the port we are trying to send to. Cancel the send
-        // source, so that we do not try to send more messages needlessly.
-        //
-        // We do not yet invalidate this instance. When the send right to the port of this instance is destroyed,
-        // this instance gets a NO_SENDERS notification which will cause this instance invalidation. Noteworthy
-        // special case: the InitializeConnection message holds the send right to this connection's receive port. If
-        // that message can't be sent, dropping it releases the send right, and this connection gets the NO_SENDERS.
+    case MachMessageSendResult::InvalidDestinationPort:
+        // The other end has destroyed the receive right to the port we are trying to send to.
+        // Cancel the send source, so that we do not try to send more messages needlessly. This
+        // instance is invalidated once it gets the NO_SENDERS notification. See markReceiverGone().
         cancelSendSource();
         return PlatformSendResult::ReceiverIsGone;
     }
@@ -266,28 +300,23 @@ auto Connection::platformSendOutgoingMessage(OutgoingMessage& message) -> Platfo
 void Connection::initializeSendSource()
 {
     ASSERT(m_isConnected);
-    if (m_sendPort == MACH_PORT_DEAD)
+    Locker locker { m_sendLock };
+    if (m_sendPort == MACH_PORT_DEAD) {
+        markReceiverGone();
         return;
+    }
     RELEASE_ASSERT(m_sendPort != MACH_PORT_NULL);
 
     OSObjectPtr sendSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_POSSIBLE, protect(m_connectionQueue->dispatchQueue()).get()));
     m_sendSource = sendSource;
-    dispatch_source_set_registration_handler(sendSource, [this, protectedThis = Ref { *this }] {
-        if (!m_sendSource)
-            return;
-        sendOutgoingMessages();
+    // Messages queued before the source was registered get no send-possible notification, so send
+    // them once the source is registered.
+    dispatch_source_set_registration_handler(sendSource, [protectedThis = Ref { *this }] {
+        protectedThis->sendOutgoingMessages();
     });
-    dispatch_source_set_event_handler(sendSource, [this, protectedThis = Ref { *this }] {
-        if (!m_sendSource)
-            return;
-
-        unsigned long data = dispatch_source_get_data(protect(m_sendSource));
-
-        if (data & DISPATCH_MACH_SEND_POSSIBLE) {
-            // FIXME: Figure out why we get spurious DISPATCH_MACH_SEND_POSSIBLE events.
-            sendOutgoingMessages();
-            return;
-        }
+    // The receiver may have room for the queued messages now.
+    dispatch_source_set_event_handler(sendSource, [protectedThis = Ref { *this }] {
+        protectedThis->sendOutgoingMessages();
     });
 
     mach_port_t sendPort = m_sendPort;
@@ -317,7 +346,6 @@ void Connection::receiveSourceEventHandler()
 
     if (decoder->messageName() == MessageName::InitializeConnection) {
         ASSERT(m_isServer);
-        ASSERT(!m_sendPort);
         if (m_isConnected) {
             // The sender sent an invalid message deliberately, close immediately.
             ASSERT_IS_TESTING_IPC();
@@ -334,15 +362,14 @@ void Connection::receiveSourceEventHandler()
 
         m_isConnected = true;
 
-        if (!MACH_PORT_VALID(sendRight->sendRight())) {
-            // The InitializeConnection message was valid message. We received MACH_PORT_DEAD
-            // because by the time we read the message, the port was already closed.
-            // Do not initialize the send source, as there is nobody to send to.
-            // Keep the receive source, so that we receive the sent messages and then
-            // the NO_SENDERS notification.
-            return;
+        {
+            Locker locker { m_sendLock };
+            ASSERT(!m_sendPort);
+            // If the client went away before this message was received, the send right is dead.
+            // The connection stays open until it has received the messages that the client sent.
+            // Then it closes on the no-senders notification.
+            m_sendPort = sendRight->leakSendRight();
         }
-        m_sendPort = sendRight->leakSendRight();
         initializeSendSource();
         return;
     }
@@ -355,6 +382,7 @@ void Connection::receiveSourceEventHandler()
 
 IPC::Connection::Identifier Connection::identifier() const
 {
+    Locker locker { m_sendLock };
     return Identifier(m_isServer ? m_receivePort : m_sendPort, m_xpcConnection);
 }
 

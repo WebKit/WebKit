@@ -34,6 +34,10 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/threads/BinarySemaphore.h>
 
+#if HAVE(QOS_CLASSES)
+#include <pthread/qos.h>
+#endif
+
 namespace TestWebKitAPI {
 
 template <typename T>
@@ -251,6 +255,31 @@ enum class ConnectionTestDirection {
 
 void PrintTo(ConnectionTestDirection, ::std::ostream*);
 
+// Whether the main thread, which most tests send from, sends messages itself or queues them for the
+// connection queue to send. On Cocoa, a thread sends a message itself if its QoS is at least that
+// of the connection queue, so the main thread runs at the user-interactive or the utility QoS. On
+// other platforms, the connection queue sends every message.
+enum class ConnectionTestSendingThread : bool {
+    CallingThread,
+    ConnectionQueue,
+};
+
+void PrintTo(ConnectionTestSendingThread, ::std::ostream*);
+
+// Sets the calling thread's QoS so that it sends messages the given way, and restores it when destroyed.
+class ConnectionTestSendingThreadScope {
+    WTF_MAKE_NONCOPYABLE(ConnectionTestSendingThreadScope);
+public:
+    explicit ConnectionTestSendingThreadScope(ConnectionTestSendingThread);
+    ~ConnectionTestSendingThreadScope();
+
+private:
+    bool m_savedSendOnCallingThreadEnabled { false };
+#if HAVE(QOS_CLASSES)
+    qos_class_t m_savedQOSClass { QOS_CLASS_UNSPECIFIED };
+#endif
+};
+
 class ConnectionTestBase {
 public:
     void setupBase();
@@ -327,12 +356,16 @@ protected:
 //  - Server as b() and client as a()
 // The setup and teardown of the Connection is not symmetric, so this fixture is useful to test various scenarios
 // around these.
-class ConnectionTestABBA : public testing::TestWithParam<std::tuple<ConnectionTestDirection>>, protected ConnectionTestBase {
+// On Cocoa, each of these also runs with the main thread sending its messages itself and with it
+// queuing them, see ConnectionTestSendingThread.
+class ConnectionTestABBA : public testing::TestWithParam<std::tuple<ConnectionTestDirection, ConnectionTestSendingThread>>, protected ConnectionTestBase {
 public:
     bool serverIsA() const { return std::get<0>(GetParam()) == ConnectionTestDirection::ServerIsA; }
+    ConnectionTestSendingThread sendingThread() const { return std::get<1>(GetParam()); }
 
     void SetUp() override
     {
+        m_sendingThreadScope.emplace(sendingThread());
         setupBase();
         if (!serverIsA())
             std::swap(m_connections[0].connection, m_connections[1].connection);
@@ -341,7 +374,35 @@ public:
     void TearDown() override
     {
         teardownBase();
+        m_sendingThreadScope = std::nullopt;
     }
+
+private:
+    std::optional<ConnectionTestSendingThreadScope> m_sendingThreadScope;
+};
+
+// How the main thread sends messages in the tests that don't test both ways.
+#if PLATFORM(COCOA)
+constexpr auto defaultConnectionTestSendingThread = ConnectionTestSendingThread::CallingThread;
+#else
+constexpr auto defaultConnectionTestSendingThread = ConnectionTestSendingThread::ConnectionQueue;
+#endif
+
+// The parameters to instantiate ConnectionTestABBA and the fixtures derived from it with.
+inline auto connectionTestABBAParameters()
+{
+    return testing::Combine(testing::Values(ConnectionTestDirection::ServerIsA, ConnectionTestDirection::ClientIsA),
+#if PLATFORM(COCOA)
+        testing::Values(ConnectionTestSendingThread::CallingThread, ConnectionTestSendingThread::ConnectionQueue));
+#else
+        testing::Values(ConnectionTestSendingThread::ConnectionQueue));
+#endif
+}
+
+// Names the tests that run the default way like the tests were named before there were two ways, for example
+// "ServerIsA", and the others like "ServerIsASendingOnConnectionQueue".
+struct ConnectionTestABBAParametersToStringFormatter {
+    std::string operator()(const testing::TestParamInfo<ConnectionTestABBA::ParamType>&) const;
 };
 
 class AutoWorkQueue {

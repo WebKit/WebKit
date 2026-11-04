@@ -118,6 +118,11 @@ void AuxiliaryProcess::initialize(AuxiliaryProcessInitializationParameters&& par
     connection->open(*this);
 }
 
+void AuxiliaryProcess::enableIPCSendOnCallingThread()
+{
+    IPC::Connection::enableSendOnCallingThread();
+}
+
 void AuxiliaryProcess::setProcessSuppressionEnabled(bool enabled)
 {
     if (enabled)
@@ -259,6 +264,8 @@ void AuxiliaryProcess::applyProcessCreationParameters(AuxiliaryProcessCreationPa
     if (parameters.shouldEnableStreamingIPCSignposts)
         IPC::StreamClientConnection::forceEnableSignposts();
 #endif
+    if (parameters.shouldEnableIPCSendOnCallingThread)
+        IPC::Connection::enableSendOnCallingThread();
 }
 
 void AuxiliaryProcess::grantAccessToContainerTempDirectory(const SandboxExtension::Handle& handle)

@@ -29,4 +29,5 @@ struct WebKit::AuxiliaryProcessCreationParameters {
     bool shouldEnableIPCSignposts;
     bool shouldEnableStreamingIPCSignposts;
 #endif
+    bool shouldEnableIPCSendOnCallingThread;
 };

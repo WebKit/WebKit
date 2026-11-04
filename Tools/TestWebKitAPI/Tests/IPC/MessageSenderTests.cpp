@@ -155,7 +155,7 @@ TEST_P(MessageSenderTest, SendAsyncWithErrorAsynchronousCallback)
 
 INSTANTIATE_TEST_SUITE_P(MessageSenderTest,
     MessageSenderTest,
-    testing::Values(ConnectionTestDirection::ServerIsA, ConnectionTestDirection::ClientIsA),
-    TestParametersToStringFormatter());
+    connectionTestABBAParameters(),
+    ConnectionTestABBAParametersToStringFormatter());
 
 }

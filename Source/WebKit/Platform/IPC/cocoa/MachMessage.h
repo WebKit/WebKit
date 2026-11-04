@@ -41,6 +41,12 @@ namespace IPC {
 
 class Decoder;
 
+enum class MachMessageSendResult : uint8_t {
+    Success, // The message was sent.
+    Timeout, // The destination had no room for the message. Sending it again as it is can send it.
+    InvalidDestinationPort, // The destination does not receive messages anymore. The message is unchanged.
+};
+
 // A Mach message built from an Encoder and owning all Mach resources it references:
 // - Before send(): attachment send rights and the Encoder's out-of-line MmapSpan (if any).
 // - After a timed-out send() (pseudo-receive): a send right to the destination port, attachment
@@ -52,11 +58,7 @@ class MachMessage {
 public:
     static constexpr size_t maxAttachmentCount = 16383;
 
-    enum class SendResult : uint8_t {
-        Success, // The message was sent.
-        Timeout, // The destination had no room for the message. Sending it again as it is can send it.
-        InvalidDestinationPort, // The destination does not receive messages anymore. The message is unchanged.
-    };
+    using SendResult = MachMessageSendResult;
 
     // Returns nullptr if the encoder has more than maxAttachmentCount attachments.
     static std::unique_ptr<MachMessage> create(UniqueRef<Encoder>&&);

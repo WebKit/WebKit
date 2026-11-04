@@ -28,20 +28,19 @@
 #include "IPCTestUtilities.h"
 #include "Helpers/Test.h"
 #include "WorkQueueMessageReceiver.h"
+#include <wtf/Box.h>
 #include <wtf/Threading.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 // libproc is private on iOS, so the send benchmarks are macOS only.
 #if PLATFORM(MAC)
 #include <libproc.h>
-#include <pthread.h>
 #include <time.h>
 #endif
 
 #if PLATFORM(COCOA)
 #include <mach/mach.h>
 #endif
-
 
 namespace TestWebKitAPI {
 
@@ -127,6 +126,14 @@ static Vector<uint8_t> testDataOfSize(size_t size)
     });
 }
 #endif // PLATFORM(COCOA)
+
+// Calls `function` on a thread whose QoS is too low for it to send messages itself, so that the messages it sends are
+// queued for the connection queue to send.
+template<typename Function>
+static void sendFromThreadThatQueues(Function&& function)
+{
+    Thread::create("Thread that queues messages"_s, std::forward<Function>(function), ThreadType::Unknown, Thread::QOS::Utility)->waitForCompletion();
+}
 
 namespace {
 class SimpleConnectionTest : public testing::Test {
@@ -461,7 +468,9 @@ TEST_P(ConnectionTestABBA, FlushSentMessagesAfterPeerIsGoneWaitsForClose)
     a()->dispatchOnReceiveQueueForTesting([&] {
         holdA.waitFor(kWaitForAbsenceTimeout);
     });
-    a()->send(MockTestMessage1 { }, 1);
+    sendFromThreadThatQueues([&] {
+        a()->send(MockTestMessage1 { }, 1);
+    });
     BinarySemaphore releaseA;
     a()->dispatchOnReceiveQueueForTesting([&] {
         releaseA.waitFor(10_s);
@@ -472,6 +481,526 @@ TEST_P(ConnectionTestABBA, FlushSentMessagesAfterPeerIsGoneWaitsForClose)
     releaseA.signal();
     EXPECT_EQ(a()->flushSentMessages(kDefaultWaitForTimeout), IPC::Error::InvalidConnection);
     EXPECT_TRUE(aClient().waitForDidClose(kDefaultWaitForTimeout));
+}
+
+// Blocks a connection's queue, so that it neither receives nor sends messages, until unblock() is called or it is
+// destroyed.
+class ConnectionQueueBlocker {
+    WTF_MAKE_NONCOPYABLE(ConnectionQueueBlocker);
+public:
+    explicit ConnectionQueueBlocker(IPC::Connection& connection)
+    {
+        connection.dispatchOnReceiveQueueForTesting([semaphore = m_semaphore] {
+            semaphore->wait();
+        });
+    }
+
+    ~ConnectionQueueBlocker()
+    {
+        unblock();
+    }
+
+    // May be called on any thread.
+    void unblock()
+    {
+        if (m_isBlocking.exchange(false))
+            m_semaphore->signal();
+    }
+
+private:
+    // The connection queue may still be waking up when this is destroyed.
+    Box<BinarySemaphore> m_semaphore { Box<BinarySemaphore>::create() };
+    std::atomic<bool> m_isBlocking { true };
+};
+
+// Tests for sending messages on the calling thread. The main thread sends its messages itself, see
+// ConnectionTestSendingThread. While a()'s connection queue is blocked, only a message that the sending thread sent
+// itself can arrive at b(). So b() receiving a message then shows that it was sent on the calling thread, and b() not
+// receiving it shows that it was queued.
+class ConnectionSendOnCallingThreadTest : public ConnectionTestABBA {
+protected:
+    static constexpr uint64_t probeDestinationID = 0xffffff;
+
+    // The destination IDs of the messages that b() receives within the timeout, until there are at least `count`.
+    Vector<uint64_t> receiveFromA(size_t count, Seconds timeout)
+    {
+        Vector<uint64_t> destinationIDs;
+        auto deadline = MonotonicTime::now() + timeout;
+        while (true) {
+            for (auto& message : bClient().takeMessages())
+                destinationIDs.append(message.destinationID);
+            if (destinationIDs.size() >= count || MonotonicTime::now() >= deadline)
+                return destinationIDs;
+            Util::runFor(10_ms);
+        }
+    }
+
+    // a() can only send a message itself once it is connected, which for a server is when it receives b()'s
+    // InitializeConnection message on its connection queue. A message that a() sends before then arrives once it is.
+    ::testing::AssertionResult waitUntilAIsConnected()
+    {
+        a()->send(MockTestMessage1 { }, probeDestinationID);
+        auto received = receiveFromA(1, kDefaultWaitForTimeout);
+        if (received.size() != 1 || received[0] != probeDestinationID)
+            return ::testing::AssertionFailure() << "The probe didn't arrive, " << received.size() << " messages";
+        return ::testing::AssertionSuccess();
+    }
+
+    // Sends from several threads at once while b() doesn't receive, with message sizes that are sent inline and out
+    // of line, from threads that send their messages themselves and threads that queue them. Every thread's messages
+    // must arrive in order.
+    void sendFromThreadsWhileBIsBlocked(std::span<const Thread::QOS> senderQOSs)
+    {
+        constexpr uint64_t messagesPerThread = 500;
+        Vector<Vector<uint8_t>> data { testDataOfSize(16), testDataOfSize(2000), testDataOfSize(6000) };
+        auto sendMessages = [&](uint64_t thread) {
+            for (uint64_t i = 0; i < messagesPerThread; ++i)
+                a()->send(MockTestMessageWithDataAndAttachments { data[i % data.size()].span(), { } }, (thread << 32) | i);
+        };
+
+        ConnectionQueueBlocker blocker { *b() };
+        Vector<Ref<Thread>> senders;
+        for (uint64_t thread = 0; thread < senderQOSs.size(); ++thread) {
+            senders.append(Thread::create("ConnectionSendOnCallingThreadTest sender"_s, [&sendMessages, thread] {
+                sendMessages(thread);
+            }, ThreadType::Unknown, senderQOSs[thread]));
+        }
+        for (auto& sender : senders)
+            sender->waitForCompletion();
+
+        blocker.unblock();
+        Vector<uint64_t> nextSequenceNumbers(senderQOSs.size(), [](size_t) -> uint64_t {
+            return 0;
+        });
+        for (uint64_t i = 0; i < senderQOSs.size() * messagesPerThread; ++i) {
+            auto destinationID = bClient().waitForMessage(kDefaultWaitForTimeout).destinationID;
+            auto thread = destinationID >> 32;
+            auto sequenceNumber = destinationID & 0xffffffff;
+            ASSERT_LT(thread, senderQOSs.size());
+            EXPECT_EQ(sequenceNumber, nextSequenceNumbers[thread]) << " thread: " << thread;
+            nextSequenceNumbers[thread] = sequenceNumber + 1;
+        }
+    }
+};
+
+TEST_P(ConnectionSendOnCallingThreadTest, SmallMessagesAreSentOnCallingThread)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilAIsConnected());
+
+    // Fewer messages than b()'s port holds, so that none of them has to wait for b().
+    constexpr uint64_t messageCount = 100;
+    ConnectionQueueBlocker blocker { *a() };
+    for (uint64_t i = 0; i < messageCount; ++i)
+        a()->send(MockTestMessage1 { }, i);
+    auto received = receiveFromA(messageCount, kDefaultWaitForTimeout);
+    ASSERT_EQ(received.size(), messageCount);
+    for (uint64_t i = 0; i < messageCount; ++i)
+        EXPECT_EQ(received[i], i);
+}
+
+// Sending on the calling thread is off by default. Then even a thread whose QoS is high enough
+// queues its messages for the connection queue to send.
+TEST_P(ConnectionSendOnCallingThreadTest, MessagesAreQueuedWhenSendOnCallingThreadIsDisabled)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilAIsConnected());
+
+    IPC::Connection::setSendOnCallingThreadEnabledForTesting(false);
+    {
+        ConnectionQueueBlocker blocker { *a() };
+        a()->send(MockTestMessage1 { }, 1);
+        EXPECT_TRUE(receiveFromA(1, kWaitForAbsenceTimeout).isEmpty());
+    }
+    auto received = receiveFromA(1, kDefaultWaitForTimeout);
+    ASSERT_EQ(received.size(), 1u);
+    EXPECT_EQ(received[0], 1u);
+}
+
+TEST_P(ConnectionSendOnCallingThreadTest, LargeMessagesAreSentOnCallingThread)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilAIsConnected());
+
+    auto data = testDataOfSize(64 * 1024);
+    bClient().setAsyncMessageHandler([&](IPC::Connection&, IPC::Decoder& decoder) -> bool {
+        auto receivedData = decoder.decode<std::span<const uint8_t>>();
+        EXPECT_TRUE(receivedData && equalSpans(*receivedData, data.span()));
+        return false; // Record the message.
+    });
+
+    // Bodies that are sent inline and out of line.
+    constexpr uint64_t messageCount = 10;
+    ConnectionQueueBlocker blocker { *a() };
+    for (uint64_t i = 0; i < messageCount; ++i)
+        a()->send(MockTestMessageWithDataAndAttachments { data.span(), { } }, i);
+    auto received = receiveFromA(messageCount, kDefaultWaitForTimeout);
+    ASSERT_EQ(received.size(), messageCount);
+    for (uint64_t i = 0; i < messageCount; ++i)
+        EXPECT_EQ(received[i], i);
+}
+
+TEST_P(ConnectionSendOnCallingThreadTest, MessagesWithAttachmentsAreSentOnCallingThread)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilAIsConnected());
+
+    mach_port_t port = MACH_PORT_NULL;
+    ASSERT_EQ(mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port), KERN_SUCCESS);
+    auto sendRight = MachSendRight::createFromReceiveRight(port);
+    ASSERT_TRUE(!!sendRight);
+
+    constexpr uint64_t messageCount = 10;
+    auto data = testDataOfSize(100);
+    bClient().setAsyncMessageHandler([&](IPC::Connection&, IPC::Decoder& decoder) -> bool {
+        auto receivedData = decoder.decode<std::span<const uint8_t>>();
+        auto attachmentCount = decoder.decode<uint64_t>();
+        EXPECT_TRUE(receivedData && equalSpans(*receivedData, data.span()));
+        EXPECT_TRUE(attachmentCount && *attachmentCount == 2u);
+        for (unsigned i = 0; i < 2; ++i) {
+            auto attachment = decoder.decode<IPC::Attachment>();
+            EXPECT_TRUE(attachment && attachment->sendRight() == port);
+        }
+        return false; // Record the message.
+    });
+
+    {
+        ConnectionQueueBlocker blocker { *a() };
+        for (uint64_t i = 0; i < messageCount; ++i) {
+            Vector<IPC::Attachment> attachments(2, [&](size_t) {
+                return MachSendRight { sendRight };
+            });
+            a()->send(MockTestMessageWithDataAndAttachments { data.span(), WTF::move(attachments) }, i);
+        }
+        auto received = receiveFromA(messageCount, kDefaultWaitForTimeout);
+        ASSERT_EQ(received.size(), messageCount);
+        for (uint64_t i = 0; i < messageCount; ++i)
+            EXPECT_EQ(received[i], i);
+    }
+
+    sendRight = { };
+    mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_RECEIVE, -1);
+}
+
+// a() can't send a message itself before it is connected, which for a server is when b() has opened. The messages
+// sent before then must still arrive first.
+TEST_P(ConnectionSendOnCallingThreadTest, MessagesSentBeforeConnectingAreQueued)
+{
+    ASSERT_TRUE(openA());
+    for (uint64_t i = 0; i < 10; ++i)
+        a()->send(MockTestMessage1 { }, i);
+
+    ASSERT_TRUE(openB());
+    for (uint64_t i = 10; i < 20; ++i)
+        a()->send(MockTestMessage1 { }, i);
+    for (uint64_t i = 0; i < 20; ++i)
+        EXPECT_EQ(bClient().waitForMessage(kDefaultWaitForTimeout).destinationID, i);
+}
+
+// A message that is queued rather than sent on the calling thread keeps the messages sent after it behind it until it
+// has been sent, even ones that could be sent on the calling thread. Only threads whose QoS is at least that of a()'s
+// connection queue send messages themselves.
+TEST_P(ConnectionSendOnCallingThreadTest, MessagesAreNotSentAheadOfQueuedMessage)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilAIsConnected());
+
+    auto checkMessageIsQueuedWithMessageBehindIt = [&](uint64_t destinationID, Thread::QOS qos) {
+        SCOPED_TRACE(destinationID);
+        {
+            // Keep a()'s connection queue from sending the queued message.
+            ConnectionQueueBlocker blocker { *a() };
+            Thread::create("ConnectionSendOnCallingThreadTest low QoS sender"_s, [&] {
+                a()->send(MockTestMessage1 { }, destinationID);
+            }, ThreadType::Unknown, qos)->waitForCompletion();
+            a()->send(MockTestMessage1 { }, destinationID + 1);
+            EXPECT_TRUE(receiveFromA(1, kWaitForAbsenceTimeout).isEmpty());
+        }
+        auto received = receiveFromA(2, kDefaultWaitForTimeout);
+        ASSERT_EQ(received.size(), 2u);
+        EXPECT_EQ(received[0], destinationID);
+        EXPECT_EQ(received[1], destinationID + 1);
+    };
+    checkMessageIsQueuedWithMessageBehindIt(100, Thread::QOS::Utility);
+    checkMessageIsQueuedWithMessageBehindIt(200, Thread::QOS::Background);
+
+    // A message sent from another thread with a high enough QoS is sent on that thread.
+    ConnectionQueueBlocker blocker { *a() };
+    Thread::create("ConnectionSendOnCallingThreadTest user interactive sender"_s, [&] {
+        a()->send(MockTestMessage1 { }, 300);
+    }, ThreadType::Unknown, Thread::QOS::UserInteractive)->waitForCompletion();
+    auto received = receiveFromA(1, kDefaultWaitForTimeout);
+    ASSERT_EQ(received.size(), 1u);
+    EXPECT_EQ(received[0], 300u);
+}
+
+// When b()'s port is full, the message that doesn't fit is queued, and the messages sent after it are queued behind
+// it.
+TEST_P(ConnectionSendOnCallingThreadTest, MessagesAreNotSentAheadOfMessageReceiverHadNoRoomFor)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilAIsConnected());
+
+    // b()'s port holds 128 messages.
+    constexpr uint64_t messageCount = 200;
+    ConnectionQueueBlocker blockerA { *a() };
+    {
+        ConnectionQueueBlocker blockerB { *b() };
+        for (uint64_t i = 0; i < messageCount; ++i)
+            a()->send(MockTestMessage1 { }, i);
+    }
+
+    // b() now receives the messages that were sent before its port was full. The rest wait for a()'s connection queue.
+    auto sentOnCallingThread = receiveFromA(messageCount, kDefaultWaitForTimeout);
+    EXPECT_GT(sentOnCallingThread.size(), 100u);
+    EXPECT_LT(sentOnCallingThread.size(), messageCount);
+    for (uint64_t i = 0; i < sentOnCallingThread.size(); ++i)
+        EXPECT_EQ(sentOnCallingThread[i], i);
+
+    blockerA.unblock();
+    auto sentLater = receiveFromA(messageCount - sentOnCallingThread.size(), kDefaultWaitForTimeout);
+    ASSERT_EQ(sentOnCallingThread.size() + sentLater.size(), messageCount);
+    for (uint64_t i = 0; i < sentLater.size(); ++i)
+        EXPECT_EQ(sentLater[i], sentOnCallingThread.size() + i);
+}
+
+TEST_P(ConnectionSendOnCallingThreadTest, SendingFromThreadsKeepsOrder)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilAIsConnected());
+    constexpr std::array senderQOSs { Thread::QOS::UserInteractive, Thread::QOS::UserInteractive, Thread::QOS::UserInteractive, Thread::QOS::UserInteractive };
+    sendFromThreadsWhileBIsBlocked(senderQOSs);
+}
+
+TEST_P(ConnectionSendOnCallingThreadTest, SendingFromThreadsThatSendAndThreadsThatQueueKeepsOrder)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilAIsConnected());
+    constexpr std::array senderQOSs { Thread::QOS::UserInteractive, Thread::QOS::Utility, Thread::QOS::UserInteractive, Thread::QOS::Utility };
+    sendFromThreadsWhileBIsBlocked(senderQOSs);
+}
+
+// b() receives slowly, so that its port keeps filling up while threads send, some sending their messages themselves
+// and some queuing them. Every message must arrive once, and each thread's in order, however the sends interleave with
+// the send source's notifications that b() has room again.
+TEST_P(ConnectionSendOnCallingThreadTest, SendingToSlowReceiverKeepsOrder)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilAIsConnected());
+
+    constexpr std::array senderQOSs { Thread::QOS::UserInteractive, Thread::QOS::UserInteractive, Thread::QOS::UserInteractive, Thread::QOS::UserInteractive,
+        Thread::QOS::UserInteractive, Thread::QOS::UserInteractive, Thread::QOS::Utility, Thread::QOS::Utility };
+    constexpr uint64_t messagesPerThread = 3000;
+    std::array<uint64_t, senderQOSs.size()> nextSequenceNumbers { };
+    uint64_t receivedCount = 0;
+    bClient().setAsyncMessageHandler([&](IPC::Connection&, IPC::Decoder& decoder) {
+        auto thread = decoder.destinationID() >> 32;
+        auto sequenceNumber = decoder.destinationID() & 0xffffffff;
+        EXPECT_LT(thread, senderQOSs.size());
+        if (thread < senderQOSs.size()) {
+            EXPECT_EQ(sequenceNumber, nextSequenceNumbers[thread]) << " thread: " << thread;
+            nextSequenceNumbers[thread] = sequenceNumber + 1;
+        }
+        ++receivedCount;
+        return true;
+    });
+
+    std::atomic<bool> doneSending { false };
+    auto slowReceiver = Thread::create("ConnectionSendOnCallingThreadTest slow receiver"_s, [&] {
+        while (!doneSending) {
+            b()->dispatchOnReceiveQueueForTesting([] {
+                sleep(1_ms);
+            });
+            sleep(1_ms);
+        }
+    });
+    Vector<Ref<Thread>> senders;
+    for (uint64_t thread = 0; thread < senderQOSs.size(); ++thread) {
+        senders.append(Thread::create("ConnectionSendOnCallingThreadTest sender"_s, [this, thread] {
+            for (uint64_t i = 0; i < messagesPerThread; ++i)
+                a()->send(MockTestMessage1 { }, (thread << 32) | i);
+        }, ThreadType::Unknown, senderQOSs[thread]));
+    }
+    for (auto& sender : senders)
+        sender->waitForCompletion();
+    doneSending = true;
+    slowReceiver->waitForCompletion();
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return receivedCount == senderQOSs.size() * messagesPerThread;
+    }));
+    EXPECT_EQ(receivedCount, senderQOSs.size() * messagesPerThread);
+}
+
+// Messages from a()'s connection queue can be sent on it too. That must not deadlock or reorder messages.
+TEST_P(ConnectionSendOnCallingThreadTest, SendFromConnectionQueue)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilAIsConnected());
+
+    a()->send(MockTestMessage1 { }, 1);
+    BinarySemaphore didSend;
+    BinarySemaphore didReceive;
+    a()->dispatchOnReceiveQueueForTesting([&] {
+        // The queue runs at its own QoS, it can't be sending queued messages or handling a send source event at the
+        // same time, and a message 1 that it had to send has been sent by now. It stays busy until b() has received
+        // message 2, so message 2 can only have been sent on it as the calling thread.
+        a()->send(MockTestMessage1 { }, 2);
+        didSend.signal();
+        didReceive.wait();
+    });
+    didSend.wait();
+    auto received = receiveFromA(2, kDefaultWaitForTimeout);
+    didReceive.signal();
+    ASSERT_EQ(received.size(), 2u);
+    EXPECT_EQ(received[0], 1u);
+    EXPECT_EQ(received[1], 2u);
+
+    a()->send(MockTestMessage1 { }, 3);
+    EXPECT_EQ(bClient().waitForMessage(kDefaultWaitForTimeout).destinationID, 3u);
+}
+
+// b() going away while threads send to it. Depending on whether a() first finds b()'s port dead or gets the no-senders
+// notification, sends fail with MACH_SEND_INVALID_DEST, or stop because a() is no longer connected.
+// SendToReceiverThatHasGoneAway checks the former reliably.
+TEST_P(ConnectionSendOnCallingThreadTest, ReceiverInvalidatesWhileThreadsSend)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilAIsConnected());
+    bClient().setAsyncMessageHandler([](IPC::Connection&, IPC::Decoder&) {
+        return true; // Drop the message.
+    });
+
+    std::atomic<bool> stop { false };
+    Vector<Ref<Thread>> senders;
+    for (unsigned i = 0; i < 4; ++i) {
+        senders.append(Thread::create("ConnectionSendOnCallingThreadTest sender"_s, [&] {
+            for (uint64_t j = 0; !stop && a()->send(MockTestMessage1 { }, j) == IPC::Error::NoError; ++j) { }
+        }, ThreadType::Unknown, Thread::QOS::UserInteractive));
+    }
+    sleep(10_ms);
+    b()->invalidate();
+    EXPECT_TRUE(aClient().waitForDidClose(5_s));
+    stop = true;
+    for (auto& sender : senders)
+        sender->waitForCompletion();
+}
+
+// A message sent on the calling thread that finds b()'s port dead is dropped, and a() can't send anything after that.
+// A message sent after that is dropped right away, which releases what it carries. a() still closes once it gets the
+// no-senders notification.
+TEST_P(ConnectionSendOnCallingThreadTest, SendToReceiverThatHasGoneAway)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilAIsConnected());
+
+    {
+        // Keep a() from handling the no-senders notification, so that it is still connected when b()'s port dies. Only
+        // messages sent on the calling thread can reach b()'s port while a()'s connection queue is blocked.
+        ConnectionQueueBlocker blocker { *a() };
+        b()->invalidate();
+        // b()'s port dies once b()'s receive source has been cancelled on b()'s connection queue. Once a send has
+        // found the port dead, flushSentMessages() waits until a() closes. A send that finds b()'s port full does the
+        // same, but b()'s port usually dies long before it holds 128 messages.
+        bool sendFailed = false;
+        for (unsigned attempt = 0; attempt < 5000 && !sendFailed; ++attempt) {
+            a()->send(MockTestMessage1 { }, attempt);
+            sendFailed = a()->flushSentMessages(0_s) == IPC::Error::Timeout;
+            if (!sendFailed)
+                sleep(1_ms);
+        }
+        ASSERT_TRUE(sendFailed);
+
+        mach_port_t port = MACH_PORT_NULL;
+        ASSERT_EQ(mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port), KERN_SUCCESS);
+        auto sendRight = MachSendRight::createFromReceiveRight(port);
+        ASSERT_TRUE(!!sendRight);
+        auto sendRightCount = [&] {
+            mach_port_urefs_t count = 0;
+            EXPECT_EQ(mach_port_get_refs(mach_task_self(), port, MACH_PORT_RIGHT_SEND, &count), KERN_SUCCESS);
+            return count;
+        };
+        auto sendRightCountBeforeSend = sendRightCount();
+        Vector<IPC::Attachment> attachments;
+        attachments.append(MachSendRight { sendRight });
+        EXPECT_EQ(a()->send(MockTestMessageWithDataAndAttachments { std::span<const uint8_t> { }, WTF::move(attachments) }, 5000), IPC::Error::InvalidConnection);
+        EXPECT_EQ(sendRightCount(), sendRightCountBeforeSend);
+        EXPECT_EQ(a()->flushSentMessages(0_s), IPC::Error::Timeout);
+        sendRight = { };
+        mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_RECEIVE, -1);
+    }
+    EXPECT_TRUE(aClient().waitForDidClose(5_s));
+}
+
+TEST_P(ConnectionSendOnCallingThreadTest, SenderInvalidatesWhileOtherThreadsSend)
+{
+    ASSERT_TRUE(openBoth());
+    ASSERT_TRUE(waitUntilAIsConnected());
+    bClient().setAsyncMessageHandler([](IPC::Connection&, IPC::Decoder&) {
+        return true; // Drop the message.
+    });
+
+    Vector<Ref<Thread>> senders;
+    for (unsigned i = 0; i < 4; ++i) {
+        senders.append(Thread::create("ConnectionSendOnCallingThreadTest sender"_s, [&] {
+            // Stops once a() has been invalidated.
+            for (uint64_t j = 0; a()->send(MockTestMessage1 { }, j) == IPC::Error::NoError; ++j) { }
+        }, ThreadType::Unknown, Thread::QOS::UserInteractive));
+    }
+    sleep(10_ms);
+    a()->invalidate();
+    for (auto& sender : senders)
+        sender->waitForCompletion();
+    EXPECT_TRUE(bClient().waitForDidClose(5_s));
+}
+
+INSTANTIATE_TEST_SUITE_P(ConnectionTest,
+    ConnectionSendOnCallingThreadTest,
+    testing::Combine(testing::Values(ConnectionTestDirection::ServerIsA, ConnectionTestDirection::ClientIsA), testing::Values(ConnectionTestSendingThread::CallingThread)),
+    ConnectionTestABBAParametersToStringFormatter());
+
+// The client sends messages itself as soon as it is connected, before its connection queue has run at all, which is
+// also before its send source's registration handler has run. The messages that find the server's port full are
+// queued, and must be sent in order once the server has room, whether the send source learns of that from the kernel
+// or when its registration handler runs.
+TEST_F(ConnectionTest, MessagesSentBeforeClientConnectionQueueRunsAreSent)
+{
+    ConnectionTestSendingThreadScope sendingThreadScope { ConnectionTestSendingThread::CallingThread };
+    ASSERT_TRUE(openServer());
+
+    // Keep the server from receiving, so that its port fills up, and the client's connection queue from running.
+    std::optional<ConnectionQueueBlocker> serverBlocker { std::in_place, *server() };
+    std::optional<ConnectionQueueBlocker> clientBlocker { std::in_place, *client() };
+    ASSERT_TRUE(openClient());
+
+    // The server's port holds 128 messages, including the client's InitializeConnection message.
+    constexpr uint64_t messageCount = 200;
+    for (uint64_t i = 0; i < messageCount; ++i)
+        client()->send(MockTestMessage1 { }, i);
+
+    // The server receives the messages that the client sent itself. The rest wait for the client's connection queue.
+    serverBlocker = std::nullopt;
+    Vector<uint64_t> received;
+    while (received.size() < 120) {
+        auto message = serverClient().waitForMessage(kDefaultWaitForTimeout);
+        received.append(message.destinationID);
+    }
+    clientBlocker = std::nullopt;
+    while (received.size() < messageCount)
+        received.append(serverClient().waitForMessage(kDefaultWaitForTimeout).destinationID);
+    for (uint64_t i = 0; i < messageCount; ++i)
+        EXPECT_EQ(received[i], i);
+}
+
+// A client connection whose send port is dead when it opens drops its InitializeConnection message, which releases
+// the send right to its receive port, and closes once it gets the no-senders notification.
+TEST_F(ConnectionTest, ClientWithDeadSendPortCloses)
+{
+    Ref connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { MACH_PORT_DEAD });
+    Ref connectionClient = MockConnectionClient::create();
+    connection->open(connectionClient);
+    EXPECT_TRUE(connectionClient->waitForDidClose(kDefaultWaitForTimeout));
+    connection->invalidate();
 }
 
 #endif // PLATFORM(COCOA)
@@ -2006,18 +2535,12 @@ TEST_P(ConnectionDidReceiveInvalidMessageTest, Sync)
 //
 //     TestIPC --force --filter '*ConnectionSendBenchmark*'
 //
-// a() sends from the main thread, which runs at the user-interactive QoS of a UI process's main thread, and b()
-// receives on a run loop of its own. Both ends are in this process, so the instruction and cycle counts include the
-// receiving side. The sender's CPU time is the main thread's.
+// a() sends from the main thread, and b() receives on a run loop of its own. Each scenario runs with the main thread
+// sending its messages itself and queuing them for the connection queue to send, where both are supported, see
+// ConnectionTestSendingThread. Both ends are in this process, so the instruction and cycle counts include the receiving
+// side. The sender's CPU time is the main thread's.
 class ConnectionSendBenchmark : public ConnectionRunLoopTest {
 public:
-    void SetUp() override
-    {
-        ConnectionRunLoopTest::SetUp();
-        m_savedQOSClass = qos_class_self();
-        pthread_set_qos_class_self_np(QOS_CLASS_USER_INTERACTIVE, 0);
-    }
-
     void TearDown() override
     {
         if (m_receiveRunLoop) {
@@ -2027,14 +2550,6 @@ public:
             m_receiveRunLoop = nullptr;
             localReferenceBarrier();
         }
-        // A thread can't go back to having no QoS class, so restore the QoS the main thread started with instead, or
-        // the default QoS.
-        auto qosClass = m_savedQOSClass;
-        if (qosClass == QOS_CLASS_UNSPECIFIED)
-            qosClass = qos_class_main();
-        if (qosClass == QOS_CLASS_UNSPECIFIED)
-            qosClass = QOS_CLASS_DEFAULT;
-        pthread_set_qos_class_self_np(qosClass, 0);
         ConnectionRunLoopTest::TearDown();
     }
 
@@ -2139,8 +2654,10 @@ protected:
     {
         auto wallTime = end.time - start.time;
         auto latencies = std::exchange(m_latencies, { });
-        SAFE_PRINTF("[ BENCHMARK ] %-34s messages=%7zu wall=%9.2fms rate=%9.0f/s sender_cpu=%9.2fms instructions=%13llu cycles=%13llu send_p50=%7.2fus send_p99=%8.2fus latency_p50=%8.2fus latency_p99=%9.2fus\n",
-            scenario, messageCount, wallTime.milliseconds(), messageCount / wallTime.seconds(), (end.threadCPUTime - start.threadCPUTime).milliseconds(),
+        // For example "ServerIsA", for the parameters the scenario runs with.
+        auto parameters = CString { ::testing::UnitTest::GetInstance()->current_test_info()->value_param() ? testing::PrintToString(GetParam()).c_str() : "" };
+        SAFE_PRINTF("[ BENCHMARK ] %-34s %-50s messages=%7zu wall=%9.2fms rate=%9.0f/s sender_cpu=%9.2fms instructions=%13llu cycles=%13llu send_p50=%7.2fus send_p99=%8.2fus latency_p50=%8.2fus latency_p99=%9.2fus\n",
+            scenario, parameters, messageCount, wallTime.milliseconds(), messageCount / wallTime.seconds(), (end.threadCPUTime - start.threadCPUTime).milliseconds(),
             static_cast<unsigned long long>(end.instructions - start.instructions), static_cast<unsigned long long>(end.cycles - start.cycles),
             percentile(sendDurations, 0.5) * 1e6, percentile(sendDurations, 0.99) * 1e6, percentile(latencies, 0.5) * 1e6, percentile(latencies, 0.99) * 1e6);
         fflush(stdout);
@@ -2182,7 +2699,6 @@ private:
     Vector<uint64_t> m_nextSequenceNumbers;
     Vector<double> m_latencies;
     BinarySemaphore m_didReceiveAllMessages;
-    qos_class_t m_savedQOSClass { QOS_CLASS_UNSPECIFIED };
 };
 
 TEST_P(ConnectionSendBenchmark, DISABLED_SmallMessages)
@@ -2324,19 +2840,19 @@ TEST_P(ConnectionSendBenchmark, DISABLED_SyncRoundTrips)
 
 INSTANTIATE_TEST_SUITE_P(ConnectionTest,
     ConnectionSendBenchmark,
-    testing::Values(ConnectionTestDirection::ServerIsA),
-    TestParametersToStringFormatter());
+    testing::Combine(testing::Values(ConnectionTestDirection::ServerIsA), testing::Values(ConnectionTestSendingThread::CallingThread, ConnectionTestSendingThread::ConnectionQueue)),
+    ConnectionTestABBAParametersToStringFormatter());
 #endif // PLATFORM(MAC)
 
 INSTANTIATE_TEST_SUITE_P(ConnectionTest,
     ConnectionTestABBA,
-    testing::Values(ConnectionTestDirection::ServerIsA, ConnectionTestDirection::ClientIsA),
-    TestParametersToStringFormatter());
+    connectionTestABBAParameters(),
+    ConnectionTestABBAParametersToStringFormatter());
 
 INSTANTIATE_TEST_SUITE_P(ConnectionTest,
     ConnectionRunLoopTest,
-    testing::Values(ConnectionTestDirection::ServerIsA, ConnectionTestDirection::ClientIsA),
-    TestParametersToStringFormatter());
+    connectionTestABBAParameters(),
+    ConnectionTestABBAParametersToStringFormatter());
 
 INSTANTIATE_TEST_SUITE_P(ConnectionTest,
     ConnectionDidReceiveInvalidMessageTest,

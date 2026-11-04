@@ -97,6 +97,7 @@ public:
 
     void mainThreadPing(CompletionHandler<void()>&&);
     void setProcessSuppressionEnabled(bool);
+    void enableIPCSendOnCallingThread();
 
 #if PLATFORM(COCOA)
     void setApplicationIsDaemon();

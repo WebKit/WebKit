@@ -28,6 +28,7 @@
 messages -> AuxiliaryProcess WantsDispatchMessage {
     ShutDown()
     SetProcessSuppressionEnabled(bool flag)
+    EnableIPCSendOnCallingThread()
 
     MainThreadPing() -> ()
 
