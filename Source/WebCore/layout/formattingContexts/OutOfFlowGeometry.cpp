@@ -26,6 +26,7 @@
 #include "config.h"
 #include "OutOfFlowGeometry.h"
 
+#include "BlockFormattingUtils.h"
 #include "RenderBox.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
@@ -313,25 +314,58 @@ LayoutUnit OutOfFlowGeometry::clamp(LayoutUnit borderBoxSize, const MinimumSizeT
     return std::max(borderAndPadding, borderBoxSize);
 }
 
+// With both sizes automatic, the axis with an auto inset when only one has one, and otherwise the block axis.
+auto OutOfFlowGeometry::ratioDependentAxis() const -> std::optional<Axis>
+{
+    CheckedRef style = this->style();
+    if (!style->aspectRatio().hasRatio())
+        return { };
+    if (auto ratio = style->logicalAspectRatio(); !ratio || std::isnan(ratio))
+        return { };
+    auto writingMode = m_containingBlock.writingMode;
+    // The intrinsic sizing keywords in the block axis are the automatic size (css-sizing-3 §3.2).
+    auto& blockSize = style->logicalHeight(writingMode);
+    auto inlineSizeIsAutomatic = style->logicalWidth(writingMode).isAuto();
+    auto blockSizeIsAutomatic = blockSize.isAuto() || blockSize.isIntrinsic();
+    if (inlineSizeIsAutomatic != blockSizeIsAutomatic)
+        return inlineSizeIsAutomatic ? Axis::Inline : Axis::Block;
+    if (!inlineSizeIsAutomatic)
+        return { };
+    auto inlineAxisHasAutoInset = style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto();
+    auto blockAxisHasAutoInset = style->insetBefore(writingMode).isAuto() || style->insetAfter(writingMode).isAuto();
+    return inlineAxisHasAutoInset && !blockAxisHasAutoInset ? Axis::Inline : Axis::Block;
+}
+
 bool OutOfFlowGeometry::hasFitContentInlineSize() const
 {
     CheckedRef style = this->style();
     auto writingMode = m_containingBlock.writingMode;
-    if (!style->logicalWidth(writingMode).isAuto())
+    if (!style->logicalWidth(writingMode).isAuto() || ratioDependentAxis() == Axis::Inline)
         return false;
     auto values = axisValues(Axis::Inline);
     return ((!values.insetStart || !values.insetEnd) && !values.defaultAnchor) || !alignmentAppliesStretch(Axis::Inline);
 }
 
+bool OutOfFlowGeometry::needsContentInlineSizes() const
+{
+    return hasFitContentInlineSize() || (ratioDependentAxis() == Axis::Inline && style().logicalMinWidth(m_containingBlock.writingMode).isAuto() && m_box->firstChild());
+}
+
 auto OutOfFlowGeometry::computeInlineAxisGeometry(std::optional<IntrinsicWidthConstraints> contentInlineSizes) const -> AxisGeometry
 {
-    ASSERT(contentInlineSizes || !hasFitContentInlineSize());
+    ASSERT(contentInlineSizes || !needsContentInlineSizes());
     CheckedRef style = this->style();
     auto writingMode = m_containingBlock.writingMode;
     auto values = axisValues(Axis::Inline);
+    auto ratioDependentAxis = this->ratioDependentAxis();
     auto borderBoxSize = [&] {
         if (auto& inlineSize = style->logicalWidth(writingMode); inlineSize.isSpecified())
             return borderBoxSizeFor(inlineSize, values.containingBlockSize, values.borderAndPadding);
+        // A preferred aspect ratio gives it from the definite block size.
+        if (ratioDependentAxis == Axis::Inline) {
+            if (auto blockSize = definiteBorderBoxBlockSize(axisValues(Axis::Block)))
+                return *BlockFormattingUtils::aspectRatioBorderBoxInlineSize(m_box, *blockSize, values.borderAndPadding, m_blockAxisBorderAndPadding);
+        }
         // The automatic size is resolved against the inset-modified containing block minus the margins, auto ones as zero.
         auto [rangeStart, rangeEnd] = insetModifiedContainingBlock(values);
         auto stretchFitSize = rangeEnd - rangeStart - values.marginStart.value_or(0_lu) - values.marginEnd.value_or(0_lu);
@@ -340,10 +374,26 @@ auto OutOfFlowGeometry::computeInlineAxisGeometry(std::optional<IntrinsicWidthCo
         // The fit-content size: the stretch-fit size, floored by the min-content size and capped by the max-content size (css-sizing-3 §5.1).
         return std::min(std::max(contentInlineSizes->minimum + values.borderAndPadding, stretchFitSize), contentInlineSizes->maximum + values.borderAndPadding);
     }();
-    return computeAxisGeometry(Axis::Inline, values, clamp(borderBoxSize, style->logicalMinWidth(writingMode), style->logicalMaxWidth(writingMode), values.containingBlockSize, values.borderAndPadding));
+    // The min and max inline sizes, with those the ratio transfers from the min and max block sizes when it gives the block size, and when it
+    // gives the inline size an auto min inline size is the min-content size (css-sizing-4 §5.1, RenderBox::computeOutOfFlowPositionedLogicalWidth).
+    auto maximumSize = LayoutUnit::max();
+    if (auto& maximumInlineSize = style->logicalMaxWidth(writingMode); maximumInlineSize.isSpecified())
+        maximumSize = borderBoxSizeFor(maximumInlineSize, values.containingBlockSize, values.borderAndPadding);
+    auto minimumSize = values.borderAndPadding;
+    if (auto& minimumInlineSize = style->logicalMinWidth(writingMode); minimumInlineSize.isSpecified())
+        minimumSize = std::max(minimumSize, borderBoxSizeFor(minimumInlineSize, values.containingBlockSize, values.borderAndPadding));
+    else if (ratioDependentAxis == Axis::Inline && contentInlineSizes)
+        minimumSize = std::max(minimumSize, contentInlineSizes->minimum + values.borderAndPadding);
+    if (ratioDependentAxis == Axis::Block) {
+        if (auto limits = BlockFormattingUtils::aspectRatioInlineSizeLimits(m_box, values.borderAndPadding, m_blockAxisBorderAndPadding, axisValues(Axis::Block).containingBlockSize, { }, writingMode)) {
+            maximumSize = std::min(maximumSize, limits->second);
+            minimumSize = std::max(minimumSize, limits->first);
+        }
+    }
+    return computeAxisGeometry(Axis::Inline, values, std::max(minimumSize, std::min(borderBoxSize, maximumSize)));
 }
 
-std::optional<LayoutUnit> OutOfFlowGeometry::definiteBorderBoxBlockSize(const AxisValues& values) const
+std::optional<LayoutUnit> OutOfFlowGeometry::definiteBorderBoxBlockSize(const AxisValues& values, std::optional<LayoutUnit> borderBoxInlineSize) const
 {
     CheckedRef style = this->style();
     auto writingMode = m_containingBlock.writingMode;
@@ -351,6 +401,12 @@ std::optional<LayoutUnit> OutOfFlowGeometry::definiteBorderBoxBlockSize(const Ax
     auto& maximumBlockSize = style->logicalMaxHeight(writingMode);
     if (auto& blockSize = style->logicalHeight(writingMode); blockSize.isSpecified())
         return clamp(borderBoxSizeFor(blockSize, values.containingBlockSize, values.borderAndPadding), minimumBlockSize, maximumBlockSize, values.containingBlockSize, values.borderAndPadding);
+    // A preferred aspect ratio gives it from the inline size, which makes it definite (css-sizing-4 §5.1).
+    if (ratioDependentAxis() == Axis::Block) {
+        if (!borderBoxInlineSize)
+            return { };
+        return BlockFormattingUtils::aspectRatioBorderBoxBlockSize(m_box, *borderBoxInlineSize, m_inlineAxisBorderAndPadding, values.borderAndPadding, values.containingBlockSize, { }, writingMode);
+    }
     // With neither inset auto, the automatic size is the stretch-fit size when the alignment stretches (§4.3).
     if (values.insetStart && values.insetEnd && alignmentAppliesStretch(Axis::Block)) {
         auto stretchFitSize = values.containingBlockSize - *values.insetStart - *values.insetEnd - values.marginStart.value_or(0_lu) - values.marginEnd.value_or(0_lu);
@@ -359,9 +415,9 @@ std::optional<LayoutUnit> OutOfFlowGeometry::definiteBorderBoxBlockSize(const Ax
     return { };
 }
 
-std::optional<LayoutUnit> OutOfFlowGeometry::definiteContentBoxBlockSize() const
+std::optional<LayoutUnit> OutOfFlowGeometry::definiteContentBoxBlockSize(std::optional<LayoutUnit> borderBoxInlineSize) const
 {
-    return definiteBorderBoxBlockSize(axisValues(Axis::Block)).transform([&](auto borderBoxSize) {
+    return definiteBorderBoxBlockSize(axisValues(Axis::Block), borderBoxInlineSize).transform([&](auto borderBoxSize) {
         return borderBoxSize - m_blockAxisBorderAndPadding;
     });
 }
@@ -376,13 +432,18 @@ auto OutOfFlowGeometry::computeReplacedBlockAxisGeometry(LayoutUnit borderBoxSiz
     return computeAxisGeometry(Axis::Block, axisValues(Axis::Block), borderBoxSize);
 }
 
-auto OutOfFlowGeometry::computeBlockAxisGeometry(LayoutUnit intrinsicContentBlockSize) const -> AxisGeometry
+auto OutOfFlowGeometry::computeBlockAxisGeometry(LayoutUnit intrinsicContentBlockSize, LayoutUnit borderBoxInlineSize) const -> AxisGeometry
 {
     CheckedRef style = this->style();
     auto values = axisValues(Axis::Block);
-    // Otherwise the automatic size is the fit-content size, which is the content's block size in this axis.
     auto writingMode = m_containingBlock.writingMode;
-    auto borderBoxSize = definiteBorderBoxBlockSize(values).value_or(clamp(intrinsicContentBlockSize + values.borderAndPadding, style->logicalMinHeight(writingMode), style->logicalMaxHeight(writingMode), values.containingBlockSize, values.borderAndPadding));
+    // The size a preferred aspect ratio gives, whose automatic minimum is the content's block size (css-sizing-4 §5.1).
+    if (ratioDependentAxis() == Axis::Block) {
+        if (auto borderBoxSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(m_box, borderBoxInlineSize, m_inlineAxisBorderAndPadding, values.borderAndPadding, values.containingBlockSize, { }, writingMode, intrinsicContentBlockSize))
+            return computeAxisGeometry(Axis::Block, values, *borderBoxSize);
+    }
+    // Otherwise the automatic size is the fit-content size, which is the content's block size in this axis.
+    auto borderBoxSize = definiteBorderBoxBlockSize(values, borderBoxInlineSize).value_or(clamp(intrinsicContentBlockSize + values.borderAndPadding, style->logicalMinHeight(writingMode), style->logicalMaxHeight(writingMode), values.containingBlockSize, values.borderAndPadding));
     return computeAxisGeometry(Axis::Block, values, borderBoxSize);
 }
 
