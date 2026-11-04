@@ -74,6 +74,7 @@ private:
 
     void elementSelectionChanged(bool) override;
     void timelineRecordingChanged(bool) override;
+    void takeTimelineScreenshot(const WebCore::IntRect&, double timestamp, CompletionHandler<void()>&&) override;
 
     bool overridesShowPaintRects() const override { return true; }
     void setShowPaintRects(bool) override;

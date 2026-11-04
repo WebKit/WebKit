@@ -35,11 +35,14 @@
 #include "InspectorBackendClient.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "PageInspectorController.h"
+#include "RemoteFrame.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
+#include "Settings.h"
 #include "TimelineRecordFactory.h"
 #include "WebDebuggerAgent.h"
 #include <wtf/SetForScope.h>
@@ -170,6 +173,7 @@ void PageTimelineAgent::internalStop()
     Ref { m_instrumentingAgents.get() }->setTrackingPageTimelineAgent(nullptr);
 
     m_autoCapturePhase = AutoCapturePhase::None;
+    m_pendingClientScreenshotTime = std::nullopt;
 
 #if PLATFORM(COCOA)
     m_frameStartObserver = nullptr;
@@ -179,10 +183,12 @@ void PageTimelineAgent::internalStop()
 #endif
     m_startedComposite = false;
 
-    InspectorTimelineAgent::internalStop();
-
+    // Tell the client before the frontend learns that recording stopped, so that the client drops
+    // a screenshot that it is still taking.
     if (auto* client = m_inspectedPage->inspectorController().inspectorBackendClient())
         client->timelineRecordingChanged(false);
+
+    InspectorTimelineAgent::internalStop();
 }
 
 Inspector::Protocol::ErrorStringOr<void> PageTimelineAgent::setAutoCaptureEnabled(bool enabled)
@@ -300,7 +306,7 @@ void PageTimelineAgent::didComposite(const LocalFrame& frame)
 
 void PageTimelineAgent::willPaint()
 {
-    if (m_isCapturingScreenshot)
+    if (isPaintingScreenshot())
         return;
 
     pushCurrentRecord(JSON::Object::create(), TimelineRecordType::Paint, true);
@@ -308,7 +314,7 @@ void PageTimelineAgent::willPaint()
 
 void PageTimelineAgent::didPaint(RenderObject& renderer, const LayoutRect& clipRect)
 {
-    if (m_isCapturingScreenshot)
+    if (isPaintingScreenshot())
         return;
 
     auto* entry = lastRecordEntry();
@@ -385,6 +391,15 @@ bool PageTimelineAgent::shouldStartHeapInstrument() const
     return InspectorTimelineAgent::shouldStartHeapInstrument();
 }
 
+static bool hasFramesInOtherProcesses(const LocalFrame& localMainFrame)
+{
+    for (RefPtr frame = localMainFrame.tree().traverseNext(); frame; frame = frame->tree().traverseNext()) {
+        if (is<RemoteFrame>(*frame))
+            return true;
+    }
+    return false;
+}
+
 void PageTimelineAgent::captureScreenshot()
 {
     SetForScope isTakingScreenshot(m_isCapturingScreenshot, true);
@@ -400,11 +415,59 @@ void PageTimelineAgent::captureScreenshot()
     if (!localMainFrameView)
         return;
 
+    // This process cannot paint the frames that other processes host. Under Site Isolation the client
+    // takes the screenshot instead, so that no WebContent process receives another site's pixels.
+    Ref settings = inspectedPage->settings();
+    if (settings->siteIsolationEnabled() && settings->remoteSnapshottingEnabled() && hasFramesInOtherProcesses(*localMainFrame)) {
+        takeScreenshotInClient(snapshotStartTime);
+        return;
+    }
+
     if (RefPtr snapshot = snapshotFrameRect(*localMainFrame, localMainFrameView->unobscuredContentRect(), { { }, PixelFormat::BGRA8, ColorSpace::SRGB() })) {
         Ref snapshotRecord = TimelineRecordFactory::createScreenshotData(encodeDataURL(WTF::move(snapshot), "image/png"_s));
         pushCurrentRecord(WTF::move(snapshotRecord), TimelineRecordType::Screenshot, false, snapshotStartTime);
         didCompleteCurrentRecord(TimelineRecordType::Screenshot);
     }
+}
+
+void PageTimelineAgent::takeScreenshotInClient(double snapshotStartTime)
+{
+    // Take one screenshot at a time. If rendering updates meanwhile, take one more when it is done.
+    if (m_isWaitingForClientScreenshot) {
+        m_pendingClientScreenshotTime = snapshotStartTime;
+        return;
+    }
+
+    Ref inspectedPage = m_inspectedPage;
+    auto* client = inspectedPage->inspectorController().inspectorBackendClient();
+    RefPtr localMainFrame = inspectedPage->localMainFrame();
+    RefPtr localMainFrameView = localMainFrame ? localMainFrame->view() : nullptr;
+    if (!client || !localMainFrameView)
+        return;
+
+    m_isWaitingForClientScreenshot = true;
+    client->takeTimelineScreenshot(localMainFrameView->unobscuredContentRect(), snapshotStartTime, [weakThis = WeakPtr { *this }] {
+        CheckedPtr checkedThis = weakThis;
+        if (!checkedThis)
+            return;
+
+        checkedThis->m_isWaitingForClientScreenshot = false;
+        if (auto pendingTime = std::exchange(checkedThis->m_pendingClientScreenshotTime, std::nullopt); pendingTime && checkedThis->tracking())
+            checkedThis->takeScreenshotInClient(*pendingTime);
+    });
+}
+
+bool PageTimelineAgent::isPaintingScreenshot() const
+{
+    if (m_isCapturingScreenshot)
+        return true;
+
+    // The client's screenshot makes this process paint its frames into a snapshot.
+    if (!m_isWaitingForClientScreenshot)
+        return false;
+    RefPtr localMainFrame = m_inspectedPage->localMainFrame();
+    RefPtr localMainFrameView = localMainFrame ? localMainFrame->view() : nullptr;
+    return localMainFrameView && localMainFrameView->paintBehavior().contains(PaintBehavior::Snapshotting);
 }
 
 Inspector::Protocol::DOM::NodeId PageTimelineAgent::nodeIdForDocument(Document& document) const

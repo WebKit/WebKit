@@ -271,6 +271,12 @@ void WebInspectorBackend::timelineRecordingChanged(bool active)
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::TimelineRecordingChanged(active), m_page->identifier());
 }
 
+void WebInspectorBackend::takeTimelineScreenshot(const WebCore::IntRect& rect, double timestamp, CompletionHandler<void()>&& completionHandler)
+{
+    // The UI process takes the screenshot of every process's frames and sends the record to the frontend itself.
+    protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::WebInspectorBackendProxy::TakeTimelineScreenshot(rect, timestamp), WTF::move(completionHandler), m_page->identifier());
+}
+
 void WebInspectorBackend::showPaintRectsChanged(bool show)
 {
     // Forward the main-frame process's paint-rects toggle to the UIProcess, which fans it out to the

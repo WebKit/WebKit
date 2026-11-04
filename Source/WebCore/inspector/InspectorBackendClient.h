@@ -28,6 +28,7 @@
 
 #include <WebCore/FrameIdentifier.h>
 #include <optional>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Seconds.h>
 
@@ -38,6 +39,7 @@ class FrontendChannel;
 namespace WebCore {
 
 class FloatRect;
+class IntRect;
 class LocalFrame;
 class Page;
 class PageInspectorController;
@@ -89,6 +91,9 @@ public:
     virtual void didSetSearchingForNode(bool) { }
     virtual void elementSelectionChanged(bool) { }
     virtual void timelineRecordingChanged(bool) { }
+    // Takes a Timeline screenshot that includes frames in other processes, and sends the record to
+    // the frontend on behalf of the page. The completion handler runs once the screenshot is done.
+    virtual void takeTimelineScreenshot(const IntRect&, double /* timestamp */, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 
     using DeveloperPreference = InspectorBackendClientDeveloperPreference;
     virtual void setDeveloperPreferenceOverride(DeveloperPreference, std::optional<bool>) { }

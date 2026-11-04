@@ -93,6 +93,7 @@ public:
     void stopElementSelection();
     void elementSelectionChanged(bool);
     void timelineRecordingChanged(bool);
+    void takeTimelineScreenshot(const WebCore::IntRect&, double timestamp, CompletionHandler<void()>&&);
     void showPaintRectsChanged(bool);
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>);

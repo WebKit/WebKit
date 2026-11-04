@@ -296,7 +296,8 @@ private:
     void setInspectorPageDeveloperExtrasEnabled(bool);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
     void elementSelectionChanged(bool);
-    void LEGACY_NODELETE timelineRecordingChanged(bool);
+    void timelineRecordingChanged(bool);
+    void takeTimelineScreenshot(const WebCore::IntRect&, double timestamp, CompletionHandler<void()>&&);
     void showPaintRectsChanged(bool);
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>);
