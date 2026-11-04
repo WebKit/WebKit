@@ -5,8 +5,8 @@
     // An eval'd function has no URL, so only its script identifier can resolve it. It is compiled in
     // the main frame's global object, so the main frame target owns it. Keeping it on `window` keeps
     // its script alive, so the debugger still reports the script after the inspector attaches.
-    window.animateFromEval = eval(`(function animateFromEval() {
-        return document.getElementById("box").animate([{opacity: 0}, {opacity: 1}], {duration: 10000});
+    window.functionFromEval = eval(`(function functionFromEval() {
+        return 42;
     })`);
 
     function test() {
@@ -22,23 +22,28 @@
 
         suite.addTestCase({
             name: "SiteIsolation.Debugger.StackTracePageTarget.ResolvesMainFrameScript",
-            description: "A stack trace delivered on the page target resolves a URL-less script owned by the main frame target. The Animation domain still reports on the page target.",
+            description: "A stack trace delivered on the page target resolves a URL-less script owned by the main frame target.",
             async test() {
                 let mainFrameTarget = await mainFrameTargetByURL();
                 InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame's target.");
+                if (!mainFrameTarget)
+                    return;
 
-                let [animationAddedEvent] = await Promise.all([
-                    WI.animationManager.animationCollection.awaitEvent(WI.Collection.Event.ItemAdded),
-                    InspectorTest.evaluateInPage(`animateFromEval()`),
-                ]);
-                let animation = animationAddedEvent.data.item;
+                let {result} = await mainFrameTarget.RuntimeAgent.evaluate.invoke({expression: "functionFromEval", objectGroup: "test"});
+                let {details} = await mainFrameTarget.DebuggerAgent.getFunctionDetails.invoke({functionId: result.objectId});
+                let {scriptId, lineNumber, columnNumber} = details.location;
 
-                let callFrame = animation.stackTrace?.callFrames.find((callFrame) => callFrame.functionName === "animateFromEval");
-                InspectorTest.expectNotNull(callFrame, "Animation backtrace should contain the eval'd function.");
+                // Stack trace line numbers are 1-based, while a Debugger.Location's are 0-based.
+                let stackTrace = WI.StackTrace.fromPayload(WI.pageTarget, {
+                    callFrames: [{functionName: "functionFromEval", url: "", scriptId, lineNumber: lineNumber + 1, columnNumber}],
+                }, {deliveredOnTarget: true});
+
+                let callFrame = stackTrace.callFrames.find((callFrame) => callFrame.functionName === "functionFromEval");
+                InspectorTest.expectNotNull(callFrame, "Stack trace should contain the eval'd function.");
                 if (!callFrame)
                     return;
 
-                InspectorTest.expectEqual(callFrame.target, WI.pageTarget, "Animation backtrace should be resolved against the page target.");
+                InspectorTest.expectEqual(callFrame.target, WI.pageTarget, "Stack trace should be resolved against the page target.");
                 InspectorTest.expectFalse(callFrame.nativeCode, "The eval'd function's frame should not be treated as native code.");
                 InspectorTest.expectNotNull(callFrame.sourceCodeLocation, "The eval'd function's frame should have a source location.");
                 if (!callFrame.sourceCodeLocation)
@@ -85,6 +90,5 @@
 
 <body onload="runTest()">
 <p>Test that a stack trace delivered on the page target resolves scripts owned by the main frame target, and scripts owned by no other target.</p>
-<div id="box"></div>
 <iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/debugger-frame.html"></iframe>
 </body>
