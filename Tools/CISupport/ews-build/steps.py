@@ -1550,6 +1550,20 @@ class CheckChangeRelevance(AnalyzeChange):
         re.compile(rb'Tools/CISupport/safer-cpp-swift-version', re.IGNORECASE)
     ]
 
+    webdriver_path_regexes = [
+        re.compile(rb'Source/WebDriver/', re.IGNORECASE),
+        re.compile(rb'Source/WebKit/UIProcess/Automation/', re.IGNORECASE),
+        re.compile(rb'Source/WebKit/WebProcess/Automation/', re.IGNORECASE),
+        re.compile(rb'Source/WebKit/Shared/Automation/', re.IGNORECASE),
+        re.compile(rb'Source/WebCore/automation/', re.IGNORECASE),
+        re.compile(rb'Source/WebCore/Modules/webdriver/', re.IGNORECASE),
+        re.compile(rb'Tools/MiniBrowser/mac/', re.IGNORECASE),
+        re.compile(rb'Tools/MiniBrowser/MiniBrowser.xcodeproj', re.IGNORECASE),
+        re.compile(rb'WebDriverTests/', re.IGNORECASE),
+        re.compile(rb'Tools/Scripts/webkitpy/webdriver_tests/', re.IGNORECASE),
+        re.compile(rb'Tools/Scripts/run-webdriver-tests', re.IGNORECASE),
+    ]
+
     group_to_paths_mapping = {
         'bindings': bindings_path_regexes,
         'monterey-release-build': monterey_builder_path_regexes,
@@ -1558,6 +1572,7 @@ class CheckChangeRelevance(AnalyzeChange):
         'webkitpy': webkitpy_path_regexes,
         'wk1-tests': wk1_path_regexes,
         'safer-cpp': safer_cpp_path_regexes,
+        'webdriver': webdriver_path_regexes,
     }
 
     def _patch_is_relevant(self, patch, builderName, timeout=30):

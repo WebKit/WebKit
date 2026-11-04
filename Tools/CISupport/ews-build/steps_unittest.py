@@ -7117,6 +7117,39 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
 
+class TestCheckChangeRelevanceForWebDriver(unittest.TestCase):
+    BUILDER_NAME = 'macOS-Tahoe-Debug-WebDriver-Tests-EWS'
+
+    def test_relevant_files(self):
+        for file_name in [
+            'Source/WebDriver/Session.cpp',
+            'Source/WebKit/UIProcess/Automation/WebAutomationSession.cpp',
+            'Source/WebKit/WebProcess/Automation/WebAutomationSessionProxy.cpp',
+            'Source/WebKit/Shared/Automation/AutomationProtocolObjects.h',
+            'Source/WebCore/automation/AutomationInstrumentation.cpp',
+            'Source/WebCore/Modules/webdriver/NavigatorWebDriver.cpp',
+            'Tools/MiniBrowser/mac/AutomationConnection.m',
+            'Tools/MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj',
+            'WebDriverTests/TestExpectations.json',
+            'Tools/Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py',
+            'Tools/Scripts/run-webdriver-tests',
+        ]:
+            self.assertTrue(CheckChangeRelevance()._patch_is_relevant(f'Tools/ChangeLog\n{file_name}', self.BUILDER_NAME), file_name)
+
+    def test_irrelevant_files(self):
+        for file_name in [
+            'Source/WebKit/UIProcess/WebPageProxy.cpp',
+            'Source/WebCore/dom/Document.cpp',
+            'Tools/MiniBrowser/gtk/main.c',
+            'Tools/Scripts/run-webkit-tests',
+            'LayoutTests/imported/w3c/web-platform-tests/webdriver/tests/support/helpers.py',
+        ]:
+            self.assertFalse(CheckChangeRelevance()._patch_is_relevant(file_name, self.BUILDER_NAME), file_name)
+
+    def test_queues_without_a_group_still_run_on_every_change(self):
+        self.assertTrue(CheckChangeRelevance()._patch_is_relevant('Source/WebCore/dom/Document.cpp', 'macOS-Tahoe-Debug-API-Tests-EWS'))
+
+
 class TestGetTestExpectationsBaseline(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
