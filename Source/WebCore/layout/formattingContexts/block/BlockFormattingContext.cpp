@@ -438,6 +438,9 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
         result.outOfFlowBoxes.appendVector(WTF::move(contentResult.outOfFlowBoxes));
     } else if (auto contentBlockSize = BlockFormattingUtils::emptyEditableContentBlockSize(box))
         intrinsicContentBlockSize = *contentBlockSize;
+    // Size containment sizes the box as if it had no content (css-contain-2 §3.2, RenderBox::overrideLogicalHeightForSizeContainment).
+    if (box->shouldApplySizeContainment())
+        intrinsicContentBlockSize = box->explicitIntrinsicInnerLogicalHeight().value_or(0_lu);
 
     auto blockAxis = outOfFlowGeometry.computeBlockAxisGeometry(intrinsicContentBlockSize);
     geometry.setContentBoxHeight(blockAxis.borderBoxSize - geometry.verticalBorderAndPadding());
