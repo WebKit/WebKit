@@ -319,7 +319,7 @@ bool CSSParser::supportsDeclaration(CSSParserTokenRange& range)
     SetForScope suppressObserver(m_observerWrapper, decltype(m_observerWrapper) { nullptr });
     runInNewNestingContext([&] {
         ASSERT(topContext().m_parsedProperties.isEmpty());
-        result = consumeDeclaration(range, StyleRuleType::Style);
+        result = consumeDeclaration(range, StyleRuleType::Style).isValid;
     });
 
     return result;
@@ -1670,7 +1670,7 @@ void CSSParser::consumeBlockContent(CSSParserTokenRange range, StyleRuleType rul
     while (!range.atEnd()) {
         const auto initialRange = range;
 
-        auto consumeNestedRuleOrInvalidSyntax = [&] {
+        auto consumeNestedRuleOrInvalidSyntax = [&] -> bool {
             if (blockAllowedRules.contains(BlockAllowedRule::QualifiedRules)) {
                 ASSERT(isStyleNestedContext());
                 // For block, we try to consume a qualified rule (~= a style rule).
@@ -1678,17 +1678,19 @@ void CSSParser::consumeBlockContent(CSSParserTokenRange range, StyleRuleType rul
                 // in the case of invalid syntax.
                 RefPtr rule = consumeQualifiedRule(range, AllowedRules::RegularRules);
                 if (!rule)
-                    return;
+                    return false;
                 if (!rule->isStyleRule())
-                    return;
+                    return false;
                 storeDeclarations();
                 topContext().m_parsedRules.append(rule.releaseNonNull());
-            } else {
-                // https://drafts.csswg.org/css-syntax/#typedef-declaration-list
-                // For declaration list, we consume invalid tokens until next recovery point.
-                range = initialRange;
-                consumeUntilSemicolon();
+                return true;
             }
+
+            // https://drafts.csswg.org/css-syntax/#typedef-declaration-list
+            // For declaration list, we consume invalid tokens until next recovery point.
+            range = initialRange;
+            consumeUntilSemicolon();
+            return false;
         };
 
         switch (range.peek().type()) {
@@ -1706,7 +1708,7 @@ void CSSParser::consumeBlockContent(CSSParserTokenRange range, StyleRuleType rul
             consumeUntilSemicolon();
 
             auto declarationRange = declarationStart.rangeUntil(range);
-            auto isValidDeclaration = consumeDeclaration(declarationRange, ruleType);
+            auto [isValidDeclaration, deferredInvalidDeclaration] = consumeDeclaration(declarationRange, ruleType);
 
             if (useObserver)
                 observerWrapper->skipCommentsBefore(range, false);
@@ -1714,7 +1716,12 @@ void CSSParser::consumeBlockContent(CSSParserTokenRange range, StyleRuleType rul
             if (!isValidDeclaration) {
                 // If it's not a valid declaration, we rewind the parser and try to parse it as a nested style rule.
                 range = initialRange;
-                consumeNestedRuleOrInvalidSyntax();
+                bool didConsumeNestedRule = consumeNestedRuleOrInvalidSyntax();
+
+                // Text like `a:hover { ... }` starts like a declaration but may be consumed as a nested style rule instead.
+                // Only notify the observer of an invalid declaration if it was not consumed as a nested style rule.
+                if (deferredInvalidDeclaration && !didConsumeNestedRule)
+                    observerWrapper->observer().observeProperty(deferredInvalidDeclaration->startOffset, deferredInvalidDeclaration->endOffset, deferredInvalidDeclaration->isImportant, false);
             }
             break;
         }
@@ -1830,7 +1837,7 @@ NODELETE static bool ruleDoesNotAllowImportant(StyleRuleType type)
 }
 
 // https://drafts.csswg.org/css-syntax/#consume-declaration
-bool CSSParser::consumeDeclaration(CSSParserTokenRange range, StyleRuleType ruleType)
+auto CSSParser::consumeDeclaration(CSSParserTokenRange range, StyleRuleType ruleType) -> ConsumeDeclarationResult
 {
     CSSParserTokenRange rangeCopy = range; // For inspector callbacks
 
@@ -1838,13 +1845,13 @@ bool CSSParser::consumeDeclaration(CSSParserTokenRange range, StyleRuleType rule
     auto& token = range.consumeIncludingWhitespace();
     auto propertyID = token.parseAsCSSPropertyID();
     if (range.consume().type() != ColonToken)
-        return false; // Parse error
+        return { }; // Parse error
 
     range.consumeWhitespace();
 
     auto important = consumeTrailingImportantAndWhitespace(range);
     if (important == IsImportant::Yes && ruleDoesNotAllowImportant(ruleType))
-        return false;
+        return { };
 
     const size_t oldPropertiesCount = topContext().m_parsedProperties.size();
     auto didParseNewProperties = [&] {
@@ -1871,12 +1878,16 @@ bool CSSParser::consumeDeclaration(CSSParserTokenRange range, StyleRuleType rule
 
     RefPtr observerWrapper = m_observerWrapper.get();
     if (observerWrapper&& (ruleType == StyleRuleType::Style || ruleType == StyleRuleType::Keyframe || ruleType == StyleRuleType::Page)) {
-        observerWrapper->observer().observeProperty(
-            observerWrapper->startOffset(rangeCopy), observerWrapper->endOffset(rangeCopy),
-            important == IsImportant::Yes, didParseNewProperties());
+        auto startOffset = observerWrapper->startOffset(rangeCopy);
+        auto endOffset = observerWrapper->endOffset(rangeCopy);
+        bool isImportant = important == IsImportant::Yes;
+        // The caller notifies the observer of an invalid declaration once it knows it was not consumed as a nested style rule instead.
+        if (!didParseNewProperties())
+            return { false, { { startOffset, endOffset, isImportant } } };
+        observerWrapper->observer().observeProperty(startOffset, endOffset, isImportant, true);
     }
 
-    return didParseNewProperties();
+    return { didParseNewProperties(), std::nullopt };
 }
 
 void CSSParser::consumeCustomPropertyValue(CSSParserTokenRange range, const AtomString& variableName, IsImportant important)

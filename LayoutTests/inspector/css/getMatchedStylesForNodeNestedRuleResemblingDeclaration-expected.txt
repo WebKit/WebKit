@@ -1,0 +1,34 @@
+Tests for the CSS.getMatchedStyleForNode command with nested rules whose selector starts like a declaration (e.g. `a:hover`).
+
+
+== Running test suite: CSS.getMatchedStyleForNode.NestedRuleResemblingDeclaration
+-- Running test case: CSS.getMatchedStyleForNode.NestedRuleResemblingDeclaration.ParentRule
+PASS: Should have 1 authored rule.
+Testing rule #0
+PASS: Selector text should be "#parent".
+PASS: Rule should have properties: ["color: red"].
+
+-- Running test case: CSS.getMatchedStyleForNode.NestedRuleResemblingDeclaration.ChildRule
+PASS: Should have 1 authored rule.
+Testing rule #0
+PASS: Selector text should be "& b:not(.child)".
+PASS: Rule should have properties: ["color: green"].
+
+-- Running test case: CSS.getMatchedStyleForNode.NestedRuleResemblingDeclaration.FollowingRule
+PASS: Should have 1 authored rule.
+Testing rule #0
+PASS: Selector text should be "#after-parent".
+PASS: Rule should have properties: ["color: purple"].
+
+-- Running test case: CSS.getMatchedStyleForNode.NestedRuleResemblingDeclaration.GroupingRuleParent
+PASS: Should have 1 authored rule.
+Testing rule #0
+PASS: Selector text should be "#grouping-parent".
+PASS: Rule should have properties: ["color: red"].
+
+-- Running test case: CSS.getMatchedStyleForNode.NestedRuleResemblingDeclaration.FollowingGroupingRule
+PASS: Should have 1 authored rule.
+Testing rule #0
+PASS: Selector text should be "#after-grouping-parent".
+PASS: Rule should have properties: ["color: purple"].
+
