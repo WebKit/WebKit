@@ -634,8 +634,6 @@ TEST_F(CaptionPreferenceTests, MenuRebuildingWithAVKit)
     if (!CaptionUserPreferencesMediaAF::canSetActiveProfileID())
         return;
 
-    MediaAccessibilityShim shim;
-
     WKCaptionStyleMenuController *controller = ensureController();
     PlatformMenu *initialMenu = controller.captionStyleMenu;
     EXPECT_TRUE(initialMenu != nil);
@@ -646,12 +644,7 @@ TEST_F(CaptionPreferenceTests, MenuRebuildingWithAVKit)
     EXPECT_TRUE(rebuiltMenu != nil);
 
     auto profileCount = CaptionUserPreferencesMediaAF::platformProfileIDs().size();
-
-#if PLATFORM(IOS_FAMILY)
     EXPECT_EQ(rebuiltMenu.children.count, profileCount + 1);
-#elif PLATFORM(MAC)
-    EXPECT_EQ(rebuiltMenu.numberOfItems, profileCount + 1);
-#endif
 }
 #endif
 

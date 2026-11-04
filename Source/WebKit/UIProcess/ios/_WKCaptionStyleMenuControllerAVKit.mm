@@ -30,8 +30,6 @@
 
 #import "_WKCaptionStyleMenuControllerInternal.h"
 
-#import <AVKit/AVLegibleMediaOptionsMenuController.h>
-
 #import <UIKit/UIKit.h>
 #import <WebCore/CaptionUserPreferencesMediaAF.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
@@ -62,7 +60,7 @@ using namespace WTF;
     if (!PAL::isAVKitFrameworkAvailable())
         return nil;
 
-    _menuController = [PAL::allocAVLegibleMediaOptionsMenuControllerInstance() initWithPlayer:nil];
+    _menuController = adoptNS([PAL::allocAVLegibleMediaOptionsMenuControllerInstance() initWithPlayer:nil]);
     [_menuController setDelegate:self];
     [self rebuildMenu];
 

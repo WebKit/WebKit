@@ -25,7 +25,7 @@
 
 import AVKit_Private
 import os
-@_spi(AVExperienceController) import AVKit
+@_spi(AVExperienceController) @_spi(AVNowPlayingExperienceController) import AVKit
 
 extension Logger {
     static let experienceController = Logger(subsystem: "com.apple.WebKit", category: "Fullscreen")
@@ -71,6 +71,114 @@ class WKSPlatformExperienceController {
     init(contentSource: AVPlayerViewControllerContentSource) {
         avExperienceController = AVExperienceController(contentSource: contentSource)
         avExperienceController.delegate = self
+    }
+}
+
+extension WKSPlatformExperienceController {
+    func transitionToFullscreen() async -> Bool {
+        guard avExperienceController.experience == .background else {
+            return false
+        }
+
+        Logger.experienceController.log("\(#function)")
+        return await avExperienceController.transition(to: .nowPlaying) == .completed
+    }
+
+    func transitionFromFullscreen() async -> Bool {
+        guard avExperienceController.experience == .nowPlaying else {
+            return false
+        }
+
+        Logger.experienceController.log("\(#function)")
+        return await avExperienceController.transition(to: .background) == .completed
+    }
+}
+
+extension WKSPlatformExperienceController: @MainActor AVExperienceController.Delegate {
+    func experienceController(
+        _ controller: AVExperienceController,
+        didChangeTransitionContext context: AVExperienceController.TransitionContext
+    ) {
+        guard let experienceController, case .finished(let result) = context.status, result == .completed else {
+            return
+        }
+
+        Logger.experienceController.log("\(#function)")
+        experienceController.delegate?.experienceControllerDidExitFullscreen(experienceController)
+    }
+
+    func experienceController(
+        _ controller: AVExperienceController,
+        prepareForTransitionUsing context: AVExperienceController.TransitionContext
+    ) async {
+        guard context.toExperience == .nowPlaying else {
+            return
+        }
+
+        Logger.experienceController.log("\(#function)")
+
+        let nowPlayingController = controller.nowPlayingExperienceController
+
+        let skipConfiguration = AVNowPlayingExperienceController.Configuration.SkipIntervalConfiguration(
+            enabled: true,
+            interval: 10.0
+        )
+
+        let configuration = AVNowPlayingExperienceController.Configuration(
+            playbackSpeeds: AVPlaybackSpeed.systemDefaultSpeeds,
+            skipBehavior: .interval(backward: skipConfiguration, forward: skipConfiguration),
+            updatesNowPlayingInfoCenter: false
+        )
+
+        nowPlayingController.configuration = configuration
+        nowPlayingController.delegate = self
+    }
+
+    func experienceController(
+        _ controller: AVExperienceController,
+        didChangeAvailableExperiences availableExperiences: AVExperienceController.Experiences
+    ) {
+    }
+}
+
+extension WKSPlatformExperienceController: @MainActor AVNowPlayingExperienceController.Delegate {
+    func nowPlayingExperienceControllerDidSkipToNextItem(_ controller: AVNowPlayingExperienceController) {
+    }
+
+    func nowPlayingExperienceControllerDidSkipToPreviousItem(_ controller: AVNowPlayingExperienceController) {
+    }
+
+    func nowPlayingExperienceControllerDidToggleCaptionStylePreviewID(_ controller: AVNowPlayingExperienceController, previewID: String?) {
+        // FIXME: Remove this Task once AVKit resolves rdar://173021517
+        Task.immediate {
+            if let experienceController {
+                experienceController.delegate?.experienceController(experienceController, didToggleCaptionStylePreviewID: previewID)
+            }
+        }
+    }
+
+    func nowPlayingExperienceControllerDidBeginScrubbing(_ controller: AVNowPlayingExperienceController) {
+        // FIXME: Remove this Task once AVKit resolves rdar://173021517
+        Task.immediate {
+            if let experienceController {
+                experienceController.delegate?.experienceControllerDidBeginScrubbing(experienceController)
+            }
+        }
+    }
+
+    func nowPlayingExperienceControllerDidEndScrubbing(_ controller: AVNowPlayingExperienceController) {
+        // FIXME: Remove this Task once AVKit resolves rdar://173021517
+        Task.immediate {
+            if let experienceController {
+                experienceController.delegate?.experienceControllerDidEndScrubbing(experienceController)
+            }
+        }
+    }
+
+    func nowPlayingExperienceControllerUserWillPause(_ controller: AVNowPlayingExperienceController) {
+    }
+
+    func nowPlayingExperienceControllerUserWillPlay(_ controller: AVNowPlayingExperienceController) {
     }
 }
 
