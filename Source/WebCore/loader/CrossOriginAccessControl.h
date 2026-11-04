@@ -108,6 +108,7 @@ struct CORPViolationReportContext {
 // https://fetch.spec.whatwg.org/#cross-origin-resource-policy-check
 // https://wicg.github.io/document-isolation-policy/#dip-corp
 WEBCORE_EXPORT std::optional<ResourceError> performCrossOriginResourcePolicyCheck(const CrossOriginEmbedderPolicy&, const DocumentIsolationPolicy&, const SecurityOrigin&, const URL&, const ResourceResponse&, ForNavigation, const OriginAccessPatterns&, const CORPViolationReportContext*);
+WEBCORE_EXPORT std::optional<ResourceError> performCrossOriginResourcePolicyCheck(const CrossOriginEmbedderPolicy&, const DocumentIsolationPolicy&, const SecurityOrigin&, const URL&, bool isResponseNull, const URL& responseURL, const String& crossOriginResourcePolicyHeaderValue, ForNavigation, const OriginAccessPatterns&, const CORPViolationReportContext*);
 std::optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest&, const ResourceResponse&);
 String validateCrossOriginRedirectionURL(const URL&);
 

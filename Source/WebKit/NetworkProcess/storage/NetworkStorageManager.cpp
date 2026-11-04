@@ -2485,14 +2485,14 @@ void NetworkStorageManager::unlockCacheStorage(IPC::Connection& connection, cons
         cacheStorageManager->unlockStorage(connection.uniqueID());
 }
 
-void NetworkStorageManager::cacheStorageRetrieveRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)
+void NetworkStorageManager::cacheStorageRetrieveRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RetrieveRecordsCallback&& callback)
 {
     RefPtr cache = m_cacheStorageRegistry->cache(cacheIdentifier);
     if (!cache)
-        return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+        return callback({ makeUnexpected(WebCore::DOMCacheEngine::Error::Internal), { } });
 
     auto origin = cache->origin();
-    STORAGE_MESSAGE_CHECK_COMPLETION(origin && isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin->topOrigin }), connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)));
+    STORAGE_MESSAGE_CHECK_COMPLETION(origin && isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin->topOrigin }), connection, callback({ makeUnexpected(WebCore::DOMCacheEngine::Error::Internal), { } }));
 
     cache->retrieveRecords(WTF::move(options), WTF::move(callback));
 }

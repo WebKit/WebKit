@@ -102,6 +102,7 @@ public:
     void suspend() final;
     void resume() final;
     GraphicsClient* graphicsClient() final;
+    ReportingClient* reportingClient() final { return this; }
 
 
     USING_CAN_MAKE_WEAKPTR(EventTarget);

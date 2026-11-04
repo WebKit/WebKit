@@ -2146,6 +2146,7 @@ public:
     void notifyReportObservers(Ref<Report>&&) final;
     void sendReportToEndpoints(const URL& baseURL, std::span<const String> endpointURIs, std::span<const String> endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
     String httpUserAgent() const final;
+    ReportingClient* reportingClient() final { return this; }
 
     virtual void didChangeViewSize() { }
     static bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(const NavigationRequester&, Frame& targetFrame, const URL& destinationURL);

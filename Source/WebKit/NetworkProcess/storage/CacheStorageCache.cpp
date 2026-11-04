@@ -168,7 +168,7 @@ static CacheStorageRecord toCacheStorageRecord(WebCore::DOMCacheEngine::CrossThr
     return CacheStorageRecord { WTF::move(recordInfo), record.requestHeadersGuard, WTF::move(record.request), record.options, WTF::move(record.referrer), record.responseHeadersGuard, WTF::move(record.response), record.responseBodySize, WTF::move(record.responseBody) };
 }
 
-void CacheStorageCache::retrieveRecords(WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)
+void CacheStorageCache::retrieveRecords(WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RetrieveRecordsCallback&& callback)
 {
     auto targetRecordInfos = findRecords(options);
     retrieveRecords(targetRecordInfos, WTF::move(options), WTF::move(callback));
@@ -206,7 +206,7 @@ Vector<CacheStorageRecordInformation> CacheStorageCache::findRecords(const WebCo
     return targetRecordInfos;
 }
 
-void CacheStorageCache::retrieveRecords(const Vector<CacheStorageRecordInformation>& targetRecordInfos, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)
+void CacheStorageCache::retrieveRecords(const Vector<CacheStorageRecordInformation>& targetRecordInfos, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RetrieveRecordsCallback&& callback)
 {
     if (targetRecordInfos.isEmpty())
         return callback({ });
@@ -225,17 +225,34 @@ void CacheStorageCache::retrieveRecords(const Vector<CacheStorageRecordInformati
                 record.responseBodySize = cacheStorageRecord->responseBodySize;
             }
 
-            if (record.response.type == WebCore::ResourceResponse::Type::Opaque) {
-                if (WebCore::validateCrossOriginResourcePolicy(options.crossOriginEmbedderPolicy.value, options.documentIsolationPolicy, options.sourceOrigin, record.request.url(), false, record.response.url, record.response.httpHeaderFields.get(WebCore::HTTPHeaderName::CrossOriginResourcePolicy), WebCore::ForNavigation::No, WebCore::EmptyOriginAccessPatterns::singleton()))
-                    return callback(makeUnexpected(Error::CORP));
-            }
-
             result.append(WTF::move(record));
         }
 
         std::ranges::sort(result, { }, &CrossThreadRecord::identifier);
 
-        callback(WTF::move(result));
+        // The cross-origin resource policy check of https://w3c.github.io/ServiceWorker/#cache-matchall. The caller reports.
+        Vector<WebCore::DOMCacheEngine::CORPViolation> corpViolations;
+        for (auto& record : result) {
+            if (record.response.type != WebCore::ResourceResponse::Type::Opaque)
+                continue;
+
+            auto crossOriginResourcePolicy = record.response.httpHeaderFields.get(WebCore::HTTPHeaderName::CrossOriginResourcePolicy);
+            auto isBlocked = [&](WebCore::CrossOriginEmbedderPolicyValue embedderPolicyValue, WebCore::DocumentIsolationPolicyValue documentIsolationPolicyValue) {
+                return !!WebCore::validateCrossOriginResourcePolicy(embedderPolicyValue, documentIsolationPolicyValue, options.sourceOrigin, record.request.url(), false, record.response.url, crossOriginResourcePolicy, WebCore::ForNavigation::No, WebCore::EmptyOriginAccessPatterns::singleton());
+            };
+            if (isBlocked(WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone, WebCore::DocumentIsolationPolicyValue::None))
+                return callback({ makeUnexpected(Error::CORP), WTF::move(corpViolations) });
+
+            bool isBlockedByPolicy = !!WebCore::performCrossOriginResourcePolicyCheck(options.crossOriginEmbedderPolicy, options.documentIsolationPolicy, options.sourceOrigin, record.request.url(), false, record.response.url, crossOriginResourcePolicy, WebCore::ForNavigation::No, WebCore::EmptyOriginAccessPatterns::singleton(), nullptr);
+            if (isBlockedByPolicy || isBlocked(options.crossOriginEmbedderPolicy.reportOnlyValue, options.documentIsolationPolicy.reportOnlyValue)) {
+                // FIXME: For a redirected response put() under another request, this should be the response's first URL, which the cache doesn't store.
+                corpViolations.append({ record.response.isRedirected ? record.request.url() : record.response.url, record.response.url, crossOriginResourcePolicy });
+            }
+            if (isBlockedByPolicy)
+                return callback({ makeUnexpected(Error::CORP), WTF::move(corpViolations) });
+        }
+
+        callback({ WTF::move(result), WTF::move(corpViolations) });
     });
 }
 

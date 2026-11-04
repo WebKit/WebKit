@@ -282,6 +282,17 @@ using WebCore::DOMCacheEngine::RecordIdentifiersOrError = std::expected<Vector<u
 
 using WebCore::DOMCacheEngine::CrossThreadRecordsOrError = std::expected<Vector<WebCore::DOMCacheEngine::CrossThreadRecord>, WebCore::DOMCacheEngine::Error>
 
+[CustomHeader] struct WebCore::DOMCacheEngine::CORPViolation {
+    URL blockedURL;
+    URL responseURL;
+    String crossOriginResourcePolicy;
+};
+
+[CustomHeader] struct WebCore::DOMCacheEngine::RetrieveRecordsResult {
+    WebCore::DOMCacheEngine::CrossThreadRecordsOrError records;
+    Vector<WebCore::DOMCacheEngine::CORPViolation> corpViolations;
+};
+
 using WebCore::DOMCacheEngine::RemoveCacheIdentifierOrError = std::expected<bool, WebCore::DOMCacheEngine::Error>
 
 using WebCore::IDBKeyPath = Variant<String, Vector<String>>;

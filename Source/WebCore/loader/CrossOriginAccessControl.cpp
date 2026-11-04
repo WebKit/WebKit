@@ -368,8 +368,16 @@ std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedd
 
 std::optional<ResourceError> performCrossOriginResourcePolicyCheck(const CrossOriginEmbedderPolicy& embedderPolicy, const DocumentIsolationPolicy& documentIsolationPolicy, const SecurityOrigin& origin, const URL& requestURL, const ResourceResponse& response, ForNavigation forNavigation, const OriginAccessPatterns& patterns, const CORPViolationReportContext* reportContext)
 {
+    bool isResponseNull = response.isNull();
+    String crossOriginResourcePolicyHeaderValue = isResponseNull ? nullString() : response.httpHeaderField(HTTPHeaderName::CrossOriginResourcePolicy);
+    URL responseURL = isResponseNull ? URL { } : response.url();
+    return performCrossOriginResourcePolicyCheck(embedderPolicy, documentIsolationPolicy, origin, requestURL, isResponseNull, responseURL, crossOriginResourcePolicyHeaderValue, forNavigation, patterns, reportContext);
+}
+
+std::optional<ResourceError> performCrossOriginResourcePolicyCheck(const CrossOriginEmbedderPolicy& embedderPolicy, const DocumentIsolationPolicy& documentIsolationPolicy, const SecurityOrigin& origin, const URL& requestURL, bool isResponseNull, const URL& responseURL, const String& crossOriginResourcePolicyHeaderValue, ForNavigation forNavigation, const OriginAccessPatterns& patterns, const CORPViolationReportContext* reportContext)
+{
     auto check = [&](CrossOriginEmbedderPolicyValue embedderPolicyValue, DocumentIsolationPolicyValue documentIsolationPolicyValue) {
-        return validateCrossOriginResourcePolicy(embedderPolicyValue, documentIsolationPolicyValue, origin, requestURL, response, forNavigation, patterns);
+        return validateCrossOriginResourcePolicy(embedderPolicyValue, documentIsolationPolicyValue, origin, requestURL, isResponseNull, responseURL, crossOriginResourcePolicyHeaderValue, forNavigation, patterns);
     };
 
     // A response that is blocked without either policy is not reported.

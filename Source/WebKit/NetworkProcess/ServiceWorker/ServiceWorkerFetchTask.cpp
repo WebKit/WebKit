@@ -89,7 +89,7 @@ Ref<ServiceWorkerFetchTask> ServiceWorkerFetchTask::fromCache(NetworkResourceLoa
     WebCore::RetrieveRecordsOptions options {
         .request { request },
         .crossOriginEmbedderPolicy { loader.parameters().crossOriginEmbedderPolicy },
-        .documentIsolationPolicy = loader.parameters().documentIsolationPolicy.value,
+        .documentIsolationPolicy { loader.parameters().documentIsolationPolicy },
         .sourceOrigin { WTF::move(clientOrigin) }
     };
 

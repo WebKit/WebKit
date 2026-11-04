@@ -59,14 +59,14 @@ public:
 
     void getSize(CompletionHandler<void(uint64_t)>&&);
     void open(WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
-    void retrieveRecords(WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&&);
+    void retrieveRecords(WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::RetrieveRecordsCallback&&);
     void removeRecords(WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void putRecords(Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void removeAllRecords();
     void close();
 
     Vector<CacheStorageRecordInformation> findRecords(const WebCore::RetrieveRecordsOptions&);
-    void retrieveRecords(const Vector<CacheStorageRecordInformation>&, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&&);
+    void retrieveRecords(const Vector<CacheStorageRecordInformation>&, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::RetrieveRecordsCallback&&);
 
 private:
     CacheStorageCache(CacheStorageManager&, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&&);

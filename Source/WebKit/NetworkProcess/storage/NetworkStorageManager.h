@@ -274,7 +274,7 @@ private:
     void cacheStorageDereference(IPC::Connection&, WebCore::DOMCacheIdentifier);
     void lockCacheStorage(IPC::Connection&, const WebCore::ClientOrigin&);
     void unlockCacheStorage(IPC::Connection&, const WebCore::ClientOrigin&);
-    void cacheStorageRetrieveRecords(IPC::Connection&, WebCore::DOMCacheIdentifier, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&&);
+    void cacheStorageRetrieveRecords(IPC::Connection&, WebCore::DOMCacheIdentifier, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::RetrieveRecordsCallback&&);
     void cacheStorageRemoveRecords(IPC::Connection&, WebCore::DOMCacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void cacheStoragePutRecords(IPC::Connection&, WebCore::DOMCacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void cacheStorageClearMemoryRepresentation(IPC::Connection&, const WebCore::ClientOrigin&, CompletionHandler<void()>&&);

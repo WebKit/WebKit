@@ -711,7 +711,7 @@ struct WebCore::ApplicationManifest {
 struct WebCore::RetrieveRecordsOptions {
     WebCore::ResourceRequest request;
     WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
-    WebCore::DocumentIsolationPolicyValue documentIsolationPolicy;
+    WebCore::DocumentIsolationPolicy documentIsolationPolicy;
     Ref<WebCore::SecurityOrigin> sourceOrigin;
     bool ignoreSearch;
     bool ignoreMethod;

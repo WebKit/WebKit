@@ -50,7 +50,7 @@ public:
     using RetrieveCachesPromise = NativePromise<DOMCacheEngine::CacheInfos, DOMCacheEngine::Error>;
     virtual Ref<RetrieveCachesPromise> retrieveCaches(const ClientOrigin&, uint64_t updateCounter) = 0;
 
-    using RetrieveRecordsPromise = NativePromise<Vector<DOMCacheEngine::CrossThreadRecord>, DOMCacheEngine::Error>;
+    using RetrieveRecordsPromise = NativePromise<DOMCacheEngine::RetrieveRecordsResult, DOMCacheEngine::Error>;
     virtual Ref<RetrieveRecordsPromise> retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&) = 0;
     using BatchPromise = NativePromise<Vector<uint64_t>, DOMCacheEngine::Error>;
     virtual Ref<BatchPromise> batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&) = 0;

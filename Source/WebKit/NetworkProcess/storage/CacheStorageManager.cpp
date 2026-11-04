@@ -568,11 +568,12 @@ static void queryCaches(Vector<Ref<CacheStorageCache>>&& caches, size_t index, W
         auto matches = cache->findRecords(options);
         if (!matches.isEmpty()) {
             cache->retrieveRecords({ WTF::move(matches[0]) }, WTF::move(options), [callback = WTF::move(callback)](auto&& result) mutable {
-                if (!result.has_value()) {
+                // ServiceWorkerFetchTask, the only user, does its own CORP check and reporting.
+                if (!result.records.has_value()) {
                     callback({ });
                     return;
                 }
-                callback(WTF::move(borrow(result.value())[0]));
+                callback(WTF::move(borrow(result.records.value())[0]));
             });
             return;
         }

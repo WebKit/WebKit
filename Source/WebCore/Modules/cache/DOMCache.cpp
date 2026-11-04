@@ -29,6 +29,7 @@
 #include "CacheQueryOptions.h"
 #include "CachedResourceRequestInitiatorTypes.h"
 #include "ContextDestructionObserverInlines.h"
+#include "CrossOriginAccessControl.h"
 #include "EventLoop.h"
 #include "FetchResponse.h"
 #include "HTTPParsers.h"
@@ -38,6 +39,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSFetchRequest.h"
 #include "JSFetchResponse.h"
+#include "OriginAccessPatterns.h"
 #include "ScriptExecutionContextInlines.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/URL.h>
@@ -511,6 +513,21 @@ void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& optio
     });
 }
 
+// https://fetch.spec.whatwg.org/#cross-origin-resource-policy-check
+// https://wicg.github.io/document-isolation-policy/#dip-corp
+static void queueCORPViolationReports(ScriptExecutionContext& context, const Vector<CORPViolation>& violations)
+{
+    auto* client = context.reportingClient();
+    if (!client)
+        return;
+
+    // The network process decided what to block, so this only queues the reports.
+    for (auto& violation : violations) {
+        CORPViolationReportContext reportContext { *client, context.url(), FetchOptions::Destination::EmptyString, violation.blockedURL };
+        performCrossOriginResourcePolicyCheck(context.crossOriginEmbedderPolicy(), context.documentIsolationPolicy(), *protect(context.securityOrigin()), violation.blockedURL, false, violation.responseURL, violation.crossOriginResourcePolicy, ForNavigation::No, OriginAccessPatternsForWebProcess::singleton(), &reportContext);
+    }
+}
+
 void DOMCache::queryCache(ResourceRequest&& request, const CacheQueryOptions& options, ShouldRetrieveResponses shouldRetrieveResponses, RecordsCallback&& callback)
 {
     RefPtr context = scriptExecutionContext();
@@ -519,7 +536,7 @@ void DOMCache::queryCache(ResourceRequest&& request, const CacheQueryOptions& op
         return;
     }
 
-    RetrieveRecordsOptions retrieveOptions { WTF::move(request), context->crossOriginEmbedderPolicy(), context->documentIsolationPolicy().value, *context->securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses == ShouldRetrieveResponses::Yes };
+    RetrieveRecordsOptions retrieveOptions { WTF::move(request), context->crossOriginEmbedderPolicy(), context->documentIsolationPolicy(), *context->securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses == ShouldRetrieveResponses::Yes };
 
     context->enqueueTaskWhenSettled(m_connection->retrieveRecords(m_identifier, WTF::move(retrieveOptions)), TaskSource::DOMManipulation, [pendingActivity = makePendingActivity(*this), callback = WTF::move(callback)] (auto&& result) mutable {
         RefPtr scriptExecutionContext = pendingActivity->object().scriptExecutionContext();
@@ -533,7 +550,15 @@ void DOMCache::queryCache(ResourceRequest&& request, const CacheQueryOptions& op
             return;
         }
 
-        auto records = WTF::map(WTF::move(result).value(), [](CrossThreadRecord&& record) {
+        if (scriptExecutionContext)
+            queueCORPViolationReports(*scriptExecutionContext, result->corpViolations);
+
+        if (!result->records) {
+            callback(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext.get(), result->records.error()));
+            return;
+        }
+
+        auto records = WTF::map(WTF::move(result->records).value(), [](CrossThreadRecord&& record) {
             return fromCrossThreadRecord(WTF::move(record));
         });
         callback(WTF::move(records));

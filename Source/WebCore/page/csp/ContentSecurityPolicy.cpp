@@ -106,20 +106,9 @@ ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ContentSecurity
     updateSourceSelf(SecurityOrigin::create(m_protectedURL).get());
 }
 
-NODELETE static ReportingClient* reportingClientForContext(ScriptExecutionContext& scriptExecutionContext)
-{
-    if (auto* document = dynamicDowncast<Document>(scriptExecutionContext))
-        return document;
-
-    if (auto* workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
-        return workerGlobalScope;
-
-    return nullptr;
-}
-
 ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ScriptExecutionContext& scriptExecutionContext)
     : m_scriptExecutionContext(scriptExecutionContext)
-    , m_reportingClient { reportingClientForContext(scriptExecutionContext) }
+    , m_reportingClient { scriptExecutionContext.reportingClient() }
     , m_protectedURL { WTF::move(protectedURL) }
 {
     ASSERT(scriptExecutionContext.securityOrigin());

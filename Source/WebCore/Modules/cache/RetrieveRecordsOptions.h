@@ -34,12 +34,12 @@
 namespace WebCore {
 
 struct RetrieveRecordsOptions {
-    RetrieveRecordsOptions isolatedCopy() const & { return { request.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), documentIsolationPolicy, sourceOrigin->isolatedCopy(), ignoreSearch, ignoreMethod, ignoreVary, shouldProvideResponse }; }
-    RetrieveRecordsOptions isolatedCopy() && { return { WTF::move(request).isolatedCopy(), WTF::move(crossOriginEmbedderPolicy).isolatedCopy(), documentIsolationPolicy, sourceOrigin->isolatedCopy(), ignoreSearch, ignoreMethod, ignoreVary, shouldProvideResponse }; }
+    RetrieveRecordsOptions isolatedCopy() const & { return { request.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), documentIsolationPolicy.isolatedCopy(), sourceOrigin->isolatedCopy(), ignoreSearch, ignoreMethod, ignoreVary, shouldProvideResponse }; }
+    RetrieveRecordsOptions isolatedCopy() && { return { WTF::move(request).isolatedCopy(), WTF::move(crossOriginEmbedderPolicy).isolatedCopy(), WTF::move(documentIsolationPolicy).isolatedCopy(), sourceOrigin->isolatedCopy(), ignoreSearch, ignoreMethod, ignoreVary, shouldProvideResponse }; }
 
     ResourceRequest request;
     CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
-    DocumentIsolationPolicyValue documentIsolationPolicy { DocumentIsolationPolicyValue::None };
+    DocumentIsolationPolicy documentIsolationPolicy;
     const Ref<SecurityOrigin> sourceOrigin;
     bool ignoreSearch { false };
     bool ignoreMethod { false };

@@ -114,6 +114,7 @@ enum class TaskSource : uint8_t;
 struct ClientOrigin;
 struct CryptoKeyData;
 struct NetworkLoadPolicy;
+struct ReportingClient;
 struct SettingsValues;
 
 #if ENABLE(NOTIFICATIONS)
@@ -165,6 +166,7 @@ public:
     virtual const NetworkLoadPolicy& networkLoadPolicy() const = 0;
 
     virtual NotificationClient* notificationClient() { return nullptr; }
+    virtual ReportingClient* reportingClient() { return nullptr; }
     virtual std::optional<PAL::SessionID> sessionID() const;
 
     virtual void disableEval(const String& errorMessage) = 0;
