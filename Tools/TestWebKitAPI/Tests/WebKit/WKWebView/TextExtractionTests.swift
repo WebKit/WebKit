@@ -274,12 +274,24 @@ extension WKWebView {
     }
 }
 
+#endif // ENABLE_UNIFIED_PDF
+
 private func decodeJSONObject(_ text: String) throws -> [String: Any] {
     let data = try #require(text.data(using: .utf8))
     return try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
 }
 
-#endif // ENABLE_UNIFIED_PDF
+private func firstJSONNode(in node: [String: Any], where predicate: ([String: Any]) -> Bool) -> [String: Any]? {
+    if predicate(node) {
+        return node
+    }
+    for child in node["children"] as? [[String: Any]] ?? [] {
+        if let match = firstJSONNode(in: child, where: predicate) {
+            return match
+        }
+    }
+    return nil
+}
 
 private let mainFrameMarkup = """
     <!DOCTYPE html>
@@ -2631,6 +2643,77 @@ struct TextExtractionTests {
             #expect(debugText.contains("origin=localhost:\(serverConfiguration.port)"))
             #expect(debugText.contains("origin=http://localhost") == false)
             #expect(debugText.contains("origin=127.0.0.1") == false)
+        }
+    }
+
+    @Test(arguments: [false, true])
+    func subframeRectsIncludeSubframePositionWithSiteIsolation(crossSite: Bool) async throws {
+        // The button is at (20, 30) in the iframe, which is at (100, 150) in the main frame, so its bounds in
+        // the web view are (120, 180, 120, 40).
+        func mainFrameMarkupWithSubframe(from subframeHost: String) -> String {
+            """
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+            <body style='margin: 0'>
+            <iframe style='position: absolute; left: 100px; top: 150px; width: 400px; height: 300px; border: none;'></iframe>
+            <script>
+                subframeLoaded = false;
+                const iframe = document.querySelector('iframe');
+                iframe.addEventListener('load', () => subframeLoaded = true, { once: true });
+                iframe.src = `http://\(subframeHost):${location.port}/subframe.html`;
+            </script>
+            </body>
+            """
+        }
+
+        // 127.0.0.1 and localhost are different sites, so only the latter puts the iframe in another process.
+        var server = try HTTPServer(protocol: .http) {
+            Route("/same-site.html") {
+                mainFrameMarkupWithSubframe(from: "127.0.0.1")
+            }
+            Route("/cross-site.html") {
+                mainFrameMarkupWithSubframe(from: "localhost")
+            }
+            Route("/subframe.html") {
+                """
+                <body style='margin: 0'>
+                <button style='position: absolute; left: 20px; top: 30px; width: 120px; height: 40px;'>Target button</button>
+                </body>
+                """
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let webView = makeWebViewForTextExtractionTesting(webFeatures: ["SiteIsolationEnabled"])
+            let subframes = SubframeCollector()
+            let navigationDelegate = TestNavigationDelegate()
+            subframes.install(on: navigationDelegate)
+            webView.navigationDelegate = navigationDelegate
+
+            let url = try #require(URL(string: "http://127.0.0.1:\(serverConfiguration.port)/\(crossSite ? "cross-site" : "same-site").html"))
+            webView.load(URLRequest(url: url))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            try await waitForCondition("subframe to finish loading", timeout: .seconds(2)) {
+                try await webView.callJavaScript(returning: Bool.self) { "return subframeLoaded" }
+            }
+
+            let configuration = _WKTextExtractionConfiguration()
+            configuration.outputFormat = .JSON
+            configuration.includeRects = true
+            configuration.additionalFrames = subframes.frames
+
+            let json = try decodeJSONObject(await webView.debugText(configuration))
+            let button = try #require(firstJSONNode(in: json) { $0["nodeName"] as? String == "button" })
+            let rect = try #require(button["rect"] as? [String: Any])
+            #expect(rect["x"] as? Int == 120)
+            #expect(rect["y"] as? Int == 180)
+            #expect(rect["width"] as? Int == 120)
+            #expect(rect["height"] as? Int == 40)
+
+            let interaction = _WKTextExtractionInteraction(action: .click)
+            interaction.nodeIdentifier = try #require(button["uid"] as? String)
+            let result = try #require(await webView._performInteraction(interaction))
+            #expect(result.error == nil)
+            #expect(result.interactedElementBounds == CGRect(x: 120, y: 180, width: 120, height: 40))
         }
     }
 

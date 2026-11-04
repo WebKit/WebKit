@@ -479,6 +479,34 @@ static inline void merge(Item& destinationItem, Item&& sourceItem)
     }
 }
 
+static inline IntRect absoluteBoundsForNode(const RenderObject& renderer)
+{
+    IntRect absoluteRect;
+    if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(renderer); renderElement && renderElement->firstChild())
+        absoluteRect = renderer.pixelSnappedAbsoluteClippedOverflowRect();
+
+    if (absoluteRect.isEmpty())
+        absoluteRect = renderer.absoluteBoundingBoxRect();
+
+    return absoluteRect;
+}
+
+// In the coordinates of the main frame's view, in which extracted items and interaction results are reported,
+// even when the node is in a frame whose local root isn't the main frame.
+static inline FloatRect mainFrameViewBounds(const Node& node)
+{
+    RefPtr view = node.document().view();
+    if (!view) [[unlikely]]
+        return { };
+
+    CheckedPtr renderer = node.renderer();
+    if (!renderer)
+        return { };
+
+    return view->contentsToMainFrameView(absoluteBoundsForNode(*renderer));
+}
+
+// In the coordinates of the local root frame's view, for hit testing and dispatching events in this process.
 static inline FloatRect rootViewBounds(const Node& node)
 {
     RefPtr view = node.document().view();
@@ -489,14 +517,7 @@ static inline FloatRect rootViewBounds(const Node& node)
     if (!renderer)
         return { };
 
-    IntRect absoluteRect;
-    if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(*renderer); renderElement && renderElement->firstChild())
-        absoluteRect = renderer->pixelSnappedAbsoluteClippedOverflowRect();
-
-    if (absoluteRect.isEmpty())
-        absoluteRect = renderer->absoluteBoundingBoxRect();
-
-    return view->contentsToRootView(absoluteRect);
+    return view->contentsToRootView(absoluteBoundsForNode(*renderer));
 }
 
 static inline String labelText(HTMLElement& element)
@@ -543,7 +564,7 @@ static inline std::optional<FloatRect> visibleAssociatedLabelBounds(HTMLElement&
         if (renderer->style().opacity() < minOpacityToConsiderVisible)
             continue;
 
-        auto bounds = rootViewBounds(*label);
+        auto bounds = mainFrameViewBounds(*label);
         if (!bounds.isEmpty())
             return bounds;
     }
@@ -608,7 +629,7 @@ static inline RefPtr<Node> visualProxyForTransparentControl(const HTMLInputEleme
 
     static constexpr auto minTransparentControlLength = 8;
     static constexpr auto maxTransparentControlLength = 96;
-    auto inputBounds = rootViewBounds(input);
+    auto inputBounds = mainFrameViewBounds(input);
     if (inputBounds.width() < minTransparentControlLength || inputBounds.height() < minTransparentControlLength)
         return { };
 
@@ -628,7 +649,7 @@ static inline RefPtr<Node> visualProxyForTransparentControl(const HTMLInputEleme
         if (!ancestorRenderer)
             break;
 
-        if (rootViewBounds(*ancestor).area() > maxProxyContainerAreaRatio * inputArea)
+        if (mainFrameViewBounds(*ancestor).area() > maxProxyContainerAreaRatio * inputArea)
             break;
 
         for (CheckedRef descendant : descendantsOfType<RenderObject>(*ancestorRenderer)) {
@@ -642,7 +663,7 @@ static inline RefPtr<Node> visualProxyForTransparentControl(const HTMLInputEleme
             if (!proxyNode)
                 continue;
 
-            auto proxyBounds = rootViewBounds(*proxyNode);
+            auto proxyBounds = mainFrameViewBounds(*proxyNode);
             auto proxyArea = proxyBounds.area();
             if (proxyArea <= 0)
                 continue;
@@ -1259,7 +1280,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
 
     bool pushedVisualBlockContainer = false;
     if (CheckedPtr renderer = node.renderer()) {
-        auto nodeBounds = rootViewBounds(node);
+        auto nodeBounds = mainFrameViewBounds(node);
         if (isBlock && isVisuallyDistinctContainer(protect(renderer->style()).get(), nodeBounds)) {
             context.visualBlockContainerStack.append(context.nextVisualBlockContainerNumber++);
             pushedVisualBlockContainer = true;
@@ -1470,7 +1491,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
             editable = WTF::move(result);
         },
         [&](ItemData&& result) {
-            auto bounds = rootViewBounds(node);
+            auto bounds = mainFrameViewBounds(node);
             if (bounds.isEmpty()) {
                 if (RefPtr input = dynamicDowncast<HTMLInputElement>(node)) {
                     if (auto labelBounds = visibleAssociatedLabelBounds(*input))
@@ -1520,7 +1541,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
 
     bool onlyCollectTextAndLinks = linkURL || editable;
     if (onlyCollectTextAndLinks) {
-        if (auto bounds = rootViewBounds(node); context.shouldIncludeNodeWithRect(bounds) && (context.originalRequest.includeClippedContent || !isClippedOutByAncestors(node, bounds))) {
+        if (auto bounds = mainFrameViewBounds(node); context.shouldIncludeNodeWithRect(bounds) && (context.originalRequest.includeClippedContent || !isClippedOutByAncestors(node, bounds))) {
             item = {
                 TextItemData { { }, { }, emptyString(), { } },
                 WTF::move(bounds),
@@ -1833,7 +1854,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
         .hasOverflowItems = false,
     } };
 
-    root.rectInRootView = view->contentsToRootView(IntRect { IntPoint::zero(), view->contentsSize() });
+    root.rectInRootView = view->contentsToMainFrameView(IntRect { IntPoint::zero(), view->contentsSize() });
     if (root.rectInRootView.isEmpty())
         return { root, 0 };
 
@@ -3517,7 +3538,7 @@ void handleInteraction(Interaction&& interaction, LocalFrame& frame, CompletionH
     dispatchInteraction(WTF::move(interaction), frame, *stringsToValidate, [completion = WTF::move(completion), targetNode = WTF::move(targetNode), stringsToValidate](bool success, String&& message) mutable {
         FloatRect bounds;
         if (targetNode)
-            bounds = rootViewBounds(*targetNode);
+            bounds = mainFrameViewBounds(*targetNode);
         completion(success, WTF::move(message), WTF::move(*stringsToValidate), bounds);
     });
 }
