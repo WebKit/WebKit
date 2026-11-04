@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #scroller {
+            width: 300px;
+            height: 100px;
+            overflow-x: scroll;
+            white-space: nowrap;
+            font-size: 0;
+        }
+
+        .item {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        let clickedItem = null;
+
+        async function runTest()
+        {
+            description("Tests that a smooth scrollTo() issued during a view transition leaves the web process and UI process scroll positions in sync.");
+
+            const scroller = document.getElementById("scroller");
+            for (const item of scroller.children)
+                item.addEventListener("click", () => clickedItem = item.id);
+
+            scroller.scrollTo({ left: 300, behavior: "instant" });
+
+            const transition = await new Promise(resolve => requestAnimationFrame(() => resolve(document.startViewTransition(() => { }))));
+            await transition.updateCallbackDone;
+            scroller.scrollTo({ left: 0, behavior: "smooth" });
+            const scrollEnded = new Promise(resolve => scroller.addEventListener("scrollend", resolve, { once: true }));
+
+            await transition.finished;
+            await Promise.race([scrollEnded, UIHelper.delayFor(2000)]);
+            await UIHelper.renderingUpdate();
+
+            shouldBe("scroller.scrollLeft", "0");
+
+            await UIHelper.activateAt(50, 50);
+            await UIHelper.renderingUpdate();
+            shouldBeEqualToString("clickedItem", "item0");
+
+            finishJSTest();
+        }
+
+        window.addEventListener("load", runTest, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="item" id="item0" style="background-color: green"></div><div class="item" id="item1" style="background-color: blue"></div><div class="item" id="item2" style="background-color: orange"></div><div class="item" id="item3" style="background-color: red"></div><div class="item" id="item4" style="background-color: purple"></div><div class="item" id="item5" style="background-color: gray"></div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

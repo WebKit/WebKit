@@ -458,6 +458,11 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
 
     auto destinationPosition = requestedScrollData.destinationPosition(currentScrollPosition());
     if (isAnimatedUpdate(requestedScrollData.requestType)) {
+        // The animation can complete synchronously (e.g. UIScrollView may not animate). Respond first, because
+        // the web process ignores scroll updates that arrive before the response to its latest request.
+        scopeExit.release();
+        if (tree)
+            tree->didHandleScrollRequestForNode(scrollingNodeID(), requestedScrollData.requestType, currentScrollPosition(), shouldFireScrollEnd, requestedScrollData.identifier);
         startAnimatedScrollToPosition(destinationPosition);
         return;
     }
