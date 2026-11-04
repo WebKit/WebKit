@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
+static WorkletParameters generateWorkletParameters(AudioWorklet& worklet, TransferredMessagePort&& globalScopePort)
 {
     RefPtr document = worklet.document();
     auto jsRuntimeFlags = document->settings().javaScriptRuntimeFlags();
@@ -70,14 +70,15 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
         document->agentClusterID(),
         document->crossOriginIsolated() ? CanBeCrossOriginIsolated::Yes : CanBeCrossOriginIsolated::No,
         protect(document->contentSecurityPolicy())->responseHeaders(),
-        document->networkLoadPolicy()
+        document->networkLoadPolicy(),
+        WTF::move(globalScopePort)
     };
 }
 
 AudioWorkletMessagingProxy::AudioWorkletMessagingProxy(AudioWorklet& worklet)
     : m_worklet(worklet)
     , m_documentIdentifier(worklet.document()->identifier())
-    , m_workletThread(AudioWorkletThread::create(*this, generateWorkletParameters(worklet)))
+    , m_workletThread(AudioWorkletThread::create(*this, generateWorkletParameters(worklet, worklet.takeGlobalScopePort())))
 {
     ASSERT(isMainThread());
 
