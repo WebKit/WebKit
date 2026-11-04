@@ -1,0 +1,2 @@
+Tests that a WebContent process that forges its frame's URL cannot postMessage with that URL's origin.
+PASS
