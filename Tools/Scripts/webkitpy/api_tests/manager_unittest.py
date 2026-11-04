@@ -28,6 +28,7 @@ from unittest.mock import MagicMock, patch
 from webkitcorepy import OutputCapture
 
 from webkitpy.api_tests.manager import Manager
+from webkitpy.api_tests.runner import Runner
 from webkitpy.api_tests.test_expectations import PASS, FAIL, CRASH, TIMEOUT
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.program_status import ProgramStatus
@@ -216,3 +217,43 @@ TestWebKitAPI.WKWebViewSwiftOverlayTests/evaluateJavaScriptYieldsExpectedRespons
             self.assertEqual(manager.run([]), Manager.FAILED_BUILD_CHECK)
         warnings = [line for line in captured.root.log.getvalue().splitlines() if line.startswith('ASAN_OPTIONS is set')]
         self.assertEqual(['ASAN_OPTIONS is set in the environment but is ignored; pass it with --additional-env-var=ASAN_OPTIONS=... instead.'], warnings)
+
+    FAILURE_OUTPUT = 'Tools/TestWebKitAPI/Tests/WebKit/WKWebView/AdvancedPrivacyProtections.mm:647\nValue of: referrerFromPopup.startsWith(mainURLPrefix)\n  Actual: false\nExpected: true\n'
+
+    def _sample_upload(self):
+        return Manager._upload_results_with_logs({
+            'TestWebKitAPI.AdvancedPrivacyProtections.DoNotHideReferrerInPopupWindow': {'actual': 'FAIL', 'time': 3717},
+            'TestWebKitAPI.GetUserMedia.OriginAndWebArchivePermission': {'actual': 'TIMEOUT', 'time': 33285},
+            'TestWebKitAPI.ContextMenuMouseEvents.RightClick': {'expected': 'PASS FAIL', 'actual': 'FAIL', 'time': 2429},
+            'TestIPC.ArgumentCoderEditingRange.OverflowingRangeIsRejectedNotCrashed': {'time': 76},
+        }, {
+            'TestWebKitAPI.AdvancedPrivacyProtections.DoNotHideReferrerInPopupWindow': (Runner.STATUS_FAILED, self.FAILURE_OUTPUT, 3.717),
+            'TestWebKitAPI.GetUserMedia.OriginAndWebArchivePermission': (Runner.STATUS_TIMEOUT, '', 33.285),
+        })
+
+    def test_upload_log_for_unexpected_failure(self):
+        self.assertEqual(self.FAILURE_OUTPUT, self._sample_upload()['TestWebKitAPI.AdvancedPrivacyProtections.DoNotHideReferrerInPopupWindow']['log'])
+
+    def test_no_upload_log_for_unexpected_failure_without_output(self):
+        self.assertNotIn('log', self._sample_upload()['TestWebKitAPI.GetUserMedia.OriginAndWebArchivePermission'])
+
+    def test_no_upload_log_for_expected_failure(self):
+        self.assertNotIn('log', self._sample_upload()['TestWebKitAPI.ContextMenuMouseEvents.RightClick'])
+
+    def test_no_upload_log_for_pass(self):
+        self.assertNotIn('log', self._sample_upload()['TestIPC.ArgumentCoderEditingRange.OverflowingRangeIsRejectedNotCrashed'])
+
+    def test_upload_logs_stop_at_run_limit(self):
+        outputs = ['x' * 14610] * 175 + ['x' * 32]
+        unexpected_failures = {f'TestWebKitAPI.Crash.Test{index}': (Runner.STATUS_CRASHED, output, 1.0) for index, output in enumerate(outputs)}
+        results = Manager._upload_results_with_logs({test: {'actual': 'CRASH'} for test in unexpected_failures}, unexpected_failures)
+        self.assertEqual([8191] * 32 + [0] * 144, [len(result.get('log', '')) for result in results.values()])
+
+    def test_truncate_log_within_limit(self):
+        self.assertEqual('x' * 8192, Manager.truncate_log('x' * 8192))
+
+    def test_truncate_log_at_line_end(self):
+        self.assertEqual(('x' * 99 + '\n') * 81 + '[1,900 more bytes]\n', Manager.truncate_log(('x' * 99 + '\n') * 100))
+
+    def test_truncate_log_inside_character(self):
+        self.assertEqual('x' + 'é' * 4085 + '[1,830 more bytes]\n', Manager.truncate_log('x' + 'é' * 5000))
