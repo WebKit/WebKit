@@ -73,6 +73,8 @@ public:
     // A block-level box with a justify-self other than normal, stretch or legacy is aligned in the inline axis of its containing block, which
     // sizes an auto inline size to fit its content and keeps its margins as they are (css-align-3 §6.1).
     static bool isAlignedByJustifySelf(const RenderBox&, const Style::ComputedStyle& containingBlockStyle);
+    // An auto inline size fits the content of a box justify-self aligns, and of a child of a horizontal marquee (RenderBox::sizesLogicalWidthToFitContent).
+    static bool autoInlineSizeFitsContent(const RenderBox&, const Style::ComputedStyle& containingBlockStyle);
     // How far justify-self moves the margin box from the inline start of the containing block, unless an auto margin aligns it.
     static LayoutUnit justifySelfOffset(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit marginStart, LayoutUnit marginEnd, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle);
     // Its inline size, min inline size or max inline size is min-content, max-content or fit-content.
