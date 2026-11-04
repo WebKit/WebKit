@@ -415,16 +415,28 @@ CanvasRenderingContext2DBase::State::State()
     , wordSpacing("0px"_s)
     , lang("inherit"_s)
     , unparsedFont(DefaultFont)
+    , font(FontProxy::create())
 {
+}
+
+auto CanvasRenderingContext2DBase::State::clone() const -> State
+{
+    State cloned = *this;
+
+    // FIXME: implement copy-on-write so we only clone when it's changed.
+    cloned.font = protect(this->font)->clone();
+
+    return cloned;
 }
 
 String CanvasRenderingContext2DBase::State::fontString() const
 {
-    if (!font.realized())
+    Ref fontProxy = this->font;
+    if (!fontProxy->realized())
         return DefaultFont;
 
     StringBuilder serializedFont;
-    const auto& font = this->font.fontDescription();
+    const auto& font = fontProxy->fontDescription();
 
     auto italic = font.fontStyleSlope() ? "italic "_s : ""_s;
     auto smallCaps = font.variantCaps() == FontVariantCaps::Small ? "small-caps "_s : ""_s;
@@ -627,30 +639,34 @@ static CanvasTextRendering toCanvasTextRendering(TextRenderingMode textRendering
 
 CanvasFontKerning CanvasRenderingContext2DBase::State::canvasFontKerning() const
 {
-    if (!font.realized())
+    Ref font = this->font;
+    if (!font->realized())
         return CanvasFontKerning::Auto;
-    return toCanvasFontKerning(font.fontDescription().kerning());
+    return toCanvasFontKerning(font->fontDescription().kerning());
 }
 
 CanvasTextRendering CanvasRenderingContext2DBase::State::canvasTextRendering() const
 {
-    if (!font.realized())
+    Ref font = this->font;
+    if (!font->realized())
         return CanvasTextRendering::Auto;
-    return toCanvasTextRendering(font.fontDescription().textRenderingMode());
+    return toCanvasTextRendering(font->fontDescription().textRenderingMode());
 }
 
 CanvasFontStretch CanvasRenderingContext2DBase::State::canvasFontStretch() const
 {
-    if (!font.realized())
+    Ref font = this->font;
+    if (!font->realized())
         return CanvasFontStretch::Normal;
-    return toCanvasFontStretch(font.fontDescription().width());
+    return toCanvasFontStretch(font->fontDescription().width());
 }
 
 CanvasFontVariantCaps CanvasRenderingContext2DBase::State::canvasFontVariantCaps() const
 {
-    if (!font.realized())
+    Ref font = this->font;
+    if (!font->realized())
         return CanvasFontVariantCaps::Normal;
-    return toCanvasFontVariantCaps(font.fontDescription().variantCaps());
+    return toCanvasFontVariantCaps(font->fontDescription().variantCaps());
 }
 
 String CanvasRenderingContext2DBase::State::globalCompositeOperationString() const
@@ -661,6 +677,16 @@ String CanvasRenderingContext2DBase::State::globalCompositeOperationString() con
 String CanvasRenderingContext2DBase::State::shadowColorString() const
 {
     return serializationForHTML(shadowColor);
+}
+
+Ref<CanvasRenderingContext2DBase::FontProxy> CanvasRenderingContext2DBase::FontProxy::create()
+{
+    return adoptRef(*new CanvasRenderingContext2DBase::FontProxy());
+}
+
+Ref<CanvasRenderingContext2DBase::FontProxy> CanvasRenderingContext2DBase::FontProxy::clone() const
+{
+    return adoptRef(*new CanvasRenderingContext2DBase::FontProxy(*this));
 }
 
 CanvasRenderingContext2DBase::FontProxy::~FontProxy()
@@ -772,7 +798,7 @@ void CanvasRenderingContext2DBase::realizeSavesLoop()
     do {
         if (m_stateStack.size() > MaxSaveCount)
             break;
-        m_stateStack.append(state());
+        m_stateStack.append(state().clone());
         if (context)
             context->save();
     } while (--m_unrealizedSaveCount);
@@ -3268,7 +3294,7 @@ void CanvasRenderingContext2DBase::setDirection(Direction direction)
 
 bool CanvasRenderingContext2DBase::canDrawText(double x, double y, bool fill, std::optional<double> maxWidth)
 {
-    if (!fontProxy()->realized())
+    if (!protect(fontProxy())->realized())
         return false;
 
     auto* c = effectiveDrawingContext();
@@ -3342,17 +3368,19 @@ static bool canUseCachedShapedText(const TextRun& textRun)
 
 void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, double x, double y, bool fill, std::optional<double> maxWidth)
 {
+    RefPtr fontProxy = this->fontProxy();
+    CheckedRef fontCascade = fontProxy->fontCascade();
+
     auto* cachedShapedText = [&]() -> TextShapingResultAndDisplayList* {
         if (!canUseCachedShapedText(textRun))
             return nullptr;
 
-        CheckedRef fontCascade = fontProxy()->fontCascade();
         RefPtr fonts = fontCascade->fonts();
         ASSERT(fonts);
         return fonts->getOrCreateCachedShapedText(textRun, fontCascade, 0, std::nullopt, ForTextEmphasis::No);
     }();
 
-    float fontWidth = cachedShapedText ? cachedShapedText->textShapingResult.width : protect(fontProxy()->fontCascade())->width(textRun);
+    float fontWidth = cachedShapedText ? cachedShapedText->textShapingResult.width : fontCascade->width(textRun);
 
     bool useMaxWidth = maxWidth && maxWidth.value() < fontWidth;
     float width = useMaxWidth ? maxWidth.value() : fontWidth;
@@ -3361,7 +3389,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
 
     // The slop built in to this mask rect matches the heuristic used in FontCGWin.cpp for GDI text.
     FloatRect textRect = [&] () {
-        const auto& fontMetrics = fontProxy()->metricsOfPrimaryFont();
+        const auto& fontMetrics = fontProxy->metricsOfPrimaryFont();
         return FloatRect(
             location.x() - fontMetrics.intHeight() / 2,
             location.y() - fontMetrics.intAscent() - fontMetrics.intLineGap(),
@@ -3379,7 +3407,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
     bool cachedDisplayListNeedsStateSave = false;
     // Any shadow could add display list items to draw glyphs a 2nd time with different context attributes.
     if (cachedShapedText && !cachedShapedText->displayList && !cachedShapedText->textShapingResult.glyphBuffer.isEmpty() && !c->dropShadow()) {
-        cachedShapedText->displayList = protect(fontProxy()->fontCascade())->displayListForGlyphBuffer(*c, cachedShapedText->textShapingResult.glyphBuffer, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+        cachedShapedText->displayList = fontCascade->displayListForGlyphBuffer(*c, cachedShapedText->textShapingResult.glyphBuffer, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
 
         if (cachedShapedText->displayList) {
             for (auto& item : cachedShapedText->displayList->items()) {
@@ -3408,11 +3436,11 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
                     }
                 } else {
                     FloatPoint startPoint = point + WebCore::size(glyphBuffer.initialAdvance());
-                    protect(fontProxy()->fontCascade())->drawGlyphBuffer(context, glyphBuffer, startPoint, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+                    fontCascade->drawGlyphBuffer(context, glyphBuffer, startPoint, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
                 }
             }
         } else
-            fontProxy()->drawBidiText(context, textRun, point, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+            fontProxy->drawBidiText(context, textRun, point, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
     };
 
 #if USE(CG)
@@ -3526,7 +3554,7 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
 {
     Ref<TextMetrics> metrics = TextMetrics::create();
 
-    auto* fontProxy = this->fontProxy();
+    RefPtr fontProxy = this->fontProxy();
     if (!fontProxy->realized())
         return metrics;
 
@@ -3537,6 +3565,7 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
 
     FloatPoint offset = textOffset(fontWidth, textRun.direction());
     auto [emHeightAscent, emHeightDescent] = emHeightAscentAndDescent(protect(fontProxy->fontCascade()));
+
     // Bind the primary font's metrics only after width() has run, since it can rebuild the font cache.
     auto& fontMetrics = fontProxy->metricsOfPrimaryFont();
 
@@ -3570,7 +3599,8 @@ void CanvasRenderingContext2DBase::updateStateTransform(const AffineTransform& t
 
 FloatPoint CanvasRenderingContext2DBase::textOffset(float width, TextDirection direction)
 {
-    auto [emHeightAscent, emHeightDescent] = emHeightAscentAndDescent(protect(fontProxy()->fontCascade()));
+    auto [emHeightAscent, emHeightDescent] = emHeightAscentAndDescent(protect(protect(fontProxy())->fontCascade()));
+
     FloatPoint offset;
 
     switch (state().textBaseline) {
@@ -3793,14 +3823,15 @@ void CanvasRenderingContext2DBase::setLetterSpacing(const String& letterSpacing)
     if (!unitAllowedForSpacing(rawLength->unit))
         return;
 
-    CheckedRef fontCascade = fontProxy()->fontCascade();
+    RefPtr fontProxy = this->fontProxy();
+    CheckedRef fontCascade = fontProxy->fontCascade();
     // FIXME: Passing the context's font as the root font means root font relative units ('rem', 'rex', ...) still
     //        resolve against the font of the context here, even though unitAllowedForSpacing() admits
     //        them. Fixing it needs this setter to update style first, so it is done separately.
     double pixels = Style::resolveLength(rawLength->value, rawLength->unit, CSSPropertyID::LetterSpacing, fontCascade, fontCascade, nullptr);
 
     modifiableState().letterSpacing = CSS::serializationForCSS(CSS::defaultSerializationContext(), *rawLength);
-    modifiableState().font.setLetterSpacing(pixels);
+    protect(modifiableState().font)->setLetterSpacing(pixels);
 }
 
 void CanvasRenderingContext2DBase::setWordSpacing(const String& wordSpacing)
@@ -3824,14 +3855,15 @@ void CanvasRenderingContext2DBase::setWordSpacing(const String& wordSpacing)
     if (!unitAllowedForSpacing(rawLength->unit))
         return;
 
-    CheckedRef fontCascade = fontProxy()->fontCascade();
+    RefPtr fontProxy = this->fontProxy();
+    CheckedRef fontCascade = fontProxy->fontCascade();
     // FIXME: Passing the context's font as the root font means root font relative units ('rem', 'rex', ...) still
     //        resolve against the font of the context here, even though unitAllowedForSpacing() admits
     //        them. Fixing it needs this setter to update style first, so it is done separately.
     double pixels = Style::resolveLength(rawLength->value, rawLength->unit, CSSPropertyID::WordSpacing, fontCascade, fontCascade, nullptr);
 
     modifiableState().wordSpacing = CSS::serializationForCSS(CSS::defaultSerializationContext(), *rawLength);
-    modifiableState().font.setWordSpacing(pixels);
+    protect(modifiableState().font)->setWordSpacing(pixels);
 }
 
 void CanvasRenderingContext2DBase::carryOverKerningAndTextRendering(FontCascadeDescription& description) const
@@ -3849,11 +3881,13 @@ void CanvasRenderingContext2DBase::setLang(const String& lang)
 {
     if (state().lang == lang)
         return;
+
     realizeSaves();
     modifiableState().lang = lang;
-    if (!state().font.realized())
+    if (!protect(state().font)->realized())
         return;
-    modifiableState().font.update([language = effectiveLanguage()](FontCascadeDescription& description) {
+
+    protect(modifiableState().font)->update([language = effectiveLanguage()](FontCascadeDescription& description) {
         description.setComputedLocale(language);
     });
 }
@@ -3862,10 +3896,12 @@ void CanvasRenderingContext2DBase::setFontKerning(CanvasFontKerning fontKerning)
 {
     if (state().canvasFontKerning() == fontKerning)
         return;
-    if (!fontProxy()->realized())
+
+    if (!protect(fontProxy())->realized())
         return;
+
     realizeSaves();
-    modifiableState().font.update([&](FontCascadeDescription& description) {
+    protect(modifiableState().font)->update([&](FontCascadeDescription& description) {
         description.setKerning(toKerning(fontKerning));
     });
 }
@@ -3874,10 +3910,12 @@ void CanvasRenderingContext2DBase::setTextRendering(CanvasTextRendering textRend
 {
     if (state().canvasTextRendering() == textRendering)
         return;
-    if (!fontProxy()->realized())
+
+    if (!protect(fontProxy())->realized())
         return;
+
     realizeSaves();
-    modifiableState().font.update([&](FontCascadeDescription& description) {
+    protect(modifiableState().font)->update([&](FontCascadeDescription& description) {
         description.setTextRenderingMode(toTextRenderingMode(textRendering));
     });
 }
@@ -3886,10 +3924,13 @@ void CanvasRenderingContext2DBase::setFontStretch(CanvasFontStretch fontStretch)
 {
     if (state().canvasFontStretch() == fontStretch)
         return;
-    if (!fontProxy()->realized())
+
+    if (!protect(fontProxy())->realized())
         return;
+
     realizeSaves();
-    modifiableState().font.update([&](FontCascadeDescription& description) {
+
+    protect(modifiableState().font)->update([&](FontCascadeDescription& description) {
         description.setWidth(fontSelectionWidthValue(fontStretch));
     });
 }
@@ -3898,10 +3939,12 @@ void CanvasRenderingContext2DBase::setFontVariantCaps(CanvasFontVariantCaps font
 {
     if (state().canvasFontVariantCaps() == fontVariantCaps)
         return;
-    if (!fontProxy()->realized())
+
+    if (!protect(fontProxy())->realized())
         return;
+
     realizeSaves();
-    modifiableState().font.update([&](FontCascadeDescription& description) {
+    protect(modifiableState().font)->update([&](FontCascadeDescription& description) {
         description.setVariantCaps(toFontVariantCaps(fontVariantCaps));
     });
 }

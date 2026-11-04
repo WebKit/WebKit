@@ -273,12 +273,12 @@ public:
     Direction direction() const { return state().direction; }
     void setDirection(Direction);
 
-    class FontProxy final : public FontSelectorClient {
+    class FontProxy final : public RefCounted<FontProxy>, public FontSelectorClient {
     public:
-        FontProxy() = default;
+        static Ref<FontProxy> create();
+        Ref<FontProxy> clone() const;
+
         virtual ~FontProxy();
-        FontProxy(const FontProxy&);
-        FontProxy& operator=(const FontProxy&);
 
         bool realized() const { return m_font.hasFontSelector(); }
         void initialize(FontSelector&, const FontCascade&);
@@ -302,6 +302,12 @@ public:
         void update(NOESCAPE const ScopedLambda<void(FontCascadeDescription&)>&);
 
     private:
+        FontProxy() = default;
+
+        // Use clone() to create a ref-counted copy.
+        FontProxy(const FontProxy&);
+        FontProxy& operator=(const FontProxy&);
+
         void update(FontSelector&);
         void fontsNeedUpdate(FontSelector&) final;
 
@@ -310,6 +316,13 @@ public:
 
     struct State final {
         State();
+
+        State clone() const;
+
+        // Explicit copy constructor definition inhibits these,
+        // so we have to explicitly define them.
+        State(State&&) = default;
+        State& operator=(State&&) = default;
 
         String unparsedStrokeColor;
         String unparsedFillColor;
@@ -343,7 +356,7 @@ public:
         String lang;
 
         String unparsedFont;
-        FontProxy font;
+        Ref<FontProxy> font;
         // The font description `unparsedFont` was resolved against. Relative values in the font
         // shorthand depend on it, so `font` is stale once it no longer matches the canvas element.
         FontCascadeDescription fontResolutionBase;
@@ -352,17 +365,21 @@ public:
 
         RefPtr<CanvasLayerContextSwitcher> targetSwitcher;
 
-        NODELETE CanvasLineCap canvasLineCap() const;
-        NODELETE CanvasLineJoin canvasLineJoin() const;
-        NODELETE CanvasTextAlign canvasTextAlign() const;
-        NODELETE CanvasTextBaseline canvasTextBaseline() const;
-        NODELETE CanvasFontKerning canvasFontKerning() const;
-        NODELETE CanvasFontStretch canvasFontStretch() const;
-        NODELETE CanvasFontVariantCaps canvasFontVariantCaps() const;
-        NODELETE CanvasTextRendering canvasTextRendering() const;
+        CanvasLineCap canvasLineCap() const;
+        CanvasLineJoin canvasLineJoin() const;
+        CanvasTextAlign canvasTextAlign() const;
+        CanvasTextBaseline canvasTextBaseline() const;
+        CanvasFontKerning canvasFontKerning() const;
+        CanvasFontStretch canvasFontStretch() const;
+        CanvasFontVariantCaps canvasFontVariantCaps() const;
+        CanvasTextRendering canvasTextRendering() const;
         String fontString() const;
         String globalCompositeOperationString() const;
         String shadowColorString() const;
+
+    private:
+        // Use clone() to make a copy instead.
+        State(const State&) = default;
     };
     const Vector<State, 1>& stateStack() LIFETIME_BOUND;
 
