@@ -90,7 +90,6 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasSizingKeyword,
     ContentHasStretchBlockSize,
     ContentHasAspectRatio,
-    ContentHasSizeContainment,
     ContentHasUnmeasurableIntrinsicInlineSize,
     ContentHasQuirksModePercentageHeight,
     ContentHasNestedQuirkContainer,
@@ -211,8 +210,9 @@ static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockCo
 {
     CheckedRef style = blockContainer.style();
     auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() ? !hasScrollbarsOrGutter(blockContainer) : style->display() == Style::DisplayType::BlockFlowRoot || blockContainer.isOutOfFlowPositioned();
+    // FIXME: A root whose content content-visibility skips (RenderBlockFlow::layoutBlock leaves it as it is).
     return isSupportedRoot && !blockContainer.isWritingModeRoot() && !blockContainer.isFieldset()
-        && !blockContainer.shouldApplyAnyContainment() && style->alignContent().isNormal()
+        && !blockContainer.layoutContext().isSkippedContentRootForLayout(blockContainer) && style->alignContent().isNormal()
         && !style->specifiesColumns() && style->columnSpan() != ColumnSpan::All && style->blockStepSize().isNone()
         && style->overflowContinue() == OverflowContinue::Normal && !style->containerType().hasSizeContainment();
 }
@@ -467,9 +467,6 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     // FIXME: Scrollbars (hasScrollbarsOrGutter).
     if (outOfFlowBox.hasNonVisibleOverflow() && hasScrollbarsOrGutter(outOfFlowBox))
         return BlockAvoidanceReason::ContentHasOutOfFlowScrollContainer;
-    // So is a box with layout and size containment.
-    if (outOfFlowBox.shouldApplyLayoutContainment() && outOfFlowBox.shouldApplySizeContainment())
-        return BlockAvoidanceReason::ContentHasSizeContainment;
     // Its own formatting context sizes a replaced element, from its natural size and aspect ratio.
     if (isReplaced)
         return { };
@@ -866,8 +863,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "stretch block size"_s;
     case BlockAvoidanceReason::ContentHasAspectRatio:
         return "aspect-ratio"_s;
-    case BlockAvoidanceReason::ContentHasSizeContainment:
-        return "size containment"_s;
     case BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize:
         return "intrinsic size of unmeasurable content"_s;
     case BlockAvoidanceReason::ContentHasQuirksModePercentageHeight:
