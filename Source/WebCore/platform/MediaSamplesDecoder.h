@@ -35,6 +35,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
 
@@ -96,11 +97,12 @@ private:
     RefPtr<AudioDecoder> m_audioDecoder WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     RefPtr<VideoDecoder> m_videoDecoder WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     struct InFlightFrame {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(InFlightFrame);
         MediaSamplesBlock::MediaSampleItem metadata;
         // The first sequence of the block the frame was decoded from.
         int64_t blockSequence { 0 };
     };
-    HashMap<int64_t, InFlightFrame, DefaultHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_inFlight WTF_GUARDED_BY_CAPABILITY(m_queue.get());
+    HashMap<int64_t, UniqueRef<InFlightFrame>, DefaultHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_inFlight WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     int64_t m_nextSequence WTF_GUARDED_BY_CAPABILITY(m_queue.get()) { 0 };
     Vector<MediaSamplesBlock> m_completedOutput WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     // The block the last frame in m_completedOutput was decoded from.
