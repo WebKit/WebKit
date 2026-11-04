@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+let frameCount = 0;
+
+function renderFrame() {
+    document.getElementById("target").style.width = `${100 + ++frameCount}px`;
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Timeline.ScreenshotPayload");
+
+    suite.addTestCase({
+        name: "Timeline.ScreenshotPayload.NoEndTime",
+        description: "A Screenshot record should have a start time and image data, but no end time.",
+        async test() {
+            await InspectorProtocol.awaitCommand({method: "Timeline.enable", params: {}});
+            await InspectorProtocol.awaitCommand({method: "Timeline.setInstruments", params: {instruments: ["Screenshot"]}});
+
+            let screenshotRecordPromise = new Promise((resolve) => {
+                InspectorProtocol.eventHandler["Timeline.eventRecorded"] = ({params}) => {
+                    if (params.record.type !== "Screenshot")
+                        return;
+                    delete InspectorProtocol.eventHandler["Timeline.eventRecorded"];
+                    resolve(params.record);
+                };
+            });
+
+            await InspectorProtocol.awaitCommand({method: "Timeline.start", params: {}});
+            ProtocolTest.evaluateInPage("renderFrame()");
+            let record = await screenshotRecordPromise;
+            await InspectorProtocol.awaitCommand({method: "Timeline.stop", params: {}});
+
+            ProtocolTest.expectEqual(typeof record.startTime, "number", "Screenshot record should have a start time.");
+            ProtocolTest.expectFalse("endTime" in record, "Screenshot record should not have an end time.");
+            ProtocolTest.expectThat(record.data.imageData.startsWith("data:image/png;base64,"), "Screenshot record should contain image data.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+}
+</style>
+</head>
+<body onload="runTest()">
+<p>Tests the protocol payload of 'Screenshot' Timeline records.</p>
+<div id="target"></div>
+</body>
+</html>

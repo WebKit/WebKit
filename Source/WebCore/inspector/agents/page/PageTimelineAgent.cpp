@@ -447,11 +447,9 @@ void PageTimelineAgent::captureScreenshot()
     }
 #endif
 
-    if (RefPtr snapshot = snapshotFrameRect(*localMainFrame, localMainFrameView->unobscuredContentRect(), { { }, PixelFormat::BGRA8, ColorSpace::SRGB() })) {
-        Ref snapshotRecord = TimelineRecordFactory::createScreenshotData(encodeDataURL(WTF::move(snapshot), "image/png"_s));
-        pushCurrentRecord(WTF::move(snapshotRecord), TimelineRecordType::Screenshot, false, snapshotStartTime);
-        didCompleteCurrentRecord(TimelineRecordType::Screenshot);
-    }
+    // A screenshot has no duration, so its record has no end time.
+    if (RefPtr snapshot = snapshotFrameRect(*localMainFrame, localMainFrameView->unobscuredContentRect(), { { }, PixelFormat::BGRA8, ColorSpace::SRGB() }))
+        appendRecord(TimelineRecordFactory::createScreenshotData(encodeDataURL(WTF::move(snapshot), "image/png"_s)), TimelineRecordType::Screenshot, false, snapshotStartTime);
 }
 
 Inspector::Protocol::DOM::NodeId PageTimelineAgent::nodeIdForNode(Node* node) const

@@ -1,0 +1,9 @@
+Tests the protocol payload of 'Screenshot' Timeline records.
+
+
+== Running test suite: Timeline.ScreenshotPayload
+-- Running test case: Timeline.ScreenshotPayload.NoEndTime
+PASS: Screenshot record should have a start time.
+PASS: Screenshot record should not have an end time.
+PASS: Screenshot record should contain image data.
+
