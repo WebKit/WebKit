@@ -128,6 +128,8 @@ def main(user=None):
         "jsc",
         "LayoutTestHelper",
         "make",
+        "MiniBrowser",
+        "minidriver",
         "perl5.12",
         "perl5.16",
         "perl5.18",
