@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true CSSRhythmicSizingEnabled=true ] -->
+<style>
+body { font: 10px monospace; }
+.wrap { width: 250px; border: 1px solid; margin: 2px; display: inline-block; vertical-align: top; }
+.s { block-step-size: 30px; background: lightblue; }
+</style>
+<div class="wrap"><div class="s" id="text">text</div><div class="s" id="step">step</div><div class="s" id="margin">margin</div><div id="toggle">toggle</div><div>last</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "text that wraps onto a second line of the box";
+document.getElementById("step").style.blockStepSize = "45px";
+document.getElementById("margin").style.marginTop = "12px";
+document.getElementById("toggle").className = "s";
+</script>
