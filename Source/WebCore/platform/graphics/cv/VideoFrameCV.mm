@@ -595,7 +595,7 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, ColorS
     callback({ });
 }
 
-RefPtr<NativeImage> VideoFrame::copyNativeImage() const
+RefPtr<NativeImage> VideoFrame::copyNativeImage(std::optional<ColorSpace>) const
 {
     RetainPtr source = pixelBuffer();
     RetainPtr bgraSource = CVPixelBufferGetPixelFormatType(source) != kCVPixelFormatType_32BGRA ? ImageTransferSessionVT::convertPixelBuffer(source.get(), kCVPixelFormatType_32BGRA, ImageTransferSessionVT::DestinationColorSpace::Unspecified) : source;

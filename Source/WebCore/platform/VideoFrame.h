@@ -140,7 +140,8 @@ public:
 
     NODELETE void initializeCharacteristics(MediaTime presentationTime, bool isMirrored, Rotation);
 
-    RefPtr<NativeImage> copyNativeImage() const;
+    RefPtr<NativeImage> copyNativeImage(std::optional<ColorSpace> = std::nullopt) const;
+
     const PlatformVideoColorSpace& colorSpace() const LIFETIME_BOUND { return m_colorSpace; }
 
     bool hasNoTransformation() const { return m_rotation == VideoFrameRotation::None && !m_isMirrored; }

@@ -59,6 +59,17 @@ inline PlatformVideoColorSpace srgbColorSpace()
     };
 }
 
+// https://w3c.github.io/webcodecs/#display-p3-color-space
+inline PlatformVideoColorSpace displayP3ColorSpace()
+{
+    return {
+        .primaries = PlatformVideoColorPrimaries::Smpte432,
+        .transfer = PlatformVideoTransferCharacteristics::Iec6196621,
+        .matrix = PlatformVideoMatrixCoefficients::Rgb,
+        .fullRange = true
+    };
+}
+
 NODELETE void overrideVideoColorSpaceAsNeeded(PlatformVideoColorSpace&, const std::optional<PlatformVideoColorSpace>&);
 
 NODELETE WEBCORE_EXPORT bool usesITUR2100TF(const PlatformVideoColorSpace&);
