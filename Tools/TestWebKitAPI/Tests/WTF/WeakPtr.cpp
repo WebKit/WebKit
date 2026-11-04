@@ -3379,6 +3379,72 @@ TEST(WTF_ThreadSafeWeakPtr, RemoveInDestructor)
     }
 }
 
+struct RefsSelfDuringDestruction : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RefsSelfDuringDestruction> {
+    RefsSelfDuringDestruction() { ++instanceCount; }
+    ~RefsSelfDuringDestruction()
+    {
+        refCountAtDestruction = refCount();
+        {
+            Ref protectedThis { *this };
+            RefPtr anotherProtectedThis = this;
+            refCountWhileProtected = refCount();
+        }
+        refCountAfterProtection = refCount();
+        if (weakPtr)
+            weakPtrWasNullDuringDestruction = !weakPtr->get();
+        --instanceCount;
+    }
+
+    static void reset()
+    {
+        instanceCount = 0;
+        refCountAtDestruction = 0;
+        refCountWhileProtected = 0;
+        refCountAfterProtection = 0;
+        weakPtrWasNullDuringDestruction = false;
+        weakPtr = nullptr;
+    }
+
+    static inline int instanceCount { 0 };
+    static inline unsigned refCountAtDestruction { 0 };
+    static inline unsigned refCountWhileProtected { 0 };
+    static inline unsigned refCountAfterProtection { 0 };
+    static inline bool weakPtrWasNullDuringDestruction { false };
+    static inline ThreadSafeWeakPtr<RefsSelfDuringDestruction>* weakPtr { nullptr };
+};
+
+TEST(WTF_ThreadSafeWeakPtr, RefDuringDestructionStrongOnly)
+{
+    RefsSelfDuringDestruction::reset();
+    RefPtr object = adoptRef(*new RefsSelfDuringDestruction);
+    EXPECT_EQ(RefsSelfDuringDestruction::instanceCount, 1);
+
+    object = nullptr;
+    EXPECT_EQ(RefsSelfDuringDestruction::instanceCount, 0);
+    EXPECT_EQ(RefsSelfDuringDestruction::refCountAtDestruction, 1u);
+    EXPECT_EQ(RefsSelfDuringDestruction::refCountWhileProtected, 3u);
+    EXPECT_EQ(RefsSelfDuringDestruction::refCountAfterProtection, 1u);
+}
+
+TEST(WTF_ThreadSafeWeakPtr, RefDuringDestructionWithControlBlock)
+{
+    RefsSelfDuringDestruction::reset();
+    RefPtr object = adoptRef(*new RefsSelfDuringDestruction);
+    ThreadSafeWeakPtr<RefsSelfDuringDestruction> weakObject { *object };
+    RefsSelfDuringDestruction::weakPtr = &weakObject;
+    EXPECT_EQ(RefsSelfDuringDestruction::instanceCount, 1);
+
+    object = nullptr;
+    EXPECT_EQ(RefsSelfDuringDestruction::instanceCount, 0);
+    EXPECT_EQ(RefsSelfDuringDestruction::refCountAtDestruction, 1u);
+    EXPECT_EQ(RefsSelfDuringDestruction::refCountWhileProtected, 3u);
+    EXPECT_EQ(RefsSelfDuringDestruction::refCountAfterProtection, 1u);
+    EXPECT_TRUE(RefsSelfDuringDestruction::weakPtrWasNullDuringDestruction);
+    EXPECT_NULL(weakObject.get());
+
+    RefsSelfDuringDestruction::reset();
+}
+
 // The four tests below reproduce races in ThreadSafeWeakPtr and ThreadSafeWeakHashSet. Each runs
 // its accesses twice: once unguarded, which is where the race lives, and once with every access to
 // the shared handle under a single lock. The guarded run is the control -- if only the unguarded

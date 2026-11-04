@@ -247,9 +247,9 @@ private:
 
 VideoFullscreenControllerContext::~VideoFullscreenControllerContext()
 {
-    auto notifyClientsModelWasDestroyed = [this] {
-        while (!m_playbackClients.isEmpty())
-            protect(*m_playbackClients.begin())->modelDestroyed();
+    auto notifyClientsModelWasDestroyed = [protectedThis = Ref { *this }] {
+        while (!protectedThis->m_playbackClients.isEmpty())
+            protect(*protectedThis->m_playbackClients.begin())->modelDestroyed();
     };
     if (isUIThread()) {
         WebThreadLock();
