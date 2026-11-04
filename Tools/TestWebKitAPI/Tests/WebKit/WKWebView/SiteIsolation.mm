@@ -11999,6 +11999,48 @@ TEST(SiteIsolation, DropTextOnContentEditableInCrossOriginSubframe)
     EXPECT_WK_STREQ("Hello", [webView stringByEvaluatingJavaScript:@"editor.textContent" inFrame:[webView firstChildFrame]]);
 }
 
+static CGRect liftPreviewFrameForImageInCrossOriginIframe(bool siteIsolationEnabled)
+{
+    RetainPtr imageData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]];
+    HTTPServer server({
+        { "/mainframe"_s, { "<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'><iframe style='position: absolute; left: 100px; top: 150px; width: 300px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin: 0'><img id='image' src='image.png' style='position: absolute; left: 20px; top: 30px; width: 200px; height: 100px;'>"
+            "<script>new IntersectionObserver((entries) => { if (entries.some((entry) => entry.isIntersecting)) window.imageIsVisible = true; }).observe(image)</script></body>"_s } },
+        { "/image.png"_s, { imageData.get() } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolationEnabled ? siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 500, 500)) : viewAndDelegate(server, CGRectMake(0, 0, 500, 500));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    // Under Site Isolation, the iframe's process receives the iframe's geometry from the main frame's process
+    // asynchronously, and can't snapshot the image to start a drag until it does. Until then, an intersection
+    // observer reports the image as not intersecting the viewport.
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"image.complete && image.naturalWidth > 0 && !!window.imageIsVisible" inFrame:[webView firstChildFrame]] boolValue];
+    }));
+    [webView waitForNextPresentationUpdate];
+
+    // The image is at (20, 30) in the iframe, which is at (100, 150) in the main frame.
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(170, 230) to:CGPointMake(170, 400)];
+
+    EXPECT_EQ(1U, [simulator liftPreviews].count);
+    id liftPreview = [simulator liftPreviews].firstObject;
+    if (![liftPreview isKindOfClass:UITargetedDragPreview.class])
+        return CGRectNull;
+    return [(UITargetedDragPreview *)liftPreview view].frame;
+}
+
+TEST(SiteIsolation, DragLiftPreviewForImageInCrossOriginIframe)
+{
+    // Without Site Isolation, the iframe is in the main frame's process.
+    auto expectedFrame = liftPreviewFrameForImageInCrossOriginIframe(false);
+    EXPECT_EQ(CGRectMake(120, 180, 200, 100), expectedFrame);
+
+    auto frame = liftPreviewFrameForImageInCrossOriginIframe(true);
+    EXPECT_EQ(expectedFrame, frame);
+}
+
 static void checkDropPreviewForImagePlaceholderInIframe(ASCIILiteral iframeOrigin)
 {
     HTTPServer server({

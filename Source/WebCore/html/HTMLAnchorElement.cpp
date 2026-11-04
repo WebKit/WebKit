@@ -560,7 +560,7 @@ void HTMLAnchorElement::handleClick(Event& event)
         systemPreviewInfo.element.documentIdentifier = document->identifier();
         systemPreviewInfo.element.webPageIdentifier = document->pageID();
         if (RefPtr child = firstElementChild())
-            systemPreviewInfo.previewRect = child->boundsInRootViewSpace();
+            systemPreviewInfo.previewRect = child->boundsInMainFrameViewSpace();
 
         if (RefPtr page = document->page())
             page->beginSystemPreview(completedURL, document->topOrigin().data(), WTF::move(systemPreviewInfo), [keepBlobAlive = URLKeepingBlobAlive(completedURL, document->topOrigin().data())] { });

@@ -1451,7 +1451,7 @@ void DragController::doSystemDrag(DragImage image, RefPtr<TextIndicator>&& textI
             // If the drag image has been customized, fall back to positioning the preview relative to the drag event location.
             IntSize dragPreviewSize;
             if (dataTransferImageElement)
-                dragPreviewSize = dataTransferImageElement->boundsInRootViewSpace().size();
+                dragPreviewSize = dataTransferImageElement->boundsInMainFrameViewSpace().size();
             else {
                 dragPreviewSize = item.image.size();
                 if (auto* page = frame.page())
@@ -1460,7 +1460,7 @@ void DragController::doSystemDrag(DragImage image, RefPtr<TextIndicator>&& textI
             item.dragPreviewFrameInRootViewCoordinates = { dragLocationInRootViewCoordinates, WTF::move(dragPreviewSize) };
         } else {
             // We can position the preview using the bounds of the drag source element.
-            item.dragPreviewFrameInRootViewCoordinates = element->boundsInRootViewSpace();
+            item.dragPreviewFrameInRootViewCoordinates = element->boundsInMainFrameViewSpace();
         }
 
         if (RefPtr link = containingLinkElement(*element)) {

@@ -1972,29 +1972,50 @@ NODELETE inline bool shouldObtainBoundsFromBoxModel(const Element* element)
     return false;
 }
 
-IntRect Element::boundsInRootViewSpace()
+// Updates layout, then returns the element's view and its bounds in absolute coordinates, with custom handling for SVG.
+static std::optional<std::pair<Ref<LocalFrameView>, IntRect>> viewAndAbsoluteBoundsUpdatingLayout(Element& element)
 {
-    Ref document = this->document();
+    Ref document = element.document();
     document->updateLayoutIgnorePendingStylesheets();
 
     RefPtr view = document->view();
     if (!view)
-        return IntRect();
+        return std::nullopt;
 
-    if (isInNonRenderedSVGSubtree(*this))
-        return IntRect();
+    if (isInNonRenderedSVGSubtree(element))
+        return std::nullopt;
 
     Vector<FloatQuad> quads;
 
-    if (RefPtr svgElement = elementWithSVGLayoutBox(*this)) {
+    if (RefPtr svgElement = elementWithSVGLayoutBox(element)) {
         if (auto localRect = svgElement->getBoundingBox())
-            quads.append(protect(renderer())->localToAbsoluteQuad(*localRect));
-    } else if (shouldObtainBoundsFromBoxModel(this)) {
+            quads.append(protect(element.renderer())->localToAbsoluteQuad(*localRect));
+    } else if (shouldObtainBoundsFromBoxModel(&element)) {
         // Get the bounding rectangle from the box model.
-        protect(renderer())->absoluteQuads(quads);
+        protect(element.renderer())->absoluteQuads(quads);
     }
 
-    return view->contentsToRootView(enclosingIntRect(unitedBoundingBoxes(quads)));
+    return std::pair { view.releaseNonNull(), enclosingIntRect(unitedBoundingBoxes(quads)) };
+}
+
+IntRect Element::boundsInRootViewSpace()
+{
+    auto viewAndAbsoluteBounds = viewAndAbsoluteBoundsUpdatingLayout(*this);
+    if (!viewAndAbsoluteBounds)
+        return IntRect();
+
+    auto& [view, absoluteBounds] = *viewAndAbsoluteBounds;
+    return view->contentsToRootView(absoluteBounds);
+}
+
+IntRect Element::boundsInMainFrameViewSpace()
+{
+    auto viewAndAbsoluteBounds = viewAndAbsoluteBoundsUpdatingLayout(*this);
+    if (!viewAndAbsoluteBounds)
+        return IntRect();
+
+    auto& [view, absoluteBounds] = *viewAndAbsoluteBounds;
+    return view->contentsToMainFrameView(absoluteBounds);
 }
 
 IntRect Element::boundingBoxInRootViewCoordinates() const

@@ -614,17 +614,7 @@ enum class MediaControlsHost::ShowMediaStatsTag { IncludeShowMediaStats };
 
 static FloatRect contextMenuAnchorRect(HTMLElement& target)
 {
-    auto bounds = FloatRect { target.boundsInRootViewSpace() };
-
-    RefPtr localFrame = target.document().frame();
-    if (!localFrame)
-        return bounds;
-
-    RefPtr localRootView = localFrame->rootFrame().view();
-    if (!localRootView)
-        return bounds;
-
-    return localRootView->convertToRootViewAcrossIsolatedFrames(bounds);
+    return target.boundsInMainFrameViewSpace();
 }
 
 Ref<DOMRect> MediaControlsHost::mediaControlsContextMenuAnchorRectForBindings(HTMLElement& target)
