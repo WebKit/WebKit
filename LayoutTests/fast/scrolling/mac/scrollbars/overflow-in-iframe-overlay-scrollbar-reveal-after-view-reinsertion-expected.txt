@@ -1,0 +1,19 @@
+
+Test that overlay scrollbars on overflow inside an iframe still show after the view is removed from the window and added back
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial state
+enabled
+MayBegin should show the scrollbar
+PASS Scrollbar state: enabled,visible_thumb
+Cancelled should hide the scrollbar
+PASS Scrollbar state: enabled
+Remove the view from the window and add it back, like switching tabs away and back
+MayBegin should show the scrollbar again
+PASS Scrollbar state: enabled,visible_thumb
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

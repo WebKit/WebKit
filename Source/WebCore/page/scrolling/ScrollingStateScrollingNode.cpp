@@ -190,7 +190,8 @@ OptionSet<ScrollingStateNode::Property> ScrollingStateScrollingNode::applicableP
         Property::ScrolledContentsLayer,
         Property::HorizontalScrollbarLayer,
         Property::VerticalScrollbarLayer,
-        Property::PainterForScrollbar
+        Property::PainterForScrollbar,
+        Property::ScrollbarEnabledState
     };
 
     auto properties = ScrollingStateNode::applicableProperties();
