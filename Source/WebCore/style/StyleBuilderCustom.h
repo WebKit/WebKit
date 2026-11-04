@@ -55,6 +55,7 @@
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleKeyword+CSSValueConversion.h"
+#include "StyleKeywordColor.h"
 #include "StylePrimitiveNumericOrKeyword+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StyleResolveForFont.h"
@@ -112,6 +113,7 @@ public:
     static void applyHighlightValueColor(BuilderState&, CSSValue&);
 
     // Custom handling of value setting only.
+    static void applyValueAccentColor(BuilderState&, CSSValue&);
     static void applyValueTextOrientation(BuilderState&, CSSValue&);
     static void applyValueWebkitTextSizeAdjust(BuilderState&, CSSValue&);
     static void applyValueWebkitTextZoom(BuilderState&, CSSValue&);
@@ -663,19 +665,42 @@ inline void BuilderCustom::applyInitialColor(BuilderState& builderState)
 
     if (builderState.applyPropertyToRegularStyle()) {
         auto styleColor = toStyle(initialColor, builderState, ForVisitedLink::No);
-        builderState.style().setColor(styleColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+        ResolvedColors resolvedColors {
+            builderState.parentStyle().color(),
+            builderState.style().accentColor().colorOrDefaultColor(),
+            StyleColorOptionsPurpose::ComputedStyle
+        };
+        builderState.style().setColor(styleColor.resolveColor(resolvedColors));
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        if (axCustomColorModeActive)
-            builderState.style().setOverrideColor(styleColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+        if (axCustomColorModeActive) {
+            ResolvedColors resolvedColors {
+                builderState.parentStyle().color(),
+                builderState.style().accentColor().colorOrDefaultColor(),
+                StyleColorOptionsPurpose::Rendering
+            };
+            builderState.style().setOverrideColor(styleColor.resolveColor(resolvedColors));
+        }
 #endif
     }
 
     if (builderState.applyPropertyToVisitedLinkStyle()) {
         auto styleColor = toStyle(initialColor, builderState, ForVisitedLink::Yes);
-        builderState.style().setVisitedLinkColor(styleColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+        ResolvedColors resolvedColors {
+            builderState.parentStyle().visitedLinkColor(),
+            builderState.style().accentColor().colorOrDefaultColor(),
+            StyleColorOptionsPurpose::ComputedStyle
+        };
+        builderState.style().setVisitedLinkColor(styleColor.resolveColor(resolvedColors));
+
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        if (axCustomColorModeActive)
-            builderState.style().setOverrideVisitedLinkColor(styleColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+        if (axCustomColorModeActive) {
+            ResolvedColors resolvedColors {
+                builderState.parentStyle().visitedLinkColor(),
+                builderState.style().accentColor().colorOrDefaultColor(),
+                StyleColorOptionsPurpose::Rendering
+            };
+            builderState.style().setOverrideVisitedLinkColor(styleColor.resolveColor(resolvedColors));
+        }
 #endif
     }
 
@@ -692,19 +717,43 @@ inline void BuilderCustom::applyValueColor(BuilderState& builderState, CSSValue&
 
     if (builderState.applyPropertyToRegularStyle()) {
         auto color = toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::No);
-        builderState.style().setColor(color.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+        ResolvedColors resolvedColors {
+            builderState.parentStyle().color(),
+            builderState.style().accentColor().colorOrDefaultColor(),
+            StyleColorOptionsPurpose::ComputedStyle
+        };
+        builderState.style().setColor(color.resolveColor(resolvedColors));
+
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        if (axCustomColorModeActive)
-            builderState.style().setOverrideColor(color.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+        if (axCustomColorModeActive) {
+            ResolvedColors resolvedColors {
+                builderState.parentStyle().color(),
+                builderState.style().accentColor().colorOrDefaultColor(),
+                StyleColorOptionsPurpose::Rendering
+            };
+            builderState.style().setOverrideColor(color.resolveColor(resolvedColors));
+        }
 #endif
     }
 
     if (builderState.applyPropertyToVisitedLinkStyle()) {
         auto color = toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::Yes);
-        builderState.style().setVisitedLinkColor(color.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+        ResolvedColors resolvedColors {
+            builderState.parentStyle().visitedLinkColor(),
+            builderState.style().accentColor().colorOrDefaultColor(),
+            StyleColorOptionsPurpose::ComputedStyle
+        };
+        builderState.style().setVisitedLinkColor(color.resolveColor(resolvedColors));
+
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        if (axCustomColorModeActive)
-            builderState.style().setOverrideVisitedLinkColor(color.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+        if (axCustomColorModeActive) {
+            ResolvedColors resolvedColors {
+                builderState.parentStyle().visitedLinkColor(),
+                builderState.style().accentColor().colorOrDefaultColor(),
+                StyleColorOptionsPurpose::Rendering
+            };
+            builderState.style().setOverrideVisitedLinkColor(color.resolveColor(resolvedColors));
+        }
 #endif
     }
 
@@ -734,19 +783,41 @@ inline void BuilderCustom::applyHighlightInheritColor(BuilderState& builderState
     auto& inheritedColor = parentHighlightStyle ? parentHighlightStyle->colorForHighlight() : Color::currentColor();
 
     if (builderState.applyPropertyToRegularStyle()) {
-        builderState.style().setColor(inheritedColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+        ResolvedColors resolvedColors {
+            builderState.parentStyle().color(),
+            builderState.style().accentColor().colorOrDefaultColor(),
+            StyleColorOptionsPurpose::ComputedStyle
+        };
+        builderState.style().setColor(inheritedColor.resolveColor(resolvedColors));
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        if (axCustomColorModeActive)
-            builderState.style().setOverrideColor(inheritedColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+        if (axCustomColorModeActive) {
+            ResolvedColors resolvedColors {
+                builderState.parentStyle().color(),
+                builderState.style().accentColor().colorOrDefaultColor(),
+                StyleColorOptionsPurpose::Rendering
+            };
+            builderState.style().setOverrideColor(inheritedColor.resolveColor(resolvedColors));
+        }
 #endif
         builderState.style().setColorForHighlight(Color { inheritedColor });
     }
     // FIXME: visitedLinkColor needs its own unresolved value for this.
     if (builderState.applyPropertyToVisitedLinkStyle()) {
-        builderState.style().setVisitedLinkColor(inheritedColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+        ResolvedColors resolvedColors {
+            builderState.parentStyle().visitedLinkColor(),
+            builderState.style().accentColor().colorOrDefaultColor(),
+            StyleColorOptionsPurpose::ComputedStyle
+        };
+        builderState.style().setVisitedLinkColor(inheritedColor.resolveColor(resolvedColors));
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-        if (axCustomColorModeActive)
-            builderState.style().setOverrideVisitedLinkColor(inheritedColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+        if (axCustomColorModeActive) {
+            ResolvedColors resolvedColors {
+                builderState.parentStyle().visitedLinkColor(),
+                builderState.style().accentColor().colorOrDefaultColor(),
+                StyleColorOptionsPurpose::Rendering
+            };
+            builderState.style().setOverrideVisitedLinkColor(inheritedColor.resolveColor(resolvedColors));
+        }
 #endif
     }
 
@@ -766,6 +837,30 @@ inline void BuilderCustom::applyHighlightValueColor(BuilderState& builderState, 
 
     if (builderState.applyPropertyToRegularStyle())
         builderState.style().setColorForHighlight(toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::No));
+}
+
+inline void BuilderCustom::applyValueAccentColor(BuilderState& builderState, CSSValue& value)
+{
+    auto accentColor = toStyleFromCSSValue<AccentColor>(builderState, value);
+
+    if (auto styleColor = accentColor.tryColor()) {
+        if (styleColor->containsCurrentAccentColor()) [[unlikely]] {
+            Color parentAccentColor =
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+                KeywordColor {
+                    protect(builderState.parentStyle())->accentColorResolvingCurrentColor(),
+                    protect(builderState.parentStyle())->accentColorResolvingCurrentColorApplyingColorFilter(),
+                };
+#else
+                ResolvedColor { protect(builderState.parentStyle())->accentColorResolvingCurrentColor() };
+#endif
+
+            // Replaces any CurrentAccentColor children with the accent color of the parent.
+            accentColor = replaceCurrentAccentColor(*styleColor, parentAccentColor);
+        }
+    }
+
+    builderState.style().setAccentColor(WTF::move(accentColor));
 }
 
 } // namespace Style

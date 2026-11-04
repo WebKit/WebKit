@@ -105,6 +105,26 @@ bool containsCurrentColor(const ColorMix& colorMix)
     });
 }
 
+bool containsCurrentAccentColor(const ColorMix& colorMix)
+{
+    return std::ranges::any_of(colorMix.components, [&](auto& component) {
+        return WebCore::Style::containsCurrentAccentColor(component.color);
+    });
+}
+
+Color replaceCurrentAccentColor(const ColorMix& colorMix, const Color& replaced)
+{
+    return ColorMix {
+        .colorInterpolationMethod = colorMix.colorInterpolationMethod,
+        .components = colorMix.components.map([&](const ColorMix::Component& component) {
+            return ColorMix::Component {
+                .color = replaceCurrentAccentColor(component.color, replaced),
+                .percentage = component.percentage
+            };
+        })
+    };
+}
+
 // MARK: - Serialization
 
 namespace ColorMixSerializationDetails {

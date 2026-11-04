@@ -277,6 +277,11 @@ bool Color::containsCurrentColor() const
     return switchOn([](const auto& kind) { return WebCore::Style::containsCurrentColor(kind); });
 }
 
+bool Color::containsCurrentAccentColor() const
+{
+    return switchOn([](const auto& kind) { return WebCore::Style::containsCurrentAccentColor(kind); });
+}
+
 bool Color::isCurrentColor() const
 {
     return std::holds_alternative<CurrentColor>(value);
@@ -346,6 +351,17 @@ WebCore::Color resolveColor(const Color& value, const ResolvedColors& resolvedCo
 bool containsCurrentColor(const Color& value)
 {
     return value.containsCurrentColor();
+}
+
+bool containsCurrentAccentColor(const Color& value)
+{
+    return value.containsCurrentAccentColor();
+}
+
+Color replaceCurrentAccentColor(const Color& color, const Color& replaced)
+{
+    // FIXME: should optimize this to avoid creating copies.
+    return color.switchOn([&](const auto& kind) { return replaceCurrentAccentColor(kind, replaced); });
 }
 
 // MARK: - Serialization
