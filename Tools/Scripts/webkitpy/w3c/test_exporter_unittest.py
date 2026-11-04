@@ -28,9 +28,11 @@ from unittest.mock import patch
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2
+from webkitpy.w3c import test_exporter
 from webkitpy.w3c.test_exporter import WebPlatformTestExporter, parse_args, wpt_commit_message
 from webkitbugspy import mocks as bmocks, Tracker, bugzilla
 from webkitcorepy import mocks as wkmocks, run, testing, OutputCapture
+from webkitcorepy.mocks import Terminal as MockTerminal
 from webkitscmpy import mocks as mocks
 
 
@@ -1453,6 +1455,157 @@ diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/heade
             git_mock.head.message = f'Test\n{self.BUGZILLA_URL}/show_bug.cgi?id=1\n'
             exporter = WebPlatformTestExporter(host, options)
         self.assertFalse(exporter.has_wpt_changes())
+
+
+class CheckExportTest(unittest.TestCase):
+    EXISTING_PR = 'https://github.com/web-platform-tests/wpt/pull/1'
+
+    class FakeExporter(object):
+        instances = []
+        wpt_commits = set()
+        existing = (None, False)
+
+        def __init__(self, host, options):
+            self._options = options
+            self._bug = type('Bug', (), {'link': 'https://bugs.example.com/show_bug.cgi?id=1'})()
+            self.recorded = []
+            self.instances.append(self)
+
+        def has_wpt_changes(self):
+            return self._options.git_commit in self.wpt_commits
+
+        def find_existing_wpt_pull_request(self):
+            return self.existing
+
+        def record_existing_wpt_pull_request(self, url):
+            self.recorded.append(url)
+
+    def setUp(self):
+        self.FakeExporter.instances = []
+        self.FakeExporter.wpt_commits = set()
+        self.FakeExporter.existing = (None, False)
+        self.export_calls = []
+        self.export_result = 0
+        self.webkit_base = '/webkit'
+        self.repository = type('Repository', (), {'root_path': '/webkit'})()
+        self.commits = [self.make_commit('a' * 40), self.make_commit('b' * 40)]
+
+        def main(argv, stdout, stderr):
+            self.export_calls.append(argv)
+            return self.export_result
+
+        for patcher in (
+            patch('webkitpy.w3c.test_exporter.Host', lambda: MockHost()),
+            patch('webkitpy.w3c.test_exporter.WebKitFinder', lambda fs: type('Finder', (), {'webkit_base': lambda finder: self.webkit_base})()),
+            patch('webkitpy.w3c.test_exporter.WebPlatformTestExporter', self.FakeExporter),
+            patch('webkitpy.w3c.test_exporter.configure_logging', lambda: None),
+            patch('webkitpy.w3c.test_exporter.main', main),
+        ):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    @staticmethod
+    def make_commit(hash, message='Some change'):
+        return type('Commit', (), {'hash': hash, 'message': message})()
+
+    def check(self, **kwargs):
+        with OutputCapture(level=logging.INFO) as captured:
+            test_exporter.check_export(self.repository, self.commits, **kwargs)
+        return captured
+
+    def test_different_checkout(self):
+        self.webkit_base = '/other'
+        self.FakeExporter.wpt_commits = {'b' * 40}
+        self.assertEqual(self.check().stdout.getvalue(), '')
+        self.assertEqual(self.FakeExporter.instances, [])
+
+    def test_import_or_resync_is_not_exported(self):
+        for title in ('Resync WPT webcodecs tests', 'resync wpt/fetch', 'RESYNC wpt', 'Import WPT fetch tests', 'import WPT css', 'Importing WPT tests', 'Reimport WPT tests', 'Reimporting WPT tests', 'Re-import WPT tests', 'Re-importing WPT tests', 'Sync WPT tests', 'Syncing WPT tests', 'Re-sync WPT tests', 'Synchronize WPT tests', 'Synchronizing WPT tests'):
+            self.commits = [self.make_commit('a' * 40, title + '\n\nBody')]
+            self.FakeExporter.instances = []
+            self.FakeExporter.wpt_commits = {'a' * 40}
+            captured = self.check()
+            self.assertEqual(
+                captured.stdout.getvalue(),
+                'Skipping web-platform-tests pull request creation: this change is a WPT import or sync.\n',
+            )
+            self.assertEqual(self.FakeExporter.instances, [])
+        self.assertEqual(self.export_calls, [])
+
+    def test_import_title_requires_wpt(self):
+        for title in ('Resync the cache', 'Import the cache', 'Update WPT tests', 'Resync web-platform-tests', 'Resync swiftwpt', 'Imported WPT tests', 'Reimported WPT tests', 'Re-imported WPT tests', 'Resynced WPT tests', 'Synced WPT tests', 'Synchronized WPT tests'):
+            self.commits = [self.make_commit('a' * 40, title)]
+            self.FakeExporter.wpt_commits = {'a' * 40}
+            self.assertIn('has not been exported yet', self.check(interactive=False).stdout.getvalue())
+
+    def test_import_commit_skipped_among_others(self):
+        self.commits = [self.make_commit('a' * 40, 'Resync WPT tests'), self.make_commit('b' * 40)]
+        self.FakeExporter.wpt_commits = {'a' * 40, 'b' * 40}
+        self.assertIn('-c -g ' + 'b' * 40, self.check(interactive=False).stdout.getvalue())
+
+    def test_no_wpt_changes(self):
+        self.assertEqual(self.check().stdout.getvalue(), '')
+        self.assertEqual(len(self.FakeExporter.instances), 2)
+        self.assertEqual(self.export_calls, [])
+
+    def test_newest_commit_with_changes_is_used(self):
+        self.FakeExporter.wpt_commits = {'a' * 40, 'b' * 40}
+        self.FakeExporter.existing = (self.EXISTING_PR, True)
+        self.check()
+        self.assertEqual([e._options.git_commit for e in self.FakeExporter.instances], ['b' * 40])
+
+    def test_existing_pull_request_already_on_bug(self):
+        self.FakeExporter.wpt_commits = {'a' * 40}
+        self.FakeExporter.existing = (self.EXISTING_PR, True)
+        captured = self.check()
+        self.assertEqual(captured.stdout.getvalue(), f'Found web-platform-tests pull request: {self.EXISTING_PR}\n')
+        self.assertEqual(self.FakeExporter.instances[-1].recorded, [])
+        self.assertEqual(self.export_calls, [])
+
+    def test_existing_pull_request_commented_on_bug(self):
+        self.FakeExporter.wpt_commits = {'a' * 40}
+        self.FakeExporter.existing = (self.EXISTING_PR, False)
+        captured = self.check()
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            f'Found web-platform-tests pull request: {self.EXISTING_PR}\n'
+            'Posted web-platform-tests pull request link to https://bugs.example.com/show_bug.cgi?id=1\n',
+        )
+        self.assertEqual(self.FakeExporter.instances[-1].recorded, [self.EXISTING_PR])
+        self.assertEqual(self.export_calls, [])
+
+    def test_non_interactive_does_not_prompt(self):
+        self.FakeExporter.wpt_commits = {'a' * 40}
+        captured = self.check(interactive=False)
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'This change modifies web-platform-tests and has not been exported yet.\n'
+            f"To export it later, run 'Tools/Scripts/export-w3c-test-changes -c -g {'a' * 40}'\n",
+        )
+        self.assertEqual(self.export_calls, [])
+
+    def test_decline_export(self):
+        self.FakeExporter.wpt_commits = {'a' * 40}
+        with MockTerminal.input('n'):
+            captured = self.check()
+        self.assertIn('To export it later', captured.stdout.getvalue())
+        self.assertEqual(self.export_calls, [])
+
+    def test_accept_export(self):
+        self.FakeExporter.wpt_commits = {'a' * 40}
+        with MockTerminal.input('y'):
+            captured = self.check()
+        self.assertNotIn('To export it later', captured.stdout.getvalue())
+        self.assertEqual(self.export_calls, [['-c', '-g', 'a' * 40]])
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_failed_export_is_not_fatal(self):
+        self.FakeExporter.wpt_commits = {'a' * 40}
+        self.export_result = 1
+        with MockTerminal.input('y'):
+            captured = self.check()
+        self.assertEqual(self.export_calls, [['-c', '-g', 'a' * 40]])
+        self.assertEqual(captured.stderr.getvalue(), 'Failed to export to web-platform-tests, error is non fatal, continuing...\n')
 
 
 class WPTCommitMessageTest(unittest.TestCase):

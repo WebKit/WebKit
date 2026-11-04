@@ -84,7 +84,8 @@ def main(
     identifier_template: PerRepository[IdentifierTrailer | str] | None = None, subversion: PerRepository[str] | None = None,
     additional_setup: Callable[..., Any] | None = None, hooks: PerRepository[str] | None = None,
     canonical_svn: PerRepository[bool] | None = None, programs: list[type[Command]] | None = None,
-    classifier: PerRepository[CommitClassifier] | None = None, fallback_path: str | None = None, **kwargs: Any
+    classifier: PerRepository[CommitClassifier] | None = None, fallback_path: str | None = None,
+    wpt_export_check: PerRepository[Callable[..., Any]] | None = None, **kwargs: Any
 ) -> int:
     logging.basicConfig(level=logging.WARNING)
 
@@ -202,6 +203,9 @@ def main(
     if callable(canonical_svn):
         canonical_svn = canonical_svn(repository) if repository else None
 
+    if callable(wpt_export_check):
+        wpt_export_check = wpt_export_check(repository) if repository else None
+
     if not getattr(parsed, 'main', None):
         parser.print_help()
         return -1
@@ -221,6 +225,7 @@ def main(
                 hooks=hooks,
                 canonical_svn=canonical_svn,
                 fallback_path=fallback_path,
+                wpt_export_check=wpt_export_check,
             )
             return result
         except Exception:

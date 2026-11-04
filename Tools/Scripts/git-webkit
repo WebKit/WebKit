@@ -60,6 +60,11 @@ def classifier():
         return CommitClassifier.load(file)
 
 
+def wpt_export_check(repository, commits, interactive=True):
+    from webkitpy.w3c import test_exporter
+    return test_exporter.check_export(repository, commits, interactive=interactive)
+
+
 if '__main__' == __name__:
     _script_dir = os.path.dirname(os.path.abspath(__file__))
     _root = os.path.dirname(os.path.dirname(_script_dir))
@@ -69,5 +74,6 @@ if '__main__' == __name__:
         hooks=os.path.join(_script_dir, 'hooks'),
         classifier=is_webkit_filter(classifier()),
         fallback_path=_root,
+        wpt_export_check=is_webkit_filter(wpt_export_check),
     ))
 
