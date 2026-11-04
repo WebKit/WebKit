@@ -118,8 +118,6 @@ http/tests/iframe-monitor/ [ Pass ]
 
 http/tests/ipc/write-web-archive-frame-ancestry-check.html [ Pass ]
 
-webkit.org/b/308178 [ Tahoe+ Debug arm64 ] http/tests/site-isolation/mouse-events/context-menu-event-twice.html [ Pass Timeout ]
-
 # Some of these have failing results: webkit.org/b/293983
 imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html [ Pass ]
 imported/w3c/web-platform-tests/dom/events/scrolling/scroll-cross-origin-iframes.html [ Pass ]
