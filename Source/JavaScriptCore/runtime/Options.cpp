@@ -644,6 +644,14 @@ static void overrideDefaults()
     }
 #endif
 
+#if OS(LINUX) && !OS(ANDROID) && CPU(ARM64)
+    constexpr int maxCoresForThresholdScaling = 4;
+    if (WTF::numberOfProcessorCores() <= maxCoresForThresholdScaling) {
+        Options::thresholdForFTLOptimizeAfterWarmUp() *= Options::ftlThresholdScaleForFewCores();
+        Options::thresholdForFTLOptimizeSoon() *= Options::ftlThresholdScaleForFewCores();
+    }
+#endif
+
 #if USE(MEMORY_FOOTPRINT_API)
     // On iOS and conditionally Linux, we control heap growth using process memory footprint. Therefore these values can be agressive.
     Options::smallHeapRAMFraction() = 0.8;
