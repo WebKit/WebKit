@@ -16971,6 +16971,91 @@ TEST(SiteIsolation, RequestRectForFoundTextRangeIOS)
     EXPECT_GT(CGRectGetHeight(receivedRect), 0);
 }
 
+static CGRect loadAndRequestRectForFoundTextRange(TestWKWebView *webView, TestNavigationDelegate *navigationDelegate, NSString *url, void (^prepare)(TestWKWebView *, WKFrameInfo *))
+{
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    if (prepare)
+        prepare(webView, [webView firstChildFrame]);
+
+    auto ranges = textRangesForQueryString(webView, @"world");
+    EXPECT_EQ([ranges count], (NSUInteger)1);
+
+    __block bool didReceiveRect = false;
+    __block CGRect receivedRect = CGRectNull;
+    [webView _requestRectForFoundTextRange:[ranges firstObject] completionHandler:^(CGRect rect) {
+        receivedRect = rect;
+        didReceiveRect = true;
+    }];
+    TestWebKitAPI::Util::run(&didReceiveRect);
+    return receivedRect;
+}
+
+static void checkRectForFoundTextRangeInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, void (^prepare)(TestWKWebView *, WKFrameInfo *) = nil)
+{
+    HTTPServer server({
+        { "/control"_s, { makeStringByReplacingAll(mainframeHTML, "domain2.com"_s, "domain1.com"_s) } },
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    // The control page uses a same-origin iframe, which is in the main frame's process.
+    CGRect controlRect = loadAndRequestRectForFoundTextRange(webView.get(), navigationDelegate.get(), @"https://domain1.com/control", prepare);
+    EXPECT_FALSE(CGRectIsEmpty(controlRect));
+
+    CGRect rect = loadAndRequestRectForFoundTextRange(webView.get(), navigationDelegate.get(), @"https://domain1.com/mainframe", prepare);
+
+    // If the rect were left in the iframe's local root-view coordinates instead of being
+    // converted to main-frame view coordinates, this would not match the control's rect.
+    EXPECT_NEAR(CGRectGetMinX(rect), CGRectGetMinX(controlRect), 1);
+    EXPECT_NEAR(CGRectGetMinY(rect), CGRectGetMinY(controlRect), 1);
+    EXPECT_NEAR(CGRectGetWidth(rect), CGRectGetWidth(controlRect), 1);
+    EXPECT_NEAR(CGRectGetHeight(rect), CGRectGetHeight(controlRect), 1);
+}
+
+static ASCIILiteral foundTextRangeSubframeHTML = "<body style='margin: 0; font-family: monospace; font-size: 24px;'><p style='margin: 0'>Hello world</p></body>"_s;
+static ASCIILiteral tallFoundTextRangeSubframeHTML = "<body style='margin: 0; padding-top: 500px; min-height: 1000px; font-family: monospace; font-size: 24px;'><p style='margin: 0'>Hello world</p></body>"_s;
+
+TEST(SiteIsolation, RequestRectForFoundTextRangeInCrossOriginIframeIOS)
+{
+    checkRectForFoundTextRangeInCrossOriginIframe(
+        "<body style='margin: 0'><iframe style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        foundTextRangeSubframeHTML
+    );
+}
+
+TEST(SiteIsolation, RequestRectForFoundTextRangeInCrossOriginIframeWithScrolledMainFrameIOS)
+{
+    checkRectForFoundTextRangeInCrossOriginIframe(
+        "<body style='margin: 0; height: 2000px'><iframe style='display: block; margin-left: 100px; margin-top: 500px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        foundTextRangeSubframeHTML,
+        ^(TestWKWebView *webView, WKFrameInfo *) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
+            EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 400;
+            }));
+            [webView waitForNextPresentationUpdate];
+        }
+    );
+}
+
+TEST(SiteIsolation, RequestRectForFoundTextRangeInScrolledCrossOriginIframeIOS)
+{
+    checkRectForFoundTextRangeInCrossOriginIframe(
+        "<body style='margin: 0'><iframe style='margin: 100px; width: 500px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        tallFoundTextRangeSubframeHTML,
+        ^(TestWKWebView *webView, WKFrameInfo *childFrameInfo) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
+            EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:childFrameInfo] intValue] == 500;
+            }));
+            [webView waitForNextPresentationUpdate];
+        }
+    );
+}
+
 #endif
 
 TEST(SiteIsolation, MainPageNavigatesCrossOriginIframeToAboutBlank)
