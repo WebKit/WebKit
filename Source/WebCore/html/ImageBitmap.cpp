@@ -780,8 +780,16 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         return;
     }
 
-    FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawVideoFrame(*internalFrame, destRect, ShouldDiscardAlpha::Yes, { internalFrame->orientation(), drawsHDRContent });
+    // The frame's image is its visible rectangle at its display size, which the source rectangle crops: the whole
+    // frame is drawn where that puts it, clipped to the image.
+    auto& sourceRect = sourceRectangle.returnValue();
+    auto& context = bitmapData->context();
+    GraphicsContextStateSaver stateSaver(context);
+    context.scale(FloatSize(outputSize.width() / static_cast<float>(sourceRect.width()), outputSize.height() / static_cast<float>(sourceRect.height())));
+    context.translate(-FloatPoint(sourceRect.location()));
+    context.clip(FloatRect { { }, FloatSize(videoFrame->displayWidth(), videoFrame->displayHeight()) });
+    context.drawVideoFrame(*internalFrame, videoFrame->renderingRect(*internalFrame), ShouldDiscardAlpha::Yes, { internalFrame->orientation(), drawsHDRContent });
+    stateSaver.restore();
 
     auto imageBitmap = create(bitmapData.releaseNonNull(), originClean);
     completionHandler(WTF::move(imageBitmap));

@@ -30,6 +30,7 @@
 #include <WebCore/CanvasImageSource.h>
 #include <WebCore/ContextDestructionObserver.h>
 #include <WebCore/DOMRectReadOnly.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <WebCore/PlaneLayout.h>
 #include <WebCore/PredefinedColorSpace.h>
@@ -140,6 +141,9 @@ public:
     RefPtr<VideoFrame> internalFrame() const { return m_data.internalFrame; }
     // Returns the frame to render, without its rotation if WebCodecsVideoFrameRotationEnabled is off.
     RefPtr<VideoFrame> internalFrameForRendering(ScriptExecutionContext&) const;
+    // Where to draw a frame of internalFrameForRendering() whole, in its orientation, for the visible rectangle to fill
+    // the display size from the origin, which is this frame's canvas image.
+    FloatRect renderingRect(const VideoFrame& renderedFrame) const;
 
     NODELETE void setDisplaySize(size_t, size_t);
     NODELETE void setVisibleRect(const DOMRectInit&);

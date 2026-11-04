@@ -2010,7 +2010,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CSSStyleImageValue& im
 }
 
 #if ENABLE(WEB_CODECS)
-ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& frame, const FloatRect&, const FloatRect& dstRect)
+ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& frame, const FloatRect& srcRect, const FloatRect& dstRect)
 {
     // Let usability be the result of checking the usability of image.
     auto usability = checkUsability(frame);
@@ -2021,8 +2021,18 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
     if (usability.returnValue() == CanvasImageSourceUsability::Bad)
         return { };
 
+    if (!srcRect.width() || !srcRect.height())
+        return { };
+
+    auto normalizedSrcRect = normalizeRect(srcRect);
+    auto normalizedDstRect = normalizeRect(dstRect);
+    if (normalizedSrcRect.isEmpty() || normalizedDstRect.isEmpty())
+        return { };
+
     auto* context = effectiveDrawingContext();
     if (!context)
+        return { };
+    if (!hasInvertibleTransform()) [[unlikely]]
         return { };
 
     RefPtr scriptContext = protect(canvasBase())->scriptExecutionContext();
@@ -2033,7 +2043,6 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
     if (!internalFrame)
         return { };
 
-    auto normalizedDstRect = normalizeRect(dstRect);
     auto compositeOperator = state().globalComposite;
 
     RasterDrawingOptions options = {
@@ -2045,9 +2054,16 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
         state().globalBlend
     };
 
+    // The frame's canvas image is its visible rectangle at its display size, of which the source rectangle selects a
+    // part: the whole frame is drawn where that puts it, clipped to the image and the destination.
     auto draw = [&](GraphicsContext& drawingContext, const FloatRect& destination, RasterDrawingOptions drawingOptions) {
-        // FIXME: Add support for srcRect
-        drawingContext.drawVideoFrame(*internalFrame, destination, ShouldDiscardAlpha::No, drawingOptions);
+        GraphicsContextStateSaver stateSaver(drawingContext);
+        drawingContext.clip(destination);
+        drawingContext.translate(destination.location());
+        drawingContext.scale(FloatSize(destination.width() / normalizedSrcRect.width(), destination.height() / normalizedSrcRect.height()));
+        drawingContext.translate(-normalizedSrcRect.location());
+        drawingContext.clip(FloatRect { { }, size(frame) });
+        drawingContext.drawVideoFrame(*internalFrame, frame.renderingRect(*internalFrame), ShouldDiscardAlpha::No, drawingOptions);
     };
 
     // FIXME: Can we avoid post-processing in any cases?
