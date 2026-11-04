@@ -62,7 +62,7 @@ WI.StorageManager = class StorageManager extends WI.Object
         if (!this._enabled)
             return;
 
-        // COMPATIBILITY (macOS 26.2, iOS 26.2): The Storage domain did not exist yet. Like Browser,
+        // COMPATIBILITY (macOS 27.0, iOS 27.0): The Storage domain did not exist yet. Like Browser,
         // it lives on the UIProcess (multiplexing) target, exposed as WI.backendTarget.StorageAgent.
         if (target.hasDomain("Storage"))
             target.StorageAgent.enable();
@@ -99,7 +99,7 @@ WI.StorageManager = class StorageManager extends WI.Object
         console.assert(this._enabled);
 
         for (let target of WI.targets) {
-            // COMPATIBILITY (macOS 26.2, iOS 26.2): The Storage domain did not exist yet.
+            // COMPATIBILITY (macOS 27.0, iOS 27.0): The Storage domain did not exist yet.
             if (target.hasDomain("Storage"))
                 target.StorageAgent.disable();
         }

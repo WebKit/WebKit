@@ -39,7 +39,7 @@ WI.CanvasObserver = class CanvasObserver extends InspectorBackend.Dispatcher
 
     canvasSizeChanged(canvasId, sizes)
     {
-        // COMPATIBILITY (macOS X.Y, iOS X.Y): `width` and `height` were replaced by `sizes`.
+        // COMPATIBILITY (macOS 27.0, iOS 27.0): `width` and `height` were replaced by `sizes`.
         if (!Array.isArray(sizes))
             sizes = Number.isFinite(sizes) && Number.isFinite(arguments[2]) ? [{width: sizes, height: arguments[2]}] : [];
 
@@ -113,7 +113,7 @@ WI.CanvasObserver = class CanvasObserver extends InspectorBackend.Dispatcher
         WI.canvasManager.programNameChanged(this._target, programId, name);
     }
 
-    // COMPATIBILITY (macOS X.Y, iOS X.Y): `Canvas.clientNodesChanged` was renamed to `Canvas.cssCanvasClientNodesChanged`.
+    // COMPATIBILITY (macOS 27.0, iOS 27.0): `Canvas.clientNodesChanged` was renamed to `Canvas.cssCanvasClientNodesChanged`.
     clientNodesChanged(canvasId)
     {
         WI.canvasManager.cssCanvasClientNodesChanged(this._target, canvasId);

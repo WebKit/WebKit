@@ -116,11 +116,11 @@ WI.Canvas = class Canvas extends WI.Object
 
         let sizes = payload.sizes?.map(WI.Size.fromJSON) || [];
 
-        // COMPATIBILITY (macOS X.Y, iOS X.Y): `width` and `height` were replaced by `sizes`.
+        // COMPATIBILITY (macOS 27.0, iOS 27.0): `width` and `height` were replaced by `sizes`.
         if (!payload.sizes && "width" in payload && "height" in payload)
             sizes.push(new WI.Size(payload.width, payload.height));
 
-        // COMPATIBILITY (macOS X.Y, iOS X.Y): `cssCanvasName` was renamed to `cssCanvasNames`.
+        // COMPATIBILITY (macOS 27.0, iOS 27.0): `cssCanvasName` was renamed to `cssCanvasNames`.
         let cssCanvasNames = payload.cssCanvasNames || (payload.cssCanvasName ? [payload.cssCanvasName] : []);
 
         // COMPATIBILITY (macOS 13.0, iOS 16.0): `backtrace` was renamed to `stackTrace`.
@@ -265,7 +265,7 @@ WI.Canvas = class Canvas extends WI.Object
     {
         if (!this._requestNodesPromise) {
             let requestPromise;
-            // COMPATIBILITY (macOS X.Y, iOS X.Y): `Canvas.requestNode` was renamed to `Canvas.requestNodes`.
+            // COMPATIBILITY (macOS 27.0, iOS 27.0): `Canvas.requestNode` was renamed to `Canvas.requestNodes`.
             if (this._target.hasCommand("Canvas.requestNode")) {
                 WI.domManager.ensureDocument();
                 requestPromise = this._target.CanvasAgent.requestNode(this._identifier).then(({nodeId}) => ({nodeIds: nodeId ? [nodeId] : []}));
@@ -296,7 +296,7 @@ WI.Canvas = class Canvas extends WI.Object
     {
         if (!this._requestCSSCanvasClientNodesPromise) {
             let requestPromise;
-            // COMPATIBILITY (macOS X.Y, iOS X.Y): `Canvas.requestCSSCanvasClientNodes` was temporarily renamed to `Canvas.requestClientNodes`.
+            // COMPATIBILITY (macOS 27.0, iOS 27.0): `Canvas.requestCSSCanvasClientNodes` was temporarily renamed to `Canvas.requestClientNodes`.
             if (this._target.hasCommand("Canvas.requestClientNodes")) {
                 WI.domManager.ensureDocument();
                 requestPromise = this._target.CanvasAgent.requestClientNodes(this._identifier);

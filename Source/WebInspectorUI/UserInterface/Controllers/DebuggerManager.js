@@ -1134,7 +1134,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     {
         let targetData = this.dataForTarget(target);
 
-        // COMPATIBILITY (macOS X.Y, iOS X.Y): Older backends could report the same script more than once.
+        // COMPATIBILITY (macOS 27.0, iOS 27.0): Older backends could report the same script more than once.
         let existingScript = targetData.scriptForIdentifier(scriptIdentifier);
         if (existingScript) {
             console.assert(existingScript.url === (url || null));

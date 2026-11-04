@@ -42,7 +42,7 @@ WI.DebuggerObserver = class DebuggerObserver extends InspectorBackend.Dispatcher
     scriptParsed(scriptId, url, startLine, startColumn, endLine, endColumn, executionContextId, scriptType, isContentScript, sourceURL, sourceMapURL, displayName, requestId)
     {
         if (this._legacyScriptParsed) {
-            // COMPATIBILITY (macOS X.Y, iOS X.Y): Older backends report `module` instead of `scriptType`.
+            // COMPATIBILITY (macOS 27.0, iOS 27.0): Older backends report `module` instead of `scriptType`.
             let isModule = sourceURL;
             sourceMapURL = isContentScript;
             sourceURL = scriptType;

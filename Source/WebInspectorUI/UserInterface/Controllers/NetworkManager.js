@@ -1755,7 +1755,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!WI.settings.experimentalEnableNetworkEmulatedCondition.value)
             return;
 
-        // COMPATIBILITY (macOS X.Y, iOS X.Y): Network.setEmulatedConditions did not exist.
+        // COMPATIBILITY (macOS 27.0, iOS 27.0): The latency paratemeter of Network.setEmulatedConditions did not exist.
         if (!target.hasCommand("Network.setEmulatedConditions"))
             return;
 
