@@ -415,6 +415,10 @@
 #include "PaymentCoordinator.h"
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
+
 #if ENABLE(WEB_CODECS)
 #include "JSWebCodecsVideoFrame.h"
 #endif
@@ -1726,6 +1730,18 @@ String Internals::computedAppleColorFilter(Element& element)
 {
     return Style::Extractor::appleColorFilterSerializationForTesting(element);
 }
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+void Internals::setAXCustomColorModeElementQuirksForTesting(const String& forceFilterSelector, const String& preserveAuthoredColorsSelector)
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page())
+        return;
+
+    protect(document->page())->settings().setNeedsSiteSpecificQuirks(true);
+    AXCustomColorModeController::setElementQuirkSelectorsForTesting(*document, forceFilterSelector, preserveAuthoredColorsSelector);
+}
+#endif
 
 String Internals::usedBackgroundColor(Element& element)
 {

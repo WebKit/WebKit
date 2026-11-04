@@ -307,6 +307,8 @@ auto SVGImageInstance::documentStateForDraw(const ImageDrawDescriptor& descripto
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     if (state.rendition.invertContent == InvertContent::FromResource)
         state.rendition.invertContent = m_fallbackInvertContent ? InvertContent::Yes : InvertContent::No;
+    else if (state.rendition.invertContent == InvertContent::Forced)
+        state.rendition.invertContent = InvertContent::Yes;
 #endif
 
     return state;

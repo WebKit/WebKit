@@ -322,6 +322,9 @@ public:
     float usedOutlineOffset(Element&);
 
     String computedAppleColorFilter(Element&);
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    void setAXCustomColorModeElementQuirksForTesting(const String& forceFilterSelector, const String& preserveAuthoredColorsSelector);
+#endif
     String usedBackgroundColor(Element&);
 
     Node& ensureUserAgentShadowRoot(Element& host);

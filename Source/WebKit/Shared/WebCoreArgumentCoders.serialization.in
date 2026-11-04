@@ -3540,7 +3540,8 @@ header: <WebCore/ImageTypes.h>
 [AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::InvertContent : uint8_t {
     FromResource,
     No,
-    Yes
+    Yes,
+    Forced
 };
 #endif
 

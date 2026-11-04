@@ -233,7 +233,14 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
     InterpolationQualityMaintainer interpolationMaintainer(graphicsContext, ImageQualityController::interpolationQualityFromStyle(style));
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    descriptor = { descriptor, styleImage->drawsSVGImage() && AXCustomColorModeController::shouldInvertSVGImage(renderer, *styleImage) ? InvertContent::Yes : InvertContent::No };
+    auto invertContent = [&] {
+        if (styleImage->drawsSVGImage())
+            return AXCustomColorModeController::shouldInvertSVGImage(renderer, *styleImage) ? InvertContent::Yes : InvertContent::No;
+        if constexpr (std::is_same_v<T, Style::MaskBorder>)
+            return InvertContent::No;
+        return AXCustomColorModeController::shouldForceInvertBitmapImage(renderer, *styleImage) ? InvertContent::Forced : InvertContent::No;
+    };
+    descriptor = { descriptor, invertContent() };
 #endif
 
     // FIXME: Remove suppression once rdar://189998444 is fixed.

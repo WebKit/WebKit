@@ -96,7 +96,8 @@ enum class ImageDrawResult {
 enum class InvertContent : uint8_t {
     FromResource,
     No,
-    Yes
+    Yes,
+    Forced
 };
 
 enum class ImagePaintTimeTransformation : uint8_t {

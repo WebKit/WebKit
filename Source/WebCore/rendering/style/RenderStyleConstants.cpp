@@ -98,6 +98,18 @@ TextStream& operator<<(TextStream& ts, AnimationPlayState playState)
     return ts;
 }
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+TextStream& operator<<(TextStream& ts, AppleColorFilterOverride colorFilterOverride)
+{
+    switch (colorFilterOverride) {
+    case AppleColorFilterOverride::None: ts << "none"_s; break;
+    case AppleColorFilterOverride::Preserve: ts << "preserve"_s; break;
+    case AppleColorFilterOverride::Force: ts << "force"_s; break;
+    }
+    return ts;
+}
+#endif
+
 TextStream& operator<<(TextStream& ts, AspectRatioType aspectRatioType)
 {
     switch (aspectRatioType) {

@@ -604,6 +604,7 @@ enum LayerType {
     float usedOutlineOffset(Element element);
 
     DOMString computedAppleColorFilter(Element element);
+    [Conditional=AX_CUSTOM_COLOR_MODE] undefined setAXCustomColorModeElementQuirksForTesting(DOMString forceFilterSelector, DOMString preserveAuthoredColorsSelector);
     DOMString usedBackgroundColor(Element element);
 
     Node ensureUserAgentShadowRoot(Element host);
