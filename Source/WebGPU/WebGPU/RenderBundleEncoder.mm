@@ -43,6 +43,7 @@
     Vector<WebGPU::Metal::BindableResources> _resources;
     HashMap<uint64_t, WebGPU::Metal::IndexBufferAndIndexData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> _minVertexCountForDrawCommand;
     WebGPU::Metal::IndirectDrawForSlotContainer _indirectDrawsForSlot;
+    Vector<uint64_t> _fragmentDynamicOffsetsHeaderOffsets;
 }
 
 static bool setCommandEncoder(auto& buffer, auto& renderPassEncoder)
@@ -51,7 +52,7 @@ static bool setCommandEncoder(auto& buffer, auto& renderPassEncoder)
     return !!renderPassEncoder->renderCommandEncoder();
 }
 
-- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb containerBuffer:(id<MTLBuffer>)containerBuffer pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer pipeline:(const WebGPU::Metal::RenderPipeline*)pipeline minVertexCounts:(WebGPU::Metal::RenderBundle::MinVertexCountsContainer*)minVertexCounts indirectDraws:(WebGPU::Metal::IndirectDrawForSlotContainer*)indirectDraws outOfBoundsReadFlag:(id<MTLBuffer>)outOfBoundsReadFlag
+- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb containerBuffer:(id<MTLBuffer>)containerBuffer pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer fragmentDynamicOffsetsHeaderOffsets:(Vector<uint64_t>*)fragmentDynamicOffsetsHeaderOffsets pipeline:(const WebGPU::Metal::RenderPipeline*)pipeline minVertexCounts:(WebGPU::Metal::RenderBundle::MinVertexCountsContainer*)minVertexCounts indirectDraws:(WebGPU::Metal::IndirectDrawForSlotContainer*)indirectDraws outOfBoundsReadFlag:(id<MTLBuffer>)outOfBoundsReadFlag
 {
     if (!(self = [super init]))
         return nil;
@@ -68,6 +69,7 @@ static bool setCommandEncoder(auto& buffer, auto& renderPassEncoder)
     _depthBiasSlopeScale = depthBiasSlopeScale;
     _depthBiasClamp = depthBiasClamp;
     _fragmentDynamicOffsetsBuffer = fragmentDynamicOffsetsBuffer;
+    _fragmentDynamicOffsetsHeaderOffsets = WTF::move(*fragmentDynamicOffsetsHeaderOffsets);
     _pipeline = pipeline;
     _minVertexCountForDrawCommand = WTF::move(*minVertexCounts);
     _indirectDrawsForSlot = WTF::move(*indirectDraws);
@@ -88,6 +90,11 @@ static bool setCommandEncoder(auto& buffer, auto& renderPassEncoder)
 - (WebGPU::Metal::IndirectDrawForSlotContainer*)indirectDrawsForSlot
 {
     return &_indirectDrawsForSlot;
+}
+
+- (std::span<const uint64_t>)fragmentDynamicOffsetsHeaderOffsets
+{
+    return _fragmentDynamicOffsetsHeaderOffsets.span();
 }
 
 @end
@@ -116,7 +123,7 @@ if (returnIfEncodingIsFinished([NSString stringWithFormat:@"%s: failed as encodi
 if (returnIfEncodingIsFinished([NSString stringWithFormat:@"%s: failed as encoding has finished", __PRETTY_FUNCTION__]) || !m_icbDescriptor) \
     return finalizeRenderCommand();
 
-static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndirectCommandBuffer> icb, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode depthClipMode, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, id<MTLBuffer> fragmentDynamicOffsetsBuffer, const RenderPipeline* pipeline, Device& device, RenderBundle::MinVertexCountsContainer& vertexCountContainer, IndirectDrawForSlotContainer& indirectDrawContainer)
+static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndirectCommandBuffer> icb, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode depthClipMode, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, id<MTLBuffer> fragmentDynamicOffsetsBuffer, const RenderPipeline* pipeline, Device& device, RenderBundle::MinVertexCountsContainer& vertexCountContainer, IndirectDrawForSlotContainer& indirectDrawContainer, Vector<uint64_t>& fragmentDynamicOffsetsHeaderOffsets)
 {
     id<MTLArgumentEncoder> argumentEncoder =
         [device.icbCommandClampFunction(MTLIndexTypeUInt32) newArgumentEncoderWithBufferIndex:device.bufferIndexForICBContainer()];
@@ -128,10 +135,11 @@ static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndi
     [argumentEncoder setBuffer:outOfBoundsRead offset:0 atIndex:0];
     [argumentEncoder setIndirectCommandBuffer:icb atIndex:1];
 
-    RenderBundleICBWithResources* renderBundle = [[RenderBundleICBWithResources alloc] initWithICB:icb containerBuffer:container pipelineState:renderPipelineState depthStencilState:depthStencilState cullMode:cullMode frontFace:frontFace depthClipMode:depthClipMode depthBias:depthBias depthBiasSlopeScale:depthBiasSlopeScale depthBiasClamp:depthBiasClamp fragmentDynamicOffsetsBuffer:fragmentDynamicOffsetsBuffer pipeline:pipeline minVertexCounts:&vertexCountContainer indirectDraws:&indirectDrawContainer outOfBoundsReadFlag:outOfBoundsRead];
+    RenderBundleICBWithResources* renderBundle = [[RenderBundleICBWithResources alloc] initWithICB:icb containerBuffer:container pipelineState:renderPipelineState depthStencilState:depthStencilState cullMode:cullMode frontFace:frontFace depthClipMode:depthClipMode depthBias:depthBias depthBiasSlopeScale:depthBiasSlopeScale depthBiasClamp:depthBiasClamp fragmentDynamicOffsetsBuffer:fragmentDynamicOffsetsBuffer fragmentDynamicOffsetsHeaderOffsets:&fragmentDynamicOffsetsHeaderOffsets pipeline:pipeline minVertexCounts:&vertexCountContainer indirectDraws:&indirectDrawContainer outOfBoundsReadFlag:outOfBoundsRead];
 
     vertexCountContainer.clear();
     indirectDrawContainer.clear();
+    fragmentDynamicOffsetsHeaderOffsets.clear();
 
     return renderBundle;
 }
@@ -299,6 +307,16 @@ static std::span<T> makeSpanFromBuffer(id<MTLBuffer> buffer, size_t byteOffset =
     return unsafeMakeSpan(static_cast<T*>(buffer.contents), (bufferLength - byteOffset) / sizeof(T));
 }
 
+static void initializeFragmentDynamicOffsetsHeader(id<MTLBuffer> buffer, size_t index, uint32_t sampleMask)
+{
+    static_assert(sizeof(float) == sizeof(uint32_t));
+    auto floats = makeSpanFromBuffer<float>(buffer).subspan(index, RenderBundleEncoder::startIndexForFragmentDynamicOffsets);
+    auto words = makeSpanFromBuffer<uint32_t>(buffer).subspan(index, RenderBundleEncoder::startIndexForFragmentDynamicOffsets);
+    floats[0] = 0.f;
+    floats[1] = 1.f;
+    words[2] = sampleMask;
+}
+
 bool RenderBundleEncoder::executePreDrawCommands(bool needsValidationLayerWorkaround, bool passWasSplit, uint32_t firstInstance, uint32_t instanceCount)
 {
     if (!isValid())
@@ -328,12 +346,15 @@ bool RenderBundleEncoder::executePreDrawCommands(bool needsValidationLayerWorkar
     }
     m_vertexDynamicOffset = vertexDynamicOffsetSum.value();
 
-    auto fragmentDynamicOffsetSum = checkedSum<uint64_t>(m_fragmentDynamicOffset, sizeof(uint32_t) * pipelineLayout->sizeOfFragmentDynamicOffsets());
+    auto fragmentDynamicOffsetCount = pipelineLayout->sizeOfFragmentDynamicOffsets();
+    auto fragmentDynamicOffsetSum = checkedSum<uint64_t>(m_fragmentDynamicOffset, fragmentDynamicOffsetCount ? sizeof(uint32_t) * (RenderBundleEncoder::startIndexForFragmentDynamicOffsets + fragmentDynamicOffsetCount) : 0);
     if (fragmentDynamicOffsetSum.hasOverflowed()) {
         makeInvalid(@"Invalid fragmentDynamicOffset");
         return false;
     }
     m_fragmentDynamicOffset = fragmentDynamicOffsetSum.value();
+    if (!fragmentDynamicOffsetCount)
+        fragmentDynamicOffset = 0;
 
     if (needsValidationLayerWorkaround) {
         pipeline = pipeline->recomputeLastStrideAsStride();
@@ -416,6 +437,12 @@ bool RenderBundleEncoder::executePreDrawCommands(bool needsValidationLayerWorkar
     for (size_t i = 0, sz = m_fragmentBuffers.size(); i < sz; ++i) {
         if (m_fragmentBuffers[i].buffer)
             [icbCommand setFragmentBuffer:m_fragmentBuffers[i].buffer offset:m_fragmentBuffers[i].offset atIndex:i];
+    }
+
+    if (m_dynamicOffsetsFragmentBuffer && fragmentDynamicOffsetCount) {
+        initializeFragmentDynamicOffsetsHeader(m_dynamicOffsetsFragmentBuffer, fragmentDynamicOffset / sizeof(uint32_t), m_sampleMask);
+        if (fragmentDynamicOffset && !renderPassEncoder)
+            m_fragmentDynamicOffsetsHeaderOffsets.append(fragmentDynamicOffset);
     }
 
     if (m_bindGroupDynamicOffsets) {
@@ -1017,14 +1044,9 @@ void RenderBundleEncoder::endCurrentICB()
     m_vertexDynamicOffset = 0;
 
     if (!m_dynamicOffsetsFragmentBuffer) {
-        m_dynamicOffsetsFragmentBuffer = device->safeCreateBuffer(m_fragmentDynamicOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float));
-        auto fragmentBufferSpan = makeSpanFromBuffer<float>(m_dynamicOffsetsFragmentBuffer);
-        auto fragmentBufferIntSpan = makeSpanFromBuffer<uint32_t>(m_dynamicOffsetsFragmentBuffer);
-        RELEASE_ASSERT(fragmentBufferSpan.size());
-        static_assert(sizeof(float) == sizeof(uint32_t));
-        fragmentBufferSpan[0] = 0.f;
-        fragmentBufferSpan[1] = 1.f;
-        fragmentBufferIntSpan[2] = m_sampleMask;
+        m_dynamicOffsetsFragmentBuffer = device->safeCreateBuffer(std::max<uint64_t>(m_fragmentDynamicOffset, RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float)));
+        RELEASE_ASSERT(makeSpanFromBuffer<float>(m_dynamicOffsetsFragmentBuffer).size());
+        initializeFragmentDynamicOffsetsHeader(m_dynamicOffsetsFragmentBuffer, 0, m_sampleMask);
         if (!addResource(m_resources, m_dynamicOffsetsFragmentBuffer, MTLRenderStageFragment))
             return;
     }
@@ -1430,7 +1452,7 @@ void RenderBundleEncoder::splitICB(bool needsPipelineReset)
     m_currentCommandIndex = 0;
 
     if (m_indirectCommandBuffer.size)
-        [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode, m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp, m_dynamicOffsetsFragmentBuffer, m_pipeline.get(), device.get(), m_minVertexCountForDrawCommand, m_indirectDrawsForSlot)];
+        [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode, m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp, m_dynamicOffsetsFragmentBuffer, m_pipeline.get(), device.get(), m_minVertexCountForDrawCommand, m_indirectDrawsForSlot, m_fragmentDynamicOffsetsHeaderOffsets)];
 
     if (m_previousCommandCount)
         m_indirectCommandBuffer = makeICB(m_previousCommandCount);

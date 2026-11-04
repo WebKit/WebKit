@@ -1,0 +1,121 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("A render bundle draw that follows a draw with fragment dynamic offsets must still clamp frag_depth to the viewport depth range. Each result is the red, green and blue channel written by the first, second and third draw, and every draw should pass its depth test.");
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    const format = 'rgba8unorm';
+    const depthFormat = 'depth24plus-stencil8';
+    let module = device.createShaderModule({ code: `
+        @group(0) @binding(0) var<uniform> u0: vec4f;
+        @group(1) @binding(0) var<uniform> u1: vec4f;
+        @group(2) @binding(0) var<uniform> u2: vec4f;
+        struct VOut { @builtin(position) position: vec4f, };
+        fn fullScreenTriangle(i: u32, z: f32) -> VOut {
+            var p = array(vec2f(-1, -1), vec2f(3, -1), vec2f(-1, 3));
+            return VOut(vec4f(p[i], z, 1));
+        }
+        @vertex fn vs(@builtin(vertex_index) i: u32) -> VOut { return fullScreenTriangle(i, 0.75); }
+        @vertex fn vsFar(@builtin(vertex_index) i: u32) -> VOut { return fullScreenTriangle(i, 1); }
+        @fragment fn plain() -> @location(0) vec4f { return u0 * u1 * u2; }
+        struct FOut { @location(0) color: vec4f, @builtin(frag_depth) depth: f32, };
+        @fragment fn sameDepth(v: VOut) -> FOut { return FOut(u0 * u1 * u2, v.position.z); }
+        @fragment fn pastFarPlane(v: VOut) -> FOut { return FOut(u0 * u1 * u2, v.position.z + 1); }
+    ` });
+
+    let uniformBuffer = device.createBuffer({ size: 512, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(uniformBuffer, 256, new Float32Array([1, 1, 1, 1]));
+
+    let layouts = new Map();
+    let bindGroups = new Map();
+    function resourcesFor(dynamicOffsetCount) {
+        if (!layouts.has(dynamicOffsetCount)) {
+            let groupLayouts = [0, 1, 2].map(group => device.createBindGroupLayout({
+                entries: [{ binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'uniform', hasDynamicOffset: group < dynamicOffsetCount } }],
+            }));
+            layouts.set(dynamicOffsetCount, groupLayouts);
+            bindGroups.set(dynamicOffsetCount, [0, 1, 2].map(group => device.createBindGroup({
+                layout: groupLayouts[group],
+                entries: [{ binding: 0, resource: { buffer: uniformBuffer, offset: group < dynamicOffsetCount ? 0 : 256, size: 16 } }],
+            })));
+        }
+        return { layouts: layouts.get(dynamicOffsetCount), bindGroups: bindGroups.get(dynamicOffsetCount) };
+    }
+
+    async function render({ dynamicOffsetCounts, depthRange = [0, 1], pastFarPlane = false, replayCommands = false }) {
+        const draws = [
+            { entryPoint: 'plain', depthCompare: 'greater', writeMask: GPUColorWrite.RED },
+            { entryPoint: pastFarPlane ? 'pastFarPlane' : 'sameDepth', depthCompare: 'greater-equal', writeMask: GPUColorWrite.GREEN },
+            { entryPoint: 'plain', depthCompare: 'equal', writeMask: GPUColorWrite.BLUE },
+        ];
+        let bundleEncoder = device.createRenderBundleEncoder({ colorFormats: [format], depthStencilFormat: depthFormat });
+        draws.forEach((draw, i) => {
+            let { layouts, bindGroups } = resourcesFor(dynamicOffsetCounts[i]);
+            let pipeline = device.createRenderPipeline({
+                layout: device.createPipelineLayout({ bindGroupLayouts: layouts }),
+                vertex: { module, entryPoint: pastFarPlane ? 'vsFar' : 'vs' },
+                fragment: { module, entryPoint: draw.entryPoint, targets: [{ format, writeMask: draw.writeMask }] },
+                depthStencil: { format: depthFormat, depthWriteEnabled: true, depthCompare: draw.depthCompare },
+                multisample: replayCommands ? { count: 1, mask: 0x7fffffff } : { count: 1 },
+            });
+            bundleEncoder.setPipeline(pipeline);
+            for (let group = 0; group < 3; ++group)
+                bundleEncoder.setBindGroup(group, bindGroups[group], group < dynamicOffsetCounts[i] ? [256] : []);
+            bundleEncoder.draw(3);
+        });
+        let bundle = bundleEncoder.finish();
+
+        const usage = GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC;
+        let colorTexture = device.createTexture({ size: [1, 1], format, usage });
+        let depthTexture = device.createTexture({ size: [1, 1], format: depthFormat, usage });
+        let readback = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+        let commandEncoder = device.createCommandEncoder();
+        let pass = commandEncoder.beginRenderPass({
+            colorAttachments: [{ view: colorTexture.createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 0, g: 0, b: 0, a: 0 } }],
+            depthStencilAttachment: {
+                view: depthTexture.createView(),
+                depthLoadOp: 'clear', depthStoreOp: 'store', depthClearValue: 0,
+                stencilLoadOp: 'clear', stencilStoreOp: 'store', stencilClearValue: 0,
+            },
+        });
+        pass.setViewport(0, 0, 1, 1, depthRange[0], depthRange[1]);
+        pass.executeBundles([bundle]);
+        pass.end();
+        commandEncoder.copyTextureToBuffer({ texture: colorTexture }, { buffer: readback, bytesPerRow: 256 }, [1, 1]);
+        device.queue.submit([commandEncoder.finish()]);
+
+        await readback.mapAsync(GPUMapMode.READ);
+        let channels = [...new Uint8Array(readback.getMappedRange(0, 4))].slice(0, 3);
+        readback.unmap();
+        return channels.join();
+    }
+
+    window.results = {
+        twoOffsets: await render({ dynamicOffsetCounts: [2, 2, 2] }),
+        noOffsetsAfterTwo: await render({ dynamicOffsetCounts: [2, 0, 0] }),
+        oneOffset: await render({ dynamicOffsetCounts: [1, 1, 1] }),
+        viewportDepthRange: await render({ dynamicOffsetCounts: [2, 2, 2], depthRange: [0.25, 0.75], pastFarPlane: true }),
+        replayedCommands: await render({ dynamicOffsetCounts: [2, 2, 2], replayCommands: true }),
+    };
+    for (let name of Object.keys(results))
+        shouldBeEqualToString('results.' + name, '255,255,255');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

@@ -1,0 +1,14 @@
+A render bundle draw that follows a draw with fragment dynamic offsets must still clamp frag_depth to the viewport depth range. Each result is the red, green and blue channel written by the first, second and third draw, and every draw should pass its depth test.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS results.twoOffsets is "255,255,255"
+PASS results.noOffsetsAfterTwo is "255,255,255"
+PASS results.oneOffset is "255,255,255"
+PASS results.viewportDepthRange is "255,255,255"
+PASS results.replayedCommands is "255,255,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -115,8 +115,11 @@ void RenderBundle::updateMinMaxDepths(float minDepth, float maxDepth)
     m_minDepth = minDepth;
     m_maxDepth = maxDepth;
     std::array<float, 2> twoFloats = { m_minDepth, m_maxDepth };
-    for (RenderBundleICBWithResources* icb in m_renderBundlesResources)
+    for (RenderBundleICBWithResources* icb in m_renderBundlesResources) {
         m_device->getQueue()->writeBuffer(icb.fragmentDynamicOffsetsBuffer, 0, asWritableBytes(std::span(twoFloats)));
+        for (auto headerOffset : icb.fragmentDynamicOffsetsHeaderOffsets)
+            m_device->getQueue()->writeBuffer(icb.fragmentDynamicOffsetsBuffer, headerOffset, asWritableBytes(std::span(twoFloats)));
+    }
 }
 
 uint64_t RenderBundle::drawCount() const

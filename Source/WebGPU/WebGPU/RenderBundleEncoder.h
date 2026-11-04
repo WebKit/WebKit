@@ -44,7 +44,7 @@ class RenderPipeline;
 
 @interface RenderBundleICBWithResources : NSObject
 
-- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb containerBuffer:(id<MTLBuffer>)containerBuffer pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer pipeline:(const WebGPU::Metal::RenderPipeline*)pipeline minVertexCounts:(WebGPU::Metal::RenderBundle::MinVertexCountsContainer*)minVertexCounts indirectDraws:(WebGPU::Metal::IndirectDrawForSlotContainer*)indirectDraws outOfBoundsReadFlag:(id<MTLBuffer>)outOfBoundsReadFlag NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb containerBuffer:(id<MTLBuffer>)containerBuffer pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer fragmentDynamicOffsetsHeaderOffsets:(Vector<uint64_t>*)fragmentDynamicOffsetsHeaderOffsets pipeline:(const WebGPU::Metal::RenderPipeline*)pipeline minVertexCounts:(WebGPU::Metal::RenderBundle::MinVertexCountsContainer*)minVertexCounts indirectDraws:(WebGPU::Metal::IndirectDrawForSlotContainer*)indirectDraws outOfBoundsReadFlag:(id<MTLBuffer>)outOfBoundsReadFlag NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
 @property (readonly, nonatomic) id<MTLBuffer> outOfBoundsReadFlag;
@@ -63,6 +63,7 @@ class RenderPipeline;
 
 - (WebGPU::Metal::RenderBundle::MinVertexCountsContainer*)minVertexCountForDrawCommand;
 - (WebGPU::Metal::IndirectDrawForSlotContainer*)indirectDrawsForSlot;
+- (std::span<const uint64_t>)fragmentDynamicOffsetsHeaderOffsets;
 @end
 
 namespace WebGPU::Metal {
@@ -212,6 +213,7 @@ private:
     id<MTLBuffer> m_dynamicOffsetsFragmentBuffer { nil };
     uint64_t m_vertexDynamicOffset { 0 };
     uint64_t m_fragmentDynamicOffset { 0 };
+    Vector<uint64_t> m_fragmentDynamicOffsetsHeaderOffsets;
 
     ThreadSafeWeakPtr<RenderPassEncoder> m_renderPassEncoder;
     id<MTLIndirectRenderCommand> m_currentCommand { nil };
