@@ -650,6 +650,12 @@ Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, 
 // Full annotations are added in this class.
 void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, unsigned start, unsigned end)
 {
+    CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(*this);
+    if (!lineLayout)
+        return;
+    // Selection extents span the lines of the block that establishes our inline formatting context.
+    CheckedRef formattingContextRoot = lineLayout->flow();
+
     for (auto textBox = InlineIterator::lineLeftmostTextBoxFor(*this); textBox; textBox = textBox.traverseNextTextBox()) {
         LayoutRect rect;
         if (start <= textBox->start() && textBox->end() <= end)
@@ -673,11 +679,10 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
                 rect.shiftXEdgeTo(textBox->lineBox().logicalTop());
         }
 
-        RenderBlock* containingBlock = this->containingBlock();
         // Map rect, extended left to leftOffset, and right to rightOffset, through transforms to get minX and maxX.
-        LogicalSelectionOffsetCaches cache(*containingBlock);
-        LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, LayoutUnit(textBox->logicalTop()), cache);
-        LayoutUnit rightOffset = containingBlock->logicalRightSelectionOffset(*containingBlock, LayoutUnit(textBox->logicalTop()), cache);
+        LogicalSelectionOffsetCaches cache(formattingContextRoot);
+        LayoutUnit leftOffset = formattingContextRoot->logicalLeftSelectionOffset(formattingContextRoot, LayoutUnit(textBox->logicalTop()), cache);
+        LayoutUnit rightOffset = formattingContextRoot->logicalRightSelectionOffset(formattingContextRoot, LayoutUnit(textBox->logicalTop()), cache);
         LayoutRect extentsRect = rect;
         if (textBox->isHorizontal()) {
             extentsRect.setX(leftOffset);
@@ -952,7 +957,7 @@ static PositionWithAffinity createPositionWithAffinityAfterAdjustingOffsetForBiD
 
         auto previousRun = run->nextLineLeftwardOnLineIgnoringLineBreak();
         if ((previousRun && previousRun->bidiLevel() == run->bidiLevel())
-            || run->renderer().containingBlock()->writingMode().bidiDirection() == run->direction()) // FIXME: left on 12CBA
+            || run->formattingContextRoot().writingMode().bidiDirection() == run->direction()) // FIXME: left on 12CBA
             return createPositionWithAffinityForBox(run, run->leftmostCaretOffset(), shouldAffinityBeDownstream);
 
         if (previousRun && previousRun->bidiLevel() > run->bidiLevel()) {
@@ -983,7 +988,7 @@ static PositionWithAffinity createPositionWithAffinityAfterAdjustingOffsetForBiD
 
     auto nextRun = run->nextLineRightwardOnLineIgnoringLineBreak();
     if ((nextRun && nextRun->bidiLevel() == run->bidiLevel())
-        || run->renderer().containingBlock()->writingMode().bidiDirection() == run->direction())
+        || run->formattingContextRoot().writingMode().bidiDirection() == run->direction())
         return createPositionWithAffinityForBox(run, run->rightmostCaretOffset(), shouldAffinityBeDownstream);
 
     // offset is on the right edge
@@ -2100,7 +2105,7 @@ LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerM
 
     if (selectionState() == HighlightState::None)
         return LayoutRect();
-    if (!containingBlock())
+    if (!LayoutIntegration::LineLayout::containing(*this))
         return LayoutRect();
 
     // Now calculate startPos and endPos for painting selection.

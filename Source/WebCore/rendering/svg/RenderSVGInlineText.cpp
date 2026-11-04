@@ -168,17 +168,15 @@ static int offsetForPositionInFragment(const InlineIterator::SVGTextBox& textBox
 
 PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& point, HitTestSource, const RenderFragmentContainer*)
 {
-    if (!InlineIterator::lineLeftmostTextBoxFor(*this) || text().isEmpty())
+    auto firstTextBox = InlineIterator::lineLeftmostTextBoxFor(*this);
+    if (!firstTextBox || text().isEmpty())
         return createPositionWithAffinity(0, Affinity::Downstream);
 
     float baseline = m_scaledFont.metricsOfPrimaryFont().ascent();
 
-    RenderBlock* containingBlock = this->containingBlock();
-    ASSERT(containingBlock);
-
     // Map local point to absolute point, as the character origins stored in the text fragments use absolute coordinates.
     FloatPoint absolutePoint(point);
-    absolutePoint.moveBy(containingBlock->location());
+    absolutePoint.moveBy(firstTextBox->formattingContextRoot().location());
 
     float closestDistance = std::numeric_limits<float>::max();
     float closestDistancePosition = 0;

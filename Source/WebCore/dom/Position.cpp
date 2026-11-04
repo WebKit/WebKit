@@ -42,6 +42,7 @@
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineRunAndOffset.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "Logging.h"
 #include "NodeTraversal.h"
 #include "PositionIterator.h"
@@ -1206,9 +1207,13 @@ NODELETE static bool isNonTextLeafChild(RenderObject& object)
 
 static InlineIterator::TextBoxIterator searchAheadForBetterMatch(RenderText& renderer)
 {
-    CheckedPtr container = renderer.containingBlock();
+    // Look for a better match in the same inline formatting context.
+    CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(renderer);
+    if (!lineLayout)
+        return { };
+    CheckedRef formattingContextRoot = lineLayout->flow();
     CheckedPtr<RenderObject> next = &renderer;
-    while ((next = next->nextInPreOrder(container.get()))) {
+    while ((next = next->nextInPreOrder(formattingContextRoot.ptr()))) {
         if (is<RenderBlock>(next))
             return { };
         if (next->isBR())

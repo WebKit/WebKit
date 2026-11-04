@@ -160,14 +160,14 @@ void OutlinePainter::paintOutline(const RenderBoxModelObject& renderer, const La
     if (m_paintInfo.context().paintingDisabled() || !styleToUse->hasOutline())
         return;
 
-    if (!renderer.containingBlock()) {
-        ASSERT_NOT_REACHED();
+    auto firstInlineBox = InlineIterator::lineLeftmostInlineBoxFor(renderer);
+    if (!firstInlineBox)
         return;
-    }
 
     auto isHorizontalWritingMode = renderer.isHorizontalWritingMode();
-    CheckedRef containingBlock = *renderer.containingBlock();
-    auto isFlipped = containingBlock->writingMode().isBlockFlipped();
+    // Inline box fragments are in the coordinate system of their formatting context root.
+    CheckedRef formattingContextRoot = firstInlineBox->formattingContextRoot();
+    auto isFlipped = formattingContextRoot->writingMode().isBlockFlipped();
     Vector<LayoutRect> rects;
     for (auto& box : InlineIterator::inlineBoxesFor(renderer)) {
         // Start with the inline box's own rect as the base, ensuring the outline
@@ -179,7 +179,7 @@ void OutlinePainter::paintOutline(const RenderBoxModelObject& renderer, const La
         if (!isHorizontalWritingMode)
             baseRect = baseRect.transposedRect();
         if (isFlipped)
-            containingBlock->flipForWritingMode(baseRect);
+            formattingContextRoot->flipForWritingMode(baseRect);
         rects.append(LayoutRect { baseRect });
 
         // Collect a rect for each leaf box inside this inline box fragment,
@@ -196,7 +196,7 @@ void OutlinePainter::paintOutline(const RenderBoxModelObject& renderer, const La
                 enclosingVisualRect = enclosingVisualRect.transposedRect();
 
             if (isFlipped)
-                containingBlock->flipForWritingMode(enclosingVisualRect);
+                formattingContextRoot->flipForWritingMode(enclosingVisualRect);
 
             rects.append(LayoutRect { enclosingVisualRect });
         }
