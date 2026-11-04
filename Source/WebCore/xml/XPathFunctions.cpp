@@ -58,9 +58,9 @@ class Interval {
 public:
     static const int Inf = -1;
 
-    Interval();
-    Interval(int value);
-    Interval(int min, int max);
+    NODELETE Interval();
+    NODELETE Interval(int value);
+    NODELETE Interval(int min, int max);
 
     bool contains(int value) const;
 

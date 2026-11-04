@@ -49,7 +49,7 @@ private:
 class LocationPath final : public Expression {
     WTF_MAKE_TZONE_ALLOCATED(LocationPath);
 public:
-    LocationPath();
+    NODELETE LocationPath();
 
     void setAbsolute() { m_isAbsolute = true; setIsContextNodeSensitive(false); }
 

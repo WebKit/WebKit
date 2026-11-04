@@ -44,7 +44,7 @@ class ServiceWorkerInspectorProxy {
     WTF_MAKE_NONCOPYABLE(ServiceWorkerInspectorProxy);
 public:
     explicit ServiceWorkerInspectorProxy(ServiceWorkerThreadProxy&);
-    ~ServiceWorkerInspectorProxy();
+    NODELETE ~ServiceWorkerInspectorProxy();
 
     NODELETE void serviceWorkerTerminated();
 
