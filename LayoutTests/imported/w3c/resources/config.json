@@ -13,6 +13,7 @@
  "aliases": [
           {"url-path": "/resources/testharnessreport.js", "local-dir":"../../../resources/"},
           {"url-path": "/resources/testdriver-vendor.js", "local-dir":"../../../resources/"},
+          {"url-path": "/common/get-host-info.sub.js", "local-dir":"../../../resources/"},
           {"url-path": "/webkit-test-resources/", "local-dir":"../../../resources/"},
           {"url-path": "/WebKit/", "local-dir":"../../../http/wpt/"}],
  "check_subdomains": false,
