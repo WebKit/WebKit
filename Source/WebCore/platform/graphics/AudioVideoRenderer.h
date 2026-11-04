@@ -99,6 +99,7 @@ public:
     using HostingContextPromise = NativePromise<WebCore::HostingContext, void, WTF::PromiseOption::Default | WTF::PromiseOption::WithoutCrossThreadCopy>;
     virtual Ref<HostingContextPromise> requestHostingContext() { return HostingContextPromise::createAndReject(); }
     virtual HostingContext hostingContext() const { return { }; }
+    virtual bool supportsUIProcessVideoLayerHosting() const { return false; }
     virtual WebCore::FloatSize videoLayerSize() const { return { }; }
     virtual void notifyVideoLayerSizeChanged(Function<void(const MediaTime&, FloatSize)>&&) { }
     virtual void setVideoLayerSize(const FloatSize&) { }

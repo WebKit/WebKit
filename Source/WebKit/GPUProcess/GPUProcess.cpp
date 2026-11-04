@@ -70,6 +70,10 @@
 #include "RemoteAudioSessionProxyManager.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include "RemoteLayerHostingManager.h"
+#endif
+
 #if ENABLE(MEDIA_STREAM)
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #endif
@@ -107,6 +111,9 @@ constexpr Seconds minimumLifetimeBeforeIdleExit { 5_s };
 
 GPUProcess::GPUProcess()
     : m_idleExitTimer(*this, &GPUProcess::tryExitIfUnused)
+#if PLATFORM(COCOA)
+    , m_remoteLayerHostingManager { RemoteLayerHostingManager::create(*this) }
+#endif
 {
     RELEASE_LOG(Process, "%p - GPUProcess::GPUProcess:", this);
 #if ASSERT_ENABLED && PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
@@ -1197,6 +1204,13 @@ RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager()
     if (!m_audioSessionManager)
         m_audioSessionManager = RemoteAudioSessionProxyManager::create(*this);
     return *m_audioSessionManager;
+}
+#endif
+
+#if PLATFORM(COCOA)
+RemoteLayerHostingManager& GPUProcess::remoteLayerHostingManager()
+{
+    return m_remoteLayerHostingManager;
 }
 #endif
 

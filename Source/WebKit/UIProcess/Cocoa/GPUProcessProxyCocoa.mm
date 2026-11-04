@@ -32,6 +32,7 @@
 #include "GPUProcessCreationParameters.h"
 #include "GPUProcessMessages.h"
 #include "MediaPermissionUtilities.h"
+#include "RemoteLayerHostingManagerProxy.h"
 #include "WebProcessProxy.h"
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/cocoa/SpanCocoa.h>
@@ -131,6 +132,11 @@ void GPUProcessProxy::postWillTakeSnapshotNotification(CompletionHandler<void()>
 std::optional<IPC::Connection::AsyncReplyID> GPUProcessProxy::sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
     return sendWithAsyncReply(Messages::GPUProcess::SinkCompletedSnapshotToPDF { identifier, rootFrameIdentifier }, WTF::move(completionHandler));
+}
+
+RemoteLayerHostingManagerProxy& GPUProcessProxy::remoteLayerHostingManagerProxy()
+{
+    return m_remoteLayerHostingManagerProxy;
 }
 
 }

@@ -342,6 +342,8 @@ enum class PIPState {
     [_playerLayer setFrame:[_videoViewContainer layer].bounds];
     [_playerLayer setPresentationModel:model.get()];
     [_playerLayer setVideoSublayer:videoView.layer];
+    if (_videoPresentationInterfaceMac)
+        [_playerLayer setPreviewsResizeWithTransform:CheckedPtr { _videoPresentationInterfaceMac }->previewsResizeWithTransform()];
     // Use plain Resize gravity (no internal aspect-fit/crop) while the fly-to-PiP animation is in
     // flight: WebAVPlayerLayer's -layoutSublayers otherwise reshapes videoView.layer's *current*
     // bounds to fit _videoDimensions' aspect ratio before computing its scale-to-target-frame

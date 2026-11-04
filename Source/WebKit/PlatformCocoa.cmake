@@ -338,6 +338,8 @@ set(WebKit_FORWARDING_HEADERS_FILES
 )
 
 list(APPEND WebKit_MESSAGES_IN_FILES
+    GPUProcess/cocoa/RemoteLayerHostingManager
+
     GPUProcess/media/RemoteImageDecoderAVFProxy
 
     GPUProcess/media/ios/RemoteMediaSessionHelperProxy
@@ -356,6 +358,7 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 
     UIProcess/Cocoa/PlaybackSessionManagerProxy
     UIProcess/Cocoa/SecItemShimProxy
+    UIProcess/Cocoa/RemoteLayerHostingManagerProxy
     UIProcess/Cocoa/VideoPresentationManagerProxy
 
     UIProcess/Inspector/WebInspectorUIExtensionControllerProxy

@@ -78,6 +78,7 @@ class GraphicsLayerContentsDisplayDelegate;
 class GraphicsLayerFactory;
 class GraphicsLayerKeyframeValueList;
 class HTMLVideoElement;
+class Image;
 class ImageBuffer;
 class NativeImage;
 class MediaPlayer;
@@ -86,6 +87,8 @@ class Settings;
 class TiledBacking;
 class TimingFunction;
 class TransformationMatrix;
+
+struct VideoLayerContext;
 
 typedef unsigned TileCoverage;
 
@@ -410,7 +413,7 @@ public:
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(SPATIAL_PORTAL)
     virtual void removeModelContents() { }
 #endif
-    virtual void setContentsToVideoElement(HTMLVideoElement&, ContentsLayerPurpose) { }
+    virtual void setContentsToVideoLayer(const VideoLayerContext&, HTMLVideoElement&, ContentsLayerPurpose) { }
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT virtual void setContentsToMediaPlayer(MediaPlayer*, ContentsLayerPurpose);
 #endif

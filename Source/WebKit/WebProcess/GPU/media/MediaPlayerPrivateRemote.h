@@ -197,6 +197,9 @@ public:
 
     Ref<HostingContextPromise> requestHostingContext() override;
     WebCore::HostingContext hostingContext() const override;
+    // The RemoteMediaPlayerProxy in the GPU process registers the player's video layer with
+    // RemoteLayerHostingManager.
+    bool supportsUIProcessVideoLayerHosting() const final { return true; }
     void setLayerHostingContext(WebCore::HostingContext&&);
 
 #if ENABLE(MACH_PORT_LAYER_HOSTING)

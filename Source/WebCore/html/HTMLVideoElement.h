@@ -44,6 +44,7 @@ class PictureInPictureObserver;
 class ShareableBitmap;
 class VideoFrameRequestCallback;
 struct ImageBufferFormat;
+struct VideoLayerContext;
 
 enum class RenderingMode : uint8_t;
 
@@ -57,6 +58,8 @@ public:
 
     WEBCORE_EXPORT unsigned videoWidth() const;
     WEBCORE_EXPORT unsigned videoHeight() const;
+
+    WEBCORE_EXPORT VideoLayerContext videoLayerContext();
 
     WEBCORE_EXPORT ExceptionOr<void> webkitEnterFullscreen();
     WEBCORE_EXPORT void webkitExitFullscreen();
