@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const workletSource = `
+    let counter = 0;
+    class Trigger extends AudioWorkletProcessor {
+        constructor() {
+            super();
+            this.port.onmessage = () => {
+                for (let i = 0; i < 2000; ++i) {
+                    try {
+                        class Late extends AudioWorkletProcessor { process() { return false; } }
+                        registerProcessor('late-' + (counter++), Late);
+                    } catch { return; }
+                }
+            };
+        }
+        process() { return false; }
+    }
+    registerProcessor('trigger', Trigger);
+`;
+const workletURL = URL.createObjectURL(new Blob([workletSource], { type: 'application/javascript' }));
+
+function gc() { if (window.GCController) GCController.collect(); }
+
+async function iteration()
+{
+    let context = new OfflineAudioContext(1, 128, 44100);
+    await context.audioWorklet.addModule(workletURL);
+    let node = new AudioWorkletNode(context, 'trigger', { numberOfInputs: 1, numberOfOutputs: 0 });
+    await context.startRendering();
+    node.port.postMessage(0);
+    await new Promise(r => setTimeout(r, 0));
+    await new Promise(r => setTimeout(r, 0));
+    context = null;
+    node = null;
+    gc();
+    await new Promise(r => setTimeout(r, 0));
+    gc();
+}
+
+(async () => {
+    for (let i = 0; i < 100; ++i)
+        await iteration();
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+</script>
+</body>
+</html>

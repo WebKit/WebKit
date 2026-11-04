@@ -34,12 +34,14 @@ namespace WebCore {
 
 class WorkletPendingTasks;
 
-class WorkletGlobalScopeProxy : public ThreadSafeRefCounted<WorkletGlobalScopeProxy> {
+class WorkletGlobalScopeProxy : public ThreadSafeRefCounted<WorkletGlobalScopeProxy, WTF::DestructionThread::Main> {
 public:
     virtual ~WorkletGlobalScopeProxy() = default;
 
     virtual bool postTaskForModeToWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) = 0;
     virtual bool isAudioWorkletMessagingProxy() const = 0;
+
+    virtual void detachFromThread() { }
 };
 
 } // namespace WebCore

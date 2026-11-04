@@ -40,6 +40,7 @@
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <wtf/Borrow.h>
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -53,7 +54,16 @@ Worklet::Worklet(Document& document)
 {
 }
 
-Worklet::~Worklet() = default;
+Worklet::~Worklet()
+{
+    ASSERT(isMainThread());
+
+    // Sever each proxy's back-pointer from its worklet thread while we still hold the owning
+    // reference, so that a worklet thread can never observe a non-null back-pointer to a proxy
+    // whose refcount has already reached zero.
+    for (Ref proxy : m_proxies)
+        proxy->detachFromThread();
+}
 
 Document* Worklet::document()
 {

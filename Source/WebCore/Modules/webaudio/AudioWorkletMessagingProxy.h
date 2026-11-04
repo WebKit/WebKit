@@ -52,6 +52,8 @@ public:
     // This method is used in the main thread to post task back to the worklet thread.
     bool postTaskForModeToWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
 
+    void detachFromThread() final;
+
     AudioWorkletThread& workletThread() { return m_workletThread.get(); }
 
     void postTaskToAudioWorklet(Function<void(AudioWorklet&)>&&);
