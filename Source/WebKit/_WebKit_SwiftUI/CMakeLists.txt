@@ -100,7 +100,7 @@ if (WebKit_SwiftUI_ADDITIONS_SOURCES)
     target_sources(_WebKit_SwiftUI PRIVATE ${WebKit_SwiftUI_ADDITIONS_SOURCES})
 endif ()
 
-add_dependencies(_WebKit_SwiftUI WebKit WebKit_StageSwiftModule WebKit_CopyModules)
+add_dependencies(_WebKit_SwiftUI WebKit WebKit_StageSwiftModule WebKit_CopyModules SwiftPrewarmObjC)
 
 # Stage the swiftmodule inside the framework under the target triple, the layout
 # the Swift importer expects when it resolves the overlay.
