@@ -2271,8 +2271,8 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
             if (auto* positionedParentScrollableArea = positionedParent->scrollableArea())
                 localPoint -= toLayoutSize(positionedParentScrollableArea->scrollPosition());
         }
-        if (positionedParent->renderer().isInlineBox() && positionedParent->renderer().canContainAbsolutelyPositionedObjects())
-            localPoint += PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(downcast<RenderBoxModelObject>(positionedParent->renderer()), renderer().style());
+        if (positionedParent->renderer().isInlineBox())
+            localPoint = toLayoutPoint(downcast<RenderBox>(renderer()).offsetFromContainer(positionedParent->renderer(), { }));
 
         ASSERT(positionedParent->contentsScrollingScope());
         m_boxScrollingScope = positionedParent->contentsScrollingScope();

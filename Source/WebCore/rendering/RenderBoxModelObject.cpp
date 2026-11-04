@@ -541,18 +541,10 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     if (const RenderBoxModelObject* offsetParent = this->offsetParent()) {
         if (auto* renderBox = dynamicDowncast<RenderBox>(*offsetParent); renderBox && !offsetParent->isBody() && !is<RenderTable>(*offsetParent))
             referencePoint.move(-renderBox->borderLeft(), -renderBox->borderTop());
-        else if (offsetParent->isInlineBox()) {
-            // Inside inline formatting context both inflow and statically positioned out-of-flow boxes are positioned relative to the root block container.
+        else if (offsetParent->isInlineBox() && !isOutOfFlowPositioned()) {
+            // In-flow content is positioned relative to the inline formatting context root, while out-of-flow boxes are already positioned
+            // relative to the inline box.
             auto topLeft = offsetParent->firstFragmentBorderBoxRect().location();
-            if (isOutOfFlowPositioned()) {
-                auto& outOfFlowStyle = style();
-                ASSERT(containingBlock());
-                auto isHorizontalWritingMode = !containingBlock() || containingBlock()->writingMode().isHorizontal();
-                if (!PositionedLayoutConstraints::usesStaticPosition(outOfFlowStyle, LogicalBoxAxis::Inline, isHorizontalWritingMode))
-                    topLeft.setX(LayoutUnit { });
-                if (!PositionedLayoutConstraints::usesStaticPosition(outOfFlowStyle, LogicalBoxAxis::Block, isHorizontalWritingMode))
-                    topLeft.setY(LayoutUnit { });
-            }
             referencePoint.move(-topLeft.x(), -topLeft.y());
         }
 
@@ -1273,6 +1265,13 @@ LayoutRect RenderBoxModelObject::firstFragmentBorderBoxRect() const
     return { };
 }
 
+LayoutRect RenderBoxModelObject::firstFragmentBorderBoxRectFromBlockStart() const
+{
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+        return lineLayout->firstInlineBoxRectFromBlockStart(*this);
+    return { };
+}
+
 LayoutUnit RenderBoxModelObject::paddingBoxLogicalWidth() const
 {
     if (!LayoutIntegration::LineLayout::containing(*this))
@@ -1626,8 +1625,8 @@ auto RenderBoxModelObject::computeVisibleRectsInContainer(const RepaintRects& re
 
     adjustedRects.move(locationOffset);
 
-    if (styleToUse.position() == PositionType::Absolute && localContainer->isInlineBox() && localContainer->canContainAbsolutelyPositionedObjects())
-        adjustedRects.move(PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(downcast<RenderBoxModelObject>(*localContainer), styleToUse));
+    if (styleToUse.hasOutOfFlowPosition() && localContainer->isInlineBox())
+        adjustedRects.move(toLayoutSize(downcast<RenderBoxModelObject>(*localContainer).firstFragmentBorderBoxRectFromBlockStart().location()));
     else if (styleToUse.hasInFlowPosition() && layer()) {
         // Apply the in-flow position offset when invalidating a rectangle. The layer
         // is translated, but the renderer isn't, so we need to do this to get the
