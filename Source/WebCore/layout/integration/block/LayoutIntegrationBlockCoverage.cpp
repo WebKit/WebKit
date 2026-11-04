@@ -98,7 +98,6 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasLineClamp,
     ContentHasTextBoxTrim,
     ContentHasLineGrid,
-    ContentHasBlockStepSize
 };
 
 // A list item lays out its content like any other block container (RenderListItem::layoutBlock), unless it has a marker: an outside one,
@@ -200,7 +199,7 @@ static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockCo
     // FIXME: A root whose content content-visibility skips (RenderBlockFlow::layoutBlock leaves it as it is).
     return isSupportedRoot && !blockContainer.isWritingModeRoot() && !blockContainer.isFieldset()
         && !blockContainer.layoutContext().isSkippedContentRootForLayout(blockContainer) && style->alignContent().isNormal()
-        && !style->specifiesColumns() && style->columnSpan() != ColumnSpan::All && style->blockStepSize().isNone()
+        && !style->specifiesColumns() && style->columnSpan() != ColumnSpan::All
         && style->overflowContinue() == OverflowContinue::Normal && !style->containerType().hasSizeContainment();
 }
 
@@ -564,9 +563,6 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
         return BlockAvoidanceReason::ContentHasSizingKeyword;
     if (isFillAvailable(style->logicalHeight(writingMode)) || isFillAvailable(style->logicalMinHeight(writingMode)) || isFillAvailable(style->logicalMaxHeight(writingMode)))
         return BlockAvoidanceReason::ContentHasStretchBlockSize;
-    // The block-step-size rounding of the margin box is the parent's job on the render tree path (RenderBlockFlow::performBlockStepSizing).
-    if (!style->blockStepSize().isNone())
-        return BlockAvoidanceReason::ContentHasBlockStepSize;
     return outOfFlowBoxesInLeafAvoidanceReason(box, rootContainer);
 }
 
@@ -861,8 +857,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "text-box-trim"_s;
     case BlockAvoidanceReason::ContentHasLineGrid:
         return "line grid"_s;
-    case BlockAvoidanceReason::ContentHasBlockStepSize:
-        return "block-step-size"_s;
     }
     ASSERT_NOT_REACHED();
     return { };
