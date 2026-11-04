@@ -380,6 +380,20 @@ bool FlexFormattingUtils::canResolveFullyConstrainedLogicalHeight(const RenderFl
     return flexBox.hasFullyConstrainedLogicalHeight() && containingBlock->hasDefiniteLogicalHeight();
 }
 
+static std::optional<LayoutUnit> definiteContentBoxLogicalHeightAsFlexItem(const RenderFlexibleBox& flexBox)
+{
+    // A flex container that is itself a flex item gets a definite block size from its own flex container even with
+    // height: auto, e.g. as a column flex item with a definite flex basis (9.8). Its inner cross size is then the
+    // content box of that size.
+    if (!flexBox.isFlexItem())
+        return { };
+    CheckedRef parentFlexBox = downcast<RenderFlexibleBox>(*flexBox.parent());
+    auto overridingLogicalHeight = parentFlexBox->usedFlexItemOverridingLogicalHeightForPercentageResolution(flexBox);
+    if (!overridingLogicalHeight)
+        return { };
+    return flexBox.contentBoxLogicalHeight(*overridingLogicalHeight);
+}
+
 bool FlexFormattingUtils::flexItemHasComputableAspectRatio(const FlexLayoutItem& flexLayoutItem) const
 {
     CheckedRef flexItem = flexLayoutItem.renderer;
@@ -433,6 +447,8 @@ LayoutUnit FlexFormattingUtils::innerCrossSizeForFlexItem(const RenderBox& flexI
             innerCrossSize = flexBox->availableLogicalHeightForPercentageComputation().value_or(0_lu);
         else if (canResolveFullyConstrainedLogicalHeight(flexBox) || hasDefiniteLogicalWidthForAspectRatioCrossSize(flexBox))
             innerCrossSize = std::max(0_lu, flexBox->computeLogicalHeight(flexBox->logicalHeight(), 0_lu).extent - flexBox->borderAndPaddingLogicalHeight() - flexBox->scrollbarLogicalHeight());
+        else if (auto contentBoxLogicalHeight = size.isAuto() ? definiteContentBoxLogicalHeightAsFlexItem(flexBox) : std::nullopt)
+            innerCrossSize = *contentBoxLogicalHeight;
         else {
             ASSERT_NOT_REACHED();
             return 0_lu;
@@ -675,6 +691,8 @@ bool FlexFormattingUtils::hasDefiniteCrossSizeForFlexItem(const RenderBox& flexI
         if (canResolveFullyConstrainedLogicalHeight(flexBox))
             return true;
         if (hasDefiniteLogicalWidthForAspectRatioCrossSize(flexBox))
+            return true;
+        if (crossSize.isAuto() && definiteContentBoxLogicalHeightAsFlexItem(flexBox))
             return true;
     }
     return false;
