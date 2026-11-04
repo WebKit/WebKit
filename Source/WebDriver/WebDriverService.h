@@ -132,6 +132,8 @@ private:
     void deleteCookie(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void deleteAllCookies(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void performActions(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void connectGamepad(RefPtr<JSON::Object>&&, Function<void(CommandResult&&)>&&);
+    void disconnectGamepad(RefPtr<JSON::Object>&&, Function<void(CommandResult&&)>&&);
     void releaseActions(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void dismissAlert(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void acceptAlert(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);

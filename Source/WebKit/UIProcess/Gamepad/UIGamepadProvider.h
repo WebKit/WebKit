@@ -27,6 +27,7 @@
 
 #if ENABLE(GAMEPAD)
 
+#include <WebCore/GamepadProvider.h>
 #include <WebCore/GamepadProviderClient.h>
 #include <wtf/HashSet.h>
 #include <wtf/RunLoop.h>
@@ -61,6 +62,9 @@ public:
 #endif
 
     Vector<std::optional<GamepadData>> snapshotGamepads();
+
+    // Automation must transfer the monitoring client as well as the singleton.
+    void setGamepadProviderForAutomation(WebCore::GamepadProvider&);
 
     size_t numberOfConnectedGamepads() const { return m_gamepads.size(); }
 

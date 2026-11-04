@@ -300,7 +300,8 @@
                 "Keyboard",
                 "Touch",
                 "Wheel",
-                "Pen"
+                "Pen",
+                "Gamepad"
             ]
         },
         {
@@ -334,6 +335,9 @@
             "type": "object",
             "description": "A new state for a specific input source. All state-related fields are optional and must be applicable to the InputSource referenced by 'sourceId'. If no state-related fields are specified, the state is assumed to remain the same as in the previous step (i.e., 'sustained').",
             "properties": [
+                { "name": "gamepadIndex", "type": "integer", "optional": true, "description": "Axis or button index for a virtual gamepad input action." },
+                { "name": "gamepadValue", "type": "number", "optional": true, "description": "Normalized virtual gamepad input value." },
+                { "name": "gamepadButton", "type": "boolean", "optional": true, "description": "Whether gamepadIndex identifies a button rather than an axis." },
                 { "name": "sourceId", "type": "string", "description": "The input source whose state is described by this object." },
                 { "name": "pressedCharKey", "type": "string", "optional": true, "description": "Deprecated; use 'pressedCharKeys' instead, which can describe more than one character key being held down at once. For 'keyboard' input sources, specifies a character key that has 'pressed' state. Unmentioned character keys are assumed to have a 'released' state. Ignored if 'pressedCharKeys' is also present." },
                 { "name": "pressedCharKeys", "type": "array", "items": { "type": "string" }, "optional": true, "description": "For 'keyboard' input sources, specifies character keys that have a 'pressed' state, in the order they were pressed. Unmentioned character keys are assumed to have a 'released' state. Each entry must be a single unicode code point or a single grapheme cluster." },
@@ -618,6 +622,26 @@
                 { "name": "interactions", "type": "array", "items": { "$ref": "KeyboardInteraction" }, "description": "An ordered list of key sequences to be delivered using native key events." }
             ],
             "async": true
+        },
+        {
+            "name": "connectGamepad",
+            "async": true,
+            "description": "Register a virtual gamepad for a top-level automation browsing context (GTK feasibility prototype).",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle" },
+                { "name": "options", "type": "object" }
+            ],
+            "returns": [
+                { "name": "name", "type": "string" }
+            ]
+        },
+        {
+            "name": "disconnectGamepad",
+            "async": true,
+            "description": "Disconnect a virtual gamepad owned by this automation session.",
+            "parameters": [
+                { "name": "name", "type": "string" }
+            ]
         },
         {
             "name": "performInteractionSequence",

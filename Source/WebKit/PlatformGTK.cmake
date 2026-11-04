@@ -1,4 +1,11 @@
 include(GLibMacros)
+
+if (ENABLE_GAMEPAD)
+    list(APPEND WebKit_SOURCES
+        UIProcess/Gamepad/AutomationGamepad.cpp
+        UIProcess/Gamepad/AutomationGamepadProvider.cpp
+    )
+endif ()
 include(InspectorGResources.cmake)
 include(ModernMediaControlsGResources.cmake)
 include(Platform/Skia.cmake)

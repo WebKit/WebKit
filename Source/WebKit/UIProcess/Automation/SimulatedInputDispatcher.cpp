@@ -107,6 +107,7 @@ SimulatedInputSourceState SimulatedInputSourceState::emptyStateForSourceType(Sim
     switch (type) {
     case SimulatedInputSourceType::Null:
     case SimulatedInputSourceType::Keyboard:
+    case SimulatedInputSourceType::Gamepad:
         break;
     case SimulatedInputSourceType::Wheel:
         result.scrollDelta = WebCore::IntSize();
@@ -263,6 +264,12 @@ void SimulatedInputDispatcher::transitionToNextInputSourceState()
 
 void SimulatedInputDispatcher::transitionBetweenKeyFrames(AutomationCompletionHandler&& completionHandler)
 {
+    // Submit all virtual gamepad changes as one frame within the shared tick.
+    // The backend validates the frame before changing any device.
+    if (auto error = m_client.simulateGamepadInputFrame(protect(m_page), m_keyframes[m_keyframeIndex])) {
+        completionHandler(error);
+        return;
+    }
     m_inputSourceStateIndex = 0;
     auto maximumDuration = m_keyframes[m_keyframeIndex].maximumDuration();
 
@@ -374,6 +381,7 @@ static const String& pointerTypeForInputSource(SimulatedInputSourceType type)
     case SimulatedInputSourceType::Null:
     case SimulatedInputSourceType::Keyboard:
     case SimulatedInputSourceType::Wheel:
+    case SimulatedInputSourceType::Gamepad:
         break;
     }
     ASSERT_NOT_REACHED();
@@ -406,6 +414,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 
     switch (inputSource.type) {
     case SimulatedInputSourceType::Null:
+    case SimulatedInputSourceType::Gamepad:
         // The maximum duration is handled at the keyframe level by m_keyFrameTransitionDurationTimer.
         eventDispatchFinished(std::nullopt);
         break;
