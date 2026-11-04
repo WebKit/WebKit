@@ -1,0 +1,6 @@
+
+PASS attribute-removal
+PASS css-transform
+PASS css-scale
+PASS web-animation
+
