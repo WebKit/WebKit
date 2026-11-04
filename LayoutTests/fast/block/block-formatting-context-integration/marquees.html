@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px monospace; }
+marquee { width: 300px; border: 1px solid; margin: 2px; display: block; }
+.b { background: lightblue; }
+</style>
+<marquee behavior="alternate" scrollamount="0">plain text in a marquee that is long enough to overflow the width of the box</marquee>
+<marquee scrollamount="0"><div class="b">block child</div><div class="b" style="width: 100px">fixed</div><div class="b" style="padding: 5px; margin: 3px">padded</div></marquee>
+<marquee scrollamount="0" direction="up" height="60"><div class="b">up child</div><div class="b">second</div></marquee>
+<marquee scrollamount="0" direction="right">text <div class="b">mixed block</div> more text</marquee>
+<marquee scrollamount="0"><div class="b" style="margin: 0 auto">auto margins</div><div class="b" style="display: flow-root">flow-root</div></marquee>
+<marquee scrollamount="0" behavior="none"><div class="b">behavior none</div></marquee>
+<div style="width: 200px"><marquee scrollamount="0" style="display: inline-block; width: auto">inline-block marquee</marquee> after</div>
