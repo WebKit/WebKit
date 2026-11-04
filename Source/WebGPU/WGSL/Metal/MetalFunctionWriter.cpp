@@ -35,8 +35,10 @@
 #include "Constraints.h"
 #include "Types.h"
 #include "WGSLShaderModule.h"
+#include <limits>
 #include <numbers>
 #include <wtf/HashSet.h>
+#include <wtf/OptionSet.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/MakeString.h>
@@ -390,6 +392,11 @@ public:
 
 private:
     enum class PackingHelper : bool { Pack, Unpack };
+    enum class ArgumentKind : uint8_t { Constant = 1 << 0, Runtime = 1 << 1 };
+    struct CallSiteInfo {
+        Vector<OptionSet<ArgumentKind>> argumentKinds;
+        bool hasMixedArgument { false };
+    };
 
     void emitNecessaryHelpers();
     void serializeVariable(AST::Variable&);
@@ -398,6 +405,8 @@ private:
     void generatePackingHelpers(AST::Structure&);
     bool emitPackedVector(const Types::Vector&, bool shouldPack);
     bool shouldForceInlining(AST::Function&) const;
+    void collectCallSiteInfo(AST::Function&);
+    void selectForcedInliningCallees();
 
     bool outlineConstant(const Type*, AST::Expression&);
     void serializeConstant(const Type*, ConstantValue);
@@ -419,6 +428,10 @@ private:
     AST::Function* m_currentFunction { nullptr };
     AST::Continuing*m_continuing { nullptr };
     HashSet<AST::Function*> m_visitedFunctions;
+    HashSet<AST::Function*> m_collectedFunctions;
+    Vector<AST::Function*> m_functionsCalleesFirst;
+    HashMap<AST::Function*, CallSiteInfo> m_callSiteInfo;
+    HashSet<AST::Function*> m_forcedInliningCallees;
     HashMap<const AST::Structure*, AST::Structure*> m_packedStructures;
     HashSet<const AST::Structure*> m_usedPackHelpers;
     HashSet<const AST::Structure*> m_usedUnpackHelpers;
@@ -468,6 +481,8 @@ void FunctionDefinitionWriter::write()
 
     m_output.append(m_body);
     m_body.clear();
+
+    selectForcedInliningCallees();
 
     for (auto& entryPoint : m_shaderModule.callGraph().entrypoints()) {
         if (m_prepareResult.entryPoints.contains(entryPoint.originalName))
@@ -1024,9 +1039,32 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     m_shaderModule.clearUsesPackedVec3();
 }
 
-bool FunctionDefinitionWriter::shouldForceInlining(AST::Function& functionDefinition) const
+void FunctionDefinitionWriter::collectCallSiteInfo(AST::Function& function)
 {
-    if (metalAppleGPUFamily() < 9 || m_entryPointStage)
+    if (!m_collectedFunctions.add(&function).isNewEntry)
+        return;
+
+    for (auto& callee : m_shaderModule.callGraph().callees(function)) {
+        auto& callSiteInfo = m_callSiteInfo.add(callee.target, CallSiteInfo { }).iterator->value;
+        for (auto& callSite : callee.callSites) {
+            auto& arguments = std::get<1>(callSite)->arguments();
+            if (callSiteInfo.argumentKinds.size() < arguments.size())
+                callSiteInfo.argumentKinds.grow(arguments.size());
+            for (size_t i = 0; i < arguments.size(); ++i) {
+                auto& argumentKinds = callSiteInfo.argumentKinds[i];
+                argumentKinds.add(arguments[i].constantValue() ? ArgumentKind::Constant : ArgumentKind::Runtime);
+                if (argumentKinds.containsAll({ ArgumentKind::Constant, ArgumentKind::Runtime }))
+                    callSiteInfo.hasMixedArgument = true;
+            }
+        }
+        collectCallSiteInfo(*callee.target);
+    }
+    m_functionsCalleesFirst.append(&function);
+}
+
+static bool returnsLargeAggregate(AST::Function& functionDefinition)
+{
+    if (functionDefinition.stage())
         return false;
 
     auto* returnType = functionDefinition.maybeReturnType();
@@ -1043,6 +1081,52 @@ bool FunctionDefinitionWriter::shouldForceInlining(AST::Function& functionDefini
     constexpr unsigned minimumInlinedReturnSize = 128;
     auto size = type->maybeSize();
     return size && *size >= minimumInlinedReturnSize;
+}
+
+void FunctionDefinitionWriter::selectForcedInliningCallees()
+{
+    if (metalAppleGPUFamily() < 9)
+        return;
+
+    for (auto& entryPoint : m_shaderModule.callGraph().entrypoints()) {
+        if (m_prepareResult.entryPoints.contains(entryPoint.originalName))
+            collectCallSiteInfo(entryPoint.function);
+    }
+
+    constexpr uint64_t maximumInliningGrowthFactor = 4;
+    constexpr uint64_t maximumBodyCount = std::numeric_limits<uint32_t>::max();
+
+    uint64_t remainingGrowth = 0;
+    for (auto* function : m_functionsCalleesFirst)
+        remainingGrowth += function->span().length;
+    remainingGrowth *= maximumInliningGrowthFactor;
+
+    HashMap<AST::Function*, uint64_t> bodyCounts;
+    for (size_t i = m_functionsCalleesFirst.size(); i--;) {
+        auto& function = *m_functionsCalleesFirst[i];
+        uint64_t bodies = std::max<uint64_t>(bodyCounts.get(&function), 1);
+        bool forced = returnsLargeAggregate(function);
+        auto callSiteInfo = m_callSiteInfo.find(&function);
+        if (!forced && callSiteInfo != m_callSiteInfo.end() && callSiteInfo->value.hasMixedArgument) {
+            uint64_t growth = (bodies - 1) * function.span().length;
+            if (growth <= remainingGrowth) {
+                remainingGrowth -= growth;
+                forced = true;
+            }
+        }
+        if (forced)
+            m_forcedInliningCallees.add(&function);
+        uint64_t inlinedBodies = forced ? bodies : 1;
+        for (auto& callee : m_shaderModule.callGraph().callees(function)) {
+            auto& calleeBodies = bodyCounts.add(callee.target, 0u).iterator->value;
+            calleeBodies = std::min(calleeBodies + callee.callSites.size() * inlinedBodies, maximumBodyCount);
+        }
+    }
+}
+
+bool FunctionDefinitionWriter::shouldForceInlining(AST::Function& functionDefinition) const
+{
+    return !m_entryPointStage && m_forcedInliningCallees.contains(&functionDefinition);
 }
 
 void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)

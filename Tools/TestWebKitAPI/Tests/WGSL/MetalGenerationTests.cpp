@@ -34,7 +34,7 @@
 
 namespace TestWGSLAPI {
 
-inline std::expected<String, WGSL::FailedCheck> translate(const String& wgsl, const String& entryPointName)
+inline std::expected<String, WGSL::FailedCheck> translate(const String& wgsl, const String& entryPointName, unsigned appleGPUFamily = 4)
 {
     auto result = WGSL::staticCheck(wgsl, std::nullopt, { 8 });
     if (auto* maybeError = std::get_if<WGSL::FailedCheck>(&result))
@@ -46,7 +46,7 @@ inline std::expected<String, WGSL::FailedCheck> translate(const String& wgsl, co
         return makeUnexpected(WGSL::FailedCheck { { *maybeError }, { } });
     HashMap<String, WGSL::ConstantValue> constantValues;
     auto generationResult = WGSL::generate(ast, std::get<WGSL::PrepareResult>(prepareResult), constantValues, WGSL::DeviceState {
-        .appleGPUFamily = 4,
+        .appleGPUFamily = appleGPUFamily,
         .shaderValidationEnabled = false
     });
     if (auto* maybeError = std::get_if<WGSL::Error>(&generationResult))
@@ -131,6 +131,47 @@ using __PackedType = typename __PackedTypeImpl<T>::Type;
 }
 
 )"_s);
+}
+
+static constexpr auto mixedArgumentShader = R"(
+fn mixed(x : f32, y : f32) -> f32 { return sin(x) * y; }
+fn unrelated(x : f32) -> f32 { return x + 1.0; }
+
+@group(0) @binding(0) var<storage, read_write> out : array<f32>;
+@group(0) @binding(1) var<uniform> inp : vec4f;
+
+@compute @workgroup_size(1)
+fn main() {
+    out[0] = mixed(2.0, inp.x) + mixed(inp.y, inp.x) + unrelated(inp.z) + unrelated(inp.w);
+})"_s;
+
+TEST(WGSLMetalGenerationTests, ForcesInliningWhenParameterMixesConstantAndRuntimeArguments)
+{
+    auto family9 = translate(mixedArgumentShader, "main"_s, 9);
+    ASSERT_TRUE(family9.has_value());
+    EXPECT_TRUE(family9->contains("__attribute__((always_inline)) float function0("_s));
+    EXPECT_FALSE(family9->contains("__attribute__((always_inline)) float function1("_s));
+
+    auto family8 = translate(mixedArgumentShader, "main"_s, 8);
+    ASSERT_TRUE(family8.has_value());
+    EXPECT_FALSE(family8->contains("__attribute__((always_inline)) float function"_s));
+}
+
+TEST(WGSLMetalGenerationTests, DoesNotForceInliningWhenArgumentsAreAllConstantOrAllRuntime)
+{
+    auto mslSource = translate(R"(
+fn allConstant(x : f32) -> f32 { return x + 1.0; }
+fn allRuntime(x : f32) -> f32 { return x + 2.0; }
+
+@group(0) @binding(0) var<storage, read_write> out : array<f32>;
+@group(0) @binding(1) var<uniform> inp : vec4f;
+
+@compute @workgroup_size(1)
+fn main() {
+    out[0] = allConstant(1.0) + allConstant(2.0) + allRuntime(inp.x) + allRuntime(inp.y);
+})"_s, "main"_s, 9);
+    ASSERT_TRUE(mslSource.has_value());
+    EXPECT_FALSE(mslSource->contains("__attribute__((always_inline)) float function"_s));
 }
 
 TEST(WGSLMetalGenerationTests, RepeatedGenerationIsDeterministic)
