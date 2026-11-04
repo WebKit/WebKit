@@ -1,0 +1,5 @@
+Test that WebPageProxy::TranscodeChosenFiles only transcodes file paths the UI process previously approved for the sending WebContent process, and still transcodes the ones it did approve.
+
+PASS: no unapproved file path was transcoded
+PASS: an approved file path was still transcoded
+
