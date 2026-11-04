@@ -76,6 +76,9 @@ public:
     // Frame-aware variant: draw the paint rect scoped to a specific local root frame (Site Isolation
     // per-frame overlays). Defaults to the frame-less version for clients that don't distinguish frames.
     virtual void showPaintRect(LocalFrame&, const FloatRect& rect) { showPaintRect(rect); }
+    virtual void setShowRulers(bool) { }
+    // One rect per highlighted node or quad, for the page overlay to draw ruler guide lines around. Empty withdraws them.
+    virtual void frameHighlightRulerBoundsChanged(LocalFrame&, const Vector<FloatRect>&) { }
     // Tear down any per-frame paint-rect overlay owned by a local root frame that is going away, so
     // it isn't retained past the frame's lifetime. No-op for clients without per-frame overlays.
     virtual void willDestroyFrameOverlays(LocalFrame&) { }

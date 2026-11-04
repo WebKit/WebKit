@@ -413,6 +413,7 @@ public:
     ExceptionOr<unsigned> inspectorGridOverlayCount();
     ExceptionOr<unsigned> inspectorFlexOverlayCount();
     ExceptionOr<unsigned> inspectorPaintRectCount();
+    ExceptionOr<Ref<DOMRectList>> inspectorFrameHighlightRulerBounds();
 
     ExceptionOr<unsigned> markerCountForNode(Node&, const String&);
     ExceptionOr<RefPtr<Range>> markerRangeForNode(Node&, const String& markerType, unsigned index);

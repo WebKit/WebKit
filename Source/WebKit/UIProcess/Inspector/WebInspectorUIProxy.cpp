@@ -793,6 +793,12 @@ void WebInspectorUIProxy::showPaintRectsChanged(bool show)
         inspectedPage->inspectorController().setShowPaintRects(show);
 }
 
+void WebInspectorUIProxy::showRulersChanged(bool show)
+{
+    if (RefPtr inspectedPage = m_inspectedPage)
+        inspectedPage->inspectorController().setShowRulers(show);
+}
+
 void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     switch (developerPreference) {

@@ -127,6 +127,11 @@ static void contentsQuadToCoordinateSystem(const FrameView* mainView, const Loca
         quad += toIntSize(mainView->scrollPosition());
 }
 
+static bool isFiniteRect(const FloatRect& rect)
+{
+    return std::isfinite(rect.x()) && std::isfinite(rect.y()) && std::isfinite(rect.width()) && std::isfinite(rect.height());
+}
+
 static Element* effectiveElementForNode(Node& node)
 {
     if (!is<Element>(node) || !protect(node.document())->frame())
@@ -406,6 +411,7 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
 InspectorOverlay::InspectorOverlay(InspectorOverlayOwner& owner)
     : m_owner(owner)
     , m_paintRectUpdateTimer(*this, &InspectorOverlay::updatePaintRectsTimerFired)
+    , m_reportRulerBoundsTimer(*this, &InspectorOverlay::reportRulerBoundsTimerFired)
 {
 }
 
@@ -478,9 +484,12 @@ void InspectorOverlay::paint(GraphicsContext& context)
 
     RulerExclusion rulerExclusion;
 
+    Vector<FloatRect> highlightBounds;
+
     if (m_highlightQuad) {
         auto quadRulerExclusion = drawQuadHighlight(context, *m_highlightQuad);
         rulerExclusion.bounds.unite(quadRulerExclusion.bounds);
+        highlightBounds.append(quadRulerExclusion.bounds);
     }
 
     if (RefPtr highlightNodeList = m_highlightNodeList) {
@@ -488,6 +497,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
             if (RefPtr node = highlightNodeList->item(i)) {
                 auto nodeRulerExclusion = drawNodeHighlight(context, *node);
                 rulerExclusion.bounds.unite(nodeRulerExclusion.bounds);
+                highlightBounds.append(nodeRulerExclusion.bounds);
 
                 if (m_nodeGridOverlayConfig) {
                     if (auto gridHighlightOverlay = buildGridOverlay({ *node, *m_nodeGridOverlayConfig }))
@@ -506,6 +516,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
         auto nodeRulerExclusion = drawNodeHighlight(context, protect(*m_highlightNode));
         rulerExclusion.bounds.unite(nodeRulerExclusion.bounds);
         rulerExclusion.titlePath = nodeRulerExclusion.titlePath;
+        highlightBounds.append(nodeRulerExclusion.bounds);
 
         if (m_nodeGridOverlayConfig) {
             if (auto gridHighlightOverlay = buildGridOverlay({ *m_highlightNode, *m_nodeGridOverlayConfig }))
@@ -540,6 +551,31 @@ void InspectorOverlay::paint(GraphicsContext& context)
 
         if (auto flexHighlightOverlay = buildFlexOverlay(flexOverlay))
             drawFlexOverlay(context, *flexHighlightOverlay);
+    }
+
+    if (isFrameScoped()) {
+        // Rulers are page-wide, so the page overlay draws the guide lines for this frame's highlights.
+        // In the main-frame process, report contents coordinates: a main-frame scroll doesn't repaint
+        // this overlay (see PageOverlayController::didScrollFrame), so view coordinates would go stale.
+        // FIXME: The page overlay doesn't keep its rulers clear of this highlight's element title.
+        Vector<FloatRect> rulerBounds;
+        RefPtr page = this->page();
+        RefPtr localRootView = geometryFrame->rootFrame().view();
+        if ((m_showRulers || m_showRulersForNodeHighlight) && page && localRootView) {
+            bool reportsContentsCoordinates = !!page->localMainFrame();
+            for (auto& bounds : highlightBounds) {
+                // A node without a box (e.g. display: none) has empty bounds at the origin.
+                if (bounds.isEmpty() || !isFiniteRect(bounds))
+                    continue;
+                rulerBounds.append(reportsContentsCoordinates ? localRootView->rootViewToContents(bounds) : bounds);
+            }
+        }
+        updateReportedRulerBounds(WTF::move(rulerBounds));
+    } else {
+        for (auto& bounds : frameHighlightRulerBoundsInRootView()) {
+            drawBounds(context, bounds);
+            rulerExclusion.bounds.unite(bounds);
+        }
     }
 
     if (!m_paintRects.isEmpty())
@@ -699,13 +735,13 @@ bool InspectorOverlay::shouldDrawRulers() const
     if (isFrameScoped())
         return false;
 
-    return m_showRulers || m_showRulersForNodeHighlight;
+    return m_showRulers || m_showRulersForNodeHighlight || !m_frameHighlightRulerBounds.isEmpty();
 }
 
 bool InspectorOverlay::shouldShowOverlay() const
 {
     // Rulers alone must not install a frame surface that would paint nothing.
-    if (m_showRulers && !isFrameScoped())
+    if ((m_showRulers || !m_frameHighlightRulerBounds.isEmpty()) && !isFrameScoped())
         return true;
 
     return m_highlightNode
@@ -724,6 +760,11 @@ void InspectorOverlay::update()
         return;
 
     RefPtr geometryFrame = frameForGeometry();
+
+    // Don't wait for paint(), which may not happen (e.g. the frame is offscreen).
+    bool hasRulerHighlight = m_highlightNode || m_highlightNodeList || m_highlightQuad;
+    if (isFrameScoped() && (!hasRulerHighlight || (!m_showRulers && !m_showRulersForNodeHighlight)))
+        updateReportedRulerBounds({ });
 
     // Dispatch on frame-scoped, not on whether a geometry frame exists, so the page path stays direct.
     if (!shouldShowOverlay()) {
@@ -793,6 +834,118 @@ void InspectorOverlay::setShowRulers(bool showRulers)
     m_showRulers = showRulers;
 
     update();
+}
+
+void InspectorOverlay::setFrameHighlightRulerBounds(FrameIdentifier frameID, FrameIdentifier localRootFrameID, const Vector<FloatRect>& bounds, RulerBoundsSource source)
+{
+    ASSERT(!isFrameScoped());
+
+    if (bounds.isEmpty()) {
+        removeFrameHighlightRulerBounds(frameID, source);
+        return;
+    }
+
+    auto& entry = m_frameHighlightRulerBounds.ensure(frameID, [&] {
+        return FrameHighlightRulerBounds { localRootFrameID, { }, source };
+    }).iterator->value;
+    if (entry.localRootFrameID == localRootFrameID && entry.bounds == bounds && entry.source == source)
+        return;
+
+    entry = { localRootFrameID, bounds, source };
+    update();
+}
+
+void InspectorOverlay::removeFrameHighlightRulerBounds(FrameIdentifier frameID, RulerBoundsSource source)
+{
+    ASSERT(!isFrameScoped());
+
+    auto it = m_frameHighlightRulerBounds.find(frameID);
+    if (it == m_frameHighlightRulerBounds.end() || it->value.source != source)
+        return;
+
+    m_frameHighlightRulerBounds.remove(it);
+    update();
+}
+
+Vector<FloatRect> InspectorOverlay::frameHighlightRulerBoundsInRootView() const
+{
+    Vector<FloatRect> result;
+    RefPtr page = this->page();
+    if (!page || m_frameHighlightRulerBounds.isEmpty())
+        return result;
+
+    Ref mainFrame = page->mainFrame();
+    for (auto& entry : m_frameHighlightRulerBounds.values()) {
+        RefPtr localRootFrame = entry.localRootFrameID == mainFrame->frameID() ? mainFrame.ptr() : mainFrame->tree().descendantByFrameID(*entry.localRootFrameID);
+        RefPtr localRootView = localRootFrame ? localRootFrame->virtualView() : nullptr;
+        if (!localRootView)
+            continue;
+
+        RefPtr localRootLocalView = dynamicDowncast<LocalFrameView>(*localRootView);
+        if (entry.source == RulerBoundsSource::ThisProcess && !localRootLocalView)
+            continue;
+
+        for (auto bounds : entry.bounds) {
+            if (entry.source == RulerBoundsSource::ThisProcess)
+                bounds = localRootLocalView->contentsToRootView(bounds);
+            bounds = localRootView->convertToRootViewAcrossIsolatedFrames(bounds);
+            if (isFiniteRect(bounds))
+                result.append(bounds);
+        }
+    }
+    return result;
+}
+
+void InspectorOverlay::clearFrameHighlightRulerBounds()
+{
+    if (m_frameHighlightRulerBounds.isEmpty())
+        return;
+
+    m_frameHighlightRulerBounds.clear();
+    update();
+}
+
+void InspectorOverlay::updateReportedRulerBounds(Vector<FloatRect>&& bounds)
+{
+    ASSERT(isFrameScoped());
+
+    m_pendingRulerBounds = WTF::move(bounds);
+    if (m_pendingRulerBounds == m_reportedRulerBounds) {
+        m_reportRulerBoundsTimer.stop();
+        return;
+    }
+
+    if (!m_reportRulerBoundsTimer.isActive())
+        m_reportRulerBoundsTimer.startOneShot(0_s);
+}
+
+void InspectorOverlay::invalidateReportedRulerBounds()
+{
+    cancelRulerBoundsReport();
+    update();
+}
+
+void InspectorOverlay::cancelRulerBoundsReport()
+{
+    ASSERT(isFrameScoped());
+
+    m_reportedRulerBounds = { };
+    m_pendingRulerBounds = { };
+    m_reportRulerBoundsTimer.stop();
+}
+
+void InspectorOverlay::reportRulerBoundsTimerFired()
+{
+    if (m_pendingRulerBounds == m_reportedRulerBounds)
+        return;
+
+    RefPtr frame = m_owner->overlayOwnerFrame();
+    auto* client = m_owner->overlayOwnerBackendClient();
+    if (!frame || !client || !m_owner->overlayOwnerPage())
+        return;
+
+    m_reportedRulerBounds = m_pendingRulerBounds;
+    client->frameHighlightRulerBoundsChanged(*frame, m_reportedRulerBounds);
 }
 
 bool InspectorOverlay::removeGridOverlayForNode(Node& node)

@@ -457,6 +457,31 @@ unsigned PageInspectorController::paintRectCount() const
     return m_overlay->paintRectCount();
 }
 
+Vector<FloatRect> PageInspectorController::frameHighlightRulerBounds() const
+{
+    return m_overlay->frameHighlightRulerBoundsInRootView();
+}
+
+void PageInspectorController::setFrameHighlightRulerBounds(FrameIdentifier frameID, FrameIdentifier localRootFrameID, const Vector<FloatRect>& bounds, InspectorOverlay::RulerBoundsSource source)
+{
+    m_overlay->setFrameHighlightRulerBounds(frameID, localRootFrameID, bounds, source);
+}
+
+void PageInspectorController::removeFrameHighlightRulerBounds(FrameIdentifier frameID, InspectorOverlay::RulerBoundsSource source)
+{
+    m_overlay->removeFrameHighlightRulerBounds(frameID, source);
+}
+
+void PageInspectorController::forgetAllFrameHighlightRulerBounds()
+{
+    m_overlay->forgetAllFrameHighlightRulerBounds();
+}
+
+void PageInspectorController::clearFrameHighlightRulerBounds()
+{
+    m_overlay->clearFrameHighlightRulerBounds();
+}
+
 bool PageInspectorController::shouldShowOverlay() const
 {
     return m_overlay->shouldShowOverlay();

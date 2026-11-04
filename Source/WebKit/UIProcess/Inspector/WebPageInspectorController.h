@@ -115,6 +115,7 @@ public:
     bool isPageInstrumentationEnabled() const;
 
     void setShowPaintRects(bool);
+    void setShowRulers(bool);
 
     void disconnectFrameTargetForTesting(WebCore::FrameIdentifier);
 

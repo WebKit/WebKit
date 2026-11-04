@@ -655,6 +655,16 @@ void WebPageInspectorController::setShowPaintRects(bool show)
         std::ignore = m_pageAgent->setShowPaintRects(show);
 }
 
+void WebPageInspectorController::setShowRulers(bool show)
+{
+#if !PLATFORM(IOS_FAMILY)
+    if (m_pageAgent)
+        std::ignore = m_pageAgent->setShowRulers(show);
+#else
+    UNUSED_PARAM(show);
+#endif
+}
+
 void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* agent)
 {
     if (m_enabledBrowserAgent == agent)

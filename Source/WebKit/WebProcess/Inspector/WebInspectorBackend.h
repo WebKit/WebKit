@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include <WebCore/DebuggerPauseSessionIdentifier.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorBackendClient.h>
@@ -99,6 +100,8 @@ public:
     void elementSelectionChanged(bool);
     void timelineRecordingChanged(bool);
     void showPaintRectsChanged(bool);
+    void showRulersChanged(bool);
+    void frameHighlightRulerBoundsChanged(WebCore::FrameIdentifier, WebCore::FrameIdentifier localRootFrameID, const Vector<WebCore::FloatRect>&);
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>);
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
@@ -132,6 +135,9 @@ public:
     void setBootstrapScript(const String&);
 
     void setSettingOverride(const String& setting, std::optional<bool>);
+
+    void setShowRulers(bool);
+    void setFrameHighlightRulerBounds(WebCore::FrameIdentifier, WebCore::FrameIdentifier localRootFrameID, Vector<WebCore::FloatRect>&&);
 
     // Set up / tear down every per-frame instrumentation agent for a frame. Callers
     // don't need to know which agents are frame-scoped; each helper no-ops unless its
@@ -186,6 +192,7 @@ private:
     // ensurePageInstrumentationForFrame starts in the correct state (the UIProcess replays state
     // only on the first (process, page) registration).
     bool m_showPaintRects { false };
+    bool m_showRulers { false };
     String m_bootstrapScript;
     HashSet<String> m_overriddenSettings;
 };

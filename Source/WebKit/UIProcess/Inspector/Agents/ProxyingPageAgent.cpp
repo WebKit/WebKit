@@ -166,6 +166,7 @@ void ProxyingPageAgent::frameDestroyed(FrameIdentifier frameID)
         return;
 
     m_cachedFrameDocumentInfo.remove(frameID);
+    clearFrameHighlightRulerBounds(frameID);
     m_frontendDispatcher->frameDetached(protocolFrameIdForFrameID(frameID));
 }
 
@@ -174,7 +175,53 @@ void ProxyingPageAgent::frameSwappedOutOfProcess(FrameIdentifier frameID, Proces
     if (!m_enabled)
         return;
 
+    clearFrameHighlightRulerBounds(frameID);
     m_frontendDispatcher->frameDetached(IdentifierRegistry::protocolFrameId(frameID, oldProcessID));
+}
+
+void ProxyingPageAgent::frameHighlightRulerBoundsChanged(IPC::Connection& connection, FrameIdentifier frameID, FrameIdentifier localRootFrameID, Vector<FloatRect>&& bounds)
+{
+    if (!m_enabled)
+        return;
+
+    Ref inspectedPage = m_inspectedPage;
+    auto isFrameInSender = [&](FrameIdentifier id) {
+        RefPtr frame = WebFrameProxy::webFrame(id);
+        return frame && frame->page() == inspectedPage.ptr() && frame->process().hasConnection(connection);
+    };
+    if (!isFrameInSender(frameID) || !isFrameInSender(localRootFrameID))
+        return;
+
+    bounds.removeAllMatching([](auto& rect) {
+        return !(std::isfinite(rect.x()) && std::isfinite(rect.y()) && std::isfinite(rect.width()) && std::isfinite(rect.height()));
+    });
+
+    if (!bounds.isEmpty())
+        m_framesWithRulerBounds.set(frameID, localRootFrameID);
+    else if (!m_framesWithRulerBounds.remove(frameID))
+        return;
+
+    sendFrameHighlightRulerBoundsToMainFrameProcess(frameID, localRootFrameID, WTF::move(bounds));
+}
+
+void ProxyingPageAgent::clearFrameHighlightRulerBounds(FrameIdentifier frameID)
+{
+    auto localRootFrameID = m_framesWithRulerBounds.takeOptional(frameID);
+    if (!localRootFrameID)
+        return;
+
+    sendFrameHighlightRulerBoundsToMainFrameProcess(frameID, *localRootFrameID, { });
+}
+
+void ProxyingPageAgent::sendFrameHighlightRulerBoundsToMainFrameProcess(FrameIdentifier frameID, FrameIdentifier localRootFrameID, Vector<FloatRect>&& bounds)
+{
+    Ref inspectedPage = m_inspectedPage;
+    RefPtr mainFrame = inspectedPage->mainFrame();
+    if (!mainFrame)
+        return;
+
+    Ref mainFrameProcess = mainFrame->process();
+    mainFrameProcess->send(Messages::WebInspectorBackend::SetFrameHighlightRulerBounds { frameID, localRootFrameID, WTF::move(bounds) }, inspectedPage->webPageIDInProcess(mainFrameProcess));
 }
 
 void ProxyingPageAgent::provisionalFrameDiscarded(FrameIdentifier frameID, ProcessIdentifier processID)
@@ -217,6 +264,8 @@ void ProxyingPageAgent::enableInstrumentationForProcess(WebProcessProxy& webProc
     // exactly once per (process, page) registration, guarded above.
     if (m_showPaintRects)
         webProcess.send(Messages::WebInspectorBackend::SetShowPaintRects { true }, pageID);
+    if (m_showRulers)
+        webProcess.send(Messages::WebInspectorBackend::SetShowRulers { true }, pageID);
 
     for (auto& [setting, value] : m_settingOverrides)
         webProcess.send(Messages::WebInspectorBackend::SetSettingOverride { setting, value }, pageID);
@@ -321,6 +370,8 @@ CommandResult<void> ProxyingPageAgent::disable()
     // Reset so a later frontend reconnect doesn't replay a stale toggle or script via
     // enableInstrumentationForProcess. The processes are torn down below, so no "off" send is needed.
     m_showPaintRects = false;
+    m_showRulers = false;
+    m_framesWithRulerBounds.clear();
     m_bootstrapScript = { };
 
     // Force-teardown: disable all processes unconditionally, bypassing the
@@ -758,12 +809,17 @@ void ProxyingPageAgent::searchInResources(const String& text, std::optional<bool
     }
 }
 
-// FIXME: <https://webkit.org/b/308899> Draw rulers in every WebContent process. Rulers render via
-// InspectorOverlay, which subframe processes don't have wired up, and need page-wide (cross-process)
-// geometry rather than the per-frame local drawing used for paint rects.
+// Page.setShowRulers reaches the main-frame process's InspectorPageAgent, which draws the rulers and relays
+// the toggle here. Frame overlays in every process need it to report their highlights' bounds.
 #if !PLATFORM(IOS_FAMILY)
-CommandResult<void> ProxyingPageAgent::setShowRulers(bool)
+CommandResult<void> ProxyingPageAgent::setShowRulers(bool show)
 {
+    m_showRulers = show;
+
+    forEachInstrumentedProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebInspectorBackend::SetShowRulers { show }, pageID);
+    });
+
     return { };
 }
 #endif

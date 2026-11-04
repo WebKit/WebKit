@@ -1,0 +1,29 @@
+Tests that highlights report ruler guide-line bounds to the page overlay under site isolation.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameHighlightRulers
+-- Running test case: ShowRulers
+Enabling rulers...
+PASS: Page overlay should have ruler bounds for the iframe's highlight.
+PASS: Page overlay should drop the ruler bounds once the iframe's highlight is hidden.
+
+-- Running test case: ShowRulersTurnedOffWhileHighlighted
+PASS: Page overlay should have ruler bounds for the iframe's highlight.
+Disabling rulers...
+PASS: Page overlay should drop the ruler bounds once rulers are disabled.
+
+-- Running test case: HighlightShowRulers
+PASS: Page overlay should have ruler bounds for the iframe's highlight.
+PASS: Page overlay should drop the ruler bounds once the iframe's highlight is hidden.
+
+-- Running test case: HighlightNodeListShowRulers
+PASS: Page overlay should have ruler bounds for each highlighted node.
+PASS: Page overlay should drop the ruler bounds once the highlight is hidden.
+
+-- Running test case: MainFrameScroll
+PASS: Page overlay should have ruler bounds for the main frame's highlight.
+Scrolling the main frame by 100px...
+PASS: Ruler bounds should move up by the scroll offset.
+PASS: Ruler bounds should keep their height.
+

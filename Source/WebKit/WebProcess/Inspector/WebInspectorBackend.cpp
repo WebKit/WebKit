@@ -28,6 +28,7 @@
 
 #include "FrameNetworkAgentProxy.h"
 #include "PageAgentProxy.h"
+#include "ProxyingPageAgentMessages.h"
 #include "WebFrame.h"
 #include "WebInspectorBackendMessages.h"
 #include "WebInspectorBackendProxyMessages.h"
@@ -279,6 +280,23 @@ void WebInspectorBackend::showPaintRectsChanged(bool show)
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::ShowPaintRectsChanged(show), m_page->identifier());
 }
 
+void WebInspectorBackend::showRulersChanged(bool show)
+{
+    if (!m_page)
+        return;
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::ShowRulersChanged(show), m_page->identifier());
+}
+
+void WebInspectorBackend::frameHighlightRulerBoundsChanged(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier localRootFrameID, const Vector<WebCore::FloatRect>& bounds)
+{
+    // Dropped reports are resent by enablePageInstrumentation().
+    if (!m_page || !m_pageInstrumentationEnabled)
+        return;
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::ProxyingPageAgent::FrameHighlightRulerBoundsChanged(frameID, localRootFrameID, bounds), m_page->identifier());
+}
+
 void WebInspectorBackend::setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::SetDeveloperPreferenceOverride(developerPreference, overrideValue), m_page->identifier());
@@ -447,9 +465,14 @@ void WebInspectorBackend::removeInstrumentationForFrame(LocalFrame& frame)
     m_frameNetworkAgentProxies.remove(frameID);
     m_framePageAgentProxies.remove(frameID);
 
+    frame.inspectorController().cancelRulerBoundsReport();
+
     // Tear down the frame's paint-rect overlay (if it owned one). The overlay is held by the page
     // overlay controller, so it wouldn't be released just by the proxy above going away.
     if (RefPtr corePage = m_page ? m_page->corePage() : nullptr) {
+        if (corePage->localMainFrame())
+            corePage->inspectorController().removeFrameHighlightRulerBounds(frameID, InspectorOverlay::RulerBoundsSource::ThisProcess);
+
         if (auto* client = corePage->inspectorController().inspectorBackendClient())
             client->willDestroyFrameOverlays(frame);
     }
@@ -738,6 +761,7 @@ void WebInspectorBackend::ensurePageInstrumentationForFrame(LocalFrame& frame)
     // they were fanned out, and would otherwise default to off.
     proxy->setShowPaintRects(m_showPaintRects);
     proxy->setBootstrapScript(m_bootstrapScript);
+    frameController.setShowRulers(m_showRulers);
 
     m_framePageAgentProxies.add(frameID, WTF::move(proxy));
 }
@@ -769,6 +793,7 @@ void WebInspectorBackend::enablePageInstrumentation()
 
     forEachLocalOrProvisionalFrame(*corePage, [&](LocalFrame& frame) {
         ensurePageInstrumentationForFrame(frame);
+        frame.inspectorController().invalidateReportedRulerBounds();
     });
 }
 
@@ -785,9 +810,19 @@ void WebInspectorBackend::disablePageInstrumentation()
     m_framePageAgentProxies.clear();
     m_pageInstrumentationEnabled = false;
 
+    if (RefPtr corePage = m_page ? m_page->corePage() : nullptr) {
+        if (m_showRulers) {
+            forEachLocalOrProvisionalFrame(*corePage, [](LocalFrame& frame) {
+                frame.inspectorController().setShowRulers(false);
+            });
+        }
+        corePage->inspectorController().clearFrameHighlightRulerBounds();
+    }
+
     // Reset so a later re-enable seeds fresh proxies as off; the UIProcess ProxyingPageAgent also
     // resets on disable().
     m_showPaintRects = false;
+    m_showRulers = false;
     m_bootstrapScript = { };
 
     if (RefPtr corePage = m_page ? m_page->corePage() : nullptr) {
@@ -821,6 +856,28 @@ void WebInspectorBackend::setSettingOverride(const String& settingName, std::opt
         m_overriddenSettings.add(settingName);
     else
         m_overriddenSettings.remove(settingName);
+}
+
+void WebInspectorBackend::setShowRulers(bool show)
+{
+    m_showRulers = show;
+
+    RefPtr corePage = m_page ? m_page->corePage() : nullptr;
+    if (!corePage)
+        return;
+
+    forEachLocalOrProvisionalFrame(*corePage, [&](LocalFrame& frame) {
+        frame.inspectorController().setShowRulers(show);
+    });
+}
+
+void WebInspectorBackend::setFrameHighlightRulerBounds(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier localRootFrameID, Vector<WebCore::FloatRect>&& bounds)
+{
+    RefPtr corePage = m_page ? m_page->corePage() : nullptr;
+    if (!corePage || !corePage->localMainFrame())
+        return;
+
+    corePage->inspectorController().setFrameHighlightRulerBounds(frameID, localRootFrameID, bounds, InspectorOverlay::RulerBoundsSource::OtherProcess);
 }
 
 void WebInspectorBackend::setBootstrapScript(const String& source)

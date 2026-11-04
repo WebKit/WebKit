@@ -93,6 +93,10 @@ public:
     // True when this frame's own overlay holds the highlight state, not the page overlay.
     NODELETE WEBCORE_EXPORT bool hasOverlayContentToDraw() const;
 
+    WEBCORE_EXPORT void setShowRulers(bool);
+    WEBCORE_EXPORT void invalidateReportedRulerBounds();
+    WEBCORE_EXPORT void cancelRulerBoundsReport();
+
     WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel&, bool isAutomaticInspection = false, bool immediatelyPause = false);
     WEBCORE_EXPORT void disconnectFrontend(Inspector::FrontendChannel&);
     WEBCORE_EXPORT void dispatchMessageFromFrontend(const String& message);

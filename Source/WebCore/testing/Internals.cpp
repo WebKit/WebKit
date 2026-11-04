@@ -2342,6 +2342,15 @@ ExceptionOr<unsigned> Internals::inspectorPaintRectCount()
     return protect(document->page()->inspectorController())->paintRectCount();
 }
 
+ExceptionOr<Ref<DOMRectList>> Internals::inspectorFrameHighlightRulerBounds()
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    return DOMRectList::create(protect(document->page()->inspectorController())->frameHighlightRulerBounds());
+}
+
 ExceptionOr<unsigned> Internals::markerCountForNode(Node& node, const String& markerType)
 {
     OptionSet<DocumentMarkerType> markerTypes;

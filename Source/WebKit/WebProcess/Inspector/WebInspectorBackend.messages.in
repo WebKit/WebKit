@@ -63,6 +63,13 @@ messages -> WebInspectorBackend {
     # Fan out Page.overrideSetting the same way. `setting` is the Page.Setting protocol name.
     SetSettingOverride(String setting, std::optional<bool> value)
 
+    # Fan out Page.setShowRulers the same way, so every frame overlay reports its highlights' bounds.
+    SetShowRulers(bool show)
+
+    # Main-frame process only. Relays another process's highlight bounds to the page overlay, which only
+    # happens while the inspector highlights an element there with rulers.
+    SetFrameHighlightRulerBounds(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier localRootFrameID, Vector<WebCore::FloatRect> bounds)
+
     # Fan out Page.setBootstrapScript from the UIProcess ProxyingPageAgent, so frames in processes
     # the page target doesn't reach (cross-origin subframes under Site Isolation) run it too.
     SetBootstrapScript(String source)

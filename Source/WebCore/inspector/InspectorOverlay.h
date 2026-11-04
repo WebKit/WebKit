@@ -40,6 +40,8 @@
 #include <wtf/AbstractCanMakeCheckedPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Deque.h>
+#include <wtf/HashMap.h>
+#include <wtf/Markable.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -232,6 +234,22 @@ public:
 
     void setShowRulers(bool);
 
+    // Page overlay only. Highlight bounds reported by frame overlays, relative to each frame's local root:
+    // contents coordinates from this process, view coordinates from another. They are mapped to the main
+    // frame's view when painting, so they follow main-frame scrolling and layout. A removal only drops
+    // bounds from the same source, so a late one can't erase a frame that moved processes.
+    enum class RulerBoundsSource : bool { ThisProcess, OtherProcess };
+    void setFrameHighlightRulerBounds(FrameIdentifier, FrameIdentifier localRootFrameID, const Vector<FloatRect>&, RulerBoundsSource);
+    void removeFrameHighlightRulerBounds(FrameIdentifier, RulerBoundsSource);
+    void clearFrameHighlightRulerBounds();
+    // Doesn't update, for use while the main frame is destroyed.
+    void forgetAllFrameHighlightRulerBounds() { m_frameHighlightRulerBounds.clear(); }
+    Vector<FloatRect> frameHighlightRulerBoundsInRootView() const;
+
+    // Frame overlay only.
+    void invalidateReportedRulerBounds();
+    void cancelRulerBoundsReport();
+
     NODELETE Node* highlightedNode() const;
     unsigned gridOverlayCount() const { return m_activeGridOverlays.size(); }
     unsigned flexOverlayCount() const { return m_activeFlexOverlays.size(); }
@@ -275,6 +293,9 @@ private:
 
     void updatePaintRectsTimerFired();
 
+    void updateReportedRulerBounds(Vector<FloatRect>&&);
+    void reportRulerBoundsTimerFired();
+
     bool removeGridOverlayForNode(Node&);
     bool removeFlexOverlayForNode(Node&);
 
@@ -312,6 +333,18 @@ private:
     bool m_showPaintRects { false };
     bool m_showRulers { false };
     bool m_showRulersForNodeHighlight { false };
+
+    struct FrameHighlightRulerBounds {
+        Markable<FrameIdentifier> localRootFrameID;
+        Vector<FloatRect> bounds;
+        RulerBoundsSource source;
+    };
+    HashMap<FrameIdentifier, FrameHighlightRulerBounds> m_frameHighlightRulerBounds;
+
+    // Reported from a timer rather than paint(), since the page overlay invalidates itself in response.
+    Vector<FloatRect> m_reportedRulerBounds;
+    Vector<FloatRect> m_pendingRulerBounds;
+    Timer m_reportRulerBoundsTimer;
 };
 
 } // namespace WebCore

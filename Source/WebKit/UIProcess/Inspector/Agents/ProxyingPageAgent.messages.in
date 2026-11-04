@@ -35,4 +35,7 @@ messages -> Inspector::ProxyingPageAgent {
     DomContentEventFired(double timestamp)
     LoadEventFired(double timestamp)
     FrameDetached(WebCore::FrameIdentifier frameID)
+
+    # A frame overlay's highlight bounds in its local root's view coordinates, for the main-frame process's page overlay.
+    FrameHighlightRulerBoundsChanged(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier localRootFrameID, Vector<WebCore::FloatRect> bounds)
 }

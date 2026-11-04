@@ -30,6 +30,7 @@
 #include "WebPageInspectorAgentBase.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/PageIdentifier.h>
@@ -121,6 +122,10 @@ private:
     void domContentEventFired(double timestamp);
     void loadEventFired(double timestamp);
     void frameDetached(WebCore::FrameIdentifier);
+    void frameHighlightRulerBoundsChanged(IPC::Connection&, WebCore::FrameIdentifier, WebCore::FrameIdentifier localRootFrameID, Vector<WebCore::FloatRect>&&);
+
+    void clearFrameHighlightRulerBounds(WebCore::FrameIdentifier);
+    void sendFrameHighlightRulerBoundsToMainFrameProcess(WebCore::FrameIdentifier, WebCore::FrameIdentifier localRootFrameID, Vector<WebCore::FloatRect>&&);
 
     void removeAllRegisteredReceivers();
 
@@ -137,11 +142,15 @@ private:
     bool m_enabled { false };
     HashMap<std::pair<WebCore::ProcessIdentifier, WebCore::PageIdentifier>, unsigned> m_instrumentedProcessPageCounts;
 
-    // Latest paint-rects toggle, bootstrap script and setting overrides, sent to every instrumented process and replayed
-    // to any process that registers later (e.g. a cross-origin navigation spawns a new one).
+    // Latest paint-rects and rulers toggles, bootstrap script and setting overrides, sent to every instrumented
+    // process and replayed to any process that registers later (e.g. a cross-origin navigation spawns a new one).
     bool m_showPaintRects { false };
+    bool m_showRulers { false };
     String m_bootstrapScript;
     HashMap<String, bool> m_settingOverrides;
+
+    // Frames whose ruler bounds were forwarded to the main-frame process, mapped to their local root.
+    HashMap<WebCore::FrameIdentifier, WebCore::FrameIdentifier> m_framesWithRulerBounds;
 
     // Pin each instrumented WebProcessProxy alive while we hold an IPC message
     // receiver registration on it. Without this, the process can be destructed

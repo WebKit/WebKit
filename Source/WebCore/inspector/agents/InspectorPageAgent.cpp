@@ -714,6 +714,7 @@ void InspectorPageAgent::searchInResources(const String& text, std::optional<boo
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setShowRulers(bool showRulers)
 {
     protect(overlay())->setShowRulers(showRulers);
+    m_client->setShowRulers(showRulers);
 
     return { };
 }

@@ -140,6 +140,21 @@ bool FrameInspectorController::hasOverlayContentToDraw() const
     return m_overlay->shouldShowOverlay();
 }
 
+void FrameInspectorController::setShowRulers(bool showRulers)
+{
+    m_overlay->setShowRulers(showRulers);
+}
+
+void FrameInspectorController::invalidateReportedRulerBounds()
+{
+    m_overlay->invalidateReportedRulerBounds();
+}
+
+void FrameInspectorController::cancelRulerBoundsReport()
+{
+    m_overlay->cancelRulerBoundsReport();
+}
+
 FrameAgentContext FrameInspectorController::frameAgentContext()
 {
     AgentContext baseContext = {

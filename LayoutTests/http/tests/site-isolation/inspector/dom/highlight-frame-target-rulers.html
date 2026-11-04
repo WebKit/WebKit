@@ -1,0 +1,171 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameHighlightRulers");
+
+    // Rulers are page-wide, so a frame overlay hands its highlights' bounds to the main-frame process's page
+    // overlay, which draws the ruler guide lines. The bounds are read from the main-frame process, as drawn
+    // (internals -> PageInspectorController::frameHighlightRulerBounds).
+
+    async function nodeIdsInFrame(urlSubstring, selectors) {
+        let target = await waitForFrameTargetForURLContaining(urlSubstring);
+        InspectorTest.assert(target instanceof WI.FrameTarget, "Should resolve a FrameTarget for " + urlSubstring + ".");
+
+        let frameDoc = WI.domManager.frameTargetDocumentForTarget(target);
+        if (!frameDoc) {
+            let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+            frameDoc = docEvent.data.document;
+        }
+
+        let htmlNode = frameDoc.children.find((child) => child.nodeName() === "HTML");
+        await new Promise((resolve) => htmlNode.getChildNodes(resolve));
+        let bodyNode = htmlNode.children.find((child) => child.nodeName() === "BODY");
+        await new Promise((resolve) => bodyNode.getChildNodes(resolve));
+        let containerNode = bodyNode.children.find((child) => child.getAttribute("id") === "container");
+        await new Promise((resolve) => containerNode.getChildNodes(resolve));
+
+        let nodeIds = [];
+        for (let selector of selectors) {
+            let node = WI.domManager.nodeForId(await containerNode.querySelector(selector));
+            InspectorTest.assert(node, "Should find " + selector + ".");
+            nodeIds.push(node.backendNodeId);
+        }
+        return {target, nodeIds};
+    }
+
+    function highlightConfig() {
+        return {
+            contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+            paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
+            borderColor: {r: 255, g: 229, b: 153, a: 0.66},
+            marginColor: {r: 246, g: 178, b: 107, a: 0.66},
+        };
+    }
+
+    async function rulerBounds() {
+        let json = await InspectorTest.evaluateInPage("internals.inspectorFrameHighlightRulerBounds ? JSON.stringify(Array.from(internals.inspectorFrameHighlightRulerBounds(), (rect) => ({top: rect.top, height: rect.height}))) : '[]'");
+        return JSON.parse(json);
+    }
+
+    // The bounds reach the main-frame process asynchronously (a timer in the frame overlay, then for a
+    // cross-origin frame an IPC hop through the UIProcess), so poll for the expected number of rects.
+    async function pollForRulerBounds(expectedCount) {
+        let bounds;
+        for (let i = 0; i < 100; ++i) {
+            bounds = await rulerBounds();
+            if (bounds.length === expectedCount)
+                break;
+            await new Promise((resolve) => { setTimeout(resolve, 50); });
+        }
+        return bounds;
+    }
+
+    suite.addTestCase({
+        name: "ShowRulers",
+        description: "With Page.setShowRulers enabled, a highlight in a cross-origin iframe should reach the page overlay.",
+        async test() {
+            let {target, nodeIds: [nodeId]} = await nodeIdsInFrame("highlight-frame.html", ["#target"]);
+
+            InspectorTest.log("Enabling rulers...");
+            await PageAgent.setShowRulers(true);
+
+            try {
+                await target.DOMAgent.highlightNode.invoke({nodeId, highlightConfig: highlightConfig()});
+                InspectorTest.expectEqual((await pollForRulerBounds(1)).length, 1, "Page overlay should have ruler bounds for the iframe's highlight.");
+
+                await target.DOMAgent.hideHighlight();
+                InspectorTest.expectEqual((await pollForRulerBounds(0)).length, 0, "Page overlay should drop the ruler bounds once the iframe's highlight is hidden.");
+            } finally {
+                await PageAgent.setShowRulers(false);
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "ShowRulersTurnedOffWhileHighlighted",
+        description: "Turning rulers off should drop the ruler bounds of a highlight that stays visible.",
+        async test() {
+            let {target, nodeIds: [nodeId]} = await nodeIdsInFrame("highlight-frame.html", ["#target"]);
+
+            await PageAgent.setShowRulers(true);
+            try {
+                await target.DOMAgent.highlightNode.invoke({nodeId, highlightConfig: highlightConfig()});
+                InspectorTest.expectEqual((await pollForRulerBounds(1)).length, 1, "Page overlay should have ruler bounds for the iframe's highlight.");
+            } finally {
+                InspectorTest.log("Disabling rulers...");
+                await PageAgent.setShowRulers(false);
+            }
+
+            InspectorTest.expectEqual((await pollForRulerBounds(0)).length, 0, "Page overlay should drop the ruler bounds once rulers are disabled.");
+            await target.DOMAgent.hideHighlight();
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightShowRulers",
+        description: "DOM.highlightNode with showRulers should reach the page overlay without Page.setShowRulers.",
+        async test() {
+            let {target, nodeIds: [nodeId]} = await nodeIdsInFrame("highlight-frame.html", ["#target"]);
+
+            await target.DOMAgent.highlightNode.invoke({nodeId, highlightConfig: highlightConfig(), showRulers: true});
+            InspectorTest.expectEqual((await pollForRulerBounds(1)).length, 1, "Page overlay should have ruler bounds for the iframe's highlight.");
+
+            await target.DOMAgent.hideHighlight();
+            InspectorTest.expectEqual((await pollForRulerBounds(0)).length, 0, "Page overlay should drop the ruler bounds once the iframe's highlight is hidden.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightNodeListShowRulers",
+        description: "Each highlighted node should get its own ruler bounds.",
+        async test() {
+            let {target, nodeIds} = await nodeIdsInFrame("highlight-frame-target-rulers.html", ["#first", "#second"]);
+
+            await target.DOMAgent.highlightNodeList.invoke({nodeIds, highlightConfig: highlightConfig(), showRulers: true});
+            InspectorTest.expectEqual((await pollForRulerBounds(2)).length, 2, "Page overlay should have ruler bounds for each highlighted node.");
+
+            await target.DOMAgent.hideHighlight();
+            InspectorTest.expectEqual((await pollForRulerBounds(0)).length, 0, "Page overlay should drop the ruler bounds once the highlight is hidden.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "MainFrameScroll",
+        description: "Ruler bounds for a main-frame highlight should follow a main-frame scroll, which doesn't repaint the frame overlay.",
+        async test() {
+            let {target, nodeIds: [nodeId]} = await nodeIdsInFrame("highlight-frame-target-rulers.html", ["#first"]);
+
+            await target.DOMAgent.highlightNode.invoke({nodeId, highlightConfig: highlightConfig(), showRulers: true});
+            try {
+                let [before] = await pollForRulerBounds(1);
+                InspectorTest.expectThat(before, "Page overlay should have ruler bounds for the main frame's highlight.");
+                if (!before)
+                    return;
+
+                InspectorTest.log("Scrolling the main frame by 100px...");
+                await InspectorTest.evaluateInPage("window.scrollTo(0, 100)");
+
+                let [after] = await rulerBounds();
+                InspectorTest.expectEqual(Math.round(before.top - after.top), 100, "Ruler bounds should move up by the scroll offset.");
+                InspectorTest.expectEqual(after.height, before.height, "Ruler bounds should keep their height.");
+            } finally {
+                await target.DOMAgent.hideHighlight();
+                await InspectorTest.evaluateInPage("window.scrollTo(0, 0)");
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that highlights report ruler guide-line bounds to the page overlay under site isolation.</p>
+<div id="container">
+    <div id="first" style="width: 100px; height: 40px; background: cyan;"></div>
+    <div id="second" style="width: 100px; height: 40px; margin-top: 100px; background: cyan;"></div>
+</div>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/highlight-frame.html" width="300" height="200"></iframe>
+<div style="height: 2000px;"></div>
+</body>

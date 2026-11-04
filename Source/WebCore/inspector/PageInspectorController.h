@@ -133,6 +133,12 @@ public:
     NODELETE WEBCORE_EXPORT unsigned gridOverlayCount() const;
     NODELETE WEBCORE_EXPORT unsigned flexOverlayCount() const;
     WEBCORE_EXPORT unsigned paintRectCount() const;
+    WEBCORE_EXPORT Vector<FloatRect> frameHighlightRulerBounds() const;
+
+    WEBCORE_EXPORT void setFrameHighlightRulerBounds(FrameIdentifier, FrameIdentifier localRootFrameID, const Vector<FloatRect>&, InspectorOverlay::RulerBoundsSource);
+    WEBCORE_EXPORT void removeFrameHighlightRulerBounds(FrameIdentifier, InspectorOverlay::RulerBoundsSource);
+    WEBCORE_EXPORT void forgetAllFrameHighlightRulerBounds();
+    WEBCORE_EXPORT void clearFrameHighlightRulerBounds();
 
     InspectorBackendClient* inspectorBackendClient() const LIFETIME_BOUND { return m_inspectorBackendClient.get(); }
     InspectorFrontendClient* inspectorFrontendClient() const { return m_inspectorFrontendClient; }

@@ -465,6 +465,20 @@ void WebInspectorBackendClient::inspectedFrameDestroyed(LocalFrame& destroyedFra
     if (RefPtr page = m_page) {
         if (RefPtr backend = page->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
             backend->removeInstrumentationForDestroyedFrame(destroyedFrame);
+
+        // A FrameIdentifier names the logical frame, so keep the bounds if another LocalFrame now hosts it.
+        if (RefPtr corePage = page->corePage()) {
+            auto frameID = destroyedFrame.frameID();
+            Ref mainFrame = corePage->mainFrame();
+            RefPtr currentFrame = mainFrame->frameID() == frameID ? mainFrame.ptr() : mainFrame->tree().descendantByFrameID(frameID);
+            bool isHostedByAnotherLocalFrame = currentFrame && currentFrame.get() != &destroyedFrame && is<LocalFrame>(*currentFrame);
+            if (!isHostedByAnotherLocalFrame) {
+                if (corePage->localMainFrame() == &destroyedFrame)
+                    corePage->inspectorController().forgetAllFrameHighlightRulerBounds();
+                else
+                    corePage->inspectorController().removeFrameHighlightRulerBounds(frameID, InspectorOverlay::RulerBoundsSource::ThisProcess);
+            }
+        }
     }
 
     willDestroyFrameOverlays(destroyedFrame);
@@ -534,6 +548,38 @@ void WebInspectorBackendClient::setShowPaintRects(bool show)
     // every WebContent process (see WebInspectorBackend::setShowPaintRects).
     if (RefPtr inspector = page->inspector())
         inspector->showPaintRectsChanged(show);
+}
+
+void WebInspectorBackendClient::setShowRulers(bool show)
+{
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    // Without Site Isolation the page overlay draws every highlight, so there are no frame overlays to tell.
+    RefPtr corePage = page->corePage();
+    if (!corePage || !corePage->settings().siteIsolationEnabled())
+        return;
+
+    if (RefPtr inspector = page->inspector())
+        inspector->showRulersChanged(show);
+}
+
+void WebInspectorBackendClient::frameHighlightRulerBoundsChanged(LocalFrame& frame, const Vector<FloatRect>& bounds)
+{
+    RefPtr page = m_page;
+    RefPtr corePage = page ? page->corePage() : nullptr;
+    if (!corePage)
+        return;
+
+    auto localRootFrameID = frame.rootFrame().frameID();
+    if (corePage->localMainFrame()) {
+        corePage->inspectorController().setFrameHighlightRulerBounds(frame.frameID(), localRootFrameID, bounds, InspectorOverlay::RulerBoundsSource::ThisProcess);
+        return;
+    }
+
+    if (RefPtr inspector = page->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
+        inspector->frameHighlightRulerBoundsChanged(frame.frameID(), localRootFrameID, bounds);
 }
 
 void WebInspectorBackendClient::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
