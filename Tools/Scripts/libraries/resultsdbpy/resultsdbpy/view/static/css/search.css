@@ -53,13 +53,28 @@
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
-    column-gap: 4px;
+    column-gap: 8px;
 }
 
-.next-regress-bar button {
+.next-regress-bar button, .next-regress-bar .link-button {
     background-color: var(--blurBackgroundColor);
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
+}
+
+/* With the space between them, the Find buttons sit as far apart as the bar's column-gap. */
+.next-regress-bar > div > button + button {
+    margin-left: 4px;
+}
+
+.next-regress-bar .link-button {
+    align-self: center;
+    padding: 2px 4px;
+    border: 1px solid var(--greyLight);
+    border-radius: 4px;
+    font-size: calc(var(--smallSize) - 4px);
+    line-height: 1;
+    color: buttontext;
 }
 
 .condensed-view {
@@ -131,8 +146,11 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .next-regress-bar button{
+    .next-regress-bar button, .next-regress-bar .link-button {
         background-color: var(--blurBackgroundColorDark);
+    }
+    .next-regress-bar .link-button {
+        color: var(--grey);
     }
     .condensed-view {
         --selectedColor: rgb(51, 160, 255);
