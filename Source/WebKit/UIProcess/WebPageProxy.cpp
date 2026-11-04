@@ -9054,6 +9054,9 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
         resolveFixedContainerEdges();
 #endif
 
+    if (frame && frame == m_focusedFrame)
+        m_focusedFrame = nullptr;
+
     if (frame)
         frame->disconnect();
 
