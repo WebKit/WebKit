@@ -67,6 +67,8 @@ public:
 
     virtual void clearTexturesIfNeeded(const IntRect& viewport, std::optional<uint32_t> slice) { UNUSED_PARAM(viewport); UNUSED_PARAM(slice); }
 
+    virtual void invalidateTextures() { }
+
     virtual bool isWebGLBacking() const { return false; }
 
 private:

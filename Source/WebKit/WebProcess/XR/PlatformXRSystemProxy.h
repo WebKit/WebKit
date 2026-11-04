@@ -59,6 +59,7 @@ public:
     std::optional<PlatformXR::LayerInfo> createLayerProjection(uint32_t, uint32_t, bool);
 #if ENABLE(WEBXR_LAYERS)
     std::optional<PlatformXR::LayerInfo> createCompositionLayer(PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout);
+    void deleteLayer(PlatformXR::LayerHandle);
 #endif
 #if USE(OPENXR)
     void submitFrame(Vector<PlatformXR::DeviceLayer>&&);

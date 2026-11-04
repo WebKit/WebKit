@@ -225,6 +225,21 @@ void OpenXRGraphicsBindingOpenGLES::waitFrameFence(WTF::UnixFileDescriptor&& fen
         fence->serverWait();
 }
 
+void OpenXRGraphicsBindingOpenGLES::releaseExportedTextures(uint64_t image)
+{
+    ASSERT(!m_glContext || WebCore::GLContext::current() == m_glContext.get());
+
+    auto key = static_cast<PlatformGLObject>(image);
+#if USE(GBM) || OS(ANDROID)
+    if (auto texture = m_exportedTexturesMap.take(key))
+        glDeleteTextures(1, &texture);
+#endif
+#if defined(XR_KHR_composition_layer_cube)
+    if (auto texture = m_sideBySideTextures.take(key))
+        glDeleteTextures(1, &texture);
+#endif
+}
+
 void OpenXRGraphicsBindingOpenGLES::releaseSessionGraphics()
 {
     // Deleting the GL objects below requires the context that owns them to be current. The context may be null if the session graphics
@@ -235,15 +250,13 @@ void OpenXRGraphicsBindingOpenGLES::releaseSessionGraphics()
     if (m_fbosForBlitting[0])
         glDeleteFramebuffers(m_fbosForBlitting.size(), m_fbosForBlitting.data());
     m_fbosForBlitting = { 0, 0 };
-    for (auto texture : m_exportedTexturesMap.values())
-        glDeleteTextures(1, &texture);
-    m_exportedTexturesMap.clear();
+    for (auto image : copyToVector(m_exportedTexturesMap.keys()))
+        releaseExportedTextures(image);
 #endif
 
 #if defined(XR_KHR_composition_layer_cube)
-    for (auto texture : m_sideBySideTextures.values())
-        glDeleteTextures(1, &texture);
-    m_sideBySideTextures.clear();
+    for (auto image : copyToVector(m_sideBySideTextures.keys()))
+        releaseExportedTextures(image);
     if (m_reconstructionFBOs[0])
         glDeleteFramebuffers(m_reconstructionFBOs.size(), m_reconstructionFBOs.data());
     m_reconstructionFBOs = { 0, 0 };

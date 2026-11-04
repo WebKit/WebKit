@@ -56,6 +56,7 @@ public:
     uint64_t acquiredTexture() const { return m_acquiredTexture; }
     HasAlpha hasAlpha() const { return m_hasAlpha; }
     size_t imageCount() const { return m_imageHandles.size(); }
+    void releaseExportedTextures(OpenXRGraphicsBinding&) const;
 
 private:
     OpenXRSwapchain(XrSwapchain, const XrSwapchainCreateInfo&, Vector<uint64_t>&&, HasAlpha);

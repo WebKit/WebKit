@@ -51,6 +51,7 @@ public:
     virtual PlatformXR::DeviceLayer endFrame() = 0;
     virtual PlatformXR::LayerHandle layerHandle() const = 0;
     virtual bool supportsViewportScaling() const { return false; }
+    virtual bool isDestroyed() const { return false; }
 
     virtual bool isWebXRWebGLLayer() const { return false; }
     virtual bool isXRCompositionLayer() const { return false; }

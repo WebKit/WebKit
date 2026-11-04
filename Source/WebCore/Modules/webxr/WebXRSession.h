@@ -62,6 +62,7 @@ class XRFrameRequestCallback;
 class WebCoreOpaqueRoot;
 class WebXRView;
 class WebXRReferenceSpace;
+class XRCompositionLayer;
 struct XRCanvasConfiguration;
 struct XRRenderStateInit;
 
@@ -150,6 +151,7 @@ public:
 
 #if ENABLE(WEBXR_LAYERS)
     unsigned maxRenderLayers() const;
+    void layerDestroyed(const XRCompositionLayer&);
 #endif
 
     void initializeTrackingAndRendering(std::optional<XRCanvasConfiguration>&&);

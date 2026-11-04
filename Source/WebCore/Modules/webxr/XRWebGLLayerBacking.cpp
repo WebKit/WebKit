@@ -119,11 +119,40 @@ void XRWebGLLayerBacking::endFrame(PlatformXR::DeviceLayer& layerData)
 }
 #endif
 
+RefPtr<WebGLOpaqueTexture> XRWebGLLayerBacking::cachedOpaqueTexture(WebGLOpaqueTextureCache& cache, WebXRWebGLSwapchain& swapchain, PlatformGLObject texture)
+{
+    if (auto it = cache.find(texture); it != cache.end())
+        return it->value.ptr();
+
+    // Wrappers that nobody else references (not in a layer's texture list nor in an XRSubImage) cannot be observed anymore.
+    cache.removeIf([](auto& entry) {
+        return entry.value->hasOneRef();
+    });
+
+    RefPtr opaqueTexture = WebGLOpaqueTexture::create(*swapchain.context(), texture, swapchain.textureTarget());
+    if (opaqueTexture)
+        cache.add(texture, Ref { *opaqueTexture });
+    return opaqueTexture;
+}
+
 RefPtr<WebGLOpaqueTexture> XRWebGLLayerBacking::currentColorTexture(uint32_t index) const
 {
     if (auto texture = m_colorSwapchain->currentTextureAtIndex(index))
-        return WebGLOpaqueTexture::create(*m_colorSwapchain->context(), texture, m_colorSwapchain->textureTarget());
+        return cachedOpaqueTexture(m_colorTextureCache, *m_colorSwapchain, texture);
     return nullptr;
+}
+
+void XRWebGLLayerBacking::invalidateTextures()
+{
+    auto invalidate = [](WebGLOpaqueTextureCache& cache) {
+        for (auto& texture : cache.values()) {
+            if (RefPtr context = texture->context())
+                context->deleteTexture(texture.ptr());
+        }
+        cache.clear();
+    };
+    invalidate(m_colorTextureCache);
+    invalidate(m_depthTextureCache);
 }
 
 bool XRWebGLLayerBacking::requiresPerViewColorTextures() const
@@ -139,7 +168,7 @@ RefPtr<WebGLOpaqueTexture> XRWebGLLayerBacking::currentDepthTexture(uint32_t ind
     if (!m_depthSwapchain)
         return nullptr;
     if (auto texture = m_depthSwapchain->currentTextureAtIndex(index))
-        return WebGLOpaqueTexture::create(*m_depthSwapchain->context(), texture, m_depthSwapchain->textureTarget());
+        return cachedOpaqueTexture(m_depthTextureCache, *m_depthSwapchain, texture);
     return nullptr;
 }
 
