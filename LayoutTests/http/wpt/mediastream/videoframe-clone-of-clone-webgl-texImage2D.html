@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<video id="video" autoplay playsinline muted width="320" height="240"></video>
+<canvas id="canvas" width="64" height="64"></canvas>
+<script>
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+
+    video.srcObject = stream;
+    await video.play();
+
+    const metadata = await new Promise(resolve => video.requestVideoFrameCallback((now, metadata) => resolve(metadata)));
+
+    const frame = new VideoFrame(video, { timestamp: Math.round(metadata.mediaTime * 1000000) });
+    test.add_cleanup(() => frame.close());
+
+    const flippedFrame = new VideoFrame(frame, { flip: true });
+    test.add_cleanup(() => flippedFrame.close());
+    const flippedFrame2 = new VideoFrame(flippedFrame, { flip: true });
+    test.add_cleanup(() => flippedFrame2.close());
+
+    const gl = canvas.getContext('webgl2');
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    for (const source of [frame, flippedFrame, flippedFrame2]) {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+        assert_equals(gl.getError(), gl.NO_ERROR, "texImage2D");
+    }
+}, "Uploading a clone of a cloned camera VideoFrame to WebGL");
+</script>
+</body>
+</html>
