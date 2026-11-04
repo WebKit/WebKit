@@ -141,14 +141,20 @@ class CommitContext(object):
         result = self.redis.get('commit_mapping:' + key)
         if result:
             try:
-                result = [Commit.from_json(element) for element in json.loads(result)]
+                return [Commit.from_json(element) for element in json.loads(result)]
             except ValueError:
-                result = None
-        if result is None:
-            result = function()
+                pass
+        result = function()
         if result:
             self.redis.set('commit_mapping:' + key, json.dumps(result, cls=Commit.Encoder), ex=self.cache_timeout)
         return result
+
+    @staticmethod
+    def _ref_cache_key(repository_id, ref):
+        return f'repository_id={repository_id}:ref={str(ref).lower()}'
+
+    def _forget_cached_ref(self, repository_id, ref):
+        self.redis.delete('commit_mapping:' + self._ref_cache_key(repository_id, ref))
 
     def register_repository(self, repository):
         if not isinstance(repository, Repository):
@@ -171,10 +177,7 @@ class CommitContext(object):
                     repository_id=repository_id, ref__gte=ref.lower(), ref__lte=(ref.lower() + 'g'),
                 )]
 
-        return self.run_function_through_redis_cache(
-            f'repository_id={repository_id}:ref={str(ref).lower()}',
-            callback,
-        )
+        return self.run_function_through_redis_cache(self._ref_cache_key(repository_id, ref), callback)
 
     def find_commits_by_uuid(self, repository_id, branch, uuid, limit=100):
         if branch is None:
@@ -400,14 +403,21 @@ class CommitContext(object):
         if repository_id not in self.repositories:
             raise RuntimeError('{} is not a recognized repository')
 
+        reference = ref or revision or hash or identifier
         with self:
-            commits = self.find_commits_by_ref(repository_id=repository_id, ref=ref or revision or hash or identifier)
+            commits = self.find_commits_by_ref(repository_id=repository_id, ref=reference)
+            if commits and not fast and not commits[0].identifier:
+                # The cached lookup may predate the identifier, so check the database before asking the repository.
+                self._forget_cached_ref(repository_id, reference)
+                commits = self.find_commits_by_ref(repository_id=repository_id, ref=reference)
             if len(commits) > 1:
-                raise ScmBase.Exception(f'Multiple commits with the id {ref or revision or hash or identifier} exist in {repository_id}')
+                raise ScmBase.Exception(f'Multiple commits with the id {reference} exist in {repository_id}')
             if commits and (fast or commits[0].identifier):
                 return commits[0]
             commit = self.repositories[repository_id].commit(ref=ref, revision=revision, hash=hash, identifier=identifier, fast=fast)
-            return self.register_commit(commit)
+            commit = self.register_commit(commit)
+            self._forget_cached_ref(repository_id, reference)
+            return commit
 
     def url(self, commit):
         repo = self.repositories.get(commit.repository_id)

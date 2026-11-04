@@ -22,6 +22,8 @@
 
 import time
 
+from unittest import mock
+
 from redis import StrictRedis
 from fakeredis import FakeStrictRedis
 from resultsdbpy.model.cassandra_context import CassandraContext
@@ -244,6 +246,53 @@ class CommitContextTest(WaitForDockerTestCase):
                 [self.stash_repository.commit(ref='d8bce26fa65c')],
                 self.database.find_commits_by_ref(repository_id='safari', ref='d8bce26fa65c'),
             )
+
+    def _registrations_needing_an_identifier(self, reference):
+        self.database.register_partial_commit('safari', hash=reference, fast=True)
+        self.database.register_partial_commit('safari', hash=reference, fast=True)
+        self.assertIsNone(self.database.find_commits_by_ref(repository_id='safari', ref=reference)[0].identifier)
+        with mock.patch.object(self.stash_repository, 'commit', wraps=self.stash_repository.commit) as lookup:
+            self.database.register_partial_commit('safari', hash=reference, fast=False)
+            self.database.register_partial_commit('safari', hash=reference, fast=False)
+        return lookup.call_count
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_identifier_replaces_cached_commit_without_one(self, redis=StrictRedis, cassandra=CassandraContext):
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            self.init_database(redis=redis, cassandra=cassandra)
+            self.assertEqual(self._registrations_needing_an_identifier('d8bce26fa65c6fc8f39c17927abb77f69fab82fc'), 1)
+            self.assertEqual(self.database.find_commits_by_ref(repository_id='safari', ref='d8bce26fa65c6fc8f39c17927abb77f69fab82fc')[0].identifier, 5)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_identifier_replaces_cached_commit_without_one_by_short_hash(self, redis=StrictRedis, cassandra=CassandraContext):
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            self.init_database(redis=redis, cassandra=cassandra)
+            self.assertEqual(self._registrations_needing_an_identifier('d8bce26fa65c'), 1)
+            self.assertEqual(self.database.find_commits_by_ref(repository_id='safari', ref='d8bce26fa65c')[0].identifier, 5)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_stale_lookup_under_another_ref_is_rechecked(self, redis=StrictRedis, cassandra=CassandraContext):
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            self.init_database(redis=redis, cassandra=cassandra)
+            self.database.register_partial_commit('safari', hash='d8bce26fa65c', fast=True)
+            self.database.find_commits_by_ref(repository_id='safari', ref='d8bce26fa65c')
+            self.database.find_commits_by_ref(repository_id='safari', ref='d8bce26fa65c6fc8f39c17927abb77f69fab82fc')
+            self.database.register_partial_commit('safari', hash='d8bce26fa65c', fast=False)
+
+            with mock.patch.object(self.stash_repository, 'commit', wraps=self.stash_repository.commit) as lookup:
+                commit = self.database.register_partial_commit('safari', hash='d8bce26fa65c6fc8f39c17927abb77f69fab82fc', fast=False)
+            self.assertEqual(lookup.call_count, 0)
+            self.assertEqual(commit.identifier, 5)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_cache_hit_keeps_its_expiry(self, redis=StrictRedis, cassandra=CassandraContext):
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            self.init_database(redis=redis, cassandra=cassandra)
+            self.database.register_partial_commit('safari', hash='d8bce26fa65c', fast=False)
+            self.database.find_commits_by_ref(repository_id='safari', ref='d8bce26fa65c')
+            with mock.patch.object(self.database.redis, 'set') as cache_write:
+                self.database.find_commits_by_ref(repository_id='safari', ref='d8bce26fa65c')
+            cache_write.assert_not_called()
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_commit_from_svn_repo(self, redis=StrictRedis, cassandra=CassandraContext):
