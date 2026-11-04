@@ -123,6 +123,7 @@
                   { "template": "mac_tahoe_aws", "count": 1 },
                   { "template": "mac_tahoe_aircloud", "first": 10003, "count": 1 },
                   { "template": "mac_tahoe_aws", "first": 10004, "count": 1 },
+                  { "template": "mac_tahoe_aws", "first": 10015, "count": 1 },
                   { "template": "mac_tahoe_aircloud", "first": 10005, "count": 2 },
                   { "template": "mac_sequoia_aircloud", "count": 4 },
                   { "template": "mac_golden_gate_aircloud", "count": 4 },
@@ -286,7 +287,8 @@
                   "additionalArguments": ["--cmake"],
                   "triggers": [
                       "tahoe-debug-tests-wk2",
-                      "tahoe-debug-applesilicon-tests-wk2"
+                      "tahoe-debug-applesilicon-tests-wk2",
+                      "tahoe-debug-tests-webdriver"
                   ],
                   "workernames": ["bot621", "bot10002"]
                   },
@@ -299,6 +301,10 @@
                   "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures", "-2", "-1"],
                   "workernames": ["bot257", "bot10001", "bot132", "bot10000"]
+                  },
+                  { "name": "Apple-Tahoe-Debug-WebDriver-Tests", "factory": "TestWebDriverFactory",
+                  "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                  "workernames": ["bot10015"]
                   },
                   {
                     "name": "Apple-Tahoe-Safer-CPP-Checks", "factory": "SaferCPPStaticAnalyzerFactory",
@@ -770,6 +776,9 @@
                   },
                   { "type": "Triggerable", "name": "tahoe-debug-applesilicon-tests-wk2",
                   "builderNames": ["Apple-Tahoe-Debug-AppleSilicon-WK2-Tests"]
+                  },
+                  { "type": "Triggerable", "name": "tahoe-debug-tests-webdriver",
+                  "builderNames": ["Apple-Tahoe-Debug-WebDriver-Tests"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "mac-sequoia", "branch": "main", "treeStableTimer": 45.0,
                   "builderNames": ["Apple-Sequoia-Release-Build", "Apple-Sequoia-Debug-Build"]
