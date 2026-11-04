@@ -26,7 +26,6 @@ import argparse
 import json
 import math
 import os
-import shutil
 import subprocess
 import sys
 import time
@@ -188,8 +187,9 @@ def main(args=None):
 
     processor = HookProcessor(checkout=checkout, database=database) if args.hooks else None
 
+    AutoInstall.install('gunicorn')
     with subprocess.Popen(
-        [shutil.which('gunicorn'), 'reporelaypy.webserver:app'],
+        [sys.executable, '-m', 'gunicorn', 'reporelaypy.webserver:app'],
         cwd=os.path.dirname(os.path.dirname(reporelaypy.__file__)),
         env=passenv,
     ) as webserver:
