@@ -29,29 +29,32 @@ WI.AnimationObserver = class AnimationObserver extends InspectorBackend.Dispatch
 
     animationCreated(animation)
     {
-        WI.animationManager.animationCreated(animation);
+        WI.animationManager.animationCreated(this._target, animation);
     }
 
     nameChanged(animationId, name)
     {
-        WI.animationManager.nameChanged(animationId, name);
+        WI.animationManager.nameChanged(this._target, animationId, name);
     }
 
     effectChanged(animationId, effect)
     {
         // COMPATIBILITY (macOS 15.4, iOS 18.4): `Animation.effectChanged` removed the `effect` parameter in favor of `Animation.requestEffect`.`
-        WI.animationManager.effectChanged(animationId, effect);
+        WI.animationManager.effectChanged(this._target, animationId, effect);
     }
 
     targetChanged(animationId)
     {
-        WI.animationManager.targetChanged(animationId);
+        WI.animationManager.targetChanged(this._target, animationId);
     }
 
     animationDestroyed(animationId)
     {
-        WI.animationManager.animationDestroyed(animationId);
+        WI.animationManager.animationDestroyed(this._target, animationId);
     }
+
+    // FIXME: <https://webkit.org/b/330057> These events still drop `this._target`, and `TimelineManager.animationTrackingUpdated` resolves
+    // nodes with `WI.domManager.nodeForId()`, because tracking is page-only and needs the frame-target work before it can be per-target.
 
     trackingStart(timestamp)
     {

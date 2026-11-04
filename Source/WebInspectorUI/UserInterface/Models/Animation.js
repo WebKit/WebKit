@@ -25,14 +25,16 @@
 
 WI.Animation = class Animation extends WI.Object
 {
-    constructor(animationId, {name, cssAnimationName, cssTransitionProperty, stackTrace} = {})
+    constructor(target, animationId, {name, cssAnimationName, cssTransitionProperty, stackTrace} = {})
     {
         super();
 
+        console.assert(target instanceof WI.Target, target);
         console.assert(animationId);
         console.assert((!cssAnimationName && !cssTransitionProperty) || !!cssAnimationName !== !!cssTransitionProperty);
         console.assert(!stackTrace || stackTrace instanceof WI.StackTrace, stackTrace);
 
+        this._target = target;
         this._animationId = animationId;
 
         this._name = name || null;
@@ -49,18 +51,17 @@ WI.Animation = class Animation extends WI.Object
 
     // Static
 
-    static fromPayload(payload)
+    static fromPayload(target, payload)
     {
         // COMPATIBILITY (macOS 13.0, iOS 16.0): `backtrace` was renamed to `stackTrace`.
         if (payload.backtrace)
             payload.stackTrace = {callFrames: payload.backtrace};
 
-        let animation = new WI.Animation(payload.animationId, {
+        let animation = new WI.Animation(target, payload.animationId, {
             name: payload.name,
             cssAnimationName: payload.cssAnimationName,
             cssTransitionProperty: payload.cssTransitionProperty,
-            // The Animation domain only exists on the page target, which `WI.assumingMainTarget()` returns.
-            stackTrace: WI.StackTrace.fromPayload(WI.assumingMainTarget(), payload.stackTrace, {deliveredOnTarget: true}),
+            stackTrace: WI.StackTrace.fromPayload(target, payload.stackTrace, {deliveredOnTarget: true}),
         });
 
         // COMPATIBILITY (macOS 15.4, iOS 18.4): `Animation` removed the `effect` property in favor of `Animation.requestEffect`.
@@ -128,6 +129,7 @@ WI.Animation = class Animation extends WI.Object
 
     // Public
 
+    get target() { return this._target; }
     get animationId() { return this._animationId; }
     get name() { return this._name; }
     get cssAnimationName() { return this._cssAnimationName; }
@@ -228,8 +230,7 @@ WI.Animation = class Animation extends WI.Object
 
         this._ensureEffectCallbacks = [callback];
 
-        let target = WI.assumingMainTarget();
-        target.AnimationAgent.requestEffect(this._animationId, (error, effect) => {
+        this._target.AnimationAgent.requestEffect(this._animationId, (error, effect) => {
             if (error) {
                 WI.reportInternalError(error);
                 return;
@@ -257,13 +258,12 @@ WI.Animation = class Animation extends WI.Object
 
         WI.domManager.ensureDocument();
 
-        let target = WI.assumingMainTarget();
-        target.AnimationAgent.requestEffectTarget(this._animationId, (error, effectTarget) => {
+        this._target.AnimationAgent.requestEffectTarget(this._animationId, (error, effectTarget) => {
             // COMPATIBILITY (iOS 15.4): nodeId was renamed to effectTarget and changed from DOM.NodeId to DOM.Styleable.
             if (!isNaN(effectTarget))
                 effectTarget = {nodeId: effectTarget};
 
-            this._effectTarget = !error ? WI.DOMStyleable.fromPayload(effectTarget) : null;
+            this._effectTarget = !error ? WI.DOMStyleable.fromPayload(effectTarget, this._target) : null;
 
             for (let requestEffectTargetCallback of this._requestEffectTargetCallbacks)
                 requestEffectTargetCallback(this._effectTarget);
