@@ -507,6 +507,8 @@ void EventHandler::clear()
     m_originatingTouchPointDocument = nullptr;
     m_originatingTouchPointTargetKey = 0;
     m_touchPressed = false;
+    m_touchPressElement = nullptr;
+    m_touchPressElementWasRemoved = false;
 #endif
     m_maxMouseMovedDuration = 0;
     m_didStartDrag = false;
@@ -532,6 +534,13 @@ void EventHandler::nodeWillBeRemoved(Node& nodeToBeRemoved)
 
     if (nodeToBeRemoved.isShadowIncludingInclusiveAncestorOf(m_clickCaptureElement.get()))
         m_clickCaptureElement = nullptr;
+
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    if (nodeToBeRemoved.isShadowIncludingInclusiveAncestorOf(m_touchPressElement.get())) {
+        m_touchPressElement = nullptr;
+        m_touchPressElementWasRemoved = true;
+    }
+#endif
 }
 
 static void setSelectionIfNeeded(FrameSelection& selection, const VisibleSelection& newSelection)
@@ -2122,6 +2131,12 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
         dispatchMouseEvent(eventNames().mousedownEvent, protect(mouseEvent.targetNode()).get(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
         return true;
     }
+
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    m_touchPressElement = nullptr;
+    if (std::exchange(m_touchPressElementWasRemoved, false) && platformMouseEvent.syntheticClickType() != SyntheticClickType::NoTap)
+        m_clickNode = nullptr;
+#endif
 
     protect(frame->selection())->setCaretBlinkingSuspended(true);
 
@@ -5687,6 +5702,11 @@ std::expected<bool, RemoteFrameGeometryTransformer> EventHandler::handleTouchEve
             if (freshTouchEvents) {
                 m_originatingTouchPointDocument = doc.ptr();
                 freshTouchEvents = false;
+                if (RefPtr targetFrame = doc->frame()) {
+                    CheckedRef targetEventHandler = targetFrame->eventHandler();
+                    targetEventHandler->m_touchPressElement = element;
+                    targetEventHandler->m_touchPressElementWasRemoved = false;
+                }
             }
             if (!doc->hasTouchEventHandlers())
                 continue;

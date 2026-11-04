@@ -808,6 +808,8 @@ private:
     RefPtr<Document> m_originatingTouchPointDocument;
     unsigned m_originatingTouchPointTargetKey { 0 };
     bool m_touchPressed { false };
+    RefPtr<Element> m_touchPressElement;
+    bool m_touchPressElementWasRemoved { false };
 #endif
 
 #if ENABLE(IOS_GESTURE_EVENTS)
