@@ -40,6 +40,7 @@ const CONDENSED_TOOLTIP_DELAY = 200;
 const CONDENSED_TOOLTIP_STOP_RADIUS = 4;
 const CONDENSED_DOT_MARGIN = 1;
 const CONDENSED_CLICKED_COMMIT_GAP = 6;
+const CONDENSED_START_ARROW_WIDTH = 20;
 const CONDENSED_REFIT_DELAY = 150;
 
 let willFilterExpected = false;
@@ -1271,7 +1272,7 @@ class TimelineFromEndpoint {
 
         const minimumUuid = minimumUuidForResults(this.results, limit);
         const condensedRunWidth = () => parseInt(getComputedStyle(document.body).getPropertyValue('--smallSize')) + 2 * CONDENSED_DOT_MARGIN;
-        const condensedRunsPerLine = element => Math.max(1, Math.floor((element.getBoundingClientRect().width - CONDENSED_CLICKED_COMMIT_GAP) / condensedRunWidth()));
+        const condensedRunsPerLine = element => Math.max(1, Math.floor((element.getBoundingClientRect().width - CONDENSED_CLICKED_COMMIT_GAP - CONDENSED_START_ARROW_WIDTH) / condensedRunWidth()));
         let drawnRunsPerLine = null;
         const loadedCommits = () => commitsForResults(this.results, limit, this.allCommits);
         const repositoryNameFor = (commit, repositories) => commit && repositories.length > 1 ? commit.repository_id : null;
@@ -1306,7 +1307,7 @@ class TimelineFromEndpoint {
                     return;
                 const runWidth = condensedRunWidth();
                 const runsPerLine = condensedRunsPerLine(element);
-                const view = {...state, ...stateDiff, runsPerLine, lineWidth: runsPerLine * runWidth + CONDENSED_CLICKED_COMMIT_GAP};
+                const view = {...state, ...stateDiff, runsPerLine, lineWidth: runsPerLine * runWidth + CONDENSED_CLICKED_COMMIT_GAP + CONDENSED_START_ARROW_WIDTH};
                 view.goToLabel = commitLabelOf(view.clickedRun ? markRun(view.clickedRun.uuid) : view.markedCommit);
                 drawnRunsPerLine = view.show ? runsPerLine : null;
                 DOM.inject(element, view.show ? CondensedView(condensedRows, minimumUuid, view, {
@@ -1851,14 +1852,17 @@ function CondensedView(rows, minimumUuid, view, {failureTypeFor, commitLinksFor,
             };
         },
     });
-    const runCountSliderRef = REF.createRef({
-        onElementMount: (element) => {
-            element.oninput = () => {
-                runCountNumberRef.element.value = element.value;
-            };
-            element.onchange = () => setView({runCount: null, lineCount: Math.round(parseInt(element.value, 10) / view.runsPerLine)});
-        },
-    });
+    const lineCount = Math.ceil(runCount / view.runsPerLine);
+    const LineCountButton = (newLineCount, symbol, name) => {
+        if (newLineCount < 1 || newLineCount > maxLines)
+            return `<button class="button tiny" title="${name}" aria-label="${name}" disabled>${symbol}</button>`;
+        const buttonRef = REF.createRef({
+            onElementMount: (element) => {
+                element.onclick = () => setView({runCount: null, lineCount: newLineCount});
+            },
+        });
+        return `<button class="button tiny" title="${name}" aria-label="${name}" ref="${buttonRef}">${symbol}</button>`;
+    };
     const highlightClassFor = (row, runs, index) => {
         const highlight = view.clickedRun || view.markedCommit;
         if (!highlight)
@@ -1906,7 +1910,7 @@ function CondensedView(rows, minimumUuid, view, {failureTypeFor, commitLinksFor,
         const clickedRunCommitLinks = row === view.clickedRun?.row ? commitLinksFor(view.clickedRun.uuid) : '';
         return `<div class="strip">
                 <div class="text tiny">${row.label} (${failuresText})${clickedRunCommitLinks ? ` · ${clickedRunCommitLinks}` : ''}</div>
-                <div ref="${runsRef}" style="max-width: ${view.lineWidth}px">${types.map((type, index) => `<div class="dot small ${type}${highlightClassFor(row, runs, index)}"><div class="text">${Expectations.symbolMap[type]}</div></div>`).join('')}</div>
+                <div class="runs" ref="${runsRef}" style="max-width: ${view.lineWidth}px">${types.map((type, index) => `<div class="dot small ${type}${highlightClassFor(row, runs, index)}${index && !(index % view.runsPerLine) ? ' wrapped' : ''}"><div class="text">${Expectations.symbolMap[type]}</div></div>`).join('')}</div>
             </div>`;
     };
     const StripsWithoutFailures = () => {
@@ -1947,10 +1951,13 @@ function CondensedView(rows, minimumUuid, view, {failureTypeFor, commitLinksFor,
     const markedCommitLabel = commitLabelOf(view.markedCommit);
 
     return `<div class="condensed-view">
-            <div class="text tiny">Up to ${runCount} run${runCount === 1 ? '' : 's'} per configuration, newest first. Click a run to mark its commit on every strip.${markedCommitLabel ? ` · marked: ${escapeHTML(markedCommitLabel)}` : ''}</div>
+            <div class="text tiny">Up to ${runCount} run${runCount === 1 ? '' : 's'} per configuration. Newest runs start at the arrow and go left to right. Click a run to mark its commit on every strip.${markedCommitLabel ? ` · marked: ${escapeHTML(markedCommitLabel)}` : ''}</div>
             <div class="input text tiny">
+                <label>Lines:</label>
+                ${LineCountButton(lineCount - 1, '&minus;', 'One line fewer')}
+                <span class="line-count">${lineCount}</span>
+                ${LineCountButton(lineCount + 1, '+', 'One more line')}
                 <label>Runs:</label>
-                <input type="range" min="${view.runsPerLine}" max="${maxLines * view.runsPerLine}" step="${view.runsPerLine}" value="${runCount}" ref="${runCountSliderRef}" style="--notches: ${maxLines}">
                 <input type="number" min="1" max="${MAX_CONDENSED_RUN_COUNT}" value="${runCount}" ref="${runCountNumberRef}">
             </div>
             ${GoToBar()}
