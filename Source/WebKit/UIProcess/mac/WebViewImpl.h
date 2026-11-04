@@ -963,6 +963,11 @@ private:
 
     void nativeMouseEventHandler(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
     void nativeMouseEventHandlerInternal(NSEvent *, WebEventInputSource, WebCore::PlatformMouseEvent::CanInitiateDrag = WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
+    enum class MouseEventState : uint8_t { Pending, Handled, Unhandled };
+    void resolvePendingMouseEvent(uint64_t identifier, MouseEventState);
+    void dispatchReadyMouseEvents();
+    void flushPendingMouseEvents();
+    void clearPendingMouseEvents();
 
     void scheduleMouseDidMoveOverElementForModifierFlagsChange(NSEvent *);
 
@@ -1134,6 +1139,16 @@ private:
     std::optional<NSRange> m_stagedMarkedRange;
     Deque<Vector<WebCore::KeypressCommand>> m_collectedKeypressCommands;
     Deque<Function<void()>> m_interpretKeyEventHoldingTank;
+
+    struct PendingMouseEvent {
+        uint64_t identifier { 0 };
+        RetainPtr<NSEvent> event;
+        WebEventInputSource inputSource { WebEventInputSource::UserDriven };
+        WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag { WebCore::PlatformMouseEvent::CanInitiateDrag::Yes };
+        MouseEventState state { MouseEventState::Pending };
+    };
+    Deque<PendingMouseEvent> m_pendingMouseEvents;
+    uint64_t m_lastPendingMouseEventIdentifier { 0 };
 
     String m_lastStringForCandidateRequest;
     NSInteger m_lastCandidateRequestSequenceNumber;

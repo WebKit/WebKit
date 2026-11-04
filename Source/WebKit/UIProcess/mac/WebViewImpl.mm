@@ -1518,6 +1518,7 @@ void WebViewImpl::processWillSwap()
 
 void WebViewImpl::processDidExit()
 {
+    clearPendingMouseEvents();
     handleProcessSwapOrExit();
     m_gestureController = nullptr;
 }
@@ -2495,6 +2496,7 @@ void WebViewImpl::viewWillMoveToWindowImpl(NSWindow *window)
     if (window == currentWindow.get())
         return;
 
+    flushPendingMouseEvents();
     clearAllEditCommands();
 
     if (!m_isPreparingToUnparentView)
@@ -6860,23 +6862,64 @@ void WebViewImpl::nativeMouseEventHandler(NSEvent *event, WebEventInputSource in
         return;
     }
 
-    if (RetainPtr context = [m_view.get() inputContext]) {
-        WeakPtr weakThis { *this };
-        RetainPtr<NSEvent> retainedEvent = event;
-        [context handleEvent:event completionHandler:[weakThis, retainedEvent, inputSource, canInitiateDrag] (BOOL handled) {
-            if (!weakThis)
-                return;
-            if (handled)
-                LOG_WITH_STREAM(TextInput, stream << "Event " << [retainedEvent type] << " was handled by text input context");
-            else {
-                Ref webEvent = NativeWebMouseEvent::create(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view.get(), inputSource, canInitiateDrag);
-                weakThis->m_page->handleMouseEvent(WTF::move(webEvent));
-            }
-        }];
+    RetainPtr context = [m_view.get() inputContext];
+    if (!context && m_pendingMouseEvents.isEmpty()) {
+        Ref webEvent = NativeWebMouseEvent::create(event, m_lastPressureEvent.get(), m_view.get().get(), inputSource, canInitiateDrag);
+        m_page->handleMouseEvent(WTF::move(webEvent));
         return;
     }
-    Ref webEvent = NativeWebMouseEvent::create(event, m_lastPressureEvent.get(), m_view.get().get(), inputSource, canInitiateDrag);
-    m_page->handleMouseEvent(WTF::move(webEvent));
+
+    auto identifier = ++m_lastPendingMouseEventIdentifier;
+    m_pendingMouseEvents.append({ identifier, event, inputSource, canInitiateDrag, MouseEventState::Pending });
+
+    if (!context) {
+        resolvePendingMouseEvent(identifier, MouseEventState::Unhandled);
+        return;
+    }
+
+    WeakPtr weakThis { *this };
+    [context handleEvent:event completionHandler:[weakThis, identifier](BOOL handled) {
+        if (CheckedPtr checkedThis = weakThis)
+            checkedThis->resolvePendingMouseEvent(identifier, handled ? MouseEventState::Handled : MouseEventState::Unhandled);
+    }];
+}
+
+void WebViewImpl::resolvePendingMouseEvent(uint64_t identifier, MouseEventState state)
+{
+    auto pendingEventItr = m_pendingMouseEvents.findIf([identifier](auto& event) {
+        return event.identifier == identifier;
+    });
+    if (pendingEventItr == m_pendingMouseEvents.end() || pendingEventItr->state != MouseEventState::Pending)
+        return;
+    pendingEventItr->state = state;
+    dispatchReadyMouseEvents();
+}
+
+void WebViewImpl::dispatchReadyMouseEvents()
+{
+    while (!m_pendingMouseEvents.isEmpty() && m_pendingMouseEvents.first().state != MouseEventState::Pending) {
+        auto readyEvent = m_pendingMouseEvents.takeFirst();
+        if (readyEvent.state == MouseEventState::Handled) {
+            LOG_WITH_STREAM(TextInput, stream << "Event " << [readyEvent.event type] << " was handled by text input context");
+            continue;
+        }
+        Ref webEvent = NativeWebMouseEvent::create(readyEvent.event.get(), m_lastPressureEvent.get(), m_view.get().get(), readyEvent.inputSource, readyEvent.canInitiateDrag);
+        m_page->handleMouseEvent(WTF::move(webEvent));
+    }
+}
+
+void WebViewImpl::flushPendingMouseEvents()
+{
+    for (auto& pendingEvent : m_pendingMouseEvents) {
+        if (pendingEvent.state == MouseEventState::Pending)
+            pendingEvent.state = MouseEventState::Unhandled;
+    }
+    dispatchReadyMouseEvents();
+}
+
+void WebViewImpl::clearPendingMouseEvents()
+{
+    m_pendingMouseEvents.clear();
 }
 
 void WebViewImpl::nativeMouseEventHandlerInternal(NSEvent *event, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag)
