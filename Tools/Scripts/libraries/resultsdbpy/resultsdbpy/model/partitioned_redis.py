@@ -49,3 +49,12 @@ class PartitionedRedis(object):
     def scan_iter(self, match=None, **kwargs):
         for key in self._redis.scan_iter(match=self._partition + ':' + match, **kwargs):
             yield key[len(self._partition) + 1:]
+
+    def zadd(self, name, mapping, **kwargs):
+        return self._redis.zadd(self._partition + ':' + name, mapping, **kwargs)
+
+    def zrangebyscore(self, name, minimum, maximum, **kwargs):
+        return self._redis.zrangebyscore(self._partition + ':' + name, minimum, maximum, **kwargs)
+
+    def zremrangebyscore(self, name, minimum, maximum):
+        return self._redis.zremrangebyscore(self._partition + ':' + name, minimum, maximum)
