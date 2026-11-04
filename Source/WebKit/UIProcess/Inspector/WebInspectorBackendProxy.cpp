@@ -63,6 +63,12 @@ void WebInspectorBackendProxy::showPaintRectsChanged(bool show)
     protect(m_proxy)->showPaintRectsChanged(show);
 }
 
+void WebInspectorBackendProxy::showRulersChanged(bool show)
+{
+    // This receiver lives only on the current main frame process, so the toggle is always current.
+    protect(m_proxy)->showRulersChanged(show);
+}
+
 void WebInspectorBackendProxy::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     protect(m_proxy)->setDeveloperPreferenceOverride(developerPreference, overrideValue);

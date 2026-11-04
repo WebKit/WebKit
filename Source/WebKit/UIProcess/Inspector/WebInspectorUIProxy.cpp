@@ -230,6 +230,9 @@ void WebInspectorUIProxy::resetState()
 void WebInspectorUIProxy::reset()
 {
     if (RefPtr inspectedPage = m_inspectedPage.get()) {
+#if PLATFORM(MAC)
+        inspectedPage->inspectorController().resetPageRulers();
+#endif
         protect(inspectedPage->legacyMainFrameProcess())->removeMessageReceiver(Messages::WebInspectorBackendProxy::messageReceiverName(), inspectedPage->webPageIDInMainFrameProcess());
         m_inspectedPage = nullptr;
     }
@@ -791,6 +794,16 @@ void WebInspectorUIProxy::showPaintRectsChanged(bool show)
     // controller so its ProxyingPageAgent fans it out to the cross-origin subframe processes.
     if (RefPtr inspectedPage = m_inspectedPage.get())
         inspectedPage->inspectorController().setShowPaintRects(show);
+}
+
+void WebInspectorUIProxy::showRulersChanged(bool show)
+{
+#if PLATFORM(MAC)
+    if (RefPtr inspectedPage = m_inspectedPage)
+        inspectedPage->inspectorController().setShowRulers(show);
+#else
+    UNUSED_PARAM(show);
+#endif
 }
 
 void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)

@@ -1427,8 +1427,8 @@ RetainPtr<NSDictionary> WebPageProxy::frameInspectorHighlightsForTesting() const
     NullGraphicsContext context;
 
     RetainPtr frames { adoptNS([[NSMutableArray alloc] init]) };
-    for (auto& [processID, highlight] : m_inspectorController->frameHighlights().values()) {
-        auto geometry { InspectorOverlay::drawFrameHighlight(context, highlight, pageGeometry) };
+    for (auto& drawing : m_inspectorController->drawFrameHighlights(context, pageGeometry)) {
+        auto& [highlight, geometry] = drawing;
 
         RetainPtr nodes { adoptNS([[NSMutableArray alloc] init]) };
         for (size_t i = 0; i < geometry.nodes.size(); ++i) {
@@ -1439,7 +1439,7 @@ RetainPtr<NSDictionary> WebPageProxy::frameInspectorHighlightsForTesting() const
 
             if (!geometry.nodes[i].titleBounds.isEmpty()) {
                 StringBuilder titleText;
-                for (auto& content : highlight.nodeInfos[i].titleContents)
+                for (auto& content : highlight->nodeInfos[i].titleContents)
                     titleText.append(content.text);
 
                 RetainPtr title { dictionaryForRect(geometry.nodes[i].titleBounds) };
@@ -1451,7 +1451,7 @@ RetainPtr<NSDictionary> WebPageProxy::frameInspectorHighlightsForTesting() const
         }
 
         RetainPtr quads { adoptNS([[NSMutableArray alloc] init]) };
-        for (auto& quad : highlight.quads)
+        for (auto& quad : highlight->quads)
             [quads addObject:dictionaryForRect(quad.boundingBox()).get()];
 
         RetainPtr frame { adoptNS([[NSMutableDictionary alloc] init]) };

@@ -718,6 +718,8 @@ void InspectorPageAgent::searchInResources(const String& text, std::optional<boo
 #if !PLATFORM(IOS_FAMILY)
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setShowRulers(bool showRulers)
 {
+    m_client->showRulersChanged(showRulers);
+
     protect(overlay())->setShowRulers(showRulers);
 
     return { };

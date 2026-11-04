@@ -279,6 +279,11 @@ void WebInspectorBackend::showPaintRectsChanged(bool show)
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::ShowPaintRectsChanged(show), m_page->identifier());
 }
 
+void WebInspectorBackend::showRulersChanged(bool show)
+{
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::ShowRulersChanged(show), m_page->identifier());
+}
+
 void WebInspectorBackend::setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::SetDeveloperPreferenceOverride(developerPreference, overrideValue), m_page->identifier());

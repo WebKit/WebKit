@@ -50,6 +50,7 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <JavaScriptCore/InspectorTargetAgent.h>
+#include <algorithm>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -392,6 +393,15 @@ void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore:
             m_networkAgent->disableInstrumentationForProcess(*oldProcess, oldWebPageID);
         m_networkAgent->enableInstrumentationForProcess(newProcess, newWebPageID);
     }
+
+#if PLATFORM(MAC)
+    // The frontend's Page.setShowRulers replay can reach the new process before its
+    // WebInspectorBackendProxy receiver is registered, so the forward is dropped. Pull the state once.
+    newProcess->sendWithAsyncReply(Messages::WebPage::GetInspectorShowRulers(), [page = WeakPtr { m_inspectedPage.get() }](bool showRulers) {
+        if (RefPtr inspectedPage = page)
+            inspectedPage->inspectorController().setShowRulers(showRulers);
+    }, newWebPageID);
+#endif
 }
 
 void WebPageInspectorController::frameDidPauseForDebugger(WebProcessProxy& process, WebCore::FrameIdentifier frameID)
@@ -737,6 +747,9 @@ void WebPageInspectorController::clearFrameHighlightNotFromProcess(WebCore::Fram
 
 void WebPageInspectorController::clearAllFrameHighlights()
 {
+    // The page-wide ruler state belongs to the inspector session; drop it with the highlights.
+    resetPageRulers();
+
     if (m_frameHighlights.isEmpty())
         return;
 
@@ -748,6 +761,73 @@ void WebPageInspectorController::frameHighlightsDidChange()
 {
     if (RefPtr pageClient { m_inspectedPage->pageClient() })
         pageClient->frameInspectorHighlightsDidChange();
+
+    updatePageRulersSuppression();
+}
+
+void WebPageInspectorController::setShowRulers(bool show)
+{
+    if (m_showRulers == show)
+        return;
+
+    m_showRulers = show;
+
+    if (!m_frameHighlights.isEmpty())
+        frameHighlightsDidChange();
+}
+
+void WebPageInspectorController::resetPageRulers()
+{
+    m_showRulers = false;
+    m_lastSentPageRulersSuppression = std::nullopt;
+}
+
+bool WebPageInspectorController::frameHighlightShowRulers(const WebCore::InspectorOverlayHighlight& highlight) const
+{
+    bool hasHighlightedContent = !highlight.nodeInfos.isEmpty() || !highlight.quads.isEmpty();
+    return hasHighlightedContent && (highlight.showRulers || m_showRulers);
+}
+
+bool WebPageInspectorController::pageRulersSuppressed() const
+{
+    return std::ranges::any_of(m_frameHighlights.values(), [this](auto& entry) {
+        return frameHighlightShowRulers(entry.second);
+    });
+}
+
+void WebPageInspectorController::updatePageRulersSuppression()
+{
+    // When this process draws ruler bars for a frame highlight, the main frame's page overlay leaves
+    // its bars out, so only one set is on screen.
+    bool suppressed = pageRulersSuppressed();
+    if (m_lastSentPageRulersSuppression == suppressed)
+        return;
+
+    m_lastSentPageRulersSuppression = suppressed;
+
+    Ref inspectedPage { m_inspectedPage };
+    protect(inspectedPage->legacyMainFrameProcess())->send(Messages::WebPage::SetInspectorRulersSuppressed(suppressed), inspectedPage->webPageIDInMainFrameProcess());
+}
+
+auto WebPageInspectorController::drawFrameHighlights(WebCore::GraphicsContext& context, const WebCore::InspectorOverlay::PageGeometry& pageGeometry) const -> Vector<FrameHighlightDrawing>
+{
+    Vector<FrameHighlightDrawing> drawings;
+    WebCore::InspectorOverlay::RulerExclusion rulerExclusion;
+    std::optional<size_t> rulersIndex;
+
+    for (auto& [processID, highlight] : m_frameHighlights.values()) {
+        bool showRulers = frameHighlightShowRulers(highlight);
+        drawings.append({ &highlight, WebCore::InspectorOverlay::drawFrameHighlight(context, highlight, pageGeometry, showRulers, rulerExclusion) });
+        if (showRulers && !rulersIndex)
+            rulersIndex = drawings.size() - 1;
+    }
+
+    // One set of bars over every highlight, placed against the union of their bounds exclusions
+    // (the title path is taken from the last highlight that gets rulers).
+    if (rulersIndex)
+        drawings[*rulersIndex].geometry.rulers = WebCore::InspectorOverlay::drawRulers(context, rulerExclusion, pageGeometry);
+
+    return drawings;
 }
 
 WebCore::InspectorOverlay::PageGeometry WebPageInspectorController::frameHighlightPageGeometry() const

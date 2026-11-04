@@ -757,8 +757,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         context.scale({ static_cast<float>(scale), static_cast<float>(-scale) });
         context.clip({ { }, pageGeometry.viewportSize });
 
-        for (auto& [processID, highlight] : inspectorController.frameHighlights().values())
-            WebCore::InspectorOverlay::drawFrameHighlight(context, highlight, pageGeometry);
+        inspectorController.drawFrameHighlights(context, pageGeometry);
     }
     CGContextFlush(cgContext.get());
 

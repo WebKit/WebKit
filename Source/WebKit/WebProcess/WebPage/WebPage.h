@@ -1802,6 +1802,8 @@ public:
     void connectInspector(Inspector::FrontendChannel::ConnectionType);
     void disconnectInspector();
     void sendMessageToTargetBackend(const String& message);
+    void setInspectorRulersSuppressed(bool);
+    void getInspectorShowRulers(CompletionHandler<void(bool)>&&);
 
     void insertNewlineInQuotedContent();
 

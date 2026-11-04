@@ -641,7 +641,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
     if (!m_paintRects.isEmpty())
         drawPaintRects(context, m_paintRects);
 
-    if (shouldDrawRulers())
+    if (shouldDrawRulerBars())
         drawRulers(context, rulerExclusion);
 }
 
@@ -846,10 +846,17 @@ bool InspectorOverlay::shouldDrawRulers() const
     return m_showRulers || m_showRulersForNodeHighlight;
 }
 
+bool InspectorOverlay::shouldDrawRulerBars() const
+{
+    // While the UI process draws the ruler bars for a frame highlight, this overlay still draws its
+    // own highlight's guide lines, but not a second set of bars.
+    return shouldDrawRulers() && !m_rulersSuppressed;
+}
+
 bool InspectorOverlay::shouldShowOverlay() const
 {
     // Rulers alone must not install a frame surface that would paint nothing.
-    if (m_showRulers && !isFrameScoped())
+    if (m_showRulers && !isFrameScoped() && !m_rulersSuppressed)
         return true;
 
     return m_highlightNode
@@ -935,6 +942,16 @@ void InspectorOverlay::setShowRulers(bool showRulers)
         return;
 
     m_showRulers = showRulers;
+
+    update();
+}
+
+void InspectorOverlay::setRulersSuppressed(bool suppressed)
+{
+    if (m_rulersSuppressed == suppressed)
+        return;
+
+    m_rulersSuppressed = suppressed;
 
     update();
 }
@@ -1161,7 +1178,7 @@ FloatRect InspectorOverlay::drawBounds(GraphicsContext& context, const Inspector
 
 void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverlay::RulerExclusion& rulerExclusion)
 {
-    // Rulers are page-wide. Every caller gates on shouldDrawRulers(), which is false when frame scoped.
+    // Rulers are page-wide. The caller gates on shouldDrawRulerBars(), which is false when frame scoped.
     ASSERT(!isFrameScoped());
 
     if (auto pageGeometry { mainFramePageGeometry() })
@@ -1629,14 +1646,12 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     return drawElementTitleLabel(context, label);
 }
 
-auto InspectorOverlay::drawFrameHighlight(GraphicsContext& context, const Highlight& highlight, const PageGeometry& pageGeometry) -> FrameHighlightGeometry
+auto InspectorOverlay::drawFrameHighlight(GraphicsContext& context, const Highlight& highlight, const PageGeometry& pageGeometry, bool showRulers, RulerExclusion& rulerExclusion) -> FrameHighlightGeometry
 {
     FrameHighlightGeometry geometry;
 
-    std::optional<RulerExclusion> rulerExclusion;
     auto titleInsets { pageGeometry.obscuredContentInsets };
-    if (highlight.showRulers) {
-        rulerExclusion.emplace();
+    if (showRulers) {
         titleInsets.setTop(titleInsets.top() + rulerSize);
         titleInsets.setLeft(titleInsets.left() + rulerSize);
     }
@@ -1645,9 +1660,9 @@ auto InspectorOverlay::drawFrameHighlight(GraphicsContext& context, const Highli
         Highlight::Bounds bounds;
         drawOutlinedQuad(context, highlight.quads[0], highlight.contentColor, highlight.contentOutlineColor, bounds);
 
-        if (rulerExclusion) {
+        if (showRulers) {
             drawBounds(context, bounds, pageGeometry);
-            rulerExclusion->bounds.unite(bounds);
+            rulerExclusion.bounds.unite(bounds);
         }
     }
 
@@ -1659,7 +1674,7 @@ auto InspectorOverlay::drawFrameHighlight(GraphicsContext& context, const Highli
             drawShapeHighlight(context, *nodeInfo.shapeOutside, bounds);
 
         FloatRect guidesBounds;
-        if (rulerExclusion)
+        if (showRulers)
             guidesBounds = drawBounds(context, bounds, pageGeometry);
 
         Path titlePath;
@@ -1672,10 +1687,10 @@ auto InspectorOverlay::drawFrameHighlight(GraphicsContext& context, const Highli
             titleBounds.moveBy(label.location());
         }
 
-        if (rulerExclusion) {
-            rulerExclusion->bounds.unite(bounds);
+        if (showRulers) {
+            rulerExclusion.bounds.unite(bounds);
             if (highlight.type == Highlight::Type::Node)
-                rulerExclusion->titlePath = WTF::move(titlePath);
+                rulerExclusion.titlePath = WTF::move(titlePath);
         }
 
         if (nodeInfo.gridHighlightOverlay)
@@ -1692,9 +1707,6 @@ auto InspectorOverlay::drawFrameHighlight(GraphicsContext& context, const Highli
 
     for (auto& flexHighlightOverlay : highlight.flexHighlightOverlays)
         drawFlexOverlay(context, flexHighlightOverlay);
-
-    if (rulerExclusion)
-        geometry.rulers = drawRulers(context, *rulerExclusion, pageGeometry);
 
     return geometry;
 }

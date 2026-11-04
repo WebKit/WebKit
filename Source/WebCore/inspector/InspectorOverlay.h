@@ -281,6 +281,11 @@ public:
     unsigned paintRectCount() const { return m_paintRects.size(); }
 
     void setShowRulers(bool);
+    bool showRulers() const { return m_showRulers; }
+    // Under Site Isolation the UI process draws the ruler bars while it draws a frame highlight;
+    // the page overlay then leaves its bars out but still draws its highlight's guide lines.
+    void setRulersSuppressed(bool);
+    bool rulersSuppressed() const { return m_rulersSuppressed; }
 
     NODELETE Node* highlightedNode() const;
     unsigned gridOverlayCount() const { return m_activeGridOverlays.size(); }
@@ -304,15 +309,18 @@ public:
     WEBCORE_EXPORT static void drawGridOverlay(GraphicsContext&, const InspectorOverlayHighlight::GridHighlightOverlay&);
     WEBCORE_EXPORT static void drawFlexOverlay(GraphicsContext&, const InspectorOverlayHighlight::FlexHighlightOverlay&);
 
-    WEBCORE_EXPORT static FrameHighlightGeometry drawFrameHighlight(GraphicsContext&, const Highlight&, const PageGeometry&);
-
-private:
-    using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
-
     struct RulerExclusion {
         Highlight::Bounds bounds;
         Path titlePath;
     };
+
+    // When showRulers, unions the highlight's ruler exclusion into the out parameter; the caller
+    // draws the bars once over every frame highlight with drawRulers().
+    WEBCORE_EXPORT static FrameHighlightGeometry drawFrameHighlight(GraphicsContext&, const Highlight&, const PageGeometry&, bool showRulers, RulerExclusion&);
+    WEBCORE_EXPORT static FrameHighlightGeometry::Rulers drawRulers(GraphicsContext&, const RulerExclusion&, const PageGeometry&);
+
+private:
+    using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
 
     RulerExclusion drawNodeHighlight(GraphicsContext&, Node&);
     RulerExclusion drawQuadHighlight(GraphicsContext&, const FloatQuad&);
@@ -320,7 +328,6 @@ private:
     void drawBounds(GraphicsContext&, const Highlight::Bounds&);
     void drawRulers(GraphicsContext&, const RulerExclusion&);
     static FloatRect drawBounds(GraphicsContext&, const Highlight::Bounds&, const PageGeometry&);
-    static FrameHighlightGeometry::Rulers drawRulers(GraphicsContext&, const RulerExclusion&, const PageGeometry&);
     std::optional<PageGeometry> mainFramePageGeometry() const;
 
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
@@ -343,8 +350,10 @@ private:
     // True when scoped to one frame rather than the whole page.
     bool isFrameScoped() const { return !!m_owner->overlayOwnerFrame(); }
 
-    // Single answer to "are rulers being drawn", so the guide lines and tooltip insets agree.
+    // Single answer to "are rulers wanted", so the guide lines and tooltip insets agree.
     NODELETE bool shouldDrawRulers() const;
+    // The bars themselves can be suppressed while the guide lines stay, see setRulersSuppressed().
+    NODELETE bool shouldDrawRulerBars() const;
 
     const CheckedRef<const InspectorOverlayOwner> m_owner;
 
@@ -368,6 +377,7 @@ private:
     bool m_showPaintRects { false };
     bool m_showRulers { false };
     bool m_showRulersForNodeHighlight { false };
+    bool m_rulersSuppressed { false };
 };
 
 } // namespace WebCore
