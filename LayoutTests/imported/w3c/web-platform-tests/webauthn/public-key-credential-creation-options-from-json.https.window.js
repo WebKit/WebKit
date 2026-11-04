@@ -49,37 +49,14 @@ test(() => {
   };
 
   assertJsonEquals(actual.rp, expected.rp);
-  internals.log(JSON.stringify(actual));
-  internals.log("----------------");
-  internals.log(actual.user.id.byteLength);
-  internals.log(actual.user.id);
-  internals.log(JSON.stringify(typeof(actual.user.id)));
-  internals.log(expected.user.id.byteLength);
-  internals.log(expected.user.id);
-  internals.log(JSON.stringify(typeof(expected.user.id)));
-  internals.log("----------------");
-  internals.log(typeof(actual.user));
-  internals.log(JSON.stringify(expected.user.id.length));
-  internals.log(JSON.stringify(expected));
-  if (!actual.user.name != expected.user.name) {
-    internals.log("NAME NOT MATCH");
-
-  }
-  if (!actual.user.displayName != expected.user.displayName) {
-    internals.log("NAME NOT MATCH");
-
-  }
-  if (!bytesEqual(actual.user.id, expected.user.id)) {
-    internals.log("ID NOT MATCH");
-  }
-  //assert_true(userEntityEquals(actual.user, expected.user));
-  /*assert_true(bytesEqual(actual.challenge, expected.challenge));
+  assert_true(userEntityEquals(actual.user, expected.user));
+  assert_true(bytesEqual(actual.challenge, expected.challenge));
   assertJsonEquals(actual.pubKeyCredParams, expected.pubKeyCredParams, "pk");
   assert_equals(actual.attestation, expected.attestation);
   if (actual.hasOwnProperty('hints')) {
     // Not all implementations support hints yet.
     assertJsonEquals(actual.hints, expected.hints);
-  }*/
+  }
 }, "parseCreationOptionsFromJSON()");
 
 test(() => {
@@ -135,11 +112,6 @@ test(() => {
         write: test_b64,
       },
       credBlob: test_b64,
-      supplementalPubKeys: {
-        scopes: ["spk scope"],
-        attestation: "directest",
-        attestationFormats: ["asn2"],
-      },
       prf: {
         eval: {
           first: test_b64,
@@ -183,11 +155,6 @@ test(() => {
         write: test_bytes,
       },
       credBlob: test_bytes,
-      supplementalPubKeys: {
-        scopes: ["spk scope"],
-        attestation: "directest",
-        attestationFormats: ["asn2"],
-      },
       prf: {
         eval: {
           first: test_bytes,
@@ -201,21 +168,13 @@ test(() => {
         },
       },
     },
-  };  
-  internals.log("----");
+  };
 
-  internals.log(JSON.stringify(expected));
-
-  internals.log("----");
-
-  internals.log(JSON.stringify(actual));
-  internals.log("----");
   // Some implementations do not support all of these extensions.
   if (actual.extensions.hasOwnProperty('appidExclude')) {
     assert_equals(
         actual.extensions.appidExclude, expected.extensions.appidExclude);
   }
-  internals.log("2");
   if (actual.extensions.hasOwnProperty('hmacCreateSecret')) {
     assert_equals(
         actual.extensions.hmacCreateSecret,
@@ -242,38 +201,74 @@ test(() => {
     assert_equals(
         actual.extensions.largeBlob.support,
         expected.extensions.largeBlob.support);
-        internals.log("2");
     assert_true(bytesEqual(
         actual.extensions.largeBlob.write,
         expected.extensions.largeBlob.write));
-        internals.log("3");
   }
   if (actual.extensions.hasOwnProperty('credBlob')) {
-    internals.log("4");
     assert_true(
         bytesEqual(actual.extensions.credBlob, expected.extensions.credBlob));
-        internals.log("5");
-  }
-  if (actual.extensions.hasOwnProperty('supplementalPubKeys')) {
-    assertJsonEquals(
-        actual.extensions.supplementalPubKeys,
-        expected.extensions.supplementalPubKeys);
   }
   if (actual.extensions.hasOwnProperty('prf')) {
     let prfValuesEquals = (a, b) => {
       return bytesEqual(a.first, b.first) && bytesEqual(a.second, b.second);
     };
-    internals.log("6");
     assert_true(
         prfValuesEquals(
             actual.extensions.prf.eval, expected.extensions.prf.eval),
         'prf eval');
-        internals.log("7");
     assert_true(
         prfValuesEquals(
             actual.extensions.prf.evalByCredential['test cred'],
             expected.extensions.prf.evalByCredential['test cred']),
         'prf ebc');
-        internals.log("8");
   }
 }, "parseCreationOptionsFromJSON() with extensions");
+
+test(() => {
+  let actual = PublicKeyCredential.parseCreationOptionsFromJSON({
+    rp: {
+      id: "example.com",
+      name: "Example Inc",
+    },
+    user: {
+      id: test_b64,
+      name: "test@example.com",
+      displayName: "test user"
+    },
+    challenge: test_b64,
+    pubKeyCredParams: [
+      {
+        type: "public-key",
+        alg: -7,
+      },
+    ],
+    hints: ["duplicated-value", "duplicated-value", "hybrid", "hybrid"]
+  });
+  let expected = {
+    rp: {
+      id: "example.com",
+      name: "Example Inc",
+    },
+    user: {
+      id: test_bytes,
+      name: "test@example.com",
+      displayName: "test user"
+    },
+    challenge: test_bytes,
+    pubKeyCredParams: [
+      {
+        type: "public-key",
+        alg: -7,
+      },
+    ],
+    attestation: "none",
+    hints: ["duplicated-value", "duplicated-value", "hybrid", "hybrid"]
+  };
+
+  assert_equals(actual.attestation, expected.attestation);
+  if (actual.hasOwnProperty('hints')) {
+    // Not all implementations support hints yet.
+    assertJsonEquals(actual.hints, expected.hints);
+  }
+}, "parseCreationOptionsFromJSON() with duplicated hints");

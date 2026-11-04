@@ -7921,7 +7921,6 @@ imported/w3c/web-platform-tests/css/css-pseudo/svg-text-selection-transparent-ba
 imported/w3c/web-platform-tests/page-lifecycle/child-display-none.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/page-lifecycle/child-out-of-viewport.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/page-lifecycle/worker-dispay-none.tentative.html [ Skip ]
-imported/w3c/web-platform-tests/page-lifecycle/set-composited-layer-position.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies-a-b-a-embed.tentative.https.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/CSS2/visudet/inline-block-baseline-003.xht [ ImageOnlyFailure ]

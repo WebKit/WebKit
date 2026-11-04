@@ -78,8 +78,8 @@ promise_test(async t => {
       };
 
       encoder.configure(CONFIG);
-//      encoder.encode(frame2);
-//      flushInCallbackDone = encoder.flush();
+      encoder.encode(frame2);
+      flushInCallbackDone = encoder.flush();
 
       resolve();
     };

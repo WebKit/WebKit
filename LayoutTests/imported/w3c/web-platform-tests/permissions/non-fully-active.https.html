@@ -60,4 +60,49 @@
     assert_equals(status.name, "geolocation");
     iframe.remove();
   }, "Trying to query() a non-fully active document rejects with a InvalidStateError");
+
+  promise_test(async (t) => {
+    // Create the iframe, wait for it to load...
+    const iframe = await attachIframe();
+
+    // Get the status
+    const initialStatus =
+      await iframe.contentWindow.navigator.permissions.query({
+        name: "geolocation",
+      });
+
+    assert_true("onchange" in initialStatus, "onchange is supported");
+
+    // Let's check events are firing...
+    await new Promise(async (resolve) => {
+      const newState = initialStatus.state === "prompt" ? "denied" : "granted";
+      initialStatus.addEventListener("change", resolve, { once: true });
+      await test_driver.set_permission({ name: "geolocation" }, newState);
+    });
+
+    // No longer fully active...
+    iframe.remove();
+
+    await new Promise(async (resolve, reject) => {
+      // Gets dropped on the floor.
+      initialStatus.addEventListener("change", reject, { once: true });
+      await test_driver.set_permission({ name: "geolocation" }, "prompt");
+      // Try to force it synthetically. This would trigger the event synchronously.
+      initialStatus.dispatchEvent(new Event("change"));
+      resolve();
+    });
+
+    // Re-attach, and go back to fully active.
+    document.body.appendChild(iframe);
+    await new Promise((resolve) =>
+      iframe.addEventListener("load", resolve, { once: true })
+    );
+
+    // Finally, let's recheck that permission state.
+    const finalStatus = await iframe.contentWindow.navigator.permissions.query({
+      name: "geolocation",
+    });
+    assert_equals(finalStatus.state, "prompt", "expected prompt state");
+    iframe.remove();
+  }, "Permission change events shouldn't fire on non-fully active document");
 </script>
