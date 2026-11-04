@@ -113,6 +113,8 @@ public:
     LayoutRect borderBoundingBox() const { return { { }, borderBoxRectInContainer().size() }; }
     virtual LayoutRect visualOverflowRect() const;
     virtual LayoutRect firstFragmentBorderBoxRect() const;
+    LayoutRect firstFragmentBorderBoxRectFromBlockStart() const;
+    virtual LayoutPoint flipForWritingModeForChild(const RenderBox& child, const LayoutPoint&) const;
     virtual LayoutUnit paddingBoxLogicalWidth() const;
     virtual LayoutUnit paddingBoxLogicalHeight() const;
     virtual LayoutUnit paddingBoxWidth() const;
