@@ -97,7 +97,7 @@ static void wpeBufferDMABufDispose(GObject* object)
     auto* priv = dmabufBuffer->priv;
     priv->pixels = nullptr;
     g_clear_pointer(&priv->bufferObject, gbm_bo_destroy);
-    if (priv->device && priv->device.has_value()) {
+    if (priv->device && priv->device.value()) {
         gbm_device_destroy(priv->device.value());
         priv->device = std::nullopt;
     }
