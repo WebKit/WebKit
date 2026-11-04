@@ -377,6 +377,8 @@ class SerializedEnum(object):
     def parameter(self):
         if self.is_option_set():
             return f'OptionSet<{self.namespace_and_name()}>'
+        if self.underlying_type == 'bool':
+            return 'uint8_t'
         return self.underlying_type
 
     def is_option_set(self):
@@ -1411,7 +1413,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
             result.append('    return (value.toRaw() | allValidBitsValue) == allValidBitsValue;')
         else:
             if enum.underlying_type == 'bool':
-                result.append('    switch (static_cast<uint8_t>(value)) {')
+                result.append('    switch (value) {')
                 result.append('    case 0:')
                 result.append('    case 1:')
             else:

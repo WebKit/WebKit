@@ -136,8 +136,8 @@ static bool alertReceived = false;
 
 #if ASSERT_ENABLED
 namespace WTF {
-template<> bool isValidEnum<WebKit::WebPushD::PushMessageDisposition>(std::underlying_type_t<WebKit::WebPushD::PushMessageDisposition>) { return true; }
-template<> bool isValidEnum<WebCore::NotificationDirection>(std::underlying_type_t<WebCore::NotificationDirection>) { return true; }
+template<> bool isValidEnum<WebKit::WebPushD::PushMessageDisposition>(UnderlyingTypeWithBoolPromotedToUint8t<WebKit::WebPushD::PushMessageDisposition>) { return true; }
+template<> bool isValidEnum<WebCore::NotificationDirection>(UnderlyingTypeWithBoolPromotedToUint8t<WebCore::NotificationDirection>) { return true; }
 }
 #endif
 

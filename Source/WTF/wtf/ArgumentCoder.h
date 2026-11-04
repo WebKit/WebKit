@@ -77,14 +77,14 @@ struct ArgumentCoder<T> {
     template<typename Encoder>
     static void encode(Encoder& encoder, T value)
     {
-        ASSERT(WTF::isValidEnum<T>(std::to_underlying<T>(value)));
-        encoder << std::to_underlying<T>(value);
+        ASSERT(WTF::isValidEnum<T>(WTF::UnderlyingTypeWithBoolPromotedToUint8t<T>(value)));
+        encoder << WTF::UnderlyingTypeWithBoolPromotedToUint8t<T>(value);
     }
 
     template<typename Decoder>
     static std::optional<T> decode(Decoder& decoder)
     {
-        auto value = decoder.template decode<std::underlying_type_t<T>>();
+        auto value = decoder.template decode<WTF::UnderlyingTypeWithBoolPromotedToUint8t<T>>();
         if (value && WTF::isValidEnum<T>(*value))
             return static_cast<T>(*value);
         return std::nullopt;
