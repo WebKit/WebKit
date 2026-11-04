@@ -93,22 +93,22 @@ static pas_msl_zone init_zone(const pas_heap_config* config, pas_lock_hold_mode 
 
 PAS_NEVER_INLINE pas_allocation_result pas_msl_malloc_logging_slow(size_t size, pas_allocation_result result, const pas_heap_config* config, pas_lock_hold_mode heap_lock_hold_mode)
 {
-    PAS_TESTING_ASSERT(malloc_logger);
-    if (result.did_succeed && pas_msl_is_enabled()) {
+    malloc_logger_t* logger = __atomic_load_n(&malloc_logger, __ATOMIC_RELAXED);
+    if (logger && result.did_succeed && pas_msl_is_enabled()) {
         pas_msl_zone zone = init_zone(config, heap_lock_hold_mode);
         uint32_t type = (pas_stack_logging_flag_zone | pas_stack_logging_type_alloc);
-        malloc_logger(type, (uintptr_t)&zone, (uintptr_t)size, 0, (uintptr_t)result.begin, 0);
+        logger(type, (uintptr_t)&zone, (uintptr_t)size, 0, (uintptr_t)result.begin, 0);
     }
     return result;
 }
 
 PAS_NEVER_INLINE void pas_msl_free_logging_slow(void* ptr, const pas_heap_config* config, pas_lock_hold_mode heap_lock_hold_mode)
 {
-    PAS_TESTING_ASSERT(malloc_logger);
-    if (ptr && pas_msl_is_enabled()) {
+    malloc_logger_t* logger = __atomic_load_n(&malloc_logger, __ATOMIC_RELAXED);
+    if (logger && ptr && pas_msl_is_enabled()) {
         pas_msl_zone zone = init_zone(config, heap_lock_hold_mode);
         uint32_t type = (pas_stack_logging_flag_zone | pas_stack_logging_type_dealloc);
-        malloc_logger(type, (uintptr_t)&zone, (uintptr_t)ptr, 0, 0, 0);
+        logger(type, (uintptr_t)&zone, (uintptr_t)ptr, 0, 0, 0);
     }
 }
 
