@@ -26,12 +26,14 @@
 #pragma once
 
 #include <WebCore/PlatformTimeRanges.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 template<typename> class ExceptionOr;
 
 class TimeRanges : public RefCounted<TimeRanges> {
+    WTF_MAKE_TZONE_ALLOCATED(TimeRanges);
 public:
     NODELETE WEBCORE_EXPORT static Ref<TimeRanges> create();
     NODELETE WEBCORE_EXPORT static Ref<TimeRanges> create(double start, double end);

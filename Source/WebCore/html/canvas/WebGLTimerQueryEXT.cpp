@@ -29,8 +29,11 @@
 #include "WebGLTimerQueryEXT.h"
 
 #include "WebGLRenderingContextBase.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGLTimerQueryEXT);
 
 Ref<WebGLTimerQueryEXT> WebGLTimerQueryEXT::createLost()
 {

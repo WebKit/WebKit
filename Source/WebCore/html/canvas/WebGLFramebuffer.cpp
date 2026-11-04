@@ -35,8 +35,11 @@
 #include <JavaScriptCore/SlotVisitorInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGLFramebuffer);
 
 static void entryAddMembersToOpaqueRoots(const WebGLFramebuffer::AttachmentEntry& entry, const AbstractLocker&, JSC::AbstractSlotVisitor& visitor)
 {

@@ -47,8 +47,11 @@
 #include "VTTScanner.h"
 #include "WebVTTParser.h"
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VTTRegion);
 
 // The default values are defined within the WebVTT Regions Spec.
 // https://dvcs.w3.org/hg/text-tracks/raw-file/default/608toVTT/region.html

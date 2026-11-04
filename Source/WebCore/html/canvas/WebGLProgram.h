@@ -34,6 +34,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/Lock.h>
 #include <wtf/Markable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -51,6 +52,7 @@ class WebGLRenderingContextBase;
 class WebGLShader;
 
 class WebGLProgram final : public WebGLObject, public ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLProgram);
 public:
     static Ref<WebGLProgram> createLost(WebGLRenderingContextBase&);
     static Ref<WebGLProgram> create(WebGLRenderingContextBase&);

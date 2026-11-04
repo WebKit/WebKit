@@ -31,8 +31,11 @@
 #include "WebGL2RenderingContext.h"
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGLVertexArrayObject);
 
 
 Ref<WebGLVertexArrayObject> WebGLVertexArrayObject::createLost()

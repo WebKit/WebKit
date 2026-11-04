@@ -29,10 +29,12 @@
 
 #include <WebCore/GraphicsContextGL.h>
 #include <WebCore/WebGLObject.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class WebGLRenderbuffer final : public WebGLObject {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLRenderbuffer);
 public:
     virtual ~WebGLRenderbuffer();
 

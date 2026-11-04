@@ -39,6 +39,7 @@
 #include <WebCore/Timer.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -53,6 +54,7 @@ class WEBCORE_EXPORT VTTRegion final
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(VTTRegion, WEBCORE_EXPORT);
 public:
     static Ref<VTTRegion> create(ScriptExecutionContext& context)
     {

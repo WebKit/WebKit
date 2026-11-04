@@ -30,8 +30,11 @@
 
 #include "WebGLShaderPrecisionFormat.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGLShaderPrecisionFormat);
 
 // static
 Ref<WebGLShaderPrecisionFormat> WebGLShaderPrecisionFormat::create(GCGLint rangeMin, GCGLint rangeMax, GCGLint precision)

@@ -26,11 +26,13 @@
 #pragma once
 
 #include "WebCoreOpaqueRoot.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class TrackOpaqueRoot : public ThreadSafeRefCounted<TrackOpaqueRoot> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(TrackOpaqueRoot);
 public:
     static Ref<TrackOpaqueRoot> create(const WebCoreOpaqueRoot& root)
     {

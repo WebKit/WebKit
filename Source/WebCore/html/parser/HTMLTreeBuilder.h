@@ -42,7 +42,7 @@ class ScriptElement;
 enum class TagName : uint16_t;
 
 struct CustomElementConstructionData {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CustomElementConstructionData);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(CustomElementConstructionData);
 
     CustomElementConstructionData(Ref<JSCustomElementInterface>&&, Ref<CustomElementRegistry>&&, const AtomString& name, Vector<Attribute>&&);
     ~CustomElementConstructionData();

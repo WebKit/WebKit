@@ -28,6 +28,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
 
@@ -39,6 +40,7 @@ class FileList;
 struct FileChooserFileInfo;
 
 class DirectoryFileListCreator : public ThreadSafeRefCounted<DirectoryFileListCreator> {
+    WTF_MAKE_TZONE_ALLOCATED(DirectoryFileListCreator);
 public:
     using CompletionHandler = Function<void(Ref<FileList>&&)>;
 

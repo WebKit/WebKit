@@ -27,10 +27,12 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class TextMetrics : public RefCounted<TextMetrics> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(TextMetrics);
 public:
     static Ref<TextMetrics> create() { return adoptRef(*new TextMetrics); }
 

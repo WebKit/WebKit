@@ -33,6 +33,7 @@
 #include "IntersectionObserverEntry.h"
 #include "LocalFrame.h"
 #include "NodeDocument.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
@@ -48,6 +49,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LazyLoadElementObserver);
 
 class LazyLoadIntersectionObserverCallback final : public IntersectionObserverCallback {
+    WTF_MAKE_TZONE_ALLOCATED(LazyLoadIntersectionObserverCallback);
 public:
     static Ref<LazyLoadIntersectionObserverCallback> create(Document& document)
     {
@@ -88,6 +90,8 @@ private:
         return invoke(thisObserver, entries, observer);
     }
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LazyLoadIntersectionObserverCallback);
 
 LazyLoadElementObserver::LazyLoadElementObserver() = default;
 LazyLoadElementObserver::~LazyLoadElementObserver() = default;

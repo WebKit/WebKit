@@ -33,6 +33,7 @@
 #include <WebCore/File.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -42,6 +43,7 @@ class HTMLElement;
 class HTMLFormElement;
 
 class DOMFormData : public RefCounted<DOMFormData>, public ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(DOMFormData);
 public:
     using FormDataEntryValue = Variant<Ref<File>, String>;
 

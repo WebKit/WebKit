@@ -26,11 +26,12 @@
 #pragma once
 
 #include <WebCore/PermissionsPolicy.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 struct OwnerPermissionsPolicyData {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(OwnerPermissionsPolicyData);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(OwnerPermissionsPolicyData);
 
     using PolicyDirective = PermissionsPolicy::PolicyDirective;
     OwnerPermissionsPolicyData(SecurityOriginData&& documentOrigin, PermissionsPolicy&& documentPolicy, PolicyDirective&& containerPolicy)

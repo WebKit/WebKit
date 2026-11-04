@@ -36,11 +36,13 @@
 #include "Quirks.h"
 #include "SecurityOrigin.h"
 #include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PermissionsPolicy);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(OwnerPermissionsPolicyData);
 
 using namespace HTMLNames;
 

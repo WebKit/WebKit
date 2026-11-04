@@ -30,9 +30,12 @@
 #include "DOMMatrixReadOnly.h"
 #include "NativeImage.h"
 #include "Pattern.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasPattern);
 
 Ref<CanvasPattern> CanvasPattern::create(SourceImage&& image, bool repeatX, bool repeatY, bool originClean)
 {

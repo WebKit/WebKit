@@ -94,6 +94,8 @@ do { \
 
 namespace WebCore {
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(HTMLVideoElement::VideoFrameRequest);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLVideoElement);
 
 using namespace HTMLNames;
