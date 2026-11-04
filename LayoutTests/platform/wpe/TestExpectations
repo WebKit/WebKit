@@ -745,8 +745,8 @@ webkit.org/b/280604 webgl/webgl-worker.html [ Skip ]
 webkit.org/b/280604 webgl/webgl-fail-platform-context-creation-no-crash.html [ Skip ]
 
 # WEBGL2 flakies
-webkit.org/b/313803 webkit.org/b/251107 webgl/2.0.y/conformance2/textures/image_bitmap_from_video/tex-2d-r8-red-unsigned_byte.html [ Timeout ]
-webkit.org/b/313803 webkit.org/b/251107 webgl/2.0.y/conformance2/textures/video/tex-2d-rgba8ui-rgba_integer-unsigned_byte.html [ Timeout ]
+webkit.org/b/313803 webkit.org/b/251107 webgl/2.0.y/conformance2/textures/image_bitmap_from_video/tex-2d-r8-red-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/313803 webkit.org/b/251107 webgl/2.0.y/conformance2/textures/video/tex-2d-rgba8ui-rgba_integer-unsigned_byte.html [ Pass Timeout ]
 
 webkit.org/b/212147 http/tests/xmlhttprequest/url-with-credentials.html [ Failure ]
 webkit.org/b/306455 http/tests/xmlhttprequest/logout.html [ Failure Pass ]
@@ -796,8 +796,8 @@ webkit.org/b/244476 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [
 
 webkit.org/b/244489 fast/canvas/webgl/bufferData-offset-length.html [ Failure ]
 
-webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
-webgl/1.0.x/conformance/extensions/oes-texture-half-float-with-video.html [ Timeout ]
+webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html [ Pass Timeout ]
+webgl/1.0.x/conformance/extensions/oes-texture-half-float-with-video.html [ Pass Timeout ]
 webgl/2.0.y/conformance2/textures/video [ Skip ]
 webgl/2.0.y/conformance2/textures/image_bitmap_from_video [ Skip ]
 webgl/2.0.y/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html [ Skip ]
@@ -1166,7 +1166,7 @@ webkit.org/b/309633 [ arm64 ] fast/text/hyphenate-locale.html [ Failure ]
 
 webkit.org/b/309634 [ arm64 ] http/tests/xmlhttprequest/binary-x-user-defined.html [ Failure ]
 
-webkit.org/b/313803 webkit.org/b/309635 [ arm64 ] webgl/2.0.y/conformance2/textures/video/tex-2d-r8-red-unsigned_byte.html [ Timeout ]
+webkit.org/b/313803 webkit.org/b/309635 [ arm64 ] webgl/2.0.y/conformance2/textures/video/tex-2d-r8-red-unsigned_byte.html [ Pass Timeout ]
 
 webkit.org/b/309636 [ arm64 ] webgl/tex-2d-video-no-change-wrap.html [ Pass Failure ]
 
@@ -1272,7 +1272,7 @@ webkit.org/b/313055 fast/canvas/image-buffer-backend-variants.html [ Pass Failur
 # Gardening 2026-06-27 (WPE x86_64, builder 40) https://bugs.webkit.org/show_bug.cgi?id=318036
 webkit.org/b/318034 [ x86_64 ] fast/canvas/image-potential-subsample.html [ Failure Pass ]
 
-webkit.org/b/318345 [ x86_64 ] media/track/video-track-configuration-mp4-default-colorspace.html [ Failure Pass ]
+webkit.org/b/318345 media/track/video-track-configuration-mp4-default-colorspace.html [ Failure Pass ]
 
 webkit.org/b/318349 [ arm64 ] imported/w3c/web-platform-tests/largest-contentful-paint/image-TAO.sub.html [ Failure Pass ]
 webkit.org/b/318350 [ arm64 ] http/tests/websocket/tests/hybi/inspector/handshake-error.html [ Failure Pass ]
