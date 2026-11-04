@@ -32,6 +32,9 @@
 #include "StylePosition.h"
 
 namespace WebCore {
+
+class MeshGradient;
+
 namespace Style {
 
 // https://github.com/w3c/csswg-drafts/blob/main/css-images-5/explainers/2d-gradients.md#mesh-gradient
@@ -56,7 +59,7 @@ DEFINE_TYPE_MAPPING(CSS::MeshGradientRelativeControlPoint, MeshGradientRelativeC
 
 // <mesh-absolute-position> = <position> [ with <position> [ / <position> ]{0,3} ]?
 struct MeshGradientAbsolutePosition {
-    using ControlPoints = SlashSeparatedVector<Position, 4>;
+    using ControlPoints = std::optional<MinimallySerializingSlashSeparatedRectEdges<Position>>;
 
     Position position;
     ControlPoints controlPoints;
@@ -76,7 +79,7 @@ DEFINE_TYPE_MAPPING(CSS::MeshGradientAbsolutePosition, MeshGradientAbsolutePosit
 
 // <mesh-relative-position> = by <coordinate-pair> [ with <mesh-relative-control-point> [ / <mesh-relative-control-point> ]{0,3} ]?
 struct MeshGradientRelativePosition {
-    using ControlPoints = SlashSeparatedVector<MeshGradientRelativeControlPoint, 4>;
+    using ControlPoints = std::optional<MinimallySerializingSlashSeparatedRectEdges<MeshGradientRelativeControlPoint>>;
 
     CoordinatePair offset;
     ControlPoints controlPoints;
@@ -140,6 +143,8 @@ template<size_t I> const auto& get(const MeshGradient& value)
 DEFINE_TYPE_MAPPING(CSS::MeshGradient, MeshGradient)
 
 bool containsCurrentColor(const MeshGradient&);
+
+Ref<WebCore::MeshGradient> createPlatformMeshGradient(const MeshGradient&, FloatSize, const ComputedStyle&);
 
 } // namespace Style
 } // namespace WebCore

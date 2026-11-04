@@ -301,6 +301,12 @@ void RecorderImpl::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMark
     m_items.append(DrawDotsForDocumentMarker(rect, style));
 }
 
+void RecorderImpl::drawMeshGradient(MeshGradient& gradient, const FloatRect& destination)
+{
+    appendStateChangeItemIfNecessary();
+    m_items.append(DrawMeshGradient(gradient, destination));
+}
+
 void RecorderImpl::drawEllipse(const FloatRect& rect)
 {
     appendStateChangeItemIfNecessary();

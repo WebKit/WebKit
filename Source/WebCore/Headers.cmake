@@ -2580,6 +2580,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MediaSourcePrivateClient.h
     platform/graphics/MediaTimeUpdateData.h
     platform/graphics/MediaUsageInfo.h
+    platform/graphics/MeshGradient.h
+    platform/graphics/MeshGradientRenderer.h
+    platform/graphics/MeshGradientRendererCPU.h
     platform/graphics/Model.h
     platform/graphics/ModelContext.h
     platform/graphics/NativeImage.h

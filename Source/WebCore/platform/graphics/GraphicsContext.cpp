@@ -35,6 +35,7 @@
 #include "ImageOrientation.h"
 #include "IntRect.h"
 #include "LayoutRoundedRect.h"
+#include "MeshGradientRendererCPU.h"
 #include "SourceImage.h"
 #include "SystemImage.h"
 #include "TextRun.h"
@@ -447,6 +448,11 @@ void GraphicsContext::drawPattern(ImageBuffer& image, const FloatRect& destRect,
 void GraphicsContext::drawControlPart(ControlPart& part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     part.draw(*this, borderRect, deviceScaleFactor, style);
+}
+
+void GraphicsContext::drawMeshGradient(MeshGradient& gradient, const FloatRect& destination)
+{
+    MeshGradientRendererCPU { }.draw(*this, gradient, destination);
 }
 
 #if ENABLE(VIDEO)

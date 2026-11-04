@@ -144,6 +144,7 @@ template<typename T> struct ToCSSMapping<MinimallySerializingSpaceSeparatedPair<
 template<typename T> struct ToCSSMapping<MinimallySerializingSpaceSeparatedPoint<T>> { using type = MinimallySerializingSpaceSeparatedPoint<CSSType<T>>; };
 template<typename T> struct ToCSSMapping<MinimallySerializingSpaceSeparatedSize<T>> { using type = MinimallySerializingSpaceSeparatedSize<CSSType<T>>; };
 template<typename T> struct ToCSSMapping<MinimallySerializingSpaceSeparatedRectEdges<T>> { using type = MinimallySerializingSpaceSeparatedRectEdges<CSSType<T>>; };
+template<typename T> struct ToCSSMapping<MinimallySerializingSlashSeparatedRectEdges<T>> { using type = MinimallySerializingSlashSeparatedRectEdges<CSSType<T>>; };
 
 // Standard Range-Like type mappings:
 template<typename T, size_t N> struct ToCSSMapping<SpaceSeparatedVector<T, N>> { using type = SpaceSeparatedVector<CSSType<T>, N>; };
@@ -310,6 +311,7 @@ template<typename T> struct ToStyleMapping<MinimallySerializingSpaceSeparatedPai
 template<typename T> struct ToStyleMapping<MinimallySerializingSpaceSeparatedPoint<T>> { using type = MinimallySerializingSpaceSeparatedPoint<StyleType<T>>; };
 template<typename T> struct ToStyleMapping<MinimallySerializingSpaceSeparatedSize<T>> { using type = MinimallySerializingSpaceSeparatedSize<StyleType<T>>; };
 template<typename T> struct ToStyleMapping<MinimallySerializingSpaceSeparatedRectEdges<T>> { using type = MinimallySerializingSpaceSeparatedRectEdges<StyleType<T>>; };
+template<typename T> struct ToStyleMapping<MinimallySerializingSlashSeparatedRectEdges<T>> { using type = MinimallySerializingSlashSeparatedRectEdges<StyleType<T>>; };
 
 // Standard Range-Like type mappings:
 template<typename T, size_t N> struct ToStyleMapping<SpaceSeparatedVector<T, N>> { using type = SpaceSeparatedVector<StyleType<T>, N>; };

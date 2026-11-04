@@ -1917,6 +1917,43 @@ template<typename T> inline constexpr auto TreatAsTupleLike<MinimallySerializing
 template<typename T> inline constexpr auto SerializationSeparator<MinimallySerializingSpaceSeparatedRectEdges<T>> = SerializationSeparatorType::Space;
 template<typename T> inline constexpr auto SerializationCoalescing<MinimallySerializingSpaceSeparatedRectEdges<T>> = SerializationCoalescingType::Minimal;
 
+template<typename T> struct MinimallySerializingSlashSeparatedRectEdges : RectEdges<T> {
+    using value_type = T;
+
+    constexpr MinimallySerializingSlashSeparatedRectEdges(T value)
+        : RectEdges<T> { value, value, value, value }
+    {
+    }
+
+    constexpr MinimallySerializingSlashSeparatedRectEdges(T top, T right, T bottom, T left)
+        : RectEdges<T> { WTF::move(top), WTF::move(right), WTF::move(bottom), WTF::move(left) }
+    {
+    }
+
+    constexpr MinimallySerializingSlashSeparatedRectEdges(RectEdges<T>&& rectEdges)
+        : RectEdges<T> { WTF::move(rectEdges) }
+    {
+    }
+
+    constexpr bool operator==(const MinimallySerializingSlashSeparatedRectEdges<T>&) const = default;
+};
+
+template<size_t I, typename T> decltype(auto) get(const MinimallySerializingSlashSeparatedRectEdges<T>& value)
+{
+    if constexpr (!I)
+        return value.top();
+    else if constexpr (I == 1)
+        return value.right();
+    else if constexpr (I == 2)
+        return value.bottom();
+    else if constexpr (I == 3)
+        return value.left();
+}
+
+template<typename T> inline constexpr auto TreatAsTupleLike<MinimallySerializingSlashSeparatedRectEdges<T>> = true;
+template<typename T> inline constexpr auto SerializationSeparator<MinimallySerializingSlashSeparatedRectEdges<T>> = SerializationSeparatorType::Slash;
+template<typename T> inline constexpr auto SerializationCoalescing<MinimallySerializingSlashSeparatedRectEdges<T>> = SerializationCoalescingType::Minimal;
+
 template<typename T> struct MinimallySerializingSpaceSeparatedRectCorners : RectCorners<T> {
     using value_type = T;
 
@@ -2271,6 +2308,12 @@ public:
 
 template<typename T> class tuple_size<WebCore::MinimallySerializingSpaceSeparatedRectEdges<T>> : public std::integral_constant<size_t, 4> { };
 template<size_t I, typename T> class tuple_element<I, WebCore::MinimallySerializingSpaceSeparatedRectEdges<T>> {
+public:
+    using type = T;
+};
+
+template<typename T> class tuple_size<WebCore::MinimallySerializingSlashSeparatedRectEdges<T>> : public std::integral_constant<size_t, 4> { };
+template<size_t I, typename T> class tuple_element<I, WebCore::MinimallySerializingSlashSeparatedRectEdges<T>> {
 public:
     using type = T;
 };

@@ -55,7 +55,7 @@ template<> struct Serialize<MeshGradientRelativeControlPoint> { void operator()(
 
 // <mesh-absolute-position> = <position> [ with <position> [ / <position> ]{0,3} ]?
 struct MeshGradientAbsolutePosition {
-    using ControlPoints = SlashSeparatedVector<Position, 4>;
+    using ControlPoints = std::optional<MinimallySerializingSlashSeparatedRectEdges<Position>>;
 
     Position position;
     ControlPoints controlPoints;
@@ -75,7 +75,7 @@ template<> struct Serialize<MeshGradientAbsolutePosition> { void operator()(Stri
 
 // <mesh-relative-position> = by <coordinate-pair> [ with <mesh-relative-control-point> [ / <mesh-relative-control-point> ]{0,3} ]?
 struct MeshGradientRelativePosition {
-    using ControlPoints = SlashSeparatedVector<MeshGradientRelativeControlPoint, 4>;
+    using ControlPoints = std::optional<MinimallySerializingSlashSeparatedRectEdges<MeshGradientRelativeControlPoint>>;
 
     CoordinatePair offset;
     ControlPoints controlPoints;

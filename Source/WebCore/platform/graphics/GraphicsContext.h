@@ -52,6 +52,7 @@ class FilterResults;
 class FloatRoundedRect;
 class Gradient;
 class ImageBuffer;
+class MeshGradient;
 class Path;
 class SourceImage;
 class SystemImage;
@@ -317,6 +318,8 @@ public:
     // The `lineSegments` defines the start and end offset of each segment along the line.
     virtual void drawLinesForText(const FloatPoint& origin, float thickness, std::span<const FloatSegment> lineSegments, bool isPrinting, bool doubleLines, StrokeStyle) = 0;
     virtual void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) = 0;
+
+    WEBCORE_EXPORT virtual void drawMeshGradient(MeshGradient&, const FloatRect& destination);
 
     // Transparency Layers
 

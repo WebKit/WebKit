@@ -620,6 +620,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::RemoteCDMInstanceSessionIdentifier"_s,
         "WebKit::RemoteGraphicsContextIdentifier"_s,
         "WebKit::RemoteGradientIdentifier"_s,
+        "WebKit::RemoteMeshGradientIdentifier"_s,
         "WebKit::RemoteDisplayListIdentifier"_s,
         "WebKit::RemoteDisplayListRecorderIdentifier"_s,
         "WebKit::RemoteLegacyCDMIdentifier"_s,

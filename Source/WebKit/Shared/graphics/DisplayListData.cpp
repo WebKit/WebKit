@@ -98,6 +98,7 @@ private:
             [](const DisplayList::DrawFilteredImageBuffer&) { return false; },
             [](const DisplayList::DrawGlyphs&) { return false; },
             [](const DisplayList::DrawImageBuffer&) { return false; },
+            [](const DisplayList::DrawMeshGradient&) { return false; },
             [](const DisplayList::DrawNativeImage&) { return false; },
             [](const DisplayList::DrawPatternNativeImage&) { return false; },
             [](const DisplayList::DrawPatternImageBuffer&) { return false; },

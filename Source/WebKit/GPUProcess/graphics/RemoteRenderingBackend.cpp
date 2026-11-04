@@ -61,6 +61,7 @@
 #include <WebCore/Gradient.h>
 #include <WebCore/HTMLCanvasElement.h>
 #include <WebCore/ImageBufferDisplayListBackend.h>
+#include <WebCore/MeshGradient.h>
 #include <WebCore/NullImageBufferBackend.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/Borrow.h>
@@ -588,6 +589,20 @@ void RemoteRenderingBackend::releaseGradient(RemoteGradientIdentifier identifier
     assertIsCurrent(workQueue());
     bool success = m_remoteResourceCache.releaseGradient(identifier);
     MESSAGE_CHECK(success, "Gradient released before being cached.");
+}
+
+void RemoteRenderingBackend::cacheMeshGradient(Ref<MeshGradient>&& gradient, RemoteMeshGradientIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    bool success = m_remoteResourceCache.cacheMeshGradient(identifier, WTF::move(gradient));
+    MESSAGE_CHECK(success, "Mesh gradient already cached.");
+}
+
+void RemoteRenderingBackend::releaseMeshGradient(RemoteMeshGradientIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    bool success = m_remoteResourceCache.releaseMeshGradient(identifier);
+    MESSAGE_CHECK(success, "Mesh gradient released before being cached.");
 }
 
 

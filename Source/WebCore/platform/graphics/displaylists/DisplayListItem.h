@@ -65,6 +65,7 @@ class DrawPlaceholder;
 class DrawImageBuffer;
 class DrawLine;
 class DrawLinesForText;
+class DrawMeshGradient;
 class DrawNativeImage;
 class DrawPath;
 class DrawPatternNativeImage;
@@ -135,6 +136,7 @@ using Item = Variant
     , DrawImageBuffer
     , DrawLine
     , DrawLinesForText
+    , DrawMeshGradient
     , DrawNativeImage
     , DrawPath
     , DrawPatternNativeImage

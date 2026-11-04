@@ -46,6 +46,7 @@
 #include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+AngleDefinitions.h"
 #include "CSSPropertyParserConsumer+AnglePercentageDefinitions.h"
+#include "CSSPropertyParserConsumer+Background.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+ColorInterpolationMethod.h"
@@ -1017,15 +1018,18 @@ template<typename ControlPoints> static std::optional<ControlPoints> consumeMesh
     if (!consumeIdent<CSSValueID::With>(range))
         return ControlPoints { };
 
-    typename ControlPoints::Container controlPoints;
+    using Edges = typename ControlPoints::value_type;
+
+    std::array<std::optional<typename Edges::value_type>, 4> controlPoints;
+    size_t count = 0;
     do {
         auto controlPoint = consumeControlPoint(range);
         if (!controlPoint)
             return { };
-        controlPoints.append(WTF::move(*controlPoint));
-    } while (controlPoints.size() < 4 && consumeSlashIncludingWhitespace(range));
+        controlPoints[count++] = WTF::move(*controlPoint);
+    } while (count < controlPoints.size() && consumeSlashIncludingWhitespace(range));
 
-    return ControlPoints { WTF::move(controlPoints) };
+    return ControlPoints { completeQuadFromArray<Edges>(WTF::move(controlPoints)) };
 }
 
 static std::optional<CSS::MeshGradientPoint> consumeMeshGradientPoint(CSSParserTokenRange& range, CSS::PropertyParserState& state)

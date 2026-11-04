@@ -29,6 +29,7 @@
 
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteGradientIdentifier.h"
+#include "RemoteMeshGradientIdentifier.h"
 #include "RemotePathImplIdentifier.h"
 #include <WebCore/DisplayList.h>
 #include <WebCore/RenderingResourceIdentifier.h>
@@ -66,6 +67,10 @@ public:
     bool releaseGradient(RemoteGradientIdentifier);
     RefPtr<WebCore::Gradient> cachedGradient(RemoteGradientIdentifier) const;
 
+    bool cacheMeshGradient(RemoteMeshGradientIdentifier, Ref<WebCore::MeshGradient>&&);
+    bool releaseMeshGradient(RemoteMeshGradientIdentifier);
+    RefPtr<WebCore::MeshGradient> cachedMeshGradient(RemoteMeshGradientIdentifier) const;
+
     bool cacheFilter(Ref<WebCore::Filter>&&);
     bool releaseFilter(WebCore::RenderingResourceIdentifier);
     RefPtr<WebCore::Filter> cachedFilter(WebCore::RenderingResourceIdentifier) const;
@@ -89,6 +94,7 @@ private:
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::ImageBuffer>> m_imageBuffers;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::NativeImage>> m_nativeImages;
     HashMap<RemoteGradientIdentifier, Ref<WebCore::Gradient>> m_gradients;
+    HashMap<RemoteMeshGradientIdentifier, Ref<WebCore::MeshGradient>> m_meshGradients;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Filter>> m_filters;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<SharedFont>> m_fonts;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::FontCustomPlatformData>> m_fontCustomPlatformDatas;

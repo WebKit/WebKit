@@ -30,6 +30,7 @@
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextIdentifier.h"
+#include "RemoteMeshGradientIdentifier.h"
 #include "RemotePathImplIdentifier.h"
 #include <WebCore/DisplayListRecorder.h>
 #include <wtf/TZoneMalloc.h>
@@ -126,6 +127,7 @@ private:
     void drawLine(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2) final;
     void drawLinesForText(const WebCore::FloatPoint&, float thickness, std::span<const WebCore::FloatSegment>, bool isPrinting, bool doubleLines, WebCore::StrokeStyle) final;
     void drawDotsForDocumentMarker(const WebCore::FloatRect&, WebCore::DocumentMarkerLineStyle) final;
+    void drawMeshGradient(WebCore::MeshGradient&, const WebCore::FloatRect& destination) final;
     void drawEllipse(const WebCore::FloatRect&) final;
     void drawPath(const WebCore::Path&) final;
     void drawFocusRing(const WebCore::Path&, float outlineWidth, const WebCore::Color&, float zoomFactor) final;
@@ -168,6 +170,7 @@ private:
     bool recordResourceUse(const WebCore::SourceImage&);
     bool recordResourceUse(WebCore::FontBase&);
     std::optional<RemoteGradientIdentifier> recordResourceUse(WebCore::Gradient&);
+    std::optional<RemoteMeshGradientIdentifier> recordResourceUse(WebCore::MeshGradient&);
     bool recordResourceUse(WebCore::Filter&);
     std::optional<RemoteDisplayListIdentifier> recordResourceUse(const WebCore::DisplayList::DisplayList&);
 

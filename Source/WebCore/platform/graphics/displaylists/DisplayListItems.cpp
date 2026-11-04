@@ -473,6 +473,17 @@ void DrawLinesForText::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("style"_s, style());
 }
 
+void DrawMeshGradient::apply(GraphicsContext& context) const
+{
+    context.drawMeshGradient(m_gradient, m_destination);
+}
+
+void DrawMeshGradient::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts.dumpProperty("gradient"_s, gradient());
+    ts.dumpProperty("destination"_s, destination());
+}
+
 void DrawDotsForDocumentMarker::apply(GraphicsContext& context) const
 {
     context.drawDotsForDocumentMarker(m_rect, m_style);

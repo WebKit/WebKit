@@ -2948,6 +2948,9 @@
 		726CDE202759735000A445B2 /* FilterEffectGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 729661A2275960A500E7DF9B /* FilterEffectGeometry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726D56E2253AE28D0002EF90 /* PlatformImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 726D56E1253AE0430002EF90 /* PlatformImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726D56E3253AE3660002EF90 /* NativeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 55A336F61D8209F40022C4C7 /* NativeImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		90C063E8DD6EB5CD9957990D /* MeshGradientRendererCPU.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5B71CDD2CB5D823572727F /* MeshGradientRendererCPU.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41ACF31DC72BF9108385C7C3 /* MeshGradientRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = CE04C4227D3BF83B554DE57B /* MeshGradientRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F013D3C3C527424BC7573A4D /* MeshGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = AC6B399ED103392D617845A0 /* MeshGradient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		727003E6292F2DD50094C64B /* FilterRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 727003E5292F2DBB0094C64B /* FilterRenderingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7272D337292F818E00F74D99 /* FilterStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 7272D336292F767D00F74D99 /* FilterStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		727610562988B09800897621 /* ApplePayButtonPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 72F8898A29887AB900A6E07A /* ApplePayButtonPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13179,6 +13182,12 @@
 		5576A5631D88A70800CCC04C /* ImageFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFrame.h; sourceTree = "<group>"; };
 		5597FCCB2076C06800D35BB0 /* GlyphDisplayListCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlyphDisplayListCache.h; sourceTree = "<group>"; };
 		55A336F61D8209F40022C4C7 /* NativeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeImage.h; sourceTree = "<group>"; };
+		0FAB358E2F99319B7975CA02 /* MeshGradientRendererCPU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MeshGradientRendererCPU.cpp; sourceTree = "<group>"; };
+		CF5B71CDD2CB5D823572727F /* MeshGradientRendererCPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MeshGradientRendererCPU.h; sourceTree = "<group>"; };
+		CE04C4227D3BF83B554DE57B /* MeshGradientRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MeshGradientRenderer.h; sourceTree = "<group>"; };
+		8A3629DBFC93D326D5CCE230 /* MeshGradientRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MeshGradientRenderer.cpp; sourceTree = "<group>"; };
+		11401E2D84BF1AFE182B2D46 /* MeshGradient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MeshGradient.cpp; sourceTree = "<group>"; };
+		AC6B399ED103392D617845A0 /* MeshGradient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MeshGradient.h; sourceTree = "<group>"; };
 		55A336F81D821E3C0022C4C7 /* ImageBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBackingStore.h; sourceTree = "<group>"; };
 		55AF14E31EAAC59B0026EEAA /* UTIRegistry.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = UTIRegistry.mm; sourceTree = "<group>"; };
 		55AF14E41EAAC59B0026EEAA /* UTIRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UTIRegistry.h; sourceTree = "<group>"; };
@@ -36984,6 +36993,12 @@
 				5149E5DD2F725A000019F7C3 /* MediaSourceTypeSupportedCache.h */,
 				51ED8A2D2F8000000019F7C4 /* MediaTimeUpdateData.h */,
 				07611DB8243FB75C00D80704 /* MediaUsageInfo.h */,
+				11401E2D84BF1AFE182B2D46 /* MeshGradient.cpp */,
+				AC6B399ED103392D617845A0 /* MeshGradient.h */,
+				8A3629DBFC93D326D5CCE230 /* MeshGradientRenderer.cpp */,
+				CE04C4227D3BF83B554DE57B /* MeshGradientRenderer.h */,
+				0FAB358E2F99319B7975CA02 /* MeshGradientRendererCPU.cpp */,
+				CF5B71CDD2CB5D823572727F /* MeshGradientRendererCPU.h */,
 				51E4CC032BA1132F00A29FB3 /* MIMESniffer.cpp */,
 				51E4CC022BA1132F00A29FB3 /* MIMESniffer.h */,
 				07B93FFB23B92AAB0036F8EA /* MIMETypeCache.cpp */,
@@ -47860,6 +47875,9 @@
 				72FD88D1295E3C40006FACDC /* MenuListPart.h in Headers */,
 				A11AE0CC1FFD60530047348B /* MerchantValidationEvent.h in Headers */,
 				93309DFA099E64920056E581 /* MergeIdenticalElementsCommand.h in Headers */,
+				F013D3C3C527424BC7573A4D /* MeshGradient.h in Headers */,
+				41ACF31DC72BF9108385C7C3 /* MeshGradientRenderer.h in Headers */,
+				90C063E8DD6EB5CD9957990D /* MeshGradientRendererCPU.h in Headers */,
 				E1ADECCE0E76AD8B004A1A5E /* MessageChannel.h in Headers */,
 				CD5F16442DBB0AD200CE85D9 /* MessageClientForTesting.h in Headers */,
 				75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */,

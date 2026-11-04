@@ -546,6 +546,14 @@ void BifurcatedGraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect,
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
+void BifurcatedGraphicsContext::drawMeshGradient(MeshGradient& gradient, const FloatRect& destination)
+{
+    m_primaryContext.drawMeshGradient(gradient, destination);
+    m_secondaryContext.drawMeshGradient(gradient, destination);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
 void BifurcatedGraphicsContext::beginPage(const FloatRect& pageRect)
 {
     m_primaryContext.beginPage(pageRect);

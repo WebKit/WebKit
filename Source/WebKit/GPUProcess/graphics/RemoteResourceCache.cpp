@@ -33,6 +33,7 @@
 #include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/MeshGradient.h>
 #include <WebCore/NativeImage.h>
 
 namespace WebKit {
@@ -85,6 +86,21 @@ bool RemoteResourceCache::releaseGradient(RemoteGradientIdentifier identifier)
 RefPtr<Gradient> RemoteResourceCache::cachedGradient(RemoteGradientIdentifier identifier) const
 {
     return m_gradients.get(identifier);
+}
+
+bool RemoteResourceCache::cacheMeshGradient(RemoteMeshGradientIdentifier identifier, Ref<MeshGradient>&& gradient)
+{
+    return m_meshGradients.add(identifier, WTF::move(gradient)).isNewEntry;
+}
+
+bool RemoteResourceCache::releaseMeshGradient(RemoteMeshGradientIdentifier identifier)
+{
+    return m_meshGradients.remove(identifier);
+}
+
+RefPtr<MeshGradient> RemoteResourceCache::cachedMeshGradient(RemoteMeshGradientIdentifier identifier) const
+{
+    return m_meshGradients.get(identifier);
 }
 
 bool RemoteResourceCache::cacheFilter(Ref<Filter>&& filter)
@@ -160,6 +176,7 @@ void RemoteResourceCache::releaseAllResources()
 void RemoteResourceCache::releaseMemory()
 {
     m_gradients.clear();
+    m_meshGradients.clear();
     m_filters.clear();
     m_fonts.clear();
     m_paths.clear();

@@ -40,6 +40,7 @@
 #include <WebCore/BitmapImage.h>
 #include <WebCore/FEImage.h>
 #include <WebCore/FilterResults.h>
+#include <WebCore/MeshGradient.h>
 #include <WebCore/SVGFilterRenderer.h>
 #include <wtf/URL.h>
 
@@ -515,6 +516,14 @@ void RemoteGraphicsContext::drawLinesForText(const FloatPoint& point, float thic
 void RemoteGraphicsContext::drawDotsForDocumentMarker(const FloatRect& rect, const DocumentMarkerLineStyle& style)
 {
     context().drawDotsForDocumentMarker(rect, style);
+}
+
+void RemoteGraphicsContext::drawMeshGradient(RemoteMeshGradientIdentifier identifier, const FloatRect& destination)
+{
+    RefPtr gradient = resourceCache().cachedMeshGradient(identifier);
+    MESSAGE_CHECK(gradient);
+
+    context().drawMeshGradient(*gradient, destination);
 }
 
 void RemoteGraphicsContext::drawEllipse(const FloatRect& rect)

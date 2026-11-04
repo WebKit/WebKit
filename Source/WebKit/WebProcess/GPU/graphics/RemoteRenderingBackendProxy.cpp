@@ -543,6 +543,18 @@ void RemoteRenderingBackendProxy::releaseGradient(RemoteGradientIdentifier ident
     send(Messages::RemoteRenderingBackend::ReleaseGradient(identifier));
 }
 
+void RemoteRenderingBackendProxy::cacheMeshGradient(Ref<MeshGradient>&& gradient, RemoteMeshGradientIdentifier identifier)
+{
+    send(Messages::RemoteRenderingBackend::CacheMeshGradient(WTF::move(gradient), identifier));
+}
+
+void RemoteRenderingBackendProxy::releaseMeshGradient(RemoteMeshGradientIdentifier identifier)
+{
+    if (!m_connection)
+        return;
+    send(Messages::RemoteRenderingBackend::ReleaseMeshGradient(identifier));
+}
+
 void RemoteRenderingBackendProxy::cacheFilter(Ref<Filter>&& filter)
 {
     send(Messages::RemoteRenderingBackend::CacheFilter(WTF::move(filter)));

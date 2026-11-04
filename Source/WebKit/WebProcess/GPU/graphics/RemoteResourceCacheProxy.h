@@ -29,11 +29,13 @@
 
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteGradientIdentifier.h"
+#include "RemoteMeshGradientIdentifier.h"
 #include "RemoteNativeImageIdentifier.h"
 #include "RemotePathImplIdentifier.h"
 #include "RenderingUpdateID.h"
 #include <WebCore/FilterFunction.h>
 #include <WebCore/Gradient.h>
+#include <WebCore/MeshGradient.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/ShareableBitmap.h>
 #include <wtf/CheckedPtr.h>
@@ -73,6 +75,7 @@ public:
     RemotePathImplIdentifier recordPathImplUse(const WebCore::PathImpl&);
     void recordFontUse(WebCore::FontBase&);
     RemoteGradientIdentifier recordGradientUse(WebCore::Gradient&);
+    RemoteMeshGradientIdentifier recordMeshGradientUse(WebCore::MeshGradient&);
     void recordFilterUse(WebCore::Filter&);
     void recordFontCustomPlatformDataUse(const WebCore::FontCustomPlatformData&);
     RemoteDisplayListIdentifier recordDisplayListUse(const WebCore::DisplayList::DisplayList&);
@@ -99,6 +102,7 @@ private:
     // WebCore::RenderingResourceObserver overrides.
     void willDestroyNativeImage(const WebCore::NativeImage&) override;
     void willDestroyGradient(const WebCore::Gradient&) override;
+    void willDestroyMeshGradient(const WebCore::MeshGradient&) override;
     void willDestroyPathImpl(const WebCore::PathImpl&) override;
     void willDestroyFilter(WebCore::RenderingResourceIdentifier) override;
     void willDestroyDisplayList(const WebCore::DisplayList::DisplayList&) override;
@@ -114,6 +118,7 @@ private:
     };
     HashMap<CheckedPtr<const WebCore::NativeImage>, NativeImageEntry> m_nativeImages;
     HashMap<CheckedPtr<const WebCore::Gradient>, RemoteGradientIdentifier> m_gradients;
+    HashMap<CheckedPtr<const WebCore::MeshGradient>, RemoteMeshGradientIdentifier> m_meshGradients;
     HashMap<CheckedPtr<const WebCore::PathImpl>, RemotePathImplIdentifier> m_paths;
     HashSet<WebCore::RenderingResourceIdentifier> m_filters;
     HashMap<CheckedPtr<const WebCore::DisplayList::DisplayList>, RemoteDisplayListIdentifier> m_displayLists;

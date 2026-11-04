@@ -48,6 +48,8 @@ messages -> RemoteRenderingBackend Stream {
     ReleaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier identifier)
     CacheGradient(Ref<WebCore::Gradient> gradient, WebKit::RemoteGradientIdentifier identifier)
     ReleaseGradient(WebKit::RemoteGradientIdentifier identifier)
+    CacheMeshGradient(Ref<WebCore::MeshGradient> gradient, WebKit::RemoteMeshGradientIdentifier identifier)
+    ReleaseMeshGradient(WebKit::RemoteMeshGradientIdentifier identifier)
     CacheFilter(Ref<WebCore::Filter> filter) NotStreamEncodable
     ReleaseFilter(WebCore::RenderingResourceIdentifier identifier)
     ReleaseMemory()

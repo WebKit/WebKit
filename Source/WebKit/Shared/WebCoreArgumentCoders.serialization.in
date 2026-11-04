@@ -1088,6 +1088,13 @@ header: <WebCore/RectCorners.h>
     WebCore::Color left();
 }
 
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::RectEdges<WebCore::FloatPoint> {
+    WebCore::FloatPoint top();
+    WebCore::FloatPoint right();
+    WebCore::FloatPoint bottom();
+    WebCore::FloatPoint left();
+}
+
 [CustomHeader] class WebCore::RectEdges<WebCore::RubberBandingBehavior> {
     WebCore::RubberBandingBehavior top();
     WebCore::RubberBandingBehavior right();
@@ -2111,6 +2118,21 @@ class WebCore::TransformOperations {
     WebCore::GradientSpreadMethod spreadMethod();
     WebCore::GradientColorStops stops();
     bool isTransient();
+}
+
+header: <WebCore/MeshGradient.h>
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::MeshGradient::Point {
+    WebCore::FloatPoint position;
+    WebCore::Color color;
+    WebCore::RectEdges<WebCore::FloatPoint> controlPoints;
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder, CreateUsing=tryCreate] class WebCore::MeshGradient {
+    WebCore::ColorInterpolationMethod colorInterpolationMethod();
+    unsigned rows();
+    unsigned columns();
+    Vector<WebCore::MeshGradient::Point> points();
+    WebCore::Color backgroundColor();
 }
 
 header: <WebCore/Pattern.h>

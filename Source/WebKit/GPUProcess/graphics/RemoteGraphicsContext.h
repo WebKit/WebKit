@@ -31,6 +31,7 @@
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextIdentifier.h"
+#include "RemoteMeshGradientIdentifier.h"
 #include "RemotePathImplIdentifier.h"
 #include "RemoteRenderingBackend.h"
 #include "StreamMessageReceiver.h"
@@ -120,6 +121,7 @@ public:
     void drawLine(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2);
     void drawLinesForText(const WebCore::FloatPoint&, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, WebCore::StrokeStyle);
     void drawDotsForDocumentMarker(const WebCore::FloatRect&, const WebCore::DocumentMarkerLineStyle&);
+    void drawMeshGradient(RemoteMeshGradientIdentifier, const WebCore::FloatRect& destination);
     void drawEllipse(const WebCore::FloatRect&);
     void drawPath(const WebCore::Path&);
     void drawFocusRingPath(const WebCore::Path&, float outlineWidth, const WebCore::Color&, float zoomFactor);

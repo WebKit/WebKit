@@ -2768,6 +2768,9 @@ platform/graphics/MediaPlayerPrivateWirelessPlayback.cpp
 platform/graphics/MediaResourceSniffer.cpp
 platform/graphics/MediaSampleConverter.cpp
 platform/graphics/MediaSourcePrivate.cpp
+platform/graphics/MeshGradient.cpp
+platform/graphics/MeshGradientRenderer.cpp
+platform/graphics/MeshGradientRendererCPU.cpp
 platform/graphics/Model.cpp
 platform/graphics/ModelContext.cpp
 platform/graphics/NativeImage.cpp

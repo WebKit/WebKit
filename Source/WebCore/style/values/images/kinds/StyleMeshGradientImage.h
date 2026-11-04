@@ -26,9 +26,13 @@
 #pragma once
 
 #include "StyleGeneratedImage.h"
+#include "StyleGeneratedImageCache.h"
 #include "StyleMeshGradient.h"
 
 namespace WebCore {
+
+class MeshGradient;
+
 namespace Style {
 
 class MeshGradientImage final : public GeneratedImage {
@@ -60,7 +64,12 @@ private:
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
 
+    using CachedGradient = GeneratedImageCacheEntry<WebCore::MeshGradient>;
+    Ref<WebCore::MeshGradient> gradientForSize(const RenderElement&, FloatSize, bool isForFirstLine, CachedGradient*&) const;
+
     Gradient m_gradient;
+    bool m_containsCurrentColor { false };
+    mutable GeneratedImageCache<WebCore::MeshGradient> m_gradients;
 };
 
 } // namespace Style

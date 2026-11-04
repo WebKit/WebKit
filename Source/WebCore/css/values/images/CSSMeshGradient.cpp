@@ -34,11 +34,11 @@ namespace CSS {
 
 static void appendControlPoints(StringBuilder& builder, const SerializationContext& context, const auto& controlPoints)
 {
-    if (controlPoints.isEmpty())
+    if (!controlPoints)
         return;
 
     builder.append(' ', nameLiteralForSerialization(CSSValueID::With), ' ');
-    serializationForCSS(builder, context, controlPoints);
+    serializationForCSS(builder, context, *controlPoints);
 }
 
 void Serialize<MeshGradientRelativeControlPoint>::operator()(StringBuilder& builder, const SerializationContext& context, const MeshGradientRelativeControlPoint& value)
