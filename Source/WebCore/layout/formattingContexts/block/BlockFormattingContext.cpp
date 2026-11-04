@@ -589,7 +589,7 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
     auto horizontalBorderAndPadding = geometry.horizontalBorderAndPadding();
     auto aspectRatioBorderBoxInlineSize = BlockFormattingUtils::aspectRatioBorderBoxInlineSize(box, horizontalBorderAndPadding, geometry.verticalBorderAndPadding(), containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), writingMode);
     auto contentInlineSizes = [&] -> std::optional<IntrinsicWidthConstraints> {
-        auto fitsContent = style->logicalWidth(writingMode).isAuto() && BlockFormattingUtils::isAlignedByJustifySelf(box, containingBlockStyle);
+        auto fitsContent = style->logicalWidth(writingMode).isAuto() && BlockFormattingUtils::autoInlineSizeFitsContent(box, containingBlockStyle);
         if (!BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode) && !fitsContent && !BlockFormattingUtils::hasAspectRatioAutomaticMinimumInlineSize(box, aspectRatioBorderBoxInlineSize, writingMode))
             return { };
         auto sizes = computeIntrinsicInlineSizes(*blockContainer);

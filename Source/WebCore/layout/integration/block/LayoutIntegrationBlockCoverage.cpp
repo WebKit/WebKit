@@ -62,7 +62,6 @@ enum class BlockAvoidanceReason : uint8_t {
     RootHasListMarker,
     RootIsMultiColumnFlow,
     RootIsFieldset,
-    RootIsMarquee,
     RootHasUnsupportedRenderer,
     RootHasUnsupportedWritingMode,
     RootIsPaginated,
@@ -125,8 +124,6 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::RootIsMultiColumnFlow;
     if (rootContainer.isFieldset())
         return BlockAvoidanceReason::RootIsFieldset;
-    if (rootContainer.isHTMLMarquee())
-        return BlockAvoidanceReason::RootIsMarquee;
     // A text control lays out its inner text with the block formatting context and adjusts it after (RenderTextControlSingleLine::layout), and
     // its placeholder itself (RenderTextControl::layoutExcludedChildren). A table caption, a file input and an SVG foreignObject only size and
     // place themselves their own way.
@@ -645,7 +642,7 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     }
     // So do an auto inline size that justify-self makes fit the content (BlockFormattingUtils::inlineSizeAndMargins).
     CheckedRef parentStyle = blockContainer->parent()->style();
-    auto fitsContent = style->logicalWidth().isAuto() && Layout::BlockFormattingUtils::isAlignedByJustifySelf(*blockContainer, parentStyle);
+    auto fitsContent = style->logicalWidth().isAuto() && Layout::BlockFormattingUtils::autoInlineSizeFitsContent(*blockContainer, parentStyle);
     if ((Layout::BlockFormattingUtils::hasIntrinsicInlineSize(*blockContainer, blockContainer->writingMode()) || fitsContent) && !canComputeContentInlineSizes(*blockContainer))
         return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
     // A preferred aspect ratio gives an auto block size from the inline size (BlockFormattingUtils::aspectRatioBorderBoxBlockSize), and an
@@ -757,8 +754,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "root: multi-column flow"_s;
     case BlockAvoidanceReason::RootIsFieldset:
         return "root: fieldset"_s;
-    case BlockAvoidanceReason::RootIsMarquee:
-        return "root: marquee"_s;
     case BlockAvoidanceReason::RootHasUnsupportedRenderer:
         return "root: other renderer"_s;
     case BlockAvoidanceReason::RootHasUnsupportedWritingMode:
