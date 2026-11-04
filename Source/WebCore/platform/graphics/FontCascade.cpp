@@ -459,13 +459,9 @@ float FontCascade::zeroWidth() const
 GlyphData FontCascade::glyphDataForCharacter(char32_t c, bool mirror, FontVariant variant, std::optional<ResolvedEmojiPolicy> resolvedEmojiPolicy) const
 {
     if (variant == FontVariant::Auto) {
-        if (m_fontDescription.variantCaps() == FontVariantCaps::Small) {
-            char32_t upperC = u_toupper(c);
-            if (upperC != c) {
-                c = upperC;
-                variant = FontVariant::SmallCaps;
-            } else
-                variant = FontVariant::Normal;
+        if (auto capital = capitalForSynthesizedSmallCaps(c)) {
+            c = *capital;
+            variant = FontVariant::SmallCaps;
         } else
             variant = FontVariant::Normal;
     }
@@ -479,6 +475,22 @@ GlyphData FontCascade::glyphDataForCharacter(char32_t c, bool mirror, FontVarian
     SUPPRESS_UNCOUNTED_ARG return fonts->glyphDataForCharacter(c, m_fontDescription, fontSelector(), variant, emojiPolicy);
 }
 
+std::optional<char32_t> FontCascade::capitalForSynthesizedSmallCaps(char32_t character) const
+{
+    if (!isSmallCaps())
+        return std::nullopt;
+
+    char32_t capital = u_toupper(character);
+    if (capital == character)
+        return std::nullopt;
+
+    // A small-caps face already has small capitals: it draws the character itself, not its capital.
+    RefPtr font = glyphDataForCharacter(character, false, FontVariant::Normal).font;
+    if (font && font->isSmallCapsFace())
+        return std::nullopt;
+
+    return capital;
+}
 
 bool FontCascade::canUseSimplifiedTextMeasuring(char32_t character, FontVariant fontVariant, bool whitespaceIsCollapsed, const Font& primaryFont) const
 {
@@ -1941,6 +1953,8 @@ bool shouldSynthesizeSmallCaps(bool dontSynthesizeSmallCaps, const Font* nextFon
     if (dontSynthesizeSmallCaps)
         return false;
     if (!nextFont || nextFont->isSystemFontFallbackPlaceholder())
+        return false;
+    if (fontVariantCaps == FontVariantCaps::Small && nextFont->isSmallCapsFace())
         return false;
     if (engageAllSmallCapsProcessing && isUnicodeCompatibleASCIIWhitespace(baseCharacter))
         return false;

@@ -184,7 +184,7 @@ static void fallbackFontsForRunWithIterator(SingleThreadWeakHashSet<const Font>&
 
         auto addFallbackFontForCharacterIfApplicable = [&](auto character) {
             if (isSmallCaps)
-                character = u_toupper(character);
+                character = fontCascade.capitalForSynthesizedSmallCaps(character).value_or(character);
 
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
             if (glyphData.glyph && glyphData.font && glyphData.font != primaryFont.ptr()) {
@@ -243,7 +243,7 @@ static TextUtil::EnclosingAscentDescent enclosingGlyphBoundsForRunWithIterator(c
 
         auto computeTopAndBottomForCharacter = [&](auto character) {
             if (isSmallCaps)
-                character = u_toupper(character);
+                character = fontCascade.capitalForSynthesizedSmallCaps(character).value_or(character);
 
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
             Ref font = glyphData.font ? Ref { *glyphData.font } : primaryFont;

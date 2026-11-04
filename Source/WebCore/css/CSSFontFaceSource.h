@@ -81,6 +81,7 @@ public:
     bool requiresExternalResource() const { return m_fontRequest.get(); }
 
     NODELETE bool isSVGFontFaceSource() const;
+    SVGFontFaceElement* svgFontFaceElement() const;
 
 private:
     NODELETE bool shouldIgnoreFontLoadCompletions() const;

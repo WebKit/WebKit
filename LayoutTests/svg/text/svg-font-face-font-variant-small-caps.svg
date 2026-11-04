@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+<defs>
+    <font horiz-adv-x="500">
+        <font-face font-family="SmallCapsFirst" font-variant="small-caps" units-per-em="1000" ascent="800" descent="200"/>
+        <missing-glyph horiz-adv-x="500"/>
+        <glyph unicode="a" d="M0 0L500 0L250 900Z"/>
+    </font>
+    <font horiz-adv-x="500">
+        <font-face font-family="SmallCapsFirst" units-per-em="1000" ascent="800" descent="200"/>
+        <missing-glyph horiz-adv-x="500"/>
+        <glyph unicode="a" d="M0 250L500 250L500 750L0 750Z"/>
+    </font>
+
+    <font horiz-adv-x="500">
+        <font-face font-family="NormalFirst" font-variant="normal" units-per-em="1000" ascent="800" descent="200"/>
+        <missing-glyph horiz-adv-x="500"/>
+        <glyph unicode="a" d="M0 250L500 250L500 750L0 750Z"/>
+    </font>
+    <font horiz-adv-x="500">
+        <font-face font-family="NormalFirst" font-variant="small-caps" units-per-em="1000" ascent="800" descent="200"/>
+        <missing-glyph horiz-adv-x="500"/>
+        <glyph unicode="a" d="M0 0L500 0L250 900Z"/>
+    </font>
+
+    <font horiz-adv-x="500">
+        <font-face font-family="SmallCapsOnly" font-variant="small-caps" units-per-em="1000" ascent="800" descent="200"/>
+        <missing-glyph horiz-adv-x="500"/>
+        <glyph unicode="a" d="M0 500L250 250L500 500L250 750Z"/>
+    </font>
+
+    <font horiz-adv-x="500">
+        <font-face font-family="BothVariants" font-variant="normal, small-caps" units-per-em="1000" ascent="800" descent="200"/>
+        <missing-glyph horiz-adv-x="500"/>
+        <glyph unicode="a" d="M0 500L250 250L500 500L250 750Z"/>
+    </font>
+
+    <font horiz-adv-x="500">
+        <font-face font-family="Square" units-per-em="1000" ascent="800" descent="200"/>
+        <missing-glyph horiz-adv-x="500"/>
+        <glyph unicode="a" d="M0 250L500 250L500 750L0 750Z"/>
+    </font>
+
+    <font horiz-adv-x="500">
+        <font-face id="dynamic" font-family="Dynamic" units-per-em="1000" ascent="800" descent="200"/>
+        <missing-glyph horiz-adv-x="500"/>
+        <glyph unicode="a" d="M0 0L500 0L250 900Z"/>
+    </font>
+</defs>
+<g font-size="40">
+    <text x="20" y="50" font-family="SmallCapsFirst">aa</text>
+    <text x="200" y="50" font-family="SmallCapsFirst" font-variant="small-caps">aa</text>
+
+    <text x="20" y="110" font-family="NormalFirst">aa</text>
+    <text x="200" y="110" font-family="NormalFirst" font-variant="small-caps">aa</text>
+
+    <text x="20" y="170" font-family="SmallCapsOnly, Square">aa</text>
+    <text x="200" y="170" font-family="SmallCapsOnly, Square" font-variant="small-caps">aa</text>
+
+    <text x="20" y="230" font-family="BothVariants">aa</text>
+    <text x="200" y="230" font-family="BothVariants" font-variant="small-caps">aa</text>
+
+    <text x="20" y="290" font-family="Dynamic, Square">aa</text>
+    <text x="200" y="290" font-family="Dynamic, Square" font-variant="small-caps">aa</text>
+</g>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+requestAnimationFrame(() => {
+    document.getElementById("dynamic").setAttribute("font-variant", "small-caps");
+    requestAnimationFrame(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+});
+</script>
+</svg>

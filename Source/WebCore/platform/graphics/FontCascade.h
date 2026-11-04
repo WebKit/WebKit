@@ -138,6 +138,7 @@ public:
     Vector<LayoutRect> characterSelectionRectsForText(const TextRun&, const LayoutRect& selectionRect, unsigned from, std::optional<unsigned> to) const;
 
     bool isSmallCaps() const { return m_fontDescription.variantCaps() == FontVariantCaps::Small; }
+    std::optional<char32_t> capitalForSynthesizedSmallCaps(char32_t) const;
 
     float letterSpacing() const { return m_spacing.letter; }
     float wordSpacing() const { return m_spacing.word; }

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+<defs>
+    <font horiz-adv-x="500">
+        <font-face font-family="Triangle" units-per-em="1000" ascent="800" descent="200"/>
+        <missing-glyph horiz-adv-x="500"/>
+        <glyph unicode="a" d="M0 0L500 0L250 900Z"/>
+    </font>
+    <font horiz-adv-x="500">
+        <font-face font-family="Square" units-per-em="1000" ascent="800" descent="200"/>
+        <missing-glyph horiz-adv-x="500"/>
+        <glyph unicode="a" d="M0 250L500 250L500 750L0 750Z"/>
+    </font>
+    <font horiz-adv-x="500">
+        <font-face font-family="Diamond" units-per-em="1000" ascent="800" descent="200"/>
+        <missing-glyph horiz-adv-x="500"/>
+        <glyph unicode="a" d="M0 500L250 250L500 500L250 750Z"/>
+    </font>
+</defs>
+<g font-size="40">
+    <text x="20" y="50" font-family="Square">aa</text>
+    <text x="200" y="50" font-family="Triangle">aa</text>
+
+    <text x="20" y="110" font-family="Square">aa</text>
+    <text x="200" y="110" font-family="Triangle">aa</text>
+
+    <text x="20" y="170" font-family="Square">aa</text>
+    <text x="200" y="170" font-family="Diamond">aa</text>
+
+    <text x="20" y="230" font-family="Diamond">aa</text>
+    <text x="200" y="230" font-family="Diamond">aa</text>
+
+    <text x="20" y="290" font-family="Square">aa</text>
+    <text x="200" y="290" font-family="Triangle">aa</text>
+</g>
+</svg>

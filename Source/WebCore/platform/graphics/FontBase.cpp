@@ -38,9 +38,9 @@
 
 namespace WebCore {
 
-FontBase::FontBase(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+FontBase::FontBase(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, IsSmallCapsFace smallCapsFace, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
     : m_platformData(platformData)
-    , m_attributes({ renderingResourceIdentifier, origin, interstitial, visibility, orientationFallback })
+    , m_attributes({ renderingResourceIdentifier, origin, interstitial, visibility, orientationFallback, smallCapsFace })
 {
 }
 

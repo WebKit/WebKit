@@ -29,13 +29,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<SharedFont> SharedFont::create(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> identifier)
+Ref<SharedFont> SharedFont::create(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, IsSmallCapsFace smallCapsFace, std::optional<RenderingResourceIdentifier> identifier)
 {
-    return adoptRef(*new SharedFont(platformData, origin, interstitial, visibility, orientationFallback, identifier));
+    return adoptRef(*new SharedFont(platformData, origin, interstitial, visibility, orientationFallback, smallCapsFace, identifier));
 }
 
-SharedFont::SharedFont(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
-    : FontBase(platformData, origin, interstitial, visibility, orientationFallback, renderingResourceIdentifier)
+SharedFont::SharedFont(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, IsSmallCapsFace smallCapsFace, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+    : FontBase(platformData, origin, interstitial, visibility, orientationFallback, smallCapsFace, renderingResourceIdentifier)
 {
     platformInit();
     platformVerticalDataInit();

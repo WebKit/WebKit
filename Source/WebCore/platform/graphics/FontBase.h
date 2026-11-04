@@ -62,6 +62,7 @@ enum class FontOrigin : bool { Remote, Local };
 enum class FontIsInterstitial : bool { No, Yes };
 enum class FontVisibility : bool { Visible, Invisible };
 enum class FontIsOrientationFallback : bool { No, Yes };
+enum class FontIsSmallCapsFace : bool { No, Yes };
 
 struct FontInternalAttributes {
     WEBCORE_EXPORT RenderingResourceIdentifier ensureRenderingResourceIdentifier() const;
@@ -71,6 +72,7 @@ struct FontInternalAttributes {
     FontIsInterstitial isInterstitial : 1;
     FontVisibility visibility : 1;
     FontIsOrientationFallback isTextOrientationFallback : 1;
+    FontIsSmallCapsFace isSmallCapsFace : 1; // NOLINT(runtime/enum_bitfields)
 };
 
 class FontBase : public AbstractRefCounted {
@@ -80,6 +82,7 @@ public:
     using IsInterstitial = FontIsInterstitial;
     using Visibility = FontVisibility;
     using IsOrientationFallback = FontIsOrientationFallback;
+    using IsSmallCapsFace = FontIsSmallCapsFace;
 
     WEBCORE_EXPORT ~FontBase();
 
@@ -97,6 +100,7 @@ public:
     bool isInterstitial() const { return m_attributes.isInterstitial == IsInterstitial::Yes; }
     Visibility visibility() const { return m_attributes.visibility; }
     bool isTextOrientationFallback() const { return m_attributes.isTextOrientationFallback == IsOrientationFallback::Yes; }
+    bool isSmallCapsFace() const { return m_attributes.isSmallCapsFace == IsSmallCapsFace::Yes; }
     WEBCORE_EXPORT RenderingResourceIdentifier renderingResourceIdentifier() const;
 
     const FontMetrics& fontMetrics() const LIFETIME_BOUND { return m_fontMetrics; }
@@ -191,7 +195,7 @@ protected:
     };
 #endif
 
-    WEBCORE_EXPORT FontBase(const FontPlatformData&, Origin, IsInterstitial, Visibility, IsOrientationFallback, std::optional<RenderingResourceIdentifier>);
+    WEBCORE_EXPORT FontBase(const FontPlatformData&, Origin, IsInterstitial, Visibility, IsOrientationFallback, IsSmallCapsFace, std::optional<RenderingResourceIdentifier>);
     FontBase();
 
     WEBCORE_EXPORT void platformInit();
