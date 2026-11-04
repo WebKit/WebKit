@@ -150,14 +150,36 @@ inline void* vmAllocate(size_t vmSize, VMTag usage = VMTag::Malloc)
 // Use this function to create maskable memory regions.
 inline void* tryVMAllocate(size_t vmAlignment, size_t vmSize, VMTag usage = VMTag::Malloc)
 {
+    char* mapped;
     vmValidate(vmSize);
     vmValidate(vmAlignment);
+
+#if BOS(LINUX) && BCPU(ADDRESS32)
+    // Work around pathological behavior when allocating naturally-aligned 1MB
+    // chunks (which is the typical case). In this case, the slow path in the
+    // rest of this function allocates vmAlignment + vmSize and unmaps
+    // rightExtra, leaving behind a large hole. But for the next 1MB/1MB
+    // allocation it will try to allocate 2MB again which can't fit in the hole,
+    // so that all 1MB allocations are interleaved with 1MB holes. This halves
+    // the usable address space.
+    //
+    // However, after we've aligned the last allocation, all we need to do is
+    // allocate just vmSize and the kernel is going to give us an adjacent,
+    // hence naturally-aligned, range. If there have been intervening
+    // allocations this will fail and we fall back to manual alignment.
+    mapped = static_cast<char*>(tryVMAllocate(vmSize, usage));
+    if (!mapped)
+        return nullptr;
+    if (roundUpToMultipleOf(vmAlignment, mapped) == mapped)
+        return mapped;
+    vmDeallocate(mapped, vmSize);
+#endif
 
     size_t mappedSize = vmAlignment + vmSize;
     if (mappedSize < vmAlignment || mappedSize < vmSize) // Check for overflow
         return nullptr;
 
-    char* mapped = static_cast<char*>(tryVMAllocate(mappedSize, usage));
+    mapped = static_cast<char*>(tryVMAllocate(mappedSize, usage));
     if (!mapped)
         return nullptr;
     char* mappedEnd = mapped + mappedSize;
