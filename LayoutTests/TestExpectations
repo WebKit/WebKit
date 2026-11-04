@@ -6078,6 +6078,10 @@ webkit.org/b/281223 imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBef
 # Flaky.
 imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-script-and-default-style-meta-from-fragment.html [ Skip ]
 
+# Debug assertion failures since import.
+imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-shadow-root.html [ Skip ]
+imported/w3c/web-platform-tests/dom/xpath-evaluation-detached-nodes.html [ Skip ]
+
 # uncategorized dialog element failures
 webkit.org/b/286022 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-close-via-attribute.tentative.html [ Skip ]
 

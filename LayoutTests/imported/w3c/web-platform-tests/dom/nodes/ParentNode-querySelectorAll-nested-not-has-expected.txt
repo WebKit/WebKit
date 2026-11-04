@@ -1,0 +1,13 @@
+A:
+A
+B:
+B
+C:
+C
+D:
+D
+E:
+E
+
+PASS querySelectorAll with :not(:has(..))
+

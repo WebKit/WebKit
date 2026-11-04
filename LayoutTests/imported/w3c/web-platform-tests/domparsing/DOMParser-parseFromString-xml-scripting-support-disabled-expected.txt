@@ -6,4 +6,10 @@ PASS parseFromString as HTML, svg script, append importNode result
 PASS parseFromString as XML, svg script, appendChild
 PASS parseFromString as XML, svg script, append importNode result
 PASS parseFromString as XML, svg script, append importNode result, but with namespace prefix
+PASS parseFromString as XML, svg script, append adoptNode result
+PASS parseFromString as XML, svg script, append cloneNode result
+PASS parseFromString as XHTML, whole root, append importNode result
+PASS parseFromString as XHTML, script, append importNode result
+PASS parseFromString as XHTML, script, append adoptNode result
+PASS parseFromString as XHTML, script, append cloneNode result
 

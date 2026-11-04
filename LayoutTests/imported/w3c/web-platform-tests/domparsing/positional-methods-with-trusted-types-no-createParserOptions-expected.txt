@@ -1,0 +1,347 @@
+
+FAIL Element.beforeHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.beforeHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS Element.beforeHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS Element.beforeHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS Element.beforeHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS Element.beforeHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL Element.beforeHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Element.beforeHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS Element.beforeHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS Element.beforeHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL Element.beforeHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.afterHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.afterHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS Element.afterHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS Element.afterHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS Element.afterHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS Element.afterHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL Element.afterHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Element.afterHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS Element.afterHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS Element.afterHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL Element.afterHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.replaceWithHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS Element.replaceWithHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS Element.replaceWithHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS Element.replaceWithHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS Element.replaceWithHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL Element.replaceWithHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Element.replaceWithHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS Element.replaceWithHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS Element.replaceWithHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL Element.replaceWithHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.appendHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.appendHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS Element.appendHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS Element.appendHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS Element.appendHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS Element.appendHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL Element.appendHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Element.appendHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS Element.appendHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS Element.appendHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL Element.appendHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL Element.prependHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Element.prependHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS Element.prependHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS Element.prependHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS Element.prependHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS Element.prependHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL Element.prependHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Element.prependHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS Element.prependHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS Element.prependHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL Element.prependHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ShadowRoot.beforeHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ShadowRoot.beforeHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ShadowRoot.beforeHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS ShadowRoot.beforeHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS ShadowRoot.beforeHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS ShadowRoot.beforeHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS ShadowRoot.beforeHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL ShadowRoot.beforeHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL ShadowRoot.beforeHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS ShadowRoot.beforeHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS ShadowRoot.beforeHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL ShadowRoot.beforeHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ShadowRoot.afterHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ShadowRoot.afterHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ShadowRoot.afterHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS ShadowRoot.afterHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS ShadowRoot.afterHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS ShadowRoot.afterHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS ShadowRoot.afterHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL ShadowRoot.afterHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL ShadowRoot.afterHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS ShadowRoot.afterHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS ShadowRoot.afterHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL ShadowRoot.afterHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ShadowRoot.replaceWithHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ShadowRoot.replaceWithHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ShadowRoot.replaceWithHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS ShadowRoot.replaceWithHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS ShadowRoot.replaceWithHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS ShadowRoot.replaceWithHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS ShadowRoot.replaceWithHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL ShadowRoot.replaceWithHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL ShadowRoot.replaceWithHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS ShadowRoot.replaceWithHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS ShadowRoot.replaceWithHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL ShadowRoot.replaceWithHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ShadowRoot.appendHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ShadowRoot.appendHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ShadowRoot.appendHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS ShadowRoot.appendHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS ShadowRoot.appendHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS ShadowRoot.appendHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS ShadowRoot.appendHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL ShadowRoot.appendHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL ShadowRoot.appendHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS ShadowRoot.appendHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS ShadowRoot.appendHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL ShadowRoot.appendHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL ShadowRoot.prependHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ShadowRoot.prependHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ShadowRoot.prependHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS ShadowRoot.prependHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS ShadowRoot.prependHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS ShadowRoot.prependHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS ShadowRoot.prependHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL ShadowRoot.prependHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL ShadowRoot.prependHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS ShadowRoot.prependHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS ShadowRoot.prependHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL ShadowRoot.prependHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL template.content.beforeHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL template.content.beforeHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL template.content.beforeHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS template.content.beforeHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS template.content.beforeHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS template.content.beforeHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS template.content.beforeHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL template.content.beforeHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL template.content.beforeHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS template.content.beforeHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS template.content.beforeHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL template.content.beforeHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL template.content.afterHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL template.content.afterHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL template.content.afterHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS template.content.afterHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS template.content.afterHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS template.content.afterHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS template.content.afterHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL template.content.afterHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL template.content.afterHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS template.content.afterHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS template.content.afterHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL template.content.afterHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL template.content.replaceWithHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL template.content.replaceWithHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL template.content.replaceWithHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS template.content.replaceWithHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS template.content.replaceWithHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS template.content.replaceWithHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS template.content.replaceWithHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL template.content.replaceWithHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL template.content.replaceWithHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS template.content.replaceWithHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS template.content.replaceWithHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL template.content.replaceWithHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL template.content.appendHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL template.content.appendHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL template.content.appendHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS template.content.appendHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS template.content.appendHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS template.content.appendHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS template.content.appendHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL template.content.appendHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL template.content.appendHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS template.content.appendHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS template.content.appendHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL template.content.appendHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+FAIL template.content.prependHTML does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL template.content.prependHTMLUnsafe does not throw with vetting-free options and no createParserOptions in the default policy object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL template.content.prependHTMLUnsafe does not throw with TrustedHTML and vetting-free options when default policy lacks createParserOptions object[method_name] is not a function. (In 'object[method_name](passthrough_policy.createHTML("<span>html;</span>"))', 'object[method_name]' is undefined)
+PASS template.content.prependHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS template.content.prependHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: 'default' } when default policy lacks createParserOptions
+PASS template.content.prependHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+PASS template.content.prependHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: { removeElements: [] } } when default policy lacks createParserOptions
+FAIL template.content.prependHTMLUnsafe throws TypeError with string and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name]("<span>html;</span>", getOptions());
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL template.content.prependHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { sanitizer: new Sanitizer() } when default policy lacks createParserOptions assert_throws_js: function "() => {
+                object[method_name](
+                  passthrough_policy.createHTML("<span>html;</span>"),
+                  getOptions(),
+                );
+              }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS template.content.prependHTMLUnsafe throws TypeError with string and unvetted options { runScripts: true } when default policy lacks createParserOptions
+PASS template.content.prependHTMLUnsafe throws TypeError with TrustedHTML and unvetted options { runScripts: true } when default policy lacks createParserOptions
+FAIL template.content.prependHTMLUnsafe does not throw or call createHTML when passed TrustedHTMLParserOptions passthrough_policy.createParserOptions is not a function. (In 'passthrough_policy.createParserOptions({})', 'passthrough_policy.createParserOptions' is undefined)
+

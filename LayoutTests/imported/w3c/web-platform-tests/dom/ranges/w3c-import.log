@@ -15,6 +15,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-adopt-test.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-attribute-nodes.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-cloneContents-around-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-cloneContents-around-shadow.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-cloneContents-in-ShadowRoot.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-cloneContents.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-cloneRange.html
@@ -26,9 +28,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-comparePoint-2.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-comparePoint.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-deleteContents-around-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-deleteContents-around-shadow.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-deleteContents-in-ShadowRoot.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-deleteContents.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-detach.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-expand-shadow.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-extractContents-around-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-extractContents-around-shadow.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-extractContents-dynamic-end.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-extractContents-in-ShadowRoot.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-extractContents.html
@@ -46,6 +53,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-deleteData.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-insertBefore.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-insertData.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-normalize.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-removeChild.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-replaceChild.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-replaceData.html

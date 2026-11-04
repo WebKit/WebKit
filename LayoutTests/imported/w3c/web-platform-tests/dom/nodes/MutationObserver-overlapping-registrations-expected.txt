@@ -1,0 +1,5 @@
+
+PASS Observers registered on separate targets do not share registrations
+PASS An observer matching through multiple registrations receives one record with the requested old value
+PASS Distinct observers matching the same mutation receive records using their own options
+

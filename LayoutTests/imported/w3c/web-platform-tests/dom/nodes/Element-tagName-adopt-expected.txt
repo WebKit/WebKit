@@ -1,0 +1,3 @@
+
+PASS tagName should not be uppercased when appended to XML document
+

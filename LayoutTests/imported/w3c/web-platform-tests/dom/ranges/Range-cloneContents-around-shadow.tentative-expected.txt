@@ -1,0 +1,9 @@
+abcdef
+
+
+FAIL Range.cloneContents() when "<p>abc[def</p><div><shadow-root><span>Inner]Text</span></shadow-root><span>UnassignedText</span></div>" The index is not in the allowed range.
+PASS Range.cloneContents() when "<div><shadow-root><span>Inner[Text</span></shadow-root><span>UnassignedText</span></div><p>abc]def</p>"
+PASS Range.cloneContents() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>UnassignedText</span>}</div>" (the shadow is clonable)
+PASS Range.cloneContents() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>UnassignedText</span>}</div>" (the shadow is clonable): range.cloneContents() should clone a part of the text and the unassigned <span>
+PASS Range.cloneContents() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>UnassignedText</span>}</div>" (the shadow is clonable): range.cloneContents() should clone the host with the shadow
+

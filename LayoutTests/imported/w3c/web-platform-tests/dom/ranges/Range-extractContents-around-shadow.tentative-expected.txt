@@ -1,0 +1,14 @@
+abc
+
+
+FAIL Range.extractContents() when "<p>abc[def</p><div><shadow-root><span>Inner]Text</span></shadow-root><span>UnassignedText</span></div>" The index is not in the allowed range.
+PASS Range.extractContents() when "<div><shadow-root><span>Inner[Text</span></shadow-root><span>UnassignedText</span></div><p>abc]def</p>"
+PASS Range.extractContents() when "<div><shadow-root><span>Inner[Text</span></shadow-root><span>UnassignedText</span></div><p>abc]def</p>": range.extractContents() shouldn't delete the content in the shadow
+PASS Range.extractContents() when "<div><shadow-root><span>Inner[Text</span></shadow-root><span>UnassignedText</span></div><p>abc]def</p>": range.extractContents() shouldn't delete the content in the parent DOM
+PASS Range.extractContents() when "<div><shadow-root><span>Inner[Text</span></shadow-root><span>UnassignedText</span></div><p>abc]def</p>": range.extractContents() should clone nothing
+PASS Range.extractContents() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>UnassignedText</span>}</div>" (the shadow is clonable)
+PASS Range.extractContents() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>UnassignedText</span>}</div>" (the shadow is clonable): range.extractContents() shouldn't delete the content in the shadow
+PASS Range.extractContents() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>UnassignedText</span>}</div>" (the shadow is clonable): range.extractContents() should delete a part of the text and the unassigned <span>
+PASS Range.extractContents() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>UnassignedText</span>}</div>" (the shadow is clonable): range.extractContents() should clone a part of the text and the unassigned <span>
+PASS Range.extractContents() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>UnassignedText</span>}</div>" (the shadow is clonable): range.extractContents() should clone the host with the shadow
+

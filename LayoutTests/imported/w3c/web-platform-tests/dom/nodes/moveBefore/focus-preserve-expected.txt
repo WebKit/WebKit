@@ -1,7 +1,7 @@
-Button
 
-PASS when reparenting an element, don't automatically reset the document focus
-PASS when reparenting a focused element into an inert parent, reset the document focus
-PASS when reparenting a focused element into a hidden parent, reset the document focus
-PASS when reparenting an ancestor of an focused element into a hidden parent, reset the document focus
+PASS moveBefore() preserves focus when the focused element remains focusable
+PASS moveBefore() preserves focus and a backward selection in a text input
+PASS Focus is fixed up after moveBefore() moves the focused element into an inert subtree
+PASS Focus is fixed up after moveBefore() moves the focused element into a hidden parent
+PASS Focus is fixed up after moveBefore() moves an ancestor of the focused element into a hidden parent
 

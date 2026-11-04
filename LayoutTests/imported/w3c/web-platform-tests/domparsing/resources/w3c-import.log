@@ -19,3 +19,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/resources/domparser-iframe.js
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/resources/domparser-url-tests.js
 /LayoutTests/imported/w3c/web-platform-tests/domparsing/resources/dummy-xml.xml
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/resources/slow.js
+/LayoutTests/imported/w3c/web-platform-tests/domparsing/resources/util.js

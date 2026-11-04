@@ -1,0 +1,13 @@
+Paragraph 1
+
+Paragraph 2
+
+Hello world
+
+PASS The same element should be found with both lowercase and uppercase div selectors
+PASS The same paragraph should be found with both lowercase and uppercase p selectors
+PASS The same NodeList should be returned for querySelectorAll with lowercase and uppercase p selectors
+PASS Mixed case selectors should work correctly
+PASS Tag name case-insensitivity with child combinator (>) dynamically created
+PASS Case-insensitivity with non-standard tag names
+

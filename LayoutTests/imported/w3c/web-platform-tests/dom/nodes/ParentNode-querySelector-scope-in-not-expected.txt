@@ -1,0 +1,3 @@
+
+PASS :scope nested in :not should select one element per [data-main] scope
+

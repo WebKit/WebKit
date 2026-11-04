@@ -1,0 +1,3 @@
+
+PASS Script post-connection steps run in a newly-connected shadow tree
+

@@ -1,0 +1,6 @@
+foo
+
+
+PASS Sanity check with div
+PASS Append child nodes to svg
+

@@ -3,4 +3,7 @@ PASS Adopting an Element called 'x<' should work.
 PASS Adopting an Element called ':good:times:' should work.
 PASS Explicitly adopting a DocumentType should work.
 PASS Adopting a Document should throw.
+PASS Adopting an Element should adopt its Attr nodes.
+PASS Inserting an Element into another document should adopt its Attr nodes.
+PASS Adopting an Element should adopt its namespaced attributes.
 

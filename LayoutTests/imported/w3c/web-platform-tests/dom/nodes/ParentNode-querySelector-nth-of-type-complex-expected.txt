@@ -1,0 +1,7 @@
+Sibling to ensure div.clearfix is :nth-of-type(1) among divs
+
+Row 1 Data
+Target Text
+
+PASS querySelector with complex :nth-of-type selector
+

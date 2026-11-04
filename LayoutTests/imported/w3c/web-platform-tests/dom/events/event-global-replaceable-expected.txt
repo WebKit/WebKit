@@ -1,0 +1,4 @@
+
+PASS Setting window.event replaces it
+PASS Dispatching does not affect window.event after it's been replaced
+

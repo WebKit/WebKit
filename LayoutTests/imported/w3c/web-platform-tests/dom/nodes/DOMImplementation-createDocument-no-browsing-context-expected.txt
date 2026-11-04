@@ -1,0 +1,7 @@
+
+PASS new DOMImplementation() throws
+PASS createDocument: defaultView is null
+PASS createHTMLDocument: defaultView is null
+PASS createHTMLDocument: proxied event handlers on body are null without a window
+PASS createHTMLDocument: iframe should not load in a document without a browsing context
+

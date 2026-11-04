@@ -1,0 +1,14 @@
+
+FAIL setHTMLUnsafe with Trusted Types default policy setting runScripts: true: external scripts execute as async assert_true: script.async is true expected true got false
+FAIL appendHTMLUnsafe with Trusted Types default policy setting runScripts: true: external scripts execute as async promise_test: Unhandled rejection with value: object "TypeError: container[method] is not a function. (In 'container[method](html, options)', 'container[method]' is undefined)"
+FAIL prependHTMLUnsafe with Trusted Types default policy setting runScripts: true: external scripts execute as async promise_test: Unhandled rejection with value: object "TypeError: container[method] is not a function. (In 'container[method](html, options)', 'container[method]' is undefined)"
+FAIL beforeHTMLUnsafe with Trusted Types default policy setting runScripts: true: external scripts execute as async promise_test: Unhandled rejection with value: object "TypeError: child[method] is not a function. (In 'child[method](html, options)', 'child[method]' is undefined)"
+FAIL afterHTMLUnsafe with Trusted Types default policy setting runScripts: true: external scripts execute as async promise_test: Unhandled rejection with value: object "TypeError: child[method] is not a function. (In 'child[method](html, options)', 'child[method]' is undefined)"
+FAIL replaceWithHTMLUnsafe with Trusted Types default policy setting runScripts: true: external scripts execute as async promise_test: Unhandled rejection with value: object "TypeError: child[method] is not a function. (In 'child[method](html, options)', 'child[method]' is undefined)"
+FAIL innerHTML with Trusted Types default policy setting runScripts: true: external scripts execute as async assert_true: script.async is true expected true got false
+FAIL outerHTML with Trusted Types default policy setting runScripts: true: external scripts execute as async assert_true: script.async is true expected true got false
+FAIL beforebegin with Trusted Types default policy setting runScripts: true: external scripts execute as async assert_true: script.async is true expected true got false
+FAIL afterbegin with Trusted Types default policy setting runScripts: true: external scripts execute as async assert_true: script.async is true expected true got false
+FAIL beforeend with Trusted Types default policy setting runScripts: true: external scripts execute as async assert_true: script.async is true expected true got false
+FAIL afterend with Trusted Types default policy setting runScripts: true: external scripts execute as async assert_true: script.async is true expected true got false
+

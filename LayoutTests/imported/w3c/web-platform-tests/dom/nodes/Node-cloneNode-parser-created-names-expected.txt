@@ -1,0 +1,9 @@
+KSL.com has not verified the accuracy of the information provided with
+Blah blah blah
+
+In talking with parents who home-school
+
+
+PASS cloneNode on elements with names containing colons
+PASS cloneNode on elements with names containing angle brackets
+

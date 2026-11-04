@@ -24,6 +24,8 @@ PASS childList Node.replaceChild: replacement mutation
 PASS childList Node.replaceChild: removal mutation
 PASS childList Node.replaceChild: internal replacement mutation
 PASS childList Node.replaceChild: self internal replacement mutation
+PASS childList ParentNode.replaceChildren: move an existing child
+PASS childList ParentNode.replaceChildren: self replacement of only child
 PASS childList Node.removeChild: removal mutation
 PASS Range (r70) is created
 PASS childList Range.deleteContents: child removal mutation

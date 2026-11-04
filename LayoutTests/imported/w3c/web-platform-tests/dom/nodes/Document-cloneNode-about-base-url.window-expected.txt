@@ -1,0 +1,7 @@
+
+PASS An about:blank document inherits the initiator base URL
+PASS Deep clone of an about:blank document
+PASS Shallow clone of an about:blank document
+PASS Clone of an about:blank document after detaching the source
+PASS Clone of an about:blank document with a <base>
+

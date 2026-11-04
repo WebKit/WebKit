@@ -1,0 +1,4 @@
+
+PASS wheel listeners on EventTarget are not passive by default
+PASS wheel listeners on Performance are not passive by default
+

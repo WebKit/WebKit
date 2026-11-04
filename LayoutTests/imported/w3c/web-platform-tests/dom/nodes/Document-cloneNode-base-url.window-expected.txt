@@ -1,0 +1,13 @@
+
+PASS Deep clone of a document with a <base>
+PASS Shallow clone of a document with a <base>
+PASS Clone of a document without a <base>
+PASS Clone of a createHTMLDocument() document without a <base>
+PASS Clone of a createHTMLDocument() document with a <base>
+FAIL Deep clone of a document with a relative <base> assert_equals: source expected "http://web-platform.test:8800/dom/nodes/sub/" but got "http://web-platform.test:8800/dom/nodes/Document-cloneNode-base-url.window.html"
+FAIL Shallow clone of a document with a relative <base> assert_equals: source expected "http://web-platform.test:8800/dom/nodes/sub/" but got "http://web-platform.test:8800/dom/nodes/Document-cloneNode-base-url.window.html"
+PASS Shallow clone is unaffected by later mutation of the source
+PASS Shallow clone's base URL survives later mutation of the clone
+PASS Inserting a <base> into a shallow clone overrides the copied base URL
+PASS Clone of a blob: URL document
+

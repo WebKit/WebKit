@@ -1,0 +1,12 @@
+
+FAIL Streaming with trusted types and no default policy does not throw for streamHTML. d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)
+PASS Streaming with trusted types and no default policy throws for streamHTMLUnsafe.
+FAIL Streaming with trusted types and no default policy does not throw for streamAppendHTML. d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)
+PASS Streaming with trusted types and no default policy throws for streamAppendHTMLUnsafe.
+FAIL Streaming with trusted types and no default policy does not throw for streamPrependHTML. d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)
+PASS Streaming with trusted types and no default policy throws for streamPrependHTMLUnsafe.
+FAIL Streaming with trusted types and no default policy does not throw for streamBeforeHTML. d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)
+PASS Streaming with trusted types and no default policy throws for streamBeforeHTMLUnsafe.
+FAIL Streaming with trusted types and no default policy does not throw for streamAfterHTML. d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)
+PASS Streaming with trusted types and no default policy throws for streamAfterHTMLUnsafe.
+

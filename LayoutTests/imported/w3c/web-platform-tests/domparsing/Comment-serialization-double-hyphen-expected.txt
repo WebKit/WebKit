@@ -1,0 +1,5 @@
+
+PASS Serializing a comment containing '--' via innerHTML
+PASS Serializing a comment containing '-->' via innerHTML
+PASS Serializing a comment containing only '--' via innerHTML
+

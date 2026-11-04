@@ -1,0 +1,32 @@
+
+FAIL A given TrustedHTMLParserOptions can override default policy's runScript/safety for streamHTMLUnsafe promise_test: Unhandled rejection with value: object "TypeError: withScripts.createParserOptions is not a function. (In 'withScripts.createParserOptions({
+              runScripts: true,
+            })', 'withScripts.createParserOptions' is undefined)"
+FAIL A given TrustedHTMLParserOptions can override default policy's runScript/safety for streamAppendHTMLUnsafe promise_test: Unhandled rejection with value: object "TypeError: withScripts.createParserOptions is not a function. (In 'withScripts.createParserOptions({
+              runScripts: true,
+            })', 'withScripts.createParserOptions' is undefined)"
+FAIL A given TrustedHTMLParserOptions can override default policy's runScript/safety for streamPrependHTMLUnsafe promise_test: Unhandled rejection with value: object "TypeError: withScripts.createParserOptions is not a function. (In 'withScripts.createParserOptions({
+              runScripts: true,
+            })', 'withScripts.createParserOptions' is undefined)"
+FAIL A given TrustedHTMLParserOptions can override default policy's runScript/safety for streamBeforeHTMLUnsafe promise_test: Unhandled rejection with value: object "TypeError: withScripts.createParserOptions is not a function. (In 'withScripts.createParserOptions({
+              runScripts: true,
+            })', 'withScripts.createParserOptions' is undefined)"
+FAIL A given TrustedHTMLParserOptions can override default policy's runScript/safety for streamAfterHTMLUnsafe promise_test: Unhandled rejection with value: object "TypeError: withScripts.createParserOptions is not a function. (In 'withScripts.createParserOptions({
+              runScripts: true,
+            })', 'withScripts.createParserOptions' is undefined)"
+FAIL A given TrustedHTMLParserOptions can override default policy's sanitizer for streamHTMLUnsafe promise_test: Unhandled rejection with value: object "TypeError: withScripts.createParserOptions is not a function. (In 'withScripts.createParserOptions({
+            sanitizer: { removeElements: ["span"] },
+          })', 'withScripts.createParserOptions' is undefined)"
+FAIL A given TrustedHTMLParserOptions can override default policy's sanitizer for streamAppendHTMLUnsafe promise_test: Unhandled rejection with value: object "TypeError: withScripts.createParserOptions is not a function. (In 'withScripts.createParserOptions({
+            sanitizer: { removeElements: ["span"] },
+          })', 'withScripts.createParserOptions' is undefined)"
+FAIL A given TrustedHTMLParserOptions can override default policy's sanitizer for streamPrependHTMLUnsafe promise_test: Unhandled rejection with value: object "TypeError: withScripts.createParserOptions is not a function. (In 'withScripts.createParserOptions({
+            sanitizer: { removeElements: ["span"] },
+          })', 'withScripts.createParserOptions' is undefined)"
+FAIL A given TrustedHTMLParserOptions can override default policy's sanitizer for streamBeforeHTMLUnsafe promise_test: Unhandled rejection with value: object "TypeError: withScripts.createParserOptions is not a function. (In 'withScripts.createParserOptions({
+            sanitizer: { removeElements: ["span"] },
+          })', 'withScripts.createParserOptions' is undefined)"
+FAIL A given TrustedHTMLParserOptions can override default policy's sanitizer for streamAfterHTMLUnsafe promise_test: Unhandled rejection with value: object "TypeError: withScripts.createParserOptions is not a function. (In 'withScripts.createParserOptions({
+            sanitizer: { removeElements: ["span"] },
+          })', 'withScripts.createParserOptions' is undefined)"
+

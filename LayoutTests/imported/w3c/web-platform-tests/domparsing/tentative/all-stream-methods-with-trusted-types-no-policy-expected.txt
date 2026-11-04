@@ -1,0 +1,14 @@
+
+FAIL streamHTML with trusted types and no default policy returns a WritableStream. d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)
+PASS streamHTMLUnsafe with trusted types and no default policy throws.
+FAIL streamAppendHTML with trusted types and no default policy returns a WritableStream. d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)
+PASS streamAppendHTMLUnsafe with trusted types and no default policy throws.
+FAIL streamPrependHTML with trusted types and no default policy returns a WritableStream. d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)
+PASS streamPrependHTMLUnsafe with trusted types and no default policy throws.
+FAIL streamBeforeHTML with trusted types and no default policy returns a WritableStream. d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)
+PASS streamBeforeHTMLUnsafe with trusted types and no default policy throws.
+FAIL streamAfterHTML with trusted types and no default policy returns a WritableStream. d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)
+PASS streamAfterHTMLUnsafe with trusted types and no default policy throws.
+FAIL streamReplaceWithHTML with trusted types and no default policy returns a WritableStream. d[method] is not a function. (In 'd[method]()', 'd[method]' is undefined)
+PASS streamReplaceWithHTMLUnsafe with trusted types and no default policy throws.
+

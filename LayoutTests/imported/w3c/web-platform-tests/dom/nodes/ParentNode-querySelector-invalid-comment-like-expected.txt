@@ -1,0 +1,5 @@
+
+PASS querySelector throws SyntaxError for comment-like selector
+PASS querySelectorAll throws SyntaxError for comment-like selector
+PASS matches throws SyntaxError for comment-like selector
+

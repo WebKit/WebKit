@@ -1,0 +1,16 @@
+link text
+div
+
+PASS Document.children
+PASS Element.children
+PASS DocumentFragment.children
+PASS Document.firstElementChild
+PASS Element.firstElementChild
+PASS DocumentFragment.firstElementChild
+PASS Document.lastElementChild
+PASS Element.lastElementChild
+PASS DocumentFragment.lastElementChild
+PASS Document.childElementCount
+PASS Element.childElementCount
+PASS DocumentFragment.childElementCount
+

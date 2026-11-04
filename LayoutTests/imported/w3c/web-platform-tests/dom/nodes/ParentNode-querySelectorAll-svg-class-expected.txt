@@ -1,0 +1,3 @@
+
+PASS Selecting a svg element with a class selector
+

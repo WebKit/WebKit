@@ -1,0 +1,13 @@
+1
+Text
+2
+3
+Text
+
+PASS Text node's nextElementSibling skips non-element siblings
+PASS Text node's previousElementSibling skips non-element siblings
+PASS Comment node's nextElementSibling skips non-element siblings
+PASS Comment node's previousElementSibling skips non-element siblings
+PASS Element's nextElementSibling chains correctly and ends with null
+PASS Element's previousElementSibling chains correctly and ends with null
+

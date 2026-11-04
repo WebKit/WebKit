@@ -1,0 +1,4 @@
+
+PASS :scope child selector on element with colon-prefixed class
+PASS :scope selector on element with colon-prefixed ID
+

@@ -1,0 +1,6 @@
+
+FAIL abort() unblocks rendering on a streamed render-blocking parser-blocking script promise_test: Unhandled rejection with value: object "TypeError: document.head
+      .streamAppendHTMLUnsafe is not a function. (In 'document.head
+      .streamAppendHTMLUnsafe({ runScripts: true })', 'document.head
+      .streamAppendHTMLUnsafe' is undefined)"
+

@@ -1,0 +1,3 @@
+
+PASS Modifying window.constructor does not affect event dispatch
+

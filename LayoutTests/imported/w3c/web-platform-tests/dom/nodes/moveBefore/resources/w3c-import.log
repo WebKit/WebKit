@@ -15,3 +15,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/resources/dummy.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/resources/green.css
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/resources/moveBefore-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/resources/stylesheet-cascade-blue.css
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/resources/stylesheet-cascade-blue.css.headers
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/resources/stylesheet-cascade-purple.css
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/resources/stylesheet-cascade-purple.css.headers

@@ -1,0 +1,26 @@
+
+PASS append a namespaced style attribute preserves HTML inline style
+PASS append a namespaced event handler attribute preserves an HTML event handler
+PASS change a namespaced style attribute preserves HTML inline style
+PASS change a namespaced event handler attribute preserves an HTML event handler
+PASS remove a namespaced style attribute preserves HTML inline style
+PASS remove a namespaced event handler attribute preserves an HTML event handler
+PASS replace a namespaced style attribute preserves HTML inline style
+PASS replace a namespaced event handler attribute preserves an HTML event handler
+PASS append a namespaced style attribute preserves SVG inline style
+PASS append a namespaced event handler attribute preserves an SVG event handler
+PASS change a namespaced style attribute preserves SVG inline style
+PASS change a namespaced event handler attribute preserves an SVG event handler
+PASS remove a namespaced style attribute preserves SVG inline style
+PASS remove a namespaced event handler attribute preserves an SVG event handler
+PASS replace a namespaced style attribute preserves SVG inline style
+PASS replace a namespaced event handler attribute preserves an SVG event handler
+PASS A namespaced slot attribute does not assign a slot
+PASS A namespaced open attribute does not fire a toggle event
+PASS A namespaced src attribute does not navigate an iframe
+PASS A namespaced src attribute does not prepare a script
+PASS A namespaced type attribute does not change an input's state
+PASS A namespaced selected attribute does not change an option's selectedness
+PASS A namespaced multiple attribute does not reset a select
+PASS A namespaced size attribute does not reset a select
+

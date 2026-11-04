@@ -1,0 +1,5 @@
+
+PASS Mutation observers are notified in the order they were created
+PASS Mutation observers are notified in the order they were created, also when one observes a removed subtree
+PASS The mutation observer microtask is only queued once a record is queued for an observer
+

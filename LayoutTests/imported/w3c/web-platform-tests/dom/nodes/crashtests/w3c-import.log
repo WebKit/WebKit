@@ -12,6 +12,7 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/adopt-shadow-host-with-live-collection.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/attribute-index-when-no-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/childNodes-last_visited-unwrap-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/document-replaceChild-input-documentElement.html
@@ -20,3 +21,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/multiple-append-mutated-in-unload-document.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/multiple-append-mutated-in-unload.https.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/multiple-append-mutated-in-unload.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/replaceChild-host-including-ancestor-crash.html

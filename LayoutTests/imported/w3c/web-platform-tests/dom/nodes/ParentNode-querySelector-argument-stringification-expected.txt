@@ -1,0 +1,8 @@
+bold italic 1 italic 2
+paragraph
+
+
+PASS querySelector stringifies Array argument via toString()
+PASS querySelectorAll stringifies Array argument via toString()
+PASS querySelector stringifies object with custom toString()
+

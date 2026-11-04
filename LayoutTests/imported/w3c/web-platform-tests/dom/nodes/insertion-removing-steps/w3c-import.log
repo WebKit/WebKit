@@ -29,6 +29,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-three-scripts.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/blur-event.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/change-event.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/frame-post-connection-steps.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/insertion-removing-steps-iframe.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/insertion-removing-steps-script.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/later-script-removed-by-earlier-script.html

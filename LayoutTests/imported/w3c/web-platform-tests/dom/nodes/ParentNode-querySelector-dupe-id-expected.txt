@@ -1,0 +1,4 @@
+
+PASS Sanity: returns a non-null value
+PASS Returns a non-null value for connected cloned node with duplicated ID
+

@@ -1,0 +1,706 @@
+
+FAIL Policies determine runScripts: Element.beforeHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.beforeHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.beforeHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.beforeHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.beforeHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.beforeHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.beforeHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.beforeHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: Element.beforeHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: Element.beforeHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: Element.beforeHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: Element.beforeHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: Element.beforeHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: Element.beforeHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: Element.beforeHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: Element.beforeHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: Element.beforeHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: Element.beforeHTMLUnsafe
+FAIL Policies determine runScripts: Element.afterHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.afterHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.afterHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.afterHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.afterHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.afterHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.afterHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.afterHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: Element.afterHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: Element.afterHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: Element.afterHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: Element.afterHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: Element.afterHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: Element.afterHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: Element.afterHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: Element.afterHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: Element.afterHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: Element.afterHTMLUnsafe
+FAIL Policies determine runScripts: Element.replaceWithHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.replaceWithHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.replaceWithHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.replaceWithHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.replaceWithHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.replaceWithHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.replaceWithHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.replaceWithHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: Element.replaceWithHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: Element.replaceWithHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: Element.replaceWithHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: Element.replaceWithHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: Element.replaceWithHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: Element.replaceWithHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: Element.replaceWithHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: Element.replaceWithHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: Element.replaceWithHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: Element.replaceWithHTMLUnsafe
+FAIL Policies determine runScripts: Element.appendHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.appendHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.appendHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.appendHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.appendHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.appendHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.appendHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.appendHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: Element.appendHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: Element.appendHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: Element.appendHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: Element.appendHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: Element.appendHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: Element.appendHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: Element.appendHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: Element.appendHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: Element.appendHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: Element.appendHTMLUnsafe
+FAIL Policies determine runScripts: Element.prependHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.prependHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.prependHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.prependHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.prependHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.prependHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.prependHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: Element.prependHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: Element.prependHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: Element.prependHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: Element.prependHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: Element.prependHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: Element.prependHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: Element.prependHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: Element.prependHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: Element.prependHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: Element.prependHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: Element.prependHTMLUnsafe
+FAIL Policies determine runScripts: ShadowRoot.beforeHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.beforeHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.beforeHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.beforeHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.beforeHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.beforeHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.beforeHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.beforeHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: ShadowRoot.beforeHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: ShadowRoot.beforeHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: ShadowRoot.beforeHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: ShadowRoot.beforeHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: ShadowRoot.beforeHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: ShadowRoot.beforeHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: ShadowRoot.beforeHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: ShadowRoot.beforeHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: ShadowRoot.beforeHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: ShadowRoot.beforeHTMLUnsafe
+FAIL Policies determine runScripts: ShadowRoot.afterHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.afterHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.afterHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.afterHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.afterHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.afterHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.afterHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.afterHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: ShadowRoot.afterHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: ShadowRoot.afterHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: ShadowRoot.afterHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: ShadowRoot.afterHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: ShadowRoot.afterHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: ShadowRoot.afterHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: ShadowRoot.afterHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: ShadowRoot.afterHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: ShadowRoot.afterHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: ShadowRoot.afterHTMLUnsafe
+FAIL Policies determine runScripts: ShadowRoot.replaceWithHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.replaceWithHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.replaceWithHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.replaceWithHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.replaceWithHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.replaceWithHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.replaceWithHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.replaceWithHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: ShadowRoot.replaceWithHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: ShadowRoot.replaceWithHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: ShadowRoot.replaceWithHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: ShadowRoot.replaceWithHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: ShadowRoot.replaceWithHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: ShadowRoot.replaceWithHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: ShadowRoot.replaceWithHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: ShadowRoot.replaceWithHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: ShadowRoot.replaceWithHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: ShadowRoot.replaceWithHTMLUnsafe
+FAIL Policies determine runScripts: ShadowRoot.appendHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.appendHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.appendHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.appendHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.appendHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.appendHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.appendHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.appendHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: ShadowRoot.appendHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: ShadowRoot.appendHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: ShadowRoot.appendHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: ShadowRoot.appendHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: ShadowRoot.appendHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: ShadowRoot.appendHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: ShadowRoot.appendHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: ShadowRoot.appendHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: ShadowRoot.appendHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: ShadowRoot.appendHTMLUnsafe
+FAIL Policies determine runScripts: ShadowRoot.prependHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.prependHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.prependHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.prependHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.prependHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.prependHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.prependHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: ShadowRoot.prependHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: ShadowRoot.prependHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: ShadowRoot.prependHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: ShadowRoot.prependHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: ShadowRoot.prependHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: ShadowRoot.prependHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: ShadowRoot.prependHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: ShadowRoot.prependHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: ShadowRoot.prependHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: ShadowRoot.prependHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: ShadowRoot.prependHTMLUnsafe
+FAIL Policies determine runScripts: template.content.beforeHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.beforeHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.beforeHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.beforeHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.beforeHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.beforeHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.beforeHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.beforeHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: template.content.beforeHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: template.content.beforeHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: template.content.beforeHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: template.content.beforeHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: template.content.beforeHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: template.content.beforeHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: template.content.beforeHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: template.content.beforeHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: template.content.beforeHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: template.content.beforeHTMLUnsafe
+FAIL Policies determine runScripts: template.content.afterHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.afterHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.afterHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.afterHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.afterHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.afterHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.afterHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.afterHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: template.content.afterHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: template.content.afterHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: template.content.afterHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: template.content.afterHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: template.content.afterHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: template.content.afterHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: template.content.afterHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: template.content.afterHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: template.content.afterHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: template.content.afterHTMLUnsafe
+FAIL Policies determine runScripts: template.content.replaceWithHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.replaceWithHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.replaceWithHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.replaceWithHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.replaceWithHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.replaceWithHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.replaceWithHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.replaceWithHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: template.content.replaceWithHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: template.content.replaceWithHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: template.content.replaceWithHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: template.content.replaceWithHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: template.content.replaceWithHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: template.content.replaceWithHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: template.content.replaceWithHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: template.content.replaceWithHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: template.content.replaceWithHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: template.content.replaceWithHTMLUnsafe
+FAIL Policies determine runScripts: template.content.appendHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.appendHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.appendHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.appendHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.appendHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.appendHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.appendHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.appendHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: template.content.appendHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: template.content.appendHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: template.content.appendHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: template.content.appendHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: template.content.appendHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: template.content.appendHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: template.content.appendHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: template.content.appendHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: template.content.appendHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: template.content.appendHTMLUnsafe
+FAIL Policies determine runScripts: template.content.prependHTML (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.prependHTML (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.prependHTML (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.prependHTML (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.prependHTMLUnsafe (runScripts=true => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.prependHTMLUnsafe (runScripts=true => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.prependHTMLUnsafe (runScripts=false => true) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policies determine runScripts: template.content.prependHTMLUnsafe (runScripts=false => false) object[method_name] is not a function. (In 'object[method_name](
+              "<span>html;</span><script>window.did_run = true<" + "/script>",
+              { runScripts: run_scripts_at_caller },
+            )', 'object[method_name]' is undefined)
+FAIL Policy can inject sanitizer: template.content.prependHTMLUnsafe object[method_name] is not a function. (In 'object[method_name]("<span>html;</span><p>forbidden</p>")', 'object[method_name]' is undefined)
+FAIL createParserOptions runs and injects sanitizer even when TrustedHTML is passed: template.content.prependHTMLUnsafe object[method_name] is not a function. (In 'object[method_name](
+            passthrough_policy.createHTML("<span>html;</span><p>forbidden</p>"),
+          )', 'object[method_name]' is undefined)
+FAIL TrustedHTMLParserOptions overrides default policy: template.content.prependHTMLUnsafe trusted_policy.createParserOptions is not a function. (In 'trusted_policy.createParserOptions({
+            runScripts: true,
+          })', 'trusted_policy.createParserOptions' is undefined)
+PASS createParserOptions returning null throws TypeError without calling createHTML: template.content.prependHTMLUnsafe
+PASS createParserOptions returning undefined throws TypeError without calling createHTML: template.content.prependHTMLUnsafe
+PASS createParserOptions returning 0 throws TypeError without calling createHTML: template.content.prependHTMLUnsafe
+PASS createParserOptions returning 123 throws TypeError without calling createHTML: template.content.prependHTMLUnsafe
+PASS createParserOptions returning "foo" throws TypeError without calling createHTML: template.content.prependHTMLUnsafe
+PASS createParserOptions returning true throws TypeError without calling createHTML: template.content.prependHTMLUnsafe
+PASS createParserOptions returning false throws TypeError without calling createHTML: template.content.prependHTMLUnsafe
+FAIL Comment.beforeHTMLUnsafe passes a "Node" sink name to createParserOptions object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.afterHTMLUnsafe passes a "Node" sink name to createParserOptions object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Comment.replaceWithHTMLUnsafe passes a "Node" sink name to createParserOptions object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.beforeHTMLUnsafe passes a "Node" sink name to createParserOptions object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.afterHTMLUnsafe passes a "Node" sink name to createParserOptions object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL Text.replaceWithHTMLUnsafe passes a "Node" sink name to createParserOptions object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.beforeHTMLUnsafe passes a "Node" sink name to createParserOptions object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.afterHTMLUnsafe passes a "Node" sink name to createParserOptions object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL ProcessingInstruction.replaceWithHTMLUnsafe passes a "Node" sink name to createParserOptions object[method_name] is not a function. (In 'object[method_name]("<span>html;</span>")', 'object[method_name]' is undefined)
+FAIL beforeHTMLUnsafe checks createParserOptions before hierarchy checks assert_equals: expected "createParserOptions called" but got "element[`${pos}HTMLUnsafe`] is not a function. (In 'element[`${pos}HTMLUnsafe`](\"<span>test</span>\")', 'element[`${pos}HTMLUnsafe`]' is undefined)"
+FAIL afterHTMLUnsafe checks createParserOptions before hierarchy checks assert_equals: expected "createParserOptions called" but got "element[`${pos}HTMLUnsafe`] is not a function. (In 'element[`${pos}HTMLUnsafe`](\"<span>test</span>\")', 'element[`${pos}HTMLUnsafe`]' is undefined)"
+FAIL replaceWithHTMLUnsafe checks createParserOptions before hierarchy checks assert_equals: expected "createParserOptions called" but got "element[`${pos}HTMLUnsafe`] is not a function. (In 'element[`${pos}HTMLUnsafe`](\"<span>test</span>\")', 'element[`${pos}HTMLUnsafe`]' is undefined)"
+FAIL appendHTMLUnsafe checks createParserOptions before hierarchy checks assert_equals: expected "createParserOptions called" but got "element[`${pos}HTMLUnsafe`] is not a function. (In 'element[`${pos}HTMLUnsafe`](\"<span>test</span>\")', 'element[`${pos}HTMLUnsafe`]' is undefined)"
+FAIL prependHTMLUnsafe checks createParserOptions before hierarchy checks assert_equals: expected "createParserOptions called" but got "element[`${pos}HTMLUnsafe`] is not a function. (In 'element[`${pos}HTMLUnsafe`](\"<span>test</span>\")', 'element[`${pos}HTMLUnsafe`]' is undefined)"
+

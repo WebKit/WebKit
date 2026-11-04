@@ -1,0 +1,3 @@
+
+PASS XML parser queues a mutation record for each inserted node
+text

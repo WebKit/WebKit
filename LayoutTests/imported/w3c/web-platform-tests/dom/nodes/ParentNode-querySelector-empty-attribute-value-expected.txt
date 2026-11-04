@@ -1,0 +1,6 @@
+has empty title
+has non-empty title
+
+PASS [title=''] matches element with empty title attribute
+PASS Compound [title][title=''] matches element with empty title attribute
+

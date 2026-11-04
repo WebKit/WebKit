@@ -1,0 +1,76 @@
+
+FAIL appendHTML on the html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          html[method]("<p>new</p>");
+        }" threw object "TypeError: html[method] is not a function. (In 'html[method]("<p>new</p>")', 'html[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL appendHTML on the html element of an inert document throws HierarchyRequestError assert_throws_dom: function "() => {
+          doc.documentElement[method]("<p>new</p>");
+        }" threw object "TypeError: doc.documentElement[method] is not a function. (In 'doc.documentElement[method]("<p>new</p>")', 'doc.documentElement[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL appendHTML on a detached html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          html[method]("<p>new</p>");
+        }" threw object "TypeError: html[method] is not a function. (In 'html[method]("<p>new</p>")', 'html[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL prependHTML on the html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          html[method]("<p>new</p>");
+        }" threw object "TypeError: html[method] is not a function. (In 'html[method]("<p>new</p>")', 'html[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL prependHTML on the html element of an inert document throws HierarchyRequestError assert_throws_dom: function "() => {
+          doc.documentElement[method]("<p>new</p>");
+        }" threw object "TypeError: doc.documentElement[method] is not a function. (In 'doc.documentElement[method]("<p>new</p>")', 'doc.documentElement[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL prependHTML on a detached html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          html[method]("<p>new</p>");
+        }" threw object "TypeError: html[method] is not a function. (In 'html[method]("<p>new</p>")', 'html[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTML on head/body (parent is the html element) throws HierarchyRequestError assert_throws_dom: head function "() => {
+          doc.head[method]("<p>new</p>");
+        }" threw object "TypeError: doc.head[method] is not a function. (In 'doc.head[method]("<p>new</p>")', 'doc.head[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTML on a child of a detached html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          comment[method]("<p>new</p>");
+        }" threw object "TypeError: comment[method] is not a function. (In 'comment[method]("<p>new</p>")', 'comment[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL afterHTML on head/body (parent is the html element) throws HierarchyRequestError assert_throws_dom: head function "() => {
+          doc.head[method]("<p>new</p>");
+        }" threw object "TypeError: doc.head[method] is not a function. (In 'doc.head[method]("<p>new</p>")', 'doc.head[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL afterHTML on a child of a detached html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          comment[method]("<p>new</p>");
+        }" threw object "TypeError: comment[method] is not a function. (In 'comment[method]("<p>new</p>")', 'comment[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTML on head/body (parent is the html element) throws HierarchyRequestError assert_throws_dom: head function "() => {
+          doc.head[method]("<p>new</p>");
+        }" threw object "TypeError: doc.head[method] is not a function. (In 'doc.head[method]("<p>new</p>")', 'doc.head[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTML on a child of a detached html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          comment[method]("<p>new</p>");
+        }" threw object "TypeError: comment[method] is not a function. (In 'comment[method]("<p>new</p>")', 'comment[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL setHTML on the html element replaces head and body promise_test: Unhandled rejection with value: object "TypeError: html[`setHTML${suffix}`] is not a function. (In 'html[`setHTML${suffix}`]("<head><meta name='x'></head><body><p>new</p></body>")', 'html[`setHTML${suffix}`]' is undefined)"
+FAIL appendHTMLUnsafe on the html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          html[method]("<p>new</p>");
+        }" threw object "TypeError: html[method] is not a function. (In 'html[method]("<p>new</p>")', 'html[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL appendHTMLUnsafe on the html element of an inert document throws HierarchyRequestError assert_throws_dom: function "() => {
+          doc.documentElement[method]("<p>new</p>");
+        }" threw object "TypeError: doc.documentElement[method] is not a function. (In 'doc.documentElement[method]("<p>new</p>")', 'doc.documentElement[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL appendHTMLUnsafe on a detached html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          html[method]("<p>new</p>");
+        }" threw object "TypeError: html[method] is not a function. (In 'html[method]("<p>new</p>")', 'html[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL prependHTMLUnsafe on the html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          html[method]("<p>new</p>");
+        }" threw object "TypeError: html[method] is not a function. (In 'html[method]("<p>new</p>")', 'html[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL prependHTMLUnsafe on the html element of an inert document throws HierarchyRequestError assert_throws_dom: function "() => {
+          doc.documentElement[method]("<p>new</p>");
+        }" threw object "TypeError: doc.documentElement[method] is not a function. (In 'doc.documentElement[method]("<p>new</p>")', 'doc.documentElement[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL prependHTMLUnsafe on a detached html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          html[method]("<p>new</p>");
+        }" threw object "TypeError: html[method] is not a function. (In 'html[method]("<p>new</p>")', 'html[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTMLUnsafe on head/body (parent is the html element) throws HierarchyRequestError assert_throws_dom: head function "() => {
+          doc.head[method]("<p>new</p>");
+        }" threw object "TypeError: doc.head[method] is not a function. (In 'doc.head[method]("<p>new</p>")', 'doc.head[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL beforeHTMLUnsafe on a child of a detached html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          comment[method]("<p>new</p>");
+        }" threw object "TypeError: comment[method] is not a function. (In 'comment[method]("<p>new</p>")', 'comment[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL afterHTMLUnsafe on head/body (parent is the html element) throws HierarchyRequestError assert_throws_dom: head function "() => {
+          doc.head[method]("<p>new</p>");
+        }" threw object "TypeError: doc.head[method] is not a function. (In 'doc.head[method]("<p>new</p>")', 'doc.head[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL afterHTMLUnsafe on a child of a detached html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          comment[method]("<p>new</p>");
+        }" threw object "TypeError: comment[method] is not a function. (In 'comment[method]("<p>new</p>")', 'comment[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTMLUnsafe on head/body (parent is the html element) throws HierarchyRequestError assert_throws_dom: head function "() => {
+          doc.head[method]("<p>new</p>");
+        }" threw object "TypeError: doc.head[method] is not a function. (In 'doc.head[method]("<p>new</p>")', 'doc.head[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+FAIL replaceWithHTMLUnsafe on a child of a detached html element throws HierarchyRequestError assert_throws_dom: function "() => {
+          comment[method]("<p>new</p>");
+        }" threw object "TypeError: comment[method] is not a function. (In 'comment[method]("<p>new</p>")', 'comment[method]' is undefined)" that is not a DOMException HierarchyRequestError: property "code" is equal to undefined, expected 3
+PASS setHTMLUnsafe on the html element replaces head and body
+

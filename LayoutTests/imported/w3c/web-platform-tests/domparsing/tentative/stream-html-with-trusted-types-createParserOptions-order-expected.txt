@@ -1,0 +1,7 @@
+
+FAIL streamBeforeHTMLUnsafe checks createParserOptions before hierarchy checks assert_equals: expected "createParserOptions called" but got "element[method_name] is not a function. (In 'element[method_name]()', 'element[method_name]' is undefined)"
+FAIL streamAfterHTMLUnsafe checks createParserOptions before hierarchy checks assert_equals: expected "createParserOptions called" but got "element[method_name] is not a function. (In 'element[method_name]()', 'element[method_name]' is undefined)"
+FAIL streamReplaceWithHTMLUnsafe checks createParserOptions before hierarchy checks assert_equals: expected "createParserOptions called" but got "element[method_name] is not a function. (In 'element[method_name]()', 'element[method_name]' is undefined)"
+FAIL streamAppendHTMLUnsafe checks createParserOptions before hierarchy checks assert_equals: expected "createParserOptions called" but got "element[method_name] is not a function. (In 'element[method_name]()', 'element[method_name]' is undefined)"
+FAIL streamPrependHTMLUnsafe checks createParserOptions before hierarchy checks assert_equals: expected "createParserOptions called" but got "element[method_name] is not a function. (In 'element[method_name]()', 'element[method_name]' is undefined)"
+

@@ -1,0 +1,72 @@
+
+FAIL streamHTML on Element invokes CE reactions synchronously for removed children and on write promise_test: Unhandled rejection with value: object "TypeError: container[method] is not a function. (In 'container[method]({ sanitizer: { elements: [newName] } })', 'container[method]' is undefined)"
+FAIL streamHTML on ShadowRoot invokes CE reactions synchronously for removed children and on write promise_test: Unhandled rejection with value: object "TypeError: shadow[method] is not a function. (In 'shadow[method](options)', 'shadow[method]' is undefined)"
+FAIL streamHTMLUnsafe on Element invokes CE reactions synchronously for removed children and on write promise_test: Unhandled rejection with value: object "TypeError: container[method] is not a function. (In 'container[method]({ sanitizer: { elements: [newName] } })', 'container[method]' is undefined)"
+FAIL streamHTMLUnsafe on ShadowRoot invokes CE reactions synchronously for removed children and on write promise_test: Unhandled rejection with value: object "TypeError: shadow[method] is not a function. (In 'shadow[method](options)', 'shadow[method]' is undefined)"
+FAIL streamReplaceWithHTML on ChildNode invokes CE reactions synchronously for replaced element and on write promise_test: Unhandled rejection with value: object "TypeError: targetElement[method] is not a function. (In 'targetElement[method](options)', 'targetElement[method]' is undefined)"
+FAIL streamReplaceWithHTMLUnsafe on ChildNode invokes CE reactions synchronously for replaced element and on write promise_test: Unhandled rejection with value: object "TypeError: targetElement[method] is not a function. (In 'targetElement[method](options)', 'targetElement[method]' is undefined)"
+FAIL streamAppendHTML on Element invokes CE reactions on write/close without removing existing elements promise_test: Unhandled rejection with value: object "TypeError: container[method] is not a function. (In 'container[method](options)', 'container[method]' is undefined)"
+FAIL streamAppendHTML on ShadowRoot invokes CE reactions on write/close without removing existing elements promise_test: Unhandled rejection with value: object "TypeError: shadow[method] is not a function. (In 'shadow[method](options)', 'shadow[method]' is undefined)"
+FAIL streamAppendHTMLUnsafe on Element invokes CE reactions on write/close without removing existing elements promise_test: Unhandled rejection with value: object "TypeError: container[method] is not a function. (In 'container[method](options)', 'container[method]' is undefined)"
+FAIL streamAppendHTMLUnsafe on ShadowRoot invokes CE reactions on write/close without removing existing elements promise_test: Unhandled rejection with value: object "TypeError: shadow[method] is not a function. (In 'shadow[method](options)', 'shadow[method]' is undefined)"
+FAIL streamPrependHTML on Element invokes CE reactions on write/close without removing existing elements promise_test: Unhandled rejection with value: object "TypeError: container[method] is not a function. (In 'container[method](options)', 'container[method]' is undefined)"
+FAIL streamPrependHTML on ShadowRoot invokes CE reactions on write/close without removing existing elements promise_test: Unhandled rejection with value: object "TypeError: shadow[method] is not a function. (In 'shadow[method](options)', 'shadow[method]' is undefined)"
+FAIL streamPrependHTMLUnsafe on Element invokes CE reactions on write/close without removing existing elements promise_test: Unhandled rejection with value: object "TypeError: container[method] is not a function. (In 'container[method](options)', 'container[method]' is undefined)"
+FAIL streamPrependHTMLUnsafe on ShadowRoot invokes CE reactions on write/close without removing existing elements promise_test: Unhandled rejection with value: object "TypeError: shadow[method] is not a function. (In 'shadow[method](options)', 'shadow[method]' is undefined)"
+FAIL streamBeforeHTML on ChildNode invokes CE reactions on write/close without removing target element promise_test: Unhandled rejection with value: object "TypeError: targetElement[method] is not a function. (In 'targetElement[method](options)', 'targetElement[method]' is undefined)"
+FAIL streamBeforeHTMLUnsafe on ChildNode invokes CE reactions on write/close without removing target element promise_test: Unhandled rejection with value: object "TypeError: targetElement[method] is not a function. (In 'targetElement[method](options)', 'targetElement[method]' is undefined)"
+FAIL streamAfterHTML on ChildNode invokes CE reactions on write/close without removing target element promise_test: Unhandled rejection with value: object "TypeError: targetElement[method] is not a function. (In 'targetElement[method](options)', 'targetElement[method]' is undefined)"
+FAIL streamAfterHTMLUnsafe on ChildNode invokes CE reactions on write/close without removing target element promise_test: Unhandled rejection with value: object "TypeError: targetElement[method] is not a function. (In 'targetElement[method](options)', 'targetElement[method]' is undefined)"
+FAIL streamHTML with replaceWithChildrenElements preserves scoped customElementRegistry promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method]({
+      sanitizer: {
+        elements: ["scoped-replaced-child"],
+        replaceWithChildrenElements: ["div"],
+      },
+    })', 'inner[method]' is undefined)"
+FAIL streamHTML should use scoped custom element registry promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamHTML on ShadowRoot uses ShadowRoot's customElementRegistry promise_test: Unhandled rejection with value: object "TypeError: shadow[method] is not a function. (In 'shadow[method](options)', 'shadow[method]' is undefined)"
+FAIL streamHTMLUnsafe with replaceWithChildrenElements preserves scoped customElementRegistry promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method]({
+      sanitizer: {
+        elements: ["scoped-replaced-child"],
+        replaceWithChildrenElements: ["div"],
+      },
+    })', 'inner[method]' is undefined)"
+FAIL streamHTMLUnsafe should use scoped custom element registry promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamHTMLUnsafe on ShadowRoot uses ShadowRoot's customElementRegistry promise_test: Unhandled rejection with value: object "TypeError: shadow[method] is not a function. (In 'shadow[method](options)', 'shadow[method]' is undefined)"
+FAIL streamAppendHTML with replaceWithChildrenElements preserves scoped customElementRegistry promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method]({
+      sanitizer: {
+        elements: ["scoped-replaced-child"],
+        replaceWithChildrenElements: ["div"],
+      },
+    })', 'inner[method]' is undefined)"
+FAIL streamAppendHTML should use scoped custom element registry promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAppendHTML on ShadowRoot uses ShadowRoot's customElementRegistry promise_test: Unhandled rejection with value: object "TypeError: shadow[method] is not a function. (In 'shadow[method](options)', 'shadow[method]' is undefined)"
+FAIL streamAppendHTMLUnsafe with replaceWithChildrenElements preserves scoped customElementRegistry promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method]({
+      sanitizer: {
+        elements: ["scoped-replaced-child"],
+        replaceWithChildrenElements: ["div"],
+      },
+    })', 'inner[method]' is undefined)"
+FAIL streamAppendHTMLUnsafe should use scoped custom element registry promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamAppendHTMLUnsafe on ShadowRoot uses ShadowRoot's customElementRegistry promise_test: Unhandled rejection with value: object "TypeError: shadow[method] is not a function. (In 'shadow[method](options)', 'shadow[method]' is undefined)"
+FAIL streamPrependHTML with replaceWithChildrenElements preserves scoped customElementRegistry promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method]({
+      sanitizer: {
+        elements: ["scoped-replaced-child"],
+        replaceWithChildrenElements: ["div"],
+      },
+    })', 'inner[method]' is undefined)"
+FAIL streamPrependHTML should use scoped custom element registry promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTML on ShadowRoot uses ShadowRoot's customElementRegistry promise_test: Unhandled rejection with value: object "TypeError: shadow[method] is not a function. (In 'shadow[method](options)', 'shadow[method]' is undefined)"
+FAIL streamPrependHTMLUnsafe with replaceWithChildrenElements preserves scoped customElementRegistry promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method]({
+      sanitizer: {
+        elements: ["scoped-replaced-child"],
+        replaceWithChildrenElements: ["div"],
+      },
+    })', 'inner[method]' is undefined)"
+FAIL streamPrependHTMLUnsafe should use scoped custom element registry promise_test: Unhandled rejection with value: object "TypeError: inner[method] is not a function. (In 'inner[method](options)', 'inner[method]' is undefined)"
+FAIL streamPrependHTMLUnsafe on ShadowRoot uses ShadowRoot's customElementRegistry promise_test: Unhandled rejection with value: object "TypeError: shadow[method] is not a function. (In 'shadow[method](options)', 'shadow[method]' is undefined)"
+FAIL streamHTML on <template> does not construct or upgrade top-level or nested custom elements promise_test: Unhandled rejection with value: object "TypeError: tpl[method] is not a function. (In 'tpl[method](options)', 'tpl[method]' is undefined)"
+FAIL streamHTMLUnsafe on <template> does not construct or upgrade top-level or nested custom elements promise_test: Unhandled rejection with value: object "TypeError: tpl[method] is not a function. (In 'tpl[method](options)', 'tpl[method]' is undefined)"
+FAIL streamAppendHTML on <template> does not construct or upgrade top-level or nested custom elements promise_test: Unhandled rejection with value: object "TypeError: tpl[method] is not a function. (In 'tpl[method](options)', 'tpl[method]' is undefined)"
+FAIL streamAppendHTMLUnsafe on <template> does not construct or upgrade top-level or nested custom elements promise_test: Unhandled rejection with value: object "TypeError: tpl[method] is not a function. (In 'tpl[method](options)', 'tpl[method]' is undefined)"
+

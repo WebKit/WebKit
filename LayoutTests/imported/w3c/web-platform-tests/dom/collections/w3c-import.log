@@ -14,8 +14,10 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-as-prototype.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-delete.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-detached-root-gc.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-empty-name.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-iterator.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-live-item-removal.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-live-mutations.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-own-props.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-supported-property-indices.html

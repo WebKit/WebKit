@@ -1,0 +1,4 @@
+
+PASS querySelectorAll on orphaned element does not return the element itself
+PASS querySelectorAll descendant selector works on orphaned elements
+

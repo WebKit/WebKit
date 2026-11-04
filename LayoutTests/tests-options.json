@@ -2003,6 +2003,9 @@
     "imported/w3c/web-platform-tests/dom/traversal/TreeWalker.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/domparsing/tentative/stream-html-parser-blocking-script.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/editing/crashtests/insertparagraph-in-listitem-in-svg-followed-by-collapsible-spaces.html": [
         "slow"
     ],

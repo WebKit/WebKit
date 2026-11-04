@@ -1,0 +1,10 @@
+
+PASS Should parse XML character entities correctly in type text/xml
+FAIL Should return an error document for undefined (HTML) character entities in type text/xml assert_equals: expected (string) "http://www.mozilla.org/newlayout/xml/parsererror.xml" but got (object) null
+PASS Should parse XML character entities correctly in type application/xml
+FAIL Should return an error document for undefined (HTML) character entities in type application/xml assert_equals: expected (string) "http://www.mozilla.org/newlayout/xml/parsererror.xml" but got (object) null
+PASS Should parse XML character entities correctly in type application/xhtml+xml
+FAIL Should return an error document for undefined (HTML) character entities in type application/xhtml+xml assert_equals: expected (string) "http://www.mozilla.org/newlayout/xml/parsererror.xml" but got (object) null
+PASS Should parse XML character entities correctly in type image/svg+xml
+FAIL Should return an error document for undefined (HTML) character entities in type image/svg+xml assert_equals: expected (string) "http://www.mozilla.org/newlayout/xml/parsererror.xml" but got (object) null
+

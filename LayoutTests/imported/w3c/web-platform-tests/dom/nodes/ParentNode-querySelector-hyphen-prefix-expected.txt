@@ -1,0 +1,6 @@
+
+PASS ID selector with hyphen-prefix followed by letters
+PASS Class selector with hyphen-prefix followed by letters
+PASS ID selector with hyphen-prefix followed by numbers
+PASS Class selector with hyphen-prefix followed by numbers
+

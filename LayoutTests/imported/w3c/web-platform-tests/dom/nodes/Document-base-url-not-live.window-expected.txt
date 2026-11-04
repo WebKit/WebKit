@@ -1,0 +1,4 @@
+
+FAIL about:blank base URL is not live assert_equals: child base URL is a snapshot from creation, not the container's current base URL expected "http://web-platform.test:8800/dom/nodes/Document-base-url-not-live.window.html" but got "http://example.com/changed/"
+PASS about:srcdoc base URL is not live
+
