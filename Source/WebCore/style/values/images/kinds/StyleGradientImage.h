@@ -30,11 +30,13 @@
 #include "StyleGeneratedImage.h"
 #include "StyleGeneratedImageCache.h"
 #include "StyleGradient.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
 
 class GradientImage final : public GeneratedImage {
+    WTF_MAKE_TZONE_ALLOCATED(GradientImage);
 public:
     static Ref<GradientImage> create(Gradient gradient)
     {

@@ -44,6 +44,7 @@
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include <wtf/PointerComparison.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/ZippedRange.h>
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
@@ -52,6 +53,8 @@
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CrossfadeImage);
 
 CrossfadeImage::CrossfadeImage(CrossfadeFunction&& function)
     : GeneratedImage { Type::CrossfadeImage }

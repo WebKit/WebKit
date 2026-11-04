@@ -27,6 +27,7 @@
 
 #include <WebCore/StylePrimitiveNumeric.h>
 #include <WebCore/StyleTransformFunctionBase.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -43,6 +44,7 @@ namespace Style {
 // https://drafts.csswg.org/css-transforms-2/#funcdef-translatez
 
 class TranslateTransformFunction final : public TransformFunctionBase {
+    WTF_MAKE_TZONE_ALLOCATED(TranslateTransformFunction);
 public:
     using X = Style::LengthPercentage<>;
     using Y = Style::LengthPercentage<>;

@@ -50,9 +50,12 @@
 #include <JavaScriptCore/ConstructData.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/PointerComparison.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PaintImage);
 
 PaintImage::PaintImage(CustomIdent&& name, Ref<CSSVariableData>&& arguments)
     : GeneratedImage { Type::PaintImage }
