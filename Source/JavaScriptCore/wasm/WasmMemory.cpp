@@ -403,9 +403,7 @@ std::expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         }
 
         memcpySpan(unsafeMakeSpan(static_cast<uint8_t*>(newMemory), desiredSize), m_handle->mutableSpan());
-        Ref newHandle = adoptRef(*new BufferMemoryHandle(newMemory, desiredSize, desiredSize, initial(), maximum(), sharingMode(), MemoryMode::BoundsChecking));
-        m_handle->transferAnchors(newHandle.get());
-        m_handle = WTF::move(newHandle);
+        m_handle->replaceAllocatedMemory(newMemory, desiredSize);
 
         ASSERT(basePointer() == newMemory);
         return success();

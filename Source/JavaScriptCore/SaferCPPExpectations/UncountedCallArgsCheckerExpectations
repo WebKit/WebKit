@@ -144,7 +144,6 @@ wasm/WasmFunctionParser.h
 wasm/WasmIPIntPlan.cpp
 wasm/WasmIPIntSlowPaths.cpp
 wasm/WasmMemory.cpp
-wasm/WasmMemory.h
 wasm/WasmOMGIRGenerator.cpp
 wasm/WasmOMGPlan.cpp
 wasm/WasmOSREntryPlan.cpp
