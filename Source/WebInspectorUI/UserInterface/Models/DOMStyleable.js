@@ -36,9 +36,10 @@ WI.DOMStyleable = class DOMStyleable
 
     // Static
 
-    static fromPayload({nodeId, pseudoId})
+    static fromPayload({nodeId, pseudoId}, target)
     {
-        return new WI.DOMStyleable(WI.domManager.nodeForId(nodeId), {pseudoId});
+        let node = target instanceof WI.FrameTarget ? WI.domManager.nodeForIdInFrameTarget(nodeId, target) : WI.domManager.nodeForId(nodeId);
+        return new WI.DOMStyleable(node, {pseudoId});
     }
 
     // Public

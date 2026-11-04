@@ -168,14 +168,14 @@ WI.RemoteObject = class RemoteObject
     {
         console.assert(typeof callback === "function");
 
+        let target = animation.target;
+
         function wrapCallback(error, object) {
             if (error || !object)
                 callback(null);
             else
-                callback(WI.RemoteObject.fromPayload(object, WI.mainTarget));
+                callback(WI.RemoteObject.fromPayload(object, target));
         }
-
-        let target = WI.assumingMainTarget();
 
         // COMPATIBILITY (iOS 13.1): Animation.resolveAnimation did not exist yet.
         console.assert(target.hasCommand("Animation.resolveAnimation"));
