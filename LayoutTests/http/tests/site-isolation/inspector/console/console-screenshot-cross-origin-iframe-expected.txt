@@ -1,0 +1,25 @@
+CONSOLE MESSAGE: [object HTMLDivElement]
+CONSOLE MESSAGE: Viewport
+CONSOLE MESSAGE: [object DOMRect]
+
+
+== Running test suite: SiteIsolation.Console.ScreenshotCrossOriginIFrame
+-- Running test case: SiteIsolation.Console.ScreenshotCrossOriginIFrame.Setup
+PASS: The iframe should have rendered #testNode.
+
+-- Running test case: SiteIsolation.Console.ScreenshotCrossOriginIFrame.Node
+PASS: The added message should be an image.
+PASS: The message should not be an error.
+PASS: The image should contain #testNode.
+
+-- Running test case: SiteIsolation.Console.ScreenshotCrossOriginIFrame.Viewport
+PASS: The added message should be an image.
+PASS: The message should not be an error.
+PASS: The image should contain the iframe's body.
+
+-- Running test case: SiteIsolation.Console.ScreenshotCrossOriginIFrame.DOMRect
+PASS: The added message should be an image.
+PASS: The message should not be an error.
+PASS: The top left of the rect should contain #testNode.
+PASS: The bottom right of the rect should contain the iframe's body.
+

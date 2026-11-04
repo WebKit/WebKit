@@ -1,0 +1,118 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    function colorName([r, g, b]) {
+        const near = (value, expected) => Math.abs(value - expected) <= 10;
+        if (near(r, 255) && near(g, 0) && near(b, 0))
+            return "red";
+        if (near(r, 0) && near(g, 128) && near(b, 0))
+            return "green";
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // Points are fractions of the image size, so they work at any device scale factor.
+    async function colorsInImage(dataURL, points) {
+        let bytes = Uint8Array.from(atob(dataURL.substring(dataURL.indexOf(",") + 1)), (c) => c.charCodeAt(0));
+        let bitmap = await createImageBitmap(new Blob([bytes], {type: "image/png"}));
+        let canvas = document.createElement("canvas");
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        let context = canvas.getContext("2d");
+        context.drawImage(bitmap, 0, 0);
+        return points.map(({x, y}) => colorName(context.getImageData(Math.floor(x * bitmap.width), Math.floor(y * bitmap.height), 1, 1).data));
+    }
+
+    function awaitConsoleMessageFromTarget(target) {
+        return new Promise((resolve) => {
+            function handler(event) {
+                let {message} = event.data;
+                if (message.target !== target)
+                    return;
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+                resolve(message);
+            }
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+        });
+    }
+
+    async function screenshotInFrame(frameTarget, expression) {
+        let [message] = await Promise.all([
+            awaitConsoleMessageFromTarget(frameTarget),
+            frameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true}),
+        ]);
+        return message;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Console.ScreenshotCrossOriginIFrame");
+
+    let frameTarget = null;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Console.ScreenshotCrossOriginIFrame.Setup",
+        description: "Find the frame target of the cross-origin iframe.",
+        async test() {
+            frameTarget = await waitForFrameTargetForURLContaining("console-screenshot-frame.html");
+            InspectorTest.assert(frameTarget, "Should have a frame target for the cross-origin iframe.");
+            let hasTestNode = await waitForExpressionInTarget(frameTarget, `!!document.getElementById("testNode")`);
+            InspectorTest.expectThat(hasTestNode, "The iframe should have rendered #testNode.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Console.ScreenshotCrossOriginIFrame.Node",
+        description: "console.screenshot(node) in a cross-origin iframe should capture the node.",
+        async test() {
+            let message = await screenshotInFrame(frameTarget, `console.screenshot(document.getElementById("testNode"))`);
+            InspectorTest.expectEqual(message.type, WI.ConsoleMessage.MessageType.Image, "The added message should be an image.");
+            InspectorTest.expectEqual(message.level, WI.ConsoleMessage.MessageLevel.Log, "The message should not be an error.");
+            if (message.level !== WI.ConsoleMessage.MessageLevel.Log)
+                return;
+            let [center] = await colorsInImage(message.messageText, [{x: 0.5, y: 0.5}]);
+            InspectorTest.expectEqual(center, "red", "The image should contain #testNode.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Console.ScreenshotCrossOriginIFrame.Viewport",
+        description: "console.screenshot() in a cross-origin iframe should capture the iframe's viewport.",
+        async test() {
+            let message = await screenshotInFrame(frameTarget, `console.screenshot()`);
+            InspectorTest.expectEqual(message.type, WI.ConsoleMessage.MessageType.Image, "The added message should be an image.");
+            InspectorTest.expectEqual(message.level, WI.ConsoleMessage.MessageLevel.Log, "The message should not be an error.");
+            if (message.level !== WI.ConsoleMessage.MessageLevel.Log)
+                return;
+            let [center] = await colorsInImage(message.messageText, [{x: 0.5, y: 0.5}]);
+            InspectorTest.expectEqual(center, "green", "The image should contain the iframe's body.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Console.ScreenshotCrossOriginIFrame.DOMRect",
+        description: "console.screenshot(rect) in a cross-origin iframe should interpret the rect in the iframe's document coordinates.",
+        async test() {
+            let message = await screenshotInFrame(frameTarget, `console.screenshot(new DOMRect(0, 0, 50, 50))`);
+            InspectorTest.expectEqual(message.type, WI.ConsoleMessage.MessageType.Image, "The added message should be an image.");
+            InspectorTest.expectEqual(message.level, WI.ConsoleMessage.MessageLevel.Log, "The message should not be an error.");
+            if (message.level !== WI.ConsoleMessage.MessageLevel.Log)
+                return;
+            let [topLeft, bottomRight] = await colorsInImage(message.messageText, [{x: 0.1, y: 0.1}, {x: 0.9, y: 0.9}]);
+            InspectorTest.expectEqual(topLeft, "red", "The top left of the rect should contain #testNode.");
+            InspectorTest.expectEqual(bottomRight, "green", "The bottom right of the rect should contain the iframe's body.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</head>
+<body>
+<iframe src="http://localhost:8000/site-isolation/inspector/console/resources/console-screenshot-frame.html"></iframe>
+</body>
+</html>
