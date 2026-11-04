@@ -632,6 +632,12 @@ NODELETE static RefPtr<PrintContext>& printContextForTesting()
     return context;
 }
 
+static std::optional<bool>& trackingPreventionEnabledBeforeTest()
+{
+    static std::optional<bool> enabled;
+    return enabled;
+}
+
 Ref<Internals> Internals::create(Document& document)
 {
     return adoptRef(*new Internals(document));
@@ -655,6 +661,9 @@ void Internals::resetToConsistentState(Page& page)
     page.setPagination(Pagination());
 
     CachedMatchFinder::setMaximumRunCountForTesting(std::nullopt);
+
+    if (auto enabled = std::exchange(trackingPreventionEnabledBeforeTest(), std::nullopt))
+        DeprecatedGlobalSettings::setTrackingPreventionEnabled(*enabled);
 
     page.setDefersLoading(false);
     page.setResourceCachingDisabledByWebInspector(false);
@@ -6869,6 +6878,9 @@ String Internals::resourceLoadStatisticsForURL(const DOMURL& url)
 
 void Internals::setTrackingPreventionEnabled(bool enable)
 {
+    auto& enabledBeforeTest = trackingPreventionEnabledBeforeTest();
+    if (!enabledBeforeTest)
+        enabledBeforeTest = DeprecatedGlobalSettings::trackingPreventionEnabled();
     DeprecatedGlobalSettings::setTrackingPreventionEnabled(enable);
 }
 
