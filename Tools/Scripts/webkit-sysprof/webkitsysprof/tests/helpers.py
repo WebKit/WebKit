@@ -1,8 +1,7 @@
-"""What the tests build captures from, and read what a command printed with.
+"""Builders for synthetic captures and a test case that captures output.
 
-A synthetic mark is shaped like what the parser produces: it carries no begin
-time, so everything derives one from `end_time` and `duration`, and it names the
-process that emitted it by pid as well as by kind.
+Synthetic marks are shaped like parser output. They carry no begin time, only
+`end_time` and `duration`, and name their process by pid and by group.
 """
 
 import builtins
@@ -22,12 +21,10 @@ _ELF_STT_FUNC = 2
 
 
 def build_minimal_elf(symbols, code_size=0x2000):
-    """An ELF64 LE file with one R+X PT_LOAD segment covering file offset 0 up to
-    the end of `code_size` bytes of (placeholder, all-zero) code, mapped at vaddr 0,
-    so a file offset and the vaddr it translates to are the same number. The code
-    is covered by a ".text" section (sysprof's own ELF reader only ever trusts a
-    symbol defined in a section literally named that), and a .symtab names
-    `symbols`, each given as (name, file_offset, size), pointing into it.
+    """An ELF64 LE file with one R+X PT_LOAD at vaddr 0, so file offsets equal vaddrs.
+
+    The zeroed code lies in a ".text" section, the only section sysprof trusts
+    symbols in. `symbols` are (name, file_offset, size) tuples.
     """
     code_offset = _ELF_EHDR_SIZE + _ELF_PHDR_SIZE
     code = b"\x00" * code_size
@@ -40,8 +37,7 @@ def build_minimal_elf(symbols, code_size=0x2000):
         strtab += name.encode() + b"\x00"
     strtab_offset = code_offset + len(code)
 
-    # Index 0 is always the reserved null section; .text is index 1, so that is
-    # what the symbols built below point their st_shndx at.
+    # Index 0 is the null section, so .text is index 1.
     section_names = [b"", b".text", b".symtab", b".strtab", b".shstrtab"]
     text_index = 1
     shstrtab = b"\x00".join(section_names) + b"\x00"
@@ -117,15 +113,116 @@ def build_minimal_elf(symbols, code_size=0x2000):
     return bytes(ehdr) + phdr + code + strtab + shstrtab + symtab + sections
 
 
-def mark(name, begin_msec, end_msec, group="WebKit (Web)", pid=1):
+def mark(name, begin_msec, end_msec, group="WebKit (Web)", pid=1, message=""):
     return {
         "group": group,
         "pid": pid,
         "name": name,
-        "message": "",
+        "message": message,
         "duration": msec_to_nsec(end_msec - begin_msec),
         "end_time": msec_to_nsec(end_msec),
     }
+
+
+def instant(name, msec, message="", pid=1, group="WebKit (Web)"):
+    return mark(name, msec, msec, group=group, pid=pid, message=message)
+
+
+def _reasons_text(reasons):
+    return ", ".join(reasons)
+
+
+def composition(begin, end, reasons=("Animation",), pid=1, frame_at=None):
+    """A RenderLayerTree holding a DidRenderFrame, a flush and a paint.
+
+    The frame is at the midpoint unless `frame_at` is given. The flush and paint
+    split the time before it. `reasons=None` gives an empty message, as before reasons were traced.
+    """
+    frame = (begin + end) / 2 if frame_at is None else frame_at
+    message = "" if reasons is None else "reasons: " + _reasons_text(reasons)
+    middle = begin + (frame - begin) / 2
+    return [
+        mark("RenderLayerTree", begin, end, pid=pid),
+        instant("DidRenderFrame", frame, message, pid=pid),
+        mark("FlushCompositingState", begin, middle, pid=pid),
+        mark("PaintToGLContext", middle, frame, pid=pid),
+    ]
+
+
+def scheduled(msec, state, waiting=False, timer=False, reasons=(), pid=1):
+    """A ScheduleComposition, worded as ThreadedCompositor.cpp words it."""
+    return instant(
+        "ScheduleComposition",
+        msec,
+        "reasons: {}, state: {}, waiting for tiles: {}, render timer active: {}".format(
+            _reasons_text(reasons),
+            state,
+            "yes" if waiting else "no",
+            "yes" if timer else "no",
+        ),
+        pid=pid,
+    )
+
+
+def frame_complete(msec, state, waiting=False, reasons=(), pid=1):
+    """A FrameComplete, worded as ThreadedCompositor.cpp words it."""
+    return instant(
+        "FrameComplete",
+        msec,
+        "reasons: {}, state: {}, waiting for tiles: {}".format(
+            _reasons_text(reasons), state, "yes" if waiting else "no"
+        ),
+        pid=pid,
+    )
+
+
+def requested(msec, pid=1):
+    return instant("RequestCompositionForRenderingUpdate", msec, pid=pid)
+
+
+def rendering_update(begin, end, pid=1):
+    return mark("LayerTreeHostRenderingUpdate", begin, end, pid=pid)
+
+
+def presented(msec, interval=16.667):
+    return instant(
+        "WaylandFramePresented",
+        msec,
+        "sequence=1, latency=1.000 ms, refreshInterval={} ms".format(interval),
+        pid=0,
+        group="WebKit (UI)",
+    )
+
+
+def discarded(msec):
+    return instant("WaylandFrameDiscarded", msec, pid=0, group="WebKit (UI)")
+
+
+def steady_animation(begin, frames, period=16.0, pid=1):
+    """An accelerated animation compositing once per `period`.
+
+    Each paint requests the next frame, so every frame but the last holds an
+    InProgress ScheduleComposition and ends in a ScheduledWhileInProgress
+    FrameComplete, which restarts the timer.
+    """
+    marks = [scheduled(begin - 0.5, "Idle", reasons=("Animation",), pid=pid)]
+    for i in range(frames):
+        t = begin + i * period
+        marks += composition(t, t + 1, ("Animation",), pid=pid)
+        last = i == frames - 1
+        if not last:
+            marks.append(
+                scheduled(t + 0.3, "InProgress", reasons=("Animation",), pid=pid)
+            )
+        marks.append(
+            frame_complete(
+                t + period - 0.5,
+                "InProgress" if last else "ScheduledWhileInProgress",
+                reasons=() if last else ("Animation",),
+                pid=pid,
+            )
+        )
+    return marks
 
 
 def stacktrace(pid, tid, addresses, time_msec=0):
@@ -173,12 +270,9 @@ def sysprof_data(marks, begin_msec=0, end_msec=1000):
 
 
 class approx:
-    """A number equal to another within a tolerance, relative unless `abs` says so.
+    """A number compared within a tolerance, relative unless `abs` is given.
 
-    Durations are divided and summed before they are compared, so comparing them
-    exactly would test the rounding of binary floating point rather than the
-    analysis. Works inside a list or a dict too, since a float compared against one
-    of these defers to it.
+    Works inside lists and dicts, since float comparison defers to it.
     """
 
     def __init__(self, value, rel=1e-6, abs=None):
@@ -193,11 +287,7 @@ class approx:
 
 
 class SysprofTestCase(unittest.TestCase):
-    """A test reading back what the command under it printed.
-
-    OutputCapture keeps stdout and the root logger to itself, so that a command
-    configuring logging does not outlive the test that ran it.
-    """
+    """Captures stdout and the root logger so logging setup does not leak between tests."""
 
     def setUp(self):
         capture = OutputCapture()

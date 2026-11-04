@@ -22,38 +22,26 @@ _FRAME_CTRSET = 9
 _FRAME_MARK = 10
 _FRAME_FILE_CHUNK = 13
 
-# Frame types considered "data" by libsysprof when guessing a capture's end
-# time (everything except TIMESTAMP, CTRDEF, FILE_CHUNK, JITMAP, METADATA,
-# and OVERLAY).
+# Frame types libsysprof counts when guessing a capture's end time: all but
+# TIMESTAMP, CTRDEF, FILE_CHUNK, JITMAP, METADATA and OVERLAY.
 _DATA_FRAME_TYPES = {2, 3, 4, 5, 6, 9, 10, 12, 14, 16, 17}
 
 _COUNTER_TYPE_DOUBLE = 1
 
-# sysprof itself resolves every sample against the binaries it saw mapped while
-# recording, and bundles the result into the capture as a file named this (usually
-# gzip-compressed, hence the two names) so a capture stays symbolizable without the
-# original binaries. See SysprofPackedSymbol in libsysprof for the record layout this
-# decodes: a table of (addr_begin, addr_end, pid, name_offset, tag_offset, padding)
-# sorted by (pid, addr_begin), followed by the strings the offsets point into.
+# Symbols sysprof resolved at record time, bundled (usually gzipped) into the capture.
+# Layout is SysprofPackedSymbol: (addr_begin, addr_end, pid, name_offset, tag_offset,
+# padding) records sorted by (pid, addr_begin), then the string table.
 _SYMBOLS_FILE_NAMES = ("__symbols__.gz", "__symbols__")
 _PACKED_SYMBOL_SIZE = 32
 
-# The recorder also embeds a copy of /proc/kallsyms, the running kernel's own symbol
-# table, in the same file-chunked, usually-gzipped way, which is how a kernel frame
-# (e.g. a syscall's stack reaching into a driver) gets a real name like drm_ioctl
-# instead of a bare address: unlike the bundled userspace symbols above, sysprof does
-# not resolve these into "__symbols__" itself, so this file is decoded independently.
+# The recording kernel's /proc/kallsyms, bundled the same way. sysprof does not fold
+# kernel symbols into __symbols__, so it is decoded separately.
 _KALLSYMS_FILE_NAMES = ("/proc/kallsyms.gz", "/proc/kallsyms")
 
 _BUNDLED_FILE_NAMES = _SYMBOLS_FILE_NAMES + _KALLSYMS_FILE_NAMES
 
-# sysprof-cli also bundles its own (i.e. the recording machine's) /proc/mounts,
-# and, per profiled process, that process's own /proc/<pid>/mountinfo -- together
-# enough to translate a path recorded inside a container's bind mount (e.g.
-# Tools/Scripts/container-sdk-rootdir-wrapper's /sdk/webkit) back into a real path
-# on this machine, the same way libsysprof's own SysprofMountNamespace does (see
-# ../mounts). Unlike the fixed names above, a mountinfo path carries the pid it
-# belongs to, so it is matched by pattern rather than by an exact name.
+# The recording machine's /proc/mounts and each profiled process's
+# /proc/<pid>/mountinfo, used to translate container paths (see ../mounts).
 _PROC_MOUNTS_FILE_NAMES = ("/proc/mounts.gz", "/proc/mounts")
 _MOUNTINFO_PATH_RE = re.compile(r"^/proc/(\d+)/mountinfo(\.gz)?$")
 
@@ -180,9 +168,8 @@ def _index_frames(data: mmap.mmap) -> List[Tuple[int, int, int, int]]:
 def _parse_mark(
     data: mmap.mmap, offset: int, length: int, duration: int, end_time: int
 ) -> Dict[str, Any]:
-    # The frame header is len, cpu, pid, time, so the process that emitted the mark
-    # is four bytes in. The group names its kind, e.g. "WebKit (Web)", which two
-    # processes of one kind share.
+    # Frame header is len, cpu, pid, time. The group (e.g. "WebKit (Web)") is shared
+    # by processes of one kind, so the pid tells them apart.
     (pid,) = struct.unpack_from("<i", data, offset + 4)
     group = _read_cstring(data, offset + 32, 24) or ""
     name = _read_cstring(data, offset + 56, 40) or ""
@@ -200,18 +187,12 @@ def _parse_mark(
 def _parse_sample(
     data: mmap.mmap, offset: int, length: int, time: int
 ) -> Dict[str, Any]:
-    # SysprofCaptureSample: frame, n_addrs:16 + padding:16, tid, addrs[n_addrs]. The
-    # addresses are the raw stack the profiler unwound, innermost frame first, exactly
-    # as libsysprof wrote them; nothing here resolves or reorders them.
+    # SysprofCaptureSample: frame, n_addrs:16 + padding:16, tid, addrs[n_addrs].
+    # Addresses are the raw stack, innermost frame first.
     (pid,) = struct.unpack_from("<i", data, offset + 4)
     n_addrs_and_padding, tid = struct.unpack_from("<Ii", data, offset + 24)
     n_addrs = n_addrs_and_padding & 0xFFFF
-    # n_addrs is a plain field of the frame, not implied by its (8-byte-aligned)
-    # length, so a truncated or corrupted capture could declare more addresses than
-    # the frame actually has room for; reading that many would run into whatever
-    # comes after it in the mmap instead of raising. Clamping to what the frame's
-    # own length allows keeps a bad frame from being misread as a bogus stack
-    # rather than simply a short one.
+    # Clamp to the frame length so a corrupt n_addrs cannot read into the next frame.
     n_addrs = min(n_addrs, max(0, (length - 32) // 8))
     addresses = list(struct.unpack_from(f"<{n_addrs}Q", data, offset + 32))
     return {"pid": pid, "tid": tid, "time": time, "addresses": addresses}
@@ -223,9 +204,7 @@ def _parse_map(
     length: int,
     maps_by_pid: Dict[int, List[Dict[str, Any]]],
 ) -> None:
-    # SysprofCaptureMap: frame, start, end, offset, inode, filename. One of these is
-    # written per file mapped into a process, and is what a raw stack address is
-    # resolved against: which file covered it, and where within that file.
+    # SysprofCaptureMap: frame, start, end, offset, inode, filename.
     (pid,) = struct.unpack_from("<i", data, offset + 4)
     start, end, file_offset, inode = struct.unpack_from("<QQQQ", data, offset + 24)
     filename = _read_cstring(data, offset + 56, length - 56) or ""
@@ -243,21 +222,15 @@ def _parse_map(
 def _parse_process(
     data: mmap.mmap, offset: int, length: int, processes: Dict[int, str]
 ) -> None:
-    # SysprofCaptureProcess: frame, cmdline. Frames are processed in time order, so a
-    # pid seen more than once (e.g. after it re-execs) keeps its most recent cmdline.
+    # SysprofCaptureProcess: frame, cmdline. Frames arrive in time order, so a pid
+    # that re-execs keeps its latest cmdline.
     (pid,) = struct.unpack_from("<i", data, offset + 4)
     processes[pid] = _read_cstring(data, offset + 24, length - 24) or ""
 
 
 def _is_wanted_bundled_path(path: str) -> bool:
-    """Whether `path` names one of the files this reader ever buffers: the
-    bundled-symbols and kallsyms files (see _BUNDLED_FILE_NAMES), the recording
-    machine's own /proc/mounts, or some profiled process's own
-    /proc/<pid>/mountinfo. Everything else sysprof-cli bundles (mountinfo.gz for
-    a pid never profiled long enough to matter, glxinfo.gz, cpuinfo.gz, a
-    container's /run/.containerenv, ...) is of no use here and is left unread
-    rather than buffered for nothing.
-    """
+    """Whether `path` is a bundled file this reader uses. Others (glxinfo.gz,
+    cpuinfo.gz, ...) are skipped rather than buffered."""
     return (
         path in _BUNDLED_FILE_NAMES
         or path in _PROC_MOUNTS_FILE_NAMES
@@ -273,21 +246,16 @@ def _accumulate_bundled_file_chunk(
     completed_paths: set,
 ) -> None:
     # SysprofCaptureFileChunk: frame, is_last:1 + padding1:15 + len:16, path[256],
-    # data[len]. A file this large arrives split across several of these, all
-    # sharing one path, with the last one flagged; a path this reader has no use
-    # for (see _is_wanted_bundled_path) is skipped rather than buffered. A path
-    # already completed (its is_last chunk already seen) is left alone rather than
-    # appended to further: sysprof only ever bundles a given path once per
-    # capture, so further chunks under the same name would be a second, distinct
-    # file this reader has no way to tell apart from the first, and concatenating
-    # the two would just corrupt both.
+    # data[len]. A file spans several chunks with the last one flagged. Chunks after
+    # is_last would be a second file of the same name, so they are ignored.
     (is_last_and_len,) = struct.unpack_from("<I", data, offset + 24)
     is_last = bool(is_last_and_len & 0x1)
     chunk_len = (is_last_and_len >> 16) & 0xFFFF
     path = _read_cstring(data, offset + 28, 256) or ""
     if path not in completed_paths and _is_wanted_bundled_path(path):
         chunk_start = offset + 284
-        chunk = bytes(data[chunk_start: chunk_start + chunk_len])
+        chunk_end = chunk_start + chunk_len
+        chunk = bytes(data[chunk_start:chunk_end])
         chunks_by_path.setdefault(path, []).append(chunk)
         if is_last:
             completed_paths.add(path)
@@ -300,8 +268,7 @@ def _decode_bundled_file(
         try:
             return gzip.decompress(b"".join(chunks_by_path[gz_name]))
         except OSError:
-            # A capture cut off mid-write can leave a truncated, unreadable blob;
-            # that is no different from one that never bundled the file at all.
+            # Truncated blob from a capture cut off mid-write.
             return None
     if chunks_by_path.get(raw_name):
         return b"".join(chunks_by_path[raw_name])
@@ -346,11 +313,8 @@ def _decode_mounts_by_pid(
 
 
 def _parse_kallsyms(blob: bytes) -> List[Tuple[int, str]]:
-    # Each line of /proc/kallsyms is "<address> <type letter> <name> [module]"; only
-    # the address and name matter here. kallsyms often lists a run of aliases at the
-    # very same address (a function and the section label it starts, say), and
-    # keeping only the first of a run, as sysprof itself does, is enough to resolve
-    # a stack address to *a* name for that address.
+    # Lines are "<address> <type> <name> [module]". Like sysprof, keep only the first
+    # of several aliases at one address.
     entries: List[Tuple[int, str]] = []
     last_address: Optional[int] = None
     for line in blob.decode("utf-8", errors="replace").splitlines():
@@ -381,8 +345,7 @@ def _parse_packed_symbols(blob: bytes) -> Dict[int, List[Tuple[int, int, str]]]:
             break
         offset += _PACKED_SYMBOL_SIZE
 
-        # sysprof terminates the table with one record of all zeroes; nothing
-        # meaningful follows it (the trailing bytes are the string table).
+        # An all-zero record ends the table. The string table follows.
         if addr_begin == 0 and addr_end == 0 and pid == 0 and name_offset == 0:
             break
 
@@ -390,15 +353,9 @@ def _parse_packed_symbols(blob: bytes) -> Dict[int, List[Tuple[int, int, str]]]:
         if not name:
             continue
 
-        # sysprof itself carries this separately as the symbol's "nick" (e.g. which
-        # library a libc/GLib/Gio function belongs to; see
-        # sysprof_bundled_symbolizer_symbolize()'s use of tag_offset), shown
-        # alongside the name rather than as part of it. Folding it in here as
-        # "name (nick)" keeps that information rather than silently dropping it,
-        # without needing every other place that reads a bundled symbol's name to
-        # know about a second field. An empty tag string is sysprof's own
-        # convention for "no nick" (offset 0 conventionally names the empty
-        # string), so it is treated exactly like a zero offset.
+        # The tag is sysprof's "nick" (e.g. the owning library, see
+        # sysprof_bundled_symbolizer_symbolize()), folded in as "name (nick)".
+        # An empty tag means no nick.
         tag = (
             _read_cstring(blob, tag_offset, len(blob) - tag_offset)
             if tag_offset

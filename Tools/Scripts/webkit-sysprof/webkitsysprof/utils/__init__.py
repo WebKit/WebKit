@@ -6,6 +6,7 @@ import re
 import statistics
 from typing import (
     Any,
+    Callable,
     Dict,
     Iterable,
     List,
@@ -37,21 +38,20 @@ def msec_to_nsec(msec: int) -> int:
     return msec * NSEC_PER_MSEC
 
 
-# A timespan bound is a plain number of milliseconds, nothing int() would also take.
-# Ended with \Z rather than $, which would let a trailing newline through.
+# Plain milliseconds only. \Z because $ lets a trailing newline through.
 MILLISECONDS_RE = re.compile(r"^\d+\Z")
 
 
 class UsageError(ValueError):
-    """The user asked for something the tool cannot do, e.g. a backwards timespan.
+    """A request the tool cannot serve, e.g. a backwards timespan.
 
-    Told apart from the other ValueErrors so that the command line can report it as
-    a usage error while a broken capture still raises where it broke.
+    Separate from other ValueErrors so the CLI reports it as a usage error while a
+    broken capture still raises where it broke.
     """
 
 
 def mark_begin(mark: Dict[str, Any]) -> int:
-    """Marks carry an end time and a duration, so a begin time has to be derived."""
+    """Marks carry only an end time and a duration."""
     return int(mark["end_time"] - mark["duration"])
 
 
@@ -64,9 +64,7 @@ def parse_timespan_argument(arg: str) -> Tuple[Optional[int], Optional[int]]:
     def parse_bound(value: str) -> Optional[int]:
         if value == "":
             return None
-        # Digits and nothing else: int() would take " 5", "+5" and "1_000" too, and
-        # a timespan the tool reads as something other than what was typed is what
-        # rejecting a malformed one is meant to prevent.
+        # int() would also take " 5", "+5" and "1_000".
         if not MILLISECONDS_RE.match(value):
             raise UsageError(f"timespan bound is no number of milliseconds: {value}")
         return int(value)
@@ -82,9 +80,8 @@ def parse_timespan_argument(arg: str) -> Tuple[Optional[int], Optional[int]]:
     if timespan_begin is not None and timespan_end is not None:
         if timespan_begin > timespan_end:
             raise UsageError(f"timespan begins after it ends: {arg}")
-        # A window of no length encloses no data and is no duration to divide by,
-        # so every rate taken over it is unknown. Rejected rather than reported as
-        # a row of zeroes, which reads as a measurement that was made.
+        # No duration to divide rates by. Rejected rather than reported as zeroes
+        # that look measured.
         if timespan_begin == timespan_end:
             raise UsageError(f"timespan is of no length: {arg}")
 
@@ -95,11 +92,7 @@ def parse_timespan_argument(arg: str) -> Tuple[Optional[int], Optional[int]]:
 
 
 def sysprof_data_with_marks_by_name(sysprof_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Reshape parsed data so that marks are grouped by name.
-
-    The groups keep the order the marks were parsed in, so the callers that walk
-    them in time order sort them the way they need. The input is left untouched.
-    """
+    """Group the marks by name, in parse order. The input is left untouched."""
     document = dict(sysprof_data["document"])
     document["timespan"] = {
         "begin": sysprof_data["document"]["timespan"][0],
@@ -108,8 +101,7 @@ def sysprof_data_with_marks_by_name(sysprof_data: Dict[str, Any]) -> Dict[str, A
     marks_by_name: Dict[str, List[Dict[str, Any]]] = collections.defaultdict(list)
     for mark in sysprof_data["marks"]:
         marks_by_name[mark["name"]].append(mark)
-    # Handed out as a plain dict, so that a name the capture never held is a
-    # KeyError for the callers that subscript it rather than an empty list.
+    # A plain dict, so subscripting a name the capture lacks is a KeyError.
     return {"document": document, "marks": dict(marks_by_name)}
 
 
@@ -121,10 +113,7 @@ def check_timespan_holds_data(
 ) -> None:
     """Reject a timespan the caller asked for that the capture cannot answer."""
     if capture_begin >= capture_end:
-        # The capture holds no range for a window to miss, so there is nothing the
-        # caller could have asked for that would be right, and blaming the window
-        # for what the capture lacks would point at the wrong thing. Say so, so
-        # that the empty report below carries its reason with it.
+        # Not the window's fault, so warn to explain the empty report.
         logging.warning(
             "The capture spans no time (begins at %d, ends at %d), so the report "
             "has no rate to give.",
@@ -142,27 +131,38 @@ def check_timespan_holds_data(
         )
 
 
+def clamped_timespan(
+    sysprof_data: Dict[str, Any],
+    timespan_begin: Optional[int],
+    timespan_end: Optional[int],
+) -> Tuple[int, int]:
+    """The --timespan window clamped to the capture's timespan.
+
+    So a window past the capture does not stretch the rate duration.
+    """
+    begin = sysprof_data["document"]["timespan"]["begin"]
+    end = sysprof_data["document"]["timespan"]["end"]
+    if timespan_begin is not None:
+        begin = max(begin, timespan_begin)
+    if timespan_end is not None:
+        end = min(end, timespan_end)
+    return begin, end
+
+
 def trim_marks_by_name_to_timespan(
     sysprof_data: Dict[str, Any],
     timespan_begin: Optional[int],
     timespan_end: Optional[int],
 ) -> Dict[str, Any]:
-    """Narrow data grouped by sysprof_data_with_marks_by_name() to a timespan.
+    """Narrow data from sysprof_data_with_marks_by_name() to a timespan.
 
-    Marks that cross a boundary are dropped, since only part of them happened
-    within the window. The input is left untouched, so its callers keep the
-    untrimmed data, which the frame cycles need.
+    Marks crossing a boundary are dropped. The input is left untouched, since
+    compositions and rendering updates need the untrimmed data.
     """
-    # Narrowed even where no bound was given, since the capture holds marks that
-    # begin before its own timespan does, and the frame cycles are cut to that
-    # timespan either way.
-    timespan = dict(sysprof_data["document"]["timespan"])
-    # Clamped to the capture, so that a window reaching past it does not stretch
-    # the analyzed duration that every rate is divided by.
-    if timespan_begin is not None:
-        timespan["begin"] = max(timespan_begin, timespan["begin"])
-    if timespan_end is not None:
-        timespan["end"] = min(timespan_end, timespan["end"])
+    # Narrowed even without bounds, as the capture holds marks that begin before
+    # its own timespan.
+    begin, end = clamped_timespan(sysprof_data, timespan_begin, timespan_end)
+    timespan = {"begin": begin, "end": end}
 
     def mark_in_timespan(mark: Dict[str, Any]) -> bool:
         return (
@@ -182,11 +182,7 @@ def trim_marks_by_name_to_timespan(
 
 
 def merged_spans(spans: Iterable[Tuple[int, int]]) -> List[Tuple[int, int]]:
-    """The [begin, end) spans merged where they overlap or touch, in order.
-
-    Empty spans are dropped, so that a mark clipped to nothing does not become a
-    span of no length between two real ones.
-    """
+    """The [begin, end) spans merged where they overlap or touch, empties dropped."""
     merged: List[Tuple[int, int]] = []
     for begin, end in sorted(spans):
         if end <= begin:
@@ -209,8 +205,7 @@ def sample_statistics(
         "max": max(values),
         "mean": statistics.mean(values),
         "stddev": statistics.stdev(values) if len(values) > 1 else 0,
-        # Both of these sort what they are given, so handing them a sorted sequence
-        # would add a sort rather than save the two they do.
+        # Both sort internally, so presorting would not save anything.
         "median": statistics.median(values),
         "percentiles": percentiles(values, wanted),
     }
@@ -221,22 +216,15 @@ def percentiles(
     wanted: Sequence[int],
     method: Literal["inclusive", "exclusive"] = "inclusive",
 ) -> Dict[str, float]:
-    """Percentiles interpolated between the data points, empty below two of them.
+    """Interpolated percentiles, empty below two samples (quantiles() raises
+    there before Python 3.13). Keyed by str so the report round-trips JSON.
 
-    Keyed by the percentile as a string, the shape json.dumps() turns an int key
-    into anyway, so that a report read back from JSON is the report written.
-
-    The inclusive method stays between the smallest and the largest sample, while
-    the exclusive one extrapolates past them: on few samples it reports a P25 below
-    the minimum, a P99 above the maximum and negative durations. Reporting the
-    samples wants the former, estimating the spread of what they were drawn from
-    wants the latter. Both need two data points, and below that quantiles() raises
-    before Python 3.13.
+    Inclusive stays within the sample range, exclusive extrapolates past it and
+    can report values below the minimum or above the maximum on few samples.
     """
     for percentile in wanted:
         if not 1 <= percentile <= 99:
             raise ValueError(f"no percentile between 1 and 99: {percentile}")
-    # Before the sort quantiles() does, which nothing would read.
     if not wanted:
         return {}
     if len(values) < 2:
@@ -246,14 +234,13 @@ def percentiles(
 
 
 def mark_pid(mark: Dict[str, Any]) -> int:
-    """The process a mark was emitted by, as the capture records it."""
     return int(mark.get("pid", 0))
 
 
 def marks_by_process(
-    marks: Sequence[Dict[str, Any]],
+    marks: Iterable[Dict[str, Any]],
 ) -> Dict[int, List[Dict[str, Any]]]:
-    """The marks grouped by the process they came from, in process order."""
+    """The marks, or anything with a pid, grouped by process in process order."""
     by_pid: Dict[int, List[Dict[str, Any]]] = collections.defaultdict(list)
     for mark in marks:
         by_pid[mark_pid(mark)].append(mark)
@@ -261,29 +248,30 @@ def marks_by_process(
 
 
 class MarkIndex:
-    """Marks ordered by begin time, for lookup within a window.
+    """Marks of one or several names ordered by begin time, for window lookups.
 
-    Holds whatever marks it is given, of one name or of many, so that a caller
-    reading several names as one timeline indexes them once.
+    `begin` and `end` read the times of other items, such as compositions.
     """
 
-    def __init__(self, marks: Sequence[Dict[str, Any]]) -> None:
-        self._marks = sorted(marks, key=mark_begin)
-        self._begins = [mark_begin(mark) for mark in self._marks]
-        # The latest end among the first i marks. Every mark still running at a
-        # given time covers that time onwards, so their union is one span reaching
-        # to the latest of their ends, and that is all this has to answer.
+    def __init__(
+        self,
+        marks: Sequence[Any],
+        begin: Callable[[Any], int] = mark_begin,
+        end: Callable[[Any], int] = lambda mark: mark["end_time"],
+    ) -> None:
+        self._marks = sorted(marks, key=begin)
+        self._end = end
+        self._begins = [begin(mark) for mark in self._marks]
+        # Latest end among the first i marks. Marks still running at a time form
+        # one span from it to their latest end.
         self._ends_until: List[int] = list(
-            itertools.accumulate((mark["end_time"] for mark in self._marks), max)
+            itertools.accumulate((end(mark) for mark in self._marks), max)
         )
 
     def spans_within(self, begin: int, end: int) -> List[Tuple[int, int]]:
-        """The [begin, end) spans of time one of these marks was running.
+        """Unmerged [begin, end) spans where a mark runs, in begin order.
 
-        Unmerged and in begin order. What began before the window and had not ended
-        by then counts, since a composition of an earlier cycle is what a cycle
-        waiting on the compositor is running, and all of those together reach from
-        the start of the window to the latest of their ends.
+        Marks begun before the window and still running form one leading span.
         """
         first = bisect.bisect_left(self._begins, begin)
         spans = []
@@ -293,60 +281,40 @@ class MarkIndex:
         for index in range(first, len(self._marks)):
             if self._begins[index] >= end:
                 break
-            spans.append(
-                (self._begins[index], min(self._marks[index]["end_time"], end))
-            )
+            spans.append((self._begins[index], min(self._end(self._marks[index]), end)))
         return spans
 
-    def last_end_of_marks_beginning_within(self, begin: int, end: int) -> Optional[int]:
-        """End of the last mark beginning within [begin, end), None if there is none.
+    def marks_overlapping(self, begin: int, end: int) -> List[Any]:
+        """The marks running in [begin, end), in begin order.
 
-        The last end, not the first: marks nest, so the first one to end is not the
-        one compositing finished with. Indexing by end time instead has the mirror
-        problem, of returning a short mark of the next cycle when an enclosing mark
-        overruns this one.
-        """
-        first = bisect.bisect_left(self._begins, begin)
-        last = bisect.bisect_left(self._begins, end)
-        if first >= last:
-            return None
-        return max(self._marks[index]["end_time"] for index in range(first, last))
-
-    def marks_overlapping(self, begin: int, end: int) -> List[Dict[str, Any]]:
-        """The marks running at any point of [begin, end), in begin order.
-
-        Walked backwards from the last mark that began before the window, and
-        stopped where no earlier mark reaches into it, so the walk costs what
-        overlaps rather than everything that came before.
+        Walks back only while an earlier mark can still reach the window.
         """
         overlapping = []
         for index in reversed(range(bisect.bisect_left(self._begins, end))):
             if self._ends_until[index] <= begin:
                 break
-            if self._marks[index]["end_time"] > begin:
+            if self._end(self._marks[index]) > begin:
                 overlapping.append(self._marks[index])
         overlapping.reverse()
         return overlapping
 
 
+def mark_index_by_process(marks: Sequence[Dict[str, Any]]) -> Dict[int, MarkIndex]:
+    """A MarkIndex of the marks of each process."""
+    return {pid: MarkIndex(group) for pid, group in marks_by_process(marks).items()}
+
+
 def marks_in_time_order(
     sysprof_data: Dict[str, Any], mark_name: str
 ) -> List[Dict[str, Any]]:
-    """The marks of that name, ordered by when they ended.
-
-    The grouping keeps the marks in parse order, so every walk that depends on
-    time order sorts them here.
-    """
+    """The marks of that name, ordered by end time."""
     return sorted(
         sysprof_data["marks"].get(mark_name, []), key=lambda mark: mark["end_time"]
     )
 
 
 def intervals_between_marks(marks: Sequence[Dict[str, Any]]) -> List[float]:
-    """Times between the ends of consecutive marks, in milliseconds.
-
-    Takes the marks in time order, as marks_in_time_order() returns them.
-    """
+    """Milliseconds between the ends of consecutive marks, given in time order."""
     return [
         nsec_to_msec(marks[i]["end_time"] - marks[i - 1]["end_time"])
         for i in range(1, len(marks))
@@ -354,21 +322,15 @@ def intervals_between_marks(marks: Sequence[Dict[str, Any]]) -> List[float]:
 
 
 def display_refreshes(sysprof_data: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """The DisplayLinkUpdate marks of the capture, in time order.
+    """All DisplayLinkUpdate marks in time order.
 
-    All of them: the display links all live in the UI process, one per display, so
-    the marks of a capture are the refreshes of one process either way. Two displays
-    driven at once are merged, which no mark tells apart, and so is a link that
-    stopped and started again: the gap it leaves counts as one very long interval
-    between two refreshes.
+    The links all live in the UI process. Two displays at once merge
+    indistinguishably, and a stopped link leaves one very long interval.
     """
     return marks_in_time_order(sysprof_data, "DisplayLinkUpdate")
 
 
 def median_vblank_interval(refreshes: Sequence[Dict[str, Any]]) -> Optional[float]:
-    """Median time between display refreshes in milliseconds, None if unknown.
-
-    Takes the refreshes as display_refreshes() returns them.
-    """
+    """Median ms between display_refreshes(), None if unknown."""
     intervals = intervals_between_marks(refreshes)
     return statistics.median(intervals) if intervals else None

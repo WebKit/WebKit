@@ -1,4 +1,4 @@
-"""The helpers webkitsysprof.utils holds, which every command reads marks with."""
+"""Tests for webkitsysprof.utils."""
 
 import unittest
 
@@ -34,16 +34,14 @@ class UtilsTest(SysprofTestCase):
             ]
         )
 
-        # In begin order, and the long mark that began well before the window is
-        # found even though the walk back to it passes marks that end before it.
+        # In begin order. The enclosing mark is found past marks that end earlier.
         self.assertEqual(
             [found["name"] for found in index.marks_overlapping(*_window(30, 50))],
             ["Enclosing", "Inside"],
         )
 
     def test_a_mark_touching_a_window_at_its_edge_does_not_overlap_it(self):
-        # Half open at both ends, like every other window these are read through, so
-        # a mark of the neighbouring cycle stays out of this one.
+        # Windows are half open, keeping neighbouring rows' marks out.
         index = MarkIndex([mark("Before", 0, 10), mark("After", 20, 30)])
 
         self.assertEqual(index.marks_overlapping(*_window(10, 20)), [])
@@ -55,19 +53,19 @@ class UtilsTest(SysprofTestCase):
         self.assertEqual(
             merged_spans([(0, 5), (3, 8), (8, 9), (20, 25)]), [(0, 9), (20, 25)]
         )
-        # An empty span is no span at all, rather than one of no length in between.
+        # Empty spans are dropped.
         self.assertEqual(merged_spans([(5, 5), (10, 12)]), [(10, 12)])
         self.assertEqual(merged_spans([]), [])
 
     def test_a_timespan_bound_is_digits_and_nothing_else(self):
-        # int() would take every one of these and analyze a window nobody asked for.
+        # int() would accept most of these.
         for timespan in [
             "  5",
             "+5",
             "0-1_000",
             "5\n",
             "500-100",
-            # Of no length, so it encloses nothing between its bounds.
+            # Empty.
             "0-0",
             "500-500",
             "abc",
@@ -79,7 +77,7 @@ class UtilsTest(SysprofTestCase):
                 parse_timespan_argument(timespan)
 
     def test_percentiles_outside_the_range_of_the_quantiles_are_rejected(self):
-        # Percentile 0 used to index the list from the back and report P99 as P0.
+        # Percentile 0 used to index from the back and report P99 as P0.
         for percentile in [0, 100, -1]:
             with self.subTest(percentile=percentile), self.assertRaises(ValueError):
                 percentiles([1.0, 2.0, 3.0], [percentile])
