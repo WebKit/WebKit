@@ -44,6 +44,7 @@ TextStream& operator<<(TextStream& textStream, const QuirkBehavior& quirkBehavio
     printIfExists("userAgent"_s, quirkBehavior, &QuirkBehavior::userAgent);
     printIfExists("chromeCompatibilityVersion"_s, quirkBehavior, &QuirkBehavior::chromeCompatibilityVersion);
     printIfExists("cookieNames"_s, quirkBehavior, &QuirkBehavior::cookieNames);
+    printIfExists("styleSheet"_s, quirkBehavior, &QuirkBehavior::styleSheet);
     printIfExists("elementSelector"_s, quirkBehavior, &QuirkBehavior::elementSelector);
     printIfExists("documentSelector"_s, quirkBehavior, &QuirkBehavior::documentSelector);
     printIfExists("secondaryURL"_s, quirkBehavior, &QuirkBehavior::secondaryURL);

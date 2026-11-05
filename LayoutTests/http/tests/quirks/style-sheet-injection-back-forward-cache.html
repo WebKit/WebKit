@@ -1,0 +1,52 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="resources/style-sheet-injection.js"></script>
+</head>
+<body>
+<p id="target">Target</p>
+<pre id="output"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+let output = "";
+function log(message) { output += message + "\n"; }
+function flush() { document.getElementById("output").textContent = output; }
+
+window.addEventListener("pageshow", event => {
+    if (!event.persisted)
+        return;
+
+    const isSameDocumentRestoredNotReloaded = window.bfcacheMarker === 1;
+    log("Restored from the back/forward cache: " + isSameDocumentRestoredNotReloaded);
+    log(StyleSheetQuirkHelpers.state());
+    flush();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+window.addEventListener("load", () => {
+    if (!window.internals) {
+        log("FAIL: this test requires window.internals.");
+        flush();
+        testRunner.notifyDone();
+        return;
+    }
+
+    StyleSheetQuirkHelpers.installQuirk("*://127.0.0.1/*", "inject");
+    history.pushState({ }, "", "?inject");
+    log("Before leaving:\n" + StyleSheetQuirkHelpers.state() + "\n");
+    window.bfcacheMarker = 1;
+
+    setTimeout(() => {
+        location.href = "resources/page-cache-helper.html";
+    }, 0);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="resources/style-sheet-injection.js"></script>
+</head>
+<body>
+<p id="target">Target</p>
+<pre id="output"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let output = "";
+function log(message) { output += message + "\n"; }
+
+if (!window.internals)
+    log("FAIL: this test requires window.internals.");
+else {
+    StyleSheetQuirkHelpers.installQuirk("*://127.0.0.1/*", "inject");
+
+    log("Initial URL, which does not match:\n" + StyleSheetQuirkHelpers.state() + "\n");
+
+    history.pushState({ }, "", "?inject");
+    log("history.pushState() to ?inject:\n" + StyleSheetQuirkHelpers.state() + "\n");
+
+    history.pushState({ }, "", "?other");
+    log("history.pushState() to ?other:\n" + StyleSheetQuirkHelpers.state());
+}
+document.getElementById("output").textContent = output;
+</script>
+</body>
+</html>

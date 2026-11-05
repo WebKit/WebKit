@@ -3648,6 +3648,9 @@ void Document::didBecomeCurrentDocumentInFrame()
 
     if (isTopDocument() && m_quirks)
         m_quirks->determineRelevantQuirks();
+
+    if (m_frame && settings().needsSiteSpecificQuirks())
+        quirks().updateInjectedStyleSheets();
 }
 
 void Document::frameDestroyed()

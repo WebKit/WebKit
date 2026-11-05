@@ -905,6 +905,7 @@ TEST(ArgumentCoderQuirkTable, RoundTripsEveryField)
     behavior.userAgent = "userAgent"_s;
     behavior.chromeCompatibilityVersion = "123"_s;
     behavior.cookieNames = { "a"_s, "b"_s };
+    behavior.styleSheet = "body { color: red; }"_s;
     behavior.elementSelector = ".element"_s;
     behavior.documentSelector = "#document"_s;
     behavior.secondaryURL = { quirkMatchPattern("*://*.example.com/*"_s) };

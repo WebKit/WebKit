@@ -154,7 +154,8 @@ https://www.forbes.com/
 https://gizmodo.com/
     NeedsFullscreenDisplayNoneQuirk
 https://play.geforcenow.com/
-    NeedsGeforcenowWarningDisplayNoneQuirk
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: div.cdk-overlay-container, div.unsupported-scenario-container { display: none !important; }
 https://www.google.com/
     NeedsSingleOwnerMainFrameCNAMECloakingCookieCapQuirk
         secondaryURL: [*://*.youtube.com/*, *://*.google.com/*]

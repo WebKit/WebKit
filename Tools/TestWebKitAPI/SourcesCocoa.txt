@@ -282,6 +282,7 @@ Tests/WebKit/WKWebView/ProvisionalURLNotChange.mm @nonARC
 Tests/WebKit/WKWebView/Proxy.mm @nonARC
 Tests/WebKit/WKWebView/PushAPI.mm @nonARC
 Tests/WebKit/WKWebView/QuickLook.mm @nonARC
+Tests/WebKit/WKWebView/QuirksStyleSheetInjection.mm @nonARC
 Tests/WebKit/WKWebView/QuirksURLChange.mm @nonARC
 Tests/WebKit/WKWebView/ReloadWithDifferingInitialScale.mm @nonARC
 Tests/WebKit/WKWebView/RemoteObjectRegistry.mm @nonARC
