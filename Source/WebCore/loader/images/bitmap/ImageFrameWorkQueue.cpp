@@ -112,17 +112,10 @@ void ImageFrameWorkQueue::start()
             }
         }
 
-<<<<<<< HEAD:Source/WebCore/loader/images/bitmap/ImageFrameWorkQueue.cpp
-        if (RefPtr protectedRunLoop = weakRunLoop.get()) {
-            // Ensure destruction happens on creation thread.
-            callOnRunLoop(*protectedRunLoop, [protectedThis = WTF::move(protectedThis), weakRunLoop = WTF::move(weakRunLoop), protectedWorkQueue = WTF::move(protectedWorkQueue), protectedSource = WTF::move(protectedSource)] mutable { });
-        }
-=======
         // Ensure destruction happens on creation thread.
-        callOnMainThread([protectedThis = WTF::move(protectedThis), protectedWorkQueue = WTF::move(protectedWorkQueue), protectedSource = WTF::move(protectedSource)
+        callOnMainThread([protectedThis = [protectedThis = WTF::move(protectedThis), weakRunLoop = WTF::move(weakRunLoop), protectedWorkQueue = WTF::move(protectedWorkQueue), protectedSource = WTF::move(protectedSource)
             , protectedDecoder = WTF::move(protectedDecoder)
             ] () mutable { });
->>>>>>> 962f99980ad4 (Heap UAF in RemoteImageDecoderAVFManager::m_remoteImageDecoders):Source/WebCore/platform/graphics/ImageFrameWorkQueue.cpp
     });
 }
 
