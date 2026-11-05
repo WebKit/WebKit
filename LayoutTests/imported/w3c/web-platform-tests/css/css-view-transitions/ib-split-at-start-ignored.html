@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html class=reftest-wait>
+<title>View transitions: ib split fragmented elements skipped</title>
+<link rel="help" href="https://www.w3.org/TR/css-view-transitions-1/">
+<link rel="author" href="mailto:mattwoodrow@apple.com">
+<link rel="match" href="ib-split-at-start-ignored-ref.html">
+
+<script src="/common/reftest-wait.js"></script>
+<style>
+#target {
+  view-transition-name: target;
+}
+#inner {
+  width: 200px;
+  height: 200px;
+  background: red;
+}
+
+::view-transition {
+  background: pink;
+}
+::view-transition-group(root) {
+  animation-duration: 500s;
+  visibility: hidden;
+}
+::view-transition-group(target) {
+  border: 1px solid black;
+}
+</style>
+<span id=target>
+  <div id=inner></div>
+</span>
+
+<script>
+failIfNot(document.startViewTransition, "Missing document.startViewTransition");
+
+function runTransition() {
+  document.startViewTransition().ready.then(takeScreenshot);
+}
+
+requestAnimationFrame(() => requestAnimationFrame(runTransition))
+</script>
