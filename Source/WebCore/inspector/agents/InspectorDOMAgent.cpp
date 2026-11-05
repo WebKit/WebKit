@@ -3215,22 +3215,12 @@ NODELETE static Inspector::Protocol::DOM::VideoProjectionMetadataKind videoProje
 }
 #endif
 
-Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> InspectorDOMAgent::getMediaStats(Inspector::Protocol::DOM::NodeId nodeId)
-{
 #if ENABLE(VIDEO)
-    Inspector::Protocol::ErrorString errorString;
-
-    RefPtr element = assertElement(errorString, nodeId);
-    if (!element)
-        return makeUnexpected(errorString);
-
-    RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(element);
-    if (!mediaElement)
-        return makeUnexpected("Node for given nodeId is not a media element"_s);
-
+Ref<Inspector::Protocol::DOM::MediaStats> InspectorDOMAgent::buildMediaStats(HTMLMediaElement& mediaElement)
+{
     auto stats = Inspector::Protocol::DOM::MediaStats::create().release();
 
-    auto quality = mediaElement->getVideoPlaybackQuality();
+    auto quality = mediaElement.getVideoPlaybackQuality();
     auto jsonQuality = Inspector::Protocol::DOM::VideoPlaybackQuality::create()
         .setTotalVideoFrames(quality->totalVideoFrames())
         .setDroppedVideoFrames(quality->droppedVideoFrames())
@@ -3238,21 +3228,21 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
         .release();
     stats->setQuality(WTF::move(jsonQuality));
 
-    auto sourceType = mediaElement->localizedSourceType();
+    auto sourceType = mediaElement.localizedSourceType();
     if (!sourceType.isEmpty())
         stats->setSource(sourceType);
 
-    RefPtr videoTrack = mediaElement->videoTracks() ? mediaElement->videoTracks()->selectedItem() : nullptr;
-    RefPtr audioTrack = mediaElement->audioTracks() ? mediaElement->audioTracks()->firstEnabled() : nullptr;
+    RefPtr videoTrack = mediaElement.videoTracks() ? mediaElement.videoTracks()->selectedItem() : nullptr;
+    RefPtr audioTrack = mediaElement.audioTracks() ? mediaElement.audioTracks()->firstEnabled() : nullptr;
 
-    auto viewport = mediaElement->contentBoxRect().size();
+    auto viewport = mediaElement.contentBoxRect().size();
     auto viewportJSON = Inspector::Protocol::DOM::ViewportSize::create()
         .setWidth(viewport.width())
         .setHeight(viewport.height())
         .release();
     stats->setViewport(WTF::move(viewportJSON));
 
-    if (RefPtr window = mediaElement->document().window())
+    if (RefPtr window = mediaElement.document().window())
         stats->setDevicePixelRatio(window->devicePixelRatio());
 
     if (videoTrack) {
@@ -3312,6 +3302,23 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
     }
 
     return stats;
+}
+#endif
+
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> InspectorDOMAgent::getMediaStats(Inspector::Protocol::DOM::NodeId nodeId)
+{
+#if ENABLE(VIDEO)
+    Inspector::Protocol::ErrorString errorString;
+
+    RefPtr element = assertElement(errorString, nodeId);
+    if (!element)
+        return makeUnexpected(errorString);
+
+    RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(element);
+    if (!mediaElement)
+        return makeUnexpected("Node for given nodeId is not a media element"_s);
+
+    return buildMediaStats(*mediaElement);
 #else
     UNUSED_PARAM(nodeId);
     return makeUnexpected("no media support"_s);

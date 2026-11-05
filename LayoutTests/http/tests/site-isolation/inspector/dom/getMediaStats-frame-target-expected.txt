@@ -1,0 +1,35 @@
+Tests FrameDOMAgent.getMediaStats for media elements inside a cross-origin iframe.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDOMAgent.getMediaStats
+-- Running test case: Setup
+PASS: Should find a cross-origin frame target.
+PASS: Should find iframe BODY.
+
+-- Running test case: NotAMediaElement
+PASS: Should produce an exception.
+Error: Node for given nodeId is not a media element
+
+-- Running test case: EmptyVideo
+PASS: Should return stats for video#emptyVideo.
+PASS: Should provide stats.quality.
+PASS: Should provide stats.viewport.
+PASS: Empty video should not provide stats.video.
+PASS: Empty video should not provide stats.audio.
+
+-- Running test case: ValidVideo
+PASS: Should return stats for video#validVideo.
+PASS: Should provide stats.video.
+PASS: stats.video.codec should not be empty.
+PASS: stats.video.humanReadableCodecString should not be empty.
+
+-- Running test case: FrontendDOMNode
+PASS: Node should be owned by the frame target.
+PASS: DOMNode.getMediaStats should return stats for an iframe node.
+PASS: Should provide stats.video.
+
+-- Running test case: InvalidNodeId
+PASS: Should produce an exception.
+Error: Missing node for given nodeId
+

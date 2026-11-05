@@ -1,0 +1,139 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent.getMediaStats");
+
+    let frameTarget = null;
+    let frameBody = null;
+
+    async function findChildElement(parent, predicate) {
+        await new Promise((resolve) => parent.getChildNodes(resolve));
+        return parent.children.find(predicate);
+    }
+
+    async function findById(id) {
+        let nodeId = await frameBody.querySelector("#" + id);
+        return WI.domManager.nodeForId(nodeId);
+    }
+
+    async function mediaStatsFor(node) {
+        let {mediaStats} = await frameTarget.DOMAgent.getMediaStats(node.backendNodeId);
+        return mediaStats;
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target, wait for the video to load, and walk to its body.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            frameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+            InspectorTest.expectNotNull(frameTarget, "Should find a cross-origin frame target.");
+
+            if (frameTarget.isProvisional) {
+                let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+                frameTarget = committedEvent.data.target;
+            }
+            await frameTarget.ensureTargetExecutionContext();
+
+            let {result} = await frameTarget.RuntimeAgent.evaluate.invoke({
+                expression: `new Promise((resolve) => {
+                    let video = document.getElementById("validVideo");
+                    if (video.readyState >= HTMLMediaElement.HAVE_METADATA)
+                        resolve(true);
+                    else if (video.error)
+                        resolve(false);
+                    else {
+                        video.addEventListener("loadedmetadata", () => resolve(true), {once: true});
+                        video.addEventListener("error", () => resolve(false), {once: true});
+                    }
+                })`,
+                objectGroup: "test",
+                returnByValue: true,
+                awaitPromise: true,
+                contextId: frameTarget.executionContext.id,
+            });
+            InspectorTest.assert(result.value, "video#validVideo failed to load.");
+
+            let frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            if (!frameDoc) {
+                let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                frameDoc = docEvent.data.document;
+            }
+            let htmlNode = await findChildElement(frameDoc, (n) => n.nodeName() === "HTML");
+            frameBody = await findChildElement(htmlNode, (n) => n.nodeName() === "BODY");
+            InspectorTest.expectNotNull(frameBody, "Should find iframe BODY.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "NotAMediaElement",
+        description: "getMediaStats on a non-media element should reject.",
+        async test() {
+            let node = await findById("notAVideo");
+            await InspectorTest.expectException(async () => {
+                await mediaStatsFor(node);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "EmptyVideo",
+        description: "getMediaStats on an empty video should succeed without video/audio stats.",
+        async test() {
+            let node = await findById("emptyVideo");
+            let stats = await mediaStatsFor(node);
+            InspectorTest.expectNotNull(stats, "Should return stats for video#emptyVideo.");
+            InspectorTest.expectThat(stats.quality, "Should provide stats.quality.");
+            InspectorTest.expectThat(stats.viewport, "Should provide stats.viewport.");
+            InspectorTest.expectFalse("video" in stats, "Empty video should not provide stats.video.");
+            InspectorTest.expectFalse("audio" in stats, "Empty video should not provide stats.audio.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ValidVideo",
+        description: "getMediaStats on a loaded video should report video stats.",
+        async test() {
+            let node = await findById("validVideo");
+            let stats = await mediaStatsFor(node);
+            InspectorTest.expectNotNull(stats, "Should return stats for video#validVideo.");
+            InspectorTest.expectThat(stats.video, "Should provide stats.video.");
+            InspectorTest.expectNotEqual(stats.video?.codec, "", "stats.video.codec should not be empty.");
+            InspectorTest.expectNotEqual(stats.video?.humanReadableCodecString, "", "stats.video.humanReadableCodecString should not be empty.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "FrontendDOMNode",
+        description: "WI.DOMNode.prototype.getMediaStats should route to the frame target for iframe nodes.",
+        async test() {
+            let node = await findById("validVideo");
+            InspectorTest.expectEqual(node.owningTarget, frameTarget, "Node should be owned by the frame target.");
+            let stats = await node.getMediaStats();
+            InspectorTest.expectNotNull(stats, "DOMNode.getMediaStats should return stats for an iframe node.");
+            InspectorTest.expectThat(stats?.video, "Should provide stats.video.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "InvalidNodeId",
+        description: "getMediaStats with a bogus nodeId should reject.",
+        async test() {
+            await InspectorTest.expectException(async () => {
+                await frameTarget.DOMAgent.getMediaStats(9999999);
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests FrameDOMAgent.getMediaStats for media elements inside a cross-origin iframe.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/media-stats-frame.html"></iframe>
+</body>

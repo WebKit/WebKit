@@ -214,15 +214,23 @@ WI.MediaDetailsSidebarPanel = class MediaDetailsSidebarPanel extends WI.DOMDetai
         if (!this.domNode)
             return;
 
-        let stats = await this.domNode.getMediaStats();
-        this.#setSource(stats.source);
-        this.#setViewport(stats.viewport);
-        this.#setDevicePixelRatio(stats.devicePixelRatio);
-        this.#setQuality(stats.quality);
-        this.#setVideoFormat(stats.video?.humanReadableCodecString);
-        this.#setAudioFormat(stats.audio?.humanReadableCodecString);
-        this.#setVideo(stats.video);
-        this.#setAudio(stats.audio);
+        let stats = null;
+        try {
+            stats = await this.domNode.getMediaStats();
+        } catch {
+            // The node or its target may have gone away. Keep polling.
+        }
+
+        if (stats) {
+            this.#setSource(stats.source);
+            this.#setViewport(stats.viewport);
+            this.#setDevicePixelRatio(stats.devicePixelRatio);
+            this.#setQuality(stats.quality);
+            this.#setVideoFormat(stats.video?.humanReadableCodecString);
+            this.#setAudioFormat(stats.audio?.humanReadableCodecString);
+            this.#setVideo(stats.video);
+            this.#setAudio(stats.audio);
+        }
 
         if (this.isAttached)
             this.#updateTimer = setTimeout(() => this.#updateTimerFired(), this.#updateTimerInterval);

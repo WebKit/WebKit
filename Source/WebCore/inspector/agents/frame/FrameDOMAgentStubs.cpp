@@ -74,9 +74,4 @@ Inspector::CommandResult<void> FrameDOMAgent::focus(int)
     return makeUnexpected("Not supported for frame targets"_s);
 }
 
-Inspector::CommandResult<Ref<Inspector::Protocol::DOM::MediaStats>> FrameDOMAgent::getMediaStats(int)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
 } // namespace WebCore
