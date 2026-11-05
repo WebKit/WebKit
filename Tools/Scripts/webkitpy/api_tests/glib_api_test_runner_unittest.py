@@ -140,6 +140,12 @@ class GLibAPITestRunnerTest(unittest.TestCase):
         os.chmod(path, 0o755)
         return path
 
+    def test_requested_tests_that_do_not_exist_select_nothing(self):
+        runner = StubTestRunner(self._base_directory)
+        runner.TEST_TARGETS = ["WPE"]
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual([], runner._get_tests(["TestMissing", "TestPrinting:/webkit/WebKitPrintOperation/custom-widget"]))
+
     def test_resolves_bare_and_prefixed_binary_names(self):
         runner = StubTestRunner(self._base_directory)
 
