@@ -26,10 +26,12 @@
 
 import argparse
 import logging
+import os
 import re
 import string
 import sys
 import subprocess
+import tempfile
 import textwrap
 
 from webkitcorepy import arguments, string_utils, run
@@ -60,6 +62,35 @@ CO_AUTHORED_BY_RE = re.compile(r'^Co-authored-by:', re.IGNORECASE)
 WEBKIT_ONLY_TRAILER_RE = re.compile(r'^(Originally-landed-as|Identifier|git-svn-id):')
 WEBKIT_WPT_PATH_RE = re.compile(r'(?<![/\w])(LayoutTests/)?imported/w3c/web-platform-tests/')
 MARKDOWN_ESCAPE_TABLE = str.maketrans({c: rf'\{c}<!---->' for c in string.punctuation})
+WEBKIT_TEST_RUNNER_HEADER_RE = re.compile(rb'\s*<!--\s*webkit-test-runner\s*\[[^\]]*\]\s*-->')
+
+
+def diff_without_webkit_test_runner_headers(repository_path, commit, paths):
+    # WebKitTestRunner only reads a header on a test's first line, and import-w3c-tests keeps WebKit's there.
+    git = local.Git.executable()
+
+    def git_output(*args, **kwargs):
+        return run([git, *args], cwd=repository_path, capture_output=True, check=True, **kwargs).stdout
+
+    stripped_paths = []
+    trees = []
+    with tempfile.TemporaryDirectory() as directory:
+        for index, revision in enumerate((f'{commit}^', commit)):
+            env = dict(os.environ, GIT_INDEX_FILE=os.path.join(directory, f'index{index}'))
+            for line in git_output('ls-tree', revision, '--', *paths).splitlines():
+                meta, path = line.split(b'\t', 1)
+                mode, _, sha = meta.split()
+                data = git_output('cat-file', 'blob', sha)
+                first_line, newline, rest = data.partition(b'\n')
+                if WEBKIT_TEST_RUNNER_HEADER_RE.search(first_line):
+                    first_line = WEBKIT_TEST_RUNNER_HEADER_RE.sub(b'', first_line, count=1)
+                    data = first_line + newline + rest if first_line.strip() else rest
+                    sha = git_output('hash-object', '-w', '--stdin', input=data).strip()
+                    if path.decode() not in stripped_paths:
+                        stripped_paths.append(path.decode())
+                git_output('update-index', '--add', '--cacheinfo', b'%s,%s,%s' % (mode, sha, path), env=env)
+            trees.append(git_output('write-tree', env=env).strip().decode())
+    return git_output('diff', '--binary', '--no-color', '--full-index', '--no-renames', *trees), stripped_paths
 
 
 def wpt_commit_message(message, bugs):
@@ -184,6 +215,11 @@ class WebPlatformTestExporter(object):
     def _wpt_patch(self):
         patch_data = self._host.scm().create_patch(self._options.git_commit, [WEBKIT_WPT_DIR], commit_message=False) or b''
         patch_data = self._strip_ignored_files_from_diff(patch_data)
+        if b'webkit-test-runner' in patch_data:
+            paths = [line[len(b'diff --git a/'):].split(b' b/')[0].decode() for line in patch_data.splitlines() if line.startswith(b'diff --git a/')]
+            patch_data, stripped_paths = diff_without_webkit_test_runner_headers(self._repository.root_path, self._options.git_commit, paths)
+            for path in stripped_paths:
+                _log.info(f'Leaving out the webkit-test-runner header of {path}')
         if b'diff' not in patch_data:
             return ''
         return patch_data
@@ -244,10 +280,9 @@ class WebPlatformTestExporter(object):
         # FIXME: We can probably try to use --relative git parameter to not do that replacement.
         patch_data = patch_data.replace(string_utils.encode(WEBKIT_WPT_DIR) + b'/', b'')
 
-        # FIXME: Support stripping of <!-- webkit-test-runner --> comments.
         self.has_webkit_test_runner_specific_changes = b'webkit-test-runner' in patch_data
         if self.has_webkit_test_runner_specific_changes:
-            _log.warning("Patch contains webkit-test-runner specific changes, please remove them before creating a PR")
+            _log.warning("Unexpectedly, the patch still mentions webkit-test-runner after its first-line headers were removed. Fix the tests in WebKit so that webkit-test-runner options are only in a first-line header, then export again.")
             return b''
 
         self._filesystem.write_binary_file(patch_file, patch_data)

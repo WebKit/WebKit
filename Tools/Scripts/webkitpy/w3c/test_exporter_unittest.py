@@ -22,13 +22,15 @@
 
 import os
 import logging
+import subprocess
+import tempfile
 import unittest
 from unittest.mock import patch
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2
-from webkitpy.w3c.test_exporter import WebPlatformTestExporter, parse_args, wpt_commit_message
+from webkitpy.w3c.test_exporter import WebPlatformTestExporter, diff_without_webkit_test_runner_headers, parse_args, wpt_commit_message
 from webkitbugspy import mocks as bmocks, Tracker, bugzilla
 from webkitcorepy import mocks as wkmocks, run, testing, OutputCapture
 from webkitscmpy import mocks as mocks
@@ -1617,3 +1619,56 @@ class WPTCommitMessageTest(unittest.TestCase):
             '',
             'WebKit-Bug: https://bugs.example.com/show_bug.cgi?id=1',
         ]))
+
+
+class DiffWithoutWebKitTestRunnerHeadersTest(unittest.TestCase):
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.git('init', '-q')
+
+    def tearDown(self):
+        self.directory.cleanup()
+
+    def git(self, *args):
+        return subprocess.run(['git', '-c', 'user.name=Tester', '-c', 'user.email=tester@example.com', *args], cwd=self.directory.name, capture_output=True, check=True).stdout
+
+    def commit(self, files):
+        for path, content in files.items():
+            os.makedirs(os.path.dirname(os.path.join(self.directory.name, path)), exist_ok=True)
+            with open(os.path.join(self.directory.name, path), 'wb') as file:
+                file.write(content)
+        self.git('add', '-A')
+        self.git('commit', '-q', '-m', 'commit')
+        return self.git('rev-parse', 'HEAD').decode().strip()
+
+    def diff(self, commit, *paths):
+        return diff_without_webkit_test_runner_headers(self.directory.name, commit, list(paths))
+
+    def test_new_file(self):
+        self.commit({'base.html': b'base\n'})
+        commit = self.commit({'t/test.html': b'<!DOCTYPE html> <!-- webkit-test-runner [ SomeFeatureEnabled=true ] -->\n<p>test\n'})
+        patch, stripped = self.diff(commit, 't/test.html')
+        self.assertEqual(stripped, ['t/test.html'])
+        self.assertIn(b'+<!DOCTYPE html>\n+<p>test\n', patch)
+        self.assertNotIn(b'webkit-test-runner', patch)
+
+    def test_edited_file(self):
+        self.commit({'t/test.html': b'<!DOCTYPE html><!-- webkit-test-runner [ SomeFeatureEnabled=true ] -->\n<p>old\n', 't/other.html': b'<!-- webkit-test-runner [ SomeFeatureEnabled=true ] -->\n<p>old\n'})
+        commit = self.commit({'t/test.html': b'<!DOCTYPE html><!-- webkit-test-runner [ SomeFeatureEnabled=true ] -->\n<p>new\n', 't/other.html': b'<!-- webkit-test-runner [ SomeFeatureEnabled=true ] -->\n<p>new\n'})
+        patch, stripped = self.diff(commit, 't/test.html', 't/other.html')
+        self.assertEqual(sorted(stripped), ['t/other.html', 't/test.html'])
+        self.assertIn(b' <!DOCTYPE html>\n-<p>old\n+<p>new\n', patch)
+        self.assertIn(b'@@ -1 +1 @@\n-<p>old\n+<p>new\n', patch)
+        self.assertNotIn(b'webkit-test-runner', patch)
+
+    def test_header_only_change(self):
+        self.commit({'t/test.html': b'<!DOCTYPE html>\n<p>test\n'})
+        commit = self.commit({'t/test.html': b'<!DOCTYPE html> <!-- webkit-test-runner [ SomeFeatureEnabled=true ] -->\n<p>test\n'})
+        self.assertEqual(self.diff(commit, 't/test.html'), (b'', ['t/test.html']))
+
+    def test_later_line_header_is_kept(self):
+        self.commit({'t/test.html': b'<!DOCTYPE html>\n<p>test\n'})
+        commit = self.commit({'t/test.html': b'<!DOCTYPE html>\n<!-- webkit-test-runner [ SomeFeatureEnabled=true ] -->\n<p>test\n'})
+        patch, stripped = self.diff(commit, 't/test.html')
+        self.assertEqual(stripped, [])
+        self.assertIn(b'+<!-- webkit-test-runner [ SomeFeatureEnabled=true ] -->', patch)
