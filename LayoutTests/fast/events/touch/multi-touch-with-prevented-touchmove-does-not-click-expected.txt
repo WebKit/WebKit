@@ -1,0 +1,12 @@
+
+Tests that a two-finger gesture does not dispatch click when the page prevents touchmove of the second finger, even if the first finger does not move.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS preventedTouchMoveCount is 1
+PASS targetClickCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

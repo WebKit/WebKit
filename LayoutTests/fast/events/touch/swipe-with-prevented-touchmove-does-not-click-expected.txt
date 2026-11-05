@@ -1,0 +1,13 @@
+
+Tests that a swipe beyond the tap threshold does not dispatch click nor scroll when the page prevents touchmove, even if the first prevented touchmove stays within the threshold.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS preventedTouchMoveCount is 2
+PASS targetClickCount is 0
+PASS window.scrollY is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
