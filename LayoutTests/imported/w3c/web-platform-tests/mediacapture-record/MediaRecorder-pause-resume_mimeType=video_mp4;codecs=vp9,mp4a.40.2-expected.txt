@@ -1,0 +1,6 @@
+
+PASS MediaRecorder handles pause() and resume() state and events, mimeType "video/mp4;codecs=vp9,mp4a.40.2"
+PASS MediaRecorder handles stop() in paused state appropriately, mimeType "video/mp4;codecs=vp9,mp4a.40.2"
+PASS MediaRecorder constructor throws on no support 1st, video/mp4;codecs=vp9,mp4a.40.2
+PASS MediaRecorder constructor throws on no support 2nd, video/mp4;codecs=vp9,mp4a.40.2
+

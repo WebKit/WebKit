@@ -1,5 +1,11 @@
 
-PASS MediaRecorder will stop recording when any of track is added and error event will be fired
-PASS MediaRecorder will stop recording when any of track is removed and error event will be fired
+FAIL MediaRecorder will stop recording when any of track is added and error event will be fired assert_true: the type of event should be ErrorEvent expected true got false
+FAIL MediaRecorder will stop recording when any of track is removed and error event will be fired assert_true: the type of event should be ErrorEvent expected true got false
 PASS MediaRecorder cannot start recording when MediaRecorder' state is not inactive and an InvalidStateError should be thrown
+FAIL MediaRecorder throws NotSupportedError when given both videoKeyFrameIntervalDuration and videoKeyFrameIntervalCount assert_throws_dom: function "function () {
+            new MediaRecorder(video, {
+                videoKeyFrameIntervalDuration: 10,
+                videoKeyFrameIntervalCount: 10,
+            });
+        }" did not throw
 

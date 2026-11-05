@@ -1,4 +1,4 @@
-// META: global=window,worker
+// META: global=window,dedicatedworker
 
 test(() => {
   for (const [formatFrom, formatTo] of [

@@ -4580,7 +4580,25 @@
     "imported/w3c/web-platform-tests/media-source/mediasource-replay.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-canvas-media-source.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-events-and-exceptions.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-mimetype.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-pause-resume.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection-no-sink.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/mediacapture-record/legacy/MediaRecorder-canvas-media-source-legacy.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/mediacapture-streams/GUM-echoCancellation-all.https.html": [

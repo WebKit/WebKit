@@ -1,0 +1,13 @@
+
+PASS MediaRecorder will stop recording and fire a stop event when all tracks are ended
+PASS MediaRecorder will stop recording and fire a stop event when stop() is called
+PASS MediaRecorder will stop recording and fire a stop event when stop() is called for audio-only streams
+PASS MediaRecorder will not fire an exception when stopped after creation
+PASS MediaRecorder will not fire an exception when stopped after having just been stopped
+PASS MediaRecorder will not fire an exception when stopped after having just been spontaneously stopped
+PASS MediaRecorder will fire start event even if stopped synchronously
+PASS MediaRecorder will fire start event even if a track is removed synchronously
+PASS MediaRecorder will fire only start and stop events in a basic recording flow.
+PASS MediaRecorder will not fire an error event if a recorder is stopped synchronously after a track is removed
+FAIL MediaRecorder will not fire an error event if a recorder is stopped synchronously after all tracks are ended promise_test: Unhandled rejection with value: "stop event time out"
+

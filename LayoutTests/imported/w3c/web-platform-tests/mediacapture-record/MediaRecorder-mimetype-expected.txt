@@ -7,23 +7,247 @@ PASS MediaRecorder invalid audio mimeType is unsupported
 PASS MediaRecorder invalid video mimeType throws
 PASS MediaRecorder invalid video mimeType is unsupported
 PASS Supported mimeType audio/mp4 is set immediately after constructing
-PASS Supported mimeType video/mp4 is set immediately after constructing
-PASS Unsupported mimeType audio/ogg throws
-PASS Unsupported mimeType audio/ogg; codecs="vorbis" throws
-PASS Unsupported mimeType audio/ogg; codecs="opus" throws
+PASS Unsupported older mimeType audio/ogg throws
 PASS Supported mimeType audio/webm is set immediately after constructing
-PASS Unsupported mimeType audio/webm; codecs="vorbis" throws
+PASS Unsupported older mimeType audio/matroska throws
+PASS Unsupported older mimeType audio/x-matroska throws
+PASS Unsupported older mimeType audio/ogg; codecs="vorbis" throws
+PASS Unsupported older mimeType audio/ogg; codecs="opus" throws
+PASS Unsupported older mimeType audio/webm; codecs="vorbis" throws
 PASS Supported mimeType audio/webm; codecs="opus" is set immediately after constructing
+PASS Supported mimeType audio/mp4; codecs="mp4a.40.2" is set immediately after constructing
+PASS Supported mimeType audio/mp4; codecs="opus" is set immediately after constructing
+PASS Unsupported older mimeType audio/matroska; codecs="opus" throws
+PASS Unsupported older mimeType audio/matroska; codecs="pcm" throws
+PASS Unsupported older mimeType audio/x-matroska; codecs="opus" throws
+PASS Unsupported older mimeType audio/x-matroska; codecs="pcm" throws
+PASS Supported mimeType video/mp4 is set immediately after constructing
 PASS Supported mimeType video/webm is set immediately after constructing
+PASS Unsupported older mimeType video/x-matroska throws
+PASS Unsupported older mimeType video/matroska throws
 PASS Supported mimeType video/webm; codecs="vp8" is set immediately after constructing
-PASS Unsupported mimeType video/webm; codecs="vp8, vorbis" throws
-PASS Supported mimeType video/webm; codecs="vp8, opus" is set immediately after constructing
+PASS Unsupported older mimeType video/webm; codecs="vp8.madeup.profile" throws
 PASS Supported mimeType video/webm; codecs="vp9" is set immediately after constructing
-PASS Unsupported mimeType video/webm; codecs="vp9, vorbis" throws
+PASS Unsupported older mimeType video/webm; codecs="vp9.madeup.profile" throws
+PASS Unsupported older mimeType video/webm; codecs="av1" throws
+PASS Unsupported older mimeType video/webm; codecs="av1.madeup.profile" throws
+PASS Unsupported older mimeType video/webm; codecs="av01" throws
+PASS Unsupported older mimeType video/webm; codecs="av01.madeup.profile" throws
+PASS Supported mimeType video/mp4; codecs="avc1.64003E" is set immediately after constructing
+PASS Unsupported older mimeType video/mp4; codecs="avc3.64003E" throws
+PASS Unsupported older mimeType video/mp4; codecs="vp9" throws
+PASS Unsupported older mimeType video/mp4; codecs="vp9.madeup.profile" throws
+PASS Supported mimeType video/mp4; codecs="hvc1.1.6.L186.B0" is set immediately after constructing
+PASS Supported mimeType video/mp4; codecs="hev1.1.6.L186.B0" is set immediately after constructing
+PASS Unsupported older mimeType video/x-matroska; codecs="hvc1.1.6.L186.B0" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="hev1.1.6.L186.B0" throws
+PASS Unsupported older mimeType video/matroska; codecs="vp8" throws
+PASS Unsupported older mimeType video/matroska; codecs="vp8.madeup.profile" throws
+PASS Unsupported older mimeType video/matroska; codecs="vp9" throws
+PASS Unsupported older mimeType video/matroska; codecs="vp9.madeup.profile" throws
+PASS Unsupported older mimeType video/matroska; codecs="av1" throws
+PASS Unsupported older mimeType video/matroska; codecs="av1.madeup.profile" throws
+PASS Unsupported older mimeType video/matroska; codecs="av01" throws
+PASS Unsupported older mimeType video/matroska; codecs="av01.madeup.profile" throws
+PASS Unsupported older mimeType video/matroska; codecs="hvc1.1.6.L186.B0" throws
+PASS Unsupported older mimeType video/matroska; codecs="hev1.1.6.L186.B0" throws
+PASS Unsupported older mimeType video/matroska; codecs="avc1.64003E" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="vp8" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="vp8.madeup.profile" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="vp9" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="vp9.madeup.profile" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="av1" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="av1.madeup.profile" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="av01" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="av01.madeup.profile" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="avc1.64003E" throws
+PASS Unsupported older mimeType video/webm; codecs="vp8, vorbis" throws
+PASS Supported mimeType video/webm; codecs="vp8, opus" is set immediately after constructing
+PASS Unsupported older mimeType video/webm; codecs="vp9, vorbis" throws
 PASS Supported mimeType video/webm; codecs="vp9, opus" is set immediately after constructing
-PASS Unsupported mimeType video/webm; codecs="av1" throws
-PASS Unsupported mimeType video/webm; codecs="av1, opus" throws
+PASS Unsupported older mimeType video/webm; codecs="av1, opus" throws
+PASS Unsupported older mimeType video/webm; codecs="av01, opus" throws
+PASS Supported mimeType video/mp4; codecs="avc1.64003E, mp4a.40.2" is set immediately after constructing
+PASS Unsupported older mimeType video/mp4; codecs="avc3.64003E, mp4a.40.2" throws
+PASS Unsupported older mimeType video/mp4; codecs="vp9, opus" throws
+PASS Supported mimeType video/mp4; codecs="hvc1.1.6.L186.B0, mp4a.40.2" is set immediately after constructing
+PASS Supported mimeType video/mp4; codecs="hev1.1.6.L186.B0, mp4a.40.2" is set immediately after constructing
+PASS Supported mimeType video/mp4; codecs="hvc1.1.6.L186.B0, opus" is set immediately after constructing
+PASS Supported mimeType video/mp4; codecs="hev1.1.6.L186.B0, opus" is set immediately after constructing
+PASS Unsupported older mimeType video/x-matroska; codecs="hvc1.1.6.L186.B0, opus" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="hev1.1.6.L186.B0, opus" throws
+PASS Unsupported older mimeType video/matroska; codecs="vp9, opus" throws
+PASS Unsupported older mimeType video/matroska; codecs="av1, opus" throws
+PASS Unsupported older mimeType video/matroska; codecs="av01, opus" throws
+PASS Unsupported older mimeType video/matroska; codecs="hvc1.1.6.L186.B0, opus" throws
+PASS Unsupported older mimeType video/matroska; codecs="hev1.1.6.L186.B0, opus" throws
+PASS Unsupported older mimeType video/matroska; codecs="avc1.64003E, opus" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="vp9, opus" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="av1, opus" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="av01, opus" throws
+PASS Unsupported older mimeType video/x-matroska; codecs="avc1.64003E, opus" throws
+PASS Profile ignored for mimeType audio/mp4; codecs="mp4a.40.2"
+FAIL Profile ignored for mimeType video/webm; codecs="vp8.madeup.profile" assert_equals: Same result with or without profile expected true but got false
+FAIL Profile ignored for mimeType video/webm; codecs="vp9.madeup.profile" assert_equals: Same result with or without profile expected true but got false
+PASS Profile ignored for mimeType video/webm; codecs="av1.madeup.profile"
+PASS Profile ignored for mimeType video/webm; codecs="av01.madeup.profile"
+PASS Profile ignored for mimeType video/mp4; codecs="avc1.64003E"
+PASS Profile ignored for mimeType video/mp4; codecs="avc3.64003E"
+PASS Profile ignored for mimeType video/mp4; codecs="vp9.madeup.profile"
+FAIL Profile ignored for mimeType video/mp4; codecs="hvc1.1.6.L186.B0" assert_equals: Same result with or without profile expected false but got true
+FAIL Profile ignored for mimeType video/mp4; codecs="hev1.1.6.L186.B0" assert_equals: Same result with or without profile expected false but got true
+PASS Profile ignored for mimeType video/x-matroska; codecs="hvc1.1.6.L186.B0"
+PASS Profile ignored for mimeType video/x-matroska; codecs="hev1.1.6.L186.B0"
+PASS Profile ignored for mimeType video/matroska; codecs="vp8.madeup.profile"
+PASS Profile ignored for mimeType video/matroska; codecs="vp9.madeup.profile"
+PASS Profile ignored for mimeType video/matroska; codecs="av1.madeup.profile"
+PASS Profile ignored for mimeType video/matroska; codecs="av01.madeup.profile"
+PASS Profile ignored for mimeType video/matroska; codecs="hvc1.1.6.L186.B0"
+PASS Profile ignored for mimeType video/matroska; codecs="hev1.1.6.L186.B0"
+PASS Profile ignored for mimeType video/matroska; codecs="avc1.64003E"
+PASS Profile ignored for mimeType video/x-matroska; codecs="vp8.madeup.profile"
+PASS Profile ignored for mimeType video/x-matroska; codecs="vp9.madeup.profile"
+PASS Profile ignored for mimeType video/x-matroska; codecs="av1.madeup.profile"
+PASS Profile ignored for mimeType video/x-matroska; codecs="av01.madeup.profile"
+PASS Profile ignored for mimeType video/x-matroska; codecs="avc1.64003E"
+PASS Profile ignored for mimeType video/mp4; codecs="avc1.64003E, mp4a.40.2"
+PASS Profile ignored for mimeType video/mp4; codecs="avc3.64003E, mp4a.40.2"
+FAIL Profile ignored for mimeType video/mp4; codecs="hvc1.1.6.L186.B0, mp4a.40.2" assert_equals: Same result with or without profile expected false but got true
+FAIL Profile ignored for mimeType video/mp4; codecs="hev1.1.6.L186.B0, mp4a.40.2" assert_equals: Same result with or without profile expected false but got true
+FAIL Profile ignored for mimeType video/mp4; codecs="hvc1.1.6.L186.B0, opus" assert_equals: Same result with or without profile expected false but got true
+FAIL Profile ignored for mimeType video/mp4; codecs="hev1.1.6.L186.B0, opus" assert_equals: Same result with or without profile expected false but got true
+PASS Profile ignored for mimeType video/x-matroska; codecs="hvc1.1.6.L186.B0, opus"
+PASS Profile ignored for mimeType video/x-matroska; codecs="hev1.1.6.L186.B0, opus"
+PASS Profile ignored for mimeType video/matroska; codecs="hvc1.1.6.L186.B0, opus"
+PASS Profile ignored for mimeType video/matroska; codecs="hev1.1.6.L186.B0, opus"
+PASS Profile ignored for mimeType video/matroska; codecs="avc1.64003E, opus"
+PASS Profile ignored for mimeType video/x-matroska; codecs="avc1.64003E, opus"
+FAIL Support or lack thereof for newer mimeType audio/webm; codecs="futureaudiocodec" is detected asynchronously. assert_true: throwing over unsupported sync codec expected true got false
+FAIL Support or lack thereof for newer mimeType audio/matroska; codecs="futureaudiocodec" is detected asynchronously. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Support or lack thereof for newer mimeType audio/x-matroska; codecs="futureaudiocodec" is detected asynchronously. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Support or lack thereof for newer mimeType video/webm; codecs="av02" is detected asynchronously. assert_true: throwing over unsupported sync codec expected true got false
+FAIL Support or lack thereof for newer mimeType video/matroska; codecs="av02" is detected asynchronously. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Support or lack thereof for newer mimeType video/x-matroska; codecs="av02" is detected asynchronously. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Support or lack thereof for newer mimeType video/webm; codecs="av02,opus" is detected asynchronously, unless opus is unsupported. assert_false: throwing over unsupported sync opus codec expected false got true
+PASS Support or lack thereof for newer mimeType video/webm; codecs="av02,pcm" is detected asynchronously, unless pcm is unsupported.
+FAIL Support or lack thereof for newer mimeType video/webm; codecs="av02,futureaudiocodec" is detected asynchronously. assert_true: throwing over unsupported sync codec expected true got false
+PASS Support or lack thereof for newer mimeType video/webm; codecs="av01,futureaudiocodec" is detected asynchronously, unless av01 is unsupported.
+FAIL Support or lack thereof for newer mimeType video/matroska; codecs="av02,opus" is detected asynchronously, unless opus is unsupported. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Support or lack thereof for newer mimeType video/matroska; codecs="av02,pcm" is detected asynchronously, unless pcm is unsupported. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Support or lack thereof for newer mimeType video/matroska; codecs="av02,futureaudiocodec" is detected asynchronously. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Support or lack thereof for newer mimeType video/matroska; codecs="av01,futureaudiocodec" is detected asynchronously, unless av01 is unsupported. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Support or lack thereof for newer mimeType video/x-matroska; codecs="av02,opus" is detected asynchronously, unless opus is unsupported. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Support or lack thereof for newer mimeType video/x-matroska; codecs="av02,pcm" is detected asynchronously, unless pcm is unsupported. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Support or lack thereof for newer mimeType video/x-matroska; codecs="av02,futureaudiocodec" is detected asynchronously. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Support or lack thereof for newer mimeType video/x-matroska; codecs="av01,futureaudiocodec" is detected asynchronously, unless av01 is unsupported. promise_test: Unhandled rejection with value: object "TypeError: Type error"
 PASS MediaRecorder sets a nonempty mimeType on 'onstart' for audio
+PASS MediaRecorder start() does not throw with audio/mp4 for audio
+PASS Unsupported mimeType audio/ogg throws for audio
+PASS MediaRecorder start() does not throw with audio/webm for audio
+PASS Unsupported mimeType audio/matroska throws for audio
+PASS Unsupported mimeType audio/x-matroska throws for audio
+PASS Unsupported mimeType audio/ogg; codecs="vorbis" throws for audio
+PASS Unsupported mimeType audio/ogg; codecs="opus" throws for audio
+PASS Unsupported mimeType audio/webm; codecs="vorbis" throws for audio
+PASS MediaRecorder start() does not throw with audio/webm; codecs="opus" for audio
+PASS MediaRecorder start() does not throw with audio/mp4; codecs="mp4a.40.2" for audio
+PASS MediaRecorder start() does not throw with audio/mp4; codecs="opus" for audio
+PASS Unsupported mimeType audio/matroska; codecs="opus" throws for audio
+PASS Unsupported mimeType audio/matroska; codecs="pcm" throws for audio
+PASS Unsupported mimeType audio/x-matroska; codecs="opus" throws for audio
+PASS Unsupported mimeType audio/x-matroska; codecs="pcm" throws for audio
+PASS Unsupported mimeType video/webm; codecs="vp8, vorbis" throws for audio
+PASS MediaRecorder start() does not throw with video/webm; codecs="vp8, opus" for audio
+PASS Unsupported mimeType video/webm; codecs="vp9, vorbis" throws for audio
+PASS MediaRecorder start() does not throw with video/webm; codecs="vp9, opus" for audio
+PASS Unsupported mimeType video/webm; codecs="av1, opus" throws for audio
+PASS Unsupported mimeType video/webm; codecs="av01, opus" throws for audio
+PASS MediaRecorder start() does not throw with video/mp4; codecs="avc1.64003E, mp4a.40.2" for audio
+PASS Unsupported mimeType video/mp4; codecs="avc3.64003E, mp4a.40.2" throws for audio
+PASS Unsupported mimeType video/mp4; codecs="vp9, opus" throws for audio
+PASS MediaRecorder start() does not throw with video/mp4; codecs="hvc1.1.6.L186.B0, mp4a.40.2" for audio
+PASS MediaRecorder start() does not throw with video/mp4; codecs="hev1.1.6.L186.B0, mp4a.40.2" for audio
+PASS MediaRecorder start() does not throw with video/mp4; codecs="hvc1.1.6.L186.B0, opus" for audio
+PASS MediaRecorder start() does not throw with video/mp4; codecs="hev1.1.6.L186.B0, opus" for audio
+PASS Unsupported mimeType video/x-matroska; codecs="hvc1.1.6.L186.B0, opus" throws for audio
+PASS Unsupported mimeType video/x-matroska; codecs="hev1.1.6.L186.B0, opus" throws for audio
+PASS Unsupported mimeType video/matroska; codecs="vp9, opus" throws for audio
+PASS Unsupported mimeType video/matroska; codecs="av1, opus" throws for audio
+PASS Unsupported mimeType video/matroska; codecs="av01, opus" throws for audio
+PASS Unsupported mimeType video/matroska; codecs="hvc1.1.6.L186.B0, opus" throws for audio
+PASS Unsupported mimeType video/matroska; codecs="hev1.1.6.L186.B0, opus" throws for audio
+PASS Unsupported mimeType video/matroska; codecs="avc1.64003E, opus" throws for audio
+PASS Unsupported mimeType video/x-matroska; codecs="vp9, opus" throws for audio
+PASS Unsupported mimeType video/x-matroska; codecs="av1, opus" throws for audio
+PASS Unsupported mimeType video/x-matroska; codecs="av01, opus" throws for audio
+PASS Unsupported mimeType video/x-matroska; codecs="avc1.64003E, opus" throws for audio
+PASS MediaRecorder start() does not throw with video/mp4 for video
+PASS MediaRecorder start() does not throw with video/webm for video
+PASS Unsupported mimeType video/x-matroska throws for video
+PASS Unsupported mimeType video/matroska throws for video
+PASS MediaRecorder start() does not throw with video/webm; codecs="vp8" for video
+PASS Unsupported mimeType video/webm; codecs="vp8.madeup.profile" throws for video
+PASS MediaRecorder start() does not throw with video/webm; codecs="vp9" for video
+PASS Unsupported mimeType video/webm; codecs="vp9.madeup.profile" throws for video
+PASS Unsupported mimeType video/webm; codecs="av1" throws for video
+PASS Unsupported mimeType video/webm; codecs="av1.madeup.profile" throws for video
+PASS Unsupported mimeType video/webm; codecs="av01" throws for video
+PASS Unsupported mimeType video/webm; codecs="av01.madeup.profile" throws for video
+PASS MediaRecorder start() does not throw with video/mp4; codecs="avc1.64003E" for video
+PASS Unsupported mimeType video/mp4; codecs="avc3.64003E" throws for video
+PASS Unsupported mimeType video/mp4; codecs="vp9" throws for video
+PASS Unsupported mimeType video/mp4; codecs="vp9.madeup.profile" throws for video
+PASS MediaRecorder start() does not throw with video/mp4; codecs="hvc1.1.6.L186.B0" for video
+PASS MediaRecorder start() does not throw with video/mp4; codecs="hev1.1.6.L186.B0" for video
+PASS Unsupported mimeType video/x-matroska; codecs="hvc1.1.6.L186.B0" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="hev1.1.6.L186.B0" throws for video
+PASS Unsupported mimeType video/matroska; codecs="vp8" throws for video
+PASS Unsupported mimeType video/matroska; codecs="vp8.madeup.profile" throws for video
+PASS Unsupported mimeType video/matroska; codecs="vp9" throws for video
+PASS Unsupported mimeType video/matroska; codecs="vp9.madeup.profile" throws for video
+PASS Unsupported mimeType video/matroska; codecs="av1" throws for video
+PASS Unsupported mimeType video/matroska; codecs="av1.madeup.profile" throws for video
+PASS Unsupported mimeType video/matroska; codecs="av01" throws for video
+PASS Unsupported mimeType video/matroska; codecs="av01.madeup.profile" throws for video
+PASS Unsupported mimeType video/matroska; codecs="hvc1.1.6.L186.B0" throws for video
+PASS Unsupported mimeType video/matroska; codecs="hev1.1.6.L186.B0" throws for video
+PASS Unsupported mimeType video/matroska; codecs="avc1.64003E" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="vp8" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="vp8.madeup.profile" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="vp9" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="vp9.madeup.profile" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="av1" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="av1.madeup.profile" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="av01" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="av01.madeup.profile" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="avc1.64003E" throws for video
+PASS Unsupported mimeType video/webm; codecs="vp8, vorbis" throws for video
+PASS MediaRecorder start() does not throw with video/webm; codecs="vp8, opus" for video
+PASS Unsupported mimeType video/webm; codecs="vp9, vorbis" throws for video
+PASS MediaRecorder start() does not throw with video/webm; codecs="vp9, opus" for video
+PASS Unsupported mimeType video/webm; codecs="av1, opus" throws for video
+PASS Unsupported mimeType video/webm; codecs="av01, opus" throws for video
+PASS MediaRecorder start() does not throw with video/mp4; codecs="avc1.64003E, mp4a.40.2" for video
+PASS Unsupported mimeType video/mp4; codecs="avc3.64003E, mp4a.40.2" throws for video
+PASS Unsupported mimeType video/mp4; codecs="vp9, opus" throws for video
+PASS MediaRecorder start() does not throw with video/mp4; codecs="hvc1.1.6.L186.B0, mp4a.40.2" for video
+PASS MediaRecorder start() does not throw with video/mp4; codecs="hev1.1.6.L186.B0, mp4a.40.2" for video
+PASS MediaRecorder start() does not throw with video/mp4; codecs="hvc1.1.6.L186.B0, opus" for video
+PASS MediaRecorder start() does not throw with video/mp4; codecs="hev1.1.6.L186.B0, opus" for video
+PASS Unsupported mimeType video/x-matroska; codecs="hvc1.1.6.L186.B0, opus" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="hev1.1.6.L186.B0, opus" throws for video
+PASS Unsupported mimeType video/matroska; codecs="vp9, opus" throws for video
+PASS Unsupported mimeType video/matroska; codecs="av1, opus" throws for video
+PASS Unsupported mimeType video/matroska; codecs="av01, opus" throws for video
+PASS Unsupported mimeType video/matroska; codecs="hvc1.1.6.L186.B0, opus" throws for video
+PASS Unsupported mimeType video/matroska; codecs="hev1.1.6.L186.B0, opus" throws for video
+PASS Unsupported mimeType video/matroska; codecs="avc1.64003E, opus" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="vp9, opus" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="av1, opus" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="av01, opus" throws for video
+PASS Unsupported mimeType video/x-matroska; codecs="avc1.64003E, opus" throws for video
+PASS MediaRecorder start() does not throw with video/mp4 for audio
+PASS MediaRecorder start() does not throw with video/webm for audio
 PASS MediaRecorder sets a nonempty mimeType on 'onstart' for video
 PASS MediaRecorder sets a nonempty mimeType on 'onstart' for audio/video
 PASS MediaRecorder mimeType is not set before 'onstart' for audio

@@ -10,14 +10,13 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/BlobEvent-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-bitrate.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-blob-timecode.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-canvas-media-source.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-creation.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-destroy-script-execution.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-detached-context.html
@@ -25,8 +24,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-error.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-events-and-exceptions.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-mimetype.html
-/LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-pause-resume.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection-no-sink.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-requestData.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-start.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-video-key-frame-distance.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/idlharness.window.js

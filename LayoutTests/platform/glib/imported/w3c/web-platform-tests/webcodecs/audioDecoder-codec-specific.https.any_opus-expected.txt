@@ -1,0 +1,13 @@
+
+PASS Test isConfigSupported()
+PASS Test that AudioDecoder.isConfigSupported() returns a parsed configuration
+PASS Test configure()
+PASS Verify closed AudioDecoder operations
+PASS Test decoding
+FAIL Test decoding a with a negative timestamp assert_equals: expected 6458 but got -19958
+PASS Test decoding a with a positive timestamp
+PASS Test decoding after flush
+PASS Test reset during flush
+PASS AudioDecoder decodeQueueSize test
+PASS Test Opus decoding with non-48k sample rate
+

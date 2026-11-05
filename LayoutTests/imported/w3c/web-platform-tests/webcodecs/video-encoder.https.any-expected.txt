@@ -8,4 +8,5 @@ PASS Verify closed VideoEncoder operations
 PASS Verify unconfigured VideoEncoder operations
 PASS Verify encoding closed frames throws.
 PASS Encode video with negative timestamp
+PASS Encode video preserves unset, zero, and duplicate-timestamp durations
 
