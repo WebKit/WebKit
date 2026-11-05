@@ -249,6 +249,8 @@ public:
 
     WEBCORE_EXPORT void setShadowPath(const Path&) override;
 
+    WEBCORE_EXPORT void setHidesFromScreenCapture(bool) override;
+
 private:
     friend class FrameProcessIndicators;
 
@@ -546,6 +548,8 @@ private:
     void updateBackdropRoot();
     void updateShadowPath();
 
+    void updateHidesFromScreenCapture();
+
     void updateBlendMode();
 
     void updateVideoGravity();
@@ -689,6 +693,7 @@ private:
         TonemappingEnabledChanged               = 1LLU << 48,
 #endif
         ShadowPathChanged                       = 1LLU << 49,
+        HidesFromScreenCaptureChanged           = 1LLU << 50,
     };
     typedef uint64_t LayerChangeFlags;
     static ASCIILiteral layerChangeAsString(LayerChange);

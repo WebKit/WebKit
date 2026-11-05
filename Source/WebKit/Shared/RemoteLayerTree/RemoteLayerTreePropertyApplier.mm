@@ -547,6 +547,9 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::BackdropRootChanged)
         layer.shouldRasterize = properties.backdropRoot;
 
+    if (properties.changedProperties & LayerChange::HidesFromScreenCaptureChanged)
+        [layer _web_setHidesFromScreenCapture:properties.hidesFromScreenCapture];
+
     if (properties.changedProperties & LayerChange::TonemappingEnabledChanged) {
 #if HAVE(SUPPORT_HDR_DISPLAY_APIS)
         layer.toneMapMode = properties.tonemappingEnabled ? CAToneMapModeIfSupported : CAToneMapModeNever;

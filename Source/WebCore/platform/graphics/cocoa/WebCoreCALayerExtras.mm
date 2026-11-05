@@ -120,6 +120,15 @@
     return CGRectIntersectsRect(self.mask.bounds, rectInMask);
 }
 
+- (void)_web_setHidesFromScreenCapture:(BOOL)hides
+{
+    CADisableUpdateMask screenCaptureMask = kCALayerDisableUpdateCloned | kCALayerDisableUpdateSnapshot;
+    if (hides)
+        self.disableUpdateMask |= screenCaptureMask;
+    else
+        self.disableUpdateMask &= ~screenCaptureMask;
+}
+
 - (void)_web_clearContents
 {
     self.contents = nil;

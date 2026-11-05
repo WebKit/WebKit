@@ -250,6 +250,9 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
         if (layerProperties.changedProperties & LayerChange::ShadowPathChanged)
             ts.dumpProperty("shadowPath"_s, layerProperties.shadowPath.isEmpty() ? "empty" : "set");
 
+        if (layerProperties.changedProperties & LayerChange::HidesFromScreenCaptureChanged)
+            ts.dumpProperty("hidesFromScreenCapture"_s, layerProperties.hidesFromScreenCapture);
+
         if (auto displayOnlyImage = layerProperties.displayOnlyImage)
             ts.dumpProperty("displayOnlyImage"_s, *displayOnlyImage);
     }
