@@ -439,6 +439,11 @@ ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk:
 
 ShouldBlockFetchWithNewlineAndLessThan:
 
+# aimode.alibaba.com: rdar://190854564
+# The page references fonts and icons on dev.g.alicdn.com, which never responds, so the load event never fires.
+ShouldBlockUnresponsiveSubresourceLoad:
+  conditions: [SecondaryURL]
+
 # bungalow.com: rdar://61658940
 # sfusd.edu: rdar://116292738
 # Deferring 'mapbox-gl.js' script on bungalow.com causes the script to get in a bad state (rdar://problem/61658940).

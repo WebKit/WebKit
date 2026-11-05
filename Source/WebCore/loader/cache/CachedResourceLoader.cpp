@@ -1267,6 +1267,11 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
         return makeUnexpected(frame->loader().blockedError(request.resourceRequest()));
     }
 
+    if (document && document->quirks().shouldBlockUnresponsiveSubresourceLoad(url)) {
+        CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("CachedResourceLoader::requestResource blocked by quirk", frame.get());
+        return makeUnexpected(frame->loader().blockedError(request.resourceRequest()));
+    }
+
     request.updateReferrerPolicy(document ? document->referrerPolicy() : ReferrerPolicy::Default);
 
     if (InspectorInstrumentation::willIntercept(frame.ptr(), request.resourceRequest()))

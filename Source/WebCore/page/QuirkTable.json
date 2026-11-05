@@ -27,6 +27,11 @@
             "behaviors": [{ "id": "ShouldDispatchSimulatedMouseEventsQuirk" }]
         },
         {
+            "bugs": ["rdar://190854564"],
+            "matches": ["*://aimode.alibaba.com/*"],
+            "behaviors": [{ "id": "ShouldBlockUnresponsiveSubresourceLoad", "secondaryURL": ["*://dev.g.alicdn.com/aimode/*"] }]
+        },
+        {
             "matches": ["*://*.amazon.*/*"],
             "behaviors": [
                 {
