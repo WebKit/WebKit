@@ -32,6 +32,7 @@
 #import "CommandEncoder.h"
 #import "Device.h"
 #import "IsValidToUseWith.h"
+#import "MetalFunctionWriter.h"
 #import "MetalSPI.h"
 #import "Texture.h"
 #import "TextureView.h"
@@ -1557,6 +1558,8 @@ enum CopyExternalImageFlags : uint32_t {
     CopyExternalImageEncodeDestinationTransferFunction = 1 << 5,
     CopyExternalImageCancelSRGBDestinationEncoding = 1 << 6,
     CopyExternalImageSourceIsVideoFrame = 1 << 7,
+    CopyExternalImageSourceIsPQ = 1 << 8,
+    CopyExternalImageSourceIsHLG = 1 << 9,
 };
 
 // https://drafts.csswg.org/css-color-4/#color-conversion-code, in row-major order and applied to
@@ -1703,6 +1706,18 @@ static std::array<float, 9> colorMatrixBetweenPrimaries(CopyExternalImageSourceP
     return identityColorMatrix;
 }
 
+HDRTransferFunction hdrTransferFunctionForPixelBuffer(CVPixelBufferRef pixelBuffer)
+{
+    RetainPtr transferFunction = adoptCF(static_cast<CFStringRef>(CVBufferCopyAttachment(pixelBuffer, kCVImageBufferTransferFunctionKey, nil)));
+    if (!transferFunction)
+        return HDRTransferFunction::None;
+    if (CFEqual(transferFunction.get(), kCVImageBufferTransferFunction_SMPTE_ST_2084_PQ))
+        return HDRTransferFunction::PQ;
+    if (CFEqual(transferFunction.get(), kCVImageBufferTransferFunction_ITU_R_2100_HLG))
+        return HDRTransferFunction::HLG;
+    return HDRTransferFunction::None;
+}
+
 std::optional<std::array<float, 9>> primariesConversionMatrixForPixelBuffer(CVPixelBufferRef pixelBuffer, WebGPU::PredefinedColorSpace destination)
 {
     bool destinationIsDisplayP3 = destination == WebGPU::PredefinedColorSpace::DisplayP3 || destination == WebGPU::PredefinedColorSpace::DisplayP3Linear;
@@ -1742,9 +1757,10 @@ id<MTLRenderPipelineState> Queue::copyExternalImagePipelineState(MTLPixelFormat 
         return nil;
 
     NSError *error = nil;
-    /* NOLINT */ id<MTLLibrary> library = [mtlDevice newLibraryWithSource:@R"(#include <metal_stdlib>
-using namespace metal;
-struct WebKitCopyExternalImageArgs {
+    // The HDR to SDR mapping is the one importExternalTexture() applies, from the same source.
+    NSString *shaderPrologue = @"#include <metal_stdlib>\nusing namespace metal;\n";
+    NSString *hdrToSDRSource = [NSString stringWithUTF8String:WGSL::Metal::hdrToSDRMetalSource().characters()];
+    /* NOLINT */ NSString *shaderBody = @R"(struct WebKitCopyExternalImageArgs {
     uint sourceOriginX;
     uint sourceOriginY;
     uint destinationOriginX;
@@ -1766,6 +1782,8 @@ constant uint webKitCopyExternalImageDecodeSourceTransferFunction = 16;
 constant uint webKitCopyExternalImageEncodeDestinationTransferFunction = 32;
 constant uint webKitCopyExternalImageCancelSRGBDestinationEncoding = 64;
 constant uint webKitCopyExternalImageSourceIsVideoFrame = 128;
+constant uint webKitCopyExternalImageSourceIsPQ = 256;
+constant uint webKitCopyExternalImageSourceIsHLG = 512;
 // A frame's chroma plane is half resolution, so it has to be filtered rather than read, and the crop
 // the coordinates go through can leave them just outside the plane at the edges.
 constexpr sampler webKitCopyExternalImageFrameSampler(coord::normalized, address::clamp_to_edge, filter::linear);
@@ -1824,7 +1842,10 @@ struct WebKitCopyExternalImageVertexOut {
         color.a = 1.f;
     if ((args.flags & webKitCopyExternalImageUnpremultiplySource) && color.a > 0.f)
         color.rgb /= color.a;
-    if (args.flags & webKitCopyExternalImageDecodeSourceTransferFunction)
+    bool sourceIsHDR = args.flags & (webKitCopyExternalImageSourceIsPQ | webKitCopyExternalImageSourceIsHLG);
+    if (sourceIsHDR)
+        color.rgb = __wgslToneMapHDR(__wgslDecodeHDR(saturate(color.rgb), args.flags & webKitCopyExternalImageSourceIsHLG));
+    else if (args.flags & webKitCopyExternalImageDecodeSourceTransferFunction)
         color.rgb = webKitSRGBToLinear(color.rgb);
     // Explicit dot products, so that the host's row-major storage order is unambiguous. The matrix is
     // the identity when the source and destination share primaries, which leaves the values alone.
@@ -1833,7 +1854,7 @@ struct WebKitCopyExternalImageVertexOut {
     color.g = args.colorMatrix[3] * rgb.r + args.colorMatrix[4] * rgb.g + args.colorMatrix[5] * rgb.b;
     color.b = args.colorMatrix[6] * rgb.r + args.colorMatrix[7] * rgb.g + args.colorMatrix[8] * rgb.b;
     if (args.flags & webKitCopyExternalImageEncodeDestinationTransferFunction)
-        color.rgb = webKitLinearToSRGB(color.rgb);
+        color.rgb = sourceIsHDR ? __wgslLinearToBT1886(color.rgb) : webKitLinearToSRGB(color.rgb);
     if (args.flags & webKitCopyExternalImagePremultiplyDestination)
         color.rgb *= color.a;
     // Metal applies the sRGB transfer function on the way into an _sRGB attachment. Undo it here, so
@@ -1841,7 +1862,8 @@ struct WebKitCopyExternalImageVertexOut {
     if (args.flags & webKitCopyExternalImageCancelSRGBDestinationEncoding)
         color.rgb = webKitSRGBToLinear(color.rgb);
     return color;
-})" options:nil error:&error];
+})";
+    /* NOLINT */ id<MTLLibrary> library = [mtlDevice newLibraryWithSource:[NSString stringWithFormat:@"%@%@%@", shaderPrologue, hdrToSDRSource, shaderBody] options:nil error:&error];
     id<MTLFunction> vertexFunction = error ? nil : [library newFunctionWithName:@"vsCopyExternalImage"];
     id<MTLFunction> fragmentFunction = vertexFunction ? [library newFunctionWithName:@"fsCopyExternalImage"] : nil;
     id<MTLRenderPipelineState> pipelineState = nil;
@@ -2046,6 +2068,16 @@ void Queue::copyExternalImageToTexture(const WebGPU::ImageCopyExternalImage& sou
         // A frame's primaries are its own, and are usually neither of the two the caller can name.
         sourcePrimaries = sourcePrimariesForPixelBuffer(pixelBuffer.get());
         flags |= CopyExternalImageSourceIsVideoFrame;
+        switch (hdrTransferFunctionForPixelBuffer(pixelBuffer.get())) {
+        case HDRTransferFunction::None:
+            break;
+        case HDRTransferFunction::PQ:
+            flags |= CopyExternalImageSourceIsPQ;
+            break;
+        case HDRTransferFunction::HLG:
+            flags |= CopyExternalImageSourceIsHLG;
+            break;
+        }
     } else {
         RetainPtr ioSurface = source.source;
         auto surfaceWidth = static_cast<uint32_t>(IOSurfaceGetWidth(ioSurface.get()));
@@ -2090,11 +2122,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto colorMatrix = colorMatrixBetweenPrimaries(sourcePrimaries, isDisplayP3(destination.colorSpace));
     bool primariesDiffer = colorMatrix != identityColorMatrix;
     bool transferFunctionsDiffer = isLinear(source.colorSpace) != isLinear(destination.colorSpace);
-    bool convertsColor = primariesDiffer || transferFunctionsDiffer;
+    // An HDR frame is never in the destination's transfer function, so it is always decoded, by the
+    // shader's HDR path rather than the sRGB one, and tone mapped on the way.
+    bool sourceIsHDR = flags & (CopyExternalImageSourceIsPQ | CopyExternalImageSourceIsHLG);
+    bool convertsColor = primariesDiffer || transferFunctionsDiffer || sourceIsHDR;
     if (convertsColor) {
         // Primaries are converted in linear light, so the source is decoded and the destination
         // re-encoded around the matrix. Either step is skipped when that end is already linear.
-        if (!isLinear(source.colorSpace))
+        if (!isLinear(source.colorSpace) && !sourceIsHDR)
             flags |= CopyExternalImageDecodeSourceTransferFunction;
         if (!isLinear(destination.colorSpace))
             flags |= CopyExternalImageEncodeDestinationTransferFunction;

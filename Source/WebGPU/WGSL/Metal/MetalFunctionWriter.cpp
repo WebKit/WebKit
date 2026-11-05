@@ -48,6 +48,47 @@ namespace WGSL {
 
 namespace Metal {
 
+ASCIILiteral hdrToSDRMetalSource()
+{
+    return
+        "// Decodes PQ (SMPTE ST 2084) or HLG (ITU-R BT.2100) rgb to linear light in the frame's own primaries,\n"
+        "// scaled so that 1.0 is SDR white. An SDR canvas has no room above that, so __wgslToneMapHDR() then\n"
+        "// fits what is brighter into it.\n"
+        "static float3 __wgslDecodeHDR(float3 encoded, bool isHLG)\n"
+        "{\n"
+        "    constexpr float referenceWhiteNits = 440.0f;\n"
+        "    if (!isHLG) {\n"
+        "        constexpr float m1 = 0.1593017578125f, m2 = 78.84375f, c1 = 0.8359375f, c2 = 18.8515625f, c3 = 18.6875f;\n"
+        "        float3 const p = pow(encoded, 1.0f / m2);\n"
+        "        return pow(max(p - c1, 0.0f) / (c2 - c3 * p), 1.0f / m1) * (10000.0f / referenceWhiteNits);\n"
+        "    }\n"
+        "    constexpr float a = 0.17883277f, b = 0.28466892f, c = 0.55991073f;\n"
+        "    float3 const scene = select((exp((encoded - c) / a) + b) / 12.0f, encoded * encoded / 3.0f, encoded <= 0.5f);\n"
+        "    // The HLG OOTF for a 1000 nit display: a gamma of 1.2 applied through the luminance.\n"
+        "    float const sceneLuminance = dot(scene, float3(0.2627f, 0.6780f, 0.0593f));\n"
+        "    return scene * pow(max(sceneLuminance, 1e-6f), 0.2f) * (1000.0f / referenceWhiteNits);\n"
+        "}\n"
+        "\n"
+        "// Leaves everything up to half of SDR white alone, and rolls what is above it off towards 1.0 with a\n"
+        "// slope that starts out matching, so SDR-range content is not dimmed. It scales the color by its\n"
+        "// luminance, to keep the hue of what it compresses.\n"
+        "static float3 __wgslToneMapHDR(float3 linearLight)\n"
+        "{\n"
+        "    constexpr float knee = 0.5f;\n"
+        "    float const luminance = dot(linearLight, float3(0.2627f, 0.6780f, 0.0593f));\n"
+        "    if (luminance <= knee)\n"
+        "        return linearLight;\n"
+        "    float const excess = luminance - knee;\n"
+        "    float const mapped = knee + (1.0f - knee) * excess / (excess + (1.0f - knee));\n"
+        "    return linearLight * (mapped / luminance);\n"
+        "}\n"
+        "\n"
+        "static float3 __wgslLinearToBT1886(float3 linearLight)\n"
+        "{\n"
+        "    return sign(linearLight) * pow(abs(linearLight), 1.0f / 2.4f);\n"
+        "}\n"_s;
+}
+
 #define DECLARE_FORWARD_PROGRESS_VOLATILE_ACCESS "uint32_t __wgslEnsureForwardProgress = 0;"_s
 #define CHECK_FORWARD_PROGRESS_VOLATILE_ACCESS "if (__wgslEnsureForwardProgress == 4294967295u) break;"_s
 #define DECLARE_FORWARD_PROGRESS_VOLATILE_COUNTER "volatile uint32_t __wgslEnsureForwardProgress = 0; if (!__wgslEnsureForwardProgress)"_s
@@ -567,6 +608,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesExternalTextures()) {
         m_shaderModule.clearUsesExternalTextures();
+        m_output.append(hdrToSDRMetalSource(), "\n"_s);
         m_output.append("struct texture_external {\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -574,7 +616,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
                 m_indent, "texture2d<float> SecondPlane;\n"_s,
                 m_indent, "float3x2 UVRemapMatrix;\n"_s,
                 m_indent, "float4x3 ColorSpaceConversionMatrix;\n"_s,
-                m_indent, "float3x3 PrimariesConversionMatrix;\n"_s,
+                m_indent, "float3x4 PrimariesConversionMatrix;\n"_s,
                 m_indent, "uint2 VisibleSize;\n"_s,
                 // The size the source presents the frame at, which is what textureDimensions() is owed and
                 // is not the size of the plane the frame was decoded into: a VideoFrame carries a display
@@ -591,14 +633,29 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
                 // has to skip the round trip rather than run it to arrive back where it started.
                 m_indent, "float4 to_destination_color_space(float3 rgb, float alpha, float premultiplied) const\n"_s,
                 m_indent, "{\n"_s,
-                m_indent, "    if (PrimariesConversionMatrix[0][0] == 0.0f)\n"_s,
+                // The w of the matrix's first column says how the frame's rgb is encoded: 0 is SDR, which
+                // is taken to be sRGB-encoded, 1 is PQ and 2 is HLG.
+                m_indent, "    float const transfer = PrimariesConversionMatrix[0][3];\n"_s,
+                m_indent, "    bool const isHDR = transfer != 0.0f;\n"_s,
+                m_indent, "    bool const keepsPrimaries = PrimariesConversionMatrix[0][0] == 0.0f;\n"_s,
+                m_indent, "    if (keepsPrimaries && !isHDR)\n"_s,
                 m_indent, "        return float4(rgb * mix(alpha, 1.0f, premultiplied), alpha);\n"_s,
                 m_indent, "    float3 const straight = (premultiplied != 0.0f && alpha > 0.0f) ? rgb / alpha : rgb;\n"_s,
-                m_indent, "    float3 const magnitude = abs(straight);\n"_s,
-                m_indent, "    float3 const linearLight = sign(straight) * select(pow((magnitude + 0.055f) / 1.055f, 2.4f), magnitude / 12.92f, magnitude <= 0.04045f);\n"_s,
-                m_indent, "    float3 const converted = PrimariesConversionMatrix * linearLight;\n"_s,
+                m_indent, "    float3 linearLight;\n"_s,
+                m_indent, "    if (isHDR)\n"_s,
+                m_indent, "        linearLight = __wgslToneMapHDR(__wgslDecodeHDR(clamp(straight, 0.0f, 1.0f), transfer == 2.0f));\n"_s,
+                m_indent, "    else {\n"_s,
+                m_indent, "        float3 const magnitude = abs(straight);\n"_s,
+                m_indent, "        linearLight = sign(straight) * select(pow((magnitude + 0.055f) / 1.055f, 2.4f), magnitude / 12.92f, magnitude <= 0.04045f);\n"_s,
+                m_indent, "    }\n"_s,
+                m_indent, "    float3x3 const primaries = keepsPrimaries ? float3x3(1.0f) : float3x3(PrimariesConversionMatrix[0].xyz, PrimariesConversionMatrix[1].xyz, PrimariesConversionMatrix[2].xyz);\n"_s,
+                m_indent, "    float3 const converted = primaries * linearLight;\n"_s,
                 m_indent, "    float3 const convertedMagnitude = abs(converted);\n"_s,
-                m_indent, "    float3 const encoded = sign(converted) * select(1.055f * pow(convertedMagnitude, 1.0f / 2.4f) - 0.055f, convertedMagnitude * 12.92f, convertedMagnitude <= 0.0031308f);\n"_s,
+                // HDR is encoded the way a video signal is, with the pure 2.4 gamma of ITU-R BT.1886, rather
+                // than with the sRGB curve, as CoreGraphics does when it brings HDR video down to SDR.
+                m_indent, "    float3 const encoded = isHDR\n"_s,
+                m_indent, "        ? __wgslLinearToBT1886(converted)\n"_s,
+                m_indent, "        : sign(converted) * select(1.055f * pow(convertedMagnitude, 1.0f / 2.4f) - 0.055f, convertedMagnitude * 12.92f, convertedMagnitude <= 0.0031308f);\n"_s,
                 m_indent, "    return float4(encoded * alpha, alpha);\n"_s,
                 m_indent, "}\n"_s);
         }
@@ -1214,7 +1271,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                     m_indent, "texture2d<float> __"_s, name, "_SecondPlane [[id("_s, (bindingIndex + 1), ")]];\n"_s,
                     m_indent, "float3x2 __"_s, name, "_UVRemapMatrix [[id("_s, (bindingIndex + 2), ")]];\n"_s,
                     m_indent, "float4x3 __"_s, name, "_ColorSpaceConversionMatrix [[id("_s, (bindingIndex + 3), ")]];\n"_s,
-                    m_indent, "float3x3 __"_s, name, "_PrimariesConversionMatrix [[id("_s, (bindingIndex + 4), ")]];\n"_s,
+                    m_indent, "float3x4 __"_s, name, "_PrimariesConversionMatrix [[id("_s, (bindingIndex + 4), ")]];\n"_s,
                     m_indent, "uint2 __"_s, name, "_VisibleSize [[id("_s, (bindingIndex + 5), ")]];\n"_s);
                 continue;
             }

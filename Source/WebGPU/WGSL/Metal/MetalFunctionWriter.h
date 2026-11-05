@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WGSL {
@@ -37,6 +38,20 @@ struct PrepareResult;
 namespace Metal {
 
 void emitMetalFunctions(StringBuilder&, ShaderModule&, PrepareResult&, const HashMap<String, ConstantValue>&, DeviceState&&);
+
+// The HDR to SDR mapping which importExternalTexture() applies to a PQ or HLG frame in the shader it
+// is sampled by, and which copyExternalImageToTexture() applies in the shader it copies with. They
+// are the same Metal Shading Language, so that a frame copied out of a video matches the same frame
+// sampled through an external texture. PQ or HLG is decoded to linear light where 1.0 is 440 nits,
+// what is brighter than half of that is rolled off towards 1.0 by luminance, and the result is
+// encoded with the pure 2.4 gamma of ITU-R BT.1886 rather than the sRGB curve. Together these match
+// how CoreGraphics draws the same frame to a 2D canvas.
+//
+// Self-contained and needing only <metal_stdlib> with `using namespace metal`. Where it is emitted
+// ahead of use is up to the shader. Its identifiers begin with two underscores, which WGSL rejects,
+// so that they cannot collide with the shader's own, and which is why it is spelled as quoted text in
+// the implementation, where the style checker does not look.
+ASCIILiteral hdrToSDRMetalSource();
 
 } // namespace Metal
 } // namespace WGSL

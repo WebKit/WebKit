@@ -79,6 +79,8 @@ constexpr MTLPixelFormat MTLPixelFormatYCBCR12_444_2P_PACKED = static_cast<MTLPi
 constexpr MTLPixelFormat MTLPixelFormatYCBCR12_420_2P_PACKED_PQ = static_cast<MTLPixelFormat>(583);
 constexpr MTLPixelFormat MTLPixelFormatYCBCR12_422_2P_PACKED_PQ = static_cast<MTLPixelFormat>(584);
 constexpr MTLPixelFormat MTLPixelFormatYCBCR12_444_2P_PACKED_PQ = static_cast<MTLPixelFormat>(585);
+constexpr MTLPixelFormat MTLPixelFormatR10Unorm_PACKED = static_cast<MTLPixelFormat>(588);
+constexpr MTLPixelFormat MTLPixelFormatRG10Unorm_PACKED = static_cast<MTLPixelFormat>(589);
 
 @protocol MTLResourceSPI <MTLResource>
 @optional

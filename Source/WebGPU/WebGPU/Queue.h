@@ -57,6 +57,16 @@ class TextureView;
 // the destination's, which has to stay a no-op rather than a transfer function round trip.
 std::optional<std::array<float, 9>> primariesConversionMatrixForPixelBuffer(CVPixelBufferRef, WebGPU::PredefinedColorSpace destination);
 
+// The HDR transfer functions which importExternalTexture() and copyExternalImageToTexture() decode
+// and tone map to SDR. Anything else is treated as SDR. The values are what the external texture
+// shader finds in the fourth column of its primaries conversion matrix, so they must not change.
+enum class HDRTransferFunction : uint8_t {
+    None = 0,
+    PQ = 1, // NOLINT
+    HLG = 2, // NOLINT
+};
+HDRTransferFunction hdrTransferFunctionForPixelBuffer(CVPixelBufferRef);
+
 // https://gpuweb.github.io/gpuweb/#gpuqueue
 // A device owns its default queue, not the other way around.
 class Queue final : public WebGPU::Queue {

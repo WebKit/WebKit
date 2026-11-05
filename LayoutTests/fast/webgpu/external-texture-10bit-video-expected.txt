@@ -1,0 +1,35 @@
+Tests that 10-bit bi-planar video frames, HDR (PQ and HLG, BT.2020) and SDR (BT.709, video and full range, 4:2:0 and 4:2:2), come out of GPUDevice.importExternalTexture and of GPUQueue.copyExternalImageToTexture with the right colors, with HDR mapped to SDR, from both a video element and a WebCodecs VideoDecoder, and that both paths agree.
+
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: copyExternalImageToTexture
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-420-10bit-hlg-videorange.mp4 from a video element: importExternalTexture
+PASS hevc-420-10bit-hlg-videorange.mp4 from a video element: copyExternalImageToTexture
+PASS hevc-420-10bit-hlg-videorange.mp4 from a video element: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree
+PASS vp9-p2-420-10bit-pq-videorange.webm from a video element: importExternalTexture
+PASS vp9-p2-420-10bit-pq-videorange.webm from a video element: copyExternalImageToTexture
+PASS vp9-p2-420-10bit-pq-videorange.webm from a video element: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-420-10bit-bt709-videorange.mp4 from a video element: importExternalTexture
+PASS hevc-420-10bit-bt709-videorange.mp4 from a video element: copyExternalImageToTexture
+PASS hevc-420-10bit-bt709-videorange.mp4 from a video element: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-420-10bit-bt709-videorange.mp4 from a VideoDecoder: importExternalTexture
+PASS hevc-420-10bit-bt709-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture
+PASS hevc-420-10bit-bt709-videorange.mp4 from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-420-10bit-bt709-fullrange.mp4 from a video element: importExternalTexture
+PASS hevc-420-10bit-bt709-fullrange.mp4 from a video element: copyExternalImageToTexture
+PASS hevc-420-10bit-bt709-fullrange.mp4 from a video element: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-420-10bit-bt709-fullrange.mp4 from a VideoDecoder: importExternalTexture
+PASS hevc-420-10bit-bt709-fullrange.mp4 from a VideoDecoder: copyExternalImageToTexture
+PASS hevc-420-10bit-bt709-fullrange.mp4 from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-422-10bit-bt709-videorange.mp4 from a video element: importExternalTexture
+PASS hevc-422-10bit-bt709-videorange.mp4 from a video element: copyExternalImageToTexture
+PASS hevc-422-10bit-bt709-videorange.mp4 from a video element: importExternalTexture and copyExternalImageToTexture agree
+PASS hevc-422-10bit-bt709-videorange.mp4 from a VideoDecoder: importExternalTexture
+PASS hevc-422-10bit-bt709-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture
+PASS hevc-422-10bit-bt709-videorange.mp4 from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree

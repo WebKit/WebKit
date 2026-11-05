@@ -52,8 +52,8 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const BindGroupLayout::Bu
     } else if (bufferType == BindGroupLayout::BufferBindingType::Float4x3) {
         descriptor.dataType = MTLDataTypeFloat4x3;
         bufferType = BindGroupLayout::BufferBindingType::Uniform;
-    } else if (bufferType == BindGroupLayout::BufferBindingType::Float3x3) {
-        descriptor.dataType = MTLDataTypeFloat3x3;
+    } else if (bufferType == BindGroupLayout::BufferBindingType::Float3x4) {
+        descriptor.dataType = MTLDataTypeFloat3x4;
         bufferType = BindGroupLayout::BufferBindingType::Uniform;
     } else if (bufferType == BindGroupLayout::BufferBindingType::UInt2) {
         descriptor.dataType = MTLDataTypeUInt2;
@@ -76,7 +76,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const BindGroupLayout::Bu
         break;
     case BindGroupLayout::BufferBindingType::Float3x2:
     case BindGroupLayout::BufferBindingType::Float4x3:
-    case BindGroupLayout::BufferBindingType::Float3x3:
+    case BindGroupLayout::BufferBindingType::Float3x4:
     case BindGroupLayout::BufferBindingType::UInt2:
         ASSERT_NOT_REACHED();
         return nil;
@@ -317,7 +317,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const String& label, Vector<R
             descriptors[2] = createArgumentDescriptor(bufferLayout, entry.visibility);
             bufferLayout.type = BindGroupLayout::BufferBindingType::Float4x3;
             descriptors[3] = createArgumentDescriptor(bufferLayout, entry.visibility);
-            bufferLayout.type = BindGroupLayout::BufferBindingType::Float3x3;
+            bufferLayout.type = BindGroupLayout::BufferBindingType::Float3x4;
             descriptors[4] = createArgumentDescriptor(bufferLayout, entry.visibility);
             bufferLayout.type = BindGroupLayout::BufferBindingType::UInt2;
             descriptors[5] = createArgumentDescriptor(bufferLayout, entry.visibility);

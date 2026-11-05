@@ -59,7 +59,7 @@ public:
         ReadOnlyStorage,
         Float3x2,
         Float4x3,
-        Float3x3,
+        Float3x4,
         UInt2,
         ArrayLength,
     };

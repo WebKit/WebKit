@@ -223,10 +223,14 @@ public:
         id<MTLTexture> _Nullable texture1 { nil };
         simd::float3x2 uvRemappingMatrix;
         simd::float4x3 colorSpaceConversionMatrix;
-        // Converts the frame's primaries to the color space the import asked for, applied to
-        // linear-light values. All zero, which no real conversion can be, when the frame's primaries
-        // already are that color space and the transfer function round trip has to be skipped.
-        simd::float3x3 primariesConversionMatrix { simd::float3x3(0.f) };
+        // The xyz of each column convert the frame's primaries to the color space the import asked
+        // for, applied to linear-light values. They are all zero, which no real conversion can be,
+        // when the frame's primaries already are that color space. The first column's w describes
+        // the frame's transfer function: 0 for SDR, which the shader treats as sRGB-encoded, 1 for
+        // PQ and 2 for HLG, both of which are decoded and tone mapped to SDR. A frame that is
+        // neither all zero nor HDR skips the transfer function round trip entirely. Three float4
+        // columns rather than a float3x3 and a column more, so that it is no larger than a float3x3.
+        simd::float3x4 primariesConversionMatrix { simd::float3x4(0.f) };
     };
     // A single-plane frame's color is premultiplied into a copy when it is imported for sampling,
     // because textureSampleBaseClampToEdge() has to filter premultiplied color rather than

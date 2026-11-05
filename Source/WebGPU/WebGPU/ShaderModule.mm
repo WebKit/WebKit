@@ -856,7 +856,7 @@ NODELETE static auto wgslBindingType(BindGroupLayout::BufferBindingType bindingT
         return WGSL::BufferBindingType::ReadOnlyStorage;
     case BindGroupLayout::BufferBindingType::Float3x2:
     case BindGroupLayout::BufferBindingType::Float4x3:
-    case BindGroupLayout::BufferBindingType::Float3x3:
+    case BindGroupLayout::BufferBindingType::Float3x4:
     case BindGroupLayout::BufferBindingType::UInt2:
     case BindGroupLayout::BufferBindingType::ArrayLength:
         ASSERT_NOT_REACHED("Unexpected buffer bindingType");
