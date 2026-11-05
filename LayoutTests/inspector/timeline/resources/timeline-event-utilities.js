@@ -14,21 +14,36 @@ TestPage.registerInitializer(() => {
                     let recording = WI.timelineManager.activeRecording;
                     let timeline = recording.timelines.get(timelineType ?? WI.TimelineRecord.Type.Script);
 
+                    // A record that the expression does not cause, such as a screenshot, can arrive before every
+                    // instrument has reported that it started. A start that arrives while capturing stops makes
+                    // capturing active again. The reply to the evaluation comes after all those starts, so wait for it too.
+                    let recordAdded = false;
+                    let evaluated = false;
+                    function stopCapturingIfDone() {
+                        if (!recordAdded || !evaluated)
+                            return;
+
+                        if (!silent)
+                            InspectorTest.log("Stopping Capture...");
+                        WI.timelineManager.stopCapturing();
+                    }
+
                     let recordAddedListener = timeline.addEventListener(WI.Timeline.Event.RecordAdded, (recordAddedEvent) => {
                         let {record} = recordAddedEvent.data;
                         if (eventType && record.eventType !== eventType)
                             return;
 
                         timeline.removeEventListener(WI.Timeline.Event.RecordAdded, recordAddedListener);
-
-                        if (!silent)
-                            InspectorTest.log("Stopping Capture...");
-                        WI.timelineManager.stopCapturing();
+                        recordAdded = true;
+                        stopCapturingIfDone();
                     });
 
                     if (!silent)
                         InspectorTest.log("Evaluating...");
-                    InspectorTest.evaluateInPage(expression).catch(reject);
+                    InspectorTest.evaluateInPage(expression).then(() => {
+                        evaluated = true;
+                        stopCapturingIfDone();
+                    }, reject);
                     return;
                 }
 
