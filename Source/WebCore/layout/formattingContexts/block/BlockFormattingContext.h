@@ -134,6 +134,9 @@ public:
 private:
     void layoutBlockItems(const Vector<BlockItem>&, BlockLayoutResult&);
     bool isAfterClampPoint() const;
+    TextBoxTrimState textBoxTrimStateFor(const RenderBlockFlow&, const TextBoxTrimState& ancestorState) const;
+    void startTextBoxTrim(const RenderBlockFlow&, ContainingBlockState&);
+    void endTextBoxTrim(const RenderBlockFlow&, ContainingBlockState&);
     void handleBlockLevelBoxEnd(const RenderBox&);
     void handleBlockContainerStart(const RenderBox&);
     void handleEmptyEditableContent(const RenderBox& blockContainer, ContainingBlockState&);
