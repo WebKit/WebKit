@@ -35,6 +35,7 @@
 #include "LayoutIntegrationBlockCoverage.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
+#include "LineClampUpdater.h"
 #include "LocalFrameViewInlines.h"
 #include "LocalFrameViewLayoutContext.h"
 #include "Logging.h"
@@ -131,8 +132,19 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
     auto paintInvalidation = PaintInvalidation { };
     auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
     auto blockLayoutState = Layout::BlockLayoutState { { } };
+    // The line-clamp budget of the root's block formatting context: the root's LineClampUpdater sets it up and reads back what the content left
+    // of it. The boxes in the content laid out through the render tree do not see it, since the lines of independent formatting contexts do not
+    // count (css-overflow-4 §5.2).
+    auto* renderTreeLayoutState = rootRenderer().view().frameView().layoutContext().layoutState();
+    if (auto lineClamp = renderTreeLayoutState ? renderTreeLayoutState->lineClamp() : std::nullopt) {
+        blockLayoutState.setLineClamp(Layout::BlockLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, false, lineClamp->isStableTextWrap, lineClamp->hasConstrainedTextWrapContent });
+        blockLayoutState.setClampAfterBox(lineClamp->clampAfterBox.get());
+        renderTreeLayoutState->setLineClamp({ });
+    }
     auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(constraintsForBlockContent(rootRenderer(), relayoutChildren), BlockIntegrationUtils::rootGeometry(rootRenderer()));
     LOG_WITH_STREAM(Layout, stream << "BlockLayout for root (" << &rootRenderer() << "): " << result);
+    if (auto lineClamp = blockLayoutState.lineClamp())
+        renderTreeLayoutState->setLineClamp(RenderLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, blockLayoutState.clampAfterBox(), lineClamp->isStableTextWrap, lineClamp->hasConstrainedTextWrapContent });
 
     updateRenderers(result, paintInvalidation);
     // Like updateRenderers for the block containers in the root: the inline formatting context took the overflow of the block-level boxes in
@@ -398,6 +410,13 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
     };
     auto previousStates = Vector<PreviousState> { };
     auto layoutRepainters = Vector<LayoutRepainter> { };
+    // What RenderBlockFlow::layoutBlockChild does for a box after the clamp point: it hides it and its content, which it does not lay out.
+    for (auto& invisibleBox : result.invisibleBoxes) {
+        CheckedRef renderer = mutableRenderer(invisibleBox);
+        LineClampUpdater::setIsForcedHidden(renderer, true);
+        LineClampUpdater::skipLayoutForForcedHidden(renderer);
+    }
+
     previousStates.reserveInitialCapacity(result.boxes.size());
     layoutRepainters.reserveInitialCapacity(result.boxes.size());
     for (auto& box : result.boxes) {

@@ -33,6 +33,7 @@
 #include <WebCore/LayoutUnits.h>
 #include <WebCore/StyleTextBoxEdge.h>
 #include <algorithm>
+#include <wtf/CheckedPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/EnumSet.h>
 #include <wtf/Vector.h>
@@ -84,6 +85,8 @@ public:
         bool shouldDiscardOverflow { false };
         bool isLegacy { true };
         bool isStableTextWrap { false };
+        // Inline content that 'text-wrap-style' constrains was laid out as if it were 'stable' (RenderLayoutState::LineClamp).
+        bool hasConstrainedTextWrapContent { false };
     };
     enum class TextBoxTrimSide : bool {
         Start,
@@ -136,6 +139,11 @@ public:
     BlockLayoutState(MarginState, std::optional<LineClamp> = { }, TextBoxTrim = { }, Style::TextBoxEdge = CSS::Keyword::Auto { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { }, std::optional<LineGrid> lineGrid = { });
 
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
+    // The content takes its lines off the budget as it gets laid out (LineClampUpdater).
+    void setLineClamp(std::optional<LineClamp> lineClamp) { m_lineClamp = lineClamp; }
+    // The clamp point is between this in-flow block-level box and its next sibling, with no line box right before it (see the auto clamp point).
+    const RenderBox* clampAfterBox() const { return m_clampAfterBox.get(); }
+    void setClampAfterBox(const RenderBox* clampAfterBox) { m_clampAfterBox = clampAfterBox; }
     TextBoxTrim textBoxTrim() const { return m_textBoxTrim; }
     Style::TextBoxEdge textBoxEdge() const { return m_textBoxEdge; }
 
@@ -151,6 +159,7 @@ public:
 
 private:
     std::optional<LineClamp> m_lineClamp;
+    CheckedPtr<const RenderBox> m_clampAfterBox;
     TextBoxTrim m_textBoxTrim;
     Style::TextBoxEdge m_textBoxEdge;
     std::optional<LayoutUnit> m_intrusiveInitialLetterLogicalBottom;

@@ -65,7 +65,7 @@ enum class BlockAvoidanceReason : uint8_t {
     RootHasUnsupportedRenderer,
     RootHasUnsupportedWritingMode,
     RootIsPaginated,
-    RootIsInLineClampContext,
+    RootIsInLegacyLineClampContext,
     RootIsInTextBoxTrimContext,
     RootIsInLineGridContext,
     RootHasColumns,
@@ -73,7 +73,6 @@ enum class BlockAvoidanceReason : uint8_t {
     RootHasMarginTrim,
     RootHasStableBothEdgesScrollbarGutter,
     ContentHasFloat,
-    ContentIsHiddenByLineClamp,
     ContentHasOutOfFlowBox,
     ContentHasOutOfFlowNonBlockContainer,
     ContentHasListMarker,
@@ -151,8 +150,9 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     if (auto* layoutState = layoutContext->layoutState()) {
         if (layoutState->isPaginated())
             return BlockAvoidanceReason::RootIsPaginated;
-        if (layoutState->lineClamp() || layoutState->legacyLineClamp())
-            return BlockAvoidanceReason::RootIsInLineClampContext;
+        // FIXME: -webkit-line-clamp, which clamps the content of a -webkit-box at its clamp point (LegacyLineClampUpdater).
+        if (layoutState->legacyLineClamp())
+            return BlockAvoidanceReason::RootIsInLegacyLineClampContext;
         // The layout state has no entry for the boxes inside the block formatting context, so their inline content would see the
         // root's line grid at the wrong offset.
         if (layoutState->lineGrid())
@@ -516,8 +516,6 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(c
 
 static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
 {
-    if (box.isForceHiddenByLineClamp())
-        return BlockAvoidanceReason::ContentIsHiddenByLineClamp;
     // Buttons fit their content (RenderBox::sizesLogicalWidthToFitContent); other form controls are flex containers with content of their own.
     if (isAnyOf<HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement>(box.element()) && !box.isRenderButton())
         return BlockAvoidanceReason::ContentIsFormControl;
@@ -565,10 +563,6 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
 
 static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer)
 {
-    // A box a line-clamp container hid after its clamp point stays hidden until the render tree path lays it out again
-    // (RenderBlockFlow::layoutBlockChild, markInlineContentDirtyForLayout).
-    if (renderer.isForceHiddenByLineClamp())
-        return BlockAvoidanceReason::ContentIsHiddenByLineClamp;
     // Without floats, clear introduces no clearance (CSS 2.2 §9.5.2), and floats outside the root stay out of its block formatting context.
     if (renderer.isFloating())
         return BlockAvoidanceReason::ContentHasFloat;
@@ -788,8 +782,8 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "root: horizontal-bt writing mode"_s;
     case BlockAvoidanceReason::RootIsPaginated:
         return "root: paginated"_s;
-    case BlockAvoidanceReason::RootIsInLineClampContext:
-        return "root: in line-clamp"_s;
+    case BlockAvoidanceReason::RootIsInLegacyLineClampContext:
+        return "root: in -webkit-line-clamp"_s;
     case BlockAvoidanceReason::RootIsInTextBoxTrimContext:
         return "root: in text-box-trim"_s;
     case BlockAvoidanceReason::RootIsInLineGridContext:
@@ -804,8 +798,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "root: scrollbar-gutter both-edges"_s;
     case BlockAvoidanceReason::ContentHasFloat:
         return "float"_s;
-    case BlockAvoidanceReason::ContentIsHiddenByLineClamp:
-        return "hidden by line-clamp"_s;
     case BlockAvoidanceReason::ContentHasOutOfFlowBox:
         return "out-of-flow box in inline or leaf content"_s;
     case BlockAvoidanceReason::ContentHasOutOfFlowNonBlockContainer:

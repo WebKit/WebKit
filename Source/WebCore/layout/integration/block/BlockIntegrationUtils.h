@@ -108,6 +108,8 @@ public:
             bool afterAreQuirky { false };
         };
         std::optional<MarginsOfKeptBlockLevelBoxes> marginsOfKeptBlockLevelBoxes { };
+        // The lines with content, which count towards the line-clamp budget (RenderBlockFlow::lineCount).
+        size_t lineCount { 0 };
     };
     // The content box block size is the percentage basis of the atomic inline-level boxes in it. Relayout children lays the lines out from
     // scratch, like when the inline size, border or padding of the block container changed. The block formatting context lays out the
@@ -146,6 +148,8 @@ public:
     // Like RenderBlockFlow::layoutBlock: the boxes laid out through the render tree that resolve a percentage block size against the block
     // container are laid out again (RenderBlockFlow::dirtyForLayoutFromPercentageHeightDescendants).
     static void markPercentageHeightDescendantsForLayout(const RenderBlockFlow&);
+    // A box that followed the clamp point of a line-clamp container the last time it was laid out, and which is visible again.
+    static void showBoxHiddenByLineClamp(const RenderBox&);
     // A table, a flex or grid container, or a block formatting context root whose content the block formatting context cannot lay out (canUseForNestedBlockLayout).
     static bool laysOutThroughRenderTree(const RenderBox&);
 
