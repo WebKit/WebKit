@@ -158,6 +158,13 @@ static inline InlineContentBreaker::PartialRun firstCharacterBreakRespectingLine
     return { breakPosition, breakWidth };
 }
 
+NODELETE static const Style::ComputedStyle& wrappingStyle(const Box& layoutBox)
+{
+    // Text has the white-space of its own style. It differs from the parent box style for text in a display: contents element.
+    // Inline box boundaries are governed by the parent box e.g. the <div> in <div><span>first</span><span>second</span></div>.
+    return layoutBox.isInlineTextBox() ? layoutBox.style() : layoutBox.parent().style();
+}
+
 NODELETE static bool shouldRevertToEarlierWrapOpportunity(const InlineContentBreaker::LineStatus& lineStatus, const InlineContentBreaker::ContinuousContent::RunList& runs, size_t overflowingRunIndex)
 {
     // https://drafts.csswg.org/css-text-4/#wrap-inside
@@ -302,10 +309,6 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         // e.g. <div style="white-space: nowrap">no wrap<div style="display: inline-block; white-space: normal">yes wrap</div></div>.
         // While the inline-block has pre-wrap which allows wrapping (for its own content), the content lives in a nowrap context.
         auto& runs = continuousContent.runs();
-        // Text has the white-space of its own style. It differs from the parent box style for text in a display: contents element.
-        auto wrappingStyle = [](const Box& layoutBox) -> const Style::ComputedStyle& {
-            return layoutBox.isInlineTextBox() ? layoutBox.style() : layoutBox.parent().style();
-        };
         CheckedRef overflowingBox = runs[overflowingRunIndex].inlineItem.layoutBox();
         auto isWrappingAllowed = TextUtil::isWrappingAllowed(overflowingBox->isInlineBox() ? overflowingBox->style() : wrappingStyle(overflowingBox));
         for (auto index = overflowingRunIndex; !isWrappingAllowed && index--;)
@@ -385,6 +388,45 @@ NODELETE static bool isBreakableRun(const InlineContentBreaker::ContinuousConten
     }
     // Check if this text run needs to stay on the current line.
     return TextUtil::isWrappingAllowed(run.style);
+}
+
+std::optional<size_t> InlineContentBreaker::overflowWrapOpportunityAfter(const ContinuousContent::RunList& runs, size_t runIndex, const LineStatus& lineStatus) const
+{
+    // Returns the index of the run to break after when the run at runIndex is text and the inline box boundary right after it allows overflow-wrap breaking.
+    // https://drafts.csswg.org/css-text-3/#line-break-details
+    // For soft wrap opportunities defined by the boundary between two characters, the white-space property on the nearest common ancestor of the two characters controls breaking.
+    // e.g. <div style="overflow-wrap: anywhere"><span style="white-space: nowrap">first</span><span style="white-space: nowrap">second</span></div>
+    // While "first" is not breakable, overflow-wrap on the <div> allows breaking the content after the first <span>.
+    auto* inlineTextItem = dynamicDowncast<InlineTextItem>(runs[runIndex].inlineItem);
+    // For soft wrap opportunities created by characters that disappear at the line break (e.g. U+0020 SPACE), properties on the box directly containing that character control the line breaking at that opportunity.
+    if (!inlineTextItem || inlineTextItem->isWhitespace())
+        return { };
+    // Skip over the closing inline boxes (and out-of-flow boxes) to find the content after the boundary.
+    // e.g. first</span><span>second or first<div style="position: absolute"></div></span><span>second
+    auto lastInlineBoxEndIndex = std::optional<size_t> { };
+    auto nextRunIndex = runIndex + 1;
+    for (; nextRunIndex < runs.size(); ++nextRunIndex) {
+        auto& inlineItem = runs[nextRunIndex].inlineItem;
+        if (inlineItem.isInlineBoxEnd())
+            lastInlineBoxEndIndex = nextRunIndex;
+        else if (!inlineItem.isOutOfFlow())
+            break;
+    }
+    if (nextRunIndex == runs.size())
+        return { };
+    // The parent of the outermost closing inline box (or when there's none, the parent of the opening inline box) stands in for the nearest common ancestor
+    // of the content before and after the boundary. They are the same box unless an empty inline box sits in between.
+    // e.g. <span>first</span><span>second</span> or <b style="display: contents">first</b><span>second</span>
+    auto& boundaryItem = runs[lastInlineBoxEndIndex.value_or(nextRunIndex)].inlineItem;
+    if (!boundaryItem.isInlineBoxStartOrEnd())
+        return { };
+    CheckedRef style = wrappingStyle(boundaryItem.layoutBox());
+    if (!TextUtil::isWrappingAllowed(style))
+        return { };
+    // overflow-wrap only breaks when there's no earlier wrap opportunity, and it never applies to the block ellipsis.
+    if (!wordBreakBehavior(style, lineStatus.hasWrapOpportunityAtPreviousPosition || lineStatus.hasBlockEllipsis).contains(WordBreakRule::AtArbitraryPosition))
+        return { };
+    return nextRunIndex - 1;
 }
 
 static inline std::optional<size_t> lastValidBreakingPosition(const InlineContentBreaker::ContinuousContent::RunList& runs, size_t textRunIndex)
@@ -699,8 +741,12 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
     for (auto index = overflowingRunIndex; index--;) {
         auto& run = runs[index];
         previousContentWidth -= run.spaceRequired();
-        if (!isBreakableRun(run))
+        if (!isBreakableRun(run)) {
+            // e.g. <div style="overflow-wrap: anywhere"><span style="white-space: nowrap">fits</span><span style="white-space: nowrap">overflows</span></div>
+            if (auto trailingRunIndex = overflowWrapOpportunityAfter(runs, index, lineStatus))
+                return OverflowingTextContent::BreakingPosition { *trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { false } };
             continue;
+        }
         ASSERT(run.inlineItem.isText());
         auto availableWidth = std::max(0.f, lineStatus.availableWidth - previousContentWidth);
         if (auto partialRun = tryBreakingTextRun(runs, { index, false, lineStatus.contentLogicalRight + previousContentWidth }, availableWidth, lineStatus)) {
@@ -735,10 +781,17 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
 
 std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> InlineContentBreaker::tryBreakingNextOverflowingRuns(const LineStatus& lineStatus, const ContinuousContent::RunList& runs, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const
 {
+    // e.g. <div style="overflow-wrap: anywhere"><span style="white-space: nowrap">overflows</span><span style="white-space: nowrap">next</span></div>
+    if (!isBreakableRun(runs[overflowingRunIndex])) {
+        if (auto trailingRunIndex = overflowWrapOpportunityAfter(runs, overflowingRunIndex, lineStatus))
+            return OverflowingTextContent::BreakingPosition { *trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { true } };
+    }
     auto nextContentWidth = nonOverflowingContentWidth + runs[overflowingRunIndex].spaceRequired();
     for (auto index = overflowingRunIndex + 1; index < runs.size(); ++index) {
         auto& run = runs[index];
         if (!isBreakableRun(run)) {
+            if (auto trailingRunIndex = overflowWrapOpportunityAfter(runs, index, lineStatus))
+                return OverflowingTextContent::BreakingPosition { *trailingRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { true } };
             nextContentWidth += run.spaceRequired();
             continue;
         }
