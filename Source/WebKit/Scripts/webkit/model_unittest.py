@@ -89,6 +89,45 @@ class ModelCheckTest(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertTrue("attribute mismatch" in errors[0])
 
+    def test_mismatch_message_attribute_swift_types(self):
+        contents = """
+        [
+            ExceptionForEnabledBy,
+            ExceptionForDispatchedFrom,
+            ExceptionForDispatchedTo,
+            SwiftReceiver
+        ]
+        messages -> WebPage {
+        #if USE(COCOA)
+            LoadURL(String url) SwiftTypes
+        #endif
+        #if USE(GTK)
+            LoadURL(String url)
+        #endif
+        }"""
+        receiver = parser.parse(StringIO(contents))
+        errors = model.check_global_model_inputs([receiver])
+        self.assertEqual(len(errors), 1)
+        self.assertTrue("attribute mismatch" in errors[0])
+
+    def test_async_reply_messages_do_not_take_swift_types(self):
+        contents = """
+        [
+            ExceptionForEnabledBy,
+            ExceptionForDispatchedFrom,
+            ExceptionForDispatchedTo,
+            SwiftReceiver,
+            SwiftTypes
+        ]
+        messages -> WebPage {
+            LoadURL(String url) -> (bool loaded)
+        }"""
+        receiver = parser.parse(StringIO(contents))
+        model.generate_global_model([receiver])
+        self.assertEqual([message.name for message in receiver.messages], ['LoadURL', 'LoadURLReply'])
+        self.assertTrue(receiver.takes_swift_types(receiver.messages[0]))
+        self.assertFalse(receiver.takes_swift_types(receiver.messages[1]))
+
 
 if __name__ == '__main__':
     unittest.main()

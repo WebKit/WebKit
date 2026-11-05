@@ -91,6 +91,7 @@ set(WEBKIT_SWIFT_MEMORY_SAFETY_FLAGS
 set(WEBKIT_SWIFT_MEMORY_SAFETY_ERROR_FLAGS
     "-Werror ForeignReferenceType"
     "-Werror RegionIsolation"
+    "-Werror SendableClosureCaptures"
     "-Werror StrictMemorySafety"
 )
 

@@ -210,6 +210,7 @@ set(WTF_PUBLIC_HEADERS
     NoLock.h
     NoTailCalls.h
     NoVirtualDestructorBase.h
+    NonEscapableBorrow.h
     Nonallocatable.h
     Noncopyable.h
     Nonmovable.h

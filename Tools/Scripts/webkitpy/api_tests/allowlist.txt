@@ -196,6 +196,8 @@ TestWTF.WTF_Logger
 TestWTF.WTF_Markable
 TestWTF.WTF_NakedPtr
 TestWTF.WTF_NeverDestroyed
+TestWTF.WTF_NonEscapableBorrow
+TestWTF.WTF_NonEscapableBorrowDeathTest
 TestWTF.WTF_Observer
 TestWTF.WTF_OptionSet
 TestWTF.WTF_OrderedHashMap

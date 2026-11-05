@@ -68,6 +68,8 @@ _test_receiver_names = [
     'TestWithSwift',
     'TestWithSwiftConditionally',
     'TestWithSwiftConditionallyAndEnabledBy',
+    'TestWithSwiftTypes',
+    'TestWithSwiftTypesOptIn',
     'TestWithValidator',
     'TestWithWantsAsyncDispatch',
     'TestWithWantsDispatch',

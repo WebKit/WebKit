@@ -59,6 +59,9 @@ enum class Incredible;
 }
 
 namespace Namespace {
+enum class SwiftEnum : uint8_t;
+enum class SwiftBoolEnum : bool;
+enum class SwiftOptionSet : uint16_t;
 class ReturnRefClass;
 struct EmptyConstructorStruct;
 class EmptyConstructorWithIf;
@@ -72,6 +75,14 @@ class OuterClass;
 #endif
 #if !(ENABLE(OUTER_CONDITION))
 class OtherOuterClass;
+#endif
+struct SwiftInner;
+struct SwiftStruct;
+class SwiftNode;
+class SwiftLeaf;
+class SwiftBase;
+#if ENABLE(SWIFT_TYPE_CONDITION)
+class SwiftDerived;
 #endif
 }
 
@@ -104,6 +115,7 @@ class AppKitControlSystemImage;
 template<typename> class RectEdges;
 class OpaqueTypeObject;
 struct Amazing;
+struct FrameIdentifierType;
 }
 
 namespace WebKit {
@@ -120,6 +132,8 @@ class CoreIPCDDScannerResult;
 #endif
 class RValueWithFunctionCalls;
 class Fabulous;
+class NotAnIdentifierTag;
+struct SwiftAtomicTestIdentifierType;
 }
 
 enum class EnumWithoutNamespace : uint8_t;
@@ -432,6 +446,53 @@ template<> struct ArgumentCoder<WebCore::OpaqueTypeObject> {
     static std::optional<WebCore::OpaqueTypeObject> decode(Decoder&);
 };
 
+template<> struct ArgumentCoder<WTF::ObjectIdentifier<WebCore::FrameIdentifierType>> {
+    static void encode(Encoder&, const WTF::ObjectIdentifier<WebCore::FrameIdentifierType>&);
+    static std::optional<WTF::ObjectIdentifier<WebCore::FrameIdentifierType>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WTF::ObjectIdentifier<WebKit::NotAnIdentifierTag>> {
+    static void encode(Encoder&, const WTF::ObjectIdentifier<WebKit::NotAnIdentifierTag>&);
+    static std::optional<WTF::ObjectIdentifier<WebKit::NotAnIdentifierTag>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WTF::AtomicObjectIdentifier<WebKit::SwiftAtomicTestIdentifierType>> {
+    static void encode(Encoder&, const WTF::AtomicObjectIdentifier<WebKit::SwiftAtomicTestIdentifierType>&);
+    static std::optional<WTF::AtomicObjectIdentifier<WebKit::SwiftAtomicTestIdentifierType>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Namespace::SwiftInner> {
+    static void encode(Encoder&, const Namespace::SwiftInner&);
+    static std::optional<Namespace::SwiftInner> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Namespace::SwiftStruct> {
+    static void encode(Encoder&, const Namespace::SwiftStruct&);
+    static std::optional<Namespace::SwiftStruct> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Namespace::SwiftNode> {
+    static void encode(Encoder&, const Namespace::SwiftNode&);
+    static std::optional<Ref<Namespace::SwiftNode>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Namespace::SwiftLeaf> {
+    static void encode(Encoder&, const Namespace::SwiftLeaf&);
+    static std::optional<Ref<Namespace::SwiftLeaf>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Namespace::SwiftBase> {
+    static void encode(Encoder&, const Namespace::SwiftBase&);
+    static std::optional<Namespace::SwiftBase> decode(Decoder&);
+};
+
+#if ENABLE(SWIFT_TYPE_CONDITION)
+template<> struct ArgumentCoder<Namespace::SwiftDerived> {
+    static void encode(Encoder&, const Namespace::SwiftDerived&);
+    static std::optional<Namespace::SwiftDerived> decode(Decoder&);
+};
+#endif
+
 } // namespace IPC
 
 
@@ -447,5 +508,7 @@ template<> bool isValidOptionSet<OptionSetEnumAllCondition>(OptionSet<OptionSetE
 #if (ENABLE(OUTER_CONDITION)) && (ENABLE(INNER_CONDITION))
 template<> bool isValidEnum<EnumNamespace::InnerEnumType>(uint8_t);
 #endif
+template<> bool isValidEnum<Namespace::SwiftEnum>(uint8_t);
+template<> bool isValidOptionSet<Namespace::SwiftOptionSet>(OptionSet<Namespace::SwiftOptionSet>);
 
 } // namespace WTF

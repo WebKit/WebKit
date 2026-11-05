@@ -119,6 +119,7 @@ set(TestWTF_SOURCES
     Tests/WTF/NakedPtr.cpp
     Tests/WTF/NativePromise.cpp
     Tests/WTF/NeverDestroyed.cpp
+    Tests/WTF/NonEscapableBorrow.cpp
     Tests/WTF/Observer.cpp
     Tests/WTF/OptionCountedSet.cpp
     Tests/WTF/OptionSet.cpp

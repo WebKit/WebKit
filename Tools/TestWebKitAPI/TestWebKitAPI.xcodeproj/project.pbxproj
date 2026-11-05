@@ -1384,6 +1384,7 @@
 				WTF/NakedPtr.cpp,
 				WTF/NativePromise.cpp,
 				WTF/NeverDestroyed.cpp,
+				WTF/NonEscapableBorrow.cpp,
 				WTF/Observer.cpp,
 				WTF/OptionCountedSet.cpp,
 				WTF/OptionSet.cpp,

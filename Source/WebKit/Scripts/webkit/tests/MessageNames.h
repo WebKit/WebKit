@@ -67,14 +67,16 @@ enum class ReceiverName : uint8_t {
     , TestWithSwift = 23
     , TestWithSwiftConditionally = 24
     , TestWithSwiftConditionallyAndEnabledBy = 25
-    , TestWithValidator = 26
-    , TestWithWantsAsyncDispatch = 27
-    , TestWithWantsDispatch = 28
-    , TestWithWantsDispatchNoSyncMessages = 29
-    , TestWithoutAttributes = 30
-    , TestWithoutUsingIPCConnection = 31
-    , IPC = 32
-    , Invalid = 33
+    , TestWithSwiftTypes = 26
+    , TestWithSwiftTypesOptIn = 27
+    , TestWithValidator = 28
+    , TestWithWantsAsyncDispatch = 29
+    , TestWithWantsDispatch = 30
+    , TestWithWantsDispatchNoSyncMessages = 31
+    , TestWithoutAttributes = 32
+    , TestWithoutUsingIPCConnection = 33
+    , IPC = 34
+    , Invalid = 35
 };
 
 enum class MessageName : uint16_t {
@@ -165,6 +167,16 @@ enum class MessageName : uint16_t {
     TestWithSuperclass_TestMessageWithMessageName,
     TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessageReply,
     TestWithSwiftConditionally_TestAsyncMessageReply,
+    TestWithSwiftTypesOptIn_CxxTypedMessageReply,
+    TestWithSwiftTypesOptIn_SwiftTypedMessageReply,
+    TestWithSwiftTypesOptIn_SwiftTypedMessageWithoutReply,
+    TestWithSwiftTypes_MessageWithCxxTypesReply,
+    TestWithSwiftTypes_MessageWithEmptyReplyReply,
+    TestWithSwiftTypes_MessageWithMultipleRepliesReply,
+    TestWithSwiftTypes_MessageWithRefsReply,
+    TestWithSwiftTypes_MessageWithReplyReply,
+    TestWithSwiftTypes_MessageWithoutParameters,
+    TestWithSwiftTypes_MessageWithoutReply,
     TestWithSwift_TestAsyncMessageReply,
     TestWithSwift_TestMessageWithAliasedParameter,
     TestWithSwift_TestMessageWithEmptyReplyReply,
@@ -256,6 +268,13 @@ enum class MessageName : uint16_t {
 #endif
     TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage,
     TestWithSwiftConditionally_TestAsyncMessage,
+    TestWithSwiftTypesOptIn_CxxTypedMessage,
+    TestWithSwiftTypesOptIn_SwiftTypedMessage,
+    TestWithSwiftTypes_MessageWithCxxTypes,
+    TestWithSwiftTypes_MessageWithEmptyReply,
+    TestWithSwiftTypes_MessageWithMultipleReplies,
+    TestWithSwiftTypes_MessageWithRefs,
+    TestWithSwiftTypes_MessageWithReply,
     TestWithSwift_TestAsyncMessage,
     TestWithSwift_TestMessageWithEmptyReply,
     TestWithValidator_MessageWithReply,
@@ -282,6 +301,10 @@ enum class MessageName : uint16_t {
     TestWithSuperclass_TestSynchronousMessage,
     TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage,
     TestWithSwiftConditionally_TestSyncMessage,
+    TestWithSwiftTypesOptIn_CxxTypedSynchronousMessage,
+    TestWithSwiftTypesOptIn_SwiftTypedSynchronousMessage,
+    TestWithSwiftTypes_SynchronousMessage,
+    TestWithSwiftTypes_SynchronousMessageWithoutParameters,
     TestWithSwift_TestSyncMessage,
     TestWithSwift_TestThrowingMessageWithReply,
     TestWithWantsAsyncDispatch_TestSyncMessage,

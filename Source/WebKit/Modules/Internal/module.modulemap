@@ -327,6 +327,12 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module SwiftCoding {
+        requires cplusplus20
+        header "../../Platform/IPC/SwiftCoding.h"
+        export *
+    }
+
     module TransferString {
         requires cplusplus23
         header "../../Platform/IPC/TransferString.h"
