@@ -31,16 +31,48 @@
 
 namespace JSC {
 
+inline Lock& WeakBlock::weakBlockLock() const
+{
+    return m_heap.weakBlockLock();
+}
+
+inline void WeakBlock::assertWorldIsStopped() const
+{
+    ASSERT(m_heap.worldIsStopped());
+}
+
+inline Lock& WeakSet::weakBlockLock() const
+{
+    return heap()->weakBlockLock();
+}
+
+inline void WeakSet::assertIsHoldingWeakBlockLock() const
+{
+    assertIsHeld(weakBlockLock());
+}
+
+inline void WeakSet::assertWorldIsStopped() const
+{
+    ASSERT(heap()->worldIsStopped());
+}
+
+inline void WeakSet::assertIsExclusiveAccessHolder() const
+{
+    heap()->assertIsExclusiveAccessHolder();
+}
+
 inline WeakImpl* WeakSet::allocate(JSValue jsValue, WeakHandleOwner* weakHandleOwner, void* context)
 {
     CellContainer container = jsValue.asCell()->cellContainer();
     ASSERT(container.vm().currentThreadIsHoldingAPILock());
     WeakSet& weakSet = container.weakSet();
+    weakSet.assertIsExclusiveAccessHolder();
     WeakBlock* block = weakSet.m_currentBlock;
-    if (!block || !block->hasFreeCell()) [[unlikely]]
-        block = weakSet.findAllocator(container);
-
-    WeakImpl* weakImpl = block->takeFreeCell();
+    WeakImpl* weakImpl = block ? block->takeFreeCell() : nullptr;
+    if (!weakImpl) [[unlikely]] {
+        weakImpl = weakSet.findAllocator(container)->takeFreeCell();
+        ASSERT(weakImpl);
+    }
     container.vm().heap.didAllocate(sizeof(WeakImpl));
     weakImpl->initialize(jsValue, weakHandleOwner, context);
     return weakImpl;

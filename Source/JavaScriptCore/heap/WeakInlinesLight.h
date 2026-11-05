@@ -39,4 +39,13 @@ template<typename T> inline void Weak<T>::clear()
     m_impl = nullptr;
 }
 
+template<typename T> inline void Weak<T>::clearConcurrently()
+{
+    auto* pointer = impl();
+    if (!pointer)
+        return;
+    pointer->clearConcurrently();
+    m_impl = nullptr;
+}
+
 } // namespace JSC
