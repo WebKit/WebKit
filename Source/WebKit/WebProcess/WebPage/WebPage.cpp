@@ -2556,6 +2556,14 @@ void WebPage::close(CompletionHandler<void()>&& completionHandler)
     if (isRunningModal)
         RunLoop::mainSingleton().stop();
 
+    // Unloading the page may have started keepalive loads, such as a beacon sent from pagehide, which are
+    // only queued on the network process connection so far. The UI process may terminate this process as
+    // soon as it gets the reply, so make sure the network process received them first.
+    if (RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection()) {
+        networkProcessConnection->connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::FlushNetworkProcessIPC(), WTF::move(completionHandler));
+        return;
+    }
+
     completionHandler();
 }
 

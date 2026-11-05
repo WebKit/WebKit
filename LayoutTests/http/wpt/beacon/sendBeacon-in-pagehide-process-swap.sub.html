@@ -1,0 +1,13 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Beacons sent from pagehide reach the server when the page is closed after a cross-site navigation swaps processes</title>
+<script src="/common/utils.js"></script>
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+
+const TOKEN = token();
+const COUNT = 20;
+const DESTINATION = "http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/beacon/support/sendBeacon-in-pagehide-process-swap-destination.html?token=" + TOKEN + "&count=" + COUNT;
+onload = () => location.href = "support/sendBeacon-in-pagehide-process-swap-source.html?token=" + TOKEN + "&count=" + COUNT + "&destination=" + encodeURIComponent(DESTINATION);
+</script>

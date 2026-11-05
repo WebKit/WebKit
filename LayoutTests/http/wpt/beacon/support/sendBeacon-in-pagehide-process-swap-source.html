@@ -1,0 +1,14 @@
+<!doctype html>
+<meta charset="utf-8">
+<script>
+const params = new URLSearchParams(location.search);
+const beaconCount = Number(params.get("count"));
+
+addEventListener("pagehide", () => {
+    for (let i = 0; i < beaconCount; ++i)
+        navigator.sendBeacon("../resources/count-beacons.py?record&token=" + params.get("token") + "&i=" + i);
+});
+
+// The destination is cross-site, so it loads in another process and this page is closed.
+onload = () => setTimeout(() => location.href = params.get("destination"), 0);
+</script>
