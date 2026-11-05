@@ -32,6 +32,7 @@
 #include "BlockStepSizing.h"
 #include "Element.h"
 #include "InlineContentConstrainer.h"
+#include "LocalFrameViewInlines.h"
 #include "OutOfFlowGeometry.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
@@ -248,7 +249,7 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
     }
     // FIXME: Floats need the block container's top before the inline content is laid out; decide whether it has line boxes from its
     // inline items then.
-    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(downcast<RenderBlockFlow>(blockContainer), constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.replacedElementAvailableBlockSize, blockContainerState.relayoutChildren, m_blockLayoutState, *this, result);
+    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(downcast<RenderBlockFlow>(blockContainer), constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.replacedElementAvailableBlockSize, orthogonalFlowAvailableInlineSpace(blockContainerState), blockContainerState.relayoutChildren, m_blockLayoutState, *this, result);
     // The content takes its lines off the line-clamp budget (LineClampUpdater).
     if (auto lineClamp = m_blockLayoutState.lineClamp()) {
         lineClamp->maximumLines -= std::min(lineClamp->maximumLines, inlineContentLayoutResult.lineCount);
@@ -404,9 +405,16 @@ void BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
     auto containingBlockInlineSize = containingBlockState.inlineRange.size();
     auto& geometry = boxState.geometry;
+    auto containingBlockBlockSize = [&] -> std::optional<LayoutUnit> {
+        if (box.writingMode().isOrthogonal(root().writingMode()))
+            return orthogonalFlowAvailableInlineSpace(containingBlockState);
+        if (box.isRenderReplaced() && box.document().inQuirksMode())
+            return containingBlockState.replacedElementAvailableBlockSize;
+        return containingBlockState.contentBoxBlockSize;
+    };
     auto constraints = ConstraintsForIndependentFormattingContext {
         .containingBlockInlineSize = containingBlockInlineSize,
-        .containingBlockBlockSize = box.isRenderReplaced() && box.document().inQuirksMode() ? std::optional { containingBlockState.replacedElementAvailableBlockSize } : containingBlockState.contentBoxBlockSize,
+        .containingBlockBlockSize = containingBlockBlockSize(),
         .relayoutChildren = containingBlockState.relayoutChildren,
         .borderBoxInlineSize = decidesItsOwnInlineSize(box, root().writingMode()) ? std::nullopt : std::optional { geometry.borderBoxWidth() }
     };
@@ -926,6 +934,37 @@ ContainingBlockState BlockFormattingContext::computeContainingBlockStateAtBlockS
 }
 
 // Quirks mode: body is at least as tall as the viewport leaves it inside html (RenderBox::computeLogicalHeight).
+// The available inline space of an orthogonal box, the block size of its containing block (css-writing-modes-4 §7.3.1). The initial
+// containing block's size stands in for an indefinite one, and caps it when it is not auto, or in quirks mode, where an auto one is the
+// available block size of the containing block like for percentages (RenderBox::perpendicularContainingBlockLogicalHeight).
+LayoutUnit BlockFormattingContext::orthogonalFlowAvailableInlineSpace(const ContainingBlockState& containingBlockState) const
+{
+    CheckedRef containingBlock = containingBlockState.blockContainer;
+    CheckedRef style = containingBlock->style();
+    auto writingMode = root().writingMode();
+    auto& blockSize = style->logicalHeight(writingMode);
+    if (blockSize.isFixed())
+        return containingBlockState.fillAvailableBlockSize;
+    // The size the parent formatting context gives the root, like the render tree's overriding size.
+    if (containingBlock.ptr() == &root() && root().overridingBorderBoxLogicalHeight())
+        return containingBlockState.contentBoxBlockSize.value_or(containingBlockState.fillAvailableBlockSize);
+    auto viewSize = root().view().frameView().layoutSize();
+    auto initialContainingBlockSize = LayoutUnit { writingMode.isHorizontal() ? viewSize.height() : viewSize.width() };
+    auto& maximumBlockSize = style->logicalMaxHeight(writingMode);
+    auto isIndefinite = blockSize.isAuto() && (maximumBlockSize.isNone() || maximumBlockSize.isMaxContent()) && !containingBlock->document().inQuirksMode() && !style->aspectRatio().hasRatio();
+    if (isIndefinite)
+        return initialContainingBlockSize;
+    // A preferred aspect ratio gives an auto block size from the inline size, in quirks mode too.
+    auto availableBlockSize = containingBlockState.fillAvailableBlockSize;
+    if (style->aspectRatio().hasRatio()) {
+        auto& geometry = containingBlockState.geometry;
+        auto borderBoxBlockSize = (blockSize.isAuto() || blockSize.isIntrinsic()) ? BlockFormattingUtils::aspectRatioBorderBoxBlockSize(containingBlock, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding(), { }, { }, writingMode) : std::nullopt;
+        if (auto contentBoxBlockSize = borderBoxBlockSize ? std::optional { *borderBoxBlockSize - geometry.verticalBorderAndPadding() } : containingBlockState.contentBoxBlockSize)
+            availableBlockSize = *contentBoxBlockSize;
+    }
+    return std::min(availableBlockSize, initialContainingBlockSize);
+}
+
 LayoutUnit BlockFormattingContext::viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter) const
 {
     auto& html = root();
