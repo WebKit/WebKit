@@ -116,6 +116,7 @@ public:
     struct YUVColorimetry {
         DMABufBuffer::ColorSpace colorSpace;
         DMABufBuffer::TransferFunction transferFunction;
+        DMABufBuffer::SampleRange sampleRange;
     };
     YUVColorimetry yuvColorimetry() const;
 #endif

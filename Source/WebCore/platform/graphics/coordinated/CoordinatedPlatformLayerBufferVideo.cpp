@@ -362,7 +362,8 @@ static std::optional<SkYUVAInfo> buildYUVAInfoFromMappedFrame(GstMappedFrame& ma
         return std::nullopt;
     }
 
-    auto yuvaColorSpace = DMABufBuffer::skiaYUVColorSpace(yuvColorimetry.colorSpace);
+    auto sampleBits = GST_VIDEO_INFO_FORMAT(mappedFrame.info()) == GST_VIDEO_FORMAT_P010_10LE ? DMABufBuffer::SampleBits::SixteenMSBAligned : DMABufBuffer::SampleBits::Eight;
+    auto yuvaColorSpace = DMABufBuffer::skiaYUVColorSpace(yuvColorimetry.colorSpace, yuvColorimetry.sampleRange, sampleBits);
     return SkYUVAInfo(SkISize::Make(mappedFrame.width(), mappedFrame.height()), planeConfig, subsampling, yuvaColorSpace);
 }
 

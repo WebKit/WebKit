@@ -908,6 +908,7 @@ RefPtr<DMABufBuffer> VideoFrameGStreamer::getDMABuf()
     auto yuvColorimetry = this->yuvColorimetry();
     dmabuf->setColorSpace(yuvColorimetry.colorSpace);
     dmabuf->setTransferFunction(yuvColorimetry.transferFunction);
+    dmabuf->setSampleRange(yuvColorimetry.sampleRange);
 
     dmabuf->ref();
     gst_mini_object_set_qdata(memory, dmabufQuark, dmabuf.ptr(), [](gpointer data) {
@@ -971,13 +972,11 @@ Ref<DMABufBuffer> VideoFrameGStreamer::dmabufForQualcommDecoder(const IntSize& s
 
     // The driver converts YUV to RGB while sampling, so it needs the frame colorimetry.
     // EGL has no token for SMPTE 240M.
-    const auto& colorimetry = GST_VIDEO_INFO_COLORIMETRY(&info());
-    auto colorSpace = yuvColorimetry().colorSpace;
-    if (colorSpace != DMABufBuffer::ColorSpace::Smpte240M) {
-        dmabuf->setColorSpace(colorSpace);
-
-        auto sampleRange = colorimetry.range == GST_VIDEO_COLOR_RANGE_0_255 ? DMABufBuffer::SampleRange::Full : DMABufBuffer::SampleRange::Narrow;
-        dmabuf->setSampleRange(sampleRange);
+    auto yuvColorimetry = this->yuvColorimetry();
+    if (yuvColorimetry.colorSpace != DMABufBuffer::ColorSpace::Smpte240M) {
+        dmabuf->setColorSpace(yuvColorimetry.colorSpace);
+        dmabuf->setSampleRange(yuvColorimetry.sampleRange);
+        dmabuf->setIsQualcommVideoFrameBuffer();
     }
 
     return dmabuf;
@@ -1008,6 +1007,7 @@ VideoFrameGStreamer::YUVColorimetry VideoFrameGStreamer::yuvColorimetry() const
     return {
         yuvColorSpaceFromMatrix(colorimetry.matrix),
         colorimetry.transfer == GST_VIDEO_TRANSFER_SMPTE2084 ? DMABufBuffer::TransferFunction::Pq : DMABufBuffer::TransferFunction::Bt709,
+        colorimetry.range == GST_VIDEO_COLOR_RANGE_0_255 ? DMABufBuffer::SampleRange::Full : DMABufBuffer::SampleRange::Narrow,
     };
 }
 #endif
