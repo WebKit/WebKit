@@ -318,10 +318,10 @@ private:
 FlexLayout::FlexItemsAtMaxContentWidthScope::FlexItemsAtMaxContentWidthScope(FlexLayout& flexLayout, const FlexLayoutItems& flexLayoutItems, const FlexFormattingContext::SizeList& flexItemsMaxContentWidths)
     : m_flexLayout(flexLayout)
     , m_flexLayoutItems(flexLayoutItems)
+    , m_overridingSizes(ReserveCapacityTag { }, flexLayoutItems.size())
     , m_flexLayoutStateScope(flexLayout.m_flexLayoutState, FlexLayoutState { flexLayout.flexBox().hasDefiniteLogicalHeight() })
 {
     ASSERT(flexLayoutItems.size() == flexItemsMaxContentWidths.size());
-    m_overridingSizes.reserveInitialCapacity(flexLayoutItems.size());
     for (size_t index = 0; index < flexLayoutItems.size(); ++index) {
         auto& flexLayoutItem = flexLayoutItems[index];
         CheckedRef flexItem = flexLayoutItem.renderer;

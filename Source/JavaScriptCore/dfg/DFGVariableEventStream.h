@@ -91,8 +91,8 @@ public:
     static constexpr bool verbose = false;
 
     VariableEventStreamBuilder()
+        : m_bytes(ReserveCapacityTag { }, 1024)
     {
-        m_bytes.reserveInitialCapacity(1024);
     }
 
     void appendAndLog(const VariableEvent& event)

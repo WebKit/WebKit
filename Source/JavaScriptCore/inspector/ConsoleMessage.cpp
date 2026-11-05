@@ -128,6 +128,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     : m_source(source)
     , m_type(type)
     , m_level(level)
+    , m_jsonLogValues(ReserveCapacityTag { }, messages.size())
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
@@ -137,8 +138,6 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
 
     if (!messages.size())
         return;
-
-    m_jsonLogValues.reserveInitialCapacity(messages.size());
 
     StringBuilder builder;
     for (auto& message : messages) {
