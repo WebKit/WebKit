@@ -55,6 +55,38 @@ TEST(MIMESniffer, MIMETypes)
     ASSERT_EQ(MIMESniffer::getMIMETypeFromContent({ aviData.data(), aviData.size() }), String("video/avi"_s));
 }
 
+// Builds a buffer holding the first frame header of an MP3 file without ID3 tag, followed by the header of the second frame located at frameSize.
+static Vector<uint8_t> mp3TwoFrameHeaders(std::array<uint8_t, 4> firstHeader, std::array<uint8_t, 4> secondHeader, size_t frameSize)
+{
+    Vector<uint8_t> data(FillWith { }, frameSize + secondHeader.size(), 0);
+    memcpySpan(data.mutableSpan(), std::span { firstHeader });
+    memcpySpan(data.mutableSpan().subspan(frameSize), std::span { secondHeader });
+    return data;
+}
+
+TEST(MIMESniffer, MP3WithoutID3)
+{
+    // MPEG-1 Layer III, 128kbps, 48kHz, no padding: frame size is 144 * 128000 / 48000 = 384 (half-a-second-48000.mp3).
+    auto mpeg1 = mp3TwoFrameHeaders({ 0xFF, 0xFB, 0x94, 0x64 }, { 0xFF, 0xFB, 0xC4, 0x64 }, 384);
+    EXPECT_EQ(MIMESniffer::getMIMETypeFromContent(mpeg1.span()), String("audio/mpeg"_s));
+
+    // MPEG-1 Layer III, 128kbps, 44.1kHz, padded: frame size is 144 * 128000 / 44100 + 1 = 418 (sine440.mp3).
+    auto mpeg1Padded = mp3TwoFrameHeaders({ 0xFF, 0xFA, 0x93, 0xCC }, { 0xFF, 0xFA, 0x93, 0xCC }, 418);
+    EXPECT_EQ(MIMESniffer::getMIMETypeFromContent(mpeg1Padded.span()), String("audio/mpeg"_s));
+
+    // MPEG-2 Layer III, 64kbps, 22.05kHz, no padding: frame size is 72 * 64000 / 22050 = 208 (sound_5.mp3).
+    auto mpeg2 = mp3TwoFrameHeaders({ 0xFF, 0xF3, 0x80, 0xC4 }, { 0xFF, 0xF3, 0x20, 0xC4 }, 208);
+    EXPECT_EQ(MIMESniffer::getMIMETypeFromContent(mpeg2.span()), String("audio/mpeg"_s));
+
+    // MPEG-2.5 Layer III, 32kbps, 8kHz, no padding: frame size is 72 * 32000 / 8000 = 288 (half-a-second-8000.mp3).
+    auto mpeg25 = mp3TwoFrameHeaders({ 0xFF, 0xE3, 0x48, 0x64 }, { 0xFF, 0xE3, 0x58, 0x64 }, 288);
+    EXPECT_EQ(MIMESniffer::getMIMETypeFromContent(mpeg25.span()), String("audio/mpeg"_s));
+
+    // The second frame header must lie entirely within the sequence.
+    mpeg1.shrink(mpeg1.size() - 1);
+    EXPECT_NE(MIMESniffer::getMIMETypeFromContent(mpeg1.span()), String("audio/mpeg"_s));
+}
+
 TEST(MIMESniffer, WebMSnifferDoesNotReadPastEnd)
 {
     // Truncated WebM-style header crafted so hasSignatureForWebM() advances

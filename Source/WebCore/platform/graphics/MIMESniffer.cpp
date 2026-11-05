@@ -229,8 +229,8 @@ struct MP3Frame {
 NODELETE static uint32_t mp3FrameSize(const MP3Frame& frame)
 {
     // To compute an mp3 frame size, execute these steps:
-    // If version is 1, let scale be 144, else, let scale be 72.
-    auto scale = (frame.version == 1) ? 144u : 72u;
+    // If header's version & 0x01 is non-zero, let scale be 144, else, let scale be 72.
+    auto scale = (frame.version & 0x1) ? 144u : 72u;
     // Let size be bitrate * scale / freq.
     uint32_t size = frame.bitRate * scale / frame.sampleRate;
     // If pad is not zero, increment size by 1.
