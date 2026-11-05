@@ -1,0 +1,10 @@
+Test that a scroll anchoring adjustment made before the next rendering update does not drop a pending smooth scroll in an overflow scroller
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scroller.scrollTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
