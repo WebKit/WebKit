@@ -131,7 +131,7 @@ static CGColorSpaceRef getColorSpace(CGContextDelegateRef delegate, CGRenderingS
     return recorder.colorSpace();
 }
 
-UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
+UniqueRef<GraphicsContextCG> DrawGlyphsRecorder::createInternalContext()
 {
     auto contextDelegate = adoptCF(CGContextDelegateCreate(this));
     CGContextDelegateSetCallback(contextDelegate.get(), deBeginLayer, reinterpret_cast<CGContextDelegateCallback>(&beginLayer));
@@ -369,7 +369,8 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
     // If you set these two equal to each other, and solve for X, you get
     // CTM * currentTextMatrix = CTM * X * m_originalTextMatrix
     // currentTextMatrix * inverse(m_originalTextMatrix) = X
-    AffineTransform currentTextMatrix = CGContextGetTextMatrix(protect(m_internalContext->platformContext()).get());
+    // This is called in the middle of a draw, so the pending state must not be applied here.
+    AffineTransform currentTextMatrix = CGContextGetTextMatrix(m_internalContext->contextForState().get());
     AffineTransform ctmFixup;
     if (auto invertedOriginalTextMatrix = m_originalTextMatrix.inverse())
         ctmFixup = currentTextMatrix * invertedOriginalTextMatrix.value();

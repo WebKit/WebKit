@@ -31,7 +31,7 @@
 #include <WebCore/AffineTransform.h>
 #include <WebCore/Color.h>
 #include <WebCore/Gradient.h>
-#include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsContextCG.h>
 #include <WebCore/Pattern.h>
 #include <WebCore/TextFlags.h>
 #include <pal/spi/cf/CoreTextSPI.h>
@@ -66,7 +66,7 @@ public:
     CGColorSpaceRef colorSpace() const;
 
 private:
-    UniqueRef<GraphicsContext> createInternalContext();
+    UniqueRef<GraphicsContextCG> createInternalContext();
 
     void drawBySplittingIntoOTSVGAndNonOTSVGRuns(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& anchorPoint, FontSmoothingMode);
     void drawOTSVGRun(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& anchorPoint, FontSmoothingMode);
@@ -96,7 +96,7 @@ private:
         bool ignoreTransforms { false };
     };
     State m_originalState;
-    const UniqueRef<GraphicsContext> m_internalContext;
+    const UniqueRef<GraphicsContextCG> m_internalContext;
     RetainPtr<CGColorRef> m_initialFillColor;
     RetainPtr<CGColorRef> m_initialStrokeColor;
     const DeriveFontFromContext m_deriveFontFromContext;

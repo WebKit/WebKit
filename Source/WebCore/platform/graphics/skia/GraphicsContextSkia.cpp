@@ -867,10 +867,6 @@ void GraphicsContextSkia::translate(float x, float y)
     m_canvas.translate(SkFloatToScalar(x), SkFloatToScalar(y));
 }
 
-void GraphicsContextSkia::didUpdateState(GraphicsContextState&)
-{
-}
-
 void GraphicsContextSkia::concatCTM(const AffineTransform& ctm)
 {
     m_canvas.concat(ctm);
