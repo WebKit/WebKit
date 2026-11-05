@@ -3,15 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 110;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
 		DD2A1D052888D1CB00342472 /* MobileMiniBrowser (Platform filters) */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = DD2A1D082888D1CB00342472 /* Build configuration list for PBXAggregateTarget "MobileMiniBrowser (Platform filters)" */;
-			buildPhases = (
-			);
 			dependencies = (
 				DD2A1D0A2888D1D300342472 /* PBXTargetDependency */,
 			);
@@ -60,11 +58,14 @@
 			inputFiles = (
 				"$(SRCROOT)/../TestRunnerShared/Scripts/install-extensions-rule.sh",
 			);
-			isEditable = 1;
 			outputFiles = (
 				"$(BUILT_PRODUCTS_DIR)/$(EXTENSIONS_FOLDER_PATH)/$(INPUT_FILE_NAME)",
 			);
-			script = "echo \"source root $(SRCROOT)\"\n\"${SCRIPT_INPUT_FILE_0}\"\n";
+			script = (
+				"echo \"source root $(SRCROOT)\"",
+				"\"${SCRIPT_INPUT_FILE_0}\"",
+				"",
+			);
 		};
 /* End PBXBuildRule section */
 
@@ -95,27 +96,23 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		CD498B231D76341700681FA7 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 10;
+			dstSubfolder = Frameworks;
 			files = (
 				CD498B431D76348000681FA7 /* MobileMiniBrowser.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E3EE46D92DF345E9009ED72B /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
-			dstSubfolderSpec = 16;
+			dstSubfolder = Product;
 			files = (
 				E3EE46DB2DF3473D009ED72B /* GPUExtension.appex in CopyFiles */,
 				E3EE46DD2DF3475B009ED72B /* NetworkingExtension.appex in CopyFiles */,
 				E37DD4942FB4F8180069AF09 /* WebContentEnhancedSecurityExtension.appex in CopyFiles */,
 				E3EE46DF2DF34770009ED72B /* WebContentExtension.appex in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -159,29 +156,23 @@
 /* Begin PBXFrameworksBuildPhase section */
 		CD1DAF8F1D709E3600017CF0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CD498B421D76348000681FA7 /* MobileMiniBrowser.framework in Frameworks */,
 				DDC9E8CD2A91E0F400B015C1 /* UIKit.framework in Frameworks */,
 				4484520429424D840059B0FE /* WebKit.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CD1DAFA81D709E3600017CF0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CD498B371D76348000681FA7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				DDC9E8CC2A91DEDE00B015C1 /* UIKit.framework in Frameworks */,
 				DD403C5828500FE300D899FC /* WebKit.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -289,14 +280,12 @@
 /* Begin PBXHeadersBuildPhase section */
 		CD498B381D76348000681FA7 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CD498B501D763D7600681FA7 /* SceneDelegate.h in Headers */,
 				457D0F7A29088D9000AE5914 /* SettingsViewController.h in Headers */,
 				CD498B4E1D763D7600681FA7 /* TabViewController.h in Headers */,
 				CD498B4F1D763D7600681FA7 /* WebViewController.h in Headers */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
@@ -351,8 +340,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			name = MobileMiniBrowser.framework;
 			productName = MobileMiniBrowser;
 			productReference = CD498B3B1D76348000681FA7 /* MobileMiniBrowser.framework */;
@@ -384,7 +371,6 @@
 				};
 			};
 			buildConfigurationList = CD1DAF8D1D709E3600017CF0 /* Build configuration list for PBXProject "MobileMiniBrowser" */;
-			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -392,6 +378,8 @@
 				Base,
 			);
 			mainGroup = CD1DAF891D709E3600017CF0;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 100;
 			productRefGroup = CD1DAF931D709E3600017CF0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -407,15 +395,12 @@
 /* Begin PBXResourcesBuildPhase section */
 		CD1DAF901D709E3600017CF0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CD1DAFA51D709E3600017CF0 /* LaunchScreen.storyboard in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CD1DAFA91D709E3600017CF0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CDC2792E2935418400151088 /* index.html in Resources */,
 				CDC2792A2935418400151088 /* looping.html in Resources */,
@@ -423,46 +408,37 @@
 				CDC2792C2935418400151088 /* test.mp4 in Resources */,
 				CDC2792B2935418400151088 /* test2s.mp4 in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CD498B391D76348000681FA7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CD498B521D763D8800681FA7 /* Assets.xcassets in Resources */,
 				CD498B511D763D7F00681FA7 /* Main.storyboard in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CD1DAF8E1D709E3600017CF0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CD1DAF971D709E3600017CF0 /* main.m in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CD1DAFA71D709E3600017CF0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CD1DAFB01D709E3600017CF0 /* MobileMiniBrowserUITests.m in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CD498B361D76348000681FA7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CD498B4D1D763D7100681FA7 /* SceneDelegate.m in Sources */,
 				45BE567C2908C74600FD7A95 /* SettingsViewController.m in Sources */,
 				CD498B4B1D763D7100681FA7 /* TabViewController.m in Sources */,
 				CD498B4C1D763D7100681FA7 /* WebViewController.m in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -508,21 +484,21 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		CD1DAFB21D709E3600017CF0 /* Debug */ = {
+		CD1DAFB21D709E3600017CF0 /* Debug configuration for PBXProject "MobileMiniBrowser" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD4DEEE31D78C6FF00625986 /* DebugRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
-		CD1DAFB31D709E3600017CF0 /* Release */ = {
+		CD1DAFB31D709E3600017CF0 /* Release configuration for PBXProject "MobileMiniBrowser" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD4DEEE31D78C6FF00625986 /* DebugRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
-		CD1DAFB51D709E3600017CF0 /* Debug */ = {
+		CD1DAFB51D709E3600017CF0 /* Debug configuration for PBXNativeTarget "MobileMiniBrowser" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD4DEEE41D78C6FF00625986 /* MobileMiniBrowser.xcconfig */;
 			buildSettings = {
@@ -538,7 +514,7 @@
 			};
 			name = Debug;
 		};
-		CD1DAFB61D709E3600017CF0 /* Release */ = {
+		CD1DAFB61D709E3600017CF0 /* Release configuration for PBXNativeTarget "MobileMiniBrowser" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD4DEEE41D78C6FF00625986 /* MobileMiniBrowser.xcconfig */;
 			buildSettings = {
@@ -554,7 +530,7 @@
 			};
 			name = Release;
 		};
-		CD1DAFB81D709E3600017CF0 /* Debug */ = {
+		CD1DAFB81D709E3600017CF0 /* Debug configuration for PBXNativeTarget "MobileMiniBrowserUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = MobileMiniBrowserUITests/Info.plist;
@@ -569,7 +545,7 @@
 			};
 			name = Debug;
 		};
-		CD1DAFB91D709E3600017CF0 /* Release */ = {
+		CD1DAFB91D709E3600017CF0 /* Release configuration for PBXNativeTarget "MobileMiniBrowserUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = MobileMiniBrowserUITests/Info.plist;
@@ -584,7 +560,7 @@
 			};
 			name = Release;
 		};
-		CD498B451D76348000681FA7 /* Debug */ = {
+		CD498B451D76348000681FA7 /* Debug configuration for PBXNativeTarget "MobileMiniBrowser.framework" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD4DEEE41D78C6FF00625986 /* MobileMiniBrowser.xcconfig */;
 			buildSettings = {
@@ -608,7 +584,7 @@
 			};
 			name = Debug;
 		};
-		CD498B461D76348000681FA7 /* Release */ = {
+		CD498B461D76348000681FA7 /* Release configuration for PBXNativeTarget "MobileMiniBrowser.framework" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD4DEEE41D78C6FF00625986 /* MobileMiniBrowser.xcconfig */;
 			buildSettings = {
@@ -632,13 +608,13 @@
 			};
 			name = Release;
 		};
-		DD2A1D062888D1CB00342472 /* Debug */ = {
+		DD2A1D062888D1CB00342472 /* Debug configuration for PBXAggregateTarget "MobileMiniBrowser (Platform filters)" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 			};
 			name = Debug;
 		};
-		DD2A1D072888D1CB00342472 /* Release */ = {
+		DD2A1D072888D1CB00342472 /* Release configuration for PBXAggregateTarget "MobileMiniBrowser (Platform filters)" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 			};
@@ -650,49 +626,45 @@
 		CD1DAF8D1D709E3600017CF0 /* Build configuration list for PBXProject "MobileMiniBrowser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CD1DAFB21D709E3600017CF0 /* Debug */,
-				CD1DAFB31D709E3600017CF0 /* Release */,
+				CD1DAFB21D709E3600017CF0 /* Debug configuration for PBXProject "MobileMiniBrowser" */,
+				CD1DAFB31D709E3600017CF0 /* Release configuration for PBXProject "MobileMiniBrowser" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		CD1DAFB41D709E3600017CF0 /* Build configuration list for PBXNativeTarget "MobileMiniBrowser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CD1DAFB51D709E3600017CF0 /* Debug */,
-				CD1DAFB61D709E3600017CF0 /* Release */,
+				CD1DAFB51D709E3600017CF0 /* Debug configuration for PBXNativeTarget "MobileMiniBrowser" */,
+				CD1DAFB61D709E3600017CF0 /* Release configuration for PBXNativeTarget "MobileMiniBrowser" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		CD1DAFB71D709E3600017CF0 /* Build configuration list for PBXNativeTarget "MobileMiniBrowserUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CD1DAFB81D709E3600017CF0 /* Debug */,
-				CD1DAFB91D709E3600017CF0 /* Release */,
+				CD1DAFB81D709E3600017CF0 /* Debug configuration for PBXNativeTarget "MobileMiniBrowserUITests" */,
+				CD1DAFB91D709E3600017CF0 /* Release configuration for PBXNativeTarget "MobileMiniBrowserUITests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		CD498B441D76348000681FA7 /* Build configuration list for PBXNativeTarget "MobileMiniBrowser.framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CD498B451D76348000681FA7 /* Debug */,
-				CD498B461D76348000681FA7 /* Release */,
+				CD498B451D76348000681FA7 /* Debug configuration for PBXNativeTarget "MobileMiniBrowser.framework" */,
+				CD498B461D76348000681FA7 /* Release configuration for PBXNativeTarget "MobileMiniBrowser.framework" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		DD2A1D082888D1CB00342472 /* Build configuration list for PBXAggregateTarget "MobileMiniBrowser (Platform filters)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DD2A1D062888D1CB00342472 /* Debug */,
-				DD2A1D072888D1CB00342472 /* Release */,
+				DD2A1D062888D1CB00342472 /* Debug configuration for PBXAggregateTarget "MobileMiniBrowser (Platform filters)" */,
+				DD2A1D072888D1CB00342472 /* Release configuration for PBXAggregateTarget "MobileMiniBrowser (Platform filters)" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
 	rootObject = CD1DAF8A1D709E3600017CF0 /* Project object */;
+	validationLevel = 1;
 }

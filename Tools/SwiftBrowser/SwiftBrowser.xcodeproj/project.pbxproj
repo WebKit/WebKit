@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 71;
+	objectVersion = 110;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,13 +14,11 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		07A4CEC52D092C0800764F5E /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 10;
+			dstSubfolder = Frameworks;
 			files = (
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -49,12 +47,10 @@
 /* Begin PBXFrameworksBuildPhase section */
 		07A58BD12D0400B300CAB4ED /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				07A4CEC32D092C0800764F5E /* _WebKit_SwiftUI.framework in Frameworks */,
 				07A58C0E2D04DD4700CAB4ED /* WebKit.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -101,14 +97,10 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			fileSystemSynchronizedGroups = (
 				B97501332FE9F5AD0067C5C8 /* Source */,
 			);
 			name = SwiftBrowser;
-			packageProductDependencies = (
-			);
 			productName = SwiftUIMiniBrowser;
 			productReference = 07A58BD42D0400B300CAB4ED /* SwiftBrowser.app */;
 			productType = "com.apple.product-type.application";
@@ -129,7 +121,6 @@
 				};
 			};
 			buildConfigurationList = 07A58BCF2D0400B300CAB4ED /* Build configuration list for PBXProject "SwiftBrowser" */;
-			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -138,6 +129,7 @@
 			);
 			mainGroup = 07A58BCB2D0400B300CAB4ED;
 			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 100;
 			productRefGroup = 07A58BD52D0400B300CAB4ED /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -150,25 +142,21 @@
 /* Begin PBXResourcesBuildPhase section */
 		07A58BD22D0400B300CAB4ED /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		07A58BD02D0400B300CAB4ED /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		07A58BE12D0400B400CAB4ED /* Debug */ = {
+		07A58BE12D0400B400CAB4ED /* Debug configuration for PBXProject "SwiftBrowser" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = B97501632FE9F5BD0067C5C8 /* Configurations */;
 			baseConfigurationReferenceRelativePath = DebugRelease.xcconfig;
@@ -176,7 +164,7 @@
 			};
 			name = Debug;
 		};
-		07A58BE22D0400B400CAB4ED /* Release */ = {
+		07A58BE22D0400B400CAB4ED /* Release configuration for PBXProject "SwiftBrowser" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = B97501632FE9F5BD0067C5C8 /* Configurations */;
 			baseConfigurationReferenceRelativePath = DebugRelease.xcconfig;
@@ -184,7 +172,7 @@
 			};
 			name = Release;
 		};
-		07A58BE42D0400B400CAB4ED /* Debug */ = {
+		07A58BE42D0400B400CAB4ED /* Debug configuration for PBXNativeTarget "SwiftBrowser" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = B97501632FE9F5BD0067C5C8 /* Configurations */;
 			baseConfigurationReferenceRelativePath = SwiftBrowser.xcconfig;
@@ -192,7 +180,7 @@
 			};
 			name = Debug;
 		};
-		07A58BE52D0400B400CAB4ED /* Release */ = {
+		07A58BE52D0400B400CAB4ED /* Release configuration for PBXNativeTarget "SwiftBrowser" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = B97501632FE9F5BD0067C5C8 /* Configurations */;
 			baseConfigurationReferenceRelativePath = SwiftBrowser.xcconfig;
@@ -206,22 +194,21 @@
 		07A58BCF2D0400B300CAB4ED /* Build configuration list for PBXProject "SwiftBrowser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				07A58BE12D0400B400CAB4ED /* Debug */,
-				07A58BE22D0400B400CAB4ED /* Release */,
+				07A58BE12D0400B400CAB4ED /* Debug configuration for PBXProject "SwiftBrowser" */,
+				07A58BE22D0400B400CAB4ED /* Release configuration for PBXProject "SwiftBrowser" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		07A58BE32D0400B400CAB4ED /* Build configuration list for PBXNativeTarget "SwiftBrowser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				07A58BE42D0400B400CAB4ED /* Debug */,
-				07A58BE52D0400B400CAB4ED /* Release */,
+				07A58BE42D0400B400CAB4ED /* Debug configuration for PBXNativeTarget "SwiftBrowser" */,
+				07A58BE52D0400B400CAB4ED /* Release configuration for PBXNativeTarget "SwiftBrowser" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
 	rootObject = 07A58BCC2D0400B300CAB4ED /* Project object */;
+	validationLevel = 1;
 }
