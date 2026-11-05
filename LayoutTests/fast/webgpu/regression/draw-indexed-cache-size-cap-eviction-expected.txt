@@ -1,0 +1,10 @@
+Regression test for rdar://186968639: the maxCacheSize eviction in Buffer::drawIndexedValidated() did not arm m_mustTakeSlowIndexValidationPath, so an unsubmitted encoder's raw drawIndexedPrimitives lost its backstop. Green means the backstop ran; anything else means an out-of-bounds vertex fetch.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pixel.join() is "0,255,0,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

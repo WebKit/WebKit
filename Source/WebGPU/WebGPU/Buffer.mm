@@ -546,8 +546,15 @@ void Buffer::drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint
 
     constexpr auto maxCacheSize = 1000000;
     if (m_drawIndexedCache.size() > maxCacheSize) {
+#ifdef RC_REMOVE_SEC_ACCEL_3
         m_drawIndexedCache.clear();
+<<<<<<< HEAD
         m_minValidatedVertexCount = UINT32_MAX;
+=======
+#else
+        invalidateDrawIndexedCache();
+#endif // RC_REMOVE_SEC_ACCEL_3
+>>>>>>> 32cc627f0193 (WebGPU drawIndexedValidated size-cap eviction severs in-flight skip backstop causing GPU OOB read)
     }
 
     m_drawIndexedCache.set(makeKey(firstIndex, indexCount, baseVertex, indexType, primitiveOffset, icb), DrawIndexValidationCacheEntry { vertexCount, validationGeneration });
@@ -765,20 +772,36 @@ bool Buffer::needsIndexValidation(uint32_t maxUnsignedIndex, uint16_t maxUshortI
     return maxUnsignedIndex >= m_minValidatedVertexCount || maxUshortIndex >= m_minValidatedVertexCount;
 }
 
-void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
+void Buffer::invalidateDrawIndexedCache(CommandEncoder* commandEncoder)
 {
+<<<<<<< HEAD
     if (!m_usage.containsAny({ WebGPU::BufferUsage::Indirect, WebGPU::BufferUsage::Index }))
         return;
 
+=======
+>>>>>>> 32cc627f0193 (WebGPU drawIndexedValidated size-cap eviction severs in-flight skip backstop causing GPU OOB read)
     if (auto currentSize = computeSize(m_skippedValidationCommandEncoders, m_device.get())) {
         bool validationNotNeeded = currentSize == 1 && commandEncoder && commandEncoder == m_device->commandEncoderFromIdentifier(*m_skippedValidationCommandEncoders.begin().get());
         if (!validationNotNeeded)
             m_mustTakeSlowIndexValidationPath = true;
     }
 
-    m_gpuResourceMap.clear();
     m_drawIndexedCache.clear();
     m_minValidatedVertexCount = UINT32_MAX;
+<<<<<<< HEAD
+=======
+#endif // RC_REMOVE_SEC_ACCEL_3
+}
+
+void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
+{
+    if (!(m_usage & (WGPUBufferUsage_Indirect | WGPUBufferUsage_Index)))
+        return;
+
+    invalidateDrawIndexedCache(commandEncoder);
+
+    m_gpuResourceMap.clear();
+>>>>>>> 32cc627f0193 (WebGPU drawIndexedValidated size-cap eviction severs in-flight skip backstop causing GPU OOB read)
     ++m_contentsGeneration;
     ++m_indexContentsGeneration;
     m_indexValueUpperBoundUint = UINT32_MAX;
