@@ -49,23 +49,23 @@ public:
     static Ref<InjectedBundleScriptWorld> create(ContentWorldIdentifier, const String& name, Type = Type::Internal);
     static Ref<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld&);
     static RefPtr<InjectedBundleScriptWorld> get(const WebCore::DOMWrapperWorld&);
-    static InjectedBundleScriptWorld* LEGACY_NODELETE find(const String&);
+    NODELETE static InjectedBundleScriptWorld* find(const String&);
     static InjectedBundleScriptWorld& normalWorldSingleton();
 
     virtual ~InjectedBundleScriptWorld();
 
-    const WebCore::DOMWrapperWorld& LEGACY_NODELETE coreWorld() const;
-    WebCore::DOMWrapperWorld& LEGACY_NODELETE coreWorld();
+    NODELETE const WebCore::DOMWrapperWorld& coreWorld() const;
+    NODELETE WebCore::DOMWrapperWorld& coreWorld();
 
     void clearWrappers();
-    void LEGACY_NODELETE setAllowAutofill();
-    void LEGACY_NODELETE setAllowElementUserInfo();
-    void LEGACY_NODELETE makeAllShadowRootsOpen();
-    void LEGACY_NODELETE exposeClosedShadowRootsForExtensions();
-    void LEGACY_NODELETE disableOverrideBuiltinsBehavior();
-    void LEGACY_NODELETE setAllowJSHandleCreation();
-    void LEGACY_NODELETE setAllowNodeSnapshotCreation();
-    void LEGACY_NODELETE setAllowPostingLegacySynchronousMessages();
+    NODELETE void setAllowAutofill();
+    NODELETE void setAllowElementUserInfo();
+    NODELETE void makeAllShadowRootsOpen();
+    NODELETE void exposeClosedShadowRootsForExtensions();
+    NODELETE void disableOverrideBuiltinsBehavior();
+    NODELETE void setAllowJSHandleCreation();
+    NODELETE void setAllowNodeSnapshotCreation();
+    NODELETE void setAllowPostingLegacySynchronousMessages();
 
     ContentWorldIdentifier identifier() const { return m_identifier; }
     const String& name() const LIFETIME_BOUND { return m_name; }

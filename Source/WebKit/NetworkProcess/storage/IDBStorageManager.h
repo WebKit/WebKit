@@ -58,7 +58,7 @@ public:
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
     IDBStorageManager(const String& path, IDBStorageRegistry&, QuotaCheckFunction&&, bool useSQLiteMemoryBackingStore);
     ~IDBStorageManager();
-    bool LEGACY_NODELETE isActive() const;
+    NODELETE bool isActive() const;
     bool hasDataInMemory() const;
     void closeDatabasesForDeletion();
     void stopDatabaseActivitiesForSuspend();

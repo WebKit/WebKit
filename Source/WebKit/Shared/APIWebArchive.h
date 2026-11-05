@@ -59,7 +59,7 @@ public:
 
     Ref<API::Data> data();
 
-    WebCore::LegacyWebArchive* LEGACY_NODELETE coreLegacyWebArchive();
+    NODELETE WebCore::LegacyWebArchive* coreLegacyWebArchive();
 
 private:
     WebArchive(WebArchiveResource* mainResource, RefPtr<API::Array>&& subresources, RefPtr<API::Array>&& subframeArchives);

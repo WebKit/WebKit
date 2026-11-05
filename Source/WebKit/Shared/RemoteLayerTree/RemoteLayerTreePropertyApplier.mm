@@ -257,7 +257,7 @@ static MTCoreMaterialVisualStyleCategory materialVisualStyleCategoryForAppleVisu
 
 #if HAVE(MATERIAL_HOSTING)
 
-static WKHostedMaterialEffectType LEGACY_NODELETE hostedMaterialEffectTypeForAppleVisualEffect(AppleVisualEffect effect)
+NODELETE static WKHostedMaterialEffectType hostedMaterialEffectTypeForAppleVisualEffect(AppleVisualEffect effect)
 {
     switch (effect) {
     case AppleVisualEffect::GlassMaterial:
@@ -289,7 +289,7 @@ static WKHostedMaterialEffectType LEGACY_NODELETE hostedMaterialEffectTypeForApp
     }
 }
 
-static WKHostedMaterialColorScheme LEGACY_NODELETE hostedMaterialColorSchemeForAppleVisualEffectData(const AppleVisualEffectData& data)
+NODELETE static WKHostedMaterialColorScheme hostedMaterialColorSchemeForAppleVisualEffectData(const AppleVisualEffectData& data)
 {
     switch (data.colorScheme) {
     case AppleVisualEffectData::ColorScheme::Light:
@@ -696,7 +696,7 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
 #endif
 
     [layer setSublayers:createNSArray(properties.children, [&] (auto& child) -> CALayer * {
-        // FIXME: Static analysis false positive. This context is LEGACY_NODELETE.
+        // FIXME: Static analysis false positive. This context is NODELETE.
         SUPPRESS_UNRETAINED_LOCAL auto* childNode = relatedLayers.get(child);
         ASSERT(childNode);
         if (!childNode)

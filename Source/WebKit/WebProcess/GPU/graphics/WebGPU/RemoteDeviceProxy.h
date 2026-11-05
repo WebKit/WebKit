@@ -66,7 +66,7 @@ public:
 
     Vector<::WebGPU::FeatureName> features() const final { return m_features; }
     const ::WebGPU::Limits& limits() const LIFETIME_BOUND final { return m_limits; }
-    Ref<::WebGPU::Queue> LEGACY_NODELETE queue() final;
+    NODELETE Ref<::WebGPU::Queue> queue() final;
     void destroy() final;
 
     RefPtr<::WebGPU::Buffer> createBuffer(const ::WebGPU::BufferDescriptor&) final;

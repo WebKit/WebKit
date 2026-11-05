@@ -433,8 +433,8 @@ public:
     static RefPtr<Connection> connection(UniqueID);
     UniqueID uniqueID() const { return m_uniqueID; }
 
-    void LEGACY_NODELETE setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
-    void LEGACY_NODELETE setShouldExitOnSyncMessageSendFailure(bool);
+    NODELETE void setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
+    NODELETE void setShouldExitOnSyncMessageSendFailure(bool);
 
     // The set callback will be called on the connection work queue when the connection is closed,
     // before didCall is called on the client thread. Must be called before the connection is opened.
@@ -442,7 +442,7 @@ public:
     // on the work queue, for example if we want to handle them on some other thread we could avoid
     // handling the message on the client thread first.
     typedef void (*DidCloseOnConnectionWorkQueueCallback)(Connection*);
-    void LEGACY_NODELETE setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback);
+    NODELETE void setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback);
 
     using OutgoingMessageQueueIsGrowingLargeCallback = Function<void()>;
     void setOutgoingMessageQueueIsGrowingLargeCallback(OutgoingMessageQueueIsGrowingLargeCallback&&);
@@ -590,7 +590,7 @@ public:
 
     void ignoreTimeoutsForTesting() { m_ignoreTimeoutsForTesting = true; }
 
-    void LEGACY_NODELETE enableIncomingMessagesThrottling();
+    NODELETE void enableIncomingMessagesThrottling();
 
 #if ENABLE(IPC_TESTING_API)
     void addMessageObserver(const MessageObserver&);
@@ -626,7 +626,7 @@ public:
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     static bool signpostsEnabled();
-    static void LEGACY_NODELETE forceEnableSignposts();
+    NODELETE static void forceEnableSignposts();
 #endif
 
     // Lets threads send messages themselves, instead of queuing them for the connection queue, when
@@ -635,8 +635,8 @@ public:
     static bool sendOnCallingThreadEnabled();
     static void setSendOnCallingThreadEnabledForTesting(bool);
 
-    static bool LEGACY_NODELETE shouldCrashOnMessageCheckFailure();
-    static void LEGACY_NODELETE setShouldCrashOnMessageCheckFailure(bool);
+    NODELETE static bool shouldCrashOnMessageCheckFailure();
+    NODELETE static void setShouldCrashOnMessageCheckFailure(bool);
 
 #if ENABLE(IPC_TESTING_API)
     bool hasErrorString() const
@@ -661,7 +661,7 @@ private:
     Connection(Identifier&&, bool isServer, ThreadQOS = ThreadQOS::Default);
     Connection();
     void platformInitialize(Identifier&&);
-    bool LEGACY_NODELETE platformPrepareForOpen();
+    NODELETE bool platformPrepareForOpen();
     void platformOpen();
     void platformInvalidate();
 
@@ -716,7 +716,7 @@ private:
     bool platformCanSendOutgoingMessages() const WTF_REQUIRES_LOCK(m_sendLock);
     // True while an accepted message is still completing asynchronously (Windows OVERLAPPED write,
     // GLib G_IO_OUT).
-    bool LEGACY_NODELETE platformHasMessageInFlight() const;
+    NODELETE bool platformHasMessageInFlight() const;
 
 #if PLATFORM(COCOA)
     bool canSendOnCallingThread(std::optional<ThreadQOS>) const;
@@ -751,7 +751,7 @@ private:
     size_t incomingMessagesDispatchingBatchSize() const;
     CompletionHandler<void(Connection*, std::unique_ptr<Decoder>&&)> takeAsyncReplyHandlerWithDispatcherWithLockHeld(AsyncReplyID);
 
-    Timeout LEGACY_NODELETE timeoutRespectingIgnoreTimeoutsForTesting(Timeout) const;
+    NODELETE Timeout timeoutRespectingIgnoreTimeoutsForTesting(Timeout) const;
 
     Error sendMessageImpl(UniqueRef<Encoder>&&, OptionSet<SendOption> sendOptions, std::optional<ThreadQOS> = std::nullopt);
 

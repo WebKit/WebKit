@@ -54,7 +54,7 @@ public:
 
     void didChooseColor(const WebCore::Color&);
     void didEndChooser();
-    void LEGACY_NODELETE disconnectFromPage();
+    NODELETE void disconnectFromPage();
 
     void reattachColorChooser(const WebCore::Color&) override;
     void setSelectedColor(const WebCore::Color&) override;

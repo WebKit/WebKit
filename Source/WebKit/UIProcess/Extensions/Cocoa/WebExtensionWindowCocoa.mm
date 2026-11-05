@@ -204,7 +204,7 @@ RefPtr<WebExtensionTab> WebExtensionWindow::activeTab() const
     return extensionContext->getOrCreateTab(activeTab);
 }
 
-WKWebExtensionWindowType LEGACY_NODELETE toAPI(WebExtensionWindow::Type type)
+NODELETE WKWebExtensionWindowType toAPI(WebExtensionWindow::Type type)
 {
     switch (type) {
     case WebExtensionWindow::Type::Normal:
@@ -217,7 +217,7 @@ WKWebExtensionWindowType LEGACY_NODELETE toAPI(WebExtensionWindow::Type type)
     return WKWebExtensionWindowTypeNormal;
 }
 
-static inline WebExtensionWindow::Type LEGACY_NODELETE toImpl(WKWebExtensionWindowType type)
+NODELETE static inline WebExtensionWindow::Type toImpl(WKWebExtensionWindowType type)
 {
     switch (type) {
     case WKWebExtensionWindowTypeNormal:
@@ -238,7 +238,7 @@ WebExtensionWindow::Type WebExtensionWindow::type() const
     return toImpl([m_delegate windowTypeForWebExtensionContext:m_extensionContext->wrapper()]);
 }
 
-static inline WebExtensionWindow::State LEGACY_NODELETE toImpl(WKWebExtensionWindowState state)
+NODELETE static inline WebExtensionWindow::State toImpl(WKWebExtensionWindowState state)
 {
     switch (state) {
     case WKWebExtensionWindowStateNormal:
@@ -263,7 +263,7 @@ WebExtensionWindow::State WebExtensionWindow::state() const
     return toImpl([m_delegate windowStateForWebExtensionContext:m_extensionContext->wrapper()]);
 }
 
-WKWebExtensionWindowState LEGACY_NODELETE toAPI(WebExtensionWindow::State state)
+NODELETE WKWebExtensionWindowState toAPI(WebExtensionWindow::State state)
 {
     switch (state) {
     case WebExtensionWindow::State::Normal:

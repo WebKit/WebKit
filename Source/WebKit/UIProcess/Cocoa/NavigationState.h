@@ -66,7 +66,7 @@ public:
     void ref() const final;
     void deref() const final;
 
-    static NavigationState* LEGACY_NODELETE fromWebPage(WebPageProxy&);
+    NODELETE static NavigationState* fromWebPage(WebPageProxy&);
 
     UniqueRef<API::NavigationClient> createNavigationClient();
     UniqueRef<API::HistoryClient> createHistoryClient();

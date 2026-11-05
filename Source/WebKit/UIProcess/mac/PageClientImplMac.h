@@ -65,7 +65,7 @@ public:
     virtual ~PageClientImpl();
 
     // FIXME: Eventually WebViewImpl should become the PageClient.
-    void LEGACY_NODELETE setImpl(WebViewImpl&);
+    NODELETE void setImpl(WebViewImpl&);
 
     void viewWillMoveToAnotherWindow();
 
@@ -225,7 +225,7 @@ private:
     void showPDFHUD(PDFPluginIdentifier) final;
 
 #if ENABLE(FULLSCREEN_API)
-    WebFullScreenManagerProxyClient& LEGACY_NODELETE fullScreenManagerProxyClient() final;
+    NODELETE WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() final;
 #endif
 
 #if ENABLE(FULLSCREEN_API)

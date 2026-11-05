@@ -78,7 +78,7 @@ public:
     void reshape(int width, int height) final;
     bool supportsExtension(WebCore::GCGLExtension) final;
     bool enableExtension(WebCore::GCGLExtension) final;
-    std::optional<size_t> LEGACY_NODELETE estimatedMemoryCost() final;
+    NODELETE std::optional<size_t> estimatedMemoryCost() final;
 
     GCGLint maxCombinedTextureImageUnits() final { return m_maxCombinedTextureImageUnits; }
     GCGLint maxVertexAttribs() final { return m_maxVertexAttribs; }
@@ -390,7 +390,7 @@ public:
 #endif
     // End of list used by generate-gpup-webgl script.
 
-    static bool LEGACY_NODELETE handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);
+    NODELETE static bool handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);
 
 protected:
     explicit RemoteGraphicsContextGLProxy(const WebCore::GraphicsContextGLAttributes&, RemoteRenderingBackendProxy&);
@@ -421,11 +421,11 @@ private:
     void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, std::span<const char8_t>);
     void memoryCostChanged(std::optional<uint64_t>);
 
-    void LEGACY_NODELETE initialize(const RemoteGraphicsContextGLInitializationState&);
+    NODELETE void initialize(const RemoteGraphicsContextGLInitializationState&);
     void waitUntilInitialized();
     void disconnectGpuProcessIfNeeded();
     void abandonGpuProcess();
-    uint32_t LEGACY_NODELETE createObjectName();
+    NODELETE uint32_t createObjectName();
 
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection; // Only main thread use.
     RefPtr<IPC::StreamClientConnection> m_streamConnection;

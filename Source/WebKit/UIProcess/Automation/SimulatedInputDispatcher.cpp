@@ -45,7 +45,7 @@
 namespace WebKit {
 
 // https://w3c.github.io/webdriver/#dfn-normalised-key-value
-VirtualKey LEGACY_NODELETE normalizedVirtualKey(VirtualKey key)
+NODELETE VirtualKey normalizedVirtualKey(VirtualKey key)
 {
     switch (key) {
     case VirtualKey::ControlRight:

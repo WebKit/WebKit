@@ -71,8 +71,8 @@ public:
     void cancelReceive(std::optional<WebCore::WebTransportStreamErrorCode>);
     void cancelSend(std::optional<WebCore::WebTransportStreamErrorCode>);
     void cancel(std::optional<WebCore::WebTransportStreamErrorCode>);
-    WebCore::WebTransportSendStreamStats LEGACY_NODELETE getSendStreamStats();
-    WebCore::WebTransportReceiveStreamStats LEGACY_NODELETE getReceiveStreamStats();
+    NODELETE WebCore::WebTransportSendStreamStats getSendStreamStats();
+    NODELETE WebCore::WebTransportReceiveStreamStats getReceiveStreamStats();
     uint64_t bytesSent() const { return m_bytesSent; }
     uint64_t bytesReceived() const { return m_bytesReceived; }
 

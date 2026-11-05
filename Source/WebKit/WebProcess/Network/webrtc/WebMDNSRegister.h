@@ -48,7 +48,7 @@ class WebMDNSRegister : public CanMakeWeakPtr<WebMDNSRegister> {
 public:
     explicit WebMDNSRegister(WebRTCNetworkBase&);
 
-    void LEGACY_NODELETE ref() const;
+    NODELETE void ref() const;
     void deref() const;
 
     void unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier);

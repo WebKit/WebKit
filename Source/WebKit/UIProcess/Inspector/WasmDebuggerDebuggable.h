@@ -61,7 +61,7 @@ public:
 
     std::optional<ProcessID> webContentProcessPID() const override;
 
-    void LEGACY_NODELETE detachFromProcess();
+    NODELETE void detachFromProcess();
 
     // Response forwarding for WebAssembly debugging
     void sendResponseToFrontend(const String& response);

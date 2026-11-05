@@ -48,7 +48,7 @@ public:
     ~ProvisionalFrameProxy();
 
     WebFrameProxy& frame() const { return m_frame.get(); }
-    WebProcessProxy& LEGACY_NODELETE process() const;
+    NODELETE WebProcessProxy& process() const;
     WebCore::NavigationIdentifier navigationID() const { return m_navigationID; }
 
     RefPtr<FrameProcess> takeFrameProcess();

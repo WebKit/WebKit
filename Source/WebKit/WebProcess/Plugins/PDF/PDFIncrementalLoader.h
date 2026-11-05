@@ -100,11 +100,11 @@ private:
 
     void unconditionalCompleteOutstandingRangeRequests();
 
-    ByteRangeRequest* LEGACY_NODELETE byteRangeRequestForStreamLoader(WebCore::NetscapePlugInStreamLoader&);
+    NODELETE ByteRangeRequest* byteRangeRequestForStreamLoader(WebCore::NetscapePlugInStreamLoader&);
     void forgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
     void cancelAndForgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
 
-    std::optional<ByteRangeRequestIdentifier> LEGACY_NODELETE identifierForLoader(WebCore::NetscapePlugInStreamLoader&);
+    NODELETE std::optional<ByteRangeRequestIdentifier> identifierForLoader(WebCore::NetscapePlugInStreamLoader&);
     void removeOutstandingByteRangeRequest(ByteRangeRequestIdentifier);
 
 

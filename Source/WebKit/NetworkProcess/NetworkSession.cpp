@@ -1067,7 +1067,7 @@ void NetworkSession::setEmulatedConditions(std::optional<uint64_t> bandwidthByte
 }
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-static double LEGACY_NODELETE connectionTimesMovingAverage(const Deque<Seconds, 25>& connectionTimes)
+NODELETE static double connectionTimesMovingAverage(const Deque<Seconds, 25>& connectionTimes)
 {
     constexpr double alphaSmoothing { 0.75 };
     // EWMA:

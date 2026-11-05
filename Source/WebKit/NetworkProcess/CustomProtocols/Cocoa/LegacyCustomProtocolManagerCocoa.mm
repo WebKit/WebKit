@@ -40,7 +40,7 @@
 
 namespace WebKit {
 
-static RefPtr<NetworkProcess>& LEGACY_NODELETE firstNetworkProcess()
+NODELETE static RefPtr<NetworkProcess>& firstNetworkProcess()
 {
     static NeverDestroyed<RefPtr<NetworkProcess>> networkProcess;
     return networkProcess.get();

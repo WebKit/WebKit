@@ -110,17 +110,17 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebLoaderStrategy);
 
-[[maybe_unused]] static uint64_t LEGACY_NODELETE pageIDForLog(const std::optional<WebResourceLoader::TrackingParameters>& parameters)
+NODELETE [[maybe_unused]] static uint64_t pageIDForLog(const std::optional<WebResourceLoader::TrackingParameters>& parameters)
 {
     return parameters ? parameters->pageID.toUInt64() : 0;
 }
 
-[[maybe_unused]] static uint64_t LEGACY_NODELETE frameIDForLog(const std::optional<WebResourceLoader::TrackingParameters>& parameters)
+NODELETE [[maybe_unused]] static uint64_t frameIDForLog(const std::optional<WebResourceLoader::TrackingParameters>& parameters)
 {
     return parameters ? parameters->frameID.toUInt64() : 0;
 }
 
-[[maybe_unused]] static uint64_t LEGACY_NODELETE resourceIDForLog(const std::optional<WebResourceLoader::TrackingParameters>& parameters)
+NODELETE [[maybe_unused]] static uint64_t resourceIDForLog(const std::optional<WebResourceLoader::TrackingParameters>& parameters)
 {
     return parameters ? parameters->resourceID.toUInt64() : 0;
 }
@@ -172,7 +172,7 @@ void WebLoaderStrategy::schedulePluginStreamLoad(LocalFrame& frame, NetscapePlug
     });
 }
 
-static Seconds LEGACY_NODELETE maximumBufferingTime(CachedResource* resource)
+NODELETE static Seconds maximumBufferingTime(CachedResource* resource)
 {
     if (!resource)
         return 0_s;

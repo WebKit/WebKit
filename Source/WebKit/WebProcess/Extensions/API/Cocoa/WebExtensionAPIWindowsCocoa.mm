@@ -48,7 +48,7 @@
 
 namespace WebKit {
 
-static inline NSString *LEGACY_NODELETE toWebAPI(WebExtensionWindow::State state)
+NODELETE static inline NSString *toWebAPI(WebExtensionWindow::State state)
 {
     switch (state) {
     case WebExtensionWindow::State::Normal:
@@ -65,7 +65,7 @@ static inline NSString *LEGACY_NODELETE toWebAPI(WebExtensionWindow::State state
     }
 }
 
-static inline NSString *LEGACY_NODELETE toWebAPI(WebExtensionWindow::Type type)
+NODELETE static inline NSString *toWebAPI(WebExtensionWindow::Type type)
 {
     switch (type) {
     case WebExtensionWindow::Type::Normal:
@@ -569,7 +569,7 @@ WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onFocusChanged()
     return *m_onFocusChanged;
 }
 
-inline OptionSet<WebExtensionWindowTypeFilter> LEGACY_NODELETE toWindowTypeFilter(WebExtensionWindow::Type type)
+NODELETE inline OptionSet<WebExtensionWindowTypeFilter> toWindowTypeFilter(WebExtensionWindow::Type type)
 {
     switch (type) {
     case WebExtensionWindow::Type::Normal:

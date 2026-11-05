@@ -66,7 +66,7 @@ public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
-    WebPage* LEGACY_NODELETE page() const;
+    NODELETE WebPage* page() const;
 
     void updateDockingAvailability();
 

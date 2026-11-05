@@ -72,9 +72,9 @@ public:
     explicit NetworkActivityTracker(Label, Domain = Domain::WebKit);
     ~NetworkActivityTracker();
 
-    void LEGACY_NODELETE setParent(NetworkActivityTracker&);
-    void LEGACY_NODELETE start();
-    void LEGACY_NODELETE complete(CompletionCode);
+    NODELETE void setParent(NetworkActivityTracker&);
+    NODELETE void start();
+    NODELETE void complete(CompletionCode);
 
 #if HAVE(NW_ACTIVITY)
     nw_activity_t getPlatformObject() const { return m_networkActivity.get(); }

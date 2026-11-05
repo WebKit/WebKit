@@ -100,7 +100,7 @@ private:
     void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&) override { };
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) override { };
     void didFailLoading(const WebCore::ResourceError&) override;
-    bool LEGACY_NODELETE isDownloadTriggeredWithDownloadAttribute() const;
+    NODELETE bool isDownloadTriggeredWithDownloadAttribute() const;
 
     // MessageSender.
     IPC::Connection* messageSenderConnection() const override;

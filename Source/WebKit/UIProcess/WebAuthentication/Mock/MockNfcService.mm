@@ -139,7 +139,7 @@ namespace {
 
 static id<NFReaderSessionDelegate> globalNFReaderSessionDelegate;
 
-static WeakPtr<MockNfcService>& LEGACY_NODELETE weakGlobalNfcService()
+NODELETE static WeakPtr<MockNfcService>& weakGlobalNfcService()
 {
     static NeverDestroyed<WeakPtr<MockNfcService>> service;
     return service.get();

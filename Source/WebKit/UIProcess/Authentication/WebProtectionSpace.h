@@ -39,13 +39,13 @@ public:
     }
     
     const String& protocol() const LIFETIME_BOUND;
-    const String& LEGACY_NODELETE host() const LIFETIME_BOUND;
-    int LEGACY_NODELETE port() const;
-    const String& LEGACY_NODELETE realm() const LIFETIME_BOUND;
-    bool LEGACY_NODELETE isProxy() const;
-    WebCore::ProtectionSpace::ServerType LEGACY_NODELETE serverType() const;
+    NODELETE const String& host() const LIFETIME_BOUND;
+    NODELETE int port() const;
+    NODELETE const String& realm() const LIFETIME_BOUND;
+    NODELETE bool isProxy() const;
+    NODELETE WebCore::ProtectionSpace::ServerType serverType() const;
     bool receivesCredentialSecurely() const;
-    WebCore::ProtectionSpace::AuthenticationScheme LEGACY_NODELETE authenticationScheme() const;
+    NODELETE WebCore::ProtectionSpace::AuthenticationScheme authenticationScheme() const;
 
     const WebCore::ProtectionSpace& protectionSpace() const LIFETIME_BOUND { return m_coreProtectionSpace; }
 

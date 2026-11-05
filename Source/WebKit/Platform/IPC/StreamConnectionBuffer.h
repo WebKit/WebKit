@@ -118,7 +118,7 @@ public:
 
     static constexpr size_t maximumSize() { return std::min(static_cast<size_t>(ClientOffset::serverIsSleepingTag), static_cast<size_t>(ServerOffset::clientIsWaitingTag)) - 1; }
 
-    std::span<uint8_t> LEGACY_NODELETE headerForTesting();
+    NODELETE std::span<uint8_t> headerForTesting();
     std::span<uint8_t> dataForTesting() LIFETIME_BOUND { return mutableSpan(); }
 
     static constexpr bool sharedMemorySizeIsValid(size_t size) { return headerSize() < size && size <= headerSize() + maximumSize(); }

@@ -752,57 +752,57 @@ public:
         return index;
     }
 
-    bool LEGACY_NODELETE useTagNameForTextFormControls() const
+    NODELETE bool useTagNameForTextFormControls() const
     {
         return m_versionBehaviors.contains(TextExtractionVersionBehavior::TagNameForTextFormControls);
     }
 
-    bool LEGACY_NODELETE includeRects() const
+    NODELETE bool includeRects() const
     {
         return !usePlainTextOutput() && m_options.flags.contains(TextExtractionOptionFlag::IncludeRects);
     }
 
-    bool LEGACY_NODELETE includeSelectOptions() const
+    NODELETE bool includeSelectOptions() const
     {
         return !usePlainTextOutput() && m_options.flags.contains(TextExtractionOptionFlag::IncludeSelectOptions);
     }
 
-    bool LEGACY_NODELETE includeTagName() const
+    NODELETE bool includeTagName() const
     {
         return useTextTreeOutput() && m_options.flags.contains(TextExtractionOptionFlag::IncludeTagName);
     }
 
-    bool LEGACY_NODELETE includeURLs() const
+    NODELETE bool includeURLs() const
     {
         return !usePlainTextOutput() && m_options.flags.contains(TextExtractionOptionFlag::IncludeURLs);
     }
 
-    bool LEGACY_NODELETE shortenURLs() const
+    NODELETE bool shortenURLs() const
     {
         return m_options.flags.contains(TextExtractionOptionFlag::ShortenURLs);
     }
 
-    bool LEGACY_NODELETE usePlainTextOutput() const
+    NODELETE bool usePlainTextOutput() const
     {
         return m_options.outputFormat == TextExtractionOutputFormat::PlainText;
     }
 
-    bool LEGACY_NODELETE useHTMLOutput() const
+    NODELETE bool useHTMLOutput() const
     {
         return m_options.outputFormat == TextExtractionOutputFormat::HTMLMarkup;
     }
 
-    bool LEGACY_NODELETE useMarkdownOutput() const
+    NODELETE bool useMarkdownOutput() const
     {
         return m_options.outputFormat == TextExtractionOutputFormat::Markdown;
     }
 
-    bool LEGACY_NODELETE useTextTreeOutput() const
+    NODELETE bool useTextTreeOutput() const
     {
         return m_options.outputFormat == TextExtractionOutputFormat::TextTree;
     }
 
-    bool LEGACY_NODELETE useJSONOutput() const
+    NODELETE bool useJSONOutput() const
     {
         return m_options.outputFormat == TextExtractionOutputFormat::MinifiedJSON;
     }
@@ -862,7 +862,7 @@ public:
         m_urlStringStack.append(WTF::move(urlString));
     }
 
-    std::optional<String> LEGACY_NODELETE currentURLString() const
+    NODELETE std::optional<String> currentURLString() const
     {
         if (m_urlStringStack.isEmpty())
             return std::nullopt;
@@ -880,9 +880,9 @@ public:
         m_urlStringStack.removeLast();
     }
 
-    void LEGACY_NODELETE pushSuperscript() { m_superscriptLevel++; }
-    bool LEGACY_NODELETE superscriptLevel() const { return m_superscriptLevel; }
-    void LEGACY_NODELETE popSuperscript()
+    NODELETE void pushSuperscript() { m_superscriptLevel++; }
+    NODELETE bool superscriptLevel() const { return m_superscriptLevel; }
+    NODELETE void popSuperscript()
     {
         if (!m_superscriptLevel) {
             ASSERT_NOT_REACHED();
@@ -891,9 +891,9 @@ public:
         m_superscriptLevel--;
     }
 
-    void LEGACY_NODELETE pushStrikethrough() { m_strikethroughLevel++; }
-    bool LEGACY_NODELETE isInsideStrikethrough() const { return m_strikethroughLevel > 0; }
-    void LEGACY_NODELETE popStrikethrough()
+    NODELETE void pushStrikethrough() { m_strikethroughLevel++; }
+    NODELETE bool isInsideStrikethrough() const { return m_strikethroughLevel > 0; }
+    NODELETE void popStrikethrough()
     {
         if (!m_strikethroughLevel) {
             ASSERT_NOT_REACHED();
@@ -1041,7 +1041,7 @@ private:
         protect(rootJSONObject())->setInteger("version"_s, version());
     }
 
-    uint32_t LEGACY_NODELETE version() const
+    NODELETE uint32_t version() const
     {
         return m_options.version.value_or(currentTextExtractionOutputVersion);
     }

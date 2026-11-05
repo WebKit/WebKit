@@ -58,7 +58,7 @@ public:
 
     void invalidate();
 
-    WebProcessProxy* LEGACY_NODELETE process() const;
+    NODELETE WebProcessProxy* process() const;
 
 private:
     WebOpenPanelResultListenerProxy(WebPageProxy*, WebProcessProxy&);

@@ -215,7 +215,7 @@ private:
 
 class ResourceMonitorURLsController : public WebPrivacyContentRuleListController<bool> {
 public:
-    static ResourceMonitorURLsController& LEGACY_NODELETE singleton();
+    NODELETE static ResourceMonitorURLsController& singleton();
 
     void getSource(CompletionHandler<void(String&&)>&&);
 
@@ -236,7 +236,7 @@ private:
 
 class TrackingPreventionContentRuleListController : public ListDataControllerBase, public WebPrivacyContentRuleListController<> {
 public:
-    static TrackingPreventionContentRuleListController& LEGACY_NODELETE singleton();
+    NODELETE static TrackingPreventionContentRuleListController& singleton();
 
 private:
     friend class NeverDestroyed<TrackingPreventionContentRuleListController, MainRunLoopAccessTraits>;

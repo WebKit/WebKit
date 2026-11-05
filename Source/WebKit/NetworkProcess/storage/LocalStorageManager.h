@@ -50,7 +50,7 @@ public:
     static String localStorageFilePath(const String& directory);
 
     LocalStorageManager(const String& path, StorageAreaRegistry&);
-    bool LEGACY_NODELETE isActive() const;
+    NODELETE bool isActive() const;
     bool hasDataInMemory() const;
     void clearDataInMemory();
     void clearDataOnDisk();

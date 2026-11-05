@@ -44,7 +44,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static inline bool LEGACY_NODELETE computeIsAlwaysOnLoggingAllowed(NetworkSession& session)
+NODELETE static inline bool computeIsAlwaysOnLoggingAllowed(NetworkSession& session)
 {
     if (session.networkProcess().sessionIsControlledByAutomation(session.sessionID()))
         return true;

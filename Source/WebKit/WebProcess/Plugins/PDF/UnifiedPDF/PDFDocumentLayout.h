@@ -61,16 +61,16 @@ public:
     size_t rowCount() const;
     PDFLayoutRow rowForPageIndex(PageIndex) const;
     Vector<PDFLayoutRow> rows() const;
-    unsigned LEGACY_NODELETE rowIndexForPageIndex(PageIndex) const;
+    NODELETE unsigned rowIndexForPageIndex(PageIndex) const;
 
     static constexpr WebCore::FloatSize documentMargin { 16, 18 };
     static constexpr WebCore::FloatSize pageMargin { 14, 16 };
 
-    bool LEGACY_NODELETE isLeftPageIndex(PageIndex) const;
-    bool LEGACY_NODELETE isRightPageIndex(PageIndex) const;
+    NODELETE bool isLeftPageIndex(PageIndex) const;
+    NODELETE bool isRightPageIndex(PageIndex) const;
     bool isLastPageIndex(PageIndex) const;
     PageIndex lastPageIndex() const;
-    bool LEGACY_NODELETE isFirstPageOfRow(PageIndex) const;
+    NODELETE bool isFirstPageOfRow(PageIndex) const;
 
     RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
     std::optional<PageIndex> indexForPage(RetainPtr<PDFPage>) const;
@@ -83,12 +83,12 @@ public:
     std::pair<PageIndex, WebCore::FloatPoint> pageIndexAndPagePointForDocumentYOffset(float) const;
 
     // This is not scaled by scale().
-    WebCore::FloatRect LEGACY_NODELETE layoutBoundsForPageAtIndex(PageIndex) const;
+    NODELETE WebCore::FloatRect layoutBoundsForPageAtIndex(PageIndex) const;
     // Bounds of the pages in the row, including document margins. Not scaled.
     WebCore::FloatRect layoutBoundsForRow(PDFLayoutRow) const;
 
     // Returns 0, 90, 180, 270.
-    WebCore::IntDegrees LEGACY_NODELETE rotationForPageAtIndex(PageIndex) const;
+    NODELETE WebCore::IntDegrees rotationForPageAtIndex(PageIndex) const;
 
     WebCore::FloatPoint documentToPDFPage(WebCore::FloatPoint documentPoint, PageIndex) const;
     WebCore::FloatRect documentToPDFPage(WebCore::FloatRect documentRect, PageIndex) const;
@@ -105,8 +105,8 @@ public:
     };
 
     OptionSet<LayoutUpdateChange> updateLayout(WebCore::IntSize pluginSize, ShouldUpdateAutoSizeScale);
-    WebCore::FloatSize LEGACY_NODELETE contentsSize() const;
-    WebCore::FloatSize LEGACY_NODELETE scaledContentsSize() const;
+    NODELETE WebCore::FloatSize contentsSize() const;
+    NODELETE WebCore::FloatSize scaledContentsSize() const;
 
     void setDisplayMode(PDFPluginDisplayMode displayMode) { m_displayMode = displayMode; }
     PDFPluginDisplayMode displayMode() const { return m_displayMode; }

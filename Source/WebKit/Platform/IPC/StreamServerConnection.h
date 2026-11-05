@@ -110,8 +110,8 @@ public:
         HasMoreMessages
     };
     DispatchResult dispatchStreamMessages(size_t messageLimit);
-    void LEGACY_NODELETE markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral error);
-    void LEGACY_NODELETE markCurrentlyDispatchedMessageAsInvalid(const String&);
+    NODELETE void markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral error);
+    NODELETE void markCurrentlyDispatchedMessageAsInvalid(const String&);
 
     // Called from a stream message handler. True if the handler can defer the message, i.e. the message is
     // an asynchronous message without a reply or attachments.

@@ -42,7 +42,7 @@ public:
 
     void registerCache(WebCore::DOMCacheIdentifier, CacheStorageCache&);
     void unregisterCache(WebCore::DOMCacheIdentifier);
-    CacheStorageCache* LEGACY_NODELETE cache(WebCore::DOMCacheIdentifier);
+    NODELETE CacheStorageCache* cache(WebCore::DOMCacheIdentifier);
 
 private:
     CacheStorageRegistry();

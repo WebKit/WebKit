@@ -75,7 +75,7 @@ static const MediaProducerMediaStateFlags activeCaptureMask { MediaProducerMedia
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-static WeakHashSet<UserMediaPermissionRequestManagerProxy>& LEGACY_NODELETE proxies()
+NODELETE static WeakHashSet<UserMediaPermissionRequestManagerProxy>& proxies()
 {
     static NeverDestroyed<WeakHashSet<UserMediaPermissionRequestManagerProxy>> set;
     return set;
@@ -242,7 +242,7 @@ void UserMediaPermissionRequestManagerProxy::clearCachedState()
 }
 
 #if ENABLE(MEDIA_STREAM)
-static uint64_t LEGACY_NODELETE toWebCore(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason reason)
+NODELETE static uint64_t toWebCore(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason reason)
 {
     switch (reason) {
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoConstraints:
@@ -1020,8 +1020,8 @@ public:
         m_handler(m_cameraPermission, m_microphonePermission);
     }
 
-    void LEGACY_NODELETE setCameraPermission(PermissionState state) { m_cameraPermission = state; }
-    void LEGACY_NODELETE setMicrophonePermission(PermissionState state) { m_microphonePermission = state; }
+    NODELETE void setCameraPermission(PermissionState state) { m_cameraPermission = state; }
+    NODELETE void setMicrophonePermission(PermissionState state) { m_microphonePermission = state; }
 
 private:
     explicit UserMediaPermissionInfoGatherer(CompletionHandler<void(PermissionState, PermissionState)>&& handler)

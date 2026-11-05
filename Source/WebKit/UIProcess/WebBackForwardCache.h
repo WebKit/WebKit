@@ -49,7 +49,7 @@ public:
     explicit WebBackForwardCache(WebProcessPool&);
     ~WebBackForwardCache();
 
-    void LEGACY_NODELETE ref() const;
+    NODELETE void ref() const;
     void deref() const;
 
     void setCapacity(WebProcessPool&, unsigned);

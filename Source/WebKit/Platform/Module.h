@@ -54,7 +54,7 @@ public:
     bool load();
     // Note: On Mac this leaks the CFBundle to avoid crashes when a bundle is unloaded and there are
     // live Objective-C objects whose methods come from that bundle.
-    void LEGACY_NODELETE unload();
+    NODELETE void unload();
 
 #if USE(CF)
     String bundleIdentifier() const;

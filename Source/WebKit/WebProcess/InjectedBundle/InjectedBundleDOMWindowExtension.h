@@ -44,7 +44,7 @@ class WebFrame;
 class InjectedBundleDOMWindowExtension : public API::ObjectImpl<API::Object::Type::BundleDOMWindowExtension>, public CanMakeWeakPtr<InjectedBundleDOMWindowExtension> {
 public:
     static Ref<InjectedBundleDOMWindowExtension> create(WebFrame*, InjectedBundleScriptWorld*);
-    static InjectedBundleDOMWindowExtension* LEGACY_NODELETE get(WebCore::DOMWindowExtension*);
+    NODELETE static InjectedBundleDOMWindowExtension* get(WebCore::DOMWindowExtension*);
 
     virtual ~InjectedBundleDOMWindowExtension();
     

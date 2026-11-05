@@ -60,7 +60,7 @@ using VirtualKey = Inspector::Protocol::Automation::VirtualKey;
 using VirtualKeyMap = HashMap<VirtualKey, VirtualKey, WTF::IntHash<VirtualKey>, WTF::StrongEnumHashTraits<VirtualKey>>;
 
 // https://w3c.github.io/webdriver/#dfn-normalised-key-value
-VirtualKey LEGACY_NODELETE normalizedVirtualKey(VirtualKey);
+NODELETE VirtualKey normalizedVirtualKey(VirtualKey);
 
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 // A CharKey must only ever represent a single unicode codepoint or a single grapheme cluster.
@@ -187,7 +187,7 @@ public:
     void run(std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, SimulatedInputRunOptions, AutomationCompletionHandler&&);
     void cancel();
 
-    bool LEGACY_NODELETE isActive() const;
+    NODELETE bool isActive() const;
 
 private:
     SimulatedInputDispatcher(WebPageProxy&, SimulatedInputDispatcher::Client&);

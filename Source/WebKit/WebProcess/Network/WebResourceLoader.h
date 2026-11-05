@@ -117,7 +117,7 @@ private:
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler&&, String&& unblockRequestDeniedScript, const WebCore::ResourceError&, const URL& blockedPageURL, WebCore::SubstituteData&&);
 #endif
 
-    size_t LEGACY_NODELETE calculateBytesTransferredOverNetworkDelta(size_t bytesTransferredOverNetwork);
+    NODELETE size_t calculateBytesTransferredOverNetworkDelta(size_t bytesTransferredOverNetwork);
     void updateNetworkLoadMetrics(WebCore::NetworkLoadMetrics&);
 
     RefPtr<WebCore::ResourceLoader> m_coreLoader;

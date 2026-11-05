@@ -197,7 +197,7 @@ bool messageTypeSendsReply(MessageType messageType)
     return false;
 }
 
-static RefPtr<PrivateClickMeasurementManager>& LEGACY_NODELETE managerPointer()
+NODELETE static RefPtr<PrivateClickMeasurementManager>& managerPointer()
 {
     static NeverDestroyed<RefPtr<PrivateClickMeasurementManager>> manager;
     return manager.get();
@@ -209,7 +209,7 @@ void initializePCMStorageInDirectory(const String& storageDirectory, const Strin
     managerPointer() = PrivateClickMeasurementManager::create(makeUniqueRef<PCM::DaemonClient>(), storageDirectory, std::make_pair(applicationBundleIdentifier, secondaryApplicationBundleIdentifier));
 }
 
-static PrivateClickMeasurementManager& LEGACY_NODELETE daemonManagerSingleton()
+NODELETE static PrivateClickMeasurementManager& daemonManagerSingleton()
 {
     ASSERT(managerPointer());
     return *managerPointer();

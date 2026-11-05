@@ -65,8 +65,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    WebSharedWorkerServer* LEGACY_NODELETE server();
-    const WebSharedWorkerServer* LEGACY_NODELETE server() const;
+    NODELETE WebSharedWorkerServer* server();
+    NODELETE const WebSharedWorkerServer* server() const;
 
     NetworkSession* session();
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }

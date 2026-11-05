@@ -79,7 +79,7 @@ public:
     static Ref<UserMediaPermissionRequestManagerProxy> create(WebPageProxy&);
     ~UserMediaPermissionRequestManagerProxy();
 
-    WebPageProxy* LEGACY_NODELETE page() const;
+    NODELETE WebPageProxy* page() const;
 
     void disconnectFromPage();
 
@@ -184,9 +184,9 @@ private:
 
     RequestAction getRequestAction(const UserMediaPermissionRequestProxy&);
 
-    bool LEGACY_NODELETE wasGrantedVideoOrAudioAccess(WebCore::FrameIdentifier);
-    bool LEGACY_NODELETE wasGrantedAudioAccess(WebCore::FrameIdentifier);
-    bool LEGACY_NODELETE wasGrantedVideoAccess(WebCore::FrameIdentifier);
+    NODELETE bool wasGrantedVideoOrAudioAccess(WebCore::FrameIdentifier);
+    NODELETE bool wasGrantedAudioAccess(WebCore::FrameIdentifier);
+    NODELETE bool wasGrantedVideoAccess(WebCore::FrameIdentifier);
 
     void computeFilteredDeviceList(WebCore::FrameIdentifier, UserMediaPermissionRequestProxy::DeviceUIDs&& previouslySelectedDeviceUIDs, WebCore::PermissionState, WebCore::PermissionState, CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&)>&&);
     void platformGetMediaStreamDevices(bool revealIdsAndLabels, CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&)>&&);

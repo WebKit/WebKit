@@ -60,7 +60,7 @@ class WebGestureEvent;
 #endif
 
 WebCore::PlatformMouseEvent platform(const WebMouseEvent&);
-WebCore::PlatformWheelEvent LEGACY_NODELETE platform(const WebWheelEvent&);
+NODELETE WebCore::PlatformWheelEvent platform(const WebWheelEvent&);
 WebCore::PlatformKeyboardEvent platform(const WebKeyboardEvent&);
 
 #if ENABLE(TOUCH_EVENTS)
@@ -74,17 +74,17 @@ WebCore::PlatformTouchPoint platform(const WebTouchPoint&);
 WebCore::PlatformGestureEvent platform(const WebGestureEvent&);
 #endif
 
-WebCore::MouseEventInputSource LEGACY_NODELETE platform(WebEventInputSource);
-WebEventInputSource LEGACY_NODELETE kit(WebCore::MouseEventInputSource);
+NODELETE WebCore::MouseEventInputSource platform(WebEventInputSource);
+NODELETE WebEventInputSource kit(WebCore::MouseEventInputSource);
 
 WebCore::MouseButton platform(WebMouseEventButton);
-WebMouseEventButton LEGACY_NODELETE kit(WebCore::MouseButton);
+NODELETE WebMouseEventButton kit(WebCore::MouseButton);
 
-WebCore::PlatformEvent::Type LEGACY_NODELETE platform(WebEventType);
-WebEventType LEGACY_NODELETE kit(WebCore::PlatformEvent::Type);
+NODELETE WebCore::PlatformEvent::Type platform(WebEventType);
+NODELETE WebEventType kit(WebCore::PlatformEvent::Type);
 
 OptionSet<WebCore::PlatformEvent::Modifier> platform(OptionSet<WebEventModifier>);
-OptionSet<WebKit::WebEventModifier> LEGACY_NODELETE kit(OptionSet<WebCore::PlatformEvent::Modifier>);
+NODELETE OptionSet<WebKit::WebEventModifier> kit(OptionSet<WebCore::PlatformEvent::Modifier>);
 
 #if PLATFORM(GTK) || PLATFORM(WPE) || USE(LIBWPE)
 MonotonicTime monotonicTimeForEventTimeInMilliseconds(uint64_t);

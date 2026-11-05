@@ -54,7 +54,7 @@ public:
 
     virtual ~InjectedBundleNodeHandle();
 
-    WebCore::Node* LEGACY_NODELETE coreNode();
+    NODELETE WebCore::Node* coreNode();
 
     // Convenience DOM Operations
     RefPtr<InjectedBundleNodeHandle> document();
@@ -78,8 +78,8 @@ public:
     bool htmlInputElementLastChangeWasUserEdit();
     bool htmlTextAreaElementLastChangeWasUserEdit();
     bool isTextField() const;
-    bool LEGACY_NODELETE isSelectElement() const;
-    bool LEGACY_NODELETE isSelectableTextNode() const;
+    NODELETE bool isSelectElement() const;
+    NODELETE bool isSelectableTextNode() const;
     
     RefPtr<InjectedBundleNodeHandle> htmlTableCellElementCellAbove();
 

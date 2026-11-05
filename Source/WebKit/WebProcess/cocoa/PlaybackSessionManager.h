@@ -141,8 +141,8 @@ public:
     void mediaEngineChanged(WebCore::HTMLMediaElement&);
     WebCore::HTMLMediaElementIdentifier contextIdForMediaElement(WebCore::HTMLMediaElement&);
 
-    WebCore::HTMLMediaElement* LEGACY_NODELETE mediaElementWithContextId(WebCore::HTMLMediaElementIdentifier) const;
-    WebCore::HTMLMediaElement* LEGACY_NODELETE currentPlaybackControlsElement() const;
+    NODELETE WebCore::HTMLMediaElement* mediaElementWithContextId(WebCore::HTMLMediaElementIdentifier) const;
+    NODELETE WebCore::HTMLMediaElement* currentPlaybackControlsElement() const;
 
 #if ENABLE(IMAGE_ANALYSIS)
     void cancelTextRecognition();
@@ -246,7 +246,7 @@ private:
     const Logger& logger() const { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "VideoPresentationManager"_s; }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const;
+    NODELETE WTFLogChannel& logChannel() const;
 #endif
 
     WeakPtr<WebPage> m_page;

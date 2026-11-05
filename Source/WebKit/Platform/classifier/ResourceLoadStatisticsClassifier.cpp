@@ -32,7 +32,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static double LEGACY_NODELETE vectorLength(unsigned a, unsigned b, unsigned c)
+NODELETE static double vectorLength(unsigned a, unsigned b, unsigned c)
 {
     return std::hypot(a, b, c);
 }

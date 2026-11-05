@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-_WKContentSecurityPolicyModeForExtension LEGACY_NODELETE toWKContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension);
-WebCore::ContentSecurityPolicyModeForExtension LEGACY_NODELETE toContentSecurityPolicyModeForExtension(_WKContentSecurityPolicyModeForExtension);
+NODELETE _WKContentSecurityPolicyModeForExtension toWKContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension);
+NODELETE WebCore::ContentSecurityPolicyModeForExtension toContentSecurityPolicyModeForExtension(_WKContentSecurityPolicyModeForExtension);
 
 } // namespace WebKit

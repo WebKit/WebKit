@@ -75,9 +75,9 @@ class PluginView final : public WebCore::PluginViewBase {
 public:
     static RefPtr<PluginView> create(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader);
 
-    WebCore::LocalFrame* LEGACY_NODELETE frame() const;
+    NODELETE WebCore::LocalFrame* frame() const;
 
-    bool LEGACY_NODELETE isBeingDestroyed() const;
+    NODELETE bool isBeingDestroyed() const;
 
     void manualLoadDidReceiveResponse(const WebCore::ResourceResponse&);
     void manualLoadDidReceiveData(const WebCore::SharedBuffer&);
@@ -125,7 +125,7 @@ public:
 
     void obscuredContentInsetsDidChange();
 
-    void LEGACY_NODELETE webPageDestroyed();
+    NODELETE void webPageDestroyed();
 
     bool handleEditingCommand(const String& commandName, const String& argument);
     bool isEditingCommandEnabled(const String& commandName);
@@ -153,7 +153,7 @@ public:
 
     WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const;
     
-    bool LEGACY_NODELETE isUsingUISideCompositing() const;
+    NODELETE bool isUsingUISideCompositing() const;
 
     void invalidateRect(const WebCore::IntRect&) final;
 
@@ -165,7 +165,7 @@ public:
 
     void didSameDocumentNavigationForFrame(WebFrame&);
 
-    PDFPluginIdentifier LEGACY_NODELETE pdfPluginIdentifier() const;
+    NODELETE PDFPluginIdentifier pdfPluginIdentifier() const;
 
     void setPDFDisplayMode(PDFPluginDisplayMode);
 
@@ -209,7 +209,7 @@ private:
 
     void updateDocumentForPluginSizingBehavior();
 
-    WebCore::RenderEmbeddedObject* LEGACY_NODELETE renderer() const;
+    NODELETE WebCore::RenderEmbeddedObject* renderer() const;
 
     // WebCore::PluginViewBase
     WebCore::PluginLayerHostingStrategy layerHostingStrategy() const final;

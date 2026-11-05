@@ -60,7 +60,7 @@ public:
 private:
     explicit ServiceWorkerNotificationHandler() = default;
 
-    WebsiteDataStore* LEGACY_NODELETE dataStoreForNotificationID(const WTF::UUID&);
+    NODELETE WebsiteDataStore* dataStoreForNotificationID(const WTF::UUID&);
 
     HashMap<WTF::UUID, PAL::SessionID> m_notificationToSessionMap;
 };

@@ -218,8 +218,8 @@ public:
     void setPersistedDomains(const HashSet<RegistrableDomain>&);
     void didCreateNetworkProcess();
 
-    NetworkSession* LEGACY_NODELETE networkSession();
-    void LEGACY_NODELETE invalidateAndCancel();
+    NODELETE NetworkSession* networkSession();
+    NODELETE void invalidateAndCancel();
 
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&, CompletionHandler<void()>&&);
     void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebPageProxyIdentifier openerWebPageProxyID, OpenerDomain&&);

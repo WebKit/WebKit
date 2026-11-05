@@ -94,7 +94,7 @@ static inline WebFoundTextRange createWebFoundTextRange(const SimpleRange& simpl
     };
 }
 
-static inline bool LEGACY_NODELETE canConvertToWebFoundTextRange(const SimpleRange& range)
+NODELETE static inline bool canConvertToWebFoundTextRange(const SimpleRange& range)
 {
     auto& document = range.startContainer().document();
 

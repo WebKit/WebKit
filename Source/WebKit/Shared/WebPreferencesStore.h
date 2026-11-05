@@ -45,16 +45,16 @@ struct WebPreferencesStore {
     // NOTE: The getters in this class have non-standard names to aid in the use of the preference macros.
 
     bool setStringValueForKey(const String& key, const String& value);
-    String LEGACY_NODELETE getStringValueForKey(const String& key) const;
+    NODELETE String getStringValueForKey(const String& key) const;
 
     bool setBoolValueForKey(const String& key, bool value);
-    bool LEGACY_NODELETE getBoolValueForKey(const String& key) const;
+    NODELETE bool getBoolValueForKey(const String& key) const;
 
     bool setUInt32ValueForKey(const String& key, uint32_t value);
-    uint32_t LEGACY_NODELETE getUInt32ValueForKey(const String& key) const;
+    NODELETE uint32_t getUInt32ValueForKey(const String& key) const;
 
     bool setDoubleValueForKey(const String& key, double value);
-    double LEGACY_NODELETE getDoubleValueForKey(const String& key) const;
+    NODELETE double getDoubleValueForKey(const String& key) const;
 
     void setOverrideDefaultsStringValueForKey(const String& key, String value);
     void setOverrideDefaultsBoolValueForKey(const String& key, bool value);

@@ -64,9 +64,9 @@ public:
     double windowIdentifierNone() const { return WebExtensionWindowConstants::None; }
     double windowIdentifierCurrent() const { return WebExtensionWindowConstants::Current; }
 
-    NSDictionary *LEGACY_NODELETE createType();
-    NSDictionary *LEGACY_NODELETE windowState();
-    NSDictionary *LEGACY_NODELETE windowType();
+    NODELETE NSDictionary *createType();
+    NODELETE NSDictionary *windowState();
+    NODELETE NSDictionary *windowType();
 
     WebExtensionAPIWindowsEvent& onCreated();
     WebExtensionAPIWindowsEvent& onRemoved();

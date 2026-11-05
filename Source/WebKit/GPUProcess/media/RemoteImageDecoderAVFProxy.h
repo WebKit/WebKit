@@ -57,7 +57,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
-    bool LEGACY_NODELETE allowsExitUnderMemoryPressure() const;
+    NODELETE bool allowsExitUnderMemoryPressure() const;
 
     void ref() const final;
     void deref() const final;

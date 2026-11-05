@@ -112,7 +112,7 @@ public:
 #endif
     std::optional<ImageCopyTexture> convertToBacking(const ::WebGPU::TexelCopyTextureInfo&);
     std::optional<ImageCopyTextureTagged> convertToBacking(const WebCore::WebGPUImageCopyTextureTagged&);
-    std::optional<ObjectDescriptorBase> LEGACY_NODELETE convertToBacking(const WebCore::WebGPUObjectDescriptorBase&);
+    NODELETE std::optional<ObjectDescriptorBase> convertToBacking(const WebCore::WebGPUObjectDescriptorBase&);
     std::optional<PipelineLayoutDescriptor> convertToBacking(const ::WebGPU::PipelineLayoutDescriptor&);
     std::optional<PresentationContextDescriptor> convertToBacking(const WebCore::WebGPUPresentationContextDescriptor&);
     std::optional<ProgrammableStage> convertToBacking(const ::WebGPU::ProgrammableStage&);

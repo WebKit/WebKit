@@ -100,7 +100,7 @@ public:
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
-    bool LEGACY_NODELETE hasSourceProxies() const;
+    NODELETE bool hasSourceProxies() const;
     void reapplyCaptureEnvironment(WebCore::PageIdentifier);
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;

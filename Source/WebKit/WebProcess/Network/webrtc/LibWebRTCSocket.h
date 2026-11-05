@@ -65,7 +65,7 @@ public:
     void setState(State state) { m_state = state; }
 
     void suspend();
-    void LEGACY_NODELETE resume();
+    NODELETE void resume();
 
 private:
     bool willSend(size_t);

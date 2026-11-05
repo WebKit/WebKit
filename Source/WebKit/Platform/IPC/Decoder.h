@@ -90,18 +90,18 @@ public:
     bool isAsyncWithReplyMessage() const { return messageIsAsyncWithReply(messageName()); }
     bool isAsyncReplyMessage() const { return messageIsReplyToAsyncWithReply(messageName()); }
 
-    ShouldDispatchWhenWaitingForSyncReply LEGACY_NODELETE shouldDispatchMessageWhenWaitingForSyncReply() const;
+    NODELETE ShouldDispatchWhenWaitingForSyncReply shouldDispatchMessageWhenWaitingForSyncReply() const;
     bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || m_isAllowedWhenWaitingForSyncReplyOverride; }
     bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
-    bool LEGACY_NODELETE shouldUseFullySynchronousModeForTesting() const;
-    bool LEGACY_NODELETE shouldMaintainOrderingWithAsyncMessages() const;
+    NODELETE bool shouldUseFullySynchronousModeForTesting() const;
+    NODELETE bool shouldMaintainOrderingWithAsyncMessages() const;
     void setIsAllowedWhenWaitingForSyncReplyOverride(bool value) { m_isAllowedWhenWaitingForSyncReplyOverride = value; }
 
     bool wasHandled() const { return m_wasHandled; }
     void markHandled() { m_wasHandled = true; }
 
 #if PLATFORM(MAC)
-    void LEGACY_NODELETE setImportanceAssertion(ImportanceAssertion&&);
+    NODELETE void setImportanceAssertion(ImportanceAssertion&&);
 #endif
 
 #if ENABLE(IPC_TESTING_API)

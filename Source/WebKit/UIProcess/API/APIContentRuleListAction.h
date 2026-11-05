@@ -37,12 +37,12 @@ public:
     static Ref<ContentRuleListAction> create(WebCore::ContentRuleListResults::Result&&);
     virtual ~ContentRuleListAction();
 
-    bool LEGACY_NODELETE blockedLoad() const;
-    bool LEGACY_NODELETE madeHTTPS() const;
-    bool LEGACY_NODELETE blockedCookies() const;
-    bool LEGACY_NODELETE redirected() const;
-    bool LEGACY_NODELETE modifiedHeaders() const;
-    const Vector<WTF::String>& LEGACY_NODELETE notifications() const LIFETIME_BOUND;
+    NODELETE bool blockedLoad() const;
+    NODELETE bool madeHTTPS() const;
+    NODELETE bool blockedCookies() const;
+    NODELETE bool redirected() const;
+    NODELETE bool modifiedHeaders() const;
+    NODELETE const Vector<WTF::String>& notifications() const LIFETIME_BOUND;
 
 private:
     ContentRuleListAction(WebCore::ContentRuleListResults::Result&&);

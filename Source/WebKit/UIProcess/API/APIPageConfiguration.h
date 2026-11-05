@@ -128,29 +128,29 @@ public:
         WebCore::SecurityOriginData securityOrigin;
         bool operator==(const OpenerInfo&) const;
     };
-    const std::optional<OpenerInfo>& LEGACY_NODELETE openerInfo() const;
+    NODELETE const std::optional<OpenerInfo>& openerInfo() const;
     void setOpenerInfo(std::optional<OpenerInfo>&&);
     void consumeOpenerInfo();
 
-    const WebCore::Site& LEGACY_NODELETE openedSite() const;
+    NODELETE const WebCore::Site& openedSite() const;
     void setOpenedSite(const WebCore::Site&);
 
     bool processInheritedFromOpener() const { return m_data.processInheritedFromOpener; }
     void setProcessInheritedFromOpener(bool value) { m_data.processInheritedFromOpener = value; }
 
-    const WTF::String& LEGACY_NODELETE openedMainFrameName() const;
+    NODELETE const WTF::String& openedMainFrameName() const;
     void setOpenedMainFrameName(const WTF::String&);
 
-    const WebCore::RegistrableDomain& LEGACY_NODELETE openedByScriptDomain() const;
+    NODELETE const WebCore::RegistrableDomain& openedByScriptDomain() const;
     void setOpenedByScriptDomain(WebCore::RegistrableDomain&&);
 
     WebCore::SandboxFlags initialSandboxFlags() const { return m_data.initialSandboxFlags; }
-    void LEGACY_NODELETE setInitialSandboxFlags(WebCore::SandboxFlags);
+    NODELETE void setInitialSandboxFlags(WebCore::SandboxFlags);
 
     WebCore::ReferrerPolicy initialReferrerPolicy() const { return m_data.initialReferrerPolicy; }
-    void LEGACY_NODELETE setInitialReferrerPolicy(WebCore::ReferrerPolicy);
+    NODELETE void setInitialReferrerPolicy(WebCore::ReferrerPolicy);
 
-    const std::optional<WebCore::WindowFeatures>& LEGACY_NODELETE windowFeatures() const;
+    NODELETE const std::optional<WebCore::WindowFeatures>& windowFeatures() const;
     void setWindowFeatures(WebCore::WindowFeatures&&);
 
     WebKit::WebProcessPool& processPool() const;
@@ -160,39 +160,39 @@ public:
     void setUserContentController(RefPtr<WebKit::WebUserContentControllerProxy>&&);
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    const WTF::URL& LEGACY_NODELETE requiredWebExtensionBaseURL() const;
+    NODELETE const WTF::URL& requiredWebExtensionBaseURL() const;
     void setRequiredWebExtensionBaseURL(WTF::URL&&);
 
-    WebKit::WebExtensionController* LEGACY_NODELETE webExtensionController() const;
+    NODELETE WebKit::WebExtensionController* webExtensionController() const;
     void setWebExtensionController(RefPtr<WebKit::WebExtensionController>&&);
 
-    WebKit::WebExtensionController* LEGACY_NODELETE weakWebExtensionController() const;
-    void LEGACY_NODELETE setWeakWebExtensionController(WebKit::WebExtensionController*);
+    NODELETE WebKit::WebExtensionController* weakWebExtensionController() const;
+    NODELETE void setWeakWebExtensionController(WebKit::WebExtensionController*);
 #endif
 
-    WebKit::WebPageGroup* LEGACY_NODELETE pageGroup();
+    NODELETE WebKit::WebPageGroup* pageGroup();
     void setPageGroup(RefPtr<WebKit::WebPageGroup>&&);
 
     WebKit::WebPreferences& preferences() const;
     void setPreferences(RefPtr<WebKit::WebPreferences>&&);
 
-    WebKit::WebPageProxy* LEGACY_NODELETE relatedPage() const;
+    NODELETE WebKit::WebPageProxy* relatedPage() const;
     void setRelatedPage(WeakPtr<WebKit::WebPageProxy>&& relatedPage) { m_data.relatedPage = WTF::move(relatedPage); }
 
-    WebKit::WebProcessProxy* LEGACY_NODELETE preferredProcessFromOpener() const;
+    NODELETE WebKit::WebProcessProxy* preferredProcessFromOpener() const;
     void setPreferredProcessFromOpener(WeakPtr<WebKit::WebProcessProxy>&& process) { m_data.preferredProcessFromOpener = WTF::move(process); }
 
-    WebKit::WebPageProxy* LEGACY_NODELETE pageToCloneSessionStorageFrom() const;
-    void LEGACY_NODELETE setPageToCloneSessionStorageFrom(WeakPtr<WebKit::WebPageProxy>&&);
+    NODELETE WebKit::WebPageProxy* pageToCloneSessionStorageFrom() const;
+    NODELETE void setPageToCloneSessionStorageFrom(WeakPtr<WebKit::WebPageProxy>&&);
 
-    WebKit::WebPageProxy* LEGACY_NODELETE alternateWebViewForNavigationGestures() const;
-    void LEGACY_NODELETE setAlternateWebViewForNavigationGestures(WeakPtr<WebKit::WebPageProxy>&&);
+    NODELETE WebKit::WebPageProxy* alternateWebViewForNavigationGestures() const;
+    NODELETE void setAlternateWebViewForNavigationGestures(WeakPtr<WebKit::WebPageProxy>&&);
 
     WebKit::VisitedLinkStore& visitedLinkStore() const;
     void setVisitedLinkStore(RefPtr<WebKit::VisitedLinkStore>&&);
 
     WebKit::WebsiteDataStore& websiteDataStore() const;
-    WebKit::WebsiteDataStore* LEGACY_NODELETE websiteDataStoreIfExists() const;
+    NODELETE WebKit::WebsiteDataStore* websiteDataStoreIfExists() const;
     void setWebsiteDataStore(RefPtr<WebKit::WebsiteDataStore>&&);
 
     WebsitePolicies& defaultWebsitePolicies() const;
@@ -280,7 +280,7 @@ public:
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-    ApplicationManifest* LEGACY_NODELETE applicationManifest() const;
+    NODELETE ApplicationManifest* applicationManifest() const;
     void setApplicationManifest(RefPtr<ApplicationManifest>&&);
 #endif
 
@@ -348,7 +348,7 @@ public:
 
 #if ENABLE(APPLE_PAY)
     bool applePayEnabled() const;
-    void LEGACY_NODELETE setApplePayEnabled(bool);
+    NODELETE void setApplePayEnabled(bool);
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
@@ -470,8 +470,8 @@ public:
     void setDelaysWebProcessLaunchUntilFirstLoad(bool);
     bool delaysWebProcessLaunchUntilFirstLoad() const;
 
-    void LEGACY_NODELETE setAllowPostingLegacySynchronousMessages(bool);
-    bool LEGACY_NODELETE allowPostingLegacySynchronousMessages() const;
+    NODELETE void setAllowPostingLegacySynchronousMessages(bool);
+    NODELETE bool allowPostingLegacySynchronousMessages() const;
 
     void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_data.contentSecurityPolicyModeForExtension = mode; }
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_data.contentSecurityPolicyModeForExtension; }
@@ -533,7 +533,7 @@ private:
         static WebKit::DragLiftDelay defaultDragLiftDelay();
 #endif
 #if PLATFORM(COCOA)
-        uintptr_t LEGACY_NODELETE defaultMediaTypesRequiringUserActionForPlayback();
+        NODELETE uintptr_t defaultMediaTypesRequiringUserActionForPlayback();
 #endif
 
         LazyInitializedRef<WebKit::WebProcessPool, createWebProcessPool> processPool;

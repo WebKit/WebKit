@@ -194,7 +194,7 @@ public:
     void setAttachedWindowHeight(unsigned);
     void setAttachedWindowWidth(unsigned);
 
-    void LEGACY_NODELETE setSheetRect(const WebCore::FloatRect&);
+    NODELETE void setSheetRect(const WebCore::FloatRect&);
 
     void startWindowDrag();
 
@@ -254,7 +254,7 @@ private:
     void platformBringInspectedPageToFront();
     void platformHide();
     bool platformIsFront();
-    void LEGACY_NODELETE platformAttachAvailabilityChanged(bool);
+    NODELETE void platformAttachAvailabilityChanged(bool);
     void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void platformOpenURLExternally(const String&);
     void platformInspectedURLChanged(const String&);
@@ -263,7 +263,7 @@ private:
     void platformDetach();
     void platformSetAttachedWindowHeight(unsigned);
     void platformSetAttachedWindowWidth(unsigned);
-    void LEGACY_NODELETE platformSetSheetRect(const WebCore::FloatRect&);
+    NODELETE void platformSetSheetRect(const WebCore::FloatRect&);
     void platformStartWindowDrag();
     void platformRevealFileExternally(const String&);
     void platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
@@ -296,7 +296,7 @@ private:
     void setInspectorPageDeveloperExtrasEnabled(bool);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
     void elementSelectionChanged(bool);
-    void LEGACY_NODELETE timelineRecordingChanged(bool);
+    NODELETE void timelineRecordingChanged(bool);
     void showPaintRectsChanged(bool);
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>);
@@ -315,7 +315,7 @@ private:
 
     unsigned inspectionLevel() const;
 
-    WebPreferences& LEGACY_NODELETE inspectorPagePreferences() const;
+    NODELETE WebPreferences& inspectorPagePreferences() const;
 
 #if PLATFORM(MAC)
     void applyForcedAppearance();

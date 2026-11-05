@@ -57,7 +57,7 @@ public:
     const String& nameOverride() const LIFETIME_BOUND final { return m_nameOverride; }
     void setNameOverride(const String&);
 
-    void LEGACY_NODELETE detachFromPage();
+    NODELETE void detachFromPage();
 
 private:
     explicit WebPageDebuggable(WebPageProxy&);

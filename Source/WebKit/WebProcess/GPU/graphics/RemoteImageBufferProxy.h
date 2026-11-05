@@ -72,7 +72,7 @@ public:
     static Ref<RemoteImageBufferProxy> createForSerializedBuffer(const WebCore::ImageBuffer::Parameters&, std::unique_ptr<WebCore::ImageBufferBackend>&&, RemoteRenderingBackendProxy&);
 
     ~RemoteImageBufferProxy();
-    bool LEGACY_NODELETE isValid() const;
+    NODELETE bool isValid() const;
 
     void disconnect();
 
@@ -129,7 +129,7 @@ private:
     void flushDrawingContextImpl() const;
     std::optional<WebCore::RenderingMode> getEffectiveRenderingModeForTesting() const final;
 
-    void LEGACY_NODELETE assertDispatcherIsCurrent() const;
+    NODELETE void assertDispatcherIsCurrent() const;
     void prepareForDisplay() final;
 #if PLATFORM(COCOA)
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;

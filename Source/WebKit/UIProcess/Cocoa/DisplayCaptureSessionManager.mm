@@ -180,7 +180,7 @@ bool DisplayCaptureSessionManager::canRequestDisplayCapturePermission()
 }
 
 #if HAVE(SCREEN_CAPTURE_KIT)
-static WebCore::DisplayCapturePromptType LEGACY_NODELETE toScreenCaptureKitPromptType(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType promptType)
+NODELETE static WebCore::DisplayCapturePromptType toScreenCaptureKitPromptType(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType promptType)
 {
     if (promptType == UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Screen)
         return WebCore::DisplayCapturePromptType::Screen;

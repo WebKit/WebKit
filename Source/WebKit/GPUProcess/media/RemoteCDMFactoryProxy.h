@@ -81,7 +81,7 @@ public:
 
     RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
-    bool LEGACY_NODELETE allowsExitUnderMemoryPressure() const;
+    NODELETE bool allowsExitUnderMemoryPressure() const;
 
     String mediaKeysStorageDirectory() const LIFETIME_BOUND;
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;

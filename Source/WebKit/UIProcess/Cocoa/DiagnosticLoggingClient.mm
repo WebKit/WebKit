@@ -64,7 +64,7 @@ void DiagnosticLoggingClient::logDiagnosticMessage(WebKit::WebPageProxy*, const 
         [m_delegate.get() _webView:m_webView.get().get() logDiagnosticMessage:message.createNSString().get() description:description.createNSString().get()];
 }
 
-static _WKDiagnosticLoggingResultType LEGACY_NODELETE toWKDiagnosticLoggingResultType(WebCore::DiagnosticLoggingResultType result)
+NODELETE static _WKDiagnosticLoggingResultType toWKDiagnosticLoggingResultType(WebCore::DiagnosticLoggingResultType result)
 {
     switch (result) {
     case WebCore::DiagnosticLoggingResultPass:
@@ -76,7 +76,7 @@ static _WKDiagnosticLoggingResultType LEGACY_NODELETE toWKDiagnosticLoggingResul
     }
 }
 
-static _WKDiagnosticLoggingDomain LEGACY_NODELETE toWKDiagnosticLoggingDomain(WebCore::DiagnosticLoggingDomain domain)
+NODELETE static _WKDiagnosticLoggingDomain toWKDiagnosticLoggingDomain(WebCore::DiagnosticLoggingDomain domain)
 {
     switch (domain) {
     case WebCore::DiagnosticLoggingDomain::Media:

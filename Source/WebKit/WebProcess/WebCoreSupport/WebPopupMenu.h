@@ -41,7 +41,7 @@ public:
     static Ref<WebPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
     ~WebPopupMenu();
 
-    WebPage* LEGACY_NODELETE page();
+    NODELETE WebPage* page();
 
     void disconnectFromPage() { m_page = nullptr; }
 #if !PLATFORM(IOS_FAMILY)

@@ -61,7 +61,7 @@ UserMediaProcessManager& UserMediaProcessManager::singleton()
 UserMediaProcessManager::UserMediaProcessManager() = default;
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-static bool LEGACY_NODELETE needsAppleCameraService()
+NODELETE static bool needsAppleCameraService()
 {
 #if !PLATFORM(MAC) && !PLATFORM(MACCATALYST)
     return false;

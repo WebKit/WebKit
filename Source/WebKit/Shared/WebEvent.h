@@ -80,7 +80,7 @@ public:
 
     MonotonicTime timestamp() const { return m_data.timestamp; }
 
-    bool LEGACY_NODELETE isActivationTriggeringEvent() const;
+    NODELETE bool isActivationTriggeringEvent() const;
     WTF::UUID authorizationToken() const { return m_data.authorizationToken; }
 
 #if PLATFORM(GTK) || PLATFORM(WPE)

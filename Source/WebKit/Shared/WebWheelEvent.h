@@ -133,7 +133,7 @@ public:
 
     const WebWheelEventData& wheelData() const LIFETIME_BOUND { return m_data; }
 
-    static bool LEGACY_NODELETE isWheelEventType(WebEventType);
+    NODELETE static bool isWheelEventType(WebEventType);
 
 protected:
     WebWheelEvent(WebEventData&&, WebWheelEventData&&);

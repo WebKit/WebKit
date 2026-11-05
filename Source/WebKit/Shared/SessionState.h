@@ -89,7 +89,7 @@ public:
     const Vector<AtomString>& documentState() const LIFETIME_BOUND { return m_documentState; }
     enum class ShouldValidate : bool { No, Yes };
     void setDocumentState(const Vector<AtomString>&, ShouldValidate = ShouldValidate::No);
-    static bool LEGACY_NODELETE validateDocumentState(const Vector<AtomString>&);
+    NODELETE static bool validateDocumentState(const Vector<AtomString>&);
     void replaceChildFrameState(Ref<FrameState>&&);
 
     String urlString;
@@ -134,7 +134,7 @@ public:
 
     Vector<Ref<FrameState>> children;
 
-    bool LEGACY_NODELETE isEqualForTesting(const FrameState&) const;
+    NODELETE bool isEqualForTesting(const FrameState&) const;
 
 private:
     // This is used to help debug <rdar://problem/48634553>.

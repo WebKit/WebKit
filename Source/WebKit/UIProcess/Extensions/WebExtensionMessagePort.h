@@ -63,15 +63,15 @@ public:
 
     using Error = std::optional<std::pair<ErrorType, std::optional<String>>>;
 
-    bool LEGACY_NODELETE operator==(const WebExtensionMessagePort&) const;
+    NODELETE bool operator==(const WebExtensionMessagePort&) const;
 
     const String& applicationIdentifier() const LIFETIME_BOUND { return m_applicationIdentifier; }
     WebExtensionPortChannelIdentifier channelIdentifier() const { return m_channelIdentifier; }
-    WebExtensionContext* LEGACY_NODELETE extensionContext() const;
+    NODELETE WebExtensionContext* extensionContext() const;
 
     void disconnect(Error = std::nullopt);
     void reportDisconnection(Error);
-    bool LEGACY_NODELETE isDisconnected() const;
+    NODELETE bool isDisconnected() const;
 
 #if PLATFORM(COCOA)
     void sendMessage(id message, CompletionHandler<void(Error)>&& = { });

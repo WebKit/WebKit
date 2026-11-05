@@ -215,7 +215,7 @@ public:
     void removePreviewForPage(PDFDocumentLayout::PageIndex);
     void invalidatePreviewsForPageCoverage(const PDFPageCoverage&);
 
-    void LEGACY_NODELETE setShowDebugBorders(bool);
+    NODELETE void setShowDebugBorders(bool);
 
 private:
     AsyncPDFRenderer(PDFPresentationController&);
@@ -272,8 +272,8 @@ private:
     void ensurePreviewsForCurrentPageCoverage();
 
     static WebCore::FloatRect convertTileRectToPaintingCoords(const WebCore::FloatRect&, float pageScaleFactor);
-    static WebCore::AffineTransform LEGACY_NODELETE tileToPaintingTransform(float tilingScaleFactor);
-    static WebCore::AffineTransform LEGACY_NODELETE paintingToTileTransform(float tilingScaleFactor);
+    NODELETE static WebCore::AffineTransform tileToPaintingTransform(float tilingScaleFactor);
+    NODELETE static WebCore::AffineTransform paintingToTileTransform(float tilingScaleFactor);
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     WebCore::DynamicContentScalingResourceCache ensureDynamicContentScalingResourceCache();
 #endif

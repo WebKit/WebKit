@@ -102,7 +102,7 @@ public:
     RepaintRequirements finishAnnotationTracking(PDFAnnotation* annotationUnderMouse, WebCore::PlatformEventType, WebCore::MouseButton);
 
     PDFAnnotation *trackedAnnotation() const { return m_trackedAnnotation.get(); }
-    bool LEGACY_NODELETE isBeingHovered() const;
+    NODELETE bool isBeingHovered() const;
 
 private:
     void resetAnnotationTrackingState();
@@ -146,7 +146,7 @@ public:
     };
     using PDFElementTypes = OptionSet<PDFElementType>;
 
-    WebCore::LocalFrameView* LEGACY_NODELETE frameView() const;
+    NODELETE WebCore::LocalFrameView* frameView() const;
     WebCore::FrameView* mainFrameView() const;
 
     CGRect pluginBoundsForAnnotation(PDFAnnotation*) const final;
@@ -192,7 +192,7 @@ public:
 
     void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint& clickPointInMainFrameView);
 
-    bool LEGACY_NODELETE canShowDataDetectorHighlightOverlays() const;
+    NODELETE bool canShowDataDetectorHighlightOverlays() const;
 
     WebCore::IntRect rectForSelectionInRootViewContentsSpace(PDFSelection *) const;
 #endif
@@ -242,7 +242,7 @@ public:
 
     bool shouldSizeToFitContent() const final;
 
-    static WebCore::ViewportConfiguration::Parameters LEGACY_NODELETE viewportParameters();
+    NODELETE static WebCore::ViewportConfiguration::Parameters viewportParameters();
 
     bool hasSelection() const;
 
@@ -300,8 +300,8 @@ private:
     // Scale normalization is used to map the internal "scale factor" to the exposed scaleFactor()/setPageScaleFactor()
     // so that scale factor 1 shows at "Actual Size".
     void computeNormalizationFactor();
-    double LEGACY_NODELETE fromNormalizedScaleFactor(double) const;
-    double LEGACY_NODELETE toNormalizedScaleFactor(double) const;
+    NODELETE double fromNormalizedScaleFactor(double) const;
+    NODELETE double toNormalizedScaleFactor(double) const;
 
     void didBeginMagnificationGesture() override;
     void didEndMagnificationGesture() override;
@@ -327,7 +327,7 @@ private:
 
     WebCore::IntRect availableContentsRect() const;
 
-    WebCore::DelegatedScrollingMode LEGACY_NODELETE scrollingMode() const;
+    NODELETE WebCore::DelegatedScrollingMode scrollingMode() const;
     bool isFullMainFramePlugin() const;
 
     void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) override;
@@ -389,18 +389,18 @@ private:
     std::optional<PDFContextMenu> createContextMenu(const WebCore::IntPoint& contextMenuEventRootViewPoint, WebEventInputSource) const;
     PDFContextMenuItem contextMenuItem(ContextMenuItemTag, bool hasAction = true) const;
     String titleForContextMenuItemTag(ContextMenuItemTag) const;
-    bool LEGACY_NODELETE isDisplayModeContextMenuItemTag(ContextMenuItemTag) const;
-    PDFContextMenuItem LEGACY_NODELETE separatorContextMenuItem() const;
+    NODELETE bool isDisplayModeContextMenuItemTag(ContextMenuItemTag) const;
+    NODELETE PDFContextMenuItem separatorContextMenuItem() const;
     Vector<PDFContextMenuItem> selectionContextMenuItems(const WebCore::IntPoint& contextMenuEventRootViewPoint) const;
     Vector<PDFContextMenuItem> displayModeContextMenuItems() const;
     Vector<PDFContextMenuItem> scaleContextMenuItems() const;
     Vector<PDFContextMenuItem> navigationContextMenuItemsForPageAtIndex(PDFDocumentLayout::PageIndex) const;
-    WebCore::ContextMenuAction LEGACY_NODELETE contextMenuActionFromTag(ContextMenuItemTag) const;
+    NODELETE WebCore::ContextMenuAction contextMenuActionFromTag(ContextMenuItemTag) const;
     static ContextMenuItemTag toContextMenuItemTag(int tagValue);
     void performContextMenuAction(ContextMenuItemTag, const WebCore::IntPoint& contextMenuEventRootViewPoint);
 
-    ContextMenuItemTag LEGACY_NODELETE contextMenuItemTagFromDisplayMode(const PDFPluginDisplayMode&) const;
-    PDFPluginDisplayMode LEGACY_NODELETE displayModeFromContextMenuItemTag(const ContextMenuItemTag&) const;
+    NODELETE ContextMenuItemTag contextMenuItemTagFromDisplayMode(const PDFPluginDisplayMode&) const;
+    NODELETE PDFPluginDisplayMode displayModeFromContextMenuItemTag(const ContextMenuItemTag&) const;
 
     Vector<String> contextMenuItemTitlesForTesting(const WebCore::IntPoint& contextMenuEventRootViewPoint) const final;
 #endif
@@ -410,7 +410,7 @@ private:
     void beginAutoscroll();
     void autoscrollTimerFired();
     void continueAutoscroll();
-    void LEGACY_NODELETE stopAutoscroll();
+    NODELETE void stopAutoscroll();
     void scrollWithDelta(const WebCore::IntSize&);
 
     // Selections
@@ -428,7 +428,7 @@ private:
     enum class IsDraggingSelection : bool { No, Yes };
     enum class IsMarqueeSelection : bool { No, Yes };
 
-    SelectionGranularity LEGACY_NODELETE selectionGranularityForMouseEvent(const WebCore::PlatformMouseEvent&) const;
+    NODELETE SelectionGranularity selectionGranularityForMouseEvent(const WebCore::PlatformMouseEvent&) const;
     void beginTrackingSelection(PDFDocumentLayout::PageIndex, const WebCore::FloatPoint& pagePoint, const WebCore::PlatformMouseEvent&);
     void extendCurrentSelectionIfNeeded();
     void updateCurrentSelectionForContextMenuEventIfNeeded();
@@ -555,7 +555,7 @@ private:
     bool requestStartKeyboardScrollAnimation(const WebCore::KeyboardScroll& scrollData) override;
     bool requestStopKeyboardScrollAnimation(bool immediate) override;
 
-    WebCore::OverscrollBehavior LEGACY_NODELETE overscrollBehavior() const;
+    NODELETE WebCore::OverscrollBehavior overscrollBehavior() const;
     WebCore::OverscrollBehavior horizontalOverscrollBehavior() const override { return overscrollBehavior(); }
     WebCore::OverscrollBehavior verticalOverscrollBehavior() const override { return overscrollBehavior(); }
 
@@ -636,8 +636,8 @@ private:
     void createPasswordEntryForm();
     void teardownPasswordEntryForm() override;
 
-    bool LEGACY_NODELETE isInDiscreteDisplayMode() const;
-    bool LEGACY_NODELETE isShowingTwoPages() const;
+    NODELETE bool isInDiscreteDisplayMode() const;
+    NODELETE bool isShowingTwoPages() const;
 
     WebCore::PlatformWheelEvent wheelEventCopyWithVelocity(const WebCore::PlatformWheelEvent&) const;
 

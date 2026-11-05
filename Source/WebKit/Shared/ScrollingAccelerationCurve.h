@@ -71,7 +71,7 @@ private:
 
     void computeIntermediateValuesIfNeeded();
 
-    float LEGACY_NODELETE evaluateQuartic(float) const;
+    NODELETE float evaluateQuartic(float) const;
 
     struct Parameters {
         float gainLinear { 0 };

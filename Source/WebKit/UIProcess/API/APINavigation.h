@@ -136,8 +136,8 @@ public:
     size_t redirectChainIndex(const WTF::URL&);
 
     bool wasUserInitiated() const { return m_lastNavigationAction && !!m_lastNavigationAction->userGestureTokenIdentifier; }
-    bool LEGACY_NODELETE isRequestFromClientOrUserInput() const;
-    void LEGACY_NODELETE markRequestAsFromClientInput();
+    NODELETE bool isRequestFromClientOrUserInput() const;
+    NODELETE void markRequestAsFromClientInput();
     void markAsFromLoadData() { m_isFromLoadData = true; }
     bool isFromLoadData() const { return m_isFromLoadData; }
 
@@ -210,10 +210,10 @@ public:
     const WebCore::SecurityOriginData& agentClusterOrigin() const LIFETIME_BOUND { return m_agentClusterOrigin; }
     const std::optional<WebCore::AgentClusterAssignment>& agentClusterAssignment() const LIFETIME_BOUND { return m_agentClusterAssignment; }
     void setSafeBrowsingCheckOngoing(size_t, bool);
-    bool LEGACY_NODELETE safeBrowsingCheckOngoing(size_t);
-    bool LEGACY_NODELETE safeBrowsingCheckOngoing();
+    NODELETE bool safeBrowsingCheckOngoing(size_t);
+    NODELETE bool safeBrowsingCheckOngoing();
     void setSafeBrowsingWarning(RefPtr<WebKit::BrowsingWarning>&&);
-    RefPtr<WebKit::BrowsingWarning> LEGACY_NODELETE safeBrowsingWarning();
+    NODELETE RefPtr<WebKit::BrowsingWarning> safeBrowsingWarning();
     void whenSafeBrowsingCheckCompletes(Function<void()>&&);
     void fireSafeBrowsingCheckCompletionCallbacks();
     bool hadSafeBrowsingWarning() const { return m_hadSafeBrowsingWarning; }
@@ -223,7 +223,7 @@ public:
     WebCore::ProcessIdentifier processID() const { return m_processID; }
     void setProcessID(WebCore::ProcessIdentifier processID) { m_processID = processID; }
 
-    void LEGACY_NODELETE setHasStorageForCurrentSite(bool);
+    NODELETE void setHasStorageForCurrentSite(bool);
     bool hasStorageForCurrentSite() const { return m_hasStorageForCurrentSite; }
 
     void setIsEnhancedSecurityLinkForCurrentSite(bool isEnhancedSecurityLink) { m_isEnhancedSecurityLinkForCurrentSite = isEnhancedSecurityLink; }

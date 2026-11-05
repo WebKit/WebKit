@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-OptionSet<WebEventModifier> LEGACY_NODELETE modifiersFromPlatformEventModifiers(OptionSet<WebCore::PlatformEventModifier> modifiers)
+NODELETE OptionSet<WebEventModifier> modifiersFromPlatformEventModifiers(OptionSet<WebCore::PlatformEventModifier> modifiers)
 {
     OptionSet<WebEventModifier> result;
     if (modifiers.contains(WebCore::PlatformEventModifier::ShiftKey))

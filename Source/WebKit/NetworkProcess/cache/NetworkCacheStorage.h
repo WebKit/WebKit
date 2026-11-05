@@ -101,7 +101,7 @@ public:
     // This may call completion handler synchronously on failure.
     using RetrieveCompletionHandler = CompletionHandler<bool(Record&&, const Timings&)>;
     void retrieve(const Key&, unsigned priority, RetrieveCompletionHandler&&);
-    bool LEGACY_NODELETE mayContain(const Key&) const;
+    NODELETE bool mayContain(const Key&) const;
 
     using MappedBodyHandler = Function<void (const Data& mappedBody)>;
     void store(const Record&, MappedBodyHandler&&, bool storeBlobInMemoryCache = false);
@@ -130,7 +130,7 @@ public:
 
     void setCapacity(size_t);
     size_t capacity() const { return m_capacity; }
-    size_t LEGACY_NODELETE approximateSize() const;
+    NODELETE size_t approximateSize() const;
 
     // Incrementing this number will delete all existing cache content for everyone. Do you really need to do it?
     static const unsigned version = 18;
@@ -186,13 +186,13 @@ private:
     ConcurrentWorkQueue& backgroundIOQueue() { return m_backgroundIOQueue.get(); }
     WorkQueue& serialBackgroundIOQueue() { return m_serialBackgroundIOQueue.get(); }
 
-    bool LEGACY_NODELETE mayContainBlob(const Key&) const;
+    NODELETE bool mayContainBlob(const Key&) const;
 
     void addToRecordFilter(const Key&);
     void deleteFiles(const Key&);
 
     struct ReadOperationIsLowerPriority {
-        bool LEGACY_NODELETE operator()(const std::unique_ptr<ReadOperation>&, const std::unique_ptr<ReadOperation>&) const;
+        NODELETE bool operator()(const std::unique_ptr<ReadOperation>&, const std::unique_ptr<ReadOperation>&) const;
     };
 
     size_t estimateRecordsSize(unsigned recordCount, unsigned blobCount) const;

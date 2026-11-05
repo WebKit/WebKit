@@ -422,7 +422,7 @@ static void checkURLArgument(NSURL *url)
     protect(_configuration.get())->setGeneralStorageDirectory(url.path);
 }
 
-static _WKUnifiedOriginStorageLevel LEGACY_NODELETE toWKUnifiedOriginStorageLevel(WebKit::UnifiedOriginStorageLevel level)
+NODELETE static _WKUnifiedOriginStorageLevel toWKUnifiedOriginStorageLevel(WebKit::UnifiedOriginStorageLevel level)
 {
     switch (level) {
     case WebKit::UnifiedOriginStorageLevel::None:
@@ -434,7 +434,7 @@ static _WKUnifiedOriginStorageLevel LEGACY_NODELETE toWKUnifiedOriginStorageLeve
     }
 }
 
-static WebKit::UnifiedOriginStorageLevel LEGACY_NODELETE toUnifiedOriginStorageLevel(_WKUnifiedOriginStorageLevel wkLevel)
+NODELETE static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_WKUnifiedOriginStorageLevel wkLevel)
 {
     switch (wkLevel) {
     case _WKUnifiedOriginStorageLevelNone:

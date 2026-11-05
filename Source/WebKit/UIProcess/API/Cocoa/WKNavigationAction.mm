@@ -44,7 +44,7 @@
 
 @implementation WKNavigationAction
 
-static WKNavigationType LEGACY_NODELETE toWKNavigationType(WebCore::NavigationType navigationType)
+NODELETE static WKNavigationType toWKNavigationType(WebCore::NavigationType navigationType)
 {
     switch (navigationType) {
     case WebCore::NavigationType::LinkClicked:

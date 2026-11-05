@@ -64,7 +64,7 @@ using namespace WebCore;
 
 using DOMRangeHandleCache = HashMap<SingleThreadWeakRef<WebCore::Range>, WeakRef<InjectedBundleRangeHandle>>;
 
-static DOMRangeHandleCache& LEGACY_NODELETE domRangeHandleCache()
+NODELETE static DOMRangeHandleCache& domRangeHandleCache()
 {
     static NeverDestroyed<DOMRangeHandleCache> cache;
     return cache;

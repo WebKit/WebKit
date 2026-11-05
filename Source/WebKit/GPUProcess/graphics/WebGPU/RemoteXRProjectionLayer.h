@@ -96,7 +96,7 @@ private:
 #if PLATFORM(COCOA)
     void startFrame(uint64_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, uint64_t reusableTextureIndex, PlatformXR::RateMapDescription&&);
 #endif
-    void LEGACY_NODELETE endFrame();
+    NODELETE void endFrame();
     void destroy();
 
     const Ref<::WebGPU::XRProjectionLayer> m_backing;

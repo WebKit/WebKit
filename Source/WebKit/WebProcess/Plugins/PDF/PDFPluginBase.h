@@ -393,7 +393,7 @@ private:
     bool documentFinishedLoading() const { return m_documentFinishedLoading; }
     void ensureDataBufferLength(uint64_t) WTF_REQUIRES_LOCK(m_streamedDataLock);
 
-    bool LEGACY_NODELETE haveStreamedDataForRange(uint64_t offset, size_t count) const WTF_REQUIRES_LOCK(m_streamedDataLock);
+    NODELETE bool haveStreamedDataForRange(uint64_t offset, size_t count) const WTF_REQUIRES_LOCK(m_streamedDataLock);
     // This just checks whether the CFData is large enough; it doesn't know if we filled this range with data.
 
     void insertRangeRequestData(uint64_t offset, const Vector<uint8_t>&);
@@ -414,7 +414,7 @@ protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);
 
     WebPage* webPage() const;
-    WebCore::Page* LEGACY_NODELETE page() const;
+    NODELETE WebCore::Page* page() const;
 
     virtual void teardown();
 
@@ -485,7 +485,7 @@ protected:
 
 #if ENABLE(PDF_HUD)
     WebCore::IntRect frameForHUDInMainFrameViewCoordinates() const;
-    bool LEGACY_NODELETE hudEnabled() const;
+    NODELETE bool hudEnabled() const;
     bool shouldShowHUD() const;
     void updateHUDVisibility();
 #endif
@@ -498,16 +498,16 @@ protected:
 
     String annotationStyle() const;
 
-    static NSString *LEGACY_NODELETE htmlPasteboardType();
-    static NSString *LEGACY_NODELETE rtfPasteboardType();
-    static NSString *LEGACY_NODELETE stringPasteboardType();
-    static NSString *LEGACY_NODELETE urlPasteboardType();
+    NODELETE static NSString *htmlPasteboardType();
+    NODELETE static NSString *rtfPasteboardType();
+    NODELETE static NSString *stringPasteboardType();
+    NODELETE static NSString *urlPasteboardType();
 
 #if PLATFORM(MAC)
     void writeStringToFindPasteboard(const String&) const;
 #endif
 
-    std::optional<WebCore::PageIdentifier> LEGACY_NODELETE pageIdentifier() const;
+    NODELETE std::optional<WebCore::PageIdentifier> pageIdentifier() const;
 
     virtual WebCore::Color pluginBackgroundColor() const;
     void updateFullFramePluginBackgroundColor();

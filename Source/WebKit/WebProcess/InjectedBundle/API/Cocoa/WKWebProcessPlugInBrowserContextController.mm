@@ -464,7 +464,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
     return _editingDelegate.getAutoreleased();
 }
 
-static inline WKEditorInsertAction LEGACY_NODELETE toWK(WebCore::EditorInsertAction action)
+NODELETE static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
 {
     switch (action) {
     case WebCore::EditorInsertAction::Typed:

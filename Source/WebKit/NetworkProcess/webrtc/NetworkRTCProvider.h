@@ -119,7 +119,7 @@ public:
     void closeSocket(WebCore::LibWebRTCSocketIdentifier);
 
 #if PLATFORM(COCOA)
-    bool LEGACY_NODELETE webRTCInterfaceMonitoringViaNWEnabled() const;
+    NODELETE bool webRTCInterfaceMonitoringViaNWEnabled() const;
     const std::optional<audit_token_t>& sourceApplicationAuditToken() const LIFETIME_BOUND { return m_sourceApplicationAuditToken; }
     const UTF8CString& applicationBundleIdentifier() const LIFETIME_BOUND { return m_applicationBundleIdentifier; }
 #endif
@@ -157,7 +157,7 @@ private:
 
     void signalSocketIsClosed(WebCore::LibWebRTCSocketIdentifier);
 
-    void LEGACY_NODELETE assertIsRTCNetworkThread();
+    NODELETE void assertIsRTCNetworkThread();
 
     static constexpr size_t maxSockets { 256 };
 

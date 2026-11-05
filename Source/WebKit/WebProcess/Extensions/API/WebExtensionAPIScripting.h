@@ -48,7 +48,7 @@ class WebExtensionAPIScripting : public WebExtensionAPIObject, public JSWebExten
 
 public:
 #if PLATFORM(COCOA)
-    NSDictionary *LEGACY_NODELETE executionWorld();
+    NODELETE NSDictionary *executionWorld();
 
     void executeScript(NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void insertCSS(NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);

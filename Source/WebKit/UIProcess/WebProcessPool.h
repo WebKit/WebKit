@@ -272,7 +272,7 @@ public:
 #endif
 
     void addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
-    void LEGACY_NODELETE clearSupportedPlugins();
+    NODELETE void clearSupportedPlugins();
 
     HashSet<ProcessID> prewarmedProcessIdentifiers();
     HashSet<ProcessID> crossOriginIsolatedProcessIdentifiers();
@@ -339,7 +339,7 @@ public:
 
     void prewarmProcess(WebsiteDataStore* = nullptr);
 
-    bool LEGACY_NODELETE shouldTerminate(WebProcessProxy&);
+    NODELETE bool shouldTerminate(WebProcessProxy&);
 
     void disableProcessTermination();
     void enableProcessTermination();
@@ -355,7 +355,7 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
 
     bool javaScriptConfigurationFileEnabled() { return m_javaScriptConfigurationFileEnabled; }
-    void LEGACY_NODELETE setJavaScriptConfigurationFileEnabled(bool flag);
+    NODELETE void setJavaScriptConfigurationFileEnabled(bool flag);
 #if PLATFORM(IOS_FAMILY)
     void setJavaScriptConfigurationFileEnabledFromDefaults();
 #endif
@@ -369,7 +369,7 @@ public:
         GameControllerFramework,
     };
     size_t numberOfConnectedGamepadsForTesting(GamepadType);
-    void LEGACY_NODELETE setUsesOnlyHIDGamepadProviderForTesting(bool);
+    NODELETE void setUsesOnlyHIDGamepadProviderForTesting(bool);
 
 #if PLATFORM(COCOA)
     static bool omitPDFSupport();
@@ -423,12 +423,12 @@ public:
     static void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::Site&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, WebCore::CrossOriginEmbedderPolicyValue, CompletionHandler<void(WebCore::ProcessIdentifier)>&&);
 
 #if PLATFORM(COCOA)
-    bool LEGACY_NODELETE processSuppressionEnabled() const;
+    NODELETE bool processSuppressionEnabled() const;
 #endif
 
     void windowServerConnectionStateChanged();
 
-    static void LEGACY_NODELETE setInvalidMessageCallback(void (*)(WKStringRef));
+    NODELETE static void setInvalidMessageCallback(void (*)(WKStringRef));
     static void didReceiveInvalidMessage(IPC::MessageName);
 
     static void registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
@@ -477,7 +477,7 @@ public:
 
 #if PLATFORM(COCOA)
     bool cookieStoragePartitioningEnabled() const { return m_cookieStoragePartitioningEnabled; }
-    void LEGACY_NODELETE setCookieStoragePartitioningEnabled(bool);
+    NODELETE void setCookieStoragePartitioningEnabled(bool);
 
     void clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace&&);
 
@@ -650,7 +650,7 @@ private:
     enum class NeedsGlobalStaticInitialization : bool { No, Yes };
     void platformInitialize(NeedsGlobalStaticInitialization);
 
-    RefPtr<WebProcessProxy> LEGACY_NODELETE webProcessProxyFromConnection(const IPC::Connection&) const;
+    NODELETE RefPtr<WebProcessProxy> webProcessProxyFromConnection(const IPC::Connection&) const;
 
     void platformInitializeWebProcess(const WebProcessProxy&, WebProcessCreationParameters&);
     void platformInvalidateContext();
@@ -787,7 +787,7 @@ private:
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-    ModelProcessProxy& LEGACY_NODELETE ensureModelProcess();
+    NODELETE ModelProcessProxy& ensureModelProcess();
     void updateModelProcessAssertion();
     void terminateAllWebContentProcessesWithModelPlayers();
 #endif
@@ -797,7 +797,7 @@ private:
 
     void platformLoadResourceMonitorRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
     void platformCompileResourceMonitorRuleList(const String& rulesText, CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
-    String LEGACY_NODELETE platformResourceMonitorRuleListSourceForTesting();
+    NODELETE String platformResourceMonitorRuleListSourceForTesting();
 #endif
 
     const Ref<API::ProcessPoolConfiguration> m_configuration;
@@ -811,7 +811,7 @@ private:
 
     HashMap<PAL::SessionID, WeakPtr<WebProcessProxy>> m_dummyProcessProxies; // Lightweight WebProcessProxy objects without backing process.
 
-    static WeakHashSet<WebProcessProxy>& LEGACY_NODELETE remoteWorkerProcesses();
+    NODELETE static WeakHashSet<WebProcessProxy>& remoteWorkerProcesses();
 
     std::optional<WebPreferencesStore> m_remoteWorkerPreferences;
     RefPtr<WebUserContentControllerProxy> m_userContentControllerForRemoteWorkers;

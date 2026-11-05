@@ -90,10 +90,10 @@ public:
     void destroyBidirectionalStream(WebCore::WebTransportStreamIdentifier);
     void streamSendBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
     void terminate(WebCore::WebTransportSessionErrorCode, UTF8CString&&);
-    void LEGACY_NODELETE datagramIncomingMaxAgeUpdated(std::optional<double>);
-    void LEGACY_NODELETE datagramOutgoingMaxAgeUpdated(std::optional<double>);
-    void LEGACY_NODELETE incomingMaxBufferedDatagramsUpdated(uint32_t);
-    void LEGACY_NODELETE outgoingMaxBufferedDatagramsUpdated(uint32_t);
+    NODELETE void datagramIncomingMaxAgeUpdated(std::optional<double>);
+    NODELETE void datagramOutgoingMaxAgeUpdated(std::optional<double>);
+    NODELETE void incomingMaxBufferedDatagramsUpdated(uint32_t);
+    NODELETE void outgoingMaxBufferedDatagramsUpdated(uint32_t);
 
     void receiveDatagram(std::span<const uint8_t>, bool, std::optional<WebCore::Exception>&&);
     void streamReceiveBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<WebCore::Exception>&&);
@@ -107,7 +107,7 @@ public:
     void destroyStream(WebCore::WebTransportStreamIdentifier, std::optional<WebCore::WebTransportStreamErrorCode>);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    std::optional<SharedPreferencesForWebProcess> LEGACY_NODELETE sharedPreferencesForWebProcess() const;
+    NODELETE std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
     bool isSessionClosed() const;
 private:
 #if PLATFORM(COCOA) && HAVE(WEBTRANSPORT)

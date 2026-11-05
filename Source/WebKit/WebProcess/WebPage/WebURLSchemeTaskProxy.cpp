@@ -57,7 +57,7 @@ static uint64_t pageIDFromWebFrame(const RefPtr<WebFrame>& frame)
     return 0;
 }
 
-static uint64_t LEGACY_NODELETE frameIDFromWebFrame(const RefPtr<WebFrame>& frame)
+NODELETE static uint64_t frameIDFromWebFrame(const RefPtr<WebFrame>& frame)
 {
     if (frame)
         return frame->frameID().toUInt64();

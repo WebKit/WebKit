@@ -135,14 +135,14 @@ public:
     float scale() const { return m_parameters.scale; }
     WebCore::ContentsFormat contentsFormat() const { return m_parameters.contentsFormat; }
     WebCore::ColorSpace colorSpace() const { return m_parameters.colorSpace; }
-    WebCore::PixelFormat LEGACY_NODELETE pixelFormat() const;
+    NODELETE WebCore::PixelFormat pixelFormat() const;
     Type type() const { return m_parameters.type; }
     bool isOpaque() const { return m_parameters.isOpaque; }
-    unsigned LEGACY_NODELETE bytesPerPixel() const;
+    NODELETE unsigned bytesPerPixel() const;
     bool supportsPartialRepaint() const;
     bool drawingRequiresClearedPixels() const;
 
-    PlatformCALayerRemote& LEGACY_NODELETE layer() const;
+    NODELETE PlatformCALayerRemote& layer() const;
 
     void encode(IPC::Encoder&) const;
 
@@ -172,7 +172,7 @@ public:
     void markFrontBufferVolatileForTesting();
 
 private:
-    RemoteLayerBackingStoreCollection* LEGACY_NODELETE backingStoreCollection() const LIFETIME_BOUND;
+    NODELETE RemoteLayerBackingStoreCollection* backingStoreCollection() const LIFETIME_BOUND;
 
     void drawInContext(WebCore::GraphicsContext&);
 

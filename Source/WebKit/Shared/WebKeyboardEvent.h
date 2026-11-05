@@ -127,7 +127,7 @@ public:
 
     const WebKeyboardEventData& keyboardData() const LIFETIME_BOUND { return m_data; }
 
-    static bool LEGACY_NODELETE isKeyboardEventType(WebEventType);
+    NODELETE static bool isKeyboardEventType(WebEventType);
 
 #if PLATFORM(WPE)
     static String keyValueStringForWPEKeyval(unsigned);

@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-_WKMediaCaptureStateDeprecated LEGACY_NODELETE toWKMediaCaptureStateDeprecated(WebCore::MediaProducerMediaStateFlags);
-_WKMediaMutedState LEGACY_NODELETE toWKMediaMutedState(WebCore::MediaProducerMutedStateFlags);
+NODELETE _WKMediaCaptureStateDeprecated toWKMediaCaptureStateDeprecated(WebCore::MediaProducerMediaStateFlags);
+NODELETE _WKMediaMutedState toWKMediaMutedState(WebCore::MediaProducerMutedStateFlags);
 
 } // namespace WebKit

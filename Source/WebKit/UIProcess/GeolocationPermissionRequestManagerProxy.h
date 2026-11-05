@@ -44,7 +44,7 @@ public:
 
     void invalidateRequests();
 
-    void LEGACY_NODELETE ref() const;
+    NODELETE void ref() const;
     void deref() const;
 
     // Create a request to be presented to the user.

@@ -63,7 +63,7 @@ public:
         WebCore::FrameIdentifier frameID;
         WebPageProxyIdentifier webPageProxyID;
     };
-    void LEGACY_NODELETE setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&&);
+    NODELETE void setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&&);
     void didLoadFromRegistrableDomain(WebCore::RegistrableDomain&&) final;
     Vector<WebCore::RegistrableDomain> loadedSubresourceDomains() const final;
 
@@ -286,11 +286,11 @@ private:
 
     void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) final;
 
-    inline bool LEGACY_NODELETE hasPlugInView() const;
+    NODELETE inline bool hasPlugInView() const;
 
     void documentLoaderDetached(WebCore::NavigationIdentifier, WebCore::LoadWillContinueInAnotherProcess) final;
 
-    bool LEGACY_NODELETE siteIsolationEnabled() const;
+    NODELETE bool siteIsolationEnabled() const;
 
     void broadcastFrameTreeSyncDataToOtherProcesses(WebCore::FrameTreeSyncSerializationData&&) final;
 

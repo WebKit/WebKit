@@ -80,7 +80,7 @@ private:
     void trackIdentifierChanged(const String&) final;
 
     ASCIILiteral logClassName() const { return "RemoteMediaSessionCoordinator"_s; }
-    WTFLogChannel& LEGACY_NODELETE logChannel() const;
+    NODELETE WTFLogChannel& logChannel() const;
 
     WeakRef<WebPage> m_page;
     String m_identifier;

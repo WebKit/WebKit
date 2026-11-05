@@ -95,7 +95,7 @@ class InjectionResultHolder : public RefCounted<InjectionResultHolder> {
 
 public:
     template<typename... Args>
-    static Ref<InjectionResultHolder> LEGACY_NODELETE create(Args&&... args)
+    NODELETE static Ref<InjectionResultHolder> create(Args&&... args)
     {
         return adoptRef(*new InjectionResultHolder(std::forward<Args>(args)...));
     }

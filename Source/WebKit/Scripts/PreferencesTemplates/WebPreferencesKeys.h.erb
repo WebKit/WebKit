@@ -33,7 +33,7 @@ namespace WebKit {
 namespace WebPreferencesKey {
 
 <%- for @pref in @exposedPreferences do -%>
-const String& LEGACY_NODELETE <%= @pref.nameLower %>Key();
+NODELETE const String& <%= @pref.nameLower %>Key();
 <%- end -%>
 
 } // namespace WebPreferencesKey

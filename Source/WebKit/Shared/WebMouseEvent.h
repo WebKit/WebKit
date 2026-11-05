@@ -52,15 +52,15 @@ enum class WebMouseEventButton : int8_t {
     Forward,
     None = -2,
 };
-WebMouseEventButton LEGACY_NODELETE mouseButton(const WebCore::NavigationAction&);
+NODELETE WebMouseEventButton mouseButton(const WebCore::NavigationAction&);
 
 enum class WebMouseEventSyntheticClickType : uint8_t {
     NoTap,
     OneFingerTap,
     TwoFingerTap
 };
-WebMouseEventSyntheticClickType LEGACY_NODELETE syntheticClickType(const WebCore::NavigationAction&);
-WebCore::SyntheticClickType LEGACY_NODELETE coreSyntheticClickType(WebMouseEventSyntheticClickType);
+NODELETE WebMouseEventSyntheticClickType syntheticClickType(const WebCore::NavigationAction&);
+NODELETE WebCore::SyntheticClickType coreSyntheticClickType(WebMouseEventSyntheticClickType);
 
 class WebMouseEvent;
 
@@ -148,7 +148,7 @@ public:
 
     const WebMouseEventData& mouseData() const LIFETIME_BOUND { return m_data; }
 
-    static bool LEGACY_NODELETE isMouseEventType(WebEventType);
+    NODELETE static bool isMouseEventType(WebEventType);
 
 protected:
     WebMouseEvent(WebEventData&&, WebMouseEventData&&);

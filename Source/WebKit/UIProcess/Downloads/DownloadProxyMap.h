@@ -66,14 +66,14 @@ public:
     bool isEmpty() const { return m_downloads.isEmpty(); }
     void invalidate();
 
-    void LEGACY_NODELETE ref() const;
+    NODELETE void ref() const;
     void deref() const;
 
 private:
     NetworkProcessProxy& process() const { return m_process; }
 
-    void LEGACY_NODELETE platformCreate();
-    void LEGACY_NODELETE platformDestroy();
+    NODELETE void platformCreate();
+    NODELETE void platformDestroy();
 
     WeakRef<NetworkProcessProxy> m_process;
     HashMap<DownloadID, Ref<DownloadProxy>> m_downloads;

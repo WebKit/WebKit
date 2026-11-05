@@ -41,7 +41,7 @@ public:
         return adoptRef(*new WebCredential(credential));
     }
 
-    const WebCore::Credential& LEGACY_NODELETE credential();
+    NODELETE const WebCore::Credential& credential();
 
 private:
     explicit WebCredential(const WebCore::Credential&);

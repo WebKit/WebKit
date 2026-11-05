@@ -86,7 +86,7 @@ public:
     void deny(UserMediaAccessDenialReason = UserMediaAccessDenialReason::UserMediaDisabled);
 
     virtual void invalidate();
-    bool LEGACY_NODELETE isPending() const;
+    NODELETE bool isPending() const;
 
     bool requiresAudioCapture() const { return m_eligibleAudioDevices.size(); }
     bool requiresVideoCapture() const { return !requiresDisplayCapture() && m_eligibleVideoDevices.size(); }
@@ -136,7 +136,7 @@ public:
 protected:
     UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, std::optional<WebCore::UserMediaRequestIdentifier>, WebCore::FrameIdentifier mainFrameID, FrameInfoData&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&&, Kind);
 
-    UserMediaPermissionRequestManagerProxy* LEGACY_NODELETE manager() const;
+    NODELETE UserMediaPermissionRequestManagerProxy* manager() const;
 
 private:
     void applyDeviceSelection(const String& audioDeviceUID, const String& videoDeviceUID);

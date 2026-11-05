@@ -49,7 +49,7 @@ class WebExtensionControllerProxy final : public RefCounted<WebExtensionControll
     WTF_MAKE_NONCOPYABLE(WebExtensionControllerProxy);
 
 public:
-    static RefPtr<WebExtensionControllerProxy> LEGACY_NODELETE get(WebExtensionControllerIdentifier);
+    NODELETE static RefPtr<WebExtensionControllerProxy> get(WebExtensionControllerIdentifier);
     static Ref<WebExtensionControllerProxy> getOrCreate(const WebExtensionControllerParameters&, WebPage* = nullptr);
 
     ~WebExtensionControllerProxy();
@@ -78,7 +78,7 @@ public:
     // FIXME: Include the error here.
     void didFailLoadForFrame(WebPage&, WebFrame&, const URL&);
 
-    RefPtr<WebExtensionContextProxy> LEGACY_NODELETE extensionContext(const String& uniqueIdentifier) const;
+    NODELETE RefPtr<WebExtensionContextProxy> extensionContext(const String& uniqueIdentifier) const;
     RefPtr<WebExtensionContextProxy> extensionContext(const URL&) const;
     RefPtr<WebExtensionContextProxy> extensionContext(WebFrame&, WebCore::DOMWrapperWorld&) const;
 

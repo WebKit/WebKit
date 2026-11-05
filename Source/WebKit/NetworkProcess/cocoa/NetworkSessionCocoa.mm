@@ -138,7 +138,7 @@ static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore
     }
 }
 
-static NSURLSessionAuthChallengeDisposition LEGACY_NODELETE toNSURLSessionAuthChallengeDisposition(WebKit::AuthenticationChallengeDisposition disposition)
+NODELETE static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDisposition(WebKit::AuthenticationChallengeDisposition disposition)
 {
     switch (disposition) {
     case WebKit::AuthenticationChallengeDisposition::UseCredential:
@@ -152,7 +152,7 @@ static NSURLSessionAuthChallengeDisposition LEGACY_NODELETE toNSURLSessionAuthCh
     }
 }
 
-static WebCore::NetworkLoadPriority LEGACY_NODELETE toNetworkLoadPriority(float priority)
+NODELETE static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 {
     if (priority <= NSURLSessionTaskPriorityLow)
         return WebCore::NetworkLoadPriority::Low;
@@ -161,7 +161,7 @@ static WebCore::NetworkLoadPriority LEGACY_NODELETE toNetworkLoadPriority(float 
     return WebCore::NetworkLoadPriority::Medium;
 }
 
-static WebCore::PrivacyStance LEGACY_NODELETE toPrivacyStance(nw_connection_privacy_stance_t stance)
+NODELETE static WebCore::PrivacyStance toPrivacyStance(nw_connection_privacy_stance_t stance)
 {
     switch (stance) {
     case nw_connection_privacy_stance_unknown:

@@ -125,7 +125,7 @@ public:
     void playbackStateChanged(bool, MediaTimeUpdateData&&);
     void engineFailedToLoad(int64_t);
     void updateCachedState(RemoteMediaPlayerState&&);
-    void LEGACY_NODELETE updatePlaybackQualityMetrics(WebCore::VideoPlaybackQualityMetrics&&);
+    NODELETE void updatePlaybackQualityMetrics(WebCore::VideoPlaybackQualityMetrics&&);
     void characteristicChanged(RemoteMediaPlayerState&&);
     void sizeChanged(WebCore::FloatSize);
     void firstVideoFrameAvailable();
@@ -219,13 +219,13 @@ private:
         explicit TimeProgressEstimator(const MediaPlayerPrivateRemote& parent);
         MediaTime currentTime() const;
         MediaTime cachedTime() const;
-        bool LEGACY_NODELETE timeIsProgressing() const;
+        NODELETE bool timeIsProgressing() const;
         void pause();
         void setTime(const MediaTimeUpdateData&);
         void setRate(double);
         Lock& lock() const { return m_lock; };
         MediaTime currentTimeWithLockHeld() const;
-        MediaTime LEGACY_NODELETE cachedTimeWithLockHeld() const;
+        NODELETE MediaTime cachedTimeWithLockHeld() const;
         void forceUseOfCachedTimeUntilNextSetTime();
 
     private:

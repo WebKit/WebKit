@@ -57,9 +57,9 @@ public:
     const String& displayName() const LIFETIME_BOUND { return m_displayName; }
     const String& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
 
-    OptionSet<Type> LEGACY_NODELETE types() const;
+    NODELETE OptionSet<Type> types() const;
 
-    size_t LEGACY_NODELETE totalSize() const;
+    NODELETE size_t totalSize() const;
     size_t sizeOfTypes(OptionSet<Type>) const;
 
     size_t sizeOfType(Type type) const { return m_typeSizes.get(type); }
@@ -74,7 +74,7 @@ public:
     WKWebExtensionDataRecord *wrapper() const { return (WKWebExtensionDataRecord *)API::ObjectImpl<API::Object::Type::WebExtensionDataRecord>::wrapper(); }
 #endif
 
-    bool LEGACY_NODELETE operator==(const WebExtensionDataRecord&) const;
+    NODELETE bool operator==(const WebExtensionDataRecord&) const;
 
 private:
     String m_displayName;

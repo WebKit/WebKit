@@ -63,7 +63,7 @@ private:
             , value(data)
         { }
         
-        bool LEGACY_NODELETE canCoalesce(ScrollingLogEvent::EventType, uint64_t blankPixelCount) const;
+        NODELETE bool canCoalesce(ScrollingLogEvent::EventType, uint64_t blankPixelCount) const;
     };
     
     unsigned blankPixelCount(const WebCore::FloatRect& visibleRect) const;

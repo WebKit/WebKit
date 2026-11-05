@@ -55,6 +55,6 @@ inline bool willFindAllMatches(OptionSet<FindOptions> options)
     return options.containsAny({ FindOptions::ShowOverlay, FindOptions::ShowHighlight, FindOptions::DetermineMatchIndex });
 }
 
-WebCore::FindOptions LEGACY_NODELETE core(OptionSet<FindOptions>);
+NODELETE WebCore::FindOptions core(OptionSet<FindOptions>);
 
 } // namespace WebKit

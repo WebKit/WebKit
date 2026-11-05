@@ -40,7 +40,7 @@ public:
 protected:
     explicit FidoAuthenticator(Ref<CtapDriver>&&);
 
-    CtapDriver& LEGACY_NODELETE driver() const;
+    NODELETE CtapDriver& driver() const;
     Ref<CtapDriver> releaseDriver();
 
     String transportForDebugging() const;

@@ -150,7 +150,7 @@ public:
 
     void invalidate();
 
-    bool LEGACY_NODELETE hasVideoPlayingInPictureInPicture() const;
+    NODELETE bool hasVideoPlayingInPictureInPicture() const;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
@@ -164,7 +164,7 @@ public:
     // Interface to WebChromeClient
     bool canEnterVideoFullscreen(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
-    bool LEGACY_NODELETE supportsVideoFullscreenStandby() const;
+    NODELETE bool supportsVideoFullscreenStandby() const;
     void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool standby);
     void setPlayerIdentifierForVideoElement(WebCore::HTMLVideoElement&);
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { });
@@ -227,15 +227,15 @@ protected:
     void requestRouteSharingPolicyAndContextUID(WebCore::MediaPlayerClientIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
     void ensureUpdatedVideoDimensions(WebCore::MediaPlayerClientIdentifier, WebCore::FloatSize existingVideoDimensions);
 
-    void LEGACY_NODELETE setCurrentVideoFullscreenMode(VideoPresentationInterfaceContext&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    NODELETE void setCurrentVideoFullscreenMode(VideoPresentationInterfaceContext&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void setRequiresTextTrackRepresentation(WebCore::MediaPlayerClientIdentifier, bool);
     void setTextTrackRepresentationBounds(WebCore::MediaPlayerClientIdentifier, const WebCore::IntRect&);
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& LEGACY_NODELETE logger() const;
-    uint64_t LEGACY_NODELETE logIdentifier() const;
+    NODELETE const Logger& logger() const;
+    NODELETE uint64_t logIdentifier() const;
     ASCIILiteral logClassName() const;
-    WTFLogChannel& LEGACY_NODELETE logChannel() const;
+    NODELETE WTFLogChannel& logChannel() const;
 #endif
 
     WeakPtr<WebPage> m_page;

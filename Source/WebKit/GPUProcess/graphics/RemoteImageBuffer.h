@@ -61,7 +61,7 @@ public:
 private:
     RemoteImageBuffer(Ref<WebCore::ImageBuffer>&&, WebCore::RenderingResourceIdentifier, RemoteGraphicsContextIdentifier, RemoteRenderingBackend&);
     void startListeningForIPC();
-    IPC::StreamConnectionWorkQueue& LEGACY_NODELETE workQueue() const;
+    NODELETE IPC::StreamConnectionWorkQueue& workQueue() const;
 
     // IPC::StreamMessageReceiver
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;

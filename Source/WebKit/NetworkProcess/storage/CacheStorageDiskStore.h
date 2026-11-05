@@ -54,7 +54,7 @@ private:
 
         std::span<const uint8_t> span() const;
         RefPtr<WebCore::SharedBuffer> convertToSharedBuffer() &&;
-        explicit LEGACY_NODELETE operator bool() const;
+        NODELETE explicit operator bool() const;
         static SafeFileData read(const String& filePath);
     };
 

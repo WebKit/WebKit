@@ -48,7 +48,7 @@ using namespace WebKit;
 static NSString * const urlsKey = @"urls";
 static NSString * const typesKey = @"types";
 
-_WKWebExtensionWebRequestResourceType LEGACY_NODELETE toWebExtensionWebRequestResourceType(const ResourceLoadInfo& resourceLoadInfo)
+NODELETE _WKWebExtensionWebRequestResourceType toWebExtensionWebRequestResourceType(const ResourceLoadInfo& resourceLoadInfo)
 {
     switch (resourceLoadInfo.type) {
     case ResourceLoadInfo::Type::Document:

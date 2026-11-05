@@ -73,9 +73,9 @@ public:
     void openOptionsPage(Ref<WebExtensionCallbackHandler>&&);
     void reload();
 
-    String LEGACY_NODELETE runtimeIdentifier();
+    NODELETE String runtimeIdentifier();
 
-    JSValueRef LEGACY_NODELETE lastError();
+    NODELETE JSValueRef lastError();
 
     JSValueRef onInstalledReason(JSContextRef);
     JSValueRef platformArch(JSContextRef);

@@ -40,7 +40,7 @@ namespace API {
 
 class ContentWorld final : public API::ObjectImpl<API::Object::Type::ContentWorld>, public CanMakeWeakPtr<ContentWorld> {
 public:
-    static OptionSet<WebKit::ContentWorldOption> LEGACY_NODELETE defaultOptions();
+    NODELETE static OptionSet<WebKit::ContentWorldOption> defaultOptions();
     static ContentWorld* worldForIdentifier(WebKit::ContentWorldIdentifier);
     static Ref<ContentWorld> sharedWorldWithName(const WTF::String&, OptionSet<WebKit::ContentWorldOption> = defaultOptions() );
     static Ref<ContentWorld> createNamelessWorld(OptionSet<WebKit::ContentWorldOption>);

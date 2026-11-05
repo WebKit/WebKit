@@ -40,7 +40,7 @@ using namespace WebCore;
 
 using DOMWrapperWorldMap = HashMap<SingleThreadWeakRef<const DOMWrapperWorld>, WeakRef<InjectedBundleScriptWorld>>;
 
-static DOMWrapperWorldMap& LEGACY_NODELETE allWorlds()
+NODELETE static DOMWrapperWorldMap& allWorlds()
 {
     static NeverDestroyed<DOMWrapperWorldMap> map;
     return map;

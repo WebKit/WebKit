@@ -117,8 +117,8 @@ private:
 #endif
     };
 
-    bool LEGACY_NODELETE isUpdating(const PerDomainData&) const;
-    bool LEGACY_NODELETE isHighAccuracyEnabled(const PerDomainData&) const;
+    NODELETE bool isUpdating(const PerDomainData&) const;
+    NODELETE bool isHighAccuracyEnabled(const PerDomainData&) const;
     void providerStartUpdating(PerDomainData&, const WebCore::RegistrableDomain&);
     void providerStopUpdating(PerDomainData&);
     void providerSetEnabledHighAccuracy(PerDomainData&, bool enabled);

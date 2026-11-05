@@ -47,7 +47,7 @@ public:
     ContentRuleList(Ref<WebKit::WebCompiledContentRuleList>&&, WebKit::NetworkCache::Data&&);
     virtual ~ContentRuleList();
 
-    const WTF::String& LEGACY_NODELETE name() const LIFETIME_BOUND;
+    NODELETE const WTF::String& name() const LIFETIME_BOUND;
     const WebKit::WebCompiledContentRuleList& compiledRuleList() const { return m_compiledRuleList.get(); }
     
     static bool supportsRegularExpression(const WTF::String&);

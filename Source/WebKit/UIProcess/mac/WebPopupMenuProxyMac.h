@@ -51,7 +51,7 @@ public:
     void hidePopupMenu() override;
     void cancelTracking() override;
 
-    NSPopUpButtonCell *LEGACY_NODELETE popup() const;
+    NODELETE NSPopUpButtonCell *popup() const;
     bool isVisible() const { return m_isVisible; }
 
 private:

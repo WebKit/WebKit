@@ -43,7 +43,7 @@ enum class WebEventModifier : uint8_t {
     AltGraphKey = 1 << 5,
 };
 
-OptionSet<WebEventModifier> LEGACY_NODELETE modifiersFromPlatformEventModifiers(OptionSet<WebCore::PlatformEventModifier>);
+NODELETE OptionSet<WebEventModifier> modifiersFromPlatformEventModifiers(OptionSet<WebCore::PlatformEventModifier>);
 OptionSet<WebEventModifier> modifiersForNavigationAction(const WebCore::NavigationAction&);
 
 } // namespace WebKit

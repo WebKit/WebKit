@@ -95,7 +95,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    WebCore::PaymentCoordinator& LEGACY_NODELETE paymentCoordinator() const;
+    NODELETE WebCore::PaymentCoordinator& paymentCoordinator() const;
 
     // Message handlers.
     void validateMerchant(const String& validationURLString);

@@ -66,7 +66,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    IPC::Connection& LEGACY_NODELETE connection() const;
+    NODELETE IPC::Connection& connection() const;
 
     WeakRef<WebProcess> m_process;
 

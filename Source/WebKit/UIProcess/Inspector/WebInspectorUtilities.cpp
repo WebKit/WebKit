@@ -45,13 +45,13 @@ namespace WebKit {
 
 using PageLevelMap = WeakHashMap<WebPageProxy, unsigned>;
 
-static PageLevelMap& LEGACY_NODELETE pageLevelMap()
+NODELETE static PageLevelMap& pageLevelMap()
 {
     static NeverDestroyed<PageLevelMap> map;
     return map;
 }
 
-unsigned LEGACY_NODELETE inspectorLevelForPage(WebPageProxy* page)
+NODELETE unsigned inspectorLevelForPage(WebPageProxy* page)
 {
     if (page) {
         auto findResult = pageLevelMap().find(*page);
@@ -80,7 +80,7 @@ void untrackInspectorPage(WebPageProxy& inspectorPage)
 static WebProcessPool* s_mainInspectorProcessPool;
 static WebProcessPool* s_nestedInspectorProcessPool;
 
-static WeakHashSet<WebProcessPool>& LEGACY_NODELETE allInspectorProcessPools()
+NODELETE static WeakHashSet<WebProcessPool>& allInspectorProcessPools()
 {
     static NeverDestroyed<WeakHashSet<WebProcessPool>> allInspectorProcessPools;
     return allInspectorProcessPools.get();
@@ -104,12 +104,12 @@ void prepareProcessPoolForInspector(WebProcessPool& processPool)
     allInspectorProcessPools().add(processPool);
 }
 
-bool LEGACY_NODELETE isInspectorProcessPool(WebProcessPool& processPool)
+NODELETE bool isInspectorProcessPool(WebProcessPool& processPool)
 {
     return allInspectorProcessPools().contains(processPool);
 }
 
-bool LEGACY_NODELETE isInspectorPage(WebPageProxy& webPage)
+NODELETE bool isInspectorPage(WebPageProxy& webPage)
 {
     return pageLevelMap().contains(webPage);
 }

@@ -78,7 +78,7 @@ public:
     };
 
     static Ref<WebPageOverlay> create(std::unique_ptr<Client>, WebCore::PageOverlay::OverlayType = WebCore::PageOverlay::OverlayType::View);
-    static WebPageOverlay* LEGACY_NODELETE fromCoreOverlay(WebCore::PageOverlay&);
+    NODELETE static WebPageOverlay* fromCoreOverlay(WebCore::PageOverlay&);
     virtual ~WebPageOverlay();
 
     void setNeedsDisplay(const WebCore::IntRect& dirtyRect);

@@ -47,10 +47,10 @@ public:
 private:
     using CoalescedEventSequence = Vector<Ref<NativeWebWheelEvent>>;
 
-    static bool LEGACY_NODELETE canCoalesce(const WebWheelEvent&, const WebWheelEvent&);
+    NODELETE static bool canCoalesce(const WebWheelEvent&, const WebWheelEvent&);
     static Ref<WebWheelEvent> coalesce(const WebWheelEvent&, const WebWheelEvent&);
 
-    bool LEGACY_NODELETE shouldDispatchEventNow(const WebWheelEvent&) const;
+    NODELETE bool shouldDispatchEventNow(const WebWheelEvent&) const;
 
     Deque<Ref<NativeWebWheelEvent>, 2> m_wheelEventQueue;
     Deque<std::unique_ptr<CoalescedEventSequence>> m_eventsBeingProcessed;

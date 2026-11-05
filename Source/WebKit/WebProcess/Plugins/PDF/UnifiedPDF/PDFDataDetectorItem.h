@@ -48,9 +48,9 @@ class PDFDataDetectorItem : public RefCounted<PDFDataDetectorItem> {
 public:
     static Ref<PDFDataDetectorItem> create(DDScannerResult *, PDFPage *);
 
-    DDScannerResult *LEGACY_NODELETE scannerResult() const;
-    bool LEGACY_NODELETE hasActions() const;
-    bool LEGACY_NODELETE isPastDate() const;
+    NODELETE DDScannerResult *scannerResult() const;
+    NODELETE bool hasActions() const;
+    NODELETE bool isPastDate() const;
     RetainPtr<PDFSelection> selection() const;
 
 private:

@@ -70,7 +70,7 @@ private:
     RemoteImageBufferSet(ImageBufferSetIdentifier, RemoteGraphicsContextIdentifier, RemoteRenderingBackend&);
 
     void startListeningForIPC();
-    IPC::StreamConnectionWorkQueue& LEGACY_NODELETE workQueue() const;
+    NODELETE IPC::StreamConnectionWorkQueue& workQueue() const;
 
     // Tries to swap one of the existing back buffers to the new front buffer, if any are
     // not currently in-use.

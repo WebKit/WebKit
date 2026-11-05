@@ -160,8 +160,8 @@ public:
         return WTF::move(m_entry);
     }
 
-    const std::optional<ResourceRequest>& LEGACY_NODELETE revalidationRequest() const { return m_speculativeValidationRequest; }
-    bool LEGACY_NODELETE wasRevalidated() const { return !!m_speculativeValidationRequest; }
+    NODELETE const std::optional<ResourceRequest>& revalidationRequest() const { return m_speculativeValidationRequest; }
+    NODELETE bool wasRevalidated() const { return !!m_speculativeValidationRequest; }
 
 private:
     std::unique_ptr<Entry> m_entry;
@@ -213,7 +213,7 @@ public:
         saveToDiskIfReady();
     }
 
-    bool LEGACY_NODELETE didReceiveMainResourceResponse() const { return m_didReceiveMainResourceResponse; }
+    NODELETE bool didReceiveMainResourceResponse() const { return m_didReceiveMainResourceResponse; }
     void markMainResourceResponseAsReceived()
     {
         m_didReceiveMainResourceResponse = true;

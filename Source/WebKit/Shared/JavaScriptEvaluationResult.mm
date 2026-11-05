@@ -34,7 +34,7 @@ namespace WebKit {
 
 class JavaScriptEvaluationResult::ObjCExtractor {
 public:
-    Map LEGACY_NODELETE takeMap() { return WTF::move(m_map); }
+    NODELETE Map takeMap() { return WTF::move(m_map); }
     JSObjectID addObjectToMap(id);
     bool failed() const { return m_failed; }
 private:

@@ -50,16 +50,16 @@ public:
     void remove(WebPageProxyIdentifier, RefPtr<JSON::Value> keys, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
     void clear(WebPageProxyIdentifier, Ref<WebExtensionCallbackHandler>&&);
 
-    double LEGACY_NODELETE quotaBytes();
+    NODELETE double quotaBytes();
 
     // Only exposed to trusted contexts.
     void setAccessLevel(WebPageProxyIdentifier, RefPtr<JSON::Value>, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
 
     // Exposed only by storage.sync.
-    double LEGACY_NODELETE quotaBytesPerItem();
-    double LEGACY_NODELETE maxItems();
-    double LEGACY_NODELETE maxWriteOperationsPerHour();
-    double LEGACY_NODELETE maxWriteOperationsPerMinute();
+    NODELETE double quotaBytesPerItem();
+    NODELETE double maxItems();
+    NODELETE double maxWriteOperationsPerHour();
+    NODELETE double maxWriteOperationsPerMinute();
 
     WebExtensionAPIEvent& onChanged();
 

@@ -36,7 +36,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
-static RetainPtr<SecTrustRef>& LEGACY_NODELETE allowedLocalTestServerTrust()
+NODELETE static RetainPtr<SecTrustRef>& allowedLocalTestServerTrust()
 {
     static NeverDestroyed<RetainPtr<SecTrustRef>> serverTrust;
     return serverTrust.get();
@@ -82,7 +82,7 @@ namespace WebKit::PCM {
 
 enum class LoadTaskIdentifierType { };
 using LoadTaskIdentifier = ObjectIdentifier<LoadTaskIdentifierType>;
-static HashMap<LoadTaskIdentifier, RetainPtr<NSURLSessionDataTask>>& LEGACY_NODELETE taskMap()
+NODELETE static HashMap<LoadTaskIdentifier, RetainPtr<NSURLSessionDataTask>>& taskMap()
 {
     static NeverDestroyed<HashMap<LoadTaskIdentifier, RetainPtr<NSURLSessionDataTask>>> map;
     return map.get();

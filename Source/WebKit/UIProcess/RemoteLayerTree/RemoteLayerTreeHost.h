@@ -73,7 +73,7 @@ public:
     RetainPtr<CALayer> layerForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
     RetainPtr<CALayer> rootLayer() const;
 
-    RemoteLayerTreeDrawingAreaProxy& LEGACY_NODELETE drawingArea() const;
+    NODELETE RemoteLayerTreeDrawingAreaProxy& drawingArea() const;
 
     // Returns true if the root layer changed.
     bool updateLayerTree(const IPC::Connection&, const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, float indicatorScaleFactor  = 1);
@@ -104,7 +104,7 @@ public:
     RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 #endif
 
-    void LEGACY_NODELETE detachFromDrawingArea();
+    NODELETE void detachFromDrawingArea();
     void clearLayers();
 
     // Detach the root layer; it will be reattached upon the next incoming commit.
@@ -112,7 +112,7 @@ public:
 
     RetainPtr<CALayer> layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 
-    bool LEGACY_NODELETE replayDynamicContentScalingDisplayListsIntoBackingStore() const;
+    NODELETE bool replayDynamicContentScalingDisplayListsIntoBackingStore() const;
     bool threadedAnimationsEnabled() const;
 
     bool cssUnprefixedBackdropFilterEnabled() const;

@@ -46,7 +46,7 @@ public:
 
     InspectorBrowserAgent(WebPageAgentContext&);
     ~InspectorBrowserAgent();
-    bool LEGACY_NODELETE enabled() const;
+    NODELETE bool enabled() const;
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend();

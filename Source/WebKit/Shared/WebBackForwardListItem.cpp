@@ -79,7 +79,7 @@ WebBackForwardListItem* WebBackForwardListItem::itemForID(BackForwardItemIdentif
     return allItems().get(identifier);
 }
 
-static const FrameState* LEGACY_NODELETE childItemWithTarget(const FrameState& frameState, const String& target)
+NODELETE static const FrameState* childItemWithTarget(const FrameState& frameState, const String& target)
 {
     for (auto& child : frameState.children) {
         if (child->target == target)
@@ -89,7 +89,7 @@ static const FrameState* LEGACY_NODELETE childItemWithTarget(const FrameState& f
     return nullptr;
 }
 
-static bool LEGACY_NODELETE hasSameFrames(const FrameState& a, const FrameState& b)
+NODELETE static bool hasSameFrames(const FrameState& a, const FrameState& b)
 {
     if (a.target != b.target)
         return false;

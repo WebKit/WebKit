@@ -135,7 +135,7 @@ public:
 #endif
     std::optional<::WebGPU::TexelCopyTextureInfo> convertFromBacking(const ImageCopyTexture&);
     std::optional<WebCore::WebGPUImageCopyTextureTagged> convertFromBacking(const ImageCopyTextureTagged&);
-    std::optional<WebCore::WebGPUObjectDescriptorBase> LEGACY_NODELETE convertFromBacking(const ObjectDescriptorBase&);
+    NODELETE std::optional<WebCore::WebGPUObjectDescriptorBase> convertFromBacking(const ObjectDescriptorBase&);
     // std::nullopt when the layout does not convert; nullptr when it is missing and allowed to be.
     std::optional<RefPtr<::WebGPU::PipelineLayout>> convertLayoutFromBacking(const PipelineDescriptorBase&, bool allowMissingPipelineLayout);
     std::optional<::WebGPU::PipelineLayoutDescriptor> convertFromBacking(const PipelineLayoutDescriptor&, Vector<Ref<::WebGPU::BindGroupLayout>>& bindGroupLayoutsStorage);

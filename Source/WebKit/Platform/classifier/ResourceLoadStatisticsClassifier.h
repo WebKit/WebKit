@@ -48,7 +48,7 @@ protected:
     {
         return classifyWithVectorThreshold(subresourceUnderTopFrameDomainsCount, subresourceUniqueRedirectsToCount, subframeUnderTopFrameOriginsCount);
     }
-    bool LEGACY_NODELETE classifyWithVectorThreshold(unsigned, unsigned, unsigned);
+    NODELETE bool classifyWithVectorThreshold(unsigned, unsigned, unsigned);
 };
 
 }

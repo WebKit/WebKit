@@ -78,7 +78,7 @@ public:
     ~ViewSnapshot();
 
     void clearImage();
-    bool LEGACY_NODELETE hasImage() const;
+    NODELETE bool hasImage() const;
 
 #if HAVE(IOSURFACE)
     id asLayerContents();
@@ -174,7 +174,7 @@ public:
     ViewSnapshotStore();
     ~ViewSnapshotStore();
 
-    static ViewSnapshotStore& LEGACY_NODELETE singleton();
+    NODELETE static ViewSnapshotStore& singleton();
 
     void recordSnapshot(WebPageProxy&, WebBackForwardListItem&);
 

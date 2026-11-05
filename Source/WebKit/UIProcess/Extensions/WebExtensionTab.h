@@ -117,7 +117,7 @@ public:
     HasChanges removeUnchangedParameters(WebExtensionTabParameters&);
     WebExtensionTabParameters parametersApplying(const WebExtensionTabParameters&) const;
 
-    WebExtensionContext* LEGACY_NODELETE extensionContext() const;
+    NODELETE WebExtensionContext* extensionContext() const;
 
     bool operator==(const WebExtensionTab&) const;
 

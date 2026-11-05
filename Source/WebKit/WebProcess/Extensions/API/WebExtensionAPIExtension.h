@@ -58,7 +58,7 @@ public:
     JSValue *getBackgroundPage(JSContextRef);
     NSArray *getViews(JSContextRef, NSDictionary *filter, NSString **outExceptionString);
 
-    NSDictionary *LEGACY_NODELETE viewType();
+    NODELETE NSDictionary *viewType();
 #endif
 
 private:

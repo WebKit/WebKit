@@ -142,10 +142,10 @@ protected:
     };
     virtual Vector<LayerCoverage> layerCoveragesForRepaintPageCoverage(RepaintRequirements, const PDFPageCoverage&) = 0;
 
-    static Ref<WebCore::GraphicsLayer> LEGACY_NODELETE pageBackgroundLayerForPageContainerLayer(WebCore::GraphicsLayer&);
+    NODELETE static Ref<WebCore::GraphicsLayer> pageBackgroundLayerForPageContainerLayer(WebCore::GraphicsLayer&);
 
     Ref<AsyncPDFRenderer> asyncRenderer();
-    RefPtr<AsyncPDFRenderer> LEGACY_NODELETE asyncRendererIfExists() const;
+    NODELETE RefPtr<AsyncPDFRenderer> asyncRendererIfExists() const;
     void clearAsyncRenderer();
 
     WebCore::Path shadowPathForLayer(const WebCore::GraphicsLayer&) const;

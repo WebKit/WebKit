@@ -80,7 +80,7 @@ public:
 
     void connect();
     void disconnect();
-    void LEGACY_NODELETE incrementUseCount();
+    NODELETE void incrementUseCount();
     void decrementUseCount();
 
 private:
@@ -88,7 +88,7 @@ private:
 
     void didSetItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
     void didRemoveItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
-    void LEGACY_NODELETE didClear(uint64_t mapSeed);
+    NODELETE void didClear(uint64_t mapSeed);
 
     // Message handlers.
     void dispatchStorageEvent(const std::optional<StorageAreaImplIdentifier>& sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString, uint64_t messageIdentifier);

@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-static size_t LEGACY_NODELETE ruleListDataSize(size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize)
+NODELETE static size_t ruleListDataSize(size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize)
 {
     return topURLFiltersBytecodeOffset + topURLFiltersBytecodeSize;
 }

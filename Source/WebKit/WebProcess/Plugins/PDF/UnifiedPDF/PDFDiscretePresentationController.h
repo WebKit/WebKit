@@ -89,11 +89,11 @@ private:
     std::optional<PDFLayoutRow> visibleRow() const override;
     std::optional<PDFLayoutRow> rowForLayer(const WebCore::GraphicsLayer&) const override;
 
-    WebCore::FloatSize LEGACY_NODELETE contentsOffsetForPage(PDFDocumentLayout::PageIndex) const;
+    NODELETE WebCore::FloatSize contentsOffsetForPage(PDFDocumentLayout::PageIndex) const;
 
     bool handleKeyboardEvent(const WebKeyboardEvent&) override;
 
-    bool LEGACY_NODELETE handleKeyboardCommand(const WebKeyboardEvent&);
+    NODELETE bool handleKeyboardCommand(const WebKeyboardEvent&);
     bool handleKeyboardEventForPageNavigation(const WebKeyboardEvent&);
 
     bool wantsWheelEvents() const override { return true; }
@@ -108,7 +108,7 @@ private:
 
     bool eventCanStartPageTransition(const WebCore::PlatformWheelEvent&) const;
 
-    bool LEGACY_NODELETE canTransitionOnSide(WebCore::BoxSide) const;
+    NODELETE bool canTransitionOnSide(WebCore::BoxSide) const;
 
     // Transition state
     enum class TransitionDirection : uint8_t {
@@ -128,7 +128,7 @@ private:
         return direction == TransitionDirection::NextHorizontal || direction == TransitionDirection::NextVertical;
     }
 
-    bool LEGACY_NODELETE canTransitionInDirection(TransitionDirection) const;
+    NODELETE bool canTransitionInDirection(TransitionDirection) const;
 
     void startOrStopAnimationTimerIfNecessary();
     void animationTimerFired();
@@ -169,8 +169,8 @@ private:
 
     void buildRows();
 
-    bool LEGACY_NODELETE canGoToNextRow() const;
-    bool LEGACY_NODELETE canGoToPreviousRow() const;
+    NODELETE bool canGoToNextRow() const;
+    NODELETE bool canGoToPreviousRow() const;
 
     enum class Animated : bool { No, Yes };
     void goToNextRow(Animated);
@@ -180,7 +180,7 @@ private:
     void setVisibleRow(unsigned);
     void updateLayersAfterChangeInVisibleRow(std::optional<unsigned> additionalVisibleRowIndex = { });
 
-    std::optional<unsigned> LEGACY_NODELETE additionalVisibleRowIndexForDirection(TransitionDirection) const;
+    NODELETE std::optional<unsigned> additionalVisibleRowIndexForDirection(TransitionDirection) const;
 
     // First index is layer, second index is start/end.
     static constexpr size_t topLayerIndex = 0;
@@ -189,8 +189,8 @@ private:
     static constexpr size_t endIndex = 1;
     std::array<std::array<float, 2>, 2> layerOpacitiesForStretchOffset(TransitionDirection, WebCore::FloatSize layerOffset, WebCore::FloatSize rowSize) const;
     WebCore::FloatSize layerOffsetForStretch(TransitionDirection, WebCore::FloatSize stretchDistance, WebCore::FloatSize rowSize) const;
-    static float LEGACY_NODELETE relevantAxisForDirection(TransitionDirection, WebCore::FloatSize);
-    static void LEGACY_NODELETE setRelevantAxisForDirection(TransitionDirection, WebCore::FloatSize&, float value);
+    NODELETE static float relevantAxisForDirection(TransitionDirection, WebCore::FloatSize);
+    NODELETE static void setRelevantAxisForDirection(TransitionDirection, WebCore::FloatSize&, float value);
 
     struct RowData {
         PDFLayoutRow pages;
@@ -209,7 +209,7 @@ private:
         RefPtr<WebCore::GraphicsLayer> backgroundLayerForPageIndex(PDFDocumentLayout::PageIndex) const;
     };
 
-    const RowData* LEGACY_NODELETE rowDataForLayer(const WebCore::GraphicsLayer&) const;
+    NODELETE const RowData* rowDataForLayer(const WebCore::GraphicsLayer&) const;
     WebCore::FloatPoint positionForRowContainerLayer(const PDFLayoutRow&) const;
     WebCore::FloatSize rowContainerSize(const PDFLayoutRow&) const;
 

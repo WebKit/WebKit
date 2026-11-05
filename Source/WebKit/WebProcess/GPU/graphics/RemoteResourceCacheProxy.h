@@ -108,7 +108,7 @@ private:
     void willDestroyDisplayList(const WebCore::DisplayList::DisplayList&) override;
 
     void finalizeRenderingUpdateForFonts();
-    void LEGACY_NODELETE prepareForNextRenderingUpdate();
+    NODELETE void prepareForNextRenderingUpdate();
     void releaseFonts();
     void releaseFontCustomPlatformDatas();
 

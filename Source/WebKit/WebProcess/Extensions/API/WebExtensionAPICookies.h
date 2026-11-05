@@ -50,7 +50,7 @@ public:
 
     void getAllCookieStores(Ref<WebExtensionCallbackHandler>&&);
 
-    NSDictionary *LEGACY_NODELETE sameSiteStatus();
+    NODELETE NSDictionary *sameSiteStatus();
 
     WebExtensionAPIEvent& onChanged();
 

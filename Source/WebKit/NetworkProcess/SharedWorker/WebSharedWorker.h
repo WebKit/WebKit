@@ -60,7 +60,7 @@ public:
 
     ~WebSharedWorker();
 
-    static WebSharedWorker* LEGACY_NODELETE fromIdentifier(WebCore::SharedWorkerIdentifier);
+    NODELETE static WebSharedWorker* fromIdentifier(WebCore::SharedWorkerIdentifier);
 
     const WebCore::SharedWorkerKey& key() const LIFETIME_BOUND { return m_key; }
     const WebCore::WorkerOptions& workerOptions() const LIFETIME_BOUND { return m_workerOptions; }
@@ -76,7 +76,7 @@ public:
     void resume(WebCore::SharedWorkerObjectIdentifier);
     unsigned sharedWorkerObjectsCount() const { return m_sharedWorkerObjects.size(); }
     void forEachSharedWorkerObject(NOESCAPE const Function<void(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&)>&) const;
-    std::optional<WebCore::ProcessIdentifier> LEGACY_NODELETE firstSharedWorkerObjectProcess() const;
+    NODELETE std::optional<WebCore::ProcessIdentifier> firstSharedWorkerObjectProcess() const;
 
     void didCreateContextConnection(WebSharedWorkerServerToContextConnection&);
 

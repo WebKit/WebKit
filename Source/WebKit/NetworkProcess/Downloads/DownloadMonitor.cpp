@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-constexpr uint64_t LEGACY_NODELETE operator""_kbps(unsigned long long kilobytesPerSecond)
+NODELETE constexpr uint64_t operator""_kbps(unsigned long long kilobytesPerSecond)
 {
     return kilobytesPerSecond * 1024;
 }
@@ -56,7 +56,7 @@ static constexpr std::array throughputIntervals = {
     ThroughputInterval { 60_min, 128_kbps }
 };
 
-static Seconds LEGACY_NODELETE timeUntilNextInterval(size_t currentInterval)
+NODELETE static Seconds timeUntilNextInterval(size_t currentInterval)
 {
     RELEASE_ASSERT(currentInterval + 1 < throughputIntervals.size());
     return throughputIntervals[currentInterval + 1].time - throughputIntervals[currentInterval].time;

@@ -67,7 +67,7 @@ public:
     CoreIPCNumber& operator=(const CoreIPCNumber& other) = default;
 
     RetainPtr<CFNumberRef> createCFNumber() const;
-    CoreIPCNumber::NumberHolder LEGACY_NODELETE get() const;
+    NODELETE CoreIPCNumber::NumberHolder get() const;
     RetainPtr<id> toID() const;
 
 private:

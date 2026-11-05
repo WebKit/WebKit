@@ -38,7 +38,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-inline static WKTextExtractionContainer LEGACY_NODELETE containerType(TextExtraction::ContainerType type)
+NODELETE inline static WKTextExtractionContainer containerType(TextExtraction::ContainerType type)
 {
     switch (type) {
     case TextExtraction::ContainerType::ViewportConstrained:
@@ -70,7 +70,7 @@ inline static WKTextExtractionContainer LEGACY_NODELETE containerType(TextExtrac
     }
 }
 
-static WKTextExtractionEventListenerTypes LEGACY_NODELETE eventListenerTypes(OptionSet<TextExtraction::EventListenerCategory> eventListeners)
+NODELETE static WKTextExtractionEventListenerTypes eventListenerTypes(OptionSet<TextExtraction::EventListenerCategory> eventListeners)
 {
     WKTextExtractionEventListenerTypes result = WKTextExtractionEventListenerTypeNone;
     if (eventListeners.contains(TextExtraction::EventListenerCategory::Click))

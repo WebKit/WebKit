@@ -45,8 +45,8 @@ public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
-    void LEGACY_NODELETE setEnumeratingAllNetworkInterfacesEnabled(bool);
-    void LEGACY_NODELETE setEnumeratingVisibleNetworkInterfacesEnabled(bool);
+    NODELETE void setEnumeratingAllNetworkInterfacesEnabled(bool);
+    NODELETE void setEnumeratingVisibleNetworkInterfacesEnabled(bool);
 
     static void signalUsedInterface(WebCore::ScriptExecutionContextIdentifier, String&&);
 

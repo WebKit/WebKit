@@ -65,7 +65,7 @@ static constexpr auto Redirect = "Redirect"_s;
 static constexpr auto PopUp = "PopUp"_s;
 static constexpr auto SubFrame = "SubFrame"_s;
 
-static ASCIILiteral LEGACY_NODELETE toString(const SOAuthorizationSession::InitiatingAction& action)
+NODELETE static ASCIILiteral toString(const SOAuthorizationSession::InitiatingAction& action)
 {
     switch (action) {
     case SOAuthorizationSession::InitiatingAction::Redirect:
