@@ -340,7 +340,7 @@ static std::optional<BorderBoxSize> definiteMaximumSize(const PlacedGridItem& gr
 static BorderBoxSize inlineContentSizeSuggestion(const PlacedGridItem& gridItem, LayoutUnit borderAndPadding, std::optional<LayoutUnit> gridAreaInlineSize, std::optional<LayoutUnit> gridAreaBlockSize, const IntegrationUtils& integrationUtils)
 {
     auto& layoutBox = gridItem.layoutBox();
-    auto contentSizeSuggestion = BorderBoxSize { ContentBoxSize { integrationUtils.minContentWidthForGridItem(layoutBox, gridAreaInlineSize) }, borderAndPadding };
+    auto contentSizeSuggestion = BorderBoxSize::fromIntegrationFunction(integrationUtils.inlineIntrinsicSizeForGridItem(layoutBox, GridItemIntrinsicSize::MinContent, gridAreaInlineSize, { }, { }));
 
     auto aspectRatio = gridItem.preferredAspectRatio();
     if (!aspectRatio)
@@ -469,7 +469,7 @@ static BorderBoxSize blockContentSizeSuggestion(const PlacedGridItem& gridItem, 
 {
     auto& layoutBox = gridItem.layoutBox();
     auto& integrationUtils = formattingContext.integrationUtils();
-    auto contentSizeSuggestion = BorderBoxSize::fromIntegrationFunction(integrationUtils.minContentHeightForGridItem(layoutBox, gridAreaInlineSize));
+    auto contentSizeSuggestion = BorderBoxSize::fromIntegrationFunction(integrationUtils.blockIntrinsicSizeForGridItem(layoutBox, gridAreaInlineSize));
 
     auto aspectRatio = gridItem.preferredAspectRatio();
     if (!aspectRatio)
@@ -541,8 +541,8 @@ LayoutUnit inlinePreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit 
         // Otherwise (self-alignment is not stretch, and does not behave as stretch), a non-replaced
         // grid item with an automatic size is sized to its fit-content size in the axis.
         if (!placedGridItem.isReplacedElement()) {
-            auto minContentBorderBoxWidth = BorderBoxSize { ContentBoxSize { integrationUtils.minContentWidthForGridItem(placedGridItem.layoutBox(), columnsSize) }, borderAndPadding };
-            auto maxContentBorderBoxWidth = BorderBoxSize { ContentBoxSize { integrationUtils.maxContentWidthForGridItem(placedGridItem.layoutBox(), columnsSize) }, borderAndPadding };
+            auto minContentBorderBoxWidth = BorderBoxSize::fromIntegrationFunction(integrationUtils.inlineIntrinsicSizeForGridItem(placedGridItem.layoutBox(), GridItemIntrinsicSize::MinContent, columnsSize, { }, { }));
+            auto maxContentBorderBoxWidth = BorderBoxSize::fromIntegrationFunction(integrationUtils.inlineIntrinsicSizeForGridItem(placedGridItem.layoutBox(), GridItemIntrinsicSize::MaxContent, columnsSize, { }, { }));
             auto stretchFitBorderBoxWidth = stretchFitSize(borderAndPadding, columnsSize, usedMargins);
             return fitContentSize(minContentBorderBoxWidth, maxContentBorderBoxWidth, stretchFitBorderBoxWidth);
         }
@@ -722,8 +722,8 @@ LayoutUnit blockPreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit b
             auto stretchFitBorderBoxHeight = stretchFitSize(borderAndPadding, rowsSize, usedMargins);
 
             auto& integrationUtils = formattingContext.integrationUtils();
-            auto minContentBorderBoxHeight = BorderBoxSize::fromIntegrationFunction(integrationUtils.minContentHeightForGridItem(placedGridItem.layoutBox(), gridAreaInlineSize));
-            auto maxContentBorderBoxHeight = BorderBoxSize::fromIntegrationFunction(integrationUtils.maxContentHeightForGridItem(placedGridItem.layoutBox(), gridAreaInlineSize));
+            auto minContentBorderBoxHeight = BorderBoxSize::fromIntegrationFunction(integrationUtils.blockIntrinsicSizeForGridItem(placedGridItem.layoutBox(), gridAreaInlineSize));
+            auto maxContentBorderBoxHeight = BorderBoxSize::fromIntegrationFunction(integrationUtils.blockIntrinsicSizeForGridItem(placedGridItem.layoutBox(), gridAreaInlineSize));
             return fitContentSize(minContentBorderBoxHeight, maxContentBorderBoxHeight, stretchFitBorderBoxHeight);
         }
 
@@ -1060,7 +1060,7 @@ static std::optional<LayoutUnit> stretchedBlockSizeForInlineContribution(const P
 MarginBoxSize inlineAxisMinContentContribution(const PlacedGridItem& gridItem, std::optional<LayoutUnit> gridAreaBlockSize, const IntegrationUtils& integrationUtils)
 {
     auto stretchedBlockSize = stretchedBlockSizeForInlineContribution(gridItem, gridAreaBlockSize, integrationUtils);
-    auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(integrationUtils.minContentContributionWidthForGridItem(gridItem.layoutBox(), gridAreaBlockSize, stretchedBlockSize));
+    auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(integrationUtils.inlineIntrinsicSizeForGridItem(gridItem.layoutBox(), GridItemIntrinsicSize::MinContentContribution, { }, gridAreaBlockSize, stretchedBlockSize));
     auto usedMargins = usedMarginsForAxis(gridItem, gridItem.inlineAxisSizes());
     return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd };
 }
@@ -1068,21 +1068,21 @@ MarginBoxSize inlineAxisMinContentContribution(const PlacedGridItem& gridItem, s
 MarginBoxSize inlineAxisMaxContentContribution(const PlacedGridItem& gridItem, std::optional<LayoutUnit> gridAreaBlockSize, const IntegrationUtils& integrationUtils)
 {
     auto stretchedBlockSize = stretchedBlockSizeForInlineContribution(gridItem, gridAreaBlockSize, integrationUtils);
-    auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(integrationUtils.maxContentContributionWidthForGridItem(gridItem.layoutBox(), gridAreaBlockSize, stretchedBlockSize));
+    auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(integrationUtils.inlineIntrinsicSizeForGridItem(gridItem.layoutBox(), GridItemIntrinsicSize::MaxContentContribution, { }, gridAreaBlockSize, stretchedBlockSize));
     auto usedMargins = usedMarginsForAxis(gridItem, gridItem.inlineAxisSizes());
     return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd };
 }
 
 MarginBoxSize blockAxisMinContentContribution(const PlacedGridItem& gridItem, LayoutUnit gridAreaInlineSize, const GridFormattingContext& formattingContext)
 {
-    auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().minContentContributionHeightForGridItem(gridItem.layoutBox(), gridAreaInlineSize));
+    auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().blockIntrinsicSizeForGridItem(gridItem.layoutBox(), gridAreaInlineSize));
     auto usedMargins = usedMarginsForAxis(gridItem, gridItem.blockAxisSizes());
     return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd };
 }
 
 MarginBoxSize blockAxisMaxContentContribution(const PlacedGridItem& gridItem, LayoutUnit gridAreaInlineSize, const GridFormattingContext& formattingContext)
 {
-    auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().maxContentContributionHeightForGridItem(gridItem.layoutBox(), gridAreaInlineSize));
+    auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().blockIntrinsicSizeForGridItem(gridItem.layoutBox(), gridAreaInlineSize));
     auto usedMargins = usedMarginsForAxis(gridItem, gridItem.blockAxisSizes());
     return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd };
 }
