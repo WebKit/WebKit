@@ -98,11 +98,13 @@ messages -> WebExtensionContext {
     [Validator=isDevToolsMessageAllowed] DevToolsInspectedWindowEval(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String scriptSource, std::optional<URL> frameURL) -> (std::expected<std::expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, WebKit::WebExtensionError> result)
     [Validator=isDevToolsMessageAllowed] DevToolsInspectedWindowReload(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<bool> ignoreCache)
 #endif
+#endif
 
     // Event APIs
     [Validator=isLoaded] AddListener(WebCore::FrameIdentifier frameIdentifier, WebKit::WebExtensionEventListenerType listenerType, WebKit::WebExtensionContentWorldType contentWorldType)
     [Validator=isLoaded] RemoveListener(WebCore::FrameIdentifier frameIdentifier, WebKit::WebExtensionEventListenerType listenerType, WebKit::WebExtensionContentWorldType contentWorldType, uint64_t removedCount)
 
+#if PLATFORM(COCOA)
     // Extensions APIs
     [Validator=isLoaded] ExtensionIsAllowedIncognitoAccess() -> (bool result)
 

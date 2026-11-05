@@ -171,7 +171,6 @@ set(WebKit_BINDINGS_IN_FILES
     WebProcess/Extensions/Interfaces/WebExtensionAPIDevToolsInspectedWindow
     WebProcess/Extensions/Interfaces/WebExtensionAPIDevToolsNetwork
     WebProcess/Extensions/Interfaces/WebExtensionAPIDevToolsPanels
-    WebProcess/Extensions/Interfaces/WebExtensionAPIEvent
     WebProcess/Extensions/Interfaces/WebExtensionAPIExtension
     WebProcess/Extensions/Interfaces/WebExtensionAPILocalization
     WebProcess/Extensions/Interfaces/WebExtensionAPIMenus
@@ -193,6 +192,7 @@ set(WebKit_BINDINGS_IN_FILES
 
 set(WebKit_CPP_BINDINGS_IN_FILES
     WebProcess/Extensions/Interfaces/WebExtensionAPIAlarms
+    WebProcess/Extensions/Interfaces/WebExtensionAPIEvent
     WebProcess/Extensions/Interfaces/WebExtensionAPINamespace
     WebProcess/Extensions/Interfaces/WebExtensionAPIRuntime
     WebProcess/Extensions/Interfaces/WebExtensionAPIStorage

@@ -323,7 +323,6 @@ UIProcess/XR/openxr/OpenXRSwapchain.cpp
 UIProcess/XR/openxr/PlatformXROpenXR.cpp
 UIProcess/XR/openxr/PlatformXRSystemOpenXR.cpp
 
-WebProcess/Extensions/API/glib/WebExtensionAPIEventGLib.cpp
 WebProcess/Extensions/API/glib/WebExtensionAPIPortGLib.cpp
 WebProcess/Extensions/API/glib/WebExtensionAPITestGLib.cpp
 

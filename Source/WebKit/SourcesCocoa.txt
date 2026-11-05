@@ -520,7 +520,6 @@ UIProcess/Extensions/Cocoa/API/WebExtensionContextAPICookiesCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIDeclarativeNetRequestCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIDevToolsInspectedWindow.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIDevToolsPanels.mm
-UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIEventCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIExtensionCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIMenusCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPINotificationsCocoa.mm

@@ -46,13 +46,6 @@ static JSClassRef createClassWithoutProperties(const char* className)
     return JSClassCreate(&definition);
 }
 
-JSClassRef JSWebExtensionAPIEvent::eventClassSingleton()
-{
-    notImplemented();
-    SUPPRESS_UNCOUNTED_LOCAL static JSClassRef jsClass = createClassWithoutProperties("Event");
-    return jsClass;
-}
-
 JSClassRef JSWebExtensionAPIPort::portClassSingleton()
 {
     notImplemented();

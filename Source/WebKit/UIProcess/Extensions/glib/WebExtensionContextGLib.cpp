@@ -495,6 +495,11 @@ void WebExtensionContext::performTasksAfterBackgroundContentLoads()
     scheduleBackgroundContentToUnload();
 }
 
+bool WebExtensionContext::isBackgroundPage(WebPageProxyIdentifier pageProxyIdentifier) const
+{
+    return m_backgroundWebView && webkitWebViewGetPage(m_backgroundWebView.get()).identifier() == pageProxyIdentifier;
+}
+
 bool WebExtensionContext::decidePolicyForNavigationAction(WebKitWebView *webView, WebKitNavigationPolicyDecision *navigationPolicy)
 {
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -649,12 +654,6 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::tabPageIde
 void WebExtensionContext::cookiesDidChange(API::HTTPCookieStore&)
 {
     notImplemented();
-}
-
-bool WebExtensionContext::isBackgroundPage(WebPageProxyIdentifier) const
-{
-    notImplemented();
-    return false;
 }
 
 String WebExtensionContext::declarativeNetRequestContentRuleListFilePath()
