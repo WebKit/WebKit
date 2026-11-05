@@ -727,9 +727,7 @@ TEST(WTF_Vector, ReverseIterator)
 
 TEST(WTF_Vector, MoveOnly_UncheckedAppend)
 {
-    Vector<MoveOnly> vector;
-
-    vector.reserveInitialCapacity(100);
+    Vector<MoveOnly> vector(ReserveCapacityTag { }, 100);
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i);
         vector.append(WTF::move(moveOnly));
@@ -1269,9 +1267,7 @@ static MoveOnly multiplyByTwoMoveOnly(const MoveOnly& value)
 
 TEST(WTF_Vector, MapStaticFunctionMoveOnly)
 {
-    Vector<MoveOnly> vector;
-
-    vector.reserveInitialCapacity(3);
+    Vector<MoveOnly> vector(ReserveCapacityTag { }, 3);
     for (unsigned i = 0; i < 3; ++i)
         vector.append(MoveOnly { i });
 
@@ -1301,9 +1297,7 @@ TEST(WTF_Vector, MapLambda)
 
 TEST(WTF_Vector, MapLambdaMove)
 {
-    Vector<MoveOnly> vector;
-
-    vector.reserveInitialCapacity(3);
+    Vector<MoveOnly> vector(ReserveCapacityTag { }, 3);
     for (unsigned i = 0; i < 3; ++i)
         vector.append(MoveOnly { i });
 

@@ -97,9 +97,7 @@ MediaQueryList MediaQueryParser::consumeMediaQueryList(CSSParserTokenRange& rang
     if (range.atEnd())
         return { };
 
-    MediaQueryList list;
-
-    list.reserveInitialCapacity(mediaQueryCount(range));
+    MediaQueryList list(ReserveCapacityTag { }, mediaQueryCount(range));
 
     while (true) {
         auto begin = range;

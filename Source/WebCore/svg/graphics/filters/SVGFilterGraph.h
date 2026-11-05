@@ -45,9 +45,7 @@ public:
 
     std::optional<NodeVector> getNamedNodes(std::span<const AtomString> names) const
     {
-        NodeVector nodes;
-
-        nodes.reserveInitialCapacity(names.size());
+        NodeVector nodes(ReserveCapacityTag { }, names.size());
 
         for (auto& name : names) {
             if (auto node = getNamedNode(name))
