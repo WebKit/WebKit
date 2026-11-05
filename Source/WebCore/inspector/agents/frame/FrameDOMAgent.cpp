@@ -80,6 +80,7 @@
 #include "markup.h"
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/InspectorDebuggerAgent.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TopExceptionScope.h>
@@ -1156,6 +1157,7 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::EventListen
     auto addListener = [&](const Ref<RegisteredEventListener>& listener, const EventListenerInfo& info) {
         Inspector::Protocol::DOM::EventListenerId identifier = 0;
         bool disabled = false;
+        RefPtr<JSC::Breakpoint> breakpoint;
 
         Ref eventTarget = *info.eventTarget;
 
@@ -1163,6 +1165,7 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::EventListen
             if (inspectorEventListener.matches(eventTarget, info.eventType, listener->callback(), listener->useCapture())) {
                 identifier = inspectorEventListener.identifier;
                 disabled = inspectorEventListener.disabled;
+                breakpoint = inspectorEventListener.breakpoint;
                 break;
             }
         }
@@ -1176,7 +1179,7 @@ Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::EventListen
             m_eventListenerEntries.add(identifier, inspectorEventListener);
         }
 
-        listeners->addItem(buildObjectForEventListener(listener, identifier, eventTarget, info.eventType, disabled));
+        listeners->addItem(buildObjectForEventListener(listener, identifier, eventTarget, info.eventType, disabled, breakpoint));
     };
 
     // Get Capturing Listeners (in this order)
@@ -1211,6 +1214,61 @@ Inspector::CommandResult<void> FrameDOMAgent::setEventListenerDisabled(int event
     return { };
 }
 
+Inspector::CommandResult<void> FrameDOMAgent::setBreakpointForEventListener(int eventListenerId, RefPtr<JSON::Object>&& options)
+{
+    Inspector::Protocol::ErrorString errorString;
+
+    auto it = m_eventListenerEntries.find(eventListenerId);
+    if (it == m_eventListenerEntries.end())
+        return makeUnexpected("Missing event listener for given eventListenerId"_s);
+
+    // Events of nested frames only reach their own frame's agents.
+    Ref eventTarget = *it->value.eventTarget;
+    RefPtr<LocalFrame> frame;
+    if (RefPtr node = dynamicDowncast<Node>(eventTarget))
+        frame = node->document().frame();
+    else if (RefPtr window = dynamicDowncast<LocalDOMWindow>(eventTarget))
+        frame = window->frame();
+    if (frame != m_inspectedFrame.ptr())
+        return makeUnexpected("Not supported for event listeners outside the frame's document"_s);
+
+    if (it->value.breakpoint)
+        return makeUnexpected("Breakpoint for given eventListenerId already exists"_s);
+
+    it->value.breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, WTF::move(options));
+    if (!it->value.breakpoint)
+        return makeUnexpected(errorString);
+
+    return { };
+}
+
+Inspector::CommandResult<void> FrameDOMAgent::removeBreakpointForEventListener(int eventListenerId)
+{
+    auto it = m_eventListenerEntries.find(eventListenerId);
+    if (it == m_eventListenerEntries.end())
+        return makeUnexpected("Missing event listener for given eventListenerId"_s);
+
+    if (!it->value.breakpoint)
+        return makeUnexpected("Breakpoint for given eventListenerId missing"_s);
+
+    it->value.breakpoint = nullptr;
+
+    return { };
+}
+
+// Stale entries are dropped here rather than on removal, since a `once` listener is removed just before it runs.
+void FrameDOMAgent::didAddEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
+{
+    // Adding the same callback again creates a new EventListener, so compare by value instead of by pointer.
+    m_eventListenerEntries.removeIf([&](auto& entry) {
+        auto& inspectorEventListener = entry.value;
+        return inspectorEventListener.eventTarget.get() == &target
+            && inspectorEventListener.eventType == eventType
+            && inspectorEventListener.useCapture == capture
+            && *inspectorEventListener.eventListener == listener;
+    });
+}
+
 bool FrameDOMAgent::isEventListenerDisabled(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
@@ -1218,6 +1276,24 @@ bool FrameDOMAgent::isEventListenerDisabled(EventTarget& target, const AtomStrin
             return inspectorEventListener.disabled;
     }
     return false;
+}
+
+RefPtr<JSC::Breakpoint> FrameDOMAgent::breakpointForEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
+{
+    for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
+        if (inspectorEventListener.matches(target, eventType, listener, capture))
+            return inspectorEventListener.breakpoint;
+    }
+    return nullptr;
+}
+
+Inspector::Protocol::DOM::EventListenerId FrameDOMAgent::idForEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
+{
+    for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
+        if (inspectorEventListener.matches(target, eventType, listener, capture))
+            return inspectorEventListener.identifier;
+    }
+    return 0;
 }
 
 // Cleared per-renderer at the start of every flex layout, so no explicit invalidation is needed.
@@ -1238,7 +1314,7 @@ Vector<size_t> FrameDOMAgent::flexibleBoxRendererCachedItemsAtStartOfLine(const 
     return m_flexibleBoxRendererCachedItemsAtStartOfLine.get(renderer);
 }
 
-Ref<Inspector::Protocol::DOM::EventListener> FrameDOMAgent::buildObjectForEventListener(const Ref<RegisteredEventListener>& registeredEventListener, Inspector::Protocol::DOM::EventListenerId identifier, EventTarget& eventTarget, const AtomString& eventType, bool disabled)
+Ref<Inspector::Protocol::DOM::EventListener> FrameDOMAgent::buildObjectForEventListener(const Ref<RegisteredEventListener>& registeredEventListener, Inspector::Protocol::DOM::EventListenerId identifier, EventTarget& eventTarget, const AtomString& eventType, bool disabled, const RefPtr<JSC::Breakpoint>& breakpoint)
 {
     Ref<EventListener> eventListener = registeredEventListener->callback();
 
@@ -1329,6 +1405,8 @@ Ref<Inspector::Protocol::DOM::EventListener> FrameDOMAgent::buildObjectForEventL
         value->setOnce(true);
     if (disabled)
         value->setDisabled(disabled);
+    if (breakpoint)
+        value->setHasBreakpoint(true);
     return value;
 }
 
