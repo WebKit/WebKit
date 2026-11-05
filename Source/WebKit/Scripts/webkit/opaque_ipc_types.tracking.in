@@ -108,7 +108,7 @@
 [NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::InfoOption Variant<WebKit::CoreIPCDate, WebKit::CoreIPCString, bool, WebKit::CoreIPCSecTrustData::RevocationInfoArray, WebKit::CoreIPCSecTrustData::InfoSubDict>
 [NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::InfoType Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::InfoOption>>
 [Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyArrayOfData Vector<WebKit::CoreIPCData>
-[Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyVariant Variant<bool, WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyArrayOfNumbers, WebKit::CoreIPCSecTrustData::PolicyArrayOfStrings, WebKit::CoreIPCSecTrustData::PolicyArrayOfData, WebKit::CoreIPCSecTrustData::PolicyArrayOfArrayContainingDateOrNumbers, WebKit::CoreIPCSecTrustData::PolicyDictionaryValueIsNumber>
+[Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyVariant Variant<bool, WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyArrayOfNumbers, WebKit::CoreIPCSecTrustData::PolicyArrayOfStrings, WebKit::CoreIPCSecTrustData::PolicyArrayOfData, WebKit::CoreIPCSecTrustData::PolicyArrayOfArrayContainingDateOrNumbers, WebKit::CoreIPCSecTrustData::PolicyDictionaryValueIsNumberOrArrayOfNumbers>
 [Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyOption Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyVariant>>
 [Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyValue Variant<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyOption>
 [Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyType Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyValue>>

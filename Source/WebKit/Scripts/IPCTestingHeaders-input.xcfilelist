@@ -18,6 +18,7 @@ $(SRCROOT)/Shared/Cocoa/CoreIPCData.h
 $(SRCROOT)/Shared/Cocoa/CoreIPCDate.h
 $(SRCROOT)/Shared/Cocoa/CoreIPCError.h
 $(SRCROOT)/Shared/Cocoa/CoreIPCNSURLCredential.h
+$(SRCROOT)/Shared/Cocoa/CoreIPCNSURLProtectionSpace.h
 $(SRCROOT)/Shared/Cocoa/CoreIPCNSURLRequest.h
 $(SRCROOT)/Shared/cf/CoreIPCNumber.h
 $(SRCROOT)/Shared/Cocoa/CoreIPCPKPayment.h

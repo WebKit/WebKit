@@ -74,7 +74,7 @@ CoreIPCSecTrust::PolicyOptionValueShape CoreIPCSecTrust::detectPolicyOptionShape
         if ([element isKindOfClass:NSArray.class])
             return PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber;
     } else if ([option isKindOfClass:NSDictionary.class])
-        return PolicyOptionValueShape::DictionaryValueIsNumber;
+        return PolicyOptionValueShape::DictionaryValueIsNumberOrArrayOfNumbers;
 
     RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust::detectPolicyOptionShape was unable to detect option's shape");
     ASSERT_NOT_REACHED();
@@ -206,22 +206,32 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
             policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
         }
-        case CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumber: {
+        case CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumberOrArrayOfNumbers: {
             RetainPtr d = dynamic_objc_cast<NSDictionary>(optionValue);
             if (!d)
-                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumber unexpected type for key "_s, (String)optionKey, " (expecting NSDictionary)"_s);
-            CoreIPCSecTrustData::PolicyDictionaryValueIsNumber vector;
+                return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumberOrArrayOfNumbers unexpected type for key "_s, (String)optionKey, " (expecting NSDictionary)"_s);
+            CoreIPCSecTrustData::PolicyDictionaryValueIsNumberOrArrayOfNumbers vector;
             vector.reserveCapacity([d count]);
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
             for (SUPPRESS_UNRETAINED_LOCAL NSString* key in d.get()) {
                 if (![key isKindOfClass:NSString.class])
-                    return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumber unexpected dictionary key type for key "_s, (String)optionKey, " (expecting NSString)"_s);
-                NSNumber *value = [d objectForKey:key];
-                if (![value isKindOfClass:NSNumber.class])
-                    return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumber unexpected dictionary value type for key "_s, (String)optionKey, " (expecting NSNumber)"_s);
+                    return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumberOrArrayOfNumbers unexpected dictionary key type for key "_s, (String)optionKey, " (expecting NSString)"_s);
                 CoreIPCString s { key };
-                CoreIPCNumber n { value };
-                vector.append(std::make_pair(WTF::move(s), WTF::move(n)));
+                id value = [d objectForKey:key];
+                if (RetainPtr number = dynamic_objc_cast<NSNumber>(value)) {
+                    vector.append(std::make_pair(WTF::move(s), CoreIPCNumber { number }));
+                    continue;
+                }
+                // Security's KeySize option holds an array of SecKeySubtype values for kSecAttrKeyTypeMLDSA.
+                RetainPtr array = dynamic_objc_cast<NSArray>(value);
+                if (!array || !arrayElementsTheSameType(array, NSNumber.class))
+                    return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumberOrArrayOfNumbers unexpected dictionary value type for key "_s, (String)optionKey, " (expecting NSNumber or NSArray of NSNumber)"_s);
+                CoreIPCSecTrustData::PolicyArrayOfNumbers numbers;
+                numbers.reserveCapacity([array count]);
+                // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+                for (SUPPRESS_UNRETAINED_LOCAL NSNumber *element in array.get())
+                    numbers.append(CoreIPCNumber { element });
+                vector.append(std::make_pair(WTF::move(s), WTF::move(numbers)));
             }
             CoreIPCSecTrustData::PolicyVariant v = WTF::move(vector);
             policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
@@ -711,10 +721,22 @@ static RetainPtr<NSDictionary> createPolicyDictionary(const CoreIPCSecTrustData:
                 }
                 value = outerArray;
             },
-            [&] (const CoreIPCSecTrustData::PolicyDictionaryValueIsNumber& a) {
+            [&](const CoreIPCSecTrustData::PolicyDictionaryValueIsNumberOrArrayOfNumbers& a) {
                 RetainPtr d = adoptNS([[NSMutableDictionary alloc] initWithCapacity:a.size()]);
-                for (const auto& i : borrow(a))
-                    [d setObject:i.second.toID().get() forKey:i.first.toID().get()];
+                for (const auto& i : borrow(a)) {
+                    RetainPtr<id> dictionaryValue = WTF::switchOn(i.second,
+                        [&](const CoreIPCNumber& number) -> RetainPtr<id> {
+                            return number.toID();
+                        },
+                        [&](const CoreIPCSecTrustData::PolicyArrayOfNumbers& numbers) -> RetainPtr<id> {
+                            RetainPtr array = adoptNS([[NSMutableArray alloc] initWithCapacity:numbers.size()]);
+                            for (const auto& number : borrow(numbers))
+                                [array addObject:number.toID()];
+                            return array;
+                        }
+                    );
+                    [d setObject:dictionaryValue forKey:i.first.toID()];
+                }
                 value = d;
             }
         );

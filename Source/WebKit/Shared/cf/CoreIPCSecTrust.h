@@ -61,12 +61,13 @@ struct CoreIPCSecTrustData {
     using InfoSubDict = Vector<std::pair<CoreIPCString, bool>>;
     using InfoOption = Variant<CoreIPCDate, CoreIPCString, bool, RevocationInfoArray, InfoSubDict>;
     using InfoType = Vector<std::pair<CoreIPCString, InfoOption>>;
-    using PolicyDictionaryValueIsNumber = Vector<std::pair<CoreIPCString, CoreIPCNumber>>;
     using PolicyArrayOfArrayContainingDateOrNumbers = Vector<Vector<Variant<CoreIPCNumber, CoreIPCDate>>>;
     using PolicyArrayOfNumbers = Vector<CoreIPCNumber>;
+    using PolicyDictionaryValue = Variant<CoreIPCNumber, PolicyArrayOfNumbers>;
+    using PolicyDictionaryValueIsNumberOrArrayOfNumbers = Vector<std::pair<CoreIPCString, PolicyDictionaryValue>>;
     using PolicyArrayOfStrings = Vector<CoreIPCString>;
     using PolicyArrayOfData = Vector<CoreIPCData>;
-    using PolicyVariant = Variant<bool, CoreIPCString, PolicyArrayOfNumbers, PolicyArrayOfStrings, PolicyArrayOfData, PolicyArrayOfArrayContainingDateOrNumbers, PolicyDictionaryValueIsNumber>;
+    using PolicyVariant = Variant<bool, CoreIPCString, PolicyArrayOfNumbers, PolicyArrayOfStrings, PolicyArrayOfData, PolicyArrayOfArrayContainingDateOrNumbers, PolicyDictionaryValueIsNumberOrArrayOfNumbers>;
     using PolicyOption = Vector<std::pair<CoreIPCString, PolicyVariant>>;
     using PolicyValue = Variant<CoreIPCString, PolicyOption>;
     using PolicyType = Vector<std::pair<CoreIPCString, PolicyValue>>;
@@ -110,7 +111,7 @@ public:
         ArrayOfStrings,
         ArrayOfData,
         ArrayOfArrayContainingDateOrNumber,
-        DictionaryValueIsNumber,
+        DictionaryValueIsNumberOrArrayOfNumbers,
     };
     static PolicyOptionValueShape detectPolicyOptionShape(id);
 };
