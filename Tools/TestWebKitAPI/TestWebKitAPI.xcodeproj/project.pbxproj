@@ -149,6 +149,7 @@
 		A176D24B2D6D2A4E00C63915 /* GPUExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D2472D6D295400C63915 /* GPUExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A176D24C2D6D2A4E00C63915 /* NetworkingExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D2482D6D295400C63915 /* NetworkingExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A176D24D2D6D2A4E00C63915 /* WebContentExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D2492D6D295400C63915 /* WebContentExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A176D24E2D6D2A4E00C63915 /* WebContentEnhancedSecurityExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D24A2D6D295400C63915 /* WebContentEnhancedSecurityExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A1798B7F22431D2B000764BD /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A1798B7E22431D2B000764BD /* libWebCoreTestSupport.dylib */; };
 		A1798B8522433647000764BD /* WebProcessPlugInWithInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1798B8422433647000764BD /* WebProcessPlugInWithInternals.mm */; };
 		A17C58252C9AAA25009DD0B5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A17C58242C9AAA25009DD0B5 /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
@@ -375,6 +376,7 @@
 			files = (
 				A176D24B2D6D2A4E00C63915 /* GPUExtension.appex in Embed Extensions */,
 				A176D24C2D6D2A4E00C63915 /* NetworkingExtension.appex in Embed Extensions */,
+				A176D24E2D6D2A4E00C63915 /* WebContentEnhancedSecurityExtension.appex in Embed Extensions */,
 				A176D24D2D6D2A4E00C63915 /* WebContentExtension.appex in Embed Extensions */,
 			);
 			name = "Embed Extensions";
@@ -524,6 +526,7 @@
 		A176D2472D6D295400C63915 /* GPUExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = GPUExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A176D2482D6D295400C63915 /* NetworkingExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = NetworkingExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A176D2492D6D295400C63915 /* WebContentExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = WebContentExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A176D24A2D6D295400C63915 /* WebContentEnhancedSecurityExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = WebContentEnhancedSecurityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1798B7E22431D2B000764BD /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1798B8322433647000764BD /* WebProcessPlugInWithInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebProcessPlugInWithInternals.h; sourceTree = "<group>"; };
 		A1798B8422433647000764BD /* WebProcessPlugInWithInternals.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessPlugInWithInternals.mm; sourceTree = "<group>"; };
@@ -1944,6 +1947,7 @@
 				A176D2472D6D295400C63915 /* GPUExtension.appex */,
 				A176D2482D6D295400C63915 /* NetworkingExtension.appex */,
 				A176D2492D6D295400C63915 /* WebContentExtension.appex */,
+				A176D24A2D6D295400C63915 /* WebContentEnhancedSecurityExtension.appex */,
 				7B9FC57E28A26137007570E7 /* TestIPC */,
 				8DD76FA10486AA7600D96B5E /* TestWebKitAPI */,
 				3A15785328D1505B00142DB1 /* TestWGSL */,
