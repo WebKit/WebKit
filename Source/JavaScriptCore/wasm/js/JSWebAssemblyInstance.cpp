@@ -403,6 +403,10 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
     for (unsigned i = 0; i < moduleInformation.memoryCount(); i++) {
         const auto& mem = moduleInformation.memory(i);
         if (!mem.isImport()) {
+            // Allocation of a 1-byte page is bug 330237. A module with that page size validates, and instantiation fails here.
+            if (mem.pageSize() != PageCount::pageSize)
+                return exception(createOutOfMemoryError(globalObject));
+
             // We create a memory when it's a memory definition.
             auto* jsMemory = JSWebAssemblyMemory::create(vm, globalObject->webAssemblyMemoryStructure());
 

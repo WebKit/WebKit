@@ -260,15 +260,13 @@ auto SectionParser::parseFunction() -> PartialResult
     return { };
 }
 
-static bool LEGACY_NODELETE limitsFlagIsValid(uint8_t flags)
+NODELETE static bool limitsFlagIsValid(uint8_t flags, uint8_t validFlagsMask)
 {
-    constexpr uint8_t invalidFlagsMask = ~0x07;
-    const uint8_t hasInvalidFlags = flags & invalidFlagsMask;
-    return !hasInvalidFlags;
+    return !(flags & ~validFlagsMask);
 }
 
 template <SectionParser::LimitsType LimitType>
-auto SectionParser::parseResizableLimits(uint64_t& initial, std::optional<uint64_t>& maximum, bool& isShared, bool& is64bit) -> PartialResult
+auto SectionParser::parseResizableLimits(uint64_t& initial, std::optional<uint64_t>& maximum, bool& isShared, bool& is64bit, uint32_t& pageSize) -> PartialResult
 {
     ASSERT(!maximum);
 
@@ -276,14 +274,21 @@ auto SectionParser::parseResizableLimits(uint64_t& initial, std::optional<uint64
     constexpr uint8_t hasMaxMask = 1;
     constexpr uint8_t isSharedMask = 1 << 1;
     constexpr uint8_t is64bitMask = 1 << 2;
+    constexpr uint8_t hasCustomPageSizeMask = 1 << 3;
 
     WASM_PARSER_FAIL_IF(!parseUInt8(flags), "can't parse resizable limits flags"_s);
-    WASM_PARSER_FAIL_IF(!limitsFlagIsValid(flags), "resizable limits flag are not valid "_s, hex(flags, 2, Lowercase));
+    uint8_t validFlagsMask = 0x07;
+    if constexpr (LimitType == LimitsType::Memory) {
+        if (Options::useWasmCustomPageSizes())
+            validFlagsMask = 0x0f;
+    }
+    WASM_PARSER_FAIL_IF(!limitsFlagIsValid(flags, validFlagsMask), "resizable limits flag are not valid "_s, hex(flags, 2, Lowercase));
     if constexpr (LimitType != LimitsType::Memory)
         WASM_PARSER_FAIL_IF(flags & isSharedMask, "can't use shared limits for non memory"_s);
 
     isShared = flags & isSharedMask;
     is64bit = flags & is64bitMask;
+    pageSize = PageCount::pageSize;
     WASM_PARSER_FAIL_IF(isShared && !Options::useWasmFaultSignalHandler(), "shared memory is not enabled"_s);
     WASM_PARSER_FAIL_IF(is64bit && !Options::useWasmMemory64(), "Memory64 is not enabled"_s);
 
@@ -310,6 +315,17 @@ auto SectionParser::parseResizableLimits(uint64_t& initial, std::optional<uint64
     }
 
     WASM_PARSER_FAIL_IF(isShared && !maximum, "shared memory must have a maximum size"_s);
+
+    if constexpr (LimitType == LimitsType::Memory) {
+        if (flags & hasCustomPageSizeMask) {
+            uint32_t exponent;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(exponent), "can't parse memory page size"_s);
+            WASM_PARSER_FAIL_IF(exponent >= 64, "memory page size exponent of "_s, exponent, " is invalid"_s);
+            uint64_t decodedPageSize = 1ull << exponent;
+            WASM_PARSER_FAIL_IF(decodedPageSize != 1 && decodedPageSize != PageCount::pageSize, "memory page size of "_s, decodedPageSize, " is invalid"_s);
+            pageSize = static_cast<uint32_t>(decodedPageSize);
+        }
+    }
     return { };
 }
 
@@ -340,7 +356,8 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
     std::optional<uint64_t> maximum;
     bool isShared = false;
     bool isTable64 = false;
-    PartialResult limits = parseResizableLimits<LimitsType::Table>(initial, maximum, isShared, isTable64);
+    uint32_t pageSize = PageCount::pageSize;
+    PartialResult limits = parseResizableLimits<LimitsType::Table>(initial, maximum, isShared, isTable64, pageSize);
     ASSERT(!isShared);
     if (!limits) [[unlikely]]
         return makeUnexpected(WTF::move(limits.error()));
@@ -401,16 +418,24 @@ auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
     PageCount maximumPageCount;
     bool isShared { false };
     bool isMemory64 { false };
+    uint32_t pageSize = PageCount::pageSize;
     {
         uint64_t initial;
         std::optional<uint64_t> maximum;
-        PartialResult limits = parseResizableLimits<LimitsType::Memory>(initial, maximum, isShared, isMemory64);
+        PartialResult limits = parseResizableLimits<LimitsType::Memory>(initial, maximum, isShared, isMemory64, pageSize);
         if (!limits) [[unlikely]]
             return makeUnexpected(WTF::move(limits.error()));
         ASSERT(!maximum || *maximum >= initial);
 
         const uint64_t maxDeclarablePageCount = maxDeclarablePages(AddressType { isMemory64 });
         WASM_PARSER_FAIL_IF(initial > maxDeclarablePageCount, "Memory's initial page count of "_s, initial, " is invalid"_s);
+
+        if (pageSize != PageCount::pageSize) {
+            uint64_t addressSpacePages = isMemory64 ? (std::numeric_limits<uint64_t>::max() / pageSize) : ((1ull << 32) / pageSize);
+            WASM_PARSER_FAIL_IF(initial > addressSpacePages, "Memory's initial page count of "_s, initial, " does not fit in its address space"_s);
+            if (maximum)
+                WASM_PARSER_FAIL_IF(*maximum > addressSpacePages, "Memory's maximum page count of "_s, *maximum, " does not fit in its address space"_s);
+        }
 
         initialPageCount = PageCount(initial);
 
@@ -422,7 +447,7 @@ auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
     ASSERT(initialPageCount);
     ASSERT(!maximumPageCount || maximumPageCount >= initialPageCount);
 
-    m_info->memories.append(MemoryInformation(initialPageCount, maximumPageCount, isShared, isImport, isMemory64));
+    m_info->memories.append(MemoryInformation(initialPageCount, maximumPageCount, isShared, isImport, isMemory64, pageSize));
 
     return { };
 }

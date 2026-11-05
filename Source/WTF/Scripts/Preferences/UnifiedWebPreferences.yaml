@@ -7007,6 +7007,17 @@ WantsBalancedSetDefersLoadingBehavior:
   status: embedder
   defaultValue: false
 
+WasmCustomPageSizesEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "WebAssembly Custom Page Sizes"
+  humanReadableDescription: "Allow a WebAssembly memory to declare a page size of 1 byte or 64 KiB."
+  jscOptionName: useWasmCustomPageSizes
+  sharedPreferenceForWebProcess: true
+  excludeFrom: [ WebKitLegacy, WebCore ]
+  defaultValue: false
+
 WasmJSStringBuiltinsEnabled:
   type: bool
   status: stable
