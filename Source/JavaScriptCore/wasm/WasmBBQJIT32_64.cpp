@@ -2314,39 +2314,143 @@ void BBQJIT::emitThrowOnNullReference(ExceptionType type, Location ref)
     );
 }
 
+// (declare-const num (_ BitVec 64))
+// (declare-const amount (_ BitVec 32))
+//
+// (define-fun low ((x (_ BitVec 64))) (_ BitVec 32)
+//             ((_ extract 31 0) x))
+//
+// (define-fun high ((x (_ BitVec 64))) (_ BitVec 32)
+//             ((_ extract 63 32) x))
+//
+// (define-fun rotl32 ((num (_ BitVec 32)) (amount (_ BitVec 32))) (_ BitVec 32)
+//   (ext_rotate_left num amount))
+//
+// (define-fun rotl64 ((num (_ BitVec 64)) (amount (_ BitVec 32))) (_ BitVec 64)
+//   (ext_rotate_left num ((_ zero_extend 32) amount)))
+//
+// (define-fun rotr32 ((num (_ BitVec 32)) (amount (_ BitVec 32))) (_ BitVec 32)
+//   (ext_rotate_right num amount))
+//
+// (define-fun rotr64 ((num (_ BitVec 64)) (amount (_ BitVec 32))) (_ BitVec 64)
+//   (ext_rotate_right num ((_ zero_extend 32) amount)))
+//
+// (define-fun masked_amount ((amount (_ BitVec 32))) (_ BitVec 32)
+//             (bvand amount #x0000001f))
+//
+// (push)
+// (define-fun rotl_mask ((amount (_ BitVec 32))) (_ BitVec 32)
+//             (bvsub (bvshl #x00000001 amount) #x00000001))
+//
+// (define-fun rotl_calc_tmp ((num (_ BitVec 64))(amount (_ BitVec 32))) (_ BitVec 32)
+//             (bvand (bvxor (rotl32 (high num) amount) (rotl32 (low num) amount)) (rotl_mask amount)))
+//
+// (define-fun rotl64_32 ((num (_ BitVec 64)) (amount (_ BitVec 32))) (_ BitVec 64)
+//       (concat
+//         (bvxor (rotl32 (high num) amount) (rotl_calc_tmp num amount))
+//         (bvxor (rotl32 (low num) amount) (rotl_calc_tmp num amount))))
+//
+// (assert
+//   (not
+//     (=
+//       (rotl64 num (masked_amount amount))
+//       (rotl64_32 num (masked_amount amount)))))
+// (check-sat)
+// (pop)
+//
+// (push)
+// (define-fun rotr_mask ((amount (_ BitVec 32))) (_ BitVec 32)
+//              (bvnot (bvlshr #xffffffff amount)))
+//
+// (define-fun rotr_calc_tmp ((num (_ BitVec 64))(amount (_ BitVec 32))) (_ BitVec 32)
+//             (bvand (bvxor (rotr32 (high num) amount) (rotr32 (low num) amount)) (rotr_mask amount)))
+//
+// (define-fun rotr64_32 ((num (_ BitVec 64)) (amount (_ BitVec 32))) (_ BitVec 64)
+//       (concat
+//         (bvxor (rotr32 (high num) amount) (rotr_calc_tmp num amount))
+//         (bvxor (rotr32 (low num) amount) (rotr_calc_tmp num amount))))
+//
+// (assert
+//   (not
+//     (=
+//       (rotr64 num (masked_amount amount))
+//       (rotr64_32 num (masked_amount amount)))))
+// (check-sat)
+// (pop)
+//
+// (push)
+// (assert
+//   (bvult amount #x00000040))
+// (assert
+//   (bvuge amount #x00000020))
+//
+// (assert
+//     (not
+//       (=
+//         (rotl64 num amount)
+//         (rotl64
+//           (concat
+//             (low num)
+//             (high num))
+//           (bvand amount #x0000001f)))))
+// (check-sat)
+// (pop)
+//
+// (push)
+// (assert
+//   (bvult amount #x00000040))
+// (assert
+//   (bvuge amount #x00000020))
+//
+// (assert
+//     (not
+//       (=
+//         (rotr64 num amount)
+//         (rotr64
+//           (concat
+//             (low num)
+//             (high num))
+//           (bvand amount #x0000001f)))))
+// (check-sat)
+// (pop)
 void BBQJIT::rotI64Helper(RotI64HelperOp op, Location lhsLocation, Location rhsLocation, Location resultLocation)
 {
-    // NB: this only works as long as result is allocated in lhsLocation!
-    auto carry = rhsLocation.asGPRhi();
-    auto shift = rhsLocation.asGPRlo();
     ScratchScope<2, 0> scratches(*this, lhsLocation, rhsLocation, resultLocation);
-    auto tmpHi = scratches.gpr(0);
-    auto tmpLo = scratches.gpr(1);
-    m_jit.move(lhsLocation.asGPRhi(), resultLocation.asGPRhi());
+    auto amount = scratches.gpr(0);
+    auto tmp = scratches.gpr(1);
+    // Assume that any input (even rhsLocation.asGPRhi()) can alias the
+    // resultLocation, so read all values before clobbering anything.
+    m_jit.and32(TrustedImm32(63), rhsLocation.asGPRlo(), amount);
+    m_jit.move(lhsLocation.asGPRhi(), tmp);
     m_jit.move(lhsLocation.asGPRlo(), resultLocation.asGPRlo());
-    m_jit.and32(TrustedImm32(63), shift, shift);
-    auto rotate = m_jit.branch32(RelationalCondition::LessThan, shift, TrustedImm32(32));
-    // swap
+    m_jit.move(tmp, resultLocation.asGPRhi());
+    auto rotate = m_jit.branch32(RelationalCondition::LessThan, amount, TrustedImm32(32));
+    // rotX64(hi:lo, 32 + N) == rotX64(lo:hi, N); see the last 2 asserts above.
     m_jit.swap(resultLocation.asGPRhi(), resultLocation.asGPRlo());
+    m_jit.and32(TrustedImm32(31), amount, amount);
     rotate.link(&m_jit);
-    m_jit.and32(TrustedImm32(31), shift, shift);
-    auto zero = m_jit.branch32(RelationalCondition::Equal, shift, TrustedImm32(0));
+    auto zero = m_jit.branch32(RelationalCondition::Equal, amount, TrustedImm32(0));
     // rotate
-    m_jit.move(TrustedImm32(32), carry);
-    m_jit.sub32(carry, shift, carry);
     if (op == RotI64HelperOp::Left) {
-        m_jit.urshift32(resultLocation.asGPRhi(), carry, tmpLo);
-        m_jit.urshift32(resultLocation.asGPRlo(), carry, tmpHi);
-        m_jit.lshift32(resultLocation.asGPRhi(), shift, resultLocation.asGPRhi());
-        m_jit.lshift32(resultLocation.asGPRlo(), shift, resultLocation.asGPRlo());
+        // See rotl64_32 above.
+        m_jit.rotateLeft32(resultLocation.asGPRhi(), amount, resultLocation.asGPRhi());
+        m_jit.rotateLeft32(resultLocation.asGPRlo(), amount, resultLocation.asGPRlo());
+        m_jit.move(TrustedImm32(1), tmp);
+        m_jit.lshift32(amount, tmp);
+        m_jit.sub32(TrustedImm32(1), tmp);
     } else if (op == RotI64HelperOp::Right) {
-        m_jit.lshift32(resultLocation.asGPRhi(), carry, tmpLo);
-        m_jit.lshift32(resultLocation.asGPRlo(), carry, tmpHi);
-        m_jit.urshift32(resultLocation.asGPRhi(), shift, resultLocation.asGPRhi());
-        m_jit.urshift32(resultLocation.asGPRlo(), shift, resultLocation.asGPRlo());
+        // See rotr64_32 above.
+        m_jit.rotateRight32(resultLocation.asGPRhi(), amount, resultLocation.asGPRhi());
+        m_jit.rotateRight32(resultLocation.asGPRlo(), amount, resultLocation.asGPRlo());
+        m_jit.move(TrustedImm32(-1), tmp);
+        m_jit.urshift32(amount, tmp);
+        m_jit.not32(tmp);
     }
-    m_jit.or32(tmpHi, resultLocation.asGPRhi());
-    m_jit.or32(tmpLo, resultLocation.asGPRlo());
+    // Swap the bits selected by the mask in tmp.
+    m_jit.xor32(resultLocation.asGPRhi(), resultLocation.asGPRlo(), amount);
+    m_jit.and32(amount, tmp, tmp);
+    m_jit.xor32(resultLocation.asGPRhi(), tmp, resultLocation.asGPRhi());
+    m_jit.xor32(resultLocation.asGPRlo(), tmp, resultLocation.asGPRlo());
     zero.link(&m_jit);
 }
 
