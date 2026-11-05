@@ -7529,6 +7529,7 @@
 		0CEBF20D2F07F3689744454A /* ImageDrawDescriptorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 920A67A63082764F62086B03 /* ImageDrawDescriptorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		807547D380B36BF6457BF6C4 /* ColorAppearance.h in Headers */ = {isa = PBXBuildFile; fileRef = A0FE1D51155B617031EC275F /* ColorAppearance.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5A8EA984E6E737343E65221A /* ImageContentSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9696F89359DB2093C05E5988 /* ImageContentSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DECA8791265D4C1DBC7BA7F1 /* PageAnimationAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 61D2ED4C387044AEAE6FA67C /* PageAnimationAgent.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -24163,6 +24164,8 @@
 		1BA5B0B524C398F9ED0D21D8 /* ImageContentSettings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageContentSettings.cpp; sourceTree = "<group>"; };
 		9696F89359DB2093C05E5988 /* ImageContentSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageContentSettings.h; sourceTree = "<group>"; };
 		E0BA4176CB20FD04A40E4570 /* ImageRenditionOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageRenditionOptions.cpp; sourceTree = "<group>"; };
+		61D2ED4C387044AEAE6FA67C /* PageAnimationAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageAnimationAgent.h; sourceTree = "<group>"; };
+		9829198B5E944BBE98399502 /* PageAnimationAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageAnimationAgent.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34734,6 +34737,8 @@
 		A5B81CB91FAA44820037D1E6 /* page */ = {
 			isa = PBXGroup;
 			children = (
+				9829198B5E944BBE98399502 /* PageAnimationAgent.cpp */,
+				61D2ED4C387044AEAE6FA67C /* PageAnimationAgent.h */,
 				91278D5A21DEDAD500B57184 /* PageAuditAgent.cpp */,
 				91278D5C21DEDAD500B57184 /* PageAuditAgent.h */,
 				953C6E6B2A0E05F100ACABC4 /* PageCanvasAgent.cpp */,
@@ -48123,6 +48128,7 @@
 				51D5A0062F1E000600C0FFEE /* PacedMediaSamplesDecoder.h in Headers */,
 				65A21468097A329100B9050A /* Page.h in Headers */,
 				1E8D17F2C31AF57C3D9059DC /* PageAgentInstrumentation.h in Headers */,
+				DECA8791265D4C1DBC7BA7F1 /* PageAnimationAgent.h in Headers */,
 				91278D5E21DEDAD600B57184 /* PageAuditAgent.h in Headers */,
 				953C6E6C2A0E05F100ACABC4 /* PageCanvasAgent.h in Headers */,
 				95F45D27264DFBF100D0B8B8 /* PageColorSampler.h in Headers */,

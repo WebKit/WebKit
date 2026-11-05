@@ -2044,6 +2044,7 @@ inspector/agents/frame/FrameDOMStorageAgent.cpp
 inspector/agents/frame/FrameDebuggerAgent.cpp
 inspector/agents/frame/FrameIndexedDBAgent.cpp
 inspector/agents/frame/FrameWorkerAgent.cpp
+inspector/agents/page/PageAnimationAgent.cpp
 inspector/agents/page/PageAuditAgent.cpp
 inspector/agents/page/PageCanvasAgent.cpp
 inspector/agents/page/PageConsoleAgent.cpp

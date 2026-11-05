@@ -44,21 +44,20 @@ class Element;
 class Event;
 class KeyframeEffect;
 class LocalFrame;
-class Page;
+class ScriptExecutionContext;
 class StyleOriginatedAnimation;
 class WebAnimation;
 class WeakPtrImplWithEventTargetData;
 
 struct Styleable;
 
-class InspectorAnimationAgent final : public InspectorAgentBase, public Inspector::AnimationBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorAnimationAgent> {
+class InspectorAnimationAgent : public InspectorAgentBase, public Inspector::AnimationBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorAnimationAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorAnimationAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorAnimationAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorAnimationAgent);
 public:
     OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 
-    InspectorAnimationAgent(PageAgentContext&);
     ~InspectorAnimationAgent();
 
     // InspectorAgentBase
@@ -84,6 +83,13 @@ public:
     void willDestroyWebAnimation(WebAnimation&);
     void frameNavigated(LocalFrame&);
 
+protected:
+    InspectorAnimationAgent(WebAgentContext&);
+
+    virtual bool matchesCurrentContext(ScriptExecutionContext*) const = 0;
+    virtual Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> pushStyleablePathToFrontend(const Styleable&) = 0;
+    virtual Inspector::Protocol::DOM::NodeId pushStyleableElementToFrontend(const Styleable&) = 0;
+
 private:
     NODELETE String findAnimationId(WebAnimation&);
     WebAnimation* assertAnimation(Inspector::Protocol::ErrorString&, const String& animationId);
@@ -99,7 +105,6 @@ private:
     const Ref<Inspector::AnimationBackendDispatcher> m_backendDispatcher;
 
     const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
-    WeakRef<Page> m_inspectedPage;
 
     // FIXME <https://webkit.org/b/303593>: Animation should not be destroyed before notifying this agent to unbind it.
     // The value type should be WeakRef or CheckedRef instead.

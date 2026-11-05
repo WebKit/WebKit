@@ -42,7 +42,6 @@
 #include "FrameInspectorController.h"
 #include "FrameTree.h"
 #include "GraphicsContext.h"
-#include "InspectorAnimationAgent.h"
 #include "InspectorBackendClient.h"
 #include "InspectorCPUProfilerAgent.h"
 #include "InspectorCSSAgent.h"
@@ -62,6 +61,7 @@
 #include "LocalFrame.h"
 #include "NodeDocument.h"
 #include "Page.h"
+#include "PageAnimationAgent.h"
 #include "PageAuditAgent.h"
 #include "PageCanvasAgent.h"
 #include "PageConsoleAgent.h"
@@ -253,7 +253,7 @@ void PageInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<PageAuditAgent>(pageContext));
     m_agents.append(makeUniqueRef<PageCanvasAgent>(pageContext));
     m_agents.append(makeUniqueRef<PageTimelineAgent>(pageContext));
-    m_agents.append(makeUniqueRef<InspectorAnimationAgent>(pageContext));
+    m_agents.append(makeUniqueRef<PageAnimationAgent>(pageContext));
 }
 
 void PageInspectorController::siteIsolationFirstEnabled()

@@ -36,13 +36,12 @@
 #include "CSSValue.h"
 #include "CSSValuePool.h"
 #include "ContextDestructionObserverInlines.h"
-#include "DocumentPage.h"
+#include "Document.h"
 #include "Element.h"
 #include "Event.h"
 #include "FillMode.h"
 #include "FrameDestructionObserverInlines.h"
 #include "InspectorCSSAgent.h"
-#include "InspectorDOMAgent.h"
 #include "InspectorObjectIdentifier.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWrapperCache.h"
@@ -52,7 +51,6 @@
 #include "LocalFrame.h"
 #include "MutableStyleProperties.h"
 #include "NodeInlines.h"
-#include "Page.h"
 #include "PlaybackDirection.h"
 #include "RenderElement.h"
 #include "StyleExtractor.h"
@@ -253,12 +251,11 @@ static Ref<Inspector::Protocol::Animation::Effect> buildObjectForEffect(Animatio
     return effectPayload;
 }
 
-InspectorAnimationAgent::InspectorAnimationAgent(PageAgentContext& context)
+InspectorAnimationAgent::InspectorAnimationAgent(WebAgentContext& context)
     : InspectorAgentBase("Animation"_s, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::AnimationFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::AnimationBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_injectedScriptManager(context.injectedScriptManager)
-    , m_inspectedPage(context.inspectedPage)
     , m_animationBindingTimer(*this, &InspectorAnimationAgent::animationBindingTimerFired)
     , m_animationDestroyedTimer(*this, &InspectorAnimationAgent::animationDestroyedTimerFired)
 {
@@ -291,17 +288,9 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::enable()
 
     agents->setEnabledAnimationAgent(this);
 
-    const auto existsInCurrentPage = [&] (ScriptExecutionContext* scriptExecutionContext) {
-        // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's WebSockets
-        auto* document = dynamicDowncast<Document>(scriptExecutionContext);
-        return document && document->page() == m_inspectedPage.ptr();
-    };
-
-    {
-        for (auto& animation : WebAnimation::instances()) {
-            if (existsInCurrentPage(protect(animation->scriptExecutionContext())))
-                bindAnimation(animation, nullptr);
-        }
+    for (auto& animation : WebAnimation::instances()) {
+        if (matchesCurrentContext(protect(animation->scriptExecutionContext())))
+            bindAnimation(animation, nullptr);
     }
 
     return { };
@@ -343,11 +332,6 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> Ins
 
     m_animationsIgnoringTargetChanges.remove(*animation);
 
-    Ref agents = m_instrumentingAgents.get();
-    CheckedPtr domAgent = agents->persistentDOMAgent();
-    if (!domAgent)
-        return makeUnexpected("DOM domain must be enabled"_s);
-
     RefPtr keyframeEffect = animation->keyframeEffect();
     if (!keyframeEffect)
         return makeUnexpected("Animation for given animationId does not have an effect"_s);
@@ -356,7 +340,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> Ins
     if (!target)
         return makeUnexpected("Animation for given animationId does not have a target"_s);
 
-    return domAgent->pushStyleablePathToFrontend(errorString, *target);
+    return pushStyleablePathToFrontend(*target);
 }
 
 Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> InspectorAnimationAgent::resolveAnimation(const Inspector::Protocol::Animation::AnimationId& animationId, const String& objectGroup)
@@ -482,10 +466,8 @@ void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, K
         .release();
 
     if (ensureResult.isNewEntry) {
-        if (CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent()) {
-            if (auto nodeId = domAgent->pushStyleableElementToFrontend(target))
-                event->setNodeId(nodeId);
-        }
+        if (auto nodeId = pushStyleableElementToFrontend(target))
+            event->setNodeId(nodeId);
 
         if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation.get()))
             event->setAnimationName(cssAnimation->animationName());
