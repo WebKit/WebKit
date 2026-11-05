@@ -121,8 +121,7 @@ RemoteImageBuffer::~RemoteImageBuffer()
     // Unwind the context's state stack before destruction, since calls to restore may not have
     // been flushed yet, or the web process may have terminated.
     auto& context = m_imageBuffer->context();
-    while (context.stackSize())
-        context.restore();
+    context.unwindStateStack();
 }
 
 void RemoteImageBuffer::startListeningForIPC()

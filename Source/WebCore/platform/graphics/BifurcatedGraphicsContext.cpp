@@ -513,6 +513,22 @@ void BifurcatedGraphicsContext::setCTM(const AffineTransform& transform)
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
+void BifurcatedGraphicsContext::saveTransform()
+{
+    m_primaryContext.saveTransform();
+    m_secondaryContext.saveTransform();
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
+void BifurcatedGraphicsContext::restoreTransform()
+{
+    m_primaryContext.restoreTransform();
+    m_secondaryContext.restoreTransform();
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
 AffineTransform BifurcatedGraphicsContext::getCTM(IncludeDeviceScale includeDeviceScale) const
 {
     return m_primaryContext.getCTM(includeDeviceScale);

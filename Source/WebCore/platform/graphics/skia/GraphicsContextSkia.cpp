@@ -112,7 +112,8 @@ static void setPaintColor(SkPaint& paint, const Color& color)
 }
 
 GraphicsContextSkia::GraphicsContextSkia(SkCanvas& canvas, RenderingMode renderingMode, RenderingPurpose renderingPurpose, CompletionHandler<void()>&& destroyNotify)
-    : m_canvas(canvas)
+    : GraphicsContext(IsDeferred::No, { }, InterpolationQuality::Default, canvas.getTotalMatrix())
+    , m_canvas(canvas)
     , m_renderingMode(renderingMode)
     , m_renderingPurpose(renderingPurpose)
     , m_destroyNotify(WTF::move(destroyNotify))
@@ -129,12 +130,6 @@ GraphicsContextSkia::~GraphicsContextSkia()
 bool GraphicsContextSkia::hasPlatformContext() const
 {
     return true;
-}
-
-AffineTransform GraphicsContextSkia::getCTM(IncludeDeviceScale includeScale) const
-{
-    UNUSED_PARAM(includeScale);
-    return m_canvas.getTotalMatrix();
 }
 
 SkCanvas* GraphicsContextSkia::platformContext() const
@@ -198,6 +193,14 @@ void GraphicsContextSkia::restore(GraphicsContextState::Purpose purpose)
     GraphicsContext::restore(purpose);
     m_canvas.restore();
     popSkiaState();
+}
+
+void GraphicsContextSkia::restoreTransform()
+{
+    if (!canRestoreTransform())
+        return;
+    GraphicsContext::restoreTransform();
+    m_canvas.setMatrix(ctm());
 }
 
 // Draws a filled rectangle with a stroked border.
@@ -556,7 +559,9 @@ sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowS
         return SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, skShadowColor, skShadowColorSpace, nullptr);
 
     // Fast path: identity CTM doesn't need the transform compensation
-    AffineTransform ctm = getCTM(GraphicsContext::IncludeDeviceScale::PossiblyIncludeDeviceScale);
+    // Use the canvas matrix, since callers such as drawNativeImage() with an image orientation transform
+    // the canvas directly, without changing the CTM of this context.
+    AffineTransform ctm = m_canvas.getTotalMatrix();
     if (ctm.isIdentity())
         return SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, skShadowColor, skShadowColorSpace, nullptr);
 
@@ -864,16 +869,21 @@ void GraphicsContextSkia::drawDotsForDocumentMarker(const FloatRect& boundaries,
 
 void GraphicsContextSkia::translate(float x, float y)
 {
+    if (!updateCTMForTranslate(x, y))
+        return;
     m_canvas.translate(SkFloatToScalar(x), SkFloatToScalar(y));
 }
 
 void GraphicsContextSkia::concatCTM(const AffineTransform& ctm)
 {
+    if (!updateCTMForConcatCTM(ctm))
+        return;
     m_canvas.concat(ctm);
 }
 
 void GraphicsContextSkia::setCTM(const AffineTransform& ctm)
 {
+    GraphicsContext::setCTM(ctm);
     m_canvas.setMatrix(ctm);
 }
 
@@ -884,6 +894,7 @@ void GraphicsContextSkia::saveLayer(float opacity, CompositeMode compositeMode)
     currentState.isLayer = true;
     currentState.compositeMode = m_state.compositeMode();
     currentState.alpha = m_state.alpha();
+    currentState.ctm = ctm();
 
     SkPaint paint;
     paint.setAlphaf(opacity);
@@ -905,6 +916,8 @@ void GraphicsContextSkia::restoreLayer()
     ASSERT(m_skiaStateStack.last().isLayer);
     auto compositeMode = m_skiaStateStack.last().compositeMode;
     auto alpha = m_skiaStateStack.last().alpha;
+    // Restoring the layer restored the canvas matrix that saveLayer() saved.
+    didChangePlatformCTM(m_skiaStateStack.last().ctm);
     popSkiaState();
     if (compositeMode)
         setCompositeMode(*compositeMode);
@@ -1051,11 +1064,15 @@ void GraphicsContextSkia::clipOut(const Path& path)
 
 void GraphicsContextSkia::rotate(float radians)
 {
+    if (!updateCTMForRotate(radians))
+        return;
     m_canvas.rotate(SkFloatToScalar(rad2deg(radians)));
 }
 
 void GraphicsContextSkia::scale(const FloatSize& scale)
 {
+    if (!updateCTMForScale(scale))
+        return;
     m_canvas.scale(SkFloatToScalar(scale.width()), SkFloatToScalar(scale.height()));
 }
 

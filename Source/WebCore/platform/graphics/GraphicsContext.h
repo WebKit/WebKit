@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <WebCore/AffineTransform.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/ControlPart.h>
 #include <WebCore/DashArray.h>
@@ -78,8 +79,8 @@ public:
         No,
         Yes
     };
-    NODELETE WEBCORE_EXPORT GraphicsContext(IsDeferred = IsDeferred::No, const GraphicsContextState::ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
-    WEBCORE_EXPORT GraphicsContext(IsDeferred, const GraphicsContextState&);
+    NODELETE WEBCORE_EXPORT GraphicsContext(IsDeferred = IsDeferred::No, const GraphicsContextState::ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default, const AffineTransform& initialCTM = { });
+    WEBCORE_EXPORT GraphicsContext(IsDeferred, const GraphicsContextState&, const AffineTransform& initialCTM);
     WEBCORE_EXPORT virtual ~GraphicsContext();
 
     virtual bool hasPlatformContext() const { return false; }
@@ -182,6 +183,13 @@ public:
 
     WEBCORE_EXPORT virtual void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore);
     WEBCORE_EXPORT virtual void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore);
+
+    // Saves and restores only the CTM, leaving the rest of the state, such as the clip, as it is.
+    // The CTM is restored to the value it had at saveTransform(), not to a recorded absolute value,
+    // so these can be recorded and replayed under a different base transform. These nest with
+    // save() and restore(): saveTransform() pushes a GraphicsContextState::Purpose::Transform state.
+    WEBCORE_EXPORT virtual void saveTransform();
+    WEBCORE_EXPORT virtual void restoreTransform();
 
     void unwindStateStack(unsigned count);
     WEBCORE_EXPORT void unwindStateStack();
@@ -340,18 +348,20 @@ public:
 
     // Transforms
 
+    // GraphicsContext maintains the CTM. Subclasses that override these call the base implementation.
+    // A change to the CTM is passed to didUpdateState() as GraphicsContextState::Change::CTM.
     void scale(float s) { scale({ s, s }); }
-    virtual void scale(const FloatSize&) = 0;
-    virtual void rotate(float angleInRadians) = 0;
+    WEBCORE_EXPORT virtual void scale(const FloatSize&);
+    WEBCORE_EXPORT virtual void rotate(float angleInRadians);
     void translate(const FloatSize& size) { translate(size.width(), size.height()); }
     void translate(const FloatPoint& p) { translate(p.x(), p.y()); }
-    virtual void translate(float x, float y) = 0;
+    WEBCORE_EXPORT virtual void translate(float x, float y);
 
-    virtual void concatCTM(const AffineTransform&) = 0;
-    virtual void setCTM(const AffineTransform&) = 0;
+    WEBCORE_EXPORT virtual void concatCTM(const AffineTransform&);
+    WEBCORE_EXPORT virtual void setCTM(const AffineTransform&);
 
     enum IncludeDeviceScale { DefinitelyIncludeDeviceScale, PossiblyIncludeDeviceScale };
-    virtual AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const = 0;
+    WEBCORE_EXPORT virtual AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const;
 
     // This function applies the device scale factor to the context, making the context capable of
     // acting as a base-level context for a HiDPI environment.
@@ -417,6 +427,22 @@ protected:
         Color strokeColor;
     };
     RectsAndStrokeColor computeRectsAndStrokeColorForLinesForText(const FloatPoint& origin, float thickness, std::span<const FloatSegment>, bool isPrinting, bool doubleLines, StrokeStyle);
+
+    const AffineTransform& ctm() const LIFETIME_BOUND { return m_state.ctm(); }
+    // Update the CTM for a transform operation. These return false, leaving the CTM as it is, for an
+    // operation that does not change the CTM.
+    WEBCORE_EXPORT bool updateCTMForScale(const FloatSize&);
+    WEBCORE_EXPORT bool updateCTMForRotate(float angleInRadians);
+    WEBCORE_EXPORT bool updateCTMForTranslate(float x, float y);
+    WEBCORE_EXPORT bool updateCTMForConcatCTM(const AffineTransform&);
+
+    // Whether the innermost saved state is a saveTransform() one.
+    WEBCORE_EXPORT bool canRestoreTransform() const;
+    // Called before the CTM changes, while the pending changes still have the CTM they were made under.
+    virtual void willChangeCTM() { }
+    // Sets the CTM to the one the platform context already has, such as after the platform context
+    // reset its state, without marking it changed.
+    void didChangePlatformCTM(const AffineTransform& ctm) { m_state.setAppliedCTM(ctm); }
 
     GraphicsContextState m_state;
 private:

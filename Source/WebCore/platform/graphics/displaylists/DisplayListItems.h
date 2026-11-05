@@ -72,6 +72,22 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const { }
 };
 
+class SaveTransform {
+public:
+    static constexpr char name[] = "save-transform";
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const { }
+};
+
+class RestoreTransform {
+public:
+    static constexpr char name[] = "restore-transform";
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const { }
+};
+
 class Translate {
 public:
     static constexpr char name[] = "translate";

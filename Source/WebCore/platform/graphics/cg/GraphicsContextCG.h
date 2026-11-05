@@ -111,14 +111,6 @@ public:
 
     void drawPattern(const NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions = { }) final;
 
-    using GraphicsContext::scale;
-    void scale(const FloatSize&) final;
-    void rotate(float angleInRadians) final;
-    void translate(float x, float y) final;
-
-    void concatCTM(const AffineTransform&) final;
-    void setCTM(const AffineTransform&) override;
-
     AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const override;
 
     void drawFocusRing(const Path&, float outlineWidth, const Color&, float zoomFactor) final;
@@ -172,6 +164,7 @@ private:
     // usable from the const accessors.
     void updatePlatformContextStateIfNeeded() const;
     void updatePlatformContextState();
+    void willChangeCTM() final;
 
     void setCGDropShadow(const std::optional<GraphicsDropShadow>&, bool shadowsIgnoreTransforms);
     void clearCGDropShadow();

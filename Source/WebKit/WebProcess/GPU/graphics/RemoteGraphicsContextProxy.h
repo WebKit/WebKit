@@ -98,6 +98,8 @@ private:
 
     void save(WebCore::GraphicsContextState::Purpose) final;
     void restore(WebCore::GraphicsContextState::Purpose) final;
+    void saveTransform() final;
+    void restoreTransform() final;
     void translate(float x, float y) final;
     void rotate(float angle) final;
     void scale(const WebCore::FloatSize&) final;

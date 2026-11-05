@@ -89,36 +89,49 @@ void RecorderImpl::restore(GraphicsContextState::Purpose purpose)
 
 void RecorderImpl::translate(float x, float y)
 {
-    if (!updateStateForTranslate(x, y))
+    if (!updateCTMForTranslate(x, y))
         return;
     m_items.append(Translate(x, y));
 }
 
 void RecorderImpl::rotate(float angle)
 {
-    if (!updateStateForRotate(angle))
+    if (!updateCTMForRotate(angle))
         return;
     m_items.append(Rotate(angle));
 }
 
 void RecorderImpl::scale(const FloatSize& scale)
 {
-    if (!updateStateForScale(scale))
+    if (!updateCTMForScale(scale))
         return;
     m_items.append(Scale(scale));
 }
 
 void RecorderImpl::setCTM(const AffineTransform& transform)
 {
-    updateStateForSetCTM(transform);
+    GraphicsContext::setCTM(transform);
     m_items.append(SetCTM(transform));
 }
 
 void RecorderImpl::concatCTM(const AffineTransform& transform)
 {
-    if (!updateStateForConcatCTM(transform))
+    if (!updateCTMForConcatCTM(transform))
         return;
     m_items.append(ConcatenateCTM(transform));
+}
+
+void RecorderImpl::saveTransform()
+{
+    updateStateForSaveTransform();
+    m_items.constructAndAppend(WTF::InPlaceType<SaveTransform>);
+}
+
+void RecorderImpl::restoreTransform()
+{
+    if (!updateStateForRestoreTransform())
+        return;
+    m_items.constructAndAppend(WTF::InPlaceType<RestoreTransform>);
 }
 
 void RecorderImpl::setLineCap(LineCap lineCap)

@@ -108,6 +108,8 @@ private:
     void clipOut(const FloatRect&) final { }
     void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final { }
     void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final { }
+    void saveTransform() final { }
+    void restoreTransform() final { }
 
     void drawRaisedEllipse(const FloatRect&, const Color&, const Color&) final { }
 

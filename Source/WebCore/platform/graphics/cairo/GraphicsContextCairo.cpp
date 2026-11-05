@@ -68,8 +68,16 @@ public:
     } m_mask;
 };
 
+static AffineTransform ctmForCairoContext(cairo_t* context)
+{
+    cairo_matrix_t m;
+    cairo_get_matrix(context, &m);
+    return AffineTransform(m.xx, m.yx, m.xy, m.yy, m.x0, m.y0);
+}
+
 GraphicsContextCairo::GraphicsContextCairo(RefPtr<cairo_t>&& context)
-    : m_cr(WTF::move(context))
+    : GraphicsContext(IsDeferred::No, { }, InterpolationQuality::Default, ctmForCairoContext(context.get()))
+    , m_cr(WTF::move(context))
 {
     m_cairoStateStack.append(CairoState());
     m_cairoState = &m_cairoStateStack.last();
@@ -85,12 +93,6 @@ GraphicsContextCairo::~GraphicsContextCairo() = default;
 bool GraphicsContextCairo::hasPlatformContext() const
 {
     return true;
-}
-
-AffineTransform GraphicsContextCairo::getCTM(IncludeDeviceScale includeScale) const
-{
-    UNUSED_PARAM(includeScale);
-    return Cairo::State::getCTM(*platformContext());
 }
 
 GraphicsContextCairo* GraphicsContextCairo::platformContext() const
@@ -260,6 +262,8 @@ void GraphicsContextCairo::drawDotsForDocumentMarker(const FloatRect& rect, Docu
 
 void GraphicsContextCairo::translate(float x, float y)
 {
+    if (!updateCTMForTranslate(x, y))
+        return;
     Cairo::translate(*this, x, y);
 }
 
@@ -282,24 +286,40 @@ void GraphicsContextCairo::didUpdateState(GraphicsContextState& state)
 
 void GraphicsContextCairo::concatCTM(const AffineTransform& transform)
 {
+    if (!updateCTMForConcatCTM(transform))
+        return;
     Cairo::concatCTM(*this, transform);
 }
 
 void GraphicsContextCairo::setCTM(const AffineTransform& transform)
 {
+    GraphicsContext::setCTM(transform);
     Cairo::State::setCTM(*this, transform);
+}
+
+void GraphicsContextCairo::restoreTransform()
+{
+    if (!canRestoreTransform())
+        return;
+    GraphicsContext::restoreTransform();
+    Cairo::State::setCTM(*this, ctm());
 }
 
 void GraphicsContextCairo::beginTransparencyLayer(float opacity)
 {
     GraphicsContext::beginTransparencyLayer(opacity);
     Cairo::beginTransparencyLayer(*this, opacity);
+    m_layerCTMs.append(ctm());
 }
 
 void GraphicsContextCairo::endTransparencyLayer()
 {
     GraphicsContext::endTransparencyLayer();
     Cairo::endTransparencyLayer(*this);
+    // Popping the group restored the matrix that pushing it saved.
+    // FIXME: beginTransparencyLayer(CompositeOperator, BlendMode) does not push a group, so ending that layer pops an unrelated one.
+    if (!m_layerCTMs.isEmpty())
+        didChangePlatformCTM(m_layerCTMs.takeLast());
 }
 
 void GraphicsContextCairo::clearRect(const FloatRect& rect)
@@ -340,11 +360,15 @@ void GraphicsContextCairo::clipOut(const Path& path)
 
 void GraphicsContextCairo::rotate(float radians)
 {
+    if (!updateCTMForRotate(radians))
+        return;
     Cairo::rotate(*this, radians);
 }
 
 void GraphicsContextCairo::scale(const FloatSize& size)
 {
+    if (!updateCTMForScale(size))
+        return;
     Cairo::scale(*this, size);
 }
 

@@ -150,7 +150,7 @@ void RemoteGraphicsContextProxy::restore(GraphicsContextState::Purpose purpose)
 void RemoteGraphicsContextProxy::translate(float x, float y)
 {
     sendPendingDrawsIfNecessary();
-    if (!updateStateForTranslate(x, y))
+    if (!updateCTMForTranslate(x, y))
         return;
     send(Messages::RemoteGraphicsContext::Translate(x, y));
 }
@@ -158,7 +158,7 @@ void RemoteGraphicsContextProxy::translate(float x, float y)
 void RemoteGraphicsContextProxy::rotate(float angle)
 {
     sendPendingDrawsIfNecessary();
-    if (!updateStateForRotate(angle))
+    if (!updateCTMForRotate(angle))
         return;
     send(Messages::RemoteGraphicsContext::Rotate(angle));
 }
@@ -166,7 +166,7 @@ void RemoteGraphicsContextProxy::rotate(float angle)
 void RemoteGraphicsContextProxy::scale(const FloatSize& scale)
 {
     sendPendingDrawsIfNecessary();
-    if (!updateStateForScale(scale))
+    if (!updateCTMForScale(scale))
         return;
     send(Messages::RemoteGraphicsContext::Scale(scale));
 }
@@ -174,16 +174,31 @@ void RemoteGraphicsContextProxy::scale(const FloatSize& scale)
 void RemoteGraphicsContextProxy::setCTM(const AffineTransform& transform)
 {
     sendPendingDrawsIfNecessary();
-    updateStateForSetCTM(transform);
+    GraphicsContext::setCTM(transform);
     send(Messages::RemoteGraphicsContext::SetCTM(transform));
 }
 
 void RemoteGraphicsContextProxy::concatCTM(const AffineTransform& transform)
 {
     sendPendingDrawsIfNecessary();
-    if (!updateStateForConcatCTM(transform))
+    if (!updateCTMForConcatCTM(transform))
         return;
     send(Messages::RemoteGraphicsContext::ConcatCTM(transform));
+}
+
+void RemoteGraphicsContextProxy::saveTransform()
+{
+    sendPendingDrawsIfNecessary();
+    updateStateForSaveTransform();
+    send(Messages::RemoteGraphicsContext::SaveTransform());
+}
+
+void RemoteGraphicsContextProxy::restoreTransform()
+{
+    sendPendingDrawsIfNecessary();
+    if (!updateStateForRestoreTransform())
+        return;
+    send(Messages::RemoteGraphicsContext::RestoreTransform());
 }
 
 void RemoteGraphicsContextProxy::setLineCap(LineCap lineCap)

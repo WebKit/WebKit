@@ -294,15 +294,27 @@ static GraphicsContext::IsDeferred isDeferredForCGContext(CGContextRef cgContext
     return GraphicsContext::IsDeferred::Yes;
 }
 
+static AffineTransform ctmForCGContext(CGContextRef cgContext)
+{
+    if (!cgContext)
+        return { };
+    return CGContextGetCTM(cgContext);
+}
+
 GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext, CGContextSource source, std::optional<RenderingMode> knownRenderingMode)
-    : GraphicsContext(isDeferredForCGContext(cgContext), GraphicsContextState::basicChangeFlags, coreInterpolationQuality(cgContext))
+    : GraphicsContext(isDeferredForCGContext(cgContext), GraphicsContextState::basicChangeFlags, coreInterpolationQuality(cgContext), ctmForCGContext(cgContext))
     , m_cgContext(cgContext)
     , m_renderingMode(knownRenderingMode.value_or(renderingModeForCGContext(cgContext, source)))
     , m_isLayerCGContext(source == GraphicsContextCG::CGContextFromCALayer)
 {
 }
 
-GraphicsContextCG::~GraphicsContextCG() = default;
+GraphicsContextCG::~GraphicsContextCG()
+{
+    // Leave the platform context with the state of this context, for the code that continues to use it.
+    if (m_cgContext)
+        updatePlatformContextStateIfNeeded();
+}
 
 bool GraphicsContextCG::hasPlatformContext() const
 {
@@ -1335,6 +1347,12 @@ void GraphicsContextCG::updatePlatformContextState()
 
     const RetainPtr<CGContextRef>& context = contextForDraw();
 
+    // Apply the CTM first, since the drop shadow and the style are set in base space.
+    if (changes.contains(GraphicsContextState::Change::CTM)) {
+        CGContextSetCTM(context, m_state.ctm());
+        m_userToDeviceTransformKnownToBeIdentity = false;
+    }
+
     for (auto change : changes) {
         switch (change) {
         case GraphicsContextState::Change::FillBrush:
@@ -1511,39 +1529,12 @@ void GraphicsContextCG::setLineJoin(LineJoin join)
     }
 }
 
-// The transform functions below apply the pending state to the platform context even though they
-// do not draw. Shadows and styles are converted to device space using the user to base transform,
-// so a pending shadow or style has to reach the context while the transform it was set under is
-// still current. The same applies to the base transform change in applyDeviceScaleFactor().
-
-void GraphicsContextCG::scale(const FloatSize& size)
+void GraphicsContextCG::willChangeCTM()
 {
-    CGContextScaleCTM(contextForDraw(), size.width(), size.height());
-    m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
-void GraphicsContextCG::rotate(float angle)
-{
-    CGContextRotateCTM(contextForDraw(), angle);
-    m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
-void GraphicsContextCG::translate(float x, float y)
-{
-    CGContextTranslateCTM(contextForDraw(), x, y);
-    m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
-void GraphicsContextCG::concatCTM(const AffineTransform& transform)
-{
-    CGContextConcatCTM(contextForDraw(), transform);
-    m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
-void GraphicsContextCG::setCTM(const AffineTransform& transform)
-{
-    CGContextSetCTM(contextForDraw(), transform);
-    m_userToDeviceTransformKnownToBeIdentity = false;
+    // The drop shadow and the style are converted to base space using the CTM in effect when they
+    // are applied, so a pending change to them has to reach the context before the CTM changes.
+    if (m_state.changes().containsAny({ GraphicsContextState::Change::DropShadow, GraphicsContextState::Change::Style, GraphicsContextState::Change::ShadowsIgnoreTransforms }))
+        updatePlatformContextState();
 }
 
 AffineTransform GraphicsContextCG::getCTM(IncludeDeviceScale includeScale) const
@@ -1551,14 +1542,18 @@ AffineTransform GraphicsContextCG::getCTM(IncludeDeviceScale includeScale) const
     // The CTM usually includes the deviceScaleFactor except in WebKit 1 when the
     // content is non-composited, since the scale factor is integrated at a lower
     // level. To guarantee the deviceScale is included, we can use this CG API.
-    if (includeScale == DefinitelyIncludeDeviceScale)
-        return CGContextGetUserSpaceToDeviceSpaceTransform(contextForDraw());
+    if (includeScale == DefinitelyIncludeDeviceScale) {
+        updatePlatformContextStateIfNeeded();
+        return CGContextGetUserSpaceToDeviceSpaceTransform(contextForState());
+    }
 
-    return CGContextGetCTM(contextForDraw());
+    return GraphicsContext::getCTM(includeScale);
 }
 
 FloatRect GraphicsContextCG::roundToDevicePixels(const FloatRect& rect) const
 {
+    // Apply a pending CTM change, which also invalidates m_userToDeviceTransformKnownToBeIdentity.
+    updatePlatformContextStateIfNeeded();
     CGAffineTransform deviceMatrix;
     if (!m_userToDeviceTransformKnownToBeIdentity) {
         deviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(contextForState());
@@ -1673,6 +1668,8 @@ void GraphicsContextCG::beginPage(const FloatRect& pageRect)
 
     ASSERT(!stackSize());
     m_state = GraphicsContextState { GraphicsContextState::basicChangeFlags, coreInterpolationQuality(context.get()) };
+    // Beginning a page resets the platform state, including the CTM.
+    didChangePlatformCTM(CGContextGetCTM(context.get()));
     didUpdateState(m_state);
     m_userToDeviceTransformKnownToBeIdentity = false;
 }
