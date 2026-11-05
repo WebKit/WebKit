@@ -78,7 +78,12 @@ while ($count--) {
         my $status = WEXITSTATUS($?);
         if ($status) {
             print STDERR "\njsc exited with non-zero status: $status\n";
-            exit $status;
         }
+        if ($status == 127) {
+            if (!isWindows()) {
+                print STDERR "Did you mean to use the flatpak build sandbox? Try running with the webkit-flatpak Script.\n";
+            }
+        }
+        exit $status;
     }
 }
