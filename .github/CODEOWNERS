@@ -163,18 +163,19 @@ AllowedSPI*.toml @emw-apple
 # ================================================================================
 # WebKit
 
-*ContentExtension* @b-weinstein @xeenon
-*InspectorExtension* @b-weinstein @xeenon
-*WebExtension* @b-weinstein @xeenon
+*ContentExtension* @b-weinstein @xeenon @elijahsawyers @kiaraarose
+*InspectorExtension* @b-weinstein @xeenon @elijahsawyers @kiaraarose
+*WebExtension* @b-weinstein @xeenon @elijahsawyers @kiaraarose
 /Source/WebKit/_WebKit_SwiftUI @rr-codes
 /Source/WebKit/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in @brentfulgham @pvollan
 /Source/WebKit/NetworkProcess @cdumez
 /Source/WebKit/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in @brentfulgham @pvollan
 /Source/WebKit/Platform @cdumez
 /Source/WebKit/Resources/SandboxProfiles @brentfulgham @pvollan
+/Source/WebKit/Shared/Extensions @b-weinstein @xeenon @elijahsawyers @kiaraarose
 /Source/WebKit/Shared/Sandbox @brentfulgham @pvollan
 /Source/WebKit/UIProcess @cdumez
-/Source/WebKit/UIProcess/Extensions @b-weinstein @xeenon
+/Source/WebKit/UIProcess/Extensions @b-weinstein @xeenon @elijahsawyers @kiaraarose
 /Source/WebKit/UIProcess/Inspector @patrickangle @burg
 /Source/WebKit/WebKitSwift @rr-codes
 /Source/WebKit/UIProcess/DigitalCredentials @marcoscaceres
@@ -182,10 +183,12 @@ AllowedSPI*.toml @emw-apple
 /Source/WebKit/WebProcess @cdumez
 /Source/WebKit/WebProcess/DigitalCredentials @marcoscaceres
 /Source/WebKit/WebKitSwift/IdentityDocumentServices @marcoscaceres
-/Source/WebKit/WebProcess/Extensions @b-weinstein @xeenon
+/Source/WebKit/WebProcess/Extensions @b-weinstein @xeenon @elijahsawyers @kiaraarose
 /Source/WebKit/WebProcess/Inspector @patrickangle @burg
 /Source/WebKit/WebProcess/com.apple.WebProcess.sb.in  @brentfulgham @pvollan
 /Source/WebKit/Scripts/webkit/opaque_ipc_types.* @sheeparegreat
+/Tools/Scripts/webkitpy/webextensions @b-weinstein @xeenon @elijahsawyers @kiaraarose
+/Tools/TestWebKitAPI/Resources/cocoa/web-extension* @b-weinstein @xeenon @elijahsawyers @kiaraarose
 
 # ================================================================================
 # WebDriver
