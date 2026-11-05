@@ -1,0 +1,32 @@
+<style>
+    .box {
+        position: fixed;
+        border: 30px solid green;
+        padding: 30px;
+    }
+</style>
+<body>
+    <div class="box" style="top: 40px; left: 40px;">
+        <img class="image-box">
+    </div>
+    <script>
+        if (window.internals && window.testRunner) {
+            internals.clearMemoryCache();
+            internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+            testRunner.waitUntilDone();
+        }
+
+        var image = new Image;
+        image.onload = (() => {
+            if (window.internals)
+                internals.setHasHDRContentForTesting(image);
+
+            var imgElement = document.querySelector("img.image-box");
+            imgElement.src = image.src;
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+        image.src = "resources/green-400x400.png";
+    </script>
+</body>
