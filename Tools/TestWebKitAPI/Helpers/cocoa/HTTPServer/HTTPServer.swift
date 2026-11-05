@@ -59,6 +59,16 @@ public struct Route: Sendable {
         let statusCode: Int
         let headerFields: [String: String]
         let response: Data
+
+        var path: String { pathComponents.joined() }
+
+        var responseData: HTTPResponseData {
+            HTTPResponseData(
+                statusCode: UInt(statusCode),
+                headerFields: headerFields.map { (name: $0.key, value: $0.value) },
+                body: response
+            )
+        }
     }
 
     fileprivate let children: [Storage]
@@ -193,21 +203,15 @@ public struct HTTPServer: ~Copyable {
     public init(protocol: `Protocol`, @RouteBuilder _ route: () -> Route) throws {
         let responses = route().children
             .reduce(into: [String: HTTPResponseData]()) { result, child in
-                let path = child.pathComponents.joined()
-                let response = HTTPResponseData(
-                    statusCode: UInt(child.statusCode),
-                    headerFields: child.headerFields.map { (name: $0.key, value: $0.value) },
-                    body: child.response
-                )
-
-                result[path] = response
+                result[child.path] = child.responseData
             }
 
         self.protocol = `protocol`
         self.storage = try HTTPServerCore(protocol: .init(`protocol`), responses: responses)
     }
 
-    /// Calls the given closure after starting the server, and then closes the server once finished.
+    /// Calls the given closure after starting the server, and then closes the server once finished, even if the closure
+    /// throws.
     ///
     /// - Parameter body: A closure that will run while this server is active.
     /// - Returns: The return value, if any, of the `body` closure parameter.
@@ -216,7 +220,15 @@ public struct HTTPServer: ~Copyable {
         _ body: (Configuration) async throws -> sending Result
     ) async throws -> sending Result {
         try await storage.startListening()
-        let result = try await body(Configuration(port: Int(storage.port), scheme: `protocol`.scheme))
+
+        let result: Result
+        do {
+            result = try await body(Configuration(port: Int(storage.port), scheme: `protocol`.scheme, storage: storage))
+        } catch {
+            // Close the server before the error leaves `run`, as when the body returns.
+            await storage.cancel()
+            throw error
+        }
 
         await storage.cancel()
         return result
@@ -278,6 +290,8 @@ extension HTTPServer {
 
         fileprivate let scheme: String
 
+        fileprivate let storage: HTTPServerCore
+
         // swift-format-ignore: NeverForceUnwrap
         /// The URL of the server, addressed by IP.
         ///
@@ -300,6 +314,26 @@ extension HTTPServer {
         /// The URL representing the HTTPS proxy for the server.
         public var httpsProxy: Foundation.URL? {
             Foundation.URL(string: "https://127.0.0.1:\(port)/")
+        }
+
+        /// Replaces the responses for paths the server already has, so that later requests for them get the new
+        /// responses.
+        ///
+        /// Use this to change a page between two loads of it, such as to drop the headers that made the document of a
+        /// back/forward list item cross-origin isolated before going back to it.
+        ///
+        /// ```swift
+        /// serverConfiguration.replaceResponses {
+        ///     Route("/isolated") { "no longer isolated" }
+        /// }
+        /// ```
+        ///
+        /// - Parameter route: The new responses, for paths the server already has responses for.
+        @MainActor
+        public func replaceResponses(@RouteBuilder _ route: () -> Route) {
+            for child in route().children {
+                storage.setResponse(child.responseData, for: child.path)
+            }
         }
     }
 }

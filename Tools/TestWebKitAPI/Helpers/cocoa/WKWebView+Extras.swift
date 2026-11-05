@@ -157,6 +157,19 @@ extension WKWebView {
         _ = try await _evaluateJavaScriptWithoutUserGesture(script)
     }
 
+    /// Starts evaluating a script, and returns without waiting for it to run.
+    ///
+    /// Use this for a script that starts a navigation, and then wait for the navigation. Awaiting the script instead
+    /// lets the navigation's delegate callbacks happen before the test starts waiting for them.
+    ///
+    /// - Parameters:
+    ///   - script: The script to evaluate.
+    ///   - frame: The frame to evaluate the script in, or `nil` for the main frame.
+    ///   - userGesture: Whether the script runs with a user gesture, as scripts that `evaluateJavaScript` runs do.
+    public func startEvaluatingJavaScript(_ script: String, in frame: WKFrameInfo? = nil, withUserGesture userGesture: Bool = true) {
+        _evaluateJavaScript(script, withSourceURL: nil, inFrame: frame, in: .page, withUserGesture: userGesture, completionHandler: nil)
+    }
+
     /// Creates a handle for the first element matching a selector.
     ///
     /// - Parameters:
@@ -230,5 +243,147 @@ extension TestNavigationDelegate {
 
             body()
         }
+    }
+
+    /// Waits for the main frame's next provisional navigation to fail, such as one whose policy decision is to cancel.
+    ///
+    /// Start waiting before the navigation can fail: start it without waiting for its script or load call to return,
+    /// such as with `evaluateJavaScript(_:completionHandler:)`. Any `didFailProvisionalNavigation` callback the test
+    /// set still runs.
+    ///
+    /// - Returns: The navigation error.
+    public func waitForDidFailProvisionalNavigation() async -> any Error {
+        let previousCallback = didFailProvisionalNavigation
+        defer { didFailProvisionalNavigation = previousCallback }
+
+        return await withCheckedContinuation { continuation in
+            var resumed = false
+            didFailProvisionalNavigation = { webView, navigation, error in
+                previousCallback?(webView, navigation, error)
+                guard !resumed else {
+                    return
+                }
+
+                resumed = true
+                continuation.resume(returning: error)
+            }
+        }
+    }
+
+    /// Waits for the main frame's next navigation to commit.
+    ///
+    /// Any `didCommitNavigation` callback the test set still runs.
+    public func waitForDidCommitNavigation() async {
+        let previousCallback = didCommitNavigation
+        defer { didCommitNavigation = previousCallback }
+
+        await withCheckedContinuation { continuation in
+            var resumed = false
+            didCommitNavigation = { webView, navigation in
+                previousCallback?(webView, navigation)
+                guard !resumed else {
+                    return
+                }
+
+                resumed = true
+                continuation.resume()
+            }
+        }
+    }
+
+    /// Waits for the next load in a frame other than the main frame to finish.
+    ///
+    /// Any `didFinishLoadWithRequestInFrame` callback the test set still runs.
+    public func waitForDidFinishLoadInSubframe() async {
+        let previousCallback = didFinishLoadWithRequestInFrame
+        defer { didFinishLoadWithRequestInFrame = previousCallback }
+
+        await withCheckedContinuation { continuation in
+            var resumed = false
+            didFinishLoadWithRequestInFrame = { webView, request, frame in
+                previousCallback?(webView, request, frame)
+                guard !resumed, !frame.isMainFrame else {
+                    return
+                }
+
+                resumed = true
+                continuation.resume()
+            }
+        }
+    }
+
+    /// Waits for the web content process of the main frame to terminate.
+    ///
+    /// Any `webContentProcessDidTerminate` callback the test set still runs.
+    ///
+    /// - Returns: Why the process terminated.
+    public func waitForWebContentProcessDidTerminate() async -> _WKProcessTerminationReason {
+        let previousCallback = webContentProcessDidTerminate
+        defer { webContentProcessDidTerminate = previousCallback }
+
+        return await withCheckedContinuation { continuation in
+            var resumed = false
+            webContentProcessDidTerminate = { webView, reason in
+                previousCallback?(webView, reason)
+                guard !resumed else {
+                    return
+                }
+
+                resumed = true
+                continuation.resume(returning: reason)
+            }
+        }
+    }
+
+    /// Waits for the policy decision of the next navigation action that matches a condition, and holds the decision,
+    /// so that the navigation waits until the test makes it.
+    ///
+    /// ```swift
+    /// let decidePolicy = await navigationDelegate.holdNextNavigationActionPolicyDecision {
+    ///     $0.request.url == pendingURL
+    /// } triggeredBy: {
+    ///     webView.load(URLRequest(url: pendingURL))
+    /// }
+    /// // Check what happens while the navigation waits for its policy decision.
+    /// decidePolicy(.cancel)
+    /// ```
+    ///
+    /// The `decidePolicyForNavigationAction` callback the test set, if any, decides every other navigation action;
+    /// without one, they are allowed.
+    ///
+    /// - Parameters:
+    ///   - condition: Whether to hold the decision for a navigation action.
+    ///   - body: Work that starts the navigation, such as a load.
+    /// - Returns: The decision handler of the navigation action. Call it once, before the test ends.
+    public func holdNextNavigationActionPolicyDecision(
+        where condition: @escaping (WKNavigationAction) -> Bool,
+        triggeredBy body: () -> Void
+    ) async -> (WKNavigationActionPolicy) -> Void {
+        let previousCallback = decidePolicyForNavigationAction
+        defer { decidePolicyForNavigationAction = previousCallback }
+
+        var heldDecisionHandler: ((WKNavigationActionPolicy) -> Void)?
+        await withCheckedContinuation { continuation in
+            decidePolicyForNavigationAction = { navigationAction, decisionHandler in
+                guard heldDecisionHandler == nil, condition(navigationAction) else {
+                    if let previousCallback {
+                        previousCallback(navigationAction, decisionHandler)
+                    } else {
+                        decisionHandler(.allow)
+                    }
+                    return
+                }
+
+                heldDecisionHandler = decisionHandler
+                continuation.resume()
+            }
+
+            body()
+        }
+
+        guard let heldDecisionHandler else {
+            fatalError("The continuation only resumes once it holds a decision handler")
+        }
+        return heldDecisionHandler
     }
 }

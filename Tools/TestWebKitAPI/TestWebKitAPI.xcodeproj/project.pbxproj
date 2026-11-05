@@ -681,6 +681,7 @@
 				cocoa/JavaScriptTypes.swift,
 				cocoa/MiniTURNServer.mm,
 				cocoa/PDFTestHelpers.swift,
+				cocoa/ProcessSwapTestUtilities.swift,
 				cocoa/SafeBrowsingTestUtilities.swift,
 				cocoa/SiteIsolationTestUtilities.swift,
 				cocoa/StdLibExtras.swift,
