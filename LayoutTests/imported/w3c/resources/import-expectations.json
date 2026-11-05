@@ -150,7 +150,7 @@
     "web-platform-tests/css/geometry": "import",
     "web-platform-tests/css/mediaqueries": "import",
     "web-platform-tests/css/motion": "import",
-    "web-platform-tests/css/printing": "skip",
+    "web-platform-tests/css/printing": "import",
     "web-platform-tests/css/reference": "import",
     "web-platform-tests/css/selectors": "import",
     "web-platform-tests/css/support": "import",

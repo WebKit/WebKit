@@ -7537,6 +7537,12 @@ imported/w3c/web-platform-tests/css/css-break/chrome-bug-1289999-crash.https.htm
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Failure ]
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Failure ]
 
+# webkit.org/b/330242 css/printing tests that fail
+webkit.org/b/330242 imported/w3c/web-platform-tests/css/printing/existing-transition-in-media-print.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/330242 imported/w3c/web-platform-tests/css/printing/page-overflow-crash-print.html [ ImageOnlyFailure ]
+webkit.org/b/330242 imported/w3c/web-platform-tests/css/printing/select-combobox-print.html [ ImageOnlyFailure ]
+webkit.org/b/174412 imported/w3c/web-platform-tests/css/printing/table-in-flex-overflow-print.html [ Skip ]
+
 # tests that require wheel event synthesis:
 imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/scroll-cross-origin-iframes.html [ Skip ]
