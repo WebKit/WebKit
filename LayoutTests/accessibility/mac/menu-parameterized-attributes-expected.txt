@@ -43,6 +43,7 @@ AXTextMarkerForIndex
 AXTextMarkerIsValid
 AXIndexForTextMarker
 AXRelativeIndexForTextMarker
+AXTextMarkerForRelativeIndex
 
 
 #menuitem supported paramterized attributes:
@@ -88,6 +89,7 @@ AXTextMarkerForIndex
 AXTextMarkerIsValid
 AXIndexForTextMarker
 AXRelativeIndexForTextMarker
+AXTextMarkerForRelativeIndex
 
 
 

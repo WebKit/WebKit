@@ -1,0 +1,119 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<p id="paragraph">Hello world</p>
+<p id="paragraph2">This <b>is a</b> test</p>
+<ul id="list">
+    <li id="item1">One</li>
+    <li id="item2">Two</li>
+    <li id="item3">Three</li>
+</ul>
+<div id="editable" contenteditable="true">Edit me</div>
+<div><input id="input" type="text" value="Field"></div>
+<div><textarea id="textarea">Area</textarea></div>
+</div>
+
+<script>
+var output = "Tests AXTextMarkerForRelativeIndex. For each element, checks the text between the marker at a relative index and the next marker.\n\n";
+
+function textAtRelativeIndex(element, index) {
+    var marker = element.textMarkerForRelativeIndex(index);
+    return element.stringForTextMarkerRange(element.textMarkerRangeForMarkers(marker, element.nextTextMarker(marker)));
+}
+
+if (window.accessibilityController) {
+    var paragraph = accessibilityController.accessibleElementById("paragraph");
+    var paragraph2 = accessibilityController.accessibleElementById("paragraph2");
+    var list = accessibilityController.accessibleElementById("list");
+    var item1 = accessibilityController.accessibleElementById("item1");
+    var item2 = accessibilityController.accessibleElementById("item2");
+    var item3 = accessibilityController.accessibleElementById("item3");
+    var editable = accessibilityController.accessibleElementById("editable");
+    var input = accessibilityController.accessibleElementById("input");
+    var textarea = accessibilityController.accessibleElementById("textarea");
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    output += "Paragraph:\n";
+    output += expect("textAtRelativeIndex(paragraph, 0)", "'H'");
+    output += expect("textAtRelativeIndex(paragraph, 6)", "'w'");
+    output += expect("textAtRelativeIndex(paragraph, 10)", "'d'");
+    output += expect("textAtRelativeIndex(paragraph, 13)", "'T'");
+
+    output += "\nSecond paragraph:\n";
+    output += expect("textAtRelativeIndex(paragraph2, 0)", "'T'");
+    output += expect("textAtRelativeIndex(paragraph2, 4)", "' '");
+    output += expect("textAtRelativeIndex(paragraph2, 5)", "'i'");
+    output += expect("textAtRelativeIndex(paragraph2, 8)", "'a'");
+    output += expect("textAtRelativeIndex(paragraph2, 9)", "' '");
+    output += expect("textAtRelativeIndex(paragraph2, 10)", "'t'");
+    output += expect("textAtRelativeIndex(paragraph2, 13)", "'t'");
+    output += expect("textAtRelativeIndex(paragraph2, 16)", "'• O'");
+
+    output += "\nList:\n";
+    output += expect("textAtRelativeIndex(list, 0)", "'• O'");
+    output += expect("textAtRelativeIndex(list, 2)", "'e'");
+    output += expect("textAtRelativeIndex(list, 4)", "'• T'");
+    output += expect("textAtRelativeIndex(list, 8)", "'• T'");
+    output += expect("textAtRelativeIndex(list, 12)", "'e'");
+
+    output += "\nFirst list item:\n";
+    output += expect("textAtRelativeIndex(item1, 0)", "'• O'");
+    output += expect("textAtRelativeIndex(item1, 1)", "'n'");
+    output += expect("textAtRelativeIndex(item1, 2)", "'e'");
+    output += expect("textAtRelativeIndex(item1, 4)", "'• T'");
+
+    output += "\nSecond list item:\n";
+    output += expect("textAtRelativeIndex(item2, 0)", "'• T'");
+    output += expect("textAtRelativeIndex(item2, 2)", "'o'");
+    output += expect("textAtRelativeIndex(item2, 4)", "'• T'");
+
+    output += "\nThird list item:\n";
+    output += expect("textAtRelativeIndex(item3, 0)", "'• T'");
+    output += expect("textAtRelativeIndex(item3, 4)", "'e'");
+    output += expect("textAtRelativeIndex(item3, 6)", "'E'");
+
+    output += "\nContenteditable:\n";
+    output += expect("textAtRelativeIndex(editable, 0)", "'E'");
+    output += expect("textAtRelativeIndex(editable, 4)", "' '");
+    output += expect("textAtRelativeIndex(editable, 6)", "'e'");
+
+    output += "\nInput:\n";
+    output += expect("textAtRelativeIndex(input, 0)", "'F'");
+    output += expect("textAtRelativeIndex(input, 2)", "'e'");
+    output += expect("textAtRelativeIndex(input, 4)", "'d'");
+
+    output += "\nTextarea:\n";
+    output += expect("textAtRelativeIndex(textarea, 0)", "'A'");
+    output += expect("textAtRelativeIndex(textarea, 3)", "'a'");
+
+    output += "\nFrom the first paragraph into the elements below it:\n";
+    output += expect("textAtRelativeIndex(paragraph, 18)", "'i'");
+    output += expect("textAtRelativeIndex(paragraph, 22)", "' '");
+    output += expect("textAtRelativeIndex(paragraph, 26)", "'t'");
+    output += expect("textAtRelativeIndex(paragraph, 29)", "'• O'");
+    output += expect("textAtRelativeIndex(paragraph, 31)", "'e'");
+    output += expect("textAtRelativeIndex(paragraph, 33)", "'• T'");
+    output += expect("textAtRelativeIndex(paragraph, 35)", "'o'");
+    output += expect("textAtRelativeIndex(paragraph, 37)", "'• T'");
+    output += expect("textAtRelativeIndex(paragraph, 41)", "'e'");
+    output += expect("textAtRelativeIndex(paragraph, 43)", "'E'");
+    output += expect("textAtRelativeIndex(paragraph, 47)", "' '");
+    output += expect("textAtRelativeIndex(paragraph, 49)", "'e'");
+
+    output += "\nPast the end of the document, which returns the marker for the last position in the document:\n";
+    output += expect("textarea.textMarkerForRelativeIndex(5).isEqual(webArea.endTextMarker)", "true");
+    output += expect("textarea.textMarkerForRelativeIndex(1000).isEqual(webArea.endTextMarker)", "true");
+
+    document.getElementById("content").style.display = "none";
+    debug(output);
+}
+</script>
+</body>
+</html>

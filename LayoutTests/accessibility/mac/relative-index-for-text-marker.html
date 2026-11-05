@@ -11,7 +11,7 @@
 <div id="trail">Trailing text.</div>
 
 <script>
-var output = "Tests AXRelativeIndexForTextMarker. The attribute returns the receiver-local character offset of a text marker, 0..numberOfCharacters, or NSNotFound when the marker does not lie within the receiver's range.\n\n";
+var output = "Tests AXRelativeIndexForTextMarker. The attribute returns the receiver-local character offset of a text marker, or NSNotFound when the marker lies before the receiver's range.\n\n";
 
 if (window.accessibilityController) {
     target = accessibilityController.accessibleElementById("target").childAtIndex(0);
@@ -37,9 +37,13 @@ if (window.accessibilityController) {
     trailRange = trail.textMarkerRangeForElement(trail);
     trailStart = trail.startTextMarkerForTextMarkerRange(trailRange);
 
-    output += "\nMarkers outside target's range (expect NSNotFound, surfaced as -1 by the test bindings' int truncation):\n";
+    output += "\nMarkers before target's range (expect NSNotFound, surfaced as -1 by the test bindings' int truncation):\n";
     output += expect("target.relativeIndexForTextMarker(preambleStart)", "-1");
-    output += expect("target.relativeIndexForTextMarker(trailStart)", "-1");
+
+    output += "\nMarkers after target's range:\n";
+    // A marker past the end of the target element's range is expected to
+    // return the offset beyond the element's last character.
+    output += expect("target.relativeIndexForTextMarker(trailStart)", "13");
 
     // 3. Same-marker query on a different receiver (preamble's start
     //    queried on preamble itself) returns 0, confirming the result

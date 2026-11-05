@@ -2935,6 +2935,16 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElementMac::textMarkerForIndex(in
     return nullptr;
 }
 
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementMac::textMarkerForRelativeIndex(int textIndex)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto textMarker = attributeValueForParameter(@"AXTextMarkerForRelativeIndex", [NSNumber numberWithInteger:textIndex]);
+    return AccessibilityTextMarker::create(textMarker.get());
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
 RefPtr<AccessibilityTextMarker> AccessibilityUIElementMac::startTextMarker()
 {
     BEGIN_AX_OBJC_EXCEPTIONS

@@ -330,6 +330,8 @@ public:
     AXTextMarker nextMarkerFromOffset(unsigned, ForceSingleOffsetMovement = ForceSingleOffsetMovement::No, std::optional<AXID> stopAtID = std::nullopt) const;
     // Returns the number of intermediate text markers between this and the root.
     unsigned offsetFromRoot() const;
+    // Returns the number of intermediate text markers between this and the provided text marker.
+    std::optional<unsigned> offsetFromTextMarker(const AXTextMarker&) const;
     // Starting from this marker, navigate to the last marker before the given AXID. Assumes `this`
     // is before the AXID in the AX tree (anything else is a bug). std::nullopt means we will find
     // the last marker on the entire webpage.

@@ -358,6 +358,7 @@ public:
     virtual bool isTextMarkerRangeValid(AccessibilityTextMarkerRange*);
     virtual bool isTextMarkerNull(AccessibilityTextMarker*);
     virtual RefPtr<AccessibilityTextMarker> textMarkerForIndex(int);
+    virtual RefPtr<AccessibilityTextMarker> textMarkerForRelativeIndex(int);
     virtual RefPtr<AccessibilityTextMarker> startTextMarker();
     virtual RefPtr<AccessibilityTextMarker> endTextMarker();
     virtual bool setSelectedTextMarkerRange(AccessibilityTextMarkerRange*);

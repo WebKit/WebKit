@@ -11,6 +11,8 @@ text
 audio <audio controls><source src="test.mp3" type="audio/mpeg"></audio>file.
 </div>
 
+<p id="paragraph">paragraph</p>
+
 <p id="description"></p>
 <div id="console"></div>
 
@@ -45,6 +47,13 @@ audio <audio controls><source src="test.mp3" type="audio/mpeg"></audio>file.
         previous = result.previous;
         current = result.current;
         verifyMarkerIndex(previous, current, text);
+
+        // Paragraph break: the index between the two newlines after a paragraph has no text marker
+        // of its own, so it snaps back to the end of the paragraph's text.
+        text = accessibilityController.accessibleElementById("paragraph").childAtIndex(0);
+        textMarkerRange = text.textMarkerRangeForElement(text);
+        var paragraphEndIndex = text.indexForTextMarker(text.endTextMarkerForTextMarkerRange(textMarkerRange));
+        shouldBe("text.indexForTextMarker(text.textMarkerForIndex(paragraphEndIndex + 1))", "paragraphEndIndex");
     }
     
     

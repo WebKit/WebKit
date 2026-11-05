@@ -1149,17 +1149,6 @@ unsigned AXTextMarker::offsetFromRoot() const
 
     if (!isValid())
         return 0;
-    auto target = toTextRunMarker();
-    if (!target.isValid()) {
-        // Nothing at or after this marker has text (e.g. it points at an empty text field that ends
-        // the document), so toTextRunMarker() had nothing to anchor to. Anchor backwards instead, as
-        // every character in the document precedes this position, so its index is the end of the
-        // last run before it.
-        RefPtr previous = findObjectWithRuns(*isolatedObject(), AXDirection::Previous);
-        if (!previous)
-            return 0;
-        target = AXTextMarker { *previous, previous->textRuns()->totalLength() };
-    }
 
     RefPtr tree = std::get<RefPtr<AXIsolatedTree>>(axTreeForID(treeID()));
     RefPtr root = tree ? tree->rootNode() : nullptr;
@@ -1173,22 +1162,62 @@ unsigned AXTextMarker::offsetFromRoot() const
     // therefore counts each object's full run length, with no per-object base to subtract (which
     // also means there is no unsigned subtraction here to underflow).
     TEXT_MARKER_ASSERT(!start.offset());
+
+    std::optional<unsigned> offset = offsetFromTextMarker(start);
+    // If this assert fails, it means we couldn't navigate from root to `this`, which should never happen.
+    TEXT_MARKER_ASSERT(offset.has_value());
+    return offset.value_or(0);
+}
+
+std::optional<unsigned> AXTextMarker::offsetFromTextMarker(const AXTextMarker& startMarker) const
+{
+    AX_ASSERT(!isMainThread());
+
+    if (!isValid())
+        return std::nullopt;
+    auto target = toTextRunMarker();
+    if (!target.isValid()) {
+        // Nothing at or after this marker has text (e.g. it points at an empty text field that ends
+        // the document), so toTextRunMarker() had nothing to anchor to. Anchor backwards instead, as
+        // every character in the document precedes this position, so its index is the end of the
+        // last run before it.
+        RefPtr previous = findObjectWithRuns(*isolatedObject(), AXDirection::Previous);
+        if (!previous)
+            return std::nullopt;
+        target = AXTextMarker { *previous, previous->textRuns()->totalLength() };
+    }
+
+    auto start = startMarker.toTextRunMarker();
+    if (!start.isValid() || treeID() != start.treeID())
+        return std::nullopt;
+
+    auto startID = start.objectID();
     auto targetID = target.objectID();
     unsigned offset = 0;
     bool found = false;
     forEachRunObjectForward(start, std::nullopt, [&] (AXIsolatedObject& object, unsigned precedingAuxiliaryCharacters) {
         offset += precedingAuxiliaryCharacters;
+        // When in the start node, we may not start at offset 0.
+        unsigned startOffset = object.objectID() == startID ? start.offset() : 0;
+
         if (object.objectID() == targetID) {
-            offset += target.offset();
+            unsigned endOffset = target.offset();
+            if (startOffset > endOffset)
+                return false;
+
+            offset += endOffset - startOffset;
             found = true;
             return false;
         }
-        offset += object.textRuns()->totalLength();
+
+        TEXT_MARKER_ASSERT(object.textRuns()->totalLength() >= startOffset);
+        offset += object.textRuns()->totalLength() - startOffset;
         return true;
     });
 
-    // If this assert fails, it means we couldn't navigate from root to `this`, which should never happen.
-    TEXT_MARKER_ASSERT_DOUBLE(found, (*this), target);
+    if (!found)
+        return std::nullopt;
+
     return offset;
 }
 
