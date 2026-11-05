@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../media/utilities.js"></script>
+</head>
+<body>
+<script>
+description("drawImage() of a video must honor globalCompositeOperation, including the modes that affect the whole canvas (copy, source-in, destination-in) and the ones that change how the video is blended (destination-over, multiply).");
+jsTestIsAsync = true;
+
+const video = document.createElement("video");
+
+const red = [255, 0, 0, 255];
+const transparent = [0, 0, 0, 0];
+
+// The video frame is drawn into (20, 20)-(80, 80).
+let videoColor;
+
+function createContext()
+{
+    const canvas = document.createElement("canvas");
+    canvas.width = 200;
+    canvas.height = 100;
+    return canvas.getContext("2d");
+}
+
+function fillCanvas(context, color)
+{
+    context.fillStyle = color;
+    context.fillRect(0, 0, 200, 100);
+}
+
+function checkPixel(context, x, y, expected, expectedName)
+{
+    const pixel = Array.from(context.getImageData(x, y, 1, 1).data);
+    const description = `pixel at (${x}, ${y}) is ${expectedName}`;
+    if (pixel.every((value, i) => Math.abs(value - expected[i]) <= 3))
+        testPassed(description);
+    else
+        testFailed(`${description}, was [${pixel}] but expected [${expected}]`);
+}
+
+// [name, composite operation, draws the existing canvas content, [x, y, expected color, name of the expected color] checks]
+const testCases = [
+    ["copy", "copy",
+        context => fillCanvas(context, "rgb(0, 0, 255)"),
+        () => [[50, 50, videoColor, "the video color"], [150, 50, transparent, "transparent"], [5, 5, transparent, "transparent"]]],
+    ["source-in", "source-in",
+        context => fillCanvas(context, "rgb(255, 0, 0)"),
+        () => [[50, 50, videoColor, "the video color"], [150, 50, transparent, "transparent"], [5, 5, transparent, "transparent"]]],
+    ["destination-in", "destination-in",
+        context => fillCanvas(context, "rgb(255, 0, 0)"),
+        () => [[50, 50, red, "red"], [150, 50, transparent, "transparent"], [5, 5, transparent, "transparent"]]],
+    // The video is drawn behind the red square (40, 40)-(80, 80).
+    ["destination-over", "destination-over",
+        context => {
+            context.fillStyle = "rgb(255, 0, 0)";
+            context.fillRect(40, 40, 40, 40);
+        },
+        () => [[60, 60, red, "red"], [30, 30, videoColor, "the video color"], [150, 50, transparent, "transparent"]]],
+    ["multiply", "multiply",
+        context => fillCanvas(context, "rgb(255, 0, 0)"),
+        () => [[50, 50, [videoColor[0], 0, 0, 255], "the video color multiplied by red"], [150, 50, red, "red"]]],
+];
+
+waitForVideoFrame(video).then(() => {
+    // Draw with the default composite operation to find out what color the video has.
+    const referenceContext = createContext();
+    referenceContext.drawImage(video, 20, 20, 60, 60);
+    videoColor = Array.from(referenceContext.getImageData(50, 50, 1, 1).data);
+    if (videoColor[3] === 255)
+        testPassed("the video draws an opaque pixel");
+    else
+        testFailed(`the video draws an opaque pixel, but it drew [${videoColor}]`);
+
+    for (const [name, compositeOperation, drawExistingContent, checks] of testCases) {
+        debug("");
+        debug(`${name}:`);
+        const context = createContext();
+        drawExistingContent(context);
+        context.globalCompositeOperation = compositeOperation;
+        context.drawImage(video, 20, 20, 60, 60);
+        for (const [x, y, expected, expectedName] of checks())
+            checkPixel(context, x, y, expected, expectedName);
+    }
+
+    finishJSTest();
+});
+
+video.src = "../../media/content/pure-color-green.mp4";
+</script>
+</body>
+</html>
