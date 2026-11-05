@@ -2340,6 +2340,92 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('while (  foo) {', 'Extra space after ( in while'
                          '  [whitespace/parens] [5]')
 
+    def test_raw_strings(self):
+        # The contents of a multi-line raw string with a delimiter are not checked.
+        self.assert_multi_line_lint(
+            'String description()\n'
+            '{\n'
+            '    return R"DL(\n'
+            '(set-state\n'
+            '  (change-flags [should-antialias])\n'
+            '  (should-antialias 0))\n'
+            '(clip-to-native-image\n'
+            '  (dest-rect at (0,1) size 77x99)))DL"_s;\n'
+            '}\n',
+            '', 'foo.cpp')
+        self.assert_multi_line_lint(
+            'String description()\n'
+            '{\n'
+            '    return R"(\n'
+            '  (a,b)\n'
+            ')";\n'
+            '}\n',
+            '', 'foo.cpp')
+
+        # Raw strings that start and end on the same line, with all prefixes.
+        self.assert_lint('foo(R"(a,b [c] (d))", 1);', '')
+        self.assert_lint('foo(R"DL(a,b [c] (d))DL", 1);', '')
+        self.assert_lint('foo(u8R"(a,b)", uR"(a,b)", UR"(a,b)", LR"(a,b)");', '')
+        self.assert_lint('foo(R"(a,b)", R"x(c,d)x");', '')
+
+        # Code before the start and after the end of a raw string is checked.
+        self.assert_lint('foo(bar,R"(a, b)");', 'Missing space after ,  [whitespace/comma] [3]')
+        self.assert_lint('foo(R"(a, b)",bar);', 'Missing space after ,  [whitespace/comma] [3]')
+        self.assert_lint('foo(R"DL(a, b)DL",bar);', 'Missing space after ,  [whitespace/comma] [3]')
+        self.assert_multi_line_lint(
+            'void foo()\n'
+            '{\n'
+            '    bar(R"DL(\n'
+            '  (a,b)\n'
+            '  (c,d))DL",baz);\n'
+            '}\n',
+            'Missing space after ,  [whitespace/comma] [3]', 'foo.cpp')
+
+        # Code after a multi-line raw string is checked, and line numbers are preserved.
+        code = ('void foo()\n'
+                '{\n'
+                '    bar(R"DL(\n'
+                '  (a,b)\n'
+                '  (c,d))DL");\n'
+                '    baz (1);\n'
+                '}\n')
+        expected = 'Extra space before ( in function call  [whitespace/parens] [4]'
+        self.assert_multi_line_lint(code, expected, 'foo.cpp')
+        self.assertEqual(expected, self.perform_lint(code, 'foo.cpp', [], lines_to_check=[6]))
+        self.assertEqual('', self.perform_lint(code, 'foo.cpp', [], lines_to_check=[3, 4, 5]))
+
+        # )" does not end a raw string with a different delimiter.
+        self.assert_multi_line_lint(
+            'String description()\n'
+            '{\n'
+            '    return R"DL(\n'
+            '(a)"\n'
+            '  (b,c) [d]\n'
+            ')DL";\n'
+            '}\n',
+            '', 'foo.cpp')
+
+        # A raw string content line starting with /* does not start a multi-line comment.
+        self.assert_multi_line_lint(
+            'void foo()\n'
+            '{\n'
+            '    bar(R"DL(\n'
+            '/* (a,b)\n'
+            ')DL");\n'
+            '    baz(a,b);\n'
+            '}\n',
+            'Missing space after ,  [whitespace/comma] [3]', 'foo.cpp')
+
+        # R"( inside a string or a comment does not start a raw string.
+        self.assert_multi_line_lint(
+            'void foo()\n'
+            '{\n'
+            '    bar("R\\"(");\n'
+            '    bar(1); // R"(\n'
+            '    baz(a,b);\n'
+            '}\n',
+            'Missing space after ,  [whitespace/comma] [3]', 'foo.cpp')
+
     def test_spacing_for_fncall(self):
         self.assert_lint('if (foo) {', '')
         self.assert_lint('for (foo;bar;baz) {', '')
@@ -3463,25 +3549,62 @@ class CleansedLinesTest(unittest.TestCase):
                  'Line 4 "foo"']
 
         clean_lines = cpp_style.CleansedLines(lines)
-        self.assertEqual(lines, clean_lines.raw_lines)
+        self.assertEqual(lines, clean_lines.lines_without_raw_strings)
         self.assertEqual(4, clean_lines.num_lines())
 
         self.assertEqual(['Line 1',
-                           'Line 2',
-                           'Line 3 ',
-                           'Line 4 "foo"'],
-                          clean_lines.lines)
+                          'Line 2',
+                          'Line 3 ',
+                          'Line 4 "foo"'],
+                         clean_lines.lines)
 
         self.assertEqual(['Line 1',
-                           'Line 2',
-                           'Line 3 ',
-                           'Line 4 ""'],
-                          clean_lines.elided)
+                          'Line 2',
+                          'Line 3 ',
+                          'Line 4 ""'],
+                         clean_lines.elided)
 
     def test_init_empty(self):
         clean_lines = cpp_style.CleansedLines([])
-        self.assertEqual([], clean_lines.raw_lines)
+        self.assertEqual([], clean_lines.lines_without_raw_strings)
         self.assertEqual(0, clean_lines.num_lines())
+
+    def test_init_raw_strings(self):
+        lines = ['    return R"DL(',
+                 '(a,b) // c',
+                 '(d)"',
+                 '  (e)))DL" + f; // g',
+                 'h(R"(i)", 1, u8R"x(j)x"); // k',
+                 'l();']
+
+        clean_lines = cpp_style.CleansedLines(cpp_style.cleanse_raw_strings(lines))
+        self.assertEqual(6, clean_lines.num_lines())
+
+        self.assertEqual(['    return ""',
+                          '    ""',
+                          '    ""',
+                          '    "" + f; // g',
+                          'h("", 1, ""); // k',
+                          'l();'],
+                         clean_lines.lines_without_raw_strings)
+
+        self.assertEqual(['    return ""',
+                          '    ""',
+                          '    ""',
+                          '    "" + f; ',
+                          'h("", 1, ""); ',
+                          'l();'],
+                         clean_lines.elided)
+
+    def test_cleanse_raw_strings(self):
+        cleanse = cpp_style.cleanse_raw_strings
+        self.assertEqual(['f("");'], cleanse(['f(R"(a)");']))
+        self.assertEqual(['f("", "");'], cleanse(['f(R"(a)", R"(b)");']))
+        self.assertEqual(['f("");'], cleanse(['f(LR"(a)");']))
+        self.assertEqual(['f("R\\"(");', 'g();'], cleanse(['f("R\\"(");', 'g();']))
+        self.assertEqual(['f(); // R"(', 'g();'], cleanse(['f(); // R"(', 'g();']))
+        self.assertEqual(['f(FOOR"(a)");'], cleanse(['f(FOOR"(a)");']))
+        self.assertEqual(['f(""', '""', '""'], cleanse(['f(R"(', 'a', 'b']))
 
     def test_collapse_strings(self):
         collapse = cpp_style.CleansedLines.collapse_strings
