@@ -30,11 +30,10 @@ namespace WTF {
 
 Vector<wchar_t> String::wideCharacters() const
 {
-    Vector<wchar_t> result;
     if (!m_impl)
-        return result;
+        return { };
 
-    result.reserveInitialCapacity(length() + 1);
+    Vector<wchar_t> result(ReserveCapacityTag { }, length() + 1);
 
     if (is8Bit())
         result.append(span8());

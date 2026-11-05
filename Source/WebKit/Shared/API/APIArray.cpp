@@ -64,13 +64,11 @@ Ref<Array> Array::createStringArray(const std::span<const WTF::String> strings)
 
 Vector<WTF::String> Array::toStringVector()
 {
-    Vector<WTF::String> patternsVector;
-
     size_t size = this->size();
     if (!size)
-        return patternsVector;
+        return { };
 
-    patternsVector.reserveInitialCapacity(size);
+    Vector<WTF::String> patternsVector(ReserveCapacityTag { }, size);
     for (RefPtr entry : elementsOfType<API::String>())
         patternsVector.append(entry->string());
     return patternsVector;

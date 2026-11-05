@@ -106,11 +106,10 @@ static ExceptionOr<ApplePayLineItem> convertAndValidate(ApplePayLineItem&& lineI
 
 static ExceptionOr<Vector<ApplePayLineItem>> convertAndValidate(std::optional<Vector<ApplePayLineItem>>&& lineItems)
 {
-    Vector<ApplePayLineItem> result;
     if (!lineItems)
-        return WTF::move(result);
+        return Vector<ApplePayLineItem> { };
 
-    result.reserveInitialCapacity(lineItems->size());
+    Vector<ApplePayLineItem> result(ReserveCapacityTag { }, lineItems->size());
     
     for (auto lineItem : lineItems.value()) {
         auto convertedLineItem = convertAndValidate(WTF::move(lineItem));

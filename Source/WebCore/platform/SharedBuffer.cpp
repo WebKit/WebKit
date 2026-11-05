@@ -301,14 +301,13 @@ bool FragmentedSharedBuffer::startsWith(std::span<const uint8_t> prefix) const
 
 Vector<uint8_t> FragmentedSharedBuffer::read(size_t offset, size_t length) const
 {
-    Vector<uint8_t> data;
     if (offset >= size())
-        return data;
+        return { };
     auto remaining = std::min(length, size() - offset);
     if (!remaining)
-        return data;
+        return { };
 
-    data.reserveInitialCapacity(remaining);
+    Vector<uint8_t> data(ReserveCapacityTag { }, remaining);
     auto segments = segmentForPosition(offset);
     auto& currentSegment = segments[0];
     size_t offsetInSegment = offset - currentSegment.beginPosition;
