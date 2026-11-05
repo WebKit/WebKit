@@ -1889,6 +1889,16 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(Document& doc
     return instrumentingAgents(page);
 }
 
+// Unlike instrumentingAgents(Document&), prefers the document's frame, whose own agents report its records
+// under Site Isolation. A document without a frame has no page, except a template document, which uses its
+// host's page.
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForFrameOrPage(Document& document)
+{
+    if (RefPtr frame = document.frame())
+        return &instrumentingAgents(*frame);
+    return instrumentingAgents(document);
+}
+
 InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(Page& page)
 {
     ASSERT(isMainThread());

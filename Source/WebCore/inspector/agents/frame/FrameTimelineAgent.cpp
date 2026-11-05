@@ -29,10 +29,12 @@
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
+#include "FrameDOMAgent.h"
 #include "InspectorWebAgentBase.h"
 #include "InstrumentingAgents.h"
 #include "LayoutRect.h"
 #include "LocalFrameView.h"
+#include "Node.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
@@ -205,16 +207,29 @@ void FrameTimelineAgent::didEnqueueLargestContentfulPaint(Element* element, unsi
     appendRecord(TimelineRecordFactory::createLargestContentfulPaintData(nodeIdForNode(element), area), TimelineRecordType::LargestContentfulPaint, false);
 }
 
-// FIXME: <https://webkit.org/b/329361> Push nodes through FrameDOMAgent once the frontend resolves node IDs in
-// Timeline records through the record's target.
-Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForNode(Node*) const
+Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForNode(Node* node) const
 {
-    return 0;
+    if (!node)
+        return 0;
+
+    CheckedPtr domAgent = protect(m_instrumentingAgents)->persistentFrameDOMAgent();
+    if (!domAgent)
+        return 0;
+
+    // Like the page's DOM agent, push a node only once the frontend has requested its document.
+    if (!domAgent->boundNodeId(protect(node->document()).ptr()))
+        return 0;
+
+    return domAgent->pushNodePathToFrontend(node);
 }
 
-Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForDocument(Document&) const
+Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForDocument(Document& document) const
 {
-    return 0;
+    CheckedPtr domAgent = protect(m_instrumentingAgents)->persistentFrameDOMAgent();
+    if (!domAgent)
+        return 0;
+
+    return domAgent->boundNodeId(&document);
 }
 
 Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForRenderer(const RenderObject& renderer) const

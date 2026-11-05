@@ -27,8 +27,6 @@ http/tests/media/media-stream/enumerate-devices-source-id.html [ Timeout ]
 http/tests/workers/service/resultingClientId.https.html [ Timeout ]
 http/tests/navigation/cross-site-iframe-nav-with-bfcache.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-video.html [ Pass Timeout ]
-webkit.org/b/329361 inspector/timeline/timeline-layout-events.html [ Timeout ]
-webkit.org/b/329361 inspector/timeline/timeline-layout-events-iframe.html [ Timeout ]
 
 ########################
 # Tests that Text fail #
@@ -73,6 +71,7 @@ inspector/runtime/executionContextCreated-onEnable.html [ Failure ]
 http/tests/inspector/dom/cross-domain-inspected-node-access.html [ Failure ]
 webkit.org/b/327622 http/tests/inspector/network/intercept-request-with-response.html [ Failure ]
 webkit.org/b/330198 inspector/timeline/timeline-event-RenderingFrame.html [ Failure ]
+webkit.org/b/330228 inspector/timeline/timeline-layout-events.html [ Pass Failure ]
 
 #########################
 # Tests that Image fail #

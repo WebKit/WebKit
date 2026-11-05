@@ -125,6 +125,38 @@ TestPage.registerInitializer(() => {
         });
     };
 
+    // Resolves with the first record of the given type from the target in the active recording's Layout timeline.
+    FrameTimelineTest.awaitLayoutRecord = function(target, eventType) {
+        let layoutTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Layout);
+        return new Promise((resolve) => {
+            let listener = layoutTimeline.addEventListener(WI.Timeline.Event.RecordAdded, (event) => {
+                let {record} = event.data;
+                if (record.target !== target || record.eventType !== eventType)
+                    return;
+
+                layoutTimeline.removeEventListener(WI.Timeline.Event.RecordAdded, listener);
+                resolve(record);
+            });
+        });
+    };
+
+    // Resolves once the frontend has the frame target's document, which a frame target needs before it can send
+    // node IDs.
+    FrameTimelineTest.awaitFrameDocument = async function(target) {
+        if (WI.domManager.frameTargetDocumentForTarget(target))
+            return;
+
+        await new Promise((resolve) => {
+            let listener = WI.domManager.addEventListener(WI.DOMManager.Event.FrameDocumentAvailable, (event) => {
+                if (event.data.target !== target)
+                    return;
+
+                WI.domManager.removeEventListener(WI.DOMManager.Event.FrameDocumentAvailable, listener);
+                resolve();
+            });
+        });
+    };
+
     // Fails the test case if the expression throws, so that a missing function shows up as a failure, not a timeout.
     FrameTimelineTest.evaluateInTarget = async function(target, expression) {
         let response = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
