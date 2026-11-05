@@ -29,6 +29,8 @@
 #include "Helpers/Test.h"
 #include <cstddef>
 #include <cstdint>
+#include <limits>
+#include <string>
 #include <unicode/uvernum.h>
 #include <wtf/HexNumber.h>
 #include <wtf/text/MakeString.h>
@@ -104,6 +106,39 @@ TEST(WTF, StringConcatenate_Unsigned)
     EXPECT_EQ("hello 4 world"_s, makeString("hello "_s, sizeof(int) , " world"_s)); // size_t
     EXPECT_EQ("hello 4 world"_s, makeString("hello "_s, offsetof(S, i) , " world"_s)); // size_t
     EXPECT_EQ("hello 3235839742 world"_s, makeString("hello "_s, static_cast<size_t>(0xc0defefe), " world"_s));
+}
+
+template<typename IntegerType>
+static void testLengthOfIntegerAsStringAtPowersOf10()
+{
+    auto check = [](IntegerType value) {
+        EXPECT_EQ(std::to_string(value).size(), WTF::lengthOfIntegerAsString(value));
+    };
+    check(std::numeric_limits<IntegerType>::min());
+    check(std::numeric_limits<IntegerType>::max());
+    for (uint64_t power = 1; ; power *= 10) {
+        for (uint64_t value : { power - 1, power, power + 1 }) {
+            if (value > static_cast<uint64_t>(std::numeric_limits<IntegerType>::max()))
+                continue;
+            check(static_cast<IntegerType>(value));
+            if constexpr (std::is_signed_v<IntegerType>)
+                check(-static_cast<IntegerType>(value));
+        }
+        if (power > std::numeric_limits<uint64_t>::max() / 10)
+            break;
+    }
+}
+
+TEST(WTF, StringConcatenate_LengthOfIntegerAsString)
+{
+    testLengthOfIntegerAsStringAtPowersOf10<int8_t>();
+    testLengthOfIntegerAsStringAtPowersOf10<uint8_t>();
+    testLengthOfIntegerAsStringAtPowersOf10<int16_t>();
+    testLengthOfIntegerAsStringAtPowersOf10<uint16_t>();
+    testLengthOfIntegerAsStringAtPowersOf10<int32_t>();
+    testLengthOfIntegerAsStringAtPowersOf10<uint32_t>();
+    testLengthOfIntegerAsStringAtPowersOf10<int64_t>();
+    testLengthOfIntegerAsStringAtPowersOf10<uint64_t>();
 }
 
 TEST(WTF, StringConcatenate_Enum)

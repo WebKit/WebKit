@@ -27,7 +27,11 @@
 #include "JSStringJoiner.h"
 
 #include "JSCJSValueInlines.h"
+#include "MathCommon.h"
+#include "PageCount.h"
 #include <charconv>
+#include <wtf/Float16.h>
+#include <wtf/dtoa.h>
 #include <wtf/text/ParsingUtilities.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -50,17 +54,78 @@ static inline void appendStringToData(std::span<OutputCharacterType>& data, std:
     skip(data, separator.size());
 }
 
-template<typename CharacterType>
-static inline void appendStringToData(std::span<CharacterType>& data, int32_t value)
+template<std::integral IntegerType>
+    requires (sizeof(IntegerType) == 1)
+struct ByteIntegerStrings {
+    constexpr ByteIntegerStrings()
+    {
+        for (unsigned i = 0; i < 256; ++i) {
+            IntegerType value = static_cast<IntegerType>(i);
+            lengths[i] = lengthOfIntegerAsString(value);
+            int magnitude = value < 0 ? -static_cast<int>(value) : static_cast<int>(value);
+            unsigned index = lengths[i];
+            do {
+                characters[i][--index] = '0' + magnitude % 10;
+                magnitude /= 10;
+            } while (magnitude);
+            if (value < 0)
+                characters[i][0] = '-';
+        }
+    }
+
+    std::array<std::array<Latin1Character, 4>, 256> characters { };
+    std::array<uint8_t, 256> lengths { };
+};
+
+template<std::integral IntegerType>
+static constexpr ByteIntegerStrings<IntegerType> byteIntegerStrings;
+
+template<typename CharacterType, std::integral IntegerType>
+static inline void appendStringToData(std::span<CharacterType>& data, IntegerType value)
 {
-    if constexpr (std::is_same_v<CharacterType, Latin1Character>) {
+    if constexpr (std::is_same_v<CharacterType, Latin1Character> && sizeof(IntegerType) == 1) {
+        uint8_t index = static_cast<uint8_t>(value);
+        auto& characters = byteIntegerStrings<IntegerType>.characters[index];
+        unsigned length = byteIntegerStrings<IntegerType>.lengths[index];
+        if (data.size() >= characters.size()) [[likely]]
+            memcpySpan(data.first(characters.size()), std::span { characters });
+        else
+            memcpySpan(data, std::span { characters }.first(length));
+        skip(data, length);
+    } else if constexpr (std::is_same_v<CharacterType, Latin1Character>) {
         auto result = std::to_chars(std::bit_cast<char*>(data.data()), std::bit_cast<char*>(std::to_address(data.end())), value);
         ASSERT(result.ec != std::errc::value_too_large);
         skip(data, result.ptr - std::bit_cast<char*>(data.data()));
     } else {
-        WTF::StringTypeAdapter<int32_t> adapter { value };
+        WTF::StringTypeAdapter<IntegerType> adapter { value };
         adapter.writeTo(data);
         skip(data, adapter.length());
+    }
+}
+
+template<std::integral IntegerType>
+static constexpr size_t maxIntegerStringLength = std::max(lengthOfIntegerAsString(std::numeric_limits<IntegerType>::min()), lengthOfIntegerAsString(std::numeric_limits<IntegerType>::max()));
+
+// Requires numberToShortestStringBufferSize characters of room even though fewer are consumed.
+template<typename CharacterType>
+static inline void appendStringToData(std::span<CharacterType>& data, double value)
+{
+    if (auto int32Value = tryConvertToStrictInt32(value)) {
+        appendStringToData(data, *int32Value);
+        return;
+    }
+    if (isSafeInteger(value)) {
+        appendStringToData(data, static_cast<int64_t>(value));
+        return;
+    }
+    if constexpr (std::is_same_v<CharacterType, Latin1Character>) {
+        size_t length = numberToShortestString(value, std::span<char, numberToShortestStringBufferSize> { std::bit_cast<char*>(data.data()), numberToShortestStringBufferSize });
+        skip(data, length);
+    } else {
+        std::array<char, numberToShortestStringBufferSize> buffer;
+        size_t length = numberToShortestString(value, buffer);
+        StringImpl::copyCharacters(data, byteCast<Latin1Character>(std::span { buffer }.first(length)));
+        skip(data, length);
     }
 }
 
@@ -323,6 +388,301 @@ JSString* JSExactLengthJoiner::joinImpl(JSGlobalObject* globalObject, const Writ
 
 template JSString* JSExactLengthJoiner::joinImpl<Int32Shape>(JSGlobalObject*, const WriteBarrier<Unknown>*, unsigned);
 template JSString* JSExactLengthJoiner::joinImpl<ContiguousShape>(JSGlobalObject*, const WriteBarrier<Unknown>*, unsigned);
+
+template<std::integral ElementType>
+JSString* joinIntegerTypedArray(JSGlobalObject* globalObject, std::span<const ElementType> elements, size_t length, StringView separator)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(elements.size() <= length);
+
+    static_assert(MAX_ARRAY_BUFFER_SIZE / sizeof(ElementType) <= std::numeric_limits<uint64_t>::max() / maxIntegerStringLength<ElementType>);
+    uint64_t accumulatedStringsLength = 0;
+    for (auto element : elements) {
+        if constexpr (sizeof(ElementType) == 1)
+            accumulatedStringsLength += byteIntegerStrings<ElementType>.lengths[static_cast<uint8_t>(element)];
+        else
+            accumulatedStringsLength += lengthOfIntegerAsString(element);
+    }
+
+    CheckedInt32 totalSeparatorsLength = CheckedInt32(separator.length()) * (CheckedInt32(std::max<size_t>(length, 1)) - 1);
+    CheckedInt32 totalLength = totalSeparatorsLength + CheckedInt32(accumulatedStringsLength);
+    if (totalLength.hasOverflowed()) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
+
+    if (!totalLength)
+        return jsEmptyString(vm);
+
+    auto join = [&]<typename CharacterType>(std::span<const CharacterType> separatorCharacters) -> JSString* {
+        std::span<CharacterType> data;
+        String result = StringImpl::tryCreateUninitialized(totalLength, data);
+        if (result.isNull()) [[unlikely]] {
+            throwOutOfMemoryError(globalObject, scope);
+            return { };
+        }
+
+        auto appendAll = [&](auto appendSeparator) ALWAYS_INLINE_LAMBDA {
+            if (!elements.empty()) {
+                appendStringToData(data, elements[0]);
+                for (auto element : elements.subspan(1)) {
+                    appendSeparator();
+                    appendStringToData(data, element);
+                }
+            }
+            for (size_t i = std::max<size_t>(elements.size(), 1); i < length; ++i)
+                appendSeparator();
+        };
+
+        switch (separatorCharacters.size()) {
+        case 0:
+            for (auto element : elements)
+                appendStringToData(data, element);
+            break;
+        case 1: {
+            CharacterType separatorCharacter = separatorCharacters[0];
+            appendAll([&] ALWAYS_INLINE_LAMBDA {
+                consume(data) = separatorCharacter;
+            });
+            break;
+        }
+        default:
+            appendAll([&] ALWAYS_INLINE_LAMBDA {
+                appendStringToData(data, separatorCharacters);
+            });
+            break;
+        }
+        RELEASE_ASSERT(data.empty());
+
+        return jsString(vm, WTF::move(result));
+    };
+
+    if (separator.is8Bit())
+        return join(separator.span8());
+    return join(separator.span16());
+}
+
+template JSString* joinIntegerTypedArray<int8_t>(JSGlobalObject*, std::span<const int8_t>, size_t, StringView);
+template JSString* joinIntegerTypedArray<uint8_t>(JSGlobalObject*, std::span<const uint8_t>, size_t, StringView);
+template JSString* joinIntegerTypedArray<int16_t>(JSGlobalObject*, std::span<const int16_t>, size_t, StringView);
+template JSString* joinIntegerTypedArray<uint16_t>(JSGlobalObject*, std::span<const uint16_t>, size_t, StringView);
+template JSString* joinIntegerTypedArray<int32_t>(JSGlobalObject*, std::span<const int32_t>, size_t, StringView);
+template JSString* joinIntegerTypedArray<uint32_t>(JSGlobalObject*, std::span<const uint32_t>, size_t, StringView);
+template JSString* joinIntegerTypedArray<int64_t>(JSGlobalObject*, std::span<const int64_t>, size_t, StringView);
+template JSString* joinIntegerTypedArray<uint64_t>(JSGlobalObject*, std::span<const uint64_t>, size_t, StringView);
+
+template<typename ElementType, typename CharacterType>
+class JSTypedArrayJoiner {
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+    JSTypedArrayJoiner(std::span<const CharacterType> separator)
+        : m_separator(separator)
+    {
+    }
+
+    JSString* join(JSGlobalObject*, std::span<const ElementType> elements, size_t length);
+
+private:
+    static constexpr size_t maxElementStringLength = [] {
+        if constexpr (std::is_integral_v<ElementType>)
+            return maxIntegerStringLength<ElementType>;
+        else
+            return numberToShortestStringBufferSize;
+    }();
+    static constexpr size_t sampledElementCount = 64;
+    static constexpr size_t maxBufferCapacity = (std::numeric_limits<unsigned>::max() >> 1) / sizeof(CharacterType);
+    static_assert(WTF::isValidCapacityForVector<CharacterType>(maxBufferCapacity) && !WTF::isValidCapacityForVector<CharacterType>(maxBufferCapacity + 1));
+
+    enum class SeparatorKind : uint8_t { None, OneCharacter, Characters };
+
+    template<SeparatorKind> bool appendElements(std::span<const ElementType>);
+    template<SeparatorKind> bool append(ElementType);
+    bool appendSeparators(size_t count);
+
+    ALWAYS_INLINE bool ensureRoom(size_t room)
+    {
+        if (m_buffer.size() - m_length >= room) [[likely]]
+            return true;
+        return expandBuffer(room);
+    }
+
+    NEVER_INLINE bool expandBuffer(size_t room)
+    {
+        if (room > maxBufferCapacity - m_length)
+            return false;
+        size_t capacity = m_buffer.capacity();
+        size_t newCapacity = std::max(m_length + room, std::min(capacity + capacity / 2, maxBufferCapacity));
+        m_buffer.shrink(m_length);
+        if (!m_buffer.tryReserveCapacity(newCapacity))
+            return false;
+        m_buffer.grow(m_buffer.capacity());
+        return true;
+    }
+
+    template<SeparatorKind kind>
+    ALWAYS_INLINE size_t separatorLength() const
+    {
+        if constexpr (kind == SeparatorKind::None)
+            return 0;
+        else if constexpr (kind == SeparatorKind::OneCharacter)
+            return 1;
+        else
+            return m_separator.size();
+    }
+
+    template<SeparatorKind kind>
+    ALWAYS_INLINE void appendSeparator(std::span<CharacterType>& data) const
+    {
+        if constexpr (kind == SeparatorKind::OneCharacter)
+            consume(data) = m_separator[0];
+        else if constexpr (kind == SeparatorKind::Characters)
+            appendStringToData(data, m_separator);
+    }
+
+    std::span<const CharacterType> m_separator;
+    Vector<CharacterType, 0, CrashOnOverflow, 16, WTF::StringImplMalloc> m_buffer;
+    size_t m_length { 0 };
+};
+
+template<typename ElementType, typename CharacterType>
+template<typename JSTypedArrayJoiner<ElementType, CharacterType>::SeparatorKind kind>
+bool JSTypedArrayJoiner<ElementType, CharacterType>::appendElements(std::span<const ElementType> elements)
+{
+    ASSERT(!elements.empty());
+    auto sampled = elements.first(std::min(elements.size(), sampledElementCount));
+    if (!ensureRoom(sampled.size() * (separatorLength<kind>() + maxElementStringLength))) [[unlikely]]
+        return false;
+
+    if (!append<SeparatorKind::None>(sampled[0])) [[unlikely]]
+        return false;
+    for (auto element : sampled.subspan(1)) {
+        if (!append<kind>(element)) [[unlikely]]
+            return false;
+    }
+
+    auto remaining = elements.subspan(sampled.size());
+    if (remaining.empty())
+        return true;
+
+    CheckedSize estimatedLength = m_length;
+    estimatedLength *= elements.size();
+    estimatedLength /= sampled.size();
+    estimatedLength += estimatedLength / static_cast<size_t>(16);
+    m_buffer.shrink(m_length);
+    if (!estimatedLength.hasOverflowed())
+        m_buffer.tryReserveCapacity(std::min<size_t>(estimatedLength, maxBufferCapacity));
+    m_buffer.grow(m_buffer.capacity());
+
+    for (auto element : remaining) {
+        if (!append<kind>(element)) [[unlikely]]
+            return false;
+    }
+    return true;
+}
+
+template<typename ElementType, typename CharacterType>
+template<typename JSTypedArrayJoiner<ElementType, CharacterType>::SeparatorKind kind>
+ALWAYS_INLINE bool JSTypedArrayJoiner<ElementType, CharacterType>::append(ElementType element)
+{
+    if (!ensureRoom(separatorLength<kind>() + maxElementStringLength)) [[unlikely]]
+        return false;
+
+    auto data = m_buffer.mutableSpan().subspan(m_length);
+    appendSeparator<kind>(data);
+    if constexpr (std::is_integral_v<ElementType>)
+        appendStringToData(data, element);
+    else
+        appendStringToData(data, static_cast<double>(element));
+
+    m_length = m_buffer.size() - data.size();
+    return m_length <= String::MaxLength;
+}
+
+template<typename ElementType, typename CharacterType>
+bool JSTypedArrayJoiner<ElementType, CharacterType>::appendSeparators(size_t count)
+{
+    if (m_separator.empty())
+        return true;
+
+    CheckedSize room = m_separator.size();
+    room *= count;
+    if (room.hasOverflowed() || room > String::MaxLength - m_length) [[unlikely]]
+        return false;
+
+    if (!ensureRoom(room)) [[unlikely]]
+        return false;
+
+    auto data = m_buffer.mutableSpan().subspan(m_length);
+    while (count--)
+        appendSeparator<SeparatorKind::Characters>(data);
+    m_length = m_buffer.size() - data.size();
+    return true;
+}
+
+template<typename ElementType, typename CharacterType>
+JSString* JSTypedArrayJoiner<ElementType, CharacterType>::join(JSGlobalObject* globalObject, std::span<const ElementType> elements, size_t length)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(elements.size() <= length);
+    if (!length)
+        return jsEmptyString(vm);
+
+    auto outOfMemory = [&] -> JSString* {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    };
+
+    if (!elements.empty()) {
+        bool succeeded = true;
+        switch (m_separator.size()) {
+        case 0:
+            succeeded = appendElements<SeparatorKind::None>(elements);
+            break;
+        case 1:
+            succeeded = appendElements<SeparatorKind::OneCharacter>(elements);
+            break;
+        default:
+            succeeded = appendElements<SeparatorKind::Characters>(elements);
+            break;
+        }
+        if (!succeeded) [[unlikely]]
+            return outOfMemory();
+    }
+
+    if (!appendSeparators(length - std::max<size_t>(elements.size(), 1))) [[unlikely]]
+        return outOfMemory();
+
+    if (!m_length)
+        return jsEmptyString(vm);
+
+    m_buffer.shrink(m_length);
+    m_buffer.shrinkToFit();
+    return jsString(vm, String::adopt(WTF::move(m_buffer)));
+}
+
+template<typename ElementType>
+JSString* joinTypedArray(JSGlobalObject* globalObject, std::span<const ElementType> elements, size_t length, StringView separator)
+{
+    if (separator.is8Bit())
+        return JSTypedArrayJoiner<ElementType, Latin1Character>(separator.span8()).join(globalObject, elements, length);
+    return JSTypedArrayJoiner<ElementType, char16_t>(separator.span16()).join(globalObject, elements, length);
+}
+
+template JSString* joinTypedArray<int8_t>(JSGlobalObject*, std::span<const int8_t>, size_t, StringView);
+template JSString* joinTypedArray<uint8_t>(JSGlobalObject*, std::span<const uint8_t>, size_t, StringView);
+template JSString* joinTypedArray<int16_t>(JSGlobalObject*, std::span<const int16_t>, size_t, StringView);
+template JSString* joinTypedArray<uint16_t>(JSGlobalObject*, std::span<const uint16_t>, size_t, StringView);
+template JSString* joinTypedArray<int32_t>(JSGlobalObject*, std::span<const int32_t>, size_t, StringView);
+template JSString* joinTypedArray<uint32_t>(JSGlobalObject*, std::span<const uint32_t>, size_t, StringView);
+template JSString* joinTypedArray<int64_t>(JSGlobalObject*, std::span<const int64_t>, size_t, StringView);
+template JSString* joinTypedArray<uint64_t>(JSGlobalObject*, std::span<const uint64_t>, size_t, StringView);
+template JSString* joinTypedArray<Float16>(JSGlobalObject*, std::span<const Float16>, size_t, StringView);
+template JSString* joinTypedArray<float>(JSGlobalObject*, std::span<const float>, size_t, StringView);
+template JSString* joinTypedArray<double>(JSGlobalObject*, std::span<const double>, size_t, StringView);
 
 } // namespace JSC
 

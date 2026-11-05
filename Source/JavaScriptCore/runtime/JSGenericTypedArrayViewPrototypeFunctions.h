@@ -621,29 +621,21 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncJoin(VM& vm, JSGlobal
             RELEASE_AND_RETURN(scope, JSValue::encode(joiner.join(globalObject)));
         }
 
-        JSStringJoiner joiner(separator);
-        joiner.reserveCapacity(globalObject, length);
-        RETURN_IF_EXCEPTION(scope, { });
-
         size_t accessibleLength = std::min(length, updatedLength.value());
+        std::span<const typename ViewClass::ElementType> elements = thisObject->typedSpan().first(accessibleLength);
 
-        for (size_t i = 0; i < accessibleLength; i++) {
-            JSValue value;
-            if constexpr (ViewClass::Adaptor::canConvertToJSQuickly)
-                value = thisObject->getIndexQuickly(i);
-            else {
-                auto nativeValue = thisObject->getIndexQuicklyAsNativeValue(i);
-                value = ViewClass::Adaptor::toJSValue(globalObject, nativeValue);
-                RETURN_IF_EXCEPTION(scope, { });
-            }
-            joiner.append(globalObject, value);
+        if (length == 1 && accessibleLength == 1) {
+            JSValue value = ViewClass::Adaptor::toJSValue(globalObject, elements[0]);
             RETURN_IF_EXCEPTION(scope, { });
+            RELEASE_AND_RETURN(scope, JSValue::encode(value.toString(globalObject)));
         }
 
-        for (size_t i = accessibleLength; i < length; i++)
-            joiner.appendEmptyString();
+        if constexpr (std::is_integral_v<typename ViewClass::ElementType>) {
+            if (!thisObject->isShared())
+                RELEASE_AND_RETURN(scope, JSValue::encode(joinIntegerTypedArray(globalObject, elements, length, separator)));
+        }
 
-        RELEASE_AND_RETURN(scope, JSValue::encode(joiner.join(globalObject)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(joinTypedArray(globalObject, elements, length, separator)));
     };
 
     JSValue separatorValue = callFrame->argument(0);

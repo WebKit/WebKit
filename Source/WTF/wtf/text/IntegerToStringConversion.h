@@ -22,6 +22,7 @@
 #pragma once
 
 #include <array>
+#include <bit>
 #include <cstdint>
 #include <span>
 #include <string>
@@ -98,15 +99,32 @@ inline void writeIntegerToBuffer(IntegerType integer, std::span<CharacterType> d
         return writeIntegerToBufferImpl<CharacterType, IntegerType, PositiveNumber>(integer, destination);
 }
 
+inline constexpr auto powersOf10ForLengthOfIntegerAsString = [] {
+    std::array<uint64_t, 20> powers { };
+    uint64_t power = 1;
+    for (auto& entry : powers) {
+        entry = power;
+        power *= 10;
+    }
+    return powers;
+}();
+
 template<typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType>
 constexpr unsigned lengthOfIntegerAsStringImpl(UnsignedIntegerType number)
 {
     unsigned length = 0;
 
-    do {
-        ++length;
-        number /= 10;
-    } while (number);
+    if constexpr (sizeof(UnsignedIntegerType) <= sizeof(uint64_t)) {
+        uint64_t magnitude = static_cast<uint64_t>(number) | 1;
+        // 1233 / 4096 approximates log10(2), so this is the digit count or one less.
+        unsigned digitsBelow = ((64 - std::countl_zero(magnitude)) * 1233) >> 12;
+        length = digitsBelow + (magnitude >= powersOf10ForLengthOfIntegerAsString[digitsBelow]);
+    } else {
+        do {
+            ++length;
+            number /= 10;
+        } while (number);
+    }
 
     if (NumberType == NegativeNumber)
         ++length;
@@ -123,9 +141,10 @@ constexpr unsigned lengthOfIntegerAsString(IntegerType integer)
         return 1;
     }
     else if constexpr (std::is_signed_v<IntegerType>) {
-        if (integer < 0)
-            return lengthOfIntegerAsStringImpl<typename std::make_unsigned_t<IntegerType>, NegativeNumber>(WTF::negate(integer));
-        return lengthOfIntegerAsStringImpl<typename std::make_unsigned_t<IntegerType>, PositiveNumber>(unsignedCast(integer));
+        using UnsignedType = std::make_unsigned_t<IntegerType>;
+        bool isNegative = integer < 0;
+        UnsignedType magnitude = isNegative ? static_cast<UnsignedType>(0 - unsignedCast(integer)) : unsignedCast(integer);
+        return lengthOfIntegerAsStringImpl<UnsignedType, PositiveNumber>(magnitude) + isNegative;
     } else
         return lengthOfIntegerAsStringImpl<IntegerType, PositiveNumber>(integer);
 }

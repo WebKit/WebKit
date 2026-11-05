@@ -302,6 +302,12 @@ private:
     bool m_isAll8Bit { true };
 };
 
+template<std::integral ElementType>
+JSString* joinIntegerTypedArray(JSGlobalObject*, std::span<const ElementType> elements, size_t length, StringView separator);
+
+template<typename ElementType>
+JSString* joinTypedArray(JSGlobalObject*, std::span<const ElementType> elements, size_t length, StringView separator);
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace JSC
