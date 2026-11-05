@@ -29,6 +29,7 @@
 #include <WebCore/AXRemoteFrame.h>
 #include <WebCore/AccessibilityObject.h>
 #include <WebCore/ScrollView.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,6 +40,7 @@ class Scrollbar;
 class ScrollView;
 
 class AccessibilityScrollView final : public AccessibilityObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityScrollView);
 public:
     static Ref<AccessibilityScrollView> create(AXID, ScrollView&, AXObjectCache&);
     AccessibilityRole determineAccessibilityRole() final;

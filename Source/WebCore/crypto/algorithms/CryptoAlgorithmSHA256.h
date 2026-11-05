@@ -26,10 +26,12 @@
 #pragma once
 
 #include "CryptoAlgorithm.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CryptoAlgorithmSHA256 final : public CryptoAlgorithm {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmSHA256);
 public:
     static constexpr ASCIILiteral s_name = "SHA-256"_s;
     static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::SHA_256;

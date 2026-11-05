@@ -28,6 +28,7 @@
 #include <WebCore/CryptoAlgorithmIdentifier.h>
 #include <WebCore/CryptoKey.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ template<typename> class ExceptionOr;
 struct JsonWebKey;
 
 class CryptoKeyAES final : public CryptoKey {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoKeyAES);
 public:
     static const int s_length128 = 128;
     static const int s_length192 = 192;

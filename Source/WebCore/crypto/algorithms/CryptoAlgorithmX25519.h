@@ -20,12 +20,14 @@
 #pragma once
 
 #include "CryptoAlgorithm.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CryptoKeyOKP;
 
 class CryptoAlgorithmX25519 final : public CryptoAlgorithm {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmX25519);
 public:
     static constexpr ASCIILiteral s_name = "X25519"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::X25519;

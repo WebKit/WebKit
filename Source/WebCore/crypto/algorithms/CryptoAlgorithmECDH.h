@@ -26,12 +26,14 @@
 #pragma once
 
 #include <WebCore/CryptoAlgorithm.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CryptoKeyEC;
 
 class CryptoAlgorithmECDH final : public CryptoAlgorithm {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmECDH);
 public:
     static constexpr ASCIILiteral s_name = "ECDH"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::ECDH;

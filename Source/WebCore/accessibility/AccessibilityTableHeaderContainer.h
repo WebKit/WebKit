@@ -30,10 +30,12 @@
 
 #include "AccessibilityMockObject.h"
 #include "IntRect.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class AccessibilityTableHeaderContainer final : public AccessibilityMockObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityTableHeaderContainer);
 public:
     static Ref<AccessibilityTableHeaderContainer> create(AXID, AXObjectCache&);
     virtual ~AccessibilityTableHeaderContainer();

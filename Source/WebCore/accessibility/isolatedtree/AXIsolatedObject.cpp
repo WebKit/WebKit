@@ -46,6 +46,7 @@
 #include "RenderObject.h"
 #include "SharedBuffer.h"
 #include "WebAnimation.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
@@ -61,6 +62,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AXIsolatedObject);
 
 using namespace HTMLNames;
 

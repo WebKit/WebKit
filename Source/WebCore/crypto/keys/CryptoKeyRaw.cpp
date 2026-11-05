@@ -27,8 +27,11 @@
 #include "CryptoKeyRaw.h"
 
 #include "CryptoAlgorithmRegistry.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoKeyRaw);
 
 CryptoKeyRaw::CryptoKeyRaw(CryptoAlgorithmIdentifier identifier, Vector<uint8_t>&& keyData, CryptoKeyUsageBitmap usages)
     : CryptoKey(identifier, CryptoKeyType::Secret, false, usages)

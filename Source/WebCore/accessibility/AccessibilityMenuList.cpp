@@ -36,8 +36,11 @@
 #include "HTMLSelectElement.h"
 #include "RenderObjectDocument.h"
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilityMenuList);
 
 AccessibilityMenuList::AccessibilityMenuList(AXID axID, RenderObject& renderer, AXObjectCache& cache)
     : AccessibilityRenderObject(axID, renderer, cache)

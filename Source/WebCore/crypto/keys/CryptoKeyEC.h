@@ -29,6 +29,7 @@
 #include <WebCore/CryptoKeyPair.h>
 
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 #if OS(DARWIN) && !PLATFORM(GTK)
 #include <WebCore/CommonCryptoUtilities.h>
 
@@ -60,6 +61,7 @@ struct JsonWebKey;
 template<typename> class ExceptionOr;
 
 class CryptoKeyEC final : public CryptoKey {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoKeyEC);
 public:
     using NamedCurve = PAL::Crypto::ECNamedCurve;
 

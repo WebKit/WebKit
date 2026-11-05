@@ -28,8 +28,11 @@
 
 #include "ScriptExecutionContext.h"
 #include <pal/crypto/CryptoDigest.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoAlgorithmSHA512);
 
 Ref<CryptoAlgorithm> CryptoAlgorithmSHA512::create()
 {

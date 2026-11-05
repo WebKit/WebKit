@@ -30,8 +30,11 @@
 #include "AccessibilityScrollView.h"
 #include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AXLocalFrame);
 
 AXLocalFrame::AXLocalFrame(AXID axID, AXObjectCache& cache)
     : AccessibilityMockObject(axID, cache)

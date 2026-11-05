@@ -26,12 +26,14 @@
 #pragma once
 
 #include "CryptoAlgorithm.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CryptoKeyHMAC;
 
 class CryptoAlgorithmHMAC final : public CryptoAlgorithm {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmHMAC);
 public:
     static constexpr ASCIILiteral s_name = "HMAC"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::HMAC;

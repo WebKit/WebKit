@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CryptoAlgorithm.h"
+#include <wtf/TZoneMalloc.h>
 
 #if HAVE(RSA_PSS)
 
@@ -35,6 +36,7 @@ class CryptoAlgorithmRsaPssParams;
 class CryptoKeyRSA;
 
 class CryptoAlgorithmRSA_PSS final : public CryptoAlgorithm {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmRSA_PSS);
 public:
     static constexpr ASCIILiteral s_name = "RSA-PSS"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::RSA_PSS;

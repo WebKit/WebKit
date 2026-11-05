@@ -39,8 +39,11 @@
 #include "NodeInlines.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilityMathMLElement);
 
 AccessibilityMathMLElement::AccessibilityMathMLElement(AXID axID, RenderObject& renderer, AXObjectCache& cache, bool isAnonymousOperator)
     : AccessibilityRenderObject(axID, renderer, cache)

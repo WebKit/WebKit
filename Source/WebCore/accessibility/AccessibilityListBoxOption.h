@@ -29,6 +29,7 @@
 #pragma once
 
 #include "AccessibilityRenderObject.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ class HTMLElement;
 class HTMLSelectElement;
 
 class AccessibilityListBoxOption final : public AccessibilityRenderObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityListBoxOption);
 public:
     static Ref<AccessibilityListBoxOption> create(AXID, HTMLElement&, AXObjectCache&);
     virtual ~AccessibilityListBoxOption();

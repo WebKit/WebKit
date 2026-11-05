@@ -27,6 +27,7 @@
 #pragma once
 
 #include "CryptoAlgorithm.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,6 +35,7 @@ class CryptoAlgorithmAesCtrParams;
 class CryptoKeyAES;
 
 class CryptoAlgorithmAESCTR final : public CryptoAlgorithm {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmAESCTR);
 public:
     class CounterBlockHelper {
     public:

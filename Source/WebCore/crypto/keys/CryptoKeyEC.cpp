@@ -29,6 +29,7 @@
 #include "CryptoAlgorithmRegistry.h"
 #include "ExceptionOr.h"
 #include "JsonWebKey.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 
 #if OS(DARWIN) && !PLATFORM(GTK)
@@ -37,6 +38,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoKeyEC);
 
 static const ASCIILiteral P256 { "P-256"_s };
 static const ASCIILiteral P384 { "P-384"_s };

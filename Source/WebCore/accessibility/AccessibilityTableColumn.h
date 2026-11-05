@@ -29,12 +29,14 @@
 #pragma once
 
 #include "AccessibilityMockObject.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class RenderTableSection;
 
 class AccessibilityTableColumn final : public AccessibilityMockObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityTableColumn);
 public:
     static Ref<AccessibilityTableColumn> create(AXID, AXObjectCache&);
     virtual ~AccessibilityTableColumn();

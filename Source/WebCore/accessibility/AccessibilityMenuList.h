@@ -26,12 +26,14 @@
 #pragma once
 
 #include "AccessibilityRenderObject.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class AccessibilityMenuListPopup;
 
 class AccessibilityMenuList final : public AccessibilityRenderObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityMenuList);
 public:
     static Ref<AccessibilityMenuList> create(AXID, RenderObject&, AXObjectCache&);
 

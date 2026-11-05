@@ -50,8 +50,11 @@
 #include "XLinkNames.h"
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilitySVGObject);
 
 AccessibilitySVGObject::AccessibilitySVGObject(AXID axID, RenderObject& renderer, AXObjectCache& cache, bool isSVGRoot)
     : AccessibilityRenderObject(axID, renderer, cache)

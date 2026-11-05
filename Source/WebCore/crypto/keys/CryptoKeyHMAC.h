@@ -27,6 +27,7 @@
 
 #include <WebCore/CryptoKey.h>
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -36,6 +37,7 @@ struct JsonWebKey;
 template<typename> class ExceptionOr;
 
 class CryptoKeyHMAC final : public CryptoKey {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoKeyHMAC);
 public:
     static Ref<CryptoKeyHMAC> create(const Vector<uint8_t>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsageBitmap usage)
     {
