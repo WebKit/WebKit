@@ -80,10 +80,20 @@ void GetRenderTargetLayerCountAndIndex(webgpu::ImageHelper *image,
 }
 
 bool IsTextureLevelDefinitionCompatibleWithImage(webgpu::ImageHelper *image,
+                                                 const gl::ImageIndex &index,
                                                  const gl::Extents &size,
                                                  const webgpu::Format &format)
 {
-    return size == wgpu_gl::GetExtents(image->getSize()) &&
+    const gl::LevelIndex level(index.getLevelIndex());
+    if (!image->isTextureLevelInAllocatedImage(level))
+    {
+        return false;
+    }
+    const WGPUExtent3D levelSize = image->getLevelSize(image->toWgpuLevel(level));
+    // The faces of a cube map are the layers of the image.
+    const uint32_t levelDepth =
+        index.getType() == gl::TextureType::CubeMap ? 1 : levelSize.depthOrArrayLayers;
+    return size == gl::Extents(levelSize.width, levelSize.height, levelDepth) &&
            image->getIntendedFormatID() == format.getIntendedFormatID() &&
            image->getActualFormatID() == format.getActualImageFormatID();
 }
@@ -218,20 +228,23 @@ angle::Result TextureWgpu::copyImage(const gl::Context *context,
     const webgpu::Format &webgpuFormat =
         contextWgpu->getFormat(internalFormatInfo.sizedInternalFormat);
 
-    // The texture level being redefined might be the same as the one bound to the framebuffer.
-    // This _could_ be supported by using a temp image before redefining the level (and potentially
-    // discarding the image).  However, this is currently unimplemented.
-    FramebufferWgpu *framebufferWgpu = GetImplAs<FramebufferWgpu>(source);
-    RenderTargetWgpu *colorReadRT    = framebufferWgpu->getReadPixelsRenderTarget();
-    webgpu::ImageHelper *srcImage    = colorReadRT->getImage();
-    const bool isCubeMap             = index.getType() == gl::TextureType::CubeMap;
-    gl::LevelIndex levelIndex(index.getLevelIndex());
-    const uint32_t layerIndex    = index.hasLayer() ? index.getLayerIndex() : 0;
+    CopySource copySource;
+    gl::Rectangle clippedSourceArea;
+    const bool hasCopyArea = GetCopySource(source, sourceArea, &copySource, &clippedSourceArea);
+    const bool isOutOfBounds = !hasCopyArea || clippedSourceArea != sourceArea;
+    const gl::Offset destOffset(clippedSourceArea.x - sourceArea.x,
+                                clippedSourceArea.y - sourceArea.y, 0);
 
-    const uint32_t redefinedFace = isCubeMap ? layerIndex : 0;
-    const uint32_t sourceFace    = isCubeMap ? colorReadRT->getLayer() : 0;
-    const bool isSelfCopy        = mImage->getTexture().get() == srcImage->getTexture().get() &&
-                            levelIndex == colorReadRT->getGlLevel() && redefinedFace == sourceFace;
+    // The texture level being redefined might be the same as the one bound to the framebuffer, and
+    // redefining it can release the image.  WebGPU doesn't allow copies within a subresource
+    // either.  In that case, copy the source area to a snapshot first, and copy from the snapshot.
+    webgpu::ImageHelper snapshotImage;
+    RenderTargetWgpu snapshotRenderTarget;
+    if (hasCopyArea && isSameSubresourceAsCopySource(copySource, index))
+    {
+        ANGLE_TRY(snapshotCopySource(contextWgpu, &snapshotImage, &snapshotRenderTarget,
+                                     &copySource, &clippedSourceArea));
+    }
 
     // TODO(anglebug.com/438268609): handle copying a texture when it needs to be redefined.
     ANGLE_TRY(redefineLevel(context, webgpuFormat, index, newImageSize));
@@ -245,14 +258,21 @@ angle::Result TextureWgpu::copyImage(const gl::Context *context,
                                       newImageSize));
     }
 
-    if (isSelfCopy)
+    // WebGL and robust resource initialization require the texels that a copy from outside the
+    // framebuffer doesn't write to be zero.  The front-end initializes them only with robust
+    // resource initialization, and only when the framebuffer reads another texture.
+    if (isOutOfBounds && (context->isWebGL() || context->isRobustResourceInitEnabled()))
     {
-        UNIMPLEMENTED();
+        ANGLE_TRY(clearLevelToZero(contextWgpu, index, webgpuFormat));
+    }
+
+    if (!hasCopyArea)
+    {
         return angle::Result::Continue;
     }
 
-    return copySubImageImpl(context, index, gl::Offset(0, 0, 0), sourceArea, internalFormatInfo,
-                            source);
+    return copySubImageImpl(context, index, destOffset, clippedSourceArea, internalFormatInfo,
+                            copySource);
 }
 
 angle::Result TextureWgpu::copySubImage(const gl::Context *context,
@@ -274,26 +294,20 @@ angle::Result TextureWgpu::copySubImage(const gl::Context *context,
                                       mState.getBaseLevelDesc().size));
     }
 
-    return copySubImageImpl(context, index, destOffset, sourceArea, internalFormat, source);
-}
+    // The copy overwrites the contents that are uploaded to the level, so the uploads must be
+    // written first.
+    const gl::LevelIndex level(index.getLevelIndex());
+    if (mImage->isTextureLevelInAllocatedImage(level))
+    {
+        ANGLE_TRY(mImage->flushSingleLevelUpdates(contextWgpu, level, nullptr, 0));
+    }
 
-angle::Result TextureWgpu::copySubImageImpl(const gl::Context *context,
-                                            const gl::ImageIndex &index,
-                                            const gl::Offset &destOffset,
-                                            const gl::Rectangle &sourceArea,
-                                            const gl::InternalFormat &internalFormat,
-                                            gl::Framebuffer *source)
-{
-    gl::Extents fbSize = source->getReadColorAttachment()->getSize();
+    CopySource copySource;
     gl::Rectangle clippedSourceArea;
-    if (!ClipRectangle(sourceArea, gl::Rectangle(0, 0, fbSize.width, fbSize.height),
-                       &clippedSourceArea))
+    if (!GetCopySource(source, sourceArea, &copySource, &clippedSourceArea))
     {
         return angle::Result::Continue;
     }
-
-    ContextWgpu *contextWgpu         = GetImplAs<ContextWgpu>(context);
-    FramebufferWgpu *framebufferWgpu = GetImplAs<FramebufferWgpu>(source);
 
     // If negative offsets are given, clippedSourceArea ensures we don't read from those offsets.
     // However, that changes the sourceOffset->destOffset mapping.  Here, destOffset is shifted by
@@ -303,7 +317,131 @@ angle::Result TextureWgpu::copySubImageImpl(const gl::Context *context,
     const gl::Offset modifiedDestOffset(destOffset.x + clippedSourceArea.x - sourceArea.x,
                                         destOffset.y + clippedSourceArea.y - sourceArea.y, zOffset);
 
-    RenderTargetWgpu *colorReadRT = framebufferWgpu->getReadPixelsRenderTarget();
+    // WebGPU doesn't allow copies within a subresource.  Copy the source area to a snapshot first,
+    // and copy from the snapshot.
+    webgpu::ImageHelper snapshotImage;
+    RenderTargetWgpu snapshotRenderTarget;
+    if (isSameSubresourceAsCopySource(copySource, index))
+    {
+        ANGLE_TRY(snapshotCopySource(contextWgpu, &snapshotImage, &snapshotRenderTarget,
+                                     &copySource, &clippedSourceArea));
+    }
+
+    return copySubImageImpl(context, index, modifiedDestOffset, clippedSourceArea, internalFormat,
+                            copySource);
+}
+
+bool TextureWgpu::GetCopySource(gl::Framebuffer *source,
+                                const gl::Rectangle &sourceArea,
+                                CopySource *copySourceOut,
+                                gl::Rectangle *clippedSourceAreaOut)
+{
+    FramebufferWgpu *framebufferWgpu = GetImplAs<FramebufferWgpu>(source);
+    copySourceOut->renderTarget      = framebufferWgpu->getReadPixelsRenderTarget();
+    copySourceOut->size              = source->getReadColorAttachment()->getSize();
+    copySourceOut->flipY             = framebufferWgpu->flipY();
+    return ClipRectangle(sourceArea,
+                         gl::Rectangle(0, 0, copySourceOut->size.width, copySourceOut->size.height),
+                         clippedSourceAreaOut);
+}
+
+bool TextureWgpu::isSameSubresourceAsCopySource(const CopySource &source,
+                                                const gl::ImageIndex &index) const
+{
+    RenderTargetWgpu *readRT = source.renderTarget;
+    if (!readRT || readRT->getImage() != mImage || !mImage->isInitialized() ||
+        readRT->getGlLevel() != gl::LevelIndex(index.getLevelIndex()))
+    {
+        return false;
+    }
+    // A mip level of a 3D texture is one subresource.
+    if (mImage->getTextureDescriptor().dimension == WGPUTextureDimension_3D)
+    {
+        return true;
+    }
+    const uint32_t layer = index.hasLayer() ? static_cast<uint32_t>(index.getLayerIndex()) : 0;
+    return readRT->getLayer() == layer;
+}
+
+angle::Result TextureWgpu::snapshotCopySource(ContextWgpu *contextWgpu,
+                                              webgpu::ImageHelper *snapshotImage,
+                                              RenderTargetWgpu *snapshotRenderTarget,
+                                              CopySource *source,
+                                              gl::Rectangle *sourceArea)
+{
+    RenderTargetWgpu *readRT      = source->renderTarget;
+    webgpu::ImageHelper *srcImage = readRT->getImage();
+    ASSERT((srcImage->getUsage() & WGPUTextureUsage_CopySrc) != 0);
+
+    // The snapshot holds the area as it is laid out in the texture, so a flipped source stays
+    // flipped.
+    gl::Box textureBox(sourceArea->x, sourceArea->y, 0, sourceArea->width, sourceArea->height, 1);
+    if (source->flipY)
+    {
+        textureBox.y = source->size.height - sourceArea->y - sourceArea->height;
+    }
+
+    WGPUTextureDescriptor descriptor = snapshotImage->createTextureDescriptor(
+        WGPUTextureUsage_CopySrc | WGPUTextureUsage_CopyDst | WGPUTextureUsage_TextureBinding,
+        WGPUTextureDimension_2D,
+        gl_wgpu::GetExtent3D(gl::Extents(sourceArea->width, sourceArea->height, 1)),
+        srcImage->toWgpuTextureFormat(), /*mipLevelCount*/ 1, /*sampleCount*/ 1);
+    ANGLE_TRY(snapshotImage->initImage(
+        webgpu::GetProcs(contextWgpu), srcImage->getIntendedFormatID(),
+        srcImage->getActualFormatID(), contextWgpu->getDevice(), gl::LevelIndex(0), descriptor));
+    ANGLE_TRY(snapshotImage->CopyImage(contextWgpu, srcImage, gl::ImageIndex::Make2D(0),
+                                       gl::kOffsetZero, readRT->getGlLevel(), readRT->getLayer(),
+                                       textureBox, WGPUTextureAspect_All));
+
+    webgpu::TextureViewHandle snapshotView;
+    ANGLE_TRY(snapshotImage->createTextureViewSingleLevel(
+        gl::LevelIndex(0), 0, snapshotView, WGPUTextureAspect_All, WGPUTextureFormat_Undefined));
+    snapshotRenderTarget->set(snapshotImage, snapshotView, webgpu::LevelIndex(0), 0,
+                              snapshotImage->toWgpuTextureFormat());
+
+    source->renderTarget = snapshotRenderTarget;
+    source->size         = gl::Extents(sourceArea->width, sourceArea->height, 1);
+    *sourceArea          = gl::Rectangle(0, 0, sourceArea->width, sourceArea->height);
+    return angle::Result::Continue;
+}
+
+angle::Result TextureWgpu::clearLevelToZero(ContextWgpu *contextWgpu,
+                                            const gl::ImageIndex &index,
+                                            const webgpu::Format &webgpuFormat)
+{
+    const gl::LevelIndex level(index.getLevelIndex());
+    if (!mImage->isTextureLevelInAllocatedImage(level))
+    {
+        return angle::Result::Continue;
+    }
+
+    webgpu::TextureViewHandle levelView;
+    ANGLE_TRY(mImage->createTextureViewSingleLevel(
+        level, index.hasLayer() ? index.getLayerIndex() : 0, levelView, WGPUTextureAspect_All,
+        WGPUTextureFormat_Undefined));
+
+    // Emulated alpha channels read as one.
+    const bool hasEmulatedAlpha = webgpuFormat.getIntendedFormat().alphaBits == 0 &&
+                                  webgpuFormat.getActualImageFormat().alphaBits != 0;
+    webgpu::PackedRenderPassDescriptor clearRenderPassDesc;
+    clearRenderPassDesc.colorAttachments.push_back(webgpu::CreateNewClearColorAttachment(
+        gl::ColorF(0.0f, 0.0f, 0.0f, hasEmulatedAlpha ? 1.0f : 0.0f), WGPU_DEPTH_SLICE_UNDEFINED,
+        levelView));
+    ANGLE_TRY(contextWgpu->endRenderPass(webgpu::RenderPassClosureReason::CopyImage));
+    ANGLE_TRY(contextWgpu->startRenderPass(clearRenderPassDesc));
+    return contextWgpu->endRenderPass(webgpu::RenderPassClosureReason::CopyImage);
+}
+
+angle::Result TextureWgpu::copySubImageImpl(const gl::Context *context,
+                                            const gl::ImageIndex &index,
+                                            const gl::Offset &destOffset,
+                                            const gl::Rectangle &clippedSourceArea,
+                                            const gl::InternalFormat &internalFormat,
+                                            const CopySource &source)
+{
+    ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
+
+    RenderTargetWgpu *colorReadRT = source.renderTarget;
     if (!colorReadRT || !colorReadRT->getImage())
     {
         UNIMPLEMENTED();
@@ -314,16 +452,14 @@ angle::Result TextureWgpu::copySubImageImpl(const gl::Context *context,
     angle::FormatID dstIntendedFormatID = dstFormat.getIntendedFormatID();
     angle::FormatID dstActualFormatID   = dstFormat.getActualImageFormatID();
 
-    bool isViewportFlipY = framebufferWgpu->flipY();
-
     gl::Box clippedSourceBox(clippedSourceArea.x, clippedSourceArea.y, colorReadRT->getLayer(),
                              clippedSourceArea.width, clippedSourceArea.height, 1);
 
     // If it's possible to perform the copy with a transfer, that's the best option.
     if (CanCopyWithTransferForTexImage(*colorReadRT->getImage(), dstIntendedFormatID,
-                                       dstActualFormatID, mImage->getUsage(), isViewportFlipY))
+                                       dstActualFormatID, mImage->getUsage(), source.flipY))
     {
-        return mImage->CopyImage(contextWgpu, colorReadRT->getImage(), index, modifiedDestOffset,
+        return mImage->CopyImage(contextWgpu, colorReadRT->getImage(), index, destOffset,
                                  colorReadRT->getGlLevel(), colorReadRT->getLayer(),
                                  clippedSourceBox, WGPUTextureAspect_All);
     }
@@ -336,23 +472,23 @@ angle::Result TextureWgpu::copySubImageImpl(const gl::Context *context,
             gl::LevelIndex(index.getLevelIndex()), index.hasLayer() ? index.getLayerIndex() : 0,
             dstView, WGPUTextureAspect_All, WGPUTextureFormat_Undefined));
 
-        WGPUExtent3D srcSize = colorReadRT->getImage()->getTextureDescriptor().size;
-        WGPUExtent3D dstSize = mImage->getTextureDescriptor().size;
+        WGPUExtent3D srcSize = gl_wgpu::GetExtent3D(source.size);
+        WGPUExtent3D dstSize =
+            mImage->getLevelSize(mImage->toWgpuLevel(gl::LevelIndex(index.getLevelIndex())));
         const angle::Format &srcFormat =
             angle::Format::Get(colorReadRT->getImage()->getIntendedFormatID());
         const angle::Format &dstAngleFormat = dstFormat.getIntendedFormat();
-        gl::Rectangle finalSourceArea       = clippedSourceArea;
 
         return contextWgpu->getUtils()->copyImage(
-            contextWgpu, colorReadRT->getTextureView(), dstView, finalSourceArea,
-            modifiedDestOffset, srcSize, dstSize, false, false, isViewportFlipY, false, srcFormat,
-            dstAngleFormat.id, dstActualFormatID, nullptr);
+            contextWgpu, colorReadRT->getTextureView(), dstView, clippedSourceArea, destOffset,
+            srcSize, dstSize, false, false, source.flipY, false, srcFormat, dstAngleFormat.id,
+            dstActualFormatID, nullptr);
     }
 
     return getImage()->copyImageCpuReadback(
-        context, index, clippedSourceArea, modifiedDestOffset,
+        context, index, clippedSourceArea, destOffset,
         gl::Extents(clippedSourceArea.width, clippedSourceArea.height, 1), internalFormat,
-        colorReadRT->getImage(), source->getExtents());
+        colorReadRT->getImage(), source.size);
 }
 
 angle::Result TextureWgpu::copyTexture(const gl::Context *context,
@@ -849,7 +985,7 @@ angle::Result TextureWgpu::redefineLevel(const gl::Context *context,
                     ? TextureLevelAllocation::WithinAllocatedImage
                     : TextureLevelAllocation::OutsideAllocatedImage;
             TextureLevelDefinition levelDefinition =
-                IsTextureLevelDefinitionCompatibleWithImage(mImage, size, webgpuFormat)
+                IsTextureLevelDefinitionCompatibleWithImage(mImage, index, size, webgpuFormat)
                     ? TextureLevelDefinition::Compatible
                     : TextureLevelDefinition::Incompatible;
             // Note: ImageHelper::mFirstAllocatedLevel should eventually track gl::OwnerLevel
@@ -1095,6 +1231,8 @@ void TextureWgpu::resetImageAndReleaseViews()
         renderTargets.clear();
     }
     mImage->resetImage();
+    // The next image is created with the current definitions of the levels.
+    mRedefinedLevels = {};
 }
 
 }  // namespace rx

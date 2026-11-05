@@ -2648,7 +2648,6 @@
 42266907 WGPU : SimpleStateChangeTest.FboEarlyCullFaceBackCCWState/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.FboEarlyCullFaceBackCWState/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.RebindTranslatedAttribute/* = SKIP
-42266907 WGPU : SimpleStateChangeTest.RedefineTextureInUse/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.UpdateBoundElementArrayBuffer/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.UpdateBufferInUse/* = SKIP
 42266907 WGPU : SixteenBppTextureTest.RGB565Validation/* = SKIP
@@ -2656,7 +2655,6 @@
 42266907 WGPU : SixteenBppTextureTest.RGBA5551Validation/* = SKIP
 42266907 WGPU : StateChangeRenderTest.DepthRangeUpdates/* = SKIP
 42266907 WGPU : StateChangeRenderTest.GenerateMipmap/* = SKIP
-42266907 WGPU : StateChangeRenderTest.RecreateTexture/* = SKIP
 42266907 WGPU : StateChangeTest.DisablingBufferedVertexAttribute/* = SKIP
 42266907 WGPU : StateChangeTest.MultiContextVertexAttribute/* = SKIP
 42266907 WGPU : StateChangeTest.SetCurrentAttribute/* = SKIP
@@ -2716,7 +2714,6 @@
 42266907 WGPU : WebGLCompatibilityTest.DrawElementsOffsetRestriction/* = SKIP
 42266907 WGPU : WebGLCompatibilityTest.TextureCopyingFeedbackLoops/* = SKIP
 42266907 WGPU : WebGLCompatibilityTest.BuiltInInvariant/* = SKIP
-42266907 WGPU : WebGLReadOutsideFramebufferTest.CopyTexSubImage2D/* = SKIP
 42266907 WGPU : WebGLReadOutsideFramebufferTest.CopyTexImage2D/* = SKIP
 498271998 WGPU : WebGLGLSLTest.ComplexExpression/* = SKIP
 
@@ -2737,7 +2734,7 @@
 418022112 WGPU : ImageTest.RespecificationOfOtherLevel/* = SKIP
 418022112 WGPU : ImageTest.SourceCubeAndSameTargetTextureWithEachCubeFace/* = SKIP
 423702346 WGPU : SimpleUniformTestES3.PackUniformFP16Test/* = SKIP
-438268609 WGPU : CopyTexImageTest.CopyTex*Cube*/* = SKIP
+438268609 WGPU : CopyTexImageTest.CopyTexSubImageToNonCubeCompleteDestination/* = SKIP
 // Unimplemented format conversions for image copies
 438268609 WGPU : CopyTexImageTest.RGBAToL*/* = SKIP
 438268609 WGPU : CopyTexImageTest.RGBToL/* = SKIP
@@ -2757,8 +2754,7 @@
 // WGPU y-flip transforms have a bug when run on NVIDIA GPUs on Linux or Windows.
 468025322 NVIDIA WGPU : CopyTextureVariationsTest.Copy*Texture/ES2_WebGPU__*YFlip* = SKIP
 
-// WGPU does not support resizing textures or preserving sibling face data upon redefinition yet.
-513918923 WGPU : RobustResourceInitTest.RedefineSiblingFace/* = SKIP
+// Sibling face data is not preserved upon redefinition yet.
 513918923 WIN OPENGL : RobustResourceInitTest.RedefineSiblingFace/* = SKIP
 
 // SPIR-V compilation error
