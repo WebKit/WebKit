@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 90px; border: 1px solid; margin: 2px; }
+.vrl { writing-mode: vertical-rl; background: lightblue; }
+</style>
+<div class="root" style="height: 80px"><div class="vrl" id="text">text</div></div>
+<div class="root" style="height: 80px"><div id="mode">becomes vertical text</div></div>
+<div class="root" style="height: 80px">a <span class="vrl" style="display: inline-block" id="inline">inline</span> b</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("text").firstChild.data = "longer text in the vertical box";
+document.getElementById("mode").style.writingMode = "vertical-lr";
+document.getElementById("inline").firstChild.data = "longer inline-block text";
+</script>

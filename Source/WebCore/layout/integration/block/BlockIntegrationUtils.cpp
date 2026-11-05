@@ -157,6 +157,13 @@ static bool percentagesResolveAgainstTableCell(const RenderBlock& containingBloc
     return ancestor && ancestor->isRenderTableCell();
 }
 
+// The available inline space of an orthogonal box can be the size of the initial containing block, which the view lays the box out again for
+// when it changes, like RenderBox::perpendicularContainingBlockLogicalHeight registers it.
+static void registerOrthogonalBoxForLayout(RenderBox& box)
+{
+    box.view().addPercentHeightDescendant(box);
+}
+
 BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegrationUtils::layoutIndependentFormattingContext(const RenderBox& root, const Layout::ConstraintsForIndependentFormattingContext& constraints)
 {
     // Only the root and its content are written here, by the root's own formatting context, and nothing else in the block formatting context
@@ -175,13 +182,15 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     // The block formatting context writes the geometry of the containing block once all of it is laid out. The render tree takes a containing
     // block block size, definite or not, as the box's own (RenderBox::hasAutoHeightOrContainingBlockWithAutoHeight), so only a box with a
     // percentage or stretch block size, which resolves against it, gets one. An orthogonal box resolves that against the inline size of the containing
-    // block instead (RenderBox::computePercentageLogicalHeight), and takes its available inline space from the containing block's style
-    // (RenderBox::perpendicularContainingBlockLogicalHeight, coverage).
+    // block instead (RenderBox::computePercentageLogicalHeight), and takes the block size as its available inline space
+    // (RenderBox::perpendicularContainingBlockLogicalHeight).
     auto containingBlockWritingMode = containingBlock->writingMode();
     auto isOrthogonal = box->writingMode().isOrthogonal(containingBlockWritingMode);
     box->setOverridingContainingBlockContentLogicalWidth(constraints.containingBlockInlineSize);
-    if (!isOrthogonal && !percentagesResolveAgainstTableCell(containingBlock) && Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box->writingMode()))
+    if (isOrthogonal || (!percentagesResolveAgainstTableCell(containingBlock) && Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box->writingMode())))
         box->setOverridingContainingBlockContentLogicalHeight(constraints.containingBlockBlockSize);
+    if (isOrthogonal)
+        registerOrthogonalBoxForLayout(box);
     CheckedPtr drawableContent = drawableContentBlock(box);
     if (drawableContent)
         drawableContent->setOverridingContainingBlockContentLogicalWidth(constraints.containingBlockInlineSize);
@@ -323,7 +332,7 @@ bool BlockIntegrationUtils::laysOutThroughRenderTree(const RenderBox& box)
     return !blockContainer || !canUseForNestedBlockLayout(*blockContainer);
 }
 
-BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit replacedElementAvailableBlockSize, bool relayoutChildren, const Layout::BlockLayoutState& blockLayoutState, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult)
+BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit replacedElementAvailableBlockSize, LayoutUnit orthogonalFlowAvailableInlineSpace, bool relayoutChildren, const Layout::BlockLayoutState& blockLayoutState, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult)
 {
     // Only the line layout of this block container and its inline content are written here, and nothing else in the block formatting
     // context reads them.
@@ -384,7 +393,10 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
             continue;
         }
         box->setOverridingContainingBlockContentLogicalWidth(constraints.horizontal().logicalWidth);
-        if (!box->writingMode().isOrthogonal(inlineContentRoot.writingMode()) && !percentagesResolveAgainstTableCell(inlineContentRoot) && Layout::BlockFormattingUtils::hasPercentageBlockSize(*box, box->writingMode()))
+        if (box->writingMode().isOrthogonal(inlineContentRoot.writingMode())) {
+            box->setOverridingContainingBlockContentLogicalHeight(orthogonalFlowAvailableInlineSpace);
+            registerOrthogonalBoxForLayout(*box);
+        } else if (!percentagesResolveAgainstTableCell(inlineContentRoot) && Layout::BlockFormattingUtils::hasPercentageBlockSize(*box, box->writingMode()))
             box->setOverridingContainingBlockContentLogicalHeight(box->isRenderReplaced() && box->document().inQuirksMode() ? std::optional { replacedElementAvailableBlockSize } : contentBoxBlockSize);
         atomicInlineLevelBoxes.append(*box);
         if (CheckedPtr drawableContent = drawableContentBlock(*box))
