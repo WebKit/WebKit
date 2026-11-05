@@ -1,0 +1,4 @@
+This tests moving the focus backward across a shadow host whose slot has no assigned nodes and no fallback content.
+To manually test, focus the second input element and press Shift+Tab. WebKit should focus the first input element.
+
+PASS
