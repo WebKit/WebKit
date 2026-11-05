@@ -1768,6 +1768,10 @@ Node* Internals::shadowRoot(Element& host)
         host.updateUserAgentShadowTree();
         protect(host.document())->removeElementWithPendingUserAgentShadowTreeUpdate(host);
     }
+#if ENABLE(VIDEO)
+    if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(host))
+        mediaElement->ensureDeferredMediaControls();
+#endif
     return host.shadowRoot();
 }
 

@@ -37,18 +37,14 @@
 /* Support displaying the time labels above or below the scrubber, rather than side-by-side: */
 .time-control.above,
 .time-control.below {
-
     flex-wrap: wrap;
-    .scrubber { width: 100%; }
 }
-.time-control.above {
-    .scrubber { order: 2; }
-    .time-label { order: 1; }
-}
-.time-control.below {
-    .scrubber { order: 1; }
-    .time-label { order: 2; }
-}
+.time-control.above .scrubber,
+.time-control.below .scrubber { width: 100%; }
+.time-control.above .scrubber { order: 2; }
+.time-control.above .time-label { order: 1; }
+.time-control.below .scrubber { order: 1; }
+.time-control.below .time-label { order: 2; }
 
 /* Support toggling the duration and remaining time labels: */
 .time-control.duration > #time-label-remaining { display: none; }
