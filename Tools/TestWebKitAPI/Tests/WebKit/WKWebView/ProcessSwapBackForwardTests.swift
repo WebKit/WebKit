@@ -239,6 +239,79 @@ struct ProcessSwapBackForwardTests {
         }
     }
 
+    // The history item of a document that location.replace() committed through a COOP swap has to record the group the
+    // document committed into, so that going back restores the document from the back/forward cache.
+    @Test(arguments: [false, true])
+    func navigateBackToItemReplacedThroughCOOPSwap(siteIsolationEnabled: Bool) async throws {
+        try await Self.navigateBackToItemReplacedThroughCOOPSwap(siteIsolationEnabled: siteIsolationEnabled, includingCOEP: true)
+    }
+
+    // A control: without COEP, the replacement swaps between two groups that aren't cross-origin isolated, so a stale
+    // group in the history item doesn't change which process can restore it.
+    @Test
+    func navigateBackToItemReplacedThroughCOOPSwapWithoutCOEP() async throws {
+        try await Self.navigateBackToItemReplacedThroughCOOPSwap(siteIsolationEnabled: false, includingCOEP: false)
+    }
+
+    private static func navigateBackToItemReplacedThroughCOOPSwap(siteIsolationEnabled: Bool, includingCOEP: Bool) async throws {
+        var isolatedHeaderFields = ["Content-Type": "text/html", "Cross-Origin-Opener-Policy": "same-origin"]
+        if includingCOEP {
+            isolatedHeaderFields["Cross-Origin-Embedder-Policy"] = "require-corp"
+        }
+        var server = try HTTPServer(protocol: .https) {
+            Route("/source.html") {
+                "foo"
+            }
+
+            Route("/isolated.html", headerFields: isolatedHeaderFields) {
+                "<script>addEventListener('pageshow', event => { if (event.persisted) window.wasPersisted = true })</script>"
+            }
+
+            Route("/other.html") {
+                "bar"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let processPool = WKProcessPool.processSwapping()
+            let configuration = WKWebViewConfiguration()
+            configuration.processPool = processPool
+            configuration.enableCrossOriginOpenerAndEmbedderPolicies()
+            let (webView, navigationDelegate) = webViewAndDelegate(
+                configuration: configuration,
+                frame: CGRect(x: 0, y: 0, width: 800, height: 600),
+                siteIsolationEnabled: siteIsolationEnabled
+            )
+            let isolatedURL = serverConfiguration.address.appending(path: "isolated.html")
+
+            webView.load(URLRequest(url: serverConfiguration.address.appending(path: "source.html")))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            let sourceProcessIdentifier = webView._webProcessIdentifier
+
+            // Replaces the history item of /source.html with a document that commits into a new group.
+            webView.startEvaluatingJavaScript("location.replace('/isolated.html')", withUserGesture: false)
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            let isolatedProcessIdentifier = webView._webProcessIdentifier
+            #expect(isolatedProcessIdentifier != sourceProcessIdentifier)
+            if includingCOEP {
+                #expect(processPool.crossOriginIsolatedProcessIdentifiers.contains(isolatedProcessIdentifier))
+            }
+            #expect(webView._committedURL?.absoluteString == isolatedURL.absoluteString)
+            #expect(webView.backForwardList.backList.isEmpty)
+
+            webView.load(URLRequest(url: serverConfiguration.address.appending(path: "other.html")))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView._webProcessIdentifier != isolatedProcessIdentifier)
+
+            webView.goBack()
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(webView._webProcessIdentifier == isolatedProcessIdentifier)
+            #expect(webView._committedURL?.absoluteString == isolatedURL.absoluteString)
+            #expect(try await webView.callJavaScript(returning: Bool.self) { "return !!window.wasPersisted" })
+        }
+    }
+
     private static let crossOriginIsolation = [
         "Content-Type": "text/html",
         "Cross-Origin-Opener-Policy": "same-origin",
