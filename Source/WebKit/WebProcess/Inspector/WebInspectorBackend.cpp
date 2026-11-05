@@ -64,6 +64,7 @@
 #include <WebCore/WindowFeatures.h>
 #include <wtf/Borrow.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
 
@@ -72,6 +73,8 @@ static const float maximumAttachedHeightRatio = 0.75;
 static const float minimumAttachedWidth = 500;
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInspectorBackend);
 using namespace WebCore;
 
 Ref<WebInspectorBackend> WebInspectorBackend::create(WebPage& page)

@@ -27,6 +27,7 @@
 
 #include <WebCore/LocalDOMWindow.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class LocalFrame;
@@ -35,6 +36,7 @@ class LocalFrame;
 namespace WebKit {
 
 class WebAutomationDOMWindowObserver final : public RefCounted<WebAutomationDOMWindowObserver>, public WebCore::LocalDOMWindowObserver {
+    WTF_MAKE_TZONE_ALLOCATED(WebAutomationDOMWindowObserver);
 public:
     static Ref<WebAutomationDOMWindowObserver> create(WebCore::LocalDOMWindow& window, WTF::Function<void(WebAutomationDOMWindowObserver&)>&& callback)
     {

@@ -45,6 +45,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(ASYNC_SCROLLING)
 #include <WebCore/AsyncScrollingCoordinator.h>
@@ -63,6 +64,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EventDispatcher);
 using namespace WebCore;
 
 EventDispatcher::EventDispatcher(WebProcess& process)

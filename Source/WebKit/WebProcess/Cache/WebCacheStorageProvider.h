@@ -28,6 +28,7 @@
 #include "WebCacheStorageConnection.h"
 #include <WebCore/CacheStorageProvider.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -37,6 +38,7 @@ class Decoder;
 namespace WebKit {
 
 class WebCacheStorageProvider final : public WebCore::CacheStorageProvider {
+    WTF_MAKE_TZONE_ALLOCATED(WebCacheStorageProvider);
 public:
     static Ref<WebCacheStorageProvider> create() { return adoptRef(*new WebCacheStorageProvider); }
 

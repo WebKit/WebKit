@@ -40,8 +40,11 @@
 #include <WebCore/WebTransportSessionClient.h>
 #include <WebCore/WorkerGlobalScope.h>
 #include <WebCore/WorkerWebTransportSession.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketProvider);
 using namespace WebCore;
 
 RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(Document& document, WebSocketChannelClient& client, IsInitiatedByWorker isInitiatedByWorker)

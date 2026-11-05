@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -44,6 +45,7 @@ class WebPage;
 
 /// FIXME: Need to keep a queue of pending notifications which permission is still being requested.
 class NotificationPermissionRequestManager : public RefCounted<NotificationPermissionRequestManager> {
+    WTF_MAKE_TZONE_ALLOCATED(NotificationPermissionRequestManager);
 public:
     static Ref<NotificationPermissionRequestManager> create(WebPage*);
     ~NotificationPermissionRequestManager();

@@ -28,8 +28,11 @@
 
 #include <WebCore/FileChooser.h>
 #include <WebCore/Icon.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebOpenPanelResultListener);
 
 Ref<WebOpenPanelResultListener> WebOpenPanelResultListener::create(WebPage& page, Ref<WebCore::FileChooser>&& fileChooser)
 {

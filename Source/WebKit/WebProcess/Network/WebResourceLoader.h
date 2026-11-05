@@ -37,6 +37,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -61,6 +62,7 @@ namespace WebKit {
 enum class PrivateRelayed : bool;
 
 class WebResourceLoader : public RefCounted<WebResourceLoader>, public IPC::MessageSender, public CanMakeWeakPtr<WebResourceLoader> {
+    WTF_MAKE_TZONE_ALLOCATED(WebResourceLoader);
 public:
     struct TrackingParameters {
         WebPageProxyIdentifier webPageProxyID;

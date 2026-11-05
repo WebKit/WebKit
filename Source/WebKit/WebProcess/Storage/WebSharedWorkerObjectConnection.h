@@ -28,10 +28,12 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/SharedWorkerObjectConnection.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebSharedWorkerObjectConnection final : public WebCore::SharedWorkerObjectConnection, private IPC::MessageSender, public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(WebSharedWorkerObjectConnection);
 public:
     static Ref<WebSharedWorkerObjectConnection> create() { return adoptRef(*new WebSharedWorkerObjectConnection); }
     ~WebSharedWorkerObjectConnection();

@@ -34,6 +34,7 @@
 #include <WebCore/InspectorDebuggableType.h>
 #include <WebCore/InspectorFrontendAPIDispatcher.h>
 #include <WebCore/InspectorFrontendClient.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 #include "InspectorExtensionTypes.h"
@@ -58,7 +59,7 @@ class WebInspectorUI final
     : public RefCounted<WebInspectorUI>
     , private IPC::Connection::Client
     , public WebCore::InspectorFrontendClient {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebInspectorUI);
+    WTF_MAKE_TZONE_ALLOCATED(WebInspectorUI);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebInspectorUI);
 public:
     static Ref<WebInspectorUI> create(WebPage&);

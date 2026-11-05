@@ -26,7 +26,11 @@
 #include "config.h"
 #include "WebUndoStep.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebUndoStep);
 
 Ref<WebUndoStep> WebUndoStep::create(Ref<WebCore::UndoStep>&& step)
 {

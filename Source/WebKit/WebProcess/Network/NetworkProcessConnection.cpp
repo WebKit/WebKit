@@ -78,12 +78,15 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/WorkerGlobalScope.h>
 #include <pal/SessionID.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
 #include "WebPaymentCoordinatorMessages.h"
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkProcessConnection);
 using namespace WebCore;
 
 NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier&& connectionIdentifier, HTTPCookieAcceptPolicy cookieAcceptPolicy)

@@ -35,6 +35,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefCounter.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 struct Cookie;
@@ -47,6 +48,7 @@ enum PendingCookieUpdateCounterType { };
 using PendingCookieUpdateCounter = RefCounter<PendingCookieUpdateCounterType>;
 
 class WebCookieCache final : public RefCounted<WebCookieCache>, public WebCore::CookieChangeListener {
+    WTF_MAKE_TZONE_ALLOCATED(WebCookieCache);
 public:
     static Ref<WebCookieCache> create()
     {

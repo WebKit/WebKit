@@ -33,9 +33,12 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/VM.h>
 #include <JavaScriptCore/WasmDebugServer.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WasmDebuggerDispatcher);
 
 WasmDebuggerDispatcher::WasmDebuggerDispatcher(WebProcess& process)
     : m_process(process)

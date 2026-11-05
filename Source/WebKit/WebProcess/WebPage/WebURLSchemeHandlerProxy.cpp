@@ -38,8 +38,11 @@
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebURLSchemeHandlerProxy);
 using namespace WebCore;
 
 WebURLSchemeHandlerProxy::WebURLSchemeHandlerProxy(WebPage& page, WebURLSchemeHandlerIdentifier identifier)

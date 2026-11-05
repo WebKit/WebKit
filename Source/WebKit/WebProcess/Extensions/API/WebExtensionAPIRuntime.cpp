@@ -45,8 +45,11 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/LocalFrameInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionAPIRuntimeBase);
 
 static inline JSValueRef makeErrorValue(JSGlobalContextRef contextRef, const String& errorMessage)
 {

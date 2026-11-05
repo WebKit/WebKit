@@ -33,6 +33,7 @@
 #include "SharedVideoFrame.h"
 #include <WebCore/SampleBufferDisplayLayer.h>
 #include <wtf/Identified.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -44,6 +45,7 @@ namespace WebKit {
 class SampleBufferDisplayLayerManager;
 
 class SampleBufferDisplayLayer final : public WebCore::SampleBufferDisplayLayer, public IPC::MessageReceiver, public GPUProcessConnection::Client, public Identified<SampleBufferDisplayLayerIdentifier> {
+    WTF_MAKE_TZONE_ALLOCATED(SampleBufferDisplayLayer);
 public:
     static Ref<SampleBufferDisplayLayer> create(SampleBufferDisplayLayerManager&, WebCore::SampleBufferDisplayLayerClient&);
     ~SampleBufferDisplayLayer();

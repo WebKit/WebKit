@@ -53,6 +53,8 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebKit {
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(WebPrintOperationGtk::PrintPagesData);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPrintOperationGtk);
 
 WebPrintOperationGtk::PrintPagesData::PrintPagesData(WebPrintOperationGtk* printOperation)

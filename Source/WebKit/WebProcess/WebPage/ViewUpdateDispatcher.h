@@ -34,6 +34,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class WorkQueue;
@@ -44,6 +45,7 @@ namespace WebKit {
 class WebProcess;
 
 class ViewUpdateDispatcher final: private IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(ViewUpdateDispatcher);
 public:
     ViewUpdateDispatcher(WebProcess&);
     ~ViewUpdateDispatcher();

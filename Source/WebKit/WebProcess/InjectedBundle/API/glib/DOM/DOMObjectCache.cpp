@@ -37,7 +37,8 @@
 namespace WebKit {
 
 struct DOMObjectCacheData {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DOMObjectCacheData);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DOMObjectCacheData);
+public:
     DOMObjectCacheData(GObject* wrapper)
         : object(wrapper)
         , cacheReferences(1)

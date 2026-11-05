@@ -30,12 +30,14 @@
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/WebLockRegistry.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebProcess;
 
 class RemoteWebLockRegistry final : public WebCore::WebLockRegistry, public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteWebLockRegistry);
 public:
     static Ref<RemoteWebLockRegistry> create(WebProcess& process) { return adoptRef(*new RemoteWebLockRegistry(process)); }
     ~RemoteWebLockRegistry();

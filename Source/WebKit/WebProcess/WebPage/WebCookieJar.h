@@ -32,6 +32,7 @@
 #include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,6 +47,7 @@ namespace WebKit {
 class WebFrame;
 
 class WebCookieJar final : public WebCore::CookieJar {
+    WTF_MAKE_TZONE_ALLOCATED(WebCookieJar);
 public:
     static Ref<WebCookieJar> create() { return adoptRef(*new WebCookieJar); }
     

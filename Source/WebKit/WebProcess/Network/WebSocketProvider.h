@@ -28,6 +28,7 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/SocketProvider.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -36,6 +37,7 @@ class Connection;
 namespace WebKit {
 
 class WebSocketProvider final : public WebCore::SocketProvider {
+    WTF_MAKE_TZONE_ALLOCATED(WebSocketProvider);
 public:
     static Ref<WebSocketProvider> create(WebPageProxyIdentifier webPageProxyID) { return adoptRef(*new WebSocketProvider(webPageProxyID)); }
     ~WebSocketProvider();

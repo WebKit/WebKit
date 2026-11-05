@@ -61,6 +61,7 @@
 #include <wtf/MachSendRight.h>
 #include <wtf/MainThread.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
@@ -89,6 +90,8 @@ extern WTFLogChannel LogMedia;
 }
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerPrivateRemote);
 using namespace WebCore;
 
 #ifdef ALWAYS_LOG_UNIMPLEMENTED_METHODS

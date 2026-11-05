@@ -42,6 +42,7 @@
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -66,6 +67,7 @@ class AudioVideoRendererRemote final
 #endif
     , public GPUProcessConnection::Client
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioVideoRendererRemote> {
+    WTF_MAKE_TZONE_ALLOCATED(AudioVideoRendererRemote);
 public:
     static Ref<AudioVideoRendererRemote> create(LoggerHelper*, WebCore::HTMLMediaElementIdentifier, WebCore::MediaPlayerIdentifier, GPUProcessConnection&);
     ~AudioVideoRendererRemote();
@@ -73,6 +75,7 @@ public:
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
     class MessageReceiver final : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
+        WTF_MAKE_TZONE_ALLOCATED(MessageReceiver);
     public:
         static Ref<MessageReceiver> create(AudioVideoRendererRemote& parent)
         {

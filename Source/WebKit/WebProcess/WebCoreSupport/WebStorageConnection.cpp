@@ -34,8 +34,11 @@
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/StorageEstimate.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebStorageConnection);
 
 Ref<WebStorageConnection> WebStorageConnection::create()
 {

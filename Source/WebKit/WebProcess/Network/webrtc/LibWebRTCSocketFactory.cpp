@@ -36,8 +36,11 @@
 #include "WebProcess.h"
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCSocketFactory);
 using namespace WebCore;
 
 static inline webrtc::SocketAddress prepareSocketAddress(const webrtc::SocketAddress& address, bool disableNonLocalhostConnections)

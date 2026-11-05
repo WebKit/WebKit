@@ -39,6 +39,7 @@
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/Site.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 
 namespace IPC {
@@ -68,6 +69,7 @@ class WebUserContentController;
 struct RemoteWorkerInitializationData;
 
 class WebSWContextManagerConnection final : public WebCore::SWContextManager::Connection, public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_TZONE_ALLOCATED(WebSWContextManagerConnection);
 public:
     static Ref<WebSWContextManagerConnection> create(Ref<IPC::Connection>&& connection, WebCore::Site&& site, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, const WebPreferencesStore& store, RemoteWorkerInitializationData&& initializationData, WebCore::CrossOriginEmbedderPolicyValue crossOriginEmbedderPolicy) { return adoptRef(*new WebSWContextManagerConnection(WTF::move(connection), WTF::move(site), serviceWorkerPageIdentifier, pageGroupID, webPageProxyID, pageID, store, WTF::move(initializationData), crossOriginEmbedderPolicy)); }
     ~WebSWContextManagerConnection();

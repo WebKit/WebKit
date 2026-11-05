@@ -37,6 +37,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Identified.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(GPU_PROCESS)
@@ -85,6 +86,7 @@ public:
 // so that a Vector of RemoteImageBufferSets can be used with a single
 // IPC call.
 class RemoteImageBufferSetProxy : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::MainRunLoop>, public Identified<ImageBufferSetIdentifier> {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteImageBufferSetProxy);
 public:
     static Ref<RemoteImageBufferSetProxy> create(RemoteRenderingBackendProxy&, ImageBufferSetClient&);
     ~RemoteImageBufferSetProxy();

@@ -33,6 +33,7 @@
 #include <WebCore/SWClientConnection.h>
 #include <WebCore/SharedMemory.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace IPC {
@@ -51,6 +52,7 @@ class WebSWOriginTable;
 class WebServiceWorkerProvider;
 
 class WebSWClientConnection final : public WebCore::SWClientConnection, private IPC::MessageSender, public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(WebSWClientConnection);
 public:
     static Ref<WebSWClientConnection> create() { return adoptRef(*new WebSWClientConnection); }
     ~WebSWClientConnection();

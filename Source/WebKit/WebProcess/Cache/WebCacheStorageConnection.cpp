@@ -34,8 +34,11 @@
 #include "WebProcess.h"
 #include <wtf/MainThread.h>
 #include <wtf/NativePromise.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCacheStorageConnection);
 
 WebCacheStorageConnection::WebCacheStorageConnection() = default;
 

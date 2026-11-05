@@ -34,6 +34,7 @@
 #include <WebCore/PlatformXR.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
@@ -45,7 +46,7 @@ namespace WebKit {
 class WebPage;
 
 class PlatformXRSystemProxy : public IPC::MessageReceiver {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PlatformXRSystemProxy);
+    WTF_MAKE_TZONE_ALLOCATED(PlatformXRSystemProxy);
 public:
     PlatformXRSystemProxy(WebPage&);
     virtual ~PlatformXRSystemProxy();

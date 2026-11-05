@@ -31,6 +31,7 @@
 #include "RemoteCDMFactory.h"
 #include "RemoteCDMInstanceSessionIdentifier.h"
 #include <WebCore/CDMInstanceSession.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ class SharedBuffer;
 namespace WebKit {
 
 class RemoteCDMInstanceSession final : public IPC::MessageReceiver, public WebCore::CDMInstanceSession {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteCDMInstanceSession);
 public:
     static Ref<RemoteCDMInstanceSession> create(WeakPtr<RemoteCDMFactory>&&, RemoteCDMInstanceSessionIdentifier&&);
     virtual ~RemoteCDMInstanceSession();

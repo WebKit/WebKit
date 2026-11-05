@@ -30,12 +30,14 @@
 #if USE(COORDINATED_GRAPHICS)
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class ThreadedCompositor;
 
 class ThreadedDisplayRefreshMonitor : public WebCore::DisplayRefreshMonitor, public CanMakeWeakPtr<ThreadedDisplayRefreshMonitor> {
+    WTF_MAKE_TZONE_ALLOCATED(ThreadedDisplayRefreshMonitor);
 public:
     class Client {
     public:

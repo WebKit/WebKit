@@ -49,6 +49,7 @@
 #include <WebCore/ShareableBitmap.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
 #if PLATFORM(COCOA)
@@ -65,6 +66,10 @@ extern WTFLogChannel LogMedia;
 }
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioVideoRendererRemote);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioVideoRendererRemote::MessageReceiver);
 
 using namespace WebCore;
 

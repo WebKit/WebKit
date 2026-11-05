@@ -34,6 +34,7 @@
 #include "WebProcessProxyMessages.h"
 #include <WebCore/AnimationFrameRate.h>
 #include <WebCore/DisplayRefreshMonitor.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if PLATFORM(MAC)
@@ -41,6 +42,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebDisplayRefreshMonitor);
 using namespace WebCore;
 
 // Avoid repeated start/stop IPC when rescheduled inside the callback.

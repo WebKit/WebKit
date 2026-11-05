@@ -41,9 +41,12 @@
 #include <WebCore/Settings.h>
 #include <WebCore/StorageAccessQuirks.h>
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebResourceLoadObserver);
 
 using namespace WebCore;
 

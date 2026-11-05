@@ -29,10 +29,12 @@
 
 #include "RemoteRealtimeMediaSource.h"
 #include <WebCore/CAAudioStreamDescription.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class RemoteRealtimeAudioSource final : public RemoteRealtimeMediaSource {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteRealtimeAudioSource);
 public:
     static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, WebCore::MediaDeviceHashSalts&&, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, std::optional<WebCore::PageIdentifier>);
     ~RemoteRealtimeAudioSource();

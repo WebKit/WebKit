@@ -40,8 +40,11 @@
 #include "WebPageMessages.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelProcessConnection);
 using namespace WebCore;
 
 RefPtr<ModelProcessConnection> ModelProcessConnection::create(IPC::Connection& parentConnection)

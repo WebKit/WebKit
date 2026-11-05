@@ -28,8 +28,11 @@
 
 #include <WebCore/Element.h>
 #include <WebCore/LocalFrame.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebAutomationDOMWindowObserver);
 
 WebAutomationDOMWindowObserver::WebAutomationDOMWindowObserver(WebCore::LocalDOMWindow& window, WTF::Function<void(WebAutomationDOMWindowObserver&)>&& callback)
     : m_window(window)

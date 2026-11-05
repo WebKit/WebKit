@@ -37,6 +37,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -57,7 +58,7 @@ class PageAgentProxy;
 class WebPage;
 
 class WebInspectorBackend : public ThreadSafeRefCounted<WebInspectorBackend>, private IPC::Connection::Client {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebInspectorBackend);
+    WTF_MAKE_TZONE_ALLOCATED(WebInspectorBackend);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebInspectorBackend);
 public:
     static Ref<WebInspectorBackend> create(WebPage&);

@@ -29,8 +29,11 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebBadgeClient);
 using namespace WebCore;
 
 void WebBadgeClient::setAppBadge(WebCore::Frame* frame, const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge)

@@ -32,12 +32,14 @@
 #include <WebCore/IDBObjectStoreIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <optional>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebIDBResult;
 
 class WebIDBConnectionToServer final : private WebCore::IDBClient::IDBConnectionToServerDelegate, private IPC::MessageSender, public RefCounted<WebIDBConnectionToServer> {
+    WTF_MAKE_TZONE_ALLOCATED(WebIDBConnectionToServer);
 public:
     static Ref<WebIDBConnectionToServer> create(PAL::SessionID);
     virtual ~WebIDBConnectionToServer();

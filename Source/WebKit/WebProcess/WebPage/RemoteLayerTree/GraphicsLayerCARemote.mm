@@ -140,6 +140,7 @@ Color GraphicsLayerCARemote::pageTiledBackingBorderColor() const
 }
 
 class GraphicsLayerCARemoteAsyncContentsDisplayDelegate : public GraphicsLayerAsyncContentsDisplayDelegate {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GraphicsLayerCARemoteAsyncContentsDisplayDelegate);
 public:
     GraphicsLayerCARemoteAsyncContentsDisplayDelegate(IPC::Connection& connection, DrawingAreaIdentifier identifier)
         : m_connection(connection)
@@ -270,6 +271,7 @@ bool GraphicsLayerCARemote::shouldDirectlyCompositeImageBuffer(ImageBuffer* imag
 }
 
 class ImageBufferFlusherFence final : public WebCore::PlatformCALayerDelegatedContentsFence {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ImageBufferFlusherFence);
 public:
     static Ref<ImageBufferFlusherFence> create(std::unique_ptr<ThreadSafeImageBufferFlusher>&& flusher)
     {

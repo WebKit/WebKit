@@ -31,8 +31,11 @@
 #include "WebLockRegistryProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/WebLockManagerSnapshot.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteWebLockRegistry);
 
 struct LockInfo {
     Function<void()> lockStolenHandler;

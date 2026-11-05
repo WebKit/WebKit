@@ -30,8 +30,11 @@
 
 #include "CompositingRunLoop.h"
 #include "ThreadedCompositorPlayStation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ThreadedDisplayRefreshMonitor);
 
 ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID displayID, Client& client, WebCore::DisplayUpdate displayUpdate)
     : WebCore::DisplayRefreshMonitor(displayID)

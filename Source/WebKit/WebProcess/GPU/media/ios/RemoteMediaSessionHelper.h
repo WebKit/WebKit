@@ -30,6 +30,7 @@
 #include "GPUProcessConnection.h"
 #include "MessageReceiver.h"
 #include <WebCore/MediaSessionHelperIOS.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -43,6 +44,7 @@ class RemoteMediaSessionHelper final
 #endif
     , public IPC::MessageReceiver
     , public GPUProcessConnection::Client {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionHelper);
 public:
     RemoteMediaSessionHelper();
     virtual ~RemoteMediaSessionHelper() = default;

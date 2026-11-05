@@ -36,6 +36,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
@@ -50,7 +51,7 @@ class LibWebRTCSocket;
 struct RTCSocketCreationFlags;
 
 class LibWebRTCSocketFactory : public CanMakeThreadSafeCheckedPtr<LibWebRTCSocketFactory> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LibWebRTCSocketFactory);
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCSocketFactory);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LibWebRTCSocketFactory);
 public:
     LibWebRTCSocketFactory() = default;

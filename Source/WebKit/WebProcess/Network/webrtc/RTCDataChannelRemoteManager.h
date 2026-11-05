@@ -32,6 +32,7 @@
 #include <WebCore/RTCDataChannelRemoteHandlerConnection.h>
 #include <WebCore/RTCDataChannelRemoteSource.h>
 #include <WebCore/RTCDataChannelRemoteSourceConnection.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
@@ -69,6 +70,7 @@ private:
     WebCore::RTCDataChannelRemoteSource* sourceFromIdentifier(WebCore::RTCDataChannelIdentifier);
 
     class RemoteHandlerConnection : public WebCore::RTCDataChannelRemoteHandlerConnection {
+        WTF_MAKE_TZONE_ALLOCATED(RemoteHandlerConnection);
     public:
         static Ref<RemoteHandlerConnection> create(Ref<WorkQueue>&&);
 
@@ -84,6 +86,7 @@ private:
     };
 
     class RemoteSourceConnection : public WebCore::RTCDataChannelRemoteSourceConnection {
+        WTF_MAKE_TZONE_ALLOCATED(RemoteSourceConnection);
     public:
         static Ref<RemoteSourceConnection> create();
 

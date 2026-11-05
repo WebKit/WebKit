@@ -29,6 +29,7 @@
 #include "MessageReceiver.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -40,6 +41,7 @@ namespace WebKit {
 class WebProcess;
 
 class WasmDebuggerDispatcher final : private IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(WasmDebuggerDispatcher);
 public:
     explicit WasmDebuggerDispatcher(WebProcess&);
     ~WasmDebuggerDispatcher();

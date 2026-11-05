@@ -36,6 +36,8 @@
 #if ENABLE(GPU_PROCESS)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageBufferSetProxy);
 using namespace WebCore;
 
 class RemoteImageBufferSetProxyFlushFence : public ThreadSafeRefCounted<RemoteImageBufferSetProxyFlushFence> {

@@ -79,6 +79,7 @@
 #include <WebCore/UserContentURLPattern.h>
 #include <wtf/Borrow.h>
 #include <wtf/ProcessID.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(QUICK_LOOK)
 #include <WebCore/LegacyPreviewLoaderClient.h>
@@ -89,6 +90,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSWContextManagerConnection);
 using namespace PAL;
 using namespace WebCore;
 

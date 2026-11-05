@@ -21,12 +21,15 @@
 
 #include "WebKitDOMNodePrivate.h"
 #include <WebCore/NodeFilter.h>
+#include <wtf/TZoneMallocInlines.h>
 
 using namespace WebCore;
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GObjectNodeFilterCondition);
 
 GObjectNodeFilterCondition::~GObjectNodeFilterCondition()
 {

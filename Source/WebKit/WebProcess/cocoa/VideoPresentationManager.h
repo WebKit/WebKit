@@ -139,6 +139,7 @@ class VideoPresentationManager
     : public RefCounted<VideoPresentationManager>
     , public CanMakeWeakPtr<VideoPresentationManager>
     , private IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(VideoPresentationManager);
 public:
     USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<VideoPresentationManager>);
 

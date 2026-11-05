@@ -43,6 +43,7 @@
 #include <wtf/AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -72,7 +73,7 @@ class RemoteVideoFrameObjectHeapProxy;
 #endif
 
 class GPUProcessConnection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUProcessConnection>, public IPC::Connection::Client {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GPUProcessConnection);
+    WTF_MAKE_TZONE_ALLOCATED(GPUProcessConnection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GPUProcessConnection);
 public:
     static Ref<GPUProcessConnection> create(Ref<IPC::Connection>&&);

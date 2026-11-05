@@ -31,6 +31,7 @@
 #include "RemoteRealtimeMediaSourceProxy.h"
 #include <WebCore/RealtimeMediaSource.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -42,6 +43,7 @@ class RemoteRealtimeMediaSource : public WebCore::RealtimeMediaSource
 #endif
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteRealtimeMediaSource, WTF::DestructionThread::MainRunLoop>
 {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteRealtimeMediaSource);
 public:
     ~RemoteRealtimeMediaSource();
 

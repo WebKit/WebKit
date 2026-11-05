@@ -26,9 +26,12 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSearchPopupMenu);
 using namespace WebCore;
 
 Ref<WebSearchPopupMenu> WebSearchPopupMenu::create(WebPage* page, PopupMenuClient* client)

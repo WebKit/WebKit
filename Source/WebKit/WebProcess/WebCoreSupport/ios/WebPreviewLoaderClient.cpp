@@ -35,8 +35,11 @@
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPreviewLoaderClient);
 
 using namespace WebCore;
 

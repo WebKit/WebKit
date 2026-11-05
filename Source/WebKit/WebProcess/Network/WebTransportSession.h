@@ -32,6 +32,7 @@
 #include <WebCore/WebTransportSession.h>
 #include <wtf/NativePromise.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace IPC {
@@ -63,6 +64,7 @@ struct WebTransportSessionIdentifierType { };
 using WebTransportSessionIdentifier = AtomicObjectIdentifier<WebTransportSessionIdentifierType>;
 
 class WebTransportSession : public WebCore::WebTransportSession, public IPC::MessageReceiver, public IPC::MessageSender, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebTransportSession> {
+    WTF_MAKE_TZONE_ALLOCATED(WebTransportSession);
 public:
     static Ref<WebTransportSession> create(Ref<IPC::Connection>&&, ThreadSafeWeakPtr<WebCore::WebTransportSessionClient>&&, const WebPageProxyIdentifier&);
     ~WebTransportSession();

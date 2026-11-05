@@ -30,12 +30,13 @@
 #include <WebCore/CoordinatedPlatformLayerBufferDMABuf.h>
 #include <WebCore/DMABufBuffer.h>
 #include <WebCore/GraphicsLayerContentsDisplayDelegateCoordinated.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 class RemoteGraphicsContextGLProxyGBM final : public RemoteGraphicsContextGLProxy {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RemoteGraphicsContextGLProxyGBM);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteGraphicsContextGLProxyGBM);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGraphicsContextGLProxyGBM);
 public:
     virtual ~RemoteGraphicsContextGLProxyGBM() = default;

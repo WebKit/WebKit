@@ -41,6 +41,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WorkQueue.h>
 
@@ -87,7 +88,7 @@ class EventDispatcher final :
     public MomentumEventDispatcher::Client,
 #endif
     public IPC::MessageReceiver {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EventDispatcher);
+    WTF_MAKE_TZONE_ALLOCATED(EventDispatcher);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventDispatcher);
 #endif

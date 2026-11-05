@@ -36,12 +36,14 @@
 #include "WebProcess.h"
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #include <WebCore/TextureMapperPlatformLayer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 namespace {
 
 class PlatformLayerDisplayDelegate final : public WebCore::GraphicsLayerContentsDisplayDelegate {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PlatformLayerDisplayDelegate);
 public:
     static Ref<PlatformLayerDisplayDelegate> create(PlatformLayerContainer&& platformLayer)
     {
@@ -63,7 +65,7 @@ private:
 };
 
 class RemoteGraphicsContextGLProxyWC final : public RemoteGraphicsContextGLProxy {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RemoteGraphicsContextGLProxyWC);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteGraphicsContextGLProxyWC);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGraphicsContextGLProxyWC);
 public:
     // RemoteGraphicsContextGLProxy overrides.

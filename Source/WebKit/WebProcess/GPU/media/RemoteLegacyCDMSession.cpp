@@ -35,8 +35,11 @@
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/TypedArrayType.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLegacyCDMSession);
 
 using namespace WebCore;
 

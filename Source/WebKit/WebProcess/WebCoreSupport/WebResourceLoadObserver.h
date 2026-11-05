@@ -30,12 +30,14 @@
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class WebResourceLoadObserver final : public WebCore::ResourceLoadObserver {
+    WTF_MAKE_TZONE_ALLOCATED(WebResourceLoadObserver);
 public:
     using TopFrameDomain = WebCore::RegistrableDomain;
     using SubFrameDomain = WebCore::RegistrableDomain;

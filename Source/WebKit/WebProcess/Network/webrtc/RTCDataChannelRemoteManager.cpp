@@ -39,8 +39,13 @@
 #include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDataChannelRemoteManager::RemoteHandlerConnection);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDataChannelRemoteManager::RemoteSourceConnection);
 
 RTCDataChannelRemoteManager& RTCDataChannelRemoteManager::singleton()
 {

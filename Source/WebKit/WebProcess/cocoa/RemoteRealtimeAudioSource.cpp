@@ -32,8 +32,11 @@
 #include "UserMediaCaptureManager.h"
 #include "UserMediaCaptureManagerProxyMessages.h"
 #include "WebProcess.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRealtimeAudioSource);
 using namespace WebCore;
 
 Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& device, const MediaConstraints* constraints, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, std::optional<PageIdentifier> pageIdentifier)

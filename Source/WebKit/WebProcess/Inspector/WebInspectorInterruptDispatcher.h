@@ -28,6 +28,7 @@
 #include "MessageReceiver.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class WorkQueue;
@@ -38,6 +39,7 @@ namespace WebKit {
 class WebProcess;
 
 class WebInspectorInterruptDispatcher final : private IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(WebInspectorInterruptDispatcher);
 public:
     explicit WebInspectorInterruptDispatcher(WebProcess&);
     ~WebInspectorInterruptDispatcher();

@@ -38,6 +38,7 @@
 namespace WebKit {
 
 class RemoteVideoDecoderCallbacks : public ThreadSafeRefCounted<RemoteVideoDecoderCallbacks> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteVideoDecoderCallbacks);
 public:
     static Ref<RemoteVideoDecoderCallbacks> create(WebCore::VideoDecoder::OutputCallback&& outputCallback) { return adoptRef(*new RemoteVideoDecoderCallbacks(WTF::move(outputCallback))); }
 
@@ -78,6 +79,7 @@ private:
 };
 
 class RemoteVideoEncoderCallbacks : public ThreadSafeRefCounted<RemoteVideoEncoderCallbacks> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteVideoEncoderCallbacks);
 public:
     static Ref<RemoteVideoEncoderCallbacks> create(WebCore::VideoEncoder::DescriptionCallback&& descriptionCallback, WebCore::VideoEncoder::OutputCallback&& outputCallback) { return adoptRef(*new RemoteVideoEncoderCallbacks(WTF::move(descriptionCallback), WTF::move(outputCallback))); }
 
