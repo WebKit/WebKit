@@ -98,7 +98,11 @@ static void printUsageStatement(const char* programName)
     SAFE_PRINTF("  -h,          --help             Prints this help message\n");
     SAFE_PRINTF("  -p <port>,   --port=<port>      Port number the driver will use\n");
     SAFE_PRINTF("               --host=<host>      Host IP the driver will use, or either 'local' or 'all' (default: 'local')\n");
+#if !PLATFORM(COCOA)
+    SAFE_PRINTF("               --allow-hosts=<host>[,<host>...]       Additional hostnames, without port, to accept in the Host header (localhost and IP addresses are always accepted)\n");
+    SAFE_PRINTF("               --allow-origins=<origin>[,<origin>...] Origins, as <scheme>://<host>[:<port>], to accept in the Origin header (requests with any other Origin are rejected)\n");
     SAFE_PRINTF("  -t <ip:port> --target=<ip:port> Target IP and port\n");
+#endif
 #if ENABLE(WEBDRIVER_BIDI)
     SAFE_PRINTF("               --bidi-port=<port>        Port number to use for BiDi's WebSocket connections\n");
 #endif
@@ -112,6 +116,11 @@ int WebDriverService::run(int argc, char** argv)
 {
     String portString;
     std::optional<String> host;
+#if !PLATFORM(COCOA)
+    // minidriver has its own loopback-only checks of the Host and Origin headers.
+    Vector<String> allowedHosts;
+    Vector<URL> allowedOrigins;
+#endif
 #if ENABLE(WEBDRIVER_BIDI)
     String bidiPortString;
 #endif
@@ -145,6 +154,29 @@ int WebDriverService::run(int argc, char** argv)
             host = arg.subspan(hostArgument.size());
             continue;
         }
+
+#if !PLATFORM(COCOA)
+        static constexpr auto allowHostsArgument = "--allow-hosts="_span;
+        if (spanHasPrefix(arg, allowHostsArgument)) {
+            allowedHosts.appendVector(String { arg.subspan(allowHostsArgument.size()) }.split(','));
+            continue;
+        }
+
+        static constexpr auto allowOriginsArgument = "--allow-origins="_span;
+        if (spanHasPrefix(arg, allowOriginsArgument)) {
+            for (auto& originString : String { arg.subspan(allowOriginsArgument.size()) }.split(',')) {
+                URL origin { originString };
+                bool isOrigin = origin.isValid() && origin.protocolIsInHTTPFamily() && origin.path() == "/"_s
+                    && !origin.hasQuery() && !origin.hasFragmentIdentifier() && !origin.hasCredentials();
+                if (!isOrigin) {
+                    SAFE_FPRINTF(stderr, "Invalid origin %s in --allow-origins, expected <scheme>://<host>[:<port>]\n", originString.utf8());
+                    return EXIT_FAILURE;
+                }
+                allowedOrigins.append(WTF::move(origin));
+            }
+            continue;
+        }
+#endif
 
 #if ENABLE(WEBDRIVER_BIDI)
         static constexpr auto bidiPortArgument = "--bidi-port="_span;
@@ -228,6 +260,11 @@ int WebDriverService::run(int argc, char** argv)
         RELEASE_LOG_INFO(WebDriverClassic, "%s starting: http=%s:%d", programNameStr.data(), hostStr.data(), *port);
     else
         RELEASE_LOG_INFO(WebDriverClassic, "%s starting: http=%s:%d target=%s:%d", programNameStr.data(), hostStr.data(), *port, m_targetAddress.utf8().data(), m_targetPort);
+#endif
+
+#if !PLATFORM(COCOA)
+    setAllowedHosts(WTF::move(allowedHosts));
+    setAllowedOrigins(WTF::move(allowedOrigins));
 #endif
 
     if (!m_server.listen(host, *port)) {
