@@ -1305,6 +1305,68 @@ LayoutUnit RenderBoxModelObject::paddingBoxLogicalHeight() const
     return logicalHeight;
 }
 
+// An inline box is only ever the containing block of out-of-flow boxes, so its geometry here is that of the containing block
+// rectangle it forms (see paddingBoxLogicalWidth() and paddingBoxLogicalHeight()).
+LayoutUnit RenderBoxModelObject::paddingBoxWidth() const
+{
+    ASSERT(isInlineBox());
+    return isHorizontalWritingMode() ? paddingBoxLogicalWidth() : paddingBoxLogicalHeight();
+}
+
+LayoutUnit RenderBoxModelObject::paddingBoxHeight() const
+{
+    ASSERT(isInlineBox());
+    return isHorizontalWritingMode() ? paddingBoxLogicalHeight() : paddingBoxLogicalWidth();
+}
+
+LayoutUnit RenderBoxModelObject::contentBoxLogicalWidth() const
+{
+    ASSERT(isInlineBox());
+    return std::max(0_lu, paddingBoxLogicalWidth() - paddingStart() - paddingEnd());
+}
+
+LayoutUnit RenderBoxModelObject::contentBoxLogicalHeight() const
+{
+    ASSERT(isInlineBox());
+    return std::max(0_lu, paddingBoxLogicalHeight() - paddingBefore() - paddingAfter());
+}
+
+LayoutUnit RenderBoxModelObject::contentBoxWidth() const
+{
+    return isHorizontalWritingMode() ? contentBoxLogicalWidth() : contentBoxLogicalHeight();
+}
+
+LayoutUnit RenderBoxModelObject::contentBoxHeight() const
+{
+    return isHorizontalWritingMode() ? contentBoxLogicalHeight() : contentBoxLogicalWidth();
+}
+
+LayoutSize RenderBoxModelObject::contentBoxSize() const
+{
+    return { contentBoxWidth(), contentBoxHeight() };
+}
+
+LayoutUnit RenderBoxModelObject::availableLogicalHeight(AvailableLogicalHeightType heightType) const
+{
+    ASSERT(isInlineBox());
+    if (heightType == AvailableLogicalHeightType::ExcludeMarginBorderPadding)
+        return contentBoxLogicalHeight();
+    return paddingBoxLogicalHeight() + borderBefore() + borderAfter();
+}
+
+std::optional<LayoutUnit> RenderBoxModelObject::availableLogicalHeightForPercentageComputation() const
+{
+    ASSERT(isInlineBox());
+    // Percentages of out-of-flow boxes resolve against the padding box of their containing block.
+    return paddingBoxLogicalHeight();
+}
+
+bool RenderBoxModelObject::hasDefiniteLogicalHeightForPercentageResolutionFromStyle() const
+{
+    ASSERT(isInlineBox());
+    return true;
+}
+
 void RenderBoxModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     for (auto rect : localBorderBoxRects())

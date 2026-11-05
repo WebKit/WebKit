@@ -214,9 +214,9 @@ public:
     virtual bool cachedEnclosingFragmentedFlowNeedsUpdate() const;
     void resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* = nullptr) final;
 
-    std::optional<LayoutUnit> availableLogicalHeightForPercentageComputation() const;
+    std::optional<LayoutUnit> availableLogicalHeightForPercentageComputation() const final;
     bool hasDefiniteLogicalHeight() const;
-    bool hasDefiniteLogicalHeightForPercentageResolutionFromStyle() const;
+    bool hasDefiniteLogicalHeightForPercentageResolutionFromStyle() const final;
 
     static String updateSecurityDiscCharacters(const Style::ComputedStyle&, String&&);
 

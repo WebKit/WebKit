@@ -46,8 +46,6 @@ class PositionedLayoutConstraints;
 struct PaintInfo;
 struct RenderBoxOverridingSizes;
 
-enum class AvailableLogicalHeightType : bool { ExcludeMarginBorderPadding, IncludeMarginBorderPadding };
-
 
 enum class StretchingMode { Normal, Explicit };
 
@@ -104,17 +102,17 @@ public:
     inline LayoutRect contentBoxRect() const;
     inline LayoutRect paddingBoxRectIncludingScrollbar() const;
 
-    inline LayoutSize contentBoxSize() const;
-    inline LayoutUnit contentBoxWidth() const;
-    inline LayoutUnit contentBoxHeight() const;
+    inline LayoutSize contentBoxSize() const final;
+    inline LayoutUnit contentBoxWidth() const final;
+    inline LayoutUnit contentBoxHeight() const final;
     inline LayoutSize contentBoxLogicalSize() const;
-    inline LayoutUnit contentBoxLogicalWidth() const;
+    inline LayoutUnit contentBoxLogicalWidth() const final;
     inline LayoutUnit contentBoxLogicalWidth(LayoutUnit overridingBorderBoxWidth) const;
-    inline LayoutUnit contentBoxLogicalHeight() const;
+    inline LayoutUnit contentBoxLogicalHeight() const final;
     inline LayoutUnit contentBoxLogicalHeight(LayoutUnit overridingBorderBoxHeight) const;
 
-    inline LayoutUnit paddingBoxWidth() const;
-    inline LayoutUnit paddingBoxHeight() const;
+    inline LayoutUnit paddingBoxWidth() const final;
+    inline LayoutUnit paddingBoxHeight() const final;
     LayoutUnit paddingBoxLogicalWidth() const final;
     LayoutUnit paddingBoxLogicalHeight() const final;
     inline LayoutUnit paddingBoxLogicalBottom() const;
@@ -393,7 +391,7 @@ public:
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Style::UnevaluatedCalcSize& logicalHeight, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
     bool hasAutoHeightOrContainingBlockWithAutoHeight(UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
 
-    virtual LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const;
+    LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const override;
     LayoutUnit availableLogicalHeightUsing(const Style::PreferredSize&, AvailableLogicalHeightType) const;
 
     LayoutUnit computeSizingKeywordLogicalWidthUsing(CSS::Keyword::Stretch, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;

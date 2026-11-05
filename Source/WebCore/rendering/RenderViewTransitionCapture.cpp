@@ -30,6 +30,7 @@
 #include "ImageQualityController.h"
 #include "NaturalDimensions.h"
 #include "PaintInfo.h"
+#include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"

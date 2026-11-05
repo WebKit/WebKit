@@ -23,6 +23,7 @@
 #include "RenderSVGBlock.h"
 
 #include "LegacyRenderSVGResource.h"
+#include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"

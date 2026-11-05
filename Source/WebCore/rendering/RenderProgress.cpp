@@ -22,6 +22,7 @@
 #include "RenderProgress.h"
 
 #include "HTMLProgressElement.h"
+#include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderTheme.h"

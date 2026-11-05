@@ -33,6 +33,7 @@
 #include "NaturalDimensions.h"
 #include "NodeInlines.h"
 #include "PaintInfo.h"
+#include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
