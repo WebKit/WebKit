@@ -103,6 +103,7 @@ private:
     void notifyCursorRectAndSurroundingToContext();
     void notifyCursorRectToContext();
     void notifySurroundingToContext();
+    void insertTextInSurrounding(const String&);
 
     WebCore::IntRect platformTransformCursorRectToViewCoordinates(const WebCore::IntRect&);
     bool platformEventKeyIsKeyPress(PlatformEventKey*) const;

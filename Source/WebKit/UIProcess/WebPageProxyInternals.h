@@ -269,6 +269,8 @@ public:
     // deletion of the surrounding text has to wait for.
     uint64_t queuedKeyEventCount { 0 };
     uint64_t completedKeyEventCount { 0 };
+    // Key events of the input method replied to by the web process, to compare with EditorState::handledInputMethodKeyEventCount.
+    uint64_t handledInputMethodKeyEventCount { 0 };
     struct PendingDeleteSurrounding {
         int64_t offset { 0 };
         unsigned characterCount { 0 };

@@ -86,6 +86,10 @@ struct EditorState {
     bool hasComposition { false };
     bool triggeredByAccessibilitySelectionChange { false };
     bool isInPlugin { false };
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    // The key events of the input method that the web process had handled when it sent this state.
+    uint64_t handledInputMethodKeyEventCount { 0 };
+#endif
 #if PLATFORM(MAC)
     bool canEnableAutomaticSpellingCorrection { true };
     bool inputMethodUsesCorrectKeyEventOrder { false };

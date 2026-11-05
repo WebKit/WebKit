@@ -3428,6 +3428,7 @@ private:
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<InputMethodState> m_inputMethodState;
     WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_focusedElementBeforePageBlur;
+    uint64_t m_handledInputMethodKeyEventCount { 0 };
 #endif
 
 #if USE(OS_STATE)

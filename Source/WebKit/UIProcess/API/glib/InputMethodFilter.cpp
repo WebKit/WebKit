@@ -27,6 +27,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/glib/GMallocString.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(GTK)
 #include "Display.h"
@@ -414,6 +415,10 @@ void InputMethodFilter::committed(const char* compositionString)
     bool preeditWasEmpty = m_preedit.text.isEmpty();
     m_preedit = { };
 
+    // Input methods ask for the surrounding text right after committing, before the web process has inserted the
+    // text. Insert it in the surrounding text right away, like deletions are removed from it.
+    insertTextInSurrounding(m_compositionResult);
+
     auto* webView = webkitInputMethodContextGetWebView(m_context.get());
     ASSERT(webView);
     if (m_filteringContext.isActive) {
@@ -485,6 +490,34 @@ void InputMethodFilter::cancelComposition()
     m_preedit = { };
     m_compositionResult = { };
     webkit_input_method_context_reset(m_context.get());
+}
+
+void InputMethodFilter::insertTextInSurrounding(const String& text)
+{
+    if (m_surrounding.text.isNull())
+        return;
+
+    unsigned length = m_surrounding.text.length();
+    unsigned start = std::min<uint64_t>(std::min(m_surrounding.cursorPosition, m_surrounding.selectionPosition), length);
+    unsigned end = std::min<uint64_t>(std::max(m_surrounding.cursorPosition, m_surrounding.selectionPosition), length);
+    if (text.isEmpty() && start == end)
+        return;
+
+    // The web process reports the text of a password field masked, one bullet per UTF-16 code unit (see
+    // RenderText::secureText()). Mask the inserted text the same way, so that the input method is never told it in clear.
+    String insertedText = text;
+    if (m_state && m_state->purpose == InputMethodState::Purpose::Password) {
+        std::span<char16_t> characters;
+        insertedText = String::createUninitialized(text.length(), characters);
+        for (auto& character : characters)
+            character = WTF::Unicode::bullet;
+    }
+
+    StringView surroundingText(m_surrounding.text);
+    m_surrounding.text = makeString(surroundingText.left(start), insertedText, surroundingText.substring(end));
+    m_surrounding.cursorPosition = start + insertedText.length();
+    m_surrounding.selectionPosition = m_surrounding.cursorPosition;
+    notifySurroundingToContext();
 }
 
 } // namespace WebKit

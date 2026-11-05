@@ -260,16 +260,17 @@ static void webkitInputMethodContextMockNotifyCursorArea(WebKitInputMethodContex
 static void webkitInputMethodContextMockNotifySurrounding(WebKitInputMethodContext* context, const gchar *text, unsigned length, unsigned cursorIndex, unsigned selectionIndex)
 {
     auto* mock = reinterpret_cast<WebKitInputMethodContextMock*>(context);
+    // Record the text before reacting to it: the replacement below makes the context notify the new text before this returns.
     g_clear_pointer(&mock->surroundingText, g_free);
+    mock->surroundingText = g_strndup(text, length);
+    mock->surroundingCursorIndex = cursorIndex;
+    mock->surroundingSelectionIndex = selectionIndex;
+    mock->surroundingCount++;
 
     if (!mock->preedit && cursorIndex >= 3 && text[cursorIndex - 3] == ':' && text[cursorIndex - 2] == '-' && text[cursorIndex - 1] == ')') {
         g_signal_emit_by_name(context, "delete-surrounding", -3, 3, nullptr);
         g_signal_emit_by_name(context, "committed", "😀️", nullptr);
     }
-    mock->surroundingText = g_strndup(text, length);
-    mock->surroundingCursorIndex = cursorIndex;
-    mock->surroundingSelectionIndex = selectionIndex;
-    mock->surroundingCount++;
 }
 
 static void webkitInputMethodContextMockReset(WebKitInputMethodContext* context)
@@ -1634,6 +1635,44 @@ static void testWebKitInputMethodContextDeleteSurroundingConsecutive(InputMethod
     test->waitForSurroundingText("a");
 }
 
+static void testWebKitInputMethodContextCommitSurrounding(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body><div id='editable' contenteditable></div></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'ab'; getSelection().collapse(editable.firstChild, 2)", nullptr);
+    test->waitForSurroundingText("ab");
+
+    // The surrounding text has the committed text before the web process inserts it.
+    g_signal_emit_by_name(test->m_context.get(), "committed", "c", nullptr);
+    g_assert_cmpstr(test->surroundingText(), ==, "abc");
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 3);
+    auto textContent = test->editableTextContent();
+    g_assert_cmpstr(textContent.get(), ==, "abc");
+}
+
+static void testWebKitInputMethodContextCommitSurroundingPassword(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body><input id='editable' type='password'></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->runJavaScriptAndWaitUntilFinished("editable.value = 'ab'; editable.setSelectionRange(2, 2)", nullptr);
+    test->waitForSurroundingText("\u2022\u2022");
+
+    // The committed text is in the surrounding text before the web process inserts it, masked like the web process
+    // masks the field, so the input method is never told it in clear.
+    g_signal_emit_by_name(test->m_context.get(), "committed", "c", nullptr);
+    g_assert_cmpstr(test->surroundingText(), ==, "\u2022\u2022\u2022");
+    // The cursor index is in bytes, and a bullet is three bytes in UTF-8.
+    g_assert_cmpuint(test->surroundingCursorIndex(), ==, 9);
+
+    test->waitForSurroundingText("\u2022\u2022\u2022");
+    auto* jsResult = test->runJavaScriptAndWaitUntilFinished("editable.value === 'abc'", nullptr);
+    g_assert_true(WebViewTest::javascriptResultToBoolean(jsResult));
+}
+
 static void testWebKitInputMethodContextCommitThenDeleteSurrounding(InputMethodTest* test, gconstpointer)
 {
     test->loadHtml("<html><body><div id='editable' contenteditable></div></body></html>", nullptr);
@@ -1648,6 +1687,7 @@ static void testWebKitInputMethodContextCommitThenDeleteSurrounding(InputMethodT
     g_signal_emit_by_name(test->m_context.get(), "committed", "x", nullptr);
     g_signal_emit_by_name(test->m_context.get(), "committed", "yz", nullptr);
     test->deleteSurroundingCodePoints(-1, 1);
+    g_assert_cmpstr(test->surroundingText(), ==, "abxy");
 
     GUniquePtr<char> textContent;
     for (unsigned i = 0; i < 100; ++i) {
@@ -3024,6 +3064,8 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-code-points", testWebKitInputMethodContextDeleteSurroundingCodePoints);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-bytes", testWebKitInputMethodContextDeleteSurroundingBytes);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-consecutive", testWebKitInputMethodContextDeleteSurroundingConsecutive);
+    InputMethodTest::add("WebKitInputMethodContext", "commit-surrounding", testWebKitInputMethodContextCommitSurrounding);
+    InputMethodTest::add("WebKitInputMethodContext", "commit-surrounding-password", testWebKitInputMethodContextCommitSurroundingPassword);
     InputMethodTest::add("WebKitInputMethodContext", "commit-then-delete-surrounding", testWebKitInputMethodContextCommitThenDeleteSurrounding);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-code-points-prevented", testWebKitInputMethodContextDeleteSurroundingCodePointsPrevented);
     InputMethodTest::add("WebKitInputMethodContext", "set-context-surrounding", testWebKitInputMethodContextSetContextSurrounding);
