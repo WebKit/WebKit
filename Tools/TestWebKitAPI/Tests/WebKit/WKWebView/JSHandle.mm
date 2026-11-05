@@ -233,4 +233,52 @@ TEST(JSHandle, HandleDoesNotKeepDocumentAliveAfterNavigation)
     EXPECT_EQ(baselineDocuments, liveDocumentsCount());
 }
 
+TEST(JSHandle, StaleHandleDoesNotAliasNewObject)
+{
+    HTTPServer server({
+        { "/page1"_s, { "<p>before navigation</p>"_s } },
+        { "/page2"_s, { "<p>after navigation</p>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration.get().preferences _setUsesPageCache:NO];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
+    worldConfiguration.get().jsHandleCreationEnabled = YES;
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/page1"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr<WKJSHandle> staleHandle = [webView objectByEvaluatingJavaScript:@"window.webkit.createJSHandle({})" inFrame:nil inContentWorld:world.get()];
+    EXPECT_TRUE([staleHandle isKindOfClass:WKJSHandle.class]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/page2"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView.get().configuration.processPool _garbageCollectJavaScriptObjectsForTesting];
+
+    RetainPtr<NSArray> newHandles = [webView objectByEvaluatingJavaScript:@"Array.from({ length: 256 }, (_, i) => window.webkit.createJSHandle({ i }))" inFrame:nil inContentWorld:world.get()];
+    EXPECT_EQ([newHandles count], 256u);
+
+    for (WKJSHandle *newHandle in newHandles.get())
+        EXPECT_FALSE([staleHandle isEqual:newHandle]);
+
+    EXPECT_TRUE([[webView objectByCallingAsyncFunction:@"return stale === undefined" withArguments:@{ @"stale" : staleHandle.get() } inFrame:nil inContentWorld:world.get()] boolValue]);
+
+    staleHandle = nil;
+    [webView.get().configuration.processPool _garbageCollectJavaScriptObjectsForTesting];
+    [webView objectByEvaluatingJavaScript:@"1" inFrame:nil inContentWorld:world.get()];
+
+    NSUInteger index = 0;
+    for (WKJSHandle *newHandle in newHandles.get()) {
+        EXPECT_TRUE([[webView objectByCallingAsyncFunction:@"return h.i" withArguments:@{ @"h" : newHandle } inFrame:nil inContentWorld:world.get()] isEqual:@(index)]);
+        ++index;
+    }
+}
+
 }

@@ -129,7 +129,7 @@ public:
     NODELETE bool hasScriptErrorCallbacks() const;
     void invokeScriptErrorCallbacks(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber) const;
 
-    void addJSHandle(JSHandleIdentifier, JSC::JSObject&);
+    JSHandleIdentifier addJSHandle(JSC::JSObject&);
     NODELETE void refJSHandle(JSHandleIdentifier);
     bool derefJSHandle(JSHandleIdentifier);
     NODELETE JSC::JSObject* jsHandle(JSHandleIdentifier) const;
@@ -179,6 +179,8 @@ private:
         size_t refCount { 0 };
     };
     HashMap<JSHandleIdentifier, JSHandleSlot> m_jsHandles WTF_GUARDED_BY_LOCK(m_gcLock);
+    // Keys are kept alive by the matching slot in m_jsHandles, so an address here is never stale.
+    HashMap<JSC::JSObject*, JSHandleIdentifier> m_jsHandleIdentifiers WTF_GUARDED_BY_LOCK(m_gcLock);
 };
 
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext&, DOMWrapperWorld&);

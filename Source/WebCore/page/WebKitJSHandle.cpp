@@ -66,8 +66,6 @@ Ref<WebKitJSHandle> WebKitJSHandle::create(JSC::JSObject* object)
 
 WebKitJSHandle::~WebKitJSHandle()
 {
-    if (!m_object)
-        return;
     jsHandleDestroyed(m_identifier);
 }
 
@@ -104,17 +102,21 @@ NODELETE static Markable<FrameIdentifier> windowFrameIdentifier(JSC::JSObject* o
     return std::nullopt;
 }
 
+static JSHandleIdentifier registerHandle(JSC::JSObject* object)
+{
+    if (auto* global = dynamicDowncast<JSDOMGlobalObject>(object->realmMayBeNull())) {
+        ASSERT(&global->vm() == commonVMOrNull());
+        auto identifier = global->addJSHandle(*object);
+        handleToGlobalMap(global->vm()).set(identifier, global);
+        return identifier;
+    }
+    return JSHandleIdentifier(WebProcessJSHandleIdentifier::generate(), Process::identifier());
+}
+
 WebKitJSHandle::WebKitJSHandle(JSC::JSObject* object)
-    : m_identifier(JSHandleIdentifier(WebProcessJSHandleIdentifier(reinterpret_cast<uintptr_t>(object)), Process::identifier()))
+    : m_identifier(registerHandle(object))
     , m_windowFrameIdentifier(WebCore::windowFrameIdentifier(object))
 {
-    auto* global = dynamicDowncast<JSDOMGlobalObject>(object->realmMayBeNull());
-    if (!global)
-        return;
-    global->addJSHandle(m_identifier, *object);
-    ASSERT(&global->vm() == commonVMOrNull());
-    handleToGlobalMap(global->vm()).set(m_identifier, global);
-    m_object = object;
 }
 
 }

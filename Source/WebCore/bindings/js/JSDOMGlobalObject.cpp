@@ -473,14 +473,18 @@ void JSDOMGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(JSDOMGlobalObject);
 
-void JSDOMGlobalObject::addJSHandle(JSHandleIdentifier identifier, JSObject& object)
+JSHandleIdentifier JSDOMGlobalObject::addJSHandle(JSObject& object)
 {
     Locker locker { m_gcLock };
     auto& vm = this->vm();
+    auto identifier = m_jsHandleIdentifiers.ensure(&object, [] {
+        return JSHandleIdentifier { WebProcessJSHandleIdentifier::generate(), Process::identifier() };
+    }).iterator->value;
     auto result = m_jsHandles.ensure(identifier, [&] {
         return JSHandleSlot { WriteBarrier<JSObject> { vm, this, &object }, 0 };
     });
     ++result.iterator->value.refCount;
+    return identifier;
 }
 
 void JSDOMGlobalObject::refJSHandle(JSHandleIdentifier identifier)
@@ -500,6 +504,7 @@ bool JSDOMGlobalObject::derefJSHandle(JSHandleIdentifier identifier)
         return false;
     if (--it->value.refCount)
         return false;
+    m_jsHandleIdentifiers.remove(it->value.object.get());
     m_jsHandles.remove(it);
     return true;
 }
