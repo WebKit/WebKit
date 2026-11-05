@@ -99,12 +99,15 @@ void LibWebRTCResolver::start(const webrtc::SocketAddress& address, Function<voi
     sendOnMainThread([identifier = this->identifier(), name = WTF::move(name).isolatedCopy(), contextIdentifier = m_contextIdentifier](IPC::Connection& connection) {
         if (!canStart(contextIdentifier, name)) {
             WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([identifier]() {
-                auto resolver = protect(WebProcess::singleton().libWebRTCNetwork().socketFactory())->resolver(identifier);
-                if (!resolver)
-                    return;
+                auto callback = [&] -> Function<void()> {
+                    auto resolver = protect(WebProcess::singleton().libWebRTCNetwork().socketFactory())->resolver(identifier);
+                    if (!resolver)
+                        return { };
 
-                resolver->setError(-1);
-                if (auto callback = resolver->takeCallback())
+                    resolver->setError(-1);
+                    return resolver->takeCallback();
+                }();
+                if (callback)
                     callback();
             });
             return;
