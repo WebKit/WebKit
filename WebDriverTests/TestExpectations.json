@@ -350,7 +350,7 @@
     "imported/selenium/py/test/selenium/webdriver/common/bidi_storage_tests.py": {
         "expected": {"all": {"status": ["FAIL"], "note": ["webkit.org/b/296240", "webkit.org/b/296255"]}},
         "subtests": {
-            "TestBidiStorage::test_storage_initialized": {
+            "test_storage_initialized": {
                 "expected": {"wpe": {"status": ["PASS"]}}
             }
         }
@@ -507,7 +507,7 @@
     "imported/selenium/py/test/selenium/webdriver/common/quit_tests.py": {
         "subtests": {
             "test_quit": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/321475"}, "wpe": {"status": ["PASS"]}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/321475"}}
             }
         }
     },
