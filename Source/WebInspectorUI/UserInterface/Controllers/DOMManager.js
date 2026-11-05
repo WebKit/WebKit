@@ -449,6 +449,12 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         this._frameTargetDOMData.delete(target);
 
+        // The frame agent forgets its listener ids along with its document.
+        for (let breakpoint of this.eventListenerBreakpoints) {
+            if (breakpoint.eventListener.owningTarget === target)
+                this.removeBreakpointForEventListener(breakpoint.eventListener);
+        }
+
         this._trySpliceUnsplicedFrameDocuments();
     }
 
@@ -456,6 +462,18 @@ WI.DOMManager = class DOMManager extends WI.Object
     {
         let data = this._frameTargetDOMData.get(target);
         return data ? data.document : null;
+    }
+
+    isNodeInFrameTargetDocument(node, target)
+    {
+        let frameDocument = this.frameTargetDocumentForTarget(target);
+        for (let ancestor = node; ancestor; ancestor = ancestor.parentNode) {
+            if (ancestor === frameDocument)
+                return true;
+            if (ancestor.nodeType() === Node.DOCUMENT_NODE || ancestor.parentNode?.templateContent() === ancestor)
+                return false;
+        }
+        return false;
     }
 
     nodeForIdInFrameTarget(nodeId, target)
@@ -789,9 +807,20 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     static supportsBreakpointForEventListener(eventListener)
     {
-        // Listener ids are only unique per agent, and frame targets have no event listener breakpoints.
-        // FIXME: <https://webkit.org/b/298980> Add DOM support for FrameTarget.
-        return DOMManager.supportsEventListenerBreakpoints() && !eventListener.owningTarget;
+        if (!DOMManager.supportsEventListenerBreakpoints())
+            return false;
+
+        let target = eventListener.owningTarget;
+        if (!target)
+            return true;
+
+        // COMPATIBILITY (macOS 27.3, iOS 27.3): DOM.setBreakpointForEventListener was not supported on frame targets.
+        if (!target.hasCommand("DOM.setBreakpointForEventListener"))
+            return false;
+
+        // Matches FrameDOMAgent::setBreakpointForEventListener.
+        let node = eventListener.onWindow ? eventListener.windowNode : eventListener.node;
+        return !!node && WI.domManager.isNodeInFrameTargetDocument(node, target);
     }
 
     static scriptForEventListener(eventListener)
@@ -1261,9 +1290,12 @@ WI.DOMManager = class DOMManager extends WI.Object
             delete this._idToDOMNode[id];
         }
 
-        for (let breakpoint of this._breakpointsForEventListeners.values())
+        for (let [key, breakpoint] of this._breakpointsForEventListeners) {
+            if (breakpoint.eventListener.owningTarget)
+                continue;
+            this._breakpointsForEventListeners.delete(key);
             WI.domDebuggerManager.dispatchEventToListeners(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, {breakpoint});
-        this._breakpointsForEventListeners.clear();
+        }
 
         let newDocument = null;
         if (payload && "nodeId" in payload)
@@ -1655,7 +1687,8 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (!DOMManager.supportsBreakpointForEventListener(eventListener))
             return;
 
-        let breakpoint = this._breakpointsForEventListeners.get(eventListener.eventListenerId);
+        let key = DOMManager._keyForEventListener(eventListener.eventListenerId, eventListener.owningTarget);
+        let breakpoint = this._breakpointsForEventListeners.get(key);
         if (breakpoint) {
             console.assert(breakpoint.disabled);
             breakpoint.disabled = false;
@@ -1665,14 +1698,10 @@ WI.DOMManager = class DOMManager extends WI.Object
         breakpoint = new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: eventListener.type, eventListener});
         console.assert(!breakpoint.disabled);
 
-        this._breakpointsForEventListeners.set(eventListener.eventListenerId, breakpoint);
+        this._breakpointsForEventListeners.set(key, breakpoint);
 
-        for (let target of WI.targets) {
-            if (target instanceof WI.FrameTarget)
-                continue;
-            if (target.hasDomain("DOM"))
-                this._setEventBreakpoint(breakpoint, target);
-        }
+        for (let target of this._targetsForEventListener(eventListener))
+            this._setEventBreakpoint(breakpoint, target);
 
         WI.debuggerManager.addProbesForBreakpoint(breakpoint);
 
@@ -1681,10 +1710,7 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     removeBreakpointForEventListener(eventListener)
     {
-        if (!DOMManager.supportsBreakpointForEventListener(eventListener))
-            return;
-
-        let breakpoint = this._breakpointsForEventListeners.take(eventListener.eventListenerId);
+        let breakpoint = this._breakpointsForEventListeners.take(DOMManager._keyForEventListener(eventListener.eventListenerId, eventListener.owningTarget));
         if (!breakpoint)
             return;
 
@@ -1701,17 +1727,29 @@ WI.DOMManager = class DOMManager extends WI.Object
     {
         for (let breakpoint of Array.from(this._breakpointsForEventListeners.values())) {
             let eventListener = breakpoint.eventListener;
-            if (eventListener.nodeId === domNode.id)
+            if (eventListener.nodeId && DOMManager.keyForNodeId(eventListener.nodeId, eventListener.owningTarget) === domNode.id)
                 this.removeBreakpointForEventListener(eventListener);
         }
     }
 
-    breakpointForEventListenerId(eventListenerId)
+    breakpointForEventListenerId(eventListenerId, target)
     {
-        return this._breakpointsForEventListeners.get(eventListenerId) || null;
+        return this._breakpointsForEventListeners.get(DOMManager._keyForEventListener(eventListenerId, target)) || null;
     }
 
     // Private
+
+    static _keyForEventListener(eventListenerId, target)
+    {
+        return DOMManager.keyForNodeId(eventListenerId, target);
+    }
+
+    _targetsForEventListener(eventListener)
+    {
+        if (eventListener.owningTarget)
+            return this._frameTargetDOMData.has(eventListener.owningTarget) ? [eventListener.owningTarget] : [];
+        return WI.targets.filter((target) => !(target instanceof WI.FrameTarget) && target.hasDomain("DOM"));
+    }
 
     _setEventBreakpoint(breakpoint, target)
     {
@@ -1745,12 +1783,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (!breakpoint.eventListener)
             return;
 
-        for (let target of WI.targets) {
-            if (target instanceof WI.FrameTarget)
-                continue;
-            if (!target.hasDomain("DOM"))
-                continue;
-
+        for (let target of this._targetsForEventListener(breakpoint.eventListener)) {
             if (breakpoint.disabled)
                 this._removeEventBreakpoint(breakpoint, target);
             else
@@ -1769,11 +1802,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (breakpoint.disabled)
             return;
 
-        for (let target of WI.targets) {
-            // FIXME: <https://webkit.org/b/298980> Add DOM support for FrameTarget.
-            if (target instanceof WI.FrameTarget)
-                continue;
-
+        for (let target of this._targetsForEventListener(breakpoint.eventListener)) {
             // Clear the old breakpoint from the backend before setting the new one.
             this._removeEventBreakpoint(breakpoint, target);
             this._setEventBreakpoint(breakpoint, target);

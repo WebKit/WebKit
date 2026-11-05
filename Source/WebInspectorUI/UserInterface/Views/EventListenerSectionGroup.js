@@ -87,7 +87,7 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
                 revealBreakpointGoToArrow.addEventListener("click", (event) => {
                     console.assert(this.hasEventListenerBreakpoint);
                     WI.showSourcesTab({
-                        representedObjectToSelect: WI.domManager.breakpointForEventListenerId(this._eventListener.eventListenerId),
+                        representedObjectToSelect: WI.domManager.breakpointForEventListenerId(this._eventListener.eventListenerId, this._eventListener.owningTarget),
                     });
                 });
             }

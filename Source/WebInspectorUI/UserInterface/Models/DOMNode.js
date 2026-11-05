@@ -970,6 +970,8 @@ WI.DOMNode = class DOMNode extends WI.Object
                 listener.owningTarget = owningTarget;
                 if (listener.nodeId)
                     listener.node = owningTarget ? WI.domManager.nodeForIdInFrameTarget(listener.nodeId, owningTarget) : WI.domManager.nodeForId(listener.nodeId);
+                if (listener.onWindow)
+                    listener.windowNode = this;
             }
             return result;
         });

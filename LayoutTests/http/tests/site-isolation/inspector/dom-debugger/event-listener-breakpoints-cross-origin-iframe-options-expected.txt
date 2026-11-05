@@ -1,0 +1,93 @@
+Tests that the options of a breakpoint on an event listener in a cross-origin iframe apply in the frame target.
+
+
+
+== Running test suite: SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options.Setup
+PASS: Should find the cross-origin frame target.
+PASS: Listener should belong to the frame target.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options.HasBreakpoint
+PASS: Listener should not have a breakpoint.
+Setting breakpoint on "frameButtonClicked"...
+PASS: Listener should have a breakpoint.
+Removing breakpoint on "frameButtonClicked"...
+PASS: Listener should not have a breakpoint after removal.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options.Condition
+Setting breakpoint on "frameButtonClicked"...
+
+Setting condition to 'false'...
+
+Triggering breakpoint...
+PASS: Should not pause.
+
+Triggering breakpoint...
+PASS: Should not pause.
+
+Setting condition to 'true'...
+
+Triggering breakpoint...
+PASS: Should pause.
+
+Triggering breakpoint...
+PASS: Should pause.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options.IgnoreCount
+Setting breakpoint on "frameButtonClicked"...
+
+Setting ignoreCount to '2'...
+
+Triggering breakpoint...
+PASS: Should not pause.
+
+Triggering breakpoint...
+PASS: Should not pause.
+
+Triggering breakpoint...
+PASS: Should pause.
+
+Triggering breakpoint...
+PASS: Should pause.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options.Action.Evaluate
+Setting breakpoint on "frameButtonClicked"...
+
+Adding evaluate action...
+
+Triggering breakpoint...
+PASS: Should execute breakpoint action in the frame.
+PASS: Should pause.
+
+Editing evaluate action...
+
+Triggering breakpoint...
+PASS: Should execute breakpoint action in the frame.
+PASS: Should pause.
+
+Editing evaluate action...
+Enabling auto-continue...
+
+Triggering breakpoint...
+PASS: Should execute breakpoint action in the frame.
+PASS: Should not pause.
+
+Editing evaluate action...
+
+Triggering breakpoint...
+PASS: Should execute breakpoint action in the frame.
+PASS: Should not pause.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options.BreakpointsInactive
+Setting breakpoint on "frameButtonClicked"...
+Deactivating breakpoints in the frame target...
+PASS: Should not pause while breakpoints are inactive.
+Reactivating breakpoints in the frame target...
+PASS: Should pause while breakpoints are active.
+-- Running test teardown.
+

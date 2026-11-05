@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<script>
+window.frameCondition = true;
+
+function frameButtonClicked(event) { window.lastEventType = event.type; }
+function frameWindowHandler(event) { window.lastEventType = event.type; }
+function captureClicked(event) { window.lastEventType = event.type; }
+function bubbleClicked(event) { window.lastEventType = event.type; }
+function ancestorClicked(event) { window.lastEventType = event.type; }
+function onceClicked(event) { window.lastEventType = event.type; }
+
+function clickFrameButton() { document.getElementById("frame-button").click(); return true; }
+function clickCaptureButton() { document.getElementById("capture-button").click(); return true; }
+function clickAncestorChild() { document.getElementById("ancestor-child").click(); return true; }
+function clickOnceButton() { document.getElementById("once-button").click(); return true; }
+function clickAttributeButton() { document.getElementById("attribute-button").click(); return true; }
+function dispatchWindowEvent() { window.dispatchEvent(new CustomEvent("frame-window-event")); return true; }
+function addPadListeners(count) { for (let i = 0; i < count; ++i) document.body.addEventListener("pad" + i, function() { }); return true; }
+
+window.addEventListener("frame-window-event", frameWindowHandler);
+</script>
+<body>
+<button id="frame-button">Frame Button</button>
+<button id="capture-button">Capture Button</button>
+<div id="ancestor"><button id="ancestor-child">Ancestor Child</button></div>
+<button id="once-button">Once Button</button>
+<button id="attribute-button" onclick="window.lastEventType = event.type">Attribute Button</button>
+<script>
+document.getElementById("frame-button").addEventListener("click", frameButtonClicked);
+document.getElementById("capture-button").addEventListener("click", captureClicked, true);
+document.getElementById("capture-button").addEventListener("click", bubbleClicked);
+document.getElementById("ancestor").addEventListener("click", ancestorClicked);
+document.getElementById("once-button").addEventListener("click", onceClicked, {once: true});
+</script>
+</body>

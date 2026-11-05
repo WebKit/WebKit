@@ -209,21 +209,29 @@ function test() {
 
     suite.addTestCase({
         name: "FrameListenerBreakpoint",
-        description: "A breakpoint on a frame listener is not registered, and removing it does not remove the breakpoint of the page listener with the same id.",
+        description: "A breakpoint on a frame listener is kept apart from the breakpoint of the page listener with the same id.",
         async test() {
+            let pageBreakpoint = () => WI.domManager.breakpointForEventListenerId(mainListener.eventListenerId, null);
+            let frameBreakpoint = () => WI.domManager.breakpointForEventListenerId(frameListener.eventListenerId, frameTarget);
+
             WI.domManager.setBreakpointForEventListener(frameListener);
-            InspectorTest.expectNull(WI.domManager.breakpointForEventListenerId(frameListener.eventListenerId), "Should not register a breakpoint for the frame listener.");
+            await flushCommands();
+            InspectorTest.expectNotNull(frameBreakpoint(), "Should register a breakpoint for the frame listener.");
+            InspectorTest.expectNull(pageBreakpoint(), "Should not register a breakpoint for the page listener.");
 
             WI.domManager.setBreakpointForEventListener(mainListener);
             await flushCommands();
-            InspectorTest.expectNotNull(WI.domManager.breakpointForEventListenerId(mainListener.eventListenerId), "Should register a breakpoint for the page listener.");
+            InspectorTest.expectNotNull(pageBreakpoint(), "Should register a breakpoint for the page listener.");
+            InspectorTest.expectThat(pageBreakpoint() !== frameBreakpoint(), "The two breakpoints should be different.");
 
             WI.domManager.removeBreakpointForEventListener(frameListener);
-            InspectorTest.expectNotNull(WI.domManager.breakpointForEventListenerId(mainListener.eventListenerId), "Removing the frame listener's breakpoint should keep the page listener's breakpoint.");
+            await flushCommands();
+            InspectorTest.expectNull(frameBreakpoint(), "Should remove the breakpoint of the frame listener.");
+            InspectorTest.expectNotNull(pageBreakpoint(), "Removing the frame listener's breakpoint should keep the page listener's breakpoint.");
 
             WI.domManager.removeBreakpointForEventListener(mainListener);
-            InspectorTest.expectNull(WI.domManager.breakpointForEventListenerId(mainListener.eventListenerId), "Should remove the breakpoint of the page listener.");
             await flushCommands();
+            InspectorTest.expectNull(pageBreakpoint(), "Should remove the breakpoint of the page listener.");
         }
     });
 

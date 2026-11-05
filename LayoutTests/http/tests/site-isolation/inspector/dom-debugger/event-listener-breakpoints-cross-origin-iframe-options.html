@@ -1,0 +1,164 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/dom-debugger-test-utilities.js"></script>
+<script src="resources/event-listener-breakpoint-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options");
+
+    let frameTarget = null;
+    let frameNode = null;
+    let frameListener = null;
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options.Setup",
+        description: "Find the click listener of a node in the cross-origin frame.",
+        async test() {
+            frameTarget = await waitForFrameTargetForURLContaining("event-listener-breakpoint-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+
+            let frameDocument = await frameTargetDocument(frameTarget);
+            frameNode = WI.domManager.nodeForId(await withDeadline(frameDocument.querySelector("#frame-button"), "frame querySelector"));
+            frameListener = await eventListenerForNode(frameNode, "frameButtonClicked");
+            InspectorTest.expectThat(frameListener?.owningTarget === frameTarget, "Listener should belong to the frame target.");
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options.HasBreakpoint",
+        description: "The frame target should report whether a listener has a breakpoint.",
+        async test() {
+            InspectorTest.expectThat(!(await eventListenerForNode(frameNode, "frameButtonClicked")).hasBreakpoint, "Listener should not have a breakpoint.");
+
+            await setListenerBreakpoint(frameListener);
+            InspectorTest.expectThat((await eventListenerForNode(frameNode, "frameButtonClicked")).hasBreakpoint, "Listener should have a breakpoint.");
+
+            await removeListenerBreakpoint(frameListener);
+            InspectorTest.expectThat(!(await eventListenerForNode(frameNode, "frameButtonClicked")).hasBreakpoint, "Listener should not have a breakpoint after removal.");
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options.Condition",
+        description: "The debugger should not pause unless the breakpoint has a truthy condition.",
+        async test() {
+            let breakpoint = await setListenerBreakpoint(frameListener);
+            InspectorTest.assert(breakpoint, "Should register a breakpoint for the frame listener.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Setting condition to 'false'...");
+            breakpoint.condition = "false";
+
+            let pauseCount = 0;
+            for (let i = 1; i <= 4; ++i) {
+                if (i === 3) {
+                    InspectorTest.newline();
+                    InspectorTest.log("Setting condition to 'true'...");
+                    breakpoint.condition = "true";
+                }
+                await flushCommands(frameTarget);
+
+                InspectorTest.newline();
+                InspectorTest.log("Triggering breakpoint...");
+                pauseCount += await countPausesDuring(frameTarget, "clickFrameButton()");
+
+                if (i <= 2)
+                    InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
+                else
+                    InspectorTest.expectEqual(pauseCount, i - 2, "Should pause.");
+            }
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options.IgnoreCount",
+        description: "The debugger should not pause until the breakpoint has been hit more times than its ignore count.",
+        async test() {
+            let breakpoint = await setListenerBreakpoint(frameListener);
+            InspectorTest.assert(breakpoint, "Should register a breakpoint for the frame listener.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Setting ignoreCount to '2'...");
+            breakpoint.ignoreCount = 2;
+            await flushCommands(frameTarget);
+
+            let pauseCount = 0;
+            for (let i = 1; i <= 4; ++i) {
+                InspectorTest.newline();
+                InspectorTest.log("Triggering breakpoint...");
+                pauseCount += await countPausesDuring(frameTarget, "clickFrameButton()");
+
+                if (i <= 2)
+                    InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
+                else
+                    InspectorTest.expectEqual(pauseCount, i - 2, "Should pause.");
+            }
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options.Action.Evaluate",
+        description: "Evaluate actions should run in the frame when the breakpoint is hit, and auto-continue should stop it pausing.",
+        async test() {
+            let breakpoint = await setListenerBreakpoint(frameListener);
+            InspectorTest.assert(breakpoint, "Should register a breakpoint for the frame listener.");
+
+            InspectorTest.newline();
+            InspectorTest.log("Adding evaluate action...");
+            let action = new WI.BreakpointAction(WI.BreakpointAction.Type.Evaluate, {data: "window.BREAKPOINT_ACTION_EVALUATE = 1;"});
+            breakpoint.addAction(action);
+
+            let pauseCount = 0;
+            for (let i = 1; i <= 4; ++i) {
+                if (i > 1) {
+                    InspectorTest.newline();
+                    InspectorTest.log("Editing evaluate action...");
+                    action.data = `window.BREAKPOINT_ACTION_EVALUATE = ${i};`;
+
+                    if (i === 3) {
+                        InspectorTest.log("Enabling auto-continue...");
+                        breakpoint.autoContinue = true;
+                    }
+                }
+                await flushCommands(frameTarget);
+
+                InspectorTest.newline();
+                InspectorTest.log("Triggering breakpoint...");
+                pauseCount += await countPausesDuring(frameTarget, "clickFrameButton()");
+
+                let {result} = await evaluateInTarget(frameTarget, "window.BREAKPOINT_ACTION_EVALUATE");
+                InspectorTest.expectEqual(result.value, i, "Should execute breakpoint action in the frame.");
+
+                if (i <= 2)
+                    InspectorTest.expectEqual(pauseCount, i, "Should pause.");
+                else
+                    InspectorTest.expectEqual(pauseCount, 2, "Should not pause.");
+            }
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.Options.BreakpointsInactive",
+        description: "A frame listener breakpoint should not pause while the frame's breakpoints are inactive.",
+        async test() {
+            await setListenerBreakpoint(frameListener);
+
+            InspectorTest.log("Deactivating breakpoints in the frame target...");
+            await frameTarget.DebuggerAgent.setBreakpointsActive(false);
+            await expectNoListenerPause(frameTarget, "clickFrameButton()", "Should not pause while breakpoints are inactive.");
+
+            InspectorTest.log("Reactivating breakpoints in the frame target...");
+            await frameTarget.DebuggerAgent.setBreakpointsActive(true);
+            InspectorTest.expectEqual(await countPausesDuring(frameTarget, "clickFrameButton()"), 1, "Should pause while breakpoints are active.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that the options of a breakpoint on an event listener in a cross-origin iframe apply in the frame target.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom-debugger/resources/event-listener-breakpoint-frame.html"></iframe>
+</body>

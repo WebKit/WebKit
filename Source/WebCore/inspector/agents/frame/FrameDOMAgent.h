@@ -29,6 +29,7 @@
 #include "InspectorOverlay.h"
 #include "InspectorWebAgentBase.h"
 #include "Timer.h"
+#include <JavaScriptCore/Breakpoint.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/CheckedPtr.h>
@@ -156,7 +157,10 @@ public:
     void pseudoElementCreated(PseudoElement&);
     void pseudoElementDestroyed(PseudoElement&);
     void frameDocumentUpdated(LocalFrame&);
+    void didAddEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     bool isEventListenerDisabled(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    RefPtr<JSC::Breakpoint> breakpointForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    Inspector::Protocol::DOM::EventListenerId idForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     void flexibleBoxRendererBeganLayout(const RenderObject&);
     void flexibleBoxRendererWrappedToNextLine(const RenderObject&, size_t lineStartItemIndex);
     bool handleMousePress();
@@ -221,6 +225,7 @@ private:
         AtomString eventType;
         bool useCapture { false };
         bool disabled { false };
+        RefPtr<JSC::Breakpoint> breakpoint;
 
         InspectorEventListener() { }
 
@@ -247,7 +252,7 @@ private:
         }
     };
 
-    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const Ref<RegisteredEventListener>&, Inspector::Protocol::DOM::EventListenerId, EventTarget&, const AtomString& eventType, bool disabled);
+    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const Ref<RegisteredEventListener>&, Inspector::Protocol::DOM::EventListenerId, EventTarget&, const AtomString& eventType, bool disabled, const RefPtr<JSC::Breakpoint>&);
 
     const UniqueRef<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::DOMBackendDispatcher> m_backendDispatcher;

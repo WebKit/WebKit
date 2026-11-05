@@ -307,14 +307,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             return false;
 
         // Matches FrameDOMDebuggerAgent::setDOMBreakpoint, which only accepts nodes of its frame's own document.
-        let frameDocument = WI.domManager.frameTargetDocumentForTarget(target);
-        for (let ancestor = node; ancestor; ancestor = ancestor.parentNode) {
-            if (ancestor === frameDocument)
-                return true;
-            if (ancestor.nodeType() === Node.DOCUMENT_NODE || ancestor.parentNode?.templateContent() === ancestor)
-                return false;
-        }
-        return false;
+        return WI.domManager.isNodeInFrameTargetDocument(node, target);
     }
 
     domBreakpointForPauseData(pauseData, target)

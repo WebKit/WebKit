@@ -42,16 +42,6 @@ Inspector::CommandResult<String> FrameDOMAgent::getAssociatedDataForNode(int)
 }
 #endif
 
-Inspector::CommandResult<void> FrameDOMAgent::setBreakpointForEventListener(int, RefPtr<JSON::Object>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
-Inspector::CommandResult<void> FrameDOMAgent::removeBreakpointForEventListener(int)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
 #if PLATFORM(IOS_FAMILY)
 Inspector::CommandResult<void> FrameDOMAgent::highlightSelector(const String&, const String&, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
 {

@@ -1,0 +1,77 @@
+Tests that breakpoints on event listeners of a cross-origin iframe and of the same-process frame nested in it go to each frame's own target, even when their listener ids are the same.
+
+
+
+== Running test suite: SiteIsolation.DOMDebugger.EventListenerBreakpoint.SameProcessFrames
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.SameProcessFrames.Setup
+PASS: Should find the cross-origin frame target.
+PASS: Should find the nested frame's target.
+PASS: Parent button should belong to the cross-origin frame target.
+PASS: Nested button should belong to the nested frame's target.
+PASS: Parent listener should belong to the cross-origin frame target.
+PASS: Nested listener should belong to the nested frame's target.
+PASS: The two frame listeners should have the same id.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.SameProcessFrames.NestedListener
+PASS: Nested listener should support breakpoints.
+Setting breakpoint on "nestedClicked"...
+PASS: Should register a breakpoint for the nested listener.
+PASS: Should not register a breakpoint for the parent listener with the same id.
+Clicking the nested frame's button...
+PASS: Should pause once.
+PASS: Should pause in the frame target that ran the listener.
+PASS: Pause reason should be "listener".
+PASS: Top call frame should be "nestedClicked".
+PASS: Pause data should carry the listener's id.
+PASS: Pause data frameTarget should be true.
+PASS: Pause data should resolve to the breakpoint of that listener.
+Clicking the parent frame's button...
+PASS: Should not pause for the parent listener with the same id.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.SameProcessFrames.ParentListener
+Setting breakpoint on "parentClicked"...
+PASS: Should not register a breakpoint for the nested listener with the same id.
+Clicking the parent frame's button...
+PASS: Should pause once.
+PASS: Should pause in the frame target that ran the listener.
+PASS: Pause reason should be "listener".
+PASS: Top call frame should be "parentClicked".
+PASS: Pause data should carry the listener's id.
+PASS: Pause data frameTarget should be true.
+PASS: Pause data should resolve to the breakpoint of that listener.
+Clicking the nested frame's button...
+PASS: Should not pause for the nested listener with the same id.
+Script of the nested frame clicks the parent frame's button...
+PASS: Should pause once.
+PASS: Should pause in the frame target that ran the listener.
+PASS: Pause reason should be "listener".
+PASS: Top call frame should be "parentClicked".
+PASS: Pause data should carry the listener's id.
+PASS: Pause data frameTarget should be true.
+PASS: Pause data should resolve to the breakpoint of that listener.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.SameProcessFrames.NestedListenerOnParentTarget
+PASS: The parent frame's agent should list the nested frame's listener.
+Setting a breakpoint on it in the cross-origin frame target directly...
+PASS: Should produce an exception.
+Error: Not supported for event listeners outside the frame's document
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.SameProcessFrames.WindowListener
+PASS: Should find the parent frame's window listener.
+PASS: Window listener of the frame's own document should support breakpoints.
+PASS: Window listener listed for a node of another frame's document should not support breakpoints.
+Setting breakpoint on "parentWindowHandler"...
+Dispatching an event on the parent frame's window...
+PASS: Should pause once.
+PASS: Should pause in the frame target that ran the listener.
+PASS: Pause reason should be "listener".
+PASS: Top call frame should be "parentWindowHandler".
+PASS: Pause data should carry the listener's id.
+PASS: Pause data frameTarget should be true.
+PASS: Pause data should resolve to the breakpoint of that listener.
+-- Running test teardown.
+

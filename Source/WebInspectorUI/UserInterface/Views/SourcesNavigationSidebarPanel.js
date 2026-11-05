@@ -178,8 +178,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             } else if (selectedTreeElement instanceof WI.ResourceTreeElement || selectedTreeElement instanceof WI.ScriptTreeElement) {
                 let breakpoints = this._breakpointsBeneathTreeElement(selectedTreeElement);
                 this._removeAllBreakpoints(breakpoints);
-            } else if (selectedTreeElement.representedObject === SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject) {
-                let eventBreakpointsOnWindow = WI.domManager.eventListenerBreakpoints.filter((eventBreakpoint) => eventBreakpoint.eventListener.onWindow);
+            } else if (SourcesNavigationSidebarPanel._isWindowEventTargetRepresentedObject(selectedTreeElement.representedObject)) {
+                let windowTarget = selectedTreeElement.representedObject.target;
+                let eventBreakpointsOnWindow = WI.domManager.eventListenerBreakpoints.filter((eventBreakpoint) => eventBreakpoint.eventListener.onWindow && eventBreakpoint.eventListener.owningTarget === windowTarget);
                 for (let eventBreakpoint of eventBreakpointsOnWindow)
                     WI.domManager.removeBreakpointForEventListener(eventBreakpoint.eventListener);
             }
@@ -476,6 +477,27 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         return WI.sharedApp.debuggableType === WI.DebuggableType.ITML
             || WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript
             || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker;
+    }
+
+    static _windowEventTargetRepresentedObject(target)
+    {
+        if (!target) {
+            SourcesNavigationSidebarPanel.__pageWindowEventTargetRepresentedObject ??= {__window: true, target: null};
+            return SourcesNavigationSidebarPanel.__pageWindowEventTargetRepresentedObject;
+        }
+
+        SourcesNavigationSidebarPanel.__frameWindowEventTargetRepresentedObjects ??= new WeakMap;
+        let representedObject = SourcesNavigationSidebarPanel.__frameWindowEventTargetRepresentedObjects.get(target);
+        if (!representedObject) {
+            representedObject = {__window: true, target};
+            SourcesNavigationSidebarPanel.__frameWindowEventTargetRepresentedObjects.set(target, representedObject);
+        }
+        return representedObject;
+    }
+
+    static _isWindowEventTargetRepresentedObject(representedObject)
+    {
+        return !!representedObject?.__window;
     }
 
     // Public
@@ -1467,7 +1489,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allListenersBreakpoint,
                 (treeElement) => treeElement instanceof WI.EventBreakpointTreeElement,
                 (treeElement) => treeElement instanceof WI.DOMNodeTreeElement,
-                (treeElement) => treeElement.representedObject === SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject,
+                (treeElement) => SourcesNavigationSidebarPanel._isWindowEventTargetRepresentedObject(treeElement.representedObject),
                 (treeElement) => treeElement instanceof WI.DOMBreakpointTreeElement,
                 (treeElement) => treeElement.representedObject === WI.domDebuggerManager.allRequestsBreakpoint,
                 (treeElement) => treeElement instanceof WI.URLBreakpointTreeElement,
@@ -1545,13 +1567,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (breakpoint.eventListener) {
                 let eventTargetTreeElement = null;
                 if (breakpoint.eventListener.onWindow) {
-                    if (!SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject)
-                        SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject = {__window: true};
+                    let windowTarget = breakpoint.eventListener.owningTarget;
+                    let windowRepresentedObject = SourcesNavigationSidebarPanel._windowEventTargetRepresentedObject(windowTarget);
 
-                    eventTargetTreeElement = this._breakpointsTreeOutline.findTreeElement(SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject);
+                    eventTargetTreeElement = this._breakpointsTreeOutline.findTreeElement(windowRepresentedObject);
                     if (!eventTargetTreeElement) {
-                        const subtitle = null;
-                        eventTargetTreeElement = new WI.GeneralTreeElement(["event-target-window"], WI.unlocalizedString("window"), subtitle, SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject);
+                        let subtitle = windowTarget?.displayName || null;
+                        eventTargetTreeElement = new WI.GeneralTreeElement(["event-target-window"], WI.unlocalizedString("window"), subtitle, windowRepresentedObject);
                         this._insertDebuggerTreeElement(eventTargetTreeElement, this._breakpointsTreeOutline);
                     }
                 } else if (breakpoint.eventListener.node)
@@ -1974,7 +1996,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
             let eventBreakpoint = null;
             if (pauseData.eventListenerId)
-                eventBreakpoint = WI.domManager.breakpointForEventListenerId(pauseData.eventListenerId);
+                eventBreakpoint = WI.domManager.breakpointForEventListenerId(pauseData.eventListenerId, pauseData.frameTarget ? target : null);
             if (!eventBreakpoint)
                 eventBreakpoint = WI.domDebuggerManager.listenerBreakpointsForEventName(pauseData.eventName)[0];
 
@@ -2187,7 +2209,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             || treeElement instanceof WI.SymbolicBreakpointTreeElement)
             return;
 
-        if (treeElement.representedObject === SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject)
+        if (SourcesNavigationSidebarPanel._isWindowEventTargetRepresentedObject(treeElement.representedObject))
             return;
 
         if (treeElement instanceof WI.LocalResourceOverrideTreeElement) {

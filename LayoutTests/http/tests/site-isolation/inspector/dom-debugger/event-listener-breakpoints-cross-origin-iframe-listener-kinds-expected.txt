@@ -1,0 +1,75 @@
+Tests that breakpoints on capturing, bubbling, ancestor, once and attribute event listeners in a cross-origin iframe pause in the frame target.
+
+
+
+== Running test suite: SiteIsolation.DOMDebugger.EventListenerBreakpoint.ListenerKinds
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.ListenerKinds.Setup
+PASS: Should find the cross-origin frame target.
+PASS: Frame target should have a document.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.ListenerKinds.CaptureAndBubble
+PASS: Should find the capturing listener.
+PASS: Should find the bubbling listener.
+PASS: The two listeners should have different ids.
+Setting breakpoint on "captureClicked"...
+PASS: Should pause once.
+PASS: Should pause in the frame target that ran the listener.
+PASS: Pause reason should be "listener".
+PASS: Top call frame should be "captureClicked".
+PASS: Pause data should carry the listener's id.
+PASS: Pause data frameTarget should be true.
+PASS: Pause data should resolve to the breakpoint of that listener.
+Removing breakpoint on "captureClicked"...
+Setting breakpoint on "bubbleClicked"...
+PASS: Should pause once.
+PASS: Should pause in the frame target that ran the listener.
+PASS: Pause reason should be "listener".
+PASS: Top call frame should be "bubbleClicked".
+PASS: Pause data should carry the listener's id.
+PASS: Pause data frameTarget should be true.
+PASS: Pause data should resolve to the breakpoint of that listener.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.ListenerKinds.AncestorListener
+PASS: Listener should belong to the ancestor.
+PASS: Ancestor listener should support breakpoints.
+Setting breakpoint on "ancestorClicked"...
+Clicking the descendant...
+PASS: Should pause once.
+PASS: Should pause in the frame target that ran the listener.
+PASS: Pause reason should be "listener".
+PASS: Top call frame should be "ancestorClicked".
+PASS: Pause data should carry the listener's id.
+PASS: Pause data frameTarget should be true.
+PASS: Pause data should resolve to the breakpoint of that listener.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.ListenerKinds.Once
+PASS: Should find the once listener.
+Setting breakpoint on "onceClicked"...
+Clicking the button...
+PASS: Should pause once.
+PASS: Should pause in the frame target that ran the listener.
+PASS: Pause reason should be "listener".
+PASS: Top call frame should be "onceClicked".
+PASS: Pause data should carry the listener's id.
+PASS: Pause data frameTarget should be true.
+PASS: Pause data should resolve to the breakpoint of that listener.
+Clicking the button again...
+PASS: Should not pause after the listener was removed by running once.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.EventListenerBreakpoint.ListenerKinds.Attribute
+PASS: Should find the attribute listener.
+Setting breakpoint on "onclick"...
+Clicking the button...
+PASS: Should pause once.
+PASS: Should pause in the frame target that ran the listener.
+PASS: Pause reason should be "listener".
+PASS: Top call frame should be "onclick".
+PASS: Pause data should carry the listener's id.
+PASS: Pause data frameTarget should be true.
+PASS: Pause data should resolve to the breakpoint of that listener.
+-- Running test teardown.
+
