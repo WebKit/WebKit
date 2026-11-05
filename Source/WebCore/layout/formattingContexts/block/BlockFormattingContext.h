@@ -86,12 +86,14 @@ struct BlockLayoutResult {
     LayoutUnit intrinsicContentBlockSize;
 };
 
-// The padding box of the containing block of an out-of-flow box (CSS 2.2 §10.1), relative to its border box: the inline axis runs from its
-// inline start (in its direction), the block axis from its block start.
+// The containing block of an out-of-flow box (CSS 2.2 §10.1, css-position-3 §2.1): the padding box of a block, or the rectangle a positioned
+// inline box forms, relative to the border box of the block, or of the block container whose inline content the inline box is in. The inline
+// axis runs from its inline start (in its direction), the block axis from its block start.
 struct OutOfFlowContainingBlock {
-    CheckedRef<const RenderBox> box;
-    LayoutUnit paddingBoxInlineStart;
-    LayoutUnit paddingBoxBlockStart;
+    WritingMode writingMode;
+    bool isScrollContainer { false };
+    LayoutUnit inlineStart;
+    LayoutUnit blockStart;
     LayoutUnit inlineSize;
     LayoutUnit blockSize;
     std::optional<LayoutRect> scrollableContainingBlock { };
