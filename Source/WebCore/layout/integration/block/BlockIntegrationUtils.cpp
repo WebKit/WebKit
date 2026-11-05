@@ -33,6 +33,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationBlockCoverage.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LineClampUpdater.h"
 #include "LocalFrameViewInlines.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockFlowInlines.h"
@@ -82,17 +83,21 @@ BlockIntegrationUtils::BlockIntegrationUtils(PaintInvalidation& paintInvalidatio
 
 static BlockIntegrationUtils::InlineContentLayoutResult inlineContentLayoutResult(const LineLayout& lineLayout)
 {
-    // Like RenderBlockFlow::layoutInlineContent: inline content without a contentful line in an editable block container is as tall as an empty one.
-    if (!lineLayout.hasContentfulInlineOrBlockLine()) {
-        CheckedRef blockContainer = lineLayout.flow();
-        if (auto contentBlockSize = Layout::BlockFormattingUtils::emptyEditableContentBlockSize(blockContainer))
-            return { *contentBlockSize, true };
-    }
-    if (lineLayout.blockLevelBoxAtEnd())
-        return { { }, true, true };
-    if (lineLayout.isSelfCollapsingContent())
-        return { { }, false };
-    return { lineLayout.hasContentfulInlineOrBlockLine() ? lineLayout.contentLogicalHeight() : 0_lu, true };
+    auto result = [&] -> BlockIntegrationUtils::InlineContentLayoutResult {
+        // Like RenderBlockFlow::layoutInlineContent: inline content without a contentful line in an editable block container is as tall as an empty one.
+        if (!lineLayout.hasContentfulInlineOrBlockLine()) {
+            CheckedRef blockContainer = lineLayout.flow();
+            if (auto contentBlockSize = Layout::BlockFormattingUtils::emptyEditableContentBlockSize(blockContainer))
+                return { *contentBlockSize, true };
+        }
+        if (lineLayout.blockLevelBoxAtEnd())
+            return { { }, true, true };
+        if (lineLayout.isSelfCollapsingContent())
+            return { { }, false };
+        return { lineLayout.hasContentfulInlineOrBlockLine() ? lineLayout.contentLogicalHeight() : 0_lu, true };
+    }();
+    result.lineCount = lineLayout.lineCount();
+    return result;
 }
 
 // Like RenderBlockFlow::layoutBlockChild with a child that does not need layout: the block-level boxes in lines kept from their last layout keep
@@ -302,6 +307,14 @@ void BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(const Rende
     mutableBlockContainer->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 }
 
+void BlockIntegrationUtils::showBoxHiddenByLineClamp(const RenderBox& box)
+{
+    // Only the box and its content are written, which the block formatting context lays out right after, like RenderBlockFlow::layoutBlockChild
+    // (LineClampUpdater::setIsForcedHidden marks them for layout).
+    SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableBox = const_cast<RenderBox&>(box);
+    LineClampUpdater::setIsForcedHidden(mutableBox, false);
+}
+
 bool BlockIntegrationUtils::laysOutThroughRenderTree(const RenderBox& box)
 {
     // FIXME: A block formatting context root whose content the block formatting context cannot lay out yet runs render tree block layout
@@ -318,8 +331,11 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
 
     // Like RenderBlockFlow::layoutBlockChild, which only lays out a block that needs it, and RenderBlock::recomputeLogicalWidth, which
     // lays its content out again when its width changed: otherwise the lines stay as they are. A block whose content only needs its overflow
-    // recomputed or its out-of-flow boxes laid out keeps them too (RenderBlock::canPerformSimplifiedLayout).
-    auto contentNeedsLayout = inlineContentRoot.selfNeedsLayout() || inlineContentRoot.normalChildNeedsLayout() || inlineContentRoot.outOfFlowChildNeedsStaticPositionLayout();
+    // recomputed or its out-of-flow boxes laid out keeps them too (RenderBlock::canPerformSimplifiedLayout). Content takes its lines off the
+    // line-clamp budget as it gets laid out, and what the content before it left of the budget may have changed: RenderBlockFlow::layoutInFlowChildren
+    // lays out all the content of a line-clamp container's formatting context again.
+    auto isInLineClampContext = !!blockLayoutState.lineClamp();
+    auto contentNeedsLayout = isInLineClampContext || inlineContentRoot.selfNeedsLayout() || inlineContentRoot.normalChildNeedsLayout() || inlineContentRoot.outOfFlowChildNeedsStaticPositionLayout();
     if (CheckedPtr lineLayout = inlineContentRoot.inlineLayout(); lineLayout && !contentNeedsLayout && lineLayout->hasContent() && !inlineContentConstraintsChanged(*lineLayout, constraints)) {
         auto keptContentLayoutResult = lineLayout->hasBlocks() ? keptInlineContentWithBlockLevelBoxesLayoutResult(inlineContentRoot, *lineLayout) : std::optional { inlineContentLayoutResult(*lineLayout) };
         if (keptContentLayoutResult) {
@@ -331,7 +347,7 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
 
     // Like RenderBlockFlow::layoutInlineContent, which lays the content out from scratch when the box's width changed (RenderBlock::recomputeLogicalWidth).
     // The renderer of the root has its new geometry already, and RenderBlock::recomputeLogicalWidth told its layout about the change.
-    auto invalidateChildren = relayoutChildren || inlineContentRoot.logicalWidth() != geometry.borderBoxWidth() || inlineContentRoot.hasBorderOrPaddingLogicalWidthChanged();
+    auto invalidateChildren = relayoutChildren || isInLineClampContext || inlineContentRoot.logicalWidth() != geometry.borderBoxWidth() || inlineContentRoot.hasBorderOrPaddingLogicalWidthChanged();
     auto inlineContentStatus = inlineContentRoot.markInlineContentDirtyForLayout(invalidateChildren ? RelayoutChildren::Yes : RelayoutChildren::No);
     if (inlineContentStatus.hasSimpleOutOfFlowContentOnly) {
         // Like RenderBlockFlow::layoutInlineContent: content of out-of-flow boxes only has no lines, and the static position of the boxes is

@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.clamp { line-clamp: 2; width: 180px; border: 1px solid; margin: 2px; float: left; }
+p { margin: 3px 0; background: lightblue; }
+</style>
+<div class="clamp" id="more"><p>one</p><div><p>two</p><p>three</p></div><p>four <span style="display: inline-block">inline-block</span></p></div>
+<div class="clamp" id="fewer" style="line-clamp: 4"><p>one</p><div><p>two</p><p>three</p></div><p>four</p><p>five</p></div>
+<div class="clamp" id="none"><p>one</p><div><p>two three four five six seven</p></div><p>four</p></div>
+<div class="clamp"><p>one</p><p id="text">two</p><p>three</p></div>
+<div class="clamp" id="auto" style="line-clamp: auto; max-height: 24px"><p>one</p><p>two</p><p>three</p><p>four</p></div>
+<div class="clamp" id="width"><p>text that wraps once the box gets narrower</p><p>after</p></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("more").style.lineClamp = "4";
+document.getElementById("fewer").style.lineClamp = "2";
+document.getElementById("none").style.lineClamp = "none";
+document.getElementById("text").firstChild.data = "two two two two two two two two two two two two";
+document.getElementById("auto").style.maxHeight = "60px";
+document.getElementById("width").style.width = "100px";
+</script>
