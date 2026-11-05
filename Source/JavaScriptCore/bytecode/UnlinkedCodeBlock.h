@@ -175,7 +175,7 @@ public:
     void setHasCheckpoints() { m_hasCheckpoints = true; }
 
     bool hasQuickDFGTierUpUpdated() const { return m_quickDFGTierUp != TriState::Indeterminate; }
-    bool isQuickDFGTierUp() const { return m_quickDFGTierUp == TriState::True; }
+    bool isQuickDFGTierUp() const { return m_quickDFGTierUp == TriState::True || m_quickFTLTierUp; }
     void setQuickDFGTierUp(TriState state) { m_quickDFGTierUp = state; }
     TriState quickDFGTierUp() const { return m_quickDFGTierUp; }
 
