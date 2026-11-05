@@ -97,6 +97,7 @@ struct CrossOriginOpenerPolicyEnforcementResult {
 bool isRecognizedCrossOriginOpenerPolicyToken(StringView);
 
 WEBCORE_EXPORT CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse&);
+WEBCORE_EXPORT CrossOriginOpenerPolicy crossOriginOpenerPolicyForEmptyDocument(const NavigationRequester&);
 WEBCORE_EXPORT std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(ReportingClient&, const ResourceResponse&, const std::optional<NavigationRequester>&, ContentSecurityPolicy* responseCSP, SandboxFlags effectiveSandboxFlags, const String& referrer, bool isDisplayingInitialEmptyDocument, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult);
 WEBCORE_EXPORT bool coopValuesRequireBrowsingContextGroupSwitch(IsInitialAboutBlank, CrossOriginOpenerPolicyValue activeDocumentCOOPValue, const SecurityOrigin& activeDocumentNavigationOrigin, CrossOriginOpenerPolicyValue responseCOOPValue, const SecurityOrigin& responseOrigin);
 
