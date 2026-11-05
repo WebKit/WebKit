@@ -31,6 +31,7 @@
 #include "BlockItemsBuilder.h"
 #include "BlockStepSizing.h"
 #include "Element.h"
+#include "InlineContentConstrainer.h"
 #include "OutOfFlowGeometry.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
@@ -125,26 +126,64 @@ BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockConten
 
 void BlockFormattingContext::layoutBlockItems(const BlockItemList& blockItems, BlockLayoutResult& result)
 {
-    for (auto& blockItem : blockItems) {
+    auto blockContainerEndIndex = [&](size_t startIndex) {
+        auto index = startIndex + 1;
+        while (blockItems[index].type() != BlockItem::Type::BlockContainerEnd || &blockItems[index].renderer() != &blockItems[startIndex].renderer())
+            ++index;
+        return index;
+    };
+    for (size_t index = 0; index < blockItems.size(); ++index) {
+        auto& blockItem = blockItems[index];
         CheckedRef box = blockItem.renderer();
+        auto isBlockLevelBoxStart = blockItem.type() == BlockItem::Type::BlockContainerStart || blockItem.type() == BlockItem::Type::IndependentFormattingContextRoot;
+        if (isBlockLevelBoxStart && isAfterClampPoint()) {
+            // Neither it nor anything in it is laid out (LineClampUpdater::skipLayoutForForcedHidden).
+            result.invisibleBoxes.append(box);
+            if (blockItem.type() == BlockItem::Type::BlockContainerStart)
+                index = blockContainerEndIndex(index);
+            continue;
+        }
+        // A box an earlier clamp point hid is visible again.
+        if (isBlockLevelBoxStart && box->isForceHiddenByLineClamp())
+            LayoutIntegration::BlockIntegrationUtils::showBoxHiddenByLineClamp(box);
+
         switch (blockItem.type()) {
         case BlockItem::Type::BlockContainerStart:
             handleBlockContainerStart(box);
             break;
         case BlockItem::Type::BlockContainerEnd:
             handleBlockContainerEnd(box, result);
+            handleBlockLevelBoxEnd(box);
             break;
         case BlockItem::Type::InlineContent:
             handleInlineContent(box, result);
             break;
         case BlockItem::Type::IndependentFormattingContextRoot:
             handleIndependentFormattingContextRoot(box, result);
+            handleBlockLevelBoxEnd(box);
             break;
         case BlockItem::Type::OutOfFlowBox:
             handleOutOfFlowBox(box, result);
             break;
         }
     }
+}
+
+// "Any in-flow or floating boxes that follow the clamp point in the box tree" are invisible boxes (css-overflow-4 §5.3.1): the content before
+// them took all the lines of the line-clamp budget.
+bool BlockFormattingContext::isAfterClampPoint() const
+{
+    auto lineClamp = m_blockLayoutState.lineClamp();
+    return lineClamp && lineClamp->shouldDiscardOverflow && !lineClamp->maximumLines;
+}
+
+// The clamp point may be right after a block-level box, which no line box precedes (LineClampUpdater::autoClampPoints).
+void BlockFormattingContext::handleBlockLevelBoxEnd(const RenderBox& box)
+{
+    if (m_blockLayoutState.clampAfterBox() != &box)
+        return;
+    m_blockLayoutState.setLineClamp(BlockLayoutState::LineClamp { 0, m_blockLayoutState.lineClamp()->shouldDiscardOverflow, false });
+    m_blockLayoutState.setClampAfterBox(nullptr);
 }
 
 void BlockFormattingContext::handleBlockContainerStart(const RenderBox& blockContainer)
@@ -201,9 +240,20 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
     // The block-level boxes in the content add states of their own while it is laid out, which can move the block container's state, and the
     // geometry with it.
     auto geometry = blockContainerState.geometry;
+    // While the line-clamp container looks for its auto clamp point, its content is laid out as if 'text-wrap-style' were 'stable', and it
+    // lays out again what that constrained (RenderBlockFlow::layoutInFlowChildren).
+    if (auto lineClamp = m_blockLayoutState.lineClamp(); lineClamp && lineClamp->isStableTextWrap && InlineContentConstrainer::constrainsContent(blockContainer.style())) {
+        lineClamp->hasConstrainedTextWrapContent = true;
+        m_blockLayoutState.setLineClamp(lineClamp);
+    }
     // FIXME: Floats need the block container's top before the inline content is laid out; decide whether it has line boxes from its
     // inline items then.
     auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(downcast<RenderBlockFlow>(blockContainer), constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.replacedElementAvailableBlockSize, blockContainerState.relayoutChildren, m_blockLayoutState, *this, result);
+    // The content takes its lines off the line-clamp budget (LineClampUpdater).
+    if (auto lineClamp = m_blockLayoutState.lineClamp()) {
+        lineClamp->maximumLines -= std::min(lineClamp->maximumLines, inlineContentLayoutResult.lineCount);
+        m_blockLayoutState.setLineClamp(lineClamp);
+    }
     auto& blockContainerStateAfterLayout = containingBlockStates.last();
     auto& marginCollapse = m_blockLayoutState.marginCollapse();
     if (auto& margins = inlineContentLayoutResult.marginsOfKeptBlockLevelBoxes) {
@@ -230,7 +280,7 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
 
 // A block-level box in inline content is laid out like a child of the block container, between the line boxes before and after it (CSS 2.2
 // §9.2.1.1).
-BlockLevelBoxInInlineContent BlockFormattingContext::layoutBlockLevelBoxInInlineContent(const RenderBox& box, LayoutUnit lineLogicalTop, size_t lineCount, BlockLayoutResult& result)
+BlockLevelBoxInInlineContent BlockFormattingContext::layoutBlockLevelBoxInInlineContent(const RenderBox& box, LayoutUnit lineLogicalTop, size_t lineCount, size_t lineCountForLineClamp, BlockLayoutResult& result)
 {
     auto& containingBlockStates = m_blockLayoutState.containingBlockStates();
     auto& blockContainerState = containingBlockStates.last();
@@ -243,10 +293,26 @@ BlockLevelBoxInInlineContent BlockFormattingContext::layoutBlockLevelBoxInInline
     }
     // Its own line is one more line with content.
     blockContainerState.lineCountThroughLastBlockLevelBox = lineCount + 1;
+    // The inline formatting context counts its lines against the line-clamp budget it started with, and the box takes its own off what is left
+    // of it (layoutWithFormattingContextForBlockInInline).
+    auto lineClamp = m_blockLayoutState.lineClamp();
+    auto remainingLines = lineClamp ? lineClamp->maximumLines - std::min(lineClamp->maximumLines, lineCountForLineClamp) : 0;
+    if (lineClamp) {
+        auto lineClampForBox = *lineClamp;
+        lineClampForBox.maximumLines = remainingLines;
+        m_blockLayoutState.setLineClamp(lineClampForBox);
+    }
     auto stateCount = containingBlockStates.size();
     layoutBlockItems(BlockItemsBuilder { root() }.buildForBlockLevelBoxInInlineContent(box), result);
     ASSERT_UNUSED(stateCount, containingBlockStates.size() == stateCount);
     ASSERT(result.boxes.last().renderer.ptr() == &box);
+    auto boxLineCount = size_t { 0 };
+    if (lineClamp) {
+        auto lineClampAfterBox = *m_blockLayoutState.lineClamp();
+        boxLineCount = remainingLines - std::min(remainingLines, lineClampAfterBox.maximumLines);
+        lineClamp->hasConstrainedTextWrapContent |= lineClampAfterBox.hasConstrainedTextWrapContent;
+        m_blockLayoutState.setLineClamp(lineClamp);
+    }
 
     // Without a top, the block container's margins still collapse with what is after the box, which collapsed through.
     auto& blockContainerStateAfterLayout = containingBlockStates.last();
@@ -259,7 +325,8 @@ BlockLevelBoxInInlineContent BlockFormattingContext::layoutBlockLevelBoxInInline
     return {
         result.boxes.last().geometry,
         marginsCollapseWithBlockContainerTop ? lineLogicalTop : marginCollapse.logicalTop() - *blockContainerStateAfterLayout.borderBoxLogicalTop,
-        marginState
+        marginState,
+        boxLineCount
     };
 }
 
