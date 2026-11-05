@@ -275,6 +275,18 @@ NODELETE static bool useShrinkWrappedFocusRingForOutlineStyleAuto()
 #endif
 }
 
+// CG draws a focus ring from a list of rects around their plain union, so a rect inside another one
+// doesn't change it. Adwaita and Cairo give each rect its own rounded corners, so a small rect in a
+// corner of a bigger one can still change the ring's corner there.
+static constexpr bool LEGACY_NODELETE canDropFocusRingRectsContainedInFirstRect()
+{
+#if USE(CG)
+    return true;
+#else
+    return false;
+#endif
+}
+
 static void drawFocusRing(GraphicsContext& context, const Path& path, const UsedStyle& usedStyle, const Color& color)
 {
     context.drawFocusRing(path, usedStyle.outlineWidth<float>(), color, usedStyle.computedStyle().usedZoom());
@@ -297,16 +309,25 @@ void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<
     auto usedStyle = renderer.usedStyle();
     auto outlineOffset = usedStyle.outlineOffset<float>();
 
+    bool paintsUnionOfRects = !useShrinkWrappedFocusRingForOutlineStyleAuto() || !style->border().hasBorderRadius();
+    bool dropsContainedRects = paintsUnionOfRects && canDropFocusRingRectsContainedInFirstRect();
+
     Vector<FloatRect> pixelSnappedFocusRingRects;
     for (auto rect : focusRingRects) {
         rect.inflate(outlineOffset);
-        pixelSnappedFocusRingRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
+        auto snappedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
+        if (dropsContainedRects && !pixelSnappedFocusRingRects.isEmpty() && !snappedRect.isEmpty()) {
+            const auto& firstRect = pixelSnappedFocusRingRects.first();
+            if (!firstRect.isEmpty() && firstRect.contains(snappedRect))
+                continue;
+        }
+        pixelSnappedFocusRingRects.append(snappedRect);
     }
     auto styleOptions = renderer.styleColorOptions(StyleColorOptionsPurpose::Rendering);
     styleOptions.add(StyleColorOptions::UseSystemAppearance);
     auto focusRingColor = usePlatformFocusRingColorForOutlineStyleAuto() ? RenderTheme::singleton().focusRingColor(styleOptions) : style->visitedDependentOutlineColorApplyingColorFilter();
 
-    if (!useShrinkWrappedFocusRingForOutlineStyleAuto() || !style->border().hasBorderRadius()) {
+    if (paintsUnionOfRects) {
         drawFocusRing(m_paintInfo.context(), pixelSnappedFocusRingRects, usedStyle, focusRingColor);
         return;
     }

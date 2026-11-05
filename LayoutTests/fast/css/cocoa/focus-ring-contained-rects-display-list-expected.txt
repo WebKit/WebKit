@@ -1,0 +1,9 @@
+contained:
+[at (0,0) size 220x140]
+contained-with-offset:
+[at (-4,-4) size 228x148]
+overflowing-child:
+[at (0,0) size 220x140, at (10,10) size 300x20]
+overflowing-child-with-offset:
+[at (-4,-4) size 228x148, at (6,6) size 308x28]
+
