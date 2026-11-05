@@ -816,9 +816,9 @@ public:
 
     WEBCORE_EXPORT VisiblePosition visiblePositionForPoint(const LayoutPoint&, HitTestSource, AllowUserSelectNone = AllowUserSelectNone::No);
 
-    // Returns the containing block level element for this element.
-    WEBCORE_EXPORT RenderBlock* containingBlock() const;
-    static RenderBlock* containingBlockForPositionType(PositionType, const RenderObject&);
+    // The box that establishes this renderer's containing block: a block for in-flow content, and for out-of-flow boxes possibly an inline box.
+    WEBCORE_EXPORT RenderBoxModelObject* containingBlock() const;
+    static RenderBoxModelObject* containingBlockForPositionType(PositionType, const RenderObject&);
 
     // Convert the given local point to absolute coordinates. If OptionSet<MapCoordinatesMode> includes UseTransforms, take transforms into account.
     WEBCORE_EXPORT FloatPoint localToAbsolute(const FloatPoint& localPoint = FloatPoint(), OptionSet<MapCoordinatesMode> = { }, bool* wasFixed = nullptr) const;

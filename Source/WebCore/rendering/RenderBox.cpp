@@ -950,8 +950,8 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, s
             return false;
         if (effectiveOverflowBlockDirection() != Overflow::Visible)
             return false;
-        // Stretch only overrides the automatic minimum when the container has a definite cross size.
-        if (hasStretchedLogicalHeight() && containingBlock()->hasDefiniteLogicalHeight())
+        // Stretch only overrides the automatic minimum when the container has a definite cross size (only blocks stretch their items).
+        if (hasStretchedLogicalHeight() && downcast<RenderBlock>(*containingBlock()).hasDefiniteLogicalHeight())
             return false;
         return true;
     };
@@ -2579,7 +2579,7 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForContent(AvailableLogicalHei
 
 LayoutUnit RenderBox::containingBlockAvailableLineWidth() const
 {
-    return containingBlock()->availableLogicalWidthForLine(logicalTop(), availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
+    return downcast<RenderBlock>(*containingBlock()).availableLogicalWidthForLine(logicalTop(), availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
 }
 
 LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
@@ -2589,7 +2589,11 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
             return gridAreaContentLogicalHeight->value();
     }
 
-    auto* containingBlock = this->containingBlock();
+    CheckedPtr containingBlock = dynamicDowncast<RenderBlock>(this->containingBlock());
+    if (!containingBlock) {
+        // An inline box is only the containing block of out-of-flow boxes.
+        return PositionedLayoutConstraints { *this, LogicalBoxAxis::Inline }.containingSize();
+    }
     if (auto overridingLogicalHeight = containingBlock->overridingBorderBoxLogicalHeight())
         return containingBlock->contentBoxLogicalHeight(*overridingLogicalHeight);
 
@@ -2659,7 +2663,7 @@ LayoutSize RenderBox::offsetFromContainer(const RenderElement& container, const 
         auto& inlineBox = downcast<RenderBoxModelObject>(container);
         auto borderBoxRect = LayoutRect { location() + toLayoutSize(inlineBox.firstFragmentBorderBoxRectFromBlockStart().location()), borderBoxSize() };
         if (inlineBox.writingMode().isBlockFlipped()) {
-            if (CheckedPtr containingBlock = inlineBox.containingBlock())
+            if (CheckedPtr containingBlock = downcast<RenderBlock>(inlineBox.containingBlock()))
                 containingBlock->flipForWritingMode(borderBoxRect);
         }
         return offset + toLayoutSize(borderBoxRect.location());
@@ -2805,7 +2809,7 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
         return;
     }
 
-    auto& containingBlock = *this->containingBlock();
+    auto& containingBlock = downcast<RenderBlock>(*this->containingBlock());
     bool hasPerpendicularContainingBlock = containingBlock.isHorizontalWritingMode() != isHorizontalWritingMode();
 
     // Width calculations
@@ -3505,7 +3509,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
     computedValues.extent = usedLogicalHeight();
 
     auto computeMargins = [&] {
-        auto& containingBlock = *this->containingBlock();
+        auto& containingBlock = downcast<RenderBlock>(*this->containingBlock());
         bool hasPerpendicularContainingBlock = containingBlock.isHorizontalWritingMode() != isHorizontalWritingMode();
         bool shouldFlipBeforeAfter = hasPerpendicularContainingBlock ? shouldFlipBeforeAfterMargins(containingBlock.writingMode(), writingMode()) : containingBlock.writingMode().isBlockOpposing(writingMode());
         auto marginBefore = shouldFlipBeforeAfter ? computedValues.margins.after : computedValues.margins.before;
@@ -3978,15 +3982,20 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computePercenta
     const RenderBox* containingBlockChild = this;
     LayoutUnit rootMarginBorderPaddingHeight;
     bool isHorizontal = isHorizontalWritingMode();
-    while (containingBlock && !is<RenderView>(*containingBlock) && skipContainingBlockForPercentHeightCalculation(*containingBlock, isHorizontal != containingBlock->isHorizontalWritingMode())) {
-        if (containingBlock->isBody() || containingBlock->isDocumentElementRenderer())
-            rootMarginBorderPaddingHeight += containingBlock->marginBefore(containingBlock->writingMode()) + containingBlock->marginAfter(containingBlock->writingMode()) + containingBlock->borderAndPaddingLogicalHeight();
+    while (containingBlock && !is<RenderView>(*containingBlock)) {
+        // Inline box containing blocks are never skipped, their containing block rectangle has a definite height.
+        CheckedPtr containingBox = dynamicDowncast<RenderBox>(*containingBlock);
+        if (!containingBox || !skipContainingBlockForPercentHeightCalculation(*containingBox, isHorizontal != containingBox->isHorizontalWritingMode()))
+            break;
+        if (containingBox->isBody() || containingBox->isDocumentElementRenderer())
+            rootMarginBorderPaddingHeight += containingBox->marginBefore(containingBox->writingMode()) + containingBox->marginAfter(containingBox->writingMode()) + containingBox->borderAndPaddingLogicalHeight();
         skippedAutoHeightContainingBlock = true;
-        containingBlockChild = containingBlock;
-        containingBlock = containingBlock->containingBlock();
+        containingBlockChild = containingBox.get();
+        containingBlock = containingBox->containingBlock();
     }
     if (updateDescendants == UpdatePercentageHeightDescendants::Yes) {
-        containingBlock->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
+        if (CheckedPtr block = dynamicDowncast<RenderBlock>(containingBlock))
+            block->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
     }
 
     if (is<RenderView>(containingBlock) && view().frameView().isAutoSizeEnabled()) {
@@ -4058,7 +4067,8 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computePercenta
     auto shouldSubtractBorderAndPadding = [&] {
         if (isRenderTable())
             return is<HTMLTableElement>(element()) || style().boxSizing() == BoxSizing::BorderBox;
-        return is<RenderTableCell>(*containingBlock) && !skippedAutoHeightContainingBlock && containingBlock->overridingBorderBoxLogicalHeight() && style().boxSizing() == BoxSizing::ContentBox;
+        CheckedPtr tableCell = dynamicDowncast<RenderTableCell>(*containingBlock);
+        return tableCell && !skippedAutoHeightContainingBlock && tableCell->overridingBorderBoxLogicalHeight() && style().boxSizing() == BoxSizing::ContentBox;
     };
     if (shouldSubtractBorderAndPadding()) {
         result -= borderAndPaddingLogicalHeight();
@@ -4322,7 +4332,7 @@ LayoutRange RenderBox::containingBlockRangeForPositioned(const RenderBoxModelObj
             : LayoutRange(startEdge, container.paddingBoxLogicalHeight());
     }
 
-    auto* containingBlock = dynamicDowncast<RenderBlock>(container) ? : container.containingBlock();
+    auto* containingBlock = dynamicDowncast<RenderBlock>(container) ? : dynamicDowncast<RenderBlock>(container.containingBlock());
     if (!containingBlock) {
         ASSERT_NOT_REACHED();
         return { };
@@ -5305,21 +5315,18 @@ LayoutPoint RenderBox::topLeftLocationWithFlipping() const
 {
     ASSERT(view().frameView().hasFlippedBlockRenderers());
 
-    if (isOutOfFlowPositioned()) {
-        // A box positioned relative to an inline box flips within the border box of the inline box's first fragment.
-        if (CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(container()); inlineBox && inlineBox->isInlineBox()) {
-            auto writingMode = inlineBox->writingMode();
-            if (!writingMode.isBlockFlipped())
-                return location();
-            auto borderBoxSize = inlineBox->firstFragmentBorderBoxRect().size();
-            return writingMode.isHorizontal() ? LayoutPoint { x(), borderBoxSize.height() - borderBoxHeight() - y() } : LayoutPoint { borderBoxSize.width() - borderBoxWidth() - x(), y() };
-        }
-    }
-
-    auto* containerBlock = containingBlock();
-    if (!containerBlock || containerBlock == this)
+    CheckedPtr containingBlock = this->containingBlock();
+    if (!containingBlock || containingBlock == this)
         return location();
-    return containerBlock->flipForWritingModeForChild(*this, location());
+    if (containingBlock->isInlineBox()) {
+        // A box whose containing block is an inline box flips within the border box of the inline box's first fragment.
+        auto writingMode = containingBlock->writingMode();
+        if (!writingMode.isBlockFlipped())
+            return location();
+        auto borderBoxSize = containingBlock->firstFragmentBorderBoxRect().size();
+        return writingMode.isHorizontal() ? LayoutPoint { x(), borderBoxSize.height() - borderBoxHeight() - y() } : LayoutPoint { borderBoxSize.width() - borderBoxWidth() - x(), y() };
+    }
+    return downcast<RenderBox>(*containingBlock).flipForWritingModeForChild(*this, location());
 }
 
 bool RenderBox::shouldIgnoreAspectRatio() const
@@ -5607,8 +5614,15 @@ LayoutUnit RenderBox::offsetFromLogicalTopOfFirstPage() const
     if ((layoutState && !layoutState->isPaginated()) || (!layoutState && !enclosingFragmentedFlow()))
         return 0;
 
-    RenderBlock* containerBlock = containingBlock();
-    return containerBlock->offsetFromLogicalTopOfFirstPage() + logicalTop();
+    CheckedPtr containingBlock = this->containingBlock();
+    auto logicalTopInContainingBlock = logicalTop();
+    if (containingBlock->isInlineBox()) {
+        // The box is positioned relative to the inline box, which is positioned in its own containing block.
+        auto inlineBoxLocation = containingBlock->firstFragmentBorderBoxRectFromBlockStart().location();
+        logicalTopInContainingBlock += containingBlock->isHorizontalWritingMode() ? inlineBoxLocation.y() : inlineBoxLocation.x();
+        containingBlock = containingBlock->containingBlock();
+    }
+    return downcast<RenderBox>(*containingBlock).offsetFromLogicalTopOfFirstPage() + logicalTopInContainingBlock;
 }
 
 LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewportRect)

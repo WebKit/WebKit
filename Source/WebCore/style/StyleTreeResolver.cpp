@@ -1706,8 +1706,11 @@ static std::optional<LayoutSize> scrollContainerSizeForPositionOptions(const Sty
     CheckedPtr anchoredRenderer = anchored.renderer();
     if (!anchoredRenderer)
         return { };
+    // Inline boxes are never scroll containers.
+    CheckedPtr containingBlock = dynamicDowncast<RenderBox>(*anchoredRenderer->containingBlock());
+    if (!containingBlock)
+        return { };
     // Overlay scrollbars can't affect anchor() function resolution so we don't need to save the size.
-    CheckedRef containingBlock = *anchoredRenderer->containingBlock();
     if (containingBlock->canUseOverlayScrollbars())
         return { };
     bool isOverflowScroller = containingBlock->isScrollContainerX() || containingBlock->isScrollContainerY();

@@ -83,7 +83,7 @@ static bool isValidRendererForSelection(const RenderObject& renderer, const Rend
 // Line and margin gaps are filled by the blocks in the containing block chain (an inline box containing block has none).
 static CheckedPtr<RenderBlock> containingBlockBelowView(const RenderObject& renderer)
 {
-    for (CheckedPtr<RenderBoxModelObject> containingBlock = renderer.containingBlock(); containingBlock && !is<RenderView>(*containingBlock); containingBlock = containingBlock->containingBlock()) {
+    for (CheckedPtr containingBlock = renderer.containingBlock(); containingBlock && !is<RenderView>(*containingBlock); containingBlock = containingBlock->containingBlock()) {
         if (CheckedPtr block = dynamicDowncast<RenderBlock>(*containingBlock))
             return block;
     }

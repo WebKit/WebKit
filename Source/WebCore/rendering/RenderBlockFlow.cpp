@@ -1196,7 +1196,7 @@ void RenderBlockFlow::adjustBlockEndChildrenForMarginTrim()
         }
 
         if (child->isSelfCollapsingBlock()) {
-            auto* childContainingBlock = child->containingBlock();
+            auto* childContainingBlock = downcast<RenderBlock>(child->containingBlock());
             childContainingBlock->setLogicalTopForChild(*child, childContainingBlock->logicalHeight());
             child = child->previousSiblingBox();
         }  else if (auto* nestedBlock = dynamicDowncast<RenderBlockFlow>(child); nestedBlock && nestedBlock->isBlockContainer() && !nestedBlock->childrenInline() && !nestedBlock->style().marginTrim().contains(Style::MarginTrimSide::BlockEnd)) {

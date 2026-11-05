@@ -3128,8 +3128,12 @@ LayoutSize RenderLayer::minimumSizeForResizing(float zoomFactor) const
     // Use the resizer size as the strict minimum size
     auto resizerRect = overflowControlsRects().resizer;
     auto& rendererStyle = renderer().style();
-    auto minWidth = Style::evaluateMinimum<LayoutUnit>(rendererStyle.minWidth(), renderer().containingBlock()->borderBoxWidth(), rendererStyle.usedZoomForLength());
-    auto minHeight = Style::evaluateMinimum<LayoutUnit>(rendererStyle.minHeight(), renderer().containingBlock()->borderBoxHeight(), rendererStyle.usedZoomForLength());
+    CheckedPtr containingBlock = renderer().containingBlock();
+    CheckedPtr containingBox = dynamicDowncast<RenderBox>(*containingBlock);
+    // An inline box containing block resolves percentages against its containing block rectangle.
+    auto containingBlockSize = containingBox ? containingBox->borderBoxSize() : LayoutSize { containingBlock->paddingBoxWidth(), containingBlock->paddingBoxHeight() };
+    auto minWidth = Style::evaluateMinimum<LayoutUnit>(rendererStyle.minWidth(), containingBlockSize.width(), rendererStyle.usedZoomForLength());
+    auto minHeight = Style::evaluateMinimum<LayoutUnit>(rendererStyle.minHeight(), containingBlockSize.height(), rendererStyle.usedZoomForLength());
     minWidth = std::max(LayoutUnit(minWidth / zoomFactor), LayoutUnit(resizerRect.width()));
     minHeight = std::max(LayoutUnit(minHeight / zoomFactor), LayoutUnit(resizerRect.height()));
     return LayoutSize(minWidth, minHeight);
@@ -5769,7 +5773,7 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const Layo
         if (renderer().isRenderBox())
             renderBox()->flipForWritingMode(result);
         else
-            renderer().containingBlock()->flipForWritingMode(result);
+            downcast<RenderBlock>(*renderer().containingBlock()).flipForWritingMode(result);
     }
 
     PaginationInclusionMode inclusionMode = ExcludeCompositedPaginatedLayers;
@@ -5872,7 +5876,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
         if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer()))
             box->flipForWritingMode(boundingBoxRect);
         else
-            renderer().containingBlock()->flipForWritingMode(boundingBoxRect);
+            downcast<RenderBlock>(*renderer().containingBlock()).flipForWritingMode(boundingBoxRect);
     }
 
     LayoutRect unionBounds = boundingBoxRect;

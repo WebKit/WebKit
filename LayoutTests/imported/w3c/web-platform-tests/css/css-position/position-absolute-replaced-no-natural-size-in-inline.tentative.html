@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Test: absolutely positioned replaced element without natural size whose containing block is an inline box</title>
+<link rel="help" href="https://www.w3.org/TR/CSS22/visudet.html#abs-replaced-width">
+<link rel="help" href="https://drafts.csswg.org/css-position-3/#def-cb">
+<meta name="assert" content="An absolutely positioned replaced element with a natural aspect ratio but no natural size, auto width and non-auto left and right fills the width of its containing block, which here is a relatively positioned inline box.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<link rel="stylesheet" href="/fonts/ahem.css">
+<div style="position: relative; font: 20px/1 Ahem; width: 400px">
+  XX <span id="inline-box" style="position: relative; padding: 3px 4px">XX<svg id="target" viewBox="0 0 10 10" style="position: absolute; left: 0; right: 0; top: 0"></svg>XX</span> ZZ
+</div>
+<script>
+test(() => {
+    const inlineBox = document.getElementById("inline-box").getBoundingClientRect();
+    assert_approx_equals(document.getElementById("target").getBoundingClientRect().width, inlineBox.width, 0.5);
+}, "The replaced element is as wide as the padding box of the inline box");
+</script>

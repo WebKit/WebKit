@@ -308,9 +308,10 @@ RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetectionGeneric(
 
     // Anonymous block boxes are ignored when resolving percentage values that
     // would refer to it: the closest non-anonymous ancestor box is used instead.
-    auto* ancestor = containingBlock();
+    // In-flow content is contained by blocks.
+    auto* ancestor = downcast<RenderBlock>(containingBlock());
     while (ancestor && ancestor->shouldSkipForPercentageResolution())
-        ancestor = ancestor->containingBlock();
+        ancestor = downcast<RenderBlock>(ancestor->containingBlock());
     if (!ancestor) {
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -500,7 +501,8 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
 
     auto containingBlockHasDefiniteHeight = containingBlock->hasDefiniteLogicalHeightForPercentageResolutionFromStyle();
 #if ASSERT_ENABLED
-    verifyDefiniteHeightConsistencyBetweenStyleAndContainingBlockChain(*containingBlock, containingBlockHasDefiniteHeight);
+    // Relatively positioned boxes are in-flow, so they are contained by blocks.
+    verifyDefiniteHeightConsistencyBetweenStyleAndContainingBlockChain(downcast<RenderBlock>(*containingBlock), containingBlockHasDefiniteHeight);
 #endif
     auto availableHeight = [&] {
         auto* renderBox = dynamicDowncast<RenderBox>(*this);
@@ -598,9 +600,10 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     // movement of stickily positioned items.
     // Table rows are also skipped because a sticky cell should be constrained by its section
     // (thead/tbody/tfoot), not by the individual row whose content box is the same height as the cell.
-    RenderBlock* containingBlock = this->containingBlock();
-    while (containingBlock && (!is<RenderBlock>(*containingBlock) || containingBlock->isAnonymousBlock() || containingBlock->isRenderTableRow()))
-        containingBlock = containingBlock->containingBlock();
+    // Sticky positioned boxes are in-flow, so they are contained by blocks.
+    auto* containingBlock = downcast<RenderBlock>(this->containingBlock());
+    while (containingBlock && (containingBlock->isAnonymousBlock() || containingBlock->isRenderTableRow()))
+        containingBlock = downcast<RenderBlock>(containingBlock->containingBlock());
     ASSERT(containingBlock);
 
     auto enclosingClipping = enclosingClippingBoxForStickyPosition();
@@ -1071,7 +1074,8 @@ void RenderBoxModelObject::addOutOfFlowBox(RenderBox& outOfFlowBox)
     if (outOfFlowBox.isRenderFragmentedFlow())
         return;
     // FIXME: Find out if we can do this as part of outOfFlowBox.setChildNeedsLayout(MarkingBehavior::OnlyThis)
-    if (outOfFlowBox.needsLayout()) {
+    // An inline box's out-of-flow boxes are laid out as part of laying out the inline box by its inline formatting context.
+    if (outOfFlowBox.needsLayout() && !isInlineBox()) {
         // We should turn this bit on only while in layout.
         ASSERT(outOfFlowChildNeedsLayout() || view().frameView().layoutContext().isInLayout());
         setOutOfFlowChildNeedsLayoutBit(true);
@@ -1155,8 +1159,10 @@ bool RenderBoxModelObject::requiresLayer() const
 
 void RenderBoxModelObject::removeOutOfFlowBoxesIfNeededOnStyleChange(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
-    // Only a block keeps a list of out-of-flow boxes, so any other box has its descendants on the nearest non-anonymous block.
-    CheckedPtr containingBlockForOutOfFlowBoxes = nearestNonAnonymousContainingBlockIncludingSelf();
+    // Inline boxes and blocks keep their own lists of out-of-flow boxes, any other box has its descendants on the nearest non-anonymous block.
+    CheckedPtr<RenderBoxModelObject> containingBlockForOutOfFlowBoxes = this;
+    if (!isInlineBox())
+        containingBlockForOutOfFlowBoxes = nearestNonAnonymousContainingBlockIncludingSelf();
     if (!containingBlockForOutOfFlowBoxes)
         return;
 

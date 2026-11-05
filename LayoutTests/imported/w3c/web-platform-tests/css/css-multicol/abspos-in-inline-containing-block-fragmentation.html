@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Multi-column Layout Test: an absolutely positioned box in an inline box containing block fragments at the column boundary</title>
+<link rel="help" href="https://drafts.csswg.org/css-break-3/#breaking-rules">
+<link rel="help" href="https://drafts.csswg.org/css-position-3/#def-cb">
+<meta name="assert" content="The lines of an absolutely positioned box whose containing block is a relatively positioned inline box down the first column break at the column boundary.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+.multicol { position: relative; columns: 2; column-gap: 0; column-fill: auto; width: 400px; height: 100px; font: 20px/30px Ahem; }
+.abs { position: absolute; top: 0; left: 0; width: 100px; line-height: 20px; }
+</style>
+<div class="multicol">XX<br>XX<br>XX <span id="inline-box" style="position: relative">XX<div class="abs"><div>A</div><div id="second">B</div><div>C</div></div></span></div>
+<script>
+test(() => {
+    const multicol = document.querySelector(".multicol").getBoundingClientRect();
+    const inlineBox = document.getElementById("inline-box").getBoundingClientRect();
+    const second = document.getElementById("second").getBoundingClientRect();
+    // The inline box starts 65px down the first column, so the second line (85px to 105px) does not fit and moves to the top of the second column.
+    assert_approx_equals(inlineBox.top - multicol.top, 65, 0.5, "inline box top");
+    assert_approx_equals(second.left - multicol.left, 200 + inlineBox.left - multicol.left, 0.5, "second line is in the second column");
+    assert_approx_equals(second.top - multicol.top, 0, 0.5, "second line is at the top of the second column");
+}, "Lines of an absolutely positioned box in an inline box containing block break at the column boundary");
+</script>

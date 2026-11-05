@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<!-- The selection gap after the first line is clipped out where the absolutely positioned box in the inline box is. -->
+<link rel="stylesheet" href="../../imported/w3c/web-platform-tests/fonts/ahem.css">
+<style>
+.container { font: 20px/1 Ahem; width: 200px; color: transparent; }
+.container::selection, .container *::selection { background-color: green; color: transparent; }
+.box { position: absolute; left: 40px; top: 0; width: 50px; height: 20px; background-color: white; }
+</style>
+<div class="container">XX <span style="position: relative">XX<div class="box"></div></span><br>XX</div>
+<script>getSelection().selectAllChildren(document.querySelector(".container"));</script>

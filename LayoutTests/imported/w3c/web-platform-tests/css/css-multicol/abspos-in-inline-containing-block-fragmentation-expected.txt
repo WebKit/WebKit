@@ -1,0 +1,9 @@
+XX
+XX
+XX XX
+A
+B
+C
+
+PASS Lines of an absolutely positioned box in an inline box containing block break at the column boundary
+

@@ -104,6 +104,8 @@ public:
     void collectOverflow();
     LayoutRect inkOverflowBoundingBoxRectFor(const RenderBoxModelObject&) const;
     Vector<FloatRect> collectInlineBoxRects(const RenderBoxModelObject&) const;
+    // The block that establishes this inline formatting context lays out the out-of-flow boxes of these inline boxes.
+    Vector<CheckedRef<RenderBoxModelObject>> inlineBoxesWithOutOfFlowBoxes() const;
 
     NODELETE LayoutUnit contentLogicalHeight() const;
     std::optional<LayoutUnit> clampedContentLogicalHeight() const;

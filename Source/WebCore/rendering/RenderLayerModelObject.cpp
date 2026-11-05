@@ -202,7 +202,8 @@ void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style:
     // that when it's laid out, its RenderBox::computeOutOfFlowPositionedLogicalWidth/Height takes into
     // account its new inline/block position rather than its old block/inline position.
     // Position changes and other types of display changes are handled elsewhere.
-    if ((oldStyle && isOutOfFlowPositioned() && parent() && (parent() != containingBlock()))
+    // An inline box containing block is no exception: its out-of-flow boxes are laid out by its formatting context root without line layout.
+    if ((oldStyle && isOutOfFlowPositioned() && parent() && (parent() != containingBlock() || parent()->isInlineBox()))
         && (style().position() == oldStyle->position())
         && (style().originalDisplay().isInlineType() != oldStyle->originalDisplay().isInlineType())
         && (style().originalDisplay().isBlockType() || style().originalDisplay().isInlineType())
