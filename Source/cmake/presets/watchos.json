@@ -1,0 +1,74 @@
+{
+    "version": 4,
+    "include": ["cocoa.json"],
+    "configurePresets": [
+        {
+            "name": "watchos",
+            "hidden": true,
+            "inherits": ["cocoa"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "watchos.internal;watchos"
+                }
+            }
+        },
+        {
+            "name": "watchos-release",
+            "displayName": "watchOS Release",
+            "inherits": ["watchos", "release"],
+            "binaryDir": "WebKitBuild/cmake-watchos/Release"
+        },
+        {
+            "name": "watchos-debug",
+            "displayName": "watchOS Debug",
+            "inherits": ["watchos", "debug"],
+            "binaryDir": "WebKitBuild/cmake-watchos/Debug"
+        },
+        {
+            "name": "watchos-sim",
+            "hidden": true,
+            "inherits": ["cocoa"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "watchsimulator.internal;watchsimulator"
+                }
+            }
+        },
+        {
+            "name": "watchos-sim-release",
+            "displayName": "watchOS Simulator Release",
+            "inherits": ["watchos-sim", "release"],
+            "binaryDir": "WebKitBuild/cmake-watchsimulator/Release"
+        },
+        {
+            "name": "watchos-sim-debug",
+            "displayName": "watchOS Simulator Debug",
+            "inherits": ["watchos-sim", "debug"],
+            "binaryDir": "WebKitBuild/cmake-watchsimulator/Debug"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "watchos-release",
+            "displayName": "watchOS Release",
+            "configurePreset": "watchos-release"
+        },
+        {
+            "name": "watchos-debug",
+            "displayName": "watchOS Debug",
+            "configurePreset": "watchos-debug"
+        },
+        {
+            "name": "watchos-sim-release",
+            "displayName": "watchOS Simulator Release",
+            "configurePreset": "watchos-sim-release"
+        },
+        {
+            "name": "watchos-sim-debug",
+            "displayName": "watchOS Simulator Debug",
+            "configurePreset": "watchos-sim-debug"
+        }
+    ]
+}

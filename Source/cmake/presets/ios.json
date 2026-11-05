@@ -1,0 +1,67 @@
+{
+    "version": 4,
+    "include": ["cocoa.json"],
+    "configurePresets": [
+        {
+            "name": "ios",
+            "hidden": true,
+            "inherits": ["cocoa"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "LIST",
+                    "value": "iphoneos.internal;iphoneos"
+                }
+            }
+        },
+        {
+            "name": "ios-release",
+            "displayName": "iOS Release",
+            "inherits": ["ios", "release"],
+            "binaryDir": "WebKitBuild/cmake-iphoneos/Release"
+        },
+        {
+            "name": "ios-debug",
+            "displayName": "iOS Debug",
+            "inherits": ["ios", "debug"],
+            "binaryDir": "WebKitBuild/cmake-iphoneos/Debug"
+        },
+        {
+            "name": "ios-dev-release",
+            "displayName": "iOS Development (Release, ccache, compile_commands)",
+            "inherits": ["ios-release", "dev"],
+            "cacheVariables": {
+                "ENABLE_EXPERIMENTAL_FEATURES": {
+                    "type": "BOOL",
+                    "value": "OFF"
+                }
+            }
+        },
+        {
+            "name": "ios-dev-debug",
+            "displayName": "iOS Development (Debug, ccache, compile_commands)",
+            "inherits": ["ios-debug", "dev"]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "ios-release",
+            "displayName": "iOS Release",
+            "configurePreset": "ios-release"
+        },
+        {
+            "name": "ios-debug",
+            "displayName": "iOS Debug",
+            "configurePreset": "ios-debug"
+        },
+        {
+            "name": "ios-dev-release",
+            "displayName": "iOS Development Release",
+            "configurePreset": "ios-dev-release"
+        },
+        {
+            "name": "ios-dev-debug",
+            "displayName": "iOS Development Debug",
+            "configurePreset": "ios-dev-debug"
+        }
+    ]
+}

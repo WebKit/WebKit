@@ -1,0 +1,61 @@
+{
+    "version": 4,
+    "include": ["cocoa.json"],
+    "configurePresets": [
+        {
+            "name": "ios-sim",
+            "hidden": true,
+            "inherits": ["cocoa"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "iphonesimulator.internal;iphonesimulator"
+                }
+            }
+        },
+        {
+            "name": "ios-sim-debug",
+            "displayName": "iOS Simulator Debug",
+            "inherits": ["ios-sim", "debug"],
+            "binaryDir": "WebKitBuild/cmake-iphonesimulator/Debug"
+        },
+        {
+            "name": "ios-sim-dev-debug",
+            "displayName": "iOS Simulator Development (Debug, ccache, compile_commands)",
+            "inherits": ["ios-sim-debug", "dev"]
+        },
+        {
+            "name": "ios-sim-release",
+            "displayName": "iOS Simulator Release",
+            "inherits": ["ios-sim", "release"],
+            "binaryDir": "WebKitBuild/cmake-iphonesimulator/Release"
+        },
+        {
+            "name": "ios-sim-dev-release",
+            "displayName": "iOS Simulator Development (Release, ccache, compile_commands)",
+            "inherits": ["ios-sim-release", "dev"]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "ios-sim-debug",
+            "displayName": "iOS Simulator Debug",
+            "configurePreset": "ios-sim-debug"
+        },
+        {
+            "name": "ios-sim-dev-debug",
+            "displayName": "iOS Simulator Development Debug",
+            "configurePreset": "ios-sim-dev-debug"
+        },
+        {
+            "name": "ios-sim-release",
+            "displayName": "iOS Simulator Release",
+            "configurePreset": "ios-sim-release"
+        },
+        {
+            "name": "ios-sim-dev-release",
+            "displayName": "iOS Simulator Development Release",
+            "configurePreset": "ios-sim-dev-release"
+        }
+    ]
+}
