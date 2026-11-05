@@ -26,7 +26,73 @@
 #include "config.h"
 #include "HTTPServer.h"
 
+#include "CommandResult.h"
+#include <wtf/JSONValues.h>
+
 namespace WebDriver {
+
+static StringView hostnameFromHostHeader(StringView hostHeader)
+{
+    // RFC3986 ipv6 addresses
+    if (hostHeader.startsWith('[')) {
+        auto end = hostHeader.find(']');
+        if (end == notFound)
+            return { };
+        return hostHeader.substring(1, end - 1);
+    }
+
+    auto colon = hostHeader.find(':');
+    return colon == notFound ? hostHeader : hostHeader.left(colon);
+}
+
+std::expected<void, String> HTTPRequestHandler::validateRequestHeaders(const String& hostHeader, const String& originHeader, const String& method, const String& contentTypeHeader) const
+{
+    // Browsers always send a Host header, so a request without one can't come from a web page.
+    // Accepting only localhost and IP addresses by default protects against DNS rebinding attacks.
+    if (!hostHeader.isNull()) {
+        auto hostname = hostnameFromHostHeader(hostHeader);
+        bool isAllowedHost = equalLettersIgnoringASCIICase(hostname, "localhost"_s) || URL::hostIsIPAddress(hostname) || std::ranges::any_of(m_allowedHosts, [&](auto& allowedHost) {
+            return equalIgnoringASCIICase(allowedHost, hostname);
+        });
+        if (!isAllowedHost)
+            return makeUnexpected("Host header not allowed, use --allow-hosts to accept it"_s);
+    }
+
+    // WebDriver clients don't send an Origin header, but browsers do for any cross-site POST request.
+    if (!originHeader.isNull()) {
+        URL origin { originHeader };
+        bool isAllowedOrigin = origin.isValid() && std::ranges::any_of(m_allowedOrigins, [&](auto& allowedOrigin) {
+            return protocolHostAndPortAreEqual(allowedOrigin, origin);
+        });
+        if (!isAllowedOrigin)
+            return makeUnexpected("Origin header not allowed, use --allow-origins to accept it"_s);
+    }
+
+    // These are the only content types a web page can POST cross-site without a CORS preflight.
+    if (method == "POST"_s && !contentTypeHeader.isNull()) {
+        StringView contentType = contentTypeHeader;
+        auto semicolon = contentType.find(';');
+        auto mimeType = (semicolon == notFound ? contentType : contentType.left(semicolon)).trim(isASCIIWhitespace<char16_t>);
+        if (equalLettersIgnoringASCIICase(mimeType, "application/x-www-form-urlencoded"_s)
+            || equalLettersIgnoringASCIICase(mimeType, "multipart/form-data"_s)
+            || equalLettersIgnoringASCIICase(mimeType, "text/plain"_s))
+            return makeUnexpected("Content-Type header not allowed, use application/json"_s);
+    }
+
+    return { };
+}
+
+HTTPRequestHandler::Response HTTPRequestHandler::rejectedRequestResponse(const String& reason)
+{
+    auto result = CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, reason);
+    auto errorObject = JSON::Object::create();
+    errorObject->setString("error"_s, result.errorString());
+    errorObject->setString("message"_s, reason);
+    errorObject->setString("stacktrace"_s, emptyString());
+    auto responseObject = JSON::Object::create();
+    responseObject->setObject("value"_s, WTF::move(errorObject));
+    return { result.httpStatusCode(), responseObject->toJSONString().utf8(), "application/json; charset=utf-8"_s };
+}
 
 HTTPServer::HTTPServer(HTTPRequestHandler& requestHandler)
     : m_requestHandler(requestHandler)

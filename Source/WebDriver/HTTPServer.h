@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -69,11 +70,20 @@ public:
     };
     virtual void handleRequest(Request&&, Function<void (Response&&)>&& replyHandler) = 0;
 
+    void setAllowedHosts(Vector<String>&& hosts) { m_allowedHosts = WTF::move(hosts); }
+    void setAllowedOrigins(Vector<URL>&& origins) { m_allowedOrigins = WTF::move(origins); }
+
+    std::expected<void, String> validateRequestHeaders(const String& hostHeader, const String& originHeader, const String& method = { }, const String& contentTypeHeader = { }) const;
+    static Response rejectedRequestResponse(const String& reason);
+
 #if USE(INSPECTOR_SOCKET_SERVER)
     void connect(ConnectionID);
 #endif
 
 private:
+    Vector<String> m_allowedHosts;
+    Vector<URL> m_allowedOrigins;
+
 #if USE(INSPECTOR_SOCKET_SERVER)
     void sendResponse(Response&&);
     void reset();

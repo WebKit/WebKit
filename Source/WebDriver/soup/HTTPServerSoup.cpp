@@ -31,6 +31,7 @@
 #include <wtf/Function.h>
 #include <wtf/glib/GLibExtras.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebDriver {
 
@@ -63,16 +64,31 @@ bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
 
     soup_server_add_handler(m_soupServer.get(), nullptr, [](SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer userData) {
         auto& httpServer = *static_cast<HTTPServer*>(userData);
+        auto* requestHeaders = soup_server_message_get_request_headers(message);
+        auto hostHeader = String::fromLatin1(soup_message_headers_get_one(requestHeaders, "Host"));
+        auto originHeader = String::fromLatin1(soup_message_headers_get_one(requestHeaders, "Origin"));
+        auto contentTypeHeader = String::fromLatin1(soup_message_headers_get_one(requestHeaders, "Content-Type"));
+        auto method = String::fromUTF8(soup_server_message_get_method(message));
+        auto result = httpServer.m_requestHandler.validateRequestHeaders(hostHeader, originHeader, method, contentTypeHeader);
+        if (!result) {
+            RELEASE_LOG_ERROR(WebDriverClassic, "Rejected HTTP request: %s", result.error().utf8());
+            auto response = HTTPRequestHandler::rejectedRequestResponse(result.error());
+            auto responseCharacters = byteCast<char>(response.data.span());
+            soup_server_message_set_status(message, response.statusCode, nullptr);
+            soup_server_message_set_response(message, response.contentType.utf8().legacyCStringPointer(), SOUP_MEMORY_COPY, responseCharacters.data(), responseCharacters.size());
+            return;
+        }
+
         GRefPtr<SoupServerMessage> protectedMessage = message;
         soup_server_pause_message(server, message);
         auto* requestBody = soup_server_message_get_request_body(message);
 
         if (httpServer.m_visibleHost.isEmpty()) {
-            const auto* visibleHostAndPort = soup_message_headers_get_one(soup_server_message_get_request_headers(message), "Host");
-            httpServer.m_visibleHost = visibleHostAndPort ? String::fromLatin1(visibleHostAndPort).split(':').at(0) : "localhost"_s;
+            URL visibleURL { makeString("http://"_s, hostHeader) };
+            httpServer.m_visibleHost = visibleURL.isValid() ? visibleURL.host().toString() : "localhost"_s;
         }
 
-        httpServer.m_requestHandler.handleRequest({ String::fromUTF8(soup_server_message_get_method(message)), String::fromUTF8(path), requestBody->data, static_cast<size_t>(requestBody->length) },
+        httpServer.m_requestHandler.handleRequest({ WTF::move(method), String::fromUTF8(path), requestBody->data, static_cast<size_t>(requestBody->length) },
             [server, message = WTF::move(protectedMessage)](HTTPRequestHandler::Response&& response) {
                 soup_server_message_set_status(message.get(), response.statusCode, nullptr);
                 if (!response.data.isNull()) {

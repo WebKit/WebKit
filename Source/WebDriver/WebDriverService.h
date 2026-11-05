@@ -167,6 +167,7 @@ private:
     void flushRequestQueueWithResult(CommandResult&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
+    std::expected<void, String> validateHandshakeHeaders(const String& hostHeader, const String& originHeader) const override { return validateRequestHeaders(hostHeader, originHeader); }
     bool acceptHandshake(HTTPRequestHandler::Request&&) override;
     void handleMessage(WebSocketMessageHandler::Message&&, Function<void (WebSocketMessageHandler::Message&&)>&& replyHandler) override;
     void clientDisconnected(const WebSocketMessageHandler::Connection&) override;
