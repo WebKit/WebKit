@@ -745,6 +745,11 @@ public:
 
 #ifdef __OBJC__
     WKWebExtensionContext *wrapper() const { return (WKWebExtensionContext *)API::ObjectImpl<API::Object::Type::WebExtensionContext>::wrapper(); }
+#elif ENABLE(2022_GLIB_API)
+    WebKitWebExtensionContext *wrapper() const
+    {
+        return m_delegate.get();
+    }
 #endif
 
 private:
@@ -754,6 +759,9 @@ private:
     explicit WebExtensionContext();
 
     int LEGACY_NODELETE toAPIError(WebExtensionContext::Error);
+
+    URL platformLoad();
+    void platformUnload();
 
     String stateFilePath() const;
 #if PLATFORM(COCOA)

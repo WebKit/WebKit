@@ -273,25 +273,8 @@ void WebExtensionContext::clearError(Error error)
     }).get());
 }
 
-std::expected<bool, RefPtr<API::Error>> WebExtensionContext::load(WebExtensionController& controller, String storageDirectory)
+URL WebExtensionContext::platformLoad()
 {
-    if (isLoaded()) {
-        RELEASE_LOG_ERROR(Extensions, "Extension context already loaded");
-        return makeUnexpected(createError(Error::AlreadyLoaded));
-    }
-
-#if PLATFORM(IOS) || PLATFORM(VISION)
-    RefPtr extension = m_extension;
-    if (extension->backgroundContentIsPersistent()) {
-        RELEASE_LOG_ERROR(Extensions, "Cannot load persistent background content on this platform");
-        return makeUnexpected(extension->createError(WebExtension::Error::InvalidBackgroundPersistence));
-    }
-#endif
-
-    m_storageDirectory = storageDirectory;
-    m_extensionController = controller;
-    m_contentScriptWorld = API::ContentWorld::sharedWorldWithName(makeString("WebExtension-"_s, m_uniqueIdentifier));
-
     readStateFromStorage();
 
     auto lastSeenBaseURL = URL { objectForKey<NSString>(m_state, lastSeenBaseURLStateKey) };
@@ -300,127 +283,16 @@ std::expected<bool, RefPtr<API::Error>> WebExtensionContext::load(WebExtensionCo
     if (RetainPtr displayName = protect(m_extension)->displayName().createNSString())
         [m_state setObject:displayName.get() forKey:lastSeenDisplayNameStateKey];
 
-    loadStorageAccessLevelsFromStorage();
-
-    determineInstallReasonDuringLoad();
-
-    writeStateToStorage();
-
-    populateWindowsAndTabs();
-
-    moveLocalStorageIfNeeded(lastSeenBaseURL, [this, protectedThis = Ref { *this }] {
-        // The extension could have been unloaded before this was called.
-        if (!isLoaded())
-            return;
-
-        removeStaleExtensionWebsiteData();
-
-        m_safeToInjectContent = true;
-
-        loadBackgroundWebViewDuringLoad();
-
-#if ENABLE(INSPECTOR_EXTENSIONS)
-        loadInspectorBackgroundPagesDuringLoad();
-#endif
-
-        loadRegisteredContentScripts();
-
-        loadDeclarativeNetRequestRulesetStateFromStorage();
-        loadDeclarativeNetRequestRules([](bool) { });
-
-        // Notify the WebProcess that the extension loaded before we inject content scripts.
-        // This will ensure that the content world is set up correctly (e.g. configured with the `browser` namespace).
-        if (RefPtr controller = extensionController())
-            controller->dispatchDidLoad(*this);
-
-        addInjectedContent();
-    });
-
-    return true;
+    return lastSeenBaseURL;
 }
 
-std::expected<bool, RefPtr<API::Error>> WebExtensionContext::unload()
+void WebExtensionContext::platformUnload()
 {
-    if (!isLoaded()) {
-        RELEASE_LOG_ERROR(Extensions, "Extension context not loaded");
-        return makeUnexpected(createError(Error::NotLoaded));
-    }
-
-    writeStateToStorage();
-
-    unloadBackgroundWebView();
-#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
-    unloadOffscreenWebView();
-#endif
-
-    removeInjectedContent();
-
-    invalidateStorage();
-    unloadDeclarativeNetRequestState();
-
-    m_privilegedIdentifier = std::nullopt;
-
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebExtensionContextAdditions.h>)
     additionsDidUnload();
 #endif
 
-    m_actionsToPerformAfterBackgroundContentLoads.clear();
-    m_backgroundContentEventListeners.clear();
-    m_backgroundContentHasLoadedOnce = false;
-    m_eventListenerFrames.clear();
-    m_installReason = InstallReason::None;
-    m_previousVersion = nullString();
-    m_safeToLoadBackgroundContent = false;
-    m_backgroundContentLoadError = nil;
-
-    m_registeredScriptsMap.clear();
-    m_dynamicallyInjectedUserStyleSheets.clear();
-    m_injectedScriptsPerPatternMap.clear();
-    m_injectedStyleSheetsPerPatternMap.clear();
-    m_safeToInjectContent = false;
-
-    m_extensionController = nullptr;
-    m_contentScriptWorld = nullptr;
-
-    m_tabMap.clear();
-    m_extensionPageTabMap.clear();
     [m_tabDelegateToIdentifierMap removeAllObjects];
-
-    m_windowMap.clear();
-    m_windowOrderVector.clear();
-    m_focusedWindowIdentifier = std::nullopt;
-
-    m_actionWindowMap.clear();
-    m_actionTabMap.clear();
-    m_defaultAction = nullptr;
-#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-    m_sidebarWindowMap.clear();
-    m_sidebarTabMap.clear();
-    m_sidebarPageMap.clear();
-    m_defaultSidebar = nullptr;
-#endif
-    m_popupPageActionMap.clear();
-
-    m_ports.clear();
-    m_pagePortMap.clear();
-    m_portQueuedMessages.clear();
-    m_nativePortMap.clear();
-
-    m_alarmMap.clear();
-
-    m_commands.clear();
-    m_populatedCommands = false;
-
-    m_menuItems.clear();
-    m_mainMenuItems.clear();
-
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    m_inspectorContextMap.clear();
-#endif
-
-    m_pendingPermissionRequests = 0;
-
-    return true;
 }
 
 std::expected<bool, RefPtr<API::Error>> WebExtensionContext::reload()
@@ -581,15 +453,6 @@ void WebExtensionContext::removeStaleExtensionWebsiteData()
             FileSystem::overwriteEntireFile(sentinelPath, { });
         });
     });
-}
-
-void WebExtensionContext::invalidateStorage()
-{
-    m_registeredContentScriptsStorage = nullptr;
-    m_localStorageStore = nullptr;
-    m_sessionStorageStore = nullptr;
-    m_syncStorageStore = nullptr;
-    m_storageAccessLevels.clear();
 }
 
 void WebExtensionContext::setInspectable(bool inspectable)
@@ -3530,19 +3393,6 @@ void WebExtensionContext::inspectorEffectiveAppearanceDidChange(API::InspectorEx
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
-void WebExtensionContext::unloadDeclarativeNetRequestState()
-{
-    removeDeclarativeNetRequestRules();
-
-    m_sessionRulesIDs.clear();
-    m_dynamicRulesIDs.clear();
-    m_matchedRules.clear();
-    m_enabledStaticRulesetIDs.clear();
-
-    m_declarativeNetRequestDynamicRulesStore = nullptr;
-    m_declarativeNetRequestSessionRulesStore = nullptr;
-}
-
 String WebExtensionContext::declarativeNetRequestContentRuleListFilePath()
 {
     if (!m_declarativeNetRequestContentRuleListFilePath.isEmpty())
@@ -3552,17 +3402,6 @@ String WebExtensionContext::declarativeNetRequestContentRuleListFilePath()
     m_declarativeNetRequestContentRuleListFilePath = FileSystem::pathByAppendingComponent(directoryPath, "DeclarativeNetRequestContentRuleList.data"_s);
 
     return m_declarativeNetRequestContentRuleListFilePath;
-}
-
-void WebExtensionContext::removeDeclarativeNetRequestRules()
-{
-    if (!isLoaded())
-        return;
-
-    // Use all user content controllers in case the extension was briefly allowed in private browsing
-    // and content was injected into any of those content controllers.
-    for (Ref userContentController : extensionController()->allUserContentControllers())
-        userContentController->removeContentRuleList(uniqueIdentifier());
 }
 
 static NSString *computeStringHashForContentBlockerRules(NSString *rules)

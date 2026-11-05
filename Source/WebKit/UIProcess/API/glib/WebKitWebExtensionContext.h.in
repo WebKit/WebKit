@@ -44,6 +44,9 @@ webkit_web_extension_context_new_for_extension                              (Web
 WEBKIT_API WebKitWebExtension *
 webkit_web_extension_context_get_web_extension                              (WebKitWebExtensionContext *context);
 
+WEBKIT_API gboolean
+webkit_web_extension_context_get_loaded                                     (WebKitWebExtensionContext *context);
+
 WEBKIT_API const gchar *
 webkit_web_extension_context_get_base_uri                                   (WebKitWebExtensionContext *context);
 

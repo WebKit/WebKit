@@ -1,0 +1,86 @@
+/*
+ * Copyright (C) 2026 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+@API_SINGLE_HEADER_CHECK@
+
+#ifndef WebKitWebExtensionManager_h
+#define WebKitWebExtensionManager_h
+
+#if ENABLE(2022_GLIB_API)
+
+#include <glib-object.h>
+#include <gio/gio.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+
+#include "WebKitWebExtensionContext.h"
+#include "WebKitSettings.h"
+
+G_BEGIN_DECLS
+
+#define WEBKIT_TYPE_WEB_EXTENSION_MANAGER                            (webkit_web_extension_manager_get_type())
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebExtensionManager, webkit_web_extension_manager, WEBKIT, WEB_EXTENSION_MANAGER, GObject)
+
+WEBKIT_API WebKitWebExtensionManager *
+webkit_web_extension_manager_new                                     (void);
+
+WEBKIT_API WebKitWebExtensionManager *
+webkit_web_extension_manager_new_with_identifier                     (const gchar *identifier);
+
+WEBKIT_API WebKitWebExtensionManager *
+webkit_web_extension_manager_new_with_non_persistent_settings        (void);
+
+WEBKIT_API gboolean
+webkit_web_extension_manager_get_persistence                         (WebKitWebExtensionManager *manager);
+
+WEBKIT_API const gchar *
+webkit_web_extension_manager_get_identifier                          (WebKitWebExtensionManager *manager);
+
+WEBKIT_API WebKitSettings *
+webkit_web_extension_manager_get_settings                            (WebKitWebExtensionManager *manager);
+
+WEBKIT_API void
+webkit_web_extension_manager_set_settings                            (WebKitWebExtensionManager *manager,
+                                                                      WebKitSettings            *settings);
+
+WEBKIT_API WebKitWebExtension **
+webkit_web_extension_manager_get_loaded_extensions                   (WebKitWebExtensionManager *manager);
+
+WEBKIT_API WebKitWebExtensionContext **
+webkit_web_extension_manager_get_loaded_contexts                     (WebKitWebExtensionManager *manager);
+
+WEBKIT_API WebKitWebExtensionContext *
+webkit_web_extension_manager_extension_context_for_extension         (WebKitWebExtensionManager *manager,
+                                                                      WebKitWebExtension        *extension);
+
+WEBKIT_API gboolean
+webkit_web_extension_manager_load_extension_context                  (WebKitWebExtensionManager  *manager,
+                                                                      WebKitWebExtensionContext  *context,
+                                                                      GError                    **error);
+
+WEBKIT_API gboolean
+webkit_web_extension_manager_unload_extension_context                (WebKitWebExtensionManager  *manager,
+                                                                      WebKitWebExtensionContext  *context,
+                                                                      GError                    **error);
+
+G_END_DECLS
+
+#endif // ENABLE(2022_GLIB_API)
+
+#endif // WebKitWebExtensionManager_h
