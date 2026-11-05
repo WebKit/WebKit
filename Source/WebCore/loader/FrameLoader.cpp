@@ -3863,11 +3863,9 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
         request.setResponseContentDispositionEncodingFallbackArray("UTF-8"_s, document->encoding(), localFrame->settings().defaultTextEncodingName());
     }
 
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(targetFrame.mainFrame())) {
-        if (shouldUpdate == ShouldUpdateAppInitiatedValue::Yes) {
-            if (RefPtr documentLoader = localMainFrame->loader().documentLoader())
-                request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
-        }
+    if (shouldUpdate == ShouldUpdateAppInitiatedValue::Yes) {
+        if (RefPtr documentLoader = protect(m_frame)->rootFrame().loader().documentLoader())
+            request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
     }
 
     if (page && isMainResource && !request.didFilterLinkDecoration()) {
@@ -5027,10 +5025,8 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(frame, initiatedByMainFrame, item.shouldOpenExternalURLsPolicy());
     bool isFormSubmission = false;
 
-    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame())) {
-        if (RefPtr documentLoader = localFrame->loader().documentLoader())
-            request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
-    }
+    if (RefPtr documentLoader = frame->rootFrame().loader().documentLoader())
+        request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
 
     // If this was a repost that failed the page cache, we might try to repost the form.
     NavigationAction action;

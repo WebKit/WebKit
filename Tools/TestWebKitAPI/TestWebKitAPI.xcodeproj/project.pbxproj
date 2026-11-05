@@ -603,6 +603,7 @@
 				WebKit/WKWebView/HTTP3Server.swift,
 				WebKit/WKWebView/PDFLookUpTests.swift,
 				WebKit/WKWebView/SiteIsolationAnimationControlTests.swift,
+				WebKit/WKWebView/SiteIsolationAppPrivacyReportTests.swift,
 				WebKit/WKWebView/SiteIsolationContentsOfAllFramesTests.swift,
 				WebKit/WKWebView/SiteIsolationCookieTests.swift,
 				WebKit/WKWebView/SiteIsolationDataDetectionTests.swift,
