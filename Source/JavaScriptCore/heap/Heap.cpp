@@ -130,7 +130,7 @@ static GrowthMode growthMode(size_t ramSize)
 {
     // An Aggressive heap uses more memory to go faster.
     // We do this for machines with enough RAM.
-    size_t aggressiveHeapThresholdInBytes = static_cast<size_t>(Options::aggressiveHeapThresholdInMB()) * MB;
+    uint64_t aggressiveHeapThresholdInBytes = static_cast<uint64_t>(Options::aggressiveHeapThresholdInMB()) * MB;
     if (ramSize >= aggressiveHeapThresholdInBytes)
         return GrowthMode::Aggressive;
     return GrowthMode::Default;
