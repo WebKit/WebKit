@@ -110,7 +110,7 @@ public:
     static std::optional<TextDirection> overridingDirection(const InlineTextBox&);
     static std::optional<TextDirection> overridingDirection(const RenderText&);
 
-    static AtomString ellipsisTextInInlineDirection(bool isHorizontal = true);
+    static AtomString ellipsisText();
 
     static InlineLayoutUnit hyphenWidth(const Style::ComputedStyle&);
 

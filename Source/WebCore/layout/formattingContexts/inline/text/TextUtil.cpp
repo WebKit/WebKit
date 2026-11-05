@@ -733,14 +733,10 @@ TextDirection TextUtil::directionForTextContent(StringView content)
     return baseTextDirection(content).value_or(TextDirection::LTR);
 }
 
-AtomString TextUtil::ellipsisTextInInlineDirection(bool isHorizontal)
+AtomString TextUtil::ellipsisText()
 {
-    if (isHorizontal) {
-        static MainThreadNeverDestroyed<const AtomString> horizontalEllipsisStr(span(horizontalEllipsis));
-        return horizontalEllipsisStr;
-    }
-    static MainThreadNeverDestroyed<const AtomString> verticalEllipsisStr(span(verticalEllipsis));
-    return verticalEllipsisStr;
+    static MainThreadNeverDestroyed<const AtomString> ellipsisStr(span(horizontalEllipsis));
+    return ellipsisStr;
 }
 
 InlineLayoutUnit TextUtil::hyphenWidth(const Style::ComputedStyle& style)

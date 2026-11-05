@@ -35,6 +35,7 @@
 #include "StyleColorResolver.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTextShadow.h"
+#include "TextPainter.h"
 
 namespace WebCore {
 
@@ -93,17 +94,31 @@ void EllipsisBoxPainter::paint()
     );
 
     auto visualRect = m_lineBox.ellipsisVisualRect();
-    auto textOrigin = visualRect.location();
+    auto deviceScaleFactor = m_lineBox.formattingContextRoot().document().deviceScaleFactor();
     // Use lineStyle to align with possible baseline adjustment by :first-line/:first-letter.
     auto ascent = LayoutUnit(lineStyle->metricsOfPrimaryFont().ascent());
-    textOrigin.move(m_paintOffset.x(), m_paintOffset.y() + ascent);
-
-    if (rootStyle->writingMode().isHorizontal())
-        textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, m_lineBox.formattingContextRoot().document().deviceScaleFactor()));
-    else
-        textOrigin.setX(roundToDevicePixel(LayoutUnit { textOrigin.x() }, m_lineBox.formattingContextRoot().document().deviceScaleFactor()));
-
-    context.drawBidiText(rootStyle->fontCascade(), m_lineBox.ellipsisText(), textOrigin);
+    auto writingMode = rootStyle->writingMode();
+    if (writingMode.isHorizontal()) {
+        auto textOrigin = visualRect.location();
+        textOrigin.move(m_paintOffset.x(), m_paintOffset.y() + ascent);
+        textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, deviceScaleFactor));
+        context.drawBidiText(rootStyle->fontCascade(), m_lineBox.ellipsisText(), textOrigin);
+    } else {
+        // Like vertical text content, paint the ellipsis in its logical coordinates in a rotated context (see TextBoxPainter).
+        visualRect.moveBy(m_paintOffset);
+        auto logicalWidth = visualRect.height();
+        auto logicalHeight = visualRect.width();
+        auto paintRect = FloatRect { roundToDevicePixel(LayoutUnit { visualRect.x() }, deviceScaleFactor), visualRect.y() - logicalHeight, logicalWidth, logicalHeight };
+        auto rotationDirection = RotationDirection::Clockwise;
+        if (writingMode.isLineOverLeft()) {
+            paintRect.move(logicalHeight, logicalWidth);
+            rotationDirection = RotationDirection::Counterclockwise;
+        }
+        GraphicsContextStateSaver stateSaver { context };
+        context.concatCTM(rotation(paintRect, rotationDirection));
+        auto textOrigin = FloatPoint { paintRect.x(), paintRect.y() + roundToDevicePixel(ascent, deviceScaleFactor) };
+        context.drawBidiText(rootStyle->fontCascade(), m_lineBox.ellipsisText(), textOrigin);
+    }
 
     if (textColor != context.fillColor())
         context.setFillColor(textColor);

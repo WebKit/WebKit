@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>A string block ellipsis is painted in the inline direction in vertical writing modes</title>
+<style>
+div {
+    font: 20px/1 Ahem;
+    height: 12em;
+    border: 1px solid;
+    margin: 4px;
+    float: left;
+    line-clamp: 2 " (more)";
+}
+.rl { writing-mode: vertical-rl; }
+.lr { writing-mode: vertical-lr; }
+.upright { text-orientation: upright; }
+</style>
+<div class="rl">line one<br>line two<br>line three</div>
+<div class="lr">line one<br>line two<br>line three</div>
+<div class="rl upright">line one<br>line two<br>line three</div>
+<div class="lr upright">line one<br>line two<br>line three</div>

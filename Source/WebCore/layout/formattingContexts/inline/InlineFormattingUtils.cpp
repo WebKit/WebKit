@@ -708,7 +708,7 @@ std::optional<BlockOverflowEllipsis> InlineFormattingUtils::blockEllipsisForLine
             return nullAtom();
         },
         [&](const CSS::Keyword::Ellipsis&) -> AtomString {
-            return TextUtil::ellipsisTextInInlineDirection(root->writingMode().isHorizontal());
+            return TextUtil::ellipsisText();
         },
         [&](const Style::String& string) -> AtomString {
             return AtomString { string.value };

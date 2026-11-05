@@ -428,7 +428,7 @@ static inline void makeRoomForLinkBoxOnClampedLineIfNeeded(auto& content, auto c
 
     content.setLineEllipsis(clampedLineIndex, { InlineDisplay::Line::Ellipsis::Type::Block,
         ellipsisBoxRect,
-        TextUtil::ellipsisTextInInlineDirection(clampedLine.isHorizontal())
+        TextUtil::ellipsisText()
     });
     clampedLine.setHasEllipsis();
 }
@@ -533,14 +533,14 @@ NODELETE static InlineDisplay::Line::Ellipsis trailingBlockEllipsis(const BlockO
     return { InlineDisplay::Line::Ellipsis::Type::Block, visualRect, blockEllipsis.text };
 }
 
-static AtomString textOverflowEllipsisText(const Style::ComputedStyle& style, bool isHorizontal)
+static AtomString textOverflowEllipsisText(const Style::ComputedStyle& style)
 {
     return WTF::switchOn(style.textOverflow(),
         [&](const CSS::Keyword::Clip&) -> AtomString {
             return nullAtom();
         },
         [&](const CSS::Keyword::Ellipsis&) -> AtomString {
-            return TextUtil::ellipsisTextInInlineDirection(isHorizontal);
+            return TextUtil::ellipsisText();
         },
         [&](const Style::String& string) -> AtomString {
             return AtomString { string.value };
@@ -577,7 +577,7 @@ static void truncateBlockEllipsisForTextOverflow(InlineDisplay::Line::Ellipsis& 
     if (styleForTruncation.overflowX() == Overflow::Visible)
         return;
     auto isHorizontal = displayLine.isHorizontal();
-    auto textOverflowText = textOverflowEllipsisText(styleForTruncation, isHorizontal);
+    auto textOverflowText = textOverflowEllipsisText(styleForTruncation);
     if (textOverflowText.isEmpty())
         return;
 
@@ -663,9 +663,9 @@ std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::placeTrai
 
     auto ellipsisText = [&] -> AtomString {
         if (truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection)
-            return textOverflowEllipsisText(styleForTruncation, displayLine.isHorizontal());
+            return textOverflowEllipsisText(styleForTruncation);
         // Legacy line clamp always uses ...
-        return TextUtil::ellipsisTextInInlineDirection(displayLine.isHorizontal());
+        return TextUtil::ellipsisText();
     }();
 
     if (ellipsisText.isEmpty())

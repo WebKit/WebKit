@@ -5310,8 +5310,6 @@ imported/w3c/web-platform-tests/css/css-overflow/text-overflow-021.html [ ImageO
 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-028.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-multiline-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-editing-input.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-vertical-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-vertical-rtl-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-scroll-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-scroll-rtl-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-scroll-vertical-lr-001.html [ ImageOnlyFailure ]
