@@ -622,6 +622,11 @@
             ]
         },
         {
+            "bugs": ["rdar://158560192"],
+            "matches": ["*://*.gradescope.com/*"],
+            "behaviors": [{ "id": "NeedsPartitionedCookiesQuirk" }]
+        },
+        {
             "bugs": ["rdar://157388533"],
             "matches": ["*://*.gunbroker.com/*"],
             "behaviors": [

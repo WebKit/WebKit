@@ -1271,10 +1271,14 @@ TEST_F(QuirksTest, NeedsPartitionedCookies)
     };
 
     EXPECT_TRUE(needsPartitionedCookies("https://biller.billpaysite.com/pay"_s, false));
+    EXPECT_TRUE(needsPartitionedCookies("https://www.gradescope.com/courses/1"_s, false));
 
     EXPECT_FALSE(needsPartitionedCookies("https://biller.billpaysite.com/pay"_s, true));
     EXPECT_FALSE(needsPartitionedCookies("https://notbillpaysite.com/"_s, false));
     EXPECT_FALSE(needsPartitionedCookies("https://billpaysite.com.example.com/"_s, false));
+    EXPECT_FALSE(needsPartitionedCookies("https://www.gradescope.com/courses/1"_s, true));
+    EXPECT_FALSE(needsPartitionedCookies("https://notgradescope.com/"_s, false));
+    EXPECT_FALSE(needsPartitionedCookies("https://gradescope.com.example.com/"_s, false));
     EXPECT_FALSE(needsPartitionedCookies("https://www.example.com/"_s, false));
 }
 
