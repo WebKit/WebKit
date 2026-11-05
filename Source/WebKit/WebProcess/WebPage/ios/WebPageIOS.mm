@@ -1339,17 +1339,18 @@ static std::pair<std::optional<SimpleRange>, SelectionWasFlipped> rangeForPointI
     VisiblePosition selectionStart = existingSelection.visibleStart();
     VisiblePosition selectionEnd = existingSelection.visibleEnd();
 
-    RefPtr localMainFrame = frame.localMainFrame();
     RefPtr frameView = frame.view();
     if (!frameView)
         return { std::nullopt, SelectionWasFlipped::No };
 
     // Constrain the drag point (in this frame's root-view coordinates) to the visible viewport so the
-    // selection can't be extended outside it. For the main frame its unobscured content rect is used
-    // directly (root-view and contents coincide there). For a cross-origin subframe -- whose main
-    // frame is remote -- use this frame's own unobscured content rect converted to root-view
-    // coordinates; clamping against the contents-space rect directly would fold the frame's scroll
-    // offset into the point, which rootViewToContents would then apply a second time.
+    // selection can't be extended outside it. For a frame whose local root is the main frame, the main
+    // frame's unobscured content rect is used directly (root-view and contents coincide there). For a
+    // frame under a remote ancestor -- whose local root isn't the main frame -- use this frame's own
+    // unobscured content rect converted to root-view coordinates; clamping against the contents-space
+    // rect directly would fold the frame's scroll offset into the point, which rootViewToContents
+    // would then apply a second time.
+    RefPtr localMainFrame = frame.rootFrame().isMainFrame() ? frame.localMainFrame() : nullptr;
     auto viewportToConstrainWithin = localMainFrame ? protect(localMainFrame->view())->unobscuredContentRect() : frameView->contentsToRootView(frameView->unobscuredContentRect());
     auto pointInDocument = frameView->rootViewToContents(pointInRootViewCoordinates.constrainedWithin(viewportToConstrainWithin));
 

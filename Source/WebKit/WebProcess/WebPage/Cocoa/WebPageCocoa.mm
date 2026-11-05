@@ -2547,18 +2547,16 @@ bool WebPage::shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode,
 WebCore::IntPoint WebPage::mainFrameCoordinatesToRootView(WebCore::IntPoint point) const
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
-    RefPtr view = frame ? frame->view() : nullptr;
-    if (!view || frame->localMainFrame()) {
-        // The main frame is in this process: rootViewToContents() on the focused frame's view already
-        // walks the (in-process) frame tree from the true root, so no extra conversion is needed here.
+    RefPtr localRootView = frame ? frame->rootFrame().view() : nullptr;
+    if (!localRootView)
         return point;
-    }
 
-    // The main frame is in another process. Convert the incoming main-frame root-view point into this
-    // frame's own root-view coordinates, applying the frame's offset within the top-level page as well
-    // as any CSS transforms on the remote ancestor frames -- a plain translation offset could not
-    // represent a scale. The caller re-applies this frame's own scroll via rootViewToContents().
-    return roundedIntPoint(view->convertFromRootViewAcrossIsolatedFrames(WebCore::FloatPoint { point }));
+    // Convert the incoming main-frame root-view point into the root-view coordinates of the focused
+    // frame's local root, applying any CSS transforms on the ancestor frames -- a plain translation
+    // offset could not represent a scale. The local root can be under a remote ancestor even when the
+    // main frame is in this process. Convert to the local root's coordinates, not the focused frame's,
+    // since the caller applies the focused frame's offset within its local root via rootViewToContents().
+    return roundedIntPoint(localRootView->convertFromRootViewAcrossIsolatedFrames(WebCore::FloatPoint { point }));
 }
 
 std::optional<WebCore::RemoteUserInputEventData> WebPage::remoteUserInputEventDataForSelectionGesture(WebCore::LocalFrame* localRootFrame, WebCore::IntPoint point)

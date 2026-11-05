@@ -1,0 +1,79 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Dragging a selection end grabber in a frame nested inside a same-site parent, which is itself a cross-origin iframe, should extend the selection to the line under the finger. The nested frame is not the local root of its process, so its offset within the parent must be applied only once.");
+jsTestIsAsync = true;
+
+// The middle frame is at y = 60 in the main frame and the nested frame is at y = 80 in the middle
+// frame, so the nested frame's lines, 40px tall, start at y = 140 in the main frame.
+const nestedFrameTop = 60 + 80;
+const lineHeight = 40;
+const initialLine = 3;
+const linesToDrag = 4;
+// UIKit doesn't move the selection end by exactly as much as the grabber is dragged, so the
+// selection ends a line above "token" + (initialLine + linesToDrag). This matches what
+// drag-selection-grabber-in-same-site-nested-frame.html, where all the frames are same-site, gets.
+const expectedEndLine = initialLine + linesToDrag - 1;
+
+let reportedSelection = "";
+let initialSelection = "";
+let extendedSelection = "";
+let endToken = "";
+addEventListener("message", (event) => {
+    if (event.data === "ready")
+        runTest();
+    else if (typeof event.data === "string" && event.data.startsWith("selection:"))
+        reportedSelection = event.data.substring("selection:".length);
+});
+
+async function selectWord() {
+    // The long press is occasionally delivered before the nested frame is ready to process it.
+    for (let attempt = 0; attempt < 20 && !reportedSelection.length; ++attempt) {
+        await UIHelper.longPressAtPoint(30, nestedFrameTop + (initialLine + 0.5) * lineHeight);
+        for (let frame = 0; frame < 10 && !reportedSelection.length; ++frame)
+            await UIHelper.animationFrame();
+    }
+}
+
+async function waitForSelectionToSettle() {
+    // The drag sends intermediate touches, each of which can update the selection, so wait until
+    // the reported selection stops changing before reading it.
+    await UIHelper.ensurePresentationUpdate();
+    let lastSelection = reportedSelection;
+    for (let stableFrames = 0; stableFrames < 10; ) {
+        await UIHelper.animationFrame();
+        if (reportedSelection === lastSelection)
+            ++stableFrames;
+        else {
+            lastSelection = reportedSelection;
+            stableFrames = 0;
+        }
+    }
+}
+
+async function runTest() {
+    await UIHelper.ensurePresentationUpdate();
+    await selectWord();
+    await UIHelper.waitForSelectionToAppear();
+    initialSelection = reportedSelection;
+    shouldBeEqualToString("initialSelection", "token" + initialLine);
+
+    // Drag the end grabber down by 4 lines. If the nested frame's offset within the middle frame
+    // (2 lines) were applied twice, the selection would end 2 lines short, at "token4".
+    for (let attempt = 0; attempt < 20 && reportedSelection === initialSelection; ++attempt) {
+        const grabber = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+        await UIHelper.dragFromPointToPoint(grabber.x, grabber.y, grabber.x + 100, grabber.y + linesToDrag * lineHeight, 0.5);
+        for (let frame = 0; frame < 10 && reportedSelection === initialSelection; ++frame)
+            await UIHelper.animationFrame();
+    }
+
+    await waitForSelectionToSettle();
+    extendedSelection = reportedSelection;
+    shouldBeTrue("extendedSelection.startsWith('token" + initialLine + "')");
+    endToken = extendedSelection.match(/token\d+/g).pop();
+    shouldBeEqualToString("endToken", "token" + expectedEndLine);
+    finishJSTest();
+}
+</script>
+<iframe style="position: absolute; left: 0; top: 60px; width: 400px; height: 460px; border: none;" src="http://localhost:8000/site-isolation/resources/middle-frame-with-multiline-text-child.html?localhost"></iframe>
