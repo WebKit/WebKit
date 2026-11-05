@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 110;
+	objectVersion = 90;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -2397,7 +2397,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 			);
-			preferredProjectObjectVersion = 100;
+			preferredProjectObjectVersion = 90;
 			projectDirPath = "";
 			projectReferences = (
 				{
@@ -3402,5 +3402,4 @@
 /* End XCConfigurationList section */
 	};
 	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
-	validationLevel = 1;
 }
