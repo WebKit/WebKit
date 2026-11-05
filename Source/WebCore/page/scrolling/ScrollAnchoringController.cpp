@@ -477,11 +477,11 @@ static TextStream& operator<<(TextStream& ts, AnchorSearchStatus result)
 // For each absolutely-positioned element A whose containing block is N...
 AnchorSearchStatus ScrollAnchoringController::findAnchorInOutOfFlowObjects(RenderObject& candidate)
 {
-    CheckedPtr block = dynamicDowncast<RenderBlock>(candidate);
-    if (!block)
+    CheckedPtr containingBlock = dynamicDowncast<RenderBoxModelObject>(candidate);
+    if (!containingBlock)
         return AnchorSearchStatus::Exclude;
 
-    auto* outOfFlowBoxes = block->outOfFlowBoxes();
+    auto* outOfFlowBoxes = containingBlock->outOfFlowBoxes();
     if (!outOfFlowBoxes)
         return AnchorSearchStatus::Exclude;
 
