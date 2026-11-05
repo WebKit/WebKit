@@ -1,0 +1,4 @@
+
+PASS PhoneNumberPossessionCredential isn't exposed when the feature is disabled.
+PASS get() ignores phoneNumberPossessionIdentifier when the feature is disabled.
+

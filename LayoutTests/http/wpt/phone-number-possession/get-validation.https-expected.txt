@@ -1,0 +1,23 @@
+
+PASS get() requires transient activation.
+PASS An RP ID from another site is rejected.
+PASS An RP ID that isn't a suffix of the document's domain is rejected.
+PASS The phoneNumberSuffixHint "" is rejected.
+PASS The phoneNumberSuffixHint "1111111111111111" is rejected.
+PASS The phoneNumberSuffixHint "12a4" is rejected.
+PASS The phoneNumberSuffixHint "+1234" is rejected.
+PASS The phoneNumberSuffixHint "123 4" is rejected.
+PASS A 0 byte challenge is rejected.
+PASS A 1025 byte challenge is rejected.
+PASS A 0 byte pnpiSuffixHint is rejected.
+PASS A 33 byte pnpiSuffixHint is rejected.
+PASS A 0 character pinnedCarrier is rejected.
+PASS A 254 character pinnedCarrier is rejected.
+PASS desiredResponseType must be a valid PhoneNumberPossessionResponseType.
+PASS challenge is required.
+PASS desiredResponseType is required.
+PASS phoneNumberPossessionIdentifier can't be combined with another credential type.
+PASS Conditional mediation is rejected.
+PASS Silent mediation resolves with null, because the user always has to consent.
+PASS An invalid request doesn't consume transient activation.
+

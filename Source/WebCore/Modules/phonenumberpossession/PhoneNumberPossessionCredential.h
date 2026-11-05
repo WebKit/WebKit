@@ -33,21 +33,16 @@
 
 namespace WebCore {
 
-class AbortSignal;
 class Document;
-enum class MediationRequirement : uint8_t;
-struct PhoneNumberPossessionRequest;
 struct PhoneNumberPossessionResponse;
 template<typename IDLType> class DOMPromiseDeferred;
 
-using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 
 class PhoneNumberPossessionCredential final : public BasicCredential {
 public:
     NODELETE static Ref<PhoneNumberPossessionCredential> create(PhoneNumberPossessionResponse&&);
     virtual ~PhoneNumberPossessionCredential();
 
-    static void discoverFromExternalSource(const Document&, PhoneNumberPossessionRequest&&, MediationRequirement, RefPtr<AbortSignal>&&, CredentialPromise&&);
     static void isAvailable(Document&, DOMPromiseDeferred<IDLBoolean>&&);
     static void isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&&);
 

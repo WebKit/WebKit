@@ -598,6 +598,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/permissions/PermissionStatus.idl \
     $(WebCore)/Modules/permissions/Permissions.idl \
     $(WebCore)/Modules/permissions/WorkerNavigator+Permissions.idl \
+    $(WebCore)/Modules/phonenumberpossession/PhoneNumberPossessionCredential.idl \
+    $(WebCore)/Modules/phonenumberpossession/PhoneNumberPossessionRequestOptions.idl \
+    $(WebCore)/Modules/phonenumberpossession/PhoneNumberPossessionResponseType.idl \
     $(WebCore)/Modules/pictureinpicture/DocumentOrShadowRoot+PictureInPicture.idl \
     $(WebCore)/Modules/pictureinpicture/Document+PictureInPicture.idl \
     $(WebCore)/Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl \

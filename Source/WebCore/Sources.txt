@@ -4891,6 +4891,9 @@ JSPermissionName.cpp
 JSPermissionState.cpp
 JSPermissionStatus.cpp
 JSPermissions.cpp
+JSPhoneNumberPossessionCredential.cpp
+JSPhoneNumberPossessionRequestOptions.cpp
+JSPhoneNumberPossessionResponseType.cpp
 JSPhotoCapabilities.cpp
 JSPhotoSettings.cpp
 JSPictureInPictureEvent.cpp

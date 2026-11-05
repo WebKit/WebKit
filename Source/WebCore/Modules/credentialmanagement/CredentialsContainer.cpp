@@ -44,6 +44,7 @@
 #include "LocalFrame.h"
 #include "Navigator.h"
 #include "Page.h"
+#include "PhoneNumberPossessionCoordinator.h"
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -63,6 +64,9 @@ static bool checkCredentialTypeCombinations(const CredentialRequestOptions& opti
         OTP       = 1 << 3,
         PublicKey = 1 << 4,
         Digital   = 1 << 5,
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+        PhoneNumberPossession = 1 << 6,
+#endif
     };
 
     OptionSet<CredentialType> requestedTypes;
@@ -78,6 +82,10 @@ static bool checkCredentialTypeCombinations(const CredentialRequestOptions& opti
         requestedTypes.add(CredentialType::PublicKey);
     if (options.digital)
         requestedTypes.add(CredentialType::Digital);
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    if (options.phoneNumberPossessionIdentifier)
+        requestedTypes.add(CredentialType::PhoneNumberPossession);
+#endif
 
     if (requestedTypes.isEmpty()) {
         promise.reject(Exception { ExceptionCode::NotSupportedError, "No credential type was specified."_s });
@@ -94,6 +102,9 @@ static bool checkCredentialTypeCombinations(const CredentialRequestOptions& opti
         case CredentialType::Identity:
         case CredentialType::OTP:
         case CredentialType::PublicKey:
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+        case CredentialType::PhoneNumberPossession:
+#endif
         case CredentialType::Digital:   return { };
         }
         ASSERT_NOT_REACHED();
@@ -164,6 +175,14 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
 #endif
         return;
     }
+
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    if (options.phoneNumberPossessionIdentifier) {
+        RefPtr page = document->page();
+        page->phoneNumberPossessionCoordinator().discoverFromExternalSource(*document, WTF::move(*options.phoneNumberPossessionIdentifier), options.mediation, WTF::move(options.signal), WTF::move(promise));
+        return;
+    }
+#endif
 
     if (!options.publicKey) {
         promise.resolve(nullptr);

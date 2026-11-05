@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ PhoneNumberPossessionEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>Phone Number Possession: isAvailable()</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="./resources/util.js"></script>
+<body>
+<script>
+promise_test(async () => {
+    setMockConfiguration();
+    assert_true(await PhoneNumberPossessionCredential.isAvailable());
+}, "isAvailable() resolves with true when the platform can provide a phone number possession.");
+
+promise_test(async () => {
+    setMockConfiguration({ isAvailable: false });
+    assert_false(await PhoneNumberPossessionCredential.isAvailable());
+}, "isAvailable() resolves with false when the platform can't provide a phone number possession.");
+
+promise_test(async () => {
+    assert_false(await PhoneNumberPossessionCredential.isConditionalMediationAvailable());
+}, "isConditionalMediationAvailable() resolves with false.");
+</script>
+</body>

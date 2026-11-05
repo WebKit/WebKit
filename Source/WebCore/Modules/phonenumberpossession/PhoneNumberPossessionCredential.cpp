@@ -28,14 +28,11 @@
 
 #if ENABLE(PHONE_NUMBER_POSSESSION)
 
-#include "AbortSignal.h"
 #include "DocumentPage.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMPromiseDeferred.h"
-#include "MediationRequirement.h"
 #include "Page.h"
 #include "PhoneNumberPossessionCoordinator.h"
-#include "PhoneNumberPossessionRequest.h"
 #include "PhoneNumberPossessionResponse.h"
 #include <wtf/UUID.h>
 
@@ -58,16 +55,6 @@ PhoneNumberPossessionCredential::PhoneNumberPossessionCredential(PhoneNumberPoss
 }
 
 PhoneNumberPossessionCredential::~PhoneNumberPossessionCredential() = default;
-
-void PhoneNumberPossessionCredential::discoverFromExternalSource(const Document& document, PhoneNumberPossessionRequest&& request, MediationRequirement mediation, RefPtr<AbortSignal>&& signal, CredentialPromise&& promise)
-{
-    RefPtr page = document.page();
-    if (!page) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Preconditions for calling .get() are not met."_s });
-        return;
-    }
-    page->phoneNumberPossessionCoordinator().discoverFromExternalSource(document, WTF::move(request), mediation, WTF::move(signal), WTF::move(promise));
-}
 
 void PhoneNumberPossessionCredential::isAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
 {

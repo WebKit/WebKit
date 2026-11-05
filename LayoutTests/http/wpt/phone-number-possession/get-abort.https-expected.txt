@@ -1,0 +1,6 @@
+
+PASS An already aborted signal rejects the request.
+PASS Aborting a pending request rejects it and cancels it in the UI process.
+PASS Aborting a pending request rejects it with the signal's reason.
+PASS Aborting the signal of a finished request doesn't affect a later request.
+

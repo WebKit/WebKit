@@ -1,0 +1,87 @@
+<!DOCTYPE html><!-- webkit-test-runner [ PhoneNumberPossessionEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>Phone Number Possession: request validation</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="./resources/util.js"></script>
+<body>
+<script>
+setMockConfiguration();
+
+// Runs first, before any test has left an unconsumed activation behind.
+promise_test(async t => {
+    await promiseRejects(t, "NotAllowedError", navigator.credentials.get(makeOptions()), "Calling get() needs to be triggered by an activation triggering user event.");
+}, "get() requires transient activation.");
+
+promise_test(async t => {
+    await promiseRejects(t, "SecurityError", getWithActivation(makeOptions({ rpId: "example.com" })), "The origin of the document is not authorized for the provided RP ID.");
+}, "An RP ID from another site is rejected.");
+
+promise_test(async t => {
+    await promiseRejects(t, "SecurityError", getWithActivation(makeOptions({ rpId: "sub.localhost" })), "The origin of the document is not authorized for the provided RP ID.");
+}, "An RP ID that isn't a suffix of the document's domain is rejected.");
+
+for (const phoneNumberSuffixHint of ["", "1".repeat(16), "12a4", "+1234", "123 4"]) {
+    promise_test(async t => {
+        await promiseRejects(t, TypeError, getWithActivation(makeOptions({ phoneNumberSuffixHint })), "The phoneNumberSuffixHint must contain between 1 and 15 digits.");
+    }, `The phoneNumberSuffixHint "${phoneNumberSuffixHint}" is rejected.`);
+}
+
+for (const length of [0, 1025]) {
+    promise_test(async t => {
+        await promiseRejects(t, TypeError, getWithActivation(makeOptions({ challenge: new Uint8Array(length) })), "The challenge must be between 1 and 1024 bytes long.");
+    }, `A ${length} byte challenge is rejected.`);
+}
+
+for (const length of [0, 33]) {
+    promise_test(async t => {
+        await promiseRejects(t, TypeError, getWithActivation(makeOptions({ pnpiSuffixHint: new Uint8Array(length) })), "The pnpiSuffixHint must be between 1 and 32 bytes long.");
+    }, `A ${length} byte pnpiSuffixHint is rejected.`);
+}
+
+for (const pinnedCarrier of ["", "a".repeat(254)]) {
+    promise_test(async t => {
+        await promiseRejects(t, TypeError, getWithActivation(makeOptions({ pinnedCarrier })), "The pinnedCarrier must contain between 1 and 253 characters.");
+    }, `A ${pinnedCarrier.length} character pinnedCarrier is rejected.`);
+}
+
+promise_test(async t => {
+    await promise_rejects_js(t, TypeError, getWithActivation(makeOptions({ desiredResponseType: "phone-number" })));
+}, "desiredResponseType must be a valid PhoneNumberPossessionResponseType.");
+
+promise_test(async t => {
+    const options = makeOptions();
+    delete options.phoneNumberPossessionIdentifier.challenge;
+    await promise_rejects_js(t, TypeError, getWithActivation(options));
+}, "challenge is required.");
+
+promise_test(async t => {
+    const options = makeOptions();
+    delete options.phoneNumberPossessionIdentifier.desiredResponseType;
+    await promise_rejects_js(t, TypeError, getWithActivation(options));
+}, "desiredResponseType is required.");
+
+promise_test(async t => {
+    const options = { ...makeOptions(), publicKey: { challenge: new Uint8Array([1, 2, 3, 4]) } };
+    await promiseRejects(t, "NotSupportedError", getWithActivation(options), "The credential type combination is not supported.");
+}, "phoneNumberPossessionIdentifier can't be combined with another credential type.");
+
+promise_test(async t => {
+    await promiseRejects(t, TypeError, getWithActivation({ ...makeOptions(), mediation: "conditional" }), "Conditional mediation is not supported for phone number possession credentials.");
+}, "Conditional mediation is rejected.");
+
+promise_test(async () => {
+    assert_equals(await getWithActivation({ ...makeOptions(), mediation: "silent" }), null);
+}, "Silent mediation resolves with null, because the user always has to consent.");
+
+promise_test(async t => {
+    await test_driver.bless("request phone number possession");
+    await promiseRejects(t, TypeError, navigator.credentials.get(makeOptions({ phoneNumberSuffixHint: "" })), "The phoneNumberSuffixHint must contain between 1 and 15 digits.");
+    await promiseRejects(t, "SecurityError", navigator.credentials.get(makeOptions({ rpId: "example.com" })), "The origin of the document is not authorized for the provided RP ID.");
+    const credential = await navigator.credentials.get(makeOptions());
+    assert_true(credential instanceof PhoneNumberPossessionCredential);
+}, "An invalid request doesn't consume transient activation.");
+</script>
+</body>

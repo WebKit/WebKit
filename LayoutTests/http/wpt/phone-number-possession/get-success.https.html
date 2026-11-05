@@ -1,0 +1,91 @@
+<!DOCTYPE html><!-- webkit-test-runner [ PhoneNumberPossessionEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>Phone Number Possession: successful requests</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="./resources/util.js"></script>
+<body>
+<script>
+setMockConfiguration();
+
+promise_test(async () => {
+    const credential = await getWithActivation(makeOptions());
+    assert_true(credential instanceof PhoneNumberPossessionCredential);
+    assert_true(credential instanceof Credential);
+    assert_equals(credential.type, "phone-number-possession");
+    assert_regexp_match(credential.id, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/, "id is a version 4 UUID");
+    const otherCredential = await getWithActivation(makeOptions());
+    assert_not_equals(otherCredential.id, credential.id, "each credential gets its own id");
+}, "get() resolves with a PhoneNumberPossessionCredential.");
+
+promise_test(async () => {
+    const credential = await getWithActivation(makeOptions());
+    assert_true(credential.encryptedResult instanceof ArrayBuffer, "encryptedResult");
+    assert_equals(credential.encryptedResult, credential.encryptedResult, "encryptedResult is the same object every time");
+    assertBufferFilled(credential.portingZKP, mockResponse.portingZKP, "portingZKP");
+    assert_equals(credential.portingZKP, credential.portingZKP, "portingZKP is the same object every time");
+}, "get() returns encryptedResult and portingZKP.");
+
+promise_test(async () => {
+    const credential = await getWithActivation(makeOptions());
+    assert_equals(credential.carrierDomain, mockResponse.carrierDomain);
+    assert_equals(credential.carrierConfigurationId, mockResponse.carrierConfigurationId);
+}, "get() returns the carrier's domain and configuration ID.");
+
+promise_test(async () => {
+    const credential = await getWithActivation(makeOptions());
+    assert_true(credential.encryptedDecryptionKeyOrError instanceof ArrayBuffer, "encryptedDecryptionKeyOrError");
+    assert_equals(credential.encryptedDecryptionKeyOrError, credential.encryptedDecryptionKeyOrError, "encryptedDecryptionKeyOrError is the same object every time");
+    const { value, length } = mockResponse.decryptionKey;
+    assert_array_equals(decodeJSON(credential.encryptedDecryptionKeyOrError).decryptionKey, new Array(length).fill(value));
+}, "get() returns encryptedDecryptionKeyOrError.");
+
+promise_test(async t => {
+    setMockConfiguration({ includesOptionalFields: false });
+    t.add_cleanup(() => setMockConfiguration());
+    const credential = await getWithActivation(makeOptions());
+    assert_equals(credential.encryptedDecryptionKeyOrError, null);
+    assert_equals(credential.portingZKP, null);
+}, "Members the platform leaves out are null.");
+
+promise_test(async () => {
+    const credential = await getWithActivation(makeOptions());
+    assert_false("msisdn" in decodeJSON(credential.encryptedResult));
+
+    const credentialWithPhoneNumber = await getWithActivation(makeOptions({ desiredResponseType: "possession-identifier-and-phone-number" }));
+    const { value, length } = mockResponse.msisdn;
+    assert_equals(decodeJSON(credentialWithPhoneNumber.encryptedResult).msisdn, base64URLEncode(new Uint8Array(length).fill(value)));
+}, "encryptedResult only includes the phone number when it was requested.");
+
+promise_test(async () => {
+    const credential = await getWithActivation(makeOptions());
+    assert_equals(credential.clientDataJSON, credential.clientDataJSON, "clientDataJSON is the same object every time");
+    const clientData = decodeJSON(credential.clientDataJSON);
+    assert_equals(clientData.challenge, base64URLEncode(testChallenge));
+    assert_equals(clientData.requestContext, "web browser");
+    assert_equals(clientData.rpId, "localhost");
+}, "clientDataJSON defaults the RP ID to the document's effective domain.");
+
+promise_test(async () => {
+    const credential = await getWithActivation(makeOptions({ rpId: "localhost" }));
+    assert_equals(decodeJSON(credential.clientDataJSON).rpId, "localhost");
+}, "clientDataJSON uses an explicit RP ID.");
+
+promise_test(async () => {
+    const credential = await getWithActivation(makeOptions({ phoneNumberSuffixHint: "1".repeat(15) }));
+    assert_true(credential instanceof PhoneNumberPossessionCredential);
+}, "A 15 digit phoneNumberSuffixHint is accepted.");
+
+promise_test(async () => {
+    const credential = await getWithActivation(makeOptions({ pnpiSuffixHint: new Uint8Array(32) }));
+    assert_true(credential instanceof PhoneNumberPossessionCredential);
+}, "A 32 byte pnpiSuffixHint is accepted.");
+
+promise_test(async () => {
+    const credential = await getWithActivation(makeOptions({ pinnedCarrier: "a".repeat(253) }));
+    assert_true(credential instanceof PhoneNumberPossessionCredential);
+}, "A 253 character pinnedCarrier is accepted.");
+</script>
+</body>

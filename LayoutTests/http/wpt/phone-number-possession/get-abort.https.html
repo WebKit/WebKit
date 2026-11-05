@@ -1,0 +1,61 @@
+<!DOCTYPE html><!-- webkit-test-runner [ PhoneNumberPossessionEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>Phone Number Possession: aborting requests</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="./resources/util.js"></script>
+<body>
+<script>
+promise_test(async t => {
+    setMockConfiguration();
+    const controller = new AbortController();
+    controller.abort();
+    await promise_rejects_dom(t, "AbortError", getWithActivation({ ...makeOptions(), signal: controller.signal }));
+}, "An already aborted signal rejects the request.");
+
+promise_test(async t => {
+    setMockConfiguration({ outcome: "no-response" });
+    const controller = new AbortController();
+    await test_driver.bless("request phone number possession");
+    const promise = navigator.credentials.get({ ...makeOptions(), signal: controller.signal });
+    controller.abort();
+    await promise_rejects_dom(t, "AbortError", promise);
+
+    setMockConfiguration();
+    const credential = await getWithActivation(makeOptions());
+    assert_true(credential instanceof PhoneNumberPossessionCredential);
+}, "Aborting a pending request rejects it and cancels it in the UI process.");
+
+promise_test(async t => {
+    setMockConfiguration({ outcome: "no-response" });
+    const controller = new AbortController();
+    const reason = new Error("Custom reason");
+    await test_driver.bless("request phone number possession");
+    const promise = navigator.credentials.get({ ...makeOptions(), signal: controller.signal });
+    controller.abort(reason);
+    await promise_rejects_exactly(t, reason, promise);
+}, "Aborting a pending request rejects it with the signal's reason.");
+
+promise_test(async t => {
+    setMockConfiguration();
+    const finishedController = new AbortController();
+    await getWithActivation({ ...makeOptions(), signal: finishedController.signal });
+
+    setMockConfiguration({ outcome: "no-response" });
+    const pendingController = new AbortController();
+    await test_driver.bless("request phone number possession");
+    const pendingPromise = navigator.credentials.get({ ...makeOptions(), signal: pendingController.signal });
+
+    finishedController.abort();
+    await promiseRejects(t, "NotAllowedError", navigator.credentials.get(makeOptions()), "A phone number possession request is already in progress.");
+
+    await PhoneNumberPossessionCredential.isAvailable();
+
+    const reason = new Error("The test aborted the pending request.");
+    pendingController.abort(reason);
+    await promise_rejects_exactly(t, reason, pendingPromise);
+}, "Aborting the signal of a finished request doesn't affect a later request.");
+</script>
+</body>
