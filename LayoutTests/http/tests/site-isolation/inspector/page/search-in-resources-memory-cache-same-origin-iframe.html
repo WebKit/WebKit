@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function loadImageFromMemoryCache() {
+    // The <img> below has already loaded the image, so the same-origin iframe (in the same process) takes it
+    // from the memory cache while resolving its style. The image is an SVG because the search skips
+    // base64-encoded content before it reaches the URL check.
+    let iframe = document.createElement("iframe");
+    iframe.srcdoc = `<div style="width: 10px; height: 10px; background-image: url(resources/search-in-resources-memory-cache-image.svg)"></div>`;
+    iframe.addEventListener("load", () => {
+        iframe.contentDocument.body.offsetHeight;
+        TestPage.dispatchEventToFrontend("ImageLoadedFromMemoryCache");
+    });
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    function sanitizeURL(url) {
+        return url.replace(/^https?:\/\/[^\/]+\//, "");
+    }
+
+    function frameDescription(frameId) {
+        let frame = WI.networkManager.frameForIdentifier(frameId);
+        if (!frame)
+            return "unknown frame";
+        return frame.isMainFrame() ? "main frame" : "child frame";
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SearchInResources.MemoryCache");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SearchInResources.MemoryCache.ImageDuringStyleResolution",
+        description: "Searching should not crash when a resource was served from the memory cache during style resolution, which leaves its buffered entry without a URL.",
+        async test() {
+            // Other memory cache hits are reported like network loads, with a response and so a URL. Only
+            // Network.requestServedFromMemoryCache shows that the image took the path that leaves no URL.
+            let imageServedFromMemoryCachePromise = new Promise((resolve) => {
+                let originalRequestServedFromMemoryCache = WI.NetworkObserver.prototype.requestServedFromMemoryCache;
+                WI.NetworkObserver.prototype.requestServedFromMemoryCache = function(requestId, frameId, loaderId, documentURL, timestamp, initiator, resource) {
+                    if (resource.url.endsWith("/search-in-resources-memory-cache-image.svg")) {
+                        WI.NetworkObserver.prototype.requestServedFromMemoryCache = originalRequestServedFromMemoryCache;
+                        resolve();
+                    }
+                    return originalRequestServedFromMemoryCache.apply(this, arguments);
+                };
+            });
+
+            await Promise.all([
+                imageServedFromMemoryCachePromise,
+                InspectorTest.awaitEvent("ImageLoadedFromMemoryCache"),
+                InspectorTest.evaluateInPage("loadImageFromMemoryCache()"),
+            ]);
+            InspectorTest.pass("Image should be reported through Network.requestServedFromMemoryCache.");
+
+            // The image is a cached resource of both frames, so it is reported once for each.
+            let {result} = await WI.networkManager.resourceSearchTarget.PageAgent.searchInResources("memory-cache-string");
+            InspectorTest.expectThat(Array.isArray(result), "Should return an array of results.");
+            for (let line of result.map(({url, frameId, matchesCount}) => `FOUND: ${sanitizeURL(url)} (${matchesCount}) in ${frameDescription(frameId)}`).sort())
+                InspectorTest.log(line);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Page.searchInResources does not crash under Site Isolation when a resource was served from the memory cache during style resolution.</p>
+<img src="resources/search-in-resources-memory-cache-image.svg">
+</body>
