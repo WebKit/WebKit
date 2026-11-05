@@ -48,10 +48,10 @@ Ref<PhoneNumberPossessionCredential> PhoneNumberPossessionCredential::create(Pho
 
 PhoneNumberPossessionCredential::PhoneNumberPossessionCredential(PhoneNumberPossessionResponse&& response)
     : BasicCredential(createVersion4UUIDString(), Type::PhoneNumberPossession, Discovery::Remote)
-    , m_encryptedPNPIWithProof(WTF::move(response.encryptedPNPIWithProof))
-    , m_aggregatorData(response.aggregatorData ? RefPtr { AggregatorResponseData::create(WTF::move(*response.aggregatorData)) } : nullptr)
-    , m_carrierPubKey(WTF::move(response.carrierPubKey))
-    , m_encryptedMSISDN(WTF::move(response.encryptedMSISDN))
+    , m_encryptedResult(WTF::move(response.encryptedResult))
+    , m_carrierDomain(WTF::move(response.carrierDomain))
+    , m_carrierConfigurationID(response.carrierConfigurationID)
+    , m_encryptedDecryptionKeyOrError(WTF::move(response.encryptedDecryptionKeyOrError))
     , m_clientDataJSON(WTF::move(response.clientDataJSON))
     , m_portingZKP(WTF::move(response.portingZKP))
 {

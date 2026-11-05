@@ -48,7 +48,7 @@ function makeRequest(overrides = { })
         desiredResponseType: 0,
         phoneNumberSuffixHint: null,
         pnpiSuffixHint: { },
-        knownCarrierPubKey: { },
+        pinnedCarrier: null,
         ...overrides,
     };
 }
