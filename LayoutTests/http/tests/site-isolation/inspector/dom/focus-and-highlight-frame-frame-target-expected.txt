@@ -1,0 +1,34 @@
+Tests DOM.focus and DOM.highlightFrame on a cross-origin iframe's FrameDOMAgent, and DOM.highlightFrame on the page target for a cross-site child frame.
+
+
+
+== Running test suite: SiteIsolation.DOM.FocusAndHighlightFrame
+-- Running test case: Setup
+PASS: Should find the frame target.
+PASS: Frame document should have #container.
+PASS: Frame target should expose DOM.focus.
+PASS: Frame target should expose DOM.highlightFrame.
+
+-- Running test case: Focus
+PASS: Should get a nodeId for '#input'.
+PASS: DOM.focus should be accepted by the frame target.
+PASS: #input should be the active element.
+
+-- Running test case: FocusNotFocusable
+PASS: DOM.focus should report that #plain is not focusable.
+
+-- Running test case: HighlightFrameLocalChild
+PASS: Should get the frameId of the local child.
+PASS: DOM.highlightFrame should be accepted for a local child frame.
+
+-- Running test case: HighlightFrameRemoteChild
+PASS: Should get the frameId of the remote child.
+PASS: DOM.highlightFrame should be accepted for a remote child frame.
+
+-- Running test case: HighlightFrameNotAChild
+PASS: DOM.highlightFrame should reject the frame target's own frame.
+PASS: DOM.highlightFrame should reject a malformed frameId.
+
+-- Running test case: HighlightFramePageTarget
+PASS: DOM.highlightFrame should be accepted by the page target for a cross-site child frame.
+

@@ -1,0 +1,162 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FocusAndHighlightFrame");
+
+    let target;
+    let containerNode;
+
+    async function documentForTarget(frameTarget) {
+        await frameTarget.ensureTargetExecutionContext();
+        let frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+        while (!frameDoc) {
+            await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+            frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+        }
+        return frameDoc;
+    }
+
+    async function frameTargetFor(substring) {
+        let frameTarget = await waitForFrameTargetForURLContaining(substring);
+        InspectorTest.assert(frameTarget, "Should find the frame target for " + substring + ".");
+        return frameTarget;
+    }
+
+    async function frameIdFor(substring) {
+        let frameDoc = await documentForTarget(await frameTargetFor(substring));
+        return frameDoc ? frameDoc.frameIdentifier : null;
+    }
+
+    // Binds the children of #container so nodes that querySelector returns are already in the frontend.
+    async function containerNodeForTarget(frameTarget) {
+        let frameDoc = await documentForTarget(frameTarget);
+        let htmlNode = frameDoc.children.find((child) => child.nodeName() === "HTML");
+        await new Promise((resolve) => htmlNode.getChildNodes(resolve));
+        let bodyNode = htmlNode.children.find((child) => child.nodeName() === "BODY");
+        await new Promise((resolve) => bodyNode.getChildNodes(resolve));
+        let node = bodyNode.children.find((child) => child.getAttribute("id") === "container");
+        if (node)
+            await new Promise((resolve) => node.getChildNodes(resolve));
+        return node;
+    }
+
+    // `querySelector` answers the scoped frontend key; raw protocol commands need the backend nodeId.
+    async function backendNodeIdFor(container, selector) {
+        let node = WI.domManager.nodeForId(await container.querySelector(selector));
+        return node ? node.backendNodeId : null;
+    }
+
+    // Resolves to an error, or null when the command succeeded.
+    async function errorFrom(promise) {
+        try {
+            await promise;
+            return null;
+        } catch (error) {
+            return error;
+        }
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target and bind its #container.",
+        async test() {
+            target = await waitForFrameTargetForURLContaining("focus-highlight-frame.html");
+            InspectorTest.expectNotNull(target, "Should find the frame target.");
+
+            containerNode = await containerNodeForTarget(target);
+            InspectorTest.expectNotNull(containerNode, "Frame document should have #container.");
+
+            InspectorTest.expectTrue(target.hasCommand("DOM.focus"), "Frame target should expose DOM.focus.");
+            InspectorTest.expectTrue(target.hasCommand("DOM.highlightFrame"), "Frame target should expose DOM.highlightFrame.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Focus",
+        description: "DOM.focus should focus an element in the frame target's document.",
+        async test() {
+            // Element::focus() ignores a frame that is cross-origin to the top document and has had no user
+            // interaction, for every target alike, so focus in a frame that is same-origin with the top document.
+            let childTarget = await frameTargetFor("focus-highlight-child-frame.html?remote-child");
+            let childContainerNode = await containerNodeForTarget(childTarget);
+            let nodeId = await backendNodeIdFor(childContainerNode, "#input");
+            InspectorTest.expectNotNull(nodeId, "Should get a nodeId for '#input'.");
+
+            let error = await errorFrom(childTarget.DOMAgent.focus(nodeId));
+            InspectorTest.expectNull(error, "DOM.focus should be accepted by the frame target.");
+
+            let {result} = await childTarget.RuntimeAgent.evaluate.invoke({expression: "document.activeElement.id", objectGroup: "test", returnByValue: true});
+            InspectorTest.expectEqual(result.value, "input", "#input should be the active element.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "FocusNotFocusable",
+        description: "DOM.focus should reject an element that is not focusable.",
+        async test() {
+            let nodeId = await backendNodeIdFor(containerNode, "#plain");
+            let error = await errorFrom(target.DOMAgent.focus(nodeId));
+            InspectorTest.expectEqual(error?.message, "Element for given nodeId is not focusable", "DOM.focus should report that #plain is not focusable.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightFrameLocalChild",
+        description: "DOM.highlightFrame should highlight the owner of a same-process child frame.",
+        async test() {
+            let frameId = await frameIdFor("focus-highlight-child-frame.html?local-child");
+            InspectorTest.expectNotNull(frameId, "Should get the frameId of the local child.");
+
+            let error = await errorFrom(target.DOMAgent.highlightFrame(frameId));
+            InspectorTest.expectNull(error, "DOM.highlightFrame should be accepted for a local child frame.");
+            await target.DOMAgent.hideHighlight();
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightFrameRemoteChild",
+        description: "DOM.highlightFrame should highlight the owner of a child frame hosted by another process.",
+        async test() {
+            let frameId = await frameIdFor("focus-highlight-child-frame.html?remote-child");
+            InspectorTest.expectNotNull(frameId, "Should get the frameId of the remote child.");
+
+            let error = await errorFrom(target.DOMAgent.highlightFrame(frameId));
+            InspectorTest.expectNull(error, "DOM.highlightFrame should be accepted for a remote child frame.");
+            await target.DOMAgent.hideHighlight();
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightFrameNotAChild",
+        description: "DOM.highlightFrame should reject frames that are not children of the frame target's frame.",
+        async test() {
+            let ownFrameId = await frameIdFor("focus-highlight-frame.html");
+            let error = await errorFrom(target.DOMAgent.highlightFrame(ownFrameId));
+            InspectorTest.expectEqual(error?.message, "Missing child frame for given frameId", "DOM.highlightFrame should reject the frame target's own frame.");
+
+            error = await errorFrom(target.DOMAgent.highlightFrame("bogus"));
+            InspectorTest.expectEqual(error?.message, "Invalid frameId format", "DOM.highlightFrame should reject a malformed frameId.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightFramePageTarget",
+        description: "The page target's DOM.highlightFrame should highlight the owner of a cross-site child frame.",
+        async test() {
+            let frameId = await frameIdFor("focus-highlight-frame.html");
+            let error = await errorFrom(WI.pageTarget.DOMAgent.highlightFrame(frameId));
+            InspectorTest.expectNull(error, "DOM.highlightFrame should be accepted by the page target for a cross-site child frame.");
+            await WI.pageTarget.DOMAgent.hideHighlight();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests DOM.focus and DOM.highlightFrame on a cross-origin iframe's FrameDOMAgent, and DOM.highlightFrame on the page target for a cross-site child frame.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/focus-highlight-frame.html" width="400" height="400"></iframe>
+</body>
