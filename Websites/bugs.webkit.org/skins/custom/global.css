@@ -2423,11 +2423,6 @@ table.attachment_entry {
     white-space: pre-wrap;
 }
 
-.bz_comment_text:not(.markdown) {
-    font-family: "SF Mono", monospace;
-    font-size-adjust: 0.53;
-}
-
 .bz_comment_text p {
     margin: 0;
     margin-block-end: 1rem;
