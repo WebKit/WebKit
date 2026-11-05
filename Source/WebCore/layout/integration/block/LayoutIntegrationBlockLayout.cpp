@@ -32,6 +32,8 @@
 #include "BlockFormattingUtils.h"
 #include "BlockIntegrationUtils.h"
 #include "FlexFormattingUtils.h"
+#include "InlineIteratorBoxInlines.h"
+#include "InlineIteratorInlineBox.h"
 #include "LayoutIntegrationBlockCoverage.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
@@ -39,6 +41,7 @@
 #include "LocalFrameViewInlines.h"
 #include "LocalFrameViewLayoutContext.h"
 #include "Logging.h"
+#include "PositionedLayoutConstraints.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -292,12 +295,18 @@ static Layout::OutOfFlowGeometry::StaticPosition staticPosition(const RenderBox&
     auto staticInlinePosition = flexBox ? flexBox->startOffsetForContent() : layer->staticInlinePosition();
     auto staticBlockPosition = flexBox ? flexBox->borderAndPaddingBefore() : layer->staticBlockPosition();
     auto position = LayoutPoint { blockContainer->writingMode().isLogicalLeftInlineStart() ? staticInlinePosition : blockContainer->logicalWidth() - staticInlinePosition, staticBlockPosition };
-    // An out-of-flow box between them is positioned in its own containing block, which is where container() goes.
+    // An out-of-flow box between them is positioned in its own containing block, which is where container() goes, from the border box of the
+    // first fragment of a positioned inline box (RenderBoxModelObject::blockStartRelativeFirstFragmentBorderBoxRect).
     for (CheckedPtr<const RenderElement> box = blockContainer.ptr(); box != &containingBlock; box = box->container()) {
-        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*box)) {
-            position.move(renderBox->logicalLeft(), renderBox->logicalTop());
-            auto inFlowOffset = renderBox->offsetForInFlowPosition();
-            position.move(renderBox->isHorizontalWritingMode() ? inFlowOffset : inFlowOffset.transposedSize());
+        CheckedPtr renderBox = dynamicDowncast<RenderBox>(*box);
+        if (!renderBox)
+            continue;
+        position.move(renderBox->logicalLeft(), renderBox->logicalTop());
+        auto inFlowOffset = renderBox->offsetForInFlowPosition();
+        position.move(renderBox->isHorizontalWritingMode() ? inFlowOffset : inFlowOffset.transposedSize());
+        if (CheckedPtr inlineBox = renderBox->isOutOfFlowPositioned() ? dynamicDowncast<RenderBoxModelObject>(renderBox->container()) : nullptr; inlineBox && inlineBox->isInlineBox()) {
+            auto topLeft = inlineBox->blockStartRelativeFirstFragmentBorderBoxRect().location();
+            position.moveBy(inlineBox->writingMode().isHorizontal() ? topLeft : topLeft.transposedPoint());
         }
     }
     auto paddingBox = logicalPaddingBoxRect(containingBlock);
@@ -357,9 +366,38 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
     auto* outOfFlowBoxes = containingBlock.outOfFlowBoxes();
     if (!outOfFlowBoxes)
         return;
+    auto writingMode = containingBlock.writingMode();
     auto paddingBox = logicalPaddingBoxRect(containingBlock);
-    auto paddingBoxInlineStart = containingBlock.writingMode().isLogicalLeftInlineStart() ? paddingBox.x() : containingBlock.logicalWidth() - paddingBox.maxX();
-    auto outOfFlowContainingBlock = Layout::OutOfFlowContainingBlock { containingBlock, paddingBoxInlineStart, paddingBox.y(), paddingBox.width(), paddingBox.height(), scrollableContainingBlock(containingBlock) };
+    auto paddingBoxInlineStart = writingMode.isLogicalLeftInlineStart() ? paddingBox.x() : containingBlock.logicalWidth() - paddingBox.maxX();
+    auto paddingBoxContainingBlock = Layout::OutOfFlowContainingBlock { writingMode, containingBlock.hasPotentiallyScrollableOverflow(), paddingBoxInlineStart, paddingBox.y(), paddingBox.width(), paddingBox.height(), scrollableContainingBlock(containingBlock) };
+    // The containing block a positioned inline box forms (css-position-3 §2.1): from the start of the padding box of its first fragment to
+    // the end of the padding box of its last one in the inline axis, which is the left one of the last line in right-to-left, and the padding
+    // box of the bounding box of its fragments in the block axis (RenderBox::containingBlockRangeForPositioned, PositionedLayoutConstraints::fixupLogicalLeftPosition).
+    auto inlineBoxContainingBlock = [&](const RenderBoxModelObject& inlineBox) {
+        // The fragments are in the block container whose inline content the inline box is in, which may be an anonymous block inside the
+        // containing block.
+        CheckedRef inlineContentRoot = *inlineBox.containingBlock();
+        auto inlineContentRootOffset = LayoutSize { };
+        for (CheckedPtr<const RenderBlock> block = inlineContentRoot.ptr(); block && block != &containingBlock; block = block->containingBlock())
+            inlineContentRootOffset += LayoutSize { block->logicalLeft(), block->logicalTop() };
+        auto firstFragment = inlineBox.firstFragmentBorderBoxRect();
+        if (writingMode.isBlockFlipped())
+            inlineContentRoot->physicalToBlockStartRelative(firstFragment);
+        auto firstFragmentLogicalTopLeft = writingMode.isHorizontal() ? firstFragment.location() : firstFragment.location().transposedPoint();
+        auto leftFragmentLogicalLeft = firstFragmentLogicalTopLeft.x();
+        if (!writingMode.isLogicalLeftInlineStart()) {
+            if (auto fragment = InlineIterator::lineLeftmostInlineBoxFor(inlineBox)) {
+                while (auto next = std::ranges::next(fragment))
+                    fragment = next;
+                leftFragmentLogicalLeft = fragment->logicalLeftIgnoringInlineDirection();
+            }
+        }
+        auto inlineSize = inlineBox.paddingBoxLogicalWidth();
+        auto logicalLeft = inlineContentRootOffset.width() + leftFragmentLogicalLeft + inlineBox.borderLogicalLeft();
+        auto inlineStart = writingMode.isLogicalLeftInlineStart() ? logicalLeft : containingBlock.logicalWidth() - logicalLeft - inlineSize;
+        auto blockStart = inlineContentRootOffset.height() + firstFragmentLogicalTopLeft.y() + inlineBox.borderBefore();
+        return Layout::OutOfFlowContainingBlock { writingMode, false, inlineStart, blockStart, inlineSize, inlineBox.paddingBoxLogicalHeight() };
+    };
     auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
     auto blockLayoutState = Layout::BlockLayoutState { { } };
     // Laying out a box registers the out-of-flow boxes in it, which can make the list grow while it is iterated (like in RenderBlock::layoutOutOfFlowBoxes).
@@ -368,7 +406,22 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
         // it when it lays the box out. Capturing again compares with the previous capture, which tells style resolution to resolve anchor()
         // and position-visibility again.
         auto capturesScrollSnapshots = outOfFlowBox->needsLayout() && Style::AnchorPositionEvaluator::isAnchorPositioned(outOfFlowBox->style());
-        auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layoutOutOfFlowBox(outOfFlowBox, outOfFlowContainingBlock, staticPosition(outOfFlowBox, containingBlock), defaultAnchor(outOfFlowBox, containingBlock));
+        auto outOfFlowContainingBlock = paddingBoxContainingBlock;
+        auto boxStaticPosition = staticPosition(outOfFlowBox, containingBlock);
+        auto boxDefaultAnchor = defaultAnchor(outOfFlowBox, containingBlock);
+        if (CheckedPtr container = outOfFlowBox->container(); container && container->isInlineBox()) {
+            outOfFlowContainingBlock = inlineBoxContainingBlock(downcast<RenderBoxModelObject>(*container));
+            // The static position and the default anchor are relative to the padding box of the block.
+            auto inlineOffset = outOfFlowContainingBlock.inlineStart - paddingBoxContainingBlock.inlineStart;
+            auto blockOffset = outOfFlowContainingBlock.blockStart - paddingBoxContainingBlock.blockStart;
+            boxStaticPosition.inlinePosition -= inlineOffset;
+            boxStaticPosition.blockPosition -= blockOffset;
+            if (boxDefaultAnchor) {
+                boxDefaultAnchor->inlineStart -= inlineOffset;
+                boxDefaultAnchor->blockStart -= blockOffset;
+            }
+        }
+        auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layoutOutOfFlowBox(outOfFlowBox, outOfFlowContainingBlock, boxStaticPosition, boxDefaultAnchor);
         LOG_WITH_STREAM(Layout, stream << "BlockLayout for out-of-flow box (" << outOfFlowBox.ptr() << "): " << result);
         updateRenderers(result, paintInvalidation);
         if (capturesScrollSnapshots)
@@ -377,11 +430,9 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
     SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableContainingBlock = const_cast<RenderBlock&>(containingBlock);
     // The transforms of the boxes that depend on the size of their containing block (offset-path), before the overflow they extend.
     mutableContainingBlock->updateOutOfFlowDescendantTransformsAfterLayout();
-    // Fixed positioned boxes do not scroll with the content, so they add no scrollable overflow (RenderBlock::addOverflowFromOutOfFlowBoxes).
-    for (CheckedRef outOfFlowBox : *outOfFlowBoxes) {
-        if (outOfFlowBox->isAbsolutelyPositioned())
-            mutableContainingBlock->addOverflowFromContainedBox(outOfFlowBox);
-    }
+    // Fixed positioned boxes do not scroll with the content, so they add no scrollable overflow, and a positioned inline box places the boxes from
+    // its first fragment (RenderBlock::addOverflowFromOutOfFlowBoxes).
+    downcast<RenderBlockFlow>(mutableContainingBlock).addOverflowFromOutOfFlowBoxes();
 }
 
 void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, PaintInvalidation& paintInvalidation)
@@ -455,7 +506,16 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
         if (!containingBlock->writingMode().isLogicalLeftInlineStart())
             logicalLeft = containingBlock->logicalWidth() - logicalLeft - geometry.borderBoxWidth();
         auto location = LayoutPoint { logicalLeft, Layout::BoxGeometry::borderBoxTop(geometry) };
-        renderer->setLocation(containingBlock->writingMode().isHorizontal() ? location : location.transposedPoint());
+        auto physicalLocation = containingBlock->writingMode().isHorizontal() ? location : location.transposedPoint();
+        // The render tree places a box whose containing block is a positioned inline box from the border box of the first fragment of the
+        // inline box, which is in the block container whose inline content the inline box is in
+        // (RenderBoxModelObject::blockStartRelativeFirstFragmentBorderBoxRect).
+        if (CheckedPtr container = renderer->isOutOfFlowPositioned() ? renderer->container() : nullptr; container && container->isInlineBox()) {
+            for (CheckedPtr<const RenderBlock> block = container->containingBlock(); block && block != containingBlock.ptr(); block = block->containingBlock())
+                physicalLocation -= toLayoutSize(block->location());
+            physicalLocation -= toLayoutSize(downcast<RenderBoxModelObject>(*container).blockStartRelativeFirstFragmentBorderBoxRect().location());
+        }
+        renderer->setLocation(physicalLocation);
     }
 
     // What RenderBox::computePercentageLogicalHeight does for a box whose percentage block sizes resolve against a table cell: the cell registers
