@@ -28,7 +28,7 @@
 
 class WebStorageTrackerClient : public WebCore::StorageTrackerClient {
 public:
-    static WebStorageTrackerClient* LEGACY_NODELETE sharedWebStorageTrackerClient();
+    NODELETE static WebStorageTrackerClient* sharedWebStorageTrackerClient();
     
     virtual ~WebStorageTrackerClient();
     void dispatchDidModifyOrigin(const String& originIdentifier) override;

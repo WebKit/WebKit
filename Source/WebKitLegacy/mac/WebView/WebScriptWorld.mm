@@ -42,7 +42,7 @@
 @end
 
 using WorldMap = HashMap<SingleThreadWeakRef<WebCore::DOMWrapperWorld>, WebScriptWorld*>;
-static WorldMap& LEGACY_NODELETE allWorlds()
+NODELETE static WorldMap& allWorlds()
 {
     static WorldMap& map = *new WorldMap;
     return map;

@@ -113,7 +113,7 @@ using namespace WebCore::HTMLNames;
 @end
 #endif
 
-static WebViewInsertAction LEGACY_NODELETE kit(WebCore::EditorInsertAction action)
+NODELETE static WebViewInsertAction kit(WebCore::EditorInsertAction action)
 {
     switch (action) {
     case WebCore::EditorInsertAction::Typed:

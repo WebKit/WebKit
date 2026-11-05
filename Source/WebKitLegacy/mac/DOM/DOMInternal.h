@@ -73,10 +73,10 @@ inline void addDOMWrapper(NSObject* wrapper, Source impl)
     addDOMWrapper(wrapper, static_cast<void*>(impl));
 }
 
-DOMNodeFilter * LEGACY_NODELETE kit(WebCore::NodeFilter*);
+NODELETE DOMNodeFilter * kit(WebCore::NodeFilter*);
 WebCore::NodeFilter* core(DOMNodeFilter *);
 
-DOMNativeXPathNSResolver * LEGACY_NODELETE kit(WebCore::XPathNSResolver*);
+NODELETE DOMNativeXPathNSResolver * kit(WebCore::XPathNSResolver*);
 WebCore::XPathNSResolver* core(DOMNativeXPathNSResolver *);
 
 inline NSTimeInterval kit(WallTime time)

@@ -30,4 +30,4 @@ namespace WebCore {
 class CSSStyleSheet;
 }
 
-DOMCSSStyleSheet * LEGACY_NODELETE kit(WebCore::CSSStyleSheet*);
+NODELETE DOMCSSStyleSheet * kit(WebCore::CSSStyleSheet*);

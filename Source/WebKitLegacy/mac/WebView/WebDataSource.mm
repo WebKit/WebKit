@@ -109,7 +109,7 @@ public:
 #endif
 };
 
-static inline WebDataSourcePrivate* LEGACY_NODELETE toPrivate(void* privateAttribute)
+NODELETE static inline WebDataSourcePrivate* toPrivate(void* privateAttribute)
 {
     return reinterpret_cast<WebDataSourcePrivate*>(privateAttribute);
 }

@@ -117,14 +117,14 @@ private:
         void schedule(WebCore::ResourceLoader*, WebCore::ResourceLoadPriority = WebCore::ResourceLoadPriority::VeryLow);
         void addLoadInProgress(WebCore::ResourceLoader*);
         void remove(WebCore::ResourceLoader*);
-        bool LEGACY_NODELETE hasRequests() const;
+        NODELETE bool hasRequests() const;
         bool limitRequests(WebCore::ResourceLoadPriority) const;
 
         typedef Deque<RefPtr<WebCore::ResourceLoader>> RequestQueue;
         RequestQueue& requestsPending(WebCore::ResourceLoadPriority priority) { return m_requestsPending[priorityToIndex(priority)]; }
 
     private:
-        static unsigned LEGACY_NODELETE priorityToIndex(WebCore::ResourceLoadPriority);
+        NODELETE static unsigned priorityToIndex(WebCore::ResourceLoadPriority);
 
         std::array<RequestQueue, WebCore::resourceLoadPriorityCount> m_requestsPending;
         typedef HashSet<RefPtr<WebCore::ResourceLoader>> RequestMap;

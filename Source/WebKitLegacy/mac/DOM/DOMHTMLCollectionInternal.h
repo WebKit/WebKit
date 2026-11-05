@@ -30,5 +30,5 @@ namespace WebCore {
 class HTMLCollection;
 }
 
-DOMHTMLCollection * LEGACY_NODELETE kit(WebCore::HTMLCollection*);
+NODELETE DOMHTMLCollection * kit(WebCore::HTMLCollection*);
 Class kitClass(WebCore::HTMLCollection*);

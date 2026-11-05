@@ -77,7 +77,7 @@ WebDragClient::WebDragClient(WebView* webView)
 
 #if PLATFORM(MAC)
 
-static OptionSet<WebCore::DragSourceAction> LEGACY_NODELETE coreDragSourceActionMask(WebDragSourceAction action)
+NODELETE static OptionSet<WebCore::DragSourceAction> coreDragSourceActionMask(WebDragSourceAction action)
 {
     OptionSet<WebCore::DragSourceAction> result;
 
@@ -93,7 +93,7 @@ static OptionSet<WebCore::DragSourceAction> LEGACY_NODELETE coreDragSourceAction
     return result;
 }
 
-static WebDragDestinationAction LEGACY_NODELETE kit(WebCore::DragDestinationAction action)
+NODELETE static WebDragDestinationAction kit(WebCore::DragDestinationAction action)
 {
     switch (action) {
     case WebCore::DragDestinationAction::DHTML:

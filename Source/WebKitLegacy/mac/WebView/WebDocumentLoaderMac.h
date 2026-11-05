@@ -51,8 +51,8 @@ public:
     }
 
     void setDataSource(WebDataSource *, WebView*);
-    void LEGACY_NODELETE detachDataSource();
-    WebDataSource *LEGACY_NODELETE dataSource() const;
+    NODELETE void detachDataSource();
+    NODELETE WebDataSource *dataSource() const;
 
     void increaseLoadCount(WebCore::ResourceLoaderIdentifier);
     void decreaseLoadCount(WebCore::ResourceLoaderIdentifier);

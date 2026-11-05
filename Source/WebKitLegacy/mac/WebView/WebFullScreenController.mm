@@ -473,7 +473,7 @@ static RetainPtr<NSWindow> createBackgroundFullscreenWindow(NSRect frame)
     return window;
 }
 
-static NSRect LEGACY_NODELETE windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFrame, NSRect finalFrame)
+NODELETE static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFrame, NSRect finalFrame)
 {
     NSRect initialWindowFrame;
     if (!NSWidth(initialFrame) || !NSWidth(finalFrame) || !NSHeight(initialFrame) || !NSHeight(finalFrame))

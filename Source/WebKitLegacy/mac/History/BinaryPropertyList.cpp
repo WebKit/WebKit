@@ -59,11 +59,11 @@ public:
     IntegerArray() : m_integers(0), m_size(0) { }
     IntegerArray(const int* integers, size_t size) : m_integers(integers), m_size(size) { ASSERT(integers); ASSERT(size); }
 
-    bool LEGACY_NODELETE isDeletedValue() const { return HashTraits<size_t>::isDeletedValue(m_size); }
+    NODELETE bool isDeletedValue() const { return HashTraits<size_t>::isDeletedValue(m_size); }
 
     using value_type = const int; // For std::span.
-    const int* LEGACY_NODELETE data() const { ASSERT(!isDeletedValue()); return m_integers; }
-    size_t LEGACY_NODELETE size() const { ASSERT(!isDeletedValue()); return m_size; }
+    NODELETE const int* data() const { ASSERT(!isDeletedValue()); return m_integers; }
+    NODELETE size_t size() const { ASSERT(!isDeletedValue()); return m_size; }
 
 private:
     friend struct IntegerArrayHashTraits;
@@ -73,24 +73,24 @@ private:
     size_t m_size;
 };
 
-inline bool LEGACY_NODELETE operator==(const IntegerArray& a, const IntegerArray& b)
+NODELETE inline bool operator==(const IntegerArray& a, const IntegerArray& b)
 {
     return a.m_integers == b.m_integers &&  a.m_size == b.m_size;
 }
 
-inline void LEGACY_NODELETE add(Hasher& hasher, const IntegerArray& array)
+NODELETE inline void add(Hasher& hasher, const IntegerArray& array)
 {
     add(hasher, std::span(array.data(), array.size()));
 }
 
 struct IntegerArrayHashTraits : HashTraits<IntegerArray> {
-    static void LEGACY_NODELETE constructDeletedValue(IntegerArray& slot) { HashTraits<size_t>::constructDeletedValue(slot.m_size); }
-    static bool LEGACY_NODELETE isDeletedValue(const IntegerArray& slot) { return HashTraits<size_t>::isDeletedValue(slot.m_size); }
+    NODELETE static void constructDeletedValue(IntegerArray& slot) { HashTraits<size_t>::constructDeletedValue(slot.m_size); }
+    NODELETE static bool isDeletedValue(const IntegerArray& slot) { return HashTraits<size_t>::isDeletedValue(slot.m_size); }
 };
 
 struct IntegerArrayHash {
-    static unsigned LEGACY_NODELETE hash(const IntegerArray& array) { return computeHash(array); }
-    static bool LEGACY_NODELETE equal(const IntegerArray&, const IntegerArray&);
+    NODELETE static unsigned hash(const IntegerArray& array) { return computeHash(array); }
+    NODELETE static bool equal(const IntegerArray&, const IntegerArray&);
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
@@ -113,15 +113,15 @@ class BinaryPropertyListPlan : private BinaryPropertyListObjectStream {
 public:
     BinaryPropertyListPlan(BinaryPropertyListWriter&);
 
-    ObjectReference LEGACY_NODELETE booleanTrueObjectReference() const;
+    NODELETE ObjectReference booleanTrueObjectReference() const;
     ObjectReference integerObjectReference(int) const;
     ObjectReference stringObjectReference(const String&) const;
     ObjectReference integerArrayObjectReference(const int*, size_t) const;
 
-    ObjectReference LEGACY_NODELETE objectCount() const { return m_currentObjectReference; }
+    NODELETE ObjectReference objectCount() const { return m_currentObjectReference; }
 
-    ObjectReference LEGACY_NODELETE byteCount() const { return m_byteCount; }
-    ObjectReference LEGACY_NODELETE objectReferenceCount() const { return m_objectReferenceCount; }
+    NODELETE ObjectReference byteCount() const { return m_byteCount; }
+    NODELETE ObjectReference objectReferenceCount() const { return m_objectReferenceCount; }
 
 private:
     virtual void writeBooleanTrue();
@@ -135,12 +135,12 @@ private:
     virtual size_t writeDictionaryStart();
     virtual void writeDictionaryEnd(size_t);
 
-    void LEGACY_NODELETE writeArrayObject(size_t);
-    void LEGACY_NODELETE writeDictionaryObject(size_t);
-    void LEGACY_NODELETE writeStringObject(const String&);
+    NODELETE void writeArrayObject(size_t);
+    NODELETE void writeDictionaryObject(size_t);
+    NODELETE void writeStringObject(const String&);
     void writeStringObject(const char*);
 
-    static ObjectReference LEGACY_NODELETE invalidObjectReference() { return std::numeric_limits<ObjectReference>::max(); }
+    NODELETE static ObjectReference invalidObjectReference() { return std::numeric_limits<ObjectReference>::max(); }
 
     typedef HashMap<IntegerArray, ObjectReference, IntegerArrayHash, IntegerArrayHashTraits> IntegerArrayMap;
 
@@ -179,7 +179,7 @@ void BinaryPropertyListPlan::writeBooleanTrue()
     ++m_byteCount;
 }
 
-static inline int LEGACY_NODELETE integerByteCount(size_t integer)
+NODELETE static inline int integerByteCount(size_t integer)
 {
     if (integer <= 0xFF)
         return 2;
@@ -275,7 +275,7 @@ void BinaryPropertyListPlan::writeDictionaryEnd(size_t savedAggregateSize)
     m_currentAggregateSize = savedAggregateSize + 1;
 }
 
-static size_t LEGACY_NODELETE markerPlusLengthByteCount(size_t length)
+NODELETE static size_t markerPlusLengthByteCount(size_t length)
 {
     if (length <= maxLengthInMarkerByte)
         return 1;
@@ -363,12 +363,12 @@ private:
     void appendStringObject(const char*);
     void appendIntegerArrayObject(const int*, size_t);
 
-    void LEGACY_NODELETE appendByte(unsigned char);
-    void LEGACY_NODELETE appendByte(unsigned);
-    void LEGACY_NODELETE appendByte(unsigned long);
-    void LEGACY_NODELETE appendByte(int);
+    NODELETE void appendByte(unsigned char);
+    NODELETE void appendByte(unsigned);
+    NODELETE void appendByte(unsigned long);
+    NODELETE void appendByte(int);
 
-    void LEGACY_NODELETE appendInteger(size_t);
+    NODELETE void appendInteger(size_t);
 
     void appendObjectReference(ObjectReference);
 
@@ -411,7 +411,7 @@ inline void BinaryPropertyListSerializer::appendByte(int byte)
     ASSERT(m_currentByteIndex <= m_currentAggregateBufferByteIndex);
 }
 
-static int LEGACY_NODELETE bytesNeeded(size_t count)
+NODELETE static int bytesNeeded(size_t count)
 {
     ASSERT(count);
     int bytesNeeded = 1;
@@ -420,7 +420,7 @@ static int LEGACY_NODELETE bytesNeeded(size_t count)
     return bytesNeeded;
 }
 
-static inline void LEGACY_NODELETE storeLength(std::span<UInt8> destination, size_t length)
+NODELETE static inline void storeLength(std::span<UInt8> destination, size_t length)
 {
 #ifdef __LP64__
     destination[0] = length >> 56;

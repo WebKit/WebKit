@@ -30,4 +30,4 @@ namespace WebCore {
 class XPathExpression;
 }
 
-DOMXPathExpression * LEGACY_NODELETE kit(WebCore::XPathExpression*);
+NODELETE DOMXPathExpression * kit(WebCore::XPathExpression*);

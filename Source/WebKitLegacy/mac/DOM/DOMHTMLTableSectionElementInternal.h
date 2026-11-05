@@ -31,4 +31,4 @@ class HTMLTableSectionElement;
 }
 
 WebCore::HTMLTableSectionElement* core(DOMHTMLTableSectionElement *);
-DOMHTMLTableSectionElement * LEGACY_NODELETE kit(WebCore::HTMLTableSectionElement*);
+NODELETE DOMHTMLTableSectionElement * kit(WebCore::HTMLTableSectionElement*);

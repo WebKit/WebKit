@@ -262,5 +262,5 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebFrameLoaderClient)
     static bool isType(const WebCore::LocalFrameLoaderClient& client) { return !client.isEmptyFrameLoaderClient(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-WebDataSource *LEGACY_NODELETE dataSource(WebCore::DocumentLoader*);
+NODELETE WebDataSource *dataSource(WebCore::DocumentLoader*);
 void addTypesFromClass(NSMutableDictionary *, Class, NSArray *);

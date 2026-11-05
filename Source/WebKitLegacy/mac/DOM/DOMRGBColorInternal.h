@@ -30,4 +30,4 @@ namespace WebCore {
 class DeprecatedCSSOMRGBColor;
 }
 
-DOMRGBColor * LEGACY_NODELETE kit(WebCore::DeprecatedCSSOMRGBColor*);
+NODELETE DOMRGBColor * kit(WebCore::DeprecatedCSSOMRGBColor*);

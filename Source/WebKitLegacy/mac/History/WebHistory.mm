@@ -55,7 +55,7 @@ NSString * const WebHistoryItemsDiscardedWhileLoadingNotification = @"WebHistory
 NSString * const WebHistorySavedNotification = @"WebHistorySavedNotification";
 NSString * const WebHistoryItemsKey = @"WebHistoryItems";
 
-static RetainPtr<WebHistory>& LEGACY_NODELETE sharedHistory()
+NODELETE static RetainPtr<WebHistory>& sharedHistory()
 {
     static NeverDestroyed<RetainPtr<WebHistory>> _sharedHistory;
     return _sharedHistory;

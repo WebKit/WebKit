@@ -30,4 +30,4 @@ namespace WebCore {
 class DeprecatedCSSOMCounter;
 }
 
-DOMCounter * LEGACY_NODELETE kit(WebCore::DeprecatedCSSOMCounter*);
+NODELETE DOMCounter * kit(WebCore::DeprecatedCSSOMCounter*);

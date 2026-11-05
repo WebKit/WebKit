@@ -30,4 +30,4 @@ namespace WebCore {
 class HTMLFormElement;
 }
 
-DOMHTMLFormElement * LEGACY_NODELETE kit(WebCore::HTMLFormElement*);
+NODELETE DOMHTMLFormElement * kit(WebCore::HTMLFormElement*);

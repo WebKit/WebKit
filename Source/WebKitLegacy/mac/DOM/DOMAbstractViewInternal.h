@@ -33,9 +33,9 @@ class WindowProxy;
 }
 
 WebCore::LocalDOMWindow* core(DOMAbstractView *);
-DOMAbstractView * LEGACY_NODELETE kit(WebCore::LocalDOMWindow*);
-DOMAbstractView * LEGACY_NODELETE kit(WebCore::DOMWindow*);
-DOMAbstractView * LEGACY_NODELETE kit(WebCore::WindowProxy*);
+NODELETE DOMAbstractView * kit(WebCore::LocalDOMWindow*);
+NODELETE DOMAbstractView * kit(WebCore::DOMWindow*);
+NODELETE DOMAbstractView * kit(WebCore::WindowProxy*);
 WebCore::WindowProxy* toWindowProxy(DOMAbstractView *);
 
 @interface DOMAbstractView (WebKitLegacyInternal)

@@ -248,7 +248,7 @@ static RetainPtr<NSCountedSet> createNSCountedSet(const HashCountedSet<ASCIILite
     return externalRepresentation(protect(_private->coreFrame.get()), { WebCore::RenderAsTextFlag::PrintingMode }).createNSString().autorelease();
 }
 
-static OptionSet<WebCore::RenderAsTextFlag> LEGACY_NODELETE toRenderAsTextFlags(WebRenderTreeAsTextOptions options)
+NODELETE static OptionSet<WebCore::RenderAsTextFlag> toRenderAsTextFlags(WebRenderTreeAsTextOptions options)
 {
     OptionSet<WebCore::RenderAsTextFlag> flags;
 

@@ -30,4 +30,4 @@ namespace WebCore {
 class HTMLScriptElement;
 }
 
-DOMHTMLScriptElement * LEGACY_NODELETE kit(WebCore::HTMLScriptElement*);
+NODELETE DOMHTMLScriptElement * kit(WebCore::HTMLScriptElement*);

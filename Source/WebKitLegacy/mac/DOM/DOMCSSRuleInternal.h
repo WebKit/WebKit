@@ -30,5 +30,5 @@ namespace WebCore {
 class CSSRule;
 }
 
-DOMCSSRule * LEGACY_NODELETE kit(WebCore::CSSRule*);
+NODELETE DOMCSSRule * kit(WebCore::CSSRule*);
 Class kitClass(WebCore::CSSRule*);

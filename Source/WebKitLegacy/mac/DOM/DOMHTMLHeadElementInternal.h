@@ -30,4 +30,4 @@ namespace WebCore {
 class HTMLHeadElement;
 }
 
-DOMHTMLHeadElement * LEGACY_NODELETE kit(WebCore::HTMLHeadElement*);
+NODELETE DOMHTMLHeadElement * kit(WebCore::HTMLHeadElement*);

@@ -101,7 +101,7 @@ static void installFlip4MacPlugInWorkaroundIfNecessary();
 #endif
 
 
-static RetainPtr<NSMutableSet>& LEGACY_NODELETE pluginViews()
+NODELETE static RetainPtr<NSMutableSet>& pluginViews()
 {
     static NeverDestroyed<RetainPtr<NSMutableSet>> pluginViews;
     return pluginViews;

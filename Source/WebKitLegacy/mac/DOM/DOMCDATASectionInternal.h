@@ -30,4 +30,4 @@ namespace WebCore {
 class CDATASection;
 }
 
-DOMCDATASection * LEGACY_NODELETE kit(WebCore::CDATASection*);
+NODELETE DOMCDATASection * kit(WebCore::CDATASection*);

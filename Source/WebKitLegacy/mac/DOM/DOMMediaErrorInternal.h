@@ -31,4 +31,4 @@ namespace WebCore {
 class MediaError;
 }
 
-DOMMediaError * LEGACY_NODELETE kit(WebCore::MediaError*);
+NODELETE DOMMediaError * kit(WebCore::MediaError*);

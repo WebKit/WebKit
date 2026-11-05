@@ -58,7 +58,7 @@ using BackForwardListMap = HashMap<WeakRef<BackForwardList>, WebBackForwardList*
 
 // FIXME: Instead of this we could just create a class derived from BackForwardList
 // with a pointer to a WebBackForwardList in it.
-static BackForwardListMap& LEGACY_NODELETE backForwardLists()
+NODELETE static BackForwardListMap& backForwardLists()
 {
     static NeverDestroyed<BackForwardListMap> staticBackForwardLists;
     return staticBackForwardLists;

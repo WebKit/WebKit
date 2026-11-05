@@ -48,8 +48,8 @@ public:
 
     void addItem(Ref<WebCore::HistoryItem>&&) override;
     void setChildItem(WebCore::BackForwardFrameItemIdentifier, Ref<WebCore::HistoryItem>&&) final { }
-    void LEGACY_NODELETE goBack();
-    void LEGACY_NODELETE goForward();
+    NODELETE void goBack();
+    NODELETE void goForward();
     void goToItem(WebCore::HistoryItem&) override;
 
     RefPtr<WebCore::HistoryItem> backItem();
@@ -61,16 +61,16 @@ public:
     void backListWithLimit(int, Vector<Ref<WebCore::HistoryItem>>&);
     void forwardListWithLimit(int, Vector<Ref<WebCore::HistoryItem>>&);
 
-    int LEGACY_NODELETE capacity();
+    NODELETE int capacity();
     void setCapacity(int);
-    bool LEGACY_NODELETE enabled();
+    NODELETE bool enabled();
     void setEnabled(bool);
     unsigned backListCount() const override;
     unsigned forwardListCount() const override;
     bool containsItem(const WebCore::HistoryItem&) const final;
 
     void close() override;
-    bool LEGACY_NODELETE closed();
+    NODELETE bool closed();
 
     void removeItem(WebCore::HistoryItem&);
     const Vector<Ref<WebCore::HistoryItem>>& entries() const LIFETIME_BOUND { return m_entries; }

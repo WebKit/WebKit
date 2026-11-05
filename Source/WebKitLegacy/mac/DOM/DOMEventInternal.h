@@ -32,5 +32,5 @@ class Event;
 }
 
 WebCore::Event* core(DOMEvent *);
-DOMEvent * LEGACY_NODELETE kit(WebCore::Event*);
+NODELETE DOMEvent * kit(WebCore::Event*);
 Class kitClass(WebCore::Event*);

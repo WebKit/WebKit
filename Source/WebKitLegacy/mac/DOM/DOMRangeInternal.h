@@ -33,5 +33,5 @@ struct SimpleRange;
 }
 
 WebCore::Range* core(DOMRange *);
-DOMRange * LEGACY_NODELETE kit(WebCore::Range*);
+NODELETE DOMRange * kit(WebCore::Range*);
 DOMRange *kit(const std::optional<WebCore::SimpleRange>&);

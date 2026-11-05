@@ -217,7 +217,7 @@ NSString *NSAccessibilityEnhancedUserInterfaceAttribute = @"AXEnhancedUserInterf
 
 @end
 
-WebCore::EditableLinkBehavior LEGACY_NODELETE core(WebKitEditableLinkBehavior editableLinkBehavior)
+NODELETE WebCore::EditableLinkBehavior core(WebKitEditableLinkBehavior editableLinkBehavior)
 {
     using namespace WebCore;
     switch (editableLinkBehavior) {
@@ -236,7 +236,7 @@ WebCore::EditableLinkBehavior LEGACY_NODELETE core(WebKitEditableLinkBehavior ed
     return EditableLinkBehavior::Default;
 }
 
-WebCore::TextDirectionSubmenuInclusionBehavior LEGACY_NODELETE core(WebTextDirectionSubmenuInclusionBehavior behavior)
+NODELETE WebCore::TextDirectionSubmenuInclusionBehavior core(WebTextDirectionSubmenuInclusionBehavior behavior)
 {
     using namespace WebCore;
     switch (behavior) {
@@ -1083,7 +1083,7 @@ static RetainPtr<NSURL> createUniqueWebDataURL();
     return NO;
 }
 
-static WebFrameLoadType LEGACY_NODELETE toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
+NODELETE static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 {
     using namespace WebCore;
     switch (frameLoadType) {

@@ -71,7 +71,7 @@ static inline CFRunLoopRef callbacksRunLoop()
 #endif
 }
 
-static inline auto LEGACY_NODELETE callbacksRunLoopMode()
+NODELETE static inline auto callbacksRunLoopMode()
 {
     return kCFRunLoopCommonModes;
 }

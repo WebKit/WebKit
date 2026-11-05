@@ -30,4 +30,4 @@ namespace WebCore {
 class NamedNodeMap;
 }
 
-DOMNamedNodeMap * LEGACY_NODELETE kit(WebCore::NamedNodeMap*);
+NODELETE DOMNamedNodeMap * kit(WebCore::NamedNodeMap*);
