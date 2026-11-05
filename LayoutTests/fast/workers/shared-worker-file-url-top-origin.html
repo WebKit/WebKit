@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+// A file: document has a real, non-opaque top origin whose host is empty, so RegistrableDomain maps it to
+// "nullOrigin" and WebCore::Site::isEmpty() is true even though the scheme is "file". Validating the claimed
+// top origin site must still accept it rather than treat it as one the web content process forged.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function done(result)
+{
+    document.body.textContent = result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.onload = () => {
+    let worker;
+    try {
+        worker = new SharedWorker("resources/shared-worker-file-url-top-origin.js");
+    } catch (error) {
+        done("FAIL: constructing the shared worker threw " + error);
+        return;
+    }
+    worker.onerror = () => done("FAIL: the shared worker script failed to load");
+    worker.port.onmessage = event => done(event.data === "connected" ? "PASS" : "FAIL: unexpected message " + event.data);
+    worker.port.start();
+};
+
+</script>
+</head>
+<body></body>
+</html>
