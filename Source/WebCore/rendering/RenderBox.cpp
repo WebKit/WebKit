@@ -5350,7 +5350,7 @@ static inline bool shouldComputeLogicalWidthFromAspectRatioAndInsets(const Rende
     return style.logicalHeight().isAuto();
 }
 
-static RenderBlock* containingBlockForStretchResolution(const RenderBox& box)
+static RenderBoxModelObject* containingBlockForStretchResolution(const RenderBox& box)
 {
     auto isIgnoredAsContainingBlock = [](auto& candidate) {
         // Flow threads (multicol/paged) are invisible to the DOM; their children should
@@ -5376,7 +5376,7 @@ static RenderBlock* containingBlockForStretchResolution(const RenderBox& box)
     // Walks past anonymous boxes that the CSS 2 Section 9.2.1.1 rule says to ignore
     // when resolving values that would refer to them, returning the first ancestor
     // that is a legitimate containing block for value resolution.
-    auto* ancestor = box.containingBlock();
+    RenderBoxModelObject* ancestor = box.containingBlock();
     while (ancestor && isIgnoredAsContainingBlock(*ancestor))
         ancestor = ancestor->containingBlock();
     return ancestor;
@@ -5386,9 +5386,14 @@ bool RenderBox::isBlockSizeResolvableForStretch() const
 {
     // css-sizing-4 Section 6.7 defines stretch as behaving like 100%, so stretch
     // resolution shares the percent rule from CSS 2 Section 9.2.1.1.
-    CheckedPtr containingBlock = containingBlockForStretchResolution(*this);
-    if (!containingBlock)
+    CheckedPtr containingBlockForStretch = containingBlockForStretchResolution(*this);
+    if (!containingBlockForStretch)
         return false;
+
+    // The containing block rectangle of an inline box has a definite size.
+    CheckedPtr containingBlock = dynamicDowncast<RenderBlock>(*containingBlockForStretch);
+    if (!containingBlock)
+        return true;
 
     // Orthogonal children's block axis maps to the parent's inline axis, which is always definite.
     if (isOrthogonal(*this, *containingBlock))

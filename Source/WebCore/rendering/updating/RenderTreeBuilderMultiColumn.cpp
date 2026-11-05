@@ -112,7 +112,7 @@ static bool isValidColumnSpanner(const RenderMultiColumnFlow& fragmentedFlow, co
         return false;
 
     // This looks like a spanner, but if we're inside something unbreakable, it's not to be treated as one.
-    for (auto* ancestor = descendantBox->containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+    for (RenderBoxModelObject* ancestor = descendantBox->containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
         if (is<RenderView>(*ancestor))
             return false;
         if (ancestor->isLegend())
@@ -137,7 +137,8 @@ static bool isValidColumnSpanner(const RenderMultiColumnFlow& fragmentedFlow, co
             }
         }
         ASSERT(ancestor->style().columnSpan() != ColumnSpan::All || !isValidColumnSpanner(fragmentedFlow, *ancestor));
-        if (ancestor->isUnsplittableForPagination())
+        // Inline boxes split across columns.
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(*ancestor); box && box->isUnsplittableForPagination())
             return false;
     }
     ASSERT_NOT_REACHED();
