@@ -406,7 +406,7 @@ DEFAULT_MAKE_COMMAND = (
     '"'
 )
 DEFAULT_CMAKE_BUILD_COMMAND = (
-    'xcrun ninja -C {build_dir}'
+    'xcrun cmake --build {build_dir}'
 )
 DEFAULT_CMAKE_CONFIGURE_COMMAND = (
     'xcrun cmake -S {source_dir} -B {build_dir} --preset {preset} '
