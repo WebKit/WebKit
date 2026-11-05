@@ -84,7 +84,7 @@ templates:
   mac-golden-gate-aws:
     worker:
       platform: '*'
-      os: macOS Golden Gate 27.2-26B123
+      os: macOS Golden Gate 27.0-26A428
       device: Mac16,11
       xcode: Xcode 27.0-27A266a
       fleet: aws
