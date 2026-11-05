@@ -1069,6 +1069,7 @@ static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(
     [opener.navigationDelegate allowAnyTLSCertificate];
     auto configuration = server.httpsProxyConfiguration();
     enableSiteIsolation(configuration);
+    enableUnloadEvent(configuration);
     if (processPool)
         configuration.processPool = processPool.get();
     opener.webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
@@ -1076,6 +1077,7 @@ static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(
     opener.uiDelegate = adoptNS([TestUIDelegate new]);
     opener.uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
         enableSiteIsolation(configuration);
+        enableUnloadEvent(configuration);
         opened.webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
         opened.navigationDelegate = adoptNS([TestNavigationDelegate new]);
         [opened.navigationDelegate allowAnyTLSCertificate];
@@ -3289,6 +3291,7 @@ TEST(SiteIsolation, UnloadOrderOfSameSiteChildAndGrandchildUnderCrossSiteParent)
     RetainPtr messageHandler = adoptNS([TestMessageHandler new]);
     RetainPtr configuration = server.httpsProxyConfiguration();
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    enableUnloadEvent(configuration.get());
     auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration.get(), CGRectZero, true);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/top"]]];
     [navigationDelegate waitForDidFinishNavigation];

@@ -246,6 +246,16 @@ bool defaultShowModalDialogEnabled()
 #endif
 }
 
+bool defaultUnloadEventEnabled()
+{
+#if PLATFORM(COCOA)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoUnloadEvent);
+    return !newSDK;
+#else
+    return true;
+#endif
+}
+
 #if ENABLE(GAMEPAD)
 bool defaultGamepadVibrationActuatorEnabled()
 {

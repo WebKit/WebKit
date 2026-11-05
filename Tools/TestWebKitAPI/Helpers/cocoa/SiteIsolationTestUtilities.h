@@ -58,6 +58,7 @@ struct HTTPResponse;
 
 void setFeatureEnabled(WKWebViewConfiguration *, NSString *featureName, bool enabled);
 void enableSiteIsolation(WKWebViewConfiguration *);
+void enableUnloadEvent(WKWebViewConfiguration *);
 
 std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(RetainPtr<WKWebViewConfiguration>, CGRect, bool enable);
 std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(RetainPtr<WKWebViewConfiguration>, CGRect = CGRectZero);
