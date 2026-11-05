@@ -191,6 +191,7 @@ public:
     void endSwipeGesture(WebBackForwardListItem* targetItem, _UIViewControllerTransitionContext *, bool cancelled);
     void willCommitPostSwipeTransitionLayerTree(bool);
     void setRenderTreeSize(uint64_t);
+    bool isShowingSwipeSnapshotImage() const { return m_isShowingSwipeSnapshotImage; }
 #elif PLATFORM(GTK)
     void setMagnification(double, WebCore::FloatPoint);
     void endMagnification();
@@ -471,6 +472,7 @@ private:
     RetainPtr<_UIViewControllerOneToOneTransitionContext> m_swipeTransitionContext;
     uint64_t m_snapshotRemovalTargetRenderTreeSize { 0 };
     bool m_didCallWillEndSwipeGesture { false };
+    bool m_isShowingSwipeSnapshotImage { false };
 #endif
 
 #if PLATFORM(GTK)

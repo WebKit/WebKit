@@ -281,8 +281,10 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
             return true;
         }();
 
-        if (canUseSnapshot)
+        if (canUseSnapshot) {
             [m_snapshotView layer].contents = protect(snapshot->asLayerContents()).get();
+            m_isShowingSwipeSnapshotImage = true;
+        }
 
         WebCore::Color coreColor = snapshot->backgroundColor();
         if (coreColor.isValid())
@@ -494,6 +496,7 @@ void ViewGestureController::resetState()
 {
     [m_snapshotView removeFromSuperview];
     m_snapshotView = nullptr;
+    m_isShowingSwipeSnapshotImage = false;
     
     m_snapshotRemovalTargetRenderTreeSize = 0;
 

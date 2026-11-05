@@ -25,9 +25,10 @@
 
 #import "config.h"
 
-#import "PoseAsClass.h"
+#import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import "PoseAsClass.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 
@@ -110,6 +111,79 @@ TEST(NavigationSwipeTests, DoNotAssertWhenSnapshottingZeroSizeView)
     [webView synchronouslyLoadTestPageNamed:@"simple2"];
 
     simulateBackSwipeAndWaitForGestureToEnd(webView.get());
+}
+
+static constexpr CGFloat initialObscuredInsetTop = 100;
+static constexpr CGFloat changedObscuredInsetTop = 50;
+static constexpr CGFloat contentOffsetWhenLeavingPage = 800;
+
+static RetainPtr<TestWKWebView> createWebViewAndChangeObscuredInsetsAfterLeavingScrolledPage(const HTTPServer& server)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView setAllowsBackForwardNavigationGestures:YES];
+    [webView _setObscuredInsets:UIEdgeInsetsMake(initialObscuredInsetTop, 0, 0, 0)];
+
+    [webView synchronouslyLoadRequest:server.request("/first"_s)];
+    [webView waitForNextPresentationUpdate];
+
+    [[webView scrollView] setContentOffset:CGPointMake(0, contentOffsetWhenLeavingPage)];
+    [webView waitForNextVisibleContentRectUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    [webView synchronouslyLoadRequest:server.request("/second"_s)];
+    [webView waitForNextPresentationUpdate];
+
+    // Simulate the client collapsing its bars after leaving the first page.
+    [webView _setObscuredInsets:UIEdgeInsetsMake(changedObscuredInsetTop, 0, 0, 0)];
+    [webView waitForNextVisibleContentRectUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    return webView;
+}
+
+static void waitForScrollPositionRestoration(TestWKWebView *webView)
+{
+    Util::waitForConditionWithLogging([webView] -> bool {
+        return [webView scrollView].contentOffset.y > 0;
+    }, 3, @"Timed out waiting for the scroll position to be restored");
+    [webView waitForNextPresentationUpdate];
+}
+
+static HTTPServer createServerWithTallPages()
+{
+    static constexpr auto tallPage = "<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0; height: 5000px'></body>"_s;
+    return HTTPServer({
+        { "/first"_s, { tallPage } },
+        { "/second"_s, { tallPage } },
+    });
+}
+
+TEST(NavigationSwipeTests, RestoredScrollPositionMatchesSwipeSnapshotAfterObscuredInsetsChange)
+{
+    poseAsClass("TestNavigationInteractiveTransition", "_UINavigationInteractiveTransitionBase");
+
+    auto server = createServerWithTallPages();
+    RetainPtr webView = createWebViewAndChangeObscuredInsetsAfterLeavingScrolledPage(server);
+    [webView becomeFirstResponder];
+
+    simulateBackSwipeAndWaitForGestureToEnd(webView);
+    waitForScrollPositionRestoration(webView);
+
+    // The swipe snapshot was taken at the content offset at which the page was left, so the page
+    // should be restored to that content offset to avoid shifting when the snapshot is removed.
+    EXPECT_EQ([webView scrollView].contentOffset.y, contentOffsetWhenLeavingPage);
+}
+
+TEST(NavigationSwipeTests, RestoredScrollPositionWithoutSwipeAccountsForObscuredInsetsChange)
+{
+    auto server = createServerWithTallPages();
+    RetainPtr webView = createWebViewAndChangeObscuredInsetsAfterLeavingScrolledPage(server);
+
+    [webView synchronouslyGoBack];
+    waitForScrollPositionRestoration(webView);
+
+    // Without a swipe snapshot, the content that was at the top of the unobscured area should remain there.
+    EXPECT_EQ([webView scrollView].contentOffset.y, contentOffsetWhenLeavingPage + initialObscuredInsetTop - changedObscuredInsetTop);
 }
 
 #endif // PLATFORM(IOS_FAMILY)
