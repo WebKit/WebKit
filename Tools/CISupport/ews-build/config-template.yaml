@@ -478,7 +478,7 @@ builders:
     architectures: [arm64]
     additionalArguments: [--cmake]
     rebuild_without_change_on_builder: true
-    triggers: [macos-golden-gate-debug-api-tests-ews, macos-golden-gate-debug-wk2-tests-ews]
+    triggers: [macos-golden-gate-debug-api-tests-ews, macos-golden-gate-debug-wk2-tests-ews, macos-golden-gate-debug-webdriver-tests-ews]
     workernames:
       $flatten:
         - {$map: {$eval: "range(0, 3)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m2pro'\").name"}}
@@ -509,6 +509,7 @@ builders:
     factory: WebDriverTestsFactory
     platform: mac-golden-gate
     configuration: debug
+    triggered_by: [macos-golden-gate-debug-build-ews]
     additionalArguments: [--site-isolation]
     workernames: {$map: {$eval: workers}, each(w): {$if: "w.tag == 'webdriver'", then: {$eval: w.name}}}
   - name: macOS-Sequoia-Release-Build-EWS
@@ -821,6 +822,9 @@ schedulers:
   - type: Triggerable
     name: macos-golden-gate-debug-wk2-tests-ews
     builderNames: [macOS-Golden-Gate-Debug-WK2-Tests-EWS]
+  - type: Triggerable
+    name: macos-golden-gate-debug-webdriver-tests-ews
+    builderNames: [macOS-Golden-Gate-Debug-WebDriver-Tests-EWS]
   - type: Triggerable
     name: ios-27-sim-build-ews
     builderNames: [iOS-27-Simulator-Build-EWS]

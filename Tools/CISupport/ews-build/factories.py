@@ -258,7 +258,7 @@ class APITestsFactory(TestFactory):
 
 class WebDriverTestsFactory(TestFactory):
     def __init__(self, platform, configuration=None, architectures=None, triggered_by=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggered_by=triggered_by, additionalArguments=additionalArguments)
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggered_by=triggered_by, additionalArguments=additionalArguments, checkRelevance=True)
         self.addStep(KillOldProcesses())
         self.getProduct()
         self.addStep(RunWebDriverTests())
