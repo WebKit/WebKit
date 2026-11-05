@@ -1306,3 +1306,5 @@ webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/rot
 webkit.org/b/329970 [ Debug ] media/video-orientation.html [ Failure Pass ]
 
 webkit.org/b/329973 [ Release ] fullscreen/full-screen-enter-while-exiting-mid-completion-handler.html [ Crash Pass ]
+
+webkit.org/b/330280 fast/events/touch/tap-with-prevented-touchmove-within-threshold-clicks.html [ Failure ]
