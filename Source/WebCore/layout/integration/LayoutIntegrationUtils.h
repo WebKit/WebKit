@@ -40,12 +40,18 @@ class ElementBox;
 class InlineLayoutState;
 class LayoutState;
 
+// Border plus padding of a grid item along the grid container's axes, whatever the item's own writing mode.
+struct GridItemBorderAndPadding {
+    LayoutUnit inlineAxis;
+    LayoutUnit blockAxis;
+};
+
 class IntegrationUtils {
 public:
     IntegrationUtils(const LayoutState&);
 
     void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth = { }, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight = { }) const;
-    std::pair<LayoutUnit, LayoutUnit> borderAndPaddingForGridItem(const ElementBox&, std::optional<LayoutUnit> gridAreaInlineSize) const;
+    GridItemBorderAndPadding borderAndPaddingForGridItem(const ElementBox&, std::optional<LayoutUnit> gridAreaInlineSize) const;
     void layoutGridItem(const ElementBox&, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize, std::optional<LayoutUnit> gridAreaBlockSize) const;
     LayoutUnit maxContentWidth(const ElementBox&) const;
     LayoutUnit maxContentWidthForGridItem(const ElementBox&, std::optional<LayoutUnit> gridAreaInlineSize) const;

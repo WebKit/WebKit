@@ -346,7 +346,7 @@ static BorderBoxSize inlineContentSizeSuggestion(const PlacedGridItem& gridItem,
     if (!aspectRatio)
         return contentSizeSuggestion;
 
-    auto blockBorderAndPadding = integrationUtils.borderAndPaddingForGridItem(layoutBox, gridAreaInlineSize).second;
+    auto blockBorderAndPadding = integrationUtils.borderAndPaddingForGridItem(layoutBox, gridAreaInlineSize).blockAxis;
     auto& blockAxisSizes = gridItem.blockAxisSizes();
     if (auto blockMaximumSize = definiteMaximumSize(gridItem, blockAxisSizes.maximumSize, blockBorderAndPadding, gridAreaBlockSize))
         contentSizeSuggestion = std::min(contentSizeSuggestion, inlineSizeFromAspectRatio(gridItem, *aspectRatio, blockMaximumSize->value, borderAndPadding, blockBorderAndPadding));
@@ -403,7 +403,7 @@ static std::optional<BorderBoxSize> inlineTransferredSizeSuggestion(const Placed
         return { };
 
     // and its preferred size in the opposite axis is definite
-    auto blockBorderAndPadding = integrationUtils.borderAndPaddingForGridItem(layoutBox, gridAreaInlineSize).second;
+    auto blockBorderAndPadding = integrationUtils.borderAndPaddingForGridItem(layoutBox, gridAreaInlineSize).blockAxis;
     auto blockMargins = usedMarginsForAxis(gridItem, gridItem.blockAxisSizes());
     auto definiteBlockSize = blockSpecifiedSizeSuggestion(gridItem, blockBorderAndPadding, gridAreaBlockSize, blockMargins);
     if (!definiteBlockSize)
@@ -437,7 +437,7 @@ static std::optional<BorderBoxSize> blockTransferredSizeSuggestion(const PlacedG
         return { };
 
     // and its preferred size in the opposite axis is definite
-    auto inlineBorderAndPadding = formattingContext.integrationUtils().borderAndPaddingForGridItem(layoutBox, gridAreaInlineSize).first;
+    auto inlineBorderAndPadding = formattingContext.integrationUtils().borderAndPaddingForGridItem(layoutBox, gridAreaInlineSize).inlineAxis;
     auto inlineMargins = usedMarginsForAxis(gridItem, gridItem.inlineAxisSizes());
     auto definiteInlineSize = inlineSpecifiedSizeSuggestion(gridItem, inlineBorderAndPadding, gridAreaInlineSize, inlineMargins);
     if (!definiteInlineSize)
@@ -1053,7 +1053,7 @@ static std::optional<LayoutUnit> stretchedBlockSizeForInlineContribution(const P
         return { };
 
     // The grid area inline size is not known while sizing the columns.
-    auto blockBorderAndPadding = integrationUtils.borderAndPaddingForGridItem(gridItem.layoutBox(), { }).second;
+    auto blockBorderAndPadding = integrationUtils.borderAndPaddingForGridItem(gridItem.layoutBox(), { }).blockAxis;
     return stretchFitSize(blockBorderAndPadding, *gridAreaBlockSize, usedMarginsForAxis(gridItem, blockAxisSizes)).value;
 }
 

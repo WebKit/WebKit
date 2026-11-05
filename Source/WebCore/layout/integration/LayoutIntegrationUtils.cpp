@@ -46,6 +46,14 @@ const Style::ComputedStyle& IntegrationUtils::firstNonAnonymousAncestorStyle(con
     return box.style();
 }
 
+// The grid container's axes, not the item's own: an orthogonal item's inline axis is the container's block axis.
+static GridItemBorderAndPadding borderAndPadding(const RenderBox& renderer, WritingMode containerWritingMode)
+{
+    if (containerWritingMode.isHorizontal())
+        return { renderer.horizontalBorderAndPaddingExtent(), renderer.verticalBorderAndPaddingExtent() };
+    return { renderer.verticalBorderAndPaddingExtent(), renderer.horizontalBorderAndPaddingExtent() };
+}
+
 // https://drafts.csswg.org/css-grid-2/#item-margins
 // Percent/Calc padding and sizing resolves against the gridAreaInlineSize, not the block size of the grid container.
 static LayoutUnit inlineWidthForGridItemWithGridArea(const LayoutState& layoutState, const ElementBox& box, LayoutIntegration::LogicalWidthType logicalWidthType, std::optional<LayoutUnit> gridAreaInlineSize,
@@ -88,18 +96,17 @@ void IntegrationUtils::layoutWithFormattingContextForBox(const ElementBox& box, 
     m_globalLayoutState->layoutWithFormattingContextForBox(box, overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight);
 }
 
-std::pair<LayoutUnit, LayoutUnit> IntegrationUtils::borderAndPaddingForGridItem(const ElementBox& box, std::optional<LayoutUnit> gridAreaInlineSize) const
+GridItemBorderAndPadding IntegrationUtils::borderAndPaddingForGridItem(const ElementBox& box, std::optional<LayoutUnit> gridAreaInlineSize) const
 {
     ASSERT(box.isGridItem());
     CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
 
     // The inline grid area is indefinite while sizing columns, so the item's cyclic percentage padding resolves against zero.
     renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize.value_or(0_lu));
-    auto inlineBorderAndPadding = renderer->borderAndPaddingLogicalWidth();
-    auto blockBorderAndPadding = renderer->borderAndPaddingLogicalHeight();
+    auto gridItemBorderAndPadding = borderAndPadding(renderer.get(), box.parent().writingMode());
     renderer->clearGridAreaContentSize();
 
-    return { inlineBorderAndPadding, blockBorderAndPadding };
+    return gridItemBorderAndPadding;
 }
 
 void IntegrationUtils::layoutGridItem(const ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize, std::optional<LayoutUnit> gridAreaBlockSize) const

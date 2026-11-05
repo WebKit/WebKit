@@ -118,7 +118,7 @@ TrackSizes GridSizer::sizeColumnTracks(const PlacedGridItems& placedGridItems, c
     auto& layoutConstraints = this->layoutConstraints();
 
     auto columnTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
-        auto usedInlineBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), { }).first;
+        auto usedInlineBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), { }).inlineAxis;
         auto gridAreaBlockSize = gridAreaBlockSizeForColumnSizing(gridItem, rowSizes, layoutContext.usedRowGap);
         auto gridAreaMaximumBlockSize = GridLayoutUtils::gridAreaMaximumSize(gridItem.rowStartLine(), gridItem.rowEndLine(), rowTrackSizingFunctionsList, layoutContext.usedRowGap, layoutConstraints.blockAxis);
         return { gridItem, gridItem.inlineAxisSizes(), usedInlineBorderAndPadding, GridLayoutUtils::usedMarginsForAxis(gridItem, gridItem.inlineAxisSizes()),
@@ -140,7 +140,7 @@ TrackSizes GridSizer::sizeRowTracks(const PlacedGridItems& placedGridItems, cons
     auto rowTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
         auto gridAreaInlineSize = GridLayoutUtils::gridAreaDimensionSize(gridItem.columnStartLine(), gridItem.columnEndLine(), columnSizes, layoutContext.usedColumnGap);
         auto gridAreaMaximumInlineSize = GridLayoutUtils::gridAreaMaximumSize(gridItem.columnStartLine(), gridItem.columnEndLine(), columnTrackSizingFunctionsList, layoutContext.usedColumnGap, layoutConstraints().inlineAxis);
-        auto usedBlockBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), gridAreaInlineSize).second;
+        auto usedBlockBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), gridAreaInlineSize).blockAxis;
         return { gridItem, gridItem.blockAxisSizes(), usedBlockBorderAndPadding, GridLayoutUtils::usedMarginsForAxis(gridItem, gridItem.blockAxisSizes()),
             { gridItem.rowStartLine(), gridItem.rowEndLine() }, gridAreaInlineSize, gridAreaMaximumInlineSize };
     });
