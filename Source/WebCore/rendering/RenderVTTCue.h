@@ -69,7 +69,7 @@ private:
 
     NODELETE RenderBlockFlow* backdropBox() const;
     NODELETE RenderBoxModelObject* cueBox() const;
-    static FloatRect unroundedAbsoluteBoundingBoxRect(const RenderBox&);
+    static FloatRect unroundedAbsoluteBoundingBoxRect(const RenderBoxModelObject&);
 
     WeakPtr<VTTCue, WeakPtrImplWithEventTargetData> m_cue;
     FloatPoint m_fallbackPosition;

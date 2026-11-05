@@ -133,12 +133,13 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
         isFirstOnLine = true;
         isLastOnLine = true;
         lineExtentRect = imageRect;
+        auto containingBlockRect = containingBlock->borderBoxRectInContainer();
         if (containingBlock->isHorizontalWritingMode()) {
-            lineExtentRect.setX(containingBlock->x());
-            lineExtentRect.setWidth(containingBlock->borderBoxWidth());
+            lineExtentRect.setX(containingBlockRect.x());
+            lineExtentRect.setWidth(containingBlockRect.width());
         } else {
-            lineExtentRect.setY(containingBlock->y());
-            lineExtentRect.setHeight(containingBlock->borderBoxHeight());
+            lineExtentRect.setY(containingBlockRect.y());
+            lineExtentRect.setHeight(containingBlockRect.height());
         }
     } else {
         auto lineRect = run->lineBox().contentLogicalRectAdjustedForAdjacentLineBoxes();
