@@ -34,7 +34,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC::B3 {
 
-class WasmArrayLengthValue final : public Value {
+class JS_EXPORT_PRIVATE WasmArrayLengthValue final : public Value {
 public:
     static bool accepts(Kind kind) { return kind.opcode() == WasmArrayLength; }
 

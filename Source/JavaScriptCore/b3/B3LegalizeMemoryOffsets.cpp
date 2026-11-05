@@ -49,8 +49,7 @@ public:
     void run()
     {
         // FIXME: Perhaps this should be moved to lowerMacros, and quirks mode can impose the requirement
-        // that the offset is legal. But for now this is sort of OK because we run pureCSE after. Also,
-        // we should probably have something better than just pureCSE to clean up the code that this
+        // that the offset is legal. Nothing after this phase cleans up the address arithmetic it
         // introduces.
         // https://bugs.webkit.org/show_bug.cgi?id=169246
         

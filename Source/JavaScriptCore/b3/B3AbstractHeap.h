@@ -42,13 +42,13 @@ class AbstractHeapRepository;
 
 class AbstractHeap {
     WTF_MAKE_NONCOPYABLE(AbstractHeap);
-    WTF_MAKE_TZONE_ALLOCATED(AbstractHeap);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AbstractHeap, JS_EXPORT_PRIVATE);
 public:
     AbstractHeap()
     {
     }
 
-    AbstractHeap(AbstractHeap* parent, const char* heapName, ptrdiff_t offset = 0, Mutability = Mutability::Mutable);
+    JS_EXPORT_PRIVATE AbstractHeap(AbstractHeap* parent, const char* heapName, ptrdiff_t offset = 0, Mutability = Mutability::Mutable);
 
     bool isInitialized() const { return !!m_heapName; }
 
@@ -68,7 +68,7 @@ public:
         return m_parent;
     }
 
-    const Vector<AbstractHeap*>& children() const;
+    const Vector<AbstractHeap*>& children() const { return m_children; }
 
     const char* heapName() const
     {
@@ -99,7 +99,7 @@ public:
         return m_offset;
     }
 
-    void compute(unsigned begin = 0);
+    JS_EXPORT_PRIVATE void compute(unsigned begin = 0);
 
     // Print information about just this heap.
     void shallowDump(PrintStream&) const;
@@ -113,7 +113,7 @@ public:
 private:
     friend class AbstractHeapRepository;
 
-    NO_RETURN_DUE_TO_CRASH void badRangeError() const;
+    NO_RETURN_DUE_TO_CRASH JS_EXPORT_PRIVATE void badRangeError() const;
 
     AbstractHeap* m_parent { nullptr };
     Vector<AbstractHeap*> m_children;
@@ -153,7 +153,7 @@ private:
     }
 
     const AbstractHeap& atSlow(ptrdiff_t index);
-    void initialize(AbstractHeap& field, ptrdiff_t index);
+    JS_EXPORT_PRIVATE void initialize(AbstractHeap& field, ptrdiff_t index);
 
     AbstractHeap m_heapForAnyIndex;
     size_t m_heapNameLength;

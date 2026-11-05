@@ -31,10 +31,12 @@
 
 #include "B3AtomicValue.h"
 #include "B3BasicBlockInlines.h"
+#include "B3BlockWorklist.h"
 #include "B3BulkMemoryValue.h"
 #include "B3ComputeDivisionMagic.h"
 #include "B3Dominators.h"
 #include "B3EliminateDeadCode.h"
+#include "B3HeapRangeTree.h"
 #include "B3InsertionSetInlines.h"
 #include "B3MemoryValueInlines.h"
 #include "B3NaturalLoops.h"
@@ -44,6 +46,7 @@
 #include "B3SwitchValue.h"
 #include "B3ValueKeyInlines.h"
 #include "B3ValueInlines.h"
+#include "B3WasmAddressValue.h"
 #include "B3WasmArrayElementValue.h"
 #include "B3WasmArrayGetValue.h"
 #include "B3WasmArrayLengthValue.h"
@@ -61,6 +64,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/LayeredHashMap.h>
 #include <wtf/MathExtras.h>
+#include <wtf/RangeSet.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 
@@ -118,6 +122,40 @@ struct WasmGCAccessKeyTraits : HashTraits<WasmGCAccessKey> {
 struct WasmGCAvailableValue {
     Value* value { nullptr };
     uint32_t packedMask { 0 };
+};
+
+// Names the value some access to (base, offset) produced or stored. Each access is keyed by its own
+// opcode, and a load finds a store of its width through storeOpcode(). `extra` separates accesses
+// of one opcode that do not produce interchangeable values: the result type of a Load, the stored
+// value's type for Store, and the pinned register for WasmAddress. `epoch` sums the write counters
+// that can change `heap`, the access's heap range tree node, so a write in between makes a later
+// probe miss, and two epochs compare only for the same node. A WasmAddress's epoch is the
+// pinned-register counter alone. An immutable load is not reused across a write that overlaps it,
+// even though it could be: that write is usually a call, and keeping the value live across a call
+// costs a spill where a reload costs one load.
+// FIXME: Measure that trade-off. Reusing an immutable load across calls may win when the value has
+// several uses after the call or the reload would miss in cache.
+struct MemoryAccessKey {
+    Value* base { nullptr };
+    int32_t offset { 0 };
+    HeapRangeTree::NodeID heap { HeapRangeTree::root };
+    Opcode opcode { Load };
+    uint8_t extra { 0 };
+    uint64_t epoch { 0 };
+
+    friend bool operator==(const MemoryAccessKey&, const MemoryAccessKey&) = default;
+
+    unsigned hash() const
+    {
+        uint64_t location = static_cast<uint32_t>(offset) | (static_cast<uint64_t>(heap) << 32);
+        uint64_t version = epoch ^ (static_cast<uint64_t>(opcode) << 56) ^ (static_cast<uint64_t>(extra) << 48);
+        return WTF::pairIntHash(WTF::intHash(static_cast<uint64_t>(reinterpret_cast<uintptr_t>(base))), WTF::pairIntHash(WTF::intHash(location), WTF::intHash(version)));
+    }
+};
+
+struct MemoryAccessKeyTraits : HashTraits<MemoryAccessKey> {
+    static constexpr bool hasIsEmptyValueFunction = true;
+    static bool isEmptyValue(const MemoryAccessKey& key) { return !key.base; }
 };
 
 // The goal of this phase is to:
@@ -622,6 +660,258 @@ private:
     int64_t m_max { 0 };
 };
 
+enum class BlockState : uint8_t { Unvisited, Reachable, Unknown, Unreachable };
+
+// Per-slot write counters for the walk in dominator order, with the counters at each block's tail
+// kept for the blocks it flows into. A block starts from its immediate dominator's tail, raised slot
+// by slot to the largest value any visited predecessor left, so a counter still equals what a
+// dominating access saw only if no path in between bumped it.
+//
+// Counters only grow, so a block's tail is at least its immediate dominator's in every slot. The
+// Dense layout copies every tail in full. The Sparse layout, for procedures where blocks times slots
+// would be too large, records only the slots each block changed: a predecessor's tail is then its
+// dominator's with the changes of the blocks between them applied. Leaving a block's dominator
+// subtree undoes its changes, so the current counters always start as the immediate dominator's tail.
+class BlockEpochs {
+public:
+    enum class Layout : uint8_t { Dense, Sparse };
+
+    void reset(unsigned slotCount, unsigned numBlocks, Layout layout)
+    {
+        m_layout = layout;
+        m_current.fill(0, slotCount);
+        if (layout == Layout::Dense) {
+            m_atTail.resize(static_cast<size_t>(numBlocks) * slotCount);
+            m_changes.clear();
+            m_blockChanges.clear();
+            m_changedInBlock.clear();
+        } else {
+            m_atTail.clear();
+            m_changes.shrink(0);
+            m_blockChanges.fill({ }, numBlocks);
+            m_changedInBlock.fill(0, slotCount);
+            m_blockStamp = 0;
+        }
+#if ASSERT_ENABLED
+        m_shadowAtTail.clear();
+        if (layout == Layout::Sparse && static_cast<uint64_t>(numBlocks) * slotCount <= maxShadowEntries)
+            m_shadowAtTail.fill(0, static_cast<size_t>(numBlocks) * slotCount);
+#endif
+    }
+
+    uint32_t operator[](unsigned slot) const { return m_current[slot]; }
+    unsigned slotCount() const { return m_current.size(); }
+
+    void bump(unsigned slot)
+    {
+        if (m_layout == Layout::Sparse)
+            noteChange(slot);
+        ++m_current[slot];
+    }
+
+    // How control enters a block. It does not depend on what the counters count, so one
+    // classification serves every BlockEpochs.
+    struct Entry {
+        // Control can also arrive over a path the walk has not accounted for, so the caller must
+        // invalidate every slot.
+        bool hasUnaccountedPredecessor { false };
+        // The loop this block heads, if the walk has yet to visit one of its back edges.
+        const NaturalLoop* loopEnteredOverBackEdge { nullptr };
+    };
+
+    static Entry classifyEntry(BasicBlock* block, NaturalLoops& naturalLoops, const IndexMap<BasicBlock*, BlockState>& blockStates)
+    {
+        // An unvisited predecessor that the block's own natural loop contains is an ordinary back
+        // edge, whose body can be summarized. Anything else is an irreducible retreating edge,
+        // reaching this block over a path the walk has not accounted for.
+        const NaturalLoop* loop = nullptr;
+        bool hasBackEdgeIntoLoop = false;
+        for (BasicBlock* predecessor : block->predecessors()) {
+            if (blockStates[predecessor] != BlockState::Unvisited)
+                continue;
+            if (!loop)
+                loop = naturalLoops.headerOf(block);
+            if (!loop || !naturalLoops.belongsTo(predecessor, *loop))
+                return { true, nullptr };
+            hasBackEdgeIntoLoop = true;
+        }
+        return { false, hasBackEdgeIntoLoop ? loop : nullptr };
+    }
+
+    // loopWrites holds the slots each loop writes, by loop index. Returns false when the Sparse
+    // layout gave up on merging some predecessor, in which case the caller must invalidate every slot.
+    [[nodiscard]] bool beginBlock(BasicBlock* block, Dominators& dominators, const IndexMap<BasicBlock*, BlockState>& blockStates, Entry entry, const Vector<BitVector>& loopWrites)
+    {
+        BasicBlock* idom = dominators.idom(block);
+        ASSERT(idom != block);
+        ASSERT(!idom || blockStates[idom] != BlockState::Unvisited);
+
+        if (m_layout == Layout::Sparse) {
+            ++m_blockStamp;
+            m_block = block;
+            m_blockChangesBegin = m_changes.size();
+        } else if (idom)
+            memcpySpan(m_current.mutableSpan(), tailOf(idom));
+        else
+            m_current.fill(0);
+#if ASSERT_ENABLED
+        if (m_layout == Layout::Sparse && !m_shadowAtTail.isEmpty())
+            checkMatchesShadow(idom ? shadowTailOf(idom) : std::span<const uint32_t> { });
+#endif
+
+        bool mergedAll = true;
+        for (BasicBlock* predecessor : block->predecessors()) {
+            if (predecessor == idom)
+                continue;
+            // An Unvisited predecessor has no tail counters yet and is accounted for through
+            // `entry`. An Unreachable one never runs, so nothing it writes reaches here.
+            BlockState state = blockStates[predecessor];
+            if (state == BlockState::Unreachable || state == BlockState::Unvisited)
+                continue;
+            if (m_layout == Layout::Sparse) {
+                mergedAll &= mergeSparseTail(predecessor, idom, dominators);
+                continue;
+            }
+            auto tailSpan = tailOf(predecessor);
+            RELEASE_ASSERT(tailSpan.size() == m_current.size());
+            for (unsigned i = 0; i < tailSpan.size(); ++i)
+                m_current[i] = std::max(m_current[i], tailSpan[i]);
+        }
+#if ASSERT_ENABLED
+        if (m_layout == Layout::Sparse && !m_shadowAtTail.isEmpty() && mergedAll) {
+            Vector<uint32_t> expected;
+            expected.fill(0, m_current.size());
+            if (idom)
+                memcpySpan(expected.mutableSpan(), shadowTailOf(idom));
+            for (BasicBlock* predecessor : block->predecessors()) {
+                BlockState state = blockStates[predecessor];
+                if (predecessor == idom || state == BlockState::Unreachable || state == BlockState::Unvisited)
+                    continue;
+                auto tailSpan = shadowTailOf(predecessor);
+                for (unsigned i = 0; i < tailSpan.size(); ++i)
+                    expected[i] = std::max(expected[i], tailSpan[i]);
+            }
+            checkMatchesShadow(expected.span());
+        }
+#endif
+
+        // The walk has not seen the loop body yet. A value computed before the loop cannot be
+        // reused inside it once the body writes the same slot, so invalidate exactly the slots the
+        // body writes. Bumping everything instead is sound but throws away every loop-invariant
+        // read.
+        if (entry.loopEnteredOverBackEdge) {
+            for (unsigned slot : loopWrites[entry.loopEnteredOverBackEdge->index()])
+                bump(slot);
+        }
+        return mergedAll;
+    }
+
+    void endBlock(BasicBlock* block)
+    {
+#if ASSERT_ENABLED
+        if (!m_shadowAtTail.isEmpty())
+            memcpySpan(m_shadowAtTail.mutableSpan().subspan(block->index() * slotCount(), slotCount()), m_current.span());
+#endif
+        if (m_layout == Layout::Dense) {
+            memcpySpan(m_atTail.mutableSpan().subspan(block->index() * slotCount(), slotCount()), m_current.span());
+            return;
+        }
+        // A block the walk found unreachable was never begun, and changes nothing.
+        if (m_block != block)
+            return;
+        m_blockChanges[block->index()] = { m_blockChangesBegin, m_changes.size() };
+        for (Change& change : changesOf(block))
+            change.atTail = m_current[change.slot];
+        m_block = nullptr;
+    }
+
+    // Called once the walk is done with every block `block` dominates.
+    void leaveSubtree(BasicBlock* block)
+    {
+        if (m_layout == Layout::Dense)
+            return;
+        for (const Change& change : changesOf(block))
+            m_current[change.slot] = change.atEntry;
+    }
+
+private:
+    struct Change {
+        unsigned slot;
+        uint32_t atEntry;
+        uint32_t atTail;
+    };
+
+    std::span<const uint32_t> tailOf(BasicBlock* block) const
+    {
+        return m_atTail.span().subspan(block->index() * slotCount(), slotCount());
+    }
+
+    std::span<Change> changesOf(BasicBlock* block)
+    {
+        auto [begin, end] = m_blockChanges[block->index()];
+        return m_changes.mutableSpan().subspan(begin, end - begin);
+    }
+
+    void noteChange(unsigned slot)
+    {
+        ASSERT(m_block);
+        if (m_changedInBlock[slot] == m_blockStamp)
+            return;
+        m_changedInBlock[slot] = m_blockStamp;
+        m_changes.append({ slot, m_current[slot], 0 });
+    }
+
+    // `stop`, the immediate dominator of the block being entered, dominates `predecessor`, and the
+    // counters already hold its tail. Gives up past about as much work as a Dense merge does.
+    bool mergeSparseTail(BasicBlock* predecessor, BasicBlock* stop, Dominators& dominators)
+    {
+        static constexpr size_t minimumMergeBudget = 1024;
+        size_t budget = std::max<size_t>(slotCount(), minimumMergeBudget);
+        for (BasicBlock* block = predecessor; block != stop; block = dominators.idom(block)) {
+            RELEASE_ASSERT(block);
+            auto changes = changesOf(block);
+            if (changes.size() + 1 > budget)
+                return false;
+            budget -= changes.size() + 1;
+            for (const Change& change : changes) {
+                if (change.atTail > m_current[change.slot]) {
+                    noteChange(change.slot);
+                    m_current[change.slot] = change.atTail;
+                }
+            }
+        }
+        return true;
+    }
+
+#if ASSERT_ENABLED
+    static constexpr uint64_t maxShadowEntries = 16 * 1024 * 1024;
+
+    std::span<const uint32_t> shadowTailOf(BasicBlock* block) const
+    {
+        return m_shadowAtTail.span().subspan(block->index() * slotCount(), slotCount());
+    }
+
+    // An empty span stands for all zeros.
+    void checkMatchesShadow(std::span<const uint32_t> expected) const
+    {
+        for (unsigned i = 0; i < m_current.size(); ++i)
+            ASSERT(m_current[i] == (expected.empty() ? 0 : expected[i]));
+    }
+
+    Vector<uint32_t> m_shadowAtTail; // What the Dense layout would keep, to check the Sparse one against.
+#endif
+
+    Layout m_layout { Layout::Dense };
+    Vector<uint32_t> m_current;
+    Vector<uint32_t> m_atTail; // Dense only.
+    Vector<Change> m_changes; // Sparse only, grouped by block.
+    Vector<std::pair<size_t, size_t>> m_blockChanges; // Sparse only, each block's range in m_changes.
+    Vector<unsigned> m_changedInBlock; // Sparse only, the m_blockStamp of the last block to change each slot.
+    unsigned m_blockStamp { 0 };
+    size_t m_blockChangesBegin { 0 };
+    BasicBlock* m_block { nullptr }; // Sparse only, the block begun and not yet ended.
+};
+
 class ReduceStrength {
 public:
     ReduceStrength(Procedure& proc, ReduceStrengthPass pass)
@@ -661,7 +951,9 @@ public:
         handleChangedCFGIfNecessary();
         if (m_mayHaveUnfoldedPhis)
             simplifySSA();
-        if (m_proc.optLevel() >= 2)
+        // Nothing between the Final pass and moveConstants() removes dead values, and moveConstants()
+        // hoists each constant to a dominator shared by all its uses, dead ones included.
+        if (m_pass == ReduceStrengthPass::Final)
             eliminateDeadCodeImpl(m_proc);
         return m_changed;
     }
@@ -672,20 +964,34 @@ public:
     {
         // lowerMacros expands every wasm-GC opcode, so the Final run cannot see one.
         m_trackWasmGCAccesses = m_pass == ReduceStrengthPass::Initial && m_proc.usesWasmGCAccesses();
-        if (m_trackWasmGCAccesses) {
+        // Memory value numbering resolves ranges through the tree of the procedure's
+        // AbstractHeapRepository, which generateToAir() always builds.
+        const std::optional<HeapRangeTree>& heapTree = m_proc.heaps().rangeTree();
+        m_heapTree = m_pass == ReduceStrengthPass::Initial && m_proc.optLevel() >= 2 && heapTree ? &*heapTree : nullptr;
+        m_naturalLoops = m_trackWasmGCAccesses || m_heapTree ? &m_proc.naturalLoops() : nullptr;
+        if (m_trackWasmGCAccesses)
             computeWasmGCSpans();
-            m_naturalLoops = &m_proc.naturalLoops();
-            scanWasmGCAccesses();
-            m_wasmGCMap.clear();
-            m_wasmGCEpochs.shrink(0);
-            m_wasmGCEpochs.grow(wasmGCSlotCount());
-            m_wasmGCEpochsAtTail.resize(static_cast<size_t>(m_proc.size()) * wasmGCSlotCount());
-        }
 
         {
-            // The walk folds a Phi based on this snapshot of its Upsilons, so it must not create Phis or
-            // Upsilons, nor delete values.
-            PhiChildren phiChildren(m_proc);
+            // The walk folds a Phi based on this snapshot of its Upsilons, so it must not create or
+            // delete a Phi or an Upsilon.
+            PhiChildren phiChildren(m_proc, PhiChildren::Collect::No);
+            scanValues(phiChildren);
+
+            if (m_trackWasmGCAccesses) {
+                m_wasmGCMap.clear();
+                m_wasmGCEpochs.reset(wasmGCSlotCount(), m_proc.size(), BlockEpochs::Layout::Dense);
+            }
+
+            if (m_heapTree) {
+                m_memoryMap.clear();
+                m_validateMemoryForwarding = shouldValidateIR();
+                m_memoryAccessBlocks.clear();
+                m_deadStoreSummaries.shrink(0);
+                m_deadStoreSummaries.grow(m_proc.size());
+                m_deadStoreCandidates.shrink(0);
+            }
+
             SetForScope phiChildrenScope(m_phiChildren, &phiChildren);
             SetForScope phiChildrenValueCountScope(m_phiChildrenValueCount, m_proc.values().size());
             m_blockStates = IndexMap<BasicBlock*, BlockState>(m_proc.size(), BlockState::Unvisited);
@@ -693,11 +999,13 @@ public:
             m_enteredFromReachableBlock.ensureSize(m_proc.size());
             m_valueForConstant.clear();
             m_proc.resetValueOwners(); // Used by Phi folding.
+            m_rootConstants.clearAll();
 
             m_dominators = &m_proc.dominators(); // Recompute if necessary.
             m_layeredCSE.clear();
             reduceAllBlocksStrengthInDominatorPreOrder();
             m_valueForConstant.clear();
+            m_rootConstants.clearAll();
 
 #if ASSERT_ENABLED
             BitVector snapshotUpsilonIndices;
@@ -707,12 +1015,17 @@ public:
                     snapshotUpsilonIndices.set(upsilon->index());
                 }
             }
-            for (Value* value : m_proc.values()) {
-                if (value->opcode() == Upsilon)
-                    ASSERT(snapshotUpsilonIndices.get(value->index()));
+            for (BasicBlock* block : m_proc) {
+                for (Value* value : *block) {
+                    if (value->opcode() == Upsilon)
+                        ASSERT(snapshotUpsilonIndices.get(value->index()));
+                }
             }
 #endif
         }
+
+        if (m_heapTree)
+            eliminateDeadStoresAcrossBlocks();
 
         handleChangedCFGIfNecessary();
     }
@@ -738,9 +1051,20 @@ public:
                 m_block = block;
                 m_blockState = computeBlockReachability();
 
+                // An unreachable block is not reduced, and only the blocks it dominates, which are
+                // unreachable too, seed from its tail.
+                std::optional<BlockEpochs::Entry> epochsEntry;
+                if ((m_trackWasmGCAccesses || m_heapTree) && m_blockState != BlockState::Unreachable)
+                    epochsEntry = BlockEpochs::classifyEntry(block, *m_naturalLoops, m_blockStates);
                 if (m_trackWasmGCAccesses) {
                     m_wasmGCMap.startLayer();
-                    beginWasmGCBlock(block);
+                    if (epochsEntry)
+                        beginWasmGCBlock(block, *epochsEntry);
+                }
+                if (m_heapTree) {
+                    m_memoryMap.startLayer();
+                    if (epochsEntry)
+                        beginMemoryBlock(block, *epochsEntry);
                 }
 
                 // Every block an unreachable block dominates is unreachable too, and the whole region is
@@ -751,20 +1075,29 @@ public:
                     reduceBlockStrength();
 
                 if (m_trackWasmGCAccesses)
-                    endWasmGCBlock(block);
+                    m_wasmGCEpochs.endBlock(block);
+                if (m_heapTree)
+                    m_memoryEpochs.endBlock(block);
 
                 finishBlock(block);
             },
-            [&](BasicBlock*) {
+            [&](BasicBlock* block) {
                 m_layeredCSE.dropLastLayer();
-                if (m_trackWasmGCAccesses)
+                if (m_trackWasmGCAccesses) {
                     m_wasmGCMap.dropLastLayer();
+                    m_wasmGCEpochs.leaveSubtree(block);
+                }
+                if (m_heapTree) {
+                    m_memoryMap.dropLastLayer();
+                    m_memoryEpochs.leaveSubtree(block);
+                }
             });
     }
 
 private:
     void reduceBlockStrength()
     {
+        m_pendingStores.shrink(0);
         for (m_index = 0; m_index < m_block->size(); ++m_index) {
             if (B3ReduceStrengthInternal::verbose) {
                 dataLog(
@@ -774,9 +1107,9 @@ private:
             m_value = m_block->at(m_index);
             m_value->performSubstitution();
 
-            HeapRange writesBeforeReduction;
-            if (m_trackWasmGCAccesses)
-                writesBeforeReduction = m_value->effects().writes;
+            Effects effectsBeforeReduction;
+            if (m_trackWasmGCAccesses || m_heapTree)
+                effectsBeforeReduction = m_value->effects();
 
             // Many rules mutate the current value's children in place (e.g. Add(Add(x, c1), c2)
             // becomes Add(x, c1 + c2)), and the result may match another rule. Without fixpoint
@@ -799,14 +1132,33 @@ private:
             if (m_proc.optLevel() >= 2)
                 replaceIfRedundant();
 
-            // Runs after the reduction rules above, so that a cast the rules strip off the base
-            // or a trap bit they drop is already reflected in the access this records.
-            if (m_trackWasmGCAccesses)
-                processWasmGCAccess(writesBeforeReduction, reduced);
+            if (m_trackWasmGCAccesses || m_heapTree) {
+                // Forwarding a load or dropping a store below only removes effects, so
+                // effectsAfterReduction still bounds what the value does afterward.
+                Effects effectsAfterReduction = reduced ? m_value->effects() : effectsBeforeReduction;
+
+                // Runs after the reduction rules above, so that a cast the rules strip off the base
+                // or a trap bit they drop is already reflected in the access this records.
+                if (m_trackWasmGCAccesses)
+                    processWasmGCAccess(effectsBeforeReduction.writes, effectsAfterReduction.writes);
+                if (m_heapTree) {
+                    processMemoryAccess(effectsBeforeReduction, effectsAfterReduction, reduced);
+                    eliminateDeadStores(effectsBeforeReduction, effectsAfterReduction, reduced);
+                }
+            }
+        }
+        if (m_heapTree) {
+            // Nothing after these stores in the block observes them, so they are dead if every
+            // path through the successors overwrites them first.
+            if (m_block->numSuccessors()) {
+                for (MemoryValue* store : m_pendingStores)
+                    m_deadStoreCandidates.append({ m_block, store });
+            }
         }
         m_insertionSet.execute(m_block);
     }
 
+    // A rule may narrow what m_value writes, but never widen it; see checkInLoopSummary().
     void reduceValueStrength()
     {
         switch (m_value->opcode()) {
@@ -2792,9 +3144,8 @@ private:
             // the same address.
             if (memory->offset()) {
                 if (Value* newAddress = address->addConstant(m_proc, memory->offset())) {
-                    m_insertionSet.insertValue(m_index, newAddress);
-                    address = newAddress;
-                    memory->lastChild() = newAddress;
+                    address = placeNewConstant(newAddress);
+                    memory->lastChild() = address;
                     memory->setOffset(0);
                     m_changed = true;
                 }
@@ -2805,8 +3156,7 @@ private:
                 // Into this: Store(int32-constant, address)
                 if (m_value->child(0)->hasFloat()) {
                     float value = m_value->child(0)->asFloat();
-                    Value* constant = m_insertionSet.insert<Const32Value>(m_index, m_value->child(0)->origin(), std::bit_cast<int32_t>(value));
-                    m_value->child(0) = constant;
+                    m_value->child(0) = placeNewConstant(m_proc.add<Const32Value>(m_value->child(0)->origin(), std::bit_cast<int32_t>(value)));
                     m_changed = true;
                 }
 
@@ -2814,8 +3164,7 @@ private:
                 // Into this: Store(int64-constant, address)
                 if (m_value->child(0)->hasDouble()) {
                     double value = m_value->child(0)->asDouble();
-                    Value* constant = m_insertionSet.insert<Const64Value>(m_index, m_value->child(0)->origin(), std::bit_cast<int64_t>(value));
-                    m_value->child(0) = constant;
+                    m_value->child(0) = placeNewConstant(m_proc.add<Const64Value>(m_value->child(0)->origin(), std::bit_cast<int64_t>(value)));
                     m_changed = true;
                 }
             }
@@ -3474,19 +3823,8 @@ private:
         case Const128:
         case ConstFloat:
         case ConstDouble: {
-            ValueKey key = m_value->key();
-            auto addResult = m_valueForConstant.add(key, m_value);
-            if (!addResult.isNewEntry) {
-                Value* constInRoot = addResult.iterator->value;
-                if (constInRoot != m_value) {
-                    m_value->replaceWithIdentity(constInRoot);
-                    m_changed = true;
-                }
-            } else if (m_block != m_root) {
-                Value* constInRoot = m_proc.clone(m_value);
-                ASSERT(m_root && m_root->size() >= 1);
-                m_root->appendNonTerminal(constInRoot);
-                addResult.iterator->value = constInRoot;
+            Value* constInRoot = constantInRoot(m_value);
+            if (constInRoot != m_value) {
                 m_value->replaceWithIdentity(constInRoot);
                 m_changed = true;
             }
@@ -4696,8 +5034,6 @@ private:
         }
     }
 
-    enum class BlockState : uint8_t { Unvisited, Reachable, Unknown, Unreachable };
-
     // A block's successors are final once the walk finishes it, so only then are its state and edges
     // recorded. Until then the block is Unvisited, including to its own back edge.
     void finishBlock(BasicBlock* block)
@@ -4760,19 +5096,112 @@ private:
         }
     }
 
+    // The one copy of `constant` in the root block that every equal constant is replaced with.
+    Value* constantInRoot(Value* constant)
+    {
+        auto addResult = m_valueForConstant.add(constant->key(), constant);
+        if (!addResult.isNewEntry)
+            return addResult.iterator->value;
+        if (m_block == m_root) {
+            m_rootConstants.set(constant->index());
+            return constant;
+        }
+        Value* constInRoot = m_proc.clone(constant);
+        ASSERT(m_root && m_root->size() >= 1);
+        m_root->appendNonTerminal(constInRoot);
+        addResult.iterator->value = constInRoot;
+        m_rootConstants.set(constInRoot->index());
+        return constInRoot;
+    }
+
+    // Places a constant a rule just created for the current value. Value numbering matches memory
+    // accesses by the identity of their base and stored value, so an equal constant already in the
+    // root is reused, and otherwise `fresh` becomes the root's copy.
+    Value* placeNewConstant(Value* fresh)
+    {
+        auto addResult = m_valueForConstant.add(fresh->key(), fresh);
+        if (!addResult.isNewEntry) {
+            m_proc.deleteValue(fresh);
+            return addResult.iterator->value;
+        }
+        m_rootConstants.set(fresh->index());
+        if (m_block == m_root)
+            m_insertionSet.insertValue(m_index, fresh);
+        else
+            m_root->appendNonTerminal(fresh);
+        return fresh;
+    }
+
     void replaceIfRedundant()
     {
-        if (m_value->opcode() == Identity || m_value->isConstant())
+        // When a rule replaced this value with one it inserted ahead of it, the walk never visits
+        // the replacement, so number it here or nothing later can match it.
+        if (m_value->opcode() == Identity) {
+            Value* replacement = m_value->foldIdentity();
+            if (replacement->performSubstitution())
+                m_changed = true;
+            // A replacement with no owner yet is still in m_insertionSet, so it belongs to the
+            // current block. A value outside the root runs after every root copy of a constant, but
+            // one inside the root may run before a copy appended to the root's end.
+            bool mayUseRootConstants = replacement->owner ? replacement->owner != m_root : m_block != m_root;
+            if (Value* match = dominatingEquivalent(replacement, mayUseRootConstants)) {
+                m_value->child(0) = match;
+                m_changed = true;
+            }
             return;
+        }
 
-        ValueKey key = m_value->key();
+        if (Value* match = dominatingEquivalent(m_value, true))
+            replaceWithIdentity(match);
+    }
+
+    // The key under which `value` matches earlier values. It is never passed to
+    // ValueKey::materialize(), so it may drop parts of the kind that do not change the result.
+    static ValueKey numberingKey(Value* value)
+    {
+        // Once one length read of an array has run, the array is known to be non-null, so a later
+        // read of it cannot trap and either can stand in for the other whatever their trap bits.
+        if (value->opcode() == WasmArrayLength)
+            return ValueKey(WasmArrayLength, value->type(), value->child(0));
+        return value->key();
+    }
+
+    // Returns an earlier value that `value` can be replaced with, or records `value` for later
+    // values to match and returns null.
+    Value* dominatingEquivalent(Value* value, bool mayUseRootConstants)
+    {
+        ASSERT(value->opcode() != Identity);
+
+        if (value->isConstant()) {
+            Value* constInRoot = constantInRoot(value);
+            return constInRoot != value ? constInRoot : nullptr;
+        }
+
+        ValueKey key = numberingKey(value);
         if (!key)
-            return;
+            return nullptr;
 
-        if (std::optional<Value*> match = m_layeredCSE.findOrAdd(key, m_value)) {
-            m_value->replaceWithIdentity(*match);
+        // Point constant children at the root's copies, or the key would not match the same
+        // expression built over those copies.
+        bool canonicalizedChild = false;
+        if (mayUseRootConstants) {
+            for (Value*& child : value->children()) {
+                if (!child->isConstant() || m_rootConstants.get(child->index()))
+                    continue;
+                Value* constInRoot = constantInRoot(child);
+                if (constInRoot != child) {
+                    child = constInRoot;
+                    canonicalizedChild = true;
+                }
+            }
+        }
+        if (canonicalizedChild) {
+            key = numberingKey(value);
             m_changed = true;
         }
+
+        std::optional<Value*> match = m_layeredCSE.findOrAdd(key, value);
+        return match && *match != value ? *match : nullptr;
     }
 
     // Each slot has an epoch in m_wasmGCEpochs, and a write bumps the epochs of the slots it may touch.
@@ -4785,6 +5214,7 @@ private:
     static constexpr unsigned wasmGCArraySlot(unsigned elementType) { return 1 + elementType; }
     static constexpr unsigned wasmGCArrayAllSlot() { return 1 + numberOfWasmGCArrayElementTypes; }
     unsigned wasmGCSlotCount() const { return numberOfWasmGCSharedSlots + m_wasmGCStructWidth; }
+    static constexpr uint32_t unwrittenWasmGCStructField = UINT32_MAX;
 
     unsigned wasmGCStructFieldIndex(HeapRange range) const
     {
@@ -4899,7 +5329,7 @@ private:
             }
 
             // The bumped epoch gives this store a key that's not present, so the add below inserts.
-            ++m_wasmGCEpochs[location.slot];
+            m_wasmGCEpochs.bump(location.slot);
             key = wasmGCKeyFor(location);
         }
 
@@ -4907,7 +5337,7 @@ private:
         ASSERT_UNUSED(added, added);
     }
 
-    void processWasmGCAccess(HeapRange writesBeforeReduction, bool reduced)
+    void processWasmGCAccess(HeapRange writesBeforeReduction, HeapRange writesAfterReduction)
     {
         auto packedMaskFor = [](Wasm::StorageType type) -> uint32_t {
             if (!type.is<Wasm::PackedType>())
@@ -4954,17 +5384,14 @@ private:
                 if (!writes)
                     return;
                 if (writes.overlaps(m_wasmGCStructSpan))
-                    ++m_wasmGCEpochs[wasmGCStructAllSlot()];
+                    m_wasmGCEpochs.bump(wasmGCStructAllSlot());
                 if (writes.overlaps(m_wasmGCArraySpan))
-                    ++m_wasmGCEpochs[wasmGCArrayAllSlot()];
+                    m_wasmGCEpochs.bump(wasmGCArrayAllSlot());
             };
 
             // A rule that rewrites this value may insert values ahead of it that carry the original's
             // writes, and the walk never visits those, so charge both the original and the rewrite.
             bumpWasmGCEpochs(writesBeforeReduction);
-            if (!reduced)
-                return;
-            HeapRange writesAfterReduction = m_value->effects().writes;
             if (writesBeforeReduction != writesAfterReduction)
                 bumpWasmGCEpochs(writesAfterReduction);
             return;
@@ -4974,129 +5401,134 @@ private:
 
     void bumpAllWasmGCEpochs()
     {
-        ++m_wasmGCEpochs[wasmGCStructAllSlot()];
-        ++m_wasmGCEpochs[wasmGCArrayAllSlot()];
+        m_wasmGCEpochs.bump(wasmGCStructAllSlot());
+        m_wasmGCEpochs.bump(wasmGCArrayAllSlot());
     }
 
-    void beginWasmGCBlock(BasicBlock* block)
+    void beginWasmGCBlock(BasicBlock* block, BlockEpochs::Entry entry)
     {
-        // An unreachable block is not reduced, and only the blocks it dominates, which are
-        // unreachable too, seed from its tail.
-        if (m_blockState == BlockState::Unreachable)
-            return;
-
-        unsigned slotCount = wasmGCSlotCount();
-
-        // Seed from the immediate dominator, which the walk has already finished. Entries recorded
-        // in a dominating block stay in the map for the whole of its subtree, so an epoch that
-        // started below one of them would make a stale entry findable again; every path reaching
-        // here runs the dominator first, so its tail is a floor on what has been written.
-        BasicBlock* idom = m_dominators->idom(block);
-        ASSERT(idom != block);
-        if (idom) {
-            ASSERT(isFinished(idom));
-            auto tailSpan = m_wasmGCEpochsAtTail.span().subspan(idom->index() * slotCount, slotCount);
-            memcpySpan(m_wasmGCEpochs.mutableSpan(), tailSpan);
-        } else
-            m_wasmGCEpochs.fill(0);
-
-        // An unvisited predecessor that the block's own natural loop contains is an ordinary back
-        // edge, whose body can be summarized. Anything else is an irreducible retreating edge,
-        // reaching this block over a path the walk has not accounted for.
-        const NaturalLoop* loop = m_naturalLoops->headerOf(block);
-        bool hasBackEdgeIntoLoop = false;
-        bool hasUnaccountedPredecessor = false;
-        for (BasicBlock* predecessor : block->predecessors()) {
-            // Nothing written in a block that never runs reaches this one.
-            if (m_blockStates[predecessor] == BlockState::Unreachable)
-                continue;
-            if (!isFinished(predecessor)) {
-                if (loop && m_naturalLoops->belongsTo(predecessor, *loop))
-                    hasBackEdgeIntoLoop = true;
-                else
-                    hasUnaccountedPredecessor = true;
-                continue;
-            }
-            auto tailSpan = m_wasmGCEpochsAtTail.span().subspan(predecessor->index() * slotCount, slotCount);
-            RELEASE_ASSERT(tailSpan.size() == m_wasmGCEpochs.size());
-            for (unsigned i = 0; i < tailSpan.size(); ++i)
-                m_wasmGCEpochs[i] = std::max(m_wasmGCEpochs[i], tailSpan[i]);
-        }
-
-        if (hasUnaccountedPredecessor) {
+        bool mergedAll = m_wasmGCEpochs.beginBlock(block, *m_dominators, m_blockStates, entry, m_wasmGCLoopWrites);
+        if (entry.hasUnaccountedPredecessor || !mergedAll)
             bumpAllWasmGCEpochs();
-            return;
-        }
-
-        if (!hasBackEdgeIntoLoop)
-            return;
-
-        // The walk has not seen the loop body yet. A value computed before the loop cannot be
-        // reused inside it once the body stores to the same slot, so invalidate exactly the slots
-        // the body writes. Bumping everything instead is sound but throws away every
-        // loop-invariant field read, which is most of them in code like this.
-        for (unsigned slot : writesInLoop(*loop))
-            ++m_wasmGCEpochs[slot];
     }
 
-    // Give a slot to each mutable struct field the procedure stores to. And summarize what each block inside a loop writes, so
-    // that Value::effects() runs over a block once rather than once per loop enclosing it. Stores that initialize an
-    // immutable field or element are left out: immutable keys carry no epochs, so there is nothing for them to bump.
-    void scanWasmGCAccesses()
+    // Gathers what the walk needs settled before it starts: the Phi-to-Upsilon snapshot, the slots
+    // the wasm-GC and memory epochs count, and what each loop writes.
+    void scanValues(PhiChildren& phiChildren)
     {
-        constexpr uint32_t unwritten = UINT32_MAX;
-        m_wasmGCStructFieldSlots.shrink(0);
-        m_wasmGCStructFieldSlots.grow(m_wasmGCStructSpan.distance());
-        m_wasmGCStructFieldSlots.fill(unwritten);
+        bool hasLoops = m_naturalLoops && m_naturalLoops->numLoops();
 
-        m_wasmGCBlockWrites.shrink(0);
-        if (m_naturalLoops->numLoops())
-            m_wasmGCBlockWrites.grow(m_proc.size());
+        if (m_trackWasmGCAccesses) {
+            m_wasmGCStructFieldSlots.fill(unwrittenWasmGCStructField, m_wasmGCStructSpan.distance());
+            m_wasmGCLoopWrites.shrink(0);
+            if (hasLoops)
+                m_wasmGCLoopWrites.grow(m_naturalLoops->numLoops());
+        }
+        unsigned wasmGCStructWidth = 0;
 
-        unsigned width = 0;
-        for (unsigned index = 0; index < m_proc.size(); ++index) {
-            BasicBlock* block = m_proc.at(index);
-            if (!block)
-                continue;
-            BitVector* writes = m_naturalLoops->innerMostLoopOf(block) ? &m_wasmGCBlockWrites[index] : nullptr;
+        Vector<MemoryWrite> memoryWrites;
+        if (m_heapTree) {
+            m_memoryAccessRanges.clear();
+            m_procHasInt64MemoryAccess = false;
+            m_memoryLoopWrites.shrink(0);
+            if (hasLoops)
+                m_memoryLoopWrites.grow(m_naturalLoops->numLoops());
+        }
+
+        for (BasicBlock* block : m_proc) {
+            const NaturalLoop* loop = hasLoops ? m_naturalLoops->innerMostLoopOf(block) : nullptr;
+            BitVector* wasmGCLoopWrites = m_trackWasmGCAccesses && loop ? &m_wasmGCLoopWrites[loop->index()] : nullptr;
+            BitVector* memoryLoopWrites = m_heapTree && loop ? &m_memoryLoopWrites[loop->index()] : nullptr;
+            bool needsEffects = m_heapTree || wasmGCLoopWrites;
 
             for (Value* value : *block) {
-                switch (value->opcode()) {
-                case WasmStructSet: {
-                    auto* set = value->as<WasmStructFieldValue>();
-                    if (set->mutability() == Mutability::Immutable)
-                        break;
-                    uint32_t& slot = m_wasmGCStructFieldSlots[wasmGCStructFieldIndex(set->range())];
-                    if (slot == unwritten)
-                        slot = numberOfWasmGCSharedSlots + width++;
-                    if (writes)
-                        writes->set(slot);
-                    break;
+                // An Upsilon writes only local state, which neither epoch counts.
+                if (UpsilonValue* upsilon = value->as<UpsilonValue>()) {
+                    phiChildren.add(upsilon);
+                    continue;
                 }
 
-                case WasmArraySet: {
-                    auto* set = value->as<WasmArrayElementValue>();
-                    if (writes && set->mutability() == Mutability::Mutable)
-                        writes->set(wasmGCArrayLocation(set).slot);
-                    break;
-                }
+                Effects effects;
+                if (needsEffects)
+                    effects = value->effects();
 
-                default: {
-                    if (!writes)
-                        break;
-                    HeapRange written = value->effects().writes;
-                    if (!written)
-                        break;
-                    if (written.overlaps(m_wasmGCStructSpan))
-                        writes->set(wasmGCStructAllSlot());
-                    if (written.overlaps(m_wasmGCArraySpan))
-                        writes->set(wasmGCArrayAllSlot());
-                    break;
+                if (m_trackWasmGCAccesses)
+                    scanWasmGCAccess(value, effects.writes, wasmGCLoopWrites, wasmGCStructWidth);
+
+                if (!m_heapTree)
+                    continue;
+                MemoryValue* memory = value->as<MemoryValue>();
+                if (memory) {
+                    m_memoryAccessRanges.add(memory->range());
+                    m_procHasInt64MemoryAccess |= memory->accessType() == Int64;
                 }
+                if (effects.writes || effects.writesPinned) {
+                    MemoryWrite write { effects.writes, memoryLoopWrites, effects.writesPinned };
+                    if (memoryWrites.isEmpty() || memoryWrites.last() != write)
+                        memoryWrites.append(write);
                 }
             }
         }
 
+        if (m_trackWasmGCAccesses) {
+            assignWasmGCStructSlots(wasmGCStructWidth);
+            includeInnerLoopWrites(m_wasmGCLoopWrites);
+        }
+        if (m_heapTree) {
+            assignMemorySlots(memoryWrites);
+            includeInnerLoopWrites(m_memoryLoopWrites);
+        }
+    }
+
+    // The scan records each write in its block's innermost loop only. A loop also writes whatever
+    // the loops nested in it write.
+    void includeInnerLoopWrites(Vector<BitVector>& loopWrites)
+    {
+        for (unsigned index = 0; index < loopWrites.size(); ++index) {
+            for (const NaturalLoop* outer = m_naturalLoops->innerMostOuterLoop(m_naturalLoops->loop(index)); outer; outer = m_naturalLoops->innerMostOuterLoop(*outer))
+                loopWrites[outer->index()].merge(loopWrites[index]);
+        }
+    }
+
+    // Gives a slot to the mutable struct field `value` stores to, if any, and records what it writes
+    // in its loop's summary. Stores that initialize an immutable field or element are left out:
+    // immutable keys carry no epochs, so there is nothing for them to bump.
+    void scanWasmGCAccess(Value* value, HeapRange writes, BitVector* loopWrites, unsigned& width)
+    {
+        switch (value->opcode()) {
+        case WasmStructSet: {
+            auto* set = value->as<WasmStructFieldValue>();
+            if (set->mutability() == Mutability::Immutable)
+                return;
+            uint32_t& slot = m_wasmGCStructFieldSlots[wasmGCStructFieldIndex(set->range())];
+            if (slot == unwrittenWasmGCStructField)
+                slot = numberOfWasmGCSharedSlots + width++;
+            if (loopWrites)
+                loopWrites->set(slot);
+            return;
+        }
+
+        case WasmArraySet: {
+            auto* set = value->as<WasmArrayElementValue>();
+            if (loopWrites && set->mutability() == Mutability::Mutable)
+                loopWrites->set(wasmGCArrayLocation(set).slot);
+            return;
+        }
+
+        default: {
+            if (!loopWrites || !writes)
+                return;
+            if (writes.overlaps(m_wasmGCStructSpan))
+                loopWrites->set(wasmGCStructAllSlot());
+            if (writes.overlaps(m_wasmGCArraySpan))
+                loopWrites->set(wasmGCArrayAllSlot());
+            return;
+        }
+        }
+    }
+
+    void assignWasmGCStructSlots(unsigned width)
+    {
         // Thousands of written fields across thousands of blocks would make the per-block epoch
         // snapshots the largest thing in the compile. Past that every field uses the struct catch-all
         // slot, so a store to any field bumps the one epoch every struct key carries.
@@ -5118,35 +5550,15 @@ private:
                 writes = WTF::move(shared);
             };
 
-            for (BitVector& writes : m_wasmGCBlockWrites)
+            for (BitVector& writes : m_wasmGCLoopWrites)
                 collapseWasmGCFieldWrites(writes);
         }
 
         m_wasmGCStructWidth = width;
         for (uint32_t& slot : m_wasmGCStructFieldSlots) {
-            if (!width || slot == unwritten)
+            if (!width || slot == unwrittenWasmGCStructField)
                 slot = wasmGCStructAllSlot();
         }
-    }
-
-    BitVector writesInLoop(const NaturalLoop& loop)
-    {
-        BitVector writes;
-        for (unsigned i = 0; i < loop.size(); ++i) {
-            // scanWasmGCAccesses() summarizes exactly the blocks that report an innermost loop. A
-            // body block that reported none would contribute nothing here, quietly understating
-            // what the loop writes.
-            ASSERT(m_naturalLoops->innerMostLoopOf(loop.at(i)));
-            writes.merge(m_wasmGCBlockWrites[loop.at(i)->index()]);
-        }
-        return writes;
-    }
-
-    void endWasmGCBlock(BasicBlock* block)
-    {
-        unsigned slotCount = wasmGCSlotCount();
-        auto tailSpan = m_wasmGCEpochsAtTail.mutableSpan().subspan(block->index() * slotCount, slotCount);
-        memcpySpan(tailSpan, m_wasmGCEpochs.span());
     }
 
     void computeWasmGCSpans()
@@ -5170,6 +5582,622 @@ private:
             end = std::max(end, range.end());
         }
         m_wasmGCArraySpan = HeapRange(begin, end);
+    }
+
+    // Slot 0 of m_memoryEpochs counts writes to the pinned registers. Each node N of m_heapTree
+    // has two counters: own(N), bumped by a write whose range resolves to N, and sub(N), bumped by
+    // a write that resolves to N or anything below it. A write overlapping an access resolves to an
+    // ancestor-or-self of the access's node or to a descendant of it, since both nodes contain the
+    // overlap and any two nodes are nested or disjoint. So summing own() over the access node's
+    // ancestors-or-self plus its sub() gives a number that grows whenever such a write happens. A
+    // counter no write can bump maps to slot 1, which stays 0.
+    static constexpr unsigned pinnedMemorySlot = 0;
+    static constexpr unsigned unwrittenMemorySlot = 1;
+    unsigned ownMemorySlot(HeapRangeTree::NodeID node) const { return m_ownMemorySlots[node]; }
+    unsigned subMemorySlot(HeapRangeTree::NodeID node) const { return m_subMemorySlots[node]; }
+
+    template<typename Func>
+    void forEachMemoryWriteSlot(const Effects& effects, const Func& func) const
+    {
+        // A write that overlaps no access cannot change any of them, while nodeFor() may resolve its
+        // range to the root, which every access counts.
+        std::optional<HeapRangeTree::NodeID> node;
+        if (m_memoryAccessRanges.overlaps(effects.writes))
+            node = m_heapTree->nodeFor(effects.writes);
+        forEachMemoryWriteSlot(effects.writesPinned, node, func);
+    }
+
+    // `node` is what the written range resolves to, or nullopt when it overlaps no access.
+    template<typename Func>
+    void forEachMemoryWriteSlot(bool writesPinned, std::optional<HeapRangeTree::NodeID> node, const Func& func) const
+    {
+        if (writesPinned)
+            func(pinnedMemorySlot);
+        if (!node)
+            return;
+        // A write scanValues() did not see has no slot of its own, and charging the root
+        // invalidates everything it could overlap.
+        forEachMemoryWriteSlotOfNode(ownMemorySlot(*node) == unwrittenMemorySlot ? HeapRangeTree::root : *node, func);
+    }
+
+    template<typename Func>
+    void forEachMemoryWriteSlotOfNode(HeapRangeTree::NodeID node, const Func& func) const
+    {
+        func(ownMemorySlot(node));
+        for (;;) {
+            func(subMemorySlot(node));
+            if (node == HeapRangeTree::root)
+                break;
+            node = m_heapTree->parent(node);
+        }
+    }
+
+    void applyMemoryWrites(const Effects& effects)
+    {
+        forEachMemoryWriteSlot(effects, [&](unsigned slot) {
+            m_memoryEpochs.bump(slot);
+        });
+    }
+
+    void applyMemoryWrites(bool writesPinned, std::optional<HeapRangeTree::NodeID> node)
+    {
+        forEachMemoryWriteSlot(writesPinned, node, [&](unsigned slot) {
+            m_memoryEpochs.bump(slot);
+        });
+    }
+
+    uint64_t memoryEpochFor(HeapRangeTree::NodeID node) const
+    {
+        uint64_t epoch = m_memoryEpochs[subMemorySlot(node)];
+        for (;;) {
+            epoch += m_memoryEpochs[ownMemorySlot(node)];
+            if (node == HeapRangeTree::root)
+                break;
+            node = m_writtenAncestors[node];
+        }
+        return epoch;
+    }
+
+    void bumpAllMemoryEpochs()
+    {
+        m_memoryEpochs.bump(pinnedMemorySlot);
+        m_memoryEpochs.bump(ownMemorySlot(HeapRangeTree::root));
+    }
+
+    // What a value writes, and where scanValues() summarizes it if the value is inside a loop.
+    struct MemoryWrite {
+        HeapRange writes;
+        BitVector* loopWrites { nullptr };
+        bool writesPinned { false };
+
+        friend bool operator==(const MemoryWrite&, const MemoryWrite&) = default;
+    };
+
+    // Gives a slot to each counter some write bumps, and records what each value inside a loop
+    // writes in that loop's summary, so that a loop header can invalidate exactly that before the
+    // walk has seen the body.
+    void assignMemorySlots(const Vector<MemoryWrite>& writes)
+    {
+        m_memoryAccessRanges.compact();
+
+        // A slot that no write bumps would stay 0, so all of those share one.
+        m_ownMemorySlots.fill(unwrittenMemorySlot, m_heapTree->size());
+        m_subMemorySlots.fill(unwrittenMemorySlot, m_heapTree->size());
+        unsigned slotCount = unwrittenMemorySlot + 1;
+        auto markWritten = [&](HeapRangeTree::NodeID node) {
+            if (m_ownMemorySlots[node] == unwrittenMemorySlot)
+                m_ownMemorySlots[node] = slotCount++;
+            for (;;) {
+                if (m_subMemorySlots[node] != unwrittenMemorySlot)
+                    break;
+                m_subMemorySlots[node] = slotCount++;
+                if (node == HeapRangeTree::root)
+                    break;
+                node = m_heapTree->parent(node);
+            }
+        };
+        markWritten(HeapRangeTree::root);
+        // Marking a write's node first gives it every slot the loop summary below asks for.
+        for (const MemoryWrite& write : writes) {
+            if (write.loopWrites && write.writesPinned)
+                write.loopWrites->set(pinnedMemorySlot);
+            if (!m_memoryAccessRanges.overlaps(write.writes))
+                continue;
+            HeapRangeTree::NodeID node = m_heapTree->nodeFor(write.writes);
+            markWritten(node);
+            if (write.loopWrites) {
+                forEachMemoryWriteSlotOfNode(node, [&](unsigned slot) {
+                    write.loopWrites->set(slot);
+                });
+            }
+        }
+        bool fitsDense = static_cast<uint64_t>(m_proc.size()) * slotCount <= Options::maxB3MemoryEpochSnapshotEntries();
+        m_memoryEpochs.reset(slotCount, m_proc.size(), fitsDense ? BlockEpochs::Layout::Dense : BlockEpochs::Layout::Sparse);
+
+        // An ancestor whose own() slot no write bumps adds nothing to memoryEpochFor(). The root has
+        // a written own() slot, and node ids follow the preorder, so a parent's entry is set before
+        // its children's.
+        m_writtenAncestors.resize(m_heapTree->size());
+        for (HeapRangeTree::NodeID node = HeapRangeTree::root + 1; node < m_heapTree->size(); ++node) {
+            HeapRangeTree::NodeID parent = m_heapTree->parent(node);
+            m_writtenAncestors[node] = ownMemorySlot(parent) != unwrittenMemorySlot ? parent : m_writtenAncestors[parent];
+        }
+    }
+
+    void beginMemoryBlock(BasicBlock* block, BlockEpochs::Entry entry)
+    {
+        bool mergedAll = m_memoryEpochs.beginBlock(block, *m_dominators, m_blockStates, entry, m_memoryLoopWrites);
+        if (entry.hasUnaccountedPredecessor || !mergedAll)
+            bumpAllMemoryEpochs();
+    }
+
+    bool isWithinAccessedRanges(HeapRange range) const
+    {
+        return !range || m_memoryAccessRanges.contains(range);
+    }
+
+    void recordMemoryAccess(const MemoryAccessKey& key)
+    {
+        ASSERT(!m_value->as<MemoryValue>() || isWithinAccessedRanges(m_value->as<MemoryValue>()->range()));
+        if (m_memoryMap.add(key, m_value) && m_validateMemoryForwarding)
+            m_memoryAccessBlocks.set(m_value, m_block);
+    }
+
+    // Walks every path back from the value being replaced to `source` and checks that no value on
+    // it satisfies `clobbers`.
+    template<typename Clobbers>
+    void validateMemoryForwarding(Value* source, const Clobbers& clobbers)
+    {
+        BasicBlock* sourceBlock = m_memoryAccessBlocks.get(source);
+        RELEASE_ASSERT(sourceBlock);
+
+        auto indexAfter = [&](BasicBlock* block, Value* value) -> unsigned {
+            for (unsigned index = 0; index < block->size(); ++index) {
+                if (block->at(index) == value)
+                    return index + 1;
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+            return 0;
+        };
+        auto check = [&](BasicBlock* block, unsigned begin, unsigned end) {
+            for (unsigned index = begin; index < end; ++index)
+                RELEASE_ASSERT(!clobbers(block->at(index)));
+        };
+
+        if (sourceBlock == m_block) {
+            check(m_block, indexAfter(m_block, source), m_index);
+            return;
+        }
+        check(m_block, 0, m_index);
+
+        BlockWorklist worklist;
+        worklist.pushAll(m_block->predecessors());
+        while (BasicBlock* block = worklist.pop()) {
+            // A block the walk proved unreachable never runs, so nothing in it can clobber.
+            if (m_blockStates[block] == BlockState::Unreachable)
+                continue;
+            if (block == sourceBlock) {
+                check(block, indexAfter(block, source), block->size());
+                continue;
+            }
+            check(block, 0, block->size());
+            worklist.pushAll(block->predecessors());
+        }
+    }
+
+    void validateNoWriteSince(Value* source, HeapRange range)
+    {
+        if (!m_validateMemoryForwarding)
+            return;
+        validateMemoryForwarding(source, [&](Value* value) {
+            return value->effects().writes.overlaps(range);
+        });
+    }
+
+    void forwardMemoryValue(Value* source, Value* replacement, HeapRange range)
+    {
+        validateNoWriteSince(source, range);
+        replaceWithIdentity(replacement);
+        // A replacement inserted just now, such as the Trunc of a wider load, is never visited by
+        // the walk, so number it here.
+        if (!replacement->owner)
+            replaceIfRedundant();
+    }
+
+    static uint8_t memoryTypeTag(Type type)
+    {
+        ASSERT(type.kind() <= V128);
+        return static_cast<uint8_t>(type.kind());
+    }
+
+    // A full-width access is told apart by the type of the value it moves. A narrow one always
+    // moves an Int32.
+    static uint8_t memoryAccessExtra(MemoryValue* memory)
+    {
+        switch (memory->opcode()) {
+        case Load:
+            return memoryTypeTag(memory->type());
+        case Store:
+            return memoryTypeTag(memory->child(0)->type());
+        default:
+            return 0;
+        }
+    }
+
+    // The recorded access that shows memory already holds what `store` writes, found before the
+    // store's own write is charged, or null.
+    Value* redundantStoreSource(MemoryValue* store, HeapRangeTree::NodeID node)
+    {
+        Value* stored = store->child(0);
+        uint64_t epoch = memoryEpochFor(node);
+        uint8_t extra = memoryAccessExtra(store);
+        auto holds = [&](Opcode opcode) -> Value* {
+            std::optional<Value*> match = m_memoryMap.find(MemoryAccessKey { store->lastChild(), store->offset(), node, opcode, extra, epoch });
+            if (!match)
+                return nullptr;
+            Value* value = isStore((*match)->opcode()) ? (*match)->child(0) : *match;
+            return value == stored ? *match : nullptr;
+        };
+
+        if (Value* source = holds(store->opcode()))
+            return source;
+        switch (store->opcode()) {
+        case Store8:
+            if (Value* source = holds(Load8Z))
+                return source;
+            return holds(Load8S);
+        case Store16:
+            if (Value* source = holds(Load16Z))
+                return source;
+            return holds(Load16S);
+        case Store:
+            return holds(Load);
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+    }
+
+    void recordStore(MemoryValue* store, HeapRangeTree::NodeID node)
+    {
+        recordMemoryAccess(MemoryAccessKey { store->lastChild(), store->offset(), node, store->opcode(), memoryAccessExtra(store), memoryEpochFor(node) });
+    }
+
+    void forwardOrRecordLoad(MemoryValue* load, HeapRangeTree::NodeID node)
+    {
+        HeapRange range = load->range();
+        uint64_t epoch = memoryEpochFor(node);
+        auto keyFor = [&](Opcode opcode, uint8_t extra) {
+            return MemoryAccessKey { load->lastChild(), load->offset(), node, opcode, extra, epoch };
+        };
+        auto findKey = [&](Opcode opcode, uint8_t extra) -> Value* {
+            std::optional<Value*> match = m_memoryMap.find(keyFor(opcode, extra));
+            return match ? *match : nullptr;
+        };
+        auto insert = [&](Opcode opcode, auto... children) -> Value* {
+            return m_insertionSet.insert<Value>(m_index, opcode, load->origin(), children...);
+        };
+        auto mask = [&](int32_t bits) {
+            return placeNewConstant(m_proc.add<Const32Value>(load->origin(), bits));
+        };
+
+        uint8_t ownExtra = memoryAccessExtra(load);
+
+        if (Value* match = findKey(load->opcode(), ownExtra)) {
+            forwardMemoryValue(match, match, range);
+            return;
+        }
+
+        bool narrowsInt64 = m_procHasInt64MemoryAccess && load->opcode() == Load && load->type() == Int32;
+        if (narrowsInt64) {
+            if (Value* match = findKey(Load, memoryTypeTag(Int64))) {
+                forwardMemoryValue(match, insert(Trunc, match), range);
+                return;
+            }
+        }
+
+        if (Value* store = findKey(storeOpcode(load->accessBank(), load->accessWidth()), ownExtra)) {
+            Value* stored = store->child(0);
+            Value* replacement = nullptr;
+            switch (load->opcode()) {
+            case Load8Z:
+                replacement = insert(BitAnd, stored, mask(0xff));
+                break;
+            case Load8S:
+                replacement = insert(SExt8, stored);
+                break;
+            case Load16Z:
+                replacement = insert(BitAnd, stored, mask(0xffff));
+                break;
+            case Load16S:
+                replacement = insert(SExt16, stored);
+                break;
+            default:
+                replacement = stored;
+                break;
+            }
+            forwardMemoryValue(store, replacement, range);
+            return;
+        }
+
+        if (narrowsInt64) {
+            if (Value* store = findKey(Store, memoryTypeTag(Int64))) {
+                forwardMemoryValue(store, insert(Trunc, store->child(0)), range);
+                return;
+            }
+        }
+
+        recordMemoryAccess(keyFor(load->opcode(), ownExtra));
+    }
+
+    // Whether every access `effects` can overwrite is one `cover` can overwrite too.
+    static bool writesWithin(const Effects& effects, const Effects& cover)
+    {
+        if (effects.writesPinned && !cover.writesPinned)
+            return false;
+        return cover.writes.subsumes(effects.writes);
+    }
+
+    // A loop header invalidates only the slots scanValues() saw the loop's blocks write, and the walk
+    // is past it by the time it reaches the body, so no value in a loop may write anything else. A
+    // rule that widened a write would leave a stale forwarding behind, so this crashes instead.
+    void checkInLoopSummary(const Effects& effects) const
+    {
+        if (m_memoryLoopWrites.isEmpty())
+            return;
+        const NaturalLoop* loop = m_naturalLoops->innerMostLoopOf(m_block);
+        if (!loop)
+            return;
+        const BitVector& summary = m_memoryLoopWrites[loop->index()];
+        forEachMemoryWriteSlot(effects, [&](unsigned slot) {
+            RELEASE_ASSERT(summary.get(slot));
+        });
+    }
+
+    void processMemoryAccess(const Effects& effectsBeforeReduction, const Effects& effectsAfterReduction, bool reduced)
+    {
+        MemoryValue* memory = nullptr;
+        if (isLoadStore(m_value->opcode())) {
+            memory = m_value->as<MemoryValue>();
+            // A part of the access outside every range scanValues() saw accessed could be
+            // overwritten by a write that applyMemoryWrites() ignores.
+            if (memory->hasFence() || !isWithinAccessedRanges(memory->range()))
+                memory = nullptr;
+        }
+
+        auto writesMemory = [](const Effects& effects) {
+            return effects.writes || effects.writesPinned;
+        };
+        if (!memory && m_value->opcode() != WasmAddress && !writesMemory(effectsBeforeReduction) && !writesMemory(effectsAfterReduction))
+            return;
+
+        HeapRangeTree::NodeID node = memory ? m_heapTree->nodeFor(memory->range()) : HeapRangeTree::root;
+        if (memory && memory->isStore() && !memory->traps()) {
+            if (Value* source = redundantStoreSource(memory, node)) {
+                validateNoWriteSince(source, memory->range());
+                m_value->replaceWithNop();
+                m_changed = true;
+                if (reduced)
+                    applyMemoryWrites(effectsBeforeReduction);
+                return;
+            }
+        }
+
+        if (ASSERT_ENABLED)
+            checkInLoopSummary(effectsBeforeReduction);
+
+        // A rule that rewrites this value may insert values ahead of it that carry the original's
+        // writes, and the walk never visits those, so charge both the original and the rewrite.
+        // A store's write range is the access range the tree already resolved to `node`.
+        if (memory && effectsBeforeReduction.writes && effectsBeforeReduction.writes == memory->range())
+            applyMemoryWrites(effectsBeforeReduction.writesPinned, node);
+        else
+            applyMemoryWrites(effectsBeforeReduction);
+        if (reduced && !writesWithin(effectsAfterReduction, effectsBeforeReduction)) {
+            checkInLoopSummary(effectsAfterReduction);
+            applyMemoryWrites(effectsAfterReduction);
+        }
+
+        if (memory) {
+            if (memory->isStore())
+                recordStore(memory, node);
+            else
+                forwardOrRecordLoad(memory, node);
+            return;
+        }
+
+        switch (m_value->opcode()) {
+        case WasmAddress: {
+            auto* address = m_value->as<WasmAddressValue>();
+            MemoryAccessKey key { address->child(0), 0, HeapRangeTree::root, WasmAddress, static_cast<uint8_t>(address->pinnedGPR()), m_memoryEpochs[pinnedMemorySlot] };
+            if (std::optional<Value*> match = m_memoryMap.find(key)) {
+                if (m_validateMemoryForwarding) {
+                    validateMemoryForwarding(*match, [](Value* value) {
+                        return value->effects().writesPinned;
+                    });
+                }
+                replaceWithIdentity(*match);
+                return;
+            }
+            recordMemoryAccess(key);
+            return;
+        }
+
+        default:
+            return;
+        }
+    }
+
+    void killPendingStoresObservedBy(const Effects& effects)
+    {
+        if (effects.exitsSideways || effects.fence) {
+            m_pendingStores.shrink(0);
+            return;
+        }
+        killPendingStoresOverlapping(effects.reads);
+    }
+
+    void killPendingStoresOverlapping(HeapRange range)
+    {
+        if (!range)
+            return;
+        m_pendingStores.removeAllMatching([&](MemoryValue* store) {
+            return store->range().overlaps(range);
+        });
+    }
+
+    // Whether `killer` writes over everything `store` wrote, so that `store` is dead if nothing in
+    // between observes it.
+    static bool overwrites(MemoryValue* killer, MemoryValue* store)
+    {
+        return killer->lastChild() == store->lastChild()
+            && killer->offset() == store->offset()
+            && killer->accessWidth() >= store->accessWidth()
+            && killer->range().overlaps(store->range());
+    }
+
+    void validateDeadStore(MemoryValue* dead)
+    {
+        for (unsigned index = m_index; ;) {
+            RELEASE_ASSERT(index);
+            Value* value = m_block->at(--index);
+            if (value == dead)
+                return;
+            Effects effects = value->effects();
+            RELEASE_ASSERT(!effects.reads.overlaps(dead->range()));
+            RELEASE_ASSERT(!effects.exitsSideways);
+            RELEASE_ASSERT(!effects.fence);
+        }
+    }
+
+    // A trapping store is never removed, since that would drop its fault, and never makes an earlier
+    // store dead, since a handler for its fault can observe what the earlier store wrote.
+    void eliminateDeadStores(const Effects& effectsBeforeReduction, const Effects& effectsAfterReduction, bool reduced)
+    {
+        auto touchesMemory = [](const Effects& effects) {
+            return effects.reads || effects.writes || effects.exitsSideways || effects.fence;
+        };
+        if (!touchesMemory(effectsBeforeReduction) && !(reduced && touchesMemory(effectsAfterReduction)))
+            return;
+
+        killPendingStoresObservedBy(effectsBeforeReduction);
+        if (reduced)
+            killPendingStoresObservedBy(effectsAfterReduction);
+
+        MemoryValue* store = m_value->as<MemoryValue>();
+        if (!store || !store->isStore() || store->hasFence() || store->traps())
+            store = nullptr;
+
+        DeadStoreBlockSummary& summary = m_deadStoreSummaries[m_block->index()];
+        if (store
+            && summary.storesAtHead.size() < maxStoresAtHead
+            && !summary.observesEverything
+            && !summary.accessed.overlaps(store->range()))
+            summary.storesAtHead.append(store);
+        auto summarize = [&](const Effects& effects) {
+            summary.accessed.add(effects.reads);
+            summary.accessed.add(effects.writes);
+            summary.observesEverything |= effects.exitsSideways || effects.fence;
+        };
+        summarize(effectsBeforeReduction);
+        if (reduced)
+            summarize(effectsAfterReduction);
+
+        if (store) {
+            // processMemoryAccess() already charged this store's write, which overlaps every store
+            // it kills, so no later load can match the m_memoryMap entry of the Nop.
+            m_pendingStores.removeAllMatching([&](MemoryValue* pending) {
+                if (!overwrites(store, pending))
+                    return false;
+                if (m_validateMemoryForwarding)
+                    validateDeadStore(pending);
+                pending->replaceWithNop();
+                m_changed = true;
+                return true;
+            });
+        }
+
+        // Only after the kill above, or this store's own write would drop the pending stores it
+        // makes dead.
+        killPendingStoresOverlapping(effectsBeforeReduction.writes);
+        if (reduced)
+            killPendingStoresOverlapping(effectsAfterReduction.writes);
+
+        if (store) {
+            if (m_pendingStores.size() == maxPendingStores)
+                m_pendingStores.removeAt(0);
+            m_pendingStores.append(store);
+        }
+    }
+
+    // A store is dead when every path out of its block reaches a store that overwrites it before
+    // anything that could observe it. A function exit observes everything. The walk has already
+    // collected the candidates and summarized every block, so this only follows successor edges.
+    void eliminateDeadStoresAcrossBlocks()
+    {
+        if (m_deadStoreCandidates.isEmpty())
+            return;
+
+        Vector<unsigned> visitedStamp;
+        visitedStamp.fill(0, m_proc.size());
+        unsigned stamp = 0;
+        Vector<BasicBlock*, 16> worklist;
+        Vector<MemoryValue*> deadStores;
+        for (auto [block, store] : m_deadStoreCandidates) {
+            if (!store->isStore())
+                continue;
+            auto overwritesStore = [&](MemoryValue* killer) {
+                return killer != store && killer->isStore() && overwrites(killer, store);
+            };
+            ++stamp;
+            worklist.shrink(0);
+            auto pushSuccessors = [&](BasicBlock* from) {
+                for (BasicBlock* successor : from->successorBlocks()) {
+                    if (std::exchange(visitedStamp[successor->index()], stamp) != stamp)
+                        worklist.append(successor);
+                }
+            };
+            pushSuccessors(block);
+
+            HeapRange range = store->range();
+            bool dead = true;
+            unsigned searched = 0;
+            while (!worklist.isEmpty()) {
+                BasicBlock* successor = worklist.takeLast();
+                // Only a block the walk reduced has a summary.
+                BlockState state = m_blockStates[successor];
+                if (++searched > maxDeadStoreSearchBlocks || state == BlockState::Unvisited || state == BlockState::Unreachable) {
+                    dead = false;
+                    break;
+                }
+                // Coming back to a block that dominates the store's own block can run the definition
+                // of its base again, after which the same base value may name a different address.
+                if (m_dominators->dominates(successor, block)) {
+                    dead = false;
+                    break;
+                }
+                const DeadStoreBlockSummary& summary = m_deadStoreSummaries[successor->index()];
+                if (std::ranges::any_of(summary.storesAtHead, overwritesStore))
+                    continue;
+                if (summary.observesEverything
+                    || summary.accessed.overlaps(range)
+                    || !successor->numSuccessors()) {
+                    dead = false;
+                    break;
+                }
+                pushSuccessors(successor);
+            }
+            if (dead)
+                deadStores.append(store);
+        }
+
+        // Nothing is removed until every candidate is decided, since the summaries name the stores
+        // that kill. A store whose only killer is itself dead is still dead: whatever kills the
+        // killer also overwrites the store, and nothing reads it in between.
+        for (MemoryValue* store : deadStores) {
+            store->replaceWithNop();
+            m_changed = true;
+        }
     }
 
     void simplifyCFG()
@@ -5426,6 +6454,7 @@ private:
     ReduceStrengthPass m_pass;
     InsertionSet m_insertionSet;
     UncheckedKeyHashMap<ValueKey, Value*> m_valueForConstant;
+    BitVector m_rootConstants; // Indices of the values m_valueForConstant maps to.
     BasicBlock* m_root { nullptr };
     BasicBlock* m_block { nullptr };
     unsigned m_index { 0 };
@@ -5446,10 +6475,67 @@ private:
     std::array<HeapRange, numberOfWasmGCArrayElementTypes> m_wasmGCArrayHeaps;
     Vector<uint32_t> m_wasmGCStructFieldSlots;
     unsigned m_wasmGCStructWidth { 0 };
-    Vector<uint32_t> m_wasmGCEpochs;
-    Vector<uint32_t> m_wasmGCEpochsAtTail;
+    BlockEpochs m_wasmGCEpochs;
     NaturalLoops* m_naturalLoops { nullptr };
-    Vector<BitVector> m_wasmGCBlockWrites; // Slots each block inside a loop writes.
+    Vector<BitVector> m_wasmGCLoopWrites; // Slots each loop writes, by loop index.
+
+    bool m_validateMemoryForwarding { false };
+    LayeredHashMap<MemoryAccessKey, Value*, DefaultHash<MemoryAccessKey>, MemoryAccessKeyTraits> m_memoryMap;
+    const HeapRangeTree* m_heapTree { nullptr }; // Null when memory value numbering is off.
+    RangeSet<HeapRange> m_memoryAccessRanges; // What scanValues() saw accessed.
+    Vector<unsigned> m_ownMemorySlots;
+    Vector<unsigned> m_subMemorySlots;
+    Vector<HeapRangeTree::NodeID> m_writtenAncestors; // The nearest strict ancestor of each node with an own() slot that a write bumps, or the root.
+    bool m_procHasInt64MemoryAccess { false };
+    BlockEpochs m_memoryEpochs;
+    Vector<BitVector> m_memoryLoopWrites; // Slots each loop writes, by loop index.
+    UncheckedKeyHashMap<Value*, BasicBlock*> m_memoryAccessBlocks; // Where each recorded access is, when validating.
+    static constexpr unsigned maxPendingStores = 16;
+    Vector<MemoryValue*, maxPendingStores> m_pendingStores; // Stores in this block that a later store may make dead.
+    // A few ranges whose union covers every range added, so that accesses to two distant heaps do
+    // not make a store to a heap between them look observed. Past capacity, ranges merge.
+    class AccessedRanges {
+    public:
+        void add(HeapRange range)
+        {
+            if (!range)
+                return;
+            for (unsigned i = 0; i < m_size; ++i) {
+                if (m_ranges[i].overlaps(range)) {
+                    m_ranges[i] |= range;
+                    return;
+                }
+            }
+            if (m_size < m_ranges.size()) {
+                m_ranges[m_size++] = range;
+                return;
+            }
+            m_ranges[m_size - 1] |= range;
+        }
+
+        bool overlaps(HeapRange range) const
+        {
+            for (unsigned i = 0; i < m_size; ++i) {
+                if (m_ranges[i].overlaps(range))
+                    return true;
+            }
+            return false;
+        }
+
+    private:
+        std::array<HeapRange, 4> m_ranges;
+        unsigned m_size { 0 };
+    };
+    // What a dead store search needs to know about one block, gathered while the walk visits it.
+    static constexpr unsigned maxStoresAtHead = 4;
+    struct DeadStoreBlockSummary {
+        AccessedRanges accessed; // What the block reads or writes.
+        bool observesEverything { false };
+        Vector<MemoryValue*, maxStoresAtHead> storesAtHead; // Stores before which nothing in the block touches their range or observes everything.
+    };
+    static constexpr unsigned maxDeadStoreSearchBlocks = 16;
+    Vector<DeadStoreBlockSummary> m_deadStoreSummaries;
+    Vector<std::pair<BasicBlock*, MemoryValue*>> m_deadStoreCandidates;
     bool m_changed { false };
     bool m_changedCFG { false };
 };
