@@ -5908,7 +5908,7 @@ void Document::processApplicationManifest(const ApplicationManifest& application
 
 #endif // ENABLE(APPLICATION_MANIFEST)
 
-MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const DoublePoint& documentPoint, const PlatformMouseEvent& event)
+MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const DoublePoint& documentPoint, const PlatformMouseEvent& event, Element* mouseCaptureElement)
 {
     if (renderTreeState() != RenderTreeState::Built)
         return MouseEventWithHitTestResults(event, HitTestResult(DoublePoint()));
@@ -5934,6 +5934,11 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
             // If we have a capture element, we must target it instead of what would normally hit-test for this event.
             if (captureElement)
                 targetElement = WTF::move(captureElement);
+            // Likewise for an element capturing the mouse for the duration of a drag (e.g. a slider thumb): the
+            // :hover chain follows it rather than whatever is under the pointer, so that containers of the control
+            // stay hovered until the drag ends.
+            else if (mouseCaptureElement && request.active())
+                targetElement = mouseCaptureElement;
         }
         updateHoverActiveState(request, targetElement.get(), captureElementChanged);
     }
