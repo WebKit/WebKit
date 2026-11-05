@@ -165,6 +165,16 @@ static gboolean wpeViewHeadlessRenderBuffer(WPEView* view, WPEBuffer* buffer, co
     return TRUE;
 }
 
+static gboolean wpeViewHeadlessLockPointer(WPEView*)
+{
+    return TRUE;
+}
+
+static gboolean wpeViewHeadlessUnlockPointer(WPEView*)
+{
+    return TRUE;
+}
+
 static void wpe_view_headless_class_init(WPEViewHeadlessClass* viewHeadlessClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(viewHeadlessClass);
@@ -173,4 +183,6 @@ static void wpe_view_headless_class_init(WPEViewHeadlessClass* viewHeadlessClass
 
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewHeadlessClass);
     viewClass->render_buffer = wpeViewHeadlessRenderBuffer;
+    viewClass->lock_pointer = wpeViewHeadlessLockPointer;
+    viewClass->unlock_pointer = wpeViewHeadlessUnlockPointer;
 }
