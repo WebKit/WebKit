@@ -5309,8 +5309,8 @@ public:
 #if CPU(ARM_THUMB2)
             // Not enough argument registers: try to load the 5th argument from the stack
             MacroAssembler::RegisterID matchingContext = m_regs.regT1;
-            unsigned offset = POKE_ARGUMENT_OFFSET;
-            m_jit.loadPtr(MacroAssembler::Address(GPRInfo::callFrameRegister, offset * sizeof(void*)), matchingContext);
+            unsigned offset = prologueStackPointerDelta() + POKE_ARGUMENT_OFFSET * sizeof(void *);
+            m_jit.loadPtr(MacroAssembler::Address(GPRInfo::callFrameRegister, offset), matchingContext);
 #else
             MacroAssembler::RegisterID matchingContext = m_regs.matchingContext;
 #endif
