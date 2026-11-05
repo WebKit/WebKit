@@ -40,6 +40,10 @@ final class PhoneNumberPossessionController {
         base = Base(manager: UnavailablePhoneNumberPossessionManager())
     }
 
+    init(mockConfiguration: WebCore.MockPhoneNumberPossessionConfiguration) {
+        base = Base(manager: MockPhoneNumberPossessionManager(configuration: mockConfiguration))
+    }
+
     // FIXME: rdar://191032757 Each task below captures completionHandler explicitly, because the
     // Swift 6.4 optimizer crashes when a closure captures a sending C++ reference implicitly.
     // Drop completionHandler from the capture lists once that's fixed.
