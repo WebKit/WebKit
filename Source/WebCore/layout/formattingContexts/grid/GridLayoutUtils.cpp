@@ -142,44 +142,6 @@ UsedMargins usedMarginsForAxis(const PlacedGridItem& gridItem, const ComputedSiz
 }
 
 // https://drafts.csswg.org/css-sizing-4/#aspect-ratio
-std::optional<double> preferredAspectRatio(const ElementBox& gridItem)
-{
-    ASSERT(gridItem.isGridItem());
-
-    auto& computedAspectRatio = gridItem.style().aspectRatio();
-
-    auto isDegenerateRatio = [&] {
-        auto ratio = computedAspectRatio.tryRatio();
-        return !ratio || !ratio->numerator.value || !ratio->denominator.value;
-    };
-
-    // "If the <ratio> is degenerate, the property instead behaves as auto."
-    //
-    // auto: "Replaced elements with a natural aspect ratio use that aspect ratio;
-    // otherwise the box has no preferred aspect ratio."
-    // FIXME: Use the natural aspect ratio of replaced grid items once they are supported (GridAvoidanceReason::GridItemIsReplacedElement).
-    if (computedAspectRatio.isAuto() || isDegenerateRatio())
-        return { };
-
-    // <ratio>: "The box's preferred aspect ratio is the specified ratio of width / height."
-    if (computedAspectRatio.isRatio()) {
-        auto ratio = *computedAspectRatio.tryRatio();
-        return ratio.numerator.value / ratio.denominator.value;
-    }
-
-    // auto && <ratio>: "The preferred aspect ratio is the specified ratio of width / height
-    // unless it is a replaced element with a natural aspect ratio, in which case that aspect
-    // ratio is used instead."
-    if (computedAspectRatio.isAutoAndRatio()) {
-        auto ratio = *computedAspectRatio.tryRatio();
-        return ratio.numerator.value / ratio.denominator.value;
-    }
-
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-// https://drafts.csswg.org/css-sizing-4/#aspect-ratio
 NODELETE static BorderBoxSize blockSizeFromAspectRatio(const PlacedGridItem& gridItem, double aspectRatio, LayoutUnit borderBoxInlineSize, LayoutUnit inlineBorderAndPadding, LayoutUnit blockBorderAndPadding)
 {
     if (gridItem.layoutBox().style().boxSizingForAspectRatio() == BoxSizing::BorderBox)
@@ -218,7 +180,7 @@ static bool isStretchedForAutomaticSize(const PlacedGridItem& placedGridItem, co
 
     auto alignmentPosition = axisAlignment.position();
     if (alignmentPosition == ItemPosition::Normal)
-        return !preferredAspectRatio(placedGridItem.layoutBox()) && !placedGridItem.isReplacedElement();
+        return !placedGridItem.preferredAspectRatio() && !placedGridItem.isReplacedElement();
 
     return alignmentPosition == ItemPosition::Stretch;
 }
@@ -233,7 +195,7 @@ bool hasFitContentBlockSize(const PlacedGridItem& placedGridItem)
     if (isStretchedForAutomaticSize(placedGridItem, blockAxisSizes, placedGridItem.blockAxisAlignment()))
         return false;
 
-    return !placedGridItem.isReplacedElement() && !preferredAspectRatio(placedGridItem.layoutBox());
+    return !placedGridItem.isReplacedElement() && !placedGridItem.preferredAspectRatio();
 }
 
 // Whether the grid item's size in the axis is automatic for the purposes of its preferred aspect ratio,
@@ -247,7 +209,7 @@ static bool hasAutomaticSizeDuringItemSizing(const PlacedGridItem& gridItem, Log
 
 bool sizeDependsOnAspectRatio(const PlacedGridItem& gridItem)
 {
-    if (gridItem.isReplacedElement() || !preferredAspectRatio(gridItem.layoutBox()))
+    if (gridItem.isReplacedElement() || !gridItem.preferredAspectRatio())
         return false;
 
     // A preferred aspect ratio only ever has an effect if at least one of the box's sizes is automatic.
@@ -266,7 +228,7 @@ bool inlineContributionMayRequireFullSizingAlgorithmForIntrinsicWidth(const Elem
 
     // Grid items with an aspect ratio may transfers block size into inline size, so we should run the full sizing algorithm.
     // FIXME: This is only the case when inline size is indefinite, so we can tighten this constraint.
-    if (preferredAspectRatio(gridItem))
+    if (PlacedGridItem::physicalPreferredAspectRatio(gridItem))
         return true;
 
     // A wrapped column flex container (flex-flow: column wrap) lays out its flex lines along the cross (inline) axis,
@@ -380,7 +342,7 @@ static BorderBoxSize inlineContentSizeSuggestion(const PlacedGridItem& gridItem,
     auto& layoutBox = gridItem.layoutBox();
     auto contentSizeSuggestion = BorderBoxSize { ContentBoxSize { integrationUtils.minContentWidthForGridItem(layoutBox, gridAreaInlineSize) }, borderAndPadding };
 
-    auto aspectRatio = preferredAspectRatio(layoutBox);
+    auto aspectRatio = gridItem.preferredAspectRatio();
     if (!aspectRatio)
         return contentSizeSuggestion;
 
@@ -436,7 +398,7 @@ static std::optional<BorderBoxSize> inlineTransferredSizeSuggestion(const Placed
 {
     // If the item has a preferred aspect ratio
     auto& layoutBox = gridItem.layoutBox();
-    auto aspectRatio = preferredAspectRatio(layoutBox);
+    auto aspectRatio = gridItem.preferredAspectRatio();
     if (!aspectRatio)
         return { };
 
@@ -470,7 +432,7 @@ static std::optional<BorderBoxSize> blockTransferredSizeSuggestion(const PlacedG
 {
     // If the item has a preferred aspect ratio
     auto& layoutBox = gridItem.layoutBox();
-    auto aspectRatio = preferredAspectRatio(layoutBox);
+    auto aspectRatio = gridItem.preferredAspectRatio();
     if (!aspectRatio)
         return { };
 
@@ -509,7 +471,7 @@ static BorderBoxSize blockContentSizeSuggestion(const PlacedGridItem& gridItem, 
     auto& integrationUtils = formattingContext.integrationUtils();
     auto contentSizeSuggestion = BorderBoxSize::fromIntegrationFunction(integrationUtils.minContentHeightForGridItem(layoutBox, gridAreaInlineSize));
 
-    auto aspectRatio = preferredAspectRatio(layoutBox);
+    auto aspectRatio = gridItem.preferredAspectRatio();
     if (!aspectRatio)
         return contentSizeSuggestion;
 
@@ -530,17 +492,8 @@ static BorderBoxSize blockContentSizeSuggestion(const PlacedGridItem& gridItem, 
 
 // https://drafts.csswg.org/css-overflow-3/#overflow-properties
 // The scroll, auto, and hidden values are known as the scrollable values of overflow.
-NODELETE static bool hasScrollableInlineComputedOverflowValue(const PlacedGridItem& gridItem)
+NODELETE static bool hasScrollableOverflowValue(Overflow computedOverflow)
 {
-    auto computedOverflow = gridItem.layoutBox().style().overflowX();
-    return computedOverflow == Overflow::Hidden || computedOverflow == Overflow::Scroll || computedOverflow == Overflow::Auto;
-}
-
-// https://drafts.csswg.org/css-overflow-3/#overflow-properties
-// The scroll, auto, and hidden values are known as the scrollable values of overflow.
-NODELETE static bool hasScrollableBlockComputedOverflowValue(const PlacedGridItem& gridItem)
-{
-    auto computedOverflow = gridItem.layoutBox().style().overflowY();
     return computedOverflow == Overflow::Hidden || computedOverflow == Overflow::Scroll || computedOverflow == Overflow::Auto;
 }
 
@@ -576,7 +529,7 @@ LayoutUnit inlinePreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit 
         // consistent with the size calculation rules for block-level elements, so its automatic
         // inline size fills the grid area. Its block size is then transferred through the ratio.
         auto hasAutoMargin = inlineAxisSizes.marginStart.isAuto() || inlineAxisSizes.marginEnd.isAuto();
-        if (!placedGridItem.isReplacedElement() && preferredAspectRatio(placedGridItem.layoutBox()) && !hasAutoMargin
+        if (!placedGridItem.isReplacedElement() && placedGridItem.preferredAspectRatio() && !hasAutoMargin
             && placedGridItem.inlineAxisAlignment().position() == ItemPosition::Normal) {
             // Only when the block size is automatic too. Otherwise the inline size is transferred
             // from the block size instead; see usedSizesForAspectRatioItem().
@@ -624,7 +577,7 @@ BorderBoxSize automaticMinimumInlineSize(const PlacedGridItem& gridItem, LayoutU
     // if it spans more than one track in that axis, none of those tracks are flexible
     //
     // Otherwise, the automatic minimum size is zero, as usual.
-    if (hasScrollableInlineComputedOverflowValue(gridItem))
+    if (hasScrollableOverflowValue(gridItem.inlineAxisOverflow()))
         return BorderBoxSize::zeroSized();
 
     auto gridItemColumnStartLine = gridItem.columnStartLine();
@@ -690,7 +643,7 @@ BorderBoxSize automaticMinimumBlockSize(const PlacedGridItem& gridItem, LayoutUn
     // if it spans more than one track in that axis, none of those tracks are flexible
     //
     // Otherwise, the automatic minimum size is zero, as usual.
-    if (hasScrollableBlockComputedOverflowValue(gridItem))
+    if (hasScrollableOverflowValue(gridItem.blockAxisOverflow()))
         return BorderBoxSize::zeroSized();
 
     auto gridItemRowStartLine = gridItem.rowStartLine();
@@ -765,7 +718,7 @@ LayoutUnit blockPreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit b
         // https://drafts.csswg.org/css-grid-1/#grid-item-sizing
         // Otherwise (self-alignment is not stretch, and does not behave as stretch), a non-replaced
         // grid item with an automatic size is sized to its fit-content size in the axis.
-        if (!placedGridItem.isReplacedElement() && !preferredAspectRatio(placedGridItem.layoutBox())) {
+        if (!placedGridItem.isReplacedElement() && !placedGridItem.preferredAspectRatio()) {
             auto stretchFitBorderBoxHeight = stretchFitSize(borderAndPadding, rowsSize, usedMargins);
 
             auto& integrationUtils = formattingContext.integrationUtils();
@@ -1023,7 +976,7 @@ std::pair<LayoutUnit, LayoutUnit> usedSizesForAspectRatioItem(const PlacedGridIt
     const UsedMargins& inlineMargins, const UsedMargins& blockMargins)
 {
     ASSERT(sizeDependsOnAspectRatio(gridItem));
-    auto aspectRatio = gridItem.layoutBox().style().logicalAspectRatio();
+    auto aspectRatio = *gridItem.preferredAspectRatio();
 
     auto [inlinePreferred, blockPreferred] = preferredSizesForAspectRatio(gridItem, aspectRatio, ratioDeterminingAxis(gridItem), inlineBorderAndPadding, blockBorderAndPadding,
         gridAreaInlineSize, gridAreaBlockSize, formattingContext, inlineMargins, blockMargins);

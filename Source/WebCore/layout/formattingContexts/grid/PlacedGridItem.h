@@ -67,6 +67,15 @@ public:
 
     const WritingMode& writingMode() const LIFETIME_BOUND { return m_writingMode; }
 
+    // The overflow in the grid container's inline and block axes.
+    Overflow inlineAxisOverflow() const { return m_inlineAxisOverflow; }
+    Overflow blockAxisOverflow() const { return m_blockAxisOverflow; }
+
+    // The physical preferred aspect ratio (width / height) of the box.
+    static std::optional<double> physicalPreferredAspectRatio(const ElementBox&);
+    // The preferred aspect ratio as inline size / block size in the grid container's axes.
+    std::optional<double> preferredAspectRatio() const;
+
     bool isReplacedElement() const { return m_layoutBox->isReplacedBox(); }
 
     const GridAreaLines& gridAreaLines() const LIFETIME_BOUND { return m_gridAreaLines; }
@@ -85,6 +94,10 @@ private:
     const StyleSelfAlignmentData m_blockAxisAlignment;
 
     const WritingMode m_writingMode;
+    const WritingMode m_gridContainerWritingMode;
+
+    const Overflow m_inlineAxisOverflow;
+    const Overflow m_blockAxisOverflow;
 
     const Style::ZoomFactor m_usedZoom { 1.0f };
 

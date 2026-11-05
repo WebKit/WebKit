@@ -123,7 +123,6 @@ bool sizeDependsOnContainingBlockSize(const SizeType& size)
     return size.isStretch() || size.isPercentOrCalculated();
 }
 
-std::optional<double> preferredAspectRatio(const ElementBox&);
 bool hasFitContentBlockSize(const PlacedGridItem&);
 bool inlineContributionMayRequireFullSizingAlgorithmForIntrinsicWidth(const ElementBox&, WritingMode containerWritingMode);
 
