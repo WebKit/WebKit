@@ -183,7 +183,6 @@ private:
 #if USE(WPE_RENDERER)
     struct wpe_renderer_backend_egl_offscreen_target* m_wpeTarget { nullptr };
 #endif
-    mutable GLExtensions m_glExtensions;
 };
 
 } // namespace WebCore

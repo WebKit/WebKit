@@ -636,19 +636,22 @@ unsigned GLContext::version() const
 
 const GLContext::GLExtensions& GLContext::glExtensions() const
 {
-    static std::once_flag flag;
-    std::call_once(flag, [this] {
+    static GLExtensions glExtensions;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
         const char* extensionsString = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
-        m_glExtensions.OES_texture_npot = isExtensionSupported(extensionsString, "GL_OES_texture_npot");
-        m_glExtensions.EXT_unpack_subimage = isExtensionSupported(extensionsString, "GL_EXT_unpack_subimage");
-        m_glExtensions.APPLE_sync = isExtensionSupported(extensionsString, "GL_APPLE_sync");
-        m_glExtensions.OES_packed_depth_stencil = isExtensionSupported(extensionsString, "GL_OES_packed_depth_stencil");
-        m_glExtensions.EXT_YUV_target = isExtensionSupported(extensionsString, "GL_EXT_YUV_target");
+        glExtensions = GLExtensions {
+            .OES_texture_npot = isExtensionSupported(extensionsString, "GL_OES_texture_npot"),
+            .EXT_unpack_subimage = isExtensionSupported(extensionsString, "GL_EXT_unpack_subimage"),
+            .APPLE_sync = isExtensionSupported(extensionsString, "GL_APPLE_sync"),
+            .OES_packed_depth_stencil = isExtensionSupported(extensionsString, "GL_OES_packed_depth_stencil"),
+            .EXT_YUV_target = isExtensionSupported(extensionsString, "GL_EXT_YUV_target"),
 #if USE(VULKAN)
-        m_glExtensions.EXT_memory_object = isExtensionSupported(extensionsString, "GL_EXT_memory_object");
+            .EXT_memory_object = isExtensionSupported(extensionsString, "GL_EXT_memory_object"),
 #endif
+        };
     });
-    return m_glExtensions;
+    return glExtensions;
 }
 
 GLContext::ScopedGLContext::ScopedGLContext(std::unique_ptr<GLContext>&& context)
