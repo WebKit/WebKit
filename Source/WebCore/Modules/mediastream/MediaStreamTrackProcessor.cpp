@@ -38,6 +38,7 @@
 #include "OffscreenCanvas.h"
 #include "ReadableStream.h"
 #include "SVGImageElement.h"
+#include "Settings.h"
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <wtf/Scope.h>
 #include <wtf/Seconds.h>
@@ -212,6 +213,11 @@ RefPtr<WebCodecsVideoFrame> MediaStreamTrackProcessor::VideoFrameObserver::takeV
         .timestamp = Seconds(videoFrame->presentationTime().toDouble()).microsecondsAs<int64_t>(),
         .colorSpace = videoFrame->colorSpace()
     };
+
+    if (context.settingsValues().webCodecsVideoFrameRotationEnabled && videoFrame->has90DegreeRotation()) {
+        init.displayWidth = init.codedHeight;
+        init.displayHeight = init.codedWidth;
+    }
 
     return WebCodecsVideoFrame::create(context, videoFrame.releaseNonNull(), WTF::move(init));
 }

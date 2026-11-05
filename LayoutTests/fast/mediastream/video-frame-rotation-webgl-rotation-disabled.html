@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebCodecsVideoFrameRotationEnabled=false ] -->
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>WebGL applies the rotation of camera VideoFrames when WebCodecsVideoFrameRotationEnabled is off</title>
+    <script src='../../resources/testharness.js'></script>
+    <script src='../../resources/testharnessreport.js'></script>
+    <script src='resources/video-frame-rotation-webgl.js'></script>
+</head>
+<body>
+    <canvas id=referenceCanvas></canvas>
+    <canvas id=webglCanvas></canvas>
+    <script>
+validateRotations(false);
+    </script>
+</body>
+</html>
