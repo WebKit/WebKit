@@ -1,0 +1,198 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-document-splicing-test-utilities.js"></script>
+<script>
+window.playThenPause = async function playThenPause(video) {
+    let playing = new Promise((resolve) => video.addEventListener("playing", resolve, {once: true}));
+    await video.play();
+    await playing;
+
+    let paused = new Promise((resolve) => video.addEventListener("pause", resolve, {once: true}));
+    video.pause();
+    await paused;
+
+    return true;
+};
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent.MediaEvents");
+
+    let frameTarget = null;
+    let nestedFrameTarget = null;
+    let mainFrameTarget = null;
+    let mainVideoNode = null;
+    let sameOriginVideoNode = null;
+    let crossOriginVideoNode = null;
+    let nestedVideoNode = null;
+
+    let firedEvents = [];
+    WI.DOMNode.addEventListener(WI.DOMNode.Event.DidFireEvent, (event) => {
+        let {domEvent} = event.data;
+        if (domEvent.originator)
+            return;
+        firedEvents.push({node: event.target, eventName: domEvent.eventName});
+    });
+
+    async function evaluate(target, expression) {
+        let {result, wasThrown} = await target.RuntimeAgent.evaluate.invoke({
+            expression,
+            objectGroup: "test",
+            returnByValue: true,
+            awaitPromise: true,
+        });
+        InspectorTest.assert(!wasThrown, `Evaluation should not throw: ${expression}`);
+        return result.value;
+    }
+
+    const expectedEventNames = ["play", "playing", "pause"];
+
+    function eventNamesForNodeSince(node, startIndex) {
+        return node.domEvents.slice(startIndex).filter((domEvent) => !domEvent.originator).map((domEvent) => domEvent.eventName);
+    }
+
+    async function awaitExpectedEvents(node, startIndex) {
+        while (!expectedEventNames.every((eventName) => eventNamesForNodeSince(node, startIndex).includes(eventName)))
+            await node.awaitEvent(WI.DOMNode.Event.DidFireEvent);
+    }
+
+    async function flushDOMAgents() {
+        let targets = WI.targets.filter((target) => target.hasDomain("DOM"));
+        for (let i = 0; i < 2; ++i)
+            await Promise.all(targets.map((target) => target.DOMAgent.getSupportedEventNames().catch(() => {})));
+    }
+
+    function countFiredEvents(eventName, predicate) {
+        return firedEvents.filter((entry) => entry.eventName === eventName && predicate(entry.node)).length;
+    }
+
+    function isSameElementAs(expectedNode) {
+        let expectedURL = expectedNode.ownerDocument?.documentURL;
+        return (node) => node.getAttribute("id") === expectedNode.getAttribute("id") && node.ownerDocument?.documentURL === expectedURL;
+    }
+
+    function expectPlayAndPause(node, startIndex, label) {
+        let eventNames = eventNamesForNodeSince(node, startIndex);
+        InspectorTest.expectThat(eventNames.includes("play"), `${label} should receive a "play" event.`);
+        InspectorTest.expectThat(eventNames.includes("playing"), `${label} should receive a "playing" event.`);
+        InspectorTest.expectThat(eventNames.includes("pause"), `${label} should receive a "pause" event.`);
+    }
+
+    function expectNoDuplicates(node, label) {
+        let predicate = isSameElementAs(node);
+        for (let eventName of expectedEventNames)
+            InspectorTest.expectEqual(countFiredEvents(eventName, predicate), 1, `${label} "${eventName}" should be reported exactly once.`);
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target and the three video elements.",
+        async test() {
+            frameTarget = await frameTargetForURLContainingWhenReady("localhost:8000/site-isolation/inspector/dom/resources/media-events-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+
+            nestedFrameTarget = await frameTargetForURLContainingWhenReady("media-events-frame.html?nested");
+            InspectorTest.expectNotNull(nestedFrameTarget, "Should find the nested frame target.");
+
+            mainFrameTarget = await frameTargetForURLContainingWhenReady("media-events-frame-target.html");
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame target.");
+
+            let pageDocument = await WI.domManager.requestDocument();
+            let sameOriginFrameNode = await childElement(pageDocument.body, (node) => node.getAttribute("id") === "sameOriginFrame");
+            mainVideoNode = pageDocument.body.children.find((node) => node.getAttribute("id") === "mainVideo");
+            InspectorTest.expectNotNull(mainVideoNode, "Should find the main frame video.");
+
+            sameOriginVideoNode = WI.domManager.nodeForId(await sameOriginFrameNode.children[0].querySelector("#video"));
+            InspectorTest.expectNotNull(sameOriginVideoNode, "Should find the same-origin frame video.");
+
+            let frameDocument = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            InspectorTest.expectThat(frameDocument.parentNode, "Cross-origin frame document should be spliced into the page tree.");
+
+            crossOriginVideoNode = WI.domManager.nodeForId(await frameDocument.querySelector("#video"));
+            InspectorTest.expectNotNull(crossOriginVideoNode, "Should find the cross-origin frame video.");
+            InspectorTest.expectEqual(crossOriginVideoNode?.owningTarget, frameTarget, "Cross-origin video should be owned by the frame target.");
+
+            nestedVideoNode = WI.domManager.nodeForId(await WI.domManager.frameTargetDocumentForTarget(nestedFrameTarget).querySelector("#video"));
+            InspectorTest.expectNotNull(nestedVideoNode, "Should find the nested frame video.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "CrossOriginFrame",
+        description: "Media events from a video in a cross-origin frame should reach the frontend, once each.",
+        async test() {
+            firedEvents = [];
+            let startIndex = crossOriginVideoNode.domEvents.length;
+
+            InspectorTest.log("Playing then pausing video in the cross-origin frame...");
+            await evaluate(frameTarget, `playThenPause(document.getElementById("video"))`);
+            await awaitExpectedEvents(crossOriginVideoNode, startIndex);
+            await flushDOMAgents();
+
+            expectPlayAndPause(crossOriginVideoNode, startIndex, "Cross-origin video");
+            expectNoDuplicates(crossOriginVideoNode, "Cross-origin video");
+        }
+    });
+
+    suite.addTestCase({
+        name: "MainFrame",
+        description: "Media events from a video in the main frame should be reported once, not again by the main frame's frame target.",
+        async test() {
+            firedEvents = [];
+            let startIndex = mainVideoNode.domEvents.length;
+
+            InspectorTest.log("Playing then pausing video in the main frame...");
+            await evaluate(mainFrameTarget, `playThenPause(document.getElementById("mainVideo"))`);
+            await awaitExpectedEvents(mainVideoNode, startIndex);
+            await flushDOMAgents();
+
+            expectPlayAndPause(mainVideoNode, startIndex, "Main frame video");
+            expectNoDuplicates(mainVideoNode, "Main frame video");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SameOriginFrame",
+        description: "Media events from a video in a same-origin frame should be reported once, not again by that frame's frame target.",
+        async test() {
+            firedEvents = [];
+            let startIndex = sameOriginVideoNode.domEvents.length;
+
+            InspectorTest.log("Playing then pausing video in the same-origin frame...");
+            await evaluate(mainFrameTarget, `playThenPause(document.getElementById("sameOriginFrame").contentDocument.getElementById("video"))`);
+            await awaitExpectedEvents(sameOriginVideoNode, startIndex);
+            await flushDOMAgents();
+
+            expectPlayAndPause(sameOriginVideoNode, startIndex, "Same-origin frame video");
+            expectNoDuplicates(sameOriginVideoNode, "Same-origin frame video");
+        }
+    });
+
+    suite.addTestCase({
+        name: "NestedFrame",
+        description: "Media events from a video in a frame back in the main frame's process, below a cross-origin frame, should be reported once.",
+        async test() {
+            firedEvents = [];
+            let startIndex = nestedVideoNode.domEvents.length;
+
+            InspectorTest.log("Playing then pausing video in the nested frame...");
+            await evaluate(nestedFrameTarget, `playThenPause(document.getElementById("video"))`);
+            await awaitExpectedEvents(nestedVideoNode, startIndex);
+            await flushDOMAgents();
+
+            expectPlayAndPause(nestedVideoNode, startIndex, "Nested frame video");
+            expectNoDuplicates(nestedVideoNode, "Nested frame video");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that DOM.didFireEvent for media elements is sent from frame targets, and that main-frame and same-origin media events are not reported twice.</p>
+<video id="mainVideo" muted playsinline preload="auto" src="/media-resources/content/test.mp4"></video>
+<iframe id="sameOriginFrame" src="resources/media-events-frame.html"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/media-events-frame.html"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/media-events-nested-frame.html"></iframe>
+</body>

@@ -216,96 +216,6 @@ private:
     const RefPtr<Node> m_node;
 };
 
-class EventFiredCallback final : public EventListener {
-public:
-    NODELETE static Ref<EventFiredCallback> create(InspectorDOMAgent& domAgent)
-    {
-        return adoptRef(*new EventFiredCallback(domAgent));
-    }
-
-    void handleEvent(ScriptExecutionContext&, Event& event) final
-    {
-        CheckedPtr domAgent = m_domAgent.get();
-        if (!domAgent)
-            return;
-
-        RefPtr node = dynamicDowncast<Node>(event.target());
-        if (!node || domAgent->m_dispatchedEvents.contains(&event))
-            return;
-
-        auto nodeId = domAgent->pushNodePathToFrontend(node.get());
-        if (!nodeId)
-            return;
-
-        domAgent->m_dispatchedEvents.add(&event);
-
-        RefPtr<JSON::Object> data = JSON::Object::create();
-
-#if ENABLE(FULLSCREEN_API)
-        if (event.type() == eventNames().webkitfullscreenchangeEvent || event.type() == eventNames().fullscreenchangeEvent)
-            data->setBoolean("enabled"_s, !!protect(protect(node->document())->fullscreen())->fullscreenElement());
-#endif // ENABLE(FULLSCREEN_API)
-
-        auto timestamp = protect(protect(domAgent->environment())->executionStopwatch())->elapsedTime().seconds();
-        domAgent->m_frontendDispatcher->didFireEvent(nodeId, event.type(), timestamp, data->size() ? WTF::move(data) : nullptr);
-    }
-
-private:
-    EventFiredCallback(InspectorDOMAgent& domAgent)
-        : EventListener(EventListener::CPPEventListenerType)
-        , m_domAgent(domAgent)
-    {
-    }
-
-    const WeakPtr<InspectorDOMAgent> m_domAgent;
-};
-
-String InspectorDOMAgent::toErrorString(ExceptionCode ec)
-{
-    return static_cast<bool>(ec) ? String(DOMException::name(ec)) : emptyString();
-}
-
-String InspectorDOMAgent::toErrorString(Exception&& exception)
-{
-    return DOMException::name(exception.code());
-}
-
-InspectorDOMAgent::InspectorDOMAgent(PageAgentContext& context, InspectorOverlay& overlay)
-    : InspectorAgentBase("DOM"_s, context)
-    , m_injectedScriptManager(context.injectedScriptManager)
-    , m_frontendDispatcher(makeUniqueRef<Inspector::DOMFrontendDispatcher>(context.frontendRouter))
-    , m_backendDispatcher(Inspector::DOMBackendDispatcher::create(protect(context.backendDispatcher), this))
-    , m_inspectedPage(context.inspectedPage)
-    , m_overlay(overlay)
-    , m_destroyedNodesTimer(*this, &InspectorDOMAgent::destroyedNodesTimerFired)
-#if ENABLE(VIDEO)
-    , m_mediaMetricsTimer(*this, &InspectorDOMAgent::mediaMetricsTimerFired)
-#endif
-{
-}
-
-InspectorDOMAgent::~InspectorDOMAgent() = default;
-
-void InspectorDOMAgent::didCreateFrontendAndBackend()
-{
-    m_history = makeUnique<InspectorHistory>();
-    m_domEditor = makeUnique<DOMEditor>(*m_history);
-
-    Ref { m_instrumentingAgents.get() }->setPersistentDOMAgent(this);
-    m_document = protect(m_inspectedPage)->localTopDocument();
-
-    // Force a layout so that we can collect additional information from the layout process.
-    relayoutDocument();
-
-#if ENABLE(VIDEO)
-    if (RefPtr document = m_document)
-        addEventListenersToNode(*document);
-
-    for (auto& mediaElement : HTMLMediaElement::allMediaElements())
-        addEventListenersToNode(Ref { mediaElement.get() });
-#endif
-}
-
 #if ENABLE(VIDEO)
 static void forEachInspectedNodeEventName(Node& node, const Function<void(const AtomString&)>& callback)
 {
@@ -333,7 +243,200 @@ static void forEachInspectedNodeEventName(Node& node, const Function<void(const 
         callback(eventNames().waitingEvent);
     }
 }
+
+class EventFiredCallback final : public EventListener {
+public:
+    NODELETE static Ref<EventFiredCallback> create(InspectorMediaEventTracker& tracker)
+    {
+        return adoptRef(*new EventFiredCallback(tracker));
+    }
+
+    void handleEvent(ScriptExecutionContext&, Event& event) final
+    {
+        if (CheckedPtr tracker = m_tracker)
+            tracker->handleEvent(event);
+    }
+
+private:
+    EventFiredCallback(InspectorMediaEventTracker& tracker)
+        : EventListener(EventListener::CPPEventListenerType)
+        , m_tracker(tracker)
+    {
+    }
+
+    const WeakPtr<InspectorMediaEventTracker> m_tracker;
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorMediaEventTracker);
+
+InspectorMediaEventTracker::InspectorMediaEventTracker(Client& client)
+    : m_client(client)
+    , m_mediaMetricsTimer(*this, &InspectorMediaEventTracker::mediaMetricsTimerFired)
+{
+}
+
+InspectorMediaEventTracker::~InspectorMediaEventTracker() = default;
+
+bool InspectorMediaEventTracker::isInLocalFrameTree(Node& node)
+{
+    for (RefPtr<Frame> frame = node.document().frame(); frame; frame = frame->tree().parent()) {
+        if (!is<LocalFrame>(*frame))
+            return false;
+    }
+    return true;
+}
+
+void InspectorMediaEventTracker::addEventListenersToNode(Node& node)
+{
+    if (!m_eventFiredCallback)
+        m_eventFiredCallback = EventFiredCallback::create(*this);
+
+    m_instrumentedNodes.add(node);
+
+    forEachInspectedNodeEventName(node, [node = Ref { node }, eventFiredCallback = Ref { *m_eventFiredCallback }](const AtomString& eventName) {
+        node->addEventListener(eventName, eventFiredCallback.copyRef());
+    });
+
+    if (is<HTMLMediaElement>(node)) {
+        if (!m_mediaMetricsTimer.isActive())
+            m_mediaMetricsTimer.start(0_s, 1_s / 15.);
+    }
+}
+
+void InspectorMediaEventTracker::reset(RemoveEventListeners removeEventListeners)
+{
+    RefPtr eventFiredCallback = std::exchange(m_eventFiredCallback, nullptr);
+    if (eventFiredCallback && removeEventListeners == RemoveEventListeners::Yes) {
+        for (Ref node : m_instrumentedNodes) {
+            forEachInspectedNodeEventName(node, [&](const AtomString& eventName) {
+                node->removeEventListener(eventName, *eventFiredCallback, { });
+            });
+        }
+    }
+
+    m_instrumentedNodes.clear();
+    m_dispatchedEvents.clear();
+
+    m_mediaMetricsTimer.stop();
+    m_mediaMetrics.clear();
+}
+
+void InspectorMediaEventTracker::eventDidResetAfterDispatch(const Event& event)
+{
+    m_dispatchedEvents.remove(&event);
+}
+
+void InspectorMediaEventTracker::handleEvent(Event& event)
+{
+    RefPtr currentTarget = dynamicDowncast<Node>(event.currentTarget());
+    if (!currentTarget || !m_instrumentedNodes.contains(*currentTarget))
+        return;
+
+    RefPtr node = dynamicDowncast<Node>(event.target());
+    if (!node || m_dispatchedEvents.contains(&event))
+        return;
+
+    auto nodeId = m_client->pushNodePathForMediaEvent(*node);
+    if (!nodeId)
+        return;
+
+    m_dispatchedEvents.add(&event);
+
+    RefPtr<JSON::Object> data = JSON::Object::create();
+
+#if ENABLE(FULLSCREEN_API)
+    if (event.type() == eventNames().webkitfullscreenchangeEvent || event.type() == eventNames().fullscreenchangeEvent)
+        data->setBoolean("enabled"_s, !!protect(protect(node->document())->fullscreen())->fullscreenElement());
+#endif // ENABLE(FULLSCREEN_API)
+
+    m_client->mediaEventDidFire(nodeId, event.type(), data->size() ? WTF::move(data) : nullptr);
+}
+
+void InspectorMediaEventTracker::mediaMetricsTimerFired()
+{
+    Vector<Ref<HTMLMediaElement>> mediaElements;
+    for (Ref node : m_instrumentedNodes) {
+        if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(node))
+            mediaElements.append(mediaElement.releaseNonNull());
+    }
+
+    if (mediaElements.isEmpty()) {
+        m_mediaMetricsTimer.stop();
+        m_mediaMetrics.clear();
+        return;
+    }
+
+    for (auto& mediaElement : mediaElements) {
+        if (!is<HTMLVideoElement>(mediaElement) || !mediaElement->isPlaying())
+            continue;
+
+        auto videoPlaybackQuality = mediaElement->getVideoPlaybackQuality();
+        unsigned displayCompositedVideoFrames = videoPlaybackQuality->displayCompositedVideoFrames();
+
+        auto iterator = m_mediaMetrics.find(mediaElement);
+        if (iterator == m_mediaMetrics.end()) {
+            m_mediaMetrics.set(mediaElement.get(), MediaMetrics { displayCompositedVideoFrames });
+            continue;
+        }
+
+        bool isPowerEfficient = displayCompositedVideoFrames > iterator->value.displayCompositedFrames;
+        if (iterator->value.isPowerEfficient != isPowerEfficient) {
+            iterator->value.isPowerEfficient = isPowerEfficient;
+
+            if (auto nodeId = m_client->pushNodePathForMediaEvent(mediaElement.get()))
+                m_client->powerEfficientPlaybackStateDidChange(nodeId, isPowerEfficient);
+        }
+
+        iterator->value.displayCompositedFrames = displayCompositedVideoFrames;
+    }
+}
 #endif // ENABLE(VIDEO)
+
+String InspectorDOMAgent::toErrorString(ExceptionCode ec)
+{
+    return static_cast<bool>(ec) ? String(DOMException::name(ec)) : emptyString();
+}
+
+String InspectorDOMAgent::toErrorString(Exception&& exception)
+{
+    return DOMException::name(exception.code());
+}
+
+InspectorDOMAgent::InspectorDOMAgent(PageAgentContext& context, InspectorOverlay& overlay)
+    : InspectorAgentBase("DOM"_s, context)
+    , m_injectedScriptManager(context.injectedScriptManager)
+    , m_frontendDispatcher(makeUniqueRef<Inspector::DOMFrontendDispatcher>(context.frontendRouter))
+    , m_backendDispatcher(Inspector::DOMBackendDispatcher::create(protect(context.backendDispatcher), this))
+    , m_inspectedPage(context.inspectedPage)
+    , m_overlay(overlay)
+    , m_destroyedNodesTimer(*this, &InspectorDOMAgent::destroyedNodesTimerFired)
+#if ENABLE(VIDEO)
+    , m_mediaEventTracker(*this)
+#endif
+{
+}
+
+InspectorDOMAgent::~InspectorDOMAgent() = default;
+
+void InspectorDOMAgent::didCreateFrontendAndBackend()
+{
+    m_history = makeUnique<InspectorHistory>();
+    m_domEditor = makeUnique<DOMEditor>(*m_history);
+
+    Ref { m_instrumentingAgents.get() }->setPersistentDOMAgent(this);
+    m_document = protect(m_inspectedPage)->localTopDocument();
+
+    // Force a layout so that we can collect additional information from the layout process.
+    relayoutDocument();
+
+#if ENABLE(VIDEO)
+    if (RefPtr document = m_document)
+        addEventListenersToNode(*document);
+
+    for (auto& mediaElement : HTMLMediaElement::allMediaElements())
+        addEventListenersToNode(Ref { mediaElement.get() });
+#endif
+}
 
 void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
@@ -352,25 +455,7 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
     overlay->clearAllFlexOverlays();
 
 #if ENABLE(VIDEO)
-    if (m_eventFiredCallback) {
-        auto removeFromNode = [eventFiredCallback = Ref { *m_eventFiredCallback }](Node& node) {
-            forEachInspectedNodeEventName(node, [node = Ref { node }, eventFiredCallback](const AtomString& eventName) {
-                node->removeEventListener(eventName, eventFiredCallback.get(), { });
-            });
-        };
-
-        if (RefPtr document = m_document)
-            removeFromNode(*document);
-
-        for (auto& mediaElement : HTMLMediaElement::allMediaElements())
-            removeFromNode(Ref { mediaElement.get() });
-
-        m_eventFiredCallback = nullptr;
-    }
-
-    if (m_mediaMetricsTimer.isActive())
-        m_mediaMetricsTimer.stop();
-    m_mediaMetrics.clear();
+    m_mediaEventTracker.reset(InspectorMediaEventTracker::RemoveEventListeners::Yes);
 #endif // ENABLE(VIDEO)
 
     Ref { m_instrumentingAgents.get() }->setPersistentDOMAgent(nullptr);
@@ -592,7 +677,6 @@ void InspectorDOMAgent::discardBindings()
 {
     m_nodeToId.clear();
     m_idToNode.clear();
-    m_dispatchedEvents.clear();
     m_eventListenerEntries.clear();
     m_childrenRequested.clear();
 }
@@ -2692,21 +2776,32 @@ Inspector::Protocol::DOM::NodeId InspectorDOMAgent::identifierForNode(Node& node
 void InspectorDOMAgent::addEventListenersToNode(Node& node)
 {
 #if ENABLE(VIDEO)
-    if (!m_eventFiredCallback)
-        m_eventFiredCallback = EventFiredCallback::create(*this);
-
-    forEachInspectedNodeEventName(node, [node = Ref { node }, eventFiredCallback = Ref { *m_eventFiredCallback }](const AtomString& eventName) {
-        node->addEventListener(eventName, eventFiredCallback.copyRef());
-    });
-
-    if (is<HTMLMediaElement>(node)) {
-        if (!m_mediaMetricsTimer.isActive())
-            m_mediaMetricsTimer.start(0_s, 1_s / 15.);
-    }
+    m_mediaEventTracker.addEventListenersToNode(node);
 #else
     UNUSED_PARAM(node);
 #endif // ENABLE(VIDEO)
 }
+
+#if ENABLE(VIDEO)
+Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathForMediaEvent(Node& node)
+{
+    if (!InspectorMediaEventTracker::isInLocalFrameTree(node))
+        return 0;
+    return pushNodePathToFrontend(&node);
+}
+
+void InspectorDOMAgent::mediaEventDidFire(Inspector::Protocol::DOM::NodeId nodeId, const String& eventName, RefPtr<JSON::Object>&& data)
+{
+    auto timestamp = protect(protect(environment())->executionStopwatch())->elapsedTime().seconds();
+    m_frontendDispatcher->didFireEvent(nodeId, eventName, timestamp, WTF::move(data));
+}
+
+void InspectorDOMAgent::powerEfficientPlaybackStateDidChange(Inspector::Protocol::DOM::NodeId nodeId, bool isPowerEfficient)
+{
+    auto timestamp = protect(protect(environment())->executionStopwatch())->elapsedTime().seconds();
+    m_frontendDispatcher->powerEfficientPlaybackStateChanged(nodeId, timestamp, isPowerEfficient);
+}
+#endif // ENABLE(VIDEO)
 
 void InspectorDOMAgent::didInsertDOMNode(Node& node)
 {
@@ -3004,7 +3099,11 @@ bool InspectorDOMAgent::isEventListenerDisabled(EventTarget& target, const AtomS
 
 void InspectorDOMAgent::eventDidResetAfterDispatch(const Event& event)
 {
-    m_dispatchedEvents.remove(&event);
+#if ENABLE(VIDEO)
+    m_mediaEventTracker.eventDidResetAfterDispatch(event);
+#else
+    UNUSED_PARAM(event);
+#endif
 }
 
 void InspectorDOMAgent::flexibleBoxRendererBeganLayout(const RenderObject& renderer)
@@ -3041,51 +3140,6 @@ Inspector::Protocol::DOM::EventListenerId InspectorDOMAgent::idForEventListener(
     }
     return 0;
 }
-
-#if ENABLE(VIDEO)
-void InspectorDOMAgent::mediaMetricsTimerFired()
-{
-    // FIXME: remove metrics information for any media element when it's destroyed
-
-    if (HTMLMediaElement::allMediaElements().isEmpty()) {
-        if (m_mediaMetricsTimer.isActive())
-            m_mediaMetricsTimer.stop();
-        m_mediaMetrics.clear();
-        return;
-    }
-
-    for (auto& weakMediaElement : HTMLMediaElement::allMediaElements()) {
-        Ref mediaElement = weakMediaElement.get();
-        if (!is<HTMLVideoElement>(mediaElement) || !mediaElement->isPlaying())
-            continue;
-
-        auto videoPlaybackQuality = mediaElement->getVideoPlaybackQuality();
-        unsigned displayCompositedVideoFrames = videoPlaybackQuality->displayCompositedVideoFrames();
-
-        auto iterator = m_mediaMetrics.find(mediaElement);
-        if (iterator == m_mediaMetrics.end()) {
-            m_mediaMetrics.set(mediaElement.get(), MediaMetrics(displayCompositedVideoFrames));
-            continue;
-        }
-
-        bool isPowerEfficient = displayCompositedVideoFrames > iterator->value.displayCompositedFrames;
-        if (iterator->value.isPowerEfficient != isPowerEfficient) {
-            iterator->value.isPowerEfficient = isPowerEfficient;
-
-            if (auto nodeId = pushNodePathToFrontend(mediaElement.ptr())) {
-                auto timestamp = protect(protect(environment())->executionStopwatch())->elapsedTime().seconds();
-                m_frontendDispatcher->powerEfficientPlaybackStateChanged(nodeId, timestamp, iterator->value.isPowerEfficient);
-            }
-        }
-
-        iterator->value.displayCompositedFrames = displayCompositedVideoFrames;
-    }
-
-    m_mediaMetrics.removeIf([&] (auto& entry) {
-        return !HTMLMediaElement::allMediaElements().contains(&entry.key);
-    });
-}
-#endif
 
 RefPtr<Node> InspectorDOMAgent::nodeForPath(const String& path)
 {
