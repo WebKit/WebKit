@@ -99,8 +99,9 @@ public:
     bool restoredRubberbandingInProgress() const { return m_restoredRubberbandingInProgress; }
 #endif
 
-    virtual bool startAnimatedScrollToPosition(FloatPoint);
+    virtual bool startAnimatedScrollToPosition(FloatPoint, ScrollAnimationCurve);
     virtual void stopAnimatedScroll(EnumSet<AnimatedScrollType>);
+    void stopSpringAnimation();
 
     virtual void serviceScrollAnimation(MonotonicTime);
 

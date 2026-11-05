@@ -177,7 +177,7 @@ void RemoteScrollingTreeMac::startPendingScrollAnimations()
         LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::startPendingScrollAnimations() for node " << nodeID << " with data " << data);
 
         auto finalPosition = data.destinationPosition(targetNode->currentScrollPosition());
-        targetNode->startAnimatedScrollToPosition(finalPosition);
+        targetNode->startAnimatedScrollToPosition(finalPosition, data.animationCurve);
     }
 
     auto nodesWithPendingKeyboardScrollAnimations = std::exchange(m_nodesWithPendingKeyboardScrollAnimations, { });

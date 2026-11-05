@@ -27,7 +27,10 @@
 
 #include <WebCore/FloatSize.h>
 #include <WebCore/ScrollTypes.h>
+#include <array>
+#include <numbers>
 #include <wtf/Platform.h>
+#include <wtf/Seconds.h>
 
 namespace WTF {
 class TextStream;
@@ -84,5 +87,17 @@ struct KeyboardScrollParameters {
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const KeyboardScroll&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const KeyboardScrollParameters&);
+
+// The spring for animated scrolls to an edge of the document: a critically damped spring with a response of 0.6s,
+// with time warped by cubic-bezier(0, 0.2, 1, 1), as in UIKit's smooth deceleration animation.
+namespace DocumentEdgeScrollSpring {
+inline constexpr double response = 0.6;
+inline constexpr double mass = 1;
+inline constexpr double angularFrequency = 2 * std::numbers::pi / response;
+inline constexpr double stiffness = angularFrequency * angularFrequency * mass;
+// What -[CASpringAnimation durationForEpsilon:FLT_MIN] returns for this spring.
+inline constexpr Seconds duration = 1.6_s;
+inline constexpr std::array<double, 4> timingFunctionControlPoints { 0, 0.2, 1, 1 };
+}
 
 } // namespace WebCore

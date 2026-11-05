@@ -1,0 +1,159 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+html {
+    scroll-snap-type: y mandatory;
+}
+
+body {
+    margin: 0;
+}
+
+/* Snap areas are shorter than their scrollers, so that the only snap positions are their starts and the edges. */
+.section {
+    height: 400px;
+    scroll-snap-align: start;
+}
+
+/* The nested scroller is as tall as the document, so that the pointer stays over it however far the document scrolls. */
+#nested {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 20000px;
+    overflow: scroll;
+}
+
+#nested > div {
+    height: 40000px;
+}
+
+#snapScroller {
+    position: absolute;
+    top: 0;
+    left: 400px;
+    width: 300px;
+    height: 300px;
+    overflow: scroll;
+    scroll-snap-type: y mandatory;
+}
+
+#snapScroller > div {
+    height: 200px;
+    scroll-snap-align: start;
+}
+
+/* Keep the test output out of the way of the snap areas and the pointer. */
+#output {
+    position: absolute;
+    top: 0;
+    left: 720px;
+    width: 60px;
+}
+</style>
+</head>
+<body>
+<div id="output"><p id="description"></p><div id="console"></div></div>
+<div id="nested"><div></div></div>
+<div id="snapScroller" tabindex="0"></div>
+<script>
+description("Tests that interrupting an animated scroll to the end of a scroll snap container leaves it at a snap position.");
+jsTestIsAsync = true;
+
+for (let i = 0; i < 50; ++i) {
+    const section = document.createElement("div");
+    section.className = "section";
+    document.body.appendChild(section);
+}
+for (let i = 0; i < 45; ++i)
+    snapScroller.appendChild(document.createElement("div"));
+
+var scroller;
+var maxScrollTop;
+var snapPositions;
+var finalScrollTop;
+
+function touchTrackpad()
+{
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "maybegin", "none");
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "cancelled", "none");
+}
+
+function scrollGesture()
+{
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, "began", "none");
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, "changed", "none");
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+}
+
+function scrollMouseWheel()
+{
+    eventSender.mouseScrollBy(0, 10);
+}
+
+async function scrollToEndThenInteract(scrollerToSpring, scrollEventTarget, snapAreas, x, y, interact)
+{
+    scroller = scrollerToSpring;
+    scroller.scrollTop = 0;
+    nested.scrollTop = 1000;
+    await UIHelper.renderingUpdate();
+    maxScrollTop = scroller.scrollHeight - scroller.clientHeight;
+    snapPositions = [0, maxScrollTop, ...Array.from(snapAreas, area => area.offsetTop).filter(offset => offset < maxScrollTop)];
+    eventSender.mouseMoveTo(x, y);
+
+    const scrolled = new Promise(resolve => scrollEventTarget.addEventListener("scroll", resolve, { once: true }));
+    await UIHelper.keyDown("end");
+    await scrolled;
+    interact();
+
+    // Wait for any snap animation, including one that starts after a delay for mouse wheel scrolls.
+    await UIHelper.waitForTargetScrollAnimationToSettle(scroller);
+    await UIHelper.delayFor(300);
+    await UIHelper.waitForTargetScrollAnimationToSettle(scroller);
+
+    // Read the position before printing results, since the layout that printing causes can snap the scroller.
+    finalScrollTop = scroller.scrollTop;
+    shouldBeTrue("finalScrollTop < maxScrollTop");
+    shouldBeTrue("snapPositions.includes(finalScrollTop)");
+}
+
+async function runTest()
+{
+    const documentScroller = document.scrollingElement;
+    const sections = document.querySelectorAll(".section");
+
+    debug("Touching the trackpad over the document");
+    await scrollToEndThenInteract(documentScroller, window, sections, 500, 500, touchTrackpad);
+
+    debug("Scroll gesture over the document");
+    await scrollToEndThenInteract(documentScroller, window, sections, 500, 500, scrollGesture);
+
+    debug("Mouse wheel over the document");
+    await scrollToEndThenInteract(documentScroller, window, sections, 500, 500, scrollMouseWheel);
+
+    debug("Touching the trackpad over a nested scroller");
+    await scrollToEndThenInteract(documentScroller, window, sections, 100, 100, touchTrackpad);
+
+    debug("Scroll gesture over a nested scroller");
+    await scrollToEndThenInteract(documentScroller, window, sections, 100, 100, scrollGesture);
+
+    debug("Mouse wheel over a nested scroller");
+    await scrollToEndThenInteract(documentScroller, window, sections, 100, 100, scrollMouseWheel);
+
+    scrollTo(0, 0);
+    snapScroller.focus();
+
+    debug("Touching the trackpad over an overflow scroll snap container");
+    await scrollToEndThenInteract(snapScroller, snapScroller, snapScroller.children, 500, 100, touchTrackpad);
+
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>

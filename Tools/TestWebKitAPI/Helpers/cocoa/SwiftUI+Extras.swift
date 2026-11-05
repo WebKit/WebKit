@@ -60,13 +60,18 @@ public func render(
 ) {
     let resolvedView = rootView()
 
-    #if WTF_PLATFORM_MAC
-    let viewController = NSHostingController(rootView: resolvedView)
-    #else
-    let viewController = UIHostingController(rootView: resolvedView)
-
     // The hosting controller must be installed in a window for a layout pass to run,
     // otherwise the web view's constraints are never resolved and it stays zero-sized.
+
+    #if WTF_PLATFORM_MAC
+    let viewController = NSHostingController(rootView: resolvedView)
+
+    let window = NSWindow(contentViewController: viewController)
+    window.setContentSize(.init(width: 800, height: 600))
+    window.orderFront(nil)
+    window.layoutIfNeeded()
+    #else
+    let viewController = UIHostingController(rootView: resolvedView)
 
     let window = UIWindow(frame: .init(x: 0, y: 0, width: 800, height: 600))
     window.rootViewController = viewController

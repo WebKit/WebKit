@@ -152,12 +152,14 @@ public:
     void stopAllTimers();
     void scrollPositionChanged();
 
-    bool startAnimatedScrollToDestination(FloatPoint startOffset, FloatPoint destinationOffset);
-    bool retargetAnimatedScroll(FloatPoint newDestinationOffset);
+    bool startAnimatedScrollToDestination(FloatPoint startOffset, FloatPoint destinationOffset, ScrollAnimationCurve = ScrollAnimationCurve::Default);
+    bool retargetAnimatedScroll(FloatPoint newDestinationOffset, ScrollAnimationCurve);
     bool retargetAnimatedScrollBy(FloatSize);
+    std::optional<FloatPoint> animatedScrollDestinationOffset() const;
 
     void stopAnimatedScroll();
     void stopAnimatedNonRubberbandingScroll();
+    void stopSpringAnimation();
 
     void stopKeyboardScrolling();
 
@@ -227,6 +229,8 @@ public:
 #endif
 
 private:
+    bool isSpringAnimationRunning() const;
+
     void updateRubberBandAnimatingState();
 
     void setIsAnimatingRubberBand(bool);

@@ -10955,6 +10955,8 @@ void WebPage::scrollToEdge(WebCore::RectEdges<bool> edges, WebCore::ScrollIsAnim
 
     auto options = WebCore::ScrollPositionChangeOptions::createProgrammatic();
     options.animated = animated;
+    if (animated == WebCore::ScrollIsAnimated::Yes)
+        options.animationCurve = WebCore::documentEdgeScrollAnimationCurve();
 
     frameView->scrollToEdgeWithOptions(edges, options);
 }

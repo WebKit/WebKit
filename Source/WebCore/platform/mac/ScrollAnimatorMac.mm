@@ -76,6 +76,7 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     protect(scrollableArea())->scrollbarsController().setScrollbarAnimationsUnsuspendedByUserInteraction(true);
     m_scrollController.updateGestureInProgressState(wheelEvent);
+    m_scrollController.handleWheelEventDuringSpringAnimation(wheelEvent);
 
     // Events in the PlatformWheelEventPhase::MayBegin phase have no deltas, and therefore never passes through the scroll handling logic below.
     // This causes us to return with an 'unhandled' return state, even though this event was successfully processed.

@@ -156,6 +156,24 @@ static FloatSize hyperbolicReboundDeltaForElasticDelta(IntSize stretchAmount, fl
 }
 #endif
 
+void ScrollingEffectsController::handleWheelEventDuringSpringAnimation(const PlatformWheelEvent& wheelEvent)
+{
+    if (!isSpringAnimationRunning())
+        return;
+
+    // Ignore the rest of a momentum scroll, which would otherwise fight the spring animation, and keep scrolling once it finishes.
+    if (wheelEvent.isMomentumEvent()) {
+        m_ignoreMomentumScrolls = true;
+        m_momentumScrollInProgress = false;
+        return;
+    }
+
+    // Spring animations last long enough that the user may want to take over before they finish, either by touching
+    // the trackpad (as with momentum scrolling) or by scrolling.
+    if (wheelEvent.isGestureStart() || wheelEvent.isNonGestureEvent())
+        stopSpringAnimation();
+}
+
 bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     if (processWheelEventForScrollSnap(wheelEvent))

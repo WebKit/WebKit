@@ -224,6 +224,29 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
     if (!scrollingDirections().at(boxSideForDirection(direction)))
         return false;
 
+#if PLATFORM(MAC)
+    // Scroll to the edge of the document the same way as the Home and End keys.
+    if (granularity == ScrollGranularity::Document) {
+        scrollableArea->endKeyboardScroll(false);
+        scrollableArea->scroll(direction, ScrollGranularity::Document);
+        return true;
+    }
+
+    if (!isKeyRepeat && granularity == ScrollGranularity::Page) {
+        scrollableArea->endKeyboardScroll(false);
+        auto currentPosition = scrollableArea->scrollAnimator().currentPosition();
+        auto newPosition = (currentPosition + scroll->offset).constrainedBetween(scrollableArea->minimumScrollPosition(), scrollableArea->maximumScrollPosition());
+        if (newPosition != currentPosition) {
+            // Request a delta rather than a position, so that the scroll starts from the latest position rather than from this one,
+            // which may be out of date while an animation runs, such as one that scrolls to the edge of the document.
+            auto options = ScrollPositionChangeOptions::createProgrammatic();
+            options.originalScrollDelta = newPosition - currentPosition;
+            scrollableArea->scrollToPositionWithAnimation(newPosition, options);
+        }
+        return true;
+    }
+#endif
+
     if (granularity == ScrollGranularity::Document || (!isKeyRepeat && granularity == ScrollGranularity::Page)) {
         scrollableArea->endKeyboardScroll(false);
         auto newPosition = IntPoint(scrollableArea->scrollAnimator().currentPosition() + scroll->offset);

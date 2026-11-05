@@ -344,6 +344,21 @@ enum class ScrollInterruptsAnimation : bool {
     Yes
 };
 
+enum class ScrollAnimationCurve : bool {
+    Default,
+    Spring
+};
+
+// The curve for animated scrolls to an edge of the document, such as with the Home and End keys.
+constexpr ScrollAnimationCurve documentEdgeScrollAnimationCurve()
+{
+#if PLATFORM(MAC)
+    return ScrollAnimationCurve::Spring;
+#else
+    return ScrollAnimationCurve::Default;
+#endif
+}
+
 enum class ScrollBehaviorForFixedElements : bool {
     StickToDocumentBounds,
     StickToViewportBounds
@@ -388,6 +403,7 @@ struct ScrollPositionChangeOptions {
     ScrollSnapPointSelectionMethod snapPointSelectionMethod { ScrollSnapPointSelectionMethod::Closest };
     std::optional<FloatSize> originalScrollDelta { };
     ScrollInterruptsAnimation interruptsAnimation { ScrollInterruptsAnimation::Yes };
+    ScrollAnimationCurve animationCurve { ScrollAnimationCurve::Default };
 
     static ScrollPositionChangeOptions createProgrammatic()
     {
@@ -418,6 +434,7 @@ struct ScrollbarColor {
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollClamping);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollAnimationCurve);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollBehaviorForFixedElements);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollBehavior);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollElasticity);

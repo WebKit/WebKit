@@ -60,6 +60,15 @@ TextStream& operator<<(TextStream& ts, ScrollClamping clamping)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, ScrollAnimationCurve curve)
+{
+    switch (curve) {
+    case ScrollAnimationCurve::Default: ts << "default"_s; break;
+    case ScrollAnimationCurve::Spring: ts << "spring"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, ScrollBehaviorForFixedElements behavior)
 {
     switch (behavior) {
@@ -226,6 +235,7 @@ TextStream& operator<<(TextStream& ts, ScrollPositionChangeOptions options)
     ts.dumpProperty("snap point selection method"_s, options.snapPointSelectionMethod);
     ts.dumpProperty("original scroll delta"_s, options.originalScrollDelta ? *options.originalScrollDelta : FloatSize());
     ts.dumpProperty("interrupts animation"_s, options.interruptsAnimation == ScrollInterruptsAnimation::Yes);
+    ts.dumpProperty("animation curve"_s, options.animationCurve);
 
     return ts;
 }

@@ -252,6 +252,9 @@ TextStream& operator<<(TextStream& ts, const RequestedScrollData& requestedScrol
     if (requestedScrollData.scrollbarRevealBehavior == ScrollbarRevealBehavior::DontReveal)
         ts.dumpProperty("scrollbar-reveal"_s, requestedScrollData.scrollbarRevealBehavior);
 
+    if (requestedScrollData.animationCurve != ScrollAnimationCurve::Default)
+        ts.dumpProperty("animation curve"_s, requestedScrollData.animationCurve);
+
     if (requestedScrollData.identifier)
         ts.dumpProperty("identifier"_s, *requestedScrollData.identifier);
 

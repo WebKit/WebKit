@@ -1,0 +1,128 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body {
+    height: 20000px;
+}
+
+#scroller {
+    width: 300px;
+    height: 300px;
+    overflow: scroll;
+}
+
+#scroller > div {
+    height: 20000px;
+}
+</style>
+</head>
+<body>
+<div id="scroller" tabindex="0"><div></div></div>
+<script>
+description("Tests that pressing Space or Page Down while an animated scroll to the end of the document is in progress scrolls by a page from the position on screen, without first jumping back to an earlier position.");
+jsTestIsAsync = true;
+
+var largestBackwardStep;
+var highestOnScreenScrollTop;
+var finalScrollTop;
+var maxScrollTop;
+
+// The vertical scroll position of the given node in a dump of the UI process's scrolling tree, which is what is on screen.
+function scrollTopFromScrollingTree(scrollingTree, node)
+{
+    if (!scrollingTree.includes(node))
+        return NaN;
+
+    let properties = scrollingTree.slice(scrollingTree.indexOf(node));
+    if (node == "frame scrolling node")
+        properties = properties.slice(0, properties.indexOf("(children"));
+    const match = properties.match(/\(scroll position \(([-\d.]+),([-\d.]+)\)\)/);
+    return match ? Math.round(parseFloat(match[2])) : 0;
+}
+
+// Samples the scrolling tree until stopSampling() is called.
+function startSamplingScrollingTree(node)
+{
+    const done = new Promise(resolve => {
+        testRunner.runUIScript(`(() => {
+            const samples = [];
+            let lastSampleTime = 0;
+            globalThis.samplingScrollingTree = true;
+            function sample() {
+                const now = Date.now();
+                if (now - lastSampleTime >= 4) {
+                    lastSampleTime = now;
+                    samples.push(uiController.scrollingTreeAsText);
+                }
+                if (globalThis.samplingScrollingTree)
+                    uiController.doAsyncTask(sample);
+                else
+                    uiController.uiScriptComplete(JSON.stringify(samples));
+            }
+            uiController.doAsyncTask(sample);
+        })()`, result => resolve(JSON.parse(result).map(scrollingTree => scrollTopFromScrollingTree(scrollingTree, node))));
+    });
+
+    return {
+        stopSampling: () => {
+            testRunner.runUIScript(`globalThis.samplingScrollingTree = false; uiController.uiScriptComplete();`, () => { });
+            return done;
+        },
+    };
+}
+
+async function scrollToEndThenScrollByPage(key, scrollTarget, scrollEventTarget, node)
+{
+    scrollTarget.scrollTop = 0;
+    await UIHelper.renderingUpdate();
+
+    const sampler = startSamplingScrollingTree(node);
+
+    // Scroll by a page soon after the animated scroll to the end starts, while it is moving fastest.
+    const scrolled = new Promise(resolve => scrollEventTarget.addEventListener("scroll", resolve, { once: true }));
+    await UIHelper.keyDown("downArrow", ["metaKey"]);
+    await scrolled;
+    await UIHelper.renderingUpdate();
+
+    await UIHelper.keyDown(key);
+    await UIHelper.waitForTargetScrollAnimationToSettle(scrollTarget);
+
+    const samples = await sampler.stopSampling();
+
+    largestBackwardStep = 0;
+    for (let i = 1; i < samples.length; ++i)
+        largestBackwardStep = Math.max(largestBackwardStep, samples[i - 1] - samples[i]);
+    highestOnScreenScrollTop = Math.max(...samples);
+    finalScrollTop = scrollTarget.scrollTop;
+    maxScrollTop = scrollTarget.scrollHeight - scrollTarget.clientHeight;
+
+    shouldBe("largestBackwardStep", "0");
+    shouldBeTrue("finalScrollTop >= highestOnScreenScrollTop");
+    shouldBeTrue("finalScrollTop < maxScrollTop");
+}
+
+async function runTest()
+{
+    for (const [name, key] of [["Space", " "], ["Page Down", "pageDown"]]) {
+        debug(`Document, ${name}`);
+        await scrollToEndThenScrollByPage(key, document.scrollingElement, window, "frame scrolling node");
+    }
+
+    scrollTo(0, 0);
+    scroller.focus();
+    for (const [name, key] of [["Space", " "], ["Page Down", "pageDown"]]) {
+        debug(`Overflow scroller, ${name}`);
+        await scrollToEndThenScrollByPage(key, scroller, scroller, "overflow scrolling node");
+        shouldBe("scrollY", "0");
+    }
+
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>

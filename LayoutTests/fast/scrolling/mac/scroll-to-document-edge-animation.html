@@ -1,0 +1,69 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body {
+    height: 10000px;
+}
+</style>
+</head>
+<body>
+<script>
+description("Tests that scrolling to the start or end of the document with the keyboard animates with a spring, which takes much longer than the 200ms of other animated scrolls.");
+jsTestIsAsync = true;
+
+var duration;
+var maxScrollY;
+var scrollEndCount = 0;
+document.addEventListener("scrollend", () => ++scrollEndCount);
+
+async function scrollToEdge(key, modifiers = [])
+{
+    scrollEndCount = 0;
+    const scrollEnded = new Promise(resolve => document.addEventListener("scrollend", resolve, { once: true }));
+    const startTime = performance.now();
+    await UIHelper.keyDown(key, modifiers);
+    await scrollEnded;
+    duration = performance.now() - startTime;
+
+    // Give any extra scrollend events a chance to arrive.
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+}
+
+async function runTest()
+{
+    maxScrollY = document.scrollingElement.scrollHeight - innerHeight;
+
+    debug("End");
+    await scrollToEdge("end");
+    shouldBe("scrollY", "maxScrollY");
+    shouldBeTrue("duration > 400");
+    shouldBe("scrollEndCount", "1");
+
+    debug("Home");
+    await scrollToEdge("home");
+    shouldBe("scrollY", "0");
+    shouldBeTrue("duration > 400");
+    shouldBe("scrollEndCount", "1");
+
+    debug("Command-Down Arrow");
+    await scrollToEdge("downArrow", ["metaKey"]);
+    shouldBe("scrollY", "maxScrollY");
+    shouldBeTrue("duration > 400");
+    shouldBe("scrollEndCount", "1");
+
+    debug("Command-Up Arrow");
+    await scrollToEdge("upArrow", ["metaKey"]);
+    shouldBe("scrollY", "0");
+    shouldBeTrue("duration > 400");
+    shouldBe("scrollEndCount", "1");
+
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>

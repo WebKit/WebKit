@@ -274,6 +274,9 @@ void RemoteLayerTreeEventDispatcher::scrollingThreadHandleWheelEvent(const WebWh
     auto platformWheelEvent = platform(webWheelEvent);
     auto processingSteps = determineWheelEventProcessing(platformWheelEvent, rubberBandableEdges);
 
+    // Do this before the event is handled here or in the web process, so that it stops springs whichever scroller handles it.
+    scrollingTree->stopSpringAnimationsForWheelEvent(platformWheelEvent);
+
     bool needSynchronousScrolling = processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling);
     if (needSynchronousScrolling) {
         scrollingTree->willSendEventForDefaultHandling(platformWheelEvent);

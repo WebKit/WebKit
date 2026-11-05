@@ -1,0 +1,15 @@
+Tests that Home and End scroll a scroller that animates on the main thread to the start of the inline axis, as well as to the start or end of the block axis.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Home
+PASS scroller.scrollLeft is 0
+PASS scroller.scrollTop is 0
+End
+PASS scroller.scrollLeft is 0
+PASS scroller.scrollTop is maxScrollTop
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

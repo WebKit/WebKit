@@ -30,9 +30,12 @@
 
 #include "FloatPoint.h"
 #include "GeometryUtilities.h"
+#include "KeyboardScroll.h"
 #include "ScrollExtents.h"
 #include "ScrollableArea.h"
+#include "SpringSolver.h"
 #include "TimingFunction.h"
+#include "UnitBezier.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -43,6 +46,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollAnimationSmooth);
 static const float animationSpeed { 1000.0f };
 static const Seconds maxAnimationDuration { 200_ms };
 
+// The end of the spring is imperceptible, so finish once the remaining distance is a fraction of a pixel.
+static constexpr float springAnimationCompletionDistance { 0.25 };
+
 ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollAnimationClient& client)
     : ScrollAnimation(Type::Smooth, client)
     , m_timingFunction(CubicBezierTimingFunction::create())
@@ -51,10 +57,11 @@ ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollAnimationClient& client)
 
 ScrollAnimationSmooth::~ScrollAnimationSmooth() = default;
 
-bool ScrollAnimationSmooth::startAnimatedScrollToDestination(const FloatPoint& fromOffset, const FloatPoint& destinationOffset)
+bool ScrollAnimationSmooth::startAnimatedScrollToDestination(const FloatPoint& fromOffset, const FloatPoint& destinationOffset, ScrollAnimationCurve curve)
 {
     auto extents = m_client.scrollExtentsForAnimation(*this);
 
+    m_curve = curve;
     m_currentOffset = m_startOffset = fromOffset;
     m_destinationOffset = destinationOffset.constrainedBetween(extents.minimumScrollOffset(), extents.maximumScrollOffset());
 
@@ -75,11 +82,17 @@ bool ScrollAnimationSmooth::startAnimatedScrollToDestination(const FloatPoint& f
 
 bool ScrollAnimationSmooth::retargetActiveAnimation(const FloatPoint& newOffset)
 {
+    return retargetActiveAnimation(newOffset, m_curve);
+}
+
+bool ScrollAnimationSmooth::retargetActiveAnimation(const FloatPoint& newOffset, ScrollAnimationCurve curve)
+{
     if (!isActive())
         return false;
 
     auto extents = m_client.scrollExtentsForAnimation(*this);
 
+    m_curve = curve;
     m_startTime = MonotonicTime::now();
     m_startOffset = m_currentOffset;
     m_destinationOffset = newOffset.constrainedBetween(extents.minimumScrollOffset(), extents.maximumScrollOffset());
@@ -103,7 +116,23 @@ void ScrollAnimationSmooth::updateScrollExtents()
 Seconds ScrollAnimationSmooth::durationFromDistance(const FloatSize& delta) const
 {
     float distance = euclidianDistance(delta);
+    if (m_curve == ScrollAnimationCurve::Spring)
+        return distance ? DocumentEdgeScrollSpring::duration : 0_s;
     return std::min(Seconds(distance / animationSpeed), maxAnimationDuration);
+}
+
+double ScrollAnimationSmooth::springProgress(Seconds elapsedTime)
+{
+    // Computed the same way SpringSolver computes the damping ratio, so that the ratio is exactly 1.
+    double damping = 2 * std::sqrt(DocumentEdgeScrollSpring::stiffness * DocumentEdgeScrollSpring::mass);
+
+    // Like a CAMediaTimingFunction, the bezier warps time before the spring is evaluated. It removes the
+    // initial ease-in of the spring, so that the curve resembles exponential decay.
+    auto& controlPoints = DocumentEdgeScrollSpring::timingFunctionControlPoints;
+    double fractionComplete = std::clamp(elapsedTime / DocumentEdgeScrollSpring::duration, 0.0, 1.0);
+    double warpedTime = UnitBezier(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3]).solve(fractionComplete, UnitBezier::kBezierEpsilon) * DocumentEdgeScrollSpring::duration.value();
+
+    return SpringSolver(DocumentEdgeScrollSpring::mass, DocumentEdgeScrollSpring::stiffness, damping, 0).solve(warpedTime);
 }
 
 void ScrollAnimationSmooth::serviceAnimation(MonotonicTime currentTime)
@@ -119,13 +148,23 @@ bool ScrollAnimationSmooth::animateScroll(MonotonicTime currentTime)
     MonotonicTime endTime = m_startTime + m_duration;
     currentTime = std::min(currentTime, endTime);
 
-    double fractionComplete = (currentTime - m_startTime) / m_duration;
-    float progress = protect(m_timingFunction)->transformProgress(fractionComplete, m_duration.value());
+    float progress;
+    if (m_curve == ScrollAnimationCurve::Spring)
+        progress = springProgress(currentTime - m_startTime);
+    else {
+        double fractionComplete = (currentTime - m_startTime) / m_duration;
+        progress = protect(m_timingFunction)->transformProgress(fractionComplete, m_duration.value());
+    }
 
     m_currentOffset = {
         std::lerp(m_startOffset.x(), m_destinationOffset.x(), progress),
         std::lerp(m_startOffset.y(), m_destinationOffset.y(), progress),
     };
+
+    if (m_curve == ScrollAnimationCurve::Spring && (currentTime == endTime || euclidianDistance(m_destinationOffset - m_currentOffset) < springAnimationCompletionDistance)) {
+        m_currentOffset = m_destinationOffset;
+        return false;
+    }
 
     return currentTime < endTime;
 }
@@ -133,7 +172,7 @@ bool ScrollAnimationSmooth::animateScroll(MonotonicTime currentTime)
 String ScrollAnimationSmooth::debugDescription() const
 {
     TextStream textStream;
-    textStream << "ScrollAnimationSmooth " << this << " active " << isActive() << " from " << m_startOffset << " to " << m_destinationOffset << " current offset " << currentOffset();
+    textStream << "ScrollAnimationSmooth " << this << " active " << isActive() << " curve " << m_curve << " from " << m_startOffset << " to " << m_destinationOffset << " current offset " << currentOffset();
     return textStream.release();
 }
 
