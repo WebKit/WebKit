@@ -264,10 +264,9 @@ void GPUDevice::destroy(ScriptExecutionContext& scriptExecutionContext)
         return;
 
     m_isDestroyed = true;
-    for (Ref buffer : m_buffersToUnmap)
+    auto buffersToUnmap = std::exchange(m_buffersToUnmap, { });
+    for (Ref buffer : buffersToUnmap)
         buffer->destroy(scriptExecutionContext);
-
-    m_buffersToUnmap.clear();
 
     m_backing->destroy();
     notifyMemoryCostChanged();
@@ -320,6 +319,8 @@ ExceptionOr<Ref<GPUBuffer>> GPUDevice::createBuffer(GPUBufferDescriptor&& buffer
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createBuffer: Unable to create buffer."_s };
 
     Ref result = GPUBuffer::create(buffer.releaseNonNull(), bufferSize, usage, mappedAtCreation, WTF::move(backingDescriptor.label), *this);
+    if (mappedAtCreation)
+        addBufferToUnmap(result);
     // A buffer over the device's limits is invalid, so it holds no memory.
     if (bufferSize <= limits()->maxBufferSize())
         result->setMemoryCost(memoryCostIfAllocatable(bufferSize));

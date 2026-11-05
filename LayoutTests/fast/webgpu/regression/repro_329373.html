@@ -1,0 +1,52 @@
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Test that GPUDevice.destroy() cancels pending GPUBuffer.mapAsync() with AbortError and unmaps mappedAtCreation buffers.");
+
+async function main() {
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+
+    const buffer = device.createBuffer({
+        size: 16,
+        usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
+    });
+
+    const mappedAtCreationBuffer = device.createBuffer({
+        size: 16,
+        usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.COPY_SRC,
+        mappedAtCreation: true,
+    });
+
+    window.buffer = buffer;
+    window.mappedAtCreationBuffer = mappedAtCreationBuffer;
+
+    const mapPromise = buffer.mapAsync(GPUMapMode.READ).then(
+        () => "fulfilled",
+        error => error.name
+    );
+
+    shouldBeEqualToString("buffer.mapState", "pending");
+    shouldBeEqualToString("mappedAtCreationBuffer.mapState", "mapped");
+
+    device.destroy();
+
+    shouldBeEqualToString("buffer.mapState", "unmapped");
+    shouldBeEqualToString("mappedAtCreationBuffer.mapState", "unmapped");
+
+    window.mapResult = await mapPromise;
+    shouldBeEqualToString("mapResult", "AbortError");
+    shouldBeEqualToString("buffer.mapState", "unmapped");
+    shouldThrowErrorName("buffer.getMappedRange()", "OperationError");
+    shouldThrowErrorName("mappedAtCreationBuffer.getMappedRange()", "OperationError");
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>
