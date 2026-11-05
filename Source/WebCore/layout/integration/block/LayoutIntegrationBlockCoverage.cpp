@@ -48,6 +48,7 @@
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderObjectInlines.h"
+#include "RenderReplaced.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -227,10 +228,15 @@ static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& leaf, const Rend
     auto isInsideLeaf = [&](const RenderBox& containingBlock) {
         return &containingBlock == &leaf || containingBlock.isDescendantOf(&leaf);
     };
+    // A replaced element gives the boxes of its shadow content its content box size as their fixed size, like the controls of a media element
+    // (RenderReplaced::layoutShadowContent).
+    auto isShadowContentOfReplacedElement = [](const RenderBox& box) {
+        return is<RenderReplaced>(box.parent());
+    };
     auto resolvesOutsideLeaf = [&](const RenderBox& box) {
         auto isHorizontalWritingMode = box.isHorizontalWritingMode();
         for (CheckedPtr containingBlock = box.containingBlock(); containingBlock && isInsideLeaf(*containingBlock); containingBlock = containingBlock->containingBlock()) {
-            if (!box.skipContainingBlockForPercentHeightCalculation(*containingBlock, isHorizontalWritingMode != containingBlock->isHorizontalWritingMode()))
+            if (isShadowContentOfReplacedElement(*containingBlock) || !box.skipContainingBlockForPercentHeightCalculation(*containingBlock, isHorizontalWritingMode != containingBlock->isHorizontalWritingMode()))
                 return false;
         }
         return true;
@@ -240,7 +246,7 @@ static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& leaf, const Rend
     auto replacedElementResolvesOutsideLeaf = [&](const RenderBox& replaced) {
         for (CheckedPtr containingBlock = replaced.containingBlock(); containingBlock && isInsideLeaf(*containingBlock); containingBlock = containingBlock->containingBlock()) {
             CheckedRef style = containingBlock->style();
-            if (!style->logicalHeight().isAuto() || containingBlock->isRenderTableCell() || containingBlock->isOutOfFlowPositioned() || style->aspectRatio().hasRatio())
+            if (!style->logicalHeight().isAuto() || isShadowContentOfReplacedElement(*containingBlock) || containingBlock->isRenderTableCell() || containingBlock->isOutOfFlowPositioned() || style->aspectRatio().hasRatio())
                 return false;
             if (containingBlock == replaced.containingBlock() && containingBlock->isFlexibleBoxIncludingDeprecated())
                 return false;
@@ -260,6 +266,9 @@ static bool hasPercentageBlockSizeInQuirksMode(const RenderBox& leaf, const Rend
     }
     for (CheckedRef descendant : descendantsOfType<RenderBox>(leaf)) {
         if (descendant->isOutOfFlowPositioned() || !Layout::BlockFormattingUtils::hasPercentageBlockSize(descendant, descendant->writingMode()))
+            continue;
+        // The percentage block size of a table row or cell is a share of the table's (RenderTableSection::distributeExtraLogicalHeightToPercentRows).
+        if (isShadowContentOfReplacedElement(descendant) || descendant->isRenderTableRow() || descendant->isRenderTableCell())
             continue;
         if (hasStretchBlockSize(descendant) || (descendant->isRenderReplaced() ? replacedElementResolvesOutsideLeaf(descendant) : resolvesOutsideLeaf(descendant)))
             return true;
