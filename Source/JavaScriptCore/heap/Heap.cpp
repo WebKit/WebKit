@@ -137,7 +137,7 @@ static constexpr bool verboseStop = false;
 
 namespace {
 
-static GrowthMode LEGACY_NODELETE growthMode(size_t ramSize)
+NODELETE static GrowthMode growthMode(size_t ramSize)
 {
     // An Aggressive heap uses more memory to go faster.
     // We do this for machines with enough RAM.
@@ -164,7 +164,7 @@ static size_t minHeapSize(HeapType heapType, size_t ramSize)
     }
 }
 
-static size_t LEGACY_NODELETE maxEdenSizeForRateLimiting(GrowthMode growthMode, size_t minBytesPerCycle)
+NODELETE static size_t maxEdenSizeForRateLimiting(GrowthMode growthMode, size_t minBytesPerCycle)
 {
     // Only do rate limiting for Aggressive heaps.
     if (growthMode == GrowthMode::Aggressive)
@@ -216,7 +216,7 @@ static void recordType(TypeCountSet& set, JSCell* cell)
     set.add(typeName);
 }
 
-constexpr bool LEGACY_NODELETE measurePhaseTiming()
+NODELETE constexpr bool measurePhaseTiming()
 {
     return false;
 }
@@ -253,12 +253,12 @@ public:
     {
     }
     
-    void LEGACY_NODELETE setScope(std::optional<CollectionScope> scope)
+    NODELETE void setScope(std::optional<CollectionScope> scope)
     {
         m_scope = scope;
     }
     
-    void LEGACY_NODELETE setScope(JSC::Heap& heap)
+    NODELETE void setScope(JSC::Heap& heap)
     {
         setScope(heap.collectionScope());
     }

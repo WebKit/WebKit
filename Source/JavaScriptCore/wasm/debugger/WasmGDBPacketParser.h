@@ -64,10 +64,10 @@ public:
 
     GDBPacketParser() = default;
 
-    ParseResult LEGACY_NODELETE processByte(uint8_t byte);
+    NODELETE ParseResult processByte(uint8_t byte);
     StringView getCompletedPacket() const;
 
-    void LEGACY_NODELETE reset();
+    NODELETE void reset();
 
     bool isIdle() const { return m_phase == ReceivePhase::Idle; }
     ErrorReason getError() const { return m_errorReason; }

@@ -275,7 +275,7 @@ public:
     void packNodeIndices();
     void clearAbstractValues();
 
-    void LEGACY_NODELETE dethread();
+    NODELETE void dethread();
     
     FrozenValue* freeze(JSValue); // We use weak freezing by default.
     FrozenValue* freezeStrong(JSValue); // Shorthand for freeze(value)->strengthenTo(StrongValue).
@@ -315,7 +315,7 @@ public:
 
     void dump(PrintStream&, DumpContext*);
 
-    bool LEGACY_NODELETE terminalsAreValid();
+    NODELETE bool terminalsAreValid();
     
     enum PhiNodeDumpMode { DumpLivePhisOnly, DumpAllPhis };
     void dumpBlockHeader(PrintStream&, const char* prefix, BasicBlock*, PhiNodeDumpMode, DumpContext*);
@@ -641,7 +641,7 @@ public:
         return arithRound->canSpeculateInt32(pass) && !hasExitSite(arithRound->origin.semantic, Overflow) && !hasExitSite(arithRound->origin.semantic, NegativeZero);
     }
     
-    static ASCIILiteral LEGACY_NODELETE opName(NodeType);
+    NODELETE static ASCIILiteral opName(NodeType);
     
     RegisteredStructureSet* addStructureSet(const StructureSet& structureSet)
     {
@@ -846,16 +846,16 @@ public:
     // any GetLocals in the basic block.
     // FIXME: it may be appropriate, in the future, to generalize this to handle GetLocals
     // introduced anywhere in the basic block.
-    void LEGACY_NODELETE substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, VariableAccessData* variableAccessData, Node* newGetLocal);
+    NODELETE void substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, VariableAccessData* variableAccessData, Node* newGetLocal);
     
     void invalidateCFG();
     void invalidateNodeLiveness();
     
-    void LEGACY_NODELETE clearFlagsOnAllNodes(NodeFlags);
+    NODELETE void clearFlagsOnAllNodes(NodeFlags);
     
-    void LEGACY_NODELETE clearReplacements();
-    void LEGACY_NODELETE clearEpochs();
-    void LEGACY_NODELETE initializeNodeOwners();
+    NODELETE void clearReplacements();
+    NODELETE void clearEpochs();
+    NODELETE void initializeNodeOwners();
     
     BlockList blocksInPreOrder();
     BlockList blocksInPostOrder();
@@ -1356,7 +1356,7 @@ public:
             functor(virtualRegisterForArgumentIncludingThis(argument));
     }
 
-    static unsigned LEGACY_NODELETE parameterSlotsForArgCount(unsigned);
+    NODELETE static unsigned parameterSlotsForArgCount(unsigned);
     
     unsigned frameRegisterCount();
     unsigned stackPointerOffset();

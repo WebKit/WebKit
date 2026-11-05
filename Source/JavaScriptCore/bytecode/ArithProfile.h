@@ -156,13 +156,13 @@ public:
     void emitSetInt52OverflowIfNeeded(CCallHelpers&, GPRReg doubleBitsGPR) const;
 
     // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble).
-    bool LEGACY_NODELETE shouldEmitSetDouble() const;
+    NODELETE bool shouldEmitSetDouble() const;
     void emitSetDouble(CCallHelpers&, GPRReg scratchGPR) const;
 
     void emitSetNonNumeric(CCallHelpers&) const;
-    bool LEGACY_NODELETE shouldEmitSetNonNumeric() const;
+    NODELETE bool shouldEmitSetNonNumeric() const;
 
-    bool LEGACY_NODELETE shouldEmitSetHeapBigInt() const;
+    NODELETE bool shouldEmitSetHeapBigInt() const;
     void emitSetHeapBigInt(CCallHelpers&) const;
 
     void emitUnconditionalSet(CCallHelpers&, BitfieldType) const;

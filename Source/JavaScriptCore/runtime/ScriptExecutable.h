@@ -65,9 +65,9 @@ public:
     unsigned startColumn() const { return m_source.startColumn().oneBasedInt(); }
     JS_EXPORT_PRIVATE unsigned endColumn() const;
 
-    std::optional<int> LEGACY_NODELETE overrideLineNumber(VM&) const;
-    unsigned LEGACY_NODELETE typeProfilingStartOffset() const;
-    unsigned LEGACY_NODELETE typeProfilingEndOffset() const;
+    NODELETE std::optional<int> overrideLineNumber(VM&) const;
+    NODELETE unsigned typeProfilingStartOffset() const;
+    NODELETE unsigned typeProfilingEndOffset() const;
 
     bool usesArguments() const { return m_features & ArgumentsFeature; }
     bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }
@@ -135,14 +135,14 @@ public:
     template <typename ExecutableType>
     void prepareForExecution(VM&, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*&);
 
-    ScriptExecutable* LEGACY_NODELETE topLevelExecutable();
+    NODELETE ScriptExecutable* topLevelExecutable();
     JSArray* createTemplateObject(JSGlobalObject*, JSTemplateObjectDescriptor*);
 
 private:
     friend class ExecutableBase;
     void prepareForExecutionImpl(VM&, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*&);
 
-    bool LEGACY_NODELETE hasClearableCode() const;
+    NODELETE bool hasClearableCode() const;
 
     TemplateObjectMap& ensureTemplateObjectMap(VM&);
 

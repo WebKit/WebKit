@@ -262,9 +262,9 @@ public:
     JS_EXPORT_PRIVATE static Info info();
     static unsigned numberOfVMs() { return singleton().m_numberOfVMs; }
 
-    JS_EXPORT_PRIVATE static void LEGACY_NODELETE setWasmDebuggerOnStop(StopTheWorldCallback);
-    JS_EXPORT_PRIVATE static void LEGACY_NODELETE setWasmDebuggerOnResume(PostResumeCallback);
-    JS_EXPORT_PRIVATE static void LEGACY_NODELETE setMemoryDebuggerCallback(StopTheWorldCallback);
+    NODELETE JS_EXPORT_PRIVATE static void setWasmDebuggerOnStop(StopTheWorldCallback);
+    NODELETE JS_EXPORT_PRIVATE static void setWasmDebuggerOnResume(PostResumeCallback);
+    NODELETE JS_EXPORT_PRIVATE static void setMemoryDebuggerCallback(StopTheWorldCallback);
 
     ALWAYS_INLINE CONCURRENT_SAFE static void requestStopAll(StopReason reason)
     {
@@ -317,7 +317,7 @@ private:
     JS_EXPORT_PRIVATE CONCURRENT_SAFE void requestResumeAllInternal(StopReason);
 
     void resumeTheWorld() WTF_REQUIRES_LOCK(m_worldLock);
-    void LEGACY_NODELETE incrementActiveVMs(VM&) WTF_REQUIRES_LOCK(m_worldLock);
+    NODELETE void incrementActiveVMs(VM&) WTF_REQUIRES_LOCK(m_worldLock);
     void decrementActiveVMs(VM&) WTF_REQUIRES_LOCK(m_worldLock);
     void handleVMExit(VM&) WTF_REQUIRES_LOCK(m_worldLock);
     void enterStopTheWorldParticipation(VM&, StopTheWorldEvent);

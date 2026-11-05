@@ -99,8 +99,8 @@ static inline bool isAbsentUnit(Variant<TemporalAuto, std::optional<TemporalUnit
 }
 
 WTF::String ellipsizeAt(unsigned maxLength, StringView);
-PropertyName LEGACY_NODELETE temporalUnitPluralPropertyName(VM&, TemporalUnit);
-PropertyName LEGACY_NODELETE temporalUnitSingularPropertyName(VM&, TemporalUnit);
+NODELETE PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
+NODELETE PropertyName temporalUnitSingularPropertyName(VM&, TemporalUnit);
 std::optional<TemporalUnit> temporalUnitType(StringView);
 
 enum class TemporalUnitDefault : uint8_t { Unset, Required };

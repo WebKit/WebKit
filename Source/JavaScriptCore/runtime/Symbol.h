@@ -60,7 +60,7 @@ public:
     GCOwnedDataScope<const PrivateName&> privateName() const { return { this, m_privateName }; }
     JSString* description(VM&);
 
-    JSValue LEGACY_NODELETE toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
+    NODELETE JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
     JSObject* toObject(JSGlobalObject*) const;
     double toNumber(JSGlobalObject*) const;
     JSString* toString(JSGlobalObject*);

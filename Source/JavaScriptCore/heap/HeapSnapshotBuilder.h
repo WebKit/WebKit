@@ -114,7 +114,7 @@ public:
     HeapSnapshotBuilder(HeapProfiler&, SnapshotType = SnapshotType::InspectorSnapshot);
     ~HeapSnapshotBuilder() final;
 
-    static void LEGACY_NODELETE resetNextAvailableObjectIdentifier();
+    NODELETE static void resetNextAvailableObjectIdentifier();
 
     // Performs a garbage collection that builds a snapshot of all live cells.
     void buildSnapshot();
@@ -151,11 +151,11 @@ public:
 
 private:
     static NodeIdentifier nextAvailableObjectIdentifier;
-    static NodeIdentifier LEGACY_NODELETE getNextObjectIdentifier();
+    NODELETE static NodeIdentifier getNextObjectIdentifier();
 
     // Finalized snapshots are not modified during building. So searching them
     // for an existing node can be done concurrently without a lock.
-    bool LEGACY_NODELETE previousSnapshotHasNodeForCell(JSCell*, NodeIdentifier&);
+    NODELETE bool previousSnapshotHasNodeForCell(JSCell*, NodeIdentifier&);
 
     String descriptionForNode(const HeapSnapshotNode&);
 

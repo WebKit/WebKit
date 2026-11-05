@@ -49,10 +49,10 @@ class Disassembler {
 public:
     Disassembler() = default;
 
-    void LEGACY_NODELETE startEntrypoint(CCallHelpers&);
-    void LEGACY_NODELETE endEntrypoint(CCallHelpers&);
-    void LEGACY_NODELETE startLatePath(CCallHelpers&);
-    void LEGACY_NODELETE endLatePath(CCallHelpers&);
+    NODELETE void startEntrypoint(CCallHelpers&);
+    NODELETE void endEntrypoint(CCallHelpers&);
+    NODELETE void startLatePath(CCallHelpers&);
+    NODELETE void endLatePath(CCallHelpers&);
     void startBlock(BasicBlock*, CCallHelpers&);
     void addInst(Inst*, MacroAssembler::Label, MacroAssembler::Label);
 

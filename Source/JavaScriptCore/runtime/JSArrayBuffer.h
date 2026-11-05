@@ -53,8 +53,8 @@ public:
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
-    JS_EXPORT_PRIVATE bool LEGACY_NODELETE isShared() const;
-    ArrayBufferSharingMode LEGACY_NODELETE sharingMode() const;
+    NODELETE JS_EXPORT_PRIVATE bool isShared() const;
+    NODELETE ArrayBufferSharingMode sharingMode() const;
     bool isResizableOrGrowableShared() const { return m_impl->isResizableOrGrowableShared(); }
 
 #if ENABLE(WEBASSEMBLY)

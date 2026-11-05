@@ -64,7 +64,7 @@ inline void appendAirArgs(Vector<B3::Air::Arg>& args, T&& t, Arguments&&... othe
     appendAirArgs(args, std::forward<Arguments>(others)...);
 }
 
-[[noreturn]] void LEGACY_NODELETE printAirArg(PrintStream&, Context&);
+NODELETE [[noreturn]] void printAirArg(PrintStream&, Context&);
 
 // Printer<Arg&> is only a place-holder which PrintSpecial::generate() will later
 // replace with a Printer for a register, constant, etc. as appropriate. 

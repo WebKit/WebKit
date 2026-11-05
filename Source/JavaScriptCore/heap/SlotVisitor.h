@@ -129,8 +129,8 @@ public:
     bool isMarked(MarkedBlock&, HeapCell*) const final;
     bool isMarked(PreciseAllocation&, HeapCell*) const final;
 
-    void LEGACY_NODELETE didStartMarking(CollectionScope, HeapVersion markingVersion, bool isAnalyzingHeap);
-    void LEGACY_NODELETE reset();
+    NODELETE void didStartMarking(CollectionScope, HeapVersion markingVersion, bool isAnalyzingHeap);
+    NODELETE void reset();
     void clearMarkStacks();
 
     size_t bytesMarked() const { return m_flushedBytesMarked + m_bytesMarkedInHeap; }
@@ -218,13 +218,13 @@ private:
 
     void donateAll(const AbstractLocker&);
 
-    bool LEGACY_NODELETE hasWork(const AbstractLocker&);
+    NODELETE bool hasWork(const AbstractLocker&);
     bool didReachTermination(const AbstractLocker&);
 
     template<typename Func>
     IterationStatus forEachMarkStack(NOESCAPE const Func&);
 
-    MarkStackArray& LEGACY_NODELETE correspondingGlobalStack(MarkStackArray&);
+    NODELETE MarkStackArray& correspondingGlobalStack(MarkStackArray&);
 
     HeapVersion m_markingVersion;
 

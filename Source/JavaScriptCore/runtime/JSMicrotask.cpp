@@ -76,7 +76,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
-static ALWAYS_INLINE JSCell* LEGACY_NODELETE dynamicCastToCell(JSValue value)
+NODELETE static ALWAYS_INLINE JSCell* dynamicCastToCell(JSValue value)
 {
     if (value.isCell())
         return value.asCell();

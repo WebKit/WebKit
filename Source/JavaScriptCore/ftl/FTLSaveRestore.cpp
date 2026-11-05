@@ -36,12 +36,12 @@
 
 namespace JSC { namespace FTL {
 
-static size_t LEGACY_NODELETE bytesForGPRs()
+NODELETE static size_t bytesForGPRs()
 {
     return MacroAssembler::numberOfRegisters() * sizeof(int64_t);
 }
 
-static size_t LEGACY_NODELETE bytesForFPRs()
+NODELETE static size_t bytesForFPRs()
 {
     // FIXME: It might be worthwhile saving the full state of the FP registers, at some point.
     // Right now we don't need this since we only do the save/restore just prior to OSR exit, and
@@ -84,7 +84,7 @@ struct Regs {
             first = MacroAssembler::nextRegister(first);
     }
 
-    GPRReg LEGACY_NODELETE nextRegister(GPRReg current)
+    NODELETE GPRReg nextRegister(GPRReg current)
     {
         auto next = MacroAssembler::nextRegister(current);
         for (; next <= MacroAssembler::lastRegister(); next = MacroAssembler::nextRegister(next)) {

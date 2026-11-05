@@ -114,10 +114,10 @@ public:
     bool operator==(const Option&) const;
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    ASCIILiteral LEGACY_NODELETE name() const { return g_constMetaData[m_id].name; }
-    ASCIILiteral LEGACY_NODELETE description() const { return g_constMetaData[m_id].description; }
-    Options::Type LEGACY_NODELETE type() const { return g_constMetaData[m_id].type; }
-    Options::Availability LEGACY_NODELETE availability() const { return g_constMetaData[m_id].availability; }
+    NODELETE ASCIILiteral name() const { return g_constMetaData[m_id].name; }
+    NODELETE ASCIILiteral description() const { return g_constMetaData[m_id].description; }
+    NODELETE Options::Type type() const { return g_constMetaData[m_id].type; }
+    NODELETE Options::Availability availability() const { return g_constMetaData[m_id].availability; }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     Option(Options::ID id, void* addressOfValue)
@@ -169,7 +169,7 @@ static const Option defaultFor(Options::ID id)
     return Option(id, addressOfDefault);
 }
 
-inline static void* LEGACY_NODELETE addressOfOption(Options::ID id)
+NODELETE inline static void* addressOfOption(Options::ID id)
 {
     auto offset = g_constMetaData[id].offsetOfOption;
     return reinterpret_cast<uint8_t*>(&g_jscConfig.options) + offset;
@@ -182,18 +182,18 @@ static const Option optionFor(Options::ID id)
     return Option(id, addressOfOption(id));
 }
 
-inline static bool LEGACY_NODELETE hasMetadata()
+NODELETE inline static bool hasMetadata()
 {
     return !!g_metadata.get();
 }
 
-inline static bool LEGACY_NODELETE wasOverridden(Options::ID id)
+NODELETE inline static bool wasOverridden(Options::ID id)
 {
     ASSERT(id < NumberOfOptions);
     return g_optionWasOverridden->get(id);
 }
 
-inline static void LEGACY_NODELETE setWasOverridden(Options::ID id)
+NODELETE inline static void setWasOverridden(Options::ID id)
 {
     ASSERT(id < NumberOfOptions);
     g_optionWasOverridden->set(id);
@@ -318,7 +318,7 @@ std::optional<OptionsStorage::OSLogType> parse(const char* string)
 }
 
 #if OS(DARWIN)
-static os_log_type_t LEGACY_NODELETE asDarwinOSLogType(OSLogType type)
+NODELETE static os_log_type_t asDarwinOSLogType(OSLogType type)
 {
     switch (type) {
     case OSLogType::None:
@@ -702,7 +702,7 @@ void Options::setAllJITCodeValidations(bool value)
     Options::useJITAsserts() = value;
 }
 
-static inline void LEGACY_NODELETE disableAllWasmJITOptions()
+NODELETE static inline void disableAllWasmJITOptions()
 {
 #if ENABLE(WEBASSEMBLY)
     // This really only makes sense if could use wasm, otherwise we should not override this.
@@ -718,7 +718,7 @@ static inline void LEGACY_NODELETE disableAllWasmJITOptions()
     Options::dumpOMGDisassembly() = false;
 }
 
-static inline void LEGACY_NODELETE disableAllWasmOptions()
+NODELETE static inline void disableAllWasmOptions()
 {
     disableAllWasmJITOptions();
 
@@ -736,7 +736,7 @@ static inline void LEGACY_NODELETE disableAllWasmOptions()
     Options::useWasmTailCalls() = false;
 }
 
-static inline void LEGACY_NODELETE disableAllJITOptions()
+NODELETE static inline void disableAllJITOptions()
 {
 #if ENABLE(WEBASSEMBLY)
     // This really only makes sense if could use wasm, otherwise we should not override this.
@@ -765,7 +765,7 @@ static inline void LEGACY_NODELETE disableAllJITOptions()
 }
 
 #if OS(DARWIN)
-static void LEGACY_NODELETE disableAllSignalHandlerBasedOptions()
+NODELETE static void disableAllSignalHandlerBasedOptions()
 {
     Options::usePollingTraps() = true;
     Options::useSharedArrayBuffer() = false;
@@ -1182,7 +1182,7 @@ void Options::finalize()
     OptionsHelper::releaseMetadata();
 }
 
-static bool LEGACY_NODELETE isSeparator(char c)
+NODELETE static bool isSeparator(char c)
 {
     return isUnicodeCompatibleASCIIWhitespace(c) || (c == ',');
 }
@@ -1559,10 +1559,10 @@ SUPPRESS_ASAN bool canUseJITCage()
     return JSC_JIT_CAGE_VERSION() && !ASAN_ENABLED && WTF::processHasEntitlement("com.apple.private.verified-jit"_s);
 }
 #else
-bool LEGACY_NODELETE canUseJITCage() { return false; }
+NODELETE bool canUseJITCage() { return false; }
 #endif
 
-bool LEGACY_NODELETE canUseWasm()
+NODELETE bool canUseWasm()
 {
 #if ENABLE(WEBASSEMBLY) && !PLATFORM(WATCHOS)
     return true;
@@ -1571,7 +1571,7 @@ bool LEGACY_NODELETE canUseWasm()
 #endif
 }
 
-bool LEGACY_NODELETE hasCapacityToUseLargeGigacage()
+NODELETE bool hasCapacityToUseLargeGigacage()
 {
     // Gigacage::hasCapacityToUseLargeGigacage is determined based on EFFECTIVE_ADDRESS_WIDTH.
     // If we have enough address range to potentially use a large gigacage,

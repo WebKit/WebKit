@@ -101,61 +101,61 @@ public:
             : m_kind(None)
         { }
 
-        static Location LEGACY_NODELETE none();
+        NODELETE static Location none();
 
-        static Location LEGACY_NODELETE fromStack(int32_t stackOffset);
+        NODELETE static Location fromStack(int32_t stackOffset);
 
-        static Location LEGACY_NODELETE fromStackArgument(int32_t stackOffset);
+        NODELETE static Location fromStackArgument(int32_t stackOffset);
 
-        static Location LEGACY_NODELETE fromGPR(GPRReg gpr);
+        NODELETE static Location fromGPR(GPRReg gpr);
 
-        static Location LEGACY_NODELETE fromFPR(FPRReg fpr);
+        NODELETE static Location fromFPR(FPRReg fpr);
 
-        static Location LEGACY_NODELETE fromGlobal(int32_t globalOffset);
+        NODELETE static Location fromGlobal(int32_t globalOffset);
 
-        static Location LEGACY_NODELETE fromArgumentLocation(ArgumentLocation argLocation, TypeKind type);
+        NODELETE static Location fromArgumentLocation(ArgumentLocation argLocation, TypeKind type);
 
         static bool rangesOverlap(Location a, uint32_t aSize, Location b, uint32_t bSize);
 
-        bool LEGACY_NODELETE isNone() const;
+        NODELETE bool isNone() const;
 
-        bool LEGACY_NODELETE isGPR() const;
+        NODELETE bool isGPR() const;
 
-        bool LEGACY_NODELETE isFPR() const;
+        NODELETE bool isFPR() const;
 
-        bool LEGACY_NODELETE isRegister() const;
+        NODELETE bool isRegister() const;
 
-        bool LEGACY_NODELETE isStack() const;
+        NODELETE bool isStack() const;
 
-        bool LEGACY_NODELETE isStackArgument() const;
+        NODELETE bool isStackArgument() const;
 
-        bool LEGACY_NODELETE isGlobal() const;
+        NODELETE bool isGlobal() const;
 
-        bool LEGACY_NODELETE isMemory() const;
+        NODELETE bool isMemory() const;
 
-        int32_t LEGACY_NODELETE asStackOffset() const;
+        NODELETE int32_t asStackOffset() const;
 
-        Address LEGACY_NODELETE asStackAddress() const;
+        NODELETE Address asStackAddress() const;
 
-        int32_t LEGACY_NODELETE asGlobalOffset() const;
+        NODELETE int32_t asGlobalOffset() const;
 
-        Address LEGACY_NODELETE asGlobalAddress() const;
+        NODELETE Address asGlobalAddress() const;
 
-        int32_t LEGACY_NODELETE asStackArgumentOffset() const;
+        NODELETE int32_t asStackArgumentOffset() const;
 
-        Address LEGACY_NODELETE asStackArgumentAddress() const;
+        NODELETE Address asStackArgumentAddress() const;
 
-        Address LEGACY_NODELETE asAddress() const;
+        NODELETE Address asAddress() const;
 
-        GPRReg LEGACY_NODELETE asGPR() const;
-        FPRReg LEGACY_NODELETE asFPR() const;
+        NODELETE GPRReg asGPR() const;
+        NODELETE FPRReg asFPR() const;
         Reg asReg() const { return isGPR() ? Reg(asGPR()) : Reg(asFPR()); }
 
         void dump(PrintStream& out) const;
 
-        bool LEGACY_NODELETE operator==(Location other) const;
+        NODELETE bool operator==(Location other) const;
 
-        Kind LEGACY_NODELETE kind() const;
+        NODELETE Kind kind() const;
 
     private:
         union {
@@ -178,16 +178,16 @@ public:
 
     static_assert(sizeof(Location) == 4);
 
-    static bool LEGACY_NODELETE isValidValueTypeKind(TypeKind kind);
+    NODELETE static bool isValidValueTypeKind(TypeKind kind);
 
-    static TypeKind LEGACY_NODELETE pointerType();
+    NODELETE static TypeKind pointerType();
 
-    static bool LEGACY_NODELETE isFloatingPointType(TypeKind type);
+    NODELETE static bool isFloatingPointType(TypeKind type);
 
 public:
     static uint32_t sizeOfType(TypeKind type);
 
-    static TypeKind LEGACY_NODELETE toValueKind(TypeKind kind);
+    NODELETE static TypeKind toValueKind(TypeKind kind);
 
     class Value {
     public:
@@ -409,10 +409,10 @@ public:
         };
 
         static RegisterBinding none() { return RegisterBinding(); }
-        static RegisterBinding LEGACY_NODELETE fromValue(Value);
-        static RegisterBinding LEGACY_NODELETE scratch();
+        NODELETE static RegisterBinding fromValue(Value);
+        NODELETE static RegisterBinding scratch();
 
-        Value LEGACY_NODELETE toValue() const;
+        NODELETE Value toValue() const;
 
         bool isNone() const { return m_kind == None; }
         bool isValid() const { return m_kind != None; }
@@ -422,7 +422,7 @@ public:
 
         void dump(PrintStream& out) const;
 
-        unsigned LEGACY_NODELETE hash() const;
+        NODELETE unsigned hash() const;
 
         TypeKind m_type { 0 };
         unsigned m_kind : 3 { None };
@@ -674,7 +674,7 @@ public:
         }
 
         // This function is intentionally not using implicitSlots since arguments and results should not include implicit slot.
-        Location LEGACY_NODELETE allocateArgumentOrResult(BBQJIT& generator, TypeKind type, unsigned i, RegisterSet& remainingGPRs, RegisterSet& remainingFPRs);
+        NODELETE Location allocateArgumentOrResult(BBQJIT& generator, TypeKind type, unsigned i, RegisterSet& remainingGPRs, RegisterSet& remainingFPRs);
 
         template<typename Stack>
         void flushAtBlockBoundary(BBQJIT& generator, unsigned targetArity, Stack& expressionStack, bool endOfWasmBlock)
@@ -809,9 +809,9 @@ public:
             }
         }
 
-        void LEGACY_NODELETE convertIfToBlock();
+        NODELETE void convertIfToBlock();
 
-        void LEGACY_NODELETE convertLoopToBlock();
+        NODELETE void convertLoopToBlock();
 
         void addBranch(Jump jump);
 
@@ -825,20 +825,20 @@ public:
 
         void linkIfBranch(MacroAssembler::AbstractMacroAssemblerType* masm);
 
-        void LEGACY_NODELETE dump(PrintStream& out) const;
+        NODELETE void dump(PrintStream& out) const;
 
-        LocalOrTempIndex LEGACY_NODELETE enclosedHeight() const;
+        NODELETE LocalOrTempIndex enclosedHeight() const;
 
-        unsigned LEGACY_NODELETE implicitSlots() const;
+        NODELETE unsigned implicitSlots() const;
 
-        const Vector<Location, 2>& LEGACY_NODELETE targetLocations() const;
+        NODELETE const Vector<Location, 2>& targetLocations() const;
 
-        const Vector<Location, 2>& LEGACY_NODELETE argumentLocations() const;
+        NODELETE const Vector<Location, 2>& argumentLocations() const;
 
-        const Vector<Location, 2>& LEGACY_NODELETE resultLocations() const;
+        NODELETE const Vector<Location, 2>& resultLocations() const;
 
-        BlockType LEGACY_NODELETE blockType() const;
-        const BlockSignature& LEGACY_NODELETE signature() const;
+        NODELETE BlockType blockType() const;
+        NODELETE const BlockSignature& signature() const;
 
         FunctionArgCount branchTargetArity() const;
 
@@ -846,17 +846,17 @@ public:
 
         Type argumentType(unsigned i) const;
 
-        CatchKind LEGACY_NODELETE catchKind() const;
+        NODELETE CatchKind catchKind() const;
 
-        void LEGACY_NODELETE setCatchKind(CatchKind catchKind);
+        NODELETE void setCatchKind(CatchKind catchKind);
 
-        unsigned LEGACY_NODELETE tryStart() const;
+        NODELETE unsigned tryStart() const;
 
-        unsigned LEGACY_NODELETE tryEnd() const;
+        NODELETE unsigned tryEnd() const;
 
-        unsigned LEGACY_NODELETE tryCatchDepth() const;
+        NODELETE unsigned tryCatchDepth() const;
 
-        void LEGACY_NODELETE setTryInfo(unsigned tryStart, unsigned tryEnd, unsigned tryCatchDepth);
+        NODELETE void setTryInfo(unsigned tryStart, unsigned tryEnd, unsigned tryCatchDepth);
 
         struct TryTableTarget {
             CatchKind type;
@@ -868,16 +868,16 @@ public:
 
         void setTryTableTargets(TargetList&&);
 
-        void LEGACY_NODELETE setIfBranch(MacroAssembler::Jump branch);
+        NODELETE void setIfBranch(MacroAssembler::Jump branch);
 
-        void LEGACY_NODELETE setLoopLabel(MacroAssembler::Label label);
+        NODELETE void setLoopLabel(MacroAssembler::Label label);
 
-        const MacroAssembler::Label& LEGACY_NODELETE loopLabel() const;
+        NODELETE const MacroAssembler::Label& loopLabel() const;
 
     private:
         friend class BBQJIT;
 
-        void LEGACY_NODELETE fillLabels(CCallHelpers::Label label);
+        NODELETE void fillLabels(CCallHelpers::Label label);
 
         BlockSignature m_signature;
         BlockType m_blockType;
@@ -1065,7 +1065,7 @@ public:
         return Value::none();
     }
 
-    void LEGACY_NODELETE setParser(FunctionParser<BBQJIT>* parser);
+    NODELETE void setParser(FunctionParser<BBQJIT>* parser);
 
     bool addArguments(const RTT& signature);
 
@@ -1075,7 +1075,7 @@ public:
 
     PartialResult addLocal(Type type, uint32_t numberOfLocals);
 
-    Value LEGACY_NODELETE instanceValue();
+    NODELETE Value instanceValue();
 
     // Tables
     [[nodiscard]] PartialResult addTableGet(unsigned tableIndex, Value index, Value& result);
@@ -1104,9 +1104,9 @@ public:
 
     // Globals
 
-    Value LEGACY_NODELETE topValue(TypeKind type, unsigned offset = 0);
+    NODELETE Value topValue(TypeKind type, unsigned offset = 0);
 
-    Value LEGACY_NODELETE exception(const ControlData& control);
+    NODELETE Value exception(const ControlData& control);
 
     [[nodiscard]] PartialResult getGlobal(uint32_t index, Value& result);
 
@@ -1395,11 +1395,11 @@ public:
         I64TruncF64U
     };
 
-    TruncationKind LEGACY_NODELETE truncationKind(OpType truncationOp);
+    NODELETE TruncationKind truncationKind(OpType truncationOp);
 
-    TruncationKind LEGACY_NODELETE truncationKind(Ext1OpType truncationOp);
+    NODELETE TruncationKind truncationKind(Ext1OpType truncationOp);
 
-    FloatingPointRange LEGACY_NODELETE lookupTruncationRange(TruncationKind truncationKind);
+    NODELETE FloatingPointRange lookupTruncationRange(TruncationKind truncationKind);
 
     void truncInBounds(TruncationKind truncationKind, Location operandLocation, Location resultLocation, FPRReg scratch1FPR, FPRReg scratch2FPR);
 
@@ -1947,13 +1947,13 @@ public:
     // Control flow
     [[nodiscard]] ControlData addTopLevel(BlockSignature&&);
 
-    bool LEGACY_NODELETE hasLoops() const;
+    NODELETE bool hasLoops() const;
 
     MacroAssembler::Label addLoopOSREntrypoint();
 
     [[nodiscard]] PartialResult addBlock(BlockSignature&&, std::span<TypedExpression> args, ControlType& result);
 
-    B3::Type LEGACY_NODELETE toB3Type(Type);
+    NODELETE B3::Type toB3Type(Type);
 
     B3::Type toB3Type(TypeKind);
 
@@ -2027,7 +2027,7 @@ public:
         BranchNotFolded
     };
 
-    [[nodiscard]] BranchFoldResult LEGACY_NODELETE tryFoldFusedBranchCompare(OpType, ExpressionType);
+    NODELETE [[nodiscard]] BranchFoldResult tryFoldFusedBranchCompare(OpType, ExpressionType);
     [[nodiscard]] Jump emitFusedBranchCompareBranch(OpType, ExpressionType, Location);
     [[nodiscard]] BranchFoldResult tryFoldFusedBranchCompare(OpType, ExpressionType, ExpressionType);
     [[nodiscard]] Jump emitFusedBranchCompareBranch(OpType, ExpressionType, Location, ExpressionType, Location);
@@ -2057,7 +2057,7 @@ public:
 
     void slowPathSpillBindings(const RegisterBindings&);
     void slowPathRestoreBindings(const RegisterBindings&);
-    void LEGACY_NODELETE restoreValuesAfterCall(const CallInformation&);
+    NODELETE void restoreValuesAfterCall(const CallInformation&);
 
     template<size_t N>
     void returnValuesFromCall(Vector<Value, N>& results, const RTT& functionType, const CallInformation&);
@@ -2090,9 +2090,9 @@ public:
 
     // SIMD
 
-    bool LEGACY_NODELETE usesSIMD();
+    NODELETE bool usesSIMD();
 
-    void LEGACY_NODELETE notifyFunctionUsesSIMD();
+    NODELETE void notifyFunctionUsesSIMD();
 
     PartialResult addSIMDLoad(ExpressionType, uint64_t, ExpressionType&, uint8_t);
 
@@ -2142,21 +2142,21 @@ public:
 
     void dump(const ControlStack&, const Stack*);
     void didFinishParsingLocals();
-    void LEGACY_NODELETE didPopValueFromStack(ExpressionType, ASCIILiteral);
+    NODELETE void didPopValueFromStack(ExpressionType, ASCIILiteral);
 
     void finalize();
 
-    Vector<UnlinkedHandlerInfo>&& LEGACY_NODELETE takeExceptionHandlers();
-    FixedBitVector&& LEGACY_NODELETE takeDirectCallees();
-    Vector<CCallHelpers::Label>&& LEGACY_NODELETE takeCatchEntrypoints();
+    NODELETE Vector<UnlinkedHandlerInfo>&& takeExceptionHandlers();
+    NODELETE FixedBitVector&& takeDirectCallees();
+    NODELETE Vector<CCallHelpers::Label>&& takeCatchEntrypoints();
     Box<PCToCodeOriginMapBuilder> takePCToCodeOriginMapBuilder();
 
     std::unique_ptr<BBQDisassembler> takeDisassembler();
 
-    const RegisterAtOffsetList& LEGACY_NODELETE calleeSaveRegisters() const LIFETIME_BOUND { return m_calleeSaves; }
+    NODELETE const RegisterAtOffsetList& calleeSaveRegisters() const LIFETIME_BOUND { return m_calleeSaves; }
 
 private:
-    static bool LEGACY_NODELETE isScratch(Location);
+    NODELETE static bool isScratch(Location);
 
     void emitStoreConst(Value constant, Location dst);
     void emitStoreConst(StorageType, Value constant, BaseIndex dst);
@@ -2195,10 +2195,10 @@ private:
     template<size_t N, typename OverflowHandler>
     void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector);
 
-    ControlData& LEGACY_NODELETE currentControlData();
+    NODELETE ControlData& currentControlData();
 
-    void LEGACY_NODELETE setLRUKey(Location, LocalOrTempIndex key);
-    void LEGACY_NODELETE increaseLRUKey(Location);
+    NODELETE void setLRUKey(Location, LocalOrTempIndex key);
+    NODELETE void increaseLRUKey(Location);
     uint32_t nextLRUKey() { return ++m_lastUseTimestamp; }
 
     Location bind(Value);
@@ -2207,7 +2207,7 @@ private:
 
     Location allocateWithHint(Value, Location hint);
 
-    Location LEGACY_NODELETE locationOfWithoutBinding(Value);
+    NODELETE Location locationOfWithoutBinding(Value);
 
     Location locationOf(Value);
 
@@ -2285,7 +2285,7 @@ private:
     }
     void clobber(JSC::Reg reg) { reg.isGPR() ? clobber(reg.gpr()) : clobber(reg.fpr()); }
 
-    Location LEGACY_NODELETE canonicalSlot(Value);
+    NODELETE Location canonicalSlot(Value);
 
     Location allocateStack(Value value);
 

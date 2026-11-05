@@ -117,8 +117,8 @@ public:
     MembershipChange::Ticket requestMembershipChange(MembershipChange&&);
 
     // Summed over the heaps, for the MutatorScheduler.
-    size_t LEGACY_NODELETE totalBytesAllocatedThisCycle();
-    size_t LEGACY_NODELETE totalMaxEdenSize();
+    NODELETE size_t totalBytesAllocatedThisCycle();
+    NODELETE size_t totalMaxEdenSize();
 
     void dump(PrintStream&) const;
 

@@ -44,12 +44,12 @@ struct WeakCustomGetterOrSetterHashTranslator {
 
     using Key = std::tuple<PropertyName, typename T::CustomFunctionPointer, const ClassInfo*>;
 
-    static unsigned LEGACY_NODELETE hash(const Key& key)
+    NODELETE static unsigned hash(const Key& key)
     {
         return BaseHash::hash(std::get<0>(key), std::get<1>(key), std::get<2>(key));
     }
 
-    static bool LEGACY_NODELETE equal(T* a, const Key& b)
+    NODELETE static bool equal(T* a, const Key& b)
     {
         return a->propertyName() == std::get<0>(b) && a->customFunctionPointer() == std::get<1>(b) && a->slotBaseClassInfoIfExists() == std::get<2>(b);
     }

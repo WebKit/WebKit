@@ -203,7 +203,7 @@ namespace JSC {
             return (size + sizeof(WTF::AllocAlignmentInteger) - 1) & ~(sizeof(WTF::AllocAlignmentInteger) - 1);
         }
 
-        void* LEGACY_NODELETE freeablePool();
+        NODELETE void* freeablePool();
         void allocateFreeablePool();
         void deallocateObjects();
 

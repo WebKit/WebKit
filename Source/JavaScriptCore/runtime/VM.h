@@ -297,7 +297,7 @@ public:
     inline CallFrame* topJSCallFrame() const;
 
     // Global object in which execution began.
-    JS_EXPORT_PRIVATE JSGlobalObject* LEGACY_NODELETE deprecatedVMEntryGlobalObject(JSGlobalObject*) const;
+    NODELETE JS_EXPORT_PRIVATE JSGlobalObject* deprecatedVMEntryGlobalObject(JSGlobalObject*) const;
 
     WeakRandom& random() LIFETIME_BOUND { return m_random; }
     WeakRandom& heapRandom() LIFETIME_BOUND { return m_heapRandom; }
@@ -312,7 +312,7 @@ public:
         m_hasTerminationRequest = false;
         clearEntryScopeService(ConcurrentEntryScopeService::ResetTerminationRequest);
     }
-    void LEGACY_NODELETE setHasTerminationRequest();
+    NODELETE void setHasTerminationRequest();
 
     bool executionForbidden() const { return m_executionForbidden; }
     void setExecutionForbidden() { m_executionForbidden = true; }
@@ -873,7 +873,7 @@ public:
     }
 
     void* lastStackTop() { return m_lastStackTop; }
-    void LEGACY_NODELETE setLastStackTop(const Thread&);
+    NODELETE void setLastStackTop(const Thread&);
     
 #if ENABLE(C_LOOP)
     ALWAYS_INLINE CLoopStack& cloopStack() { return traps().cloopStack(); }
@@ -1028,7 +1028,7 @@ public:
         DrainMicrotaskDelayScope& operator=(const DrainMicrotaskDelayScope&);
 
     private:
-        void LEGACY_NODELETE increment();
+        NODELETE void increment();
         void decrement();
 
         RefPtr<VM> m_vm;
@@ -1103,7 +1103,7 @@ public:
 
     WTF::RunLoop& runLoop() const { return m_runLoop; }
 
-    static void LEGACY_NODELETE setCrashOnVMCreation(bool);
+    NODELETE static void setCrashOnVMCreation(bool);
 
     void addLoopHintExecutionCounter(const JSInstruction*);
     uintptr_t* getLoopHintExecutionCounter(const JSInstruction*);
@@ -1132,8 +1132,8 @@ public:
     void reconcileWeakReferencesAtGCEnd();
     DECLARE_VISIT_AGGREGATE;
 
-    void LEGACY_NODELETE addDebugger(Debugger&);
-    void LEGACY_NODELETE removeDebugger(Debugger&);
+    NODELETE void addDebugger(Debugger&);
+    NODELETE void removeDebugger(Debugger&);
     template<typename Func>
     void forEachDebugger(NOESCAPE const Func&);
 
@@ -1144,7 +1144,7 @@ public:
 
     int64_t numberOfActiveJITPlans() const { return m_numberOfActiveJITPlans.load(std::memory_order_relaxed); }
 
-    Ref<Waiter> LEGACY_NODELETE syncWaiter();
+    NODELETE Ref<Waiter> syncWaiter();
 
     void notifyDebuggerHookInjected() { m_isDebuggerHookInjected = true; }
     bool isDebuggerHookInjected() const { return m_isDebuggerHookInjected; }
@@ -1152,7 +1152,7 @@ public:
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
     Wasm::DebugState* debugStateIfExists() { return m_debugState.get(); }
-    JS_EXPORT_PRIVATE Wasm::DebugState* LEGACY_NODELETE debugState();
+    NODELETE JS_EXPORT_PRIVATE Wasm::DebugState* debugState();
 #endif
 
 private:

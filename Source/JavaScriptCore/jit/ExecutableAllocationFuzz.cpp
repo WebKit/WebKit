@@ -35,7 +35,7 @@
 namespace JSC {
 
 static Atomic<unsigned> s_numberOfExecutableAllocationFuzzChecks;
-unsigned LEGACY_NODELETE numberOfExecutableAllocationFuzzChecks()
+NODELETE unsigned numberOfExecutableAllocationFuzzChecks()
 {
     return s_numberOfExecutableAllocationFuzzChecks.load();
 }

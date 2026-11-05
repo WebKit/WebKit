@@ -46,10 +46,10 @@ using JITWriteSeparateHeapsFunction = void (*)(off_t, const void*, size_t);
     WTF_FUNCPTR_PTRAUTH_STR("JSCConfig." #method) method
 
 struct Config {
-    static Config& LEGACY_NODELETE singleton();
+    NODELETE static Config& singleton();
 
     static void disableFreezingForTesting() { g_wtfConfig.disableFreezingForTesting(); }
-    JS_EXPORT_PRIVATE static void LEGACY_NODELETE enableRestrictedOptions();
+    NODELETE JS_EXPORT_PRIVATE static void enableRestrictedOptions();
     static void finalize() { WTF::Config::finalize(); }
 
     static void configureForTesting()

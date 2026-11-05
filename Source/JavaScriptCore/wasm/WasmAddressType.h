@@ -56,11 +56,11 @@ public:
     { }
 
     AddressType::Kind type() const { return m_type; }
-    TypeKind LEGACY_NODELETE asWasmTypeKind() const;
+    NODELETE TypeKind asWasmTypeKind() const;
     Wasm::Type asWasmType() const;
-    B3::TypeKind LEGACY_NODELETE asB3TypeKind() const;
+    NODELETE B3::TypeKind asB3TypeKind() const;
 
-    friend bool LEGACY_NODELETE operator==(const AddressType& lhs, const AddressType& rhs);
+    friend bool operator==(const AddressType& lhs, const AddressType& rhs);
     friend bool operator!=(const AddressType& lhs, const AddressType& rhs);
     constexpr bool is64Bit() const { return m_type == AddressType::I64; }
 
@@ -68,6 +68,8 @@ private:
 
     AddressType::Kind m_type { AddressType::I32 };
 };
+
+NODELETE bool operator==(const AddressType&, const AddressType&);
 
 } } // namespace JSC::Wasm
     //

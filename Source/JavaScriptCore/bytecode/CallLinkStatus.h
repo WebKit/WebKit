@@ -103,7 +103,7 @@ public:
     bool isBasedOnStub() const { return m_isBasedOnStub; }
     bool canOptimize() const { return !m_variants.isEmpty(); }
 
-    bool LEGACY_NODELETE isClosureCall() const; // Returns true if any callee is a closure call.
+    NODELETE bool isClosureCall() const; // Returns true if any callee is a closure call.
 
     void makeClosureCall();
 

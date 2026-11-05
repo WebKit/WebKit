@@ -273,7 +273,7 @@ void StackVisitor::readInlinableNativeCalleeFrame(CallFrame* callFrame)
 }
 
 #if ENABLE(DFG_JIT)
-static int LEGACY_NODELETE inlinedFrameOffset(CodeOrigin* codeOrigin)
+NODELETE static int inlinedFrameOffset(CodeOrigin* codeOrigin)
 {
     InlineCallFrame* inlineCallFrame = codeOrigin->inlineCallFrame();
     int frameOffset = inlineCallFrame ? inlineCallFrame->stackOffset : 0;

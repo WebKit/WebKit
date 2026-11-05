@@ -77,15 +77,15 @@ public:
     iterator end() LIFETIME_BOUND;
     DebuggerScope* next();
 
-    void LEGACY_NODELETE invalidateChain();
+    NODELETE void invalidateChain();
     bool isValid() const { return !!m_scope; }
 
     bool isCatchScope() const;
     bool isFunctionNameScope() const;
-    bool LEGACY_NODELETE isWithScope() const;
-    bool LEGACY_NODELETE isGlobalScope() const;
+    NODELETE bool isWithScope() const;
+    NODELETE bool isGlobalScope() const;
     bool isClosureScope() const;
-    bool LEGACY_NODELETE isGlobalLexicalEnvironment() const;
+    NODELETE bool isGlobalLexicalEnvironment() const;
     bool isNestedLexicalScope() const;
 
     String name() const;

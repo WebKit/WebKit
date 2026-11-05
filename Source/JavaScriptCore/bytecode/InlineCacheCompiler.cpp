@@ -84,7 +84,7 @@ static constexpr bool traceHandlerStats = false || ICStatsInternal::traceHandler
 }
 
 template<typename... Args>
-static void LEGACY_NODELETE traceHandler(CCallHelpers& jit, ICEvent::Kind kind, Args&&... args)
+NODELETE static void traceHandler(CCallHelpers& jit, ICEvent::Kind kind, Args&&... args)
 {
     if constexpr (InlineCacheCompilerInternal::traceHandlerExecution) {
 #if CPU(ARM64)
@@ -114,7 +114,7 @@ void AccessGenerationResult::dump(PrintStream& out) const
         out.print(":", *m_handler);
 }
 
-static TypedArrayType LEGACY_NODELETE toTypedArrayType(AccessCase::AccessType accessType)
+NODELETE static TypedArrayType toTypedArrayType(AccessCase::AccessType accessType)
 {
     switch (accessType) {
     case AccessCase::IndexedTypedArrayInt8Load:
@@ -192,7 +192,7 @@ static TypedArrayType LEGACY_NODELETE toTypedArrayType(AccessCase::AccessType ac
     }
 }
 
-static bool LEGACY_NODELETE forResizableTypedArray(AccessCase::AccessType accessType)
+NODELETE static bool forResizableTypedArray(AccessCase::AccessType accessType)
 {
     switch (accessType) {
     case AccessCase::IndexedResizableTypedArrayInt8Load:
@@ -231,7 +231,7 @@ static bool LEGACY_NODELETE forResizableTypedArray(AccessCase::AccessType access
     }
 }
 
-static bool LEGACY_NODELETE needsScratchFPR(AccessCase::AccessType type)
+NODELETE static bool needsScratchFPR(AccessCase::AccessType type)
 {
     switch (type) {
     case AccessCase::Load:
@@ -381,7 +381,7 @@ static bool LEGACY_NODELETE needsScratchFPR(AccessCase::AccessType type)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static bool LEGACY_NODELETE forInBy(AccessCase::AccessType type)
+NODELETE static bool forInBy(AccessCase::AccessType type)
 {
     switch (type) {
     case AccessCase::Load:
@@ -529,7 +529,7 @@ static bool LEGACY_NODELETE forInBy(AccessCase::AccessType type)
     return false;
 }
 
-static bool LEGACY_NODELETE isStateless(AccessCase::AccessType type)
+NODELETE static bool isStateless(AccessCase::AccessType type)
 {
     switch (type) {
     case AccessCase::Load:
@@ -679,7 +679,7 @@ static bool LEGACY_NODELETE isStateless(AccessCase::AccessType type)
     return false;
 }
 
-bool LEGACY_NODELETE doesJSCalls(AccessCase::AccessType type)
+NODELETE bool doesJSCalls(AccessCase::AccessType type)
 {
     switch (type) {
     case AccessCase::Getter:
@@ -830,7 +830,7 @@ bool LEGACY_NODELETE doesJSCalls(AccessCase::AccessType type)
 }
 
 
-static bool LEGACY_NODELETE isMegamorphic(AccessCase::AccessType type)
+NODELETE static bool isMegamorphic(AccessCase::AccessType type)
 {
     switch (type) {
     case AccessCase::LoadMegamorphic:

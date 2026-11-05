@@ -67,12 +67,12 @@ private:
     class Snapshot;
     friend class Snapshot;
     
-    double LEGACY_NODELETE bytesAllocatedThisCycleImpl();
+    NODELETE double bytesAllocatedThisCycleImpl();
     
-    double LEGACY_NODELETE bytesSinceBeginningOfCycle(const Snapshot&);
-    double LEGACY_NODELETE maxHeadroom();
-    double LEGACY_NODELETE headroomFullness(const Snapshot&);
-    double LEGACY_NODELETE mutatorUtilization(const Snapshot&);
+    NODELETE double bytesSinceBeginningOfCycle(const Snapshot&);
+    NODELETE double maxHeadroom();
+    NODELETE double headroomFullness(const Snapshot&);
+    NODELETE double mutatorUtilization(const Snapshot&);
     
     Collector& m_collector;
     State m_state { Normal };

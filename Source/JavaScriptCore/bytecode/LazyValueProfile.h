@@ -67,7 +67,7 @@ public:
 
     void initialize(CompressedLazyValueProfileHolder&);
 
-    LazyOperandValueProfile* LEGACY_NODELETE getIfPresent(const LazyOperandValueProfileKey& key) const;
+    NODELETE LazyOperandValueProfile* getIfPresent(const LazyOperandValueProfileKey& key) const;
 
     SpeculatedType prediction(const LazyOperandValueProfileKey&) const;
 private:

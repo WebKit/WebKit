@@ -49,7 +49,7 @@ public:
 
     bool isRoot() const { return !m_parent; }
 
-    JS_EXPORT_PRIVATE void LEGACY_NODELETE compute(unsigned begin);
+    NODELETE JS_EXPORT_PRIVATE void compute(unsigned begin);
 
     bool isComputed() const { return !!m_range; }
     HeapRange range() const { return m_range; }

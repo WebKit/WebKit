@@ -1161,7 +1161,7 @@ void testCheckSelectWithUpsilonBeforeCheck()
     CHECK_EQ(invoke<intptr_t>(*code, false), 666);
 }
 
-double LEGACY_NODELETE b3Pow(double x, int y)
+NODELETE double b3Pow(double x, int y)
 {
     if (y < 0 || y > 1000)
         return pow(x, y);

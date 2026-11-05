@@ -143,7 +143,7 @@ public:
     {
     }
 
-    bool LEGACY_NODELETE hasNonBMPCharacters() const { return m_characterWidths & CharacterClassWidths::HasNonBMPChars; }
+    NODELETE bool hasNonBMPCharacters() const { return m_characterWidths & CharacterClassWidths::HasNonBMPChars; }
 
     bool hasOneCharacterSize() const { return m_characterWidths == CharacterClassWidths::HasBMPChars || m_characterWidths == CharacterClassWidths::HasNonBMPChars; }
     bool hasOnlyBMPCharacters() const { return m_characterWidths == CharacterClassWidths::HasBMPChars; }
@@ -384,7 +384,7 @@ struct PatternTerm {
 
     static PatternTerm NamedBackReference(unsigned subpatternId, OptionSet<Flags> currFlags)
     {
-        PatternTerm LEGACY_NODELETE term(subpatternId, currFlags);
+        NODELETE PatternTerm term(subpatternId, currFlags);
         ASSERT(term.type == Type::NumberedBackReference);
         term.type = Type::NamedBackReference;
         return term;
@@ -443,17 +443,17 @@ struct PatternTerm {
         type = Type::NamedBackReference;
     }
 
-    bool LEGACY_NODELETE invert() const
+    NODELETE bool invert() const
     {
         return m_invert;
     }
 
-    void LEGACY_NODELETE setMatchDirection(MatchDirection matchDirection)
+    NODELETE void setMatchDirection(MatchDirection matchDirection)
     {
         m_matchDirection = matchDirection;
     }
 
-    MatchDirection LEGACY_NODELETE matchDirection() const
+    NODELETE MatchDirection matchDirection() const
     {
         return m_matchDirection;
     }
@@ -468,17 +468,17 @@ struct PatternTerm {
         return m_possessive;
     }
 
-    bool LEGACY_NODELETE ignoreCase() const
+    NODELETE bool ignoreCase() const
     {
         return m_currentFlags.contains(Flags::IgnoreCase);
     }
 
-    bool LEGACY_NODELETE multiline() const
+    NODELETE bool multiline() const
     {
         return m_currentFlags.contains(Flags::Multiline);
     }
 
-    bool LEGACY_NODELETE dotAll() const
+    NODELETE bool dotAll() const
     {
         return m_currentFlags.contains(Flags::DotAll);
     }

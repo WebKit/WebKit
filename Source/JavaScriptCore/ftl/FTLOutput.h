@@ -74,7 +74,7 @@ public:
     Output(State&);
     ~Output();
 
-    void LEGACY_NODELETE initialize(AbstractHeapRepository&);
+    NODELETE void initialize(AbstractHeapRepository&);
 
     void setFrequency(double value)
     {
@@ -93,7 +93,7 @@ public:
     void applyBlockOrder();
 
     void probeDebugPrint(const String& str, LValue value);
-    LBasicBlock LEGACY_NODELETE appendTo(LBasicBlock, LBasicBlock nextBlock);
+    NODELETE LBasicBlock appendTo(LBasicBlock, LBasicBlock nextBlock);
     void appendTo(LBasicBlock);
 
     void setOrigin(DFG::Node* node) { m_origin = node; }
@@ -103,7 +103,7 @@ public:
 
     B3::SlotBaseValue* lockedStackSlot(uint64_t bytes);
 
-    LValue LEGACY_NODELETE constBool(bool value);
+    NODELETE LValue constBool(bool value);
     LValue constInt32(int32_t value);
 
     LValue alreadyRegisteredWeakPointer(DFG::Graph& graph, JSCell* cell)
@@ -145,7 +145,7 @@ public:
     LValue phi(LType, ValueFromBlock, Params... theRest);
     template<typename VectorType>
     LValue phi(LType, const VectorType&);
-    void LEGACY_NODELETE addIncomingToPhi(LValue phi, ValueFromBlock);
+    NODELETE void addIncomingToPhi(LValue phi, ValueFromBlock);
     template<typename... Params>
     void addIncomingToPhi(LValue phi, ValueFromBlock, Params... theRest);
     template<typename... Params>

@@ -186,7 +186,7 @@ static constexpr StyleListKind styleLists[numberOfTemporalUnits] = {
     StyleListKind::LongShortNarrowNumeric,
 };
 
-static PropertyName LEGACY_NODELETE displayName(VM& vm, TemporalUnit unit)
+NODELETE static PropertyName displayName(VM& vm, TemporalUnit unit)
 {
     switch (unit) {
 #define JSC_TEMPORAL_UNIT_PLURAL_PROPERTY_NAME(name, capitalizedName) case TemporalUnit::capitalizedName: return vm.propertyNames->name##sDisplay;
@@ -358,7 +358,7 @@ enum class DurationSignType : uint8_t {
 };
 
 // https://tc39.es/proposal-intl-duration-format/#sec-durationsign
-static DurationSignType LEGACY_NODELETE getDurationSign(ISO8601::Duration duration)
+NODELETE static DurationSignType getDurationSign(ISO8601::Duration duration)
 {
     for (size_t i = 0; i < numberOfTemporalUnits; ++i) {
         auto value = duration[i];

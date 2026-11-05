@@ -235,7 +235,7 @@ public:
     }
 
 private:
-    VirtualRegister LEGACY_NODELETE assign(const Operands<bool>& usedOperands, const Vector<unsigned>& allocation, Operand operand)
+    NODELETE VirtualRegister assign(const Operands<bool>& usedOperands, const Vector<unsigned>& allocation, Operand operand)
     {
         if (operand.isArgument())
             return operand.virtualRegister();

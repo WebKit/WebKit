@@ -237,25 +237,25 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         void clearReturnPC() { callerFrameAndPC().returnPC = nullptr; }
         static constexpr ptrdiff_t returnPCOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, returnPC); }
 
-        bool LEGACY_NODELETE callSiteBitsAreBytecodeOffset() const;
-        bool LEGACY_NODELETE callSiteBitsAreCodeOriginIndex() const;
+        NODELETE bool callSiteBitsAreBytecodeOffset() const;
+        NODELETE bool callSiteBitsAreCodeOriginIndex() const;
 
-        unsigned LEGACY_NODELETE callSiteAsRawBits() const;
-        unsigned LEGACY_NODELETE unsafeCallSiteAsRawBits() const;
-        CallSiteIndex LEGACY_NODELETE callSiteIndex() const;
-        CallSiteIndex LEGACY_NODELETE unsafeCallSiteIndex() const;
+        NODELETE unsigned callSiteAsRawBits() const;
+        NODELETE unsigned unsafeCallSiteAsRawBits() const;
+        NODELETE CallSiteIndex callSiteIndex() const;
+        NODELETE CallSiteIndex unsafeCallSiteIndex() const;
         void setCallSiteIndex(CallSiteIndex);
 
 #if ENABLE(WEBASSEMBLY)
-        JSWebAssemblyInstance* LEGACY_NODELETE wasmInstance() const;
+        NODELETE JSWebAssemblyInstance* wasmInstance() const;
 #endif
 
         JSCell* codeOwnerCell() const;
 
     private:
-        unsigned LEGACY_NODELETE callSiteBitsAsBytecodeOffset() const;
-        JS_EXPORT_PRIVATE JSGlobalObject* LEGACY_NODELETE lexicalGlobalObjectFromNativeCallee(VM&) const;
-        JS_EXPORT_PRIVATE JSCell* LEGACY_NODELETE codeOwnerCellSlow() const;
+        NODELETE unsigned callSiteBitsAsBytecodeOffset() const;
+        NODELETE JS_EXPORT_PRIVATE JSGlobalObject* lexicalGlobalObjectFromNativeCallee(VM&) const;
+        NODELETE JS_EXPORT_PRIVATE JSCell* codeOwnerCellSlow() const;
     public:
 
         // This will try to get you the bytecode offset, but you should be aware that
@@ -271,8 +271,8 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 
         inline Register* topOfFrame();
 
-        const JSInstruction* LEGACY_NODELETE currentVPC() const; // This only makes sense in the LLInt and baseline.
-        void LEGACY_NODELETE setCurrentVPC(const JSInstruction*);
+        NODELETE const JSInstruction* currentVPC() const; // This only makes sense in the LLInt and baseline.
+        NODELETE void setCurrentVPC(const JSInstruction*);
 
         void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
         inline void setScope(int scopeRegisterOffset, JSScope*);
@@ -374,7 +374,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         SUPPRESS_ASAN const CallerFrameAndPC& unsafeCallerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
     };
 
-JS_EXPORT_PRIVATE bool LEGACY_NODELETE isFromJSCode(void* returnAddress);
+NODELETE JS_EXPORT_PRIVATE bool isFromJSCode(void* returnAddress);
 
 #if OS(WINDOWS) && CPU(X86_64)
 // On Windows x86_64, __builtin_frame_address(1) doesn't work, it returns __builtin_frame_address(0)

@@ -200,7 +200,7 @@ public:
         Type m_type;
     };
 
-    std::optional<Entry> LEGACY_NODELETE lookup(const Identifier&) const;
+    NODELETE std::optional<Entry> lookup(const Identifier&) const;
 
 #define JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS(name) JSValue name##Value(BytecodeGenerator&);
     JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS)

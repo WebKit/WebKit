@@ -171,7 +171,7 @@ public:
 
     DECLARE_VISIT_CHILDREN;
 
-    void LEGACY_NODELETE copyToArguments(JSGlobalObject*, JSValue* firstElementDest, unsigned offset, unsigned length);
+    NODELETE void copyToArguments(JSGlobalObject*, JSValue* firstElementDest, unsigned offset, unsigned length);
 
     template<typename, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)

@@ -62,7 +62,7 @@ private:
     { }
 
 public:
-    static std::optional<SignalContext> LEGACY_NODELETE tryCreate(PlatformRegisters& registers)
+    NODELETE static std::optional<SignalContext> tryCreate(PlatformRegisters& registers)
     {
         auto instructionPointer = MachineContext::instructionPointer(registers);
         if (!instructionPointer)
@@ -76,12 +76,12 @@ public:
     void* framePointer;
 };
 
-inline static bool LEGACY_NODELETE vmIsInactive(VM& vm)
+NODELETE inline static bool vmIsInactive(VM& vm)
 {
     return !vm.entryScope && !vm.ownerThread();
 }
 
-static bool LEGACY_NODELETE isSaneFrame(CallFrame* frame, CallFrame* calleeFrame, EntryFrame* entryFrame, StackBounds stackBounds)
+NODELETE static bool isSaneFrame(CallFrame* frame, CallFrame* calleeFrame, EntryFrame* entryFrame, StackBounds stackBounds)
 {
     if (reinterpret_cast<void*>(frame) >= reinterpret_cast<void*>(entryFrame))
         return false;
@@ -261,7 +261,7 @@ public:
         });
     }
 
-    VMTraps& LEGACY_NODELETE traps() { return m_vm.traps(); }
+    NODELETE VMTraps& traps() { return m_vm.traps(); }
 
 
     void notify(AbstractLocker&)
@@ -274,7 +274,7 @@ public:
         });
     }
 
-    bool LEGACY_NODELETE isStopped(AbstractLocker&)
+    NODELETE bool isStopped(AbstractLocker&)
     {
         return !m_scheduled;
     }

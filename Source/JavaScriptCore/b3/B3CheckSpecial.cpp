@@ -45,7 +45,7 @@ using GenerationContext = Air::GenerationContext;
 
 namespace {
 
-unsigned LEGACY_NODELETE numB3Args(Kind kind)
+NODELETE unsigned numB3Args(Kind kind)
 {
     switch (kind.opcode()) {
     case CheckAdd:
@@ -60,12 +60,12 @@ unsigned LEGACY_NODELETE numB3Args(Kind kind)
     }
 }
 
-unsigned LEGACY_NODELETE numB3Args(Value* value)
+NODELETE unsigned numB3Args(Value* value)
 {
     return numB3Args(value->kind());
 }
 
-unsigned LEGACY_NODELETE numB3Args(Inst& inst)
+NODELETE unsigned numB3Args(Inst& inst)
 {
     return numB3Args(inst.origin);
 }

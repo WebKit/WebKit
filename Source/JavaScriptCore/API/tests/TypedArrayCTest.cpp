@@ -36,7 +36,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 
-static void LEGACY_NODELETE bytesDeallocatorNoCopy(void*, void*) { }
+NODELETE static void bytesDeallocatorNoCopy(void*, void*) { }
 static void freePtr(void* ptr, void*)
 {
     free(ptr);

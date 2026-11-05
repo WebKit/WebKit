@@ -94,7 +94,7 @@ public:
     // createWithButterfly() and then notify the ObjectInitializationScope.
     static Butterfly* tryCreateUninitializedRestrictedButterfly(VM&, GCDeferralContext*, Structure*, unsigned initialLength);
 
-    static void LEGACY_NODELETE eagerlyInitializeButterfly(ObjectInitializationScope&, JSArray*, unsigned initialLength);
+    NODELETE static void eagerlyInitializeButterfly(ObjectInitializationScope&, JSArray*, unsigned initialLength);
 
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool throwException);
 
@@ -177,7 +177,7 @@ public:
     JS_EXPORT_PRIVATE void copyToArguments(JSGlobalObject*, JSValue* firstElementDest, unsigned offset, unsigned length);
 
     JS_EXPORT_PRIVATE bool isIteratorProtocolFastAndNonObservable();
-    bool LEGACY_NODELETE isToPrimitiveFastAndNonObservable();
+    NODELETE bool isToPrimitiveFastAndNonObservable();
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue, IndexingType);
 
@@ -288,7 +288,7 @@ bool moveArrayElements(JSGlobalObject* globalObject, VM& vm, JSArray* target, un
 }
 
 template<typename T>
-void LEGACY_NODELETE clearElement(T& element)
+NODELETE void clearElement(T& element)
 {
     element.clear();
 }

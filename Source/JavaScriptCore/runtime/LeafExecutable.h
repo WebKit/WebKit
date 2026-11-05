@@ -44,7 +44,7 @@ public:
     }
 
     ptrdiff_t base() const { return m_base; }
-    LeafExecutable LEGACY_NODELETE operator+(size_t) const;
+    NODELETE LeafExecutable operator+(size_t) const;
 
 private:
     ptrdiff_t m_base;

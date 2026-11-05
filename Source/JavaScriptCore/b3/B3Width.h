@@ -58,7 +58,7 @@ inline Width widthForType(Type type)
     return Width8;
 }
 
-Type LEGACY_NODELETE bestType(Bank bank, Width width);
+NODELETE Type bestType(Bank bank, Width width);
 
 } } // namespace JSC::B3
 

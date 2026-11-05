@@ -148,17 +148,17 @@ public:
         ASSERT(!isEmpty() && !isMaterialized() && b3Value() == value);
     }
 
-    bool LEGACY_NODELETE isEmpty() const
+    NODELETE bool isEmpty() const
     {
         return !m_storage;
     }
 
-    bool LEGACY_NODELETE isMaterialized() const
+    NODELETE bool isMaterialized() const
     {
         return m_storage & isMaterializedMask;
     }
 
-    void LEGACY_NODELETE setMaterialized(B3::Variable* var)
+    NODELETE void setMaterialized(B3::Variable* var)
     {
         ASSERT(!isMaterialized());
         m_storage = reinterpret_cast<uintptr_t>(var) | isMaterializedMask;
@@ -166,20 +166,20 @@ public:
     }
 
     // Not named value() to disambiguate with TypedExpression::value()
-    B3::Value* LEGACY_NODELETE b3Value() const
+    NODELETE B3::Value* b3Value() const
     {
         ASSERT(!isMaterialized());
         // No need to mask in this common case since the isMaterialized bit will be 0
         return reinterpret_cast<B3::Value*>(m_storage);
     }
 
-    B3::Variable* LEGACY_NODELETE b3Variable() const
+    NODELETE B3::Variable* b3Variable() const
     {
         ASSERT(isMaterialized());
         return reinterpret_cast<B3::Variable*>(m_storage & ~isMaterializedMask);
     }
 
-    B3::Type LEGACY_NODELETE type() const
+    NODELETE B3::Type type() const
     {
         if (isMaterialized()) [[unlikely]]
             return b3Variable()->type();
@@ -208,7 +208,7 @@ public:
     using WasmConstRefValue = Const64Value;
 
     static constexpr bool shouldFuseBranchCompare = false;
-    static constexpr bool LEGACY_NODELETE tierSupportsSIMD() { return true; }
+    NODELETE static constexpr bool tierSupportsSIMD() { return true; }
     static constexpr bool validateFunctionBodySize = true;
 
     struct ControlData {
@@ -246,15 +246,15 @@ public:
         {
         }
 
-        static bool LEGACY_NODELETE isIf(const ControlData& control) { return control.blockType() == BlockType::If; }
-        static bool LEGACY_NODELETE isElse(const ControlData& control) { return control.blockType() == BlockType::Else; }
-        static bool LEGACY_NODELETE isTry(const ControlData& control) { return control.blockType() == BlockType::Try; }
-        static bool LEGACY_NODELETE isTryTable(const ControlData& control) { return control.blockType() == BlockType::TryTable; }
-        static bool LEGACY_NODELETE isAnyCatch(const ControlData& control) { return control.blockType() == BlockType::Catch; }
-        static bool LEGACY_NODELETE isTopLevel(const ControlData& control) { return control.blockType() == BlockType::TopLevel; }
-        static bool LEGACY_NODELETE isLoop(const ControlData& control) { return control.blockType() == BlockType::Loop; }
-        static bool LEGACY_NODELETE isBlock(const ControlData& control) { return control.blockType() == BlockType::Block; }
-        static bool LEGACY_NODELETE isCatch(const ControlData& control)
+        NODELETE static bool isIf(const ControlData& control) { return control.blockType() == BlockType::If; }
+        NODELETE static bool isElse(const ControlData& control) { return control.blockType() == BlockType::Else; }
+        NODELETE static bool isTry(const ControlData& control) { return control.blockType() == BlockType::Try; }
+        NODELETE static bool isTryTable(const ControlData& control) { return control.blockType() == BlockType::TryTable; }
+        NODELETE static bool isAnyCatch(const ControlData& control) { return control.blockType() == BlockType::Catch; }
+        NODELETE static bool isTopLevel(const ControlData& control) { return control.blockType() == BlockType::TopLevel; }
+        NODELETE static bool isLoop(const ControlData& control) { return control.blockType() == BlockType::Loop; }
+        NODELETE static bool isBlock(const ControlData& control) { return control.blockType() == BlockType::Block; }
+        NODELETE static bool isCatch(const ControlData& control)
         {
             if (control.blockType() != BlockType::Catch)
                 return false;
@@ -296,27 +296,27 @@ public:
                 out.print("None");
         }
 
-        BlockType LEGACY_NODELETE blockType() const { return controlBlockType; }
+        NODELETE BlockType blockType() const { return controlBlockType; }
 
-        const BlockSignature& LEGACY_NODELETE signature() const { return m_signature; }
+        NODELETE const BlockSignature& signature() const { return m_signature; }
 
         bool hasNonVoidresult() const { return m_signature.returnCount() > 0; }
 
-        BasicBlock* LEGACY_NODELETE targetBlockForBranch()
+        NODELETE BasicBlock* targetBlockForBranch()
         {
             if (blockType() == BlockType::Loop)
                 return special;
             return continuation;
         }
 
-        void LEGACY_NODELETE convertIfToBlock()
+        NODELETE void convertIfToBlock()
         {
             ASSERT(blockType() == BlockType::If);
             controlBlockType = BlockType::Block;
             special = nullptr;
         }
 
-        void LEGACY_NODELETE convertTryToCatch(unsigned tryEndCallSiteIndex, Variable* exception)
+        NODELETE void convertTryToCatch(unsigned tryEndCallSiteIndex, Variable* exception)
         {
             ASSERT(blockType() == BlockType::Try);
             controlBlockType = BlockType::Catch;
@@ -325,7 +325,7 @@ public:
             m_exception = exception;
         }
 
-        void LEGACY_NODELETE convertTryToCatchAll(unsigned tryEndCallSiteIndex, Variable* exception)
+        NODELETE void convertTryToCatchAll(unsigned tryEndCallSiteIndex, Variable* exception)
         {
             ASSERT(blockType() == BlockType::Try);
             controlBlockType = BlockType::Catch;
@@ -347,7 +347,7 @@ public:
             m_tryTableTargets = WTF::move(targets);
         }
 
-        void LEGACY_NODELETE endTryTable(unsigned tryEndCallSiteIndex)
+        NODELETE void endTryTable(unsigned tryEndCallSiteIndex)
         {
             ASSERT(blockType() == BlockType::TryTable);
             m_tryEnd = tryEndCallSiteIndex;
@@ -368,31 +368,31 @@ public:
             return m_signature.returnType(i);
         }
 
-        unsigned LEGACY_NODELETE tryStart() const
+        NODELETE unsigned tryStart() const
         {
             ASSERT(controlBlockType == BlockType::Try || controlBlockType == BlockType::TryTable || controlBlockType == BlockType::Catch);
             return m_tryStart;
         }
 
-        unsigned LEGACY_NODELETE tryEnd() const
+        NODELETE unsigned tryEnd() const
         {
             ASSERT(controlBlockType == BlockType::Catch || controlBlockType == BlockType::TryTable);
             return m_tryEnd;
         }
 
-        unsigned LEGACY_NODELETE tryDepth() const
+        NODELETE unsigned tryDepth() const
         {
             ASSERT(controlBlockType == BlockType::Try || controlBlockType == BlockType::TryTable || controlBlockType == BlockType::Catch);
             return m_tryCatchDepth;
         }
 
-        CatchKind LEGACY_NODELETE catchKind() const
+        NODELETE CatchKind catchKind() const
         {
             ASSERT(controlBlockType == BlockType::Catch);
             return m_catchKind;
         }
 
-        Variable* LEGACY_NODELETE exception() const
+        NODELETE Variable* exception() const
         {
             ASSERT(controlBlockType == BlockType::Catch || controlBlockType == BlockType::TryTable);
             return m_exception;
@@ -432,7 +432,7 @@ public:
     typedef std::expected<std::unique_ptr<InternalFunction>, ErrorType> Result;
     typedef std::expected<void, ErrorType> PartialResult;
 
-    static ExpressionType LEGACY_NODELETE emptyExpression() { return { }; };
+    NODELETE static ExpressionType emptyExpression() { return { }; };
 
     enum class CastKind { Cast, Test };
 
@@ -447,14 +447,14 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    unsigned LEGACY_NODELETE advanceCallSiteIndex()
+    NODELETE unsigned advanceCallSiteIndex()
     {
         if (m_inlineParent)
             return m_inlineRoot->advanceCallSiteIndex();
         return ++m_callSiteIndex;
     }
 
-    unsigned LEGACY_NODELETE callSiteIndex() const
+    NODELETE unsigned callSiteIndex() const
     {
         if (m_inlineParent)
             return m_inlineRoot->callSiteIndex();
@@ -466,12 +466,12 @@ public:
 
     void computeStackCheckSize(bool& needsOverflowCheck, int32_t& checkSize);
 
-    Value* LEGACY_NODELETE wasmRefOfCell(Value* cell)
+    NODELETE Value* wasmRefOfCell(Value* cell)
     {
         return cell;
     }
 
-    Value* LEGACY_NODELETE pointerOfWasmRef(Value* ref)
+    NODELETE Value* pointerOfWasmRef(Value* ref)
     {
         return ref;
     }
@@ -497,8 +497,8 @@ public:
     }
 
     // SIMD
-    bool LEGACY_NODELETE usesSIMD() const { return m_info.usesSIMD(m_functionIndex); }
-    void LEGACY_NODELETE notifyFunctionUsesSIMD()
+    NODELETE bool usesSIMD() const { return m_info.usesSIMD(m_functionIndex); }
+    NODELETE void notifyFunctionUsesSIMD()
     {
         ASSERT(m_info.usesSIMD(m_functionIndex));
         m_proc.setUsesSIMD();
@@ -862,10 +862,10 @@ public:
     [[nodiscard]] PartialResult endTopLevel(std::span<const TypedExpression>) { return { }; }
 
     // Fused comparison stubs (B3 will do this for us later).
-    [[nodiscard]] PartialResult LEGACY_NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, std::span<const TypedExpression>) { RELEASE_ASSERT_NOT_REACHED(); }
-    [[nodiscard]] PartialResult LEGACY_NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, std::span<const TypedExpression>) { RELEASE_ASSERT_NOT_REACHED(); }
-    [[nodiscard]] PartialResult LEGACY_NODELETE addFusedIfCompare(OpType, ExpressionType, BlockSignature&&, std::span<TypedExpression>, ControlType&) { RELEASE_ASSERT_NOT_REACHED(); }
-    [[nodiscard]] PartialResult LEGACY_NODELETE addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature&&, std::span<TypedExpression>, ControlType&) { RELEASE_ASSERT_NOT_REACHED(); }
+    NODELETE [[nodiscard]] PartialResult addFusedBranchCompare(OpType, ControlType&, ExpressionType, std::span<const TypedExpression>) { RELEASE_ASSERT_NOT_REACHED(); }
+    NODELETE [[nodiscard]] PartialResult addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, std::span<const TypedExpression>) { RELEASE_ASSERT_NOT_REACHED(); }
+    NODELETE [[nodiscard]] PartialResult addFusedIfCompare(OpType, ExpressionType, BlockSignature&&, std::span<TypedExpression>, ControlType&) { RELEASE_ASSERT_NOT_REACHED(); }
+    NODELETE [[nodiscard]] PartialResult addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature&&, std::span<TypedExpression>, ControlType&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     // Calls
     [[nodiscard]] PartialResult addCall(unsigned, FunctionSpaceIndex functionIndexSpace, const RTT&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
@@ -887,11 +887,11 @@ public:
     [[nodiscard]] PartialResult emitInlineDirectCall(InliningNode*, FunctionCodeIndex calleeIndex, const RTT&, const ArgumentList& args, ValueResults&);
 
     void dump(const ControlStack&, const Stack* expressionStack);
-    void LEGACY_NODELETE setParser(FunctionParser<OMGIRGenerator>* parser) { m_parser = parser; };
+    NODELETE void setParser(FunctionParser<OMGIRGenerator>* parser) { m_parser = parser; };
     ALWAYS_INLINE void willParseOpcode() { }
     ALWAYS_INLINE void willParseExtendedOpcode() { }
     ALWAYS_INLINE void didParseOpcode() { }
-    void LEGACY_NODELETE didFinishParsingLocals() { }
+    NODELETE void didFinishParsingLocals() { }
     void didPopValueFromStack(ExpressionType expr, ASCIILiteral message)
     {
         TRACE_VALUE(Wasm::Types::Void, get(expr), "pop at height: ", m_parser->expressionStack().size() + 1, " site: [", message, "], ", expr);
@@ -917,20 +917,20 @@ public:
         m_stackmaps.add(CallSiteIndex(callSiteIndex), WTF::move(stackmap));
     }
 
-    StackMaps&& LEGACY_NODELETE takeStackmaps()
+    NODELETE StackMaps&& takeStackmaps()
     {
         RELEASE_ASSERT(m_inlineRoot == this);
         return WTF::move(m_stackmaps);
     }
 
-    Vector<UnlinkedHandlerInfo>&& LEGACY_NODELETE takeExceptionHandlers()
+    NODELETE Vector<UnlinkedHandlerInfo>&& takeExceptionHandlers()
     {
         RELEASE_ASSERT(m_inlineRoot == this);
         return WTF::move(m_exceptionHandlers);
     }
 
 private:
-    void LEGACY_NODELETE emitPrepareWasmOperation(BasicBlock*)
+    NODELETE void emitPrepareWasmOperation(BasicBlock*)
     {
     }
 
@@ -1105,7 +1105,7 @@ private:
         return set(m_currentBlock, dst, src);
     }
 
-    bool LEGACY_NODELETE useSignalingMemory0() const
+    NODELETE bool useSignalingMemory0() const
     {
         return m_mode == MemoryMode::Signaling;
     }
@@ -1169,22 +1169,22 @@ private:
     Value* m_baseMemoryValue { nullptr };
     Value* m_boundsCheckingSizeValue { nullptr };
 
-    Value* LEGACY_NODELETE instanceValue()
+    NODELETE Value* instanceValue()
     {
         return m_instanceValue;
     }
 
-    Value* LEGACY_NODELETE vmValue()
+    NODELETE Value* vmValue()
     {
         return m_vmValue;
     }
 
-    Value* LEGACY_NODELETE baseMemoryValue()
+    NODELETE Value* baseMemoryValue()
     {
         return m_baseMemoryValue;
     }
 
-    Value* LEGACY_NODELETE boundsCheckingSizeValue()
+    NODELETE Value* boundsCheckingSizeValue()
     {
         return m_boundsCheckingSizeValue;
     }

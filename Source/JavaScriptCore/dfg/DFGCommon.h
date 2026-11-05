@@ -253,7 +253,7 @@ enum class PlanStage {
 // when you're forcing a crash with diagnostics.
 void startCrashing();
 
-JS_EXPORT_PRIVATE bool LEGACY_NODELETE isCrashing();
+NODELETE JS_EXPORT_PRIVATE bool isCrashing();
 
 struct NodeAndIndex {
     NodeAndIndex()

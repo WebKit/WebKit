@@ -688,7 +688,7 @@ namespace JSC {
 
         bool isArrayLiteral() const final { return true; }
 
-        ArgumentListNode* LEGACY_NODELETE toArgumentList(ParserArena&, int) const;
+        NODELETE ArgumentListNode* toArgumentList(ParserArena&, int) const;
 
         ElementNode* elements() const { return m_element; }
 
@@ -765,7 +765,7 @@ namespace JSC {
         PropertyListNode(const JSTokenLocation&, PropertyNode*);
         PropertyListNode(const JSTokenLocation&, PropertyNode*, PropertyListNode*);
 
-        bool LEGACY_NODELETE hasStaticallyNamedProperty(const Identifier& propName);
+        NODELETE bool hasStaticallyNamedProperty(const Identifier& propName);
         bool isComputedClassField() const
         {
             return m_node->isComputedClassField();
@@ -774,7 +774,7 @@ namespace JSC {
         {
             return m_node->isInstanceClassField();
         }
-        bool LEGACY_NODELETE hasInstanceFields() const;
+        NODELETE bool hasInstanceFields() const;
 
         bool isStaticClassField() const
         {
@@ -801,7 +801,7 @@ namespace JSC {
             return m_hasPrivateAccessors;
         }
 
-        static bool LEGACY_NODELETE shouldCreateLexicalScopeForClass(PropertyListNode*);
+        NODELETE static bool shouldCreateLexicalScopeForClass(PropertyListNode*);
 
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID*, RegisterID*, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>*, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>*);
 
@@ -1629,8 +1629,8 @@ namespace JSC {
 
         void append(StatementNode*);
 
-        StatementNode* LEGACY_NODELETE singleStatement() const;
-        StatementNode* LEGACY_NODELETE lastStatement() const;
+        NODELETE StatementNode* singleStatement() const;
+        NODELETE StatementNode* lastStatement() const;
 
         bool hasCompletionValue() const;
         bool hasEarlyBreakOrContinue() const;
@@ -1824,7 +1824,7 @@ namespace JSC {
     class ContinueNode final : public StatementNode, public ThrowableExpressionData {
     public:
         ContinueNode(const JSTokenLocation&, const Identifier&);
-        Label* LEGACY_NODELETE trivialTarget(BytecodeGenerator&);
+        NODELETE Label* trivialTarget(BytecodeGenerator&);
 
     private:
         bool hasCompletionValue() const final { return false; }
@@ -1838,7 +1838,7 @@ namespace JSC {
     class BreakNode final : public StatementNode, public ThrowableExpressionData {
     public:
         BreakNode(const JSTokenLocation&, const Identifier&);
-        Label* LEGACY_NODELETE trivialTarget(BytecodeGenerator&);
+        NODELETE Label* trivialTarget(BytecodeGenerator&);
 
     private:
         bool hasCompletionValue() const final { return false; }

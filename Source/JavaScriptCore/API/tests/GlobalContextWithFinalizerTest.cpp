@@ -31,7 +31,7 @@
 
 static bool failed = true;
 
-static void LEGACY_NODELETE finalize(JSObjectRef)
+NODELETE static void finalize(JSObjectRef)
 {
     failed = false;
 }

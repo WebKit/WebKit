@@ -32,7 +32,7 @@ namespace JSC { namespace FTL {
 
 using namespace DFG;
 
-static bool LEGACY_NODELETE verboseCapabilities()
+NODELETE static bool verboseCapabilities()
 {
     return verboseCompilationEnabled() || Options::verboseFTLFailure();
 }

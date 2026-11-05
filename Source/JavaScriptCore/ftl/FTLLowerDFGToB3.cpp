@@ -9704,7 +9704,7 @@ IGNORE_CLANG_WARNINGS_END
             Int64, operationCreateRest, weakPointer(globalObject), argumentStart, m_out.constInt32(numberOfArgumentsToSkip), arrayLength));
     }
 
-    const AbstractHeap& LEGACY_NODELETE abstractHeapForOwnPropertyKeysCache(NodeType type)
+    NODELETE const AbstractHeap& abstractHeapForOwnPropertyKeysCache(NodeType type)
     {
         switch (type) {
         case ObjectKeys:
@@ -16116,7 +16116,7 @@ IGNORE_CLANG_WARNINGS_END
         terminate(InadequateCoverage);
     }
 
-    void LEGACY_NODELETE compileCPUIntrinsic()
+    NODELETE void compileCPUIntrinsic()
     {
 #if CPU(X86_64)
         Intrinsic intrinsic = m_node->intrinsic();
@@ -24817,7 +24817,7 @@ IGNORE_CLANG_WARNINGS_END
         {
         }
 
-        bool LEGACY_NODELETE operator<(const CharacterCase& other) const
+        NODELETE bool operator<(const CharacterCase& other) const
         {
             return character < other.character;
         }
@@ -25616,7 +25616,7 @@ IGNORE_CLANG_WARNINGS_END
         didAlreadyTerminate();
     }
 
-    void LEGACY_NODELETE didAlreadyTerminate()
+    NODELETE void didAlreadyTerminate()
     {
         m_state.setIsValid(false);
     }
@@ -26418,7 +26418,7 @@ IGNORE_CLANG_WARNINGS_END
             m_out.constInt64(JSValue::ValueNull));
     }
 
-    LValue LEGACY_NODELETE isProvenValue(SpeculatedType provenType, SpeculatedType wantedType)
+    NODELETE LValue isProvenValue(SpeculatedType provenType, SpeculatedType wantedType)
     {
         if (!(provenType & ~wantedType))
             return m_out.booleanTrue;
@@ -28182,7 +28182,7 @@ IGNORE_CLANG_WARNINGS_END
     {
         m_doubleValues.set(node, LoweredNodeValue(value, m_highBlock));
     }
-    void LEGACY_NODELETE setTuple(Node* tuple, unsigned index, LValue value)
+    NODELETE void setTuple(Node* tuple, unsigned index, LValue value)
     {
         ASSERT(index < tuple->tupleSize());
         m_tupleValues.at(tuple->tupleOffset() + index) = LoweredNodeValue(value, m_highBlock);
@@ -28220,12 +28220,12 @@ IGNORE_CLANG_WARNINGS_END
     {
         setDouble(m_node, value);
     }
-    void LEGACY_NODELETE setTuple(unsigned index, LValue value)
+    NODELETE void setTuple(unsigned index, LValue value)
     {
         setTuple(m_node, index, value);
     }
 
-    bool LEGACY_NODELETE isValid(const LoweredNodeValue& value)
+    NODELETE bool isValid(const LoweredNodeValue& value)
     {
         if (!value)
             return false;
@@ -28452,10 +28452,10 @@ IGNORE_CLANG_WARNINGS_END
         return result;
     }
 
-    AvailabilityMap& LEGACY_NODELETE availabilityMap() { return m_availabilityCalculator.m_availability; }
+    NODELETE AvailabilityMap& availabilityMap() { return m_availabilityCalculator.m_availability; }
 
-    VM& LEGACY_NODELETE vm() { return m_graph.m_vm; }
-    CodeBlock* LEGACY_NODELETE codeBlock() { return m_graph.m_codeBlock; }
+    NODELETE VM& vm() { return m_graph.m_vm; }
+    NODELETE CodeBlock* codeBlock() { return m_graph.m_codeBlock; }
 
     Graph& m_graph;
     State& m_ftlState;

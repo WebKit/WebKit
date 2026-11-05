@@ -225,7 +225,7 @@ public:
         return m_jitType;
     }
 
-    bool LEGACY_NODELETE isUnlinked() const;
+    NODELETE bool isUnlinked() const;
     
     template<typename PointerType>
     static JITType jitTypeFor(PointerType jitCode)

@@ -772,7 +772,7 @@ void ExecutionHandler::handleThreadStopInfo(StringView packet)
     sendStopReplyForThread(locker, *vmId);
 }
 
-static uint64_t LEGACY_NODELETE getStopPC(const DebugState& state)
+NODELETE static uint64_t getStopPC(const DebugState& state)
 {
     if (state.isStoppedAtSystemCall())
         return VirtualAddress(VirtualAddress::INVALID_BASE).value();

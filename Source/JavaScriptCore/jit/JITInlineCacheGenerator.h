@@ -74,7 +74,7 @@ public:
 
     CCallHelpers::Label slowPathBegin() const { return m_slowPathBegin; }
 
-    void LEGACY_NODELETE finalize(
+    NODELETE void finalize(
         LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer,
         CodeLocationLabel<JITStubRoutinePtrTag> start);
 

@@ -189,7 +189,7 @@ void InspectorScriptProfilerAgent::didEvaluateScript(Seconds startTime, Profilin
     addEvent(startTime, endTime, reason);
 }
 
-static Protocol::ScriptProfiler::EventType LEGACY_NODELETE toProtocol(ProfilingReason reason)
+NODELETE static Protocol::ScriptProfiler::EventType toProtocol(ProfilingReason reason)
 {
     switch (reason) {
     case ProfilingReason::API:

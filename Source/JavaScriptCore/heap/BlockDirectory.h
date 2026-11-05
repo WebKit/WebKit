@@ -73,16 +73,16 @@ class BlockDirectory {
 public:
     BlockDirectory(size_t cellSize);
     ~BlockDirectory();
-    void LEGACY_NODELETE setSubspace(Subspace*);
+    NODELETE void setSubspace(Subspace*);
     void lastChanceToFinalize();
     void prepareForAllocation();
     void stopAllocating();
     void stopAllocatingForGood();
     void resumeAllocating();
-    void LEGACY_NODELETE beginMarkingForFullCollection();
+    NODELETE void beginMarkingForFullCollection();
     void endMarking();
-    void LEGACY_NODELETE snapshotUnsweptForEdenCollection();
-    void LEGACY_NODELETE snapshotUnsweptForFullCollection();
+    NODELETE void snapshotUnsweptForEdenCollection();
+    NODELETE void snapshotUnsweptForFullCollection();
     void sweepAll();
     void shrink();
     void assertNoUnswept();
@@ -213,13 +213,13 @@ public:
     MarkedBlock::Handle* findBlockToSweep(unsigned& unsweptCursor);
 
     // FIXME: rdar://139998916
-    MarkedBlock::Handle* LEGACY_NODELETE findMarkedBlockHandleDebug(MarkedBlock*);
+    NODELETE MarkedBlock::Handle* findMarkedBlockHandleDebug(MarkedBlock*);
 
     void didFinishUsingBlock(MarkedBlock::Handle*);
     void didFinishUsingBlock(AbstractLocker&, MarkedBlock::Handle*) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock);
 
     Subspace* subspace() const { return m_subspace; }
-    MarkedSpace& LEGACY_NODELETE markedSpace() const;
+    NODELETE MarkedSpace& markedSpace() const;
     
     void dump(PrintStream&) const;
     void dumpBits(PrintStream& = WTF::dataFile()) WTF_REQUIRES_SHARED_LOCK(m_bitvectorLock);

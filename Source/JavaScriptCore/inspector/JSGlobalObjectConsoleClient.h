@@ -50,8 +50,8 @@ public:
     explicit JSGlobalObjectConsoleClient(InspectorConsoleAgent*);
     ~JSGlobalObjectConsoleClient() final { }
 
-    static bool LEGACY_NODELETE logToSystemConsole();
-    static void LEGACY_NODELETE setLogToSystemConsole(bool);
+    NODELETE static bool logToSystemConsole();
+    NODELETE static void setLogToSystemConsole(bool);
 
     void setDebuggerAgent(InspectorDebuggerAgent* agent) { m_debuggerAgent = agent; }
     void setPersistentScriptProfilerAgent(InspectorScriptProfilerAgent* agent) { m_scriptProfilerAgent = agent; }

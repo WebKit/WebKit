@@ -244,7 +244,7 @@ public:
     StringImpl* tryGetValueImpl() const;
     ALWAYS_INLINE unsigned length() const;
 
-    JSValue LEGACY_NODELETE toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
+    NODELETE JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
     bool toBoolean() const { return !!length(); }
     JSObject* toObject(JSGlobalObject*) const;
     double toNumber(JSGlobalObject*) const;

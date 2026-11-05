@@ -205,7 +205,7 @@ void JSToken::dump(PrintStream& out) const
     out.print(*m_data.cooked);
 }
 
-static ALWAYS_INLINE bool LEGACY_NODELETE isPrivateFieldName(UniquedStringImpl* uid)
+NODELETE static ALWAYS_INLINE bool isPrivateFieldName(UniquedStringImpl* uid)
 {
     return uid->length() && uid->at(0) == '#';
 }
@@ -1232,7 +1232,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseAs
     return createAssignmentElement(context, element, startPosition, lastTokenEndPosition());
 }
 
-static const char* LEGACY_NODELETE destructuringKindToVariableKindName(DestructuringKind kind)
+NODELETE static const char* destructuringKindToVariableKindName(DestructuringKind kind)
 {
     switch (kind) {
     case DestructuringKind::DestructureToLet:
@@ -2328,7 +2328,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeB
 #undef failIfDuplicateIfViolation
 }
 
-static ALWAYS_INLINE SuperBinding LEGACY_NODELETE adjustSuperBindingForBaseConstructor(ConstructorKind constructorKind, SuperBinding expectedSuperBinding, SourceParseMode parseMode, bool scopeNeedsSuperBinding, bool currentScopeUsesEval, InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures)
+NODELETE static ALWAYS_INLINE SuperBinding adjustSuperBindingForBaseConstructor(ConstructorKind constructorKind, SuperBinding expectedSuperBinding, SourceParseMode parseMode, bool scopeNeedsSuperBinding, bool currentScopeUsesEval, InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures)
 {
     if (expectedSuperBinding == SuperBinding::NotNeeded)
         return SuperBinding::NotNeeded;
@@ -2350,7 +2350,7 @@ static ALWAYS_INLINE SuperBinding LEGACY_NODELETE adjustSuperBindingForBaseConst
     return SuperBinding::Needed;
 }
 
-static ALWAYS_INLINE SuperBinding LEGACY_NODELETE adjustSuperBindingForBaseConstructor(ConstructorKind constructorKind, SuperBinding expectedSuperBinding, SourceParseMode parseMode, Scope* functionScope)
+NODELETE static ALWAYS_INLINE SuperBinding adjustSuperBindingForBaseConstructor(ConstructorKind constructorKind, SuperBinding expectedSuperBinding, SourceParseMode parseMode, Scope* functionScope)
 {
     return adjustSuperBindingForBaseConstructor(constructorKind, expectedSuperBinding, parseMode, functionScope->needsSuperBinding(), functionScope->usesEval(), functionScope->innerArrowFunctionFeatures());
 }
@@ -2394,7 +2394,7 @@ template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBo
     return context.createFunctionMetadata(startLocation, tokenLocation(), functionStart, functionNameStart, parametersStart, implementationVisibility, lexicallyScopedFeatures(), constructorKind, functionSuperBinding, parameterCount, sourceParseMode(), isArrowFunctionBodyExpression);
 }
 
-static const char* LEGACY_NODELETE stringArticleForFunctionMode(SourceParseMode mode)
+NODELETE static const char* stringArticleForFunctionMode(SourceParseMode mode)
 {
     switch (mode) {
     case SourceParseMode::GetterMode:
@@ -2427,7 +2427,7 @@ static const char* LEGACY_NODELETE stringArticleForFunctionMode(SourceParseMode 
     return nullptr;
 }
     
-static const char* LEGACY_NODELETE stringForFunctionMode(SourceParseMode mode)
+NODELETE static const char* stringForFunctionMode(SourceParseMode mode)
 {
     switch (mode) {
     case SourceParseMode::GetterMode:
@@ -2884,8 +2884,8 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     return true;
 }
 
-static NO_RETURN_DUE_TO_CRASH FunctionMetadataNode* LEGACY_NODELETE getMetadata(ParserFunctionInfo<SyntaxChecker>&) { RELEASE_ASSERT_NOT_REACHED(); }
-static FunctionMetadataNode* LEGACY_NODELETE getMetadata(ParserFunctionInfo<ASTBuilder>& info) { return info.body; }
+NODELETE static NO_RETURN_DUE_TO_CRASH FunctionMetadataNode* getMetadata(ParserFunctionInfo<SyntaxChecker>&) { RELEASE_ASSERT_NOT_REACHED(); }
+NODELETE static FunctionMetadataNode* getMetadata(ParserFunctionInfo<ASTBuilder>& info) { return info.body; }
 
 template <typename LexerType>
 template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDeclaration(TreeBuilder& context, FunctionDeclarationType declarationType, ExportType exportType, DeclarationDefaultContext declarationDefaultContext, std::optional<int> functionConstructorParametersEndPosition)
@@ -5732,7 +5732,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrowFunctio
     return context.createArrowFunctionExpr(location, info);
 }
 
-static const char* LEGACY_NODELETE operatorString(bool prefix, unsigned tok)
+NODELETE static const char* operatorString(bool prefix, unsigned tok)
 {
     switch (tok) {
     case MINUSMINUS:

@@ -119,14 +119,14 @@ void EvacuatedStackSlice::dump(PrintStream& out) const
     out.print(", entryPC=", RawPointer(m_entryPC), " }");
 }
 
-static const Register* LEGACY_NODELETE alignStackPointer(const Register* ptr)
+NODELETE static const Register* alignStackPointer(const Register* ptr)
 {
     constexpr size_t stackAlignmentMask = stackAlignmentBytes() - 1;
     uintptr_t alignedAddress = (reinterpret_cast<uintptr_t>(ptr) + stackAlignmentMask) & ~stackAlignmentMask;
     return reinterpret_cast<const Register*>(alignedAddress);
 }
 
-static const Register* LEGACY_NODELETE topOfFrame(const CallFrame* callFrame)
+NODELETE static const Register* topOfFrame(const CallFrame* callFrame)
 {
     // We include a few extra slots above the frame record via the
     // headroomSlotCount parameter of StackSlicer::evacuatePendingSlice, but we still count
@@ -168,7 +168,7 @@ static ALWAYS_INLINE const Register* bottomOfCallerFrame(const CallFrame* callFr
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-static std::optional<Wasm::CompilationMode> LEGACY_NODELETE compilationModeOfCallee(CalleeBits calleeBits)
+NODELETE static std::optional<Wasm::CompilationMode> compilationModeOfCallee(CalleeBits calleeBits)
 {
     if (!calleeBits.isNativeCallee())
         return std::nullopt;

@@ -50,7 +50,7 @@ public:
     }
 
     template <typename T>
-    void LEGACY_NODELETE write(T item)
+    NODELETE void write(T item)
     {
         RELEASE_ASSERT(m_offset + sizeof(T) <= m_maxSize);
         static constexpr uint8_t mask = std::numeric_limits<uint8_t>::max();
@@ -75,7 +75,7 @@ public:
     { }
 
     template <typename T>
-    T LEGACY_NODELETE read()
+    NODELETE T read()
     {
         RELEASE_ASSERT(m_offset + sizeof(T) <= m_size);
         T result = 0;

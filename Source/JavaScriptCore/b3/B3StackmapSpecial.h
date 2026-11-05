@@ -68,7 +68,7 @@ protected:
     bool isValidImpl(
         unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
         Air::Inst&);
-    bool LEGACY_NODELETE admitsStackImpl(
+    NODELETE bool admitsStackImpl(
         unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
         Air::Inst&, unsigned argIndex);
 
@@ -77,7 +77,7 @@ protected:
         Air::GenerationContext&, unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs, Air::Inst&);
 
     static bool isArgValidForType(const Air::Arg&, Type);
-    static bool LEGACY_NODELETE isArgValidForRep(Air::Code&, const Air::Arg&, const ValueRep&);
+    NODELETE static bool isArgValidForRep(Air::Code&, const Air::Arg&, const ValueRep&);
     static ValueRep repForArg(Air::Code&, const Air::Arg&);
 };
 

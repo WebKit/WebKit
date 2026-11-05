@@ -50,7 +50,7 @@ String multiVMSameModuleSameFunction();
 String multiVMMultipleInstancesPerModule();
 
 // Get all registered test scripts
-std::span<const TestScript> LEGACY_NODELETE getTestScripts();
+NODELETE std::span<const TestScript> getTestScripts();
 
 } // namespace TestScripts
 

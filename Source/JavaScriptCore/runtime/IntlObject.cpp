@@ -1234,7 +1234,7 @@ bool isUnicodeVariantSubtag(StringView string)
 }
 
 using VariantCode = uint64_t;
-static VariantCode LEGACY_NODELETE parseVariantCode(StringView string)
+NODELETE static VariantCode parseVariantCode(StringView string)
 {
     ASSERT(isUnicodeVariantSubtag(string));
     ASSERT(string.containsOnlyASCII());
@@ -1253,7 +1253,7 @@ static VariantCode LEGACY_NODELETE parseVariantCode(StringView string)
     return result;
 }
 
-static unsigned LEGACY_NODELETE convertToUnicodeSingletonIndex(char16_t singleton)
+NODELETE static unsigned convertToUnicodeSingletonIndex(char16_t singleton)
 {
     ASSERT(isASCIIAlphanumeric(singleton));
     singleton = toASCIILower(singleton);
@@ -1265,41 +1265,41 @@ static unsigned LEGACY_NODELETE convertToUnicodeSingletonIndex(char16_t singleto
 }
 static constexpr unsigned numberOfUnicodeSingletons = 10 + 26; // Digits + Alphabets.
 
-static bool LEGACY_NODELETE isUnicodeExtensionAttribute(StringView string)
+NODELETE static bool isUnicodeExtensionAttribute(StringView string)
 {
     auto length = string.length();
     return length >= 3 && length <= 8 && string.containsOnly<isASCIIAlphanumeric>();
 }
 
-static bool LEGACY_NODELETE isUnicodeExtensionKey(StringView string)
+NODELETE static bool isUnicodeExtensionKey(StringView string)
 {
     return string.length() == 2 && isASCIIAlphanumeric(string[0]) && isASCIIAlpha(string[1]);
 }
 
-static bool LEGACY_NODELETE isUnicodeExtensionTypeComponent(StringView string)
+NODELETE static bool isUnicodeExtensionTypeComponent(StringView string)
 {
     auto length = string.length();
     return length >= 3 && length <= 8 && string.containsOnly<isASCIIAlphanumeric>();
 }
 
-static bool LEGACY_NODELETE isUnicodePUExtensionValue(StringView string)
+NODELETE static bool isUnicodePUExtensionValue(StringView string)
 {
     auto length = string.length();
     return length >= 1 && length <= 8 && string.containsOnly<isASCIIAlphanumeric>();
 }
 
-static bool LEGACY_NODELETE isUnicodeOtherExtensionValue(StringView string)
+NODELETE static bool isUnicodeOtherExtensionValue(StringView string)
 {
     auto length = string.length();
     return length >= 2 && length <= 8 && string.containsOnly<isASCIIAlphanumeric>();
 }
 
-static bool LEGACY_NODELETE isUnicodeTKey(StringView string)
+NODELETE static bool isUnicodeTKey(StringView string)
 {
     return string.length() == 2 && isASCIIAlpha(string[0]) && isASCIIDigit(string[1]);
 }
 
-static bool LEGACY_NODELETE isUnicodeTValueComponent(StringView string)
+NODELETE static bool isUnicodeTValueComponent(StringView string)
 {
     auto length = string.length();
     return length >= 3 && length <= 8 && string.containsOnly<isASCIIAlphanumeric>();
@@ -1329,12 +1329,12 @@ public:
     bool parseUnicodeLocaleId();
     bool parseUnicodeLanguageId();
 
-    bool LEGACY_NODELETE isEOS()
+    NODELETE bool isEOS()
     {
         return m_cursor == m_range.end();
     }
 
-    bool LEGACY_NODELETE next()
+    NODELETE bool next()
     {
         if (isEOS())
             return false;
@@ -1408,7 +1408,7 @@ bool LanguageTagParser::parseUnicodeLanguageId()
     }
 }
 
-bool LEGACY_NODELETE LanguageTagParser::parseUnicodeExtensionAfterPrefix()
+NODELETE bool LanguageTagParser::parseUnicodeExtensionAfterPrefix()
 {
     // ((sep keyword)+ | (sep attribute)+ (sep keyword)*) ;
     //
@@ -1490,7 +1490,7 @@ bool LanguageTagParser::parseTransformedExtensionAfterPrefix()
     return found;
 }
 
-bool LEGACY_NODELETE LanguageTagParser::parseOtherExtensionAfterPrefix()
+NODELETE bool LanguageTagParser::parseOtherExtensionAfterPrefix()
 {
     // (sep alphanum{2,8})+ ;
     ASSERT(!isEOS());
@@ -1507,7 +1507,7 @@ bool LEGACY_NODELETE LanguageTagParser::parseOtherExtensionAfterPrefix()
     }
 }
 
-bool LEGACY_NODELETE LanguageTagParser::parsePUExtensionAfterPrefix()
+NODELETE bool LanguageTagParser::parsePUExtensionAfterPrefix()
 {
     // (sep alphanum{1,8})+ ;
     ASSERT(!isEOS());

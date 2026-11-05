@@ -238,7 +238,7 @@ ALWAYS_INLINE JSString* fastArrayJoin(JSGlobalObject* globalObject, JSObject* th
     return fastArrayJoin(globalObject, thisObject, separator, length, sawHoles, genericCase);
 }
 
-inline bool LEGACY_NODELETE canUseDefaultArrayJoinForToString(JSObject* thisObject)
+NODELETE inline bool canUseDefaultArrayJoinForToString(JSObject* thisObject)
 {
     JSGlobalObject* globalObject = thisObject->realmMayBeNull();
     if (!globalObject)

@@ -127,10 +127,10 @@ public:
     void breakpointActionProbe(JSC::JSGlobalObject*, JSC::BreakpointActionID, unsigned batchId, unsigned sampleId, JSC::JSValue sample) final;
     void didDeferBreakpointPause(JSC::BreakpointID) final;
 
-    bool LEGACY_NODELETE isPaused() const;
-    bool LEGACY_NODELETE breakpointsActive() const;
+    NODELETE bool isPaused() const;
+    NODELETE bool breakpointsActive() const;
 
-    void LEGACY_NODELETE setSuppressAllPauses(bool);
+    NODELETE void setSuppressAllPauses(bool);
 
     void handleConsoleAssert(const String& message);
 
@@ -250,7 +250,7 @@ private:
     RefPtr<JSON::Object> buildExceptionPauseReason(JSC::JSValue exception, const InjectedScript&);
 
     using AsyncCallIdentifier = std::pair<unsigned, uint64_t>;
-    static AsyncCallIdentifier LEGACY_NODELETE asyncCallIdentifier(AsyncCallType, uint64_t callbackId);
+    NODELETE static AsyncCallIdentifier asyncCallIdentifier(AsyncCallType, uint64_t callbackId);
 
     const UniqueRef<DebuggerFrontendDispatcher> m_frontendDispatcher;
     const Ref<DebuggerBackendDispatcher> m_backendDispatcher;
@@ -268,7 +268,7 @@ private:
         // Put another way, it doesn't change whether the script is blackboxed.
         UncheckedKeyHashSet<JSC::Debugger::BlackboxRange> ranges;
 
-        inline bool LEGACY_NODELETE operator==(const BlackboxedScript& other) const
+        NODELETE inline bool operator==(const BlackboxedScript& other) const
         {
             return url == other.url
                 && caseSensitive == other.caseSensitive

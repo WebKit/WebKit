@@ -52,7 +52,7 @@ void MachineThreads::gatherFromConductor(ConservativeRoots& conservativeRoots, J
     conservativeRoots.add(conductingMutatorState.stackTop, conductingMutatorState.stackOrigin, jitStubRoutines, codeBlocks);
 }
 
-static inline int LEGACY_NODELETE osRedZoneAdjustment()
+NODELETE static inline int osRedZoneAdjustment()
 {
     int redZoneAdjustment = 0;
 #if CPU(X86_64)
@@ -73,7 +73,7 @@ static inline int LEGACY_NODELETE osRedZoneAdjustment()
     return redZoneAdjustment;
 }
 
-static std::pair<void*, size_t> LEGACY_NODELETE captureStack(Thread& thread, void* stackTop)
+NODELETE static std::pair<void*, size_t> captureStack(Thread& thread, void* stackTop)
 {
     char* begin = reinterpret_cast_ptr<char*>(thread.stack().origin());
     char* end = std::bit_cast<char*>(WTF::roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(stackTop)));
@@ -90,7 +90,7 @@ static std::pair<void*, size_t> LEGACY_NODELETE captureStack(Thread& thread, voi
 }
 
 SUPPRESS_ASAN
-static void LEGACY_NODELETE copyMemory(void* dst, const void* src, size_t size)
+NODELETE static void copyMemory(void* dst, const void* src, size_t size)
 {
     size_t dstAsSize = reinterpret_cast<size_t>(dst);
     size_t srcAsSize = reinterpret_cast<size_t>(src);

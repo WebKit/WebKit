@@ -327,7 +327,7 @@ protected:
             m_remappedStackSlotIndices[i] = i;
     }
 
-    unsigned LEGACY_NODELETE remap(unsigned slotIndex) const
+    NODELETE unsigned remap(unsigned slotIndex) const
     {
         for (;;) {
             unsigned remappedSlotIndex = m_remappedStackSlotIndices[slotIndex];
@@ -337,12 +337,12 @@ protected:
         }
     }
 
-    StackSlot* LEGACY_NODELETE remapStackSlot(StackSlot* slot) const
+    NODELETE StackSlot* remapStackSlot(StackSlot* slot) const
     {
         return m_code.stackSlots()[remap(slot->index())];
     }
 
-    bool LEGACY_NODELETE isRemappedSlotIndex(unsigned slotIndex) const
+    NODELETE bool isRemappedSlotIndex(unsigned slotIndex) const
     {
         return m_remappedStackSlotIndices[slotIndex] != slotIndex;
     };

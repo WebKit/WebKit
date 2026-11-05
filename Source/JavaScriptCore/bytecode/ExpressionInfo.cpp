@@ -222,7 +222,7 @@ struct ExpressionInfo::Diff {
     using FieldID = ExpressionInfo::FieldID;
 
     template<unsigned bitCount>
-    void LEGACY_NODELETE set(FieldID fieldID, unsigned value)
+    NODELETE void set(FieldID fieldID, unsigned value)
     {
         switch (fieldID) {
         case FieldID::InstPC:

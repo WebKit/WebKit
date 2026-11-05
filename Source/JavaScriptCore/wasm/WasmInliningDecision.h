@@ -60,9 +60,9 @@ public:
     unsigned callProfileIndex() const { return m_callProfileIndex; }
     double relativeCallCount() const { return m_relativeCallCount; }
     size_t wasmSize() const { return m_wasmSize; }
-    double LEGACY_NODELETE score() const;
+    NODELETE double score() const;
 
-    InliningNode* LEGACY_NODELETE callTarget(FunctionSpaceIndex functionIndexSpace, unsigned callProfileIndex);
+    NODELETE InliningNode* callTarget(FunctionSpaceIndex functionIndexSpace, unsigned callProfileIndex);
 
 private:
     SUPPRESS_UNCOUNTED_MEMBER const IPIntCallee& m_callee;

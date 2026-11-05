@@ -83,8 +83,8 @@ public:
         friend class Encoder;
 
     public:
-        uint8_t* LEGACY_NODELETE buffer() const { return m_buffer; }
-        ptrdiff_t LEGACY_NODELETE offset() const { return m_offset; }
+        NODELETE uint8_t* buffer() const { return m_buffer; }
+        NODELETE ptrdiff_t offset() const { return m_offset; }
 
     private:
         Allocation(uint8_t* buffer, ptrdiff_t offset)
@@ -226,14 +226,14 @@ private:
         }
 
         // FIXME: Port call sites for span() / mutableSpan() and remove.
-        const uint8_t* LEGACY_NODELETE buffer() const { return m_buffer.span().data(); }
-        uint8_t* LEGACY_NODELETE buffer() { return m_buffer.mutableSpan().data(); }
+        NODELETE const uint8_t* buffer() const { return m_buffer.span().data(); }
+        NODELETE uint8_t* buffer() { return m_buffer.mutableSpan().data(); }
         size_t size() const { return static_cast<size_t>(m_offset); }
 
         std::span<uint8_t> mutableSpan() LIFETIME_BOUND { return m_buffer.mutableSpan().first(size()); }
         std::span<const uint8_t> span() const LIFETIME_BOUND { return m_buffer.span().first(size()); }
 
-        bool LEGACY_NODELETE getOffset(const void* address, ptrdiff_t& result) const
+        NODELETE bool getOffset(const void* address, ptrdiff_t& result) const
         {
             auto* addr = static_cast<const uint8_t*>(address);
             auto* bufferStart = buffer();
@@ -244,7 +244,7 @@ private:
             return false;
         }
 
-        void LEGACY_NODELETE alignEnd()
+        NODELETE void alignEnd()
         {
             ptrdiff_t size = roundUpToMultipleOf(alignof(std::max_align_t), m_offset);
             if (size == m_offset)
@@ -413,20 +413,20 @@ public:
     {
     }
 
-    bool LEGACY_NODELETE isEmpty() const
+    NODELETE bool isEmpty() const
     {
         return m_offset == s_invalidOffset;
     }
 
 protected:
-    const uint8_t* LEGACY_NODELETE buffer() const
+    NODELETE const uint8_t* buffer() const
     {
         ASSERT(!isEmpty());
         return std::bit_cast<const uint8_t*>(this) + m_offset;
     }
 
     template<typename T>
-    const T* LEGACY_NODELETE buffer() const
+    NODELETE const T* buffer() const
     {
         ASSERT(!(std::bit_cast<uintptr_t>(buffer()) % alignof(T)));
         return std::bit_cast<const T*>(buffer());
@@ -530,10 +530,10 @@ public:
         return decode(decoder, unusedIsNewAllocation, std::forward<Args>(args)...);
     }
 
-    const T* LEGACY_NODELETE operator->() const { return get(); }
+    NODELETE const T* operator->() const { return get(); }
 
 private:
-    const T* LEGACY_NODELETE get() const
+    NODELETE const T* get() const
     {
         RELEASE_ASSERT(!this->isEmpty());
         return this->template buffer<T>();
@@ -588,7 +588,7 @@ class CachedWriteBarrier : public CachedObject<WriteBarrier<Source>> {
     friend struct CachedWriteBarrierOffsets;
 
 public:
-    bool LEGACY_NODELETE isEmpty() const { return m_ptr.isEmpty(); }
+    NODELETE bool isEmpty() const { return m_ptr.isEmpty(); }
 
     void encode(Encoder& encoder, const WriteBarrier<Source> src)
     {
@@ -818,8 +818,8 @@ public:
         return m_is8Bit ? create(span8()) : create(span16());
     }
 
-    std::span<const Latin1Character> LEGACY_NODELETE span8() const LIFETIME_BOUND { return { this->template buffer<Latin1Character>(), m_length }; }
-    std::span<const char16_t> LEGACY_NODELETE span16() const LIFETIME_BOUND { return { this->template buffer<char16_t>(), m_length }; }
+    NODELETE std::span<const Latin1Character> span8() const LIFETIME_BOUND { return { this->template buffer<Latin1Character>(), m_length }; }
+    NODELETE std::span<const char16_t> span16() const LIFETIME_BOUND { return { this->template buffer<char16_t>(), m_length }; }
 
 private:
     bool m_is8Bit : 1;
@@ -1899,40 +1899,40 @@ public:
     void encode(Encoder&, const UnlinkedFunctionExecutable&);
     UnlinkedFunctionExecutable* decode(Decoder&) const;
 
-    unsigned LEGACY_NODELETE unlinkedFunctionStart() const { return m_unlinkedFunctionStart; }
-    unsigned LEGACY_NODELETE startOffset() const { return m_startOffset; }
-    unsigned LEGACY_NODELETE sourceLength() const { return m_sourceLength; }
-    unsigned LEGACY_NODELETE parametersStartOffset() const { return m_parametersStartOffset; }
-    unsigned LEGACY_NODELETE unlinkedFunctionEnd() const { return m_unlinkedFunctionEnd; }
-    unsigned LEGACY_NODELETE parameterCount() const { return m_parameterCount; }
+    NODELETE unsigned unlinkedFunctionStart() const { return m_unlinkedFunctionStart; }
+    NODELETE unsigned startOffset() const { return m_startOffset; }
+    NODELETE unsigned sourceLength() const { return m_sourceLength; }
+    NODELETE unsigned parametersStartOffset() const { return m_parametersStartOffset; }
+    NODELETE unsigned unlinkedFunctionEnd() const { return m_unlinkedFunctionEnd; }
+    NODELETE unsigned parameterCount() const { return m_parameterCount; }
 
-    CodeFeatures LEGACY_NODELETE features() const { return m_mutableMetadata.m_features; }
-    LexicallyScopedFeatures LEGACY_NODELETE lexicallyScopedFeatures() const { return m_mutableMetadata.m_lexicallyScopedFeatures; }
-    SourceParseMode LEGACY_NODELETE sourceParseMode() const { return m_sourceParseMode; }
+    NODELETE CodeFeatures features() const { return m_mutableMetadata.m_features; }
+    NODELETE LexicallyScopedFeatures lexicallyScopedFeatures() const { return m_mutableMetadata.m_lexicallyScopedFeatures; }
+    NODELETE SourceParseMode sourceParseMode() const { return m_sourceParseMode; }
 
-    unsigned LEGACY_NODELETE hasCapturedVariables() const { return m_mutableMetadata.m_hasCapturedVariables; }
-    ImplementationVisibility LEGACY_NODELETE implementationVisibility() const { return static_cast<ImplementationVisibility>(m_implementationVisibility); }
-    unsigned LEGACY_NODELETE isBuiltinFunction() const { return m_isBuiltinFunction; }
-    unsigned LEGACY_NODELETE isBuiltinDefaultClassConstructor() const { return m_isBuiltinDefaultClassConstructor; }
-    unsigned LEGACY_NODELETE constructAbility() const { return m_constructAbility; }
-    unsigned LEGACY_NODELETE constructorKind() const { return m_constructorKind; }
-    unsigned LEGACY_NODELETE functionMode() const { return m_functionMode; }
-    unsigned LEGACY_NODELETE scriptMode() const { return m_scriptMode; }
-    unsigned LEGACY_NODELETE superBinding() const { return m_superBinding; }
-    unsigned LEGACY_NODELETE derivedContextType() const { return m_derivedContextType; }
-    unsigned LEGACY_NODELETE evalContextType() const { return m_evalContextType; }
-    unsigned LEGACY_NODELETE inlineAttribute() const { return m_inlineAttribute; }
-    unsigned LEGACY_NODELETE needsClassFieldInitializer() const { return m_needsClassFieldInitializer; }
-    unsigned LEGACY_NODELETE privateBrandRequirement() const { return m_privateBrandRequirement; }
-    unsigned LEGACY_NODELETE hasName() const { return m_hasName; }
+    NODELETE unsigned hasCapturedVariables() const { return m_mutableMetadata.m_hasCapturedVariables; }
+    NODELETE ImplementationVisibility implementationVisibility() const { return static_cast<ImplementationVisibility>(m_implementationVisibility); }
+    NODELETE unsigned isBuiltinFunction() const { return m_isBuiltinFunction; }
+    NODELETE unsigned isBuiltinDefaultClassConstructor() const { return m_isBuiltinDefaultClassConstructor; }
+    NODELETE unsigned constructAbility() const { return m_constructAbility; }
+    NODELETE unsigned constructorKind() const { return m_constructorKind; }
+    NODELETE unsigned functionMode() const { return m_functionMode; }
+    NODELETE unsigned scriptMode() const { return m_scriptMode; }
+    NODELETE unsigned superBinding() const { return m_superBinding; }
+    NODELETE unsigned derivedContextType() const { return m_derivedContextType; }
+    NODELETE unsigned evalContextType() const { return m_evalContextType; }
+    NODELETE unsigned inlineAttribute() const { return m_inlineAttribute; }
+    NODELETE unsigned needsClassFieldInitializer() const { return m_needsClassFieldInitializer; }
+    NODELETE unsigned privateBrandRequirement() const { return m_privateBrandRequirement; }
+    NODELETE unsigned hasName() const { return m_hasName; }
 
     Identifier ecmaName(Decoder& decoder) const { return m_ecmaName.decode(decoder); }
     RefPtr<TDZEnvironmentLink> parentScopeTDZVariables(Decoder& decoder) const { return m_parentScopeTDZVariables.decode(decoder); }
 
     UnlinkedFunctionExecutable::RareData* rareData(Decoder& decoder) const { return m_rareData.decode(decoder); }
 
-    const CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock>& LEGACY_NODELETE unlinkedCodeBlockForCall() const { return m_unlinkedCodeBlockForCall; }
-    const CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock>& LEGACY_NODELETE unlinkedCodeBlockForConstruct() const { return m_unlinkedCodeBlockForConstruct; }
+    NODELETE const CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock>& unlinkedCodeBlockForCall() const { return m_unlinkedCodeBlockForCall; }
+    NODELETE const CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock>& unlinkedCodeBlockForConstruct() const { return m_unlinkedCodeBlockForConstruct; }
 
 private:
     CachedFunctionExecutableMetadata m_mutableMetadata;
@@ -1991,38 +1991,38 @@ public:
 
     JSInstructionStream* instructions(Decoder& decoder) const { return m_instructions.decode(decoder); }
 
-    VirtualRegister LEGACY_NODELETE thisRegister() const { return m_thisRegister; }
-    VirtualRegister LEGACY_NODELETE scopeRegister() const { return m_scopeRegister; }
+    NODELETE VirtualRegister thisRegister() const { return m_thisRegister; }
+    NODELETE VirtualRegister scopeRegister() const { return m_scopeRegister; }
 
     Ref<UnlinkedMetadataTable> metadata(Decoder& decoder) const { return m_metadata.decode(decoder); }
 
-    unsigned LEGACY_NODELETE isConstructor() const { return m_isConstructor; }
-    unsigned LEGACY_NODELETE isBuiltinDefaultClassConstructor() const { return m_isBuiltinDefaultClassConstructor; }
-    unsigned LEGACY_NODELETE isBuiltinFunction() const { return m_isBuiltinFunction; }
-    unsigned LEGACY_NODELETE superBinding() const { return m_superBinding; }
-    unsigned LEGACY_NODELETE scriptMode() const { return m_scriptMode; }
-    unsigned LEGACY_NODELETE isArrowFunctionContext() const { return m_isArrowFunctionContext; }
-    unsigned LEGACY_NODELETE isClassContext() const { return m_isClassContext; }
-    unsigned LEGACY_NODELETE constructorKind() const { return m_constructorKind; }
-    unsigned LEGACY_NODELETE derivedContextType() const { return m_derivedContextType; }
-    unsigned LEGACY_NODELETE evalContextType() const { return m_evalContextType; }
-    unsigned LEGACY_NODELETE hasTailCalls() const { return m_hasTailCalls; }
-    unsigned LEGACY_NODELETE hasCheckpoints() const { return m_hasCheckpoints; }
+    NODELETE unsigned isConstructor() const { return m_isConstructor; }
+    NODELETE unsigned isBuiltinDefaultClassConstructor() const { return m_isBuiltinDefaultClassConstructor; }
+    NODELETE unsigned isBuiltinFunction() const { return m_isBuiltinFunction; }
+    NODELETE unsigned superBinding() const { return m_superBinding; }
+    NODELETE unsigned scriptMode() const { return m_scriptMode; }
+    NODELETE unsigned isArrowFunctionContext() const { return m_isArrowFunctionContext; }
+    NODELETE unsigned isClassContext() const { return m_isClassContext; }
+    NODELETE unsigned constructorKind() const { return m_constructorKind; }
+    NODELETE unsigned derivedContextType() const { return m_derivedContextType; }
+    NODELETE unsigned evalContextType() const { return m_evalContextType; }
+    NODELETE unsigned hasTailCalls() const { return m_hasTailCalls; }
+    NODELETE unsigned hasCheckpoints() const { return m_hasCheckpoints; }
 
-    int LEGACY_NODELETE numVars() const { return m_numVars; }
-    int LEGACY_NODELETE numCalleeLocals() const { return m_numCalleeLocals; }
-    int LEGACY_NODELETE numParameters() const { return m_numParameters; }
+    NODELETE int numVars() const { return m_numVars; }
+    NODELETE int numCalleeLocals() const { return m_numCalleeLocals; }
+    NODELETE int numParameters() const { return m_numParameters; }
 
-    SourceParseMode LEGACY_NODELETE parseMode() const { return m_parseMode; }
-    OptionSet<CodeGenerationMode> LEGACY_NODELETE codeGenerationMode() const { return m_codeGenerationMode; }
-    unsigned LEGACY_NODELETE codeType() const { return m_codeType; }
+    NODELETE SourceParseMode parseMode() const { return m_parseMode; }
+    NODELETE OptionSet<CodeGenerationMode> codeGenerationMode() const { return m_codeGenerationMode; }
+    NODELETE unsigned codeType() const { return m_codeType; }
 
     UnlinkedCodeBlock::RareData* rareData(Decoder& decoder) const { return m_rareData.decode(decoder); }
 
-    unsigned LEGACY_NODELETE numValueProfiles() const { return m_numValueProfiles; }
-    unsigned LEGACY_NODELETE numArrayProfiles() const { return m_numArrayProfiles; }
-    unsigned LEGACY_NODELETE numBinaryArithProfiles() const { return m_numBinaryArithProfiles; }
-    unsigned LEGACY_NODELETE numUnaryArithProfiles() const { return m_numUnaryArithProfiles; }
+    NODELETE unsigned numValueProfiles() const { return m_numValueProfiles; }
+    NODELETE unsigned numArrayProfiles() const { return m_numArrayProfiles; }
+    NODELETE unsigned numBinaryArithProfiles() const { return m_numBinaryArithProfiles; }
+    NODELETE unsigned numUnaryArithProfiles() const { return m_numUnaryArithProfiles; }
 
 private:
     VirtualRegister m_thisRegister;
@@ -2212,7 +2212,7 @@ enum class CachedCodeBlockTag {
     CachedEvalCodeBlockTag,
 };
 
-static CachedCodeBlockTag LEGACY_NODELETE tagFromSourceCodeType(SourceCodeType type)
+NODELETE static CachedCodeBlockTag tagFromSourceCodeType(SourceCodeType type)
 {
     switch (type) {
     case SourceCodeType::ProgramType:
@@ -2514,7 +2514,7 @@ protected:
         m_bootSessionUUID.encode(encoder, bootSessionUUIDString());
     }
 
-    CachedCodeBlockTag LEGACY_NODELETE tag() const { return m_tag; }
+    NODELETE CachedCodeBlockTag tag() const { return m_tag; }
 
     bool isUpToDate(Decoder& decoder) const
     {

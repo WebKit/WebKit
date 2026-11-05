@@ -122,7 +122,7 @@ public:
 
     std::optional<CodeOrigin> findPC(void* pc) const;
 
-    double LEGACY_NODELETE memorySize();
+    NODELETE double memorySize();
 
 private:
     size_t m_compressedPCBufferSize;

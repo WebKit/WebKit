@@ -74,7 +74,7 @@ public:
     Lock& getLock() LIFETIME_BOUND { return m_lock; }
 
     OSREntryData& addOSREntryData(FunctionCodeIndex functionIndex, uint32_t loopIndex, StackMap&&);
-    OSREntryData& LEGACY_NODELETE osrEntryData(uint32_t loopIndex);
+    NODELETE OSREntryData& osrEntryData(uint32_t loopIndex);
 
     void optimizeAfterWarmUp(FunctionCodeIndex functionIndex)
     {

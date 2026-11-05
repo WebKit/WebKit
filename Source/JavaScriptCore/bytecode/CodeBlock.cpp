@@ -1284,7 +1284,7 @@ bool CodeBlock::shouldJettisonDueToWeakReference(VM& vm)
     return !vm.heap.isMarked(this);
 }
 
-static Seconds LEGACY_NODELETE timeToLive(JITType jitType)
+NODELETE static Seconds timeToLive(JITType jitType)
 {
     if (Options::useEagerCodeBlockJettisonTiming()) [[unlikely]] {
         switch (jitType) {
@@ -2588,7 +2588,7 @@ double CodeBlock::optimizationThresholdScalingFactor() const
     return result;
 }
 
-static int32_t LEGACY_NODELETE clipThreshold(double threshold)
+NODELETE static int32_t clipThreshold(double threshold)
 {
     if (threshold < 1.0)
         return 1;

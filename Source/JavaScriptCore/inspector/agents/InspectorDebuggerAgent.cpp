@@ -79,7 +79,7 @@ static String objectGroupForBreakpointAction(JSC::BreakpointActionID id)
     return makeString("breakpoint-action-"_s, id);
 }
 
-static JSC::Debugger::BlackboxRange LEGACY_NODELETE blackboxRange(const JSC::Debugger::Script& script)
+NODELETE static JSC::Debugger::BlackboxRange blackboxRange(const JSC::Debugger::Script& script)
 {
     return {
         { OrdinalNumber::fromZeroBasedInt(script.startLine), OrdinalNumber::fromZeroBasedInt(script.startColumn) },
@@ -690,17 +690,17 @@ static String functionName(JSC::InternalFunction& internalFunction)
     return internalFunction.name();
 }
 
-static String LEGACY_NODELETE functionName(JSC::NativeExecutable& nativeExecutable)
+NODELETE static String functionName(JSC::NativeExecutable& nativeExecutable)
 {
     return nativeExecutable.name();
 }
 
-static String LEGACY_NODELETE functionName(JSC::FunctionExecutable& functionExecutable)
+NODELETE static String functionName(JSC::FunctionExecutable& functionExecutable)
 {
     return functionExecutable.ecmaName().string();
 }
 
-static String LEGACY_NODELETE functionName(JSC::CodeBlock& codeBlock)
+NODELETE static String functionName(JSC::CodeBlock& codeBlock)
 {
     if (auto* functionExecutable = dynamicDowncast<JSC::FunctionExecutable>(codeBlock.ownerExecutable()))
         return functionName(*functionExecutable);
@@ -708,7 +708,7 @@ static String LEGACY_NODELETE functionName(JSC::CodeBlock& codeBlock)
     return nullString();
 }
 
-static String LEGACY_NODELETE functionName(JSC::CallFrame* callFrame)
+NODELETE static String functionName(JSC::CallFrame* callFrame)
 {
     if (callFrame->isNativeCalleeFrame())
         return nullString();
@@ -780,7 +780,7 @@ struct ReplacedNativeExecutable {
 };
 
 static Lock s_replacedNativeExecutablesLock;
-static Vector<Box<ReplacedNativeExecutable>>& LEGACY_NODELETE replacedNativeExecutables() WTF_REQUIRES_LOCK(s_replacedNativeExecutablesLock)
+NODELETE static Vector<Box<ReplacedNativeExecutable>>& replacedNativeExecutables() WTF_REQUIRES_LOCK(s_replacedNativeExecutablesLock)
 {
     ASSERT(s_replacedNativeExecutablesLock.isHeld());
     static NeverDestroyed<Vector<Box<ReplacedNativeExecutable>>> replacedNativeExecutables;
@@ -817,7 +817,7 @@ struct ReplacedInternalFunction {
 };
 
 static Lock s_replacedInternalFunctionsLock;
-static Vector<Box<ReplacedInternalFunction>>& LEGACY_NODELETE replacedInternalFunctions() WTF_REQUIRES_LOCK(s_replacedInternalFunctionsLock)
+NODELETE static Vector<Box<ReplacedInternalFunction>>& replacedInternalFunctions() WTF_REQUIRES_LOCK(s_replacedInternalFunctionsLock)
 {
     ASSERT(s_replacedInternalFunctionsLock.isHeld());
     static NeverDestroyed<Vector<Box<ReplacedInternalFunction>>> replacedInternalFunctions;

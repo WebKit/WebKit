@@ -164,12 +164,12 @@ private:
         return (value || 1.0 / value < 0.0);
     }
 
-    static bool LEGACY_NODELETE mergeFlags(NodeFlags& flagsRef, NodeFlags newFlags)
+    NODELETE static bool mergeFlags(NodeFlags& flagsRef, NodeFlags newFlags)
     {
         return checkAndSet(flagsRef, flagsRef | newFlags);
     }
 
-    bool LEGACY_NODELETE mergeDefaultFlags(Node* node)
+    NODELETE bool mergeDefaultFlags(Node* node)
     {
         bool changed = false;
         if (node->flags() & NodeHasVarArgs) {

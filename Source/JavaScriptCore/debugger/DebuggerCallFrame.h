@@ -47,18 +47,18 @@ public:
 
     static Ref<DebuggerCallFrame> create(VM&, CallFrame*);
 
-    JS_EXPORT_PRIVATE RefPtr<DebuggerCallFrame> LEGACY_NODELETE callerFrame();
+    NODELETE JS_EXPORT_PRIVATE RefPtr<DebuggerCallFrame> callerFrame();
     JSGlobalObject* globalObject(VM&);
     JS_EXPORT_PRIVATE SourceID sourceID() const;
 
     // line and column are in base 0 e.g. the first line is line 0.
-    int LEGACY_NODELETE line() const { return m_position.m_line.zeroBasedInt(); }
-    int LEGACY_NODELETE column() const { return m_position.m_column.zeroBasedInt(); }
+    NODELETE int line() const { return m_position.m_line.zeroBasedInt(); }
+    NODELETE int column() const { return m_position.m_column.zeroBasedInt(); }
     JS_EXPORT_PRIVATE const TextPosition& position() const LIFETIME_BOUND { return m_position; }
 
     JS_EXPORT_PRIVATE DebuggerScope* scope(VM&);
     JS_EXPORT_PRIVATE String functionName(VM&) const;
-    JS_EXPORT_PRIVATE Type LEGACY_NODELETE type(VM&) const;
+    NODELETE JS_EXPORT_PRIVATE Type type(VM&) const;
     JS_EXPORT_PRIVATE JSValue thisValue(VM&) const;
 
     JSValue evaluateWithScopeExtension(VM&, const String&, JSObject* scopeExtensionObject, NakedPtr<Exception>&);

@@ -48,10 +48,10 @@ public:
     static Ref<GenericTypedArrayView> createUninitialized(size_t length);
     static RefPtr<GenericTypedArrayView> tryCreateUninitialized(size_t length);
     
-    typename Adaptor::Type* LEGACY_NODELETE data() const { return static_cast<typename Adaptor::Type*>(baseAddress()); }
+    NODELETE typename Adaptor::Type* data() const { return static_cast<typename Adaptor::Type*>(baseAddress()); }
 
-    std::span<const typename Adaptor::Type> LEGACY_NODELETE typedSpan() const { return unsafeMakeSpan(data(), length()); }
-    std::span<typename Adaptor::Type> LEGACY_NODELETE typedMutableSpan() { return unsafeMakeSpan(data(), length()); }
+    NODELETE std::span<const typename Adaptor::Type> typedSpan() const { return unsafeMakeSpan(data(), length()); }
+    NODELETE std::span<typename Adaptor::Type> typedMutableSpan() { return unsafeMakeSpan(data(), length()); }
 
     bool set(GenericTypedArrayView<Adaptor>* array, size_t offset)
     {
@@ -73,7 +73,7 @@ public:
     
     void zeroFill() { zeroRange(0, length()); }
     
-    size_t LEGACY_NODELETE length() const
+    NODELETE size_t length() const
     {
         return byteLength() / sizeof(typename Adaptor::Type);
     }

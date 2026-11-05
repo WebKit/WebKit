@@ -122,12 +122,12 @@ static inline void writeUnalignedValue(uint8_t* p, V value)
 
 class Writer : public RefCountedAndCanMakeWeakPtr<Writer> {
 public:
-    static Ref<Writer> LEGACY_NODELETE create(DebugObject* obj)
+    NODELETE static Ref<Writer> create(DebugObject* obj)
     {
         return adoptRef(*new Writer(obj));
     }
 
-    uintptr_t LEGACY_NODELETE position() const { return m_position; }
+    NODELETE uintptr_t position() const { return m_position; }
 
     template<typename T>
     class Slot {
@@ -189,9 +189,9 @@ public:
             m_buffer.grow(pos);
     }
 
-    DebugObject* LEGACY_NODELETE debugObject() { return m_debugObject; }
+    NODELETE DebugObject* debugObject() { return m_debugObject; }
 
-    uint8_t* LEGACY_NODELETE buffer() LIFETIME_BOUND { return &m_buffer[0]; }
+    NODELETE uint8_t* buffer() LIFETIME_BOUND { return &m_buffer[0]; }
 
     void align(uintptr_t align)
     {
@@ -236,14 +236,14 @@ private:
     friend class Slot;
 
     template<typename T>
-    uint8_t* LEGACY_NODELETE addressAt(uintptr_t offset) LIFETIME_BOUND
+    NODELETE uint8_t* addressAt(uintptr_t offset) LIFETIME_BOUND
     {
         ASSERT(offset < m_buffer.size() && offset + sizeof(T) <= m_buffer.size());
         return &m_buffer[offset];
     }
 
     template<typename T>
-    T* LEGACY_NODELETE rawSlotAt(uintptr_t offset) LIFETIME_BOUND
+    NODELETE T* rawSlotAt(uintptr_t offset) LIFETIME_BOUND
     {
         ASSERT(offset < m_buffer.size() && offset + sizeof(T) <= m_buffer.size());
         return reinterpret_cast<T*>(&m_buffer[offset]);
@@ -262,17 +262,17 @@ private:
 
 class CodeDescription : public RefCounted<CodeDescription> {
 public:
-    const UTF8CString& LEGACY_NODELETE name() const LIFETIME_BOUND { return m_name; }
+    NODELETE const UTF8CString& name() const LIFETIME_BOUND { return m_name; }
 
-    const void* LEGACY_NODELETE codeStart() const { return reinterpret_cast<const void*>(m_codeRegion.data()); }
+    NODELETE const void* codeStart() const { return reinterpret_cast<const void*>(m_codeRegion.data()); }
 
-    const void* LEGACY_NODELETE codeEnd() const { return reinterpret_cast<const void*>(std::to_address(m_codeRegion.end())); }
+    NODELETE const void* codeEnd() const { return reinterpret_cast<const void*>(std::to_address(m_codeRegion.end())); }
 
-    uintptr_t LEGACY_NODELETE codeSize() const { return m_codeRegion.size(); }
+    NODELETE uintptr_t codeSize() const { return m_codeRegion.size(); }
 
-    std::span<const uint8_t> LEGACY_NODELETE region() { return m_codeRegion; }
+    NODELETE std::span<const uint8_t> region() { return m_codeRegion; }
 
-    static Ref<CodeDescription> LEGACY_NODELETE create(const UTF8CString& name, std::span<const uint8_t> region)
+    NODELETE static Ref<CodeDescription> create(const UTF8CString& name, std::span<const uint8_t> region)
     {
         return adoptRef(*new CodeDescription(name, region));
     }
@@ -411,8 +411,8 @@ public:
         strncpy(header->segname, m_segment.data(), sizeof(header->segname));
     }
 
-    const void* LEGACY_NODELETE addr() const { return m_addr; }
-    size_t LEGACY_NODELETE size() const { return m_size; }
+    NODELETE const void* addr() const { return m_addr; }
+    NODELETE size_t size() const { return m_size; }
 
 private:
     ASCIICString m_name;

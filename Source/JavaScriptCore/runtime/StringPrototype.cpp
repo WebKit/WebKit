@@ -1945,7 +1945,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncTrimEnd, (JSGlobalObject* globalObject, 
     return JSValue::encode(trimString<TrimKind::TrimEnd>(globalObject, thisValue));
 }
 
-static inline unsigned LEGACY_NODELETE clampAndTruncateToUnsigned(double value, unsigned min, unsigned max)
+NODELETE static inline unsigned clampAndTruncateToUnsigned(double value, unsigned min, unsigned max)
 {
     if (value < min)
         return min;

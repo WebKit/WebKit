@@ -225,7 +225,7 @@ private:
         }
     }
 
-    bool LEGACY_NODELETE canBeTransformedToFloat(Value* value)
+    NODELETE bool canBeTransformedToFloat(Value* value)
     {
         if (value->opcode() == FloatToDouble)
             return true;

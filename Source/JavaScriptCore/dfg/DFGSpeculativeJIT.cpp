@@ -1272,7 +1272,7 @@ bool SpeculativeJIT::genericJSValueStrictEq(Node* node, bool invert)
     return false;
 }
 
-static const char* LEGACY_NODELETE dataFormatString(DataFormat format)
+NODELETE static const char* dataFormatString(DataFormat format)
 {
     // These values correspond to the DataFormat enum.
     const char* strings[] = {
@@ -12776,7 +12776,7 @@ void SpeculativeJIT::emitSwitchChar(Node* node, SwitchData* data)
 namespace {
 
 struct CharacterCase {
-    bool LEGACY_NODELETE operator<(const CharacterCase& other) const
+    NODELETE bool operator<(const CharacterCase& other) const
     {
         return character < other.character;
     }

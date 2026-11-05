@@ -62,7 +62,7 @@ public:
     bool isUnlinked() const { return ::JSC::isUnlinked(m_mode); }
 
     enum class Tier { Baseline = 0, DFG = 1, FTL = 2, Count = 3 };
-    Tier LEGACY_NODELETE tier() const;
+    NODELETE Tier tier() const;
     JITType jitType() const
     {
         switch (tier()) {
@@ -96,8 +96,8 @@ public:
     virtual bool iterateCodeBlocksForGC(AbstractSlotVisitor&, NOESCAPE const Function<void(CodeBlock*)>&);
     virtual bool checkLivenessAndVisitChildren(AbstractSlotVisitor&);
 
-    bool LEGACY_NODELETE isInSafepoint() const;
-    bool LEGACY_NODELETE safepointKeepsDependenciesLive() const;
+    NODELETE bool isInSafepoint() const;
+    NODELETE bool safepointKeepsDependenciesLive() const;
 
     template<typename Functor>
     void addMainThreadFinalizationTask(const Functor& functor)
@@ -124,8 +124,8 @@ public:
     }
 
 protected:
-    bool LEGACY_NODELETE computeCompileTimes() const;
-    bool LEGACY_NODELETE reportCompileTimes() const;
+    NODELETE bool computeCompileTimes() const;
+    NODELETE bool reportCompileTimes() const;
 
     enum CompilationPath { FailPath, BaselinePath, DFGPath, FTLPath, CancelPath };
     virtual CompilationPath compileInThreadImpl() = 0;

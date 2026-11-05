@@ -45,7 +45,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 namespace {
 
-bool LEGACY_NODELETE hasPartialXmmRegUpdate(const Inst& inst)
+NODELETE bool hasPartialXmmRegUpdate(const Inst& inst)
 {
     switch (inst.kind.opcode) {
     case ConvertDoubleToFloat:
@@ -69,7 +69,7 @@ bool LEGACY_NODELETE hasPartialXmmRegUpdate(const Inst& inst)
     return false;
 }
 
-bool LEGACY_NODELETE isDependencyBreaking(const Inst& inst)
+NODELETE bool isDependencyBreaking(const Inst& inst)
 {
     // "xorps reg, reg" is used by the frontend to remove the dependency on its argument.
     switch (inst.kind.opcode) {
@@ -93,20 +93,20 @@ struct FPDefDistance {
             distance[i] = 255;
     }
 
-    void LEGACY_NODELETE reset(FPRReg reg)
+    NODELETE void reset(FPRReg reg)
     {
         unsigned index = MacroAssembler::fpRegisterIndex(reg);
         distance[index] = 255;
     }
 
-    void LEGACY_NODELETE add(FPRReg reg, unsigned registerDistance)
+    NODELETE void add(FPRReg reg, unsigned registerDistance)
     {
         unsigned index = MacroAssembler::fpRegisterIndex(reg);
         if (registerDistance < distance[index])
             distance[index] = static_cast<unsigned char>(registerDistance);
     }
 
-    bool LEGACY_NODELETE updateFromPrecessor(FPDefDistance& precessorDistance, unsigned constantOffset = 0)
+    NODELETE bool updateFromPrecessor(FPDefDistance& precessorDistance, unsigned constantOffset = 0)
     {
         bool changed = false;
         for (unsigned i = 0; i < MacroAssembler::numberOfFPRegisters(); ++i) {

@@ -38,7 +38,7 @@ enum class GCConductor : uint8_t {
     Collector
 };
 
-const char* LEGACY_NODELETE gcConductorShortName(GCConductor officer);
+NODELETE const char* gcConductorShortName(GCConductor officer);
 
 // Being the conductor: the collector thread, or a mutator holding the conn. One global capability rather than one per
 // Collector, so that Heap's methods can require it too. Exists only for thread-safety analysis; the variable is never

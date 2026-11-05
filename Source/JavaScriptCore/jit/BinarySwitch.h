@@ -97,7 +97,7 @@ private:
         {
         }
         
-        bool LEGACY_NODELETE operator<(const Case& other) const
+        NODELETE bool operator<(const Case& other) const
         {
             return value < other.value;
         }

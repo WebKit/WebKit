@@ -92,8 +92,8 @@ public:
     size_t numberOfExceptionHandlers() const { return m_exceptionHandlers.size(); }
     UnlinkedHandlerInfo& exceptionHandler(int index) { return m_exceptionHandlers[index]; }
     void addExceptionHandler(const UnlinkedHandlerInfo& handler) { m_exceptionHandlers.append(handler); }
-    UnlinkedHandlerInfo* LEGACY_NODELETE handlerForBytecodeIndex(BytecodeIndex, RequiredHandler = RequiredHandler::AnyHandler);
-    UnlinkedHandlerInfo* LEGACY_NODELETE handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
+    NODELETE UnlinkedHandlerInfo* handlerForBytecodeIndex(BytecodeIndex, RequiredHandler = RequiredHandler::AnyHandler);
+    NODELETE UnlinkedHandlerInfo* handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
 
     BitVector& bitVector(size_t i) { return m_bitVectors[i]; }
     unsigned addBitVector(BitVector&& bitVector)
@@ -187,7 +187,7 @@ public:
 
     [[nodiscard]] bool finalize(std::unique_ptr<JSInstructionStream>);
 
-    void LEGACY_NODELETE dump(PrintStream&) const;
+    NODELETE void dump(PrintStream&) const;
 
     unsigned addBinaryArithProfile() { return m_numBinaryArithProfiles++; }
     unsigned addUnaryArithProfile() { return m_numUnaryArithProfiles++; }

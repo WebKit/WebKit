@@ -107,13 +107,13 @@ enum Conversion : uint8_t {
 };
 } // namespace Array
 
-IndexingType LEGACY_NODELETE toIndexingShape(Array::Type);
+NODELETE IndexingType toIndexingShape(Array::Type);
 
-TypedArrayType LEGACY_NODELETE toTypedArrayType(Array::Type);
-Array::Type LEGACY_NODELETE toArrayType(TypedArrayType);
-Array::Type LEGACY_NODELETE refineTypedArrayType(Array::Type, TypedArrayType);
+NODELETE TypedArrayType toTypedArrayType(Array::Type);
+NODELETE Array::Type toArrayType(TypedArrayType);
+NODELETE Array::Type refineTypedArrayType(Array::Type, TypedArrayType);
 
-bool LEGACY_NODELETE permitsBoundsCheckLowering(Array::Type);
+NODELETE bool permitsBoundsCheckLowering(Array::Type);
 
 // Only arrays with ArrayStorage can have a non-writable length.
 inline bool arrayModeImpliesWritableLength(Array::Type type)

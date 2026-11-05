@@ -104,8 +104,8 @@ public:
     // able to load a recovery. We only use it when a direct load is
     // currently impossible, to determine whether we should spill a
     // GPR or an FPR for loading this value.
-    bool LEGACY_NODELETE loadsIntoGPR() const;
-    bool LEGACY_NODELETE loadsIntoFPR() const;
+    NODELETE bool loadsIntoGPR() const;
+    NODELETE bool loadsIntoFPR() const;
 
     ValueRecovery recovery() const { return m_recovery; }
 

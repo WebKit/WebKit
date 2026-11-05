@@ -51,7 +51,7 @@ public:
 
     void clear();
 
-    Value* LEGACY_NODELETE findMatch(const ValueKey&, BasicBlock*, Dominators&);
+    NODELETE Value* findMatch(const ValueKey&, BasicBlock*, Dominators&);
 
     bool process(Value*, Dominators&);
     

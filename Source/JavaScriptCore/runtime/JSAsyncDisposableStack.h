@@ -72,7 +72,7 @@ public:
     static JSAsyncDisposableStack* createWithInitialValues(VM&);
     static JSAsyncDisposableStack* create(VM&, Structure*);
 
-    bool LEGACY_NODELETE disposed();
+    NODELETE bool disposed();
 
 private:
     JSAsyncDisposableStack(VM& vm, Structure* structure)

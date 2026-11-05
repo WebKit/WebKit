@@ -33,7 +33,7 @@ typedef struct {
 } NodeList;
 
 extern NodeList* NodeList_new(Node* parentNode);
-extern unsigned LEGACY_NODELETE NodeList_length(NodeList*);
-extern Node* LEGACY_NODELETE NodeList_item(NodeList*, unsigned);
-extern void LEGACY_NODELETE NodeList_ref(NodeList*);
+NODELETE extern unsigned NodeList_length(NodeList*);
+NODELETE extern Node* NodeList_item(NodeList*, unsigned);
+NODELETE extern void NodeList_ref(NodeList*);
 extern void NodeList_deref(NodeList*);

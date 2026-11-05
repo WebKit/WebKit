@@ -52,15 +52,15 @@ public:
 
     bool isActive() const { return m_hasEnteredVM; }
 
-    bool LEGACY_NODELETE hasTimeLimit();
+    NODELETE bool hasTimeLimit();
     void enteredVM();
-    void LEGACY_NODELETE exitedVM();
+    NODELETE void exitedVM();
 
     static constexpr Seconds noTimeLimit = Seconds::infinity();
 
 private:
     void startTimer(Seconds timeLimit);
-    void LEGACY_NODELETE stopTimer();
+    NODELETE void stopTimer();
 
     bool m_hasEnteredVM { false };
 

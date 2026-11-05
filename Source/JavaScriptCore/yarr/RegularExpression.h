@@ -51,8 +51,8 @@ public:
     int match(StringView, unsigned startFrom = 0, int* matchLength = nullptr) const;
     int searchRev(StringView) const;
 
-    int LEGACY_NODELETE matchedLength() const;
-    bool LEGACY_NODELETE isValid() const;
+    NODELETE int matchedLength() const;
+    NODELETE bool isValid() const;
 
 private:
     class Private;

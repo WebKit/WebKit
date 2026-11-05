@@ -81,7 +81,7 @@ public:
     }
 
 private:
-    static bool LEGACY_NODELETE foldPurifyNaN(Edge& edge)
+    NODELETE static bool foldPurifyNaN(Edge& edge)
     {
         if (edge->op() == PurifyNaN) {
             edge = edge->child1();
@@ -90,7 +90,7 @@ private:
         return false;
     }
 
-    static bool LEGACY_NODELETE foldPurifyNaNOnBinary(Node* node)
+    NODELETE static bool foldPurifyNaNOnBinary(Node* node)
     {
         bool result = false;
         if (node->isBinaryUseKind(DoubleRepUse)) {
@@ -100,7 +100,7 @@ private:
         return result;
     }
 
-    static bool LEGACY_NODELETE foldPurifyNaNOnUnary(Node* node)
+    NODELETE static bool foldPurifyNaNOnUnary(Node* node)
     {
         if (node->child1().useKind() == DoubleRepUse)
             return foldPurifyNaN(node->child1());

@@ -47,16 +47,16 @@ static constexpr bool verbose = false;
 const unsigned giveUpThreshold = 50;
 constexpr size_t relationshipListInlineCapacity = 8;
 
-int64_t LEGACY_NODELETE clampedSumImpl() { return 0; }
+NODELETE int64_t clampedSumImpl() { return 0; }
 
 template<typename... Args>
-int64_t LEGACY_NODELETE clampedSumImpl(int left, Args... args)
+NODELETE int64_t clampedSumImpl(int left, Args... args)
 {
     return static_cast<int64_t>(left) + clampedSumImpl(args...);
 }
 
 template<typename... Args>
-int LEGACY_NODELETE clampedSum(Args... args)
+NODELETE int clampedSum(Args... args)
 {
     int64_t result = clampedSumImpl(args...);
     return static_cast<int>(WTF::min(
@@ -66,7 +66,7 @@ int LEGACY_NODELETE clampedSum(Args... args)
             result)));
 }
 
-bool LEGACY_NODELETE isGeneralOffset(int offset)
+NODELETE bool isGeneralOffset(int offset)
 {
     return offset >= -1 && offset <= 1;
 }
@@ -82,7 +82,7 @@ public:
 
     // Some relationships provide more information than others. When a relationship provides more
     // information, it is less vague.
-    static unsigned LEGACY_NODELETE vagueness(Kind kind)
+    NODELETE static unsigned vagueness(Kind kind)
     {
         switch (kind) {
         case Equal:
@@ -100,7 +100,7 @@ public:
     static constexpr unsigned minVagueness = 0;
     static constexpr unsigned maxVagueness = 2;
     
-    static Kind LEGACY_NODELETE flipped(Kind kind)
+    NODELETE static Kind flipped(Kind kind)
     {
         switch (kind) {
         case LessThan:
@@ -130,7 +130,7 @@ public:
         RELEASE_ASSERT(m_left != m_right);
     }
     
-    static Relationship LEGACY_NODELETE safeCreate(NodeFlowProjection left, NodeFlowProjection right, Kind kind, int offset = 0)
+    NODELETE static Relationship safeCreate(NodeFlowProjection left, NodeFlowProjection right, Kind kind, int offset = 0)
     {
         if (!left.isStillValid() || !right.isStillValid() || left == right)
             return Relationship();
@@ -139,14 +139,14 @@ public:
 
     explicit operator bool() const { return !!m_left; }
     
-    NodeFlowProjection LEGACY_NODELETE left() const { return m_left; }
-    NodeFlowProjection LEGACY_NODELETE right() const { return m_right; }
-    Kind LEGACY_NODELETE kind() const { return m_kind; }
-    int LEGACY_NODELETE offset() const { return m_offset; }
+    NODELETE NodeFlowProjection left() const { return m_left; }
+    NODELETE NodeFlowProjection right() const { return m_right; }
+    NODELETE Kind kind() const { return m_kind; }
+    NODELETE int offset() const { return m_offset; }
 
-    unsigned LEGACY_NODELETE vagueness() const { return vagueness(kind()); }
+    NODELETE unsigned vagueness() const { return vagueness(kind()); }
     
-    Relationship LEGACY_NODELETE flipped() const
+    NODELETE Relationship flipped() const
     {
         if (!*this)
             return Relationship();
@@ -179,7 +179,7 @@ public:
         return Relationship(m_right, m_left, flipped(m_kind), -m_offset);
     }
     
-    Relationship LEGACY_NODELETE inverse() const
+    NODELETE Relationship inverse() const
     {
         if (!*this)
             return *this;
@@ -202,22 +202,22 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    bool LEGACY_NODELETE isCanonical() const { return m_left < m_right; }
+    NODELETE bool isCanonical() const { return m_left < m_right; }
     
-    Relationship LEGACY_NODELETE canonical() const
+    NODELETE Relationship canonical() const
     {
         if (isCanonical())
             return *this;
         return flipped();
     }
     
-    bool LEGACY_NODELETE sameNodesAs(const Relationship& other) const
+    NODELETE bool sameNodesAs(const Relationship& other) const
     {
         return m_left == other.m_left
             && m_right == other.m_right;
     }
 
-    bool LEGACY_NODELETE isEquivalentTo(const Relationship& other) const
+    NODELETE bool isEquivalentTo(const Relationship& other) const
     {
         if (m_left != other.m_left || m_kind != other.m_kind)
             return false;
@@ -239,14 +239,14 @@ public:
         return false;
     }
     
-    bool LEGACY_NODELETE operator==(const Relationship& other) const
+    NODELETE bool operator==(const Relationship& other) const
     {
         return sameNodesAs(other)
             && m_kind == other.m_kind
             && m_offset == other.m_offset;
     }
     
-    bool LEGACY_NODELETE operator<(const Relationship& other) const
+    NODELETE bool operator<(const Relationship& other) const
     {
         if (m_left != other.m_left)
             return m_left < other.m_left;
@@ -260,7 +260,7 @@ public:
     // If possible, returns a form of this relationship where the given node is the left
     // side. Returns a null relationship if this relationship cannot say anything about this
     // node.
-    Relationship LEGACY_NODELETE forNode(NodeFlowProjection node) const
+    NODELETE Relationship forNode(NodeFlowProjection node) const
     {
         if (m_left == node)
             return *this;
@@ -269,17 +269,17 @@ public:
         return Relationship();
     }
     
-    void LEGACY_NODELETE setLeft(NodeFlowProjection left)
+    NODELETE void setLeft(NodeFlowProjection left)
     {
         RELEASE_ASSERT(left != m_right);
         m_left = left;
     }
-    void LEGACY_NODELETE setRight(NodeFlowProjection right)
+    NODELETE void setRight(NodeFlowProjection right)
     {
         RELEASE_ASSERT(right != m_left);
         m_right = right;
     }
-    bool LEGACY_NODELETE addToOffset(int offset)
+    NODELETE bool addToOffset(int offset)
     {
         if (sumOverflows<int>(m_offset, offset))
             return false;
@@ -442,7 +442,7 @@ public:
     // In some cases, it will do something conservative. It's always safe for this to return
     // *this, or to return other. It'll do that sometimes, mainly to accelerate convergence for
     // things that we don't think are important enough to slow down the analysis.
-    Relationship LEGACY_NODELETE filter(const Relationship& other) const
+    NODELETE Relationship filter(const Relationship& other) const
     {
         // We are only interested in merging relationships over the same nodes.
         ASSERT(sameNodesAs(other));
@@ -539,7 +539,7 @@ public:
     // return this or it may return something else, but whatever it returns, it will have the same nodes as
     // this. This is not automatically done by filter() because it currently only makes sense to call this
     // during a very particular part of setOneSide().
-    Relationship LEGACY_NODELETE filterConstant(const Relationship& other) const
+    NODELETE Relationship filterConstant(const Relationship& other) const
     {
         ASSERT(m_left == other.m_left);
         ASSERT(m_right->isInt32Constant());
@@ -583,7 +583,7 @@ public:
         return Relationship();
     }
     
-    int LEGACY_NODELETE minValueOfLeft() const
+    NODELETE int minValueOfLeft() const
     {
         if (m_left->isInt32Constant())
             return m_left->asInt32();
@@ -601,7 +601,7 @@ public:
         return clampedSum(minRightValue, m_offset);
     }
     
-    int LEGACY_NODELETE maxValueOfLeft() const
+    NODELETE int maxValueOfLeft() const
     {
         if (m_left->isInt32Constant())
             return m_left->asInt32();
@@ -654,7 +654,7 @@ public:
     }
     
 private:
-    Relationship LEGACY_NODELETE mergeImpl(const Relationship& other) const
+    NODELETE Relationship mergeImpl(const Relationship& other) const
     {
         ASSERT(sameNodesAs(other));
         ASSERT(m_kind != GreaterThan);
@@ -1022,7 +1022,7 @@ public:
         Relationship proof { };
     };
 
-    std::optional<std::tuple<RangeBound, RangeBound>> LEGACY_NODELETE rangeFor(Node* node)
+    NODELETE std::optional<std::tuple<RangeBound, RangeBound>> rangeFor(Node* node)
     {
         if (node->isInt32Constant()) {
             int32_t value = node->asInt32();
@@ -1079,7 +1079,7 @@ public:
     // otherwise it might break the inductive reasoning around phis/upsilons.
     // For example, if lhs > 0 => node(lhs) > 0, you can't add that relationship. Pruning
     // relationships involving lhs won't prune this new relationship.
-    bool LEGACY_NODELETE provablyGreaterThan(Node* lhs, Node* rhs, int32_t minOffset = 0)
+    NODELETE bool provablyGreaterThan(Node* lhs, Node* rhs, int32_t minOffset = 0)
     {
         auto iter = m_relationships.find(lhs);
         if (iter != m_relationships.end()) {
@@ -1093,12 +1093,12 @@ public:
         return false;
     }
 
-    bool LEGACY_NODELETE provablyGreaterThanOrEqual(Node* lhs, Node* rhs)
+    NODELETE bool provablyGreaterThanOrEqual(Node* lhs, Node* rhs)
     {
         return provablyGreaterThan(lhs, rhs, -1);
     }
 
-    bool LEGACY_NODELETE provablyNonNegative(Node* lhs)
+    NODELETE bool provablyNonNegative(Node* lhs)
     {
         return provablyGreaterThanOrEqual(lhs, m_zero);
     }

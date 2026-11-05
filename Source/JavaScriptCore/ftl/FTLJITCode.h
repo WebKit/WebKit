@@ -54,8 +54,8 @@ public:
 
     void initializeB3Code(CodeRef<JSEntryPtrTag>);
     void initializeB3Byproducts(std::unique_ptr<OpaqueByproducts>);
-    void LEGACY_NODELETE initializeAddressForCall(CodePtr<JSEntryPtrTag>);
-    void LEGACY_NODELETE initializeAddressForArityCheck(CodePtr<JSEntryPtrTag>);
+    NODELETE void initializeAddressForCall(CodePtr<JSEntryPtrTag>);
+    NODELETE void initializeAddressForArityCheck(CodePtr<JSEntryPtrTag>);
     
     void validateReferences(const TrackedReferences&) override;
 

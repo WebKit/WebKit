@@ -71,7 +71,7 @@ static void SYSV_ABI flushDirtyStackPages(State* state)
 }
 
 // Not for general use. This should only be for writing tests.
-JS_EXPORT_PRIVATE void* probeStateForContext(Context&);
+NODELETE JS_EXPORT_PRIVATE void* probeStateForContext(Context&);
 void* probeStateForContext(Context& context)
 {
     return context.m_state;

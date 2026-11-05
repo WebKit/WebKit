@@ -259,12 +259,12 @@ struct AbstractModuleRecord::ResolveQuery {
     {
     }
 
-    bool LEGACY_NODELETE isEmptyValue() const
+    NODELETE bool isEmptyValue() const
     {
         return !exportName;
     }
 
-    bool LEGACY_NODELETE isDeletedValue() const
+    NODELETE bool isDeletedValue() const
     {
         return exportName.isHashTableDeletedValue();
     }
@@ -284,12 +284,12 @@ struct AbstractModuleRecord::ResolveQuery {
     RefPtr<UniquedStringImpl> exportName;
 };
 
-inline unsigned LEGACY_NODELETE AbstractModuleRecord::ResolveQuery::Hash::hash(const ResolveQuery& query)
+NODELETE inline unsigned AbstractModuleRecord::ResolveQuery::Hash::hash(const ResolveQuery& query)
 {
     return WTF::PtrHash<AbstractModuleRecord*>::hash(query.moduleRecord) + IdentifierRepHash::hash(query.exportName);
 }
 
-inline bool LEGACY_NODELETE AbstractModuleRecord::ResolveQuery::Hash::equal(const ResolveQuery& lhs, const ResolveQuery& rhs)
+NODELETE inline bool AbstractModuleRecord::ResolveQuery::Hash::equal(const ResolveQuery& lhs, const ResolveQuery& rhs)
 {
     return lhs.moduleRecord == rhs.moduleRecord && lhs.exportName == rhs.exportName;
 }

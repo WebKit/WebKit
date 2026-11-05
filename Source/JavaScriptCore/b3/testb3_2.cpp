@@ -7220,7 +7220,7 @@ static void testBitAndWithMaskReturnsBooleans(int64_t a, int64_t b)
     CHECK_EQ(compileAndRun<intptr_t>(proc, a, b), expected);
 }
 
-static double LEGACY_NODELETE bitAndDouble(double a, double b)
+NODELETE static double bitAndDouble(double a, double b)
 {
     return std::bit_cast<double>(std::bit_cast<uint64_t>(a) & std::bit_cast<uint64_t>(b));
 }
@@ -7282,7 +7282,7 @@ static void testBitAndImmsDouble(double a, double b)
     CHECK(isIdentical(compileAndRun<double>(proc), bitAndDouble(a, b)));
 }
 
-static float LEGACY_NODELETE bitAndFloat(float a, float b)
+NODELETE static float bitAndFloat(float a, float b)
 {
     return std::bit_cast<float>(std::bit_cast<uint32_t>(a) & std::bit_cast<uint32_t>(b));
 }

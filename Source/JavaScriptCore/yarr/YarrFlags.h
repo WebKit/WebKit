@@ -63,10 +63,10 @@ enum class Flags : uint16_t {
     DeletedValue = 1 << numberOfFlags,
 };
 
-JS_EXPORT_PRIVATE std::optional<OptionSet<Flags>> LEGACY_NODELETE parseFlags(StringView);
+NODELETE JS_EXPORT_PRIVATE std::optional<OptionSet<Flags>> parseFlags(StringView);
 
 class FlagsString;
-JS_EXPORT_PRIVATE FlagsString LEGACY_NODELETE flagsString(OptionSet<Flags>);
+NODELETE JS_EXPORT_PRIVATE FlagsString flagsString(OptionSet<Flags>);
 
 class FlagsString {
 public:

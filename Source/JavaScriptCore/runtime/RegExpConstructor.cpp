@@ -275,7 +275,7 @@ JSC_DEFINE_CUSTOM_SETTER(setRegExpConstructorMultiline, (JSGlobalObject* globalO
     return true;
 }
 
-static inline bool LEGACY_NODELETE areLegacyFeaturesEnabled(JSGlobalObject* globalObject, JSValue newTarget)
+NODELETE static inline bool areLegacyFeaturesEnabled(JSGlobalObject* globalObject, JSValue newTarget)
 {
     if (!newTarget)
         return true;

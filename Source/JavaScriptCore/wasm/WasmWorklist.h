@@ -76,11 +76,11 @@ private:
         Ticket ticket;
         RefPtr<Plan> plan;
 
-        void LEGACY_NODELETE setToNextPriority();
+        NODELETE void setToNextPriority();
     };
 
     struct QueueElementIsLowerPriority {
-        bool LEGACY_NODELETE operator()(const QueueElement& left, const QueueElement& right) const
+        NODELETE bool operator()(const QueueElement& left, const QueueElement& right) const
         {
             // Within one Priority, the earliest ticket is served first.
             if (left.priority == right.priority)
@@ -99,7 +99,7 @@ private:
     Vector<Ref<Thread>> m_threads;
 };
 
-Worklist* LEGACY_NODELETE existingWorklistOrNull();
+NODELETE Worklist* existingWorklistOrNull();
 JS_EXPORT_PRIVATE Worklist& ensureWorklist();
 
 } } // namespace JSC::Wasm

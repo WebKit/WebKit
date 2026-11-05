@@ -83,7 +83,7 @@ public:
     bool isMarked(HeapCell*) const;
     bool isMarked(HeapVersion markingVersion, HeapCell*) const;
     
-    bool LEGACY_NODELETE isNewlyAllocated(HeapCell*) const;
+    NODELETE bool isNewlyAllocated(HeapCell*) const;
     
     void noteMarked();
     void assertValidCell(VM&, HeapCell*) const;

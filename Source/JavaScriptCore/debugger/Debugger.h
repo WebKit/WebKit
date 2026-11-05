@@ -72,7 +72,7 @@ public:
     };
     JS_EXPORT_PRIVATE void attach(JSGlobalObject*);
     JS_EXPORT_PRIVATE void detach(JSGlobalObject*, ReasonForDetach);
-    JS_EXPORT_PRIVATE bool LEGACY_NODELETE isAttached(JSGlobalObject*);
+    NODELETE JS_EXPORT_PRIVATE bool isAttached(JSGlobalObject*);
 
     void forEachBreakpointLocation(SourceID, SourceProvider*, int startLine, int startColumn, int endLine, int endColumn, NOESCAPE const Function<void(int, int)>&);
 
@@ -123,7 +123,7 @@ public:
     BreakpointID pausingBreakpointID() const { return m_pausingBreakpointID; }
 
     void schedulePauseAtNextOpportunity();
-    void LEGACY_NODELETE cancelPauseAtNextOpportunity();
+    NODELETE void cancelPauseAtNextOpportunity();
     bool schedulePauseForSpecialBreakpoint(Breakpoint&);
     bool cancelPauseForSpecialBreakpoint(Breakpoint&);
     void breakProgram(RefPtr<Breakpoint>&& specialBreakpoint = nullptr);
@@ -141,7 +141,7 @@ public:
     using BlackboxFlags = OptionSet<BlackboxFlag>;
     using BlackboxConfiguration = UncheckedKeyHashMap<BlackboxRange, BlackboxFlags>;
     void setBlackboxConfiguration(SourceID, BlackboxConfiguration&&);
-    void LEGACY_NODELETE setBlackboxBreakpointEvaluations(bool);
+    NODELETE void setBlackboxBreakpointEvaluations(bool);
     void clearBlackbox();
 
     bool isPaused() const { return m_isPaused; }
@@ -192,7 +192,7 @@ public:
     };
 
     Client* client() const { return m_client; }
-    void LEGACY_NODELETE setClient(Client*);
+    NODELETE void setClient(Client*);
 
     // FIXME: <https://webkit.org/b/162773> Web Inspector: Simplify Debugger::Script to use SourceProvider
     struct Script {
@@ -252,7 +252,7 @@ public:
         virtual void didEvaluateScript(Seconds startTime, ProfilingReason) = 0;
     };
 
-    void LEGACY_NODELETE setProfilingClient(ProfilingClient*);
+    NODELETE void setProfilingClient(ProfilingClient*);
     bool hasProfilingClient() const { return m_profilingClient != nullptr; }
     // Lets a client find the debuggers it installed itself into without keeping pointers to them.
     bool hasProfilingClient(const ProfilingClient& client) const { return m_profilingClient == &client; }
@@ -321,7 +321,7 @@ private:
     void pauseIfNeeded(JSC::JSGlobalObject*);
     BlackboxFlags blackboxFlagsAtPosition(SourceID, const TextPosition&) const;
     void resetImmediatePauseState();
-    void LEGACY_NODELETE resetEventualPauseState();
+    NODELETE void resetEventualPauseState();
     void resetAsyncPauseState();
 
     enum SteppingMode {
@@ -342,7 +342,7 @@ private:
     void clearDebuggerRequests(JSGlobalObject*);
     void clearParsedData();
 
-    bool LEGACY_NODELETE canDispatchFunctionToObservers() const;
+    NODELETE bool canDispatchFunctionToObservers() const;
     void dispatchFunctionToObservers(Function<void(Observer&)>);
 
     VM& m_vm;

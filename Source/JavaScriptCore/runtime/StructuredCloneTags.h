@@ -360,7 +360,7 @@ using WasmMemoryHandleArray = Vector<RefPtr<SharedArrayBufferContents>>;
 
 constexpr uint64_t autoLengthMarker = UINT64_MAX;
 
-inline constexpr unsigned LEGACY_NODELETE typedArrayElementSize(ArrayBufferViewSubtag tag)
+NODELETE inline constexpr unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
 {
     switch (tag) {
 #define JSC_TYPED_ARRAY_SUBTAG_ELEMENT_SIZE(name) \
@@ -474,9 +474,9 @@ inline ErrorType toErrorType(SerializableErrorType value)
 
 constexpr unsigned CurrentMajorVersion = 16;
 constexpr unsigned CurrentMinorVersion = 0;
-inline constexpr unsigned LEGACY_NODELETE majorVersionFor(unsigned version) { return version & 0x00FFFFFF; }
-inline constexpr unsigned LEGACY_NODELETE minorVersionFor(unsigned version) { return version >> 24; }
-inline constexpr unsigned LEGACY_NODELETE makeVersion(unsigned major, unsigned minor)
+NODELETE inline constexpr unsigned majorVersionFor(unsigned version) { return version & 0x00FFFFFF; }
+NODELETE inline constexpr unsigned minorVersionFor(unsigned version) { return version >> 24; }
+NODELETE inline constexpr unsigned makeVersion(unsigned major, unsigned minor)
 {
     ASSERT_UNDER_CONSTEXPR_CONTEXT(major < (1u << 24));
     ASSERT_UNDER_CONSTEXPR_CONTEXT(minor < (1u << 8));
@@ -506,7 +506,7 @@ inline constexpr unsigned LEGACY_NODELETE makeVersion(unsigned major, unsigned m
  * Version 16. added line/column/sourceURL/stack information to DOMException.
  */
 // FIXME: We should have two versions one for JSC version changes and one for WebCore version changes.
-inline constexpr unsigned LEGACY_NODELETE currentVersion() { return makeVersion(CurrentMajorVersion, CurrentMinorVersion); }
+NODELETE inline constexpr unsigned currentVersion() { return makeVersion(CurrentMajorVersion, CurrentMinorVersion); }
 constexpr unsigned TerminatorTag = 0xFFFFFFFF;
 constexpr unsigned StringPoolTag = 0xFFFFFFFE;
 constexpr unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
@@ -519,7 +519,7 @@ constexpr uint32_t StringDataIs8BitFlag = 0x80000000U;
 
 // This function is only used for a sanity check mechanism used in
 // CloneSerializer::addToObjectPoolIfNotDupe() and CloneDeserializer::addToObjectPool().
-inline constexpr bool LEGACY_NODELETE canBeAddedToObjectPool(SerializationTag tag)
+NODELETE inline constexpr bool canBeAddedToObjectPool(SerializationTag tag)
 {
     // If you add a type to the allow ist (i.e. returns true) here, it means
     // that both the serializer and deserializer will push objects of this

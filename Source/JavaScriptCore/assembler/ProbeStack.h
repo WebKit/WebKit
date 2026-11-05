@@ -94,7 +94,7 @@ public:
             flushWrites();
     }
 
-    void* LEGACY_NODELETE lowWatermarkFromVisitingDirtyChunks();
+    NODELETE void* lowWatermarkFromVisitingDirtyChunks();
 
 private:
     uint64_t dirtyBitFor(void* logicalAddress)

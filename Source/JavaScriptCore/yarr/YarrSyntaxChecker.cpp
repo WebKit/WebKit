@@ -35,35 +35,35 @@ namespace JSC { namespace Yarr {
 
 class SyntaxChecker {
 public:
-    void LEGACY_NODELETE assertionBOL() { }
-    void LEGACY_NODELETE assertionEOL() { }
-    void LEGACY_NODELETE assertionBOI() { }
-    void LEGACY_NODELETE assertionEOI(bool) { }
-    void LEGACY_NODELETE assertionWordBoundary(bool) { }
-    void LEGACY_NODELETE atomPatternCharacter(char32_t, bool) { }
-    void LEGACY_NODELETE atomBuiltInCharacterClass(BuiltInCharacterClassID, bool) { }
-    void LEGACY_NODELETE atomCharacterClassBegin(bool = false) { }
-    void LEGACY_NODELETE atomCharacterClassAtom(char16_t) { }
-    void LEGACY_NODELETE atomCharacterClassRange(char16_t, char16_t) { }
-    void LEGACY_NODELETE atomCharacterClassBuiltIn(BuiltInCharacterClassID, bool) { }
-    void LEGACY_NODELETE atomClassStringDisjunction(Vector<Vector<char32_t>>&) { }
-    void LEGACY_NODELETE atomCharacterClassSetOp(CharacterClassSetOp) { }
-    void LEGACY_NODELETE atomCharacterClassPushNested(bool) { }
-    void LEGACY_NODELETE atomCharacterClassPopNested(bool) { }
-    void LEGACY_NODELETE atomCharacterClassEnd() { }
-    void LEGACY_NODELETE atomParenthesesSubpatternBegin(bool, std::optional<String> = std::nullopt) { }
-    void LEGACY_NODELETE atomParentheticalAssertionBegin(bool, MatchDirection) { }
-    void LEGACY_NODELETE atomParentheticalModifierBegin(OptionSet<Flags>, OptionSet<Flags>) { }
-    void LEGACY_NODELETE atomParenthesesEnd() { }
-    void LEGACY_NODELETE atomBackReference(unsigned) { }
-    void LEGACY_NODELETE atomNamedBackReference(const String&) { }
-    void LEGACY_NODELETE atomNamedForwardReference(const String&) { }
-    void LEGACY_NODELETE quantifyAtom(unsigned, unsigned, bool) { }
-    void LEGACY_NODELETE disjunction(CreateDisjunctionPurpose) { }
-    void LEGACY_NODELETE resetForReparsing() { }
+    NODELETE void assertionBOL() { }
+    NODELETE void assertionEOL() { }
+    NODELETE void assertionBOI() { }
+    NODELETE void assertionEOI(bool) { }
+    NODELETE void assertionWordBoundary(bool) { }
+    NODELETE void atomPatternCharacter(char32_t, bool) { }
+    NODELETE void atomBuiltInCharacterClass(BuiltInCharacterClassID, bool) { }
+    NODELETE void atomCharacterClassBegin(bool = false) { }
+    NODELETE void atomCharacterClassAtom(char16_t) { }
+    NODELETE void atomCharacterClassRange(char16_t, char16_t) { }
+    NODELETE void atomCharacterClassBuiltIn(BuiltInCharacterClassID, bool) { }
+    NODELETE void atomClassStringDisjunction(Vector<Vector<char32_t>>&) { }
+    NODELETE void atomCharacterClassSetOp(CharacterClassSetOp) { }
+    NODELETE void atomCharacterClassPushNested(bool) { }
+    NODELETE void atomCharacterClassPopNested(bool) { }
+    NODELETE void atomCharacterClassEnd() { }
+    NODELETE void atomParenthesesSubpatternBegin(bool, std::optional<String> = std::nullopt) { }
+    NODELETE void atomParentheticalAssertionBegin(bool, MatchDirection) { }
+    NODELETE void atomParentheticalModifierBegin(OptionSet<Flags>, OptionSet<Flags>) { }
+    NODELETE void atomParenthesesEnd() { }
+    NODELETE void atomBackReference(unsigned) { }
+    NODELETE void atomNamedBackReference(const String&) { }
+    NODELETE void atomNamedForwardReference(const String&) { }
+    NODELETE void quantifyAtom(unsigned, unsigned, bool) { }
+    NODELETE void disjunction(CreateDisjunctionPurpose) { }
+    NODELETE void resetForReparsing() { }
 
-    constexpr static bool LEGACY_NODELETE abortedDueToError() { return false; }
-    constexpr static ErrorCode LEGACY_NODELETE abortErrorCode() { return ErrorCode::NoError; }
+    NODELETE constexpr static bool abortedDueToError() { return false; }
+    NODELETE constexpr static ErrorCode abortErrorCode() { return ErrorCode::NoError; }
 };
 static_assert(YarrSyntaxCheckable<SyntaxChecker>);
 

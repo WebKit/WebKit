@@ -52,10 +52,10 @@ public:
     CaseCollection cases(const BasicBlock* owner) const { return CaseCollection(this, owner); }
     CaseCollection cases() const { return cases(owner); }
 
-    bool LEGACY_NODELETE hasFallThrough(const BasicBlock*) const;
+    NODELETE bool hasFallThrough(const BasicBlock*) const;
     bool hasFallThrough() const;
 
-    BasicBlock* LEGACY_NODELETE fallThrough(const BasicBlock* owner);
+    NODELETE BasicBlock* fallThrough(const BasicBlock* owner);
 
     // These two functions can be called in any order.
     void setFallThrough(BasicBlock*, const FrequentedBlock&);

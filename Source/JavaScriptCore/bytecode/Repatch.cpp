@@ -279,7 +279,7 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
 
 #if ENABLE(JIT)
 
-static ECMAMode LEGACY_NODELETE ecmaModeFor(PutByKind putByKind)
+NODELETE static ECMAMode ecmaModeFor(PutByKind putByKind)
 {
     switch (putByKind) {
     case PutByKind::ByIdSloppy:
@@ -359,7 +359,7 @@ static InlineCacheAction actionForCell(VM& vm, JSCell* cell)
     return AttemptToCache;
 }
 
-static bool LEGACY_NODELETE forceICFailure(JSGlobalObject*)
+NODELETE static bool forceICFailure(JSGlobalObject*)
 {
     return Options::forceICFailure();
 }
@@ -426,7 +426,7 @@ static std::optional<NonStringPrimitiveKeyInfo> nonStringPrimitiveKeyInfoForUID(
     return std::nullopt;
 }
 
-inline CodePtr<CFunctionPtrTag> LEGACY_NODELETE appropriateGetByOptimizeFunction(GetByKind kind)
+NODELETE inline CodePtr<CFunctionPtrTag> appropriateGetByOptimizeFunction(GetByKind kind)
 {
     switch (kind) {
     case GetByKind::ById:
@@ -447,7 +447,7 @@ inline CodePtr<CFunctionPtrTag> LEGACY_NODELETE appropriateGetByOptimizeFunction
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline CodePtr<CFunctionPtrTag> LEGACY_NODELETE appropriateGetByGaveUpFunction(GetByKind kind)
+NODELETE inline CodePtr<CFunctionPtrTag> appropriateGetByGaveUpFunction(GetByKind kind)
 {
     switch (kind) {
     case GetByKind::ById:
@@ -953,7 +953,7 @@ void repatchArrayGetByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JS
     }
 }
 
-static CodePtr<CFunctionPtrTag> LEGACY_NODELETE appropriatePutByGaveUpFunction(PutByKind putByKind)
+NODELETE static CodePtr<CFunctionPtrTag> appropriatePutByGaveUpFunction(PutByKind putByKind)
 {
     switch (putByKind) {
     case PutByKind::ByIdStrict:
@@ -994,7 +994,7 @@ void repatchPutBySlowPathCall(CodeBlock* codeBlock, PropertyInlineCache& propert
     repatchSlowPathCall(codeBlock, propertyCache, appropriatePutByGaveUpFunction(kind));
 }
 
-static CodePtr<CFunctionPtrTag> LEGACY_NODELETE appropriatePutByOptimizeFunction(PutByKind putByKind)
+NODELETE static CodePtr<CFunctionPtrTag> appropriatePutByOptimizeFunction(PutByKind putByKind)
 {
     switch (putByKind) {
     case PutByKind::ByIdStrict:
@@ -1595,7 +1595,7 @@ void repatchDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeleteP
     }
 }
 
-inline CodePtr<CFunctionPtrTag> LEGACY_NODELETE appropriateInByOptimizeFunction(InByKind kind)
+NODELETE inline CodePtr<CFunctionPtrTag> appropriateInByOptimizeFunction(InByKind kind)
 {
     switch (kind) {
     case InByKind::ById:
@@ -1608,7 +1608,7 @@ inline CodePtr<CFunctionPtrTag> LEGACY_NODELETE appropriateInByOptimizeFunction(
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline CodePtr<CFunctionPtrTag> LEGACY_NODELETE appropriateInByGaveUpFunction(InByKind kind)
+NODELETE inline CodePtr<CFunctionPtrTag> appropriateInByGaveUpFunction(InByKind kind)
 {
     switch (kind) {
     case InByKind::ById:

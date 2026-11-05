@@ -136,9 +136,9 @@ public:
     
     bool isStillLive(VM&);
     
-    bool LEGACY_NODELETE merge(const CallVariant&);
+    NODELETE bool merge(const CallVariant&);
     
-    void LEGACY_NODELETE filter(JSValue);
+    NODELETE void filter(JSValue);
     
     void dump(PrintStream& out) const;
     

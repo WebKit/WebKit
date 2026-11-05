@@ -51,7 +51,7 @@ public:
     ~JITWorklist();
 
     static JITWorklist& ensureGlobalWorklist();
-    static JITWorklist* LEGACY_NODELETE existingGlobalWorklistOrNull();
+    NODELETE static JITWorklist* existingGlobalWorklistOrNull();
 
     CompilationResult enqueue(Ref<JITPlan>);
     size_t queueLength() const;
@@ -73,8 +73,8 @@ public:
 
     void removeDeadPlans(VM&);
 
-    unsigned LEGACY_NODELETE setMaximumNumberOfConcurrentDFGCompilations(unsigned);
-    unsigned LEGACY_NODELETE setMaximumNumberOfConcurrentFTLCompilations(unsigned);
+    NODELETE unsigned setMaximumNumberOfConcurrentDFGCompilations(unsigned);
+    NODELETE unsigned setMaximumNumberOfConcurrentFTLCompilations(unsigned);
 
     // Only called on the main thread after suspending all threads.
     template<typename Visitor>
@@ -94,7 +94,7 @@ private:
     unsigned planLoad(JITPlan&);
 
     size_t queueLength(const AbstractLocker&) const;
-    size_t LEGACY_NODELETE totalOngoingCompilations(const AbstractLocker&) const;
+    NODELETE size_t totalOngoingCompilations(const AbstractLocker&) const;
 
     void waitUntilAllPlansForVMAreReady(VM&);
 

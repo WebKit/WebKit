@@ -817,7 +817,7 @@ constexpr uint64_t alignMInt = 64;
 
 
 void initialize();
-void LEGACY_NODELETE verifyInitialization();
+NODELETE void verifyInitialization();
 
 } }
 

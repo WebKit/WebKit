@@ -709,7 +709,7 @@ private:
         m_insertionSet.insertNode(nodeIndex, SpecNone, FencedStoreBarrier, origin, base);
     }
     
-    bool LEGACY_NODELETE reallyInsertBarriers()
+    NODELETE bool reallyInsertBarriers()
     {
         return mode == PhaseMode::Fast || m_isConverged;
     }

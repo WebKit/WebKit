@@ -40,12 +40,12 @@ namespace LLInt {
 
 void setEntrypoint(CodeBlock*);
 
-unsigned LEGACY_NODELETE frameRegisterCountFor(CodeBlock*);
+NODELETE unsigned frameRegisterCountFor(CodeBlock*);
 
 MacroAssemblerCodeRef<JSEntryPtrTag> defaultCall();
 MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueEntrypoint();
 MacroAssemblerCodeRef<JSEntryPtrTag> fuzzerReturnEarlyFromLoopHintEntrypoint();
 MacroAssemblerCodeRef<JSEntryPtrTag> genericReturnPointEntrypoint(OpcodeSize);
-CodePtr<JITThunkPtrTag> LEGACY_NODELETE arityFixup();
+NODELETE CodePtr<JITThunkPtrTag> arityFixup();
 
 } } // namespace JSC::LLInt

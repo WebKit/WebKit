@@ -61,7 +61,7 @@ public:
     bool automaticInspectionAllowed() const final { return true; }
     void pauseWaitingForAutomaticInspection() final;
 
-    void LEGACY_NODELETE globalObjectDestroyed();
+    NODELETE void globalObjectDestroyed();
 
 private:
     JSGlobalObjectDebuggable(JSGlobalObject&);

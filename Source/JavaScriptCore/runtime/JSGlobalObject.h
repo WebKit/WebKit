@@ -575,9 +575,9 @@ public:
     void installObjectPropertyChangeAdaptiveWatchpoint(const ObjectPropertyCondition&, InlineWatchpointSet&);
     void installChainedWatchpoint(InlineWatchpointSet& from, InlineWatchpointSet& to);
 
-    inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& LEGACY_NODELETE typedArrayConstructorSpeciesAbsenceWatchpoint(TypedArrayType);
-    inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& LEGACY_NODELETE typedArrayPrototypeSymbolIteratorAbsenceWatchpoint(TypedArrayType);
-    inline std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& LEGACY_NODELETE typedArrayPrototypeConstructorWatchpoint(TypedArrayType);
+    NODELETE inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayConstructorSpeciesAbsenceWatchpoint(TypedArrayType);
+    NODELETE inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayPrototypeSymbolIteratorAbsenceWatchpoint(TypedArrayType);
+    NODELETE inline std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& typedArrayPrototypeConstructorWatchpoint(TypedArrayType);
 
     void addWeakTicket(DeferredWorkTimer::Ticket&);
     void clearWeakTickets();
@@ -710,7 +710,7 @@ public:
     DECLARE_EXPORT_INFO;
 
     bool hasDebugger() const { return m_debugger; }
-    bool LEGACY_NODELETE hasInteractiveDebugger() const;
+    NODELETE bool hasInteractiveDebugger() const;
     const RuntimeFlags& runtimeFlags() const LIFETIME_BOUND { return m_runtimeFlags; }
 
 #if ENABLE(DFG_JIT)
@@ -753,7 +753,7 @@ public:
 
     JSScope* globalScopeExtension() LIFETIME_BOUND { return m_globalScopeExtension.get(); }
     void setGlobalScopeExtension(JSScope*);
-    void LEGACY_NODELETE clearGlobalScopeExtension();
+    NODELETE void clearGlobalScopeExtension();
 
     JSCallee* globalCallee() LIFETIME_BOUND { return m_globalCallee.get(); }
     JSCallee* evalCallee() LIFETIME_BOUND { return m_evalCallee.get(); }
@@ -1047,7 +1047,7 @@ public:
     JS_EXPORT_PRIVATE void setInspectable(bool);
     JS_EXPORT_PRIVATE bool inspectable() const;
 
-    void LEGACY_NODELETE setIsITML();
+    NODELETE void setIsITML();
 
     RegExpGlobalData& regExpGlobalData() LIFETIME_BOUND { return m_regExpGlobalData; }
     static constexpr ptrdiff_t regExpGlobalDataOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_regExpGlobalData); }
@@ -1077,7 +1077,7 @@ public:
 
 #if ENABLE(REMOTE_INSPECTOR)
     // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
-    Inspector::JSGlobalObjectInspectorController& LEGACY_NODELETE inspectorController() const;
+    NODELETE Inspector::JSGlobalObjectInspectorController& inspectorController() const;
     JSGlobalObjectDebuggable& inspectorDebuggable() { return *m_inspectorDebuggable; }
 #endif
 
@@ -1086,8 +1086,8 @@ public:
     static constexpr ptrdiff_t globalLexicalBindingEpochOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalBindingEpoch); }
     unsigned* addressOfGlobalLexicalBindingEpoch() LIFETIME_BOUND { return &m_globalLexicalBindingEpoch; }
 
-    JS_EXPORT_PRIVATE void LEGACY_NODELETE setConsoleClient(WeakPtr<ConsoleClient>&&);
-    JS_EXPORT_PRIVATE CheckedPtr<ConsoleClient> LEGACY_NODELETE consoleClient() const;
+    NODELETE JS_EXPORT_PRIVATE void setConsoleClient(WeakPtr<ConsoleClient>&&);
+    NODELETE JS_EXPORT_PRIVATE CheckedPtr<ConsoleClient> consoleClient() const;
 
     void setName(const String&);
     const String& name() const LIFETIME_BOUND { return m_name; }
@@ -1098,7 +1098,7 @@ public:
     inline void setUnhandledRejectionCallback(VM&, JSObject*);
     JSObject* unhandledRejectionCallback() const LIFETIME_BOUND { return m_unhandledRejectionCallback.get(); }
 
-    static void LEGACY_NODELETE reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception*);
+    NODELETE static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception*);
     static JSObject* currentScriptExecutionOwner(JSGlobalObject* global) { return global; }
     static ScriptExecutionStatus scriptExecutionStatus(JSGlobalObject*, JSObject*) { return ScriptExecutionStatus::Running; }
     static void reportViolationForUnsafeEval(JSGlobalObject*, const String&) { }
@@ -1305,7 +1305,7 @@ protected:
 private:
     friend class LLIntOffsetsExtractor;
 
-    static const GlobalObjectMethodTable* LEGACY_NODELETE baseGlobalObjectMethodTable();
+    NODELETE static const GlobalObjectMethodTable* baseGlobalObjectMethodTable();
 
     void notifyArrayBufferDetachingSlow();
     void fireWatchpointAndMakeAllArrayStructuresSlowPut(VM&);

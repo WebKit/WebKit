@@ -44,7 +44,7 @@ public:
 
     const ObjectPropertyCondition& key() const LIFETIME_BOUND { return m_key; }
 
-    void LEGACY_NODELETE initialize(const ObjectPropertyCondition&);
+    NODELETE void initialize(const ObjectPropertyCondition&);
     void install(VM&);
 
     virtual ~AdaptiveInferredPropertyValueWatchpointBase() = default;

@@ -132,7 +132,7 @@ template<typename CharacterType> struct LiteralParserToken {
 };
 
 template <typename CharType>
-ALWAYS_INLINE void LEGACY_NODELETE setParserTokenString(LiteralParserToken<CharType>&, const CharType* string);
+NODELETE ALWAYS_INLINE void setParserTokenString(LiteralParserToken<CharType>&, const CharType* string);
 
 template <typename CharType, JSONReviverMode reviverMode>
 class LiteralParser {
@@ -280,8 +280,8 @@ private:
             ASSERT(m_start <= ptr && ptr <= m_end);
             m_ptr = ptr;
         }
-        inline const CharType* LEGACY_NODELETE currentTokenStart() const;
-        inline const CharType* LEGACY_NODELETE currentTokenEnd() const;
+        NODELETE inline const CharType* currentTokenStart() const;
+        NODELETE inline const CharType* currentTokenEnd() const;
         
     private:
         template<JSONIdentifierHint>

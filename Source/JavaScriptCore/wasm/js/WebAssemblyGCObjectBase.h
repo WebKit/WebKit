@@ -51,17 +51,17 @@ protected:
 
     DECLARE_DEFAULT_FINISH_CREATION;
 
-    JS_EXPORT_PRIVATE static bool LEGACY_NODELETE getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
-    JS_EXPORT_PRIVATE static bool LEGACY_NODELETE getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned, PropertySlot&);
+    NODELETE JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    NODELETE JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned, PropertySlot&);
     JS_EXPORT_PRIVATE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE static bool putByIndex(JSCell*, JSGlobalObject*, unsigned, JSValue, bool shouldThrow);
     JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
     JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned);
-    JS_EXPORT_PRIVATE static void LEGACY_NODELETE getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
+    NODELETE JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    JS_EXPORT_PRIVATE static JSValue LEGACY_NODELETE getPrototype(JSObject*, JSGlobalObject*);
+    NODELETE JS_EXPORT_PRIVATE static JSValue getPrototype(JSObject*, JSGlobalObject*);
     JS_EXPORT_PRIVATE static bool setPrototype(JSObject*, JSGlobalObject*, JSValue, bool shouldThrowIfCantSet);
-    JS_EXPORT_PRIVATE static bool LEGACY_NODELETE isExtensible(JSObject*, JSGlobalObject*);
+    NODELETE JS_EXPORT_PRIVATE static bool isExtensible(JSObject*, JSGlobalObject*);
     JS_EXPORT_PRIVATE static bool preventExtensions(JSObject*, JSGlobalObject*);
 
 };

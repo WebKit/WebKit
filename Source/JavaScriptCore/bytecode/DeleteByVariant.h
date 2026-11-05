@@ -49,18 +49,18 @@ public:
     ~DeleteByVariant();
 
     DeleteByVariant(const DeleteByVariant&);
-    DeleteByVariant& LEGACY_NODELETE operator=(const DeleteByVariant&);
+    NODELETE DeleteByVariant& operator=(const DeleteByVariant&);
 
     Structure* oldStructure() const { return m_oldStructure; }
     Structure* newStructure() const { return m_newStructure; }
     bool result() const { return m_result; }
-    bool LEGACY_NODELETE writesStructures() const;
+    NODELETE bool writesStructures() const;
 
     PropertyOffset offset() const { return m_offset; }
 
     bool isPropertyUnset() const { return offset() == invalidOffset; }
 
-    bool LEGACY_NODELETE attemptToMerge(const DeleteByVariant& other);
+    NODELETE bool attemptToMerge(const DeleteByVariant& other);
 
     DECLARE_VISIT_AGGREGATE;
     template<typename Visitor> void markIfCheap(Visitor&);

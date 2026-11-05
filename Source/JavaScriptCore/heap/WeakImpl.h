@@ -52,7 +52,7 @@ public:
     void initialize(JSValue, WeakHandleOwner*, void* context);
 
     State state();
-    void LEGACY_NODELETE clear();
+    NODELETE void clear();
 
     JSValue jsValue() { return JSValue::decode(m_jsValue.load<MemoryOrder::Relaxed>()); }
     WeakHandleOwner* weakHandleOwner() { return weakHandleOwnerOf(stateWord()); }

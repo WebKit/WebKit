@@ -398,7 +398,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_string)
 }
 
 #if ENABLE(JIT)
-static void LEGACY_NODELETE updateArithProfileForUnaryArithOp(UnaryArithProfile& profile, JSValue result, JSValue operand)
+NODELETE static void updateArithProfileForUnaryArithOp(UnaryArithProfile& profile, JSValue result, JSValue operand)
 {
     profile.observeArg(operand);
     ASSERT(result.isNumber() || result.isBigInt());

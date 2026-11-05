@@ -147,7 +147,7 @@ public:
     void clear() { *this = Duration(); }
 
     template<TemporalUnit unit>
-    std::optional<Int128> LEGACY_NODELETE totalNanoseconds() const;
+    NODELETE std::optional<Int128> totalNanoseconds() const;
 
     Duration operator-() const
     {
@@ -237,7 +237,7 @@ public:
 
     friend constexpr auto operator<=>(const ExactTime&, const ExactTime&) = default;
 
-    std::optional<ExactTime> LEGACY_NODELETE add(Duration) const;
+    NODELETE std::optional<ExactTime> add(Duration) const;
     InternalDuration difference(JSGlobalObject*, ExactTime, unsigned, TemporalUnit, RoundingMode) const;
     ExactTime round(JSGlobalObject*, unsigned, TemporalUnit, RoundingMode) const;
 
@@ -266,7 +266,7 @@ public:
         : m_dateDuration(Duration()), m_time(0) { }
     static constexpr Int128 maxTimeDuration = 9'007'199'254'740'992 * ExactTime::nsPerSecond - 1;
 
-    int32_t LEGACY_NODELETE sign() const;
+    NODELETE int32_t sign() const;
 
     int32_t timeDurationSign() const
     {
@@ -277,7 +277,7 @@ public:
 
     Duration dateDuration() const { return m_dateDuration; }
 
-    static InternalDuration LEGACY_NODELETE JS_EXPORT_PRIVATE combineDateAndTimeDuration(Duration, Int128);
+    NODELETE static InternalDuration JS_EXPORT_PRIVATE combineDateAndTimeDuration(Duration, Int128);
 private:
 
     // Time fields are ignored
@@ -548,11 +548,11 @@ struct TimeZoneIdentifierParseRecord {
 
 std::optional<TimeZoneIdentifierParseRecord> parseTimeZoneIdentifier(StringView);
 uint8_t dayOfWeek(PlainDate);
-uint16_t LEGACY_NODELETE dayOfYear(PlainDate);
+NODELETE uint16_t dayOfYear(PlainDate);
 uint8_t weeksInYear(int32_t year);
 uint8_t weekOfYear(PlainDate);
 int32_t yearOfWeek(PlainDate);
-uint8_t LEGACY_NODELETE daysInMonth(int32_t year, uint8_t month);
+NODELETE uint8_t daysInMonth(int32_t year, uint8_t month);
 uint8_t daysInMonth(uint8_t month);
 String formatTimeZoneOffsetString(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned>);
@@ -562,10 +562,10 @@ String temporalYearMonthToString(PlainYearMonth, StringView, unsigned calendarId
 String temporalMonthDayToString(PlainMonthDay, StringView, unsigned calendarId);
 String monthCode(uint32_t);
 
-bool LEGACY_NODELETE isValidDuration(const Duration&);
-bool LEGACY_NODELETE isValidISODate(double, double, double);
+NODELETE bool isValidDuration(const Duration&);
+NODELETE bool isValidISODate(double, double, double);
 
-std::optional<ParsedMonthCode> LEGACY_NODELETE parseMonthCode(StringView);
+NODELETE std::optional<ParsedMonthCode> parseMonthCode(StringView);
 std::optional<TimeZoneIdentifierParseRecord> JS_EXPORT_PRIVATE parseTemporalTimeZoneString(StringView);
 
 bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond);
@@ -576,6 +576,6 @@ Int128 roundTimeDuration(JSGlobalObject*, Int128, unsigned, TemporalUnit, Roundi
 
 using CheckedInt128 = Checked<Int128, RecordOverflow>;
 
-CheckedInt128 LEGACY_NODELETE checkedCastDoubleToInt128(double n);
+NODELETE CheckedInt128 checkedCastDoubleToInt128(double n);
 
 } // namespace JSC

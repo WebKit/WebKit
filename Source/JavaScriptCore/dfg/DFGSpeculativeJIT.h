@@ -315,7 +315,7 @@ public:
 
     void checkArgumentTypes();
 
-    void LEGACY_NODELETE clearGenerationInfo();
+    NODELETE void clearGenerationInfo();
 
     // These methods are used when generating 'unexpected'
     // calls out from JIT code to C++ helper routines -
@@ -1619,7 +1619,7 @@ public:
     void compileThrow(Node*);
     void compileThrowStaticError(Node*);
 
-    void LEGACY_NODELETE compileExtractFromTuple(Node*);
+    NODELETE void compileExtractFromTuple(Node*);
     void compileStringIteratorNext(Node*);
     void compileEnumeratorNextUpdateIndexAndMode(Node*);
     void compileEnumeratorNextUpdatePropertyName(Node*);
@@ -2184,7 +2184,7 @@ public:
         return *this;
     }
 
-    void LEGACY_NODELETE adopt(GPRTemporary&);
+    NODELETE void adopt(GPRTemporary&);
 
     ~GPRTemporary()
     {

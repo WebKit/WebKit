@@ -43,7 +43,7 @@ class Code;
 
 Vector<Arg> computeCCallingConvention(Code&, CCallValue*);
 
-size_t LEGACY_NODELETE cCallResultCount(Code&, CCallValue*);
+NODELETE size_t cCallResultCount(Code&, CCallValue*);
 
 /*
  * On some platforms (well, on 32-bit platforms,) C functions can take arguments
@@ -53,11 +53,11 @@ size_t LEGACY_NODELETE cCallResultCount(Code&, CCallValue*);
  */
 
 // Return the number of Air::Args needed to marshall this Value to the C function
-size_t LEGACY_NODELETE cCallArgumentRegisterCount(Type);
+NODELETE size_t cCallArgumentRegisterCount(Type);
 // Return the width of the individual Air::Args needed to marshall this value
-Width LEGACY_NODELETE cCallArgumentRegisterWidth(Type);
+NODELETE Width cCallArgumentRegisterWidth(Type);
 
-Tmp LEGACY_NODELETE cCallResult(Code&, CCallValue*, unsigned);
+NODELETE Tmp cCallResult(Code&, CCallValue*, unsigned);
 
 Inst buildCCall(Code&, Value* origin, const Vector<Arg>&);
 

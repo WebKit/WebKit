@@ -344,7 +344,7 @@ bool JSArray::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Propert
     return JSObject::deleteProperty(thisObject, globalObject, propertyName, slot);
 }
 
-static int LEGACY_NODELETE compareKeysForQSort(const void* a, const void* b)
+NODELETE static int compareKeysForQSort(const void* a, const void* b)
 {
     unsigned da = *static_cast<const unsigned*>(a);
     unsigned db = *static_cast<const unsigned*>(b);

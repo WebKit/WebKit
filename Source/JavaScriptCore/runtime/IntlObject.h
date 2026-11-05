@@ -205,16 +205,16 @@ Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vec
 
 bool isUnicodeLocaleIdentifierType(StringView);
 
-bool LEGACY_NODELETE isUnicodeLanguageSubtag(StringView);
-bool LEGACY_NODELETE isUnicodeScriptSubtag(StringView);
-bool LEGACY_NODELETE isUnicodeRegionSubtag(StringView);
-bool LEGACY_NODELETE isUnicodeVariantSubtag(StringView);
+NODELETE bool isUnicodeLanguageSubtag(StringView);
+NODELETE bool isUnicodeScriptSubtag(StringView);
+NODELETE bool isUnicodeRegionSubtag(StringView);
+NODELETE bool isUnicodeVariantSubtag(StringView);
 bool isUnicodeLanguageId(StringView);
 JS_EXPORT_PRIVATE bool isStructurallyValidLanguageTag(StringView);
 String canonicalizeUnicodeLocaleID(const ASCIICString& languageTag);
 JS_EXPORT_PRIVATE String canonicalizeUnicodeLocaleID(const StringView);
 
-bool LEGACY_NODELETE isWellFormedCurrencyCode(StringView);
+NODELETE bool isWellFormedCurrencyCode(StringView);
 
 std::optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID);
 

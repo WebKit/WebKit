@@ -779,7 +779,7 @@ Exception* VM::ensureTerminationException()
 }
 
 #if ENABLE(JIT)
-static ThunkGenerator LEGACY_NODELETE thunkGeneratorForIntrinsic(Intrinsic intrinsic)
+NODELETE static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
 {
     switch (intrinsic) {
     case CharCodeAtIntrinsic:

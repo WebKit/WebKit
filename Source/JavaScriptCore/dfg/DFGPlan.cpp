@@ -108,7 +108,7 @@ void dumpAndVerifyGraph(Graph& graph, const char* text, bool forceDump = false)
         validate(graph, modeForFinalValidate);
 }
 
-Profiler::CompilationKind LEGACY_NODELETE profilerCompilationKindForMode(JITCompilationMode mode)
+NODELETE Profiler::CompilationKind profilerCompilationKindForMode(JITCompilationMode mode)
 {
     switch (mode) {
     case JITCompilationMode::InvalidCompilation:

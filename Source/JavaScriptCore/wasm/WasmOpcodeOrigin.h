@@ -104,7 +104,7 @@ public:
     ASCIILiteral opcodeString() const;
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-    B3::Origin LEGACY_NODELETE asB3Origin();
+    NODELETE B3::Origin asB3Origin();
 #endif
 
 private:

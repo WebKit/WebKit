@@ -109,7 +109,7 @@ public:
         return m_depth;
     }
 
-    bool LEGACY_NODELETE wasValidWalk() const
+    NODELETE bool wasValidWalk() const
     {
         return !m_bailingOut;
     }
@@ -172,7 +172,7 @@ protected:
         m_callFrame = m_callFrame->unsafeCallerFrame(m_entryFrame);
     }
 
-    bool LEGACY_NODELETE isAtTop() const
+    NODELETE bool isAtTop() const
     {
         return !m_callFrame;
     }
@@ -203,7 +203,7 @@ protected:
         }
     }
 
-    bool LEGACY_NODELETE isValidFramePointer(void* callFrame)
+    NODELETE bool isValidFramePointer(void* callFrame)
     {
         uint8_t* fpCast = std::bit_cast<uint8_t*>(callFrame);
         for (auto& thread : m_vm.heap.machineThreads().threads(m_machineThreadsLocker)) {
@@ -282,7 +282,7 @@ public:
 
 private:
 
-    bool LEGACY_NODELETE isCFrame()
+    NODELETE bool isCFrame()
     {
         return frame()->callerFrame != m_callFrame;
     }
@@ -306,7 +306,7 @@ private:
         Base::resetAtMachineFrame();
     }
 
-    CallerFrameAndPC* LEGACY_NODELETE frame()
+    NODELETE CallerFrameAndPC* frame()
     {
         return reinterpret_cast<CallerFrameAndPC*>(m_machineFrame);
     }
@@ -473,7 +473,7 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
     }
 }
 
-static ALWAYS_INLINE BytecodeIndex LEGACY_NODELETE tryGetBytecodeIndex(unsigned llintPC, CodeBlock* codeBlock)
+NODELETE static ALWAYS_INLINE BytecodeIndex tryGetBytecodeIndex(unsigned llintPC, CodeBlock* codeBlock)
 {
 #if ENABLE(DFG_JIT)
     RELEASE_ASSERT(!codeBlock->hasCodeOrigins());

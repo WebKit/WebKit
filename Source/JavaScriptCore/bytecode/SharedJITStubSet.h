@@ -156,7 +156,7 @@ public:
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> getDOMJITCode(DOMJITCacheKey) const;
     void setDOMJITCode(DOMJITCacheKey, MacroAssemblerCodeRef<JITStubRoutinePtrTag>);
 
-    RefPtr<InlineCacheHandler> LEGACY_NODELETE getSlowPathHandler(AccessType) const;
+    NODELETE RefPtr<InlineCacheHandler> getSlowPathHandler(AccessType) const;
     void setSlowPathHandler(AccessType, Ref<InlineCacheHandler>);
 
 private:

@@ -60,28 +60,28 @@ public:
             }
         }
 
-        uint32_t LEGACY_NODELETE loopSize() { return loop->size(); }
-        BasicBlock* LEGACY_NODELETE loopBody(uint32_t i) { return loop->at(i).node(); }
-        BasicBlock* LEGACY_NODELETE header() const { return loop->header().node(); }
+        NODELETE uint32_t loopSize() { return loop->size(); }
+        NODELETE BasicBlock* loopBody(uint32_t i) { return loop->at(i).node(); }
+        NODELETE BasicBlock* header() const { return loop->header().node(); }
         // If operand is a constant, it indicates that we can do fully unrolling.
-        bool LEGACY_NODELETE shouldFullyUnroll() const { return std::holds_alternative<CheckedInt32>(operand) && std::holds_alternative<CheckedInt32>(initialValue); }
+        NODELETE bool shouldFullyUnroll() const { return std::holds_alternative<CheckedInt32>(operand) && std::holds_alternative<CheckedInt32>(initialValue); }
 
-        Node* LEGACY_NODELETE condition() const
+        NODELETE Node* condition() const
         {
             if (tail && tail->terminal()->isBranch())
                 return tail->terminal()->child1().node();
             return nullptr;
         }
 
-        bool LEGACY_NODELETE shouldInvertCondition() const
+        NODELETE bool shouldInvertCondition() const
         {
             ASSERT(invertCondition.has_value());
             return *invertCondition;
         }
-        BasicBlock*& LEGACY_NODELETE loopTarget(BasicBlock* tail) const { return tail->successor(shouldInvertCondition()); }
-        BasicBlock*& LEGACY_NODELETE exitTarget(BasicBlock* tail) const { return tail->successor(!shouldInvertCondition()); }
+        NODELETE BasicBlock*& loopTarget(BasicBlock* tail) const { return tail->successor(shouldInvertCondition()); }
+        NODELETE BasicBlock*& exitTarget(BasicBlock* tail) const { return tail->successor(!shouldInvertCondition()); }
 
-        bool LEGACY_NODELETE isInductionVariable(Node* node) { return node->operand() == inductionVariable->operand(); }
+        NODELETE bool isInductionVariable(Node* node) { return node->operand() == inductionVariable->operand(); }
         void dump(PrintStream& out) const;
 
         bool isProfitableToUnroll();
@@ -95,9 +95,9 @@ public:
         bool isLocalAccessNode(Node*);
 
         // Ratio of this count to total material node count
-        double LEGACY_NODELETE ratio(uint32_t count) { return materialNodeCount ? static_cast<double>(count) / materialNodeCount : 0.0; }
+        NODELETE double ratio(uint32_t count) { return materialNodeCount ? static_cast<double>(count) / materialNodeCount : 0.0; }
 
-        uint32_t LEGACY_NODELETE generalUnrollSizeLimit() { return shouldFullyUnroll() ? Options::maxLoopUnrollingBodyNodeSize() : Options::maxPartialLoopUnrollingBodyNodeSize(); }
+        NODELETE uint32_t generalUnrollSizeLimit() { return shouldFullyUnroll() ? Options::maxLoopUnrollingBodyNodeSize() : Options::maxPartialLoopUnrollingBodyNodeSize(); }
 
         // Used for early bailout during loop node scanning; combines general and special-case size limits.
         uint32_t maxAllowedUnrollSize() { return std::max(generalUnrollSizeLimit(), Options::maxNumericHotLoopSize()); }
@@ -277,7 +277,7 @@ public:
 
     // Returns the true successor of a block prior to edge-breaking by skipping through
     // intermediate jump pads inserted on critical edges.
-    BasicBlock* LEGACY_NODELETE loopAnalysisSuccessor(BasicBlock* successor)
+    NODELETE BasicBlock* loopAnalysisSuccessor(BasicBlock* successor)
     {
         while (successor->isJumpPad())
             successor = successor->successor(0);
@@ -772,7 +772,7 @@ void LoopUnrollingPhase::LoopData::dump(PrintStream& out) const
 }
 
 // FIXME: Add more condition and update operations if they are profitable.
-bool LEGACY_NODELETE LoopUnrollingPhase::isSupportedConditionOp(NodeType op)
+NODELETE bool LoopUnrollingPhase::isSupportedConditionOp(NodeType op)
 {
     switch (op) {
     case CompareLess:
@@ -787,7 +787,7 @@ bool LEGACY_NODELETE LoopUnrollingPhase::isSupportedConditionOp(NodeType op)
     }
 }
 
-bool LEGACY_NODELETE LoopUnrollingPhase::isSupportedUpdateOp(NodeType op)
+NODELETE bool LoopUnrollingPhase::isSupportedUpdateOp(NodeType op)
 {
     switch (op) {
     case ArithAdd:
@@ -946,7 +946,7 @@ bool LoopUnrollingPhase::LoopData::isNumericComputationNode(Node* node)
     }
 }
 
-bool LEGACY_NODELETE LoopUnrollingPhase::LoopData::isLocalAccessNode(Node* node)
+NODELETE bool LoopUnrollingPhase::LoopData::isLocalAccessNode(Node* node)
 {
     switch (node->op()) {
     case GetLocal:

@@ -147,13 +147,13 @@ public:
 
     // The inline depth is the depth of the inline stack, so 1 = not inlined,
     // 2 = inlined one deep, etc.
-    unsigned LEGACY_NODELETE inlineDepth() const;
+    NODELETE unsigned inlineDepth() const;
     
     // If the code origin corresponds to inlined code, gives you the heap object that
     // would have owned the code if it had not been inlined. Otherwise returns 0.
-    CodeBlock* LEGACY_NODELETE codeOriginOwner() const;
+    NODELETE CodeBlock* codeOriginOwner() const;
     
-    int LEGACY_NODELETE stackOffset() const;
+    NODELETE int stackOffset() const;
     
     unsigned hash() const;
     bool operator==(const CodeOrigin&) const;

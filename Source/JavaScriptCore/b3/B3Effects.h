@@ -154,7 +154,7 @@ public:
 
     // Returns true if reordering instructions with these respective effects would change program
     // behavior in an observable way.
-    bool LEGACY_NODELETE interferes(const Effects&) const;
+    NODELETE bool interferes(const Effects&) const;
     
     friend bool operator==(const Effects&, const Effects&) = default;
 

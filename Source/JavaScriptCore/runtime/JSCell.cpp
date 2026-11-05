@@ -196,7 +196,7 @@ JSObject* JSCell::toObjectSlow(JSGlobalObject* globalObject) const
     return downcast<Symbol>(this)->toObject(globalObject);
 }
 
-void LEGACY_NODELETE slowValidateCell(JSCell* cell)
+NODELETE void slowValidateCell(JSCell* cell)
 {
     ASSERT_GC_OBJECT_LOOKS_VALID(cell);
 }

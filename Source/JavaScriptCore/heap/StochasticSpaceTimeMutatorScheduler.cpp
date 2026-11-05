@@ -46,9 +46,9 @@ public:
         m_bytesAllocatedThisCycle = scheduler.bytesAllocatedThisCycleImpl();
     }
     
-    MonotonicTime LEGACY_NODELETE now() const { return m_now; }
+    NODELETE MonotonicTime now() const { return m_now; }
     
-    double LEGACY_NODELETE bytesAllocatedThisCycle() const { return m_bytesAllocatedThisCycle; }
+    NODELETE double bytesAllocatedThisCycle() const { return m_bytesAllocatedThisCycle; }
     
 private:
     MonotonicTime m_now;

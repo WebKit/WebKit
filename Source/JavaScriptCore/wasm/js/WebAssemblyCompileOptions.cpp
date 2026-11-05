@@ -88,7 +88,7 @@ WebAssemblyCompileOptions WebAssemblyCompileOptions::esmIntegrationDefaults()
     return options;
 }
 
-static bool LEGACY_NODELETE namesInclude(const String& expected, const Vector<String>& names)
+NODELETE static bool namesInclude(const String& expected, const Vector<String>& names)
 {
     for (auto& name : names) {
         if (name == expected)
