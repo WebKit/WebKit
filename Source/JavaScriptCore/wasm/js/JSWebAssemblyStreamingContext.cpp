@@ -29,26 +29,28 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
+#include "JSGlobalObject.h"
 #include "JSPromise.h"
 
 namespace JSC {
 
 const ClassInfo JSWebAssemblyStreamingContext::s_info = { "WebAssemblyStreamingContext"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyStreamingContext) };
 
-JSWebAssemblyStreamingContext::JSWebAssemblyStreamingContext(VM& vm, Structure* structure, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions)
+JSWebAssemblyStreamingContext::JSWebAssemblyStreamingContext(VM& vm, Structure* structure, JSPromise* promise, JSObject* importObject, JSGlobalObject* incumbent, std::optional<WebAssemblyCompileOptions>&& compileOptions)
     : Base(vm, structure)
     , m_promise(promise, WriteBarrierEarlyInit)
     , m_importObject(importObject, WriteBarrierEarlyInit)
+    , m_incumbentGlobalObject(incumbent, WriteBarrierEarlyInit)
     , m_compileOptions(WTF::move(compileOptions))
 {
 }
 
 JSWebAssemblyStreamingContext::~JSWebAssemblyStreamingContext() = default;
 
-JSWebAssemblyStreamingContext* JSWebAssemblyStreamingContext::create(VM& vm, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions)
+JSWebAssemblyStreamingContext* JSWebAssemblyStreamingContext::create(VM& vm, JSPromise* promise, JSObject* importObject, JSGlobalObject* incumbent, std::optional<WebAssemblyCompileOptions>&& compileOptions)
 {
     auto* structure = vm.webAssemblyStreamingContextStructure.get();
-    JSWebAssemblyStreamingContext* result = new (NotNull, allocateCell<JSWebAssemblyStreamingContext>(vm)) JSWebAssemblyStreamingContext(vm, structure, promise, importObject, WTF::move(compileOptions));
+    JSWebAssemblyStreamingContext* result = new (NotNull, allocateCell<JSWebAssemblyStreamingContext>(vm)) JSWebAssemblyStreamingContext(vm, structure, promise, importObject, incumbent, WTF::move(compileOptions));
     result->finishCreation(vm);
     return result;
 }
@@ -66,6 +68,7 @@ void JSWebAssemblyStreamingContext::visitChildrenImpl(JSCell* cell, Visitor& vis
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_promise);
     visitor.append(thisObject->m_importObject);
+    visitor.append(thisObject->m_incumbentGlobalObject);
 }
 
 DEFINE_VISIT_CHILDREN(JSWebAssemblyStreamingContext);
