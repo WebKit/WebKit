@@ -38,5 +38,9 @@
 <script>var zoomCount = 2; window.shouldZoomOut = true;</script>
 <script src="../../../fast/repaint/resources/repaint.js"></script>
 <script src="../resources/testPageZoom.js"></script>
+<script>
+if (window.internals)
+    internals.disableTileSizeUpdateDelay();
+</script>
 </body>
 </html>
