@@ -437,9 +437,10 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     // Its own formatting context sizes a replaced element, from its natural size and aspect ratio.
     if (isReplaced)
         return { };
-    // FIXME: The sizing keywords and calc-size() (css-sizing-3 §3.2); lengths, percentages and calc() otherwise.
+    // FIXME: calc-size() and the legacy intrinsic and min-intrinsic keywords; lengths, percentages, calc() and the sizing keywords otherwise
+    // (css-sizing-3 §3.2, css-sizing-4 §6.1), -webkit-fill-available included.
     auto isSupportedSize = [](auto& size) {
-        return size.isSpecified() && !size.isCalcSize();
+        return (size.isSpecified() || size.isIntrinsic() || size.isStretch()) && !size.isCalcSize();
     };
     // A calc-size() answers to the keyword of its basis, auto included.
     auto isAuto = [](auto& size) {
@@ -449,14 +450,20 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
         || !(isAuto(style->minWidth()) || isSupportedSize(style->minWidth())) || !(isAuto(style->minHeight()) || isSupportedSize(style->minHeight()))
         || !(style->maxWidth().isNone() || isSupportedSize(style->maxWidth())) || !(style->maxHeight().isNone() || isSupportedSize(style->maxHeight())))
         return BlockAvoidanceReason::ContentHasSizingKeyword;
-    // An auto inline size with an auto inset, or with a self-alignment other than normal and stretch, is the fit-content size (css-position-3 §4.3),
-    // from the inline sizes of the content, and so is the automatic minimum of one a preferred aspect ratio gives (css-sizing-4 §5.1). The
-    // self-alignment is in the writing mode of the containing block, whose block axis is the box's inline axis in an orthogonal flow.
     auto writingMode = outOfFlowBox.writingMode();
+    auto hasIntrinsicInlineSize = style->logicalWidth(writingMode).isIntrinsic() || style->logicalMinWidth(writingMode).isIntrinsic() || style->logicalMaxWidth(writingMode).isIntrinsic();
+    // FIXME: The min-content and max-content inline sizes a preferred aspect ratio transfers from the block size (css-sizing-4 §5.2).
+    if (hasIntrinsicInlineSize && style->aspectRatio().hasRatio())
+        return BlockAvoidanceReason::ContentHasSizingKeyword;
+    // An auto inline size with an auto inset, or with a self-alignment other than normal and stretch, is the fit-content size (css-position-3 §4.3),
+    // from the inline sizes of the content, and so is the automatic minimum of one a preferred aspect ratio gives (css-sizing-4 §5.1), and
+    // the min-content, max-content and fit-content keywords in the inline axis. The self-alignment is in the writing mode of the containing
+    // block, whose block axis is the box's inline axis in an orthogonal flow.
     CheckedPtr containingBlock = outOfFlowBox.containingBlock();
     auto isOrthogonal = containingBlock && writingMode.isOrthogonal(containingBlock->writingMode());
     auto inlineAxisAlignment = isOrthogonal ? style->alignSelf().resolve() : style->justifySelf().resolve();
-    auto needsContentInlineSizes = style->logicalWidth(writingMode).isAuto() && (style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto() || !(inlineAxisAlignment.isNormal() || inlineAxisAlignment.isStretch()) || style->aspectRatio().hasRatio());
+    auto needsContentInlineSizes = hasIntrinsicInlineSize
+        || (style->logicalWidth(writingMode).isAuto() && (style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto() || !(inlineAxisAlignment.isNormal() || inlineAxisAlignment.isStretch()) || style->aspectRatio().hasRatio()));
     // The render tree measures a leaf container (BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes).
     if (needsContentInlineSizes && !isLeafContainer && !canComputeContentInlineSizes(downcast<RenderBlockFlow>(outOfFlowBox)))
         return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
