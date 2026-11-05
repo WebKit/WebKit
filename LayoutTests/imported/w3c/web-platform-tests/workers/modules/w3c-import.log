@@ -15,6 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/dedicated-worker-blob-url-sandboxed-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/dedicated-worker-blob-url.window.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-blob-url.any.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-csp.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-data-url-cross-origin.html

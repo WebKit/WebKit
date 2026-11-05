@@ -32,6 +32,7 @@
 #include "EventTargetInterfaces.h"
 #include "FetchRequestCredentials.h"
 #include "MessagePort.h"
+#include "URLKeepingBlobAlive.h"
 #include "WorkerGlobalScopeProxy.h"
 #include "WorkerOptions.h"
 #include "WorkerScriptLoaderClient.h"
@@ -110,6 +111,7 @@ private:
     static void networkStateChanged(bool isOnLine);
 
     RefPtr<WorkerScriptLoader> m_scriptLoader;
+    URLKeepingBlobAlive m_blobURLExtension;
     const WorkerOptions m_options;
     String m_identifier;
     WorkerGlobalScopeProxy& m_contextProxy; // The proxy outlives the worker to perform thread shutdown.

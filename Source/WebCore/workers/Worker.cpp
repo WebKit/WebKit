@@ -133,6 +133,10 @@ ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::Ru
     worker->m_scriptLoader = scriptLoader.copyRef();
     auto contentSecurityPolicyEnforcement = shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective;
 
+    // Keep a blob URL alive until the worker has finished loading, since the worker takes its origin from it.
+    if (scriptURL.protocolIsBlob())
+        worker->m_blobURLExtension = { scriptURL, context.topOrigin().data() };
+
     ResourceRequest request { WTF::move(scriptURL) };
     request.setInitiatorIdentifier(worker->m_identifier);
 
@@ -221,6 +225,7 @@ void Worker::notifyFinished(std::optional<ScriptExecutionContextIdentifier> main
 {
     auto clearLoader = makeScopeExit([this] {
         m_scriptLoader = nullptr;
+        m_blobURLExtension.clear();
     });
 
     RefPtr context = scriptExecutionContext();

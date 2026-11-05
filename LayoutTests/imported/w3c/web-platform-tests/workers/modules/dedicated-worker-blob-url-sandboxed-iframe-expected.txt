@@ -1,0 +1,6 @@
+
+PASS Creating a module worker from a blob URL works.
+PASS Creating a module worker from a blob URL works immediately before revoking.
+PASS A module worker created from a blob URL can import another blob URL.
+PASS A module worker created from a blob URL revoked immediately after construction can import another blob URL.
+
