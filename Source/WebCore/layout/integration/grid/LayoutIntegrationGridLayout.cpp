@@ -219,8 +219,8 @@ static MinMaxSizeConstraints inlineAxisMinMaxSizeConstraints(const RenderGrid& g
     auto gridContainerZoom = gridContainerStyle->usedZoomForLength();
     auto boxSizing = gridContainerStyle->boxSizing();
 
-    auto& minWidthStyle = gridContainerStyle->minWidth();
-    auto& maxWidthStyle = gridContainerStyle->maxWidth();
+    auto& minWidthStyle = gridContainerStyle->logicalMinWidth();
+    auto& maxWidthStyle = gridContainerStyle->logicalMaxWidth();
 
     // Only a percentage, calc(), stretch or calc-size() resolves against the containing block, so only those can be cyclic.
     auto resolvesAgainstContainingBlock = [](auto& size) {
@@ -255,8 +255,8 @@ static MinMaxSizeConstraints blockAxisMinMaxSizeConstraints(const RenderGrid& gr
 {
     CheckedRef gridContainerStyle = gridContainerRenderer.style();
     return {
-        gridContainerRenderer.computeContentLogicalHeight(gridContainerStyle->minHeight(), std::nullopt),
-        gridContainerRenderer.computeContentLogicalHeight(gridContainerStyle->maxHeight(), std::nullopt)
+        gridContainerRenderer.computeContentLogicalHeight(gridContainerStyle->logicalMinHeight(), std::nullopt),
+        gridContainerRenderer.computeContentLogicalHeight(gridContainerStyle->logicalMaxHeight(), std::nullopt)
     };
 }
 
@@ -293,12 +293,45 @@ GridLayout::GridItemBorderBoxRects GridLayout::gridItemBorderBoxRects() const
     return gridItemBorderBoxRects;
 }
 
+// The offset of the grid container's content box from its border box, in the grid container's own logical axes.
+struct LogicalContentBoxOffset {
+    LayoutUnit inlineStart;
+    LayoutUnit blockStart;
+};
+
+// Read from the renderer, as populateGridPositions does, and not from the root BoxGeometry's edges.
+static LogicalContentBoxOffset logicalContentBoxOffset(const RenderGrid& renderGrid)
+{
+    // FIXME: A vertical scrollbar on the left shifts the content box, as IFC's formattingContextConstraints does
+    // (BoxGeometryUpdater.cpp): add its width to inlineStart when the writing mode isInlineLeftToRight(), to blockStart when it
+    // isBlockLeftToRight(), and to neither otherwise. A grid container with a scrollbar is not laid out by GFC yet
+    // (GridHasNonVisibleOverflow).
+    return { renderGrid.borderAndPaddingStart(), renderGrid.borderAndPaddingBefore() };
+}
+
+// The one place where a grid item's geometry goes from the grid container's logical axes to the renderer's physical rect.
+// https://drafts.csswg.org/css-writing-modes-4/#logical-to-physical
+// The inline axis is mirrored when it runs right to left or bottom to top, and the axes swap for a vertical writing mode.
+// The block axis is deliberately not mirrored: renderer coordinates are unflipped and flipForWritingMode is applied where they are used.
+static LayoutRect physicalBorderBoxRect(const Layout::BoxGeometry& gridItemGeometry, LogicalContentBoxOffset contentBoxOffset, LayoutUnit gridContainerBorderBoxInlineSize, WritingMode gridContainerWritingMode)
+{
+    auto logicalBorderBox = Layout::BoxGeometry::borderBoxRect(gridItemGeometry);
+    auto inlineOffset = contentBoxOffset.inlineStart + logicalBorderBox.left();
+    auto blockOffset = contentBoxOffset.blockStart + logicalBorderBox.top();
+    if (gridContainerWritingMode.isInlineFlipped())
+        inlineOffset = gridContainerBorderBoxInlineSize - inlineOffset - logicalBorderBox.width();
+    if (gridContainerWritingMode.isHorizontal())
+        return { inlineOffset, blockOffset, logicalBorderBox.width(), logicalBorderBox.height() };
+    return { blockOffset, inlineOffset, logicalBorderBox.height(), logicalBorderBox.width() };
+}
+
 void GridLayout::updateGridItemRenderers(const GridItemBorderBoxRects& previousGridItemRects)
 {
     CheckedRef renderGrid = gridBoxRenderer();
     CheckedRef layoutState = this->layoutState();
-    auto& gridBoxGeometry = layoutState->geometryForBox(gridBox());
-    auto contentBoxOffset = LayoutPoint(gridBoxGeometry.contentBoxLeft(), gridBoxGeometry.contentBoxTop());
+    auto gridContainerWritingMode = renderGrid->writingMode();
+    auto contentBoxOffset = logicalContentBoxOffset(renderGrid);
+    auto gridContainerBorderBoxInlineSize = renderGrid->logicalWidth();
 
     size_t gridItemIndex = 0;
     for (CheckedRef layoutBox : formattingContextBoxes(gridBox())) {
@@ -306,16 +339,14 @@ void GridLayout::updateGridItemRenderers(const GridItemBorderBoxRects& previousG
             continue;
         CheckedRef renderer = downcast<RenderBox>(*layoutBox->rendererForIntegration());
         auto& gridItemGeometry = layoutState->geometryForBox(layoutBox);
-        auto borderBoxRect = Layout::BoxGeometry::borderBoxRect(gridItemGeometry);
 
-        renderer->setLocation(contentBoxOffset + borderBoxRect.topLeft());
-        renderer->setBorderBoxWidth(borderBoxRect.width());
-        renderer->setBorderBoxHeight(borderBoxRect.height());
+        renderer->setBorderBoxInContainer(physicalBorderBoxRect(gridItemGeometry, contentBoxOffset, gridContainerBorderBoxInlineSize, gridContainerWritingMode));
 
-        renderer->setMarginBefore(gridItemGeometry.marginBefore());
-        renderer->setMarginAfter(gridItemGeometry.marginAfter());
-        renderer->setMarginStart(gridItemGeometry.marginStart());
-        renderer->setMarginEnd(gridItemGeometry.marginEnd());
+        // The margins are logical in the grid container's writing mode, and so is the renderer's margin box when it is given that mode.
+        renderer->setMarginBefore(gridItemGeometry.marginBefore(), gridContainerWritingMode);
+        renderer->setMarginAfter(gridItemGeometry.marginAfter(), gridContainerWritingMode);
+        renderer->setMarginStart(gridItemGeometry.marginStart(), gridContainerWritingMode);
+        renderer->setMarginEnd(gridItemGeometry.marginEnd(), gridContainerWritingMode);
 
         if (!renderGrid->selfNeedsLayout() && renderer->checkForRepaintDuringLayout())
             renderer->repaintDuringLayoutIfMoved(previousGridItemRects[gridItemIndex]);
@@ -396,7 +427,7 @@ void GridLayout::updateFormattingContextRootRenderer(const Layout::UsedTrackSize
 
     OrderIteratorPopulator orderIteratorPopulator(currentGrid.orderIterator());
 
-    renderGrid->setBorderBoxHeight(usedBlockContentSize + renderGrid->borderAndPaddingLogicalHeight());
+    renderGrid->setLogicalHeight(usedBlockContentSize + renderGrid->borderAndPaddingLogicalHeight());
 
     for (CheckedRef layoutBox : formattingContextBoxes(gridBox())) {
         if (layoutBox->isExcludedFromGridFormattingContextForIntegration())
@@ -483,7 +514,7 @@ void GridLayout::layout()
     updateGridItemRenderers(previousGridItemRects);
     updateGridItemGridAreas(usedTrackSizes, gridItemRects);
     updateFormattingContextRootRenderer(usedTrackSizes, usedBlockContentSize, gridItemRects, autoRepeatColumnsCount, autoRepeatRowsCount, autoRepeatColumnsTruncatedByLimit, autoRepeatRowsTruncatedByLimit, leadingImplicitColumnsCount, leadingImplicitRowsCount, collapsedColumnTracks, collapsedRowTracks);
-    auto contentBoxBlockStart = layoutState().geometryForBox(gridBox()).contentBoxTop();
+    auto contentBoxBlockStart = logicalContentBoxOffset(protect(gridBoxRenderer())).blockStart;
     auto borderBoxOffset = [&](std::optional<LayoutUnit> baseline) -> std::optional<LayoutUnit> {
         if (!baseline)
             return { };
