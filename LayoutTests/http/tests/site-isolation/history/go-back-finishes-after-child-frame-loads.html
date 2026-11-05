@@ -1,0 +1,11 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true UsesBackForwardCache=false UseUIProcessForBackForwardItemLoading=true ] -->
+<!-- This test checks that going back to a page that isn't in the back/forward cache only finishes once its child frame has loaded from session history. -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.queueLoad("resources/page-with-same-site-iframe.html");
+    testRunner.queueLoad("resources/page-without-iframe.html");
+    testRunner.queueBackNavigation(1);
+}
+</script>

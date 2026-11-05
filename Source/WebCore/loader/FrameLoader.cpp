@@ -2675,6 +2675,7 @@ void FrameLoader::clearProvisionalLoad()
 void FrameLoader::provisionalLoadFailedInAnotherProcess()
 {
     m_provisionalLoadHappeningInAnotherProcess = false;
+    m_isWaitingForDelegatedBackForwardLoad = false;
     m_isComplete = true;
 
     if (RefPtr localParent = dynamicDowncast<LocalFrame>(m_frame->tree().parent())) {
@@ -3124,6 +3125,8 @@ bool FrameLoader::subframeIsLoading() const
             continue;
         }
         Ref childLoader = localChild->loader();
+        if (childLoader->m_isWaitingForDelegatedBackForwardLoad)
+            return true;
         RefPtr documentLoader = childLoader->documentLoader();
         if (documentLoader && documentLoader->isLoadingInAPISense())
             return true;
@@ -3205,8 +3208,6 @@ void FrameLoader::dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocu
 #endif
 
     auto willContinueLoading = willInternallyHandleFailure == WillInternallyHandleFailure::Yes ? WillContinueLoading::Yes : WillContinueLoading::No;
-    if (history().provisionalItem())
-        willContinueLoading = WillContinueLoading::Yes;
 #if ENABLE(CONTENT_FILTERING)
     if (provisionalDocumentLoader.contentFilterWillHandleProvisionalLoadFailure(error)) {
         willContinueLoading = WillContinueLoading::Yes;

@@ -1,0 +1,38 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true UsesBackForwardCache=false UseUIProcessForBackForwardItemLoading=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("This test checks that going back to a page that isn't in the back/forward cache finishes when its cross-site child frame fails to load from session history in another process.");
+jsTestIsAsync = true;
+
+const networkSimulator = "/resources/network-simulator.py?test=go-back-finishes-when-cross-site-child-frame-fails-to-load";
+
+function setNetworkState(command)
+{
+    const request = new XMLHttpRequest();
+    request.open("GET", `${networkSimulator}&command=${command}`, false);
+    request.send();
+}
+
+let popup;
+let loadCount = 0;
+onmessage = event => {
+    if (event.data == "initial ping") {
+        setNetworkState("disconnect");
+        popup.history.back();
+        return;
+    }
+    if (event.data != "loaded")
+        return;
+    if (++loadCount == 1) {
+        popup.location = "/site-isolation/resources/post-message-to-opener.html";
+        return;
+    }
+    testPassed("The page finished loading after going back.");
+    shouldBeEqualToString("popup.frames[0].location.href", "about:blank");
+    popup.close();
+    finishJSTest();
+};
+
+setNetworkState("connect");
+popup = open("resources/page-with-cross-site-iframe.html");
+</script>
