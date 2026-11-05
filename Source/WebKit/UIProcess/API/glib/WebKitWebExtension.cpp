@@ -473,6 +473,7 @@ static gboolean webkitWebExtensionInitableInit(GInitable* initable, GCancellable
     }
 
     self->priv->extension = WTF::move(extension);
+    self->priv->extension->setWrapper(self);
 
     return TRUE;
 #else
@@ -503,6 +504,7 @@ WebKitWebExtension* webkitWebExtensionCreate(HashMap<String, GRefPtr<GBytes>>&& 
 
     WebKitWebExtension* object = WEBKIT_WEB_EXTENSION(g_object_new(WEBKIT_TYPE_WEB_EXTENSION, nullptr));
     object->priv->extension = WTF::move(extension);
+    object->priv->extension->setWrapper(object);
     return object;
 }
 

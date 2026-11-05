@@ -27,6 +27,8 @@
 #include "WebKitWebExtensionContextPrivate.h"
 #include "WebKitWebExtensionPrivate.h"
 #include "WebKitWebViewPrivate.h"
+#include "WebKitWebsiteDataManagerPrivate.h"
+#include "WebsiteDataFetchOption.h"
 #include <WebCore/NotImplemented.h>
 #include <glib.h>
 #include <wtf/glib/Application.h>
@@ -39,6 +41,7 @@ static constexpr auto groupNameStateKey = "ExtensionState"_s;
 static constexpr auto backgroundContentEventListenersKey = "BackgroundContentEventListeners"_s;
 static constexpr auto backgroundContentEventListenersVersionKey = "BackgroundContentEventListenersVersion"_s;
 static constexpr auto lastSeenBaseURLStateKey = "LastSeenBaseURL"_s;
+static constexpr auto lastSeenVersionStateKey = "LastSeenVersion"_s;
 static constexpr auto lastSeenDisplayNameStateKey = "LastSeenDisplayName"_s;
 
 static constexpr auto storageAccessLevelsKey = "StorageAccessLevels"_s;
@@ -129,6 +132,29 @@ void WebExtensionContext::clearError(Error error)
     });
 }
 
+URL WebExtensionContext::platformLoad()
+{
+    readStateFromStorage();
+
+    GUniquePtr<char> baseURI(g_key_file_get_string(m_state.get(), groupNameStateKey, lastSeenBaseURLStateKey, nullptr));
+    auto lastSeenBaseURL = URL { String::fromUTF8(baseURI.get()) };
+    g_key_file_set_string(m_state.get(), groupNameStateKey, lastSeenBaseURLStateKey, m_baseURL.string().utf8().legacyCStringPointer());
+
+    if (auto displayName = protect(m_extension)->displayName(); !displayName.isEmpty())
+        g_key_file_set_string(m_state.get(), groupNameStateKey, lastSeenDisplayNameStateKey, displayName.utf8().legacyCStringPointer());
+
+    if (auto* wrapper = m_delegate.get())
+        g_object_notify(G_OBJECT(wrapper), "loaded");
+
+    return lastSeenBaseURL;
+}
+
+void WebExtensionContext::platformUnload()
+{
+    if (auto* wrapper = m_delegate.get())
+        g_object_notify(G_OBJECT(wrapper), "loaded");
+}
+
 GRefPtr<GKeyFile> WebExtensionContext::currentState() const
 {
     return m_state;
@@ -215,6 +241,89 @@ void WebExtensionContext::enumerateExtensionPages(NOESCAPE const Function<void(W
     }
 }
 
+void WebExtensionContext::moveLocalStorageIfNeeded(const URL& previousBaseURL, CompletionHandler<void()>&& completionHandler)
+{
+    if (!previousBaseURL.isValid() || previousBaseURL == baseURL()) {
+        completionHandler();
+        return;
+    }
+
+    RefPtr dataStore = extensionController()->websiteDataStore();
+
+    auto oldOrigin = WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(previousBaseURL);
+    auto newOrigin = WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(baseURL());
+    dataStore->renameOriginInWebsiteData(WTF::move(oldOrigin), WTF::move(newOrigin), { WebsiteDataType::IndexedDBDatabases, WebsiteDataType::LocalStorage }, [completionHandler = WTF::move(completionHandler)] mutable {
+        completionHandler();
+    });
+}
+
+static OptionSet<WebsiteDataType> allWebsiteDataTypes()
+{
+    return toWebsiteDataTypes(WEBKIT_WEBSITE_DATA_ALL);
+}
+
+void WebExtensionContext::removeStaleExtensionWebsiteData()
+{
+    if (!storageIsPersistent())
+        return;
+
+    RefPtr controller = extensionController();
+    if (!controller || !controller->markDidRemoveStaleExtensionWebsiteData())
+        return;
+
+    auto sentinelPath = FileSystem::pathByAppendingComponent(controller->configuration().storageDirectory(), "StaleExtensionOriginsCleared"_s);
+    if (FileSystem::fileExists(sentinelPath))
+        return;
+
+    RefPtr dataStore = extensionController()->websiteDataStore();
+
+    auto dataTypes = allWebsiteDataTypes();
+    dataStore->fetchData(dataTypes, { WebsiteDataFetchOption::IncludeAllOrigins }, [protectedThis = Ref { *this }, dataTypes, dataStore, sentinelPath](Vector<WebsiteDataRecord> records) {
+        RefPtr controller = protectedThis->extensionController();
+        if (!controller)
+            return;
+
+        auto activeExtensionURLs = controller->activeExtensionURLs();
+
+        Vector<WebsiteDataRecord> staleRecords;
+        for (auto& record : records) {
+            WebsiteDataRecord staleRecord;
+            for (auto& origin : record.origins) {
+                if (WebExtensionMatchPattern::isWebExtensionURL(origin.toURL()) && !activeExtensionURLs.contains(origin.toURL().protocolHostAndPort().convertToASCIILowercase()))
+                    staleRecord.origins.add(origin);
+            }
+            if (!staleRecord.origins.isEmpty()) {
+                staleRecord.types = record.types;
+                staleRecords.append(WTF::move(staleRecord));
+            }
+        }
+
+        if (staleRecords.isEmpty()) {
+            FileSystem::overwriteEntireFile(sentinelPath, { });
+            return;
+        }
+
+        dataStore->removeData(dataTypes, staleRecords, [sentinelPath] {
+            FileSystem::overwriteEntireFile(sentinelPath, { });
+        });
+    });
+}
+
+void WebExtensionContext::loadStorageAccessLevelsFromStorage()
+{
+    bool hasSavedLevels = g_key_file_has_group(m_state.get(), storageAccessLevelsKey);
+
+    if (hasSavedLevels) {
+        for (auto dataType : allWebExtensionDataTypes()) {
+            GUniquePtr<char> accessLevelString(g_key_file_get_string(m_state.get(), storageAccessLevelsKey, toAPIString(dataType).utf8().legacyCStringPointer(), nullptr));
+            if (auto accessLevel = toWebExtensionStorageAccessLevel(String::fromUTF8(accessLevelString.get())))
+                m_storageAccessLevels.set(dataType, *accessLevel);
+        }
+
+        return;
+    }
+}
+
 WebKitWebView* WebExtensionContext::relatedWebView()
 {
     ASSERT(isLoaded());
@@ -247,7 +356,7 @@ GRefPtr<WebKitSettings> WebExtensionContext::webViewConfiguration(WebViewPurpose
     if (!isLoaded())
         return nullptr;
 
-    GRefPtr<WebKitSettings> settings(adoptGRef(webkit_settings_new()));
+    GRefPtr<WebKitSettings> settings(adoptGRef(webkitSettingsCopy(protect(extensionController()->configuration())->webViewConfiguration())));
     WebKit::WebPreferences* preferences = webkitSettingsGetPreferences(settings.get());
 
     webkit_settings_set_javascript_can_access_clipboard(settings.get(), hasPermission(WebExtensionPermission::clipboardWrite()));
@@ -303,12 +412,20 @@ void WebExtensionContext::loadBackgroundWebView()
 
     GRefPtr<WebKitSettings> settings = webViewConfiguration(WebViewPurpose::Background);
     WebKit::WebPreferences* preferences = webkitSettingsGetPreferences(settings.get());
-    GRefPtr<WebKitWebView> webView = adoptGRef(WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+    GRefPtr<WebKitNetworkSession> networkSession = webkit_network_session_new(protect(extensionController->configuration())->storageDirectory().utf8().legacyCStringPointer(), nullptr);
+    webkitWebsiteDataManagerSetDataStore(webkit_network_session_get_website_data_manager(networkSession.get()), extensionController->websiteDataStore());
+    WebKitWebView* floatingView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "web-extension-mode", isManifestVersion3 ? WEBKIT_WEB_EXTENSION_MODE_MANIFESTV3 : WEBKIT_WEB_EXTENSION_MODE_MANIFESTV2,
         "related-view", preferences->siteIsolationEnabled() ? nullptr : relatedWebView(),
         "settings", settings.get(),
+        "network-session", networkSession.get(),
         "web-extension-context", m_delegate.get(),
-        nullptr)));
+        nullptr));
+#if PLATFORM(GTK)
+    GRefPtr<WebKitWebView> webView = adoptGRef(WEBKIT_WEB_VIEW(g_object_ref_sink(floatingView)));
+#else
+    GRefPtr<WebKitWebView> webView = adoptGRef(floatingView);
+#endif
     m_backgroundWebView = webView;
 
     g_signal_connect(m_backgroundWebView.get(), "decide-policy", G_CALLBACK(onDecidePolicy), this);
@@ -405,7 +522,35 @@ void WebExtensionContext::unloadBackgroundWebView()
     g_signal_handlers_disconnect_by_func(m_backgroundWebView.get(), reinterpret_cast<gpointer>(onDidFailNavigation), this);
     g_signal_handlers_disconnect_by_func(m_backgroundWebView.get(), reinterpret_cast<gpointer>(onWebProcessTerminated), this);
     webkit_web_view_try_close(m_backgroundWebView.get());
-    m_backgroundWebView = nullptr;
+    RunLoop::mainSingleton().dispatch([webView = std::exchange(m_backgroundWebView, nullptr)] { });
+}
+
+void WebExtensionContext::determineInstallReasonDuringLoad()
+{
+    ASSERT(isLoaded());
+
+    RefPtr extension = m_extension;
+    String currentVersion = extension->version();
+    GUniquePtr<char> previousVersion(g_key_file_get_string(m_state.get(), groupNameStateKey, lastSeenVersionStateKey, nullptr));
+    m_previousVersion = String::fromUTF8(previousVersion.get());
+    g_key_file_set_string(m_state.get(), groupNameStateKey, lastSeenVersionStateKey, currentVersion.utf8().legacyCStringPointer());
+
+    bool extensionVersionDidChange = !m_previousVersion.isEmpty() && m_previousVersion != currentVersion;
+
+    m_shouldFireStartupEvent = extensionController()->isFreshlyCreated();
+
+    if (extensionVersionDidChange) {
+        // Clear background event listeners on extension update.
+        g_key_file_remove_key(m_state.get(), groupNameStateKey, backgroundContentEventListenersKey, nullptr);
+        g_key_file_remove_key(m_state.get(), groupNameStateKey, backgroundContentEventListenersVersionKey, nullptr);
+
+        RELEASE_LOG_DEBUG(Extensions, "Queued installed event with extension update reason");
+        m_installReason = InstallReason::ExtensionUpdate;
+    } else if (!m_shouldFireStartupEvent) {
+        RELEASE_LOG_DEBUG(Extensions, "Queued installed event with extension install reason");
+        m_installReason = InstallReason::ExtensionInstall;
+    } else
+        m_installReason = InstallReason::None;
 }
 
 void WebExtensionContext::loadBackgroundPageListenersFromStorage()
@@ -581,18 +726,6 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
     completionHandler(false);
 }
 
-std::expected<bool, RefPtr<API::Error>> WebExtensionContext::load(WebExtensionController&, String)
-{
-    notImplemented();
-    return makeUnexpected(createError(Error::Unknown));
-}
-
-std::expected<bool, RefPtr<API::Error>> WebExtensionContext::unload()
-{
-    notImplemented();
-    return makeUnexpected(createError(Error::Unknown));
-}
-
 void WebExtensionContext::permissionsDidChange(PermissionNotification, const PermissionsSet&)
 {
     notImplemented();
@@ -628,21 +761,22 @@ void WebExtensionContext::didFailLoadForFrame(WebPageProxyIdentifier, const WebE
     notImplemented();
 }
 
-std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifier(WebProcessProxy&) const
+std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifier(WebProcessProxy& destinationProcess) const
 {
-    notImplemented();
-    return std::nullopt;
+    if (!m_backgroundWebView || protect(extension())->backgroundContentIsServiceWorker())
+        return std::nullopt;
+
+    Ref backgroundPage = webkitWebViewGetPage(m_backgroundWebView.get());
+    return backgroundPage->webPageIDInProcess(destinationProcess);
 }
 
 Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageIdentifiers(WebProcessProxy&) const
 {
-    notImplemented();
     return { };
 }
 
 Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::tabPageIdentifiers(WebProcessProxy&) const
 {
-    notImplemented();
     return { };
 }
 

@@ -4485,3 +4485,34 @@ webkit_settings_set_webrtc_udp_ports_range(WebKitSettings* settings, const gchar
     UNUSED_PARAM(udpPortsRange);
 #endif
 }
+
+WebKitSettings* webkitSettingsCopy(WebKitSettings* settings)
+{
+    g_return_val_if_fail(settings, nullptr);
+
+    WebKitSettings* newSettings = webkit_settings_new();
+    WebKitSettingsPrivate* priv = newSettings->priv;
+
+    priv->preferences = settings->priv->preferences->copy();
+    priv->defaultFontFamily = settings->priv->defaultFontFamily;
+    priv->monospaceFontFamily = settings->priv->monospaceFontFamily;
+    priv->serifFontFamily = settings->priv->serifFontFamily;
+    priv->sansSerifFontFamily = settings->priv->sansSerifFontFamily;
+    priv->cursiveFontFamily = settings->priv->cursiveFontFamily;
+    priv->fantasyFontFamily = settings->priv->fantasyFontFamily;
+    priv->pictographFontFamily = settings->priv->pictographFontFamily;
+    priv->mathFontFamily = settings->priv->mathFontFamily;
+    priv->defaultCharset = settings->priv->defaultCharset;
+    priv->userAgent = settings->priv->userAgent;
+    priv->mediaContentTypesRequiringHardwareSupport = settings->priv->mediaContentTypesRequiringHardwareSupport;
+#if ENABLE(WEB_RTC)
+    priv->webrtcUDPPortsRange = settings->priv->webrtcUDPPortsRange;
+#endif
+    priv->allowModalDialogs = settings->priv->allowModalDialogs;
+    priv->zoomTextOnly = settings->priv->zoomTextOnly;
+#if PLATFORM(GTK)
+    priv->enableBackForwardNavigationGestures = settings->priv->enableBackForwardNavigationGestures;
+#endif
+
+    return newSettings;
+}

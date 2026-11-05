@@ -531,6 +531,22 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
             static_cast<GParamFlags>(WEBKIT_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY)));
 }
 
+void webkitWebsiteDataManagerSetDataStore(WebKitWebsiteDataManager* manager, RefPtr<WebKit::WebsiteDataStore> dataStore)
+{
+    WebKitWebsiteDataManagerPrivate* priv = manager->priv;
+
+    if (priv->websiteDataStore == dataStore)
+        return;
+
+    if (auto originStorageRatio = dataStore->originQuotaRatio())
+        priv->originStorageRatio = *originStorageRatio;
+
+    if (auto totalStorageRatio = dataStore->defaultTotalQuotaRatio())
+        priv->totalStorageRatio = *totalStorageRatio;
+
+    priv->websiteDataStore = dataStore;
+}
+
 WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataManager* manager)
 {
     WebKitWebsiteDataManagerPrivate* priv = manager->priv;
@@ -1153,7 +1169,7 @@ WebKitFaviconDatabase* webkit_website_data_manager_get_favicon_database(WebKitWe
 }
 #endif
 
-static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes types)
+OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes types)
 {
     OptionSet<WebsiteDataType> returnValue;
     if (types & WEBKIT_WEBSITE_DATA_MEMORY_CACHE)

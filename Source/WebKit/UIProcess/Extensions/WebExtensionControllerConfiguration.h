@@ -34,8 +34,12 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/UUID.h>
 
+#if ENABLE(2022_GLIB_API)
+#include "WebKitSettings.h"
+#elif PLATFORM(COCOA)
 OBJC_CLASS WKWebExtensionControllerConfiguration;
 OBJC_CLASS WKWebViewConfiguration;
+#endif
 
 namespace WebKit {
 
@@ -66,8 +70,11 @@ public:
     void setStorageDirectory(const String& directory) { m_storageDirectory = directory; }
 
 #if PLATFORM(COCOA)
-    WKWebViewConfiguration *webViewConfiguration();
-    void setWebViewConfiguration(WKWebViewConfiguration *configuration) { m_webViewConfiguration = configuration; }
+    WKWebViewConfiguration* webViewConfiguration();
+    void setWebViewConfiguration(WKWebViewConfiguration* configuration) { m_webViewConfiguration = configuration; }
+#elif ENABLE(2022_GLIB_API)
+    WebKitSettings* webViewConfiguration();
+    void setWebViewConfiguration(WebKitSettings* configuration) { m_webViewConfiguration = configuration; }
 #endif
 
     WebsiteDataStore& defaultWebsiteDataStore() const;
@@ -88,6 +95,8 @@ private:
     String m_storageDirectory;
 #if PLATFORM(COCOA)
     RetainPtr<WKWebViewConfiguration> m_webViewConfiguration;
+#elif ENABLE(2022_GLIB_API)
+    GRefPtr<WebKitSettings> m_webViewConfiguration;
 #endif
     RefPtr<WebsiteDataStore> m_defaultWebsiteDataStore;
 };
