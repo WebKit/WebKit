@@ -637,6 +637,30 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue('<!-- webkit-test-runner [ dummy ] -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.any.html').split('\n')[0])
         self.assertFalse('<!-- webkit-test-runner [ dummy ] -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.any.worker.html').split('\n')[0])
 
+    def test_webkit_test_runner_options_with_clean_dest_dir(self):
+        FAKE_FILES = {
+            f'{FAKE_WPT_DIR}/css/test.html': '<!doctype html>\n<script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
+            '/mock-checkout/LayoutTests/w3c/web-platform-tests/css/test.html': '<!doctype html><!-- webkit-test-runner [ dummy ] -->\nold',
+            f'{FAKE_WPT_DIR}/t/test.html': '<!doctype html>\n<script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
+            '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html': '<!doctype html> <!-- webkit-test-runner [ dummy ] -->\nold',
+            f'{FAKE_WPT_DIR}/t/later.html': '<!doctype html>\n<script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
+            '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/later.html': '<!doctype html>\n<!-- webkit-test-runner [ dummy ] -->',
+            f'{FAKE_WPT_DIR}/t/test.any.js': 'test(() => {}, "empty")',
+            '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.any.html': '<!-- This file is required for WebKit test infrastructure to run the templated test --><!-- webkit-test-runner [ dummy ] -->',
+            '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/removed.html': '<!doctype html><!-- webkit-test-runner [ dummy ] -->',
+            '/mock-checkout/Source/WebCore/css/CSSProperties.json': '',
+        }
+        FAKE_FILES.update(FAKE_RESOURCES)
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+
+        self.assertEqual(fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/test.html').split('\n')[0], '<!doctype html><!-- webkit-test-runner [ dummy ] -->')
+        self.assertEqual(fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html').split('\n')[0], '<!doctype html> <!-- webkit-test-runner [ dummy ] -->')
+        self.assertTrue('<!-- webkit-test-runner [ dummy ] -->' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.any.html').split('\n')[0])
+        self.assertFalse('webkit-test-runner' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.any.worker.html'))
+        self.assertFalse('webkit-test-runner' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/later.html'))
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/removed.html'))
+
     def test_webkit_test_runner_import_reftests_with_absolute_paths_download(self):
         FAKE_FILES = {
             f'{FAKE_WPT_DIR}/css/css-images/test3.html': '<html><head><link rel=match href=/css/css-images/test3-ref.html></head></html>',

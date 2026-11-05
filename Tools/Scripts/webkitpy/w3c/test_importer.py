@@ -71,6 +71,7 @@ import itertools
 import json
 import logging
 import mimetypes
+import re
 from pathlib import PurePath
 from typing import Optional
 
@@ -79,6 +80,7 @@ from webkitscmpy.local.git import Git
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.layout_tests.controllers.layout_test_finder import supported_test_extensions
 from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
 from webkitpy.w3c.common import TEMPLATED_TEST_GLOBAL_SUFFIXES, TEMPLATED_TEST_HEADER, WPT_GH_URL, WPTPaths, case_mismatches
 from webkitpy.w3c.test_converter import convert_for_webkit
@@ -194,6 +196,7 @@ class TestImporter(object):
         self._slow_tests = []
 
         self._to_skip_new_directories = set()
+        self._removed_webkit_test_runner_options = {}
 
     def do_import(self):
         finder = WebKitFinder(self.filesystem)
@@ -378,7 +381,13 @@ class TestImporter(object):
     def clean_destination_directory(self, filename):
         directory = self.filesystem.join(self.destination_directory, filename)
         for relative_path in self.filesystem.files_under(directory, file_filter=self._should_remove_before_importing):
-            self.filesystem.remove(self.filesystem.join(directory, relative_path))
+            path = self.filesystem.join(directory, relative_path)
+            # Remember the options of files that the import can give them back to.
+            if relative_path.endswith(supported_test_extensions):
+                options = self._webkit_test_runner_options(path)
+                if options:
+                    self._removed_webkit_test_runner_options[self.filesystem.normpath(path)] = options
+            self.filesystem.remove(path)
 
     def remove_dangling_expectations(self, filename):
         #FIXME: Clean also the expected files stored in all platform specific folders.
@@ -497,7 +506,7 @@ class TestImporter(object):
 
     def _webkit_test_runner_options(self, path):
         if not(self.filesystem.isfile(path)):
-            return ''
+            return self._removed_webkit_test_runner_options.get(self.filesystem.normpath(path), '')
 
         options_prefix = '<!-- webkit-test-runner'
         contents = ''
@@ -508,9 +517,9 @@ class TestImporter(object):
 
         if not len(contents):
             return ''
-        first_line = contents[0]
-
-        return first_line[first_line.index(options_prefix):] if options_prefix in first_line else ''
+        # Keep the whitespace before the options, so that importing an unchanged first line keeps it unchanged.
+        match = re.search(r'\s*' + re.escape(options_prefix) + r'.*\Z', contents[0])
+        return match.group(0) if match else ''
 
     def _add_webkit_test_runner_options_to_content(self, content, webkit_test_runner_options):
         lines = content.split('\n')
