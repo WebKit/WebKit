@@ -80,10 +80,20 @@ void GetRenderTargetLayerCountAndIndex(webgpu::ImageHelper *image,
 }
 
 bool IsTextureLevelDefinitionCompatibleWithImage(webgpu::ImageHelper *image,
+                                                 const gl::ImageIndex &index,
                                                  const gl::Extents &size,
                                                  const webgpu::Format &format)
 {
-    return size == wgpu_gl::GetExtents(image->getSize()) &&
+    const gl::LevelIndex level(index.getLevelIndex());
+    if (!image->isTextureLevelInAllocatedImage(level))
+    {
+        return false;
+    }
+    const WGPUExtent3D levelSize = image->getLevelSize(image->toWgpuLevel(level));
+    // The faces of a cube map are the layers of the image.
+    const uint32_t levelDepth =
+        index.getType() == gl::TextureType::CubeMap ? 1 : levelSize.depthOrArrayLayers;
+    return size == gl::Extents(levelSize.width, levelSize.height, levelDepth) &&
            image->getIntendedFormatID() == format.getIntendedFormatID() &&
            image->getActualFormatID() == format.getActualImageFormatID();
 }
@@ -849,7 +859,7 @@ angle::Result TextureWgpu::redefineLevel(const gl::Context *context,
                     ? TextureLevelAllocation::WithinAllocatedImage
                     : TextureLevelAllocation::OutsideAllocatedImage;
             TextureLevelDefinition levelDefinition =
-                IsTextureLevelDefinitionCompatibleWithImage(mImage, size, webgpuFormat)
+                IsTextureLevelDefinitionCompatibleWithImage(mImage, index, size, webgpuFormat)
                     ? TextureLevelDefinition::Compatible
                     : TextureLevelDefinition::Incompatible;
             // Note: ImageHelper::mFirstAllocatedLevel should eventually track gl::OwnerLevel
@@ -1095,6 +1105,8 @@ void TextureWgpu::resetImageAndReleaseViews()
         renderTargets.clear();
     }
     mImage->resetImage();
+    // The next image is created with the current definitions of the levels.
+    mRedefinedLevels = {};
 }
 
 }  // namespace rx
