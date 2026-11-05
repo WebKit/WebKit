@@ -163,8 +163,12 @@ static size_t computeAvailableMemory()
     return ((sizeAccordingToKernel + multiple - 1) / multiple) * multiple;
 #elif BOS(FREEBSD) || BOS(LINUX)
     struct sysinfo info;
-    if (!sysinfo(&info))
-        return info.totalram * info.mem_unit;
+    if (!sysinfo(&info)) {
+        size_t result;
+        if (__builtin_mul_overflow(info.totalram, info.mem_unit, &result))
+            return std::numeric_limits<size_t>::max();
+        return result;
+    }
     return availableMemoryGuess;
 #elif BOS(UNIX)
     long pages = sysconf(_SC_PHYS_PAGES);

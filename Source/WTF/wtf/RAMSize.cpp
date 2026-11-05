@@ -27,11 +27,13 @@
 #include <wtf/RAMSize.h>
 
 #include <mutex>
+#include <wtf/CheckedArithmetic.h>
 
 #if OS(WINDOWS)
 #include <windows.h>
 #elif USE(SYSTEM_MALLOC)
 #if OS(LINUX) || OS(FREEBSD)
+#include <limits>
 #include <sys/sysinfo.h>
 #elif OS(UNIX) || OS(HAIKU)
 #include <unistd.h>
@@ -46,7 +48,7 @@
 
 namespace WTF {
 
-#if OS(WINDOWS)
+#if OS(WINDOWS) || (USE(SYSTEM_MALLOC) && (OS(LINUX) || OS(FREEBSD)))
 static constexpr size_t ramSizeGuess = 512 * MB;
 #endif
 
@@ -62,8 +64,12 @@ static size_t computeRAMSize()
 #elif USE(SYSTEM_MALLOC)
 #if OS(LINUX) || OS(FREEBSD)
     struct sysinfo si;
-    sysinfo(&si);
-    return si.totalram * si.mem_unit;
+    if (sysinfo(&si))
+        return ramSizeGuess;
+    auto bytes = checkedProduct<size_t>(si.totalram, si.mem_unit);
+    if (bytes.hasOverflowed())
+        return std::numeric_limits<size_t>::max();
+    return bytes.value();
 #elif OS(UNIX) || OS(HAIKU)
     long pages = sysconf(_SC_PHYS_PAGES);
     long pageSize = sysconf(_SC_PAGE_SIZE);
