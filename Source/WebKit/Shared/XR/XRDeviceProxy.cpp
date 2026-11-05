@@ -149,10 +149,10 @@ std::optional<PlatformXR::LayerInfo> XRDeviceProxy::createLayerProjection(uint32
 }
 
 #if ENABLE(WEBXR_LAYERS)
-std::optional<PlatformXR::LayerInfo> XRDeviceProxy::createCompositionLayer(PlatformXR::CompositionLayerType type, WebCore::IntSize size, PlatformXR::LayerLayout layout)
+std::optional<PlatformXR::LayerInfo> XRDeviceProxy::createCompositionLayer(PlatformXR::CompositionLayerType type, WebCore::IntSize size, PlatformXR::LayerLayout layout, PlatformXR::LayerUpdateMode updateMode)
 {
     RefPtr xrSystem = m_xrSystem.get();
-    return xrSystem ? xrSystem->createCompositionLayer(type, size, layout) : std::nullopt;
+    return xrSystem ? xrSystem->createCompositionLayer(type, size, layout, updateMode) : std::nullopt;
 }
 #endif
 

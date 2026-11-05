@@ -148,6 +148,8 @@ void XRCompositionLayer::setTransform(WebXRRigidTransform& transform)
 void XRCompositionLayer::startFrame(PlatformXR::FrameData& frameData)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
+    m_contentUpdatedThisFrame = false;
+
     auto it = frameData.layers.find(m_backing->handle());
     if (it == frameData.layers.end())
         return;
@@ -197,6 +199,7 @@ PlatformXR::DeviceLayer XRCompositionLayer::endFrame()
 
     layerData.handle = m_backing->handle();
     layerData.visible = true;
+    layerData.contentUpdated = std::exchange(m_contentUpdatedThisFrame, false);
 
     recomputePose();
 

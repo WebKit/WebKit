@@ -105,7 +105,7 @@ private:
     void submitFrame(IPC::Connection&);
 #endif
 #if ENABLE(WEBXR_LAYERS)
-    NODELETE void createCompositionLayer(IPC::Connection&, PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>&&);
+    NODELETE void createCompositionLayer(IPC::Connection&, PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, PlatformXR::LayerUpdateMode, CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>&&);
     void deleteLayer(IPC::Connection&, PlatformXR::LayerHandle);
 #endif
 #if ENABLE(WEBXR_HIT_TEST)

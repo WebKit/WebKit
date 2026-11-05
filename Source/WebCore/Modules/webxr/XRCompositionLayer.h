@@ -71,11 +71,14 @@ public:
     XRLayerQuality quality() const { return XRLayerQuality::Default; }
     void setQuality(XRLayerQuality) { }
 
+    // FIXME: No backend detects a resource loss yet, so nothing sets this to true again after the first draw.
     bool needsRedraw() const { return m_needsRedraw; }
     void setNeedsRedraw(bool needsRedraw) { m_needsRedraw = needsRedraw; }
 
     bool isStatic() const { return m_isStatic; }
     void setIsStatic(bool isStatic) { m_isStatic = isStatic; }
+
+    void markContentUpdated() { m_contentUpdatedThisFrame = true; }
 
     XRLayerBacking& backing();
     PlatformXR::LayerHandle layerHandle() const final;
@@ -125,6 +128,7 @@ private:
     bool m_destroyed { false };
     bool m_isStatic { false };
     bool m_needsRedraw { true };
+    bool m_contentUpdatedThisFrame { false };
     XRLayerLayout m_layout { XRLayerLayout::Stereo };
     bool m_blendTextureSourceAlpha { false };
     bool m_forceMonoPresentation { false };

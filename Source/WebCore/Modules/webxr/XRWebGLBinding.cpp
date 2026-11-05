@@ -743,6 +743,8 @@ ExceptionOr<Ref<XRWebGLSubImage>> XRWebGLBinding::getSubImage(XRCompositionLayer
             if (!validateXRWebGLSubImageCreation(layer, frame))
                 return Exception { ExceptionCode::InvalidStateError, "Validation does not PASS."_s };
 
+            layer.markContentUpdated();
+
             int viewsPerTexture = layout == XRLayerLayout::StereoLeftRight || layout == XRLayerLayout::StereoTopBottom ? 2 : 1;
             Ref viewport = initializeViewport(IntSize(init.viewPixelWidth, init.viewPixelHeight), layout, init.textureType, index, viewsPerTexture);
 
