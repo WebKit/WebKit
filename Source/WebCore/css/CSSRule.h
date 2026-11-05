@@ -24,6 +24,7 @@
 
 #include <WebCore/CSSParserEnum.h>
 #include <WebCore/StyleRuleType.h>
+#include <wtf/Lock.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
@@ -64,6 +65,8 @@ public:
     virtual RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&);
     virtual void getChildStyleSheets(HashSet<Ref<CSSStyleSheet>>&) { }
 
+    Lock& opaqueRootLockForGC() const { return m_opaqueRootLockForGC; }
+
     WEBCORE_EXPORT ExceptionOr<void> NODELETE setCssText(const String&);
 
 protected:
@@ -77,6 +80,7 @@ protected:
 private:
     mutable unsigned char m_hasCachedSelectorText : 1;
     unsigned char m_parentIsRule : 1;
+    mutable Lock m_opaqueRootLockForGC;
     union {
         CSSRule* m_parentRule;
         CSSStyleSheet* m_parentStyleSheet;
@@ -92,12 +96,14 @@ inline CSSRule::CSSRule(CSSStyleSheet* parent)
 
 inline void CSSRule::setParentStyleSheet(CSSStyleSheet* styleSheet)
 {
+    Locker locker { m_opaqueRootLockForGC };
     m_parentIsRule = false;
     m_parentStyleSheet = styleSheet;
 }
 
 inline void CSSRule::setParentRule(CSSRule* rule)
 {
+    Locker locker { m_opaqueRootLockForGC };
     m_parentIsRule = true;
     m_parentRule = rule;
 }
