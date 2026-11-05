@@ -1112,10 +1112,11 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContentContributionForGridItem(R
             && gridLayoutState.containsLayoutRequirementForGridItem(gridItem, ItemLayoutRequirement::MinContentContributionForSecondColumnPass);
 
         bool isComputingColumnIntrinsicWidthForNonOrthogonalItem = this->isComputingColumnIntrinsicWidthForNonOrthogonalItem(gridItem);
+        auto definiteRowsEstimateForColumnIntrinsicWidth = isComputingColumnIntrinsicWidthForNonOrthogonalItem ? m_algorithm.estimatedGridAreaBreadthForGridItem(gridItem, Style::GridTrackSizingDirection::Rows) : std::nullopt;
 
         // FIXME: It's unclear if we should return the intrinsic width or the preferred width.
         // See http://lists.w3.org/Archives/Public/www-style/2013Jan/0245.html
-        if (gridItem.shouldInvalidateContentWidths() || needsGridItemMinContentContributionForSecondColumnPass || isComputingColumnIntrinsicWidthForNonOrthogonalItem)
+        if (gridItem.shouldInvalidateContentWidths() || needsGridItemMinContentContributionForSecondColumnPass || definiteRowsEstimateForColumnIntrinsicWidth)
             gridItem.invalidateContentLogicalWidths();
 
         // Row-axis override for preferred-width computation:
@@ -1124,8 +1125,8 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContentContributionForGridItem(R
         // - second-column-pass min-content: stretched row size as the item's content size.
         auto minContentLogicalWidth = [&] {
             if (isComputingColumnIntrinsicWidthForNonOrthogonalItem) {
-                if (auto rowsEstimate = m_algorithm.estimatedGridAreaBreadthForGridItem(gridItem, Style::GridTrackSizingDirection::Rows)) {
-                    ScopedGridAreaContentLogicalHeight scope(gridItem, rowsEstimate);
+                if (definiteRowsEstimateForColumnIntrinsicWidth) {
+                    ScopedGridAreaContentLogicalHeight scope(gridItem, definiteRowsEstimateForColumnIntrinsicWidth);
                     return gridItem.minContentLogicalWidthContribution();
                 }
             } else if (needsGridItemMinContentContributionForSecondColumnPass) {
@@ -1176,18 +1177,19 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::maxContentContributionForGridItem(R
             return { };
 
         bool isComputingColumnIntrinsicWidthForNonOrthogonalItem = this->isComputingColumnIntrinsicWidthForNonOrthogonalItem(gridItem);
+        auto definiteRowsEstimateForColumnIntrinsicWidth = isComputingColumnIntrinsicWidthForNonOrthogonalItem ? m_algorithm.estimatedGridAreaBreadthForGridItem(gridItem, Style::GridTrackSizingDirection::Rows) : std::nullopt;
 
         // FIXME: It's unclear if we should return the intrinsic width or the preferred width.
         // See http://lists.w3.org/Archives/Public/www-style/2013Jan/0245.html
-        if (gridItem.shouldInvalidateContentWidths() || isComputingColumnIntrinsicWidthForNonOrthogonalItem)
+        if (gridItem.shouldInvalidateContentWidths() || definiteRowsEstimateForColumnIntrinsicWidth)
             gridItem.invalidateContentLogicalWidths();
 
         // Row-axis override for preferred-width computation: gridAreaContentLogicalHeight =
         // sum of definite max row tracks (https://drafts.csswg.org/css-grid-2/#algo-track-sizing).
         auto maxContentLogicalWidth = [&] {
             if (isComputingColumnIntrinsicWidthForNonOrthogonalItem) {
-                if (auto rowsEstimate = m_algorithm.estimatedGridAreaBreadthForGridItem(gridItem, Style::GridTrackSizingDirection::Rows)) {
-                    ScopedGridAreaContentLogicalHeight scope(gridItem, rowsEstimate);
+                if (definiteRowsEstimateForColumnIntrinsicWidth) {
+                    ScopedGridAreaContentLogicalHeight scope(gridItem, definiteRowsEstimateForColumnIntrinsicWidth);
                     return gridItem.maxContentLogicalWidthContribution();
                 }
             } else if (shouldTreatGridAreaBlockSizeAsIndefinite(gridItem)) {
