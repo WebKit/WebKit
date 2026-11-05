@@ -378,7 +378,10 @@ void RemoteGraphicsContext::drawFilteredImageBufferInternal(std::optional<Render
     for (auto& effect : filter.effectsOfType(FilterEffect::Type::FEImage)) {
         Ref feImage = downcast<FEImage>(effect.get());
 
-        auto effectImage = sourceImage(feImage->sourceImage().imageIdentifier());
+        auto imageReference = feImage->sourceImage().imageReference();
+        auto* imageIdentifier = std::get_if<RenderingResourceIdentifier>(&imageReference);
+        MESSAGE_CHECK(imageIdentifier);
+        auto effectImage = sourceImage(*imageIdentifier);
         MESSAGE_CHECK(effectImage);
         feImage->setImageSource(WTF::move(*effectImage));
     }

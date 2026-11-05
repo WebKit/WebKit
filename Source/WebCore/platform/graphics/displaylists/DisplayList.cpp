@@ -47,16 +47,83 @@ DisplayList::DisplayList(Vector<Item>&& items)
     }));
 }
 
-RefPtr<const DisplayList> DisplayList::createResolvingResources(Vector<Item>&& items, std::span<const Ref<const FontBase>> fonts, std::span<const Ref<const DisplayList>> displayLists)
+RefPtr<const DisplayList> DisplayList::createResolvingResources(Vector<Item>&& items, std::span<const Ref<const FontBase>> fonts, std::span<const SourceImage> images, std::span<const Ref<const DisplayList>> displayLists)
 {
+    auto sourceImage = [&](uint64_t index) -> std::optional<SourceImage> {
+        if (index >= images.size() || !images[index].isResolved())
+            return std::nullopt;
+        return images[index];
+    };
+    auto resolveNativeImage = [&](auto& item) {
+        if (item.isResolved())
+            return true;
+        if (item.imageIndex() >= images.size())
+            return false;
+        RefPtr nativeImage = images[item.imageIndex()].nativeImageIfExists();
+        if (!nativeImage)
+            return false;
+        item.setNativeImage(nativeImage.releaseNonNull());
+        return true;
+    };
+    auto resolveImageBuffer = [&](auto& item) {
+        if (item.isResolved())
+            return true;
+        if (item.imageIndex() >= images.size())
+            return false;
+        RefPtr imageBuffer = images[item.imageIndex()].imageBufferIfExists();
+        if (!imageBuffer)
+            return false;
+        item.setImageBuffer(imageBuffer.releaseNonNull());
+        return true;
+    };
+    auto resolvePattern = [&](const SourceBrush& brush) {
+        RefPtr pattern = brush.pattern();
+        if (!pattern)
+            return true;
+        auto index = pattern->tileImage().imageIndex();
+        if (!index)
+            return true;
+        auto tileImage = sourceImage(*index);
+        if (!tileImage)
+            return false;
+        pattern->setTileImage(WTF::move(*tileImage));
+        return true;
+    };
+
     for (auto& item : items) {
         bool isValid = WTF::switchOn(item,
+            [&](ClipToImageBuffer& item) {
+                return resolveImageBuffer(item);
+            },
             [&](DrawDisplayList& item) {
                 if (item.isResolved())
                     return true;
                 if (item.displayListIndex() >= displayLists.size())
                     return false;
                 item.setDisplayList(displayLists[item.displayListIndex()].copyRef());
+                return true;
+            },
+            [&](DrawFilteredImageBuffer& item) {
+                if (item.isResolved())
+                    return true;
+                if (auto index = item.sourceImageIndex()) {
+                    if (*index >= images.size())
+                        return false;
+                    RefPtr imageBuffer = images[*index].imageBufferIfExists();
+                    if (!imageBuffer)
+                        return false;
+                    item.setSourceImage(imageBuffer.releaseNonNull());
+                }
+                if (item.effectImageIndices().size() != item.filter().effectsOfType(FilterFunction::Type::FEImage).size())
+                    return false;
+                Vector<SourceImage> effectImages(ReserveCapacityTag { }, item.effectImageIndices().size());
+                for (auto index : item.effectImageIndices()) {
+                    auto image = sourceImage(index);
+                    if (!image)
+                        return false;
+                    effectImages.append(WTF::move(*image));
+                }
+                item.setEffectImages(WTF::move(effectImages));
                 return true;
             },
             [&](DrawGlyphs& item) {
@@ -68,6 +135,21 @@ RefPtr<const DisplayList> DisplayList::createResolvingResources(Vector<Item>&& i
                     return false;
                 item.setFont(fonts[item.fontIndex()].copyRef());
                 return true;
+            },
+            [&](DrawImageBuffer& item) {
+                return resolveImageBuffer(item);
+            },
+            [&](DrawNativeImage& item) {
+                return resolveNativeImage(item);
+            },
+            [&](DrawPatternImageBuffer& item) {
+                return resolveImageBuffer(item);
+            },
+            [&](DrawPatternNativeImage& item) {
+                return resolveNativeImage(item);
+            },
+            [&](SetState& item) {
+                return resolvePattern(item.state().fillBrush()) && resolvePattern(item.state().strokeBrush());
             },
             [](auto&) {
                 return true;
