@@ -40,11 +40,19 @@
 
 namespace WebCore {
 
+class RenderBlockFlow;
 class RenderBox;
 
 namespace Layout {
 
 class BlockFormattingContext;
+
+// What text-box-trim the content laid out next is in (css-inline-3 §6.2, LocalFrameViewLayoutContext::TextBoxTrim): its first formatted line
+// gets its start trimmed, and the last formatted line, in the inline content of a block container, its end.
+struct TextBoxTrimState {
+    bool trimsFirstFormattedLine { false };
+    CheckedPtr<const RenderBlockFlow> lastFormattedLineRoot;
+};
 
 struct ContainingBlockState {
     CheckedRef<const RenderBox> blockContainer;
@@ -72,6 +80,8 @@ struct ContainingBlockState {
     // The lines with content in its inline content up to the line of the last block-level box in it, that line included: the inline
     // formatting context's line count is larger when line boxes came after that box.
     size_t lineCountThroughLastBlockLevelBox { 0 };
+    // Its text-box-trim applies to its content only, and what its ancestors' did for the content after it is restored at its end.
+    std::optional<TextBoxTrimState> textBoxTrimStateToRestore { };
 
     LayoutUnit contentBoxLogicalTop() const { return *borderBoxLogicalTop + borderAndPaddingBefore; }
 };
@@ -146,6 +156,24 @@ public:
     void setClampAfterBox(const RenderBox* clampAfterBox) { m_clampAfterBox = clampAfterBox; }
     TextBoxTrim textBoxTrim() const { return m_textBoxTrim; }
     Style::TextBoxEdge textBoxEdge() const { return m_textBoxEdge; }
+    // The sides of the inline content laid out next to trim, and how.
+    void setTextBoxTrim(TextBoxTrim textBoxTrim) { m_textBoxTrim = textBoxTrim; }
+    void setTextBoxEdge(Style::TextBoxEdge textBoxEdge) { m_textBoxEdge = textBoxEdge; }
+
+    const TextBoxTrimState& textBoxTrimState() const LIFETIME_BOUND { return m_textBoxTrimState; }
+    void setTextBoxTrimState(TextBoxTrimState state) { m_textBoxTrimState = WTF::move(state); }
+    // The block container with the last formatted line of a box with trim-end and block-level content, which only its first layout tells.
+    const RenderBlockFlow* lastFormattedLineRoot(const RenderBox& box) const
+    {
+        for (auto& [trimmingBox, lastFormattedLineRoot] : m_lastFormattedLineRoots) {
+            if (trimmingBox.ptr() == &box)
+                return lastFormattedLineRoot.ptr();
+        }
+        return nullptr;
+    }
+    using LastFormattedLineRoots = Vector<std::pair<CheckedRef<const RenderBox>, CheckedRef<const RenderBlockFlow>>>;
+    const LastFormattedLineRoots& lastFormattedLineRoots() const LIFETIME_BOUND { return m_lastFormattedLineRoots; }
+    void setLastFormattedLineRoots(LastFormattedLineRoots&& lastFormattedLineRoots) { m_lastFormattedLineRoots = WTF::move(lastFormattedLineRoots); }
 
     std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom() const { return m_intrusiveInitialLetterLogicalBottom; }
     const std::optional<LineGrid>& lineGrid() const LIFETIME_BOUND { return m_lineGrid; }
@@ -162,6 +190,8 @@ private:
     CheckedPtr<const RenderBox> m_clampAfterBox;
     TextBoxTrim m_textBoxTrim;
     Style::TextBoxEdge m_textBoxEdge;
+    TextBoxTrimState m_textBoxTrimState;
+    LastFormattedLineRoots m_lastFormattedLineRoots;
     std::optional<LayoutUnit> m_intrusiveInitialLetterLogicalBottom;
     std::optional<LineGrid> m_lineGrid;
     MarginState m_marginState;

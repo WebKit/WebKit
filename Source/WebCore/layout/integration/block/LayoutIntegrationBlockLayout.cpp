@@ -50,9 +50,11 @@
 #include "RenderFlexibleBox.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
+#include "RenderObjectInlines.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "ScrollbarUpdateScope.h"
+#include "TextBoxTrimmer.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -132,22 +134,65 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
 {
     auto paintInvalidation = PaintInvalidation { };
     auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
-    auto blockLayoutState = Layout::BlockLayoutState { { } };
     // The line-clamp budget of the root's block formatting context: the root's LineClampUpdater sets it up and reads back what the content left
     // of it. The boxes in the content laid out through the render tree do not see it, since the lines of independent formatting contexts do not
     // count (css-overflow-4 §5.2).
     auto* renderTreeLayoutState = rootRenderer().view().frameView().layoutContext().layoutState();
-    if (auto lineClamp = renderTreeLayoutState ? renderTreeLayoutState->lineClamp() : std::nullopt) {
-        blockLayoutState.setLineClamp(Layout::BlockLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, false, lineClamp->isStableTextWrap, lineClamp->hasConstrainedTextWrapContent });
-        blockLayoutState.setClampAfterBox(lineClamp->clampAfterBox.get());
+    auto renderTreeLineClamp = renderTreeLayoutState ? renderTreeLayoutState->lineClamp() : std::nullopt;
+    if (renderTreeLineClamp)
         renderTreeLayoutState->setLineClamp({ });
-    }
-    auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(constraintsForBlockContent(rootRenderer(), relayoutChildren), BlockIntegrationUtils::rootGeometry(rootRenderer()));
-    LOG_WITH_STREAM(Layout, stream << "BlockLayout for root (" << &rootRenderer() << "): " << result);
-    if (auto lineClamp = blockLayoutState.lineClamp())
-        renderTreeLayoutState->setLineClamp(RenderLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, blockLayoutState.clampAfterBox(), lineClamp->isStableTextWrap, lineClamp->hasConstrainedTextWrapContent });
+    // The text-box-trim the root's TextBoxTrimmer sets up for its content, which does not reach into the independent formatting contexts in it
+    // either.
+    CheckedRef layoutContext = rootRenderer().view().frameView().layoutContext();
+    auto renderTreeTextBoxTrim = layoutContext->textBoxTrim();
+    layoutContext->setTextBoxTrim({ });
 
-    updateRenderers(result, paintInvalidation);
+    auto layoutContent = [&](Layout::BlockLayoutState::LastFormattedLineRoots&& lastFormattedLineRoots) {
+        auto blockLayoutState = Layout::BlockLayoutState { { } };
+        if (renderTreeLineClamp) {
+            blockLayoutState.setLineClamp(Layout::BlockLayoutState::LineClamp { renderTreeLineClamp->maximumLines, renderTreeLineClamp->shouldDiscardOverflow, false, renderTreeLineClamp->isStableTextWrap, renderTreeLineClamp->hasConstrainedTextWrapContent });
+            blockLayoutState.setClampAfterBox(renderTreeLineClamp->clampAfterBox.get());
+        }
+        if (renderTreeTextBoxTrim)
+            blockLayoutState.setTextBoxTrimState({ renderTreeTextBoxTrim->trimFirstFormattedLine, renderTreeTextBoxTrim->lastFormattedLineRoot.get() });
+        blockLayoutState.setLastFormattedLineRoots(WTF::move(lastFormattedLineRoots));
+        if (CheckedPtr lastFormattedLineRoot = blockLayoutState.lastFormattedLineRoot(rootRenderer()))
+            blockLayoutState.setTextBoxTrimState({ blockLayoutState.textBoxTrimState().trimsFirstFormattedLine, lastFormattedLineRoot.get() });
+        auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(constraintsForBlockContent(rootRenderer(), relayoutChildren), BlockIntegrationUtils::rootGeometry(rootRenderer()));
+        LOG_WITH_STREAM(Layout, stream << "BlockLayout for root (" << &rootRenderer() << "): " << result);
+        if (auto lineClamp = blockLayoutState.lineClamp())
+            renderTreeLayoutState->setLineClamp(RenderLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, blockLayoutState.clampAfterBox(), lineClamp->isStableTextWrap, lineClamp->hasConstrainedTextWrapContent });
+        updateRenderers(result, paintInvalidation);
+        return result;
+    };
+    auto result = layoutContent({ });
+
+    // The last formatted line of a box with trim-end and block-level content, a block-level box on the last line of its inline content included,
+    // is only known once the content is laid out, which it is again with it (RenderBlockFlow::layoutInFlowChildren). That inline content is laid
+    // out again (TextBoxTrimmer::lastInlineFormattingContextRootForTrimEnd).
+    auto lastFormattedLineRoots = Layout::BlockLayoutState::LastFormattedLineRoots { };
+    auto addLastFormattedLineRoot = [&](const RenderBox& box) {
+        CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
+        if (!blockContainer)
+            return;
+        if (CheckedPtr lastFormattedLineRoot = TextBoxTrimmer::lastInlineFormattingContextRootForTrimEnd(*blockContainer)) {
+            // The inline content of the block containers on the way, which may lay it out as a block-level box in it, is not kept either.
+            for (CheckedPtr<RenderBlock> ancestor = lastFormattedLineRoot; ancestor && ancestor != blockContainer; ancestor = ancestor->containingBlock())
+                ancestor->setNeedsLayout(MarkingBehavior::OnlyThis);
+            SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableBlockContainer = const_cast<RenderBlockFlow&>(*blockContainer);
+            mutableBlockContainer->setNeedsLayout(MarkingBehavior::OnlyThis);
+            lastFormattedLineRoots.append({ box, *lastFormattedLineRoot });
+        }
+    };
+    addLastFormattedLineRoot(rootRenderer());
+    for (auto& box : result.boxes) {
+        if (!box.isLaidOutThroughRenderTree)
+            addLastFormattedLineRoot(box.renderer);
+    }
+    if (!lastFormattedLineRoots.isEmpty())
+        result = layoutContent(WTF::move(lastFormattedLineRoots));
+    layoutContext->setTextBoxTrim(renderTreeTextBoxTrim);
+
     // Like updateRenderers for the block containers in the root: the inline formatting context took the overflow of the block-level boxes in
     // the root's inline content from their renderers, before they had their new geometry.
     if (CheckedPtr lineLayout = rootRenderer().inlineLayout(); lineLayout && lineLayout->hasBlocks())
