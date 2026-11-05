@@ -835,9 +835,6 @@ imported/w3c/web-platform-tests/css/filter-effects/effect-reference-displacement
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-local-url-with-base-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/filter-effects/fecomposite-non-zero-inoffset-001.html [ Pass ]
 
-imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-print.sub.html [ Pass ]
-imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-scaled-print.sub.html [ Pass ]
-
 imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient-rotation.html [ Pass ]
 

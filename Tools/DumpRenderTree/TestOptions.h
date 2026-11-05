@@ -44,6 +44,7 @@ public:
     bool webViewIsCompatibleWithOptions(const TestOptions&) const;
 
     // Test-Runner-Specific Features
+    bool dumpCSSPageBoxes() const { return boolTestRunnerFeatureValue("dumpCSSPageBoxes", false); }
     bool dumpJSConsoleLogInStdErr() const { return boolTestRunnerFeatureValue("dumpJSConsoleLogInStdErr", false); }
     bool enableDragDestinationActionLoad() const { return boolTestRunnerFeatureValue("enableDragDestinationActionLoad", false); }
     bool layerBackedWebView() const { return boolTestRunnerFeatureValue("layerBackedWebView", false); }

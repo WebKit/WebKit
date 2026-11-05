@@ -59,6 +59,7 @@ public:
     bool allowTestOnlyMockContentFilterIPC() const { return boolTestRunnerFeatureValue("allowTestOnlyMockContentFilterIPC"); }
     bool allowTestOnlyOriginAccessAllowListIPC() const { return boolTestRunnerFeatureValue("allowTestOnlyOriginAccessAllowListIPC"); }
     bool blockThirdPartyStorage() const { return boolTestRunnerFeatureValue("blockThirdPartyStorage"); }
+    bool dumpCSSPageBoxes() const { return boolTestRunnerFeatureValue("dumpCSSPageBoxes"); }
     bool dumpJSConsoleLogInStdErr() const { return boolTestRunnerFeatureValue("dumpJSConsoleLogInStdErr"); }
     bool editable() const { return boolTestRunnerFeatureValue("editable"); }
     bool enableInAppBrowserPrivacy() const { return boolTestRunnerFeatureValue("enableInAppBrowserPrivacy"); }

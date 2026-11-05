@@ -183,6 +183,9 @@ class Manager(object):
             self._expectations[(driver_name, device_type)] = test_expectations.TestExpectations(self._port, test_names, force_expectations_pass=self._options.force, device_type=device_type)
             self._expectations[(driver_name, device_type)].parse_all_expectations()
             self._expectations[(driver_name, device_type)].add_test_list_expectations(self._finder.get_test_list_expectations())
+            if driver_name == 'DumpRenderTree':
+                # FIXME: DumpRenderTree can't render WPT print reftests as printed pages (rdar://191464040).
+                self._expectations[(driver_name, device_type)].add_skipped_tests({test.test_path for test in tests if test.is_wpt_print_reftest})
 
             tests_to_run = self._tests_to_run(tests, device_type=device_type)
             tests_to_run_by_device[device_type] = [test for test in tests_to_run if test not in aggregate_tests_to_run]

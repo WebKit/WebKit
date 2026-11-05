@@ -74,6 +74,7 @@ public:
     bool isTestRunning() { return !!testRunner(); }
 
     bool shouldDumpPixels() const { return m_dumpPixels; }
+    bool shouldDumpCSSPageBoxes() const { return m_dumpCSSPageBoxes; }
 
     enum class IsFinalTestOutput : bool { No, Yes };
     void outputText(StringView, IsFinalTestOutput = IsFinalTestOutput::No);
@@ -186,6 +187,7 @@ private:
     RefPtr<TextInputController> m_textInputController;
 
     bool m_dumpPixels { false };
+    bool m_dumpCSSPageBoxes { false };
     bool m_pixelResultIsPending { false };
     bool m_accessibilityIsolatedTreeMode { false };
     uint64_t m_testIdentifier { 0 };

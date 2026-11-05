@@ -300,6 +300,11 @@ WKStringRef WKBundlePageCopyRenderTreeExternalRepresentationForPrinting(WKBundle
     return WebKit::toCopiedAPI(protect(WebKit::toImpl(pageRef))->renderTreeExternalRepresentationForPrinting());
 }
 
+WKImageRef WKBundlePageCreateCSSPageBoxesSnapshotForTesting(WKBundlePageRef pageRef, WKSize defaultPageBoxSize, double defaultPageMargin)
+{
+    return WebKit::toAPILeakingRef(protect(WebKit::toImpl(pageRef))->cssPageBoxesSnapshotForTesting(WebKit::toIntSize(defaultPageBoxSize), static_cast<int>(defaultPageMargin)));
+}
+
 void WKBundlePageClose(WKBundlePageRef pageRef)
 {
     protect(WebKit::toImpl(pageRef))->sendClose();

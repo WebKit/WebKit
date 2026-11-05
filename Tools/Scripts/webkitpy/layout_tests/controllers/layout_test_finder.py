@@ -454,6 +454,7 @@ class LayoutTestFinder(object):
                     or LOCAL_WPT_PATH + "/" in trimmed_path
                 ),
                 is_wpt_crash_test=self.is_wpt_crash_test(trimmed_path),
+                is_wpt_print_reftest=self.is_wpt_print_reftest(trimmed_path),
             )
 
     def _find_variants(self, f):
@@ -617,7 +618,7 @@ class LayoutTestFinder(object):
             reference_files,
         )
 
-    def is_wpt_crash_test(self, name):
+    def _wpt_source_file(self, name):
         # This shouldn't exist, we should be reading the WPT manifest instead.
         if IMPORTED_WPT_DIR + "/" in name:
             wpt_dir = IMPORTED_WPT_DIR
@@ -626,9 +627,15 @@ class LayoutTestFinder(object):
             wpt_dir = LOCAL_WPT_PATH
             url_base = "/WebKit/"
         else:
-            return False
+            return None
 
         base_dir = self.fs.join(self.layout_tests_base_dir, *wpt_dir.split('/'))
-        sourcefile = SourceFile(base_dir, name.split(wpt_dir + "/", 1)[1], url_base)
+        return SourceFile(base_dir, name.split(wpt_dir + "/", 1)[1], url_base)
 
-        return sourcefile.name_is_crashtest
+    def is_wpt_crash_test(self, name):
+        sourcefile = self._wpt_source_file(name)
+        return sourcefile is not None and sourcefile.name_is_crashtest
+
+    def is_wpt_print_reftest(self, name):
+        sourcefile = self._wpt_source_file(name)
+        return sourcefile is not None and sourcefile.name_is_print_reftest and not sourcefile.name_is_crashtest

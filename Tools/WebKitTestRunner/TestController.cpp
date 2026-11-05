@@ -2232,6 +2232,10 @@ TestOptions TestController::testOptionsForTest(const TestCommand& command) const
     merge(features, featureDefaultsFromTestHeaderForTest(command, TestOptions::keyTypeMapping()));
     merge(features, featureFromAdditionalHeaderOption(command, TestOptions::keyTypeMapping()));
     merge(features, platformSpecificFeatureOverridesDefaultsForTest(command));
+
+    if (features.boolTestRunnerFeatures["dumpCSSPageBoxes"])
+        features.boolWebPreferenceFeatures.insert_or_assign("ShouldPrintBackgrounds", true);
+
     return TestOptions { features };
 }
 

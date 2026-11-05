@@ -33,6 +33,7 @@
 #include "WPTFunctions.h"
 #include "WebCoreTestSupport.h"
 #include <JavaScriptCore/JSStringRefPtr.h>
+#include <WebCore/CSSUnits.h>
 #include <cmath>
 #include <WebKit/WKArray.h>
 #include <WebKit/WKBundle.h>
@@ -518,6 +519,18 @@ void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuild
 #endif
 }
 
+// WPT print reftests default to a 5in by 3in page. wptrunner prints them with 0.5in margins.
+static constexpr double printReftestPageWidth = 5 * WebCore::CSS::pixelsPerInch;
+static constexpr double printReftestPageHeight = 3 * WebCore::CSS::pixelsPerInch;
+static constexpr double printReftestPageMargin = 0.5 * WebCore::CSS::pixelsPerInch;
+
+// FIXME: Apply fuzzy matching to each page separately, as WPT does (rdar://191464055). It applies to the whole image.
+// FIXME: Support <meta name=reftest-pages>, which limits the comparison to some of the pages (rdar://191464016).
+static WKImageRef createPrintReftestSnapshot(WKBundlePageRef page)
+{
+    return WKBundlePageCreateCSSPageBoxesSnapshotForTesting(page, WKSizeMake(printReftestPageWidth, printReftestPageHeight), printReftestPageMargin);
+}
+
 void InjectedBundlePage::dump()
 {
     auto& injectedBundle = InjectedBundle::singleton();
@@ -583,7 +596,9 @@ void InjectedBundlePage::dump()
 
     if (injectedBundle.shouldDumpPixels() && testRunner->shouldDumpPixels()) {
         bool shouldCreateSnapshot = injectedBundle.isPrinting();
-        if (shouldCreateSnapshot) {
+        if (injectedBundle.shouldDumpCSSPageBoxes())
+            injectedBundle.setPixelResult(adoptWK(createPrintReftestSnapshot(m_page)).get());
+        else if (shouldCreateSnapshot) {
             WKSnapshotOptions options = kWKSnapshotOptionsShareable;
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             WKRect snapshotRect = WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page));
@@ -601,7 +616,7 @@ void InjectedBundlePage::dump()
         } else
             injectedBundle.setPixelResultIsPending(true);
 
-        if (WKBundlePageIsTrackingRepaints(m_page) && !injectedBundle.isPrinting())
+        if (WKBundlePageIsTrackingRepaints(m_page) && !injectedBundle.isPrinting() && !injectedBundle.shouldDumpCSSPageBoxes())
             injectedBundle.setRepaintRects(adoptWK(WKBundlePageCopyTrackedRepaintRects(m_page)).get());
     }
 

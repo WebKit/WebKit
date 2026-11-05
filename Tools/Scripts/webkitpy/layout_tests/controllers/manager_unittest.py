@@ -152,3 +152,26 @@ passes/text.html                       ['PASS']
         manager._collect_tests = Mock(return_value=({dt: [] for dt in device_type_list}, set()))
         exit_code = manager.print_expectations(['this/file/does/not/exist.html'])
         self.assertEqual(exit_code, 0)
+
+    def test_collect_tests_skips_wpt_print_reftests_in_dump_render_tree(self):
+        print_reftest = Test('passes/image.html', is_wpt_test=True, is_wpt_print_reftest=True)
+        other_test = Test('passes/text.html', is_wpt_test=True)
+
+        def collect_tests(driver_name):
+            host = MockHost()
+            port = host.port_factory.get('test-mac-leopard')
+            options = MockOptions(
+                test_list=None, http=True, verbose=False, driver_names=[driver_name], force=False,
+                skip_failing_tests=False, skip_flaky_tests=False, skipped='default', order='natural',
+                run_chunk=None, run_part=None,
+            )
+            manager = Manager(port, options=options, printer=Mock())
+            manager._current_driver_name = driver_name
+            manager._finder = Mock()
+            manager._finder.find_tests = Mock(return_value=([], [print_reftest, other_test]))
+            manager._finder.get_test_list_expectations = Mock(return_value=[])
+            tests_to_run_by_device, tests_to_skip = manager._collect_tests([], [None], driver_name)
+            return tests_to_run_by_device[None], tests_to_skip
+
+        self.assertEqual(collect_tests('DumpRenderTree'), ([other_test], {print_reftest}))
+        self.assertEqual(collect_tests('WebKitTestRunner'), ([print_reftest, other_test], set()))
