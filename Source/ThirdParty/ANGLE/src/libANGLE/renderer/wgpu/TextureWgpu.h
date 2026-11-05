@@ -201,12 +201,37 @@ class TextureWgpu : public TextureImpl, public angle::ObserverInterface
                                   const gl::PixelUnpackState &unpack,
                                   const uint8_t *pixels);
 
+    // The color buffer that glCopyTex[Sub]Image* reads.
+    struct CopySource
+    {
+        RenderTargetWgpu *renderTarget = nullptr;
+        // The size of the level that renderTarget views.
+        gl::Extents size;
+        bool flipY = false;
+    };
+
+    // Returns false if sourceArea is outside the read color buffer of source.
+    static bool GetCopySource(gl::Framebuffer *source,
+                              const gl::Rectangle &sourceArea,
+                              CopySource *copySourceOut,
+                              gl::Rectangle *clippedSourceAreaOut);
+    bool isSameSubresourceAsCopySource(const CopySource &source, const gl::ImageIndex &index) const;
+    // Copies sourceArea of source to snapshotImage, and points source and sourceArea to the copy.
+    angle::Result snapshotCopySource(ContextWgpu *contextWgpu,
+                                     webgpu::ImageHelper *snapshotImage,
+                                     RenderTargetWgpu *snapshotRenderTarget,
+                                     CopySource *source,
+                                     gl::Rectangle *sourceArea);
+    angle::Result clearLevelToZero(ContextWgpu *contextWgpu,
+                                   const gl::ImageIndex &index,
+                                   const webgpu::Format &webgpuFormat);
+
     angle::Result copySubImageImpl(const gl::Context *context,
                                    const gl::ImageIndex &index,
                                    const gl::Offset &destOffset,
-                                   const gl::Rectangle &sourceArea,
+                                   const gl::Rectangle &clippedSourceArea,
                                    const gl::InternalFormat &internalFormat,
-                                   gl::Framebuffer *source);
+                                   const CopySource &source);
 
     angle::Result copySubTextureImpl(const gl::Context *context,
                                      const gl::ImageIndex &index,

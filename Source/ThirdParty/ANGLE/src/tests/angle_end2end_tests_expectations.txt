@@ -2648,7 +2648,6 @@
 42266907 WGPU : SimpleStateChangeTest.FboEarlyCullFaceBackCCWState/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.FboEarlyCullFaceBackCWState/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.RebindTranslatedAttribute/* = SKIP
-42266907 WGPU : SimpleStateChangeTest.RedefineTextureInUse/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.UpdateBoundElementArrayBuffer/* = SKIP
 42266907 WGPU : SimpleStateChangeTest.UpdateBufferInUse/* = SKIP
 42266907 WGPU : SixteenBppTextureTest.RGB565Validation/* = SKIP
@@ -2656,7 +2655,6 @@
 42266907 WGPU : SixteenBppTextureTest.RGBA5551Validation/* = SKIP
 42266907 WGPU : StateChangeRenderTest.DepthRangeUpdates/* = SKIP
 42266907 WGPU : StateChangeRenderTest.GenerateMipmap/* = SKIP
-42266907 WGPU : StateChangeRenderTest.RecreateTexture/* = SKIP
 42266907 WGPU : StateChangeTest.DisablingBufferedVertexAttribute/* = SKIP
 42266907 WGPU : StateChangeTest.MultiContextVertexAttribute/* = SKIP
 42266907 WGPU : StateChangeTest.SetCurrentAttribute/* = SKIP
@@ -2757,8 +2755,7 @@
 // WGPU y-flip transforms have a bug when run on NVIDIA GPUs on Linux or Windows.
 468025322 NVIDIA WGPU : CopyTextureVariationsTest.Copy*Texture/ES2_WebGPU__*YFlip* = SKIP
 
-// WGPU does not support resizing textures or preserving sibling face data upon redefinition yet.
-513918923 WGPU : RobustResourceInitTest.RedefineSiblingFace/* = SKIP
+// Sibling face data is not preserved upon redefinition yet.
 513918923 WIN OPENGL : RobustResourceInitTest.RedefineSiblingFace/* = SKIP
 
 // SPIR-V compilation error

@@ -2644,6 +2644,93 @@ TEST_P(SimpleStateChangeTest, RedefineTextureInUse)
     EXPECT_PIXEL_COLOR_EQ(w, h, GLColor::white);
 }
 
+// Test redefining a level other than the base level of a texture in use, with the same size and
+// format.  The other levels keep their contents.
+TEST_P(SimpleStateChangeTest, RedefineOtherLevelOfTextureInUse)
+{
+    constexpr GLsizei kSize = 16;
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    for (GLint level = 0; (kSize >> level) > 0; ++level)
+    {
+        const GLsizei levelSize = kSize >> level;
+        std::vector<GLColor> levelData(levelSize * levelSize,
+                                       level == 0 ? GLColor::red : GLColor::green);
+        glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, levelSize, levelSize, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, levelData.data());
+    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Sample level 0 by drawing the texture at its size, and level 1 by minifying it by two.
+    auto drawLevel = [&](GLint level) {
+        const GLsizei levelSize = kSize >> level;
+        glViewport(0, 0, levelSize, levelSize);
+        draw2DTexturedQuad(0.5f, 1.0f, true);
+        ASSERT_GL_NO_ERROR();
+    };
+    drawLevel(0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+    drawLevel(1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize / 2, kSize / 2, GLColor::green);
+
+    // Redefine level 1 with the same size and format.
+    std::vector<GLColor> blueData(kSize / 2 * kSize / 2, GLColor::blue);
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, kSize / 2, kSize / 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 blueData.data());
+    ASSERT_GL_NO_ERROR();
+
+    drawLevel(0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+    drawLevel(1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize / 2, kSize / 2, GLColor::blue);
+}
+
+// Test redefining a face of a cube map in use, with the same size and format.  The other faces keep
+// their contents.
+TEST_P(SimpleStateChangeTest, RedefineCubeMapFaceInUse)
+{
+    constexpr GLsizei kSize                  = 4;
+    const std::array<GLColor, 6> kFaceColors = {GLColor::red,    GLColor::green, GLColor::blue,
+                                                GLColor::yellow, GLColor::cyan,  GLColor::magenta};
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
+    for (GLenum face = 0; face < 6; ++face)
+    {
+        std::vector<GLColor> faceData(kSize * kSize, kFaceColors[face]);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, faceData.data());
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    auto expectFace = [&](GLenum face, const GLColor &color) {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, tex, 0);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, color);
+    };
+    expectFace(0, kFaceColors[0]);
+
+    // Redefine the negative X face with the same size and format.
+    std::vector<GLColor> whiteData(kSize * kSize, GLColor::white);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, whiteData.data());
+    ASSERT_GL_NO_ERROR();
+
+    expectFace(1, GLColor::white);
+    for (GLenum face = 0; face < 6; ++face)
+    {
+        if (face != 1)
+        {
+            expectFace(face, kFaceColors[face]);
+        }
+    }
+}
+
 // Test updating a Texture's contents while in use by GL works as expected.
 TEST_P(SimpleStateChangeTest, UpdateTextureInUse)
 {
