@@ -49,7 +49,6 @@ XRCubeLayer::~XRCubeLayer() = default;
 void XRCubeLayer::setOrientation(DOMPointReadOnly& orientation)
 {
     m_orientation = orientation;
-    setNeedsRedraw(true);
 }
 
 void XRCubeLayer::fillInTypeSpecificDeviceLayerData(PlatformXR::DeviceLayer& layerData) const

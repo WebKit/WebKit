@@ -53,7 +53,6 @@ XRCylinderLayer::~XRCylinderLayer() = default;
 void XRCylinderLayer::setRadius(float radius)
 {
     m_radius = std::max(std::numeric_limits<float>::epsilon(), radius);
-    setNeedsRedraw(true);
 }
 
 void XRCylinderLayer::setCentralAngle(float angle)
@@ -62,13 +61,11 @@ void XRCylinderLayer::setCentralAngle(float angle)
     static constexpr float MaxCentralAngle = 1.9 * std::numbers::pi_v<float>;
 
     m_centralAngle = std::clamp(angle, std::numeric_limits<float>::epsilon(), MaxCentralAngle);
-    setNeedsRedraw(true);
 }
 
 void XRCylinderLayer::setAspectRatio(float ratio)
 {
     m_aspectRatio = std::max(std::numeric_limits<float>::epsilon(), ratio);
-    setNeedsRedraw(true);
 }
 
 void XRCylinderLayer::fillInTypeSpecificDeviceLayerData(PlatformXR::DeviceLayer& layerData) const
