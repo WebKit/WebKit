@@ -545,10 +545,8 @@ void Buffer::drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint
         return;
 
     constexpr auto maxCacheSize = 1000000;
-    if (m_drawIndexedCache.size() > maxCacheSize) {
-        m_drawIndexedCache.clear();
-        m_minValidatedVertexCount = UINT32_MAX;
-    }
+    if (m_drawIndexedCache.size() > maxCacheSize)
+        invalidateDrawIndexedCache();
 
     m_drawIndexedCache.set(makeKey(firstIndex, indexCount, baseVertex, indexType, primitiveOffset, icb), DrawIndexValidationCacheEntry { vertexCount, validationGeneration });
 
@@ -765,20 +763,26 @@ bool Buffer::needsIndexValidation(uint32_t maxUnsignedIndex, uint16_t maxUshortI
     return maxUnsignedIndex >= m_minValidatedVertexCount || maxUshortIndex >= m_minValidatedVertexCount;
 }
 
-void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
+void Buffer::invalidateDrawIndexedCache(CommandEncoder* commandEncoder)
 {
-    if (!m_usage.containsAny({ WebGPU::BufferUsage::Indirect, WebGPU::BufferUsage::Index }))
-        return;
-
     if (auto currentSize = computeSize(m_skippedValidationCommandEncoders, m_device.get())) {
         bool validationNotNeeded = currentSize == 1 && commandEncoder && commandEncoder == m_device->commandEncoderFromIdentifier(*m_skippedValidationCommandEncoders.begin().get());
         if (!validationNotNeeded)
             m_mustTakeSlowIndexValidationPath = true;
     }
 
-    m_gpuResourceMap.clear();
     m_drawIndexedCache.clear();
     m_minValidatedVertexCount = UINT32_MAX;
+}
+
+void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
+{
+    if (!m_usage.containsAny({ WebGPU::BufferUsage::Indirect, WebGPU::BufferUsage::Index }))
+        return;
+
+    invalidateDrawIndexedCache(commandEncoder);
+
+    m_gpuResourceMap.clear();
     ++m_contentsGeneration;
     ++m_indexContentsGeneration;
     m_indexValueUpperBoundUint = UINT32_MAX;
