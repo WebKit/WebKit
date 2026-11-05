@@ -4274,6 +4274,9 @@ void WebPageProxy::propagateDragAndDrop(DragEventForwardingData&& forwardingData
     Ref targetProcess = frame->process();
     auto filenames = dragData.fileNames();
     if (!filenames.isEmpty()) {
+        for (auto& fileName : filenames)
+            targetProcess->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(fileName));
+
         Vector<SandboxExtension::Handle> freshUploadHandles;
         createSandboxExtensionsForUpload(targetProcess, filenames, freshUploadHandles);
         forwardingData.sandboxExtensionsForUpload = WTF::move(freshUploadHandles);
@@ -13055,6 +13058,15 @@ void WebPageProxy::transcodeChosenFiles(IPC::Connection& connection, Vector<Stri
 #if PLATFORM(MAC)
     WEBPAGEPROXY_RELEASE_LOG(DragAndDrop, "WebPageProxy::transcodeChosenFiles");
     Ref process = WebProcessProxy::fromConnection(connection);
+
+    for (auto& path : transcodingPaths) {
+        if (path.isEmpty())
+            continue;
+        MESSAGE_CHECK_COMPLETION(process, process->wasPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(path)), completionHandler({ }));
+    }
+
+    MESSAGE_CHECK_COMPLETION(process, !destinationExtension.contains('/') && destinationExtension != ".."_s, completionHandler({ }));
+
     transcodeImagesInBackgroundQueue(WTF::move(transcodingPaths), WTF::move(destinationUTI), WTF::move(destinationExtension), [this, protectedThis = Ref { *this }, process = WTF::move(process), completionHandler = WTF::move(completionHandler)](auto&& replacementPaths) mutable {
         Vector<String> transcodedPaths;
         for (auto& path : replacementPaths) {
