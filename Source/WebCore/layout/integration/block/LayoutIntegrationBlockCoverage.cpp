@@ -300,7 +300,8 @@ static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const Re
 // between them itself, without percentage padding, which RenderBox resolves against the containing block's current inline size.
 // A block-level independent formatting context root the block formatting context lays out through the render tree
 // (BlockIntegrationUtils::layoutIndependentFormattingContext): a replaced element, a table, a button, a flex (-webkit-box included) or grid
-// container, or a block formatting context root whose content the block formatting context cannot lay out.
+// container, the text control's one around its inner text and decorations included, or a block formatting context root whose content the
+// block formatting context cannot lay out.
 static bool isLaidOutThroughRenderTree(const RenderObject& renderer)
 {
     if (renderer.isInline() || renderer.isFloatingOrOutOfFlowPositioned())
@@ -311,6 +312,7 @@ static bool isLaidOutThroughRenderTree(const RenderObject& renderer)
     case RenderObject::Type::Button:
     case RenderObject::Type::Table:
     case RenderObject::Type::FlexibleBox:
+    case RenderObject::Type::TextControlInnerContainer:
     case RenderObject::Type::DeprecatedFlexibleBox:
     case RenderObject::Type::Grid:
         return true;
