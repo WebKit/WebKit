@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+// Building a shadow tree's style resolver appends the scope's author style sheets, which
+// re-registers their @font-face rules. Re-registering a rule whose font is still loading
+// drops the previously registered face, taking the font face set's active count to zero and
+// settling document.fonts.ready. Promise resolution consults a "then" property, so an author
+// getter used to run while the shared shadow tree resolver map was being mutated. This test
+// makes that getter grow the map, which used to free the hash table entry that
+// Style::Scope::createOrFindSharedShadowTreeResolver was still holding on to.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// Referencing document.fonts while parsing makes it observe the document finishing loading,
+// which document.fonts.ready needs in order to settle.
+document.fonts;
+
+const fontURL = "/resources/load-and-stall.py?name=square100.png&mimeType=application/octet-stream&stallAt=1&stallFor=60&rand=" + Math.random();
+const family = "StallingWebFont";
+const decoyCount = 32;
+
+let gadgetStyleInB;
+let elementInB;
+let readyPromise;
+const decoyStyles = [];
+const decoyRoots = [];
+const decoySheets = [];
+
+function log(message)
+{
+    document.getElementById("result").appendChild(document.createTextNode(message + "\n"));
+}
+
+function done()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function setup()
+{
+    const fontFaceSheet = new CSSStyleSheet();
+    fontFaceSheet.replaceSync("@font-face { font-family: " + family + "; src: url(\"" + fontURL + "\"); }");
+    const extraSheet = new CSSStyleSheet();
+    extraSheet.replaceSync(".marker { color: green; }");
+    for (let i = 0; i < decoyCount; ++i) {
+        const sheet = new CSSStyleSheet();
+        sheet.replaceSync(".decoy" + i + " { color: rgb(" + i + ", 1, 2); }");
+        decoySheets.push(sheet);
+    }
+
+    // A rendered shadow tree that uses the stalling font.
+    const hostA = document.createElement("div");
+    document.body.appendChild(hostA);
+    const rootA = hostA.attachShadow({ mode: "open" });
+    rootA.adoptedStyleSheets = [fontFaceSheet];
+    const probe = document.createElement("span");
+    probe.style.font = "24px " + family;
+    probe.textContent = "A";
+    rootA.appendChild(probe);
+
+    // The shadow tree whose resolver gets rebuilt by the attribute change below. Its <style>
+    // element is removable, which forces a full resolver reconstruction when it goes away.
+    const hostB = document.createElement("div");
+    hostB.style.display = "none";
+    document.body.appendChild(hostB);
+    const rootB = hostB.attachShadow({ mode: "open" });
+    gadgetStyleInB = document.createElement("style");
+    gadgetStyleInB.textContent = ".gadget { color: navy; }";
+    rootB.appendChild(gadgetStyleInB);
+    const wrapperInB = document.createElement("div");
+    elementInB = document.createElement("span");
+    elementInB.textContent = "B";
+    wrapperInB.appendChild(elementInB);
+    rootB.appendChild(wrapperInB);
+    rootB.adoptedStyleSheets = [fontFaceSheet, extraSheet];
+
+    // Shadow trees whose resolvers are rebuilt from inside the "then" getter, growing the
+    // shared shadow tree resolver map.
+    for (let i = 0; i < decoyCount; ++i) {
+        const host = document.createElement("div");
+        host.style.display = "none";
+        document.body.appendChild(host);
+        const root = host.attachShadow({ mode: "open" });
+        const style = document.createElement("style");
+        style.textContent = ".decoyGadget" + i + " { color: rgb(1, " + i + ", 3); }";
+        root.appendChild(style);
+        const wrapper = document.createElement("div");
+        wrapper.appendChild(document.createElement("span"));
+        root.appendChild(wrapper);
+        decoyRoots.push(root);
+        decoyStyles.push(style);
+    }
+
+    // One style update, building every shadow tree resolver while the font is still pending.
+    document.body.offsetHeight;
+
+    // Start the stalling load, so the face is registered and loading with an active count of one.
+    document.fonts.load("24px " + family, "A");
+
+    if (document.fonts.status !== "loading") {
+        log("FAIL: expected document.fonts.status to be loading, got " + document.fonts.status);
+        done();
+        return false;
+    }
+
+    // Materialize the JS object for the ready promise. Settling it only reaches promise
+    // resolution, and thus the resolution value's "then" property, once it exists.
+    readyPromise = document.fonts.ready;
+    return true;
+}
+
+function trigger()
+{
+    if (document.fonts.status !== "loading") {
+        log("FAIL: the web font finished loading before the test could run");
+        done();
+        return;
+    }
+
+    const originalThen = Object.getOwnPropertyDescriptor(FontFaceSet.prototype, "then");
+    Object.defineProperty(FontFaceSet.prototype, "then", {
+        configurable: true,
+        get() {
+            if (originalThen)
+                Object.defineProperty(FontFaceSet.prototype, "then", originalThen);
+            else
+                delete FontFaceSet.prototype.then;
+
+            // Rebuild the decoy shadow tree resolvers, growing the shared resolver map past its
+            // load factor so that its hash table gets reallocated.
+            document.body.offsetHeight;
+            return undefined;
+        }
+    });
+
+    // Schedule a resolver reconstruction for the shadow trees, without flushing it yet.
+    for (let i = 0; i < decoyCount; ++i) {
+        decoyRoots[i].adoptedStyleSheets = [decoySheets[i]];
+        decoyStyles[i].remove();
+    }
+    gadgetStyleInB.remove();
+
+    // Flush, which drops the resolvers and leaves the shadow trees ready to build new ones.
+    document.styleSheets.length;
+
+    // Rebuild the resolver of the shadow tree containing elementInB from style invalidation.
+    elementInB.id = "boom";
+
+    log("PASS if no crash.");
+    done();
+}
+
+window.addEventListener("load", () => {
+    setTimeout(() => {
+        if (setup())
+            setTimeout(trigger, 0);
+    }, 0);
+});
+</script>
+</head>
+<body>
+<pre id="result"></pre>
+</body>
+</html>
