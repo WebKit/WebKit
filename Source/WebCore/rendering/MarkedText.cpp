@@ -57,11 +57,10 @@ Vector<MarkedText> MarkedText::subdivide(const Vector<MarkedText>& markedTexts, 
     };
 
     // 1. Build table of all offsets.
-    Vector<Offset> offsets;
     ASSERT(markedTexts.size() < std::numeric_limits<unsigned>::max() / 2);
     unsigned numberOfMarkedTexts = markedTexts.size();
     unsigned numberOfOffsets = 2 * numberOfMarkedTexts;
-    offsets.reserveInitialCapacity(numberOfOffsets);
+    Vector<Offset> offsets(ReserveCapacityTag { }, numberOfOffsets);
     for (auto& markedText : markedTexts) {
         offsets.append({ Offset::Begin, markedText.startOffset, &markedText });
         offsets.append({ Offset::End, markedText.endOffset, &markedText });

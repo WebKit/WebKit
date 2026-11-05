@@ -377,9 +377,8 @@ std::optional<Vector<uint8_t>> GPUVideoEncoderVTB::toVector(CMSampleBufferRef sa
     if (!blockBuffer)
         return { };
 
-    Vector<uint8_t> buffer;
     size_t size = PAL::CMBlockBufferGetDataLength(blockBuffer);
-    buffer.reserveInitialCapacity(size);
+    Vector<uint8_t> buffer(ReserveCapacityTag { }, size);
     for (size_t currentStart = 0; currentStart < size;) {
         char* data = nullptr;
         size_t length = 0;

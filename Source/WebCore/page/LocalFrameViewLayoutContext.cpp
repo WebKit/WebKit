@@ -520,9 +520,8 @@ void LocalFrameViewLayoutContext::flushPendingSVGTransformAttributeUpdatesIfNeed
         SingleThreadWeakPtr<const RenderLayerModelObject> repaintContainer;
         LayoutRect oldRect;
     };
-    Vector<FastRecord> fastRecords;
+    Vector<FastRecord> fastRecords(ReserveCapacityTag { }, pending.size());
     Vector<SlowRecord> slowRecords;
-    fastRecords.reserveInitialCapacity(pending.size());
     for (auto& weakRenderer : pending) {
         CheckedPtr renderer = weakRenderer.get();
         if (!renderer || renderer->renderTreeBeingDestroyed())

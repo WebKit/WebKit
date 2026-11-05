@@ -1800,9 +1800,8 @@ void HTMLSelectElement::deselectItemsWithoutValidation(HTMLElement* excludeEleme
 
 FormControlState HTMLSelectElement::saveFormControlState() const
 {
-    FormControlState state;
     auto& items = listItems();
-    state.reserveInitialCapacity(items.size());
+    FormControlState state(ReserveCapacityTag { }, items.size());
     for (auto& element : items) {
         RefPtr option = dynamicDowncast<HTMLOptionElement>(*element);
         if (!option || !option->selected())

@@ -3025,10 +3025,8 @@ TEST(WTF_ThreadSafeWeakPtr, ThreadSafety)
         }
         counter = nullptr;
     } }, std::thread { [&, counter] () mutable {
-        Vector<RefPtr<ThreadSafeInstanceCounter>> strongReferences;
-        Vector<ThreadSafeWeakPtr<ThreadSafeInstanceCounter>> weakReferences;
-        strongReferences.reserveInitialCapacity(51);
-        weakReferences.reserveInitialCapacity(51);
+        Vector<RefPtr<ThreadSafeInstanceCounter>> strongReferences(ReserveCapacityTag { }, 51);
+        Vector<ThreadSafeWeakPtr<ThreadSafeInstanceCounter>> weakReferences(ReserveCapacityTag { }, 51);
         readyThreads++;
         while (readyThreads < 3) { }
         for (size_t i = 0; i < 50; i++) {

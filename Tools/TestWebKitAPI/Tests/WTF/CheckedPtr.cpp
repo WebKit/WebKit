@@ -384,13 +384,12 @@ public:
 TEST(WTF_CheckedPtr, CanMakeThreadSafeCheckedPtr)
 {
     constexpr unsigned threadCount = 20;
-    Vector<Ref<Thread>> threads;
+    Vector<Ref<Thread>> threads(ReserveCapacityTag { }, threadCount);
     auto object = makeUnique<ThreadSafeCheckedPtrObject>();
 
     std::atomic<bool> allThreadsHaveStarted = false;
     Seconds startingTime;
 
-    threads.reserveInitialCapacity(threadCount);
     for (unsigned i = 0; i < threadCount; ++i) {
         threads.append(Thread::create("CheckedPtr testing thread"_s, [&]() mutable {
             CheckedPtr ptr = object.get();

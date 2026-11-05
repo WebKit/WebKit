@@ -55,9 +55,8 @@ Ref<JSON::Array> filterObjects(const JSON::Array& array, NOESCAPE const WTF::Fun
 
 Vector<String> makeStringVector(const JSON::Array& array)
 {
-    Vector<String> vector;
     size_t count = array.length();
-    vector.reserveInitialCapacity(count);
+    Vector<String> vector(ReserveCapacityTag { }, count);
 
     for (Ref value : array) {
         if (auto string = value->asString(); !string.isNull())

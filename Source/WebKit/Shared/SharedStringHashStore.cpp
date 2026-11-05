@@ -166,10 +166,8 @@ void SharedStringHashStore::processPendingOperations()
         return;
     }
 
-    Vector<SharedStringHash> addedSharedStringHashes;
-    Vector<SharedStringHash> removedSharedStringHashes;
-    addedSharedStringHashes.reserveInitialCapacity(approximateNewHashCount);
-    removedSharedStringHashes.reserveInitialCapacity(m_pendingOperations.size() - approximateNewHashCount);
+    Vector<SharedStringHash> addedSharedStringHashes(ReserveCapacityTag { }, approximateNewHashCount);
+    Vector<SharedStringHash> removedSharedStringHashes(ReserveCapacityTag { }, m_pendingOperations.size() - approximateNewHashCount);
     for (auto& operation : borrow(m_pendingOperations).get()) {
         switch (operation.type) {
         case Operation::Add:

@@ -1877,14 +1877,13 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
         return { };
     }
 
-    Vector<String, 1> elements;
     // ICU ~69 doesn't list VES and UYW, but it is actually supported via Intl.DisplayNames.
     // And ICU ~69 lists up EQE / LSM while it cannot return information via Intl.DisplayNames.
     // So, we need to add the following work-around.
     //     1. Add VES and UYW
     //     2. Do not add EQE and LSM
     // https://unicode-org.atlassian.net/browse/ICU-21685
-    elements.reserveInitialCapacity(count + 2);
+    Vector<String, 1> elements(ReserveCapacityTag { }, count + 2);
     elements.append("VES"_s);
     elements.append("UYW"_s);
     for (int32_t index = 0; index < count; ++index) {

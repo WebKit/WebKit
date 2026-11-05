@@ -327,11 +327,10 @@ static std::expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedR
     if (!topLevelArray)
         return makeUnexpected(ContentExtensionError::JSONTopLevelStructureNotAnArray);
 
-    Vector<ContentExtensionRule> ruleList;
     constexpr size_t maxRuleCount = 150000;
     if (topLevelArray->length() > maxRuleCount)
         return makeUnexpected(ContentExtensionError::JSONTooManyRules);
-    ruleList.reserveInitialCapacity(topLevelArray->length());
+    Vector<ContentExtensionRule> ruleList(ReserveCapacityTag { }, topLevelArray->length());
     for (auto& value : *topLevelArray) {
         auto ruleObject = value->asObject();
         if (!ruleObject)

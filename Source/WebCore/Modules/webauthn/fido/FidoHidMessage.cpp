@@ -100,11 +100,10 @@ bool FidoHidMessage::messageComplete() const
 
 Vector<uint8_t> FidoHidMessage::getMessagePayload() const
 {
-    Vector<uint8_t> data;
     size_t dataSize = 0;
     for (const auto& packet : m_packets)
         dataSize += packet->getPacketPayload().size();
-    data.reserveInitialCapacity(dataSize);
+    Vector<uint8_t> data(ReserveCapacityTag { }, dataSize);
 
     for (const auto& packet : m_packets) {
         const auto& packet_data = packet->getPacketPayload();

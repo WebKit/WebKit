@@ -408,11 +408,8 @@ static RetainPtr<CFDataRef> encodeSessionHistoryEntryData(const FrameState& fram
 
 static RetainPtr<CFDictionaryRef> createDictionary(std::initializer_list<std::pair<CFStringRef, CFTypeRef>> keyValuePairs)
 {
-    Vector<CFTypeRef> keys;
-    Vector<CFTypeRef> values;
-
-    keys.reserveInitialCapacity(keyValuePairs.size());
-    values.reserveInitialCapacity(keyValuePairs.size());
+    Vector<CFTypeRef> keys(ReserveCapacityTag { }, keyValuePairs.size());
+    Vector<CFTypeRef> values(ReserveCapacityTag { }, keyValuePairs.size());
 
     for (const auto& keyValuePair : keyValuePairs) {
         keys.append(keyValuePair.first);
