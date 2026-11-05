@@ -1,0 +1,21 @@
+
+== Running test suite: Page.snapshotRect
+-- Running test case: Page.snapshotRect.PageTarget.Viewport
+PASS: Snapshot (PageTarget, Viewport) should contain the blue box.
+PASS: Snapshot (PageTarget, Viewport) should contain the green box.
+PASS: Snapshot (PageTarget, Viewport) should be (CSS pixel width) * devicePixelRatio pixels wide.
+PASS: Snapshot (PageTarget, Viewport) should be (CSS pixel height) * devicePixelRatio pixels tall.
+
+-- Running test case: Page.snapshotRect.PageTarget.Page
+PASS: Snapshot (PageTarget, Page) should contain the blue box.
+PASS: Snapshot (PageTarget, Page) should contain the green box.
+PASS: Snapshot (PageTarget, Page) should be (CSS pixel width) * devicePixelRatio pixels wide.
+PASS: Snapshot (PageTarget, Page) should be (CSS pixel height) * devicePixelRatio pixels tall.
+
+-- Running test case: Page.snapshotRect.BackendTarget
+SKIP: Backend target does not have the Page domain without Site Isolation.
+
+-- Running test case: Page.snapshotRect.ZeroSizeRect
+PASS: Page.snapshotRect (PageTarget) should return an error for a zero-size rect.
+Error message: Could not capture snapshot
+

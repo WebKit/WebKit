@@ -78,6 +78,8 @@ private:
     bool shouldStartHeapInstrument() const override;
 
     void captureScreenshot();
+    void takeScreenshotInClient(double snapshotStartTime);
+    bool isPaintingScreenshot() const;
 
     Inspector::Protocol::DOM::NodeId nodeIdForDocument(Document&) const;
     Inspector::Protocol::DOM::NodeId nodeIdForRenderer(const RenderObject&) const;
@@ -96,6 +98,8 @@ private:
 #endif
     bool m_startedComposite { false };
     bool m_isCapturingScreenshot { false };
+    bool m_isWaitingForClientScreenshot { false };
+    std::optional<double> m_pendingClientScreenshotTime;
 };
 
 } // namespace WebCore

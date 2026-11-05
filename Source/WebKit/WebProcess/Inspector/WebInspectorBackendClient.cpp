@@ -516,6 +516,18 @@ void WebInspectorBackendClient::timelineRecordingChanged(bool active)
         inspector->timelineRecordingChanged(active);
 }
 
+void WebInspectorBackendClient::takeTimelineScreenshot(const WebCore::IntRect& rect, double timestamp, CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr page = m_page;
+    RefPtr inspector = page ? page->inspector() : nullptr;
+    if (!inspector) {
+        completionHandler();
+        return;
+    }
+
+    inspector->takeTimelineScreenshot(rect, timestamp, WTF::move(completionHandler));
+}
+
 void WebInspectorBackendClient::setShowPaintRects(bool show)
 {
     RefPtr page = m_page.get();
