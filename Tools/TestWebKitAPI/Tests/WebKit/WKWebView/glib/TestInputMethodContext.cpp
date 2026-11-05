@@ -64,6 +64,7 @@ typedef struct _WebKitInputMethodContextMock {
     unsigned focusOutCount;
     unsigned cursorAreaCount;
     unsigned surroundingCount;
+    unsigned resetCount;
 #if ENABLE(WPE_PLATFORM)
     bool usingWPEPlatformAPI;
 #endif
@@ -276,6 +277,7 @@ static void webkitInputMethodContextMockNotifySurrounding(WebKitInputMethodConte
 static void webkitInputMethodContextMockReset(WebKitInputMethodContext* context)
 {
     auto* mock = reinterpret_cast<WebKitInputMethodContextMock*>(context);
+    mock->resetCount++;
     if (!mock->preedit)
         return;
 
@@ -1699,6 +1701,37 @@ static void testWebKitInputMethodContextCommitThenDeleteSurrounding(InputMethodT
     test->waitForSurroundingText("abxy");
 }
 
+static void testWebKitInputMethodContextCommitSurroundingLongText(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body><textarea id='editable'></textarea></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->runJavaScriptAndWaitUntilFinished("editable.value = 'a'.repeat(1500); editable.setSelectionRange(1500, 1500)", nullptr);
+    GUniquePtr<char> a1000(g_strnfill(1000, 'a'));
+    GUniquePtr<char> a999(g_strnfill(999, 'a'));
+    test->waitForSurroundingText(a1000.get());
+
+    // Committing moves the start of the 1000 characters sent before the caret, which is not a change made without
+    // the input method, so the context is not reset.
+    unsigned resetCount = test->m_context->resetCount;
+    g_signal_emit_by_name(test->m_context.get(), "committed", "b", nullptr);
+    GUniquePtr<char> afterCommit(g_strconcat(a999.get(), "b", nullptr));
+    test->waitForSurroundingText(afterCommit.get());
+    g_assert_cmpuint(test->m_context->resetCount, ==, resetCount);
+
+    // A deletion brings text that was left out back into the surrounding text: not a change either.
+    test->deleteSurroundingCodePoints(-1, 1);
+    test->waitForSurroundingText(a1000.get());
+    g_assert_cmpuint(test->m_context->resetCount, ==, resetCount);
+
+    // A script changing the text before the caret is a change made without the input method.
+    test->runJavaScriptAndWaitUntilFinished("editable.setRangeText('z', 1499, 1500, 'end')", nullptr);
+    GUniquePtr<char> afterScript(g_strconcat(a999.get(), "z", nullptr));
+    test->waitForSurroundingText(afterScript.get());
+    g_assert_cmpuint(test->m_context->resetCount, >, resetCount);
+}
+
 static void testWebKitInputMethodContextDeleteSurroundingCodePointsPrevented(InputMethodTest* test, gconstpointer)
 {
     test->loadHtml("<html><body><div id='editable' contenteditable></div></body></html>", nullptr);
@@ -3067,6 +3100,7 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "commit-surrounding", testWebKitInputMethodContextCommitSurrounding);
     InputMethodTest::add("WebKitInputMethodContext", "commit-surrounding-password", testWebKitInputMethodContextCommitSurroundingPassword);
     InputMethodTest::add("WebKitInputMethodContext", "commit-then-delete-surrounding", testWebKitInputMethodContextCommitThenDeleteSurrounding);
+    InputMethodTest::add("WebKitInputMethodContext", "commit-surrounding-long-text", testWebKitInputMethodContextCommitSurroundingLongText);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-code-points-prevented", testWebKitInputMethodContextDeleteSurroundingCodePointsPrevented);
     InputMethodTest::add("WebKitInputMethodContext", "set-context-surrounding", testWebKitInputMethodContextSetContextSurrounding);
     InputMethodTest::add("WebKitInputMethodContext", "reset", testWebKitInputMethodContextReset);

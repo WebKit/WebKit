@@ -305,6 +305,49 @@ void InputMethodFilter::notifyCursorRectToContext()
     webkit_input_method_context_notify_cursor_area(m_context.get(), translatedRect.x(), translatedRect.y(), translatedRect.width(), translatedRect.height());
 }
 
+// The web process sends at most this many characters before and after the selection. Keep it in sync with
+// maxSurroundingTextLength in WebPageGLib.cpp.
+static constexpr unsigned maxSurroundingTextLength = 1000;
+
+// Whether two surrounding texts have the same text around the cursor. Beyond the part both have, they can only differ
+// because the web process left text out of one of them: then the longer one reaches the limit, or the limit minus one
+// when the last character in it would have split a surrogate pair.
+static bool surroundingTextsAgreeAroundCursor(const String& first, uint64_t firstCursor, uint64_t firstSelection, const String& second, uint64_t secondCursor, uint64_t secondSelection)
+{
+    if (std::max(firstCursor, firstSelection) > first.length() || std::max(secondCursor, secondSelection) > second.length())
+        return false;
+    if (static_cast<int64_t>(firstSelection) - static_cast<int64_t>(firstCursor) != static_cast<int64_t>(secondSelection) - static_cast<int64_t>(secondCursor))
+        return false;
+
+    auto sideLengthsAgree = [](unsigned firstLength, unsigned secondLength) {
+        return firstLength == secondLength || std::max(firstLength, secondLength) >= maxSurroundingTextLength - 1;
+    };
+
+    StringView firstView(first);
+    StringView secondView(second);
+    unsigned firstStart = std::min(firstCursor, firstSelection);
+    unsigned firstEnd = std::max(firstCursor, firstSelection);
+    unsigned secondStart = std::min(secondCursor, secondSelection);
+    unsigned secondEnd = std::max(secondCursor, secondSelection);
+
+    // The selected text is always sent whole.
+    if (firstView.substring(firstStart, firstEnd - firstStart) != secondView.substring(secondStart, secondEnd - secondStart))
+        return false;
+
+    if (!sideLengthsAgree(firstStart, secondStart))
+        return false;
+    unsigned beforeLength = std::min(firstStart, secondStart);
+    if (firstView.substring(firstStart - beforeLength, beforeLength) != secondView.substring(secondStart - beforeLength, beforeLength))
+        return false;
+
+    unsigned firstAfterLength = first.length() - firstEnd;
+    unsigned secondAfterLength = second.length() - secondEnd;
+    if (!sideLengthsAgree(firstAfterLength, secondAfterLength))
+        return false;
+    unsigned afterLength = std::min(firstAfterLength, secondAfterLength);
+    return firstView.substring(firstEnd, afterLength) == secondView.substring(secondEnd, afterLength);
+}
+
 void InputMethodFilter::notifySurrounding(const String& text, uint64_t cursorPosition, uint64_t selectionPosition)
 {
     // The surrounding text is kept without a context too, to notify the next one of it.
@@ -319,11 +362,20 @@ void InputMethodFilter::notifySurrounding(const String& text, uint64_t cursorPos
     if (m_surrounding.text == text && m_surrounding.cursorPosition == cursorPosition && m_surrounding.selectionPosition == selectionPosition)
         return;
 
+    bool changedWithoutInputMethod = !surroundingTextsAgreeAroundCursor(m_surrounding.text, m_surrounding.cursorPosition, m_surrounding.selectionPosition, text, cursorPosition, selectionPosition);
     m_surrounding.text = text;
     m_surrounding.cursorPosition = cursorPosition;
     m_surrounding.selectionPosition = selectionPosition;
-    if (m_context)
-        notifySurroundingToContext();
+    if (!m_context)
+        return;
+
+    notifySurroundingToContext();
+    // The changes made by the input method are already in m_surrounding, so a different text around the cursor was
+    // changed by something else, like a script, the user moving the cursor, or the focus moving to another element.
+    // Input methods only ask for the surrounding text when they handle their own events, so reset the context to make
+    // them ask for it now. A text that only differs where the limit of the surrounding text cut it isn't a change.
+    if (changedWithoutInputMethod && m_preedit.text.isEmpty())
+        webkit_input_method_context_reset(m_context.get());
 }
 
 void InputMethodFilter::notifySurroundingToContext()
