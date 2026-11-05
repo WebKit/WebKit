@@ -79,6 +79,9 @@ struct BlockLayoutResult {
     };
     // In tree order.
     Vector<OutOfFlowBox> outOfFlowBoxes;
+    // The in-flow block-level boxes that follow the clamp point of a line-clamp container: invisible boxes, which take no space, and which are
+    // not laid out, nor is their content (css-overflow-4 §5.3.1).
+    Vector<CheckedRef<const RenderBox>> invisibleBoxes;
     // The content box block size of the root from its content (CSS 2.2 §10.6.7).
     LayoutUnit intrinsicContentBlockSize;
 };
@@ -103,6 +106,8 @@ struct BlockLevelBoxInInlineContent {
     LayoutUnit logicalBottom;
     // The margins still open, which move the next line down unless they collapse with the block container's block-start margin.
     BlockLayoutState::MarginState marginState;
+    // The lines the box and its content took off the line-clamp budget.
+    size_t lineCount { 0 };
 };
 
 // Context only: what it changes as it lays out its content is in the block layout state, so the context can be built again from the root,
@@ -115,8 +120,9 @@ public:
     // The root's geometry is the one the formatting context it is in gave it.
     BlockLayoutResult layout(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry);
     // A block-level box in the inline content of the innermost block container being laid out, on the line the inline formatting context
-    // reached it on, below lineCount lines with content. It and its content join the result.
-    BlockLevelBoxInInlineContent layoutBlockLevelBoxInInlineContent(const RenderBox&, LayoutUnit lineLogicalTop, size_t lineCount, BlockLayoutResult&);
+    // reached it on, below lineCount lines with content, of which lineCountForLineClamp count towards the line-clamp budget with the lines of
+    // the block-level boxes before it. It and its content join the result.
+    BlockLevelBoxInInlineContent layoutBlockLevelBoxInInlineContent(const RenderBox&, LayoutUnit lineLogicalTop, size_t lineCount, size_t lineCountForLineClamp, BlockLayoutResult&);
     // The min-content and max-content inline sizes of the content of a block container (css-sizing-3 §5.1).
     IntrinsicWidthConstraints computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const;
     // An out-of-flow box and its content, in its containing block that has its size (css-position-3 §4), and against its default anchor
@@ -125,6 +131,8 @@ public:
 
 private:
     void layoutBlockItems(const Vector<BlockItem>&, BlockLayoutResult&);
+    bool isAfterClampPoint() const;
+    void handleBlockLevelBoxEnd(const RenderBox&);
     void handleBlockContainerStart(const RenderBox&);
     void handleEmptyEditableContent(const RenderBox& blockContainer, ContainingBlockState&);
     void handleBlockContainerEnd(const RenderBox&, BlockLayoutResult&);
