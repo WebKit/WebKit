@@ -1,0 +1,16 @@
+Test that the Network interception configuration is forwarded to every WebContent process hosting a frame of the page, including processes that join the page later.
+
+
+== Running test suite: SiteIsolation.Network.InterceptionConfig
+-- Running test case: SiteIsolation.Network.InterceptionConfig.ReplayedIntoLateJoiningProcess
+PASS: Added target should be a FrameTarget, proving a separate-process OOPIF.
+PASS: The late-joining cross-origin iframe's process should hold the interception configuration.
+
+-- Running test case: SiteIsolation.Network.InterceptionConfig.BroadcastToExistingProcess
+PASS: The cross-origin iframe's process should not yet match the second pattern.
+PASS: The cross-origin iframe's process should hold the newly added pattern.
+
+-- Running test case: SiteIsolation.Network.InterceptionConfig.RemovalReachesExistingProcess
+PASS: The cross-origin iframe's process should no longer match the removed pattern.
+PASS: The cross-origin iframe's process should still match the pattern that was not removed.
+

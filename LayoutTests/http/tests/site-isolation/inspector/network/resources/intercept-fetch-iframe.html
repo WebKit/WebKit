@@ -1,0 +1,24 @@
+<p>Cross-origin iframe that fetches a resource when its parent asks and reports the result.</p>
+
+<script>
+window.addEventListener("message", async (event) => {
+    if (event.data.type !== "Fetch")
+        return;
+
+    try {
+        let response = await fetch(event.data.url, {cache: "no-store"});
+        let text = await response.text();
+        window.parent.postMessage({
+            type: "FetchResult",
+            status: response.status,
+            statusText: response.statusText,
+            contentType: response.headers.get("Content-Type"),
+            text: text.trim(),
+        }, "*");
+    } catch (error) {
+        window.parent.postMessage({type: "FetchResult", error: error.name}, "*");
+    }
+});
+
+window.parent.postMessage({type: "Ready"}, "*");
+</script>

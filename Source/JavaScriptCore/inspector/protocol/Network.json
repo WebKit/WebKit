@@ -269,7 +269,8 @@
         {
             "name": "setInterceptionEnabled",
             "description": "Enable interception of network requests.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
+            "async": true,
             "parameters": [
                 { "name": "enabled", "type": "boolean" }
             ]
@@ -277,7 +278,8 @@
         {
             "name": "addInterception",
             "description": "Add an interception.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
+            "async": true,
             "parameters": [
                 { "name": "url", "type": "string", "description": "URL pattern to intercept, intercept everything if not specified or empty" },
                 { "name": "stage", "$ref": "NetworkStage", "description": "Stage to intercept." },
@@ -288,7 +290,8 @@
         {
             "name": "removeInterception",
             "description": "Remove an interception.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
+            "async": true,
             "parameters": [
                 { "name": "url", "type": "string" },
                 { "name": "stage", "$ref": "NetworkStage", "description": "Stage to intercept." },
@@ -299,7 +302,7 @@
         {
             "name": "interceptContinue",
             "description": "Continue request or response without modifications.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network request or response to continue." },
                 { "name": "stage", "$ref": "NetworkStage", "description": "Stage to continue." }
@@ -308,7 +311,7 @@
         {
             "name": "interceptWithRequest",
             "description": "Replace intercepted request with the provided one.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network request or response to continue." },
                 { "name": "url", "type": "string", "optional": true,"description": "HTTP request url." },
@@ -320,7 +323,7 @@
         {
             "name": "interceptWithResponse",
             "description": "Provide response content for an intercepted response.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network response to modify." },
                 { "name": "content", "type": "string" },
@@ -334,7 +337,7 @@
         {
             "name": "interceptRequestWithResponse",
             "description": "Provide response for an intercepted request. Request completely bypasses the network in this case and is immediately fulfilled with the provided data.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network response to modify." },
                 { "name": "content", "type": "string" },
@@ -348,7 +351,7 @@
         {
             "name": "interceptRequestWithError",
             "description": "Fail request with given error type.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network request to fail." },
                 { "name": "errorType", "$ref": "ResourceErrorType", "description": "Deliver error reason for the request failure." }
@@ -441,7 +444,7 @@
         {
             "name": "requestIntercepted",
             "description": "Fired when HTTP request has been intercepted. The frontend must respond with <code>Network.interceptContinue</code>, <code>Network.interceptWithRequest</code>` or <code>Network.interceptWithResponse</code>` to resolve this request.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for this intercepted network. Corresponds with an earlier <code>Network.requestWillBeSent</code>." },
                 { "name": "request", "$ref": "Request", "description": "Original request content that would proceed if this is continued." }
@@ -450,7 +453,7 @@
         {
             "name": "responseIntercepted",
             "description": "Fired when HTTP response has been intercepted. The frontend must response with <code>Network.interceptContinue</code> or <code>Network.interceptWithResponse</code>` to continue this response.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for this intercepted network. Corresponds with an earlier <code>Network.requestWillBeSent</code>." },
                 { "name": "response", "$ref": "Response", "description": "Original response content that would proceed if this is continued." }

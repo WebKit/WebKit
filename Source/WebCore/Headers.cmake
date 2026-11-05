@@ -1652,6 +1652,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/InspectorResourceUtilities.h
     inspector/InspectorWebAgentBase.h
     inspector/LegacyWebSocketInspectorInstrumentation.h
+    inspector/NetworkInterception.h
     inspector/PageInspectorController.h
     inspector/UncachedLoadType.h
     inspector/WebInjectedScriptManager.h
