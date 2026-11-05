@@ -1065,7 +1065,9 @@ auto RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
                 childrenInline() ? layoutInlineChildren(RelayoutChildren::No, previousHeight, repaintLogicalTop, repaintLogicalBottom) : layoutBlockChildren(RelayoutChildren::No, maxFloatLogicalBottom);
             }
         };
-        applyTextBoxTrimEndIfNeeded();
+        // The block formatting context lays out its last formatted line again itself (LayoutIntegration::BlockLayout::layout).
+        if (contentLayout != ContentLayout::BlockFormattingContext)
+            applyTextBoxTrimEndIfNeeded();
     }
     return contentLayout;
 }
