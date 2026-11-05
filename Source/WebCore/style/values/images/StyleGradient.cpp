@@ -157,7 +157,7 @@ static std::optional<float> resolveColorStopPosition(const GradientAngularColorS
             return percentage.value / 100.0;
         },
         [&](const typename AnglePercentage<>::Calc& calc) -> std::optional<float> {
-            return Style::evaluate<float>(calc, 100);
+            return Style::evaluate<float>(calc, 360) / 360.0;
         }
     );
 }
