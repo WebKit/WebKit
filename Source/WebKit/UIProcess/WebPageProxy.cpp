@@ -2082,6 +2082,13 @@ void WebPageProxy::close()
 
     m_isClosed = true;
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    // The key events the held deletions wait for won't be replied to anymore.
+    internals().completedKeyEventCount = internals().queuedKeyEventCount;
+    for (auto& deletion : std::exchange(internals().pendingDeleteSurroundings, { }))
+        deletion.completionHandler();
+#endif
+
     leastRecentlyVisiblePages().remove(*this);
     leastRecentlyHiddenPages().remove(*this);
 
@@ -5673,6 +5680,9 @@ bool WebPageProxy::handleKeyboardEvent(Ref<NativeWebKeyboardEvent>&& event)
     LOG_WITH_STREAM(KeyHandling, stream << "WebPageProxy::handleKeyboardEvent: " << event->type());
 
     internals().keyEventQueue.append(event.copyRef());
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    ++internals().queuedKeyEventCount;
+#endif
 
     // Otherwise, sent from DidReceiveEvent message handler.
     if (internals().keyEventQueue.size() == 1) {
@@ -15656,6 +15666,11 @@ void WebPageProxy::gestureEventHandlingCompleted(std::optional<WebEventType> eve
 void WebPageProxy::keyEventHandlingCompleted(bool handled)
 {
     Ref event = internals().keyEventQueue.takeFirst();
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    ++internals().completedKeyEventCount;
+    // Send the deletions that waited for this key event before the next one.
+    sendPendingDeleteSurroundings();
+#endif
 
 #if PLATFORM(WIN)
     if (!handled && event->type() == WebEventType::RawKeyDown)
@@ -16387,6 +16402,11 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     internals().lastFrameHandlingMouseMove = std::nullopt;
     flushPendingMouseEventCallbacks();
     internals().keyEventQueue.clear();
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    internals().completedKeyEventCount = internals().queuedKeyEventCount;
+    for (auto& deletion : std::exchange(internals().pendingDeleteSurroundings, { }))
+        deletion.completionHandler();
+#endif
     if (m_wheelEventCoalescer)
         m_wheelEventCoalescer->clear();
 
@@ -18627,11 +18647,14 @@ void WebPageProxy::cancelComposition(const String& compositionString)
 
     // Remove any pending composition key event.
     if (internals().keyEventQueue.size() > 1) {
+        auto sizeBeforeRemoval = internals().keyEventQueue.size();
         auto event = internals().keyEventQueue.takeFirst();
         internals().keyEventQueue.removeAllMatching([](const auto& event) {
             return event->handledByInputMethod();
         });
         internals().keyEventQueue.prepend(WTF::move(event));
+        // The removed key events won't be replied to.
+        internals().completedKeyEventCount += sizeBeforeRemoval - internals().keyEventQueue.size();
     }
     send(Messages::WebPage::CancelComposition(compositionString));
 }
@@ -18641,7 +18664,27 @@ void WebPageProxy::deleteSurrounding(int64_t offset, unsigned characterCount, Co
     if (!hasRunningProcess())
         return completionHandler();
 
+    // The commits of the input method are key events, which wait in keyEventQueue. Send the deletion after the key
+    // events queued before it, so that the web process applies them in the order the input method asked for them.
+    if (internals().completedKeyEventCount < internals().queuedKeyEventCount || !internals().pendingDeleteSurroundings.isEmpty()) {
+        internals().pendingDeleteSurroundings.append({ offset, characterCount, internals().queuedKeyEventCount, WTF::move(completionHandler) });
+        return;
+    }
+
     sendWithAsyncReply(Messages::WebPage::DeleteSurrounding(offset, characterCount), WTF::move(completionHandler));
+}
+
+void WebPageProxy::sendPendingDeleteSurroundings()
+{
+    auto& deletions = internals().pendingDeleteSurroundings;
+    while (!deletions.isEmpty() && deletions.first().queuedKeyEventCount <= internals().completedKeyEventCount) {
+        auto deletion = deletions.takeFirst();
+        if (!hasRunningProcess()) {
+            deletion.completionHandler();
+            continue;
+        }
+        sendWithAsyncReply(Messages::WebPage::DeleteSurrounding(deletion.offset, deletion.characterCount), WTF::move(deletion.completionHandler));
+    }
 }
 
 #endif // PLATFORM(GTK) || PLATFORM(WPE)

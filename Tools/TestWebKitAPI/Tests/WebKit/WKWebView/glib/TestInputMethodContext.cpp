@@ -1634,6 +1634,31 @@ static void testWebKitInputMethodContextDeleteSurroundingConsecutive(InputMethod
     test->waitForSurroundingText("a");
 }
 
+static void testWebKitInputMethodContextCommitThenDeleteSurrounding(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body><div id='editable' contenteditable></div></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->runJavaScriptAndWaitUntilFinished("editable.textContent = 'ab'; getSelection().collapse(editable.firstChild, 2)", nullptr);
+    test->waitForSurroundingText("ab");
+
+    // The deletion is sent after the commits queued before it. The expected text differs from what the page has while
+    // a commit or the deletion is still pending ("abx", "abxyz"), and from a deletion applied too early ("abyz").
+    g_signal_emit_by_name(test->m_context.get(), "committed", "x", nullptr);
+    g_signal_emit_by_name(test->m_context.get(), "committed", "yz", nullptr);
+    test->deleteSurroundingCodePoints(-1, 1);
+
+    GUniquePtr<char> textContent;
+    for (unsigned i = 0; i < 100; ++i) {
+        textContent = test->editableTextContent();
+        if (!g_strcmp0(textContent.get(), "abxy"))
+            break;
+    }
+    g_assert_cmpstr(textContent.get(), ==, "abxy");
+    test->waitForSurroundingText("abxy");
+}
+
 static void testWebKitInputMethodContextDeleteSurroundingCodePointsPrevented(InputMethodTest* test, gconstpointer)
 {
     test->loadHtml("<html><body><div id='editable' contenteditable></div></body></html>", nullptr);
@@ -2999,6 +3024,7 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-code-points", testWebKitInputMethodContextDeleteSurroundingCodePoints);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-bytes", testWebKitInputMethodContextDeleteSurroundingBytes);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-consecutive", testWebKitInputMethodContextDeleteSurroundingConsecutive);
+    InputMethodTest::add("WebKitInputMethodContext", "commit-then-delete-surrounding", testWebKitInputMethodContextCommitThenDeleteSurrounding);
     InputMethodTest::add("WebKitInputMethodContext", "delete-surrounding-code-points-prevented", testWebKitInputMethodContextDeleteSurroundingCodePointsPrevented);
     InputMethodTest::add("WebKitInputMethodContext", "set-context-surrounding", testWebKitInputMethodContextSetContextSurrounding);
     InputMethodTest::add("WebKitInputMethodContext", "reset", testWebKitInputMethodContextReset);

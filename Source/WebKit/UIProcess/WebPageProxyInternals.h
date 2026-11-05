@@ -264,6 +264,19 @@ public:
     GeolocationPermissionRequestManagerProxy geolocationPermissionRequestManager;
     HiddenPageThrottlingAutoIncreasesCounter::Token hiddenPageDOMTimerThrottlingAutoIncreasesCount;
     Deque<Ref<NativeWebKeyboardEvent>> keyEventQueue;
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    // Key events appended to keyEventQueue, and the ones handled or removed from it, to know which key events a
+    // deletion of the surrounding text has to wait for.
+    uint64_t queuedKeyEventCount { 0 };
+    uint64_t completedKeyEventCount { 0 };
+    struct PendingDeleteSurrounding {
+        int64_t offset { 0 };
+        unsigned characterCount { 0 };
+        uint64_t queuedKeyEventCount { 0 };
+        CompletionHandler<void()> completionHandler;
+    };
+    Deque<PendingDeleteSurrounding> pendingDeleteSurroundings;
+#endif
     WebCore::RectEdges<bool> mainFramePinnedState { true, true, true, true };
     WebCore::LayoutPoint maxStableLayoutViewportOrigin;
     WebCore::FloatSize maximumUnobscuredSize;

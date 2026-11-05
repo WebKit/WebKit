@@ -3654,6 +3654,9 @@ private:
     void remoteFrameMouseEventTimedOut();
     void mouseMoveWasHandledInFrame(WebCore::FrameIdentifier);
     void keyEventHandlingCompleted(bool handled);
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void sendPendingDeleteSurroundings();
+#endif
 #if ENABLE(MAC_GESTURE_EVENTS)
     void gestureEventHandlingCompleted(std::optional<WebEventType>, bool handled, std::optional<WebCore::RemoteUserInputEventData>);
 #endif
