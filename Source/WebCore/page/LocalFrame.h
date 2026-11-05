@@ -347,7 +347,7 @@ public:
     String customNavigatorPlatform() const final;
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final;
     bool allowPrivacyProxy() const final;
-    AutoplayPolicy autoplayPolicy() const final;
+    std::optional<AutoplayPolicy> autoplayPolicy() const final;
     ColorSchemePreference colorSchemePreference() const final;
 
     NODELETE WEBCORE_EXPORT SandboxFlags effectiveSandboxFlags() const;

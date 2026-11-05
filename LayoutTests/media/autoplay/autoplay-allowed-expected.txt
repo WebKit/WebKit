@@ -1,0 +1,11 @@
+RUN(internals.setDocumentAutoplayPolicy(document, 'allowed'))
+EXPECTED (getAutoplayPolicyForURL(iframe, 'resources/audio-only.html') == 'allowed') OK
+EXPECTED (getAutoplayPolicyForURL(iframe, 'resources/video-muted-with-audio.html') == 'allowed') OK
+EXPECTED (getAutoplayPolicyForURL(iframe, 'resources/video-with-audio.html') == 'allowed') OK
+EXPECTED (getAutoplayPolicyForURL(iframe, 'resources/audiocontext.html') == 'allowed') OK
+EXPECTED (getAutoplayPolicyForURLWithGesture(iframe, 'resources/audio-only.html') == 'allowed') OK
+EXPECTED (getAutoplayPolicyForURLWithGesture(iframe, 'resources/video-muted-with-audio.html') == 'allowed') OK
+EXPECTED (getAutoplayPolicyForURLWithGesture(iframe, 'resources/video-with-audio.html') == 'allowed') OK
+EXPECTED (getAutoplayPolicyForURLWithGesture(iframe, 'resources/audiocontext.html') == 'allowed') OK
+END OF TEST
+

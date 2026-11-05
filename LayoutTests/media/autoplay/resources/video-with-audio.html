@@ -1,0 +1,19 @@
+<script src="../../video-test.js"></script>
+<script>
+window.addEventListener('message', async event => {
+	if (event.data === "getAutoplayPolicy") {
+		let video = document.querySelector('video');
+		if (video.readyState < video.HAVE_METADATA)
+			await waitFor(video, 'loadedmetadata', true);
+		if (!navigator.getAutoplayPolicy) {
+			parent.postMessage('Not Available', '*');
+			return;
+		}
+		parent.postMessage(navigator.getAutoplayPolicy(video));
+	}
+});
+</script>
+<video controls>
+	<source src="../../content/test.mp4" type="video/mp4">
+	<source src="../../content/test.ogv" type="video/ogv">
+</audio>

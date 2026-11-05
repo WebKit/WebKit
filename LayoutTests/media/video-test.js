@@ -82,6 +82,26 @@ function compare(testFuncString, expected, comparison)
     return {success:success, observed:observed};
 }
 
+async function compareAsync(testFuncString, expected, comparison)
+{
+    var observed = await eval(testFuncString);
+
+    var success = false;
+    switch (comparison)
+    {
+        case '<':   success = observed <  expected; break;
+        case '<=': success = observed <= expected; break;
+        case '>':   success = observed >  expected; break;
+        case '>=': success = observed >= expected; break;
+        case '!=':  success = observed != expected; break;
+        case '==': success = observed == expected; break;
+        case '===': success = observed === expected; break;
+        case 'instanceof': success = observed instanceof expected; break;
+    }
+
+    return {success:success, observed:observed};
+}
+
 function testExpected(testFuncString, expected, comparison)
 {
     if (comparison === undefined)
@@ -89,6 +109,19 @@ function testExpected(testFuncString, expected, comparison)
 
     try {
         let {success, observed} = compare(testFuncString, expected, comparison);
+        reportExpected(success, testFuncString, comparison, expected, observed)
+    } catch (ex) {
+        consoleWrite(ex);
+    }
+}
+
+async function testExpectedAsync(testFuncString, expected, comparison)
+{
+    if (comparison === undefined)
+        comparison = '==';
+
+    try {
+        let {success, observed} = await compareAsync(testFuncString, expected, comparison);
         reportExpected(success, testFuncString, comparison, expected, observed)
     } catch (ex) {
         consoleWrite(ex);

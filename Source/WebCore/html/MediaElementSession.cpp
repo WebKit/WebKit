@@ -460,6 +460,32 @@ static ASCIILiteral mediaGestureReasonString(Document::MediaGestureReason reason
 
 #endif
 
+AutoplayPolicy MediaElementSession::getAutoplayPolicy() const
+{
+    RefPtr element = m_element;
+    if (!element)
+        return AutoplayPolicy::Disallowed;
+
+    Ref document = element->document();
+
+    if (m_restrictions & RequireUserGestureForVideoRateChange && !document->processingUserGestureForMedia())
+        return AutoplayPolicy::Disallowed;
+
+    if (m_restrictions & RequireUserGestureForVideoDueToAggressiveThermalMitigation && !document->processingUserGestureForMedia())
+        return AutoplayPolicy::Disallowed;
+
+    if (m_restrictions & RequireUserGestureForVideoDueToLowPowerMode && !document->processingUserGestureForMedia())
+        return AutoplayPolicy::Disallowed;
+
+    if (m_restrictions & RequirePageVisibilityToPlayAudio && element->elementIsHidden())
+        return AutoplayPolicy::Disallowed;
+
+    if (m_restrictions & RequireUserGestureForAudioRateChange && !document->processingUserGestureForMedia())
+        return AutoplayPolicy::AllowedMuted;
+
+    return AutoplayPolicy::Allowed;
+}
+
 std::expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbackStateChangePermitted(MediaPlaybackState state, ForAutoplay forAutoplay) const
 {
     RefPtr element = m_element.get();

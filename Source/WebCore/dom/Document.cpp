@@ -8050,9 +8050,8 @@ bool Document::requiresUserGestureForAudioPlayback() const
 {
     if (auto* loader = this->loader()) {
         // If an audio playback policy was set during navigation, use it. If not, use the global settings.
-        AutoplayPolicy policy = loader->autoplayPolicy();
-        if (policy != AutoplayPolicy::Default)
-            return policy == AutoplayPolicy::AllowWithoutSound || policy == AutoplayPolicy::Deny;
+        if (auto policy = loader->autoplayPolicy())
+            return policy == AutoplayPolicy::AllowedMuted || policy == AutoplayPolicy::Disallowed;
     }
 
     return settings().requiresUserGestureForAudioPlayback();
@@ -8062,9 +8061,8 @@ bool Document::requiresUserGestureForVideoPlayback() const
 {
     if (auto* loader = this->loader()) {
         // If a video playback policy was set during navigation, use it. If not, use the global settings.
-        AutoplayPolicy policy = loader->autoplayPolicy();
-        if (policy != AutoplayPolicy::Default)
-            return policy == AutoplayPolicy::Deny;
+        if (auto policy = loader->autoplayPolicy())
+            return policy == AutoplayPolicy::Disallowed;
     }
 
     return settings().requiresUserGestureForVideoPlayback();
@@ -8073,9 +8071,8 @@ bool Document::requiresUserGestureForVideoPlayback() const
 bool Document::mediaDataLoadsAutomatically() const
 {
     if (auto* loader = this->loader()) {
-        AutoplayPolicy policy = loader->autoplayPolicy();
-        if (policy != AutoplayPolicy::Default)
-            return policy != AutoplayPolicy::Deny;
+        if (auto policy = loader->autoplayPolicy())
+            return policy != AutoplayPolicy::Disallowed;
     }
 
     return settings().mediaDataLoadsAutomatically();

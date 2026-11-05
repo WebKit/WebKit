@@ -130,7 +130,7 @@ public:
     virtual String customNavigatorPlatform() const = 0;
     virtual OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const = 0;
     virtual bool allowPrivacyProxy() const = 0;
-    virtual AutoplayPolicy autoplayPolicy() const = 0;
+    virtual std::optional<AutoplayPolicy> autoplayPolicy() const = 0;
     virtual ColorSchemePreference colorSchemePreference() const = 0;
 
     virtual void updateSandboxFlags(SandboxFlags, NotifyUIProcess);

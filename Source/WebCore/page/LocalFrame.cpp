@@ -1432,11 +1432,11 @@ bool LocalFrame::allowPrivacyProxy() const
     return true;
 }
 
-AutoplayPolicy LocalFrame::autoplayPolicy() const
+std::optional<AutoplayPolicy> LocalFrame::autoplayPolicy() const
 {
     if (auto* documentLoader = loader().activeDocumentLoader())
         return documentLoader->autoplayPolicy();
-    return AutoplayPolicy::Default;
+    return { };
 }
 
 ColorSchemePreference LocalFrame::colorSchemePreference() const

@@ -67,6 +67,7 @@ class VideoTrack;
 
 struct MediaPositionState;
 
+enum class AutoplayPolicy : uint8_t;
 enum class MediaSessionPlaybackState : uint8_t;
 
 class MediaElementSession final : public PlatformMediaSession {
@@ -91,6 +92,8 @@ public:
     void visibilityChanged();
     void isVisibleInViewportChanged();
     void inActiveDocumentChanged();
+
+    AutoplayPolicy getAutoplayPolicy() const;
 
     enum class ForAutoplay : bool { No, Yes };
     std::expected<void, MediaPlaybackDenialExplanation> playbackStateChangePermitted(MediaPlaybackState, ForAutoplay = ForAutoplay::No) const;

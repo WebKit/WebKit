@@ -1,0 +1,19 @@
+<script src="../../video-test.js"></script>
+<script>
+window.addEventListener('message', async event => {
+	if (event.data === "getAutoplayPolicy") {
+		let audio = document.querySelector('audio');
+		if (audio.readyState < audio.HAVE_METADATA)
+			await waitFor(audio, 'loadedmetadata', true);
+		if (!navigator.getAutoplayPolicy) {
+			parent.postMessage('Not Available', '*');
+			return;
+		}
+		parent.postMessage(navigator.getAutoplayPolicy(audio));
+	}
+});
+</script>
+<audio controls>
+	<source src="../../content/short.mp3" type="audio/mp3">
+	<source src="../../content/short.webm" type="audio/webm">
+</audio>

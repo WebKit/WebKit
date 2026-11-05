@@ -1,0 +1,31 @@
+<html>
+<head>
+	<title>autoplay-basic</title>
+	<script src="autoplay-test.js"></script>
+	<script src="../video-test.js"></script>
+	<script src="../media-file.js"></script>
+	<script>
+	window.addEventListener('load', event => {
+		runTest().then(endTest).catch(failTest);
+	});
+
+	async function runTest() {
+        if (window.internals)
+            run(`internals.setDocumentAutoplayPolicy(document, 'disallowed')`);
+
+		await testExpectedAsync(`getAutoplayPolicyForURL(iframe, 'resources/audio-only.html')`, 'disallowed');
+		await testExpectedAsync(`getAutoplayPolicyForURL(iframe, 'resources/video-muted-with-audio.html')`, 'disallowed');
+		await testExpectedAsync(`getAutoplayPolicyForURL(iframe, 'resources/video-with-audio.html')`, 'disallowed');
+		await testExpectedAsync(`getAutoplayPolicyForURL(iframe, 'resources/audiocontext.html')`, 'disallowed');
+
+		await testExpectedAsync(`getAutoplayPolicyForURLWithGesture(iframe, 'resources/audio-only.html')`, 'allowed');
+		await testExpectedAsync(`getAutoplayPolicyForURLWithGesture(iframe, 'resources/video-muted-with-audio.html')`, 'allowed');
+		await testExpectedAsync(`getAutoplayPolicyForURLWithGesture(iframe, 'resources/video-with-audio.html')`, 'allowed');
+		await testExpectedAsync(`getAutoplayPolicyForURLWithGesture(iframe, 'resources/audiocontext.html')`, 'allowed');
+	}
+	</script>
+</head>
+<body>
+	<iframe id=iframe></iframe>
+</body>
+</html>
