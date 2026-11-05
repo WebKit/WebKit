@@ -926,6 +926,7 @@ void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow
     m_needsClear = true;
     m_isComplete = false;
     m_isWaitingForDelegatedBackForwardLoad = false;
+    m_delegatedBackForwardLoadDecision = std::nullopt;
     m_didCallImplicitClose = false;
     Ref frame = m_frame.get();
     Ref document = *frame->document();
@@ -2029,6 +2030,14 @@ void FrameLoader::loadWithNavigationAction(ResourceRequest&& request, Navigation
     if (navigationIDForCacheOnlyLoadRetry) {
         loader->setNavigationID(*navigationIDForCacheOnlyLoadRetry);
         loader->markIsCacheOnlyLoadRetry();
+    }
+    if (action.policyAlreadyDecided() == PolicyAlreadyDecided::Yes) {
+        if (auto decision = std::exchange(m_delegatedBackForwardLoadDecision, std::nullopt)) {
+            if (decision->navigationID)
+                loader->setNavigationID(*decision->navigationID);
+            loader->setAgentClusterAssignment(decision->agentClusterAssignment);
+            loader->setUnpartitionedStorageSite(WTF::move(decision->unpartitionedStorageSite));
+        }
     }
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(protect(m_frame), loader, action.initiatedByMainFrame(), action.shouldOpenExternalURLsPolicy());
     loader->setIsContinuingLoad(shouldTreatAsContinuingLoad);
@@ -5172,6 +5181,7 @@ void FrameLoader::clearWaitingForDelegatedBackForwardLoad()
     if (!m_isWaitingForDelegatedBackForwardLoad)
         return;
     m_isWaitingForDelegatedBackForwardLoad = false;
+    m_delegatedBackForwardLoadDecision = std::nullopt;
     Ref frame = m_frame.get();
     if (RefPtr parentFrame = dynamicDowncast<LocalFrame>(frame->tree().parent()))
         parentFrame->loader().checkCompleted();

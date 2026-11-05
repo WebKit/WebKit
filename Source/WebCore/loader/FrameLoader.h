@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <WebCore/AgentClusterAssignment.h>
 #include <WebCore/BackForwardCacheCommitData.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderStateMachine.h>
@@ -46,6 +47,7 @@
 #include <WebCore/PendingNavigateEventIdentifier.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/ReferrerPolicy.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceLoadNotifier.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequestBase.h>
@@ -105,6 +107,12 @@ enum class IsMainResource : bool { No, Yes };
 enum class ShouldUpdateAppInitiatedValue : bool { No, Yes };
 
 struct WindowFeatures;
+
+struct DelegatedBackForwardLoadDecision {
+    std::optional<NavigationIdentifier> navigationID;
+    AgentClusterAssignment agentClusterAssignment;
+    std::optional<RegistrableDomain> unpartitionedStorageSite;
+};
 
 NODELETE WEBCORE_EXPORT bool isBackForwardLoadType(FrameLoadType);
 NODELETE WEBCORE_EXPORT bool isReload(FrameLoadType);
@@ -383,6 +391,7 @@ public:
     void setWaitingForDelegatedBackForwardLoad() { m_isWaitingForDelegatedBackForwardLoad = true; }
     WEBCORE_EXPORT void clearWaitingForDelegatedBackForwardLoad();
     bool isWaitingForDelegatedBackForwardLoad() const { return m_isWaitingForDelegatedBackForwardLoad; }
+    void setDelegatedBackForwardLoadDecision(DelegatedBackForwardLoadDecision&& decision) { m_delegatedBackForwardLoadDecision = WTF::move(decision); }
 
     void setRequiredCookiesVersion(uint64_t version) { m_requiredCookiesVersion = version; }
     uint64_t requiredCookiesVersion() const { return m_requiredCookiesVersion; }
@@ -587,6 +596,7 @@ private:
     // A child frame whose back/forward load is delegated to the UIProcess still reports isComplete()
     // on its initial empty document, so this is what keeps its parent from completing.
     bool m_isWaitingForDelegatedBackForwardLoad { false };
+    std::optional<DelegatedBackForwardLoadDecision> m_delegatedBackForwardLoadDecision;
 
     bool m_alwaysAllowLocalWebarchive { false };
 

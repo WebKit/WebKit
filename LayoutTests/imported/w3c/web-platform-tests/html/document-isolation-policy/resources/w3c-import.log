@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/common.js
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/fetch-and-create-url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/header-parsing-frame.py
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/history-traversal-parent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/nothing-cross-origin-corp.js
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/nothing-cross-origin-corp.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/resources/nothing-no-corp.js
