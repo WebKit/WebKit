@@ -425,9 +425,9 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     // FIXME: An orthogonal leaf container, whose inline size comes from the available block size (css-writing-modes-4 §7.3).
     if (isLeafContainer && outOfFlowBox.isWritingModeRoot())
         return BlockAvoidanceReason::ContentHasOrthogonalFlow;
-    // FIXME: A positioned inline box as its containing block, whose first and last fragments make the containing block's rectangle
-    // (css-position-3 §2.1), not a block container's padding box (PositionedLayoutConstraints takes container(), not containingBlock()).
-    if (CheckedPtr container = outOfFlowBox.container(); container && container->isInlineBox())
+    // FIXME: A positioned inline box with a direction of its own as its containing block, whose writing mode the containing block takes
+    // (css-position-3 §2.1).
+    if (CheckedPtr container = outOfFlowBox.container(); container && container->isInlineBox() && container->writingMode() != outOfFlowBox.containingBlock()->writingMode())
         return BlockAvoidanceReason::ContentHasInlineBoxContainingBlock;
     CheckedRef style = outOfFlowBox.style();
     // Style resolution gives anchor() and anchor-size() their values and picks the position-try fallback (Style::AnchorPositionEvaluator).
