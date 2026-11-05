@@ -358,12 +358,15 @@ static std::optional<IntRect> overflowClipRectForSelection(const VisibleSelectio
 
     CheckedRef renderer = enclosingLayer->renderer();
     std::optional<IntRect> clipRect;
-    CheckedPtr block = dynamicDowncast<RenderBlock>(renderer.get());
-    if (!block)
-        block = renderer->containingBlock();
-    for (; block && !is<RenderView>(*block); block = block->containingBlock()) {
-        if (!block->hasNonVisibleOverflow())
+    CheckedPtr<RenderBoxModelObject> containingBlock = dynamicDowncast<RenderBlock>(renderer);
+    if (!containingBlock)
+        containingBlock = renderer->containingBlock();
+    for (; containingBlock && !is<RenderView>(*containingBlock); containingBlock = containingBlock->containingBlock()) {
+        if (!containingBlock->hasNonVisibleOverflow())
             continue;
+
+        // Inline boxes don't clip their overflow, so this is a block.
+        CheckedRef block = downcast<RenderBlock>(*containingBlock);
 
         auto blockClipRect = enclosingIntRect(block->localToAbsoluteQuad(FloatQuad { block->overflowClipRect({ }) }).boundingBox());
         if (clipRect)
