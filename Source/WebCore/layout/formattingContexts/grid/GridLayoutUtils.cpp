@@ -157,11 +157,9 @@ std::optional<double> preferredAspectRatio(const ElementBox& gridItem)
     //
     // auto: "Replaced elements with a natural aspect ratio use that aspect ratio;
     // otherwise the box has no preferred aspect ratio."
-    if (computedAspectRatio.isAuto() || isDegenerateRatio()) {
-        if (gridItem.isReplacedBox() && gridItem.hasIntrinsicRatio())
-            return gridItem.intrinsicRatio();
+    // FIXME: Use the natural aspect ratio of replaced grid items once they are supported (GridAvoidanceReason::GridItemIsReplacedElement).
+    if (computedAspectRatio.isAuto() || isDegenerateRatio())
         return { };
-    }
 
     // <ratio>: "The box's preferred aspect ratio is the specified ratio of width / height."
     if (computedAspectRatio.isRatio()) {
@@ -173,8 +171,6 @@ std::optional<double> preferredAspectRatio(const ElementBox& gridItem)
     // unless it is a replaced element with a natural aspect ratio, in which case that aspect
     // ratio is used instead."
     if (computedAspectRatio.isAutoAndRatio()) {
-        if (gridItem.isReplacedBox() && gridItem.hasIntrinsicRatio())
-            return gridItem.intrinsicRatio();
         auto ratio = *computedAspectRatio.tryRatio();
         return ratio.numerator.value / ratio.denominator.value;
     }
@@ -598,13 +594,9 @@ LayoutUnit inlinePreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit 
             return fitContentSize(minContentBorderBoxWidth, maxContentBorderBoxWidth, stretchFitBorderBoxWidth);
         }
 
-        // Otherwise, a replaced grid item with an automatic size uses its natural size in the axis
-        // (i.e. it is sized consistent with the block-level replaced element sizing rules).
-        auto& layoutBox = placedGridItem.layoutBox();
-        if (placedGridItem.isReplacedElement() && layoutBox.hasNaturalWidth())
-            return BorderBoxSize { ContentBoxSize { layoutBox.naturalWidth() }, borderAndPadding }.value;
-
-        // FIXME: Handle replaced elements with no natural size in the axis.
+        // FIXME: Otherwise, a replaced grid item with an automatic size uses its natural size in the axis
+        // (i.e. it is sized consistent with the block-level replaced element sizing rules). Replaced grid
+        // items are not supported yet (GridAvoidanceReason::GridItemIsReplacedElement).
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     }
@@ -782,14 +774,10 @@ LayoutUnit blockPreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit b
             return fitContentSize(minContentBorderBoxHeight, maxContentBorderBoxHeight, stretchFitBorderBoxHeight);
         }
 
-        // Otherwise, a replaced grid item with an automatic size uses its natural size in the axis
-        // (i.e. it is sized consistent with the block-level replaced element sizing rules).
-        auto& layoutBox = placedGridItem.layoutBox();
-        if (placedGridItem.isReplacedElement() && layoutBox.hasNaturalHeight())
-            return BorderBoxSize { ContentBoxSize { layoutBox.naturalHeight() }, borderAndPadding }.value;
-
-        // FIXME: Handle replaced elements with no natural size in the axis and non-replaced items
-        // with a preferred aspect ratio.
+        // FIXME: Otherwise, a replaced grid item with an automatic size uses its natural size in the axis
+        // (i.e. it is sized consistent with the block-level replaced element sizing rules). Replaced grid
+        // items are not supported yet (GridAvoidanceReason::GridItemIsReplacedElement). Also handle
+        // non-replaced items with a preferred aspect ratio.
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     }

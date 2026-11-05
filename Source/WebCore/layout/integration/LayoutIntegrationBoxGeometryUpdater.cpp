@@ -521,8 +521,9 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
     return { };
 }
 
-static inline void setIntegrationBaseline(const RenderBox& renderBox)
+static inline void setIntegrationBaseline(const RenderBox& renderBox, Layout::BoxGeometry& boxGeometry)
 {
+    boxGeometry.setBaseline({ });
     if (renderBox.isFloatingOrOutOfFlowPositioned())
         return;
 
@@ -584,7 +585,7 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox)
 
             return rootWritingMode.prefersCentralBaseline() && !isWritingModeRoot ? marginBoxLogicalHeight / 2 : marginBoxLogicalHeight;
         };
-        const_cast<Layout::ElementBox&>(renderBox.layoutBox()).setBaselineForIntegration(baselinePosition());
+        boxGeometry.setBaseline(baselinePosition());
     }
 }
 
@@ -756,13 +757,12 @@ void BoxGeometryUpdater::updateBoxGeometryAfterIntegrationLayout(const Layout::E
 
     auto integrationAdjustments = [&] {
         // FIXME: These should eventually be all absorbed by LFC layout.
-        setIntegrationBaseline(*renderBox);
+        setIntegrationBaseline(*renderBox, boxGeometry);
 
         if (CheckedPtr renderListMarker = dynamicDowncast<RenderListOutsideMarker>(*renderBox)) {
             CheckedRef style = layoutBox.parent().style();
             boxGeometry.setHorizontalMargin(horizontalLogicalMargin(*renderListMarker, { }, style->writingMode()));
             setListMarkerOffsetForMarkerOutside(*renderListMarker);
-            const_cast<Layout::ElementBox&>(layoutBox).setListMarkerLayoutBounds(renderListMarker->layoutBounds());
         }
 
         if (is<RenderTable>(*renderBox)) {

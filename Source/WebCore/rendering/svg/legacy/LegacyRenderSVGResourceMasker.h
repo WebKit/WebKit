@@ -32,6 +32,8 @@ namespace WebCore {
 class GraphicsContext;
 class SVGMaskElement;
 
+struct ImageDrawDescriptor;
+
 struct MaskerData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MaskerData);
     RefPtr<ImageBuffer> maskImage;

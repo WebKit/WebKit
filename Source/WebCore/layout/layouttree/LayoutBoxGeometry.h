@@ -125,6 +125,10 @@ public:
     LayoutUnit verticalSpaceForScrollbar() const { return m_verticalSpaceForScrollbar; }
     LayoutUnit horizontalSpaceForScrollbar() const { return m_horizontalSpaceForScrollbar; }
 
+    // The baseline position of an atomic inline-level box from the top of its margin box, unless it is synthesized.
+    std::optional<LayoutUnit> baseline() const { return m_baseline; }
+    void setBaseline(std::optional<LayoutUnit> baseline) { m_baseline = baseline; }
+
     bool hasMarginBorderOrPadding() const { return horizontalMarginBorderAndPadding() || verticalMarginBorderAndPadding(); }
 
     NODELETE Rect marginBox() const;
@@ -201,6 +205,8 @@ private:
 
     LayoutUnit m_verticalSpaceForScrollbar;
     LayoutUnit m_horizontalSpaceForScrollbar;
+
+    std::optional<LayoutUnit> m_baseline;
 
 #if ASSERT_ENABLED
     bool m_hasValidTop { false };

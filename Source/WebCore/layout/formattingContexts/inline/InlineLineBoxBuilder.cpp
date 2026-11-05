@@ -405,7 +405,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
             inlineLevelBox.setLogicalHeight(marginBoxHeight);
             return;
         }
-        if (auto ascent = layoutBox.baselineForIntegration()) {
+        if (auto ascent = listMarkerBoxGeometry.baseline()) {
             if (layoutBox.isListMarkerImage())
                 return setVerticalProperties({ *ascent, marginBoxHeight - *ascent });
             // Special list marker handling. Text driven list markers behave as text when it comes to layout bounds/ascent descent.
@@ -431,7 +431,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         auto marginBoxHeight = inlineLevelBoxGeometry.marginBoxHeight();
         auto ascent = [&]() -> InlineLayoutUnit {
             if (layoutState().shouldNotSynthesizeInlineBlockBaseline())
-                return downcast<ElementBox>(layoutBox).baselineForIntegration().value_or(marginBoxHeight);
+                return inlineLevelBoxGeometry.baseline().value_or(marginBoxHeight);
 
             if (layoutBox.isInlineBlockBox()) {
                 // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or
@@ -771,7 +771,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
                 // Integration codepath sets ideographic baseline by default for non-horizontal content.
                 continue;
             }
-            auto isInlineBlockWithNonSyntheticBaseline = layoutBox.isInlineBlockBox() && downcast<ElementBox>(layoutBox).baselineForIntegration().has_value();
+            auto isInlineBlockWithNonSyntheticBaseline = layoutBox.isInlineBlockBox() && formattingContext().geometryForBox(layoutBox).baseline().has_value();
             if (isInlineBlockWithNonSyntheticBaseline && !layoutBox.writingMode().isHorizontal())
                 continue;
         }

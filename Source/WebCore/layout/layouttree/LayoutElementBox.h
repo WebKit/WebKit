@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <WebCore/CachedImage.h>
 #include <WebCore/LayoutBox.h>
 
 namespace WebCore {
@@ -56,30 +55,10 @@ public:
     bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
     NODELETE bool hasOutOfFlowChild() const;
 
-    void setBaselineForIntegration(LayoutUnit baseline) { m_baselineForIntegration = baseline; }
-    std::optional<LayoutUnit> baselineForIntegration() const { return m_baselineForIntegration; }
-
-    NODELETE bool hasIntrinsicWidth() const;
-    NODELETE bool hasIntrinsicHeight() const;
-    NODELETE bool hasIntrinsicRatio() const;
-    NODELETE bool hasNaturalWidth() const;
-    NODELETE bool hasNaturalHeight() const;
-    NODELETE LayoutUnit naturalWidth() const;
-    NODELETE LayoutUnit naturalHeight() const;
-    NODELETE LayoutUnit intrinsicWidth() const;
-    NODELETE LayoutUnit intrinsicHeight() const;
-    NODELETE LayoutUnit intrinsicRatio() const;
-    NODELETE bool hasAspectRatio() const;
-
     // From the renderer.
     bool isListMarkerImage() const;
-
     // FIXME: This is temporary until after list marker content is accessible by IFC (webkit.org/b/294342)
-    void setListMarkerLayoutBounds(std::pair<float, float>);
-    std::pair<float, float> layoutBoundsForListMarker() const { return m_replacedData ? m_replacedData->layoutBounds : std::pair<float, float>(); }
-
-    // FIXME: This doesn't belong.
-    CachedImage* cachedImage() const { return m_replacedData ? m_replacedData->cachedImage : nullptr; }
+    std::pair<float, float> layoutBoundsForListMarker() const;
 
     // Null only for the initial containing block. Defined in RenderElement.h.
     inline RenderElement* rendererForIntegration() const;
@@ -89,22 +68,7 @@ protected:
     ~ElementBox();
 
 private:
-    friend class Box;
-
     NODELETE const Box& initialContainingBlockChild() const;
-
-    struct ReplacedData {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ReplacedData);
-
-        std::pair<float, float> layoutBounds;
-
-        std::optional<LayoutSize> intrinsicSize;
-        std::optional<LayoutUnit> intrinsicRatio;
-        WeakPtr<CachedImage> cachedImage;
-    };
-
-    std::unique_ptr<ReplacedData> m_replacedData;
-    std::optional<LayoutUnit> m_baselineForIntegration;
 };
 
 }

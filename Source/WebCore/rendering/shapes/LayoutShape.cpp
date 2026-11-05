@@ -33,6 +33,7 @@
 #include "BoxLayoutShape.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "ImageDrawDescriptor.h"
 #include "PathLayoutShape.h"
 #include "PathUtilities.h"
 #include "PixelBuffer.h"

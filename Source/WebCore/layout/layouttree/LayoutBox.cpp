@@ -60,11 +60,6 @@ Box::~Box()
 
 void Box::clearFormattingContextData()
 {
-    if (auto* elementBox = dynamicDowncast<ElementBox>(*this)) {
-        elementBox->m_replacedData = nullptr;
-        elementBox->m_baselineForIntegration = { };
-    }
-
     if (hasBoxRareData())
         removeBoxRareData();
     m_isAnonymousTextIndentCandidateForIntegration = false;

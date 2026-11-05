@@ -111,88 +111,11 @@ bool ElementBox::isListMarkerImage() const
     return listMarkerRenderer && listMarkerRenderer->isImage();
 }
 
-void ElementBox::setListMarkerLayoutBounds(std::pair<float, float> layoutBounds)
+std::pair<float, float> ElementBox::layoutBoundsForListMarker() const
 {
-    ASSERT(isListMarkerBox());
-    if (!m_replacedData)
-        m_replacedData = makeUnique<ReplacedData>();
-    m_replacedData->layoutBounds = layoutBounds;
-}
-
-bool ElementBox::hasIntrinsicWidth() const
-{
-    return (m_replacedData && m_replacedData->intrinsicSize) || style().logicalWidth().isIntrinsic();
-}
-
-bool ElementBox::hasIntrinsicHeight() const
-{
-    return (m_replacedData && m_replacedData->intrinsicSize) || style().logicalHeight().isIntrinsic();
-}
-
-bool ElementBox::hasIntrinsicRatio() const
-{
-    if (!hasAspectRatio())
-        return false;
-    return m_replacedData && (m_replacedData->intrinsicSize || m_replacedData->intrinsicRatio);
-}
-
-bool ElementBox::hasNaturalWidth() const
-{
-    return m_replacedData && m_replacedData->intrinsicSize;
-}
-
-bool ElementBox::hasNaturalHeight() const
-{
-    return m_replacedData && m_replacedData->intrinsicSize;
-}
-
-LayoutUnit ElementBox::naturalWidth() const
-{
-    ASSERT(hasNaturalWidth());
-    return m_replacedData->intrinsicSize->width();
-}
-
-LayoutUnit ElementBox::naturalHeight() const
-{
-    ASSERT(hasNaturalHeight());
-    return m_replacedData->intrinsicSize->height();
-}
-
-LayoutUnit ElementBox::intrinsicWidth() const
-{
-    ASSERT(hasIntrinsicWidth());
-    if (m_replacedData && m_replacedData->intrinsicSize)
-        return m_replacedData->intrinsicSize->width();
-
-    // FIXME: Document what invariant holds to allow not checking if the logicalWidth() is fixed.
-    return LayoutUnit { style().logicalWidth().tryFixed()->resolveZoom(style().usedZoomForLength()) };
-}
-
-LayoutUnit ElementBox::intrinsicHeight() const
-{
-    ASSERT(hasIntrinsicHeight());
-    if (m_replacedData && m_replacedData->intrinsicSize)
-        return m_replacedData->intrinsicSize->height();
-
-    // FIXME: Document what invariant holds to allow not checking if the logicalHeight() is fixed.
-    return LayoutUnit { style().logicalHeight().tryFixed()->resolveZoom(style().usedZoomForLength()) };
-}
-
-LayoutUnit ElementBox::intrinsicRatio() const
-{
-    ASSERT(hasIntrinsicRatio() || (hasIntrinsicWidth() && hasIntrinsicHeight()));
-    if (m_replacedData) {
-        if (m_replacedData->intrinsicRatio)
-            return *m_replacedData->intrinsicRatio;
-        if (m_replacedData->intrinsicSize->height())
-            return m_replacedData->intrinsicSize->width() / m_replacedData->intrinsicSize->height();
-    }
-    return 1;
-}
-
-bool ElementBox::hasAspectRatio() const
-{
-    return isImage();
+    CheckedPtr listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(rendererForIntegration());
+    ASSERT(listMarkerRenderer);
+    return listMarkerRenderer->layoutBounds();
 }
 
 }

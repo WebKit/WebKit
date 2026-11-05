@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include <WebCore/AffineTransform.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/PaintPhase.h>
 #include <WebCore/RenderElement.h>

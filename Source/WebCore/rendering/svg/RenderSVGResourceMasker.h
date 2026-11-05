@@ -30,6 +30,8 @@ namespace WebCore {
 class GraphicsContext;
 class SVGMaskElement;
 
+struct ImageDrawDescriptor;
+
 class RenderSVGResourceMasker final : public RenderSVGResourceContainer {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGResourceMasker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceMasker);
