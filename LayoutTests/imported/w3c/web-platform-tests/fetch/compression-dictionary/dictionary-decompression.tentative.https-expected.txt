@@ -1,0 +1,7 @@
+
+PASS Decompression using Brotli with the dictionary works as expected
+PASS Decompression using Zstandard with the dictionary works as expected
+PASS Decompression of a cross origin resource works as expected
+PASS Decompression using Brotli fails when dictionary hash mismatches
+PASS Decompression using Zstandard fails when dictionary hash mismatches
+

@@ -333,6 +333,7 @@ public:
 #endif
 
     virtual bool canPrefetchDNS() const { return true; }
+    virtual bool hasCompressionDictionarySupport() const { return true; }
 
     void setInspectionForServiceWorkersAllowed(bool);
     void setPersistedDomains(HashSet<WebCore::RegistrableDomain>&&);
