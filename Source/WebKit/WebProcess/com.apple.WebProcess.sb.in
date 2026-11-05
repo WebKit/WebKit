@@ -64,10 +64,10 @@
 
 (allow fs-quota-get)
 
-;; Allow development dylibs to be loaded
+;; Load WebKitSwift in local development builds and in STP.
 (when (equal? (param "WK_FRAMEWORKS_ARE_RELOCATED") "YES")
     (allow file-read* file-map-executable
-        (literal (string-append (param "WEBKIT2_FRAMEWORK_DIR") "/libWebKitSwift.dylib"))))
+        (literal (string-append (param "WEBKIT2_FRAMEWORK_DIR") "/WebKit.framework/Versions/A/Frameworks/libWebKitSwift.dylib"))))
 
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (require-not (webcontent-process-launched))
