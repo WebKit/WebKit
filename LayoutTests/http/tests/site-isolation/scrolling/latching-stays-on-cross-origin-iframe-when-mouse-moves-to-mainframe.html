@@ -47,6 +47,16 @@ function queryFrame()
     });
 }
 
+async function waitForIframeInScrollingTree()
+{
+    for (let i = 0; i < 100; ++i) {
+        let tree = await UIHelper.getScrollingTree();
+        if (/frame hosting node[\s\S]*frame scrolling node/.test(tree))
+            return;
+        await UIHelper.renderingUpdate();
+    }
+}
+
 window.addEventListener('load', async () => {
     if (!window.eventSender) {
         finishJSTest();
@@ -54,6 +64,7 @@ window.addEventListener('load', async () => {
     }
 
     await loadFrame();
+    await waitForIframeInScrollingTree();
     await UIHelper.renderingUpdate();
 
     // Begin the gesture over the iframe, establishing a latch to its scroller, then move the
