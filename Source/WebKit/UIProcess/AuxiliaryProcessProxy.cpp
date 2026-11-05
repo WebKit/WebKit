@@ -669,7 +669,7 @@ AuxiliaryProcessCreationParameters AuxiliaryProcessProxy::auxiliaryProcessParame
 
 std::optional<SandboxExtensionHandle> AuxiliaryProcessProxy::createMobileGestaltSandboxExtensionIfNeeded() const
 {
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST) && !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
     if (_MGCacheValid())
         return std::nullopt;
     
