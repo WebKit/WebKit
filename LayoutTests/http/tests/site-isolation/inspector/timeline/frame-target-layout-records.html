@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-timeline-test-utilities.js"></script>
+<script>
+function invalidateMainFrameLayout()
+{
+    let box = document.getElementById("main-box");
+    box.style.width = (parseInt(box.style.width) + 10) + "px";
+}
+
+function forceSameOriginFrameLayout()
+{
+    let box = document.getElementById("same-origin-frame").contentDocument.getElementById("box");
+    box.style.width = (box.offsetWidth + 10) + "px";
+    return box.offsetWidth;
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.FrameTargetLayoutRecords");
+
+    let mainFrameTarget;
+    let sameOriginFrameTarget;
+    let crossOriginFrameTarget;
+
+    function targetDescription(target) {
+        if (target === mainFrameTarget)
+            return "main frame target";
+        if (target === sameOriginFrameTarget)
+            return "same-origin iframe target";
+        if (target === crossOriginFrameTarget)
+            return "cross-origin iframe target";
+        if (target === WI.mainTarget)
+            return "page target";
+        return "unknown target";
+    }
+
+    function expectNodeInTarget(record, target, {nodeType, id}) {
+        // Not displayNameForEventType, which needs localized strings that tests do not load for some event types.
+        let description = `${record.eventType} record`;
+        InspectorTest.expectEqual(record.target, target, `The ${description} should come from the ${targetDescription(target)}.`);
+
+        let node = record.domNodeOrInfo;
+        InspectorTest.expectThat(node instanceof WI.DOMNode, `The ${description} should have a DOM node.`);
+        if (!(node instanceof WI.DOMNode))
+            return;
+
+        InspectorTest.expectEqual(node.owningTarget, target, `The ${description}'s DOM node should belong to the ${targetDescription(target)}.`);
+        InspectorTest.expectEqual(node.nodeType(), nodeType, `The ${description}'s DOM node should have node type ${nodeType}.`);
+        if (id)
+            InspectorTest.expectEqual(node.getAttribute("id"), id, `The ${description}'s DOM node should be #${id}.`);
+    }
+
+    function expectNoLayoutRecordsFromPageTarget(recording) {
+        let layoutTimeline = recording.timelines.get(WI.TimelineRecord.Type.Layout);
+        // Composite records stay page-level.
+        let pageTargetRecords = layoutTimeline.records.filter((record) => record.target === WI.mainTarget && record.eventType !== WI.LayoutTimelineRecord.EventType.Composite);
+        InspectorTest.expectEqual(pageTargetRecords.length, 0, "No layout, style or paint records should come from the page target.");
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetLayoutRecords.Setup",
+        description: "Find the frame targets and wait for their documents.",
+        async test() {
+            WI.timelineManager.enabledTimelineTypes = [WI.TimelineRecord.Type.Layout];
+
+            // Not InspectorTest.mainFrameTarget, which falls back to the page target while the frontend does not yet
+            // know the main frame target's frame (webkit.org/b/330228).
+            mainFrameTarget = await waitForFrameTargetForURLContaining("/frame-target-layout-records.html");
+            sameOriginFrameTarget = await waitForFrameTargetForURLContaining("layout-frame.html?same-origin");
+            crossOriginFrameTarget = await waitForFrameTargetForURLContaining("layout-frame.html?cross-origin");
+            InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame target.");
+            InspectorTest.expectNotNull(sameOriginFrameTarget, "Should find the same-origin iframe target.");
+            InspectorTest.expectNotNull(crossOriginFrameTarget, "Should find the cross-origin iframe target.");
+
+            for (let target of [sameOriginFrameTarget, crossOriginFrameTarget])
+                await FrameTimelineTest.failIfTargetRemoved(target, waitForExpressionInTarget(target, "typeof forceLayout === 'function'"), "its script");
+            for (let target of [mainFrameTarget, sameOriginFrameTarget, crossOriginFrameTarget])
+                await FrameTimelineTest.awaitFrameDocument(target);
+            InspectorTest.pass("The frame targets' documents are available.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetLayoutRecords.MainFrame",
+        description: "Style and layout records from the main frame should come from its frame target, with nodes that resolve in that target.",
+        async test() {
+            // The harness adds each result line to the main frame's document without waiting. Apply the pending lines
+            // and their layout before capturing, so that the first records of each type come from this test case.
+            await InspectorTest.evaluateInPage("document.body.offsetHeight");
+
+            await FrameTimelineTest.startCapturing([WI.mainTarget, mainFrameTarget]);
+
+            let recording = WI.timelineManager.activeRecording;
+            let invalidateStylesPromise = FrameTimelineTest.awaitLayoutRecord(mainFrameTarget, WI.LayoutTimelineRecord.EventType.InvalidateStyles);
+            let recalculateStylesPromise = FrameTimelineTest.awaitLayoutRecord(mainFrameTarget, WI.LayoutTimelineRecord.EventType.RecalculateStyles);
+            let invalidateLayoutPromise = FrameTimelineTest.awaitLayoutRecord(mainFrameTarget, WI.LayoutTimelineRecord.EventType.InvalidateLayout);
+            let scheduleLayoutPromise = FrameTimelineTest.awaitLayoutRecord(mainFrameTarget, WI.LayoutTimelineRecord.EventType.ScheduleLayout);
+            let layoutPromise = FrameTimelineTest.awaitLayoutRecord(mainFrameTarget, WI.LayoutTimelineRecord.EventType.Layout);
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "invalidateMainFrameLayout()");
+
+            expectNodeInTarget(await invalidateStylesPromise, mainFrameTarget, {nodeType: Node.DOCUMENT_NODE});
+            expectNodeInTarget(await recalculateStylesPromise, mainFrameTarget, {nodeType: Node.DOCUMENT_NODE});
+            expectNodeInTarget(await invalidateLayoutPromise, mainFrameTarget, {nodeType: Node.ELEMENT_NODE, id: "main-box"});
+            expectNodeInTarget(await scheduleLayoutPromise, mainFrameTarget, {nodeType: Node.DOCUMENT_NODE});
+            expectNodeInTarget(await layoutPromise, mainFrameTarget, {nodeType: Node.DOCUMENT_NODE});
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+
+            expectNoLayoutRecordsFromPageTarget(recording);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetLayoutRecords.CrossOriginFrame",
+        description: "Style, layout and paint records from the cross-origin iframe should come from its frame target, with nodes that resolve in that target.",
+        async test() {
+            await FrameTimelineTest.startCapturing([WI.mainTarget, crossOriginFrameTarget]);
+
+            let recording = WI.timelineManager.activeRecording;
+            let invalidateStylesPromise = FrameTimelineTest.awaitLayoutRecord(crossOriginFrameTarget, WI.LayoutTimelineRecord.EventType.InvalidateStyles);
+            let recalculateStylesPromise = FrameTimelineTest.awaitLayoutRecord(crossOriginFrameTarget, WI.LayoutTimelineRecord.EventType.RecalculateStyles);
+            let invalidateLayoutPromise = FrameTimelineTest.awaitLayoutRecord(crossOriginFrameTarget, WI.LayoutTimelineRecord.EventType.InvalidateLayout);
+            let forcedLayoutPromise = FrameTimelineTest.awaitLayoutRecord(crossOriginFrameTarget, WI.LayoutTimelineRecord.EventType.ForcedLayout);
+            let paintPromise = FrameTimelineTest.awaitLayoutRecord(crossOriginFrameTarget, WI.LayoutTimelineRecord.EventType.Paint);
+            await FrameTimelineTest.evaluateInTarget(crossOriginFrameTarget, "forceLayout()");
+
+            expectNodeInTarget(await invalidateStylesPromise, crossOriginFrameTarget, {nodeType: Node.DOCUMENT_NODE});
+            expectNodeInTarget(await recalculateStylesPromise, crossOriginFrameTarget, {nodeType: Node.DOCUMENT_NODE});
+            expectNodeInTarget(await invalidateLayoutPromise, crossOriginFrameTarget, {nodeType: Node.ELEMENT_NODE, id: "box"});
+            expectNodeInTarget(await forcedLayoutPromise, crossOriginFrameTarget, {nodeType: Node.DOCUMENT_NODE});
+
+            let paintRecord = await paintPromise;
+            InspectorTest.expectEqual(paintRecord.target, crossOriginFrameTarget, "The paint record should come from the cross-origin iframe target.");
+            InspectorTest.expectThat(paintRecord.domNodeOrInfo instanceof WI.DOMNode && paintRecord.domNodeOrInfo.owningTarget === crossOriginFrameTarget, "The paint record's DOM node should belong to the cross-origin iframe target.");
+
+            // The iframe's target highlights the quad in the iframe's own coordinates. In page coordinates, the quad
+            // would start to the right of the same-origin iframe, outside this iframe's viewport.
+            let {result: {value: frameWidth}} = await FrameTimelineTest.evaluateInTarget(crossOriginFrameTarget, "innerWidth");
+            let {result: {value: frameHeight}} = await FrameTimelineTest.evaluateInTarget(crossOriginFrameTarget, "innerHeight");
+            let topLeft = paintRecord.quad.points[0];
+            InspectorTest.expectThat(topLeft.x >= 0 && topLeft.x < frameWidth && topLeft.y >= 0 && topLeft.y < frameHeight, "The paint record's quad should start inside the cross-origin iframe's viewport.");
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+
+            expectNoLayoutRecordsFromPageTarget(recording);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetLayoutRecords.SameOriginFrameForcedByParent",
+        description: "Style and layout records of a same-origin iframe whose layout a script in the parent forces should come from the iframe's frame target, and the layout should still be classified as forced.",
+        async test() {
+            await FrameTimelineTest.startCapturing([WI.mainTarget, mainFrameTarget, sameOriginFrameTarget]);
+
+            let recording = WI.timelineManager.activeRecording;
+            let invalidateStylesPromise = FrameTimelineTest.awaitLayoutRecord(sameOriginFrameTarget, WI.LayoutTimelineRecord.EventType.InvalidateStyles);
+            let recalculateStylesPromise = FrameTimelineTest.awaitLayoutRecord(sameOriginFrameTarget, WI.LayoutTimelineRecord.EventType.RecalculateStyles);
+            let forcedLayoutPromise = FrameTimelineTest.awaitLayoutRecord(sameOriginFrameTarget, WI.LayoutTimelineRecord.EventType.ForcedLayout);
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "forceSameOriginFrameLayout()");
+
+            expectNodeInTarget(await invalidateStylesPromise, sameOriginFrameTarget, {nodeType: Node.DOCUMENT_NODE});
+            expectNodeInTarget(await recalculateStylesPromise, sameOriginFrameTarget, {nodeType: Node.DOCUMENT_NODE});
+
+            let forcedLayoutRecord = await forcedLayoutPromise;
+            expectNodeInTarget(forcedLayoutRecord, sameOriginFrameTarget, {nodeType: Node.DOCUMENT_NODE});
+            InspectorTest.expectThat(forcedLayoutRecord.sourceCodeLocation?.sourceCode.url.endsWith("/frame-target-layout-records.html"), "The forced layout should point to the parent's script.");
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+
+            expectNoLayoutRecordsFromPageTarget(recording);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetLayoutRecords.SameOriginFrameLargestContentfulPaint",
+        description: "A Largest Contentful Paint record from the same-origin iframe should have a node that resolves in its frame target.",
+        async test() {
+            await FrameTimelineTest.startCapturing([sameOriginFrameTarget]);
+
+            let largestContentfulPaintPromise = FrameTimelineTest.awaitLayoutRecord(sameOriginFrameTarget, WI.LayoutTimelineRecord.EventType.LargestContentfulPaint);
+            await FrameTimelineTest.evaluateInTarget(sameOriginFrameTarget, "prependLargeText()");
+            expectNodeInTarget(await largestContentfulPaintPromise, sameOriginFrameTarget, {nodeType: Node.ELEMENT_NODE, id: "large-text"});
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, layout, style and paint records are reported by the frame target of the frame that did the work, with node IDs from that frame target.</p>
+<div id="main-box" style="width: 100px; height: 20px; background: green"></div>
+<iframe id="same-origin-frame" src="resources/layout-frame.html?same-origin"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/timeline/resources/layout-frame.html?cross-origin"></iframe>
+</body>
