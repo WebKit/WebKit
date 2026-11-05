@@ -1310,6 +1310,7 @@
 				WTF/cocoa/RetainPtrHashingCocoaARC.mm,
 				WTF/cocoa/RetainRef.mm,
 				WTF/cocoa/RetainRefARC.mm,
+				WTF/cocoa/RunLoopCocoa.mm,
 				WTF/cocoa/TextStreamCocoa.cpp,
 				WTF/cocoa/TextStreamCocoa.mm,
 				WTF/cocoa/TypeCastsCocoa.mm,

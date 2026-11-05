@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/RunLoop.h>
 
+#include <mach/mach.h>
 #include <wtf/AutodrainedPool.h>
 #include <wtf/SchedulePair.h>
 
@@ -50,15 +51,66 @@ RunLoop::RunLoop()
     CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, performWork };
     lazyInitialize(m_runLoopSource, adoptCF(CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context)));
     CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopCommonModes);
+
+    if (m_runLoop == CFRunLoopGetMain()) {
+        mach_port_options_t options { };
+        options.flags = MPO_QLIMIT | MPO_INSERT_SEND_RIGHT;
+        options.mpl.mpl_qlimit = 1;
+        mach_port_t port = MACH_PORT_NULL;
+        if (mach_port_construct(mach_task_self(), &options, 0, &port) != KERN_SUCCESS)
+            return;
+
+        m_wakeUpPort = port;
+        CFRunLoopSourceContext1 wakeUpPortContext = {
+            1, this, nullptr, nullptr, nullptr, nullptr, nullptr,
+            [](void* context) -> mach_port_t {
+                return static_cast<RunLoop*>(context)->m_wakeUpPort;
+            },
+            [](void*, CFIndex, CFAllocatorRef, void* context) -> void* {
+                performWork(context);
+                return nullptr;
+            }
+        };
+
+        m_wakeUpPortSource = adoptCF(CFRunLoopSourceCreate(kCFAllocatorDefault, 0, reinterpret_cast<CFRunLoopSourceContext*>(&wakeUpPortContext)));
+        if (!m_wakeUpPortSource) {
+            mach_port_destruct(mach_task_self(), std::exchange(m_wakeUpPort, MACH_PORT_NULL), -1, 0);
+            return;
+        }
+        CFRunLoopAddSource(m_runLoop.get(), m_wakeUpPortSource.get(), kCFRunLoopCommonModes);
+    }
 }
 
 RunLoop::~RunLoop()
 {
     CFRunLoopSourceInvalidate(m_runLoopSource.get());
+    if (m_wakeUpPortSource) {
+        CFRunLoopSourceInvalidate(m_wakeUpPortSource.get());
+        mach_port_destruct(mach_task_self(), m_wakeUpPort, -1, 0);
+    }
 }
 
 void RunLoop::wakeUp()
 {
+    // CFRunLoopWakeUp() holds the CFRunLoop lock across its mach_msg() call to the wake-up port,
+    // and the newly woken thread immediately tries to acquire that same lock. Send the wakeup
+    // message to the wakeup port we installed instead to avoid this.
+    if (m_wakeUpPort != MACH_PORT_NULL && CFRunLoopIsWaiting(m_runLoop.get())) {
+        mach_msg_header_t header { };
+        header.msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, 0);
+        header.msgh_size = sizeof(header);
+        header.msgh_remote_port = m_wakeUpPort;
+        auto result = mach_msg(&header, MACH_SEND_MSG | MACH_SEND_TIMEOUT, sizeof(header), 0, MACH_PORT_NULL, 0, MACH_PORT_NULL);
+        if (result == MACH_MSG_SUCCESS)
+            return;
+        if (result == MACH_SEND_TIMED_OUT) {
+            // A wake-up message is already queued on the port. Destroy the pseudo-received
+            // message header to release the copied send right.
+            mach_msg_destroy(&header);
+            return;
+        }
+    }
+
     CFRunLoopSourceSignal(m_runLoopSource.get());
     CFRunLoopWakeUp(m_runLoop.get());
 }
