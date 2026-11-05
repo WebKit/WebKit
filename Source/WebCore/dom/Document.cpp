@@ -10468,21 +10468,21 @@ bool Document::useDarkAppearance([[maybe_unused]] const Style::ComputedStyle* st
     UNUSED_PARAM(style);
 #endif
 
-    bool pageUsesDarkAppearance = false;
-    if (RefPtr documentPage = page())
-        pageUsesDarkAppearance = documentPage->useDarkAppearance();
+    RefPtr page = this->page();
+    if (!page)
+        return false;
 
     if (settings().useSystemAppearance())
-        return pageUsesDarkAppearance;
+        return page->useDarkAppearance();
 
 #if ENABLE(DARK_MODE_CSS)
     if (colorScheme.contains(ColorScheme::Dark))
-        return pageUsesDarkAppearance;
+        return page->useDarkAppearance();
 #endif
 
-    if (RefPtr frame = this->frame(); frame && frame->isMainFrame()) {
+    if (RefPtr frame = this->frame(); frame && frame->isMainFrame() && !page->isUtilityPage()) {
         if (url().isAboutBlank() || !frame->loader().stateMachine().committedFirstRealDocumentLoad())
-            return pageUsesDarkAppearance;
+            return page->useDarkAppearance();
     }
 
     return false;
