@@ -12342,6 +12342,12 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
         if (!strongSelf)
             return;
 
+        if (RetainPtr webView = strongSelf->_webView.get()) {
+            auto status = update.hinge ? update.hinge.status : UIHingeStatusUnknown;
+            bool isOpen = status == UIHingeStatusPartiallyOpen || status == UIHingeStatusFullyOpen;
+            [webView _setCameraRotationAdjustment:(isOpen ? 90 : 0)];
+        }
+
         if (RefPtr page = strongSelf->_page) {
             bool isFolded = update.hinge.status == UIHingeStatusPartiallyOpen;
             page->setDevicePostureType(isFolded ? WebCore::DevicePostureType::Folded : WebCore::DevicePostureType::Continuous);

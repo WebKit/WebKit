@@ -254,7 +254,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self addSubview:_scrollView.get()];
 
     [self _dispatchSetDeviceOrientation:[self _deviceOrientationIgnoringOverrides]];
-    [self _dispatchSetOrientationForMediaCapture:[self _deviceOrientationIgnoringOverrides]];
+    [self _dispatchSetOrientationForMediaCapture:[self _deviceOrientationForMediaCapture]];
 
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
@@ -401,6 +401,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return windowScene.effectiveGeometry.interfaceOrientation;
         return UIInterfaceOrientationUnknown;
     }());
+}
+
+- (void)_setCameraRotationAdjustment:(WebCore::IntDegrees)degrees
+{
+    if (_cameraRotationAdjustment == degrees)
+        return;
+
+    _cameraRotationAdjustment = degrees;
+    [self _dispatchSetOrientationForMediaCapture:[self _deviceOrientationForMediaCapture]];
+}
+
+- (WebCore::IntDegrees)_deviceOrientationForMediaCapture
+{
+    return [self _deviceOrientationIgnoringOverrides] + _cameraRotationAdjustment;
 }
 
 - (void)_dynamicUserInterfaceTraitDidChange
@@ -3793,7 +3807,7 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 {
     if (!_overridesInterfaceOrientation)
         [self _dispatchSetDeviceOrientation:[self _deviceOrientationIgnoringOverrides]];
-    [self _dispatchSetOrientationForMediaCapture:[self _deviceOrientationIgnoringOverrides]];
+    [self _dispatchSetOrientationForMediaCapture:[self _deviceOrientationForMediaCapture]];
 }
 
 - (void)_contentSizeCategoryDidChange:(NSNotification *)notification

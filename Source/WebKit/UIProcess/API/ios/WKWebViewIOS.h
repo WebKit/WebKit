@@ -216,6 +216,8 @@ enum class TapHandlingResult : uint8_t;
 @property (nonatomic, readonly) UIEdgeInsets _computedUnobscuredSafeAreaInset;
 @property (nonatomic, readonly, getter=_isRetainingActiveFocusedState) BOOL _retainingActiveFocusedState;
 @property (nonatomic, readonly) WebCore::IntDegrees _deviceOrientationIgnoringOverrides;
+@property (nonatomic, readonly) WebCore::IntDegrees _deviceOrientationForMediaCapture;
+- (void)_setCameraRotationAdjustment:(WebCore::IntDegrees)degrees;
 
 - (void)_setObscuredInsetsInternal:(UIEdgeInsets)obscuredInsets;
 

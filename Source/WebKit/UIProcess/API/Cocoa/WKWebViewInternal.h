@@ -607,6 +607,10 @@ struct LiveResizeSnapshotState {
 #if ENABLE(SYSTEM_TEXT_EXTRACTION)
     std::optional<WTF::UUID> _textExtractionIdentifier;
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+    WebCore::IntDegrees _cameraRotationAdjustment;
+#endif
 }
 
 - (BOOL)_isValid;
