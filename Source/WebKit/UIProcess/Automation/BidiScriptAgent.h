@@ -66,6 +66,8 @@ public:
         WebCore::SecurityOriginData origin;
         Inspector::Protocol::BidiScript::RealmType type;
         Inspector::Protocol::BidiBrowsingContext::BrowsingContext context;
+        Inspector::Protocol::BidiBrowsingContext::BrowsingContext topLevelContext;
+        std::optional<WebCore::FrameIdentifier> frameIdentifier;
     };
 
 
@@ -81,11 +83,12 @@ public:
     void getRealms(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& optionalBrowsingContext , std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&) override;
 
     // Realm lifecycle events.
-    void notifyRealmCreated(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext, const WebCore::SecurityOriginData&);
-    void notifyRealmDestroyed(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
-
-    // Lookup RealmIdentifier from browsing context (for UIProcess-initiated realm destruction).
-    std::optional<RealmIdentifier> realmIdentifierForBrowsingContext(const String& browsingContext) const;
+    void notifyRealmCreatedFromBrowsingContext(RealmIdentifier, WebCore::FrameIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext, Inspector::Protocol::BidiBrowsingContext::BrowsingContext, const WebCore::SecurityOriginData&);
+    bool rebindRealmToBrowsingContext(RealmIdentifier, WebCore::FrameIdentifier, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&);
+    void notifyRealmDestroyedFromBrowsingContext(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
+    void notifyRealmsDestroyedForFrame(WebCore::FrameIdentifier);
+    void notifyRealmsDestroyedForProcess(WebCore::ProcessIdentifier);
+    void notifyRealmsDestroyedForTopLevelContext(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&);
 
     // Emit events for all currently active realms (called when subscribing to script.realmCreated).
     void emitEventsForActiveRealms(const HashSet<String>& contextFilter = { });
@@ -106,15 +109,14 @@ private:
         std::optional<Vector<String>> userContexts;
     };
 
-    void sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData&, Inspector::Protocol::BidiScript::RealmType, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
+    void sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData&, Inspector::Protocol::BidiScript::RealmType, Inspector::Protocol::BidiBrowsingContext::BrowsingContext, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
+    void notifyRealmsDestroyed(Function<bool(RealmIdentifier, const RealmInfo&)>&&);
 
     void processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&);
-    void collectExecutionReadyFrameRealms(const FrameTreeNodeData&, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>& realms, const std::optional<String>& contextHandleFilter, bool recurseSubframes = true);
+    void collectExecutionReadyFrames(FrameTreeNodeData&&, Vector<FrameInfoData>& frames, const std::optional<String>& contextHandleFilter);
     bool LEGACY_NODELETE isFrameExecutionReady(const FrameInfoData&);
-    RefPtr<Inspector::Protocol::BidiScript::RealmInfo> createRealmInfoForFrame(const FrameInfoData&);
+    RefPtr<Inspector::Protocol::BidiScript::RealmInfo> createRealmInfoForFrame(const FrameInfoData&, RealmIdentifier);
     std::optional<String> contextHandleForFrame(const FrameInfoData&);
-    RealmIdentifier generateRealmIdForFrame(const FrameInfoData&);
-    String generateRealmIdForBrowsingContext(const String& browsingContext);
     static String originStringFromSecurityOriginData(const WebCore::SecurityOriginData&);
 
     void finishEvaluateBidiScriptResult(const String& realmID, const String& expression, Inspector::CommandResult<String>&&, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&);
