@@ -36,6 +36,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-div-ref-svg-feimage-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-div-ref-svg-feimage-svg-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-div-ref-svg-mixed-ignored.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-div-removed-contain-paint.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-outside-subtree-ignored.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-svg-ref-svg-feimage-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/filtered-svg-ref-svg-feimage-svg-ignored.tentative.https.sub.html

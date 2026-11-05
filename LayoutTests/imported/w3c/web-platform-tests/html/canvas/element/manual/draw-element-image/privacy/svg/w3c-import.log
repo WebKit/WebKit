@@ -21,9 +21,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-mask-on-svg-content-ignored.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-mask-visited.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-pattern-cross-origin-image.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-pattern-filter-transformed-text.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-pattern-href-outside-subtree-ignored.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-pattern-outside-subtree-ignored.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-pattern-with-feImage-cross-origin-image.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-pattern-with-feImage-transformed-text.tentative.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-radial-gradient-href-outside-subtree-ignored.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-radial-gradient-outside-subtree-ignored.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/privacy/svg/svg-use-chained-outside-subtree-images-ignored.tentative.https.sub.html

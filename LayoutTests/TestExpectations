@@ -8238,6 +8238,10 @@ webkit.org/b/329524 imported/w3c/web-platform-tests/html/canvas/element/manual/d
 webkit.org/b/329524 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/css-backdrop-filter.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/329529 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/css-blend-mode.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/329529 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/css-filter-image.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/329529 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/css-object-fit-cover-tall.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/329529 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/css-object-fit-cover-wide.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/329529 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/css-object-fit-fill-tall.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/329529 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/css-object-fit-fill-wide.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/329528 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/css-object-fit-nested-canvas.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/329529 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/css-transform-on-div.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/329529 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/dialog-paints-in-top-layer.tentative.html [ ImageOnlyFailure ]
@@ -8257,6 +8261,7 @@ webkit.org/b/329529 imported/w3c/web-platform-tests/html/canvas/element/manual/d
 webkit.org/b/329529 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/top-layer-not-painted-in-canvas.tentative.html [ ImageOnlyFailure ]
 
 # Results vary between runs and configurations.
+webkit.org/b/329535 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/animated-gif-pinned-to-element-image.tentative.html [ Failure Pass ]
 webkit.org/b/329527 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/nested-canvas-reset.tentative.html [ ImageOnlyFailure Pass ]
 webkit.org/b/329527 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/nested-content-drawable-canvas.tentative.html [ Failure Pass ]
 webkit.org/b/329527 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/onpaint-display-none.tentative.html [ Failure Pass ]

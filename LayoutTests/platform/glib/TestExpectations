@@ -5248,6 +5248,7 @@ webkit.org/b/309894 [ Release ] http/tests/inspector/target/pause-on-inline-debu
 webkit.org/b/320214 [ Debug ] inspector/debugger/async-stack-trace-truncate.html [ Failure Timeout ]
 webkit.org/b/328192 fast/canvas/draw-element-image/2d-drawElementImage-rotated-text.html [ ImageOnlyFailure Pass ]
 webkit.org/b/329532 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/moved-nested-content-drawable-canvas.tentative.html [ Crash ]
+webkit.org/b/329532 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/moved-webgl-canvas.tentative.html [ Crash ]
 webkit.org/b/329530 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/anchor-positioning.tentative.html [ ImageOnlyFailure Timeout ]
 webkit.org/b/329530 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/broken-image.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/329530 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/css-backdrop-filter-with-mix-blend-mode-and-opacity.tentative.html [ ImageOnlyFailure ]

@@ -13,6 +13,14 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-no-content-drawable.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-object-fit-contain-tall.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-object-fit-contain-wide.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-object-fit-cover-tall.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-object-fit-cover-wide.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-object-fit-fill-tall.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-object-fit-fill-wide.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-object-fit-none-tall.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-object-fit-none-wide.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-update-element-geometry-offscreen.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-update-element-geometry.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint.tentative.html
