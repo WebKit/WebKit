@@ -544,7 +544,9 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
         // What RenderBlockFlow::layoutBlock invalidates: changes inside the box, at the place it had before it moved.
         auto damagedInlineContent = std::optional<PaintInvalidation::LogicalTopAndBottom> { };
         if (blockFlow) {
-            damagedInlineContent = paintInvalidation.damagedInlineContentLogicalTopAndBottom(*blockFlow, box.geometry.verticalBorderAndPadding() + box.intrinsicContentBlockSize);
+            // The geometry is in the writing mode of the containing block, whose inline axis is the box's block axis in an orthogonal flow.
+            auto blockAxisBorderAndPadding = blockFlow->writingMode().isOrthogonal(containingBlockOf(*blockFlow).writingMode()) ? box.geometry.horizontalBorderAndPadding() : box.geometry.verticalBorderAndPadding();
+            damagedInlineContent = paintInvalidation.damagedInlineContentLogicalTopAndBottom(*blockFlow, blockAxisBorderAndPadding + box.intrinsicContentBlockSize);
             if (CheckedPtr cache = protect(blockFlow->document())->existingAXObjectCache(); cache && damagedInlineContent)
                 cache->onLaidOutInlineContent(*blockFlow);
         }

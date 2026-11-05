@@ -195,7 +195,9 @@ static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockCo
     CheckedRef style = blockContainer.style();
     auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() ? !hasScrollbarsOrGutter(blockContainer) : style->display() == Style::DisplayType::BlockFlowRoot || blockContainer.isOutOfFlowPositioned();
     // FIXME: A root whose content content-visibility skips (RenderBlockFlow::layoutBlock leaves it as it is).
-    return isSupportedRoot && !blockContainer.isWritingModeRoot() && !blockContainer.isFieldset()
+    // An out-of-flow box sizes itself in its own writing mode (OutOfFlowGeometry).
+    auto isSupportedWritingMode = !blockContainer.isWritingModeRoot() || (blockContainer.isOutOfFlowPositioned() && !(blockContainer.writingMode().isHorizontal() && blockContainer.writingMode().isBlockFlipped()));
+    return isSupportedRoot && isSupportedWritingMode && !blockContainer.isFieldset()
         && !blockContainer.layoutContext().isSkippedContentRootForLayout(blockContainer) && style->alignContent().isNormal()
         && !style->specifiesColumns() && style->columnSpan() != ColumnSpan::All
         && style->overflowContinue() == OverflowContinue::Normal && !style->containerType().hasSizeContainment();
@@ -474,11 +476,14 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
         || !(isAuto(style->minWidth()) || isSupportedSize(style->minWidth())) || !(isAuto(style->minHeight()) || isSupportedSize(style->minHeight()))
         || !(style->maxWidth().isNone() || isSupportedSize(style->maxWidth())) || !(style->maxHeight().isNone() || isSupportedSize(style->maxHeight())))
         return BlockAvoidanceReason::ContentHasSizingKeyword;
-    // An auto inline size with an auto inset, or with justify-self other than normal and stretch, is the fit-content size (css-position-3 §4.3),
-    // from the inline sizes of the content, and so is the automatic minimum of one a preferred aspect ratio gives (css-sizing-4 §5.1).
+    // An auto inline size with an auto inset, or with a self-alignment other than normal and stretch, is the fit-content size (css-position-3 §4.3),
+    // from the inline sizes of the content, and so is the automatic minimum of one a preferred aspect ratio gives (css-sizing-4 §5.1). The
+    // self-alignment is in the writing mode of the containing block, whose block axis is the box's inline axis in an orthogonal flow.
     auto writingMode = outOfFlowBox.writingMode();
-    auto justifySelf = style->justifySelf().resolve();
-    auto needsContentInlineSizes = style->logicalWidth(writingMode).isAuto() && (style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto() || !(justifySelf.isNormal() || justifySelf.isStretch()) || style->aspectRatio().hasRatio());
+    CheckedPtr containingBlock = outOfFlowBox.containingBlock();
+    auto isOrthogonal = containingBlock && writingMode.isOrthogonal(containingBlock->writingMode());
+    auto inlineAxisAlignment = isOrthogonal ? style->alignSelf().resolve() : style->justifySelf().resolve();
+    auto needsContentInlineSizes = style->logicalWidth(writingMode).isAuto() && (style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto() || !(inlineAxisAlignment.isNormal() || inlineAxisAlignment.isStretch()) || style->aspectRatio().hasRatio());
     // The render tree measures a leaf container (BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes).
     if (needsContentInlineSizes && !isLeafContainer && !canComputeContentInlineSizes(downcast<RenderBlockFlow>(outOfFlowBox)))
         return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;

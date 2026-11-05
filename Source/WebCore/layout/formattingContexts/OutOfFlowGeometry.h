@@ -43,9 +43,10 @@ class ComputedStyle;
 
 namespace Layout {
 
-// The absolute positioning layout model (css-position-3 §4) for a box in the logical coordinates of its containing block, whose writing mode
-// is the box's (not orthogonal): the inset-modified containing block, the size, the auto margins and the alignment of the margin box. The
-// inline axis first; the block axis may need the content laid out with the inline size.
+// The absolute positioning layout model (css-position-3 §4) for a box in the logical coordinates of its containing block: the inset-modified
+// containing block, the size, the auto margins and the alignment of the margin box. The insets, the margins and the self-alignment are in the
+// writing mode of the containing block, the sizes in the box's own, whose inline axis is the block axis of the containing block in an
+// orthogonal flow (css-writing-modes-4 §7.3). The box's inline axis first; its block axis may need the content laid out with the inline size.
 class OutOfFlowGeometry {
 public:
     // The padding box of the containing block (CSS 2.2 §10.1). A scroll container's scrollable overflow reaches past its end sides only
@@ -85,7 +86,7 @@ public:
         LayoutUnit blockStart;
         LayoutUnit blockSize;
     };
-    // The used values in one axis, the border box start relative to the padding box of the containing block.
+    // The used values in one axis of the containing block, the border box start relative to its padding box.
     struct AxisGeometry {
         LayoutUnit borderBoxSize;
         LayoutUnit marginStart;
@@ -93,7 +94,10 @@ public:
         LayoutUnit borderBoxStart;
     };
 
+    // The border and padding are the box's in its own inline and block axes.
     OutOfFlowGeometry(const RenderBox&, const ContainingBlock&, const StaticPosition&, const std::optional<DefaultAnchor>&, LayoutUnit inlineAxisBorderAndPadding, LayoutUnit blockAxisBorderAndPadding);
+    // Whether the box's inline axis is the block axis of the containing block, where computeInlineAxisGeometry places it.
+    bool isOrthogonal() const { return m_isOrthogonal; }
 
     // An auto inline size is the fit-content size when an inset in the inline axis is auto or justify-self is neither normal nor stretch
     // (css-position-3 §4.3), which takes the min-content and max-content inline sizes of the content (css-sizing-3 §5.1). So does the
@@ -111,6 +115,9 @@ public:
 
 private:
     enum class Axis : bool { Inline, Block };
+    // The axis of the containing block that is the box's inline or block axis.
+    Axis containingBlockAxis(Axis) const;
+    bool hasAutoInset(Axis containingBlockAxis) const;
     // The axis whose automatic size a preferred aspect ratio gives from the size in the other axis (css-position-3 §4.3).
     std::optional<Axis> ratioDependentAxis() const;
     bool hasFitContentInlineSize() const;
@@ -149,6 +156,7 @@ private:
     const std::optional<DefaultAnchor> m_defaultAnchor;
     const LayoutUnit m_inlineAxisBorderAndPadding;
     const LayoutUnit m_blockAxisBorderAndPadding;
+    const bool m_isOrthogonal;
 };
 
 }
