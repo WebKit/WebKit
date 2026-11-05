@@ -57,6 +57,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-date-baseline-min-height-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-date-baseline-min-height-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-date-baseline-min-height.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-date-baseline-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-date-baseline-print.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-date-baseline-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-date-baseline.html

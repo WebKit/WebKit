@@ -203,7 +203,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/baseline-synthesis-vert-lr-line-under.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/box-sizing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/box-sizing-min-max-sizes-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/break-nested-float-in-flex-item-001-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/break-nested-float-in-flex-item-001-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/break-nested-float-in-flex-item-002-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/break-nested-float-in-flex-item-002-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/break-nested-float-in-flex-item-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/button-column-wrap-crash.html
@@ -2097,6 +2099,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/inline-flex-min-content-height.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/inline-flex.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/inline-flexbox-absurd-block-size-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/inline-flexbox-vertical-rl-image-flexitem-crash-print-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/inline-flexbox-vertical-rl-image-flexitem-crash-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/inline-flexbox-wrap-vertically-width-calculation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-width-orthogonal-writing-mode.html

@@ -304,6 +304,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table_grid_size_col_colspan-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table_grid_size_col_colspan-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table_grid_size_col_colspan.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tfoot-crash-print-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tfoot-crash-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/th-text-align-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/th-text-align-ref.html

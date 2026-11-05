@@ -182,6 +182,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-dynamic-transformed-sibling-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-dynamic-transformed-sibling-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-dynamic-transformed-sibling.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-overflow-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-overflow-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-overflow-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-root-element-flex-expected.html
@@ -195,6 +196,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-scroll-overlap-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-scroll-overlap-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-scroll-overlap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-video-controls-print-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-fixed-video-controls-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-relative-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-relative-001.html

@@ -529,10 +529,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-update-and-transition-in-subframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-zero-support-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/vh-zero-support.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-page-print-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-page-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-page-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-relative-lengths-scaled-viewport.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-unit-011-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-unit-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-units-001-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-units-001-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-units-001-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/viewport-units-after-font-load.html

@@ -128,6 +128,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-thead-th.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-top.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-offset-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-offset-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-offset-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-offset-top-left.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container-expected.html

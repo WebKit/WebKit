@@ -38,9 +38,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-display-type-002.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-display.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-focus-steps.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-after-1-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-after-1-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-after-2-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-after-2-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-before-1-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-before-1-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-before-2-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-before-2-print.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-pseudo-elements-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-pseudo-elements-001-ref.html

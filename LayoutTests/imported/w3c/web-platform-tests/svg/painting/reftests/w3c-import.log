@@ -74,6 +74,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/mask-percentage-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/mask-percentage-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/mask-percentage.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/mask-print-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/mask-print-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/mask-print.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-001-expected.svg

@@ -143,6 +143,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-005-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-005-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-005-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-005.html

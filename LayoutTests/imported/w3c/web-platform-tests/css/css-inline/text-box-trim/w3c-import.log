@@ -24,10 +24,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/border-padding-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/new-fc-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/new-fc-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/not-at-page-edges-001-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/not-at-page-edges-001-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/not-at-page-edges-001-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/not-at-page-edges-002-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/not-at-page-edges-002-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/not-at-page-edges-002-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/not-at-page-edges-003-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/not-at-page-edges-003-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/not-at-page-edges-003-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-inline/text-box-trim/out-of-flow-001-expected.xht

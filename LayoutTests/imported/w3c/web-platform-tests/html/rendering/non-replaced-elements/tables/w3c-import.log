@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-align-float-ref.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-align-float.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-background-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-background-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-background-print.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-1-expected.html
@@ -78,8 +79,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-height-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-height-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-height.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-pagination-001-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-pagination-001-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-pagination-001-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-pagination-002-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-pagination-002-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-pagination-002-print.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-rowspan-height-distribution.html

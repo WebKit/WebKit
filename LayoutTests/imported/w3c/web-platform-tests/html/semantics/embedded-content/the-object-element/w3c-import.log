@@ -27,9 +27,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-handler.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-ignored-in-media-element.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-image-click.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-image-display-none-loading-for-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-image-display-none-loading-for-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-image-display-none-loading-for-print.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-image-display-none-loading.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-image-only-for-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-image-only-for-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-image-only-for-print.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-in-display-none-load-event.html
@@ -40,6 +42,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-param-url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-remove-param-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-setcustomvalidity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-svg-only-for-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-svg-only-for-print.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/test0.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/test1.html

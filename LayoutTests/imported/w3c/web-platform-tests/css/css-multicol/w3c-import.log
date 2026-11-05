@@ -33,8 +33,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/always-balancing-before-column-span.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/as-column-flex-item-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/as-column-flex-item.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/auto-fill-auto-size-001-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/auto-fill-auto-size-001-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/auto-fill-auto-size-001-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/auto-fill-auto-size-002-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/auto-fill-auto-size-002-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/auto-fill-auto-size-002-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/balance-break-avoidance-000-expected.xht
@@ -100,6 +102,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/change-transform-in-spanner-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/change-transform-in-spanner.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/change-transform.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-balancing-paged-001-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-balancing-paged-001-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-balancing-paged-001-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-balancing-with-overflow-auto-crash.html
@@ -500,6 +503,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-height-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-height-001-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-height-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-height-002-print-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-height-002-print-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-height-002-print.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-height-block-child-001-expected.xht

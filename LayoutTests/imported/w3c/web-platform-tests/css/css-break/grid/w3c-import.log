@@ -187,5 +187,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/grid/monolithic-overflow-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/grid/monolithic-overflow-009-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/grid/monolithic-overflow-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/grid/monolithic-overflow-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/grid/monolithic-overflow-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-break/grid/monolithic-overflow-print.html

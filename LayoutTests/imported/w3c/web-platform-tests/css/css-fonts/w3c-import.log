@@ -28,8 +28,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/crash-font-face-invalid-descriptor.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/crash-large-grapheme-cluster.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/discrete-no-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/downloadable-font-in-iframe-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/downloadable-font-in-iframe-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/downloadable-font-in-iframe-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/downloadable-font-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/downloadable-font-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/downloadable-font-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/downloadable-font-scoped-to-document-expected.html

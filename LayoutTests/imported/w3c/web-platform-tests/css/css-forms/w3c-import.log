@@ -49,6 +49,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-forms/radio-checkmark-animation-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-forms/radio-checkmark-animation-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-forms/radio-checkmark-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-forms/select-combobox-print-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-forms/select-combobox-print-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-forms/select-combobox-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-forms/textarea-base-appearance-rendering-ref.tentative.html

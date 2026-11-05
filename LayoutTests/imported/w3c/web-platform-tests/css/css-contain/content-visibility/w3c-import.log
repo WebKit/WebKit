@@ -237,6 +237,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested-scroll-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-relevancy-updates.html
