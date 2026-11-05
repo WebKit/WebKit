@@ -85,7 +85,9 @@ public:
     static std::optional<Vector<EGLint>> buildEGLImageAttributes(const Attributes&, Attributes::EnableModifiers = Attributes::EnableModifiers::Yes);
 
     bool importIfNeeded();
+    static sk_sp<SkColorSpace> skiaColorSpace(TransferFunction);
     sk_sp<SkColorSpace> skiaColorSpace() const;
+    static SkYUVColorSpace skiaYUVColorSpace(ColorSpace);
     SkYUVAInfo yuvaInfo() const;
     const GrBackendTexture& backendTexture(size_t) const;
 

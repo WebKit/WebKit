@@ -420,32 +420,13 @@ SkYUVAInfo DMABufBuffer::yuvaInfo() const
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    SkYUVColorSpace yuvaColorSpace = [&] {
-        switch (m_colorSpace.value_or(DMABufBuffer::ColorSpace::Bt601)) {
-        case DMABufBuffer::ColorSpace::Bt601:
-            return kRec601_Limited_SkYUVColorSpace;
-        case DMABufBuffer::ColorSpace::Bt709:
-            return kRec709_Full_SkYUVColorSpace;
-        case DMABufBuffer::ColorSpace::Bt2020:
-            return kBT2020_8bit_Full_SkYUVColorSpace;
-        case DMABufBuffer::ColorSpace::Smpte240M:
-            return kSMPTE240_Full_SkYUVColorSpace;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }();
-
+    auto yuvaColorSpace = skiaYUVColorSpace(m_colorSpace.value_or(DMABufBuffer::ColorSpace::Bt601));
     return SkYUVAInfo(SkISize::Make(m_attributes.size.width(), m_attributes.size.height()), planeConfig, subsampling, yuvaColorSpace);
 }
 
 sk_sp<SkColorSpace> DMABufBuffer::skiaColorSpace() const
 {
-    switch (m_transferFunction.value_or(DMABufBuffer::TransferFunction::Bt709)) {
-    case DMABufBuffer::TransferFunction::Bt709:
-        return SkColorSpace::MakeRGB(SkNamedTransferFn::kRec709, SkNamedGamut::kSRGB);
-    case DMABufBuffer::TransferFunction::Pq:
-        return SkColorSpace::MakeRGB(SkNamedTransferFn::kPQ, SkNamedGamut::kRec2020);
-    }
-    RELEASE_ASSERT_NOT_REACHED();
+    return skiaColorSpace(m_transferFunction.value_or(DMABufBuffer::TransferFunction::Bt709));
 }
 
 class PromiseDMABufImageContext final : public ThreadSafeRefCounted<PromiseDMABufImageContext> {
@@ -584,3 +565,35 @@ sk_sp<SkImage> DMABufBuffer::createPromiseImageForQualcommVideoFrame(const sk_sp
 } // namespace WebCore
 
 #endif // USE(GBM)
+
+#if USE(COORDINATED_GRAPHICS)
+namespace WebCore {
+
+sk_sp<SkColorSpace> DMABufBuffer::skiaColorSpace(TransferFunction transferFunction)
+{
+    switch (transferFunction) {
+    case DMABufBuffer::TransferFunction::Bt709:
+        return SkColorSpace::MakeRGB(SkNamedTransferFn::kRec709, SkNamedGamut::kSRGB);
+    case DMABufBuffer::TransferFunction::Pq:
+        return SkColorSpace::MakeRGB(SkNamedTransferFn::kPQ, SkNamedGamut::kRec2020);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+SkYUVColorSpace DMABufBuffer::skiaYUVColorSpace(ColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case DMABufBuffer::ColorSpace::Bt601:
+        return kRec601_Limited_SkYUVColorSpace;
+    case DMABufBuffer::ColorSpace::Bt709:
+        return kRec709_Full_SkYUVColorSpace;
+    case DMABufBuffer::ColorSpace::Bt2020:
+        return kBT2020_8bit_Full_SkYUVColorSpace;
+    case DMABufBuffer::ColorSpace::Smpte240M:
+        return kSMPTE240_Full_SkYUVColorSpace;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WebCore
+#endif // USE(COORDINATED_GRAPHICS)
