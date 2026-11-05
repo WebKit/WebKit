@@ -511,25 +511,26 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
         return layoutOutOfFlowIndependentFormattingContext(outOfFlowBox, containingBlock, staticPosition, defaultAnchor);
     auto result = BlockLayoutResult { };
     CheckedRef box = downcast<RenderBlockFlow>(outOfFlowBox);
+    // In the box's own writing mode, which its content is laid out in.
     auto geometry = computeBorderAndPadding(box, containingBlock.inlineSize);
     auto outOfFlowGeometry = OutOfFlowGeometry { box, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.box->writingMode(), containingBlock.box->hasPotentiallyScrollableOverflow(), containingBlock.scrollableContainingBlock }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
 
-    auto contentInlineSizes = outOfFlowGeometry.needsContentInlineSizes() ? std::optional { computeIntrinsicInlineSizes(box) } : std::nullopt;
+    // The box establishes an independent formatting context for its content, a block formatting context with a block layout state of its own,
+    // in the box's writing mode.
+    auto blockLayoutState = BlockLayoutState { { } };
+    auto contentFormattingContext = BlockFormattingContext { box, integrationUtils(), blockLayoutState };
+    auto contentInlineSizes = outOfFlowGeometry.needsContentInlineSizes() ? std::optional { contentFormattingContext.computeIntrinsicInlineSizes(box) } : std::nullopt;
     auto inlineAxis = outOfFlowGeometry.computeInlineAxisGeometry(contentInlineSizes);
     geometry.setContentBoxWidth(inlineAxis.borderBoxSize - geometry.horizontalBorderAndPadding());
-    geometry.setHorizontalMargin({ inlineAxis.marginStart, inlineAxis.marginEnd });
-    geometry.setLeft(containingBlock.paddingBoxInlineStart + inlineAxis.borderBoxStart);
     auto contentBoxBlockSize = outOfFlowGeometry.definiteContentBoxBlockSize(inlineAxis.borderBoxSize);
 
     auto intrinsicContentBlockSize = LayoutUnit { };
     if (box->firstChild()) {
-        // The box establishes an independent formatting context for its content, a block formatting context with a block layout state of its own.
-        auto blockLayoutState = BlockLayoutState { { } };
         auto horizontalConstraints = HorizontalConstraints { geometry.borderAndPaddingStart(), geometry.contentBoxWidth() };
         // Coverage keeps out the -webkit-fill-available block sizes inside, and the percentage block sizes of replaced elements in quirks mode.
         auto availableBlockSize = contentBoxBlockSize.value_or(0_lu);
         auto relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(box, geometry.contentBoxWidth());
-        auto contentResult = BlockFormattingContext { box, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, geometry.borderAndPaddingBefore() }, contentBoxBlockSize, availableBlockSize, availableBlockSize, relayoutChildren }, geometry);
+        auto contentResult = contentFormattingContext.layout({ { horizontalConstraints, geometry.borderAndPaddingBefore() }, contentBoxBlockSize, availableBlockSize, availableBlockSize, relayoutChildren }, geometry);
         intrinsicContentBlockSize = contentResult.intrinsicContentBlockSize;
         result.boxes.appendVector(WTF::move(contentResult.boxes));
         result.outOfFlowBoxes.appendVector(WTF::move(contentResult.outOfFlowBoxes));
@@ -541,6 +542,17 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
 
     auto blockAxis = outOfFlowGeometry.computeBlockAxisGeometry(intrinsicContentBlockSize, inlineAxis.borderBoxSize);
     geometry.setContentBoxHeight(blockAxis.borderBoxSize - geometry.verticalBorderAndPadding());
+
+    // The result is in the logical coordinates of the containing block, whose inline axis is the box's block axis in an orthogonal flow. Border
+    // and padding keep the box's own sides.
+    if (outOfFlowGeometry.isOrthogonal()) {
+        std::swap(inlineAxis, blockAxis);
+        geometry.setBorder({ { geometry.borderBefore(), geometry.borderAfter() }, { geometry.borderStart(), geometry.borderEnd() } });
+        geometry.setPadding({ { geometry.paddingBefore(), geometry.paddingAfter() }, { geometry.paddingStart(), geometry.paddingEnd() } });
+        geometry.setContentBoxSize({ geometry.contentBoxHeight(), geometry.contentBoxWidth() });
+    }
+    geometry.setHorizontalMargin({ inlineAxis.marginStart, inlineAxis.marginEnd });
+    geometry.setLeft(containingBlock.paddingBoxInlineStart + inlineAxis.borderBoxStart);
     geometry.setVerticalMargin({ blockAxis.marginStart, blockAxis.marginEnd });
     geometry.setTop(containingBlock.paddingBoxBlockStart + blockAxis.borderBoxStart);
 
