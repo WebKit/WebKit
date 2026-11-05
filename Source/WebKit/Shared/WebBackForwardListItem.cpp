@@ -67,6 +67,11 @@ WebBackForwardListItem::~WebBackForwardListItem()
     removeFromBackForwardCache();
 }
 
+void WebBackForwardListItem::setBrowsingContextGroup(BrowsingContextGroup& group)
+{
+    m_browsingContextGroup = &group;
+}
+
 HashMap<BackForwardItemIdentifier, WeakRef<WebBackForwardListItem>>& WebBackForwardListItem::allItems()
 {
     RELEASE_ASSERT(RunLoop::isMain());

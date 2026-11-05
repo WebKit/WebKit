@@ -60,6 +60,7 @@ public:
     void setLastProcessIdentifier(const WebCore::ProcessIdentifier& identifier) { m_lastProcessIdentifier = identifier; }
 
     BrowsingContextGroup* browsingContextGroup() const LIFETIME_BOUND { return m_browsingContextGroup.get(); }
+    void setBrowsingContextGroup(BrowsingContextGroup&);
 
     NODELETE const FrameState& mainFrameState() const LIFETIME_BOUND;
     Ref<FrameState> copyMainFrameState() const;
@@ -120,7 +121,7 @@ private:
     const WebPageProxyIdentifier m_pageID;
     WebCore::ProcessIdentifier m_lastProcessIdentifier;
     RefPtr<WebBackForwardCacheEntry> m_backForwardCacheEntry;
-    const RefPtr<BrowsingContextGroup> m_browsingContextGroup;
+    RefPtr<BrowsingContextGroup> m_browsingContextGroup;
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     RefPtr<ViewSnapshot> m_snapshot;
 #endif

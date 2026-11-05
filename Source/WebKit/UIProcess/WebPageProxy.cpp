@@ -1819,6 +1819,12 @@ void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisional
     if (RefPtr logger = m_logger)
         logger->setEnabled(this, isAlwaysOnLoggingAllowed());
 
+    // A document that commits over an existing history item (replace, reload, or a traversal whose
+    // response committed into a different group than the item recorded) lives in the group this page
+    // just adopted; the item must record it so later traversals pick a compatible process.
+    if (RefPtr currentItem = backForwardList().currentItem(); currentItem && currentItem->browsingContextGroup() != m_browsingContextGroup.ptr())
+        currentItem->setBrowsingContextGroup(m_browsingContextGroup.get());
+
     protect(legacyMainFrameProcess())->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
     addAllMessageReceivers();
 
