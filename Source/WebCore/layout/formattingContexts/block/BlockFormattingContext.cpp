@@ -104,6 +104,10 @@ BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockConten
     m_blockLayoutState.marginCollapse().startBlockFormattingContextRoot(m_blockLayoutState.containingBlockStates().last());
     // The margins of a box that establishes a block formatting context do not collapse with its children's (CSS 2.2 §8.3.1).
     m_blockLayoutState.marginCollapse().resetAdjoiningMargins(m_blockLayoutState.containingBlockStates().last().contentBoxLogicalTop());
+    // margin-trim discards the margins at the block-start and block-end edges of the content (css-box-4 §3.3.1).
+    auto marginTrim = root().style().marginTrim();
+    if (marginTrim.contains(Style::MarginTrimSide::BlockStart))
+        m_blockLayoutState.marginCollapse().setTrimsMarginsAtBlockStartEdge(true);
 
     // FIXME: Keep the block items across layouts and invalidate them on tree and formatting context participation changes.
     auto blockItems = BlockItemList { };
@@ -118,6 +122,10 @@ BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockConten
     // The content of the root ends at the bottom margin edge of its last in-flow child (CSS 2.2 §10.6.7), except for a quirky one in a
     // quirk container. Negative margins may pull that above its content box top.
     auto& rootState = m_blockLayoutState.containingBlockStates().last();
+    if (marginTrim.contains(Style::MarginTrimSide::BlockEnd)) {
+        m_blockLayoutState.marginCollapse().resetAdjoiningMargins(m_blockLayoutState.marginCollapse().logicalTop());
+        placeChildrenAtTrimmedBlockEnd(WTF::move(rootState.blockEndChildren), result);
+    }
     m_blockLayoutState.marginCollapse().endBlockFormattingContextRoot(rootState);
     auto contentLogicalBottom = BlockMarginCollapse::isQuirkContainer(root()) && m_blockLayoutState.marginCollapse().endsWithQuirk() ? m_blockLayoutState.marginCollapse().logicalTop() : m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
     result.intrinsicContentBlockSize = std::max(0_lu, contentLogicalBottom - rootState.contentBoxLogicalTop());
@@ -194,6 +202,15 @@ void BlockFormattingContext::handleBlockContainerStart(const RenderBox& blockCon
     if (blockContainerState.geometry.borderAndPaddingBefore())
         resolveBorderBoxLogicalTops(blockContainerState);
     startTextBoxTrim(downcast<RenderBlockFlow>(blockContainer), blockContainerState);
+    // Its margin-trim discards the margins at the block-start edge of its content, its first child's block-start margin and the ones that
+    // collapse with it (css-box-4 §3.3.1).
+    auto marginTrim = blockContainer.style().marginTrim();
+    if (marginTrim.contains(Style::MarginTrimSide::BlockStart)) {
+        blockContainerState.trimsMarginsAtBlockStartEdgeToRestore = m_blockLayoutState.marginCollapse().trimsMarginsAtBlockStartEdge();
+        m_blockLayoutState.marginCollapse().setTrimsMarginsAtBlockStartEdge(true);
+    }
+    if (marginTrim.contains(Style::MarginTrimSide::BlockEnd) && !blockContainerState.borderBoxLogicalTop)
+        blockContainerState.adjoiningMarginsAtContentStart = m_blockLayoutState.marginCollapse().adjoiningMargins();
     m_blockLayoutState.containingBlockStates().append(WTF::move(blockContainerState));
     if (!blockContainer.firstChild())
         handleEmptyEditableContent(blockContainer, m_blockLayoutState.containingBlockStates().last());
@@ -264,6 +281,10 @@ void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockConta
     auto blockContainerState = m_blockLayoutState.containingBlockStates().takeLast();
     ASSERT(blockContainerState.blockContainer.ptr() == &blockContainer);
     endTextBoxTrim(downcast<RenderBlockFlow>(blockContainer), blockContainerState);
+    if (auto trimsMargins = blockContainerState.trimsMarginsAtBlockStartEdgeToRestore) {
+        auto& marginCollapse = m_blockLayoutState.marginCollapse();
+        marginCollapse.setTrimsMarginsAtBlockStartEdge(*trimsMargins && marginCollapse.trimsMarginsAtBlockStartEdge());
+    }
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
     m_blockLayoutState.marginCollapse().endBlockContainer(blockContainerState, containingBlockState);
     // Nothing in its content separated the block-start margin from the block-end margin. Unless the box's own height, block-end
@@ -333,6 +354,7 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
     // Content that ends with a block-level box leaves the margins after it open (CSS 2.2 §8.3.1).
     if (!inlineContentLayoutResult.hasLineBoxes || inlineContentLayoutResult.endsWithBlockLevelBox)
         return;
+    blockContainerStateAfterLayout.blockEndChildren = { { }, { }, blockContainerStateAfterLayout.borderAndPaddingBefore };
     // The first line box separates the block-start margin from what follows (CSS 2.2 §8.3.1).
     if (!blockContainerStateAfterLayout.borderBoxLogicalTop)
         resolveBorderBoxLogicalTops(blockContainerStateAfterLayout);
@@ -670,7 +692,8 @@ ContainingBlockState BlockFormattingContext::containingBlockStateForRoot(const C
         .margins = { },
         .isLaidOutThroughRenderTree = false,
         .relayoutChildren = constraints.relayoutChildren(),
-        .lineCountThroughLastBlockLevelBox = 0
+        .lineCountThroughLastBlockLevelBox = 0,
+        .blockEndChildren = { { }, { }, constraints.logicalTop() }
     };
 }
 
@@ -689,7 +712,8 @@ ContainingBlockState BlockFormattingContext::containingBlockStateFor(const Rende
         .margins = { },
         .isLaidOutThroughRenderTree = false,
         .relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(blockContainer, geometry.contentBoxWidth()),
-        .lineCountThroughLastBlockLevelBox = 0
+        .lineCountThroughLastBlockLevelBox = 0,
+        .blockEndChildren = { { }, { }, geometry.borderAndPaddingBefore() }
     };
 }
 
@@ -1067,6 +1091,9 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
     auto& collapsedMarginsBefore = blockContainerState.margins.collapsedMarginsBefore();
 
     if (!blockContainerState.borderBoxLogicalTop) {
+        // Its margin-trim at the block-end edge discards the margins of its content, which all collapse with its last child's block-end margin.
+        if (auto& margins = blockContainerState.adjoiningMarginsAtContentStart)
+            m_blockLayoutState.marginCollapse().resetAdjoiningMargins(m_blockLayoutState.marginCollapse().logicalTop(), *margins);
         // The margins collapse through the box, which has no height and leaves them open. Its top border edge is its parent's when they
         // include the parent's block-start margin, and otherwise where it would be with a non-zero bottom border (CSS 2.2 §8.3.1).
         computeBlockSize(box, { }, containingBlockState, geometry);
@@ -1079,6 +1106,7 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
         auto collapsedMarginsAfter = AdjoiningMargins { };
         collapsedMarginsAfter.add(geometry.marginAfter());
         result.boxes.append({ box, WTF::move(geometry), { }, collapsedMarginsBefore, collapsedMarginsAfter, blockContainerState.margins.collapsedMarginsBeforeAreQuirky(), box.style().marginAfter().hasQuirk(), false });
+        containingBlockState.blockEndChildren.collapsedThroughChildren.append(result.boxes.size() - 1);
         return;
     }
 
@@ -1091,6 +1119,13 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
     auto establishesBlockFormattingContext = [&] {
         return !blockContainer || blockContainer->createsNewFormattingContext();
     };
+    // Its margin-trim discards the margins at the block-end edge of its content, its last child's block-end margin and the ones that collapse
+    // with it (css-box-4 §3.3.1).
+    auto trimsMarginsAtBlockEnd = !establishesBlockFormattingContext() && style->marginTrim().contains(Style::MarginTrimSide::BlockEnd);
+    if (trimsMarginsAtBlockEnd) {
+        m_blockLayoutState.marginCollapse().resetAdjoiningMargins(m_blockLayoutState.marginCollapse().logicalTop());
+        placeChildrenAtTrimmedBlockEnd(WTF::move(blockContainerState.blockEndChildren), result);
+    }
     auto marginAfterCollapsesWithChildren = !establishesBlockFormattingContext() && !geometry.borderAndPaddingAfter() && BlockFormattingUtils::blockSizeBehavesAsAuto(style->logicalHeight(writingMode), containingBlockState.contentBoxBlockSize);
     // A quirk container leaves out a quirky margin after its last child (RenderBlockFlow::handleAfterSideOfBlock).
     auto contentBoxLogicalBottom = marginAfterCollapsesWithChildren || (BlockMarginCollapse::isQuirkContainer(box) && m_blockLayoutState.marginCollapse().endsWithQuirk()) ? m_blockLayoutState.marginCollapse().logicalTop() : m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
@@ -1118,6 +1153,40 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
 
     geometry.setTop(borderBoxLogicalTop - *containingBlockState.borderBoxLogicalTop);
     result.boxes.append({ box, WTF::move(geometry), intrinsicContentBlockSize, collapsedMarginsBefore, m_blockLayoutState.marginCollapse().adjoiningMargins(), blockContainerState.margins.collapsedMarginsBeforeAreQuirky(), marginAfterIsQuirky, blockContainerState.isLaidOutThroughRenderTree });
+    auto boxIndex = result.boxes.size() - 1;
+    containingBlockState.blockEndChildren = { { }, boxIndex, containingBlockState.blockEndChildren.contentBoxLogicalTop };
+    // Its block-end margin collapses with the margins at the block-end edge of its content, which margin-trim at the block-end edge of an ancestor
+    // discards too.
+    auto ancestorTrimsMarginsAtBlockEnd = std::ranges::any_of(m_blockLayoutState.containingBlockStates(), [](auto& state) {
+        return state.blockContainer->style().marginTrim().contains(Style::MarginTrimSide::BlockEnd);
+    });
+    if (marginAfterCollapsesWithChildren && !trimsMarginsAtBlockEnd && ancestorTrimsMarginsAtBlockEnd)
+        m_blockLayoutState.blockEndChildren().append({ boxIndex, WTF::move(blockContainerState.blockEndChildren) });
+}
+
+// margin-trim at the block-end edge of a block container discards the margins that placed the children whose margins collapse through them
+// at the end of its content, also in its last child when its block-end margin collapses with them: they go to the bottom border edge of the
+// child before them (CSS 2.2 §8.3.1, css-box-4 §3.3.1).
+void BlockFormattingContext::placeChildrenAtTrimmedBlockEnd(BlockEndChildren&& children, BlockLayoutResult& result)
+{
+    auto logicalTop = children.contentBoxLogicalTop;
+    if (children.lastChild) {
+        auto& lastChildGeometry = result.boxes[*children.lastChild].geometry;
+        logicalTop = BoxGeometry::borderBoxTop(lastChildGeometry) + lastChildGeometry.borderBoxHeight();
+    }
+    for (auto index : children.collapsedThroughChildren)
+        result.boxes[index].geometry.setTop(logicalTop);
+    if (!children.lastChild)
+        return;
+    auto& blockEndChildren = m_blockLayoutState.blockEndChildren();
+    auto lastChildEntry = blockEndChildren.findIf([&](auto& entry) {
+        return entry.first == *children.lastChild;
+    });
+    if (lastChildEntry == notFound)
+        return;
+    auto lastChildChildren = WTF::move(blockEndChildren[lastChildEntry].second);
+    blockEndChildren.removeAt(lastChildEntry);
+    placeChildrenAtTrimmedBlockEnd(WTF::move(lastChildChildren), result);
 }
 
 // The block container separates the adjoining margins from the margins that follow (CSS 2.2 §8.3.1), so they collapse into one margin. It

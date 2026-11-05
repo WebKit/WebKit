@@ -102,6 +102,7 @@ void BlockMarginCollapse::resetAdjoiningMargins(LayoutUnit logicalTop, const Adj
 {
     m_adjoiningMargins = margins;
     m_logicalTop = logicalTop;
+    m_trimsMarginsAtBlockStartEdge = false;
     m_endsWithQuirk = margins.collapsedValue() && marginsAreQuirky;
 }
 
@@ -125,6 +126,8 @@ void BlockMarginCollapse::addKeptContentMarginsBefore(ContainingBlockState& bloc
 
 void BlockMarginCollapse::startBlockContainer(ContainingBlockState& blockContainerState, const ContainingBlockState& containingBlockState, LayoutUnit marginBefore)
 {
+    if (m_trimsMarginsAtBlockStartEdge)
+        marginBefore = { };
     blockContainerState.margins.m_endsWithQuirkBefore = std::exchange(m_endsWithQuirk, false);
     CheckedRef box = blockContainerState.blockContainer;
     auto isQuirky = box->style().marginBefore().hasQuirk();
@@ -167,6 +170,8 @@ void BlockMarginCollapse::endBlockFormattingContextRoot(const ContainingBlockSta
 
 void BlockMarginCollapse::addCollapsedThroughBlockEndMargin(const ContainingBlockState& blockContainerState, ContainingBlockState& containingBlockState, LayoutUnit marginAfter)
 {
+    if (m_trimsMarginsAtBlockStartEdge)
+        marginAfter = { };
     if (m_quirkContainerBlockStartSide)
         m_quirkContainerBlockStartSide->childMargins.add(marginAfter, { });
     else
@@ -178,6 +183,8 @@ void BlockMarginCollapse::addCollapsedThroughBlockEndMargin(const ContainingBloc
 
 bool BlockMarginCollapse::addBlockEndMargin(const ContainingBlockState& blockContainerState, LayoutUnit margin, bool isQuirky, bool collapsesWithMarginsAfterContent, LayoutUnit borderBoxLogicalBottom)
 {
+    // A box that does not collapse through separates the margins before it from the ones after it.
+    m_trimsMarginsAtBlockStartEdge = false;
     if (!collapsesWithMarginsAfterContent)
         m_adjoiningMargins = { };
     else if (m_endsWithQuirk)
