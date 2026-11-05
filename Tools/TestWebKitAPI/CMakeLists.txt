@@ -89,6 +89,7 @@ set(TestWTF_SOURCES
     Tests/WTF/HashCountedSet.cpp
     Tests/WTF/HashMap.cpp
     Tests/WTF/HashSet.cpp
+    Tests/WTF/HashTable.cpp
     Tests/WTF/Hasher.cpp
     Tests/WTF/HexNumber.cpp
     Tests/WTF/IndexSparseSet.cpp

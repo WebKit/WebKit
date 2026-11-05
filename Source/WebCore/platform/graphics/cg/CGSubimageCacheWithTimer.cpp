@@ -79,11 +79,9 @@ struct CGSubimageCacheAdder {
         return a.image == b.image && a.rect == b.rect;
     }
 
-    static void translate(CGSubimageCacheWithTimer::CacheEntry& entry, const CGSubimageRequest& request, unsigned /*hashCode*/)
+    static void translate(CGSubimageCacheWithTimer::CacheEntry* entry, const CGSubimageRequest& request, unsigned /*hashCode*/)
     {
-        entry.image = request.image.get();
-        entry.subimage = adoptCF(CGImageCreateWithImageInRect(request.image.get(), request.rect));
-        entry.rect = request.rect;
+        new (NotNull, entry) CGSubimageCacheWithTimer::CacheEntry { request.image.get(), adoptCF(CGImageCreateWithImageInRect(request.image.get(), request.rect)), request.rect, { } };
     }
 };
 

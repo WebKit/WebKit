@@ -118,9 +118,9 @@ struct CrossThreadStringTranslator {
         return WTF::equal(string.impl(), impl);
     }
 
-    static void translate(String& location, const StringImpl* impl, unsigned)
+    static void translate(String* location, const StringImpl* impl, unsigned)
     {
-        location = impl->isolatedCopy();
+        new (NotNull, location) String(impl->isolatedCopy());
     }
 };
 

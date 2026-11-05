@@ -46,9 +46,9 @@ struct QNameComponentsTranslator {
         return c.m_prefix == name->m_prefix.impl() && c.m_localName == name->m_localName.impl() && c.m_namespaceURI == name->m_namespaceURI.impl();
     }
 
-    static void translate(QualifiedName::QualifiedNameImpl*& location, const QualifiedNameComponents& components, unsigned)
+    static void translate(QualifiedName::QualifiedNameImpl** location, const QualifiedNameComponents& components, unsigned)
     {
-        location = &QualifiedName::QualifiedNameImpl::create(components.m_prefix.get(), components.m_localName.get(), components.m_namespaceURI.get()).leakRef();
+        new (NotNull, location) QualifiedName::QualifiedNameImpl*(&QualifiedName::QualifiedNameImpl::create(components.m_prefix.get(), components.m_localName.get(), components.m_namespaceURI.get()).leakRef());
     }
 };
 

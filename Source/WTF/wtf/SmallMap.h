@@ -47,7 +47,6 @@ public:
 
     Value& ensure(const Key& key, NOESCAPE const auto& functor) LIFETIME_BOUND
     {
-        ASSERT(Map::isValidKey(key));
         if (std::holds_alternative<std::monostate>(m_storage)) {
             m_storage = Pair { key, functor() };
             return std::get<Pair>(m_storage).value;
@@ -65,7 +64,6 @@ public:
 
     void remove(const Key& key)
     {
-        ASSERT(Map::isValidKey(key));
         if (auto* pair = std::get_if<Pair>(&m_storage)) {
             if (pair->key == key)
                 m_storage = std::monostate { };
@@ -75,7 +73,6 @@ public:
 
     const Value* get(const Key& key) const LIFETIME_BOUND
     {
-        ASSERT(Map::isValidKey(key));
         if (auto* pair = std::get_if<Pair>(&m_storage)) {
             if (pair->key == key)
                 return std::addressof(pair->value);

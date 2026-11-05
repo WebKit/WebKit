@@ -1351,6 +1351,7 @@
 				WTF/Hasher.cpp,
 				WTF/HashMap.cpp,
 				WTF/HashSet.cpp,
+				WTF/HashTable.cpp,
 				WTF/HexNumber.cpp,
 				WTF/IndexSparseSet.cpp,
 				WTF/InlineMap.cpp,

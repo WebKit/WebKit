@@ -288,9 +288,9 @@ struct JITThunks::HostKeySearcher {
 struct JITThunks::NativeExecutableTranslator {
     static unsigned LEGACY_NODELETE hash(const NativeExecutable* key) { return WeakNativeExecutableHash::hash(key); }
     static bool LEGACY_NODELETE equal(const Weak<NativeExecutable>& a, const NativeExecutable* b) { return WeakNativeExecutableHash::equal(a, b); }
-    static void translate(Weak<NativeExecutable>& location, NativeExecutable* executable, unsigned)
+    static void translate(Weak<NativeExecutable>* location, NativeExecutable* executable, unsigned)
     {
-        location = Weak<NativeExecutable>(executable, executable->vm().jitStubs.get());
+        new (NotNull, location) Weak<NativeExecutable>(executable, executable->vm().jitStubs.get());
     }
 };
 

@@ -213,7 +213,7 @@ public:
     // in the table. HashTranslator must have the following function members:
     //   static unsigned hash(const T&);
     //   static bool equal(const ValueType&, const T&);
-    //   static translate(ValueType&, const T&, unsigned hashCode);
+    //   static void translate(KeyType* uninitializedLocation, const T&, unsigned hashCode);
     template<typename HashTranslator, typename K, typename V> AddResult add(K&&, V&&) LIFETIME_BOUND;
     template<typename HashTranslator> AddResult ensure(auto&& key, NOESCAPE const Invocable<MappedType()> auto&) LIFETIME_BOUND;
 
@@ -269,10 +269,10 @@ template<typename ValueTraits, typename HashFunctions>
 struct HashMapTranslator {
     static unsigned hash(const auto& key) { return HashFunctions::hash(key); }
     static bool equal(const auto& a, const auto& b) { return HashFunctions::equal(a, b); }
-    template<typename U> static void translate(auto& location, U&& key, NOESCAPE const Invocable<typename ValueTraits::ValueTraits::TraitType()> auto& functor)
+    template<typename U> static void translate(typename ValueTraits::TraitType* location, U&& key, NOESCAPE const Invocable<typename ValueTraits::ValueTraits::TraitType()> auto& functor)
     {
-        ValueTraits::KeyTraits::assignToEmpty(location.key, std::forward<U>(key));
-        ValueTraits::ValueTraits::assignToEmpty(location.value, functor());
+        std::construct_at(std::addressof(location->key), std::forward<U>(key));
+        std::construct_at(std::addressof(location->value), functor());
     }
 };
 
@@ -280,10 +280,10 @@ template<typename ValueTraits, typename Translator>
 struct HashMapTranslatorAdapter {
     static unsigned hash(const auto& key) { return Translator::hash(key); }
     static bool equal(const auto& a, const auto& b) { return Translator::equal(a, b); }
-    static void translate(auto& location, auto&& key, NOESCAPE const Invocable<typename ValueTraits::ValueTraits::TraitType()> auto& functor, unsigned hashCode)
+    static void translate(typename ValueTraits::TraitType* location, auto&& key, NOESCAPE const Invocable<typename ValueTraits::ValueTraits::TraitType()> auto& functor, unsigned hashCode)
     {
-        Translator::translate(location.key, key, hashCode);
-        location.value = functor();
+        Translator::translate(std::addressof(location->key), key, hashCode);
+        std::construct_at(std::addressof(location->value), functor());
     }
 };
 

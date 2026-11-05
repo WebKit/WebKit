@@ -98,9 +98,9 @@ struct ImpureDataTranslator {
         return slot->key == key;
     }
 
-    static void translate(std::unique_ptr<ImpureDataSlot>& slot, const HeapLocation& key, unsigned hashCode)
+    static void translate(std::unique_ptr<ImpureDataSlot>* slot, const HeapLocation& key, unsigned hashCode)
     {
-        new (NotNull, std::addressof(slot)) std::unique_ptr<ImpureDataSlot>(new ImpureDataSlot {key, LazyNode(), hashCode});
+        new (NotNull, slot) std::unique_ptr<ImpureDataSlot>(new ImpureDataSlot { key, LazyNode(), hashCode });
     }
 };
 

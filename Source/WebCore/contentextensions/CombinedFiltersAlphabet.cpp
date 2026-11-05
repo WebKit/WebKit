@@ -53,10 +53,10 @@ struct TermCreatorTranslator {
         return *term == input.term;
     }
 
-    static void translate(const Term*& location, const TermCreatorInput& input, unsigned)
+    static void translate(const Term** location, const TermCreatorInput& input, unsigned)
     {
         std::unique_ptr<Term> newUniqueTerm(new Term(input.term));
-        location = newUniqueTerm.get();
+        new (NotNull, location) const Term*(newUniqueTerm.get());
         input.internedTermsStorage.append(WTF::move(newUniqueTerm));
     }
 };

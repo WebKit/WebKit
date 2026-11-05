@@ -213,6 +213,17 @@
 #define ALWAYS_INLINE_LAMBDA
 #endif
 
+/* ALWAYS_INLINE_CALLEE */
+
+/* Inlines the calls in the statement that follows. Only Clang supports always_inline on a statement. */
+#if !defined(ALWAYS_INLINE_CALLEE) && defined(NDEBUG) && COMPILER(CLANG)
+#define ALWAYS_INLINE_CALLEE [[clang::always_inline]] // NOLINT: check-webkit-style does not understand annotations.
+#endif
+
+#if !defined(ALWAYS_INLINE_CALLEE)
+#define ALWAYS_INLINE_CALLEE
+#endif
+
 /* COLD */
 
 #if !defined(COLD)

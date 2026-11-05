@@ -230,10 +230,10 @@ namespace WTF {
             return a == b;
         }
 
-        static void translate(String& location, StringView view, unsigned hash)
+        static void translate(String* location, StringView view, unsigned hash)
         {
-            location = view.toString();
-            location.impl()->setHash(hash);
+            std::construct_at(location, view.toString());
+            location->impl()->setHash(hash);
         }
     };
 
@@ -252,9 +252,9 @@ namespace WTF {
             return equalIgnoringASCIICaseCommon(a, b);
         }
 
-        static void translate(String& location, StringView view, unsigned)
+        static void translate(String* location, StringView view, unsigned)
         {
-            location = view.toString();
+            std::construct_at(location, view.toString());
         }
     };
 
@@ -269,10 +269,10 @@ namespace WTF {
             return a == b;
         }
 
-        static void translate(String& location, ASCIILiteral literal, unsigned hash)
+        static void translate(String* location, ASCIILiteral literal, unsigned hash)
         {
-            location = literal;
-            location.impl()->setHash(hash);
+            std::construct_at(location, literal);
+            location->impl()->setHash(hash);
         }
     };
 

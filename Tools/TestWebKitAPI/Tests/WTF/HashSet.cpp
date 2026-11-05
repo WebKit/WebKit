@@ -62,7 +62,8 @@ struct InitialCapacityTestHashTraits : public WTF::UnsignedWithZeroKeyHashTraits
 template<unsigned size>
 void testInitialCapacity()
 {
-    const unsigned initialCapacity = WTF::HashTableCapacityForSize<size>::value;
+    // HashTable requires minimumTableSize >= 8.
+    const unsigned initialCapacity = std::max(8u, WTF::HashTableCapacityForSize<size>::value);
     HashSet<int, DefaultHash<int>, InitialCapacityTestHashTraits<initialCapacity> > testSet;
 
     // Initial capacity is null.
@@ -302,6 +303,8 @@ TEST(WTF_HashSet, CopyCapacityIsNotOnBoundary)
     }
 }
 
+namespace {
+
 struct DerefObserver {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DerefObserver);
     NEVER_INLINE void ref()
@@ -311,38 +314,39 @@ struct DerefObserver {
     NEVER_INLINE void deref()
     {
         --count;
-        observedBucket = bucketAddress->get();
+        if (!set)
+            return;
+        observedDeref = true;
+        observedSetSize = set->size();
+        observedContains = set->contains(this);
     }
     unsigned count { 1 };
-    const RefPtr<DerefObserver>* bucketAddress { nullptr };
-    const DerefObserver* observedBucket { nullptr };
+    const HashSet<RefPtr<DerefObserver>>* set { nullptr };
+    bool observedDeref { false };
+    unsigned observedSetSize { 0 };
+    bool observedContains { true };
 };
 
-TEST(WTF_HashSet, RefPtrNotZeroedBeforeDeref)
+} // namespace
+
+TEST(WTF_HashSet, RefPtrRemovedBeforeDeref)
 {
     auto observer = makeUniqueWithoutRefCountedCheck<DerefObserver>();
 
     HashSet<RefPtr<DerefObserver>> set;
     set.add(adoptRef(observer.get()));
+    EXPECT_TRUE(set.contains(observer.get()));
 
-    auto iterator = set.find(observer.get());
-    EXPECT_TRUE(iterator != set.end());
-
-    observer->bucketAddress = iterator.get();
-
-    EXPECT_TRUE(observer->observedBucket == nullptr);
+    observer->set = &set;
     EXPECT_TRUE(set.remove(observer.get()));
 
-    // It if fine to either leave the old value intact at deletion or already set it to the deleted
-    // value.
-    // A zero would be a incorrect outcome as it would mean we nulled the bucket before an opaque
-    // call.
-    EXPECT_TRUE(observer->observedBucket == observer.get() || observer->observedBucket == RefPtr<DerefObserver>::PtrTraits::hashTableDeletedValue());
+    EXPECT_TRUE(observer->observedDeref);
+    EXPECT_EQ(observer->observedSetSize, 0u);
+    EXPECT_FALSE(observer->observedContains);
     EXPECT_EQ(observer->count, 0u);
 }
 
-
-TEST(WTF_HashSet, UniquePtrNotZeroedBeforeDestructor)
+TEST(WTF_HashSet, UniquePtrRemovedBeforeDestructor)
 {
     struct DestructorObserver {
         ~DestructorObserver()
@@ -352,26 +356,27 @@ TEST(WTF_HashSet, UniquePtrNotZeroedBeforeDestructor)
         std::function<void()> observe;
     };
 
-    const std::unique_ptr<DestructorObserver>* bucketAddress = nullptr;
-    const DestructorObserver* observedBucket = nullptr;
-    std::unique_ptr<DestructorObserver> observer(new DestructorObserver { [&]() {
-        observedBucket = bucketAddress->get();
-    }});
-
-    const DestructorObserver* observerAddress = observer.get();
-
     HashSet<std::unique_ptr<DestructorObserver>> set;
+    DestructorObserver* observerAddress = nullptr;
+    bool observedDestructor = false;
+    unsigned observedSetSize = 0;
+    bool observedContains = true;
+    std::unique_ptr<DestructorObserver> observer(new DestructorObserver { [&]() {
+        observedDestructor = true;
+        observedSetSize = set.size();
+        observedContains = set.contains(observerAddress);
+    }});
+    observerAddress = observer.get();
+
     auto addResult = set.add(WTF::move(observer));
-
     EXPECT_TRUE(addResult.isNewEntry);
-    EXPECT_TRUE(observedBucket == nullptr);
+    EXPECT_FALSE(observedDestructor);
 
-    bucketAddress = addResult.iterator.get();
-
-    EXPECT_TRUE(observedBucket == nullptr);
     EXPECT_TRUE(set.remove(*addResult.iterator));
 
-    EXPECT_TRUE(observedBucket == observerAddress || observedBucket == reinterpret_cast<const DestructorObserver*>(-1));
+    EXPECT_TRUE(observedDestructor);
+    EXPECT_EQ(observedSetSize, 0u);
+    EXPECT_FALSE(observedContains);
 }
 
 TEST(WTF_HashSet, Ref)
@@ -973,94 +978,6 @@ TEST(WTF_HashSet, RangesAllAnyNoneOf)
     }));
 }
 
-// FIXME: Tests using ASSERT_DEATH currently panic on playstation
-#if !PLATFORM(PLAYSTATION)
-TEST(WTF_HashSetDeathTest, StringViewHashTranslatorEmptyValue)
-{
-    HashSet<String> hashSet;
-    auto shouldCrash = [&] {
-        hashSet.add<StringViewHashTranslator>(StringView(String())); // Results in HashTraits empty value
-    };
-    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
-}
-
-TEST(WTF_HashSetDeathTest, StringViewHashTranslatorDeletedValue)
-{
-    HashSet<String> hashSet;
-    auto shouldCrash = [&] {
-        hashSet.add<StringViewHashTranslator>(StringView(String(WTF::HashTableDeletedValue))); // Results in HashTraits deleted value
-    };
-
-    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
-}
-
-TEST(WTF_HashSetDeathTest, ASCIICaseInsensitiveStringViewHashTranslatorEmptyValue)
-{
-    HashSet<String> hashSet;
-    auto shouldCrash = [&] {
-        hashSet.add<ASCIICaseInsensitiveStringViewHashTranslator>(StringView(String())); // Results in HashTraits empty value
-    };
-    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
-}
-
-TEST(WTF_HashSetDeathTest, ASCIICaseInsensitiveStringViewHashTranslatorDeletedValue)
-{
-    HashSet<String> hashSet;
-    auto shouldCrash = [&] {
-        hashSet.add<ASCIICaseInsensitiveStringViewHashTranslator>(StringView(String(WTF::HashTableDeletedValue))); // Results in HashTraits deleted value
-    };
-
-    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
-}
-
-TEST(WTF_HashSetDeathTest, HashTranslatorASCIILiteralEmptyValue)
-{
-    HashSet<String> hashSet;
-    auto shouldCrash = [&] {
-        hashSet.add<HashTranslatorASCIILiteral>(ASCIILiteral()); // Results in HashTraits empty value
-    };
-    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
-}
-
-TEST(WTF_HashSetDeathTest, HashTranslatorASCIILiteralDeletedValue)
-{
-    HashSet<String> hashSet;
-    auto shouldCrash = [&] {
-        hashSet.add<HashTranslatorASCIILiteral>(ASCIILiteral::deletedValue()); // Results in HashTraits deleted value
-    };
-
-    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
-}
-
-#ifdef NDEBUG
-TEST(WTF_HashSetDeathTest, HashTranslatorASCIILiteralCaseInsensitiveEmptyValue)
-{
-    HashSet<String> hashSet;
-    hashSet.reserveInitialCapacity(8); // All empty buckets
-    auto invalidLookup = [&] {
-        return hashSet.contains<HashTranslatorASCIILiteralCaseInsensitive>(ASCIILiteral()); // Results in HashTraits empty value
-    };
-    EXPECT_FALSE(invalidLookup());
-}
-
-TEST(WTF_HashSet, HashTranslatorASCIILiteralCaseInsensitiveDeletedValue)
-{
-    HashSet<String> hashSet;
-    hashSet.reserveInitialCapacity(8);
-    for (size_t i = 0; i < 8; ++i)
-        hashSet.add(String::number(i));
-    for (size_t i = 0; i < 8; ++i)
-        hashSet.remove(String::number(i)); // Lots of deleted buckets (100% deleted buckets is impossible, so we do our best)
-    auto invalidLookup = [&] {
-        return hashSet.contains<HashTranslatorASCIILiteralCaseInsensitive>(ASCIILiteral::deletedValue()); // Results in HashTraits deleted value
-    };
-
-    EXPECT_FALSE(invalidLookup());
-}
-#endif
-
-#endif
-
 class Object : public WTF::RefCountedAndCanMakeWeakPtr<Object> {
 public:
     static Ref<Object> create() { return adoptRef(*new Object); }
@@ -1144,23 +1061,5 @@ TEST(WTF_HashSet, InlineWeakPtr)
         set.add(&InlineWeakPtrObject::create().get());
     EXPECT_LT(set.size(), 16u);
 }
-
-#if !PLATFORM(PLAYSTATION)
-TEST(WTF_HashSetDeathTest, InlineWeakPtrAddAfterDeath)
-{
-    HashSet<InlineWeakPtr<InlineWeakPtrObject>> set;
-
-    RefPtr object = InlineWeakPtrObject::create();
-    InlineWeakPtr<InlineWeakPtrObject> weak { object.get() };
-
-    object = nullptr;
-    EXPECT_TRUE(!weak);
-
-    auto shouldCrash = [&] {
-        set.add(WTF::move(weak));
-    };
-    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
-}
-#endif
 
 } // namespace TestWebKitAPI

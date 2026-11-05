@@ -86,9 +86,9 @@ struct AttributeSpanTranslator {
         return equalSpans<WTF::IgnoreTypeChecks::Yes>(a->attributes(), b);
     }
 
-    static void translate(Ref<ShareableElementData>& location, std::span<const Attribute> attributes, unsigned /*hash*/)
+    static void translate(Ref<ShareableElementData>* location, std::span<const Attribute> attributes, unsigned /*hash*/)
     {
-        location = ShareableElementData::createWithAttributes(attributes);
+        new (NotNull, location) Ref<ShareableElementData>(ShareableElementData::createWithAttributes(attributes));
     }
 };
 

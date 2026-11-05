@@ -764,6 +764,8 @@ TEST(WTF_HashMap, ValueIsDestructedOnRemove)
     EXPECT_TRUE(destructed);
 }
 
+namespace {
+
 struct DerefObserver {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DerefObserver);
     NEVER_INLINE void ref()
@@ -773,33 +775,36 @@ struct DerefObserver {
     NEVER_INLINE void deref()
     {
         --count;
-        observedBucket = bucketAddress->get();
+        if (!map)
+            return;
+        observedDeref = true;
+        observedMapSize = map->size();
+        observedContains = map->contains(this);
     }
     unsigned count { 1 };
-    const RefPtr<DerefObserver>* bucketAddress { nullptr };
-    const DerefObserver* observedBucket { nullptr };
+    const HashMap<RefPtr<DerefObserver>, int>* map { nullptr };
+    bool observedDeref { false };
+    unsigned observedMapSize { 0 };
+    bool observedContains { true };
 };
 
-TEST(WTF_HashMap, RefPtrNotZeroedBeforeDeref)
+} // namespace
+
+TEST(WTF_HashMap, RefPtrRemovedBeforeDeref)
 {
     auto observer = makeUniqueWithoutRefCountedCheck<DerefObserver>();
 
     HashMap<RefPtr<DerefObserver>, int> map;
     map.add(adoptRef(observer.get()), 5);
+    EXPECT_TRUE(map.contains(observer.get()));
 
-    auto iterator = map.find(observer.get());
-    EXPECT_TRUE(iterator != map.end());
+    observer->map = &map;
 
-    observer->bucketAddress = &iterator->key;
-
-    EXPECT_TRUE(observer->observedBucket == nullptr);
     EXPECT_TRUE(map.remove(observer.get()));
 
-    // It if fine to either leave the old value intact at deletion or already set it to the deleted
-    // value.
-    // A zero would be a incorrect outcome as it would mean we nulled the bucket before an opaque
-    // call.
-    EXPECT_TRUE(observer->observedBucket == observer.get() || observer->observedBucket == RefPtr<DerefObserver>::PtrTraits::hashTableDeletedValue());
+    EXPECT_TRUE(observer->observedDeref);
+    EXPECT_EQ(observer->observedMapSize, 0u);
+    EXPECT_FALSE(observer->observedContains);
     EXPECT_EQ(observer->count, 0u);
 }
 

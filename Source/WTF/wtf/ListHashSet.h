@@ -492,9 +492,9 @@ template<typename HashFunctions>
 struct ListHashSetTranslator {
     template<typename T> static unsigned hash(const T& key) { return HashFunctions::hash(key); }
     template<typename T, typename U> static bool equal(const T& a, const U& b) { return HashFunctions::equal(a->m_value, b); }
-    template<typename T, typename U, typename V> static void translate(std::unique_ptr<T>& location, U&& key, V&&)
+    template<typename T, typename U, typename V> static void translate(std::unique_ptr<T>* location, U&& key, V&&)
     {
-        location = makeUnique<T>(std::forward<U>(key));
+        std::construct_at(location, makeUnique<T>(std::forward<U>(key)));
     }
 };
 

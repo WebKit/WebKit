@@ -437,11 +437,6 @@ struct ActionKeyHash {
         }
         return true;
     }
-    static const bool safeToCompareToEmptyOrDeleted = false;
-};
-
-struct ActionKeyHashTraits : public WTF::CustomHashTraits<ActionKey> {
-    static const bool emptyValueIsZero = true;
 };
 
 } // anonymous namespace.
@@ -453,7 +448,7 @@ void DFAMinimizer::minimize(DFA& dfa)
     // Unlike traditional minimization final states can be differentiated by their action.
     // Instead of creating a single set for the final state, we partition by actions from
     // the start.
-    HashMap<ActionKey, Vector<unsigned>, ActionKeyHash, ActionKeyHashTraits> finalStates;
+    HashMap<ActionKey, Vector<unsigned>, ActionKeyHash, WTF::CustomHashTraits<ActionKey>> finalStates;
     for (unsigned i = 0; i < dfa.nodes.size(); ++i) {
         const DFANode& node = dfa.nodes[i];
         if (node.hasActions()) {

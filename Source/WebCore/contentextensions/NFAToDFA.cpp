@@ -238,7 +238,7 @@ struct NodeIdSetToUniqueNodeIdSetTranslator {
         return a == b.nodeIdSet;
     }
 
-    static void translate(UniqueNodeIdSet& location, const NodeIdSetToUniqueNodeIdSetSource& source, unsigned hash)
+    static void translate(UniqueNodeIdSet* location, const NodeIdSetToUniqueNodeIdSetSource& source, unsigned hash)
     {
         DFANode newDFANode;
 
@@ -260,9 +260,9 @@ struct NodeIdSetToUniqueNodeIdSetTranslator {
 
         unsigned dfaNodeId = source.dfa.nodes.size();
         source.dfa.nodes.append(newDFANode);
-        new (NotNull, &location) UniqueNodeIdSet(source.nodeIdSet, hash, dfaNodeId);
+        new (NotNull, location) UniqueNodeIdSet(source.nodeIdSet, hash, dfaNodeId);
 
-        ASSERT(location.impl());
+        ASSERT(location->impl());
     }
 };
 
