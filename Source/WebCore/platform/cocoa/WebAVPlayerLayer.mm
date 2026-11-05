@@ -302,10 +302,10 @@ NODELETE static bool areFramesEssentiallyEqualWithTolerance(const WebCore::Float
 
     OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "self.bounds: ", WebCore::FloatRect(self.bounds), ", targetVideoFrame: ", _targetVideoFrame, ", transform: [", transform.a, ", ", transform.d, "]");
 
-    NSTimeInterval animationDuration = [CATransaction animationDuration];
-    RunLoop::mainSingleton().dispatch([self, strongSelf = retainPtr(self), animationDuration] {
+    NSTimeInterval resolveDelay = [_videoSublayer animationKeys].count ? [CATransaction animationDuration] + 0.1 : 0;
+    RunLoop::mainSingleton().dispatch([self, strongSelf = retainPtr(self), resolveDelay] {
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
-        [self performSelector:@selector(resolveBounds) withObject:nil afterDelay:animationDuration + 0.1];
+        [self performSelector:@selector(resolveBounds) withObject:nil afterDelay:resolveDelay];
     });
 }
 
