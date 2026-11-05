@@ -244,8 +244,14 @@ LayoutSize BlockIntegrationUtils::layoutOutOfFlowIndependentFormattingContext(co
 
 Layout::IntrinsicWidthConstraints BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes(const RenderBox& box, LayoutUnit borderAndPadding)
 {
-    // Like RenderBox::computeOutOfFlowPositionedLogicalWidthUsing for a fit-content size.
-    return { box.minContentLogicalWidthContribution() - borderAndPadding, box.maxContentLogicalWidthContribution() - borderAndPadding };
+    // Like RenderBox::computeOutOfFlowPositionedLogicalWidthUsing: the contributions for an automatic fit-content size, and for the sizing
+    // keywords the intrinsic sizes of the content (RenderBox::computeIntrinsicKeywordLogicalWidths), as the contributions apply them.
+    CheckedRef style = box.style();
+    if (!style->logicalWidth().isIntrinsic() && !style->logicalMinWidth().isIntrinsic() && !style->logicalMaxWidth().isIntrinsic())
+        return { box.minContentLogicalWidthContribution() - borderAndPadding, box.maxContentLogicalWidthContribution() - borderAndPadding };
+    auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { box.view().frameView().layoutContext(), box };
+    auto [minimum, maximum] = box.computeIntrinsicLogicalWidths();
+    return { minimum, maximum };
 }
 
 Layout::IntrinsicWidthConstraints BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizeContributions(const RenderBox& box)

@@ -467,6 +467,10 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
                 boxDefaultAnchor->blockStart -= blockOffset;
             }
         }
+        // What -webkit-fill-available resolves to in the block axis: the available block size of the containing block, which is not the
+        // inset-modified containing block (RenderBox::computeSizingKeywordLogicalContentHeightUsing).
+        if (CheckedRef style = outOfFlowBox->style(); style->logicalHeight().isFillAvailable() || style->logicalMinHeight().isFillAvailable() || style->logicalMaxHeight().isFillAvailable())
+            outOfFlowContainingBlock.fillAvailableBlockSize = containingBlock.availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
         auto layoutOutOfFlowBox = [&] {
             auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layoutOutOfFlowBox(outOfFlowBox, outOfFlowContainingBlock, boxStaticPosition, boxDefaultAnchor);
             LOG_WITH_STREAM(Layout, stream << "BlockLayout for out-of-flow box (" << outOfFlowBox.ptr() << "): " << result);
