@@ -165,6 +165,11 @@ WebXRWebGLSharedImageSwapchain::WebXRWebGLSharedImageSwapchain(WebGLRenderingCon
 
 WebXRWebGLSharedImageSwapchain::~WebXRWebGLSharedImageSwapchain()
 {
+    releaseResources();
+}
+
+void WebXRWebGLSharedImageSwapchain::releaseResources()
+{
     for (size_t i = 0; i < m_displayImagesSets.size(); ++i)
         releaseTexturesAtIndex(i);
     m_displayImagesSets.clear();
@@ -347,9 +352,15 @@ WebXRWebGLStaticImageSwapchain::WebXRWebGLStaticImageSwapchain(WebGLRenderingCon
 
 WebXRWebGLStaticImageSwapchain::~WebXRWebGLStaticImageSwapchain()
 {
+    releaseResources();
+    m_textures.clear();
+}
+
+void WebXRWebGLStaticImageSwapchain::releaseResources()
+{
+    // Zeroes the texture names but keeps the slots, so currentTexture() still finds an entry.
     for (size_t i = 0; i < m_textures.size(); ++i)
         releaseDisplayImagesAtIndex(i);
-    m_textures.clear();
 }
 
 PlatformGLObject WebXRWebGLStaticImageSwapchain::currentTexture()
@@ -486,15 +497,20 @@ WebXRWebGLMultiTextureSwapchain::WebXRWebGLMultiTextureSwapchain(WebGLRenderingC
 
 WebXRWebGLMultiTextureSwapchain::~WebXRWebGLMultiTextureSwapchain()
 {
+    releaseResources();
+}
+
+void WebXRWebGLMultiTextureSwapchain::releaseResources()
+{
     for (size_t i = 0; i < m_textureSets.size(); ++i)
         releaseTexturesAtIndex(i);
     m_textureSets.clear();
 
     if (RefPtr gl = m_context->graphicsContextGL()) {
-        if (m_blitReadFBO)
-            gl->deleteFramebuffer(m_blitReadFBO);
-        if (m_blitDrawFBO)
-            gl->deleteFramebuffer(m_blitDrawFBO);
+        if (auto framebuffer = std::exchange(m_blitReadFBO, 0))
+            gl->deleteFramebuffer(framebuffer);
+        if (auto framebuffer = std::exchange(m_blitDrawFBO, 0))
+            gl->deleteFramebuffer(framebuffer);
     }
 }
 

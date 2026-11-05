@@ -85,6 +85,12 @@ void RemoteXRProjectionLayerProxy::endFrame()
     UNUSED_VARIABLE(sendResult);
 }
 
+void RemoteXRProjectionLayerProxy::destroy()
+{
+    auto sendResult = send(Messages::RemoteXRProjectionLayer::Destroy());
+    UNUSED_VARIABLE(sendResult);
+}
+
 bool RemoteXRProjectionLayerProxy::isValid() const
 {
     // The Web Process cannot know. RemoteGPU::isValid() answers it for tests.

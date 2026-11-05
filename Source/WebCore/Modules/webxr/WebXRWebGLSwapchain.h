@@ -98,6 +98,10 @@ public:
 
     void clearTextureIfNeeded(const IntRect& viewport, std::optional<GCGLint> slice);
 
+    // Deletes the GL textures and images that back the swapchain. Used when a layer is destroyed while
+    // the page still holds it, so that its graphics memory does not live as long as the layer object.
+    virtual void releaseResources() = 0;
+
 protected:
     WebXRWebGLSwapchain(WebGLRenderingContextBase&, SwapchainTargets, bool clearOnAccess, size_t imageCount);
     virtual void clearTextureRegion(GraphicsContextGL&, const IntRect& viewport, std::optional<GCGLint> slice);
@@ -132,6 +136,8 @@ public:
     void endFrame(PlatformXR::DeviceLayer&) override;
 
     bool allTexturesAreBound() const override;
+
+    void releaseResources() override;
 
 private:
     WebXRWebGLSharedImageSwapchain(WebGLRenderingContextBase&, SwapchainTargets, GCGLenum format, IntSize initialSize, bool clearOnAccess, size_t imageCount);
@@ -177,6 +183,8 @@ public:
 
     GCGLenum textureTarget() const override { return m_imageAttributes.textureType; }
 
+    void releaseResources() override;
+
 private:
     WebXRWebGLStaticImageSwapchain(WebGLRenderingContextBase&, StaticImageAttributes);
     void bindCompositorTexturesForDisplay(GraphicsContextGL&, PlatformXR::FrameData::LayerData&);
@@ -204,6 +212,8 @@ public:
     void endFrame(PlatformXR::DeviceLayer&) override;
 
     bool allTexturesAreBound() const override;
+
+    void releaseResources() override;
 
 protected:
     struct TextureSet {

@@ -69,6 +69,10 @@ public:
 
     virtual void invalidateTextures() { }
 
+    // Releases the graphics resources behind the layer once it is destroyed. The backing must stay
+    // safe to query afterwards, but it is never asked to start or end another frame.
+    virtual void releaseResources() { }
+
     virtual bool isWebGLBacking() const { return false; }
 
 private:

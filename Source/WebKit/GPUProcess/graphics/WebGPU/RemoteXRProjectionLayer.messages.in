@@ -33,6 +33,7 @@ messages -> RemoteXRProjectionLayer Stream {
     void StartFrame(uint64_t frameIndex, MachSendRight colorBuffer, MachSendRight depthBuffer, MachSendRight completionSyncEvent, uint64_t textureIndex, struct PlatformXR::RateMapDescription rateMapDescription) NotStreamEncodable
 #endif
     void EndFrame()
+    void Destroy()
     void Destruct()
 }
 

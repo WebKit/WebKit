@@ -106,6 +106,9 @@ ExceptionOr<Ref<XRGPUSubImage>> XRGPUBinding::getSubImage(XRProjectionLayer& pro
     if (!m_backing)
         return Exception { ExceptionCode::AbortError };
 
+    if (projectionLayer.isDestroyed())
+        return Exception { ExceptionCode::InvalidStateError, "Cannot get a subimage from a destroyed layer."_s };
+
     auto layerData = projectionLayer.layerData();
     if (!layerData)
         return Exception { ExceptionCode::AbortError, "First frame is not ready"_s };

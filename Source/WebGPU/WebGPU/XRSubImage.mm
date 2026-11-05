@@ -155,6 +155,12 @@ Texture* XRSubImage::depthTexture()
     return m_depthTextures.get(m_currentTextureIndex);
 }
 
+void XRSubImage::releaseTextures()
+{
+    m_colorTextures.clear();
+    m_depthTextures.clear();
+}
+
 RefPtr<XRSubImage> XRBinding::getViewSubImage(XRProjectionLayer& projectionLayer)
 {
     return device().getXRViewSubImage(projectionLayer);

@@ -96,6 +96,7 @@ void XRCompositionLayer::destroyResources()
     m_backing->invalidateTextures();
     m_colorTextures.clear();
     m_depthStencilTextures.clear();
+    m_backing->releaseResources();
 }
 
 void XRCompositionLayer::setColorTextures(Vector<RefPtr<WebGLOpaqueTexture>>&& colorTextures)

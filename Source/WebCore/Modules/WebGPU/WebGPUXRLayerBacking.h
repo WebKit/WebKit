@@ -65,6 +65,11 @@ public:
     }
 #endif
 
+    void releaseResources() final
+    {
+        m_projectionLayer->destroy();
+    }
+
 private:
     explicit WebGPUXRLayerBacking(Ref<::WebGPU::XRProjectionLayer>&& projectionLayer)
         : m_projectionLayer(WTF::move(projectionLayer))

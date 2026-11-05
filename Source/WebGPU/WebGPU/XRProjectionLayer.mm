@@ -142,6 +142,22 @@ void XRProjectionLayer::clearDepthTexture()
     queue->commitMTLCommandBuffer(commandBuffer);
 }
 
+void XRProjectionLayer::destroy()
+{
+    [m_colorTextures removeAllObjects];
+    [m_depthTextures removeAllObjects];
+    m_colorTexture = nil;
+    m_depthTexture = nil;
+    m_sharedEvent = std::make_pair(nil, 0);
+    m_rasterizationMapLeft = nil;
+    m_rasterizationMapRight = nil;
+
+    // The device keeps one XR subimage, which wraps the textures of the last layer it was updated
+    // from. Those wrappers retain the same compositor textures; update() rewraps them on demand.
+    if (RefPtr subImage = m_device->getXRViewSubImage())
+        subImage->releaseTextures();
+}
+
 void XRProjectionLayer::setLabel(String&&)
 {
 }

@@ -155,6 +155,13 @@ void XRWebGLLayerBacking::invalidateTextures()
     invalidate(m_depthTextureCache);
 }
 
+void XRWebGLLayerBacking::releaseResources()
+{
+    m_colorSwapchain->releaseResources();
+    if (m_depthSwapchain)
+        m_depthSwapchain->releaseResources();
+}
+
 bool XRWebGLLayerBacking::requiresPerViewColorTextures() const
 {
     // Non-array stereo cube layers use two separate GL_TEXTURE_CUBE_MAP objects (one per eye);

@@ -55,6 +55,7 @@ public:
     void startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples) final;
 #endif
     void endFrame() final;
+    void destroy() final;
     void setLabel(String&&) final { }
     bool isValid() const final;
 

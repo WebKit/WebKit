@@ -89,6 +89,7 @@ public:
     void clearTexturesIfNeeded(const IntRect& viewport, std::optional<uint32_t> slice) final;
 
     void invalidateTextures() final;
+    void releaseResources() final;
 
     bool isWebGLBacking() const final { return true; }
 

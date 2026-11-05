@@ -60,6 +60,7 @@ public:
 
     bool LEGACY_NODELETE isValid() const final;
     void update(const XRProjectionLayer&);
+    void releaseTextures();
     Texture* currentColorTexture();
     Texture* depthTexture();
     RefPtr<WebGPU::Texture> colorTexture() final;

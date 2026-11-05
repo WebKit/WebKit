@@ -81,6 +81,11 @@ void RemoteXRProjectionLayer::endFrame()
 {
 }
 
+void RemoteXRProjectionLayer::destroy()
+{
+    protect(m_backing)->destroy();
+}
+
 void RemoteXRProjectionLayer::stopListeningForIPC()
 {
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteXRProjectionLayer::messageReceiverName(), m_identifier.toUInt64());

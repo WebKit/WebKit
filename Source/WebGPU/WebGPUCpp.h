@@ -1735,6 +1735,9 @@ public:
     virtual void startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples) = 0;
 #endif
     virtual void endFrame() = 0;
+    // Drops the compositor textures the layer holds. Called when the page destroys the layer, which can
+    // happen long before the last reference to it goes away.
+    virtual void destroy() = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
