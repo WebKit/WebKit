@@ -368,16 +368,23 @@ void LineLayout::updateFormattingContextGeometries(LayoutUnit availableLogicalWi
 
 bool LineLayout::rootStyleWillChange(const RenderBlockFlow& root, const Style::ComputedStyle& newStyle)
 {
-    if (!m_inlineContent)
-        return false;
+    if (!m_inlineContent) {
+        // Inline items built for intrinsic sizing are measured with the old style.
+        if (Layout::InlineInvalidation::rootStyleChangeInvalidatesInlineItemsWithoutLines(m_lineDamage.get(), inlineItemsForInvalidation(), root.layoutBox(), newStyle))
+            Layout::InlineInvalidation::inlineItemListWillChange(ensureLineDamage());
+        return true;
+    }
 
     return Layout::InlineInvalidation { ensureLineDamage(), inlineItemsForInvalidation(), m_inlineContent->displayContent() }.rootStyleWillChange(root.layoutBox(), newStyle);
 }
 
 bool LineLayout::styleWillChange(const RenderElement& renderer, const Style::ComputedStyle& newStyle, Style::Difference diff)
 {
-    if (!m_inlineContent)
-        return false;
+    if (!m_inlineContent) {
+        if (Layout::InlineInvalidation::styleChangeInvalidatesInlineItemsWithoutLines(m_lineDamage.get(), inlineItemsForInvalidation(), renderer.layoutBox(), newStyle))
+            Layout::InlineInvalidation::inlineItemListWillChange(ensureLineDamage());
+        return true;
+    }
 
     return Layout::InlineInvalidation { ensureLineDamage(), inlineItemsForInvalidation(), m_inlineContent->displayContent() }.styleWillChange(renderer.layoutBox(), newStyle, diff);
 }
