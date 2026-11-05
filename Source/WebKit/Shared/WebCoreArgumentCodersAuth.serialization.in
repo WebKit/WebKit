@@ -486,19 +486,14 @@ struct WebCore::PhoneNumberPossessionRequest {
     WebCore::PhoneNumberPossessionResponseType desiredResponseType;
     String phoneNumberSuffixHint;
     std::optional<WebCore::BufferSource> pnpiSuffixHint;
-    std::optional<WebCore::BufferSource> knownCarrierPubKey;
-};
-
-struct WebCore::AggregatorResponseDataFields {
-    RefPtr<JSC::ArrayBuffer> encryptedProviderErrorInfo;
-    RefPtr<JSC::ArrayBuffer> encryptedZKPEncryptionKey;
+    String pinnedCarrier;
 };
 
 struct WebCore::PhoneNumberPossessionResponse {
-    Ref<JSC::ArrayBuffer> encryptedPNPIWithProof;
-    std::optional<WebCore::AggregatorResponseDataFields> aggregatorData;
-    RefPtr<JSC::ArrayBuffer> carrierPubKey;
-    RefPtr<JSC::ArrayBuffer> encryptedMSISDN;
+    Ref<JSC::ArrayBuffer> encryptedResult;
+    String carrierDomain;
+    uint16_t carrierConfigurationID;
+    RefPtr<JSC::ArrayBuffer> encryptedDecryptionKeyOrError;
     Ref<JSC::ArrayBuffer> clientDataJSON;
     RefPtr<JSC::ArrayBuffer> portingZKP;
 };
