@@ -70,7 +70,6 @@ enum class BlockAvoidanceReason : uint8_t {
     RootIsInLineGridContext,
     RootHasColumns,
     RootHasAlignContent,
-    RootHasMarginTrim,
     RootHasStableBothEdgesScrollbarGutter,
     ContentHasFloat,
     ContentHasOutOfFlowBox,
@@ -92,7 +91,6 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasAnchorPositioning,
     ContentHasOutOfFlowSelfAlignment,
     ContentHasOutOfFlowScrollContainer,
-    ContentHasMarginTrim,
     ContentHasLineClamp,
     ContentHasTextBoxTrim,
     ContentHasLineGrid,
@@ -167,8 +165,6 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::RootHasColumns;
     if (!style->alignContent().isNormal())
         return BlockAvoidanceReason::RootHasAlignContent;
-    if (!style->marginTrim().isNone())
-        return BlockAvoidanceReason::RootHasMarginTrim;
     if (style->scrollbarGutter().isStableBothEdges())
         return BlockAvoidanceReason::RootHasStableBothEdgesScrollbarGutter;
     return { };
@@ -647,8 +643,6 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
 
     // The layout state has no entry for the boxes inside the block formatting context, which is where line-clamp, text-box-trim and line
     // grids reach the inline content below them.
-    if (!style->marginTrim().isNone())
-        return BlockAvoidanceReason::ContentHasMarginTrim;
     if (!style->maxLines().isAuto())
         return BlockAvoidanceReason::ContentHasLineClamp;
     // FIXME: An out-of-flow box with text-box-trim, which is laid out on its own, after its last formatted line would have to be known.
@@ -752,8 +746,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "root: columns"_s;
     case BlockAvoidanceReason::RootHasAlignContent:
         return "root: align-content"_s;
-    case BlockAvoidanceReason::RootHasMarginTrim:
-        return "root: margin-trim"_s;
     case BlockAvoidanceReason::RootHasStableBothEdgesScrollbarGutter:
         return "root: scrollbar-gutter both-edges"_s;
     case BlockAvoidanceReason::ContentHasFloat:
@@ -796,8 +788,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "out-of-flow self alignment"_s;
     case BlockAvoidanceReason::ContentHasOutOfFlowScrollContainer:
         return "out-of-flow scroll container"_s;
-    case BlockAvoidanceReason::ContentHasMarginTrim:
-        return "margin-trim"_s;
     case BlockAvoidanceReason::ContentHasLineClamp:
         return "line-clamp"_s;
     case BlockAvoidanceReason::ContentHasTextBoxTrim:

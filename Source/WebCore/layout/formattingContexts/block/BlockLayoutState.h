@@ -54,6 +54,13 @@ struct TextBoxTrimState {
     CheckedPtr<const RenderBlockFlow> lastFormattedLineRoot;
 };
 
+struct BlockEndChildren {
+    Vector<size_t> collapsedThroughChildren;
+    std::optional<size_t> lastChild;
+    // Relative to the border box of the block container.
+    LayoutUnit contentBoxLogicalTop;
+};
+
 struct ContainingBlockState {
     CheckedRef<const RenderBox> blockContainer;
     // The geometry of the block container itself, completed once its content is laid out (not used for the root).
@@ -82,6 +89,15 @@ struct ContainingBlockState {
     size_t lineCountThroughLastBlockLevelBox { 0 };
     // Its text-box-trim applies to its content only, and what its ancestors' did for the content after it is restored at its end.
     std::optional<TextBoxTrimState> textBoxTrimStateToRestore { };
+    // Its margin-trim discards the margins at the block-start edge of its content; whether an ancestor's still does after it, unless something
+    // separated margins in it.
+    std::optional<bool> trimsMarginsAtBlockStartEdgeToRestore { };
+    // The children at the block-end edge of its content in the result: those whose margins collapsed through them after the last one that
+    // did not, and that one, which margin-trim at the block-end edge places again.
+    BlockEndChildren blockEndChildren { };
+    // The adjoining margins at the start of its content, which margin-trim at the block-end edge goes back to when all of its content collapses
+    // through it.
+    std::optional<AdjoiningMargins> adjoiningMarginsAtContentStart { };
 
     LayoutUnit contentBoxLogicalTop() const { return *borderBoxLogicalTop + borderAndPaddingBefore; }
 };
@@ -171,6 +187,10 @@ public:
         }
         return nullptr;
     }
+    // The children at the block-end edge of the content of the boxes in the result whose block-end margin collapses with them, which margin-trim
+    // at the block-end edge of an ancestor places again.
+    Vector<std::pair<size_t, BlockEndChildren>>& blockEndChildren() LIFETIME_BOUND { return m_blockEndChildren; }
+
     using LastFormattedLineRoots = Vector<std::pair<CheckedRef<const RenderBox>, CheckedRef<const RenderBlockFlow>>>;
     const LastFormattedLineRoots& lastFormattedLineRoots() const LIFETIME_BOUND { return m_lastFormattedLineRoots; }
     void setLastFormattedLineRoots(LastFormattedLineRoots&& lastFormattedLineRoots) { m_lastFormattedLineRoots = WTF::move(lastFormattedLineRoots); }
@@ -192,6 +212,7 @@ private:
     Style::TextBoxEdge m_textBoxEdge;
     TextBoxTrimState m_textBoxTrimState;
     LastFormattedLineRoots m_lastFormattedLineRoots;
+    Vector<std::pair<size_t, BlockEndChildren>> m_blockEndChildren;
     std::optional<LayoutUnit> m_intrusiveInitialLetterLogicalBottom;
     std::optional<LineGrid> m_lineGrid;
     MarginState m_marginState;
