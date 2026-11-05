@@ -141,8 +141,6 @@ public:
 
     const IntegrationUtils& integrationUtils() const LIFETIME_BOUND { return m_integrationUtils; }
 
-    const BoxGeometry& geometryForGridItem(const ElementBox&) const LIFETIME_BOUND;
-
     const WritingMode writingMode() const { return m_gridBox->style().writingMode(); }
 
     // FIXME: This is only here because the integration code needs to know the

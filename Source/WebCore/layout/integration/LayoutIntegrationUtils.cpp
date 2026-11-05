@@ -114,10 +114,28 @@ GridItemBorderAndPadding IntegrationUtils::borderAndPaddingForGridItem(const Ele
     return gridItemBorderAndPadding;
 }
 
-void IntegrationUtils::layoutGridItem(const ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize, std::optional<LayoutUnit> gridAreaBlockSize) const
+void IntegrationUtils::layoutGridItem(const ElementBox& box, GridItemOverridingBorderBoxSize overridingSize, LayoutUnit gridAreaInlineSize, std::optional<LayoutUnit> gridAreaBlockSize) const
 {
     ASSERT(box.isGridItem());
-    LayoutIntegration::layoutGridItemWithFormattingContext(box, overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight, gridAreaInlineSize, gridAreaBlockSize, const_cast<LayoutState&>(m_globalLayoutState.get()));
+
+    if (box.writingMode().isOrthogonal(box.parent().writingMode())) {
+        // The renderer's overriding sizes are along the item's own axes, so the overriding size would be swapped here.
+        // Orthogonal items stay on legacy through GridAvoidanceReason::GridItemHasUnsupportedWritingMode.
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return;
+    }
+
+    LayoutIntegration::layoutGridItemWithFormattingContext(box, overridingSize.inlineAxis, overridingSize.blockAxis, gridAreaInlineSize, gridAreaBlockSize, const_cast<LayoutState&>(m_globalLayoutState.get()));
+}
+
+// The laid-out size comes from the renderer: BoxGeometry double-counts a fieldset's legend border and keeps a collapsed table's padding.
+LayoutUnit IntegrationUtils::borderBoxSizeForGridItem(const ElementBox& box, LogicalBoxAxis axis) const
+{
+    ASSERT(box.isGridItem());
+    CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
+
+    auto containerIsHorizontal = box.parent().writingMode().isHorizontal();
+    return containerIsHorizontal == (axis == LogicalBoxAxis::Inline) ? renderer->borderBoxWidth() : renderer->borderBoxHeight();
 }
 
 std::optional<LayoutUnit> IntegrationUtils::firstLineBaselineForGridItem(const ElementBox& box) const
@@ -197,7 +215,7 @@ LayoutUnit IntegrationUtils::blockIntrinsicSizeForGridItem(const ElementBox& box
     // height must not resolve against it (see layoutGridItemWithFormattingContext()).
     LayoutIntegration::layoutGridItemWithFormattingContext(box, { }, { }, gridAreaInlineSize, { }, const_cast<LayoutState&>(m_globalLayoutState.get()));
 
-    return m_globalLayoutState->geometryForBox(box).borderBoxHeight();
+    return borderBoxSizeForGridItem(box, LogicalBoxAxis::Block);
 }
 
 LayoutUnit IntegrationUtils::minContentLogicalWidthContribution(const ElementBox& box) const

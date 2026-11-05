@@ -216,12 +216,6 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
         layoutContext.collapsedColumnTracksList, layoutContext.collapsedRowTracksList, baselines };
 }
 
-const BoxGeometry& GridFormattingContext::geometryForGridItem(const ElementBox& layoutBox) const
-{
-    ASSERT(layoutBox.isGridItem());
-    return layoutState().geometryForBox(layoutBox);
-}
-
 BoxGeometry& GridFormattingContext::geometryForGridItem(const ElementBox& layoutBox)
 {
     ASSERT(layoutBox.isGridItem());

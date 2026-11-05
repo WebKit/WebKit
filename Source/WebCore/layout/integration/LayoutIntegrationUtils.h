@@ -46,6 +46,12 @@ struct GridItemBorderAndPadding {
     LayoutUnit blockAxis;
 };
 
+// The overriding border-box size to lay a grid item out at, along the grid container's axes. An absent block size lets the item size itself.
+struct GridItemOverridingBorderBoxSize {
+    LayoutUnit inlineAxis;
+    std::optional<LayoutUnit> blockAxis;
+};
+
 enum class GridItemIntrinsicSize : uint8_t {
     MinContent,
     MaxContent,
@@ -59,7 +65,9 @@ public:
 
     void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth = { }, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight = { }) const;
     GridItemBorderAndPadding borderAndPaddingForGridItem(const ElementBox&, std::optional<LayoutUnit> gridAreaInlineSize) const;
-    void layoutGridItem(const ElementBox&, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize, std::optional<LayoutUnit> gridAreaBlockSize) const;
+    void layoutGridItem(const ElementBox&, GridItemOverridingBorderBoxSize, LayoutUnit gridAreaInlineSize, std::optional<LayoutUnit> gridAreaBlockSize) const;
+    // The grid item's laid-out border-box size along the grid container's `axis`. Call it after the item's layout.
+    LayoutUnit borderBoxSizeForGridItem(const ElementBox&, LogicalBoxAxis) const;
     // Border-box sizes along the grid container's inline / block axis. The stretched block size is the container-block size the item is stretched to; it only
     // applies to inline contributions, where it can be transferred through the item's preferred aspect ratio.
     LayoutUnit inlineIntrinsicSizeForGridItem(const ElementBox&, GridItemIntrinsicSize, std::optional<LayoutUnit> gridAreaInlineSize, std::optional<LayoutUnit> gridAreaBlockSize, std::optional<LayoutUnit> stretchedBlockSize) const;

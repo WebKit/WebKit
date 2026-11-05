@@ -300,7 +300,7 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
                 gridAreaInlineSize, gridAreaBlockSize, formattingContext, inlineMargins, blockMargins);
             usedInlineSizes.append(inlineUsedSize);
             usedBlockSizes.append(blockUsedSize);
-            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, blockUsedSize, gridAreaInlineSize, gridAreaBlockSize);
+            integrationUtils.layoutGridItem(gridItem.layoutBox(), { inlineUsedSize, blockUsedSize }, gridAreaInlineSize, gridAreaBlockSize);
             continue;
         }
 
@@ -313,12 +313,11 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
         bool hasFitContentBlockSize = GridLayoutUtils::hasFitContentBlockSize(gridItem);
         if (!hasFitContentBlockSize) {
             auto usedBlockSize = GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctions, blockBorderAndPadding, gridAreaBlockSize, formattingContext, gridAreaInlineSize, blockMargins);
-            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, usedBlockSize, gridAreaInlineSize, gridAreaBlockSize);
+            integrationUtils.layoutGridItem(gridItem.layoutBox(), { inlineUsedSize, usedBlockSize }, gridAreaInlineSize, gridAreaBlockSize);
             usedBlockSizes.append(usedBlockSize);
         } else {
-            integrationUtils.layoutGridItem(gridItem.layoutBox(), inlineUsedSize, { }, gridAreaInlineSize, gridAreaBlockSize);
-            // Add the border and padding sums to the content box height the item's layout produced.
-            usedBlockSizes.append(formattingContext.geometryForGridItem(gridItem.layoutBox()).contentBoxHeight() + blockBorderAndPadding);
+            integrationUtils.layoutGridItem(gridItem.layoutBox(), { inlineUsedSize, { } }, gridAreaInlineSize, gridAreaBlockSize);
+            usedBlockSizes.append(integrationUtils.borderBoxSizeForGridItem(gridItem.layoutBox(), LogicalBoxAxis::Block));
         }
     }
     return { usedInlineSizes, usedBlockSizes };
