@@ -345,17 +345,17 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
         if (CheckedPtr element = dynamicDowncast<RenderElement>(*descendant); element && element != &box && element->isBlockLevelBox() && element->parent()->isInlineBox())
             return false;
         // The own formatting context of a box laid out through the render tree measures it (RenderBox::minContentLogicalWidthContribution),
-        // and so does the inline formatting context for an atomic inline-level box (BoxGeometryUpdater::updateLayoutBoxDimensions).
-        // FIXME: An orthogonal box, which the render tree lays out to measure it (RenderBox::computeIntrinsicLogicalHeight), a percentage
-        // block size, which an aspect ratio turns into an inline size against the block size of the containing block, and percentage
-        // padding, which resolves against its inline size, both of which the block formatting context writes once all of it is laid out.
-        // And scrollbars that come or go with the layout, which RenderBlock::scrollbarsChanged makes the containing blocks measure again.
+        // and so does the inline formatting context for an atomic inline-level box (BoxGeometryUpdater::updateLayoutBoxDimensions). A percentage
+        // block size, which an aspect ratio turns into an inline size, resolves against the block size of the containing block from its style
+        // there too (RenderBox::computePercentageLogicalHeight).
+        // FIXME: An orthogonal box, which the render tree lays out to measure it (RenderBox::computeIntrinsicLogicalHeight), and percentage
+        // padding, which resolves against its inline size, which the block formatting context writes once all of it is laid out. And scrollbars
+        // that come or go with the layout, which RenderBlock::scrollbarsChanged makes the containing blocks measure again.
         if (descendant != &box && (isLaidOutThroughRenderTree(*descendant) || isAtomicInlineLevelBox(*descendant))) {
             CheckedRef leaf = downcast<RenderBox>(*descendant);
             CheckedRef style = leaf->style();
             auto writingMode = leaf->writingMode();
-            if (writingMode.isOrthogonal(leaf->parent()->writingMode()) || Layout::BlockFormattingUtils::hasPercentageBlockSize(leaf, writingMode)
-                || style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated())
+            if (writingMode.isOrthogonal(leaf->parent()->writingMode()) || style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated())
                 return false;
             auto hasAutoScrollbars = [](const RenderBox& box) {
                 CheckedRef style = box.style();
