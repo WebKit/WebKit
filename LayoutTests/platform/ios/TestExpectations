@@ -385,9 +385,6 @@ media/video-supports-fullscreen.html [ Skip ]
 # Encrypted Media Extensions are not enabled
 media/encrypted-media/
 
-# FIXME: <rdar://problem/6512037> LayoutTests: Enable printing tests once printing is supported on iOS
-printing
-
 # Tests that rely on custom domain names.
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/nav-cancelation-2.sub.html [ Skip ]
 imported/w3c/web-platform-tests/cookies/attributes/domain.sub.html [ Skip ]
