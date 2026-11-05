@@ -6,11 +6,11 @@ class StyleSheetQuirkHelpers {
         internals.setTopDocumentHostForQuirks("127.0.0.1");
     }
 
-    static installQuirk(matches, queryContains)
+    static installQuirk(matches, queryContains, styleSheet = this.sheetColoringTargetGreenAndDeclaringOneFontFace)
     {
         const quirk = {
             matches: [matches],
-            behaviors: [{ id: "NeedsStyleSheetInjectedQuirk", styleSheet: this.sheetColoringTargetGreenAndDeclaringOneFontFace }]
+            behaviors: [{ id: "NeedsStyleSheetInjectedQuirk", styleSheet }]
         };
         if (queryContains)
             quirk.queryContains = queryContains;
