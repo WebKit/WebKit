@@ -4,14 +4,38 @@ PASS HMAC with SHA-1 verification
 PASS HMAC with SHA-256 verification
 PASS HMAC with SHA-384 verification
 PASS HMAC with SHA-512 verification
+PASS HMAC with SHA-1 verification with altered signature during call
+PASS HMAC with SHA-256 verification with altered signature during call
+PASS HMAC with SHA-384 verification with altered signature during call
+PASS HMAC with SHA-512 verification with altered signature during call
 PASS HMAC with SHA-1 verification with altered signature after call
 PASS HMAC with SHA-256 verification with altered signature after call
 PASS HMAC with SHA-384 verification with altered signature after call
 PASS HMAC with SHA-512 verification with altered signature after call
+PASS HMAC with SHA-1 verification with transferred signature during call
+PASS HMAC with SHA-256 verification with transferred signature during call
+PASS HMAC with SHA-384 verification with transferred signature during call
+PASS HMAC with SHA-512 verification with transferred signature during call
+PASS HMAC with SHA-1 verification with transferred signature after call
+PASS HMAC with SHA-256 verification with transferred signature after call
+PASS HMAC with SHA-384 verification with transferred signature after call
+PASS HMAC with SHA-512 verification with transferred signature after call
+PASS HMAC with SHA-1 with altered plaintext during call
+PASS HMAC with SHA-256 with altered plaintext during call
+PASS HMAC with SHA-384 with altered plaintext during call
+PASS HMAC with SHA-512 with altered plaintext during call
 PASS HMAC with SHA-1 with altered plaintext after call
 PASS HMAC with SHA-256 with altered plaintext after call
 PASS HMAC with SHA-384 with altered plaintext after call
 PASS HMAC with SHA-512 with altered plaintext after call
+PASS HMAC with SHA-1 with transferred plaintext during call
+PASS HMAC with SHA-256 with transferred plaintext during call
+PASS HMAC with SHA-384 with transferred plaintext during call
+PASS HMAC with SHA-512 with transferred plaintext during call
+PASS HMAC with SHA-1 with transferred plaintext after call
+PASS HMAC with SHA-256 with transferred plaintext after call
+PASS HMAC with SHA-384 with transferred plaintext after call
+PASS HMAC with SHA-512 with transferred plaintext after call
 PASS HMAC with SHA-1 no verify usage
 PASS HMAC with SHA-256 no verify usage
 PASS HMAC with SHA-384 no verify usage

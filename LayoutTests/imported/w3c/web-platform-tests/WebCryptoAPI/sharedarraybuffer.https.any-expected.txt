@@ -1,0 +1,10 @@
+
+PASS digest() data is a SharedArrayBuffer
+PASS encrypt() data is a SharedArrayBuffer
+PASS encrypt() AesGcmParams.iv is a SharedArrayBuffer
+PASS encrypt() AesGcmParams.additionalData is a SharedArrayBuffer
+PASS digest() data is a Uint8Array(SharedArrayBuffer)
+PASS encrypt() data is a Uint8Array(SharedArrayBuffer)
+PASS encrypt() AesGcmParams.iv is a Uint8Array(SharedArrayBuffer)
+PASS encrypt() AesGcmParams.additionalData is a Uint8Array(SharedArrayBuffer)
+

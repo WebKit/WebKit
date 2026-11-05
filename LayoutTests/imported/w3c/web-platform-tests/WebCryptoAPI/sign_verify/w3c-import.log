@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.https.any.js
@@ -19,15 +17,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa_vectors.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_curve25519.https.any.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_curve448.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_points.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_points.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_vectors.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/hmac.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/hmac.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/hmac_vectors.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/mac.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs_vectors.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss_vectors.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/signature.js

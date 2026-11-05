@@ -1,4 +1,334 @@
 
+PASS Bad usages: importKey(spki, Ed25519, true, [encrypt])
+PASS Bad usages: importKey(spki, Ed25519, false, [encrypt])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, encrypt])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, encrypt])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, verify, encrypt])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, verify, encrypt])
+PASS Bad usages: importKey(spki, Ed25519, true, [decrypt])
+PASS Bad usages: importKey(spki, Ed25519, false, [decrypt])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, decrypt])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, decrypt])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, verify, decrypt])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, verify, decrypt])
+PASS Bad usages: importKey(spki, Ed25519, true, [sign])
+PASS Bad usages: importKey(spki, Ed25519, false, [sign])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, sign])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, sign])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, verify, sign])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, verify, sign])
+PASS Bad usages: importKey(spki, Ed25519, true, [wrapKey])
+PASS Bad usages: importKey(spki, Ed25519, false, [wrapKey])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, wrapKey])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, wrapKey])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, verify, wrapKey])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, verify, wrapKey])
+PASS Bad usages: importKey(spki, Ed25519, true, [unwrapKey])
+PASS Bad usages: importKey(spki, Ed25519, false, [unwrapKey])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, unwrapKey])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, unwrapKey])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, verify, unwrapKey])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, verify, unwrapKey])
+PASS Bad usages: importKey(spki, Ed25519, true, [deriveKey])
+PASS Bad usages: importKey(spki, Ed25519, false, [deriveKey])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, deriveKey])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, deriveKey])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, verify, deriveKey])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, verify, deriveKey])
+PASS Bad usages: importKey(spki, Ed25519, true, [deriveBits])
+PASS Bad usages: importKey(spki, Ed25519, false, [deriveBits])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, deriveBits])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, deriveBits])
+PASS Bad usages: importKey(spki, Ed25519, true, [verify, verify, deriveBits])
+PASS Bad usages: importKey(spki, Ed25519, false, [verify, verify, deriveBits])
+FAIL Bad usages: importKey(spki, Ed25519, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, false, [verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, true, [verify, verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, false, [verify, verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, false, [verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, true, [verify, verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, false, [verify, verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, false, [verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, true, [verify, verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, false, [verify, verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, false, [verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, true, [verify, verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, Ed25519, false, [verify, verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [encrypt])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [encrypt])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, encrypt])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, encrypt])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, sign, encrypt])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, sign, encrypt])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [decrypt])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [decrypt])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, decrypt])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, decrypt])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, sign, decrypt])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, sign, decrypt])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [verify])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [verify])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, verify])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, verify])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, sign, verify])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, sign, verify])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [wrapKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [wrapKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, wrapKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, wrapKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, sign, wrapKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, sign, wrapKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [unwrapKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [unwrapKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, unwrapKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, unwrapKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, sign, unwrapKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, sign, unwrapKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [deriveKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [deriveKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, deriveKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, deriveKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, sign, deriveKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, sign, deriveKey])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [deriveBits])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [deriveBits])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, deriveBits])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, deriveBits])
+PASS Bad usages: importKey(pkcs8, Ed25519, true, [sign, sign, deriveBits])
+PASS Bad usages: importKey(pkcs8, Ed25519, false, [sign, sign, deriveBits])
+FAIL Bad usages: importKey(pkcs8, Ed25519, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, false, [sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, true, [sign, sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, false, [sign, sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, false, [sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, true, [sign, sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, false, [sign, sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, false, [sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, true, [sign, sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, false, [sign, sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, false, [sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, true, [sign, sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, Ed25519, false, [sign, sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+PASS Bad usages: importKey(raw, Ed25519, true, [encrypt])
+PASS Bad usages: importKey(raw, Ed25519, false, [encrypt])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, encrypt])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, encrypt])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, verify, encrypt])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, verify, encrypt])
+PASS Bad usages: importKey(raw, Ed25519, true, [decrypt])
+PASS Bad usages: importKey(raw, Ed25519, false, [decrypt])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, decrypt])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, decrypt])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, verify, decrypt])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, verify, decrypt])
+PASS Bad usages: importKey(raw, Ed25519, true, [sign])
+PASS Bad usages: importKey(raw, Ed25519, false, [sign])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, sign])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, sign])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, verify, sign])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, verify, sign])
+PASS Bad usages: importKey(raw, Ed25519, true, [wrapKey])
+PASS Bad usages: importKey(raw, Ed25519, false, [wrapKey])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, wrapKey])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, wrapKey])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, verify, wrapKey])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, verify, wrapKey])
+PASS Bad usages: importKey(raw, Ed25519, true, [unwrapKey])
+PASS Bad usages: importKey(raw, Ed25519, false, [unwrapKey])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, unwrapKey])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, unwrapKey])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, verify, unwrapKey])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, verify, unwrapKey])
+PASS Bad usages: importKey(raw, Ed25519, true, [deriveKey])
+PASS Bad usages: importKey(raw, Ed25519, false, [deriveKey])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, deriveKey])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, deriveKey])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, verify, deriveKey])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, verify, deriveKey])
+PASS Bad usages: importKey(raw, Ed25519, true, [deriveBits])
+PASS Bad usages: importKey(raw, Ed25519, false, [deriveBits])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, deriveBits])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, deriveBits])
+PASS Bad usages: importKey(raw, Ed25519, true, [verify, verify, deriveBits])
+PASS Bad usages: importKey(raw, Ed25519, false, [verify, verify, deriveBits])
+FAIL Bad usages: importKey(raw, Ed25519, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, false, [verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, true, [verify, verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, false, [verify, verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, false, [verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, true, [verify, verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, false, [verify, verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, false, [verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, true, [verify, verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, false, [verify, verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, false, [verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, true, [verify, verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, Ed25519, false, [verify, verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [encrypt])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [encrypt])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, encrypt])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, encrypt])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, sign, encrypt])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, sign, encrypt])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [decrypt])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [decrypt])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, decrypt])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, decrypt])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, sign, decrypt])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, sign, decrypt])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [verify])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [verify])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, verify])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, verify])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, sign, verify])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, sign, verify])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [wrapKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [wrapKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, wrapKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, wrapKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, sign, wrapKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, sign, wrapKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [unwrapKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [unwrapKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, unwrapKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, unwrapKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, sign, unwrapKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, sign, unwrapKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [deriveKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [deriveKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, deriveKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, deriveKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, sign, deriveKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, sign, deriveKey])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [deriveBits])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [deriveBits])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, deriveBits])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, deriveBits])
+PASS Bad usages: importKey(jwk(private), Ed25519, true, [sign, sign, deriveBits])
+PASS Bad usages: importKey(jwk(private), Ed25519, false, [sign, sign, deriveBits])
+FAIL Bad usages: importKey(jwk(private), Ed25519, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, false, [sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, true, [sign, sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, false, [sign, sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, false, [sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, true, [sign, sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, false, [sign, sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, false, [sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, true, [sign, sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, false, [sign, sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, false, [sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, true, [sign, sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), Ed25519, false, [sign, sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [encrypt])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [encrypt])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, encrypt])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, encrypt])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, verify, encrypt])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, verify, encrypt])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [decrypt])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [decrypt])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, decrypt])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, decrypt])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, verify, decrypt])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, verify, decrypt])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [sign])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [sign])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, sign])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, sign])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, verify, sign])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, verify, sign])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [wrapKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [wrapKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, wrapKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, wrapKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, verify, wrapKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, verify, wrapKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [unwrapKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [unwrapKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, unwrapKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, unwrapKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, verify, unwrapKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, verify, unwrapKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [deriveKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [deriveKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, deriveKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, deriveKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, verify, deriveKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, verify, deriveKey])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [deriveBits])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [deriveBits])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, deriveBits])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, deriveBits])
+PASS Bad usages: importKey(jwk (public) , Ed25519, true, [verify, verify, deriveBits])
+PASS Bad usages: importKey(jwk (public) , Ed25519, false, [verify, verify, deriveBits])
+FAIL Bad usages: importKey(jwk (public) , Ed25519, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, false, [verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, true, [verify, verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, false, [verify, verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, false, [verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, true, [verify, verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, false, [verify, verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, false, [verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, true, [verify, verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, false, [verify, verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, false, [verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, true, [verify, verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , Ed25519, false, [verify, verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(spki, {name: Ed25519}, true, [encrypt])
 PASS Bad usages: importKey(spki, {name: Ed25519}, false, [encrypt])
 PASS Bad usages: importKey(spki, {name: Ed25519}, true, [verify, encrypt])
@@ -41,6 +371,30 @@ PASS Bad usages: importKey(spki, {name: Ed25519}, true, [verify, deriveBits])
 PASS Bad usages: importKey(spki, {name: Ed25519}, false, [verify, deriveBits])
 PASS Bad usages: importKey(spki, {name: Ed25519}, true, [verify, verify, deriveBits])
 PASS Bad usages: importKey(spki, {name: Ed25519}, false, [verify, verify, deriveBits])
+FAIL Bad usages: importKey(spki, {name: Ed25519}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, false, [verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, true, [verify, verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, false, [verify, verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, false, [verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, true, [verify, verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, false, [verify, verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, false, [verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, true, [verify, verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, false, [verify, verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, false, [verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, true, [verify, verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: Ed25519}, false, [verify, verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(pkcs8, {name: Ed25519}, true, [encrypt])
 PASS Bad usages: importKey(pkcs8, {name: Ed25519}, false, [encrypt])
 PASS Bad usages: importKey(pkcs8, {name: Ed25519}, true, [sign, encrypt])
@@ -83,6 +437,30 @@ PASS Bad usages: importKey(pkcs8, {name: Ed25519}, true, [sign, deriveBits])
 PASS Bad usages: importKey(pkcs8, {name: Ed25519}, false, [sign, deriveBits])
 PASS Bad usages: importKey(pkcs8, {name: Ed25519}, true, [sign, sign, deriveBits])
 PASS Bad usages: importKey(pkcs8, {name: Ed25519}, false, [sign, sign, deriveBits])
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, false, [sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, true, [sign, sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, false, [sign, sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, false, [sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, true, [sign, sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, false, [sign, sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, false, [sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, true, [sign, sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, false, [sign, sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, false, [sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, true, [sign, sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: Ed25519}, false, [sign, sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(raw, {name: Ed25519}, true, [encrypt])
 PASS Bad usages: importKey(raw, {name: Ed25519}, false, [encrypt])
 PASS Bad usages: importKey(raw, {name: Ed25519}, true, [verify, encrypt])
@@ -125,6 +503,30 @@ PASS Bad usages: importKey(raw, {name: Ed25519}, true, [verify, deriveBits])
 PASS Bad usages: importKey(raw, {name: Ed25519}, false, [verify, deriveBits])
 PASS Bad usages: importKey(raw, {name: Ed25519}, true, [verify, verify, deriveBits])
 PASS Bad usages: importKey(raw, {name: Ed25519}, false, [verify, verify, deriveBits])
+FAIL Bad usages: importKey(raw, {name: Ed25519}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, false, [verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, true, [verify, verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, false, [verify, verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, false, [verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, true, [verify, verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, false, [verify, verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, false, [verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, true, [verify, verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, false, [verify, verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, false, [verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, true, [verify, verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: Ed25519}, false, [verify, verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(jwk(private), {name: Ed25519}, true, [encrypt])
 PASS Bad usages: importKey(jwk(private), {name: Ed25519}, false, [encrypt])
 PASS Bad usages: importKey(jwk(private), {name: Ed25519}, true, [sign, encrypt])
@@ -167,6 +569,30 @@ PASS Bad usages: importKey(jwk(private), {name: Ed25519}, true, [sign, deriveBit
 PASS Bad usages: importKey(jwk(private), {name: Ed25519}, false, [sign, deriveBits])
 PASS Bad usages: importKey(jwk(private), {name: Ed25519}, true, [sign, sign, deriveBits])
 PASS Bad usages: importKey(jwk(private), {name: Ed25519}, false, [sign, sign, deriveBits])
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, false, [sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, true, [sign, sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, false, [sign, sign, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, false, [sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, true, [sign, sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, false, [sign, sign, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, false, [sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, true, [sign, sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, false, [sign, sign, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, false, [sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, true, [sign, sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: Ed25519}, false, [sign, sign, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [encrypt])
 PASS Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [encrypt])
 PASS Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [verify, encrypt])
@@ -209,10 +635,58 @@ PASS Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [verify, derive
 PASS Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [verify, deriveBits])
 PASS Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [verify, verify, deriveBits])
 PASS Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [verify, verify, deriveBits])
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [verify, verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [verify, verify, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [verify, verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [verify, verify, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [verify, verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [verify, verify, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, true, [verify, verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk (public) , {name: Ed25519}, false, [verify, verify, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+PASS Empty usages: importKey(pkcs8, Ed25519, true, [])
+PASS Empty usages: importKey(pkcs8, Ed25519, false, [])
+PASS Empty usages: importKey(jwk(private), Ed25519, true, [])
+PASS Empty usages: importKey(jwk(private), Ed25519, false, [])
 PASS Empty usages: importKey(pkcs8, {name: Ed25519}, true, [])
 PASS Empty usages: importKey(pkcs8, {name: Ed25519}, false, [])
 PASS Empty usages: importKey(jwk(private), {name: Ed25519}, true, [])
 PASS Empty usages: importKey(jwk(private), {name: Ed25519}, false, [])
+PASS Bad key length: importKey(spki, Ed25519, true, [verify])
+PASS Bad key length: importKey(spki, Ed25519, false, [verify])
+PASS Bad key length: importKey(spki, Ed25519, true, [verify, verify])
+PASS Bad key length: importKey(spki, Ed25519, false, [verify, verify])
+PASS Bad key length: importKey(pkcs8, Ed25519, true, [sign])
+PASS Bad key length: importKey(pkcs8, Ed25519, false, [sign])
+PASS Bad key length: importKey(pkcs8, Ed25519, true, [sign, sign])
+PASS Bad key length: importKey(pkcs8, Ed25519, false, [sign, sign])
+PASS Bad key length: importKey(raw, Ed25519, true, [verify])
+PASS Bad key length: importKey(raw, Ed25519, false, [verify])
+PASS Bad key length: importKey(raw, Ed25519, true, [verify, verify])
+PASS Bad key length: importKey(raw, Ed25519, false, [verify, verify])
+PASS Bad key length: importKey(jwk(private), Ed25519, true, [sign])
+PASS Bad key length: importKey(jwk(private), Ed25519, false, [sign])
+PASS Bad key length: importKey(jwk(private), Ed25519, true, [sign, sign])
+PASS Bad key length: importKey(jwk(private), Ed25519, false, [sign, sign])
+PASS Bad key length: importKey(jwk (public) , Ed25519, true, [verify])
+PASS Bad key length: importKey(jwk (public) , Ed25519, false, [verify])
+PASS Bad key length: importKey(jwk (public) , Ed25519, true, [verify, verify])
+PASS Bad key length: importKey(jwk (public) , Ed25519, false, [verify, verify])
 PASS Bad key length: importKey(spki, {name: Ed25519}, true, [verify])
 PASS Bad key length: importKey(spki, {name: Ed25519}, false, [verify])
 PASS Bad key length: importKey(spki, {name: Ed25519}, true, [verify, verify])
@@ -233,6 +707,18 @@ PASS Bad key length: importKey(jwk (public) , {name: Ed25519}, true, [verify])
 PASS Bad key length: importKey(jwk (public) , {name: Ed25519}, false, [verify])
 PASS Bad key length: importKey(jwk (public) , {name: Ed25519}, true, [verify, verify])
 PASS Bad key length: importKey(jwk (public) , {name: Ed25519}, false, [verify, verify])
+PASS Missing JWK 'x' parameter: importKey(jwk(private), Ed25519, true, [sign])
+PASS Missing JWK 'x' parameter: importKey(jwk(private), Ed25519, false, [sign])
+PASS Missing JWK 'x' parameter: importKey(jwk(private), Ed25519, true, [sign, sign])
+PASS Missing JWK 'x' parameter: importKey(jwk(private), Ed25519, false, [sign, sign])
+PASS Missing JWK 'kty' parameter: importKey(jwk(private), Ed25519, true, [sign])
+PASS Missing JWK 'kty' parameter: importKey(jwk(private), Ed25519, false, [sign])
+PASS Missing JWK 'kty' parameter: importKey(jwk(private), Ed25519, true, [sign, sign])
+PASS Missing JWK 'kty' parameter: importKey(jwk(private), Ed25519, false, [sign, sign])
+PASS Missing JWK 'crv' parameter: importKey(jwk (public) , Ed25519, true, [verify])
+PASS Missing JWK 'crv' parameter: importKey(jwk (public) , Ed25519, false, [verify])
+PASS Missing JWK 'crv' parameter: importKey(jwk (public) , Ed25519, true, [verify, verify])
+PASS Missing JWK 'crv' parameter: importKey(jwk (public) , Ed25519, false, [verify, verify])
 PASS Missing JWK 'x' parameter: importKey(jwk(private), {name: Ed25519}, true, [sign])
 PASS Missing JWK 'x' parameter: importKey(jwk(private), {name: Ed25519}, false, [sign])
 PASS Missing JWK 'x' parameter: importKey(jwk(private), {name: Ed25519}, true, [sign, sign])
@@ -245,6 +731,8 @@ PASS Missing JWK 'crv' parameter: importKey(jwk (public) , {name: Ed25519}, true
 PASS Missing JWK 'crv' parameter: importKey(jwk (public) , {name: Ed25519}, false, [verify])
 PASS Missing JWK 'crv' parameter: importKey(jwk (public) , {name: Ed25519}, true, [verify, verify])
 PASS Missing JWK 'crv' parameter: importKey(jwk (public) , {name: Ed25519}, false, [verify, verify])
+PASS Invalid key pair: importKey(jwk(private), Ed25519, true, [sign])
+PASS Invalid key pair: importKey(jwk(private), Ed25519, true, [sign, sign])
 PASS Invalid key pair: importKey(jwk(private), {name: Ed25519}, true, [sign])
 PASS Invalid key pair: importKey(jwk(private), {name: Ed25519}, true, [sign, sign])
 PASS Missing algorithm name: importKey(spki, {}, true, verify)
@@ -257,14 +745,26 @@ PASS Missing algorithm name: importKey(jwk(private), {}, true, sign)
 PASS Missing algorithm name: importKey(jwk(private), {}, false, sign)
 PASS Missing algorithm name: importKey(jwk (public) , {}, true, verify)
 PASS Missing algorithm name: importKey(jwk (public) , {}, false, verify)
+PASS Invalid 'kty' field: importKey(jwk(private), Ed25519, true, [sign])
+PASS Invalid 'kty' field: importKey(jwk (public) , Ed25519, true, [verify])
 PASS Invalid 'kty' field: importKey(jwk(private), {name: Ed25519}, true, [sign])
 PASS Invalid 'kty' field: importKey(jwk (public) , {name: Ed25519}, true, [verify])
+PASS Import from a non-extractable: importKey(jwk(private), Ed25519, true, [sign])
+PASS Import from a non-extractable: importKey(jwk (public) , Ed25519, true, [verify])
 PASS Import from a non-extractable: importKey(jwk(private), {name: Ed25519}, true, [sign])
 PASS Import from a non-extractable: importKey(jwk (public) , {name: Ed25519}, true, [verify])
+PASS Invalid 'use' field: importKey(jwk(private), Ed25519, true, [sign])
+PASS Invalid 'use' field: importKey(jwk (public) , Ed25519, true, [verify])
 PASS Invalid 'use' field: importKey(jwk(private), {name: Ed25519}, true, [sign])
 PASS Invalid 'use' field: importKey(jwk (public) , {name: Ed25519}, true, [verify])
+PASS Invalid 'crv' field: importKey(jwk(private), Ed25519, true, [sign])
+PASS Invalid 'crv' field: importKey(jwk (public) , Ed25519, true, [verify])
 PASS Invalid 'crv' field: importKey(jwk(private), {name: Ed25519}, true, [sign])
 PASS Invalid 'crv' field: importKey(jwk (public) , {name: Ed25519}, true, [verify])
+PASS Invalid 'alg' field 'ed25519': importKey(jwk(private), Ed25519, true, [sign])
+PASS Invalid 'alg' field 'ED25519': importKey(jwk(private), Ed25519, true, [sign])
+PASS Invalid 'alg' field 'ed25519': importKey(jwk (public) , Ed25519, true, [verify])
+PASS Invalid 'alg' field 'ED25519': importKey(jwk (public) , Ed25519, true, [verify])
 PASS Invalid 'alg' field 'ed25519': importKey(jwk(private), {name: Ed25519}, true, [sign])
 PASS Invalid 'alg' field 'ED25519': importKey(jwk(private), {name: Ed25519}, true, [sign])
 PASS Invalid 'alg' field 'ed25519': importKey(jwk (public) , {name: Ed25519}, true, [verify])

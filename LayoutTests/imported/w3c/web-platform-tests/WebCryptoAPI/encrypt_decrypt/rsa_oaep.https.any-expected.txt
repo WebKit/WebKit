@@ -12,18 +12,54 @@ PASS RSA-OAEP with SHA-1 and a label decryption
 PASS RSA-OAEP with SHA-256 and a label decryption
 PASS RSA-OAEP with SHA-384 and a label decryption
 PASS RSA-OAEP with SHA-512 and a label decryption
-PASS RSA-OAEP with SHA-1 and no label decryption with altered ciphertext
-PASS RSA-OAEP with SHA-256 and no label decryption with altered ciphertext
-PASS RSA-OAEP with SHA-384 and no label decryption with altered ciphertext
-PASS RSA-OAEP with SHA-512 and no label decryption with altered ciphertext
-PASS RSA-OAEP with SHA-1 and empty label decryption with altered ciphertext
-PASS RSA-OAEP with SHA-256 and empty label decryption with altered ciphertext
-PASS RSA-OAEP with SHA-384 and empty label decryption with altered ciphertext
-PASS RSA-OAEP with SHA-512 and empty label decryption with altered ciphertext
-PASS RSA-OAEP with SHA-1 and a label decryption with altered ciphertext
-PASS RSA-OAEP with SHA-256 and a label decryption with altered ciphertext
-PASS RSA-OAEP with SHA-384 and a label decryption with altered ciphertext
-PASS RSA-OAEP with SHA-512 and a label decryption with altered ciphertext
+PASS RSA-OAEP with SHA-1 and no label decryption with altered ciphertext during call
+PASS RSA-OAEP with SHA-256 and no label decryption with altered ciphertext during call
+PASS RSA-OAEP with SHA-384 and no label decryption with altered ciphertext during call
+PASS RSA-OAEP with SHA-512 and no label decryption with altered ciphertext during call
+PASS RSA-OAEP with SHA-1 and empty label decryption with altered ciphertext during call
+PASS RSA-OAEP with SHA-256 and empty label decryption with altered ciphertext during call
+PASS RSA-OAEP with SHA-384 and empty label decryption with altered ciphertext during call
+PASS RSA-OAEP with SHA-512 and empty label decryption with altered ciphertext during call
+PASS RSA-OAEP with SHA-1 and a label decryption with altered ciphertext during call
+PASS RSA-OAEP with SHA-256 and a label decryption with altered ciphertext during call
+PASS RSA-OAEP with SHA-384 and a label decryption with altered ciphertext during call
+PASS RSA-OAEP with SHA-512 and a label decryption with altered ciphertext during call
+PASS RSA-OAEP with SHA-1 and no label decryption with altered ciphertext after call
+PASS RSA-OAEP with SHA-256 and no label decryption with altered ciphertext after call
+PASS RSA-OAEP with SHA-384 and no label decryption with altered ciphertext after call
+PASS RSA-OAEP with SHA-512 and no label decryption with altered ciphertext after call
+PASS RSA-OAEP with SHA-1 and empty label decryption with altered ciphertext after call
+PASS RSA-OAEP with SHA-256 and empty label decryption with altered ciphertext after call
+PASS RSA-OAEP with SHA-384 and empty label decryption with altered ciphertext after call
+PASS RSA-OAEP with SHA-512 and empty label decryption with altered ciphertext after call
+PASS RSA-OAEP with SHA-1 and a label decryption with altered ciphertext after call
+PASS RSA-OAEP with SHA-256 and a label decryption with altered ciphertext after call
+PASS RSA-OAEP with SHA-384 and a label decryption with altered ciphertext after call
+PASS RSA-OAEP with SHA-512 and a label decryption with altered ciphertext after call
+PASS RSA-OAEP with SHA-1 and no label decryption with transferred ciphertext during call
+PASS RSA-OAEP with SHA-256 and no label decryption with transferred ciphertext during call
+PASS RSA-OAEP with SHA-384 and no label decryption with transferred ciphertext during call
+PASS RSA-OAEP with SHA-512 and no label decryption with transferred ciphertext during call
+PASS RSA-OAEP with SHA-1 and empty label decryption with transferred ciphertext during call
+PASS RSA-OAEP with SHA-256 and empty label decryption with transferred ciphertext during call
+PASS RSA-OAEP with SHA-384 and empty label decryption with transferred ciphertext during call
+PASS RSA-OAEP with SHA-512 and empty label decryption with transferred ciphertext during call
+PASS RSA-OAEP with SHA-1 and a label decryption with transferred ciphertext during call
+PASS RSA-OAEP with SHA-256 and a label decryption with transferred ciphertext during call
+PASS RSA-OAEP with SHA-384 and a label decryption with transferred ciphertext during call
+PASS RSA-OAEP with SHA-512 and a label decryption with transferred ciphertext during call
+PASS RSA-OAEP with SHA-1 and no label decryption with transferred ciphertext after call
+PASS RSA-OAEP with SHA-256 and no label decryption with transferred ciphertext after call
+PASS RSA-OAEP with SHA-384 and no label decryption with transferred ciphertext after call
+PASS RSA-OAEP with SHA-512 and no label decryption with transferred ciphertext after call
+PASS RSA-OAEP with SHA-1 and empty label decryption with transferred ciphertext after call
+PASS RSA-OAEP with SHA-256 and empty label decryption with transferred ciphertext after call
+PASS RSA-OAEP with SHA-384 and empty label decryption with transferred ciphertext after call
+PASS RSA-OAEP with SHA-512 and empty label decryption with transferred ciphertext after call
+PASS RSA-OAEP with SHA-1 and a label decryption with transferred ciphertext after call
+PASS RSA-OAEP with SHA-256 and a label decryption with transferred ciphertext after call
+PASS RSA-OAEP with SHA-384 and a label decryption with transferred ciphertext after call
+PASS RSA-OAEP with SHA-512 and a label decryption with transferred ciphertext after call
 PASS RSA-OAEP with SHA-1 and no label using publicKey to decrypt
 PASS RSA-OAEP with SHA-256 and no label using publicKey to decrypt
 PASS RSA-OAEP with SHA-384 and no label using publicKey to decrypt
@@ -48,18 +84,54 @@ PASS RSA-OAEP with SHA-1 and a label no decrypt usage
 PASS RSA-OAEP with SHA-256 and a label no decrypt usage
 PASS RSA-OAEP with SHA-384 and a label no decrypt usage
 PASS RSA-OAEP with SHA-512 and a label no decrypt usage
-PASS RSA-OAEP with SHA-1 and no label with altered plaintext
-PASS RSA-OAEP with SHA-256 and no label with altered plaintext
-PASS RSA-OAEP with SHA-384 and no label with altered plaintext
-PASS RSA-OAEP with SHA-512 and no label with altered plaintext
-PASS RSA-OAEP with SHA-1 and empty label with altered plaintext
-PASS RSA-OAEP with SHA-256 and empty label with altered plaintext
-PASS RSA-OAEP with SHA-384 and empty label with altered plaintext
-PASS RSA-OAEP with SHA-512 and empty label with altered plaintext
-PASS RSA-OAEP with SHA-1 and a label with altered plaintext
-PASS RSA-OAEP with SHA-256 and a label with altered plaintext
-PASS RSA-OAEP with SHA-384 and a label with altered plaintext
-PASS RSA-OAEP with SHA-512 and a label with altered plaintext
+PASS RSA-OAEP with SHA-1 and no label with altered plaintext during call
+PASS RSA-OAEP with SHA-256 and no label with altered plaintext during call
+PASS RSA-OAEP with SHA-384 and no label with altered plaintext during call
+PASS RSA-OAEP with SHA-512 and no label with altered plaintext during call
+PASS RSA-OAEP with SHA-1 and empty label with altered plaintext during call
+PASS RSA-OAEP with SHA-256 and empty label with altered plaintext during call
+PASS RSA-OAEP with SHA-384 and empty label with altered plaintext during call
+PASS RSA-OAEP with SHA-512 and empty label with altered plaintext during call
+PASS RSA-OAEP with SHA-1 and a label with altered plaintext during call
+PASS RSA-OAEP with SHA-256 and a label with altered plaintext during call
+PASS RSA-OAEP with SHA-384 and a label with altered plaintext during call
+PASS RSA-OAEP with SHA-512 and a label with altered plaintext during call
+PASS RSA-OAEP with SHA-1 and no label with altered plaintext after call
+PASS RSA-OAEP with SHA-256 and no label with altered plaintext after call
+PASS RSA-OAEP with SHA-384 and no label with altered plaintext after call
+PASS RSA-OAEP with SHA-512 and no label with altered plaintext after call
+PASS RSA-OAEP with SHA-1 and empty label with altered plaintext after call
+PASS RSA-OAEP with SHA-256 and empty label with altered plaintext after call
+PASS RSA-OAEP with SHA-384 and empty label with altered plaintext after call
+PASS RSA-OAEP with SHA-512 and empty label with altered plaintext after call
+PASS RSA-OAEP with SHA-1 and a label with altered plaintext after call
+PASS RSA-OAEP with SHA-256 and a label with altered plaintext after call
+PASS RSA-OAEP with SHA-384 and a label with altered plaintext after call
+PASS RSA-OAEP with SHA-512 and a label with altered plaintext after call
+FAIL RSA-OAEP with SHA-1 and no label with transferred plaintext during call assert_unreached: encrypt error for test RSA-OAEP with SHA-1 and no label: 'The operation failed for an operation-specific reason' Reached unreachable code
+FAIL RSA-OAEP with SHA-256 and no label with transferred plaintext during call assert_unreached: encrypt error for test RSA-OAEP with SHA-256 and no label: 'The operation failed for an operation-specific reason' Reached unreachable code
+FAIL RSA-OAEP with SHA-384 and no label with transferred plaintext during call assert_unreached: encrypt error for test RSA-OAEP with SHA-384 and no label: 'The operation failed for an operation-specific reason' Reached unreachable code
+FAIL RSA-OAEP with SHA-512 and no label with transferred plaintext during call assert_unreached: encrypt error for test RSA-OAEP with SHA-512 and no label: 'The operation failed for an operation-specific reason' Reached unreachable code
+FAIL RSA-OAEP with SHA-1 and empty label with transferred plaintext during call assert_unreached: encrypt error for test RSA-OAEP with SHA-1 and empty label: 'The operation failed for an operation-specific reason' Reached unreachable code
+FAIL RSA-OAEP with SHA-256 and empty label with transferred plaintext during call assert_unreached: encrypt error for test RSA-OAEP with SHA-256 and empty label: 'The operation failed for an operation-specific reason' Reached unreachable code
+FAIL RSA-OAEP with SHA-384 and empty label with transferred plaintext during call assert_unreached: encrypt error for test RSA-OAEP with SHA-384 and empty label: 'The operation failed for an operation-specific reason' Reached unreachable code
+FAIL RSA-OAEP with SHA-512 and empty label with transferred plaintext during call assert_unreached: encrypt error for test RSA-OAEP with SHA-512 and empty label: 'The operation failed for an operation-specific reason' Reached unreachable code
+FAIL RSA-OAEP with SHA-1 and a label with transferred plaintext during call assert_unreached: encrypt error for test RSA-OAEP with SHA-1 and a label: 'The operation failed for an operation-specific reason' Reached unreachable code
+FAIL RSA-OAEP with SHA-256 and a label with transferred plaintext during call assert_unreached: encrypt error for test RSA-OAEP with SHA-256 and a label: 'The operation failed for an operation-specific reason' Reached unreachable code
+FAIL RSA-OAEP with SHA-384 and a label with transferred plaintext during call assert_unreached: encrypt error for test RSA-OAEP with SHA-384 and a label: 'The operation failed for an operation-specific reason' Reached unreachable code
+FAIL RSA-OAEP with SHA-512 and a label with transferred plaintext during call assert_unreached: encrypt error for test RSA-OAEP with SHA-512 and a label: 'The operation failed for an operation-specific reason' Reached unreachable code
+PASS RSA-OAEP with SHA-1 and no label with transferred plaintext after call
+PASS RSA-OAEP with SHA-256 and no label with transferred plaintext after call
+PASS RSA-OAEP with SHA-384 and no label with transferred plaintext after call
+PASS RSA-OAEP with SHA-512 and no label with transferred plaintext after call
+PASS RSA-OAEP with SHA-1 and empty label with transferred plaintext after call
+PASS RSA-OAEP with SHA-256 and empty label with transferred plaintext after call
+PASS RSA-OAEP with SHA-384 and empty label with transferred plaintext after call
+PASS RSA-OAEP with SHA-512 and empty label with transferred plaintext after call
+PASS RSA-OAEP with SHA-1 and a label with transferred plaintext after call
+PASS RSA-OAEP with SHA-256 and a label with transferred plaintext after call
+PASS RSA-OAEP with SHA-384 and a label with transferred plaintext after call
+PASS RSA-OAEP with SHA-512 and a label with transferred plaintext after call
 PASS RSA-OAEP with SHA-1 and no label
 PASS RSA-OAEP with SHA-256 and no label
 PASS RSA-OAEP with SHA-384 and no label

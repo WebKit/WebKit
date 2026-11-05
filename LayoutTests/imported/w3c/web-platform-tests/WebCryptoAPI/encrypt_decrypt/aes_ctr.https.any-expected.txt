@@ -3,15 +3,33 @@ PASS setup
 PASS AES-CTR 128-bit key
 PASS AES-CTR 192-bit key
 PASS AES-CTR 256-bit key
-PASS AES-CTR 128-bit key with altered plaintext
-PASS AES-CTR 192-bit key with altered plaintext
-PASS AES-CTR 256-bit key with altered plaintext
+PASS AES-CTR 128-bit key with altered plaintext during call
+PASS AES-CTR 192-bit key with altered plaintext during call
+PASS AES-CTR 256-bit key with altered plaintext during call
+PASS AES-CTR 128-bit key with altered plaintext after call
+PASS AES-CTR 192-bit key with altered plaintext after call
+PASS AES-CTR 256-bit key with altered plaintext after call
+PASS AES-CTR 128-bit key with transferred plaintext during call
+PASS AES-CTR 192-bit key with transferred plaintext during call
+PASS AES-CTR 256-bit key with transferred plaintext during call
+PASS AES-CTR 128-bit key with transferred plaintext after call
+PASS AES-CTR 192-bit key with transferred plaintext after call
+PASS AES-CTR 256-bit key with transferred plaintext after call
 PASS AES-CTR 128-bit key decryption
 PASS AES-CTR 192-bit key decryption
 PASS AES-CTR 256-bit key decryption
-PASS AES-CTR 128-bit key decryption with altered ciphertext
-PASS AES-CTR 192-bit key decryption with altered ciphertext
-PASS AES-CTR 256-bit key decryption with altered ciphertext
+PASS AES-CTR 128-bit key decryption with altered ciphertext during call
+PASS AES-CTR 192-bit key decryption with altered ciphertext during call
+PASS AES-CTR 256-bit key decryption with altered ciphertext during call
+PASS AES-CTR 128-bit key decryption with altered ciphertext after call
+PASS AES-CTR 192-bit key decryption with altered ciphertext after call
+PASS AES-CTR 256-bit key decryption with altered ciphertext after call
+PASS AES-CTR 128-bit key decryption with transferred ciphertext during call
+PASS AES-CTR 192-bit key decryption with transferred ciphertext during call
+PASS AES-CTR 256-bit key decryption with transferred ciphertext during call
+PASS AES-CTR 128-bit key decryption with transferred ciphertext after call
+PASS AES-CTR 192-bit key decryption with transferred ciphertext after call
+PASS AES-CTR 256-bit key decryption with transferred ciphertext after call
 PASS AES-CTR 128-bit key without encrypt usage
 PASS AES-CTR 192-bit key without encrypt usage
 PASS AES-CTR 256-bit key without encrypt usage
