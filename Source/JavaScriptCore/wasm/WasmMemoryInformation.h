@@ -54,10 +54,11 @@ public:
         ASSERT(!*this);
     }
 
-    MemoryInformation(PageCount initial, PageCount maximum, bool isShared, bool isImport, bool isMemory64);
+    MemoryInformation(PageCount initial, PageCount maximum, bool isShared, bool isImport, bool isMemory64, uint32_t pageSize = PageCount::pageSize);
 
     PageCount initial() const { return m_initial; }
     PageCount maximum() const { return m_maximum; }
+    uint32_t pageSize() const { return m_pageSize; }
     bool isShared() const { return m_isShared; }
     bool isImport() const { return m_isImport; }
     AddressType addressType() const { return m_addressType; }
@@ -71,6 +72,7 @@ private:
     PageCount m_maximum { };
     bool m_isShared { false };
     bool m_isImport { false };
+    uint32_t m_pageSize { PageCount::pageSize };
     AddressType m_addressType;
 };
 

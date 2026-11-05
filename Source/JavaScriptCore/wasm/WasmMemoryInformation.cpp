@@ -35,11 +35,12 @@
 
 namespace JSC { namespace Wasm {
 
-MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum, bool isShared, bool isImport, bool isMemory64)
+MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum, bool isShared, bool isImport, bool isMemory64, uint32_t pageSize)
     : m_initial(initial)
     , m_maximum(maximum)
     , m_isShared(isShared)
     , m_isImport(isImport)
+    , m_pageSize(pageSize)
     , m_addressType(isMemory64)
 {
     RELEASE_ASSERT(!!m_initial);
