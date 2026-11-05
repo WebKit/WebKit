@@ -50,6 +50,8 @@ public:
     void setNeedsToUpdateChildren() final { m_childrenDirty = true; }
 
     RefPtr<AXRemoteFrame> remoteFrame() const { return m_remoteFrame; }
+    // Binds the remote frame child to the process now hosting the frame, after the frame moved to another process.
+    void rebindRemoteFrame();
 
     String ownerDebugDescription() const;
     String extraDebugInfo() const final;
@@ -118,6 +120,9 @@ private:
     bool canSetFocusAttribute() const final;
     bool isFocused() const final;
     void addLocalFrameChild();
+#if PLATFORM(COCOA)
+    void bindRemoteFrame(AXRemoteFrame&);
+#endif
     void addRemoteFrameChild();
     const AccessibilityScrollView* frameRootScrollView() const;
 

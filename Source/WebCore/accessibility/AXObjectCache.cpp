@@ -2000,6 +2000,19 @@ void AXObjectCache::handleRecomputeCellSlots(AccessibilityNodeObject& axTable)
 #endif
 }
 
+void AXObjectCache::remoteFrameDidChangeProcess(RemoteFrame& frame)
+{
+    // The remote frame child is still bound to the process the frame left, so bind it to the new one.
+    RefPtr view = frame.view();
+    if (RefPtr scrollView = dynamicDowncast<AccessibilityScrollView>(view ? get(*view) : nullptr))
+        scrollView->rebindRemoteFrame();
+}
+
+void AXObjectCache::repostFocusedUIElementChanged()
+{
+    platformHandleFocusedUIElementChanged(nullptr, protect(focusedObjectForLocalFrame()).get());
+}
+
 void AXObjectCache::onRemoteFrameInitialized(AXRemoteFrame& remoteFrame)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

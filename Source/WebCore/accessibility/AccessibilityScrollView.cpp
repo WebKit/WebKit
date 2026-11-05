@@ -370,6 +370,58 @@ void AccessibilityScrollView::addLocalFrameChild()
 #endif // ENABLE(ACCESSIBILITY_LOCAL_FRAME)
 }
 
+#if PLATFORM(COCOA)
+void AccessibilityScrollView::bindRemoteFrame(AXRemoteFrame& remoteFrame)
+{
+    RefPtr scrollFrameView = dynamicDowncast<RemoteFrameView>(m_scrollView);
+    if (!scrollFrameView)
+        return;
+
+    // Generate a new token and pass it back to the other remote frame so it can bind these objects together.
+    Ref scrollFrame = scrollFrameView->frame();
+    scrollFrame->bindRemoteAccessibilityFrames(getpid(), remoteFrame.generateRemoteToken(), [this, protectedThis = Ref { *this }, weakScrollFrame = WeakPtr { scrollFrame.get() }, protectedRemoteFrame = Ref { remoteFrame }](AccessibilityRemoteToken token, int processIdentifier) mutable {
+        protectedRemoteFrame->initializePlatformElementWithRemoteToken(token, processIdentifier);
+
+        RefPtr scrollFrame = weakScrollFrame;
+        if (!scrollFrame)
+            return;
+
+        // Update the remote side with the offset so it can calculate frames correctly.
+        // This is the position of this iframe element within its parent frame,
+        // adjusted for scroll via contentsToView().
+        auto iframePosition = flooredIntPoint(elementRect().location());
+        RefPtr parentAXScrollView = frameRootScrollView();
+        if (RefPtr parentScrollView = parentAXScrollView ? parentAXScrollView->scrollView() : nullptr)
+            iframePosition = parentScrollView->contentsToView(iframePosition);
+        scrollFrame->updateRemoteFrameOffsetInMainFrame(iframePosition);
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+        scrollFrame->updateRemoteFrameAccessibilityInheritedState(hostingFrameInheritedState());
+
+        // Request the screen position for the UI process to update asynchronously.
+        if (RefPtr page = this->page())
+            page->chrome().client().requestFrameScreenPosition(scrollFrame->frameID());
+#endif
+    });
+}
+#endif // PLATFORM(COCOA)
+
+void AccessibilityScrollView::rebindRemoteFrame()
+{
+#if PLATFORM(COCOA)
+    RefPtr remoteFrame = m_remoteFrame;
+    if (!remoteFrame)
+        return;
+
+#if PLATFORM(MAC)
+    // Release the registration for the process the frame left. Binding registers the process it moved to.
+    if (RefPtr remoteFrameView = dynamicDowncast<RemoteFrameView>(m_scrollView))
+        protect(remoteFrameView->frame())->unbindRemoteAccessibilityFrames(remoteFrame->remoteFramePID());
+#endif
+    bindRemoteFrame(*remoteFrame);
+#endif
+}
+
 void AccessibilityScrollView::addRemoteFrameChild()
 {
     RefPtr scrollFrameView = dynamicDowncast<RemoteFrameView>(m_scrollView.get());
@@ -390,33 +442,8 @@ void AccessibilityScrollView::addRemoteFrameChild()
         addChild(*remoteFrame);
 
 #if PLATFORM(COCOA)
-        // Generate a new token and pass it back to the other remote frame so it can bind these objects together.
-        Ref scrollFrame = scrollFrameView->frame();
-        remoteFrame->setFrameID(scrollFrame->frameID());
-        scrollFrame->bindRemoteAccessibilityFrames(getpid(), remoteFrame->generateRemoteToken(), [this, protectedThis = Ref { *this }, weakScrollFrame = WeakPtr { scrollFrame.get() }, protectedRemoteFrame = Ref { *remoteFrame }] (AccessibilityRemoteToken token, int processIdentifier) mutable {
-            protectedRemoteFrame->initializePlatformElementWithRemoteToken(token, processIdentifier);
-
-            RefPtr scrollFrame = weakScrollFrame.get();
-            if (!scrollFrame)
-                return;
-
-            // Update the remote side with the offset so it can calculate frames correctly.
-            // This is the position of this iframe element within its parent frame,
-            // adjusted for scroll via contentsToView().
-            auto iframePosition = flooredIntPoint(elementRect().location());
-            RefPtr parentAXScrollView = frameRootScrollView();
-            if (RefPtr parentScrollView = parentAXScrollView ? parentAXScrollView->scrollView() : nullptr)
-                iframePosition = parentScrollView->contentsToView(iframePosition);
-            scrollFrame->updateRemoteFrameOffsetInMainFrame(iframePosition);
-
-#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-            scrollFrame->updateRemoteFrameAccessibilityInheritedState(hostingFrameInheritedState());
-
-            // Request the screen position for the UI process to update asynchronously.
-            if (RefPtr page = this->page())
-                page->chrome().client().requestFrameScreenPosition(scrollFrame->frameID());
-#endif
-        });
+        remoteFrame->setFrameID(scrollFrameView->frame().frameID());
+        bindRemoteFrame(*remoteFrame);
 #endif // PLATFORM(COCOA)
     } else {
         remoteFrame->setParent(this);
