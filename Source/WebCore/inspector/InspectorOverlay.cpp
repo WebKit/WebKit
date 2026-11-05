@@ -281,25 +281,22 @@ static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, co
     context.strokePath(path);
 }
 
-static void drawFragmentHighlight(GraphicsContext& context, Node& node, const InspectorOverlay::Highlight::Config& highlightConfig, InspectorOverlay::Highlight::Bounds& bounds)
+static void drawFragmentHighlight(GraphicsContext& context, const Vector<FloatQuad>& quads, const InspectorOverlay::Highlight& highlight, InspectorOverlay::Highlight::Bounds& bounds)
 {
-    InspectorOverlay::Highlight highlight;
-    buildNodeHighlight(node, highlightConfig, highlight, InspectorOverlay::CoordinateSystem::Document);
-
     FloatQuad marginQuad;
     FloatQuad borderQuad;
     FloatQuad paddingQuad;
     FloatQuad contentQuad;
 
-    size_t size = highlight.quads.size();
+    size_t size = quads.size();
     if (size >= 1)
-        marginQuad = highlight.quads[0];
+        marginQuad = quads[0];
     if (size >= 2)
-        borderQuad = highlight.quads[1];
+        borderQuad = quads[1];
     if (size >= 3)
-        paddingQuad = highlight.quads[2];
+        paddingQuad = quads[2];
     if (size >= 4)
-        contentQuad = highlight.quads[3];
+        contentQuad = quads[3];
 
     if (!marginQuad.boundingBoxIsEmpty() && marginQuad != borderQuad && highlight.marginColor.isVisible())
         drawOutlinedQuadWithClip(context, marginQuad, borderQuad, highlight.marginColor, bounds);
@@ -314,93 +311,192 @@ static void drawFragmentHighlight(GraphicsContext& context, Node& node, const In
         drawOutlinedQuad(context, contentQuad, highlight.contentColor, highlight.contentOutlineColor, bounds);
 }
 
-static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOverlay::Highlight::Bounds& bounds)
+static void drawFragmentHighlight(GraphicsContext& context, Node& node, const InspectorOverlay::Highlight::Config& highlightConfig, InspectorOverlay::Highlight::Bounds& bounds)
+{
+    InspectorOverlay::Highlight highlight;
+    buildNodeHighlight(node, highlightConfig, highlight, InspectorOverlay::CoordinateSystem::Document);
+    drawFragmentHighlight(context, highlight.quads, highlight, bounds);
+}
+
+template<typename MapPoint>
+static Path mapPathPoints(const Path& path, const MapPoint& mapPoint)
+{
+    Path newPath;
+    path.applyElements([&](const PathElement& pathElement) {
+        switch (pathElement.type) {
+        case PathElement::Type::MoveToPoint:
+            newPath.moveTo(mapPoint(pathElement.points[0]));
+            break;
+
+        case PathElement::Type::AddLineToPoint:
+            newPath.addLineTo(mapPoint(pathElement.points[0]));
+            break;
+
+        case PathElement::Type::AddCurveToPoint:
+            newPath.addBezierCurveTo(mapPoint(pathElement.points[0]), mapPoint(pathElement.points[1]), mapPoint(pathElement.points[2]));
+            break;
+
+        case PathElement::Type::AddQuadCurveToPoint:
+            newPath.addQuadCurveTo(mapPoint(pathElement.points[0]), mapPoint(pathElement.points[1]));
+            break;
+
+        case PathElement::Type::CloseSubpath:
+            newPath.closeSubpath();
+            break;
+        }
+    });
+    return newPath;
+}
+
+static std::optional<InspectorOverlay::Highlight::ShapeOutside> buildShapeOutsideHighlight(Node& node)
 {
     CheckedPtr renderer = node.renderer();
     if (!renderer || renderer->isSkippedContent() || !is<RenderBox>(renderer))
-        return;
+        return std::nullopt;
 
     const ShapeOutsideInfo* shapeOutsideInfo = downcast<RenderBox>(renderer.get())->shapeOutsideInfo();
     if (!shapeOutsideInfo)
-        return;
+        return std::nullopt;
 
     RefPtr containingFrame = protect(node.document())->frame();
     if (!containingFrame)
-        return;
+        return std::nullopt;
 
     RefPtr containingView = containingFrame->view();
     if (!containingView)
-        return;
+        return std::nullopt;
 
     // See buildRendererHighlight(): only read under CoordinateSystem::View, which frames never reach.
     RefPtr containingPage = containingFrame->page();
     RefPtr mainView = containingPage ? protect(containingPage->mainFrame())->virtualView() : nullptr;
 
-    static constexpr auto shapeHighlightColor = SRGBA<uint8_t> { 96, 82, 127, 204 };
-
     LayoutShape::DisplayPaths paths;
     protect(shapeOutsideInfo->computedShape())->buildDisplayPaths(paths);
+
+    InspectorOverlay::Highlight::ShapeOutside shapeOutside;
 
     if (paths.shape.isEmpty()) {
         LayoutRect shapeBounds = shapeOutsideInfo->computedShapePhysicalBoundingBox();
         // FIXME: Remove suppression once rdar://189998444 is fixed.
         SUPPRESS_MEMORY_UNSAFE_CAST FloatQuad shapeQuad = renderer->localToAbsoluteQuad(FloatRect(shapeBounds));
         contentsQuadToCoordinateSystem(mainView, *containingView, shapeQuad, InspectorOverlay::CoordinateSystem::Document);
-        drawOutlinedQuad(context, shapeQuad, shapeHighlightColor, Color::transparentBlack, bounds);
+        shapeOutside.boundingQuad = shapeQuad;
+        return shapeOutside;
+    }
+
+    const auto localToRoot = [&](const FloatPoint& point) {
+        return containingView->contentsToRootView(renderer->localToAbsolute(shapeOutsideInfo->shapeToRendererPoint(point)));
+    };
+
+    if (paths.marginShape.length())
+        shapeOutside.marginPath = mapPathPoints(paths.marginShape, localToRoot);
+
+    shapeOutside.shapePath = mapPathPoints(paths.shape, localToRoot);
+    return shapeOutside;
+}
+
+static void drawShapeHighlight(GraphicsContext& context, const InspectorOverlay::Highlight::ShapeOutside& shapeOutside, InspectorOverlay::Highlight::Bounds& bounds)
+{
+    static constexpr auto shapeHighlightColor = SRGBA<uint8_t> { 96, 82, 127, 204 };
+
+    if (shapeOutside.boundingQuad) {
+        drawOutlinedQuad(context, *shapeOutside.boundingQuad, shapeHighlightColor, Color::transparentBlack, bounds);
         return;
     }
 
-    const auto mapPoints = [&] (const Path& path) {
-        Path newPath;
-        path.applyElements([&] (const PathElement& pathElement) {
-            const auto localToRoot = [&] (size_t index) {
-                const FloatPoint& point = pathElement.points[index];
-                return containingView->contentsToRootView(renderer->localToAbsolute(shapeOutsideInfo->shapeToRendererPoint(point)));
-            };
-
-            switch (pathElement.type) {
-            case PathElement::Type::MoveToPoint:
-                newPath.moveTo(localToRoot(0));
-                break;
-
-            case PathElement::Type::AddLineToPoint:
-                newPath.addLineTo(localToRoot(0));
-                break;
-
-            case PathElement::Type::AddCurveToPoint:
-                newPath.addBezierCurveTo(localToRoot(0), localToRoot(1), localToRoot(2));
-                break;
-
-            case PathElement::Type::AddQuadCurveToPoint:
-                newPath.addQuadCurveTo(localToRoot(0), localToRoot(1));
-                break;
-
-            case PathElement::Type::CloseSubpath:
-                newPath.closeSubpath();
-                break;
-            }
-        });
-        return newPath;
-    };
-
-    if (paths.marginShape.length()) {
-        Path marginPath = mapPoints(paths.marginShape);
-        bounds.unite(marginPath.boundingRect());
+    if (shapeOutside.marginPath) {
+        bounds.unite(shapeOutside.marginPath->boundingRect());
 
         GraphicsContextStateSaver stateSaver(context);
 
         constexpr auto shapeMarginHighlightColor = SRGBA<uint8_t> { 96, 82, 127, 153 };
         context.setFillColor(shapeMarginHighlightColor);
-        context.fillPath(marginPath);
+        context.fillPath(*shapeOutside.marginPath);
     }
 
-    Path shapePath = mapPoints(paths.shape);
-    bounds.unite(shapePath.boundingRect());
+    bounds.unite(shapeOutside.shapePath.boundingRect());
 
     GraphicsContextStateSaver stateSaver(context);
 
     context.setFillColor(shapeHighlightColor);
-    context.fillPath(shapePath);
+    context.fillPath(shapeOutside.shapePath);
+}
+
+static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOverlay::Highlight::Bounds& bounds)
+{
+    if (auto shapeOutside { buildShapeOutsideHighlight(node) })
+        drawShapeHighlight(context, *shapeOutside, bounds);
+}
+
+static Vector<InspectorOverlayLabel::Content> elementTitleContents(Node&);
+
+// A highlighted quad is in its own frame's view, and everything else is in the local root's view.
+static void mapToMainFrameView(InspectorOverlay::Highlight& highlight, const LocalFrameView& view, const LocalFrameView& quadView)
+{
+    Ref localRootView { view };
+
+    const auto mapPoint = [&](const FloatPoint& point) {
+        return localRootView->convertToRootViewAcrossIsolatedFrames(point);
+    };
+
+    const auto mapQuad = [&](FloatQuad& quad) {
+        quad = localRootView->convertToRootViewAcrossIsolatedFrames(quad);
+    };
+
+    const auto mapQuads = [&](Vector<FloatQuad>& quads) {
+        for (auto& quad : quads)
+            mapQuad(quad);
+    };
+
+    const auto mapLabels = [&](Vector<InspectorOverlayLabel>& labels) {
+        for (auto& label : labels)
+            label.setLocation(mapPoint(label.location()));
+    };
+
+    const auto mapGridOverlay = [&](InspectorOverlay::Highlight::GridHighlightOverlay& gridOverlay) {
+        for (auto& gridLine : gridOverlay.gridLines)
+            gridLine = { mapPoint(gridLine.start()), mapPoint(gridLine.end()) };
+        mapQuads(gridOverlay.gaps);
+        for (auto& area : gridOverlay.areas)
+            mapQuad(area.quad);
+        mapLabels(gridOverlay.labels);
+    };
+
+    const auto mapFlexOverlay = [&](InspectorOverlay::Highlight::FlexHighlightOverlay& flexOverlay) {
+        mapQuad(flexOverlay.containerBounds);
+        mapQuads(flexOverlay.itemBounds);
+        mapQuads(flexOverlay.mainAxisGaps);
+        mapQuads(flexOverlay.mainAxisSpaceBetweenItemsAndGaps);
+        mapQuads(flexOverlay.spaceBetweenItemsAndCrossAxisSpace);
+        mapQuads(flexOverlay.crossAxisGaps);
+        mapLabels(flexOverlay.labels);
+    };
+
+    for (auto& quad : highlight.quads)
+        quad = quadView.convertToRootViewAcrossIsolatedFrames(quad);
+
+    for (auto& nodeInfo : highlight.nodeInfos) {
+        mapQuads(nodeInfo.quads);
+
+        if (auto& shapeOutside { nodeInfo.shapeOutside }) {
+            if (shapeOutside->boundingQuad)
+                mapQuad(*shapeOutside->boundingQuad);
+            if (shapeOutside->marginPath)
+                shapeOutside->marginPath = mapPathPoints(*shapeOutside->marginPath, mapPoint);
+            shapeOutside->shapePath = mapPathPoints(shapeOutside->shapePath, mapPoint);
+        }
+
+        if (nodeInfo.gridHighlightOverlay)
+            mapGridOverlay(*nodeInfo.gridHighlightOverlay);
+        if (nodeInfo.flexHighlightOverlay)
+            mapFlexOverlay(*nodeInfo.flexHighlightOverlay);
+    }
+
+    for (auto& gridOverlay : highlight.gridHighlightOverlays)
+        mapGridOverlay(gridOverlay);
+
+    for (auto& flexOverlay : highlight.flexHighlightOverlays)
+        mapFlexOverlay(flexOverlay);
 }
 
 InspectorOverlay::InspectorOverlay(InspectorOverlayOwner& owner)
@@ -457,9 +553,9 @@ void InspectorOverlay::paint(GraphicsContext& context)
     // -- and is a no-op when scrolling is delegated, so this must be too. PageOverlay::drawRect() has
     // already translated by scrollOrigin(), which is part of that same conversion and must not be
     // re-applied here. Must precede the clearRect below, which is also viewport-relative.
-    // FIXME: <rdar://116202544> Remove once frame overlays can use OverlayType::View, which needs a
-    // per-frame view-overlay root layer and attachViewOverlayGraphicsLayer() to stop hardcoding the
-    // main frame.
+    // FIXME: Remove once frame overlays on other ports can use OverlayType::View, which
+    // needs a per-frame view-overlay root layer and attachViewOverlayGraphicsLayer() to stop hardcoding the
+    // main frame. macOS draws frame highlights in the UI process instead, see drawFrameHighlight().
     GraphicsContextStateSaver documentSurfaceStateSaver(context);
     if (isFrameScoped() && !pageView->delegatesScrollingToNativeView())
         context.translate(pageView->documentScrollPositionRelativeToViewOrigin() - pageView->scrollOrigin());
@@ -549,16 +645,53 @@ void InspectorOverlay::paint(GraphicsContext& context)
         drawRulers(context, rulerExclusion);
 }
 
+auto InspectorOverlay::buildNodeInfo(Node& node) -> Highlight::NodeInfo
+{
+    Highlight nodeHighlight;
+    buildNodeHighlight(node, m_nodeHighlightConfig, nodeHighlight, CoordinateSystem::Document);
+
+    Highlight::NodeInfo nodeInfo;
+    nodeInfo.quads = WTF::move(nodeHighlight.quads);
+    if (m_nodeHighlightConfig.showInfo) {
+        nodeInfo.shapeOutside = buildShapeOutsideHighlight(node);
+        nodeInfo.titleContents = elementTitleContents(node);
+    }
+
+    // Kept with the node, since paint() draws them right after it.
+    if (m_nodeGridOverlayConfig)
+        nodeInfo.gridHighlightOverlay = buildGridOverlay({ node, *m_nodeGridOverlayConfig });
+    if (m_nodeFlexOverlayConfig)
+        nodeInfo.flexHighlightOverlay = buildFlexOverlay({ node, *m_nodeFlexOverlayConfig });
+
+    return nodeInfo;
+}
+
 void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
     if (!m_highlightNode && !m_highlightQuad && !m_highlightNodeList && !m_activeGridOverlays.size() && !m_activeFlexOverlays.size())
         return;
 
+    bool isMainFrameView { coordinateSystem == CoordinateSystem::MainFrameView };
+    RefPtr<LocalFrameView> geometryView;
+    RefPtr<LocalFrameView> localRootView;
+    if (isMainFrameView) {
+        ASSERT(isFrameScoped());
+        RefPtr geometryFrame { frameForGeometry() };
+        geometryView = geometryFrame ? geometryFrame->view() : nullptr;
+        localRootView = geometryFrame ? geometryFrame->rootFrame().view() : nullptr;
+        if (!geometryView || !localRootView)
+            return;
+    }
+
     RefPtr highlightNodeList = m_highlightNodeList;
-    constexpr bool offsetBoundsByScroll = true;
+    bool offsetBoundsByScroll { !isMainFrameView };
 
     highlight.type = InspectorOverlay::Highlight::Type::None;
-    if (m_highlightNode) {
+    if (m_highlightNode && isMainFrameView) {
+        highlight.setDataFromConfig(m_nodeHighlightConfig);
+        highlight.type = InspectorOverlay::Highlight::Type::Node;
+        highlight.nodeInfos.append(buildNodeInfo(protect(*m_highlightNode)));
+    } else if (m_highlightNode) {
         buildNodeHighlight(protect(*m_highlightNode), m_nodeHighlightConfig, highlight, coordinateSystem);
 
         if (m_nodeGridOverlayConfig) {
@@ -574,6 +707,11 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
         highlight.setDataFromConfig(m_nodeHighlightConfig);
         for (unsigned i = 0; i < highlightNodeList->length(); ++i) {
             RefPtr node = highlightNodeList->item(i);
+
+            if (isMainFrameView) {
+                highlight.nodeInfos.append(buildNodeInfo(*node));
+                continue;
+            }
 
             InspectorOverlay::Highlight nodeHighlight;
             buildNodeHighlight(*node, m_nodeHighlightConfig, nodeHighlight, coordinateSystem);
@@ -619,6 +757,9 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
         if (auto flexHighlightOverlay = buildFlexOverlay(flexOverlay))
             highlight.flexHighlightOverlays.append(*flexHighlightOverlay);
     }
+
+    if (localRootView)
+        mapToMainFrameView(highlight, *localRootView, *geometryView);
 }
 
 void InspectorOverlay::hideHighlight()
@@ -1239,11 +1380,8 @@ NODELETE static bool rendererIsGridItem(RenderObject& renderer)
     return false;
 }
 
-Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, const InspectorOverlay::Highlight::Bounds& bounds)
+static Vector<InspectorOverlayLabel::Content> elementTitleContents(Node& node)
 {
-    if (bounds.isEmpty())
-        return { };
-
     RefPtr element = effectiveElementForNode(node);
     if (!element)
         return { };
@@ -1356,24 +1494,11 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         }
     }
 
-    RefPtr geometryFrame = frameForGeometry();
-    RefPtr pageView = geometryFrame ? geometryFrame->virtualView() : nullptr;
-    if (!pageView)
-        return { };
+    return labelContents;
+}
 
-    FloatSize viewportSize = pageView->sizeForVisibleContent();
-    auto obscuredContentInsets = pageView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
-    // Only reserve space for rulers that were actually drawn, or the label is displaced by rulerSize.
-    if (shouldDrawRulers()) {
-        obscuredContentInsets.setTop(obscuredContentInsets.top() + rulerSize);
-        obscuredContentInsets.setLeft(obscuredContentInsets.left() + rulerSize);
-    }
-
-    // FIXME: For a frame overlay these clamps are against the frame's own viewport, so a tooltip for a
-    // node near an iframe edge is confined to the iframe instead of the window. Fixing it needs the
-    // label drawn into a surface that can extend past the frame, which a per-frame overlay cannot do
-    // today -- it is the same constraint as <rdar://116202544>'s OverlayType::View work.
-
+static InspectorOverlayLabel elementTitleLabel(Vector<InspectorOverlayLabel::Content>&& labelContents, const InspectorOverlay::Highlight::Bounds& bounds, FloatSize viewportSize, const FloatBoxExtent& obscuredContentInsets)
+{
     auto expectedLabelSize = InspectorOverlayLabel::expectedSize(labelContents, InspectorOverlayLabel::Arrow::Direction::Up);
     auto boundsCenterX = bounds.center().x();
 
@@ -1417,17 +1542,94 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     }
 
     constexpr auto elementTitleBackgroundColor = SRGBA<uint8_t> { 255, 255, 194 };
+
+    return { WTF::move(labelContents), { labelX, labelY }, elementTitleBackgroundColor, { arrowDirection, arrowAlignment } };
+}
+
+static Path drawElementTitleLabel(GraphicsContext& context, InspectorOverlayLabel& label)
+{
     constexpr auto elementTitleBorderColor = Color::darkGray;
 
     GraphicsContextStateSaver stateSaver(context);
     context.setStrokeThickness(1);
     context.setStrokeColor(elementTitleBorderColor);
 
-    InspectorOverlayLabel label = { WTF::move(labelContents), { labelX, labelY }, elementTitleBackgroundColor, { arrowDirection, arrowAlignment } };
     return label.draw(context);
 }
 
-static void drawLayoutPattern(GraphicsContext& context, const FloatQuad& quad, int hatchSpacing, Flip flip)
+Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, const InspectorOverlay::Highlight::Bounds& bounds)
+{
+    if (bounds.isEmpty())
+        return { };
+
+    auto labelContents { elementTitleContents(node) };
+    if (labelContents.isEmpty())
+        return { };
+
+    RefPtr geometryFrame = frameForGeometry();
+    RefPtr pageView = geometryFrame ? geometryFrame->virtualView() : nullptr;
+    if (!pageView)
+        return { };
+
+    FloatSize viewportSize = pageView->sizeForVisibleContent();
+    auto obscuredContentInsets = pageView->obscuredContentInsets(ScrollView::InsetType::WebCoreOrPlatformInset);
+    // Only reserve space for rulers that were actually drawn, or the label is displaced by rulerSize.
+    if (shouldDrawRulers()) {
+        obscuredContentInsets.setTop(obscuredContentInsets.top() + rulerSize);
+        obscuredContentInsets.setLeft(obscuredContentInsets.left() + rulerSize);
+    }
+
+    // FIXME: For a frame overlay on ports other than macOS, these clamps are against the frame's own
+    // viewport, so a tooltip for a node near an iframe edge is confined to the iframe instead of the
+    // window. macOS draws frame highlights in the UI process against the page, see drawFrameHighlight().
+
+    auto label { elementTitleLabel(WTF::move(labelContents), bounds, viewportSize, obscuredContentInsets) };
+    return drawElementTitleLabel(context, label);
+}
+
+auto InspectorOverlay::drawFrameHighlight(GraphicsContext& context, const Highlight& highlight, const PageGeometry& pageGeometry) -> FrameHighlightGeometry
+{
+    FrameHighlightGeometry geometry;
+
+    if (highlight.type == Highlight::Type::Rects && !highlight.quads.isEmpty()) {
+        Highlight::Bounds bounds;
+        drawOutlinedQuad(context, highlight.quads[0], highlight.contentColor, highlight.contentOutlineColor, bounds);
+    }
+
+    for (auto& nodeInfo : highlight.nodeInfos) {
+        Highlight::Bounds bounds;
+        drawFragmentHighlight(context, nodeInfo.quads, highlight, bounds);
+
+        if (nodeInfo.shapeOutside)
+            drawShapeHighlight(context, *nodeInfo.shapeOutside, bounds);
+
+        FloatRect titleBounds;
+        if (!bounds.isEmpty() && !nodeInfo.titleContents.isEmpty()) {
+            auto titleContents { nodeInfo.titleContents };
+            auto label { elementTitleLabel(WTF::move(titleContents), bounds, pageGeometry.viewportSize, pageGeometry.obscuredContentInsets) };
+            titleBounds = drawElementTitleLabel(context, label).boundingRect();
+            titleBounds.moveBy(label.location());
+        }
+
+        if (nodeInfo.gridHighlightOverlay)
+            drawGridOverlay(context, *nodeInfo.gridHighlightOverlay);
+
+        if (nodeInfo.flexHighlightOverlay)
+            drawFlexOverlay(context, *nodeInfo.flexHighlightOverlay);
+
+        geometry.nodes.append({ bounds, titleBounds });
+    }
+
+    for (auto& gridHighlightOverlay : highlight.gridHighlightOverlays)
+        drawGridOverlay(context, gridHighlightOverlay);
+
+    for (auto& flexHighlightOverlay : highlight.flexHighlightOverlays)
+        drawFlexOverlay(context, flexHighlightOverlay);
+
+    return geometry;
+}
+
+static void drawLayoutPattern(GraphicsContext& context, const FloatQuad& quad, int hatchSpacing, float dashPeriod, Flip flip)
 {
     GraphicsContextStateSaver saver(context);
     context.clipPath(quadToPath(quad));
@@ -1436,8 +1638,63 @@ static void drawLayoutPattern(GraphicsContext& context, const FloatQuad& quad, i
 
     auto boundingBox = quad.enclosingBoundingBox();
 
+    // Only the parts of lines that can reach the clip are added, so that the work depends on the clip rather than on
+    // the quad, which a transform can make arbitrarily large.
+    auto visibleRect { intersection(FloatRect { boundingBox }, context.clipBounds()) };
+    if (visibleRect.isEmpty())
+        return;
+    visibleRect.inflate(hatchSpacing);
+
+    // Each hatch line keeps x - y constant, or x + y when flipped.
+    auto lineKey = [&](const FloatPoint& point) {
+        return flip == Flip::Yes ? point.x() + point.y() : point.x() - point.y();
+    };
+    auto [minimumVisibleKey, maximumVisibleKey] { std::minmax({ lineKey(visibleRect.minXMinYCorner()), lineKey(visibleRect.maxXMinYCorner()), lineKey(visibleRect.minXMaxYCorner()), lineKey(visibleRect.maxXMaxYCorner()) }) };
+
+    // The visible part starts a whole number of dash periods from the line's start, so that its dashes stay in place.
+    auto addVisiblePartOfLine = [&](const FloatPoint& start, const FloatPoint& end) {
+        auto delta { end - start };
+        float enter { 0 };
+        float exit { 1 };
+        auto clipToEdge = [&](float direction, float distanceToEdge) {
+            if (!direction)
+                return distanceToEdge >= 0;
+            if (direction < 0)
+                enter = std::max(enter, distanceToEdge / direction);
+            else
+                exit = std::min(exit, distanceToEdge / direction);
+            return enter < exit;
+        };
+        if (!clipToEdge(-delta.width(), start.x() - visibleRect.x()) || !clipToEdge(delta.width(), visibleRect.maxX() - start.x())
+            || !clipToEdge(-delta.height(), start.y() - visibleRect.y()) || !clipToEdge(delta.height(), visibleRect.maxY() - start.y()))
+            return;
+
+        auto length { delta.diagonalLength() };
+        auto startDistance { std::floor(enter * length / dashPeriod) * dashPeriod };
+        hatchPath.moveTo(startDistance > 0 ? start + delta.scaled(startDistance / length) : start);
+        hatchPath.addLineTo(exit < 1 ? start + delta.scaled(exit) : end);
+    };
+
     auto correctedLineForPoints = [&](const FloatPoint& start, const FloatPoint& end) {
         return (flip == Flip::Yes) ? FloatLine(end, start) : FloatLine(start, end);
+    };
+
+    // Lines start every hatchSpacing along startSide, from -otherSideLength up to startSide's length, and end
+    // otherSideLength further along endSide. Only the ones whose key is visible are added.
+    auto addHatchLines = [&](const FloatLine& startSide, const FloatLine& endSide, float otherSideLength) {
+        auto keyAtStart { lineKey(startSide.start()) };
+        bool keyIncreasesAlongSide { lineKey(startSide.end()) > keyAtStart };
+        double firstVisibleDistance { keyIncreasesAlongSide ? minimumVisibleKey - keyAtStart : keyAtStart - maximumVisibleKey };
+        double lastVisibleDistance { keyIncreasesAlongSide ? maximumVisibleKey - keyAtStart : keyAtStart - minimumVisibleKey };
+
+        float firstDistance { -otherSideLength };
+        double lineCount { std::ceil((static_cast<double>(startSide.length()) - firstDistance) / hatchSpacing) };
+        auto firstIndex { static_cast<uint64_t>(std::clamp(std::ceil((firstVisibleDistance - firstDistance) / hatchSpacing), 0.0, lineCount)) };
+        auto endIndex { static_cast<uint64_t>(std::clamp(std::floor((lastVisibleDistance - firstDistance) / hatchSpacing) + 1, 0.0, lineCount)) };
+        for (auto index = firstIndex; index < endIndex; ++index) {
+            float distance { firstDistance + static_cast<float>(index * hatchSpacing) };
+            addVisiblePartOfLine(startSide.pointAtAbsoluteDistance(distance), endSide.pointAtAbsoluteDistance(distance + otherSideLength));
+        }
     };
 
     auto topSide = correctedLineForPoints(boundingBox.minXMinYCorner(), boundingBox.maxXMinYCorner());
@@ -1447,17 +1704,11 @@ static void drawLayoutPattern(GraphicsContext& context, const FloatQuad& quad, i
     if (topSide.length() > leftSide.length()) {
         auto bottomSide = correctedLineForPoints(boundingBox.minXMaxYCorner(), boundingBox.maxXMaxYCorner());
         // Move across the relative top of the area, starting left of `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
-        for (float x = -leftSide.length(); x < topSide.length(); x += hatchSpacing) {
-            hatchPath.moveTo(topSide.pointAtAbsoluteDistance(x));
-            hatchPath.addLineTo(bottomSide.pointAtAbsoluteDistance(x + leftSide.length()));
-        }
+        addHatchLines(topSide, bottomSide, leftSide.length());
     } else {
         auto rightSide = correctedLineForPoints(boundingBox.maxXMinYCorner(), boundingBox.maxXMaxYCorner());
         // Move down the relative left side of the area, starting above `0, 0` to ensure that the tail of the previous hatch line is drawn while scrolling.
-        for (float y = -topSide.length(); y < leftSide.length(); y += hatchSpacing) {
-            hatchPath.moveTo(leftSide.pointAtAbsoluteDistance(y));
-            hatchPath.addLineTo(rightSide.pointAtAbsoluteDistance(y + topSide.length()));
-        }
+        addHatchLines(leftSide, rightSide, topSide.length());
     }
 
     context.strokePath(hatchPath);
@@ -1470,7 +1721,7 @@ static void drawLayoutStippling(GraphicsContext& context, const FloatQuad& quad,
     context.setStrokeStyle(StrokeStyle::DashedStroke);
     context.setLineDash({ 1, density }, 1);
 
-    drawLayoutPattern(context, quad, density, Flip::No);
+    drawLayoutPattern(context, quad, density, 1 + density, Flip::No);
 }
 
 static void drawLayoutHatching(GraphicsContext& context, const FloatQuad& quad, Flip flip = Flip::No)
@@ -1481,7 +1732,7 @@ static void drawLayoutHatching(GraphicsContext& context, const FloatQuad& quad, 
     context.setLineDash({ 2, 2 }, 2);
 
     constexpr auto defaultLayoutHatchSpacing = 12;
-    drawLayoutPattern(context, quad, defaultLayoutHatchSpacing, flip);
+    drawLayoutPattern(context, quad, defaultLayoutHatchSpacing, 2 + 2, flip);
 }
 
 void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const InspectorOverlay::Highlight::GridHighlightOverlay& gridOverlay)

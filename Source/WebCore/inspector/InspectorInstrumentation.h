@@ -208,6 +208,7 @@ public:
     static void willLayout(LocalFrame&);
     static void didLayout(LocalFrame&, const RenderElement&, const Vector<FloatQuad>&);
     static void didScroll(Page&);
+    static void didScroll(LocalFrame&);
     static void willComposite(LocalFrame&);
     static void didComposite(LocalFrame&);
     static void willPaint(RenderObject&);
@@ -1100,6 +1101,12 @@ inline void InspectorInstrumentation::didScroll(Page& page)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     didScrollImpl(protect(instrumentingAgents(page)));
+}
+
+inline void InspectorInstrumentation::didScroll(LocalFrame& frame)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    didScrollImpl(protect(instrumentingAgents(frame)));
 }
 
 inline void InspectorInstrumentation::willComposite(LocalFrame& frame)

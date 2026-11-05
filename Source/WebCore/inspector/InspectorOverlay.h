@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include <WebCore/BoxExtents.h>
 #include <WebCore/Color.h>
 #include <WebCore/FloatLine.h>
 #include <WebCore/FloatQuad.h>
@@ -119,6 +120,24 @@ struct InspectorOverlayHighlight {
         Vector<InspectorOverlayLabel> labels;
     };
 
+    struct ShapeOutside {
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ShapeOutside);
+
+        std::optional<FloatQuad> boundingQuad;
+        std::optional<Path> marginPath;
+        Path shapePath;
+    };
+
+    struct NodeInfo {
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(NodeInfo);
+
+        Vector<FloatQuad> quads;
+        std::optional<ShapeOutside> shapeOutside;
+        Vector<InspectorOverlayLabel::Content> titleContents;
+        std::optional<GridHighlightOverlay> gridHighlightOverlay;
+        std::optional<FlexHighlightOverlay> flexHighlightOverlay;
+    };
+
     void setDataFromConfig(const Config& config)
     {
         contentColor = config.content;
@@ -139,6 +158,7 @@ struct InspectorOverlayHighlight {
     Vector<FloatQuad> quads;
     Vector<GridHighlightOverlay> gridHighlightOverlays;
     Vector<FlexHighlightOverlay> flexHighlightOverlays;
+    Vector<NodeInfo> nodeInfos;
     bool usePageCoordinates { true };
 
     using Bounds = FloatRect;
@@ -214,6 +234,20 @@ public:
     enum class CoordinateSystem {
         View, // Adjusts for the main frame's scroll offset.
         Document, // Does not adjust for the main frame's scroll offset.
+        MainFrameView, // Main frame view coordinates across isolated frames, with each node in nodeInfos.
+    };
+
+    struct PageGeometry {
+        FloatSize viewportSize;
+        FloatBoxExtent obscuredContentInsets;
+    };
+
+    struct FrameHighlightGeometry {
+        struct NodeGeometry {
+            FloatRect bounds;
+            FloatRect titleBounds;
+        };
+        Vector<NodeGeometry> nodes;
     };
 
     void update();
@@ -254,6 +288,8 @@ public:
     WEBCORE_EXPORT static void drawGridOverlay(GraphicsContext&, const InspectorOverlayHighlight::GridHighlightOverlay&);
     WEBCORE_EXPORT static void drawFlexOverlay(GraphicsContext&, const InspectorOverlayHighlight::FlexHighlightOverlay&);
 
+    WEBCORE_EXPORT static FrameHighlightGeometry drawFrameHighlight(GraphicsContext&, const Highlight&, const PageGeometry&);
+
 private:
     using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
 
@@ -270,6 +306,7 @@ private:
 
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
     
+    Highlight::NodeInfo buildNodeInfo(Node&);
     std::optional<InspectorOverlayHighlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false);
     std::optional<InspectorOverlayHighlight::FlexHighlightOverlay> buildFlexOverlay(const InspectorOverlay::Flex&);
 

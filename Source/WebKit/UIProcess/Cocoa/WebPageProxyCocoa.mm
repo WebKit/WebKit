@@ -1309,6 +1309,11 @@ NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceI
         return @{ userInterfaceItem: activeContextMenu->platformData().get() };
 #endif // ENABLE(CONTEXT_MENUS)
 
+#if PLATFORM(MAC)
+    if ([userInterfaceItem isEqualToString:@"inspectorHighlight"])
+        return @{ userInterfaceItem: frameInspectorHighlightsForTesting().get() };
+#endif
+
     return nil;
 }
 
