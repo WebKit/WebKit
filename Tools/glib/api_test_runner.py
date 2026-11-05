@@ -453,15 +453,18 @@ class TestRunner(object):
         with open(os.path.join(self._source_directory(), TEST_EXPECTATIONS_PATH)) as fd:
             new_expectations = json.load(fd)
 
+        def port_expected(entry):
+            return self._expectations.port_expected(entry.get('expected', {}))
+
         changed = []
         for test in sorted(set(old_expectations) | set(new_expectations)):
             old_entry, new_entry = old_expectations.get(test, {}), new_expectations.get(test, {})
-            if old_entry.get('expected') != new_entry.get('expected'):
+            if port_expected(old_entry) != port_expected(new_entry):
                 changed.append(test)
                 continue
             old_subtests, new_subtests = old_entry.get('subtests', {}), new_entry.get('subtests', {})
             changed.extend(f'{test}:{subtest}' for subtest in sorted(set(old_subtests) | set(new_subtests))
-                           if old_subtests.get(subtest) != new_subtests.get(subtest))
+                           if port_expected(old_subtests.get(subtest, {})) != port_expected(new_subtests.get(subtest, {})))
         return changed
 
     def _changed_source_tests(self, path):
