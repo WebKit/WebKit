@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+    position: relative;
+    z-index: 1;
+    width: 600px;
+    height: 2000px;
+    overflow-x: clip;
+}
+
+.sticky {
+    position: sticky;
+    top: 0;
+    height: 100px;
+    background-color: blue;
+    will-change: transform;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div class="container"><div class="sticky"></div></div>
+<script>
+description("The clipping layer of a composited overflow-x: clip container should not be taller than LayoutRect::renderableInfiniteRect(), so that the sticky element inside keeps device pixel precision.");
+if (window.internals) {
+    const layerTree = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING);
+    var tallestLayerHeight = Math.max(...[...layerTree.matchAll(/\(bounds [-\d.]+ ([-\d.]+)\)/g)].map(match => parseFloat(match[1])));
+    shouldBe("tallestLayerHeight", "2097152");
+}
+</script>
+</body>
+</html>

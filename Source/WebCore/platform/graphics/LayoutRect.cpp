@@ -190,6 +190,21 @@ void LayoutRect::expandToInfiniteX()
     setWidth(infRect.width());
 }
 
+void LayoutRect::makeRenderable()
+{
+    auto infiniteRect = LayoutRect::infiniteRect();
+    auto renderableInfiniteRect = LayoutRect::renderableInfiniteRect();
+    if (width() == infiniteRect.width()) {
+        setX(renderableInfiniteRect.x());
+        setWidth(renderableInfiniteRect.width());
+    }
+
+    if (height() == infiniteRect.height()) {
+        setY(renderableInfiniteRect.y());
+        setHeight(renderableInfiniteRect.height());
+    }
+}
+
 LayoutRect unionRect(const Vector<LayoutRect>& rects)
 {
     if (rects.isEmpty())

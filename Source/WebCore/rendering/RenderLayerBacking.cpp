@@ -794,6 +794,8 @@ static LayoutRect clippingLayerBox(const RenderLayerModelObject& renderer)
             result = box->overflowClipRect({ });
         else if (CheckedPtr modelObject = dynamicDowncast<RenderSVGModelObject>(renderer))
             result = modelObject->overflowClipRect({ });
+        // overflow: clip on one axis only leaves the other axis infinite.
+        result.makeRenderable();
     }
 
     if (renderer.hasClip()) {

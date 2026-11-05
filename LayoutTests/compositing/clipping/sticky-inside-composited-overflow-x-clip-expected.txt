@@ -1,0 +1,10 @@
+The clipping layer of a composited overflow-x: clip container should not be taller than LayoutRect::renderableInfiniteRect(), so that the sticky element inside keeps device pixel precision.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS tallestLayerHeight is 2097152
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -3705,17 +3705,7 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
         if (clipRect.isInfinite())
             return;
 
-        auto infiniteRect = LayoutRect::infiniteRect();
-        auto renderableInfiniteRect = LayoutRect::renderableInfiniteRect();
-        if (clipRect.width() == infiniteRect.width()) {
-            clipRect.setX(renderableInfiniteRect.x());
-            clipRect.setWidth(renderableInfiniteRect.width());
-        }
-
-        if (clipRect.height() == infiniteRect.height()) {
-            clipRect.setY(renderableInfiniteRect.y());
-            clipRect.setHeight(renderableInfiniteRect.height());
-        }
+        clipRect.makeRenderable();
 
         auto offset = layer.convertToLayerCoords(&clippingRoot, { }, RenderLayer::AdjustForColumns);
         clipRect.moveBy(-offset);

@@ -100,6 +100,7 @@ public:
     }
     NODELETE void expandToInfiniteY();
     NODELETE void expandToInfiniteX();
+    NODELETE void makeRenderable();
     template<typename T, typename U> void expand(T dw, U dh) { m_size.expand(dw, dh); }
     void contract(const LayoutSize& size) { m_size -= size; }
     void contract(const LayoutBoxExtent& box)
