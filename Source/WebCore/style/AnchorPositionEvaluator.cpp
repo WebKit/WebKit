@@ -488,10 +488,9 @@ static LayoutRect boxBoundingBoxInContainer(const RenderBoxModelObject& box, con
         boundingBox.moveBy(-box.frame().view()->scrollPositionRespectingCustomFixedPosition());
     }
 
-    if (box.containingBlock() == container.containingBlock()) {
-        // Account for 'position: relative' inline containing blocks by shifting back down into them.
-        if (container.isInlineBox())
-            boundingBox.moveBy(-downcast<RenderBoxModelObject>(container).firstFragmentBorderBoxRect().location()); // FIXME: Handle RTL.
+    if (container.isInlineBox()) {
+        // Mapping into an inline box ends up in the coordinate space of its containing block, so shift back down into the inline box.
+        boundingBox.moveBy(-downcast<RenderBoxModelObject>(container).firstFragmentBorderBoxRect().location()); // FIXME: Handle RTL.
     }
 
     if (auto ancestorBox = dynamicDowncast<RenderBox>(container)) // Zero out containing block scroll position.
