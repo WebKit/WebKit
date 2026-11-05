@@ -7790,6 +7790,27 @@ imported/w3c/web-platform-tests/css/cssom/adoptedstylesheets-adopt-style.tentati
 imported/w3c/web-platform-tests/wasm/webapi/esm-integration/script-src-blocks-wasm.tentative.sub.html [ Pass Failure ]
 
 http/tests/iframe-memory-monitor/video-iframe.html [ Skip ]
+
+# webkit.org/b/330245 css/CSS2/pagination print reftests that fail
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/block-page-break-inside-avoid-13-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/block-page-break-inside-avoid-15-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/block-page-break-inside-avoid-8-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/float-page-break-inside-avoid-1-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/float-page-break-inside-avoid-2-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/float-page-break-inside-avoid-3-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/float-page-break-inside-avoid-4-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/float-page-break-inside-avoid-6-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/float-page-break-inside-avoid-8-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/rowgroup-page-break-inside-avoid-1-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/rowgroup-page-break-inside-avoid-2-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/rowgroup-page-break-inside-avoid-3-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/rowgroup-page-break-inside-avoid-7-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/table-page-break-inside-avoid-1-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/table-page-break-inside-avoid-4-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/table-page-break-inside-avoid-5-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/table-page-break-inside-avoid-7-print.html [ ImageOnlyFailure ]
+webkit.org/b/330245 imported/w3c/web-platform-tests/css/CSS2/pagination/table-page-break-inside-avoid-8-print.html [ ImageOnlyFailure ]
+
 # css/CSS2/tables failures
 webkit.org/b/329821 imported/w3c/web-platform-tests/css/CSS2/tables/fixed-table-layout-027.xht [ ImageOnlyFailure ]
 webkit.org/b/288957 imported/w3c/web-platform-tests/css/CSS2/tables/border-collapse-006.html [ ImageOnlyFailure ]
