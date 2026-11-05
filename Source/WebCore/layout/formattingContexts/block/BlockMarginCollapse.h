@@ -85,6 +85,11 @@ public:
     // Whether the margin after the last box that did not collapse through is quirky (RenderBlockFlow::MarginInfo::hasMarginAfterQuirk).
     bool endsWithQuirk() const { return m_endsWithQuirk.value_or(false); }
 
+    // margin-trim: the margins that collapse with the block-start edge of a block container that trims them are discarded, until something
+    // separates margins (css-box-4 §3.3.1).
+    bool trimsMarginsAtBlockStartEdge() const { return m_trimsMarginsAtBlockStartEdge; }
+    void setTrimsMarginsAtBlockStartEdge(bool trimsMargins) { m_trimsMarginsAtBlockStartEdge = trimsMargins; }
+
     void resetAdjoiningMargins(LayoutUnit logicalTop, const AdjoiningMargins& = { }, bool marginsAreQuirky = false);
     // The same at the bottom of the last line box of inline content. WebKit compatibility: like on the render tree path, the block-end margin
     // of its block container keeps its own quirk.
@@ -123,6 +128,7 @@ private:
 
     AdjoiningMargins m_adjoiningMargins;
     LayoutUnit m_logicalTop;
+    bool m_trimsMarginsAtBlockStartEdge { false };
     // Unset after line boxes, until the block-end margin of their block container.
     std::optional<bool> m_endsWithQuirk { false };
     // Quirks mode: body and table cells are quirk containers (RenderBlockFlow::MarginInfo). At its block-start side, until content in it
