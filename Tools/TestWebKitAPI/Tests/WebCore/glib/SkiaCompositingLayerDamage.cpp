@@ -30,9 +30,13 @@
 #if ENABLE(DAMAGE_TRACKING) && USE(SKIA)
 #include "Helpers/Test.h"
 #include <WebCore/Color.h>
+#include <WebCore/CoordinatedPlatformLayer.h>
+#include <WebCore/CoordinatedPlatformLayerBuffer.h>
 #include <WebCore/Damage.h>
+#include <WebCore/GraphicsTypes.h>
 #include <WebCore/SkiaCompositingLayer.h>
 #include <WebCore/TransformationMatrix.h>
+#include <wtf/WorkQueue.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColor.h>
 #include <skia/core/SkPixmap.h>
@@ -398,6 +402,272 @@ TEST(SkiaCompositingLayerDamage, ReplicatedLayerIsDamagedWithItsReplica)
     auto moved = paintAndCollect(root, *surface->getCanvas());
     EXPECT_EQ(moved.bounds(), IntRect(100, 100, 240, 240));
     EXPECT_TRUE(paintAndCollect(root, *surface->getCanvas()).isEmpty());
+}
+
+class CoordinatedScene {
+public:
+    CoordinatedScene()
+        : m_compositingQueue(WorkQueue::create("CoordinatedScene"_s))
+        , m_layer(CoordinatedPlatformLayer::create())
+    {
+        m_layer->setDamagePropagationEnabled(true);
+        {
+            Locker locker { m_layer->lock() };
+            m_layer->setSize({ 40, 40 });
+            m_layer->setAnchorPoint({ 0, 0, 0 });
+            m_layer->setContentsColor(Color::green);
+            m_layer->setContentsRect({ 0, 0, 40, 40 });
+        }
+        m_compositingQueue->dispatchSync([this] {
+            m_surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
+            m_root = SkiaCompositingLayer::create();
+            m_root->setDamagePropagationEnabled(true);
+            m_root->setSize({ 800, 600 });
+            m_layer->flushCompositingState({ CompositionReason::RenderingUpdate });
+            m_root->setChildren({ Ref { m_layer->ensureTarget() } });
+            paintAndCollect(*m_root, *m_surface->getCanvas());
+        });
+        EXPECT_TRUE(flushAndPaint({ }).isEmpty());
+    }
+
+    ~CoordinatedScene()
+    {
+        m_compositingQueue->dispatchSync([this] {
+            m_layer->invalidateTarget();
+            m_root = nullptr;
+            m_surface = nullptr;
+        });
+    }
+
+    CoordinatedPlatformLayer& layer() { return m_layer; }
+
+    Damage flushAndPaint(OptionSet<CompositionReason> reasons)
+    {
+        std::optional<Damage> damage;
+        m_compositingQueue->dispatchSync([&] {
+            m_layer->flushCompositingState(reasons);
+            m_surface->getCanvas()->clear(SK_ColorTRANSPARENT);
+            damage = paintAndCollect(*m_root, *m_surface->getCanvas());
+        });
+        return WTF::move(*damage);
+    }
+
+    SkColor pixelAt(int x, int y)
+    {
+        SkColor color = SK_ColorTRANSPARENT;
+        m_compositingQueue->dispatchSync([&] {
+            SkPixmap pixmap;
+            if (m_surface->peekPixels(&pixmap))
+                color = pixmap.getColor(x, y);
+        });
+        return color;
+    }
+
+    const CoordinatedPlatformLayerBuffer* targetContentsBuffer()
+    {
+        const CoordinatedPlatformLayerBuffer* buffer = nullptr;
+        m_compositingQueue->dispatchSync([&] {
+            buffer = m_layer->ensureTarget().contentsBuffer();
+        });
+        return buffer;
+    }
+
+private:
+    Ref<WorkQueue> m_compositingQueue;
+    Ref<CoordinatedPlatformLayer> m_layer;
+    RefPtr<SkiaCompositingLayer> m_root;
+    sk_sp<SkSurface> m_surface;
+};
+
+class TestContentsBuffer final : public CoordinatedPlatformLayerBuffer {
+public:
+    TestContentsBuffer()
+        : CoordinatedPlatformLayerBuffer(Type::SkiaImage, { 40, 40 })
+    {
+    }
+};
+
+static void expectDamageOnlyOnRenderingUpdate(CoordinatedScene& scene, const IntRect& expectedDamage)
+{
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::AsyncScrolling }).isEmpty());
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::VideoFrame }).isEmpty());
+
+    auto damage = scene.flushAndPaint({ CompositionReason::RenderingUpdate });
+    EXPECT_FALSE(damage.isEmpty());
+    EXPECT_EQ(damage.bounds(), expectedDamage);
+
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::RenderingUpdate }).isEmpty());
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedTileDamageWaitsForTheRenderingUpdate)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    {
+        Locker locker { layer.lock() };
+        Damage dirtyRegion(IntSize { 40, 40 });
+        dirtyRegion.add(IntRect { 10, 10, 20, 20 });
+        layer.setDirtyRegion(WTF::move(dirtyRegion));
+    }
+    expectDamageOnlyOnRenderingUpdate(scene, { 10, 10, 20, 20 });
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedPropertyDamageWaitsForTheRenderingUpdate)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    {
+        Locker locker { layer.lock() };
+        layer.setBlendMode(BlendMode::Multiply);
+    }
+    expectDamageOnlyOnRenderingUpdate(scene, { 0, 0, 40, 40 });
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedContentsRectWaitsForTheRenderingUpdate)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    EXPECT_EQ(scene.pixelAt(30, 30), SK_ColorGREEN);
+    {
+        Locker locker { layer.lock() };
+        layer.setContentsRect({ 0, 0, 20, 20 });
+    }
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::AsyncScrolling }).isEmpty());
+    EXPECT_EQ(scene.pixelAt(30, 30), SK_ColorGREEN);
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::VideoFrame }).isEmpty());
+    EXPECT_EQ(scene.pixelAt(30, 30), SK_ColorGREEN);
+
+    EXPECT_EQ(scene.flushAndPaint({ CompositionReason::RenderingUpdate }).bounds(), IntRect(0, 0, 40, 40));
+    EXPECT_EQ(scene.pixelAt(30, 30), SK_ColorTRANSPARENT);
+    EXPECT_EQ(scene.pixelAt(10, 10), SK_ColorGREEN);
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedDelegatedContentsBufferWaitsForTheRenderingUpdate)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    auto buffer = makeUnique<TestContentsBuffer>();
+    auto* bufferPointer = buffer.get();
+    {
+        Locker locker { layer.lock() };
+        Damage dirtyRegion(IntSize { 40, 40 });
+        dirtyRegion.add(IntRect { 10, 10, 20, 20 });
+        layer.setContentsBuffer(WTF::move(buffer), WTF::move(dirtyRegion));
+    }
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::VideoFrame }).isEmpty());
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::AsyncScrolling }).isEmpty());
+    EXPECT_EQ(scene.targetContentsBuffer(), nullptr);
+
+    EXPECT_EQ(scene.flushAndPaint({ CompositionReason::RenderingUpdate }).bounds(), IntRect(10, 10, 20, 20));
+    EXPECT_EQ(scene.targetContentsBuffer(), bufferPointer);
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::RenderingUpdate }).isEmpty());
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedVideoContentsBufferDamagesTheWholeLayerOnVideoFrame)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    auto buffer = makeUnique<TestContentsBuffer>();
+    auto* bufferPointer = buffer.get();
+    layer.setVideoContentsBuffer(WTF::move(buffer), CoordinatedPlatformLayer::RequireComposition::No);
+
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::AsyncScrolling }).isEmpty());
+    EXPECT_EQ(scene.targetContentsBuffer(), nullptr);
+
+    EXPECT_EQ(scene.flushAndPaint({ CompositionReason::VideoFrame }).bounds(), IntRect(0, 0, 40, 40));
+    EXPECT_EQ(scene.targetContentsBuffer(), bufferPointer);
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::VideoFrame }).isEmpty());
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedVideoContentsBufferIsFlushedOnRenderingUpdate)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    auto buffer = makeUnique<TestContentsBuffer>();
+    auto* bufferPointer = buffer.get();
+    layer.setVideoContentsBuffer(WTF::move(buffer), CoordinatedPlatformLayer::RequireComposition::No);
+
+    EXPECT_EQ(scene.flushAndPaint({ CompositionReason::RenderingUpdate }).bounds(), IntRect(0, 0, 40, 40));
+    EXPECT_EQ(scene.targetContentsBuffer(), bufferPointer);
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedVideoFrameLeavesTheTileDamagePending)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    {
+        Locker locker { layer.lock() };
+        Damage dirtyRegion(IntSize { 40, 40 });
+        dirtyRegion.add(IntRect { 10, 10, 20, 20 });
+        layer.setDirtyRegion(WTF::move(dirtyRegion));
+    }
+    layer.setVideoContentsBuffer(makeUnique<TestContentsBuffer>(), CoordinatedPlatformLayer::RequireComposition::No);
+
+    EXPECT_EQ(scene.flushAndPaint({ CompositionReason::VideoFrame }).bounds(), IntRect(0, 0, 40, 40));
+    EXPECT_EQ(scene.flushAndPaint({ CompositionReason::RenderingUpdate }).bounds(), IntRect(10, 10, 20, 20));
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedScrollbarContentsBufferDamagesTheWholeLayerOnAsyncScrolling)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    auto buffer = makeUnique<TestContentsBuffer>();
+    auto* bufferPointer = buffer.get();
+    layer.setScrollbarContentsBuffer(WTF::move(buffer), { 0, 0, 40, 40 });
+
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::VideoFrame }).isEmpty());
+    EXPECT_EQ(scene.targetContentsBuffer(), nullptr);
+
+    EXPECT_EQ(scene.flushAndPaint({ CompositionReason::AsyncScrolling }).bounds(), IntRect(0, 0, 40, 40));
+    EXPECT_EQ(scene.targetContentsBuffer(), bufferPointer);
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::AsyncScrolling }).isEmpty());
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedClearingTheVideoBufferDamagesTheWholeLayer)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    layer.setVideoContentsBuffer(makeUnique<TestContentsBuffer>(), CoordinatedPlatformLayer::RequireComposition::No);
+    EXPECT_EQ(scene.flushAndPaint({ CompositionReason::VideoFrame }).bounds(), IntRect(0, 0, 40, 40));
+
+    layer.clearVideoContentsBuffer();
+    EXPECT_EQ(scene.flushAndPaint({ CompositionReason::VideoFrame }).bounds(), IntRect(0, 0, 40, 40));
+    EXPECT_EQ(scene.targetContentsBuffer(), nullptr);
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedClearingAnAbsentVideoBufferAddsNoDamage)
+{
+    CoordinatedScene scene;
+    scene.layer().clearVideoContentsBuffer();
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::VideoFrame }).isEmpty());
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::RenderingUpdate }).isEmpty());
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedClearingAnAbsentScrollbarBufferAddsNoDamage)
+{
+    CoordinatedScene scene;
+    scene.layer().clearScrollbarContentsBuffer();
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::AsyncScrolling }).isEmpty());
+    EXPECT_TRUE(scene.flushAndPaint({ CompositionReason::RenderingUpdate }).isEmpty());
+}
+
+TEST(SkiaCompositingLayerDamage, CoordinatedDiscardedVideoBufferDoesNotReplaceTheDelegatedBuffer)
+{
+    CoordinatedScene scene;
+    auto& layer = scene.layer();
+    layer.setVideoContentsBuffer(makeUnique<TestContentsBuffer>(), CoordinatedPlatformLayer::RequireComposition::No);
+
+    auto delegated = makeUnique<TestContentsBuffer>();
+    auto* delegatedPointer = delegated.get();
+    {
+        Locker locker { layer.lock() };
+        layer.discardVideoContentsBuffer();
+        layer.setContentsBuffer(WTF::move(delegated));
+    }
+    scene.flushAndPaint({ CompositionReason::RenderingUpdate });
+    EXPECT_EQ(scene.targetContentsBuffer(), delegatedPointer);
+    scene.flushAndPaint({ CompositionReason::VideoFrame });
+    EXPECT_EQ(scene.targetContentsBuffer(), delegatedPointer);
 }
 
 } // namespace TestWebKitAPI
