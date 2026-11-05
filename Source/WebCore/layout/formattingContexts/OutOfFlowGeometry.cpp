@@ -313,22 +313,57 @@ auto OutOfFlowGeometry::axisValues(Axis axis) const -> AxisValues
     };
 }
 
-template<typename SizeType>
-LayoutUnit OutOfFlowGeometry::borderBoxSizeFor(const SizeType& size, LayoutUnit containingBlockSize, LayoutUnit borderAndPadding) const
+auto OutOfFlowGeometry::keywordSizes(const AxisValues& values, std::optional<LayoutUnit> minContent, std::optional<LayoutUnit> maxContent, std::optional<LayoutUnit> fillAvailable) const -> KeywordSizes
 {
-    auto value = Style::evaluate<LayoutUnit>(size, containingBlockSize, style().usedZoomForLength());
-    return style().boxSizing() == BoxSizing::BorderBox ? std::max(value, borderAndPadding) : value + borderAndPadding;
+    // The inset-modified containing block minus the margins, auto ones as zero.
+    auto [rangeStart, rangeEnd] = insetModifiedContainingBlock(values);
+    auto stretchFit = rangeEnd - rangeStart - values.marginStart.value_or(0_lu) - values.marginEnd.value_or(0_lu);
+    return { minContent, maxContent, stretchFit, fillAvailable };
+}
+
+// The stretch-fit size, floored by the min-content size and capped by the max-content size (css-sizing-3 §5.1).
+std::optional<LayoutUnit> OutOfFlowGeometry::fitContentSize(const KeywordSizes& keywordSizes)
+{
+    if (!keywordSizes.minContent || !keywordSizes.maxContent)
+        return { };
+    return std::min(std::max(*keywordSizes.minContent, keywordSizes.stretchFit), *keywordSizes.maxContent);
+}
+
+template<typename SizeType>
+std::optional<LayoutUnit> OutOfFlowGeometry::borderBoxSizeFor(const SizeType& size, const AxisValues& values, const KeywordSizes& keywordSizes) const
+{
+    auto borderAndPadding = values.borderAndPadding;
+    if (size.isSpecified()) {
+        auto value = Style::evaluate<LayoutUnit>(size, values.containingBlockSize, style().usedZoomForLength());
+        return style().boxSizing() == BoxSizing::BorderBox ? std::max(value, borderAndPadding) : value + borderAndPadding;
+    }
+    auto atLeastBorderAndPadding = [&](std::optional<LayoutUnit> borderBoxSize) {
+        return borderBoxSize.transform([&](auto size) {
+            return std::max(size, borderAndPadding);
+        });
+    };
+    if (size.isMinContent())
+        return atLeastBorderAndPadding(keywordSizes.minContent);
+    if (size.isMaxContent())
+        return atLeastBorderAndPadding(keywordSizes.maxContent);
+    if (size.isFitContent())
+        return atLeastBorderAndPadding(fitContentSize(keywordSizes));
+    if (size.isFillAvailable() && keywordSizes.fillAvailable)
+        return atLeastBorderAndPadding(keywordSizes.fillAvailable);
+    if (size.isStretch())
+        return atLeastBorderAndPadding(keywordSizes.stretchFit);
+    return { };
 }
 
 // The preferred size capped by the maximum size and floored by the minimum size (§4.2). The automatic minimum size is zero (§4.3).
 template<typename MinimumSizeType, typename MaximumSizeType>
-LayoutUnit OutOfFlowGeometry::clamp(LayoutUnit borderBoxSize, const MinimumSizeType& minimumSize, const MaximumSizeType& maximumSize, LayoutUnit containingBlockSize, LayoutUnit borderAndPadding) const
+LayoutUnit OutOfFlowGeometry::clamp(LayoutUnit borderBoxSize, const MinimumSizeType& minimumSize, const MaximumSizeType& maximumSize, const AxisValues& values, const KeywordSizes& keywordSizes) const
 {
-    if (maximumSize.isSpecified())
-        borderBoxSize = std::min(borderBoxSize, borderBoxSizeFor(maximumSize, containingBlockSize, borderAndPadding));
-    if (minimumSize.isSpecified())
-        borderBoxSize = std::max(borderBoxSize, borderBoxSizeFor(minimumSize, containingBlockSize, borderAndPadding));
-    return std::max(borderAndPadding, borderBoxSize);
+    if (auto maximum = borderBoxSizeFor(maximumSize, values, keywordSizes))
+        borderBoxSize = std::min(borderBoxSize, *maximum);
+    if (auto minimum = borderBoxSizeFor(minimumSize, values, keywordSizes))
+        borderBoxSize = std::max(borderBoxSize, *minimum);
+    return std::max(values.borderAndPadding, borderBoxSize);
 }
 
 // With both sizes automatic, the axis with an auto inset when only one has one, and otherwise the block axis.
@@ -361,7 +396,10 @@ bool OutOfFlowGeometry::hasFitContentInlineSize() const
 
 bool OutOfFlowGeometry::needsContentInlineSizes() const
 {
-    return hasFitContentInlineSize() || (ratioDependentAxis() == Axis::Inline && style().logicalMinWidth().isAuto() && m_box->firstChild());
+    CheckedRef style = this->style();
+    if (style->logicalWidth().isIntrinsic() || style->logicalMinWidth().isIntrinsic() || style->logicalMaxWidth().isIntrinsic())
+        return true;
+    return hasFitContentInlineSize() || (ratioDependentAxis() == Axis::Inline && style->logicalMinWidth().isAuto() && m_box->firstChild());
 }
 
 auto OutOfFlowGeometry::computeInlineAxisGeometry(std::optional<IntrinsicWidthConstraints> contentInlineSizes) const -> AxisGeometry
@@ -372,30 +410,31 @@ auto OutOfFlowGeometry::computeInlineAxisGeometry(std::optional<IntrinsicWidthCo
     auto axis = containingBlockAxis(Axis::Inline);
     auto values = axisValues(axis);
     auto ratioDependentAxis = this->ratioDependentAxis();
+    auto contentSize = [&](LayoutUnit IntrinsicWidthConstraints::* size) {
+        return contentInlineSizes.transform([&](auto& sizes) {
+            return sizes.*size + values.borderAndPadding;
+        });
+    };
+    auto keywordSizes = this->keywordSizes(values, contentSize(&IntrinsicWidthConstraints::minimum), contentSize(&IntrinsicWidthConstraints::maximum), { });
     auto borderBoxSize = [&] {
-        if (auto& inlineSize = style->logicalWidth(writingMode); inlineSize.isSpecified())
-            return borderBoxSizeFor(inlineSize, values.containingBlockSize, values.borderAndPadding);
+        if (auto size = borderBoxSizeFor(style->logicalWidth(writingMode), values, keywordSizes))
+            return *size;
         // A preferred aspect ratio gives it from the definite block size.
         if (ratioDependentAxis == Axis::Inline) {
             if (auto blockSize = definiteBorderBoxBlockSize(axisValues(containingBlockAxis(Axis::Block))))
                 return *BlockFormattingUtils::aspectRatioBorderBoxInlineSize(m_box, *blockSize, values.borderAndPadding, m_blockAxisBorderAndPadding);
         }
         // The automatic size is resolved against the inset-modified containing block minus the margins, auto ones as zero.
-        auto [rangeStart, rangeEnd] = insetModifiedContainingBlock(values);
-        auto stretchFitSize = rangeEnd - rangeStart - values.marginStart.value_or(0_lu) - values.marginEnd.value_or(0_lu);
         if (!hasFitContentInlineSize())
-            return stretchFitSize;
-        // The fit-content size: the stretch-fit size, floored by the min-content size and capped by the max-content size (css-sizing-3 §5.1).
-        return std::min(std::max(contentInlineSizes->minimum + values.borderAndPadding, stretchFitSize), contentInlineSizes->maximum + values.borderAndPadding);
+            return keywordSizes.stretchFit;
+        return *fitContentSize(keywordSizes);
     }();
     // The min and max inline sizes, with those the ratio transfers from the min and max block sizes when it gives the block size, and when it
     // gives the inline size an auto min inline size is the min-content size (css-sizing-4 §5.1, RenderBox::computeOutOfFlowPositionedLogicalWidth).
-    auto maximumSize = LayoutUnit::max();
-    if (auto& maximumInlineSize = style->logicalMaxWidth(writingMode); maximumInlineSize.isSpecified())
-        maximumSize = borderBoxSizeFor(maximumInlineSize, values.containingBlockSize, values.borderAndPadding);
+    auto maximumSize = borderBoxSizeFor(style->logicalMaxWidth(writingMode), values, keywordSizes).value_or(LayoutUnit::max());
     auto minimumSize = values.borderAndPadding;
-    if (auto& minimumInlineSize = style->logicalMinWidth(writingMode); minimumInlineSize.isSpecified())
-        minimumSize = std::max(minimumSize, borderBoxSizeFor(minimumInlineSize, values.containingBlockSize, values.borderAndPadding));
+    if (auto minimumInlineSize = borderBoxSizeFor(style->logicalMinWidth(writingMode), values, keywordSizes))
+        minimumSize = std::max(minimumSize, *minimumInlineSize);
     else if (ratioDependentAxis == Axis::Inline && contentInlineSizes)
         minimumSize = std::max(minimumSize, contentInlineSizes->minimum + values.borderAndPadding);
     if (ratioDependentAxis == Axis::Block) {
@@ -413,8 +452,11 @@ std::optional<LayoutUnit> OutOfFlowGeometry::definiteBorderBoxBlockSize(const Ax
     auto writingMode = m_box->writingMode();
     auto& minimumBlockSize = style->logicalMinHeight(writingMode);
     auto& maximumBlockSize = style->logicalMaxHeight(writingMode);
-    if (auto& blockSize = style->logicalHeight(writingMode); blockSize.isSpecified())
-        return clamp(borderBoxSizeFor(blockSize, values.containingBlockSize, values.borderAndPadding), minimumBlockSize, maximumBlockSize, values.containingBlockSize, values.borderAndPadding);
+    // The content block size is not known yet, which the min-content, max-content and fit-content keywords would take.
+    auto keywordSizes = this->keywordSizes(values, { }, { }, fillAvailableBlockSize());
+    auto& blockSize = style->logicalHeight(writingMode);
+    if (auto size = borderBoxSizeFor(blockSize, values, keywordSizes))
+        return clamp(*size, minimumBlockSize, maximumBlockSize, values, keywordSizes);
     // A preferred aspect ratio gives it from the inline size, which makes it definite (css-sizing-4 §5.1).
     if (ratioDependentAxis() == Axis::Block) {
         if (!borderBoxInlineSize)
@@ -422,10 +464,8 @@ std::optional<LayoutUnit> OutOfFlowGeometry::definiteBorderBoxBlockSize(const Ax
         return BlockFormattingUtils::aspectRatioBorderBoxBlockSize(m_box, *borderBoxInlineSize, m_inlineAxisBorderAndPadding, values.borderAndPadding, values.containingBlockSize, { }, writingMode);
     }
     // With neither inset auto, the automatic size is the stretch-fit size when the alignment stretches (§4.3).
-    if (values.insetStart && values.insetEnd && alignmentAppliesStretch(containingBlockAxis(Axis::Block))) {
-        auto stretchFitSize = values.containingBlockSize - *values.insetStart - *values.insetEnd - values.marginStart.value_or(0_lu) - values.marginEnd.value_or(0_lu);
-        return clamp(stretchFitSize, minimumBlockSize, maximumBlockSize, values.containingBlockSize, values.borderAndPadding);
-    }
+    if (blockSize.isAuto() && values.insetStart && values.insetEnd && alignmentAppliesStretch(containingBlockAxis(Axis::Block)))
+        return clamp(keywordSizes.stretchFit, minimumBlockSize, maximumBlockSize, values, keywordSizes);
     return { };
 }
 
@@ -459,9 +499,19 @@ auto OutOfFlowGeometry::computeBlockAxisGeometry(LayoutUnit intrinsicContentBloc
         if (auto borderBoxSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(m_box, borderBoxInlineSize, m_inlineAxisBorderAndPadding, values.borderAndPadding, values.containingBlockSize, { }, writingMode, intrinsicContentBlockSize))
             return computeAxisGeometry(axis, values, *borderBoxSize);
     }
-    // Otherwise the automatic size is the fit-content size, which is the content's block size in this axis.
-    auto borderBoxSize = definiteBorderBoxBlockSize(values, borderBoxInlineSize).value_or(clamp(intrinsicContentBlockSize + values.borderAndPadding, style->logicalMinHeight(writingMode), style->logicalMaxHeight(writingMode), values.containingBlockSize, values.borderAndPadding));
-    return computeAxisGeometry(axis, values, borderBoxSize);
+    // Otherwise the automatic size is the fit-content size, which is the content's block size in this axis, and so are the min-content,
+    // max-content and fit-content keywords (css-sizing-3 §3.2).
+    auto contentBlockSize = intrinsicContentBlockSize + values.borderAndPadding;
+    auto keywordSizes = this->keywordSizes(values, contentBlockSize, contentBlockSize, fillAvailableBlockSize());
+    auto borderBoxSize = [&] {
+        auto& blockSize = style->logicalHeight(writingMode);
+        if (auto size = borderBoxSizeFor(blockSize, values, keywordSizes))
+            return *size;
+        if (blockSize.isAuto() && values.insetStart && values.insetEnd && alignmentAppliesStretch(axis))
+            return keywordSizes.stretchFit;
+        return contentBlockSize;
+    }();
+    return computeAxisGeometry(axis, values, clamp(borderBoxSize, style->logicalMinHeight(writingMode), style->logicalMaxHeight(writingMode), values, keywordSizes));
 }
 
 }

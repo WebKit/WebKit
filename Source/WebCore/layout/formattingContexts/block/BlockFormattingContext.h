@@ -97,6 +97,7 @@ struct OutOfFlowContainingBlock {
     LayoutUnit inlineSize;
     LayoutUnit blockSize;
     std::optional<LayoutRect> scrollableContainingBlock { };
+    std::optional<LayoutUnit> fillAvailableBlockSize { };
 };
 
 // A block-level box in the inline content of a block container (CSS 2.2 §9.2.1.1), which the block formatting context lays out when the

@@ -583,7 +583,7 @@ void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayou
 BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition, const std::optional<OutOfFlowGeometry::DefaultAnchor>& defaultAnchor)
 {
     auto geometry = computeBorderAndPadding(root, containingBlock.inlineSize);
-    auto outOfFlowGeometry = OutOfFlowGeometry { root, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.writingMode, containingBlock.isScrollContainer, containingBlock.scrollableContainingBlock }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
+    auto outOfFlowGeometry = OutOfFlowGeometry { root, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.writingMode, containingBlock.isScrollContainer, containingBlock.scrollableContainingBlock, containingBlock.fillAvailableBlockSize }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
     auto [inlineAxis, blockAxis] = [&] -> std::pair<OutOfFlowGeometry::AxisGeometry, OutOfFlowGeometry::AxisGeometry> {
         if (root.isRenderReplaced() || root.isRenderOrLegacyRenderSVGRoot()) {
             // From its natural size and aspect ratio (CSS 2.2 §10.3.8, §10.6.5).
@@ -625,7 +625,7 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
     CheckedRef box = downcast<RenderBlockFlow>(outOfFlowBox);
     // In the box's own writing mode, which its content is laid out in.
     auto geometry = computeBorderAndPadding(box, containingBlock.inlineSize);
-    auto outOfFlowGeometry = OutOfFlowGeometry { box, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.writingMode, containingBlock.isScrollContainer, containingBlock.scrollableContainingBlock }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
+    auto outOfFlowGeometry = OutOfFlowGeometry { box, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.writingMode, containingBlock.isScrollContainer, containingBlock.scrollableContainingBlock, containingBlock.fillAvailableBlockSize }, staticPosition, defaultAnchor, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
 
     // The box establishes an independent formatting context for its content, a block formatting context with a block layout state of its own,
     // in the box's writing mode.
