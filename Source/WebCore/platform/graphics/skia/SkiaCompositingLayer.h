@@ -111,6 +111,19 @@ public:
     void addDamage(Damage&&);
 #endif
 
+    void damageWholeLayer()
+    {
+#if ENABLE(DAMAGE_TRACKING)
+        if (!damagePropagationEnabled() || m_rect.isEmpty())
+            return;
+
+        if (!m_layerDamage)
+            m_layerDamage = Damage(m_rect.size(), Damage::Mode::Full);
+        else
+            m_layerDamage->makeFull();
+#endif
+    }
+
     void setUseBackingStore(bool, CoordinatedAnimatedBackingStoreClient* = nullptr);
     void updateBackingStore(CoordinatedBackingStoreProxy::Update&&, float);
     bool hasPendingBackingStoreTileUpdates() const;
@@ -285,19 +298,6 @@ private:
     enum class IncludesReplica : bool { No, Yes };
     enum class IncludesFilterOutsets : bool { No, Yes };
     void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix& accumulatedReplicaTransform, IncludesReplica = IncludesReplica::Yes, IncludesFilterOutsets = IncludesFilterOutsets::Yes);
-
-    void damageWholeLayer()
-    {
-#if ENABLE(DAMAGE_TRACKING)
-        if (!damagePropagationEnabled() || m_rect.isEmpty())
-            return;
-
-        if (!m_layerDamage)
-            m_layerDamage = Damage(m_rect.size(), Damage::Mode::Full);
-        else
-            m_layerDamage->makeFull();
-#endif
-    }
 
     void groupPropertyChanged()
     {

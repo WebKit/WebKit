@@ -161,8 +161,13 @@ public:
     void setContentsClipShapePath(const Path&) WTF_REQUIRES_LOCK(m_lock);
     void setContentsScale(float) WTF_REQUIRES_LOCK(m_lock);
     float contentsScale() const WTF_REQUIRES_LOCK(m_lock);
+    void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, std::optional<Damage>&& = std::nullopt) WTF_REQUIRES_LOCK(m_lock);
+    void setScrollbarContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, const FloatRect&);
+    void clearScrollbarContentsBuffer();
     enum class RequireComposition : bool { No, Yes };
-    void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, std::optional<Damage>&& = std::nullopt, RequireComposition = RequireComposition::Yes) WTF_REQUIRES_LOCK(m_lock);
+    void setVideoContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, RequireComposition);
+    void clearVideoContentsBuffer();
+    void discardVideoContentsBuffer();
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
     void replaceCurrentContentsBufferWithCopy();
 #endif
@@ -248,7 +253,9 @@ private:
 #if USE(TEXTURE_MAPPER)
     void flushCompositingStateOnTarget(const OptionSet<CompositionReason>&, TextureMapperLayer&);
 #else
-    void flushCompositingStateOnTarget(const OptionSet<CompositionReason>&, SkiaCompositingLayer&);
+    void flushCompositingStateProperties(const OptionSet<CompositionReason>&);
+    void flushCompositingStateScrollbarContents(const OptionSet<CompositionReason>&);
+    void flushCompositingStateVideoContents(const OptionSet<CompositionReason>&);
 #endif
 
     enum class Change : uint8_t {
@@ -351,11 +358,24 @@ private:
         RefPtr<CoordinatedImageBackingStore> current;
         RefPtr<CoordinatedImageBackingStore> committed;
     } m_imageBackingStore WTF_GUARDED_BY_LOCK(m_lock);
+#if USE(TEXTURE_MAPPER)
     struct {
         std::unique_ptr<CoordinatedPlatformLayerBuffer> pending;
         std::unique_ptr<CoordinatedPlatformLayerBuffer> committed;
         bool hasCommitted { false };
     } m_contentsBuffer WTF_GUARDED_BY_LOCK(m_lock);
+#else
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_contentsBuffer WTF_GUARDED_BY_LOCK(m_lock);
+#endif
+    struct {
+        Lock lock;
+        std::optional<std::unique_ptr<CoordinatedPlatformLayerBuffer>> buffer WTF_GUARDED_BY_LOCK(lock);
+        std::optional<FloatRect> rect WTF_GUARDED_BY_LOCK(lock);
+    } m_scrollbarContents;
+    struct {
+        Lock lock;
+        std::optional<std::unique_ptr<CoordinatedPlatformLayerBuffer>> buffer WTF_GUARDED_BY_LOCK(lock);
+    } m_videoContents;
     struct {
         Path path;
         WindRule windRule;

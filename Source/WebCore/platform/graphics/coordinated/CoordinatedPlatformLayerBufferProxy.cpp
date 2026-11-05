@@ -72,30 +72,17 @@ void CoordinatedPlatformLayerBufferProxy::setInitialDisplayBuffer(std::unique_pt
     m_pendingBuffer = WTF::move(buffer);
 }
 
-void CoordinatedPlatformLayerBufferProxy::consumePendingBufferIfNeeded()
+std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferProxy::takePendingBuffer()
 {
     assertIsMainThread();
-    if (!m_pendingBuffer)
-        return;
-
-    if (RefPtr layer = m_layer) {
-        assertIsHeld(layer->lock());
-        layer->setContentsBuffer(WTF::move(m_pendingBuffer));
-    } else
-        m_pendingBuffer = nullptr;
+    auto buffer = std::exchange(m_pendingBuffer, nullptr);
+    return m_layer ? WTF::move(buffer) : nullptr;
 }
 
 void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer)
 {
-    RefPtr layer = m_layer;
-    if (!layer)
-        return;
-
-    {
-        Locker layerLocker { layer->lock() };
-        layer->setContentsBuffer(WTF::move(buffer), std::nullopt, CoordinatedPlatformLayer::RequireComposition::No);
-    }
-    layer->requestComposition(CompositionReason::VideoFrame);
+    if (RefPtr layer = m_layer)
+        layer->setVideoContentsBuffer(WTF::move(buffer), CoordinatedPlatformLayer::RequireComposition::Yes);
 }
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)

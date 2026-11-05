@@ -86,9 +86,14 @@ void ScrollerCoordinated::updateValues()
         return;
 
     if (!scrollerImp) {
+        {
+            Locker locker { m_lock };
+            if (!std::exchange(m_needsUpdate, false))
+                return;
+        }
+
         // Custom scrollbars are painted by RenderScrollbar
-        Locker layerLocker { hostLayer->lock() };
-        hostLayer->setContentsBuffer(nullptr);
+        hostLayer->clearScrollbarContentsBuffer();
         return;
     }
 
@@ -156,12 +161,7 @@ void ScrollerCoordinated::updateValues()
     scrollerImp->paint(recordingContext, state.frameRect, state);
     recordingContext.endRecording();
 
-    auto buffer = CoordinatedPlatformLayerBufferSkiaDeferredImage::create(ddlRecorder.detach());
-
-    Locker layerLocker { hostLayer->lock() };
-    hostLayer->setContentsRect(state.frameRect);
-    hostLayer->setContentsClippingRect(FloatRoundedRect(state.frameRect));
-    hostLayer->setContentsBuffer(WTF::move(buffer));
+    hostLayer->setScrollbarContentsBuffer(CoordinatedPlatformLayerBufferSkiaDeferredImage::create(ddlRecorder.detach()), state.frameRect);
 }
 
 void ScrollerCoordinated::setHoveredAndPressedParts(ScrollbarPart hoveredPart, ScrollbarPart pressedPart)

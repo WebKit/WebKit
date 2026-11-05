@@ -51,7 +51,7 @@ public:
     void invalidate();
     bool isValid() const { return !!m_layer; }
 
-    void consumePendingBufferIfNeeded();
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> takePendingBuffer();
     void setInitialDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
     void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
 

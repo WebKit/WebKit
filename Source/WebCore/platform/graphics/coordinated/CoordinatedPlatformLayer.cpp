@@ -154,19 +154,22 @@ void CoordinatedPlatformLayer::invalidateTarget()
         Locker locker { m_lock };
 #if USE(TEXTURE_MAPPER)
         m_backingStore = nullptr;
-#endif
-        m_imageBackingStore.committed = nullptr;
         if (m_target && shouldReleaseBuffer(m_contentsBuffer.committed.get()))
             m_contentsBuffer.committed = nullptr;
-#if !USE(TEXTURE_MAPPER)
-        if (m_target && !shouldReleaseBuffer(m_target->contentsBuffer()))
-            m_contentsBuffer.committed = m_target->takeContentsBuffer();
-#endif
         m_contentsBuffer.hasCommitted = false;
+#endif
+        m_imageBackingStore.committed = nullptr;
     }
+
 #if USE(TEXTURE_MAPPER)
     m_target = nullptr;
 #else
+    if (m_target && !shouldReleaseBuffer(m_target->contentsBuffer())) {
+        Locker locker { m_videoContents.lock };
+        if (!m_videoContents.buffer.has_value())
+            m_videoContents.buffer = m_target->takeContentsBuffer();
+    }
+
     if (m_target) {
         m_target->invalidate();
         m_target = nullptr;
@@ -530,14 +533,20 @@ float CoordinatedPlatformLayer::contentsScale() const
     return m_contentsScale;
 }
 
-void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer, std::optional<Damage>&& dirtyRegion, RequireComposition requireComposition)
+void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer, std::optional<Damage>&& dirtyRegion)
 {
     assertIsHeld(m_lock);
+#if USE(TEXTURE_MAPPER)
     if (!buffer && !m_contentsBuffer.pending && !m_contentsBuffer.hasCommitted)
         return;
 
     m_contentsBuffer.pending = WTF::move(buffer);
     m_pendingChanges.add(Change::ContentsBuffer);
+#else
+    m_contentsBuffer = WTF::move(buffer);
+    m_pendingChanges.add(Change::ContentsBuffer);
+#endif
+
 #if ENABLE(DAMAGE_TRACKING)
     if (dirtyRegion)
         addDamage(WTF::move(*dirtyRegion));
@@ -546,28 +555,80 @@ void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlat
 #else
     UNUSED_PARAM(dirtyRegion);
 #endif
+
+    notifyCompositionRequired();
+}
+
+void CoordinatedPlatformLayer::setScrollbarContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer, const FloatRect& rect)
+{
+    ASSERT(buffer);
+    {
+        Locker locker { m_scrollbarContents.lock };
+        m_scrollbarContents.buffer = WTF::move(buffer);
+        m_scrollbarContents.rect = rect;
+    }
+
+    notifyCompositionRequired();
+}
+
+void CoordinatedPlatformLayer::clearScrollbarContentsBuffer()
+{
+    {
+        Locker locker { m_scrollbarContents.lock };
+        m_scrollbarContents.buffer = nullptr;
+        m_scrollbarContents.rect = std::nullopt;
+    }
+
+    notifyCompositionRequired();
+}
+
+void CoordinatedPlatformLayer::setVideoContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer, RequireComposition requireComposition)
+{
+    ASSERT(buffer);
+    {
+        Locker locker { m_videoContents.lock };
+        m_videoContents.buffer = WTF::move(buffer);
+    }
+
     if (requireComposition == RequireComposition::Yes)
+        requestComposition(CompositionReason::VideoFrame);
+    else
         notifyCompositionRequired();
+}
+
+void CoordinatedPlatformLayer::clearVideoContentsBuffer()
+{
+    {
+        Locker locker { m_videoContents.lock };
+        m_videoContents.buffer = nullptr;
+    }
+
+    notifyCompositionRequired();
+}
+
+void CoordinatedPlatformLayer::discardVideoContentsBuffer()
+{
+    Locker locker { m_videoContents.lock };
+    m_videoContents.buffer = std::nullopt;
 }
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 void CoordinatedPlatformLayer::replaceCurrentContentsBufferWithCopy()
 {
-    Locker locker { m_lock };
-    if (!m_contentsBuffer.hasCommitted)
-        return;
-
-    m_contentsBuffer.pending = nullptr;
-
     if (!m_target)
         return;
 
-    if (auto* buffer = m_target->contentsBuffer()) {
-        if (is<CoordinatedPlatformLayerBufferVideo>(*buffer))
-            m_contentsBuffer.pending = downcast<CoordinatedPlatformLayerBufferVideo>(*buffer).copyBuffer();
-        m_contentsBuffer.hasCommitted = !!m_contentsBuffer.pending;
-        m_target->setContentsBuffer(WTF::move(m_contentsBuffer.pending));
+    auto* buffer = m_target->contentsBuffer();
+    if (!buffer)
+        return;
+
+    {
+        Locker locker { m_videoContents.lock };
+        m_videoContents.buffer = std::nullopt;
     }
+
+    auto copiedBuffer = is<CoordinatedPlatformLayerBufferVideo>(*buffer) ? downcast<CoordinatedPlatformLayerBufferVideo>(*buffer).copyBuffer() : nullptr;
+    m_target->setContentsBuffer(WTF::move(copiedBuffer));
 }
 #endif
 
@@ -997,14 +1058,32 @@ void CoordinatedPlatformLayer::updateContents(bool affectedByTransformAnimation)
 
 void CoordinatedPlatformLayer::purgeBackingStores()
 {
-    Locker locker { m_lock };
-    if (m_backingStoreProxy) {
-        m_backingStoreProxy->invalidate(*this);
-        m_backingStoreProxy = nullptr;
+    {
+        Locker locker { m_lock };
+        if (m_backingStoreProxy) {
+            m_backingStoreProxy->invalidate(*this);
+            m_backingStoreProxy = nullptr;
+        }
+        m_imageBackingStore.current = nullptr;
+#if USE(TEXTURE_MAPPER)
+        if (shouldReleaseBuffer(m_contentsBuffer.pending.get()))
+            m_contentsBuffer.pending = nullptr;
+#else
+        m_contentsBuffer = nullptr;
+#endif
     }
-    m_imageBackingStore.current = nullptr;
-    if (shouldReleaseBuffer(m_contentsBuffer.pending.get()))
-        m_contentsBuffer.pending = nullptr;
+
+    {
+        Locker locker { m_scrollbarContents.lock };
+        m_scrollbarContents.buffer = std::nullopt;
+        m_scrollbarContents.rect = std::nullopt;
+    }
+
+    {
+        Locker locker { m_videoContents.lock };
+        if (m_videoContents.buffer.has_value() && shouldReleaseBuffer(m_videoContents.buffer->get()))
+            m_videoContents.buffer = std::nullopt;
+    }
 }
 
 bool CoordinatedPlatformLayer::isCompositionRequiredOrOngoing() const
@@ -1121,6 +1200,7 @@ void CoordinatedPlatformLayer::flushPositionChanges(const OptionSet<CompositionR
     applyPositionChanges(ensureTarget());
 }
 
+#if USE(TEXTURE_MAPPER)
 void CoordinatedPlatformLayer::flushCompositingState(const OptionSet<CompositionReason>& reasons)
 {
     ASSERT(!isMainThread());
@@ -1131,7 +1211,6 @@ void CoordinatedPlatformLayer::flushCompositingState(const OptionSet<Composition
     flushCompositingStateOnTarget(reasons, ensureTarget());
 }
 
-#if USE(TEXTURE_MAPPER)
 void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<CompositionReason>& reasons, TextureMapperLayer& layer)
 {
     assertIsHeld(m_lock);
@@ -1341,37 +1420,21 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
 
 #else
 
-void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<CompositionReason>& reasons, SkiaCompositingLayer& layer)
+void CoordinatedPlatformLayer::flushCompositingState(const OptionSet<CompositionReason>& reasons)
 {
-    assertIsHeld(m_lock);
-    if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::AsyncScrolling })) {
-        if (m_pendingChanges.contains(Change::ContentsRect)) {
-            layer.setContentsRect(m_contentsRect);
-            m_pendingChanges.remove(Change::ContentsRect);
-        }
+    ASSERT(!isMainThread());
+    flushCompositingStateProperties(reasons);
+    flushCompositingStateScrollbarContents(reasons);
+    flushCompositingStateVideoContents(reasons);
+}
 
-        if (m_pendingChanges.contains(Change::ContentsClippingRect)) {
-            layer.setContentsClippingRect(m_contentsClippingRect);
-            m_pendingChanges.remove(Change::ContentsClippingRect);
-        }
+void CoordinatedPlatformLayer::flushCompositingStateProperties(const OptionSet<CompositionReason>& reasons)
+{
+    Locker locker { m_lock };
+    if (m_pendingChanges.isEmpty() && (!reasons.contains(CompositionReason::RenderingUpdate) || !m_backingStoreProxy))
+        return;
 
-        if (m_pendingChanges.contains(Change::ContentsClipShapePath)) {
-            if (m_contentsClipShapePath.isEmpty())
-                layer.setContentsClipPath(std::nullopt);
-            else {
-                auto contentsClipPath = *m_contentsClipShapePath.platformPath();
-                contentsClipPath.setFillType(SkPathFillType::kWinding);
-                layer.setContentsClipPath(WTF::move(contentsClipPath));
-            }
-            m_pendingChanges.remove(Change::ContentsClipShapePath);
-        }
-
-        if (m_pendingChanges.contains(Change::ContentsImage)) {
-            layer.setImageBackingStore(m_imageBackingStore.current);
-            m_pendingChanges.remove(Change::ContentsImage);
-        }
-    }
-
+    auto& layer = ensureTarget();
     if (reasons.contains(CompositionReason::RenderingUpdate)) {
         if (m_pendingChanges.contains(Change::AnchorPoint)) {
             layer.setAnchorPoint(m_anchorPoint);
@@ -1453,6 +1516,32 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
             m_pendingChanges.remove(Change::ContentsColor);
         }
 
+        if (m_pendingChanges.contains(Change::ContentsRect)) {
+            layer.setContentsRect(m_contentsRect);
+            m_pendingChanges.remove(Change::ContentsRect);
+        }
+
+        if (m_pendingChanges.contains(Change::ContentsClippingRect)) {
+            layer.setContentsClippingRect(m_contentsClippingRect);
+            m_pendingChanges.remove(Change::ContentsClippingRect);
+        }
+
+        if (m_pendingChanges.contains(Change::ContentsClipShapePath)) {
+            if (m_contentsClipShapePath.isEmpty())
+                layer.setContentsClipPath(std::nullopt);
+            else {
+                auto contentsClipPath = *m_contentsClipShapePath.platformPath();
+                contentsClipPath.setFillType(SkPathFillType::kWinding);
+                layer.setContentsClipPath(WTF::move(contentsClipPath));
+            }
+            m_pendingChanges.remove(Change::ContentsClipShapePath);
+        }
+
+        if (m_pendingChanges.contains(Change::ContentsImage)) {
+            layer.setImageBackingStore(m_imageBackingStore.current);
+            m_pendingChanges.remove(Change::ContentsImage);
+        }
+
         if (m_pendingChanges.contains(Change::ClipPath)) {
             auto clipPath = *m_clipPath.path.platformPath();
             clipPath.setFillType(m_clipPath.windRule == WindRule::EvenOdd ? SkPathFillType::kEvenOdd : SkPathFillType::kWinding);
@@ -1530,9 +1619,7 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
 
         if (m_backingStoreProxy)
             layer.updateBackingStore(m_backingStoreProxy->takePendingUpdate(), m_contentsScale);
-    }
 
-    if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::VideoFrame, CompositionReason::AsyncScrolling })) {
 #if ENABLE(DAMAGE_TRACKING)
         if (m_pendingChanges.contains(Change::Damage)) {
             ASSERT(m_damage.has_value());
@@ -1541,10 +1628,44 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
         }
 #endif
         if (m_pendingChanges.contains(Change::ContentsBuffer)) {
-            m_contentsBuffer.hasCommitted = !!m_contentsBuffer.pending;
-            layer.setContentsBuffer(WTF::move(m_contentsBuffer.pending));
+            layer.setContentsBuffer(WTF::move(m_contentsBuffer));
             m_pendingChanges.remove(Change::ContentsBuffer);
         }
+    }
+}
+
+void CoordinatedPlatformLayer::flushCompositingStateScrollbarContents(const OptionSet<CompositionReason>& reasons)
+{
+    Locker locker { m_scrollbarContents.lock };
+    if (!m_scrollbarContents.buffer.has_value() || !reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::AsyncScrolling }))
+        return;
+
+    auto& layer = ensureTarget();
+
+    if (auto rect = std::exchange(m_scrollbarContents.rect, std::nullopt)) {
+        layer.setContentsRect(*rect);
+        layer.setContentsClippingRect(FloatRoundedRect(*rect));
+    }
+
+    auto buffer = std::exchange(m_scrollbarContents.buffer, std::nullopt);
+    if (buffer.has_value() && (buffer.value() || layer.contentsBuffer())) {
+        layer.setContentsBuffer(WTF::move(*buffer));
+        layer.damageWholeLayer();
+    }
+}
+
+void CoordinatedPlatformLayer::flushCompositingStateVideoContents(const OptionSet<CompositionReason>& reasons)
+{
+    Locker locker { m_videoContents.lock };
+    if (!m_videoContents.buffer.has_value() || !reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::VideoFrame }))
+        return;
+
+    auto& layer = ensureTarget();
+
+    auto buffer = std::exchange(m_videoContents.buffer, std::nullopt);
+    if (buffer.has_value() && (buffer.value() || layer.contentsBuffer())) {
+        layer.setContentsBuffer(WTF::move(*buffer));
+        layer.damageWholeLayer();
     }
 }
 #endif

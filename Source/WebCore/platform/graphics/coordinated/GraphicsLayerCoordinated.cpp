@@ -1128,15 +1128,23 @@ void GraphicsLayerCoordinated::commitLayerChanges(CommitState& commitState, floa
     Locker locker { m_platformLayer->lock() };
 
     if (m_pendingChanges.contains(Change::ContentsBuffer)) {
-        if (!m_contentsDisplayDelegate && !m_contentsBufferProxy)
-            m_platformLayer->setContentsBuffer(nullptr);
+        if (!m_contentsBufferProxy) {
+            if (m_contentsDisplayDelegate)
+                m_platformLayer->discardVideoContentsBuffer();
+            else {
+                m_platformLayer->clearVideoContentsBuffer();
+                m_platformLayer->setContentsBuffer(nullptr);
+            }
+        }
     }
 
     if (m_pendingChanges.contains(Change::ContentsBufferNeedsDisplay)) {
         if (m_contentsDisplayDelegate)
             m_contentsDisplayDelegate->display(m_platformLayer.get(), std::exchange(m_contentsDirtyRegion, std::nullopt));
-        else if (m_contentsBufferProxy)
-            m_contentsBufferProxy->consumePendingBufferIfNeeded();
+        else if (m_contentsBufferProxy) {
+            if (auto buffer = m_contentsBufferProxy->takePendingBuffer())
+                m_platformLayer->setVideoContentsBuffer(WTF::move(buffer), CoordinatedPlatformLayer::RequireComposition::No);
+        }
     }
 
     if (m_pendingChanges.containsAny(Change::Geometry))
