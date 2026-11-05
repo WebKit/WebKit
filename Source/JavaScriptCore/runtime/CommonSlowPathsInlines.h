@@ -224,6 +224,21 @@ ALWAYS_INLINE JSCellButterfly* trySpreadFast(JSGlobalObject* globalObject, JSCel
     }
 }
 
+ALWAYS_INLINE JSValue getByValObject(JSGlobalObject* globalObject, VM& vm, JSObject* base, PropertyName propertyName)
+{
+    Structure& structure = *base->structure();
+    if (JSCell::canUseFastGetOwnProperty(structure)) {
+        if (JSValue result = base->fastGetOwnProperty(vm, structure, propertyName))
+            return result;
+        if (structure.hasMonoProto() && structure.storedPrototype().isNull() && structure.typeInfo().isFinalObject()) {
+            if (std::optional<uint32_t> index = parseIndex(propertyName))
+                return base->get(globalObject, *index);
+            return jsUndefined();
+        }
+    }
+    return base->get(globalObject, propertyName);
+}
+
 inline void opEnumeratorPutByVal(JSGlobalObject* globalObject, JSValue baseValue, JSValue propertyNameValue, JSValue value, ECMAMode ecmaMode, unsigned index, JSPropertyNameEnumerator::Flag mode, JSPropertyNameEnumerator* enumerator, ArrayProfile* arrayProfile = nullptr, uint8_t* enumeratorMetadata = nullptr)
 {
     VM& vm = getVM(globalObject);

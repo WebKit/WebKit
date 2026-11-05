@@ -3352,17 +3352,8 @@ ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* c
         auto propertyName = asString(subscript)->toAtomString(globalObject);
         RETURN_IF_EXCEPTION(scope, JSValue());
 
-        if (baseValue.isCell()) [[likely]] {
-            Structure& structure = *baseValue.asCell()->structure();
-            if (JSCell::canUseFastGetOwnProperty(structure)) {
-                if (JSValue result = baseValue.asCell()->fastGetOwnProperty(vm, structure, propertyName.data)) {
-                    ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
-                    return result;
-                }
-            }
-
-            RELEASE_AND_RETURN(scope, baseValue.get(globalObject, propertyName.data));
-        }
+        if (baseValue.isObject()) [[likely]]
+            RELEASE_AND_RETURN(scope, CommonSlowPaths::getByValObject(globalObject, vm, asObject(baseValue), propertyName.data));
 
         ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
         RELEASE_AND_RETURN(scope, baseValue.get(globalObject, propertyName.data));
