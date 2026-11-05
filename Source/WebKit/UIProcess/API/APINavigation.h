@@ -115,6 +115,10 @@ public:
 
     WebCore::NavigationIdentifier navigationID() const { return m_navigationID; }
 
+    // Orders the navigations by when the UI process learned of them. Their identifiers cannot be compared
+    // for that: a web process mints the identifiers of the navigations it starts.
+    uint64_t sequenceNumber() const { return m_sequenceNumber; }
+
     const WebCore::ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_originalRequest; }
     void setCurrentRequest(WebCore::ResourceRequest&&);
     void upgradeCurrentInsecureRequest();
@@ -247,7 +251,10 @@ private:
     Navigation(WebCore::ProcessIdentifier, std::unique_ptr<SubstituteData>&&);
     Navigation(WebCore::ProcessIdentifier, WebCore::ResourceRequest&&, std::unique_ptr<SubstituteData>&&, RefPtr<WebKit::WebBackForwardListItem>&& fromItem);
 
+    static uint64_t generateSequenceNumber();
+
     WebCore::NavigationIdentifier m_navigationID;
+    const uint64_t m_sequenceNumber { generateSequenceNumber() };
     WebCore::ProcessIdentifier m_processID;
     WebCore::ResourceRequest m_originalRequest;
     WebCore::ResourceRequest m_currentRequest;

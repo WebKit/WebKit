@@ -47,6 +47,12 @@ SubstituteData::SubstituteData(Vector<uint8_t>&& content, const ResourceResponse
 }
 
 
+uint64_t Navigation::generateSequenceNumber()
+{
+    static uint64_t lastSequenceNumber;
+    return ++lastSequenceNumber;
+}
+
 Navigation::Navigation(WebCore::ProcessIdentifier processID)
     : m_navigationID(WebCore::NavigationIdentifier::generate())
     , m_processID(processID)

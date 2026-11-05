@@ -45,6 +45,7 @@
 #include "WebFrameProxy.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebInspectorUIProxy.h"
+#include "WebNavigationState.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
@@ -746,16 +747,16 @@ void WebAutomationSession::waitForNavigationToComplete(const Inspector::Protocol
     callback({ });
 }
 
-template<typename T>
-static void addPendingNavigationCallback(HashMap<T, Vector<Inspector::CommandCallback<void>>>& map, const T& identifier, Inspector::CommandCallback<void>&& callback)
+template<typename T, typename CallbackType>
+static void addPendingNavigationCallback(HashMap<T, Vector<CallbackType>>& map, const T& identifier, CallbackType&& callback)
 {
     auto& vector = map.ensure(identifier, [] {
-        return Vector<Inspector::CommandCallback<void>> { };
+        return Vector<CallbackType> { };
     }).iterator->value;
     vector.append(WTF::move(callback));
 }
 
-void WebAutomationSession::waitForNavigationToCompleteOnPage(WebPageProxy& page, Inspector::Protocol::Automation::PageLoadStrategy loadStrategy, Seconds timeout, Inspector::CommandCallback<void>&& callback)
+void WebAutomationSession::waitForNavigationToCompleteOnPage(WebPageProxy& page, Inspector::Protocol::Automation::PageLoadStrategy loadStrategy, Seconds timeout, Inspector::CommandCallback<void>&& callback, RefPtr<API::Navigation>&& navigation, SameDocumentNavigation sameDocumentNavigation)
 {
     Ref pageLoadState = page.pageLoadState();
 
@@ -767,10 +768,10 @@ void WebAutomationSession::waitForNavigationToCompleteOnPage(WebPageProxy& page,
     m_loadTimer.startOneShot(timeout);
     switch (loadStrategy) {
     case Inspector::Protocol::Automation::PageLoadStrategy::Normal:
-        addPendingNavigationCallback(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage, page.identifier(), WTF::move(callback));
+        addPendingNavigationCallback(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage, page.identifier(), PendingPageNavigationCallback { WTF::move(navigation), sameDocumentNavigation == SameDocumentNavigation::Yes, false, WTF::move(callback) });
         break;
     case Inspector::Protocol::Automation::PageLoadStrategy::Eager:
-        addPendingNavigationCallback(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage, page.identifier(), WTF::move(callback));
+        addPendingNavigationCallback(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage, page.identifier(), PendingPageNavigationCallback { WTF::move(navigation), sameDocumentNavigation == SameDocumentNavigation::Yes, false, WTF::move(callback) });
         break;
     case Inspector::Protocol::Automation::PageLoadStrategy::None:
         ASSERT_NOT_REACHED();
@@ -797,16 +798,16 @@ void WebAutomationSession::waitForNavigationToCompleteOnFrame(WebFrameProxy& fra
     }
 }
 
-void WebAutomationSession::respondToPendingPageNavigationCallbacksWithTimeout(HashMap<WebPageProxyIdentifier, Vector<Inspector::CommandCallback<void>>>& map)
+void WebAutomationSession::respondToPendingPageNavigationCallbacksWithTimeout(HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>>& map)
 {
     for (auto id : copyToVector(map.keys())) {
         RefPtr page = WebProcessProxy::webPage(id);
         bool shouldIgnoreTimeout = page && m_client->isShowingJavaScriptDialogOnPage(*this, *page);
-        for (auto& callback : map.take(id)) {
+        for (auto& pending : map.take(id)) {
             if (shouldIgnoreTimeout)
-                callback({ });
+                pending.callback({ });
             else
-                callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout)));
+                pending.callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout)));
         }
     }
 }
@@ -1013,8 +1014,29 @@ void WebAutomationSession::navigateBrowsingContext(const Inspector::Protocol::Au
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
     auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
 
-    page->loadRequest(URL { url });
-    waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback));
+    // A fragment navigation stays in the current document, and WebCore reports it with that document's
+    // navigation rather than the new one, so only navigations to another document are awaited. WebCore tells
+    // the two apart by the committed document's URL, not by the URL of a load that is still in flight.
+    URL targetURL { url };
+    Ref pageLoadState = page->pageLoadState();
+    bool isFragmentNavigation = targetURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(targetURL, pageLoadState->url());
+
+    RefPtr navigation = page->loadRequest(WTF::move(targetURL));
+    if (isFragmentNavigation)
+        navigation = nullptr;
+    waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback), WTF::move(navigation), isFragmentNavigation ? SameDocumentNavigation::Yes : SameDocumentNavigation::No);
+}
+
+// A traversal between entries of the same document (fragments, pushState) is reported with that document's
+// navigation rather than the new one, like a fragment navigation, so it is awaited as one.
+void WebAutomationSession::waitForHistoryTraversalToComplete(WebPageProxy& page, Inspector::Protocol::Automation::PageLoadStrategy loadStrategy, Seconds timeout, Inspector::CommandCallback<void>&& callback, RefPtr<API::Navigation>&& navigation)
+{
+    RefPtr fromItem = navigation ? navigation->fromItem() : nullptr;
+    RefPtr targetItem = navigation ? navigation->targetItem() : nullptr;
+    bool isSameDocumentNavigation = fromItem && targetItem && fromItem->mainFrameState().documentSequenceNumber == targetItem->mainFrameState().documentSequenceNumber;
+    if (isSameDocumentNavigation)
+        navigation = nullptr;
+    waitForNavigationToCompleteOnPage(page, loadStrategy, timeout, WTF::move(callback), WTF::move(navigation), isSameDocumentNavigation ? SameDocumentNavigation::Yes : SameDocumentNavigation::No);
 }
 
 void WebAutomationSession::goBackInBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&& optionalPageLoadStrategy, std::optional<double>&& optionalPageLoadTimeout, CommandCallback<void>&& callback)
@@ -1025,8 +1047,7 @@ void WebAutomationSession::goBackInBrowsingContext(const Inspector::Protocol::Au
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
     auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
 
-    page->goBack();
-    waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback));
+    waitForHistoryTraversalToComplete(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback), page->goBack());
 }
 
 void WebAutomationSession::goForwardInBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&& optionalPageLoadStrategy, std::optional<double>&& optionalPageLoadTimeout, CommandCallback<void>&& callback)
@@ -1037,8 +1058,7 @@ void WebAutomationSession::goForwardInBrowsingContext(const Inspector::Protocol:
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
     auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
 
-    page->goForward();
-    waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback));
+    waitForHistoryTraversalToComplete(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback), page->goForward());
 }
 
 void WebAutomationSession::traverseHistoryInBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, int delta, CommandCallback<void>&& callback)
@@ -1075,8 +1095,7 @@ void WebAutomationSession::traverseHistoryInBrowsingContext(const Inspector::Pro
 #endif
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!targetItem, InternalError);
 
-    page->goToBackForwardItem(*targetItem);
-    waitForNavigationToCompleteOnPage(*page, defaultPageLoadStrategy, defaultPageLoadTimeout, WTF::move(callback));
+    waitForHistoryTraversalToComplete(*page, defaultPageLoadStrategy, defaultPageLoadTimeout, WTF::move(callback), page->goToBackForwardItem(*targetItem));
 }
 
 void WebAutomationSession::reloadBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&& optionalPageLoadStrategy, std::optional<double>&& optionalPageLoadTimeout, CommandCallback<void>&& callback)
@@ -1087,8 +1106,7 @@ void WebAutomationSession::reloadBrowsingContext(const Inspector::Protocol::Auto
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
     auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
 
-    page->reload({ });
-    waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback));
+    waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback), page->reload({ }));
 }
 
 void WebAutomationSession::respondToPendingNavigationCallbacksWithSuccess(Vector<Inspector::CommandCallback<void>>&& callbacks)
@@ -1097,12 +1115,50 @@ void WebAutomationSession::respondToPendingNavigationCallbacksWithSuccess(Vector
         return;
 
     // FIXME https://webkit.org/b/323980 Support separate timers, one for each callback
-    m_loadTimer.stop();
+    if (!hasPendingNavigationCallbacks())
+        m_loadTimer.stop();
     for (auto& callback : borrow(callbacks))
         callback({ });
 }
 
-void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame)
+bool WebAutomationSession::hasPendingNavigationCallbacks() const
+{
+    return !m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.isEmpty() || !m_pendingEagerNavigationInBrowsingContextCallbacksPerPage.isEmpty()
+        || !m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.isEmpty() || !m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.isEmpty();
+}
+
+Vector<Inspector::CommandCallback<void>> WebAutomationSession::takePendingPageNavigationCallbacks(HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>>& map, const WebPageProxy& page, API::Navigation* finishedNavigation, UnboundWaits unboundWaits, NavigationNotification notification)
+{
+    auto it = map.find(page.identifier());
+    if (it == map.end())
+        return { };
+
+    // A wait bound to a navigation is completed by that navigation, or by one the UI process learned of after
+    // it, which replaced it. Loads started earlier (e.g. the initial about:blank of a new tab) and
+    // notifications that carry no navigation (e.g. a script-driven same-document navigation in the old
+    // document) must not complete it, unless its navigation was destroyed without reporting its end: an error
+    // page that replaced it has no navigation, so the end of a load without one completes the wait then, while a
+    // same-document navigation of the old document still does not. The caller passes the finished navigation: a
+    // provisional load that failed has already left WebNavigationState when its failure is reported.
+    Vector<Inspector::CommandCallback<void>> completedCallbacks;
+    it->value.removeAllMatching([&](auto& pending) {
+        if (RefPtr awaitedNavigation = pending.navigation) {
+            if (!finishedNavigation) {
+                if (!pending.navigationWasDestroyed || notification == NavigationNotification::SameDocumentNavigation)
+                    return false;
+            } else if (finishedNavigation->navigationID() != awaitedNavigation->navigationID() && finishedNavigation->sequenceNumber() <= awaitedNavigation->sequenceNumber())
+                return false;
+        } else if (!pending.isForSameDocumentNavigation && unboundWaits == UnboundWaits::Keep)
+            return false;
+        completedCallbacks.append(WTF::move(pending.callback));
+        return true;
+    });
+    if (it->value.isEmpty())
+        map.remove(it);
+    return completedCallbacks;
+}
+
+void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame, API::Navigation* finishedNavigation, NavigationNotification notification)
 {
     if (frame.isMainFrame()) {
         // New page loaded, clear frame handles previously cached for frame's page.
@@ -1118,11 +1174,34 @@ void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame
             return handlesToRemove.contains(iter.key);
         });
 
-        respondToPendingNavigationCallbacksWithSuccess(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.take(frame.page()->identifier()));
-        m_domainNotifier->browsingContextCleared(handleForWebPageProxy(*protect(frame.page())));
+        // A wait for the eager strategy normally ends when the document has loaded. The navigation it is bound
+        // to may have failed and never get there, and a same-document target has no document load, so those
+        // eager waits are completed here as well; the others are left to documentLoadedForFrame().
+        Ref page = *protect(frame.page());
+        respondToPendingNavigationCallbacksWithSuccess(takePendingPageNavigationCallbacks(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage, page, finishedNavigation, UnboundWaits::Complete, notification));
+        respondToPendingNavigationCallbacksWithSuccess(takePendingPageNavigationCallbacks(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage, page, finishedNavigation, UnboundWaits::Keep, notification));
+        m_domainNotifier->browsingContextCleared(handleForWebPageProxy(page));
     } else {
         respondToPendingNavigationCallbacksWithSuccess(m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.take(frame.frameID()));
     }
+}
+
+void WebAutomationSession::navigationDestroyed(const WebPageProxy& page, const API::Navigation& navigation)
+{
+    // The navigation ended without reporting it, e.g. its policy check was cancelled by another load. That
+    // load may have no navigation of its own (an error page), so the waits bound to the destroyed navigation
+    // end with the end of any load that is not an earlier one.
+    auto markWaitsForDestroyedNavigation = [&](auto& map) {
+        auto it = map.find(page.identifier());
+        if (it == map.end())
+            return;
+        for (auto& pending : it->value) {
+            if (pending.navigation && pending.navigation->navigationID() == navigation.navigationID())
+                pending.navigationWasDestroyed = true;
+        }
+    };
+    markWaitsForDestroyedNavigation(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage);
+    markWaitsForDestroyedNavigation(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage);
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
@@ -1147,7 +1226,9 @@ void WebAutomationSession::documentLoadedForFrame(const WebFrameProxy& frame, st
 #endif
 
     if (frame.isMainFrame()) {
-        respondToPendingNavigationCallbacksWithSuccess(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage.take(frame.page()->identifier()));
+        Ref page = *protect(frame.page());
+        RefPtr finishedNavigation = navigationID ? protect(page->navigationState())->navigation(*navigationID) : nullptr;
+        respondToPendingNavigationCallbacksWithSuccess(takePendingPageNavigationCallbacks(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage, page, finishedNavigation.get(), UnboundWaits::Complete));
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
         resetMouseState();
@@ -1441,10 +1522,10 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
     String handle = handleForWebPageProxy(page);
     m_domainNotifier->browsingContextCleared(handle);
 
-    for (auto& callback : m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.take(page.identifier()))
-        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
-    for (auto& callback : m_pendingEagerNavigationInBrowsingContextCallbacksPerPage.take(page.identifier()))
-        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
+    for (auto& pending : m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.take(page.identifier()))
+        pending.callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
+    for (auto& pending : m_pendingEagerNavigationInBrowsingContextCallbacksPerPage.take(page.identifier()))
+        pending.callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(WindowNotFound)));
 
 #if ENABLE(WEBDRIVER_BIDI)
     contextDestroyedForPage(page);
