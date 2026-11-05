@@ -3617,7 +3617,8 @@ private:
             if (node->child1()->shouldSpeculateOther()) {
                 insertCheck<OtherUse>(node->child1().node());
                 m_graph.convertToConstant(node, jsNumber(1));
-            }
+            } else if (node->child1()->op() == Spread && !node->loadVarargsData()->offset)
+                fixEdge<KnownCellUse>(node->child1());
             break;
         }
 
@@ -3626,6 +3627,8 @@ private:
             // Actually this is common that we are passing undefined / null.
             if (node->child2()->shouldSpeculateOther())
                 fixEdge<OtherUse>(node->child2());
+            else if (node->child2()->op() == Spread && !node->loadVarargsData()->offset)
+                fixEdge<KnownCellUse>(node->child2());
             break;
         }
 

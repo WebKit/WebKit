@@ -8304,6 +8304,20 @@ void SpeculativeJIT::compileVarargsLength(Node* node)
 {
     LoadVarargsData* data = node->loadVarargsData();
 
+    if (node->argumentsChild().useKind() == KnownCellUse) {
+        SpeculateCellOperand arguments(this, node->argumentsChild());
+        GPRTemporary length(this);
+        GPRReg argumentsGPR = arguments.gpr();
+        GPRReg lengthGPR = length.gpr();
+
+        load32(Address(argumentsGPR, JSCellButterfly::offsetOfPublicLength()), lengthGPR);
+        speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branch32(Above, lengthGPR, TrustedImm32(maxArguments)));
+        add32(TrustedImm32(1), lengthGPR);
+
+        strictInt32Result(lengthGPR, node);
+        return;
+    }
+
     GPRReg argumentsGPR = InvalidGPRReg;
     lock(GPRInfo::returnValueGPR);
     JSValueOperand arguments(this, node->argumentsChild());
@@ -8326,6 +8340,26 @@ void SpeculativeJIT::compileVarargsLength(Node* node)
 void SpeculativeJIT::compileLoadVarargs(Node* node)
 {
     LoadVarargsData* data = node->loadVarargsData();
+
+    if (node->argumentsChild().useKind() == KnownCellUse) {
+        SpeculateStrictInt32Operand argumentCount(this, node->child1());
+        SpeculateCellOperand arguments(this, node->argumentsChild());
+        GPRTemporary length(this);
+        GPRTemporary temp(this);
+        GPRReg argumentCountIncludingThis = argumentCount.gpr();
+        GPRReg argumentsGPR = arguments.gpr();
+        GPRReg lengthGPR = length.gpr();
+        GPRReg tempGPR = temp.gpr();
+
+        speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branchTest32(Zero, argumentCountIncludingThis));
+        speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branch32(Above, argumentCountIncludingThis, TrustedImm32(data->limit)));
+
+        store32(argumentCountIncludingThis, lowWordFor(data->machineCount));
+        sub32(argumentCountIncludingThis, TrustedImm32(1), lengthGPR);
+        emitLoadVarargsFromContiguousStorage(data, Address(argumentsGPR, JSCellButterfly::offsetOfData()), lengthGPR, tempGPR);
+        noResult(node);
+        return;
+    }
 
     SpeculateStrictInt32Operand argumentCount(this, node->child1());
     JSValueOperand arguments(this, node->argumentsChild(), ManualOperandSpeculation);
@@ -8460,10 +8494,17 @@ void SpeculativeJIT::compileForwardVarargs(Node* node)
     store32(lengthGPR, lowWordFor(data->machineCount));
         
     VirtualRegister sourceStart = argumentsStart(inlineCallFrame) + data->offset;
-    VirtualRegister targetStart = data->machineStart;
 
     sub32(TrustedImm32(1), lengthGPR);
-        
+    emitLoadVarargsFromContiguousStorage(data, addressFor(sourceStart), lengthGPR, tempGPR);
+
+    noResult(node);
+}
+
+void SpeculativeJIT::emitLoadVarargsFromContiguousStorage(LoadVarargsData* data, Address sourceStart, GPRReg lengthGPR, GPRReg tempGPR)
+{
+    VirtualRegister targetStart = data->machineStart;
+
     // First have a loop that fills in the undefined slots in case of an arity check failure.
     move(TrustedImm32(data->mandatoryMinimum), tempGPR);
     Jump done = branch32(BelowOrEqual, tempGPR, lengthGPR);
@@ -8483,11 +8524,7 @@ void SpeculativeJIT::compileForwardVarargs(Node* node)
         
     loop = label();
     sub32(TrustedImm32(1), lengthGPR);
-    loadValue(
-        BaseIndex(
-            GPRInfo::callFrameRegister, lengthGPR, TimesEight,
-            sourceStart.offset() * sizeof(EncodedJSValue)),
-        tempGPR);
+    loadValue(BaseIndex(sourceStart.base, lengthGPR, TimesEight, sourceStart.offset), tempGPR);
     storeValue(
         tempGPR,
         BaseIndex(
@@ -8496,8 +8533,6 @@ void SpeculativeJIT::compileForwardVarargs(Node* node)
     branchTest32(NonZero, lengthGPR).linkTo(loop, this);
         
     done.link(this);
-        
-    noResult(node);
 }
 
 void SpeculativeJIT::compileCreateActivation(Node* node)
