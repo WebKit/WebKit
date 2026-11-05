@@ -32,6 +32,7 @@ maybe_enter_webkit_container_sdk()
 
 from webkitpy.common.host import Host
 from webkitpy.port.factory import configuration_options
+from webkitpy.results.options import upload_options
 from webkitpy.webdriver_tests.webdriver_test_runner import WebDriverTestRunner
 from webkitpy.common.system.logutils import configure_logging
 maybe_use_container_sdk_root_dir()
@@ -68,6 +69,10 @@ option_parser.add_option("--test-list", action="append",
 configuration_group = optparse.OptionGroup(option_parser, 'Configuration options')
 configuration_group.add_options(configuration_options())
 option_parser.add_option_group(configuration_group)
+
+upload_group = optparse.OptionGroup(option_parser, 'Upload options')
+upload_group.add_options(upload_options())
+option_parser.add_option_group(upload_group)
 
 options, args = option_parser.parse_args()
 
@@ -109,6 +114,10 @@ retval = runner.process_results()
 
 if options.json_output is not None:
     runner.dump_results_to_json_file(options.json_output)
+
+if options.report_urls and not runner.upload_results(options):
+    _log.error('Failed to upload results')
+    retval = retval or 1
 
 sys.exit(retval)
 
