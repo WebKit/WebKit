@@ -74,7 +74,7 @@ public:
     bool isValid() const final { return m_device; }
     id<MTLDevice> device() const { return m_device; }
     void makeInvalid() { m_device = nil; }
-    bool LEGACY_NODELETE isXRCompatible() const final;
+    NODELETE bool isXRCompatible() const final;
 
     RefPtr<Instance> instance() const { return m_instance.get(); }
     ThreadSafeWeakPtr<Instance> weakInstance() const { return m_instance; }

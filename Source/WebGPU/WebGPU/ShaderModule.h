@@ -112,9 +112,9 @@ public:
     id<MTLLibrary> library() const { return m_library; }
 
     Device& device() const { return m_device; }
-    const String& LEGACY_NODELETE defaultVertexEntryPoint() const;
-    const String& LEGACY_NODELETE defaultFragmentEntryPoint() const;
-    const String& LEGACY_NODELETE defaultComputeEntryPoint() const;
+    NODELETE const String& defaultVertexEntryPoint() const;
+    NODELETE const String& defaultFragmentEntryPoint() const;
+    NODELETE const String& defaultComputeEntryPoint() const;
 
     using VertexStageIn = HashMap<uint32_t, WebGPU::VertexFormat, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using FragmentOutputs = HashMap<uint32_t, MTLDataType, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;

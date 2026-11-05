@@ -219,7 +219,7 @@ id<MTLRasterizationRateMap> TextureView::rasterizationMapForSlice(uint32_t slice
 
 #pragma mark WGPU Stubs
 
-void LEGACY_NODELETE wgpuTextureViewAddRef(WGPUTextureView textureView)
+NODELETE void wgpuTextureViewAddRef(WGPUTextureView textureView)
 {
     WebGPU::Metal::fromAPI(textureView).ref();
 }

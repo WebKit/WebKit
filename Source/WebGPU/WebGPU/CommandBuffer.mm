@@ -189,7 +189,7 @@ bool CommandBuffer::waitForCompletion()
 
 #pragma mark WGPU Stubs
 
-void LEGACY_NODELETE wgpuCommandBufferAddRef(WGPUCommandBuffer commandBuffer)
+NODELETE void wgpuCommandBufferAddRef(WGPUCommandBuffer commandBuffer)
 {
     WebGPU::Metal::fromAPI(commandBuffer).ref();
 }

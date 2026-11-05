@@ -127,7 +127,7 @@ public:
     virtual void visit(AST::SwitchClause&);
     virtual void visit(AST::Continuing&);
 
-    bool LEGACY_NODELETE hasError() const;
+    NODELETE bool hasError() const;
     Result<void> result();
 
     template<typename T> void checkErrorAndVisit(T& x)

@@ -590,7 +590,7 @@ id<MTLComputeCommandEncoder> ComputePassEncoder::computeCommandEncoder() const
 
 #pragma mark WGPU Stubs
 
-void LEGACY_NODELETE wgpuComputePassEncoderAddRef(WGPUComputePassEncoder computePassEncoder)
+NODELETE void wgpuComputePassEncoderAddRef(WGPUComputePassEncoder computePassEncoder)
 {
     WebGPU::Metal::fromAPI(computePassEncoder).ref();
 }

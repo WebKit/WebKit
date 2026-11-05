@@ -375,11 +375,11 @@ public:
 
     void visit(const Type*, bool shouldPack = false);
 
-    StringBuilder& LEGACY_NODELETE stringBuilder() { return m_body; }
-    Indentation<4>& LEGACY_NODELETE indent() { return m_indent; }
-    HelperGenerator& LEGACY_NODELETE helperGenerator() { return m_helperGenerator; }
-    unsigned LEGACY_NODELETE metalAppleGPUFamily() const { return m_deviceState.appleGPUFamily; }
-    bool LEGACY_NODELETE shaderValidationEnabled() const { return m_deviceState.shaderValidationEnabled; }
+    NODELETE StringBuilder& stringBuilder() { return m_body; }
+    NODELETE Indentation<4>& indent() { return m_indent; }
+    NODELETE HelperGenerator& helperGenerator() { return m_helperGenerator; }
+    NODELETE unsigned metalAppleGPUFamily() const { return m_deviceState.appleGPUFamily; }
+    NODELETE bool shaderValidationEnabled() const { return m_deviceState.shaderValidationEnabled; }
 
     ASCIILiteral declareForwardProgress() const
     {
@@ -413,7 +413,7 @@ private:
     void serializeConstant(const Type*, ConstantValue);
     void serializeBinaryExpression(AST::Expression&, AST::BinaryOperation, AST::Expression&);
     void visitStatements(AST::Statement::List&);
-    bool LEGACY_NODELETE shouldPackType() const;
+    NODELETE bool shouldPackType() const;
 
     HelperGenerator m_helperGenerator;
     StringBuilder m_body;
@@ -2778,7 +2778,7 @@ static void emitAtomicExchange(FunctionDefinitionWriter* writer, AST::CallExpres
     atomicFunction("atomic_exchange_explicit"_s, writer, call);
 }
 
-[[noreturn]] static void LEGACY_NODELETE emitArrayLength(FunctionDefinitionWriter*, AST::CallExpression&)
+NODELETE [[noreturn]] static void emitArrayLength(FunctionDefinitionWriter*, AST::CallExpression&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

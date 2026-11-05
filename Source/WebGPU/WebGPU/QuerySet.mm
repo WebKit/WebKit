@@ -220,7 +220,7 @@ void QuerySet::createContainersIfNeeded()
 
 #pragma mark WGPU Stubs
 
-void LEGACY_NODELETE wgpuQuerySetAddRef(WGPUQuerySet querySet)
+NODELETE void wgpuQuerySetAddRef(WGPUQuerySet querySet)
 {
     WebGPU::Metal::fromAPI(querySet).ref();
 }

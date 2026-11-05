@@ -60,12 +60,12 @@ static inline auto span(id<MTLBuffer> buffer, uint64_t byteOffset)
     return unsafeMakeSpan(static_cast<T*>(static_cast<void*>(byteSpan.data())), (byteOffset < buffer.length) ? (buffer.length - byteOffset) / sizeof(T) : 0);
 }
 
-// The usages a mappable buffer may have. Constants, so that the LEGACY_NODELETE functions below do not
+// The usages a mappable buffer may have. Constants, so that the NODELETE functions below do not
 // construct OptionSets from initializer lists.
 static constexpr OptionSet<WebGPU::BufferUsage> mapReadBufferUsages { WebGPU::BufferUsage::CopyDestination, WebGPU::BufferUsage::MapRead };
 static constexpr OptionSet<WebGPU::BufferUsage> mapWriteBufferUsages { WebGPU::BufferUsage::CopySource, WebGPU::BufferUsage::MapWrite };
 
-static bool LEGACY_NODELETE validateDescriptor(const Device& device, const WebGPU::BufferDescriptor& descriptor)
+NODELETE static bool validateDescriptor(const Device& device, const WebGPU::BufferDescriptor& descriptor)
 {
     UNUSED_PARAM(device);
 
@@ -82,7 +82,7 @@ static bool LEGACY_NODELETE validateDescriptor(const Device& device, const WebGP
     return true;
 }
 
-static bool LEGACY_NODELETE validateCreateBuffer(const Device& device, const WebGPU::BufferDescriptor& descriptor)
+NODELETE static bool validateCreateBuffer(const Device& device, const WebGPU::BufferDescriptor& descriptor)
 {
     if (!device.isValid())
         return false;
@@ -109,7 +109,7 @@ static bool LEGACY_NODELETE validateCreateBuffer(const Device& device, const Web
     return true;
 }
 
-static MTLStorageMode LEGACY_NODELETE storageMode(bool deviceHasUnifiedMemory, OptionSet<WebGPU::BufferUsage> usage, bool mappedAtCreation)
+NODELETE static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, OptionSet<WebGPU::BufferUsage> usage, bool mappedAtCreation)
 {
     if (deviceHasUnifiedMemory)
         return MTLStorageModeShared;
@@ -312,7 +312,7 @@ bool Buffer::validateMappedRangeBounds(size_t offset, size_t rangeSize) const
     return true;
 }
 
-static uint64_t LEGACY_NODELETE computeRangeSize(uint64_t size, uint64_t offset)
+NODELETE static uint64_t computeRangeSize(uint64_t size, uint64_t offset)
 {
     auto result = checkedDifference<uint64_t>(size, offset);
     if (result.hasOverflowed())
@@ -322,7 +322,7 @@ static uint64_t LEGACY_NODELETE computeRangeSize(uint64_t size, uint64_t offset)
 
 // The offset and size of a mapped range as size_t. std::nullopt when either does not fit in size_t
 // (32-bit platforms): no buffer is that large, so such a range is out of bounds.
-static std::optional<std::pair<size_t, size_t>> LEGACY_NODELETE mappedRangeOffsetAndSize(uint64_t bufferSize, uint64_t offset, std::optional<uint64_t> size)
+NODELETE static std::optional<std::pair<size_t, size_t>> mappedRangeOffsetAndSize(uint64_t bufferSize, uint64_t offset, std::optional<uint64_t> size)
 {
     uint64_t rangeSize = size ? *size : computeRangeSize(bufferSize, offset);
     if (!isInBounds<size_t>(offset) || !isInBounds<size_t>(rangeSize))
@@ -801,7 +801,7 @@ void Buffer::clearMustTakeSlowIndexValidationPath()
 
 #pragma mark WGPU Stubs
 
-void LEGACY_NODELETE wgpuBufferAddRef(WGPUBuffer buffer)
+NODELETE void wgpuBufferAddRef(WGPUBuffer buffer)
 {
     WebGPU::Metal::fromAPI(buffer).ref();
 }

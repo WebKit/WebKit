@@ -46,7 +46,7 @@
 
 namespace WebGPU::Metal {
 
-static MTLBlendOperation LEGACY_NODELETE blendOperation(WebGPU::BlendOperation operation)
+NODELETE static MTLBlendOperation blendOperation(WebGPU::BlendOperation operation)
 {
     switch (operation) {
     case WebGPU::BlendOperation::Add:
@@ -62,7 +62,7 @@ static MTLBlendOperation LEGACY_NODELETE blendOperation(WebGPU::BlendOperation o
     }
 }
 
-static MTLBlendFactor LEGACY_NODELETE blendFactor(WebGPU::BlendFactor factor)
+NODELETE static MTLBlendFactor blendFactor(WebGPU::BlendFactor factor)
 {
     switch (factor) {
     case WebGPU::BlendFactor::Constant:
@@ -120,7 +120,7 @@ static bool usesSecondBlendSource(const WebGPU::BlendComponent& component)
     return usesSecondBlendSource(component.srcFactor) || usesSecondBlendSource(component.dstFactor);
 }
 
-static MTLColorWriteMask LEGACY_NODELETE colorWriteMask(OptionSet<WebGPU::ColorWrite> mask)
+NODELETE static MTLColorWriteMask colorWriteMask(OptionSet<WebGPU::ColorWrite> mask)
 {
     MTLColorWriteMask mtlMask = MTLColorWriteMaskNone;
 
@@ -136,7 +136,7 @@ static MTLColorWriteMask LEGACY_NODELETE colorWriteMask(OptionSet<WebGPU::ColorW
     return mtlMask;
 }
 
-static MTLWinding LEGACY_NODELETE frontFace(WebGPU::FrontFace frontFace)
+NODELETE static MTLWinding frontFace(WebGPU::FrontFace frontFace)
 {
     switch (frontFace) {
     case WebGPU::FrontFace::CW:
@@ -146,7 +146,7 @@ static MTLWinding LEGACY_NODELETE frontFace(WebGPU::FrontFace frontFace)
     }
 }
 
-static MTLCullMode LEGACY_NODELETE cullMode(WebGPU::CullMode cullMode)
+NODELETE static MTLCullMode cullMode(WebGPU::CullMode cullMode)
 {
     switch (cullMode) {
     case WebGPU::CullMode::None:
@@ -158,7 +158,7 @@ static MTLCullMode LEGACY_NODELETE cullMode(WebGPU::CullMode cullMode)
     }
 }
 
-static MTLPrimitiveType LEGACY_NODELETE primitiveType(WebGPU::PrimitiveTopology topology)
+NODELETE static MTLPrimitiveType primitiveType(WebGPU::PrimitiveTopology topology)
 {
     switch (topology) {
     case WebGPU::PrimitiveTopology::PointList:
@@ -174,7 +174,7 @@ static MTLPrimitiveType LEGACY_NODELETE primitiveType(WebGPU::PrimitiveTopology 
     }
 }
 
-static MTLPrimitiveTopologyClass LEGACY_NODELETE topologyType(WebGPU::PrimitiveTopology topology)
+NODELETE static MTLPrimitiveTopologyClass topologyType(WebGPU::PrimitiveTopology topology)
 {
     switch (topology) {
     case WebGPU::PrimitiveTopology::PointList:
@@ -188,7 +188,7 @@ static MTLPrimitiveTopologyClass LEGACY_NODELETE topologyType(WebGPU::PrimitiveT
     }
 }
 
-static std::optional<MTLIndexType> LEGACY_NODELETE indexType(WebGPU::IndexFormat format)
+NODELETE static std::optional<MTLIndexType> indexType(WebGPU::IndexFormat format)
 {
     switch (format) {
     case WebGPU::IndexFormat::Uint16:
@@ -213,7 +213,7 @@ bool Device::validateRenderPipeline(const WebGPU::RenderPipelineDescriptor& desc
     return true;
 }
 
-static MTLStencilOperation LEGACY_NODELETE convertToMTLStencilOperation(WebGPU::StencilOperation operation)
+NODELETE static MTLStencilOperation convertToMTLStencilOperation(WebGPU::StencilOperation operation)
 {
     switch (operation) {
     case WebGPU::StencilOperation::Keep:
@@ -235,7 +235,7 @@ static MTLStencilOperation LEGACY_NODELETE convertToMTLStencilOperation(WebGPU::
     }
 }
 
-static MTLCompareFunction LEGACY_NODELETE convertToMTLCompare(WebGPU::CompareFunction comparison)
+NODELETE static MTLCompareFunction convertToMTLCompare(WebGPU::CompareFunction comparison)
 {
     switch (comparison) {
     case WebGPU::CompareFunction::Never:
@@ -257,7 +257,7 @@ static MTLCompareFunction LEGACY_NODELETE convertToMTLCompare(WebGPU::CompareFun
     }
 }
 
-static MTLVertexFormat LEGACY_NODELETE vertexFormat(WebGPU::VertexFormat vertexFormat)
+NODELETE static MTLVertexFormat vertexFormat(WebGPU::VertexFormat vertexFormat)
 {
     switch (vertexFormat) {
     case WebGPU::VertexFormat::Uint8:
@@ -347,7 +347,7 @@ static MTLVertexFormat LEGACY_NODELETE vertexFormat(WebGPU::VertexFormat vertexF
     }
 }
 
-static size_t LEGACY_NODELETE vertexFormatSize(WebGPU::VertexFormat vertexFormat)
+NODELETE static size_t vertexFormatSize(WebGPU::VertexFormat vertexFormat)
 {
     switch (vertexFormat) {
     case WebGPU::VertexFormat::Uint8:
@@ -436,7 +436,7 @@ static size_t LEGACY_NODELETE vertexFormatSize(WebGPU::VertexFormat vertexFormat
     }
 }
 
-static MTLVertexStepFunction LEGACY_NODELETE stepFunction(WebGPU::VertexStepMode stepMode, auto arrayStride)
+NODELETE static MTLVertexStepFunction stepFunction(WebGPU::VertexStepMode stepMode, auto arrayStride)
 {
     if (!arrayStride)
         return MTLVertexStepFunctionConstant;
@@ -546,7 +546,7 @@ enum class VertexFormatType {
     Float
 };
 
-static constexpr VertexFormatType LEGACY_NODELETE formatType(WebGPU::VertexFormat format)
+NODELETE static constexpr VertexFormatType formatType(WebGPU::VertexFormat format)
 {
     switch (format) {
     case WebGPU::VertexFormat::Uint8:
@@ -600,7 +600,7 @@ static constexpr VertexFormatType LEGACY_NODELETE formatType(WebGPU::VertexForma
     }
 }
 
-static bool LEGACY_NODELETE matchesFormat(const ShaderModule::VertexStageIn& stageIn, uint32_t shaderLocation, WebGPU::VertexFormat format)
+NODELETE static bool matchesFormat(const ShaderModule::VertexStageIn& stageIn, uint32_t shaderLocation, WebGPU::VertexFormat format)
 {
     auto it = stageIn.find(shaderLocation);
     if (it == stageIn.end())
@@ -730,7 +730,7 @@ static void populateStencilOperation(MTLStencilDescriptor *mtlStencil, const Web
     mtlStencil.readMask = stencilReadMask;
 }
 
-static BindGroupLayout::BufferBindingType LEGACY_NODELETE convertBindingType(WGSL::BufferBindingType bindingType)
+NODELETE static BindGroupLayout::BufferBindingType convertBindingType(WGSL::BufferBindingType bindingType)
 {
     switch (bindingType) {
     case WGSL::BufferBindingType::Uniform:
@@ -742,7 +742,7 @@ static BindGroupLayout::BufferBindingType LEGACY_NODELETE convertBindingType(WGS
     }
 }
 
-static WebGPU::SamplerBindingType LEGACY_NODELETE convertSamplerBindingType(WGSL::SamplerBindingType samplerType)
+NODELETE static WebGPU::SamplerBindingType convertSamplerBindingType(WGSL::SamplerBindingType samplerType)
 {
     switch (samplerType) {
     case WGSL::SamplerBindingType::Filtering:
@@ -754,7 +754,7 @@ static WebGPU::SamplerBindingType LEGACY_NODELETE convertSamplerBindingType(WGSL
     }
 }
 
-static OptionSet<WebGPU::ShaderStage> LEGACY_NODELETE convertVisibility(const OptionSet<WGSL::ShaderStage>& visibility)
+NODELETE static OptionSet<WebGPU::ShaderStage> convertVisibility(const OptionSet<WGSL::ShaderStage>& visibility)
 {
     OptionSet<WebGPU::ShaderStage> flags;
     if (visibility & WGSL::ShaderStage::Vertex)
@@ -767,7 +767,7 @@ static OptionSet<WebGPU::ShaderStage> LEGACY_NODELETE convertVisibility(const Op
     return flags;
 }
 
-static WebGPU::TextureSampleType LEGACY_NODELETE convertSampleType(WGSL::TextureSampleType sampleType)
+NODELETE static WebGPU::TextureSampleType convertSampleType(WGSL::TextureSampleType sampleType)
 {
     switch (sampleType) {
     case WGSL::TextureSampleType::Float:
@@ -783,7 +783,7 @@ static WebGPU::TextureSampleType LEGACY_NODELETE convertSampleType(WGSL::Texture
     }
 }
 
-static WebGPU::TextureViewDimension LEGACY_NODELETE convertViewDimension(WGSL::TextureViewDimension viewDimension)
+NODELETE static WebGPU::TextureViewDimension convertViewDimension(WGSL::TextureViewDimension viewDimension)
 {
     switch (viewDimension) {
     case WGSL::TextureViewDimension::OneDimensional:
@@ -801,7 +801,7 @@ static WebGPU::TextureViewDimension LEGACY_NODELETE convertViewDimension(WGSL::T
     }
 }
 
-static WebGPU::StorageTextureAccess LEGACY_NODELETE convertAccess(WGSL::StorageTextureAccess access)
+NODELETE static WebGPU::StorageTextureAccess convertAccess(WGSL::StorageTextureAccess access)
 {
     switch (access) {
     case WGSL::StorageTextureAccess::WriteOnly:
@@ -813,7 +813,7 @@ static WebGPU::StorageTextureAccess LEGACY_NODELETE convertAccess(WGSL::StorageT
     }
 }
 
-static WebGPU::TextureFormat LEGACY_NODELETE convertFormat(WGSL::TexelFormat format)
+NODELETE static WebGPU::TextureFormat convertFormat(WGSL::TexelFormat format)
 {
     switch (format) {
     case WGSL::TexelFormat::BGRA8unorm:
@@ -1120,7 +1120,7 @@ static NSString* errorValidatingDepthStencilState(const WebGPU::DepthStencilStat
     return nil;
 }
 
-static bool LEGACY_NODELETE hasAlphaChannel(WebGPU::TextureFormat format)
+NODELETE static bool hasAlphaChannel(WebGPU::TextureFormat format)
 {
     switch (format) {
     case WebGPU::TextureFormat::R8unorm:
@@ -1238,7 +1238,7 @@ static bool LEGACY_NODELETE hasAlphaChannel(WebGPU::TextureFormat format)
     }
 }
 
-static bool LEGACY_NODELETE textureFormatAllowedForRetunType(WebGPU::TextureFormat format, MTLDataType dataType, bool readsAlpha)
+NODELETE static bool textureFormatAllowedForRetunType(WebGPU::TextureFormat format, MTLDataType dataType, bool readsAlpha)
 {
     if (dataType == MTLDataTypeNone)
         return true;
@@ -1313,7 +1313,7 @@ static bool LEGACY_NODELETE textureFormatAllowedForRetunType(WebGPU::TextureForm
     }
 }
 
-static uint32_t LEGACY_NODELETE componentsForDataType(MTLDataType dataType)
+NODELETE static uint32_t componentsForDataType(MTLDataType dataType)
 {
     switch (dataType) {
     case MTLDataTypeBool:
@@ -2114,7 +2114,7 @@ id<MTLRenderPipelineState> RenderPipeline::icbRenderPipelineState() const
 
 #pragma mark WGPU Stubs
 
-void LEGACY_NODELETE wgpuRenderPipelineAddRef(WGPURenderPipeline renderPipeline)
+NODELETE void wgpuRenderPipelineAddRef(WGPURenderPipeline renderPipeline)
 {
     WebGPU::Metal::fromAPI(renderPipeline).ref();
 }

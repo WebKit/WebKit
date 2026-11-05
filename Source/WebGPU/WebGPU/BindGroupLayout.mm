@@ -37,7 +37,7 @@
 
 namespace WebGPU::Metal {
 
-static uint64_t LEGACY_NODELETE makeKey(uint32_t firstInteger, auto secondValue)
+NODELETE static uint64_t makeKey(uint32_t firstInteger, auto secondValue)
 {
     return firstInteger | (static_cast<uint64_t>(secondValue) << 32);
 }
@@ -136,7 +136,7 @@ static void addDescriptor(NSMutableArray<MTLArgumentDescriptor *> *arguments, MT
     [arguments addObject:stageDescriptor];
 }
 
-static bool LEGACY_NODELETE containsStage(OptionSet<WebGPU::ShaderStage> stageBitfield, auto stage)
+NODELETE static bool containsStage(OptionSet<WebGPU::ShaderStage> stageBitfield, auto stage)
 {
     static_assert(1 == static_cast<uint8_t>(WebGPU::ShaderStage::Vertex) && 2 == static_cast<uint8_t>(WebGPU::ShaderStage::Fragment) && 4 == static_cast<uint8_t>(WebGPU::ShaderStage::Compute), "Expect the bit of a stage to be 1 << ShaderStage");
     return stageBitfield.toRaw() & (1 << static_cast<uint32_t>(stage));
@@ -153,13 +153,13 @@ static const BindGroupLayout::BufferBindingLayout* bufferBindingLayout(const Res
     return std::get_if<BindGroupLayout::BufferBindingLayout>(&entry.bindingLayout);
 }
 
-static bool LEGACY_NODELETE isArrayLength(const ResolvedBindGroupLayoutEntry& entry)
+NODELETE static bool isArrayLength(const ResolvedBindGroupLayoutEntry& entry)
 {
     auto* buffer = bufferBindingLayout(entry);
     return buffer && buffer->type == BindGroupLayout::BufferBindingType::ArrayLength;
 }
 
-static bool LEGACY_NODELETE hasDynamicOffset(const ResolvedBindGroupLayoutEntry& entry)
+NODELETE static bool hasDynamicOffset(const ResolvedBindGroupLayoutEntry& entry)
 {
     auto* buffer = bufferBindingLayout(entry);
     return buffer && buffer->hasDynamicOffset;
@@ -531,28 +531,28 @@ NSString* BindGroupLayout::errorValidatingDynamicOffsets(std::span<const uint32_
     return nil;
 }
 
-static bool LEGACY_NODELETE isEqual(const BindGroupLayout::BufferBindingLayout& entry, const BindGroupLayout::BufferBindingLayout& otherEntry)
+NODELETE static bool isEqual(const BindGroupLayout::BufferBindingLayout& entry, const BindGroupLayout::BufferBindingLayout& otherEntry)
 {
     if (entry.type > BindGroupLayout::BufferBindingType::ReadOnlyStorage || otherEntry.type > BindGroupLayout::BufferBindingType::ReadOnlyStorage)
         return entry.type == otherEntry.type;
 
     return entry.type == otherEntry.type && entry.hasDynamicOffset == otherEntry.hasDynamicOffset && entry.minBindingSize == otherEntry.minBindingSize && entry.bufferSizeForBinding == otherEntry.bufferSizeForBinding;
 }
-static bool LEGACY_NODELETE isEqual(const BindGroupLayout::SamplerBindingLayout& entry, const BindGroupLayout::SamplerBindingLayout& otherEntry)
+NODELETE static bool isEqual(const BindGroupLayout::SamplerBindingLayout& entry, const BindGroupLayout::SamplerBindingLayout& otherEntry)
 {
     return entry.type == otherEntry.type;
 }
-static bool LEGACY_NODELETE isEqual(const BindGroupLayout::TextureBindingLayout& entry, const BindGroupLayout::TextureBindingLayout& otherEntry)
+NODELETE static bool isEqual(const BindGroupLayout::TextureBindingLayout& entry, const BindGroupLayout::TextureBindingLayout& otherEntry)
 {
     return entry.multisampled == otherEntry.multisampled && entry.sampleType == otherEntry.sampleType && entry.viewDimension == otherEntry.viewDimension;
 }
-static bool LEGACY_NODELETE isEqual(const BindGroupLayout::StorageTextureBindingLayout& entry, const BindGroupLayout::StorageTextureBindingLayout& otherEntry)
+NODELETE static bool isEqual(const BindGroupLayout::StorageTextureBindingLayout& entry, const BindGroupLayout::StorageTextureBindingLayout& otherEntry)
 {
     return entry.format == otherEntry.format && entry.access == otherEntry.access && entry.viewDimension == otherEntry.viewDimension;
 }
 
 template<typename T>
-static bool LEGACY_NODELETE isEqual(const T* bindingLayoutPtr, const T& bindingLayout)
+NODELETE static bool isEqual(const T* bindingLayoutPtr, const T& bindingLayout)
 {
     if (!bindingLayoutPtr)
         return false;
@@ -597,7 +597,7 @@ static bool equalEntries(const BindGroupLayout::Entry& entry, const BindGroupLay
     return BindGroupLayout::equalBindingEntries(entry.bindingLayout, otherEntry.bindingLayout);
 }
 
-static uint64_t LEGACY_NODELETE makeBindGroupLayoutPairIdentifier(uint32_t bindGroupIdentifier, uint32_t otherBindGroupIdentifier)
+NODELETE static uint64_t makeBindGroupLayoutPairIdentifier(uint32_t bindGroupIdentifier, uint32_t otherBindGroupIdentifier)
 {
     return static_cast<uint64_t>(bindGroupIdentifier) | (static_cast<uint64_t>(otherBindGroupIdentifier) << 32);
 }
@@ -860,7 +860,7 @@ const BindGroupLayout::ArgumentIndices& BindGroupLayout::argumentIndices(ShaderS
 
 #pragma mark WGPU Stubs
 
-void LEGACY_NODELETE wgpuBindGroupLayoutAddRef(WGPUBindGroupLayout bindGroupLayout)
+NODELETE void wgpuBindGroupLayoutAddRef(WGPUBindGroupLayout bindGroupLayout)
 {
     WebGPU::Metal::fromAPI(bindGroupLayout).ref();
 }

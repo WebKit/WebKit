@@ -77,7 +77,7 @@ public:
     void setBufferMapCount(int bufferMapCount) { m_bufferMapCount = bufferMapCount; }
     int bufferMapCount() const { return m_bufferMapCount; }
 
-    NSString* LEGACY_NODELETE lastError() const;
+    NODELETE NSString* lastError() const;
     bool waitForCompletion();
     bool preCommitHandler();
     void postCommitHandler();

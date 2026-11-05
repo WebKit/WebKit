@@ -215,7 +215,7 @@ void RenderBundle::releaseDestroyedResources()
 
 #pragma mark WGPU Stubs
 
-void LEGACY_NODELETE wgpuRenderBundleAddRef(WGPURenderBundle renderBundle)
+NODELETE void wgpuRenderBundleAddRef(WGPURenderBundle renderBundle)
 {
     WebGPU::Metal::fromAPI(renderBundle).ref();
 }

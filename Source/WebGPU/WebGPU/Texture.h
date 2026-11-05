@@ -74,52 +74,52 @@ public:
     void undestroy() final;
     void setLabel(String&&) final;
 
-    bool LEGACY_NODELETE isValid() const final;
+    NODELETE bool isValid() const final;
 
-    static uint32_t LEGACY_NODELETE texelBlockWidth(WebGPU::TextureFormat); // Texels
-    static uint32_t LEGACY_NODELETE texelBlockHeight(WebGPU::TextureFormat); // Texels
-    static NSUInteger LEGACY_NODELETE bytesPerRow(WebGPU::TextureFormat, uint32_t textureWidth, uint32_t sampleCount);
-    static WebGPU::Extent3D LEGACY_NODELETE physicalTextureExtent(WebGPU::TextureDimension, WebGPU::TextureFormat, WebGPU::Extent3D logicalExtent);
+    NODELETE static uint32_t texelBlockWidth(WebGPU::TextureFormat); // Texels
+    NODELETE static uint32_t texelBlockHeight(WebGPU::TextureFormat); // Texels
+    NODELETE static NSUInteger bytesPerRow(WebGPU::TextureFormat, uint32_t textureWidth, uint32_t sampleCount);
+    NODELETE static WebGPU::Extent3D physicalTextureExtent(WebGPU::TextureDimension, WebGPU::TextureFormat, WebGPU::Extent3D logicalExtent);
 
     // For depth-stencil textures, the input value to texelBlockSize()
     // needs to be the output of aspectSpecificFormat().
-    static Checked<uint32_t> LEGACY_NODELETE texelBlockSize(WebGPU::TextureFormat); // Bytes
-    static bool LEGACY_NODELETE containsDepthAspect(WebGPU::TextureFormat);
-    static bool LEGACY_NODELETE containsStencilAspect(WebGPU::TextureFormat);
-    static bool LEGACY_NODELETE isDepthOrStencilFormat(WebGPU::TextureFormat);
-    static std::optional<WebGPU::TextureFormat> LEGACY_NODELETE aspectSpecificFormat(WebGPU::TextureFormat, WebGPU::TextureAspect);
+    NODELETE static Checked<uint32_t> texelBlockSize(WebGPU::TextureFormat); // Bytes
+    NODELETE static bool containsDepthAspect(WebGPU::TextureFormat);
+    NODELETE static bool containsStencilAspect(WebGPU::TextureFormat);
+    NODELETE static bool isDepthOrStencilFormat(WebGPU::TextureFormat);
+    NODELETE static std::optional<WebGPU::TextureFormat> aspectSpecificFormat(WebGPU::TextureFormat, WebGPU::TextureAspect);
     static NSString* errorValidatingImageCopyTexture(const WebGPU::TexelCopyTextureInfo&, const WebGPU::Extent3D&);
     static NSString* errorValidatingTextureCopyRange(const WebGPU::TexelCopyTextureInfo&, const WebGPU::Extent3D&);
-    static bool LEGACY_NODELETE refersToSingleAspect(WebGPU::TextureFormat, WebGPU::TextureAspect);
-    static bool LEGACY_NODELETE isValidDepthStencilCopySource(WebGPU::TextureFormat, WebGPU::TextureAspect);
-    static bool LEGACY_NODELETE isValidDepthStencilCopyDestination(WebGPU::TextureFormat, WebGPU::TextureAspect);
+    NODELETE static bool refersToSingleAspect(WebGPU::TextureFormat, WebGPU::TextureAspect);
+    NODELETE static bool isValidDepthStencilCopySource(WebGPU::TextureFormat, WebGPU::TextureAspect);
+    NODELETE static bool isValidDepthStencilCopyDestination(WebGPU::TextureFormat, WebGPU::TextureAspect);
     static NSString* errorValidatingLinearTextureData(const WebGPU::TexelCopyBufferLayout&, uint64_t, WebGPU::TextureFormat, const WebGPU::Extent3D&);
-    static MTLTextureUsage LEGACY_NODELETE usage(OptionSet<WebGPU::TextureUsage>, WebGPU::TextureFormat);
-    static MTLPixelFormat LEGACY_NODELETE pixelFormat(WebGPU::TextureFormat);
-    static std::optional<WebGPU::TextureFormat> LEGACY_NODELETE textureFormat(MTLPixelFormat);
-    static std::optional<MTLPixelFormat> LEGACY_NODELETE depthOnlyAspectMetalFormat(WebGPU::TextureFormat);
-    static std::optional<MTLPixelFormat> LEGACY_NODELETE stencilOnlyAspectMetalFormat(WebGPU::TextureFormat);
-    static WebGPU::TextureFormat LEGACY_NODELETE removeSRGBSuffix(WebGPU::TextureFormat);
-    static std::optional<WebGPU::TextureFormat> LEGACY_NODELETE resolveTextureFormat(WebGPU::TextureFormat, WebGPU::TextureAspect);
-    static bool LEGACY_NODELETE isCompressedFormat(WebGPU::TextureFormat);
+    NODELETE static MTLTextureUsage usage(OptionSet<WebGPU::TextureUsage>, WebGPU::TextureFormat);
+    NODELETE static MTLPixelFormat pixelFormat(WebGPU::TextureFormat);
+    NODELETE static std::optional<WebGPU::TextureFormat> textureFormat(MTLPixelFormat);
+    NODELETE static std::optional<MTLPixelFormat> depthOnlyAspectMetalFormat(WebGPU::TextureFormat);
+    NODELETE static std::optional<MTLPixelFormat> stencilOnlyAspectMetalFormat(WebGPU::TextureFormat);
+    NODELETE static WebGPU::TextureFormat removeSRGBSuffix(WebGPU::TextureFormat);
+    NODELETE static std::optional<WebGPU::TextureFormat> resolveTextureFormat(WebGPU::TextureFormat, WebGPU::TextureAspect);
+    NODELETE static bool isCompressedFormat(WebGPU::TextureFormat);
     enum class CompressFormat {
         ASTC, // NOLINT
         BC, // NOLINT
         ETC // NOLINT
     };
-    static std::optional<CompressFormat> LEGACY_NODELETE compressedFormatType(WebGPU::TextureFormat);
+    NODELETE static std::optional<CompressFormat> compressedFormatType(WebGPU::TextureFormat);
     static bool isRenderableFormat(WebGPU::TextureFormat, const Device&);
     static bool isColorRenderableFormat(WebGPU::TextureFormat, const Device&);
-    static bool LEGACY_NODELETE isDepthStencilRenderableFormat(WebGPU::TextureFormat, const Device&);
-    static uint32_t LEGACY_NODELETE renderTargetPixelByteCost(WebGPU::TextureFormat);
-    static uint32_t LEGACY_NODELETE renderTargetPixelByteAlignment(WebGPU::TextureFormat);
+    NODELETE static bool isDepthStencilRenderableFormat(WebGPU::TextureFormat, const Device&);
+    NODELETE static uint32_t renderTargetPixelByteCost(WebGPU::TextureFormat);
+    NODELETE static uint32_t renderTargetPixelByteAlignment(WebGPU::TextureFormat);
 
     WebGPU::Extent3D logicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
     WebGPU::Extent3D physicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
 
     id<MTLTexture> texture() const { return m_texture; }
     // A texture bound directly, rather than through a view, has no swizzle to apply.
-    id<MTLTexture> LEGACY_NODELETE sampledTexture() const { return m_texture; }
+    NODELETE id<MTLTexture> sampledTexture() const { return m_texture; }
     bool hasSwizzle() const { return false; }
 
     uint32_t width() const { return m_width; }
@@ -127,16 +127,16 @@ public:
     uint32_t depthOrArrayLayers() const { return m_depthOrArrayLayers; }
     uint32_t mipLevelCount() const { return m_mipLevelCount; }
     uint32_t sampleCount() const { return m_sampleCount; }
-    WebGPU::TextureDimension LEGACY_NODELETE dimension() const;
+    NODELETE WebGPU::TextureDimension dimension() const;
     // Invalid textures may have no format. format() then reports an arbitrary one, which only the
     // validation that rejects the texture sees.
-    WebGPU::TextureFormat LEGACY_NODELETE format() const;
+    NODELETE WebGPU::TextureFormat format() const;
     const std::optional<WebGPU::TextureFormat>& optionalFormat() const { return m_format; }
     OptionSet<WebGPU::TextureUsage> usage() const { return m_usage; }
 
     Device& device() const { return m_device; }
 
-    bool LEGACY_NODELETE previouslyCleared() const;
+    NODELETE bool previouslyCleared() const;
     void setPreviouslyCleared();
     bool previouslyCleared(uint32_t mipLevel, uint32_t slice) const;
     void setPreviouslyCleared(uint32_t mipLevel, uint32_t slice, bool = true);
@@ -152,7 +152,7 @@ public:
     static bool supportsResolve(WebGPU::TextureFormat, const Device&);
     static bool supportsBlending(WebGPU::TextureFormat, const Device&);
     void recreateIfNeeded();
-    void LEGACY_NODELETE makeCanvasBacking();
+    NODELETE void makeCanvasBacking();
     void setCommandEncoder(CommandEncoder&) const;
     void addResourceHolder(const BindGroup&) const;
     void addResourceHolder(const RenderBundle&) const;
@@ -163,12 +163,12 @@ public:
     void recordGPUExecutionWindow(double startTime, double endTime) const;
     Seconds gpuFrameCost() const;
     void resetGPUFrameCost() const;
-    void LEGACY_NODELETE updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t>&);
-    id<MTLSharedEvent> LEGACY_NODELETE sharedEvent() const;
-    uint64_t LEGACY_NODELETE sharedEventSignalValue() const;
+    NODELETE void updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t>&);
+    NODELETE id<MTLSharedEvent> sharedEvent() const;
+    NODELETE uint64_t sharedEventSignalValue() const;
     void setRasterizationRateMaps(std::pair<id<MTLRasterizationRateMap>, id<MTLRasterizationRateMap>>&& rateMaps) { m_leftRightRasterizationMaps = WTF::move(rateMaps); }
     id<MTLRasterizationRateMap> rasterizationMapForSlice(uint32_t slice) const { return slice ? m_leftRightRasterizationMaps.second : m_leftRightRasterizationMaps.first; }
-    uint32_t LEGACY_NODELETE arrayLayerCount() const;
+    NODELETE uint32_t arrayLayerCount() const;
     WebGPU::TextureAspect aspect() const { return WebGPU::TextureAspect::All; }
     uint32_t baseArrayLayer() const { return 0; }
     uint32_t baseMipLevel() const { return 0; }

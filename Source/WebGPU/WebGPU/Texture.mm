@@ -159,7 +159,7 @@ std::optional<Texture::CompressFormat> Texture::compressedFormatType(WebGPU::Tex
     }
 }
 
-static std::optional<WebGPU::TextureFormat> LEGACY_NODELETE depthSpecificFormat(WebGPU::TextureFormat textureFormat)
+NODELETE static std::optional<WebGPU::TextureFormat> depthSpecificFormat(WebGPU::TextureFormat textureFormat)
 {
     // https://gpuweb.github.io/gpuweb/#aspect-specific-format
 
@@ -275,7 +275,7 @@ static std::optional<WebGPU::TextureFormat> LEGACY_NODELETE depthSpecificFormat(
     }
 }
 
-static std::optional<WebGPU::TextureFormat> LEGACY_NODELETE stencilSpecificFormat(WebGPU::TextureFormat textureFormat)
+NODELETE static std::optional<WebGPU::TextureFormat> stencilSpecificFormat(WebGPU::TextureFormat textureFormat)
 {
     // https://gpuweb.github.io/gpuweb/#aspect-specific-format
 
@@ -1828,7 +1828,7 @@ WebGPU::TextureFormat Texture::removeSRGBSuffix(WebGPU::TextureFormat format)
     }
 }
 
-static bool LEGACY_NODELETE textureViewFormatCompatible(WebGPU::TextureFormat format1, WebGPU::TextureFormat format2)
+NODELETE static bool textureViewFormatCompatible(WebGPU::TextureFormat format1, WebGPU::TextureFormat format2)
 {
     // https://gpuweb.github.io/gpuweb/#texture-view-format-compatible
 
@@ -2812,7 +2812,7 @@ std::optional<MTLPixelFormat> Texture::stencilOnlyAspectMetalFormat(WebGPU::Text
     }
 }
 
-static MTLStorageMode LEGACY_NODELETE storageMode(bool deviceHasUnifiedMemory, bool supportsNonPrivateDepthStencilTextures, bool supportsMemorylessTextures, OptionSet<WebGPU::TextureUsage> usage)
+NODELETE static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonPrivateDepthStencilTextures, bool supportsMemorylessTextures, OptionSet<WebGPU::TextureUsage> usage)
 {
     if (usage.contains(WebGPU::TextureUsage::Transient))
         return supportsMemorylessTextures ? MTLStorageModeMemoryless : MTLStorageModePrivate;
@@ -3186,7 +3186,7 @@ static WebGPU::Extent3D computeRenderExtent(const WebGPU::Extent3D& baseSize, ui
     return extent;
 }
 
-static MTLPixelFormat LEGACY_NODELETE resolvedPixelFormat(MTLPixelFormat viewPixelFormat, MTLPixelFormat sourcePixelFormat)
+NODELETE static MTLPixelFormat resolvedPixelFormat(MTLPixelFormat viewPixelFormat, MTLPixelFormat sourcePixelFormat)
 {
     switch (viewPixelFormat) {
     case MTLPixelFormatStencil8:
@@ -4255,7 +4255,7 @@ void Texture::updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t
 
 #pragma mark WGPU Stubs
 
-void LEGACY_NODELETE wgpuTextureAddRef(WGPUTexture texture)
+NODELETE void wgpuTextureAddRef(WGPUTexture texture)
 {
     WebGPU::Metal::fromAPI(texture).ref();
 }

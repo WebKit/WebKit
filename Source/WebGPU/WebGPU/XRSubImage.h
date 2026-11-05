@@ -56,9 +56,9 @@ public:
 
     ~XRSubImage();
 
-    void LEGACY_NODELETE setLabel(String&&) final;
+    NODELETE void setLabel(String&&) final;
 
-    bool LEGACY_NODELETE isValid() const final;
+    NODELETE bool isValid() const final;
     void update(const XRProjectionLayer&);
     void releaseTextures();
     Texture* currentColorTexture();

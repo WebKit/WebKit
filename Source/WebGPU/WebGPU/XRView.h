@@ -52,7 +52,7 @@ public:
 
     ~XRView();
 
-    void LEGACY_NODELETE setLabel(String&&) final;
+    NODELETE void setLabel(String&&) final;
 
     bool isValid() const final { return true; }
     Device& device() { return m_device; }

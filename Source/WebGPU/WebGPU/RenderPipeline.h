@@ -68,7 +68,7 @@ public:
     ~RenderPipeline();
 
     Ref<WebGPU::BindGroupLayout> getBindGroupLayout(uint32_t groupIndex) final;
-    void LEGACY_NODELETE setLabel(String&&) final;
+    NODELETE void setLabel(String&&) final;
 
     bool isValid() const final { return m_renderPipelineDescriptor && m_pipelineLayout->isValid(); }
 
@@ -78,7 +78,7 @@ public:
 
     void setPrecompiledRenderPipelineState(id<MTLRenderPipelineState>);
 
-    id<MTLDepthStencilState> LEGACY_NODELETE depthStencilState() const;
+    NODELETE id<MTLDepthStencilState> depthStencilState() const;
     bool validateDepthStencilState(bool depthReadOnly, bool stencilReadOnly) const;
     MTLPrimitiveType primitiveType() const { return m_primitiveType; }
     MTLWinding frontFace() const { return m_frontFace; }
@@ -95,7 +95,7 @@ public:
     NSString* errorValidatingColorDepthStencilTargets(const Vector<TextureOrTextureView>&, const std::optional<TextureOrTextureView>&) const;
     bool validateRenderBundle(bool depthReadOnly, bool stencilReadOnly, uint32_t sampleCount, std::span<const std::optional<WebGPU::TextureFormat>> colorFormats, std::optional<WebGPU::TextureFormat> depthStencilFormat) const;
     bool writesDepth() const;
-    bool LEGACY_NODELETE writesStencil() const;
+    NODELETE bool writesStencil() const;
 
     const RequiredBufferIndicesContainer& requiredBufferIndices() const LIFETIME_BOUND { return m_requiredBufferIndices; }
     WebGPU::PrimitiveTopology primitiveTopology() const { return m_primitiveTopology; }
@@ -104,7 +104,7 @@ public:
     // can ever match.
     std::optional<MTLIndexType> stripIndexFormat() const { return m_indexType; }
 
-    const BufferBindingSizesForBindGroup* LEGACY_NODELETE minimumBufferSizes(uint32_t) const;
+    NODELETE const BufferBindingSizesForBindGroup* minimumBufferSizes(uint32_t) const;
     RefPtr<RenderPipeline> recomputeLastStrideAsStride() const;
     uint64_t uniqueId() const { return m_uniqueId; }
     uint32_t vertexShaderBindingCount() const { return m_vertexShaderBindingCount; }

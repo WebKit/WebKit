@@ -72,7 +72,7 @@ void CommandEncoder::generateInvalidEncoderStateError()
     GENERATE_INVALID_ENCODER_STATE_ERROR();
 }
 
-static MTLLoadAction LEGACY_NODELETE loadAction(std::optional<WebGPU::LoadOp> loadOp, bool readOnly = false)
+NODELETE static MTLLoadAction loadAction(std::optional<WebGPU::LoadOp> loadOp, bool readOnly = false)
 {
     if (!loadOp)
         return readOnly ? MTLLoadActionLoad : MTLLoadActionDontCare;
@@ -84,7 +84,7 @@ static MTLLoadAction LEGACY_NODELETE loadAction(std::optional<WebGPU::LoadOp> lo
     }
 }
 
-static MTLStoreAction LEGACY_NODELETE storeAction(std::optional<WebGPU::StoreOp> storeOp, bool hasResolveTarget = false)
+NODELETE static MTLStoreAction storeAction(std::optional<WebGPU::StoreOp> storeOp, bool hasResolveTarget = false)
 {
     if (!storeOp)
         return hasResolveTarget ? MTLStoreActionMultisampleResolve : MTLStoreActionDontCare;
@@ -316,12 +316,12 @@ void CommandEncoder::finalizeBlitCommandEncoder()
     setExistingEncoder(nil);
 }
 
-static uint32_t LEGACY_NODELETE timestampWriteIndex(std::optional<uint32_t> writeIndex)
+NODELETE static uint32_t timestampWriteIndex(std::optional<uint32_t> writeIndex)
 {
     return writeIndex.value_or(0);
 }
 
-static NSUInteger LEGACY_NODELETE timestampWriteIndex(std::optional<uint32_t> writeIndex, NSUInteger defaultValue, uint32_t offset)
+NODELETE static NSUInteger timestampWriteIndex(std::optional<uint32_t> writeIndex, NSUInteger defaultValue, uint32_t offset)
 {
     return writeIndex ? (static_cast<NSUInteger>(*writeIndex) + offset) : defaultValue;
 }
@@ -1095,7 +1095,7 @@ NSString* CommandEncoder::errorValidatingImageCopyBuffer(const WebGPU::TexelCopy
     return nil;
 }
 
-static bool LEGACY_NODELETE refersToAllAspects(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect)
+NODELETE static bool refersToAllAspects(WebGPU::TextureFormat format, WebGPU::TextureAspect aspect)
 {
     switch (aspect) {
     case WebGPU::TextureAspect::All:
@@ -1711,7 +1711,7 @@ void CommandEncoder::makeSubmitInvalid(NSString* errorString)
         commandBuffer->makeInvalid(errorString ?: m_lastErrorString);
 }
 
-static bool LEGACY_NODELETE hasValidDimensions(WebGPU::TextureDimension dimension, NSUInteger width, NSUInteger height, NSUInteger depth)
+NODELETE static bool hasValidDimensions(WebGPU::TextureDimension dimension, NSUInteger width, NSUInteger height, NSUInteger depth)
 {
     switch (dimension) {
     case WebGPU::TextureDimension::_1d:
@@ -1954,7 +1954,7 @@ void CommandEncoder::copyTextureToBuffer(const WebGPU::TexelCopyTextureInfo& sou
     }
 }
 
-static bool LEGACY_NODELETE areCopyCompatible(WebGPU::TextureFormat format1, WebGPU::TextureFormat format2)
+NODELETE static bool areCopyCompatible(WebGPU::TextureFormat format1, WebGPU::TextureFormat format2)
 {
     // https://gpuweb.github.io/gpuweb/#copy-compatible
 
@@ -2404,7 +2404,7 @@ void CommandEncoder::pushDebugGroup(String&& groupLabel)
     [m_commandBuffer pushDebugGroup:groupLabel.createNSString().get()];
 }
 
-static bool LEGACY_NODELETE validateResolveQuerySet(const QuerySet& querySet, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset)
+NODELETE static bool validateResolveQuerySet(const QuerySet& querySet, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset)
 {
     if (!querySet.isDestroyed() && !querySet.isValid())
         return false;
@@ -2624,7 +2624,7 @@ void CommandEncoder::rebindSamplersPreCommit(const BindGroup& group)
 
 #pragma mark WGPU Stubs
 
-void LEGACY_NODELETE wgpuCommandEncoderAddRef(WGPUCommandEncoder commandEncoder)
+NODELETE void wgpuCommandEncoderAddRef(WGPUCommandEncoder commandEncoder)
 {
     WebGPU::Metal::fromAPI(commandEncoder).ref();
 }

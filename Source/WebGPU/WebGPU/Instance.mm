@@ -288,7 +288,7 @@ RefPtr<Instance> createInstance(InstanceDescriptor&& descriptor)
 
 #pragma mark WGPU Stubs
 
-void LEGACY_NODELETE wgpuInstanceAddRef(WGPUInstance instance)
+NODELETE void wgpuInstanceAddRef(WGPUInstance instance)
 {
     WebGPU::Metal::fromAPI(instance).ref();
 }
@@ -310,7 +310,7 @@ WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor*)
     }
 }
 
-WGPUProc LEGACY_NODELETE wgpuGetProcAddress(WGPUStringView)
+NODELETE WGPUProc wgpuGetProcAddress(WGPUStringView)
 {
     return nullptr;
 }

@@ -44,7 +44,7 @@ static constexpr uint32_t maxBindGroups = 11;
 static constexpr auto tier2LimitForBuffersAndTextures = 4;
 static constexpr auto tier2LimitForSamplers = 2;
 
-static constexpr auto LEGACY_NODELETE multipleOf4(auto input)
+NODELETE static constexpr auto multipleOf4(auto input)
 {
     return input & (~3);
 }
@@ -59,12 +59,12 @@ static uint64_t maxBufferSize(id<MTLDevice> device)
     return multipleOf4(result);
 }
 
-static constexpr uint32_t LEGACY_NODELETE largeReasonableLimit()
+NODELETE static constexpr uint32_t largeReasonableLimit()
 {
     return USHRT_MAX;
 }
 
-static constexpr auto LEGACY_NODELETE workaroundCTSBindGroupLimit(auto valueToClamp)
+NODELETE static constexpr auto workaroundCTSBindGroupLimit(auto valueToClamp)
 {
     return valueToClamp > 1000 ? 1000 : valueToClamp;
 }

@@ -176,7 +176,7 @@ WGPUInstance wgpuAdapterGetInstance(WGPUAdapter adapter)
     }
 }
 
-void LEGACY_NODELETE wgpuAdapterAddRef(WGPUAdapter adapter)
+NODELETE void wgpuAdapterAddRef(WGPUAdapter adapter)
 {
     WebGPU::Metal::fromAPI(adapter).ref();
 }

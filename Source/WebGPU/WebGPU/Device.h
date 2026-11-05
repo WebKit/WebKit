@@ -146,11 +146,11 @@ public:
     void resolveDeviceLostPromise(CompletionHandler<void(WebGPU::DeviceLostReason, String&&)>&&) final;
     void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&) final;
     void pauseAllErrorReporting(bool pause) final;
-    void LEGACY_NODELETE setLabel(String&&) final;
+    NODELETE void setLabel(String&&) final;
 
-    bool LEGACY_NODELETE isValid() const final { return m_device; }
+    NODELETE bool isValid() const final { return m_device; }
     bool isLost() const { return m_isLost; }
-    const Limits& LEGACY_NODELETE limits() const LIFETIME_BOUND final { return m_capabilities.limits; }
+    NODELETE const Limits& limits() const LIFETIME_BOUND final { return m_capabilities.limits; }
     const Limits limitsCopy() const { return m_capabilities.limits; }
     const HardwareCapabilities::BaseCapabilities& baseCapabilities() const LIFETIME_BOUND { return m_capabilities.baseCapabilities; }
 
@@ -183,19 +183,19 @@ public:
     uint32_t maxBuffersForFragmentStage() const { return m_capabilities.limits.maxBindGroups; }
 
     uint32_t maxBuffersForComputeStage() const { return m_capabilities.limits.maxBindGroups; }
-    uint32_t LEGACY_NODELETE vertexBufferIndexForBindGroup(uint32_t groupIndex) const;
+    NODELETE uint32_t vertexBufferIndexForBindGroup(uint32_t groupIndex) const;
 
     id<MTLBuffer> newBufferWithBytes(const void*, size_t, MTLResourceOptions, bool skipMemoryAttribution = false) const;
     id<MTLBuffer> newBufferWithBytesNoCopy(void*, size_t, MTLResourceOptions, bool skipMemoryAttribution = false) const;
     id<MTLTexture> newTextureWithDescriptor(MTLTextureDescriptor *, IOSurfaceRef = nullptr, NSUInteger plane = 0) const;
 
-    static bool LEGACY_NODELETE isStencilOnlyFormat(MTLPixelFormat);
-    bool LEGACY_NODELETE shouldStopCaptureAfterSubmit();
+    NODELETE static bool isStencilOnlyFormat(MTLPixelFormat);
+    NODELETE bool shouldStopCaptureAfterSubmit();
     id<MTLBuffer> placeholderBuffer() const { return m_placeholderBuffer; }
     uint64_t placeholderBufferUniqueId() const { return m_placeholderBuffer.gpuAddress; }
 
-    id<MTLTexture> LEGACY_NODELETE placeholderTexture(WebGPU::TextureFormat) const;
-    bool LEGACY_NODELETE isDestroyed() const;
+    NODELETE id<MTLTexture> placeholderTexture(WebGPU::TextureFormat) const;
+    NODELETE bool isDestroyed() const;
     NSString *errorValidatingTextureCreation(const WebGPU::TextureDescriptor&);
     id<MTLBuffer> _Nullable dispatchCallBuffer();
     id<MTLComputePipelineState> _Nullable dispatchCallPipelineState(id<MTLFunction>);
@@ -216,7 +216,7 @@ public:
         return buffer;
     }
     void loseTheDevice(WebGPU::DeviceLostReason);
-    int LEGACY_NODELETE bufferIndexForICBContainer() const;
+    NODELETE int bufferIndexForICBContainer() const;
     void setOwnerWithIdentity(id<MTLResource>) const;
     struct ExternalTextureData {
         id<MTLTexture> _Nullable texture0 { nil };
@@ -237,7 +237,7 @@ public:
     id<MTLTexture> _Nullable premultipliedAlphaTexture(id<MTLTexture>, MTLPixelFormat, std::optional<MTLTextureSwizzleChannels> sourceSwizzle) const;
     id<MTLComputePipelineState> _Nullable premultiplyAlphaPipeline() const;
     RefPtr<XRSubImage> getXRViewSubImage(XRProjectionLayer&);
-    RefPtr<XRSubImage> LEGACY_NODELETE getXRViewSubImage() const;
+    NODELETE RefPtr<XRSubImage> getXRViewSubImage() const;
     id<MTLTexture> _Nullable getXRViewSubImageDepthTexture() const;
     const std::optional<const MachSendRight> webProcessID() const;
 #if CPU(X86_64)
@@ -245,7 +245,7 @@ public:
 #else
     constexpr bool isIntel() const { return false; }
 #endif
-    bool LEGACY_NODELETE pauseErrorReporting(bool pauseReporting);
+    NODELETE bool pauseErrorReporting(bool pauseReporting);
     bool enableEncoderTimestamps() const;
     id<MTLCounterSampleBuffer> timestampsBuffer(id<MTLCommandBuffer>, size_t);
     void resolveTimestampsForBuffer(id<MTLCommandBuffer>);
@@ -268,7 +268,7 @@ public:
     // Invalid encoders take an identifier from here too, so that they never alias a live encoder. rdar://178679545
     uint64_t generateCommandEncoderId() { return m_commandEncoderId++; }
     bool supportsResidencySets() { return m_capabilities.baseCapabilities.supportsResidencySets; }
-    bool LEGACY_NODELETE isCachedCompatibile(const BindGroupLayout&, const BindGroupLayout&) const;
+    NODELETE bool isCachedCompatibile(const BindGroupLayout&, const BindGroupLayout&) const;
     void setCachedCompatibile(const BindGroupLayout&, const BindGroupLayout&) const;
     void removeCachedBindGroupLayout(const BindGroupLayout&) const;
     static constexpr uint64_t maxPipelines = (1ull << (64 - 5));
@@ -291,12 +291,12 @@ private:
     Device(Adapter&);
 
     struct ErrorScope;
-    ErrorScope* LEGACY_NODELETE currentErrorScope(WebGPU::ErrorFilter);
+    NODELETE ErrorScope* currentErrorScope(WebGPU::ErrorFilter);
     // Whether popping succeeds without a scope to pop: true for a lost device, false for an empty
     // stack. std::nullopt when there is a scope to pop.
-    std::optional<bool> LEGACY_NODELETE validatePopErrorScope() const;
+    NODELETE std::optional<bool> validatePopErrorScope() const;
 
-    bool LEGACY_NODELETE validateRenderPipeline(const WebGPU::RenderPipelineDescriptor&);
+    NODELETE bool validateRenderPipeline(const WebGPU::RenderPipelineDescriptor&);
 
     enum class LibraryCompilation : bool { Synchronous, Asynchronous };
     // Asynchronous, unless something process-wide requires compiling one pipeline at a time.

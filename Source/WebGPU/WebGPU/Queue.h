@@ -109,7 +109,7 @@ public:
     id<MTLCommandEncoder> _Nullable encoderForBuffer(id<MTLCommandBuffer>) const;
     void clearTextureViewIfNeeded(TextureView&);
     void clearTextureViewIfNeeded(Texture&);
-    static bool LEGACY_NODELETE writeWillCompletelyClear(WebGPU::TextureDimension, uint32_t widthForMetal, uint32_t logicalSizeWidth, uint32_t heightForMetal, uint32_t logicalSizeHeight, uint32_t depthForMetal, uint32_t logicalSizeDepthOrArrayLayers);
+    NODELETE static bool writeWillCompletelyClear(WebGPU::TextureDimension, uint32_t widthForMetal, uint32_t logicalSizeWidth, uint32_t heightForMetal, uint32_t logicalSizeHeight, uint32_t depthForMetal, uint32_t logicalSizeDepthOrArrayLayers);
     void endEncoding(id<MTLCommandEncoder>, id<MTLCommandBuffer>) const;
 
     id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();
@@ -141,7 +141,7 @@ private:
     bool validateWriteBuffer(const Buffer&, uint64_t bufferOffset, size_t) const;
 
 
-    bool LEGACY_NODELETE isIdle() const;
+    NODELETE bool isIdle() const;
     bool isSchedulingIdle() const { return m_submittedCommandBufferCount == m_scheduledCommandBufferCount; }
     id<MTLComputeCommandEncoder> _Nullable ensureStagedCopyEncoder();
     id<MTLComputePipelineState> _Nullable stagedCopyPipelineState();

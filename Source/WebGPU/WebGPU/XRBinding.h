@@ -54,9 +54,9 @@ public:
 
     ~XRBinding();
 
-    void LEGACY_NODELETE setLabel(String&&) final;
+    NODELETE void setLabel(String&&) final;
 
-    bool LEGACY_NODELETE isValid() const final;
+    NODELETE bool isValid() const final;
     RefPtr<WebGPU::XRProjectionLayer> createProjectionLayer(const WebGPU::XRProjectionLayerDescriptor&) final;
     RefPtr<XRSubImage> getViewSubImage(XRProjectionLayer&);
     RefPtr<WebGPU::XRSubImage> getViewSubImage(WebGPU::XRProjectionLayer&) final;
