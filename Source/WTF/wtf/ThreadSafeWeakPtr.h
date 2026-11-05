@@ -437,7 +437,7 @@ protected:
 
 private:
     static bool isStrongOnly(uintptr_t bits) { return bits & strongOnlyFlag; }
-    static uint32_t refCountFromStrongOnlyBits(uintptr_t bits) { return (bits & ~(strongOnlyFlag | destructionStartedFlag)) / refIncrement; }
+    static uint32_t refCountFromStrongOnlyBits(uintptr_t bits) { return static_cast<uint32_t>((bits & ~(strongOnlyFlag | destructionStartedFlag)) / refIncrement); }
 
     ALWAYS_INLINE uintptr_t bits() const
     {
