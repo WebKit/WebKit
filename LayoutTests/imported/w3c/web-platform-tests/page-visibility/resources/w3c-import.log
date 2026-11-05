@@ -10,13 +10,13 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/resources/blank_page_green.html
+/LayoutTests/imported/w3c/web-platform-tests/page-visibility/resources/iframe-post-load.html
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/resources/iframe-with-subframes.html
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/resources/iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/resources/pagevistestharness.js
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/resources/unload-bubbles.html
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/resources/unload.html
+/LayoutTests/imported/w3c/web-platform-tests/page-visibility/resources/window_state_context.js

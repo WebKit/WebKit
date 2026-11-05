@@ -1,0 +1,3 @@
+
+PASS Element removed after LCP entry should reflect in entry.element
+

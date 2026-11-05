@@ -1,0 +1,3 @@
+
+PASS Document rules registered before a pending stylesheet loads should match links
+

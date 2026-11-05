@@ -5072,6 +5072,15 @@
     "imported/w3c/web-platform-tests/page-lifecycle/idlharness.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/page-visibility/iframe-session-history.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/page-visibility/minimize.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/page-visibility/visibility-state-entry.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/payment-request/payment-is-showing.https.html": [
         "slow"
     ],
@@ -5663,10 +5672,16 @@
     "imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/source-order-valid.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/speculation-rules/activation-header/prefetch-activation-beacon.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/speculation-rules/activation-header/prerender-activation-beacon.tentative.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/speculation-rules/invalid-rules.https.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/speculation-rules/prefetch/anonymous/cross-origin-cookies-anonymous-client-ip-duplicate.https.html": [
+    "imported/w3c/web-platform-tests/speculation-rules/prefetch/clear-prefetch-cache-after-clear-site-data-cache.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/speculation-rules/prefetch/cross-origin-cookies.https.html": [
@@ -5687,10 +5702,31 @@
     "imported/w3c/web-platform-tests/speculation-rules/prefetch/initiators-window-open.sub.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/speculation-rules/prefetch/list-rule-eagerness-conservative-pointerdown-preventdefault.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/speculation-rules/prefetch/list-rule-eagerness-conservative-pointerdown.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/speculation-rules/prefetch/list-rule-eagerness-eager-hover.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/speculation-rules/prefetch/list-rule-eagerness-moderate-hover.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/speculation-rules/prefetch/mutate-rules.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/speculation-rules/prefetch/no-http-cache-interference-inflight.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/speculation-rules/prefetch/no-http-cache-interference-slow-error.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/speculation-rules/prefetch/no-prefetch-for-post.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/speculation-rules/prefetch/prefetch-inflight-success.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/speculation-rules/prefetch/prefetch-traverse-reload.sub.html": [
@@ -5714,16 +5750,13 @@
     "imported/w3c/web-platform-tests/speculation-rules/prefetch/sec-fetch-headers.https.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/speculation-rules/prefetch/tentative/cookie-indices.https.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/speculation-rules/prefetch/tentative/service-worker/basic.sub.https.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/speculation-rules/prefetch/tentative/service-worker/redirect.sub.https.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/speculation-rules/prefetch/user-pass.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/speculation-rules/prerender-until-script/prerender-until-script.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/speculation-rules/prerender-until-script/pus-to-prerender-upgrade.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/speculation-rules/speculation-tags/cross-site-prefetch.https.html": [

@@ -1,0 +1,3 @@
+
+PASS Element is null after iframe with LCP image is removed
+

@@ -1,0 +1,3 @@
+
+FAIL Test that prefetch activation beacon is sent upon activation. assert_true: Beacon should have been received. expected true got undefined
+

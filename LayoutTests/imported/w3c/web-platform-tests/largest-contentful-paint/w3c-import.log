@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/META.yml
@@ -27,9 +25,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/iframe-content-not-observed.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-TAO.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-element-when-fully-active.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-full-viewport.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-inside-svg.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-not-fully-visible.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-removed-after-paint.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-removed-before-load.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-src-change.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/image-sw-same-origin.https.html
@@ -42,6 +42,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/larger-image.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/larger-text.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/loadTime-after-appendChild.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/modified-text-not-reconsidered.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/multiple-image-same-src.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/multiple-redirects-TAO.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-after-untrusted-scroll.html
@@ -49,6 +50,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-css-generated-text.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-image.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-mathml.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-pseudo-element.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-random-namespace.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-background-image.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-data-uri-background-image.html
@@ -58,11 +60,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/performance-entry-sequence.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/placeholder-image.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/progressively-loaded-image.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/pseudo-content-image.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/redirects-tao-star.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/repeated-image.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/resized-image-not-reconsidered.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/same-origin-redirects.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/supported-lcp-type.html
+/LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/text-fragment-union.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/text-with-display-style.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/toJSON.html
 /LayoutTests/imported/w3c/web-platform-tests/largest-contentful-paint/transparent-text-with-shadow.html

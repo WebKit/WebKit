@@ -1,0 +1,10 @@
+
+FAIL performance.getSpeculations() preconnect shape assert_true: SpeculationMeasurement feature must be enabled expected true got false
+FAIL Preconnect: no crossorigin promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Preconnect: crossorigin=anonymous promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Preconnect: crossorigin=use-credentials promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Preconnect reports origin only promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Preconnect dedups identical (origin, crossorigin) promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Preconnect: none and use-credentials are distinct entries promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+FAIL Preconnect: distinct crossorigin values are distinct entries promise_test: Unhandled rejection with value: object "TypeError: performance.getSpeculations is not a function. (In 'performance.getSpeculations()', 'performance.getSpeculations' is undefined)"
+

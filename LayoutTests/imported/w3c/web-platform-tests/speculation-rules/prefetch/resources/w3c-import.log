@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/authenticate.py
@@ -19,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/conditional-status.py
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/cookies.py
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/counting-executor.py
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/delayed-conditional-status.py
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/executor.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/executor.sub.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/post-navigation-handler.py
@@ -27,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/random_redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/redirect-helper.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/ruleset.py
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/slow-body-conditional-status.py
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/slow-executor.py
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/sw.js
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/resources/util.py

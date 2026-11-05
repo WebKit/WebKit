@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-early-hints-preconnect.tentative.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-early-hints-preload.tentative.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-multiple-early-hints-preconnect.tentative.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-navigation-destination-url.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-navigations-eagerness.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-navigations-pointerdown.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-navigations.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-preconnect-response-header.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-preconnect-response-header.tentative.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-preconnect.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-preredirect-urls.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-serialization.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-unused-preload.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/speculation-measurement/performance-speculations-used-preload.tentative.html

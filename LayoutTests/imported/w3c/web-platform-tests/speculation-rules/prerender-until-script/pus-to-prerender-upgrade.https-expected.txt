@@ -1,0 +1,4 @@
+
+Harness Error (FAIL), message = Error: assert_implements: Prerendering must be supported (document.prerendering) undefined
+
+

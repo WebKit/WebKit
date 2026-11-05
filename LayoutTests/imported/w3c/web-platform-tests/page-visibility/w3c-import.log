@@ -10,13 +10,13 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/META.yml
-/LayoutTests/imported/w3c/web-platform-tests/page-visibility/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/page-visibility/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/page-visibility/iframe-session-history.html
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/iframe-unload.html
+/LayoutTests/imported/w3c/web-platform-tests/page-visibility/minimize.html
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/onvisibilitychange.html
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/test_attributes_exist.html
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/test_child_document.html
@@ -24,3 +24,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/test_read_only.html
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/unload-bubbles.html
 /LayoutTests/imported/w3c/web-platform-tests/page-visibility/unload.html
+/LayoutTests/imported/w3c/web-platform-tests/page-visibility/visibility-state-entry.tentative.html

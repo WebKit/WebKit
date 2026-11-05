@@ -1,0 +1,6 @@
+Click to expand
+Click to expand
+
+PASS selector_matches with link inside closed details should not crash
+PASS Rapid toggling of details with selector_matches should not crash
+

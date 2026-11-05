@@ -1,0 +1,3 @@
+
+FAIL largest-contentful-paint should not expose pseudo-elements assert_equals: expected Element node <div id="target"></div> but got Element node <<pseudo>></<pseudo>>
+

@@ -148,6 +148,22 @@ async function isUrlPrefetched(url) {
   return response.json();
 }
 
+// Polls isUrlPrefetched(url) until it reports a prefetch or |deadline_ms| has
+// passed, and returns the last count read. Reading the count resets it
+// server-side, so callers should assert on the returned value rather than
+// calling isUrlPrefetched again.
+async function waitUntilPrefetched(t, url, deadline_ms) {
+  const start = performance.now();
+  let count = 0;
+  while (true) {
+    count = await isUrlPrefetched(url);
+    if (count > 0 || performance.now() - start >= deadline_ms) {
+      return count;
+    }
+    await new Promise(resolve => t.step_timeout(resolve, 100));
+  }
+}
+
 // Must also include /common/utils.js and /common/dispatcher/dispatcher.js to use this.
 async function spawnWindowWithReference(t, options = {}, uuid = token()) {
   let agent = new PrefetchAgent(uuid, t);
@@ -193,13 +209,15 @@ function insertDocumentRule(predicate, extra_options={}) {
 }
 
 function assert_prefetched (requestHeaders, description) {
-  assert_in_array(requestHeaders.purpose, [undefined, "prefetch"], "The vendor-specific header Purpose, if present, must be 'prefetch'.");
+  assert_equals(requestHeaders.purpose, undefined,
+    "The vendor-specific header Purpose has been deprecated.");
   assert_in_array(requestHeaders['sec-purpose'],
                   ["prefetch", "prefetch;anonymous-client-ip"], description);
 }
 
 function assert_prefetched_anonymous_client_ip(requestHeaders, description) {
-  assert_in_array(requestHeaders.purpose, [undefined, "prefetch"], "The vendor-specific header Purpose, if present, must be 'prefetch'.");
+  assert_equals(requestHeaders.purpose, undefined,
+    "The vendor-specific header Purpose has been deprecated.");
   assert_equals(requestHeaders['sec-purpose'],
                 "prefetch;anonymous-client-ip",
                 description);
@@ -218,8 +236,8 @@ function assert_not_prefetched (requestHeaders, description){
 // Note that this check passes also for non-prefetch requests, so additional
 // checks are needed to distinguish from non-prefetch requests.
 function assert_prefetched_without_sec_purpose(requestHeaders, description) {
-  assert_in_array(requestHeaders.purpose, [undefined, "prefetch"],
-      "The vendor-specific header Purpose, if present, must be 'prefetch'.");
+  assert_equals(requestHeaders.purpose, undefined,
+    "The vendor-specific header Purpose has been deprecated.");
   assert_equals(requestHeaders['sec-purpose'], undefined, description);
 }
 

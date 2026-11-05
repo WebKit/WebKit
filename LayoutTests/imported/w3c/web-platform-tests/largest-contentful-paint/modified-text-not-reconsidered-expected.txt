@@ -1,0 +1,4 @@
+much longer text that would increase the bounding rectangle if reconsidered
+
+PASS Text element should not be reconsidered as LCP after text content changes.
+

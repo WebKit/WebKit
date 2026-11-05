@@ -10,14 +10,13 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/external-speculation-rules-errors.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/header-only-top-level.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/inline-speculation-rules-base-url-errors.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/inline-speculation-rules-errors.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/invalid-rules.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/script-supports.https.html

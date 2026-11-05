@@ -10,14 +10,16 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/clear-prefetch-cache-after-clear-site-data-cache.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/cross-origin-cookies.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/different-initiators-2.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/different-initiators.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/document-rules-details-element.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/document-rules-pending-stylesheet.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/document-rules-visibility.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/document-rules.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/duplicate-urls.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/fragment.https.html
@@ -25,14 +27,22 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/initiators-a-element.sub.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/initiators-iframe-location-href.sub.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/initiators-window-open.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/inline-speculation-rules-after-stylesheet.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/list-rule-eagerness-conservative-pointerdown-preventdefault.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/list-rule-eagerness-conservative-pointerdown.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/list-rule-eagerness-eager-hover.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/list-rule-eagerness-moderate-hover.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/multiple-url.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/mutate-rules.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/navigation-timing-delivery-type.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/navigation-timing-requestStart-responseStart.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/navigation-timing-sizes.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/no-http-cache-interference-inflight.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/no-http-cache-interference-slow-error.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/no-http-cache-interference.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/no-prefetch-for-post.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/out-of-document-rule-set.https.html
+/LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/prefetch-inflight-success.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/prefetch-single.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/prefetch-status.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speculation-rules/prefetch/prefetch-traverse-reload.sub.html

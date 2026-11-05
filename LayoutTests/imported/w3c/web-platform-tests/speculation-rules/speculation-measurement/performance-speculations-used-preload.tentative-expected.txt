@@ -1,0 +1,10 @@
+
+FAIL Used preload: as=script, no crossorigin assert_true: SpeculationMeasurement feature must be enabled expected true got false
+FAIL Used preload: as=script, crossorigin=anonymous assert_true: SpeculationMeasurement feature must be enabled expected true got false
+FAIL Used preload: as=script, crossorigin=use-credentials assert_true: SpeculationMeasurement feature must be enabled expected true got false
+FAIL Used preload: as=style, no crossorigin assert_true: SpeculationMeasurement feature must be enabled expected true got false
+FAIL Used preload: as=style, crossorigin=anonymous assert_true: SpeculationMeasurement feature must be enabled expected true got false
+FAIL Used preload: as=style, crossorigin=use-credentials assert_true: SpeculationMeasurement feature must be enabled expected true got false
+FAIL Used preload: as=fetch, crossorigin=anonymous assert_true: SpeculationMeasurement feature must be enabled expected true got false
+FAIL Used preload: as=fetch, crossorigin=use-credentials assert_true: SpeculationMeasurement feature must be enabled expected true got false
+

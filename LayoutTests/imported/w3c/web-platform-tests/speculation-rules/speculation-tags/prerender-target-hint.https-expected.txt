@@ -1,3 +1,4 @@
 
-FAIL Sec-Speculation-Tags: tags with prerender target hint assert_equals: expected (string) "prefetch;prerender" but got (object) null
+Harness Error (FAIL), message = Error: assert_implements: Prerendering must be supported (document.prerendering) undefined
+
 

@@ -33,6 +33,7 @@ window.requestHeaders = {
   "referer": "{{header_or_default(Referer, NONEXISTENT)}}",
   "sec-fetch-dest": "{{header_or_default(Sec-Fetch-Dest, NONEXISTENT)}}",
   "sec-fetch-mode": "{{header_or_default(Sec-Fetch-Mode, NONEXISTENT)}}",
+  "sec-ch-device-memory": "{{header_or_default(Sec-CH-Device-Memory, NONEXISTENT)}}",
   "service-worker-navigation-preload":
       "{{header_or_default(Service-Worker-Navigation-Preload, NONEXISTENT)}}",
   // Convert to the raw string to avoid backslashes from being processed as
@@ -94,6 +95,10 @@ async function navigate_by_form_generated_post(url) {
 window.requestUrl = reverse_html_escape(
     "{{location[server]}}{{location[path]}}{{location[query]}}");
 
-const uuid = new URLSearchParams(location.search).get('uuid');
-window.executor = new Executor(uuid);
+const params = new URLSearchParams(location.search);
+const uuid = params.get('uuid');
+const activated_uuid = params.get('activated_uuid') || uuid;
+window.executor = new Executor(document.prerendering ? uuid : activated_uuid);
+
+
 </script>

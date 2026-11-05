@@ -1,4 +1,5 @@
 
+
 PASS `SAMEORIGIN;SAMEORIGIN` allows same-origin framing
 PASS `SAMEORIGIN;SAMEORIGIN` blocks cross-origin framing
 PASS `SAMEORIGIN;sameOrigin` allows same-origin framing

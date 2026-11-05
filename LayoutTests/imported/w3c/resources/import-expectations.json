@@ -319,6 +319,7 @@
     "web-platform-tests/soft-navigation-heuristics": "skip",
     "web-platform-tests/speculation-rules": "import",
     "web-platform-tests/speculation-rules/prefetch/anonymous": "skip",
+    "web-platform-tests/speculation-rules/prefetch/client-hints": "skip",
     "web-platform-tests/speculation-rules/prefetch/no-vary-search": "skip",
     "web-platform-tests/speculation-rules/prefetch/tentative": "skip",
     "web-platform-tests/speculation-rules/prerender": "skip",

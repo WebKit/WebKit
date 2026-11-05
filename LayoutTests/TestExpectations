@@ -8091,6 +8091,7 @@ imported/w3c/web-platform-tests/scroll-animations/animation-trigger/timeline-tri
 
 
 webkit.org/b/317017 imported/w3c/web-platform-tests/largest-contentful-paint/multiple-redirects-TAO.html [ Pass Failure ]
+webkit.org/b/????? imported/w3c/web-platform-tests/largest-contentful-paint/larger-image.html [ Pass Failure ]
 
 # Compression Dictionary Transport only advertises and decodes dictionaries on the GLib ports, so
 # these fail elsewhere waiting for a dictionary-compressed response that is never decoded.
