@@ -152,6 +152,7 @@ private:
     ContainingBlockState containingBlockStateAtBlockStart(const RenderBox&) const;
     ContainingBlockState computeContainingBlockStateAtBlockStart(const RenderBox&);
     std::optional<LayoutUnit> stretchFitBorderBoxBlockSize(const RenderBox&, const BoxGeometry&, const ContainingBlockState&) const;
+    LayoutUnit orthogonalFlowAvailableInlineSpace(const ContainingBlockState&) const;
     void computeBlockSize(const RenderBox&, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState&, BoxGeometry&) const;
     LayoutUnit viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter) const;
     void placeInContainingBlock(const RenderBox&, ContainingBlockState&& blockContainerState, BlockLayoutResult&);
