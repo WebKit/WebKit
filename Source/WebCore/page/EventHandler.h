@@ -101,6 +101,7 @@ class PlatformWheelEvent;
 class RemoteFrame;
 class RemoteFrameGeometryTransformer;
 class RenderBox;
+class RenderBoxModelObject;
 class RenderElement;
 class RenderEmbeddedObject;
 class RenderLayer;
@@ -479,7 +480,7 @@ private:
     bool beginKeyboardScrollGesture(KeyboardScrollingAnimator*, ScrollDirection, ScrollGranularity, bool isKeyRepeat);
     void stopKeyboardScrolling();
     bool startKeyboardScrollAnimationOnDocument(ScrollDirection, ScrollGranularity, bool isKeyRepeat);
-    bool startKeyboardScrollAnimationOnRenderBoxLayer(ScrollDirection, ScrollGranularity, RenderBox*, bool isKeyRepeat);
+    bool startKeyboardScrollAnimationOnLayer(ScrollDirection, ScrollGranularity, RenderBoxModelObject&, bool isKeyRepeat);
     bool startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(ScrollDirection, ScrollGranularity, RenderBox*, bool isKeyRepeat);
     bool startKeyboardScrollAnimationOnEnclosingScrollableContainer(ScrollDirection, ScrollGranularity, Node*, bool isKeyRepeat);
     bool startKeyboardScrollAnimationOnPlugin(ScrollDirection, ScrollGranularity, RenderEmbeddedObject&, bool isKeyRepeat);

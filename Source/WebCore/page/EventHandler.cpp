@@ -3849,25 +3849,26 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
     if (!shouldHandleEvent)
         return false;
 
-    auto scrollableAreaForBox = [](RenderBox& box) -> ScrollableArea* {
-        if (auto* renderListBox = dynamicDowncast<RenderListBox>(box))
+    // Inline boxes in the containing block chain have no scrollable area.
+    auto scrollableAreaFor = [](RenderBoxModelObject& renderer) -> ScrollableArea* {
+        if (auto* renderListBox = dynamicDowncast<RenderListBox>(renderer))
             return renderListBox;
 
-        if (box.hasLayer())
-            return box.layer()->scrollableArea();
+        if (renderer.hasLayer())
+            return renderer.layer()->scrollableArea();
 
         return nullptr;
     };
 
-    CheckedPtr currentEnclosingBox = initialEnclosingBox.ptr();
+    CheckedPtr<RenderBoxModelObject> currentRenderer = initialEnclosingBox.ptr();
 #if PLATFORM(MAC)
     auto biasedDelta = ScrollingEffectsController::wheelDeltaBiasingTowardsVertical(FloatSize(wheelEvent.deltaX(), wheelEvent.deltaY()));
 #else
     auto biasedDelta = FloatSize(wheelEvent.deltaX(), wheelEvent.deltaY());
 #endif
     
-    while (currentEnclosingBox) {
-        if (CheckedPtr boxScrollableArea = scrollableAreaForBox(*currentEnclosingBox)) {
+    while (currentRenderer) {
+        if (CheckedPtr boxScrollableArea = scrollableAreaFor(*currentRenderer)) {
             auto platformEvent = wheelEvent.underlyingPlatformEvent();
             bool scrollingWasHandled;
             if (platformEvent) {
@@ -3884,8 +3885,8 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
                 return true;
         }
 
-        currentEnclosingBox = currentEnclosingBox->containingBlock();
-        if (!currentEnclosingBox || currentEnclosingBox->isRenderView())
+        currentRenderer = currentRenderer->containingBlock();
+        if (!currentRenderer || currentRenderer->isRenderView())
             return false;
     }
     return false;
@@ -5315,9 +5316,10 @@ bool EventHandler::startKeyboardScrollAnimationOnDocument(ScrollDirection direct
     return beginKeyboardScrollGesture(animator, direction, granularity, isKeyRepeat);
 }
 
-bool EventHandler::startKeyboardScrollAnimationOnRenderBoxLayer(ScrollDirection direction, ScrollGranularity granularity, RenderBox* renderBox, bool isKeyRepeat)
+bool EventHandler::startKeyboardScrollAnimationOnLayer(ScrollDirection direction, ScrollGranularity granularity, RenderBoxModelObject& renderer, bool isKeyRepeat)
 {
-    CheckedPtr scrollableArea = renderBox->layer() ? renderBox->layer()->scrollableArea() : nullptr;
+    // Inline boxes in the containing block chain have no scrollable area.
+    CheckedPtr scrollableArea = renderer.layer() ? renderer.layer()->scrollableArea() : nullptr;
     if (!scrollableArea)
         return false;
 
@@ -5327,11 +5329,11 @@ bool EventHandler::startKeyboardScrollAnimationOnRenderBoxLayer(ScrollDirection 
 
 bool EventHandler::startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(ScrollDirection direction, ScrollGranularity granularity, RenderBox* initialRenderBox, bool isKeyRepeat)
 {
-    CheckedPtr renderBox = initialRenderBox;
-    while (renderBox && !renderBox->isRenderView()) {
-        if (startKeyboardScrollAnimationOnRenderBoxLayer(direction, granularity, renderBox, isKeyRepeat))
+    CheckedPtr<RenderBoxModelObject> renderer = initialRenderBox;
+    while (renderer && !renderer->isRenderView()) {
+        if (startKeyboardScrollAnimationOnLayer(direction, granularity, *renderer, isKeyRepeat))
             return true;
-        renderBox = renderBox->containingBlock();
+        renderer = renderer->containingBlock();
     }
 
     return false;

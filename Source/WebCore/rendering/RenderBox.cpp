@@ -1260,10 +1260,13 @@ bool RenderBox::scroll(ScrollDirection direction, ScrollGranularity granularity,
     if (stopElement && *stopElement && *stopElement == element())
         return true;
 
-    RenderBlock* nextScrollBlock = containingBlock();
+    CheckedPtr<RenderBoxModelObject> containingBlock = this->containingBlock();
+    // Inline boxes don't scroll, so continue with their containing block.
+    if (containingBlock && containingBlock->isInlineBox())
+        containingBlock = containingBlock->containingBlock();
 
-    if (nextScrollBlock && !nextScrollBlock->isRenderView())
-        return nextScrollBlock->scroll(direction, granularity, stepCount, stopElement, startBox, wheelEventAbsolutePoint);
+    if (containingBlock && !containingBlock->isRenderView())
+        return downcast<RenderBox>(*containingBlock).scroll(direction, granularity, stepCount, stopElement, startBox, wheelEventAbsolutePoint);
 
     return false;
 }
@@ -1291,9 +1294,12 @@ bool RenderBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranularit
     if (stopElement && *stopElement && *stopElement == element())
         return true;
 
-    RenderBlock* b = containingBlock();
-    if (b && !b->isRenderView())
-        return b->logicalScroll(direction, granularity, stepCount, stopElement);
+    CheckedPtr<RenderBoxModelObject> containingBlock = this->containingBlock();
+    // Inline boxes don't scroll, so continue with their containing block.
+    if (containingBlock && containingBlock->isInlineBox())
+        containingBlock = containingBlock->containingBlock();
+    if (containingBlock && !containingBlock->isRenderView())
+        return downcast<RenderBox>(*containingBlock).logicalScroll(direction, granularity, stepCount, stopElement);
     return false;
 }
 
