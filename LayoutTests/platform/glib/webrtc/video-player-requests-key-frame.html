@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>The player of a remote video track asks its sender for a key frame</title>
+        <script src="../../../resources/testharness.js"></script>
+        <script src="../../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay playsInline width="320" height="240"></video>
+        <script src ="../../../webrtc/routines.js"></script>
+        <script>
+async function sentPictureLossIndications(connection)
+{
+    const report = await connection.getStats();
+    for (const stats of report.values()) {
+        if (stats.type === "inbound-rtp" && stats.kind === "video")
+            return stats.pliCount;
+    }
+    return 0;
+}
+
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
+    const track = localStream.getVideoTracks()[0];
+    test.add_cleanup(() => track.stop());
+
+    let receivingConnection;
+    video.srcObject = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(track, localStream);
+        }, (secondConnection) => {
+            receivingConnection = secondConnection;
+            secondConnection.ontrack = (trackEvent) => resolve(trackEvent.streams[0]);
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+    await video.play();
+
+    let count = 0;
+    for (let i = 0; i < 50 && !count; ++i) {
+        await waitFor(100);
+        count = await sentPictureLossIndications(receivingConnection);
+    }
+    assert_greater_than(count, 0, "picture loss indications the receiver sent");
+}, "The player of a remote video track asks its sender for a key frame");
+        </script>
+    </body>
+</html>
