@@ -27,6 +27,7 @@
 #include "config.h"
 #include "IntlLocale.h"
 
+#include "IntlCache.h"
 #include "IntlDateTimeFormat.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
@@ -339,6 +340,15 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    bool hasNoOptions = optionsValue.isUndefined();
+    if (hasNoOptions) {
+        if (auto* cached = vm.intlCache().findCachedLocaleWithoutOptions(tag)) {
+            m_localeID = cached->localeID;
+            m_nonUnicodeExtensions = cached->nonUnicodeExtensions;
+            return;
+        }
+    }
+
     JSObject* options = intlCoerceOptionsToObject(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, void());
 
@@ -476,6 +486,9 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
         throwTypeError(globalObject, scope, "failed to initialize Locale"_s);
         return;
     }
+
+    if (hasNoOptions)
+        vm.intlCache().cacheLocaleWithoutOptions(tag, m_localeID, m_nonUnicodeExtensions);
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.maximize

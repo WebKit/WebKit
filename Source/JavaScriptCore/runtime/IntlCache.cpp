@@ -119,4 +119,16 @@ String IntlCache::canonicalizeUnicodeLocaleID(const String& languageTag)
     return canonicalized;
 }
 
+void IntlCache::cacheLocaleWithoutOptions(const String& tag, const ASCIICString& localeID, const String& nonUnicodeExtensions)
+{
+    constexpr unsigned maxCachedTagLength = 100;
+    constexpr unsigned maxCacheEntries = 64;
+
+    if (tag.length() > maxCachedTagLength)
+        return;
+    if (m_cachedLocalesWithoutOptions.size() >= maxCacheEntries)
+        m_cachedLocalesWithoutOptions.clear();
+    m_cachedLocalesWithoutOptions.add(tag, LocaleWithoutOptions { localeID, nonUnicodeExtensions });
+}
+
 } // namespace JSC

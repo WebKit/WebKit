@@ -65,6 +65,19 @@ public:
 
     String canonicalizeUnicodeLocaleID(const String& languageTag);
 
+    struct LocaleWithoutOptions {
+        ASCIICString localeID;
+        String nonUnicodeExtensions;
+    };
+    const LocaleWithoutOptions* findCachedLocaleWithoutOptions(const String& tag) const
+    {
+        auto iterator = m_cachedLocalesWithoutOptions.find(tag);
+        if (iterator == m_cachedLocalesWithoutOptions.end())
+            return nullptr;
+        return &iterator->value;
+    }
+    void cacheLocaleWithoutOptions(const String& tag, const ASCIICString& localeID, const String& nonUnicodeExtensions);
+
     // The cache is reset only at the VM entry service scope; get and insert never check.
     RefPtr<const IntlDateTimeFormatImpl> findCachedDateTimeFormatImpl(const IntlDateTimeFormatImplKey& key)
     {
@@ -107,6 +120,7 @@ private:
     std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>> m_cachedDateTimePatternGenerator;
     ASCIICString m_cachedDateTimePatternGeneratorLocale;
     UncheckedKeyHashMap<String, String> m_cachedCanonicalizedLocaleIDs;
+    UncheckedKeyHashMap<String, LocaleWithoutOptions> m_cachedLocalesWithoutOptions;
 
     static std::atomic<uint64_t> s_languagesEpoch;
 
