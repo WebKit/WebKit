@@ -54,6 +54,9 @@ class MutatorScheduler;
 class SlotVisitor;
 class VerifierSlotVisitor;
 
+// Being a Collector's own thread. Exists only for thread-safety analysis.
+class WTF_CAPABILITY("collector thread") CollectorThreadRole { };
+
 // State belonging to a collection cycle.
 class Collector {
     WTF_MAKE_NONCOPYABLE(Collector);
@@ -126,6 +129,21 @@ private:
     friend class SlotVisitor;
     friend class VerifierSlotVisitor;
 
+    // Checks that the current thread is the conductor conn names, and that the conn bits agree. Runs in every build, where
+    // a thread starts conducting and at each phase change; elsewhere, assertIsConductor() runs it in debug builds only.
+    void checkIsConductor(GCConductor) WTF_ASSERTS_ACQUIRED_CAPABILITY(conductorRole);
+#if ASSERT_ENABLED
+    void assertIsConductor(GCConductor) WTF_ASSERTS_ACQUIRED_CAPABILITY(conductorRole);
+    void assertIsConductorWithWorldStopped(GCConductor) WTF_ASSERTS_ACQUIRED_CAPABILITY(conductorRole) WTF_ASSERTS_ACQUIRED_CAPABILITY(conductorWithWorldStoppedRole);
+    void assertIsCollectorThread() const WTF_ASSERTS_ACQUIRED_CAPABILITY(m_collectorThreadRole);
+    // For asserts that accept either of two roles, which thread-safety analysis cannot express.
+    bool currentThreadIsConductor() const;
+#else
+    ALWAYS_INLINE void assertIsConductor(GCConductor) WTF_ASSERTS_ACQUIRED_CAPABILITY(conductorRole) { }
+    ALWAYS_INLINE void assertIsConductorWithWorldStopped(GCConductor) WTF_ASSERTS_ACQUIRED_CAPABILITY(conductorRole) WTF_ASSERTS_ACQUIRED_CAPABILITY(conductorWithWorldStoppedRole) { }
+    ALWAYS_INLINE void assertIsCollectorThread() const WTF_ASSERTS_ACQUIRED_CAPABILITY(m_collectorThreadRole) { }
+#endif
+
     GCRequest::Ticket requestCollection(Heap& requester, GCRequest);
     bool isSubsumedByQueuedRequest(const GCRequest&);
 
@@ -156,7 +174,7 @@ private:
     }
 
     bool hasPendingMembershipChangeWithLock() const WTF_REQUIRES_LOCK(*m_threadLock) { return !m_membershipChanges.isEmpty(); }
-    void applyAllMembershipChangesWithLock(Vector<Heap*, 8>& changedHeaps) WTF_REQUIRES_LOCK(*m_threadLock);
+    void applyAllMembershipChangesWithLock(Vector<Heap*, 8>& changedHeaps) WTF_REQUIRES_LOCK(*m_threadLock) WTF_REQUIRES_CAPABILITY(conductorRole);
     void applyMembershipChangeWithLock(MembershipChange&) WTF_REQUIRES_LOCK(*m_threadLock);
 
     bool hasWorkWithLock() const WTF_REQUIRES_LOCK(*m_threadLock) { return hasPendingGCRequestWithLock() || hasPendingMembershipChangeWithLock(); }
@@ -165,11 +183,10 @@ private:
     bool isIdleWithLock() WTF_REQUIRES_LOCK(*m_threadLock);
 
     bool anyMutatorHasConnWithLock() WTF_REQUIRES_LOCK(*m_threadLock);
-    void assertConn(GCConductor);
 
-    bool shouldCollectInCollectorThread() WTF_REQUIRES_LOCK(*m_threadLock);
-    CollectionScope decideCollectionScope();
-    void collectInCollectorThread();
+    bool shouldCollectInCollectorThread() WTF_REQUIRES_LOCK(*m_threadLock) WTF_REQUIRES_CAPABILITY(m_collectorThreadRole);
+    CollectionScope decideCollectionScope() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
+    void collectInCollectorThread() WTF_REQUIRES_CAPABILITY(m_collectorThreadRole);
     void collectInMutatorThread(Heap& conductor);
 
     void startCollectingContinuously();
@@ -187,44 +204,44 @@ private:
         // A mutator must capture its machine state before conducting Fixpoint.
         NeedCurrentThreadState
     };
-    RunCurrentPhaseResult runCurrentPhase(GCConductor, CurrentThreadState*);
+    RunCurrentPhaseResult runCurrentPhase(GCConductor, CurrentThreadState*) WTF_REQUIRES_CAPABILITY(conductorRole);
 
     // Returns true if we should keep doing things.
-    bool runNotRunningPhase(GCConductor);
-    bool runBeginPhase(GCConductor);
-    bool runFixpointPhase(GCConductor);
-    bool runConcurrentPhase(GCConductor);
-    bool runReloopPhase(GCConductor);
-    bool runEndPhase(GCConductor);
-    bool changePhase(GCConductor, CollectorPhase);
-    bool finishChangingPhase(GCConductor);
+    bool runNotRunningPhase(GCConductor) WTF_REQUIRES_CAPABILITY(conductorRole);
+    bool runBeginPhase(GCConductor) WTF_REQUIRES_CAPABILITY(conductorRole);
+    bool runFixpointPhase(GCConductor) WTF_REQUIRES_CAPABILITY(conductorRole);
+    bool runConcurrentPhase(GCConductor) WTF_REQUIRES_CAPABILITY(conductorRole);
+    bool runReloopPhase(GCConductor) WTF_REQUIRES_CAPABILITY(conductorRole);
+    bool runEndPhase(GCConductor) WTF_REQUIRES_CAPABILITY(conductorRole);
+    bool changePhase(GCConductor, CollectorPhase) WTF_REQUIRES_CAPABILITY(conductorRole);
+    bool finishChangingPhase(GCConductor) WTF_REQUIRES_CAPABILITY(conductorRole);
 
     // The per-heap part of the Begin and End phases.
-    void beginCollectionInEachHeap(CollectionScope, MonotonicTime startTime);
-    void setUpVisitors(CollectionScope);
-    void endCollectionInEachHeap();
+    void beginCollectionInEachHeap(GCConductor, CollectionScope, MonotonicTime startTime) WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
+    void setUpVisitors(CollectionScope) WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
+    void endCollectionInEachHeap(GCConductor) WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
 
-    void stopThePeriphery();
-    void resumeThePeriphery();
+    void stopThePeriphery(GCConductor) WTF_REQUIRES_CAPABILITY(conductorRole);
+    void resumeThePeriphery(GCConductor) WTF_REQUIRES_CAPABILITY(conductorRole);
 
-    bool suspendCompilerThreads();
-    void resumeCompilerThreads();
+    bool suspendCompilerThreads() WTF_REQUIRES_CAPABILITY(conductorRole);
+    void resumeCompilerThreads() WTF_REQUIRES_CAPABILITY(conductorRole);
 
-    void verifyGC();
-    void verifierMark();
+    void verifyGC() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
+    void verifierMark() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
 
-    void assertMarkStacksEmpty();
+    void assertMarkStacksEmpty() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
 
-    size_t bytesMarked();
-    UTF8CString bytesMarkedPerVisitorDump();
+    size_t bytesMarked() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
+    UTF8CString bytesMarkedPerVisitorDump() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
 
     // Summed over the heaps, for logging.
-    size_t capacity();
-    uintptr_t barriersExecuted();
-    size_t mutatorMarkStacksSize();
+    size_t capacity() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
+    uintptr_t barriersExecuted() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
+    size_t mutatorMarkStacksSize() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
 
-    void beginSignpost(CollectionScope, GCConductor);
-    void endSignpost();
+    void beginSignpost(CollectionScope, GCConductor) WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
+    void endSignpost() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
 
     // The heaps this Collector's collections cover.
     Vector<Heap*, 1> m_heaps;
@@ -268,6 +285,11 @@ private:
     bool m_threadIsWorking WTF_GUARDED_BY_LOCK(*m_threadLock) { false };
     bool m_threadShouldStop WTF_GUARDED_BY_LOCK(*m_threadLock) { false };
     bool m_isCompilerThreadsSuspended { false };
+#if ASSERT_ENABLED
+    // For assertIsConductorWithWorldStopped(): set once stopThePeriphery() has stopped every heap, and cleared before
+    // resumeThePeriphery() resumes any.
+    bool m_worldIsStopped { false };
+#endif
     uint64_t m_phaseVersion { 0 };
     std::unique_ptr<MutatorScheduler> m_scheduler;
 
@@ -275,6 +297,12 @@ private:
     Box<Lock> m_threadLock;
     const Ref<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     const RefPtr<AutomaticThread> m_thread;
+    [[no_unique_address]] CollectorThreadRole m_collectorThreadRole;
+#if ASSERT_ENABLED
+    // For assertIsCollectorThread(). Set on each start, since an idle AutomaticThread exits and a later wake starts a
+    // new OS thread.
+    Atomic<uint32_t> m_collectorThreadUID { 0 };
+#endif
     Deque<GCRequest> m_requests WTF_GUARDED_BY_LOCK(*m_threadLock);
     GCRequest m_currentRequest;
     GCRequest::Ticket m_lastServedTicket WTF_GUARDED_BY_LOCK(*m_threadLock) { 0 };

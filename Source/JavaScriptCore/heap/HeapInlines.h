@@ -221,9 +221,34 @@ inline void Heap::acquireAccess()
     if constexpr (validateDFGDoesGC)
         vm().verifyCanGC();
 
-    if (m_worldState.compareExchangeWeak(0, hasAccessBit))
+    if (m_worldState.compareExchangeWeak(0, hasAccessBit)) {
+        noteAccessAcquired();
         return;
+    }
     acquireAccessSlow();
+}
+
+inline void Heap::releaseAccess()
+{
+    assertIsAccessHolder();
+    noteAccessReleased();
+    if (m_worldState.compareExchangeWeak(hasAccessBit, 0))
+        return;
+    releaseAccessSlow();
+}
+
+inline void Heap::noteAccessAcquired()
+{
+#if ASSERT_ENABLED
+    m_accessHolderThreadUID.storeRelaxed(Thread::currentSingleton().uid());
+#endif
+}
+
+inline void Heap::noteAccessReleased()
+{
+#if ASSERT_ENABLED
+    m_accessHolderThreadUID.storeRelaxed(0);
+#endif
 }
 
 inline void Heap::stopIfNecessary()
