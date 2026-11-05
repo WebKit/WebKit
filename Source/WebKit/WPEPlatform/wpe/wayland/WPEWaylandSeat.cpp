@@ -175,7 +175,14 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
         if (!view)
             return;
 
-        unsigned pressCount = state ? wpe_view_compute_press_count(view.get(), seat.m_pointer.x, seat.m_pointer.y, button, time) : 0;
+        unsigned pressCount;
+        if (state) {
+            pressCount = wpe_view_compute_press_count(view.get(), seat.m_pointer.x, seat.m_pointer.y, button, time);
+            seat.m_pointer.pressCount = pressCount;
+            seat.m_pointer.pressButton = button;
+        } else
+            pressCount = seat.m_pointer.pressButton == button ? seat.m_pointer.pressCount : 0;
+
         GRefPtr<WPEEvent> event = adoptGRef(wpe_event_pointer_button_new(state ? WPE_EVENT_POINTER_DOWN : WPE_EVENT_POINTER_UP, view.get(), seat.m_pointer.source,
             time, seat.modifiers(), button, seat.m_pointer.x, seat.m_pointer.y, pressCount));
         wpe_view_event(view.get(), event.get());

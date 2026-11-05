@@ -7,13 +7,13 @@ Manual Test Steps:
 Click to start Test1.
 Move the mouse within the window, slow and fast, like a scribble.
 Click again to end test.
-inside window: logging...
+inside window: done
 X	Y
 screen_init:	400	300
-screen_last:	390	310
-screen_delta:	-10	10
-movement_sum:	0	0
+screen_last:	350	350
+screen_delta:	0	0
+movement_sum:	-50	50
 movement:	0	0
 
-FAIL Test that movementX/Y = eNow.screenX/Y-ePrevious.screenX/Y. assert_equals: movementX = screen_delta expected -10 but got 0
+PASS Test that movementX/Y = eNow.screenX/Y-ePrevious.screenX/Y.
 

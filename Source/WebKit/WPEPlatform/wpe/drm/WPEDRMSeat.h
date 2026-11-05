@@ -87,6 +87,8 @@ private:
         uint32_t modifiers { 0 };
         uint32_t time { 0 };
         unsigned deviceCount { 0 };
+        unsigned pressCount { 0 };
+        uint32_t pressButton { 0 };
     } m_pointer;
 
     struct {

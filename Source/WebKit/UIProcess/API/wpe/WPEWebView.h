@@ -102,7 +102,7 @@ public:
     virtual WPEView* wpeView() const { return nullptr; }
 #endif
 #if ENABLE(POINTER_LOCK)
-    virtual void requestPointerLock() { };
+    virtual bool requestPointerLock() { return false; }
     virtual void didLosePointerLock() { };
 #endif
 

@@ -323,7 +323,14 @@ void Seat::handlePointerButtonEvent(struct libinput_event_pointer* event)
     m_pointer.time = libinput_event_pointer_get_time(event);
 
     auto scale = wpe_view_get_scale(m_view.get());
-    unsigned pressCount = state == LIBINPUT_BUTTON_STATE_PRESSED ? wpe_view_compute_press_count(m_view.get(), m_pointer.x / scale, m_pointer.y / scale, button, m_pointer.time) : 0;
+    unsigned pressCount;
+    if (state == LIBINPUT_BUTTON_STATE_PRESSED) {
+        pressCount = wpe_view_compute_press_count(m_view.get(), m_pointer.x / scale, m_pointer.y / scale, button, m_pointer.time);
+        m_pointer.pressCount = pressCount;
+        m_pointer.pressButton = button;
+    } else
+        pressCount = m_pointer.pressButton == button ? m_pointer.pressCount : 0;
+
     GRefPtr<WPEEvent> wpeEvent = adoptGRef(wpe_event_pointer_button_new(state == LIBINPUT_BUTTON_STATE_PRESSED ? WPE_EVENT_POINTER_DOWN : WPE_EVENT_POINTER_UP, m_view.get(), m_pointer.source,
         m_pointer.time, modifiers(), button, m_pointer.x / scale, m_pointer.y / scale, pressCount));
     wpe_view_event(m_view.get(), wpeEvent.get());

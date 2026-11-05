@@ -83,6 +83,8 @@ private:
         uint32_t modifiers { 0 };
         uint32_t time { 0 };
         uint32_t enterSerial { 0 };
+        unsigned pressCount { 0 };
+        uint32_t pressButton { 0 };
 
         struct {
             WPEEvent* event { nullptr };

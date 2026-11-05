@@ -3357,8 +3357,7 @@ void webkitWebViewRequestPointerLock(WebKitWebView* webView, CompletionHandler<v
 #endif
 
 #if PLATFORM(WPE)
-    webView->priv->view->requestPointerLock();
-    completionHandler(true);
+    completionHandler(webView->priv->view->requestPointerLock());
 #endif
 }
 

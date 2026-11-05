@@ -37,7 +37,7 @@ public:
     virtual ~EventSenderProxyClient() = default;
 
     virtual void mouseDown(unsigned, double, WKEventModifiers, double, double, int /*clickCount*/, unsigned&) = 0;
-    virtual void mouseUp(unsigned, double, WKEventModifiers, double, double, unsigned&) = 0;
+    virtual void mouseUp(unsigned, double, WKEventModifiers, double, double, int /*clickCount*/, unsigned&) = 0;
     virtual void mouseMoveTo(double, double, double, WKEventMouseButton, unsigned) = 0;
     virtual void mouseScrollBy(int, int, double, double, double) = 0;
     virtual void sendWheelEvent(double, double, double, double, double, bool) = 0;

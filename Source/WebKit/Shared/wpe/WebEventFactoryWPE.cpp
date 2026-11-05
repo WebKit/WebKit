@@ -146,6 +146,7 @@ WebMouseEventInit WebEventFactory::createWebMouseEvent(WPEEvent* event)
     case WPE_EVENT_POINTER_UP:
         type = WebEventType::MouseUp;
         button = buttonForWPEButton(wpe_event_pointer_button_get_button(event));
+        clickCount = wpe_event_pointer_button_get_press_count(event);
         if (wpe_event_get_input_source(event) == WPE_INPUT_SOURCE_TOUCHSCREEN)
             syntheticClickType = WebMouseEventSyntheticClickType::OneFingerTap;
         break;
