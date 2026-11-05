@@ -29,6 +29,9 @@
 #include "BlockFormattingContext.h"
 #include "BlockFormattingUtils.h"
 #include "InlineFormattingConstraints.h"
+#include "InlineIteratorBox.h"
+#include "InlineIteratorLineBox.h"
+#include "InlineIteratorLineBoxInlines.h"
 #include "InlineWalker.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationBlockCoverage.h"
@@ -314,6 +317,14 @@ void BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(const Rende
         return;
     mutableBlockContainer->dirtyForLayoutFromPercentageHeightDescendants();
     mutableBlockContainer->setChildNeedsLayout(MarkingBehavior::OnlyThis);
+}
+
+bool BlockIntegrationUtils::isAnonymousBlockWithoutContentfulFirstLine(const RenderBlockFlow& blockContainer)
+{
+    if (!blockContainer.isAnonymousBlock())
+        return false;
+    auto firstLineBox = InlineIterator::firstLineBoxFor(blockContainer);
+    return !firstLineBox || !firstLineBox->lineLeftmostLeafBox();
 }
 
 void BlockIntegrationUtils::showBoxHiddenByLineClamp(const RenderBox& box)

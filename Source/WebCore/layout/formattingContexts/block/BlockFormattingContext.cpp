@@ -193,6 +193,7 @@ void BlockFormattingContext::handleBlockContainerStart(const RenderBox& blockCon
     auto blockContainerState = computeContainingBlockStateAtBlockStart(blockContainer);
     if (blockContainerState.geometry.borderAndPaddingBefore())
         resolveBorderBoxLogicalTops(blockContainerState);
+    startTextBoxTrim(downcast<RenderBlockFlow>(blockContainer), blockContainerState);
     m_blockLayoutState.containingBlockStates().append(WTF::move(blockContainerState));
     if (!blockContainer.firstChild())
         handleEmptyEditableContent(blockContainer, m_blockLayoutState.containingBlockStates().last());
@@ -210,10 +211,59 @@ void BlockFormattingContext::handleEmptyEditableContent(const RenderBox& blockCo
     m_blockLayoutState.marginCollapse().resetAdjoiningMargins(blockContainerState.contentBoxLogicalTop() + *contentBlockSize);
 }
 
+// The text-box-trim of a block container applies to its content (TextBoxTrimmer). A block-start border or padding keeps the start trim of
+// an ancestor from it, and from the content after it.
+TextBoxTrimState BlockFormattingContext::textBoxTrimStateFor(const RenderBlockFlow& blockContainer, const TextBoxTrimState& ancestorState) const
+{
+    auto textBoxTrim = blockContainer.style().textBoxTrim();
+    auto trimsEnd = textBoxTrim == TextBoxTrim::TrimEnd || textBoxTrim == TextBoxTrim::TrimBoth;
+    // The last formatted line is in its own inline content, unless its first layout tells it is in block-level content, a block-level box on
+    // the last line included.
+    CheckedPtr<const RenderBlockFlow> lastFormattedLineRoot;
+    if (trimsEnd) {
+        lastFormattedLineRoot = m_blockLayoutState.lastFormattedLineRoot(blockContainer);
+        if (!lastFormattedLineRoot && blockContainer.childrenInline())
+            lastFormattedLineRoot = &blockContainer;
+    }
+    return {
+        textBoxTrim == TextBoxTrim::TrimStart || textBoxTrim == TextBoxTrim::TrimBoth || ancestorState.trimsFirstFormattedLine,
+        lastFormattedLineRoot ? lastFormattedLineRoot : ancestorState.lastFormattedLineRoot
+    };
+}
+
+void BlockFormattingContext::startTextBoxTrim(const RenderBlockFlow& blockContainer, ContainingBlockState& blockContainerState)
+{
+    auto state = m_blockLayoutState.textBoxTrimState();
+    if (state.trimsFirstFormattedLine && blockContainerState.geometry.borderAndPaddingBefore())
+        state.trimsFirstFormattedLine = false;
+    if (blockContainer.style().textBoxTrim() == TextBoxTrim::None) {
+        m_blockLayoutState.setTextBoxTrimState(WTF::move(state));
+        return;
+    }
+    blockContainerState.textBoxTrimStateToRestore = state;
+    m_blockLayoutState.setTextBoxTrimState(textBoxTrimStateFor(blockContainer, state));
+}
+
+void BlockFormattingContext::endTextBoxTrim(const RenderBlockFlow& blockContainer, ContainingBlockState& blockContainerState)
+{
+    if (auto& state = blockContainerState.textBoxTrimStateToRestore) {
+        m_blockLayoutState.setTextBoxTrimState(WTF::move(*state));
+        return;
+    }
+    // Only the first formatted line gets its start trimmed, which a ruby annotation or an anonymous block without content on its first line
+    // is not part of.
+    auto state = m_blockLayoutState.textBoxTrimState();
+    if (!state.trimsFirstFormattedLine || blockContainer.style().display() == Style::DisplayType::RubyText || LayoutIntegration::BlockIntegrationUtils::isAnonymousBlockWithoutContentfulFirstLine(blockContainer))
+        return;
+    state.trimsFirstFormattedLine = false;
+    m_blockLayoutState.setTextBoxTrimState(WTF::move(state));
+}
+
 void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockContainer, BlockLayoutResult& result)
 {
     auto blockContainerState = m_blockLayoutState.containingBlockStates().takeLast();
     ASSERT(blockContainerState.blockContainer.ptr() == &blockContainer);
+    endTextBoxTrim(downcast<RenderBlockFlow>(blockContainer), blockContainerState);
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
     m_blockLayoutState.marginCollapse().endBlockContainer(blockContainerState, containingBlockState);
     // Nothing in its content separated the block-start margin from the block-end margin. Unless the box's own height, block-end
@@ -241,6 +291,16 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
     // The block-level boxes in the content add states of their own while it is laid out, which can move the block container's state, and the
     // geometry with it.
     auto geometry = blockContainerState.geometry;
+    // The start of its first formatted line, and the end of the last one, are trimmed, the other way around on lines the block flow inverts.
+    auto& textBoxTrimState = m_blockLayoutState.textBoxTrimState();
+    auto textBoxTrim = BlockLayoutState::TextBoxTrim { };
+    auto isLineInverted = blockContainer.writingMode().isLineInverted();
+    if (textBoxTrimState.trimsFirstFormattedLine)
+        textBoxTrim.add(isLineInverted ? BlockLayoutState::TextBoxTrimSide::End : BlockLayoutState::TextBoxTrimSide::Start);
+    if (textBoxTrimState.lastFormattedLineRoot == &blockContainer)
+        textBoxTrim.add(isLineInverted ? BlockLayoutState::TextBoxTrimSide::Start : BlockLayoutState::TextBoxTrimSide::End);
+    m_blockLayoutState.setTextBoxTrim(textBoxTrim);
+    m_blockLayoutState.setTextBoxEdge(blockContainer.style().textBoxEdge());
     // While the line-clamp container looks for its auto clamp point, its content is laid out as if 'text-wrap-style' were 'stable', and it
     // lays out again what that constrained (RenderBlockFlow::layoutInFlowChildren).
     if (auto lineClamp = m_blockLayoutState.lineClamp(); lineClamp && lineClamp->isStableTextWrap && InlineContentConstrainer::constrainsContent(blockContainer.style())) {
@@ -294,6 +354,14 @@ BlockLevelBoxInInlineContent BlockFormattingContext::layoutBlockLevelBoxInInline
     }
     // Its own line is one more line with content.
     blockContainerState.lineCountThroughLastBlockLevelBox = lineCount + 1;
+    // The inline content keeps its text-box-trim. A box after the first formatted line does not trim its start (TextBoxTrimStartDisabler).
+    auto inlineContentTextBoxTrim = m_blockLayoutState.textBoxTrim();
+    auto inlineContentTextBoxEdge = m_blockLayoutState.textBoxEdge();
+    auto textBoxTrimStateToRestore = std::optional<TextBoxTrimState> { };
+    if (lineCount && m_blockLayoutState.textBoxTrimState().trimsFirstFormattedLine) {
+        textBoxTrimStateToRestore = m_blockLayoutState.textBoxTrimState();
+        m_blockLayoutState.setTextBoxTrimState({ false, textBoxTrimStateToRestore->lastFormattedLineRoot });
+    }
     // The inline formatting context counts its lines against the line-clamp budget it started with, and the box takes its own off what is left
     // of it (layoutWithFormattingContextForBlockInInline).
     auto lineClamp = m_blockLayoutState.lineClamp();
@@ -307,6 +375,10 @@ BlockLevelBoxInInlineContent BlockFormattingContext::layoutBlockLevelBoxInInline
     layoutBlockItems(BlockItemsBuilder { root() }.buildForBlockLevelBoxInInlineContent(box), result);
     ASSERT_UNUSED(stateCount, containingBlockStates.size() == stateCount);
     ASSERT(result.boxes.last().renderer.ptr() == &box);
+    m_blockLayoutState.setTextBoxTrim(inlineContentTextBoxTrim);
+    m_blockLayoutState.setTextBoxEdge(inlineContentTextBoxEdge);
+    if (textBoxTrimStateToRestore)
+        m_blockLayoutState.setTextBoxTrimState(WTF::move(*textBoxTrimStateToRestore));
     auto boxLineCount = size_t { 0 };
     if (lineClamp) {
         auto lineClampAfterBox = *m_blockLayoutState.lineClamp();
@@ -362,8 +434,18 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
         contentBlockSize = BlockFormattingUtils::emptyEditableContentBlockSize(box);
     else {
         LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(*root);
-        // Its content is in a formatting context of its own; a block formatting context gets a block layout state of its own.
+        // Its content is in a formatting context of its own; a block formatting context gets a block layout state of its own, with its own
+        // text-box-trim only, whose start trim a block-start border or padding keeps from the content after it too.
         auto blockLayoutState = BlockLayoutState { { } };
+        if (root->style().textBoxTrim() != TextBoxTrim::None) {
+            auto state = m_blockLayoutState.textBoxTrimState();
+            if (state.trimsFirstFormattedLine && rootState.geometry.borderAndPaddingBefore()) {
+                state.trimsFirstFormattedLine = false;
+                m_blockLayoutState.setTextBoxTrimState(state);
+            }
+            blockLayoutState.setLastFormattedLineRoots(Vector { m_blockLayoutState.lastFormattedLineRoots() });
+            blockLayoutState.setTextBoxTrimState(textBoxTrimStateFor(*root, state));
+        }
         auto horizontalConstraints = HorizontalConstraints { rootState.inlineRange.min(), rootState.inlineRange.size() };
         auto rootResult = BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, rootState.borderAndPaddingBefore }, rootState.contentBoxBlockSize, rootState.fillAvailableBlockSize, rootState.replacedElementAvailableBlockSize, rootState.relayoutChildren }, rootState.geometry);
         result.boxes.appendVector(WTF::move(rootResult.boxes));

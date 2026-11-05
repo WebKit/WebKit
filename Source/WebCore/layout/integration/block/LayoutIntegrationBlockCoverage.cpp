@@ -67,7 +67,6 @@ enum class BlockAvoidanceReason : uint8_t {
     RootHasUnsupportedWritingMode,
     RootIsPaginated,
     RootIsInLegacyLineClampContext,
-    RootIsInTextBoxTrimContext,
     RootIsInLineGridContext,
     RootHasColumns,
     RootHasAlignContent,
@@ -162,8 +161,6 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     if (rootContainer.enclosingFragmentedFlow())
         return BlockAvoidanceReason::RootIsPaginated;
     CheckedRef style = rootContainer.style();
-    if (layoutContext->textBoxTrim() || style->textBoxTrim() != TextBoxTrim::None)
-        return BlockAvoidanceReason::RootIsInTextBoxTrimContext;
     if (!style->lineGrid().isNone())
         return BlockAvoidanceReason::RootIsInLineGridContext;
     if (style->specifiesColumns() || rootContainer.multiColumnFlow())
@@ -654,7 +651,8 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         return BlockAvoidanceReason::ContentHasMarginTrim;
     if (!style->maxLines().isAuto())
         return BlockAvoidanceReason::ContentHasLineClamp;
-    if (style->textBoxTrim() != TextBoxTrim::None)
+    // FIXME: An out-of-flow box with text-box-trim, which is laid out on its own, after its last formatted line would have to be known.
+    if (style->textBoxTrim() != TextBoxTrim::None && blockContainer->isOutOfFlowPositioned())
         return BlockAvoidanceReason::ContentHasTextBoxTrim;
     if (!style->lineGrid().isNone())
         return BlockAvoidanceReason::ContentHasLineGrid;
@@ -748,8 +746,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "root: paginated"_s;
     case BlockAvoidanceReason::RootIsInLegacyLineClampContext:
         return "root: in -webkit-line-clamp"_s;
-    case BlockAvoidanceReason::RootIsInTextBoxTrimContext:
-        return "root: in text-box-trim"_s;
     case BlockAvoidanceReason::RootIsInLineGridContext:
         return "root: in line grid"_s;
     case BlockAvoidanceReason::RootHasColumns:
