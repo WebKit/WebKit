@@ -116,7 +116,7 @@ public:
             InlineLayoutUnit contentWidth() const { return m_contentWidth; }
 
             const InlineItem& inlineItem;
-            const Style::ComputedStyle& style;
+            const CheckedRef<const Style::ComputedStyle> style;
             InlineLayoutUnit offset { 0 };
             InlineLayoutUnit textSpacingAdjustment { 0 };
             enum class ShapingBoundary : bool { Start, End };

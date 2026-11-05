@@ -1,6 +1,5 @@
 dom/CollectionIndexCache.h
 dom/Node.cpp
-layout/formattingContexts/inline/InlineItemsBuilder.h
 rendering/RenderLayer.h
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h

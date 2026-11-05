@@ -34,7 +34,7 @@ namespace InlineIterator {
 
 inline float previousLineBoxContentBottomOrBorderAndPadding(const LineBox& lineBox)
 {
-    return lineBox.isFirst() ? lineBox.formattingContextRoot().borderAndPaddingBefore().toFloat() : lineBox.contentLogicalTopAdjustedForPrecedingLineBox();
+    return lineBox.isFirst() ? protect(lineBox.formattingContextRoot())->borderAndPaddingBefore().toFloat() : lineBox.contentLogicalTopAdjustedForPrecedingLineBox();
 }
 
 inline float contentStartInBlockDirection(const LineBox& lineBox)

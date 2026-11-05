@@ -337,7 +337,7 @@ void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacings(const InlineItemLi
         CheckedRef boundaryOwnerStyle = inlineItemList[boundaryIndex].layoutBox().parent().style();
         auto boundaryTextAutospace = boundaryOwnerStyle->textAutospace();
         if (!boundaryTextAutospace.isNoAutospace() && boundaryTextAutospace.shouldApplySpacing(inlineTextBox->content().codePointAt(start), lastCharacterFromPreviousRun))
-            spacings.add(boundaryIndex, TextAutospace::textAutospaceSize(boundaryOwnerStyle->fontCascade().primaryFont()));
+            spacings.add(boundaryIndex, TextAutospace::textAutospaceSize(protect(boundaryOwnerStyle->fontCascade())->primaryFont()));
 
         lastCharacterFromPreviousRun = TextUtil::lastBaseCharacterFromText(content);
         lastCharacterDepth = currentCharacterDepth;
@@ -375,7 +375,7 @@ InlineItemsBuilder::LayoutQueue InlineItemsBuilder::traverseUntilDamaged(const B
         return &layoutBox == &firstDamagedLayoutBox;
     };
 
-    if (appendAndCheckForDamage(*root().firstChild()))
+    if (appendAndCheckForDamage(*protect(root().firstChild())))
         return queue;
 
     while (!queue.isEmpty()) {
@@ -401,7 +401,7 @@ InlineItemsBuilder::LayoutQueue InlineItemsBuilder::traverseUntilDamaged(const B
     }
     // How did we miss the damaged box?
     ASSERT_NOT_REACHED();
-    queue.append(*root().firstChild());
+    queue.append(*protect(root().firstChild()));
     return queue;
 }
 
@@ -473,7 +473,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItemList& inlineItemList, Inli
             CheckedRef inlineBox = downcast<ElementBox>(layoutBox);
             if (!inlineBox->hasChild())
                 break;
-            layoutQueue.append(*inlineBox->firstChild());
+            layoutQueue.append(*protect(inlineBox->firstChild()));
         }
 
         while (!layoutQueue.isEmpty()) {
@@ -765,7 +765,7 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItemList& inlineItemLis
 
     StringBuilder paragraphContentBuilder;
     InlineItemOffsetList inlineItemOffsets(ReserveCapacityTag { }, inlineItemList.size());
-    buildBidiParagraph(root().style(), inlineItemList, paragraphContentBuilder, inlineItemOffsets);
+    buildBidiParagraph(protect(root().style()), inlineItemList, paragraphContentBuilder, inlineItemOffsets);
     if (paragraphContentBuilder.isEmpty()) {
         // Style may trigger visual reordering even on a completely empty content.
         // e.g. <div><span style="direction:rtl"></span></div>
@@ -902,7 +902,7 @@ static inline bool canCacheWidthOnInlineTextItem(const InlineTextBox& inlineText
     // Do not cache when:
     // 1. first-line style's unique font properties may produce non-matching width values.
     // 2. position dependent content is present (preserved tab character atm).
-    if (&inlineTextBox.style() != &inlineTextBox.firstLineStyle() && !inlineTextBox.style().fontCascadeEqual(inlineTextBox.firstLineStyle()))
+    if (&inlineTextBox.style() != &inlineTextBox.firstLineStyle() && !protect(inlineTextBox.style())->fontCascadeEqual(protect(inlineTextBox.firstLineStyle())))
         return false;
     if (!isWhitespace || !TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox))
         return true;
@@ -934,7 +934,7 @@ static void handleTextSpacing(TextSpacing::SpacingState& spacingState, Trimmable
         // We need to store information about spacing added between inline text items since it needs to be trimmed during line breaking if the consecutive items are placed on different lines
         auto characterClass = TextSpacing::characterClass(inlineTextItem.content().codePointAt(0));
         if (autospace.shouldApplySpacing(spacingState.lastCharacterClassFromPreviousRun, characterClass))
-            trimmableTextSpacings.add(inlineItemIndex, TextAutospace::textAutospaceSize(inlineTextItem.style().fontCascade().primaryFont()));
+            trimmableTextSpacings.add(inlineItemIndex, TextAutospace::textAutospaceSize(protect(inlineTextItem.style().fontCascade())->primaryFont()));
 
         auto lastCharacterFromPreviousRun = TextUtil::lastBaseCharacterFromText(inlineTextItem.content());
         spacingState.lastCharacterClassFromPreviousRun = TextSpacing::characterClass(lastCharacterFromPreviousRun);
@@ -960,7 +960,7 @@ void InlineItemsBuilder::computeInlineTextItemWidthsAndTextSpacing(InlineItemLis
         auto& inlineItem = inlineItemList[inlineItemIndex];
 
         if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
-            auto needsMeasuring = inlineTextItem->length() && !inlineTextItem->isZeroWidthSpaceSeparator() && canCacheWidthOnInlineTextItem(inlineTextItem->inlineTextBox(), inlineTextItem->isWhitespace());
+            auto needsMeasuring = inlineTextItem->length() && !inlineTextItem->isZeroWidthSpaceSeparator() && canCacheWidthOnInlineTextItem(protect(inlineTextItem->inlineTextBox()), inlineTextItem->isWhitespace());
             if (needsMeasuring) {
                 auto start = inlineTextItem->start();
                 if (inlineItemIndex) {
@@ -973,7 +973,7 @@ void InlineItemsBuilder::computeInlineTextItemWidthsAndTextSpacing(InlineItemLis
                 auto width = InlineLayoutUnit { };
                 auto mayHaveGlyphOverflow = [&] {
                     if (currentInlineTextBox != &inlineTextItem->inlineTextBox()) {
-                        currentInlineTextBoxMayHaveGlyphOverflow = textBoxMayHaveGlyphOverflow(inlineTextItem->inlineTextBox());
+                        currentInlineTextBoxMayHaveGlyphOverflow = textBoxMayHaveGlyphOverflow(protect(inlineTextItem->inlineTextBox()));
                         currentInlineTextBox = &inlineTextItem->inlineTextBox();
                     }
                     return currentInlineTextBoxMayHaveGlyphOverflow;
@@ -999,7 +999,7 @@ void InlineItemsBuilder::computeInlineTextItemWidthsAndTextSpacing(InlineItemLis
 bool InlineItemsBuilder::buildInlineItemListForTextFromBreakingPositionsCache(const InlineTextBox& inlineTextBox, InlineItemList& inlineItemList)
 {
     auto& text = inlineTextBox.content();
-    TextBreakingPositionCache::Key cacheKey { text, { inlineTextBox.style() }, m_securityOrigin.data() };
+    TextBreakingPositionCache::Key cacheKey { text, { inlineTextBox.style() }, m_securityOrigin->data() };
     auto* cacheEntry = TextBreakingPositionCache::singleton().get(cacheKey);
     if (!cacheEntry)
         return false;

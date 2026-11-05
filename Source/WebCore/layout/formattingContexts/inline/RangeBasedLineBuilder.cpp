@@ -55,13 +55,13 @@ LineLayoutResult RangeBasedLineBuilder::layoutInlineContent(const LineInput& lin
         auto hasDecoration = false;
         for (auto& inlineItem : m_inlineItemList) {
             ASSERT(inlineItem.isInlineBoxStartOrEnd());
-            inlineBoxRuns.append({ Line::Run(inlineItem, inlineItem.firstLineStyle(), { }) });
+            inlineBoxRuns.append({ Line::Run(inlineItem, protect(inlineItem.firstLineStyle()), { }) });
             if (inlineItem.isInlineBoxStart())
-                hasDecoration |= !!formattingContext().geometryForBox(inlineItem.layoutBox()).marginBorderAndPaddingStart();
+                hasDecoration |= !!formattingContext().geometryForBox(protect(inlineItem.layoutBox())).marginBorderAndPaddingStart();
         }
 
         auto lineRect = lineInput.initialLogicalRect;
-        auto contentLeft = InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), { }, lineRect.width(), { }, true);
+        auto contentLeft = InlineFormattingUtils::horizontalAlignmentOffset(protect(rootStyle()), { }, lineRect.width(), { }, true);
         return LineLayoutResult { lineInput.needsLayoutRange
             , WTF::move(inlineBoxRuns)
             , { }
@@ -107,7 +107,7 @@ LineLayoutResult RangeBasedLineBuilder::layoutInlineContent(const LineInput& lin
 
         if (isFirstFormattedLineCandidate) {
             ASSERT(!previousLine);
-            lineLayoutResult.runs.insert(0, { leadingInlineItem, leadingInlineItem.firstLineStyle(), { } });
+            lineLayoutResult.runs.insert(0, { leadingInlineItem, protect(leadingInlineItem.firstLineStyle()), { } });
             lineLayoutResult.inlineItemRange.start = lineInput.needsLayoutRange.start;
             return;
         }
@@ -120,7 +120,7 @@ LineLayoutResult RangeBasedLineBuilder::layoutInlineContent(const LineInput& lin
         if (lineLayoutResult.inlineItemRange.end != needsLayoutRange.end)
             return;
         auto& trailingInlineItem = m_inlineItemList.back();
-        lineLayoutResult.runs.append({ trailingInlineItem, isFirstFormattedLineCandidate ? trailingInlineItem.firstLineStyle() : trailingInlineItem.style(), lineLayoutResult.contentGeometry.logicalWidth });
+        lineLayoutResult.runs.append({ trailingInlineItem, protect(isFirstFormattedLineCandidate ? trailingInlineItem.firstLineStyle() : trailingInlineItem.style()), lineLayoutResult.contentGeometry.logicalWidth });
         lineLayoutResult.inlineItemRange.end = lineInput.needsLayoutRange.end;
     };
     appendTrailingInlineBoxRunIfNeeded();
@@ -179,7 +179,7 @@ bool RangeBasedLineBuilder::isEligibleForRangeInlineLayout(const InlineFormattin
         CheckedRef inlineBoxStyle = inlineItemList.first().layoutBox().style();
         if (inlineBoxStyle->textAlign() != rootStyle->textAlign())
             return false;
-        if (!TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(inlineFormattingContext.root()) || !TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(inlineItemList.first().layoutBox()))
+        if (!TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(inlineFormattingContext.root()) || !TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(protect(inlineItemList.first().layoutBox())))
             return false;
     }
 

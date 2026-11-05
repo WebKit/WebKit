@@ -107,7 +107,7 @@ bool InlineQuirks::inlineBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox)
         return inlineLevelBox.layoutBox().style().originalDisplay().isListItemType();
     }
     // Non-root inline boxes (e.g. <span>).
-    auto& boxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
+    auto& boxGeometry = formattingContext().geometryForBox(protect(inlineLevelBox.layoutBox()));
     if (boxGeometry.horizontalBorderAndPadding()) {
         // Horizontal border and padding make the inline box stretch the line (e.g. <span style="padding: 10px;"></span>).
         return true;
@@ -120,7 +120,8 @@ std::optional<LayoutUnit> InlineQuirks::initialLetterAlignmentOffset(const Box& 
     ASSERT(floatBox.isFloatingPositioned());
     if (!floatBox.style().lineBoxContain().contains(Style::WebkitLineBoxContainValue::InitialLetter))
         return { };
-    auto& primaryFontMetrics = lineBoxStyle.fontCascade().metricsOfPrimaryFont();
+    CheckedRef fontCascade = lineBoxStyle.fontCascade();
+    auto& primaryFontMetrics = fontCascade->metricsOfPrimaryFont();
     auto lineHeight = [&]() -> InlineLayoutUnit {
         if (lineBoxStyle.textAutosizingAdjustedLineHeight().isNormal())
             return primaryFontMetrics.ascent(FontBaseline::Alphabetic) + primaryFontMetrics.descent(FontBaseline::Alphabetic);
@@ -133,10 +134,10 @@ std::optional<LayoutUnit> InlineQuirks::initialLetterAlignmentOffset(const Box& 
 
 std::optional<InlineRect> InlineQuirks::adjustedRectForLineGridLineAlign(const InlineRect& rect) const
 {
-    auto& rootBoxStyle = formattingContext().root().style();
+    CheckedRef rootBoxStyle = formattingContext().root().style();
     auto& parentBlockLayoutState = formattingContext().layoutState().parentBlockLayoutState();
 
-    if (rootBoxStyle.lineAlign() == LineAlign::None)
+    if (rootBoxStyle->lineAlign() == LineAlign::None)
         return { };
     if (!parentBlockLayoutState.lineGrid())
         return { };
@@ -161,10 +162,10 @@ std::optional<InlineRect> InlineQuirks::adjustedRectForLineGridLineAlign(const I
 
 std::optional<InlineLayoutUnit> InlineQuirks::adjustmentForLineGridLineSnap(const LineBox& lineBox) const
 {
-    auto& rootBoxStyle = formattingContext().root().style();
+    CheckedRef rootBoxStyle = formattingContext().root().style();
     auto& inlineLayoutState = formattingContext().layoutState();
 
-    if (rootBoxStyle.lineSnap() == LineSnap::None)
+    if (rootBoxStyle->lineSnap() == LineSnap::None)
         return { };
     if (!inlineLayoutState.parentBlockLayoutState().lineGrid())
         return { };
@@ -197,7 +198,7 @@ std::optional<InlineLayoutUnit> InlineQuirks::adjustmentForLineGridLineSnap(cons
     auto logicalHeight = ascent + lineBox.rootInlineBox().descent();
     auto currentBaselinePosition = rootInlineBoxTop + ascent + lineGrid.layoutOffset.height();
 
-    if (rootBoxStyle.lineSnap() == LineSnap::Contain) {
+    if (rootBoxStyle->lineSnap() == LineSnap::Contain) {
         if (logicalHeight <= lineGridFontHeight)
             firstTextTop += (lineGridFontHeight - logicalHeight) / 2;
         else {

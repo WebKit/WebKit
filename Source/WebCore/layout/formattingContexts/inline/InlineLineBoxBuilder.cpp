@@ -60,7 +60,7 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
         // For now just include the hanging content in the root inline box as if it was not hanging (this is how legacy line layout works).
         return lineLayoutResult.contentGeometry.logicalWidth;
     };
-    auto lineBox = LineBox { rootBox(), lineLayoutResult.contentGeometry.logicalLeft, contentLogicalWidth(), lineIndex, isFirstFormattedLine(), lineLayoutResult.hasBlockEllipsisContentOnly(), lineLayoutResult.nonSpanningInlineLevelBoxCount };
+    auto lineBox = LineBox { protect(rootBox()), lineLayoutResult.contentGeometry.logicalLeft, contentLogicalWidth(), lineIndex, isFirstFormattedLine(), lineLayoutResult.hasBlockEllipsisContentOnly(), lineLayoutResult.nonSpanningInlineLevelBoxCount };
     if (lineLayoutResult.isBlockContent())
         constructBlockContent(lineBox);
     else {
@@ -99,7 +99,7 @@ LineBox LineBoxBuilder::buildForRootInlineBoxOnly(size_t lineIndex)
     auto& lineLayoutResult = this->lineLayoutResult();
     ASSERT(lineLayoutResult.hasContentfulInlineContent());
 
-    auto lineBox = LineBox { rootBox(), lineLayoutResult.contentGeometry.logicalLeft, lineLayoutResult.contentGeometry.logicalWidth - lineLayoutResult.hangingContent.logicalWidth, lineIndex, isFirstFormattedLine(), lineLayoutResult.hasBlockEllipsisContentOnly(), lineLayoutResult.nonSpanningInlineLevelBoxCount };
+    auto lineBox = LineBox { protect(rootBox()), lineLayoutResult.contentGeometry.logicalLeft, lineLayoutResult.contentGeometry.logicalWidth - lineLayoutResult.hangingContent.logicalWidth, lineIndex, isFirstFormattedLine(), lineLayoutResult.hasBlockEllipsisContentOnly(), lineLayoutResult.nonSpanningInlineLevelBoxCount };
     auto& rootInlineBox = lineBox.rootInlineBox();
     setVerticalPropertiesForInlineLevelBox(lineBox, rootInlineBox);
     if (isFirstFormattedLine())
@@ -125,8 +125,8 @@ TextUtil::FallbackFontList LineBoxBuilder::collectFallbackFonts(const InlineLeve
     if (inlineTextBox.inheritsStyleFromDisplayContentsParent()) {
         // Text in a display: contents element can have a font of its own. Like glyphs from fallback fonts, it only stretches
         // a parent inline box with line-height: normal (css-inline-3).
-        auto& parentStyle = isFirstFormattedLine() ? parentInlineBox.layoutBox().firstLineStyle() : parentInlineBox.layoutBox().style();
-        if (Ref primaryFont = style.fontCascade().primaryFont(); primaryFont.ptr() != &parentStyle.fontCascade().primaryFont())
+        CheckedRef parentStyle = isFirstFormattedLine() ? parentInlineBox.layoutBox().firstLineStyle() : parentInlineBox.layoutBox().style();
+        if (Ref primaryFont = protect(style.fontCascade())->primaryFont(); primaryFont.ptr() != &protect(parentStyle->fontCascade())->primaryFont())
             fallbackFonts.add(primaryFont.get());
     }
     if (fallbackFonts.isEmptyIgnoringNullReferences())
@@ -395,7 +395,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         return;
     }
     if (inlineLevelBox.isListMarker()) {
-        auto& layoutBox = downcast<ElementBox>(inlineLevelBox.layoutBox());
+        CheckedRef layoutBox = downcast<ElementBox>(inlineLevelBox.layoutBox());
         auto& listMarkerBoxGeometry = formattingContext().geometryForBox(layoutBox);
         auto marginBoxHeight = listMarkerBoxGeometry.marginBoxHeight();
 
@@ -406,13 +406,13 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
             return;
         }
         if (auto ascent = listMarkerBoxGeometry.baseline()) {
-            if (layoutBox.isListMarkerImage())
+            if (layoutBox->isListMarkerImage())
                 return setVerticalProperties({ *ascent, marginBoxHeight - *ascent });
             // Special list marker handling. Text driven list markers behave as text when it comes to layout bounds/ascent descent.
             // This needs to consult the list marker's style (and not the root) because we don't follow the DOM insertion point in case like this:
             // <li><div>content</div></li>
             // where the list marker ends up inside the <div> and the <div>'s style != <li>'s style.
-            auto listMarkerLayoutBounds = layoutBox.layoutBoundsForListMarker();
+            auto listMarkerLayoutBounds = layoutBox->layoutBoundsForListMarker();
             inlineLevelBox.setLayoutBounds({ InlineLayoutUnit(listMarkerLayoutBounds.first), InlineLayoutUnit(listMarkerLayoutBounds.second) });
 
             auto& fontMetrics = inlineLevelBox.primarymetricsOfPrimaryFont();
@@ -426,17 +426,17 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         return;
     }
     if (inlineLevelBox.isAtomicInlineBox()) {
-        auto& layoutBox = inlineLevelBox.layoutBox();
+        CheckedRef layoutBox = inlineLevelBox.layoutBox();
         auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
         auto marginBoxHeight = inlineLevelBoxGeometry.marginBoxHeight();
         auto ascent = [&]() -> InlineLayoutUnit {
             if (layoutState().shouldNotSynthesizeInlineBlockBaseline())
                 return inlineLevelBoxGeometry.baseline().value_or(marginBoxHeight);
 
-            if (layoutBox.isInlineBlockBox()) {
+            if (layoutBox->isInlineBlockBox()) {
                 // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or
                 // if its 'overflow' property has a computed value other than 'visible', in which case the baseline is the bottom margin edge.
-                auto synthesizeBaseline = !layoutBox.establishesInlineFormattingContext() || !layoutBox.style().isOverflowVisible();
+                auto synthesizeBaseline = !layoutBox->establishesInlineFormattingContext() || !layoutBox->style().isOverflowVisible();
                 if (synthesizeBaseline)
                     return marginBoxHeight;
 
@@ -465,7 +465,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
     for (size_t index = 0; index < inlineContent.size(); ++index) {
         auto& run = inlineContent[index];
         auto& layoutBox = run.layoutBox();
-        auto& style = styleToUse(layoutBox);
+        CheckedRef style = styleToUse(layoutBox);
         auto logicalLeft = rootInlineBox.logicalLeft() + run.logicalLeft();
 
         if (run.isText()) {
@@ -503,7 +503,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             continue;
         }
         if (run.isInlineBoxStart() || run.isLineSpanningInlineBoxStart()) {
-            auto marginStart = run.isInlineBoxStart() || style.boxDecorationBreak() == BoxDecorationBreak::Clone ? formattingContext.geometryForBox(layoutBox).marginStart() : LayoutUnit();
+            auto marginStart = run.isInlineBoxStart() || style->boxDecorationBreak() == BoxDecorationBreak::Clone ? formattingContext.geometryForBox(layoutBox).marginStart() : LayoutUnit();
             // At this point we don't know yet how wide this inline box is. Let's assume it's as long as the line is
             // and adjust it later if we come across an inlineBoxEnd run (see below).
             // Inline box run is based on margin box. Let's convert it to border box.
@@ -517,7 +517,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             }();
             initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth, run.isInlineBoxStart() ? InlineLevelBox::LineSpanningInlineBox::No : InlineLevelBox::LineSpanningInlineBox::Yes);
-            inlineBox.setTextEmphasis(InlineFormattingUtils::textEmphasisForInlineBox(layoutBox, rootBox()));
+            inlineBox.setTextEmphasis(InlineFormattingUtils::textEmphasisForInlineBox(layoutBox, protect(rootBox())));
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
             if (run.isInlineBoxStart()) {
                 inlineBox.setIsFirstBox();
@@ -543,8 +543,8 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             continue;
         }
         if (run.isListMarker()) {
-            auto& listMarkerBox = downcast<ElementBox>(layoutBox);
-            if (!listMarkerBox.isListMarkerImage()) {
+            CheckedRef listMarkerBox = downcast<ElementBox>(layoutBox);
+            if (!listMarkerBox->isListMarkerImage()) {
                 // Non-image type of list markers make their parent inline boxes (e.g. root inline box) contentful (and stretch them vertically).
                 lineBox.parentInlineBox(run).setHasContent();
             }
@@ -586,7 +586,7 @@ void LineBoxBuilder::constructBlockContent(LineBox& lineBox)
         auto& run = runs[index];
         if (run.isLineSpanningInlineBoxStart()) {
             auto inlineBoxWidth = blockRun.logicalWidth() ? lineLayoutResult.lineGeometry.logicalWidth : 0.f;
-            auto lineSpanningInlineBox = InlineLevelBox::createInlineBox(run.layoutBox(), run.layoutBox().style(), lineLayoutResult.contentGeometry.logicalLeft, inlineBoxWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
+            auto lineSpanningInlineBox = InlineLevelBox::createInlineBox(run.layoutBox(), protect(run.layoutBox().style()), lineLayoutResult.contentGeometry.logicalLeft, inlineBoxWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
             setVerticalPropertiesForInlineLevelBox(lineBox, lineSpanningInlineBox);
             // An inline level box's logical top is relative to its parent inline box (see LineBox::inlineLevelBoxAbsoluteTop), so only the outermost spanning box may carry the block's offset within the line.
             auto isOutermostInlineBox = &run.layoutBox().parent() == &rootBox();
@@ -715,12 +715,12 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
         auto styleToUse = [&] (auto& inlineLevelBox) -> const Style::ComputedStyle& {
             return isFirstFormattedLine() ? inlineLevelBox.layoutBox().firstLineStyle() : inlineLevelBox.layoutBox().style();
         };
-        auto& rootInlineBoxStyle = styleToUse(rootInlineBox);
-        if (rootInlineBoxStyle.writingMode().isHorizontal())
+        CheckedRef rootInlineBoxStyle = styleToUse(rootInlineBox);
+        if (rootInlineBoxStyle->writingMode().isHorizontal())
             return false;
 
         auto primaryFontRequiresIdeographicBaseline = [&](const Style::ComputedStyle& style) {
-            return style.fontDescription().orientation() == FontOrientation::Vertical || style.fontCascade().primaryFont().hasVerticalGlyphs();
+            return style.fontDescription().orientation() == FontOrientation::Vertical || protect(style.fontCascade())->primaryFont().hasVerticalGlyphs();
         };
 
         if (m_fallbackFontRequiresIdeographicBaseline || primaryFontRequiresIdeographicBaseline(rootInlineBoxStyle))
@@ -742,7 +742,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
         if (!initiatesLayoutBoundsChange)
             return;
 
-        if (inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox() || (inlineLevelBox.isListMarker() && !downcast<ElementBox>(inlineLevelBox.layoutBox()).isListMarkerImage()))
+        if (inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox() || (inlineLevelBox.isListMarker() && !protect(downcast<ElementBox>(inlineLevelBox.layoutBox()))->isListMarkerImage()))
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineLevelBox);
         else if (inlineLevelBox.isAtomicInlineBox()) {
             auto inlineLevelBoxHeight = inlineLevelBox.logicalHeight();

@@ -116,7 +116,7 @@ IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineForm
 {
     auto initializeRangeAndTextOnlyBuilderEligibility = [&] {
         m_inlineItemRange = { 0, inlineItems.content().size() };
-        m_mayUseSimplifiedTextOnlyInlineLayoutInRange = TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(formattingContextRoot());
+        m_mayUseSimplifiedTextOnlyInlineLayoutInRange = TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(protect(formattingContextRoot()));
         if (!m_mayUseSimplifiedTextOnlyInlineLayoutInRange)
             return;
 
@@ -141,8 +141,9 @@ IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineForm
         for (size_t index = 0; index < inlineBoxCount; ++index) {
             auto& inlineItem = inlineItemList[index];
             auto isNestingInlineBox = inlineItem.isInlineBoxStart() && inlineItemList[inlineItems.size() - 1 - index].isInlineBoxEnd();
-            auto& inlineBoxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
-            m_mayUseSimplifiedTextOnlyInlineLayoutInRange = isNestingInlineBox && !inlineBoxGeometry.horizontalMarginBorderAndPadding() && inlineBoxGeometry.marginStart() >= 0 && inlineBoxGeometry.marginEnd() >= 0 && TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(inlineItem.layoutBox());
+            CheckedRef layoutBox = inlineItem.layoutBox();
+            auto& inlineBoxGeometry = formattingContext().geometryForBox(layoutBox);
+            m_mayUseSimplifiedTextOnlyInlineLayoutInRange = isNestingInlineBox && !inlineBoxGeometry.horizontalMarginBorderAndPadding() && inlineBoxGeometry.marginStart() >= 0 && inlineBoxGeometry.marginEnd() >= 0 && TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(layoutBox);
             if (!m_mayUseSimplifiedTextOnlyInlineLayoutInRange)
                 return;
         }
@@ -161,12 +162,12 @@ std::optional<InlineLayoutUnit> IntrinsicWidthHandler::minimumContentSizeForBrea
     if (!m_mayUseSimplifiedTextOnlyInlineLayoutInRange)
         return { };
 
-    auto& lineBuilderRoot = this->lineBuilderRoot();
-    auto& lineBuilderRootStyle = lineBuilderRoot.style();
+    CheckedRef lineBuilderRoot = this->lineBuilderRoot();
+    CheckedRef lineBuilderRootStyle = lineBuilderRoot->style();
     auto isEligibleForBreakSpacesFastPath = [&] {
-        if (lineBuilderRootStyle.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces)
+        if (lineBuilderRootStyle->whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces)
             return false;
-        if (&lineBuilderRootStyle != &lineBuilderRoot.firstLineStyle())
+        if (lineBuilderRootStyle.ptr() != &lineBuilderRoot->firstLineStyle())
             return false;
         if (!TextUtil::isWrappingAllowed(lineBuilderRootStyle))
             return false;
@@ -237,7 +238,7 @@ InlineLayoutUnit IntrinsicWidthHandler::minimumContentSize()
     // The simplified minimum width takes each image by itself, which does not work where images stick to the content next to them.
     auto mayUseSimplifiedMinimumWidth = formattingContext().quirks().hasSoftWrapOpportunityAroundImages(IntrinsicWidthMode::Minimum) && isContentEligibleForNonLineBuilderMinimumWidth(formattingContextRoot(), m_inlineItems, m_mayUseSimplifiedTextOnlyInlineLayoutInRange);
     if (mayUseSimplifiedMinimumWidth)
-        return simplifiedMinimumWidth(formattingContextRoot());
+        return simplifiedMinimumWidth(protect(formattingContextRoot()));
 
     if (auto minimumContentSize = minimumContentSizeForBreakSpaces()) {
 #ifndef NDEBUG
@@ -263,7 +264,7 @@ InlineLayoutUnit IntrinsicWidthHandler::maximumContentSize()
     auto mayCacheLayoutResult = m_mayUseSimplifiedTextOnlyInlineLayoutInRange && !m_inlineItemRange.startIndex() ? MayCacheLayoutResult::Yes : MayCacheLayoutResult::No;
     auto maximumContentSize = InlineLayoutUnit { };
 
-    if (isContentEligibleForNonLineBuilderMaximumWidth(formattingContextRoot(), inlineItemList()))
+    if (isContentEligibleForNonLineBuilderMaximumWidth(protect(formattingContextRoot()), inlineItemList()))
         maximumContentSize = simplifiedMaximumWidth(mayCacheLayoutResult);
     else if (m_mayUseSimplifiedTextOnlyInlineLayoutInRange) {
         if (m_maximumContentWidthBetweenLineBreaks && mayUseContentWidthBetweenLineBreaksAsMaximumSize(formattingContextRoot(), inlineItemList())) {
@@ -394,10 +395,10 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth(const ElementBox&
 {
     auto maximumWidth = InlineLayoutUnit { };
 
-    for (auto* child = root.firstInFlowChild(); child; child = child->nextInFlowSibling()) {
-        if (auto* inlineTextBox = dynamicDowncast<InlineTextBox>(*child)) {
+    for (CheckedPtr child = root.firstInFlowChild(); child; child = child->nextInFlowSibling()) {
+        if (CheckedPtr inlineTextBox = dynamicDowncast<InlineTextBox>(*child)) {
             ASSERT(inlineTextBox->style().whiteSpaceCollapse() != WhiteSpaceCollapse::Preserve);
-            auto& fontCascade = inlineTextBox->style().fontCascade();
+            CheckedRef fontCascade = inlineTextBox->style().fontCascade();
             auto contentLength = inlineTextBox->content().length();
             size_t index = 0;
             auto isTreatedAsSpaceCharacter = [&](auto character) {
@@ -436,12 +437,12 @@ InlineLayoutUnit IntrinsicWidthHandler::simplifiedMaximumWidth(MayCacheLayoutRes
 {
     ASSERT(formattingContextRoot().firstChild() && formattingContextRoot().firstChild() == formattingContextRoot().lastChild());
     auto& inlineTextItem = downcast<InlineTextItem>(inlineItemList()[0]);
-    auto& style = inlineTextItem.firstLineStyle();
+    CheckedRef style = inlineTextItem.firstLineStyle();
 
     auto contentLogicalWidth = [&] {
         if (auto width = inlineTextItem.width())
             return *width;
-        return TextUtil::width(inlineTextItem, style.fontCascade(), { });
+        return TextUtil::width(inlineTextItem, protect(style->fontCascade()), { });
     }();
     if (mayCacheLayoutResult == MayCacheLayoutResult::No)
         return contentLogicalWidth;

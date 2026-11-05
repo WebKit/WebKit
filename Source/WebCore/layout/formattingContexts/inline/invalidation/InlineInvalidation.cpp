@@ -168,7 +168,7 @@ bool InlineInvalidation::inlineLevelBoxContentWillChange(const Box&)
 }
 
 struct DamagedContent {
-    const Box& layoutBox;
+    const CheckedRef<const Box> layoutBox;
     // Only text type of boxes may have offset. No offset also simply points to the end of the layout box.
     std::optional<size_t> offset { };
     enum class Type : uint8_t {
@@ -189,7 +189,7 @@ static std::optional<size_t> damagedLineIndex(const DamagedContent& damagedConte
     auto lastDisplayBoxIndexForLayoutBox = [&]() -> std::optional<size_t> {
         for (auto index = displayBoxes.size(); index--;) {
             auto& displayBox = displayBoxes[index];
-            if (&damagedContent.layoutBox == &displayBox.layoutBox())
+            if (damagedContent.layoutBox.ptr() == &displayBox.layoutBox())
                 return index;
         }
         // FIXME: When the damaged layout box does not generate even one display box (all collapsed), we should
@@ -208,7 +208,7 @@ static std::optional<size_t> damagedLineIndex(const DamagedContent& damagedConte
             return { };
         }
         auto& damagedDisplayBox = displayBoxes[damagedDisplayBoxIndex];
-        ASSERT(&damagedDisplayBox.layoutBox() == &damagedContent.layoutBox);
+        ASSERT(&damagedDisplayBox.layoutBox() == damagedContent.layoutBox.ptr());
         // In case of content deletion, we may need to damage the "previous" line.
         if (damagedContent.type == DamagedContent::Type::Insertion || !damagedDisplayBox.lineIndex())
             return { damagedDisplayBox.lineIndex() };
@@ -238,7 +238,7 @@ static std::optional<size_t> damagedLineIndex(const DamagedContent& damagedConte
     };
 
     auto leadingIndexForDisplayBox = *lastDisplayBoxIndex;
-    if (damagedContent.layoutBox.isLineBreakBox() || damagedContent.layoutBox.isReplacedBox())
+    if (damagedContent.layoutBox->isLineBreakBox() || damagedContent.layoutBox->isReplacedBox())
         return candidateLineIndex(leadingIndexForDisplayBox);
 
     if (is<InlineTextBox>(damagedContent.layoutBox)) {
@@ -257,7 +257,7 @@ static std::optional<size_t> damagedLineIndex(const DamagedContent& damagedConte
                 // Multi line damage includes line leading root inline display boxes (and maybe line spanning inline boxes).
                 continue;
             }
-            if (&displayBoxes[index].layoutBox() != &damagedContent.layoutBox) {
+            if (&displayBoxes[index].layoutBox() != damagedContent.layoutBox.ptr()) {
                 // We should always be able to find the damaged offset within this layout box.
                 break;
             }
@@ -353,7 +353,7 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
         return candidatePosition;
     }
     auto candidateInlineItem = inlineItemList[candidatePosition.index];
-    if (&candidateInlineItem.layoutBox() != &damagedContent.layoutBox || !isAnyOf<InlineTextItem, InlineSoftLineBreakItem>(candidateInlineItem))
+    if (&candidateInlineItem.layoutBox() != damagedContent.layoutBox.ptr() || !isAnyOf<InlineTextItem, InlineSoftLineBreakItem>(candidateInlineItem))
         return candidatePosition;
     if (!damagedContent.offset) {
         // When damage points to "after" the layout box, whatever InlineItem we found is surely before the damage.

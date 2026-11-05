@@ -84,7 +84,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
     if (box.isLineBreak()) {
         if (m_paintInfo.phase == PaintPhase::Accessibility) {
             CheckedPtr renderLineBreak = dynamicDowncast<RenderLineBreak>(box.layoutBox().rendererForIntegration());
-            m_paintInfo.accessibilityRegionContext()->takeBounds(renderLineBreak.get(), m_paintOffset);
+            protect(m_paintInfo.accessibilityRegionContext())->takeBounds(renderLineBreak.get(), m_paintOffset);
         }
         return;
     }
@@ -130,7 +130,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
                 return;
         }
 
-        TextBoxPainter { m_inlineContent, box, box.style(), m_paintInfo, m_paintOffset }.paint();
+        TextBoxPainter { m_inlineContent, box, protect(box.style()), m_paintInfo, m_paintOffset }.paint();
         return;
     }
 
@@ -141,7 +141,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
             auto flippedOffset = flippedContentOffsetIfNeeded(*renderer);
             if (box.isBlockLevelBox()) {
                 // Blocks-in-inline.
-                auto paintInfoForChild = m_root.paintInfoForBlockChildren(m_paintInfo);
+                auto paintInfoForChild = m_root->paintInfoForBlockChildren(m_paintInfo);
                 paintRenderer->paint(paintInfoForChild, flippedOffset);
             } else
                 paintRenderer->paintAsInlineBlock(m_paintInfo, flippedOffset);

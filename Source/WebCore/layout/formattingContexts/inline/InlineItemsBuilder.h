@@ -44,7 +44,7 @@ class InlineTextBox;
 
 class InlineItemsBuilder {
 public:
-    NODELETE InlineItemsBuilder(InlineContentCache&, const ElementBox& root, const SecurityOrigin&);
+    InlineItemsBuilder(InlineContentCache&, const ElementBox& root, const SecurityOrigin&);
     void build(InlineItemPosition startPosition);
 
     static void populateBreakingPositionCache(const InlineItemList&, const Document&, bool contentMayAdjustWidths);
@@ -75,8 +75,8 @@ private:
 
 private:
     InlineContentCache& m_inlineContentCache;
-    const ElementBox& m_root;
-    const SecurityOrigin& m_securityOrigin;
+    const CheckedRef<const ElementBox> m_root;
+    const Ref<const SecurityOrigin> m_securityOrigin;
 
     size_t m_inlineBoxCount { 0 };
     bool m_hasTextAndLineBreakOnlyContent { true }; // Note that this is true for cases like <span>text content</span>

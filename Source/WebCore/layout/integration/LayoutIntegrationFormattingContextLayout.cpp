@@ -88,7 +88,7 @@ static void layoutRendererAndUpdateBoxGeometry(const Layout::ElementBox& box, Re
 void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, Layout::LayoutState& layoutState)
 {
     CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
-    auto containingBlockInlineSize = overridingBorderBoxLogicalWidth.value_or(renderer->containingBlock()->contentBoxLogicalWidth());
+    auto containingBlockInlineSize = overridingBorderBoxLogicalWidth.value_or(protect(renderer->containingBlock())->contentBoxLogicalWidth());
     layoutRendererAndUpdateBoxGeometry(box, renderer.get(), overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight, containingBlockInlineSize, layoutState);
 }
 
@@ -122,7 +122,7 @@ static inline void populateRootRendererWithFloatsFromIFC(auto& rootBlockContaine
             // Floats inherited by IFC do not have associated layout boxes.
             continue;
         }
-        auto& floatingObject = rootBlockContainer.insertFloatingBox(downcast<RenderBox>(*layoutBox->rendererForIntegration()));
+        auto& floatingObject = rootBlockContainer.insertFloatingBox(protect(downcast<RenderBox>(*layoutBox->rendererForIntegration())));
         if (floatingObject.isPlaced()) {
             // We have already inserted this float when laying out a previous middle-block.
             continue;
@@ -163,10 +163,11 @@ static inline void populateIFCWithNewlyPlacedFloats(auto& blockRenderer, auto& p
         boxGeometry.setHorizontalMargin({ marginOffset.width(), floatRect.width() - marginOffset.width() - borderBoxSize.width() });
         boxGeometry.setVerticalMargin({ marginOffset.height(), floatRect.height() - marginOffset.height() - borderBoxSize.height() });
 
-        auto shapeOutsideInfo = floatingObject->renderer()->shapeOutsideInfo();
+        CheckedPtr floatRenderer = floatingObject->renderer();
+        auto shapeOutsideInfo = floatRenderer->shapeOutsideInfo();
         RefPtr shape = shapeOutsideInfo ? &shapeOutsideInfo->computedShape() : nullptr;
 
-        auto usedPosition = floatingObject->renderer()->usedStyle().floating() == UsedFloat::Left ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
+        auto usedPosition = floatRenderer->usedStyle().floating() == UsedFloat::Left ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
         placedFloats.add({ usedPosition, boxGeometry, borderBoxTopLeft, WTF::move(shape) });
     }
 }
@@ -307,7 +308,8 @@ LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& bo
         // Laying the box out for its block size lays out its content too, where the box is the root and gets its geometry set in its
         // own writing mode (one BoxGeometry per box, see BoxGeometryUpdater::updateBoxGeometryAfterIntegrationLayout).
         // Put back the geometry the formatting context asking for this width has for the box, e.g. its margins along the line.
-        auto& boxGeometry = renderer->view().layoutState().ensureGeometryForBox(box);
+        CheckedRef layoutState = renderer->view().layoutState();
+        auto& boxGeometry = layoutState->ensureGeometryForBox(box);
         auto boxGeometryInParentFormattingContext = Layout::BoxGeometry { boxGeometry };
         auto intrinsicBlockSize = renderer->computeIntrinsicLogicalHeight();
         boxGeometry = boxGeometryInParentFormattingContext;
@@ -325,7 +327,7 @@ LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& bo
         return renderer->minContentLogicalWidthContribution();
     case LogicalWidthType::MaxContent:
     case LogicalWidthType::MinContent: {
-        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { renderer->view().frameView().layoutContext(), renderer.get() };
+        auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { protect(renderer->view().frameView().layoutContext()), renderer.get() };
         auto [minimunLogicalWidth, maximumLogicalWidth] = renderer->computeIntrinsicLogicalWidths();
         return logicalWidthType == LogicalWidthType::MaxContent ? maximumLogicalWidth : minimunLogicalWidth;
     }

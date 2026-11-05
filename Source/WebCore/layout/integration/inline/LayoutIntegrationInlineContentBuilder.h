@@ -39,7 +39,7 @@ class InlineContent;
 
 class InlineContentBuilder {
 public:
-    NODELETE InlineContentBuilder(const RenderBlockFlow&);
+    InlineContentBuilder(const RenderBlockFlow&);
 
     FloatRect build(std::unique_ptr<Layout::InlineLayoutResult>&&, InlineContent&, const Layout::InlineDamage*) const;
 
@@ -62,7 +62,7 @@ private:
     FloatRect handlePartialDisplayContentUpdate(Layout::InlineLayoutResult&&, InlineContent&, const Layout::InlineDamage*) const;
     FloatRect appendToTruncatedDisplayContent(Layout::InlineLayoutResult&&, InlineContent&, const Layout::InlineDamage&) const;
 
-    const RenderBlockFlow& m_blockFlow;
+    const CheckedRef<const RenderBlockFlow> m_blockFlow;
 };
 
 }

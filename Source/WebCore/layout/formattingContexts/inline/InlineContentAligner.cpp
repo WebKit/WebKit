@@ -44,7 +44,7 @@ static inline void shiftDisplayBox(InlineDisplay::Box& displayBox, InlineLayoutU
     else
         writingMode.isHorizontal() ? displayBox.moveHorizontally(offset) : displayBox.moveVertically(offset);
     if (!displayBox.isTextOrSoftLineBreak() && !displayBox.isRootInlineBox())
-        inlineFormattingContext.geometryForBox(displayBox.layoutBox()).moveHorizontally(LayoutUnit { offset });
+        inlineFormattingContext.geometryForBox(protect(displayBox.layoutBox())).moveHorizontally(LayoutUnit { offset });
 }
 
 static inline InlineLayoutUnit alignmentOffset(auto& layoutBox, auto& alignmentOffsetList)
@@ -87,7 +87,7 @@ static InlineBoxIndexAndExpansion expandInlineBoxToEncloseContent(size_t inlineB
     auto expand = [&] {
         auto writingMode = inlineFormattingContext.root().writingMode();
         writingMode.isHorizontal() ? inlineBoxDisplayBox.expandHorizontally(totalExpansion) : inlineBoxDisplayBox.expandVertically(totalExpansion);
-        auto& boxGeometry = inlineFormattingContext.geometryForBox(inlineBoxDisplayBox.layoutBox());
+        auto& boxGeometry = inlineFormattingContext.geometryForBox(protect(inlineBoxDisplayBox.layoutBox()));
         if (writingMode.isLineOverLeft()) {
             inlineBoxDisplayBox.setTop(inlineBoxDisplayBox.top() - totalExpansion);
             boxGeometry.setLeft(BoxGeometry::borderBoxLeft(boxGeometry) - LayoutUnit { totalExpansion });

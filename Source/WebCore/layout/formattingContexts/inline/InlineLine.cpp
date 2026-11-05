@@ -1011,7 +1011,7 @@ InlineLayoutUnit LineRun::removeTrailingWhitespace()
         auto endPosition = m_textContent.start + m_textContent.length;
         RELEASE_ASSERT(startPosition < endPosition - trailingTrimmableContentLength);
         if (inlineTextBox->content()[endPosition - 1] == space)
-            trimmedWidth = TextUtil::trailingWhitespaceWidth(inlineTextBox, m_style.fontCascade(), startPosition, endPosition);
+            trimmedWidth = TextUtil::trailingWhitespaceWidth(inlineTextBox, protect(m_style->fontCascade()), startPosition, endPosition);
     }
     m_textContent.length -= trailingTrimmableContentLength;
     m_trailingWhitespace = { };
@@ -1045,12 +1045,12 @@ bool LineRun::isContentfulOrHasDecoration(const LineRun& run, const InlineFormat
 
 bool LineRun::hasTextCombine() const
 {
-    return m_style.textCombine() != TextCombine::None;
+    return m_style->textCombine() != TextCombine::None;
 }
 
 InlineLayoutUnit LineRun::letterSpacing() const
 {
-    return m_style.usedLetterSpacing();
+    return m_style->usedLetterSpacing();
 }
 
 }

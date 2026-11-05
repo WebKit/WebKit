@@ -167,8 +167,8 @@ private:
     // 8-byte aligned:
     TrailingWhitespace m_trailingWhitespace { };
     Markable<size_t> m_lastNonWhitespaceContentStart { };
-    const Box* m_layoutBox { nullptr };
-    const Style::ComputedStyle& m_style;
+    const CheckedPtr<const Box> m_layoutBox;
+    const CheckedRef<const Style::ComputedStyle> m_style;
     Text m_textContent;
     // 4-byte aligned:
     InlineLayoutUnit m_logicalLeft { 0 };
@@ -205,7 +205,7 @@ inline void LineRun::setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth)
 
 inline TextDirection LineRun::inlineDirection() const
 {
-    return m_style.writingMode().bidiDirection();
+    return m_style->writingMode().bidiDirection();
 }
 
 }
