@@ -275,8 +275,8 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
     //     parameters  ANY DEFINED BY algorithm OPTIONAL
     // }
 
-    ptr = value->value.sequence->data;
-    auto algorithm = ASN1SequencePtr(d2i_ASN1_SEQUENCE_ANY(nullptr, &ptr, value->value.sequence->length));
+    ptr = ASN1_STRING_get0_data(value->value.sequence);
+    auto algorithm = ASN1SequencePtr(d2i_ASN1_SEQUENCE_ANY(nullptr, &ptr, ASN1_STRING_length(value->value.sequence)));
     if (!algorithm)
         return nullptr;
 
@@ -325,7 +325,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
     if (!point)
         return nullptr;
 
-    if (EC_POINT_oct2point(group, point.get(), bitString->data, bitString->length, 0) <= 0)
+    if (EC_POINT_oct2point(group, point.get(), ASN1_STRING_get0_data(bitString), ASN1_STRING_length(bitString), 0) <= 0)
         return nullptr;
 
     if (EC_KEY_set_public_key(key.get(), point.get()) <= 0)
