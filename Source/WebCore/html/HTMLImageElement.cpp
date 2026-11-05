@@ -50,6 +50,7 @@
 #include "HTMLSrcsetParser.h"
 #include "ImageOrientation.h"
 #include "ImageRequestState.h"
+#include "ImageTypes.h"
 #include "JSRequestPriority.h"
 #include "LazyLoadElementObserver.h"
 #include "LazyLoading.h"
@@ -975,21 +976,31 @@ Image* HTMLImageElement::image() const
 
 bool HTMLImageElement::allowsAnimation() const
 {
-    if (RefPtr image = this->image())
-        return image->allowsAnimation().value_or(document().page() ? document().page()->imageAnimationEnabled() : false);
-    return false;
+    RefPtr image = this->image();
+    if (!image)
+        return false;
+
+    switch (image->animationOverride()) {
+    case ImageAnimationOverride::None:
+        return document().page() && document().page()->imageAnimationEnabled();
+    case ImageAnimationOverride::Play:
+        return true;
+    case ImageAnimationOverride::Pause:
+        return false;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-void HTMLImageElement::setAllowsAnimation(std::optional<bool> allowsAnimation)
+void HTMLImageElement::setAnimationOverride(ImageAnimationOverride animationOverride)
 {
     if (RefPtr image = this->image()) {
-        image->setAllowsAnimation(allowsAnimation);
+        image->setAnimationOverride(animationOverride);
         if (CheckedPtr renderer = this->renderer())
             renderer->repaint();
 
         if (RefPtr page = document().page()) {
-            if (allowsAnimation.value_or(false))
+            if (animationOverride == ImageAnimationOverride::Play)
                 page->addIndividuallyPlayingAnimationElement(*this);
             else
                 page->removeIndividuallyPlayingAnimationElement(*this);

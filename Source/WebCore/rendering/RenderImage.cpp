@@ -80,6 +80,7 @@
 #include "StyleComputedStyle+InitialInlines.h"
 #include "TextPainter.h"
 #include <wtf/NativePromise.h>
+#include <wtf/ScopedLambda.h>
 #include <wtf/StackStats.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -311,6 +312,13 @@ bool RenderImage::imageRepresentsNothing() const
     if (!imageResource().errorOccurred() || !m_altText.isEmpty())
         return false;
     return document().inNoQuirksMode() || (style().logicalWidth().isAuto() && style().logicalHeight().isAuto());
+}
+
+void RenderImage::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>& function)
+{
+    RenderReplaced::forEachStyleImage(function);
+    if (RefPtr image = imageResource().styleImage())
+        function(*image);
 }
 
 void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)

@@ -137,6 +137,7 @@
 #include "ImageData.h"
 #include "ImageOverlay.h"
 #include "ImageOverlayController.h"
+#include "ImageTypes.h"
 #include "InlineIteratorLineBox.h"
 #include "InspectorBackendClient.h"
 #include "InspectorDebuggableType.h"
@@ -1311,12 +1312,12 @@ void Internals::setImageAnimationEnabled(bool enabled)
 
 void Internals::resumeImageAnimation(HTMLImageElement& element)
 {
-    element.setAllowsAnimation(true);
+    element.setAnimationOverride(ImageAnimationOverride::Play);
 }
 
 void Internals::pauseImageAnimation(HTMLImageElement& element)
 {
-    element.setAllowsAnimation(false);
+    element.setAnimationOverride(ImageAnimationOverride::Pause);
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 

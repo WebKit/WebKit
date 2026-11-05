@@ -58,6 +58,7 @@
 #include "StyleListStyleType.h"
 #include "StyleScope.h"
 #include "TextUtil.h"
+#include <wtf/ScopedLambda.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -239,6 +240,13 @@ void RenderListOutsideMarker::layoutContentContainer(RenderBlockFlow& container)
     auto contentVisualOverflow = container.visualOverflowRect();
     contentVisualOverflow.moveBy(container.location());
     addVisualOverflow(contentVisualOverflow);
+}
+
+void RenderListOutsideMarker::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>& function)
+{
+    RenderBox::forEachStyleImage(function);
+    if (RefPtr image = style().listStyleImage().tryStyleImage())
+        function(*image);
 }
 
 void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)

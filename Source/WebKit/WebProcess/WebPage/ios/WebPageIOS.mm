@@ -2586,10 +2586,10 @@ static void handleAnimationActions(Element& element, uint32_t action)
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     if (static_cast<SheetAction>(action) == SheetAction::PlayAnimation) {
         if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element))
-            imageElement->setAllowsAnimation(true);
+            imageElement->setAnimationOverride(ImageAnimationOverride::Play);
     } else if (static_cast<SheetAction>(action) == SheetAction::PauseAnimation) {
         if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element))
-            imageElement->setAllowsAnimation(false);
+            imageElement->setAnimationOverride(ImageAnimationOverride::Pause);
     }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 }

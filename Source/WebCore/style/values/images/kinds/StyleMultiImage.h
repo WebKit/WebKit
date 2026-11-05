@@ -90,7 +90,9 @@ private:
     bool drawsSVGImage() const final;
     WTF::String accessibilityDescription() const final;
     bool isAnimated() const final;
+    void startAnimation() final;
     void stopAnimation() final;
+    void clearAnimationOverride() final;
     void resetAnimation() final;
     DecodingMode decodingModeForImageDraw(const RenderBoxModelObject&, const PaintInfo&) const final;
     InterpolationQuality interpolationQualityForImageDraw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const void* layer, const LayoutSize&) const final;

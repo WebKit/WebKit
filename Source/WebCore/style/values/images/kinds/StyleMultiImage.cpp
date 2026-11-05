@@ -242,10 +242,22 @@ bool MultiImage::isAnimated() const
     return m_selectedImage && protect(m_selectedImage)->isAnimated();
 }
 
+void MultiImage::startAnimation()
+{
+    if (m_selectedImage)
+        protect(m_selectedImage)->startAnimation();
+}
+
 void MultiImage::stopAnimation()
 {
     if (m_selectedImage)
         protect(m_selectedImage)->stopAnimation();
+}
+
+void MultiImage::clearAnimationOverride()
+{
+    if (m_selectedImage)
+        protect(m_selectedImage)->clearAnimationOverride();
 }
 
 void MultiImage::resetAnimation()

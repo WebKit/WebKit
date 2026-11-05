@@ -56,6 +56,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 struct ImageCandidate;
 struct ImageOrientation;
 
+enum class ImageAnimationOverride : uint8_t;
 enum class ImageRequestState : uint8_t;
 enum class ReferrerPolicy : uint8_t;
 enum class RelevantMutation : bool;
@@ -192,7 +193,7 @@ public:
 
     bool allowsAnimation() const;
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    WEBCORE_EXPORT void setAllowsAnimation(std::optional<bool>);
+    WEBCORE_EXPORT void setAnimationOverride(ImageAnimationOverride);
 #endif
 
     String fetchPriorityForBindings() const;

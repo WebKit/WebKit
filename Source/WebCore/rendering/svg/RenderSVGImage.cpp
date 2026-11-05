@@ -47,6 +47,7 @@
 #include "SVGImageIntrinsicSizing.h"
 #include "SVGVisitedRendererTracking.h"
 #include "Settings.h"
+#include <wtf/ScopedLambda.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -293,6 +294,13 @@ void RenderSVGImage::notifyFinished(CachedResource& newImage, const NetworkLoadM
     }
 
     RenderSVGModelObject::notifyFinished(newImage, metrics, loadWillContinueInAnotherProcess);
+}
+
+void RenderSVGImage::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>& function)
+{
+    RenderSVGModelObject::forEachStyleImage(function);
+    if (RefPtr image = imageResource().styleImage())
+        function(*image);
 }
 
 void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)

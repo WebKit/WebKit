@@ -43,6 +43,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageOverlay.h"
+#include "ImageTypes.h"
 #include "InlineIteratorLineBox.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
@@ -1003,18 +1004,18 @@ bool HitTestResult::isAnimating() const
 
 void HitTestResult::playAnimation() const
 {
-    setAllowsAnimation(true);
+    setAnimationOverride(ImageAnimationOverride::Play);
 }
 
 void HitTestResult::pauseAnimation() const
 {
-    setAllowsAnimation(false);
+    setAnimationOverride(ImageAnimationOverride::Pause);
 }
 
-void HitTestResult::setAllowsAnimation(bool allowAnimation) const
+void HitTestResult::setAnimationOverride(ImageAnimationOverride animationOverride) const
 {
     if (RefPtr imageElement = this->imageElement()) {
-        imageElement->setAllowsAnimation(allowAnimation);
+        imageElement->setAnimationOverride(animationOverride);
         if (auto* renderer = m_innerNonSharedNode->renderer())
             renderer->repaint();
     }

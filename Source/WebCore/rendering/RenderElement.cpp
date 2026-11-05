@@ -116,6 +116,7 @@
 #include "TextManipulationController.h"
 #include "ViewTransition.h"
 #include <wtf/MathExtras.h>
+#include <wtf/ScopedLambda.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -410,6 +411,29 @@ inline bool RenderElement::shouldRepaintForStyleDifference(Style::Difference dif
     }
 
     return false;
+}
+
+static void forEachRegisteredImageInStyle(const Style::ComputedStyle& style, NOESCAPE const auto& function)
+{
+    auto callFunction = [&](RefPtr<Style::Image> image) {
+        if (image)
+            function(*image);
+    };
+
+    for (auto& backgroundLayer : style.backgroundLayers().usedValues())
+        callFunction(backgroundLayer.image().tryStyleImage());
+    for (auto& maskLayer : style.maskLayers().usedValues())
+        callFunction(maskLayer.image().tryStyleImage());
+    callFunction(style.borderImageSource().tryStyleImage());
+    callFunction(style.maskBorderSource().tryStyleImage());
+    callFunction(style.shapeOutside().image());
+}
+
+void RenderElement::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>& function)
+{
+    forEachRegisteredImageInStyle(style(), function);
+    if (auto* firstLineStyle = style().pseudoElementStyle({ PseudoElementType::FirstLine }))
+        forEachRegisteredImageInStyle(*firstLineStyle, function);
 }
 
 template<typename FillLayers> void RenderElement::updateFillImages(const FillLayers* oldLayers, const FillLayers* newLayers)
@@ -1359,19 +1383,10 @@ void RenderElement::willBeDestroyed()
 
     clearSubtreeLayoutRootIfNeeded();
 
-    auto unregisterImage = [this](auto* image) {
-        if (image)
-            image->removeClient(*this);
-    };
-
     auto unregisterImages = [&](auto& style) {
-        for (auto& backgroundLayer : style.backgroundLayers().usedValues())
-            unregisterImage(backgroundLayer.image().tryStyleImage().get());
-        for (auto& maskLayer : style.maskLayers().usedValues())
-            unregisterImage(maskLayer.image().tryStyleImage().get());
-        unregisterImage(style.borderImageSource().tryStyleImage().get());
-        unregisterImage(style.maskBorderSource().tryStyleImage().get());
-        unregisterImage(style.shapeOutside().image().get());
+        forEachRegisteredImageInStyle(style, [&](Style::Image& image) {
+            image.removeClient(*this);
+        });
     };
 
     if (hasInitializedStyle()) {
@@ -1882,7 +1897,7 @@ VisibleInViewportState RenderElement::imageFrameAvailable(CachedImage& image, Im
     bool isVisible = isVisibleInViewport();
 
     if (!isVisible && animatingState == ImageAnimatingState::Yes)
-        protect(view())->addRendererWithPausedImageAnimations(*this, image);
+        protect(view())->addRendererWithPausedImageAnimations(*this);
 
     // Static images should repaint even if they are outside the viewport rectangle
     // because they should be inside the TileCoverageRect.
@@ -1920,8 +1935,17 @@ bool RenderElement::allowsAnimation() const
 
 void RenderElement::didRemoveCachedImageClient(CachedImage& cachedImage)
 {
-    if (hasPausedImageAnimations())
-        protect(view())->removeRendererWithPausedImageAnimations(*this, cachedImage);
+    if (!hasPausedImageAnimations())
+        return;
+
+    bool hasAnimation = false;
+    forEachStyleImage([&, cachedImage = protect(cachedImage)](Style::Image& image) {
+        if (image.cachedImage() != cachedImage.ptr() && (image.isAnimated() || image.drawsSVGImage()))
+            hasAnimation = true;
+    });
+
+    if (!hasAnimation)
+        protect(view())->removeRendererWithPausedImageAnimations(*this);
 }
 
 void RenderElement::imageContentChanged(CachedImage& cachedImage)
@@ -1955,7 +1979,7 @@ void RenderElement::scheduleRenderingUpdateForImage(CachedImage&)
         page->scheduleRenderingUpdate(RenderingUpdateStep::Images);
 }
 
-bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage& cachedImage)
+bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect)
 {
     ASSERT(m_hasPausedImageAnimations);
     if (!allowsAnimation() || !isVisibleInDocumentRect(visibleRect))
@@ -1963,8 +1987,9 @@ bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visib
 
     repaint();
 
-    if (RefPtr image = cachedImage.image())
-        image->startAnimation();
+    forEachStyleImage([](Style::Image& image) {
+        image.startAnimation();
+    });
 
     // For directly-composited animated GIFs it does not suffice to call repaint() to resume animation. We need to mark the image as changed.
     if (CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(*this))

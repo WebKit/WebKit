@@ -116,7 +116,9 @@ public:
     virtual bool drawsSVGImage() const { return false; }
     virtual WTF::String accessibilityDescription() const { return { }; }
     virtual bool isAnimated() const { return false; }
+    virtual void startAnimation() { }
     virtual void stopAnimation() { }
+    virtual void clearAnimationOverride() { }
     virtual void resetAnimation() { }
 
     // Drawing

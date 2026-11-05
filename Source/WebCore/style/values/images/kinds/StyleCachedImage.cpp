@@ -547,10 +547,22 @@ bool CachedImage::isAnimated() const
     return m_cachedImage ? protect(m_cachedImage)->isAnimated() : false;
 }
 
+void CachedImage::startAnimation()
+{
+    if (m_cachedImage)
+        protect(m_cachedImage)->startAnimation();
+}
+
 void CachedImage::stopAnimation()
 {
     if (m_cachedImage)
         protect(m_cachedImage)->stopAnimation();
+}
+
+void CachedImage::clearAnimationOverride()
+{
+    if (m_cachedImage)
+        protect(m_cachedImage)->clearAnimationOverride();
 }
 
 void CachedImage::resetAnimation()

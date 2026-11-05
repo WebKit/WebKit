@@ -65,6 +65,7 @@ private:
     FloatRect decoratedBoundingBox() const final { return m_objectBoundingBox; }
 
     void imageChanged(WrappedImagePtr, const IntRect* = nullptr) final;
+    void forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>&) override final;
 
     void layout() final;
     void paint(PaintInfo&, const LayoutPoint&) final;

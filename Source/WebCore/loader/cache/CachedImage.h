@@ -90,7 +90,9 @@ public:
 
     bool allowsAnimation(const Image&) const;
     bool isAnimated() const;
+    void startAnimation();
     void stopAnimation();
+    void clearAnimationOverride();
     void resetAnimation();
 
     String filenameExtension() const;

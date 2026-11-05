@@ -37,6 +37,7 @@
 #include "HTMLImageElement.h"
 #include "HitTestResult.h"
 #include "ImageQualityController.h"
+#include "ImageTypes.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutIntegrationFormattingContextLayout.h"
@@ -53,7 +54,6 @@
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderGeometryMap.h"
-#include "RenderImage.h"
 #include "RenderIterator.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
@@ -66,7 +66,6 @@
 #include "RenderTreeBuilder.h"
 #include "RenderWidget.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGImage.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -958,16 +957,12 @@ void RenderView::updateVisibleViewportRect(const IntRect& visibleRect)
     }
 }
 
-void RenderView::addRendererWithPausedImageAnimations(RenderElement& renderer, CachedImage& image)
+void RenderView::addRendererWithPausedImageAnimations(RenderElement& renderer)
 {
     ASSERT(!renderer.hasPausedImageAnimations() || m_renderersWithPausedImageAnimation.contains(renderer));
 
     renderer.setHasPausedImageAnimations(true);
-    auto& images = m_renderersWithPausedImageAnimation.ensure(renderer, [] {
-        return Vector<WeakPtr<CachedImage>>();
-    }).iterator->value;
-    if (!images.contains(&image))
-        images.append(image);
+    m_renderersWithPausedImageAnimation.add(renderer);
 }
 
 void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer)
@@ -979,35 +974,15 @@ void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer
     m_renderersWithPausedImageAnimation.remove(renderer);
 }
 
-void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer, CachedImage& image)
-{
-    ASSERT(renderer.hasPausedImageAnimations());
-
-    auto it = m_renderersWithPausedImageAnimation.find(renderer);
-    ASSERT(it != m_renderersWithPausedImageAnimation.end());
-
-    auto& images = it->value;
-    if (!images.contains(&image))
-        return;
-
-    if (images.size() == 1)
-        removeRendererWithPausedImageAnimations(renderer);
-    else
-        images.removeFirst(&image);
-}
-
 void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
 {
-    Vector<std::pair<SingleThreadWeakPtr<RenderElement>, WeakPtr<CachedImage>>, 10> toRemove;
-    for (auto it : m_renderersWithPausedImageAnimation) {
-        auto& renderer = it.key;
-        for (auto& image : it.value) {
-            if (renderer.repaintForPausedImageAnimationsIfNeeded(visibleRect, *image))
-                toRemove.append({ WeakPtr { renderer }, image });
-        }
+    Vector<SingleThreadWeakPtr<RenderElement>, 10> toRemove;
+    for (auto& renderer : m_renderersWithPausedImageAnimation) {
+        if (renderer.repaintForPausedImageAnimationsIfNeeded(visibleRect))
+            toRemove.append(renderer);
     }
-    for (auto& pair : toRemove)
-        removeRendererWithPausedImageAnimations(*pair.first, protect(*pair.second));
+    for (auto& renderer : toRemove)
+        removeRendererWithPausedImageAnimations(*renderer);
 
     m_SVGSVGElementsWithPausedImageAnimation.removeIf([&](auto& svgSvgElement) {
         return svgSvgElement.resumePausedAnimationsIfNeeded(visibleRect);
@@ -1033,45 +1008,37 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
     for (auto& renderElement : descendantsOfType<RenderElement>(*this)) {
         bool needsRepaint = false;
         bool shouldAnimate = animationEnabled && renderElement.isVisibleInDocumentRect(visibleRect);
+        bool hasPausedAnimation = renderElement.hasPausedImageAnimations();
+        bool shouldResume = shouldAnimate && hasPausedAnimation;
+        bool shouldPause = !hasPausedAnimation;
+        bool hasAnimation = false;
 
-        auto updateAnimation = [&](CachedImage* cachedImage) {
-            if (!cachedImage)
-                return;
-
-            bool hasPausedAnimation = renderElement.hasPausedImageAnimations();
-            RefPtr image = cachedImage->image();
-            if (RefPtr svgImage = dynamicDowncast<SVGImage>(image.get())) {
-                if (shouldAnimate && hasPausedAnimation) {
-                    svgImage->startAnimation();
-                    removeRendererWithPausedImageAnimations(renderElement, *cachedImage);
-                } else if (!hasPausedAnimation) {
-                    svgImage->stopAnimation();
-                    addRendererWithPausedImageAnimations(renderElement, *cachedImage);
-                }
-            } else if (image && image->isAnimated()) {
+        RefPtr imageElement = dynamicDowncast<HTMLImageElement>(renderElement.element());
+        renderElement.forEachStyleImage([&](Style::Image& image) {
+            if (image.drawsSVGImage()) {
+                if (shouldResume)
+                    image.startAnimation();
+                else if (shouldPause)
+                    image.stopAnimation();
+                hasAnimation = true;
+            } else if (image.isAnimated()) {
                 // Override any individual animation play state that may have been set.
-                if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(renderElement.element()))
-                    imageElement->setAllowsAnimation(std::nullopt);
+                if (imageElement)
+                    imageElement->setAnimationOverride(ImageAnimationOverride::None);
                 else
-                    image->setAllowsAnimation(std::nullopt);
+                    image.clearAnimationOverride();
 
                 // Animations of this type require a repaint to be paused or resumed.
-                if (shouldAnimate && hasPausedAnimation) {
+                if (shouldResume || shouldPause)
                     needsRepaint = true;
-                    removeRendererWithPausedImageAnimations(renderElement, *cachedImage);
-                } else if (!hasPausedAnimation) {
-                    needsRepaint = true;
-                    addRendererWithPausedImageAnimations(renderElement, *cachedImage);
-                }
+                hasAnimation = true;
             }
-        };
+        });
 
-        for (auto& layer : renderElement.style().backgroundLayers().usedValues()) {
-            RefPtr image = layer.image().tryStyleImage();
-            updateAnimation(image ? protect(image->cachedImage()) : nullptr);
-        }
-        if (auto* renderImage = dynamicDowncast<RenderImage>(renderElement))
-            updateAnimation(protect(renderImage->cachedImage()));
+        if (hasAnimation && shouldResume)
+            removeRendererWithPausedImageAnimations(renderElement);
+        else if (hasAnimation && shouldPause)
+            addRendererWithPausedImageAnimations(renderElement);
 
         if (needsRepaint)
             renderElement.repaint();

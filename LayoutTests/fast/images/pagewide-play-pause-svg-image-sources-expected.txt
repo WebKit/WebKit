@@ -1,0 +1,6 @@
+
+PASS The page-wide image animation setting applies to an SVG image used by #background
+PASS The page-wide image animation setting applies to an SVG image used by #mask
+PASS The page-wide image animation setting applies to an SVG image used by #border-image
+PASS The page-wide image animation setting applies to an SVG image used by #svg-image
+

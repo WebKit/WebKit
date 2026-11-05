@@ -42,6 +42,8 @@ class Node;
 class RenderImage;
 class Scrollbar;
 
+enum class ImageAnimationOverride : uint8_t;
+
 enum class HitTestProgress { Stop, Continue };
 
 class HitTestResult {
@@ -185,7 +187,7 @@ private:
     RefPtr<Node> nodeForImageData() const;
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    void setAllowsAnimation(bool /* allowAnimation */) const;
+    void setAnimationOverride(ImageAnimationOverride) const;
     NODELETE HTMLImageElement* imageElement() const;
 #endif
 

@@ -5075,6 +5075,7 @@ webkit.org/b/259157 imported/w3c/web-platform-tests/html/dom/elements/global-att
 # https://bugs.webkit.org/show_bug.cgi?id=248545 — re-enable them here.
 fast/images/animations-resume-from-last-displayed-frame.html [ Pass ]
 fast/images/pagewide-play-pause-animateTransform-svg-animation.html [ Pass ]
+fast/images/pagewide-play-pause-svg-image-sources.html [ Pass ]
 fast/images/pagewide-play-pause-offscreen-animations.html [ Pass Failure ] # rdar://178676128
 
 # Only applicable on platforms with HDR support

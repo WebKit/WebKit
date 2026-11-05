@@ -1720,6 +1720,7 @@ fast/images/animations-resume-from-last-displayed-frame.html [ Skip ]
 fast/images/individual-animation-toggle.html [ Skip ]
 fast/images/page-wide-animation-toggle.html [ Skip ]
 fast/images/pagewide-play-pause-animateTransform-svg-animation.html [ Skip ]
+fast/images/pagewide-play-pause-svg-image-sources.html [ Skip ]
 fast/images/pagewide-play-pause-offscreen-animations.html [ Skip ]
 
 # NOTIFICATION_EVENT is Ventura+

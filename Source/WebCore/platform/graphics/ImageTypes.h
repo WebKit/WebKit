@@ -70,6 +70,8 @@ enum class GammaAndColorProfileOption {
 
 enum class ImageAnimatingState : bool { No, Yes };
 
+enum class ImageAnimationOverride : uint8_t { None, Play, Pause };
+
 enum class EncodedDataStatus {
     Error,
     Unknown,

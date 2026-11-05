@@ -208,9 +208,8 @@ public:
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void updatePlayStateForAllAnimations(const IntRect& visibleRect);
 #endif
-    void addRendererWithPausedImageAnimations(RenderElement&, CachedImage&);
+    void addRendererWithPausedImageAnimations(RenderElement&);
     void removeRendererWithPausedImageAnimations(RenderElement&);
-    void removeRendererWithPausedImageAnimations(RenderElement&, CachedImage&);
 
     class RepaintRegionAccumulator {
         WTF_MAKE_NONCOPYABLE(RepaintRegionAccumulator);
@@ -318,7 +317,7 @@ private:
 
     TextAutosizingState m_textAutosizingState { TextAutosizingState::Normal };
 
-    SingleThreadWeakHashMap<RenderElement, Vector<WeakPtr<CachedImage>>> m_renderersWithPausedImageAnimation;
+    SingleThreadWeakHashSet<RenderElement> m_renderersWithPausedImageAnimation;
     WeakHashSet<SVGSVGElement, WeakPtrImplWithEventTargetData> m_SVGSVGElementsWithPausedImageAnimation;
     SingleThreadWeakHashSet<RenderElement> m_visibleInViewportRenderers;
 

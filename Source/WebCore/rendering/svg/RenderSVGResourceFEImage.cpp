@@ -29,6 +29,7 @@
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderImageResource.h"
 #include "SVGFEImageElement.h"
+#include <wtf/ScopedLambda.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -48,6 +49,13 @@ void RenderSVGResourceFEImage::willBeDestroyed()
 {
     m_imageResource->willBeDestroyed();
     RenderSVGResourceFilterPrimitive::willBeDestroyed();
+}
+
+void RenderSVGResourceFEImage::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>& function)
+{
+    RenderSVGResourceFilterPrimitive::forEachStyleImage(function);
+    if (RefPtr image = imageResource().styleImage())
+        function(*image);
 }
 
 void RenderSVGResourceFEImage::imageChanged(WrappedImagePtr, const IntRect*)

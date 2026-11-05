@@ -92,6 +92,7 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) final;
     void layout() final;
     void imageChanged(WrappedImagePtr, const IntRect*) final;
+    void forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>&) override final;
     NODELETE LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent) final;
     bool canBeSelectionLeaf() const final { return true; }
     void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) final;

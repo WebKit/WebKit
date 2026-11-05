@@ -134,8 +134,8 @@ public:
     virtual void resetAnimation() { }
     virtual bool isAnimating() const { return false; }
     NODELETE WEBCORE_EXPORT bool animationPending() const;
-    std::optional<bool> allowsAnimation() const { return m_allowsAnimation; }
-    void setAllowsAnimation(std::optional<bool> allowsAnimation) { m_allowsAnimation = allowsAnimation; }
+    ImageAnimationOverride animationOverride() const { return m_animationOverride; }
+    void setAnimationOverride(ImageAnimationOverride animationOverride) { m_animationOverride = animationOverride; }
     static bool systemAllowsAnimationControls() { return gSystemAllowsAnimationControls; }
     NODELETE WEBCORE_EXPORT static void setSystemAllowsAnimationControls(bool allowsControls);
 
@@ -206,7 +206,7 @@ private:
     const std::unique_ptr<ImageAdapter> m_adapter;
 
     // A value of true or false will override the default Page::imageAnimationEnabled state.
-    std::optional<bool> m_allowsAnimation { std::nullopt };
+    ImageAnimationOverride m_animationOverride { ImageAnimationOverride::None };
     const std::unique_ptr<Timer> m_animationStartTimer;
     WEBCORE_EXPORT static bool gSystemAllowsAnimationControls;
 };

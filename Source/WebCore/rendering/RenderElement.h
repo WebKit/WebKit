@@ -293,9 +293,11 @@ public:
     void setIsClippedByLineClamp(bool isClipped) { setLineClampState(isClipped ? LineClampState::Clipped : LineClampState::None); }
 
     bool allowsAnimation() const final;
-    bool repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage&);
+    bool repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect);
     bool hasPausedImageAnimations() const { return m_hasPausedImageAnimations; }
     void setHasPausedImageAnimations(bool b) { m_hasPausedImageAnimations = b; }
+
+    virtual void forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>&);
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
     bool hasHDRImages() const { return m_hasHDRImages; }

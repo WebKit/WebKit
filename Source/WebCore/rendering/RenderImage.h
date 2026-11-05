@@ -139,6 +139,7 @@ protected:
     void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
 
     void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
+    void forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>&) override final;
 
     ImageDrawResult paintIntoRect(PaintInfo&, const FloatRect&);
     void paint(PaintInfo&, const LayoutPoint&) final;

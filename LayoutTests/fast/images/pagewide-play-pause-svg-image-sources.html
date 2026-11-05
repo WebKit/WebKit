@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+    div {
+        width: 100px;
+        height: 100px;
+    }
+
+    #background {
+        background-image: url(resources/animated-green-box.svg);
+    }
+
+    #mask {
+        background-color: green;
+        mask-image: url(resources/animated-green-box.svg);
+    }
+
+    #border-image {
+        border: 10px solid;
+        border-image: url(resources/animated-green-box.svg) 10;
+    }
+</style>
+</head>
+<body>
+<div id="background"></div>
+<div id="mask"></div>
+<div id="border-image"></div>
+<svg width="100" height="100">
+    <image id="svg-image" href="resources/animated-green-box.svg" width="100" height="100"/>
+</svg>
+<script>
+const loaded = new Promise(resolve => window.addEventListener("load", resolve));
+
+for (const id of ["background", "mask", "border-image", "svg-image"]) {
+    promise_test(async () => {
+        await loaded;
+        await new Promise(requestAnimationFrame);
+
+        const element = document.getElementById(id);
+
+        internals.setImageAnimationEnabled(false);
+        assert_true(internals.hasPausedImageAnimations(element), "paused");
+
+        internals.setImageAnimationEnabled(true);
+        assert_false(internals.hasPausedImageAnimations(element), "resumed");
+    }, `The page-wide image animation setting applies to an SVG image used by #${id}`);
+}
+</script>
+</body>
+</html>

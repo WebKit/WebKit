@@ -54,6 +54,7 @@ public:
     CachedImage* cachedImage() const { return m_styleImage ? m_styleImage->cachedImage() : nullptr; }
     bool hasStyleImage() const { return !!m_styleImage; }
     const Style::Image* styleImage() const LIFETIME_BOUND { return m_styleImage.get(); }
+    Style::Image* styleImage() LIFETIME_BOUND { return m_styleImage.get(); }
 
     void resetAnimation();
 
