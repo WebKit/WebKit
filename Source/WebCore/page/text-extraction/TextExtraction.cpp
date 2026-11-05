@@ -2098,7 +2098,7 @@ RenderedText extractRenderedText(Element& element)
 
     RefPtr frameView = renderer->view().frameView();
     auto direction = renderer->writingMode().blockDirection();
-    auto elementRectInDocument = frameView->absoluteToDocumentRect(renderer->absoluteBoundingBoxRect());
+    auto elementSizeInDocument = frameView->absoluteToDocumentRect(renderer->absoluteBoundingBoxRect()).size();
 
     Vector<TokenAndBlockOffset> allTokensAndOffsets;
     extractRenderedTokens(allTokensAndOffsets, element, direction);
@@ -2136,15 +2136,46 @@ RenderedText extractRenderedText(Element& element)
                 appendText(textWithReplacedContent, text);
                 appendText(textWithoutReplacedContent, text);
             }, [&](const IntSize& size) {
-                constexpr auto ratioToConsiderLengthAsLarge = 0.9;
-                if (size.width() > ratioToConsiderLengthAsLarge * elementRectInDocument.width() && size.height() > ratioToConsiderLengthAsLarge * elementRectInDocument.height())
+                if (isLargeReplacedContent(size, elementSizeInDocument))
                     hasLargeReplacedDescendant = true;
                 appendText(textWithReplacedContent, makeString('{', size.width(), ',', size.height(), '}'));
             });
         }
     }
 
-    return { textWithReplacedContent.toString(), textWithoutReplacedContent.toString(), hasLargeReplacedDescendant };
+    return { textWithReplacedContent.toString(), textWithoutReplacedContent.toString(), hasLargeReplacedDescendant, elementSizeInDocument };
+}
+
+Vector<IntSize> extractLargestReplacedContentSizes(ContainerNode& container)
+{
+    Vector<TokenAndBlockOffset> tokensAndOffsets;
+    extractRenderedTokens(tokensAndOffsets, container, FlowDirection::TopToBottom);
+
+    Vector<IntSize> sizes;
+    for (auto& [tokens, offset] : tokensAndOffsets) {
+        for (auto& token : tokens) {
+            if (auto* size = std::get_if<IntSize>(&token))
+                sizes.append(*size);
+        }
+    }
+
+    // After sorting by descending width, a size is only needed if it's taller than every size before it.
+    std::ranges::sort(sizes, [](auto& a, auto& b) {
+        return a.width() > b.width() || (a.width() == b.width() && a.height() > b.height());
+    });
+
+    Vector<IntSize> largestSizes;
+    for (auto& size : sizes) {
+        if (largestSizes.isEmpty() || size.height() > largestSizes.last().height())
+            largestSizes.append(size);
+    }
+    return largestSizes;
+}
+
+bool isLargeReplacedContent(IntSize size, FloatSize elementSizeInDocument)
+{
+    constexpr auto ratioToConsiderLengthAsLarge = 0.9;
+    return size.width() > ratioToConsiderLengthAsLarge * elementSizeInDocument.width() && size.height() > ratioToConsiderLengthAsLarge * elementSizeInDocument.height();
 }
 
 static Vector<std::pair<String, MainFrameViewFloatRect>> extractAllTextAndRectsRecursive(Document& document)

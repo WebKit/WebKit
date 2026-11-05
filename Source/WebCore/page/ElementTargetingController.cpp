@@ -62,6 +62,7 @@
 #include "Page.h"
 #include "PseudoElement.h"
 #include "Region.h"
+#include "RemoteFrame.h"
 #include "RenderBoxInlines.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
@@ -586,6 +587,39 @@ static inline Vector<FrameIdentifier> collectChildFrameIdentifiers(const Element
     return identifiers;
 }
 
+static Vector<FrameIdentifier> collectRemoteFrameIdentifiers(const Element& element)
+{
+    RefPtr documentFrame = element.document().frame();
+    if (!documentFrame || !documentFrame->tree().hasRemoteFrameDescendant())
+        return { };
+
+    Vector<FrameIdentifier> identifiers;
+    auto collectUnder = [&](Frame& root) {
+        for (RefPtr frame = &root; frame;) {
+            if (!is<RemoteFrame>(*frame)) {
+                frame = frame->tree().traverseNext(&root);
+                continue;
+            }
+
+            for (RefPtr descendant = frame; descendant; descendant = descendant->tree().traverseNext(frame.get()))
+                identifiers.append(descendant->frameID());
+            frame = frame->tree().traverseNextSkippingChildren(&root);
+        }
+    };
+
+    if (RefPtr owner = dynamicDowncast<HTMLFrameOwnerElement>(element)) {
+        if (RefPtr contentFrame = owner->contentFrame())
+            collectUnder(*contentFrame);
+    }
+
+    for (Ref owner : descendantsOfType<HTMLFrameOwnerElement>(element)) {
+        if (RefPtr contentFrame = owner->contentFrame())
+            collectUnder(*contentFrame);
+    }
+
+    return identifiers;
+}
+
 static FloatRect computeClientRect(const RenderElement& renderer)
 {
     auto rect = FloatRect { renderer.absoluteBoundingBoxRect() };
@@ -687,30 +721,27 @@ static URL urlForElement(const Element& element)
 
 static void collectMediaAndLinkURLsRecursive(const Element& element, HashSet<URL>& urls)
 {
-    auto addURLForElement = [&urls](const Element& element) {
+    auto collectForElement = [&urls](const Element& element) {
         if (auto url = urlForElement(element); !url.isEmpty() && !url.protocolIsData() && !url.protocolIsBlob())
             urls.add(WTF::move(url));
-    };
 
-    addURLForElement(element);
-
-    for (Ref descendant : descendantsOfType<Element>(element)) {
-        addURLForElement(descendant);
-
-        RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(descendant.ptr());
+        RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(element);
         if (!frameOwner)
-            continue;
+            return;
 
         RefPtr contentDocument = frameOwner->contentDocument();
         if (!contentDocument)
-            continue;
+            return;
 
-        RefPtr documentElement = contentDocument->documentElement();
-        if (!documentElement)
-            continue;
+        if (RefPtr documentElement = contentDocument->documentElement())
+            collectMediaAndLinkURLsRecursive(*documentElement, urls);
+    };
 
-        collectMediaAndLinkURLsRecursive(*documentElement, urls);
-    }
+    // The element may itself be a frame owner, such as when the target is an <iframe>.
+    collectForElement(element);
+
+    for (Ref descendant : descendantsOfType<Element>(element))
+        collectForElement(descendant);
 }
 
 static HashSet<URL> collectMediaAndLinkURLs(const Element& element)
@@ -746,7 +777,7 @@ static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, 
         return false;
     }();
 
-    auto [renderedText, screenReaderText, hasLargeReplacedDescendant] = TextExtraction::extractRenderedText(element);
+    auto [renderedText, screenReaderText, hasLargeReplacedDescendant, sizeInDocument] = TextExtraction::extractRenderedText(element);
     return { {
         .nodeIdentifier = element.nodeIdentifier(),
         .documentIdentifier = element.document().identifier(),
@@ -759,13 +790,15 @@ static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, 
         .boundsInClientCoordinates = WTF::move(boundsInClientCoordinates),
         .positionType = positionType,
         .childFrameIdentifiers = collectChildFrameIdentifiers(element),
+        .remoteFrameIdentifiers = collectRemoteFrameIdentifiers(element),
         .mediaAndLinkURLs = collectMediaAndLinkURLs(element),
         .isNearbyTarget = isNearbyTarget == IsNearbyTarget::Yes,
         .isPseudoElement = element.isPseudoElement(),
         .isInShadowTree = element.isInShadowTree(),
         .isInVisibilityAdjustmentSubtree = isInVisibilityAdjustmentSubtree,
         .hasLargeReplacedDescendant = hasLargeReplacedDescendant,
-        .hasAudibleMedia = hasAudibleMedia(element)
+        .sizeInDocument = sizeInDocument,
+        .hasAudibleMedia = hasAudibleMedia(element),
     } };
 }
 
@@ -1174,6 +1207,38 @@ TargetedTextSearchResult ElementTargetingController::searchTextInLocalFrames(Tar
     }
 
     return result;
+}
+
+static TargetedFrameContent targetedFrameContent(Document& document)
+{
+    document.updateLayoutIgnorePendingStylesheets();
+
+    RefPtr documentElement = document.documentElement();
+    return {
+        .hasAudibleMedia = documentElement && hasAudibleMedia(*documentElement),
+        .largestReplacedContentSizes = TextExtraction::extractLargestReplacedContentSizes(document),
+        .mediaAndLinkURLs = documentElement ? collectMediaAndLinkURLs(*documentElement) : HashSet<URL> { },
+    };
+}
+
+HashMap<FrameIdentifier, TargetedFrameContent> ElementTargetingController::contentForLocalFrames(const Vector<FrameIdentifier>& requestedFrameIDs)
+{
+    RefPtr page = m_page;
+    if (!page)
+        return { };
+
+    HashSet<FrameIdentifier> frameIDs { requestedFrameIDs };
+
+    HashMap<FrameIdentifier, TargetedFrameContent> contentByFrame;
+    for (RefPtr frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame);
+        if (!localFrame || !frameIDs.contains(localFrame->frameID()))
+            continue;
+
+        if (RefPtr document = localFrame->document())
+            contentByFrame.add(localFrame->frameID(), targetedFrameContent(*document));
+    }
+    return contentByFrame;
 }
 
 std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNodes(const TargetedElementSelectors& selectors)

@@ -917,6 +917,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     RequestTargetedElement(struct WebCore::TargetedElementRequest request) -> (Vector<WebCore::TargetedElementInfo> elements)
     RequestTargetedElementsForText(struct WebCore::TargetedElementRequest request) -> (struct WebCore::TargetedTextSearchResult result)
+    RequestTargetedFrameContent(Vector<WebCore::FrameIdentifier> frameIDs) -> (HashMap<WebCore::FrameIdentifier, WebCore::TargetedFrameContent> contentByFrame)
 
     RequestAllTargetableElements(float hitTestInterval) -> (Vector<Vector<WebCore::TargetedElementInfo>> elements)
 

@@ -21763,33 +21763,84 @@ static Vector<Ref<API::TargetedElementInfo>> createTargetedElementInfos(WebPageP
     });
 }
 
-void WebPageProxy::requestTargetedElement(const API::TargetedElementRequest& request, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&& completion)
+void WebPageProxy::requestTargetedElement(const API::TargetedElementRequest& request, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&& completionHandler)
 {
     if (!hasRunningProcess())
-        return completion({ });
+        return completionHandler({ });
 
     auto coreRequest = request.makeRequest(*this);
     if (std::holds_alternative<String>(coreRequest.data) && protect(preferences())->siteIsolationEnabled())
-        return requestTargetedElementForText(WTF::move(coreRequest), WTF::move(completion));
+        return requestTargetedElementForText(WTF::move(coreRequest), WTF::move(completionHandler));
 
-    sendWithAsyncReply(Messages::WebPage::RequestTargetedElement(WTF::move(coreRequest)), [completion = WTF::move(completion), weakThis = WeakPtr { *this }](Vector<WebCore::TargetedElementInfo>&& elements) mutable {
+    sendWithAsyncReply(Messages::WebPage::RequestTargetedElement(WTF::move(coreRequest)), [completionHandler = WTF::move(completionHandler), weakThis = WeakPtr { *this }](Vector<WebCore::TargetedElementInfo>&& elements) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
-            return completion({ });
+            return completionHandler({ });
 
-        completion(createTargetedElementInfos(*protectedThis, WTF::move(elements)));
+        protectedThis->completeTargetedElementRequest(WTF::move(elements), WTF::move(completionHandler));
     });
 }
 
-void WebPageProxy::requestTargetedElementForText(WebCore::TargetedElementRequest&& request, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&& completion)
+static bool isFrameHostedByProcess(const WebFrameProxy* frame, const WebPageProxy& page, const WebProcessProxy& process)
+{
+    return frame && frame->page() == &page && &frame->process() == &process;
+}
+
+void WebPageProxy::completeTargetedElementRequest(Vector<WebCore::TargetedElementInfo>&& elements, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&& completionHandler)
+{
+    mergeContentFromRemoteFrames(WTF::move(elements), [completionHandler = WTF::move(completionHandler), weakThis = WeakPtr { *this }](Vector<WebCore::TargetedElementInfo>&& elements) mutable {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return completionHandler({ });
+
+        completionHandler(createTargetedElementInfos(*protectedThis, WTF::move(elements)));
+    });
+}
+
+void WebPageProxy::mergeContentFromRemoteFrames(Vector<WebCore::TargetedElementInfo>&& elements, CompletionHandler<void(Vector<WebCore::TargetedElementInfo>&&)>&& completionHandler)
+{
+    HashSet<WebCore::FrameIdentifier> remoteFrameIDs;
+    for (auto& element : elements)
+        remoteFrameIDs.addAll(element.remoteFrameIdentifiers);
+
+    if (remoteFrameIDs.isEmpty())
+        return completionHandler(WTF::move(elements));
+
+    auto contentByFrame = Box<HashMap<WebCore::FrameIdentifier, WebCore::TargetedFrameContent>>::create();
+    Ref aggregator = CallbackAggregator::create([elements = WTF::move(elements), contentByFrame, completionHandler = WTF::move(completionHandler)] mutable {
+        for (auto& element : elements) {
+            for (auto frameID : element.remoteFrameIdentifiers) {
+                if (auto iterator = contentByFrame->find(frameID); iterator != contentByFrame->end())
+                    WebCore::mergeRemoteFrameContent(element, iterator->value);
+            }
+        }
+        completionHandler(WTF::move(elements));
+    });
+
+    auto frameIDs = copyToVector(remoteFrameIDs);
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.sendWithAsyncReply(Messages::WebPage::RequestTargetedFrameContent(frameIDs), [contentByFrame, aggregator, process = Ref { process }, weakThis = WeakPtr { *this }](HashMap<WebCore::FrameIdentifier, WebCore::TargetedFrameContent>&& result) {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
+                return;
+
+            for (auto& [frameID, content] : result) {
+                if (isFrameHostedByProcess(WebFrameProxy::webFrame(frameID), *protectedThis, process.get()))
+                    contentByFrame->set(frameID, WTF::move(content));
+            }
+        }, pageID);
+    });
+}
+
+void WebPageProxy::requestTargetedElementForText(WebCore::TargetedElementRequest&& request, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&& completionHandler)
 {
     auto results = Box<WebCore::TargetedTextSearchResult>::create();
     // Stitch together results from all processes
-    Ref aggregator = CallbackAggregator::create([results, completion = WTF::move(completion), weakThis = WeakPtr { *this }] mutable {
+    Ref aggregator = CallbackAggregator::create([results, completionHandler = WTF::move(completionHandler), weakThis = WeakPtr { *this }] mutable {
         RefPtr protectedThis = weakThis;
         RefPtr mainFrame = protectedThis ? protectedThis->mainFrame() : nullptr;
         if (!mainFrame)
-            return completion({ });
+            return completionHandler({ });
 
         Function<bool(WebCore::FrameIdentifier)> frameContainsMatch = [&](WebCore::FrameIdentifier frameID) {
             return std::ranges::any_of(results->itemsByFrame.take(frameID), [&](auto& item) {
@@ -21809,7 +21860,7 @@ void WebPageProxy::requestTargetedElementForText(WebCore::TargetedElementRequest
                 break;
             }
         }
-        completion(createTargetedElementInfos(*protectedThis, WTF::move(targets)));
+        protectedThis->completeTargetedElementRequest(WTF::move(targets), WTF::move(completionHandler));
     });
 
     forEachWebContentProcess([&](auto& process, auto pageID) {
@@ -21819,17 +21870,13 @@ void WebPageProxy::requestTargetedElementForText(WebCore::TargetedElementRequest
                 return;
 
             // Only accept results for this page's frames that the replying process hosts.
-            auto isHostedByProcess = [&](RefPtr<WebFrameProxy>&& frame) {
-                return frame && frame->page() == protectedThis.get() && &frame->process() == process.ptr();
-            };
-
             for (auto& [frameID, items] : result.itemsByFrame) {
-                if (isHostedByProcess(WebFrameProxy::webFrame(frameID)))
+                if (isFrameHostedByProcess(WebFrameProxy::webFrame(frameID), *protectedThis, process.get()))
                     results->itemsByFrame.add(frameID, WTF::move(items));
             }
 
             RefPtr mainFrame = protectedThis->mainFrame();
-            if (!isHostedByProcess(RefPtr { mainFrame }))
+            if (!isFrameHostedByProcess(mainFrame.get(), *protectedThis, process.get()))
                 return;
 
             for (auto& [frameID, targets] : result.targetsBySubframe) {
