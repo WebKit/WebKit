@@ -1751,10 +1751,12 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
                 # here, applied to the helper by _webkit_setup_swift_header_deps.
                 set(${_target}_SWIFT_EMIT_HEADER_FLAGS "${_swift_emit_header_flags}")
             endif ()
+            # swiftc leaves the module's mtime alone when only C++ headers that it imports change, though the
+            # header's thunks can; rebuild_trigger.py touches the trigger then.
             add_custom_command(
                 OUTPUT ${_header_stamp_path}
                 BYPRODUCTS ${_header_path}
-                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_module_name}.swiftmodule
+                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_module_name}.swiftmodule "${_trigger_path}"
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_header_tmp_path} ${_header_path}
                 COMMAND ${CMAKE_COMMAND} -E touch ${_header_stamp_path}
                 COMMENT "Generating ${_target} Swift-C++ header"
