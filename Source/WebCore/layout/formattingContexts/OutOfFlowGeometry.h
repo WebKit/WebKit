@@ -58,6 +58,9 @@ public:
         WritingMode writingMode;
         bool isScrollContainer { false };
         std::optional<LayoutRect> scrollableContainingBlock { };
+        // The border box block size -webkit-fill-available gives the box: the available block size of the containing block
+        // (RenderBox::availableLogicalHeight), not the size of the inset-modified containing block.
+        std::optional<LayoutUnit> fillAvailableBlockSize { };
     };
     // Where the margin box would start with position: static (CSS 2.2 §10.3.7, §10.6.4), relative to the padding box of the containing
     // block, in its direction. The inline position is where the margin box would end when the static-position containing block has the
@@ -146,8 +149,21 @@ private:
     std::pair<LayoutUnit, LayoutUnit> containingBlockRange(Axis) const;
     AxisValues axisValues(Axis) const;
     std::optional<LayoutUnit> definiteBorderBoxBlockSize(const AxisValues&, std::optional<LayoutUnit> borderBoxInlineSize = { }) const;
-    template<typename SizeType> LayoutUnit borderBoxSizeFor(const SizeType&, LayoutUnit containingBlockSize, LayoutUnit borderAndPadding) const;
-    template<typename MinimumSizeType, typename MaximumSizeType> LayoutUnit clamp(LayoutUnit borderBoxSize, const MinimumSizeType&, const MaximumSizeType&, LayoutUnit containingBlockSize, LayoutUnit borderAndPadding) const;
+    // The border box sizes the sizing keywords resolve to in an axis (css-sizing-3 §3.2, css-sizing-4 §6.1): min-content and max-content
+    // from the inline sizes of the content in the inline axis and the block size of the content in the block axis; fit-content, the
+    // stretch-fit size between the two; stretch, the stretch-fit size; and -webkit-fill-available, which is stretch in the inline axis.
+    struct KeywordSizes {
+        std::optional<LayoutUnit> minContent;
+        std::optional<LayoutUnit> maxContent;
+        LayoutUnit stretchFit;
+        std::optional<LayoutUnit> fillAvailable;
+    };
+    KeywordSizes keywordSizes(const AxisValues&, std::optional<LayoutUnit> minContent, std::optional<LayoutUnit> maxContent, std::optional<LayoutUnit> fillAvailable) const;
+    // In the box's block axis, which is the containing block's block axis unless the flow is orthogonal.
+    std::optional<LayoutUnit> fillAvailableBlockSize() const { return m_isOrthogonal ? std::nullopt : m_containingBlock.fillAvailableBlockSize; }
+    static std::optional<LayoutUnit> fitContentSize(const KeywordSizes&);
+    template<typename SizeType> std::optional<LayoutUnit> borderBoxSizeFor(const SizeType&, const AxisValues&, const KeywordSizes&) const;
+    template<typename MinimumSizeType, typename MaximumSizeType> LayoutUnit clamp(LayoutUnit borderBoxSize, const MinimumSizeType&, const MaximumSizeType&, const AxisValues&, const KeywordSizes&) const;
     const Style::ComputedStyle& style() const;
 
     const CheckedRef<const RenderBox> m_box;
