@@ -1263,6 +1263,7 @@
 				WebKitLegacy/mac/PreventImageLoadWithAutoResizing.mm,
 				WebKitLegacy/mac/URLExtras.mm,
 				WebKitLegacy/mac/UserContentTest.mm,
+				WebKitLegacy/mac/WindowScriptObjectReentrancy.mm,
 				WebKitLegacy/mac/WKBrowsingContextLoadDelegateTest.mm,
 			);
 			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;

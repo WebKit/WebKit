@@ -274,6 +274,7 @@ if (WEBKIT_PLATFORM_MAC)
         Tests/WebKitLegacy/mac/PreventImageLoadWithAutoResizing.mm
         Tests/WebKitLegacy/mac/URLExtras.mm
         Tests/WebKitLegacy/mac/UserContentTest.mm
+        Tests/WebKitLegacy/mac/WindowScriptObjectReentrancy.mm
         Tests/WebKitLegacy/mac/WKBrowsingContextLoadDelegateTest.mm
     )
     list(APPEND TestWebKitLegacy_LIBRARIES "-framework Carbon" "-framework Cocoa")

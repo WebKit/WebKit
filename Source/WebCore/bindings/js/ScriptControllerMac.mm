@@ -79,7 +79,10 @@ WebScriptObject *ScriptController::windowScriptObject()
     if (!m_windowScriptObject) {
         JSC::JSLockHolder lock(commonVM());
         RefPtr root = bindingRootObject();
-        lazyInitialize(m_windowScriptObject, RetainPtr<WebScriptObject> { checked_objc_cast<WebScriptObject>([WebScriptObject scriptObjectForJSObject:toRef(&jsWindowProxy(pluginWorldSingleton())) originRootObject:root.get() rootObject:root.get()]) });
+        RetainPtr windowScriptObject = checked_objc_cast<WebScriptObject>([WebScriptObject scriptObjectForJSObject:toRef(&jsWindowProxy(pluginWorldSingleton())) originRootObject:root.get() rootObject:root.get()]);
+        // Creating the window proxy dispatches didClearWindowObject, which may have re-entered this function.
+        if (!m_windowScriptObject)
+            lazyInitialize(m_windowScriptObject, WTF::move(windowScriptObject));
     }
 
     return m_windowScriptObject.get();
