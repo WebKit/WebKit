@@ -23,11 +23,12 @@
 #pragma once
 
 #include <WebCore/FilterEffect.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FEMerge final : public FilterEffect {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEMerge);
+    WTF_MAKE_TZONE_ALLOCATED(FEMerge);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEMerge);
 public:
     WEBCORE_EXPORT static Ref<FEMerge> create(unsigned numberOfEffectInputs, ColorSpace = ColorSpace::SRGB());

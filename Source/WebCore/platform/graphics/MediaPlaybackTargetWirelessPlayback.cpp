@@ -31,10 +31,13 @@
 #include "MediaDeviceRoute.h"
 #include "MediaDeviceRouteController.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UUID.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlaybackTargetWirelessPlayback);
 
 Ref<MediaPlaybackTargetWirelessPlayback> MediaPlaybackTargetWirelessPlayback::create(std::optional<WTF::UUID> identifier, bool hasActiveRoute)
 {

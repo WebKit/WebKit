@@ -28,10 +28,12 @@
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/TypedArrayAdaptersForwardDeclarations.h>
 #include <WebCore/PixelBuffer.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ArrayPixelBuffer : public PixelBuffer {
+    WTF_MAKE_TZONE_ALLOCATED(ArrayPixelBuffer);
 public:
     JSC::ArrayBufferView& data() const LIFETIME_BOUND { return m_data.get(); }
     Ref<JSC::ArrayBufferView> takeData() && { return WTF::move(m_data); }

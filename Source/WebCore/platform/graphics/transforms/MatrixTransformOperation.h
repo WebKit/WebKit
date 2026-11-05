@@ -27,12 +27,14 @@
 #include <WebCore/TransformOperation.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 struct BlendingContext;
 
 class MatrixTransformOperation final : public TransformOperation {
+    WTF_MAKE_TZONE_ALLOCATED(MatrixTransformOperation);
 public:
     static Ref<MatrixTransformOperation> createIdentity()
     {

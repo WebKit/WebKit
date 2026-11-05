@@ -28,6 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include <WebCore/ControlPart.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -58,6 +59,7 @@ enum class ApplePayButtonStyle : uint8_t {
 };
 
 class ApplePayButtonPart : public ControlPart {
+    WTF_MAKE_TZONE_ALLOCATED(ApplePayButtonPart);
 public:
     NODELETE static Ref<ApplePayButtonPart> create();
     NODELETE WEBCORE_EXPORT static Ref<ApplePayButtonPart> create(ApplePayButtonType, ApplePayButtonStyle, const String& locale);

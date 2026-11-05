@@ -28,9 +28,20 @@
 
 #include "AnimationUtilities.h"
 #include "ColorBlending.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DefaultFilterOperation);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicColorMatrixFilterOperation);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicComponentTransferFilterOperation);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BlurFilterOperation);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DropShadowFilterOperation);
     
 bool DefaultFilterOperation::operator==(const FilterOperation& operation) const
 {

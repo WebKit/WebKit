@@ -27,8 +27,11 @@
 #include "ArrayPixelBuffer.h"
 
 #include "TypedArrayPixelBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ArrayPixelBuffer);
 
 ArrayPixelBuffer::ArrayPixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::ArrayBufferView>&& data)
     : PixelBuffer(format, size, data->mutableSpan())

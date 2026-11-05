@@ -219,6 +219,8 @@ enum MediaPlayerAVFoundationObservationContext {
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerPrivateAVFoundationObjC);
 static String convertEnumerationToString(AVPlayerTimeControlStatus enumerationValue)
 {
     static const std::array<NeverDestroyed<String>, 3> values {

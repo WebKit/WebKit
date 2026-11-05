@@ -29,8 +29,11 @@
 #include "FontCacheCoreText.h"
 #include "FontCascadeDescription.h"
 #include <pal/spi/cf/CoreTextSPI.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(FontDatabase::InstalledFontFamily);
 
 FontDatabase::InstalledFont::InstalledFont(CTFontDescriptorRef fontDescriptor)
     : fontDescriptor(fontDescriptor)

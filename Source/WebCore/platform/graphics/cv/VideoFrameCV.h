@@ -30,6 +30,7 @@
 #include <WebCore/VideoFrame.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 using CMSampleBufferRef = struct opaqueCMSampleBuffer*;
 
@@ -38,6 +39,7 @@ namespace WebCore {
 class PixelBuffer;
 
 class VideoFrameCV : public VideoFrame {
+    WTF_MAKE_TZONE_ALLOCATED(VideoFrameCV);
 public:
     enum class ShouldIgnoreAlpha : bool { No, Yes };
 

@@ -28,6 +28,7 @@
 #include <WebCore/BoxExtents.h>
 #include <WebCore/Color.h>
 #include <WebCore/IntPoint.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
@@ -107,6 +108,7 @@ protected:
 };
 
 class WEBCORE_EXPORT DefaultFilterOperation : public FilterOperation {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DefaultFilterOperation, WEBCORE_EXPORT);
 public:
     static Ref<DefaultFilterOperation> create(Type representedType)
     {
@@ -159,6 +161,7 @@ private:
 // Grayscale, Sepia, Saturate and HueRotate are variations on a basic color matrix effect.
 // For HueRotate, the angle of rotation is stored in m_amount.
 class WEBCORE_EXPORT BasicColorMatrixFilterOperation : public FilterOperation {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(BasicColorMatrixFilterOperation, WEBCORE_EXPORT);
 public:
     static Ref<BasicColorMatrixFilterOperation> create(double amount, Type type)
     {
@@ -190,6 +193,7 @@ private:
 
 // Invert, Brightness, Contrast and Opacity are variations on a basic component transfer effect.
 class WEBCORE_EXPORT BasicComponentTransferFilterOperation : public FilterOperation {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(BasicComponentTransferFilterOperation, WEBCORE_EXPORT);
 public:
     static Ref<BasicComponentTransferFilterOperation> create(double amount, Type type)
     {
@@ -222,6 +226,7 @@ private:
 };
 
 class WEBCORE_EXPORT BlurFilterOperation : public FilterOperation {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(BlurFilterOperation, WEBCORE_EXPORT);
 public:
     static Ref<BlurFilterOperation> create(float stdDeviation)
     {
@@ -252,6 +257,7 @@ private:
 };
 
 class WEBCORE_EXPORT DropShadowFilterOperation final : public FilterOperation {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DropShadowFilterOperation, WEBCORE_EXPORT);
 public:
     static Ref<DropShadowFilterOperation> create(const Color& color, const IntPoint& location, int stdDeviation)
     {

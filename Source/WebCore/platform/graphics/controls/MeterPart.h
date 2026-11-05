@@ -26,10 +26,12 @@
 #pragma once
 
 #include <WebCore/ControlPart.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MeterPart : public ControlPart {
+    WTF_MAKE_TZONE_ALLOCATED(MeterPart);
 public:
     enum class GaugeRegion : uint8_t {
         Optimum,

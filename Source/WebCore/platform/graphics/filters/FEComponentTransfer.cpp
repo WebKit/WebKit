@@ -27,6 +27,7 @@
 
 #include "FEComponentTransferSoftwareApplier.h"
 #include "Filter.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(CORE_IMAGE)
@@ -38,6 +39,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEComponentTransfer);
 
 Ref<FEComponentTransfer> FEComponentTransfer::create(const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction, ColorSpace colorSpace)
 {

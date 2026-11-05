@@ -30,6 +30,7 @@
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include <numbers>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(CORE_IMAGE)
@@ -41,6 +42,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEGaussianBlur);
 
 Ref<FEGaussianBlur> FEGaussianBlur::create(float x, float y, EdgeModeType edgeMode, ColorSpace colorSpace)
 {

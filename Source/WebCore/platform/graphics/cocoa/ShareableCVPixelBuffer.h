@@ -31,6 +31,7 @@
 #include <WebCore/ShareableCVPixelFormat.h>
 #include <WebCore/SharedMemory.h>
 #include <wtf/ArgumentCoder.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -98,6 +99,7 @@ private:
 };
 
 class ShareableCVPixelBufferBytes : public ThreadSafeRefCounted<ShareableCVPixelBufferBytes> {
+    WTF_MAKE_TZONE_ALLOCATED(ShareableCVPixelBufferBytes);
 public:
     using Handle = ShareableCVPixelBufferBytesHandle;
 
@@ -136,6 +138,7 @@ protected:
 };
 
 class ShareableCVPixelBufferWithBytes : public ShareableCVPixelBuffer {
+    WTF_MAKE_TZONE_ALLOCATED(ShareableCVPixelBufferWithBytes);
 public:
     NODELETE WEBCORE_EXPORT static Ref<ShareableCVPixelBufferWithBytes> create(ShareableCVPixelBufferConfiguration&&, Ref<ShareableCVPixelBufferBytes>&&);
 
@@ -152,6 +155,7 @@ private:
 };
 
 class ShareableCVPixelBufferWithPlanarBytes : public ShareableCVPixelBuffer {
+    WTF_MAKE_TZONE_ALLOCATED(ShareableCVPixelBufferWithPlanarBytes);
 public:
     NODELETE WEBCORE_EXPORT static Ref<ShareableCVPixelBufferWithPlanarBytes> create(ShareableCVPixelBufferConfiguration&&, Vector<Ref<ShareableCVPixelBufferBytes>>&&);
 

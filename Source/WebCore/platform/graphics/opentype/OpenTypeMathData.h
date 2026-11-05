@@ -33,6 +33,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(HARFBUZZ)
 #include "HbUniquePtr.h"
@@ -46,6 +47,7 @@ class SharedBuffer;
 class Font;
 
 class OpenTypeMathData : public RefCounted<OpenTypeMathData> {
+    WTF_MAKE_TZONE_ALLOCATED(OpenTypeMathData);
 public:
     static Ref<OpenTypeMathData> create(const FontPlatformData& font)
     {

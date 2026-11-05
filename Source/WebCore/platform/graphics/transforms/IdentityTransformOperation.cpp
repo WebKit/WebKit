@@ -26,7 +26,11 @@
 #include "config.h"
 #include "IdentityTransformOperation.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IdentityTransformOperation);
 
 Ref<IdentityTransformOperation> IdentityTransformOperation::create()
 {

@@ -23,11 +23,12 @@
 #pragma once
 
 #include <WebCore/FilterEffect.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FEOffset final : public FilterEffect {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEOffset);
+    WTF_MAKE_TZONE_ALLOCATED(FEOffset);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEOffset);
 public:
     WEBCORE_EXPORT static Ref<FEOffset> create(float dx, float dy, ColorSpace = ColorSpace::SRGB());

@@ -24,6 +24,7 @@
 
 #include <WebCore/FilterEffect.h>
 #include <wtf/EnumeratedArray.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -63,7 +64,7 @@ namespace WebCore {
 using ComponentTransferFunctions = EnumeratedArray<ComponentTransferChannel, ComponentTransferFunction, ComponentTransferChannel::Alpha>;
 
 class FEComponentTransfer final : public FilterEffect {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEComponentTransfer);
+    WTF_MAKE_TZONE_ALLOCATED(FEComponentTransfer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEComponentTransfer);
 public:
     WEBCORE_EXPORT static Ref<FEComponentTransfer> create(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc, ColorSpace = ColorSpace::SRGB());

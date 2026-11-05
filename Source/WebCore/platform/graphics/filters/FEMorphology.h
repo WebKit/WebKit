@@ -23,6 +23,7 @@
 #pragma once
 
 #include <WebCore/FilterEffect.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ enum class MorphologyOperatorType : uint8_t {
 };
 
 class FEMorphology final : public FilterEffect {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEMorphology);
+    WTF_MAKE_TZONE_ALLOCATED(FEMorphology);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEMorphology);
 public:
     WEBCORE_EXPORT static Ref<FEMorphology> create(MorphologyOperatorType, float radiusX, float radiusY, ColorSpace = ColorSpace::SRGB());

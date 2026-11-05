@@ -243,6 +243,7 @@ static NSDictionary *imageDecoderAssetOptionsSingleton()
 }
 
 class ImageDecoderAVFObjCSample : public MediaSampleAVFObjC {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ImageDecoderAVFObjCSample);
 public:
     static Ref<ImageDecoderAVFObjCSample> create(RetainPtr<CMSampleBufferRef>&& sampleBuffer)
     {

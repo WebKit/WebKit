@@ -25,11 +25,12 @@
 #include <WebCore/Color.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/FilterEffect.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class FEFlood final : public FilterEffect {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEFlood);
+    WTF_MAKE_TZONE_ALLOCATED(FEFlood);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEFlood);
 public:
     WEBCORE_EXPORT static Ref<FEFlood> create(const Color& floodColor, float floodOpacity, ColorSpace = ColorSpace::SRGB());

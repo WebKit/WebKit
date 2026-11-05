@@ -26,9 +26,12 @@
 
 #include "ImageBuffer.h"
 #include "LightSource.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FESpecularLighting);
 
 Ref<FESpecularLighting> FESpecularLighting::create(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&& lightSource, ColorSpace colorSpace)
 {

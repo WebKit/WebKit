@@ -36,9 +36,12 @@
 
 #include "Filter.h"
 #include "FilterImage.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpotLightSource);
 
 // spot-light edge darkening depends on an absolute treshold
 // according to the SVG 1.1 SE light regression tests

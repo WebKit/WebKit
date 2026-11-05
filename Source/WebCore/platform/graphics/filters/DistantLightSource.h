@@ -25,10 +25,12 @@
 #include <WebCore/LightSource.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DistantLightSource : public LightSource {
+    WTF_MAKE_TZONE_ALLOCATED(DistantLightSource);
     friend struct IPC::ArgumentCoder<DistantLightSource>;
 
 public:

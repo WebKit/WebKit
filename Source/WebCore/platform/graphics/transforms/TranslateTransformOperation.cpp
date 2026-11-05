@@ -23,9 +23,12 @@
 #include "TranslateTransformOperation.h"
 
 #include "AnimationUtilities.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TranslateTransformOperation);
 
 Ref<TranslateTransformOperation> TranslateTransformOperation::create(float tx, float ty, float tz, TransformOperation::Type type)
 {

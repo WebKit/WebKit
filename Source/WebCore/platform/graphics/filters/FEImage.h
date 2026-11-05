@@ -26,13 +26,14 @@
 #include <WebCore/FilterEffect.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/SourceImage.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ImageBuffer;
 
 class FEImage final : public FilterEffect {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEImage);
+    WTF_MAKE_TZONE_ALLOCATED(FEImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEImage);
 public:
     NODELETE WEBCORE_EXPORT static Ref<FEImage> create(SourceImage&&, const FloatRect& sourceImageRect);

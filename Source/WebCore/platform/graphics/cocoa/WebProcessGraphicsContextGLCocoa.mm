@@ -80,6 +80,7 @@ private:
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayBufferFence);
 
 class DisplayBufferDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DisplayBufferDisplayDelegate);
 public:
     NODELETE static Ref<DisplayBufferDisplayDelegate> create(bool isOpaque)
     {

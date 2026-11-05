@@ -27,10 +27,12 @@
 
 #include <WebCore/ControlPart.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ProgressBarPart : public ControlPart {
+    WTF_MAKE_TZONE_ALLOCATED(ProgressBarPart);
 public:
     NODELETE static Ref<ProgressBarPart> create();
     NODELETE WEBCORE_EXPORT static Ref<ProgressBarPart> create(double position, const Seconds& animationStartTime);

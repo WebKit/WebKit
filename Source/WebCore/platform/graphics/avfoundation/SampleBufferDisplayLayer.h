@@ -31,6 +31,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/MachSendRightAnnotated.h>
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -57,6 +58,7 @@ public:
 };
 
 class SampleBufferDisplayLayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SampleBufferDisplayLayer, WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SampleBufferDisplayLayer, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static RefPtr<SampleBufferDisplayLayer> create(SampleBufferDisplayLayerClient&);
     using LayerCreator = RefPtr<SampleBufferDisplayLayer> (*)(SampleBufferDisplayLayerClient&);

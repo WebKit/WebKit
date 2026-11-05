@@ -30,8 +30,11 @@
 #include "NativeImage.h"
 #include "SharedMemory.h"
 #include <wtf/DebugHeap.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShareableBitmap);
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(ShareableBitmap, WTF_INTERNAL);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableBitmap);

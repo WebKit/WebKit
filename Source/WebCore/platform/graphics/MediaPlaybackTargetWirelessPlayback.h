@@ -31,6 +31,7 @@
 #include <WebCore/MediaPlaybackTarget.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ namespace WebCore {
 class MediaDeviceRoute;
 
 class MediaPlaybackTargetWirelessPlayback final : public MediaPlaybackTarget {
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlaybackTargetWirelessPlayback);
 public:
     WEBCORE_EXPORT static Ref<MediaPlaybackTargetWirelessPlayback> create(std::optional<WTF::UUID> identifier, bool hasActiveRoute);
     static Ref<MediaPlaybackTargetWirelessPlayback> create(MediaDeviceRoute&);

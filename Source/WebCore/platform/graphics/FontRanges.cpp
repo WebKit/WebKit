@@ -50,6 +50,7 @@ FontRanges::FontRanges(FontRanges&& other, IsGenericFontFamily isGenericFontFami
 }
 
 class TrivialFontAccessor final : public FontAccessor {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(TrivialFontAccessor);
 public:
     static Ref<TrivialFontAccessor> create(Ref<Font>&& font)
     {

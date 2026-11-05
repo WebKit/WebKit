@@ -23,6 +23,7 @@
 #pragma once
 
 #include <WebCore/FilterEffect.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -38,7 +39,7 @@ enum class ColorMatrixType : uint8_t {
 };
 
 class FEColorMatrix final : public FilterEffect {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEColorMatrix);
+    WTF_MAKE_TZONE_ALLOCATED(FEColorMatrix);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEColorMatrix);
 public:
     WEBCORE_EXPORT static Ref<FEColorMatrix> create(ColorMatrixType, Vector<float>&&, ColorSpace = ColorSpace::SRGB());

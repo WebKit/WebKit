@@ -26,10 +26,13 @@
 #include "config.h"
 #include "Model.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Model);
 
 Ref<Model> Model::create(Ref<SharedBuffer>&& data, String&& mimeType, URL url, bool isConverted)
 {

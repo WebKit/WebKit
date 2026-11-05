@@ -31,9 +31,12 @@
 #include "config.h"
 #include "DistantLightSource.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DistantLightSource);
 
 Ref<DistantLightSource> DistantLightSource::create(float azimuth, float elevation)
 {
