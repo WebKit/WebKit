@@ -2190,10 +2190,15 @@ void NetworkProcessProxy::addAllowedFirstPartyForCookies(WebProcessProxy& webPro
         madeChange = true;
         pair.first = LoadedWebArchive::Yes;
     }
-    if (madeChange)
-        sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(webProcessProxy.coreProcessIdentifier(), firstPartyForCookies, loadedWebArchive), WTF::move(completionHandler));
-    else
+    if (!madeChange && !m_pendingAddAllowedFirstPartyForCookiesReplies)
+        return completionHandler();
+
+    ++m_pendingAddAllowedFirstPartyForCookiesReplies;
+    sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(webProcessProxy.coreProcessIdentifier(), firstPartyForCookies, loadedWebArchive), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] mutable {
+        if (RefPtr protectedThis = weakThis)
+            --protectedThis->m_pendingAddAllowedFirstPartyForCookiesReplies;
         completionHandler();
+    });
 }
 
 void NetworkProcessProxy::addAllowedWebPageProxyIdentifier(WebProcessProxy& webProcessProxy, WebPageProxyIdentifier pageID)
