@@ -866,8 +866,8 @@ struct Error {
 };
 
 struct InstanceDescriptor {
-    // Runs a work item on the thread that the instance calls back on. Empty: the work items wait
-    // for processEvents().
+    // Runs a work item on the thread that the instance calls back on. Empty: the work items run at
+    // once, on the thread that schedules them.
     Function<void(Function<void()>&&)> scheduleWork;
 #if PLATFORM(COCOA)
     // The task that owns the resources the instance allocates.
@@ -1349,6 +1349,8 @@ public:
     // The whole contents, where the implementation can reach them. Only the GPU Process can.
     virtual std::span<uint8_t> getBufferContents() = 0;
     virtual void copyFrom(std::span<const uint8_t>, size_t offset) = 0;
+    // The device that created the buffer.
+    virtual Device& device() const = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1433,6 +1435,8 @@ public:
     virtual Vector<FeatureName> features() const = 0;
     virtual const Limits& limits() const = 0;
     virtual Ref<Queue> queue() = 0;
+    // The adapter that created the device.
+    virtual Adapter& adapter() const = 0;
     virtual void destroy() = 0;
 
     virtual RefPtr<Buffer> createBuffer(const BufferDescriptor&) = 0;
@@ -1572,6 +1576,8 @@ public:
 #if PLATFORM(COCOA)
     virtual void copyExternalImageToTexture(const ImageCopyExternalImage& source, const ImageCopyTextureTagged& destination, const Extent3D& copySize) = 0;
 #endif
+    // Null once the device is gone: the device owns its queue.
+    virtual RefPtr<Device> device() const = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 
@@ -1678,6 +1684,8 @@ public:
     virtual ~ShaderModule() = default;
 
     virtual void compilationInfo(CompletionHandler<void(CompilationInfo&&)>&&) = 0;
+    // The device that created the shader module.
+    virtual Device& device() const = 0;
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
 

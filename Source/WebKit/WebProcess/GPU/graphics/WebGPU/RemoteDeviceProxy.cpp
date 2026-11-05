@@ -67,6 +67,7 @@ RemoteDeviceProxy::RemoteDeviceProxy(Vector<::WebGPU::FeatureName>&& features, c
     , m_parent(parent)
     , m_queue(RemoteQueueProxy::create(parent, convertToBackingContext, queueIdentifier))
 {
+    m_queue->setDevice(*this);
 }
 
 RemoteDeviceProxy::~RemoteDeviceProxy()

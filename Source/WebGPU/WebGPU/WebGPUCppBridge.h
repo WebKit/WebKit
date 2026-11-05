@@ -29,7 +29,8 @@
 #import <WebGPU/WebGPUCpp.h>
 
 // The handles of the WebGPU C API are the objects of the WebGPU C++ API, so the conversions of a
-// C API shim do not depend on the implementation that created the objects.
+// C API shim do not depend on the implementation that created the objects. A WGPUInstance is the
+// exception: it points to the C API's own instance, WebGPU::CAPI::Instance (CAPIInstance.h).
 
 namespace WebGPU {
 
@@ -131,16 +132,6 @@ inline ExternalTexture& fromAPI(WGPUExternalTexture handle)
 inline WGPUExternalTexture toAPI(ExternalTexture& object)
 {
     return reinterpret_cast<WGPUExternalTexture>(&object);
-}
-
-inline Instance& fromAPI(WGPUInstance handle)
-{
-    return *reinterpret_cast<Instance*>(handle);
-}
-
-inline WGPUInstance toAPI(Instance& object)
-{
-    return reinterpret_cast<WGPUInstance>(&object);
 }
 
 inline PipelineLayout& fromAPI(WGPUPipelineLayout handle)

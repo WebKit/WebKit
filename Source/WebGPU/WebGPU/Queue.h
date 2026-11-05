@@ -99,7 +99,7 @@ public:
     void makeInvalid();
     void setCommittedSignalEvent(id<MTLSharedEvent>, size_t frameIndex);
 
-    const Device& device() const SWIFT_RETURNS_INDEPENDENT_VALUE;
+    RefPtr<WebGPU::Device> device() const final;
     void generateAValidationError(String&&);
     void clearTextureIfNeeded(const WebGPU::TexelCopyTextureInfo&, NSUInteger);
     id<MTLCommandBuffer> _Nullable commandBufferWithDescriptor(MTLCommandBufferDescriptor*);

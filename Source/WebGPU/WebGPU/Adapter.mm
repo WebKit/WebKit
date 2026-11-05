@@ -27,12 +27,15 @@
 #import "Adapter.h"
 
 #import "APIConversions.h"
+#import "CAPIInstance.h"
+#import "CAPIObjectState.h"
 #import "Device.h"
 #import "Instance.h"
 #import <algorithm>
 #import <ranges>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/text/MakeString.h>
 
 namespace WebGPU::Metal {
 
@@ -172,19 +175,20 @@ bool Adapter::isXRCompatible() const
 WGPUInstance wgpuAdapterGetInstance(WGPUAdapter adapter)
 {
     @autoreleasepool {
-        return WebGPU::Metal::releaseToAPI(protect(WebGPU::Metal::fromAPI(adapter))->instance());
+        RefPtr instance = WebGPU::CAPI::findInstance(protect(WebGPU::fromAPI(adapter)));
+        return instance ? WebGPU::CAPI::releaseToAPI(instance.releaseNonNull()) : nullptr;
     }
 }
 
-void LEGACY_NODELETE wgpuAdapterAddRef(WGPUAdapter adapter)
+void wgpuAdapterAddRef(WGPUAdapter adapter)
 {
-    WebGPU::Metal::fromAPI(adapter).ref();
+    WebGPU::CAPI::addReference(protect(WebGPU::fromAPI(adapter)));
 }
 
 void wgpuAdapterRelease(WGPUAdapter adapter)
 {
     @autoreleasepool {
-        WebGPU::Metal::fromAPI(adapter).deref();
+        WebGPU::CAPI::releaseReference(protect(WebGPU::fromAPI(adapter)));
     }
 }
 
@@ -242,14 +246,14 @@ WGPUBool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 // Calls the uncaptured error callback of the C API with each error of the device that no error scope
 // catches, until the device is lost. As in webgpu.h, the callback has no callback mode: it is called
 // in the call that generates the error, on its thread.
-static void listenForUncapturedErrors(WebGPU::Metal::Device& device, const WGPUUncapturedErrorCallbackInfo& callbackInfo)
+static void listenForUncapturedErrors(WebGPU::Device& device, const WGPUUncapturedErrorCallbackInfo& callbackInfo)
 {
     device.resolveUncapturedErrorEvent({ [weakDevice = ThreadSafeWeakPtr { device }, callbackInfo](bool hasUncapturedError, std::optional<WebGPU::Error>&& error) {
         // There is no error when the device is destroyed.
         if (!hasUncapturedError || !error)
             return;
         RefPtr device = weakDevice;
-        if (!device || device->isLost())
+        if (!device || WebGPU::CAPI::isLost(*device))
             return;
         // The device calls its uncaptured error callback once, so listen for the next error before
         // the callback can generate one.
@@ -277,33 +281,45 @@ void wgpuSupportedFeaturesFreeMembers(WGPUSupportedFeatures features)
 }
 
 // The C API reports a device that could not be created with WGPURequestDeviceStatus_Error and no
-// device. A null descriptor is the default one.
+// device, and calls the device-lost callback of the descriptor with WGPUDeviceLostReason_FailedCreation.
+// A null descriptor is the default one.
 WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallbackInfo callbackInfo)
 {
     @autoreleasepool {
         Ref protectedAdapter = WebGPU::Metal::fromAPI(adapter);
-        WebGPU::Metal::CAPIFuture future { protectedAdapter->instance() };
-        auto callback = [callbackInfo, future](WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message) {
-            callbackInfo.callback(status, device, message, callbackInfo.userdata1, callbackInfo.userdata2);
-            future.complete();
-        };
+        RefPtr instance = WebGPU::CAPI::findInstance(protectedAdapter.get());
+        WebGPU::CAPI::Future future { instance.get(), callbackInfo.mode, [callbackInfo] {
+            callbackInfo.callback(WGPURequestDeviceStatus_CallbackCancelled, nullptr, WebGPU::Metal::toAPI("A valid external Instance reference no longer exists."_s), callbackInfo.userdata1, callbackInfo.userdata2);
+        } };
         WGPUDeviceDescriptor defaultDescriptor = WGPU_DEVICE_DESCRIPTOR_INIT;
         if (!descriptor)
             descriptor = &defaultDescriptor;
+        Ref lostEvent = WebGPU::CAPI::DeviceLostEvent::create(descriptor->deviceLostCallbackInfo, instance.get());
+        auto failedCreation = [lostEvent, callbackInfo, future](const String& error) {
+            lostEvent->lose(WGPUDeviceLostReason_FailedCreation, makeString("Failed to create the device: "_s, error));
+            future.complete([&] {
+                auto message = error.utf8();
+                callbackInfo.callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
+            });
+        };
         WebGPU::Metal::DeviceDescriptorStorage storage;
         auto apiDescriptor = WebGPU::Metal::fromAPI(*descriptor, storage);
         if (!apiDescriptor) {
-            callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI("Device does not support requested features"_s));
+            failedCreation("Device does not support requested features"_s);
             return future.future();
         }
-        protectedAdapter->requestDeviceOrError(*apiDescriptor, [callback = WTF::move(callback), uncapturedErrorCallbackInfo = descriptor->uncapturedErrorCallbackInfo](std::expected<Ref<WebGPU::Metal::Device>, String>&& device) {
-            if (!device) {
-                auto message = device.error().utf8();
-                return callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::Metal::toAPI(message));
-            }
-            if (uncapturedErrorCallbackInfo.callback)
-                listenForUncapturedErrors(device->get(), uncapturedErrorCallbackInfo);
-            callback(WGPURequestDeviceStatus_Success, WebGPU::Metal::releaseToAPI(WTF::move(*device)), WebGPU::Metal::toAPI(""_s));
+        protectedAdapter->requestDeviceOrError(*apiDescriptor, [callbackInfo, future, failedCreation = WTF::move(failedCreation), lostEvent = WTF::move(lostEvent), weakInstance = ThreadSafeWeakPtr<WebGPU::CAPI::Instance> { instance }, uncapturedErrorCallbackInfo = descriptor->uncapturedErrorCallbackInfo](std::expected<Ref<WebGPU::Metal::Device>, String>&& device) {
+            if (!device)
+                return failedCreation(device.error());
+            // A device that arrives after the callback was cancelled is not handed out: it has no
+            // entry, and it goes away with its last reference.
+            Ref<WebGPU::Device> apiDevice = WTF::move(*device);
+            future.complete([&] {
+                WebGPU::CAPI::didCreateDevice(apiDevice, weakInstance.get().get(), lostEvent);
+                if (uncapturedErrorCallbackInfo.callback)
+                    listenForUncapturedErrors(apiDevice, uncapturedErrorCallbackInfo);
+                callbackInfo.callback(WGPURequestDeviceStatus_Success, WebGPU::Metal::releaseToAPI(WTF::move(apiDevice)), WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
+            });
         });
         return future.future();
     }

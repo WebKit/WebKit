@@ -28,6 +28,8 @@
 
 #import "APIConversions.h"
 #import "Buffer.h"
+#import "CAPIInstance.h"
+#import "CAPIObjectState.h"
 #import "CommandBuffer.h"
 #import "CommandEncoder.h"
 #import "Device.h"
@@ -54,6 +56,14 @@ namespace WebGPU::Metal {
 constexpr bool skipMemoryAttribution = true;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Queue);
+
+// Nothing is valid to use with a queue whose device is gone.
+template<typename T>
+static bool isValidToUseWith(const T& object, const Queue& queue)
+{
+    RefPtr device = queue.device();
+    return device && isValidToUseWithDevice(object, *device);
+}
 
 Queue::Queue(id<MTLCommandQueue> commandQueue, Adapter& adapter, Device& device)
     : m_commandQueue(commandQueue)
@@ -955,11 +965,9 @@ NSString* Queue::errorValidatingWriteTexture(const WebGPU::TexelCopyTextureInfo&
     return nil;
 }
 
-const Device& Queue::device() const
+RefPtr<WebGPU::Device> Queue::device() const
 {
-    auto device = m_device.get();
-    RELEASE_ASSERT(device);
-    return *device.unsafeGet();
+    return m_device.get();
 }
 
 void Queue::generateAValidationError(String&& message)
@@ -2329,7 +2337,8 @@ void Queue::resolveProvisionalTextureClears(std::optional<uint64_t> committingCo
 
 id<MTLDevice> Queue::metalDevice() const
 {
-    return device().device();
+    RefPtr device = m_device;
+    return device ? device->device() : nil;
 }
 
 } // namespace WebGPU::Metal
@@ -2353,13 +2362,17 @@ WGPUFuture wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, WGPUQueueWorkDoneCallba
 {
     @autoreleasepool {
         Ref protectedQueue = WebGPU::Metal::fromAPI(queue);
-        WebGPU::Metal::CAPIFuture future { protect(protectedQueue->device())->instance() };
+        RefPtr device = protectedQueue->device();
+        WebGPU::CAPI::Future future { device ? WebGPU::CAPI::findInstance(*device).get() : nullptr, callbackInfo.mode, [callbackInfo] {
+            callbackInfo.callback(WGPUQueueWorkDoneStatus_CallbackCancelled, WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
+        } };
         protectedQueue->onSubmittedWorkDone(CompletionHandler<void(bool)> { [callbackInfo, future](bool success) {
-            if (success)
-                callbackInfo.callback(WGPUQueueWorkDoneStatus_Success, WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
-            else
-                callbackInfo.callback(WGPUQueueWorkDoneStatus_Error, WebGPU::Metal::toAPI("The device is lost"_s), callbackInfo.userdata1, callbackInfo.userdata2);
-            future.complete();
+            future.complete([&] {
+                if (success)
+                    callbackInfo.callback(WGPUQueueWorkDoneStatus_Success, WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
+                else
+                    callbackInfo.callback(WGPUQueueWorkDoneStatus_Error, WebGPU::Metal::toAPI("The device is lost"_s), callbackInfo.userdata1, callbackInfo.userdata2);
+            });
         } });
         return future.future();
     }

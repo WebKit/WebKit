@@ -28,6 +28,8 @@
 
 #import "APIConversions.h"
 #import "BindGroup.h"
+#import "CAPIInstance.h"
+#import "CAPIObjectState.h"
 #import "CommandBuffer.h"
 #import "Device.h"
 #import "RenderBundle.h"
@@ -863,13 +865,16 @@ WGPUFuture wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapMode mode, size_t offset
 {
     @autoreleasepool {
         Ref protectedBuffer = WebGPU::Metal::fromAPI(buffer);
-        WebGPU::Metal::CAPIFuture future { protectedBuffer->device().instance() };
+        WebGPU::CAPI::Future future { WebGPU::CAPI::findInstance(protect(protectedBuffer->device())).get(), callbackInfo.mode, [callbackInfo] {
+            callbackInfo.callback(WGPUMapAsyncStatus_CallbackCancelled, WebGPU::Metal::toAPI("A valid external Instance reference no longer exists."_s), callbackInfo.userdata1, callbackInfo.userdata2);
+        } };
         protectedBuffer->mapAsync(mapModeFromAPIIgnoringUnknownBits(mode), offset, WebGPU::Metal::mapSizeFromAPI(size), [callbackInfo, future](bool success) {
-            if (success)
-                callbackInfo.callback(WGPUMapAsyncStatus_Success, WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
-            else
-                callbackInfo.callback(WGPUMapAsyncStatus_Error, WebGPU::Metal::toAPI("mapAsync failed"_s), callbackInfo.userdata1, callbackInfo.userdata2);
-            future.complete();
+            future.complete([&] {
+                if (success)
+                    callbackInfo.callback(WGPUMapAsyncStatus_Success, WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
+                else
+                    callbackInfo.callback(WGPUMapAsyncStatus_Error, WebGPU::Metal::toAPI("mapAsync failed"_s), callbackInfo.userdata1, callbackInfo.userdata2);
+            });
         });
         return future.future();
     }

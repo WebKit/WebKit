@@ -28,6 +28,8 @@
 
 #import "APIConversions.h"
 #import "Adapter.h"
+#import "CAPIInstance.h"
+#import "CAPIObjectState.h"
 #import "CommandBuffer.h"
 #import "HardwareCapabilities.h"
 #import "PresentationContext.h"
@@ -97,7 +99,7 @@ RefPtr<WebGPU::PresentationContext> Instance::createPresentationContext(const We
 void Instance::scheduleWork(WorkItem&& workItem)
 {
     if (!m_scheduleWork) {
-        defaultScheduleWork(WTF::move(workItem));
+        workItem();
         return;
     }
     m_scheduleWork(WTF::move(workItem));
@@ -106,70 +108,6 @@ void Instance::scheduleWork(WorkItem&& workItem)
 const std::optional<const MachSendRight>& Instance::webProcessID() const
 {
     return m_webProcessID;
-}
-
-void Instance::defaultScheduleWork(WorkItem&& workItem)
-{
-    Locker locker(m_lock);
-    m_pendingWork.append(WTF::move(workItem));
-    m_condition.notifyAll();
-}
-
-uint64_t Instance::createFuture()
-{
-    Locker locker(m_lock);
-    return m_nextFuture++;
-}
-
-void Instance::completeFuture(uint64_t future)
-{
-    Locker locker(m_lock);
-    m_completedFutures.add(future);
-    m_condition.notifyAll();
-}
-
-bool Instance::waitForAnyFuture(std::span<const uint64_t> futures, Seconds timeout, NOESCAPE const Function<void(size_t)>& didComplete)
-{
-    auto deadline = MonotonicTime::timePointFromNow(timeout);
-    while (true) {
-        processEvents();
-        {
-            Locker locker(m_lock);
-            if (anyFutureCompleted(futures)) {
-                for (auto [index, future] : indexedRange(futures)) {
-                    if (m_completedFutures.remove(future))
-                        didComplete(index);
-                }
-                return true;
-            }
-            if (m_pendingWork.isEmpty() && !m_condition.waitUntil(m_lock, deadline, [&] WTF_REQUIRES_LOCK(m_lock) { return !m_pendingWork.isEmpty() || anyFutureCompleted(futures); }))
-                return false;
-        }
-    }
-}
-
-bool Instance::anyFutureCompleted(std::span<const uint64_t> futures) const
-{
-    for (auto future : futures) {
-        if (m_completedFutures.contains(future))
-            return true;
-    }
-    return false;
-}
-
-void Instance::processEvents()
-{
-    while (true) {
-        Deque<WorkItem> localWork;
-        {
-            Locker locker(m_lock);
-            std::swap(m_pendingWork, localWork);
-        }
-        if (localWork.isEmpty())
-            return;
-        for (auto& workItem : localWork)
-            workItem();
-    }
 }
 
 static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, std::optional<WebGPU::PowerPreference> powerPreference)
@@ -290,14 +228,16 @@ RefPtr<Instance> createInstance(InstanceDescriptor&& descriptor)
 
 void LEGACY_NODELETE wgpuInstanceAddRef(WGPUInstance instance)
 {
-    WebGPU::Metal::fromAPI(instance).ref();
+    WebGPU::CAPI::fromAPI(instance).ref();
 }
 
+// Releasing the last reference destroys the instance, see WebGPU::CAPI::Instance.
 void wgpuInstanceRelease(WGPUInstance instance)
 {
     @autoreleasepool {
-        protect(WebGPU::Metal::fromAPI(instance))->waitForCommandBufferCompletions();
-        WebGPU::Metal::fromAPI(instance).deref();
+        Ref protectedInstance = WebGPU::CAPI::fromAPI(instance);
+        protect(downcast<WebGPU::Metal::Instance>(protectedInstance->instance()))->waitForCommandBufferCompletions();
+        protectedInstance->deref();
     }
 }
 
@@ -306,7 +246,8 @@ void wgpuInstanceRelease(WGPUInstance instance)
 WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor*)
 {
     @autoreleasepool {
-        return WebGPU::Metal::releaseToAPI(WebGPU::Metal::Instance::create({ }));
+        RefPtr instance = WebGPU::CAPI::Instance::create();
+        return instance ? WebGPU::CAPI::releaseToAPI(instance.releaseNonNull()) : nullptr;
     }
 }
 
@@ -324,14 +265,14 @@ WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDe
             if (CAMetalLayer *layer = (__bridge CAMetalLayer *)metalLayerSource->layer)
                 return WebGPU::Metal::releaseToAPI(WebGPU::Metal::PresentationContextCoreAnimation::create(layer));
         }
-        return WebGPU::Metal::releaseToAPIAs<WebGPU::Metal::PresentationContext>(protect(WebGPU::Metal::fromAPI(instance))->createPresentationContext({ }));
+        return WebGPU::Metal::releaseToAPI(protect(WebGPU::CAPI::fromAPI(instance).instance())->createPresentationContext({ }));
     }
 }
 
 void wgpuInstanceProcessEvents(WGPUInstance instance)
 {
     @autoreleasepool {
-        protect(WebGPU::Metal::fromAPI(instance))->processEvents();
+        protect(WebGPU::CAPI::fromAPI(instance).events())->processEvents();
     }
 }
 
@@ -340,11 +281,16 @@ void wgpuInstanceProcessEvents(WGPUInstance instance)
 WGPUFuture wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallbackInfo callbackInfo)
 {
     @autoreleasepool {
-        Ref protectedInstance = WebGPU::Metal::fromAPI(instance);
-        WebGPU::Metal::CAPIFuture future { protectedInstance.copyRef() };
-        auto callback = [callbackInfo, future](WGPURequestAdapterStatus status, WGPUAdapter adapter, ASCIILiteral message) {
-            callbackInfo.callback(status, adapter, WebGPU::Metal::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
-            future.complete();
+        Ref protectedInstance = WebGPU::CAPI::fromAPI(instance);
+        WebGPU::CAPI::Future future { protectedInstance.ptr(), callbackInfo.mode, [callbackInfo] {
+            callbackInfo.callback(WGPURequestAdapterStatus_CallbackCancelled, nullptr, WebGPU::Metal::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);
+        } };
+        auto callback = [callbackInfo, future, weakInstance = ThreadSafeWeakPtr<WebGPU::CAPI::Instance> { protectedInstance }](WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, ASCIILiteral message) {
+            future.complete([&] {
+                if (adapter)
+                    WebGPU::CAPI::didHandOutAdapter(*adapter, weakInstance.get().get());
+                callbackInfo.callback(status, WebGPU::Metal::releaseToAPI(WTF::move(adapter)), WebGPU::Metal::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
+            });
         };
         WGPURequestAdapterOptions defaultOptions = WGPU_REQUEST_ADAPTER_OPTIONS_INIT;
         auto apiOptions = WebGPU::Metal::fromAPI(options ? *options : defaultOptions);
@@ -352,10 +298,10 @@ WGPUFuture wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAd
             callback(WGPURequestAdapterStatus_Error, nullptr, "Unknown power preference"_s);
             return future.future();
         }
-        protectedInstance->requestAdapter(*apiOptions, [callback = WTF::move(callback)](RefPtr<WebGPU::Adapter>&& adapter) {
+        protect(protectedInstance->instance())->requestAdapter(*apiOptions, [callback = WTF::move(callback)](RefPtr<WebGPU::Adapter>&& adapter) {
             if (!adapter)
                 return callback(WGPURequestAdapterStatus_Unavailable, nullptr, "No adapters present"_s);
-            callback(WGPURequestAdapterStatus_Success, WebGPU::Metal::releaseToAPIAs<WebGPU::Metal::Adapter>(WTF::move(adapter)), ""_s);
+            callback(WGPURequestAdapterStatus_Success, WTF::move(adapter), ""_s);
         });
         return future.future();
     }
@@ -370,7 +316,7 @@ WGPUWaitStatus wgpuInstanceWaitAny(WGPUInstance instance, size_t futureCount, WG
             return waitInfo.future.id;
         });
         auto timeout = timeoutNS == UINT64_MAX ? Seconds::infinity() : Seconds::fromNanoseconds(timeoutNS);
-        bool completed = protect(WebGPU::Metal::fromAPI(instance))->waitForAnyFuture(futureIDs.span(), timeout, [&](size_t index) {
+        bool completed = protect(WebGPU::CAPI::fromAPI(instance).events())->waitAny(futureIDs.span(), timeout, [&](size_t index) {
             waitInfos[index].completed = true;
         });
         return completed ? WGPUWaitStatus_Success : WGPUWaitStatus_TimedOut;
