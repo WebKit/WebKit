@@ -783,6 +783,20 @@ void WebInspectorUIProxy::elementSelectionChanged(bool active)
 void WebInspectorUIProxy::timelineRecordingChanged(bool active)
 {
     m_isProfilingPage = active;
+
+    if (RefPtr inspectedPage = m_inspectedPage)
+        inspectedPage->inspectorController().timelineRecordingChanged(active);
+}
+
+void WebInspectorUIProxy::takeTimelineScreenshot(const WebCore::IntRect& rect, double timestamp, CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr inspectedPage = m_inspectedPage;
+    if (!inspectedPage) {
+        completionHandler();
+        return;
+    }
+
+    inspectedPage->inspectorController().takeTimelineScreenshot(rect, timestamp, WTF::move(completionHandler));
 }
 
 void WebInspectorUIProxy::showPaintRectsChanged(bool show)

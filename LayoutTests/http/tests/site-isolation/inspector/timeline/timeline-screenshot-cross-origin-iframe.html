@@ -1,0 +1,152 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+    height: 2000px;
+}
+#box, iframe {
+    position: absolute;
+    top: 100px;
+    width: 50px;
+    height: 50px;
+    border: none;
+}
+#box {
+    left: 0;
+    background-color: rgb(0, 0, 255);
+}
+iframe {
+    left: 50px;
+}
+#ticker {
+    position: absolute;
+    top: 300px;
+    left: 0;
+    height: 10px;
+    background-color: black;
+}
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let isRendering = false;
+
+// Changes the page in every frame, so that the main frame's process renders, and takes a screenshot, in every frame.
+function startRendering() {
+    isRendering = true;
+    let frameCount = 0;
+    function update() {
+        if (!isRendering)
+            return;
+        document.getElementById("ticker").style.width = `${10 + (++frameCount % 10)}px`;
+        requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+}
+
+function stopRendering() {
+    isRendering = false;
+}
+
+function test() {
+    // The iframe's process can paint after the main frame's load event, so look at up to this many screenshots.
+    const maximumScreenshotCount = 300;
+
+    function colorName([r, g, b]) {
+        const near = (value, expected) => Math.abs(value - expected) <= 10;
+        if (near(r, 0) && near(g, 0) && near(b, 255))
+            return "blue";
+        if (near(r, 0) && near(g, 128) && near(b, 0))
+            return "green";
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // The box and the iframe are side by side at y = 100 in the document. The page is scrolled to y = 100, so
+    // they are at y = 0 in the screenshot. Returns the colors at the center of the box and of the iframe.
+    async function colorsInScreenshot(dataURL, scale) {
+        let bytes = Uint8Array.from(atob(dataURL.substring(dataURL.indexOf(",") + 1)), (c) => c.charCodeAt(0));
+        let bitmap = await createImageBitmap(new Blob([bytes], {type: "image/png"}));
+        let canvas = document.createElement("canvas");
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        let context = canvas.getContext("2d");
+        context.drawImage(bitmap, 0, 0);
+
+        let colorAt = (x, y) => colorName(context.getImageData(Math.floor(x * scale), Math.floor(y * scale), 1, 1).data);
+        return {box: colorAt(25, 25), iframe: colorAt(75, 25)};
+    }
+
+    function awaitCapturingState(state) {
+        return new Promise((resolve) => {
+            let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                if (WI.timelineManager.capturingState !== state)
+                    return;
+                WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+                resolve(event.data);
+            });
+        });
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.ScreenshotCrossOriginIFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.ScreenshotCrossOriginIFrame.IFrameContent",
+        description: "Timeline screenshots should include the content of a cross-origin iframe.",
+        async test() {
+            let scale = await InspectorTest.evaluateInPage("window.devicePixelRatio");
+
+            WI.timelineManager.enabledTimelineTypes = [WI.TimelineRecord.Type.Screenshots];
+
+            let capturingStartedPromise = awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            WI.timelineManager.startCapturing();
+            let {startTime} = await capturingStartedPromise;
+
+            let screenshots = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Screenshots);
+            let colors = null;
+            await new Promise((resolve) => {
+                let checkedCount = 0;
+                let checks = Promise.resolve();
+                let listener = screenshots.addEventListener(WI.Timeline.Event.RecordAdded, (event) => {
+                    let {record} = event.data;
+                    checks = checks.then(async () => {
+                        if (checkedCount >= maximumScreenshotCount || colors?.iframe === "green")
+                            return;
+                        colors = await colorsInScreenshot(record.imageData, scale);
+                        if (++checkedCount >= maximumScreenshotCount || colors.iframe === "green") {
+                            screenshots.removeEventListener(WI.Timeline.Event.RecordAdded, listener);
+                            resolve();
+                        }
+                    });
+                });
+                InspectorTest.evaluateInPage("startRendering()");
+            });
+
+            let capturingStoppedPromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            WI.timelineManager.stopCapturing();
+            let {endTime} = await capturingStoppedPromise;
+            await InspectorTest.evaluateInPage("stopRendering()");
+
+            InspectorTest.expectEqual(colors.box, "blue", "Screenshot should contain the main frame's box.");
+            InspectorTest.expectEqual(colors.iframe, "green", "Screenshot should contain the cross-origin iframe's content.");
+            InspectorTest.expectTrue(screenshots.records.every((record) => record.imageData.startsWith("data:image/png;base64,")), "Every screenshot should contain image data.");
+            InspectorTest.expectTrue(screenshots.records.every((record) => record.startTime >= startTime && record.startTime <= endTime), "Every screenshot should have a time within the recording.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+window.addEventListener("load", () => {
+    window.scrollTo(0, 100);
+    runTest();
+});
+</script>
+</head>
+<body>
+<div id="box"></div>
+<iframe src="http://localhost:8000/site-isolation/inspector/timeline/resources/screenshot-frame.html"></iframe>
+<div id="ticker"></div>
+</body>
+</html>

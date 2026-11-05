@@ -31,6 +31,7 @@
 #include "DebuggerPauseCoordinator.h"
 #include "FrameInspectorTarget.h"
 #include "FrameInspectorTargetProxy.h"
+#include "ImageOptions.h"
 #include "InspectorBrowserAgent.h"
 #include "InspectorStorageAgent.h"
 #include "PageInspectorTarget.h"
@@ -49,9 +50,12 @@
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/InspectorTargetAgent.h>
+#include <WebCore/ImageUtilities.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -91,7 +95,10 @@ WebPageInspectorController::WebPageInspectorController(WebPageProxy& inspectedPa
     m_agents.append(WTF::move(targetAgent));
 }
 
-WebPageInspectorController::~WebPageInspectorController() = default;
+WebPageInspectorController::~WebPageInspectorController()
+{
+    finishTimelineScreenshot();
+}
 
 void WebPageInspectorController::init()
 {
@@ -102,6 +109,7 @@ void WebPageInspectorController::init()
 void WebPageInspectorController::pageClosed()
 {
     m_debuggerPauseCoordinator = nullptr;
+    finishTimelineScreenshot();
     disconnectAllFrontends();
 
     m_agents.discardValues();
@@ -653,6 +661,99 @@ void WebPageInspectorController::setShowPaintRects(bool show)
 {
     if (m_pageAgent)
         std::ignore = m_pageAgent->setShowPaintRects(show);
+}
+
+void WebPageInspectorController::timelineRecordingChanged(bool active)
+{
+    m_isTimelineRecording = active;
+
+    // A screenshot that is still being taken belongs to a recording that has ended.
+    finishTimelineScreenshot();
+}
+
+// The page target asks for this when it cannot paint every frame itself. WebPageProxy::takeSnapshot() draws the
+// frames of every process (remote snapshotting), and only the UI process receives the image. So the record goes
+// to the frontend from here, on behalf of the page target, with the time that the page target sent.
+void WebPageInspectorController::takeTimelineScreenshot(const WebCore::IntRect& requestedRect, double timestamp, CompletionHandler<void()>&& completionHandler)
+{
+    // The page target asks only while it records, and waits for each screenshot before it asks for the next one.
+    // Do not let a WebContent process start more.
+    if (m_timelineScreenshotCompletionHandler || !m_isTimelineRecording || !hasFrontends()) {
+        completionHandler();
+        return;
+    }
+
+#if PLATFORM(COCOA)
+    Ref inspectedPage = m_inspectedPage;
+
+    // The rect is in the main frame's content coordinates. Do not let it be larger than what the view can show,
+    // which is more than the view's size only when the page or the view is scaled down.
+    double contentScale = inspectedPage->pageScaleFactor() * inspectedPage->viewScaleFactor();
+    contentScale = contentScale > 0 ? std::clamp(contentScale, 0.1, 1.0) : 1;
+    auto rect = requestedRect;
+    rect.setSize(rect.size().shrunkTo(expandedIntSize(WebCore::FloatSize { inspectedPage->viewSize() }.scaled(1 / contentScale))));
+
+    m_timelineScreenshotCompletionHandler = WTF::move(completionHandler);
+    auto screenshotID = ++m_timelineScreenshotID;
+
+    // A process that hosts a frame may never finish its part. Give up after a while, so that later screenshots still happen.
+    RunLoop::mainSingleton().dispatchAfter(3_s, [weakPage = WeakPtr { inspectedPage }, screenshotID] {
+        if (RefPtr page = weakPage; page && page->inspectorController().m_timelineScreenshotID == screenshotID)
+            page->inspectorController().finishTimelineScreenshot();
+    });
+
+    inspectedPage->takeSnapshot(rect, { }, { }, [weakPage = WeakPtr { inspectedPage }, screenshotID, timestamp](CGImageRef image) {
+        RefPtr page = weakPage;
+        if (!page)
+            return;
+
+        // Ignore a screenshot that timed out, or whose recording has ended.
+        auto& controller = page->inspectorController();
+        if (controller.m_timelineScreenshotID != screenshotID || !controller.m_timelineScreenshotCompletionHandler)
+            return;
+
+        if (image)
+            controller.sendTimelineScreenshotRecord(timestamp, encodeDataURL(image, "image/png"_s));
+        controller.finishTimelineScreenshot();
+    });
+#else
+    UNUSED_PARAM(requestedRect);
+    UNUSED_PARAM(timestamp);
+    completionHandler();
+#endif
+}
+
+void WebPageInspectorController::finishTimelineScreenshot()
+{
+    if (auto completionHandler = std::exchange(m_timelineScreenshotCompletionHandler, { }))
+        completionHandler();
+}
+
+void WebPageInspectorController::sendTimelineScreenshotRecord(double timestamp, const String& imageData)
+{
+    // pageClosed() discards the target agent.
+    if (!m_targetAgent || !hasFrontends())
+        return;
+
+    // The same record as the page target sends for its own screenshots (see TimelineRecordFactory::createScreenshotData()).
+    auto data = JSON::Object::create();
+    data->setString("imageData"_s, imageData);
+
+    auto record = JSON::Object::create();
+    record->setString("type"_s, Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::Timeline::EventType::Screenshot));
+    record->setDouble("startTime"_s, timestamp);
+    record->setObject("data"_s, WTF::move(data));
+
+    auto params = JSON::Object::create();
+    params->setObject("record"_s, WTF::move(record));
+
+    auto message = JSON::Object::create();
+    message->setString("method"_s, "Timeline.eventRecorded"_s);
+    message->setObject("params"_s, WTF::move(params));
+
+    // Resolve the page target now: the main frame may have moved to another process since the page target asked.
+    // Under Site Isolation all page and frame targets share one clock, so the time still fits.
+    sendMessageToInspectorFrontend(PageInspectorTarget::toTargetID(protect(m_inspectedPage)->webPageIDInMainFrameProcess()), message->toJSONString());
 }
 
 void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* agent)
