@@ -187,6 +187,17 @@ void RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection&
     }
 }
 
+#if PLATFORM(COCOA)
+std::optional<FloatRect> RemoteMediaPlayerManagerProxy::hostedVideoLayerBoundsForTesting(MediaPlayerClientIdentifier clientIdentifier) const
+{
+    for (Ref proxy : m_proxies.values()) {
+        if (auto bounds = proxy->hostedVideoLayerBoundsForTesting(clientIdentifier))
+            return bounds;
+    }
+    return std::nullopt;
+}
+#endif
+
 RefPtr<MediaPlayer> RemoteMediaPlayerManagerProxy::mediaPlayer(std::optional<MediaPlayerIdentifier> identifier)
 {
     ASSERT(RunLoop::isMain());

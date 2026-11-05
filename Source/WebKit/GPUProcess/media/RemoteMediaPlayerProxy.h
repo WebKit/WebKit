@@ -125,6 +125,10 @@ public:
     WebCore::MediaPlayerIdentifier identifier() const { return m_id; }
     void invalidate();
 
+#if PLATFORM(COCOA)
+    std::optional<WebCore::FloatRect> hostedVideoLayerBoundsForTesting(WebCore::MediaPlayerClientIdentifier) const;
+#endif
+
     // Ensure that all previously queued messages to the content process have completed.
     Ref<WebCore::MediaPromise> commitAllTransactions();
 

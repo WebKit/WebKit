@@ -56,6 +56,13 @@ void MediaStrategy::isActiveNowPlayingSessionInGPUProcessForTesting(MediaSession
     completion(false);
 }
 
+#if ENABLE(VIDEO)
+void MediaStrategy::hostedVideoLayerBoundsInGPUProcessForTesting(HTMLMediaElementIdentifier, CompletionHandler<void(std::optional<FloatRect>)>&& completion)
+{
+    completion(std::nullopt);
+}
+#endif
+
 void MediaStrategy::isRemoteCommandTargetSessionInGPUProcessForTesting(MediaSessionIdentifier, CompletionHandler<void(bool)>&& completion)
 {
     completion(false);

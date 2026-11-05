@@ -58,6 +58,13 @@ void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
     protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::FirstVideoFrameAvailable(), m_id);
 }
 
+std::optional<WebCore::FloatRect> RemoteMediaPlayerProxy::hostedVideoLayerBoundsForTesting(WebCore::MediaPlayerClientIdentifier clientIdentifier) const
+{
+    if (clientIdentifier != m_clientIdentifier)
+        return std::nullopt;
+    return m_layerHostingContextManager->rootLayerBoundsForTesting();
+}
+
 void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
 {
     ALWAYS_LOG(LOGIDENTIFIER);

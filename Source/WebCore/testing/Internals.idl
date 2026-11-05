@@ -1464,6 +1464,7 @@ enum LayerType {
     [Conditional=VIDEO] boolean elementIsActiveNowPlayingSession(HTMLMediaElement element);
     [Conditional=VIDEO] Promise<boolean> elementIsActiveNowPlayingSessionInGPUProcess(HTMLMediaElement element);
     [Conditional=VIDEO] Promise<boolean> elementIsRemoteCommandTargetInGPUProcess(HTMLMediaElement element);
+    [Conditional=VIDEO] Promise<DOMRect> hostedVideoLayerBoundsInGPUProcess(HTMLMediaElement element);
     [Conditional=VIDEO] attribute double nowPlayingUpdateInterval;
 
     [Conditional=VIDEO] HTMLMediaElement? bestMediaElementForRemoteControls(PlaybackControlsPurpose purpose);

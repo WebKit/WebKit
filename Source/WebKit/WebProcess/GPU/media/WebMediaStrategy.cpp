@@ -147,6 +147,24 @@ std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingMa
     return WebCore::MediaStrategy::createNowPlayingManager();
 }
 
+#if ENABLE(VIDEO)
+void WebMediaStrategy::hostedVideoLayerBoundsInGPUProcessForTesting(WebCore::HTMLMediaElementIdentifier identifier, CompletionHandler<void(std::optional<WebCore::FloatRect>)>&& completion)
+{
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+    assertIsMainRunLoop();
+    if (m_useGPUProcess) {
+        if (RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection()) {
+            gpuProcessConnection->connection().sendWithAsyncReply(Messages::GPUConnectionToWebProcess::HostedVideoLayerBoundsForTesting(identifier), WTF::move(completion), 0);
+            return;
+        }
+    }
+#else
+    UNUSED_PARAM(identifier);
+#endif
+    completion(std::nullopt);
+}
+#endif
+
 void WebMediaStrategy::isActiveNowPlayingSessionInGPUProcessForTesting(WebCore::MediaSessionIdentifier identifier, CompletionHandler<void(bool)>&& completion)
 {
 #if ENABLE(GPU_PROCESS)

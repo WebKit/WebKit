@@ -560,3 +560,6 @@ fast/repaint/layer-repaint-with-layout-delta-2.html [ Skip ]
 # rdar://183069235 ([macOS 27 wk1] fast/dom/HTMLElement/attr-dir-invalid.html: the platform/mac [ GoldenGate ] entry overrides fast [ Skip ] on wk1)
 # Keep it skipped on wk1 (OS skips all of fast/ on WebKit1); the entry is for WebKit2.
 [ GoldenGate ] fast/dom/HTMLElement/attr-dir-invalid.html [ Skip ]
+
+# Requires the GPU process to host the video layer.
+media/media-source/media-source-real-video-layer-size-after-leaving-viewport.html [ Skip ]

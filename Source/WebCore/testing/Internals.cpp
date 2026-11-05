@@ -6321,6 +6321,17 @@ void Internals::elementIsActiveNowPlayingSessionInGPUProcess(HTMLMediaElement& e
     });
 }
 
+void Internals::hostedVideoLayerBoundsInGPUProcess(HTMLMediaElement& element, DOMPromiseDeferred<IDLInterface<DOMRect>>&& promise)
+{
+    platformStrategies()->mediaStrategy()->hostedVideoLayerBoundsInGPUProcessForTesting(element.identifier(), [promise = WTF::move(promise)](std::optional<FloatRect> bounds) mutable {
+        if (!bounds) {
+            promise.reject(ExceptionCode::NotFoundError);
+            return;
+        }
+        promise.resolve(DOMRect::create(*bounds));
+    });
+}
+
 void Internals::elementIsRemoteCommandTargetInGPUProcess(HTMLMediaElement& element, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     platformStrategies()->mediaStrategy()->isRemoteCommandTargetSessionInGPUProcessForTesting(protect(element.mediaSession())->mediaSessionIdentifier(), [promise = WTF::move(promise)](bool result) mutable {

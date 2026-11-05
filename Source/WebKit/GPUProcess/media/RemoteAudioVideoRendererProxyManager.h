@@ -89,6 +89,10 @@ public:
 
     RefPtr<WebCore::AudioVideoRenderer> rendererFor(std::optional<WebCore::MediaPlayerIdentifier>) const;
 
+#if PLATFORM(COCOA)
+    std::optional<WebCore::FloatRect> hostedVideoLayerBoundsForTesting(WebCore::HTMLMediaElementIdentifier) const;
+#endif
+
 private:
     explicit RemoteAudioVideoRendererProxyManager(GPUConnectionToWebProcess&);
 

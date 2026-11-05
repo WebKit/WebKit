@@ -5035,3 +5035,6 @@ webkit.org/b/320901 webgl/1.0.x/conformance/textures/misc/tex-image-svg-image-no
 webkit.org/b/320901 webgl/2.0.y/conformance/glsl/misc/shader-with-double-underscore.html [ Failure Crash ]
 webkit.org/b/320901 webgl/2.0.y/conformance/textures/misc/tex-image-svg-image-no-natural-width-and-height.html [ Failure Crash ]
 webkit.org/b/320901 webgl/2.0.y/conformance2/rendering/blitframebuffer-test.html [ Failure Crash ]
+
+# Requires the GPU process to host the video layer.
+media/media-source/media-source-real-video-layer-size-after-leaving-viewport.html [ Skip ]

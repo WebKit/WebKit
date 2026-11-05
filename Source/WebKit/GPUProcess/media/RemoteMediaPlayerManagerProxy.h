@@ -82,6 +82,10 @@ public:
 
     RefPtr<WebCore::MediaPlayer> mediaPlayer(std::optional<WebCore::MediaPlayerIdentifier>);
 
+#if PLATFORM(COCOA)
+    std::optional<WebCore::FloatRect> hostedVideoLayerBoundsForTesting(WebCore::MediaPlayerClientIdentifier) const;
+#endif
+
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 private:
     explicit RemoteMediaPlayerManagerProxy(GPUConnectionToWebProcess&);

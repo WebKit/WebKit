@@ -944,6 +944,23 @@ void GPUConnectionToWebProcess::postNowPlayingRemoteControlCommandForTesting(Web
     gpuProcess().nowPlayingManager().didReceiveRemoteControlCommand(type, argument);
 }
 
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+void GPUConnectionToWebProcess::hostedVideoLayerBoundsForTesting(WebCore::MediaPlayerClientIdentifier mediaElementIdentifier, CompletionHandler<void(std::optional<WebCore::FloatRect>)>&& completionHandler)
+{
+    if (auto bounds = protect(remoteMediaPlayerManagerProxy())->hostedVideoLayerBoundsForTesting(mediaElementIdentifier)) {
+        completionHandler(WTF::move(bounds));
+        return;
+    }
+
+    if (RefPtr rendererManager = m_remoteAudioVideoRendererProxyManager) {
+        completionHandler(rendererManager->hostedVideoLayerBoundsForTesting(mediaElementIdentifier));
+        return;
+    }
+
+    completionHandler(std::nullopt);
+}
+#endif
+
 void GPUConnectionToWebProcess::updateSupportedRemoteCommands()
 {
     if (!m_isNowPlayingManagerClient || !m_remoteRemoteCommandListener)

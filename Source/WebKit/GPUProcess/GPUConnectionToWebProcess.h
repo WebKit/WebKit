@@ -329,6 +329,9 @@ private:
     void isActiveNowPlayingSessionForTesting(WebCore::MediaSessionIdentifier, CompletionHandler<void(bool)>&&);
     void isRemoteCommandTargetSessionForTesting(WebCore::MediaSessionIdentifier, CompletionHandler<void(bool)>&&);
     void postNowPlayingRemoteControlCommandForTesting(WebCore::PlatformMediaSessionRemoteControlCommandType, const WebCore::PlatformMediaSessionRemoteCommandArgument&);
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    void hostedVideoLayerBoundsForTesting(WebCore::MediaPlayerClientIdentifier, CompletionHandler<void(std::optional<WebCore::FloatRect>)>&&);
+#endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     void updateSampleBufferDisplayLayerBoundsAndPosition(WebKit::SampleBufferDisplayLayerIdentifier, WebCore::FloatRect, std::optional<WTF::MachSendRightAnnotated>&&);

@@ -55,6 +55,9 @@ private:
     void isActiveNowPlayingSessionInGPUProcessForTesting(WebCore::MediaSessionIdentifier, CompletionHandler<void(bool)>&&) final;
     void isRemoteCommandTargetSessionInGPUProcessForTesting(WebCore::MediaSessionIdentifier, CompletionHandler<void(bool)>&&) final;
     bool postNowPlayingRemoteControlCommandToGPUProcessForTesting(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&) final;
+#if ENABLE(VIDEO)
+    void hostedVideoLayerBoundsInGPUProcessForTesting(WebCore::HTMLMediaElementIdentifier, CompletionHandler<void(std::optional<WebCore::FloatRect>)>&&) final;
+#endif
     bool hasThreadSafeMediaSourceSupport() const final;
 #if ENABLE(MEDIA_SOURCE)
     void enableMockMediaSource() final;

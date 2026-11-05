@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
 #include <WebCore/MediaRecorderPrivateWriter.h>
 #endif
+#include <WebCore/FloatRect.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -67,6 +68,9 @@ public:
     virtual void isActiveNowPlayingSessionInGPUProcessForTesting(MediaSessionIdentifier, CompletionHandler<void(bool)>&&);
     virtual void isRemoteCommandTargetSessionInGPUProcessForTesting(MediaSessionIdentifier, CompletionHandler<void(bool)>&&);
     virtual bool postNowPlayingRemoteControlCommandToGPUProcessForTesting(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&);
+#if ENABLE(VIDEO)
+    virtual void hostedVideoLayerBoundsInGPUProcessForTesting(HTMLMediaElementIdentifier, CompletionHandler<void(std::optional<FloatRect>)>&&);
+#endif
     void resetMediaEngines();
     virtual bool hasThreadSafeMediaSourceSupport() const;
 #if ENABLE(MEDIA_SOURCE)

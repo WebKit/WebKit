@@ -3723,6 +3723,7 @@ media/track/in-band/track-in-band-kate-ogg-language.html [ Skip ]
 media/track/in-band/track-in-band-kate-ogg-track-order.html [ Skip ]
 
 # Skip tests that require the GPU process.
+media/media-source/media-source-real-video-layer-size-after-leaving-viewport.html [ Skip ]
 webkit.org/b/279434 fast/canvas/image-buffer-resource-limits.html [ Skip ]
 webkit.org/b/279434 webkit.org/b/267218 webgl/webgl-worker.html [ Skip ]
 webkit.org/b/279434 webgl/webgl-fail-platform-context-creation-no-crash.html [ Skip ]

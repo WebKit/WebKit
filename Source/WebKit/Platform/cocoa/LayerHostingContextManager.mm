@@ -89,8 +89,12 @@ std::optional<WebCore::HostingContext> LayerHostingContextManager::createHosting
         hadLayer = true;
     }
 
-    if (m_inlineLayerHostingContext)
+    if (m_inlineLayerHostingContext) {
+        bool rootLayerChanged = m_inlineLayerHostingContext->rootLayer() != layer.get();
         m_inlineLayerHostingContext->setRootLayer(layer.get());
+        if (rootLayerChanged)
+            setVideoLayerSizeIfPossible();
+    }
 
     if (!hadLayer)
         return std::nullopt;
@@ -131,6 +135,18 @@ void LayerHostingContextManager::setVideoLayerSizeFenced(const WebCore::FloatSiz
 #if USE(EXTENSIONKIT)
     [hostingUpdateCoordinator commit];
 #endif
+}
+
+std::optional<WebCore::FloatRect> LayerHostingContextManager::rootLayerBoundsForTesting() const
+{
+    if (!m_inlineLayerHostingContext)
+        return std::nullopt;
+
+    RetainPtr rootLayer = m_inlineLayerHostingContext->rootLayer();
+    if (!rootLayer || ![rootLayer sublayers].count)
+        return std::nullopt;
+
+    return WebCore::FloatRect { [rootLayer bounds] };
 }
 
 void LayerHostingContextManager::setVideoLayerSizeIfPossible()

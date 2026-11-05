@@ -1,0 +1,112 @@
+<!-- webkit-test-runner [ allowTestOnlyIPC=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-video-layer-size-after-leaving-viewport</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <style>
+        video { width: 400px; height: 400px; }
+        #spacer { height: 4000px; }
+    </style>
+    <script>
+    var source;
+    var sourceBuffer;
+    var boundsBefore;
+    var boundsAfter;
+
+    async function hostedVideoLayerBounds() {
+        try {
+            return await internals.hostedVideoLayerBoundsInGPUProcess(video);
+        } catch {
+            return null;
+        }
+    }
+
+    async function waitUntil(predicate, description) {
+        for (let attempt = 0; attempt < 100; ++attempt) {
+            if (await predicate())
+                return;
+            await new Promise(resolve => setTimeout(resolve, 50));
+        }
+        throw new Error(`Timed out waiting for ${description}`);
+    }
+
+    async function waitForStableHostedVideoLayerBounds() {
+        let previous = null;
+        let result = null;
+        await waitUntil(async () => {
+            const current = await hostedVideoLayerBounds();
+            const isStable = current && current.width && current.height && previous && current.width == previous.width && current.height == previous.height;
+            previous = current;
+            if (isStable)
+                result = current;
+            return isStable;
+        }, 'the hosted video layer bounds to settle');
+        return result;
+    }
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!window.internals) {
+            failTest('This test requires internals');
+            return;
+        }
+
+        if (!MediaSource.isTypeSupported(MP4.VIDEO_TYPE)) {
+            failTest(`${MP4.VIDEO_TYPE} is not supported`);
+            return;
+        }
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(MP4.VIDEO_TYPE);
+        sourceBuffer.appendBuffer(MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }]
+        }));
+        await waitFor(sourceBuffer, 'updateend');
+
+        const samples = [];
+        for (let i = 0; i < 30; ++i)
+            samples.push({ duration: 1000, compositionTimeOffset: 0, isSync: !i });
+        sourceBuffer.appendBuffer(MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples }]
+        }));
+        await waitFor(sourceBuffer, 'updateend');
+        source.endOfStream();
+
+        video.muted = true;
+        run('video.play()');
+        await waitFor(video, 'playing');
+
+        boundsBefore = await waitForStableHostedVideoLayerBounds();
+        testExpected('boundsBefore.width > 0 && boundsBefore.height > 0', true);
+
+        run('window.scrollTo(0, 3000)');
+        await waitUntil(() => !internals.mediaPlayerRenderingCanBeAccelerated(video), 'accelerated rendering to stop');
+        await waitUntil(async () => !(await hostedVideoLayerBounds()), 'the hosted video layer to be removed');
+        consoleWrite('The hosted video layer was removed while out of the viewport.');
+
+        run('window.scrollTo(0, 0)');
+        await waitUntil(() => internals.mediaPlayerRenderingCanBeAccelerated(video), 'accelerated rendering to resume');
+        boundsAfter = await waitForStableHostedVideoLayerBounds();
+
+        testExpected('boundsAfter.width == boundsBefore.width', true);
+        testExpected('boundsAfter.height == boundsBefore.height', true);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+    <div id="spacer"></div>
+</body>
+</html>
