@@ -1731,7 +1731,7 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(const RenderLayer*
         parentGraphicsLayerRect = snappedGraphicsLayer(clippingBoxOffset, clippingBox.size(), renderer()).m_snappedRect;
     }
 
-    if (compositedAncestor->hasCompositedScrollableOverflow()) {
+    if (ancestorBacking->parentsDescendantInScrolledContents(m_owningLayer)) {
         auto* scrollableArea = compositedAncestor->scrollableArea();
         ASSERT(scrollableArea);
 
@@ -4329,6 +4329,11 @@ GraphicsLayer* RenderLayerBacking::parentForSublayers() const
         return m_scrolledContentsLayer.get();
 
     return m_childContainmentLayer ? m_childContainmentLayer.get() : m_graphicsLayer.get();
+}
+
+bool RenderLayerBacking::parentsDescendantInScrolledContents(const RenderLayer&) const
+{
+    return m_owningLayer.hasCompositedScrollableOverflow();
 }
 
 GraphicsLayer* RenderLayerBacking::childForSuperlayers() const

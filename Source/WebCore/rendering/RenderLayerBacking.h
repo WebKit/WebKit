@@ -184,6 +184,8 @@ public:
     bool hasMaskLayer() const { return m_maskLayer; }
 
     NODELETE WEBCORE_EXPORT GraphicsLayer* parentForSublayers() const;
+    // Whether the composited descendant is parented in our scrolled contents, and so moves with composited scrolling.
+    bool parentsDescendantInScrolledContents(const RenderLayer& descendant) const;
     GraphicsLayer* childForSuperlayers() const;
     GraphicsLayer* childForSuperlayersExcludingViewTransitions() const;
 
