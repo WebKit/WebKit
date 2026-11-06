@@ -70,6 +70,12 @@ bool evaluateURLEnvironment(URLEnvironment environment)
 #else
         return false;
 #endif
+    case URLEnvironment::Desktop:
+#if PLATFORM(IOS_FAMILY)
+        return PAL::currentUserInterfaceIdiomIsDesktop();
+#else
+        return false;
+#endif
     case URLEnvironment::TubularApp:
 #if PLATFORM(IOS_FAMILY)
         return WTF::IOSApplication::isTubular();

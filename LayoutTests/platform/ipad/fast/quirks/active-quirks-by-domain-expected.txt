@@ -112,6 +112,7 @@ https://www.dictionary.com/
         script: (function() { let userAgent = navigator.userAgent; Object.defineProperty(navigator, 'userAgent', { get: () => { return userAgent + ' Chrome/130.0.0.0 Android/15.0'; }, configurable: true }); })();
         secondaryURL: [*://player.anyclip.com/*lre.js, *://player.anyclip.com/*lre.js?*]
 https://www.disneyplus.com/
+    NeedsZeroMaxTouchPointsQuirk
     ShouldHideCoarsePointerCharacteristicsQuirk
 https://englishtest.duolingo.com/
     NeedsChromeCompatibilityUserAgentQuirk

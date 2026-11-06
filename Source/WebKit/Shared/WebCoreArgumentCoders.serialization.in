@@ -7742,6 +7742,7 @@ webkit_platform_headers: <WebCore/QuirkMatchPattern.h> <WebCore/QuirksData.h> <W
 
 [WebKitPlatform] enum class WebCore::URLEnvironment : uint8_t {
     SmallScreen,
+    Desktop,
     TubularApp,
     LensApp,
     SafariWebApp,

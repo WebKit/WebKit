@@ -364,6 +364,13 @@
             "behaviors": [{ "id": "NeedsZeroMaxTouchPointsQuirk" }]
         },
         {
+            "bugs": ["rdar://188849586"],
+            "matches": ["*://*.disneyplus.com/*"],
+            "available": "iOS",
+            "environment": "Desktop",
+            "behaviors": [{ "id": "NeedsZeroMaxTouchPointsQuirk" }]
+        },
+        {
             "bugs": ["rdar://190675819"],
             "matches": ["*://englishtest.duolingo.com/*", "*://englishtest.duolingo.cn/*"],
             "behaviors": [{ "id": "NeedsChromeCompatibilityUserAgentQuirk", "chromeCompatibilityVersion": "157" }]

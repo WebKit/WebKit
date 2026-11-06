@@ -49,6 +49,7 @@ namespace WebCore {
 
 enum class URLEnvironment : uint8_t {
     SmallScreen,
+    Desktop,
     TubularApp,
     LensApp,
     SafariWebApp,
