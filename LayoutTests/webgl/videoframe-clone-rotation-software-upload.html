@@ -1,0 +1,149 @@
+<!-- webkit-test-runner [ AllowTestOnlyIPC=true WebCodecsVideoFrameRotationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+"use strict";
+
+// The decoded frame lives in the GPU process. Cloning it with a new rotation must not make the
+// WebGL software upload use the rotation of the decoded frame.
+
+const width = 128;
+const height = 64;
+
+// Quadrant colours of the source frame.
+const red = [255, 0, 0];
+const green = [0, 255, 0];
+const blue = [0, 0, 255];
+const white = [255, 255, 255];
+
+function drawSource()
+{
+    const canvas = new OffscreenCanvas(width, height);
+    const context = canvas.getContext("2d");
+    const quadrants = [[0, 0, red], [width / 2, 0, green], [0, height / 2, blue], [width / 2, height / 2, white]];
+    for (const [x, y, color] of quadrants) {
+        context.fillStyle = `rgb(${color.join(",")})`;
+        context.fillRect(x, y, width / 2, height / 2);
+    }
+    return canvas;
+}
+
+async function decodedFrame()
+{
+    const config = { codec: "avc1.42001f", width, height, avc: { format: "annexb" } };
+    const support = await VideoEncoder.isConfigSupported(config);
+    assert_true(support.supported, "encoder config is supported");
+
+    let chunk;
+    let decoderConfig;
+    const encoder = new VideoEncoder({
+        output: (encodedChunk, metadata) => {
+            chunk = encodedChunk;
+            if (metadata?.decoderConfig)
+                decoderConfig = metadata.decoderConfig;
+        },
+        error: e => assert_unreached(e.message)
+    });
+    encoder.configure(config);
+    const sourceFrame = new VideoFrame(drawSource(), { timestamp: 0 });
+    encoder.encode(sourceFrame, { keyFrame: true });
+    sourceFrame.close();
+    await encoder.flush();
+    encoder.close();
+
+    let frame;
+    const decoder = new VideoDecoder({
+        output: decoded => frame = decoded,
+        error: e => assert_unreached(e.message)
+    });
+    decoder.configure(decoderConfig ?? { codec: config.codec });
+    decoder.decode(chunk);
+    await decoder.flush();
+    decoder.close();
+    assert_true(!!frame, "decoder output a frame");
+    return frame;
+}
+
+// Uploads the frame into a texture with the forced software path and returns the colour at the
+// centre of each quadrant of the texture, in [top-left, top-right, bottom-left, bottom-right] order.
+function uploadAndReadQuadrants(frame, test)
+{
+    const gl = document.createElement("canvas").getContext("webgl2");
+    assert_true(!!gl, "WebGL 2 context");
+    test.add_cleanup(() => gl.getExtension("WEBGL_lose_context")?.loseContext());
+
+    if (window.internals)
+        internals.setWebGLVideoUploadPath(gl, "software");
+
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, frame);
+    assert_equals(gl.getError(), gl.NO_ERROR, "texImage2D error");
+
+    if (window.internals)
+        assert_equals(internals.webglLastVideoUpload(gl)?.path, "software", "upload path");
+
+    const framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    assert_equals(gl.checkFramebufferStatus(gl.FRAMEBUFFER), gl.FRAMEBUFFER_COMPLETE, "framebuffer status");
+
+    const textureWidth = frame.displayWidth;
+    const textureHeight = frame.displayHeight;
+    const pixels = new Uint8Array(textureWidth * textureHeight * 4);
+    gl.readPixels(0, 0, textureWidth, textureHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+    assert_equals(gl.getError(), gl.NO_ERROR, "readPixels error");
+
+    // Without UNPACK_FLIP_Y, row 0 of the texture is the top of the frame.
+    const colorAt = (x, y) => {
+        const offset = (y * textureWidth + x) * 4;
+        return [pixels[offset], pixels[offset + 1], pixels[offset + 2]];
+    };
+    const left = Math.floor(textureWidth / 4);
+    const right = Math.floor(3 * textureWidth / 4);
+    const top = Math.floor(textureHeight / 4);
+    const bottom = Math.floor(3 * textureHeight / 4);
+    return [colorAt(left, top), colorAt(right, top), colorAt(left, bottom), colorAt(right, bottom)];
+}
+
+function assertQuadrants(actual, expected)
+{
+    const names = ["top-left", "top-right", "bottom-left", "bottom-right"];
+    for (let i = 0; i < names.length; ++i) {
+        for (let channel = 0; channel < 3; ++channel)
+            assert_approx_equals(actual[i][channel], expected[i][channel], 40, `${names[i]} quadrant, channel ${channel}: got ${actual[i]}, expected ${expected[i]}`);
+    }
+}
+
+const cases = [
+    { rotation: 0, flip: false, size: [width, height], quadrants: [red, green, blue, white] },
+    { rotation: 90, flip: false, size: [height, width], quadrants: [blue, red, white, green] },
+    { rotation: 180, flip: false, size: [width, height], quadrants: [white, blue, green, red] },
+    { rotation: 270, flip: false, size: [height, width], quadrants: [green, white, red, blue] },
+    { rotation: 90, flip: true, size: [height, width], quadrants: [red, blue, green, white] },
+];
+
+for (const { rotation, flip, size, quadrants } of cases) {
+    promise_test(async test => {
+        const frame = await decodedFrame();
+        test.add_cleanup(() => frame.close());
+        assert_equals(frame.rotation, 0, "decoded frame rotation");
+
+        const clone = new VideoFrame(frame, { rotation, flip });
+        test.add_cleanup(() => clone.close());
+        assert_equals(clone.rotation, rotation, "clone rotation");
+        assert_equals(clone.flip, flip, "clone flip");
+        assert_array_equals([clone.displayWidth, clone.displayHeight], size, "clone display size");
+
+        assertQuadrants(uploadAndReadQuadrants(clone, test), quadrants);
+    }, `Software WebGL upload of a decoded frame cloned with rotation ${rotation}${flip ? " and flip" : ""}`);
+}
+</script>
+</body>
+</html>
