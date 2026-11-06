@@ -206,7 +206,7 @@ class WebDriverW3CExecutor(PytestExecutor):
                       'capabilities': self.capabilities,
                       'webdriver': {'binary': self.browser.webdriver_binary},
                       'wptserve': self.server_config,
-                      'timeout_multiplier': 10,
+                      'timeout_multiplier': 1,
                       'target_platform': self.target_platform,
                       }
             with open(config_path, 'w') as f:
