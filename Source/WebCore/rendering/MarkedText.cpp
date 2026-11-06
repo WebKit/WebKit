@@ -145,12 +145,10 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
                     else {
                         // Gets the first place such that it > currentPriority.
                         auto it = std::upper_bound(markedTexts.begin(), markedTexts.end(), currentPriority, [](const auto targetMarkedTextPriority, const auto& markedText) {
-                            return targetMarkedTextPriority > markedText.priority;
+                            return targetMarkedTextPriority < markedText.priority;
                         });
 
-                        unsigned insertIndex = (it == markedTexts.end() ? 0 : std::distance(markedTexts.begin(), it) - 1);
-
-                        markedTexts.insert(insertIndex, { highlightStart, highlightEnd, MarkedText::Type::Highlight, nullptr, highlightName, currentPriority });
+                        markedTexts.insert(std::distance(markedTexts.begin(), it), { highlightStart, highlightEnd, MarkedText::Type::Highlight, nullptr, highlightName, currentPriority });
                     }
                 }
             }
