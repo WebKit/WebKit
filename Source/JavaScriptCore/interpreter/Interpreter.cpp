@@ -805,10 +805,9 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
 
 String Interpreter::stackTraceAsString(VM& vm, const Vector<StackFrame>& stackTrace)
 {
-    // FIXME: JSStringJoiner could be more efficient than StringBuilder here.
     StringBuilder builder;
     for (unsigned i = 0; i < stackTrace.size(); i++) {
-        builder.append(String(stackTrace[i].toString(vm)));
+        stackTrace[i].appendTo(vm, builder);
         if (i != stackTrace.size() - 1)
             builder.append('\n');
     }

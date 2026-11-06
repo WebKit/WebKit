@@ -100,7 +100,7 @@ public:
     SourceID sourceID() const;
     JS_EXPORT_PRIVATE String sourceURL(VM&, AllowURLOverride = AllowURLOverride::Yes) const;
     String sourceURLStripped(VM&) const;
-    String toString(VM&) const;
+    void appendTo(VM&, StringBuilder&) const;
 
     bool hasBytecodeIndex() const;
     BytecodeIndex bytecodeIndex() const;

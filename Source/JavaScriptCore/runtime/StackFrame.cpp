@@ -32,6 +32,7 @@
 #include "JSCellInlines.h"
 #include "JSFunctionInlines.h"
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 
@@ -281,18 +282,20 @@ static StringView truncateLongDataURL(StringView sourceURL)
     return sourceURL.left(length);
 }
 
-String StackFrame::toString(VM& vm) const
+void StackFrame::appendTo(VM& vm, StringBuilder& builder) const
 {
     String functionName = this->functionName(vm);
     // sourceURL points into fullSourceURL, so keep fullSourceURL around.
     String fullSourceURL = this->sourceURLStripped(vm);
     auto sourceURL = truncateLongDataURL(fullSourceURL);
 
-    if (sourceURL.isEmpty() || !hasLineAndColumnInfo())
-        return makeString(functionName, '@', sourceURL);
+    if (sourceURL.isEmpty() || !hasLineAndColumnInfo()) {
+        builder.append(functionName, '@', sourceURL);
+        return;
+    }
 
     auto lineColumn = computeLineAndColumn();
-    return makeString(functionName, '@', sourceURL, ':', lineColumn.line, ':', lineColumn.column);
+    builder.append(functionName, '@', sourceURL, ':', lineColumn.line, ':', lineColumn.column);
 }
 
 } // namespace JSC
