@@ -38,6 +38,10 @@ class Upload(object):
     ARCHIVE_UPLOAD_ENDPOINT = '/api/upload/archive'
     BUILDBOT_DETAILS = ['buildbot-master', 'builder-name', 'build-number', 'buildbot-worker']
     VERSION = 0
+    MAXIMUM_LOG_LENGTH = 8 * 1024
+    MINIMUM_LOG_LINE_LENGTH = 200
+    LOG_LINE_NOTE = ' [{:,} more bytes]'
+    LOG_LEFT_OUT_NOTE = '[{:,} bytes left out]'
 
     class Expectations:
         # These are ordered by priority, meaning that a test which both crashes and has
@@ -171,6 +175,53 @@ class Upload(object):
         optional_data = dict(expected=expected, actual=actual, log=log)
         result.update({key: value for key, value in optional_data.items() if value is not None})
         return result
+
+    @classmethod
+    def truncate_log(cls, log):
+        encoded = log.encode('utf-8', 'replace')
+        if len(encoded) <= cls.MAXIMUM_LOG_LENGTH:
+            return encoded.decode('utf-8')
+
+        lines = encoded.split(b'\n')
+        kept = cls.truncate_log_lines(lines)
+        truncated = b'\n'.join(kept)
+        if len(truncated) > cls.MAXIMUM_LOG_LENGTH:
+            truncated = b'\n'.join(cls.keep_log_ends(lines, kept))
+        return truncated.decode('utf-8')
+
+    @classmethod
+    def truncate_log_lines(cls, lines):
+        room = cls.MAXIMUM_LOG_LENGTH - (len(lines) - 1)
+        lengths = sorted(len(line) for line in lines)
+        for index, length in enumerate(lengths):
+            lines_left = len(lengths) - index
+            share = room // lines_left
+            if length > share:
+                notes = sum(len(cls.LOG_LINE_NOTE.format(cut_length)) for cut_length in lengths[index:])
+                ceiling = max((room - notes) // lines_left, cls.MINIMUM_LOG_LINE_LENGTH)
+                return [cls.truncate_log_line(line, ceiling) if len(line) > share else line for line in lines]
+            room -= length
+        return lines
+
+    @classmethod
+    def truncate_log_line(cls, line, length):
+        kept = line[:length].decode('utf-8', 'ignore').encode('utf-8')
+        truncated = kept + cls.LOG_LINE_NOTE.format(len(line) - len(kept)).encode('utf-8')
+        return truncated if len(truncated) < len(line) else line
+
+    @classmethod
+    def keep_log_ends(cls, lines, kept):
+        room = cls.MAXIMUM_LOG_LENGTH - len(cls.LOG_LEFT_OUT_NOTE.format(len(b'\n'.join(lines))))
+        top, top_length = 0, 0
+        while top_length + len(kept[top]) + 1 <= room // 2:
+            top_length += len(kept[top]) + 1
+            top += 1
+        bottom, bottom_length = len(kept), 0
+        while bottom_length + len(kept[bottom - 1]) + 1 <= room - room // 2:
+            bottom -= 1
+            bottom_length += len(kept[bottom]) + 1
+        left_out = cls.LOG_LEFT_OUT_NOTE.format(len(b'\n'.join(lines[top:bottom]))).encode('utf-8')
+        return kept[:top] + [left_out] + kept[bottom:]
 
     @staticmethod
     def certificate_chain():

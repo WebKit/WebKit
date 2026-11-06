@@ -269,3 +269,37 @@ class UploadTest(unittest.TestCase):
                 ' ' * 8 + 'Request Entity Too Large',
                 ' ' * 4 + 'This error is not fatal, continuing',
             ], lines)
+
+    def test_truncate_log_within_limit(self):
+        log = 'Tools/TestWebKitAPI/Tests/WebKit/WKWebView/AdvancedPrivacyProtections.mm:647\nValue of: referrerFromPopup.startsWith(mainURLPrefix)\n  Actual: false\nExpected: true\n'
+        self.assertEqual(Upload.truncate_log(log), log)
+        self.assertEqual(Upload.truncate_log('x' * Upload.MAXIMUM_LOG_LENGTH), 'x' * Upload.MAXIMUM_LOG_LENGTH)
+
+    def test_truncate_log_wide_lines(self):
+        self.assertEqual(
+            Upload.truncate_log('\n'.join(['a' * 1000, 'b' * 2000, 'c' * 15000, 'd' * 6000])),
+            '\n'.join(['a' * 1000, 'b' * 2000, 'c' * 2575 + ' [12,425 more bytes]', 'd' * 2575 + ' [3,425 more bytes]']),
+        )
+
+    def test_truncate_log_keeps_line_within_its_share(self):
+        self.assertEqual(
+            Upload.truncate_log('\n'.join(['a' * 2730, 'b' * 15000, 'c' * 15000])),
+            '\n'.join(['a' * 2730, 'b' * 2710 + ' [12,290 more bytes]', 'c' * 2710 + ' [12,290 more bytes]']),
+        )
+
+    def test_truncate_log_without_line_breaks(self):
+        self.assertEqual(Upload.truncate_log('x' * 10000), 'x' * 8172 + ' [1,828 more bytes]')
+
+    def test_truncate_log_inside_character(self):
+        self.assertEqual(Upload.truncate_log('x' + 'é' * 5000), 'x' + 'é' * 4085 + ' [1,830 more bytes]')
+
+    def test_truncate_log_many_lines(self):
+        lines = [f'{index:03}' + 'x' * 57 for index in range(400)]
+        lines[0], lines[200] = 'w' * 1000, 'm' * 1000
+        self.assertEqual(
+            Upload.truncate_log('\n'.join(lines)),
+            '\n'.join(['w' * 200 + ' [800 more bytes]'] + lines[1:64] + ['[17,409 bytes left out]'] + lines[334:]),
+        )
+
+    def test_truncate_log_replaces_text_that_is_not_utf8(self):
+        self.assertEqual(Upload.truncate_log('  Actual: \ud800\n'), '  Actual: ?\n')

@@ -249,11 +249,8 @@ TestWebKitAPI.WKWebViewSwiftOverlayTests/evaluateJavaScriptYieldsExpectedRespons
         results = Manager._upload_results_with_logs({test: {'actual': 'CRASH'} for test in unexpected_failures}, unexpected_failures)
         self.assertEqual([8191] * 32 + [0] * 144, [len(result.get('log', '')) for result in results.values()])
 
-    def test_truncate_log_within_limit(self):
-        self.assertEqual('x' * 8192, Manager.truncate_log('x' * 8192))
-
-    def test_truncate_log_at_line_end(self):
-        self.assertEqual(('x' * 99 + '\n') * 81 + '[1,900 more bytes]\n', Manager.truncate_log(('x' * 99 + '\n') * 100))
-
-    def test_truncate_log_inside_character(self):
-        self.assertEqual('x' + 'é' * 4085 + '[1,830 more bytes]\n', Manager.truncate_log('x' + 'é' * 5000))
+    def test_upload_log_truncated(self):
+        output = self.FAILURE_OUTPUT + 'x' * 10000 + '\n'
+        unexpected_failures = {'TestWebKitAPI.MediaSamplesDecoder.DecodeVP8IntoSharedMemory': (Runner.STATUS_FAILED, output, 1.0)}
+        results = Manager._upload_results_with_logs({test: {'actual': 'FAIL'} for test in unexpected_failures}, unexpected_failures)
+        self.assertEqual(self.FAILURE_OUTPUT + 'x' * 8009 + ' [1,991 more bytes]\n', results['TestWebKitAPI.MediaSamplesDecoder.DecodeVP8IntoSharedMemory']['log'])

@@ -60,7 +60,6 @@ class Manager(object):
         FAILED_UPLOAD: 'Upload failed',
     }
 
-    MAXIMUM_LOG_LENGTH = 8 * 1024
     MAXIMUM_LOG_LENGTH_PER_UPLOAD = 256 * 1024
 
     def __init__(self, port, options, stream, status=None):
@@ -157,24 +156,13 @@ class Manager(object):
         return ' '.join(text for status, text in status_to_upload_text.items() if status in expectation.expected) or None
 
     @classmethod
-    def truncate_log(cls, log: str) -> str:
-        encoded = log.encode('utf-8')
-        if len(encoded) <= cls.MAXIMUM_LOG_LENGTH:
-            return log
-        marker = '[{:,} more bytes]\n'
-        kept = encoded[:cls.MAXIMUM_LOG_LENGTH - len(marker.format(len(encoded)))]
-        kept = kept[:kept.rfind(b'\n') + 1] or kept
-        kept_log = kept.decode('utf-8', 'ignore')
-        return kept_log + marker.format(len(encoded) - len(kept_log.encode('utf-8')))
-
-    @classmethod
     def _upload_results_with_logs(cls, upload_results: dict[str, dict], unexpected_failures: dict[str, tuple]) -> dict[str, dict]:
         results = dict(upload_results)
         total = 0
         for test, (_, output, _) in unexpected_failures.items():
             if not output:
                 continue
-            log = cls.truncate_log(output)
+            log = Upload.truncate_log(output)
             total += len(log.encode('utf-8'))
             if total > cls.MAXIMUM_LOG_LENGTH_PER_UPLOAD:
                 break
