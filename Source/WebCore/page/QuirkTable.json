@@ -891,6 +891,11 @@
             "behaviors": [{ "id": "IsNeverRichlyEditableForTouchBarQuirk" }]
         },
         {
+            "bugs": ["rdar://189705627"],
+            "matches": ["*://*.openrice.com/*"],
+            "behaviors": [{ "id": "NeedsOpenRiceAdPopupHeightQuirk", "elementSelector": ".popup-ad-subview-container" }]
+        },
+        {
             "bugs": ["https://webkit.org/b/296989"],
             "matches": ["*://*.madisoncity.k12.al.us/*"],
             "behaviors": [{ "id": "NeedsFormControlToBeMouseFocusableQuirk" }]

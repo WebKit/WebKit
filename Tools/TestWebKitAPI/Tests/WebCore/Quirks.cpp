@@ -1462,6 +1462,13 @@ TEST_F(QuirksTest, ClaudeSidebarQuirkCarriesTheSidebarSelector)
     EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsClaudeSidebarViewportUnitQuirk), Vector<String> { String { onClaudeSidebar } });
 }
 
+TEST_F(QuirksTest, OpenRiceAdPopupQuirkIsScopedToOpenRiceAndCarriesTheContainerSelector)
+{
+    auto quirks = resolveQuirksForTopURL("https://www.openrice.com/"_s);
+    EXPECT_EQ(elementSelectorsFor(quirks, WebCore::QuirkBehaviorID::NeedsOpenRiceAdPopupHeightQuirk), Vector<String> { ".popup-ad-subview-container"_s });
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.notopenrice.com/"_s).isBehaviorEnabled(WebCore::QuirkBehaviorID::NeedsOpenRiceAdPopupHeightQuirk));
+}
+
 TEST_F(QuirksTest, OnlyGoogleDocsOpensAboutURLsAsAboutBlank)
 {
     EXPECT_TRUE(resolveQuirksForTopURL("https://docs.google.com/"_s).isBehaviorEnabled(WebCore::QuirkBehaviorID::ShouldOpenAsAboutBlankQuirk));

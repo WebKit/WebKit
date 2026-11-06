@@ -1240,6 +1240,13 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
     if (documentQuirks.needsClaudeSidebarViewportUnitQuirk(protect(*m_element), style))
         style.setHeight(PreferredSize::Fixed { m_document->renderView()->sizeForCSSDynamicViewportUnits().height() });
 
+    if (auto openRiceAdPopupHeight = documentQuirks.needsOpenRiceAdPopupHeightQuirk(protect(*m_element), style)) {
+        style.setUsesViewportUnits();
+        m_element->document().setHasStyleWithViewportUnits();
+        if (openRiceAdPopupHeight->clampedHeight)
+            style.setHeight(PreferredSize::Fixed { *openRiceAdPopupHeight->clampedHeight });
+    }
+
     if (documentQuirks.needsAmazonDesignMenuViewportUnitQuirk(style, m_parentStyle)) {
         if (auto fixedHeight = style.height().tryFixed()) {
             auto resolvedHeight = fixedHeight->resolveZoom(ZoomFactor::none());

@@ -55,3 +55,76 @@ TEST(QuirksURLChange, TopDocumentPushStateReresolvesSubframeQuirks)
     [webView objectByEvaluatingJavaScript:@"history.replaceState({ }, '', '/')"];
     EXPECT_FALSE(subframeHasAnchorQuirk());
 }
+
+#if PLATFORM(IOS_FAMILY)
+
+static NSString * const openRiceAdPopupMarkup = @"<!DOCTYPE html><meta name='viewport' content='width=device-width, initial-scale=1'>"
+    "<style>body { margin: 0; } .popup-ad-subview { position: fixed; top: 0; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; }</style>"
+    "<div class='popup-ad-subview'><div class='popup-ad-subview-container' id='container' style='height: 700px; width: 100%;'><div id='closeButton' style='height: 51px; width: 51px;'></div></div></div>";
+
+static RetainPtr<TestWKWebView> createWebViewForOpenRiceAdPopup(NSString *baseURL, CGSize size)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration preferences].siteSpecificQuirksModeEnabled = YES;
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:openRiceAdPopupMarkup baseURL:[NSURL URLWithString:baseURL]];
+    [webView waitForNextPresentationUpdate];
+    return webView;
+}
+
+static double evaluateNumber(TestWKWebView *webView, NSString *script)
+{
+    return [[webView objectByEvaluatingJavaScript:script] doubleValue];
+}
+
+TEST(SiteSpecificQuirks, OpenRiceAdPopupContainerIsClampedToTheViewportHeight)
+{
+    RetainPtr webView = createWebViewForOpenRiceAdPopup(@"https://www.openrice.com/", CGSizeMake(382, 580));
+
+    double viewportHeight = evaluateNumber(webView.get(), @"innerHeight");
+    EXPECT_EQ(viewportHeight, evaluateNumber(webView.get(), @"container.getBoundingClientRect().height"));
+    EXPECT_EQ(0, evaluateNumber(webView.get(), @"container.getBoundingClientRect().top"));
+    EXPECT_EQ(0, evaluateNumber(webView.get(), @"closeButton.getBoundingClientRect().top"));
+}
+
+TEST(SiteSpecificQuirks, OpenRiceAdPopupContainerFollowsViewportHeightChanges)
+{
+    RetainPtr webView = createWebViewForOpenRiceAdPopup(@"https://www.openrice.com/", CGSizeMake(382, 580));
+
+    [webView setFrame:CGRectMake(0, 0, 382, 500)];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(evaluateNumber(webView.get(), @"innerHeight"), evaluateNumber(webView.get(), @"container.getBoundingClientRect().height"));
+
+    [webView setFrame:CGRectMake(0, 0, 382, 800)];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(700, evaluateNumber(webView.get(), @"container.getBoundingClientRect().height"));
+}
+
+TEST(SiteSpecificQuirks, OpenRiceAdPopupContainerIsClampedWhenTheViewportShrinksBelowItsHeight)
+{
+    RetainPtr webView = createWebViewForOpenRiceAdPopup(@"https://www.openrice.com/", CGSizeMake(382, 800));
+    EXPECT_EQ(700, evaluateNumber(webView.get(), @"container.getBoundingClientRect().height"));
+
+    [webView setFrame:CGRectMake(0, 0, 382, 500)];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(evaluateNumber(webView.get(), @"innerHeight"), evaluateNumber(webView.get(), @"container.getBoundingClientRect().height"));
+    EXPECT_EQ(0, evaluateNumber(webView.get(), @"closeButton.getBoundingClientRect().top"));
+
+    [webView setFrame:CGRectMake(0, 0, 382, 800)];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(700, evaluateNumber(webView.get(), @"container.getBoundingClientRect().height"));
+
+    [webView setFrame:CGRectMake(0, 0, 382, 500)];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(evaluateNumber(webView.get(), @"innerHeight"), evaluateNumber(webView.get(), @"container.getBoundingClientRect().height"));
+}
+
+TEST(SiteSpecificQuirks, OpenRiceAdPopupContainerIsNotClampedOnOtherSites)
+{
+    RetainPtr webView = createWebViewForOpenRiceAdPopup(@"https://www.example.com/", CGSizeMake(382, 580));
+
+    EXPECT_EQ(700, evaluateNumber(webView.get(), @"container.getBoundingClientRect().height"));
+    EXPECT_LT(evaluateNumber(webView.get(), @"closeButton.getBoundingClientRect().top"), 0);
+}
+
+#endif

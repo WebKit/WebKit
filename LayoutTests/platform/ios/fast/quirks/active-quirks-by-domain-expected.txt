@@ -359,6 +359,11 @@ https://onedrive.live.com/
 https://officeapps.live.com/
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldDisableDataURLPaddingValidation
+https://www.openrice.com/
+    NeedsOpenRiceAdPopupHeightQuirk
+        elementSelector: .popup-ad-subview-container
+https://www.notopenrice.com/
+    (none)
 https://madisoncity.k12.al.us/
     (none)
 https://mailchimp.com/

@@ -1196,6 +1196,32 @@ bool Quirks::needsClaudeSidebarViewportUnitQuirk(Element& element, const Style::
     return false;
 }
 
+std::optional<Quirks::OpenRiceAdPopupHeight> Quirks::needsOpenRiceAdPopupHeightQuirk(Element& element, const Style::ComputedStyle& style) const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(std::nullopt);
+
+    if (!m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsOpenRiceAdPopupHeightQuirk))
+        return std::nullopt;
+
+    auto fixedHeight = style.height().tryFixed();
+    if (!fixedHeight)
+        return std::nullopt;
+
+    if (!behaviorAppliesToNode(QuirkBehaviorID::NeedsOpenRiceAdPopupHeightQuirk, &element))
+        return std::nullopt;
+
+    CheckedPtr renderView = m_document->renderView();
+    if (!renderView)
+        return std::nullopt;
+
+    auto viewportHeight = renderView->sizeForCSSDynamicViewportUnits().height();
+    auto zoom = style.usedZoomForLength();
+    if (viewportHeight <= 0 || fixedHeight->resolveZoom(zoom) <= viewportHeight)
+        return OpenRiceAdPopupHeight { };
+
+    return OpenRiceAdPopupHeight { viewportHeight / zoom.value };
+}
+
 // amazon.design rdar://175953409
 bool Quirks::needsAmazonDesignMenuViewportUnitQuirk(const Style::ComputedStyle& style, const Style::ComputedStyle& parentStyle) const
 {

@@ -156,6 +156,11 @@ NeedsClaudeSidebarViewportUnitQuirk:
   conditions: [ElementSelector]
   implementation: custom
 
+NeedsOpenRiceAdPopupHeightQuirk:
+  available: iOSFamily
+  conditions: [ElementSelector]
+  implementation: custom
+
 NeedsHideSelectionDuringOverflowScrollQuirk:
   available: iOSFamily
   export: true
