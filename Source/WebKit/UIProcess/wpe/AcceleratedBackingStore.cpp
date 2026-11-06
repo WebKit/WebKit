@@ -137,7 +137,7 @@ void AcceleratedBackingStore::notifyBufferConfigurationIfNeeded()
     wpe_view_buffers_changed(m_wpeView.get(), buffersSpan.data(), buffersSpan.size());
 }
 
-void AcceleratedBackingStore::didCreateDMABufBuffer(uint64_t id, WebCore::DMABufBufferAttributes&& dmaBufAttributes, RendererBufferFormat::Usage usage)
+void AcceleratedBackingStore::didCreateDMABufBuffer(RendererBufferIdentifier id, WebCore::DMABufBufferAttributes&& dmaBufAttributes, RendererBufferFormat::Usage usage)
 {
     Vector<int> fileDescriptors(ReserveCapacityTag { }, dmaBufAttributes.fds.size());
     for (auto& fd : dmaBufAttributes.fds)
@@ -150,7 +150,7 @@ void AcceleratedBackingStore::didCreateDMABufBuffer(uint64_t id, WebCore::DMABuf
     notifyBufferConfigurationIfNeeded();
 }
 
-void AcceleratedBackingStore::didCreateSHMBuffer(uint64_t id, WebCore::ShareableBitmap::Handle&& handle)
+void AcceleratedBackingStore::didCreateSHMBuffer(RendererBufferIdentifier id, WebCore::ShareableBitmap::Handle&& handle)
 {
     auto bitmap = WebCore::ShareableBitmap::create(WTF::move(handle), WebCore::SharedMemory::Protection::ReadOnly);
     if (!bitmap)
@@ -171,7 +171,7 @@ void AcceleratedBackingStore::didCreateSHMBuffer(uint64_t id, WebCore::Shareable
 }
 
 #if OS(ANDROID)
-void AcceleratedBackingStore::didCreateAndroidBuffer(uint64_t id, RefPtr<AHardwareBuffer>&& hardwareBuffer)
+void AcceleratedBackingStore::didCreateAndroidBuffer(RendererBufferIdentifier id, RefPtr<AHardwareBuffer>&& hardwareBuffer)
 {
     RELEASE_ASSERT(hardwareBuffer);
 
@@ -183,7 +183,7 @@ void AcceleratedBackingStore::didCreateAndroidBuffer(uint64_t id, RefPtr<AHardwa
 }
 #endif // OS(ANDROID)
 
-void AcceleratedBackingStore::didDestroyBuffer(uint64_t id)
+void AcceleratedBackingStore::didDestroyBuffer(RendererBufferIdentifier id)
 {
     if (auto buffer = m_buffers.take(id))
         m_bufferIDs.remove(buffer.get());
@@ -191,7 +191,7 @@ void AcceleratedBackingStore::didDestroyBuffer(uint64_t id)
     notifyBufferConfigurationIfNeeded();
 }
 
-void AcceleratedBackingStore::frame(uint64_t bufferID, Rects&& damageRects, WTF::UnixFileDescriptor&& renderingFenceFD)
+void AcceleratedBackingStore::frame(RendererBufferIdentifier bufferID, Rects&& damageRects, WTF::UnixFileDescriptor&& renderingFenceFD)
 {
     ASSERT(!m_pendingBuffer);
     auto* buffer = m_buffers.get(bufferID);
@@ -309,11 +309,11 @@ void AcceleratedBackingStore::bufferRendered()
 
 void AcceleratedBackingStore::bufferReleased(WPEBuffer* buffer)
 {
-    if (auto id = m_bufferIDs.get(buffer)) {
+    if (auto id = m_bufferIDs.getOptional(buffer)) {
         auto releaseFence = UnixFileDescriptor { wpe_buffer_take_release_fence(buffer), UnixFileDescriptor::Adopt };
 
         if (RefPtr legacyMainFrameProcess = m_legacyMainFrameProcess.get())
-            legacyMainFrameProcess->send(Messages::AcceleratedSurface::ReleaseBuffer(id, WTF::move(releaseFence)), m_surfaceID);
+            legacyMainFrameProcess->send(Messages::AcceleratedSurface::ReleaseBuffer(*id, WTF::move(releaseFence)), m_surfaceID);
     }
 }
 

@@ -697,6 +697,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::RemoteSnapshotRecorderIdentifier"_s,
         "WebKit::RemoteVideoFrameIdentifier"_s,
         "WebKit::RemoteRenderingBackendIdentifier"_s,
+        "WebKit::RendererBufferIdentifier"_s,
         "WebKit::RenderingUpdateID"_s,
         "WebKit::RetrieveRecordResponseBodyCallbackIdentifier"_s,
         "WebKit::SampleBufferDisplayLayerIdentifier"_s,

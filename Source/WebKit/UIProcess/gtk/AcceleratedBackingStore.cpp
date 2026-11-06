@@ -257,7 +257,7 @@ AcceleratedBackingStore::~AcceleratedBackingStore()
         gdk_gl_context_clear_current();
 }
 
-AcceleratedBackingStore::Buffer::Buffer(WebPageProxy& webPage, uint64_t id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage)
+AcceleratedBackingStore::Buffer::Buffer(WebPageProxy& webPage, RendererBufferIdentifier id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage)
     : m_webPage(webPage)
     , m_id(id)
     , m_surfaceID(surfaceID)
@@ -352,7 +352,7 @@ static RefPtr<NativeImage> nativeImageFromGdkTexture(GdkTexture* texture)
 #endif
 
 #if GTK_CHECK_VERSION(4, 13, 4)
-RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferDMABuf::create(WebPageProxy& webPage, uint64_t id, uint64_t surfaceID, RendererBufferFormat::Usage usage, DMABufBufferAttributes&& dmaBufAttributes)
+RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferDMABuf::create(WebPageProxy& webPage, RendererBufferIdentifier id, uint64_t surfaceID, RendererBufferFormat::Usage usage, DMABufBufferAttributes&& dmaBufAttributes)
 {
     GRefPtr<GdkDmabufTextureBuilder> builder = adoptGRef(gdk_dmabuf_texture_builder_new());
     gdk_dmabuf_texture_builder_set_display(builder.get(), gtk_widget_get_display(webPage.viewWidget()));
@@ -371,7 +371,7 @@ RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferDMABuf::c
     return adoptRef(*new BufferDMABuf(webPage, id, surfaceID, dmaBufAttributes.size, usage, WTF::move(dmaBufAttributes.fds), WTF::move(builder)));
 }
 
-AcceleratedBackingStore::BufferDMABuf::BufferDMABuf(WebPageProxy& webPage, uint64_t id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, Vector<UnixFileDescriptor>&& fds, GRefPtr<GdkDmabufTextureBuilder>&& builder)
+AcceleratedBackingStore::BufferDMABuf::BufferDMABuf(WebPageProxy& webPage, RendererBufferIdentifier id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, Vector<UnixFileDescriptor>&& fds, GRefPtr<GdkDmabufTextureBuilder>&& builder)
     : Buffer(webPage, id, surfaceID, size, usage)
     , m_fds(WTF::move(fds))
     , m_builder(WTF::move(builder))
@@ -416,7 +416,7 @@ void AcceleratedBackingStore::BufferDMABuf::release()
 }
 #endif
 
-RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferEGLImage::create(WebPageProxy& webPage, uint64_t id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, DMABufBufferAttributes&& dmaBufAttributes)
+RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferEGLImage::create(WebPageProxy& webPage, RendererBufferIdentifier id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, DMABufBufferAttributes&& dmaBufAttributes)
 {
     auto* glDisplay = Display::singleton().glDisplay();
     if (!glDisplay)
@@ -431,7 +431,7 @@ RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferEGLImage:
     return adoptRef(*new BufferEGLImage(webPage, id, surfaceID, size, usage, WTF::move(dmaBufAttributes), image));
 }
 
-AcceleratedBackingStore::BufferEGLImage::BufferEGLImage(WebPageProxy& webPage, uint64_t id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, DMABufBufferAttributes&& dmaBufAttributes, EGLImage image)
+AcceleratedBackingStore::BufferEGLImage::BufferEGLImage(WebPageProxy& webPage, RendererBufferIdentifier id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, DMABufBufferAttributes&& dmaBufAttributes, EGLImage image)
     : Buffer(webPage, id, surfaceID, size, usage)
     , m_dmaBufAttributes(WTF::move(dmaBufAttributes))
     , m_image(image)
@@ -524,7 +524,7 @@ void AcceleratedBackingStore::BufferEGLImage::release()
 }
 
 #if USE(GBM)
-RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferGBM::create(WebPageProxy& webPage, uint64_t id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, uint32_t format, UnixFileDescriptor&& fd, uint32_t stride)
+RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferGBM::create(WebPageProxy& webPage, RendererBufferIdentifier id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, uint32_t format, UnixFileDescriptor&& fd, uint32_t stride)
 {
     auto& manager = DRMDeviceManager::singleton();
     if (!manager.isInitialized()) {
@@ -547,7 +547,7 @@ RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferGBM::crea
     return adoptRef(*new BufferGBM(webPage, id, surfaceID, size, usage, WTF::move(fd), buffer));
 }
 
-AcceleratedBackingStore::BufferGBM::BufferGBM(WebPageProxy& webPage, uint64_t id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, UnixFileDescriptor&& fd, struct gbm_bo* buffer)
+AcceleratedBackingStore::BufferGBM::BufferGBM(WebPageProxy& webPage, RendererBufferIdentifier id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, UnixFileDescriptor&& fd, struct gbm_bo* buffer)
     : Buffer(webPage, id, surfaceID, size, usage)
     , m_fd(WTF::move(fd))
     , m_buffer(buffer)
@@ -659,7 +659,7 @@ void AcceleratedBackingStore::BufferGBM::release()
 }
 #endif
 
-RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferSHM::create(WebPageProxy& webPage, uint64_t id, uint64_t surfaceID, RefPtr<ShareableBitmap>&& bitmap)
+RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferSHM::create(WebPageProxy& webPage, RendererBufferIdentifier id, uint64_t surfaceID, RefPtr<ShareableBitmap>&& bitmap)
 {
     if (!bitmap)
         return nullptr;
@@ -667,7 +667,7 @@ RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferSHM::crea
     return adoptRef(*new BufferSHM(webPage, id, surfaceID, WTF::move(bitmap)));
 }
 
-AcceleratedBackingStore::BufferSHM::BufferSHM(WebPageProxy& webPage, uint64_t id, uint64_t surfaceID, RefPtr<ShareableBitmap>&& bitmap)
+AcceleratedBackingStore::BufferSHM::BufferSHM(WebPageProxy& webPage, RendererBufferIdentifier id, uint64_t surfaceID, RefPtr<ShareableBitmap>&& bitmap)
     : Buffer(webPage, id, surfaceID, bitmap->size(), RendererBufferFormat::Usage::Rendering)
     , m_bitmap(WTF::move(bitmap))
 #if GTK_CHECK_VERSION(4, 16, 0)
@@ -745,7 +745,7 @@ void AcceleratedBackingStore::BufferSHM::release()
     didRelease();
 }
 
-void AcceleratedBackingStore::didCreateDMABufBuffer(uint64_t id, DMABufBufferAttributes&& dmaBufAttributes, RendererBufferFormat::Usage usage)
+void AcceleratedBackingStore::didCreateDMABufBuffer(RendererBufferIdentifier id, DMABufBufferAttributes&& dmaBufAttributes, RendererBufferFormat::Usage usage)
 {
     RefPtr webPage = m_webPage.get();
     if (!webPage)
@@ -773,7 +773,7 @@ void AcceleratedBackingStore::didCreateDMABufBuffer(uint64_t id, DMABufBufferAtt
         m_buffers.add(id, WTF::move(buffer));
 }
 
-void AcceleratedBackingStore::didCreateSHMBuffer(uint64_t id, ShareableBitmap::Handle&& handle)
+void AcceleratedBackingStore::didCreateSHMBuffer(RendererBufferIdentifier id, ShareableBitmap::Handle&& handle)
 {
     RefPtr webPage = m_webPage.get();
     if (!webPage)
@@ -783,12 +783,12 @@ void AcceleratedBackingStore::didCreateSHMBuffer(uint64_t id, ShareableBitmap::H
         m_buffers.add(id, WTF::move(buffer));
 }
 
-void AcceleratedBackingStore::didDestroyBuffer(uint64_t id)
+void AcceleratedBackingStore::didDestroyBuffer(RendererBufferIdentifier id)
 {
     m_buffers.remove(id);
 }
 
-void AcceleratedBackingStore::frame(uint64_t bufferID, Rects&& damageRects, WTF::UnixFileDescriptor&& renderingFenceFD)
+void AcceleratedBackingStore::frame(RendererBufferIdentifier bufferID, Rects&& damageRects, WTF::UnixFileDescriptor&& renderingFenceFD)
 {
     ASSERT(!m_pendingBuffer);
     auto* buffer = m_buffers.get(bufferID);

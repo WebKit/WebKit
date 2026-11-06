@@ -28,6 +28,7 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "MessageReceiver.h"
+#include "RendererBufferIdentifier.h"
 #include <WebCore/Color.h>
 #include <WebCore/CoordinatedCompositionReason.h>
 #include <WebCore/DMABufBuffer.h>
@@ -168,7 +169,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void releaseBuffer(uint64_t, WTF::UnixFileDescriptor&&);
+    void releaseBuffer(RendererBufferIdentifier, WTF::UnixFileDescriptor&&);
 #endif
     void frameDone();
     void releaseUnusedBuffersTimerFired();
@@ -186,7 +187,7 @@ private:
     public:
         virtual ~RenderTarget();
 
-        uint64_t id() const { return m_id; }
+        RendererBufferIdentifier id() const { return m_id; }
 
         virtual void willRenderFrame() { }
         virtual void didRenderFrame() { }
@@ -219,7 +220,7 @@ private:
 
         void createSkiaSurfaceForFramebuffer(unsigned);
 
-        uint64_t m_id { 0 };
+        RendererBufferIdentifier m_id;
         const CheckedRef<AcceleratedSurface> m_surface;
         WebCore::IntSize m_size;
         sk_sp<SkSurface> m_skiaSurface;
@@ -381,7 +382,7 @@ private:
         const WebCore::IntSize& size() const LIFETIME_BOUND { return m_size; }
         bool isEmpty() const { return m_freeTargets.isEmpty() && m_lockedTargets.isEmpty(); }
         RenderTarget* nextTarget();
-        void releaseTarget(uint64_t, UnixFileDescriptor&& releaseFence);
+        void releaseTarget(RendererBufferIdentifier, UnixFileDescriptor&& releaseFence);
         void reset();
         void releaseUnusedBuffers();
 

@@ -134,14 +134,8 @@ AcceleratedSurface::~AcceleratedSurface() = default;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AcceleratedSurface::RenderTarget);
 
-static uint64_t generateTargetID()
-{
-    static uint64_t identifier = 0;
-    return ++identifier;
-}
-
 AcceleratedSurface::RenderTarget::RenderTarget(AcceleratedSurface& surface, const IntSize& size)
-    : m_id(generateTargetID())
+    : m_id(RendererBufferIdentifier::generate())
     , m_surface(surface)
     , m_size(size)
 {
@@ -812,7 +806,7 @@ AcceleratedSurface::RenderTarget* AcceleratedSurface::SwapChain::nextTarget()
     return m_lockedTargets[0].get();
 }
 
-void AcceleratedSurface::SwapChain::releaseTarget(uint64_t targetID, UnixFileDescriptor&& releaseFence)
+void AcceleratedSurface::SwapChain::releaseTarget(RendererBufferIdentifier targetID, UnixFileDescriptor&& releaseFence)
 {
 #if USE(WPE_RENDERER)
     ASSERT(m_type != Type::WPEBackend);
@@ -1142,7 +1136,7 @@ const std::optional<Damage>& AcceleratedSurface::renderTargetDamage()
 #endif
 
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
-void AcceleratedSurface::releaseBuffer(uint64_t targetID, UnixFileDescriptor&& releaseFence)
+void AcceleratedSurface::releaseBuffer(RendererBufferIdentifier targetID, UnixFileDescriptor&& releaseFence)
 {
 #if USE(WPE_RENDERER)
     ASSERT(m_swapChain.type() != SwapChain::Type::WPEBackend);

@@ -26,15 +26,15 @@
     ExceptionForEnabledBy
 ]
 messages -> AcceleratedBackingStore {
-    DidCreateDMABufBuffer(uint64_t id, WebCore::DMABufBufferAttributes dmaBufAttributes, WebKit::RendererBufferFormat::Usage usage)
-    DidCreateSHMBuffer(uint64_t id, WebCore::ShareableBitmapHandle handle)
+    DidCreateDMABufBuffer(WebKit::RendererBufferIdentifier id, WebCore::DMABufBufferAttributes dmaBufAttributes, WebKit::RendererBufferFormat::Usage usage)
+    DidCreateSHMBuffer(WebKit::RendererBufferIdentifier id, WebCore::ShareableBitmapHandle handle)
 
 #if OS(ANDROID)
-    DidCreateAndroidBuffer(uint64_t id, RefPtr<AHardwareBuffer> androidBuffer)
+    DidCreateAndroidBuffer(WebKit::RendererBufferIdentifier id, RefPtr<AHardwareBuffer> androidBuffer)
 #endif
 
-    DidDestroyBuffer(uint64_t id)
-    Frame(uint64_t id, Vector<WebCore::IntRect, 1> damage, UnixFileDescriptor syncFD)
+    DidDestroyBuffer(WebKit::RendererBufferIdentifier id)
+    Frame(WebKit::RendererBufferIdentifier id, Vector<WebCore::IntRect, 1> damage, UnixFileDescriptor syncFD)
 
 #if ENABLE(WPE_PLATFORM)
     DidChangeBufferConfiguration(uint32_t bufferCount);

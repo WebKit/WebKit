@@ -237,6 +237,7 @@ template: struct WebKit::RemoteSnapshotRecorderIdentifierType
 template: struct WebKit::RemoteVideoFrameIdentifierType
 template: struct WebKit::VideoDecoderIdentifierType
 template: struct WebKit::VideoEncoderIdentifierType
+template: enum class WebKit::RendererBufferIdentifierType
 template: enum class WebKit::WCContentBufferIdentifierType
 template: struct IPC::AsyncReplyIDType
 template: struct WebCore::FileSystemHandleIdentifierType

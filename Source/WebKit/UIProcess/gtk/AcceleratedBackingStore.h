@@ -28,6 +28,7 @@
 #include "FenceMonitor.h"
 #include "MessageReceiver.h"
 #include "RendererBufferDescription.h"
+#include "RendererBufferIdentifier.h"
 #include <WebCore/DMABufBuffer.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
@@ -92,10 +93,10 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didCreateDMABufBuffer(uint64_t id, WebCore::DMABufBufferAttributes&&, RendererBufferFormat::Usage);
-    void didCreateSHMBuffer(uint64_t id, WebCore::ShareableBitmapHandle&&);
-    void didDestroyBuffer(uint64_t id);
-    void frame(uint64_t id, Rects&&, WTF::UnixFileDescriptor&&);
+    void didCreateDMABufBuffer(RendererBufferIdentifier, WebCore::DMABufBufferAttributes&&, RendererBufferFormat::Usage);
+    void didCreateSHMBuffer(RendererBufferIdentifier, WebCore::ShareableBitmapHandle&&);
+    void didDestroyBuffer(RendererBufferIdentifier);
+    void frame(RendererBufferIdentifier, Rects&&, WTF::UnixFileDescriptor&&);
     void frameDone();
     void queuePendingDamageDraw();
 
@@ -130,7 +131,7 @@ private:
         virtual RefPtr<WebCore::NativeImage> asNativeImageForTesting() const = 0;
         virtual void release() = 0;
 
-        uint64_t id() const { return m_id; }
+        RendererBufferIdentifier id() const { return m_id; }
         float deviceScaleFactor() const;
         void setSurfaceID(uint64_t surfaceID) { m_surfaceID = surfaceID; }
 #if USE(GTK4)
@@ -141,10 +142,10 @@ private:
         void didRelease() const;
 
     protected:
-        Buffer(WebPageProxy&, uint64_t id, uint64_t surfaceID, const WebCore::IntSize&, RendererBufferFormat::Usage);
+        Buffer(WebPageProxy&, RendererBufferIdentifier, uint64_t surfaceID, const WebCore::IntSize&, RendererBufferFormat::Usage);
 
         WeakPtr<WebPageProxy> m_webPage;
-        uint64_t m_id { 0 };
+        RendererBufferIdentifier m_id;
         uint64_t m_surfaceID { 0 };
         WebCore::IntSize m_size;
         RendererBufferFormat::Usage m_usage { RendererBufferFormat::Usage::Rendering };
@@ -153,10 +154,10 @@ private:
 #if GTK_CHECK_VERSION(4, 13, 4)
     class BufferDMABuf final : public Buffer {
     public:
-        static RefPtr<Buffer> create(WebPageProxy&, uint64_t id, uint64_t surfaceID, RendererBufferFormat::Usage, WebCore::DMABufBufferAttributes&&);
+        static RefPtr<Buffer> create(WebPageProxy&, RendererBufferIdentifier, uint64_t surfaceID, RendererBufferFormat::Usage, WebCore::DMABufBufferAttributes&&);
 
     private:
-        BufferDMABuf(WebPageProxy&, uint64_t id, uint64_t surfaceID, const WebCore::IntSize&, RendererBufferFormat::Usage, Vector<WTF::UnixFileDescriptor>&&, GRefPtr<GdkDmabufTextureBuilder>&&);
+        BufferDMABuf(WebPageProxy&, RendererBufferIdentifier, uint64_t surfaceID, const WebCore::IntSize&, RendererBufferFormat::Usage, Vector<WTF::UnixFileDescriptor>&&, GRefPtr<GdkDmabufTextureBuilder>&&);
 
         Buffer::Type type() const override { return Buffer::Type::DmaBuf; }
         void didUpdateContents(Buffer*, const Rects&) override;
@@ -173,11 +174,11 @@ private:
 
     class BufferEGLImage final : public Buffer {
     public:
-        static RefPtr<Buffer> create(WebPageProxy&, uint64_t id, uint64_t surfaceID, const WebCore::IntSize&, RendererBufferFormat::Usage, WebCore::DMABufBufferAttributes&&);
+        static RefPtr<Buffer> create(WebPageProxy&, RendererBufferIdentifier, uint64_t surfaceID, const WebCore::IntSize&, RendererBufferFormat::Usage, WebCore::DMABufBufferAttributes&&);
         ~BufferEGLImage();
 
     private:
-        BufferEGLImage(WebPageProxy&, uint64_t id, uint64_t surfaceID, const WebCore::IntSize&, RendererBufferFormat::Usage, WebCore::DMABufBufferAttributes&&, EGLImage);
+        BufferEGLImage(WebPageProxy&, RendererBufferIdentifier, uint64_t surfaceID, const WebCore::IntSize&, RendererBufferFormat::Usage, WebCore::DMABufBufferAttributes&&, EGLImage);
 
         Buffer::Type type() const override { return Buffer::Type::EglImage; }
         void didUpdateContents(Buffer*, const Rects&) override;
@@ -203,11 +204,11 @@ private:
 #if USE(GBM)
     class BufferGBM final : public Buffer {
     public:
-        static RefPtr<Buffer> create(WebPageProxy&, uint64_t id, uint64_t surfaceID, const WebCore::IntSize&, RendererBufferFormat::Usage, uint32_t format, WTF::UnixFileDescriptor&&, uint32_t stride);
+        static RefPtr<Buffer> create(WebPageProxy&, RendererBufferIdentifier, uint64_t surfaceID, const WebCore::IntSize&, RendererBufferFormat::Usage, uint32_t format, WTF::UnixFileDescriptor&&, uint32_t stride);
         ~BufferGBM();
 
     private:
-        BufferGBM(WebPageProxy&, uint64_t id, uint64_t surfaceID, const WebCore::IntSize&, RendererBufferFormat::Usage, WTF::UnixFileDescriptor&&, struct gbm_bo*);
+        BufferGBM(WebPageProxy&, RendererBufferIdentifier, uint64_t surfaceID, const WebCore::IntSize&, RendererBufferFormat::Usage, WTF::UnixFileDescriptor&&, struct gbm_bo*);
 
         Buffer::Type type() const override { return Buffer::Type::Gbm; }
         void didUpdateContents(Buffer*, const Rects&) override;
@@ -233,10 +234,10 @@ private:
 
     class BufferSHM final : public Buffer {
     public:
-        static RefPtr<Buffer> create(WebPageProxy&, uint64_t id, uint64_t surfaceID, RefPtr<WebCore::ShareableBitmap>&&);
+        static RefPtr<Buffer> create(WebPageProxy&, RendererBufferIdentifier, uint64_t surfaceID, RefPtr<WebCore::ShareableBitmap>&&);
 
     private:
-        BufferSHM(WebPageProxy&, uint64_t id, uint64_t surfaceID, RefPtr<WebCore::ShareableBitmap>&&);
+        BufferSHM(WebPageProxy&, RendererBufferIdentifier, uint64_t surfaceID, RefPtr<WebCore::ShareableBitmap>&&);
 
         Buffer::Type type() const override { return Buffer::Type::SharedMemory; }
         void didUpdateContents(Buffer*, const Rects&) override;
@@ -267,7 +268,7 @@ private:
     RefPtr<Buffer> m_pendingBuffer;
     RefPtr<Buffer> m_committedBuffer;
     Rects m_pendingDamageRects;
-    HashMap<uint64_t, RefPtr<Buffer>> m_buffers;
+    HashMap<RendererBufferIdentifier, RefPtr<Buffer>> m_buffers;
     bool m_needsFrame { false };
 };
 
