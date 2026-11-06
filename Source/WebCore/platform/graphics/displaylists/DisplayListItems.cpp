@@ -225,15 +225,15 @@ void ClipOutRoundedRect::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("rect"_s, rect());
 }
 
-void ClipToImageBuffer::apply(GraphicsContext& context) const
+void ClipToNativeImage::apply(GraphicsContext& context) const
 {
-    context.clipToImageBuffer(m_imageBuffer, m_destinationRect);
+    context.clipToNativeImage(m_image, m_destinationRect);
 }
 
-void ClipToImageBuffer::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
+void ClipToNativeImage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
     if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
-        ts.dumpProperty("image-buffer-identifier"_s, m_imageBuffer->renderingResourceIdentifier());
+        ts.dumpProperty("image-identifier"_s, m_image->renderingResourceIdentifier());
     ts.dumpProperty("dest-rect"_s, destinationRect());
 }
 
