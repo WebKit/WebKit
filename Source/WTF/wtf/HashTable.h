@@ -722,6 +722,8 @@ static_assert(std::is_trivial_v<StatusBytes>);
         static constexpr unsigned computeBestTableSize(unsigned keyCount);
         bool shouldExpand() const { return HashTableSizePolicy::shouldExpand(keyCount() + deletedCount(), tableSize()); }
         bool mustRehashInPlace() const { return keyCount() * minLoad < tableSize() * 2; }
+        // Prevent deleted slots from creating long probes.
+        bool shouldRehashForDeletedSlots() const { return deletedCount() * 4 > tableSize(); }
         static bool shouldShrink(unsigned keyCount, unsigned tableSize) { return keyCount * minLoad < tableSize && tableSize > KeyTraits::minimumTableSize; }
         bool shouldShrink() const { return shouldShrink(keyCount(), tableSize()); }
         ValueType* expand(ValueType* entry = nullptr);
@@ -1124,11 +1126,12 @@ static_assert(std::is_trivial_v<StatusBytes>);
         ++m_stats->numRemoves;
 #endif
 
-        bool shrinkAfterRemove = shouldShrink(keyCountForTable(m_table) - 1, tableSizeForTable(m_table));
         removeWithoutShrinking(pos);
 
-        if (shrinkAfterRemove)
+        if (shouldShrink(keyCountForTable(m_table), tableSizeForTable(m_table)))
             shrink();
+        else if (shouldRehashForDeletedSlots())
+            rehash(tableSize(), nullptr);
 
         internalCheckTableConsistency();
     }
@@ -1230,7 +1233,9 @@ static_assert(std::is_trivial_v<StatusBytes>);
 
         if (shouldShrink())
             shrinkToBestSize();
-        
+        else if (shouldRehashForDeletedSlots())
+            rehash(tableSize(), nullptr);
+
         internalCheckTableConsistency();
         return removedBucketCount;
     }
@@ -1284,7 +1289,7 @@ static_assert(std::is_trivial_v<StatusBytes>);
         Checked<unsigned> oldSize = tableSize();
         if (!oldSize)
             newSize = KeyTraits::minimumTableSize;
-        else if (mustRehashInPlace())
+        else if (mustRehashInPlace() || shouldRehashForDeletedSlots())
             newSize = oldSize;
         else
             newSize = oldSize * 2;
