@@ -292,7 +292,7 @@ void MarkedSpace::sweepPreciseAllocations()
 
 void MarkedSpace::prepareForAllocation()
 {
-    ASSERT(!Thread::mayBeGCThread() || heap().worldIsStopped());
+    ASSERT(heap().isInPhase(CollectorPhase::End));
     for (Subspace* subspace : m_subspaces)
         subspace->prepareForAllocation();
 
@@ -314,6 +314,7 @@ void MarkedSpace::enablePreciseAllocationTracking()
 
 void MarkedSpace::reapWeakSets()
 {
+    ASSERT(heap().isInPhase(CollectorPhase::End));
     auto visit = [&] (WeakSet* weakSet) {
         weakSet->reap();
     };
@@ -403,6 +404,7 @@ void MarkedSpace::shrink()
 
 void MarkedSpace::beginMarking()
 {
+    ASSERT(heap().isInPhase(CollectorPhase::Begin));
     switch (heap().collectionScope().value()) {
     case CollectionScope::Eden: {
         m_preciseAllocationsOffsetForThisCollection = m_preciseAllocationsNurseryOffset;
@@ -447,6 +449,7 @@ void MarkedSpace::beginMarking()
 
 void MarkedSpace::endMarking()
 {
+    ASSERT(heap().isInPhase(CollectorPhase::End));
     if (nextVersion(m_newlyAllocatedVersion) == initialVersion) [[unlikely]] {
         forEachBlock(
             [&] (MarkedBlock::Handle* handle) {
@@ -558,6 +561,7 @@ void MarkedSpace::didAllocateInBlock(MarkedBlock::Handle* block)
 
 void MarkedSpace::snapshotUnswept()
 {
+    ASSERT(heap().isInPhase(CollectorPhase::End));
     if (heap().collectionScope() == CollectionScope::Eden) {
         forEachDirectory(
             [&] (BlockDirectory& directory) -> IterationStatus {

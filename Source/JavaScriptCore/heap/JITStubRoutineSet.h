@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/GCConductor.h>
 #include <JavaScriptCore/JITStubRoutine.h>
 #include <wtf/HashMap.h>
 #include <wtf/Range.h>
@@ -61,7 +62,7 @@ public:
 
     void prepareForConservativeScan();
     
-    void deleteUnmarkedJettisonedStubRoutines(VM&);
+    void deleteUnmarkedJettisonedStubRoutines(VM&) WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
 
     template<typename Visitor> void traceMarkedStubRoutines(Visitor&);
     
@@ -90,7 +91,7 @@ public:
     void clearMarks() { }
     void mark(void*) { }
     void prepareForConservativeScan() { }
-    void deleteUnmarkedJettisonedStubRoutines(VM&) { }
+    void deleteUnmarkedJettisonedStubRoutines(VM&) WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole) { }
     template<typename Visitor> void traceMarkedStubRoutines(Visitor&) { }
 };
 
