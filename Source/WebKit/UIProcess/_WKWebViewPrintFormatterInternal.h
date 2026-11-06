@@ -27,6 +27,19 @@
 
 #if HAVE(UIKIT_PRINTING)
 
+#import <optional>
+#import <wtf/RetainPtr.h>
+
+namespace WebKit {
+
+struct PrintedDocument {
+    RetainPtr<CGPDFDocumentRef> document;
+    // Measured from the paper's edge.
+    std::optional<UIEdgeInsets> explicitPageMargin;
+};
+
+} // namespace WebKit
+
 @interface UIPrintFormatter ()
 - (CGRect)_pageContentRect:(BOOL)firstPage;
 - (void)_setNeedsRecalc;
@@ -35,7 +48,8 @@
 @interface _WKWebViewPrintFormatter ()
 - (BOOL)_shouldDrawUsingBitmap;
 - (void)_setSnapshotPaperRect:(CGRect)paperRect;
-- (void)_setPrintedDocument:(CGPDFDocumentRef)printedDocument;
+- (WebKit::PrintedDocument)_printedDocument;
+- (void)_setPrintedDocument:(WebKit::PrintedDocument&&)printedDocument;
 - (void)_setPrintPreviewImage:(CGImageRef)printPreviewImage;
 - (void)_invalidatePrintRenderingState;
 

@@ -321,6 +321,278 @@ TEST(WKWebView, PrintToPDFUsingPrintInteractionControllerAndPrintPageRenderer)
     EXPECT_NE([printPageRendererPDFData length], 0UL);
 }
 
+#if HAVE(PDFKIT)
+// A quarter inch unprintable edge.
+static constexpr CGFloat unprintableEdge = 18;
+static constexpr CGSize letterPaperSize { 612, 792 };
+
+struct PrintOptions {
+    CGSize paperSize { letterPaperSize };
+    UIEdgeInsets contentInsets { UIEdgeInsetsZero };
+    CGFloat headerHeight { 0 };
+    CGFloat footerHeight { 0 };
+    bool onBackgroundThread { false };
+};
+
+static RetainPtr<NSData> printToPDF(NSString *html, const PrintOptions& options = { })
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:html];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr printFormatter = [webView viewPrintFormatter];
+    [printFormatter setPerPageContentInsets:options.contentInsets];
+
+    CGRect paperRect = { CGPointZero, options.paperSize };
+    CGRect printableRect = CGRectInset(paperRect, unprintableEdge, unprintableEdge);
+    RetainPtr printPageRenderer = adoptNS([[UIPrintPageRenderer alloc] init]);
+    [printPageRenderer addPrintFormatter:printFormatter.get() startingAtPageAtIndex:0];
+    [printPageRenderer setPaperRect:paperRect];
+    [printPageRenderer setPrintableRect:printableRect];
+    [printPageRenderer setHeaderHeight:options.headerHeight];
+    [printPageRenderer setFooterHeight:options.footerHeight];
+
+    RetainPtr pdfData = adoptNS([[NSMutableData alloc] init]);
+    auto print = [&] {
+        UIGraphicsBeginPDFContextToData(pdfData.get(), paperRect, nil);
+        NSInteger numberOfPages = [printPageRenderer numberOfPages];
+        for (NSInteger i = 0; i < numberOfPages; ++i) {
+            UIGraphicsBeginPDFPage();
+            [printPageRenderer drawPageAtIndex:i inRect:printableRect];
+        }
+        UIGraphicsEndPDFContext();
+    };
+
+    if (!options.onBackgroundThread) {
+        print();
+        return pdfData;
+    }
+
+    __block bool done = false;
+    dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_USER_INITIATED, 0), ^{
+        print();
+        dispatch_async(mainDispatchQueueSingleton(), ^{
+            done = true;
+        });
+    });
+    TestWebKitAPI::Util::run(&done);
+    return pdfData;
+}
+
+static RetainPtr<TestPDFPage> onlyPage(NSData *data)
+{
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data]);
+    EXPECT_EQ([document pageCount], 1);
+    if ([document pageCount] != 1)
+        return nil;
+
+    RetainPtr page = [document pageAtIndex:0];
+    EXPECT_GT([page characterCount], 0);
+    if (![page characterCount])
+        return nil;
+
+    return page;
+}
+
+// Measured from the paper's top left.
+static Vector<CGRect> characterRects(TestPDFPage *page)
+{
+    Vector<CGRect> rects;
+    for (NSInteger i = 0; i < [page characterCount]; ++i) {
+        CGRect rect = [page rectForCharacterAtIndex:i];
+        if (CGRectIsEmpty(rect))
+            continue;
+        rect.origin.y = CGRectGetMaxY([page bounds]) - CGRectGetMaxY(rect);
+        rects.append(rect);
+    }
+    return rects;
+}
+
+static std::optional<CGPoint> firstCharacterPosition(NSString *styleSheet, const PrintOptions& options = { })
+{
+    RetainPtr page = onlyPage(printToPDF([NSString stringWithFormat:@"<style>%@ body { margin: 0 }</style><div>Hello</div>", styleSheet], options).get());
+    if (!page)
+        return std::nullopt;
+    auto rects = characterRects(page.get());
+    EXPECT_FALSE(rects.isEmpty());
+    if (rects.isEmpty())
+        return std::nullopt;
+    return rects[0].origin;
+}
+
+static void expectFirstCharacterOffset(NSString *styleSheet, NSString *referenceStyleSheet, CGFloat left, CGFloat top, const PrintOptions& options = { })
+{
+    auto position = firstCharacterPosition(styleSheet, options);
+    auto referencePosition = firstCharacterPosition(referenceStyleSheet, options);
+    if (!position || !referencePosition)
+        return;
+    EXPECT_NEAR(position->x - referencePosition->x, left, 0.05);
+    EXPECT_NEAR(position->y - referencePosition->y, top, 0.05);
+}
+
+TEST(WKWebView, PrintToPDFUsesPageMargins)
+{
+    // 1in = 96px = 72pt.
+    expectFirstCharacterOffset(@"@page { margin: 0 } div { margin-left: 1in; padding-top: 1in }", @"@page { margin: 0 }", 72, 72);
+    expectFirstCharacterOffset(@"@page { margin: 1in 0 0 0.5in }", @"@page { margin: 0 }", 36, 72);
+
+    // Margins narrower than the printer's unprintable edge are not widened.
+    expectFirstCharacterOffset(@"@page { margin: 0.125in 0 0 0.125in }", @"@page { margin: 0 }", 9, 9);
+}
+
+TEST(WKWebView, PrintToPDFOnBackgroundThreadUsesPageMargins)
+{
+    PrintOptions onBackgroundThread { .onBackgroundThread = true };
+    expectFirstCharacterOffset(@"@page { margin: 1in 0 0 0.5in }", @"@page { margin: 0 }", 36, 72, onBackgroundThread);
+
+    auto position = firstCharacterPosition(@"@page { margin: 1in 0 0 0.5in }", onBackgroundThread);
+    auto mainThreadPosition = firstCharacterPosition(@"@page { margin: 1in 0 0 0.5in }");
+    ASSERT_TRUE(position && mainThreadPosition);
+    EXPECT_NEAR(position->x, mainThreadPosition->x, 0.05);
+    EXPECT_NEAR(position->y, mainThreadPosition->y, 0.05);
+}
+
+TEST(WKWebView, PrintToPDFUsesContentInsetsForAutoPageMargins)
+{
+    PrintOptions withContentInsets { .contentInsets = UIEdgeInsetsMake(54, 54, 54, 54) };
+
+    expectFirstCharacterOffset(@"", @"@page { margin: 0 }", 54, 54, withContentInsets);
+    expectFirstCharacterOffset(@"@page { margin-left: 1in }", @"@page { margin: 0 }", 72, 54, withContentInsets);
+}
+
+TEST(WKWebView, PrintToPDFPageMarginsDoNotCoverHeaderOrFooter)
+{
+    constexpr CGFloat headerAndFooterHeight = 36;
+    PrintOptions withHeaderAndFooter { .headerHeight = headerAndFooterHeight, .footerHeight = headerAndFooterHeight };
+    constexpr CGFloat headerAndFooterMargin = unprintableEdge + headerAndFooterHeight;
+
+    constexpr CGFloat lineHeight = 36;
+    auto firstPage = [](NSString *pageStyle, const PrintOptions& options) -> RetainPtr<TestPDFPage> {
+        NSMutableString *html = [NSMutableString stringWithFormat:@"<style>@page { %@ } body { margin: 0; line-height: 0.5in }</style>", pageStyle];
+        for (unsigned i = 0; i < 30; ++i)
+            [html appendString:@"<div>X</div>"];
+        RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:printToPDF(html, options).get()]);
+        EXPECT_GE([document pageCount], 2);
+        return [document pageAtIndex:0];
+    };
+
+    auto expectLines = [&](NSString *pageStyle, CGFloat top, CGFloat bottom) {
+        RetainPtr page = firstPage(pageStyle, withHeaderAndFooter);
+        RetainPtr reference = firstPage(@"margin: 0", { });
+        ASSERT_TRUE(page && reference);
+        auto lines = characterRects(page.get());
+        auto referenceLines = characterRects(reference.get());
+        ASSERT_FALSE(lines.isEmpty() || referenceLines.isEmpty());
+
+        EXPECT_NEAR(CGRectGetMinX(lines[0]), CGRectGetMinX(referenceLines[0]), 0.05) << pageStyle.UTF8String;
+        EXPECT_NEAR(CGRectGetMinY(lines[0]) - CGRectGetMinY(referenceLines[0]), top, 0.05) << pageStyle.UTF8String;
+        EXPECT_EQ(lines.size(), static_cast<size_t>((letterPaperSize.height - top - bottom) / lineHeight)) << pageStyle.UTF8String;
+        EXPECT_LE(CGRectGetMaxY(lines.last()), letterPaperSize.height - bottom) << pageStyle.UTF8String;
+    };
+
+    expectLines(@"margin: 0", headerAndFooterMargin, headerAndFooterMargin);
+    expectLines(@"margin: 1in 0", 72, 72);
+    expectLines(@"margin: 0.25in 0 1in", headerAndFooterMargin, 72);
+}
+
+TEST(WKWebView, PrintToPDFShrinksPagesLargerThanPaper)
+{
+    for (NSString *pageMargin in @[ @"-0.5in", @"0 -1in 0 0" ]) {
+        RetainPtr page = onlyPage(printToPDF([NSString stringWithFormat:@"<style>@page { margin: %@ } body { margin: 0 } div { display: flex; justify-content: space-between }</style><div><span>L</span><span>R</span></div>", pageMargin]).get());
+        ASSERT_TRUE(page);
+        auto rects = characterRects(page.get());
+        ASSERT_GE(rects.size(), 2u) << pageMargin.UTF8String;
+
+        EXPECT_GE(CGRectGetMinX(rects[0]), 0) << pageMargin.UTF8String;
+        EXPECT_LT(CGRectGetMinX(rects[0]), 1) << pageMargin.UTF8String;
+        EXPECT_GE(CGRectGetMinY(rects[0]), 0) << pageMargin.UTF8String;
+        EXPECT_LE(CGRectGetMaxX(rects.last()), letterPaperSize.width + 0.5) << pageMargin.UTF8String;
+        EXPECT_GT(CGRectGetMaxX(rects.last()), letterPaperSize.width - 4) << pageMargin.UTF8String;
+    }
+}
+
+TEST(WKWebView, PrintFormatterDrawsPageInRequestedRect)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<style>@page { margin: 0 } body { margin: 0 } div { display: flex; justify-content: space-between }</style><div><span>L</span><span>R</span></div>"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr printFormatter = [webView viewPrintFormatter];
+    CGRect paperRect = { CGPointZero, letterPaperSize };
+    RetainPtr printPageRenderer = adoptNS([[UIPrintPageRenderer alloc] init]);
+    [printPageRenderer addPrintFormatter:printFormatter.get() startingAtPageAtIndex:0];
+    [printPageRenderer setPaperRect:paperRect];
+    [printPageRenderer setPrintableRect:CGRectInset(paperRect, unprintableEdge, unprintableEdge)];
+    ASSERT_EQ([printPageRenderer numberOfPages], 1);
+
+    CGRect rect = CGRectMake(100, 100, letterPaperSize.width / 2, letterPaperSize.height / 2);
+    RetainPtr pdfData = adoptNS([[NSMutableData alloc] init]);
+    UIGraphicsBeginPDFContextToData(pdfData.get(), paperRect, nil);
+    UIGraphicsBeginPDFPage();
+    [printFormatter drawInRect:rect forPageAtIndex:0];
+    UIGraphicsEndPDFContext();
+
+    RetainPtr page = onlyPage(pdfData.get());
+    ASSERT_TRUE(page);
+    auto rects = characterRects(page.get());
+    ASSERT_GE(rects.size(), 2u);
+
+    EXPECT_NEAR(CGRectGetMinX(rects[0]), CGRectGetMinX(rect), 1);
+    EXPECT_GE(CGRectGetMinY(rects[0]), CGRectGetMinY(rect));
+    EXPECT_LT(CGRectGetMinY(rects[0]), CGRectGetMinY(rect) + 6);
+    EXPECT_LE(CGRectGetMaxX(rects.last()), CGRectGetMaxX(rect) + 0.5);
+    EXPECT_GT(CGRectGetMaxX(rects.last()), CGRectGetMaxX(rect) - 6);
+}
+
+static bool isRed(CGPDFPageRef page, CGPoint pointFromTopLeft)
+{
+    constexpr CGFloat pixelsPerPoint = 4;
+    std::array<uint8_t, 4> pixel { };
+    RetainPtr colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    RetainPtr context = adoptCF(CGBitmapContextCreate(pixel.data(), 1, 1, 8, 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+    CGRect cropBox = CGPDFPageGetBoxRect(page, kCGPDFCropBox);
+    CGContextScaleCTM(context.get(), pixelsPerPoint, pixelsPerPoint);
+    CGContextTranslateCTM(context.get(), -pointFromTopLeft.x, -(CGRectGetMaxY(cropBox) - pointFromTopLeft.y));
+    CGContextDrawPDFPage(context.get(), page);
+    return pixel[0] > 200 && pixel[1] < 60 && pixel[2] < 60 && pixel[3] > 200;
+}
+
+TEST(WKWebView, PrintToPDFWithZeroPageMarginsFillsPaper)
+{
+    // https://bugs.webkit.org/attachment.cgi?id=475110. Each page's red outline is flush with the paper.
+    NSString *html = @"<!DOCTYPE html><style>"
+        "* { margin: 0px; padding: 0px }"
+        "div { outline: 1px solid red; outline-offset: -1px; display: flex; align-items: center; justify-content: center; width: 100vw; height: 100vh }"
+        "@page { size: letter landscape; margin: 0pt; break-after: always }"
+        "@media print { div { width: 792pt; height: 612pt } }"
+        "</style><div>Page 1</div><div>Page 2</div><div>Page 3</div>";
+    CGSize paperSize = CGSizeMake(792, 612);
+    RetainPtr data = printToPDF(html, { .paperSize = paperSize });
+
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+    ASSERT_EQ([document pageCount], 3);
+    RetainPtr provider = adoptCF(CGDataProviderCreateWithCFData(bridge_cast(data.get())));
+    RetainPtr pdf = adoptCF(CGPDFDocumentCreateWithProvider(provider.get()));
+    for (NSInteger i = 0; i < 3; ++i) {
+        RetainPtr page = [document pageAtIndex:i];
+        EXPECT_WK_STREQ([page text], ([NSString stringWithFormat:@"Page %ld", static_cast<long>(i + 1)]));
+        ASSERT_GT([page characterCount], 0);
+
+        CGRect label = CGRectUnion([page rectForCharacterAtIndex:0], [page rectForCharacterAtIndex:[page characterCount] - 1]);
+        EXPECT_NEAR(CGRectGetMidX(label), paperSize.width / 2, 1);
+        EXPECT_NEAR(CGRectGetMaxY([page bounds]) - CGRectGetMidY(label), paperSize.height / 2, 1);
+
+        CGPDFPageRef pdfPage = CGPDFDocumentGetPage(pdf.get(), i + 1);
+        ASSERT_TRUE(pdfPage);
+        EXPECT_TRUE(isRed(pdfPage, CGPointMake(0.25, paperSize.height / 2)));
+        EXPECT_TRUE(isRed(pdfPage, CGPointMake(paperSize.width - 0.5, paperSize.height / 2)));
+        EXPECT_TRUE(isRed(pdfPage, CGPointMake(paperSize.width / 2, 0.5)));
+        EXPECT_TRUE(isRed(pdfPage, CGPointMake(paperSize.width / 2, paperSize.height - 0.25)));
+        EXPECT_FALSE(isRed(pdfPage, CGPointMake(4, paperSize.height / 2)));
+    }
+}
+#endif // HAVE(PDFKIT)
+
 TEST(WKWebView, PrintFormatterLaunchesPrintProcess)
 {
     using namespace TestWebKitAPI;

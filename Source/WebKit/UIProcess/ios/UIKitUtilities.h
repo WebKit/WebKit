@@ -92,6 +92,7 @@ UIScrollView *scrollViewForTouches(NSSet<UITouch *> *);
 UIRectEdge uiRectEdgeForSide(WebCore::BoxSide);
 UIEdgeInsets maxEdgeInsets(const UIEdgeInsets&, const UIEdgeInsets&);
 WebCore::FloatBoxExtent floatBoxExtent(const UIEdgeInsets&);
+UIEdgeInsets uiEdgeInsets(const WebCore::FloatBoxExtent&);
 
 static constexpr auto allUIRectEdges = std::array {
     UIRectEdgeTop,
