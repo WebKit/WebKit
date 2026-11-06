@@ -104,7 +104,7 @@ struct WidthFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        auto width = Style::unapplyingZoom<LayoutUnit>(renderer.contentBoxWidth(), renderer);
+        auto width = Style::unapplyingZoom<LayoutUnit>(Style::ContainerQueryEvaluator::queryContainerSize(renderer).width(), renderer);
         return evaluateLengthFeature(feature, width, conversionData);
     }
 };
@@ -119,7 +119,7 @@ struct HeightFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        auto height = Style::unapplyingZoom<LayoutUnit>(renderer.contentBoxHeight(), renderer);
+        auto height = Style::unapplyingZoom<LayoutUnit>(Style::ContainerQueryEvaluator::queryContainerSize(renderer).height(), renderer);
         return evaluateLengthFeature(feature, height, conversionData);
     }
 };
@@ -134,7 +134,7 @@ struct InlineSizeFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        auto logicalWidth = Style::unapplyingZoom<LayoutUnit>(renderer.contentBoxLogicalWidth(), renderer);
+        auto logicalWidth = Style::unapplyingZoom<LayoutUnit>(Style::ContainerQueryEvaluator::queryContainerLogicalSize(renderer).width(), renderer);
         return evaluateLengthFeature(feature, logicalWidth, conversionData);
     }
 };
@@ -149,7 +149,7 @@ struct BlockSizeFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        auto logicalHeight = Style::unapplyingZoom<LayoutUnit>(renderer.contentBoxLogicalHeight(), renderer);
+        auto logicalHeight = Style::unapplyingZoom<LayoutUnit>(Style::ContainerQueryEvaluator::queryContainerLogicalSize(renderer).height(), renderer);
         return evaluateLengthFeature(feature, logicalHeight, conversionData);
     }
 };
@@ -164,7 +164,7 @@ struct AspectRatioFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        return evaluateRatioFeature(feature, renderer.contentBoxSize(), conversionData);
+        return evaluateRatioFeature(feature, Style::ContainerQueryEvaluator::queryContainerSize(renderer), conversionData);
     }
 };
 
@@ -178,7 +178,8 @@ struct OrientationFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        bool isPortrait = renderer.contentBoxHeight() >= renderer.contentBoxWidth();
+        auto size = Style::ContainerQueryEvaluator::queryContainerSize(renderer);
+        bool isPortrait = size.height() >= size.width();
         return evaluateIdentifierFeature(feature, isPortrait ? CSSValueID::Portrait : CSSValueID::Landscape, conversionData);
     }
 };

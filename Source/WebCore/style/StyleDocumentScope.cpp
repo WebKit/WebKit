@@ -33,6 +33,7 @@
 #include "CSSKeyframesRule.h"
 #include "CSSStyleSheet.h"
 #include "ContainerNodeInlines.h"
+#include "ContainerQueryEvaluator.h"
 #include "DocumentInlines.h"
 #include "DocumentView.h"
 #include "Element.h"
@@ -286,7 +287,7 @@ bool DocumentScope::invalidateForContainerDependencies(LayoutDependencyUpdateCon
         if (!containerElement)
             continue;
 
-        auto size = containerRenderer.logicalSize();
+        auto size = ContainerQueryEvaluator::queryContainerLogicalSize(containerRenderer);
 
         auto sizeChanged = [&](LayoutSize oldSize) {
             auto& type = containerRenderer.style().containerType();

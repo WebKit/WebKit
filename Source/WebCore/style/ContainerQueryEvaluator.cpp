@@ -35,6 +35,7 @@
 #include "MediaList.h"
 #include "NodeDocument.h"
 #include "NodeRenderStyle.h"
+#include "RenderBoxInlines.h"
 #include "RenderView.h"
 #include "StyleBuilderState.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -242,6 +243,26 @@ RefPtr<const Element> ContainerQueryEvaluator::selectContainer(CQ::ContainerRequ
             return ancestor.ptr();
     }
     return { };
+}
+
+LayoutSize ContainerQueryEvaluator::queryContainerSize(const RenderBox& queryContainer)
+{
+    // Only scrollbars whose space is known up front (overflow: scroll or a stable scrollbar gutter) reduce the
+    // query container size, auto scrollbars that depend on the content don't (https://github.com/w3c/csswg-drafts/issues/10043).
+    // The gutter is reserved in the inline axis only.
+    auto size = queryContainer.contentBoxSize();
+    auto hasGutter = !queryContainer.style().scrollbarGutter().isAuto();
+    if (queryContainer.hasAutoScrollbar(ScrollbarOrientation::Vertical) && !(hasGutter && queryContainer.isHorizontalWritingMode()))
+        size.expand(queryContainer.verticalScrollbarWidth(), 0);
+    if (queryContainer.hasAutoScrollbar(ScrollbarOrientation::Horizontal) && !(hasGutter && !queryContainer.isHorizontalWritingMode()))
+        size.expand(0, queryContainer.horizontalScrollbarHeight());
+    return size;
+}
+
+LayoutSize ContainerQueryEvaluator::queryContainerLogicalSize(const RenderBox& queryContainer)
+{
+    auto size = queryContainerSize(queryContainer);
+    return queryContainer.isHorizontalWritingMode() ? size : size.transposedSize();
 }
 
 }

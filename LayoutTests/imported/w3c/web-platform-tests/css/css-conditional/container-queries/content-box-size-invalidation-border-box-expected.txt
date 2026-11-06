@@ -1,0 +1,6 @@
+
+PASS Inline padding change on a border-box inline-size container
+PASS Block padding change on a border-box size container
+PASS Inline border change on a border-box inline-size container
+PASS Inline padding change on a border-box inline-size container with an auto scrollbar
+

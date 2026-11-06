@@ -257,7 +257,8 @@ static std::optional<double> resolveContainerUnit(CQ::Axis physicalAxis, const a
     while ((element = ContainerQueryEvaluator::selectContainer(CQ::ContainerRequirements { physicalAxis }, nullString(), *element, mode))) {
         auto* containerRenderer = dynamicDowncast<RenderBox>(element->renderer());
         if (containerRenderer && containerRenderer->hasEligibleContainmentForSizeQuery()) {
-            auto widthOrHeight = physicalAxis == CQ::Axis::Width ? containerRenderer->contentBoxWidth() : containerRenderer->contentBoxHeight();
+            auto size = ContainerQueryEvaluator::queryContainerSize(*containerRenderer);
+            auto widthOrHeight = physicalAxis == CQ::Axis::Width ? size.width() : size.height();
             auto adjustedWidthOrHeight = widthOrHeight.toDouble();
 
             // FIXME: Document why `font-size` is excluded or remove this special case.

@@ -34,6 +34,8 @@
 namespace WebCore {
 
 class Element;
+class LayoutSize;
+class RenderBox;
 
 namespace Style {
 
@@ -67,6 +69,8 @@ public:
     bool evaluate(const CQ::ContainerQuery&) const;
 
     static RefPtr<const Element> selectContainer(CQ::ContainerRequirements, const WTF::String& name, const Element&, SelectionMode = SelectionMode::Element, ScopeOrdinal = ScopeOrdinal::Element, const ContainerQueryEvaluationState* = nullptr);
+    static LayoutSize queryContainerSize(const RenderBox&);
+    static LayoutSize queryContainerLogicalSize(const RenderBox&);
 
 private:
     std::optional<MQ::FeatureEvaluationContext> featureEvaluationContextForCondition(const CQ::ContainerCondition&) const;
