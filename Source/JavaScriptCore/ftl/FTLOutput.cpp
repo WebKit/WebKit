@@ -28,6 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "AllowMacroScratchRegisterUsageIf.h"
 #include "B3AtomicValue.h"
 #include "B3BasicBlockInlines.h"
 #include "B3BulkMemoryValue.h"
@@ -504,8 +505,13 @@ LValue Output::storeDoubleAsFloat16(LValue value, TypedPointer pointer)
     result->append(value, ValueRep::SomeRegister);
     result->append(pointer.value(), ValueRep::SomeRegister);
     result->numFPScratchRegisters = 1;
+    if (isX86_64()) {
+        result->clobber(RegisterSet::macroClobberedGPRs());
+        result->clobber(RegisterSet::macroClobberedFPRs());
+    }
     result->setGenerator(
         [](CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsageIf allowScratchIf(jit, isX86_64());
             FPRReg scratchFPR = params.fpScratch(0);
             jit.convertDoubleToFloat16(params[0].fpr(), scratchFPR);
             jit.storeFloat16(scratchFPR, CCallHelpers::Address(params[1].gpr()));
@@ -895,8 +901,13 @@ LValue Output::f16round(LValue doubleValue)
 {
     PatchpointValue* result = patchpoint(Double);
     result->append(doubleValue, ValueRep::SomeRegister);
+    if (isX86_64()) {
+        result->clobber(RegisterSet::macroClobberedGPRs());
+        result->clobber(RegisterSet::macroClobberedFPRs());
+    }
     result->setGenerator(
         [](CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsageIf allowScratchIf(jit, isX86_64());
             jit.convertDoubleToFloat16(params[1].fpr(), params[0].fpr());
             jit.convertFloat16ToDouble(params[0].fpr(), params[0].fpr());
         });

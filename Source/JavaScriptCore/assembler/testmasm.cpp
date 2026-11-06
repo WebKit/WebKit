@@ -36,6 +36,7 @@
 #include <limits>
 #include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
+#include <wtf/Float16.h>
 #include <wtf/Function.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Lock.h>
@@ -43,6 +44,7 @@
 #include <wtf/PtrTag.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFProcess.h>
+#include <wtf/WeakRandom.h>
 #include <wtf/text/StringCommon.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -8835,6 +8837,176 @@ static void testMove128ToVectorMovi()
     testPattern(v128_t { 0x0000000000000042ULL, 0x0000000000000043ULL }); // Simple different values
 }
 
+#if CPU(X86_64) || CPU(ARM64)
+static bool isFloat16NaN(uint16_t bits)
+{
+    return (bits & 0x7c00) == 0x7c00 && (bits & 0x03ff);
+}
+
+static void testConvertDoubleToFloat16()
+{
+    if (!MacroAssembler::supportsFloat16())
+        return;
+
+    double input = 0;
+    double inputAfterConversion = 0;
+    auto separate = compile([&](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&input), FPRInfo::fpRegT0);
+        jit.convertDoubleToFloat16(FPRInfo::fpRegT0, FPRInfo::fpRegT1);
+        jit.storeDouble(FPRInfo::fpRegT0, CCallHelpers::TrustedImmPtr(&inputAfterConversion));
+        jit.moveFloat16To16(FPRInfo::fpRegT1, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+    auto aliased = compile([&](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.loadDouble(CCallHelpers::TrustedImmPtr(&input), FPRInfo::fpRegT0);
+        jit.convertDoubleToFloat16(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+        jit.moveFloat16To16(FPRInfo::fpRegT0, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    auto check = [&](double value) {
+        input = value;
+        uint16_t expected = WTF::convertFloat64ToFloat16(value);
+        uint32_t separateResult = invoke<uint32_t>(separate);
+        uint32_t aliasedResult = invoke<uint32_t>(aliased);
+        CHECK_EQ(std::bit_cast<uint64_t>(inputAfterConversion), std::bit_cast<uint64_t>(value));
+        if (std::isnan(value)) {
+            CHECK_EQ(separateResult <= 0xffff && isFloat16NaN(separateResult), true);
+            CHECK_EQ(aliasedResult <= 0xffff && isFloat16NaN(aliasedResult), true);
+            CHECK_EQ(separateResult & 0x8000, expected & 0x8000U);
+            CHECK_EQ(aliasedResult & 0x8000, expected & 0x8000U);
+            return;
+        }
+        CHECK_EQ(separateResult, expected);
+        CHECK_EQ(aliasedResult, expected);
+    };
+
+    for (double value : doubleOperands()) {
+        check(value);
+        check(-value);
+    }
+
+    // Values at and around every rounding boundary, where narrowing to float first would round twice.
+    for (uint32_t bits = 0; bits < 0x7c00; ++bits) {
+        double low = WTF::convertFloat16ToFloat64(bits);
+        double high = bits == 0x7bff ? 65536.0 : WTF::convertFloat16ToFloat64(bits + 1);
+        double middle = (low + high) / 2;
+        for (double value : { low, middle, std::nextafter(middle, 0.0), std::nextafter(middle, high), static_cast<double>(std::nextafterf(static_cast<float>(middle), 0.0f)), static_cast<double>(std::nextafterf(static_cast<float>(middle), static_cast<float>(high))) }) {
+            check(value);
+            check(-value);
+        }
+    }
+
+    check(std::numeric_limits<double>::denorm_min());
+    check(std::numeric_limits<float>::denorm_min());
+    check(std::numeric_limits<float>::max());
+    check(static_cast<double>(std::numeric_limits<float>::max()) * 2);
+    check(std::bit_cast<double>(0x7ff0000000000001ULL));
+    check(std::bit_cast<double>(0xfff8000000000123ULL));
+
+    WeakRandom random(42);
+    for (unsigned i = 0; i < 100000; ++i) {
+        check(std::bit_cast<double>(random.getUint64()));
+        check(std::ldexp(random.get(), static_cast<int>(random.getUint32(40)) - 30));
+    }
+}
+
+static void testConvertFloat16ToDouble()
+{
+    if (!MacroAssembler::supportsFloat16())
+        return;
+
+    uint16_t input = 0;
+    double separateOutput = 0;
+    double aliasedOutput = 0;
+    auto test = compile([&](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.loadFloat16(CCallHelpers::TrustedImmPtr(&input), FPRInfo::fpRegT0);
+        jit.convertFloat16ToDouble(FPRInfo::fpRegT0, FPRInfo::fpRegT1);
+        jit.storeDouble(FPRInfo::fpRegT1, CCallHelpers::TrustedImmPtr(&separateOutput));
+        jit.convertFloat16ToDouble(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+        jit.storeDouble(FPRInfo::fpRegT0, CCallHelpers::TrustedImmPtr(&aliasedOutput));
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (uint32_t bits = 0; bits <= 0xffff; ++bits) {
+        input = bits;
+        invoke<void>(test);
+        if (isFloat16NaN(bits)) {
+            CHECK_EQ(std::isnan(separateOutput), true);
+            CHECK_EQ(std::isnan(aliasedOutput), true);
+            continue;
+        }
+        uint64_t expected = std::bit_cast<uint64_t>(WTF::convertFloat16ToFloat64(bits));
+        CHECK_EQ(std::bit_cast<uint64_t>(separateOutput), expected);
+        CHECK_EQ(std::bit_cast<uint64_t>(aliasedOutput), expected);
+    }
+}
+
+static void testLoadStoreFloat16()
+{
+    if (!MacroAssembler::supportsFloat16())
+        return;
+
+    auto test = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.loadFloat16(CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesTwo, 2), FPRInfo::fpRegT0);
+        jit.storeFloat16(FPRInfo::fpRegT0, CCallHelpers::BaseIndex(GPRInfo::argumentGPR2, GPRInfo::argumentGPR1, CCallHelpers::TimesTwo, -2));
+        jit.loadFloat16(CCallHelpers::Address(GPRInfo::argumentGPR0, 0), FPRInfo::fpRegT1);
+        jit.storeFloat16(FPRInfo::fpRegT1, CCallHelpers::Address(GPRInfo::argumentGPR2, 6));
+        jit.convertFloat16ToDouble(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+        jit.truncateDoubleToInt32(FPRInfo::fpRegT0, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    std::array<uint16_t, 4> source { 0x3c00, 0x4800, 0xc000, 0x7bff };
+    std::array<uint16_t, 4> destination { 0x1111, 0x2222, 0x3333, 0x4444 };
+    int32_t result = invoke<int32_t>(test, source.data(), static_cast<uintptr_t>(2), destination.data());
+    CHECK_EQ(result, 65504);
+    CHECK_EQ(destination[0], 0x1111);
+    CHECK_EQ(destination[1], 0x7bff);
+    CHECK_EQ(destination[2], 0x3333);
+    CHECK_EQ(destination[3], 0x3c00);
+}
+
+static void testMove16ToFloat16Register()
+{
+    if (!MacroAssembler::supportsFloat16())
+        return;
+
+    auto roundTrip = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.move16ToFloat16(GPRInfo::argumentGPR0, FPRInfo::fpRegT0);
+        jit.moveFloat16To16(FPRInfo::fpRegT0, GPRInfo::returnValueGPR);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    double converted = 0;
+    auto convert = compile([&](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        jit.move16ToFloat16(GPRInfo::argumentGPR0, FPRInfo::fpRegT0);
+        jit.convertFloat16ToDouble(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+        jit.storeDouble(FPRInfo::fpRegT0, CCallHelpers::TrustedImmPtr(&converted));
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (uint16_t pattern : { 0x0000, 0x3c00, 0x8001, 0x7bff, 0xfc00, 0x1234 }) {
+        uint64_t argument = 0xdeadbeefcafe0000ULL | pattern;
+        CHECK_EQ(invoke<uint64_t>(roundTrip, argument), static_cast<uint64_t>(pattern));
+        invoke<void>(convert, argument);
+        CHECK_EQ(std::bit_cast<uint64_t>(converted), std::bit_cast<uint64_t>(WTF::convertFloat16ToFloat64(pattern)));
+    }
+}
+#endif
+
 #if CPU(ARM64)
 static void testMove16ToFloat16Comprehensive()
 {
@@ -10392,6 +10564,11 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 
     RUN(testMove32ToFloatX64());
     RUN(testMove64ToDoubleX64());
+
+    RUN(testConvertDoubleToFloat16());
+    RUN(testConvertFloat16ToDouble());
+    RUN(testLoadStoreFloat16());
+    RUN(testMove16ToFloat16Register());
 #endif
 
 #if CPU(ARM64)

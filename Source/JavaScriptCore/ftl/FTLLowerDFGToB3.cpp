@@ -7285,6 +7285,8 @@ IGNORE_CLANG_WARNINGS_END
             patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
             patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
             patchpoint->clobber(RegisterSet::macroClobberedGPRs());
+            if (isX86_64())
+                patchpoint->clobber(RegisterSet::macroClobberedFPRs());
             patchpoint->numGPScratchRegisters = Options::useHandlerICInFTL() ? 1 : 0;
 
             RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
@@ -19110,6 +19112,8 @@ IGNORE_CLANG_WARNINGS_END
         patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
         patchpoint->clobber(RegisterSet::macroClobberedGPRs());
+        if (isX86_64())
+            patchpoint->clobber(RegisterSet::macroClobberedFPRs());
         patchpoint->numGPScratchRegisters = Options::useHandlerICInFTL() ? 1 : 0;
 
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
@@ -22598,7 +22602,12 @@ IGNORE_CLANG_WARNINGS_END
                     PatchpointValue* patchpoint = m_out.patchpoint(Int32);
                     patchpoint->appendSomeRegister(valueToStore);
                     patchpoint->numFPScratchRegisters = 1;
+                    if (isX86_64()) {
+                        patchpoint->clobber(RegisterSet::macroClobberedGPRs());
+                        patchpoint->clobber(RegisterSet::macroClobberedFPRs());
+                    }
                     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                        AllowMacroScratchRegisterUsageIf allowScratchIf(jit, isX86_64());
                         FPRReg scratchFPR = params.fpScratch(0);
                         jit.convertDoubleToFloat16(params[1].fpr(), scratchFPR);
                         jit.moveFloat16To16(scratchFPR, params[0].gpr());

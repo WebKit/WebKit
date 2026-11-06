@@ -500,6 +500,18 @@ void MacroAssemblerX86_64::collectCPUFeatures()
 {
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
+        // Readers skip collectCPUFeatures() once a state is no longer NotChecked, so each state must be
+        // stored once, with its final value.
+        bool isTranslated = false;
+#if OS(DARWIN)
+        {
+            uint32_t val = 0;
+            size_t valSize = sizeof(val);
+            // Not WTF::isX86BinaryRunningOnARM(): Rosetta developer builds compile it out but still run translated.
+            int rc = sysctlbyname("sysctl.proc_translated", &val, &valSize, nullptr, 0);
+            isTranslated = rc >= 0 && val;
+        }
+#endif
         {
             CPUID cpuid = getCPUID(0x1);
             s_sse3CheckState = (cpuid[2] & (1 << 0)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
@@ -512,36 +524,36 @@ void MacroAssemblerX86_64::collectCPUFeatures()
 #else
             s_avxCheckState = (cpuid[2] & (1 << 28)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
 #endif
+            // Rosetta translates F16C even though it does not advertise it, the same as AVX.
+            bool hasF16C = isTranslated || (cpuid[2] & (1 << 29));
+            s_f16cCheckState = (s_avxCheckState == CPUIDCheckState::Set && hasF16C) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         }
-        auto collectLeaf7Features = [] {
+        auto collectLeaf7Features = [isTranslated] {
             if (getCPUID(0x0)[0] < 0x7) {
                 s_bmi1CheckState = CPUIDCheckState::Clear;
-                s_avx2CheckState = CPUIDCheckState::Clear;
+                s_avx2CheckState = isTranslated ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
                 return;
             }
             CPUID cpuid = getCPUID(0x7);
             s_bmi1CheckState = (cpuid[1] & (1 << 3)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
             // Hypervisors can mask AVX while still reporting AVX2, and AVX2 code paths emit VEX instructions.
-            s_avx2CheckState = (s_avxCheckState == CPUIDCheckState::Set && (cpuid[1] & (1 << 5))) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+            // Rosetta translates AVX2 even though it does not advertise it.
+            bool hasAVX2 = isTranslated || (cpuid[1] & (1 << 5));
+            s_avx2CheckState = (s_avxCheckState == CPUIDCheckState::Set && hasAVX2) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         };
 #if OS(DARWIN)
-        {
+        if (isTranslated) {
+            // Rosetta reports BMI1 only through CPUID, and only when the process is launched with
+            // ROSETTA_ADVERTISE_AVX=1.
+            collectLeaf7Features();
+        } else {
             uint32_t val = 0;
             size_t valSize = sizeof(val);
-            // Not WTF::isX86BinaryRunningOnARM(): Rosetta developer builds compile it out but still run translated.
-            int rc = sysctlbyname("sysctl.proc_translated", &val, &valSize, nullptr, 0);
-            if (rc >= 0 && val) {
-                // Rosetta translates AVX2 even when it does not advertise it, the same as AVX. It reports
-                // BMI1 only through CPUID, and only when the process is launched with ROSETTA_ADVERTISE_AVX=1.
-                collectLeaf7Features();
-                s_avx2CheckState = CPUIDCheckState::Set;
-            } else {
-                rc = sysctlbyname("hw.optional.bmi1", &val, &valSize, nullptr, 0);
-                s_bmi1CheckState = (rc >= 0 && val) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+            int rc = sysctlbyname("hw.optional.bmi1", &val, &valSize, nullptr, 0);
+            s_bmi1CheckState = (rc >= 0 && val) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
 
-                rc = sysctlbyname("hw.optional.avx2_0", &val, &valSize, nullptr, 0);
-                s_avx2CheckState = (rc >= 0 && val) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
-            }
+            rc = sysctlbyname("hw.optional.avx2_0", &val, &valSize, nullptr, 0);
+            s_avx2CheckState = (rc >= 0 && val) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         }
 #else
         collectLeaf7Features();
@@ -559,6 +571,7 @@ MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_sse4_1CheckState =
 MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_sse4_2CheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_avxCheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_avx2CheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_f16cCheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_lzcntCheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_bmi1CheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86_64::CPUIDCheckState MacroAssemblerX86_64::s_popcntCheckState = CPUIDCheckState::NotChecked;
