@@ -100,6 +100,12 @@ if options.site_isolation and port.port_name != 'mac':
     _log.error('--site-isolation is only supported on Mac')
     sys.exit(-1)
 
+if options.site_isolation:
+    if options.result_report_flavor:
+        _log.error('--site-isolation sets the result flavor, so it can\'t be combined with --result-report-flavor')
+        sys.exit(-1)
+    options.result_report_flavor = 'site-isolation'
+
 runner = WebDriverTestRunner(port)
 
 # By default, SIGTERM ends this process without running the finally blocks that stop the driver and the WPT

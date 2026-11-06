@@ -108,8 +108,8 @@ class WebDriverTestRunnerUploadTest(unittest.TestCase):
         self.assertEqual(uploads[0].commits, [{'repository_id': 'webkit', 'id': '1@main'}])
 
     def test_upload_with_suite(self):
-        _, uploads = self.upload(self.runner([]), upload_options(suite='webdriver-tests-site-isolation'))
-        self.assertEqual(uploads[0].suite, 'webdriver-tests-site-isolation')
+        _, uploads = self.upload(self.runner([]), upload_options(suite='webdriver-tests-custom'))
+        self.assertEqual(uploads[0].suite, 'webdriver-tests-custom')
 
     def test_failed_upload(self):
         succeeded, _ = self.upload(self.runner([]), upload_options(report_urls=['https://results.webkit.org', 'https://example.com']), succeeds=False)
