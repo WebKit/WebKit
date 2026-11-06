@@ -39,6 +39,7 @@ enum class ResourceResponseSource : uint8_t;
 namespace WebKit {
 
 class WebPageProxy;
+enum class ShouldClearProvisionalURL : bool;
 enum class Source;
 
 class PageLoadStateObserverBase : public AbstractRefCountedAndCanMakeWeakPtr<PageLoadStateObserverBase> {
@@ -178,7 +179,7 @@ public:
     void clearPendingAPIRequest(const Transaction::Token&);
 
     void didStartProvisionalLoad(const Transaction::Token&, const URL&, const URL& unreachableURL);
-    void didExplicitOpen(const Transaction::Token&, const URL&);
+    void didExplicitOpen(const Transaction::Token&, const URL&, ShouldClearProvisionalURL);
     void didReceiveServerRedirectForProvisionalLoad(const Transaction::Token&, const URL&);
     void didFailProvisionalLoad(const Transaction::Token&);
 

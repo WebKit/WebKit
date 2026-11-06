@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+onload = function () {
+    parent.postMessage("ready", "*");
+
+    // Spin so this process does not learn that the parent's navigation of this frame committed in another
+    // process, and call document.open() once it has had time to commit.
+    const start = Date.now();
+    let next = start + 300;
+    while (Date.now() < start + 1200) {
+        const now = Date.now();
+        if (now >= next) {
+            document.open();
+            next = now + 2;
+        }
+    }
+};
+</script>
+</body>
+</html>

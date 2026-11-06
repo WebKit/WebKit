@@ -32,6 +32,7 @@
 namespace WebKit {
 
 enum class IsMainFrame : bool;
+enum class ShouldClearProvisionalURL : bool { No, Yes };
 
 class FrameLoadStateObserver : public AbstractRefCountedAndCanMakeWeakPtr<FrameLoadStateObserver> {
 public:
@@ -64,7 +65,7 @@ public:
     void removeObserver(FrameLoadStateObserver&);
 
     void didStartProvisionalLoad(URL&&);
-    void didExplicitOpen(URL&&);
+    void didExplicitOpen(URL&&, ShouldClearProvisionalURL);
     void didReceiveServerRedirectForProvisionalLoad(URL&&);
     void didFailProvisionalLoad();
     void didSuspend();

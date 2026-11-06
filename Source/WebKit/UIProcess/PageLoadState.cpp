@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PageLoadState.h"
 
+#include "FrameLoadState.h"
 #include "WebPageProxy.h"
 
 namespace WebKit {
@@ -275,12 +276,13 @@ void PageLoadState::setHadSafeBrowsingWarning(const Transaction::Token& token)
     m_uncommittedState.hadSafeBrowsingWarning = true;
 }
 
-void PageLoadState::didExplicitOpen(const Transaction::Token& token, const URL& url)
+void PageLoadState::didExplicitOpen(const Transaction::Token& token, const URL& url, ShouldClearProvisionalURL shouldClearProvisionalURL)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
 
     m_uncommittedState.url = url;
-    m_uncommittedState.provisionalURL = { };
+    if (shouldClearProvisionalURL == ShouldClearProvisionalURL::Yes)
+        m_uncommittedState.provisionalURL = { };
 }
 
 void PageLoadState::didStartProvisionalLoad(const Transaction::Token& token, const URL& url, const URL& unreachableURL)

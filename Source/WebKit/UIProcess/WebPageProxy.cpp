@@ -9624,18 +9624,26 @@ void WebPageProxy::didExplicitOpenForFrame(IPC::Connection& connection, FrameIde
         return;
 
     Ref process = WebProcessProxy::fromConnection(connection);
+    if (process->coreProcessIdentifier() != frame->process().coreProcessIdentifier()) {
+        ASSERT(preferences().siteIsolationEnabled());
+        return;
+    }
+
     if (!checkURLReceivedFromCurrentOrPreviousWebProcess(process, url)) {
         WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "Ignoring WebPageProxy::DidExplicitOpenForFrame() IPC from the WebContent process because the file URL is outside the sandbox");
         return;
     }
 
+    // document.open() stops a provisional load in its own process only. A provisional load in another process will still commit.
+    auto shouldClearProvisionalURL = frame->provisionalLoadProcess().coreProcessIdentifier() == process->coreProcessIdentifier() ? ShouldClearProvisionalURL::Yes : ShouldClearProvisionalURL::No;
+
     Ref pageLoadState = internals().pageLoadState;
     auto transaction = pageLoadState->transaction();
 
     if (frame->isMainFrame())
-        pageLoadState->didExplicitOpen(transaction, url);
+        pageLoadState->didExplicitOpen(transaction, url, shouldClearProvisionalURL);
 
-    frame->didExplicitOpen(WTF::move(url), WTF::move(mimeType));
+    frame->didExplicitOpen(WTF::move(url), WTF::move(mimeType), shouldClearProvisionalURL);
 
     m_hasCommittedAnyProvisionalLoads = true;
     process->didCommitProvisionalLoad();

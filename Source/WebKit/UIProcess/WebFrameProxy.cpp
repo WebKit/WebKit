@@ -365,10 +365,10 @@ void WebFrameProxy::didStartProvisionalLoad(URL&& url)
     m_frameLoadState.didStartProvisionalLoad(WTF::move(url));
 }
 
-void WebFrameProxy::didExplicitOpen(URL&& url, String&& mimeType)
+void WebFrameProxy::didExplicitOpen(URL&& url, String&& mimeType, ShouldClearProvisionalURL shouldClearProvisionalURL)
 {
     m_MIMEType = WTF::move(mimeType);
-    m_frameLoadState.didExplicitOpen(WTF::move(url));
+    m_frameLoadState.didExplicitOpen(WTF::move(url), shouldClearProvisionalURL);
 }
 
 void WebFrameProxy::didReceiveServerRedirectForProvisionalLoad(URL&& url)

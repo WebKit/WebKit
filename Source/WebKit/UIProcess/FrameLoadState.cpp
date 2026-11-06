@@ -66,10 +66,11 @@ void FrameLoadState::didSuspend()
     });
 }
 
-void FrameLoadState::didExplicitOpen(URL&& url)
+void FrameLoadState::didExplicitOpen(URL&& url, ShouldClearProvisionalURL shouldClearProvisionalURL)
 {
     ASSERT(!url.isNull());
-    m_provisionalURL = { };
+    if (shouldClearProvisionalURL == ShouldClearProvisionalURL::Yes)
+        m_provisionalURL = { };
     setURL(WTF::move(url));
 }
 
