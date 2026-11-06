@@ -26,6 +26,7 @@
 #include "config.h"
 #include "BlockItemsBuilder.h"
 
+#include "BlockFormattingUtils.h"
 #include "RenderBlockFlow.h"
 
 namespace WebCore {
@@ -42,13 +43,6 @@ static bool contentTakesPartInBlockFormattingContext(const RenderBox& box)
     // container establishes a new one (CSS 2.2 §9.4.1).
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
     return blockContainer && !blockContainer->childrenInline() && !blockContainer->createsNewFormattingContext();
-}
-
-static bool establishesIndependentFormattingContext(const RenderBox& box)
-{
-    // A block-level box that is not a block container, such as a table or a flex container, establishes a formatting context of its own.
-    CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
-    return !blockContainer || blockContainer->createsNewFormattingContext();
 }
 
 static bool hasInlineContent(const RenderBox& box)
@@ -82,7 +76,7 @@ BlockItemList BlockItemsBuilder::build(const RenderBox& firstBox, const RenderBo
     CheckedPtr<const RenderBox> box = &firstBox;
     while (box) {
         // FIXME: Floats are kept out by coverage.
-        auto isSingleItem = box->isOutOfFlowPositioned() || establishesIndependentFormattingContext(*box);
+        auto isSingleItem = box->isOutOfFlowPositioned() || BlockFormattingUtils::establishesIndependentFormattingContext(*box);
         if (box->isOutOfFlowPositioned())
             blockItems.append({ *box, BlockItem::Type::OutOfFlowBox });
         else if (isSingleItem)

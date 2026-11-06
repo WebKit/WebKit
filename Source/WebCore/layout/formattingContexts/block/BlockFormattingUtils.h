@@ -73,8 +73,16 @@ public:
     // A block-level box with a justify-self other than normal, stretch or legacy is aligned in the inline axis of its containing block, which
     // sizes an auto inline size to fit its content and keeps its margins as they are (css-align-3 §6.1).
     static bool isAlignedByJustifySelf(const RenderBox&, const Style::ComputedStyle& containingBlockStyle);
-    // An auto inline size fits the content of a box justify-self aligns, and of a child of a horizontal marquee (RenderBox::sizesLogicalWidthToFitContent).
+    // An auto inline size fits the content of a box justify-self aligns, of a child of a horizontal marquee, and of a form control or a legend
+    // (RenderBox::sizesLogicalWidthToFitContent).
     static bool autoInlineSizeFitsContent(const RenderBox&, const Style::ComputedStyle& containingBlockStyle);
+    // A text control, list box, progress bar, meter or file input: a block container whose renderer sizes it and lays out its content its own
+    // way (RenderTextControlSingleLine::layout, RenderListBox::computeLogicalHeight), so its own formatting context lays it out, like a flex
+    // container.
+    static bool isFormControlBlockContainer(const RenderBox&);
+    // A block-level box that is not a block container, like a table or a flex container, a block container that establishes a block formatting
+    // context for its content (CSS 2.2 §9.4.1), or a form control block container.
+    static bool establishesIndependentFormattingContext(const RenderBox&);
     // How far justify-self moves the margin box from the inline start of the containing block, unless an auto margin aligns it.
     static LayoutUnit justifySelfOffset(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit marginStart, LayoutUnit marginEnd, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle);
     // Its inline size, min inline size or max inline size is min-content, max-content or fit-content.
