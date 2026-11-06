@@ -75,6 +75,7 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmMaterializeBaselineData, void, (
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmMaterializePolymorphicCallee, WasmOrJSImportableFunction*, (CallProfile*, WasmOrJSImportableFunction*));
 #endif
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmUnwind, void*, (JSWebAssemblyInstance*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmLoopStopCheck, void*, (JSWebAssemblyInstance*));
 
 JSC_DECLARE_JIT_OPERATION(operationConvertToI64, int64_t, (JSWebAssemblyInstance*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationConvertToF64, double, (JSWebAssemblyInstance*, EncodedJSValue));

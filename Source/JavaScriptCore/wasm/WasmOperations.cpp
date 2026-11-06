@@ -1211,6 +1211,18 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmUnwind, void*, (JSWebAssemblyInst
     return vm.targetMachinePCForThrow;
 }
 
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmLoopStopCheck, void*, (JSWebAssemblyInstance* instance))
+{
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    VM& vm = instance->vm();
+    WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
+    if (vm.traps().handleTrapsIfNeeded() && vm.hasPendingTerminationException())
+        return throwWasmToJSException(callFrame, ExceptionType::Termination, instance);
+    if (std::bit_cast<uintptr_t>(callFrame) < std::bit_cast<uintptr_t>(instance->softStackLimit()))
+        return throwWasmToJSException(callFrame, ExceptionType::StackOverflow, instance);
+    return nullptr;
+}
+
 JSC_DEFINE_JIT_OPERATION(operationConvertToI64, int64_t, (JSWebAssemblyInstance* instance, EncodedJSValue v))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
