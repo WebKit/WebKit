@@ -1220,7 +1220,19 @@ void LocalDOMWindow::print()
     if (page->isControlledByAutomation())
         return;
 
-    if (auto* loader = frame->loader().activeDocumentLoader(); loader && loader->isLoading()) {
+    // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-print
+    // print() prints right away once the document is ready for post-load tasks, after its load and pageshow
+    // events. Before that, it sets the document's "print when loaded" flag, and the print runs at that point.
+    auto shouldWaitForLoadBeforePrinting = [&] {
+        RefPtr document = this->document();
+        if (document->processingLoadEvent())
+            return true;
+        if (document->loadEventFinished() && frame->loader().state() != FrameState::Provisional)
+            return false;
+        RefPtr loader = frame->loader().activeDocumentLoader();
+        return loader && loader->isLoading();
+    };
+    if (shouldWaitForLoadBeforePrinting()) {
         m_shouldPrintWhenLoaded = true;
         return;
     }
@@ -2649,7 +2661,9 @@ void LocalDOMWindow::releaseEvents()
 
 void LocalDOMWindow::runPrintWhenLoadedSteps()
 {
-    if (m_shouldPrintWhenLoaded) {
+    // DocumentLoader::checkLoadComplete() calls runPrintWhenLoadedSteps() whenever the document's own loads go idle,
+    // and that can happen before the load event.
+    if (m_shouldPrintWhenLoaded && protect(document())->loadEventFinished()) {
         m_shouldPrintWhenLoaded = false;
         if (RefPtr loader = frame()->loader().activeDocumentLoader(); !loader || loader->mainDocumentError().isNull())
             print();

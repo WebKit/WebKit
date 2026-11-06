@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("window.print() called while the page is still loading prints after the load event, even when only an iframe is still loading.");
+jsTestIsAsync = true;
+
+// The load event waits for the iframe, but the iframe's load does not count towards this document's loads.
+// The shorter fetch makes sure print() is deferred, and is done well before the iframe and the load event.
+document.write(`<iframe src="/resources/load-and-stall.py?name=dummy.js&mimeType=text%2Fplain&stallAt=0&stallFor=1&rand=${Math.random()}"></iframe>`);
+fetch(`/resources/load-and-stall.py?name=dummy.js&mimeType=text%2Fjavascript&stallAt=0&stallFor=0.3&rand=${Math.random()}`).catch(() => { });
+
+let loadEventFired = false;
+let loadEventFiredBeforePrint;
+
+addEventListener("load", () => {
+    loadEventFired = true;
+});
+
+addEventListener("beforeprint", () => {
+    loadEventFiredBeforePrint = loadEventFired;
+});
+
+addEventListener("afterprint", () => {
+    shouldBeTrue("loadEventFiredBeforePrint");
+    finishJSTest();
+});
+
+evalAndLog("window.print()");
+</script>
+</body>
+</html>

@@ -4589,6 +4589,9 @@ void Document::implicitClose()
 
     if (CheckedPtr svgExtensions = svgExtensionsIfExists())
         svgExtensions->startAnimations();
+
+    if (RefPtr window = m_domWindow)
+        window->runPrintWhenLoadedSteps();
 }
 
 void Document::setParsing(bool b)

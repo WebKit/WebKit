@@ -1,0 +1,12 @@
+window.print() after the load event prints right away while an iframe and a fetch are still loading.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+window.print()
+PASS beforePrintFiredInsidePrintCall is true
+PASS stalledFetchFinished is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

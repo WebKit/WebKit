@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<iframe id="frame" src="about:blank"></iframe>
+<script>
+description("window.print() right after document.open(), write() and close() on a loaded document prints right away, without waiting for the written image.");
+jsTestIsAsync = true;
+
+const stalledImageURL = new URL("/resources/load-and-stall.py?name=../../../fast/images/resources/green-400x400.png&mimeType=image%2Fpng&stallAt=0&stallFor=2&rand=" + Math.random(), location.href).href;
+let stalledImageFinished;
+
+onload = () => {
+    setTimeout(() => {
+        const frameWindow = document.getElementById("frame").contentWindow;
+        const frameDocument = frameWindow.document;
+        frameDocument.open();
+        frameDocument.write(`<img src="${stalledImageURL}">`);
+        frameDocument.close();
+
+        frameWindow.addEventListener("afterprint", () => {
+            // A resource timing entry is only added once the load has finished.
+            stalledImageFinished = frameWindow.performance.getEntriesByName(stalledImageURL).length > 0;
+            shouldBeFalse("stalledImageFinished");
+            finishJSTest();
+        });
+
+        debug("frameWindow.print()");
+        frameWindow.print();
+    }, 0);
+};
+</script>
+</body>
+</html>

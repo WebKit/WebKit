@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("window.print() called from the load event handler prints once the load event is done, even when nothing is loading.");
+jsTestIsAsync = true;
+
+// The load event waits for the iframe. When the iframe finishes, this document has nothing left loading.
+document.write(`<iframe src="/resources/load-and-stall.py?name=dummy.js&mimeType=text%2Fplain&stallAt=0&stallFor=0.3&rand=${Math.random()}"></iframe>`);
+
+let loadHandlerReturned = false;
+let loadHandlerReturnedBeforePrint;
+
+addEventListener("beforeprint", () => {
+    loadHandlerReturnedBeforePrint = loadHandlerReturned;
+});
+
+addEventListener("afterprint", () => {
+    shouldBeTrue("loadHandlerReturnedBeforePrint");
+    finishJSTest();
+});
+
+onload = () => {
+    evalAndLog("window.print()");
+    loadHandlerReturned = true;
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+window.print() called from the load event handler prints once the load event is done, even while a fetch is still loading.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+window.print()
+PASS loadHandlerReturned is true
+PASS stalledFetchFinished is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
