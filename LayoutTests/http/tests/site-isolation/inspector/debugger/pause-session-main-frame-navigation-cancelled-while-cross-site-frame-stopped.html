@@ -11,24 +11,37 @@ function test() {
 
     suite.addTestCase({
         name: "SiteIsolation.Debugger.MainFrameNavigationWhileStopped.NavigationCancelled",
-        description: "A navigation of the main frame should release the page while a cross-site frame is stopped, and the page should be held again if the navigation does not commit.",
+        description: "A navigation of the main frame should release the page while a cross-site frame is stopped, and the page should be held again by a new session if the navigation does not commit.",
         async test() {
             let frameTarget = await waitForFrameTargetForURLContaining("same-process-frame.html");
             InspectorTest.expectNotNull(frameTarget, "Should find the frame target of the cross-site frame.");
             if (!frameTarget)
                 return;
 
+            let opened = GlobalPause.awaitSessionEvent((data) => data.state === "paused");
             await GlobalPause.pause(frameTarget);
+            let openedData = await opened;
+            InspectorTest.expectThat(openedData.stoppingTargetIds.includes(frameTarget.identifier), "The session should name the stopped frame.");
             await GlobalPause.expectHeld(InspectorTest.mainFrameTarget, "window.mainTicks", "The main frame's interval");
 
+            let closed = GlobalPause.awaitSessionEvent((data) => data.state === "closed");
             GlobalPause.evaluate(InspectorTest.mainFrameTarget, `location.href = "/resources/load-and-stall.py?name=../site-isolation/inspector/debugger/resources/same-process-frame.html&mimeType=text/html&stallAt=0&stallFor=10&rand=" + Math.random()`);
+            let closedData = await closed;
+            InspectorTest.expectEqual(closedData.sessionId, openedData.sessionId, "The navigation should close the session.");
             await GlobalPause.expectRunning(InspectorTest.mainFrameTarget, "window.mainTicks", await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.mainTicks"), "The main frame's interval while the navigation is pending");
 
+            let reopened = GlobalPause.awaitSessionEvent((data) => data.state === "paused");
             await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.stop()");
+            let reopenedData = await reopened;
+            InspectorTest.expectNotEqual(reopenedData.sessionId, openedData.sessionId, "Cancelling the navigation should open a new session.");
+            InspectorTest.expectThat(reopenedData.stoppingTargetIds.includes(frameTarget.identifier), "The new session should name the frame that is still stopped.");
             await GlobalPause.sleep(200);
             let before = await GlobalPause.expectHeld(InspectorTest.mainFrameTarget, "window.mainTicks", "The main frame's interval", "after the navigation was cancelled");
 
+            let reclosed = GlobalPause.awaitSessionEvent((data) => data.state === "closed");
             await GlobalPause.resumeAll();
+            let reclosedData = await reclosed;
+            InspectorTest.expectEqual(reclosedData.sessionId, reopenedData.sessionId, "Resuming should close the new session.");
             await GlobalPause.expectRunning(InspectorTest.mainFrameTarget, "window.mainTicks", before, "The main frame's interval after resuming");
         }
     });

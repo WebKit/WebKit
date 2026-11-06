@@ -42,6 +42,11 @@ WI.TargetObserver = class TargetObserver extends InspectorBackend.Dispatcher
         WI.targetManager.targetDestroyed(targetId);
     }
 
+    debuggerPauseSessionChanged(sessionId, state, stoppingTargetIds)
+    {
+        WI.debuggerManager.debuggerPauseSessionChanged(sessionId, state, stoppingTargetIds);
+    }
+
     dispatchMessageFromTarget(targetId, message)
     {
         WI.targetManager.dispatchMessageFromTarget(targetId, message);

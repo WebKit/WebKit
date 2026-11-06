@@ -133,6 +133,7 @@ void WebPageInspectorController::connectFrontend(Inspector::FrontendChannel& fro
             m_pageAgent->didCreateFrontendAndBackend();
     }
 
+    // FIXME: A frontend that connects while a debugger pause session is open does not learn about it until the session changes.
     Ref inspectedPage = m_inspectedPage.get();
     inspectedPage->didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
 
@@ -212,6 +213,12 @@ void WebPageInspectorController::setIndicating(bool indicating)
 #endif
 }
 #endif
+
+void WebPageInspectorController::debuggerPauseSessionDidChange(WebCore::DebuggerPauseSessionIdentifier sessionID, bool isPaused, const Vector<String>& stoppingTargetIDs)
+{
+    if (CheckedPtr targetAgent = m_targetAgent)
+        targetAgent->debuggerPauseSessionChanged(String::number(sessionID.toUInt64()), isPaused, stoppingTargetIDs);
+}
 
 void WebPageInspectorController::sendMessageToInspectorFrontend(const String& targetId, const String& message)
 {
