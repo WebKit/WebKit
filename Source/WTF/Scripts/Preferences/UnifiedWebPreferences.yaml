@@ -5883,9 +5883,8 @@ ShouldRestrictBaseURLSchemes:
   type: bool
   status: embedder
   defaultValue:
-    default: false
+    default: true
     WebKitLegacy: WebKit::defaultShouldRestrictBaseURLSchemes()
-    WebCore: true
 
 ShouldSuppressTextInputFromEditingDuringProvisionalNavigation:
   type: bool

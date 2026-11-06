@@ -63,13 +63,13 @@ ExceptionOr<Ref<Document>> DOMParser::parseFromString(Variant<Ref<TrustedHTML>, 
     } else
         return Exception { ExceptionCode::TypeError };
 
-    if (m_contextDocument)
-        document->setContextDocument(*m_contextDocument.get());
-    document->setMarkupUnsafe(stringValueHolder.releaseReturnValue(), { });
     if (m_contextDocument) {
+        document->setContextDocument(*m_contextDocument);
         document->setURL(URL { protect(m_contextDocument)->url() });
-        document->setSecurityOriginPolicy(m_contextDocument->securityOriginPolicy());
     }
+    document->setMarkupUnsafe(stringValueHolder.releaseReturnValue(), { });
+    if (m_contextDocument)
+        document->setSecurityOriginPolicy(m_contextDocument->securityOriginPolicy());
     return document.releaseNonNull();
 }
 

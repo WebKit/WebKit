@@ -1,6 +1,0 @@
-
-PASS A relative <base> in an about:srcdoc document resolves against the inherited base URL
-FAIL Clone of an about:srcdoc document with a relative <base> assert_equals: deep expected "http://web-platform.test:8800/dom/nodes/sub/" but got "about:blank"
-FAIL A relative <base> inserted into a shallow clone of an about:srcdoc document resolves against the inherited base URL assert_equals: expected "http://web-platform.test:8800/dom/nodes/sub/" but got "about:blank"
-FAIL A data: <base> in an about:srcdoc document and its clone falls back to the inherited base URL assert_equals: source expected "http://web-platform.test:8800/dom/nodes/Document-cloneNode-srcdoc-base-url.window.html" but got "data:/,test"
-

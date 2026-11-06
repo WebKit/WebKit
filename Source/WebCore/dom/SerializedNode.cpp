@@ -103,7 +103,7 @@ Ref<Node> SerializedNode::deserialize(SerializedNode&& serializedNode, WebCore::
             document.settings(),
             serializedDocument.url,
             serializedDocument.baseURL,
-            serializedDocument.baseURLOverride,
+            serializedDocument.aboutBaseURL,
             serializedDocument.documentURI,
             document.compatibilityMode(),
             document.parserContentPolicy(),

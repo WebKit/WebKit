@@ -476,7 +476,7 @@ public:
     inline static Ref<Document> create(const Settings&, const URL&);
     static Ref<Document> createNonRenderedPlaceholder(LocalFrame&, const URL&);
     static Ref<Document> create(Document&);
-    static Ref<Document> createCloned(ClonedDocumentType, const Settings&, const URL&, const URL& baseURL, const URL& baseURLOverride, const Variant<String, URL>& documentURI, DocumentCompatibilityMode, OptionSet<ParserContentPolicy>, Document& contextDocument, SecurityOriginPolicy*, const String& contentType, TextResourceDecoder*);
+    static Ref<Document> createCloned(ClonedDocumentType, const Settings&, const URL&, const URL& baseURL, const URL& aboutBaseURL, const Variant<String, URL>& documentURI, DocumentCompatibilityMode, OptionSet<ParserContentPolicy>, Document& contextDocument, SecurityOriginPolicy*, const String& contentType, TextResourceDecoder*);
 
     virtual ~Document();
 
@@ -936,7 +936,6 @@ public:
     // comments surrounding their declaration.
     const URL& baseURL() const LIFETIME_BOUND { return m_baseURL; }
     void setBaseURLOverride(const URL&);
-    const URL& baseURLOverride() const LIFETIME_BOUND { return m_baseURLOverride; }
     const URL& baseElementURL() const LIFETIME_BOUND { return m_baseElementURL; }
     const AtomString& baseTarget() const LIFETIME_BOUND { return m_baseTarget; }
     NODELETE HTMLBaseElement* firstBaseElement() const;
@@ -2416,6 +2415,7 @@ private:
     URL m_baseURL; // Node.baseURI: The URL to use when resolving relative URLs.
     URL m_baseURLOverride; // An alternative base URL that takes precedence over m_baseURL (but not m_baseElementURL).
     URL m_baseElementURL; // The URL set by the <base> element.
+    URL m_aboutBaseURL; // https://html.spec.whatwg.org/#concept-document-about-base-url
     URL m_cookieURL; // The URL to use for cookie access.
     URL m_firstPartyForCookies; // The policy URL for third-party cookie blocking.
     URL m_siteForCookies; // The policy URL for Same-Site cookies.

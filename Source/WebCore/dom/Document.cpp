@@ -4970,20 +4970,8 @@ URL Document::fallbackBaseURL() const
         [](const URL& url) { return url; }
     );
 
-    if (documentURL.isAboutSrcDoc()) {
-        if (auto* parent = parentDocument())
-            return parent->baseURL();
-    }
-
-    if (documentURL.isAboutBlank()) {
-        auto* creator = parentDocument();
-        if (!creator && frame()) {
-            if (auto* localOpener = dynamicDowncast<LocalFrame>(frame()->opener()))
-                creator = localOpener->document();
-        }
-        if (creator)
-            return creator->baseURL();
-    }
+    if ((documentURL.isAboutBlank() || documentURL.isAboutSrcDoc()) && !m_aboutBaseURL.isNull())
+        return m_aboutBaseURL;
 
     return documentURL;
 }
@@ -5165,12 +5153,12 @@ void Document::processBaseElement()
         baseElementURL = encodingParseURL(href, fallbackBaseURL());
     if (m_baseElementURL != baseElementURL) {
         if (settings().shouldRestrictBaseURLSchemes() && !baseElementURL.isEmpty() && !baseElementURL.isValid()) {
-            m_baseElementURL = { };
+            m_baseElementURL = fallbackBaseURL();
             addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked setting "_s, baseElementURL.stringCenterEllipsizedToLength(), " as the base URL because it is not a valid URL."_s));
         } else if (!protect(contentSecurityPolicy())->allowBaseURI(baseElementURL))
-            m_baseElementURL = { };
+            m_baseElementURL = baseElementURL.isEmpty() ? URL { } : fallbackBaseURL();
         else if (settings().shouldRestrictBaseURLSchemes() && !baseElementURL.isEmpty() && !SecurityPolicy::isBaseURLSchemeAllowed(baseElementURL)) {
-            m_baseElementURL = { };
+            m_baseElementURL = fallbackBaseURL();
             addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked setting "_s, baseElementURL.stringCenterEllipsizedToLength(), " as the base URL because it does not have an allowed scheme."_s));
         } else
             m_baseElementURL = WTF::move(baseElementURL);
@@ -6057,7 +6045,7 @@ ClonedDocumentType Document::clonedDocumentType() const
 
 Ref<Node> Document::cloneNodeInternal(Document&, CloningOperation type, CustomElementRegistry* registry) const
 {
-    Ref clone = createCloned(clonedDocumentType(), settings(), url(), baseURL(), baseURLOverride(), m_documentURI, m_compatibilityMode, m_parserContentPolicy, protect(contextDocument()), protect(securityOriginPolicy()), contentType(), protect(decoder()));
+    Ref clone = createCloned(clonedDocumentType(), settings(), url(), baseURL(), m_aboutBaseURL, m_documentURI, m_compatibilityMode, m_parserContentPolicy, protect(contextDocument()), protect(securityOriginPolicy()), contentType(), protect(decoder()));
     switch (type) {
     case CloningOperation::SelfOnly:
     case CloningOperation::SelfWithTemplateContent:
@@ -6085,14 +6073,14 @@ SerializedNode Document::serializeNode(CloningOperation type) const
             clonedDocumentType(),
             url(),
             m_baseURL,
-            m_baseURLOverride,
+            m_aboutBaseURL,
             m_documentURI,
             contentType(),
         }
     };
 }
 
-Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, const Settings& settings, const URL& url, const URL& baseURL, const URL& baseURLOverride, const Variant<String, URL>& documentURI, DocumentCompatibilityMode compatibilityMode, OptionSet<ParserContentPolicy> parserContentPolicy, Document& contextDocument, SecurityOriginPolicy* securityOriginPolicy, const String& contentType, TextResourceDecoder* decoder)
+Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, const Settings& settings, const URL& url, const URL& baseURL, const URL& aboutBaseURL, const Variant<String, URL>& documentURI, DocumentCompatibilityMode compatibilityMode, OptionSet<ParserContentPolicy> parserContentPolicy, Document& contextDocument, SecurityOriginPolicy* securityOriginPolicy, const String& contentType, TextResourceDecoder* decoder)
 {
     Ref clone = [&] -> Ref<Document> {
         switch (clonedDocumentType) {
@@ -6112,7 +6100,8 @@ Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, cons
 
     ASSERT(clone->m_url == url);
     clone->m_baseURL = baseURL;
-    clone->m_baseURLOverride = baseURLOverride;
+    clone->m_baseURLOverride = baseURL;
+    clone->m_aboutBaseURL = aboutBaseURL;
     clone->m_documentURI = documentURI;
     clone->setCompatibilityMode(compatibilityMode);
     clone->setParserContentPolicy(parserContentPolicy);
@@ -8827,10 +8816,8 @@ void Document::initSecurityContext()
     }
 
     RefPtr parentDocument = ownerElement() ? &ownerElement()->document() : nullptr;
-    if (parentDocument && m_frame->loader().shouldTreatURLAsSrcdocDocument(url())) {
+    if (parentDocument && m_frame->loader().shouldTreatURLAsSrcdocDocument(url()))
         m_isSrcdocDocument = true;
-        setBaseURLOverride(parentDocument->baseURL());
-    }
 
     m_isSecureContext = computeIsSecureContext();
 
@@ -8852,6 +8839,9 @@ void Document::initSecurityContext()
     }
 
     RefPtr ownerDocument = ownerFrame->document();
+    m_aboutBaseURL = ownerDocument->baseURL();
+    updateBaseURL();
+
     CheckedPtr contentSecurityPolicy = this->contentSecurityPolicy();
     contentSecurityPolicy->copyStateFrom(protect(ownerDocument->contentSecurityPolicy()).get());
     contentSecurityPolicy->updateSourceSelf(protect(ownerDocument->securityOrigin()));
