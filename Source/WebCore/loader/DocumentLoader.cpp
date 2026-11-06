@@ -2180,7 +2180,7 @@ bool DocumentLoader::maybeLoadEmpty()
     }
 
     SetForScope isInFinishedLoadingOfEmptyDocument { m_isInFinishedLoadingOfEmptyDocument, true };
-    m_isInitialAboutBlank = isDisplayingInitialEmptyDocument ? IsInitialAboutBlank::Yes : IsInitialAboutBlank::No;
+    m_isInitialAboutBlank = isDisplayingInitialEmptyDocument && m_isContinuingLoad == ShouldTreatAsContinuingLoad::No ? IsInitialAboutBlank::Yes : IsInitialAboutBlank::No;
     finishedLoading();
     return true;
 }

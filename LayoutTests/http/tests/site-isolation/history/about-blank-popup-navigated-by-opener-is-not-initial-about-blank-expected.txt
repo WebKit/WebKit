@@ -1,0 +1,12 @@
+A popup that its opener navigates from a cross-site document to about:blank is not showing its initial about:blank, so the about:blank has a Navigation API entry and pushState adds a history entry.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS popupShowsLoadedAboutBlank() became true
+PASS popup.navigation.entries().length is 1
+PASS popup.history.length is historyLengthBeforePushState + 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

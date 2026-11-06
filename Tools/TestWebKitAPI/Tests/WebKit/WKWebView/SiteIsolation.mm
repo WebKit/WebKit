@@ -9385,6 +9385,35 @@ static bool waitForFirstChildFrameToLoadAboutBlank(TestWKWebView *webView)
     return waitUntilFirstChildFrameEvaluatesToTrue(webView, @"location.href == 'about:blank' && document.readyState == 'complete'");
 }
 
+TEST(SiteIsolation, AboutBlankIframeHistoryBackReturnsToInitiatorProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='iframe1' src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<script>alert('webkit')</script>"_s } },
+        { "/apple"_s, { "<script>alert('apple')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "webkit");
+
+    auto childFramePID = [webView = RetainPtr { webView }] {
+        return [webView mainFrame].childFrames.firstObject.info._processIdentifier;
+    };
+    pid_t mainFramePID = [webView mainFrame].info._processIdentifier;
+
+    [webView evaluateJavaScript:@"iframe1.src = 'about:blank'" completionHandler:nil];
+    EXPECT_TRUE(waitForFirstChildFrameToLoadAboutBlank(webView.get()));
+    EXPECT_EQ(childFramePID(), mainFramePID);
+
+    [webView evaluateJavaScript:@"location.href = 'https://apple.com/apple'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "apple");
+    EXPECT_NE(childFramePID(), mainFramePID);
+
+    [webView evaluateJavaScript:@"history.back()" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_TRUE(waitForFirstChildFrameToLoadAboutBlank(webView.get()));
+    EXPECT_EQ(childFramePID(), mainFramePID);
+}
+
 TEST(SiteIsolation, SelfInitiatedAboutBlankIframeHistoryBackReturnsToInitiatorProcess)
 {
     // The second webkit.org iframe keeps a webkit.org process in the browsing context group for the first one to return to.
