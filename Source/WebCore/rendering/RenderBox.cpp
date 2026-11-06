@@ -4873,9 +4873,14 @@ void RenderBox::addOverflowFromFloatBox(const FloatingObject& floatBox)
 {
     if (!floatBox.renderer())
         return;
+    addOverflowFromFloatBox(*floatBox.renderer(), floatBox.locationOffsetOfBorderBox());
+}
+
+void RenderBox::addOverflowFromFloatBox(const RenderBox& floatBox, LayoutSize offsetFromThis)
+{
     CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*this);
     auto options = blockFlow && blockFlow->establishesLineClampContainer() ? OptionSet { ComputeOverflowOptions::DoesNotContributeToScrollableOverflow } : OptionSet<ComputeOverflowOptions> { };
-    addOverflowWithRendererOffset(*floatBox.renderer(), floatBox.locationOffsetOfBorderBox(), options);
+    addOverflowWithRendererOffset(floatBox, offsetFromThis, options);
 }
 
 // 'offsetFromThis' is normally the renderer's position (RenderBox::location()).

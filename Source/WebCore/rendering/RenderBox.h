@@ -228,6 +228,8 @@ public:
     virtual void addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions> = { });
     void addOverflowFromContainedBox(const RenderBox& child, OptionSet<ComputeOverflowOptions> = { });
     void addOverflowFromFloatBox(const FloatingObject&);
+    // A float at this offset from the box, which no float list of the render tree lists.
+    void addOverflowFromFloatBox(const RenderBox&, LayoutSize offsetFromThis);
 
     LayoutRect logicalVisualOverflowRectForPropagation(const WritingMode) const;
     LayoutRect visualOverflowRectForPropagation(const WritingMode) const;
