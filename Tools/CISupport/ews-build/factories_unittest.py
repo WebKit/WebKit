@@ -221,6 +221,27 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'run-api-tests',
             'set-build-summary'
         ],
+        'macOS-Golden-Gate-Debug-WebDriver-Tests-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'clean-webkitbuild-if-base-changed',
+            'prune-coresymbolicationd-cache-if-too-large',
+            'set-credential-helper',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'show-webkit-version',
+            'checkout-pull-request',
+            'validate-change-content',
+            'kill-old-processes',
+            'download-built-product',
+            'extract-built-product',
+            'webdriver-tests',
+            'set-build-summary'
+        ],
         'macOS-Golden-Gate-Debug-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',

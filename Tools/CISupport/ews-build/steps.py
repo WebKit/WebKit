@@ -6376,6 +6376,209 @@ class AnalyzeAPITestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddToLog
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
 
+class RunWebDriverTests(shell.Test, AddToLogMixin, ShellMixin):
+    name = 'webdriver-tests'
+    description = ['webdriver-tests running']
+    descriptionDone = ['webdriver-tests']
+    jsonFileName = 'webdriver_tests.json'
+    logfiles = {'json': jsonFileName}
+    command = ['python3', 'Tools/Scripts/run-webdriver-tests', '--verbose', WithProperties('--%(configuration)s'), f'--json-output={jsonFileName}']
+    run_name = 'first_run'
+    FAILING_STATUSES = ('FAIL', 'ERROR', 'TIMEOUT')
+    NUM_FAILURES_TO_DISPLAY = 10
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, timeout=90 * 60, maxTime=3 * 60 * 60, sigtermTime=30, **kwargs)
+        self.failures = set()
+        self.error = None
+        self.steps_to_add = []
+
+    @staticmethod
+    def test_files(failures):
+        return sorted({failure.split('::', 1)[0] for failure in failures})
+
+    def failures_of_run(self, run_name):
+        return set(self.getProperty(f'webdriver_{run_name}_failures', []))
+
+    def tests_to_run(self):
+        return []
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.log_observer_json = logobserver.BufferLogObserver()
+        self.addLogObserver('json', self.log_observer_json)
+
+        self.command = self.command + customBuildFlag(self.getProperty('platform'), self.getProperty('fullPlatform'))
+        self.command = self.command + (self.getProperty('additionalArguments') or []) + self.tests_to_run()
+        if SHOULD_FILTER_LOGS is True:
+            self.command = self.shell_command(' '.join(quote(argument) for argument in self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs webdriver')
+
+        rc = yield super().run()
+
+        if SHOULD_FILTER_LOGS is True:
+            self.steps_to_add += [
+                GenerateS3URL(
+                    f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
+                    extension='txt',
+                    additions=f'{self.build.number}',
+                    content_type='text/plain',
+                ), UploadFileToS3(
+                    'logs.txt',
+                    links={self.name: 'Full logs'},
+                    content_type='text/plain',
+                )
+            ]
+
+        failures = self.parse_failures()
+        if failures is None:
+            self.error = 'run-webdriver-tests produced no results'
+        elif not failures and rc != SUCCESS:
+            self.error = 'run-webdriver-tests failed without reporting a test failure'
+        if self.error:
+            yield self._addToLog('stderr', self.error)
+            self.set_build_summary(self.error)
+            self.build.addStepsAfterCurrentStep(self.steps_to_add)
+            defer.returnValue(FAILURE)
+            return
+
+        self.failures = failures
+        self.setProperty(f'webdriver_{self.run_name}_failures', sorted(failures))
+        if failures:
+            yield self._addToLog('test-failures', '\n'.join(sorted(failures)))
+            rc = FAILURE
+        self.evaluate()
+        self.build.addStepsAfterCurrentStep(self.steps_to_add)
+        defer.returnValue(rc)
+
+    def parse_failures(self):
+        try:
+            results = json.loads(''.join(self.log_observer_json.getStdout().splitlines()))['results']
+        except (ValueError, KeyError, TypeError):
+            return None
+
+        failures = set()
+        for result in results:
+            if result.get('status') == 'ERROR':
+                failures.add(result['test'])
+            for subtest in result.get('subtests', []):
+                if subtest.get('status') in self.FAILING_STATUSES:
+                    failures.add(f"{result['test']}::{subtest['name']}")
+        return failures
+
+    @classmethod
+    def describe(cls, label, tests):
+        tests = sorted(tests)
+        message = f"{label}{'s' if len(tests) > 1 else ''}: {', '.join(tests[:cls.NUM_FAILURES_TO_DISPLAY])}"
+        if len(tests) > cls.NUM_FAILURES_TO_DISPLAY:
+            message += ' ...'
+        return message
+
+    def set_build_summary(self, message, force_success=False):
+        self.descriptionDone = message
+        self.setProperty('build_summary', message)
+        if force_success:
+            self.build.results = SUCCESS
+            self.setProperty('force_build_success', True)
+
+    def evaluate(self):
+        if not self.failures:
+            self.set_build_summary('Passed WebDriver tests')
+            return
+        self.steps_to_add += [
+            ValidateChange(verifyBugClosed=False, addURLs=False),
+            KillOldProcesses(),
+            ReRunWebDriverTests(),
+        ]
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return super().getResultSummary()
+        if self.failures:
+            return {'step': self.describe(f'{len(self.failures)} WebDriver test failure', self.failures)}
+        if self.error:
+            return {'step': self.error}
+        return super().getResultSummary()
+
+
+class ReRunWebDriverTests(RunWebDriverTests):
+    name = 're-run-webdriver-tests'
+    run_name = 'second_run'
+
+    def tests_to_run(self):
+        return self.test_files(self.failures_of_run('first_run'))
+
+    def evaluate(self):
+        first_run_failures = self.failures_of_run('first_run')
+        if not first_run_failures & self.failures:
+            self.set_build_summary(self.describe('Found flaky test', first_run_failures | self.failures), force_success=True)
+            return
+
+        self.steps_to_add += [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+        if self.getProperty('rebuild_without_change_on_builder', False):
+            self.steps_to_add += [DownloadBuiltProduct(suffix=SUFFIX_WITHOUT_CHANGE), ExtractBuiltProduct()]
+        else:
+            self.steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
+        self.steps_to_add += [
+            ValidateChange(verifyBugClosed=False, addURLs=False),
+            KillOldProcesses(),
+            RunWebDriverTestsWithoutChange(),
+            AnalyzeWebDriverTestsResults(),
+        ]
+
+
+class RunWebDriverTestsWithoutChange(RunWebDriverTests):
+    name = 'run-webdriver-tests-without-change'
+    run_name = 'clean_tree_run'
+
+    def tests_to_run(self):
+        return self.test_files(self.failures_of_run('first_run') & self.failures_of_run('second_run'))
+
+    def evaluate(self):
+        pass
+
+
+class AnalyzeWebDriverTestsResults(buildstep.BuildStep, AddToLogMixin):
+    name = 'analyze-webdriver-tests-results'
+    description = ['analyze-webdriver-tests-results']
+    descriptionDone = ['analyze-webdriver-tests-results']
+
+    @defer.inlineCallbacks
+    def run(self):
+        repeated_failures = set(self.getProperty('webdriver_first_run_failures', [])) & set(self.getProperty('webdriver_second_run_failures', []))
+        clean_tree_failures = self.getProperty('webdriver_clean_tree_run_failures')
+        if clean_tree_failures is None:
+            message = 'Unable to run the WebDriver tests without the change'
+            self.descriptionDone = message
+            self.setProperty('build_summary', message)
+            self.build.results = FAILURE
+            defer.returnValue(FAILURE)
+            return
+
+        clean_tree_failures = set(clean_tree_failures)
+        new_failures = repeated_failures - clean_tree_failures
+
+        yield self._addToLog('stdio', f'Failures in both runs with the change: {sorted(repeated_failures)}\nFailures without the change: {sorted(clean_tree_failures)}\n')
+        if new_failures:
+            message = RunWebDriverTests.describe(f'Found {len(new_failures)} new WebDriver test failure', new_failures)
+            self.descriptionDone = message
+            self.setProperty('build_summary', message)
+            self.build.results = FAILURE
+            defer.returnValue(FAILURE)
+            return
+
+        message = 'Passed WebDriver tests'
+        if pre_existing_failures := repeated_failures & clean_tree_failures:
+            message += '; ' + RunWebDriverTests.describe('ignored pre-existing failure', pre_existing_failures)
+        self.descriptionDone = message
+        self.setProperty('build_summary', message)
+        self.setProperty('force_build_success', True)
+        self.build.results = SUCCESS
+        defer.returnValue(SUCCESS)
+
+    def getResultSummary(self):
+        return {'step': self.descriptionDone}
+
+
 class FindModifiedAPITests(shell.ShellCommand, AnalyzeChange):
     name = 'find-modified-api-tests'
     description = ['find-modified-api tests running']

@@ -7142,7 +7142,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
 
 
 class TestCheckChangeRelevanceForWebDriver(unittest.TestCase):
-    BUILDER_NAME = 'macOS-Tahoe-Debug-WebDriver-Tests-EWS'
+    BUILDER_NAME = 'macOS-Golden-Gate-Debug-WebDriver-Tests-EWS'
 
     def test_relevant_files(self):
         for file_name in [
@@ -8634,6 +8634,187 @@ class TestAnalyzeAPITestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('api_clean_tree_run_failures', ['suite.pre_existing'])
         self.setProperty('api_first_run_exceeded_failure_limit', True)
         self.expect_outcome(result=SUCCESS, state_string='Passed API tests')
+        return self.run_step()
+
+
+def webdriver_results(*results):
+    return json.dumps({'results': [
+        {'test': test, 'status': status, 'message': None, 'subtests': [{'name': name, 'status': subtest_status, 'message': None} for name, subtest_status in subtests]}
+        for test, status, subtests in results
+    ]})
+
+
+class WebDriverTestsMixin(BuildStepMixinAdditions):
+    jsonFileName = 'webdriver_tests.json'
+    STATUS = 'imported/w3c/webdriver/tests/bidi/session/status/status.py'
+    NAVIGATE = 'imported/w3c/webdriver/tests/classic/navigate_to/navigate.py'
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configure_step(self, step):
+        self.setup_step(step)
+        self.setProperty('fullPlatform', 'mac-tahoe')
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'debug')
+        self.added_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda steps: self.added_steps.extend(steps))
+
+    def expect_run(self, tests='', json_output=None, exit_code=0):
+        expectation = ExpectShell(
+            workdir='wkdir',
+            log_environ=False,
+            command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-webdriver-tests --verbose --debug --json-output={self.jsonFileName}{tests} 2>&1 | Tools/Scripts/filter-test-logs webdriver'],
+            logfiles={'json': self.jsonFileName},
+            timeout=90 * 60,
+            max_time=3 * 60 * 60,
+            sigterm_time=30,
+        )
+        if json_output is not None:
+            expectation = expectation.log('json', stdout=json_output)
+        self.expectRemoteCommands(expectation.exit(exit_code))
+
+    def added_step_names(self):
+        return [type(step).__name__ for step in self.added_steps if type(step).__name__ not in ('GenerateS3URL', 'UploadFileToS3')]
+
+
+class TestRunWebDriverTests(WebDriverTestsMixin, unittest.TestCase):
+    @defer.inlineCallbacks
+    def test_success(self):
+        self.configure_step(RunWebDriverTests())
+        self.expect_run(json_output=webdriver_results((self.STATUS, 'OK', [('test_status', 'PASS')])))
+        self.expect_outcome(result=SUCCESS, state_string='Passed WebDriver tests')
+        self.expect_property('webdriver_first_run_failures', [])
+        self.expect_property('build_summary', 'Passed WebDriver tests')
+        yield self.run_step()
+        self.assertEqual(self.added_step_names(), [])
+
+    def test_expected_results_are_not_failures(self):
+        self.configure_step(RunWebDriverTests())
+        self.expect_run(json_output=webdriver_results((self.STATUS, 'OK', [('test_one', 'XFAIL'), ('test_two', 'XPASS'), ('test_three', 'SKIP')])))
+        self.expect_outcome(result=SUCCESS, state_string='Passed WebDriver tests')
+        return self.run_step()
+
+    @defer.inlineCallbacks
+    def test_failures_are_run_again(self):
+        self.configure_step(RunWebDriverTests())
+        self.expect_run(json_output=webdriver_results(
+            (self.STATUS, 'OK', [('test_status', 'FAIL'), ('test_other', 'PASS')]),
+            (self.NAVIGATE, 'ERROR', []),
+        ), exit_code=1)
+        self.expect_outcome(result=FAILURE, state_string=f'2 WebDriver test failures: {self.STATUS}::test_status, {self.NAVIGATE}')
+        self.expect_property('webdriver_first_run_failures', [f'{self.STATUS}::test_status', self.NAVIGATE])
+        yield self.run_step()
+        self.assertEqual(self.added_step_names(), ['ValidateChange', 'KillOldProcesses', 'ReRunWebDriverTests'])
+
+    def test_failures_found_when_the_exit_code_wraps(self):
+        self.configure_step(RunWebDriverTests())
+        self.expect_run(json_output=webdriver_results((self.STATUS, 'OK', [('test_status', 'TIMEOUT')])), exit_code=0)
+        self.expect_outcome(result=FAILURE, state_string=f'1 WebDriver test failure: {self.STATUS}::test_status')
+        return self.run_step()
+
+    @defer.inlineCallbacks
+    def test_no_results(self):
+        self.configure_step(RunWebDriverTests())
+        self.expect_run(exit_code=1)
+        self.expect_outcome(result=FAILURE, state_string='run-webdriver-tests produced no results')
+        self.expect_property('build_summary', 'run-webdriver-tests produced no results')
+        yield self.run_step()
+        self.assertEqual(self.added_step_names(), [])
+
+    @defer.inlineCallbacks
+    def test_error_without_failures(self):
+        self.configure_step(RunWebDriverTests())
+        self.expect_run(json_output=webdriver_results((self.STATUS, 'OK', [('test_status', 'PASS')])), exit_code=1)
+        self.expect_outcome(result=FAILURE, state_string='run-webdriver-tests failed without reporting a test failure')
+        self.expect_property('build_summary', 'run-webdriver-tests failed without reporting a test failure')
+        yield self.run_step()
+        self.assertEqual(self.added_step_names(), [])
+
+
+class TestReRunWebDriverTests(WebDriverTestsMixin, unittest.TestCase):
+    def configure_rerun(self):
+        self.configure_step(ReRunWebDriverTests())
+        self.setProperty('webdriver_first_run_failures', [f'{self.STATUS}::test_one', f'{self.STATUS}::test_two', f'{self.NAVIGATE}::test_basic'])
+
+    @defer.inlineCallbacks
+    def test_flaky_failures_pass(self):
+        self.configure_rerun()
+        self.expect_run(tests=f' {self.STATUS} {self.NAVIGATE}', json_output=webdriver_results((self.STATUS, 'OK', [('test_one', 'PASS')])))
+        self.expect_outcome(result=SUCCESS, state_string=f'Found flaky tests: {self.STATUS}::test_one, {self.STATUS}::test_two, {self.NAVIGATE}::test_basic')
+        self.expect_property('force_build_success', True)
+        yield self.run_step()
+        self.assertEqual(self.added_step_names(), [])
+
+    @defer.inlineCallbacks
+    def test_repeated_failures_run_without_change(self):
+        self.configure_rerun()
+        self.setProperty('rebuild_without_change_on_builder', True)
+        self.expect_run(tests=f' {self.STATUS} {self.NAVIGATE}', json_output=webdriver_results((self.STATUS, 'OK', [('test_one', 'FAIL')])), exit_code=1)
+        self.expect_outcome(result=FAILURE, state_string=f'1 WebDriver test failure: {self.STATUS}::test_one')
+        yield self.run_step()
+        self.assertEqual(self.added_step_names(), [
+            'RevertAppliedChanges', 'CleanWorkingDirectory', 'ValidateChange', 'DownloadBuiltProduct', 'ExtractBuiltProduct',
+            'ValidateChange', 'KillOldProcesses', 'RunWebDriverTestsWithoutChange', 'AnalyzeWebDriverTestsResults',
+        ])
+
+    @defer.inlineCallbacks
+    def test_repeated_failures_compile_without_change(self):
+        self.configure_rerun()
+        self.expect_run(tests=f' {self.STATUS} {self.NAVIGATE}', json_output=webdriver_results((self.STATUS, 'OK', [('test_one', 'FAIL')])), exit_code=1)
+        self.expect_outcome(result=FAILURE, state_string=f'1 WebDriver test failure: {self.STATUS}::test_one')
+        yield self.run_step()
+        self.assertIn('CompileWebKitWithoutChange', self.added_step_names())
+        self.assertNotIn('DownloadBuiltProduct', self.added_step_names())
+
+
+class TestRunWebDriverTestsWithoutChange(WebDriverTestsMixin, unittest.TestCase):
+    @defer.inlineCallbacks
+    def test_runs_files_failing_in_both_runs(self):
+        self.configure_step(RunWebDriverTestsWithoutChange())
+        self.setProperty('webdriver_first_run_failures', [f'{self.STATUS}::test_one', f'{self.NAVIGATE}::test_basic'])
+        self.setProperty('webdriver_second_run_failures', [f'{self.STATUS}::test_one'])
+        self.expect_run(tests=f' {self.STATUS}', json_output=webdriver_results((self.STATUS, 'OK', [('test_one', 'FAIL')])), exit_code=1)
+        self.expect_outcome(result=FAILURE, state_string=f'1 WebDriver test failure: {self.STATUS}::test_one')
+        self.expect_property('webdriver_clean_tree_run_failures', [f'{self.STATUS}::test_one'])
+        yield self.run_step()
+        self.assertEqual(self.added_step_names(), [])
+
+
+class TestAnalyzeWebDriverTestsResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configure_step(self, clean_tree_failures):
+        self.setup_step(AnalyzeWebDriverTestsResults())
+        self.setProperty('webdriver_first_run_failures', ['a.py::test_one', 'b.py::test_two', 'c.py::test_flaky'])
+        self.setProperty('webdriver_second_run_failures', ['a.py::test_one', 'b.py::test_two'])
+        if clean_tree_failures is not None:
+            self.setProperty('webdriver_clean_tree_run_failures', clean_tree_failures)
+
+    def test_new_failure(self):
+        self.configure_step(['b.py::test_two'])
+        self.expect_outcome(result=FAILURE, state_string='Found 1 new WebDriver test failure: a.py::test_one')
+        self.expect_property('build_summary', 'Found 1 new WebDriver test failure: a.py::test_one')
+        return self.run_step()
+
+    def test_no_results_without_change(self):
+        self.configure_step(None)
+        self.expect_outcome(result=FAILURE, state_string='Unable to run the WebDriver tests without the change')
+        return self.run_step()
+
+    def test_only_pre_existing_failures(self):
+        self.configure_step(['a.py::test_one', 'b.py::test_two'])
+        self.expect_outcome(result=SUCCESS, state_string='Passed WebDriver tests; ignored pre-existing failures: a.py::test_one, b.py::test_two')
+        self.expect_property('force_build_success', True)
         return self.run_step()
 
 

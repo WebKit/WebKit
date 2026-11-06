@@ -363,6 +363,7 @@ workers:
       - {template: mac-sequoia-aircloud, prefix: ews, first: 2011, count: 5}
       - {template: mac-tahoe-aws, prefix: ews, first: 3000, count: 5}
       - {template: mac-golden-gate-aws, prefix: ews, first: 3005, count: 37}
+      - {template: mac-golden-gate-aws, prefix: bot, first: 10016, count: 2, tag: webdriver}
     each(w):
       $if: "'template' in w"
       then:
@@ -502,6 +503,14 @@ builders:
     triggered_by: [macos-golden-gate-debug-build-ews]
     additionalArguments: ['-2', '-1']
     workernames: {$map: {$eval: "range(0, 19)"}, each(i): {$eval: "pop(workers, \"tag == 'golden-gate-m4pro'\").name"}}
+  - name: macOS-Golden-Gate-Debug-WebDriver-Tests-EWS
+    shortname: mac-webdriver
+    icon: testOnly
+    factory: WebDriverTestsFactory
+    platform: mac-golden-gate
+    configuration: debug
+    additionalArguments: [--site-isolation]
+    workernames: {$map: {$eval: workers}, each(w): {$if: "w.tag == 'webdriver'", then: {$eval: w.name}}}
   - name: macOS-Sequoia-Release-Build-EWS
     shortname: mac
     icon: buildOnly

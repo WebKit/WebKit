@@ -256,6 +256,15 @@ class APITestsFactory(TestFactory):
     APITestClass = RunAPITests
 
 
+class WebDriverTestsFactory(TestFactory):
+    def __init__(self, platform, configuration=None, architectures=None, triggered_by=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggered_by=triggered_by, additionalArguments=additionalArguments)
+        self.addStep(KillOldProcesses())
+        self.getProduct()
+        self.addStep(RunWebDriverTests())
+        self.addStep(SetBuildSummary())
+
+
 class iOSBuildFactory(BuildFactory):
     pass
 
