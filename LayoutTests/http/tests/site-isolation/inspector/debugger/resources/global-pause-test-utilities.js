@@ -33,14 +33,6 @@ window.GlobalPause = {
         await resumed;
     },
 
-    // DebuggerManager asks a target that appears during a pause to pause too; cancel that, or it pauses after the resume.
-    async cancelPauseRequest(target)
-    {
-        let targetData = WI.debuggerManager.dataForTarget(target);
-        await targetData.pauseIfNeeded();
-        await targetData.resumeIfNeeded();
-    },
-
     // A document held while loading can run its first script late, so callers count "not run yet" as 0.
     async expectHeld(target, counter, description, message = "while a frame is paused")
     {
@@ -55,11 +47,11 @@ window.GlobalPause = {
         InspectorTest.expectThat(await waitForExpressionInTarget(target, `${counter} > ${before}`, 50), `${description} should advance.`);
     },
 
-    // Skip provisional targets and the inserting process: an evaluate there fires the pause DebuggerManager asks new targets for.
-    async waitForFrameTarget(urlSubstring, excludedProcesses = [])
+    // A message to a provisional target is queued until commit, so an evaluate on one never resolves and each poll would stall the 1s race.
+    async waitForFrameTarget(urlSubstring)
     {
         for (let i = 0; i < 50; ++i) {
-            for (let target of WI.targets.filter((t) => t.type === WI.TargetType.Frame && !t.isProvisional && !excludedProcesses.includes(GlobalPause.processIdentifier(t)))) {
+            for (let target of WI.targets.filter((t) => t.type === WI.TargetType.Frame && !t.isProvisional)) {
                 let url = await Promise.race([GlobalPause.evaluate(target, "document.location.href").catch(() => ""), GlobalPause.sleep(1000).then(() => "")]);
                 if (url.includes(urlSubstring))
                     return target;
