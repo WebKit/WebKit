@@ -29,6 +29,7 @@
 
 #include "Attr.h"
 #include "Attribute.h"
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "ElementInlines.h"
 #include "NodeTraversal.h"
@@ -140,11 +141,23 @@ void NodeSet::sort() const
     if (m_isSorted)
         return;
 
-    unsigned nodeCount = m_nodes.size();
-    if (nodeCount < 2) {
+    if (m_nodes.size() < 2) {
         m_isSorted = true;
         return;
     }
+
+    if (allNodesAreInOneTree())
+        sortOneTree();
+    else
+        sortEachTree();
+    m_isSorted = true;
+}
+
+void NodeSet::sortOneTree() const
+{
+    unsigned nodeCount = m_nodes.size();
+    if (nodeCount <= 1)
+        return;
 
     if (nodeCount > traversalSortCutoff) {
         traversalSort();
@@ -176,19 +189,53 @@ void NodeSet::sort() const
         sortedNodes.append(WTF::move(parentMatrix[i][0]));
 
     m_nodes = WTF::move(sortedNodes);
-    m_isSorted = true;
 }
 
-static inline RefPtr<Node> findRootNode(Node* node)
+static Node& treeRoot(Node& node)
 {
-    RefPtr<Node> current = node;
-    if (RefPtr attr = dynamicDowncast<Attr>(*current))
-        current = attr->ownerElement();
-    if (current->isConnected())
-        return protect(current->document());
-    for (RefPtr parent = current->parentNode(); parent; parent = current->parentNode())
-        current = WTF::move(parent);
-    return current;
+    if (auto* attr = dynamicDowncast<Attr>(node)) {
+        if (auto* element = attr->ownerElement())
+            return element->rootNode();
+        return node;
+    }
+    return node.rootNode();
+}
+
+bool NodeSet::allNodesAreInOneTree() const
+{
+    auto& root = treeRoot(m_nodes.first());
+    for (auto& node : m_nodes) {
+        if (&treeRoot(node) != &root)
+            return false;
+    }
+    return true;
+}
+
+// Nodes in different trees have no defined order; keep the trees in first-seen order.
+void NodeSet::sortEachTree() const
+{
+    HashMap<Ref<Node>, unsigned> treeIndices;
+    Vector<NodeSet> trees;
+#if ASSERT_ENABLED
+    HashSet<Ref<Node>> shadowIncludingRoots;
+#endif
+    for (auto& node : m_nodes) {
+        auto result = treeIndices.add(treeRoot(node), trees.size());
+        if (result.isNewEntry) {
+            // XPath doesn't cross shadow boundaries, so no two trees share a shadow-including root.
+            ASSERT(shadowIncludingRoots.add(result.iterator->key->shadowIncludingRoot()).isNewEntry);
+            trees.constructAndAppend();
+        }
+        trees[result.iterator->value].append(node.copyRef());
+    }
+
+    Vector<Ref<Node>> sortedNodes(ReserveCapacityTag { }, m_nodes.size());
+    for (auto& tree : trees) {
+        tree.sortOneTree();
+        sortedNodes.appendVector(tree.m_nodes);
+    }
+
+    m_nodes = WTF::move(sortedNodes);
 }
 
 void NodeSet::traversalSort() const
@@ -206,7 +253,7 @@ void NodeSet::traversalSort() const
 
     Vector<Ref<Node>> sortedNodes(ReserveCapacityTag { }, nodeCount);
 
-    for (RefPtr node = findRootNode(m_nodes.first().ptr()); node; node = NodeTraversal::next(*node)) {
+    for (RefPtr node = &treeRoot(m_nodes.first()); node; node = NodeTraversal::next(*node)) {
         if (nodes.contains(*node))
             sortedNodes.append(*node);
 
@@ -226,7 +273,6 @@ void NodeSet::traversalSort() const
 
     ASSERT(sortedNodes.size() == nodeCount);
     m_nodes = WTF::move(sortedNodes);
-    m_isSorted = true;
 }
 
 Node* NodeSet::firstNode() const

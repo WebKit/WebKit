@@ -67,6 +67,9 @@ public:
     auto end() const LIFETIME_BOUND { return m_nodes.end(); }
 
 private:
+    NODELETE bool allNodesAreInOneTree() const;
+    void sortOneTree() const;
+    void sortEachTree() const;
     void traversalSort() const;
 
     mutable bool m_isSorted;

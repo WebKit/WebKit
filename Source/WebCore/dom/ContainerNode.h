@@ -61,7 +61,7 @@ public:
     void stringReplaceAll(String&&);
     void replaceAll(Node*);
 
-    inline ContainerNode& rootNode() const; // Defined in ContainerNodeInlines.h
+    NODELETE inline ContainerNode& rootNode() const; // Defined in ContainerNodeInlines.h
     NODELETE ContainerNode& traverseToRootNode() const;
 
     // These methods are only used during parsing.

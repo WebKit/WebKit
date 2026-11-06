@@ -359,6 +359,9 @@ fast/frames/frame-append-body-child-crash.html [ Slow ]
 # release builds, so it is unavoidably slow to walk in a debug build.
 [ Debug ] accessibility/accessible-name-chain-depth-no-crash.html [ Slow ]
 
+# Looks up 10005 ids, and each lookup checks the whole id map's consistency in debug builds.
+[ Debug ] imported/w3c/web-platform-tests/dom/xpath-evaluation-detached-nodes.html [ Skip ]
+
 # This test is failing in all major browser engines as of Sept 2022. The reason is that the Reporting-Endpoints header
 # is served on the parent of the reporting frame, not the reporting frame.
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html
@@ -6077,9 +6080,6 @@ webkit.org/b/281223 imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBef
 
 # Flaky.
 imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-script-and-default-style-meta-from-fragment.html [ Skip ]
-
-# Debug assertion failures since import.
-imported/w3c/web-platform-tests/dom/xpath-evaluation-detached-nodes.html [ Skip ]
 
 # uncategorized dialog element failures
 webkit.org/b/286022 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-close-via-attribute.tentative.html [ Skip ]
