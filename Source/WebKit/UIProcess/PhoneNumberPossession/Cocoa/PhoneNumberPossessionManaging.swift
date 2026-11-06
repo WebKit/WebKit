@@ -24,6 +24,7 @@
 #if ENABLE_PHONE_NUMBER_POSSESSION
 
 import WebKit_Internal
+import WebCore_Private
 
 #if WTF_PLATFORM_IOS_FAMILY
 import UIKit
