@@ -23,6 +23,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 struct WebKit::WebAutocorrectionContext {
+    std::optional<WebCore::FrameIdentifier> frameID;
     String contextBefore;
     String markedText;
     String selectedText;

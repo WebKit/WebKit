@@ -28,11 +28,14 @@
 #include "Decoder.h"
 #include "EditingRange.h"
 #include "Encoder.h"
+#include <WebCore/FrameIdentifier.h>
+#include <optional>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 struct WebAutocorrectionContext {
+    std::optional<WebCore::FrameIdentifier> frameID;
     String contextBefore;
     String markedText;
     String selectedText;

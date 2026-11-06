@@ -2440,15 +2440,15 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
 
 WebAutocorrectionContext WebPage::autocorrectionContext()
 {
-    if (!m_focusedElement)
-        return { };
-
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return { };
 
-    if (!frame->selection().selection().hasEditableStyle())
-        return { };
+    WebAutocorrectionContext correction;
+    correction.frameID = frame->frameID();
+
+    if (!m_focusedElement || !frame->selection().selection().hasEditableStyle())
+        return correction;
 
     String contextBefore;
     String markedText;
@@ -2508,7 +2508,6 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
         }
     }
 
-    WebAutocorrectionContext correction;
     correction.contextBefore = WTF::move(contextBefore);
     correction.markedText = WTF::move(markedText);
     correction.selectedText = WTF::move(selectedText);
