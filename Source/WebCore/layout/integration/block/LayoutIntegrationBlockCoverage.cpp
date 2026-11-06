@@ -556,11 +556,74 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     return outOfFlowBoxesInLeafAvoidanceReason(box, rootContainer);
 }
 
+// A float in inline content, which the inline formatting context places (CSS 2.2 §9.5.1) and its own formatting context lays out through the
+// render tree. The block formatting context keeps the floats in the logical coordinates of its root, whose inline direction every block
+// container on the way has.
+// FIXME: Block-level floats, an initial letter, which the inline formatting context sinks into the lines after it, floats in a line-clamp
+// container, which hides those after the clamp point, and floats in or beside a block-level box in inline content, which the block
+// formatting context lays out while the inline formatting context is laying out its lines (layoutBlockLevelBoxInInlineContent), before it
+// gets the floats placed in them.
+static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox& floatBox, const RenderBlockFlow& rootContainer)
+{
+    CheckedPtr parent = floatBox.parent();
+    CheckedPtr parentBlockContainer = dynamicDowncast<RenderBlockFlow>(*parent);
+    if (!parent->isInlineBox() && !(parentBlockContainer && parentBlockContainer->childrenInline()))
+        return BlockAvoidanceReason::ContentHasFloat;
+    CheckedRef style = floatBox.style();
+    if (style->pseudoElementType() == PseudoElementType::FirstLetter && style->initialLetter().drop())
+        return BlockAvoidanceReason::ContentHasFloat;
+    // From the tree: coverage is also asked outside of layout, where there is no layout state to have the line-clamp container in.
+    for (CheckedPtr ancestor = floatBox.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+        if (CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*ancestor); blockContainer && blockContainer->establishesLineClampContainer())
+            return BlockAvoidanceReason::ContentHasFloat;
+    }
+    for (CheckedPtr containingBlock = floatBox.containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {
+        // margin-trim at the block-end edge moves the boxes the margins collapse through at the end of the content, and their floats would
+        // have to move with them (placeChildrenAtTrimmedBlockEnd).
+        if (containingBlock->style().marginTrim().contains(Style::MarginTrimSide::BlockEnd))
+            return BlockAvoidanceReason::ContentHasFloat;
+        if (containingBlock == &rootContainer)
+            break;
+        if (containingBlock->writingMode().isBidiLTR() != rootContainer.writingMode().isBidiLTR() || containingBlock->parent()->isInlineBox())
+            return BlockAvoidanceReason::ContentHasFloat;
+    }
+    return atomicInlineLevelBoxAvoidanceReason(floatBox, rootContainer);
+}
+
+// What a float before a box in the block formatting context makes it need.
+// FIXME: Clearance (CSS 2.2 §9.5.2), boxes that establish a formatting context of their own beside floats (§9.5), block-level boxes in inline
+// content, which the inline formatting context lays out with the floats it got before them, block containers with an inline direction
+// of their own, and out-of-flow boxes between block-level boxes that would be inline-level, whose static position is where a line box
+// beside the floats would start (RenderBlockFlow::staticInlinePositionForOriginalDisplayInline).
+static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer, bool isLaidOutThroughRenderTree)
+{
+    CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
+    if (!box || box->isInline() || box->isFloating())
+        return { };
+    CheckedPtr parentBlockContainer = dynamicDowncast<RenderBlockFlow>(*box->parent());
+    auto isInInlineContent = box->parent()->isInlineBox() || (parentBlockContainer && parentBlockContainer->childrenInline());
+    if (box->isOutOfFlowPositioned()) {
+        if (!isInInlineContent && box->style().originalDisplay().isInlineType())
+            return BlockAvoidanceReason::ContentHasFloat;
+        return { };
+    }
+    if (box->style().clear() != Clear::None)
+        return BlockAvoidanceReason::ContentHasFloat;
+    // Form controls avoid floats too (RenderBox::avoidsFloats).
+    if (isLaidOutThroughRenderTree || box->avoidsFloats())
+        return BlockAvoidanceReason::ContentHasFloat;
+    if (isInInlineContent)
+        return BlockAvoidanceReason::ContentHasFloat;
+    if (box->writingMode().isBidiLTR() != rootContainer.writingMode().isBidiLTR())
+        return BlockAvoidanceReason::ContentHasFloat;
+    return { };
+}
+
 static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer)
 {
-    // Without floats, clear introduces no clearance (CSS 2.2 §9.5.2), and floats outside the root stay out of its block formatting context.
+    // Floats outside the root stay out of its block formatting context.
     if (renderer.isFloating())
-        return BlockAvoidanceReason::ContentHasFloat;
+        return floatAvoidanceReason(downcast<RenderBox>(renderer), rootContainer);
     if (renderer.isOutOfFlowPositioned()) {
         // Its static position comes from the block formatting context its parent takes part in, or from the inline formatting context of the
         // inline content it is in, which registers it on its containing block too (RenderBlockFlow::markInlineContentDirtyForLayout).
@@ -664,7 +727,10 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
 static std::optional<BlockAvoidanceReason> descendantsAvoidanceReason(const RenderBlockFlow& rootContainer)
 {
     // Every descendant is a block box that takes part in the root's block formatting context, or inline content of one. The content of an
-    // out-of-flow box laid out by a containing block outside the root, or of a box laid out through the render tree, is not part of it.
+    // out-of-flow box laid out by a containing block outside the root, of a float, or of a box laid out through the render tree, is not part
+    // of it.
+    auto hasFloats = false;
+    CheckedPtr<const RenderBlock> lastBlockContainerWithBlockLevelBoxInInlineContent;
     for (CheckedPtr<const RenderObject> descendant = rootContainer.firstChild(); descendant;) {
         CheckedPtr renderer = dynamicDowncast<RenderElement>(*descendant);
         // Its parent lays out a box excluded from normal layout, like a text control's placeholder (RenderBlock::layoutExcludedChildren).
@@ -674,13 +740,22 @@ static std::optional<BlockAvoidanceReason> descendantsAvoidanceReason(const Rend
         }
         auto laidOutThroughRenderTree = renderer && isLaidOutThroughRenderTree(*renderer);
         if (renderer) {
+            if (hasFloats) {
+                if (auto reason = afterFloatAvoidanceReason(*renderer, rootContainer, laidOutThroughRenderTree))
+                    return reason;
+            }
             if (auto reason = laidOutThroughRenderTree ? independentFormattingContextAvoidanceReason(downcast<RenderBox>(*renderer), rootContainer) : contentAvoidanceReason(*renderer, rootContainer))
                 return reason;
+            if (!renderer->isFloatingOrOutOfFlowPositioned() && renderer->isBlockLevelBox() && renderer->parent()->isInlineBox())
+                lastBlockContainerWithBlockLevelBoxInInlineContent = renderer->containingBlock();
+            if (renderer->isFloating() && renderer->containingBlock() == lastBlockContainerWithBlockLevelBoxInInlineContent)
+                return BlockAvoidanceReason::ContentHasFloat;
+            hasFloats |= renderer->isFloating();
         }
         auto isOutOfFlowBox = renderer && renderer->isOutOfFlowPositioned();
         // The content of an atomic inline-level box or of an out-of-flow leaf container is not part of it either.
         auto skipsContent = (isOutOfFlowBox && (!isLaidOutByBlockFormattingContext(*renderer, rootContainer) || isOutOfFlowLeafContainer(*renderer)))
-            || laidOutThroughRenderTree || isAtomicInlineLevelBox(*descendant) || descendant->isRenderReplaced();
+            || laidOutThroughRenderTree || isAtomicInlineLevelBox(*descendant) || descendant->isRenderReplaced() || (renderer && renderer->isFloating());
         descendant = skipsContent ? descendant->nextInPreOrderAfterChildren(&rootContainer) : descendant->nextInPreOrder(&rootContainer);
     }
     return { };
