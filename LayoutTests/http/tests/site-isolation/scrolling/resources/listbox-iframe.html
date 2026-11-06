@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<style>
+html, body { margin: 0; }
+body { height: 2000px; }
+body.short { height: 100px; }
+#list { position: absolute; left: 10px; top: 10px; width: 150px; }
+</style>
+<body>
+<select id="list" multiple size="5"></select>
+<script>
+const params = new URLSearchParams(location.search);
+const id = params.get('id');
+const list = document.getElementById('list');
+
+if (params.has('short'))
+    document.body.className = 'short';
+
+if (params.has('scrolled')) {
+    list.style.top = '110px';
+    scrollTo(0, 100);
+}
+
+for (let i = 0; i < 40; ++i)
+    list.appendChild(new Option(`option ${i}`));
+
+if (params.has('end'))
+    list.scrollTop = list.scrollHeight;
+
+if (params.has('wheelListener'))
+    list.addEventListener('wheel', () => { }, { passive: true });
+
+if (params.has('preventWheel'))
+    list.addEventListener('wheel', (event) => event.preventDefault(), { passive: false });
+
+if (params.has('contain'))
+    document.documentElement.style.overscrollBehavior = 'contain';
+
+addEventListener('message', (event) => {
+    if (event.data == 'reset') {
+        list.scrollTop = 0;
+        scrollTo(0, 0);
+    }
+    if (event.data == 'scrollToEnd') {
+        list.style.top = `${document.body.offsetHeight - 100}px`;
+        scrollTo(0, document.documentElement.scrollHeight);
+    }
+    const listRect = list.getBoundingClientRect();
+    const reply = {
+        id,
+        listScrollTop: list.scrollTop,
+        scrollY,
+        listRect: { x: listRect.x, y: listRect.y, width: listRect.width, height: listRect.height },
+    };
+    // Dumping the scrolling state tree recomputes stale regions, so only do it when asked.
+    if (event.data == 'region')
+        reply.hasNonFastRegion = internals.scrollingStateTreeAsText().includes('synchronous event dispatch region for event wheel');
+    event.source.postMessage(reply, '*');
+});
+
+top.postMessage({ loaded: true, id }, '*');
+</script>
+</body>

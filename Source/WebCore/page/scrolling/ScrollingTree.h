@@ -327,6 +327,7 @@ protected:
 
     NODELETE WEBCORE_EXPORT void setGestureState(std::optional<WheelScrollGestureState>);
     NODELETE WEBCORE_EXPORT std::optional<WheelScrollGestureState> gestureState();
+    WEBCORE_EXPORT RefPtr<ScrollingTreeFrameScrollingNode> hostedRootNodeForFrame(FrameIdentifier) const WTF_REQUIRES_LOCK(m_treeLock);
 
     NODELETE std::optional<FramesPerSecond> nominalFramesPerSecond();
 
@@ -357,6 +358,7 @@ private:
 
     void applyLayerPositionsRecursive(ScrollingTreeNode&) WTF_REQUIRES_LOCK(m_treeLock);
     void notifyRelatedNodesRecursive(ScrollingTreeNode&);
+    RefPtr<ScrollingTreeFrameScrollingNode> findHostedRootNode(NOESCAPE const Function<bool(const ScrollingTreeFrameScrollingNode&)>&) const WTF_REQUIRES_LOCK(m_treeLock);
     void traverseScrollingTreeRecursive(ScrollingTreeNode&, NOESCAPE const VisitorFunction&) WTF_REQUIRES_LOCK(m_treeLock);
     
     NODELETE void setOverlayScrollbarsEnabled(bool);
@@ -367,8 +369,9 @@ private:
 #if ENABLE(WHEEL_EVENT_REGIONS)
     WEBCORE_EXPORT virtual OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(FloatPoint) const;
 #endif
+    WEBCORE_EXPORT virtual std::optional<ScrollingNodeID> hostedRootNodeIDWithNonFastScrollableRegionAtPoint(FloatPoint) const WTF_REQUIRES_LOCK(m_treeLock);
 
-    OptionSet<WheelEventProcessingSteps> computeWheelProcessingSteps(const PlatformWheelEvent&) WTF_REQUIRES_LOCK(m_treeStateLock);
+    OptionSet<WheelEventProcessingSteps> computeWheelProcessingSteps(const PlatformWheelEvent&, Locker<Lock>& treeStateLocker) WTF_REQUIRES_LOCK(m_treeStateLock);
 
     RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;
 
@@ -388,6 +391,7 @@ private:
 
     struct TreeState {
         EventTrackingRegions eventTrackingRegions;
+        bool hostedFramesHaveEventTrackingRegions { false };
         FloatPoint mainFrameScrollPosition;
         PlatformDisplayID displayID { 0 };
         std::optional<FramesPerSecond> nominalFramesPerSecond;
