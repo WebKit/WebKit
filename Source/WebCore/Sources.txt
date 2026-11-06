@@ -363,10 +363,10 @@ Modules/phonenumberpossession/PhoneNumberPossessionCoordinator.cpp
 Modules/phonenumberpossession/PhoneNumberPossessionCredential.cpp
 Modules/phonenumberpossession/PhoneNumberPossessionRequest.cpp
 Modules/pictureinpicture/DocumentOrShadowRootPictureInPicture.cpp
-Modules/pictureinpicture/DocumentPictureInPicture.cpp
 Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
 Modules/pictureinpicture/PictureInPictureEvent.cpp
 Modules/pictureinpicture/PictureInPictureWindow.cpp
+Modules/pictureinpicture/VideoPictureInPicture.cpp
 Modules/push-api/PushCrypto.cpp
 Modules/push-api/PushDatabase.cpp
 Modules/push-api/PushEvent.cpp

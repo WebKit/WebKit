@@ -824,7 +824,7 @@
 		1D0026A42374D62400CA6CDF /* JSPictureInPictureWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D0026A22374D62300CA6CDF /* JSPictureInPictureWindow.h */; };
 		1D0A2170645D6D5540413B44 /* Airplay-fullscreen.svg in Copy Modern Media Controls Images */ = {isa = PBXBuildFile; fileRef = BCC6DEE768FF3CAEF219270B /* Airplay-fullscreen.svg */; platformFilters = (macos, ); };
 		1D2C82B7236A3F6A0055D6C5 /* PictureInPictureSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D2C82B6236A3F6A0055D6C5 /* PictureInPictureSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1D2F8E03234474EF00993B68 /* DocumentPictureInPicture.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DEF06DD233D2E1C00EE228D /* DocumentPictureInPicture.h */; };
+		1D2F8E03234474EF00993B68 /* VideoPictureInPicture.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DEF06DD233D2E1C00EE228D /* VideoPictureInPicture.h */; };
 		1D2F8E042344751600993B68 /* PictureInPictureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DEF06CA233C3D0B00EE228D /* PictureInPictureEvent.h */; };
 		1D2F8E052344751D00993B68 /* HTMLVideoElementPictureInPicture.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DEF06CC233C3D2000EE228D /* HTMLVideoElementPictureInPicture.h */; };
 		1D2F8E062344752300993B68 /* PictureInPictureWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DEF06CD233C3D2A00EE228D /* PictureInPictureWindow.h */; };
@@ -9997,8 +9997,8 @@
 		1DEF06D0233C3D4100EE228D /* PictureInPictureEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PictureInPictureEvent.idl; sourceTree = "<group>"; };
 		1DEF06D1233C3D4B00EE228D /* PictureInPictureWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PictureInPictureWindow.idl; sourceTree = "<group>"; };
 		1DEF06D2233C3D5600EE228D /* HTMLVideoElementPictureInPicture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLVideoElementPictureInPicture.cpp; sourceTree = "<group>"; };
-		1DEF06DC233D2E1C00EE228D /* DocumentPictureInPicture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentPictureInPicture.cpp; sourceTree = "<group>"; };
-		1DEF06DD233D2E1C00EE228D /* DocumentPictureInPicture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentPictureInPicture.h; sourceTree = "<group>"; };
+		1DEF06DC233D2E1C00EE228D /* VideoPictureInPicture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoPictureInPicture.cpp; sourceTree = "<group>"; };
+		1DEF06DD233D2E1C00EE228D /* VideoPictureInPicture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPictureInPicture.h; sourceTree = "<group>"; };
 		1DEF06DE233D2E1C00EE228D /* Document+PictureInPicture.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Document+PictureInPicture.idl"; sourceTree = "<group>"; };
 		1E177CEEB040E8C9436CBB2D /* CookieStorageSessionCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CookieStorageSessionCFNet.cpp; sourceTree = "<group>"; };
 		1E4F9E98BC7FE88417A74C61 /* GPUVideoEncoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUVideoEncoder.mm; sourceTree = "<group>"; };
@@ -26634,8 +26634,6 @@
 				7C36556E2506DF9900A7882B /* DocumentOrShadowRoot+PictureInPicture.idl */,
 				CD4F799A2EB5132A0031F5E4 /* DocumentOrShadowRootPictureInPicture.cpp */,
 				CD4F79992EB5132A0031F5E4 /* DocumentOrShadowRootPictureInPicture.h */,
-				1DEF06DC233D2E1C00EE228D /* DocumentPictureInPicture.cpp */,
-				1DEF06DD233D2E1C00EE228D /* DocumentPictureInPicture.h */,
 				1DEF06CF233C3D3800EE228D /* HTMLVideoElement+PictureInPicture.idl */,
 				1DEF06D2233C3D5600EE228D /* HTMLVideoElementPictureInPicture.cpp */,
 				1DEF06CC233C3D2000EE228D /* HTMLVideoElementPictureInPicture.h */,
@@ -26645,6 +26643,8 @@
 				1DEF06CE233C3D3100EE228D /* PictureInPictureWindow.cpp */,
 				1DEF06CD233C3D2A00EE228D /* PictureInPictureWindow.h */,
 				1DEF06D1233C3D4B00EE228D /* PictureInPictureWindow.idl */,
+				1DEF06DC233D2E1C00EE228D /* VideoPictureInPicture.cpp */,
+				1DEF06DD233D2E1C00EE228D /* VideoPictureInPicture.h */,
 			);
 			path = pictureinpicture;
 			sourceTree = "<group>";
@@ -45606,7 +45606,6 @@
 				46A49C9328EE67ED00208B6E /* DocumentOrShadowRootFullscreen.h in Headers */,
 				CD3184152E89FBFA00606263 /* DocumentPage.h in Headers */,
 				BCCFBAE80B5152ED0001F1D7 /* DocumentParser.h in Headers */,
-				1D2F8E03234474EF00993B68 /* DocumentPictureInPicture.h in Headers */,
 				BA3BAEE52E12A7B300B8D3B7 /* DocumentPrefetcher.h in Headers */,
 				CDFFB2162E8A54980045D9F2 /* DocumentQuirks.h in Headers */,
 				CDFFB21D2E8A6F7E0045D9F2 /* DocumentResourceLoader.h in Headers */,
@@ -50219,6 +50218,7 @@
 				1DAB3114251D725C00FC9485 /* VideoLayerManager.h in Headers */,
 				1DAB3115251D74DB00FC9485 /* VideoLayerManagerObjC.h in Headers */,
 				41DD3C2D2902C47700369BEF /* VideoMatrixCoefficients.h in Headers */,
+				1D2F8E03234474EF00993B68 /* VideoPictureInPicture.h in Headers */,
 				4158707E28EC79A900C163C5 /* VideoPixelFormat.h in Headers */,
 				CDE83DB2183C44060031EAA3 /* VideoPlaybackQuality.h in Headers */,
 				075033A8252BD36800F70CE3 /* VideoPlaybackQualityMetrics.h in Headers */,

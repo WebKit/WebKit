@@ -24,52 +24,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DocumentPictureInPicture.h"
+#pragma once
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
 
-#include "Document.h"
-#include "HTMLVideoElementPictureInPicture.h"
-#include "JSDOMPromiseDeferred.h"
-#include "PictureInPictureSupport.h"
-#include <wtf/TZoneMallocInlines.h>
-#include "HTMLVideoElement.h"
+#include "Supplementable.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentPictureInPicture);
+class DeferredPromise;
+class Document;
 
-DocumentPictureInPicture::~DocumentPictureInPicture() = default;
+class VideoPictureInPicture : public Supplement<Document> {
+    WTF_MAKE_TZONE_ALLOCATED(VideoPictureInPicture);
+public:
+    virtual ~VideoPictureInPicture();
 
-bool DocumentPictureInPicture::pictureInPictureEnabled(Document&)
-{
-    return supportsPictureInPicture();
-}
+    static bool pictureInPictureEnabled(Document&);
+    static void exitPictureInPicture(Document&, Ref<DeferredPromise>&&);
 
-void DocumentPictureInPicture::exitPictureInPicture(Document& document, Ref<DeferredPromise>&& promise)
-{
-    RefPtr element = document.pictureInPictureElement();
+    static VideoPictureInPicture* from(Document&);
 
-    if (!element) {
-        promise->reject(ExceptionCode::InvalidStateError);
-        return;
-    }
-
-    protect(HTMLVideoElementPictureInPicture::from(*element))->exitPictureInPicture(WTF::move(promise));
-}
-
-DocumentPictureInPicture* DocumentPictureInPicture::from(Document& document)
-{
-    auto* supplement = downcast<DocumentPictureInPicture>(Supplement<Document>::from(&document, supplementName()));
-    if (!supplement) {
-        auto newSupplement = makeUnique<DocumentPictureInPicture>();
-        supplement = newSupplement.get();
-        provideTo(&document, supplementName(), WTF::move(newSupplement));
-    }
-    return supplement;
-}
+private:
+    static ASCIILiteral supplementName() { return "VideoPictureInPicture"_s; };
+    bool isVideoPictureInPicture() const final { return true; }
+};
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VideoPictureInPicture)
+    static bool isType(const WebCore::SupplementBase& supplement) { return supplement.isVideoPictureInPicture(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(PICTURE_IN_PICTURE_API)

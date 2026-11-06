@@ -86,7 +86,7 @@ public:
     virtual bool isDeviceMotionController() const { return false; }
     virtual bool isDeviceOrientationController() const { return false; }
     virtual bool isDocumentMediaElement() const { return false; }
-    virtual bool isDocumentPictureInPicture() const { return false; }
+    virtual bool isVideoPictureInPicture() const { return false; }
     virtual bool isDocumentStorageAccess() const { return false; }
     virtual bool isGeolocationController() const { return false; }
     virtual bool isHTMLVideoElementPictureInPicture() const { return false; }
