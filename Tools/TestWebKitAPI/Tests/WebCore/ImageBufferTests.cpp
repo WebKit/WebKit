@@ -127,6 +127,23 @@ TEST(ImageBufferTests, ImageBufferSubTypeCreateCreatesSubtypes)
     EXPECT_NE(nullptr, unaccelerated);
 }
 
+TEST(ImageBufferTests, AlignedImageBufferClampsLongestSide)
+{
+    auto destination = ImageBuffer::create({ 4, 4 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    ASSERT_NE(nullptr, destination);
+
+    // The strip GradientImage draws for a border-image tiled along a very wide box: under
+    // the area limit once scaled to it, but far longer than any texture.
+    auto strip = destination->context().createAlignedImageBuffer(FloatSize { 420813, 150 });
+    ASSERT_NE(nullptr, strip);
+    EXPECT_LE(strip->backendSize().width(), 16384);
+    EXPECT_GE(strip->backendSize().height(), 5);
+
+    auto wide = destination->context().createAlignedImageBuffer(FloatSize { 16000, 100 });
+    ASSERT_NE(nullptr, wide);
+    EXPECT_EQ(IntSize(16000, 100), wide->backendSize());
+}
+
 TEST(ImageBufferTests, ImageBufferSubPixelDrawing)
 {
     auto colorSpace = ColorSpace::SRGB();
