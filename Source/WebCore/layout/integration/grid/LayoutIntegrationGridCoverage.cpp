@@ -56,7 +56,6 @@ enum class GridAvoidanceReason : uint8_t {
     GridHasOutOfFlowChild,
     GridHasNonVisibleOverflow,
     GridItemIsReplacedElement,
-    GridItemDoesNotHaveElement,
     GridItemIsSubgrid,
     GridIsEmpty,
     GridHasGridTemplateAreas,
@@ -428,10 +427,6 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
         // We do not yet support grid item sizing spec for replaced elements.
         // See: https://drafts.csswg.org/css-grid/#grid-item-sizing
-        RefPtr gridItemElement = gridItem->element();
-        if (!gridItemElement)
-            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemDoesNotHaveElement, reasons, reasonCollectionMode);
-
         if (isReplacedBox(gridItem))
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemIsReplacedElement, reasons, reasonCollectionMode);
 
@@ -681,9 +676,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridHasNonVisibleOverflow:
         stream << "grid has non-visible overflow";
-        break;
-    case GridAvoidanceReason::GridItemDoesNotHaveElement:
-        stream << "grid item does not have a corresponding element";
         break;
     case GridAvoidanceReason::GridItemIsReplacedElement:
         stream << "grid item is a replaced element";
