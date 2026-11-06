@@ -1216,6 +1216,10 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseAs
         assignmentTarget = parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth);
         if (assignmentTarget && !match(DOT) && !match(OPENBRACKET) && !match(OPENPAREN) && !match(BACKQUOTE))
             return assignmentTarget;
+        // The member expression below reparses this group. Without this offset it tries the
+        // pattern again, and nested '[' / '{' do both interpretations.
+        if (!assignmentTarget) [[unlikely]]
+            rememberFailedAssignmentPattern(static_cast<unsigned>(savePoint.lexerState.startOffset));
         restoreSavePoint(context, savePoint);
     }
 
@@ -4299,6 +4303,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     int initialAssignmentCount = m_parserState.assignmentCount;
     int initialNonLHSCount = m_parserState.nonLHSCount;
     bool maybeAssignmentPattern = match(OPENBRACE) || match(OPENBRACKET);
+    unsigned assignmentPatternStart = maybeAssignmentPattern ? tokenStart() : 0;
     bool wasOpenParen = match(OPENPAREN);
     // Do not use matchSpecIdentifier() here since it is slower than isIdentifierOrKeyword.
     // Whether spec identifier is will be validated by isArrowFunctionParameters().
@@ -4346,6 +4351,13 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
             if (shouldReturnResult)
                 return result;
         }
+    }
+
+    // parseAssignmentElement already failed this group's pattern and is reparsing it as a
+    // member expression. Trying the pattern again doubles the work at every nested '[' or '{'.
+    if (maybeAssignmentPattern && !lhs && hasFailedAssignmentPattern(assignmentPatternStart)) [[unlikely]] {
+        propagateError();
+        failIfFalse(lhs, "Cannot parse expression");
     }
 
     if (!lhs && !maybeAssignmentPattern)
