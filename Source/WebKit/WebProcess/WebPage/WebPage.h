@@ -2898,6 +2898,8 @@ private:
     void layerTreeAsTextForTesting(WebCore::FrameIdentifier, uint64_t baseIndent, OptionSet<WebCore::LayerTreeAsTextOptions>, CompletionHandler<void(String&&)>&&);
     void frameTextForTesting(WebCore::FrameIdentifier, CompletionHandler<void(String&&)>&&);
     void bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier, WebCore::AccessibilityRemoteToken, CompletionHandler<void(WebCore::AccessibilityRemoteToken, int)>&&);
+    void rebindRemoteAccessibilityFrames(WebCore::FrameIdentifier);
+    void repostAccessibilityFocusInFrame(WebCore::FrameIdentifier);
     void updateRemotePageOffsetInMainFrame(WebCore::FrameIdentifier, WebCore::IntPoint);
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     void updateRemotePageAccessibilityInheritedState(WebCore::FrameIdentifier, const WebCore::InheritedFrameState&);

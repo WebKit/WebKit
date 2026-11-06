@@ -726,8 +726,19 @@ void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIde
         std::optional<WebCore::PageIdentifier> oldPageID = webPageIDInCurrentProcess();
         WebCore::ProcessIdentifier newProcessID = m_provisionalFrame->process().coreProcessIdentifier();
 
-        if (RefPtr process = std::exchange(m_provisionalFrame, nullptr)->takeFrameProcess())
+        if (RefPtr process = std::exchange(m_provisionalFrame, nullptr)->takeFrameProcess()) {
             setProcess(process.releaseNonNull());
+
+            // The parent frame's process binds its accessibility tree to the process hosting this frame. If the
+            // parent shares the old or new process, the frame turns remote or local there, which binds it. Otherwise
+            // the frame stays remote in the parent, and committing here is when the new process takes over the frame,
+            // so this is where the parent is asked to rebind to it.
+            if (RefPtr parent = parentFrame()) {
+                auto parentProcessID = parent->process().coreProcessIdentifier();
+                if (parentProcessID != oldProcessID && parentProcessID != newProcessID)
+                    protect(page())->sendToProcessContainingFrame(parent->frameID(), Messages::WebPage::RebindRemoteAccessibilityFrames(frameID));
+            }
+        }
 
         if (RefPtr page = m_page.get())
             page->inspectorController().didCommitProvisionalFrame(*this, oldProcessID, oldPageID, newProcessID);

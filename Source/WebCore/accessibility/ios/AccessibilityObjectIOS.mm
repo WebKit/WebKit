@@ -196,12 +196,17 @@ void AXRemoteFrame::initializePlatformElementWithRemoteToken(AccessibilityRemote
         if (!protectedThis)
             return;
 
-        RetainPtr remoteElement = adoptNS([allocAXRemoteElementInstance() initWithUUID:[uuid.createNSUUID() UUIDString] andRemotePid:processIdentifier andContextId:0]);
-        remoteElement.get().onClientSide = YES;
-        RefPtr parent = protectedThis->parentObjectUnignored();
-        remoteElement.get().accessibilityContainer = parent ? protect(parent->wrapper()).get() : nil;
+        // A failed bind yields no process identifier. Drop the element rather than keep one bound to a process that may no longer host the frame.
+        if (!processIdentifier)
+            protectedThis->m_remoteFramePlatformElement = nil;
+        else {
+            RetainPtr remoteElement = adoptNS([allocAXRemoteElementInstance() initWithUUID:[uuid.createNSUUID() UUIDString] andRemotePid:processIdentifier andContextId:0]);
+            remoteElement.get().onClientSide = YES;
+            RefPtr parent = protectedThis->parentObjectUnignored();
+            remoteElement.get().accessibilityContainer = parent ? protect(parent->wrapper()).get() : nil;
 
-        protectedThis->m_remoteFramePlatformElement = WTF::move(remoteElement);
+            protectedThis->m_remoteFramePlatformElement = WTF::move(remoteElement);
+        }
 
         if (CheckedPtr cache = protectedThis->axObjectCache())
             cache->onRemoteFrameInitialized(*protectedThis);

@@ -1,0 +1,22 @@
+Tests that the accessibility tree is updated when a cross-site iframe follows a link to the main frame's site, moving it into the main frame's process.
+
+Before following the link:
+AXRole: AXWebArea
+    AXRole: AXButton Before
+    AXRole: AXWebArea
+        AXRole: AXHeading Heading before navigation
+        AXRole: AXLink Follow link
+    AXRole: AXButton After
+
+After following the link:
+AXRole: AXWebArea
+    AXRole: AXButton Before
+    AXRole: AXWebArea
+        AXRole: AXHeading Heading after navigation
+        AXRole: AXButton Button after navigation
+    AXRole: AXButton After
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before  After

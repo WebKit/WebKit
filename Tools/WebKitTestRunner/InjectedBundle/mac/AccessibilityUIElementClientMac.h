@@ -72,6 +72,7 @@ public:
 
     // Actions.
     void showMenu() override;
+    void press() override;
 
     // Helpers.
     RefPtr<OpaqueJSString> getStringAttribute(const char* attributeName) const;

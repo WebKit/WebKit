@@ -21413,6 +21413,7 @@ INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebInspectorBackend::ShowMainResour
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::LoadURLInFrame);
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::LoadDataInFrame);
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebProcess::BindAccessibilityFrameWithData);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::RebindRemoteAccessibilityFrames);
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::UpdateFrameScrollingMode);
 #if PLATFORM(MAC)
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::DataDetectorsDidPresentUI);
@@ -21945,6 +21946,11 @@ void WebPageProxy::bindRemoteAccessibilityFrames(int processIdentifier, WebCore:
 
     auto [frameDataToken, frameProcessIdentifier] = sendResult.takeReply();
     completionHandler(frameDataToken, frameProcessIdentifier);
+
+    // Assistive technologies reach the frame's content through the element just bound in its parent, so focus
+    // changes the frame's process posted before now went unheard. If the frame has focus, have it post again.
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID); frame && frame->isFocused())
+        sendToProcessContainingFrame(frameID, Messages::WebPage::RepostAccessibilityFocusInFrame(frameID));
 }
 
 void WebPageProxy::updateRemoteFrameOffsetInMainFrame(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
