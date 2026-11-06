@@ -583,7 +583,9 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::RelativeGridItemHasPercentageInset, reasons, reasonCollectionMode);
         }
 
-        if (gridItemStyle->aspectRatio().hasRatio())
+        // https://drafts.csswg.org/css-sizing-4/#aspect-ratio: the preferred aspect ratio only matters when an automatic size is
+        // computed from the other axis, so it has no effect on an item whose width and height are both fixed.
+        if (gridItemStyle->aspectRatio().hasRatio() && !(gridItemStyle->width().isFixed() && gridItemStyle->height().isFixed()))
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasAspectRatio, reasons, reasonCollectionMode);
 
         if (!gridItemStyle->isOverflowVisible())
