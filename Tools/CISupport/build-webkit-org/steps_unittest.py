@@ -2128,9 +2128,11 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         self.jsonFileName = 'webdriver_tests.json'
+        os.environ['RESULTS_SERVER_API_KEY'] = 'test-api-key'
         return self.setup_test_build_step()
 
     def tearDown(self):
+        del os.environ['RESULTS_SERVER_API_KEY']
         return self.tear_down_test_build_step()
 
     def configureStep(self):
@@ -2146,17 +2148,46 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                log_environ=True,
+                log_environ=False,
                 logfiles={'json': self.jsonFileName},
-                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --buildbot-master {CURRENT_HOSTNAME} --builder-name GTK-Linux-64-bit-Release-WebDriver-Tests --build-number 101 --buildbot-worker gtk-linux-bot-14 --report {RESULTS_WEBKIT_URL} 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
                 timeout=5400,
-                max_time=10800
+                max_time=10800,
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
             )
-            .log('stdio', stdout='All tests run as expected\n')
+            .log('stdio', stdout='All tests ran as expected\n')
             .exit(0),
         )
         self.expect_outcome(result=SUCCESS, state_string='webdriver-tests')
         return self.run_step()
+
+    def test_failed_results_upload(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                log_environ=False,
+                logfiles={'json': self.jsonFileName},
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --buildbot-master {CURRENT_HOSTNAME} --builder-name GTK-Linux-64-bit-Release-WebDriver-Tests --build-number 101 --buildbot-worker gtk-linux-bot-14 --report {RESULTS_WEBKIT_URL} 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                timeout=5400,
+                max_time=10800,
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            )
+            .log('stdio', stdout='All tests ran as expected\nFailed to upload test results to https://results.webkit.org\n')
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='WebDriver Tests: results upload failed')
+        d = self.run_step()
+
+        @d.addCallback
+        def verify_no_build_summary(_):
+            step = self.get_nth_step(0)
+            summary = step.getResultSummary()
+            self.assertNotIn('build', summary)
+
+        return d
 
     def test_failure(self):
         self.configureStep()
@@ -2165,11 +2196,12 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                log_environ=True,
+                log_environ=False,
                 logfiles={'json': self.jsonFileName},
-                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --buildbot-master {CURRENT_HOSTNAME} --builder-name GTK-Linux-64-bit-Release-WebDriver-Tests --build-number 101 --buildbot-worker gtk-linux-bot-14 --report {RESULTS_WEBKIT_URL} 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
                 timeout=5400,
-                max_time=10800
+                max_time=10800,
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
             )
             .log('stdio', stdout='Unexpected failures (554)\n')
             .exit(1),
@@ -2192,11 +2224,12 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                log_environ=True,
+                log_environ=False,
                 logfiles={'json': self.jsonFileName},
-                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --buildbot-master {CURRENT_HOSTNAME} --builder-name GTK-Linux-64-bit-Release-WebDriver-Tests --build-number 101 --buildbot-worker gtk-linux-bot-14 --report {RESULTS_WEBKIT_URL} 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
                 timeout=5400,
-                max_time=10800
+                max_time=10800,
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
             )
             .log('stdio', stdout='Expected to fail, but passed (1)\n')
             .exit(1),
@@ -2219,11 +2252,12 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                log_environ=True,
+                log_environ=False,
                 logfiles={'json': self.jsonFileName},
-                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --buildbot-master {CURRENT_HOSTNAME} --builder-name GTK-Linux-64-bit-Release-WebDriver-Tests --build-number 101 --buildbot-worker gtk-linux-bot-14 --report {RESULTS_WEBKIT_URL} 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
                 timeout=5400,
-                max_time=10800
+                max_time=10800,
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
             )
             .log('stdio', stdout='''filter-test-logs progress: 11300 lines processed
 filter-test-logs progress: 20000 lines processed
