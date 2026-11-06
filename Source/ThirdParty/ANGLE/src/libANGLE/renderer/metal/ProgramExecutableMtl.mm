@@ -12,6 +12,9 @@
 
 #include "common/span_util.h"
 #include "common/unsafe_buffers.h"
+#include "common/utilities.h"
+#include "libANGLE/Display.h"
+#include "libANGLE/Shader.h"
 #include "libANGLE/renderer/metal/BufferMtl.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/TextureMtl.h"
@@ -348,6 +351,35 @@ class StdMTLBLockLayoutEncoderFactory : public gl::CustomBlockLayoutEncoderFacto
   public:
     sh::BlockLayoutEncoder *makeEncoder() override { return new mtl::BlockLayoutEncoderMTL(); }
 };
+
+// Writes the MSL source given to the Metal compiler, preceded by the compile options and the
+// preprocessor macros it is compiled with.
+void DumpMslShaderSource(const std::string &source,
+                         const std::map<std::string, std::string> &substitutionMacros,
+                         bool disableFastMath,
+                         bool usesInvariance)
+{
+    std::ostringstream content;
+    content << "// disableFastMath: " << disableFastMath
+            << ", preserveInvariance: " << usesInvariance << "\n";
+    for (const auto &macro : substitutionMacros)
+    {
+        content << "#define " << macro.first << " " << macro.second << "\n";
+    }
+    content << source;
+    const std::string dump = content.str();
+
+    std::ostringstream path;
+    const std::string shaderDumpDir = gl::GetShaderDumpFileDirectory();
+    if (!shaderDumpDir.empty())
+    {
+        path << shaderDumpDir << "/";
+    }
+    path << std::hash<std::string>{}(dump) << ".metal";
+
+    writeFile(path.str().c_str(), dump);
+    INFO() << "Dumped Metal shader source: " << path.str();
+}
 }  // anonymous namespace
 
 angle::Result CreateMslShaderLib(mtl::Context *context,
@@ -363,6 +395,13 @@ angle::Result CreateMslShaderLib(mtl::Context *context,
         angle::ObjCPtr<NSError> err;
         const bool disableFastMath      = translatedMslInfo->hasIsnanOrIsinf;
         const bool usesInvariance       = translatedMslInfo->hasInvariant;
+        const angle::FrontendFeatures &frontendFeatures =
+            context->getDisplay()->getDisplay()->getFrontendFeatures();
+        if (frontendFeatures.dumpTranslatedShaders.enabled)
+        {
+            DumpMslShaderSource(*translatedMslInfo->metalShaderSource, substitutionMacros,
+                                disableFastMath, usesInvariance);
+        }
         translatedMslInfo->metalLibrary = libraryCache.getOrCompileShaderLibrary(
             context->getDisplay(), translatedMslInfo->metalShaderSource, substitutionMacros,
             disableFastMath, usesInvariance, &err);

@@ -82,6 +82,10 @@ for shader sources. To enable these features:
 --enable-angle-features=dumpTranslatedShaders,enableTranslatedShaderSubstitution --disable-gpu-sandbox
 ```
 
+On the Metal backend, `dumpTranslatedShaders` also writes the MSL that
+is passed to the Metal compiler at program link time. See
+[Metal Backend Shaders](MetalBackendShaders.md).
+
 ## Putting it all together (example: macOS)
 
 ```

@@ -250,7 +250,6 @@ void StopFrameCapture()
 namespace mtl
 {
 
-constexpr char kANGLEPrintMSLEnv[]        = "ANGLE_METAL_PRINT_MSL_ENABLE";
 constexpr char kANGLEMSLVersionMajorEnv[] = "ANGLE_MSL_VERSION_MAJOR";
 constexpr char kANGLEMSLVersionMinorEnv[] = "ANGLE_MSL_VERSION_MINOR";
 
@@ -1116,10 +1115,6 @@ angle::ObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
         result = angle::adoptObjCPtr([metalDevice newLibraryWithSource:nsSource.get()
                                                                options:options.get()
                                                                  error:&nsError]);
-        if (angle::GetBoolEnvironmentVar(kANGLEPrintMSLEnv))
-        {
-            NSLog(@"%@\n", nsSource.get());
-        }
         *errorOut = std::move(nsError);
 
         int us = static_cast<int>((platform->currentTime(platform) - startTime) * 1e6);
