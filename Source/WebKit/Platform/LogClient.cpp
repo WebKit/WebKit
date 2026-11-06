@@ -24,9 +24,13 @@
 #include "config.h"
 #include "LogClient.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LogClient);
 
 LogClient::LogClient(Ref<ConnectionType>&& connection)
     : m_connection(connection)

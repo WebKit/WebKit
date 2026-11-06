@@ -35,6 +35,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/SwiftBridging.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 
@@ -86,7 +87,7 @@ protected:
 // The StreamServerConnection does not trust the StreamClientConnection.
 class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerConnection>, private MessageReceiveQueue, private Connection::Client {
     WTF_MAKE_NONCOPYABLE(StreamServerConnection);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StreamServerConnection);
+    WTF_MAKE_TZONE_ALLOCATED(StreamServerConnection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StreamServerConnection);
 public:
     using AsyncReplyID = Connection::AsyncReplyID;

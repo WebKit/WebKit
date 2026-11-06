@@ -27,8 +27,11 @@
 #include "AboutSchemeHandler.h"
 
 #include <WebCore/ResourceError.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AboutSchemeHandler);
 
 Ref<AboutSchemeHandler> AboutSchemeHandler::create()
 {

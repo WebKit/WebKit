@@ -27,8 +27,11 @@
 #include "BlobDataFileReferenceWithSandboxExtension.h"
 
 #include "SandboxExtension.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobDataFileReferenceWithSandboxExtension);
 
 BlobDataFileReferenceWithSandboxExtension::BlobDataFileReferenceWithSandboxExtension(const String& path, const String& replacementPath, RefPtr<SandboxExtension>&& sandboxExtension)
     : BlobDataFileReference(path, replacementPath)

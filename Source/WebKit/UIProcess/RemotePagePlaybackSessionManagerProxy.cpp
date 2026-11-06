@@ -31,8 +31,11 @@
 #include "PlaybackSessionManagerProxy.h"
 #include "PlaybackSessionManagerProxyMessages.h"
 #include "WebProcessProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePagePlaybackSessionManagerProxy);
 
 Ref<RemotePagePlaybackSessionManagerProxy> RemotePagePlaybackSessionManagerProxy::create(WebCore::PageIdentifier identifier, PlaybackSessionManagerProxy* manager, WebProcessProxy& process)
 {

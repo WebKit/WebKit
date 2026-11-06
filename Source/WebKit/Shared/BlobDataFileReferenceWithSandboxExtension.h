@@ -27,12 +27,14 @@
 #define BlobDataFileReferenceWithSandboxExtension_h
 
 #include <WebCore/BlobDataFileReference.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class SandboxExtension;
 
 class BlobDataFileReferenceWithSandboxExtension final : public WebCore::BlobDataFileReference {
+    WTF_MAKE_TZONE_ALLOCATED(BlobDataFileReferenceWithSandboxExtension);
 public:
     static Ref<BlobDataFileReference> create(const String& path, const String& replacementPath = { }, RefPtr<SandboxExtension>&& sandboxExtension = nullptr)
     {

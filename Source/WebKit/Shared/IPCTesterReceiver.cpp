@@ -33,8 +33,11 @@
 #include "Connection.h"
 #include "Logging.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IPCTesterReceiver);
 
 Ref<IPCTesterReceiver> IPCTesterReceiver::create()
 {

@@ -33,6 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/WeakPtr.h>
@@ -119,6 +120,7 @@ private:
 #endif
 
 class ProcessLauncher : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ProcessLauncher> {
+    WTF_MAKE_TZONE_ALLOCATED(ProcessLauncher);
 public:
     using ProcessType = ProcessLaunchType;
     using LaunchOptions = ProcessLaunchOptions;

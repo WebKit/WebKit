@@ -38,10 +38,13 @@
 #include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/darwin/DispatchExtras.h>
 #include <wtf/text/Base64.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockHidConnection);
 using Mock = WebCore::MockWebAuthenticationConfiguration;
 using namespace WebCore;
 using namespace cbor;

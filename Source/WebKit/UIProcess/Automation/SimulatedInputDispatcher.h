@@ -36,6 +36,7 @@
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -156,6 +157,7 @@ struct SimulatedInputRunOptions {
 };
 
 class SimulatedInputDispatcher : public RefCountedAndCanMakeWeakPtr<SimulatedInputDispatcher> {
+    WTF_MAKE_TZONE_ALLOCATED(SimulatedInputDispatcher);
     WTF_MAKE_NONCOPYABLE(SimulatedInputDispatcher);
 public:
     class Client {

@@ -71,6 +71,8 @@
 namespace WebKit {
 namespace NetworkCache {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Cache);
+
 using namespace FileSystem;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Cache::RetrieveInfo);

@@ -28,8 +28,11 @@
 
 #include <WebCore/DOMCacheEngine.h>
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CacheStorageMemoryStore);
 
 Ref<CacheStorageMemoryStore> CacheStorageMemoryStore::create()
 {

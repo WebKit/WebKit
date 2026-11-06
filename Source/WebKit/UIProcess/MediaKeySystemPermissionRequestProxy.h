@@ -29,6 +29,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MediaKeySystemRequest.h>
 #include <WebCore/MediaKeySystemRequestIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -42,6 +43,7 @@ namespace WebKit {
 class MediaKeySystemPermissionRequestManagerProxy;
 
 class MediaKeySystemPermissionRequestProxy : public RefCounted<MediaKeySystemPermissionRequestProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(MediaKeySystemPermissionRequestProxy);
 public:
     static Ref<MediaKeySystemPermissionRequestProxy> create(MediaKeySystemPermissionRequestManagerProxy& manager, WebCore::MediaKeySystemRequestIdentifier mediaKeySystemID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& mediaOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem)
     {

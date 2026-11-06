@@ -28,6 +28,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/URLHash.h>
 
@@ -35,6 +36,7 @@ namespace WebKit {
 
 enum class ExtractedURLType : bool { Link, Image };
 class TextExtractionURLCache : public RefCounted<TextExtractionURLCache> {
+    WTF_MAKE_TZONE_ALLOCATED(TextExtractionURLCache);
 public:
     static Ref<TextExtractionURLCache> create()
     {

@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/PageIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -36,6 +37,7 @@ class VideoPresentationManagerProxy;
 class WebProcessProxy;
 
 class RemotePageVideoPresentationManagerProxy : public IPC::MessageReceiver, public RefCounted<RemotePageVideoPresentationManagerProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(RemotePageVideoPresentationManagerProxy);
 public:
     static Ref<RemotePageVideoPresentationManagerProxy> create(WebCore::PageIdentifier, WebProcessProxy&, VideoPresentationManagerProxy*);
 

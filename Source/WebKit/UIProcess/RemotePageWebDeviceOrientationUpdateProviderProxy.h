@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/PageIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class MotionManagerClient;
@@ -39,6 +40,7 @@ namespace WebKit {
 class WebProcessProxy;
 
 class RemotePageWebDeviceOrientationUpdateProviderProxy : public IPC::MessageReceiver, public RefCounted<RemotePageWebDeviceOrientationUpdateProviderProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(RemotePageWebDeviceOrientationUpdateProviderProxy);
 public:
     static Ref<RemotePageWebDeviceOrientationUpdateProviderProxy> create(WebCore::PageIdentifier, WebProcessProxy&, WebCore::MotionManagerClient*);
 

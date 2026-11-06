@@ -38,6 +38,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA) && defined __has_include && __has_include(<dns_sd.h>)
 #define ENABLE_MDNS 1
@@ -93,7 +94,7 @@ public:
     using PendingRegistrationRequestIdentifier = ObjectIdentifier<PendingRegistrationRequestIdentifierType>;
 
     struct PendingRegistrationRequest {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PendingRegistrationRequest);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(PendingRegistrationRequest);
         PendingRegistrationRequest(Ref<NetworkConnectionToWebProcess> &&, String &&name, String address, PAL::SessionID, CompletionHandler<void(const String &, std::optional<WebCore::MDNSRegisterError>)> &&);
 
         Ref<NetworkConnectionToWebProcess> connection;

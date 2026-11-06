@@ -31,8 +31,11 @@
 #include "WebAuthenticatorCoordinatorProxy.h"
 #include "WebAuthenticatorCoordinatorProxyMessages.h"
 #include "WebProcessProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePageWebAuthenticatorCoordinatorProxy);
 
 Ref<RemotePageWebAuthenticatorCoordinatorProxy> RemotePageWebAuthenticatorCoordinatorProxy::create(WebCore::PageIdentifier identifier, WebAuthenticatorCoordinatorProxy* coordinator, WebProcessProxy& process)
 {

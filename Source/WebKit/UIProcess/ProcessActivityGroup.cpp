@@ -27,8 +27,11 @@
 #include "ProcessActivityGroup.h"
 
 #include "WebProcessProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessActivityGroupContext);
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessActivityGroup);
 

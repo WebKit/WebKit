@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
@@ -37,7 +38,7 @@ class WebPageProxy;
 class WebProcessProxy;
 
 class WebProcessActivityState {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebProcessActivityState);
+    WTF_MAKE_TZONE_ALLOCATED(WebProcessActivityState);
 public:
     explicit WebProcessActivityState(WebPageProxy&);
     explicit WebProcessActivityState(RemotePageProxy&);

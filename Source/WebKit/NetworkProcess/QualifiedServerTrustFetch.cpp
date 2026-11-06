@@ -31,12 +31,15 @@
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoadParameters.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #import "SecuritySoftLink.h"
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(QualifiedServerTrustFetch);
 
 using namespace WebCore;
 

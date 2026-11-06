@@ -29,8 +29,11 @@
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StorageThread);
 
 NODELETE static HashSet<CheckedRef<StorageThread>>& activeStorageThreads()
 {

@@ -30,12 +30,15 @@
 #include <WebCore/ScriptTrackingPrivacyCategory.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "WebPrivacyHelpers.h"
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptTrackingPrivacyFilter);
 
 static void initializeFilterRules(Vector<ScriptTrackingPrivacyHost>&& source, HostToAllowedCategoriesMap& target, WebCore::ScriptTrackingPrivacyFlags& categoriesWithAllowedHosts)
 {

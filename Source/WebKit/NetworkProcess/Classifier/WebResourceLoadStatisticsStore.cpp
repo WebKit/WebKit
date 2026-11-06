@@ -59,9 +59,12 @@
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SuspendableWorkQueue.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebResourceLoadStatisticsStore);
 using namespace WebCore;
 
 const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataTypes()

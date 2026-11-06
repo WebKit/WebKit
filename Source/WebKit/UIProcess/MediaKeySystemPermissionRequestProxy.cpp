@@ -30,9 +30,12 @@
 #include "WebPageProxy.h"
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaKeySystemPermissionRequestProxy);
 using namespace WebCore;
 
 MediaKeySystemPermissionRequestProxy::MediaKeySystemPermissionRequestProxy(MediaKeySystemPermissionRequestManagerProxy& manager, MediaKeySystemRequestIdentifier mediaKeySystemID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& userMediaSecurityOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem)

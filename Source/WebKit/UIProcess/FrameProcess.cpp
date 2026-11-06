@@ -32,8 +32,11 @@
 #include "WebPreferences.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Site.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameProcess);
 
 FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group, const std::optional<WebCore::Site>& site, const WebCore::Site& mainFrameSite,
     const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, BrowsingContextGroupUpdate browsingContextGroupUpdate)

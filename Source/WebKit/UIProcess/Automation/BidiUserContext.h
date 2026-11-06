@@ -31,6 +31,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
@@ -45,7 +46,7 @@ class WebsiteDataStore;
 
 class BidiUserContext {
     WTF_MAKE_NONCOPYABLE(BidiUserContext);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BidiUserContext);
+    WTF_MAKE_TZONE_ALLOCATED(BidiUserContext);
 public:
 #if USE(GLIB)
     BidiUserContext(WebsiteDataStore&, WebProcessPool&, GRefPtr<WebKitWebContext>&&);

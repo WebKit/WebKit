@@ -29,6 +29,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -44,6 +45,7 @@ enum class LoadedWebArchive : bool;
 // alive until the frame's process finishes removing the frame, so that frames created in the
 // meantime keep using the same process.
 class FrameProcess : public RefCountedAndCanMakeWeakPtr<FrameProcess> {
+    WTF_MAKE_TZONE_ALLOCATED(FrameProcess);
 public:
     ~FrameProcess();
 

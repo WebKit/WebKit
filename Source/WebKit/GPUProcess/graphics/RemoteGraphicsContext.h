@@ -39,6 +39,7 @@
 #include <WebCore/ControlFactory.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -49,6 +50,7 @@ class SharedVideoFrameReader;
 struct SharedPreferencesForWebProcess;
 
 class RemoteGraphicsContext : public IPC::StreamMessageReceiver, public CanMakeWeakPtr<RemoteGraphicsContext> {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteGraphicsContext);
 public:
     ~RemoteGraphicsContext();
 

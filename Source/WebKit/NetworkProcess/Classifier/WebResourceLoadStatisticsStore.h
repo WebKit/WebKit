@@ -44,6 +44,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
@@ -97,7 +98,7 @@ struct RegistrableDomainsToDeleteOrRestrictWebsiteDataFor {
 };
 
 class WebResourceLoadStatisticsStore final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main>, public CanMakeThreadSafeCheckedPtr<WebResourceLoadStatisticsStore> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebResourceLoadStatisticsStore);
+    WTF_MAKE_TZONE_ALLOCATED(WebResourceLoadStatisticsStore);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebResourceLoadStatisticsStore);
 public:
     using ResourceLoadStatistics = WebCore::ResourceLoadStatistics;

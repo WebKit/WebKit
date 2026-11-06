@@ -37,6 +37,7 @@
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
@@ -78,7 +79,7 @@ struct SocketComparator {
 };
 
 class NetworkRTCProvider : private FunctionDispatcher, private IPC::MessageReceiver, public ThreadSafeRefCounted<NetworkRTCProvider, WTF::DestructionThread::MainRunLoop>, public CanMakeThreadSafeCheckedPtr<NetworkRTCProvider> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NetworkRTCProvider);
+    WTF_MAKE_TZONE_ALLOCATED(NetworkRTCProvider);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkRTCProvider);
 public:
     static Ref<NetworkRTCProvider> create(NetworkConnectionToWebProcess& connection)

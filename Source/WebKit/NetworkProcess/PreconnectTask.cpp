@@ -34,8 +34,11 @@
 #include "NetworkProcess.h"
 #include "WebErrors.h"
 #include <WebCore/ResourceError.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PreconnectTask);
 
 using namespace WebCore;
 

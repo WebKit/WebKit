@@ -29,6 +29,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/TextChecking.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -39,6 +40,7 @@ class WebPageProxy;
 class WebProcessProxy;
 
 class TextCheckerCompletion : public RefCounted<TextCheckerCompletion> {
+    WTF_MAKE_TZONE_ALLOCATED(TextCheckerCompletion);
 public:
     static Ref<TextCheckerCompletion> create(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, WebPageProxy&, WebProcessProxy& requestingProcess, WebCore::PageIdentifier pageIDInRequestingProcess);
 

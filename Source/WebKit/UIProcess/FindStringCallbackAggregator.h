@@ -27,6 +27,7 @@
 
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -37,6 +38,7 @@ class WebPageProxy;
 enum class FindOptions : uint16_t;
 
 class FindStringCallbackAggregator : public RefCounted<FindStringCallbackAggregator> {
+    WTF_MAKE_TZONE_ALLOCATED(FindStringCallbackAggregator);
 public:
     static Ref<FindStringCallbackAggregator> create(WebPageProxy&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
     void foundString(std::optional<WebCore::FrameIdentifier>, uint32_t matchCount, bool didWrap);

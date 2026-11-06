@@ -29,6 +29,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -59,7 +60,7 @@ struct ScriptTrackingPrivacyRules {
 using HostToAllowedCategoriesMap = MemoryCompactRobinHoodHashMap<String, WebCore::ScriptTrackingPrivacyFlags>;
 
 class ScriptTrackingPrivacyFilter {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ScriptTrackingPrivacyFilter);
+    WTF_MAKE_TZONE_ALLOCATED(ScriptTrackingPrivacyFilter);
     WTF_MAKE_NONCOPYABLE(ScriptTrackingPrivacyFilter);
 public:
     ScriptTrackingPrivacyFilter(ScriptTrackingPrivacyRules&&);

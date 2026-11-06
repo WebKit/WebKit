@@ -31,6 +31,7 @@
 #include <wtf/Condition.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/StringHash.h>
 
@@ -43,6 +44,7 @@ namespace WebKit {
 class StorageAreaImpl;
 
 class StorageAreaSync : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<StorageAreaSync, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED(StorageAreaSync);
 public:
     static Ref<StorageAreaSync> create(RefPtr<WebCore::StorageSyncManager>&&, Ref<StorageAreaImpl>&&, const String& databaseIdentifier);
     ~StorageAreaSync();

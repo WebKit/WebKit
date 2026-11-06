@@ -29,6 +29,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/MessageQueue.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,7 +40,7 @@ class StorageTask;
 
 class StorageThread final : public CanMakeThreadSafeCheckedPtr<StorageThread> {
     WTF_MAKE_NONCOPYABLE(StorageThread);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StorageThread);
+    WTF_MAKE_TZONE_ALLOCATED(StorageThread);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StorageThread);
 public:
     enum class Type { LocalStorage, IndexedDB };

@@ -48,6 +48,7 @@
 #include <wtf/Borrow.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
@@ -57,6 +58,8 @@
 
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CtapAuthenticator);
 using namespace WebCore;
 using namespace fido;
 

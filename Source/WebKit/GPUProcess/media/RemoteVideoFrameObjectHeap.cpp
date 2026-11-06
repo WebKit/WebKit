@@ -34,6 +34,7 @@
 #include "RemoteVideoFrameProxy.h"
 #include <wtf/MainThread.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
 #if PLATFORM(COCOA)
@@ -47,6 +48,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteVideoFrameObjectHeap);
 
 using namespace WebCore;
 

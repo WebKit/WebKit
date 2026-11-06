@@ -32,6 +32,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(IOSURFACE)
@@ -60,6 +61,7 @@ class WebPageProxy;
 enum class ForceSoftwareCapturingViewportSnapshot : bool { No, Yes };
 
 class ViewSnapshot : public RefCountedAndCanMakeWeakPtr<ViewSnapshot> {
+    WTF_MAKE_TZONE_ALLOCATED(ViewSnapshot);
 public:
 #if HAVE(IOSURFACE)
     static Ref<ViewSnapshot> create(std::unique_ptr<WebCore::IOSurface>);

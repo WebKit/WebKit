@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/FontBase.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
@@ -34,6 +35,7 @@ namespace WebKit {
 // is meant for display purposes only, e.g. calls to FontCascade::drawGlyphs(). It does
 // not store glyph tables, so it can't be used for shaping or measuring glyphs.
 class SharedFont : public WebCore::FontBase, public ThreadSafeRefCounted<SharedFont> {
+    WTF_MAKE_TZONE_ALLOCATED(SharedFont);
 public:
     static Ref<SharedFont> create(const WebCore::FontPlatformData&, Origin, IsInterstitial, Visibility, IsOrientationFallback, IsSmallCapsFace, std::optional<WebCore::RenderingResourceIdentifier>);
 

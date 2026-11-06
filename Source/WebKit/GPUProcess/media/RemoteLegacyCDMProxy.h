@@ -33,13 +33,14 @@
 #include <WebCore/LegacyCDM.h>
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class RemoteLegacyCDMProxy : public IPC::MessageReceiver, public WebCore::LegacyCDMClient, public RefCounted<RemoteLegacyCDMProxy> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RemoteLegacyCDMProxy);
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLegacyCDMProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLegacyCDMProxy);
 public:
     static Ref<RemoteLegacyCDMProxy> create(WeakPtr<RemoteLegacyCDMFactoryProxy>, std::optional<WebCore::MediaPlayerIdentifier>, Ref<WebCore::LegacyCDM>&&);

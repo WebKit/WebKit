@@ -33,8 +33,11 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/MotionManagerClient.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePageWebDeviceOrientationUpdateProviderProxy);
 
 Ref<RemotePageWebDeviceOrientationUpdateProviderProxy> RemotePageWebDeviceOrientationUpdateProviderProxy::create(WebCore::PageIdentifier pageID, WebProcessProxy& process, WebCore::MotionManagerClient* client)
 {

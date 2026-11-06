@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,6 +40,7 @@ class StorageThread;
 class StorageAreaSync;
 
 class StorageSyncManager : public ThreadSafeRefCounted<StorageSyncManager, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED(StorageSyncManager);
 public:
     static Ref<StorageSyncManager> create(const String& path);
     ~StorageSyncManager();

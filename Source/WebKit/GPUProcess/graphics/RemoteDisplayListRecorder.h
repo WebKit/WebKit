@@ -31,12 +31,14 @@
 #include "RemoteDisplayListRecorderIdentifier.h"
 #include "RemoteGraphicsContext.h"
 #include <WebCore/DisplayListRecorderImpl.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 // RemoteGraphicsContext playing back the IPC GraphicsContext drawing commands to a DisplayList::Recorder.
 // Used to create DisplayList instances.
 class RemoteDisplayListRecorder final : public RemoteGraphicsContext {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteDisplayListRecorder);
 public:
     static Ref<RemoteDisplayListRecorder> create(RemoteDisplayListRecorderIdentifier, RemoteRenderingBackend&);
     ~RemoteDisplayListRecorder();

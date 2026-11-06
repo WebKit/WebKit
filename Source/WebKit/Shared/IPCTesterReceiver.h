@@ -30,6 +30,7 @@
 #include "IPCTesterPayload.h"
 #include "MessageReceiver.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -39,6 +40,7 @@ namespace WebKit {
 
 // Proxy interface to test IPC activities related to receiving messages.
 class IPCTesterReceiver final : public IPC::MessageReceiver, public RefCounted<IPCTesterReceiver> {
+    WTF_MAKE_TZONE_ALLOCATED(IPCTesterReceiver);
 public:
     static Ref<IPCTesterReceiver> create();
 

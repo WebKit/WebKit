@@ -30,6 +30,7 @@
 
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/MakeString.h>
 
@@ -38,6 +39,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(NetworkMDNSRegister::PendingRegistrationRequest);
 
 #define MDNS_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkMDNSRegister::" fmt, this, ##__VA_ARGS__)
 #define MDNS_RELEASE_LOG_IN_CALLBACK(sessionID, fmt, ...) RELEASE_LOG(Network, "NetworkMDNSRegister callback - " fmt, ##__VA_ARGS__)

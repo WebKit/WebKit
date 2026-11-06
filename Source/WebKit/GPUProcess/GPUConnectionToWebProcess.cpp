@@ -187,6 +187,8 @@
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_connection)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUConnectionToWebProcess);
 using namespace WebCore;
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(GPUConnectionToWebProcess::NowPlayingCandidate);

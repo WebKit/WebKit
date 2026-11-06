@@ -29,8 +29,11 @@
 #if ENABLE(IPC_TESTING_API)
 #include "IPCConnectionTesterMessages.h"
 #include "IPCUtilities.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IPCConnectionTester);
 
 Ref<IPCConnectionTester> IPCConnectionTester::create(IPC::Connection& connection, IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle&& handle)
 {

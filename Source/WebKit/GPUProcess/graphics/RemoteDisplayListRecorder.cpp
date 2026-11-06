@@ -29,8 +29,11 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteGraphicsContextMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteDisplayListRecorder);
 using namespace WebCore;
 
 Ref<RemoteDisplayListRecorder> RemoteDisplayListRecorder::create(RemoteDisplayListRecorderIdentifier identifier, RemoteRenderingBackend& renderingBackend)

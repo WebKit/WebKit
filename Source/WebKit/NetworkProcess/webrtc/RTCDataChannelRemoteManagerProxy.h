@@ -32,6 +32,7 @@
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/RTCDataChannelRemoteHandlerConnection.h>
 #include <WebCore/RTCDataChannelRemoteSourceConnection.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
@@ -39,6 +40,7 @@ namespace WebKit {
 class NetworkConnectionToWebProcess;
 
 class RTCDataChannelRemoteManagerProxy final : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
+    WTF_MAKE_TZONE_ALLOCATED(RTCDataChannelRemoteManagerProxy);
 public:
     static Ref<RTCDataChannelRemoteManagerProxy> create(NetworkProcess& networkProcess) { return adoptRef(*new RTCDataChannelRemoteManagerProxy(networkProcess)); }
 

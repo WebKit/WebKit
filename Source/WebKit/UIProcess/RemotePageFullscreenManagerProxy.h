@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/PageIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -36,6 +37,7 @@ class WebFullScreenManagerProxy;
 class WebProcessProxy;
 
 class RemotePageFullscreenManagerProxy : public IPC::MessageReceiver, public RefCounted<RemotePageFullscreenManagerProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(RemotePageFullscreenManagerProxy);
 public:
     static Ref<RemotePageFullscreenManagerProxy> create(WebCore::PageIdentifier, WebFullScreenManagerProxy*, WebProcessProxy&);
 

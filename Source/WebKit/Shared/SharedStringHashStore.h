@@ -30,11 +30,12 @@
 #include <WebCore/SharedStringHash.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class SharedStringHashStore : public CanMakeCheckedPtr<SharedStringHashStore> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SharedStringHashStore);
+    WTF_MAKE_TZONE_ALLOCATED(SharedStringHashStore);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SharedStringHashStore);
 public:
     class Client {

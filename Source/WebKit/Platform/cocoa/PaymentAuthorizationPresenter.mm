@@ -63,6 +63,8 @@ SOFT_LINK_CONSTANT(Contacts, CNPostalAddressSubLocalityKey, NSString *);
 
 namespace WebKit {
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(PaymentAuthorizationPresenter::Client);
+
 // FIXME: Rather than having these free functions scattered about, Apple Pay data types should know
 // how to convert themselves to and from their platform representations.
 

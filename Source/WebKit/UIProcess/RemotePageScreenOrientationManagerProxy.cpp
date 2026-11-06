@@ -29,8 +29,11 @@
 #include "WebProcessProxy.h"
 #include "WebScreenOrientationManagerProxy.h"
 #include "WebScreenOrientationManagerProxyMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePageScreenOrientationManagerProxy);
 
 Ref<RemotePageScreenOrientationManagerProxy> RemotePageScreenOrientationManagerProxy::create(WebCore::PageIdentifier identifier, WebScreenOrientationManagerProxy* manager, WebProcessProxy& process)
 {

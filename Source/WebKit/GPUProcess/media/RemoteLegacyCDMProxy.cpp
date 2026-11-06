@@ -31,8 +31,11 @@
 #include "RemoteLegacyCDMSessionProxy.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLegacyCDMProxy);
 
 using namespace WebCore;
 

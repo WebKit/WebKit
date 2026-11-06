@@ -30,8 +30,11 @@
 
 #include "RemoteAudioSourceProviderManagerMessages.h"
 #include <WebCore/AudioSourceProviderAVFObjC.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioSourceProviderProxy);
 
 Ref<RemoteAudioSourceProviderProxy> RemoteAudioSourceProviderProxy::create(WebCore::MediaPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, WebCore::AudioSourceProviderAVFObjC& localProvider)
 {

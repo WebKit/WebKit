@@ -27,8 +27,11 @@
 #include "ShareablePixelBuffer.h"
 
 #include <WebCore/SharedMemory.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShareablePixelBuffer);
 using namespace WebCore;
 
 RefPtr<ShareablePixelBuffer> ShareablePixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)

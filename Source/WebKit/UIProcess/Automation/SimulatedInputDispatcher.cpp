@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SimulatedInputDispatcher.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(WEBDRIVER_ACTIONS_API)
@@ -43,6 +44,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SimulatedInputDispatcher);
 
 // https://w3c.github.io/webdriver/#dfn-normalised-key-value
 NODELETE VirtualKey normalizedVirtualKey(VirtualKey key)

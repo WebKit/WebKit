@@ -26,9 +26,12 @@
 #include "config.h"
 #include "TextExtractionURLCache.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextExtractionURLCache);
 
 void TextExtractionURLCache::clear()
 {

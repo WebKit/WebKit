@@ -27,11 +27,12 @@
 
 #include "WebURLSchemeHandler.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class AboutSchemeHandler final : public WebURLSchemeHandler {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AboutSchemeHandler);
+    WTF_MAKE_TZONE_ALLOCATED(AboutSchemeHandler);
 public:
     class OpaquePathHandler {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(OpaquePathHandler);

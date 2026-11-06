@@ -1013,6 +1013,7 @@ void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPa
 #endif
 
 class UserMediaPermissionInfoGatherer : public RefCounted<UserMediaPermissionInfoGatherer> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(UserMediaPermissionInfoGatherer);
 public:
     static Ref<UserMediaPermissionInfoGatherer> create(CompletionHandler<void(PermissionState, PermissionState)>&& handler) { return adoptRef(*new UserMediaPermissionInfoGatherer(WTF::move(handler))); }
     ~UserMediaPermissionInfoGatherer()

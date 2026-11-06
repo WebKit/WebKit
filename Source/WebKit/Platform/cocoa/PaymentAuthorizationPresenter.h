@@ -60,7 +60,7 @@ class PaymentAuthorizationPresenter : public RefCountedAndCanMakeWeakPtr<Payment
     WTF_MAKE_NONCOPYABLE(PaymentAuthorizationPresenter);
 public:
     struct Client : public AbstractRefCountedAndCanMakeWeakPtr<Client> {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Client);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(Client);
 
         virtual ~Client() = default;
 

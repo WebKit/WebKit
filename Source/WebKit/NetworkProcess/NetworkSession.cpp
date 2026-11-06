@@ -96,7 +96,7 @@ using namespace WebCore;
 constexpr Seconds cachedNetworkResourceLoaderLifetime { 30_s };
 
 class ImageDecoderLoad final : public RefCounted<ImageDecoderLoad>, public NetworkLoadClient {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ImageDecoderLoad);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ImageDecoderLoad);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImageDecoderLoad);
 public:
     void ref() const final { RefCounted::ref(); }

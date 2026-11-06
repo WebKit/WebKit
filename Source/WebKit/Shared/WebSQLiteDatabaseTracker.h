@@ -31,12 +31,14 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 // Use eager initialization for the WeakPtrFactory since we construct WeakPtrs from a non-main thread.
 class WebSQLiteDatabaseTracker final : public WebCore::SQLiteDatabaseTrackerClient, public RefCounted<WebSQLiteDatabaseTracker>, public CanMakeWeakPtr<WebSQLiteDatabaseTracker, WeakPtrFactoryInitialization::Eager> {
+    WTF_MAKE_TZONE_ALLOCATED(WebSQLiteDatabaseTracker);
     WTF_MAKE_NONCOPYABLE(WebSQLiteDatabaseTracker)
 public:
     // IsHoldingLockedFilesHandler may get called on a non-main thread, but while holding a Lock.

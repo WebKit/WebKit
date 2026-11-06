@@ -41,6 +41,7 @@
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/LibWebRTCProvider.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
@@ -56,6 +57,8 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif // !PLATFORM(COCOA)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkRTCProvider);
 using namespace WebCore;
 
 #define RTC_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkRTCProvider::" fmt, this, ##__VA_ARGS__)

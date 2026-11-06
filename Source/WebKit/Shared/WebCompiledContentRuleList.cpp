@@ -26,9 +26,13 @@
 #include "config.h"
 #include "WebCompiledContentRuleList.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(CONTENT_EXTENSIONS)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCompiledContentRuleList);
 
 RefPtr<WebCompiledContentRuleList> WebCompiledContentRuleList::create(WebCompiledContentRuleListData&& data)
 {

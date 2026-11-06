@@ -35,6 +35,7 @@
 #include <WebCore/CDMInstance.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -52,6 +53,7 @@ struct RemoteCDMInstanceConfiguration;
 class RemoteCDMInstanceSessionProxy;
 
 class RemoteCDMInstanceProxy : public WebCore::CDMInstanceClient, private IPC::MessageReceiver, public RefCounted<RemoteCDMInstanceProxy>  {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteCDMInstanceProxy);
 public:
     USING_CAN_MAKE_WEAKPTR(WebCore::CDMInstanceClient);
 
