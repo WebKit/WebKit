@@ -44,6 +44,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Scope.h>
+#include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFProcess.h>
@@ -78,6 +79,20 @@ static UnfairLock s_connectionMapLock;
 #else
 static Lock s_connectionMapLock;
 #endif
+
+class Connection::DeferredMainRunLoopDispatcher final : public FunctionDispatcher {
+public:
+    ~DeferredMainRunLoopDispatcher()
+    {
+        for (auto& function : m_functions)
+            RunLoop::mainSingleton().dispatch(WTF::move(function));
+    }
+
+    void dispatch(Function<void()>&& function) final { m_functions.append(WTF::move(function)); }
+
+private:
+    Vector<Function<void()>, 1> m_functions;
+};
 
 class Connection::SyncMessageState final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SyncMessageState> {
 public:
@@ -220,11 +235,13 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection& connection
     }
 
     if (shouldDispatch) {
-        m_dispatcher.get()->dispatch([protectedConnection = Ref { connection }]() mutable {
+        connection.dispatchIncomingMessageWork([protectedConnection = Ref { connection }] mutable {
             protectedConnection->dispatchSyncStateMessages();
         });
     }
 
+    // Signal here rather than after the caller releases connection.m_incomingMessagesLock, since the caller has to drop
+    // its reference to this SyncMessageState while still holding that lock (see Connection::processIncomingMessage()).
     wakeUpClientRunLoop();
 
     return true;
@@ -500,6 +517,7 @@ bool Connection::open(Client& client, SerialFunctionDispatcher& dispatcher)
         return false;
     m_client = &client;
     m_syncState = SyncMessageState::getOrCreate(dispatcher);
+    m_dispatcherIsMainRunLoop = &dispatcher == &RunLoop::mainSingleton();
     platformOpen();
 
     return true;
@@ -530,7 +548,7 @@ void Connection::invalidate()
     m_isValid = false;
     if (!m_client)
         return;
-    assertIsCurrent(dispatcher());
+    assertIsOnDispatcher();
     m_client = nullptr;
     {
         Locker locker { m_sendLock };
@@ -822,7 +840,7 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
     });
 #endif
 
-    assertIsCurrent(dispatcher());
+    assertIsOnDispatcher();
     Ref protectedThis { *this };
 
     timeout = timeoutRespectingIgnoreTimeoutsForTesting(timeout);
@@ -943,7 +961,7 @@ auto Connection::sendSyncMessage(SyncRequestID syncRequestID, UniqueRef<Encoder>
         didFailToSendSyncMessage(Error::InvalidConnection);
         return makeUnexpected(Error::InvalidConnection);
     }
-    assertIsCurrent(dispatcher());
+    assertIsOnDispatcher();
     if (!pushPendingSyncRequestID(syncRequestID)) {
         didFailToSendSyncMessage(Error::CantWaitForSyncReplies);
         return makeUnexpected(Error::CantWaitForSyncReplies);
@@ -1100,6 +1118,15 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
 {
     ASSERT(message->messageReceiverName() != ReceiverName::Invalid);
 
+    // Declared before the lockers, so that the waiting thread and the main run loop are woken after the locks are
+    // released, and don't immediately block on them.
+    DeferredMainRunLoopDispatcher deferredMainRunLoopDispatcher;
+    bool shouldNotifyWaitForMessageCondition = false;
+    auto notifyWaitForMessageCondition = makeScopeExit([&] {
+        if (shouldNotifyWaitForMessageCondition)
+            m_waitForMessageCondition.notifyOne();
+    });
+
     // FIXME: These are practically the same mutex, so maybe they could be merged.
     Locker waitForMessagesLocker { m_waitForMessageLock };
 
@@ -1170,6 +1197,9 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
         // Fallback to default case, error handling will be performed in dispatchMessage().
     }
 
+    // All paths below return with the locks held, so this is reset before they are released.
+    SetForScope deferMainRunLoopDispatches { m_deferredMainRunLoopDispatcher, &deferredMainRunLoopDispatcher };
+
     if (message->isSyncMessage()) {
         Locker locker { m_incomingSyncMessageCallbackLock };
 
@@ -1184,18 +1214,18 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
         if (isWaitedForMessage(m_waitingForMessage->messageName, m_waitingForMessage->destinationID, message)) {
             m_waitingForMessage->decoder = message.moveToUniquePtr();
             ASSERT(m_waitingForMessage->decoder);
-            m_waitForMessageCondition.notifyOne();
+            shouldNotifyWaitForMessageCondition = true;
             return;
         }
 
         if (m_waitingForMessage->waitForOptions.contains(WaitForOption::DispatchIncomingSyncMessagesWhileWaiting) && message->isSyncMessage() && syncState->processIncomingMessage(*this, message)) {
-            m_waitForMessageCondition.notifyOne();
+            shouldNotifyWaitForMessageCondition = true;
             return;
         }
 
         if (m_waitingForMessage->waitForOptions.contains(WaitForOption::InterruptWaitingIfSyncMessageArrives) && message->isSyncMessage()) {
             m_waitingForMessage->messageWaitingInterrupted = true;
-            m_waitForMessageCondition.notifyOne();
+            shouldNotifyWaitForMessageCondition = true;
             enqueueIncomingMessage(WTF::move(message));
             return;
         }
@@ -1415,7 +1445,7 @@ void Connection::clearOutgoingMessages()
 
 void Connection::dispatchSyncMessage(Decoder& decoder)
 {
-    assertIsCurrent(dispatcher());
+    assertIsOnDispatcher();
     ASSERT(decoder.isSyncMessage());
 
     ++m_inDispatchSyncMessageCount;
@@ -1522,19 +1552,29 @@ void Connection::enqueueIncomingMessage(UniqueRef<Decoder> incomingMessage)
     if (!m_syncState)
         return;
     if (isIncomingMessagesThrottlingEnabled()) {
-        dispatcher()->dispatch([protectedThis = Ref { *this }] {
+        dispatchIncomingMessageWork([protectedThis = Ref { *this }] {
             protectedThis->dispatchIncomingMessages();
         });
     } else {
-        dispatcher()->dispatch([protectedThis = Ref { *this }] {
+        dispatchIncomingMessageWork([protectedThis = Ref { *this }] {
             protectedThis->dispatchOneIncomingMessage();
         });
     }
 }
 
+void Connection::dispatchIncomingMessageWork(Function<void()>&& function)
+{
+    // Only defer dispatches to the main run loop, because it is the only dispatcher that is never
+    // destroyed. See dispatcher().
+    if (m_deferredMainRunLoopDispatcher && m_dispatcherIsMainRunLoop)
+        m_deferredMainRunLoopDispatcher->dispatch(WTF::move(function));
+    else
+        dispatcher()->dispatch(WTF::move(function));
+}
+
 void Connection::dispatchMessage(Decoder& decoder)
 {
-    assertIsCurrent(dispatcher());
+    assertIsOnDispatcher();
     RefPtr client = m_client.get();
     RELEASE_ASSERT(client);
     if (decoder.isAsyncReplyMessage()) {
@@ -1590,7 +1630,7 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
 {
     if (!m_syncState)
         return;
-    assertIsCurrent(dispatcher());
+    assertIsOnDispatcher();
     {
         // FIXME: The matches here come from
         // m_messagesToDispatchWhileWaitingForSyncReply. This causes message
@@ -1671,22 +1711,23 @@ size_t Connection::numberOfMessagesToProcess(size_t totalMessages)
 
 Ref<SerialFunctionDispatcher> Connection::dispatcher()
 {
-    // dispatcher can only be accessed while the connection is valid,
-    // and must have the incoming message lock held if not being
-    // called from the SerialFunctionDispatcher.
     RefPtr syncState = m_syncState;
     RELEASE_ASSERT(syncState);
     RefPtr dispatcher = syncState->dispatcher();
     RELEASE_ASSERT(dispatcher);
-#if !ENABLE(UNFAIR_LOCK)
-    if (!m_incomingMessagesLock.isLocked())
-        assertIsCurrent(*dispatcher);
-#endif
 
     // Our syncState is specific to the SerialFunctionDispatcher we have been
     // bound to during open(), so we can retrieve the SerialFunctionDispatcher
     // from it (rather than storing another pointer on this class).
     return dispatcher.releaseNonNull();
+}
+
+void Connection::assertIsOnDispatcher()
+{
+    RELEASE_ASSERT(m_syncState);
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    assertIsCurrent(protect(m_syncState)->dispatcher());
+#endif
 }
 
 void Connection::dispatchOneIncomingMessage()
@@ -1706,7 +1747,7 @@ void Connection::dispatchOneIncomingMessage()
 void Connection::dispatchSyncStateMessages()
 {
     if (RefPtr syncState = m_syncState) {
-        assertIsCurrent(dispatcher());
+        assertIsOnDispatcher();
         syncState->dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection(*this);
     }
 }
@@ -1717,6 +1758,7 @@ void Connection::dispatchIncomingMessages()
         return;
 
     std::unique_ptr<Decoder> message;
+    RefPtr<SerialFunctionDispatcher> dispatcherToReschedule;
 
     size_t messagesToProcess = 0;
     {
@@ -1738,11 +1780,16 @@ void Connection::dispatchIncomingMessages()
 
         // Re-schedule ourselves *before* we dispatch the messages because we want to process follow-up messages if the client
         // spins a nested run loop while we're dispatching a message. Note that this means we can re-enter this method.
-        if (!m_incomingMessages.isEmpty()) {
-            dispatcher()->dispatch([protectedThis = Ref { *this }] {
-                protectedThis->dispatchIncomingMessages();
-            });
-        }
+        if (!m_incomingMessages.isEmpty())
+            dispatcherToReschedule = dispatcher();
+    }
+
+    // Re-dispatch after releasing m_incomingMessagesLock, so that the connection work queue
+    // doesn't wait for the lock while we wake the run loop.
+    if (dispatcherToReschedule) {
+        dispatcherToReschedule->dispatch([protectedThis = Ref { *this }] {
+            protectedThis->dispatchIncomingMessages();
+        });
     }
 
     dispatchMessage(makeUniqueRefFromNonNullUniquePtr(WTF::move(message)));
@@ -1826,7 +1873,7 @@ void Connection::wakeUpRunLoop()
 {
     if (!isValid())
         return;
-    if (dispatcher().ptr() == &RunLoop::mainSingleton())
+    if (m_dispatcherIsMainRunLoop)
         RunLoop::mainSingleton().wakeUp();
 }
 

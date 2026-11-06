@@ -748,6 +748,7 @@ private:
 
     // Can be called on any thread.
     void enqueueIncomingMessage(UniqueRef<Decoder>) WTF_REQUIRES_LOCK(m_incomingMessagesLock);
+    void dispatchIncomingMessageWork(Function<void()>&&) WTF_REQUIRES_LOCK(m_incomingMessagesLock);
     size_t incomingMessagesDispatchingBatchSize() const;
     CompletionHandler<void(Connection*, std::unique_ptr<Decoder>&&)> takeAsyncReplyHandlerWithDispatcherWithLockHeld(AsyncReplyID);
 
@@ -765,9 +766,11 @@ private:
     bool isThrottlingIncomingMessages() const { return *m_incomingMessagesThrottlingLevel > 0; }
 
     // Only valid between open() and invalidate().
-    Ref<SerialFunctionDispatcher> dispatcher();
+    Ref<SerialFunctionDispatcher> dispatcher() WTF_REQUIRES_LOCK(m_incomingMessagesLock);
+    void assertIsOnDispatcher();
 
     class SyncMessageState;
+    class DeferredMainRunLoopDispatcher;
 
     void addAsyncReplyHandler(AsyncReplyHandler&&);
     void addAsyncReplyHandlerWithDispatcher(AsyncReplyHandlerWithDispatcher&&);
@@ -797,6 +800,7 @@ private:
 
     CheckedPtr<Client> m_client;
     RefPtr<SyncMessageState> m_syncState;
+    bool m_dispatcherIsMainRunLoop { false };
     UniqueID m_uniqueID;
     bool m_isServer;
     std::atomic<bool> m_isValid { true };
@@ -827,6 +831,7 @@ private:
 #endif
     Deque<UniqueRef<Decoder>> m_incomingMessages WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
     MessageReceiveQueueMap m_receiveQueues WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
+    FunctionDispatcher* m_deferredMainRunLoopDispatcher WTF_GUARDED_BY_LOCK(m_incomingMessagesLock) { nullptr };
 
     // m_sendLock guards the outgoing messages and the state that the platform sends them with. On
     // Cocoa, a thread only sends a message itself if no message is queued, and holds m_sendLock for
