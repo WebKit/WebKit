@@ -27,6 +27,8 @@ if (DEVELOPER_MODE)
     if (ENABLE_JAVASCRIPTCORE_TOOLS)
         WEBKIT_GENERATE_ENTITLEMENTS(testLibJSCTools USING ../Scripts/process-entitlements.sh)
     endif ()
+
+    target_link_options(testmasm PRIVATE "LINKER:-weak_framework,BrowserEngineCore")
 endif ()
 
 # jsc can also be placed in JavaScriptCore.framework's Helpers directory.
