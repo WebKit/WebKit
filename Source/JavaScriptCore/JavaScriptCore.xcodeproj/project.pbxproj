@@ -1852,6 +1852,7 @@
 		7E83C40D17D785F3003DC41B /* CorpseSnapshotTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E83C40617D785F3003DC41B /* CorpseSnapshotTest.cpp */; };
 		7E83C40E17D785F3003DC41B /* CorpseSymbolTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E83C40817D785F3003DC41B /* CorpseSymbolTest.cpp */; };
 		7E83C40A17D785F3003DC41B /* testLibJSCTools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E83C40017D785F3003DC41B /* testLibJSCTools.cpp */; };
+		FD724E7CFA59100B7F427C3A /* testLibJSCToolsHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E90780EAB0181B560FB706B /* testLibJSCToolsHelper.cpp */; };
 		7E83C43717D785F3003DC41B /* CorpseExportsTrie.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E83C43517D785F3003DC41B /* CorpseExportsTrie.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		56C6C2B7EBDCC63B6ECEA9AD /* CorpseThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 211E3D6CA97F31CEB385A75A /* CorpseThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EF648B9EEAF54C44048B416A /* CorpseThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 960BD2B783EAEBE3233F91BF /* CorpseThread.cpp */; };
@@ -2884,6 +2885,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = FF0F56862E33437C002A232A;
 			remoteInfo = testwasmdebugger;
+		};
+		4310D2180977366CEBD71131 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 84A030410B40D71DD21ADF40;
+			remoteInfo = testLibJSCToolsHelper;
+		};
+		4871D2FA900A0028023635D8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC2E2720F7B94C00B0897D;
+			remoteInfo = "Unlock Keychain";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -4521,6 +4536,7 @@
 		7E83C40817D785F3003DC41B /* CorpseSymbolTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseSymbolTest.cpp; sourceTree = "<group>"; };
 		7E83C40717D785F3003DC41B /* CorpseSymbolTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorpseSymbolTest.h; sourceTree = "<group>"; };
 		7E83C40017D785F3003DC41B /* testLibJSCTools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testLibJSCTools.cpp; sourceTree = "<group>"; };
+		5E90780EAB0181B560FB706B /* testLibJSCToolsHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testLibJSCToolsHelper.cpp; sourceTree = "<group>"; };
 		7E83C40917D785F3003DC41B /* testLibJSCTools */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testLibJSCTools; sourceTree = BUILT_PRODUCTS_DIR; };
 		44F93E0D2AE71F9F00FFA37C /* JavaScriptCoreFramework.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptCoreFramework.cpp; sourceTree = "<group>"; };
 		451539B812DC994500EF7AC4 /* Yarr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Yarr.h; path = yarr/Yarr.h; sourceTree = "<group>"; };
@@ -6782,6 +6798,8 @@
 		FFFAF8CC2EC9A7C000042238 /* ExecutionHandlerTestSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExecutionHandlerTestSupport.h; sourceTree = "<group>"; };
 		FFFAF8CD2EC9A7C000042238 /* ExecutionHandlerTestSupport.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutionHandlerTestSupport.cpp; sourceTree = "<group>"; };
 		FFFAFBE02E6ABDCB006BFA2E /* WasmVirtualAddress.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmVirtualAddress.cpp; sourceTree = "<group>"; };
+		BB9C5F659DA58B7454BE5936 /* testLibJSCToolsHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testLibJSCToolsHelper; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D861E09712F44B52E323FBC /* TestLibJSCToolsHelper.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestLibJSCToolsHelper.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -6957,6 +6975,7 @@
 				7E83C40417D785F3003DC41B /* LibJSCToolsTestUtilities.cpp */,
 				7E83C40317D785F3003DC41B /* LibJSCToolsTestUtilities.h */,
 				7E83C40017D785F3003DC41B /* testLibJSCTools.cpp */,
+				5E90780EAB0181B560FB706B /* testLibJSCToolsHelper.cpp */,
 			);
 			path = tests;
 			sourceTree = "<group>";
@@ -7009,6 +7028,7 @@
 				FE533CAC1F217DB40016A1FE /* testmasm */,
 				79281BDC20B62B3E002E2A60 /* testmem */,
 				7E83C40917D785F3003DC41B /* testLibJSCTools */,
+				BB9C5F659DA58B7454BE5936 /* testLibJSCToolsHelper */,
 				6511230514046A4C002B101D /* testRegExp */,
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
 				44F93E022AE71F5400FFA37C /* libJavaScriptCore.a */,
@@ -8213,6 +8233,7 @@
 				3E812A1EEBE0D5AEA7D3C74B /* Mya.xcconfig */,
 				FEE0A12229FE250400CED5E4 /* TestExecutable.xcconfig */,
 				A1B2C30001E5B4A700C0FFEE /* TestLibJSCTools.xcconfig */,
+				9D861E09712F44B52E323FBC /* TestLibJSCToolsHelper.xcconfig */,
 				BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */,
 			);
 			path = Configurations;
@@ -13596,6 +13617,7 @@
 			dependencies = (
 				F7DDEC2D6CAFD2ACDD19D991 /* PBXTargetDependency */,
 				7E83C41B17D785F3003DC41B /* PBXTargetDependency */,
+				24B6A74C4B266E19E7CB74DF /* PBXTargetDependency */,
 				7E83C41D17D785F3003DC41B /* PBXTargetDependency */,
 			);
 			name = testLibJSCTools;
@@ -13621,6 +13643,24 @@
 			productInstallPath = /usr/local/bin;
 			productName = testRegExp;
 			productReference = FF0F56942E33437C002A232A /* testwasmdebugger */;
+			productType = "com.apple.product-type.tool";
+		};
+		84A030410B40D71DD21ADF40 /* testLibJSCToolsHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C8D4EE19DBC75F365C514312 /* Build configuration list for PBXNativeTarget "testLibJSCToolsHelper" */;
+			buildPhases = (
+				404F31BC5B737203325DEBA8 /* Generate Entitlements */,
+				BD3312A18A5CF8612C2C8C44 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9F4640BDAE9BC3B9B2F29FC0 /* PBXTargetDependency */,
+			);
+			name = testLibJSCToolsHelper;
+			productInstallPath = /usr/local/bin;
+			productName = testLibJSCToolsHelper;
+			productReference = BB9C5F659DA58B7454BE5936 /* testLibJSCToolsHelper */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -13684,6 +13724,7 @@
 				52CD0F592242F569004A18A5 /* testdfg */,
 				FF0F56862E33437C002A232A /* testwasmdebugger */,
 				7E83C41317D785F3003DC41B /* testLibJSCTools */,
+				84A030410B40D71DD21ADF40 /* testLibJSCToolsHelper */,
 			);
 		};
 /* End PBXProject section */
@@ -14341,6 +14382,26 @@
 			shellPath = /bin/sh;
 			shellScript = "Scripts/process-entitlements.sh\n";
 		};
+		404F31BC5B737203325DEBA8 /* Generate Entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Generate Entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-entitlements.sh\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -14762,6 +14823,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BD3312A18A5CF8612C2C8C44 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD724E7CFA59100B7F427C3A /* testLibJSCToolsHelper.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -15036,6 +15105,23 @@
 			isa = PBXTargetDependency;
 			target = FF0F56862E33437C002A232A /* testwasmdebugger */;
 			targetProxy = FF0F56972E33479D002A232A /* PBXContainerItemProxy */;
+		};
+		24B6A74C4B266E19E7CB74DF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				macos,
+				tvos,
+				watchos,
+				xros,
+			);
+			target = 84A030410B40D71DD21ADF40 /* testLibJSCToolsHelper */;
+			targetProxy = 4310D2180977366CEBD71131 /* PBXContainerItemProxy */;
+		};
+		9F4640BDAE9BC3B9B2F29FC0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
+			targetProxy = 4871D2FA900A0028023635D8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -15788,6 +15874,38 @@
 			};
 			name = Production;
 		};
+		A2881900D111E8D2A71F2D00 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9D861E09712F44B52E323FBC /* TestLibJSCToolsHelper.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0E2DC052CD93382D9902F767 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9D861E09712F44B52E323FBC /* TestLibJSCToolsHelper.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		6C140DC1C3F81D771F1C6CC2 /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9D861E09712F44B52E323FBC /* TestLibJSCToolsHelper.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Profiling;
+		};
+		49E857A7437DD6B69F76A6CF /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9D861E09712F44B52E323FBC /* TestLibJSCToolsHelper.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -16062,6 +16180,17 @@
 				FF0F56912E33437C002A232A /* Release */,
 				FF0F56922E33437C002A232A /* Profiling */,
 				FF0F56932E33437C002A232A /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		C8D4EE19DBC75F365C514312 /* Build configuration list for PBXNativeTarget "testLibJSCToolsHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A2881900D111E8D2A71F2D00 /* Debug */,
+				0E2DC052CD93382D9902F767 /* Release */,
+				6C140DC1C3F81D771F1C6CC2 /* Profiling */,
+				49E857A7437DD6B69F76A6CF /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

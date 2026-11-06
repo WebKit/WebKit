@@ -32,7 +32,6 @@
 
 #include <JavaScriptCore/CorpseProcess.h>
 #include <errno.h>
-#include <signal.h>
 #include <spawn.h>
 #include <string.h>
 #include <sys/wait.h>
@@ -201,9 +200,7 @@ void testProcess()
         else {
             RefPtr<Process> process = Process::create(translated);
             TEST_ASSERT(process->isTranslated(), "a process running x86_64 code is translated");
-            kill(translated, SIGKILL);
-            int status = 0;
-            while (waitpid(translated, &status, 0) < 0 && errno == EINTR) { }
+            killChild(translated);
         }
     }
 #endif // CPU(ARM64)

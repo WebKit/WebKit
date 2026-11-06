@@ -125,6 +125,9 @@ if (DEVELOPER_MODE)
         )
         set(testLibJSCTools_FRAMEWORKS ${jsc_FRAMEWORKS})
         set(testLibJSCTools_LIBRARIES JavaScriptCoreTools)
+
+        # testLibJSCToolsHelper is a test inspection target. Must NOT link WTF nor JavaScriptCore.
+        set(testLibJSCToolsHelper_SOURCES ../corpse/tests/testLibJSCToolsHelper.cpp)
     endif ()
 
     set(testwasmdebugger_SOURCES
@@ -161,6 +164,7 @@ if (DEVELOPER_MODE)
 
     if (ENABLE_JAVASCRIPTCORE_TOOLS)
         WEBKIT_EXECUTABLE_DECLARE(testLibJSCTools)
+        WEBKIT_EXECUTABLE_DECLARE(testLibJSCToolsHelper)
     endif ()
 
     if (COMPILER_IS_GCC_OR_CLANG)
@@ -208,6 +212,8 @@ if (DEVELOPER_MODE)
 
     if (ENABLE_JAVASCRIPTCORE_TOOLS)
         WEBKIT_EXECUTABLE(testLibJSCTools)
+        WEBKIT_EXECUTABLE(testLibJSCToolsHelper)
+        add_dependencies(testLibJSCTools testLibJSCToolsHelper)
     endif ()
 
     WEBKIT_ADD_PREFIX_HEADER(testapi ../JavaScriptCorePrefix.h PREFIX_NO_CODEGEN PREFIX_LANGUAGES CXX)
