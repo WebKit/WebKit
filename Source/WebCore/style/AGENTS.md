@@ -32,7 +32,7 @@ The bar for changing this file is high. Entries state rules, invariants and dire
 
 ## Direction
 
-- `ComputedStyle` holds computed values. Used values go through `UsedStyle` (`rendering/style/UsedStyle.h`), a rendering-layer view of a box, and `ComputedStyle` gets no public `used*` accessors. Style-level comparisons use unzoomed `Style::effective*()` free functions.
+- `ComputedStyle` holds computed values. Used values that depend on the box go through `UsedStyle` (`rendering/style/UsedStyle.h`), a rendering-layer view of a box, not through new `ComputedStyle::used*` accessors. Style-level comparisons use unzoomed `Style::effective*()` free functions.
 - Computed values are zoom-independent and zoom is applied at use. Anything zoom- or device-scale-dependent belongs in `UsedStyle`.
 - Text renderers have a full style of their own: inherited properties from the DOM parent, initial values for the rest.
 - Per-value behavior lives on the `Style::` value types under `style/values/`: conversion from and to `CSSValue` (`+CSSValueConversion`, `+CSSValueCreation`), serialization (`+Serialization`) and blending (`+Blending`), driven by `CSSProperties.json`. `StyleBuilderCustom.h`, `StyleExtractorCustom.h` and `StyleInterpolationWrappers.h` are for genuine exceptions, not a pattern to copy.
