@@ -123,7 +123,7 @@ private func makeMTLTextureFromImageAsset(
     }
 
     var mipLevelsInData = 0
-    unsafe imageAssetData.bytes.withUnsafeBytes { textureBytes in
+    let uploadTexture = { (textureBytes: UnsafeRawBufferPointer) in
         guard let baseAddress = textureBytes.baseAddress else {
             logError("nil base address in imageAssetData")
             return
@@ -213,6 +213,11 @@ private func makeMTLTextureFromImageAsset(
             }
         }
     }
+    #if compiler(>=6.4)
+    imageAssetData.bytes.withUnsafeBytes(uploadTexture)
+    #else
+    unsafe imageAssetData.bytes.withUnsafeBytes(uploadTexture)
+    #endif
 
     guard mipLevelsInData > 0 else {
         return nil

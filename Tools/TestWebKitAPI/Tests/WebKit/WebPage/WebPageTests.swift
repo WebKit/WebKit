@@ -142,8 +142,16 @@ struct WebPageTests {
             // the same identity as the page itself.
             let qualifiedServerTrustKey = try #require(SecTrustCopyKey(qualifiedServerTrust))
             let serverKey = try #require(SecTrustCopyKey(serverTrust))
-            let qualifiedServerTrustKeyData = try #require(unsafe SecKeyCopyExternalRepresentation(qualifiedServerTrustKey, nil))
-            let serverKeyData = try #require(unsafe SecKeyCopyExternalRepresentation(serverKey, nil))
+            #if compiler(>=6.4)
+            // Called outside of `#require`, whose expansion turns the `nil` error argument into an unsafe closure parameter.
+            let qualifiedServerTrustKeyRepresentation = SecKeyCopyExternalRepresentation(qualifiedServerTrustKey, nil)
+            let serverKeyRepresentation = SecKeyCopyExternalRepresentation(serverKey, nil)
+            #else
+            let qualifiedServerTrustKeyRepresentation = unsafe SecKeyCopyExternalRepresentation(qualifiedServerTrustKey, nil)
+            let serverKeyRepresentation = unsafe SecKeyCopyExternalRepresentation(serverKey, nil)
+            #endif
+            let qualifiedServerTrustKeyData = try #require(qualifiedServerTrustKeyRepresentation)
+            let serverKeyData = try #require(serverKeyRepresentation)
             #expect(CFEqual(qualifiedServerTrustKeyData, serverKeyData))
 
             // Committing a response without a tls-certificate-binding link clears the 2-QWAC.

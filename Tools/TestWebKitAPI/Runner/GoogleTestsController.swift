@@ -101,9 +101,17 @@ private func withUnsafeMutableCStyleArguments<R>(
     }
 
     var mutablePointers = unsafe pointers
+    #if compiler(>=6.4)
+    return try mutablePointers.withUnsafeMutableBufferPointer { buffer in
+        // Guaranteed to be non-nil because of the precondition at the beginning.
+        // swift-format-ignore: NeverForceUnwrap
+        unsafe try body(Int32(buffer.count - 1), buffer.baseAddress!)
+    }
+    #else
     return try unsafe mutablePointers.withUnsafeMutableBufferPointer { buffer in
         // Guaranteed to be non-nil because of the precondition at the beginning.
         // swift-format-ignore: NeverForceUnwrap
         unsafe try body(Int32(buffer.count - 1), buffer.baseAddress!)
     }
+    #endif
 }

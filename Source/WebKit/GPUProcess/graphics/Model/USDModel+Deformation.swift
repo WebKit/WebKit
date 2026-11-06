@@ -41,12 +41,17 @@ extension MTLBuffer {
         precondition(0 <= byteOffset, "Byte offset must not be negative")
         precondition(byteOffset + span.byteCount <= self.length, "Span range exceeds buffer size")
         // Preconditions guarantee that input span does not exceed the range of the MTLBuffer.
-        unsafe span.withUnsafeBytes { sourceBuffer in
+        let copyBytes = { (sourceBuffer: UnsafeRawBufferPointer) in
             guard let baseAddress = sourceBuffer.baseAddress else {
                 fatalError("Unable to get the base address of the buffer")
             }
             unsafe self.contents().advanced(by: byteOffset).copyMemory(from: baseAddress, byteCount: sourceBuffer.count)
         }
+        #if compiler(>=6.4)
+        span.withUnsafeBytes(copyBytes)
+        #else
+        unsafe span.withUnsafeBytes(copyBytes)
+        #endif
     }
 }
 
@@ -84,7 +89,11 @@ extension MTLDevice {
 @_lifetime(span: copy span)
 private func writeData(into span: inout MutableRawSpan, from data: Data) {
     let copyCount = min(data.count, span.byteCount)
+    #if compiler(>=6.4)
+    span.withUnsafeMutableBytes { unsafe $0.copyBytes(from: data.prefix(copyCount)) }
+    #else
     unsafe span.withUnsafeMutableBytes { unsafe $0.copyBytes(from: data.prefix(copyCount)) }
+    #endif
 }
 
 // V2 deformation context. Holds the compiled pipeline, the live LowLevelDeformation

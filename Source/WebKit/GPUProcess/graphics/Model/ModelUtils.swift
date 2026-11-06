@@ -92,7 +92,11 @@ private func copyDataIntoBuffer(_ buffer: inout MutableRawSpan, from data: Data)
     )
 
     // unsafe used here as that is the method for populating a MTLBuffer
+    #if compiler(>=6.4)
+    buffer.withUnsafeMutableBytes { unsafe $0.copyBytes(from: data) }
+    #else
     unsafe buffer.withUnsafeMutableBytes { unsafe $0.copyBytes(from: data) }
+    #endif
 }
 
 extension LowLevelMeshResource {

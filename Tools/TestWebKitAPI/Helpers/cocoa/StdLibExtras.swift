@@ -39,7 +39,11 @@ extension WTF.String: LosslessStringConvertible {
     // Protocol requirement; no documentation needed.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public var description: Swift.String {
+        #if compiler(>=6.4)
+        createNSString().get()
+        #else
         unsafe createNSString().get()
+        #endif
     }
 }
 

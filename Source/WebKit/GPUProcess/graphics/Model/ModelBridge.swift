@@ -631,7 +631,11 @@ extension WKBridgeMaterialGraph {
 func toData<T>(_ input: [T]) -> Data {
     // rdar://164559261 - this is needed because there is no way to represnt an NSArray of
     // primitive types in Objective-C
+    #if compiler(>=6.4)
+    input.withUnsafeBytes { unsafe Data($0) }
+    #else
     unsafe input.withUnsafeBytes { unsafe Data($0) }
+    #endif
 }
 
 func toDataArray<T>(_ input: [[T]]) -> [Data] {

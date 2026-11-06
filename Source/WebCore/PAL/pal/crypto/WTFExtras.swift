@@ -39,7 +39,11 @@ extension WTF.EscapableByteSpan: ContiguousBytes {
         let elements = unsafe Span<UInt8>(_unsafeCxxSpan: span())
         // Unsafe: We rely on body and its callees honoring the buffer's count and not escaping
         // pointers to it, but nothing ensures those properties.
+        #if compiler(>=6.4)
+        return try elements.bytes.withUnsafeBytes(body)
+        #else
         return try unsafe elements.bytes.withUnsafeBytes(body)
+        #endif
     }
 }
 
@@ -83,9 +87,15 @@ public struct NonNullBytes: ContiguousBytes, DataProtocol, RandomAccessCollectio
             // with a zero count, so `body` can never read through it. This gives CryptoKit the
             // non-null base pointer it requires even for an empty buffer.
             var placeholder: UInt8 = 0
+            #if compiler(>=6.4)
+            return try Swift.withUnsafeBytes(of: &placeholder) { (raw: UnsafeRawBufferPointer) throws(E) in
+                try unsafe body(UnsafeRawBufferPointer(start: raw.baseAddress, count: 0))
+            }
+            #else
             return try unsafe Swift.withUnsafeBytes(of: &placeholder) { (raw: UnsafeRawBufferPointer) throws(E) in
                 try unsafe body(UnsafeRawBufferPointer(start: raw.baseAddress, count: 0))
             }
+            #endif
         }
         return try unsafe bytes.withUnsafeBytes(body)
     }
