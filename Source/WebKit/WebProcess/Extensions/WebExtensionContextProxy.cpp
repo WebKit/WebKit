@@ -91,6 +91,7 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
         context.m_localization = parseLocalization(parameters.localizationJSON, parameters.baseURL);
         Ref manifestJSON = *parameters.manifestJSON;
         context.m_manifest = JSON::Value::parseJSON(String::fromUTF8(manifestJSON->span()));
+        context.m_usesStructuredCloneMessageSerialization = parameters.usesStructuredCloneMessageSerialization;
         context.m_manifestVersion = parameters.manifestVersion;
         context.m_storageAccessLevels = parameters.storageAccessLevels;
         context.m_defaultSessionID = parameters.defaultSessionID;

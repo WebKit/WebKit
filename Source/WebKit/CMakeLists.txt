@@ -643,6 +643,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/Extensions/WebExtensionFrameParameters.serialization.in
     Shared/Extensions/WebExtensionMatchedRuleParameters.serialization.in
     Shared/Extensions/WebExtensionMenuItem.serialization.in
+    Shared/Extensions/WebExtensionMessage.serialization.in
     Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in
     Shared/Extensions/WebExtensionMessageTargetParameters.serialization.in
     Shared/Extensions/WebExtensionNotification.serialization.in

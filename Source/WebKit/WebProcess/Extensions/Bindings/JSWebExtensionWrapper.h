@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "Protected.h"
+#include "WebExtensionMessage.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSCJSValuePropertyInlines.h>
 #include <JavaScriptCore/JSCellInlines.h>
@@ -198,6 +199,10 @@ JSObjectRef toJSError(JSContextRef, const String&);
 
 JSValueRef deserializeJSONString(JSContextRef, const String& jsonString);
 String serializeJSObject(JSContextRef, JSValueRef, JSValueRef* exception);
+
+// Serializes with structured clone when requested, otherwise as JSON. Returns nothing when the value
+// cannot be serialized, and structured clone also sets the exception.
+std::optional<WebExtensionMessage> serializeMessage(JSContextRef, JSValueRef, bool useStructuredClone, JSValueRef* exception);
 
 String toJSONString(JSContextRef, JSValueRef);
 String toSortedJSONString(JSContextRef, JSValueRef);

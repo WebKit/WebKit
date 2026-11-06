@@ -1734,6 +1734,7 @@ WebExtensionContextParameters WebExtensionContext::parameters(IncludePrivilegedI
         extension->serializeLocalization(),
         extension->serializeManifest(),
         extension->manifestVersion(),
+        extension->usesStructuredCloneMessageSerialization(),
         m_storageAccessLevels,
         protect(extensionController()->configuration())->defaultWebsiteDataStore().sessionID(),
         backgroundPageIdentifier(destinationProcess),

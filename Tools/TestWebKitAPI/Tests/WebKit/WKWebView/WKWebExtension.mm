@@ -2219,6 +2219,39 @@ TEST(WKWebExtension, URLOverridesParsing)
     EXPECT_FALSE(testExtension.hasOverrideNewTabPage);
 }
 
+TEST(WKWebExtension, MessageSerializationParsing)
+{
+    NSMutableDictionary *testManifestDictionary = [@{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0"
+    } mutableCopy];
+
+    auto *testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    testManifestDictionary[@"message_serialization"] = @"structured_clone";
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    testManifestDictionary[@"message_serialization"] = @"json";
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    testManifestDictionary[@"message_serialization"] = @"xml";
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+
+    testManifestDictionary[@"message_serialization"] = @123;
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+
+    testManifestDictionary[@"message_serialization"] = @"";
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+}
+
 TEST(WKWebExtension, ContentSecurityPolicyParsing)
 {
     NSMutableDictionary *testManifestDictionaryV2 = [@{

@@ -145,7 +145,7 @@
         },
         "Serialization": {
             "contextsAllowed": ["argument"],
-            "values": ["JSON", "Web"]
+            "values": ["JSON", "Message", "Web"]
         },
         "SetProperty": {
             "contextsAllowed": ["operation"]

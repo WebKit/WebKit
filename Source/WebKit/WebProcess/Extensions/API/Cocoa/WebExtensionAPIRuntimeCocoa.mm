@@ -145,47 +145,55 @@ bool WebExtensionContextProxy::isBackgroundServiceWorkerStillActivating()
     return isStillActivating;
 }
 
-void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(String&& replyJSON)>&& completionHandler)
+void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const WebExtensionMessage& message, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(std::optional<WebExtensionMessage>&& reply)>&& completionHandler)
 {
     static constexpr unsigned backgroundServiceWorkerActivationMaxPollAttempts = 400;
-    dispatchRuntimeMessageEventOnceBackgroundServiceWorkerIsActive(contentWorldType, messageJSON, targetParameters, senderParameters, userGesture, WTF::move(completionHandler), backgroundServiceWorkerActivationMaxPollAttempts);
+    dispatchRuntimeMessageEventOnceBackgroundServiceWorkerIsActive(contentWorldType, message, targetParameters, senderParameters, userGesture, WTF::move(completionHandler), backgroundServiceWorkerActivationMaxPollAttempts);
 }
 
-void WebExtensionContextProxy::dispatchRuntimeMessageEventOnceBackgroundServiceWorkerIsActive(WebExtensionContentWorldType contentWorldType, String messageJSON, std::optional<WebExtensionMessageTargetParameters> targetParameters, WebExtensionMessageSenderParameters senderParameters, bool userGesture, CompletionHandler<void(String&& replyJSON)>&& completionHandler, unsigned remainingActivationPollAttempts)
+void WebExtensionContextProxy::dispatchRuntimeMessageEventOnceBackgroundServiceWorkerIsActive(WebExtensionContentWorldType contentWorldType, WebExtensionMessage message, std::optional<WebExtensionMessageTargetParameters> targetParameters, WebExtensionMessageSenderParameters senderParameters, bool userGesture, CompletionHandler<void(std::optional<WebExtensionMessage>&& reply)>&& completionHandler, unsigned remainingActivationPollAttempts)
 {
     if (!hasDOMWrapperWorld(contentWorldType)) {
-        // A null reply to the completionHandler means no listeners replied.
-        completionHandler({ });
+        // A missing reply to the completionHandler means no listeners replied.
+        completionHandler(std::nullopt);
         return;
     }
 
     if (remainingActivationPollAttempts && isBackgroundServiceWorkerStillActivating()) {
         static constexpr auto backgroundServiceWorkerActivationPollInterval = 5_ms;
-        RunLoop::mainSingleton().dispatchAfter(backgroundServiceWorkerActivationPollInterval, [this, protectedThis = Ref { *this }, contentWorldType, messageJSON, targetParameters, senderParameters, userGesture, completionHandler = WTF::move(completionHandler), remainingActivationPollAttempts]() mutable {
-            dispatchRuntimeMessageEventOnceBackgroundServiceWorkerIsActive(contentWorldType, WTF::move(messageJSON), WTF::move(targetParameters), WTF::move(senderParameters), userGesture, WTF::move(completionHandler), remainingActivationPollAttempts - 1);
+        RunLoop::mainSingleton().dispatchAfter(backgroundServiceWorkerActivationPollInterval, [this, protectedThis = Ref { *this }, contentWorldType, message, targetParameters, senderParameters, userGesture, completionHandler = WTF::move(completionHandler), remainingActivationPollAttempts] mutable {
+            dispatchRuntimeMessageEventOnceBackgroundServiceWorkerIsActive(contentWorldType, WTF::move(message), WTF::move(targetParameters), WTF::move(senderParameters), userGesture, WTF::move(completionHandler), remainingActivationPollAttempts - 1);
         });
         return;
     }
 
-    RefPtr messageString = toJSString(messageJSON);
     auto sourceContentWorldType = senderParameters.contentWorldType;
 
-    auto callbackAggregator = ReplyCallbackAggregator::create([completionHandler = WTF::move(completionHandler)](JSValue *replyMessage, IsDefaultReply defaultReply) mutable {
+    // Replies to a web page stay JSON, like the page's own messages.
+    bool useStructuredCloneForReply = usesStructuredCloneMessageSerialization() && sourceContentWorldType != WebExtensionContentWorldType::WebPage;
+
+    auto callbackAggregator = ReplyCallbackAggregator::create([completionHandler = WTF::move(completionHandler), useStructuredCloneForReply](JSValue *replyMessage, IsDefaultReply defaultReply) mutable {
+        // A missing reply to the completionHandler means no listeners replied.
         if (defaultReply == IsDefaultReply::Yes) {
-            // A null reply to the completionHandler means no listeners replied.
-            completionHandler({ });
+            completionHandler(std::nullopt);
             return;
         }
 
-        auto *replyMessageJSON = encodeJSONString(replyMessage, JSONOptions::FragmentsAllowed);
-        if (replyMessageJSON.length > webExtensionMaxMessageLength)
-            replyMessageJSON = @"";
+        std::optional<WebExtensionMessage> reply;
+        if (useStructuredCloneForReply && replyMessage) {
+            JSValueRef exception = nullptr;
+            reply = serializeMessage(replyMessage.context.JSGlobalContextRef, replyMessage.JSValueRef, true, &exception);
+        } else {
+            auto json = String { encodeJSONString(replyMessage, JSONOptions::FragmentsAllowed) };
+            if (!json.isNull())
+                reply = WebExtensionMessage { WTF::move(json) };
+        }
 
-        // Ensure a real reply is never null, so the completionHandler can make the distinction.
-        if (!replyMessageJSON)
-            replyMessageJSON = @"";
+        // A reply that can't be serialized or is too large is still a reply, just with no value.
+        if (!reply || reply->length() > webExtensionMaxMessageLength)
+            reply = WebExtensionMessage { emptyString() };
 
-        completionHandler(replyMessageJSON);
+        completionHandler(WTF::move(reply));
     }, nil, IsDefaultReply::Yes);
 
     // This ObjC wrapper is need for the inner reply block, which is required to be a compiled block.
@@ -221,7 +229,7 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEventOnceBackgroundServiceW
             // with a signature to translate the JS function arguments. Having the block capture
             // callbackAggregatorWrapper ensures that callbackAggregator remains in scope.
             auto senderInfo = toWebAPI(listener->globalContext(), senderParameters);
-            auto returnValue = listener->call(fromMessageJSON(listener->globalContext(), messageString.get()), senderInfo, toJSValueRef(listener->globalContext(), ^(JSValue *replyMessage) {
+            auto returnValue = listener->call(message.toJSValue(listener->globalContext()), senderInfo, toJSValueRef(listener->globalContext(), ^(JSValue *replyMessage) {
                 protect(callbackAggregatorWrapper.get().aggregator).get()(replyMessage, IsDefaultReply::No);
             }));
 

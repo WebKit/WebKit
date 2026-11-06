@@ -31,7 +31,7 @@
     [NeedsScriptContext] readonly attribute any sender;
     readonly attribute any error;
 
-    [RaisesException, NeedsFrame] void postMessage([Serialization=JSON] any message);
+    [RaisesException, NeedsFrame] void postMessage([Serialization=Message] any message);
     void disconnect();
 
     readonly attribute WebExtensionAPIEvent onDisconnect;

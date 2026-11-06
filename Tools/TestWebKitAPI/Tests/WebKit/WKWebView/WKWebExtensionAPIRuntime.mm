@@ -1049,6 +1049,284 @@ TEST(WKWebExtensionAPIRuntime, PortPostMessageDeliversEachValueOnceToRepeatedLis
     [manager run];
 }
 
+static NSDictionary *structuredCloneContentScriptManifest()
+{
+    NSMutableDictionary *manifest = [runtimeContentScriptManifest mutableCopy];
+    manifest[@"message_serialization"] = @"structured_clone";
+    return manifest;
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageWithStructuredClone)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertTrue(message.buffer instanceof ArrayBuffer, 'ArrayBuffer should arrive as an ArrayBuffer')",
+        @"  browser.test.assertDeepEq(Array.from(new Uint8Array(message.buffer)), [ 1, 2, 3 ], 'ArrayBuffer should keep its bytes')",
+        @"  browser.test.assertTrue(message.floats instanceof Float32Array, 'Typed arrays should keep their type')",
+        @"  browser.test.assertTrue(message.map instanceof Map, 'Map should arrive as a Map')",
+        @"  browser.test.assertEq(message.map.get('Content-Language'), 'en', 'Map should keep its entries')",
+        @"  browser.test.assertTrue(message.set instanceof Set, 'Set should arrive as a Set')",
+        @"  browser.test.assertTrue(message.date instanceof Date, 'Date should arrive as a Date')",
+        @"  browser.test.assertEq(message.date.getTime(), 1700000000000, 'Date should keep its time')",
+        @"  browser.test.assertEq(message.bigint, 9007199254740993n, 'BigInt should keep its value')",
+        @"  browser.test.assertEq(message.undefinedValue, undefined, 'undefined should stay present')",
+        @"  browser.test.assertTrue('undefinedValue' in message, 'undefined properties should not be dropped')",
+        @"  browser.test.assertEq(message.nullValue, null, 'null should stay null')",
+        @"  browser.test.assertTrue('nullValue' in message, 'null properties should not be dropped')",
+
+        @"  sendResponse({ reply: new Map([[ 'Via', '1.1 proxy-a' ]]), bytes: new Uint8Array([ 4, 5, 6 ]) })",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const response = await browser.runtime.sendMessage({",
+        @"    buffer: new Uint8Array([ 1, 2, 3 ]).buffer,",
+        @"    floats: new Float32Array([ 1.5, 2.5 ]),",
+        @"    map: new Map([[ 'Content-Language', 'en' ]]),",
+        @"    set: new Set([ 'a', 'b' ]),",
+        @"    date: new Date(1700000000000),",
+        @"    bigint: 9007199254740993n,",
+        @"    nullValue: null,",
+        @"    undefinedValue: undefined",
+        @"  })",
+
+        @"  browser.test.assertTrue(response.reply instanceof Map, 'Reply Map should arrive as a Map')",
+        @"  browser.test.assertEq(response.reply.get('Via'), '1.1 proxy-a', 'Reply Map should keep its entries')",
+        @"  browser.test.assertTrue(response.bytes instanceof Uint8Array, 'Reply typed array should keep its type')",
+        @"  browser.test.assertDeepEq(Array.from(response.bytes), [ 4, 5, 6 ], 'Reply typed array should keep its bytes')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto manager = Util::loadExtension(structuredCloneContentScriptManifest(), @{ @"background.js": backgroundScript, @"content.js": contentScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageWithStructuredCloneNullReply)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message.value, null, 'A null property should arrive as null')",
+
+        @"  sendResponse(null)",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    // A null reply is still a reply, so it must not look like no listener responded.
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const response = await browser.runtime.sendMessage({ value: null })",
+        @"  browser.test.assertEq(response, null, 'A null reply should arrive as null')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto manager = Util::loadExtension(structuredCloneContentScriptManifest(), @{ @"background.js": backgroundScript, @"content.js": contentScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageWithStructuredCloneBlob)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {",
+        @"  browser.test.assertTrue(message.blob instanceof Blob, 'Blob should arrive as a Blob')",
+        @"  browser.test.assertEq(message.blob.type, 'text/plain', 'Blob should keep its type')",
+        @"  browser.test.assertEq(message.blob.size, 5, 'Blob should keep its size')",
+        @"  browser.test.assertEq(await message.blob.text(), 'Hello', 'Blob should keep its contents')",
+
+        @"  sendResponse({ blob: new Blob([ 'World' ], { type: 'text/plain' }) })",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const blob = new Blob([ 'Hello' ], { type: 'text/plain' })",
+        @"  const response = await browser.runtime.sendMessage({ blob })",
+
+        @"  browser.test.assertTrue(response.blob instanceof Blob, 'Reply Blob should arrive as a Blob')",
+        @"  browser.test.assertEq(await response.blob.text(), 'World', 'Reply Blob should keep its contents')",
+        @"  browser.test.assertEq(blob.size, 5, 'Sent Blob should stay usable')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto manager = Util::loadExtension(structuredCloneContentScriptManifest(), @{ @"background.js": backgroundScript, @"content.js": contentScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageWithoutStructuredCloneUsesJSON)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertFalse(message.buffer instanceof ArrayBuffer, 'ArrayBuffer should not survive JSON')",
+        @"  browser.test.assertDeepEq(message.buffer, { }, 'ArrayBuffer should arrive as an empty object')",
+        @"  browser.test.assertEq(message.date, '2023-11-14T22:13:20.000Z', 'Date should arrive as an ISO string')",
+
+        @"  sendResponse({ ok: true })",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  const response = await browser.runtime.sendMessage({ buffer: new Uint8Array([ 1, 2, 3 ]).buffer, date: new Date(1700000000000) })",
+        @"  browser.test.assertEq(response?.ok, true, 'Should get the response from the background script')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto manager = Util::loadExtension(runtimeContentScriptManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, SendMessageWithStructuredCloneRejectsUnclonableValue)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"(async () => {",
+        @"  let didThrow = false",
+        @"  try {",
+        @"    await browser.runtime.sendMessage({ callback() { } })",
+        @"  } catch (error) {",
+        @"    didThrow = true",
+        @"  }",
+
+        @"  browser.test.assertTrue(didThrow, 'Sending a function should fail with structured clone')",
+
+        @"  browser.test.notifyPass()",
+        @"})()"
+    ]);
+
+    auto manager = Util::loadExtension(structuredCloneContentScriptManifest(), @{ @"background.js": backgroundScript, @"content.js": contentScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIRuntime, PortPostMessageWithStructuredClone)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onConnect.addListener((port) => {",
+        @"  port.onMessage.addListener((message) => {",
+        @"    browser.test.assertTrue(message.map instanceof Map, 'Map should arrive as a Map')",
+        @"    browser.test.assertEq(message.map.get('Content-Language'), 'en', 'Map should keep its entries')",
+        @"    browser.test.assertDeepEq(Array.from(new Uint8Array(message.buffer)), [ 7, 8, 9 ], 'ArrayBuffer should keep its bytes')",
+
+        @"    port.postMessage({ echo: new Set([ 'a', 'b' ]) })",
+        @"  })",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"const port = browser.runtime.connect()",
+
+        @"port.onMessage.addListener((message) => {",
+        @"  browser.test.assertTrue(message.echo instanceof Set, 'Reply Set should arrive as a Set')",
+        @"  browser.test.assertEq(message.echo.size, 2, 'Reply Set should keep its entries')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"port.postMessage({ map: new Map([[ 'Content-Language', 'en' ]]), buffer: new Uint8Array([ 7, 8, 9 ]).buffer })"
+    ]);
+
+    auto manager = Util::loadExtension(structuredCloneContentScriptManifest(), @{ @"background.js": backgroundScript, @"content.js": contentScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIRuntime, SendMessageFromContentScriptWhileBackgroundIsLoading)
 {
     // A content script sends runtime.sendMessage while the non-persistent background content

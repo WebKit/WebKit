@@ -43,6 +43,7 @@
 #include <JavaScriptCore/JSWeakObjectMapRefPrivate.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/JSDOMGlobalObject.h>
+#include <WebCore/SerializedScriptValue.h>
 
 namespace WebKit {
 
@@ -395,6 +396,43 @@ JSValueRef fromMessageJSON(JSContextRef context, JSStringRef messageJSON)
 
     JSValueRef value = JSValueMakeFromJSONString(context, messageJSON);
     return value ?: JSValueMakeUndefined(context);
+}
+
+std::optional<WebExtensionMessage> serializeMessage(JSContextRef context, JSValueRef value, bool useStructuredClone, JSValueRef* exception)
+{
+    ASSERT(context);
+
+    if (!value)
+        return std::nullopt;
+
+    if (!useStructuredClone) {
+        auto json = serializeJSObject(context, value, exception);
+        if (json.isNull())
+            return std::nullopt;
+        return WebExtensionMessage { WTF::move(json) };
+    }
+
+    RefPtr serialized = WebCore::SerializedScriptValue::create(context, value, exception);
+    if (!serialized)
+        return std::nullopt;
+    return WebExtensionMessage { serialized.releaseNonNull() };
+}
+
+JSValueRef WebExtensionMessage::toJSValue(JSContextRef context) const
+{
+    ASSERT(context);
+
+    if (auto json = this->json())
+        return fromMessageJSON(context, toJSString(*json).get());
+
+    RefPtr structuredClone = this->structuredClone();
+    if (!structuredClone)
+        return JSValueMakeUndefined(context);
+
+    JSValueRef exception = nullptr;
+    JSValueRef value = structuredClone->deserialize(context, &exception);
+
+    return value && !exception ? value : JSValueMakeUndefined(context);
 }
 
 JSValueRef fromArray(JSContextRef context, Vector<Protected<JSValueRef>>&& array)

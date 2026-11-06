@@ -82,6 +82,7 @@ public:
 
     WebExtensionContextProxy& extensionContext() const { return *m_extensionContext; }
     bool hasExtensionContext() const { return !!m_extensionContext; }
+    bool usesStructuredCloneMessageSerialization() const { return m_extensionContext && contentWorldType() != WebExtensionContentWorldType::WebPage && m_extensionContext->usesStructuredCloneMessageSerialization(); }
 
     const String& propertyPath() const LIFETIME_BOUND { return m_propertyPath; }
     void setPropertyPath(const String& propertyName, const WebExtensionAPIObject* parentObject = nullptr)

@@ -137,14 +137,14 @@ messages -> WebExtensionContext {
     [Validator=isLoaded] PermissionsRemove(HashSet<String> permissions, HashSet<String> origins) -> (bool success)
 
     // Port APIs
-    [Validator=isLoaded] PortPostMessage(WebKit::WebExtensionContentWorldType sourceContentWorldType, WebKit::WebExtensionContentWorldType targetContentWorldType, std::optional<WebKit::WebPageProxyIdentifier> sendingPageProxyIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String messageJSON, bool userGesture)
+    [Validator=isLoaded] PortPostMessage(WebKit::WebExtensionContentWorldType sourceContentWorldType, WebKit::WebExtensionContentWorldType targetContentWorldType, std::optional<WebKit::WebPageProxyIdentifier> sendingPageProxyIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, struct WebKit::WebExtensionMessage message, bool userGesture)
     [Validator=isLoaded] PortRemoved(WebKit::WebExtensionContentWorldType sourceContentWorldType, WebKit::WebExtensionContentWorldType targetContentWorldType, WebKit::WebPageProxyIdentifier pageProxyIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier)
 
     // Runtime APIs
     [Validator=isLoaded] RuntimeGetBackgroundPage() -> (std::expected<std::optional<WebCore::PageIdentifier>, WebKit::WebExtensionError> result)
     [Validator=isLoaded] RuntimeOpenOptionsPage() -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isLoaded] RuntimeReload()
-    [Validator=isLoaded] RuntimeSendMessage(String extensionID, String messageJSON, struct WebKit::WebExtensionMessageSenderParameters senderParameters, bool userGesture) -> (std::expected<String, WebKit::WebExtensionError> result)
+    [Validator=isLoaded] RuntimeSendMessage(String extensionID, struct WebKit::WebExtensionMessage message, struct WebKit::WebExtensionMessageSenderParameters senderParameters, bool userGesture) -> (std::expected<WebKit::WebExtensionMessage, WebKit::WebExtensionError> result)
     [Validator=isLoaded] RuntimeConnect(String extensionID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageSenderParameters senderParameters, bool userGesture) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isLoaded] RuntimeSendNativeMessage(String applicationID, String messageJSON) -> (std::expected<String, WebKit::WebExtensionError> result)
     [Validator=isLoaded] RuntimeConnectNative(String applicationID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, WebKit::WebPageProxyIdentifier pageProxyIdentifier) -> (std::expected<void, WebKit::WebExtensionError> result)
@@ -200,7 +200,7 @@ messages -> WebExtensionContext {
     [Validator=isLoadedAndPrivilegedMessage] TabsDetectLanguage(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::expected<String, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsToggleReaderMode(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsCaptureVisibleTab(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, enum:uint8_t WebKit::WebExtensionTabImageFormat imageFormat, uint8_t imageQuality) -> (std::expected<URL, WebKit::WebExtensionError> result)
-    [Validator=isLoadedAndPrivilegedMessage] TabsSendMessage(WebKit::WebExtensionTabIdentifier tabIdentifier, String messageJSON, struct WebKit::WebExtensionMessageTargetParameters targetParameters, struct WebKit::WebExtensionMessageSenderParameters senderParameters, bool userGesture) -> (std::expected<String, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsSendMessage(WebKit::WebExtensionTabIdentifier tabIdentifier, struct WebKit::WebExtensionMessage message, struct WebKit::WebExtensionMessageTargetParameters targetParameters, struct WebKit::WebExtensionMessageSenderParameters senderParameters, bool userGesture) -> (std::expected<WebKit::WebExtensionMessage, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsConnect(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageTargetParameters targetParameters, struct WebKit::WebExtensionMessageSenderParameters senderParameters, bool userGesture) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsGetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::expected<double, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsSetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, double zoomFactor) -> (std::expected<void, WebKit::WebExtensionError> result)

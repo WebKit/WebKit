@@ -56,9 +56,12 @@ public:
     std::optional<WebPageProxyIdentifier> owningPageProxyIdentifier() const { return m_owningPageProxyIdentifier; }
     const std::optional<WebExtensionMessageSenderParameters>& senderParameters() const LIFETIME_BOUND { return m_senderParameters; }
 
-    void postMessage(WebFrame&, const String&, NSString **outExceptionString);
+    void postMessage(WebFrame&, const WebExtensionMessage&, NSString **outExceptionString);
     void disconnect();
     void fireDisconnectEventIfNeeded();
+
+    // Native and web page ports carry JSON, since the other end has no structured clone support.
+    bool usesStructuredCloneMessageSerialization() const { return WebExtensionAPIObject::usesStructuredCloneMessageSerialization() && targetContentWorldType() != WebExtensionContentWorldType::Native && targetContentWorldType() != WebExtensionContentWorldType::WebPage; }
 
     bool isDisconnected() const { return m_disconnected; }
 #endif
@@ -141,7 +144,7 @@ private:
     void remove();
 
 #if PLATFORM(COCOA)
-    void fireMessageEventIfNeeded(JSStringRef messageJSON, bool userGesture);
+    void fireMessageEventIfNeeded(const WebExtensionMessage&, bool userGesture);
 #endif
 
     WebExtensionContentWorldType m_targetContentWorldType;

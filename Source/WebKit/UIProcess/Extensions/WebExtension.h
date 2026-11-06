@@ -106,6 +106,7 @@ public:
         InvalidDescription,
         InvalidExternallyConnectable,
         InvalidIcon,
+        InvalidMessageSerialization,
         InvalidName,
         InvalidOptionsPage,
         InvalidURLOverrides,
@@ -263,6 +264,7 @@ public:
     const String& version();
 
     const String& contentSecurityPolicy();
+    bool usesStructuredCloneMessageSerialization();
 
     RefPtr<WebCore::Icon> icon(WebCore::FloatSize idealSize);
 
@@ -379,6 +381,7 @@ private:
     void populatePermissionsPropertiesIfNeeded();
     void populatePagePropertiesIfNeeded();
     void populateContentSecurityPolicyStringsIfNeeded();
+    void populateMessageSerializationIfNeeded();
     void populateWebAccessibleResourcesIfNeeded();
     void populateCommandsIfNeeded();
     void populateDeclarativeNetRequestPropertiesIfNeeded();
@@ -464,6 +467,8 @@ private:
     bool m_parsedManifest : 1 { false };
     bool m_parsedManifestDisplayStrings : 1 { false };
     bool m_parsedManifestContentSecurityPolicyStrings : 1 { false };
+    bool m_parsedManifestMessageSerialization : 1 { false };
+    bool m_usesStructuredCloneMessageSerialization : 1 { false };
     bool m_parsedManifestActionProperties : 1 { false };
     bool m_parsedManifestBackgroundProperties : 1 { false };
     bool m_parsedManifestInspectorProperties : 1 { false };

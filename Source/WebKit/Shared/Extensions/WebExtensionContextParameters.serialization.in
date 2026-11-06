@@ -36,6 +36,7 @@ struct WebKit::WebExtensionContextParameters {
     RefPtr<API::Data> manifestJSON;
 
     double manifestVersion;
+    bool usesStructuredCloneMessageSerialization;
 
     HashMap<WebKit::WebExtensionDataType, WebKit::WebExtensionStorageAccessLevel> storageAccessLevels;
 

@@ -71,6 +71,7 @@ struct WebExtensionContextParameters {
     RefPtr<API::Data> manifestJSON;
 
     double manifestVersion { 0 };
+    bool usesStructuredCloneMessageSerialization { false };
 
     WebExtensionStorageAccessLevelMap storageAccessLevels;
 

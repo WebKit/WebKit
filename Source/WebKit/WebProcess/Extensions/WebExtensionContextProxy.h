@@ -31,6 +31,7 @@
 #include "WebExtensionContentWorldType.h"
 #include "WebExtensionContextParameters.h"
 #include "WebExtensionLocalization.h"
+#include "WebExtensionMessage.h"
 #include "WebExtensionPortChannelIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/DOMWrapperWorld.h>
@@ -117,6 +118,7 @@ public:
 
     double manifestVersion() const { return m_manifestVersion; }
     bool supportsManifestVersion(double version) const { return manifestVersion() >= version; }
+    bool usesStructuredCloneMessageSerialization() const { return m_usesStructuredCloneMessageSerialization; }
     RefPtr<WebExtensionLocalization> localization() const { return m_localization; }
 
     bool isStorageAllowedInUntrustedContexts(WebExtensionDataType dataType) const { return isStorageTypeAllowedInUntrustedContexts(m_storageAccessLevels, dataType); }
@@ -184,7 +186,7 @@ private:
     static RefPtr<WebExtensionLocalization> parseLocalization(RefPtr<API::Data>, const URL& baseURL);
 
     bool isBackgroundServiceWorkerStillActivating();
-    void dispatchRuntimeMessageEventOnceBackgroundServiceWorkerIsActive(WebExtensionContentWorldType, String messageJSON, std::optional<WebExtensionMessageTargetParameters>, WebExtensionMessageSenderParameters, bool userGesture, CompletionHandler<void(String&& replyJSON)>&&, unsigned remainingActivationPollAttempts);
+    void dispatchRuntimeMessageEventOnceBackgroundServiceWorkerIsActive(WebExtensionContentWorldType, WebExtensionMessage, std::optional<WebExtensionMessageTargetParameters>, WebExtensionMessageSenderParameters, bool userGesture, CompletionHandler<void(std::optional<WebExtensionMessage>&& reply)>&&, unsigned remainingActivationPollAttempts);
 
     // Action
     void dispatchActionClickedEvent(const std::optional<WebExtensionTabParameters>&);
@@ -239,13 +241,13 @@ private:
     void dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<String> permissions, HashSet<String> origins);
 
     // Port
-    void dispatchPortMessageEvent(std::optional<WebPageProxyIdentifier>, WebExtensionPortChannelIdentifier, const String& messageJSON, bool userGesture);
+    void dispatchPortMessageEvent(std::optional<WebPageProxyIdentifier>, WebExtensionPortChannelIdentifier, const WebExtensionMessage&, bool userGesture);
     void dispatchPortDisconnectEvent(WebExtensionPortChannelIdentifier);
 
     // Runtime
-    void internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType, const String& messageJSON, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(String&& replyJSON)>&&);
+    void internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType, const WebExtensionMessage&, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(std::optional<WebExtensionMessage>&& reply)>&&);
     void internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&&);
-    void dispatchRuntimeMessageEvent(WebExtensionContentWorldType, const String& messageJSON, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(String&& replyJSON)>&&);
+    void dispatchRuntimeMessageEvent(WebExtensionContentWorldType, const WebExtensionMessage&, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(std::optional<WebExtensionMessage>&& reply)>&&);
     void dispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool userGesture, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&&);
     void dispatchRuntimeInstalledEvent(WebExtensionContextInstallReason, String previousVersion);
     void dispatchRuntimeStartupEvent();
@@ -296,6 +298,7 @@ private:
     HashSet<String> m_unsupportedAPIs;
     RefPtr<WebExtensionLocalization> m_localization;
     RefPtr<JSON::Value> m_manifest;
+    bool m_usesStructuredCloneMessageSerialization { false };
     double m_manifestVersion { 0 };
     WebExtensionStorageAccessLevelMap m_storageAccessLevels;
     PAL::SessionID m_defaultSessionID { PAL::SessionID::defaultSessionID() };

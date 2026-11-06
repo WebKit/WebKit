@@ -81,7 +81,7 @@ public:
     JSValueRef platformArch(JSContextRef);
     JSValueRef platformOS(JSContextRef);
 
-    void sendMessage(WebPageProxyIdentifier, WebFrame&, const String& extensionID, const String& messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
+    void sendMessage(WebPageProxyIdentifier, WebFrame&, const String& extensionID, const WebExtensionMessage&, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&&, String& outExceptionString);
     RefPtr<WebExtensionAPIPort> connect(WebPageProxyIdentifier, WebFrame&, JSContextRef, const String& extensionID, RefPtr<JSON::Value> options, String& outExceptionString);
 
     void sendNativeMessage(WebFrame&, const String& applicationID, const String& messageJSON, Ref<WebExtensionCallbackHandler>&&);

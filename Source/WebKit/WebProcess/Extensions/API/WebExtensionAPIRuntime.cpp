@@ -338,11 +338,11 @@ JSValueRef WebExtensionAPIRuntime::platformOS(JSContextRef context)
     });
 }
 
-void WebExtensionAPIRuntime::sendMessage(WebPageProxyIdentifier webPageProxyIdentifier, WebFrame& frame, const String& extensionID, const String& messageJSON, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
+void WebExtensionAPIRuntime::sendMessage(WebPageProxyIdentifier webPageProxyIdentifier, WebFrame& frame, const String& extensionID, const WebExtensionMessage& message, RefPtr<JSON::Value> options, Ref<WebExtensionCallbackHandler>&& callback, String& outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendMessage
 
-    if (messageJSON.length() > webExtensionMaxMessageLength) {
+    if (message.length() > webExtensionMaxMessageLength) {
         outExceptionString = toErrorString(nullString(), "message"_s, "it exceeded the maximum allowed length"_s);
         return;
     }
@@ -368,13 +368,14 @@ void WebExtensionAPIRuntime::sendMessage(WebPageProxyIdentifier webPageProxyIden
 
 #if PLATFORM(COCOA)
     bool userGesture = WebCore::UserGestureIndicator::processingUserGesture();
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendMessage(extensionID, messageJSON, senderParameters, userGesture), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<String, WebExtensionError>&& result) {
+    // The message keeps any Blob it references alive, so hold it until the receiver replies.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendMessage(extensionID, message, senderParameters, userGesture), [protectedThis = Ref { *this }, callback = WTF::move(callback), message](std::expected<WebExtensionMessage, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;
         }
 
-        callback->call(fromJSON(callback->globalContext(), JSON::Value::parseJSON(result.value())));
+        callback->call(result->toJSValue(callback->globalContext()));
     }, extensionContext().identifier());
 #endif
 }
@@ -647,18 +648,18 @@ bool WebExtensionContextProxy::matchesTarget(WebFrame& frame, const std::optiona
     return true;
 }
 
-void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(String&& replyJSON)>&& completionHandler)
+void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const WebExtensionMessage& message, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(std::optional<WebExtensionMessage>&& reply)>&& completionHandler)
 {
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     case WebExtensionContentWorldType::Inspector:
 #endif
-        internalDispatchRuntimeMessageEvent(contentWorldType, messageJSON, targetParameters, senderParameters, userGesture, WTF::move(completionHandler));
+        internalDispatchRuntimeMessageEvent(contentWorldType, message, targetParameters, senderParameters, userGesture, WTF::move(completionHandler));
         return;
 
     case WebExtensionContentWorldType::ContentScript:
-        internalDispatchRuntimeMessageEvent(contentWorldType, messageJSON, targetParameters, senderParameters, userGesture, WTF::move(completionHandler));
+        internalDispatchRuntimeMessageEvent(contentWorldType, message, targetParameters, senderParameters, userGesture, WTF::move(completionHandler));
         return;
 
     case WebExtensionContentWorldType::Native:

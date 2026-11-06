@@ -55,6 +55,8 @@ using namespace WebCore;
 
 static constexpr auto defaultLocaleManifestKey = "default_locale"_s;
 
+static constexpr auto messageSerializationManifestKey = "message_serialization"_s;
+
 static constexpr auto iconsManifestKey = "icons"_s;
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
@@ -668,6 +670,7 @@ NODELETE static int toAPI(WebExtension::Error error)
     case WebExtension::Error::InvalidDescription:
     case WebExtension::Error::InvalidExternallyConnectable:
     case WebExtension::Error::InvalidIcon:
+    case WebExtension::Error::InvalidMessageSerialization:
     case WebExtension::Error::InvalidName:
     case WebExtension::Error::InvalidOptionsPage:
     case WebExtension::Error::InvalidURLOverrides:
@@ -770,6 +773,10 @@ Ref<API::Error> WebExtension::createError(Error error, const String& customLocal
         localizedDescription = WEB_UI_STRING("Empty or invalid `externally_connectable` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for externally_connectable");
         break;
 
+    case Error::InvalidMessageSerialization:
+        localizedDescription = WEB_UI_STRING("Invalid `message_serialization` manifest entry. The value must be `json` or `structured_clone`.", "WKWebExtensionErrorInvalidManifestEntry description for message_serialization");
+        break;
+
     case Error::InvalidIcon:
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
         if (manifestObject()->getValue(iconVariantsManifestKey))
@@ -833,6 +840,7 @@ Vector<Ref<API::Error>> WebExtension::errors()
     populatePermissionsPropertiesIfNeeded();
     populatePagePropertiesIfNeeded();
     populateContentSecurityPolicyStringsIfNeeded();
+    populateMessageSerializationIfNeeded();
     populateWebAccessibleResourcesIfNeeded();
     populateCommandsIfNeeded();
     populateDeclarativeNetRequestPropertiesIfNeeded();
@@ -1024,6 +1032,38 @@ void WebExtension::populateContentSecurityPolicyStringsIfNeeded()
 
     if (!m_contentSecurityPolicy)
         m_contentSecurityPolicy = "script-src 'self'"_s;
+}
+
+bool WebExtension::usesStructuredCloneMessageSerialization()
+{
+    populateMessageSerializationIfNeeded();
+    return m_usesStructuredCloneMessageSerialization;
+}
+
+void WebExtension::populateMessageSerializationIfNeeded()
+{
+    if (m_parsedManifestMessageSerialization)
+        return;
+
+    m_parsedManifestMessageSerialization = true;
+
+    RefPtr manifestObject = this->manifestObject();
+    if (!manifestObject)
+        return;
+
+    // Documentation: https://github.com/w3c/webextensions/issues/931
+
+    if (!manifestObject->getValue(messageSerializationManifestKey))
+        return;
+
+    auto messageSerialization = manifestObject->getString(messageSerializationManifestKey);
+    if (messageSerialization == "structured_clone"_s) {
+        m_usesStructuredCloneMessageSerialization = true;
+        return;
+    }
+
+    if (messageSerialization != "json"_s)
+        recordError(createError(Error::InvalidMessageSerialization));
 }
 
 bool WebExtension::hasBackgroundContent()

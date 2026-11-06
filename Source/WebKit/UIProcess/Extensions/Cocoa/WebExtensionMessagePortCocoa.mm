@@ -153,7 +153,7 @@ void WebExtensionMessagePort::sendMessage(id message, CompletionHandler<void(Err
         return;
     }
 
-    extensionContext->portPostMessage(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, std::nullopt, m_channelIdentifier, encodeJSONString(message, JSONOptions::FragmentsAllowed), false);
+    extensionContext->portPostMessage(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, std::nullopt, m_channelIdentifier, WebExtensionMessage { String { encodeJSONString(message, JSONOptions::FragmentsAllowed) } }, false);
 
     if (completionHandler)
         completionHandler(std::nullopt);

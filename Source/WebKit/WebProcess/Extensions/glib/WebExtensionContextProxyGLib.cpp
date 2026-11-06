@@ -57,7 +57,7 @@ void WebExtensionContextProxy::dispatchPermissionsEvent(WebExtensionEventListene
     notImplemented();
 }
 
-void WebExtensionContextProxy::dispatchPortMessageEvent(std::optional<WebPageProxyIdentifier>, WebExtensionPortChannelIdentifier, const String&, bool)
+void WebExtensionContextProxy::dispatchPortMessageEvent(std::optional<WebPageProxyIdentifier>, WebExtensionPortChannelIdentifier, const WebExtensionMessage&, bool)
 {
     notImplemented();
 }
@@ -67,7 +67,7 @@ void WebExtensionContextProxy::dispatchPortDisconnectEvent(WebExtensionPortChann
     notImplemented();
 }
 
-void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType, const String&, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool, CompletionHandler<void(String&& replyJSON)>&& completionHandler)
+void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType, const WebExtensionMessage&, const std::optional<WebExtensionMessageTargetParameters>&, const WebExtensionMessageSenderParameters&, bool, CompletionHandler<void(std::optional<WebExtensionMessage>&& reply)>&& completionHandler)
 {
     notImplemented();
     completionHandler({ });

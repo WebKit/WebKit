@@ -778,6 +778,9 @@
 /* WKWebExtensionErrorInvalidManifestEntry description for commands */
 "Invalid `commands` manifest entry." = "Invalid `commands` manifest entry.";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for message_serialization */
+"Invalid `message_serialization` manifest entry. The value must be `json` or `structured_clone`." = "Invalid `message_serialization` manifest entry. The value must be `json` or `structured_clone`.";
+
 /* WKWebExtensionErrorInvalidBackgroundPersistence description */
 "Invalid `persistent` manifest entry." = "Invalid `persistent` manifest entry.";
 

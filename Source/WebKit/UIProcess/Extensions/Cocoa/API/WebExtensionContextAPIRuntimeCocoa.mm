@@ -175,7 +175,7 @@ void WebExtensionContext::runtimeReload()
     std::ignore = reload();
 }
 
-void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeSendMessage(const String& extensionID, const WebExtensionMessage& message, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(std::expected<WebExtensionMessage, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"runtime.sendMessage()";
 
@@ -205,16 +205,16 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
             return;
         }
 
-        auto callbackAggregator = EagerCallbackAggregator<void(std::expected<String, WebExtensionError>)>::create(WTF::move(completionHandler), { });
+        auto callbackAggregator = EagerCallbackAggregator<void(std::expected<WebExtensionMessage, WebExtensionError>)>::create(WTF::move(completionHandler), { });
 
         for (auto& process : mainWorldProcesses) {
-            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(targetContentWorldType, messageJSON, std::nullopt, completeSenderParameters, resolvedUserGesture), [callbackAggregator](String&& replyJSON) {
-                // A null reply means no listeners replied. Don't call the callbackAggregator
+            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(targetContentWorldType, message, std::nullopt, completeSenderParameters, resolvedUserGesture), [callbackAggregator](std::optional<WebExtensionMessage>&& reply) {
+                // A missing reply means no listeners replied. Don't call the callbackAggregator
                 // to give other listeners in a different process a chance to reply.
-                if (replyJSON.isNull())
+                if (!reply)
                     return;
 
-                callbackAggregator.get()(WTF::move(replyJSON));
+                callbackAggregator.get()(WTF::move(*reply));
             }, identifier());
         }
     });
@@ -527,13 +527,15 @@ void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, c
         auto callbackAggregator = EagerCallbackAggregator<void(std::expected<String, WebExtensionError>)>::create(WTF::move(completionHandler), { });
 
         for (auto& process : mainWorldProcesses) {
-            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters, resolvedUserGesture), [callbackAggregator](String&& replyJSON) {
-                // A null reply means no listeners replied. Don't call the callbackAggregator
+            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, WebExtensionMessage { messageJSON }, std::nullopt, completeSenderParameters, resolvedUserGesture), [callbackAggregator](std::optional<WebExtensionMessage>&& reply) {
+                // A missing reply means no listeners replied. Don't call the callbackAggregator
                 // to give other listeners in a different process a chance to reply.
-                if (replyJSON.isNull())
+                if (!reply)
                     return;
 
-                callbackAggregator.get()(WTF::move(replyJSON));
+                // Replies to a web page are always JSON.
+                if (auto replyJSON = reply->json())
+                    callbackAggregator.get()(WTF::move(*replyJSON));
             }, identifier());
         }
     });
