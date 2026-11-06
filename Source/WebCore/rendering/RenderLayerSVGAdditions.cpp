@@ -402,6 +402,8 @@ void RenderLayer::updateAncestorDependentStateForSVG()
     ASSERT(m_svgData);
     ASSERT(renderer().document().settings().layerBasedSVGEngineEnabled());
     m_svgData->enclosingHiddenOrResourceContainer = ancestorsOfType<RenderSVGHiddenContainer>(renderer()).first();
+    if (renderer().isRenderSVGRoot())
+        updateEstablishesBlendingIsolationGroup();
 }
 
 void RenderLayer::dirtyChildrenInDOMOrderForSVG()

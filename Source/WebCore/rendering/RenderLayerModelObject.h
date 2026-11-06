@@ -78,6 +78,8 @@ public:
 
     virtual bool requiresLayer() const = 0;
     bool requiresLayerForSVGIntrinsicReasons() const;
+    bool hasSVGGroupingWillChangeProperty() const;
+    bool hasSVG3DTransformRelatedProperty() const;
 
     // Returns false if the rect has no intersection with the applied clip rect. When the context specifies edge-inclusive
     // intersection, this return value allows distinguishing between no intersection and zero-area intersection.
