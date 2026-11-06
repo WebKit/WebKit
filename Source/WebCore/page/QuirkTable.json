@@ -577,6 +577,18 @@
             ]
         },
         {
+            "bugs": ["rdar://184851287"],
+            "comment": "With Safari's user agent, Docs' Print downloads a PDF instead of printing through the browser.",
+            "matches": ["*://docs.google.com/document/*"],
+            "available": "mac",
+            "behaviors": [
+                {
+                    "id": "NeedsUserAgentStringOverrideQuirk",
+                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+                }
+            ]
+        },
+        {
             "bugs": ["https://webkit.org/b/199587"],
             "matches": ["*://docs.google.com/spreadsheets/*"],
             "behaviors": [{ "id": "NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk" }]
