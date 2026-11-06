@@ -772,7 +772,7 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
     geometry.setVerticalMargin({ blockDirectionMargin(style->marginBefore(writingMode)), blockDirectionMargin(style->marginAfter(writingMode)) });
     // The inline size and margins come once its own formatting context has decided the inline size (layoutIndependentFormattingContextThroughRenderTree).
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
-    auto isLaidOutThroughRenderTree = !blockContainer || (blockContainer->createsNewFormattingContext() && LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*blockContainer));
+    auto isLaidOutThroughRenderTree = !blockContainer || (BlockFormattingUtils::establishesIndependentFormattingContext(*blockContainer) && LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*blockContainer));
     if (isLaidOutThroughRenderTree && decidesItsOwnInlineSize(box, writingMode))
         return;
 
