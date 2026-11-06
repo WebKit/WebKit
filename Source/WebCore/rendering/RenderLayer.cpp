@@ -3690,7 +3690,7 @@ GraphicsContext* RenderLayer::setupFilters(GraphicsContext& destinationContext, 
     Function<void(GraphicsContext&)> applyAdditionalDestinationClip;
     if (backgroundRect.affectedByRadius()) {
         applyAdditionalDestinationClip = [checkedThis = CheckedPtr { this }, &paintingInfo](GraphicsContext& context) {
-            checkedThis->applyAncestorClippingForBorderRadius(context, paintingInfo, paintingInfo.paintBehavior);
+            checkedThis->applyAncestorClippingForBorderRadius(context, paintingInfo, paintingInfo.paintBehavior, DoNotIncludeSelfForBorderRadius);
         };
     }
 
@@ -3719,7 +3719,7 @@ void RenderLayer::applyFilters(GraphicsContext& originalContext, const LayerPain
     if (needsClipping) {
         RegionContextStateSaver regionContextStateSaver(paintingInfo.regionContext);
 
-        clipToRect(originalContext, stateSaver, regionContextStateSaver, paintingInfo, behavior, backgroundRect);
+        clipToRect(originalContext, stateSaver, regionContextStateSaver, paintingInfo, behavior, backgroundRect, DoNotIncludeSelfForBorderRadius); // The filter output includes our own border, so only clip to ancestors.
     }
 
     m_filters->applyFilterEffect(originalContext);
