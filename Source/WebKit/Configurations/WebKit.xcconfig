@@ -108,7 +108,7 @@ WK_APPLE_PUSH_SERVICE_LDFLAGS_iphoneos = -framework ApplePushService;
 WK_APPLE_PUSH_SERVICE_LDFLAGS_iphonesimulator = -framework ApplePushService;
 WK_APPLE_PUSH_SERVICE_LDFLAGS_xros = -framework ApplePushService;
 WK_APPLE_PUSH_SERVICE_LDFLAGS_xrsimulator = -framework ApplePushService;
-WK_APPLE_PUSH_SERVICE_LDFLAGS_macosx = -framework ApplePushService;
+WK_APPLE_PUSH_SERVICE_LDFLAGS_macosx = -weak_framework ApplePushService;
 
 WK_BACKBOARD_SERVICES_LDFLAGS = $(WK_BACKBOARD_SERVICES_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_BACKBOARD_SERVICES_LDFLAGS_iphoneos = -framework BackBoardServices;

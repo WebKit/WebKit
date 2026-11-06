@@ -131,6 +131,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PushService);
 
 void PushService::create(const String& incomingPushServiceName, const String& databasePath, IncomingPushMessageHandler&& messageHandler, CompletionHandler<void(RefPtr<PushService>&&)>&& creationHandler)
 {
+    if (![APSConnection class]) {
+        RELEASE_LOG_ERROR(Push, "Push service initialization failed because ApplePushService is unavailable");
+        creationHandler(nullptr);
+        return;
+    }
+
     auto transaction = adoptOSObject(os_transaction_create("com.apple.webkit.webpushd.push-service-init"));
 
     // Create the connection ASAP so that we bootstrap_check_in to the service in a timely manner.
