@@ -26,24 +26,14 @@
 #include "config.h"
 #include "WebCoreInstanceHandle.h"
 
-namespace WebCore {
+// Provided by the linker for whichever image WebCore is linked into (WebKit2.dll, or a test executable).
+extern "C" IMAGE_DOS_HEADER __ImageBase;
 
-HINSTANCE s_instanceHandle;
+namespace WebCore {
 
 HINSTANCE instanceHandle()
 {
-    ASSERT(s_instanceHandle);
-    return s_instanceHandle;
+    return reinterpret_cast<HINSTANCE>(&__ImageBase);
 }
 
 } // namespace WebCore
-
-BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD reason, LPVOID)
-{
-    switch (reason) {
-    case DLL_PROCESS_ATTACH:
-        WebCore::s_instanceHandle = hInstance;
-        break;
-    }
-    return true;
-}
