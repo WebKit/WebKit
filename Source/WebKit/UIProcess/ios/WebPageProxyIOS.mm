@@ -1044,7 +1044,7 @@ PrintPageInfo WebPageProxy::computePageInfoForPrintingiOS(FrameIdentifier frameI
     launchPrintProcessIfNeeded(frame.get());
     auto sendResult = sendSyncToProcessContainingFrame(frameID, Messages::WebPage::ComputePagesForPrintingiOS(frameID, printInfo), Seconds::infinity());
     auto [pageCount, computedPageMargin] = sendResult.takeReplyOr(0, printInfo.margin);
-    return { pageCount, computedPageMargin };
+    return { static_cast<size_t>(pageCount), computedPageMargin };
 }
 
 std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
