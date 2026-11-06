@@ -996,51 +996,6 @@ std::pair<LayoutUnit, LayoutUnit> usedSizesForAspectRatioItem(const PlacedGridIt
     return { usedInlineSize, usedBlockSize };
 }
 
-LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes& trackSizes, const BitVector& collapsedTracksList, LayoutUnit gap)
-{
-    auto trackSizesBefore = trackSizes.subspan(0, gridLineIndex);
-    auto sumOfTrackSizes = std::reduce(trackSizesBefore.begin(), trackSizesBefore.end());
-
-    // https://drafts.csswg.org/css-grid-1/#gutters
-    // A grid line used as an item's start edge is preceded by gridLineIndex tracks, and a
-    // gutter follows each of those tracks. So the line is offset by gridLineIndex gutters.
-    auto numberOfGaps = gridLineIndex;
-
-    // https://drafts.csswg.org/css-grid-1/#collapsed-gutter
-    // A collapsed track's gutters coincide with the gutter on its other side, so no gutter follows it.
-    for (auto collapsedTrackIndex : collapsedTracksList) {
-        if (collapsedTrackIndex >= gridLineIndex)
-            break;
-        --numberOfGaps;
-    }
-    // If only collapsed tracks follow the line, the last non-collapsed track before it has no gutter
-    // on the other side of them to coincide with, so its gutter collapses away too.
-    auto tracksAfter = std::views::iota(gridLineIndex, trackSizes.size());
-    auto onlyCollapsedTracksFollow = !tracksAfter.empty() && std::ranges::all_of(tracksAfter, [&](size_t trackIndex) {
-        return collapsedTracksList.get(trackIndex);
-    });
-    if (numberOfGaps && onlyCollapsedTracksFollow)
-        --numberOfGaps;
-
-    return sumOfTrackSizes + (numberOfGaps * gap);
-}
-
-LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSizes& trackSizes, LayoutUnit gap)
-{
-    ASSERT(endLine > startLine);
-
-    // https://drafts.csswg.org/css-grid-1/#gutters
-    // The size of a grid area is the sum of the sizes of the tracks it spans, plus the gutters
-    // *between* those tracks. A span of N tracks contains only N - 1 interior gutters — the
-    // gutter that follows the area's last track belongs to the space between grid areas, not
-    // to the area itself.
-    auto spannedTrackSizes = trackSizes.subspan(startLine, endLine - startLine);
-
-    auto sumOfTrackSizes = std::reduce(spannedTrackSizes.begin(), spannedTrackSizes.end());
-    auto numberOfInteriorGaps = spannedTrackSizes.size() - 1;
-    return sumOfTrackSizes + (numberOfInteriorGaps * gap);
-}
-
 // The block size a grid item is stretched to in its grid area, when its inline size is transferred from
 // that block size through its preferred aspect ratio, so that its inline contributions depend on it.
 static std::optional<LayoutUnit> stretchedBlockSizeForInlineContribution(const PlacedGridItem& gridItem, std::optional<LayoutUnit> gridAreaBlockSize, const IntegrationUtils& integrationUtils)

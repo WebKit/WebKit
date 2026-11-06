@@ -28,6 +28,7 @@
 
 #include "GridLayoutContext.h"
 #include "GridLayoutUtils.h"
+#include "GridLinePositions.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TrackSizingAlgorithm.h"
 #include "TrackSizingFunctions.h"
@@ -137,8 +138,9 @@ TrackSizes GridSizer::sizeRowTracks(const PlacedGridItems& placedGridItems, cons
 {
     auto& layoutContext = this->layoutContext();
 
+    GridLinePositions columnLines { columnSizes, layoutContext.collapsedColumnTracksList, layoutContext.usedColumnGap };
     auto rowTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
-        auto gridAreaInlineSize = GridLayoutUtils::gridAreaDimensionSize(gridItem.columnStartLine(), gridItem.columnEndLine(), columnSizes, layoutContext.usedColumnGap);
+        auto gridAreaInlineSize = columnLines.areaSize(gridItem.columnStartLine(), gridItem.columnEndLine());
         auto gridAreaMaximumInlineSize = GridLayoutUtils::gridAreaMaximumSize(gridItem.columnStartLine(), gridItem.columnEndLine(), columnTrackSizingFunctionsList, layoutContext.usedColumnGap, layoutConstraints().inlineAxis);
         auto usedBlockBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), gridAreaInlineSize).blockAxis;
         return { gridItem, gridItem.blockAxisSizes(), usedBlockBorderAndPadding, GridLayoutUtils::usedMarginsForAxis(gridItem, gridItem.blockAxisSizes()),

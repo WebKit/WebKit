@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExplicitGridTrackSizes.h"
+#include "GridLinePositions.h"
 #include "GridTypeAliases.h"
 #include "UsedTrackSizes.h"
 #include <WebCore/LayoutIntegrationUtils.h>
@@ -72,6 +73,8 @@ struct GridContainerBaselines {
 
 struct GridLayoutResult {
     UsedTrackSizes usedTrackSizes;
+    GridLinePositions columnLines;
+    GridLinePositions rowLines;
     GridItemRects gridItemRects;
     LayoutUnit usedBlockContentSize;
     // The number of explicit grid tracks that came from an auto-repeat.
@@ -142,22 +145,6 @@ public:
     const IntegrationUtils& integrationUtils() const LIFETIME_BOUND { return m_integrationUtils; }
 
     const WritingMode writingMode() const { return m_gridBox->style().writingMode(); }
-
-    // FIXME: This is only here because the integration code needs to know the
-    // row gap to update RenderGrid. We should figure out a way to do that and remove
-    // this from the public API.
-    static LayoutUnit usedGapValue(const Style::GapGutter& gap, const Style::ComputedStyle& style)
-    {
-        if (gap.isNormal())
-            return { };
-
-        // Only handle fixed length gaps for now
-        if (auto fixedGap = gap.tryFixed())
-            return Style::evaluate<LayoutUnit>(*fixedGap, 0_lu, style.usedZoomForLength());
-
-        ASSERT_NOT_REACHED();
-        return { };
-    }
 
 private:
     IntrinsicWidthSizingPath classifyIntrinsicWidthSizingPath() const;

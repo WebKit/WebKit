@@ -2084,6 +2084,7 @@ layout/formattingContexts/grid/GridItemPlacer.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/GridItemSizingFunctions.cpp
 layout/formattingContexts/grid/GridLayout.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/GridLayoutContextBuilder.cpp @header:RenderStyleGetters
+layout/formattingContexts/grid/GridLinePositions.cpp
 layout/formattingContexts/grid/GridLayoutUtils.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/GridSizer.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/ImplicitGrid.cpp @header:RenderStyleGetters

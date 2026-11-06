@@ -188,7 +188,9 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
 
     // 4. Lay out the grid items into their respective containing blocks. Each grid area’s
     // width and height are considered definite for this purpose.
-    auto gridItemRects = GridLayout { *this }.layout(placedGridItems, columnTrackSizingFunctions, rowTrackSizingFunctions, usedTrackSizes, layoutContext);
+    GridLinePositions columnLines { usedTrackSizes.columnSizes, layoutContext.collapsedColumnTracksList, layoutContext.usedColumnGap };
+    GridLinePositions rowLines { usedTrackSizes.rowSizes, layoutContext.collapsedRowTracksList, layoutContext.usedRowGap };
+    auto gridItemRects = GridLayout { *this }.layout(placedGridItems, columnTrackSizingFunctions, rowTrackSizingFunctions, columnLines, rowLines);
 
     // Grid layout positions each item within its containing block which is the grid area.
     // Here we translate it to the coordinate space of the grid.
@@ -196,8 +198,8 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
 
         for (auto& gridItemRect : gridItemRects) {
             auto& lineNumbersForGridArea = gridItemRect.lineNumbersForGridArea;
-            auto columnPosition = GridLayoutUtils::computeGridLinePosition(lineNumbersForGridArea.columnStartLine, usedTrackSizes.columnSizes, layoutContext.collapsedColumnTracksList, layoutContext.usedColumnGap);
-            auto rowPosition = GridLayoutUtils::computeGridLinePosition(lineNumbersForGridArea.rowStartLine, usedTrackSizes.rowSizes, layoutContext.collapsedRowTracksList, layoutContext.usedRowGap);
+            auto columnPosition = columnLines.positionAsStartLine(lineNumbersForGridArea.columnStartLine);
+            auto rowPosition = rowLines.positionAsStartLine(lineNumbersForGridArea.rowStartLine);
 
             gridItemRect.borderBoxRect.moveBy(LayoutPoint { columnPosition, rowPosition });
         }
@@ -209,7 +211,7 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
 
     auto autoRepeatColumnsCount = layoutContext.gridDefinition.explicitGridTrackSizes.columnAutoRepeatTracksIndexes.distance();
     auto autoRepeatRowsCount = layoutContext.gridDefinition.explicitGridTrackSizes.rowAutoRepeatTracksIndexes.distance();
-    return { WTF::move(usedTrackSizes), WTF::move(gridItemRects), usedBlockContentSize,
+    return { WTF::move(usedTrackSizes), WTF::move(columnLines), WTF::move(rowLines), WTF::move(gridItemRects), usedBlockContentSize,
         autoRepeatColumnsCount, autoRepeatRowsCount,
         layoutContext.gridDefinition.explicitGridTrackSizes.columnAutoRepeatTruncatedByLimit, layoutContext.gridDefinition.explicitGridTrackSizes.rowAutoRepeatTruncatedByLimit,
         layoutContext.leadingImplicitTracks.columnsCount, layoutContext.leadingImplicitTracks.rowsCount,
@@ -287,7 +289,9 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
         auto usedTrackSizes = GridSizer { *this, layoutContext, layoutConstraints }.sizeGrid(placedGridItems, columnTrackSizingFunctions, rowTrackSizingFunctions);
         // FIXME: Laying out the grid items cannot change the column sizes, so this is only here to
         // preserve the side effects of laying them out during intrinsic sizing.
-        GridLayout { *this }.layout(placedGridItems, columnTrackSizingFunctions, rowTrackSizingFunctions, usedTrackSizes, layoutContext);
+        GridLinePositions columnLines { usedTrackSizes.columnSizes, layoutContext.collapsedColumnTracksList, layoutContext.usedColumnGap };
+        GridLinePositions rowLines { usedTrackSizes.rowSizes, layoutContext.collapsedRowTracksList, layoutContext.usedRowGap };
+        GridLayout { *this }.layout(placedGridItems, columnTrackSizingFunctions, rowTrackSizingFunctions, columnLines, rowLines);
         return WTF::move(usedTrackSizes.columnSizes);
     };
 

@@ -205,7 +205,7 @@ GridAreaLines ImplicitGrid::insertAutoPositionedItem(const UnplacedGridItem& ite
         ASSERT_NOT_IMPLEMENTED_YET();
         // Not a real placement: column flow is rejected by grid coverage before placement runs.
         // Return a single cell rather than an empty area, since a zero span underflows the interior
-        // gutter count in GridLayoutUtils::gridAreaDimensionSize().
+        // gutter count in GridLinePositions::areaSize().
         return { 0, 1, 0, 1 };
     }
 

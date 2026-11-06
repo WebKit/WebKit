@@ -51,6 +51,21 @@ static LogicalGridItems constructLogicalGridItems(const ElementBox& gridBox)
     return logicalGridItems;
 }
 
+// https://drafts.csswg.org/css-grid-1/#gutters
+// https://drafts.csswg.org/css-gaps-1/#gap-percent
+// Only fixed lengths are handled: a percentage gap resolves against the content box in its axis, which is not known here.
+static LayoutUnit resolveGap(const Style::GapGutter& gap, const Style::ComputedStyle& style)
+{
+    if (gap.isNormal())
+        return { };
+
+    if (auto fixedGap = gap.tryFixed())
+        return Style::evaluate<LayoutUnit>(*fixedGap, 0_lu, style.usedZoomForLength());
+
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 // https://drafts.csswg.org/css-grid-1/#overlarge-grids
 // The UA-defined limit on the number of tracks. It is the one Style used to clamp line numbers and repeat() counts when it built
 // the style, so the layout and the style agree on it. Read once per layout and passed down by value.
@@ -239,8 +254,8 @@ GridLayoutContext GridLayoutContextBuilder::build(const GridLayoutContextInput& 
 {
     auto logicalGridItems = constructLogicalGridItems(m_gridBox);
     CheckedRef gridStyle = m_gridBox->style();
-    auto usedColumnGap = GridFormattingContext::usedGapValue(gridStyle->columnGap(), gridStyle);
-    auto usedRowGap = GridFormattingContext::usedGapValue(gridStyle->rowGap(), gridStyle);
+    auto usedColumnGap = resolveGap(gridStyle->columnGap(), gridStyle);
+    auto usedRowGap = resolveGap(gridStyle->rowGap(), gridStyle);
     auto maxTracks = maxGridTracks();
     auto explicitGridTrackSizes = ExplicitGridResolver::resolve(gridStyle, input.inlineAxis.autoRepeat, input.blockAxis.autoRepeat, usedColumnGap, usedRowGap, maxTracks);
     auto leadingImplicitTracks = computeLeadingImplicitTracks(logicalGridItems, explicitGridTrackSizes, maxTracks);
