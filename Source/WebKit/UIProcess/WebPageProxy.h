@@ -3681,6 +3681,7 @@ private:
     WebCore::FloatSize screenSize();
     WebCore::FloatSize availableScreenSize();
     float textAutosizingWidth();
+    void updateUnobscuredSafeAreaInsetsInRemotePages(const WebCore::FloatBoxExtent&);
 
     void couldNotRestorePageState();
     void restorePageState(IPC::Connection&, std::optional<WebCore::FloatPoint> scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatBoxExtent& obscuredInsetsOnSave, double scale);

@@ -224,7 +224,19 @@ void WebPageProxy::dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate& ta
     internals().minimumUnobscuredSize = target.minimumUnobscuredSize;
     internals().maximumUnobscuredSize = target.maximumUnobscuredSize;
     protect(m_legacyMainFrameProcess)->send(Messages::WebPage::DynamicViewportSizeUpdate(target), webPageIDInMainFrameProcess());
+    updateUnobscuredSafeAreaInsetsInRemotePages(target.unobscuredSafeAreaInsets);
     setDeviceOrientation(target.deviceOrientation);
+}
+
+void WebPageProxy::updateUnobscuredSafeAreaInsetsInRemotePages(const FloatBoxExtent& insets)
+{
+    if (internals().unobscuredSafeAreaInsets == insets)
+        return;
+
+    internals().unobscuredSafeAreaInsets = insets;
+    protect(browsingContextGroup())->forEachRemotePage(*this, [&](auto& remotePage) {
+        protect(remotePage.siteIsolatedProcess())->send(Messages::WebPage::SetUnobscuredSafeAreaInsets(insets), remotePage.identifierInSiteIsolatedProcess());
+    });
 }
 
 void WebPageProxy::setViewportConfigurationViewLayoutSize(const WebCore::FloatSize& size, double layoutSizeScaleFactorFromClient, double minimumEffectiveDeviceWidth)
