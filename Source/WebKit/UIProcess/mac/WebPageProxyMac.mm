@@ -80,6 +80,7 @@
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <pal/spi/mac/NSPasteboardSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/FileHandle.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>

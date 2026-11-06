@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "Helpers/cocoa/TestDownloadDelegate.h"
+#import "Helpers/PlatformUtilities.h"
 #import "Helpers/Utilities.h"
 
 #import <WebKit/WKNavigationDelegatePrivate.h>
