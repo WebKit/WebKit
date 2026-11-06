@@ -119,6 +119,8 @@ const SocketConnection::MessageHandlers& RemoteInspectorServer::messageHandlers(
             GRefPtr<GVariant> backendCommandsHash;
             g_variant_get(parameters, "(@ay)", &backendCommandsHash.outPtr());
             auto* backendCommands = inspectorServer.setupInspectorClient(connection, g_variant_get_bytestring(backendCommandsHash.get()));
+            if (!backendCommands)
+                return;
             connection.sendMessage("DidSetupInspectorClient"_s, g_variant_new("(@ay)", backendCommands));
         }}
     },
@@ -163,7 +165,8 @@ const SocketConnection::MessageHandlers& RemoteInspectorServer::messageHandlers(
             GRefPtr<GVariant> sessionCapabilities;
             g_variant_get(parameters, "(&s@a{sv})", &sessionID, &sessionCapabilities.outPtr());
             auto capabilities = processSessionCapabilities(sessionCapabilities.get());
-            inspectorServer.startAutomationSession(connection, sessionID, capabilities);
+            if (!inspectorServer.startAutomationSession(connection, sessionID, capabilities))
+                return;
             auto clientCapabilities = RemoteInspector::singleton().clientCapabilities();
             connection.sendMessage("DidStartAutomationSession"_s, gVariantNew("(ss)",
                 clientCapabilities ? UTF8CStringView { clientCapabilities->browserName.utf8() } : ""_s,
@@ -238,7 +241,9 @@ void RemoteInspectorServer::setTargetList(SocketConnection& remoteInspectorConne
 IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 GVariant* RemoteInspectorServer::setupInspectorClient(SocketConnection& clientConnection, const char* clientBackendCommandsHash)
 {
-    ASSERT(!m_clientConnection);
+    if (m_clientConnection && m_clientConnection != &clientConnection)
+        return nullptr;
+
     m_clientConnection = &clientConnection;
 
     GVariant* backendCommands;
@@ -363,13 +368,14 @@ void RemoteInspectorServer::sendMessageToFrontend(SocketConnection& remoteInspec
     clientConnection->sendMessage("SendMessageToFrontend"_s, g_variant_new("(tt&s)", *connectionID, targetID, message));
 }
 
-void RemoteInspectorServer::startAutomationSession(SocketConnection& automationConnection, const char* sessionID, const RemoteInspector::Client::SessionCapabilities& capabilities)
+bool RemoteInspectorServer::startAutomationSession(SocketConnection& automationConnection, const char* sessionID, const RemoteInspector::Client::SessionCapabilities& capabilities)
 {
-    if (!m_automationConnection)
-        m_automationConnection = &automationConnection;
-    ASSERT(m_automationConnection == &automationConnection);
+    if (m_automationConnection && m_automationConnection != &automationConnection)
+        return false;
 
+    m_automationConnection = &automationConnection;
     RemoteInspector::singleton().requestAutomationSession(sessionID, capabilities);
+    return true;
 }
 
 } // namespace Inspector
