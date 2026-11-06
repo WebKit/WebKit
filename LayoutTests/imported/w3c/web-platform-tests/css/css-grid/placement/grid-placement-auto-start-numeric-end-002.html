@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: auto start line with a negative end line in an explicit grid without tracks</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#line-placement">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#explicit-grids">
+<meta name="assert" content="A grid container without track definitions has an explicit grid with one grid line, which is line 1 and also line -1. A negative end line counts back from it, and the lines before it are in leading implicit tracks, so grid-column: auto / -3 places the item in the third implicit track before line 1.">
+<style>
+.grid {
+    display: grid;
+    position: relative;
+    grid-auto-columns: 30px;
+    grid-auto-rows: 20px;
+}
+.grid > div { background: silver; }
+</style>
+
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+
+<body onload="checkLayout('.grid')">
+<div id="log"></div>
+
+<!-- Three tracks before line 1. The second item is in the first track after the one line of the explicit grid. -->
+<div class="grid">
+  <div style="grid-column: auto / -3" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+  <div style="grid-column: 1" data-offset-x="90" data-offset-y="0" data-expected-width="30" data-expected-height="20">b</div>
+</div>
+
+<!-- Two tracks before line 1. The second item is in the first track after the one line of the explicit grid. -->
+<div class="grid">
+  <div style="grid-column: auto / -2" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+  <div style="grid-column: 1" data-offset-x="60" data-offset-y="0" data-expected-width="30" data-expected-height="20">b</div>
+</div>
+
+<!-- Line -1 is line 1, so there is one track before it. The second item is in the first track after the one line of the explicit grid. -->
+<div class="grid">
+  <div style="grid-column: auto / -1" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+  <div style="grid-column: 1" data-offset-x="30" data-offset-y="0" data-expected-width="30" data-expected-height="20">b</div>
+</div>
+
+<!-- Line 1 is the same line. The second item is in the first track after the one line of the explicit grid. -->
+<div class="grid">
+  <div style="grid-column: auto / 1" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+  <div style="grid-column: 1" data-offset-x="30" data-offset-y="0" data-expected-width="30" data-expected-height="20">b</div>
+</div>
+
+<!-- Line 2 is after the only line, so the item is in the first track and the second item goes to the next row. -->
+<div class="grid">
+  <div style="grid-column: auto / 2" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+  <div style="grid-column: 1" data-offset-x="0" data-offset-y="20" data-expected-width="30" data-expected-height="20">b</div>
+</div>
+
+<!-- Start and end both negative. The second item is in the first track after the one line of the explicit grid. -->
+<div class="grid">
+  <div style="grid-column: -5 / -3" data-offset-x="0" data-offset-y="0" data-expected-width="60" data-expected-height="20">a</div>
+  <div style="grid-column: 1" data-offset-x="120" data-offset-y="0" data-expected-width="30" data-expected-height="20">b</div>
+</div>
+
+<!-- Five tracks before line 1. The second item is in the first track after the one line of the explicit grid. -->
+<div class="grid">
+  <div style="grid-column: auto / -5" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+  <div style="grid-column: 1" data-offset-x="150" data-offset-y="0" data-expected-width="30" data-expected-height="20">b</div>
+</div>
+
+<!-- A negative start with an auto end. The second item is in the first track after the one line of the explicit grid. -->
+<div class="grid">
+  <div style="grid-column: -5 / auto" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+  <div style="grid-column: 1" data-offset-x="120" data-offset-y="0" data-expected-width="30" data-expected-height="20">b</div>
+</div>
+
+<!-- The same in the row axis. -->
+<div class="grid">
+  <div style="grid-row: auto / -3" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+  <div style="grid-row: 1" data-offset-x="0" data-offset-y="60" data-expected-width="30" data-expected-height="20">b</div>
+</div>

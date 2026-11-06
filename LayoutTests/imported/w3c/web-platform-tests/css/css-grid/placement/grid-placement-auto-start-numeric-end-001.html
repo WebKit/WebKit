@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: grid placement with an auto start line and a numeric end line</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#line-placement">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-placement-errors">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-placement-algo">
+<meta name="assert" content="A grid item with an auto start and a numeric end (for example grid-column: auto / 3) spans one track ending at the end line. Negative end lines count from the end of the explicit grid, lines before the explicit grid add leading implicit tracks, lines after it add trailing implicit tracks, and the item is positioned by the auto-placement algorithm in the other axis.">
+<style>
+.grid {
+    display: grid;
+    position: relative;
+    grid-template-columns: 50px 50px 50px;
+    grid-template-rows: 40px 40px;
+    grid-auto-columns: 30px;
+    grid-auto-rows: 20px;
+}
+.dense { grid-auto-flow: row dense; }
+.float { float: left; clear: left; grid-template-columns: 40px 40px; grid-template-rows: none; }
+.wrap { display: inline-block; vertical-align: top; }
+.wrapped { grid-template-columns: 40px 40px; grid-template-rows: none; }
+.grid > div { background: silver; }
+</style>
+
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+
+<body onload="checkLayout('.grid')">
+<div id="log"></div>
+
+<!-- Column end lines: 3 is the end of column 2, -1 is the end of the explicit grid (column 3). -->
+<div class="grid" data-expected-height="80">
+  <div style="grid-column: auto / 3" data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="40">a</div>
+  <div style="grid-column: auto / -1" data-offset-x="100" data-offset-y="0" data-expected-width="50" data-expected-height="40">b</div>
+  <div style="grid-column: auto / -2; grid-row: 2" data-offset-x="50" data-offset-y="40" data-expected-width="50" data-expected-height="40">c</div>
+</div>
+
+<!-- Column end line 1 puts the item before the explicit grid, in a leading implicit column. -->
+<div class="grid" data-expected-height="80">
+  <div style="grid-column: auto / 1" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="40">a</div>
+  <div style="grid-column: 1" data-offset-x="30" data-offset-y="0" data-expected-width="50" data-expected-height="40">b</div>
+  <div style="grid-column: auto / -4; grid-row: 2" data-offset-x="0" data-offset-y="40" data-expected-width="30" data-expected-height="40">c</div>
+</div>
+
+<!-- The same in the row axis. -->
+<div class="grid" data-expected-height="100">
+  <div style="grid-row: auto / 2" data-offset-x="0" data-offset-y="20" data-expected-width="50" data-expected-height="40">a</div>
+  <div style="grid-row: auto / -1; grid-column: 2" data-offset-x="50" data-offset-y="60" data-expected-width="50" data-expected-height="40">b</div>
+  <div style="grid-row: auto / 1; grid-column: 3" data-offset-x="100" data-offset-y="0" data-expected-width="50" data-expected-height="20">c</div>
+</div>
+
+<!-- End lines past the explicit grid add trailing implicit tracks. -->
+<div class="grid" data-expected-height="120">
+  <div style="grid-column: auto / 6" data-offset-x="180" data-offset-y="0" data-expected-width="30" data-expected-height="40">a</div>
+  <div style="grid-row: auto / 5; grid-column: 1" data-offset-x="0" data-offset-y="100" data-expected-width="50" data-expected-height="20">b</div>
+</div>
+
+<!-- Items locked to a row (auto-placement step 2) mixed with auto-placed items. The auto-placed items
+     fill the cells the locked items leave free. -->
+<div class="grid" data-expected-height="100">
+  <div style="grid-row: auto / 2" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="40">a</div>
+  <div data-offset-x="100" data-offset-y="0" data-expected-width="50" data-expected-height="40">b</div>
+  <div style="grid-row: auto / 3" data-offset-x="0" data-offset-y="40" data-expected-width="50" data-expected-height="40">c</div>
+  <div data-offset-x="50" data-offset-y="40" data-expected-width="50" data-expected-height="40">d</div>
+  <div data-offset-x="100" data-offset-y="40" data-expected-width="50" data-expected-height="40">e</div>
+  <div style="grid-row: auto / 2" data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="40">f</div>
+  <div data-offset-x="0" data-offset-y="80" data-expected-width="50" data-expected-height="20">g</div>
+</div>
+
+<!-- Items locked to a column (auto-placement step 4) mixed with auto-placed items. A locked item whose
+     column is before the cursor moves to the next row, and later auto-placed items continue from it. -->
+<div class="grid" data-expected-height="100">
+  <div style="grid-column: auto / 3" data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="40">a</div>
+  <div style="grid-column: auto / 2" data-offset-x="0" data-offset-y="40" data-expected-width="50" data-expected-height="40">b</div>
+  <div data-offset-x="50" data-offset-y="40" data-expected-width="50" data-expected-height="40">c</div>
+  <div style="grid-column: auto / 3" data-offset-x="50" data-offset-y="80" data-expected-width="50" data-expected-height="20">d</div>
+  <div data-offset-x="100" data-offset-y="80" data-expected-width="50" data-expected-height="20">e</div>
+</div>
+
+<!-- The same with dense packing: the cursor is reset for every item, so b and c go back to fill the hole at the start. -->
+<div class="grid dense" data-expected-height="80">
+  <div style="grid-column: auto / 3" data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="40">a</div>
+  <div style="grid-column: auto / 2" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="40">b</div>
+  <div data-offset-x="100" data-offset-y="0" data-expected-width="50" data-expected-height="40">c</div>
+  <div style="grid-column: auto / 3" data-offset-x="50" data-offset-y="40" data-expected-width="50" data-expected-height="40">d</div>
+  <div data-offset-x="0" data-offset-y="40" data-expected-width="50" data-expected-height="40">e</div>
+</div>
+
+<!-- The shrink-to-fit width of a float counts the tracks created by the placement. -->
+<div class="grid float" data-expected-width="140" data-expected-height="20">
+  <div style="grid-column: auto / 5" data-offset-x="110" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+</div>
+<div class="grid float" data-expected-width="110" data-expected-height="20">
+  <div style="grid-column: auto / 1" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+</div>
+<div class="grid float" data-expected-width="140" data-expected-height="20">
+  <div style="grid-column: auto / -4" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+</div>
+<div class="wrap"><div class="grid wrapped" data-expected-width="110" data-expected-height="20">
+  <div style="grid-column: auto / 4" data-offset-x="80" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+</div></div>

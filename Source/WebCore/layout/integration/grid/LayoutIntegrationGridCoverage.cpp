@@ -171,8 +171,9 @@ static bool hasValidEndForAutoStart(const Style::GridPosition& end)
         [](const CSS::Keyword::Auto&) {
             return true;
         },
-        [](const Style::GridPositionExplicit&) {
-            return false;
+        [&](const Style::GridPositionExplicit&) {
+            // "auto / <integer>" places a single-track item ending at the end line.
+            return end.namedGridLine().value.isEmpty();
         },
         [&](const Style::GridPositionSpan&) {
             return end.namedGridLine().value.isEmpty();

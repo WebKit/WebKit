@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Grid placement with an auto start line and a numeric end line beyond the track limit</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#line-placement">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#overlarge-grids">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
+<style>
+.grid {
+    display: grid;
+    position: relative;
+    grid-auto-columns: 30px;
+    grid-auto-rows: 20px;
+}
+.columns { float: left; clear: left; grid-template-columns: 40px 40px; }
+.rows { grid-template-columns: 50px; grid-template-rows: 40px 40px; }
+.grid > div { background: silver; }
+</style>
+
+<script>
+// The limit is 10 tracks. Chrome cannot lower its limit (it is 10,000,000 tracks there), so the values below are derived from the
+// spec and the clamp described in UnplacedGridItem::resolveDefinitePosition, not measured in Chrome.
+// https://drafts.csswg.org/css-grid-1/#overlarge-grids: "If a grid item is placed outside this limit, its grid area must be clamped
+// to within this limited grid." and "If the grid area would be placed completely outside the limited grid, its span must be
+// truncated to 1 and the area repositioned into the last grid track on that side of the grid."
+// An item with an end line past the limit is a single track that ends at the last line of the limited grid (line 10 for
+// "auto / 100", which is the 10th track), and an item with an end line before the limit is a single track that ends at the first
+// line of the limited grid, which is 8 tracks before the explicit grid here.
+if (window.internals)
+    window.internals.setGridMaxTracksLimit(10);
+</script>
+
+<body onload="checkLayout('.grid')">
+<div id="log"></div>
+
+<!-- auto / 100 ends at line 10, the 10th track: 2 explicit tracks, 7 implicit tracks. The grid is as wide as 9 tracks, not 99.
+     The column 1 item comes first in the DOM so that the column 9 item stays in the same row. -->
+<div class="grid columns" data-expected-width="290" data-expected-height="20">
+  <div style="grid-column: 1" data-offset-x="0" data-offset-y="0" data-expected-width="40" data-expected-height="20">b</div>
+  <div style="grid-column: auto / 100" data-offset-x="260" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+</div>
+
+<!-- The same in the row axis: 2 explicit rows, 7 implicit rows, so the grid is 220px high and the item is in the 10th row. -->
+<div class="grid rows" data-expected-height="220">
+  <div style="grid-row: auto / 100" data-offset-x="0" data-offset-y="200" data-expected-width="50" data-expected-height="20">a</div>
+  <div style="grid-row: 1" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="40">b</div>
+</div>
+
+<!-- auto / -100 is before the limited grid on the leading side: a single track 8 tracks before the explicit grid. The explicit
+     grid starts after those 8 leading tracks, so the grid is as wide as 8 + 2 tracks, not 98 + 2. -->
+<div class="grid columns" data-expected-width="320" data-expected-height="20">
+  <div style="grid-column: auto / -100" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20">a</div>
+  <div style="grid-column: 1" data-offset-x="240" data-offset-y="0" data-expected-width="40" data-expected-height="20">b</div>
+</div>
+
+<!-- The same in the row axis: 8 leading rows, then the 2 explicit rows. -->
+<div class="grid rows" data-expected-height="240">
+  <div style="grid-row: auto / -100" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="20">a</div>
+  <div style="grid-row: 1" data-offset-x="0" data-offset-y="160" data-expected-width="50" data-expected-height="40">b</div>
+</div>
