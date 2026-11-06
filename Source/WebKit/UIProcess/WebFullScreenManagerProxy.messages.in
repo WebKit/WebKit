@@ -37,5 +37,9 @@ messages -> WebFullScreenManagerProxy {
     BeganEnterFullScreen(WebCore::FrameIdentifier frameID, WebCore::IntRect initialRect, WebCore::IntRect finalRect) -> (bool success)
     BeganExitFullScreen(WebCore::IntRect initialRect, WebCore::IntRect finalRect) -> ()
     CloseFullScreen()
+#if PLATFORM(IOS_FAMILY)
+    BeginRequestFullscreen()
+    EndRequestFullscreen()
+#endif
 }
 #endif

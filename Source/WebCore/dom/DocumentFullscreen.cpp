@@ -236,7 +236,14 @@ void DocumentFullscreen::requestFullscreen(Ref<Element>&& element, FullscreenChe
 
     m_pendingFullscreenElement = element.ptr();
 
-    protect(protect(document())->eventLoop())->queueTask(TaskSource::MediaElement, [weakThis = WeakPtr { *this }, element = WTF::move(element), scope = CompletionHandlerScope(WTF::move(completionHandler)), hasKeyboardAccess, checkType, handleError, identifier, mode] mutable {
+    page->chrome().client().beginRequestFullscreen();
+    auto endRequestFullscreen = makeScopeExit([weakPage = WeakPtr { *page }] {
+        if (RefPtr page = weakPage)
+            page->chrome().client().endRequestFullscreen();
+    });
+
+    protect(protect(document())->eventLoop())->queueTask(TaskSource::MediaElement, [weakThis = WeakPtr { *this }, element = WTF::move(element), scope = CompletionHandlerScope(WTF::move(completionHandler)), endRequestFullscreenToMove = WTF::move(endRequestFullscreen), hasKeyboardAccess, checkType, handleError, identifier, mode] mutable {
+        auto endRequestFullscreen = WTF::move(endRequestFullscreenToMove);
         auto completionHandler = scope.release();
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)

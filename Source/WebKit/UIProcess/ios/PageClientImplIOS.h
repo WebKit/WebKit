@@ -264,6 +264,8 @@ private:
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame, CompletionHandler<void()>&&) override;
     bool lockFullscreenOrientation(WebCore::ScreenOrientationType) override;
     void unlockFullscreenOrientation() override;
+    void beginRequestFullscreen() override;
+    void endRequestFullscreen() override;
 #endif
 
     void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>) override;

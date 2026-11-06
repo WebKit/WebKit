@@ -179,6 +179,20 @@ void WebFullScreenManagerProxy::closeFullScreen(IPC::Connection& connection)
     close();
 }
 
+#if PLATFORM(IOS_FAMILY)
+void WebFullScreenManagerProxy::beginRequestFullscreen()
+{
+    if (CheckedPtr client = m_client)
+        client->beginRequestFullscreen();
+}
+
+void WebFullScreenManagerProxy::endRequestFullscreen()
+{
+    if (CheckedPtr client = m_client)
+        client->endRequestFullscreen();
+}
+#endif
+
 void WebFullScreenManagerProxy::close()
 {
     if (CheckedPtr client = m_client)

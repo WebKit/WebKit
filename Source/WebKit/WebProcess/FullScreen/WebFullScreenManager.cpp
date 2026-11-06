@@ -216,6 +216,20 @@ bool WebFullScreenManager::supportsFullScreenForElement(const WebCore::Element& 
 #endif
 }
 
+void WebFullScreenManager::beginRequestFullscreen()
+{
+#if PLATFORM(IOS_FAMILY)
+    m_page->send(Messages::WebFullScreenManagerProxy::BeginRequestFullscreen());
+#endif
+}
+
+void WebFullScreenManager::endRequestFullscreen()
+{
+#if PLATFORM(IOS_FAMILY)
+    m_page->send(Messages::WebFullScreenManagerProxy::EndRequestFullscreen());
+#endif
+}
+
 static auto& eventsToObserve()
 {
     static NeverDestroyed eventsToObserve = std::array {

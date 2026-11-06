@@ -1768,6 +1768,18 @@ bool WebChromeClient::supportsFullScreenForElement(const Element& element, bool 
     return page && protect(page->fullScreenManager())->supportsFullScreenForElement(element, withKeyboard);
 }
 
+void WebChromeClient::beginRequestFullscreen()
+{
+    if (RefPtr page = m_page)
+        protect(page->fullScreenManager())->beginRequestFullscreen();
+}
+
+void WebChromeClient::endRequestFullscreen()
+{
+    if (RefPtr page = m_page)
+        protect(page->fullScreenManager())->endRequestFullscreen();
+}
+
 void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode, CompletionHandler<void(ExceptionOr<void>)>&& willEnterFullscreen, CompletionHandler<bool(bool)>&& didEnterFullscreen)
 {
     RefPtr page = m_page.get();
