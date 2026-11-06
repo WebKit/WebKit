@@ -100,6 +100,7 @@ static JSC::JSObject* jsResultFromReplyDecoder(JSC::JSGlobalObject*, IPC::Messag
 static bool encodeArgument(IPC::Encoder&, JSContextRef, JSValueRef, JSValueRef* exception);
 
 class JSIPCSemaphore : public RefCounted<JSIPCSemaphore> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(JSIPCSemaphore);
 public:
     static Ref<JSIPCSemaphore> create(IPC::Semaphore&& semaphore = { })
     {
@@ -130,6 +131,7 @@ private:
 };
 
 class JSIPCConnectionHandle : public RefCounted<JSIPCConnectionHandle> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(JSIPCConnectionHandle);
 public:
     static Ref<JSIPCConnectionHandle> create(IPC::Connection::Handle&& handle)
     {
@@ -157,7 +159,7 @@ private:
 };
 
 class JSIPCConnection : public RefCounted<JSIPCConnection>, private IPC::Connection::Client {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(JSIPCConnection);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(JSIPCConnection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(JSIPCConnection);
 public:
     static Ref<JSIPCConnection> create(IPC::Connection::Identifier&& testedConnectionIdentifier)
@@ -208,6 +210,7 @@ private:
 };
 
 class JSIPCStreamClientConnection : public RefCountedAndCanMakeWeakPtr<JSIPCStreamClientConnection> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(JSIPCStreamClientConnection);
 public:
     static Ref<JSIPCStreamClientConnection> create(JSIPC& jsIPC, RefPtr<IPC::StreamClientConnection> connection)
     {
@@ -254,7 +257,7 @@ private:
     // run loop invocation (in JS). This means that messages of interest do not ever enter here.
     // Due to JSIPCStreamClientConnection supporting WeakPtr and IPC::MessageReceiver forcing WeakPtr, we store this as a member.
     class MessageReceiver : public IPC::Connection::Client {
-        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MessageReceiver);
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(MessageReceiver);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MessageReceiver);
     public:
         MessageReceiver(JSIPCStreamClientConnection& connection)
@@ -277,6 +280,7 @@ private:
 };
 
 class JSIPCStreamServerConnectionHandle : public RefCounted<JSIPCStreamServerConnectionHandle> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(JSIPCStreamServerConnectionHandle);
 public:
     static Ref<JSIPCStreamServerConnectionHandle> create(IPC::StreamServerConnection::Handle&& handle)
     {
@@ -300,6 +304,7 @@ private:
 };
 
 class JSIPCStreamConnectionBuffer : public RefCounted<JSIPCStreamConnectionBuffer> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(JSIPCStreamConnectionBuffer);
 public:
     static Ref<JSIPCStreamConnectionBuffer> create(JSIPCStreamClientConnection& streamConnection)
     {
@@ -335,6 +340,7 @@ private:
 };
 
 class JSSharedMemory : public RefCounted<JSSharedMemory> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(JSSharedMemory);
 public:
     static Ref<JSSharedMemory> create(size_t size)
     {
@@ -402,6 +408,7 @@ private:
 };
 
 class JSIPC : public RefCountedAndCanMakeWeakPtr<JSIPC> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(JSIPC);
 public:
     static Ref<JSIPC> create(WebPage& webPage, WebFrame& webFrame)
     {

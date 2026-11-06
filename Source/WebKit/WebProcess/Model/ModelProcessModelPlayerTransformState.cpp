@@ -30,8 +30,11 @@
 
 #include "CoreRESPI.h"
 #include "Logging.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelProcessModelPlayerTransformState);
 
 std::unique_ptr<ModelProcessModelPlayerTransformState> ModelProcessModelPlayerTransformState::create(std::optional<WebCore::TransformationMatrix> entityTransform, std::optional<WebCore::FloatPoint3D> boundingBoxCenter, std::optional<WebCore::FloatPoint3D> boundingBoxExtents, bool hasPortal, WebCore::StageModeOperation stageModeOperation)
 {

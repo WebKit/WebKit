@@ -47,6 +47,7 @@ namespace WebKit {
 class RemoteAudioSourceProvider;
 
 class RemoteAudioSourceProviderManager : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteAudioSourceProviderManager);
 public:
     static Ref<RemoteAudioSourceProviderManager> create(IPC::Connection& connection) { return adoptRef(*new RemoteAudioSourceProviderManager(connection)); }
     ~RemoteAudioSourceProviderManager();

@@ -36,8 +36,11 @@
 #include "RemoteMediaSessionHelperProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/MediaPlaybackTargetCocoa.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionHelper);
 
 using namespace WebCore;
 

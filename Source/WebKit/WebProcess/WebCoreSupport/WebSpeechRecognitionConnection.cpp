@@ -38,8 +38,11 @@
 #include <WebCore/SpeechRecognitionConnectionClient.h>
 #include <WebCore/SpeechRecognitionRequestInfo.h>
 #include <WebCore/SpeechRecognitionUpdate.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSpeechRecognitionConnection);
 
 Ref<WebSpeechRecognitionConnection> WebSpeechRecognitionConnection::create(SpeechRecognitionConnectionIdentifier identifier)
 {

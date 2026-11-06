@@ -34,6 +34,7 @@
 #include "WebUserContentControllerDataTypes.h"
 #include <WebCore/UserContentProvider.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 #include <WebCore/ContentExtensionsBackend.h>
@@ -50,6 +51,7 @@ struct UserContentControllerParameters;
 enum class InjectUserScriptImmediately : bool;
 
 class WebUserContentController final : public WebCore::UserContentProvider, public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(WebUserContentController);
 public:
     static Ref<WebUserContentController> getOrCreate(UserContentControllerParameters&&);
     virtual ~WebUserContentController();

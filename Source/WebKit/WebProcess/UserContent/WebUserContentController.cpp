@@ -58,6 +58,7 @@
 #include <WebCore/UserStyleSheet.h>
 #include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 #include <WebCore/UserMessageHandler.h>
@@ -65,6 +66,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebUserContentController);
 using namespace WebCore;
 
 NODELETE static HashMap<UserContentControllerIdentifier, WeakPtr<WebUserContentController>>& userContentControllers()
@@ -294,6 +297,7 @@ void WebUserContentController::removeAllUserStyleSheets(const Vector<ContentWorl
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 class WebUserMessageHandlerDescriptorProxy : public WebCore::UserMessageHandlerDescriptor {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebUserMessageHandlerDescriptorProxy);
 public:
     static Ref<WebUserMessageHandlerDescriptorProxy> create(WebUserContentController& controller, const AtomString& name, InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier identifier)
     {

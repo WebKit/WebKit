@@ -145,6 +145,7 @@ private:
     void postRenderingUpdateRunLoopCallback();
 
     class BackingStoreFlusher : public ThreadSafeRefCounted<BackingStoreFlusher> {
+        WTF_MAKE_TZONE_ALLOCATED(BackingStoreFlusher);
     public:
         static Ref<BackingStoreFlusher> create(Ref<IPC::Connection>&&);
 

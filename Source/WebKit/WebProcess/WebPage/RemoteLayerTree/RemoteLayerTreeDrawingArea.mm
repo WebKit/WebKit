@@ -65,6 +65,8 @@
 #import <wtf/text/MakeString.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDrawingArea::BackingStoreFlusher);
 using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDrawingArea);

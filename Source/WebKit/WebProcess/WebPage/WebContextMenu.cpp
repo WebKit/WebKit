@@ -40,8 +40,11 @@
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/PointerCaptureController.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebContextMenu);
 using namespace WebCore;
 
 WebContextMenu::WebContextMenu(WebPage& page)

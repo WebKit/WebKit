@@ -35,6 +35,7 @@
 #include <WebCore/AudioIOCallback.h>
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class Thread;
@@ -54,6 +55,7 @@ struct AudioDestinationCreationOptions;
 namespace WebKit {
 
 class RemoteAudioDestinationProxy : public WebCore::AudioDestinationResampler, public GPUProcessConnection::Client, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioDestinationProxy, WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteAudioDestinationProxy);
     WTF_MAKE_NONCOPYABLE(RemoteAudioDestinationProxy);
 public:
     using AudioIOCallback = WebCore::AudioIOCallback;

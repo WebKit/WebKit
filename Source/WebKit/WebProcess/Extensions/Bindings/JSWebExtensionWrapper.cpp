@@ -43,8 +43,11 @@
 #include <JavaScriptCore/JSWeakObjectMapRefPrivate.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/JSDOMGlobalObject.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionCallbackHandler);
 
 Ref<WebExtensionCallbackHandler> WebExtensionCallbackHandler::create(JSContextRef context, JSObjectRef resolveFunction, JSObjectRef rejectFunction)
 {

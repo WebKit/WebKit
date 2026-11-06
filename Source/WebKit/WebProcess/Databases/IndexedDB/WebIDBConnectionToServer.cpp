@@ -49,8 +49,11 @@
 #include <WebCore/IDBValue.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebIDBConnectionToServer);
 using namespace WebCore;
 
 Ref<WebIDBConnectionToServer> WebIDBConnectionToServer::create(PAL::SessionID sessionID)

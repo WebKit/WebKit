@@ -40,7 +40,7 @@
 namespace WebKit {
 
 class WebServiceWorkerFetchTaskClient final : public WebCore::ServiceWorkerFetch::Client {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebServiceWorkerFetchTaskClient);
+    WTF_MAKE_TZONE_ALLOCATED(WebServiceWorkerFetchTaskClient);
 public:
     static Ref<WebServiceWorkerFetchTaskClient> create(Ref<IPC::Connection>&& connection, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier,  WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchTaskIdentifier, bool needsContinueDidReceiveResponseMessage)
     {

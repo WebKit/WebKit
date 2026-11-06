@@ -40,9 +40,12 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 #include <WebCore/XRCanvasConfiguration.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformXRSystemProxy);
 
 PlatformXRSystemProxy::PlatformXRSystemProxy(WebPage& page)
     : m_page(page)

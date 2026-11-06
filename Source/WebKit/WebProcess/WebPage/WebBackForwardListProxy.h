@@ -30,12 +30,14 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class WebBackForwardListProxy : public WebCore::BackForwardClient {
+    WTF_MAKE_TZONE_ALLOCATED(WebBackForwardListProxy);
 public: 
     static Ref<WebBackForwardListProxy> create(WebPage& page) { return adoptRef(*new WebBackForwardListProxy(page)); }
 

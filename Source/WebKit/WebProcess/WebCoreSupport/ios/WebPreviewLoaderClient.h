@@ -30,6 +30,7 @@
 #include <WebCore/LegacyPreviewLoaderClient.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -37,6 +38,7 @@ namespace WebKit {
 class WebFrame;
 
 class WebPreviewLoaderClient final : public WebCore::LegacyPreviewLoaderClient {
+    WTF_MAKE_TZONE_ALLOCATED(WebPreviewLoaderClient);
 public:
     static Ref<WebPreviewLoaderClient> create(const String& fileName, const String& uti, WebCore::PageIdentifier pageID)
     {

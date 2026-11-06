@@ -33,6 +33,7 @@
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
 #include "WebPageProxyIdentifier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -40,6 +41,7 @@ class WebExtensionAPIPort;
 class WebExtensionAPIRuntime;
 
 class WebExtensionAPIRuntimeBase : public JSWebExtensionWrappable {
+    WTF_MAKE_TZONE_ALLOCATED(WebExtensionAPIRuntimeBase);
 public:
     JSValueRef reportError(String errorMessage, JSGlobalContextRef, NOESCAPE const Function<void()>& = nullptr);
     JSValueRef reportError(const String& errorMessage, WebExtensionCallbackHandler&);

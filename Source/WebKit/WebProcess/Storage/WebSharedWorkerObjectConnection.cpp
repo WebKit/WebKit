@@ -35,8 +35,11 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/SharedWorkerKey.h>
 #include <WebCore/WorkerOptions.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorkerObjectConnection);
 
 #define CONNECTION_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [webProcessIdentifier=%" PRIu64 "] WebSharedWorkerObjectConnection::" fmt, this, WebCore::Process::identifier().toUInt64(), ##__VA_ARGS__)
 

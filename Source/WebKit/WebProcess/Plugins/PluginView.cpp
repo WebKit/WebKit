@@ -86,9 +86,12 @@
 #include <WebCore/UserGestureIndicator.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PluginView);
 using namespace WebCore;
 
 class PluginView::Stream : public RefCounted<PluginView::Stream>, NetscapePlugInStreamLoaderClient {

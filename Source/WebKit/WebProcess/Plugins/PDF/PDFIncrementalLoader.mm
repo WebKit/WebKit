@@ -157,6 +157,7 @@ void ByteRangeRequest::completeUnconditionally(PDFIncrementalLoader& loader)
 
 class PDFPluginStreamLoaderClient final : public ThreadSafeRefCounted<PDFPluginStreamLoaderClient>,
     public NetscapePlugInStreamLoaderClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PDFPluginStreamLoaderClient);
 public:
     static Ref<PDFPluginStreamLoaderClient> create(PDFIncrementalLoader& loader)
     {

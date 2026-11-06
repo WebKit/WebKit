@@ -26,6 +26,7 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -37,6 +38,7 @@ namespace WebKit {
 class WebPage;
 
 class WebContextMenu : public RefCounted<WebContextMenu> {
+    WTF_MAKE_TZONE_ALLOCATED(WebContextMenu);
 public:
     static Ref<WebContextMenu> create(WebPage& page)
     {

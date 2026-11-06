@@ -31,6 +31,7 @@
 #include <WebCore/DeviceOrientationUpdateProvider.h>
 #include <WebCore/Element.h>
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -39,6 +40,7 @@
 namespace WebKit {
 
 class WebDeviceOrientationUpdateProvider final : public WebCore::DeviceOrientationUpdateProvider, private IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(WebDeviceOrientationUpdateProvider);
 public:
     static Ref<WebDeviceOrientationUpdateProvider> create(WebPage& page) { return adoptRef(*new WebDeviceOrientationUpdateProvider(page));}
 

@@ -43,6 +43,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginData.h>
 #include <optional>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
 #include "NetworkProcessConnection.h"
@@ -52,6 +53,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPermissionController);
 
 Ref<WebPermissionController> WebPermissionController::create(WebProcess& process)
 {

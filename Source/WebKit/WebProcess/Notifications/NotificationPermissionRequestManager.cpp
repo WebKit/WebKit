@@ -37,6 +37,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(NOTIFICATIONS)
 #include "WebNotificationManager.h"
@@ -48,6 +49,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NotificationPermissionRequestManager);
 using namespace WebCore;
 
 Ref<NotificationPermissionRequestManager> NotificationPermissionRequestManager::create(WebPage* page)

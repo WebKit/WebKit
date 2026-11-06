@@ -36,6 +36,7 @@
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -58,6 +59,7 @@ class RemoteVideoFrameProxy;
 enum class ShouldApplyRotation : bool { No, Yes };
 
 class RemoteVideoFrameObjectHeapProxyProcessor : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::MainRunLoop>, public GPUProcessConnection::Client {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteVideoFrameObjectHeapProxyProcessor);
 public:
     static Ref<RemoteVideoFrameObjectHeapProxyProcessor> create(GPUProcessConnection&);
     ~RemoteVideoFrameObjectHeapProxyProcessor();

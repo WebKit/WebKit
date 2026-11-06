@@ -41,12 +41,15 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageInspectorController.h>
 #include <WebCore/Settings.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 #include "WebInspectorUIExtensionController.h"
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInspectorUI);
 using namespace WebCore;
 
 Ref<WebInspectorUI> WebInspectorUI::create(WebPage& page)

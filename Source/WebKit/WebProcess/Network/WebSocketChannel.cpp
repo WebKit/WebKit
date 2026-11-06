@@ -43,10 +43,13 @@
 #include <WebCore/ThreadableWebSocketChannel.h>
 #include <WebCore/WebSocketChannelClient.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URLParser.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketChannel);
 using namespace WebCore;
 
 Ref<WebSocketChannel> WebSocketChannel::create(WebPageProxyIdentifier webPageProxyID, Document& document, WebSocketChannelClient& client, IsInitiatedByWorker isInitiatedByWorker)

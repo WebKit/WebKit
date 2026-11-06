@@ -29,6 +29,7 @@
 #include "StorageNamespaceIdentifier.h"
 #include "WebPageGroupData.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class PageGroup;
@@ -39,6 +40,7 @@ namespace WebKit {
 class WebUserContentController;
 
 class WebPageGroupProxy : public RefCounted<WebPageGroupProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(WebPageGroupProxy);
 public:
     static Ref<WebPageGroupProxy> create(WebPageGroupData&&);
     virtual ~WebPageGroupProxy();

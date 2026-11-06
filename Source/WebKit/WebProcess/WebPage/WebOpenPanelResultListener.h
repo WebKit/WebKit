@@ -29,6 +29,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class FileChooser;
@@ -38,6 +39,7 @@ class Icon;
 namespace WebKit {
 
 class WebOpenPanelResultListener : public RefCounted<WebOpenPanelResultListener> {
+    WTF_MAKE_TZONE_ALLOCATED(WebOpenPanelResultListener);
 public:
     static Ref<WebOpenPanelResultListener> create(WebPage&, Ref<WebCore::FileChooser>&&);
     ~WebOpenPanelResultListener();

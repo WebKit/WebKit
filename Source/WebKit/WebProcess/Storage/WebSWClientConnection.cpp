@@ -64,9 +64,12 @@
 #include <WebCore/WorkerFetchResult.h>
 #include <WebCore/WorkerScriptLoader.h>
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSWClientConnection);
 
 using namespace PAL;
 using namespace WebCore;

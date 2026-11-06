@@ -27,10 +27,12 @@
 
 #include <WebCore/BadgeClient.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebBadgeClient final : public WebCore::BadgeClient {
+    WTF_MAKE_TZONE_ALLOCATED(WebBadgeClient);
 public:
     static Ref<WebBadgeClient> create()
     {

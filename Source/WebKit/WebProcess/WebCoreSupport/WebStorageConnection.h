@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/StorageConnection.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -39,6 +40,7 @@ class FileSystemDirectoryHandle;
 namespace WebKit {
 
 class WebStorageConnection final : public WebCore::StorageConnection {
+    WTF_MAKE_TZONE_ALLOCATED(WebStorageConnection);
 public:
     static Ref<WebStorageConnection> create();
 

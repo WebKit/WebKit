@@ -33,6 +33,7 @@
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorFrontendHost.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -56,6 +57,7 @@ class RemoteWebInspectorUI final
     : public RefCounted<RemoteWebInspectorUI>
     , public IPC::MessageReceiver
     , public WebCore::InspectorFrontendClient {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteWebInspectorUI);
 public:
     static Ref<RemoteWebInspectorUI> create(WebPage&);
     ~RemoteWebInspectorUI();

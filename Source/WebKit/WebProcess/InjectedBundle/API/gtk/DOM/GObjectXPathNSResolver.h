@@ -20,11 +20,13 @@
 
 #include "WebKitDOMXPathNSResolver.h"
 #include <WebCore/XPathNSResolver.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebKit {
 
 class GObjectXPathNSResolver : public WebCore::XPathNSResolver {
+    WTF_MAKE_TZONE_ALLOCATED(GObjectXPathNSResolver);
 public:
 
     static Ref<GObjectXPathNSResolver> create(WebKitDOMXPathNSResolver* resolver)

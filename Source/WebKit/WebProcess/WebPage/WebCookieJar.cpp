@@ -47,13 +47,17 @@
 #include <WebCore/StorageSessionProvider.h>
 #include <optional>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCookieJar);
+
 using namespace WebCore;
 
 class WebStorageSessionProvider : public WebCore::StorageSessionProvider {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebStorageSessionProvider);
     // NetworkStorageSessions are accessed only in the NetworkProcess.
     WebCore::CookieStorageSession* storageSession() const final { return nullptr; }
 };

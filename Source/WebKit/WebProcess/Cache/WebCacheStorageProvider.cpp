@@ -31,8 +31,11 @@
 #include "NetworkProcessConnection.h"
 #include "WebCacheStorageConnection.h"
 #include "WebProcess.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCacheStorageProvider);
 
 Ref<WebCore::CacheStorageConnection> WebCacheStorageProvider::createCacheStorageConnection()
 {

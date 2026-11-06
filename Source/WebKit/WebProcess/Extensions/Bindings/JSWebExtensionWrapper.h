@@ -44,6 +44,7 @@
 #include <WebCore/JSDOMGlobalObject.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -65,6 +66,7 @@ public:
 };
 
 class WebExtensionCallbackHandler : public RefCounted<WebExtensionCallbackHandler> {
+    WTF_MAKE_TZONE_ALLOCATED(WebExtensionCallbackHandler);
 public:
     static Ref<WebExtensionCallbackHandler> create(JSContextRef, JSObjectRef resolveFunction, JSObjectRef rejectFunction);
     static Ref<WebExtensionCallbackHandler> create(JSContextRef, JSObjectRef callbackFunction, WebExtensionAPIRuntimeBase&);

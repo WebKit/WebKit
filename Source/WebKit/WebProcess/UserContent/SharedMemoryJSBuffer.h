@@ -27,6 +27,7 @@
 
 #include <WebCore/WebKitBuffer.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class SharedMemory;
@@ -35,6 +36,7 @@ class SharedMemory;
 namespace WebKit {
 
 class SharedMemoryJSBuffer final : public WebCore::WebKitBuffer {
+    WTF_MAKE_TZONE_ALLOCATED(SharedMemoryJSBuffer);
 public:
     static Ref<SharedMemoryJSBuffer> create(Ref<WebCore::SharedMemory>&&);
 

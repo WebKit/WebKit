@@ -37,8 +37,11 @@
 #include "RemoteVideoFrameProxy.h"
 #include "SampleBufferDisplayLayerManager.h"
 #include "WebProcess.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SampleBufferDisplayLayer);
 using namespace WebCore;
 
 Ref<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(SampleBufferDisplayLayerManager& manager, WebCore::SampleBufferDisplayLayerClient& client)

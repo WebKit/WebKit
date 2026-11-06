@@ -31,8 +31,11 @@
 #include "RemoteRealtimeMediaSourceInlines.h"
 #include "UserMediaCaptureManager.h"
 #include "UserMediaCaptureManagerProxyMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRealtimeVideoSource);
 using namespace WebCore;
 
 Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::create(const CaptureDevice& device, const MediaConstraints* constraints, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, std::optional<PageIdentifier> pageIdentifier)

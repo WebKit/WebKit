@@ -20,6 +20,7 @@
 
 #include "WebKitDOMNodeFilter.h"
 #include <WebCore/NodeFilterCondition.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
@@ -29,6 +30,7 @@ class Node;
 namespace WebKit {
 
 class GObjectNodeFilterCondition final : public WebCore::NodeFilterCondition {
+    WTF_MAKE_TZONE_ALLOCATED(GObjectNodeFilterCondition);
 public:
     static Ref<GObjectNodeFilterCondition> create(WebKitDOMNodeFilter* filter)
     {

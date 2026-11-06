@@ -43,9 +43,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebBackForwardListProxy);
 using namespace WebCore;
 
 void WebBackForwardListProxy::removeItem(BackForwardFrameItemIdentifier frameItemID)

@@ -29,6 +29,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Deque.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class ResourceError;
@@ -43,6 +44,7 @@ class WebFrame;
 class WebURLSchemeHandlerProxy;
 
 class WebURLSchemeTaskProxy : public RefCountedAndCanMakeWeakPtr<WebURLSchemeTaskProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(WebURLSchemeTaskProxy);
 public:
     static Ref<WebURLSchemeTaskProxy> create(WebURLSchemeHandlerProxy& handler, WebCore::ResourceLoader& loader, WebFrame& webFrame)
     {

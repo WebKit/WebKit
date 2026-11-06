@@ -28,10 +28,12 @@
 #include "WebUndoStepID.h"
 #include <WebCore/UndoStep.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebUndoStep : public RefCounted<WebUndoStep> {
+    WTF_MAKE_TZONE_ALLOCATED(WebUndoStep);
 public:
     static Ref<WebUndoStep> create(Ref<WebCore::UndoStep>&&);
     ~WebUndoStep();

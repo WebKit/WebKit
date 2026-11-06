@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "FileSystemStorageError.h"
 #include <WebCore/FileSystemStorageConnection.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -57,6 +58,7 @@ class FileSystemFileHandle;
 namespace WebKit {
 
 class WebFileSystemStorageConnection final : public WebCore::FileSystemStorageConnection {
+    WTF_MAKE_TZONE_ALLOCATED(WebFileSystemStorageConnection);
 public:
     static Ref<WebFileSystemStorageConnection> create(Ref<IPC::Connection>&&);
     void connectionClosed();

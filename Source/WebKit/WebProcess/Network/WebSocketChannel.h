@@ -34,6 +34,7 @@
 #include <WebCore/ThreadableWebSocketChannel.h>
 #include <WebCore/WebSocketChannelInspector.h>
 #include <WebCore/WebSocketFrame.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -49,6 +50,7 @@ class WeakPtrImplWithEventTargetData;
 namespace WebKit {
 
 class WebSocketChannel : public IPC::MessageSender, public IPC::MessageReceiver, public WebCore::ThreadableWebSocketChannel, public RefCounted<WebSocketChannel> {
+    WTF_MAKE_TZONE_ALLOCATED(WebSocketChannel);
 public:
     static Ref<WebSocketChannel> create(WebPageProxyIdentifier, WebCore::Document&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByWorker = WebCore::IsInitiatedByWorker::No);
     ~WebSocketChannel();

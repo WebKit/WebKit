@@ -34,9 +34,12 @@
 #include "WebProcess.h"
 #include <WebCore/PageIdentifier.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewUpdateDispatcher);
 
 ViewUpdateDispatcher::ViewUpdateDispatcher(WebProcess& process)
     : m_process(process)

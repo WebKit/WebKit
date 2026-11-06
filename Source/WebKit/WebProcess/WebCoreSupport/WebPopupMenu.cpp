@@ -29,8 +29,11 @@
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PopupMenuClient.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPopupMenu);
 using namespace WebCore;
 
 Ref<WebPopupMenu> WebPopupMenu::create(WebPage* page, PopupMenuClient* client)

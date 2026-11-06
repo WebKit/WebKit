@@ -32,8 +32,11 @@
 #include "RemoteCDMInstanceSessionProxyMessages.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCDMInstanceSession);
 
 using namespace WebCore;
 

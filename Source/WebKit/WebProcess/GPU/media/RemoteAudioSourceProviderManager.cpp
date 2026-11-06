@@ -41,6 +41,8 @@
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioSourceProviderManager);
 using namespace WebCore;
 
 RemoteAudioSourceProviderManager::RemoteAudioSourceProviderManager(IPC::Connection& connection)

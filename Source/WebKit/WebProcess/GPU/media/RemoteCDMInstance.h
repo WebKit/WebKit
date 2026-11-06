@@ -32,10 +32,12 @@
 #include "RemoteCDMInstanceConfiguration.h"
 #include "RemoteCDMInstanceIdentifier.h"
 #include <WebCore/CDMInstance.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class RemoteCDMInstance final : public WebCore::CDMInstance, private IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteCDMInstance);
 public:
     virtual ~RemoteCDMInstance();
     static Ref<RemoteCDMInstance> create(WeakPtr<RemoteCDMFactory>&&, RemoteCDMInstanceIdentifier&&, RemoteCDMInstanceConfiguration&&);

@@ -30,6 +30,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class ResourceError;
@@ -44,6 +45,7 @@ namespace WebKit {
 class WebPage;
 
 class WebURLSchemeHandlerProxy : public RefCountedAndCanMakeWeakPtr<WebURLSchemeHandlerProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(WebURLSchemeHandlerProxy);
 public:
     static Ref<WebURLSchemeHandlerProxy> create(WebPage& page, WebURLSchemeHandlerIdentifier identifier)
     {

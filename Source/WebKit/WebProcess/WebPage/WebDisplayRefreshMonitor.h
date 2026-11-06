@@ -29,6 +29,7 @@
 
 #include "DisplayLinkObserverID.h"
 #include <WebCore/DisplayRefreshMonitor.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class RunLoopObserver;
@@ -37,6 +38,7 @@ class RunLoopObserver;
 namespace WebKit {
 
 class WebDisplayRefreshMonitor final : public WebCore::DisplayRefreshMonitor {
+    WTF_MAKE_TZONE_ALLOCATED(WebDisplayRefreshMonitor);
 public:
     static Ref<WebDisplayRefreshMonitor> create(WebCore::PlatformDisplayID displayID)
     {

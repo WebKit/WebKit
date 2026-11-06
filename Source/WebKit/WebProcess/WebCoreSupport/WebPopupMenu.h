@@ -24,6 +24,7 @@
 #include "WebPopupItem.h"
 #include <WebCore/PopupMenu.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,6 +38,7 @@ struct PlatformPopupMenuData;
 struct WebPopupItem;
 
 class WebPopupMenu : public WebCore::PopupMenu {
+    WTF_MAKE_TZONE_ALLOCATED(WebPopupMenu);
 public:
     static Ref<WebPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
     ~WebPopupMenu();

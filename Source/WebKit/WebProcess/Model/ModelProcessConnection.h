@@ -34,6 +34,7 @@
 #include <WebCore/ModelPlayerIdentifier.h>
 #include <wtf/AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -48,7 +49,7 @@ struct WebPageCreationParameters;
 class ModelProcessConnection
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ModelProcessConnection>
     , public IPC::Connection::Client {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ModelProcessConnection);
+    WTF_MAKE_TZONE_ALLOCATED(ModelProcessConnection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ModelProcessConnection);
 public:
     static RefPtr<ModelProcessConnection> create(IPC::Connection& parentConnection);

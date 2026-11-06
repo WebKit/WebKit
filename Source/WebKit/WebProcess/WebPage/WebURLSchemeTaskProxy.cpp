@@ -39,12 +39,15 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #define WEBURLSCHEMETASKPROXY_RELEASE_LOG_STANDARD_TEMPLATE "[schemeHandler=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", taskID=%" PRIu64 "] WebURLSchemeTaskProxy::"
 #define WEBURLSCHEMETASKPROXY_RELEASE_LOG_STANDARD_PARAMETERS m_urlSchemeHandler->identifier().toUInt64(), pageIDFromWebFrame(m_frame), frameIDFromWebFrame(m_frame), m_identifier.toUInt64()
 #define WEBURLSCHEMETASKPROXY_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, WEBURLSCHEMETASKPROXY_RELEASE_LOG_STANDARD_TEMPLATE fmt, WEBURLSCHEMETASKPROXY_RELEASE_LOG_STANDARD_PARAMETERS, ##__VA_ARGS__)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebURLSchemeTaskProxy);
 using namespace WebCore;
 
 #if !RELEASE_LOG_DISABLED

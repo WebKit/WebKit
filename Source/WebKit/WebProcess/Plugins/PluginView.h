@@ -39,6 +39,7 @@
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS PDFDocument;
@@ -72,6 +73,7 @@ struct PDFPluginTextExtractionContent;
 struct WebHitTestResultData;
 
 class PluginView final : public WebCore::PluginViewBase {
+    WTF_MAKE_TZONE_ALLOCATED(PluginView);
 public:
     static RefPtr<PluginView> create(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader);
 

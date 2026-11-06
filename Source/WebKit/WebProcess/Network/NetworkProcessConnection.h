@@ -36,6 +36,7 @@
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/ShareableResource.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -62,7 +63,7 @@ class WebSharedWorkerObjectConnection;
 enum class WebsiteDataType : uint32_t;
 
 class NetworkProcessConnection final : public RefCounted<NetworkProcessConnection>, IPC::Connection::Client {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NetworkProcessConnection);
+    WTF_MAKE_TZONE_ALLOCATED(NetworkProcessConnection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkProcessConnection);
 public:
     static Ref<NetworkProcessConnection> create(IPC::Connection::Identifier&& connectionIdentifier, WebCore::HTTPCookieAcceptPolicy httpCookieAcceptPolicy)

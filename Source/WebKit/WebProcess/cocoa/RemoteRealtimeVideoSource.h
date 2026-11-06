@@ -31,6 +31,7 @@
 #include "RemoteRealtimeMediaSourceProxy.h"
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class VideoFrame;
@@ -42,6 +43,7 @@ namespace WebKit {
 class UserMediaCaptureManager;
 
 class RemoteRealtimeVideoSource final : public RemoteRealtimeMediaSource {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteRealtimeVideoSource);
 public:
     static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, WebCore::MediaDeviceHashSalts&&, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, std::optional<WebCore::PageIdentifier>);
     ~RemoteRealtimeVideoSource();

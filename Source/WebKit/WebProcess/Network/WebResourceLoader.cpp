@@ -61,6 +61,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/PageBlock.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
@@ -72,6 +73,8 @@
 #define WEBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG_FORWARDABLE(Network, fmt, m_trackingParameters ? m_trackingParameters->pageID.toUInt64() : 0, m_trackingParameters ? m_trackingParameters->frameID.toUInt64() : 0, m_trackingParameters ? m_trackingParameters->resourceID.toUInt64() : 0, ##__VA_ARGS__)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebResourceLoader);
 using namespace WebCore;
 
 Ref<WebResourceLoader> WebResourceLoader::create(Ref<ResourceLoader>&& coreLoader, const std::optional<TrackingParameters>& trackingParameters, RefPtr<PendingStreamState>&& state)

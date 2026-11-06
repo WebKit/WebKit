@@ -29,6 +29,7 @@
 #include "MessageSender.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/SpeechRecognitionConnection.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -45,6 +46,7 @@ class WebPage;
 using SpeechRecognitionConnectionIdentifier = WebCore::PageIdentifier;
 
 class WebSpeechRecognitionConnection final : public WebCore::SpeechRecognitionConnection, private IPC::MessageReceiver, private IPC::MessageSender {
+    WTF_MAKE_TZONE_ALLOCATED(WebSpeechRecognitionConnection);
 public:
     static Ref<WebSpeechRecognitionConnection> create(SpeechRecognitionConnectionIdentifier);
 

@@ -35,8 +35,11 @@
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/WorkerFileSystemStorageConnection.h>
 #include <WebCore/WorkerGlobalScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebFileSystemStorageConnection);
 
 Ref<WebFileSystemStorageConnection> WebFileSystemStorageConnection::create(Ref<IPC::Connection>&& connection)
 {

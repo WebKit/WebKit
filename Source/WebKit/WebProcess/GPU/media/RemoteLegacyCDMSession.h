@@ -31,6 +31,7 @@
 #include "RemoteLegacyCDMSessionIdentifier.h"
 #include <WebCore/LegacyCDMSession.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -45,6 +46,7 @@ class RemoteLegacyCDMSession final
     : public WebCore::LegacyCDMSession
     , public IPC::MessageReceiver
     , public RefCounted<RemoteLegacyCDMSession> {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLegacyCDMSession);
 public:
     static RefPtr<RemoteLegacyCDMSession> create(RemoteLegacyCDMFactory&, RemoteLegacyCDMSessionIdentifier&&, WebCore::LegacyCDMSessionClient&);
     ~RemoteLegacyCDMSession();

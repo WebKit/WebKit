@@ -57,6 +57,7 @@
 #include <WebCore/PlatformMediaSession.h>
 #include <WebCore/RenderingMode.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMInstanceSessionMessages.h"
@@ -108,6 +109,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUProcessConnection);
 using namespace WebCore;
 
 Ref<GPUProcessConnection> GPUProcessConnection::create(Ref<IPC::Connection>&& connection)

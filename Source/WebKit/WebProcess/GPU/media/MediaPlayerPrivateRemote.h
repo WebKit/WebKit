@@ -49,6 +49,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/StdUnorderedMap.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(MACH_PORT_LAYER_HOSTING)
 #include <wtf/MachSendRightAnnotated.h>
@@ -90,6 +91,7 @@ class MediaPlayerPrivateRemote final
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateRemote);
 public:
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 

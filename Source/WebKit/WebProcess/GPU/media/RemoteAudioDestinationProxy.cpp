@@ -38,6 +38,7 @@
 #include <WebCore/SharedMemory.h>
 #include <algorithm>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/AudioUtilitiesCocoa.h>
@@ -48,6 +49,8 @@
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioDestinationProxy);
 
 #if PLATFORM(COCOA)
 // Allocate a ring buffer large enough to contain 2 seconds of audio.

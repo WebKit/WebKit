@@ -32,9 +32,12 @@
 #include "WebProcess.h"
 #include <WebCore/Cookie.h>
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCookieCache);
 
 using namespace WebCore;
 

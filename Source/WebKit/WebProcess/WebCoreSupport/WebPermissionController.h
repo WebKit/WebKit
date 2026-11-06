@@ -31,6 +31,7 @@
 #include <WebCore/PermissionController.h>
 #include <WebCore/PermissionDescriptor.h>
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -45,6 +46,7 @@ namespace WebKit {
 class WebProcess;
 
 class WebPermissionController final : public WebCore::PermissionController, public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(WebPermissionController);
 public:
     static Ref<WebPermissionController> create(WebProcess&);
     ~WebPermissionController();

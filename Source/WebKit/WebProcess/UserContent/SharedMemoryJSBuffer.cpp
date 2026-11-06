@@ -28,9 +28,12 @@
 
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/SharedMemory.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/ExternalStringImpl.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedMemoryJSBuffer);
 
 Ref<SharedMemoryJSBuffer> SharedMemoryJSBuffer::create(Ref<WebCore::SharedMemory>&& data)
 {

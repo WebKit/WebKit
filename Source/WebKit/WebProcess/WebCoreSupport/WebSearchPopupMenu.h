@@ -23,10 +23,12 @@
 
 #include "WebPopupMenu.h"
 #include <WebCore/SearchPopupMenu.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebSearchPopupMenu : public WebCore::SearchPopupMenu {
+    WTF_MAKE_TZONE_ALLOCATED(WebSearchPopupMenu);
 public:
     static Ref<WebSearchPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
 

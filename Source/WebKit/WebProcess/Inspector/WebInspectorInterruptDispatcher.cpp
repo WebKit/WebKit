@@ -31,9 +31,12 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/VM.h>
 #include <WebCore/CommonVM.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInspectorInterruptDispatcher);
 
 WebInspectorInterruptDispatcher::WebInspectorInterruptDispatcher(WebProcess& process)
     : m_process(process)

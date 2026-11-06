@@ -32,8 +32,11 @@
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/UserContentController.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPageGroupProxy);
 
 Ref<WebPageGroupProxy> WebPageGroupProxy::create(WebPageGroupData&& data)
 {
