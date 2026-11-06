@@ -2512,6 +2512,13 @@ void WebPage::close(CompletionHandler<void()>&& completionHandler)
     m_printContext = nullptr;
     if (RefPtr localFrame = m_mainFrame->coreLocalFrame())
         localFrame->loader().detachFromParent();
+    else {
+        // With site isolation, the main frame can be in another process, and each frame of this process roots a tree.
+        // Detach them while the main frame exists, as a policy check that the client decides later would keep its frame
+        // alive past the main frame.
+        for (Ref rootFrame : copyToVectorOf<Ref<LocalFrame>>(m_page->rootFrames()))
+            rootFrame->loader().detachFromParent();
+    }
 
     if (RefPtr provisionalFrame = m_mainFrame->provisionalFrame())
         provisionalFrame->loader().detachFromParent();
