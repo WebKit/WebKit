@@ -120,6 +120,11 @@ void PhoneNumberPossessionCoordinator::discoverFromExternalSource(const Document
         return;
     }
 
+    if (request.relyingPartyIdentifier.isEmpty())
+        request.relyingPartyIdentifier = callerOrigin->domain();
+    else
+        request.relyingPartyIdentifier = request.relyingPartyIdentifier.convertToASCIILowercase();
+
     if (auto exception = validatePhoneNumberPossessionRequest(request)) {
         promise.reject(WTF::move(*exception));
         return;
@@ -130,9 +135,7 @@ void PhoneNumberPossessionCoordinator::discoverFromExternalSource(const Document
         return;
     }
 
-    if (request.relyingPartyIdentifier.isEmpty())
-        request.relyingPartyIdentifier = callerOrigin->domain();
-
+    // FIXME: Support related origins and remove this check.
     if (!callerOrigin->isMatchingRegistrableDomainSuffix(request.relyingPartyIdentifier)) {
         promise.reject(Exception { ExceptionCode::SecurityError, "The origin of the document is not authorized for the provided RP ID."_s });
         return;
@@ -180,12 +183,13 @@ void PhoneNumberPossessionCoordinator::discoverFromExternalSource(const Document
 
 void PhoneNumberPossessionCoordinator::isAvailable(const Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    if (!m_client || !document.isFullyActive() || document.securityOrigin().isOpaque() || !document.isSameOriginWithAncestors()) {
+    RefPtr frame = document.frame();
+    if (!m_client || !frame || !document.isFullyActive() || document.securityOrigin().isOpaque() || !document.isSameOriginWithAncestors()) {
         promise.resolve(false);
         return;
     }
 
-    m_client->isAvailable([promise = WTF::move(promise)](bool isAvailable) mutable {
+    m_client->isAvailable(*frame, [promise = WTF::move(promise)](bool isAvailable) mutable {
         promise.resolve(isAvailable);
     });
 }

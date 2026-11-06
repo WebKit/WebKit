@@ -633,6 +633,7 @@ class WebPageInspectorController;
 class WebPageLoadTiming;
 class WebPageProxyMessageReceiverRegistration;
 class WebPageProxyTesting;
+class WebPhoneNumberPossessionCoordinatorProxy;
 class WebPopupMenuProxy;
 class WebPopupMenuProxyClient;
 class WebPreferences;
@@ -2601,6 +2602,11 @@ public:
     void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
     WebAuthenticatorCoordinatorProxy* webAuthenticatorCoordinatorProxy() const { return m_webAuthnCredentialsMessenger.get(); }
 
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    // Phone Number Possession API
+    WebPhoneNumberPossessionCoordinatorProxy* phoneNumberPossessionCoordinatorProxy() const { return m_phoneNumberPossessionCoordinatorProxy.get(); }
+#endif
+
     // Digital Credentials API
     void dismissDigitalCredentialsChooser(IPC::Connection&, CompletionHandler<void(bool)>&&);
     void fetchRawDigitalCredentialRequests(CompletionHandler<void(WebCore::DigitalCredentialsRawRequests)>&&);
@@ -4169,6 +4175,10 @@ private:
 
 #if ENABLE(WEB_AUTHN)
     RefPtr<WebAuthenticatorCoordinatorProxy> m_webAuthnCredentialsMessenger;
+#endif
+
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    RefPtr<WebPhoneNumberPossessionCoordinatorProxy> m_phoneNumberPossessionCoordinatorProxy;
 #endif
 
 #if ENABLE(WEBDRIVER_BIDI)

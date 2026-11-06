@@ -598,6 +598,7 @@ $(PROJECT_DIR)/UIProcess/Media/RemoteMediaSessionManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Model/ModelProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/NetworkProcessProxy.messages.in
+$(PROJECT_DIR)/UIProcess/PhoneNumberPossession/WebPhoneNumberPossessionCoordinatorProxy.messages.in
 $(PROJECT_DIR)/UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.messages.in
 $(PROJECT_DIR)/UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.messages.in
 $(PROJECT_DIR)/UIProcess/SpeechRecognitionServer.messages.in

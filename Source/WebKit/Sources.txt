@@ -633,6 +633,8 @@ UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp
 UIProcess/Notifications/WebNotificationManagerProxy.cpp
 UIProcess/Notifications/WebNotificationProvider.cpp
 
+UIProcess/PhoneNumberPossession/WebPhoneNumberPossessionCoordinatorProxy.cpp
+
 UIProcess/UserContent/WebScriptMessageHandler.cpp
 UIProcess/UserContent/WebUserContentControllerProxy.cpp @cost:3
 
@@ -864,6 +866,8 @@ WebProcess/Network/webrtc/WebRTCResolver.cpp
 
 WebProcess/Notifications/NotificationPermissionRequestManager.cpp
 WebProcess/Notifications/WebNotificationManager.cpp
+
+WebProcess/PhoneNumberPossession/WebPhoneNumberPossessionCoordinator.cpp
 
 WebProcess/Plugins/PluginView.cpp @cost:6
 WebProcess/Plugins/WebPluginInfoProvider.cpp

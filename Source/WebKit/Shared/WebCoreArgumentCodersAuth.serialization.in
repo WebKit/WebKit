@@ -474,3 +474,46 @@ enum class WebCore::MediationRequirement : uint8_t {
 };
 #endif
 
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+enum class WebCore::PhoneNumberPossessionResponseType : uint8_t {
+    PossessionIdentifier,
+    PossessionIdentifierAndPhoneNumber
+};
+
+struct WebCore::PhoneNumberPossessionRequest {
+    WebCore::BufferSource challenge;
+    String relyingPartyIdentifier;
+    WebCore::PhoneNumberPossessionResponseType desiredResponseType;
+    String phoneNumberSuffixHint;
+    std::optional<WebCore::BufferSource> pnpiSuffixHint;
+    std::optional<WebCore::BufferSource> knownCarrierPubKey;
+};
+
+struct WebCore::AggregatorResponseDataFields {
+    RefPtr<JSC::ArrayBuffer> encryptedProviderErrorInfo;
+    RefPtr<JSC::ArrayBuffer> encryptedZKPEncryptionKey;
+};
+
+struct WebCore::PhoneNumberPossessionResponse {
+    Ref<JSC::ArrayBuffer> encryptedPNPIWithProof;
+    std::optional<WebCore::AggregatorResponseDataFields> aggregatorData;
+    RefPtr<JSC::ArrayBuffer> carrierPubKey;
+    RefPtr<JSC::ArrayBuffer> encryptedMSISDN;
+    Ref<JSC::ArrayBuffer> clientDataJSON;
+    RefPtr<JSC::ArrayBuffer> portingZKP;
+};
+
+header: <WebCore/MockPhoneNumberPossessionConfiguration.h>
+enum class WebCore::MockPhoneNumberPossessionOutcome : uint8_t {
+    Success,
+    UserCancelled,
+    Failure,
+    NoResponse
+};
+
+struct WebCore::MockPhoneNumberPossessionConfiguration {
+    bool isAvailable;
+    WebCore::MockPhoneNumberPossessionOutcome outcome;
+    bool includesOptionalFields;
+};
+#endif // ENABLE(PHONE_NUMBER_POSSESSION)

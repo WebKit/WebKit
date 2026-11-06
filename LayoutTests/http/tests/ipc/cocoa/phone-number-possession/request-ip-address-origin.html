@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true PhoneNumberPossessionEnabled=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/phone-number-possession-ipc.js"></script>
+<script>
+phoneNumberPossessionIPCTest(async () => {
+    assert_equals(location.hostname, "127.0.0.1");
+    await activate();
+    const result = await requestPhoneNumberPossession(IPC.frameID[0], makeRequest({ relyingPartyIdentifier: "127.0.0.1" }));
+    assert_false(result.hasValue);
+    assert_equals(result.message, "The origin of the document is not authorized for the provided RP ID.");
+}, "RequestPhoneNumberPossession from an IP address origin is rejected");
+</script>

@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true PhoneNumberPossessionEnabled=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/phone-number-possession-ipc.js"></script>
+<script>
+phoneNumberPossessionIPCTest(async () => {
+    assert_false(await isAvailable(IPC.frameID[0] + 1000000n));
+}, "IsAvailable for a frame that doesn't exist answers false");
+
+phoneNumberPossessionIPCTest(async () => {
+    assert_false(await isAvailable(IPC.frameID[0]));
+}, "IsAvailable answers false when the platform isn't available");
+
+phoneNumberPossessionIPCTest(async () => {
+    setMockConfiguration({ isAvailable: true, outcome: MockOutcome.Success, includesOptionalFields: false });
+    assert_false(await isAvailable(IPC.frameID[0]));
+}, "SetMockConfiguration has no effect unless the web view's WKWebViewConfiguration sets _allowTestOnlyIPC, even with IPCTestingAPIEnabled");
+</script>

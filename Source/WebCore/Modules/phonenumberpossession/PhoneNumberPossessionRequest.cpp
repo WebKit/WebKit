@@ -29,27 +29,32 @@
 #if ENABLE(PHONE_NUMBER_POSSESSION)
 
 #include "Exception.h"
+#include <wtf/ASCIICType.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-// Upper bounds that keep the IPC payload small. Callers apply any stricter rules before making a request.
+static constexpr size_t maximumChallengeLength = 1024;
 static constexpr unsigned maximumPhoneNumberSuffixHintLength = 15;
-static constexpr size_t maximumPNPISuffixHintLength = 64;
+static constexpr size_t maximumPNPISuffixHintLength = 32;
 static constexpr size_t maximumCarrierPubKeyLength = 1024;
 
 std::optional<Exception> validatePhoneNumberPossessionRequest(const PhoneNumberPossessionRequest& request)
 {
-    if (!request.challenge.byteLength())
-        return Exception { ExceptionCode::TypeError, "The challenge must not be empty."_s };
+    if (!request.challenge.byteLength() || request.challenge.byteLength() > maximumChallengeLength)
+        return Exception { ExceptionCode::TypeError, makeString("The challenge must be between 1 and "_s, maximumChallengeLength, " bytes long."_s) };
 
-    if (!request.phoneNumberSuffixHint.isNull() && (request.phoneNumberSuffixHint.isEmpty() || request.phoneNumberSuffixHint.length() > maximumPhoneNumberSuffixHintLength))
-        return Exception { ExceptionCode::TypeError, "The phoneNumberSuffixHint must contain between 1 and 15 characters."_s };
+    if (request.relyingPartyIdentifier.isEmpty())
+        return Exception { ExceptionCode::TypeError, "The RP ID must not be empty."_s };
+
+    if (auto& suffix = request.phoneNumberSuffixHint; !suffix.isNull() && (suffix.isEmpty() || suffix.length() > maximumPhoneNumberSuffixHintLength || !suffix.containsOnly<isASCIIDigit>()))
+        return Exception { ExceptionCode::TypeError, makeString("The phoneNumberSuffixHint must contain between 1 and "_s, maximumPhoneNumberSuffixHintLength, " digits."_s) };
 
     if (request.pnpiSuffixHint && (!request.pnpiSuffixHint->byteLength() || request.pnpiSuffixHint->byteLength() > maximumPNPISuffixHintLength))
-        return Exception { ExceptionCode::TypeError, "The pnpiSuffixHint must be between 1 and 64 bytes long."_s };
+        return Exception { ExceptionCode::TypeError, makeString("The pnpiSuffixHint must be between 1 and "_s, maximumPNPISuffixHintLength, " bytes long."_s) };
 
     if (request.knownCarrierPubKey && (!request.knownCarrierPubKey->byteLength() || request.knownCarrierPubKey->byteLength() > maximumCarrierPubKeyLength))
-        return Exception { ExceptionCode::TypeError, "The knownCarrierPubKey must be between 1 and 1024 bytes long."_s };
+        return Exception { ExceptionCode::TypeError, makeString("The knownCarrierPubKey must be between 1 and "_s, maximumCarrierPubKeyLength, " bytes long."_s) };
 
     return std::nullopt;
 }

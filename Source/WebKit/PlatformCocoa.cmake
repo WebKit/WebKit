@@ -253,6 +253,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Media/cocoa"
     "${WEBKIT_DIR}/UIProcess/Notifications/cocoa"
     "${WEBKIT_DIR}/UIProcess/PDF"
+    "${WEBKIT_DIR}/UIProcess/PhoneNumberPossession"
     "${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/cocoa"
@@ -285,6 +286,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/Inspector/mac"
     "${WEBKIT_DIR}/WebProcess/MediaSession"
     "${WEBKIT_DIR}/WebProcess/Model/mac"
+    "${WEBKIT_DIR}/WebProcess/PhoneNumberPossession"
     "${WEBKIT_DIR}/WebProcess/Plugins/PDF"
     "${WEBKIT_DIR}/WebProcess/Plugins/PDF/UnifiedPDF"
     "${WEBKIT_DIR}/WebProcess/WebAuthentication"
@@ -364,6 +366,8 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     UIProcess/Media/AudioSessionRoutingArbitratorProxy
 
     UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy
+
+    UIProcess/PhoneNumberPossession/WebPhoneNumberPossessionCoordinatorProxy
 
     UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy
 

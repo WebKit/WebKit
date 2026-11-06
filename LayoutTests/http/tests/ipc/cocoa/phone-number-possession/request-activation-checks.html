@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true PhoneNumberPossessionEnabled=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/phone-number-possession-ipc.js"></script>
+<script>redirectToLocalhost();</script>
+<script>
+const activationRequired = "Calling get() needs to be triggered by an activation triggering user event.";
+const notAvailable = "Phone number possession is not available.";
+
+phoneNumberPossessionIPCTest(async () => {
+    const result = await requestPhoneNumberPossession(IPC.frameID[0]);
+    assert_false(result.hasValue);
+    assert_equals(result.message, activationRequired);
+}, "RequestPhoneNumberPossession without a user activation is rejected");
+
+phoneNumberPossessionIPCTest(async () => {
+    let request;
+    internals.withUserGesture(() => {
+        request = requestPhoneNumberPossession(IPC.frameID[0]);
+    });
+    const result = await request;
+    assert_false(result.hasValue);
+    assert_equals(result.message, activationRequired);
+}, "RequestPhoneNumberPossession with an activation only the WebContent process knows about is rejected");
+
+phoneNumberPossessionIPCTest(async () => {
+    await activate();
+    const first = await requestPhoneNumberPossession(IPC.frameID[0]);
+    assert_false(first.hasValue);
+    assert_equals(first.message, notAvailable);
+
+    const second = await requestPhoneNumberPossession(IPC.frameID[0]);
+    assert_false(second.hasValue);
+    assert_equals(second.message, activationRequired);
+}, "A user activation lets one RequestPhoneNumberPossession reach the platform, and only one");
+
+phoneNumberPossessionIPCTest(async () => {
+    await activate();
+    await UIHelper.removeViewFromWindow();
+    try {
+        const result = await requestPhoneNumberPossession(IPC.frameID[0]);
+        assert_false(result.hasValue);
+        assert_equals(result.message, "The document must be focused and visible.");
+    } finally {
+        await UIHelper.addViewToWindow();
+    }
+}, "RequestPhoneNumberPossession from a page that isn't visible is rejected")
+</script>

@@ -101,6 +101,7 @@ VPATH = \
     $(WebKit2)/UIProcess/Network/CustomProtocols \
     $(WebKit2)/UIProcess/Notifications \
     $(WebKit2)/UIProcess/PDF \
+    $(WebKit2)/UIProcess/PhoneNumberPossession \
     $(WebKit2)/UIProcess/RemoteLayerTree \
     $(WebKit2)/UIProcess/Storage \
     $(WebKit2)/UIProcess/UserContent \
@@ -206,6 +207,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/Media/RemoteMediaSessionCoordinatorProxy \
 	UIProcess/Media/RemoteMediaSessionManagerProxy \
 	UIProcess/Model/ModelProcessProxy \
+	UIProcess/PhoneNumberPossession/WebPhoneNumberPossessionCoordinatorProxy \
 	UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager \
 	UIProcess/SpeechRecognitionServer \
 	UIProcess/XR/PlatformXRSystem \

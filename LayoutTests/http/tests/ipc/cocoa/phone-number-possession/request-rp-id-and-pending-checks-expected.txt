@@ -1,0 +1,7 @@
+
+
+PASS RequestPhoneNumberPossession for another site's RP ID is rejected
+PASS RequestPhoneNumberPossession matches the RP ID case-insensitively
+PASS A failed request and one the user cancels are rejected the same way
+PASS Only one request can be pending, and only its frame can cancel it
+

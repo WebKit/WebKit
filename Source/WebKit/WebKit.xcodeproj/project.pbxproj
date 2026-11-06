@@ -2867,6 +2867,8 @@
 		FFFED26F705F4826140E9F75 /* WebExtensionContentRuleListBlockedLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF3D089B182017C30B8FA78 /* WebExtensionContentRuleListBlockedLoadInfo.h */; };
 		652C5CF187D079245D7A20DD /* PhoneNumberPossessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0E75FD04AA1BAA9278C4E90 /* PhoneNumberPossessionController.swift */; };
 		89FAE3BA4DC463F0B1D474DC /* PhoneNumberPossessionTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 75E777EC1F58D86C1B27BBDD /* PhoneNumberPossessionTypes.h */; };
+		B3F225E09D8387C10F3EC616 /* WebPhoneNumberPossessionCoordinatorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = AD8D0FDA4326DBFB9A799552 /* WebPhoneNumberPossessionCoordinatorProxy.h */; };
+		DE9B7DD307BFDC59AAD5A316 /* WebPhoneNumberPossessionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 615CAF1FFF884BA22CC8F813 /* WebPhoneNumberPossessionCoordinator.h */; };
 		AD68F1ED46BFEA0437BA3D85 /* PhoneNumberPossessionManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FE3E4E5FDB2A3685605EB9 /* PhoneNumberPossessionManaging.swift */; };
 		3625771CD7ED2C7CCF7238E1 /* MockPhoneNumberPossessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FC558120E9C9FB6C819C9C /* MockPhoneNumberPossessionManager.swift */; };
 /* End PBXBuildFile section */
@@ -9453,6 +9455,12 @@
 		FFF3D089B182017C30B8FA78 /* WebExtensionContentRuleListBlockedLoadInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionContentRuleListBlockedLoadInfo.h; sourceTree = "<group>"; };
 		E0E75FD04AA1BAA9278C4E90 /* PhoneNumberPossessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberPossessionController.swift; sourceTree = "<group>"; };
 		75E777EC1F58D86C1B27BBDD /* PhoneNumberPossessionTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhoneNumberPossessionTypes.h; sourceTree = "<group>"; };
+		AD8D0FDA4326DBFB9A799552 /* WebPhoneNumberPossessionCoordinatorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPhoneNumberPossessionCoordinatorProxy.h; sourceTree = "<group>"; };
+		D6E12E60E7EE9B8898B6245C /* WebPhoneNumberPossessionCoordinatorProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPhoneNumberPossessionCoordinatorProxy.cpp; sourceTree = "<group>"; };
+		7F33865A960006E2800C0F69 /* WebPhoneNumberPossessionCoordinatorProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebPhoneNumberPossessionCoordinatorProxy.messages.in; sourceTree = "<group>"; };
+		615CAF1FFF884BA22CC8F813 /* WebPhoneNumberPossessionCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPhoneNumberPossessionCoordinator.h; sourceTree = "<group>"; };
+		8DFC94D0C6BA2B574860E3F6 /* WebPhoneNumberPossessionCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPhoneNumberPossessionCoordinator.cpp; sourceTree = "<group>"; };
+		C5B999CD29BB9B11852EBA95 /* WebPhoneNumberPossessionCoordinatorProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPhoneNumberPossessionCoordinatorProxyCocoa.mm; sourceTree = "<group>"; };
 		22FE3E4E5FDB2A3685605EB9 /* PhoneNumberPossessionManaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberPossessionManaging.swift; sourceTree = "<group>"; };
 		34FC558120E9C9FB6C819C9C /* MockPhoneNumberPossessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPhoneNumberPossessionManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -16127,6 +16135,7 @@
 				BC2B410A2732EF6500A2D191 /* Model */,
 				5105B0D2162F7A5E00E27709 /* Network */,
 				31099974146C8AA80029DEB9 /* Notifications (User) */,
+				847E1AC5A46BBE217B9CA813 /* PhoneNumberPossession */,
 				1A6FB7AA11E64B4900DB1371 /* Plugins */,
 				93AB9B482574C5CE0098B10E /* Speech */,
 				5118E9981F295259003EF9F5 /* Storage */,
@@ -18080,6 +18089,9 @@
 			isa = PBXGroup;
 			children = (
 				E2CD31F14FF7684B5B31B626 /* Cocoa */,
+				D6E12E60E7EE9B8898B6245C /* WebPhoneNumberPossessionCoordinatorProxy.cpp */,
+				AD8D0FDA4326DBFB9A799552 /* WebPhoneNumberPossessionCoordinatorProxy.h */,
+				7F33865A960006E2800C0F69 /* WebPhoneNumberPossessionCoordinatorProxy.messages.in */,
 			);
 			path = PhoneNumberPossession;
 			sourceTree = "<group>";
@@ -18091,8 +18103,18 @@
 				E0E75FD04AA1BAA9278C4E90 /* PhoneNumberPossessionController.swift */,
 				22FE3E4E5FDB2A3685605EB9 /* PhoneNumberPossessionManaging.swift */,
 				75E777EC1F58D86C1B27BBDD /* PhoneNumberPossessionTypes.h */,
+				C5B999CD29BB9B11852EBA95 /* WebPhoneNumberPossessionCoordinatorProxyCocoa.mm */,
 			);
 			path = Cocoa;
+			sourceTree = "<group>";
+		};
+		847E1AC5A46BBE217B9CA813 /* PhoneNumberPossession */ = {
+			isa = PBXGroup;
+			children = (
+				8DFC94D0C6BA2B574860E3F6 /* WebPhoneNumberPossessionCoordinator.cpp */,
+				615CAF1FFF884BA22CC8F813 /* WebPhoneNumberPossessionCoordinator.h */,
+			);
+			path = PhoneNumberPossession;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -19473,6 +19495,8 @@
 				93B0A67526D5ADCF00AA21E4 /* WebPermissionController.h in Headers */,
 				D952EC7A289C6BFA006C240A /* WebPermissionControllerProxy.h in Headers */,
 				D952EC7E289C9A4C006C240A /* WebPermissionControllerProxyMessages.h in Headers */,
+				DE9B7DD307BFDC59AAD5A316 /* WebPhoneNumberPossessionCoordinator.h in Headers */,
+				B3F225E09D8387C10F3EC616 /* WebPhoneNumberPossessionCoordinatorProxy.h in Headers */,
 				1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */,
 				BC5744F012638FB3006F0F12 /* WebPopupItem.h in Headers */,
 				D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */,

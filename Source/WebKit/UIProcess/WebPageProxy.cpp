@@ -424,6 +424,10 @@
 #include "WebAuthenticatorCoordinatorProxy.h"
 #endif
 
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+#include "WebPhoneNumberPossessionCoordinatorProxy.h"
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/JSRemoteInspector.h>
 #include <JavaScriptCore/RemoteInspector.h>
@@ -1841,6 +1845,11 @@ void WebPageProxy::didAttachToRunningProcess()
 #if ENABLE(WEB_AUTHN)
     ASSERT(!m_webAuthnCredentialsMessenger);
     m_webAuthnCredentialsMessenger = WebAuthenticatorCoordinatorProxy::create(*this);
+#endif
+
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    ASSERT(!m_phoneNumberPossessionCoordinatorProxy);
+    m_phoneNumberPossessionCoordinatorProxy = WebPhoneNumberPossessionCoordinatorProxy::create(*this);
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
@@ -9046,6 +9055,10 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
 #if ENABLE(WEB_AUTHN)
     protect(protect(websiteDataStore())->authenticatorManager())->cancelRequest(webPageIDInMainFrameProcess(), frameID);
 #endif
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    if (RefPtr phoneNumberPossessionCoordinatorProxy = m_phoneNumberPossessionCoordinatorProxy)
+        phoneNumberPossessionCoordinatorProxy->cancelRequestForFrame(frameID);
+#endif
     if (RefPtr automationSession = m_configuration->processPool().automationSession())
         automationSession->didDestroyFrame(frameID);
 
@@ -9593,6 +9606,14 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
 
 #if ENABLE(WEB_AUTHN)
     protect(protect(websiteDataStore())->authenticatorManager())->cancelRequest(m_webPageID, frameID);
+#endif
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    if (RefPtr phoneNumberPossessionCoordinatorProxy = m_phoneNumberPossessionCoordinatorProxy) {
+        if (frame->isMainFrame())
+            phoneNumberPossessionCoordinatorProxy->cancelPendingRequest();
+        else
+            phoneNumberPossessionCoordinatorProxy->cancelRequestForFrame(frameID);
+    }
 #endif
 }
 
@@ -16054,6 +16075,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if ENABLE(WEB_AUTHN)
     m_webAuthnCredentialsMessenger = nullptr;
+#endif
+
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    m_phoneNumberPossessionCoordinatorProxy = nullptr;
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)

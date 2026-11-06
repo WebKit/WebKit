@@ -46,6 +46,10 @@
 #include "DisplayCaptureSessionManager.h"
 #endif
 
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+#include "WebPhoneNumberPossessionCoordinatorProxy.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -279,6 +283,11 @@ void WebPageProxyTesting::resetStateBetweenTests()
     });
 
     protect(page->browsingContextGroup())->clearBrowsingContextGroupForTesting();
+
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    if (RefPtr phoneNumberPossessionCoordinatorProxy = page->phoneNumberPossessionCoordinatorProxy())
+        phoneNumberPossessionCoordinatorProxy->clearMockConfigurationForTesting();
+#endif
 }
 
 void WebPageProxyTesting::clearBackForwardList(CompletionHandler<void()>&& completionHandler)

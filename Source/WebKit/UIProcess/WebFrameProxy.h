@@ -264,6 +264,7 @@ public:
 
     // https://html.spec.whatwg.org/multipage/interaction.html#transient-activation
     bool hasTransientActivation() const;
+    MonotonicTime lastActivationTimestamp() const { return m_lastActivationTimestamp; }
 
     NODELETE WebProcessProxy& process() const;
     void setProcess(FrameProcess&);

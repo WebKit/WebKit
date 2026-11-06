@@ -1,0 +1,61 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true PhoneNumberPossessionEnabled=true allowTestOnlyIPC=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/phone-number-possession-ipc.js"></script>
+<script>redirectToLocalhost();</script>
+<body>
+<iframe id="otherFrame" src="about:blank"></iframe>
+<script>
+const notAllowed = "The request was not allowed.";
+
+phoneNumberPossessionIPCTest(async () => {
+    await activate();
+    const result = await requestPhoneNumberPossession(IPC.frameID[0], makeRequest({ relyingPartyIdentifier: "example.com" }));
+    assert_false(result.hasValue);
+    assert_equals(result.message, "The origin of the document is not authorized for the provided RP ID.");
+}, "RequestPhoneNumberPossession for another site's RP ID is rejected");
+
+phoneNumberPossessionIPCTest(async () => {
+    await activate();
+    const result = await requestPhoneNumberPossession(IPC.frameID[0], makeRequest({ relyingPartyIdentifier: "LOCALHOST" }));
+    assert_false(result.hasValue);
+    assert_equals(result.message, "Phone number possession is not available.");
+}, "RequestPhoneNumberPossession matches the RP ID case-insensitively");
+
+phoneNumberPossessionIPCTest(async () => {
+    setMockConfiguration({ isAvailable: true, outcome: MockOutcome.Failure, includesOptionalFields: false });
+    assert_true(await isAvailable(IPC.frameID[0]));
+    await activate();
+    const failure = await requestPhoneNumberPossession(IPC.frameID[0]);
+    assert_false(failure.hasValue);
+    assert_equals(failure.message, notAllowed);
+
+    setMockConfiguration({ isAvailable: true, outcome: MockOutcome.UserCancelled, includesOptionalFields: false });
+    await activate();
+    const userCancelled = await requestPhoneNumberPossession(IPC.frameID[0]);
+    assert_false(userCancelled.hasValue);
+    assert_equals(userCancelled.message, notAllowed);
+}, "A failed request and one the user cancels are rejected the same way");
+
+phoneNumberPossessionIPCTest(async () => {
+    setMockConfiguration({ isAvailable: true, outcome: MockOutcome.NoResponse, includesOptionalFields: false });
+    await activate();
+    let pendingResult = null;
+    const pendingRequest = requestPhoneNumberPossession(IPC.frameID[0]).then(result => pendingResult = result);
+
+    await activate();
+    const secondRequest = await requestPhoneNumberPossession(IPC.frameID[0]);
+    assert_false(secondRequest.hasValue);
+    assert_equals(secondRequest.message, "A phone number possession request is already in progress.");
+
+    await cancel(frameIDOf(otherFrame.contentWindow));
+    assert_equals(pendingResult, null, "Another frame can't cancel the request.");
+
+    await cancel(IPC.frameID[0]);
+    await pendingRequest;
+    assert_false(pendingResult.hasValue);
+    assert_equals(pendingResult.message, "The request was cancelled.");
+}, "Only one request can be pending, and only its frame can cancel it");
+</script>
+</body>

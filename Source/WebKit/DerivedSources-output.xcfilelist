@@ -481,6 +481,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebPermissionControllerMessageRe
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebPermissionControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebPermissionControllerProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebPermissionControllerProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebPhoneNumberPossessionCoordinatorProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebPhoneNumberPossessionCoordinatorProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebProcessConnectionMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebProcessConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/WebProcessMessageReceiver.cpp

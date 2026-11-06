@@ -453,6 +453,10 @@
 #include <WebCore/ExceptionData.h>
 #endif // ENABLE(WEB_AUTHN)
 
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+#include "WebPhoneNumberPossessionCoordinator.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 #include "WebDeviceOrientationUpdateProvider.h"
 #endif
@@ -850,6 +854,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if ENABLE(WEB_AUTHN)
     pageConfiguration.authenticatorCoordinatorClient = makeUnique<WebAuthenticatorCoordinator>(*this);
+#endif
+
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    pageConfiguration.phoneNumberPossessionCoordinatorClient = makeUnique<WebPhoneNumberPossessionCoordinator>(*this);
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

@@ -678,6 +678,8 @@ UIProcess/Model/cocoa/ModelProcessProxyCocoa.mm @nonARC
 
 UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
 
+UIProcess/PhoneNumberPossession/Cocoa/WebPhoneNumberPossessionCoordinatorProxyCocoa.mm
+
 UIProcess/RemoteLayerTree/cocoa/RemoteLayerTreeLayers.mm @nonARC
 
 UIProcess/RemoteLayerTree/mac/RemoteLayerTreeDrawingAreaProxyMac.mm @nonARC
@@ -1055,6 +1057,7 @@ WebPageTestingMessageReceiver.cpp
 WebPasteboardProxyMessageReceiver.cpp @cost:15
 WebPaymentCoordinatorMessageReceiver.cpp
 WebPaymentCoordinatorProxyMessageReceiver.cpp @cost:3
+WebPhoneNumberPossessionCoordinatorProxyMessageReceiver.cpp
 WebProcessMessageReceiver.cpp @cost:9
 WebProcessPoolMessageReceiver.cpp @cost:10
 WebProcessProxyMessageReceiver.cpp @cost:15
