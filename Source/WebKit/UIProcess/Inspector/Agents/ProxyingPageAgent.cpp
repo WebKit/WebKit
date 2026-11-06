@@ -759,12 +759,10 @@ void ProxyingPageAgent::searchInResources(const String& text, std::optional<bool
     }
 }
 
-// FIXME: <https://webkit.org/b/308899> Draw rulers in every WebContent process. Rulers render via
-// InspectorOverlay, which subframe processes don't have wired up, and need page-wide (cross-process)
-// geometry rather than the per-frame local drawing used for paint rects.
 #if !PLATFORM(IOS_FAMILY)
 CommandResult<void> ProxyingPageAgent::setShowRulers(bool)
 {
+    // The frontend sends this only to the page target; see WebInspectorBackendProxy.ShowRulersChanged.
     return { };
 }
 #endif

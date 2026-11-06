@@ -1,0 +1,264 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<style>
+    html { overflow-x: hidden; }
+    body { margin: 0; height: 2000px; }
+    iframe { position: absolute; border: 0; }
+    #cross { left: 20px; top: 150px; width: 360px; height: 300px; }
+    #small { left: 420px; top: 150px; width: 360px; height: 300px; }
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function afterRendering()
+{
+    return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+function uiInspectorHighlight()
+{
+    return new Promise((resolve) => {
+        testRunner.runUIScript(`(() => uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem("inspectorHighlight") ?? null)))()`, resolve);
+    });
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.ShowRulersFrameTarget");
+
+    // Page coordinates of the nodes, from the iframe positions in this page and the node positions in the resource.
+    const crossTargetBounds = [70, 210, 100, 40];
+    const smallNodeBounds = [425, 155, 68, 48];
+
+    const highlightConfig = {
+        showInfo: true,
+        contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+    };
+
+    let crossTarget = null;
+    let smallTarget = null;
+
+    async function evaluateInPage(expression) {
+        let target = WI.assumingMainTarget();
+        let {result: promise} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+        let {result, wasThrown} = await target.RuntimeAgent.awaitPromise.invoke({promiseObjectId: promise.objectId, returnByValue: true});
+        if (wasThrown)
+            throw result.description;
+        return result.value;
+    }
+
+    async function objectIdFor(target, expression) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+        return result.objectId;
+    }
+
+    // What the UI process draws for frame highlights. Null or no frames means it draws none.
+    async function readUIHighlight() {
+        let json = await evaluateInPage("uiInspectorHighlight()");
+        try {
+            return JSON.parse(json)?.inspectorHighlight ?? null;
+        } catch {
+            return null;
+        }
+    }
+
+    // Frame highlights, the page-wide ruler state and the suppression message all travel asynchronously, so poll.
+    async function waitFor(predicate, timeout = 5000) {
+        let deadline = Date.now() + timeout;
+        while (Date.now() < deadline) {
+            try {
+                if (await predicate())
+                    return true;
+            } catch { }
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return false;
+    }
+
+    async function waitForUIHighlight(predicate, timeout) {
+        let ui = null;
+        await waitFor(async () => predicate(ui = await readUIHighlight()), timeout);
+        return ui;
+    }
+
+    // What the main frame's own overlay does, read in its process.
+    function pageOverlayRulersSuppressed() {
+        return evaluateInPage("Promise.resolve(window.internals.inspectorRulersSuppressed())");
+    }
+
+    function waitForPageSuppressed(expected) {
+        return waitFor(async () => await pageOverlayRulersSuppressed() === expected, 10000);
+    }
+
+    function boundsMatch(bounds, [x, y, width, height]) {
+        let near = (a, b) => Math.abs(a - b) <= 1;
+        return !!bounds && near(bounds.x, x) && near(bounds.y, y) && near(bounds.width, width) && near(bounds.height, height);
+    }
+
+    function expectThatOrLog(condition, message, actual) {
+        InspectorTest.expectThat(condition, message);
+        if (!condition)
+            InspectorTest.log("Actual: " + JSON.stringify(actual));
+    }
+
+    async function highlightAndWaitForBounds(target, expression, expectedBounds, options = {}) {
+        let objectId = await objectIdFor(target, expression);
+        await target.DOMAgent.highlightNode.invoke({objectId, highlightConfig, ...options});
+        return waitForUIHighlight((ui) => ui?.frames?.some((frame) => frame.nodes.some((node) => boundsMatch(node.bounds, expectedBounds))));
+    }
+
+    async function expectRulersDrawnWithGuides(ui) {
+        let frame = ui?.frames?.find((frame) => frame.nodes.length);
+        let rulers = frame?.rulers;
+        expectThatOrLog(!!rulers && rulers.top && rulers.left, "Should draw the rulers along the top and left edges.", ui);
+
+        let node = frame?.nodes?.[0];
+        let [clientWidth, clientHeight] = await evaluateInPage("Promise.resolve([document.documentElement.clientWidth, document.documentElement.clientHeight])");
+        expectThatOrLog(boundsMatch(node?.guides, [0, 0, clientWidth, clientHeight]), "Should draw guide lines from the node to the edges of the page's viewport.", node?.guides);
+
+        let viewportLabel = await evaluateInPage("Promise.resolve(`${visualViewport.width}px \u00d7 ${visualViewport.height}px`)");
+        expectThatOrLog(rulers?.viewportLabel === viewportLabel, "Should label the page's visual viewport size.", {expected: viewportLabel, actual: rulers?.viewportLabel});
+    }
+
+    async function expectSuppressed(expected) {
+        expectThatOrLog(await waitForPageSuppressed(expected), `Main frame's overlay should ${expected ? "" : "not "}leave its ruler bars out.`, await pageOverlayRulersSuppressed());
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Wait until the cross-site frame targets have attached.",
+        async test() {
+            crossTarget = await waitForFrameTargetForURLContaining("page-wide-parts-frame.html?cross");
+            smallTarget = await waitForFrameTargetForURLContaining("page-wide-parts-frame.html?small");
+            InspectorTest.expectNotNull(crossTarget, "Should find the frame target for the cross-site iframe.");
+            InspectorTest.expectNotNull(smallTarget, "Should find the frame target for the small cross-site iframe.");
+            InspectorTest.expectThat(crossTarget !== WI.assumingMainTarget() && smallTarget !== WI.assumingMainTarget(), "The cross-site iframes should not use the page target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "RulersFromPageSetting",
+        description: "With Page.setShowRulers on, a highlight without rulers of its own should still be drawn by the UI process with rulers and guide lines, and the page's overlay should leave its bars out.",
+        async test() {
+            await WI.assumingMainTarget().PageAgent.setShowRulers(true);
+
+            let ui = await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", crossTargetBounds);
+            ui = await waitForUIHighlight((ui) => ui?.frames?.some((frame) => frame.rulers));
+            await expectRulersDrawnWithGuides(ui);
+            await expectSuppressed(true);
+        }
+    });
+
+    suite.addTestCase({
+        name: "PageHighlightKeepsDrawingWhileSuppressed",
+        description: "A main frame node highlighted through the page target should keep its box and guide lines while the page's ruler bars are suppressed.",
+        async test() {
+            let objectId = await objectIdFor(WI.assumingMainTarget(), "document.body");
+            await WI.assumingMainTarget().DOMAgent.highlightNode.invoke({objectId, highlightConfig});
+            await evaluateInPage("afterRendering()");
+
+            let rects = JSON.parse(await evaluateInPage("Promise.resolve(JSON.stringify(Array.from(window.internals.inspectorHighlightRects())))"));
+            expectThatOrLog(rects.length > 0, "Page's overlay should still draw the main frame node's box.", rects);
+            await expectSuppressed(true);
+
+            await WI.assumingMainTarget().DOMAgent.hideHighlight();
+        }
+    });
+
+    suite.addTestCase({
+        name: "GridOnlyFrameOverlayKeepsPageRulers",
+        description: "A frame highlight with only a grid overlay should not draw rulers in the UI process or suppress the page's rulers.",
+        async test() {
+            await crossTarget.DOMAgent.hideHighlight();
+            let ui = await waitForUIHighlight((ui) => !ui?.frames?.length);
+            expectThatOrLog(!ui?.frames?.length, "Should stop drawing the node highlight.", ui);
+
+            await crossTarget.RuntimeAgent.evaluate.invoke({expression: `document.body.insertAdjacentHTML("beforeend", '<div id="grid" style="position: absolute; left: 50px; top: 200px; display: grid; grid-template-columns: 100px; grid-template-rows: 40px"><div></div></div>')`});
+            let {nodeId} = await crossTarget.DOMAgent.requestNode.invoke({objectId: await objectIdFor(crossTarget, "document.getElementById('grid')")});
+            await crossTarget.DOMAgent.showGridOverlay.invoke({nodeId, gridOverlayConfig: {gridColor: {r: 0, g: 0, b: 255, a: 1}}});
+
+            ui = await waitForUIHighlight((ui) => ui?.frames?.length === 1);
+            let frame = ui?.frames?.[0];
+            expectThatOrLog(!!frame && !frame.nodes.length && !frame.quads.length, "Grid overlay should draw without nodes or quads.", frame);
+            expectThatOrLog(!!frame && !frame.rulers, "Grid overlay alone should not draw rulers.", frame);
+            await expectSuppressed(false);
+
+            await crossTarget.DOMAgent.hideGridOverlay.invoke({nodeId});
+            await waitForUIHighlight((ui) => !ui?.frames?.length);
+            await crossTarget.RuntimeAgent.evaluate.invoke({expression: "document.getElementById('grid').remove()"});
+        }
+    });
+
+    suite.addTestCase({
+        name: "TwoFrameHighlightsOneRulerSet",
+        description: "Two cross-site iframes highlighted at once should draw one set of ruler bars, but guide lines for each node.",
+        async test() {
+            await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", crossTargetBounds);
+            await highlightAndWaitForBounds(smallTarget, "document.getElementById('n')", smallNodeBounds);
+
+            let twoFrames = (ui) => ui?.frames?.length === 2 && ui.frames.every((frame) => frame.nodes.length === 1 && frame.nodes[0].guides);
+            let ui = await waitForUIHighlight(twoFrames);
+            expectThatOrLog(twoFrames(ui), "Should draw guide lines for the nodes of both iframes.", ui);
+            expectThatOrLog(!!ui && !ui.frames[0].rulers !== !ui.frames[1].rulers, "Should draw exactly one set of ruler bars.", ui?.frames?.map((frame) => !!frame.rulers));
+            await expectSuppressed(true);
+
+            await crossTarget.DOMAgent.hideHighlight();
+            await smallTarget.DOMAgent.hideHighlight();
+            await waitForUIHighlight((ui) => !ui?.frames?.length);
+        }
+    });
+
+    suite.addTestCase({
+        name: "RulersFollowPageSettingOff",
+        description: "Turning Page.setShowRulers off should remove the rulers and guide lines from a highlight that does not ask for them, and let the page draw its rulers again.",
+        async test() {
+            let ui = await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", crossTargetBounds);
+            ui = await waitForUIHighlight((ui) => ui?.frames?.some((frame) => frame.rulers));
+            await expectSuppressed(true);
+
+            await WI.assumingMainTarget().PageAgent.setShowRulers(false);
+            ui = await waitForUIHighlight((ui) => ui?.frames?.length && !ui.frames[0].rulers);
+            expectThatOrLog(!!ui?.frames?.length && !ui.frames[0].rulers && !ui.frames[0].nodes[0].guides, "Should draw no rulers or guide lines.", ui);
+            await expectSuppressed(false);
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightRulersStillDrawnByUIProcess",
+        description: "A highlight that asks for rulers should still draw them with Page.setShowRulers off, as one set of bars.",
+        async test() {
+            let ui = await highlightAndWaitForBounds(crossTarget, "document.getElementById('target')", crossTargetBounds, {showRulers: true});
+            ui = await waitForUIHighlight((ui) => ui?.frames?.some((frame) => frame.rulers));
+            await expectRulersDrawnWithGuides(ui);
+            await expectSuppressed(true);
+
+            await crossTarget.DOMAgent.hideHighlight();
+            await waitForUIHighlight((ui) => !ui?.frames?.length);
+        }
+    });
+
+    suite.addTestCase({
+        name: "NoHighlightKeepsPagePath",
+        description: "With Page.setShowRulers on and no highlight, the UI process should draw nothing and the page should keep drawing the rulers.",
+        async test() {
+            await WI.assumingMainTarget().PageAgent.setShowRulers(true);
+            await evaluateInPage("afterRendering()");
+
+            let ui = await readUIHighlight();
+            expectThatOrLog(!ui?.frames?.length, "UI process should draw nothing without a highlight.", ui);
+            await expectSuppressed(false);
+
+            await WI.assumingMainTarget().PageAgent.setShowRulers(false);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Page.setShowRulers marks a highlighted node in a cross-site iframe, whose highlight the UI process draws.</p>
+<iframe id="cross" src="http://localhost:8000/site-isolation/inspector/dom/resources/page-wide-parts-frame.html?cross"></iframe>
+<iframe id="small" src="http://localhost:8000/site-isolation/inspector/dom/resources/page-wide-parts-frame.html?small"></iframe>
+</body>
+</html>

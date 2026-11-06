@@ -2334,6 +2334,16 @@ ExceptionOr<Ref<DOMRectList>> Internals::inspectorHighlightRects()
     return DOMRectList::create(highlight.quads);
 }
 
+ExceptionOr<bool> Internals::inspectorRulersSuppressed()
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    return document->page()->inspectorController().rulersSuppressed();
+}
+
+
 ExceptionOr<unsigned> Internals::inspectorPaintRectCount()
 {
     RefPtr document = contextDocument();

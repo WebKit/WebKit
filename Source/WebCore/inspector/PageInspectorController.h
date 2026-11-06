@@ -116,6 +116,9 @@ public:
     void inspect(Node*);
     static bool isCoveredByPageDOMAgent(const LocalFrame&);
     NODELETE WEBCORE_EXPORT bool shouldShowOverlay() const;
+    WEBCORE_EXPORT void setRulersSuppressed(bool);
+    WEBCORE_EXPORT bool rulersSuppressed() const;
+    WEBCORE_EXPORT bool showRulers() const;
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
     WEBCORE_EXPORT void getHighlight(InspectorOverlay::Highlight&, InspectorOverlay::CoordinateSystem) const;
     void hideHighlight();

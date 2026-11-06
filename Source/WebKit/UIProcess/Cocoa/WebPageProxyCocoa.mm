@@ -65,6 +65,7 @@
 #import "WebContextMenuProxy.h"
 #import "WebEventModifier.h"
 #import "WebFrameProxy.h"
+#import "WebPageInspectorController.h"
 #import "WebPageLoadTiming.h"
 #import "WebPageMessages.h"
 #import "WebPageProxyInternals.h"
@@ -202,8 +203,15 @@ NODELETE static bool exceedsRenderTreeSizeSizeThreshold(uint64_t thresholdSize, 
 
 void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction, const std::optional<MainFrameData>& mainFrameData, const PageData& pageData, const TransactionID& transactionID)
 {
-    if (RefPtr pageClient = this->pageClient())
+    if (RefPtr pageClient = this->pageClient()) {
         pageClient->didCommitLayerTree(layerTreeTransaction, mainFrameData, pageData, transactionID);
+
+#if PLATFORM(MAC)
+        // Frame highlights draw rulers and labels against the page's scroll position and viewport.
+        if (mainFrameData && !m_inspectorController->frameHighlights().isEmpty())
+            pageClient->frameInspectorHighlightPageGeometryMayHaveChanged();
+#endif
+    }
 
     // FIXME: Remove this special mechanism and fold it into the transaction's layout milestones.
     if (internals().observedLayoutMilestones.contains(WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold) && !m_hitRenderTreeSizeThreshold
@@ -1308,6 +1316,11 @@ NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceI
     if (activeContextMenu && [userInterfaceItem isEqualToString:@"mediaControlsContextMenu"])
         return @{ userInterfaceItem: activeContextMenu->platformData().get() };
 #endif // ENABLE(CONTEXT_MENUS)
+
+#if PLATFORM(MAC)
+    if ([userInterfaceItem isEqualToString:@"inspectorHighlight"])
+        return @{ userInterfaceItem: frameInspectorHighlightsForTesting().get() };
+#endif
 
     return nil;
 }

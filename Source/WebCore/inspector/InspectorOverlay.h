@@ -29,12 +29,14 @@
 
 #pragma once
 
+#include <WebCore/BoxExtents.h>
 #include <WebCore/Color.h>
 #include <WebCore/FloatLine.h>
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorBackendClient.h>
 #include <WebCore/InspectorOverlayLabel.h>
+#include <WebCore/IntPoint.h>
 #include <WebCore/Path.h>
 #include <WebCore/Timer.h>
 #include <wtf/AbstractCanMakeCheckedPtr.h>
@@ -119,6 +121,24 @@ struct InspectorOverlayHighlight {
         Vector<InspectorOverlayLabel> labels;
     };
 
+    struct ShapeOutside {
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ShapeOutside);
+
+        std::optional<FloatQuad> boundingQuad;
+        std::optional<Path> marginPath;
+        Path shapePath;
+    };
+
+    struct NodeInfo {
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(NodeInfo);
+
+        Vector<FloatQuad> quads;
+        std::optional<ShapeOutside> shapeOutside;
+        Vector<InspectorOverlayLabel::Content> titleContents;
+        std::optional<GridHighlightOverlay> gridHighlightOverlay;
+        std::optional<FlexHighlightOverlay> flexHighlightOverlay;
+    };
+
     void setDataFromConfig(const Config& config)
     {
         contentColor = config.content;
@@ -139,6 +159,8 @@ struct InspectorOverlayHighlight {
     Vector<FloatQuad> quads;
     Vector<GridHighlightOverlay> gridHighlightOverlays;
     Vector<FlexHighlightOverlay> flexHighlightOverlays;
+    Vector<NodeInfo> nodeInfos;
+    bool showRulers { false };
     bool usePageCoordinates { true };
 
     using Bounds = FloatRect;
@@ -214,6 +236,34 @@ public:
     enum class CoordinateSystem {
         View, // Adjusts for the main frame's scroll offset.
         Document, // Does not adjust for the main frame's scroll offset.
+        MainFrameView, // Main frame view coordinates across isolated frames, with each node in nodeInfos.
+    };
+
+    struct PageGeometry {
+        FloatSize viewportSize;
+        FloatBoxExtent obscuredContentInsets;
+        IntPoint scrollOffset;
+        FloatSize visualViewportSize;
+        float pageScaleFactor { 1 };
+        float pageZoomFactor { 1 };
+        String fontFamily;
+
+        friend bool operator==(const PageGeometry&, const PageGeometry&) = default;
+    };
+
+    struct FrameHighlightGeometry {
+        struct NodeGeometry {
+            FloatRect bounds;
+            FloatRect titleBounds;
+            FloatRect guidesBounds;
+        };
+        struct Rulers {
+            bool drawTopEdge { true };
+            bool drawLeftEdge { true };
+            String viewportSizeText;
+        };
+        Vector<NodeGeometry> nodes;
+        std::optional<Rulers> rulers;
     };
 
     void update();
@@ -231,6 +281,11 @@ public:
     unsigned paintRectCount() const { return m_paintRects.size(); }
 
     void setShowRulers(bool);
+    bool showRulers() const { return m_showRulers; }
+    // Under Site Isolation the UI process draws the ruler bars while it draws a frame highlight;
+    // the page overlay then leaves its bars out but still draws its highlight's guide lines.
+    void setRulersSuppressed(bool);
+    bool rulersSuppressed() const { return m_rulersSuppressed; }
 
     NODELETE Node* highlightedNode() const;
     unsigned gridOverlayCount() const { return m_activeGridOverlays.size(); }
@@ -254,22 +309,30 @@ public:
     WEBCORE_EXPORT static void drawGridOverlay(GraphicsContext&, const InspectorOverlayHighlight::GridHighlightOverlay&);
     WEBCORE_EXPORT static void drawFlexOverlay(GraphicsContext&, const InspectorOverlayHighlight::FlexHighlightOverlay&);
 
-private:
-    using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
-
     struct RulerExclusion {
         Highlight::Bounds bounds;
         Path titlePath;
     };
+
+    // When showRulers, unions the highlight's ruler exclusion into the out parameter; the caller
+    // draws the bars once over every frame highlight with drawRulers().
+    WEBCORE_EXPORT static FrameHighlightGeometry drawFrameHighlight(GraphicsContext&, const Highlight&, const PageGeometry&, bool showRulers, RulerExclusion&);
+    WEBCORE_EXPORT static FrameHighlightGeometry::Rulers drawRulers(GraphicsContext&, const RulerExclusion&, const PageGeometry&);
+
+private:
+    using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
 
     RulerExclusion drawNodeHighlight(GraphicsContext&, Node&);
     RulerExclusion drawQuadHighlight(GraphicsContext&, const FloatQuad&);
     void drawPaintRects(GraphicsContext&, const Deque<TimeRectPair>&);
     void drawBounds(GraphicsContext&, const Highlight::Bounds&);
     void drawRulers(GraphicsContext&, const RulerExclusion&);
+    static FloatRect drawBounds(GraphicsContext&, const Highlight::Bounds&, const PageGeometry&);
+    std::optional<PageGeometry> mainFramePageGeometry() const;
 
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
     
+    Highlight::NodeInfo buildNodeInfo(Node&);
     std::optional<InspectorOverlayHighlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false);
     std::optional<InspectorOverlayHighlight::FlexHighlightOverlay> buildFlexOverlay(const InspectorOverlay::Flex&);
 
@@ -287,8 +350,10 @@ private:
     // True when scoped to one frame rather than the whole page.
     bool isFrameScoped() const { return !!m_owner->overlayOwnerFrame(); }
 
-    // Single answer to "are rulers being drawn", so the guide lines and tooltip insets agree.
+    // Single answer to "are rulers wanted", so the guide lines and tooltip insets agree.
     NODELETE bool shouldDrawRulers() const;
+    // The bars themselves can be suppressed while the guide lines stay, see setRulersSuppressed().
+    NODELETE bool shouldDrawRulerBars() const;
 
     const CheckedRef<const InspectorOverlayOwner> m_owner;
 
@@ -312,6 +377,7 @@ private:
     bool m_showPaintRects { false };
     bool m_showRulers { false };
     bool m_showRulersForNodeHighlight { false };
+    bool m_rulersSuppressed { false };
 };
 
 } // namespace WebCore

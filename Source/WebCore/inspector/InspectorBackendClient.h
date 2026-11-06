@@ -67,12 +67,15 @@ public:
     virtual void highlightFrame(LocalFrame&) { highlight(); }
     virtual void hideHighlightForFrame(LocalFrame&) { hideHighlight(); }
 
+    virtual void setFrameHighlightsNeedDisplay() { }
+
     virtual void showInspectorIndication() { }
     virtual void hideInspectorIndication() { }
 
     virtual bool overridesShowPaintRects() const { return false; }
     virtual void setShowPaintRects(bool) { }
     virtual void showPaintRect(const FloatRect&) { }
+    virtual void showRulersChanged(bool) { }
     // Frame-aware variant: draw the paint rect scoped to a specific local root frame (Site Isolation
     // per-frame overlays). Defaults to the frame-less version for clients that don't distinguish frames.
     virtual void showPaintRect(LocalFrame&, const FloatRect& rect) { showPaintRect(rect); }

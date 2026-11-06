@@ -52,6 +52,8 @@
 #import "WKQuickLookPreviewController.h"
 #import "WKSharingServicePickerDelegate.h"
 #import "WebContextMenuProxyMac.h"
+#import "WebFrameProxy.h"
+#import "WebPageInspectorController.h"
 #import <WebCore/ColorSpace.h>
 #import "WebPageMessages.h"
 #import "WebPageProxyInternals.h"
@@ -66,7 +68,9 @@
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/NullGraphicsContext.h>
 #import <WebCore/Pasteboard.h>
+#import <WebCore/PathElement.h>
 #import <WebCore/Quirks.h>
 #import <WebCore/RemoteUserInputEventData.h>
 #import <WebCore/SharedBuffer.h>
@@ -1294,6 +1298,179 @@ void WebPageProxy::dispatchTrackedPointerEvent(std::optional<FrameIdentifier> fr
 
         protectedThis->dispatchTrackedPointerEvent(remoteUserInputEventData->targetFrameID, phase, FloatPoint { remoteUserInputEventData->transformedPoint }, modifiers, WTF::move(completionHandler));
     } });
+}
+
+static bool isFinite(const FloatPoint& point)
+{
+    return std::isfinite(point.x()) && std::isfinite(point.y());
+}
+
+static bool isFinite(const FloatQuad& quad)
+{
+    return isFinite(quad.p1()) && isFinite(quad.p2()) && isFinite(quad.p3()) && isFinite(quad.p4());
+}
+
+static bool isFinite(const FloatLine& line)
+{
+    return isFinite(line.start()) && isFinite(line.end());
+}
+
+static bool isFinite(const InspectorOverlayLabel& label)
+{
+    return isFinite(label.location());
+}
+
+static bool isFinite(const InspectorOverlayHighlight::GridHighlightOverlay::Area& area)
+{
+    return isFinite(area.quad);
+}
+
+static bool isFinite(const Path& path)
+{
+    bool allPointsAreFinite { true };
+    path.applyElements([&](const PathElement& element) {
+        std::span<const FloatPoint> points { element.points };
+        switch (element.type) {
+        case PathElement::Type::MoveToPoint:
+        case PathElement::Type::AddLineToPoint:
+            points = points.first(1);
+            break;
+        case PathElement::Type::AddQuadCurveToPoint:
+            points = points.first(2);
+            break;
+        case PathElement::Type::AddCurveToPoint:
+            break;
+        case PathElement::Type::CloseSubpath:
+            points = { };
+            break;
+        }
+        for (auto& point : points)
+            allPointsAreFinite = allPointsAreFinite && isFinite(point);
+    });
+    return allPointsAreFinite;
+}
+
+static bool isFinite(const InspectorOverlayHighlight::GridHighlightOverlay&);
+static bool isFinite(const InspectorOverlayHighlight::FlexHighlightOverlay&);
+static bool isFinite(const InspectorOverlayHighlight::NodeInfo&);
+
+template<typename T> static bool isFinite(const Vector<T>& values)
+{
+    return std::ranges::all_of(values, [](auto& value) {
+        return isFinite(value);
+    });
+}
+
+static bool isFinite(const InspectorOverlayHighlight::GridHighlightOverlay& overlay)
+{
+    return isFinite(overlay.gridLines) && isFinite(overlay.gaps) && isFinite(overlay.areas) && isFinite(overlay.labels);
+}
+
+static bool isFinite(const InspectorOverlayHighlight::FlexHighlightOverlay& overlay)
+{
+    return isFinite(overlay.containerBounds) && isFinite(overlay.itemBounds) && isFinite(overlay.mainAxisGaps) && isFinite(overlay.mainAxisSpaceBetweenItemsAndGaps)
+        && isFinite(overlay.spaceBetweenItemsAndCrossAxisSpace) && isFinite(overlay.crossAxisGaps) && isFinite(overlay.labels);
+}
+
+static bool isFinite(const InspectorOverlayHighlight::NodeInfo& nodeInfo)
+{
+    if (auto& shape { nodeInfo.shapeOutside }) {
+        if ((shape->boundingQuad && !isFinite(*shape->boundingQuad)) || (shape->marginPath && !isFinite(*shape->marginPath)) || !isFinite(shape->shapePath))
+            return false;
+    }
+    return isFinite(nodeInfo.quads) && (!nodeInfo.gridHighlightOverlay || isFinite(*nodeInfo.gridHighlightOverlay)) && (!nodeInfo.flexHighlightOverlay || isFinite(*nodeInfo.flexHighlightOverlay));
+}
+
+// The drawing code expects finite geometry, which a page can break with an extreme transform.
+static bool isFinite(const InspectorOverlayHighlight& highlight)
+{
+    return isFinite(highlight.quads) && isFinite(highlight.gridHighlightOverlays) && isFinite(highlight.flexHighlightOverlays) && isFinite(highlight.nodeInfos);
+}
+
+// A highlight can race with its frame leaving the sender's process, so drop a message that cannot
+// apply rather than failing a MESSAGE_CHECK, which crashes the UI process with site isolation.
+void WebPageProxy::showFrameInspectorHighlight(IPC::Connection& connection, FrameIdentifier frameID, InspectorOverlayHighlight&& highlight)
+{
+    if (m_isClosed || !protect(preferences())->siteIsolationEnabled() || !m_inspectorController->hasFrontends())
+        return;
+
+    RefPtr frame { WebFrameProxy::webFrame(frameID) };
+    Ref process { WebProcessProxy::fromConnection(connection) };
+    if (!frame || frame->page() != this || &frame->process() != process.ptr())
+        return;
+
+    if (!isFinite(highlight)) {
+        m_inspectorController->clearFrameHighlight(frameID);
+        return;
+    }
+
+    m_inspectorController->setFrameHighlight(frameID, process->coreProcessIdentifier(), WTF::move(highlight));
+}
+
+void WebPageProxy::hideFrameInspectorHighlight(IPC::Connection& connection, FrameIdentifier frameID)
+{
+    RefPtr frame { WebFrameProxy::webFrame(frameID) };
+    Ref process { WebProcessProxy::fromConnection(connection) };
+    if (!frame || frame->page() != this || &frame->process() != process.ptr())
+        return;
+
+    m_inspectorController->clearFrameHighlight(frameID);
+}
+
+RetainPtr<NSDictionary> WebPageProxy::frameInspectorHighlightsForTesting() const
+{
+    auto dictionaryForRect = [](const FloatRect& rect) {
+        return adoptNS([@{ @"x": @(rect.x()), @"y": @(rect.y()), @"width": @(rect.width()), @"height": @(rect.height()) } mutableCopy]);
+    };
+
+    auto pageGeometry { m_inspectorController->frameHighlightPageGeometry() };
+    NullGraphicsContext context;
+
+    RetainPtr frames { adoptNS([[NSMutableArray alloc] init]) };
+    for (auto& drawing : m_inspectorController->drawFrameHighlights(context, pageGeometry)) {
+        auto& [highlight, geometry] = drawing;
+
+        RetainPtr nodes { adoptNS([[NSMutableArray alloc] init]) };
+        for (size_t i = 0; i < geometry.nodes.size(); ++i) {
+            RetainPtr node { adoptNS([[NSMutableDictionary alloc] init]) };
+            [node setObject:dictionaryForRect(geometry.nodes[i].bounds).get() forKey:@"bounds"];
+            if (!geometry.nodes[i].guidesBounds.isEmpty())
+                [node setObject:dictionaryForRect(geometry.nodes[i].guidesBounds).get() forKey:@"guides"];
+
+            if (!geometry.nodes[i].titleBounds.isEmpty()) {
+                StringBuilder titleText;
+                for (auto& content : highlight->nodeInfos[i].titleContents)
+                    titleText.append(content.text);
+
+                RetainPtr title { dictionaryForRect(geometry.nodes[i].titleBounds) };
+                [title setObject:titleText.toString().createNSString().get() forKey:@"text"];
+                [node setObject:title.get() forKey:@"title"];
+            }
+
+            [nodes addObject:node.get()];
+        }
+
+        RetainPtr quads { adoptNS([[NSMutableArray alloc] init]) };
+        for (auto& quad : highlight->quads)
+            [quads addObject:dictionaryForRect(quad.boundingBox()).get()];
+
+        RetainPtr frame { adoptNS([[NSMutableDictionary alloc] init]) };
+        [frame setObject:nodes.get() forKey:@"nodes"];
+        [frame setObject:quads.get() forKey:@"quads"];
+        if (auto& rulers { geometry.rulers }) {
+            [frame setObject:@{
+                @"top": @(rulers->drawTopEdge),
+                @"left": @(rulers->drawLeftEdge),
+                @"viewportLabel": rulers->viewportSizeText.createNSString().get(),
+            } forKey:@"rulers"];
+        }
+        [frames addObject:frame.get()];
+    }
+
+    return @{
+        @"frames": frames.get(),
+        @"viewport": @{ @"width": @(pageGeometry.viewportSize.width()), @"height": @(pageGeometry.viewportSize.height()) },
+    };
 }
 
 } // namespace WebKit

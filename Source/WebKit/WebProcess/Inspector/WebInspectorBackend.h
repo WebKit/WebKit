@@ -99,6 +99,7 @@ public:
     void elementSelectionChanged(bool);
     void timelineRecordingChanged(bool);
     void showPaintRectsChanged(bool);
+    void showRulersChanged(bool);
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>);
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)

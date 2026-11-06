@@ -5488,7 +5488,7 @@ enum class WebCore::ModelContextDisablePortal : bool
 };
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 [Nested] enum class WebCore::InspectorOverlayLabel::Arrow::Direction : uint8_t {
     None,
     Down,
@@ -5563,6 +5563,20 @@ class WebCore::InspectorOverlayLabel {
     Rects,
 };
 
+[Nested] struct WebCore::InspectorOverlayHighlight::ShapeOutside {
+    std::optional<WebCore::FloatQuad> boundingQuad;
+    std::optional<WebCore::Path> marginPath;
+    WebCore::Path shapePath;
+};
+
+[Nested] struct WebCore::InspectorOverlayHighlight::NodeInfo {
+    Vector<WebCore::FloatQuad> quads;
+    std::optional<WebCore::InspectorOverlayHighlight::ShapeOutside> shapeOutside;
+    Vector<WebCore::InspectorOverlayLabel::Content> titleContents;
+    std::optional<WebCore::InspectorOverlayHighlight::GridHighlightOverlay> gridHighlightOverlay;
+    std::optional<WebCore::InspectorOverlayHighlight::FlexHighlightOverlay> flexHighlightOverlay;
+};
+
 header: <WebCore/InspectorOverlay.h>
 [CustomHeader] struct WebCore::InspectorOverlayHighlight {
     WebCore::Color contentColor;
@@ -5574,6 +5588,8 @@ header: <WebCore/InspectorOverlay.h>
     Vector<WebCore::FloatQuad> quads;
     Vector<WebCore::InspectorOverlayHighlight::GridHighlightOverlay> gridHighlightOverlays;
     Vector<WebCore::InspectorOverlayHighlight::FlexHighlightOverlay> flexHighlightOverlays;
+    Vector<WebCore::InspectorOverlayHighlight::NodeInfo> nodeInfos;
+    bool showRulers;
     bool usePageCoordinates;
 };
 

@@ -39,6 +39,10 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(MAC)
+#include <WebCore/InspectorOverlay.h>
+#endif
+
 namespace Inspector {
 class BackendDispatcher;
 class FrontendChannel;
@@ -118,6 +122,29 @@ public:
 
     void disconnectFrameTargetForTesting(WebCore::FrameIdentifier);
 
+#if PLATFORM(MAC)
+    using FrameHighlights = HashMap<WebCore::FrameIdentifier, std::pair<WebCore::ProcessIdentifier, WebCore::InspectorOverlayHighlight>>;
+    void setFrameHighlight(WebCore::FrameIdentifier, WebCore::ProcessIdentifier, WebCore::InspectorOverlayHighlight&&);
+    void clearFrameHighlight(WebCore::FrameIdentifier);
+    const FrameHighlights& frameHighlights() const LIFETIME_BOUND { return m_frameHighlights; }
+    WebCore::InspectorOverlay::PageGeometry frameHighlightPageGeometry() const;
+
+    // The page-wide ruler toggle from Page.setShowRulers, forwarded by the main frame's process.
+    void setShowRulers(bool);
+    // Called when the inspector detaches from the main frame's process, before the new process's
+    // WebInspectorBackendProxy receiver is registered, so no forwarded toggle can arrive out of order.
+    void resetPageRulers();
+    bool showRulers() const { return m_showRulers; }
+
+    struct FrameHighlightDrawing {
+        const WebCore::InspectorOverlayHighlight* highlight { nullptr };
+        WebCore::InspectorOverlay::FrameHighlightGeometry geometry;
+    };
+    // Draws every frame highlight with its guide lines, then one set of ruler bars over the union of
+    // their exclusions. Reports the bars on the first highlight that gets rulers.
+    Vector<FrameHighlightDrawing> drawFrameHighlights(WebCore::GraphicsContext&, const WebCore::InspectorOverlay::PageGeometry&) const;
+#endif
+
 private:
     void browsingContextGroupPageWasAddedToProcess(WebProcessProxy&, WebCore::PageIdentifier);
 
@@ -128,6 +155,18 @@ private:
     void removeTarget(const String& targetId);
 
     bool shouldManageFrameTargets() const;
+
+#if PLATFORM(MAC)
+    void clearFrameHighlightNotFromProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
+    void clearAllFrameHighlights();
+    void frameHighlightsDidChange();
+    // Whether a frame highlight's nodes get rulers, guide lines and the viewport size label. Grid and
+    // flex overlays alone have no node bounds to mark and never draw rulers here.
+    bool frameHighlightShowRulers(const WebCore::InspectorOverlayHighlight&) const;
+    // Whether this process draws ruler bars for a frame highlight, so the page's own bars stay off.
+    bool pageRulersSuppressed() const;
+    void updatePageRulersSuppression();
+#endif
 
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
@@ -145,6 +184,13 @@ private:
     bool m_didCreateLazyAgents { false };
     std::unique_ptr<DebuggerPauseCoordinator> m_debuggerPauseCoordinator;
     bool m_isMainFrameNavigating { false };
+
+#if PLATFORM(MAC)
+    FrameHighlights m_frameHighlights;
+    bool m_showRulers { false };
+    // std::nullopt after a main frame process change, so the next update resends the current value.
+    std::optional<bool> m_lastSentPageRulersSuppression;
+#endif
 };
 
 } // namespace WebKit

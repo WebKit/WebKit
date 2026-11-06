@@ -64,6 +64,7 @@ private:
     void hideHighlight() override;
     void highlightFrame(WebCore::LocalFrame&) override;
     void hideHighlightForFrame(WebCore::LocalFrame&) override;
+    void setFrameHighlightsNeedDisplay() override;
 
 #if PLATFORM(IOS_FAMILY)
     void showInspectorIndication() override;
@@ -77,6 +78,7 @@ private:
 
     bool overridesShowPaintRects() const override { return true; }
     void setShowPaintRects(bool) override;
+    void showRulersChanged(bool) override;
     void showPaintRect(const WebCore::FloatRect&) override;
     void showPaintRect(WebCore::LocalFrame&, const WebCore::FloatRect&) override;
     void willDestroyFrameOverlays(WebCore::LocalFrame&) override;

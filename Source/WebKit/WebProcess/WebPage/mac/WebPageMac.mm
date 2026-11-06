@@ -77,6 +77,7 @@
 #import <WebCore/EventHandler.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FrameDestructionObserverInlines.h>
+#import <WebCore/FrameInspectorController.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/GraphicsContext.h>
@@ -1235,6 +1236,45 @@ void WebPage::updatePDFHUDLocationsAfterRemoteFrameGeometryChange()
 }
 
 #endif // ENABLE(PDF_PLUGIN)
+
+void WebPage::frameInspectorHighlightNeedsUpdate(LocalFrame& frame)
+{
+    m_frameInspectorHighlightsNeedingUpdate.add(frame.frameID());
+    protect(corePage())->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
+}
+
+void WebPage::frameInspectorHighlightsNeedUpdate()
+{
+    if (m_shownFrameInspectorHighlights.isEmpty())
+        return;
+
+    for (auto frameID : m_shownFrameInspectorHighlights)
+        m_frameInspectorHighlightsNeedingUpdate.add(frameID);
+    protect(corePage())->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
+}
+
+void WebPage::hideFrameInspectorHighlight(FrameIdentifier frameID)
+{
+    m_frameInspectorHighlightsNeedingUpdate.remove(frameID);
+    if (m_shownFrameInspectorHighlights.remove(frameID))
+        send(Messages::WebPageProxy::HideFrameInspectorHighlight(frameID));
+}
+
+// After layout, so the highlight matches what this rendering update commits.
+void WebPage::sendFrameInspectorHighlights()
+{
+    for (auto frameID : std::exchange(m_frameInspectorHighlightsNeedingUpdate, { })) {
+        RefPtr webFrame { WebProcess::singleton().webFrame(frameID) };
+        RefPtr frame { webFrame ? webFrame->coreLocalFrame() : nullptr };
+        if (!frame)
+            continue;
+
+        InspectorOverlay::Highlight highlight;
+        frame->inspectorController().getHighlight(highlight, InspectorOverlay::CoordinateSystem::MainFrameView);
+        m_shownFrameInspectorHighlights.add(frameID);
+        send(Messages::WebPageProxy::ShowFrameInspectorHighlight(frameID, highlight));
+    }
+}
 
 void WebPage::dispatchTrackedPointerEvent(std::optional<FrameIdentifier> frameID, WebEventPhase phase, FloatPoint locationInRootView, OptionSet<WebEventModifier> modifiers, CompletionHandler<void(bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
