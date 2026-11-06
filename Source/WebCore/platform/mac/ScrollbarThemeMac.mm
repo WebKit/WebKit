@@ -640,8 +640,10 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
         context.translate(scrollbarRect.location());
         paintScrollbar(scrollbar, context);
     } else {
+        // AppKit draws the scroll bar into a CGContext, so display list and PDF contexts get an Unaccelerated buffer.
+        auto renderingMode = context.renderingMode() == RenderingMode::Accelerated ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
         if (auto imageBuffer = [&] -> RefPtr<ImageBuffer> {
-            if (auto buffer = context.createImageBuffer(scrollbarRect.size(), scrollbar.deviceScaleFactor(), ColorSpace::SRGB(), context.renderingMode(), RenderingMethod::Local)) {
+            if (auto buffer = context.createImageBuffer(scrollbarRect.size(), scrollbar.deviceScaleFactor(), ColorSpace::SRGB(), renderingMode, RenderingMethod::Local)) {
                 paintScrollbar(scrollbar, buffer->context());
                 return buffer;
             }

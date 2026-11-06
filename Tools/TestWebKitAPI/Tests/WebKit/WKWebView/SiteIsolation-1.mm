@@ -1290,6 +1290,66 @@ TEST(SiteIsolation, ScrollerStyleChangeUpdatesCrossOriginIframe)
     [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
 }
 
+// Remote snapshots record the frames into the GPU process, so the legacy scroll bars, which are drawn
+// into image buffers there, have to be drawn into image buffers with pixels.
+TEST(SiteIsolation, RemoteSnapshotIncludesLegacyScrollbars)
+{
+    static constexpr auto scrollerHTML = "<div id='scroller' style='width: 100px; height: 100px; overflow: scroll; background-color: rgb(0, 255, 0)'><div style='height: 1000px'></div></div>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { makeString("<body style='margin: 0'>"_s, scrollerHTML, "<iframe style='display: block; width: 200px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s) } },
+        { "/iframe"_s, { makeString("<body style='margin: 0'>"_s, scrollerHTML, "</body>"_s) } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    {
+        // Web processes take their scroller style from the UI process.
+        siteIsolationScrollerStyle = NSScrollerStyleLegacy;
+        ClassMethodSwizzler swizzler(NSScroller.class, @selector(preferredScrollerStyle), reinterpret_cast<IMP>(siteIsolationPreferredScrollerStyle));
+
+        RetainPtr configuration = server.httpsProxyConfiguration();
+        setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+        setFeatureEnabled(configuration.get(), @"UseGPUProcessForDOMRenderingEnabled", true);
+        CGFloat viewSize = 400;
+        auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, viewSize, viewSize));
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+        [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+        RetainPtr childFrame = [webView firstChildFrame];
+        EXPECT_NE([webView mainFrame].info._processIdentifier, [childFrame _processIdentifier]);
+
+        // Legacy scroll bars take up space. The scroll bar tracks start where the client area ends.
+        NSString *clientWidthScript = @"document.getElementById('scroller').clientWidth";
+        int clientWidth = [webView stringByEvaluatingJavaScript:clientWidthScript].intValue;
+        EXPECT_LT(clientWidth, 100);
+        EXPECT_EQ([webView stringByEvaluatingJavaScript:clientWidthScript inFrame:childFrame.get()].intValue, clientWidth);
+
+        RetainPtr snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+        [snapshotConfiguration setRect:NSMakeRect(0, 0, viewSize, viewSize)];
+        [snapshotConfiguration setSnapshotWidth:@(viewSize)];
+
+        __block RetainPtr<CGImageRef> image;
+        __block bool done = false;
+        [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(NSImage *snapshotImage, NSError *error) {
+            EXPECT_NULL(error);
+            image = Util::convertToCGImage(snapshotImage);
+            done = true;
+        }];
+        Util::run(&done);
+        ASSERT_NOT_NULL(image.get());
+
+        CGImagePixelReader reader { image.get() };
+        unsigned scale = reader.width() / viewSize;
+        unsigned trackMiddle = (clientWidth + 100) / 2;
+        // The main frame's scroller is at the top, and the iframe's scroller is right below it.
+        for (unsigned top : { 0, 100 }) {
+            EXPECT_WK_STREQ("rgb(0, 255, 0)", reader.cssColorAt(40 * scale, (top + 40) * scale));
+            EXPECT_WK_STRNE("rgb(0, 255, 0)", reader.cssColorAt(trackMiddle * scale, (top + 60) * scale));
+            EXPECT_WK_STRNE("rgb(0, 255, 0)", reader.cssColorAt(40 * scale, (top + trackMiddle) * scale));
+        }
+    }
+
+    // Put anything that observed the swizzled style back on the real one.
+    [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+}
+
 TEST(SiteIsolation, OverlayScrollbarStyleChangeUpdatesCrossOriginIframe)
 {
     HTTPServer server({

@@ -132,7 +132,9 @@ void DataDetectorHighlight::paintContents(const GraphicsLayer&, GraphicsContext&
     CGRect highlightBoundingRect = PAL::softLink_DataDetectors_DDHighlightGetBoundingRect(protect(m_highlight).get());
     highlightBoundingRect.origin = CGPointZero;
 
-    auto imageBuffer = graphicsContext.createImageBuffer(FloatSize(highlightBoundingRect.size), deviceScaleFactor(), ColorSpace::SRGB(), graphicsContext.renderingMode(), RenderingMethod::Local);
+    // DataDetectors draws the highlight into a CGContext, so display list and PDF contexts get an Unaccelerated buffer.
+    auto renderingMode = graphicsContext.renderingMode() == RenderingMode::Accelerated ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    auto imageBuffer = graphicsContext.createImageBuffer(FloatSize(highlightBoundingRect.size), deviceScaleFactor(), ColorSpace::SRGB(), renderingMode, RenderingMethod::Local);
     if (!imageBuffer)
         return;
 
