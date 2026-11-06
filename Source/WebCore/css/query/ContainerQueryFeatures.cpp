@@ -309,7 +309,7 @@ struct StyleFeatureSchema : public FeatureSchema {
             return toEvaluationResult(customPropertyValue && !customPropertyValue->isGuaranteedInvalid());
 
         auto resolvedFeatureValue = [&] -> RefPtr<const Style::CustomProperty> {
-            auto* featureValue = std::get_if<Ref<CSSCustomPropertyValue>>(&*feature.rightComparison->value);
+            auto* featureValue = std::get_if<Ref<CSSCustomPropertyValue>>(&feature.rightComparison.value);
             ASSERT(featureValue);
 
             // Resolve the queried custom property value for var() references, css-wide keywords and registered properties.
@@ -335,7 +335,7 @@ struct StyleFeatureSchema : public FeatureSchema {
         if (resolvedFeatureValue->isGuaranteedInvalid())
             return toEvaluationResult(!customPropertyValue || customPropertyValue->isGuaranteedInvalid());
 
-        ASSERT(feature.rightComparison->op == ComparisonOperator::Equal);
+        ASSERT(feature.rightComparison.op == ComparisonOperator::Equal);
         return toEvaluationResult(customPropertyValue && customPropertyValue->valueEquals(*resolvedFeatureValue));
     }
 
@@ -373,14 +373,14 @@ struct StyleFeatureSchema : public FeatureSchema {
             return ensureBuilder().resolveCustomPropertyForContainerQueries(value);
         };
 
-        auto resolveOperand = [&](const std::optional<Value>& operandValue, const AtomString& centerName) -> std::optional<StyleRangeValue> {
+        auto resolveOperand = [&](const Value* operandValue, const AtomString& centerName) -> std::optional<StyleRangeValue> {
             RefPtr<const Style::CustomProperty> customProperty;
             if (!centerName.isNull())
                 customProperty = style.customPropertyValue(centerName);
             else {
                 if (!operandValue)
                     return { };
-                auto* value = std::get_if<Ref<CSSCustomPropertyValue>>(&*operandValue);
+                auto* value = std::get_if<Ref<CSSCustomPropertyValue>>(operandValue);
                 if (!value)
                     return { };
                 customProperty = resolveValue(value->get());
@@ -390,20 +390,20 @@ struct StyleFeatureSchema : public FeatureSchema {
             return evaluateStyleRangeValue(customProperty->tokens(), context, style);
         };
 
-        auto center = resolveOperand(feature.subject, feature.name);
+        auto center = resolveOperand(feature.subject.get(), feature.name);
         if (!center)
             return EvaluationResult::False;
 
         std::optional<StyleRangeValue> leftValue;
         if (feature.leftComparison) {
-            leftValue = resolveOperand(feature.leftComparison->value, nullAtom());
+            leftValue = resolveOperand(&feature.leftComparison.value, nullAtom());
             if (!leftValue)
                 return EvaluationResult::False;
         }
 
         std::optional<StyleRangeValue> rightValue;
         if (feature.rightComparison) {
-            rightValue = resolveOperand(feature.rightComparison->value, nullAtom());
+            rightValue = resolveOperand(&feature.rightComparison.value, nullAtom());
             if (!rightValue)
                 return EvaluationResult::False;
         }
@@ -411,9 +411,9 @@ struct StyleFeatureSchema : public FeatureSchema {
         if (!styleRangeValuesShareCategory({ &center, &leftValue, &rightValue }))
             return EvaluationResult::False;
 
-        if (feature.leftComparison && !compare(feature.leftComparison->op, leftValue->value, center->value))
+        if (feature.leftComparison && !compare(feature.leftComparison.op, leftValue->value, center->value))
             return EvaluationResult::False;
-        if (feature.rightComparison && !compare(feature.rightComparison->op, center->value, rightValue->value))
+        if (feature.rightComparison && !compare(feature.rightComparison.op, center->value, rightValue->value))
             return EvaluationResult::False;
 
         return EvaluationResult::True;
@@ -465,7 +465,7 @@ struct ScrollableFeatureSchema : public ScrollStateFeatureSchema {
         if (!feature.rightComparison)
             return toEvaluationResult(scrollableAnywhere);
 
-        auto requested = WTF::switchOn(*feature.rightComparison->value,
+        auto requested = WTF::switchOn(feature.rightComparison.value,
             [](const CSS::Keyword& keyword) { return keyword.value; },
             [](const auto&) { return CSSValueID::Invalid; });
 
