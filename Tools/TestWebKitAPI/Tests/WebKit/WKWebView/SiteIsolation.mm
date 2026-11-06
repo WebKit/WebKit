@@ -21142,6 +21142,44 @@ TEST(SiteIsolation, DrawPagesToPDFDoesNotCarryTransformIntoNextPage)
     EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(100, 100), green));
 }
 
+// The filter() images are drawn into GPU process image buffers, which have to hold pixels to be drawn
+// into the PDF.
+TEST(SiteIsolation, DrawToPDFIncludesFilterImagesInCrossSiteFrames)
+{
+    static constexpr auto filterImageHTML = "<div style='width:100px;height:100px;background-image:filter(linear-gradient(black, black), invert(1))'></div>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { makeString("<body style='margin:0;background:rgb(0, 255, 0);print-color-adjust:exact'>"_s, filterImageHTML,
+            "<iframe style='display:block;border:0;width:200px;height:200px' src='https://b.com/subframe'></iframe></body>"_s) } },
+        { "/subframe"_s, { makeString("<body style='margin:0;background:rgb(0, 255, 0);print-color-adjust:exact'>"_s, filterImageHTML, "</body>"_s) } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration, @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration, @"UseGPUProcessForDOMRenderingEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+    EXPECT_NE([webView mainFrame].info._processIdentifier, [webView mainFrame].childFrames.firstObject.info._processIdentifier);
+
+    __block RetainPtr<NSData> data;
+    __block bool done = false;
+    [webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfData, NSError *error) {
+        EXPECT_NULL(error);
+        data = pdfData;
+        done = true;
+    }];
+    Util::run(&done);
+    ASSERT_NOT_NULL(data);
+
+    // The inverted black filter() images are white over the green pages.
+    constexpr std::array<uint8_t, 3> white { 255, 255, 255 };
+    constexpr std::array<uint8_t, 3> green { 0, 255, 0 };
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data, 1, CGPointMake(50, 50), white));
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data, 1, CGPointMake(150, 50), green));
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data, 1, CGPointMake(50, 150), white));
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data, 1, CGPointMake(150, 150), green));
+}
+
 static void collectImageBitsPerComponent(CGPDFDictionaryRef resources, Vector<CGPDFInteger>& bitsPerComponent, unsigned depth = 0)
 {
     CGPDFDictionaryRef xObjects = nullptr;

@@ -154,7 +154,7 @@ RefPtr<ImageBuffer> FilterImage::resolvedImage(const RenderElement& renderElemen
 
     cssFilter->setFilterRegion(sourceImageRect);
 
-    auto sourceImage = ImageBuffer::create(size, destinationContext.renderingMode(), RenderingPurpose::DOM, 1, ColorSpace::SRGB(), PixelFormat::BGRA8, renderer->hostWindow());
+    auto sourceImage = ImageBuffer::create(size, destinationContext.renderingModeForCompatibleBuffer(), RenderingPurpose::DOM, 1, ColorSpace::SRGB(), PixelFormat::BGRA8, renderer->hostWindow());
     if (!sourceImage)
         return nullptr;
 
@@ -173,7 +173,7 @@ RefPtr<ImageBuffer> FilterImage::resolvedImage(const RenderElement& renderElemen
 
     drawSourceImage(sourceImage->context());
 
-    auto filteredImage = ImageBuffer::create(size, destinationContext.renderingMode(), RenderingPurpose::DOM, 1, ColorSpace::SRGB(), PixelFormat::BGRA8, renderer->hostWindow());
+    auto filteredImage = ImageBuffer::create(size, destinationContext.renderingModeForCompatibleBuffer(), RenderingPurpose::DOM, 1, ColorSpace::SRGB(), PixelFormat::BGRA8, renderer->hostWindow());
     if (!filteredImage)
         return nullptr;
 

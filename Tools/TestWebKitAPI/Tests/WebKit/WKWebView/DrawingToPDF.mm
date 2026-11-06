@@ -114,6 +114,40 @@ TEST(DrawingToPDF, CSSFilterInvertAppliedOnPDFWithRemoteSnapshotting)
     runCSSFilterInvertAppliedOnPDFTest(configuration);
 }
 
+TEST(DrawingToPDF, FilterImage)
+{
+    __block bool didTakeSnapshot = false;
+
+    // With DOM rendering in the GPU process, the filter() image is drawn into GPU process image buffers.
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    enableFeature(webViewConfiguration, @"UseGPUProcessForDOMRenderingEnabled");
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 200, 200) configuration:webViewConfiguration]);
+
+    // The page is green, so a filter() image that is not drawn leaves green.
+    [webView synchronouslyLoadHTMLString:@"<style>body { margin: 0; background: #00ff00; print-color-adjust: exact; } .box { width: 100px; height: 100px; background-image: filter(linear-gradient(black, black), invert(1)); print-color-adjust: exact; }</style><div class=\"box\"></div>"];
+
+    RetainPtr configuration = adoptNS([[WKPDFConfiguration alloc] init]);
+    [configuration setRect:NSMakeRect(0, 0, 100, 100)];
+
+    [webView createPDFWithConfiguration:configuration completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
+        didTakeSnapshot = true;
+        EXPECT_NULL(error);
+        EXPECT_GT(pdfSnapshotData.length, 0u);
+        if (!pdfSnapshotData.length)
+            return;
+        RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:pdfSnapshotData]);
+        EXPECT_EQ([document pageCount], 1);
+        RetainPtr page = [document pageAtIndex:0];
+        EXPECT_NOT_NULL(page);
+
+        // The inverted black filter() image is white.
+        EXPECT_TRUE(Util::compareColors([page colorAtPoint:CGPointMake(50, 50)], [CocoaColor whiteColor]));
+    }];
+
+    Util::run(&didTakeSnapshot);
+}
+
 static void runBackgroundClipTextTest(WKWebViewConfiguration *webViewConfiguration)
 {
     __block bool didTakeSnapshot = false;
