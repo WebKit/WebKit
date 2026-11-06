@@ -2388,32 +2388,25 @@ foreach (_header_list _header_dir IN ZIP_LISTS _header_lists _header_dirs)
         file(READ ${_src} _contents)
         # Only run headers through the replacement script if they actually contain
         # a WKA import.
-        string(REGEX MATCHALL "#import <WebKitAdditions/[^>]+>" _additions_imports "${_contents}")
-        if (NOT _additions_imports)
+        if (NOT _contents MATCHES "#import <WebKitAdditions/.*\.h>")
             list(APPEND _updated_headers ${_header})
             continue ()
         endif ()
 
         cmake_path(GET _src FILENAME _name)
         set(_dst ${${_header_dir}}/${_name})
-        # The staging target only orders the build, so also depend on the staged
-        # files the script reads. Fragments that aren't staged come from the SDK.
-        list(TRANSFORM _additions_imports REPLACE "#import <WebKitAdditions/([^>]+)>" "${WebKitAdditions_HEADERS_DIR}/\\1")
-        set(_additions_inputs)
-        foreach (_input IN LISTS _additions_imports ITEMS ${WebKitAdditions_HEADERS_DIR}/FeatureNeededForHeaderReplacement)
-            if (EXISTS ${_input})
-                list(APPEND _additions_inputs ${_input})
-            endif ()
-        endforeach ()
+        set(_depfile ${CMAKE_CURRENT_BINARY_DIR}/ReplaceWebKitAdditionsIncludes/${_name}.d)
         add_custom_command(
             OUTPUT ${_dst}
             COMMAND
                 env ${WEBKITADDITIONS_DEFINITIONS_FOR_HEADER_REPLACEMENT}
                     ${WEBKIT_DIR}/mac/replace-webkit-additions-includes.py
+                    --depfile ${_depfile}
                     ${WebKitAdditions_FRAMEWORK_HEADERS_DIR} ${CMAKE_OSX_SYSROOT}
                     ${_src} ${_dst}
             MAIN_DEPENDENCY ${_src}
-            DEPENDS ${_additions_inputs} ${WEBKITADDITIONS_HEADERS_DEPENDENCIES}
+            DEPENDS ${WEBKIT_DIR}/mac/replace-webkit-additions-includes.py ${WEBKITADDITIONS_HEADERS_DEPENDENCIES}
+            DEPFILE ${_depfile}
             VERBATIM
         )
         list(APPEND _updated_headers ${_dst})

@@ -34,14 +34,16 @@ import sys
 should_restrict_header_replacement_based_on_feature = True
 
 
-def read_content_from_webkit_additions(built_products_directory, sdk_root_directory, filename):
+def read_content_from_webkit_additions(built_products_directory, sdk_root_directory, filename, files_read):
     library_headers_folder_path = os.environ.get('WK_LIBRARY_HEADERS_FOLDER_PATH', '').removeprefix('/')
     additions_path = os.path.join(library_headers_folder_path, "WebKitAdditions", filename)
 
     unexpected_errors = []
     for directory in (built_products_directory, sdk_root_directory):
+        path = os.path.join(directory, additions_path)
         try:
-            with open(os.path.join(directory, additions_path), "r") as file:
+            with open(path, "r") as file:
+                files_read.append(path)
                 return file.read()
         except FileNotFoundError:
             pass
@@ -55,11 +57,21 @@ def read_content_from_webkit_additions(built_products_directory, sdk_root_direct
     return ""
 
 
-def check_should_do_replacement(built_products_directory, sdk_root_directory):
+def check_should_do_replacement(built_products_directory, sdk_root_directory, files_read):
     if not should_restrict_header_replacement_based_on_feature:
         return True
-    feature_name = read_content_from_webkit_additions(built_products_directory, sdk_root_directory, 'FeatureNeededForHeaderReplacement').strip()
+    feature_name = read_content_from_webkit_additions(built_products_directory, sdk_root_directory, 'FeatureNeededForHeaderReplacement', files_read).strip()
     return os.environ.get(feature_name) == '1'
+
+
+def escape_for_depfile(path):
+    return path.replace('\\', '\\\\').replace(' ', '\\ ').replace('#', '\\#').replace('$', '$$')
+
+
+def write_depfile(depfile, target, dependencies):
+    os.makedirs(os.path.dirname(os.path.abspath(depfile)), exist_ok=True)
+    with open(depfile, 'w') as file:
+        file.write('%s: %s\n' % (escape_for_depfile(target), ' '.join(escape_for_depfile(path) for path in dependencies)))
 
 
 def main(argv=None):
@@ -68,7 +80,11 @@ def main(argv=None):
     parser.add_argument('sdk_root_dir')
     parser.add_argument('src', nargs='?')
     parser.add_argument('dst', nargs='?')
+    parser.add_argument('--depfile', help='write a Makefile-style list of every file read to this path (requires src)')
     args = parser.parse_args(argv)
+
+    if args.depfile and not args.src:
+        parser.error('--depfile requires src')
 
     if not args.src:
         src = sys.stdin
@@ -86,18 +102,28 @@ def main(argv=None):
     built_products_directory = args.built_products_dir
     sdk_root_directory = args.sdk_root_dir
 
-    should_do_replacement = check_should_do_replacement(built_products_directory, sdk_root_directory)
+    # Track dependencies on WKA headers, so that build systems can re-run us
+    # when one of them changes.
+    files_read = []
+    should_do_replacement = check_should_do_replacement(built_products_directory, sdk_root_directory, files_read)
 
     additions_import_pattern = re.compile(r"\#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT\n#import <WebKitAdditions/(.*)>\n#endif")
     header_contents = src.read()
     match = additions_import_pattern.search(header_contents)
     while match:
         if should_do_replacement:
-            header_contents = header_contents[:match.start()] + read_content_from_webkit_additions(built_products_directory, sdk_root_directory, match.groups()[0]) + header_contents[match.end():]
+            header_contents = header_contents[:match.start()] + read_content_from_webkit_additions(built_products_directory, sdk_root_directory, match.groups()[0], files_read) + header_contents[match.end():]
         else:
             header_contents = header_contents[:match.start()] + header_contents[match.end():]
         match = additions_import_pattern.search(header_contents)
     dst.write(header_contents)
+
+    if args.depfile:
+        dst.flush()
+        # For ninja, target name needs to match dst. Xcode doesn't pass dst,
+        # but it accepts an arbitrary target name.
+        target = os.path.abspath(args.dst) if args.dst else 'dependencies'
+        write_depfile(args.depfile, target, [os.path.abspath(path) for path in [args.src] + files_read])
 
 if __name__ == "__main__":
     main()

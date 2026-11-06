@@ -24,6 +24,12 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+# Start with an empty depfile. It'll only be populated if
+# replace-webkit-additions-includes.py runs.
+WK_HEADER_DEPENDENCY_FILE="${DERIVED_FILES_DIR}/postprocess-header-rule/${INPUT_FILE_NAME}.d"
+mkdir -p "$(dirname "${WK_HEADER_DEPENDENCY_FILE}")"
+echo "dependencies: " > "${WK_HEADER_DEPENDENCY_FILE}"
+
 if [[ -z "${SCRIPT_HEADER_VISIBILITY}" ]]; then
     exit 0
 fi
@@ -135,12 +141,13 @@ esac
 
 # As a performance optimization, only run replace-webkit-additions-includes.py if we know we need it.
 if grep -q '#import <WebKitAdditions/.*\.h>' "${INPUT_FILE_PATH}"; then
-    REPLACE_WEBKIT_ADDITIONS_INCLUDES=(python3 "${SRCROOT}/mac/replace-webkit-additions-includes.py" "${BUILT_PRODUCTS_DIR}" "${SDKROOT}")
+    REPLACE_WEBKIT_ADDITIONS_INCLUDES=(python3 "${SRCROOT}/mac/replace-webkit-additions-includes.py"
+        --depfile "${WK_HEADER_DEPENDENCY_FILE}" "${BUILT_PRODUCTS_DIR}" "${SDKROOT}" "${INPUT_FILE_PATH}")
 else
-    REPLACE_WEBKIT_ADDITIONS_INCLUDES=cat
+    REPLACE_WEBKIT_ADDITIONS_INCLUDES=(cat "${INPUT_FILE_PATH}")
 fi
 
-${REPLACE_WEBKIT_ADDITIONS_INCLUDES[@]} < "${INPUT_FILE_PATH}" |
+"${REPLACE_WEBKIT_ADDITIONS_INCLUDES[@]}" |
 sed -E "${SED_OPTIONS[@]}" |
 unifdef ${UNIFDEF_OPTIONS[@]} > "${SCRIPT_OUTPUT_FILE_0}"
 exits=(${PIPESTATUS[@]})
