@@ -346,7 +346,6 @@ webkit.org/b/326416 TestWebKitAPI.TextExtractionTests/interactionDebugDescriptio
 webkit.org/b/326696 TestWebKitAPI.TextExtractionTests/interactionDescriptionAndSearchTextForLabellessIcons() [ Skip ]
 webkit.org/b/326416 [ GoldenGate ] TestWebKitAPI.TextExtractionTests/interactionDescriptionIncludesAssociatedLabelText() [ Skip ]
 webkit.org/b/326696 TestWebKitAPI.TextExtractionTests/interactionDescriptionSkipsSearchTextForFormControlsAndLinks() [ Skip ]
-webkit.org/b/326416 TestWebKitAPI.TextExtractionTests/interactionDescriptionSkipsSearchTextForFormControlsAndLinks() [ Skip ]
 webkit.org/b/326416 TestWebKitAPI.TextExtractionTests/interactionDescriptionUsesAdjacentTextForUnlabeledIcon() [ Skip ]
 webkit.org/b/326416 TestWebKitAPI.TextExtractionTests/interactionDescriptionUsesDataAttributeForUnlabeledIconButton() [ Skip ]
 webkit.org/b/326696 TestWebKitAPI.TextExtractionTests/interactionDescriptionUsesUnrenderedTextForCollapsedTarget() [ Skip ]
