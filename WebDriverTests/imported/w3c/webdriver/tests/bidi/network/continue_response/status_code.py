@@ -1,3 +1,7 @@
+# META: timeout=long
+
+# Longer timeout required due to a large number of network interception and navigation subtests.
+
 import pytest
 
 from webdriver.bidi.modules.network import NetworkStringValue
@@ -36,6 +40,5 @@ async def test_status_code(
 
     response_completed_event = await wait_for_future_safe(on_response_completed)
     assert_response_event(
-        response_completed_event,
-        expected_response={"status": status_code},
+        response_completed_event, expected_event={"response": {"status": status_code}}
     )

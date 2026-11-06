@@ -1,45 +1,18 @@
 import random
 
 import pytest
-import pytest_asyncio
 from webdriver.bidi.modules.script import ContextTarget
 from webdriver.error import TimeoutException
 
-from tests.bidi import wait_for_bidi_events
 from ... import any_int, any_string, recursive_compare
 
 pytestmark = pytest.mark.asyncio
 
-DOWNLOAD_END = "browsingContext.downloadEnd"
 DOWNLOAD_WILL_BEGIN = "browsingContext.downloadWillBegin"
 NAVIGATION_STARTED = "browsingContext.navigationStarted"
 
 
-# This fixture is a workaround until we can cancel downloads.
-# https://github.com/w3c/webdriver-bidi/issues/1031
-@pytest_asyncio.fixture
-async def expect_download_end(bidi_session, subscribe_events):
-    await subscribe_events(events=[DOWNLOAD_END])
-
-    download_end_events = []
-
-    async def on_event(method, data):
-        download_end_events.append(data)
-
-    remove_listener = bidi_session.add_event_listener(DOWNLOAD_END, on_event)
-
-    expected_events = 0
-    def _expect_download_end(count):
-        nonlocal expected_events
-        expected_events = count
-
-    yield _expect_download_end
-
-    await wait_for_bidi_events(bidi_session, download_end_events, expected_events, timeout=2)
-    remove_listener()
-
-
-async def test_unsubscribe(bidi_session, inline, new_tab, expect_download_end):
+async def test_unsubscribe(bidi_session, inline, new_tab, wait_for_bidi_events, expect_download_end):
     filename = f"some_file_name{random.random()}.txt"
     download_link = "data:text/plain;charset=utf-8,"
     url = inline(
@@ -72,7 +45,7 @@ async def test_unsubscribe(bidi_session, inline, new_tab, expect_download_end):
     )
 
     with pytest.raises(TimeoutException):
-        await wait_for_bidi_events(bidi_session, events, 1, timeout=0.5)
+        await wait_for_bidi_events(events, 1, timeout=0.5)
 
     remove_listener()
 
@@ -83,6 +56,7 @@ async def test_download_attribute(
     new_tab,
     inline,
     wait_for_event,
+    wait_for_bidi_events,
     wait_for_future_safe,
     expect_download_end,
 ):
@@ -123,12 +97,14 @@ async def test_download_attribute(
     recursive_compare(
         {
             "context": new_tab["context"],
+            "download": any_string,
             # downloadWillBegin events created via a link with a download
             # attribute should have a `null` navigation id.
             "navigation": None,
             "suggestedFilename": download_filename,
             "timestamp": any_int,
             "url": download_link,
+            **({"userContext": new_tab["userContext"]} if "userContext" in event else {}),
         },
         event,
     )
@@ -136,12 +112,15 @@ async def test_download_attribute(
     # Check that no browsingContext.navigationStarted event was emitted
     with pytest.raises(TimeoutException):
         await wait_for_bidi_events(
-            bidi_session, navigation_started_events, 1, timeout=0.5
+            navigation_started_events, 1, timeout=0.5
         )
 
     remove_listener()
 
 
+@pytest.mark.parametrize(
+    "target", ["_self", "_blank"], ids=["in the same page", "in the other page"]
+)
 async def test_content_disposition_header(
     bidi_session,
     subscribe_events,
@@ -151,6 +130,7 @@ async def test_content_disposition_header(
     wait_for_future_safe,
     url,
     expect_download_end,
+    target,
 ):
     content_disposition_filename = f"content_disposition_filename{random.random()}.txt"
     content_disposition_link = url(
@@ -158,14 +138,18 @@ async def test_content_disposition_header(
         + f"header=Content-Disposition:attachment;%20filename={content_disposition_filename}"
     )
     page_url = inline(
-        f"""<a id="content_disposition_link" href="{content_disposition_link}">contentdisposition</a>"""
+        f"""<a id="content_disposition_link" target="{target}" href="{content_disposition_link}">contentdisposition</a>"""
     )
 
     await bidi_session.browsing_context.navigate(
         context=new_tab["context"], url=page_url, wait="complete"
     )
 
-    await subscribe_events(events=[DOWNLOAD_WILL_BEGIN, NAVIGATION_STARTED])
+    # In some cases Firefox sends an extra navigation event in the temporary browsing context,
+    # to filter them out subscribe only in the observed context.
+    await subscribe_events(
+        events=[DOWNLOAD_WILL_BEGIN, NAVIGATION_STARTED], contexts=[new_tab["context"]]
+    )
 
     # Test clicking on a link which returns a response with a
     # Content-Disposition header.
@@ -186,10 +170,12 @@ async def test_content_disposition_header(
     recursive_compare(
         {
             "context": new_tab["context"],
+            "download": any_string,
             "navigation": any_string,
             "suggestedFilename": content_disposition_filename,
             "timestamp": any_int,
             "url": content_disposition_link,
+            **({"userContext": new_tab["userContext"]} if "userContext" in download_event else {}),
         },
         download_event,
     )
@@ -250,10 +236,12 @@ async def test_redirect_to_content_disposition_header(
     recursive_compare(
         {
             "context": new_tab["context"],
+            "download": any_string,
             "navigation": any_string,
             "suggestedFilename": redirect_filename,
             "timestamp": any_int,
             "url": content_disposition_link,
+            **({"userContext": new_tab["userContext"]} if "userContext" in download_event else {}),
         },
         download_event,
     )

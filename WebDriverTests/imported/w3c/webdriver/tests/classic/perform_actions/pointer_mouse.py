@@ -1,3 +1,7 @@
+# META: timeout=long
+
+# Longer timeout required due to a large number of input action and event dispatch subtests.
+
 import pytest
 from webdriver.error import (
     InvalidArgumentException,
@@ -12,7 +16,8 @@ from tests.classic.perform_actions.support.mouse import (
 )
 from tests.classic.perform_actions.support.refine import get_events
 from tests.support.asserts import assert_move_to_coordinates
-from tests.support.helpers import center_point, filter_dict
+from tests.support.classic.helpers import center_point
+from tests.support.helpers import filter_dict
 from tests.support.sync import Poll
 
 from . import assert_pointer_events, record_pointer_events
@@ -240,20 +245,22 @@ def test_click_navigation(session, url, inline):
     wait.until(assert_page_loaded)
 
 
-@pytest.mark.parametrize("x, y", [
-    (0, 0),
-    (1, 0),
-    (0, 1),
+@pytest.mark.parametrize("x, y, event_count", [
+    (0, 0, 0),
+    (1, 0, 1),
+    (0, 1, 1),
 ], ids=["default value", "x", "y"])
-def test_move_to_position_in_viewport(session, test_actions_page, mouse_chain, x, y):
+def test_move_to_position_in_viewport(
+    session, test_actions_page, mouse_chain, x, y, event_count
+):
     mouse_chain.pointer_move(x, y).perform()
     events = get_events(session)
-    assert len(events) == 1
+    assert len(events) == event_count
 
     # Move again to check that no further mouse move event is emitted.
     mouse_chain.pointer_move(x, y).perform()
     events = get_events(session)
-    assert len(events) == 1
+    assert len(events) == event_count
 
 
 def test_move_to_fractional_position(session, inline, mouse_chain):
@@ -337,15 +344,6 @@ def test_move_to_origin_position_within_frame(
     # it's unclear what the actual spec requirements really are
     assert events[0][0] == pytest.approx(target_point[0], abs=1.0)
     assert events[0][1] == pytest.approx(target_point[1], abs=1.0)
-
-
-@pytest.mark.parametrize("missing", ["x", "y"])
-def test_missing_coordinates(session, test_actions_page, mouse_chain, missing):
-    outer = session.find.css("#outer", all=False)
-    actions = mouse_chain.pointer_move(x=0, y=0, origin=outer)
-    del actions._actions[-1][missing]
-    with pytest.raises(InvalidArgumentException):
-        actions.perform()
 
 
 def test_invalid_element_origin(session, test_actions_page, mouse_chain):

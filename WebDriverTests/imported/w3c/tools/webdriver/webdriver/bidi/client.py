@@ -101,6 +101,7 @@ class BidiSession:
         self.script = modules.Script(self)
         self.session = modules.Session(self)
         self.storage = modules.Storage(self)
+        self.user_agent_client_hints = modules.UserAgentClientHints(self)
         self.web_extension = modules.WebExtension(self)
 
     @property
@@ -251,4 +252,10 @@ class BidiSession:
         """
         self.event_listeners[name].append(fn)
 
-        return lambda: self.event_listeners[name].remove(fn)
+        def remove_listener():
+            try:
+                self.event_listeners[name].remove(fn)
+            except ValueError:
+                pass
+
+        return remove_listener

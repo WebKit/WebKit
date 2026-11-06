@@ -66,18 +66,18 @@ async def test_navigation(
     event = await wait_for_future_safe(on_load)
 
     # Check the node from the initial url is not available in the page.
-    result = await bidi_session.browsing_context.locate_nodes(
+    nodes = await bidi_session.browsing_context.locate_nodes(
         context=top_context["context"],
         locator={"type": "css", "value": "#from-initial"},
     )
-    assert len(result["nodes"]) == 0
+    assert len(nodes) == 0
 
     # Check the node from the redirected url is available in the page.
-    result = await bidi_session.browsing_context.locate_nodes(
+    nodes = await bidi_session.browsing_context.locate_nodes(
         context=top_context["context"],
         locator={"type": "css", "value": "#from-redirect"},
     )
-    assert len(result["nodes"]) == 1
+    assert len(nodes) == 1
 
     # Check that the window.location remains on initial_url
     result = await bidi_session.script.evaluate(
@@ -97,17 +97,21 @@ async def test_navigation(
     assert events[0][0] == "network.responseStarted"
     assert_response_event(
         events[0][1],
-        expected_request=expected_request,
-        expected_response=expected_response,
-        redirect_count=0,
+        expected_event={
+            "request": expected_request,
+            "response": expected_response,
+            "redirectCount": 0,
+        },
     )
 
     assert events[1][0] == "network.responseCompleted"
     assert_response_event(
         events[1][1],
-        expected_request=expected_request,
-        expected_response=expected_response,
-        redirect_count=0,
+        expected_event={
+            "request": expected_request,
+            "response": expected_response,
+            "redirectCount": 0,
+        },
     )
 
     remove_before_request_sent_listener()

@@ -2,7 +2,6 @@ import pytest
 from webdriver.error import TimeoutException
 from webdriver.bidi.modules.script import ContextTarget
 
-from tests.bidi import wait_for_bidi_events
 from ... import int_interval
 from .. import assert_navigation_info
 
@@ -11,7 +10,7 @@ pytestmark = pytest.mark.asyncio
 DOM_CONTENT_LOADED_EVENT = "browsingContext.domContentLoaded"
 
 
-async def test_unsubscribe(bidi_session, inline, top_context):
+async def test_unsubscribe(bidi_session, inline, top_context, wait_for_bidi_events):
     # test
     await bidi_session.session.subscribe(events=[DOM_CONTENT_LOADED_EVENT])
     await bidi_session.session.unsubscribe(events=[DOM_CONTENT_LOADED_EVENT])
@@ -35,7 +34,7 @@ async def test_unsubscribe(bidi_session, inline, top_context):
     )
 
     with pytest.raises(TimeoutException):
-        await wait_for_bidi_events(bidi_session, events, 1, timeout=0.5)
+        await wait_for_bidi_events(events, 1, timeout=0.5)
 
     remove_listener()
 
@@ -58,6 +57,7 @@ async def test_subscribe(
             "context": new_tab["context"],
             "url": url,
             "navigation": result["navigation"],
+            **({"userContext": new_tab["userContext"]} if "userContext" in event else {}),
         },
     )
 
@@ -84,12 +84,13 @@ async def test_timestamp(
             "context": new_tab["context"],
             "navigation": result["navigation"],
             "timestamp": int_interval(time_start, time_end),
-        },
+            **({"userContext": new_tab["userContext"]} if "userContext" in event else {}),
+       },
     )
 
 
 async def test_iframe(
-    bidi_session, subscribe_events, new_tab, test_page, test_page_same_origin_frame
+    bidi_session, subscribe_events, wait_for_bidi_events, new_tab, test_page, test_page_same_origin_frame
 ):
     events = []
 
@@ -107,7 +108,7 @@ async def test_iframe(
         context=new_tab["context"], url=test_page_same_origin_frame
     )
 
-    await wait_for_bidi_events(bidi_session, events, 2)
+    await wait_for_bidi_events(events, 2)
 
     contexts = await bidi_session.browsing_context.get_tree(root=new_tab["context"])
 
@@ -128,10 +129,16 @@ async def test_iframe(
             "context": root_info["context"],
             "url": test_page_same_origin_frame,
             "navigation": result["navigation"],
+            **({"userContext": root_info["userContext"]} if "userContext" in root_event else {}),
         },
     )
     assert_navigation_info(
-        child_event, {"context": child_info["context"], "url": test_page}
+        child_event,
+        {
+            "context": child_info["context"],
+            "url": test_page,
+            **({"userContext": child_info["userContext"]} if "userContext" in child_event else {}),
+        }
     )
     assert child_event["navigation"] is not None
     assert child_event["navigation"] != root_event["navigation"]
@@ -141,7 +148,7 @@ async def test_iframe(
 
 @pytest.mark.parametrize("type_hint", ["tab", "window"])
 async def test_new_context_not_emitted(bidi_session, subscribe_events,
-      wait_for_event, wait_for_future_safe, type_hint):
+      wait_for_event, wait_for_bidi_events, wait_for_future_safe, type_hint):
     await subscribe_events(events=[DOM_CONTENT_LOADED_EVENT])
 
     # Track all received browsingContext.domContentLoaded events in the events array
@@ -157,7 +164,7 @@ async def test_new_context_not_emitted(bidi_session, subscribe_events,
     await bidi_session.browsing_context.create(type_hint=type_hint)
 
     with pytest.raises(TimeoutException):
-        await wait_for_bidi_events(bidi_session, events, 1, timeout=0.5)
+        await wait_for_bidi_events(events, 1, timeout=0.5)
 
     remove_listener()
 
@@ -180,7 +187,10 @@ async def test_document_write(
 
     assert_navigation_info(
         event,
-        {"context": new_tab["context"]},
+        {
+            "context": new_tab["context"],
+            **({"userContext": new_tab["userContext"]} if "userContext" in event else {}),
+        },
     )
     assert event["navigation"] is not None
 
@@ -213,7 +223,12 @@ async def test_early_same_document_navigation(
 
     assert_navigation_info(
         event,
-        {"context": new_tab["context"], "navigation": result["navigation"], "url": url},
+        {
+            "context": new_tab["context"],
+            "navigation": result["navigation"],
+            "url": url,
+            **({"userContext": new_tab["userContext"]} if "userContext" in event else {}),
+        },
     )
 
 
@@ -231,5 +246,10 @@ async def test_page_with_base_tag(
 
     assert_navigation_info(
         event,
-        {"context": new_tab["context"], "navigation": result["navigation"], "url": url},
+        {
+            "context": new_tab["context"],
+            "navigation": result["navigation"],
+            "url": url,
+            **({"userContext": new_tab["userContext"]} if "userContext" in event else {}),
+        },
     )

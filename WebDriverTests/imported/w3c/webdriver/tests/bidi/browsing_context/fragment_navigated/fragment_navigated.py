@@ -3,7 +3,6 @@ import pytest
 from webdriver.bidi.modules.script import ContextTarget
 from webdriver.error import TimeoutException
 
-from tests.bidi import wait_for_bidi_events
 from ... import any_int, recursive_compare, int_interval
 from .. import assert_navigation_info
 
@@ -54,7 +53,14 @@ async def test_subscribe(bidi_session, subscribe_events, url, new_tab, wait_for_
     await bidi_session.browsing_context.navigate(context=new_tab["context"], url=target_url, wait="complete")
     event = await wait_for_future_safe(on_entry)
 
-    assert_navigation_info(event, {"context": new_tab["context"], "url": target_url})
+    assert_navigation_info(
+        event,
+        {
+            "context": new_tab["context"],
+            "url": target_url,
+            **({"userContext": new_tab["userContext"]} if "userContext" in event else {}),
+        }
+    )
 
 
 async def test_timestamp(bidi_session, current_time, subscribe_events, url, new_tab, wait_for_event, wait_for_future_safe):
@@ -75,7 +81,11 @@ async def test_timestamp(bidi_session, current_time, subscribe_events, url, new_
 
     assert_navigation_info(
         event,
-        {"context": new_tab["context"], "timestamp": int_interval(time_start, time_end)}
+        {
+            "context": new_tab["context"],
+            "timestamp": int_interval(time_start, time_end),
+            **({"userContext": new_tab["userContext"]} if "userContext" in event else {}),
+        }
     )
 
 
@@ -94,14 +104,16 @@ async def test_navigation_id(
     result = await bidi_session.browsing_context.navigate(
         context=new_tab["context"], url=target_url, wait="complete")
 
+    event = await wait_for_future_safe(on_fragment_navigated)
     recursive_compare(
         {
             'context': new_tab["context"],
             'navigation': result["navigation"],
             'timestamp': any_int,
-            'url': target_url
+            'url': target_url,
+            **({"userContext": new_tab["userContext"]} if "userContext" in event else {}),
         },
-        await wait_for_future_safe(on_fragment_navigated),
+        event,
     )
 
 
@@ -116,12 +128,14 @@ async def test_url_with_base_tag(bidi_session, subscribe_events, inline, new_tab
     target_url = url + '#foo'
     await bidi_session.browsing_context.navigate(context=new_tab["context"], url=target_url, wait="complete")
 
+    event = await wait_for_future_safe(on_fragment_navigated)
     recursive_compare(
         {
             'context': new_tab["context"],
-            'url': target_url
+            'url': target_url,
+            **({"userContext": new_tab["userContext"]} if "userContext" in event else {}),
         },
-        await wait_for_future_safe(on_fragment_navigated),
+        event,
     )
 
 
@@ -159,13 +173,15 @@ async def test_iframe(
     await bidi_session.browsing_context.navigate(
         context=child_info["context"], url=target_url, wait="complete")
 
+    event = await wait_for_future_safe(on_fragment_navigated)
     recursive_compare(
         {
             'context': child_info["context"],
             'timestamp': any_int,
-            'url': target_url
+            'url': target_url,
+            **({"userContext": child_info["userContext"]} if "userContext" in event else {}),
         },
-        await wait_for_future_safe(on_fragment_navigated),
+        event,
     )
 
     # Check that we only received one event for the iframe navigation.
@@ -208,13 +224,15 @@ async def test_document_location(
         target=ContextTarget(target_context),
     )
 
+    event = await wait_for_future_safe(on_fragment_navigated)
     recursive_compare(
         {
             'context': target_context,
             'timestamp': any_int,
-            'url': target_url
+            'url': target_url,
+            **({"userContext": new_tab["userContext"]} if "userContext" in event else {}),
         },
-        await wait_for_future_safe(on_fragment_navigated),
+        event,
     )
 
 
@@ -244,18 +262,20 @@ async def test_browsing_context_navigate(
     await bidi_session.browsing_context.navigate(
         context=target_context, url=target_url, wait="complete")
 
+    event = await wait_for_future_safe(on_fragment_navigated)
     recursive_compare(
         {
             'context': target_context,
             'timestamp': any_int,
-            'url': target_url
+            'url': target_url,
+            **({"userContext": new_tab["userContext"]} if "userContext" in event else {}),
         },
-        await wait_for_future_safe(on_fragment_navigated),
+        event,
     )
 
 
 @pytest.mark.parametrize("type_hint", ["tab", "window"])
-async def test_new_context(bidi_session, subscribe_events, type_hint):
+async def test_new_context(bidi_session, subscribe_events, type_hint, wait_for_bidi_events):
     await subscribe_events(events=[FRAGMENT_NAVIGATED_EVENT])
 
     events = []
@@ -268,13 +288,13 @@ async def test_new_context(bidi_session, subscribe_events, type_hint):
     await bidi_session.browsing_context.create(type_hint=type_hint)
 
     with pytest.raises(TimeoutException):
-        await wait_for_bidi_events(bidi_session, events, 1, timeout=0.5)
+        await wait_for_bidi_events(events, 1, timeout=0.5)
 
     remove_listener()
 
 
 @pytest.mark.parametrize("sandbox", [None, "sandbox_1"])
-async def test_document_write(bidi_session, subscribe_events, new_tab, sandbox):
+async def test_document_write(bidi_session, subscribe_events, wait_for_bidi_events, new_tab, sandbox):
     await subscribe_events(events=[FRAGMENT_NAVIGATED_EVENT])
 
     events = []
@@ -291,7 +311,7 @@ async def test_document_write(bidi_session, subscribe_events, new_tab, sandbox):
     )
 
     with pytest.raises(TimeoutException):
-        await wait_for_bidi_events(bidi_session, events, 1, timeout=0.5)
+        await wait_for_bidi_events(events, 1, timeout=0.5)
 
     remove_listener()
 
@@ -303,7 +323,7 @@ async def test_document_write(bidi_session, subscribe_events, new_tab, sandbox):
         ("#foo", ""),
     ]
 )
-async def test_regular_navigation(bidi_session, subscribe_events, url, new_tab, before, after):
+async def test_regular_navigation(bidi_session, subscribe_events, url, wait_for_bidi_events, new_tab, before, after):
     await bidi_session.browsing_context.navigate(context=new_tab["context"], url=url(EMPTY_PAGE) + before, wait="complete")
 
     await subscribe_events(events=[FRAGMENT_NAVIGATED_EVENT])
@@ -318,6 +338,6 @@ async def test_regular_navigation(bidi_session, subscribe_events, url, new_tab, 
     await bidi_session.browsing_context.navigate(context=new_tab["context"], url=url(EMPTY_PAGE + after), wait="complete")
 
     with pytest.raises(TimeoutException):
-        await wait_for_bidi_events(bidi_session, events, 1, timeout=0.5)
+        await wait_for_bidi_events(events, 1, timeout=0.5)
 
     remove_listener()

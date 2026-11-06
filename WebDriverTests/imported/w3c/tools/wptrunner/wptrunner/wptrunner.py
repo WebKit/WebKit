@@ -1,5 +1,6 @@
 # mypy: allow-untyped-calls, allow-untyped-defs
 
+import gc
 import json
 import os
 import signal
@@ -19,7 +20,7 @@ from . import testloader
 from . import wptcommandline
 from . import wptlogging
 from . import wpttest
-from mozlog import capture, handlers
+from mozlog import capture, handlers, structuredlog
 from .font import FontInstaller
 from .testrunner import ManagerGroup, TestImplementation
 
@@ -43,10 +44,25 @@ format. This manifest is used directly to determine which tests exist. Local
 metadata files are used to store the expected test results.
 """
 
-def setup_logging(*args, **kwargs):
-    global logger
-    logger = wptlogging.setup(*args, **kwargs)
-    return logger
+def setup_logging(wptrunner_kwargs, defaults, formatter_defaults=None):
+    # Legacy entry point
+    return GlobalLogger(wptrunner_kwargs, defaults, formatter_defaults).__enter__()
+
+
+class GlobalLogger(wptlogging.LoggerManager):
+    def __enter__(self) -> structuredlog.StructuredLogger:
+        global logger
+        if logger is not None:
+            raise ValueError("logger is already configured")
+        logger = super().__enter__()
+        assert logger is not None
+        return self._logger
+
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
+        global logger
+        assert logger is not None
+        super().__exit__(*args, **kwargs)
+        logger = None
 
 
 def get_loader(test_paths: wptcommandline.TestPaths,
@@ -75,7 +91,8 @@ def get_loader(test_paths: wptcommandline.TestPaths,
     else:
         test_groups = None
 
-    test_manifests = testloader.ManifestLoader(test_paths,
+    test_manifests = testloader.ManifestLoader(logger,
+                                               test_paths,
                                                force_manifest_update=kwargs["manifest_update"],
                                                manifest_download=kwargs["manifest_download"]).load()
 
@@ -110,7 +127,8 @@ def get_loader(test_paths: wptcommandline.TestPaths,
                                                                            test_groups=test_groups,
                                                                            **kwargs)
 
-    test_loader = testloader.TestLoader(test_manifests=test_manifests,
+    test_loader = testloader.TestLoader(logger=logger,
+                                        test_manifests=test_manifests,
                                         test_types=kwargs["test_types"],
                                         base_run_info=base_run_info,
                                         subsuites=subsuites,
@@ -121,7 +139,6 @@ def get_loader(test_paths: wptcommandline.TestPaths,
                                         chunk_number=kwargs["this_chunk"],
                                         include_https=ssl_enabled,
                                         include_h2=h2_enabled,
-                                        include_webtransport_h3=kwargs["enable_webtransport_h3"],
                                         skip_timeout=kwargs["skip_timeout"],
                                         skip_crash=kwargs["skip_crash"],
                                         skip_implementation_status=kwargs["skip_implementation_status"],
@@ -350,6 +367,10 @@ def run_test_iteration(test_status, test_loader, test_queue_builder,
             unexpected_fail_tests = manager_group.unexpected_fail_tests()
             unexpected_pass_tests = manager_group.unexpected_pass_tests()
 
+        # Ensure we free multiprocessing queues and associated file handles
+        # between retries
+        gc.collect()
+
     test_status.unexpected_pass += sum(len(tests) for tests in unexpected_pass_tests.values())
     test_status.unexpected += sum(len(tests) for tests in unexpected_pass_tests.values())
     test_status.unexpected += sum(len(tests) for tests in unexpected_fail_tests.values())
@@ -463,7 +484,6 @@ def run_tests(config, product, test_paths, **kwargs):
         testharness_timeout_multipler = product.get_timeout_multiplier("testharness",
                                                                        test_loader.base_run_info,
                                                                        **kwargs)
-
         mojojs_path = kwargs["mojojs_path"] if kwargs["enable_mojojs"] else None
         inject_script = kwargs["inject_script"] if kwargs["inject_script"] else None
 
@@ -477,10 +497,12 @@ def run_tests(config, product, test_paths, **kwargs):
                                  ssl_config,
                                  env_extras,
                                  kwargs["enable_webtransport_h3"],
+                                 kwargs["enable_dns"],
                                  mojojs_path,
                                  inject_script,
                                  kwargs["suppress_handler_traceback"],
-                                 kwargs["ws_extra"]) as test_environment:
+                                 kwargs["ws_extra"],
+                                 logger=logger) as test_environment:
             recording.set(["startup", "ensure_environment"])
             try:
                 test_environment.ensure_started()
@@ -590,7 +612,6 @@ def start(**kwargs: Any) -> int:
         else:
             rv = int(not run_tests(**kwargs)[0])
     finally:
-        logger.shutdown()
         logger.remove_handler(handler)
 
     # Reserve everything above 64 for our global usage.
@@ -610,9 +631,8 @@ def main():
         if kwargs["prefs_root"] is None:
             kwargs["prefs_root"] = os.path.abspath(os.path.join(here, "prefs"))
 
-        setup_logging(kwargs, {"raw": sys.stdout})
-
-        return start(**kwargs)
+        with GlobalLogger(kwargs, {"raw": sys.stdout}):
+            return start(**kwargs)
     except Exception:
         if kwargs["pdb"]:
             import pdb

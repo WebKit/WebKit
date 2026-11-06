@@ -18,13 +18,14 @@ from ..executors.executorwktr import (  # noqa: F401
 )
 
 
-__wptrunner__ = {"product": "WebKitTestRunner",
+__wptrunner__ = {"product": "wktr",
                  "check_args": "check_args",
                  "browser": "WKTRBrowser",
                  "executor": {
                      "crashtest": "WKTRCrashtestExecutor",
                      "reftest": "WKTRRefTestExecutor",
                      "testharness": "WKTRTestharnessExecutor",
+                     "test262": "WKTRTestharnessExecutor",
                  },
                  "browser_kwargs": "browser_kwargs",
                  "executor_kwargs": "executor_kwargs",

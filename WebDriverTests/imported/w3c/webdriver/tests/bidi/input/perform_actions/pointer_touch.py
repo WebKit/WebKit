@@ -65,8 +65,13 @@ async def test_click_at_fractional_coordinates(bidi_session, top_context, inline
 
 
 async def test_pointer_down_closes_browsing_context(
-    bidi_session, configuration, get_element, new_tab, inline, subscribe_events,
-    wait_for_event
+    bidi_session,
+    configuration,
+    get_element,
+    new_tab,
+    inline,
+    subscribe_events,
+    wait_for_event,
 ):
     url = inline("""<input onpointerdown="window.close()">close</input>""")
 
@@ -91,7 +96,7 @@ async def test_pointer_down_closes_browsing_context(
         actions.add_pointer(pointer_type="touch")
         .pointer_move(0, 0, origin=origin)
         .pointer_down(button=0)
-        .pause(250 * configuration["timeout_multiplier"])
+        .pause(100 * configuration["timeout_multiplier"])
         .pointer_up(button=0)
     )
 
@@ -232,6 +237,7 @@ async def test_touch_pointer_properties(
         "pointerout",
         "pointerleave",
     ] == event_types
+
     assert events[2]["type"] == "pointerdown"
     assert events[2]["pageX"] == pytest.approx(center["x"], abs=1.0)
     assert events[2]["pageY"] == pytest.approx(center["y"], abs=1.0)
@@ -240,6 +246,7 @@ async def test_touch_pointer_properties(
     assert round(events[2]["width"], 2) == 23
     assert round(events[2]["height"], 2) == 31
     assert round(events[2]["pressure"], 2) == 0.78
+
     assert events[3]["type"] == "pointermove"
     assert events[3]["pageX"] == pytest.approx(center["x"] + 10, abs=1.0)
     assert events[3]["pageY"] == pytest.approx(center["y"] + 10, abs=1.0)
@@ -250,15 +257,56 @@ async def test_touch_pointer_properties(
     assert round(events[3]["pressure"], 2) == 0.91
 
 
+async def test_touch_pointer_properties_altitude_and_azimuth_angle(
+    bidi_session, top_context, get_element, load_static_test_page
+):
+    await load_static_test_page(page="test_actions_pointer.html")
+
+    pointerArea = await get_element("#pointerArea")
+
+    actions = Actions()
+    (
+        actions.add_pointer(pointer_type="touch")
+        .pointer_move(x=0, y=0, origin=get_element_origin(pointerArea))
+        .pointer_down(button=0, altitude_angle=1.0, azimuth_angle=2.0)
+        .pointer_move(
+            x=10,
+            y=10,
+            origin=get_element_origin(pointerArea),
+            altitude_angle=0.5,
+            azimuth_angle=1.5,
+        )
+        .pointer_up(button=0)
+    )
+
+    await bidi_session.input.perform_actions(
+        actions=actions, context=top_context["context"]
+    )
+
+    events = await get_events(bidi_session, top_context["context"])
+
+    pointerdown = next(e for e in events if e["type"] == "pointerdown")
+    # `altitudeAngle` and `azimuthAngle` may undergo a round-trip trigonometric
+    # conversion via `tiltX` and `tiltY`, so compare with `pytest.approx` to
+    # account for floating-point precision loss.
+    assert pointerdown["altitudeAngle"] == pytest.approx(1.0)
+    assert pointerdown["azimuthAngle"] == pytest.approx(2.0)
+    assert pointerdown["tiltX"] == -15
+    assert pointerdown["tiltY"] == 30
+
+    pointermove = next(e for e in events if e["type"] == "pointermove")
+    assert pointermove["altitudeAngle"] == pytest.approx(0.5)
+    assert pointermove["azimuthAngle"] == pytest.approx(1.5)
+    assert pointermove["tiltX"] == 7
+    assert pointermove["tiltY"] == 61
+
+
 async def test_touch_pointer_properties_angle_twist(
     bidi_session, top_context, get_element, load_static_test_page
 ):
     await load_static_test_page(page="test_actions_pointer.html")
 
     pointerArea = await get_element("#pointerArea")
-    await get_inview_center_bidi(
-        bidi_session, context=top_context, element=pointerArea
-    )
 
     actions = Actions()
     (

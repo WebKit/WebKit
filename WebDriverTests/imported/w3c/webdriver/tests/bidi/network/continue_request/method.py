@@ -1,3 +1,7 @@
+# META: timeout=long
+
+# Longer timeout required due to a large number of network interception and navigation subtests.
+
 import pytest
 
 from webdriver.bidi.modules.script import ContextTarget
@@ -34,4 +38,6 @@ async def test_request_method(
     on_response_completed = wait_for_event(RESPONSE_COMPLETED_EVENT)
     await bidi_session.network.continue_request(request=request, method=updated_method)
     response_event = await on_response_completed
-    assert_response_event(response_event, expected_request={"method": updated_method})
+    assert_response_event(
+        response_event, expected_event={"request": {"method": updated_method}}
+    )

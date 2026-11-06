@@ -1,6 +1,30 @@
+import pytest
+
+from tests.support.sync import AsyncPoll
 from webdriver.bidi.modules.script import ContextTarget
 
 from .. import get_object_from_context
+
+
+async def assert_scroll_position(bidi_session, context, element, delta_x, delta_y):
+    async def check(_):
+        result = await bidi_session.script.call_function(
+            function_declaration="el => [el.scrollLeft, el.scrollTop]",
+            target=ContextTarget(context["context"]),
+            arguments=[element],
+            await_promise=False,
+        )
+        scroll_left = result["value"][0]["value"]
+        scroll_top = result["value"][1]["value"]
+        assert scroll_left == pytest.approx(delta_x, abs=1.0), (
+            f"scrollLeft: expected {delta_x}, got {scroll_left}"
+        )
+        assert scroll_top == pytest.approx(delta_y, abs=1.0), (
+            f"scrollTop: expected {delta_y}, got {scroll_top}"
+        )
+
+    wait = AsyncPoll(bidi_session, timeout=2)
+    await wait.until(check)
 
 
 def remote_mapping_to_dict(js_object):
@@ -46,9 +70,16 @@ async def assert_pointer_events(
 
 
 async def get_inview_center_bidi(bidi_session, context, element):
-    elem_rect = await get_element_rect(bidi_session,
-                                       context=context,
-                                       element=element)
+    # The in-view center point is based on the element's first client rect,
+    # which differs from its bounding rect when it has multiple fragments:
+    # https://w3c.github.io/webdriver/#dfn-center-point
+    result = await bidi_session.script.call_function(
+        function_declaration="el => el.getClientRects()[0].toJSON()",
+        arguments=[element],
+        target=ContextTarget(context["context"]),
+        await_promise=False,
+    )
+    elem_rect = remote_mapping_to_dict(result["value"])
     viewport_rect = await get_viewport_rect(bidi_session, context=context)
 
     x = {

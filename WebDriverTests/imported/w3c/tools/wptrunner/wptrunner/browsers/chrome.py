@@ -14,7 +14,7 @@ from .base import get_free_port
 from .base import get_timeout_multiplier   # noqa: F401
 from .base import cmd_arg
 from ..executors import executor_kwargs as base_executor_kwargs
-from ..executors.base import WdspecExecutor  # noqa: F401
+from ..executors.base import PytestExecutor  # noqa: F401
 from ..executors.executorchrome import (  # noqa: F401
     ChromeDriverPrintRefTestExecutor,
     ChromeDriverRefTestExecutor,
@@ -32,8 +32,10 @@ __wptrunner__ = {"product": "chrome",
                  "executor": {"testharness": "ChromeDriverTestharnessExecutor",
                               "reftest": "ChromeDriverRefTestExecutor",
                               "print-reftest": "ChromeDriverPrintRefTestExecutor",
-                              "wdspec": "WdspecExecutor",
-                              "crashtest": "ChromeDriverCrashTestExecutor"},
+                              "wdspec": "PytestExecutor",
+                              "aamtest": "PytestExecutor",
+                              "crashtest": "ChromeDriverCrashTestExecutor",
+                              "test262": "ChromeDriverTestharnessExecutor"},
                  "browser_kwargs": "browser_kwargs",
                  "executor_kwargs": "executor_kwargs",
                  "env_extras": "env_extras",
@@ -49,10 +51,18 @@ def check_args(**kwargs):
 
 
 def browser_kwargs(logger, test_type, run_info_data, config, **kwargs):
-    return {"binary": kwargs["binary"],
-            "webdriver_binary": kwargs["webdriver_binary"],
-            "webdriver_args": kwargs.get("webdriver_args"),
-            "leak_check": kwargs.get("leak_check", False)}
+    browser_kwargs = {
+        "binary": kwargs["binary"],
+        "webdriver_binary": kwargs["webdriver_binary"],
+        "webdriver_args": kwargs.get("webdriver_args"),
+        "leak_check": kwargs.get("leak_check", False),
+    }
+
+    if test_type == "aamtest":
+        # Necessary to force chrome to register in AT-SPI2.
+        browser_kwargs["env"] = {"ACCESSIBILITY_ENABLED": "1"}
+    return browser_kwargs
+
 
 
 def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite,
@@ -110,15 +120,21 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
     chrome_options["args"].append("--use-fake-ui-for-media-stream")
     # Use a fake UI for FedCM to allow testing it.
     chrome_options["args"].append("--use-fake-ui-for-fedcm")
-    # This is needed until https://github.com/web-platform-tests/wpt/pull/40709
-    # is merged.
-    chrome_options["args"].append("--enable-features=FedCmWithoutWellKnownEnforcement")
-    # Use a fake UI for digital identity to allow testing it.
-    chrome_options["args"].append("--use-fake-ui-for-digital-identity")
+    # Auto-grant permission for Email Verification Protocol to bypass user gesture.
+    chrome_options["args"].append("--auto-grant-email-verification-permission-for-testing")
     # Shorten delay for Reporting <https://w3c.github.io/reporting/>.
     chrome_options["args"].append("--short-reporting-delay")
-    # Point all .test domains to localhost for Chrome
-    chrome_options["args"].append("--host-resolver-rules=MAP nonexistent.*.test ^NOTFOUND, MAP *.test 127.0.0.1, MAP *.test. 127.0.0.1")
+    # Point all .test domains to localhost for Chrome. Also make payment
+    # method manifest fetches for the Apple Pay method (which many
+    # payment-request tests use, as it is the only method Safari supports)
+    # fail fast and deterministically instead of hitting the live apple.com
+    # servers, whose response timing made those tests flaky.
+    chrome_options["args"].append("--host-resolver-rules="
+                                  "MAP nonexistent.*.test ^NOTFOUND, "
+                                  "MAP *.test 127.0.0.1, "
+                                  "MAP *.test. 127.0.0.1, "
+                                  "MAP apple.com ^NOTFOUND, "
+                                  "MAP *.apple.com ^NOTFOUND")
     # Enable Secure Payment Confirmation for Chrome. This is normally disabled
     # on Linux as it hasn't shipped there yet, but in WPT we enable virtual
     # authenticator devices anyway for testing and so SPC works.
@@ -142,12 +158,22 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
         "MediaStreamTrackWebSpeech",
         "WebSpeechRecognitionContext",
     ]))
+    # For Web Install API and <install> element tests.
+    chrome_options["args"].append("--enable-features=WebAppInstallation,InstallElement")
     # For testing WebExtensions using WebDriver.
     chrome_options["args"].append("--enable-unsafe-extension-debugging")
     # Connection between ChromeDriver and Chrome will be over pipes.
     # This is needed to test extensions, PWA, compilation caches that
     # require local CDP access.
     chrome_options["args"].append("--remote-debugging-pipe")
+    # For Device Bound Session Credentials tests, which are only eligible on
+    # Windows, Mac, and Linux.
+    if run_info_data.get("os") in ["win", "mac", "linux"]:
+        chrome_options["args"].append("--enable-features=" + ",".join([
+            "EnableBoundSessionCredentialsSoftwareKeysForManualTesting",
+            "DeviceBoundSessions:RefreshQuota/false/RequireOriginTrialTokens/false",
+            "DeviceBoundSessionsFederatedRegistration",
+        ]))
 
     # Classify `http-local`, `http-public` and https variants in the
     # appropriate IP address spaces.
@@ -168,8 +194,15 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
         chrome_options["args"].append(
             "--ip-address-space-overrides=" + address_space_overrides_arg)
 
-    # Disable overlay scrollbar animations to prevent flaky wpt screenshots based on timing.
-    chrome_options["args"].append("--disable-features=ScrollbarAnimations")
+    chrome_options["args"].append("--disable-features=" + ",".join([
+        # Disable overlay scrollbar animations to prevent flaky wpt screenshots based on timing.
+        "ScrollbarAnimations",
+        # Compression dictionaries are only used over certificates that chain to a
+        # known root (or on localhost), which the wpt test CA never does, so every
+        # fetch/compression-dictionary/ test that expects Available-Dictionary fails.
+        # Keep both in one flag: a later --disable-features would replace this one.
+        "CompressionDictionaryTransportRequireKnownRootCert",
+    ]))
 
     # Always enable ViewTransitions long callback timeout to avoid erroneous
     # failures due to implicit timeout within the API.
@@ -216,6 +249,11 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
     if test_type == "wdspec":
         executor_kwargs["binary_args"] = chrome_options["args"]
 
+    if test_type == "aamtest":
+        if "--force-renderer-accessibility" not in chrome_options["args"]:
+            chrome_options["args"].append("--force-renderer-accessibility")
+            executor_kwargs["binary_args"] = chrome_options["args"]
+
     executor_kwargs["capabilities"] = capabilities
 
     return executor_kwargs
@@ -248,13 +286,13 @@ class ChromeBrowser(WebDriverBrowser):
         self._leak_check = leak_check
         self._actual_port = None
         self._require_webdriver_bidi: Optional[bool] = None
+        self._is_extension_test: Optional[bool] = None
 
     def restart_on_test_type_change(self, new_test_type: str, old_test_type: str) -> bool:
-        # Restart the test runner when switch from/to wdspec tests. Wdspec test
-        # is using a different protocol class so a restart is always needed.
-        if "wdspec" in [old_test_type, new_test_type]:
-            return True
-        return False
+        # Restart the test runner when switch from/to wdspec or aamtest tests.
+        # These tests use a different protocol class so a restart is always needed.
+        wdspec_types = {"wdspec", "aamtest"}
+        return old_test_type in wdspec_types or new_test_type in wdspec_types
 
     def create_output_handler(self, cmd: List[str]) -> OutputHandler:
         return ChromeDriverOutputHandler(
@@ -294,7 +332,9 @@ class ChromeBrowser(WebDriverBrowser):
 
     def executor_browser(self):
         browser_cls, browser_kwargs = super().executor_browser()
-        return browser_cls, {**browser_kwargs, "leak_check": self._leak_check}
+        return browser_cls, {**browser_kwargs,
+                             "leak_check": self._leak_check,
+                             "is_extension_test": self._is_extension_test}
 
     @property
     def require_webdriver_bidi(self) -> Optional[bool]:
@@ -303,16 +343,19 @@ class ChromeBrowser(WebDriverBrowser):
     def settings(self, test: Test) -> BrowserSettings:
         """ Required to store `require_webdriver_bidi` in browser settings."""
         settings = super().settings(test)
+        self._is_extension_test = (
+            (test.testdriver_features is not None and
+             "extensions" in test.testdriver_features) or
+            (test.url is not None and "web-extensions/" in test.url))
         self._require_webdriver_bidi = (
-            test.testdriver_features is not None and (
-                'bidi' in test.testdriver_features or
-                'extensions' in test.testdriver_features
-            )
-        )
+            (test.testdriver_features is not None and
+             ("bidi" in test.testdriver_features or
+              "extensions" in test.testdriver_features)) or
+            self._is_extension_test)
 
         return {
-            **settings,
-            "require_webdriver_bidi": self._require_webdriver_bidi
+            **settings, "require_webdriver_bidi": self._require_webdriver_bidi,
+            "is_extension_test": self._is_extension_test
         }
 
 

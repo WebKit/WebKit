@@ -3,7 +3,6 @@
 import argparse
 import os
 import sys
-from collections import OrderedDict
 from shutil import which
 from datetime import timedelta
 from typing import Mapping, Optional
@@ -41,7 +40,7 @@ def create_parser(product_choices=None):
     from mozlog import commandline
 
     if product_choices is None:
-        product_choices = products.product_list
+        product_choices = list(products.get_all_products())
 
     parser = argparse.ArgumentParser(description="""Runner for web-platform-tests tests.""",
                                      usage="""%(prog)s [OPTION]... [TEST]...
@@ -168,6 +167,12 @@ scheme host and port.""")
                                       help="Enable tests that require WebTransport over HTTP/3 server (default: false)")
     test_selection_group.add_argument("--no-enable-webtransport-h3", action="store_false", dest="enable_webtransport_h3",
                                       help="Do not enable WebTransport tests on experimental channels")
+    test_selection_group.add_argument("--enable-dns",
+                                      action="store_true",
+                                      default=None,
+                                      help="Enable the DNS server for resolving test domains")
+    test_selection_group.add_argument("--no-enable-dns", action="store_false", dest="enable_dns",
+                                      help="Do not enable DNS server")
     test_selection_group.add_argument("--tag", action="append", dest="tags",
                                       help="Labels applied to tests to include in the run. "
                                            "Labels starting dir: are equivalent to top-level directories.")
@@ -342,12 +347,15 @@ scheme host and port.""")
                              help="With --reftest-internal, when to take a screenshot")
     gecko_group.add_argument("--chaos", dest="chaos_mode_flags", nargs="?", const=0xFFFFFFFF, type=lambda x: int(x, 16),
                              help="Enable chaos mode with the specified feature flag "
-                             "(see http://searchfox.org/mozilla-central/source/mfbt/ChaosMode.h for "
+                             "(see http://searchfox.org/firefox-main/source/mfbt/ChaosMode.h for "
                              "details). If no value is supplied, all features are activated")
 
     gecko_view_group = parser.add_argument_group("GeckoView-specific")
     gecko_view_group.add_argument("--setenv", dest="env", action="append", default=[],
                                   help="Set target environment variable, like FOO=BAR")
+    gecko_view_group.add_argument("--enable-isolated-process", dest="isolated_process",
+                                  action="store_true", default=False,
+                                  help="Enable content service isolated process.")
 
     servo_group = parser.add_argument_group("Servo-specific")
     servo_group.add_argument("--user-stylesheet",
@@ -439,6 +447,16 @@ scheme host and port.""")
     commandline.log_formatters["wptscreenshot"] = (wptscreenshot.WptscreenshotFormatter, "wpt.fyi screenshots")
 
     commandline.add_logging_group(parser)
+
+    for product_name in products.get_all_products():
+        try:
+            product = products.Product.from_product_name(product_name)
+        except Exception as e:
+            print(f"Warning: could not load product {product_name!r} for argument registration: {e}",
+                  file=sys.stderr)
+        else:
+            product.add_arguments(parser)
+
     return parser
 
 
@@ -452,7 +470,7 @@ def set_from_config(kwargs):
 
     kwargs["config"] = config.read(kwargs["config_path"])
 
-    kwargs["product"] = products.Product(kwargs["config"], kwargs["product"])
+    kwargs["product"] = products.Product.from_product_name(kwargs["product"])
 
     keys = {"paths": [("prefs", "prefs_root", "path"),
                       ("run_info", "run_info", "path"),
@@ -510,7 +528,7 @@ def get_test_paths(config: Mapping[str, config.ConfigDict],
                    metadata_path_override: Optional[str] = None,
                    manifest_path_override: Optional[str] = None) -> TestPaths:
     # Set up test_paths
-    test_paths = OrderedDict()
+    test_paths = {}
 
     for section in config.keys():
         if section.startswith("manifest:"):
@@ -735,7 +753,7 @@ def create_parser_metadata_update(product_choices=None):
     from . import products
 
     if product_choices is None:
-        product_choices = products.product_list
+        product_choices = list(products.get_all_products())
 
     parser = argparse.ArgumentParser("web-platform-tests-update",
                                      description="Update script for web-platform-tests tests.")

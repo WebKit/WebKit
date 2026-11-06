@@ -2,8 +2,9 @@ import pytest
 
 from webdriver.bidi.modules.script import ContextTarget
 
+pytestmark = pytest.mark.asyncio
 
-@pytest.mark.asyncio
+
 @pytest.mark.parametrize("type_hint", ["tab", "window"])
 async def test_add_preload_script(
     bidi_session, add_preload_script, top_context, inline, type_hint
@@ -28,6 +29,18 @@ async def test_add_preload_script(
     )
     assert result == {"type": "string", "value": "bar"}
 
+    await bidi_session.browsing_context.reload(
+        context=new_context["context"], wait="complete"
+    )
+
+    # Check that preload script was applied after reload
+    result = await bidi_session.script.evaluate(
+        expression="window.foo",
+        target=ContextTarget(new_context["context"]),
+        await_promise=True,
+    )
+    assert result == {"type": "string", "value": "bar"}
+
     url = inline("<div>foo</div>")
     await bidi_session.browsing_context.navigate(
         context=new_context["context"],
@@ -44,7 +57,6 @@ async def test_add_preload_script(
     assert result == {"type": "string", "value": "bar"}
 
 
-@pytest.mark.asyncio
 async def test_add_same_preload_script_twice(add_preload_script):
     script_1 = await add_preload_script(function_declaration="() => { return 42; }")
     script_2 = await add_preload_script(function_declaration="() => { return 42; }")
@@ -53,7 +65,6 @@ async def test_add_same_preload_script_twice(add_preload_script):
     assert script_1 != script_2
 
 
-@pytest.mark.asyncio
 async def test_script_order(
     bidi_session, add_preload_script, subscribe_events, new_tab, inline
 ):
@@ -84,12 +95,11 @@ async def test_script_order(
 
     assert len(events) > 0
     # Make sure that console event from preload script comes first
-    events[0]["text"] == preload_script_console_text
+    assert events[0]["text"] == preload_script_console_text
 
     remove_listener()
 
 
-@pytest.mark.asyncio
 async def test_add_preload_script_in_iframe(
     bidi_session, add_preload_script, new_tab, test_page_same_origin_frame
 ):
@@ -123,7 +133,6 @@ async def test_add_preload_script_in_iframe(
     assert result == {"type": "string", "value": "foo"}
 
 
-@pytest.mark.asyncio
 async def test_add_preload_script_with_error(
     bidi_session, add_preload_script, subscribe_events, inline, new_tab, wait_for_event, wait_for_future_safe
 ):
@@ -148,7 +157,6 @@ async def test_add_preload_script_with_error(
     assert error_event["text"] == "Error: error in preload script"
 
 
-@pytest.mark.asyncio
 async def test_page_script_can_access_preload_script_properties(
     bidi_session, add_preload_script, new_tab, inline
 ):
@@ -172,7 +180,6 @@ async def test_page_script_can_access_preload_script_properties(
     assert result == {"type": "number", "value": 42}
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "types",
     [

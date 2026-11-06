@@ -42,7 +42,7 @@ def _ensure_directory_in_path(directory):
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'webdriver'))
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'wptrunner'))
 
-from wptrunner.executors.base import WdspecExecutor, WdspecProtocol  # noqa
+from wptrunner.executors.base import PytestExecutor  # noqa
 from wptrunner.browsers.base import WebDriverBrowser  # noqa
 
 pytest_runner = None
@@ -123,7 +123,7 @@ class WebKitDriverBrowser(WebDriverBrowser):
         return [self.webdriver_binary, f"--port={self.port}"] + self.webdriver_args
 
 
-class WebDriverW3CExecutor(WdspecExecutor):
+class WebDriverW3CExecutor(PytestExecutor):
     WARM_UP_TIMEOUT_SECONDS = 120
     PYTEST_ARGS = ['--strict-markers', '-p', 'no:mozlog']
 
@@ -139,7 +139,7 @@ class WebDriverW3CExecutor(WdspecExecutor):
                          'doc_root': server.document_root()}
         self.runner = TestRunner()
         browser = WebKitDriverBrowser(self.runner.logger, webdriver_binary=driver.binary_path())
-        WdspecExecutor.__init__(self, self.runner.logger, browser, server_config, driver.binary_path(), None, capabilities=driver.capabilities(), target_platform=target_platform)
+        PytestExecutor.__init__(self, self.runner.logger, browser, server_config, driver.binary_path(), None, capabilities=driver.capabilities(), target_platform=target_platform)
 
         self._timeout = timeout
         self._expectations = expectations

@@ -1,7 +1,11 @@
+# META: timeout=long
+
+# Longer timeout required due to a large number of input action and event dispatch subtests.
+
 import pytest
 from webdriver import WebElement
 
-from tests.support.asserts import (
+from tests.support.classic.asserts import (
     assert_element_has_focus,
     assert_error,
     assert_events_equal,

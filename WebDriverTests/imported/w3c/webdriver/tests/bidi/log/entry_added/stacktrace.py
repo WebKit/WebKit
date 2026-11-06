@@ -2,8 +2,9 @@ import pytest
 
 from . import assert_console_entry, assert_javascript_entry
 
+pytestmark = pytest.mark.asyncio
 
-@pytest.mark.asyncio
+
 @pytest.mark.parametrize(
     "log_method",
     [
@@ -64,6 +65,7 @@ async def test_console_entry_sync_callstack(
         text="cheese",
         stacktrace=expected_stack,
         context=top_context["context"],
+        user_context=top_context["userContext"],
     )
 
     # Navigate to a page with no error to avoid polluting the next tests with
@@ -73,7 +75,6 @@ async def test_console_entry_sync_callstack(
     )
 
 
-@pytest.mark.asyncio
 async def test_javascript_entry_sync_callstack(
     bidi_session, subscribe_events, inline, top_context, wait_for_event, wait_for_future_safe
 ):
@@ -109,6 +110,7 @@ async def test_javascript_entry_sync_callstack(
         text="Error: cheese",
         stacktrace=expected_stack,
         context=top_context["context"],
+        userContext=top_context["userContext"],
     )
 
     # Navigate to a page with no error to avoid polluting the next tests with

@@ -1,4 +1,6 @@
 from math import floor
+import pytest
+from tests.support.image import png_dimensions
 from ... import (
     get_device_pixel_ratio,
     get_document_dimensions,
@@ -59,6 +61,34 @@ async def get_physical_element_dimensions(bidi_session, context, element):
     element_dimensions = await get_element_dimensions(bidi_session, context, element)
     dpr = await get_device_pixel_ratio(bidi_session, context)
     return (floor(element_dimensions["width"] * dpr), floor(element_dimensions["height"] * dpr))
+
+
+async def get_visual_viewport_dimensions(bidi_session, context):
+    """Get the CSS dimensions of the context's visual viewport.
+
+    :param bidi_session: BiDiSession
+    :param context: Browsing context info
+    :returns: Dict containing visual viewport width and height.
+    """
+    result = await bidi_session.script.evaluate(
+        expression="({width: window.visualViewport.width, height: window.visualViewport.height})",
+        target=ContextTarget(context["context"]),
+        await_promise=False,
+    )
+    return remote_mapping_to_dict(result["value"])
+
+
+async def capture_screenshot_and_assert_visual_viewport_dimensions(
+        bidi_session, context):
+    """Capture a viewport screenshot and assert its physical dimensions."""
+    viewport = await get_visual_viewport_dimensions(bidi_session, context)
+    dpr = await get_device_pixel_ratio(bidi_session, context)
+    data = await bidi_session.browsing_context.capture_screenshot(
+        context=context["context"])
+    assert png_dimensions(data) == pytest.approx(
+        (viewport["width"] * dpr, viewport["height"] * dpr), abs=1.0
+    )
+    return data
 
 
 async def get_physical_viewport_dimensions(bidi_session, context):

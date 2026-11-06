@@ -1,8 +1,12 @@
+# META: timeout=long
+
+# Longer timeout required due to a large number of element lookup and DOM inspection subtests.
+
 import pytest
 from webdriver.client import WebElement, ShadowRoot
 from webdriver.transport import Response
 
-from tests.support.asserts import assert_error, assert_same_element, assert_success
+from tests.support.classic.asserts import assert_error, assert_same_element, assert_success
 
 
 def find_element(session, shadow_id, using, value):
@@ -245,3 +249,36 @@ def test_find_element_in_nested_shadow_root(session, get_test_page, mode):
 
     element = WebElement.from_json(value, session)
     assert element.text == expected_text
+
+
+@pytest.mark.parametrize("value", [None, 1])
+def test_implicit_wait_shadow_root(session, get_test_page, value):
+    session.url = get_test_page()
+    session.timeouts.implicit = value
+
+    session.execute_script("""
+        setTimeout(() => {
+            const host = document.querySelector('custom-element');
+            const input = document.createElement('input');
+            input.id = 'delayed';
+            host.shadowRoot.appendChild(input);
+        }, 300);
+    """)
+
+    shadow_root = session.find.css("custom-element", all=False).shadow_root
+    response = find_element(session, shadow_root.id, "css selector", "#delayed")
+    value = assert_success(response)
+
+    expected = session.execute_script("""
+        return arguments[0].shadowRoot.getElementById('delayed')
+    """, args=(session.find.css("custom-element", all=False),))
+    assert_same_element(session, value, expected)
+
+
+def test_implicit_wait_timeout(session, get_test_page):
+    session.url = get_test_page()
+    session.timeouts.implicit = 0.5
+
+    shadow_root = session.find.css("custom-element", all=False).shadow_root
+    response = find_element(session, shadow_root.id, "css selector", "#nonexistent")
+    assert_error(response, "no such element")

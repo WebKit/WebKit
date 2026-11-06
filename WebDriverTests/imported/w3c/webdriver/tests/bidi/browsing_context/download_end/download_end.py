@@ -11,6 +11,7 @@ pytestmark = pytest.mark.asyncio
 
 CONTENT = "SOME_FILE_CONTENT"
 DOWNLOAD_END = "browsingContext.downloadEnd"
+DOWNLOAD_WILL_BEGIN = "browsingContext.downloadWillBegin"
 NAVIGATION_STARTED = "browsingContext.navigationStarted"
 
 
@@ -87,10 +88,12 @@ async def test_download_attribute(bidi_session, subscribe_events, new_tab, inlin
         {
             'filepath': any_string,
             'context': new_tab["context"],
+            'download': any_string,
             'navigation': None,
             'status': 'complete',
             'timestamp': any_int,
             'url': download_link,
+            **({"userContext": new_tab["userContext"]} if "userContext" in event else {}),
         }, event)
 
     # Assert file content is available.
@@ -99,6 +102,9 @@ async def test_download_attribute(bidi_session, subscribe_events, new_tab, inlin
     assert file_content == CONTENT
 
 
+@pytest.mark.parametrize(
+    "target", ["_self", "_blank"], ids=["in the same page", "in the other page"]
+)
 async def test_content_disposition_header(
     bidi_session,
     subscribe_events,
@@ -108,6 +114,7 @@ async def test_content_disposition_header(
     wait_for_event,
     wait_for_future_safe,
     filename,
+    target,
 ):
     content_disposition_link = url(
         "/webdriver/tests/support/http_handlers/headers.py?"
@@ -115,14 +122,18 @@ async def test_content_disposition_header(
         + f"&header=Content-Disposition:attachment;%20filename={filename}"
     )
     page_url = inline(
-        f"""<a id="content_disposition_link" href="{content_disposition_link}">contentdisposition</a>"""
+        f"""<a id="content_disposition_link" target={target} href="{content_disposition_link}">contentdisposition</a>"""
     )
 
     await bidi_session.browsing_context.navigate(
         context=new_tab["context"], url=page_url, wait="complete"
     )
 
-    await subscribe_events(events=[DOWNLOAD_END, NAVIGATION_STARTED])
+    # In some cases Firefox sends an extra navigation event in the temporary browsing context,
+    # to filter them out subscribe only in the observed context.
+    await subscribe_events(
+        events=[DOWNLOAD_END, NAVIGATION_STARTED], contexts=[new_tab["context"]]
+    )
     on_navigation_started = wait_for_event(NAVIGATION_STARTED)
     on_download_end = wait_for_event(DOWNLOAD_END)
 
@@ -138,10 +149,12 @@ async def test_content_disposition_header(
         {
             "filepath": any_string,
             "context": new_tab["context"],
+            "download": any_string,
             "navigation": any_string,
             "status": "complete",
             "timestamp": any_int,
             "url": content_disposition_link,
+            **({"userContext": new_tab["userContext"]} if "userContext" in download_event else {}),
         },
         download_event,
     )
@@ -157,3 +170,41 @@ async def test_content_disposition_header(
     with open(download_event["filepath"], mode="r", encoding="utf-8") as file:
         file_content = file.read()
     assert file_content == CONTENT
+
+
+async def test_download_id(
+        bidi_session,
+        subscribe_events,
+        new_tab,
+        inline,
+        wait_for_event,
+        wait_for_future_safe,
+        download_link,
+        filename
+):
+    url = inline(
+        f"""<a id="download_link" href="{download_link}" download="{filename}">download</a>""")
+
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"], url=url, wait="complete"
+    )
+
+    await subscribe_events(events=[DOWNLOAD_WILL_BEGIN, DOWNLOAD_END])
+    on_download_will_begin = wait_for_event(DOWNLOAD_WILL_BEGIN)
+    on_download_end = wait_for_event(DOWNLOAD_END)
+
+    await bidi_session.script.evaluate(
+        expression="download_link.click()",
+        target=ContextTarget(new_tab["context"]),
+        await_promise=True,
+        user_activation=True
+    )
+
+    download_will_begin_event = await wait_for_future_safe(on_download_will_begin)
+    download_end_event = await wait_for_future_safe(on_download_end)
+
+    # The download id should be a non-empty string, identical for the
+    # downloadWillBegin and downloadEnd events of the same download.
+    assert isinstance(download_will_begin_event["download"], str)
+    assert download_will_begin_event["download"] != ""
+    assert download_will_begin_event["download"] == download_end_event["download"]

@@ -1,3 +1,7 @@
+# META: timeout=long
+
+# Longer timeout required due to a large number of network interception and navigation subtests.
+
 import pytest
 
 pytestmark = pytest.mark.asyncio
@@ -20,6 +24,7 @@ pytestmark = pytest.mark.asyncio
         ("cookie", "some nonsense value="),
         # Custom
         ("x-request-id", "some nonsense value"),
+        ("x-diacritics", "ä"),
         ("x-unicode-value", "你好世界"),
         # Protected headers.
         ("host", 'some nonsense value'),

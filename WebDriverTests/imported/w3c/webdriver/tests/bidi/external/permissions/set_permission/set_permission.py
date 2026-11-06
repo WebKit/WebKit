@@ -6,8 +6,8 @@ from . import get_permission_state
 pytestmark = pytest.mark.asyncio
 
 
-@pytest.mark.asyncio
-async def test_set_permission(bidi_session, new_tab, url):
+@pytest.mark.parametrize("permission", ["geolocation", "camera", "microphone"])
+async def test_set_permission(bidi_session, new_tab, url, permission):
     test_url = url("/common/blank.html", protocol="https")
     await bidi_session.browsing_context.navigate(
         context=new_tab["context"],
@@ -17,34 +17,33 @@ async def test_set_permission(bidi_session, new_tab, url):
 
     origin = await get_context_origin(bidi_session, new_tab)
 
-    assert await get_permission_state(bidi_session, new_tab, "geolocation") == "prompt"
+    assert await get_permission_state(bidi_session, new_tab, permission) == "prompt"
 
     await bidi_session.permissions.set_permission(
-        descriptor={"name": "geolocation"},
+        descriptor={"name": permission},
         state="granted",
         origin=origin,
     )
 
-    assert await get_permission_state(bidi_session, new_tab, "geolocation") == "granted"
+    assert await get_permission_state(bidi_session, new_tab, permission) == "granted"
 
     await bidi_session.permissions.set_permission(
-        descriptor={"name": "geolocation"},
+        descriptor={"name": permission},
         state="denied",
         origin=origin,
     )
 
-    assert await get_permission_state(bidi_session, new_tab, "geolocation") == "denied"
+    assert await get_permission_state(bidi_session, new_tab, permission) == "denied"
 
     await bidi_session.permissions.set_permission(
-        descriptor={"name": "geolocation"},
+        descriptor={"name": permission},
         state="prompt",
         origin=origin,
     )
 
-    assert await get_permission_state(bidi_session, new_tab, "geolocation") == "prompt"
+    assert await get_permission_state(bidi_session, new_tab, permission) == "prompt"
 
 
-@pytest.mark.asyncio
 async def test_set_permission_new_context(bidi_session, new_tab, url):
     test_url = url("/common/blank.html", protocol="https")
 
@@ -103,7 +102,6 @@ async def test_set_permission_origin_unknown(bidi_session, new_tab, origin, url)
     assert await get_permission_state(bidi_session, new_tab, "geolocation") == "prompt"
 
 
-@pytest.mark.asyncio
 async def test_set_permission_iframe(
     bidi_session, new_tab, test_page_cross_origin_frame
 ):

@@ -7,7 +7,7 @@ from webdriver.bidi.modules.script import ContextTarget
 from tests.support.asserts import assert_move_to_coordinates
 from tests.support.helpers import filter_dict
 
-from .. import get_events
+from .. import add_mouse_listeners, get_events
 from . import (
     assert_pointer_events,
     get_inview_center_bidi,
@@ -17,6 +17,7 @@ from . import (
 
 pytestmark = pytest.mark.asyncio
 
+CONTEXT_DESTROYED_EVENT = "browsingContext.contextDestroyed"
 CONTEXT_LOAD_EVENT = "browsingContext.load"
 
 
@@ -29,13 +30,14 @@ async def test_down_closes_browsing_context(
     inline,
     subscribe_events,
     wait_for_event,
+    wait_for_future_safe,
     mouse_up
 ):
     url = inline("""<input onmousedown="window.close()">close</input>""")
 
     # Opening a new context via `window.open` is required
     # for the script to be able to close it.
-    await subscribe_events(events=[CONTEXT_LOAD_EVENT])
+    await subscribe_events(events=[CONTEXT_LOAD_EVENT, CONTEXT_DESTROYED_EVENT])
     on_load = wait_for_event(CONTEXT_LOAD_EVENT)
 
     await bidi_session.script.evaluate(
@@ -49,13 +51,17 @@ async def test_down_closes_browsing_context(
     element = await get_element("input", context=new_context)
     origin = get_element_origin(element)
 
+    # Listen for contextDestroyed before performing actions, as the context may
+    # be destroyed before perform_actions returns.
+    on_destroyed = wait_for_event(CONTEXT_DESTROYED_EVENT)
+
     if mouse_up:
         actions = Actions()
         (
             actions.add_pointer()
             .pointer_move(0, 0, origin=origin)
             .pointer_down(button=0)
-            .pause(250 * configuration["timeout_multiplier"])
+            .pause(100 * configuration["timeout_multiplier"])
             .pointer_up(button=0)
         )
 
@@ -74,6 +80,11 @@ async def test_down_closes_browsing_context(
         await bidi_session.input.perform_actions(
             actions=actions, context=new_context["context"]
         )
+
+    # Wait for the context to be destroyed, as window.close() queues a task to
+    # close and destroy the traversable:
+    # https://html.spec.whatwg.org/#dom-window-close
+    await wait_for_future_safe(on_destroyed)
 
     with pytest.raises(NoSuchFrameException):
         await bidi_session.browsing_context.get_tree(root=new_context["context"], max_depth=0)
@@ -393,6 +404,10 @@ async def test_move_to_position_in_viewport(
 ):
     await load_static_test_page(page="test_actions.html")
 
+    # A new pointer input source is at (0, 0), so moving there dispatches no
+    # event: https://w3c.github.io/webdriver/#dfn-perform-a-pointer-move
+    expected_count = 0 if (x, y) == (0, 0) else 1
+
     actions = Actions()
     actions.add_pointer().pointer_move(x=x, y=y)
 
@@ -401,7 +416,7 @@ async def test_move_to_position_in_viewport(
     )
 
     events = await get_events(bidi_session, top_context["context"])
-    assert len(events) == 1
+    assert len(events) == expected_count
 
     # Move again to check that no further mouse move event is emitted.
     actions = Actions()
@@ -412,7 +427,7 @@ async def test_move_to_position_in_viewport(
     )
 
     events = await get_events(bidi_session, top_context["context"])
-    assert len(events) == 1
+    assert len(events) == expected_count
 
 
 @pytest.mark.parametrize("origin", ["viewport", "pointer", "element"])
@@ -472,3 +487,38 @@ async def test_move_to_origin_position_within_frame(
 
     assert len(events) == 1
     assert events[0] == target_point
+
+
+async def test_move_to_inline_block_child(
+    bidi_session, top_context, inline, get_element
+):
+    # margin-top: 0.5px is on purpose: it places the element at a fractional
+    # y-coordinate, which could trigger a rounding issue preventing the action from
+    # working.
+    url = inline("""
+        <div style="margin-top: 0.5px">
+          <a id="link" href="#"><div style="width: 32px; height: 32px;"></div></a>
+        </div>
+    """)
+    await bidi_session.browsing_context.navigate(
+        context=top_context["context"],
+        url=url,
+        wait="complete",
+    )
+    await add_mouse_listeners(bidi_session, top_context)
+
+    elem = await get_element("#link")
+    center = await get_inview_center_bidi(bidi_session, context=top_context, element=elem)
+
+    actions = Actions()
+    actions.add_pointer().pointer_move(x=0, y=0, origin=get_element_origin(elem))
+
+    await bidi_session.input.perform_actions(
+        actions=actions, context=top_context["context"]
+    )
+
+    events = await get_events(bidi_session, top_context["context"])
+    assert len(events) == 1
+    assert events[0]["type"] == "mousemove"
+    assert events[0]["clientX"] == pytest.approx(center["x"], abs=1.0)
+    assert events[0]["clientY"] == pytest.approx(center["y"], abs=1.0)

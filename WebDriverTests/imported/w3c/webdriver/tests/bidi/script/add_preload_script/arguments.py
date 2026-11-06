@@ -1,7 +1,6 @@
 import pytest
 from webdriver.bidi.modules.script import ContextTarget
 
-from tests.bidi import wait_for_bidi_events
 from ... import any_string, recursive_compare
 
 
@@ -183,6 +182,7 @@ async def test_mutation_observer(
 async def test_two_channels(
     bidi_session,
     subscribe_events,
+    wait_for_bidi_events,
     add_preload_script,
 ):
     await subscribe_events(["script.message"])
@@ -208,7 +208,7 @@ async def test_two_channels(
 
     new_tab = await bidi_session.browsing_context.create(type_hint="tab")
     # Wait for both events
-    await wait_for_bidi_events(bidi_session, events, 2, timeout=0.5)
+    await wait_for_bidi_events(events, 2, timeout=0.5)
 
     recursive_compare(
         {
@@ -226,6 +226,214 @@ async def test_two_channels(
         {
             "channel": "channel_name_2",
             "data": {"type": "string", "value": "message_from_channel_2"},
+            "source": {
+                "realm": any_string,
+                "context": new_tab["context"],
+            },
+        },
+        events[1],
+    )
+
+    remove_listener()
+
+
+async def test_channel_with_window_open(
+    bidi_session,
+    subscribe_events,
+    new_tab,
+    inline,
+    wait_for_event,
+    wait_for_bidi_events,
+    wait_for_future_safe,
+    add_preload_script,
+):
+    await subscribe_events(["script.message", "browsingContext.contextCreated"])
+
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"],
+        url=inline(f"""<button id="open" onclick='window.open("{inline('<div>popup</div>')}")'>Open popup</button>"""),
+        wait="complete",
+    )
+
+    events = []
+
+    async def on_event(method, data):
+        events.append(data)
+
+    remove_listener = bidi_session.add_event_listener("script.message", on_event)
+
+    on_created = wait_for_event("browsingContext.contextCreated")
+
+    await add_preload_script(
+        function_declaration="""(channel) => channel({'script': 1})""",
+        arguments=[{"type": "channel", "value": {"channel": "channel_name"}}],
+    )
+
+    await add_preload_script(
+        function_declaration="""(channel) => channel({'script': 2})""",
+        arguments=[{"type": "channel", "value": {"channel": "channel_name"}}],
+    )
+
+    # Trigger "window.open" by clicking on the button.
+    await bidi_session.script.evaluate(
+        expression="document.getElementById('open').click()",
+        target={"context": new_tab["context"]},
+        await_promise=True,
+    )
+
+    # Firefox might receive more events because of an interim realm.
+    await wait_for_bidi_events(events, 2, timeout=0.5, equal_check=False)
+
+    on_created_event_data = await wait_for_future_safe(on_created)
+
+    for index in range(2):
+        recursive_compare(
+            {
+                "channel": "channel_name",
+                "data": {
+                    "type": "object",
+                    "value": [
+                        ["script", {"type": "number", "value": index + 1}],
+                    ],
+                },
+                "source": {
+                    "realm": any_string,
+                    "context": on_created_event_data["context"],
+                },
+            },
+            events[index],
+        )
+
+    remove_listener()
+
+
+async def test_channel_with_window_open_subscribe_to_user_context(
+    bidi_session,
+    subscribe_events,
+    new_tab,
+    inline,
+    wait_for_event,
+    wait_for_future_safe,
+    add_preload_script,
+):
+    await subscribe_events(["browsingContext.contextCreated"])
+
+    # Subscribe to only a default user context.
+    await subscribe_events(["script.message"], user_contexts=["default"])
+
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"],
+        url=inline(f"""<button id="open" onclick='window.open("{inline('<div>popup</div>')}")'>Open popup</button>"""),
+        wait="complete",
+    )
+
+    on_created = wait_for_event("browsingContext.contextCreated")
+    on_message = wait_for_event("script.message")
+
+    await add_preload_script(
+        function_declaration="""(channel) => channel({'script': 1})""",
+        arguments=[{"type": "channel", "value": {"channel": "channel_name"}}],
+    )
+
+    # Trigger "window.open" by clicking on the button.
+    await bidi_session.script.evaluate(
+        expression="document.getElementById('open').click()",
+        target={"context": new_tab["context"]},
+        await_promise=True,
+    )
+
+    message_event_data = await wait_for_future_safe(on_message)
+    created_event_data = await wait_for_future_safe(on_created)
+
+    recursive_compare(
+        {
+            "channel": "channel_name",
+            "data": {
+                "type": "object",
+                "value": [
+                    ["script", {"type": "number", "value": 1}],
+                ],
+            },
+            "source": {
+                "realm": any_string,
+                "context": created_event_data["context"],
+            },
+        },
+        message_event_data,
+    )
+
+
+async def test_channel_multiple_messages_before_navigation(
+    bidi_session,
+    subscribe_events,
+    wait_for_bidi_events,
+    wait_for_event,
+    wait_for_future_safe,
+    new_tab,
+    inline,
+    add_preload_script,
+):
+    await subscribe_events(["script.message", "browsingContext.load"])
+
+    # Track all received script.message events in the events array.
+    events = []
+
+    async def on_event(method, data):
+        events.append(data)
+
+    remove_listener = bidi_session.add_event_listener("script.message", on_event)
+
+    # Register a preload script that sends two back-to-back channel messages
+    # in the same click task right as navigation starts.
+    await add_preload_script(
+        function_declaration="""(channel) => {
+            window.addEventListener('click', () => {
+                channel('first_message');
+                channel('second_message');
+            });
+        }""",
+        arguments=[{"type": "channel", "value": {"channel": "channel_name"}}],
+        contexts=[new_tab["context"]],
+    )
+
+    # Navigate to a page with a link that triggers a cross-document navigation.
+    target_url = inline("<div>target</div>")
+    initial_url = inline(f"<a id='link' href='{target_url}'>link</a>")
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"],
+        url=initial_url,
+        wait="complete",
+    )
+
+    on_load = wait_for_event("browsingContext.load")
+
+    # Click the link to send both channel messages and start navigating away.
+    await bidi_session.script.evaluate(
+        raw_result=True,
+        expression="document.getElementById('link').click()",
+        await_promise=False,
+        target=ContextTarget(new_tab["context"]),
+    )
+
+    await wait_for_future_safe(on_load)
+    await wait_for_bidi_events(events, 2, timeout=0.5)
+
+    recursive_compare(
+        {
+            "channel": "channel_name",
+            "data": {"type": "string", "value": "first_message"},
+            "source": {
+                "realm": any_string,
+                "context": new_tab["context"],
+            },
+        },
+        events[0],
+    )
+
+    recursive_compare(
+        {
+            "channel": "channel_name",
+            "data": {"type": "string", "value": "second_message"},
             "source": {
                 "realm": any_string,
                 "context": new_tab["context"],

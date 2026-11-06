@@ -171,6 +171,12 @@ class SeleniumSelectorProtocolPart(SelectorProtocolPart):
     def setup(self):
         self.webdriver = self.parent.webdriver
 
+    def elements_by_selector_array(self, selectors):
+        if len(selectors) == 1:
+            return self.elements_by_selector(selectors[0])
+
+        raise NotImplementedError()
+
     def elements_by_selector(self, selector):
         return self.webdriver.find_elements_by_css_selector(selector)
 
@@ -209,6 +215,11 @@ class SeleniumCookiesProtocolPart(CookiesProtocolPart):
 class SeleniumWindowProtocolPart(WindowProtocolPart):
     def setup(self):
         self.webdriver = self.parent.webdriver
+
+    def create(self, type_hint=None):
+        self.logger.info(f"Creating new {type_hint}")
+        response = self.webdriver.execute(Command.NEW_WINDOW, {"type": type_hint})
+        return response["value"]["handle"]
 
     def minimize(self):
         self.previous_rect = self.webdriver.window.rect

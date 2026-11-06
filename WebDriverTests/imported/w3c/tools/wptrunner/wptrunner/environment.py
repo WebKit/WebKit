@@ -21,13 +21,10 @@ from .wptlogging import LogLevelRewriter, QueueHandler, LogQueueThread
 here = os.path.dirname(__file__)
 repo_root = os.path.abspath(os.path.join(here, os.pardir, os.pardir, os.pardir))
 
-sys.path.insert(0, repo_root)
-# Not needed by our ports
-# from tools import localpaths  # noqa: F401
-
 serve = None
 
 
+# Not needed by our ports
 # def do_delayed_imports(logger, test_paths):
 #     global serve
 
@@ -63,8 +60,8 @@ serve = None
 #     pass
 
 
-# def get_server_logger():
-#     logger = get_default_logger(component="wptserve")
+# def get_server_logger(default_logger: Optional[StructuredLogger]) -> StructuredLogger:
+#     logger = get_default_logger(component="wptserve") or default_logger or StructuredLogger("wptserve")
 #     log_filter = handlers.LogLevelFilter(lambda x: x, "info")
 #     # Downgrade errors to warnings for the server
 #     log_filter = LogLevelRewriter(log_filter, ["error"], "warning")
@@ -97,14 +94,15 @@ serve = None
 #     websockets servers"""
 #     def __init__(self, test_paths, testharness_timeout_multipler,
 #                  pause_after_test, debug_test, debug_info, options, ssl_config, env_extras,
-#                  enable_webtransport=False, mojojs_path=None, inject_script=None,
-#                  suppress_handler_traceback=None, ws_extra=None):
+#                  enable_webtransport=None, enable_dns=None, mojojs_path=None, inject_script=None,
+#                  suppress_handler_traceback=None, ws_extra=None, logger=None):
 
+#         self.logger = logger or StructuredLogger("TestEnvironment")
 #         self.test_paths = test_paths
 #         self.server = None
 #         self.config_ctx = None
 #         self.config = None
-#         self.server_logger = get_server_logger()
+#         self.server_logger = get_server_logger(self.logger)
 #         self.server_logging_ctx = ProxyLoggingContext(self.server_logger)
 #         self.testharness_timeout_multipler = testharness_timeout_multipler
 #         self.pause_after_test = pause_after_test
@@ -121,13 +119,24 @@ serve = None
 #         self.env_extras = env_extras
 #         self.env_extras_cms = None
 #         self.ssl_config = ssl_config
-#         self.enable_webtransport = enable_webtransport
+#         self.enable_webtransport = (
+#             enable_webtransport
+#             if enable_webtransport is not None
+#             else self.options.get("enable_webtransport_h3", False)
+#         )
+#         self.enable_dns = (
+#             enable_dns
+#             if enable_dns is not None
+#             else self.options.get("enable_dns", False)
+#         )
 #         self.mojojs_path = mojojs_path
 #         self.inject_script = inject_script
 #         self.suppress_handler_traceback = suppress_handler_traceback
 #         self.ws_extra = ws_extra
 
 #     def __enter__(self):
+#         assert serve is not None
+#         serve.raise_open_file_limit()
 #         server_log_handler = self._stack.enter_context(self.server_logging_ctx)
 #         self.config_ctx = self.build_config()
 
@@ -151,7 +160,8 @@ serve = None
 #                                    self.get_routes(),
 #                                    mp_context=mpcontext.get_context(),
 #                                    log_handlers=[server_log_handler],
-#                                    webtransport_h3=self.enable_webtransport)
+#                                    webtransport_h3=self.enable_webtransport,
+#                                    dns=self.enable_dns)
 
 #         if self.options.get("supports_debugger") and self.debug_info and self.debug_info.interactive:
 #             self._stack.enter_context(self.ignore_interrupts())
@@ -198,6 +208,7 @@ serve = None
 #             "wss": [8889],
 #             "h2": [9000],
 #             "webtransport-h3": [11000],
+#             "dns": [8053],
 #         }
 #         config.ports = ports
 
@@ -326,7 +337,7 @@ serve = None
 #                     pending.append((host, port))
 
 #             for scheme, servers in self.servers.items():
-#                 if scheme == "webtransport-h3":
+#                 if scheme in ("dns", "webtransport-h3"):
 #                     continue
 #                 for port, server in servers:
 #                     s = socket.socket()

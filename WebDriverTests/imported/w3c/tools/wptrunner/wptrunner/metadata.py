@@ -1,11 +1,12 @@
 # mypy: allow-untyped-defs
 
 import array
+import gzip
 import os
 from collections import defaultdict, namedtuple
 from typing import Dict, List, Tuple
 
-from mozlog import structuredlog
+from mozlog.structuredlog import StructuredLogger
 from sys import intern
 
 from . import manifestupdate
@@ -16,7 +17,7 @@ from .expected import expected_path
 manifest = None  # Module that will be imported relative to test_root
 manifestitem = None
 
-logger = structuredlog.StructuredLogger("web-platform-tests")
+logger = StructuredLogger("web-platform-tests")
 
 try:
     import ujson as json
@@ -283,7 +284,7 @@ def unpack_result(data):
 
 
 def load_test_data(test_paths):
-    manifest_loader = testloader.ManifestLoader(test_paths, False)
+    manifest_loader = testloader.ManifestLoader(logger, test_paths, False)
     manifests = manifest_loader.load()
 
     id_test_map = {}
@@ -300,7 +301,8 @@ def update_from_logs(id_test_map, update_properties, disable_intermittent, updat
 
     for i, log_filename in enumerate(log_filenames):
         logger.info("Processing log %d/%d" % (i + 1, len(log_filenames)))
-        with open(log_filename) as f:
+        opener = gzip.open if log_filename.endswith(".gz") else open
+        with opener(log_filename, "rt") as f:
             updater.update_from_log(f)
 
     yield from update_results(id_test_map, update_properties, full_update,

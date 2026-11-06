@@ -2,16 +2,21 @@ import pytest
 
 from ... import any_string, recursive_compare
 
+pytestmark = pytest.mark.asyncio
 
-@pytest.mark.parametrize("type,value", [
-    ("css", "div"),
-    ("xpath", "//div"),
-    ("innerText", "foobarBARbaz"),
-    ("accessibility", {"role": "banner"}),
-    ("accessibility", {"name": "foo"}),
-    ("accessibility", {"role": "banner", "name": "foo"}),
-])
-@pytest.mark.asyncio
+
+@pytest.mark.parametrize(
+    "type,value",
+    [
+        ("css", "div"),
+        ("xpath", "//div"),
+        ("innerText", "foobarBARbaz"),
+        ("accessibility", {"role": "banner"}),
+        ("accessibility", {"name": "foo"}),
+        ("accessibility", {"role": "banner", "name": "foo"}),
+    ],
+    ids=["css", "xpath", "innerText", "a11y-role", "a11y-name", "a11y-both"],
+)
 async def test_find_by_locator(bidi_session, inline, top_context, type, value):
     url = inline("""
         <div data-class="one" role="banner" aria-label="foo">foobarBARbaz</div>
@@ -21,9 +26,8 @@ async def test_find_by_locator(bidi_session, inline, top_context, type, value):
         context=top_context["context"], url=url, wait="complete"
     )
 
-    result = await bidi_session.browsing_context.locate_nodes(
-        context=top_context["context"],
-        locator={ "type": type, "value": value }
+    nodes = await bidi_session.browsing_context.locate_nodes(
+        context=top_context["context"], locator={"type": type, "value": value}
     )
 
     expected = [
@@ -31,27 +35,95 @@ async def test_find_by_locator(bidi_session, inline, top_context, type, value):
             "type": "node",
             "sharedId": any_string,
             "value": {
-                "attributes": {"data-class":"one"},
+                "attributes": {"data-class": "one"},
                 "childNodeCount": 1,
                 "localName": "div",
                 "namespaceURI": "http://www.w3.org/1999/xhtml",
                 "nodeType": 1,
-            }
+            },
         },
         {
             "type": "node",
             "sharedId": any_string,
             "value": {
-                "attributes": {"data-class":"two"},
+                "attributes": {"data-class": "two"},
                 "childNodeCount": 1,
                 "localName": "div",
                 "namespaceURI": "http://www.w3.org/1999/xhtml",
                 "nodeType": 1,
-            }
-        }
+            },
+        },
     ]
 
-    recursive_compare(expected, result["nodes"])
+    recursive_compare(expected, nodes)
+
+
+@pytest.mark.parametrize("value", [":root", "html"])
+async def test_find_root_element_by_css_locator(
+    bidi_session, inline, top_context, value
+):
+    await bidi_session.browsing_context.navigate(
+        context=top_context["context"], url=inline("<div>"), wait="complete"
+    )
+
+    nodes = await bidi_session.browsing_context.locate_nodes(
+        context=top_context["context"], locator={"type": "css", "value": value}
+    )
+
+    expected = [
+        {
+            "type": "node",
+            "sharedId": any_string,
+            "value": {
+                "attributes": {},
+                "childNodeCount": 2,
+                "localName": "html",
+                "namespaceURI": "http://www.w3.org/1999/xhtml",
+                "nodeType": 1,
+            },
+        },
+    ]
+
+    recursive_compare(expected, nodes)
+
+
+@pytest.mark.parametrize(
+    "html, selector",
+    [
+        ("<div></div>", "div"),
+        ("<select></select>", "select"),
+        ("<video></video>", "video"),
+    ],
+    ids=["div", "select", "video"],
+)
+async def test_no_user_agent_shadow_root(
+    bidi_session, inline, top_context, html, selector
+):
+    url = inline(html)
+    await bidi_session.browsing_context.navigate(
+        context=top_context["context"], url=url, wait="complete"
+    )
+
+    nodes = await bidi_session.browsing_context.locate_nodes(
+        context=top_context["context"], locator={"type": "css", "value": selector}
+    )
+
+    node_result = nodes[0]
+    expected = {
+        "type": "node",
+        "sharedId": any_string,
+        "value": {
+            "attributes": {},
+            "childNodeCount": 0,
+            "localName": selector,
+            "namespaceURI": "http://www.w3.org/1999/xhtml",
+            "nodeType": 1,
+            # Make sure user-agent shadow roots are not leaked by locateNodes
+            # (eg Firefox uses shadow dom to implement the select widget).
+            "shadowRoot": None,
+        },
+    }
+    recursive_compare(expected, node_result)
 
 
 @pytest.mark.parametrize("locator,expected_nodes_values", [
@@ -149,8 +221,9 @@ async def test_find_by_locator(bidi_session, inline, top_context, type, value):
     "ignore_case_true_partial_match_max_depth_two",
     "ignore_case_false_partial_match_max_depth_two",
 ])
-@pytest.mark.asyncio
-async def test_find_by_inner_text(bidi_session, inline, top_context, locator, expected_nodes_values):
+async def test_find_by_inner_text(
+    bidi_session, inline, top_context, locator, expected_nodes_values
+):
     url = inline("""<div>foo<span><strong>bar</strong></span><span>BAR</span>baz</div>""")
     await bidi_session.browsing_context.navigate(
         context=top_context["context"], url=url, wait="complete"
@@ -164,12 +237,12 @@ async def test_find_by_inner_text(bidi_session, inline, top_context, locator, ex
         }
     } for node_value in expected_nodes_values]
 
-    result = await bidi_session.browsing_context.locate_nodes(
+    nodes = await bidi_session.browsing_context.locate_nodes(
         context=top_context["context"],
         locator=locator
     )
 
-    recursive_compare(expected, result["nodes"])
+    recursive_compare(expected, nodes)
 
 
 @pytest.mark.parametrize(
@@ -207,7 +280,6 @@ async def test_find_by_inner_text(bidi_session, inline, top_context, locator, ex
         ),
     ],
 )
-@pytest.mark.asyncio
 async def test_locate_by_accessibility_attributes(
     bidi_session,
     inline,
@@ -230,16 +302,15 @@ async def test_locate_by_accessibility_attributes(
         }
     ]
 
-    result = await bidi_session.browsing_context.locate_nodes(
+    nodes = await bidi_session.browsing_context.locate_nodes(
         context=top_context["context"],
         locator={"type": "accessibility", "value": locator_value},
     )
 
-    recursive_compare(expected, result["nodes"])
+    recursive_compare(expected, nodes)
 
 
 @pytest.mark.parametrize("domain", ["", "alt"], ids=["same_origin", "cross_origin"])
-@pytest.mark.asyncio
 async def test_locate_by_context(bidi_session, inline, top_context, domain):
     iframe_url_1 = inline("<div>foo</div>", domain=domain)
     page_url = inline(f"<iframe id='target' src='{iframe_url_1}'></iframe>")
@@ -251,7 +322,7 @@ async def test_locate_by_context(bidi_session, inline, top_context, domain):
     contexts = await bidi_session.browsing_context.get_tree(root=top_context["context"])
     iframe_context = contexts[0]["children"][0]
 
-    result = await bidi_session.browsing_context.locate_nodes(
+    nodes = await bidi_session.browsing_context.locate_nodes(
         context=top_context["context"],
         locator={"type": "context", "value": { "context": iframe_context["context"] }}
     )
@@ -270,11 +341,10 @@ async def test_locate_by_context(bidi_session, inline, top_context, domain):
         }
     ]
 
-    recursive_compare(expected, result["nodes"])
+    recursive_compare(expected, nodes)
 
 
 @pytest.mark.parametrize("domain", ["", "alt"], ids=["same_origin", "cross_origin"])
-@pytest.mark.asyncio
 async def test_locate_by_context_in_iframe(bidi_session, inline, top_context, domain):
     iframe_url_2 = inline("<div>foo</div>", domain=domain)
     iframe_url_1 = inline(f"<div><iframe id='target' src='{iframe_url_2}'></iframe></div>")
@@ -288,7 +358,7 @@ async def test_locate_by_context_in_iframe(bidi_session, inline, top_context, do
     iframe1_context = contexts[0]["children"][0]
     iframe2_context = contexts[0]["children"][0]["children"][0]
 
-    result = await bidi_session.browsing_context.locate_nodes(
+    nodes = await bidi_session.browsing_context.locate_nodes(
         context=iframe1_context["context"],
         locator={"type": "context", "value": { "context": iframe2_context["context"] }}
     )
@@ -307,13 +377,14 @@ async def test_locate_by_context_in_iframe(bidi_session, inline, top_context, do
         }
     ]
 
-    recursive_compare(expected, result["nodes"])
+    recursive_compare(expected, nodes)
 
 
 @pytest.mark.parametrize("domain", ["", "alt"], ids=["same_origin", "cross_origin"])
 @pytest.mark.parametrize("mode", ["open", "closed"])
-@pytest.mark.asyncio
-async def test_locate_by_context_in_shadow_dom(bidi_session, inline, top_context, domain, mode):
+async def test_locate_by_context_in_shadow_dom(
+    bidi_session, inline, top_context, domain, mode
+):
     iframe_url_1 = inline(f"<div>foo</div>", domain=domain)
     page_url = inline(f"""
       <div id="host"></div>
@@ -333,7 +404,7 @@ async def test_locate_by_context_in_shadow_dom(bidi_session, inline, top_context
     contexts = await bidi_session.browsing_context.get_tree(root=top_context["context"])
     iframe1_context = contexts[0]["children"][0]
 
-    result = await bidi_session.browsing_context.locate_nodes(
+    nodes = await bidi_session.browsing_context.locate_nodes(
         context=top_context["context"],
         locator={"type": "context", "value": { "context": iframe1_context["context"] }}
     )
@@ -352,4 +423,4 @@ async def test_locate_by_context_in_shadow_dom(bidi_session, inline, top_context
         }
     ]
 
-    recursive_compare(expected, result["nodes"])
+    recursive_compare(expected, nodes)

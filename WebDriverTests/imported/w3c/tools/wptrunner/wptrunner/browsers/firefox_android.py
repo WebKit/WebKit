@@ -13,7 +13,7 @@ from .base import (get_free_port,
 from ..executors.executormarionette import (MarionetteTestharnessExecutor,  # noqa: F401
                                             MarionetteRefTestExecutorAndroid,  # noqa: F401
                                             MarionetteCrashtestExecutor,  # noqa: F401
-                                            MarionetteWdspecExecutor)  # noqa: F401
+                                            MarionettePytestExecutor)  # noqa: F401
 from .base import (Browser,
                    ExecutorBrowser)
 from .firefox import (get_timeout_multiplier,  # noqa: F401
@@ -21,7 +21,7 @@ from .firefox import (get_timeout_multiplier,  # noqa: F401
                       run_info_extras as fx_run_info_extras,
                       update_properties,  # noqa: F401
                       executor_kwargs as fx_executor_kwargs,  # noqa: F401
-                      FirefoxWdSpecBrowser,
+                      FirefoxPytestBrowser,
                       ProfileCreator as FirefoxProfileCreator)
 
 
@@ -32,7 +32,8 @@ __wptrunner__ = {"product": "firefox_android",
                  "executor": {"testharness": "MarionetteTestharnessExecutor",
                               "reftest": "MarionetteRefTestExecutorAndroid",
                               "crashtest": "MarionetteCrashtestExecutor",
-                              "wdspec": "MarionetteWdspecExecutor"},
+                              "wdspec": "MarionettePytestExecutor",
+                              "test262": "MarionetteTestharnessExecutor"},
                  "browser_kwargs": "browser_kwargs",
                  "executor_kwargs": "executor_kwargs",
                  "env_extras": "env_extras",
@@ -64,6 +65,8 @@ def browser_kwargs(logger, test_type, run_info_data, config, **kwargs):
                       "chaos_mode_flags": kwargs["chaos_mode_flags"],
                       "config": config,
                       "debug_test": kwargs["debug_test"],
+                      # android only
+                      "isolated_process": kwargs["isolated_process"],
                       }
 
     if test_type == "wdspec":
@@ -140,7 +143,7 @@ def env_options():
             "supports_debugger": True}
 
 
-def get_environ(chaos_mode_flags, env_extras=None):
+def get_environ(chaos_mode_flags, isolated_process=False, env_extras=None):
     env = {}
     if env_extras is not None:
         env.update(env_extras)
@@ -151,6 +154,8 @@ def get_environ(chaos_mode_flags, env_extras=None):
     env["MOZ_DISABLE_NONLOCAL_CONNECTIONS"] = "1"
     if chaos_mode_flags is not None:
         env["MOZ_CHAOSMODE"] = hex(chaos_mode_flags)
+    if isolated_process:
+        env["MOZ_ANDROID_CONTENT_SERVICE_ISOLATED_PROCESS"] = "1"
     return env
 
 
@@ -167,46 +172,64 @@ class ProfileCreator(FirefoxProfileCreator):
 
     @staticmethod
     def default_prefs():
-        return {"fission.disableSessionHistoryInParent": False}
+        return {}
 
-    def _set_required_prefs(self, profile):
-        profile.set_preferences({
+    def _get_required_prefs(self):
+        return {
+            "fission.autostart": not self.disable_fission,
             "network.dns.localDomains": ",".join(self.config.domains_set),
-            "dom.disable_open_during_load": False,
-            "places.history.enabled": False,
-            "dom.send_after_paint_to_content": True,
-        })
+        }
+
+    def _get_default_prefs(self):
+        """Preferences that are applied to the profile of a test run.
+
+        See the note on the base class implementation: these are not visible to
+        "run_info_extras", so a run info flag does not reflect them.
+        """
+        prefs = self.default_prefs()
+        prefs.update(
+            {
+                "dom.disable_open_during_load": False,
+                "dom.send_after_paint_to_content": True,
+                "places.history.enabled": False,
+            }
+        )
+        prefs.update(self._get_address_space_override_prefs())
 
         if self.package_name == "org.mozilla.geckoview.test_runner":
             # Bug 1879324: The TestRunner doesn't support "beforeunload" prompts yet
-            profile.set_preferences({"dom.disable_beforeunload": True})
+            prefs.update({"dom.disable_beforeunload": True})
 
         if self.test_type == "reftest":
             self.logger.info("Setting android reftest preferences")
-            profile.set_preferences({
-                "browser.viewport.desktopWidth": 800,
-                # Disable high DPI
-                "layout.css.devPixelsPerPx": "1.0",
-                # Ensure that the full browser element
-                # appears in the screenshot
-                "apz.allow_zooming": False,
-                "android.widget_paints_background": False,
-                # Ensure that scrollbars are always painted
-                "layout.testing.overlay-scrollbars.always-visible": True,
-            })
+            prefs.update(
+                {
+                    "android.widget_paints_background": False,
+                    # Ensure that the full browser element
+                    # appears in the screenshot
+                    "apz.allow_zooming": False,
+                    "browser.viewport.desktopWidth": 800,
+                    # Disable high DPI
+                    "layout.css.devPixelsPerPx": "1.0",
+                    # Ensure that scrollbars are always painted
+                    "layout.testing.overlay-scrollbars.always-visible": True,
+                }
+            )
 
         if self.test_type == "wdspec":
-            profile.set_preferences({"remote.prefs.recommended": True})
-            profile.set_preferences({
-                "geo.provider.network.url": "https://web-platform.test:8444/webdriver/tests/support/http_handlers/geolocation_override.py"
-            })
+            prefs.update(
+                {
+                    "remote.prefs.recommended": True,
+                    "geo.provider.network.url":
+                        "https://web-platform.test:8444/webdriver/tests/support/http_handlers/geolocation_override.py",
+                }
+            )
         else:
-            # Except for wdspec dispatch wheel scroll as widget event by default.
-            profile.set_preferences({"remote.events.async.wheel.enabled": True})
+            # Dispatch wheel scroll as widget event by default. It stays
+            # disabled for wdspec until it can be enabled for all input sources.
+            prefs["remote.events.async.wheel.enabled"] = True
 
-        profile.set_preferences({"fission.autostart": True})
-        if self.disable_fission:
-            profile.set_preferences({"fission.autostart": False})
+        return prefs
 
 
 class FirefoxAndroidBrowser(Browser):
@@ -220,7 +243,7 @@ class FirefoxAndroidBrowser(Browser):
                  binary_args=None, timeout_multiplier=None, leak_check=False, asan=False,
                  chaos_mode_flags=None, config=None, browser_channel="nightly",
                  install_fonts=False, tests_root=None, specialpowers_path=None, adb_binary=None,
-                 debug_test=False, disable_fission=False, env_extras=None, **kwargs):
+                 debug_test=False, disable_fission=False, env_extras=None, isolated_process=False, **kwargs):
 
         super().__init__(logger, **kwargs)
         self.prefs_root = prefs_root
@@ -245,6 +268,7 @@ class FirefoxAndroidBrowser(Browser):
         self.specialpowers_path = specialpowers_path
         self.adb_binary = adb_binary
         self.disable_fission = disable_fission
+        self.isolated_process = isolated_process
 
         self.profile_creator = ProfileCreator(logger,
                                               prefs_root,
@@ -295,13 +319,17 @@ class FirefoxAndroidBrowser(Browser):
         self.leak_report_file = None
 
         args = self.binary_args[:] if self.binary_args else []
-        args += [cmd_arg("marionette"),
-                 cmd_arg("remote-allow-system-access"), "about:blank"]
+        args += [cmd_arg("marionette"), "about:blank"]
 
         debug_args, cmd = browser_command(
             self.package_name, args, self.debug_info)
 
-        env = get_environ(self.chaos_mode_flags, self.env_extras)
+        env = get_environ(self.chaos_mode_flags, self.isolated_process, self.env_extras)
+        # Allow Marionette to execute commands in the chrome scope of the
+        # application. Not set in get_environ() because for wdspec tests the
+        # environment is forwarded to geckodriver via capabilities, which
+        # rejects this variable.
+        env["MOZ_REMOTE_ALLOW_SYSTEM_ACCESS"] = "1"
 
         self.runner = FennecEmulatorRunner(app=self.package_name,
                                            profile=self.profile,
@@ -344,7 +372,10 @@ class FirefoxAndroidBrowser(Browser):
                     self.logger.warning("Failed to remove forwarded or reversed ports: %s" % e)
             # We assume that stopping the runner prompts the
             # browser to shut down.
-            self.runner.cleanup()
+            try:
+                self.runner.cleanup()
+            except Exception as e:
+                self.logger.warning(f"Failed to cleanup runner: {e}")
         self.logger.debug("stopped")
 
     @property
@@ -386,7 +417,7 @@ class FirefoxAndroidBrowser(Browser):
             return False
 
 
-class FirefoxAndroidWdSpecBrowser(FirefoxWdSpecBrowser):
+class FirefoxAndroidWdSpecBrowser(FirefoxPytestBrowser):
     def __init__(self, logger, config=None, device_serial=None, adb_binary=None, **kwargs):
 
         if "profile_creator_cls" not in kwargs:
@@ -415,8 +446,8 @@ class FirefoxAndroidWdSpecBrowser(FirefoxWdSpecBrowser):
             self.logger.warning("Failed to remove forwarded or reversed ports: %s" % e)
         super().stop(force=force)
 
-    def get_env(self, binary, debug_info, headless, gmp_path, chaos_mode_flags, e10s):
-        env = get_environ(chaos_mode_flags)
+    def get_env(self, binary, debug_info, headless, gmp_path, chaos_mode_flags, e10s, isolated_process):
+        env = get_environ(chaos_mode_flags, isolated_process)
         env["RUST_BACKTRACE"] = "1"
         return env
 

@@ -75,7 +75,8 @@ class WebDriverTestRunnerW3C(object):
             return False
         if os.path.basename(test) in ['conftest.py', '__init__.py']:
             return False
-        if os.path.basename(os.path.dirname(test)) == 'support':
+        # Like WPT, don't treat anything in a support directory as a test, at any depth (e.g. support/http_handlers).
+        if 'support' in os.path.relpath(os.path.dirname(test), self._tests_dir).split(os.sep):
             return False
         return True
 
@@ -96,7 +97,7 @@ class WebDriverTestRunnerW3C(object):
             self._server.start()
 
             # The tests compare the platformName capability with this. Like wptrunner, use the OS name as mozinfo has it
-            # (mac, linux, win), which WdspecExecutor maps to the WebDriver name.
+            # (mac, linux, win), which PytestExecutor maps to the WebDriver name.
             executor = WebDriverW3CExecutor(self._driver, self._server, self._env, self._port.get_option('timeout'), self._expectations, self._port.host.platform.os_name)
             executor.collect(tests)
             executor.setup()

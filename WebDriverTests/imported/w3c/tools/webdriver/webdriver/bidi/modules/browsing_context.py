@@ -38,6 +38,33 @@ class FormatOptions(Dict[str, Any]):
             self["quality"] = quality
 
 
+class ImageSizeOptions(Dict[str, Any]):
+    def __init__(
+        self,
+        max_height: Optional[int] = None,
+        max_width: Optional[int] = None,
+    ):
+        if max_height is not None:
+            self["maxHeight"] = max_height
+        if max_width is not None:
+            self["maxWidth"] = max_width
+
+
+class VideoOptions(Dict[str, Any]):
+    def __init__(
+        self,
+        frame_rate: Optional[int] = None,
+        height: Optional[int] = None,
+        width: Optional[int] = None,
+    ):
+        if frame_rate is not None:
+            self["frameRate"] = frame_rate
+        if height is not None:
+            self["height"] = height
+        if width is not None:
+            self["width"] = width
+
+
 class BrowsingContext(BidiModule):
     @command
     def activate(self, context: str) -> Mapping[str, Any]:
@@ -50,6 +77,7 @@ class BrowsingContext(BidiModule):
         clip: Optional[ClipOptions] = None,
         origin: Optional[OriginOptions] = None,
         format: Optional[FormatOptions] = None,
+        image_size: Optional[ImageSizeOptions] = None,
     ) -> Mapping[str, Any]:
         params: MutableMapping[str, Any] = {"context": context}
 
@@ -59,12 +87,15 @@ class BrowsingContext(BidiModule):
             params["clip"] = clip
         if origin is not None:
             params["origin"] = origin
+        if image_size is not None:
+            params["imageSize"] = image_size
 
         return params
 
     @capture_screenshot.result
     def _capture_screenshot(self, result: Mapping[str, Any]) -> bytes:
-        assert result["data"] is not None
+        assert isinstance(result["data"], str)
+
         return base64.b64decode(result["data"])
 
     @command
@@ -99,7 +130,9 @@ class BrowsingContext(BidiModule):
 
     @create.result
     def _create(self, result: Mapping[str, Any]) -> Any:
-        assert result["context"] is not None
+        assert isinstance(result["context"], str)
+        if "userContext" in result:
+            assert isinstance(result["userContext"], str)
 
         return result
 
@@ -118,8 +151,10 @@ class BrowsingContext(BidiModule):
 
     @get_tree.result
     def _get_tree(self, result: Mapping[str, Any]) -> Any:
-        assert result["contexts"] is not None
         assert isinstance(result["contexts"], list)
+
+        for context in result["contexts"]:
+            self._assert_browsing_context_info(context)
 
         return result["contexts"]
 
@@ -154,10 +189,12 @@ class BrowsingContext(BidiModule):
 
     @locate_nodes.result
     def _locate_nodes(self, result: Mapping[str, Any]) -> Any:
-        assert result["nodes"] is not None
         assert isinstance(result["nodes"], List)
 
-        return result
+        for node in result["nodes"]:
+            self._assert_node_remote_value(node)
+
+        return result["nodes"]
 
     @command
     def navigate(self,
@@ -171,25 +208,10 @@ class BrowsingContext(BidiModule):
 
     @navigate.result
     def _navigate(self, result: Mapping[str, Any]) -> Any:
-        if result["navigation"] is not None:
-            assert isinstance(result["navigation"], str)
-
-        assert result["url"] is not None
+        assert isinstance(result["navigation"], str)
         assert isinstance(result["url"], str)
 
         return result
-
-    @command
-    def reload(self,
-               context: str,
-               ignore_cache: Optional[bool] = None,
-               wait: Optional[str] = None) -> Mapping[str, Any]:
-        params: MutableMapping[str, Any] = {"context": context}
-        if ignore_cache is not None:
-            params["ignoreCache"] = ignore_cache
-        if wait is not None:
-            params["wait"] = wait
-        return params
 
     @command
     def print(self,
@@ -222,8 +244,28 @@ class BrowsingContext(BidiModule):
 
     @print.result
     def _print(self, result: Mapping[str, Any]) -> Any:
-        assert result["data"] is not None
+        assert isinstance(result["data"], str)
+
         return result["data"]
+
+    @command
+    def reload(self,
+               context: str,
+               ignore_cache: Optional[bool] = None,
+               wait: Optional[str] = None) -> Mapping[str, Any]:
+        params: MutableMapping[str, Any] = {"context": context}
+        if ignore_cache is not None:
+            params["ignoreCache"] = ignore_cache
+        if wait is not None:
+            params["wait"] = wait
+        return params
+
+    @reload.result
+    def _reload(self, result: Mapping[str, Any]) -> Any:
+        assert isinstance(result["navigation"], str)
+        assert isinstance(result["url"], str)
+
+        return result
 
     @command
     def set_viewport(self,
@@ -245,5 +287,95 @@ class BrowsingContext(BidiModule):
         return params
 
     @command
+    def start_screencast(self,
+                         context: str,
+                         destination_folder: Optional[str] = None,
+                         video: Optional[VideoOptions] = None,
+                         audio: Optional[bool] = None,
+                         mime_type: Optional[str] = None) -> Mapping[str, Any]:
+        params: MutableMapping[str, Any] = {"context": context}
+
+        if destination_folder is not None:
+            params["destinationFolder"] = destination_folder
+        if video is not None:
+            params["video"] = video
+        if audio is not None:
+            params["audio"] = audio
+        if mime_type is not None:
+            params["mimeType"] = mime_type
+
+        return params
+
+    @start_screencast.result
+    def _start_screencast(self, result: Mapping[str, Any]) -> Any:
+        assert isinstance(result["path"], str)
+        assert isinstance(result["screencast"], str)
+
+        return result
+
+    @command
+    def stop_screencast(self, screencast: str) -> Mapping[str, Any]:
+        return {"screencast": screencast}
+
+    @stop_screencast.result
+    def _stop_screencast(self, result: Mapping[str, Any]) -> Any:
+        assert isinstance(result["path"], str)
+
+        if "error" in result:
+            assert isinstance(result["error"], str)
+
+        return result
+
+    @command
     def traverse_history(self, context: str, delta: int) -> Mapping[str, Any]:
         return {"context": context, "delta": delta}
+
+    def _assert_browsing_context_info(self, info: Mapping[str, Any]) -> Any:
+        assert isinstance(info["clientWindow"], str)
+        assert isinstance(info["context"], str)
+        assert info["originalOpener"] is None or isinstance(info["originalOpener"], str)
+        assert isinstance(info["url"], str)
+        assert isinstance(info["userContext"], str)
+        if "parent" in info:
+            assert info["parent"] is None or isinstance(info["parent"], str)
+        assert "children" in info
+        if info["children"] is not None:
+            for child in info["children"]:
+                self._assert_browsing_context_info(child)
+
+    def _assert_node_remote_value(self, node: Mapping[str, Any]) -> Any:
+        assert isinstance(node, dict)
+        assert isinstance(node["type"], str)
+        if "sharedId" in node:
+            assert isinstance(node["sharedId"], str)
+        if "handle" in node:
+            assert isinstance(node["handle"], str)
+        if "internalId" in node:
+            assert isinstance(node["internalId"], str)
+        if "value" in node:
+            value = node["value"]
+            assert isinstance(value, dict)
+            assert isinstance(value["nodeType"], int)
+            assert isinstance(value["childNodeCount"], int)
+            if "attributes" in value:
+                assert isinstance(value["attributes"], dict)
+                for k, v in value["attributes"].items():
+                    assert isinstance(k, str)
+                    assert isinstance(v, str)
+
+            if "children" in value:
+                assert isinstance(value["children"], list)
+                for child in value["children"]:
+                    self._assert_node_remote_value(child)
+
+            if "localName" in value:
+                assert isinstance(value["localName"], str)
+            if "mode" in value:
+                assert value["mode"] in ["open", "closed"]
+            if "namespaceURI" in value:
+                assert isinstance(value["namespaceURI"], str)
+            if "nodeValue" in value:
+                assert isinstance(value["nodeValue"], str)
+            if "shadowRoot" in value:
+                if value["shadowRoot"] is not None:
+                    self._assert_node_remote_value(value["shadowRoot"])
