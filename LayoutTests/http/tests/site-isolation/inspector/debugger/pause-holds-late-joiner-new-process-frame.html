@@ -34,15 +34,15 @@ function test() {
                 document.body.appendChild(iframe);
             })()`);
 
-            let lateTarget = await GlobalPause.waitForFrameTarget("same-process-frame.html?late", [mainProcess, GlobalPause.processIdentifier(frameATarget)]);
+            let lateTarget = await GlobalPause.waitForFrameTarget("same-process-frame.html?late");
             InspectorTest.expectNotNull(lateTarget, "Should find the frame target for the inserted frame.");
             let lateProcess = GlobalPause.processIdentifier(lateTarget);
             InspectorTest.expectNotEqual(lateProcess, GlobalPause.processIdentifier(frameATarget), "The inserted frame should be in a new process, not frame A's.");
             InspectorTest.expectNotEqual(lateProcess, mainProcess, "The inserted frame should be in a new process, not the main frame's.");
 
-            await GlobalPause.cancelPauseRequest(lateTarget);
             let before = await GlobalPause.expectHeld(lateTarget, "(window.ticks || 0)", "The inserted frame's interval", "while frame A is paused");
             await GlobalPause.resumeAll();
+            InspectorTest.expectFalse(WI.debuggerManager.dataForTarget(lateTarget).paused, "The inserted frame should not have paused.");
             await GlobalPause.expectRunning(lateTarget, "(window.ticks || 0)", before, "The inserted frame's interval after resuming");
             let mainBefore = await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.mainTicks");
             await GlobalPause.expectRunning(InspectorTest.mainFrameTarget, "window.mainTicks", mainBefore, "The main frame's interval after resuming");
