@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>CSS Anchor Positioning Test: position-visibility: anchors-visible after only an intervening overflow clip changes</title>
+<link rel="help" href="https://drafts.csswg.org/css-anchor-position-1/#position-visibility">
+<link rel="match" href="position-visibility-anchor-overflow-clip-change-ref.html">
+<meta name="assert" content="Toggling only the overflow of an element between the anchor and the anchor-positioned element updates its visibility, also after unrelated style changes.">
+<script src="/common/reftest-wait.js"></script>
+<script src="/common/rendering-utils.js"></script>
+<style>
+#clip { width: 100px; height: 100px; overflow: visible; }
+#anchor { margin-left: 200px; width: 50px; height: 50px; anchor-name: --a; background: orange; }
+#target { position: absolute; position-anchor: --a; position-visibility: anchors-visible; left: anchor(left); top: anchor(bottom); width: 50px; height: 50px; background: red; }
+#unrelated { position: absolute; left: 400px; top: 0; width: 50px; height: 50px; background: green; }
+</style>
+<div id="clip"><div id="anchor"></div></div>
+<div id="target"></div><div id="unrelated"></div>
+<script>
+async function run() {
+  await waitForAtLeastOneFrame();
+  for (const overflow of ["hidden", "visible", "hidden"]) {
+    for (let i = 0; i < 3; ++i) {
+      unrelated.style.outlineColor = i % 2 ? "black" : "white";
+      await waitForAtLeastOneFrame();
+    }
+    clip.style.overflow = overflow;
+    await waitForAtLeastOneFrame();
+  }
+  takeScreenshot();
+}
+run();
+</script>
+</html>
