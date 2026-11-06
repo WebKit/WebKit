@@ -288,7 +288,8 @@
                   "triggers": [
                       "tahoe-debug-tests-wk2",
                       "tahoe-debug-applesilicon-tests-wk2",
-                      "tahoe-debug-tests-webdriver"
+                      "tahoe-debug-tests-webdriver",
+                      "tahoe-debug-tests-webdriver-site-isolation"
                   ],
                   "workernames": ["bot621", "bot10002"]
                   },
@@ -304,6 +305,11 @@
                   },
                   { "name": "Apple-Tahoe-Debug-WebDriver-Tests", "factory": "TestWebDriverFactory",
                   "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                  "workernames": ["bot10015"]
+                  },
+                  { "name": "Apple-Tahoe-Debug-WebDriver-Site-Isolation-Tests", "factory": "TestWebDriverFactory",
+                  "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                  "additionalArguments": ["--site-isolation"],
                   "workernames": ["bot10015"]
                   },
                   {
@@ -779,6 +785,9 @@
                   },
                   { "type": "Triggerable", "name": "tahoe-debug-tests-webdriver",
                   "builderNames": ["Apple-Tahoe-Debug-WebDriver-Tests"]
+                  },
+                  { "type": "Triggerable", "name": "tahoe-debug-tests-webdriver-site-isolation",
+                  "builderNames": ["Apple-Tahoe-Debug-WebDriver-Site-Isolation-Tests"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "mac-sequoia", "branch": "main", "treeStableTimer": 45.0,
                   "builderNames": ["Apple-Sequoia-Release-Build", "Apple-Sequoia-Debug-Build"]

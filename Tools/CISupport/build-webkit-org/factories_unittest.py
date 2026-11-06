@@ -385,6 +385,20 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'webdriver-test'
         ],
+        'Apple-Tahoe-Debug-WebDriver-Site-Isolation-Tests': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'prune-coresymbolicationd-cache-if-too-large',
+            'download-built-product',
+            'extract-built-product',
+            'webdriver-test'
+        ],
         'Apple-Tahoe-Safer-CPP-Checks': [
             'configure-build',
             'configuration',
