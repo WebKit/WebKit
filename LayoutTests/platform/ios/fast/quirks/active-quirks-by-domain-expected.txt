@@ -92,6 +92,63 @@ https://configurator.audi.com/
 https://www.digitaltrends.com/
     (none)
 https://discord.com/
+    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+        script: if (!window[Symbol.for('discordSlateToolbarClamp')]) {
+        window[Symbol.for('discordSlateToolbarClamp')] = true;
+        let toolbar = null;
+        let writtenShift = 0;
+        let frame = 0;
+        const clamp = () => {
+            if (!toolbar?.isConnected)
+                return;
+            const current = toolbar.style.translate;
+            const appliedShift = current ? parseFloat(current) : 0;
+            if (current && (!/^-?[\d.]+px$/.test(current) || Math.abs(appliedShift - writtenShift) > 0.01))
+                return;
+            const rect = toolbar.getBoundingClientRect();
+            const naturalLeft = rect.left - appliedShift;
+            const minX = visualViewport.offsetLeft;
+            const maxX = minX + visualViewport.width;
+            let shift = 0;
+            if (naturalLeft < minX)
+                shift = minX - naturalLeft;
+            else if (naturalLeft + rect.width > maxX)
+                shift = Math.max(maxX - naturalLeft - rect.width, minX - naturalLeft);
+            if (Math.abs(shift - appliedShift) < 0.5)
+                return;
+            writtenShift = shift;
+            toolbar.style.translate = shift ? shift + 'px' : '';
+        };
+        const schedule = () => {
+            if (!frame)
+                frame = requestAnimationFrame(() => { frame = 0; clamp(); });
+        };
+        const styleObserver = new MutationObserver(clamp);
+        const stopObserving = () => {
+            styleObserver.disconnect();
+            visualViewport.removeEventListener('resize', schedule);
+            visualViewport.removeEventListener('scroll', schedule);
+            toolbar?.removeEventListener('transitionend', clamp);
+            toolbar?.removeEventListener('animationend', clamp);
+        };
+        new MutationObserver(() => {
+            const current = document.getElementById('slate-toolbar');
+            if (current === toolbar)
+                return;
+            stopObserving();
+            toolbar = current;
+            writtenShift = 0;
+            if (!toolbar)
+                return;
+            styleObserver.observe(toolbar, { attributes: true, attributeFilter: ['style'] });
+            visualViewport.addEventListener('resize', schedule);
+            visualViewport.addEventListener('scroll', schedule);
+            toolbar.addEventListener('transitionend', clamp);
+            toolbar.addEventListener('animationend', clamp);
+            clamp();
+        }).observe(document, { childList: true, subtree: true });
+    }
+        secondaryURL: [*://*/assets/web.*.js, *://*/assets/web.*.js?*]
     ShouldUseLayoutViewportForClientRectsQuirk
 https://store.steampowered.com/
     ShouldTreatAddingMouseOutEventListenerAsContentChange

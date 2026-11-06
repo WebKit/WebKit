@@ -352,6 +352,19 @@
             "behaviors": [{ "id": "ShouldUseLayoutViewportForClientRectsQuirk" }]
         },
         {
+            "bugs": ["rdar://185151413"],
+            "comment": "Discord positions #slate-toolbar without clamping it to the viewport. The secondaryURL leaves the host open on purpose: the entry bundle name is stable while its hash and CDN host are not, and a script named assets/web.*.js on a discord.com page is that bundle. If Discord renames the bundle this quirk stops applying silently. Remove once Discord clamps the toolbar.",
+            "matches": ["*://*.discord.com/*"],
+            "available": "iOSFamily",
+            "behaviors": [
+                {
+                    "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
+                    "script": "if (!window[Symbol.for('discordSlateToolbarClamp')]) {\n    window[Symbol.for('discordSlateToolbarClamp')] = true;\n    let toolbar = null;\n    let writtenShift = 0;\n    let frame = 0;\n    const clamp = () => {\n        if (!toolbar?.isConnected)\n            return;\n        const current = toolbar.style.translate;\n        const appliedShift = current ? parseFloat(current) : 0;\n        if (current && (!/^-?[\\d.]+px$/.test(current) || Math.abs(appliedShift - writtenShift) > 0.01))\n            return;\n        const rect = toolbar.getBoundingClientRect();\n        const naturalLeft = rect.left - appliedShift;\n        const minX = visualViewport.offsetLeft;\n        const maxX = minX + visualViewport.width;\n        let shift = 0;\n        if (naturalLeft < minX)\n            shift = minX - naturalLeft;\n        else if (naturalLeft + rect.width > maxX)\n            shift = Math.max(maxX - naturalLeft - rect.width, minX - naturalLeft);\n        if (Math.abs(shift - appliedShift) < 0.5)\n            return;\n        writtenShift = shift;\n        toolbar.style.translate = shift ? shift + 'px' : '';\n    };\n    const schedule = () => {\n        if (!frame)\n            frame = requestAnimationFrame(() => { frame = 0; clamp(); });\n    };\n    const styleObserver = new MutationObserver(clamp);\n    const stopObserving = () => {\n        styleObserver.disconnect();\n        visualViewport.removeEventListener('resize', schedule);\n        visualViewport.removeEventListener('scroll', schedule);\n        toolbar?.removeEventListener('transitionend', clamp);\n        toolbar?.removeEventListener('animationend', clamp);\n    };\n    new MutationObserver(() => {\n        const current = document.getElementById('slate-toolbar');\n        if (current === toolbar)\n            return;\n        stopObserving();\n        toolbar = current;\n        writtenShift = 0;\n        if (!toolbar)\n            return;\n        styleObserver.observe(toolbar, { attributes: true, attributeFilter: ['style'] });\n        visualViewport.addEventListener('resize', schedule);\n        visualViewport.addEventListener('scroll', schedule);\n        toolbar.addEventListener('transitionend', clamp);\n        toolbar.addEventListener('animationend', clamp);\n        clamp();\n    }).observe(document, { childList: true, subtree: true });\n}",
+                    "secondaryURL": ["*://*/assets/web.*.js", "*://*/assets/web.*.js?*"]
+                }
+            ]
+        },
+        {
             "bugs": ["rdar://137613110"],
             "matches": ["*://*.disneyplus.com/*"],
             "behaviors": [{ "id": "ShouldHideCoarsePointerCharacteristicsQuirk" }]

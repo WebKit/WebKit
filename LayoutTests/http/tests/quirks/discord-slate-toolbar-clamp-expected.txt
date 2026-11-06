@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: http://www.discord.com:8000/quirks/resources/discord-slate-toolbar-clamp-target.html has active WebKit quirks: NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk. Visit https://docs.webkit.org/Infrastructure/Quirks.html for more information.
+selection near the left edge: within viewport: true
+selection in the middle: within viewport: true
+selection near the right edge: within viewport: true
+toolbar wider than the viewport: aligned to the left edge: true
+toolbar positioned with right instead of left: within viewport: true
+toolbar recreated near the left edge: within viewport: true
+toolbar with its own scale transform: within viewport: true
+toolbar with a translate set by the site: translate left alone: true
+toolbar moved back inside: shifted while outside: true, shift cleared: true
+

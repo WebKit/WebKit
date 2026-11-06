@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/assets/web.slate-toolbar-placer.js"></script>
+</head>
+<body style="margin: 0">
+<pre id="output"></pre>
+<script>
+const output = [];
+const viewportWidth = visualViewport.width;
+
+function nextTask() { return new Promise(resolve => setTimeout(resolve, 0)); }
+
+function finish()
+{
+    document.getElementById("output").textContent = output.join("\n");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+async function check(label, makeToolbar, predicate)
+{
+    const toolbar = makeToolbar();
+    await nextTask();
+    const { left, right } = toolbar.getBoundingClientRect();
+    output.push(`${label}: ${predicate(Math.round(left), Math.round(right))}`);
+}
+
+const withinViewport = (left, right) => left >= 0 && right <= viewportWidth;
+
+async function run()
+{
+    await check("selection near the left edge: within viewport",
+        () => createSlateToolbar({ left: 20 - 100 }), withinViewport);
+    await check("selection in the middle: within viewport",
+        () => createSlateToolbar({ left: viewportWidth / 2 - 100 }), withinViewport);
+    await check("selection near the right edge: within viewport",
+        () => createSlateToolbar({ left: viewportWidth - 20 - 100 }), withinViewport);
+    await check("toolbar wider than the viewport: aligned to the left edge",
+        () => createSlateToolbar({ width: viewportWidth + 50, left: -20 }), left => left === 0);
+    await check("toolbar positioned with right instead of left: within viewport",
+        () => createSlateToolbar({ right: viewportWidth - 20 }), withinViewport);
+    await check("toolbar recreated near the left edge: within viewport",
+        () => createSlateToolbar({ left: -80 }), withinViewport);
+
+    await check("toolbar with its own scale transform: within viewport",
+        () => createSlateToolbar({ left: -80, style: "transform: scale(0.5); transform-origin: 0 0;" }), withinViewport);
+
+    // A translate the site set itself is not the quirk's to change.
+    await check("toolbar with a translate set by the site: translate left alone",
+        () => createSlateToolbar({ left: -80, style: "translate: -50% 0;" }), () => document.getElementById("slate-toolbar").style.translate === "-50%");
+
+    const moved = createSlateToolbar({ left: -80 });
+    await nextTask();
+    const wasShifted = moved.style.translate !== "";
+    moved.style.left = (viewportWidth / 2 - 100) + "px";
+    await nextTask();
+    output.push(`toolbar moved back inside: shifted while outside: ${wasShifted}, shift cleared: ${moved.style.translate === ""}`);
+
+    finish();
+}
+
+window.addEventListener("error", event => { output.push("FAIL: " + event.message); finish(); });
+setTimeout(() => { output.push("FAIL: timed out"); finish(); }, 10000);
+run().catch(error => { output.push("FAIL: " + error); finish(); });
+</script>
+</body>
+</html>

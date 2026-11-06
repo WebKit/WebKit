@@ -1,0 +1,25 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ NeedsSiteSpecificQuirks=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>The discord.com quirk keeps #slate-toolbar inside the viewport</title>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (!window.internals) {
+    document.body.textContent = "FAIL: this test requires window.internals.";
+    testRunner?.notifyDone();
+} else {
+    // The real discord.com row applies to the target page. Its script is evaluated before the target's
+    // /assets/web.*.js script, just as it is before Discord's own entry bundle.
+    internals.setTopDocumentHostForQuirks("www.discord.com");
+    location.href = "resources/discord-slate-toolbar-clamp-target.html";
+}
+</script>
+</body>
+</html>
