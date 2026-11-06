@@ -654,18 +654,20 @@ private:
     CompositingPolicy m_compositingPolicy;
     PAL::HysteresisActivity m_compositingPolicyHysteresis;
 
-    bool m_showDebugBorders { false };
-    bool m_showRepaintCounter { false };
-    bool m_acceleratedDrawingEnabled { false };
-    bool m_useDynamicContentScalingDisplayListsForDOMRendering { false };
+    bool m_showDebugBorders : 1 { false };
+    bool m_showRepaintCounter : 1 { false };
+    bool m_acceleratedDrawingEnabled : 1 { false };
+    bool m_useDynamicContentScalingDisplayListsForDOMRendering : 1 { false };
 
-    bool m_compositing { false };
-    bool m_flushingLayers { false };
-    bool m_shouldFlushOnReattach { false };
-    bool m_forceCompositingMode { false };
-    bool m_rootElementCapturedInViewTransition { false };
+    bool m_compositing : 1 { false };
+    bool m_shouldFlushOnReattach : 1 { false };
+    bool m_forceCompositingMode : 1 { false };
+    bool m_rootElementCapturedInViewTransition : 1 { false };
 
-    bool m_isTrackingRepaints { false }; // Used for testing.
+    bool m_isTrackingRepaints : 1 { false }; // Used for testing.
+    bool m_viewBackgroundIsTransparent : 1 { false };
+
+    bool m_flushingLayers { false }; // Not a bitfield: bound by reference in SetForScope.
 
     unsigned m_contentLayersCount { 0 };
     unsigned m_layersWithTiledBackingCount { 0 };
@@ -697,8 +699,6 @@ private:
     RefPtr<GraphicsLayer> m_layerForHeader;
     RefPtr<GraphicsLayer> m_layerForFooter;
 #endif
-
-    bool m_viewBackgroundIsTransparent { false };
 
 #if !LOG_DISABLED
     int m_rootLayerUpdateCount { 0 };
