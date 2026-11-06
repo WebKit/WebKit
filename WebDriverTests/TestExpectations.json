@@ -265,8 +265,8 @@
             "test_set_viewport": { "expected": { "all": { "status": ["FAIL"], "bug": ["webkit.org/b/296255", "webkit.org/b/288333"]}}},
             "test_set_viewport_with_device_pixel_ratio": { "expected": { "all": { "status": ["FAIL"], "bug": ["webkit.org/b/296255", "webkit.org/b/288333"]}}},
             "test_print_page": { "expected": { "all": { "status": ["FAIL"], "bug": ["webkit.org/b/296255", "webkit.org/b/288331"]}}},
-            "test_navigate_back_in_browser_history" : { "expected": { "all": { "status": ["FAIL"], "bug": ["webkit.org/b/296255", "webkit.org/b/288334"]}}},
-            "test_navigate_forward_in_browser_history" : { "expected": { "all": { "status": ["FAIL"], "bug": ["webkit.org/b/296255", "webkit.org/b/288334"]}}},
+            "test_navigate_back_in_browser_history" : { "expected": { "all": { "status": ["FAIL"], "bug": ["webkit.org/b/296255", "webkit.org/b/328189"]}}},
+            "test_navigate_forward_in_browser_history" : { "expected": { "all": { "status": ["FAIL"], "bug": ["webkit.org/b/296255", "webkit.org/b/328189"]}}},
             "test_locate_nodes_with_xpath_locator": { "expected": { "all": { "status": ["FAIL"], "bug": ["webkit.org/b/296255", "webkit.org/b/288329"]}}},
             "test_locate_nodes_with_inner_text": { "expected": { "all": { "status": ["FAIL"], "bug": ["webkit.org/b/296255", "webkit.org/b/288329"]}}},
             "test_locate_nodes_given_start_nodes": { "expected": { "all": { "status": ["FAIL"], "bug": ["webkit.org/b/296255", "webkit.org/b/288329"]}}}
@@ -4213,7 +4213,6 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288333"}}
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/context.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}},
         "subtests": {
             "test_top_level_contexts": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}, "mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
@@ -4221,7 +4220,6 @@
         }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/delta.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}},
         "subtests": {
             "test_delta_forward_and_back": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}, "mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
@@ -4231,23 +4229,9 @@
             },
             "test_navigate_special_protocols[file url]": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}, "mac-site-isolation": {"status": ["TIMEOUT"], "note": "With Site Isolation, traverseHistory times out"}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/invalid.py": {
-        "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/288334"}},
-        "subtests" : {
-            "test_params_context_invalid_value": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}}
             },
-            "test_delta_invalid_value[-2]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}}
-            },
-            "test_delta_invalid_value[1]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}}
-            },
-            "test_iframe": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}}
+            "test_history_push_state": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
             }
         }
     },
