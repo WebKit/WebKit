@@ -97,11 +97,6 @@ static GridDimensions calculateInitialImplicitGridDimensions(const UnplacedGridI
     for (const auto& item : unplacedGridItems.definiteRowPositionedItems)
         updateGridBounds(item);
 
-    // The implicit grid always starts with at least one row. Grid coverage guarantees at least one
-    // in-flow grid item, and every item occupies at least one row, so placement would end up
-    // creating this row regardless.
-    maximumRowIndex = std::max<size_t>(maximumRowIndex, 1);
-
     return {
         maximumColumnIndex,
         maximumRowIndex
