@@ -28,13 +28,13 @@
 #include <utility>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
 
-class Stopwatch final : public RefCounted<Stopwatch> {
+class Stopwatch final : public ThreadSafeRefCounted<Stopwatch> {
 public:
     static Ref<Stopwatch> create()
     {
