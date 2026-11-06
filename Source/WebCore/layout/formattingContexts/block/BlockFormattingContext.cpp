@@ -585,8 +585,8 @@ void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayou
     result.outOfFlowBoxes.append({ box, staticInlinePosition(), staticBlockPosition });
 }
 
-// A replaced element or a flex container, whose own formatting context lays it out through the render tree; the block formatting context
-// places it, and sizes the flex container (css-position-3 §4.3), whose block size comes from its content when it is auto.
+// A replaced element, a flex container or a WebVTT cue box, whose own formatting context lays it out through the render tree; the block
+// formatting context places it, and sizes the flex container (css-position-3 §4.3), whose block size comes from its content when it is auto.
 BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition, const std::optional<OutOfFlowGeometry::DefaultAnchor>& defaultAnchor)
 {
     auto geometry = computeBorderAndPadding(root, containingBlock.inlineSize);
@@ -604,6 +604,12 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingCo
         auto borderBoxBlockSize = outOfFlowGeometry.definiteContentBoxBlockSize().transform([&](auto contentBoxBlockSize) {
             return contentBoxBlockSize + geometry.verticalBorderAndPadding();
         });
+        // A WebVTT cue box moves itself once laid out (RenderVTTCue::layout: the cue box positioning of the WebVTT rendering rules), from the
+        // inline position the block formatting context gives it and the block position its own layout gives it.
+        if (root.isRenderVTTCue()) {
+            auto borderBoxSize = integrationUtils().layoutOutOfFlowIndependentFormattingContext(root, inlineAxis.borderBoxSize, { }, containingBlock.inlineStart + inlineAxis.borderBoxStart);
+            return { inlineAxis, outOfFlowGeometry.computeBlockAxisGeometry(borderBoxSize.height() - geometry.verticalBorderAndPadding(), inlineAxis.borderBoxSize) };
+        }
         auto borderBoxSize = integrationUtils().layoutOutOfFlowIndependentFormattingContext(root, inlineAxis.borderBoxSize, borderBoxBlockSize);
         return { inlineAxis, outOfFlowGeometry.computeBlockAxisGeometry(borderBoxSize.height() - geometry.verticalBorderAndPadding(), inlineAxis.borderBoxSize) };
     }();
@@ -613,6 +619,12 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingCo
     geometry.setContentBoxHeight(blockAxis.borderBoxSize - geometry.verticalBorderAndPadding());
     geometry.setVerticalMargin({ blockAxis.marginStart, blockAxis.marginEnd });
     geometry.setTop(containingBlock.blockStart + blockAxis.borderBoxStart);
+    // And it stays where its own layout leaves it.
+    if (root.isRenderVTTCue()) {
+        auto location = LayoutIntegration::BlockIntegrationUtils::borderBoxLogicalLocation(root);
+        geometry.setLeft(location.x());
+        geometry.setTop(location.y());
+    }
 
     auto margins = [](LayoutUnit margin) {
         auto adjoiningMargins = AdjoiningMargins { };
@@ -626,7 +638,7 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingCo
 
 BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& outOfFlowBox, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition, const std::optional<OutOfFlowGeometry::DefaultAnchor>& defaultAnchor)
 {
-    if (!is<RenderBlockFlow>(outOfFlowBox))
+    if (!is<RenderBlockFlow>(outOfFlowBox) || outOfFlowBox.isRenderVTTCue())
         return layoutOutOfFlowIndependentFormattingContext(outOfFlowBox, containingBlock, staticPosition, defaultAnchor);
     auto result = BlockLayoutResult { };
     CheckedRef box = downcast<RenderBlockFlow>(outOfFlowBox);
