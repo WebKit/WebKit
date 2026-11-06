@@ -30,11 +30,6 @@
 #include "BlockFormattingUtils.h"
 #include "BlockMarginCollapse.h"
 #include "Document.h"
-#include "HTMLButtonElement.h"
-#include "HTMLInputElement.h"
-#include "HTMLLegendElement.h"
-#include "HTMLSelectElement.h"
-#include "HTMLTextAreaElement.h"
 #include "LocalFrameViewInlines.h"
 #include "LocalFrameViewLayoutContext.h"
 #include "RenderAncestorIterator.h"
@@ -182,9 +177,11 @@ static bool hasScrollbarsOrGutter(const RenderBox& box)
 }
 
 // Only display: flow-root, overflow other than visible without scrollbars and out-of-flow boxes. The other ways to establish a block formatting
-// context also contain, align or fragment the content, or give it scrollbars.
+// context also contain, align or fragment the content, or give it scrollbars. Not a form control, which lays out its content its own way.
 static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockContainer)
 {
+    if (Layout::BlockFormattingUtils::isFormControlBlockContainer(blockContainer))
+        return false;
     CheckedRef style = blockContainer.style();
     auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() ? !hasScrollbarsOrGutter(blockContainer) : style->display() == Style::DisplayType::BlockFlowRoot || blockContainer.isOutOfFlowPositioned();
     // FIXME: A root whose content content-visibility skips (RenderBlockFlow::layoutBlock leaves it as it is).
@@ -300,18 +297,22 @@ static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const Re
 // between them itself, without percentage padding, which RenderBox resolves against the containing block's current inline size.
 // A block-level independent formatting context root the block formatting context lays out through the render tree
 // (BlockIntegrationUtils::layoutIndependentFormattingContext): a replaced element, a table, a button, a flex (-webkit-box included) or grid
-// container, the text control's one around its inner text and decorations included, or a block formatting context root whose content the
-// block formatting context cannot lay out.
+// container, selects, range inputs and the text control's one around its inner text and decorations included, a form control block
+// container, or a block formatting context root whose content the block formatting context cannot lay out.
 static bool isLaidOutThroughRenderTree(const RenderObject& renderer)
 {
     if (renderer.isInline() || renderer.isFloatingOrOutOfFlowPositioned())
         return false;
     if (renderer.isRenderReplaced() || renderer.isRenderOrLegacyRenderSVGRoot())
         return true;
+    if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer); box && Layout::BlockFormattingUtils::isFormControlBlockContainer(*box))
+        return true;
     switch (renderer.type()) {
     case RenderObject::Type::Button:
     case RenderObject::Type::Table:
     case RenderObject::Type::FlexibleBox:
+    case RenderObject::Type::MenuList:
+    case RenderObject::Type::Slider:
     case RenderObject::Type::TextControlInnerContainer:
     case RenderObject::Type::DeprecatedFlexibleBox:
     case RenderObject::Type::Grid:
@@ -512,10 +513,8 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(c
 
 static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
 {
-    // Buttons fit their content (RenderBox::sizesLogicalWidthToFitContent); other form controls are flex containers with content of their own.
-    if (isAnyOf<HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement>(box.element()) && !box.isRenderButton())
-        return BlockAvoidanceReason::ContentIsFormControl;
-    // A fieldset's legend sits in its border, which makes the border before the legend's block size (RenderBlock::intrinsicBorderForFieldset).
+    // FIXME: A fieldset, whose block-start margin takes the one of its legend, which its own layout places (RenderBlock::marginBefore,
+    // RenderBlock::layoutExcludedChildren), while its margins collapse before it is laid out.
     if (box.isFieldset())
         return BlockAvoidanceReason::ContentIsFormControl;
     if (box.parent()->isInlineBox()) {
@@ -578,15 +577,13 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
             return outOfFlowBoxesInLeafAvoidanceReason(downcast<RenderBox>(renderer), rootContainer);
     } else if (renderer.isInline())
         return inlineContentAvoidanceReason(renderer, rootContainer);
-    // Block boxes only: not list items with a marker, replaced elements, tables, flex or grid containers or form controls.
+    // Block boxes only: not list items with a marker, replaced elements, tables, flex or grid containers or form control block containers.
+    // A form control or a legend fits its content (BlockFormattingUtils::autoInlineSizeFitsContent).
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(renderer);
     if (hasListMarker(renderer))
         return BlockAvoidanceReason::ContentHasListMarker;
     if (!blockContainer || (blockContainer->type() != RenderObject::Type::BlockFlow && !blockContainer->isRenderListItem() && !blockContainer->isRenderTextControlInnerBlock()))
         return BlockAvoidanceReason::ContentHasUnsupportedRenderer;
-    // Form controls and legends treat an auto width as fit-content (RenderBox::sizesLogicalWidthToFitContent).
-    if (isAnyOf<HTMLButtonElement, HTMLInputElement, HTMLLegendElement, HTMLSelectElement, HTMLTextAreaElement>(blockContainer->element()))
-        return BlockAvoidanceReason::ContentIsFormControl;
     if (!blockContainer->isOutOfFlowPositioned()) {
         if (blockContainer->parent()->isInlineBox()) {
             // FIXME: Anonymous block-level boxes in inline content.
