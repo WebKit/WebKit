@@ -543,7 +543,8 @@ static AtomString textOverflowEllipsisText(const Style::ComputedStyle& style)
             return TextUtil::ellipsisText();
         },
         [&](const Style::String& string) -> AtomString {
-            return AtomString { string.value };
+            // https://drafts.csswg.org/css-overflow-4/#overflow-string
+            return TextUtil::ellipsisStringWithCollapsedForcedLineBreaks(string.value);
         }
     );
 }

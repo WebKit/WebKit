@@ -50,6 +50,7 @@
 #include <numeric>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/ParsingUtilities.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
@@ -737,6 +738,39 @@ AtomString TextUtil::ellipsisText()
 {
     static MainThreadNeverDestroyed<const AtomString> ellipsisStr(span(horizontalEllipsis));
     return ellipsisStr;
+}
+
+// "Preserved segment breaks, and—regardless of the white-space value—any Unicode character with the BK and NL line breaking
+// class, must be treated as forced line breaks."
+// https://drafts.csswg.org/css-text-3/#forced-line-break
+static bool isForcedLineBreak(char16_t character)
+{
+    constexpr char16_t nextLine = 0x0085;
+    return character == newlineCharacter || character == verticalTabulation || character == formFeed || character == nextLine
+        || character == lineSeparator || character == paragraphSeparator;
+}
+
+AtomString TextUtil::ellipsisStringWithCollapsedForcedLineBreaks(const String& string)
+{
+    // "All forced line breaks inside the specified string (regardless of white-space value) must be collapsed, as defined for
+    // collapsible segment breaks in CSS Text 3 § 4.1.3 Segment Break Transformation Rules."
+    // https://drafts.csswg.org/css-overflow-4/#overflow-string
+    // FIXME: Segment breaks between East Asian characters are converted to a space too, rather than removed.
+    if (string.find(isForcedLineBreak) == notFound)
+        return AtomString { string };
+
+    StringBuilder builder;
+    builder.reserveCapacity(string.length());
+    auto followsForcedLineBreak = false;
+    for (auto character : StringView { string }.codeUnits()) {
+        auto isBreak = isForcedLineBreak(character);
+        if (!isBreak)
+            builder.append(character);
+        else if (!followsForcedLineBreak)
+            builder.append(space);
+        followsForcedLineBreak = isBreak;
+    }
+    return builder.toAtomString();
 }
 
 InlineLayoutUnit TextUtil::hyphenWidth(const Style::ComputedStyle& style)

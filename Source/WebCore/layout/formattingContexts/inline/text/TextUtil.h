@@ -111,6 +111,8 @@ public:
     static std::optional<TextDirection> overridingDirection(const RenderText&);
 
     static AtomString ellipsisText();
+    // For the <string> values of text-overflow and block-ellipsis.
+    static AtomString ellipsisStringWithCollapsedForcedLineBreaks(const String&);
 
     static InlineLayoutUnit hyphenWidth(const Style::ComputedStyle&);
 
