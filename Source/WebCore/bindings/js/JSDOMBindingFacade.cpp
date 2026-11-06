@@ -262,4 +262,26 @@ JSC::JSBoundFunction* createBoundFunction(JSC::VM& vm, JSC::JSGlobalObject* glob
     return JSC::JSBoundFunction::create(vm, globalObject, target, boundThis, boundArgs, length, JSC::jsEmptyString(vm), JSC::makeSource(sourceName, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted));
 }
 
+JSC::JSArray* arrayFromValue(JSC::JSValue value, unsigned expectedLength)
+{
+    if (!value || !value.isObject())
+        return nullptr;
+    auto* object = JSC::asObject(value);
+    if (!JSC::isJSArray(object))
+        return nullptr;
+    auto* array = JSC::asArray(object);
+    if (array->length() != expectedLength)
+        return nullptr;
+    return array;
+}
+
+JSC::Strong<JSC::JSObject> objectFromArrayAt(JSC::JSGlobalObject& globalObject, JSC::VM& vm, JSC::ThrowScope& scope, JSC::JSArray& array, unsigned index)
+{
+    auto element = array.getDirectIndex(&globalObject, index);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!element || !element.isObject())
+        return { };
+    return { vm, JSC::asObject(element) };
+}
+
 } // namespace WebCore

@@ -26,10 +26,10 @@
 #include "config.h"
 #include "InternalReadableStream.h"
 
-#include "JSDOMConvertObject.h"
-#include "JSDOMConvertSequences.h"
+#include "JSDOMBindingFacade.h"
 #include "JSDOMException.h"
 #include "WebCoreJSClientData.h"
+#include <JavaScriptCore/JSArray.h>
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/TopExceptionScope.h>
 
@@ -75,8 +75,15 @@ ExceptionOr<Ref<InternalReadableStream>> InternalReadableStream::createFromUnder
     return adoptRef(*new InternalReadableStream(globalObject, *result.returnValue().toObject(&globalObject)));
 }
 
+static bool isInternalReadableStream(JSDOMGlobalObject& globalObject, JSC::JSObject& object)
+{
+    auto& vm = globalObject.vm();
+    return !!object.getDirect(vm, builtinNames(vm).readableStreamControllerPrivateName());
+}
+
 Ref<InternalReadableStream> InternalReadableStream::fromObject(JSDOMGlobalObject& globalObject, JSC::JSObject& object)
 {
+    ASSERT(isInternalReadableStream(globalObject, object));
     return adoptRef(*new InternalReadableStream(globalObject, object));
 }
 
@@ -215,12 +222,15 @@ ExceptionOr<std::pair<Ref<InternalReadableStream>, Ref<InternalReadableStream>>>
     if (scope.exception()) [[unlikely]]
         return Exception { ExceptionCode::ExistingExceptionError };
 
-    auto resultsConversionResult = convert<IDLSequence<IDLObject>>(*globalObject, result);
-    if (resultsConversionResult.hasException(scope)) [[unlikely]]
-        return Exception { ExceptionCode::ExistingExceptionError };
+    // convert<IDLSequence> is using Array.prototype[Symbol.iterator], which the page script can override.
+    auto resultArray = getInternalBuiltinResultObjects<2>(*globalObject, result);
+    RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
+    if (!resultArray) [[unlikely]]
+        return Exception { ExceptionCode::TypeError, "Internal ReadableStream tee returned an unexpected value"_s };
 
-    auto results = resultsConversionResult.releaseReturnValue();
-    ASSERT(results.size() == 2);
+    auto results = *resultArray;
+    if (!results[0] || !results[1] || !isInternalReadableStream(*globalObject, *results[0].get()) || !isInternalReadableStream(*globalObject, *results[1].get())) [[unlikely]]
+        return Exception { ExceptionCode::TypeError, "Internal ReadableStream tee returned branches of unexpected types"_s };
 
     auto& jsDOMGlobalObject = *globalObject;
     return std::make_pair(InternalReadableStream::fromObject(jsDOMGlobalObject, *results[0].get()), InternalReadableStream::fromObject(jsDOMGlobalObject, *results[1].get()));

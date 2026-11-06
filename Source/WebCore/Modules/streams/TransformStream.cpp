@@ -27,7 +27,7 @@
 #include "TransformStream.h"
 
 #include "JSDOMConvertObject.h"
-#include "JSDOMConvertSequences.h"
+#include "JSDOMBindingFacade.h"
 #include "JSReadableStream.h"
 #include "JSTransformStream.h"
 #include "JSValueInWrappedObjectInlines.h"
@@ -161,14 +161,13 @@ ExceptionOr<CreateInternalTransformStreamResult> createInternalTransformStream(J
     JSC::VM& vm = globalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto resultsConversionResult = convert<IDLSequence<IDLObject>>(globalObject, result.returnValue());
-    if (resultsConversionResult.hasException(scope)) [[unlikely]]
-        return Exception { ExceptionCode::ExistingExceptionError };
+    // convert<IDLSequence> is using Array.prototype[Symbol.iterator], which the page script can override.
+    auto resultArray = getInternalBuiltinResultObjects<3>(globalObject, result.returnValue());
+    RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
+    if (!resultArray) [[unlikely]]
+        return Exception { ExceptionCode::TypeError, "Internal TransformStream creation returned an unexpected result"_s };
 
-    auto results = resultsConversionResult.releaseReturnValue();
-    if (results.size() != 3) [[unlikely]]
-        return Exception { ExceptionCode::TypeError, "Internal TransformStream creation returned an unexpected number of values"_s };
-
+    auto results = *resultArray;
     auto* readable = dynamicDowncast<JSReadableStream>(results[1].get());
     auto* writable = dynamicDowncast<JSWritableStream>(results[2].get());
     if (!readable || !writable) [[unlikely]]
