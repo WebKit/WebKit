@@ -275,8 +275,8 @@ static bool hasUnsupportedRepeatEntry(const Style::RepeatTrackList& repeatTrackL
             [](const Style::GridTrackSize& trackSize) {
                 return isUnsupportedGridTrackSize(trackSize);
             },
-            [](const Style::GridLineNames& names) {
-                return !names.isEmpty();
+            [](const Style::GridLineNames&) {
+                return false;
             }
         );
     });
@@ -289,8 +289,8 @@ static bool hasUnsupportedGridTrackListEntry(const Style::GridTrackList& trackLi
             [](const Style::GridTrackSize& trackSize) {
                 return isUnsupportedGridTrackSize(trackSize);
             },
-            [](const Style::GridLineNames& names) {
-                return !names.isEmpty();
+            [](const Style::GridLineNames&) {
+                return false;
             },
             [](const Style::GridTrackEntryRepeat& repeat) {
                 return hasUnsupportedRepeatEntry(repeat.list);

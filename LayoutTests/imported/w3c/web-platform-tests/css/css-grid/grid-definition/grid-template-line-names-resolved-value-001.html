@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid Layout Test: line names in the resolved value of grid-template-columns and grid-template-rows</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#resolved-track-list">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#repeat-notation">
+<meta name="assert" content="The resolved value of grid-template-columns and grid-template-rows on a grid container lists the used track sizes with the line names at the lines they name, expanding repeat() to the used number of repetitions, merging the names of adjacent lines, keeping the names of collapsed auto-fit tracks, and counting leading implicit tracks as tracks without names.">
+<style>
+.grid {
+    display: grid;
+    width: 275px;
+    grid-auto-columns: 15px;
+    grid-auto-rows: 20px;
+}
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<div id="log"></div>
+
+<div class="grid" id="fixed" style="grid-template-columns: [a] 10px [b c] 20px [d]; grid-template-rows: [r1] 30px [r2 r3]"><div>x</div></div>
+<div class="grid" id="repeat" style="grid-template-columns: repeat(2, [a] 10px [b]); grid-template-rows: repeat(2, [r] 30px [s])"><div>x</div></div>
+<!-- 275px holds five 50px repetitions with 25px left over. -->
+<div class="grid" id="fill" style="grid-template-columns: [a] repeat(auto-fill, [x] 50px [y]) [b]; grid-template-rows: [r] 20px"><div>x</div></div>
+<div class="grid" id="fill-trailing" style="grid-template-columns: [a] repeat(auto-fill, [x] 50px [y]) [y b]; grid-template-rows: [r] 20px"><div>x</div></div>
+<!-- Three repetitions fit in 175px, and only the first one has an item. -->
+<div class="grid" id="fit" style="width: 175px; grid-template-columns: [a] repeat(auto-fit, [x] 50px [y]) [b]; grid-template-rows: [r] 20px"><div>x</div></div>
+<!-- Lines -4 and -3 are two and one tracks before the first explicit line. -->
+<div class="grid" id="leading" style="grid-template-columns: [a] 10px [b]; grid-template-rows: [r] 20px [s]"><div style="grid-column: -4 / -3; grid-row: -3 / -2">x</div></div>
+<div class="grid" id="leading-fill" style="grid-template-columns: [a] repeat(auto-fill, [x] 50px [y]) [b]; grid-template-rows: [r] 20px"><div style="grid-column: -8 / -7">x</div></div>
+<div class="grid" id="dynamic" style="grid-template-columns: [a] repeat(auto-fill, [x] 50px [y]) [b]; grid-template-rows: [r] 20px"><div>x</div></div>
+
+<script>
+function resolved(id, property) {
+    return getComputedStyle(document.getElementById(id))[property];
+}
+
+test(() => {
+    assert_equals(resolved("fixed", "gridTemplateColumns"), "[a] 10px [b c] 20px [d]");
+    assert_equals(resolved("fixed", "gridTemplateRows"), "[r1] 30px [r2 r3]");
+}, "Line names around fixed tracks");
+
+test(() => {
+    assert_equals(resolved("repeat", "gridTemplateColumns"), "[a] 10px [b a] 10px [b]");
+    assert_equals(resolved("repeat", "gridTemplateRows"), "[r] 30px [s r] 30px [s]");
+}, "Line names inside repeat() with an integer count");
+
+test(() => {
+    assert_equals(resolved("fill", "gridTemplateColumns"), "[a x] 50px [y x] 50px [y x] 50px [y x] 50px [y x] 50px [y b]");
+}, "Line names inside repeat(auto-fill) with a non-exact fit, merged with the names before and after it");
+
+test(() => {
+    assert_equals(resolved("fill-trailing", "gridTemplateColumns"), "[a x] 50px [y x] 50px [y x] 50px [y x] 50px [y x] 50px [y y b]");
+}, "The last line of the auto-fill repetitions keeps its own names next to the trailing names");
+
+test(() => {
+    assert_equals(resolved("fit", "gridTemplateColumns"), "[a x] 50px [y x] 0px [y x] 0px [y b]");
+}, "Collapsed auto-fit tracks keep their line names");
+
+test(() => {
+    assert_equals(resolved("leading", "gridTemplateColumns"), "15px 15px [a] 10px [b]");
+    assert_equals(resolved("leading", "gridTemplateRows"), "20px [r] 20px [s]");
+}, "Leading implicit tracks have no line names and the explicit grid's names follow them");
+
+test(() => {
+    assert_equals(resolved("leading-fill", "gridTemplateColumns"), "15px 15px [a x] 50px [y x] 50px [y x] 50px [y x] 50px [y x] 50px [y b]");
+}, "Leading implicit tracks before an auto-fill repetition");
+
+test(() => {
+    const grid = document.getElementById("dynamic");
+    assert_equals(resolved("dynamic", "gridTemplateColumns"), "[a x] 50px [y x] 50px [y x] 50px [y x] 50px [y x] 50px [y b]");
+    grid.style.width = "125px";
+    assert_equals(resolved("dynamic", "gridTemplateColumns"), "[a x] 50px [y x] 50px [y b]");
+    grid.style.width = "325px";
+    assert_equals(resolved("dynamic", "gridTemplateColumns"), "[a x] 50px [y x] 50px [y x] 50px [y x] 50px [y x] 50px [y x] 50px [y b]");
+}, "Changing the width of the container changes the number of auto-fill repetitions the names follow");
+</script>
