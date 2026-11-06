@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<title>Ensure that computed style of widgets with appearance: auto doesn't change when Adaptive Dark Mode is enabled</title>
+
+<style>
+  label { display: block; }
+</style>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<label>Button: <input type="button" id="button"></label>
+<label>Checkbox: <input type="checkbox" id="checkbox"></label>
+<label>Color: <input type="color" id="color"></label>
+<label>Date: <input type="date" id="date"></label>
+<label>Datetime: <input type="datetime" id="datetime"></label>
+<label>Datetime-local: <input type="datetime-local" id="datetime-local"></label>
+<label>Email: <input type="email" id="email"></label>
+<label>File: <input type="file" id="file"></label>
+<label>Image: <input type="image" id="image"></label>
+<label>Month: <input type="month" id="month"></label>
+<label>Number: <input type="number" id="number"></label>
+<label>Password: <input type="password" id="password"></label>
+<label>Radio: <input type="radio" id="radio"></label>
+<label>Range: <input type="range" id="range"></label>
+<label>Reset: <input type="reset" id="reset"></label>
+<label>Search: <input type="search" id="search"></label>
+<label>Submit: <input type="submit" id="submit"></label>
+<label>Tel: <input type="tel" id="tel"></label>
+<label>Text: <input type="text" id="text"></label>
+<label>Time: <input type="time" id="time"></label>
+<label>Url: <input type="url" id="url"></label>
+<label>Week: <input type="week" id="week"></label>
+
+<script>
+  function copyComputedStyle(style) {
+    let copy = {};
+    for (let i = 0; i < style.length; ++i)
+      copy[style.item(i)] = style.getPropertyValue(style.item(i));
+
+    return copy;
+  }
+
+  function computedStyleOfWidgets(widgets) {
+    let computedStyles = {};
+    for (const widget of widgets)
+      computedStyles[widget.id] = copyComputedStyle(getComputedStyle(widget));
+    return computedStyles;
+  }
+
+  const widgets = document.querySelectorAll("input");
+
+  const computedStyleOfAllWidgetsBeforeADM = computedStyleOfWidgets(widgets);
+
+  window.internals?.settings.setAxCustomColorModeEnabled(true);
+  // Force style resolution.
+  document.body.offsetTop;
+
+  const computedStyleOfAllWidgetsAfterADM = computedStyleOfWidgets(widgets);
+
+  // Compare the before and after ADM style.
+
+  for (const widget of widgets) {
+    test(() => {
+      for (const property in computedStyleOfAllWidgetsAfterADM[widget.id])
+        assert_equals(computedStyleOfAllWidgetsAfterADM[widget.id][property], computedStyleOfAllWidgetsBeforeADM[widget.id][property], property);
+    }, `Style of input type '${widget.id}' doesn't change when ADM is enabled`);
+  }
+</script>

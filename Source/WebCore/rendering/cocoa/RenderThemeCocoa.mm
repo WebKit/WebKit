@@ -3227,8 +3227,13 @@ bool RenderThemeCocoa::adjustMenuListStyleForVectorBasedControls(Style::Computed
     RenderTheme::adjustMenuListStyle(style, element);
 
     if (!style.hasExplicitlySetColor()) {
-        const auto styleColorOptions = protect(element->document())->styleColorOptions(&style, StyleColorOptionsPurpose::Rendering);
-        style.setColor(buttonTextColor(styleColorOptions, !element->isDisabledFormControl()));
+        const auto styleColorOptionsForComputedStyle = protect(element->document())->styleColorOptions(&style, StyleColorOptionsPurpose::ComputedStyle);
+        style.setColor(buttonTextColor(styleColorOptionsForComputedStyle, !element->isDisabledFormControl()));
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        const auto styleColorOptionsForRendering = protect(element->document())->styleColorOptions(&style, StyleColorOptionsPurpose::Rendering);
+        style.setOverrideColor(buttonTextColor(styleColorOptionsForRendering, !element->isDisabledFormControl()));
+#endif
     }
 
     style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
@@ -3312,12 +3317,20 @@ bool RenderThemeCocoa::adjustButtonStyleForVectorBasedControls(Style::ComputedSt
     if (auto* input = dynamicDowncast<HTMLFormControlElement>(element))
         isEnabled = !input->isDisabledFormControl();
 
-    const auto styleColorOptions = protect(element->document())->styleColorOptions(&style, StyleColorOptionsPurpose::Rendering);
+    auto setColor = [&] {
+        const auto styleColorOptionsForComputedStyle = protect(element->document())->styleColorOptions(&style, StyleColorOptionsPurpose::ComputedStyle);
+        style.setColor(buttonTextColor(styleColorOptionsForComputedStyle, isEnabled));
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        const auto styleColorOptionsForRendering = protect(element->document())->styleColorOptions(&style, StyleColorOptionsPurpose::Rendering);
+        style.setOverrideColor(buttonTextColor(styleColorOptionsForRendering, isEnabled));
+#endif
+    };
 
     auto adjustStyleForSubmitButton = [&] {
         style.setInsideSubmitButton(true);
 #if PLATFORM(MAC)
-        style.setColor(buttonTextColor(styleColorOptions, isEnabled));
+        setColor();
 #endif
     };
 
@@ -3325,7 +3338,7 @@ bool RenderThemeCocoa::adjustButtonStyleForVectorBasedControls(Style::ComputedSt
         if (isSubmitStyleButton(element))
             adjustStyleForSubmitButton();
         else
-            style.setColor(buttonTextColor(styleColorOptions, isEnabled));
+            setColor();
     }
 
 #if PLATFORM(IOS_FAMILY)
@@ -3371,8 +3384,13 @@ bool RenderThemeCocoa::adjustMenuListButtonStyleForVectorBasedControls(Style::Co
         return false;
 
     if (!style.hasExplicitlySetColor()) {
-        const auto styleColorOptions = protect(element->document())->styleColorOptions(&style, StyleColorOptionsPurpose::Rendering);
-        style.setColor(buttonTextColor(styleColorOptions, !element->isDisabledFormControl()));
+        const auto styleColorOptionsForComputedStyle = protect(element->document())->styleColorOptions(&style, StyleColorOptionsPurpose::ComputedStyle);
+        style.setColor(buttonTextColor(styleColorOptionsForComputedStyle, !element->isDisabledFormControl()));
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        const auto styleColorOptionsForRendering = protect(element->document())->styleColorOptions(&style, StyleColorOptionsPurpose::Rendering);
+        style.setOverrideColor(buttonTextColor(styleColorOptionsForRendering, !element->isDisabledFormControl()));
+#endif
     }
 
     const auto isNonMultipleSelectElement = is<HTMLSelectElement>(*element) && !element->hasAttributeWithoutSynchronization(HTMLNames::multipleAttr);
