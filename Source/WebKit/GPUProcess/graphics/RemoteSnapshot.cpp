@@ -33,6 +33,10 @@
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if PLATFORM(COCOA)
+#include <WebCore/PDFDocumentBuffer.h>
+#endif
+
 #if HAVE(IOSURFACE)
 #include "ImageBufferShareableMappedIOSurfaceBackend.h"
 #endif
@@ -249,16 +253,14 @@ RemoteSnapshot::DisplayListAndReleaseDispatcher::~DisplayListAndReleaseDispatche
 std::optional<RefPtr<SharedBuffer>> RemoteSnapshot::drawToPDF(const FloatSize& size, FrameIdentifier rootIdentifier)
 {
     ASSERT(isComplete());
-    RefPtr buffer = ImageBuffer::create(size, RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto buffer = PDFDocumentBuffer::create(size);
     if (!buffer)
         return nullptr;
 
-    auto& context = buffer->context();
-
-    if (!applyFrame(rootIdentifier, context))
+    if (!applyFrame(rootIdentifier, buffer->context()))
         return std::nullopt;
 
-    return ImageBuffer::sinkIntoPDFDocument(WTF::move(buffer));
+    return buffer->takeData();
 }
 
 #endif

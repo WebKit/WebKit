@@ -2920,7 +2920,7 @@
 		721B3E9629679E38004F5FF6 /* InnerSpinButtonPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 721B3E9529679E38004F5FF6 /* InnerSpinButtonPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		721B3ECF29680811004F5FF6 /* ColorWellPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 721B3ECE29680811004F5FF6 /* ColorWellPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		721B3EF52968F47D004F5FF6 /* MenuListButtonPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 721B3EF42968F47D004F5FF6 /* MenuListButtonPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7220742F2D07C7F6009FA90F /* ImageBufferCGPDFDocumentBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 72D1DC382D03583800B52E57 /* ImageBufferCGPDFDocumentBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F066E451167A913CB086D5DD /* PDFDocumentBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F08F41D15F611A97422E35C2 /* PDFDocumentBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72251B5B2E8121D700CC964B /* LayoutIntegrationGridLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 72BEE7CC2E79E32200026436 /* LayoutIntegrationGridLayout.h */; };
 		722AF2DE27E1C2060078D997 /* GraphicsContextStateSaver.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2DB27E1C2040078D997 /* GraphicsContextStateSaver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		722AF2DF27E1C2060078D997 /* GraphicsContextState.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2DC27E1C2050078D997 /* GraphicsContextState.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14608,8 +14608,8 @@
 		72CE4EA42970FF8800A2AD95 /* ImageControlsButtonMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageControlsButtonMac.h; sourceTree = "<group>"; };
 		72CE4EA5297102B800A2AD95 /* ImageControlsButtonPart.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageControlsButtonPart.h; sourceTree = "<group>"; };
 		72D075142DB9231000F75BC1 /* SVGFilterPrimitiveGraph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGFilterPrimitiveGraph.h; sourceTree = "<group>"; };
-		72D1DC372D03570300B52E57 /* ImageBufferCGPDFDocumentBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferCGPDFDocumentBackend.cpp; sourceTree = "<group>"; };
-		72D1DC382D03583800B52E57 /* ImageBufferCGPDFDocumentBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferCGPDFDocumentBackend.h; sourceTree = "<group>"; };
+		D36347EBF659AB2B00FF6C88 /* PDFDocumentBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PDFDocumentBuffer.cpp; sourceTree = "<group>"; };
+		F08F41D15F611A97422E35C2 /* PDFDocumentBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDFDocumentBuffer.h; sourceTree = "<group>"; };
 		72D3F66C2A37F48E00F3A82B /* RotationDirection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RotationDirection.h; sourceTree = "<group>"; };
 		72D3F6782A3A2E5C00F3A82B /* PathSegmentData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PathSegmentData.cpp; sourceTree = "<group>"; };
 		72D5376E2BE718F9004577FD /* CanvasLayers.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CanvasLayers.idl; sourceTree = "<group>"; };
@@ -36639,8 +36639,6 @@
 				72BAC3AD23E1E545008D741C /* ImageBufferCGBackend.h */,
 				72BAC3A823E1E543008D741C /* ImageBufferCGBitmapBackend.cpp */,
 				72BAC3AA23E1E544008D741C /* ImageBufferCGBitmapBackend.h */,
-				72D1DC372D03570300B52E57 /* ImageBufferCGPDFDocumentBackend.cpp */,
-				72D1DC382D03583800B52E57 /* ImageBufferCGPDFDocumentBackend.h */,
 				72BAC3A923E1E543008D741C /* ImageBufferIOSurfaceBackend.cpp */,
 				72BAC3AB23E1E544008D741C /* ImageBufferIOSurfaceBackend.h */,
 				555B87EA1CAAF0AB00349425 /* ImageDecoderCG.cpp */,
@@ -36655,6 +36653,8 @@
 				B27535350B053814002CE64F /* PathCG.cpp */,
 				7246F02E2A1549CB00FD74F1 /* PathCG.h */,
 				A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */,
+				D36347EBF659AB2B00FF6C88 /* PDFDocumentBuffer.cpp */,
+				F08F41D15F611A97422E35C2 /* PDFDocumentBuffer.h */,
 				46C963C32B6C993C002F46D1 /* ShareableBitmapCG.mm */,
 				B6F2010A2EAC180400BBF4AA /* ShareableSpatialImage.cpp */,
 				B6F201092EAC180400BBF4AA /* ShareableSpatialImage.h */,
@@ -46434,7 +46434,6 @@
 				72BAC3AE23E1F0B0008D741C /* ImageBufferBackend.h in Headers */,
 				550640B02407587E00AAE045 /* ImageBufferCGBackend.h in Headers */,
 				2D7705C925528D34001D0C94 /* ImageBufferCGBitmapBackend.h in Headers */,
-				7220742F2D07C7F6009FA90F /* ImageBufferCGPDFDocumentBackend.h in Headers */,
 				72F9A6CD2D30DE880019DE4B /* ImageBufferDisplayListBackend.h in Headers */,
 				0FB266842E3304850071C4A5 /* ImageBufferFormat.h in Headers */,
 				727A7F3A24078B84004D2931 /* ImageBufferIOSurfaceBackend.h in Headers */,
@@ -48235,6 +48234,7 @@
 				A1677DFD213E006600A08C34 /* PaymentValidationErrors.h in Headers */,
 				5CA126C128DBCE2900B65AD3 /* PCMSites.h in Headers */,
 				5CA126B928DBA6EC00B65AD3 /* PCMTokens.h in Headers */,
+				F066E451167A913CB086D5DD /* PDFDocumentBuffer.h in Headers */,
 				B27535650B053814002CE64F /* PDFDocumentImage.h in Headers */,
 				5E2C43511BCEE2F60001E2BC /* PeerConnectionBackend.h in Headers */,
 				5EBB89391C77C39900C65D41 /* PeerMediaDescription.h in Headers */,

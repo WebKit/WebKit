@@ -127,8 +127,6 @@ public:
     virtual void getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination) = 0;
     virtual void putPixelBuffer(const PixelBufferSourceView&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
 
-    WEBCORE_EXPORT virtual RefPtr<SharedBuffer> sinkIntoPDFDocument();
-
 #if HAVE(IOSURFACE)
     virtual IOSurface* surface() { return nullptr; }
 #endif

@@ -191,11 +191,6 @@ void ImageBufferBackend::putPixelBuffer(const PixelBufferSourceView& sourcePixel
     convertImagePixels(source, destination, destinationRect.size());
 }
 
-RefPtr<SharedBuffer> ImageBufferBackend::sinkIntoPDFDocument()
-{
-    return nullptr;
-}
-
 NODELETE static AffineTransform baseTransformForBackingStore(const IntSize& backendSize, float resolutionScale)
 {
     AffineTransform baseTransform;

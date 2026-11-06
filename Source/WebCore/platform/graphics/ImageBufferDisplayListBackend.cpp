@@ -67,18 +67,6 @@ RefPtr<NativeImage> ImageBufferDisplayListBackend::copyNativeImage()
     return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
 }
 
-RefPtr<SharedBuffer> ImageBufferDisplayListBackend::sinkIntoPDFDocument()
-{
-    RefPtr buffer = ImageBuffer::create(size(), RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
-    if (!buffer)
-        return nullptr;
-
-    auto& context = buffer->context();
-    context.drawDisplayList(m_drawingContext->copyDisplayList(), m_controlFactory);
-
-    return ImageBuffer::sinkIntoPDFDocument(WTF::move(buffer));
-}
-
 String ImageBufferDisplayListBackend::debugDescription() const
 {
     TextStream stream;

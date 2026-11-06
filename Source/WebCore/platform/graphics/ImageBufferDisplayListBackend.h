@@ -51,8 +51,6 @@ private:
     void getPixelBuffer(const IntRect&, PixelBuffer&) final { RELEASE_ASSERT_NOT_REACHED(); }
     void putPixelBuffer(const PixelBufferSourceView&, const IntRect&, const IntPoint&, AlphaPremultiplication) final { RELEASE_ASSERT_NOT_REACHED(); }
 
-    RefPtr<SharedBuffer> sinkIntoPDFDocument() final;
-
     String debugDescription() const final;
 
     const Ref<WebCore::ControlFactory> m_controlFactory;

@@ -445,7 +445,6 @@ platform/graphics/cg/IOSurfacePool.mm @nonARC
 platform/graphics/cg/ImageBackingStoreCG.cpp
 platform/graphics/cg/ImageBufferCGBackend.cpp
 platform/graphics/cg/ImageBufferCGBitmapBackend.cpp
-platform/graphics/cg/ImageBufferCGPDFDocumentBackend.cpp
 platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp
 platform/graphics/cg/ImageDecoderCG.cpp
 platform/graphics/cg/ImageUtilitiesCG.cpp
@@ -453,6 +452,7 @@ platform/graphics/cg/IntPointCG.cpp
 platform/graphics/cg/IntRectCG.cpp
 platform/graphics/cg/IntSizeCG.cpp
 platform/graphics/cg/NativeImageCG.cpp
+platform/graphics/cg/PDFDocumentBuffer.cpp
 platform/graphics/cg/PathCG.cpp
 platform/graphics/cg/PatternCG.cpp
 platform/graphics/cg/ShareableBitmapCG.mm @nonARC @no-unify-when(bundle<=8)

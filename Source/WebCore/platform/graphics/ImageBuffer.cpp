@@ -45,10 +45,6 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
 
-#if USE(CG)
-#include "ImageBufferCGPDFDocumentBackend.h"
-#endif
-
 #if USE(SKIA)
 #include "GLContext.h"
 #include "ImageBufferSkiaAcceleratedBackend.h"
@@ -107,15 +103,12 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode ren
     case RenderingMode::Unaccelerated:
         return create<ImageBufferPlatformBitmapBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
 
-    case RenderingMode::PDFDocument:
-#if USE(CG)
-        return ImageBuffer::create<ImageBufferCGPDFDocumentBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
-#else
-        return nullptr;
-#endif
-
     case RenderingMode::DisplayList:
         return ImageBuffer::create<ImageBufferDisplayListBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
+
+    case RenderingMode::PDFDocument:
+        // FIXME: PDFDocument is only meaningful for a GraphicsContext. Add a type-specific rendering mode, such as ImageBufferRenderingMode, so that it cannot be passed here.
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     ASSERT_NOT_REACHED();
@@ -480,20 +473,6 @@ void ImageBuffer::putPixelBuffer(const PixelBufferSourceView& pixelBuffer, const
     auto destinationPointScaled = destinationPoint;
     destinationPointScaled.scale(resolutionScale());
     backend->putPixelBuffer(pixelBuffer, sourceRectScaled, destinationPointScaled, destinationFormat);
-}
-
-RefPtr<SharedBuffer> ImageBuffer::sinkIntoPDFDocument()
-{
-    if (auto* backend = m_backend.get())
-        return backend->sinkIntoPDFDocument();
-    return nullptr;
-}
-
-RefPtr<SharedBuffer> ImageBuffer::sinkIntoPDFDocument(RefPtr<ImageBuffer> source)
-{
-    if (!source)
-        return nullptr;
-    return source->sinkIntoPDFDocument();
 }
 
 bool ImageBuffer::isInUse() const

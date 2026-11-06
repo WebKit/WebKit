@@ -148,6 +148,7 @@
 #import <WebCore/NodeList.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/NotImplemented.h>
+#import <WebCore/PDFDocumentBuffer.h>
 #import <WebCore/Page.h>
 #import <WebCore/PagePasteboardContext.h>
 #import <WebCore/Pasteboard.h>
@@ -3937,7 +3938,7 @@ void WebPage::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, 
 
         auto snapshotRect = IntRect { FloatRect { { }, FloatSize { printInfo.availablePaperWidth, printInfo.availablePaperHeight } } };
 
-        RefPtr buffer = ImageBuffer::create(snapshotRect.size(), RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+        auto buffer = PDFDocumentBuffer::create(snapshotRect.size());
         if (!buffer)
             return;
 
@@ -3948,7 +3949,7 @@ void WebPage::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, 
         pdfSnapshotAtSize(*localMainFrame, buffer->context(), snapshotRect, { });
 
         frameView->setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
-        reply(buffer->sinkIntoPDFDocument());
+        reply(buffer->takeData());
         return;
     }
 
