@@ -210,7 +210,7 @@ private:
     Vector<Ref<const StyleRuleContainer>> containerQueryChainFor(ContainerQueryIdentifier) const;
 
     struct DynamicMediaQueryRules {
-        Vector<MQ::MediaQueryList> mediaQueries;
+        Vector<MQ::SharedMediaQueryList> mediaQueries;
         Vector<size_t> affectedRulePositions;
         Vector<Ref<const StyleRule>> affectedRules;
         bool requiresFullReset { false };

@@ -333,7 +333,8 @@ public:
     static Ref<StyleRuleMedia> create(MQ::MediaQueryList&&, Vector<Ref<StyleRuleBase>>&&);
     Ref<StyleRuleMedia> copy() const;
 
-    const MQ::MediaQueryList& mediaQueries() const LIFETIME_BOUND { return m_mediaQueries; }
+    const MQ::MediaQueryList& mediaQueries() const LIFETIME_BOUND { return *m_mediaQueries; }
+    const MQ::SharedMediaQueryList& sharedMediaQueries() const LIFETIME_BOUND { return m_mediaQueries; }
     void setMediaQueries(MQ::MediaQueryList&& queries) { m_mediaQueries = WTF::move(queries); }
 
     String debugDescription() const;
@@ -341,7 +342,7 @@ private:
     StyleRuleMedia(MQ::MediaQueryList&&, Vector<Ref<StyleRuleBase>>&&);
     StyleRuleMedia(const StyleRuleMedia&);
 
-    MQ::MediaQueryList m_mediaQueries;
+    MQ::SharedMediaQueryList m_mediaQueries;
 };
 
 class StyleRuleSupports final : public StyleRuleGroup {

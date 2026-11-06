@@ -25,6 +25,9 @@
 #pragma once
 
 #include <WebCore/GenericMediaQueryTypes.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RefCountable.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 namespace MQ {
@@ -38,6 +41,33 @@ struct MediaQuery {
 };
 
 using MediaQueryList = Vector<MediaQuery>;
+
+// An immutable, reference-counted MediaQueryList class to support cheap copies.
+class SharedMediaQueryList {
+public:
+    SharedMediaQueryList() = default;
+    SharedMediaQueryList(MediaQueryList&& list)
+    {
+        if (!list.isEmpty())
+            m_list = RefCountable<MediaQueryList>::create(WTF::move(list));
+    }
+
+    const MediaQueryList& operator*() const LIFETIME_BOUND
+    {
+        static NeverDestroyed<const MediaQueryList> emptyList;
+        if (!m_list)
+            return emptyList;
+        return **m_list;
+    }
+
+    bool isEmpty() const { return !m_list; }
+
+    // Identity comparison: true when both handles share the same underlying list (two empty handles are equal).
+    friend bool operator==(const SharedMediaQueryList& a, const SharedMediaQueryList& b) { return a.m_list == b.m_list; }
+
+private:
+    RefPtr<const RefCountable<MediaQueryList>> m_list;
+};
 
 struct MediaQueryResult {
     MediaQueryList mediaQueryList;

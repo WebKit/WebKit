@@ -623,7 +623,7 @@ RuleSet::CollectedMediaQueryChanges RuleSet::evaluateDynamicMediaQueryRules(cons
         auto& dynamicRules = m_dynamicMediaQueryRules[i];
         bool result = true;
         for (auto& queryList : dynamicRules.mediaQueries) {
-            if (!evaluator.evaluate(queryList)) {
+            if (!evaluator.evaluate(*queryList)) {
                 result = false;
                 break;
             }
