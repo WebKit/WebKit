@@ -52,7 +52,7 @@ window.addEventListener('load', async () => {
     }
 
     await loadFrame();
-    await UIHelper.renderingUpdate();
+    await UIHelper.ensurePresentationUpdate();
 
     // Don't rely on UIHelper.waitForScrollCompletion() since the scrolling happens in another process.
     eventSender.mouseMoveTo(150, 150);
