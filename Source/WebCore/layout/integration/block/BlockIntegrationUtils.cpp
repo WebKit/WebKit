@@ -220,11 +220,23 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     };
 }
 
-LayoutSize BlockIntegrationUtils::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, std::optional<LayoutUnit> borderBoxInlineSize, std::optional<LayoutUnit> borderBoxBlockSize)
+LayoutSize BlockIntegrationUtils::layoutOutOfFlowIndependentFormattingContext(const RenderBox& root, std::optional<LayoutUnit> borderBoxInlineSize, std::optional<LayoutUnit> borderBoxBlockSize, std::optional<LayoutUnit> borderBoxInlinePosition)
 {
     SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef box = const_cast<RenderBox&>(root);
     // Its size may depend on the size of its containing block, which the block formatting context has just laid out.
     box->setChildNeedsLayout(MarkingBehavior::OnlyThis);
+    // With an overriding inline size the render tree keeps a box where it is in the inline axis (RenderBox::computeLogicalWidth), so one
+    // that moves itself during its layout starts from where BlockLayout::updateRenderers would put it.
+    if (borderBoxInlinePosition) {
+        CheckedRef containingBlock = *box->containingBlock();
+        auto writingMode = containingBlock->writingMode();
+        auto inlineSize = borderBoxInlineSize.value_or(writingMode.isHorizontal() ? box->borderBoxWidth() : box->borderBoxHeight());
+        auto logicalLeft = writingMode.isLogicalLeftInlineStart() ? *borderBoxInlinePosition : containingBlock->logicalWidth() - *borderBoxInlinePosition - inlineSize;
+        if (writingMode.isHorizontal())
+            box->setX(logicalLeft);
+        else
+            box->setY(logicalLeft);
+    }
     if (borderBoxInlineSize)
         box->setOverridingBorderBoxLogicalWidth(*borderBoxInlineSize);
     if (borderBoxBlockSize)
@@ -240,6 +252,16 @@ LayoutSize BlockIntegrationUtils::layoutOutOfFlowIndependentFormattingContext(co
     if (borderBoxBlockSize)
         box->clearOverridingBorderBoxLogicalHeight();
     return { box->logicalWidth(), box->logicalHeight() };
+}
+
+LayoutPoint BlockIntegrationUtils::borderBoxLogicalLocation(const RenderBox& box)
+{
+    CheckedRef containingBlock = *box.containingBlock();
+    auto writingMode = containingBlock->writingMode();
+    auto location = writingMode.isHorizontal() ? box.location() : box.location().transposedPoint();
+    if (!writingMode.isLogicalLeftInlineStart())
+        location.setX(containingBlock->logicalWidth() - location.x() - (writingMode.isHorizontal() ? box.borderBoxWidth() : box.borderBoxHeight()));
+    return location;
 }
 
 Layout::IntrinsicWidthConstraints BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes(const RenderBox& box, LayoutUnit borderAndPadding)
