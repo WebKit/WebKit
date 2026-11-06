@@ -860,51 +860,41 @@ LayoutRect RenderFragmentedFlow::mapFromLocalToFragmentedFlow(const RenderBox* b
 {
     LayoutRect boxRect = localRect;
 
-    while (box && box != this) {
-        RenderBlock* containerBlock = box->containingBlock();
-        ASSERT(containerBlock);
-        if (!containerBlock)
+    for (CheckedPtr<const RenderBoxModelObject> renderer = box; renderer && renderer != this;) {
+        CheckedPtr containingBlock = renderer->containingBlock();
+        ASSERT(containingBlock);
+        if (!containingBlock)
             return LayoutRect();
-        LayoutPoint currentBoxLocation = box->location();
-        if (CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(box->container()); inlineBox && inlineBox->isInlineBox() && box->isOutOfFlowPositioned()) {
-            // The box is positioned relative to the inline box, which is positioned in its own containing block.
-            currentBoxLocation += toLayoutSize(inlineBox->firstFragmentBorderBoxRectFromBlockStart().location());
-            containerBlock = inlineBox->containingBlock();
-        }
 
-        if (containerBlock->writingMode().blockDirection() != box->writingMode().blockDirection())
-            box->flipForWritingMode(boxRect);
+        // An inline box has the writing mode of its containing block.
+        if (containingBlock->writingMode().blockDirection() != renderer->writingMode().blockDirection())
+            downcast<RenderBox>(*renderer).flipForWritingMode(boxRect);
 
-        boxRect.moveBy(currentBoxLocation);
-        box = containerBlock;
+        boxRect.moveBy(renderer->firstFragmentBorderBoxRectFromBlockStart().location());
+        renderer = containingBlock;
     }
 
     return boxRect;
 }
 
 // FIXME: Make this function faster. Walking the render tree is slow, better use a caching mechanism (e.g. |cachedOffsetFromLogicalTopOfFirstFragment|).
-LayoutRect RenderFragmentedFlow::mapFromFragmentedFlowToLocal(const RenderBox* box, const LayoutRect& rect) const
+LayoutRect RenderFragmentedFlow::mapFromFragmentedFlowToLocal(const RenderBoxModelObject* renderer, const LayoutRect& rect) const
 {
     LayoutRect localRect = rect;
-    if (box == this)
+    if (renderer == this)
         return localRect;
 
-    RenderBlock* containerBlock = box->containingBlock();
-    ASSERT(containerBlock);
-    if (!containerBlock)
+    CheckedPtr containingBlock = renderer->containingBlock();
+    ASSERT(containingBlock);
+    if (!containingBlock)
         return LayoutRect();
-    LayoutPoint currentBoxLocation = box->location();
-    if (CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(box->container()); inlineBox && inlineBox->isInlineBox() && box->isOutOfFlowPositioned()) {
-        // The box is positioned relative to the inline box, which is positioned in its own containing block.
-        currentBoxLocation += toLayoutSize(inlineBox->firstFragmentBorderBoxRectFromBlockStart().location());
-        containerBlock = inlineBox->containingBlock();
-    }
-    localRect = mapFromFragmentedFlowToLocal(containerBlock, localRect);
+    localRect = mapFromFragmentedFlowToLocal(containingBlock.get(), localRect);
 
-    localRect.moveBy(-currentBoxLocation);
+    localRect.moveBy(-renderer->firstFragmentBorderBoxRectFromBlockStart().location());
 
-    if (containerBlock->writingMode().blockDirection() != box->writingMode().blockDirection())
-        box->flipForWritingMode(localRect);
+    // An inline box has the writing mode of its containing block.
+    if (containingBlock->writingMode().blockDirection() != renderer->writingMode().blockDirection())
+        downcast<RenderBox>(*renderer).flipForWritingMode(localRect);
 
     return localRect;
 }

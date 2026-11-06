@@ -116,7 +116,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderImage);
 // of the start and end, we need to know the whole Position.
 void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometries, unsigned, unsigned)
 {
-    RenderBlock* containingBlock = this->containingBlock();
+    CheckedPtr containingBlock = this->containingBlock();
 
     IntRect imageRect;
     // FIXME: It doesn't make sense to package line bounds into SelectionGeometry. We should find

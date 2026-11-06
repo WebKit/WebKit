@@ -5770,7 +5770,7 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const Layo
         if (renderer().isRenderBox())
             renderBox()->flipForWritingMode(result);
         else
-            renderer().containingBlock()->flipForWritingMode(result);
+            downcast<RenderBlock>(*renderer().containingBlock()).flipForWritingMode(result);
     }
 
     PaginationInclusionMode inclusionMode = ExcludeCompositedPaginatedLayers;
@@ -5873,7 +5873,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
         if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer()))
             box->flipForWritingMode(boundingBoxRect);
         else
-            renderer().containingBlock()->flipForWritingMode(boundingBoxRect);
+            downcast<RenderBlock>(*renderer().containingBlock()).flipForWritingMode(boundingBoxRect);
     }
 
     LayoutRect unionBounds = boundingBoxRect;

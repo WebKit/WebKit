@@ -247,6 +247,7 @@ public:
     PaintInfo paintInfoForBlockChildren(const PaintInfo&) const;
 
     void layoutOutOfFlowBoxes(RelayoutChildren, bool fixedPositionObjectsOnly = false);
+    virtual void layoutOutOfFlowBox(RenderBox&, RelayoutChildren, bool fixedPositionObjectsOnly);
 
     static void relayoutRenderBlockForScrollbarChange(RenderBlock&);
 
@@ -258,8 +259,6 @@ protected:
     bool establishesIndependentFormattingContextIgnoringDisplayType(const Style::ComputedStyle&) const;
 
     void layout() override;
-
-    virtual void layoutOutOfFlowBox(RenderBox&, RelayoutChildren, bool fixedPositionObjectsOnly);
     
     void markFixedPositionBoxForLayoutIfNeeded(RenderBox& child);
 

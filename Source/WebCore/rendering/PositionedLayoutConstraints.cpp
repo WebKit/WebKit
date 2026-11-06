@@ -50,7 +50,7 @@ PositionedLayoutConstraints::PositionedLayoutConstraints(const RenderBox& render
 
 PositionedLayoutConstraints::PositionedLayoutConstraints(const RenderBox& renderer, const Style::ComputedStyle& style, LogicalBoxAxis selfAxis)
     : m_renderer(renderer)
-    , m_container(downcast<RenderBoxModelObject>(*renderer.container())) // Using containingBlock() would be wrong for relpositioned inlines.
+    , m_container(downcast<RenderBoxModelObject>(*renderer.container())) // containingBlock() skips positioned boxes that are not blocks (e.g. a relatively positioned table section).
     , m_containingWritingMode(m_container->writingMode())
     , m_parentWritingMode(renderer.parent() ? renderer.parent()->writingMode() : WritingMode())
     , m_writingMode(style.writingMode())

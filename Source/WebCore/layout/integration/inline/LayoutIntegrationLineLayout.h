@@ -105,6 +105,10 @@ public:
     LayoutRect inkOverflowBoundingBoxRectFor(const RenderBoxModelObject&) const;
     Vector<FloatRect> collectInlineBoxRects(const RenderBoxModelObject&) const;
 
+    // The out-of-flow boxes whose containing block is one of the inline boxes of this inline formatting context.
+    void layoutOutOfFlowBoxes(RelayoutChildren, bool fixedPositionObjectsOnly);
+    Vector<CheckedRef<RenderBoxModelObject>> inlineBoxesWithOutOfFlowBoxes() const;
+
     NODELETE LayoutUnit contentLogicalHeight() const;
     std::optional<LayoutUnit> clampedContentLogicalHeight() const;
     NODELETE bool hasEllipsisInBlockDirectionOnLastFormattedLine() const;

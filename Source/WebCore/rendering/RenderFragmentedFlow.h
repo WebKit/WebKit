@@ -151,7 +151,7 @@ public:
     void addFragmentsVisualOverflow(const RenderBox&, const LayoutRect&);
     void clearFragmentsOverflow(const RenderBox&);
 
-    LayoutRect mapFromFragmentedFlowToLocal(const RenderBox*, const LayoutRect&) const;
+    LayoutRect mapFromFragmentedFlowToLocal(const RenderBoxModelObject*, const LayoutRect&) const;
     LayoutRect mapFromLocalToFragmentedFlow(const RenderBox*, const LayoutRect&) const;
 
     NODELETE void flipForWritingModeLocalCoordinates(LayoutRect&) const;

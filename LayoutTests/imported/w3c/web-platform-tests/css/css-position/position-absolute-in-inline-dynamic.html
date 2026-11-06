@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 <title>CSS Test: absolutely positioned boxes follow dynamic changes of their inline box containing block</title>
 <link rel="help" href="https://drafts.csswg.org/css-position-3/#def-cb">
-<meta name="assert" content="When the inline box that establishes the containing block of an absolutely positioned box moves, changes its content or padding, or starts or stops being the containing block, the absolutely positioned box is laid out against the updated containing block.">
+<meta name="assert" content="When the inline box that establishes the containing block of an absolutely positioned box changes size, decoration, position or containing block status, the absolutely positioned box is laid out against the updated containing block.">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <link rel="stylesheet" href="/fonts/ahem.css">
@@ -53,18 +53,21 @@ function checkEdges(outOfFlowBox, expected, edges)
         assert_approx_equals(rect[edge], expected[edge], 0.5, edge);
 }
 
-const startCorner = { style: "left: 0; top: 0", edges: ["left", "top"] };
-const endCorner = { style: "right: 0; bottom: 0", edges: ["right", "bottom"] };
-const fullSize = { style: "left: 0; width: 100%; top: 0; height: 100%", edges: ["left", "top", "width", "height"] };
 const mutations = [
-    { description: "text appended to the inline box", mutate: inlineBox => inlineBox.append("YYYY"), checks: [startCorner] },
-    { description: "text removed from the inline box", mutate: inlineBox => inlineBox.lastChild.remove(), checks: [startCorner] },
-    { description: "content inserted before the inline box", mutate: inlineBox => inlineBox.before("WWWW"), checks: [startCorner, endCorner, fullSize] },
-    { description: "inline box padding change", mutate: inlineBox => inlineBox.style.padding = "10px 20px", checks: [startCorner] },
+    { description: "text appended to the inline box", mutate: inlineBox => inlineBox.append("YYYY") },
+    { description: "text removed from the inline box", mutate: inlineBox => inlineBox.lastChild.remove() },
+    { description: "content inserted before the inline box", mutate: inlineBox => inlineBox.before("WWWW") },
+    { description: "inline box padding change", mutate: inlineBox => inlineBox.style.padding = "10px 20px" },
+    { description: "inline box border change", mutate: inlineBox => inlineBox.style.border = "solid 5px" },
+];
+const checks = [
+    { style: "left: 0; top: 0", edges: ["left", "top"] },
+    { style: "right: 0; bottom: 0", edges: ["right", "bottom"] },
+    { style: "left: 0; width: 100%; top: 0; height: 100%", edges: ["left", "top", "width", "height"] },
 ];
 
 for (const mutation of mutations) {
-    for (const check of mutation.checks) {
+    for (const check of checks) {
         const { inlineBox, outOfFlowBox } = setup(check.style);
         mutation.mutate(inlineBox);
         test(() => {

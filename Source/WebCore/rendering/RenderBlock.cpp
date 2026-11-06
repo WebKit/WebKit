@@ -43,6 +43,7 @@
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InlineIteratorInlineBox.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
 #include "LayoutScope.h"
 #include "LocalFrame.h"
@@ -600,30 +601,40 @@ void RenderBlock::clearLayoutOverflow()
     m_overflow->setContentArea(flippedContentBoxRect());
 }
 
-// The offset of one of the out-of-flow boxes of the block from the block. An out-of-flow box in an inline box is positioned relative
-// to the inline box, which is in the coordinate space of its own containing block.
+// The offset of one of the out-of-flow boxes of the block from the block, adding up the positions along the containing block chain
+// (e.g. through an inline box containing block).
 static LayoutSize offsetFromBlock(const RenderBlock& block, const RenderBox& outOfFlowBox)
 {
-    CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(outOfFlowBox.container());
-    if (!inlineBox || !inlineBox->isInlineBox() || !outOfFlowBox.isOutOfFlowPositioned())
-        return outOfFlowBox.locationOffset();
-    auto offset = outOfFlowBox.locationOffset() + toLayoutSize(inlineBox->firstFragmentBorderBoxRectFromBlockStart().location());
-    for (CheckedPtr containingBlock = inlineBox->containingBlock(); containingBlock && containingBlock != &block; containingBlock = containingBlock->containingBlock())
-        offset += containingBlock->locationOffset();
+    LayoutSize offset;
+    for (CheckedPtr<const RenderBoxModelObject> renderer = &outOfFlowBox; renderer && renderer != &block; renderer = renderer->containingBlock())
+        offset += toLayoutSize(renderer->firstFragmentBorderBoxRectFromBlockStart().location());
     return offset;
+}
+
+// The inline formatting context lays out, and adds the overflow of, the out-of-flow boxes of its inline boxes.
+static LayoutIntegration::LineLayout* inlineFormattingContext(RenderBlock& block)
+{
+    auto* blockFlow = dynamicDowncast<RenderBlockFlow>(block);
+    return blockFlow ? blockFlow->inlineLayout() : nullptr;
 }
 
 void RenderBlock::addOverflowFromOutOfFlowBoxes()
 {
-    TrackedRendererListHashSet* outOfFlowDescendants = outOfFlowBoxes();
-    if (!outOfFlowDescendants)
-        return;
+    auto addOverflow = [&](TrackedRendererListHashSet* outOfFlowDescendants) {
+        if (!outOfFlowDescendants)
+            return;
+        for (auto& outOfFlowBox : *outOfFlowDescendants) {
+            // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
+            if (outOfFlowBox.isAbsolutelyPositioned())
+                addOverflowWithRendererOffset(outOfFlowBox, offsetFromBlock(*this, outOfFlowBox));
+        }
+    };
 
-    for (auto& outOfFlowBox : *outOfFlowDescendants) {
-        // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
-        if (outOfFlowBox.isAbsolutelyPositioned())
-            addOverflowWithRendererOffset(outOfFlowBox, offsetFromBlock(*this, outOfFlowBox));
+    if (CheckedPtr inlineLayout = inlineFormattingContext(*this)) {
+        for (auto& inlineBox : inlineLayout->inlineBoxesWithOutOfFlowBoxes())
+            addOverflow(inlineBox->outOfFlowBoxes());
     }
+    addOverflow(outOfFlowBoxes());
 }
 
 void RenderBlock::addVisualOverflowFromTheme()
@@ -903,14 +914,16 @@ void RenderBlock::layoutOutOfFlowBox(RenderBox& outOfFlowBox, RelayoutChildren r
 
 void RenderBlock::layoutOutOfFlowBoxes(RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
 {
-    auto* outOfFlowDescendants = outOfFlowBoxes();
-    if (!outOfFlowDescendants)
-        return;
+    // The static position of this block's own out-of-flow boxes may depend on the out-of-flow boxes of its inline boxes.
+    if (CheckedPtr inlineLayout = inlineFormattingContext(*this))
+        inlineLayout->layoutOutOfFlowBoxes(relayoutChildren, fixedPositionObjectsOnly);
 
-    // Do not cache outOfFlowDescendants->end() in a local variable, since |outOfFlowDescendants| can be mutated
-    // as it is walked. We always need to fetch the new end() value dynamically.
-    for (auto& descendant : *outOfFlowDescendants)
-        layoutOutOfFlowBox(descendant, relayoutChildren, fixedPositionObjectsOnly);
+    if (auto* outOfFlowDescendants = outOfFlowBoxes()) {
+        // Do not cache outOfFlowDescendants->end() in a local variable, since |outOfFlowDescendants| can be mutated
+        // as it is walked. We always need to fetch the new end() value dynamically.
+        for (auto& descendant : *outOfFlowDescendants)
+            layoutOutOfFlowBox(descendant, relayoutChildren, fixedPositionObjectsOnly);
+    }
     setOutOfFlowChildNeedsLayoutBit(false);
 }
 
@@ -1475,8 +1488,14 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         rootBlock.flipForWritingMode(flippedBlockRect);
         flippedBlockRect.moveBy(rootBlockPhysicalPosition);
         clipOutOutOfFlowBoxes(paintInfo, flippedBlockRect.location(), outOfFlowBoxes());
+        if (CheckedPtr inlineLayout = inlineFormattingContext(*this)) {
+            // The out-of-flow boxes of an inline box are positioned relative to the inline box.
+            for (auto& inlineBox : inlineLayout->inlineBoxesWithOutOfFlowBoxes())
+                clipOutOutOfFlowBoxes(paintInfo, flippedBlockRect.location() + toLayoutSize(inlineBox->firstFragmentBorderBoxRectFromBlockStart().location()), inlineBox->outOfFlowBoxes());
+        }
         if (isBody() || isDocumentElementRenderer()) { // The <body> must make sure to examine its containingBlock's positioned objects.
-            for (auto* ancestor = containingBlock(); ancestor && !is<RenderView>(*ancestor); ancestor = ancestor->containingBlock())
+            // The containing blocks of the document element and the body are blocks.
+            for (auto* ancestor = downcast<RenderBlock>(containingBlock()); ancestor && !is<RenderView>(*ancestor); ancestor = downcast<RenderBlock>(ancestor->containingBlock()))
                 clipOutOutOfFlowBoxes(paintInfo, LayoutPoint(ancestor->x(), ancestor->y()), ancestor->outOfFlowBoxes()); // FIXME: Not right for flipped writing modes.
         }
         clipOutFloatingBoxes(rootBlock, paintInfo, rootBlockPhysicalPosition, offsetFromRootBlock);
@@ -2042,7 +2061,8 @@ static inline bool isChildHitTestCandidate(const RenderBox& box, const RenderFra
     auto& block = [&]() -> const RenderBlock& {
         if (auto* block = dynamicDowncast<RenderBlock>(box))
             return *block;
-        return *box.containingBlock();
+        // Candidates are in-flow, so they are contained by blocks.
+        return downcast<RenderBlock>(*box.containingBlock());
     }();
     return block.fragmentAtBlockOffset(point.y()) == fragment;
 }

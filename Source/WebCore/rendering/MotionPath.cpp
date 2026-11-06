@@ -39,24 +39,43 @@
 
 namespace WebCore {
 
-static FloatPoint offsetFromContainer(const RenderObject& renderer, RenderBlock& container, const FloatRect& referenceRect)
+// The bounding box of the fragments of an inline box, in the coordinate space of its containing block.
+static LayoutRect inlineBoxBorderBoxRect(const RenderBoxModelObject& inlineBox)
+{
+    auto borderBox = inlineBox.borderBoxRectInContainer();
+    if (inlineBox.writingMode().isBlockFlipped())
+        downcast<RenderBlock>(*inlineBox.containingBlock()).flipForWritingMode(borderBox);
+    return borderBox;
+}
+
+static FloatPoint offsetFromContainer(const RenderObject& renderer, const RenderBoxModelObject& container, const FloatRect& referenceRect)
 {
     auto offsetFromContainingBlock = renderer.offsetFromContainer(container, LayoutPoint());
+    if (container.isInlineBox())
+        offsetFromContainingBlock -= toLayoutSize(inlineBoxBorderBoxRect(container).location());
     return FloatPoint(FloatPoint(offsetFromContainingBlock) - referenceRect.location());
 }
 
-static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& renderer, RenderBlock& container, const Style::OffsetPath& offsetPath)
+static FloatRect referenceBoxRect(const RenderBoxModelObject& containingBlock, CSSBoxType boxType)
+{
+    // FIXME: Support different reference boxes for inline boxes (https://bugs.webkit.org/show_bug.cgi?id=129047).
+    if (containingBlock.isInlineBox())
+        return { { }, inlineBoxBorderBoxRect(containingBlock).size() };
+    return containingBlock.referenceBoxRect(boxType);
+}
+
+static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& renderer, const RenderBoxModelObject& container, const Style::OffsetPath& offsetPath)
 {
     return WTF::switchOn(offsetPath,
         [&](const Style::BoxPath& offsetPath) -> FloatRoundedRect {
             auto referenceBox = offsetPath.referenceBox();
-            auto referenceRect = container.referenceBoxRect(referenceBox);
+            auto referenceRect = referenceBoxRect(container, referenceBox);
             auto borderShape = BorderShape::shapeForBorderRect(container.usedStyle(), LayoutRect(referenceRect));
             return borderShape.deprecatedPixelSnappedRoundedRect(container.document().deviceScaleFactor());
         },
         [&](const auto& offsetPath) -> FloatRoundedRect {
             auto referenceBox = offsetPath.referenceBox();
-            auto snappedRect = snapRectToDevicePixelsIfNeeded(container.referenceBoxRect(referenceBox), downcast<RenderLayerModelObject>(renderer));
+            auto snappedRect = snapRectToDevicePixelsIfNeeded(referenceBoxRect(container, referenceBox), downcast<RenderLayerModelObject>(renderer));
             return FloatRoundedRect { snappedRect };
         },
         [&](const CSS::Keyword::None&) -> FloatRoundedRect {
@@ -92,7 +111,7 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
     if (!canBuildMotionPathData)
         return std::nullopt;
 
-    auto startingPositionForOffsetPosition = [&](const Style::OffsetPosition& offsetPosition, const FloatRect& referenceRect, RenderBlock& container, Style::ZoomFactor zoom) -> FloatPoint {
+    auto startingPositionForOffsetPosition = [&](const Style::OffsetPosition& offsetPosition, const FloatRect& referenceRect, const RenderBoxModelObject& container, Style::ZoomFactor zoom) -> FloatPoint {
         return WTF::switchOn(offsetPosition,
             [&](const CSS::Keyword::Normal&) {
                 // If offset-position is normal, the element does not have an offset starting position.
@@ -114,7 +133,7 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
 
     MotionPathData data;
     data.containingBlockBoundingRect = containingBlockRectForRenderer(renderer, *container, offsetPath);
-    data.cornerCurvatures = BorderShape::shapeForBorderRect(container->usedStyle(), container->borderBoxRect()).cornerCurvatures();
+    data.cornerCurvatures = BorderShape::shapeForBorderRect(container->usedStyle(), LayoutRect { referenceBoxRect(*container, CSSBoxType::BorderBox) }).cornerCurvatures();
     data.offsetFromContainingBlock = offsetFromContainer(renderer, *container, data.containingBlockBoundingRect.rect());
 
     auto zoom = renderer.style().usedZoomForLength();

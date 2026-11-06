@@ -90,8 +90,8 @@ void RenderLayoutState::computeOffsets(const RenderLayoutState& ancestor, Render
         m_paintOffset = ancestor.paintOffset() + offset;
 
     if (renderer.isOutOfFlowPositioned() && !fixed) {
-        if (CheckedPtr container = renderer.container(); container && container->isInlineBox())
-            m_paintOffset += toLayoutSize(downcast<RenderBoxModelObject>(*container).firstFragmentBorderBoxRectFromBlockStart().location());
+        if (CheckedPtr containingBlock = renderer.containingBlock(); containingBlock && containingBlock->isInlineBox())
+            m_paintOffset += toLayoutSize(containingBlock->firstFragmentBorderBoxRectFromBlockStart().location());
     }
 
     m_layoutOffset = m_paintOffset;

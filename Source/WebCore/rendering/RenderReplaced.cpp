@@ -1399,11 +1399,11 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidthUsing(const SizeType& logi
             // to preserve its pre-stretch-keyword behavior.
             if (!isInline()) {
                 ASSERT(containingBlock());
-                if (CheckedRef containingBlock = *this->containingBlock(); containingBlock->containsFloats()) {
+                if (CheckedPtr containingBlock = dynamicDowncast<RenderBlock>(this->containingBlock()); containingBlock && containingBlock->containsFloats()) {
                     LayoutUnit logicalHeight;
                     if (auto height = computeContentLogicalHeight(style().logicalHeight(), std::nullopt))
                         logicalHeight = *height + borderAndPaddingLogicalHeight();
-                    logicalWidthResult = std::min(logicalWidthResult, shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, containingBlock, logicalHeight));
+                    logicalWidthResult = std::min(logicalWidthResult, shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, *containingBlock, logicalHeight));
                 }
             }
             return std::max(borderAndPadding, logicalWidthResult) - borderAndPadding;

@@ -119,6 +119,7 @@ public:
 
     bool m_didBreakAtLineToAvoidWidow : 1;
     bool m_hasPercentageBasisForDescendants : 1;
+    bool m_mayHaveInlineBoxesWithOutOfFlowBoxes : 1;
 };
 
 class RenderBlockFlow : public RenderBlock {
@@ -287,6 +288,11 @@ public:
     NODELETE void clearDidBreakAtLineToAvoidWidow();
     NODELETE void setDidBreakAtLineToAvoidWidow();
     bool didBreakAtLineToAvoidWidow() const { return hasRareBlockFlowData() && rareBlockFlowData()->m_didBreakAtLineToAvoidWidow; }
+
+    // Whether an inline box of the inline formatting context of this block may be the containing block of out-of-flow boxes.
+    // It is set when an out-of-flow box is added to an inline box, and cleared when the inline boxes turn out to have none.
+    bool mayHaveInlineBoxesWithOutOfFlowBoxes() const { return hasRareBlockFlowData() && rareBlockFlowData()->m_mayHaveInlineBoxesWithOutOfFlowBoxes; }
+    void setMayHaveInlineBoxesWithOutOfFlowBoxes(bool);
 
     RenderMultiColumnFlow* multiColumnFlow() const { return hasRareBlockFlowData() ? multiColumnFlowSlowCase() : nullptr; }
     NODELETE RenderMultiColumnFlow* multiColumnFlowSlowCase() const;

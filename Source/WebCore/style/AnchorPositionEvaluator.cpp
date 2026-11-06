@@ -523,8 +523,10 @@ static LayoutRect boundingRectForFragmentedAnchor(const RenderBoxModelObject& an
     // Compute the bounding box of the fragments.
     // Location is relative to the fragmented flow.
     CheckedPtr anchorRenderBox = dynamicDowncast<RenderBox>(&anchorBox);
-    if (!anchorRenderBox)
-        anchorRenderBox = anchorBox.containingBlock();
+    if (!anchorRenderBox) {
+        // An inline box anchor is in-flow, so it is contained by a block.
+        anchorRenderBox = downcast<RenderBlock>(anchorBox.containingBlock());
+    }
 
     LayoutPoint offsetRelativeToFragmentedFlow = fragmentedFlow.mapFromLocalToFragmentedFlow(anchorRenderBox.get(), { }).location();
     auto unfragmentedBorderBox = anchorBox.borderBoundingBox();
@@ -536,7 +538,7 @@ static LayoutRect boundingRectForFragmentedAnchor(const RenderBoxModelObject& an
 
     // Now convert to physical coordinates (top/left origin) and walk up.
     // RenderFragmentedFlow doesn't have a usable frame rect, so use its container's content rect.
-    CheckedPtr fragmentedFlowContainer = fragmentedFlow.containingBlock();
+    CheckedPtr fragmentedFlowContainer = downcast<RenderBlock>(fragmentedFlow.containingBlock());
     if (!fragmentedFlowContainer) {
         ASSERT_NOT_REACHED();
         return fragmentsBoundingBox;

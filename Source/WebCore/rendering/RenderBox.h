@@ -505,6 +505,7 @@ public:
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     LayoutRect firstFragmentBorderBoxRect() const override;
+    LayoutRect firstFragmentBorderBoxRectFromBlockStart() const final { return { location(), borderBoxSize() }; }
 
     NODELETE LayoutPoint flipForWritingModeForChild(const RenderBox& child, const LayoutPoint&) const final;
     NODELETE LayoutUnit flipForWritingMode(LayoutUnit position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
@@ -548,7 +549,6 @@ public:
 
     RenderFragmentContainer* clampToStartAndEndFragments(RenderFragmentContainer*) const;
     bool hasFragmentRangeInFragmentedFlow() const;
-    virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const;
     NODELETE RenderBoxFragmentInfo* renderBoxFragmentInfo(RenderFragmentContainer*, RenderBoxFragmentInfoFlags = RenderBoxFragmentInfoFlags::CacheRenderBoxFragmentInfo) const;
 
     // True if this box can have a range in an outside fragmentation context.
