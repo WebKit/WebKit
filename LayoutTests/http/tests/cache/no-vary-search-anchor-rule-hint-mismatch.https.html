@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const resource = "/cache/resources/no-vary-search-delayed-prefetch.py?delay=2";
+
+function navigate()
+{
+    // The prefetch is still waiting for its response, so only the rule's hint can say it is usable.
+    window.location = resource + "&a=1&b=2";
+}
+
+// Navigate once the prefetch has started but long before its response arrives.
+window.addEventListener("load", () => setTimeout(navigate, 500));
+</script>
+<script type="speculationrules">
+{
+    "prefetch": [{
+        "where": { "selector_matches": "#link" },
+        "eagerness": "immediate",
+        "expects_no_vary_search": "params=(\"b\")"
+    }]
+}
+</script>
+</head>
+<body>
+<p>A document rule with a matching expects_no_vary_search that the response does not confirm is not used: the navigation that joined the prefetch is retried against the server.</p>
+<a id="link" href="/cache/resources/no-vary-search-delayed-prefetch.py?delay=2&a=1&b=1">Link matched by a document rule</a>
+<p>The page is replaced by the response it was served. "Purpose: none" means the navigation went to the server after the response contradicted the rule's hint.</p>
+</body>
+</html>

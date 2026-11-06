@@ -2904,6 +2904,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/NetworkLoadMetrics.h
     platform/network/NetworkStateNotifier.h
     platform/network/NetworkingContext.h
+    platform/network/NoVarySearch.h
     platform/network/OrganizationStorageAccessPromptQuirk.h
     platform/network/ParsedContentRange.h
     platform/network/ParsedContentType.h

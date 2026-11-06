@@ -1,0 +1,3 @@
+Purpose: none
+
+URL: /cache/resources/no-vary-search-delayed-prefetch.py?delay=2&a=1&b=2

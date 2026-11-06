@@ -1,0 +1,3 @@
+
+PASS Don't use the in-flight prefetch. Invalid No-Vary-Search means default URL variance. The prefetched and the navigated URLs are not the same.
+

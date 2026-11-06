@@ -56,6 +56,7 @@
 #include "DocumentIsolationPolicy.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
+#include "DocumentPrefetcher.h"
 #include "DocumentQuirks.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentSecurityOrigin.h"
@@ -1374,6 +1375,13 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
     if (request.allowsCaching())
         resource = memoryCache->resourceForRequest(request.resourceRequest(), page->sessionID());
 
+    // A navigation can reuse a prefetch of a different URL if the prefetched response's No-Vary-Search header allows it.
+    bool isReusingPrefetchThroughNoVarySearch = false;
+    if (!resource && type == CachedResource::Type::MainResource && request.options().mode == FetchOptions::Mode::Navigate && request.options().cachingPolicy != CachingPolicy::AllowCachingMainResourcePrefetch) {
+        resource = frame->loader().documentPrefetcher().resourceMatchingNoVarySearch(url);
+        isReusingPrefetchThroughNoVarySearch = !!resource;
+    }
+
     if (resource && request.isLinkPreload() && !resource->isLinkPreload())
         resource->setLinkPreload();
 
@@ -1513,7 +1521,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
     if (document && !document->loadEventFinished() && !resource->resourceRequest().url().protocolIsData())
         m_validatedURLs.add(resource->resourceRequest().url());
 
-    ASSERT(resource->url() == url.string());
+    ASSERT_UNUSED(isReusingPrefetchThroughNoVarySearch, resource->url() == url.string() || (isReusingPrefetchThroughNoVarySearch && policy == Use));
     bool isNewDocumentResource = m_documentResources.set(resource->url().string(), CachedResourceHandle { *resource }).isNewEntry;
     if (!fragmentIdentifier.isEmpty()) {
         bool isFirstFragmentIdentifier = m_documentResourceFragmentIdentifiers.add(resource->url().string(), fragmentIdentifier).isNewEntry;

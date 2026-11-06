@@ -2185,7 +2185,7 @@ public:
     void attributeAddedToElement(const QualifiedName& attribute);
     void elementDisconnectedFromDocument(const Element&);
 
-    WEBCORE_EXPORT void prefetch(const URL&, const Vector<String>&, std::optional<ReferrerPolicy>, bool lowPriority = false);
+    WEBCORE_EXPORT void prefetch(const URL&, const Vector<String>&, std::optional<ReferrerPolicy>, bool lowPriority = false, const String& noVarySearchHint = { });
 
     void processSpeculationRulesHeader(const String& headerValue, const URL& baseURL);
     CachedSetInnerHTML& cachedSetInnerHTML() LIFETIME_BOUND { return m_cachedSetInnerHTML; }
