@@ -527,8 +527,26 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
         // dispatched upstream by other compat paths."
         // That state should live in PointerCaptureController, not be inferred from event tags.
         // Migrating there would make this short circuit unnecessary.
-        if (platformEvent.syntheticClickType() != SyntheticClickType::NoTap && !isAnyClick(mouseEvent) && mouseEvent.type() != eventNames().contextmenuEvent && platformEvent.inputSource() != MouseEventInputSource::Automation)
+        bool isSyntheticTouchEvent = [&] {
+            if (platformEvent.syntheticClickType() != SyntheticClickType::NoTap && platformEvent.inputSource() != MouseEventInputSource::Automation)
+                return true;
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+            if (element.document().settings().isTouchEventEmulationEnabled())
+                return true;
+#endif
+#if PLATFORM(GTK)
+            if (platformEvent.isTouchEvent())
+                return true;
+#endif
+            return false;
+        }();
+        if (isSyntheticTouchEvent && !isAnyClick(mouseEvent) && mouseEvent.type() != eventNames().contextmenuEvent) {
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+            if (isCompatibilityMouseEvent(mouseEvent) && pointerCaptureController.preventsCompatibilityMouseEventsForPrimaryTouch())
+                return ShouldIgnoreMouseEvent::Yes;
+#endif
             return ShouldIgnoreMouseEvent::No;
+        }
 
         if (RefPtr pointerEvent = pointerCaptureController.pointerEventForMouseEvent(mouseEvent, platformEvent.pointerId(), platformEvent.pointerType())) {
             pointerCaptureController.dispatchEvent(*pointerEvent, &element);
