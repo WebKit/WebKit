@@ -248,11 +248,15 @@ void ProvisionalPageProxy::setNavigation(API::Navigation& navigation)
 
 void ProvisionalPageProxy::cancel(ProvisionalLoadIsReplaced isReplaced)
 {
-    // If the provisional load started, then indicate that it failed due to cancellation by calling didFailProvisionalLoadForFrame().
     RefPtr mainFrame = m_mainFrame;
-    if (m_provisionalLoadURL.isEmpty() || !mainFrame)
+    // If the provisional load never started, there is no failure to simulate, so let the page know it was cancelled.
+    if (m_provisionalLoadURL.isEmpty() || !mainFrame) {
+        if (RefPtr page = m_page)
+            page->provisionalLoadWasCancelledBeforeStarting(m_navigationID);
         return;
+    }
 
+    // If the provisional load started, then indicate that it failed due to cancellation by calling didFailProvisionalLoadForFrame().
     ASSERT(process().isLaunching() || process().state() == WebProcessProxy::State::Running);
 
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "cancel: Simulating a didFailProvisionalLoadForFrame");

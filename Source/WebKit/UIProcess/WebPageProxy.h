@@ -1942,6 +1942,7 @@ public:
     void processDidBecomeResponsive(WebProcessProxy&);
     void resetStateAfterProcessTermination(ProcessTerminationReason);
     void provisionalProcessDidTerminate();
+    void provisionalLoadWasCancelledBeforeStarting(WebCore::NavigationIdentifier);
     void dispatchProcessDidTerminate(WebProcessProxy&, ProcessTerminationReason);
     void willChangeProcessIsResponsive();
     void didChangeProcessIsResponsive();

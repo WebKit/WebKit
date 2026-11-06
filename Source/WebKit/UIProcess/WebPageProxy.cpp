@@ -15839,6 +15839,11 @@ void WebPageProxy::provisionalProcessDidTerminate()
     m_inspectorController->mainFrameProvisionalLoadDidEnd(ProvisionalLoadIsReplaced::No);
 }
 
+void WebPageProxy::provisionalLoadWasCancelledBeforeStarting(WebCore::NavigationIdentifier navigationID)
+{
+    m_sessionHistoryTraversalQueue->mainFrameLoadDidFinish(navigationID);
+}
+
 NODELETE static bool shouldReloadAfterProcessTermination(ProcessTerminationReason reason)
 {
     switch (reason) {
