@@ -28,6 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "CompositionEvent.h"
+#include "DocumentInlines.h"
 #include "DocumentView.h"
 #include "EventContext.h"
 #include "EventNames.h"
@@ -186,10 +187,25 @@ static void resetAfterDispatchInShadowTree(Event& event)
     // FIXME: We should also clear the event's touch target list.
 }
 
+static void dispatchEventWithoutDebuggerDeferral(Node&, Event&);
+
 void EventDispatcher::dispatchEvent(Node& node, Event& event)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(node));
 
+    Ref document = node.document();
+    if (document->shouldDeferLifecycleEventForDebugger(event)) [[unlikely]] {
+        document->queueTaskToDispatchDeferredLifecycleEvent(node, [event = Ref { event }](Node& queuedNode) {
+            dispatchEventWithoutDebuggerDeferral(queuedNode, event);
+        });
+        return;
+    }
+
+    dispatchEventWithoutDebuggerDeferral(node, event);
+}
+
+static void dispatchEventWithoutDebuggerDeferral(Node& node, Event& event)
+{
     LOG_WITH_STREAM(Events, stream << "EventDispatcher::dispatchEvent " << event << " on node " << node);
 
     Ref protectedNode { node };

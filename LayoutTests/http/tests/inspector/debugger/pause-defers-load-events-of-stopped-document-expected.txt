@@ -1,0 +1,10 @@
+Test that the load and error events of images that finish while their own document is stopped in the debugger are dispatched after resuming instead of being dropped.
+
+
+== Running test suite: Debugger.PauseDefersLoadEventsOfStoppedDocument
+-- Running test case: Debugger.PauseDefersLoadEventsOfStoppedDocument.ImagesFinishWhileStopped
+PASS: Both images should finish loading while the page is stopped.
+PASS: No image event should be dispatched while the page is stopped.
+PASS: Both image events should be dispatched after resuming.
+Events: missing:error trusted=true, stalled:load trusted=true
+
