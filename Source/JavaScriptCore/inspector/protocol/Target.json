@@ -37,6 +37,13 @@
             ]
         },
         {
+            "name": "setGlobalDebuggerPauseEnabled",
+            "description": "Sets whether a pause in one frame holds the frames of the page in other processes. Enabled by default.",
+            "parameters": [
+                { "name": "enabled", "type": "boolean" }
+            ]
+        },
+        {
             "name": "sendMessageToTarget",
             "description": "Send an Inspector Protocol message to be dispatched to a Target's agents.",
             "parameters": [

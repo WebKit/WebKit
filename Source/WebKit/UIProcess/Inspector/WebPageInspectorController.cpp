@@ -86,7 +86,7 @@ WebPageInspectorController::WebPageInspectorController(WebPageProxy& inspectedPa
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_inspectedPage(inspectedPage)
 {
-    auto targetAgent = makeUniqueRef<InspectorTargetAgent>(m_frontendRouter, m_backendDispatcher);
+    auto targetAgent = makeUniqueRef<InspectorTargetAgent>(m_frontendRouter, m_backendDispatcher, this);
     m_targetAgent = targetAgent.ptr();
     m_agents.append(WTF::move(targetAgent));
 }
@@ -158,8 +158,8 @@ void WebPageInspectorController::disconnectFrontend(FrontendChannel& frontendCha
 
     Ref inspectedPage = m_inspectedPage.get();
     inspectedPage->didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
-    if (disconnectingLastFrontend && m_debuggerPauseCoordinator)
-        CheckedPtr { m_debuggerPauseCoordinator }->closeSession();
+    if (disconnectingLastFrontend)
+        m_debuggerPauseCoordinator = nullptr;
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (disconnectingLastFrontend)
@@ -186,8 +186,7 @@ void WebPageInspectorController::disconnectAllFrontends()
 
     Ref inspectedPage = m_inspectedPage.get();
     inspectedPage->didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
-    if (m_debuggerPauseCoordinator)
-        CheckedPtr { m_debuggerPauseCoordinator }->closeSession();
+    m_debuggerPauseCoordinator = nullptr;
 
 #if ENABLE(REMOTE_INSPECTOR)
     inspectedPage->remoteInspectorInformationDidChange();
@@ -213,6 +212,12 @@ void WebPageInspectorController::setIndicating(bool indicating)
 #endif
 }
 #endif
+
+Inspector::Protocol::ErrorStringOr<void> WebPageInspectorController::setGlobalDebuggerPauseEnabled(bool enabled)
+{
+    CheckedRef { ensureDebuggerPauseCoordinator() }->setEnabled(enabled);
+    return { };
+}
 
 void WebPageInspectorController::debuggerPauseSessionDidChange(WebCore::DebuggerPauseSessionIdentifier sessionID, bool isPaused, const Vector<String>& stoppingTargetIDs)
 {
@@ -388,11 +393,16 @@ void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore:
     }
 }
 
-void WebPageInspectorController::frameDidPauseForDebugger(WebProcessProxy& process, WebCore::FrameIdentifier frameID)
+DebuggerPauseCoordinator& WebPageInspectorController::ensureDebuggerPauseCoordinator()
 {
     if (!m_debuggerPauseCoordinator)
         m_debuggerPauseCoordinator = makeUnique<DebuggerPauseCoordinator>(protect(m_inspectedPage));
-    CheckedPtr { m_debuggerPauseCoordinator }->frameDidPause(process, frameID);
+    return *m_debuggerPauseCoordinator;
+}
+
+void WebPageInspectorController::frameDidPauseForDebugger(WebProcessProxy& process, WebCore::FrameIdentifier frameID)
+{
+    CheckedRef { ensureDebuggerPauseCoordinator() }->frameDidPause(process, frameID);
 }
 
 void WebPageInspectorController::frameDidContinueForDebugger(WebProcessProxy& process, WebCore::FrameIdentifier frameID)
