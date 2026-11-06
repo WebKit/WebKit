@@ -117,8 +117,8 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     if (rootContainer.isFieldset())
         return BlockAvoidanceReason::RootIsFieldset;
     // A text control lays out its inner text with the block formatting context and adjusts it after (RenderTextControlSingleLine::layout), and
-    // its placeholder itself (RenderTextControl::layoutExcludedChildren). A table caption, a file input and an SVG foreignObject only size and
-    // place themselves their own way.
+    // its placeholder itself (RenderTextControl::layoutExcludedChildren). A WebVTT cue box moves itself after (RenderVTTCue::layout). A table
+    // caption, a file input and an SVG foreignObject only size and place themselves their own way.
     auto isSupportedRenderer = [&] {
         switch (rootContainer.type()) {
         case RenderObject::Type::BlockFlow:
@@ -126,6 +126,7 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         case RenderObject::Type::TableCell:
         case RenderObject::Type::TableCaption:
         case RenderObject::Type::FileUploadControl:
+        case RenderObject::Type::VTTCue:
         case RenderObject::Type::SVGForeignObject:
         case RenderObject::Type::LegacySVGForeignObject:
             return true;
@@ -394,9 +395,9 @@ static bool isLaidOutByBlockFormattingContext(const RenderElement& outOfFlowBox,
     return containingBlock == &rootContainer || containingBlock->isDescendantOf(&rootContainer);
 }
 
-// An out-of-flow flex container, buttons, range inputs and selects included, grid container or -webkit-box, whose own formatting context
-// lays it out (BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext), and its content like that of a leaf. Not a fieldset,
-// whose legend sits in its border.
+// An out-of-flow flex container, buttons, range inputs and selects included, grid container, -webkit-box or WebVTT cue box, whose own
+// formatting context lays it out (BlockFormattingContext::layoutOutOfFlowIndependentFormattingContext), and its content like that of a leaf.
+// Not a fieldset, whose legend sits in its border.
 static bool isOutOfFlowLeafContainer(const RenderElement& outOfFlowBox)
 {
     switch (outOfFlowBox.type()) {
@@ -407,6 +408,8 @@ static bool isOutOfFlowLeafContainer(const RenderElement& outOfFlowBox)
     case RenderObject::Type::Grid:
     case RenderObject::Type::DeprecatedFlexibleBox:
         return !outOfFlowBox.isFieldset();
+    case RenderObject::Type::VTTCue:
+        return true;
     default:
         return false;
     }
