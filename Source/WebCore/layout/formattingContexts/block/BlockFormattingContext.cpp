@@ -98,6 +98,21 @@ BlockFormattingContext::BlockFormattingContext(const RenderBlockFlow& root, Layo
 
 BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockContent& constraints, const BoxGeometry& rootGeometry)
 {
+    // Floats placed from a provisional top beside or below floats from before may go elsewhere from the top the margins give their block
+    // container: the content is laid out again with those tops, like the render tree path lays out a block that moved while its floats were
+    // placed again (RenderBlockFlow::layoutBlockChild).
+    auto initialBlockLayoutState = m_blockLayoutState;
+    auto result = layoutContent(constraints, rootGeometry);
+    if (!m_needsLayoutWithResolvedBorderBoxLogicalTops)
+        return result;
+    m_needsLayoutWithResolvedBorderBoxLogicalTops = false;
+    m_isLayingOutWithResolvedBorderBoxLogicalTops = true;
+    m_blockLayoutState = WTF::move(initialBlockLayoutState);
+    return layoutContent(constraints, rootGeometry);
+}
+
+BlockLayoutResult BlockFormattingContext::layoutContent(const ConstraintsForBlockContent& constraints, const BoxGeometry& rootGeometry)
+{
     ASSERT(m_blockLayoutState.containingBlockStates().isEmpty());
     auto result = BlockLayoutResult { };
     m_blockLayoutState.containingBlockStates().append(containingBlockStateForRoot(constraints, rootGeometry));
@@ -128,6 +143,12 @@ BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockConten
     }
     m_blockLayoutState.marginCollapse().endBlockFormattingContextRoot(rootState);
     auto contentLogicalBottom = BlockMarginCollapse::isQuirkContainer(root()) && m_blockLayoutState.marginCollapse().endsWithQuirk() ? m_blockLayoutState.marginCollapse().logicalTop() : m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
+    // The content of a block formatting context root also ends below the bottom margin edge of its floats, except in a line-clamp container
+    // (CSS 2.2 §10.6.7, RenderBlockFlow::layoutBlock).
+    if (auto* placedFloats = m_blockLayoutState.placedFloats(); placedFloats && !root().establishesLineClampContainer()) {
+        if (auto floatsLogicalBottom = placedFloats->lowestPositionOnBlockAxis())
+            contentLogicalBottom = std::max(contentLogicalBottom, *floatsLogicalBottom);
+    }
     result.intrinsicContentBlockSize = std::max(0_lu, contentLogicalBottom - rootState.contentBoxLogicalTop());
     m_blockLayoutState.containingBlockStates().clear();
     return result;
@@ -304,6 +325,80 @@ void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockConta
     placeInContainingBlock(blockContainer, WTF::move(blockContainerState), result);
 }
 
+// A float in the coordinates of a border box offset by this from the one it is in; without its box, as a float from outside the inline
+// formatting context it goes to (PlacedFloats::Item::isInFormattingContextOf).
+static PlacedFloats::Item movedFloat(const PlacedFloats::Item& floatItem, LayoutSize offset, const Box* layoutBox)
+{
+    auto localGeometry = floatItem.boxGeometry();
+    auto absoluteGeometry = BoxGeometry { localGeometry };
+    absoluteGeometry.setTopLeft(floatItem.absoluteBorderBoxRect().topLeft() + offset);
+    auto position = floatItem.isStartPositioned() ? PlacedFloats::Item::Position::Start : PlacedFloats::Item::Position::End;
+    if (layoutBox)
+        return { *layoutBox, position, absoluteGeometry, BoxGeometry::borderBoxTopLeft(localGeometry), floatItem.placedByLine() };
+    return { position, absoluteGeometry, BoxGeometry::borderBoxTopLeft(localGeometry), RefPtr { floatItem.shape() } };
+}
+
+// A float from outside the inline content it intrudes into, in the coordinates of the border box of the content's block container, which is
+// offset by this from the root's. The render tree path gives the inline formatting context such floats from its float lists with their edges
+// along the physical vertical axis floored (LineLayout::preparePlacedFloats), and lines go beside them the same way here.
+static PlacedFloats::Item intrudingFloat(const PlacedFloats::Item& floatItem, LayoutSize offset, WritingMode writingMode)
+{
+    auto geometry = floatItem.boxGeometry();
+    auto localTopLeft = BoxGeometry::borderBoxTopLeft(geometry);
+    auto borderBoxTopLeft = floatItem.absoluteBorderBoxRect().topLeft() + offset;
+    if (writingMode.isHorizontal()) {
+        auto marginBoxTop = LayoutUnit { (borderBoxTopLeft.y() - geometry.marginBefore()).floor() };
+        auto marginBoxBottom = LayoutUnit { (borderBoxTopLeft.y() + geometry.borderBoxHeight() + geometry.marginAfter()).floor() };
+        geometry.setVerticalMargin({ geometry.marginBefore(), marginBoxBottom - marginBoxTop - geometry.marginBefore() - geometry.borderBoxHeight() });
+        borderBoxTopLeft.setY(marginBoxTop + geometry.marginBefore());
+    } else {
+        auto marginBoxLeft = LayoutUnit { (borderBoxTopLeft.x() - geometry.marginStart()).floor() };
+        auto marginBoxRight = LayoutUnit { (borderBoxTopLeft.x() + geometry.borderBoxWidth() + geometry.marginEnd()).floor() };
+        geometry.setHorizontalMargin({ geometry.marginStart(), marginBoxRight - marginBoxLeft - geometry.marginStart() - geometry.borderBoxWidth() });
+        borderBoxTopLeft.setX(marginBoxLeft + geometry.marginStart());
+    }
+    geometry.setTopLeft(borderBoxTopLeft);
+    auto position = floatItem.isStartPositioned() ? PlacedFloats::Item::Position::Start : PlacedFloats::Item::Position::End;
+    return { position, geometry, localTopLeft, RefPtr { floatItem.shape() } };
+}
+
+// The border box of the innermost block container in the root, from its top when it is known, and otherwise from where the margins collapsed so
+// far put it: the floats placed from there wait for it (placePendingFloats).
+LayoutSize BlockFormattingContext::inlineContentOffsetInRoot(const ContainingBlockState& blockContainerState)
+{
+    auto borderBoxLogicalTop = [&] {
+        if (auto borderBoxLogicalTop = blockContainerState.borderBoxLogicalTop)
+            return *borderBoxLogicalTop;
+        for (auto& [blockContainer, resolvedBorderBoxLogicalTop] : m_resolvedBorderBoxLogicalTops) {
+            if (blockContainer.ptr() == blockContainerState.blockContainer.ptr())
+                return resolvedBorderBoxLogicalTop;
+        }
+        return m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
+    };
+    return { blockContainerState.borderBoxLogicalLeftInRoot, borderBoxLogicalTop() };
+}
+
+// The floats in the inline content of the innermost block container, in the coordinates of its border box.
+void BlockFormattingContext::addInlineContentFloats(const PlacedFloats::List& floats)
+{
+    auto& blockContainerState = m_blockLayoutState.containingBlockStates().last();
+    auto offsetInRoot = inlineContentOffsetInRoot(blockContainerState);
+    auto& placedFloats = m_blockLayoutState.ensurePlacedFloats(root().layoutBox());
+    auto& pendingFloats = m_blockLayoutState.pendingFloats();
+    auto pendingFloatCount = size_t { 0 };
+    for (auto& pending : pendingFloats)
+        pendingFloatCount += pending.floatBoxes.size();
+    auto isPlacedAgainstOtherFloats = placedFloats.list().size() > pendingFloatCount;
+    auto addedFloats = Vector<CheckedRef<const Box>> { };
+    for (auto& floatItem : floats) {
+        CheckedRef floatBox = *floatItem.layoutBox();
+        placedFloats.add(movedFloat(floatItem, offsetInRoot, floatBox.ptr()));
+        addedFloats.append(floatBox);
+    }
+    if (!blockContainerState.borderBoxLogicalTop && !addedFloats.isEmpty())
+        pendingFloats.append({ blockContainerState.blockContainer, WTF::move(addedFloats), offsetInRoot.height(), isPlacedAgainstOtherFloats });
+}
+
 void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer, BlockLayoutResult& result)
 {
     auto& containingBlockStates = m_blockLayoutState.containingBlockStates();
@@ -328,9 +423,25 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
         lineClamp->hasConstrainedTextWrapContent = true;
         m_blockLayoutState.setLineClamp(lineClamp);
     }
-    // FIXME: Floats need the block container's top before the inline content is laid out; decide whether it has line boxes from its
-    // inline items then.
-    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(downcast<RenderBlockFlow>(blockContainer), constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.replacedElementAvailableBlockSize, orthogonalFlowAvailableInlineSpace(blockContainerState), blockContainerState.relayoutChildren, m_blockLayoutState, *this, result);
+    // The floats that intrude into the content and those in it are placed from the block container's border box in the root, whose top a
+    // content that makes line boxes resolves before it is laid out. Without line boxes the margins stay open, and the floats go where the
+    // block container's top would be if they did not (CSS 2.2 §8.3.1, §9.5.1).
+    CheckedRef inlineContentRoot = downcast<RenderBlockFlow>(blockContainer);
+    auto* placedFloats = m_blockLayoutState.placedFloats();
+    auto hasFloats = (placedFloats && !placedFloats->isEmpty()) || LayoutIntegration::BlockIntegrationUtils::inlineContentHasFloats(inlineContentRoot);
+    auto offsetInRoot = LayoutSize { };
+    auto intrudingFloats = PlacedFloats::List { };
+    if (hasFloats) {
+        if (!blockContainerState.borderBoxLogicalTop && LayoutIntegration::BlockIntegrationUtils::inlineContentMakesLineBoxes(inlineContentRoot))
+            resolveBorderBoxLogicalTops(blockContainerState);
+        offsetInRoot = inlineContentOffsetInRoot(blockContainerState);
+        if (placedFloats) {
+            for (auto& floatItem : placedFloats->list())
+                intrudingFloats.append(intrudingFloat(floatItem, -offsetInRoot, root().writingMode()));
+        }
+    }
+    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(inlineContentRoot, constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.replacedElementAvailableBlockSize, orthogonalFlowAvailableInlineSpace(blockContainerState), blockContainerState.relayoutChildren || m_isLayingOutWithResolvedBorderBoxLogicalTops, m_blockLayoutState, intrudingFloats, *this, result);
+    addInlineContentFloats(inlineContentLayoutResult.floats);
     // The content takes its lines off the line-clamp budget (LineClampUpdater).
     if (auto lineClamp = m_blockLayoutState.lineClamp()) {
         lineClamp->maximumLines -= std::min(lineClamp->maximumLines, inlineContentLayoutResult.lineCount);
@@ -709,6 +820,7 @@ ContainingBlockState BlockFormattingContext::containingBlockStateForRoot(const C
         .blockContainer = root(),
         .geometry = rootGeometry,
         .inlineRange = { horizontalConstraints.logicalLeft, horizontalConstraints.logicalWidth },
+        .borderBoxLogicalLeftInRoot = { },
         .borderBoxLogicalTop = 0_lu,
         .borderAndPaddingBefore = constraints.logicalTop(),
         .contentBoxBlockSize = constraints.contentBoxBlockSize(),
@@ -729,6 +841,7 @@ ContainingBlockState BlockFormattingContext::containingBlockStateFor(const Rende
         .blockContainer = blockContainer,
         .geometry = geometry,
         .inlineRange = { geometry.borderAndPaddingStart(), geometry.contentBoxWidth() },
+        .borderBoxLogicalLeftInRoot = parentState.borderBoxLogicalLeftInRoot + BoxGeometry::borderBoxLeft(geometry),
         .borderBoxLogicalTop = { },
         .borderAndPaddingBefore = geometry.borderAndPaddingBefore(),
         .contentBoxBlockSize = contentBoxBlockSize,
@@ -1123,9 +1236,12 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
         // include the parent's block-start margin, and otherwise where it would be with a non-zero bottom border (CSS 2.2 §8.3.1).
         computeBlockSize(box, { }, containingBlockState, geometry);
         ASSERT(!geometry.borderBoxHeight());
-        if (containingBlockState.borderBoxLogicalTop)
-            geometry.setTop(m_blockLayoutState.marginCollapse().collapsedLogicalBottomForCollapsedThroughBox() - *containingBlockState.borderBoxLogicalTop);
-        else
+        if (containingBlockState.borderBoxLogicalTop) {
+            auto borderBoxLogicalTop = m_blockLayoutState.marginCollapse().collapsedLogicalBottomForCollapsedThroughBox();
+            geometry.setTop(borderBoxLogicalTop - *containingBlockState.borderBoxLogicalTop);
+            // The floats waiting for a top are in the box or in the boxes the margins collapsed through inside it.
+            placePendingFloats(borderBoxLogicalTop);
+        } else
             geometry.setTop({ });
         m_blockLayoutState.marginCollapse().addCollapsedThroughBlockEndMargin(blockContainerState, containingBlockState, geometry.marginAfter());
         auto collapsedMarginsAfter = AdjoiningMargins { };
@@ -1230,6 +1346,43 @@ void BlockFormattingContext::resolveBorderBoxLogicalTops(ContainingBlockState& b
     // After the loop: the block container is still on the stack when its line boxes separate the margins, and its top would stop the loop.
     blockContainerState.borderBoxLogicalTop = borderBoxLogicalTop;
     m_blockLayoutState.marginCollapse().resetAdjoiningMargins(blockContainerState.contentBoxLogicalTop());
+    // The floats waiting for a top are in block containers whose margins collapsed through them into these.
+    placePendingFloats(borderBoxLogicalTop);
+}
+
+void BlockFormattingContext::placePendingFloats(LayoutUnit borderBoxLogicalTop)
+{
+    auto& pendingFloats = m_blockLayoutState.pendingFloats();
+    if (pendingFloats.isEmpty())
+        return;
+    auto& placedFloats = m_blockLayoutState.ensurePlacedFloats(root().layoutBox());
+    auto floats = placedFloats.list();
+    auto didMoveFloats = false;
+    for (auto& pending : std::exchange(pendingFloats, { })) {
+        auto offset = LayoutSize { 0_lu, borderBoxLogicalTop - pending.provisionalBorderBoxLogicalTop };
+        if (offset.isZero())
+            continue;
+        auto resolvedBorderBoxLogicalTop = m_resolvedBorderBoxLogicalTops.findIf([&](auto& entry) {
+            return entry.first.ptr() == pending.blockContainer.ptr();
+        });
+        if (resolvedBorderBoxLogicalTop == notFound) {
+            m_resolvedBorderBoxLogicalTops.append({ pending.blockContainer, borderBoxLogicalTop });
+            m_needsLayoutWithResolvedBorderBoxLogicalTops |= pending.isPlacedAgainstOtherFloats;
+        }
+        for (auto& floatItem : floats) {
+            auto isPending = pending.floatBoxes.containsIf([&](auto& floatBox) {
+                return floatBox.ptr() == floatItem.layoutBox();
+            });
+            if (isPending)
+                floatItem = movedFloat(floatItem, offset, floatItem.layoutBox());
+        }
+        didMoveFloats = true;
+    }
+    if (!didMoveFloats)
+        return;
+    placedFloats.clear();
+    for (auto& floatItem : floats)
+        placedFloats.add(WTF::move(floatItem));
 }
 
 TextStream& operator<<(TextStream& stream, const BlockLayoutResult& result)

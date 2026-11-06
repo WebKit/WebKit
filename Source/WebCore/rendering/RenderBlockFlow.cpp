@@ -1181,8 +1181,10 @@ void RenderBlockFlow::layoutBlockChildren(RelayoutChildren relayoutChildren, Lay
 
 bool RenderBlockFlow::layoutUsingBlockFormattingContext(RelayoutChildren relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
-    if (!LayoutIntegration::canUseForBlockLayout(*this))
+    if (!LayoutIntegration::canUseForBlockLayout(*this)) {
+        LayoutIntegration::BlockLayout::prepareForRenderTreeLayout(*this);
         return false;
+    }
 
     // Like layoutBlockChildren and layoutInlineChildren.
     layoutExcludedChildren(relayoutChildren);
@@ -2809,9 +2811,13 @@ void RenderBlockFlow::computeInFlowOverflow(LayoutRect contentArea, OptionSet<Co
     RenderBlock::computeInFlowOverflow(contentArea, options);
 
     auto addOverflowFromFloatsIfApplicable = [&] {
-
-        if (!m_floatingObjects)
+        if (!m_floatingObjects) {
+            // The block formatting context leaves a float to its containing block, which paints it and takes it in its overflow (css-overflow-3 §3.3),
+            // and so its ancestors do too.
+            for (auto& renderer : floatsPlacedByBlockFormattingContext())
+                addOverflowFromFloatBox(renderer, renderer->locationOffset());
             return;
+        }
         auto shouldIncludeFloats = !multiColumnFlow() && (options.contains(ComputeOverflowOptions::RecomputeFloats) || createsNewFormattingContext() || hasSelfPaintingLayer());
         if (!shouldIncludeFloats)
             return;
@@ -2864,54 +2870,91 @@ void RenderBlockFlow::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& 
     }
 }
 
+static void paintFloat(RenderBox& renderer, PaintInfo& paintInfo, const LayoutPoint& floatBoxLocation, bool preservePhase)
+{
+    GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
+
+    auto clipBlockEndIfNeeded = [&] {
+        // The clip rect in the float's own coordinates, moved to where the float's border box paints.
+        auto clipRect = LineClampUpdater::blockEndClipRect(renderer, renderer);
+        if (!clipRect)
+            return;
+        clipRect->moveBy(floatBoxLocation + renderer.locationOffset());
+        // Like the layer clip rects, this is within the area being painted (and so it is finite, which the conversion to float needs).
+        clipRect->intersect(paintInfo.rect);
+        stateSaver.save();
+        paintInfo.context().clip(*clipRect);
+    };
+    clipBlockEndIfNeeded();
+
+    if (preservePhase) {
+        renderer.paint(paintInfo, floatBoxLocation);
+        return;
+    }
+    auto paintInfoForFloat = PaintInfo { paintInfo };
+
+    paintInfoForFloat.phase = PaintPhase::BlockBackground;
+    renderer.paint(paintInfoForFloat, floatBoxLocation);
+
+    paintInfoForFloat.phase = PaintPhase::ChildBlockBackgrounds;
+    renderer.paint(paintInfoForFloat, floatBoxLocation);
+
+    paintInfoForFloat.phase = PaintPhase::Float;
+    renderer.paint(paintInfoForFloat, floatBoxLocation);
+
+    paintInfoForFloat.phase = PaintPhase::Foreground;
+    renderer.paint(paintInfoForFloat, floatBoxLocation);
+
+    paintInfoForFloat.phase = PaintPhase::Outline;
+    renderer.paint(paintInfoForFloat, floatBoxLocation);
+}
+
+Vector<CheckedRef<RenderBox>> RenderBlockFlow::floatsPlacedByBlockFormattingContext() const
+{
+    auto floats = Vector<CheckedRef<RenderBox>> { };
+    if (m_floatingObjects || !m_lineLayout || m_lineLayout->floatsInContent().isEmpty())
+        return floats;
+    // In tree order, which the placed floats are not in once a negative margin puts a float past another one (PlacedFloats::add).
+    for (CheckedPtr descendant = firstChild(); descendant;) {
+        if (descendant->isFloating())
+            floats.append(downcast<RenderBox>(*descendant));
+        descendant = descendant->isInlineBox() ? descendant->nextInPreOrder(this) : descendant->nextInPreOrderAfterChildren(this);
+    }
+    return floats;
+}
+
+LayoutUnit RenderBlockFlow::lowestFloatLogicalBottomIncludingFloatsPlacedByBlockFormattingContext() const
+{
+    if (m_floatingObjects)
+        return lowestFloatLogicalBottom();
+    auto lowestFloatBottom = LayoutUnit { };
+    for (auto& floatBox : floatsPlacedByBlockFormattingContext())
+        lowestFloatBottom = std::max(lowestFloatBottom, logicalTopForChild(floatBox) + logicalHeightForChild(floatBox) + marginAfterForChild(floatBox));
+    for (CheckedRef child : childrenOfType<RenderBlockFlow>(*this)) {
+        if (!child->isFloatingOrOutOfFlowPositioned() && !child->createsNewFormattingContext())
+            lowestFloatBottom = std::max(lowestFloatBottom, logicalTopForChild(child) + child->lowestFloatLogicalBottomIncludingFloatsPlacedByBlockFormattingContext());
+    }
+    return lowestFloatBottom;
+}
+
 void RenderBlockFlow::paintFloats(PaintInfo& paintInfo, const LayoutPoint& paintOffset, bool preservePhase)
 {
-    if (!m_floatingObjects)
+    if (!m_floatingObjects) {
+        // The block formatting context places the floats of the block containers it lays out, which the render tree's float lists do not
+        // list then: they paint in tree order (CSS 2.2 Appendix E, step 5), unless they have a layer of their own.
+        for (auto& renderer : floatsPlacedByBlockFormattingContext()) {
+            if (!renderer->hasSelfPaintingLayer())
+                paintFloat(renderer, paintInfo, flipForWritingModeForChild(renderer, paintOffset), preservePhase);
+        }
         return;
+    }
 
     for (auto& floatingObject : m_floatingObjects->set()) {
         if (!floatingObject->renderer())
             continue;
         if (!floatingObject->shouldPaint())
             continue;
-
-        auto floatBoxLocation = flipFloatForWritingModeForChild(*floatingObject, paintOffset + floatingObject->translationOffsetToAncestor());
-        auto& renderer = *floatingObject->renderer();
-        GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
-
-        auto clipBlockEndIfNeeded = [&] {
-            // The clip rect in the float's own coordinates, moved to where the float's border box paints.
-            auto clipRect = LineClampUpdater::blockEndClipRect(renderer, renderer);
-            if (!clipRect)
-                return;
-            clipRect->moveBy(floatBoxLocation + renderer.locationOffset());
-            // Like the layer clip rects, this is within the area being painted (and so it is finite, which the conversion to float needs).
-            clipRect->intersect(paintInfo.rect);
-            stateSaver.save();
-            paintInfo.context().clip(*clipRect);
-        };
-        clipBlockEndIfNeeded();
-
-        if (preservePhase) {
-            renderer.paint(paintInfo, floatBoxLocation);
-            continue;
-        }
-        auto paintInfoForFloat = PaintInfo { paintInfo };
-
-        paintInfoForFloat.phase = PaintPhase::BlockBackground;
-        renderer.paint(paintInfoForFloat, floatBoxLocation);
-
-        paintInfoForFloat.phase = PaintPhase::ChildBlockBackgrounds;
-        renderer.paint(paintInfoForFloat, floatBoxLocation);
-
-        paintInfoForFloat.phase = PaintPhase::Float;
-        renderer.paint(paintInfoForFloat, floatBoxLocation);
-
-        paintInfoForFloat.phase = PaintPhase::Foreground;
-        renderer.paint(paintInfoForFloat, floatBoxLocation);
-
-        paintInfoForFloat.phase = PaintPhase::Outline;
-        renderer.paint(paintInfoForFloat, floatBoxLocation);
+        paintFloat(*floatingObject->renderer(), paintInfo, flipFloatForWritingModeForChild(*floatingObject, paintOffset + floatingObject->translationOffsetToAncestor()), preservePhase);
     }
 }
 
@@ -3618,12 +3661,23 @@ LayoutUnit RenderBlockFlow::computedClearDeltaForChild(RenderBox& child, LayoutU
 
 bool RenderBlockFlow::hitTestFloats(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset)
 {
-    if (!m_floatingObjects)
-        return false;
-
     LayoutPoint adjustedLocation = accumulatedOffset;
     if (auto* renderView = dynamicDowncast<RenderView>(*this))
         adjustedLocation += toLayoutSize(protect(renderView->frameView())->scrollPosition());
+
+    if (!m_floatingObjects) {
+        // Like paintFloats, in reverse.
+        for (auto& renderer : floatsPlacedByBlockFormattingContext() | std::views::reverse) {
+            if (renderer->hasSelfPaintingLayer())
+                continue;
+            auto childPoint = flipForWritingModeForChild(renderer, adjustedLocation);
+            if (renderer->hitTest(request, result, locationInContainer, childPoint)) {
+                updateHitTestResult(result, locationInContainer.point() - toLayoutSize(childPoint));
+                return true;
+            }
+        }
+        return false;
+    }
 
     for (auto& floatingObject : m_floatingObjects->set() | std::views::reverse) {
         auto* renderer = floatingObject->renderer();

@@ -2111,7 +2111,7 @@ PositionWithAffinity RenderBlock::positionForPoint(const LayoutPoint& point, Hit
                 continue;
             auto childLogicalBottom = logicalTopForChild(childBox) + logicalHeightForChild(childBox);
             if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(childBox))
-                childLogicalBottom = std::max(childLogicalBottom, blockFlow->lowestFloatLogicalBottom());
+                childLogicalBottom = std::max(childLogicalBottom, blockFlow->lowestFloatLogicalBottomIncludingFloatsPlacedByBlockFormattingContext());
             // We hit child if our click is above the bottom of its padding box (like IE6/7 and FF3).
             if (pointInLogicalContents.y() < childLogicalBottom || (blocksAreFlipped && pointInLogicalContents.y() == childLogicalBottom))
                 return positionForPointRespectingEditingBoundaries(*this, childBox, pointInContents, source);
