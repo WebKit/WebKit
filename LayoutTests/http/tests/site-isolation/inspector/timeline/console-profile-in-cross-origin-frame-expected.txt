@@ -1,0 +1,44 @@
+Test that under Site Isolation, console.profile() and console.profileEnd() in a cross-origin iframe start and stop a recording on every target.
+
+
+
+== Running test suite: SiteIsolation.Timeline.ConsoleProfileInCrossOriginFrame
+-- Running test case: SiteIsolation.Timeline.ConsoleProfileInCrossOriginFrame.StartsAndStopsEveryTarget
+PASS: Should find the cross-origin iframe target.
+PASS: Capturing is active.
+PASS: The cross-origin iframe target started Timeline.
+PASS: The cross-origin iframe target started ScriptProfiler.
+PASS: The main frame target started Timeline.
+PASS: The main frame target started ScriptProfiler.
+PASS: The page target started Timeline.
+PASS: The page target started ScriptProfiler.
+PASS: Recorded a timer from the main frame target.
+PASS: Recorded a timer from the cross-origin iframe target.
+PASS: Recorded the console profile from the cross-origin iframe target.
+PASS: Capturing stopped.
+PASS: The cross-origin iframe target should report that Timeline stopped.
+PASS: The cross-origin iframe target should report that ScriptProfiler stopped.
+PASS: The main frame target should report that Timeline stopped.
+PASS: The main frame target should report that ScriptProfiler stopped.
+PASS: The page target should report that Timeline stopped.
+PASS: The page target should report that ScriptProfiler stopped.
+PASS: Record from the main frame target should be within the recording.
+PASS: Record from the cross-origin iframe target should be within the recording.
+PASS: Record from the cross-origin iframe target should be within the recording.
+
+-- Running test case: SiteIsolation.Timeline.ConsoleProfileInCrossOriginFrame.ProfileInOtherFrameDoesNotStop
+PASS: The main frame target started Timeline.
+PASS: Recorded the console profile from the main frame target.
+PASS: Capturing should still be active.
+PASS: The main frame target should not report that Timeline stopped.
+PASS: Capturing stopped.
+PASS: Record from the main frame target should be within the recording.
+
+-- Running test case: SiteIsolation.Timeline.ConsoleProfileInCrossOriginFrame.ProfileLeftOpenInOtherFrame
+PASS: The main frame target started Timeline.
+PASS: Recorded the main frame's open console profile when capturing stopped.
+PASS: Capturing stopped.
+PASS: console.profile() in the main frame started a new capture.
+PASS: console.profileEnd() in the main frame stopped capturing.
+PASS: console.profileEnd() for the profile that ended with the first capture should warn that the profile does not exist.
+

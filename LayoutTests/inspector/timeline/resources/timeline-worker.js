@@ -9,6 +9,11 @@ self.addEventListener("message", (event) => {
         break;
     case "profile":
         console.profile("worker");
+        self.postMessage("profile");
+        break;
+    case "profile-end":
+        console.profileEnd("worker");
+        self.postMessage("profile-end");
         break;
     case "busy":
         self.postMessage("busy");

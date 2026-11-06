@@ -40,6 +40,7 @@ class LayoutRect;
 class Node;
 class RenderElement;
 class RenderObject;
+class WebDebuggerAgent;
 struct FrameAgentContext;
 
 class FrameTimelineAgent final : public InspectorTimelineAgent, public CanMakeCheckedPtr<FrameTimelineAgent> {
@@ -75,6 +76,7 @@ private:
     void internalStop() override;
 
     bool shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument) const override;
+    WebDebuggerAgent* debuggerAgentForProgrammaticCapture() const override;
 
     Inspector::Protocol::DOM::NodeId nodeIdForNode(Node*) const;
     Inspector::Protocol::DOM::NodeId nodeIdForDocument(Document&) const;

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-timeline-test-utilities.js"></script>
+<script src="resources/timeline-events.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.ConsoleProfileInCrossOriginFrame");
+
+    let mainFrameTarget;
+    let iframeTarget;
+
+    function targetDescription(target) {
+        if (target === mainFrameTarget)
+            return "main frame target";
+        if (target === iframeTarget)
+            return "cross-origin iframe target";
+        if (target === WI.mainTarget)
+            return "page target";
+        return "unknown target";
+    }
+
+    function expectRecordInRecording(record, recording) {
+        InspectorTest.expectThat(recording.startTime <= record.startTime && record.endTime <= recording.endTime, `Record from the ${targetDescription(record.target)} should be within the recording.`);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.ConsoleProfileInCrossOriginFrame.StartsAndStopsEveryTarget",
+        description: "console.profile() in a cross-origin iframe should start every target, and console.profileEnd() should stop every target.",
+        async test() {
+            mainFrameTarget = InspectorTest.mainFrameTarget;
+            iframeTarget = await waitForFrameTargetForURLContaining("timeline-frame.html");
+            InspectorTest.expectNotNull(iframeTarget, "Should find the cross-origin iframe target.");
+
+            FrameTimelineTest.clearTrackingEvents();
+
+            let activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, `console.profile("frame-profile")`);
+            await activePromise;
+            InspectorTest.pass("Capturing is active.");
+
+            // The iframe starts its own domains, and the frontend starts the other targets.
+            let trackingDomains = [
+                [iframeTarget, "Timeline"],
+                [iframeTarget, "ScriptProfiler"],
+                [mainFrameTarget, "Timeline"],
+                [mainFrameTarget, "ScriptProfiler"],
+                [WI.mainTarget, "Timeline"],
+                [WI.mainTarget, "ScriptProfiler"],
+            ];
+            for (let [target, domain] of trackingDomains) {
+                await FrameTimelineTest.awaitTrackingEvent("capturingStarted", target, domain);
+                InspectorTest.pass(`The ${targetDescription(target)} started ${domain}.`);
+            }
+
+            let recording = WI.timelineManager.activeRecording;
+            let mainFrameRecordPromise = FrameTimelineTest.awaitScriptRecord(mainFrameTarget, WI.ScriptTimelineRecord.EventType.TimerFired);
+            let iframeRecordPromise = FrameTimelineTest.awaitScriptRecord(iframeTarget, WI.ScriptTimelineRecord.EventType.TimerFired);
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "fireTimer()");
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, "fireTimer()");
+            let mainFrameRecord = await mainFrameRecordPromise;
+            InspectorTest.pass("Recorded a timer from the main frame target.");
+            let iframeRecord = await iframeRecordPromise;
+            InspectorTest.pass("Recorded a timer from the cross-origin iframe target.");
+
+            let consoleProfileRecordPromise = FrameTimelineTest.awaitScriptRecord(iframeTarget, WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded);
+            let inactivePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, `console.profileEnd("frame-profile")`);
+            let consoleProfileRecord = await consoleProfileRecordPromise;
+            InspectorTest.expectEqual(consoleProfileRecord.details, "frame-profile", "Recorded the console profile from the cross-origin iframe target.");
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped.");
+
+            for (let [target, domain] of trackingDomains)
+                InspectorTest.expectThat(FrameTimelineTest.didReportTrackingEvent("capturingStopped", target, domain), `The ${targetDescription(target)} should report that ${domain} stopped.`);
+
+            expectRecordInRecording(mainFrameRecord, recording);
+            expectRecordInRecording(iframeRecord, recording);
+            expectRecordInRecording(consoleProfileRecord, recording);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.ConsoleProfileInCrossOriginFrame.ProfileInOtherFrameDoesNotStop",
+        description: "While a capture started by the cross-origin iframe is active, console.profile() and console.profileEnd() in the main frame, which the frontend started, should not stop capturing.",
+        async test() {
+            FrameTimelineTest.clearTrackingEvents();
+
+            let activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, `console.profile("frame-profile")`);
+            await activePromise;
+            await FrameTimelineTest.awaitTrackingEvent("capturingStarted", mainFrameTarget);
+            InspectorTest.pass("The main frame target started Timeline.");
+
+            let recording = WI.timelineManager.activeRecording;
+            let mainFrameProfilePromise = FrameTimelineTest.awaitScriptRecord(mainFrameTarget, WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded);
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, `console.profile("main-frame-profile"); console.profileEnd("main-frame-profile")`);
+            let mainFrameProfileRecord = await mainFrameProfilePromise;
+            InspectorTest.expectEqual(mainFrameProfileRecord.details, "main-frame-profile", "Recorded the console profile from the main frame target.");
+
+            // The main frame target sends its record before it would report a stop, so a timer record that follows
+            // shows that the capture is still going.
+            let timerRecordPromise = FrameTimelineTest.awaitScriptRecord(mainFrameTarget, WI.ScriptTimelineRecord.EventType.TimerFired);
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "fireTimer()");
+            await timerRecordPromise;
+            InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Active, "Capturing should still be active.");
+            InspectorTest.expectFalse(FrameTimelineTest.didReportTrackingEvent("capturingStopped", mainFrameTarget), "The main frame target should not report that Timeline stopped.");
+
+            let inactivePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, `console.profileEnd("frame-profile")`);
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped.");
+
+            expectRecordInRecording(mainFrameProfileRecord, recording);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.ConsoleProfileInCrossOriginFrame.ProfileLeftOpenInOtherFrame",
+        description: "A console profile that the main frame leaves open when the cross-origin iframe stops capturing should end with the capture, so that the main frame's next console.profile() starts a new capture.",
+        async test() {
+            FrameTimelineTest.clearTrackingEvents();
+
+            let activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, `console.profile("frame-profile")`);
+            await activePromise;
+            await FrameTimelineTest.awaitTrackingEvent("capturingStarted", mainFrameTarget);
+            InspectorTest.pass("The main frame target started Timeline.");
+
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, `console.profile("open-profile")`);
+
+            let mainFrameProfilePromise = FrameTimelineTest.awaitScriptRecord(mainFrameTarget, WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded);
+            let inactivePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, `console.profileEnd("frame-profile")`);
+            let mainFrameProfileRecord = await mainFrameProfilePromise;
+            InspectorTest.expectEqual(mainFrameProfileRecord.details, "open-profile", "Recorded the main frame's open console profile when capturing stopped.");
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped.");
+
+            activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, `console.profile("next-profile")`);
+            await activePromise;
+            InspectorTest.pass("console.profile() in the main frame started a new capture.");
+
+            inactivePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, `console.profileEnd("next-profile")`);
+            await inactivePromise;
+            InspectorTest.pass("console.profileEnd() in the main frame stopped capturing.");
+
+            // The open profile ended with the first capture, so ending it now only warns that it does not exist.
+            let warningPromise = new Promise((resolve) => {
+                let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
+                    let {message} = event.data;
+                    if (message.target !== mainFrameTarget || message.type !== WI.ConsoleMessage.MessageType.ProfileEnd)
+                        return;
+
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
+                    resolve(message);
+                });
+            });
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, `console.profileEnd("open-profile")`);
+            let warning = await warningPromise;
+            InspectorTest.expectEqual(warning.messageText, `Profile "open-profile" does not exist`, "console.profileEnd() for the profile that ended with the first capture should warn that the profile does not exist.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, console.profile() and console.profileEnd() in a cross-origin iframe start and stop a recording on every target.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/timeline/resources/timeline-frame.html"></iframe>
+</body>
