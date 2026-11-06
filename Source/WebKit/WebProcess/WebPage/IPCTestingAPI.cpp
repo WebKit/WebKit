@@ -70,6 +70,10 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include "DrawingAreaCoordinatedGraphicsGLib.h"
+#endif
+
 #include "WebKit-Swift.h"
 
 namespace WebKit::IPCTestingAPI {
@@ -449,6 +453,9 @@ private:
     static JSValueRef sessionID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef pageID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef frameID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    static JSValueRef acceleratedSurfaceID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+#endif
     static JSValueRef retrieveID(JSContextRef, JSObjectRef thisObject, JSValueRef* exception, NOESCAPE const WTF::Function<uint64_t(JSIPC&)>&);
 
     static JSValueRef messages(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
@@ -1952,6 +1959,9 @@ const JSStaticValue* JSIPC::staticValues()
         { "pageID", pageID, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sessionID", sessionID, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "webPageProxyID", webPageProxyID, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        { "acceleratedSurfaceID", acceleratedSurfaceID, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+#endif
         { "messages", messages, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "serializedTypeInfo", serializedTypeInfo, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "serializedEnumInfo", serializedEnumInfo, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
@@ -2938,6 +2948,16 @@ JSValueRef JSIPC::webPageProxyID(JSContextRef context, JSObjectRef thisObject, J
         return wrapped.m_webPage->webPageProxyID();
     });
 }
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+JSValueRef JSIPC::acceleratedSurfaceID(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
+{
+    return retrieveID(context, thisObject, exception, [](JSIPC& wrapped) -> uint64_t {
+        RefPtr drawingArea = dynamicDowncast<DrawingAreaCoordinatedGraphics>(wrapped.m_webPage->drawingArea());
+        return drawingArea ? drawingArea->surfaceIDForTesting() : 0;
+    });
+}
+#endif
 
 JSValueRef JSIPC::retrieveID(JSContextRef context, JSObjectRef thisObject, JSValueRef* exception, NOESCAPE const WTF::Function<uint64_t(JSIPC&)>& callback)
 {
