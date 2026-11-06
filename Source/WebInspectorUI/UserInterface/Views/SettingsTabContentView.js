@@ -317,7 +317,12 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
     {
         let sourcesSettingsView = new WI.SettingsView("sources", WI.UIString("Sources"));
 
-        sourcesSettingsView.addSetting(WI.UIString("Debugging:"), WI.settings.showScopeChainOnPause, WI.UIString("Show Scope Chain on pause"));
+        let debuggingGroup = sourcesSettingsView.addGroup(WI.UIString("Debugging:"));
+        debuggingGroup.addSetting(WI.settings.showScopeChainOnPause, WI.UIString("Show Scope Chain on pause"));
+
+        // COMPATIBILITY: Target.setGlobalDebuggerPauseEnabled did not exist yet.
+        if (InspectorBackend.hasCommand("Target.setGlobalDebuggerPauseEnabled"))
+            debuggingGroup.addSetting(WI.settings.globalDebuggerPauseEnabled, WI.UIString("Pause frames in other processes while paused", "Pause frames in other processes while paused @ Settings Sources Pane", "Settings tab checkbox label for whether pausing one frame also pauses frames of the page in other processes"));
 
         sourcesSettingsView.addSeparator();
 
