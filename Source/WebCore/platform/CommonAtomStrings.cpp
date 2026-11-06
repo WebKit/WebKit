@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CommonAtomStrings.h"
 
+#include <wtf/ScopedLeakSanitizerDisabler.h>
+
 namespace WebCore {
 
 #define DEFINE_COMMON_ATOM(atomName, atomValue) \
@@ -43,6 +45,7 @@ void initializeCommonAtomStrings()
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [] {
         RELEASE_ASSERT(isUIThread());
+        ScopedLeakSanitizerDisabler disabler;
         WEBCORE_COMMON_ATOM_STRINGS_FOR_EACH_KEYWORD(INITIALIZE_COMMON_ATOM)
     });
 }
