@@ -482,7 +482,7 @@ private:
     void soundStageSizeDidChange() final;
 
 #if PLATFORM(COCOA)
-    void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
+    void pushVideoFrameMetadata(IPC::Connection&, WebCore::VideoFrameMetadata&&, RemoteVideoFrameReference, RemoteVideoFrameProxy::Properties&&);
 #endif
     RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return protect(manager()->gpuProcessConnection())->videoFrameObjectHeapProxy(); }
 

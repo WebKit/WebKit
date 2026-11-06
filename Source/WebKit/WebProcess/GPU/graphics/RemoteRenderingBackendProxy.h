@@ -197,6 +197,8 @@ public:
     bool isGPUProcessConnectionClosed() const { return !m_connection; }
 
     RefPtr<IPC::StreamClientConnection> connection();
+    // The connection of the GPU process connection that connection() was created on.
+    RefPtr<IPC::Connection> gpuProcessIPCConnection();
 
     bool isCurrent() const final;
     Ref<WorkQueue> workQueue() { return m_queue; }
@@ -245,6 +247,7 @@ private:
     ThreadSafeWeakPtr<SerialFunctionDispatcher> m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection; // Only for main thread operation.
     RefPtr<IPC::StreamClientConnection> m_connection;
+    RefPtr<IPC::Connection> m_gpuProcessIPCConnection;
     RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
     RemoteRenderingBackendIdentifier m_identifier { RemoteRenderingBackendIdentifier::generate() };
     const UniqueRef<RemoteResourceCacheProxy> m_remoteResourceCacheProxy { RemoteResourceCacheProxy::create(*this) };

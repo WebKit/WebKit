@@ -95,6 +95,7 @@ void RemoteGPUProxy::initializeIPC(Ref<IPC::StreamClientConnection>&& streamConn
         Ref gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
         gpuProcessConnection->createGPU(m_backing, renderingBackend, WTF::move(serverHandle));
         m_gpuProcessConnection = gpuProcessConnection.get();
+        lazyInitialize(m_gpuProcessIPCConnection, Ref { gpuProcessConnection->connection() });
     });
 }
 

@@ -441,6 +441,8 @@ private:
 #endif
 #if ENABLE(VIDEO)
     const RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
+    // The connection of the GPU process connection that m_streamConnection was created on.
+    const RefPtr<IPC::Connection> m_gpuProcessIPCConnection;
 #endif
     GCGLint m_maxCombinedTextureImageUnits { 0 };
     GCGLint m_maxVertexAttribs { 0 };

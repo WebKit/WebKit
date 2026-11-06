@@ -45,6 +45,10 @@
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
 typedef struct __CVPixelBufferPool* CVPixelBufferPoolRef;
 
+namespace IPC {
+class Connection;
+}
+
 namespace WebCore {
 class SharedVideoFrameInfo;
 class VideoFrame;
@@ -75,12 +79,14 @@ class SharedVideoFrameWriter {
 public:
     SharedVideoFrameWriter();
 
-    std::optional<SharedVideoFrame> write(const WebCore::VideoFrame&, NOESCAPE const Function<void(IPC::Semaphore&)>&, NOESCAPE const Function<void(WebCore::SharedMemory::Handle&&)>&);
+    // The IPC::Connection is the GPU process connection that the result is sent on, directly or through a stream
+    // created on it. Writing a RemoteVideoFrameProxy of another connection fails.
+    std::optional<SharedVideoFrame> write(const WebCore::VideoFrame&, const IPC::Connection&, NOESCAPE const Function<void(IPC::Semaphore&)>&, NOESCAPE const Function<void(WebCore::SharedMemory::Handle&&)>&);
     std::optional<SharedVideoFrame::Buffer> writeBuffer(CVPixelBufferRef, NOESCAPE const Function<void(IPC::Semaphore&)>&, NOESCAPE const Function<void(WebCore::SharedMemory::Handle&&)>&, bool canSendIOSurface = true);
 #if USE(LIBWEBRTC)
-    std::optional<SharedVideoFrame::Buffer> writeBuffer(const webrtc::VideoFrame&, NOESCAPE const Function<void(IPC::Semaphore&)>&, NOESCAPE const Function<void(WebCore::SharedMemory::Handle&&)>&);
+    std::optional<SharedVideoFrame::Buffer> writeBuffer(const webrtc::VideoFrame&, const IPC::Connection&, NOESCAPE const Function<void(IPC::Semaphore&)>&, NOESCAPE const Function<void(WebCore::SharedMemory::Handle&&)>&);
 #endif
-    std::optional<SharedVideoFrame::Buffer> writeBuffer(const WebCore::VideoFrame&, NOESCAPE const Function<void(IPC::Semaphore&)>&, NOESCAPE const Function<void(WebCore::SharedMemory::Handle&&)>&);
+    std::optional<SharedVideoFrame::Buffer> writeBuffer(const WebCore::VideoFrame&, const IPC::Connection&, NOESCAPE const Function<void(IPC::Semaphore&)>&, NOESCAPE const Function<void(WebCore::SharedMemory::Handle&&)>&);
 
     void disable();
     bool isDisabled() { return WTF::atomicLoad<MemoryOrder::Relaxed>(&m_isDisabled); }

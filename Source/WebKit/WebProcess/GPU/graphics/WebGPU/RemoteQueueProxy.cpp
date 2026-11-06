@@ -180,7 +180,7 @@ void RemoteQueueProxy::copyExternalImageFromVideoFrameToTexture(
         if (!videoFrame || !videoFrame->get())
             return;
 
-        convertedSource->sharedFrame = m_sharedVideoFrameWriter.write(*videoFrame->get(), [this, protectedThis = protect(*this)](auto& semaphore) {
+        convertedSource->sharedFrame = m_sharedVideoFrameWriter.write(*videoFrame->get(), protect(root().gpuProcessIPCConnection()), [this, protectedThis = protect(*this)](auto& semaphore) {
             auto sendResult = send(Messages::RemoteQueue::SetSharedVideoFrameSemaphore { semaphore });
             UNUSED_VARIABLE(sendResult);
         }, [this, protectedThis = protect(*this)](WebCore::SharedMemory::Handle&& handle) {

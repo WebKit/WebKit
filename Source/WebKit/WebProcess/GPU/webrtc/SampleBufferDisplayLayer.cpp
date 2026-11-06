@@ -133,7 +133,7 @@ void SampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
     if (m_paused)
         return;
 
-    auto sharedVideoFrame = m_sharedVideoFrameWriter.write(videoFrame,
+    auto sharedVideoFrame = m_sharedVideoFrameWriter.write(videoFrame, m_connection,
         [this](auto& semaphore) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameSemaphore { semaphore }, identifier()); },
         [this](SharedMemory::Handle&& handle) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameMemory { WTF::move(handle) }, identifier()); }
     );

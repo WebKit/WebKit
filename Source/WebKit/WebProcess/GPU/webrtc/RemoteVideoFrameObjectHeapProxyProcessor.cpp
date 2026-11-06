@@ -133,11 +133,12 @@ void RemoteVideoFrameObjectHeapProxyProcessor::getVideoFrameBuffer(const RemoteV
         Locker lock(m_connectionLock);
         connection = m_connection;
     }
-    if (!connection) {
+    auto reference = connection ? frame.newReadReference(*connection) : std::nullopt;
+    if (!reference) {
         takeCallback(frame.identifier())(nullptr);
         return;
     }
-    connection->send(Messages::RemoteVideoFrameObjectHeap::GetVideoFrameBuffer(frame.newReadReference()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    connection->send(Messages::RemoteVideoFrameObjectHeap::GetVideoFrameBuffer(WTF::move(*reference)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void RemoteVideoFrameObjectHeapProxyProcessor::newConvertedVideoFrameBuffer(std::optional<SharedVideoFrame::Buffer>&& buffer)
@@ -155,7 +156,7 @@ RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(con
     if (m_sharedVideoFrameWriter.isDisabled())
         m_sharedVideoFrameWriter = { };
 
-    auto frame = m_sharedVideoFrameWriter.write(videoFrame,
+    auto frame = m_sharedVideoFrameWriter.write(videoFrame, connection,
         [&](auto& semaphore) { connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameSemaphore { semaphore }, 0); },
         [&](auto&& handle) { connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameMemory { WTF::move(handle) }, 0); });
     if (!frame)

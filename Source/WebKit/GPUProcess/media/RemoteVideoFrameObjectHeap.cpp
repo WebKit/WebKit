@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 #include "Logging.h"
+#include "ObjectIdentifierDomains.h"
 #include "RemoteVideoFrameObjectHeapMessages.h"
 #include "RemoteVideoFrameObjectHeapProxyProcessorMessages.h"
 #include "RemoteVideoFrameProxy.h"
@@ -93,13 +94,17 @@ void RemoteVideoFrameObjectHeap::close()
     // TODO: add can happen after stopping.
 }
 
-RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::add(Ref<WebCore::VideoFrame>&& frame)
+RemoteVideoFrameReference RemoteVideoFrameObjectHeap::add(Ref<WebCore::VideoFrame>&& frame)
 {
-    auto newFrameReference = RemoteVideoFrameReference::generateForAdd();
-    auto properties = RemoteVideoFrameProxy::properties(newFrameReference, frame);
-    auto success = m_heap.add(newFrameReference, WTF::move(frame));
+    auto reference = RemoteVideoFrameReference::generateForAdd();
+    add(reference, WTF::move(frame));
+    return reference;
+}
+
+void RemoteVideoFrameObjectHeap::add(RemoteVideoFrameReference reference, Ref<WebCore::VideoFrame>&& frame)
+{
+    auto success = m_heap.add(reference, WTF::move(frame));
     ASSERT_UNUSED(success, success);
-    return properties;
 }
 
 void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReference&& write)
@@ -196,9 +201,19 @@ void RemoteVideoFrameObjectHeap::setSharedVideoFrameMemory(SharedMemory::Handle&
     m_sharedVideoFrameReader.setSharedMemory(WTF::move(handle));
 }
 
+// Upper bound for waiting in get() for a frame under a Web process allocated reference. This is only
+// an outer safety cap for a frame whose adding request is still in flight, not a steady-state wait.
+static constexpr Seconds defaultTimeout = 10_s;
+
 RefPtr<WebCore::VideoFrame> RemoteVideoFrameObjectHeap::get(RemoteVideoFrameReadReference&& read)
 {
-    return m_heap.read(WTF::move(read), 0_s);
+    // The GPU process adds a frame under a reference it allocates before it sends the reference anywhere,
+    // so a miss for such a reference is final. The Web process allocates the references for the frames it
+    // requests. The frame of a synchronous request is added before the Web process gets the reply, but an
+    // asynchronous request can let the reference reach a consumer on another connection (e.g. WebGL
+    // copyTextureFromVideoFrame on its own stream) before the request that adds the frame is handled here.
+    auto timeout = isInGPUProcessObjectIdentifierDomain(read.identifier().toUInt64()) ? 0_s : defaultTimeout;
+    return m_heap.read(WTF::move(read), timeout);
 }
 
 #endif

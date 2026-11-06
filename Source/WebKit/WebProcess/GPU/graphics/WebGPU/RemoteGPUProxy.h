@@ -71,6 +71,8 @@ public:
     RemoteGPUProxy& root() { return *this; }
 
     IPC::StreamClientConnection& streamClientConnection() { return *m_streamConnection; }
+    // The connection of the GPU process connection that streamClientConnection() was created on.
+    IPC::Connection& gpuProcessIPCConnection() const { return *m_gpuProcessIPCConnection; }
 
     void ref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::ref(); }
     void deref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::deref(); }
@@ -169,6 +171,7 @@ private:
     ThreadSafeWeakPtr<SerialFunctionDispatcher> m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     const RefPtr<IPC::StreamClientConnection> m_streamConnection;
+    const RefPtr<IPC::Connection> m_gpuProcessIPCConnection;
     WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };
     bool m_didInitialize { false };
     bool m_lost { false };

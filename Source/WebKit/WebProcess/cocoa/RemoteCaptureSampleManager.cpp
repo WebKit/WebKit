@@ -168,14 +168,14 @@ void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourc
     iterator->value->setStorage(WTF::move(handle), description, WTF::move(semaphore), mediaTime, frameChunkSize);
 }
 
-void RemoteCaptureSampleManager::videoFrameAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoFrameProxy::Properties&& properties, VideoFrameTimeMetadata metadata)
+void RemoteCaptureSampleManager::videoFrameAvailable(IPC::Connection& connection, RealtimeMediaSourceIdentifier identifier, RemoteVideoFrameReference reference, RemoteVideoFrameProxy::Properties&& properties, VideoFrameTimeMetadata metadata)
 {
     ASSERT(!WTF::isMainRunLoop());
-    // Create videoFrame before early outs so that the reference in `properties` is adopted.
+    // Create videoFrame before early outs so that the reference is adopted.
     Ref<RemoteVideoFrameProxy> videoFrame = [&] {
         // FIXME: We need to either get GPUProcess or UIProcess object heap proxy. For now we always go to GPUProcess.
         Locker lock(m_videoFrameObjectHeapProxyLock);
-        return RemoteVideoFrameProxy::create(Ref { *m_connection }, Ref { *m_videoFrameObjectHeapProxy }, WTF::move(properties));
+        return RemoteVideoFrameProxy::create(connection, Ref { *m_videoFrameObjectHeapProxy }, reference, WTF::move(properties));
     }();
     auto iterator = m_videoSources.find(identifier);
     if (iterator == m_videoSources.end()) {

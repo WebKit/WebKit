@@ -35,6 +35,14 @@ namespace WebKit {
 // to be unique between said processes and the GPU processes.
 constexpr ObjectIdentifierDomain gpuProcessObjectIdentifierDomain { static_cast<uint64_t>(1) << 63 };
 
+// Returns true if `identifier` was generated in a GPU process. The other domains generate
+// their identifiers below the top bit, so the top bit alone tells the GPU process domain.
+static_assert(static_cast<uint64_t>(gpuProcessObjectIdentifierDomain) == static_cast<uint64_t>(1) << 63);
+constexpr bool isInGPUProcessObjectIdentifierDomain(uint64_t identifier)
+{
+    return identifier & static_cast<uint64_t>(gpuProcessObjectIdentifierDomain);
+}
+
 #endif
 
 }

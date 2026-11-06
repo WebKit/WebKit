@@ -122,6 +122,7 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         Ref gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
         gpuProcessConnection->createRenderingBackend(m_identifier, WTF::move(serverHandle));
         m_gpuProcessConnection = gpuProcessConnection.get();
+        m_gpuProcessIPCConnection = &gpuProcessConnection->connection();
         m_sharedResourceCache = gpuProcessConnection->sharedResourceCache();
     });
 }
@@ -253,6 +254,7 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
     m_connection = nullptr;
     m_isResponsive = false;
     m_gpuProcessConnection = nullptr;
+    m_gpuProcessIPCConnection = nullptr;
 }
 
 RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const ColorSpace& colorSpace, ImageBufferFormat bufferFormat)
@@ -749,6 +751,12 @@ RefPtr<IPC::StreamClientConnection> RemoteRenderingBackendProxy::connection()
         return nullptr;
 
     return m_connection;
+}
+
+RefPtr<IPC::Connection> RemoteRenderingBackendProxy::gpuProcessIPCConnection()
+{
+    ensureGPUProcessConnection();
+    return m_gpuProcessIPCConnection;
 }
 
 RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::cachedImageBuffer(const ImageBuffer& imageBuffer) const

@@ -276,12 +276,14 @@ void RemoteGraphicsContextGL::copyNativeImage(WebCore::GraphicsContextGL::Surfac
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-void RemoteGraphicsContextGL::surfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer buffer, CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&& completionHandler)
+void RemoteGraphicsContextGL::surfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer buffer, WebKit::RemoteVideoFrameReference reference, CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     std::optional<WebKit::RemoteVideoFrameProxy::Properties> result;
-    if (auto videoFrame = protect(m_context)->surfaceBufferToVideoFrame(buffer))
-        result = m_videoFrameObjectHeap->add(videoFrame.releaseNonNull());
+    if (RefPtr videoFrame = protect(m_context)->surfaceBufferToVideoFrame(buffer)) {
+        result = RemoteVideoFrameProxy::properties(*videoFrame);
+        m_videoFrameObjectHeap->add(reference, videoFrame.releaseNonNull());
+    }
     completionHandler(WTF::move(result));
 }
 #endif

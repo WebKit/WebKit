@@ -613,11 +613,16 @@ void RemoteGraphicsContextProxy::drawVideoFrame(const VideoFrame& frame, const F
     sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();
 #if PLATFORM(COCOA)
+    RefPtr backend = m_renderingBackend;
+    RefPtr gpuProcessIPCConnection = backend ? backend->gpuProcessIPCConnection() : nullptr;
+    if (!gpuProcessIPCConnection)
+        return;
+
     Locker locker { m_sharedVideoFrameWriterLock };
     if (!m_sharedVideoFrameWriter)
         m_sharedVideoFrameWriter = makeUnique<SharedVideoFrameWriter>();
 
-    auto sharedVideoFrame = m_sharedVideoFrameWriter->write(frame, [&](auto& semaphore) {
+    auto sharedVideoFrame = m_sharedVideoFrameWriter->write(frame, *gpuProcessIPCConnection, [&](auto& semaphore) {
         send(Messages::RemoteGraphicsContext::SetSharedVideoFrameSemaphore { semaphore });
     }, [&](SharedMemory::Handle&& handle) {
         send(Messages::RemoteGraphicsContext::SetSharedVideoFrameMemory { WTF::move(handle) });

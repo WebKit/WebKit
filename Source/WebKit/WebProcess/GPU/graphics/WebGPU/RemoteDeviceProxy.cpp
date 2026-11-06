@@ -148,7 +148,7 @@ RefPtr<::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTexture(const
     if (!convertedDescriptor->mediaIdentifier) {
         auto* videoFrame = std::get_if<RefPtr<WebCore::VideoFrame>>(&descriptor.videoBacking);
         if (videoFrame && videoFrame->get()) {
-            convertedDescriptor->sharedFrame = m_sharedVideoFrameWriter.write(*videoFrame->get(), [this, protectedThis = protect(*this)](auto& semaphore) {
+            convertedDescriptor->sharedFrame = m_sharedVideoFrameWriter.write(*videoFrame->get(), protect(root().gpuProcessIPCConnection()), [this, protectedThis = protect(*this)](auto& semaphore) {
                 auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameSemaphore { semaphore });
                 UNUSED_VARIABLE(sendResult);
             }, [this, protectedThis = protect(*this)](WebCore::SharedMemory::Handle&& handle) {
