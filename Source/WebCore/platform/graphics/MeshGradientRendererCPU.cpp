@@ -27,6 +27,7 @@
 #include "MeshGradientRendererCPU.h"
 
 #include "ColorConversion.h"
+#include "GeometryUtilities.h"
 #include "IntSize.h"
 #include "MeshGradient.h"
 #include "PixelBufferConversion.h"
@@ -45,7 +46,68 @@ static void writePixel(const PixelBufferConversionView& destination, int x, int 
     pixel[3] = alpha;
 }
 
-bool MeshGradientRendererCPU::render(const MeshGradient& gradient, const PixelBufferConversionView& destination, const IntSize& size, float)
+// Twice the signed area of the triangle (from, to, point). The sign says which side of that edge the point is on.
+//
+// Juan Pineda, "A Parallel Algorithm for Polygon Rasterization" (1988)
+// https://doi.org/10.1145/378456.378457
+static float edgeFunction(FloatPoint from, FloatPoint to, FloatPoint point)
+{
+    // Two triangles sharing an edge go along it in opposite directions, so rounding could put a pixel center on the
+    // edge outside of both. Always evaluating the edge in the same direction gives both the same answer.
+    if (to.x() < from.x() || (to.x() == from.x() && to.y() < from.y()))
+        return -edgeFunction(to, from, point);
+
+    return (to - from).cross(point - from);
+}
+
+static void drawTriangle(const PixelBufferConversionView& destination, const IntSize& size, const MeshGradient::Triangle& triangle)
+{
+    auto& [a, b, c] = triangle;
+
+    // If a position isn't finite, neither is the area. This also covers positions that overflowed.
+    float area = edgeFunction(a.position, b.position, c.position);
+    if (!area || !std::isfinite(area))
+        return;
+
+    auto colorA = asColorComponents(a.color.resolved());
+    auto colorB = asColorComponents(b.color.resolved());
+    auto colorC = asColorComponents(c.color.resolved());
+
+    // Only visit the pixels within the triangle's bounds, clipped to the destination.
+    auto clamped = [](float value, int maximum) {
+        return static_cast<int>(std::clamp(value, 0.0f, static_cast<float>(maximum)));
+    };
+    int minimumX = clamped(std::floor(min3(a.position.x(), b.position.x(), c.position.x())), size.width() - 1);
+    int maximumX = clamped(std::ceil(max3(a.position.x(), b.position.x(), c.position.x())), size.width() - 1);
+    int minimumY = clamped(std::floor(min3(a.position.y(), b.position.y(), c.position.y())), size.height() - 1);
+    int maximumY = clamped(std::ceil(max3(a.position.y(), b.position.y(), c.position.y())), size.height() - 1);
+
+    for (int y = minimumY; y <= maximumY; ++y) {
+        for (int x = minimumX; x <= maximumX; ++x) {
+            FloatPoint center { x + 0.5f, y + 0.5f };
+
+            // A vertex's barycentric weight is the area of the triangle formed by the pixel's center and the other two
+            // vertices, divided by the area of the whole triangle. The center is inside when no weight is negative.
+            //
+            // Where a patch folds over itself, a triangle's vertices go the other way around. Dividing by the signed
+            // area keeps the check working.
+            float weightA = edgeFunction(b.position, c.position, center) / area;
+            float weightB = edgeFunction(c.position, a.position, center) / area;
+            float weightC = edgeFunction(a.position, b.position, center) / area;
+            if (weightA < 0 || weightB < 0 || weightC < 0)
+                continue;
+
+            // FIXME: Pixels at the edges of the mesh are not antialiased.
+            auto color = colorA * weightA;
+            color += colorB * weightB;
+            color += colorC * weightC;
+
+            writePixel(destination, x, y, convertColor<SRGBA<uint8_t>>(makeFromComponentsClamping<SRGBA<float>>(color)));
+        }
+    }
+}
+
+bool MeshGradientRendererCPU::render(const MeshGradient& gradient, const PixelBufferConversionView& destination, const IntSize& size, float scale)
 {
     ASSERT(destination.format.alphaFormat == AlphaPremultiplication::Premultiplied);
     ASSERT(destination.format.pixelFormat == PixelFormat::RGBA8);
@@ -63,7 +125,8 @@ bool MeshGradientRendererCPU::render(const MeshGradient& gradient, const PixelBu
             writePixel(destination, x, y, background);
     }
 
-    // FIXME: Draw the mesh.
+    for (auto& triangle : gradient.triangles(scale))
+        drawTriangle(destination, size, triangle);
 
     return true;
 }
