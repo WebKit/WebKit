@@ -1512,7 +1512,7 @@ extension AppKitGesturesTests.Basic {
     }
 
     private static let middleOfTHREEInPDF = NSPoint(x: 176, y: 444)
-    private static let middleOfOneInPDF = NSPoint(x: 134, y: 471)
+    private static let middleOfOneInPDF = NSPoint(x: 124, y: 481)
 
     private static let pdfDocumentText = "one\nTwo tWo\ntHree THREE threE"
 
@@ -1678,6 +1678,70 @@ extension AppKitGesturesTests.Basic {
         let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
 
         #expect(newSelection == crazySelection)
+    }
+
+    @Test(
+        .bug("https://webkit.org/b/330303", "Long press on PDF document does not produce word selection"),
+        arguments: PDFPresentation.allCases
+    )
+    func longPressOverPDFTextSelectsWordAndDoesNotOpenContextMenu(presentation: PDFPresentation) async throws {
+        try await loadFindPDF(presentation)
+
+        let pressPoint = screenBounds(ofPointInWindowCoordinates: Self.middleOfOneInPDF)
+
+        let presentedMenuItems = await withSwizzledContextMenu(waitingForMenu: false) {
+            await recap.play { composer in
+                composer._wk_click(at: pressPoint, for: .seconds(1))
+            }
+
+            await page.waitForPendingMouseEvents()
+            await page.waitForNextPresentationUpdate()
+        }
+
+        #expect(presentedMenuItems.isEmpty)
+
+        let selectedText = await page.copySelection()
+        #expect(selectedText == "one")
+    }
+
+    private func loadFindPDF(_ presentation: PDFPresentation) async throws {
+        let pdfURL = try #require(Bundle.testResources.url(forResource: "find", withExtension: "pdf"))
+
+        guard presentation != .document else {
+            try await page.load(pdfURL).wait()
+            await page.waitForNextPresentationUpdate()
+            return
+        }
+
+        let spacer = presentation == .embedInScrolledPage ? #"<div style="height: 100vh"></div>"# : ""
+        let html = """
+            <style>
+            html { overflow: hidden; }
+            body { margin: 0; }
+            embed { display: block; width: 100vw; height: 100vh; }
+            </style>
+            \(spacer)
+            <embed src="find.pdf">
+            """
+        try await page.load(html: html, baseURL: try #require(Bundle.testResources.resourceURL)).wait()
+
+        try await page.callJavaScript {
+            #"window.scrollTo(0, document.querySelector("embed").offsetTop);"#
+        }
+
+        // An embedded PDF loads after its document does, and shows its HUD once it has laid out.
+        try #require(await waitForPDFHUD())
+        await page.waitForNextPresentationUpdate()
+    }
+
+    private func waitForPDFHUD() async throws -> Bool {
+        for _ in 0..<50 {
+            if !page.pdfHUDs.isEmpty {
+                return true
+            }
+            try await Task.sleep(for: .milliseconds(100))
+        }
+        return false
     }
 
     @Test(arguments: [false, true])
@@ -4685,9 +4749,11 @@ private struct PresentedMenuItem: Sendable, Equatable {
 }
 
 /// Captures the items of the context menu that `body` presents instead of showing it. Then runs `whileMenuIsOpen`,
-/// and chooses the item titled `itemTitle`, if any, as if it were picked from the menu.
+/// and chooses the item titled `itemTitle`, if any, as if it were picked from the menu. When `waitingForMenu` is false,
+/// only a menu that `body` has presented by the time it returns is captured, and no items are returned if there is none.
 @discardableResult
 nonisolated(nonsending) private func withSwizzledContextMenu(
+    waitingForMenu: Bool = true,
     choosingItemTitled itemTitle: String? = nil,
     whileMenuIsOpen: () async -> Void = {},
     perform body: () async -> Void
@@ -4714,7 +4780,9 @@ nonisolated(nonsending) private func withSwizzledContextMenu(
     ) {
         await body()
 
-        await future.wait()
+        if waitingForMenu {
+            await future.wait()
+        }
 
         await whileMenuIsOpen()
 
@@ -5091,6 +5159,12 @@ extension AppKitGesturesTests.Basic {
         case insidePlayer
         case visibleInsidePlayer
         case outsidePlayer
+    }
+
+    enum PDFPresentation: Sendable, CaseIterable {
+        case document
+        case embed
+        case embedInScrolledPage
     }
 
     enum HoverOpenedByClickScrollTarget: Sendable, CaseIterable {

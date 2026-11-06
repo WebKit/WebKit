@@ -1826,6 +1826,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (BOOL)_secondaryClickShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
 {
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return NO;
+
     int radius = static_cast<int>(std::ceil([_secondaryClickGestureRecognizer allowableMovement]));
 
     const auto& information = _positionInformationManager->currentInformation();
@@ -1838,6 +1842,22 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     // or a video player). Over a run of selectable text, the text selection manager should win so
     // that a long press selects a word instead of synthesizing a context menu.
     bool shouldBegin = requestIsValid && isSecondaryClickable && !isOverSelectableText;
+
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(
+        [webView _protectedPage]->logIdentifier(),
+        "Secondary click shouldBegin → %d (hasInfo=%d requestIsValid=%d secondaryClickable=%d overSelectableText=%d selectability=%hhu prefersManipulation=%d image=%d video=%d longClickQuirk=%d radius=%d)",
+        shouldBegin,
+        _positionInformationManager->hasValidCurrentInformation(),
+        requestIsValid,
+        isSecondaryClickable,
+        isOverSelectableText,
+        static_cast<uint8_t>(information.selectability),
+        prefersDirectManipulation(information),
+        information.isImage,
+        information.isOverVideo,
+        information.shouldTreatLongClickAsSecondaryClickQuirk,
+        radius
+    );
 
     if (!requestIsValid)
         _positionInformationManager->invalidate();

@@ -111,6 +111,7 @@ public:
     std::tuple<URL, WebCore::FloatRect, RefPtr<WebCore::TextIndicator>> linkDataAtPoint(WebCore::FloatPoint pointInRootView);
     std::optional<WebCore::FloatRect> highlightRectForTapAtPoint(WebCore::FloatPoint pointInRootView) const;
     CursorContext cursorContext(WebCore::FloatPoint pointInRootView) const;
+    bool hasSelectableTextAtPoint(WebCore::FloatPoint pointInRootView) const;
     void handleSyntheticClick(WebCore::PlatformMouseEvent&&);
     void clearSelection();
     void setSelectionRange(WebCore::FloatPoint pointInRootView, WebCore::TextGranularity);

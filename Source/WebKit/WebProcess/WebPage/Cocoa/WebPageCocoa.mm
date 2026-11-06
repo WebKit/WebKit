@@ -2734,7 +2734,11 @@ void WebPage::updateFocusBeforeSelectingTextAtLocation(std::optional<WebCore::Fr
     if (!localRootFrame)
         return;
 
-    auto result = localRootFrame->eventHandler().hitTestResultAtPoint(point, hitType);
+    RefPtr localRootView = localRootFrame->view();
+    if (!localRootView)
+        return;
+
+    auto result = localRootFrame->eventHandler().hitTestResultAtPoint(localRootView->rootViewToContents(point), hitType);
     RefPtr hitNode = result.innerNode();
     if (!hitNode || !hitNode->renderer())
         return;

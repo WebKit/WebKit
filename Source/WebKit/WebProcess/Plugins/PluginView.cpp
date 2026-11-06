@@ -1236,6 +1236,11 @@ CursorContext PluginView::cursorContext(FloatPoint pointInRootView) const
     return m_plugin->cursorContext(pointInRootView);
 }
 
+bool PluginView::hasSelectableTextAtPoint(FloatPoint pointInRootView) const
+{
+    return m_plugin->hasSelectableTextAtPoint(pointInRootView);
+}
+
 void PluginView::clearSelection()
 {
     m_plugin->clearSelection();
