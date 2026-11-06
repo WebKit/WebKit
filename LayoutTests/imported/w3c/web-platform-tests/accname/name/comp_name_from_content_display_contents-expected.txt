@@ -1,11 +1,37 @@
-Each element below is named from its contents, and its contents are the single character "x". Text in a following sibling belongs to that sibling and must not be part of the name.
+Each element below is named from its contents. In the first group its contents are the single character "x", and text in a following sibling belongs to that sibling and must not be part of the name.
 
 xshould not be in the name x
 should not be in the name
 xshould not be in the name xshould not be in the name
+In the second group the contents are "x" and "y" in different boxes, such as the items of a flex container, and both are part of the name.
+
+x
+y
+x
+y
+x
+y
+x
+y
+x
+y
+x
+y
+In the third group the element is a shadow host, so its contents are those of its shadow tree, where a slot stands for the nodes assigned to it or else its fallback content.
+
+y
 
 PASS name from content of a display: contents element, followed by an inline sibling
 PASS name from content of a display: contents element, followed by a block sibling
 PASS name from content of a display: contents element, followed by a text sibling
 PASS name from content of a display: contents element with the link role, followed by a sibling
+PASS name from content of a display: contents element with a block child
+PASS name from content of a display: contents element in a flex container
+PASS name from content of a display: contents element in a flex container, text after an element
+PASS name from content of a display: contents element in a flex container, with a child that does not render
+PASS name from content of a display: contents element in a flex container, with a display: contents child
+PASS name from content of a display: contents element with the link role in a grid container
+PASS name from content of a display: contents shadow host, with a node assigned to a slot
+PASS name from content of a display: contents shadow host, with the fallback content of a slot
+PASS name from content of a display: contents shadow host, with a child that is not assigned to a slot
 

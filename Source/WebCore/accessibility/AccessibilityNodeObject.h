@@ -219,7 +219,6 @@ public:
     virtual void changeValueByPercent(float percentChange);
 
     AccessibilityObject* firstChild() const override;
-    AccessibilityObject* lastChild() const override;
     AccessibilityObject* previousSibling() const override;
     AccessibilityObject* nextSibling() const override;
     AccessibilityObject* parentObject() const override;

@@ -184,7 +184,11 @@ public:
             ComposedTreeIterator<ContextInlineCapacity>::traverseNextSibling();
             return *this;
         }
-        Iterator& operator--() { return static_cast<Iterator&>(ComposedTreeIterator<ContextInlineCapacity>::traversePreviousSibling()); }
+        Iterator& operator--()
+        {
+            ComposedTreeIterator<ContextInlineCapacity>::traversePreviousSibling();
+            return *this;
+        }
     };
 
     ComposedTreeChildAdapter(ContainerNode& parent)

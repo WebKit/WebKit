@@ -30,6 +30,7 @@
 #include "AccessibilityNodeObject.h"
 
 #include "AXAttachmentHelpers.h"
+#include "AXChildIterator.h"
 #include "AXImageMapHelpers.h"
 #include "AXListHelpers.h"
 #include "AXLogger.h"
@@ -187,33 +188,26 @@ void AccessibilityNodeObject::detachRemoteParts(AccessibilityDetachmentType deta
 
 AccessibilityObject* AccessibilityNodeObject::firstChild() const
 {
-    RefPtr currentChild = node() ? node()->firstChild() : nullptr;
-    if (!currentChild)
+    RefPtr node = this->node();
+    if (!node)
         return nullptr;
 
     CheckedPtr cache = axObjectCache();
     if (!cache)
         return nullptr;
 
-    RefPtr axCurrentChild = cache->getOrCreate(*currentChild);
-    while (!axCurrentChild && currentChild) {
-        currentChild = currentChild->nextSibling();
-        axCurrentChild = cache->getOrCreate(currentChild.get());
+    RefPtr<AccessibilityObject> axCurrentChild;
+    if (RefPtr element = dynamicDowncast<Element>(*node); element && element->hasDisplayContents()) {
+        for (Ref currentChild : composedTreeChildren</* InlineContextCapacity */ 0>(*element)) {
+            axCurrentChild = cache->getOrCreate(currentChild.get());
+            if (axCurrentChild)
+                break;
+        }
+    } else {
+        for (RefPtr currentChild = node->firstChild(); currentChild && !axCurrentChild; currentChild = currentChild->nextSibling())
+            axCurrentChild = cache->getOrCreate(*currentChild);
     }
     return axCurrentChild.unsafeGet();
-}
-
-AccessibilityObject* AccessibilityNodeObject::lastChild() const
-{
-    if (!node())
-        return nullptr;
-
-    RefPtr lastChild = node()->lastChild();
-    if (!lastChild)
-        return nullptr;
-
-    CheckedPtr objectCache = axObjectCache();
-    return objectCache ? objectCache->getOrCreate(*lastChild) : nullptr;
 }
 
 AccessibilityObject* AccessibilityNodeObject::previousSibling() const
@@ -4551,8 +4545,8 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode, DescendInt
 
     if (auto* slotElement = dynamicDowncast<HTMLSlotElement>(node); slotElement && labelledbyNode) {
         // Compute the accessible name for a slot's assigned nodes only if it's being used to label
-        // another node. If no assigned nodes exist, or all assigned nodes are hidden, fall through to
-        // textUnderElement, which will return the slot's fallback content.
+        // another node. If no assigned nodes exist, fall through to textUnderElement, which will
+        // return the slot's fallback content.
         if (auto* assignedNodes = slotElement->assignedNodes()) {
             StringBuilder builder;
             for (const auto& assignedNode : *assignedNodes) {
