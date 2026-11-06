@@ -508,20 +508,21 @@ CommandResult<void> ProxyingPageAgent::overrideUserPreference(Protocol::Page::Us
     return { };
 }
 
-// FIXME: <https://webkit.org/b/308900> Forward cookie commands to correct WebContent process.
+// Required by PageBackendDispatcherHandler. These commands are targetTypes ["page"], so the frontend
+// sends them to the WebContent page target; under Site Isolation it uses the Storage domain instead.
 CommandResult<Ref<JSON::ArrayOf<Protocol::Page::Cookie>>> ProxyingPageAgent::getCookies()
 {
-    return makeUnexpected("Not yet implemented under Site Isolation"_s);
+    return makeUnexpected("Page.getCookies is not supported for this target; use Storage.getCookies"_s);
 }
 
 CommandResult<void> ProxyingPageAgent::setCookie(Ref<JSON::Object>&&, std::optional<bool>&&)
 {
-    return { };
+    return makeUnexpected("Page.setCookie is not supported for this target; use Storage.setCookie"_s);
 }
 
 CommandResult<void> ProxyingPageAgent::deleteCookie(const String&, const String&)
 {
-    return { };
+    return makeUnexpected("Page.deleteCookie is not supported for this target; use Storage.deleteCookies"_s);
 }
 
 void ProxyingPageAgent::getResourceContent(const Protocol::Network::FrameId& frameId, const String& url, Ref<GetResourceContentCallback>&& callback)
