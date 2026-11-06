@@ -57,6 +57,7 @@ using MicrotaskIdentifier = ObjectIdentifier<MicrotaskIdentifierType>;
     macro(PromiseAllSettledResolveJob) \
     macro(PromiseAnyResolveJob) \
     macro(PromiseFinallyReactionJob) \
+    macro(PromiseFinallyAwaitDelayJob) \
     macro(PromiseFinallyAwaitJob) \
     macro(PromiseReactionJob) \
     macro(AsyncFunctionResume) \
