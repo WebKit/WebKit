@@ -492,11 +492,17 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
 }
 
 // The inline size of a box laid out through the render tree that its own formatting context decides: of a table (CSS 2.2 §17.5.2), of a
-// replaced element (§10.3.4), of a frameset, which takes the size of the viewport (RenderFrameSet::layout), of a box that fits its content,
-// like a button (RenderBox::sizesLogicalWidthToFitContent), or that has a sizing keyword inline size, which it resolves with its own
-// intrinsic sizes (css-sizing-3 §5.1), and of an orthogonal box, for which it is the block size (css-writing-modes-4 §7.3).
+// replaced element (§10.3.4), of a frameset, which takes the size of the viewport (RenderFrameSet::layout), of a MathML box, which takes the
+// width of its content, or centers it in the stretch-fit inline size with display: block (RenderMathMLRow::layoutBlock,
+// RenderMathMLMath::layoutBlock), of a box that fits its content, like a button (RenderBox::sizesLogicalWidthToFitContent), or that has a
+// sizing keyword inline size, which it resolves with its own intrinsic sizes (css-sizing-3 §5.1), and of an orthogonal box, for which it is
+// the block size (css-writing-modes-4 §7.3).
 static bool decidesItsOwnInlineSize(const RenderBox& box, WritingMode writingMode)
 {
+#if ENABLE(MATHML)
+    if (box.isRenderMathMLBlock())
+        return true;
+#endif
     return is<RenderTable>(box) || box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot() || box.isRenderFrameSet() || box.sizesLogicalWidthToFitContent() || BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode)
         || box.writingMode().isOrthogonal(writingMode) || box.style().aspectRatio().hasRatio();
 }
