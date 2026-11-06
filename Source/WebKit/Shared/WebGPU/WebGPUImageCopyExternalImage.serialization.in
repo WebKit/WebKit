@@ -35,6 +35,7 @@
     std::optional<WebKit::WebGPU::Origin2D> origin;
     bool flipY;
     std::optional<WebCore::MediaPlayerIdentifier> mediaIdentifier;
+    WebCore::IntSize sourceSize;
     std::optional<WebKit::SharedVideoFrame> sharedFrame;
 };
 #endif

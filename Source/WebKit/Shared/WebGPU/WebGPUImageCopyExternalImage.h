@@ -54,6 +54,7 @@ struct ImageCopyExternalImageVideoSource {
     std::optional<Origin2D> origin;
     bool flipY { false };
     std::optional<WebCore::MediaPlayerIdentifier> mediaIdentifier;
+    WebCore::IntSize sourceSize;
     std::optional<WebKit::SharedVideoFrame> sharedFrame;
 };
 #endif

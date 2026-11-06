@@ -8,4 +8,13 @@ PASS top left with flipY
 PASS top right with flipY
 PASS bottom left with flipY
 PASS bottom right with flipY
+PASS top left with scaled displaySize
+PASS top right with scaled displaySize
+PASS bottom left with scaled displaySize
+PASS bottom right with scaled displaySize
+PASS anamorphic video at x=64
+PASS anamorphic video at x=320
+PASS anamorphic video at x=640
+PASS anamorphic video at x=800
+PASS anamorphic video at x=960
 

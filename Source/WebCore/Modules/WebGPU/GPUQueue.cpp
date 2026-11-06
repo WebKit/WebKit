@@ -793,6 +793,7 @@ struct GPUResidentSource {
     // Set instead of imageBuffer when the source is a video: a decoded frame is not an ImageBuffer,
     // it is a CVPixelBuffer the GPU process already holds.
     std::optional<WebGPUVideoSourceIdentifier> videoSource { };
+    IntSize videoSourceSize { };
 
     NODELETE bool isGPUResident() const { return imageBuffer || videoSource; }
 };
@@ -814,9 +815,13 @@ static GPUResidentSource gpuResidentSourceForVideo(const GPUVideoSource& source)
     if (auto* videoFrame = std::get_if<RefPtr<VideoFrame>>(&videoSource); videoFrame && !*videoFrame)
         return { };
 
+    auto visibleSize = GPUExternalTextureDescriptor::visibleSizeForSource(source);
+    if (visibleSize.isEmpty())
+        return { };
+
     // A decoded frame is opaque, so premultiplied and unpremultiplied alpha describe the same
     // pixels and the backing queue does not have to undo anything.
-    return { nullptr, true, WTF::move(videoSource) };
+    return { nullptr, true, WTF::move(videoSource), visibleSize };
 }
 
 // An ImageData is a plain byte array, so it has to be moved into an accelerated buffer before Metal
@@ -1463,7 +1468,7 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
         // call is what covers the in-process backing, which has no proxy to do it.
         if (RefPtr sourceImageBuffer = gpuResidentSource.imageBuffer)
             sourceImageBuffer->flushDrawingContext();
-        m_gpu->copyExternalImageToTexture(m_backing, source.convertToBacking(WTF::move(gpuResidentSource.imageBuffer), gpuResidentSource.premultipliedAlpha, WTF::move(gpuResidentSource.videoSource)), destination.convertToBacking(), backingCopySize);
+        m_gpu->copyExternalImageToTexture(m_backing, source.convertToBacking(WTF::move(gpuResidentSource.imageBuffer), gpuResidentSource.premultipliedAlpha, WTF::move(gpuResidentSource.videoSource), gpuResidentSource.videoSourceSize), destination.convertToBacking(), backingCopySize);
         return { };
     }
 
