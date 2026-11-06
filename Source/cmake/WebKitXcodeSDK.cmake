@@ -3,9 +3,10 @@
 # Always pass --sdk to xcrun explicitly -- otherwise, toolchain and SDK
 # are not guaranteed to match.
 
-# Sets CMAKE_OSX_SYSROOT, WEBKIT_SDK_NAME, WEBKIT_SDK_VERSION, and
-# WEBKIT_SDK_SYSTEM_PREFIX (the system prefix of the WEBKIT_SDK_VARIANT, if any)
-# in the caller's scope.
+# Sets CMAKE_OSX_SYSROOT, WEBKIT_SDK_NAME, WEBKIT_SDK_VERSION,
+# WEBKIT_SDK_SYSTEM_PREFIX (the system prefix of the WEBKIT_SDK_VARIANT, if any),
+# and WEBKIT_TOOLCHAIN_NAME (the toolchain an OS-train SDK was built with, or
+# XcodeDefault) in the caller's scope.
 function(WEBKIT_RESOLVE_SDK)
     foreach (_sdk IN LISTS ARGN)
         execute_process(COMMAND xcrun --sdk ${_sdk} --show-sdk-path
@@ -18,6 +19,11 @@ function(WEBKIT_RESOLVE_SDK)
             string(JSON _sdk_version GET ${_sdk_settings} Version)
             string(JSON _sdk_canonical_name GET ${_sdk_settings} CanonicalName)
             string(JSON _platform_name GET ${_sdk_settings} DefaultProperties PLATFORM_NAME)
+            string(JSON _toolchain ERROR_VARIABLE _toolchain_error
+                GET ${_sdk_settings} Toolchains 0)
+            if (_toolchain_error)
+                set(_toolchain XcodeDefault)
+            endif ()
 
             set(_system_prefix "")
             if (WEBKIT_SDK_VARIANT)
@@ -38,6 +44,7 @@ function(WEBKIT_RESOLVE_SDK)
             set(WEBKIT_SDK_VERSION "${_sdk_version}" PARENT_SCOPE)
             set(WEBKIT_SDK_NAME "${_platform_name}" PARENT_SCOPE)
             set(WEBKIT_SDK_SYSTEM_PREFIX "${_system_prefix}" PARENT_SCOPE)
+            set(WEBKIT_TOOLCHAIN_NAME "${_toolchain}" PARENT_SCOPE)
             set(CMAKE_OSX_SYSROOT "${_sdk_path}" CACHE PATH "" FORCE)
             if (_sdk_path MATCHES "\\.[Ii]nternal.sdk$")
                 set(USE_APPLE_INTERNAL_SDK ON CACHE BOOL "" FORCE)
@@ -333,3 +340,27 @@ WEBKIT_RESOLVE_TOOL(CMAKE_LINKER "ld")
 # language.
 WEBKIT_RESOLVE_TOOL(GPERF_EXECUTABLE "gperf")
 WEBKIT_RESOLVE_TOOL(Mig_EXECUTABLE "mig")
+
+# Swift Testing's @Test and @Suite macros must expand with the plugin from the
+# toolchain that built the Testing.framework being linked. Choose it the way Swift
+# Build does: an internal SDK's testing libraries are from its OS train
+# (TEST_BUILD_STYLE=_APPLEINTERNAL), otherwise they are from XcodeDefault. Sets
+# SWIFT_PLUGIN_SERVER, SWIFT_TESTING_PLUGINS_DIR, and SWIFT_TESTING_PLUGIN_FLAGS
+# (empty if the toolchain has no testing plugins).
+WEBKIT_XCRUN(SWIFT_PLUGIN_SERVER -toolchain ${WEBKIT_TOOLCHAIN_NAME} -find swift-plugin-server)
+file(REAL_PATH "${SWIFT_PLUGIN_SERVER}/../.." _wk_testing_toolchain_usr)
+set(SWIFT_TESTING_PLUGINS_DIR "${_wk_testing_toolchain_usr}/lib/swift/host/plugins/testing")
+
+# Like Swift Build, load the plugin in process when it is from the compiler's own
+# toolchain, and through that toolchain's swift-plugin-server otherwise.
+set(SWIFT_TESTING_PLUGIN_FLAGS "")
+if (IS_DIRECTORY "${SWIFT_TESTING_PLUGINS_DIR}")
+    file(REAL_PATH "${CMAKE_Swift_COMPILER}/../.." _wk_swift_toolchain_usr)
+    if (_wk_swift_toolchain_usr STREQUAL _wk_testing_toolchain_usr)
+        set(SWIFT_TESTING_PLUGIN_FLAGS "-plugin-path ${SWIFT_TESTING_PLUGINS_DIR}")
+    else ()
+        set(SWIFT_TESTING_PLUGIN_FLAGS "-external-plugin-path ${SWIFT_TESTING_PLUGINS_DIR}#${SWIFT_PLUGIN_SERVER}")
+    endif ()
+endif ()
+unset(_wk_swift_toolchain_usr)
+unset(_wk_testing_toolchain_usr)

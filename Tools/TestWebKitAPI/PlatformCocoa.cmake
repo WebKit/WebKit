@@ -6,16 +6,23 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-# Mirror Xcode's "Embed Testing.framework" phase. ditto merges into whatever is already there;
-# use a stamp to record a rewrite in case of $_testing_platform_id change
+# Mirror Xcode's "Embed Testing.framework" phase, which copies from the internal SDK's
+# AppleInternal directory when TEST_BUILD_STYLE is _APPLEINTERNAL (i.e. USE_INTERNAL_SDK).
+# ditto merges into whatever is already there; use a stamp to record a rewrite in case of
+# $_testing_source_id change.
+if (USE_APPLE_INTERNAL_SDK)
+    set(_testing_developer_dir "${CMAKE_OSX_SYSROOT}/AppleInternal/Developer")
+else ()
+    set(_testing_developer_dir "${_platform_dir}/Developer")
+endif ()
 set(_testing_staged)
 set(_testing_stamp_dir "${CMAKE_BINARY_DIR}/DerivedSources/TestWebKitAPI")
-string(MD5 _testing_platform_id "${_platform_dir}")
+string(MD5 _testing_source_id "${_testing_developer_dir}")
 foreach (_fw Testing _Testing_AppKit _Testing_CoreGraphics _Testing_CoreImage
         _Testing_CoreTransferable _Testing_Foundation _Testing_UIKit)
-    set(_src "${_platform_dir}/Developer/Library/Frameworks/${_fw}.framework")
+    set(_src "${_testing_developer_dir}/Library/Frameworks/${_fw}.framework")
     set(_dst "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${_fw}.framework")
-    set(_stamp "${_testing_stamp_dir}/staged-${_fw}-${_testing_platform_id}.stamp")
+    set(_stamp "${_testing_stamp_dir}/staged-${_fw}-${_testing_source_id}.stamp")
 
     if (EXISTS "${_src}")
         add_custom_command(OUTPUT "${_stamp}"
@@ -30,7 +37,7 @@ foreach (_fw Testing _Testing_AppKit _Testing_CoreGraphics _Testing_CoreImage
         list(APPEND _testing_staged "${_stamp}")
     endif ()
 endforeach ()
-set(_src "${_platform_dir}/Developer/usr/lib/lib_TestingInterop.dylib")
+set(_src "${_testing_developer_dir}/usr/lib/lib_TestingInterop.dylib")
 set(_dst "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib_TestingInterop.dylib")
 if (EXISTS "${_src}")
     add_custom_command(OUTPUT "${_dst}"
@@ -71,17 +78,10 @@ if (CMAKE_Swift_COMPILER_TARGET)
 endif ()
 
 # @Test and @Suite expand through libTestingMacros, in a `testing` subdirectory
-# swiftc does not search on its own. It must come from the default toolchain to
-# match the Testing.framework staged above.
-WEBKIT_XCRUN(_swift_plugin_server --toolchain XcodeDefault --find swift-plugin-server)
-get_filename_component(_swift_toolchain_bin "${_swift_plugin_server}" DIRECTORY)
-get_filename_component(_swift_toolchain_usr "${_swift_toolchain_bin}" DIRECTORY)
-set(_swift_testing_plugins "${_swift_toolchain_usr}/lib/swift/host/plugins/testing")
-if (IS_DIRECTORY "${_swift_testing_plugins}")
-    # Out of process, as Xcode runs macros: the plugin is not from this compiler's toolchain.
-    list(APPEND _testwebkitapi_swift_options
-        "-external-plugin-path ${_swift_testing_plugins}#${_swift_plugin_server}"
-    )
+# swiftc does not search on its own. WebKitXcodeSDK.cmake finds the plugin from
+# the toolchain that built the Testing.framework staged above.
+if (SWIFT_TESTING_PLUGIN_FLAGS)
+    list(APPEND _testwebkitapi_swift_options "${SWIFT_TESTING_PLUGIN_FLAGS}")
 endif ()
 foreach (_f IN LISTS _test_swift_cc_flags)
     list(APPEND _testwebkitapi_swift_options "-Xcc ${_f}")
