@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Scroll timelines whose source is a pseudo-element scroll container</title>
+<link rel="help" href="https://drafts.csswg.org/scroll-animations-1/#scroll-notation">
+<link rel="help" href="https://drafts.csswg.org/scroll-animations-1/#scroll-timeline-name">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/web-animations/testcommon.js"></script>
+<script src="./testcommon.js"></script>
+<style>
+@keyframes color-change {
+  from { color: rgb(255, 0, 0); }
+  to { color: rgb(0, 0, 255); }
+}
+.box::before, .box::after {
+  content: '0123456789012345678901234567890123456789';
+  display: block;
+  width: 8ch;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-family: monospace;
+  animation: color-change linear both;
+}
+#self-before::before, #self-after::after {
+  animation-timeline: scroll(self x);
+}
+#named-before::before {
+  scroll-timeline: --before x;
+  animation-timeline: --before;
+}
+#named-after::after {
+  scroll-timeline: --after x;
+  animation-timeline: --after;
+}
+</style>
+<div id="self-before" class="box"></div>
+<div id="self-after" class="box"></div>
+<div id="named-before" class="box"></div>
+<div id="named-after" class="box"></div>
+<script>
+'use strict';
+
+for (const timeline of ['self', 'named']) {
+  for (const pseudo of ['before', 'after']) {
+    promise_test(async t => {
+      const target = document.getElementById(`${timeline}-${pseudo}`);
+      // Both pseudo-elements are animated, but only the one under test uses a scroll timeline.
+      const animation = target.getAnimations({ subtree: true })
+          .find(animation => animation.effect.pseudoElement === `::${pseudo}`);
+      assert_true(!!animation, `The ::${pseudo} animation exists`);
+
+      // An inactive timeline leaves the animation pending, so do not await ready.
+      await waitForNextFrame();
+      assert_not_equals(animation.timeline.currentTime, null,
+        'The timeline is active');
+      assert_percents_equal(animation.timeline.currentTime, 0);
+      assert_equals(animation.effect.getComputedTiming().progress, 0);
+      assert_equals(getComputedStyle(target, `::${pseudo}`).color, 'rgb(255, 0, 0)');
+    }, `scroll timeline on ::${pseudo} with ${timeline} scroller is active`);
+  }
+}
+</script>

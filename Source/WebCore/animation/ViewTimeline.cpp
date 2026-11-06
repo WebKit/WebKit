@@ -355,7 +355,12 @@ RefPtr<Element> ViewTimeline::source() const
     return nullptr;
 }
 
-const RenderBox* ViewTimeline::sourceScrollerRenderer() const
+RenderElement* ViewTimeline::sourceRenderer() const
+{
+    return sourceScrollerRenderer();
+}
+
+RenderBox* ViewTimeline::sourceScrollerRenderer() const
 {
     auto subject = m_subject.styleable();
     if (!subject)

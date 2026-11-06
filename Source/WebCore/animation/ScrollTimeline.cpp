@@ -166,6 +166,20 @@ RefPtr<Element> ScrollTimeline::source() const
     return nullptr;
 }
 
+RenderElement* ScrollTimeline::sourceRenderer() const
+{
+    // The source Element cannot represent a pseudo-element scroll container, so for scroll(self)
+    // we must resolve the renderer from the Styleable.
+    if (m_scroller == Scroller::Self) {
+        if (auto styleable = m_source.styleable())
+            return styleable->renderer();
+        return nullptr;
+    }
+    if (RefPtr source = this->source())
+        return source->renderer();
+    return nullptr;
+}
+
 void ScrollTimeline::setSource(Element* source)
 {
     if (source)
@@ -210,10 +224,8 @@ AnimationTimelinesController* ScrollTimeline::controller() const
 ScrollTimeline::ResolvedScrollDirection ScrollTimeline::resolvedScrollDirection() const
 {
     auto writingMode = [&] -> WritingMode {
-        if (RefPtr source = this->source()) {
-            if (auto* renderer = source->renderer())
-                return renderer->style().writingMode();
-        }
+        if (CheckedPtr renderer = sourceRenderer())
+            return renderer->style().writingMode();
 
         return { Style::ComputedStyle::initialWritingMode(), Style::ComputedStyle::initialDirection(), Style::ComputedStyle::initialTextOrientation() };
     }();
@@ -254,10 +266,10 @@ ScrollTimeline::ResolvedScrollDirection ScrollTimeline::resolvedScrollDirection(
 
 auto ScrollTimeline::computeCurrentTimeData() const -> CurrentTimeData
 {
-    RefPtr source = this->source();
-    if (!source)
+    CheckedPtr renderer = sourceRenderer();
+    if (!renderer)
         return { };
-    CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(protect(source->renderer()), protect(source->document()));
+    CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(renderer, renderer->document());
     if (!sourceScrollableArea)
         return { };
     auto scrollDirection = resolvedScrollDirection();
@@ -337,7 +349,8 @@ ScrollableArea* ScrollTimeline::scrollableAreaForSourceRenderer(const RenderElem
     if (!renderBox)
         return nullptr;
 
-    if (renderer->element() == Ref { document }->scrollingElement())
+    // Pseudo-element renderers such as ::backdrop have no element, which must not match a missing scrolling element.
+    if (RefPtr element = renderer->element(); element && element == Ref { document }->scrollingElement())
         return &renderer->view().frameView();
 
     return renderBox->hasLayer() ? renderBox->layer()->scrollableArea() : nullptr;
@@ -425,20 +438,20 @@ bool ScrollTimeline::matchesAnonymousScrollFunctionForSource(const Style::Scroll
 #if ENABLE(THREADED_ANIMATIONS)
 bool ScrollTimeline::canBeAccelerated() const
 {
-    RefPtr source = this->source();
-    if (!source)
+    CheckedPtr renderer = sourceRenderer();
+    if (!renderer)
         return false;
 
-    ASSERT(source->document().settings().threadedScrollDrivenAnimationsEnabled());
+    ASSERT(renderer->document().settings().threadedScrollDrivenAnimationsEnabled());
 
-    CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(protect(source->renderer()), protect(source->document()));
+    CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(renderer, renderer->document());
     return sourceScrollableArea && !!sourceScrollableArea->scrollingNodeID();
 }
 
 void ScrollTimeline::scheduleAcceleratedRepresentationUpdate()
 {
-    if (RefPtr source = this->source()) {
-        if (RefPtr page = source->document().page()) {
+    if (CheckedPtr renderer = sourceRenderer()) {
+        if (RefPtr page = renderer->document().page()) {
             if (auto* acceleratedTimelinesUpdater = page->acceleratedTimelinesUpdater())
                 acceleratedTimelinesUpdater->scrollTimelineDidChange(*this);
         }
@@ -447,10 +460,10 @@ void ScrollTimeline::scheduleAcceleratedRepresentationUpdate()
 
 ProgressResolutionData ScrollTimeline::computeProgressResolutionData() const
 {
-    ASSERT(this->source());
-    ASSERT(this->source()->document().settings().threadedScrollDrivenAnimationsEnabled());
-    Ref source = *this->source();
-    CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(protect(source->renderer()), protect(source->document()));
+    CheckedPtr renderer = sourceRenderer();
+    ASSERT(renderer);
+    ASSERT(renderer->document().settings().threadedScrollDrivenAnimationsEnabled());
+    CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(renderer, renderer->document());
     ASSERT(sourceScrollableArea);
     ASSERT(sourceScrollableArea->scrollingNodeID());
 
@@ -484,8 +497,8 @@ std::optional<ScrollingNodeID> ScrollTimeline::scrollingNodeIDForTesting() const
 {
     if (!m_acceleratedRepresentation)
         return std::nullopt;
-    if (RefPtr source = this->source()) {
-        if (CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(protect(source->renderer()), protect(source->document())))
+    if (CheckedPtr renderer = sourceRenderer()) {
+        if (CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(renderer, renderer->document()))
             return sourceScrollableArea->scrollingNodeID();
     }
     return std::nullopt;
