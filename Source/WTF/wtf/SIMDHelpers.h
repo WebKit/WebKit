@@ -205,19 +205,34 @@ ALWAYS_INLINE void store4x(simde_uint64x2x4_t value, uint64_t* ptr)
     return simde_vst4q_u64(ptr, value);
 }
 
-ALWAYS_INLINE uint16_t sum(simde_uint8x16_t value)
+ALWAYS_INLINE uint64_t sum(simde_uint32x4_t value)
 {
-    return simde_vaddlvq_u8(value);
+#if CPU(ARM)
+    simde_uint64x2_t u64s = simde_vpaddlq_u32(value);
+    return simde_vgetq_lane_u64(u64s, 0) + simde_vgetq_lane_u64(u64s, 1);
+#else
+    return simde_vaddlvq_u32(value);
+#endif
 }
 
 ALWAYS_INLINE uint32_t sum(simde_uint16x8_t value)
 {
+#if CPU(ARM)
+    simde_uint32x4_t u32s = simde_vpaddlq_u16(value);
+    return sum(u32s);
+#else
     return simde_vaddlvq_u16(value);
+#endif
 }
 
-ALWAYS_INLINE uint64_t sum(simde_uint32x4_t value)
+ALWAYS_INLINE uint16_t sum(simde_uint8x16_t value)
 {
-    return simde_vaddlvq_u32(value);
+#if CPU(ARM)
+    simde_uint16x8_t u16s = simde_vpaddlq_u8(value);
+    return sum(u16s);
+#else
+    return simde_vaddlvq_u8(value);
+#endif
 }
 
 ALWAYS_INLINE simde_uint8x16_t sub(simde_uint8x16_t left, simde_uint8x16_t right)
@@ -347,11 +362,21 @@ ALWAYS_INLINE simde_uint64x2_t bitNot(simde_uint64x2_t input)
     return simde_vreinterpretq_u64_u32(simde_vmvnq_u32(simde_vreinterpretq_u32_u64(input)));
 }
 
+ALWAYS_INLINE uint64_t reduceOrU64(simde_uint8x16_t accumulated)
+{
+    simde_uint8x8_t low = simde_vget_low_u8(accumulated);
+    simde_uint8x8_t high = simde_vget_high_u8(accumulated);
+    simde_uint8x8_t orred = simde_vorr_u8(low, high);
+    return simde_vget_lane_u64(simde_vreinterpret_u64_u8(orred), 0);
+}
+
 ALWAYS_INLINE bool isNonZero(simde_uint8x16_t accumulated)
 {
 #if CPU(X86_64)
     auto raw = simde_uint8x16_to_m128i(accumulated);
     return !simde_mm_test_all_zeros(raw, raw);
+#elif CPU(ARM)
+    return reduceOrU64(accumulated);
 #else
     return simde_vmaxvq_u8(accumulated);
 #endif
@@ -362,6 +387,8 @@ ALWAYS_INLINE bool isNonZero(simde_uint16x8_t accumulated)
 #if CPU(X86_64)
     auto raw = simde_uint16x8_to_m128i(accumulated);
     return !simde_mm_test_all_zeros(raw, raw);
+#elif CPU(ARM)
+    return reduceOrU64(simde_vreinterpretq_u8_u16(accumulated));
 #else
     return simde_vmaxvq_u16(accumulated);
 #endif
@@ -372,6 +399,8 @@ ALWAYS_INLINE bool isNonZero(simde_uint32x4_t accumulated)
 #if CPU(X86_64)
     auto raw = simde_uint32x4_to_m128i(accumulated);
     return !simde_mm_test_all_zeros(raw, raw);
+#elif CPU(ARM)
+    return reduceOrU64(simde_vreinterpretq_u8_u32(accumulated));
 #else
     return simde_vmaxvq_u32(accumulated);
 #endif
@@ -382,6 +411,8 @@ ALWAYS_INLINE bool isNonZero(simde_uint64x2_t accumulated)
 #if CPU(X86_64)
     auto raw = simde_uint64x2_to_m128i(accumulated);
     return !simde_mm_test_all_zeros(raw, raw);
+#elif CPU(ARM)
+    return reduceOrU64(simde_vreinterpretq_u8_u64(accumulated));
 #else
     // There is no simde_vmaxvq_u64, so using simde_vmaxvq_u8.
     // But this is fine since it only just checks if the input is all-zeros.
@@ -397,6 +428,20 @@ ALWAYS_INLINE std::optional<uint8_t> findFirstNonZeroIndex(simde_uint8x16_t valu
     if (!mask)
         return std::nullopt;
     return std::countr_zero(mask);
+#elif CPU(ARM) && CPU(LITTLE_ENDIAN)
+    simde_uint16x8_t u16s = simde_vreinterpretq_u16_u8(value);
+    // Right shifting the u16 by 4 packs the non-zeroness of the two bytes into
+    // the two nibbles of the low part, which is why we can narrow the result to
+    // u8s and still be able to determine the position of the 0xff value.
+    simde_uint8x8_t u8s = simde_vshrn_n_u16(u16s, 4);
+    uint64_t u64 = simde_vget_lane_u64(simde_vreinterpret_u64_u8(u8s), 0);
+    if (!u64)
+        return std::nullopt;
+    // The result will be a multiple of 4, since it's individual nibbles that
+    // are going to be 0xf or 0x0 and each one corresponds to a u8 of our input.
+    // Divide by 4 to get the index of the nibble and hence the u8 in the input
+    // value. Counting from the right because we're on little endian.
+    return std::countr_zero(u64) >> 2;
 #else
     if (!isNonZero(value))
         return std::nullopt;
@@ -413,6 +458,14 @@ ALWAYS_INLINE std::optional<uint8_t> findFirstNonZeroIndex(simde_uint16x8_t valu
     if (!mask)
         return std::nullopt;
     return std::countr_zero(mask) >> 1;
+#elif CPU(ARM) && CPU(LITTLE_ENDIAN)
+    // if the u16 was all-ones, the u8 is going to be as well.
+    simde_uint8x8_t u8s = simde_vmovn_u16(value);
+    // See the uint8x16_t version above; here we divide by 8 cause we have the original u16s encoded in u8s.
+    uint64_t u64 = simde_vget_lane_u64(simde_vreinterpret_u64_u8(u8s), 0);
+    if (!u64)
+        return std::nullopt;
+    return std::countr_zero(u64) >> 3;
 #else
     // Incoming value is a comparison result, where each vector element is either all 1s or 0s.
     if (!isNonZero(value))
@@ -442,6 +495,15 @@ ALWAYS_INLINE std::optional<uint8_t> findFirstNonZeroIndex(simde_uint32x4_t valu
     if (!mask)
         return std::nullopt;
     return std::countr_zero(mask) >> 2;
+#elif CPU(ARM) && CPU(LITTLE_ENDIAN)
+    // if the u32 was non-zero, the u16 is going to be as well.
+    simde_uint16x4_t u16s = simde_vmovn_u32(value);
+    // See the uint8x16_t version above; here we divide by 16 cause we have the
+    // original u32s encoded in u16s.
+    uint64_t u64 = simde_vget_lane_u64(simde_vreinterpret_u64_u16(u16s), 0);
+    if (!u64)
+        return std::nullopt;
+    return std::countr_zero(u64) >> 4;
 #else
     if (!isNonZero(value))
         return std::nullopt;
@@ -458,6 +520,14 @@ ALWAYS_INLINE std::optional<uint8_t> findFirstNonZeroIndex(simde_uint64x2_t valu
     if (!mask)
         return std::nullopt;
     return std::countr_zero(mask) >> 3;
+#elif CPU(ARM) && CPU(LITTLE_ENDIAN)
+    // if the u64 was non-zero, the u32 is going to be as well.
+    simde_uint32x2_t u32s = simde_vmovn_u64(value);
+    uint64_t u64 = simde_vget_lane_u64(simde_vreinterpret_u64_u32(u32s), 0);
+    if (!u64)
+        return std::nullopt;
+    // Either the low part is all-ones and we return 0 or the high part is all-ones and we return 1;
+    return !static_cast<uint32_t>(u64);
 #else
     simde_uint32x2_t reducedMask = simde_vmovn_u64(value);
     if (!simde_vget_lane_u64(simde_vreinterpret_u64_u32(reducedMask), 0))
