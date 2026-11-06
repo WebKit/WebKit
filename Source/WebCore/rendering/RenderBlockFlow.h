@@ -542,6 +542,8 @@ public:
     struct LinePaginationAdjustment {
         LayoutUnit strut { 0_lu };
         bool isFirstAfterPageBreak { false };
+        // The line is taller than a page so moving earlier lines along with it can't help satisfy widows.
+        bool isOversizedLine { false };
     };
     LinePaginationAdjustment computeLineAdjustmentForPagination(const InlineIterator::LineBoxIterator&, LayoutUnit deltaOffset, LayoutUnit floatMinimumBottom = { });
     bool relayoutForPagination();
