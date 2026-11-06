@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<title>CSS Position: Nested position:fixed contained by a transformed scrollable element</title>
+<link rel="help" href="https://www.w3.org/TR/css-position-3/#fixed-cb">
+<link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=263955">
+<link rel="match" href="../reference/ref-filled-green-100px-square-only.html">
+<meta name="assert" content="A position:fixed element whose containing block is a transformed scroller is clipped and scrolled by that scroller, even inside a position:fixed ancestor.">
+<div style="position: fixed; top: 0; left: 8px">
+  <p>Test passes if there is a filled green square.</p>
+  <div id="scroller" style="will-change: transform; width: 100px; height: 100px; overflow: auto; scrollbar-width: none; background: red">
+    <div style="position: fixed; top: 200px; left: 0; width: 200px; height: 100px; will-change: opacity; background: green"></div>
+    <div style="height: 500px"></div>
+  </div>
+</div>
+<script>
+scroller.scrollTop = 200;
+</script>

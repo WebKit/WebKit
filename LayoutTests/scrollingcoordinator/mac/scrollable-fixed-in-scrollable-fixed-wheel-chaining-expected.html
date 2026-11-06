@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        #scroller {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: 200px;
+            height: 200px;
+            overflow: auto;
+            background-color: blue;
+        }
+        .contents {
+            height: 1000px;
+        }
+        .top-marker {
+            height: 100px;
+            background-color: orange;
+        }
+        #nested-scroller {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 150px;
+            height: 50px;
+            overflow: auto;
+            background-color: green;
+        }
+        .nested-contents {
+            height: 100px;
+        }
+    </style>
+    <script>
+        function startTest()
+        {
+            document.getElementById("nested-scroller").scrollTop = 1000;
+            document.getElementById("scroller").scrollTop = 1000;
+        }
+
+        window.addEventListener('load', startTest, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div id="nested-scroller">
+            <div class="nested-contents"></div>
+        </div>
+        <div class="contents">
+            <div class="top-marker"></div>
+        </div>
+    </div>
+</body>
+</html>
