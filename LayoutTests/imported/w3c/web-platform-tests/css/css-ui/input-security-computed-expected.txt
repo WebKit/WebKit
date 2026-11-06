@@ -1,6 +1,0 @@
-
-PASS Property input-security value 'initial'
-PASS Property input-security value 'inherit'
-PASS Property input-security value 'auto'
-PASS Property input-security value 'none'
-

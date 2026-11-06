@@ -5280,7 +5280,6 @@ webkit.org/b/319405 imported/w3c/web-platform-tests/css/css-ui/caret-color-bar-s
 webkit.org/b/319405 imported/w3c/web-platform-tests/css/css-ui/caret-color-block-shape-text-color-001.html [ ImageOnlyFailure ]
 webkit.org/b/319405 imported/w3c/web-platform-tests/css/css-ui/caret-color-block-shape-text-color-002.html [ ImageOnlyFailure ]
 webkit.org/b/319405 imported/w3c/web-platform-tests/css/css-ui/caret-color-block-shape-text-color-003.html [ ImageOnlyFailure ]
-webkit.org/b/319405 imported/w3c/web-platform-tests/css/css-ui/caret-color-block-shape-text-color-004.html [ ImageOnlyFailure ]
 webkit.org/b/319405 imported/w3c/web-platform-tests/css/css-ui/caret-color-block-shape-text-color-005.html [ ImageOnlyFailure ]
 webkit.org/b/319405 imported/w3c/web-platform-tests/css/css-ui/caret-color-underscore-shape-text-color.html [ ImageOnlyFailure ]
 webkit.org/b/319405 imported/w3c/web-platform-tests/css/css-ui/caret-eol-004.tentative.html [ ImageOnlyFailure ]
