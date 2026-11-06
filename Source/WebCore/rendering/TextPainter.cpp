@@ -32,7 +32,6 @@
 #include "InlineDisplayBox.h"
 #include "InlineIteratorTextBox.h"
 #include "LayoutIntegrationInlineContent.h"
-#include "RenderCombineText.h"
 #include "RenderLayer.h"
 #include "StyleAppleColorFilter.h"
 #include "StyleColorResolver.h"
@@ -103,7 +102,7 @@ ShadowApplier::~ShadowApplier()
         m_context.clearDropShadow();
 }
 
-TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, const Style::ComputedStyle& renderStyle, const TextPaintStyle& textPaintStyle, const Style::TextShadows& shadow, const Style::AppleColorFilter& shadowColorFilter, const AtomString& emphasisMark, float emphasisMarkOffset, const RenderCombineText* combinedText)
+TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, const Style::ComputedStyle& renderStyle, const TextPaintStyle& textPaintStyle, const Style::TextShadows& shadow, const Style::AppleColorFilter& shadowColorFilter, const AtomString& emphasisMark, float emphasisMarkOffset, bool isCombinedText)
     : m_context(context)
     , m_font(font)
     , m_renderStyle(renderStyle)
@@ -111,8 +110,8 @@ TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, cons
     , m_emphasisMark(emphasisMark)
     , m_shadow(shadow)
     , m_shadowColorFilter(shadowColorFilter)
-    , m_combinedText(combinedText)
     , m_emphasisMarkOffset(emphasisMarkOffset)
+    , m_isCombinedText(isCombinedText)
 {
 }
 
@@ -167,7 +166,7 @@ void TextPainter::paintTextWithShadows(const Style::TextShadows* shadows, const 
     if (!opaque)
         m_context.setFillColor(Color::black);
     for (const auto& shadow : *shadows) {
-        ShadowApplier shadowApplier(m_renderStyle, m_context, &shadow, colorFilter, boxRect, &shadow == &shadows->last(), lastShadowIterationShouldDrawText, opaque, m_combinedText.get());
+        ShadowApplier shadowApplier(m_renderStyle, m_context, &shadow, colorFilter, boxRect, &shadow == &shadows->last(), lastShadowIterationShouldDrawText, opaque, m_isCombinedText);
         if (!shadowApplier.nothingToDraw())
             paintTextOrEmphasisMarks(font, textRun, emphasisMark, emphasisMarkOffset, textOrigin + shadowApplier.extraOffset(), startOffset, endOffset);
     }
@@ -221,20 +220,21 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
     FloatPoint boxOrigin = boxRect.location();
     updateGraphicsContext(m_context, paintStyle, FillColorType::EmphasisMark);
     static NeverDestroyed<TextRun> objectReplacementCharacterTextRun(StringView { span(objectReplacementCharacter) });
-    CheckedRef emphasisMarkTextRun = m_combinedText ? objectReplacementCharacterTextRun.get() : textRun;
+    // Combined text gets a single emphasis mark.
+    CheckedRef emphasisMarkTextRun = m_isCombinedText ? objectReplacementCharacterTextRun.get() : textRun;
     auto emphasisMarkTextOrigin = textOrigin;
 
-    if (m_combinedText) {
+    if (m_isCombinedText) {
         auto ascent = LayoutUnit(m_font->metricsOfPrimaryFont().ascent());
         emphasisMarkTextOrigin = { boxOrigin.x() + boxRect.width() / 2, boxOrigin.y() + ascent };
         m_context.concatCTM(rotation(boxRect, RotationDirection::Clockwise));
     }
 
     // FIXME: Truncate right-to-left text correctly.
-    paintTextWithShadows(&shadow, shadowColorFilter, CheckedRef { m_combinedText ? m_combinedText->originalFont() : m_font.get() }, emphasisMarkTextRun, boxRect, emphasisMarkTextOrigin, startOffset, endOffset,
+    paintTextWithShadows(&shadow, shadowColorFilter, CheckedRef { m_isCombinedText ? m_renderStyle->fontCascade() : m_font.get() }, emphasisMarkTextRun, boxRect, emphasisMarkTextOrigin, startOffset, endOffset,
         m_emphasisMark, m_emphasisMarkOffset, paintStyle.strokeWidth > 0);
 
-    if (m_combinedText)
+    if (m_isCombinedText)
         m_context.concatCTM(rotation(boxRect, RotationDirection::Counterclockwise));
 }
 

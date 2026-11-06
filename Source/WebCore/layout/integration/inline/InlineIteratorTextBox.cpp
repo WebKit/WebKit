@@ -30,7 +30,6 @@
 #include "InlineIteratorLineBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBoxInlines.h"
-#include "RenderCombineText.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTabSize.h"
 
@@ -76,8 +75,8 @@ TextBoxIterator TextBox::nextTextBox() const
 
 const FontCascade& TextBox::fontCascade() const
 {
-    if (CheckedPtr renderer = dynamicDowncast<RenderCombineText>(this->renderer()); renderer && renderer->isCombined())
-        return renderer->textCombineFont();
+    if (auto& inlineTextBox = downcast<Layout::InlineTextBox>(displayBox().layoutBox()); inlineTextBox.isCombined())
+        return inlineTextBox.combinedText().font;
 
     return style()->fontCascade();
 }

@@ -23,7 +23,6 @@
 #include "Text.h"
 
 #include "Event.h"
-#include "RenderCombineText.h"
 #include "RenderSVGInlineText.h"
 #include "RenderText.h"
 #include "SVGElementInlines.h"
@@ -181,13 +180,10 @@ NODELETE static bool isSVGText(const Text& text)
     return parentElement && !parentElement->hasTagName(SVGNames::foreignObjectTag);
 }
 
-RenderPtr<RenderText> Text::createTextRenderer(const Style::ComputedStyle& style)
+RenderPtr<RenderText> Text::createTextRenderer()
 {
     if (isSVGText(*this) || isSVGShadowText(*this))
         return createRenderer<RenderSVGInlineText>(*this, data());
-
-    if (style.textCombine() != TextCombine::None)
-        return createRenderer<RenderCombineText>(*this, data());
 
     return createRenderer<RenderText>(RenderObject::Type::Text, *this, data());
 }

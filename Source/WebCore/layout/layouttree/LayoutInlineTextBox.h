@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FontCascade.h>
 #include <WebCore/LayoutBox.h>
 #include <wtf/OptionSet.h>
 
@@ -44,7 +45,18 @@ public:
         HighestEnumValue = HasSynthesizedGlyph
     };
     const String& content() const LIFETIME_BOUND { return m_content; }
+
+    // text-combine-upright content that fits in 1em is drawn horizontally with a font of its own.
+    struct CombinedText {
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CombinedText);
+
+        FontCascade font;
+        float width { 0 };
+        float ascent { 0 };
+        float descent { 0 };
+    };
     bool isCombined() const { return m_isCombined; }
+    NODELETE const CombinedText& combinedText() const LIFETIME_BOUND;
     // Text in a display: contents element has a style of its own instead of inheriting from the parent box.
     bool inheritsStyleFromDisplayContentsParent() const { return m_inheritsStyleFromDisplayContentsParent; }
     // FIXME: This should not be a box's property.
@@ -58,11 +70,11 @@ public:
     // BoxTreeUpdater sets these from the renderer.
     void setContent(String newContent, EnumSet<ContentCharacteristic>);
     void setCanUseSimplifiedContentMeasuring(bool value) { m_contentCharacteristicSet.set(ContentCharacteristic::CanUseSimplifiedContentMeasuring, value); }
-    void setIsCombined(bool isCombined) { m_isCombined = isCombined; }
+    void setCombinedText(std::unique_ptr<CombinedText>&&);
 
 protected:
     explicit InlineTextBox(Style::ComputedStyle&&);
-    ~InlineTextBox() = default;
+    ~InlineTextBox();
 
     void setInheritsStyleFromDisplayContentsParent(bool value) { m_inheritsStyleFromDisplayContentsParent = value; }
 

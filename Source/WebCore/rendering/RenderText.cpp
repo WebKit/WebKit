@@ -49,7 +49,6 @@
 #include "MathVariant.h"
 #include "Range.h"
 #include "RenderBlockFlowInlines.h"
-#include "RenderCombineText.h"
 #include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
@@ -601,6 +600,13 @@ void RenderText::styleDidChange(Style::Difference diff, const Style::ComputedSty
         // The secure text disc depends on the font.
         if (fontChanged && newStyle.textSecurity() != TextSecurity::None)
             layoutBoxContentDidChange();
+        auto combinedTextMayHaveChanged = oldStyle->textCombine() != newStyle.textCombine()
+            || (newStyle.textCombine() != TextCombine::None && (fontChanged || oldStyle->writingMode() != newStyle.writingMode()));
+        if (combinedTextMayHaveChanged && LayoutIntegration::BoxTreeUpdater::updateCombinedText(*this) && LayoutIntegration::BoxTreeUpdater::isInLiveFormattingContext(*this)) {
+            // Combined text is a single inline item.
+            if (CheckedPtr container = LayoutIntegration::LineLayout::blockContainer(*this))
+                container->invalidateLineLayout(RenderBlockFlow::InvalidationReason::ContentChange);
+        }
     }
 
     // Accessibility reads the non-inherited properties of text from the parent.
@@ -1071,12 +1077,10 @@ PositionWithAffinity RenderText::positionForPoint(const LayoutPoint& point, HitT
 
 NODELETE static inline std::optional<float> combineTextWidth(const RenderText& renderer, const FontCascade& fontCascade, const Style::ComputedStyle& style)
 {
-    if (style.textCombine() == TextCombine::None)
+    if (style.textCombine() == TextCombine::None || !renderer.layoutBox().isCombined())
         return { };
-    auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(renderer);
-    if (!combineTextRenderer)
-        return { };
-    return combineTextRenderer->isCombined() ? std::make_optional(combineTextRenderer->combinedTextWidth(fontCascade)) : std::nullopt;
+    // Combined text takes 1em.
+    return fontCascade.size();
 }
 
 ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& fontCascade, unsigned start, unsigned length, float xPos, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow, const Style::ComputedStyle& style) const

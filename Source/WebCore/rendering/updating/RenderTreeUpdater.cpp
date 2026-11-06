@@ -634,7 +634,7 @@ void RenderTreeUpdater::createTextRenderer(Text& textNode, const Style::TextUpda
     ASSERT(!textNode.renderer());
 
     auto& renderTreePosition = this->renderTreePosition();
-    auto textRenderer = textNode.createTextRenderer(renderTreePosition.parent().style());
+    auto textRenderer = textNode.createTextRenderer();
 
     renderTreePosition.computeNextSibling(textNode);
 

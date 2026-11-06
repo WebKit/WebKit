@@ -26,12 +26,14 @@
 #include "config.h"
 #include "LayoutIntegrationBoxTreeUpdater.h"
 
+#include "FontCascadeFonts.h"
+#include "FontCascadeInlines.h"
+#include "FontSelector.h"
 #include "FormattingContextBoxIterator.h"
 #include "LayoutElementBox.h"
 #include "RenderBlock.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockFlowInlines.h"
-#include "RenderCombineText.h"
 #include "RenderCounter.h"
 #include "RenderElementInlines.h"
 #include "RenderGlyph.h"
@@ -43,6 +45,7 @@
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "TextUtil.h"
+#include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(TREE_DEBUGGING)
 #include "LayoutIntegrationLineLayout.h"
@@ -103,15 +106,92 @@ static bool synthesizesGlyph(const RenderText& textRenderer)
     return false;
 }
 
+static constexpr float textCombineMargin = 1.15f; // Allow em + 15% margin.
+
+static std::unique_ptr<Layout::InlineTextBox::CombinedText> computeCombinedText(const RenderText& textRenderer, StringView content)
+{
+    CheckedRef style = textRenderer.style();
+    // text-combine-upright works only in vertical typographic mode.
+    if (style->textCombine() == TextCombine::None || !style->writingMode().isVerticalTypographic())
+        return nullptr;
+
+    RefPtr fontSelector = style->fontCascade().fontSelector();
+    auto fontFor = [&](const FontCascadeDescription& description) {
+        auto font = FontCascade { FontCascadeDescription { description }, style->fontCascade() };
+        font.update(fontSelector.copyRef());
+        font.setLetterSpacing(0);
+        return font;
+    };
+
+    GlyphOverflow glyphOverflow;
+    glyphOverflow.computeBounds = true;
+    auto measure = [&](const FontCascade& font) {
+        glyphOverflow.left = glyphOverflow.top = glyphOverflow.right = glyphOverflow.bottom = 0;
+        if (content.length() == 1 && content[0] == space)
+            return font.widthOfSpaceString();
+        auto run = RenderBlock::constructTextRun(content, style);
+        run.setCharacterScanForCodePath(!textRenderer.canUseSimpleFontCodePath());
+        run.setTabSize(!style->collapseWhiteSpace(), Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
+        return font.width(run, nullptr, &glyphOverflow);
+    };
+    auto combinedText = [&](FontCascade&& font, float width) {
+        return makeUnique<Layout::InlineTextBox::CombinedText>(Layout::InlineTextBox::CombinedText { WTF::move(font), width, glyphOverflow.top, glyphOverflow.bottom });
+    };
+
+    auto description = style->fontCascade().fontDescription();
+    float emWidth = description.usedSize() * textCombineMargin;
+    // Combined text is drawn horizontally.
+    description.setOrientation(FontOrientation::Horizontal);
+
+    auto horizontalFont = fontFor(description);
+    auto width = measure(horizontalFont);
+    if (width <= emWidth)
+        return combinedText(WTF::move(horizontalFont), width);
+
+    // Try compressed glyphs.
+    float bestFitDelta = width - emWidth;
+    auto bestFitDescription = description;
+    static constexpr auto widthVariants = WTF::toArray<FontWidthVariant>({ FontWidthVariant::HalfWidth, FontWidthVariant::ThirdWidth, FontWidthVariant::QuarterWidth });
+    for (auto widthVariant : widthVariants) {
+        // When modifying this, make sure to keep it in sync with FontPlatformData::isForTextCombine()!
+        description.setWidthVariant(widthVariant);
+        auto compressedFont = fontFor(description);
+        auto runWidth = measure(compressedFont);
+        if (runWidth <= emWidth)
+            return combinedText(WTF::move(compressedFont), runWidth);
+        if (auto widthDelta = runWidth - emWidth; widthDelta < bestFitDelta) {
+            bestFitDelta = widthDelta;
+            bestFitDescription = description;
+        }
+    }
+
+    // Then a smaller size.
+    float scaleFactor = std::max(0.4f, emWidth / (emWidth + bestFitDelta));
+    float originalSize = bestFitDescription.usedSize();
+    do {
+        bestFitDescription.setUsedSize(originalSize * scaleFactor);
+        auto scaledFont = fontFor(bestFitDescription);
+        auto runWidth = measure(scaledFont);
+        if (runWidth <= emWidth)
+            return combinedText(WTF::move(scaledFont), runWidth);
+        scaleFactor -= 0.05f;
+    } while (scaleFactor >= 0.4f);
+    return nullptr;
+}
+
+bool BoxTreeUpdater::updateCombinedText(RenderText& textRenderer)
+{
+    CheckedRef inlineTextBox = textRenderer.layoutBox();
+    auto wasCombined = inlineTextBox->isCombined();
+    inlineTextBox->setCombinedText(computeCombinedText(textRenderer, inlineTextBox->content()));
+    return wasCombined != inlineTextBox->isCombined();
+}
+
 void BoxTreeUpdater::updateContent(RenderText& textRenderer)
 {
     ASSERT(textRenderer.parent());
-    auto isCombined = [&] {
-        auto* combineText = dynamicDowncast<RenderCombineText>(textRenderer);
-        return combineText && combineText->isCombined();
-    }();
     CheckedRef style = textRenderer.style();
-    auto content = isCombined ? textRenderer.originalText() : textRenderer.text();
+    auto content = textRenderer.text();
     if (style->textSecurity() != TextSecurity::None)
         content = RenderBlock::updateSecurityDiscCharacters(style, WTF::move(content));
 
@@ -133,7 +213,7 @@ void BoxTreeUpdater::updateContent(RenderText& textRenderer)
 
     CheckedRef inlineTextBox = textRenderer.layoutBox();
     inlineTextBox->setContent(WTF::move(content), contentCharacteristics);
-    inlineTextBox->setIsCombined(isCombined);
+    inlineTextBox->setCombinedText(computeCombinedText(textRenderer, inlineTextBox->content()));
 }
 
 void BoxTreeUpdater::updateSimplifiedMeasuring(RenderText& textRenderer)

@@ -46,7 +46,6 @@
 #include "PlatformRenderTheme.h"
 #include "RenderBlock.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RenderCombineText.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderGlyph.h"
@@ -197,10 +196,7 @@ TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineCon
     , m_paintOffset(paintOffset)
     , m_paintRect(computePaintRect(paintOffset))
     , m_isFirstLine(m_textBox.displayBox().isFirstFormattedLine())
-    , m_isCombinedText([&] {
-        auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(m_renderer.get());
-        return combineTextRenderer && combineTextRenderer->isCombined();
-    }())
+    , m_isCombinedText(m_renderer->layoutBox().isCombined())
     , m_isPrinting(m_document->printing())
     , m_haveSelection(computeHaveSelection())
 {
@@ -777,7 +773,7 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
         (!markedText.style.textShadow.isNone() && !m_style->appleColorFilter().isNone()) ? m_style->appleColorFilter() : Style::AppleColorFilter::none(),
         emphasisMark,
         emphasisMarkOffset,
-        m_isCombinedText ? &downcast<RenderCombineText>(m_renderer.get()) : nullptr
+        m_isCombinedText
     };
 
     bool isTransparentMarkedText = isTransparent(markedText);
@@ -1757,7 +1753,7 @@ bool TextBoxPainter::computeHaveSelection() const
 const FontCascade& TextBoxPainter::fontCascade() const
 {
     if (m_isCombinedText)
-        return downcast<RenderCombineText>(m_renderer.get()).textCombineFont();
+        return m_renderer->layoutBox().combinedText().font;
 
     return m_style->fontCascade();
 }
@@ -1773,8 +1769,11 @@ FloatPoint TextBoxPainter::textOriginFromPaintRect(const FloatRect& paintRect) c
     auto textOrigin = FloatPoint { paintRect.x(), paintRect.y() + ascent };
 
     if (m_isCombinedText) {
-        if (auto newOrigin = downcast<RenderCombineText>(m_renderer.get()).computeTextOrigin(paintRect))
-            textOrigin = newOrigin.value();
+        // Visually center the combined text within the paint rect.
+        auto& textCombine = m_renderer->layoutBox().combinedText();
+        textOrigin = paintRect.minXMaxYCorner();
+        textOrigin.move((paintRect.size().transposedSize() - FloatSize { textCombine.width, textCombine.ascent + textCombine.descent }) / 2);
+        textOrigin.move(0, textCombine.ascent);
     }
 
     if (writingMode().isHorizontal())

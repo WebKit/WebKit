@@ -68,10 +68,6 @@ OptionSet<Change> determineChanges(const Style::ComputedStyle& s1, const Style::
             return true;
         if (columnSpanNeedsNewRenderer())
             return true;
-        // When text-combine is on, we use RenderCombineText, otherwise RenderText.
-        // https://bugs.webkit.org/show_bug.cgi?id=55069
-        if ((s1.textCombine() != TextCombine::None) != (s2.textCombine() != TextCombine::None))
-            return true;
         if (s1.content() != s2.content())
             return true;
         return false;

@@ -215,8 +215,8 @@ public:
 
     bool canUseSimplifiedTextMeasuring() const { return layoutBox().canUseSimplifiedContentMeasuring(); }
 
-    // The layout box content is the rendered text, or the original text when combined, with the secure text disc swapped
-    // on Cocoa platforms. In a live inline formatting context it changes only together with the inline items.
+    // The layout box content is the rendered text, with the secure text disc swapped on Cocoa platforms. In a live inline
+    // formatting context it changes only together with the inline items.
     void updateLayoutBoxContent();
     bool layoutBoxContentNeedsUpdate() const { return m_layoutBoxContentNeedsUpdate; }
     void updateLayoutBoxContentIfNeeded()

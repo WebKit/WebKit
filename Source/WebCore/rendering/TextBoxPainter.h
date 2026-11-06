@@ -39,7 +39,6 @@ namespace WebCore {
 
 class Color;
 class Document;
-class RenderCombineText;
 class RenderText;
 struct CompositionUnderline;
 struct MarkedText;

@@ -132,7 +132,6 @@ public:
 #endif
         BlockFlow,
         Button,
-        CombineText,
         Counter,
         DeprecatedFlexibleBox,
         EmbeddedObject,
@@ -1065,7 +1064,6 @@ public:
     inline bool isRenderFlexibleBox() const { return m_typeFlags.contains(TypeFlag::IsFlexibleBox); }
     inline bool isFlexibleBoxIncludingDeprecated() const { return isRenderFlexibleBox() || isRenderDeprecatedFlexibleBox(); }
 
-    bool isRenderCombineText() const { return type() == Type::CombineText; }
 
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;

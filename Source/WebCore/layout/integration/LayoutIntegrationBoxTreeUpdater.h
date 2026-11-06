@@ -61,6 +61,8 @@ public:
     static void updateContent(RenderText&);
     // Simplified measuring also depends on the style.
     static void updateSimplifiedMeasuring(RenderText&);
+    // So does the text-combine-upright font. Returns whether the text became combined or stopped being combined.
+    static bool updateCombinedText(RenderText&);
 
     // From the renderer type, which is set up before the layout box.
     static Layout::Box::ElementAttributes elementAttributes(const RenderObject&);

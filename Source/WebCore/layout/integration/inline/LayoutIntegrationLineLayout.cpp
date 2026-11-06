@@ -1804,7 +1804,11 @@ bool LineLayout::updateTextContent(RenderText& textRenderer, std::optional<size_
         return false;
     }
 
+    auto wasCombined = textRenderer.layoutBox().isCombined();
     textRenderer.updateLayoutBoxContent();
+    // Combined text is a single inline item.
+    if (wasCombined != textRenderer.layoutBox().isCombined())
+        return false;
 
     if (flow().isRenderSVGText()) {
         // SVG text is always fully laid out.

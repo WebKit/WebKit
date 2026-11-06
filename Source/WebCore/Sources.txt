@@ -3073,7 +3073,6 @@ rendering/RenderBlockFlow.cpp @header:RenderStyleGetters @cost:8
 rendering/RenderBox.cpp @header:RenderStyleGetters @cost:10
 rendering/RenderBoxModelObject.cpp @header:RenderStyleGetters @cost:7
 rendering/RenderButton.cpp @header:RenderStyleGetters @cost:7
-rendering/RenderCombineText.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderCounter.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderDeprecatedFlexibleBox.cpp @header:RenderStyleGetters @cost:7
 rendering/RenderElement.cpp @header:RenderStyleGetters @cost:12
