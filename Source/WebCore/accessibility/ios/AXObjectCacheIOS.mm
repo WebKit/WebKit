@@ -244,6 +244,24 @@ void AXObjectCache::postPlatformPossibleFormValidationErrorNotification(Accessib
     }
 }
 
+void AXObjectCache::postPlatformSyncNotification(AccessibilityObject& object, const SyncNotificationData& syncData)
+{
+    NSDictionary *userInfo = @{ NSAccessibilitySyncNotificationHandleKey: syncData.handle.createNSString().get() };
+
+    NSError *error = nil;
+    RetainPtr data = [NSKeyedArchiver archivedDataWithRootObject:userInfo requiringSecureCoding:YES error:&error];
+
+    // The wrapper must outlive the call chain. accessibilityOverrideProcessNotification re-enters WebKit and can
+    // detach the AccessibilityObject, clearing m_wrapper mid-call.
+    RetainPtr wrapper = object.wrapper();
+    if (data)
+        [wrapper accessibilityOverrideProcessNotification:NSAccessibilitySyncNotification notificationData:data.get()];
+
+    // For tests, also call the wrapper's accessibilityPostedNotification.
+    if (gShouldRepostNotificationsForTests) [[unlikely]]
+        [wrapper accessibilityPostedNotification:NSAccessibilitySyncNotification userInfo:userInfo];
+}
+
 void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent&, const VisibleSelection&)
 {
     if (object)

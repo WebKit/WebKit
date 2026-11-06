@@ -2651,6 +2651,19 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElementMac::endTextMarkerForBound
     return nullptr;
 }
 
+bool AccessibilityUIElementMac::postSyncNotification(JSStringRef handle)
+{
+    bool result = false;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    AccessibilityUIElementMac::s_controller->executeOnAXThreadAndWait([handle = [NSString stringWithJSStringRef:handle], this, &result] {
+        result = [[m_element accessibilityAttributeValue:@"AXPostSyncNotification" forParameter:handle] boolValue];
+    });
+    END_AX_OBJC_EXCEPTIONS
+
+    return result;
+}
+
 bool AccessibilityUIElementMac::replaceTextInRange(JSStringRef string, int location, int length)
 {
     bool result = false;

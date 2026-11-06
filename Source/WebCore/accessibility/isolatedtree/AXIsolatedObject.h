@@ -530,6 +530,7 @@ private:
     void scrollToGlobalPoint(IntPoint&&) const final;
     bool replaceTextInRange(const String&, const CharacterRange&) final;
     bool insertText(const String&) final;
+    bool postSyncNotification(const String& handle) final;
     bool press() final;
     bool syncPress() final;
 

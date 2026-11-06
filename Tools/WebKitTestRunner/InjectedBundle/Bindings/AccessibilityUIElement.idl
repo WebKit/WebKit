@@ -275,6 +275,8 @@ interface AccessibilityUIElement {
     undefined resetSelectedTextMarkerRange();
     boolean replaceTextInRange(DOMString string, long position, long length);
     boolean insertText(DOMString text);
+    // Asks for an AXSyncNotification carrying |handle|, posted after every notification for work done before this call.
+    boolean postSyncNotification(DOMString handle);
     AccessibilityTextMarkerRange textInputMarkedTextMarkerRange();
     AccessibilityTextMarker startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange range);
     AccessibilityTextMarker endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange range);

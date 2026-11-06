@@ -587,6 +587,7 @@ public:
     void setValueIgnoringResult(const String& value) final { setValue(value); }
     bool replaceTextInRange(const String&, const CharacterRange&) final;
     bool insertText(const String&) final;
+    bool postSyncNotification(const String& handle) final;
 
     bool setValue(float) override { return false; }
     void setValueIgnoringResult(float value) final { setValue(value); }

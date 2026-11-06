@@ -464,6 +464,18 @@ void AXObjectCache::postPlatformPossibleFormValidationErrorNotification(Accessib
         [wrapper accessibilityPostedNotification:NSAccessibilityPossibleFormValidationErrorNotification userInfo:userInfo.get()];
 }
 
+void AXObjectCache::postPlatformSyncNotification(AccessibilityObject& object, const SyncNotificationData& syncData)
+{
+    AX_ASSERT(isMainThread());
+
+    RetainPtr userInfo = @{ NSAccessibilitySyncNotificationHandleKey: syncData.handle.createNSString().get() };
+    RetainPtr wrapper = object.wrapper();
+    NSAccessibilityPostNotificationWithUserInfo(wrapper.get(), NSAccessibilitySyncNotification, userInfo.get());
+
+    if (gShouldRepostNotificationsForTests) [[unlikely]]
+        [wrapper accessibilityPostedNotification:NSAccessibilitySyncNotification userInfo:userInfo.get()];
+}
+
 void AXObjectCache::onDocumentRenderTreeCreation(const Document& document)
 {
     m_deferredDocumentsWithNewRenderTrees.append(document);

@@ -335,6 +335,7 @@ public:
     virtual void resetSelectedTextMarkerRange();
     virtual bool replaceTextInRange(JSStringRef, int position, int length);
     virtual bool insertText(JSStringRef);
+    virtual bool postSyncNotification(JSStringRef handle);
     virtual RefPtr<AccessibilityTextMarkerRange> textInputMarkedTextMarkerRange() const;
     virtual RefPtr<AccessibilityTextMarker> startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*);
     virtual RefPtr<AccessibilityTextMarker> endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*);

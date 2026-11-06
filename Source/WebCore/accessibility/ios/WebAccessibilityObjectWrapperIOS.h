@@ -75,6 +75,11 @@ enum class IsAccessibilityElement : uint8_t { No, Yes, Unknown };
 // This is called by the Accessibility system to relay back to the chrome.
 - (void)handleNotificationRelayToChrome:(NSString *)notificationName notificationData:(NSData *)notificationData;
 
+// Asks for AXSyncNotification to be posted with |handle| once every notification for work done before this call
+// has been posted. The notification is relayed through accessibilityOverrideProcessNotification:notificationData:,
+// with the handle archived under AXSyncNotificationHandle. Returns NO if the handle is not valid.
+- (BOOL)accessibilityPostSyncNotification:(NSString *)handle;
+
 // While a possible form validation error is being processed, the fields of the form it is about, in page order.
 - (NSArray *)accessibilityFormValidationFields;
 - (void)_setAccessibilityFormValidationFields:(NSArray *)fields;

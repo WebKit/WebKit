@@ -2705,6 +2705,14 @@ static RenderObject* rendererForView(WAKView* view)
     return protect(self.axBackingObject)->replaceTextInRange(string, range);
 }
 
+- (BOOL)accessibilityPostSyncNotification:(NSString *)handle
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return protect(self.axBackingObject)->postSyncNotification(handle);
+}
+
 - (BOOL)accessibilityInsertText:(NSString *)text
 {
     if (![self _prepareAccessibilityCall])

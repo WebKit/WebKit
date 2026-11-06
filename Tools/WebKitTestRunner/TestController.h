@@ -675,6 +675,8 @@ private:
     WKRetainPtr<WKTypeRef> handleAXSearchPredicate(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXElementAtPosition(WKDictionaryRef);
     void handleAXPerformAction(WKDictionaryRef);
+    WKRetainPtr<WKTypeRef> handleAXReplaceRangeWithText(WKDictionaryRef);
+    WKRetainPtr<WKTypeRef> handleAXPostSyncNotification(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXAddNotificationListener();
     void handleAXRemoveNotificationListener();
     bool observeAXApplicationForElement(CFTypeRef);

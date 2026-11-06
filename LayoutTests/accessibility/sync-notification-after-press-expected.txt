@@ -1,0 +1,12 @@
+Tests that AXSyncNotification requested after AXPress is posted after the notifications for the DOM changes the click handler made.
+
+PASS: accessibilityController.addNotificationListener(notificationCallback) === true
+PASS: axButton.postSyncNotification('after-press') === true
+PASS: document.getElementById('field').value === 'pressed'
+PASS: fieldValueChangesBeforeSync() > 0 === true
+PASS: fieldValueAtSync === 'AXValue: pressed'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ Press

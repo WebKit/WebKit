@@ -2979,6 +2979,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
         NSAccessibilitySelectTextWithCriteriaParameterizedAttribute,
         NSAccessibilitySearchTextWithCriteriaParameterizedAttribute,
         NSAccessibilityTextOperationParameterizedAttribute,
+        NSAccessibilityPostSyncNotificationParameterizedAttribute,
         NSAccessibilityTextMarkerForIndexAttribute,
         NSAccessibilityTextMarkerIsValidAttribute,
         NSAccessibilityIndexForTextMarkerAttribute,
@@ -3667,6 +3668,7 @@ struct ParameterizedAttributeContext {
     RetainPtr<NSArray> array;
     RefPtr<AXCoreObject> uiElement;
     RetainPtr<NSNumber> number;
+    RetainPtr<NSString> string;
     NSRange range { 0, 0 };
     bool rangeSet { false };
     bool pointSet { false };
@@ -3874,6 +3876,13 @@ static id handleTextOperationAttribute(WebAccessibilityObjectWrapper* wrapper, A
     if (operationResult.isEmpty())
         return nil;
     return createNSArray(operationResult).autorelease();
+}
+
+static id handlePostSyncNotificationAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject, const ParameterizedAttributeContext& context)
+{
+    if (!context.string || !backingObject.postSyncNotification(context.string.get()))
+        return nil;
+    return @YES;
 }
 
 static id handleRangesForSearchPredicateAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject, const ParameterizedAttributeContext& context)
@@ -4408,6 +4417,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, ParameterizedAttributeHan
         { NSAccessibilitySelectTextWithCriteriaParameterizedAttribute, { handleSelectTextWithCriteriaAttribute } },
         { NSAccessibilitySearchTextWithCriteriaParameterizedAttribute, { handleSearchTextWithCriteriaAttribute } },
         { NSAccessibilityTextOperationParameterizedAttribute, { handleTextOperationAttribute } },
+        { NSAccessibilityPostSyncNotificationParameterizedAttribute, { handlePostSyncNotificationAttribute } },
         { NSAccessibilityRangesForSearchPredicateParameterizedAttribute, { handleRangesForSearchPredicateAttribute } },
         { NSAccessibilityEndTextMarkerForBoundsAttribute, { handleEndTextMarkerForBoundsAttribute } },
         { NSAccessibilityStartTextMarkerForBoundsAttribute, { handleStartTextMarkerForBoundsAttribute } },
@@ -4500,6 +4510,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
             return nil;
     } else if ([parameter isKindOfClass:[NSNumber class]])
         context.number = parameter;
+    else if ([parameter isKindOfClass:[NSString class]])
+        context.string = parameter;
     else if ([parameter isKindOfClass:[NSArray class]])
         context.array = parameter;
     else if ([parameter isKindOfClass:[NSDictionary class]])
