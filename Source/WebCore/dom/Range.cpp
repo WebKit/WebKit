@@ -32,6 +32,7 @@
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DocumentFragment.h"
+#include "DocumentQuirks.h"
 #include "DocumentType.h"
 #include "ElementInlines.h"
 #include "Event.h"
@@ -99,8 +100,13 @@ Node* Range::commonAncestorContainer() const
 
 void Range::updateAssociatedSelection()
 {
-    if (m_isAssociatedWithSelection)
-        m_ownerDocument->selection().updateFromAssociatedLiveRange();
+    if (!m_isAssociatedWithSelection)
+        return;
+
+    OptionSet<FrameSelection::SetSelectionOption> options;
+    if (m_ownerDocument->quirks().shouldNotMoveFocusWhenMutatingSelectionRange())
+        options.add(FrameSelection::SetSelectionOption::DoNotSetFocus);
+    m_ownerDocument->selection().updateFromAssociatedLiveRange(options);
 }
 
 void Range::updateAssociatedHighlight()

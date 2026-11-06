@@ -3247,7 +3247,7 @@ void FrameSelection::associateLiveRange(Range& liveRange)
     updateFromAssociatedLiveRange();
 }
 
-void FrameSelection::updateFromAssociatedLiveRange()
+void FrameSelection::updateFromAssociatedLiveRange(OptionSet<SetSelectionOption> additionalOptions)
 {
     ASSERT(m_associatedLiveRange);
     if (!containsEndpoints(m_document, protect(*m_associatedLiveRange)))
@@ -3257,7 +3257,7 @@ void FrameSelection::updateFromAssociatedLiveRange()
         Ref associatedLiveRange = *m_associatedLiveRange;
         auto start = makeContainerOffsetPosition(protect(associatedLiveRange->startContainer()), associatedLiveRange->startOffset());
         auto end = makeContainerOffsetPosition(protect(associatedLiveRange->endContainer()), associatedLiveRange->endOffset());
-        setSelection({ start, end }, defaultSetSelectionOptions() | SetSelectionOption::MaintainLiveRange);
+        setSelection({ start, end }, defaultSetSelectionOptions() | additionalOptions | SetSelectionOption::MaintainLiveRange);
     }
 }
 

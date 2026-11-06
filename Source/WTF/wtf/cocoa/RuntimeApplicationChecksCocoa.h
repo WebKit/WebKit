@@ -225,6 +225,7 @@ WTF_EXPORT_PRIVATE bool isAppleWebApp();
 WTF_EXPORT_PRIVATE bool isDataActivation();
 WTF_EXPORT_PRIVATE bool isEssentialSkeleton();
 WTF_EXPORT_PRIVATE bool isFeedly();
+WTF_EXPORT_PRIVATE bool isGmail();
 WTF_EXPORT_PRIVATE bool isHimalaya();
 WTF_EXPORT_PRIVATE bool isHoYoLAB();
 WTF_EXPORT_PRIVATE bool isMailCompositionService();

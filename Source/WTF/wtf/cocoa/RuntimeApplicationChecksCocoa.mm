@@ -655,6 +655,12 @@ bool IOSApplication::isFeedly()
     return isFeedly;
 }
 
+bool IOSApplication::isGmail()
+{
+    static bool isGmail = applicationBundleIsEqualTo("com.google.Gmail"_s);
+    return isGmail;
+}
+
 bool IOSApplication::isEssentialSkeleton()
 {
     static bool isEssentialSkeleton = applicationBundleIsEqualTo("com.3d4medical.EssentialSkeleton"_s);

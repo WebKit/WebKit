@@ -1115,6 +1115,17 @@ bool Quirks::needsPointerTouchCompatibility(const Element& target) const
 
 #endif
 
+// Gmail app rdar://183372156
+bool Quirks::shouldNotMoveFocusWhenMutatingSelectionRange() const
+{
+#if PLATFORM(IOS_FAMILY)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+    return WTF::IOSApplication::isGmail();
+#else
+    return false;
+#endif
+}
+
 // facebook.com rdar://141103350
 bool Quirks::needsFacebookStoriesCreationFormQuirk(const Element& element, const Style::ComputedStyle& computedStyle) const
 {

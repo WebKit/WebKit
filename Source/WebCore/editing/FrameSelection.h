@@ -300,7 +300,7 @@ public:
     RefPtr<Range> associatedLiveRange();
     void associateLiveRange(Range&);
     void disassociateLiveRange();
-    void updateFromAssociatedLiveRange();
+    void updateFromAssociatedLiveRange(OptionSet<SetSelectionOption> = { });
     void updateOrDisassociateLiveRange(bool shouldMaintainLiveRange);
 
     CaretAnimator& caretAnimator() { return m_caretAnimator.get(); }
