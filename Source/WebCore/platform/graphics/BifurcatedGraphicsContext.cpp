@@ -332,10 +332,10 @@ void BifurcatedGraphicsContext::clipPath(const Path& path, WindRule windRule)
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
+void BifurcatedGraphicsContext::clipToNativeImage(const NativeImage& nativeImage, const FloatRect& destRect)
 {
-    m_primaryContext.clipToImageBuffer(imageBuffer, destRect);
-    m_secondaryContext.clipToImageBuffer(imageBuffer, destRect);
+    m_primaryContext.clipToNativeImage(nativeImage, destRect);
+    m_secondaryContext.clipToNativeImage(nativeImage, destRect);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }

@@ -187,8 +187,10 @@ void RemoteImageBuffer::copyNativeImage(RenderingResourceIdentifier imageIdentif
 {
     assertIsCurrent(workQueue());
     RefPtr image = m_imageBuffer->copyNativeImage();
-    // FIXME: Handle OOM.
-    MESSAGE_CHECK(image, "OOM");
+    // The buffer may have failed to allocate, or the copy may fail.
+    if (!image)
+        image = RemoteRenderingBackend::createPlaceholderNativeImage();
+    MESSAGE_CHECK(image, "NativeImage could not be created");
     bool success = m_renderingBackend->remoteResourceCache().cacheNativeImage(imageIdentifier, image.releaseNonNull());
     MESSAGE_CHECK(success, "NativeImage already exists");
 }

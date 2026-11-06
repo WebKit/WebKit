@@ -114,7 +114,7 @@ protected:
     WEBCORE_EXPORT void updateStateForClipOut(const FloatRect&);
     WEBCORE_EXPORT void updateStateForClipOut(const Path&);
     WEBCORE_EXPORT void updateStateForClipOutRoundedRect(const FloatRoundedRect&);
-    WEBCORE_EXPORT void updateStateForClipToImageBuffer(const FloatRect&);
+    WEBCORE_EXPORT void updateStateForClipToImage(const FloatRect&);
     NODELETE WEBCORE_EXPORT void updateStateForApplyDeviceScaleFactor(float);
     WEBCORE_EXPORT void updateStateForBeginPage();
     WEBCORE_EXPORT bool decomposeDrawGlyphsIfNeeded(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& anchorPoint, FontSmoothingMode);

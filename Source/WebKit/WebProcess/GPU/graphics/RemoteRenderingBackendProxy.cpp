@@ -337,6 +337,17 @@ std::unique_ptr<RemoteSerializedImageBufferProxy> RemoteRenderingBackendProxy::m
     return result;
 }
 
+Ref<RemoteNativeImageProxy> RemoteRenderingBackendProxy::sinkIntoNativeImage(RemoteImageBufferProxy& imageBuffer)
+{
+    auto identifier = imageBuffer.renderingResourceIdentifier();
+    bool success = m_imageBuffers.remove(identifier);
+    ASSERT_UNUSED(success, success);
+    bool hasAlpha = !pixelFormatIsOpaque(imageBuffer.pixelFormat());
+    Ref nativeImage = m_remoteResourceCacheProxy->createNativeImage(imageBuffer.backendSize(), imageBuffer.colorSpace().platformColorSpace(), hasAlpha);
+    send(Messages::RemoteRenderingBackend::SinkImageBufferIntoNativeImage(identifier, nativeImage->renderingResourceIdentifier()));
+    return nativeImage;
+}
+
 // The pixels exist in the GPU process, so this process cannot allocate a backing
 // store here: it either re-adopts the one it handed over, or stands in for the
 // GPU process's one with a backend that has no pixels of its own.

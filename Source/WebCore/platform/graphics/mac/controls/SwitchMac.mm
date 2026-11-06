@@ -34,6 +34,7 @@
 #import "ImageBuffer.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
+#import "NativeImage.h"
 #import "SwitchMacUtilities.h"
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
@@ -64,7 +65,7 @@ FloatRect SwitchMac::rectForBounds(const FloatRect& bounds, const ControlStyle&)
     return SwitchMacUtilities::rectForBounds(bounds);
 }
 
-static RefPtr<ImageBuffer> createTrackStateImage(GraphicsContext& context, RefPtr<ImageBuffer> trackMaskImage, FloatSize trackRectSize, float deviceScaleFactor, const ControlStyle& style, bool isOn, bool isInlineFlipped, bool isVertical, bool isEnabled, bool isPressed, bool isInActiveWindow, bool needsOnOffLabels, NSString *coreUISize)
+static RefPtr<ImageBuffer> createTrackStateImage(GraphicsContext& context, const NativeImage& trackMaskImage, FloatSize trackRectSize, float deviceScaleFactor, const ControlStyle& style, bool isOn, bool isInlineFlipped, bool isVertical, bool isEnabled, bool isPressed, bool isInActiveWindow, bool needsOnOffLabels, NSString *coreUISize)
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
@@ -85,7 +86,7 @@ static RefPtr<ImageBuffer> createTrackStateImage(GraphicsContext& context, RefPt
     CGContextStateSaver stateSaver(cgContext.get());
 
     // FIXME: clipping in context() might not always be accurate for context().platformContext().
-    trackImage->context().clipToImageBuffer(*trackMaskImage, drawingTrackRect);
+    trackImage->context().clipToNativeImage(trackMaskImage, drawingTrackRect);
 
     [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:cgContext.get() options:@{
         (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchFill,
@@ -173,7 +174,7 @@ void SwitchMac::drawTrack(GraphicsContext& context, const FloatRoundedRect& bord
         return;
 
     auto createTrackImage = [&](bool isOn) {
-        return createTrackStateImage(context, maskImage, inflatedTrackRect.size(), deviceScaleFactor, style, isOn, isInlineFlipped, isVertical, isEnabled, isPressed, isInActiveWindow, needsOnOffLabels, coreUISize);
+        return createTrackStateImage(context, *maskImage, inflatedTrackRect.size(), deviceScaleFactor, style, isOn, isInlineFlipped, isVertical, isEnabled, isPressed, isInActiveWindow, needsOnOffLabels, coreUISize);
     };
 
     RefPtr<ImageBuffer> trackImageBuffer;
@@ -271,7 +272,7 @@ void SwitchMac::drawThumb(GraphicsContext& context, const FloatRoundedRect& bord
         CGContextStateSaver stateSaverTrack(cgContext);
 
         // FIXME: clipping in context() might not always be accurate for context().platformContext().
-        thumbImage->context().clipToImageBuffer(*maskImage, NSMakeRect(0, 0, inflatedTrackRect.width(), inflatedTrackRect.height()));
+        thumbImage->context().clipToNativeImage(*maskImage, NSMakeRect(0, 0, inflatedTrackRect.width(), inflatedTrackRect.height()));
 
         [[NSAppearance currentDrawingAppearance] _drawInRect:drawingThumbRect context:cgContext options:@{
             (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchKnob,

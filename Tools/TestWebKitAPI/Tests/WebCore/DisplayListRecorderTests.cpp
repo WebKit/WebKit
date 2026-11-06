@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "Helpers/GraphicsTestUtilities.h"
 #include "Helpers/Test.h"
 #include "Helpers/WebCoreTestUtilities.h"
 #include <JavaScriptCore/InitializeThreading.h>
@@ -359,11 +360,11 @@ struct ChangeAntialiasBeforeClipPath {
     }
 };
 
-struct ChangeAntialiasBeforeClipToImageBuffer {
+struct ChangeAntialiasBeforeClipToNativeImage {
     void operator()(WebCore::GraphicsContext& c)
     {
         c.setShouldAntialias(false);
-        c.clipToImageBuffer(createTestImageBuffer().get(), { 0, 1, 77, 99 });
+        c.clipToNativeImage(*createTestImageBuffer()->copyNativeImage(), { 0, 1, 77, 99 });
     }
 
     static String description()
@@ -372,7 +373,7 @@ struct ChangeAntialiasBeforeClipToImageBuffer {
 (set-state
   (change-flags [should-antialias])
   (should-antialias 0))
-(clip-to-image-buffer
+(clip-to-native-image
   (dest-rect at (0,1) size 77x99)))DL"_s;
     }
 };
@@ -684,7 +685,7 @@ struct SetDefaultShadowsIgnoreTransforms {
 using AllOperations = testing::Types<NoCommands, ChangeAntialias, ChangeAntialiasBeforeSave,
     ChangeAntialiasBeforeAndAfterSave, ChangeAntialiasInEmptySaveRestore, DrawSystemImage, ChangeAntialiasBeforeClipRect,
     ChangeAntialiasBeforeClipOutRect, ChangeAntialiasBeforeClipOutPath, ChangeAntialiasBeforeClipPath,
-    ChangeAntialiasBeforeClipToImageBuffer, TrivialTranslate, TrivialScale, TrivialRotate, ResetClipRect,
+    ChangeAntialiasBeforeClipToNativeImage, TrivialTranslate, TrivialScale, TrivialRotate, ResetClipRect,
     SetDefaultFillBrush, SetDefaultFillRule, SetDefaultStrokeBrush, SetDefaultStrokeThickness, SetDefaultStrokeStyle,
     SetDefaultCompositeMode, SetDefaultDropShadow, SetDefaultStyle, SetDefaultAlpha, SetDefaultImageInterpolationQuality,
     SetDefaultTextDrawingMode, SetDefaultShouldAntialias, SetDefaultShouldSmoothFonts, SetDefaultShouldSubpixelQuantizeFonts,
@@ -730,6 +731,37 @@ TYPED_TEST_P(DisplayListRecorderResultStateTest, StateThroughDisplayListIsPreser
 REGISTER_TYPED_TEST_SUITE_P(DisplayListRecorderResultStateTest, StateThroughDisplayListIsPreserved);
 
 INSTANTIATE_TYPED_TEST_SUITE_P(DisplayListRecorderTest, DisplayListRecorderResultStateTest, AllOperations);
+
+// Tests that a recorded clip to a native image clips the replayed drawing, and that the recording
+// does not need the caller to keep the image alive.
+TEST(DisplayListRecorderTest, ClipToNativeImageClipsReplayedDrawing)
+{
+    constexpr WebCore::FloatSize size { 4, 1 };
+    auto createBuffer = [&] {
+        return WebCore::ImageBuffer::create(size, WebCore::RenderingMode::Unaccelerated, WebCore::RenderingPurpose::Unspecified, 1, WebCore::ColorSpace::SRGB(), WebCore::PixelFormat::BGRA8);
+    };
+    RefPtr mask = createBuffer();
+    ASSERT_TRUE(mask);
+    mask->context().fillRect({ 0, 0, 2, 1 }, WebCore::Color::black);
+    RefPtr maskImage = WebCore::ImageBuffer::sinkIntoNativeImage(WTF::move(mask));
+    ASSERT_TRUE(maskImage);
+
+    Ref recorder = WebCore::DisplayList::RecorderImpl::create(WebCore::FloatRect { { }, size });
+    WebCore::GraphicsContext& context = recorder;
+    context.clipToNativeImage(*maskImage, { { }, size });
+    context.fillRect({ { }, size }, WebCore::Color::green);
+    Ref displayList = recorder->takeDisplayList();
+
+    maskImage = nullptr;
+
+    RefPtr target = createBuffer();
+    ASSERT_TRUE(target);
+    target->context().drawDisplayList(displayList);
+    EXPECT_TRUE(imageBufferPixelIs(WebCore::Color::green, *target, { 0, 0 }));
+    EXPECT_TRUE(imageBufferPixelIs(WebCore::Color::green, *target, { 1, 0 }));
+    EXPECT_TRUE(imageBufferPixelIs(WebCore::Color::transparentBlack, *target, { 2, 0 }));
+    EXPECT_TRUE(imageBufferPixelIs(WebCore::Color::transparentBlack, *target, { 3, 0 }));
+}
 
 #if USE(CORE_TEXT)
 TEST(DisplayListRecorderTest, DeconstructedEmojiGlyphsShareNativeImages)

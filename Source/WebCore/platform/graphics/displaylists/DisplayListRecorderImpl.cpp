@@ -172,10 +172,10 @@ void RecorderImpl::clipOutRoundedRect(const FloatRoundedRect& clipRect)
     m_items.append(ClipOutRoundedRect(clipRect));
 }
 
-void RecorderImpl::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
+void RecorderImpl::clipToNativeImage(const NativeImage& image, const FloatRect& destinationRect)
 {
-    updateStateForClipToImageBuffer(destinationRect);
-    m_items.append(ClipToImageBuffer(imageBuffer, destinationRect));
+    updateStateForClipToImage(destinationRect);
+    m_items.append(ClipToNativeImage(image, destinationRect));
 }
 
 void RecorderImpl::clipOut(const Path& path)

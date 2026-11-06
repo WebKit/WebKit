@@ -34,7 +34,9 @@
 #include "FloatRoundedRect.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "InlineIteratorInlineBox.h"
+#include "NativeImage.h"
 #include "ObjectSizeNegotiation.h"
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
@@ -434,7 +436,10 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
             maskContext.translate(-transparencyLayerBounds.location());
 
             paintFunction(maskContext, borderRect, transparencyLayerBounds);
-            context.clipToImageBuffer(*maskImage, transparencyLayerBounds);
+            RefPtr maskNativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(maskImage));
+            if (!maskNativeImage)
+                return;
+            context.clipToNativeImage(*maskNativeImage, transparencyLayerBounds);
         } else {
             paintFunction(context, borderRect, transparencyLayerBounds);
             context.setCompositeOperation(CompositeOperator::SourceIn);

@@ -21,6 +21,7 @@
 
 #include "ImageBuffer.h"
 #include "LegacyRenderSVGResourceContainer.h"
+#include "NativeImage.h"
 #include "SVGUnitTypes.h"
 #include <wtf/EnumeratedArray.h>
 #include <wtf/HashMap.h>
@@ -47,13 +48,13 @@ struct ClipperData {
     bool invalidate(const Inputs& inputs)
     {
         if (this->inputs != inputs) {
-            imageBuffer = nullptr;
+            image = nullptr;
             this->inputs = inputs;
         }
-        return !imageBuffer;
+        return !image;
     }
 
-    RefPtr<ImageBuffer> imageBuffer;
+    RefPtr<NativeImage> image;
     Inputs inputs;
 };
 

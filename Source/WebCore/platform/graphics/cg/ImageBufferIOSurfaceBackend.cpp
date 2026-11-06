@@ -201,6 +201,9 @@ void ImageBufferIOSurfaceBackend::prepareForDisplay()
 
 ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
 {
+    // sinkIntoNativeImage() moves the surface into the image.
+    if (!m_surface)
+        return;
     ensureNativeImagesHaveCopiedBackingStore();
     releaseGraphicsContext();
     IOSurface::moveToPool(WTF::move(m_surface), m_ioSurfacePool.get());

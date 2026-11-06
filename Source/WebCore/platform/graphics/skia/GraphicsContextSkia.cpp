@@ -736,27 +736,27 @@ IntRect GraphicsContextSkia::clipBounds() const
     return enclosingIntRect(m_canvas.getLocalClipBounds());
 }
 
-void GraphicsContextSkia::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
+void GraphicsContextSkia::clipToNativeImage(const NativeImage& nativeImage, const FloatRect& destRect)
 {
-    if (auto nativeImage = nativeImageForDrawing(buffer)) {
-        auto image = nativeImage->platformImage();
-        if (m_threadSafeGrContext)
-            image = SkiaUtilities::createPromiseImageIfNeeded(image, m_threadSafeGrContext);
+    auto image = nativeImage.platformImage();
+    if (!image)
+        return;
+    if (m_threadSafeGrContext)
+        image = SkiaUtilities::createPromiseImageIfNeeded(image, m_threadSafeGrContext);
 
-        auto shader = image->makeShader(SkTileMode::kDecal, SkTileMode::kDecal, { }, SkMatrix::Translate(SkFloatToScalar(destRect.x()), SkFloatToScalar(destRect.y())));
+    auto shader = image->makeShader(SkTileMode::kDecal, SkTileMode::kDecal, { }, SkMatrix::Translate(SkFloatToScalar(destRect.x()), SkFloatToScalar(destRect.y())));
 
-        recordClipIfNeeded({
-            .type = ClipRecord::Type::Shader,
-            .matrix = m_canvas.getTotalMatrix(),
-            .op = SkClipOp::kIntersect,
-            .antialias = false,
-            .rect = { },
-            .path = { },
-            .shader = shader,
-        });
+    recordClipIfNeeded({
+        .type = ClipRecord::Type::Shader,
+        .matrix = m_canvas.getTotalMatrix(),
+        .op = SkClipOp::kIntersect,
+        .antialias = false,
+        .rect = { },
+        .path = { },
+        .shader = shader,
+    });
 
-        m_canvas.clipShader(WTF::move(shader));
-    }
+    m_canvas.clipShader(WTF::move(shader));
 }
 
 void GraphicsContextSkia::drawFocusRing(const Path& path, float, const Color& color, float)

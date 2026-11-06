@@ -316,16 +316,11 @@ void RemoteGraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)
     context().clipOutRoundedRect(rect);
 }
 
-void RemoteGraphicsContext::clipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect)
+void RemoteGraphicsContext::clipToNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destinationRect)
 {
-    RefPtr clipImage = imageBuffer(imageBufferIdentifier);
-    if (!clipImage) {
-        ASSERT_NOT_REACHED();
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=298384
-        // Switch to MESSAGE_CHECK(clipImage) when root cause is clear.
-        return;
-    }
-    context().clipToImageBuffer(*clipImage, destinationRect);
+    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
+    MESSAGE_CHECK(image);
+    context().clipToNativeImage(*image, destinationRect);
 }
 
 void RemoteGraphicsContext::clipOutToPath(const Path& path)

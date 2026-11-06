@@ -31,8 +31,8 @@ namespace WebCore {
 class FloatRect;
 class FloatSize;
 class GraphicsContext;
-class ImageBuffer;
 class IntSize;
+class NativeImage;
 
 struct ControlStyle;
 
@@ -51,7 +51,7 @@ NODELETE float easeInOut(float);
 NODELETE FloatRect rectWithTransposedSize(const FloatRect&, bool);
 FloatRect trackRectForBounds(const FloatRect&, const FloatSize&);
 void rotateContextForVerticalWritingMode(GraphicsContext&, const FloatRect&);
-RefPtr<ImageBuffer> trackMaskImage(GraphicsContext&, FloatSize, float, bool, NSString *);
+RefPtr<NativeImage> trackMaskImage(GraphicsContext&, FloatSize, float, bool, NSString *);
 
 } // namespace SwitchMacUtilities
 
