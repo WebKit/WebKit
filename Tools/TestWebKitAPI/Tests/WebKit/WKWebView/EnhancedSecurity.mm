@@ -44,7 +44,22 @@
 
 namespace TestWebKitAPI {
 
-#if !PLATFORM(IOS)
+TEST(EnhancedSecurity, WebProcessLaunchesWithEnhancedSecurity)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_NE([webView _webProcessIdentifier], 0);
+    EXPECT_STREQ("EnhancedSecurity", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
 
 static bool isEnhancedSecurityEnabled(WKWebView *webView)
 {
@@ -918,6 +933,9 @@ TEST(EnhancedSecurity, EnhancedSecurityRequestedWhenLockdownModeActive)
     EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
 }
 
+// On iOS, setting lockdownModeEnabled = NO requires the com.apple.developer.web-browser entitlement, which is only present when running
+// as TestWebKitAPIApp (not in command-line tool runs).
+#if !PLATFORM(IOS_FAMILY)
 TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenLockdownOptsOut)
 {
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
@@ -936,6 +954,7 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenLockdownOpts
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
+#endif
 
 TEST(EnhancedSecurity, SystemLockdownModeIgnoresWhenSecurityRestrictionModeNoneSet)
 {
@@ -956,6 +975,7 @@ TEST(EnhancedSecurity, SystemLockdownModeIgnoresWhenSecurityRestrictionModeNoneS
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
 
+#if !PLATFORM(IOS_FAMILY)
 TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenBothAPIOptsOut)
 {
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
@@ -975,6 +995,7 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenBothAPIOptsO
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
+#endif
 
 TEST(EnhancedSecurity, SystemLockdownModeIgnoresWhenMaximizeCompatibilitySet)
 {
@@ -1325,7 +1346,5 @@ TEST(EnhancedSecurity, OptOutEntitlementDoesNotOverrideExplicitEnhancedSecurity)
 
     [[webViewConfiguration processPool] _clearHasEnhancedSecurityDefaultOptOutEntitlementForTesting];
 }
-
-#endif
 
 } // namespace TestWebKitAPI

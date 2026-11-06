@@ -1663,7 +1663,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 #if HAVE(LIBPROC)
     // This approach should work on macOS outside of Apple Internal builds.
-    if (auto pid = connection->remoteProcessID()) {
+    // On iOS the connection's remote PID can be unavailable for ExtensionKit-launched processes; use the launched process's PID.
+    auto pid = connection->remoteProcessID();
+    if (!pid)
+        pid = process->processID();
+    if (pid) {
         char path[PROC_PIDPATHINFO_MAXSIZE] = "\0";
         int length = proc_pidpath(pid, path, sizeof(path));
         if (length > 0) {
