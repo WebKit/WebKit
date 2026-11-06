@@ -141,6 +141,16 @@ static void wpeIMContextDeleteSurrounding(WebKitInputMethodContextImplWPE* conte
     g_signal_emit_by_name(context, "delete-surrounding", offset, characterCount, nullptr);
 }
 
+static void wpeIMContextDeleteSurroundingCodePoints(WebKitInputMethodContextImplWPE* context, gint offset, guint codePointCount)
+{
+    g_signal_emit_by_name(context, "delete-surrounding-code-points", offset, codePointCount, nullptr);
+}
+
+static void wpeIMContextDeleteSurroundingBytes(WebKitInputMethodContextImplWPE* context, gint offset, guint byteCount)
+{
+    g_signal_emit_by_name(context, "delete-surrounding-bytes", offset, byteCount, nullptr);
+}
+
 static void webkitInputMethodContextImplWPEGetPreedit(WebKitInputMethodContext* context, char** text, GList** underlines, guint* cursorOffset)
 {
     auto* priv = WEBKIT_INPUT_METHOD_CONTEXT_IMPL_WPE(context)->priv;
@@ -236,6 +246,8 @@ WebKitInputMethodContext* webkitInputMethodContextImplWPENew(WPEView *view)
     g_signal_connect_object(priv->context.get(), "preedit-finished", G_CALLBACK(wpeIMContextPreeditEndCallback), context, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->context.get(), "committed", G_CALLBACK(wpeIMContextCommitCallback), context, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->context.get(), "delete-surrounding", G_CALLBACK(wpeIMContextDeleteSurrounding), context, G_CONNECT_SWAPPED);
+    g_signal_connect_object(priv->context.get(), "delete-surrounding-code-points", G_CALLBACK(wpeIMContextDeleteSurroundingCodePoints), context, G_CONNECT_SWAPPED);
+    g_signal_connect_object(priv->context.get(), "delete-surrounding-bytes", G_CALLBACK(wpeIMContextDeleteSurroundingBytes), context, G_CONNECT_SWAPPED);
 
     return context;
 }

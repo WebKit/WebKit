@@ -110,6 +110,13 @@ static void contextCommitCallback(WebKitInputMethodContextImplGtk* context, cons
     g_signal_emit_by_name(context, "committed", text, nullptr);
 }
 
+static gboolean contextDeleteSurroundingCallback(WebKitInputMethodContextImplGtk* context, int offset, int characterCount)
+{
+    if (characterCount > 0)
+        g_signal_emit_by_name(context, "delete-surrounding-code-points", offset, static_cast<unsigned>(characterCount), nullptr);
+    return TRUE;
+}
+
 static gboolean contextRetrieveSurrounding(WebKitInputMethodContextImplGtk* context)
 {
     auto* priv = context->priv;
@@ -132,6 +139,7 @@ static void webkitInputMethodContextImplGtkConstructed(GObject* object)
     g_signal_connect_object(priv->context.get(), "preedit-end", G_CALLBACK(contextPreeditEndCallback), object, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->context.get(), "commit", G_CALLBACK(contextCommitCallback), object, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->context.get(), "retrieve-surrounding", G_CALLBACK(contextRetrieveSurrounding), object, G_CONNECT_SWAPPED);
+    g_signal_connect_object(priv->context.get(), "delete-surrounding", G_CALLBACK(contextDeleteSurroundingCallback), object, G_CONNECT_SWAPPED);
 }
 
 static void webkitInputMethodContextImplGtkSetEnablePreedit(WebKitInputMethodContext* context, gboolean enabled)

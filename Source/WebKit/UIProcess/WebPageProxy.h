@@ -1453,7 +1453,7 @@ public:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void cancelComposition(const String& compositionString);
-    void deleteSurrounding(int64_t offset, unsigned characterCount);
+    void deleteSurrounding(int64_t offset, unsigned characterCount, CompletionHandler<void()>&&);
 
     void setInputMethodState(std::optional<InputMethodState>&&);
 #endif
