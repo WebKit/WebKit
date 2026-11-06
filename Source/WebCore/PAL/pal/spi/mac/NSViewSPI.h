@@ -48,6 +48,7 @@ typedef NS_ENUM(NSInteger, NSViewSemanticContext) {
 - (NSView *)_findLastViewInKeyViewLoop;
 
 @property (nonatomic, setter=_setSemanticContext:) NSViewSemanticContext _semanticContext;
+@property BOOL shouldBeArchived;
 
 @end
 

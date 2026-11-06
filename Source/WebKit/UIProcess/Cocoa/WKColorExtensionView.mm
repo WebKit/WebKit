@@ -29,6 +29,10 @@
 #import <QuartzCore/CoreAnimation.h>
 #import <wtf/RetainPtr.h>
 
+#if PLATFORM(MAC)
+#import <pal/spi/mac/NSViewSPI.h>
+#endif
+
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 
 @interface WKColorExtensionView () <CAAnimationDelegate>
@@ -47,6 +51,9 @@
 
     _delegate = delegate;
     self.hidden = YES;
+#if PLATFORM(MAC)
+    self.shouldBeArchived = NO;
+#endif
     return self;
 }
 
