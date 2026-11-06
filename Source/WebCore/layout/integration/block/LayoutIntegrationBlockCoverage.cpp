@@ -190,7 +190,7 @@ static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockCo
     return isSupportedRoot && isSupportedWritingMode && !blockContainer.isFieldset()
         && !blockContainer.layoutContext().isSkippedContentRootForLayout(blockContainer) && style->alignContent().isNormal()
         && !style->specifiesColumns() && style->columnSpan() != ColumnSpan::All
-        && style->overflowContinue() == OverflowContinue::Normal && !style->containerType().hasSizeContainment();
+        && style->overflowContinue() == OverflowContinue::Normal;
 }
 
 static bool isLaidOutByBlockFormattingContext(const RenderElement& outOfFlowBox, const RenderBlockFlow& rootContainer);
