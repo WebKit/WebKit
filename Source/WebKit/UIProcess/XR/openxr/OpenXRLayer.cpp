@@ -30,7 +30,6 @@
 #include "OpenXRLayer.h"
 
 #include "OpenXRGraphicsBinding.h"
-#include <openxr/openxr.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -145,6 +144,29 @@ Vector<XrCompositionLayerBaseHeader*> OpenXRLayerProjection::endFrame(OpenXRGrap
 
 #if ENABLE(WEBXR_LAYERS)
 
+template<typename XrLayerType, XrStructureType StructureType>
+OpenXRTypedCompositionLayer<XrLayerType, StructureType>::OpenXRTypedCompositionLayer(UniqueRef<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
+    : OpenXRCompositionLayer(WTF::move(swapchain), layout)
+{
+    m_layers.resize(layout == PlatformXR::LayerLayout::Mono ? 1 : 2);
+    m_layers.fill(createOpenXRStruct<XrLayerType, StructureType>());
+    int xOffset = 0;
+    int yOffset = 0;
+    int subImageWidth = layout == PlatformXR::LayerLayout::StereoLeftRight ? m_swapchain->width() / 2 : m_swapchain->width();
+    int subImageHeight = layout == PlatformXR::LayerLayout::StereoTopBottom ? m_swapchain->height() / 2 : m_swapchain->height();
+    XrExtent2Di subImageExtent = { subImageWidth, subImageHeight };
+    for (auto& xrLayer : m_layers) {
+        xrLayer.subImage.swapchain = m_swapchain->swapchain();
+        xrLayer.subImage.imageRect.offset = { xOffset, yOffset };
+        xrLayer.subImage.imageRect.extent = subImageExtent;
+        // FIXME: LayerLayout::Stereo (stereo texture array) is not handled yet, the right eye should use imageArrayIndex 1.
+        xrLayer.subImage.imageArrayIndex = 0;
+
+        xOffset += layout == PlatformXR::LayerLayout::StereoLeftRight ? subImageWidth : 0;
+        yOffset += layout == PlatformXR::LayerLayout::StereoTopBottom ? subImageHeight : 0;
+    }
+}
+
 OpenXRCompositionLayer::OpenXRCompositionLayer(UniqueRef<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
     : OpenXRLayer(WTF::move(swapchain))
     , m_layout(layout)
@@ -220,28 +242,6 @@ std::unique_ptr<OpenXRQuadLayer> OpenXRQuadLayer::create(std::unique_ptr<OpenXRS
     return std::unique_ptr<OpenXRQuadLayer>(new OpenXRQuadLayer(makeUniqueRefFromNonNullUniquePtr(WTF::move(swapchain)), layout));
 }
 
-OpenXRQuadLayer::OpenXRQuadLayer(UniqueRef<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
-    : OpenXRCompositionLayer(WTF::move(swapchain), layout)
-{
-    m_layers.resize(layout == PlatformXR::LayerLayout::Mono ? 1 : 2);
-    m_layers.fill(createOpenXRStruct<XrCompositionLayerQuad, XR_TYPE_COMPOSITION_LAYER_QUAD>());
-    int xOffset = 0;
-    int yOffset = 0;
-    int subImageWidth = layout == PlatformXR::LayerLayout::StereoLeftRight ? m_swapchain->width() / 2 : m_swapchain->width();
-    int subImageHeight = layout == PlatformXR::LayerLayout::StereoTopBottom ? m_swapchain->height() / 2 : m_swapchain->height();
-    XrExtent2Di subImageExtent = { subImageWidth, subImageHeight };
-    for (auto& xrLayer : m_layers) {
-        xrLayer.subImage.swapchain = m_swapchain->swapchain();
-        xrLayer.subImage.imageRect.offset = { xOffset, yOffset };
-        xrLayer.subImage.imageRect.extent = subImageExtent;
-        // FIXME: LayerLayout::Stereo (stereo texture array) is not handled yet, the right eye should use imageArrayIndex 1.
-        xrLayer.subImage.imageArrayIndex = 0;
-
-        xOffset += layout == PlatformXR::LayerLayout::StereoLeftRight ? subImageWidth : 0;
-        yOffset += layout == PlatformXR::LayerLayout::StereoTopBottom ? subImageHeight : 0;
-    }
-}
-
 std::optional<PlatformXR::FrameData::LayerData> OpenXRCompositionLayer::startFrame(OpenXRGraphicsBinding& graphicsBinding)
 {
     auto texture = m_swapchain->acquireImage();
@@ -282,6 +282,11 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRCompositionLayer::startFra
     return layerData;
 }
 
+OpenXRQuadLayer::OpenXRQuadLayer(UniqueRef<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
+    : OpenXRTypedCompositionLayer(WTF::move(swapchain), layout)
+{
+}
+
 XrCompositionLayerBaseHeader* OpenXRQuadLayer::fillLayer(size_t index, XrEyeVisibility eyeVisibility, const PlatformXR::DeviceLayer& layer)
 {
     auto& xrLayer = m_layers[index];
@@ -304,25 +309,8 @@ std::unique_ptr<OpenXREquirectLayer> OpenXREquirectLayer::create(std::unique_ptr
 }
 
 OpenXREquirectLayer::OpenXREquirectLayer(UniqueRef<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
-    : OpenXRCompositionLayer(WTF::move(swapchain), layout)
+    : OpenXRTypedCompositionLayer(WTF::move(swapchain), layout)
 {
-    m_layers.resize(layout == PlatformXR::LayerLayout::Mono ? 1 : 2);
-    m_layers.fill(createOpenXRStruct<XrCompositionLayerEquirect2KHR, XR_TYPE_COMPOSITION_LAYER_EQUIRECT2_KHR>());
-    int xOffset = 0;
-    int yOffset = 0;
-    int subImageWidth = layout == PlatformXR::LayerLayout::StereoLeftRight ? m_swapchain->width() / 2 : m_swapchain->width();
-    int subImageHeight = layout == PlatformXR::LayerLayout::StereoTopBottom ? m_swapchain->height() / 2 : m_swapchain->height();
-    XrExtent2Di subImageExtent = { subImageWidth, subImageHeight };
-    for (auto& xrLayer : m_layers) {
-        xrLayer.subImage.swapchain = m_swapchain->swapchain();
-        xrLayer.subImage.imageRect.offset = { xOffset, yOffset };
-        xrLayer.subImage.imageRect.extent = subImageExtent;
-        // FIXME: LayerLayout::Stereo (stereo texture array) is not handled yet, the right eye should use imageArrayIndex 1.
-        xrLayer.subImage.imageArrayIndex = 0;
-
-        xOffset += layout == PlatformXR::LayerLayout::StereoLeftRight ? subImageWidth : 0;
-        yOffset += layout == PlatformXR::LayerLayout::StereoTopBottom ? subImageHeight : 0;
-    }
 }
 
 XrCompositionLayerBaseHeader* OpenXREquirectLayer::fillLayer(size_t index, XrEyeVisibility eyeVisibility, const PlatformXR::DeviceLayer& layer)
@@ -352,25 +340,8 @@ std::unique_ptr<OpenXRCylinderLayer> OpenXRCylinderLayer::create(std::unique_ptr
 }
 
 OpenXRCylinderLayer::OpenXRCylinderLayer(UniqueRef<OpenXRSwapchain>&& swapchain, PlatformXR::LayerLayout layout)
-    : OpenXRCompositionLayer(WTF::move(swapchain), layout)
+    : OpenXRTypedCompositionLayer(WTF::move(swapchain), layout)
 {
-    m_layers.resize(layout == PlatformXR::LayerLayout::Mono ? 1 : 2);
-    m_layers.fill(createOpenXRStruct<XrCompositionLayerCylinderKHR, XR_TYPE_COMPOSITION_LAYER_CYLINDER_KHR>());
-    int xOffset = 0;
-    int yOffset = 0;
-    int subImageWidth = layout == PlatformXR::LayerLayout::StereoLeftRight ? m_swapchain->width() / 2 : m_swapchain->width();
-    int subImageHeight = layout == PlatformXR::LayerLayout::StereoTopBottom ? m_swapchain->height() / 2 : m_swapchain->height();
-    XrExtent2Di subImageExtent = { subImageWidth, subImageHeight };
-    for (auto& xrLayer : m_layers) {
-        xrLayer.subImage.swapchain = m_swapchain->swapchain();
-        xrLayer.subImage.imageRect.offset = { xOffset, yOffset };
-        xrLayer.subImage.imageRect.extent = subImageExtent;
-        // FIXME: LayerLayout::Stereo (stereo texture array) is not handled yet, the right eye should use imageArrayIndex 1.
-        xrLayer.subImage.imageArrayIndex = 0;
-
-        xOffset += layout == PlatformXR::LayerLayout::StereoLeftRight ? subImageWidth : 0;
-        yOffset += layout == PlatformXR::LayerLayout::StereoTopBottom ? subImageHeight : 0;
-    }
 }
 
 XrCompositionLayerBaseHeader* OpenXRCylinderLayer::fillLayer(size_t index, XrEyeVisibility eyeVisibility, const PlatformXR::DeviceLayer& layer)
