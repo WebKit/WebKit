@@ -3215,6 +3215,15 @@ void AXObjectCache::onSelectedOptionChanged(HTMLSelectElement& select, int optio
 #endif
 }
 
+void AXObjectCache::onSelectPickerStyleChange(HTMLSelectElement& select)
+{
+    if (RefPtr object = get(select)) {
+        m_deferredRendererChangedList.add(*object);
+        if (!m_performCacheUpdateTimer.isActive())
+            m_performCacheUpdateTimer.startOneShot(0_s);
+    }
+}
+
 void AXObjectCache::onSlottedContentChange(const HTMLSlotElement& slot)
 {
     childrenChanged(protect(get(const_cast<HTMLSlotElement&>(slot))));
