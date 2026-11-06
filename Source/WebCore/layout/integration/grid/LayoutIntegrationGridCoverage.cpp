@@ -47,7 +47,10 @@ enum class ReasonCollectionMode : bool {
 };
 
 enum class GridAvoidanceReason : uint8_t {
-    GridHasUnsupportedWritingMode,
+    GridHasVerticalLRWritingMode,
+    GridHasVerticalRLWritingMode,
+    GridHasSidewaysWritingMode,
+    GridHasHorizontalBTWritingMode,
     GridHasRTLDirection, // http://webkit.org/b/317334
     GridNeedsBaseline,
     GridHasOutOfFlowChild,
@@ -74,8 +77,9 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemHasUnsupportedMaxHeight,
     GridItemHasUnsupportedMargin,
     GridItemHasBorderBoxSizing,
-    GridItemHasUnsupportedWritingMode,
-    GridItemHasRTLDirection,
+    GridItemIsOrthogonal,
+    GridItemHasOpposingBlockFlow,
+    GridItemHasOpposingInlineDirection,
     GridItemHasAspectRatio,
     GridItemHasUnsupportedInlineAxisAlignment,
     GridItemHasUnsupportedBlockAxisAlignment,
@@ -317,10 +321,26 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
     if (renderGridStyle->display() != Style::DisplayType::BlockGrid)
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::NotAGrid, reasons, reasonCollectionMode);
 
-    if (!renderGridStyle->writingMode().isHorizontal() || renderGridStyle->writingMode().isBlockFlipped())
-        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedWritingMode, reasons, reasonCollectionMode);
+    auto gridContainerWritingMode = renderGridStyle->writingMode();
+    switch (gridContainerWritingMode.computedWritingMode()) {
+    case StyleWritingMode::HorizontalTb:
+        break;
+    case StyleWritingMode::VerticalLr:
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasVerticalLRWritingMode, reasons, reasonCollectionMode);
+        break;
+    case StyleWritingMode::VerticalRl:
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasVerticalRLWritingMode, reasons, reasonCollectionMode);
+        break;
+    case StyleWritingMode::SidewaysLr:
+    case StyleWritingMode::SidewaysRl:
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasSidewaysWritingMode, reasons, reasonCollectionMode);
+        break;
+    case StyleWritingMode::HorizontalBt:
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasHorizontalBTWritingMode, reasons, reasonCollectionMode);
+        break;
+    }
 
-    if (renderGridStyle->writingMode().bidiDirection() == TextDirection::RTL)
+    if (gridContainerWritingMode.bidiDirection() == TextDirection::RTL)
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasRTLDirection, reasons, reasonCollectionMode);
 
     if (!renderGridStyle->isOverflowVisible())
@@ -547,11 +567,17 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
             ADD_REASON_AND_RETURN_IF_NEEDED(*rowPositioningAvoidanceReason, reasons, reasonCollectionMode);
         }
 
-        if (gridItemStyle->writingMode().isVertical() || gridItemStyle->writingMode().isBlockFlipped())
-            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedWritingMode, reasons, reasonCollectionMode);
+        // Items inherit writing-mode and direction, so these are expressed relative to the grid container.
+        auto gridItemWritingMode = gridItemStyle->writingMode();
+        bool gridItemIsOrthogonal = gridItemWritingMode.isOrthogonal(gridContainerWritingMode);
+        if (gridItemIsOrthogonal)
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemIsOrthogonal, reasons, reasonCollectionMode);
 
-        if (gridItemStyle->writingMode().bidiDirection() == TextDirection::RTL)
-            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasRTLDirection, reasons, reasonCollectionMode);
+        if (!gridItemIsOrthogonal && gridItemWritingMode.isBlockOpposing(gridContainerWritingMode))
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasOpposingBlockFlow, reasons, reasonCollectionMode);
+
+        if (!gridItemIsOrthogonal && gridItemWritingMode.isInlineOpposing(gridContainerWritingMode))
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasOpposingInlineDirection, reasons, reasonCollectionMode);
 
         if (gridItem->isOutOfFlowPositioned())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasOutOfFlowChild, reasons, reasonCollectionMode);
@@ -638,8 +664,17 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridFormattingContextIntegrationDisabled:
         stream << "grid formatting context integration is disabled";
         break;
-    case GridAvoidanceReason::GridHasUnsupportedWritingMode:
-        stream << "grid has unsupported writing mode";
+    case GridAvoidanceReason::GridHasVerticalLRWritingMode:
+        stream << "grid has vertical-lr writing mode";
+        break;
+    case GridAvoidanceReason::GridHasVerticalRLWritingMode:
+        stream << "grid has vertical-rl writing mode";
+        break;
+    case GridAvoidanceReason::GridHasSidewaysWritingMode:
+        stream << "grid has sideways-lr or sideways-rl writing mode";
+        break;
+    case GridAvoidanceReason::GridHasHorizontalBTWritingMode:
+        stream << "grid has horizontal-bt writing mode";
         break;
     case GridAvoidanceReason::GridHasRTLDirection:
         stream << "grid has RTL direction";
@@ -716,11 +751,14 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridItemHasBorderBoxSizing:
         stream << "grid item has border-box box-sizing";
         break;
-    case GridAvoidanceReason::GridItemHasUnsupportedWritingMode:
-        stream << "grid item has unsupported writing mode";
+    case GridAvoidanceReason::GridItemIsOrthogonal:
+        stream << "grid item is orthogonal to the grid";
         break;
-    case GridAvoidanceReason::GridItemHasRTLDirection:
-        stream << "grid item has RTL direction";
+    case GridAvoidanceReason::GridItemHasOpposingBlockFlow:
+        stream << "grid item has a block flow opposing the grid's";
+        break;
+    case GridAvoidanceReason::GridItemHasOpposingInlineDirection:
+        stream << "grid item has an inline direction opposing the grid's";
         break;
     case GridAvoidanceReason::GridItemHasAspectRatio:
         stream << "grid item has aspect-ratio";

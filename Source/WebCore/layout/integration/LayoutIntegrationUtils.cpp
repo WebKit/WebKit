@@ -120,7 +120,7 @@ void IntegrationUtils::layoutGridItem(const ElementBox& box, GridItemOverridingB
 
     if (box.writingMode().isOrthogonal(box.parent().writingMode())) {
         // The renderer's overriding sizes are along the item's own axes, so the overriding size would be swapped here.
-        // Orthogonal items stay on legacy through GridAvoidanceReason::GridItemHasUnsupportedWritingMode.
+        // Orthogonal items stay on legacy through GridAvoidanceReason::GridItemIsOrthogonal.
         ASSERT_NOT_IMPLEMENTED_YET();
         return;
     }
@@ -174,7 +174,7 @@ LayoutUnit IntegrationUtils::inlineIntrinsicSizeForGridItem(const ElementBox& bo
     ASSERT(box.isGridItem());
 
     if (box.writingMode().isOrthogonal(box.parent().writingMode())) {
-        // The sizes below are along the item's own axes. Orthogonal items stay on legacy through GridAvoidanceReason::GridItemHasUnsupportedWritingMode.
+        // The sizes below are along the item's own axes. Orthogonal items stay on legacy through GridAvoidanceReason::GridItemIsOrthogonal.
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     }
@@ -201,7 +201,7 @@ LayoutUnit IntegrationUtils::blockIntrinsicSizeForGridItem(const ElementBox& box
     ASSERT(box.isGridItem());
 
     if (box.writingMode().isOrthogonal(box.parent().writingMode())) {
-        // The size below is along the item's own block axis. Orthogonal items stay on legacy through GridAvoidanceReason::GridItemHasUnsupportedWritingMode.
+        // The size below is along the item's own block axis. Orthogonal items stay on legacy through GridAvoidanceReason::GridItemIsOrthogonal.
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     }
