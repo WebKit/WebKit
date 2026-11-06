@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Upright text in a monospace font is measured with the advances it is painted with</title>
+<style>
+div {
+    font: 20px/1 monospace;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    inline-size: 10ch;
+    border: 1px solid;
+    margin: 4px;
+    float: left;
+}
+.lr {
+    writing-mode: vertical-lr;
+}
+</style>
+<div>aaaa aaaa aaaa</div>
+<div class="lr">aaaa aaaa aaaa</div>

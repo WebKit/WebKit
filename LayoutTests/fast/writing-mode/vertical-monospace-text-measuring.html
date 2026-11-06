@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Vertical text in a monospace font is measured the same with and without the simplified text measuring</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+span {
+    font-size: 20px;
+    line-height: 1;
+    white-space: pre;
+}
+.upright { writing-mode: vertical-rl; text-orientation: upright; }
+.mixed { writing-mode: vertical-rl; text-orientation: mixed; }
+.sideways { writing-mode: vertical-rl; text-orientation: sideways; }
+/* Letter spacing turns off the simplified (and fixed pitch) text measuring. */
+.letter-spacing { letter-spacing: 0.001px; }
+</style>
+<div id="container"></div>
+<script>
+const orientations = ["upright", "mixed", "sideways"];
+const fonts = ["monospace", "Menlo, monospace"];
+const texts = {
+    "Latin": "line two",
+    // These stay upright in mixed orientation (see FontCascade::isCJKIdeographOrSymbol).
+    "upright symbols": "†‰■①Ⅰ",
+    "Latin and upright symbols": "ab†■ cd",
+};
+const letterSpacing = 0.001;
+
+function inlineSize(className, font, text) {
+    const span = document.createElement("span");
+    span.className = className;
+    span.style.fontFamily = font;
+    span.textContent = text;
+    container.appendChild(span);
+    const size = span.getBoundingClientRect().height;
+    span.remove();
+    return size;
+}
+
+for (const orientation of orientations) {
+    for (const font of fonts) {
+        for (const [label, text] of Object.entries(texts)) {
+            test(() => {
+                const width = inlineSize(orientation, font, text);
+                const widthWithLetterSpacing = inlineSize(`${orientation} letter-spacing`, font, text);
+                assert_approx_equals(width, widthWithLetterSpacing - text.length * letterSpacing, 0.05);
+            }, `${label}, ${orientation}, ${font}`);
+        }
+    }
+}
+</script>

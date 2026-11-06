@@ -140,6 +140,11 @@ void FontCascadeFonts::determinePitch(const FontCascadeDescription& description,
 void FontCascadeFonts::determineCanTakeFixedPitchFastContentMeasuring(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
 #if PLATFORM(COCOA)
+    // Upright glyphs use their vertical advance, which differs from the space width that fixed pitch measuring uses for every character.
+    if (description.orientation() == FontOrientation::Vertical && description.nonCJKGlyphOrientation() == NonCJKGlyphOrientation::Upright) {
+        m_canTakeFixedPitchFastContentMeasuring = TriState::False;
+        return;
+    }
     auto& primaryRanges = realizeFallbackRangesAt(description, fontSelector, 0);
     unsigned numRanges = primaryRanges.size();
     if (numRanges == 1)

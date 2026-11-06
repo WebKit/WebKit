@@ -1,0 +1,20 @@
+
+PASS Latin, upright, monospace
+PASS upright symbols, upright, monospace
+PASS Latin and upright symbols, upright, monospace
+PASS Latin, upright, Menlo, monospace
+PASS upright symbols, upright, Menlo, monospace
+PASS Latin and upright symbols, upright, Menlo, monospace
+PASS Latin, mixed, monospace
+PASS upright symbols, mixed, monospace
+PASS Latin and upright symbols, mixed, monospace
+PASS Latin, mixed, Menlo, monospace
+PASS upright symbols, mixed, Menlo, monospace
+PASS Latin and upright symbols, mixed, Menlo, monospace
+PASS Latin, sideways, monospace
+PASS upright symbols, sideways, monospace
+PASS Latin and upright symbols, sideways, monospace
+PASS Latin, sideways, Menlo, monospace
+PASS upright symbols, sideways, Menlo, monospace
+PASS Latin and upright symbols, sideways, Menlo, monospace
+
