@@ -26,9 +26,9 @@ header: <WebCore/DMABufBufferAttributes.h>
 [RValue, CustomHeader] class WebCore::DMABufBufferAttributes {
     WebCore::IntSize size;
     WebCore::FourCC fourcc;
-    Vector<UnixFileDescriptor> fds;
-    Vector<uint32_t> offsets;
-    Vector<uint32_t> strides;
+    [Validator='!fds->isEmpty() && fds->size() <= WebCore::DMABufBufferAttributes::maxPlaneCountForEGLImage'] Vector<UnixFileDescriptor> fds;
+    [Validator='offsets->size() == fds->size()'] Vector<uint32_t> offsets;
+    [Validator='strides->size() == fds->size()'] Vector<uint32_t> strides;
     uint64_t modifier;
 }
 

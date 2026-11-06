@@ -403,6 +403,13 @@ void DrawingAreaCoordinatedGraphics::fillGLInformation(RenderProcessInfo&& info,
     m_renderer->fillGLInformation(WTF::move(info), WTF::move(completionHandler));
 }
 
+#if ENABLE(IPC_TESTING_API)
+uint64_t DrawingAreaCoordinatedGraphics::surfaceIDForTesting() const
+{
+    return m_renderer ? m_renderer->surfaceID() : 0;
+}
+#endif
+
 bool DrawingAreaCoordinatedGraphics::shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView& frameView) const
 {
     return frameView.frame().isMainFrame() || m_webPage->corePage()->settings().asyncFrameScrollingEnabled();

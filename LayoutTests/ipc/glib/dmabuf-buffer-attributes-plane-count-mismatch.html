@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>DMABufBufferAttributes with mismatched plane vectors are rejected when decoded</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+function takeInvalidMessageString()
+{
+    const reply = IPC.sendSyncMessage("UI", 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);
+    return reply?.arguments?.[0]?.value ?? "";
+}
+
+function uint32Vector(values)
+{
+    return { type: "Vector", value: values.map(value => ({ type: "uint32_t", value })) };
+}
+
+promise_test(async () => {
+    if (!window.IPC)
+        return;
+
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+    const surfaceID = IPC.acceleratedSurfaceID;
+    assert_not_equals(surfaceID, 0n, "the page has an accelerated surface");
+
+    takeInvalidMessageString();
+
+    const bufferID = 0x7fffffffn;
+    IPC.sendMessage("UI", surfaceID, IPC.messages.AcceleratedBackingStore_DidCreateDMABufBuffer.name, [
+        { type: "uint64_t", value: bufferID },
+        { type: "int32_t", value: 64 },
+        { type: "int32_t", value: 64 },
+        { type: "uint32_t", value: 0x34325241 },
+        { type: "Vector", value: [{ type: "Semaphore", value: IPC.createSemaphore() }] },
+        uint32Vector([0, 0]),
+        uint32Vector([256]),
+        { type: "uint64_t", value: 0n },
+        { type: "uint8_t", value: 0 },
+    ]);
+    IPC.sendMessage("UI", surfaceID, IPC.messages.AcceleratedBackingStore_DidDestroyBuffer.name, [
+        { type: "uint64_t", value: bufferID },
+    ]);
+
+    const error = takeInvalidMessageString();
+    assert_true(error.includes("Validation failed"), `the message was rejected, got: "${error}"`);
+}, "DidCreateDMABufBuffer with more offsets than planes is rejected");
+</script>
+</body>

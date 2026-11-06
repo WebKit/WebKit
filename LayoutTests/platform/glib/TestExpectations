@@ -86,6 +86,7 @@
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # Platform-specific directories.
+ipc/glib [ Pass ]
 scrollingcoordinator/ [ Pass ]
 scrollingcoordinator/mac/ [ Skip ]
 scrollingcoordinator/ios/ [ Skip ]

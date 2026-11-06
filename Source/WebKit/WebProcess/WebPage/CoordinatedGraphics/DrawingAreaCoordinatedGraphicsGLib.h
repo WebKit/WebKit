@@ -50,6 +50,10 @@ public:
 
     void fillGLInformation(RenderProcessInfo&&, CompletionHandler<void(RenderProcessInfo&&)>&&);
 
+#if ENABLE(IPC_TESTING_API)
+    uint64_t surfaceIDForTesting() const;
+#endif
+
 private:
     DrawingAreaCoordinatedGraphics(WebPage&, const WebPageCreationParameters&);
 
@@ -137,3 +141,5 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(DrawingAreaCoordinatedGraphics, DrawingAreaType::CoordinatedGraphics)
