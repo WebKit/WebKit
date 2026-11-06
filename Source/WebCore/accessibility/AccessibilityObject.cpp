@@ -3098,13 +3098,12 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
         return true;
     }
 
-    if (RefPtr input = dynamicDowncast<HTMLInputElement>(element)) {
-        input->setRangeText(replacementString, range.location, range.length, emptyString());
-        return true;
-    }
-    if (RefPtr textarea = dynamicDowncast<HTMLTextAreaElement>(element)) {
-        textarea->setRangeText(replacementString, range.location, range.length, emptyString());
-        return true;
+    // On Cocoa, text that AX clients insert in password fields reaches this code path, since password fields don't use input methods.
+    if (RefPtr textControl = dynamicDowncast<HTMLTextFormControlElement>(element)) {
+        // setRangeText() takes the end of the range, not its length. It clamps both to the length of the value.
+        unsigned start = clampTo<unsigned>(range.location);
+        unsigned end = clampTo<unsigned>(range.location + std::min(range.length, std::numeric_limits<uint64_t>::max() - range.location));
+        return !textControl->setRangeText(replacementString, start, end, emptyString()).hasException();
     }
 
     return false;
