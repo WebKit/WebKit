@@ -254,6 +254,7 @@ void BlockDirectory::prepareForAllocation()
     m_emptyCursor.set<MemoryOrder::Relaxed>(0);
 
     assertWorldIsStopped();
+    ASSERT(markedSpace().heap().isInPhase(CollectorPhase::End));
     // endMarking recomputes the empty bits wholesale rather than block by block, so none of the blocks
     // that fell empty there announced themselves the way didFinishUsingBlock does. Re-derive
     // membership from the bits here, once m_emptyCursor above has been rewound to match them.
@@ -302,6 +303,7 @@ void BlockDirectory::resumeAllocating()
 void BlockDirectory::beginMarkingForFullCollection()
 {
     assertWorldIsStopped();
+    ASSERT(markedSpace().heap().isInPhase(CollectorPhase::Begin));
 
     // Mark bits are sticky and so is our summary of mark bits. We only clear these during full
     // collections, so if you survived the last collection you will survive the next one so long
@@ -313,6 +315,7 @@ void BlockDirectory::beginMarkingForFullCollection()
 void BlockDirectory::endMarking()
 {
     assertWorldIsStopped();
+    ASSERT(markedSpace().heap().isInPhase(CollectorPhase::End));
 
     allocatedBits().clearAll();
     
@@ -363,12 +366,14 @@ void BlockDirectory::endMarking()
 void BlockDirectory::snapshotUnsweptForEdenCollection()
 {
     assertWorldIsStopped();
+    ASSERT(markedSpace().heap().isInPhase(CollectorPhase::End));
     unsweptBits() |= edenBits();
 }
 
 void BlockDirectory::snapshotUnsweptForFullCollection()
 {
     assertWorldIsStopped();
+    ASSERT(markedSpace().heap().isInPhase(CollectorPhase::End));
     unsweptBits() = liveBits();
 }
 
@@ -547,14 +552,16 @@ void BlockDirectory::assertMayAccessBitsUnlocked() const
 {
     JSC::Heap& heap = markedSpace().heap();
     if (heap.worldIsStopped())
-        ASSERT(heap.collector().currentThreadIsConductor() || Thread::currentSingleton().gcThreadType() == GCThreadType::Helper);
+        heap.collector().assertIsConductorOrHelper();
     else
         heap.assertIsExclusiveAccessHolder();
 }
 
 void BlockDirectory::assertWorldIsStopped() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
+    // Bulk rewrites happen in Begin and End, where the conductor runs alone.
     ASSERT(markedSpace().heap().worldIsStopped());
+    ASSERT(markedSpace().heap().currentThreadIsConductor());
     ASSERT(inUseBitsView().isEmpty());
 }
 #endif

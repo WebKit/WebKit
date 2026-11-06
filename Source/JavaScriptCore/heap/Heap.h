@@ -379,6 +379,9 @@ public:
     MutatorState mutatorState() const { return m_mutatorState; }
     std::optional<CollectionScope> collectionScope() const { return m_collectionScope; }
     bool needCollectionEpilogue() const { return m_worldState.load() & needCollectionEpilogueBit; }
+    // Whether this heap's world is stopped: its mutator, unless it is the conductor, and the compiler threads. Only
+    // this heap's: while the conductor stops or resumes the heaps, others may still run. "WithWorldStopped" in this
+    // class's asserts means this heap's world.
     bool worldIsStopped() const { return m_worldIsStopped; }
 #if ASSERT_ENABLED
     // Asserts that the current thread has access to the heap and that the world is running. While the world is stopped,
@@ -391,6 +394,8 @@ public:
     // with access.
     JS_EXPORT_PRIVATE void assertIsExclusiveAccessHolder() const WTF_ASSERTS_ACQUIRED_CAPABILITY(m_accessHolderRole);
     JS_EXPORT_PRIVATE void assertIsExclusiveAccessHolderOrConductorWithWorldStopped() const;
+    // For asserts that thread-safety analysis cannot express.
+    inline bool currentThreadIsConductor() const;
 #else
     ALWAYS_INLINE void assertIsAccessHolder() const WTF_ASSERTS_ACQUIRED_SHARED_CAPABILITY(m_accessHolderRole) { }
     ALWAYS_INLINE void assertIsExclusiveAccessHolder() const WTF_ASSERTS_ACQUIRED_CAPABILITY(m_accessHolderRole) { }
