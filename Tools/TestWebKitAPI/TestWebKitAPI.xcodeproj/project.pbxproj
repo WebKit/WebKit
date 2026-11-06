@@ -1528,6 +1528,7 @@
 		07C913DF2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWGSL" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				WebGPU/UncapturedErrorCallbackTests.cpp,
 				WGSL/ASTStringDumperTests.cpp,
 				WGSL/ConstLiteralTests.cpp,
 				WGSL/LexerTests.cpp,
@@ -1536,7 +1537,6 @@
 				WGSL/ParserTests.cpp,
 				WGSL/TestWGSLAPI.cpp,
 				WGSL/TypeCheckingTests.mm,
-				WebGPU/UncapturedErrorCallbackTests.cpp,
 			);
 			target = 3A15783C28D1505B00142DB1 /* TestWGSL */;
 		};

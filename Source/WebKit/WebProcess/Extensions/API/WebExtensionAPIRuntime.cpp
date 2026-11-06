@@ -296,17 +296,6 @@ JSValueRef WebExtensionAPIRuntime::lastError()
     return m_lastError.get();
 }
 
-static JSValueRef makeEnumObject(JSContextRef context, std::initializer_list<std::pair<ASCIILiteral, ASCIILiteral>> entries)
-{
-    auto globalContext = JSContextGetGlobalContext(context);
-
-    HashMap<String, Protected<JSValueRef>> object;
-    for (auto& [name, value] : entries)
-        object.add(String { name }, Protected(globalContext, JSValueMakeString(context, toJSString(value).get())));
-
-    return fromObject(context, WTF::move(object));
-}
-
 JSValueRef WebExtensionAPIRuntime::onInstalledReason(JSContextRef context)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/OnInstalledReason

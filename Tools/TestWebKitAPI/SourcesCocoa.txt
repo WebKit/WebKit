@@ -379,6 +379,7 @@ Tests/WebKit/WKWebView/WKURLSchemeHandler-leaks.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtension.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIBookmarks.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIDevTools.mm @nonARC
+Tests/WebKit/WKWebView/WKWebExtensionAPIExtensionTypes.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIMenus.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPINotifications.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIScripting.mm @nonARC

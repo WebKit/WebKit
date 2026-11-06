@@ -556,6 +556,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIExtension.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIExtension.mm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIExtensionTypes.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIExtensionTypes.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPILocalization.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPILocalization.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/JSWebExtensionAPIMenus.h

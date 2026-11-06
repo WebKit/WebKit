@@ -1141,6 +1141,7 @@ SUPPLEMENTAL_DEPENDENCY_FILE = WebExtensionSupplementalDependencies.txt
 CPP_EXTENSION_INTERFACES = \
 	WebExtensionAPIAlarms \
     WebExtensionAPIEvent \
+    WebExtensionAPIExtensionTypes \
 	WebExtensionAPINamespace \
     WebExtensionAPIRuntime \
     WebExtensionAPIStorage \
