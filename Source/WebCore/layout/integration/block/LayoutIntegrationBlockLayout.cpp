@@ -32,6 +32,7 @@
 #include "BlockFormattingUtils.h"
 #include "BlockIntegrationUtils.h"
 #include "FlexFormattingUtils.h"
+#include "FloatingObjects.h"
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
 #include "LayoutIntegrationBlockCoverage.h"
@@ -163,6 +164,9 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
         if (auto lineClamp = blockLayoutState.lineClamp())
             renderTreeLayoutState->setLineClamp(RenderLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, blockLayoutState.clampAfterBox(), lineClamp->isStableTextWrap, lineClamp->hasConstrainedTextWrapContent });
         updateRenderers(result, paintInvalidation);
+        rootRenderer().m_floatingObjects = nullptr;
+        if (blockLayoutState.placedFloats())
+            layoutContext->addRootWithFloatsPlacedByBlockFormattingContext(rootRenderer());
         return result;
     };
     auto result = layoutContent({ });
@@ -252,10 +256,35 @@ bool BlockLayout::contentDependsOnBlockSize(const RenderBlockFlow& rootRenderer)
     return hasPercentageBlockSizeContent() && canUseForBlockLayout(rootRenderer);
 }
 
+void BlockLayout::prepareForRenderTreeLayout(RenderBlockFlow& rootRenderer)
+{
+    // The render tree's block layout takes the floats of the boxes it does not lay out again from its float lists, which the block formatting
+    // context leaves empty (updateRenderers): it lays out all of the block formatting context the floats were placed in again.
+    if (!rootRenderer.view().frameView().layoutContext().removeRootWithFloatsPlacedByBlockFormattingContext(rootRenderer))
+        return;
+    for (CheckedPtr<RenderObject> descendant = rootRenderer.firstChild(); descendant;) {
+        if (CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*descendant); blockContainer && !blockContainer->isFloatingOrOutOfFlowPositioned() && !blockContainer->createsNewFormattingContext()) {
+            blockContainer->setChildNeedsLayout(MarkingBehavior::OnlyThis);
+            descendant = descendant->nextInPreOrder(&rootRenderer);
+            continue;
+        }
+        descendant = descendant->isInlineBox() ? descendant->nextInPreOrder(&rootRenderer) : descendant->nextInPreOrderAfterChildren(&rootRenderer);
+    }
+}
+
 void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock)
 {
     auto paintInvalidation = PaintInvalidation { };
     layoutOutOfFlowBoxes(containingBlock, paintInvalidation);
+}
+
+// The root of the block formatting context a block container the block formatting context laid out takes part in.
+static const RenderBlockFlow& blockFormattingContextRootOf(const RenderBlockFlow& blockContainer)
+{
+    if (blockContainer.createsNewFormattingContext())
+        return blockContainer;
+    CheckedPtr containingBlock = dynamicDowncast<RenderBlockFlow>(blockContainer.containingBlock());
+    return containingBlock ? blockFormattingContextRootOf(*containingBlock) : blockContainer;
 }
 
 // The padding box of a block in the coordinates its children are positioned in (RenderBox::setLogicalLocation): from its left edge (top in
@@ -539,6 +568,11 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
         // and this box is not laid out again. A box laid out through the render tree has them from its own layout, in its own writing
         // mode, which an orthogonal box does not share with the block formatting context.
         if (CheckedPtr blockFlow = box.isLaidOutThroughRenderTree ? nullptr : dynamicDowncast<RenderBlockFlow>(renderer)) {
+            // The floats the render tree path listed from its last layout of the box: the block formatting context placed them this time, and
+            // they paint from the tree (RenderBlockFlow::paintFloats).
+            blockFlow->m_floatingObjects = nullptr;
+            if (CheckedPtr lineLayout = blockFlow->inlineLayout(); lineLayout && !lineLayout->floatsInContent().isEmpty())
+                renderer->view().frameView().layoutContext().addRootWithFloatsPlacedByBlockFormattingContext(blockFormattingContextRootOf(*blockFlow));
             blockFlow->setMaxMarginBeforeValues(box.collapsedMarginsBefore.positive, box.collapsedMarginsBefore.negative);
             blockFlow->setMaxMarginAfterValues(box.collapsedMarginsAfter.positive, box.collapsedMarginsAfter.negative);
             blockFlow->setHasMarginBeforeQuirk(box.marginBeforeIsQuirky);

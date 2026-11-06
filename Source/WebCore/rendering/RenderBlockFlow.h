@@ -478,6 +478,8 @@ private:
 
     void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
     void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) override;
+    // The floats the block formatting context placed in the inline content, which the render tree's float lists do not list.
+    Vector<CheckedRef<RenderBox>> floatsPlacedByBlockFormattingContext() const;
 
     void repaintOverhangingFloats(bool paintAllDescendants) final;
     void clipOutFloatingBoxes(RenderBlock&, const PaintInfo*, const LayoutPoint&, const LayoutSize&) override;

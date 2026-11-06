@@ -45,6 +45,8 @@
 #include "RenderHTMLCanvas.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
+#include "RenderLineBreak.h"
+#include "RenderText.h"
 #include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
@@ -124,6 +126,23 @@ std::optional<BlockIntegrationUtils::InlineContentLayoutResult> BlockIntegration
     }
     result.marginsOfKeptBlockLevelBoxes = { marginsBefore, marginsAfter, marginsAfterAreQuirky };
     return result;
+}
+
+// The floats that intruded into the content when it was last laid out are not the ones that intrude into it now.
+static bool intrudingFloatsChanged(const LineLayout& lineLayout, const Layout::PlacedFloats::List& intrudingFloats)
+{
+    auto previousIntrudingFloats = lineLayout.intrudingFloats();
+    if (previousIntrudingFloats.size() != intrudingFloats.size())
+        return true;
+    for (size_t index = 0; index < intrudingFloats.size(); ++index) {
+        auto& previousFloat = previousIntrudingFloats[index];
+        auto& intrudingFloat = intrudingFloats[index];
+        auto previousRect = previousFloat.absoluteRectWithMargin();
+        auto rect = intrudingFloat.absoluteRectWithMargin();
+        if (previousFloat.isStartPositioned() != intrudingFloat.isStartPositioned() || previousRect.topLeft() != rect.topLeft() || previousRect.size() != rect.size() || previousFloat.shape() != intrudingFloat.shape())
+            return true;
+    }
+    return false;
 }
 
 static bool inlineContentConstraintsChanged(const LineLayout& lineLayout, const Layout::ConstraintsForInlineContent& constraints)
@@ -372,7 +391,51 @@ bool BlockIntegrationUtils::laysOutThroughRenderTree(const RenderBox& box)
     return !blockContainer || !canUseForNestedBlockLayout(*blockContainer);
 }
 
-BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit replacedElementAvailableBlockSize, LayoutUnit orthogonalFlowAvailableInlineSpace, bool relayoutChildren, const Layout::BlockLayoutState& blockLayoutState, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult)
+bool BlockIntegrationUtils::inlineContentHasFloats(const RenderBlockFlow& blockContainer)
+{
+    for (CheckedPtr<const RenderObject> descendant = blockContainer.firstChild(); descendant;) {
+        if (descendant->isFloating())
+            return true;
+        if (is<RenderBox>(*descendant)) {
+            descendant = descendant->nextInPreOrderAfterChildren(&blockContainer);
+            continue;
+        }
+        descendant = descendant->nextInPreOrder(&blockContainer);
+    }
+    return false;
+}
+
+bool BlockIntegrationUtils::inlineContentMakesLineBoxes(const RenderBlockFlow& blockContainer)
+{
+    for (CheckedPtr<const RenderObject> descendant = blockContainer.firstChild(); descendant;) {
+        if (descendant->isFloatingOrOutOfFlowPositioned()) {
+            descendant = descendant->nextInPreOrderAfterChildren(&blockContainer);
+            continue;
+        }
+        if (CheckedPtr text = dynamicDowncast<RenderText>(*descendant)) {
+            if (!text->containsOnlyCollapsibleWhitespace())
+                return true;
+        } else if (CheckedPtr lineBreak = dynamicDowncast<RenderLineBreak>(*descendant)) {
+            if (!lineBreak->isWBR())
+                return true;
+        } else if (is<RenderBox>(*descendant))
+            return true;
+        else if (descendant->isInlineBox()) {
+            CheckedRef inlineBox = downcast<RenderBoxModelObject>(*descendant);
+            CheckedRef style = inlineBox->style();
+            auto writingMode = blockContainer.writingMode();
+            auto hasInlineAxisMargin = [&](auto& margin) {
+                return !margin.isAuto() && !margin.isPossiblyZero();
+            };
+            if (hasInlineAxisMargin(style->marginStart(writingMode)) || hasInlineAxisMargin(style->marginEnd(writingMode)) || inlineBox->borderStart() || inlineBox->borderEnd() || !style->paddingStart(writingMode).isPossiblyZero() || !style->paddingEnd(writingMode).isPossiblyZero())
+                return true;
+        }
+        descendant = descendant->nextInPreOrder(&blockContainer);
+    }
+    return false;
+}
+
+BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit replacedElementAvailableBlockSize, LayoutUnit orthogonalFlowAvailableInlineSpace, bool relayoutChildren, const Layout::BlockLayoutState& blockLayoutState, const Layout::PlacedFloats::List& intrudingFloats, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult)
 {
     // Only the line layout of this block container and its inline content are written here, and nothing else in the block formatting
     // context reads them.
@@ -385,11 +448,12 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
     // lays out all the content of a line-clamp container's formatting context again.
     auto isInLineClampContext = !!blockLayoutState.lineClamp();
     auto contentNeedsLayout = isInLineClampContext || inlineContentRoot.selfNeedsLayout() || inlineContentRoot.normalChildNeedsLayout() || inlineContentRoot.outOfFlowChildNeedsStaticPositionLayout();
-    if (CheckedPtr lineLayout = inlineContentRoot.inlineLayout(); lineLayout && !contentNeedsLayout && lineLayout->hasContent() && !inlineContentConstraintsChanged(*lineLayout, constraints)) {
+    if (CheckedPtr lineLayout = inlineContentRoot.inlineLayout(); lineLayout && !contentNeedsLayout && lineLayout->hasContent() && !inlineContentConstraintsChanged(*lineLayout, constraints) && !intrudingFloatsChanged(*lineLayout, intrudingFloats)) {
         auto keptContentLayoutResult = lineLayout->hasBlocks() ? keptInlineContentWithBlockLevelBoxesLayoutResult(inlineContentRoot, *lineLayout) : std::optional { inlineContentLayoutResult(*lineLayout) };
         if (keptContentLayoutResult) {
             if (inlineContentRoot.needsSimplifiedNormalFlowLayout())
                 inlineContentRoot.simplifiedNormalFlowLayout();
+            keptContentLayoutResult->floats = lineLayout->floatsInContent();
             return *keptContentLayoutResult;
         }
     }
@@ -450,15 +514,19 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
         // The block formatting context needs the margins of every block-level box in the content, so it lays out all the lines again
         // (like RenderBlockFlow::layoutInlineContent when one of them is dirty).
         auto hasBlockLevelBoxes = inlineContentStatus.hasDirtyInFlowBlockLevelElement || lineLayout->hasBlocks();
-        auto forceFullLayout = invalidateChildren || hasBlockLevelBoxes ? LineLayout::ForceFullLayout::Yes : LineLayout::ForceFullLayout::No;
-        paintInvalidationScope.setDamagedRect(lineLayout->layout(blockLayoutState, blockFormattingContext, blockLayoutResult, forceFullLayout).repaintRect);
+        // The lines before the damage would need the floats in the content placed before them, which only the render tree's float lists keep.
+        auto hasFloats = !intrudingFloats.isEmpty() || inlineContentHasFloats(inlineContentRoot);
+        auto forceFullLayout = invalidateChildren || hasBlockLevelBoxes || hasFloats ? LineLayout::ForceFullLayout::Yes : LineLayout::ForceFullLayout::No;
+        paintInvalidationScope.setDamagedRect(lineLayout->layout(blockLayoutState, blockFormattingContext, blockLayoutResult, intrudingFloats, forceFullLayout).repaintRect);
     }
     for (auto& box : atomicInlineLevelBoxes) {
         box->clearOverridingContainingBlockContentSize();
         if (CheckedPtr drawableContent = drawableContentBlock(box))
             drawableContent->clearOverridingContainingBlockContentSize();
     }
-    return inlineContentLayoutResult(lineLayout.get());
+    auto result = inlineContentLayoutResult(lineLayout.get());
+    result.floats = lineLayout->floatsInContent();
+    return result;
 }
 
 } // namespace LayoutIntegration

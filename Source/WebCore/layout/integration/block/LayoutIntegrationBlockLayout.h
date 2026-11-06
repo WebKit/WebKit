@@ -56,6 +56,8 @@ public:
     // (css-flexbox-1 §9.4 step 11). The render tree path registers percentage height descendants for that; the block formatting context does not.
     // False for a root the block formatting context does not lay out.
     static bool contentDependsOnBlockSize(const RenderBlockFlow&);
+    // Before the render tree's block layout lays out the root, which the block formatting context may have laid out last time.
+    static void prepareForRenderTreeLayout(RenderBlockFlow&);
     // The out-of-flow boxes registered on the root or on a block container inside it, once their containing block has its size
     // (RenderBlockFlow::layoutBlock, RenderBlock::simplifiedLayout).
     void layoutOutOfFlowBoxes(const RenderBlock& containingBlock);
