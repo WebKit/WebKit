@@ -24,6 +24,9 @@
 import Foundation
 import WebKit_Internal
 
+// Not API (these classes aren't exported). SPI exempts these open overrides from library evolution's
+// explicit-availability check; an @available version would have to predate the AppKit/UIKit originals.
+@_spi(Internal)
 @objc
 @implementation
 extension WKDeferringGestureRecognizer {
