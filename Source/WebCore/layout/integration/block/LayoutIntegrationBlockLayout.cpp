@@ -220,7 +220,12 @@ std::pair<LayoutUnit, LayoutUnit> BlockLayout::computeIntrinsicInlineSizes(const
     auto paintInvalidation = PaintInvalidation { };
     auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
     auto blockLayoutState = Layout::BlockLayoutState { { } };
+    // A fieldset's legend, which sits in its border and not in its content, floors them (RenderBlock::computeBlockIntrinsicLogicalWidths). This
+    // takes the legend out of the content too, like RenderBlock::layoutExcludedChildren.
+    auto [legendMinimum, legendMaximum] = rootRenderer.computeIntrinsicLogicalWidthsForFieldsetLegend();
     auto sizes = Layout::BlockFormattingContext { rootRenderer, integrationUtils, blockLayoutState }.computeIntrinsicInlineSizes(rootRenderer);
+    sizes.minimum = std::max(sizes.minimum, legendMinimum);
+    sizes.maximum = std::max(sizes.maximum, legendMaximum);
 
     // The render tree stops invalidating intrinsic sizes at a box whose intrinsic sizes are already invalid, expecting its ancestors to be
     // invalid too. The block formatting context does not compute the render tree's intrinsic sizes of the boxes in the root, so those that
