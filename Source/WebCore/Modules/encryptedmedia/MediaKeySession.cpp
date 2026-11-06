@@ -821,8 +821,8 @@ void MediaKeySession::sessionClosed()
     // W3C Editor's Draft 09 November 2016
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    // close(), stop(), and a CDM-reported close during update() each queue a task that lands here. They guard on
-    // m_closed before enqueuing, but it is only set when the task runs, so more than one task can already be queued.
+    // close() and a CDM-reported close during update() each queue a task that lands here, and stop() calls this directly.
+    // They guard on m_closed before enqueuing, but it is only set when the task runs, so more than one task can already be queued.
     // Update m_closed here to ensure the promise is only resolved once, and avoid an assertion in DOMPromiseProxy.
     if (std::exchange(m_closed, true))
         return;
@@ -843,8 +843,8 @@ void MediaKeySession::sessionClosed()
 
     // 5. Let promise be the closed attribute of the session.
     // 6. Resolve promise.
-    // Skip if the context is stopping (e.g. a back/forward-cached page being pruned); otherwise resolving the
-    // promise trips DeferredPromise's suspended-context assertion.
+    // Skip if the context is stopping (e.g. a back/forward-cached page being pruned, or a removed iframe). When the CDM closes
+    // the session of a destroyed document, the spec runs Session Closed from a queued task, and destroying a document removes its tasks.
     RefPtr context = scriptExecutionContext();
     if (!context || context->activeDOMObjectsAreStopped()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Context is stopping; not resolving closed promise");
