@@ -135,22 +135,6 @@ webkit.org/b/306558 accessibility/mac/style-range.html [ Failure ]
 http/tests/site-isolation/date-time-picker-in-cross-origin-iframe-001.html [ Pass ]
 http/tests/site-isolation/date-time-picker-in-cross-origin-iframe-002.html [ Pass ]
 
-# Site isolation accessibility tests using the accessibility client API:
-# Skip by default, enable tests that are stable.
-http/tests/site-isolation/accessibility/client [ Skip ]
-http/tests/site-isolation/accessibility/client/simple-iframe.html [ Pass ]
-http/tests/site-isolation/accessibility/client/iframe-bounds.html [ Pass ]
-http/tests/site-isolation/accessibility/client/absolute-position-iframe.html [ Pass ]
-http/tests/site-isolation/accessibility/client/absolute-position-iframe-in-scrolled-page.html [ Pass ]
-http/tests/site-isolation/accessibility/client/absolute-position-scrolled-iframe.html [ Pass ]
-http/tests/site-isolation/accessibility/client/absolute-position-scrolled-iframe-in-scrolled-page.html [ Pass ]
-http/tests/site-isolation/accessibility/client/absolute-position-nested-scrolled-iframes.html [ Pass ]
-http/tests/site-isolation/accessibility/client/walk-up-from-iframe-content.html [ Pass ]
-http/tests/site-isolation/accessibility/client/search-past-remote-frame-immediate-descendants.html [ Pass ]
-http/tests/site-isolation/accessibility/client/search-from-remote-frame-host.html [ Pass ]
-http/tests/site-isolation/accessibility/client/iframe-name-propagates-to-web-area.html [ Pass ]
-http/tests/site-isolation/accessibility/client/iframe-access-denied.html [ Pass ]
-
 # Shared-process site isolation accessibility tests using the accessibility client API:
 # Skip by default, enable tests that are stable.
 http/wpt/site-isolation/accessibility [ Skip ]
