@@ -516,6 +516,14 @@ void GridLayout::layout()
     populateGridPositions(result.columnLines, result.rowLines);
 
     CheckedRef renderGrid = gridBoxRenderer();
+    // Resolve the height before the scroll info is committed and before out-of-flow boxes are laid out, since
+    // those whose containing block is the grid read it.
+    renderGrid->updateLogicalHeight();
+    if (result.gridItemRects.isEmpty() && renderGrid->hasLineIfEmpty()) {
+        // FIXME: This keeps the legacy grid's behavior for an empty editable grid: one line of height that wins over height and max-height.
+        // Chrome applies it only to a grid with no items, as here, but lets height and max-height win. Decide which one we want.
+        renderGrid->setLogicalHeight(std::max(renderGrid->logicalHeight(), renderGrid->borderAndPaddingLogicalHeight() + renderGrid->lineHeight() + renderGrid->scrollbarLogicalHeight()));
+    }
     // Closes the transaction RenderGrid::layoutGrid() began. Like the other containers, commit it before the transforms
     // and the overflow are updated: committing relays out a box whose scrollbar changed, and that box registers
     // with this container again if its offset-path depends on its containing block.
@@ -526,7 +534,6 @@ void GridLayout::layout()
     layoutOutOfFlowBoxes();
     renderGrid->updateOutOfFlowDescendantTransformsAfterLayout();
 
-    renderGrid->updateLogicalHeight();
     updateOverflow(renderGrid);
 
     // https://drafts.csswg.org/css-grid-2/#resolved-track-list
