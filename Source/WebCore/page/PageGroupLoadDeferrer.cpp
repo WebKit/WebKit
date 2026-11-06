@@ -51,7 +51,10 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page& page, bool deferSelf)
             RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
-            protect(localFrame->document())->suspendScheduledTasks(ReasonForSuspension::WillDeferLoading);
+            RefPtr document = localFrame->document();
+            if (!document || document->backForwardCacheState() == Document::InBackForwardCache)
+                continue;
+            document->suspendScheduledTasks(ReasonForSuspension::WillDeferLoading);
         }
     }
 

@@ -6605,6 +6605,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             loadParameters.effectiveSandboxFlags = frame->effectiveSandboxFlags();
             loadParameters.effectiveReferrerPolicy = frame->effectiveReferrerPolicy();
             loadParameters.request = navigation->currentRequest();
+            alignFirstPartyForCookiesWithMainFrame(frame.get(), loadParameters.request);
             loadParameters.shouldTreatAsContinuingLoad = navigation->currentRequestIsRedirect() ? ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted : ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
             loadParameters.frameIdentifier = frame->frameID();
             loadParameters.isRequestFromClientOrUserInput = navigationAction->data().isRequestFromClientOrUserInput;
@@ -7047,6 +7048,21 @@ void WebPageProxy::destroyProvisionalPage()
     m_provisionalPage = nullptr;
 }
 
+void WebPageProxy::alignFirstPartyForCookiesWithMainFrame(const WebFrameProxy& frame, WebCore::ResourceRequest& request) const
+{
+    if (frame.isMainFrame())
+        return;
+
+    RefPtr mainFrame = m_mainFrame;
+    if (!mainFrame)
+        return;
+
+    if (WebCore::RegistrableDomain { request.firstPartyForCookies() } == WebCore::RegistrableDomain { mainFrame->securityOrigin()->data() })
+        return;
+
+    request.setFirstPartyForCookies(mainFrame->url());
+}
+
 void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, WebFrameProxy& frame, RefPtr<SuspendedPageProxy>&& suspendedPage, BrowsingContextGroup& browsingContextGroup, Ref<WebProcessProxy>&& newProcess, ProcessSwapRequestedByClient processSwapRequestedByClient, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, LoadedWebArchive loadedWebArchive, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, WebCore::ProcessSwapDisposition processSwapDisposition, WebsiteDataStore* replacedDataStoreForWebArchiveLoad, MonotonicTime originalNavigationStartTime, const std::optional<Site>& backForwardInheritedSite)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "continueNavigationInNewProcess: newProcessPID=%i, hasSuspendedPage=%i", newProcess->processID(), !!suspendedPage);
@@ -7158,6 +7174,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         // FIXME: Add more parameters as appropriate. <rdar://116200985>
         LoadParameters loadParameters;
         loadParameters.request = navigation.currentRequest();
+        alignFirstPartyForCookiesWithMainFrame(frame, loadParameters.request);
         loadParameters.shouldTreatAsContinuingLoad = shouldTreatAsContinuingLoad;
         loadParameters.frameIdentifier = frame.frameID();
         loadParameters.isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput();
