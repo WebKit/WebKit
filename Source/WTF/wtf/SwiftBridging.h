@@ -419,23 +419,9 @@
 #endif
 
 // Newer Swift compilers rename SWIFT_ESCAPABLE, SWIFT_ESCAPABLE_IF, and SWIFT_NONESCAPABLE to SWIFT_SELF_CONTAINED,
-// SWIFT_SELF_CONTAINED_IF, and SWIFT_VIEW respectively, replacing the original meaning of SWIFT_SELF_CONTAINED. Define
-// both spellings regardless of compiler version, using SWIFT_VIEW to detect which ones <swift/bridging> provides, but
-// prefer the new spellings.
+// SWIFT_SELF_CONTAINED_IF, and SWIFT_VIEW respectively, replacing the original meaning of SWIFT_SELF_CONTAINED.
 
-#ifdef SWIFT_VIEW
-
-#ifndef SWIFT_ESCAPABLE
-#define SWIFT_ESCAPABLE ; static_assert(false, "SWIFT_ESCAPABLE is removed; use SWIFT_SELF_CONTAINED");
-#endif
-#ifndef SWIFT_ESCAPABLE_IF
-#define SWIFT_ESCAPABLE_IF(...) ; static_assert(false, "SWIFT_ESCAPABLE_IF is removed; use SWIFT_SELF_CONTAINED_IF");
-#endif
-#ifndef SWIFT_NONESCAPABLE
-#define SWIFT_NONESCAPABLE ; static_assert(false, "SWIFT_NONESCAPABLE is removed; use SWIFT_VIEW");
-#endif
-
-#else
+#ifndef SWIFT_VIEW
 
 #ifndef SWIFT_ESCAPABLE
 #define SWIFT_ESCAPABLE
