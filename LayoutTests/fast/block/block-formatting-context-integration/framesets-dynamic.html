@@ -1,0 +1,11 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<frameset id="outer" rows="80,*" border="6" bordercolor="blue">
+  <frameset id="inner" cols="30%,*" border="4" bordercolor="green"><frame><frame></frameset>
+  <frame>
+</frameset>
+<script>
+document.documentElement.offsetHeight;
+document.getElementById("outer").rows = "*,120";
+document.getElementById("inner").cols = "60,*,60";
+document.getElementById("inner").appendChild(document.createElement("frame"));
+</script>
