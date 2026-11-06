@@ -2613,6 +2613,7 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-long-deletion.html [ Failure ]
 [ GoldenGate ] http/tests/site-isolation/accessibility/client/iframe-bounds.html [ Failure ]
 [ GoldenGate ] http/tests/site-isolation/inspector/network/resource-timing-cross-origin-page-navigation.html [ Failure ]
+[ GoldenGate ] http/tests/text-extraction/debug-text-extraction-subframes.html [ Timeout ]
 [ GoldenGate Release ] http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/textureDimensions.html [ Failure ]
 [ GoldenGate ] imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrolling-with-margin-and-transform.html [ Failure ]
 [ GoldenGate ] imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Failure ]
