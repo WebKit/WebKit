@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Anchor Positioning Test: anchor-positioned element whose containing block changes</title>
+<link rel="help" href="https://drafts.csswg.org/css-anchor-position-1/#anchor-pos">
+<meta name="assert" content="An anchor-positioned element whose own style is unchanged is positioned correctly when it gets a new containing block, including a transformed containing block for a fixed-position element.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+body { margin: 0; }
+#anchor { position: absolute; left: 100px; top: 0; width: 100px; height: 20px; anchor-name: --a; }
+#wrapper { margin-left: 300px; }
+#target { position: absolute; left: anchor(--a right, 7px); top: 50px; width: 20px; height: 20px; }
+</style>
+<div id="anchor"></div>
+<div id="wrapper"><div id="target"></div></div>
+<script>
+const target = document.getElementById("target");
+const wrapper = document.getElementById("wrapper");
+
+function checkTargetLeft(expected) {
+  document.body.offsetTop;
+  assert_equals(target.getBoundingClientRect().left, expected);
+}
+
+test(() => checkTargetLeft(200), "Initially anchored to the right edge of --a");
+test(() => { wrapper.style.position = "relative"; checkTargetLeft(307); }, "Wrapper becomes the containing block and excludes the anchor: fallback is used, relative to the wrapper");
+test(() => { target.style.outlineColor = "red"; checkTargetLeft(307); }, "Unrelated change to the target keeps the fallback");
+test(() => { wrapper.style.position = "static"; checkTargetLeft(200); }, "Wrapper stops being the containing block: anchored again");
+test(() => { target.style.position = "fixed"; checkTargetLeft(200); }, "Fixed-position target is anchored");
+test(() => { document.body.style.transform = "translateX(50px)"; checkTargetLeft(250); }, "Transformed body becomes the containing block of the fixed target");
+test(() => { document.body.style.transform = "none"; checkTargetLeft(200); }, "Transform removed: anchored relative to the viewport again");
+</script>

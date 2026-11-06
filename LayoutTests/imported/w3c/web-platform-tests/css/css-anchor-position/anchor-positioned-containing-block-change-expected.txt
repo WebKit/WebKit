@@ -1,0 +1,9 @@
+
+PASS Initially anchored to the right edge of --a
+PASS Wrapper becomes the containing block and excludes the anchor: fallback is used, relative to the wrapper
+PASS Unrelated change to the target keeps the fallback
+PASS Wrapper stops being the containing block: anchored again
+PASS Fixed-position target is anchored
+PASS Transformed body becomes the containing block of the fixed target
+PASS Transform removed: anchored relative to the viewport again
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Anchor Positioning Test: anchor chain ending in a pseudo-element</title>
+<link rel="help" href="https://drafts.csswg.org/css-anchor-position-1/#anchor-pos">
+<meta name="assert" content="A chain of anchor-positioned elements ending in a ::before pseudo-element follows when the first anchor moves, is removed and is inserted again.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+body { margin: 0; }
+#first, #second, #third, #host::before { position: absolute; top: 0; width: 20px; height: 20px; }
+#first { left: 100px; anchor-name: --first; }
+#second { left: anchor(--first right, 7px); anchor-name: --second; }
+#third { left: anchor(--second right, 7px); anchor-name: --third; }
+#host::before { content: ""; left: anchor(--third right, 7px); }
+</style>
+<div id="first"></div><div id="second"></div><div id="third"></div><div id="host"></div>
+<script>
+const first = document.getElementById("first");
+const second = document.getElementById("second");
+const third = document.getElementById("third");
+const host = document.getElementById("host");
+
+function checkChain(secondLeft, thirdLeft, pseudoLeft) {
+  document.body.offsetTop;
+  assert_equals(second.getBoundingClientRect().left, secondLeft, "second");
+  assert_equals(third.getBoundingClientRect().left, thirdLeft, "third");
+  assert_equals(parseFloat(getComputedStyle(host, "::before").left), pseudoLeft, "::before");
+}
+
+test(() => checkChain(120, 140, 160), "Initial chain");
+test(() => { first.style.left = "200px"; checkChain(220, 240, 260); }, "First anchor moved: the chain follows");
+test(() => { first.remove(); checkChain(7, 27, 47); }, "First anchor removed: fallback is used along the chain");
+test(() => { document.body.insertBefore(first, second); checkChain(220, 240, 260); }, "First anchor inserted again: the chain is anchored again");
+</script>
