@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 12px/14px monospace; }
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 8px; }
+fieldset { background: lightblue; }
+legend { background: orange; }
+</style>
+<div class="root" id="resized">
+  <p style="margin: 10px 0">before</p>
+  <fieldset><legend id="text">legend</legend>content</fieldset>
+  <fieldset><legend id="margin">margin</legend>content</fieldset>
+  <fieldset><legend id="removed">removed</legend>content</fieldset>
+  <fieldset id="added">content</fieldset>
+  <fieldset><legend id="height">height</legend>content</fieldset>
+</div>
+<div class="root" style="width: auto; display: inline-block"><fieldset><legend id="wider">legend</legend>x</fieldset></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "200px";
+document.getElementById("text").firstChild.data = "a legend whose text wraps over several lines";
+document.getElementById("margin").style.marginTop = "20px";
+document.getElementById("removed").remove();
+const legend = document.createElement("legend");
+legend.textContent = "added legend";
+document.getElementById("added").prepend(legend);
+document.getElementById("height").style.height = "30px";
+document.getElementById("wider").firstChild.data = "a legend that got wider";
+</script>

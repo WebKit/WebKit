@@ -145,7 +145,7 @@ private:
     void handleBlockContainerEnd(const RenderBox&, BlockLayoutResult&);
     void handleInlineContent(const RenderBox& blockContainer, BlockLayoutResult&);
     void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);
-    void layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState);
+    LayoutUnit layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState);
     BlockLayoutResult layoutOutOfFlowIndependentFormattingContext(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&, const std::optional<OutOfFlowGeometry::DefaultAnchor>&);
     void handleOutOfFlowBox(const RenderBox&, BlockLayoutResult&);
 

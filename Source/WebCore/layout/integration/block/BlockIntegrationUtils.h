@@ -127,6 +127,8 @@ public:
         // In the writing mode of the containing block, the block formatting context's.
         Layout::BoxGeometry::Edges border;
         Layout::BoxGeometry::Edges padding;
+        // What a fieldset's own layout adds to the block-start margin of its style: its legend's (RenderBlock::marginBefore).
+        LayoutUnit legendMarginBefore;
     };
     // An independent formatting context root the block formatting context does not lay out itself, such as a table or a flex container,
     // laid out by its own formatting context through the render tree (RenderBox::layoutIfNeeded). Its position and margins are the block

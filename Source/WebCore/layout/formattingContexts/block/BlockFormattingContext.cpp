@@ -440,17 +440,20 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
 {
     auto rootState = containingBlockStateAtBlockStart(box);
     // Its margins do not collapse with its children's, nor through it, even when it is empty (CSS 2.2 §8.3.1). With a block step, they
-    // collapse once the block size is known, which its content, in a formatting context of its own, does not depend on the position for.
+    // collapse once the block size is known, which its content, in a formatting context of its own, does not depend on the position for, and
+    // so do those of a fieldset, once its own layout has placed its legend, whose block-start margin it takes (RenderBlock::marginBefore).
     auto stepSize = blockStepSize(box);
-    if (!stepSize) {
+    auto collapsesMarginsOnceLaidOut = stepSize || box.isFieldset();
+    if (!collapsesMarginsOnceLaidOut) {
         m_blockLayoutState.marginCollapse().startBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last(), rootState.geometry.marginBefore());
         resolveBorderBoxLogicalTops(rootState);
     }
 
     auto contentBlockSize = std::optional<LayoutUnit> { };
+    auto legendMarginBefore = LayoutUnit { };
     CheckedPtr root = dynamicDowncast<RenderBlockFlow>(box);
     if (!root || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*root)) {
-        layoutIndependentFormattingContextThroughRenderTree(box, rootState);
+        legendMarginBefore = layoutIndependentFormattingContextThroughRenderTree(box, rootState);
         contentBlockSize = rootState.geometry.contentBoxHeight();
     } else if (!root->firstChild())
         contentBlockSize = BlockFormattingUtils::emptyEditableContentBlockSize(box);
@@ -483,6 +486,9 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
         geometry.setVerticalMargin({ geometry.marginBefore() + halfExtraSpace, geometry.marginAfter() + halfExtraSpace });
         m_blockLayoutState.marginCollapse().startBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last(), geometry.marginBefore());
         resolveBorderBoxLogicalTops(rootState);
+    } else if (collapsesMarginsOnceLaidOut) {
+        m_blockLayoutState.marginCollapse().startBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last(), rootState.geometry.marginBefore() + legendMarginBefore);
+        resolveBorderBoxLogicalTops(rootState);
     }
     if (contentBlockSize)
         m_blockLayoutState.marginCollapse().resetAdjoiningMargins(rootState.contentBoxLogicalTop() + *contentBlockSize);
@@ -509,8 +515,8 @@ static bool decidesItsOwnInlineSize(const RenderBox& box, WritingMode writingMod
 // Everything that belongs to the block formatting context is computed here: the margins, the position, the containing block and, for a box
 // whose inline size its own formatting context does not decide, the stretch-fit inline size. The rest comes back from the box's own formatting
 // context, laid out through the render tree, which lays out its content: the inline size it decides (decidesItsOwnInlineSize), the block size,
-// border and padding.
-void BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree(const RenderBox& box, ContainingBlockState& boxState)
+// border and padding, and what it adds to the block-start margin, which collapses with the others once the box is laid out.
+LayoutUnit BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree(const RenderBox& box, ContainingBlockState& boxState)
 {
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
     auto containingBlockInlineSize = containingBlockState.inlineRange.size();
@@ -540,6 +546,7 @@ void BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree
     computeLogicalLeft(box, containingBlockState, geometry);
     boxState.borderAndPaddingBefore = geometry.borderAndPaddingBefore();
     boxState.isLaidOutThroughRenderTree = true;
+    return layoutResult.legendMarginBefore;
 }
 
 void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayoutResult& result)

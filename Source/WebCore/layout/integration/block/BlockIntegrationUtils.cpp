@@ -216,7 +216,8 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
         borderBoxSize.width(),
         borderBoxSize.height(),
         { { border.start(containingBlockWritingMode), border.end(containingBlockWritingMode) }, { border.before(containingBlockWritingMode), border.after(containingBlockWritingMode) } },
-        { { padding.start(containingBlockWritingMode), padding.end(containingBlockWritingMode) }, { padding.before(containingBlockWritingMode), padding.after(containingBlockWritingMode) } }
+        { { padding.start(containingBlockWritingMode), padding.end(containingBlockWritingMode) }, { padding.before(containingBlockWritingMode), padding.after(containingBlockWritingMode) } },
+        is<RenderBlock>(box) ? downcast<RenderBlock>(box).intrinsicMarginBeforeForFieldset() : 0_lu
     };
 }
 

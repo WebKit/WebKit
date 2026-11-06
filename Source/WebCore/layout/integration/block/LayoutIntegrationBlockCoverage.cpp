@@ -57,7 +57,6 @@ enum class BlockAvoidanceReason : uint8_t {
     RootIsRenderView,
     RootHasListMarker,
     RootIsMultiColumnFlow,
-    RootIsFieldset,
     RootHasUnsupportedRenderer,
     RootHasUnsupportedWritingMode,
     RootIsPaginated,
@@ -70,7 +69,6 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasOutOfFlowBox,
     ContentHasOutOfFlowNonBlockContainer,
     ContentHasListMarker,
-    ContentIsFormControl,
     ContentHasStretchedQuirksModeBody,
     ContentHasUnsupportedRenderer,
     ContentHasFormattingContextRoot,
@@ -106,7 +104,7 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::BlockFormattingContextIntegrationDisabled;
     if (!rootContainer.createsNewFormattingContext())
         return BlockAvoidanceReason::NotABlockFormattingContextRoot;
-    // Not RenderView, list items with a marker, table captions, multi-column flows, fieldsets or form controls, which lay out their content their
+    // Not RenderView, list items with a marker, table captions, multi-column flows or form controls, which lay out their content their
     // own way, nor marquees, whose children fit their content (RenderBox::sizesLogicalWidthToFitContent).
     if (rootContainer.isRenderView())
         return BlockAvoidanceReason::RootIsRenderView;
@@ -114,8 +112,6 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::RootHasListMarker;
     if (rootContainer.isRenderMultiColumnFlow())
         return BlockAvoidanceReason::RootIsMultiColumnFlow;
-    if (rootContainer.isFieldset())
-        return BlockAvoidanceReason::RootIsFieldset;
     // A text control lays out its inner text with the block formatting context and adjusts it after (RenderTextControlSingleLine::layout), and
     // its placeholder itself (RenderTextControl::layoutExcludedChildren). A WebVTT cue box moves itself after (RenderVTTCue::layout). A table
     // caption, a file input and an SVG foreignObject only size and place themselves their own way.
@@ -522,13 +518,10 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(c
 
 static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
 {
-    // FIXME: A fieldset, whose block-start margin takes the one of its legend, which its own layout places (RenderBlock::marginBefore,
-    // RenderBlock::layoutExcludedChildren), while its margins collapse before it is laid out.
-    if (box.isFieldset())
-        return BlockAvoidanceReason::ContentIsFormControl;
     if (box.parent()->isInlineBox()) {
-        // FIXME: Anonymous block-level boxes in inline content.
-        if (box.isAnonymous())
+        // FIXME: Anonymous block-level boxes in inline content, and a fieldset, whose block-start margin takes its legend's, which the inline
+        // formatting context does not get (BlockLevelBoxInInlineContent).
+        if (box.isAnonymous() || box.isFieldset())
             return BlockAvoidanceReason::ContentHasBlockInInline;
     } else if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(box.parent()); !parent || parent->childrenInline())
         return BlockAvoidanceReason::ContentHasBlockInInline;
@@ -745,8 +738,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "root: list item with a marker"_s;
     case BlockAvoidanceReason::RootIsMultiColumnFlow:
         return "root: multi-column flow"_s;
-    case BlockAvoidanceReason::RootIsFieldset:
-        return "root: fieldset"_s;
     case BlockAvoidanceReason::RootHasUnsupportedRenderer:
         return "root: other renderer"_s;
     case BlockAvoidanceReason::RootHasUnsupportedWritingMode:
@@ -771,8 +762,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "out-of-flow table or other renderer"_s;
     case BlockAvoidanceReason::ContentHasListMarker:
         return "list item with a marker"_s;
-    case BlockAvoidanceReason::ContentIsFormControl:
-        return "form control or legend"_s;
     case BlockAvoidanceReason::ContentHasStretchedQuirksModeBody:
         return "quirks mode body leaf"_s;
     case BlockAvoidanceReason::ContentHasUnsupportedRenderer:
