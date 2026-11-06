@@ -1,0 +1,6 @@
+
+PASS scroll timeline on ::before with self scroller is active
+PASS scroll timeline on ::after with self scroller is active
+PASS scroll timeline on ::before with named scroller is active
+PASS scroll timeline on ::after with named scroller is active
+
