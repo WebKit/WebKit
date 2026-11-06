@@ -31,6 +31,7 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <WebKit/WKContentWorld.h>
+#import <WebKit/WKError.h>
 #import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -324,6 +325,49 @@ TEST(AsyncFunction, PromiseDetachedFrame)
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_EQ([webView _webProcessIdentifier], pid);
+}
+
+TEST(AsyncFunction, RemovedFrameDoesNotExtractArguments)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr uiDelegate = adoptNS([[TestUIDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    __block RetainPtr<WKFrameInfo> subframe;
+    __block bool doneGettingSubframe = false;
+    uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *, WKFrameInfo * frame, void (^completionHandler)(void)) {
+        subframe = frame;
+        doneGettingSubframe = true;
+        completionHandler();
+    };
+
+    [webView synchronouslyLoadHTMLString:@"<iframe src='javascript:alert()'></iframe>"];
+    TestWebKitAPI::Util::run(&doneGettingSubframe);
+    ASSERT_TRUE(!!subframe);
+
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('iframe').remove()"];
+
+    // Wait until the removed frame is reported as an invalid target.
+    __block bool frameIsGone = false;
+    while (!frameIsGone) {
+        __block bool probeDone = false;
+        [webView callAsyncJavaScript:@"return 1" arguments:nil inFrame:subframe.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id, NSError *error) {
+            frameIsGone = error.code == WKErrorJavaScriptInvalidFrameTarget;
+            probeDone = true;
+        }];
+        TestWebKitAPI::Util::run(&probeDone);
+    }
+
+    // The unsupported argument type would otherwise be reported first, after the argument had been walked.
+    __block RetainPtr<NSError> argumentError;
+    __block bool done = false;
+    [webView callAsyncJavaScript:@"return 1" arguments:@{ @"a" : webView.get() } inFrame:subframe.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id, NSError *error) {
+        argumentError = error;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ([argumentError code], WKErrorJavaScriptInvalidFrameTarget);
 }
 
 TEST(AsyncFunction, CircularArgumentReference)

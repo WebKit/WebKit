@@ -1545,6 +1545,22 @@ NODELETE static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybac
     THROW_IF_SUSPENDED;
     auto handler = adoptNS([completionHandler copy]);
 
+    std::optional<WebCore::FrameIdentifier> frameID;
+    if (frame && frame._handle && frame._handle->_frameHandle->frameID())
+        frameID = frame._handle->_frameHandle->frameID();
+
+    // Skip walking the arguments when the target frame is already gone.
+    if (frameID && !WebKit::WebFrameProxy::webFrame(frameID)) {
+        if (handler) {
+            auto error = nsErrorFromExceptionDetails(WebCore::ExceptionDetails { "Unable to execute JavaScript: Target frame could not be found in the page"_s, 0, 0, WebCore::ExceptionDetails::Type::InvalidTargetFrame });
+            RunLoop::mainSingleton().dispatch([handler, error] {
+                auto rawHandler = (void (^)(id, NSError *))handler.get();
+                rawHandler(nil, error.get());
+            });
+        }
+        return;
+    }
+
     std::optional<Vector<std::pair<String, WebKit::JavaScriptEvaluationResult>>> argumentsMap;
     if (asAsyncFunction)
         argumentsMap = Vector<std::pair<String, WebKit::JavaScriptEvaluationResult>> { };
@@ -1583,10 +1599,6 @@ NODELETE static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybac
         return;
     }
     
-    std::optional<WebCore::FrameIdentifier> frameID;
-    if (frame && frame._handle && frame._handle->_frameHandle->frameID())
-        frameID = frame._handle->_frameHandle->frameID();
-
     auto removeTransientActivation = !_dontResetTransientActivationAfterRunJavaScript && WebKit::shouldEvaluateJavaScriptWithoutTransientActivation() ? WebCore::RemoveTransientActivation::Yes : WebCore::RemoveTransientActivation::No;
 
     std::optional<IPC::TransferString> scriptString;
