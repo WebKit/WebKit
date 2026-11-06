@@ -258,30 +258,38 @@ IGNORE_CLANG_WARNINGS_END
 
 void RemoteInspectorServer::setup(SocketConnection& clientConnection, uint64_t connectionID, uint64_t targetID)
 {
-    ASSERT(m_clientConnection == &clientConnection || m_automationConnection == &clientConnection);
-    ASSERT(m_idToRemoteInspectorConnectionMap.contains(connectionID));
+    RefPtr remoteInspectorConnection = m_idToRemoteInspectorConnectionMap.get(connectionID);
+    if (!remoteInspectorConnection)
+        return;
+
     if (&clientConnection == m_automationConnection) {
         m_automationTargets.add(std::make_pair(connectionID, targetID));
         RemoteInspector::singleton().setup(targetID);
         return;
     }
 
+    if (&clientConnection != m_clientConnection)
+        return;
+
     m_inspectionTargets.add(std::make_pair(connectionID, targetID));
-    m_idToRemoteInspectorConnectionMap.get(connectionID)->sendMessage("Setup"_s, g_variant_new("(t)", targetID));
+    remoteInspectorConnection->sendMessage("Setup"_s, g_variant_new("(t)", targetID));
 }
 
 void RemoteInspectorServer::close(SocketConnection& clientConnection, uint64_t connectionID, uint64_t targetID)
 {
-    ASSERT(m_clientConnection == &clientConnection || m_automationConnection == &clientConnection);
-    ASSERT(m_idToRemoteInspectorConnectionMap.contains(connectionID));
     if (&clientConnection == m_automationConnection) {
         m_automationTargets.remove(std::make_pair(connectionID, targetID));
         return;
     }
 
-    ASSERT(m_inspectionTargets.contains(std::make_pair(connectionID, targetID)));
-    m_idToRemoteInspectorConnectionMap.get(connectionID)->sendMessage("FrontendDidClose"_s, g_variant_new("(t)", targetID));
-    m_inspectionTargets.remove(std::make_pair(connectionID, targetID));
+    if (&clientConnection != m_clientConnection)
+        return;
+
+    if (!m_inspectionTargets.remove(std::make_pair(connectionID, targetID)))
+        return;
+
+    if (RefPtr remoteInspectorConnection = m_idToRemoteInspectorConnectionMap.get(connectionID))
+        remoteInspectorConnection->sendMessage("FrontendDidClose"_s, g_variant_new("(t)", targetID));
 }
 
 void RemoteInspectorServer::connectionDidClose(SocketConnection& clientConnection)
@@ -297,11 +305,15 @@ void RemoteInspectorServer::connectionDidClose(SocketConnection& clientConnectio
         // send it here.
         RemoteInspector::singleton().automationConnectionDidClose();
 #endif
-    } else if (&clientConnection == m_clientConnection) {
+    }
+
+    if (&clientConnection == m_clientConnection) {
         for (auto connectionTargetPair : copyToVector(m_inspectionTargets))
             close(clientConnection, connectionTargetPair.first, connectionTargetPair.second);
         m_clientConnection = nullptr;
-    } else if (m_remoteInspectorConnectionToIDMap.contains(&clientConnection)) {
+    }
+
+    if (m_remoteInspectorConnectionToIDMap.contains(&clientConnection)) {
         uint64_t connectionID = m_remoteInspectorConnectionToIDMap.take(&clientConnection);
         m_idToRemoteInspectorConnectionMap.remove(connectionID);
         // Send an empty target list to the clients.
@@ -317,29 +329,38 @@ void RemoteInspectorServer::connectionDidClose(SocketConnection& clientConnectio
 
 void RemoteInspectorServer::sendMessageToBackend(SocketConnection& clientConnection, uint64_t connectionID, uint64_t targetID, const char* message)
 {
-    ASSERT(m_clientConnection == &clientConnection || m_automationConnection == &clientConnection);
-    ASSERT(m_idToRemoteInspectorConnectionMap.contains(connectionID));
     if (&clientConnection == m_automationConnection) {
         RemoteInspector::singleton().sendMessageToTarget(targetID, message);
         return;
     }
 
-    m_idToRemoteInspectorConnectionMap.get(connectionID)->sendMessage("SendMessageToTarget"_s, g_variant_new("(t&s)", targetID, message));
+    if (&clientConnection != m_clientConnection || !m_inspectionTargets.contains(std::make_pair(connectionID, targetID)))
+        return;
+
+    RefPtr remoteInspectorConnection = m_idToRemoteInspectorConnectionMap.get(connectionID);
+    if (!remoteInspectorConnection)
+        return;
+
+    remoteInspectorConnection->sendMessage("SendMessageToTarget"_s, g_variant_new("(t&s)", targetID, message));
 }
 
 void RemoteInspectorServer::sendMessageToFrontend(SocketConnection& remoteInspectorConnection, uint64_t targetID, const char* message)
 {
     ASSERT(m_connections.contains(&remoteInspectorConnection));
-    ASSERT(m_remoteInspectorConnectionToIDMap.contains(&remoteInspectorConnection));
 
-    uint64_t connectionID = m_remoteInspectorConnectionToIDMap.get(&remoteInspectorConnection);
-    auto connectionTargetPair = std::make_pair(connectionID, targetID);
+    auto connectionID = m_remoteInspectorConnectionToIDMap.getOptional(&remoteInspectorConnection);
+    if (!connectionID)
+        return;
+
+    auto connectionTargetPair = std::make_pair(*connectionID, targetID);
     if (!m_automationTargets.contains(connectionTargetPair) && !m_inspectionTargets.contains(connectionTargetPair))
         return;
 
     RefPtr clientConnection = m_inspectionTargets.contains(connectionTargetPair) ? m_clientConnection : m_automationConnection;
-    ASSERT(clientConnection);
-    clientConnection->sendMessage("SendMessageToFrontend"_s, g_variant_new("(tt&s)", connectionID, targetID, message));
+    if (!clientConnection)
+        return;
+
+    clientConnection->sendMessage("SendMessageToFrontend"_s, g_variant_new("(tt&s)", *connectionID, targetID, message));
 }
 
 void RemoteInspectorServer::startAutomationSession(SocketConnection& automationConnection, const char* sessionID, const RemoteInspector::Client::SessionCapabilities& capabilities)

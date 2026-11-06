@@ -31,6 +31,7 @@
 #include <sys/wait.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/SocketConnection.h>
 #include <wtf/text/WTFString.h>
 
 #if OS(LINUX)
@@ -52,6 +53,10 @@ public:
 
     ~InspectorServerTest()
     {
+        if (m_clientConnection)
+            m_clientConnection->close();
+        if (m_observerConnection)
+            m_observerConnection->close();
         stopTestServer();
     }
 
@@ -168,6 +173,69 @@ public:
         return g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(boundAddress.get()));
     }
 
+    void connectAsInspectorClient()
+    {
+        GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
+        GUniqueOutPtr<GError> error;
+        GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host(socketClient.get(), m_serverAddress.get(), 0, nullptr, &error.outPtr()));
+        g_assert_no_error(error.get());
+        m_clientConnection = SocketConnection::create(WTF::move(connection), s_clientMessageHandlers, this);
+    }
+
+    void setupInspectorClientAndWaitForTarget()
+    {
+        m_clientConnection->sendMessage("SetupInspectorClient"_s, g_variant_new("(@ay)", g_variant_new_bytestring("")));
+        while (!m_targetID)
+            g_main_loop_run(m_mainLoop);
+    }
+
+    void waitForFrontendMessage(const char* substring)
+    {
+        m_expectedFrontendMessage = substring;
+        g_main_loop_run(m_mainLoop);
+        m_expectedFrontendMessage = nullptr;
+    }
+
+    void waitForTargetList(uint64_t targetID)
+    {
+        m_expectedTargetID = targetID;
+        m_expectedTargetConnectionID = 0;
+        while (!m_expectedTargetConnectionID)
+            g_main_loop_run(m_mainLoop);
+        m_expectedTargetID = 0;
+    }
+
+    void connectObserverAndWaitForAutomationSession()
+    {
+        GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
+        GUniqueOutPtr<GError> error;
+        GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host(socketClient.get(), m_serverAddress.get(), 0, nullptr, &error.outPtr()));
+        g_assert_no_error(error.get());
+        m_observerConnection = SocketConnection::create(WTF::move(connection), s_observerMessageHandlers, this);
+        m_observerConnection->sendMessage("StartAutomationSession"_s, g_variant_new("(s@a{sv})", "observer", g_variant_new_array(G_VARIANT_TYPE("{sv}"), nullptr, 0)));
+        while (!m_automationSessionStarted)
+            g_main_loop_run(m_mainLoop);
+    }
+
+    void waitForConnectionClosed(uint64_t connectionID)
+    {
+        m_expectedClosedConnectionID = connectionID;
+        while (m_expectedClosedConnectionID)
+            g_main_loop_run(m_mainLoop);
+    }
+
+    static const SocketConnection::MessageHandlers s_clientMessageHandlers;
+    static const SocketConnection::MessageHandlers s_observerMessageHandlers;
+    RefPtr<SocketConnection> m_observerConnection;
+    bool m_automationSessionStarted { false };
+    uint64_t m_expectedClosedConnectionID { 0 };
+    RefPtr<SocketConnection> m_clientConnection;
+    uint64_t m_connectionID { 0 };
+    uint64_t m_targetID { 0 };
+    const char* m_expectedFrontendMessage { nullptr };
+    uint64_t m_expectedTargetID { 0 };
+    uint64_t m_expectedTargetConnectionID { 0 };
+
     GPid m_serverPid { 0 };
     GUniquePtr<char> m_serverAddress;
     unsigned m_connectionTryCount { 0 };
@@ -175,6 +243,48 @@ public:
 };
 
 bool InspectorServerTest::shouldStartHTTPServer = false;
+
+const SocketConnection::MessageHandlers InspectorServerTest::s_clientMessageHandlers = {
+    { "DidClose"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { { },
+        [](SocketConnection&, GVariant*, gpointer) {
+            g_printerr("Inspector server closed the connection\n");
+            g_assert_not_reached();
+        } }
+    },
+    { "SetTargetList"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(ta(tsssb))"_s,
+        [](SocketConnection&, GVariant* parameters, gpointer userData) {
+            auto* test = static_cast<InspectorServerTest*>(userData);
+            guint64 connectionID;
+            GRefPtr<GVariant> targetList;
+            g_variant_get(parameters, "(t@a(tsssb))", &connectionID, &targetList.outPtr());
+            if (test->m_expectedTargetID) {
+                for (gsize i = 0; i < g_variant_n_children(targetList.get()); ++i) {
+                    guint64 targetID;
+                    g_variant_get_child(targetList.get(), i, "(tsssb)", &targetID, nullptr, nullptr, nullptr, nullptr);
+                    if (targetID == test->m_expectedTargetID) {
+                        test->m_expectedTargetConnectionID = connectionID;
+                        g_main_loop_quit(test->m_mainLoop);
+                    }
+                }
+                return;
+            }
+            if (test->m_targetID || !g_variant_n_children(targetList.get()))
+                return;
+            g_variant_get_child(targetList.get(), 0, "(tsssb)", &test->m_targetID, nullptr, nullptr, nullptr, nullptr);
+            test->m_connectionID = connectionID;
+            g_main_loop_quit(test->m_mainLoop);
+        } }
+    },
+    { "SendMessageToFrontend"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(tts)"_s,
+        [](SocketConnection&, GVariant* parameters, gpointer userData) {
+            auto* test = static_cast<InspectorServerTest*>(userData);
+            const char* message;
+            g_variant_get(parameters, "(tt&s)", nullptr, nullptr, &message);
+            if (test->m_expectedFrontendMessage && g_strstr_len(message, -1, test->m_expectedFrontendMessage))
+                g_main_loop_quit(test->m_mainLoop);
+        } }
+    }
+};
 
 class InspectorHTTPServerTest : public InspectorServerTest {
 public:
@@ -245,6 +355,92 @@ static void testInspectorHTTPServerPageList(InspectorHTTPServerTest* test, gcons
     g_assert_nonnull(g_strrstr(valueString.get(), "window.open('Main.html?ws=' + window.location.host + '/socket/1/1/WebPage', '_blank', 'location=no,menubar=no,status=no,toolbar=no');"));
 }
 
+const SocketConnection::MessageHandlers InspectorServerTest::s_observerMessageHandlers = {
+    { "DidClose"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { { },
+        [](SocketConnection&, GVariant*, gpointer) {
+            g_printerr("Inspector server closed the connection\n");
+            g_assert_not_reached();
+        } }
+    },
+    { "DidStartAutomationSession"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(ss)"_s,
+        [](SocketConnection&, GVariant*, gpointer userData) {
+            auto* test = static_cast<InspectorServerTest*>(userData);
+            test->m_automationSessionStarted = true;
+            g_main_loop_quit(test->m_mainLoop);
+        } }
+    },
+    { "SetTargetList"_s, std::pair<ASCIICString, SocketConnection::MessageCallback> { "(ta(tsssb))"_s,
+        [](SocketConnection&, GVariant* parameters, gpointer userData) {
+            auto* test = static_cast<InspectorServerTest*>(userData);
+            guint64 connectionID;
+            GRefPtr<GVariant> targetList;
+            g_variant_get(parameters, "(t@a(tsssb))", &connectionID, &targetList.outPtr());
+            if (connectionID != test->m_expectedClosedConnectionID || g_variant_n_children(targetList.get()))
+                return;
+            test->m_expectedClosedConnectionID = 0;
+            g_main_loop_quit(test->m_mainLoop);
+        } }
+    }
+};
+
+static void testInspectorServerInvalidMessages(InspectorServerTest* test, gconstpointer)
+{
+    static const uint64_t invalidConnectionID = 0xdeadbeef;
+
+    test->connectAsInspectorClient();
+    test->m_clientConnection->sendMessage("Setup"_s, g_variant_new("(tt)", invalidConnectionID, static_cast<uint64_t>(1)));
+    test->m_clientConnection->sendMessage("SendMessageToBackend"_s, g_variant_new("(tts)", invalidConnectionID, static_cast<uint64_t>(1), "{}"));
+    test->m_clientConnection->sendMessage("FrontendDidClose"_s, g_variant_new("(tt)", invalidConnectionID, static_cast<uint64_t>(1)));
+
+    test->setupInspectorClientAndWaitForTarget();
+    test->m_clientConnection->sendMessage("Setup"_s, g_variant_new("(tt)", invalidConnectionID, test->m_targetID));
+    test->m_clientConnection->sendMessage("SendMessageToBackend"_s, g_variant_new("(tts)", invalidConnectionID, test->m_targetID, "{}"));
+    test->m_clientConnection->sendMessage("FrontendDidClose"_s, g_variant_new("(tt)", invalidConnectionID, test->m_targetID));
+
+    test->m_clientConnection->sendMessage("Setup"_s, g_variant_new("(tt)", test->m_connectionID, test->m_targetID));
+    test->m_clientConnection->sendMessage("SendMessageToBackend"_s, g_variant_new("(tts)", test->m_connectionID, test->m_targetID, "{\"id\":4242,\"method\":\"Test.invalidMethod\"}"));
+    test->waitForFrontendMessage("\"id\":4242");
+}
+
+static void testInspectorServerConnectionWithMultipleRoles(InspectorServerTest* test, gconstpointer)
+{
+    static const uint64_t fakeTargetID = 0xfeedface;
+
+    test->connectAsInspectorClient();
+    test->setupInspectorClientAndWaitForTarget();
+
+    GVariantBuilder builder;
+    g_variant_builder_init(&builder, G_VARIANT_TYPE("a(tsssb)"));
+    g_variant_builder_add(&builder, "(tsssb)", fakeTargetID, "WebPage", "Fake", "about:blank", FALSE);
+    test->m_clientConnection->sendMessage("SetTargetList"_s, g_variant_new("(@a(tsssb)b)", g_variant_builder_end(&builder), FALSE));
+    test->waitForTargetList(fakeTargetID);
+    uint64_t ownConnectionID = test->m_expectedTargetConnectionID;
+    g_assert_cmpuint(ownConnectionID, !=, test->m_connectionID);
+
+    test->m_clientConnection->sendMessage("Setup"_s, g_variant_new("(tt)", ownConnectionID, fakeTargetID));
+    test->m_clientConnection->sendMessage("Setup"_s, g_variant_new("(tt)", test->m_connectionID, test->m_targetID));
+    test->m_clientConnection->sendMessage("SendMessageToBackend"_s, g_variant_new("(tts)", test->m_connectionID, test->m_targetID, "{\"id\":4343,\"method\":\"Test.invalidMethod\"}"));
+    test->waitForFrontendMessage("\"id\":4343");
+
+    test->connectObserverAndWaitForAutomationSession();
+    test->m_clientConnection->close();
+    test->m_clientConnection = nullptr;
+    test->waitForConnectionClosed(ownConnectionID);
+
+    test->m_targetID = 0;
+    test->connectAsInspectorClient();
+    test->setupInspectorClientAndWaitForTarget();
+    g_assert_cmpuint(test->m_connectionID, !=, ownConnectionID);
+
+    test->m_clientConnection->sendMessage("Setup"_s, g_variant_new("(tt)", ownConnectionID, fakeTargetID));
+    test->m_clientConnection->sendMessage("SendMessageToBackend"_s, g_variant_new("(tts)", ownConnectionID, fakeTargetID, "{}"));
+    test->m_clientConnection->sendMessage("FrontendDidClose"_s, g_variant_new("(tt)", ownConnectionID, fakeTargetID));
+
+    test->m_clientConnection->sendMessage("Setup"_s, g_variant_new("(tt)", test->m_connectionID, test->m_targetID));
+    test->m_clientConnection->sendMessage("SendMessageToBackend"_s, g_variant_new("(tts)", test->m_connectionID, test->m_targetID, "{\"id\":4444,\"method\":\"Test.invalidMethod\"}"));
+    test->waitForFrontendMessage("\"id\":4444");
+}
+
 void beforeAll()
 {
     // Terminate the server process if any test fails.
@@ -254,6 +450,8 @@ void beforeAll()
     });
 
     InspectorServerTest::add("WebKitWebInspectorServer", "test-page-list", testInspectorServerPageList);
+    InspectorServerTest::add("WebKitWebInspectorServer", "invalid-messages", testInspectorServerInvalidMessages);
+    InspectorServerTest::add("WebKitWebInspectorServer", "connection-with-multiple-roles", testInspectorServerConnectionWithMultipleRoles);
     InspectorHTTPServerTest::add("WebKitWebInspectorServer", "http-test-page-list", testInspectorHTTPServerPageList);
 }
 
