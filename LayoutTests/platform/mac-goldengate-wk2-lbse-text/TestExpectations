@@ -1,0 +1,108 @@
+# This TestExpectations file reflects the current status of the 'Layer-Based SVG Engine' (LBSE) in WebKit
+#
+# 1. Run tests against legacy SVG engine
+#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-goldengate-wk2-pixel \
+#                       --pixel-tests --tolerance=0 css3/masking imported/w3c/web-platform-tests/svg svg
+#
+# 2. Run tests against LBSE
+#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-goldengate-wk2-lbse-text \
+#                       --additional-platform-directory=$PWD/LayoutTests/platform/mac-goldengate-wk2-pixel \
+#                       --additional-expectations=$PWD/LayoutTests/platform/mac-goldengate-wk2-lbse-text/TestExpectations \
+#                       --pixel-tests --tolerance=0 --internal-feature=LayerBasedSVGEngineEnabled=true css3/masking imported/w3c/web-platform-tests/svg svg
+#
+# Notes:
+# - 'platform/mac-goldengate-wk2-pixel'     -> contains only pixel test results (-expected.png) generated on macOS Tahoe 26.0 using legacy SVG engine
+# - 'platform/mac-goldengate-wk2-lbse-text' -> contains mostly text results (-expected.txt) which are intrinsically different between LBSE / legacy
+#                                              SVG engine plus a few pixel test results (-expected.png) that differ from the legacy SVG engine
+#                                              (e.g. progressions in individual tests)
+
+# Filter issues
+svg/batik/text/smallFonts.svg                                                          [ ImageOnlyFailure ]
+svg/batik/text/textFeatures.svg                                                        [ ImageOnlyFailure ]
+svg/crash-svg-filter-empty-viewport.svg                                                [ Failure ]
+svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg       [ ImageOnlyFailure ]
+svg/filters/feImage-late-indirect-update.svg                                           [ ImageOnlyFailure ]
+svg/filters/feImage-reference-svg-primitive.svg                                        [ ImageOnlyFailure ]
+svg/filters/filter-on-filter-for-text.svg                                              [ ImageOnlyFailure ]
+svg/filters/filter-on-root-tile-boundary.html                                          [ ImageOnlyFailure ]
+svg/filters/filter-on-tspan.svg                                                        [ ImageOnlyFailure ]
+svg/filters/svg-gaussianblur-edgeMode-duplicate.svg                                    [ ImageOnlyFailure ]
+
+# Pattern problems
+svg/custom/pattern-content-inheritance-cycle.svg  [ ImageOnlyFailure ]
+
+# Failing WPT reftests
+imported/w3c/web-platform-tests/svg/painting/marker-009.svg                                                    [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/scripted/marker-element-added.html                                [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-template-pattern-removed.svg         [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/render/reftests/blending-svg-foreign-object.html                           [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size.svg                [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-002.html                               [ ImageOnlyFailure ]
+
+# Animation problems
+svg/animations/animateMotion-remove-or-retarget-resets-previous-target.html [ Failure ]
+
+# Overflow/scrollbar handling issues
+svg/in-html/overflow-svg-root-attr.html  [ ImageOnlyFailure ]
+svg/in-html/overflow-svg-root-style.html [ ImageOnlyFailure ]
+
+###############
+# Buggy tests #
+###############
+
+# Parses render tree output, therefore not adapted to LBSE.
+svg/outermost-svg-root.html [ Failure ]
+
+###############
+# Flaky tests #
+###############
+
+svg/as-image/svg-as-image-pattern-scale.html [ Pass ImageOnlyFailure ]
+
+###############
+#  OVERRIDES  #
+###############
+
+# Reset results inherited from TestExpectations chaining
+fast/shadow-dom/svg-multiple-references-in-multiple-shadows-pattern.html                                          [ Pass ]
+fast/shadow-dom/svg-pattern-dynamic-update-href-in-shadow-tree.html                                               [ Pass ]
+fast/shadow-dom/svg-pattern-href-in-shadow-tree.html                                                              [ Pass ]
+imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-scale-scroll.html                  [ Pass ]
+imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-with-position-under-clip-path.html [ Pass ]
+imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-html.html                          [ Pass ]
+imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-svg.html                           [ Pass ]
+imported/w3c/web-platform-tests/svg/extensibility/foreignObject/scroll-transform-nested-stacked-children.html     [ Pass ]
+imported/w3c/web-platform-tests/svg/extensibility/foreignObject/will-change-in-foreign-object-paint-order.html    [ Pass ]
+imported/w3c/web-platform-tests/svg/layout/svg-foreign-relayout-001.html                                          [ Pass ]
+imported/w3c/web-platform-tests/svg/layout/svg-foreign-relayout-002.html                                          [ Pass ]
+imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-override-multiple.html                        [ Pass ]
+imported/w3c/web-platform-tests/svg/painting/mask-containing-image-with-clip-path.svg                             [ Pass ]
+imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-003.html                                 [ Pass ]
+imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-paint-server-transform.html              [ Pass ]
+imported/w3c/web-platform-tests/svg/render/order/z-index.tentative.svg                                                      [ Pass ]
+imported/w3c/web-platform-tests/svg/render/reftests/blending-001.svg                                              [ Pass ]
+imported/w3c/web-platform-tests/svg/shapes/rect-03.svg                                                            [ Pass ]
+imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003.svg                                            [ Pass ]
+imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-css-transform.svg                                   [ Pass ]
+imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-rotate-transform.svg                                [ Pass ]
+imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-transform.svg                                       [ Pass ]
+svg/W3C-SVG-1.1/filters-composite-02-b.svg                                                                        [ Pass ]
+svg/W3C-SVG-1.1/fonts-elem-04-b.svg                                                                               [ Pass ]
+svg/W3C-SVG-1.1/paths-data-03-f.svg                                                                               [ Pass ]
+svg/W3C-SVG-1.1/text-intro-01-t.svg                                                                               [ Pass ]
+svg/W3C-SVG-1.1/text-intro-02-b.svg                                                                               [ Pass ]
+svg/W3C-SVG-1.1/text-intro-03-b.svg                                                                               [ Pass ]
+svg/W3C-SVG-1.1/text-intro-04-t.svg                                                                               [ Pass ]
+svg/W3C-SVG-1.1/text-text-06-t.svg                                                                                [ Pass ]
+svg/compositing/anonymous-RenderSVGViewportContainer-no-repaints.html                                             [ Pass ]
+svg/compositing/foreground-layer-composited-html-in-foreignobject-between-rects.html                              [ Pass ]
+svg/compositing/foreground-layer-composited-svg-rect-and-foreignobject-interleaved.html                           [ Pass ]
+svg/compositing/foreground-layer-mixed-svg-and-foreignobject-composited.html                                      [ Pass ]
+svg/compositing/foreground-layer-multiple-foreignobjects-composited.html                                          [ Pass ]
+svg/compositing/transform-change-repainting-no-viewBox-repaintRects.html                                          [ Pass ]
+svg/compositing/transform-change-repainting-viewBox-repaintRects.html                                             [ Pass ]
+svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse.svg                               [ Pass ]
+svg/transforms/layout-tiny-elements-in-scaled-group.svg                                                           [ Pass ]
+svg/transforms/rotation-origin-in-small-units.svg                                                                 [ Pass ]
+svg/transforms/rotation-tiny-element-in-group.svg                                                                 [ Pass ]
+svg/transforms/translation-tiny-element.svg                                                                       [ Pass ]

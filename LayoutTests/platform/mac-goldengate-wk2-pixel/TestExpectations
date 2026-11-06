@@ -1,0 +1,34 @@
+# This TestExpectations file applies to pixel test runs with --tolerance=0, against the legacy SVG engine
+#
+#    $ run-webkit-tests --additional-platform-directory=$PWD/LayoutTests/platform/mac-goldengate-wk2-pixel \
+#                       --pixel-tests --tolerance=0 css3/masking imported/w3c/web-platform-tests/svg svg
+#
+# and against the Layer-Based SVG Engine (LBSE), whose runs also pass this directory. Entries in
+# platform/mac-goldengate-wk2-lbse-text/TestExpectations take precedence in LBSE runs.
+
+# Scaled image draws depend on test order
+# Apparently CoreGraphics accelerated contexts in the GPU process round a few pixels of a scaled image
+# differently, depending on what test ran before. If on the same worker svg/custom/group-opacity.svg
+# ran before, these tests differ from their baselines in a few pixels. No idea why.
+svg/as-image/image-preserveAspectRatio-all.svg                   [ Pass ImageOnlyFailure ]
+svg/hixie/perf/004.xml                                           [ Pass ImageOnlyFailure ]
+svg/transforms/animated-path-inside-transformed-html.xhtml       [ Pass ImageOnlyFailure ]
+svg/wicd/test-rightsizing-b.xhtml                                [ Pass ImageOnlyFailure ]
+svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml [ Pass ImageOnlyFailure ]
+
+# Filter results depend on CPU load
+# With AcceleratedDrawingEnabled=false the output is always the same. They pass with the default tolerance,
+# but not with --tolerance=0.
+svg/W3C-SVG-1.1/filters-composite-02-b.svg                                          [ Pass ImageOnlyFailure ]
+svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse.svg [ Pass ImageOnlyFailure ]
+svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg    [ Pass ImageOnlyFailure ]
+svg/filters/feImage-late-indirect-update.svg                                        [ Pass ImageOnlyFailure ]
+svg/filters/feImage-preserveAspectRatio-all.svg                                     [ Pass ImageOnlyFailure ]
+svg/filters/feImage-reference-svg-primitive.svg                                     [ Pass ImageOnlyFailure ]
+
+# Part of flakiness removed by 325574@main, still something remaining of unknown origin.
+svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html [ Pass ImageOnlyFailure ]
+
+# Gradient draws depend on test order
+# The bottom right gradient differs from its baseline in a few pixels, depending on what test ran before.
+svg/W3C-SVG-1.1/pservers-grad-19-b.svg [ Pass ImageOnlyFailure ]
