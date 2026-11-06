@@ -3081,14 +3081,14 @@ void WebPage::updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point,
     if (!frame)
         return callback(false);
 
+    auto localPoint = mainFrameCoordinatesToRootView(point);
+
 #if ENABLE(PDF_PLUGIN) && ENABLE(TWO_PHASE_CLICKS)
     if (RefPtr pluginView = focusedPluginViewForFrame(*frame)) {
-        auto movedEndpoint = pluginView->extendInitialSelection(point, granularity, anchor);
+        auto movedEndpoint = pluginView->extendInitialSelection(localPoint, granularity, anchor);
         return callback(movedEndpoint == SelectionEndpoint::End);
     }
 #endif // ENABLE(PDF_PLUGIN) && ENABLE(TWO_PHASE_CLICKS)
-
-    auto localPoint = mainFrameCoordinatesToRootView(point);
 
     if (anchor == SelectionExtentAnchor::CurrentSelection && isPointOverLink(*frame, localPoint))
         return callback(false);

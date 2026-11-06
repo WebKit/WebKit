@@ -1641,11 +1641,13 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
     if (!frame)
         return completionHandler(point, selectionTouch, { });
 
+    auto localPoint = mainFrameCoordinatesToRootView(point);
+
 #if ENABLE(PDF_PLUGIN)
     if (RefPtr pluginView = focusedPluginViewForFrame(*frame)) {
         OptionSet<SelectionFlags> resultFlags;
         auto startOrEnd = baseIsStart ? SelectionEndpoint::End : SelectionEndpoint::Start;
-        if (pluginView->moveSelectionEndpoint(point, startOrEnd) == SelectionWasFlipped::Yes)
+        if (pluginView->moveSelectionEndpoint(localPoint, startOrEnd) == SelectionWasFlipped::Yes)
             resultFlags.add(SelectionFlags::SelectionFlipped);
         return completionHandler(point, selectionTouch, resultFlags);
     }
@@ -1661,8 +1663,6 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
 
     if (selectionTouch == SelectionTouch::Started)
         addTextInteractionSources(TextInteractionSource::Touch);
-
-    auto localPoint = mainFrameCoordinatesToRootView(point);
 
     IntPoint pointInDocument = RefPtr(frame->view())->rootViewToContents(localPoint);
     VisiblePosition position = frame->visiblePositionForPoint(pointInDocument);

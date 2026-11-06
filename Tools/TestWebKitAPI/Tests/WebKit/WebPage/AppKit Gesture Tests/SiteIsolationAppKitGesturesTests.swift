@@ -34,6 +34,7 @@ import Testing
 private import TestWebKitAPILibrary
 private import WebKit_Private._WKFrameTreeNode
 private import Recap
+private import TestWebKitAPILibrary.Helpers.cocoa.PDFTestHelpers
 
 extension AppKitGesturesTests {
     // Unlike the other gesture suites, this one does not require user action for the editor state to include
@@ -304,6 +305,92 @@ extension AppKitGesturesTests.SiteIsolation {
         let textBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(in: "div", range: range), in: iframe)
 
         return CGRect(textBounds).offsetBy(dx: iframeBounds.minX, dy: iframeBounds.minY)
+    }
+
+    @Test(
+        .bug("https://webkit.org/b/330327"),
+        arguments: [false, true]
+    )
+    func draggingToExtendSelectionInPDFInIframeSelectsTextUnderPointer(crossSite: Bool) async throws {
+        let pdfData = TestPDFBuilder.pdfDataWithLink()
+
+        var server = try HTTPServer(protocol: .http) {
+            Route("/test.pdf", headerFields: ["Content-Type": "application/pdf"]) {
+                pdfData
+            }
+        }
+
+        for feature in WKPreferences._features() where feature.key == "UnifiedPDFEnabled" {
+            page.backingWebView.configuration.preferences._setEnabled(true, for: feature)
+        }
+
+        try await server.run { serverConfiguration in
+            // The PDF page is 400pt wide, and the plugin lays it out with a 16px margin on each side, so a 432px wide
+            // iframe shows the PDF at a scale of 1, with the page's top left corner at (16, 18) in the iframe.
+            // `127.0.0.1` and `localhost` are different sites, so only the latter is loaded in another process.
+            let pdfBaseURL = crossSite ? serverConfiguration.localhostAddress : serverConfiguration.address
+            let pdfURL = pdfBaseURL.appending(path: "test.pdf")
+            let html = """
+                <body style="margin: 0">
+                <iframe id="iframe" src="\(pdfURL.absoluteString)"
+                    style="position: absolute; left: 100px; top: 150px; width: 432px; height: 300px; border: none;"></iframe>
+                </body>
+                """
+            try await page.load(html: html, baseURL: serverConfiguration.address).wait()
+            await page.waitForNextPresentationUpdate()
+
+            let iframeInfo = try await #require(page.mainFrame?.childFrames.first?.info)
+            let iframe = WebPage.FrameInfo(iframeInfo)
+            try await waitForCondition("the PDF plugin to be created") {
+                try await page.callJavaScript(returning: Bool.self, in: iframe) { "return !!document.querySelector('embed');" }
+            }
+            await page.waitForNextPresentationUpdate()
+
+            // The PDF's only line of text, "Visit our website for details", is drawn in 24pt Helvetica starting 20pt
+            // from the page's left edge, with its baseline 100pt from the page's top and bottom edges. The press is
+            // over the "u" in "our" and the drag ends over the "o" in "for", so the selection must include "website"
+            // but neither "Visit" nor "details". Were the drag's end point not converted to the iframe's coordinates,
+            // it would land 100px to the right of and 150px below where it should, below the text.
+            let iframeScreenBounds = try await screenBounds(ofElementWithID: "iframe")
+            let pageOrigin = CGPoint(x: iframeScreenBounds.minX + 16, y: iframeScreenBounds.minY + 18)
+            let textLeft = pageOrigin.x + 20
+            // Halfway up the lowercase letters, which are about 12pt tall in 24pt Helvetica.
+            let textCenterY = pageOrigin.y + 100 - 6
+            // The "u" in "our" spans about 65pt to 79pt from the text's left edge, and the "o" in "for" about
+            // 188pt to 201pt.
+            let pressPoint = CGPoint(x: textLeft + 72, y: textCenterY)
+            let dragEndPoint = CGPoint(x: textLeft + 195, y: textCenterY)
+
+            await recap.play { composer in
+                // Click-and-hold to begin a range selection, then drag to extend it.
+                composer._wk_click(at: pressPoint, for: .seconds(0.5))
+                composer.advanceTime(0.1)
+                composer._wk_drag(withStart: pressPoint, end: dragEndPoint, duration: .seconds(0.5), release: false)
+                composer.advanceTime(0.1)
+                composer._wk_mouseUp()
+            }
+
+            await page.waitForPendingMouseEvents()
+            await page.waitForNextPresentationUpdate()
+
+            let selectedText = try await copySelectedText()
+            #expect(selectedText.contains("website"))
+            #expect(!selectedText.contains("Visit"))
+            #expect(!selectedText.contains("details"))
+        }
+    }
+
+    // The PDF plugin's selection is not exposed to script, so copy it to the general pasteboard.
+    private func copySelectedText() async throws -> String {
+        NSPasteboard.general.clearContents()
+        let changeCount = NSPasteboard.general.changeCount
+
+        NSApp.sendAction(#selector(NSText.copy(_:)), to: page.backingWebView, from: nil)
+
+        try await waitForCondition("the selection to be copied") {
+            await MainActor.run { NSPasteboard.general.changeCount != changeCount }
+        }
+        return NSPasteboard.general.string(forType: .string) ?? ""
     }
 }
 
