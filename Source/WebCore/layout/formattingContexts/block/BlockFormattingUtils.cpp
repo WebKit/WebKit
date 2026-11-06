@@ -26,8 +26,13 @@
 #include "config.h"
 #include "BlockFormattingUtils.h"
 
+#include "HTMLButtonElement.h"
+#include "HTMLInputElement.h"
+#include "HTMLLegendElement.h"
+#include "HTMLSelectElement.h"
+#include "HTMLTextAreaElement.h"
 #include "LayoutBoxGeometry.h"
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -425,6 +430,8 @@ bool BlockFormattingUtils::autoInlineSizeFitsContent(const RenderBox& box, const
 {
     if (isAlignedByJustifySelf(box, containingBlockStyle))
         return true;
+    if (isAnyOf<HTMLInputElement, HTMLSelectElement, HTMLButtonElement, HTMLTextAreaElement, HTMLLegendElement>(box.element()))
+        return true;
     // FIXME: The direction of a marquee is not mapped to its writing mode (RenderBox::sizesLogicalWidthToFitContent).
     if (!box.parent()->isHTMLMarquee())
         return false;
@@ -441,6 +448,17 @@ bool BlockFormattingUtils::autoInlineSizeFitsContent(const RenderBox& box, const
     }
     ASSERT_NOT_REACHED();
     return false;
+}
+
+bool BlockFormattingUtils::isFormControlBlockContainer(const RenderBox& box)
+{
+    return box.isRenderTextControl() || box.isRenderListBox() || box.isRenderProgress() || box.isRenderMeter() || box.isRenderFileUploadControl();
+}
+
+bool BlockFormattingUtils::establishesIndependentFormattingContext(const RenderBox& box)
+{
+    CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
+    return !blockContainer || blockContainer->createsNewFormattingContext() || isFormControlBlockContainer(box);
 }
 
 LayoutUnit BlockFormattingUtils::justifySelfOffset(const RenderBox& box, LayoutUnit borderBoxInlineSize, LayoutUnit marginStart, LayoutUnit marginEnd, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle)
