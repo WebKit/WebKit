@@ -109,7 +109,7 @@ extension TestPDFPage {
             width: Int(boundsRect.size.width),
             height: Int(boundsRect.size.height),
             bitsPerComponent: 8,
-            bytesPerRow: 0,
+            bytesPerRow: Int(boundsRect.size.width) * 4,
             space: colorSpace,
             bitmapInfo: CGBitmapInfo(alpha: .premultipliedLast, byteOrder: .order32Big)
         )
@@ -119,7 +119,7 @@ extension TestPDFPage {
             width: Int(boundsRect.size.width),
             height: Int(boundsRect.size.height),
             bitsPerComponent: 8,
-            bytesPerRow: 0,
+            bytesPerRow: Int(boundsRect.size.width) * 4,
             space: colorSpace,
             bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue).union(.byteOrder32Big).rawValue
         )
@@ -133,7 +133,7 @@ extension TestPDFPage {
 
         let x = Int(point.x)
         let y = Int(point.y)
-        let index = (y * x * 4) + (x * 4)
+        let index = (y * context.width * 4) + (x * 4)
 
         // FIXME: document safety invariants here. Is CGContext always guaranteed to
         // contain a context.data of the right size at this point?
