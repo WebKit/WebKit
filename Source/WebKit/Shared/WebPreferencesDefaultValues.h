@@ -177,7 +177,7 @@ bool defaultPeerConnectionEnabledAvailable();
 NODELETE bool defaultWebRTCSocketsServiceClassEnabled();
 
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
-bool defaultHorizontalBannerViewOverlaysEnabled();
+NODELETE bool defaultHorizontalBannerViewOverlaysEnabled();
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
