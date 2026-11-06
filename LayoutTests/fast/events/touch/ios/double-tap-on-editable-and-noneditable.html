@@ -32,7 +32,9 @@
             var editableTapPointX = editableTargetRect.x + editableTargetRect.width / 2;
             var editableTapPointY = editableTargetRect.y + editableTargetRect.height / 2;
 
+            let selectionChanged = new Promise(resolve => document.addEventListener('selectionchange', resolve, { once: true }));
             await doubleTapAtPoint(editableTapPointX, editableTapPointY);
+            await selectionChanged;
             if (document.getSelection().type != "None")
                 output += 'PASS: Has Selection';
             else

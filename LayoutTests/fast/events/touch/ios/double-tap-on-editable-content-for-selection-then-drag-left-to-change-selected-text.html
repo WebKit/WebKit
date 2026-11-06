@@ -42,6 +42,7 @@
             await didShowKeyboard();
 
             await UIHelper.doubleTapAt(doubleTapPointX, doubleTapPointY);
+            await UIHelper.waitForCondition(() => document.getSelection().type == "Range");
             if (document.getSelection().toString() == "magna")
                 output += 'PASS: Correct Selection';
             else
