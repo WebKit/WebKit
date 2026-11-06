@@ -537,6 +537,9 @@ https://news.ycombinator.com/
     ShouldIgnoreTextAutoSizingQuirk
 https://ycombinator.com/
     (none)
+https://www.yelp.com/
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: div:has(button[aria-label="Share"]):has(button[aria-label="Report"]):not(:has(video)) { pointer-events: none; } button[aria-label="Share"], button[aria-label="Report"] { pointer-events: auto; }
 https://www.youtube.com/
     HasBrokenEncryptedMediaAPISupportQuirk
     NeedsScrollbarWidthThinDisabledQuirk

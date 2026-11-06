@@ -1420,6 +1420,12 @@
             ]
         },
         {
+            "bugs": ["rdar://177395486"],
+            "comment": "FIXME: Remove once Yelp stops covering the top of the video lightbox with a pointer-event-eating Share/Report bar.",
+            "matches": ["*://*.yelp.com/*"],
+            "behaviors": [{ "id": "NeedsStyleSheetInjectedQuirk", "styleSheet": "div:has(button[aria-label=\"Share\"]):has(button[aria-label=\"Report\"]):not(:has(video)) { pointer-events: none; } button[aria-label=\"Share\"], button[aria-label=\"Report\"] { pointer-events: auto; }" }]
+        },
+        {
             "bugs": ["rdar://127246368"],
             "matches": ["*://news.ycombinator.com/*"],
             "behaviors": [{ "id": "ShouldIgnoreTextAutoSizingQuirk" }]
