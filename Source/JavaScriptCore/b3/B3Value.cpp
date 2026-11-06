@@ -1176,11 +1176,14 @@ bool Value::isFree() const
     switch (opcode()) {
     case Const32:
     case Const64:
+    case Const128:
     case ConstDouble:
     case ConstFloat:
+    case BottomTuple:
     case Identity:
     case Opaque:
     case Nop:
+    case Oops:
         return true;
     default:
         return false;
