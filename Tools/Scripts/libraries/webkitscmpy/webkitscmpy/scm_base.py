@@ -68,7 +68,7 @@ class ScmBase(object):
         return False
 
     @property
-    def default_branch(self) -> str | None:
+    def default_branch(self) -> str:
         raise NotImplementedError()
 
     @property
@@ -117,29 +117,23 @@ class ScmBase(object):
     def commits(self, begin: dict[str, Any] | None = None, end: dict[str, Any] | None = None, include_log: bool = True, include_identifier: bool = True) -> Iterator[Commit]:
         raise NotImplementedError()
 
+    def branch_priority(self, branch: str, preferred_branch: str | None = None) -> tuple[int, str]:
+        if branch == self.default_branch:
+            return 0, branch
+        if self.prod_branches.match(branch):
+            return 1, branch
+        if not self.dev_branches.match(branch):
+            return 2, branch
+        if branch == preferred_branch:
+            return 3, branch
+        return 4, branch
+
     def prioritize_branches(self, branches: Sequence[str], preferred_branch: str | None = None) -> str | None:
         if not branches:
             return None
         if len(branches) == 1:
             return branches[0]
-
-        default_branch = self.default_branch
-        if default_branch in branches:
-            return default_branch
-
-        # We don't have enough information to determine a branch. We prefer production branches first,
-        # then any branch which isn't explicitly labeled a dev branch. If there are only dev branches,
-        # then we prefer the branch specified by the caller (usually the currently checked out branch).
-        # We then sort the list of candidate branches and pick the smallest.
-
-        filtered_candidates: Sequence[str] = [candidate for candidate in branches if self.prod_branches.match(candidate)]
-        if not filtered_candidates:
-            filtered_candidates = [candidate for candidate in branches if not self.dev_branches.match(candidate)]
-        if not filtered_candidates:
-            if preferred_branch and preferred_branch in branches:
-                return preferred_branch
-            filtered_candidates = branches
-        return sorted(filtered_candidates)[0]
+        return min(branches, key=lambda branch: self.branch_priority(branch, preferred_branch))
 
     def find(self, argument: str, include_log: bool = True, include_identifier: bool = True) -> Commit:
         if not isinstance(argument, string_utils.basestring):
@@ -154,7 +148,7 @@ class ScmBase(object):
             argument = argument.split('~')[0]
 
         if argument in self.DEFAULT_BRANCHES:
-            argument = self.default_branch or argument
+            argument = self.default_branch
 
         if argument == 'HEAD':
             result = self.commit(include_log=include_log, include_identifier=include_identifier)
