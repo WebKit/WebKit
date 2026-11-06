@@ -143,6 +143,7 @@ private:
     void notifyCompositionRequired() override;
     bool isCompositionRequiredOrOngoing() const override;
     void requestComposition(WebCore::CompositionReason) override;
+    void didChangeLayerPendingPosition(WebCore::CoordinatedPlatformLayer&) override;
     RunLoop* compositingRunLoop() const override;
     int maxTextureSize() const override;
     void willPaintTile() override { };

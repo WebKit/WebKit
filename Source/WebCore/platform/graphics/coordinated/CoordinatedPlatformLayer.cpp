@@ -191,16 +191,31 @@ void CoordinatedPlatformLayer::notifyCompositionRequired()
     m_client->notifyCompositionRequired();
 }
 
+void CoordinatedPlatformLayer::notifyPositionChanged()
+{
+    assertIsHeld(m_lock);
+    if (m_didNotifyPositionChange)
+        return;
+
+    if (!m_client)
+        return;
+
+    m_didNotifyPositionChange = true;
+    m_client->didChangeLayerPendingPosition(*this);
+}
+
 void CoordinatedPlatformLayer::setPosition(FloatPoint&& position)
 {
     assertIsHeld(m_lock);
     m_pendingState.position = WTF::move(position);
+    notifyPositionChanged();
 }
 
 void CoordinatedPlatformLayer::setPositionForScrolling(const FloatPoint& position)
 {
     Locker locker { m_lock };
     m_pendingState.positionForScrolling = position;
+    notifyPositionChanged();
 }
 
 const FloatPoint& CoordinatedPlatformLayer::position() const
@@ -229,12 +244,14 @@ void CoordinatedPlatformLayer::setBoundsOrigin(const FloatPoint& origin)
 {
     assertIsHeld(m_lock);
     m_pendingState.boundsOrigin = origin;
+    notifyPositionChanged();
 }
 
 void CoordinatedPlatformLayer::setBoundsOriginForScrolling(const FloatPoint& origin)
 {
     Locker locker { m_lock };
     m_pendingState.boundsOriginForScrolling = origin;
+    notifyPositionChanged();
 }
 
 const FloatPoint& CoordinatedPlatformLayer::boundsOrigin() const
@@ -1140,6 +1157,7 @@ void CoordinatedPlatformLayer::waitUntilPaintingFinished()
 void CoordinatedPlatformLayer::flushPendingState()
 {
     Locker locker { m_lock };
+    m_didNotifyPositionChange = false;
     if (!m_pendingState.position && !m_pendingState.boundsOrigin && !m_pendingState.positionForScrolling && !m_pendingState.boundsOriginForScrolling)
         return;
 

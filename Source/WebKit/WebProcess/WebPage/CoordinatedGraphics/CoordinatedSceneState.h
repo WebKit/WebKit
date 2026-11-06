@@ -65,6 +65,8 @@ public:
 
     void waitUntilPaintingFinished();
 
+    void didChangeLayerPendingPosition(WebCore::CoordinatedPlatformLayer&);
+
     void willPaintTile();
     void didPaintTile();
 #if USE(SKIA)
@@ -87,6 +89,8 @@ private:
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_pendingLayersToRemove WTF_GUARDED_BY_LOCK(m_pendingLayersLock);
     std::atomic<bool> m_didChangeLayers { false };
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_committedLayers;
+    Lock m_layersWithPendingPositionLock;
+    HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_layersWithPendingPosition WTF_GUARDED_BY_LOCK(m_layersWithPendingPositionLock);
 #if USE(SKIA)
     Lock m_layersWithPreRenderedTilesLock;
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_layersWithPreRenderedTiles WTF_GUARDED_BY_LOCK(m_layersWithPreRenderedTilesLock);

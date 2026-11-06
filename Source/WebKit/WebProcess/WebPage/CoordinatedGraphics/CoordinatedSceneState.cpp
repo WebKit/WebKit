@@ -78,8 +78,18 @@ void CoordinatedSceneState::removeLayer(CoordinatedPlatformLayer& layer)
         Locker locker { m_layersLock };
         m_layers.remove(layer);
     }
+    {
+        Locker locker { m_layersWithPendingPositionLock };
+        m_layersWithPendingPosition.remove(layer);
+    }
     m_layersToRemove.add(layer);
     m_didChangeLayers = true;
+}
+
+void CoordinatedSceneState::didChangeLayerPendingPosition(CoordinatedPlatformLayer& layer)
+{
+    Locker locker { m_layersWithPendingPositionLock };
+    m_layersWithPendingPosition.add(layer);
 }
 
 bool CoordinatedSceneState::flush()
@@ -107,8 +117,14 @@ bool CoordinatedSceneState::flush()
 void CoordinatedSceneState::flushPendingState()
 {
     Locker stateLock { m_stateLock };
-    Locker layersLock { m_layersLock };
-    for (Ref layer : m_layers)
+
+    HashSet<Ref<CoordinatedPlatformLayer>> layers;
+    {
+        Locker pendingLayersLock { m_layersWithPendingPositionLock };
+        layers = WTF::move(m_layersWithPendingPosition);
+    }
+
+    for (Ref layer : layers)
         layer->flushPendingState();
 }
 
@@ -190,6 +206,11 @@ void CoordinatedSceneState::invalidate()
         Locker pendingLayersLock { m_pendingLayersLock };
         m_pendingLayers = { };
         m_pendingLayersToRemove = { };
+    }
+
+    {
+        Locker pendingLayersLock { m_layersWithPendingPositionLock };
+        m_layersWithPendingPosition = { };
     }
 
 #if USE(SKIA)
