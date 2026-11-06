@@ -854,6 +854,64 @@ TEST(WKWebExtension, AnySizeIconVariant)
     EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(64, 64)));
 }
 
+TEST(WKWebExtension, IconVariantPrefersLargeEnoughSizeOverAny)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Size Over Any",
+        @"version": @"1.0",
+        @"description": @"Test preferring an explicit size that is large enough over any",
+
+        @"icon_variants": @[
+            @{ @"any": @"icon-any.svg", @"256": @"icon-256.png" }
+        ]
+    };
+
+    auto *iconAny = @"<svg width='100' height='100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='black' /></svg>";
+
+    auto *resources = @{
+        @"icon-any.svg": iconAny,
+        @"icon-256.png": Util::makePNGData(CGSizeMake(256, 256), @selector(whiteColor)),
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(16, 16)];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), [CocoaColor whiteColor]));
+}
+
+TEST(WKWebExtension, IconVariantUsesAnyWhenNoSizeIsLargeEnough)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Any Over Smaller Sizes",
+        @"version": @"1.0",
+        @"description": @"Test preferring any over explicit sizes that are too small",
+
+        @"icon_variants": @[
+            @{ @"any": @"icon-any.svg", @"16": @"icon-16.png" }
+        ]
+    };
+
+    auto *iconAny = @"<svg width='100' height='100' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='black' /></svg>";
+
+    auto *resources = @{
+        @"icon-any.svg": iconAny,
+        @"icon-16.png": Util::makePNGData(CGSizeMake(16, 16), @selector(whiteColor)),
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(64, 64)];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), [CocoaColor blackColor]));
+}
+
 TEST(WKWebExtension, IconVariantsWithWrongTypeRecordsError)
 {
     auto *testManifestDictionary = @{

@@ -2083,14 +2083,6 @@ size_t WebExtension::bestIconSize(const JSON::Object& iconsObject, size_t idealP
     if (!iconsObject.size())
         return 0;
 
-#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
-    // Check if the "any" size exists (typically a vector image), and prefer it.
-    if (iconsObject.getValue(anyManifestKey)) {
-        // Return max to ensure it takes precedence over all other sizes.
-        return std::numeric_limits<size_t>::max();
-    }
-#endif
-
     // Check if the ideal size exists, if so return it.
     auto idealSizeString = String::number(idealPixelSize);
     if (iconsObject.getValue(idealSizeString))
@@ -2105,9 +2097,6 @@ size_t WebExtension::bestIconSize(const JSON::Object& iconsObject, size_t idealP
             sizeValues.append(*integerValue);
     }
 
-    if (!sizeValues.size())
-        return 0;
-
     // Sort the remaining keys and find the next largest size.
     std::ranges::sort(sizeValues);
 
@@ -2115,8 +2104,16 @@ size_t WebExtension::bestIconSize(const JSON::Object& iconsObject, size_t idealP
     for (auto size : sizeValues) {
         bestSize = size;
         if (bestSize >= idealPixelSize)
-            break;
+            return bestSize;
     }
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    // No explicit size is large enough, so use "any" (typically a vector image) before the largest smaller size.
+    if (iconsObject.getValue(anyManifestKey)) {
+        // Return max to ensure it takes precedence over the smaller sizes.
+        return std::numeric_limits<size_t>::max();
+    }
+#endif
 
     return bestSize;
 }
