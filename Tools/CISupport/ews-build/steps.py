@@ -4431,6 +4431,7 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
     ENABLE_ADDITIONAL_ARGUMENTS = False
     STRESS_MODE = True
     FAILURE_MSG_IN_STRESS_MODE = 'Found test failures in stress mode'
+    BLOCK_PULL_REQUEST_ON_FAILURE = True
 
     def __init__(self, num_iterations=100, layout_test_class=RunWebKitTests):
         self.num_iterations = num_iterations
@@ -4480,6 +4481,8 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
                 UploadTestResults(identifier=self.suffix),
                 ExtractTestResults(identifier=self.suffix),
             ]
+            if self.BLOCK_PULL_REQUEST_ON_FAILURE:
+                steps_to_add.append(BlockPullRequest())
         self.build.addStepsAfterCurrentStep(steps_to_add)
         return rc
 
@@ -4497,6 +4500,7 @@ class RunWebKitTestsInSiteIsolationMode(RunWebKitTestsInStressMode):
     name = 'run-layout-tests-in-site-isolation'
     suffix = 'site-isolation'
     FAILURE_MSG_IN_STRESS_MODE = 'Found test failures in site isolation mode'
+    BLOCK_PULL_REQUEST_ON_FAILURE = False
 
     def __init__(self, layout_test_class=RunWebKitTests):
         self.layout_test_class = layout_test_class

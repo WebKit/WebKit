@@ -2910,6 +2910,22 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
         self.property_exceed_failure_limit = 'first_results_exceed_failure_limit'
         self.property_failures = 'first_run_failures'
 
+    def test_failure_blocks_pull_request(self):
+        self.configureStep()
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.patch(RunWebKitTestsInStressMode, 'evaluateResult', lambda s, r: r)
+        self.get_nth_step(0).evaluateCommand(FAILURE)
+        self.assertTrue(BlockPullRequest() in next_steps)
+
+    def test_success_does_not_block_pull_request(self):
+        self.configureStep()
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.patch(RunWebKitTestsInStressMode, 'evaluateResult', lambda s, r: r)
+        self.get_nth_step(0).evaluateCommand(SUCCESS)
+        self.assertFalse(BlockPullRequest() in next_steps)
+
     @defer.inlineCallbacks
     def test_stress_mode_does_not_label_the_build(self) -> None:
         # It runs one test 100 times to provoke a failure, so its rates are not comparable with an
@@ -3095,6 +3111,14 @@ class TestRunWebKitTestsInSiteIsolationMode(BuildStepMixinAdditions, unittest.Te
         self.setup_step(RunWebKitTestsInSiteIsolationMode())
         self.property_exceed_failure_limit = 'first_results_exceed_failure_limit'
         self.property_failures = 'first_run_failures'
+
+    def test_failure_does_not_block_pull_request(self):
+        self.configureStep()
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.patch(RunWebKitTestsInSiteIsolationMode, 'evaluateResult', lambda s, r: r)
+        self.get_nth_step(0).evaluateCommand(FAILURE)
+        self.assertFalse(BlockPullRequest() in next_steps)
 
     def test_success(self):
         self.configureStep()
