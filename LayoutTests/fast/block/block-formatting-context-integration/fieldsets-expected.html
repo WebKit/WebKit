@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 12px/14px monospace; }
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 8px; }
+fieldset { background: lightblue; }
+legend { background: orange; }
+</style>
+<div class="root">
+  <p style="margin: 10px 0">before</p>
+  <fieldset><legend>legend</legend>content</fieldset>
+  <fieldset style="margin: 12px 4px"><legend style="margin: 20px 10px 6px">legend with margins</legend><div style="margin: 8px">margins</div></fieldset>
+  <fieldset style="border-width: 2px"><legend style="height: 40px; border: 2px solid">tall legend</legend>overhang</fieldset>
+  <fieldset><legend style="text-align: center">centered</legend><legend>second legend</legend>no legend below</fieldset>
+  <fieldset>no legend</fieldset>
+  <fieldset style="height: 60px; padding: 10px"><legend>fixed height</legend>content</fieldset>
+  <fieldset><legend>outer</legend><fieldset><legend style="margin-top: 12px">inner</legend>nested</fieldset></fieldset>
+</div>
+<div class="root" dir="rtl"><fieldset><legend>right to left</legend>content</fieldset><fieldset><legend style="text-align: left">left</legend>x</fieldset></div>
+<div class="root" style="width: auto; display: inline-block"><fieldset><legend>a legend wider than the content</legend><div>x</div></fieldset></div>
+<div class="root" style="writing-mode: vertical-lr; height: 160px; width: auto; display: inline-block"><fieldset><legend>vertical</legend>content</fieldset></div>
