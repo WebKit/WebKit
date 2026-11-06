@@ -158,6 +158,11 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     if (!globalObject)
         return;
 
+    auto* jsFunctionGlobalObject = jsFunction->realmMayBeNull();
+    if (!jsFunctionGlobalObject)
+        return;
+    auto* jsFunctionWindow = dynamicDowncast<JSDOMWindow>(jsFunctionGlobalObject);
+
     if (scriptExecutionContext.isDocument()) {
         auto* window = downcast<JSDOMWindow>(globalObject);
         RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(window->wrapped());
@@ -168,18 +173,21 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             if (!protect(scriptExecutionContext.contentSecurityPolicy())->allowInlineEventHandlers(sourceURL().string(), sourcePosition().m_line, code(), element.get()))
                 return;
         }
-        Ref frame = *localDOMWindow->frame();
-        CheckedRef script = frame->script();
-        if (!script->canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript) || script->isPaused())
+        // Blink checks the incumbent realm; the realm the listener's function comes from stands in for it here.
+        RefPtr targetFrame = localDOMWindow->frame();
+        CheckedRef targetScript = targetFrame->script();
+        RefPtr frameToRunIn = targetFrame;
+        if (RefPtr document = localDOMWindow->document(); document && document->isSandboxed(SandboxFlag::Scripts) && jsFunctionWindow && !wasCreatedFromMarkup()) {
+            RefPtr functionWindow = dynamicDowncast<LocalDOMWindow>(jsFunctionWindow->wrapped());
+            if (functionWindow && functionWindow->isCurrentlyDisplayedInFrame())
+                frameToRunIn = functionWindow->frame();
+        }
+        CheckedRef script = frameToRunIn->script();
+        if (!script->canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript) || script->isPaused() || targetScript->isPaused())
             return;
     }
 
-    auto* jsFunctionGlobalObject = jsFunction->realmMayBeNull();
-    if (!jsFunctionGlobalObject)
-        return;
-
     RefPtr<Event> savedEvent;
-    auto* jsFunctionWindow = dynamicDowncast<JSDOMWindow>(jsFunctionGlobalObject);
     if (jsFunctionWindow) {
         savedEvent = jsFunctionWindow->currentEvent();
 

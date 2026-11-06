@@ -1,0 +1,63 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Listeners whose function comes from a script-disabled iframe's realm</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+// WebKit-specific: Blink runs a function from the script-disabled realm on a
+// node of that same iframe, and probably an inline handler compiled in the
+// parent and then adopted into the iframe. WebKit keeps blocking both, and keeps
+// running a function from that realm on a node of the scripted parent.
+function loadSandboxedFrame(t) {
+  return new Promise(resolve => {
+    const iframe = document.createElement("iframe");
+    iframe.sandbox = "allow-same-origin";
+    iframe.srcdoc = "<span id='target'>target</span>";
+    iframe.onload = () => resolve(iframe);
+    t.add_cleanup(() => iframe.remove());
+    document.body.appendChild(iframe);
+  });
+}
+
+function dispatchClick(node) {
+  node.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+}
+
+promise_test(async t => {
+  window.realmFunctionCalls = 0;
+  t.add_cleanup(() => { delete window.realmFunctionCalls; });
+  const iframe = await loadSandboxedFrame(t);
+  const target = iframe.contentDocument.getElementById("target");
+  target.addEventListener("click", new iframe.contentWindow.Function("parent.realmFunctionCalls++"));
+  dispatchClick(target);
+  assert_equals(window.realmFunctionCalls, 0);
+}, "A function from the script-disabled iframe's realm is not invoked for a node in that iframe");
+
+promise_test(async t => {
+  window.realmFunctionCalls = 0;
+  t.add_cleanup(() => { delete window.realmFunctionCalls; });
+  const iframe = await loadSandboxedFrame(t);
+  const div = document.createElement("div");
+  t.add_cleanup(() => div.remove());
+  document.body.appendChild(div);
+  div.addEventListener("click", new iframe.contentWindow.Function("parent.realmFunctionCalls++"));
+  dispatchClick(div);
+  assert_equals(window.realmFunctionCalls, 1);
+}, "A function from the script-disabled iframe's realm is invoked for a node in the scripted parent");
+
+promise_test(async t => {
+  window.realmFunctionCalls = 0;
+  t.add_cleanup(() => { delete window.realmFunctionCalls; });
+  const iframe = await loadSandboxedFrame(t);
+  const span = document.createElement("span");
+  span.setAttribute("onclick", "parent.realmFunctionCalls++");
+  // Compile the handler in the parent before it is adopted.
+  assert_equals(typeof span.onclick, "function");
+  const adopted = iframe.contentDocument.adoptNode(span);
+  iframe.contentDocument.body.appendChild(adopted);
+  dispatchClick(adopted);
+  assert_equals(window.realmFunctionCalls, 0);
+}, "An inline event handler compiled in the scripted parent is not invoked once adopted into the script-disabled iframe");
+</script>
+</body>
