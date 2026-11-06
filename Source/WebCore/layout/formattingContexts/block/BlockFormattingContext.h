@@ -163,7 +163,11 @@ private:
     void computeBlockSize(const RenderBox&, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState&, BoxGeometry&) const;
     LayoutUnit viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter) const;
     void placeInContainingBlock(const RenderBox&, ContainingBlockState&& blockContainerState, BlockLayoutResult&);
+    BlockLayoutResult layoutContent(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry);
     void resolveBorderBoxLogicalTops(ContainingBlockState& blockContainerState);
+    void placePendingFloats(LayoutUnit borderBoxLogicalTop);
+    LayoutSize inlineContentOffsetInRoot(const ContainingBlockState&);
+    void addInlineContentFloats(const PlacedFloats::List&);
 
     const RenderBlockFlow& root() const { return m_root; }
     LayoutIntegration::BlockIntegrationUtils& integrationUtils() const { return m_integrationUtils; }
@@ -171,6 +175,11 @@ private:
     const CheckedRef<const RenderBlockFlow> m_root;
     LayoutIntegration::BlockIntegrationUtils& m_integrationUtils;
     BlockLayoutState& m_blockLayoutState;
+    // The tops the block containers with pending floats got, which the content is laid out again with when the floats would have gone
+    // elsewhere beside other floats from there.
+    Vector<std::pair<CheckedRef<const RenderBox>, LayoutUnit>> m_resolvedBorderBoxLogicalTops;
+    bool m_needsLayoutWithResolvedBorderBoxLogicalTops { false };
+    bool m_isLayingOutWithResolvedBorderBoxLogicalTops { false };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const BlockLayoutResult&);

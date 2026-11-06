@@ -540,22 +540,25 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
 
 LineLayout::LayoutResult LineLayout::layout(const Layout::BlockLayoutState& parentBlockLayoutState, ForceFullLayout forcedFullLayout)
 {
-    return layoutInlineContent(parentBlockLayoutState, forcedFullLayout, nullptr, nullptr);
+    return layoutInlineContent(parentBlockLayoutState, forcedFullLayout, nullptr, nullptr, nullptr);
 }
 
-LineLayout::LayoutResult LineLayout::layout(const Layout::BlockLayoutState& parentBlockLayoutState, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult, ForceFullLayout forcedFullLayout)
+LineLayout::LayoutResult LineLayout::layout(const Layout::BlockLayoutState& parentBlockLayoutState, Layout::BlockFormattingContext& blockFormattingContext, Layout::BlockLayoutResult& blockLayoutResult, const Layout::PlacedFloats::List& intrudingFloats, ForceFullLayout forcedFullLayout)
 {
-    return layoutInlineContent(parentBlockLayoutState, forcedFullLayout, &blockFormattingContext, &blockLayoutResult);
+    return layoutInlineContent(parentBlockLayoutState, forcedFullLayout, &blockFormattingContext, &blockLayoutResult, &intrudingFloats);
 }
 
-LineLayout::LayoutResult LineLayout::layoutInlineContent(const Layout::BlockLayoutState& parentBlockLayoutState, ForceFullLayout forcedFullLayout, Layout::BlockFormattingContext* blockFormattingContext, Layout::BlockLayoutResult* blockLayoutResult)
+LineLayout::LayoutResult LineLayout::layoutInlineContent(const Layout::BlockLayoutState& parentBlockLayoutState, ForceFullLayout forcedFullLayout, Layout::BlockFormattingContext* blockFormattingContext, Layout::BlockLayoutResult* blockLayoutResult, const Layout::PlacedFloats::List* intrudingFloats)
 {
     ensureInlineContentCache();
 
     if (forcedFullLayout == ForceFullLayout::Yes && m_lineDamage)
         Layout::InlineInvalidation::resetInlineDamage(*m_lineDamage);
 
-    preparePlacedFloats();
+    if (intrudingFloats)
+        preparePlacedFloats(*intrudingFloats);
+    else
+        preparePlacedFloats();
 
     auto isPartialLayout = Layout::InlineInvalidation::mayOnlyNeedPartialLayout(m_lineDamage.get());
     if (!isPartialLayout) {
@@ -598,11 +601,11 @@ LineLayout::LayoutResult LineLayout::layoutInlineContent(const Layout::BlockLayo
 
     auto adjustments = adjustContentForPagination(parentBlockLayoutState, isPartialLayout);
 
-    updateRenderTreePositions(adjustments, inlineFormattingContext.layoutState(), didDiscardContent);
+    updateRenderTreePositions(adjustments, inlineFormattingContext.layoutState(), didDiscardContent, intrudingFloats ? UpdateFloatingObjects::No : UpdateFloatingObjects::Yes);
 
     if (m_lineDamage) {
         // Pagination may require another layout pass.
-        layoutInlineContent(parentBlockLayoutState, ForceFullLayout::No, blockFormattingContext, blockLayoutResult);
+        layoutInlineContent(parentBlockLayoutState, ForceFullLayout::No, blockFormattingContext, blockLayoutResult, intrudingFloats);
 
         ASSERT(!m_lineDamage);
     }
@@ -676,7 +679,7 @@ void LineLayout::setLayoutInfoForTesting(std::unique_ptr<LayoutInfoForTesting>&&
     m_layoutInfoForTesting = WTF::move(layoutInfo);
 }
 
-void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdjustments, const Layout::InlineLayoutState& inlineLayoutState, bool didDiscardContent)
+void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdjustments, const Layout::InlineLayoutState& inlineLayoutState, bool didDiscardContent, UpdateFloatingObjects updateFloatingObjects)
 {
     if (!m_inlineContent && !didDiscardContent)
         return;
@@ -758,7 +761,6 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             }
             renderer->setIsClippedByLineClamp(LineClampUpdater::isInsideLineClampContainer(renderer));
             auto isInitialLetter = layoutBox->style().pseudoElementType() == PseudoElementType::FirstLetter;
-            auto& floatingObject = flow().insertFloatingBox(renderer);
             auto [marginBoxVisualRect, borderBoxVisualRect] = Layout::IntegrationUtils::toMarginAndBorderBoxVisualRect(logicalGeometry, m_inlineContentConstraints->formattingRootBorderBoxSize(), placedFloatsWritingMode);
 
             auto paginationOffset = floatPaginationOffsetMap.getOptional(layoutBox);
@@ -772,7 +774,10 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
                 borderBoxVisualRect.move(0_lu, -firstLineTrim);
             }
 
-            flow().placeFloatingBox(floatingObject, marginBoxVisualRect, { borderBoxVisualRect.x() - marginBoxVisualRect.x(), borderBoxVisualRect.y() - marginBoxVisualRect.y() });
+            if (updateFloatingObjects == UpdateFloatingObjects::Yes) {
+                auto& floatingObject = flow().insertFloatingBox(renderer);
+                flow().placeFloatingBox(floatingObject, marginBoxVisualRect, { borderBoxVisualRect.x() - marginBoxVisualRect.x(), borderBoxVisualRect.y() - marginBoxVisualRect.y() });
+            }
 
             auto oldRect = renderer->borderBoxRectInContainer();
             renderer->setLocation(borderBoxVisualRect.location());
@@ -902,6 +907,38 @@ FloatRect LineLayout::applySVGTextFragments()
         lines[0].setLineBoxRectForSVGText(FloatRect { { }, fullBoundaries.size() });
 
     return fullBoundaries;
+}
+
+void LineLayout::preparePlacedFloats(const Layout::PlacedFloats::List& intrudingFloats)
+{
+    auto& placedFloats = ensureBlockFormattingState().placedFloats();
+    placedFloats.clear();
+    for (auto& floatItem : intrudingFloats)
+        placedFloats.add(floatItem);
+}
+
+Layout::PlacedFloats::List LineLayout::floatsInContent() const
+{
+    auto floats = Layout::PlacedFloats::List { };
+    if (!m_blockFormattingState)
+        return floats;
+    for (auto& floatItem : m_blockFormattingState->placedFloats().list()) {
+        if (floatItem.isInFormattingContextOf(rootLayoutBox()))
+            floats.append(floatItem);
+    }
+    return floats;
+}
+
+Layout::PlacedFloats::List LineLayout::intrudingFloats() const
+{
+    auto floats = Layout::PlacedFloats::List { };
+    if (!m_blockFormattingState)
+        return floats;
+    for (auto& floatItem : m_blockFormattingState->placedFloats().list()) {
+        if (!floatItem.isInFormattingContextOf(rootLayoutBox()))
+            floats.append(floatItem);
+    }
+    return floats;
 }
 
 void LineLayout::preparePlacedFloats()
