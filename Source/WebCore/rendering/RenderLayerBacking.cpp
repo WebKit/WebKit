@@ -5365,12 +5365,12 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
                 // because of the complexities involved with possibly blending across multiple filter types. Since
                 // this is bound to be rare, it's a lot easier to simply disallow acceleration in this case.
                 if (acceleratedProperties.contains(AcceleratedEffectProperty::Filter)) {
-                    if (hasEffectAffectingFilter && !replacedAcceleratedProperties.contains(AcceleratedEffectProperty::Filter))
+                    if (hasEffectAffectingFilter)
                         disallowedAcceleratedProperties.add(AcceleratedEffectProperty::Filter);
                     hasEffectAffectingFilter = true;
                 }
                 if (acceleratedProperties.contains(AcceleratedEffectProperty::BackdropFilter)) {
-                    if (hasEffectAffectingBackdropFilter && !replacedAcceleratedProperties.contains(AcceleratedEffectProperty::BackdropFilter))
+                    if (hasEffectAffectingBackdropFilter)
                         disallowedAcceleratedProperties.add(AcceleratedEffectProperty::BackdropFilter);
                     hasEffectAffectingBackdropFilter = true;
                 }

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+.target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+const duration = 1000 * 1000;
+
+const makeTarget = (test, filter) => {
+    const target = createDiv(test);
+    target.className = "target";
+    if (filter)
+        target.style.filter = filter;
+    return target;
+};
+
+const acceleratedProperties = async (target, animations) => {
+    await Promise.all(animations.map(animation => animation.ready));
+    await threadedAnimationsCommit();
+    return window.internals?.acceleratedAnimationsForElement(target).map(animation => animation.property).sort();
+};
+
+promise_test(async test => {
+    const target = makeTarget(test, "blur(2px)");
+    const animation = target.animate({ filter: ["blur(0px)", "blur(10px)"] }, duration);
+    assert_array_equals(await acceleratedProperties(target, [animation]), ["filter"]);
+}, "A 'filter' animation using the same filter operations as the base value is accelerated.");
+
+promise_test(async test => {
+    const target = makeTarget(test, "blur(2px)");
+    const animation = target.animate({ filter: ["sepia(0)", "sepia(1)"] }, duration);
+    assert_array_equals(await acceleratedProperties(target, [animation]), []);
+}, "A 'filter' animation using different filter operations than the base value is not accelerated.");
+
+promise_test(async test => {
+    const target = makeTarget(test);
+    const animation = target.animate({ filter: ["blur(5px)", "none", "sepia(1)"] }, duration);
+    assert_array_equals(await acceleratedProperties(target, [animation]), []);
+}, "A 'filter' animation with non-adjacent keyframes using different filter operations is not accelerated.");
+
+promise_test(async test => {
+    const target = makeTarget(test, "blur(2px)");
+    const animation = target.animate({ filter: ["blur(0px)", "blur(10px)"] }, { duration, composite: "add" });
+    assert_array_equals(await acceleratedProperties(target, [animation]), []);
+}, "An additive 'filter' animation is not accelerated if there is an underlying filter.");
+
+promise_test(async test => {
+    const target = makeTarget(test);
+    const lowerAnimation = target.animate({ filter: ["sepia(0)", "sepia(1)"], opacity: [0.5, 1] }, duration);
+    const upperAnimation = target.animate({ filter: ["blur(0px)", "blur(5px)"] }, { duration, delay: duration });
+    assert_array_equals(await acceleratedProperties(target, [lowerAnimation, upperAnimation]), ["opacity"]);
+}, "A 'filter' animation is not accelerated if an effect higher up the stack also targets 'filter', even if it replaces it.");
+
+</script>
+</body>
