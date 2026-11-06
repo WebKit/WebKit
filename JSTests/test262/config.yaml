@@ -1,8 +1,8 @@
 
 ---
 flags:
-  SharedArrayBuffer: useSharedArrayBuffer
-  Atomics: useSharedArrayBuffer
+  SharedArrayBuffer: alwaysUseSharedArrayBuffer
+  Atomics: alwaysUseSharedArrayBuffer
   Temporal: useTemporal
   json-parse-with-source: useJSONSourceTextAccess
   iterator-sequencing: useIteratorSequencing

@@ -408,31 +408,31 @@ class TestGetScenarios(unittest.TestCase):
 
 class TestGetFeatureFlags(unittest.TestCase):
     def test_basic_feature_flag(self):
-        config = {"flags": {"SharedArrayBuffer": "useSharedArrayBuffer"}}
+        config = {"flags": {"SharedArrayBuffer": "alwaysUseSharedArrayBuffer"}}
         metadata = {"features": ["SharedArrayBuffer"]}
         flags = runner._get_feature_flags(config, metadata)
-        self.assertEqual(flags, ["--useSharedArrayBuffer=1"])
+        self.assertEqual(flags, ["--alwaysUseSharedArrayBuffer=1"])
 
     def test_multiple_features(self):
         config = {
             "flags": {
-                "SharedArrayBuffer": "useSharedArrayBuffer",
+                "SharedArrayBuffer": "alwaysUseSharedArrayBuffer",
                 "Atomics": "useAtomics",
             }
         }
         metadata = {"features": ["SharedArrayBuffer", "Atomics"]}
         flags = runner._get_feature_flags(config, metadata)
         self.assertEqual(
-            flags, ["--useSharedArrayBuffer=1", "--useAtomics=1"]
+            flags, ["--alwaysUseSharedArrayBuffer=1", "--useAtomics=1"]
         )
 
     def test_unmapped_feature(self):
-        config = {"flags": {"SharedArrayBuffer": "useSharedArrayBuffer"}}
+        config = {"flags": {"SharedArrayBuffer": "alwaysUseSharedArrayBuffer"}}
         metadata = {"features": ["Proxy"]}
         self.assertEqual(runner._get_feature_flags(config, metadata), [])
 
     def test_no_features(self):
-        config = {"flags": {"SharedArrayBuffer": "useSharedArrayBuffer"}}
+        config = {"flags": {"SharedArrayBuffer": "alwaysUseSharedArrayBuffer"}}
         self.assertEqual(runner._get_feature_flags(config, {}), [])
 
     def test_no_config(self):
@@ -444,14 +444,14 @@ class TestGetFeatureFlags(unittest.TestCase):
         self.assertEqual(flags, ["--can-block-is-false"])
 
     def test_can_block_with_features(self):
-        config = {"flags": {"SharedArrayBuffer": "useSharedArrayBuffer"}}
+        config = {"flags": {"SharedArrayBuffer": "alwaysUseSharedArrayBuffer"}}
         metadata = {
             "features": ["SharedArrayBuffer"],
             "flags": ["CanBlockIsFalse"],
         }
         flags = runner._get_feature_flags(config, metadata)
         self.assertEqual(
-            flags, ["--useSharedArrayBuffer=1", "--can-block-is-false"]
+            flags, ["--alwaysUseSharedArrayBuffer=1", "--can-block-is-false"]
         )
 
 
@@ -884,11 +884,11 @@ class TestRunJsc(unittest.TestCase):
         mock_run.return_value = mock.Mock(returncode=0, stdout="")
         runner._run_jsc(
             "/path/to/jsc", "/test.js", "default", {},
-            ["--useSharedArrayBuffer=1"],
+            ["--alwaysUseSharedArrayBuffer=1"],
             "/harness.js", None, None, None, self._base_env(),
         )
         cmd = mock_run.call_args[0][0]
-        self.assertIn("--useSharedArrayBuffer=1", cmd)
+        self.assertIn("--alwaysUseSharedArrayBuffer=1", cmd)
 
     @mock.patch("runner.subprocess.run")
     def test_timeout_exception(self, mock_run):

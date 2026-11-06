@@ -1138,7 +1138,7 @@ public:
 
     bool allowsSharedMemorySerialization()
     {
-        return m_forStorage == SerializationForStorage::No && (isCrossOriginIsolatedContext(m_lexicalGlobalObject) || JSC::Options::useSharedArrayBuffer());
+        return m_forStorage == SerializationForStorage::No && (isCrossOriginIsolatedContext(m_lexicalGlobalObject) || JSC::Options::alwaysUseSharedArrayBuffer());
     }
 
     NODELETE bool allowsWasmModuleSerialization()

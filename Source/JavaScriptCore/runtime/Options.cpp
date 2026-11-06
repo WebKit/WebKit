@@ -768,7 +768,7 @@ NODELETE static inline void disableAllJITOptions()
 NODELETE static void disableAllSignalHandlerBasedOptions()
 {
     Options::usePollingTraps() = true;
-    Options::useSharedArrayBuffer() = false;
+    Options::alwaysUseSharedArrayBuffer() = false;
     Options::allowSharedArrayBuffer() = false;
     Options::useWasmFastMemory() = false;
     Options::useWasmFaultSignalHandler() = false;

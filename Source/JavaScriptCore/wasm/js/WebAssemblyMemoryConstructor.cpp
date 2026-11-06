@@ -128,7 +128,7 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
         }
     }
 
-    // Even though Options::useSharedArrayBuffer() is false, we can create SharedArrayBuffer through wasm shared memory.
+    // Even though Options::alwaysUseSharedArrayBuffer() is false, we can create SharedArrayBuffer through wasm shared memory.
     // But we cannot send SharedArrayBuffer to the other workers, so it is not effective.
     MemorySharingMode sharingMode = MemorySharingMode::Default;
     if (Options::useWasmFaultSignalHandler()) [[likely]] {

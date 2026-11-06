@@ -1513,7 +1513,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_iteratorConstructor.set(vm, this, iteratorConstructor);
     putDirectWithoutTransition(vm, vm.propertyNames->Iterator, iteratorConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    if (Options::useSharedArrayBuffer())
+    if (Options::alwaysUseSharedArrayBuffer())
         putDirectWithoutTransition(vm, vm.propertyNames->SharedArrayBuffer, m_sharedArrayBufferStructure.constructor(this), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     if (Options::useExplicitResourceManagement()) {
@@ -3826,8 +3826,10 @@ void JSGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
 
 void JSGlobalObject::exposeSharedArrayBuffer()
 {
-    if (!Options::allowSharedArrayBuffer() || Options::useSharedArrayBuffer())
+    if (!Options::allowSharedArrayBuffer())
         return;
+    if (Options::alwaysUseSharedArrayBuffer())
+        return; // Nothing to do because JSGlobalObject::init() already exposed it.
     VM& vm = this->vm();
     putDirect(vm, vm.propertyNames->SharedArrayBuffer, m_sharedArrayBufferStructure.constructor(this), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }

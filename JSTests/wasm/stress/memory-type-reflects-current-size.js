@@ -1,4 +1,4 @@
-//@ requireOptions("--useWasmJSTypes=1", "--useSharedArrayBuffer=1")
+//@ requireOptions("--useWasmJSTypes=1", "--alwaysUseSharedArrayBuffer=1")
 //@ skip if $addressBits <= 32
 import { instantiate } from "../wabt-wrapper.js";
 import * as assert from "../assert.js";

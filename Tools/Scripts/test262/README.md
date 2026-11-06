@@ -54,7 +54,7 @@ for particular features. Example:
 # Enable a JSC feature flag for every test that lists the given feature.
 # Adds `--<flag>=1` to the jsc command line.
 flags:
-  SharedArrayBuffer: useSharedArrayBuffer
+  SharedArrayBuffer: alwaysUseSharedArrayBuffer
   Temporal: useTemporal
 
 skip:
