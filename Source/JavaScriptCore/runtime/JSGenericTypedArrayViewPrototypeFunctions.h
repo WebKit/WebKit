@@ -957,6 +957,24 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncMap(VM& vm, JSGlobalO
         break; \
     }
 
+#define JSC_SET_FILTER_UNDEFINED(name) \
+    case name##ArrayType: { \
+        auto* view = uncheckedDowncast<JS##name##Array>(result); \
+        using Adaptor = typename JS##name##Array::Adaptor; \
+        if constexpr (Adaptor::isBigInt) { \
+            view->setIndex(globalObject, undefinedKept[0], jsUndefined()); \
+            RETURN_IF_EXCEPTION(scope, { }); \
+        } else { \
+            for (size_t i = 0; i < undefinedKept.size(); ++i) { \
+                size_t index = undefinedKept[i]; \
+                if (!view->inBounds(index)) \
+                    break; \
+                view->setIndexQuicklyToNativeValue(index, Adaptor::toNativeFromUndefined()); \
+            } \
+        } \
+        break; \
+    }
+
 template<typename ViewClass>
 ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncFilter(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
@@ -976,6 +994,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncFilter(VM& vm, JSGlob
 
     JSValue thisArg = callFrame->argument(1);
     Vector<typename ViewClass::ElementType, 256> kept;
+    Vector<size_t> undefinedKept;
     if (!kept.tryReserveInitialCapacity(length)) [[unlikely]] {
         throwOutOfMemoryError(globalObject, scope);
         return { };
@@ -992,8 +1011,11 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncFilter(VM& vm, JSGlob
             RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, IterationStatus::Done);
 
             scope.release();
-            if (result.toBoolean(globalObject))
+            if (result.toBoolean(globalObject)) {
+                if (element.isUndefined())
+                    undefinedKept.append(kept.size());
                 kept.append(nativeValue);
+            }
             return IterationStatus::Continue;
         });
         RETURN_IF_EXCEPTION(scope, { });
@@ -1011,8 +1033,11 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncFilter(VM& vm, JSGlob
             RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, IterationStatus::Done);
 
             scope.release();
-            if (result.toBoolean(globalObject))
+            if (result.toBoolean(globalObject)) {
+                if (element.isUndefined())
+                    undefinedKept.append(kept.size());
                 kept.append(nativeValue);
+            }
             return IterationStatus::Continue;
         });
         RETURN_IF_EXCEPTION(scope, { });
@@ -1039,10 +1064,20 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncFilter(VM& vm, JSGlob
         break;
     }
 
+    if (!undefinedKept.isEmpty()) {
+        switch (result->type()) {
+            FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_SET_FILTER_UNDEFINED)
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
     return JSValue::encode(result);
 }
 
 #undef JSC_DISPATCH_TYPED_ARRAY
+#undef JSC_SET_FILTER_UNDEFINED
 
 template<typename ViewClass>
 ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncFind(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
