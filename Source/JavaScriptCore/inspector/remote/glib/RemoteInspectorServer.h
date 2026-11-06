@@ -60,7 +60,7 @@ private:
     void close(SocketConnection&, uint64_t connectionID, uint64_t targetID);
     void sendMessageToFrontend(SocketConnection&, uint64_t target, const char*);
     void sendMessageToBackend(SocketConnection&, uint64_t connectionID, uint64_t targetID, const char*);
-    void startAutomationSession(SocketConnection&, const char* sessionID, const RemoteInspector::Client::SessionCapabilities&);
+    bool startAutomationSession(SocketConnection&, const char* sessionID, const RemoteInspector::Client::SessionCapabilities&);
 
     GRefPtr<GSocketService> m_service;
     uint16_t m_port { 0 };
