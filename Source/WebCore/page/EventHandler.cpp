@@ -4115,8 +4115,9 @@ bool EventHandler::sendContextMenuEventForKey()
 
     protect(frame->view())->setCursor(pointerCursor());
 
+    // The event is dispatched to this frame's local root, but its screen position is converted from the main frame's view.
     IntPoint position = view->contentsToRootView(location);
-    IntPoint globalPosition = view->hostWindow()->rootViewToScreen(IntRect(position, IntSize())).location();
+    IntPoint globalPosition = view->hostWindow()->rootViewToScreen(IntRect(view->contentsToMainFrameView(location), IntSize())).location();
 
     RefPtr<Node> targetNode = doc->focusedElement();
     if (!targetNode)

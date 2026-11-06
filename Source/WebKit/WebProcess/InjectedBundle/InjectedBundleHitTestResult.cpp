@@ -160,7 +160,7 @@ IntRect InjectedBundleHitTestResult::imageRect() const
     if (!view)
         return imageRect;
     
-    return view->contentsToRootView(imageRect);
+    return view->contentsToMainFrameView(imageRect);
 }
 
 RefPtr<WebImage> InjectedBundleHitTestResult::image() const

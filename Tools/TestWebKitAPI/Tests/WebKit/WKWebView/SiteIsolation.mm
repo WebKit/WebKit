@@ -19403,6 +19403,65 @@ TEST(SiteIsolation, ContextMenuKeyInCrossOriginFrame)
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"!!window.receivedContextMenu"] boolValue]);
 }
 
+// Returns the client coordinates of the contextmenu event that the context menu key dispatches in the iframe, and its
+// screen coordinates relative to the window's, so that they don't depend on where the window is.
+static Vector<double> contextMenuKeyEventLocationInCrossOriginIframe(bool siteIsolationEnabled)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe id='iframe' style='position: absolute; left: 100px; top: 150px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0'><input id='input' style='position: absolute; left: 20px; top: 30px; width: 100px; height: 20px;'>"
+            "<script>addEventListener('contextmenu', event => { event.preventDefault(); window.contextMenuEventLocation = [event.clientX, event.clientY, event.screenX, event.screenY]; })</script></body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolationEnabled ? siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600)) : viewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:nil];
+    while (![childFrame _isFocused]) {
+        Util::spinRunLoop();
+        childFrame = [webView firstChildFrame];
+    }
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('input').focus(); true" inFrame:childFrame.get()];
+
+    // With an element focused, the context menu key dispatches a contextmenu event near that element.
+    [webView showContextMenuForSelection:nil];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"!!window.contextMenuEventLocation" inFrame:childFrame.get()] boolValue];
+    }));
+
+    // Read the window's screen position in the main frame, whose process is guaranteed to know it.
+    RetainPtr<NSArray> windowScreenPosition = [webView objectByEvaluatingJavaScript:@"[screenX, screenY]"];
+    RetainPtr<NSArray> location = [webView objectByEvaluatingJavaScript:@"window.contextMenuEventLocation" inFrame:childFrame.get()];
+    if ([location count] != 4 || [windowScreenPosition count] != 2)
+        return { };
+
+    return {
+        [[location objectAtIndex:0] doubleValue],
+        [[location objectAtIndex:1] doubleValue],
+        [[location objectAtIndex:2] doubleValue] - [[windowScreenPosition objectAtIndex:0] doubleValue],
+        [[location objectAtIndex:3] doubleValue] - [[windowScreenPosition objectAtIndex:1] doubleValue],
+    };
+}
+
+TEST(SiteIsolation, ContextMenuKeyEventScreenLocationInCrossOriginFrame)
+{
+    // Without Site Isolation, the iframe is in the main frame's process.
+    auto expected = contextMenuKeyEventLocationInCrossOriginIframe(false);
+    auto actual = contextMenuKeyEventLocationInCrossOriginIframe(true);
+    ASSERT_EQ(4U, expected.size());
+    ASSERT_EQ(4U, actual.size());
+
+    // The event's client coordinates are in the iframe, and its screen coordinates include the iframe's position.
+    EXPECT_EQ(expected[0], actual[0]);
+    EXPECT_EQ(expected[1], actual[1]);
+    EXPECT_EQ(expected[2], actual[2]);
+    EXPECT_EQ(expected[3], actual[3]);
+}
+
 TEST(SiteIsolation, ContextMenuCopyInUnfocusedCrossOriginFrame)
 {
     HTTPServer server({

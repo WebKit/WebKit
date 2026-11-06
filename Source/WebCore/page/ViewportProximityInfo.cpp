@@ -174,7 +174,7 @@ std::optional<FloatRect> boundingRectInMainFrameDocument(const Document& documen
     if (!mainFrameView)
         return std::nullopt;
 
-    return mainFrameView->rootViewToContents(FloatRect { view->contentsToRootView(absoluteRect) });
+    return mainFrameView->rootViewToContents(FloatRect { view->contentsToMainFrameView(absoluteRect) });
 }
 
 } // namespace WebCore
