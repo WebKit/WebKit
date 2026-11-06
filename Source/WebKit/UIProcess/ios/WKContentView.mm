@@ -108,18 +108,20 @@
 
 @interface _WKPrintFormattingAttributes : NSObject
 @property (nonatomic, readonly) size_t pageCount;
+@property (nonatomic, readonly) WebCore::FloatBoxExtent computedPageMargin;
 @property (nonatomic, readonly) Markable<WebCore::FrameIdentifier> frameID;
 @property (nonatomic, readonly) WebKit::PrintInfo printInfo;
 @end
 
 @implementation _WKPrintFormattingAttributes
 
-- (instancetype)initWithPageCount:(size_t)pageCount frameID:(WebCore::FrameIdentifier)frameID printInfo:(WebKit::PrintInfo)printInfo
+- (instancetype)initWithPageCount:(size_t)pageCount computedPageMargin:(WebCore::FloatBoxExtent)computedPageMargin frameID:(WebCore::FrameIdentifier)frameID printInfo:(WebKit::PrintInfo)printInfo
 {
     if (!(self = [super init]))
         return nil;
 
     _pageCount = pageCount;
+    _computedPageMargin = computedPageMargin;
     _frameID = frameID;
     _printInfo = printInfo;
 
@@ -1313,12 +1315,13 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
     Markable<WebCore::FrameIdentifier> frameID;
     size_t pageCount = printInfo.snapshotFirstPage ? 1 : 0;
+    auto computedPageMargin = printInfo.margin;
 
     if (isPrintingOnBackgroundThread) {
         BinarySemaphore computePagesSemaphore;
         // Silencing lambda capture warnings here since the lambda actually runs synchronously thanks
         // to the BinarySemaphore.
-        SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE callOnMainRunLoop([self, printFormatter, printInfo, &frameID, &pageCount, &computePagesSemaphore]() mutable {
+        SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE callOnMainRunLoop([self, printFormatter, printInfo, &frameID, &pageCount, &computedPageMargin, &computePagesSemaphore] mutable {
             auto identifier = [self _frameIdentifierForPrintFormatter:printFormatter];
             if (!identifier) {
                 computePagesSemaphore.signal();
@@ -1333,9 +1336,10 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
             // This has the side effect of calling `WebPage::beginPrinting`. It is important that all calls
             // of `WebPage::beginPrinting` are matched with a corresponding call to `WebPage::endPrinting`.
-            protect(_page)->computePagesForPrinting(*frameID, printInfo, [&pageCount, &computePagesSemaphore](const Vector<WebCore::IntRect>& pageRects, double /* totalScaleFactorForPrinting */, const WebCore::FloatBoxExtent& /* computedPageMargin */) mutable {
+            protect(_page)->computePagesForPrinting(*frameID, printInfo, [&pageCount, &computedPageMargin, &computePagesSemaphore](const Vector<WebCore::IntRect>& pageRects, double /* totalScaleFactorForPrinting */, const WebCore::FloatBoxExtent& margin) mutable {
                 ASSERT(pageRects.size() >= 1);
                 pageCount = pageRects.size();
+                computedPageMargin = margin;
                 RELEASE_LOG(Printing, "Computed pages for printing on background thread. Page count = %zu", pageCount);
                 computePagesSemaphore.signal();
             });
@@ -1348,14 +1352,17 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
         frameID = *identifier;
 
-        if (!pageCount)
-            pageCount = protect(_page)->computePagesForPrintingiOS(*frameID, printInfo);
+        if (!pageCount) {
+            auto pageInfo = protect(_page)->computePageInfoForPrintingiOS(*frameID, printInfo);
+            pageCount = pageInfo.count;
+            computedPageMargin = pageInfo.margin;
+        }
     }
 
     if (!pageCount)
         return nil;
 
-    auto attributes = adoptNS([[_WKPrintFormattingAttributes alloc] initWithPageCount:pageCount frameID:*frameID printInfo:printInfo]);
+    RetainPtr attributes = adoptNS([[_WKPrintFormattingAttributes alloc] initWithPageCount:pageCount computedPageMargin:computedPageMargin frameID:*frameID printInfo:printInfo]);
 
     RELEASE_LOG(Printing, "Computed attributes for print formatter. Computed page count = %zu", pageCount);
 

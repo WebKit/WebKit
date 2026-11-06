@@ -87,4 +87,11 @@ struct PrintInfo {
 #endif
 };
 
+#if PLATFORM(IOS_FAMILY)
+struct PrintPageInfo {
+    size_t count { 0 };
+    WebCore::FloatBoxExtent margin;
+};
+#endif
+
 } // namespace WebKit

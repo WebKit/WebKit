@@ -1555,7 +1555,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void computePagesForPrintingiOS(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(uint64_t)>&&);
+    void computePagesForPrintingiOS(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(uint64_t, const WebCore::FloatBoxExtent&)>&&);
     void drawToPDFiOS(WebCore::FrameIdentifier, const PrintInfo&, uint64_t, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
     void drawToImage(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 
