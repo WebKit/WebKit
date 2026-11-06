@@ -812,9 +812,9 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     const FontPlatformData& platformData = originalFontData.platformData();
     RetainPtr ctFont = platformData.ctFont();
 
-    auto fullName = String(adoptCF(CTFontCopyFullName(ctFont.get())).get());
-    if (!fullName.isEmpty())
-        m_fontNamesRequiringSystemFallbackForPrewarming.add(fullName);
+    auto postScriptName = String(adoptCF(CTFontCopyPostScriptName(ctFont.get())).get());
+    if (!postScriptName.isEmpty())
+        m_fontNamesRequiringSystemFallbackForPrewarming.add(postScriptName);
 
     auto result = lookupFallbackFont(ctFont.get(), description.weight(), description.usedLocale(), description.shouldAllowUserInstalledFonts(), characterCluster);
     result = preparePlatformFont(UnrealizedCoreTextFont { WTF::move(result) }, description, { });
