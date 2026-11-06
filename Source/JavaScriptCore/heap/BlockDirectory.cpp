@@ -28,6 +28,7 @@
 
 #include "AlignedMemoryAllocator.h"
 #include "BlockDirectoryInlines.h"
+#include "Collector.h"
 #include "Heap.h"
 #include "HeapInlines.h"
 #include "MarkedSpaceInlines.h"
@@ -152,6 +153,7 @@ MarkedBlock::Handle* BlockDirectory::tryAllocateBlock(JSC::Heap& heap)
 void BlockDirectory::addBlock(MarkedBlock::Handle* block)
 {
     ASSERT(markedSpace().heap().vm().currentThreadIsHoldingAPILock());
+    markedSpace().heap().assertIsAccessHolder();
 
     Locker locker { m_bitvectorLock.grow() };
     unsigned index;
@@ -193,7 +195,7 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
 
 void BlockDirectory::removeBlock(MarkedBlock::Handle* block, WillDeleteBlock willDelete)
 {
-    markedSpace().heap().assertIsMutatorOrMutatorIsStopped();
+    markedSpace().heap().assertIsAccessHolder();
     Locker locker { m_bitvectorLock.grow() };
     ASSERT(block->directory() == this);
     ASSERT(m_blocks[block->index()].first == block);
@@ -231,7 +233,7 @@ void BlockDirectory::stopAllocating()
         });
 
 #if ASSERT_ENABLED
-    assertIsMutatorOrMutatorIsStopped();
+    assertMayAccessBitsUnlocked();
     if (!inUseBitsView().isEmpty()) [[unlikely]] {
         dataLogLn("Not all inUse bits are clear at stopAllocating");
         dataLogLn(*this);
@@ -488,7 +490,7 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> BlockDirectory::parallelNotEmptyBlock
             if (m_done)
                 return nullptr;
             Locker locker { m_lock };
-            m_directory.assertIsMutatorOrMutatorIsStopped();
+            m_directory.assertMayAccessBitsUnlocked();
             m_index = m_directory.m_bits.markingNotEmpty().findBit(m_index, true);
             if (m_index >= m_directory.m_blocks.size()) {
                 m_done = true;
@@ -541,9 +543,13 @@ MarkedSpace& BlockDirectory::markedSpace() const
 }
 
 #if ASSERT_ENABLED
-void BlockDirectory::assertIsMutatorOrMutatorIsStopped() const
+void BlockDirectory::assertMayAccessBitsUnlocked() const
 {
-    markedSpace().heap().assertIsMutatorOrMutatorIsStopped();
+    JSC::Heap& heap = markedSpace().heap();
+    if (heap.worldIsStopped())
+        ASSERT(heap.collector().currentThreadIsConductor() || Thread::currentSingleton().gcThreadType() == GCThreadType::Helper);
+    else
+        heap.assertIsExclusiveAccessHolder();
 }
 
 void BlockDirectory::assertWorldIsStopped() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS

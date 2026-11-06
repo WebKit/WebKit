@@ -501,7 +501,26 @@ void Heap::assertIsAccessHolder() const
     ASSERT(currentThreadIsAccessHolder());
 }
 
+void Heap::assertIsExclusiveAccessHolder() const
+{
+    assertIsAccessHolder();
+    ASSERT(m_accessHolderCount.loadRelaxed() == 1);
+}
+
+void Heap::assertIsExclusiveAccessHolderOrConductorWithWorldStopped() const
+{
+    if (worldIsStopped())
+        ASSERT(m_collector->currentThreadIsConductor());
+    else
+        assertIsExclusiveAccessHolder();
+}
+
 bool Heap::currentThreadIsAccessHolder() const
+{
+    return !worldIsStopped() && currentThreadAcquiredAccess();
+}
+
+bool Heap::currentThreadAcquiredAccess() const
 {
     if (!hasAccess())
         return false;
@@ -511,18 +530,6 @@ bool Heap::currentThreadIsAccessHolder() const
         return isMainThread();
     }
     return m_accessHolderThreadUID.loadRelaxed() == Thread::currentSingleton().uid();
-}
-
-void Heap::assertIsMutatorOrMutatorIsStopped() const
-{
-    if (worldIsStopped())
-        return;
-    if (auto owner = vm().apiLock().ownerThread())
-        ASSERT(owner->get() == &Thread::currentSingleton());
-    else {
-        // FIXME: It feels like heap access should be tied to holding the API lock.
-        ASSERT(hasAccess());
-    }
 }
 #endif
 

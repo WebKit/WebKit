@@ -381,9 +381,20 @@ public:
     bool needCollectionEpilogue() const { return m_worldState.load() & needCollectionEpilogueBit; }
     bool worldIsStopped() const { return m_worldIsStopped; }
 #if ASSERT_ENABLED
-    JS_EXPORT_PRIVATE void assertIsMutatorOrMutatorIsStopped() const;
+    // Asserts that the current thread has access to the heap and that the world is running. While the world is stopped,
+    // the thread with access can act only as the conductor, not the access holder.
+    // Note that this acquires the capability shared, so it does not establish that the current thread is the only one
+    // with access; code that relies on that should call assertIsExclusiveAccessHolder() instead.
+    JS_EXPORT_PRIVATE void assertIsAccessHolder() const WTF_ASSERTS_ACQUIRED_SHARED_CAPABILITY(m_accessHolderRole);
+    // Like assertIsAccessHolder(), but also asserts that no other thread has access to the heap.
+    // Note that this acquires the capability exclusively, so code that calls this relies on being the only thread
+    // with access.
+    JS_EXPORT_PRIVATE void assertIsExclusiveAccessHolder() const WTF_ASSERTS_ACQUIRED_CAPABILITY(m_accessHolderRole);
+    JS_EXPORT_PRIVATE void assertIsExclusiveAccessHolderOrConductorWithWorldStopped() const;
 #else
-    ALWAYS_INLINE void assertIsMutatorOrMutatorIsStopped() const { }
+    ALWAYS_INLINE void assertIsAccessHolder() const WTF_ASSERTS_ACQUIRED_SHARED_CAPABILITY(m_accessHolderRole) { }
+    ALWAYS_INLINE void assertIsExclusiveAccessHolder() const WTF_ASSERTS_ACQUIRED_CAPABILITY(m_accessHolderRole) { }
+    ALWAYS_INLINE void assertIsExclusiveAccessHolderOrConductorWithWorldStopped() const { }
 #endif
 
     // We're always busy on the collection threads. On the main thread, this returns true if we're
@@ -688,11 +699,10 @@ private:
     void noteAccessAcquired();
     void noteAccessReleased() WTF_REQUIRES_SHARED_CAPABILITY(m_accessHolderRole);
 #if ASSERT_ENABLED
-    JS_EXPORT_PRIVATE void assertIsAccessHolder() const WTF_ASSERTS_ACQUIRED_SHARED_CAPABILITY(m_accessHolderRole);
     // For asserts that accept either of two roles, which thread-safety analysis cannot express.
     bool currentThreadIsAccessHolder() const;
-#else
-    ALWAYS_INLINE void assertIsAccessHolder() const WTF_ASSERTS_ACQUIRED_SHARED_CAPABILITY(m_accessHolderRole) { }
+    // Whether the current thread acquired access, whether or not the world is currently stopped.
+    bool currentThreadAcquiredAccess() const;
 #endif
 
     bool handleNeedCollectionEpilogue(unsigned) WTF_REQUIRES_SHARED_CAPABILITY(m_accessHolderRole);
@@ -939,10 +949,12 @@ private:
     static constexpr unsigned needCollectionEpilogueBit = 1u << 3u;
     static constexpr unsigned mutatorWaitingBit = 1u << 4u; // Allows the mutator to use this as a condition variable.
     Atomic<unsigned> m_worldState;
-    [[no_unique_address]] HeapAccessHolderRole m_accessHolderRole;
+    NO_UNIQUE_ADDRESS HeapAccessHolderRole m_accessHolderRole;
 #if ASSERT_ENABLED
     // For assertIsAccessHolder(): the thread that acquired access, or 0.
     Atomic<uint32_t> m_accessHolderThreadUID { 0 };
+    // For assertIsExclusiveAccessHolder(): how many threads have access.
+    Atomic<unsigned> m_accessHolderCount { 0 };
 #endif
     bool m_worldIsStopped { false };
 

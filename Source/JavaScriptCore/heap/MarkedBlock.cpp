@@ -192,7 +192,7 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList, StopAllocatin
 
 void MarkedBlock::Handle::lastChanceToFinalize()
 {
-    m_directory->assertIsMutatorOrMutatorIsStopped();
+    m_directory->assertMayAccessBitsUnlocked();
     // Nothing else can be holding this block at shutdown.
     m_directory->claimInUseOrCrash(index());
     m_directory->setIsAllocated(index(), false);
@@ -210,7 +210,7 @@ void MarkedBlock::Handle::lastChanceToFinalize()
 void MarkedBlock::Handle::resumeAllocating(FreeList& freeList)
 {
     BlockDirectory* directory = this->directory();
-    directory->assertIsMutatorOrMutatorIsStopped();
+    directory->assertMayAccessBitsUnlocked();
     {
         Locker locker { blockHeader().m_lock };
         
@@ -522,7 +522,7 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     if (sweepMode == SweepOnly && !needsDestruction && !isUnswept)
         return;
 
-    heap()->assertIsMutatorOrMutatorIsStopped();
+    heap()->assertIsExclusiveAccessHolderOrConductorWithWorldStopped();
     SweepingScope sweepingScope(*heap());
 
     m_weakSet.sweep();

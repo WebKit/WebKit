@@ -265,7 +265,7 @@ void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block, size_t cellSize)
             return nullptr;
         }, cellSize);
 
-    m_directory->markedSpace().heap().assertIsMutatorOrMutatorIsStopped();
+    m_directory->markedSpace().heap().assertIsExclusiveAccessHolder();
     m_directory->markedSpace().didAllocateInBlock(m_currentBlock);
     return result;
 }

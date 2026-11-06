@@ -122,6 +122,11 @@ public:
 
     void dump(PrintStream&) const;
 
+#if ASSERT_ENABLED
+    // For asserts that accept more than one role, which thread-safety analysis cannot express.
+    bool currentThreadIsConductor() const;
+#endif
+
 private:
     class CollectorThread;
     friend class Heap;
@@ -136,8 +141,6 @@ private:
     void assertIsConductor(GCConductor) WTF_ASSERTS_ACQUIRED_CAPABILITY(conductorRole);
     void assertIsConductorWithWorldStopped(GCConductor) WTF_ASSERTS_ACQUIRED_CAPABILITY(conductorRole) WTF_ASSERTS_ACQUIRED_CAPABILITY(conductorWithWorldStoppedRole);
     void assertIsCollectorThread() const WTF_ASSERTS_ACQUIRED_CAPABILITY(m_collectorThreadRole);
-    // For asserts that accept either of two roles, which thread-safety analysis cannot express.
-    bool currentThreadIsConductor() const;
 #else
     ALWAYS_INLINE void assertIsConductor(GCConductor) WTF_ASSERTS_ACQUIRED_CAPABILITY(conductorRole) { }
     ALWAYS_INLINE void assertIsConductorWithWorldStopped(GCConductor) WTF_ASSERTS_ACQUIRED_CAPABILITY(conductorRole) WTF_ASSERTS_ACQUIRED_CAPABILITY(conductorWithWorldStoppedRole) { }
@@ -297,7 +300,7 @@ private:
     Box<Lock> m_threadLock;
     const Ref<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     const RefPtr<AutomaticThread> m_thread;
-    [[no_unique_address]] CollectorThreadRole m_collectorThreadRole;
+    NO_UNIQUE_ADDRESS CollectorThreadRole m_collectorThreadRole;
 #if ASSERT_ENABLED
     // For assertIsCollectorThread(). Set on each start, since an idle AutomaticThread exits and a later wake starts a
     // new OS thread.

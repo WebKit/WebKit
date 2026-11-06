@@ -33,7 +33,7 @@ namespace JSC {
 
 inline void BlockDirectory::forEachBlock(NOESCAPE const std::invocable<MarkedBlock::Handle*> auto& functor)
 {
-    assertIsMutatorOrMutatorIsStopped();
+    assertMayAccessBitsUnlocked();
     liveBitsView().forEachSetBit(
         [&] (size_t index) {
             functor(m_blocks[index].first);
@@ -42,7 +42,7 @@ inline void BlockDirectory::forEachBlock(NOESCAPE const std::invocable<MarkedBlo
 
 inline void BlockDirectory::forEachNotEmptyBlock(NOESCAPE const std::invocable<MarkedBlock::Handle*> auto& functor)
 {
-    assertIsMutatorOrMutatorIsStopped();
+    assertMayAccessBitsUnlocked();
     markingNotEmptyBitsView().forEachSetBit(
         [&] (size_t index) {
             functor(m_blocks[index].first);

@@ -241,6 +241,7 @@ inline void Heap::noteAccessAcquired()
 {
 #if ASSERT_ENABLED
     m_accessHolderThreadUID.storeRelaxed(Thread::currentSingleton().uid());
+    m_accessHolderCount.exchangeAdd(1);
 #endif
 }
 
@@ -248,6 +249,7 @@ inline void Heap::noteAccessReleased()
 {
 #if ASSERT_ENABLED
     m_accessHolderThreadUID.storeRelaxed(0);
+    m_accessHolderCount.exchangeSub(1);
 #endif
 }
 

@@ -934,7 +934,7 @@ void Collector::checkIsConductor(GCConductor conn)
         heap.checkConn(conn == GCConductor::Mutator && &heap == m_conductingHeap ? GCConductor::Mutator : GCConductor::Collector);
     });
     if (conn == GCConductor::Mutator)
-        m_conductingHeap->assertIsAccessHolder();
+        ASSERT(m_conductingHeap->currentThreadAcquiredAccess());
     else
         assertIsCollectorThread();
 }
@@ -960,7 +960,7 @@ void Collector::assertIsCollectorThread() const
 bool Collector::currentThreadIsConductor() const
 {
     if (m_conductingHeap)
-        return m_conductingHeap->currentThreadIsAccessHolder();
+        return m_conductingHeap->currentThreadAcquiredAccess();
     return m_collectorThreadUID.loadRelaxed() == Thread::currentSingleton().uid();
 }
 #endif

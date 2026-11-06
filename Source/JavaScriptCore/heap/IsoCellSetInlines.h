@@ -79,7 +79,7 @@ template<typename Func>
 void IsoCellSet::forEachMarkedCell(NOESCAPE const Func& func)
 {
     BlockDirectory& directory = m_subspace.m_directory;
-    directory.assertIsMutatorOrMutatorIsStopped();
+    directory.assertMayAccessBitsUnlocked();
     (directory.markingNotEmptyBitsView() & m_blocksWithBits).forEachSetBit(
         [&] (unsigned blockIndex) {
             MarkedBlock::Handle* block = directory.m_blocks[blockIndex].first;

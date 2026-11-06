@@ -193,7 +193,7 @@ inline ThreadLikeAssertion ThreadLike::createThreadLikeAssertion(uint32_t uid)
 // machine-checked, reads from any other thread must still lock, and the unlocked reads become both
 // self-documenting and checked at run time.
 //
-// BlockDirectory has long used this idiom by hand, with assertIsMutatorOrMutatorIsStopped() granting
+// BlockDirectory has long used this idiom by hand, with assertMayAccessBitsUnlocked() granting
 // shared access to m_bitvectorLock; these helpers generalize it.
 //
 // A function that calls assertIsOwnerThread() and then takes the lock must release the assertion

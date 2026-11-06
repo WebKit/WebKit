@@ -60,7 +60,7 @@ Ref<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlockS
         {
             if (m_done)
                 return nullptr;
-            m_directory.assertIsMutatorOrMutatorIsStopped();
+            m_directory.assertMayAccessBitsUnlocked();
             Locker locker { m_lock };
             auto bits = m_directory.markingNotEmptyBitsView() & m_set.m_blocksWithBits;
             m_index = bits.findBit(m_index, true);
