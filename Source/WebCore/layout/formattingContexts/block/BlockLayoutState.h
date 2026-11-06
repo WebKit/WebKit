@@ -31,6 +31,7 @@
 #include <WebCore/LayoutBoxGeometry.h>
 #include <WebCore/LayoutRange.h>
 #include <WebCore/LayoutUnits.h>
+#include <WebCore/PlacedFloats.h>
 #include <WebCore/StyleTextBoxEdge.h>
 #include <algorithm>
 #include <wtf/CheckedPtr.h>
@@ -67,6 +68,8 @@ struct ContainingBlockState {
     BoxGeometry geometry;
     // The content box in the inline direction, from the inline start of the block container's border box (in its own direction).
     LayoutRange inlineRange;
+    // The inline start of the block container's border box from the inline start of the root's border box, which the floats are placed from.
+    LayoutUnit borderBoxLogicalLeftInRoot;
     // Block offsets are relative to the border box of the root (every box in the block formatting context has the same block flow
     // direction). The top is unknown while the block-start margin can still collapse with the margins that follow it (CSS 2.2 §8.3.1).
     std::optional<LayoutUnit> borderBoxLogicalTop;
@@ -205,6 +208,25 @@ public:
     Vector<ContainingBlockState>& containingBlockStates() LIFETIME_BOUND { return m_containingBlockStates; }
     BlockMarginCollapse& marginCollapse() LIFETIME_BOUND { return m_marginCollapse; }
 
+    // The floats placed in the block formatting context so far, in the logical coordinates of the root's border box (CSS 2.2 §9.5).
+    const PlacedFloats* placedFloats() const { return m_placedFloats ? &*m_placedFloats : nullptr; }
+    PlacedFloats& ensurePlacedFloats(const ElementBox& root) LIFETIME_BOUND
+    {
+        if (!m_placedFloats)
+            m_placedFloats.emplace(root);
+        return *m_placedFloats;
+    }
+    // The floats in the inline content of a block container whose top was not known yet, placed from the top the margins collapsed so far
+    // gave it: its top ends up where the margins that collapse with it put it (CSS 2.2 §8.3.1), and they move with it.
+    struct PendingFloats {
+        CheckedRef<const RenderBox> blockContainer;
+        Vector<CheckedRef<const Box>> floatBoxes;
+        LayoutUnit provisionalBorderBoxLogicalTop;
+        // Floats whose top is known were there: the pending floats went beside or below them at the provisional top.
+        bool isPlacedAgainstOtherFloats { false };
+    };
+    Vector<PendingFloats>& pendingFloats() LIFETIME_BOUND { return m_pendingFloats; }
+
 private:
     std::optional<LineClamp> m_lineClamp;
     CheckedPtr<const RenderBox> m_clampAfterBox;
@@ -218,6 +240,8 @@ private:
     MarginState m_marginState;
     Vector<ContainingBlockState> m_containingBlockStates;
     BlockMarginCollapse m_marginCollapse;
+    std::optional<PlacedFloats> m_placedFloats;
+    Vector<PendingFloats> m_pendingFloats;
 };
 
 inline BlockLayoutState::BlockLayoutState(MarginState marginState, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, Style::TextBoxEdge textBoxEdge, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom, std::optional<LineGrid> lineGrid)

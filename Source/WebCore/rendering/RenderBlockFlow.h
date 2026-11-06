@@ -310,6 +310,9 @@ public:
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
     NODELETE LayoutUnit lowestFloatLogicalBottom() const; // Defaults to FloatingObject::FloatLeftRight
+    // Like lowestFloatLogicalBottom, with the floats the block formatting context placed in the content of the block container and of the block
+    // containers in it that take part in its block formatting context, which the float lists do not list.
+    LayoutUnit lowestFloatLogicalBottomIncludingFloatsPlacedByBlockFormattingContext() const;
     NODELETE LayoutUnit lowestFloatLogicalBottom(FloatingObjectType) const;
 
     void removeFloatingObjects();
@@ -478,6 +481,8 @@ private:
 
     void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
     void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) override;
+    // The floats the block formatting context placed in the inline content, which the render tree's float lists do not list.
+    Vector<CheckedRef<RenderBox>> floatsPlacedByBlockFormattingContext() const;
 
     void repaintOverhangingFloats(bool paintAllDescendants) final;
     void clipOutFloatingBoxes(RenderBlock&, const PaintInfo*, const LayoutPoint&, const LayoutSize&) override;

@@ -106,8 +106,13 @@ public:
     };
     // The block formatting context the inline content is in gives its state.
     LayoutResult layout(const Layout::BlockLayoutState&, ForceFullLayout = ForceFullLayout::No);
-    // It also lays out the block-level boxes in the inline content, and adds them to the result it is building.
-    LayoutResult layout(const Layout::BlockLayoutState&, Layout::BlockFormattingContext&, Layout::BlockLayoutResult&, ForceFullLayout);
+    // It also lays out the block-level boxes in the inline content, and adds them to the result it is building, and gives the floats that
+    // intrude into the content, in the logical coordinates of the root's border box, which the root's FloatingObjects do not list then.
+    LayoutResult layout(const Layout::BlockLayoutState&, Layout::BlockFormattingContext&, Layout::BlockLayoutResult&, const Layout::PlacedFloats::List& intrudingFloats, ForceFullLayout);
+    // The floats in the inline content, as its last layout placed them, and those that intruded into it, in the logical coordinates of the
+    // root's border box.
+    Layout::PlacedFloats::List floatsInContent() const;
+    Layout::PlacedFloats::List intrudingFloats() const;
     // The block-level box on the last line with content, whose margins after it stay open for the margins after the content.
     RenderBox* blockLevelBoxAtEnd() const;
     const std::optional<Layout::ConstraintsForInlineContent>& inlineContentConstraints() const LIFETIME_BOUND { return m_inlineContentConstraints; }
@@ -195,13 +200,15 @@ public:
     const LayoutInfoForTesting* layoutInfoForTesting() const { return m_layoutInfoForTesting.get(); }
 
 private:
-    LayoutResult layoutInlineContent(const Layout::BlockLayoutState&, ForceFullLayout, Layout::BlockFormattingContext*, Layout::BlockLayoutResult*);
+    LayoutResult layoutInlineContent(const Layout::BlockLayoutState&, ForceFullLayout, Layout::BlockFormattingContext*, Layout::BlockLayoutResult*, const Layout::PlacedFloats::List* intrudingFloats);
     void preparePlacedFloats();
+    void preparePlacedFloats(const Layout::PlacedFloats::List& intrudingFloats);
     FloatRect constructContent(const Layout::InlineLayoutState&, std::unique_ptr<Layout::InlineLayoutResult>&&);
     static std::unique_ptr<LayoutInfoForTesting> collectLayoutInfoForTesting(const Layout::InlineLayoutResult*);
     void setLayoutInfoForTesting(std::unique_ptr<LayoutInfoForTesting>&&);
     Vector<LineAdjustment> adjustContentForPagination(const Layout::BlockLayoutState&, bool isPartialLayout);
-    void updateRenderTreePositions(const Vector<LineAdjustment>&, const Layout::InlineLayoutState&, bool didDiscardContent);
+    enum class UpdateFloatingObjects : bool { No, Yes };
+    void updateRenderTreePositions(const Vector<LineAdjustment>&, const Layout::InlineLayoutState&, bool didDiscardContent, UpdateFloatingObjects);
 
     InlineContent& ensureInlineContent() LIFETIME_BOUND;
     Layout::BlockFormattingState& ensureBlockFormattingState() LIFETIME_BOUND;

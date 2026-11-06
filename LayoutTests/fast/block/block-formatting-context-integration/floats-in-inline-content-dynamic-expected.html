@@ -1,0 +1,56 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 20px; background: rgba(0, 0, 255, 0.5); }
+.c { background: silver; }
+p { margin: 6px 0; }
+</style>
+<div class="roots">
+<div class="root" id="resized">
+  <p><span class="l" id="wider"></span><span class="r" id="taller"></span>text that wraps around a left float and a right float</p>
+  <p>a paragraph the right float grows into</p>
+  <p id="inserted">a paragraph that gets a float</p>
+  <p><span class="r" id="removed" style="height: 60px"></span>a float that goes</p>
+  <p>away from this paragraph too</p>
+</div>
+<div class="root">
+  <p><span class="l" id="text" style="width: auto; height: auto">ab</span>a float whose text changes</p>
+  <p><span class="l" id="side"></span>a float that moves to the other side</p>
+  <div class="c" id="margin" style="margin-top: 4px"><span class="r"></span>a block whose margin changes</div>
+</div>
+<div class="root">
+  <div><div><span class="l"></span></div><p id="collapsing" style="margin-top: 10px">a margin that collapses through the float's block grows</p></div>
+</div>
+<div class="root">
+  <p><span class="r" id="grows"></span>a float that grows</p>
+  <p>into the next paragraph, which is laid out again for it</p>
+</div>
+<div class="root">
+  <div><span class="l" style="height: 40px"></span>a block</div>
+  <div class="c" id="cleared" style="display: none; clear: both">cleared</div>
+</div>
+<div class="root">
+  <div><span class="l" style="height: 40px"></span>a block</div>
+  <div class="c" id="uncleared" style="clear: both">not cleared anymore</div>
+</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "160px";
+document.getElementById("wider").style.width = "70px";
+document.getElementById("taller").style.height = "90px";
+const added = document.createElement("span");
+added.className = "l";
+added.style.height = "20px";
+document.getElementById("inserted").prepend(added);
+document.getElementById("removed").remove();
+document.getElementById("text").firstChild.data = "abcdef";
+document.getElementById("side").style.float = "right";
+document.getElementById("margin").style.marginTop = "20px";
+document.getElementById("grows").style.height = "40px";
+document.getElementById("collapsing").style.marginTop = "30px";
+document.getElementById("cleared").style.display = "block";
+document.getElementById("uncleared").style.clear = "none";
+</script>
