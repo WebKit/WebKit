@@ -67,6 +67,8 @@ fast/images/spatial-image-controls-rtl.html [ Skip ]
 fast/images/immersive [ Skip ]
 # Requires ENABLE(LINEAR_MEDIA_PLAYER) or the test times out.
 media/caption-mirroring-quirk-external-playback.html [ Skip ]
+# Needs the video fullscreen behavior of macOS, where entering fullscreen or picture in picture dispatches fullscreenchange.
+media/video-controls-deferral-presentation-modes.html [ Skip ]
 fast/sandbox/ios [ Skip ]
 fast/sandbox/mac [ Skip ]
 fast/text/data-detectors/ios [ Skip ]

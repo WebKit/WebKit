@@ -1,0 +1,89 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>A video element with controls has the same size before and after its controls are built</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<div id="onScreenContainer"></div>
+<div style="height: 20000px"></div>
+<div id="offScreenContainer"></div>
+<script>
+function hasBuiltControls(video) {
+    // Unlike internals.shadowRoot(), this does not build deferred controls.
+    return !!internals.ensureUserAgentShadowRoot(video).querySelector(".media-controls");
+}
+
+function createVideo(attributes) {
+    const video = document.createElement("video");
+    for (const [name, value] of Object.entries(attributes))
+        video.setAttribute(name, value);
+    video.controls = true;
+    return video;
+}
+
+function size(element) {
+    const rect = element.getBoundingClientRect();
+    return `${rect.width}x${rect.height}`;
+}
+
+function animationFrames() {
+    return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+async function waitForMetadata(video) {
+    if (video.readyState < HTMLMediaElement.HAVE_METADATA)
+        await new Promise(resolve => video.addEventListener("loadedmetadata", resolve, { once: true }));
+}
+
+function testSize(attributes, description) {
+    promise_test(async t => {
+        if (scrollY) {
+            // On iOS a scroll reaches the viewport asynchronously.
+            scrollTo(0, 0);
+            await UIHelper.ensureVisibleContentRectUpdate();
+        }
+        const reference = onScreenContainer.appendChild(createVideo(attributes));
+        internals.shadowRoot(reference);
+        const onScreen = onScreenContainer.appendChild(createVideo(attributes));
+        const afterOnScreen = onScreenContainer.appendChild(document.createElement("div"));
+        const offScreen = offScreenContainer.appendChild(createVideo(attributes));
+        const afterOffScreen = offScreenContainer.appendChild(document.createElement("div"));
+        t.add_cleanup(() => {
+            onScreenContainer.textContent = "";
+            offScreenContainer.textContent = "";
+        });
+
+        // Loading the metadata takes rendering updates, which build the controls of the on-screen video.
+        if (attributes.src)
+            await Promise.all([reference, onScreen, offScreen].map(waitForMetadata));
+        else
+            assert_false(hasBuiltControls(onScreen), "the on-screen video has not built its controls yet");
+
+        assert_true(hasBuiltControls(reference), "the reference has built controls");
+        const expectedSize = size(reference);
+        const afterOnScreenTop = afterOnScreen.offsetTop;
+        const afterOffScreenTop = afterOffScreen.offsetTop;
+        assert_equals(size(onScreen), expectedSize, "on-screen size right after insertion");
+        assert_equals(size(offScreen), expectedSize, "off-screen size right after insertion");
+
+        while (!hasBuiltControls(onScreen))
+            await animationFrames();
+        assert_equals(size(onScreen), expectedSize, "on-screen size after its controls are built");
+        assert_equals(afterOnScreen.offsetTop, afterOnScreenTop, "building the controls does not move the content after the on-screen video");
+        assert_false(hasBuiltControls(offScreen), "the off-screen video has not built its controls");
+        assert_equals(size(offScreen), expectedSize, "off-screen size while its controls are not built");
+
+        offScreen.scrollIntoView();
+        while (!hasBuiltControls(offScreen))
+            await animationFrames();
+        assert_equals(size(offScreen), expectedSize, "size after scrolling the off-screen element into view");
+        assert_equals(afterOffScreen.offsetTop, afterOffScreenTop, "building the controls does not move the content after the off-screen video");
+    }, description);
+}
+
+testSize({ }, "A video without a source has the same size before and after its controls are built");
+testSize({ width: 200, height: 100 }, "A video with width and height attributes has the same size before and after its controls are built");
+testSize({ src: "content/test.mp4" }, "A video with an intrinsic size has the same size before and after its controls are built");
+</script>
+</body>

@@ -51,8 +51,16 @@ promise_test(async t => {
 }, "In a new frame's document, the first audio element builds its controls at once and the next one defers");
 
 promise_test(async t => {
+    await testFirstBuildIsEager(await createFrameDocument(t), "video", "video");
+}, "In a new frame's document, the first video element builds its controls at once and the next one defers");
+
+promise_test(async t => {
     await testFirstBuildIsEager(await createFrameDocument(t), "video", "audio");
 }, "A video's controls count as the first build in a document");
+
+promise_test(async t => {
+    await testFirstBuildIsEager(await createFrameDocument(t), "audio", "video");
+}, "An audio element's controls count as the first build in a document for a later video");
 
 promise_test(async t => {
     const frameDocument = await createFrameDocument(t);

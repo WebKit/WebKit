@@ -1,0 +1,5 @@
+
+PASS A video without a source has the same size before and after its controls are built
+PASS A video with width and height attributes has the same size before and after its controls are built
+PASS A video with an intrinsic size has the same size before and after its controls are built
+

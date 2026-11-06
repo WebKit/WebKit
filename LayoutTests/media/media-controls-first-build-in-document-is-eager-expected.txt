@@ -2,6 +2,8 @@
 
 PASS In the main document, the first audio element builds its controls at once and the next one defers
 PASS In a new frame's document, the first audio element builds its controls at once and the next one defers
+PASS In a new frame's document, the first video element builds its controls at once and the next one defers
 PASS A video's controls count as the first build in a document
+PASS An audio element's controls count as the first build in a document for a later video
 PASS An element without the controls attribute does not use up the first build
 
