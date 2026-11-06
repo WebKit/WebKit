@@ -1962,6 +1962,8 @@ public:
     StackMap makeStackMap(const ControlData&, std::span<const TypedExpression> enclosingStack);
 
     void emitLoopTierUpCheckAndOSREntryData(const ControlData&, std::span<const TypedExpression> enclosingStack, unsigned loopIndex);
+    void emitLoopStopCheck();
+    void emitLoopTrapHandlers();
 
     [[nodiscard]] PartialResult addLoop(BlockSignature&&, std::span<TypedExpression> args, ControlType& result, uint32_t loopIndex);
 
@@ -2335,6 +2337,15 @@ private:
     SpillHint m_lastUseTimestamp; // Monotonically increasing integer incrementing with each register use.
     Vector<std::tuple<WasmOrigin, Function<void(BBQJIT&, CCallHelpers&)>>, 8> m_latePaths; // Late paths to emit after the rest of the function body.
     Vector<std::tuple<WasmOrigin, MacroAssembler::JumpList, MacroAssembler::Label, RegisterBindings, Function<void(BBQJIT&, CCallHelpers&)>>> m_slowPaths; // Like a late path but for when we need to make a CCall thus need to restore our state.
+
+    struct LoopTrapSite {
+        MacroAssembler::Label patchPoint;
+        MacroAssembler::Label resume;
+        MacroAssembler::JumpList taken;
+        RegisterBindings bindings;
+        bool polling { false };
+    };
+    Vector<LoopTrapSite> m_loopTrapSites;
 
     uint32_t m_frameSize { 0 };
     uint32_t m_frameSizeForValidation { 0 };
