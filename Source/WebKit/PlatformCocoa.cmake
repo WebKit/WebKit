@@ -1405,12 +1405,6 @@ file(WRITE "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap"
         export *
     }
 
-    module WKWebView {
-        requires objc
-        header \"${WebKit_HEADERS_DIR}/WKWebView.h\"
-        export *
-    }
-
     module WKUSDStageConverter {
         requires objc
         header \"${WEBKIT_DIR}/ModelProcess/cocoa/WKUSDStageConverter.h\"

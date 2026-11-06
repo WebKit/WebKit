@@ -21,13 +21,22 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+import WebKit_Internal
+import wtf
+
+extension WTF.String {
+    /// Return a `Swift.String` from this `WTF.String`.
+    var description: Swift.String {
+        // We could possibly make this quicker by treating a C++ span as
+        // a Sequence. For now, we want to avoid unsafe as much as possible.
+        Swift.String(utf8(WTF.LenientConversion).toStdString())
+    }
+}
+
 // FIXME (rdar://164119356): Move parts of StdLibExtras.swift into WTF
 // (those parts which are not specific to WebKit-level types) - and enable
 // irrespective of BACK_FORWARD_LIST_SWIFT
 #if ENABLE_BACK_FORWARD_LIST_SWIFT
-
-import WebKit_Internal
-import wtf
 
 /// Conform any WTF::Ref<T> to this protocol to get useful extensions.
 protocol CxxRef {
@@ -66,13 +75,6 @@ extension WTF.String {
             let cppspan = unsafe SpanConstChar(UnsafeBufferPointer(start: ptr.baseAddress!, count: string.utf8CString.count))
             return unsafe WTF.String.fromUTF8(cppspan)
         }
-    }
-
-    /// Return a `Swift.String` from this `WTF.String`.
-    var description: Swift.String {
-        // We could possibly make this quicker by treating a C++ span as
-        // a Sequence. For now, we want to avoid unsafe as much as possible.
-        Swift.String(utf8(WTF.LenientConversion).toStdString())
     }
 }
 
