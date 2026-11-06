@@ -47,7 +47,10 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._capturingStartTime = NaN;
         this._capturingEndTime = NaN;
 
-        this._initiatedByBackendStart = false;
+        // The target that started capturing on its own (e.g. with `console.profile()` or auto-capture), if any. The
+        // frontend starts every other target, but not this one: it has already started its own domains, and a target
+        // that the frontend started ignores its own `console.profileEnd()`.
+        this._programmaticStartTarget = null;
         this._programmaticStopTarget = null;
 
         // For each target, the domains that are tracking and have not reported that they stopped, each
@@ -335,7 +338,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._updateCapturingState(TimelineManager.CapturingState.Starting);
 
         this._capturingStartTime = NaN;
-        this._activeRecording.start(this._initiatedByBackendStart);
+        this._activeRecording.start(this._programmaticStartTarget);
     }
 
     stopCapturing()
@@ -478,7 +481,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             this._resetAutoCaptureState();
         }
         if (this._capturingState === TimelineManager.CapturingState.Inactive || restartedProgrammatically) {
-            this._initiatedByBackendStart = true;
+            this._programmaticStartTarget = target;
             this._activeRecording.addScriptInstrumentForProgrammaticCapture();
             this.startCapturing();
         }
@@ -571,7 +574,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._stopWaitingIfPossible();
     }
 
-    autoCaptureStarted()
+    autoCaptureStarted(target)
     {
         console.assert(this._enabled);
 
@@ -580,12 +583,12 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (this._capturingState === TimelineManager.CapturingState.Starting || this._capturingState === TimelineManager.CapturingState.Active)
             this.stopCapturing();
 
-        this._initiatedByBackendStart = true;
-
         // We may already have an fresh TimelineRecording created if autoCaptureStarted is received
         // between sending the Timeline.start command and receiving Timeline.capturingStarted event.
         // In that case, there is no need to call startCapturing again. Reuse the fresh recording.
         if (!waitingForCapturingStartedEvent) {
+            this._programmaticStartTarget = target;
+
             const createNewRecording = true;
             this.startCapturing(createNewRecording);
         }
@@ -992,7 +995,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._activeRecording.capturingStopped(this._capturingEndTime);
 
         this._resetAutoCaptureState();
-        this._initiatedByBackendStart = false;
+        this._programmaticStartTarget = null;
         this._programmaticStopTarget = null;
 
         if (this._shouldUpdateAutoCaptureInstrumentsWhenInactive) {
@@ -1428,7 +1431,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._loadNewRecording();
 
         // The frontend starts this capture, even if the previous one was started by the backend.
-        this._initiatedByBackendStart = false;
+        this._programmaticStartTarget = null;
         this.startCapturing();
 
         this._addRecord(new WI.ResourceTimelineRecord(mainResource));
