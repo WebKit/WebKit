@@ -50,6 +50,12 @@ public:
         Cubemap,
     };
 
+    struct ExportDescriptor {
+        TextureType type;
+        uint32_t width;
+        uint32_t height;
+    };
+
     virtual ~OpenXRGraphicsBinding() = default;
 
     virtual Vector<ASCIILiteral> requiredInstanceExtensions() const = 0;
@@ -62,7 +68,7 @@ public:
     virtual int64_t selectColorFormat(const Vector<int64_t>& supportedFormats, bool alpha) const = 0;
     virtual Vector<uint64_t> enumerateSwapchainImages(XrSwapchain) const = 0;
 
-    virtual std::optional<PlatformXR::FrameData::ExternalTexture> exportTexture(uint64_t image, const OpenXRSwapchain&, TextureType, uint32_t width, uint32_t height) = 0;
+    virtual std::optional<PlatformXR::FrameData::ExternalTexture> exportTexture(uint64_t image, const OpenXRSwapchain&, const ExportDescriptor&) = 0;
 
     virtual void commitFrame(uint64_t keyImage, const OpenXRSwapchain&, TextureType, const Vector<uint64_t>& images) = 0;
     virtual void waitFrameFence(WTF::UnixFileDescriptor&&) = 0;
