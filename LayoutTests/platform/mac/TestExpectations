@@ -39,6 +39,8 @@ fast/images/eps-as-image.html [ Skip ]
 
 fast/text-autosizing/ios/programmatic-text-size-adjust.html [ Skip ]
 fast/text-autosizing/ios/text-size-adjust-inline-style.html [ Skip ]
+# Changing the viewport to reset text autosizing isn't supported on Mac.
+fast/text-autosizing/ios/reset-keeps-style-of-text-parent.html [ Skip ]
 fast/text-autosizing [ Pass ]
 # Tests for idempotent autosizing mode rely on viewport scaling which isn't implemented on Mac.
 fast/text-autosizing/ios/idempotentmode [ Skip ]

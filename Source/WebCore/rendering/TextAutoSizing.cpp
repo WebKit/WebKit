@@ -329,7 +329,7 @@ void TextAutoSizingValue::reset()
         float originalSize = fontDescription.computedSize();
         if (fontDescription.usedSize() != originalSize) {
             fontDescription.setUsedSize(originalSize);
-            auto style = cloneRenderStyleWithState(renderer->style());
+            auto style = cloneRenderStyleWithState(parentRenderer->style());
             style.setFontDescription(FontCascadeDescription { fontDescription });
             parentRenderer->setStyle(WTF::move(style));
         }
