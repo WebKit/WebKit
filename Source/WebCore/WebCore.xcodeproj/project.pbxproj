@@ -9178,8 +9178,6 @@
 		1C0939E81A13E12900B788E5 /* CachedSVGFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedSVGFont.cpp; sourceTree = "<group>"; };
 		1C0939E91A13E12900B788E5 /* CachedSVGFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedSVGFont.h; sourceTree = "<group>"; };
 		1C09D04B1E31C32800725F18 /* PAL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PAL.xcodeproj; path = PAL/PAL.xcodeproj; sourceTree = "<group>"; };
-		1C0BE943276C60BC005FB6C1 /* RenderTextInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTextInlines.h; sourceTree = "<group>"; };
-		1C0BE947276C6603005FB6C1 /* WordTrailingSpace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WordTrailingSpace.h; sourceTree = "<group>"; };
 		1C12AC281EE778AE0079E0A0 /* FontFamilySpecificationCoreText.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontFamilySpecificationCoreText.cpp; sourceTree = "<group>"; };
 		1C12AC291EE778AE0079E0A0 /* FontFamilySpecificationCoreText.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontFamilySpecificationCoreText.h; sourceTree = "<group>"; };
 		1C12AC2C1EE779950079E0A0 /* FontDescriptionCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontDescriptionCocoa.cpp; sourceTree = "<group>"; };
@@ -42366,7 +42364,6 @@
 			children = (
 				D255137B2B67C92000153272 /* cocoa */,
 				D255137C2B67C93300153272 /* ios */,
-				FFB698C81832F10B00158A31 /* line */,
 				D255137D2B67C93E00153272 /* mac */,
 				439046C212DA25CE00AF80A2 /* mathml */,
 				FD08A879175D3926002CD360 /* shapes */,
@@ -42654,7 +42651,6 @@
 				083DAEA50F01A7FB00342754 /* RenderTextControlSingleLine.h */,
 				BCEA484E097D93020094C9E4 /* RenderTextFragment.cpp */,
 				BCEA484F097D93020094C9E4 /* RenderTextFragment.h */,
-				1C0BE943276C60BC005FB6C1 /* RenderTextInlines.h */,
 				BCEA484A097D93020094C9E4 /* RenderTheme.cpp */,
 				BCEA484B097D93020094C9E4 /* RenderTheme.h */,
 				93955A4203D72932008635CE /* RenderTreeAsText.cpp */,
@@ -44129,14 +44125,6 @@
 				9A9CF8DEF2C89587777D8B30 /* PageAgentInstrumentation.h */,
 			);
 			path = hooks;
-			sourceTree = "<group>";
-		};
-		FFB698C81832F10B00158A31 /* line */ = {
-			isa = PBXGroup;
-			children = (
-				1C0BE947276C6603005FB6C1 /* WordTrailingSpace.h */,
-			);
-			path = line;
 			sourceTree = "<group>";
 		};
 		060ADCE725AA66DEC08F0842 /* phonenumberpossession */ = {

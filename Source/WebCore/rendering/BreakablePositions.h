@@ -53,8 +53,6 @@ public:
         return next<LineBreakRules::Normal, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Normal>(iterator, startPosition);
     }
 
-    static inline bool isBreakable(CachedLineBreakIteratorFactory&, unsigned startPosition, std::optional<unsigned>& nextBreakable, bool breakNBSP, bool canUseShortcut, bool keepAllWords, bool breakAnywhere);
-
 private:
 
     // Iterator implementations.
@@ -63,8 +61,6 @@ private:
 
     template<typename CharacterType, NoBreakSpaceBehavior>
     static inline size_t nextBreakableSpace(std::span<const CharacterType> string, size_t startPosition);
-
-    static inline unsigned nextCharacter(CachedLineBreakIteratorFactory&, unsigned startPosition);
 
     // Helper functions.
     enum BreakClass : uint16_t;
@@ -269,17 +265,6 @@ inline size_t BreakablePositions::nextBreakableSpace(std::span<const CharacterTy
     return string.size();
 }
 
-inline unsigned BreakablePositions::nextCharacter(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
-{
-    auto stringView = lineBreakIteratorFactory.stringView();
-    ASSERT(startPosition <= stringView.length());
-    // FIXME: Can/Should we implement this using a Shared Iterator (performance issue)
-    // https://bugs.webkit.org/show_bug.cgi?id=197876
-    NonSharedCharacterBreakIterator iterator(stringView);
-    std::optional<unsigned> next = ubrk_following(iterator, startPosition);
-    return next.value_or(stringView.length());
-}
-
 template<BreakablePositions::LineBreakRules rules, BreakablePositions::WordBreakBehavior words, BreakablePositions::NoBreakSpaceBehavior spaces>
 inline unsigned BreakablePositions::next(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, size_t startPosition)
 {
@@ -293,33 +278,6 @@ inline unsigned BreakablePositions::next(CachedLineBreakIteratorFactory& lineBre
     return words == WordBreakBehavior::KeepAll
         ? nextBreakableSpace<char16_t, spaces>(stringView.span16(), startPosition)
         : nextBreakablePosition<char16_t, rules, words, spaces>(lineBreakIteratorFactory, stringView.span16(), startPosition);
-}
-
-
-inline bool BreakablePositions::isBreakable(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition, std::optional<unsigned>& nextBreakable, bool breakNBSP, bool canUseShortcut, bool keepAllWords, bool breakAnywhere)
-{
-    if (nextBreakable && nextBreakable.value() >= startPosition)
-        return startPosition == nextBreakable;
-
-    if (breakAnywhere)
-        return startPosition == nextCharacter(lineBreakIteratorFactory, startPosition);
-
-    if (keepAllWords) {
-        if (breakNBSP)
-            return startPosition == next<LineBreakRules::Special, WordBreakBehavior::KeepAll, NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
-        return startPosition == next<LineBreakRules::Special, WordBreakBehavior::KeepAll, NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
-    }
-
-    if (canUseShortcut) {
-        if (breakNBSP)
-            return startPosition == next<LineBreakRules::Normal, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
-        return startPosition == next<LineBreakRules::Normal, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
-    }
-
-    if (breakNBSP)
-        return startPosition == next<LineBreakRules::Special, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Break>(lineBreakIteratorFactory, startPosition);
-
-    return startPosition == next<LineBreakRules::Special, WordBreakBehavior::Normal, NoBreakSpaceBehavior::Normal>(lineBreakIteratorFactory, startPosition);
 }
 
 template<BreakablePositions::LineBreakRules rules, BreakablePositions::NoBreakSpaceBehavior nonBreakingSpaceBehavior>

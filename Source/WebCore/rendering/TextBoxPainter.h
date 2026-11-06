@@ -83,7 +83,6 @@ protected:
     void paintPlatformDocumentMarker(const MarkedText&);
     LayoutRect backgroundRectForRange(unsigned startOffset, unsigned endOffset, float logicalTop, float logicalBottom) const;
 
-    float textPosition();
     FloatRect computePaintRect(const LayoutPoint& paintOffset);
     bool computeHaveSelection() const;
     std::pair<unsigned, unsigned> selectionStartEnd() const;

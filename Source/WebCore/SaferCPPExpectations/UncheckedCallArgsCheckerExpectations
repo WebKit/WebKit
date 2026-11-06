@@ -116,7 +116,6 @@ rendering/TextBoxTrimmer.cpp
 rendering/TextDecorationPainter.cpp
 rendering/cocoa/RenderThemeCocoa.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm
-rendering/line/WordTrailingSpace.h
 rendering/shapes/ShapeOutsideInfo.cpp
 rendering/svg/RenderSVGBlock.cpp
 rendering/svg/RenderSVGInline.cpp

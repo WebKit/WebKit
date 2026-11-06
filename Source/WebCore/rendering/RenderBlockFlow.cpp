@@ -4977,8 +4977,6 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeInlineIntrinsicLogical
             continue;
         }
         renderer->clearContentLogicalWidthsInvalidation();
-        if (auto* renderText = dynamicDowncast<RenderText>(renderer))
-            renderText->resetMinMaxWidth();
     }
     return intrinsicLogicalWidths;
 }

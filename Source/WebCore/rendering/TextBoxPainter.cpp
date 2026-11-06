@@ -1483,22 +1483,6 @@ void TextBoxPainter::paintCompositionUnderlines()
     }
 }
 
-NODELETE static inline void mirrorRTLSegment(float logicalWidth, TextDirection direction, float& start, float width)
-{
-    if (direction == TextDirection::LTR)
-        return;
-    start = logicalWidth - width - start;
-}
-
-float TextBoxPainter::textPosition()
-{
-    // When computing the width of a text run, RenderBlock::computeInlineDirectionPositionsForLine() doesn't include the actual offset
-    // from the containing block edge in its measurement. textPosition() should be consistent so the text are rendered in the same width.
-    if (!m_logicalRect.x())
-        return 0;
-    return m_logicalRect.x() - makeIterator()->lineBox().contentLogicalLeft();
-}
-
 void TextBoxPainter::paintCompositionUnderline(const CompositionUnderline& underline, const CornerRadii& radii, bool hasLiveConversion)
 {
     float start = 0; // start of line to draw, relative to tx
@@ -1509,7 +1493,6 @@ void TextBoxPainter::paintCompositionUnderline(const CompositionUnderline& under
     if (paintStart <= underline.startOffset) {
         paintStart = underline.startOffset;
         useWholeWidth = false;
-        start = m_renderer->width(textBox().start(), paintStart - textBox().start(), textPosition(), m_isFirstLine);
     }
     if (paintEnd != underline.endOffset) {
         paintEnd = std::min(paintEnd, (unsigned)underline.endOffset);
@@ -1519,9 +1502,13 @@ void TextBoxPainter::paintCompositionUnderline(const CompositionUnderline& under
         paintEnd = std::min(paintEnd, textBox().start() + *m_selectableRange.truncation);
         useWholeWidth = false;
     }
+    if (paintEnd <= paintStart)
+        return;
     if (!useWholeWidth) {
-        width = m_renderer->width(paintStart, paintEnd - paintStart, textPosition() + start, m_isFirstLine);
-        mirrorRTLSegment(m_logicalRect.width(), textBox().direction(), start, width);
+        float widthBeforeRange;
+        float widthAfterRange;
+        width = fontCascade().widthOfTextRange(m_paintTextRun, paintStart - textBox().start(), paintEnd - textBox().start(), widthBeforeRange, widthAfterRange);
+        start = m_paintTextRun.ltr() ? widthBeforeRange : widthAfterRange;
     }
 
     fillCompositionUnderline(start, width, underline, radii, hasLiveConversion);
