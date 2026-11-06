@@ -96,7 +96,7 @@ if (ENABLE_WEBCORE)
     set(Brotli_NAMES SceVshBrotli ${Brotli_NAMES})
     set(Brotli_DEC_NAMES ${Brotli_NAMES} ${Brotli_DEC_NAMES})
     set(Cairo_NAMES SceCairoForWebKit ${Cairo_NAMES})
-    set(HarfBuzz_NAMES SceVshHarfbuzz ${HarfBuzz_NAMES})
+    set(HarfBuzz_NAMES SceVshHarfBuzz ${HarfBuzz_NAMES})
     set(HarfBuzz_ICU_NAMES ${HarfBuzz_NAMES} ${HarfBuzz_ICU_NAMES})
     # The OpenGL ES implementation is in the same library as the EGL implementation
     set(OpenGLES2_NAMES ${EGL_NAMES})
