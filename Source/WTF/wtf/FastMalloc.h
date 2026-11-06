@@ -55,13 +55,16 @@ namespace WTF {
 //          WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT
 //          WTF_MAKE_COMPACT_TZONE_ALLOCATED
 //          WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT
+//          WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED
+//          WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_EXPORT
+//          any of the WTF_MAKE_*TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER variants
 //      then you must use the same TZONE_ALLOCATED annotation as well. If your class is a template, use one of
 //      the template forms (WTF_MAKE_TZONE_ALLOCATED_TEMPLATE or WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT).
 //      If your class is not a template, use one of the non-template forms.
 //
 //   3. If your class / struct is particularly memory consuming and if you think tracking footprint of your class
-//      is helpful for memory-reduction work, use WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER /
-//      WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER.
+//      is helpful for memory-reduction work, use WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER /
+//      WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER (or one of their variants).
 //
 //   4. For classes / structs that are fixed sized, use a TZONE_ALLOCATED annotation
 //
@@ -87,8 +90,10 @@ namespace WTF {
 //     N.b.: WTF_DEPRECATED_MAKE_FAST_ALLOCATED is for classes and WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED is for structs.
 //     The difference between them is how we use `public:` / `private:` access specifiers in the expanded macro.
 //
-// - WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ClassName)
-// - WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ClassName)
+// - WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ClassName, HeapGroup)
+// - WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ClassName, HeapGroup)
+//     Deprecated: use WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER and its variants (see below), which behave
+//     the same way with MallocHeapBreakdown enabled and use TZoneMalloc otherwise.
 //     Normally, these are identical to WTF_DEPRECATED_MAKE_FAST_ALLOCATED.
 //     When the MallocHeapBreakdown debugging feature is enabled, these macros act differently. bmalloc is switched
 //     to using system malloc internally, and bmalloc creates a named MallocZone per this annotation. MallocZone allows us to track heap usage
@@ -103,6 +108,8 @@ namespace WTF {
 // - WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT(ClassName, exportMacro)
 // - WTF_MAKE_COMPACT_TZONE_ALLOCATED(ClassName)
 // - WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(ClassName, exportMacro)
+// - WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED(ClassName)
+// - WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_EXPORT(ClassName, exportMacro)
 //     class / struct / template is allocated from a fixed set of shared libpas heaps with the same size and alignment. Each set of shared heaps is
 //     known as a TZone Group. The particular bucket is selected using SHA 256 hashing on a process startup value along with particulars of the
 //     class / struct being allocated. This sharing provides protections from type confusion and use-after-free bugs, but with less memory overhead of
@@ -124,6 +131,24 @@ namespace WTF {
 //
 //     WTF_MAKE_COMPACT_TZONE_ALLOCATED and WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT are analogs of WTF_MAKE_TZONE_ALLOCATED and
 //     WTF_MAKE_TZONE_ALLOCATED_EXPORT, but or special classes whose object pointers need to be stored in some custom scheme e.g. in CompactPtrs.
+//     WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED and WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_EXPORT are the same, but for structs, and need
+//     WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_IMPL(ClassName) in the cpp file.
+//
+// - WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ClassName, HeapGroup)
+// - WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(ClassName, HeapGroup, exportMacro)
+// - WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ClassName, HeapGroup)
+// - WTF_MAKE_STRUCT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(ClassName, HeapGroup, exportMacro)
+// - WTF_MAKE_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ClassName, HeapGroup)
+// - WTF_MAKE_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(ClassName, HeapGroup, exportMacro)
+// - WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER(ClassName, HeapGroup)
+// - WTF_MAKE_STRUCT_COMPACT_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_EXPORT(ClassName, HeapGroup, exportMacro)
+//     Replacements for the deprecated WTF_DEPRECATED_MAKE_*FAST*_ALLOCATED_WITH_HEAP_IDENTIFIER macros.
+//     When MallocHeapBreakdown is enabled, the type is allocated from the named HeapGroup (declared with
+//     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER / DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER), exactly as with the deprecated macros.
+//     Otherwise they are identical to the corresponding WTF_MAKE_*TZONE_ALLOCATED macro above and the HeapGroup is ignored.
+//     Like the other TZone annotations, they need the matching _IMPL in the cpp file, e.g.
+//     WTF_MAKE_TZONE_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(ClassName); with MallocHeapBreakdown enabled the _IMPL expands to nothing.
+//     The _EXPORT variants only matter when TZoneMalloc is in use; the heap group allocator needs no per-class export.
 
 #if !defined(NDEBUG)
 WTF_EXPORT_PRIVATE void fastSetMaxSingleAllocationSize(size_t);
