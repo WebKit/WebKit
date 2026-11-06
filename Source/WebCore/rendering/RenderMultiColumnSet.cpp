@@ -220,6 +220,19 @@ void RenderMultiColumnSet::distributeImplicitBreaks()
     addForcedBreak(logicalBottomInFragmentedFlow());
     unsigned breakCount = forcedBreaksCount();
 
+    // With column-fill: auto and no height constraint, content is not distributed across columns.
+    // Everything between forced breaks ends up in a single column, unless the container has spanners, in
+    // which case the sets before and after them are balanced.
+    // FIXME: A nested multicol container should fill the height of the enclosing fragmentainer, which we don't
+    // take into account here, so keep balancing those.
+    auto isSpanner = [](auto* box) {
+        return box && !box->isRenderMultiColumnSet() && !box->isLegend();
+    };
+    bool isAdjacentToSpanner = isSpanner(RenderMultiColumnFlow::nextColumnSetOrSpannerSiblingOf(this)) || isSpanner(RenderMultiColumnFlow::previousColumnSetOrSpannerSiblingOf(this));
+    auto* container = multiColumnBlockFlow();
+    if (!isAdjacentToSpanner && container->style().columnFill() == ColumnFill::Auto && container->fragmentedFlowState() == RenderObject::FragmentedFlowState::NotInsideFlow)
+        return;
+
     // If there is room for more breaks (to reach the used value of column-count), imagine that we
     // insert implicit breaks at suitable locations. At any given time, the content run with the
     // currently tallest columns will get another implicit break "inserted", which will increase its
