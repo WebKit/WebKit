@@ -2140,8 +2140,8 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     if (!isNavigationAllowed())
         return;
 
-    if (auto* page = frame->page(); page && page->isInSwipeAnimation())
-        loader->setLoadStartedDuringSwipeAnimation();
+    if (auto* page = frame->page())
+        loader->setLoadStartedDuringSwipeAnimation(page->isInSwipeAnimation());
 
     if (frame->document())
         m_previousURL = protect(frame->document())->url();
