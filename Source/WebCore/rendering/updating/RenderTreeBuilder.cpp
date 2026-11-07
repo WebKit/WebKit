@@ -538,6 +538,9 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
                 // in order to compute static position for out of flow boxes, the parent has to run normal flow layout as well (as opposed to simplified)
                 if (newChild->containingBlock() != &parent)
                     return false;
+                // The static position of an out-of-flow box inside an inline box comes from line layout.
+                if (parent.isInlineBox())
+                    return false;
 #if ENABLE(VIDEO)
                 // FIXME: RenderVideo's setNeedsLayout pattern does not play well with this optimization: see webkit.org/b/276253
                 if (is<RenderVideo>(*newChild))

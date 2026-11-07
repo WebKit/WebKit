@@ -56,7 +56,7 @@ NODELETE RenderTable* RenderTableCaption::table() const
 
 LayoutUnit RenderTableCaption::containingBlockLogicalWidthForContent() const
 {
-    if (auto* containingBlock = this->containingBlock())
+    if (auto* containingBlock = downcast<RenderBlock>(this->containingBlock()))
         return containingBlock->logicalWidth();
     return { };
 }

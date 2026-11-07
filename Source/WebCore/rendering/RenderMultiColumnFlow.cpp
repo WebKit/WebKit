@@ -159,7 +159,7 @@ void RenderMultiColumnFlow::fragmentedFlowDescendantBoxLaidOut(RenderBox* descen
     if (!placeholder)
         return;
 
-    CheckedPtr container = placeholder->containingBlock();
+    CheckedPtr container = downcast<RenderBlock>(placeholder->containingBlock());
 
     for (RenderBox* prev = previousColumnSetOrSpannerSiblingOf(placeholder->spanner()); prev; prev = previousColumnSetOrSpannerSiblingOf(prev)) {
         if (CheckedPtr multiColumnSet = dynamicDowncast<RenderMultiColumnSet>(*prev)) {

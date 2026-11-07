@@ -1,0 +1,4 @@
+XX XXXX ZZ
+
+PASS The replaced element is as wide as the padding box of the inline box
+

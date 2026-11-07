@@ -112,7 +112,8 @@ static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firs
     auto toEnclosingListItem = LayoutUnit { };
     auto hasAccountedForBorderAndPadding = false;
     CheckedPtr<const RenderBlock> ancestor = &firstFormattedLineRoot;
-    for (; ancestor; ancestor = ancestor->containingBlock()) {
+    // The first formatted line and its ancestors up to the list item are in-flow, so they are contained by blocks.
+    for (; ancestor; ancestor = downcast<RenderBlock>(ancestor->containingBlock())) {
         if (!hasAccountedForBorderAndPadding)
             toEnclosingListItem -= ancestor->borderAndPaddingStart();
         if (is<RenderListItem>(*ancestor))
@@ -129,7 +130,7 @@ static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firs
 
     auto toAssociatedListItem = LayoutUnit { };
     if (ancestor && ancestor.get() != &listItem) {
-        for (CheckedPtr<const RenderBlock> box = ancestor->containingBlock(); box; box = box->containingBlock()) {
+        for (CheckedPtr<const RenderBlock> box = downcast<RenderBlock>(ancestor->containingBlock()); box; box = downcast<RenderBlock>(box->containingBlock())) {
             toAssociatedListItem -= (box->marginStart(box->writingMode()) + box->borderAndPaddingStart());
             if (box.get() == &listItem)
                 break;
@@ -656,7 +657,7 @@ void RenderListItem::placeExcludedMarker(RenderListOutsideMarker& marker)
     // Take it from there: out to our own border box start, then across the in-flow content up to us.
     auto logicalTop = LayoutUnit { excludedPosition->topLeft.y() };
     auto logicalLeft = LayoutUnit { excludedPosition->topLeft.x() } + excludedMarkerLogicalLeftOffsetFor(*firstFormattedLineRoot, *this, excludedPosition->isLineStartConstrainedByFloat);
-    for (CheckedPtr<RenderBlock> ancestor = firstFormattedLineRoot; ancestor && ancestor != this; ancestor = ancestor->containingBlock()) {
+    for (CheckedPtr<RenderBlock> ancestor = firstFormattedLineRoot; ancestor && ancestor != this; ancestor = downcast<RenderBlock>(ancestor->containingBlock())) {
         // Inside a fragmented flow the coordinates are in flow thread space, where the content is one continuous
         // strip. The column the line ended up in is a sibling of the flow thread rather than an ancestor, so leave
         // the flow thread for that column set and carry on from there, in visual space.

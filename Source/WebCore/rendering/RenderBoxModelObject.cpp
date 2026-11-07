@@ -308,9 +308,10 @@ RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetectionGeneric(
 
     // Anonymous block boxes are ignored when resolving percentage values that
     // would refer to it: the closest non-anonymous ancestor box is used instead.
-    auto* ancestor = containingBlock();
+    // In-flow content is contained by blocks.
+    auto* ancestor = downcast<RenderBlock>(containingBlock());
     while (ancestor && ancestor->shouldSkipForPercentageResolution())
-        ancestor = ancestor->containingBlock();
+        ancestor = downcast<RenderBlock>(ancestor->containingBlock());
     if (!ancestor) {
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -500,7 +501,8 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
 
     auto containingBlockHasDefiniteHeight = containingBlock->hasDefiniteLogicalHeightForPercentageResolutionFromStyle();
 #if ASSERT_ENABLED
-    verifyDefiniteHeightConsistencyBetweenStyleAndContainingBlockChain(*containingBlock, containingBlockHasDefiniteHeight);
+    // Relatively positioned boxes are in-flow, so they are contained by blocks.
+    verifyDefiniteHeightConsistencyBetweenStyleAndContainingBlockChain(downcast<RenderBlock>(*containingBlock), containingBlockHasDefiniteHeight);
 #endif
     auto availableHeight = [&] {
         auto* renderBox = dynamicDowncast<RenderBox>(*this);
@@ -541,18 +543,10 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     if (const RenderBoxModelObject* offsetParent = this->offsetParent()) {
         if (auto* renderBox = dynamicDowncast<RenderBox>(*offsetParent); renderBox && !offsetParent->isBody() && !is<RenderTable>(*offsetParent))
             referencePoint.move(-renderBox->borderLeft(), -renderBox->borderTop());
-        else if (offsetParent->isInlineBox()) {
-            // Inside inline formatting context both inflow and statically positioned out-of-flow boxes are positioned relative to the root block container.
+        else if (offsetParent->isInlineBox() && !isOutOfFlowPositioned()) {
+            // In-flow content is positioned relative to the inline formatting context root, while out-of-flow boxes are already positioned
+            // relative to the inline box.
             auto topLeft = offsetParent->firstFragmentBorderBoxRect().location();
-            if (isOutOfFlowPositioned()) {
-                auto& outOfFlowStyle = style();
-                ASSERT(containingBlock());
-                auto isHorizontalWritingMode = !containingBlock() || containingBlock()->writingMode().isHorizontal();
-                if (!PositionedLayoutConstraints::usesStaticPosition(outOfFlowStyle, LogicalBoxAxis::Inline, isHorizontalWritingMode))
-                    topLeft.setX(LayoutUnit { });
-                if (!PositionedLayoutConstraints::usesStaticPosition(outOfFlowStyle, LogicalBoxAxis::Block, isHorizontalWritingMode))
-                    topLeft.setY(LayoutUnit { });
-            }
             referencePoint.move(-topLeft.x(), -topLeft.y());
         }
 
@@ -606,9 +600,10 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     // movement of stickily positioned items.
     // Table rows are also skipped because a sticky cell should be constrained by its section
     // (thead/tbody/tfoot), not by the individual row whose content box is the same height as the cell.
-    RenderBlock* containingBlock = this->containingBlock();
-    while (containingBlock && (!is<RenderBlock>(*containingBlock) || containingBlock->isAnonymousBlock() || containingBlock->isRenderTableRow()))
-        containingBlock = containingBlock->containingBlock();
+    // Sticky positioned boxes are in-flow, so they are contained by blocks.
+    auto* containingBlock = downcast<RenderBlock>(this->containingBlock());
+    while (containingBlock && (containingBlock->isAnonymousBlock() || containingBlock->isRenderTableRow()))
+        containingBlock = downcast<RenderBlock>(containingBlock->containingBlock());
     ASSERT(containingBlock);
 
     auto enclosingClipping = enclosingClippingBoxForStickyPosition();
@@ -1079,7 +1074,8 @@ void RenderBoxModelObject::addOutOfFlowBox(RenderBox& outOfFlowBox)
     if (outOfFlowBox.isRenderFragmentedFlow())
         return;
     // FIXME: Find out if we can do this as part of outOfFlowBox.setChildNeedsLayout(MarkingBehavior::OnlyThis)
-    if (outOfFlowBox.needsLayout()) {
+    // An inline box's out-of-flow boxes are laid out as part of laying out the inline box by its inline formatting context.
+    if (outOfFlowBox.needsLayout() && !isInlineBox()) {
         // We should turn this bit on only while in layout.
         ASSERT(outOfFlowChildNeedsLayout() || view().frameView().layoutContext().isInLayout());
         setOutOfFlowChildNeedsLayoutBit(true);
@@ -1163,8 +1159,10 @@ bool RenderBoxModelObject::requiresLayer() const
 
 void RenderBoxModelObject::removeOutOfFlowBoxesIfNeededOnStyleChange(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
-    // Only a block keeps a list of out-of-flow boxes, so any other box has its descendants on the nearest non-anonymous block.
-    CheckedPtr containingBlockForOutOfFlowBoxes = nearestNonAnonymousContainingBlockIncludingSelf();
+    // Inline boxes and blocks keep their own lists of out-of-flow boxes, any other box has its descendants on the nearest non-anonymous block.
+    CheckedPtr<RenderBoxModelObject> containingBlockForOutOfFlowBoxes = this;
+    if (!isInlineBox())
+        containingBlockForOutOfFlowBoxes = nearestNonAnonymousContainingBlockIncludingSelf();
     if (!containingBlockForOutOfFlowBoxes)
         return;
 
@@ -1270,6 +1268,13 @@ LayoutRect RenderBoxModelObject::firstFragmentBorderBoxRect() const
 {
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
         return lineLayout->firstInlineBoxRect(*this);
+    return { };
+}
+
+LayoutRect RenderBoxModelObject::firstFragmentBorderBoxRectFromBlockStart() const
+{
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+        return lineLayout->firstInlineBoxRectFromBlockStart(*this);
     return { };
 }
 
@@ -1626,8 +1631,8 @@ auto RenderBoxModelObject::computeVisibleRectsInContainer(const RepaintRects& re
 
     adjustedRects.move(locationOffset);
 
-    if (styleToUse.position() == PositionType::Absolute && localContainer->isInlineBox() && localContainer->canContainAbsolutelyPositionedObjects())
-        adjustedRects.move(PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(downcast<RenderBoxModelObject>(*localContainer), styleToUse));
+    if (styleToUse.hasOutOfFlowPosition() && localContainer->isInlineBox())
+        adjustedRects.move(toLayoutSize(downcast<RenderBoxModelObject>(*localContainer).firstFragmentBorderBoxRectFromBlockStart().location()));
     else if (styleToUse.hasInFlowPosition() && layer()) {
         // Apply the in-flow position offset when invalidating a rectangle. The layer
         // is translated, but the renderer isn't, so we need to do this to get the

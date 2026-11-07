@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Anchor Positioning Test: anchor() against an anchor in an inline box containing block in a multicol container</title>
+<link rel="help" href="https://drafts.csswg.org/css-anchor-position-1/#anchor-pos">
+<link rel="help" href="https://drafts.csswg.org/css-position-3/#def-cb">
+<meta name="assert" content="anchor() resolves against the anchor box when the anchor box is absolutely positioned in a relatively positioned inline box in the second column of a multicol container.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+.container { position: relative; }
+.multicol { columns: 2; column-gap: 0; column-fill: auto; width: 400px; height: 100px; font: 20px/1 Ahem; }
+.anchor { position: absolute; top: 5px; left: 7px; width: 10px; height: 10px; anchor-name: --anchor; }
+.anchored { position: absolute; position-anchor: --anchor; left: anchor(right); top: anchor(bottom); width: 5px; height: 5px; }
+</style>
+<div class="container">
+  <div class="multicol">XX<br>XX<br>XX<br>XX<br>XX<br>XX<br>XX <span style="position: relative; padding-left: 3px">XX<div class="anchor"></div></span></div>
+  <div class="anchored"></div>
+</div>
+<script>
+test(() => {
+    const anchor = document.querySelector(".anchor").getBoundingClientRect();
+    const anchored = document.querySelector(".anchored").getBoundingClientRect();
+    assert_approx_equals(anchored.left, anchor.right, 0.5, "left");
+    assert_approx_equals(anchored.top, anchor.bottom, 0.5, "top");
+}, "anchor() resolves against an anchor in an inline box containing block in the second column");
+</script>

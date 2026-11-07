@@ -18,4 +18,22 @@ PASS direction: ltr; inline box 'position: relative; border: 10px solid; padding
 PASS direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'left: 0'
 PASS direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'top: 0'
 PASS direction: ltr; inline box 'position: relative'; absolutely positioned box with 'right: 0; bottom: 0'
+PASS writing-mode: vertical-rl; direction: ltr; inline box 'position: relative'; in-flow inline-block
+PASS writing-mode: vertical-rl; direction: ltr; inline box 'position: relative'; absolutely positioned box at its static position
+PASS writing-mode: vertical-rl; direction: ltr; inline box 'position: relative'; absolutely positioned box with 'left: 0; top: 0'
+PASS writing-mode: vertical-rl; direction: ltr; inline box 'position: relative'; absolutely positioned box with 'right: 0; bottom: 0'
+PASS writing-mode: vertical-rl; direction: ltr; inline box 'position: relative'; absolutely positioned box with 'left: 0'
+PASS writing-mode: vertical-rl; direction: ltr; inline box 'position: relative'; absolutely positioned box with 'top: 0'
+PASS writing-mode: vertical-rl; direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; in-flow inline-block
+PASS writing-mode: vertical-rl; direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box at its static position
+PASS writing-mode: vertical-rl; direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'left: 0; top: 0'
+PASS writing-mode: vertical-rl; direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'right: 0; bottom: 0'
+PASS writing-mode: vertical-rl; direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'left: 0'
+PASS writing-mode: vertical-rl; direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'top: 0'
+PASS writing-mode: vertical-lr; direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; in-flow inline-block
+PASS writing-mode: vertical-lr; direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box at its static position
+PASS writing-mode: vertical-lr; direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'left: 0; top: 0'
+PASS writing-mode: vertical-lr; direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'right: 0; bottom: 0'
+PASS writing-mode: vertical-lr; direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'left: 0'
+PASS writing-mode: vertical-lr; direction: ltr; inline box 'position: relative; border: 10px solid; padding: 5px'; absolutely positioned box with 'top: 0'
 

@@ -1,0 +1,10 @@
+XX
+XX
+XX
+XX
+XX
+XX
+XX XX
+
+PASS anchor() resolves against an anchor in an inline box containing block in the second column
+

@@ -115,12 +115,13 @@ void BoxGeometryUpdater::setListMarkerOffsetForMarkerOutside(const RenderListOut
 {
     CheckedRef layoutBox = listMarker.layoutBox();
     ASSERT(layoutBox->isListMarkerBox());
-    auto* ancestor = listMarker.containingBlock();
+    // The list marker and its ancestors up to the list item are in-flow, so they are contained by blocks.
+    auto* ancestor = downcast<RenderBlock>(listMarker.containingBlock());
 
     auto offsetFromParentListItem = [&] {
         auto hasAccountedForBorderAndPadding = false;
         auto offset = LayoutUnit { };
-        for (; ancestor; ancestor = ancestor->containingBlock()) {
+        for (; ancestor; ancestor = downcast<RenderBlock>(ancestor->containingBlock())) {
             if (!hasAccountedForBorderAndPadding)
                 offset -= (ancestor->borderStart() + ancestor->paddingStart());
             if (is<RenderListItem>(*ancestor))
@@ -143,7 +144,7 @@ void BoxGeometryUpdater::setListMarkerOffsetForMarkerOutside(const RenderListOut
             return offsetFromParentListItem;
         }
         auto offset = offsetFromParentListItem;
-        for (ancestor = ancestor->containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+        for (ancestor = downcast<RenderBlock>(ancestor->containingBlock()); ancestor; ancestor = downcast<RenderBlock>(ancestor->containingBlock())) {
             offset -= (ancestor->marginStart(ancestor->writingMode()) + ancestor->borderStart() + ancestor->paddingStart());
             if (ancestor == associatedListItem)
                 break;
@@ -408,7 +409,9 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
             } else
                 baseline = fontMetricsBasedBaseline(*innerTextRenderer);
             baseline = innerTextRenderer->logicalTop() + baseline;
-            for (auto* ancestor = innerTextRenderer->containingBlock(); ancestor && ancestor != textControl; ancestor = ancestor->containingBlock())
+            // The text control's shadow tree has no inline boxes, so the walk only meets one (and stops) when author styles position the
+            // inner text's ancestors out of the text control.
+            for (auto* ancestor = dynamicDowncast<RenderBlock>(innerTextRenderer->containingBlock()); ancestor && ancestor != textControl; ancestor = dynamicDowncast<RenderBlock>(ancestor->containingBlock()))
                 baseline = ancestor->logicalTop() + baseline;
             return baseline;
         }

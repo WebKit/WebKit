@@ -61,9 +61,10 @@ LayoutUnit LogicalSelectionOffsetCaches::ContainingBlockInfo::logicalRightSelect
 LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches(RenderBlock& rootBlock)
 {
     // LogicalSelectionOffsetCaches should not be used on an orphaned tree.
-    m_containingBlockForFixedPosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Fixed, rootBlock), nullptr);
-    m_containingBlockForAbsolutePosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Absolute, rootBlock), nullptr);
-    m_containingBlockForInflowPosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Static, rootBlock), nullptr);
+    // Only blocks extend the selection offsets of their content, an inline box containing block does not.
+    m_containingBlockForFixedPosition.setBlock(dynamicDowncast<RenderBlock>(RenderObject::containingBlockForPositionType(PositionType::Fixed, rootBlock)), nullptr);
+    m_containingBlockForAbsolutePosition.setBlock(dynamicDowncast<RenderBlock>(RenderObject::containingBlockForPositionType(PositionType::Absolute, rootBlock)), nullptr);
+    m_containingBlockForInflowPosition.setBlock(downcast<RenderBlock>(RenderObject::containingBlockForPositionType(PositionType::Static, rootBlock)), nullptr);
 }
 
 LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches(RenderBlock& block, const LogicalSelectionOffsetCaches& cache)

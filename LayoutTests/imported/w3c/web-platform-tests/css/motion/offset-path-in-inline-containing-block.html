@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Motion Path: offset-path of an absolutely positioned box whose containing block is an inline box</title>
+<link rel="help" href="https://drafts.fxtf.org/motion-1/#offset-path-property">
+<link rel="help" href="https://drafts.csswg.org/css-position-3/#def-cb">
+<meta name="assert" content="The reference box of a box whose containing block is a relatively positioned inline box on a single line is the border box of that inline box, as if it was a block.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+.container { font: 20px/1 Ahem; width: 300px; height: 200px; }
+.inline-box { position: relative; }
+.reference { position: absolute; }
+.target { position: absolute; width: 10px; height: 10px; }
+</style>
+<div id="tests"></div>
+<script>
+const writingModes = ["horizontal-tb", "vertical-rl", "vertical-lr"];
+const paths = [
+    "ray(45deg closest-side); offset-distance: 50%",
+    "border-box; offset-distance: 30%",
+    "inset(2px round 4px); offset-distance: 60%",
+];
+const mutations = [
+    { description: "", mutate: () => { } },
+    { description: "; content inserted before the inline box", mutate: inlineBox => inlineBox.before("WW") },
+    { description: "; text appended to the inline box", mutate: inlineBox => inlineBox.append("YY") },
+];
+const tests = document.getElementById("tests");
+for (const writingMode of writingModes) {
+    for (const path of paths) {
+      for (const mutation of mutations) {
+        const container = document.createElement("div");
+        container.className = "container";
+        container.style.writingMode = writingMode;
+        container.innerHTML = `XX <span class="inline-box">XXXX<i class="target" style="offset-path: ${path}"></i></span>`;
+        tests.append(container);
+        document.body.offsetTop;
+        mutation.mutate(container.querySelector(".inline-box"));
+        test(() => {
+            // The same geometry with a block containing block at the position of the inline box.
+            const inlineBoxRect = container.querySelector(".inline-box").getBoundingClientRect();
+            const reference = document.createElement("div");
+            reference.className = "reference";
+            reference.style.cssText = `left: ${inlineBoxRect.left + scrollX}px; top: ${inlineBoxRect.top + scrollY}px; width: ${inlineBoxRect.width}px; height: ${inlineBoxRect.height}px; position: absolute;`;
+            reference.innerHTML = `<i class="target" style="offset-path: ${path}"></i>`;
+            document.body.append(reference);
+            const actual = container.querySelector(".target").getBoundingClientRect();
+            const expected = reference.querySelector(".target").getBoundingClientRect();
+            reference.remove();
+            for (const edge of ["left", "top", "width", "height"])
+                assert_approx_equals(actual[edge], expected[edge], 0.5, edge);
+        }, `writing-mode: ${writingMode}; offset-path: ${path}${mutation.description}`);
+      }
+    }
+}
+</script>

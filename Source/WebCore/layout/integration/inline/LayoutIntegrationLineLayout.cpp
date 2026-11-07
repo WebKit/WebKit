@@ -804,6 +804,11 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             renderer->clearNeedsLayout();
         }
 
+        if (layoutBox->isInlineBox()) {
+            // Line layout may have changed the containing block rectangle the inline box forms for its out-of-flow boxes.
+            downcast<RenderBoxModelObject>(*layoutBox->rendererForIntegration()).markOutOfFlowBoxesForLayout(MarkingBehavior::OnlyThis);
+            continue;
+        }
         if (!layoutBox->isFloatingPositioned() && !layoutBox->isOutOfFlowPositioned())
             continue;
         if (layoutBox->isLineBreakBox())
@@ -1400,7 +1405,7 @@ InlineIterator::LineBoxIterator LineLayout::lastLineBox() const
     return InlineIterator::lineBoxFor(*m_inlineContent, m_inlineContent->displayContent().lines.isEmpty() ? 0 : m_inlineContent->displayContent().lines.size() - 1);
 }
 
-LayoutRect LineLayout::firstInlineBoxRect(const RenderBoxModelObject& inlineBox) const
+LayoutRect LineLayout::firstInlineBoxRectFromBlockStart(const RenderBoxModelObject& inlineBox) const
 {
     if (!m_inlineContent)
         return { };
@@ -1409,10 +1414,14 @@ LayoutRect LineLayout::firstInlineBoxRect(const RenderBoxModelObject& inlineBox)
     auto* firstBox = m_inlineContent->firstBoxForLayoutBox(layoutBox);
     if (!firstBox)
         return { };
+    return Layout::toLayoutRect(firstBox->visualRectIgnoringBlockDirection());
+}
 
+LayoutRect LineLayout::firstInlineBoxRect(const RenderBoxModelObject& inlineBox) const
+{
     // FIXME: We should be able to flip the display boxes soon after the root block
     // is finished sizing in one go.
-    auto firstBoxRect = Layout::toLayoutRect(firstBox->visualRectIgnoringBlockDirection());
+    auto firstBoxRect = firstInlineBoxRectFromBlockStart(inlineBox);
     switch (rootLayoutBox().writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
     case FlowDirection::BottomToTop:
@@ -1480,6 +1489,19 @@ static LayoutRect flippedRectForWritingMode(const RenderBlockFlow& root, const F
     auto flippedRect = LayoutRect { rect };
     root.flipForWritingMode(flippedRect);
     return flippedRect;
+}
+
+Vector<CheckedRef<RenderBoxModelObject>> LineLayout::inlineBoxesWithOutOfFlowBoxes() const
+{
+    Vector<CheckedRef<RenderBoxModelObject>> inlineBoxes;
+    for (CheckedRef layoutBox : formattingContextBoxes(rootLayoutBox())) {
+        if (!layoutBox->isInlineBox())
+            continue;
+        CheckedRef inlineBox = downcast<RenderBoxModelObject>(*layoutBox->rendererForIntegration());
+        if (inlineBox->hasOutOfFlowBoxes())
+            inlineBoxes.append(inlineBox);
+    }
+    return inlineBoxes;
 }
 
 bool LineLayout::isContentConsideredStale() const

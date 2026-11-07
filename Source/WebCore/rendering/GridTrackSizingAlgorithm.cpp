@@ -200,7 +200,7 @@ static void setOverridingContainingBlockContentSizeForGridItem(const RenderGrid&
     // For subgrids, this might not be the outermost grid, but could be a subgrid. If the
     // writing mode of the CB and the grid for which we're doing sizing don't match, swap
     // the directions.
-    direction = GridLayoutFunctions::flowAwareDirectionForGridItem(grid, *gridItem.containingBlock(), direction);
+    direction = GridLayoutFunctions::flowAwareDirectionForGridItem(grid, downcast<RenderBlock>(*gridItem.containingBlock()), direction);
     if (direction == Style::GridTrackSizingDirection::Columns)
         gridItem.setGridAreaContentLogicalWidth(size);
     else
