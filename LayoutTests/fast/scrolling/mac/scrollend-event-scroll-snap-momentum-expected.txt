@@ -1,0 +1,7 @@
+Flick in a scroll-snap container: scrollend should fire once, after momentum and snapping finish.
+PASS slider.scrollLeft > 0 is true
+PASS scrollendEventCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
