@@ -1041,12 +1041,12 @@ fn _umain()
 {
   for (var _ui : i32 = (0i); (_ui) < (5i); (_ui)++)
   {
-    ANGLE_postIncFunc_0(&((ANGLE_output_global._ucolor).x));
+    ANGLE_postIncPriv_0(&((ANGLE_output_global._ucolor).x));
   }
   var _ui : u32 = (0u);
   while ((ANGLE_postIncFunc_1(&(_ui))) < (5u))
   {
-    ANGLE_postIncFunc_0(&((ANGLE_output_global._ucolor).y));
+    ANGLE_postIncPriv_0(&((ANGLE_output_global._ucolor).y));
   }
   ANGLE_postIncPriv_2(&(ANGLE_output_global._ucolor));
   var _uiv : vec4<i32> = (vec4<i32>(1i, 2i, 3i, 4i));
