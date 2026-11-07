@@ -298,6 +298,7 @@ void RemoteGraphicsContextProxy::drawFilteredImageBuffer(ImageBuffer* sourceImag
     for (auto& effect : filter.effectsOfType(FilterEffect::Type::FEImage)) {
         Ref feImage = downcast<FEImage>(effect.get());
         if (!recordResourceUse(feImage->sourceImage())) {
+            ASSERT_NOT_REACHED();
             GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
             return;
         }
@@ -310,6 +311,7 @@ void RemoteGraphicsContextProxy::drawFilteredImageBuffer(ImageBuffer* sourceImag
     std::optional<RenderingResourceIdentifier> identifier;
     if (sourceImage) {
         if (!recordResourceUse(*sourceImage)) {
+            ASSERT_NOT_REACHED();
             GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
             return;
         }
