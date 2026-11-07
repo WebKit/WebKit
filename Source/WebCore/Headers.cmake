@@ -1451,7 +1451,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     history/CachedFramePlatformData.h
     history/CachedPage.h
     history/HistoryItem.h
-    history/ProcessSwapDisposition.h
 
     html/Allowlist.h
     html/AnchorElementFunctions.h

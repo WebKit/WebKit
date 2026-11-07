@@ -7343,13 +7343,6 @@ struct WebCore::DocumentSecurityPolicy {
     std::optional<WebCore::AgentClusterIdentifier> agentClusterIdentifier;
 };
 
-header: <WebCore/ProcessSwapDisposition.h>
-enum class WebCore::ProcessSwapDisposition : uint8_t {
-    None,
-    COOP,
-    Other
-};
-
 struct WebCore::MessageForTesting {
     AtomString type;
     String data;
