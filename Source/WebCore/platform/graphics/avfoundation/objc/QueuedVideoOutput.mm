@@ -125,6 +125,31 @@ static dispatch_queue_t globalOutputDelegateQueueSingleton()
     return globalQueue.get().get();
 }
 
+// The periodic time observer's block is copied and disposed on globalOutputDelegateQueue().
+// -[AVPlayerItemVideoOutput dealloc] mutates the AVPlayer's KVO observation graph, which
+// invalidate() runs on the main thread, so the block hands its reference back to the main
+// run loop rather than releasing it on the delegate queue.
+class MainRunLoopVideoOutput final {
+public:
+    explicit MainRunLoopVideoOutput(RetainPtr<AVPlayerItemVideoOutput> output)
+        : m_output(WTF::move(output))
+    {
+    }
+
+    ~MainRunLoopVideoOutput()
+    {
+        if (RetainPtr output = std::exchange(m_output, nil))
+            ensureOnMainRunLoop([output = WTF::move(output)] { });
+    }
+
+    AVPlayerItemVideoOutput *get() const { return m_output.get(); }
+
+private:
+    RetainPtr<AVPlayerItemVideoOutput> m_output;
+};
+
+using ProtectedVideoOutput = MainRunLoopVideoOutput;
+
 RefPtr<QueuedVideoOutput> QueuedVideoOutput::create(AVPlayerItem* item, AVPlayer* player)
 {
     auto queuedVideoOutput = adoptRef(new QueuedVideoOutput(item, player));
@@ -154,7 +179,11 @@ QueuedVideoOutput::QueuedVideoOutput(AVPlayerItem* item, AVPlayer* player)
 
     [m_player addObserver:m_delegate.get() forKeyPath:@"rate" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:nil];
 
+<<<<<<< HEAD
     m_videoTimebaseObserver = [m_player addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:globalOutputDelegateQueueSingleton() usingBlock:[weakThis = WeakPtr { *this }, protectedDelegate = m_delegate, protectedOutput = m_videoOutput](CMTime currentTime) mutable {
+=======
+    m_videoTimebaseObserver = [m_player addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:globalOutputDelegateQueue() usingBlock:[weakThis = WeakPtr { *this }, protectedDelegate = m_delegate, protectedOutput = ProtectedVideoOutput { m_videoOutput }](CMTime currentTime) mutable {
+>>>>>>> 6f543dffd828 (QueuedVideoOutput::invalidate() can race -[AVPlayerItemVideoOutput dealloc] on the delegate queue)
 
         // Periodically check for new available pixel buffers.
         [protectedDelegate outputMediaDataWillChange:protectedOutput.get()];
@@ -182,6 +211,8 @@ bool QueuedVideoOutput::valid()
 
 void QueuedVideoOutput::invalidate()
 {
+    RetainPtr videoOutput = std::exchange(m_videoOutput, nil);
+
     if (m_videoTimebaseObserver) {
         [m_player removeTimeObserver:m_videoTimebaseObserver.get()];
         m_videoTimebaseObserver = nil;
@@ -189,10 +220,9 @@ void QueuedVideoOutput::invalidate()
 
     cancelNextImageTimeObserver();
 
-    if (m_videoOutput) {
-        [m_playerItem removeOutput:m_videoOutput.get()];
-        [m_videoOutput setDelegate:nil queue:nil];
-        m_videoOutput = nil;
+    if (videoOutput) {
+        [m_playerItem removeOutput:videoOutput.get()];
+        [videoOutput setDelegate:nil queue:nil];
     }
 
     if (m_player) {
@@ -259,7 +289,11 @@ void QueuedVideoOutput::configureNextImageTimeObserver()
 
     auto nextImageTime = iter->first;
 
+<<<<<<< HEAD
     m_nextImageTimebaseObserver = [m_player addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:PAL::toCMTime(nextImageTime)]] queue:globalOutputDelegateQueueSingleton() usingBlock:[weakThis = WeakPtr { *this }, protectedDelegate = m_delegate, protectedOutput = m_videoOutput] () mutable {
+=======
+    m_nextImageTimebaseObserver = [m_player addBoundaryTimeObserverForTimes:@[[NSValue valueWithCMTime:PAL::toCMTime(nextImageTime)]] queue:globalOutputDelegateQueue() usingBlock:[weakThis = WeakPtr { *this }]() mutable {
+>>>>>>> 6f543dffd828 (QueuedVideoOutput::invalidate() can race -[AVPlayerItemVideoOutput dealloc] on the delegate queue)
         callOnMainRunLoop([weakThis = WTF::move(weakThis)] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->nextImageTimeReached();
