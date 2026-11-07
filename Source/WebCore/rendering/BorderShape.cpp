@@ -258,6 +258,18 @@ bool BorderShape::shapeIntersectsHitTestLocation(const HitTestLocation& hitTestL
     return pathForOuterShape(deviceScaleFactor).contains(hitTestLocation.point());
 }
 
+bool BorderShape::innerShapeIntersectsHitTestLocation(const HitTestLocation& hitTestLocation, float deviceScaleFactor) const
+{
+    // FIXME: This needs to handle area hit-testing
+    if (!hasNonRoundCornerShape())
+        return hitTestLocation.intersects(m_innerEdgeRect);
+
+    if (!hitTestLocation.intersects(snappedInnerRect(deviceScaleFactor)))
+        return false;
+
+    return pathForInnerShape(deviceScaleFactor).contains(hitTestLocation.point());
+}
+
 bool BorderShape::allCornersClippedOut(const LayoutRect& rect) const
 {
     if (!hasNonZeroRadii())
