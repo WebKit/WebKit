@@ -50,6 +50,7 @@ struct SameSizeAsElementRareData : NodeRareData {
     void* largestContentfulPaintData;
     void* typedOMData[2];
     Markable<LayoutUnit> lastRemembedSize[2];
+    Markable<TransformationMatrix> canvasTransform;
     ExplicitlySetAttrElementsMap explicitlySetAttrElementsMap;
 #if ENABLE(SPATIAL_PORTAL)
     void* spatialPortalController;
