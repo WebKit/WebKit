@@ -159,7 +159,7 @@ private:
     RefPtr(T* ptr, AdoptTag) : m_ptr(ptr) { }
 
     typename PtrTraits::StorageType m_ptr;
-} SWIFT_SELF_CONTAINED;
+} SWIFT_SELF_CONTAINED SWIFT_REFCOUNTED_PTR(.get);
 
 // Template deduction guide.
 template<typename X, typename Y> RefPtr(Ref<X, Y>&&) -> RefPtr<X, Y, DefaultRefDerefTraits<X>>;
