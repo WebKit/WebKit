@@ -99,8 +99,7 @@ InlineDisplayContentBuilder::InlineDisplayContentBuilder(InlineFormattingContext
 
 InlineDisplay::Boxes InlineDisplayContentBuilder::build(const LineLayoutResult& lineLayoutResult)
 {
-    auto boxes = InlineDisplay::Boxes { };
-    boxes.reserveInitialCapacity(lineLayoutResult.runs.size() + lineBox().nonRootInlineLevelBoxes().size() + 1);
+    InlineDisplay::Boxes boxes(ReserveCapacityTag { }, lineLayoutResult.runs.size() + lineBox().nonRootInlineLevelBoxes().size() + 1);
 
     auto contentNeedsBidiReordering = !lineLayoutResult.directionality.visualOrderList.isEmpty();
     if (contentNeedsBidiReordering)

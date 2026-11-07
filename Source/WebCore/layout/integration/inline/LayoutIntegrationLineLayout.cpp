@@ -519,8 +519,7 @@ LineLayout::ExcludedMarkerList LineLayout::excludedMarkersForFirstFormattedLine(
     if (excludedMarkers.isEmpty())
         return { };
 
-    auto layoutBounds = Vector<Layout::InlineLayoutState::AscentAndDescent> { };
-    layoutBounds.reserveInitialCapacity(excludedMarkers.size());
+    Vector<Layout::InlineLayoutState::AscentAndDescent> layoutBounds(ReserveCapacityTag { }, excludedMarkers.size());
     for (auto& marker : excludedMarkers)
         layoutBounds.append(marker->layoutBounds());
     layoutState.setExcludedMarkerLayoutBounds(WTF::move(layoutBounds));
