@@ -437,7 +437,7 @@ bool CocoaApplication::isDumpRenderTree()
 #endif
 }
 
-bool CocoaApplication::shouldOSFaultLogForAppleApplicationUsingWebKit1()
+bool CocoaApplication::shouldOSFaultLogForAppleApplication()
 {
     static bool isInternalBuild = os_variant_allows_internal_security_policies("com.apple.WebKit");
     if (!isInternalBuild)
@@ -460,11 +460,18 @@ bool CocoaApplication::shouldOSFaultLogForAppleApplicationUsingWebKit1()
             return false;
         if (CocoaApplication::isDumpRenderTree())
             return false;
+        if (CocoaApplication::isWebkitTestRunner())
+            return false;
 
         return true;
     }();
 
-    return bundleIdentifierShouldLog && !((rand() * 1000) % 1000);
+    return bundleIdentifierShouldLog;
+}
+
+bool CocoaApplication::shouldOSFaultLogForAppleApplicationUsingWebKit1()
+{
+    return shouldOSFaultLogForAppleApplication() && !((rand() * 1000) % 1000);
 }
 
 #if PLATFORM(MAC)
