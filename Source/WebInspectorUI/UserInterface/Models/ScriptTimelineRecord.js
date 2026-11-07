@@ -126,6 +126,7 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
         let profileNodeFromPayload = (nodePayload) => {
             console.assert("id" in nodePayload);
 
+            let sourceCodeLocation = null;
             if (nodePayload.url) {
                 let sourceCode = WI.networkManager.resourcesForURL(nodePayload.url).firstValue;
                 if (!sourceCode)
@@ -134,7 +135,7 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
                 // The lineNumber is 1-based, but we expect 0-based.
                 var lineNumber = nodePayload.lineNumber - 1;
 
-                var sourceCodeLocation = sourceCode ? sourceCode.createLazySourceCodeLocation(lineNumber, nodePayload.columnNumber) : null;
+                sourceCodeLocation = sourceCode?.createSourceCodeLocation(lineNumber, nodePayload.columnNumber) || null;
             }
 
             var isProgramCode = nodePayload.functionName === "(program)";
