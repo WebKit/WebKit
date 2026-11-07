@@ -724,6 +724,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'install-cmake',
             'install-ninja',
             'validate-change',
+            'libpas-tests',
             'set-o3-optimization-level',
             'compile-jsc',
             'jscore-test'

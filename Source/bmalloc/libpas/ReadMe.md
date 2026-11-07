@@ -52,7 +52,8 @@ By default, libpas builds Release, but you can change that:
 
 All of the tools (`build.sh`, `test.sh`, `build_and_test.sh`, and `clean.sh`)
 take the same options (`-h`, `-c <config>`, `-s <sdk>`, `-a <arch>`,
-`-v <variant>`, `-t <target>`, and `-p <port>`).
+`-v <variant>`, `-t <target>`, `-p <port>`, and `-b <dir>`). `-b` is not
+supported for iOS.
 
 Libpas creates multiple binaries (`test_pas` and `chaos`) during compilation, which are used by `test.sh`. Calling these binaries directly may be preferred if you would like to test or debug just one or a handful of test cases.
 
