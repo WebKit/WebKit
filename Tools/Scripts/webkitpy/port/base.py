@@ -111,6 +111,13 @@ class Port(object):
     SANITIZER_OPTION_SEPARATORS = ' ,:\t\n\r'
     SANITIZER_OPTION_PATTERN = re.compile(r'''[^{0}=]*=(?:"[^"]*"|'[^']*'|[^{0}]*)|[^{0}]+'''.format(SANITIZER_OPTION_SEPARATORS))
 
+    # LayoutTests-relative directories holding WebKit-specific Web Platform Tests,
+    # served by the WPT server under a per-root URL prefix plus the shared "WebKit/"
+    # route. Single source of truth for WPT classification and URL mapping, shared
+    # by LayoutTestFinder (Test.is_wpt_test) and Driver. Mirrors HTTP_TEST_ROOTS and
+    # the sar3 staging area served by Apache.
+    WEB_PLATFORM_TEST_ROOTS = ("http/wpt", "sar3/http/wpt")
+
     # Do test runners support alias hostnames such as web-platform.test
     supports_localhost_aliases = False
 
@@ -921,6 +928,51 @@ class Port(object):
             ports.extend(Port._web_platform_test_server.ports_to_forward())
         return ports
 
+<<<<<<< HEAD
+=======
+    def http_test_roots(self):
+        """Ordered tuple of LayoutTests-relative directories classified as HTTP tests."""
+        return self.HTTP_TEST_ROOTS
+
+    def url_prefix_for_http_test_root(self, root):
+        """The URL path prefix a given HTTP-test root is served under.
+
+        The default root (`http_test_roots()[0]`, "http/tests") is served with
+        no prefix; an extra root like "sar3/http/tests" is served under
+        "sar3/". Every root ends with that shared subdirectory; the prefix is
+        whatever precedes it."""
+        suffix = self.HTTP_TEST_ROOTS[0]
+        return root[:-len(suffix)] if root.endswith(suffix) else root
+
+    def absolute_path_for_http_test_root(self, root):
+        """Absolute on-disk directory for an HTTP-test root (an entry of
+        http_test_roots(), e.g. "sar3/http/tests")."""
+        return self._filesystem.join(self.layout_tests_dir(), *root.split('/'))
+
+    def web_platform_test_roots(self):
+        """Ordered tuple of LayoutTests-relative directories holding WebKit-specific WPT tests."""
+        return self.WEB_PLATFORM_TEST_ROOTS
+
+    @classmethod
+    def url_prefix_for_web_platform_test_root(cls, root):
+        """The URL path prefix a given WPT root's "WebKit/" route is served under.
+
+        The default root (`web_platform_test_roots()[0]`, "http/wpt") is served at
+        /WebKit/ (no prefix); an extra root like "sar3/http/wpt" is served at
+        /sar3/WebKit/. Every root ends with that shared subdirectory; the prefix is
+        whatever precedes it. Mirrors url_prefix_for_http_test_root().
+
+        A classmethod so callers without a Port instance (e.g. LayoutTestFinder)
+        can share this single source of truth."""
+        suffix = cls.WEB_PLATFORM_TEST_ROOTS[0]
+        return root[:-len(suffix)] if root.endswith(suffix) else root
+
+    def absolute_path_for_web_platform_test_root(self, root):
+        """Absolute on-disk directory for a WPT root (an entry of
+        web_platform_test_roots(), e.g. "sar3/http/wpt")."""
+        return self._filesystem.join(self.layout_tests_dir(), *root.split('/'))
+
+>>>>>>> f558588d8b25 (Serve LayoutTests/sar3/http/wpt Web Platform Tests)
     def start_http_server(self, additional_dirs=None):
         """Start a web server. Raise an error if it can't start or is already running.
 

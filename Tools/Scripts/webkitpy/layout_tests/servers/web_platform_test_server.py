@@ -56,6 +56,19 @@ def wpt_config_json(port_obj):
         config['browser_host'] = 'web-platform.test'
         config['alternate_hosts'] = {'alt': 'not-web-platform.test'}
     config['ssl']['openssl']['base_path'] = fs.join(port_obj.results_directory(), "_wpt_certs")
+
+    # Mount each additional WebKit-specific WPT root (e.g. sar3/http/wpt) under its
+    # own "<prefix>WebKit/" route, mirroring the committed "/WebKit/" alias and the
+    # sar3 staging area Apache serves. Only when the directory exists, since sar3 is
+    # a staging area that may be absent. The default root (index 0, "http/wpt") is
+    # already mounted by the committed config's "/WebKit/" alias.
+    for root in port_obj.web_platform_test_roots()[1:]:
+        if not fs.isdir(port_obj.absolute_path_for_web_platform_test_root(root)):
+            continue
+        url_path = "/" + port_obj.url_prefix_for_web_platform_test_root(root) + "WebKit/"
+        # local-dir is relative to the WPT doc root (imported/w3c/web-platform-tests).
+        config.setdefault("aliases", []).append({"url-path": url_path, "local-dir": "../../../" + root + "/"})
+
     return config
 
 

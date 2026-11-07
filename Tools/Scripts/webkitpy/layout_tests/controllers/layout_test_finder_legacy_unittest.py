@@ -1031,6 +1031,46 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
 
         self.assertFalse(finder.find_tests_by_path([test], with_expectations=True)[0].is_wpt_crash_test)
 
+    def test_is_wpt_test_sar3_root(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        files = [
+            "http/wpt/test.html",
+            "sar3/http/wpt/test.html",
+            "sar3/http/wpt/loading/test.html",
+            "fast/test.html",
+        ]
+
+        fs.chdir(self.port.layout_tests_dir())
+
+        for f in files:
+            fs.maybe_make_directory(fs.dirname(f))
+            fs.write_text_file(f, "XXX")
+
+        tests = finder.find_tests_by_path(files, with_expectations=True)
+        self.assertEqual(
+            tests,
+            [
+                Test(
+                    test_path="http/wpt/test.html",
+                    is_wpt_test=True,
+                ),
+                Test(
+                    test_path="sar3/http/wpt/test.html",
+                    is_wpt_test=True,
+                ),
+                Test(
+                    test_path="sar3/http/wpt/loading/test.html",
+                    is_wpt_test=True,
+                ),
+                Test(
+                    test_path="fast/test.html",
+                    is_wpt_test=False,
+                ),
+            ],
+        )
+
     def test_is_wpt_crash_test(self):
         finder = self.finder
         fs = finder._filesystem
