@@ -994,6 +994,8 @@ public:
     ExceptionOr<void> postRemoteControlCommand(const String&, float argument);
     ExceptionOr<void> postSystemRemoteControlCommand(const String&, float argument);
     void activeAudioRouteDidChange(bool shouldPause);
+    void simulateActiveOutputDeviceChange();
+    bool activeVideoRouteSupportsAirPlayVideo() const;
     NODELETE bool elementIsBlockingDisplaySleep(const HTMLMediaElement&) const;
     NODELETE bool isPlayerVisibleInViewport(const HTMLMediaElement&) const;
     bool isMediaElementIntersectingViewport(const HTMLMediaElement&) const;
