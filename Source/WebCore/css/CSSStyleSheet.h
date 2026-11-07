@@ -119,7 +119,8 @@ public:
     Ref<const CSSStyleSheet> rootStyleSheet() const;
     NODELETE Style::Scope* styleScope();
 
-    const MQ::MediaQueryList& mediaQueries() const LIFETIME_BOUND { return m_mediaQueries; }
+    const MQ::MediaQueryList& mediaQueries() const LIFETIME_BOUND { return *m_mediaQueries; }
+    const MQ::SharedMediaQueryList& sharedMediaQueries() const LIFETIME_BOUND { return m_mediaQueries; }
     void setMediaQueries(MQ::MediaQueryList&&);
     void setTitle(const String& title) { m_title = title; }
 
@@ -187,7 +188,7 @@ private:
     bool m_wasConstructedByJS { false }; // constructed flag in the spec.
     std::optional<bool> m_isOriginClean;
     String m_title;
-    MQ::MediaQueryList m_mediaQueries;
+    MQ::SharedMediaQueryList m_mediaQueries;
     WeakPtr<Style::Scope> m_styleScope;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_constructorDocument;
     WeakHashSet<ContainerNode, WeakPtrImplWithEventTargetData> m_adoptingTreeScopes;

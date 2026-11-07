@@ -87,3 +87,5 @@ private:
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);
 
 } // namespace WTF
+
+using WTF::RefCountable;

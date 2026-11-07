@@ -38,7 +38,7 @@ public:
     RuleSetBuilder(RuleSet&, const MQ::MediaQueryEvaluator&, Resolver* = nullptr, ShrinkToFit = ShrinkToFit::Enable);
     ~RuleSetBuilder();
 
-    void addRulesFromSheet(const StyleSheetContents&, const MQ::MediaQueryList& sheetQuery = { });
+    void addRulesFromSheet(const StyleSheetContents&, const MQ::SharedMediaQueryList& sheetQuery = { });
     void addStyleRule(const StyleRule&);
 
 private:
@@ -68,7 +68,7 @@ private:
         bool collectDynamic { false };
 
         struct DynamicContext {
-            const MQ::MediaQueryList& queries;
+            MQ::SharedMediaQueryList queries;
             Vector<size_t> affectedRulePositions { };
             HashSet<Ref<const StyleRule>> affectedRules { };
         };
@@ -77,8 +77,8 @@ private:
         Vector<RuleSet::DynamicMediaQueryRules> dynamicMediaQueryRules { };
         OptionSet<MQ::MediaQueryDynamicDependency> allDynamicDependencies { };
 
-        bool pushAndEvaluate(const MQ::MediaQueryList&);
-        void pop(const MQ::MediaQueryList&);
+        bool pushAndEvaluate(const MQ::SharedMediaQueryList&);
+        void pop(const MQ::SharedMediaQueryList&);
         void addRuleIfNeeded(const RuleData&);
     };
 

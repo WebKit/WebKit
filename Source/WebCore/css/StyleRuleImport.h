@@ -57,7 +57,8 @@ public:
 
     NODELETE bool isLoading() const;
     
-    const MQ::MediaQueryList& mediaQueries() const LIFETIME_BOUND { return m_mediaQueries; }
+    const MQ::MediaQueryList& mediaQueries() const LIFETIME_BOUND { return *m_mediaQueries; }
+    const MQ::SharedMediaQueryList& sharedMediaQueries() const LIFETIME_BOUND { return m_mediaQueries; }
     void setMediaQueries(MQ::MediaQueryList&& queries) { m_mediaQueries = WTF::move(queries); }
 
     void requestStyleSheet();
@@ -98,7 +99,7 @@ private:
 
     ImportedStyleSheetClient m_styleSheetClient;
     String m_strHref;
-    MQ::MediaQueryList m_mediaQueries;
+    MQ::SharedMediaQueryList m_mediaQueries;
     RefPtr<StyleSheetContents> m_styleSheet;
     std::optional<CascadeLayerName> m_cascadeLayerName;
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
