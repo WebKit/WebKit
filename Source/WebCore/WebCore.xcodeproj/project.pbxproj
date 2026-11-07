@@ -1580,6 +1580,7 @@
 		427DA71D13735DFA007C57FB /* JSServiceWorkerInternals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 427DA71B13735DFA007C57FB /* JSServiceWorkerInternals.cpp */; };
 		427DA71E13735DFA007C57FB /* JSServiceWorkerInternals.h in Headers */ = {isa = PBXBuildFile; fileRef = 427DA71C13735DFA007C57FB /* JSServiceWorkerInternals.h */; };
 		42B6D0F72ACAEC0300AE5EC1 /* ApplePayDisbursementRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 42B6D0F62ACAEC0200AE5EC1 /* ApplePayDisbursementRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		42D67B74A549D4BCED7A519E /* AXChildIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 42D67B74A549D4BCED7A519D /* AXChildIterator.h */; };
 		42DBC44C2EB97E1B001D7310 /* AriaNotifyOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 42DBC44B2EB97E1B001D7310 /* AriaNotifyOptions.h */; };
 		43107BE218CC19DE00CC18E8 /* SelectorPseudoTypeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 43107BE118CC19DE00CC18E8 /* SelectorPseudoTypeMap.h */; };
 		432D3FE818A8658400D7DC03 /* SelectorCheckerTestFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 432D3FE718A8658400D7DC03 /* SelectorCheckerTestFunctions.h */; };
@@ -11585,6 +11586,7 @@
 		427DA71C13735DFA007C57FB /* JSServiceWorkerInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSServiceWorkerInternals.h; sourceTree = "<group>"; };
 		42B465202ABDF777003A1F04 /* ApplePayDisbursementRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ApplePayDisbursementRequest.idl; sourceTree = "<group>"; };
 		42B6D0F62ACAEC0200AE5EC1 /* ApplePayDisbursementRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePayDisbursementRequest.h; sourceTree = "<group>"; };
+		42D67B74A549D4BCED7A519D /* AXChildIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXChildIterator.h; sourceTree = "<group>"; };
 		42DBC44A2EB97C76001D7310 /* AriaNotifyOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AriaNotifyOptions.idl; sourceTree = "<group>"; };
 		42DBC44B2EB97E1B001D7310 /* AriaNotifyOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AriaNotifyOptions.h; sourceTree = "<group>"; };
 		42DBC4652EBBD6FC001D7310 /* AXObjectCacheCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AXObjectCacheCocoa.mm; sourceTree = "<group>"; };
@@ -26770,6 +26772,7 @@
 				2914E3061CAB5A440049966F /* AXAttachmentHelpers.h */,
 				80A24B3F2E486158006FF9DB /* AXAttributeCacheScope.cpp */,
 				80A24B3E2E486143006FF9DB /* AXAttributeCacheScope.h */,
+				42D67B74A549D4BCED7A519D /* AXChildIterator.h */,
 				80E3FD5F2E4F812300742026 /* AXComputedObjectAttributeCache.cpp */,
 				80E3FD5E2E4F812300742026 /* AXComputedObjectAttributeCache.h */,
 				C05F94852AB8E1A70028AA39 /* AXCoreObject.cpp */,
@@ -44626,6 +44629,7 @@
 				41C7678C2D004D030014EB38 /* AVVideoCaptureSource.h in Headers */,
 				489DE32B2F3BA429008530FF /* AXAnnouncementTypes.h in Headers */,
 				2914E3081CAB5A440049966F /* AXAttachmentHelpers.h in Headers */,
+				42D67B74A549D4BCED7A519E /* AXChildIterator.h in Headers */,
 				07E9C65F2E5068EE001DFE83 /* AXComputedObjectAttributeCache.h in Headers */,
 				2936BF5C21D69E4B004A8FC9 /* AXCoreObject.h in Headers */,
 				489DE3272F3B9C30008530FF /* AXCrossProcessSearch.h in Headers */,

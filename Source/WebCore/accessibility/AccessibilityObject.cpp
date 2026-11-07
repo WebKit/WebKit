@@ -31,6 +31,7 @@
 
 #include "AccessibilityNodeObjectInlines.h"
 #include "AXAttributeCacheScope.h"
+#include "AXChildIterator.h"
 #include "AXComputedObjectAttributeCache.h"
 #include "AXIsolatedTree.h"
 #include "AXLogger.h"
@@ -553,6 +554,58 @@ AccessibilityObject* AccessibilityObject::displayContentsParent() const
 
     CheckedPtr cache = axObjectCache();
     return cache ? cache->getOrCreate(*parentNode) : nullptr;
+}
+
+AccessibilityObject::iterator::iterator(const AccessibilityObject* object, const AccessibilityObject* displayContentsParent)
+    : m_current(object)
+    , m_displayContentsParent(displayContentsParent)
+{
+    RefPtr parentNode = displayContentsParent ? dynamicDowncast<ContainerNode>(displayContentsParent->node()) : nullptr;
+    RefPtr node = object ? object->node() : nullptr;
+    if (!parentNode || !node || composedParentIgnoringDocumentFragments(*node) != parentNode)
+        return;
+
+    auto children = composedTreeChildren</* InlineContextCapacity */ 0>(*parentNode);
+    auto child = children.at(*node);
+    auto end = children.end();
+    if (child != end)
+        m_composedTreeChildren = ComposedTreeChildren { WTF::move(child), WTF::move(end) };
+}
+
+RefPtr<AccessibilityObject> AccessibilityObject::iterator::nextSiblingInComposedTree()
+{
+    if (!m_composedTreeChildren)
+        return nullptr;
+
+    CheckedPtr cache = protect(m_displayContentsParent)->axObjectCache();
+    if (!cache)
+        return nullptr;
+
+    auto& [child, end] = *m_composedTreeChildren;
+    for (++child; child != end; ++child) {
+        Ref node = *child;
+        if (RefPtr object = cache->getOrCreate(node.get()))
+            return object;
+    }
+    return nullptr;
+}
+
+RefPtr<AccessibilityObject> AccessibilityObject::iterator::previousSiblingInComposedTree()
+{
+    if (!m_composedTreeChildren)
+        return nullptr;
+
+    CheckedPtr cache = protect(m_displayContentsParent)->axObjectCache();
+    if (!cache)
+        return nullptr;
+
+    auto& [child, end] = *m_composedTreeChildren;
+    for (--child; child != end; --child) {
+        Ref node = *child;
+        if (RefPtr object = cache->getOrCreate(node.get()))
+            return object;
+    }
+    return nullptr;
 }
 
 AccessibilityObject* AccessibilityObject::nextSiblingUnignored(unsigned limit) const

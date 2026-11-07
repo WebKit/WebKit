@@ -12,8 +12,9 @@ PASS: Text alternatives do not include 'Fallback'
 Test 3: Button labelled by slot with no slotted content should use fallback.
 PASS: Text alternatives include 'Fallback'
 
-Test 4: Button labelled by slot with only hidden slotted content should use fallback.
-PASS: Text alternatives include 'Fallback'
+Test 4: Button labelled by slot with only hidden slotted content should not use fallback, as the slot renders neither.
+PASS: Text alternatives include 'Action'
+PASS: Text alternatives do not include 'Fallback'
 PASS: Text alternatives do not include 'Hidden'
 
 Test 5: Dynamically adding slotted content should update the label.
