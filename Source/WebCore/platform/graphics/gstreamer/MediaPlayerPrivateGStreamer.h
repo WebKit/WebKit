@@ -403,6 +403,7 @@ protected:
     mutable std::optional<bool> m_isLiveStream;
 
     bool isSeamlessSeekingEnabled() const;
+    void armInitialSegmentSeek();
     bool m_isSegmentSeekAllowed { true };
 
     // Must reflect whether the last successfull call to gst_element_set_state() was for PLAYING.
@@ -429,6 +430,7 @@ protected:
     bool m_isSeeking { false };
     std::optional<MediaTimePromise::AutoRejectProducer> m_seekPromise;
     bool m_isSeekPending { false };
+    bool m_isInitialArmingSeekPending { false };
     SeekTarget m_seekTarget;
     GRefPtr<GstElement> m_source { nullptr };
     bool m_areVolumeAndMuteInitialized { false };
