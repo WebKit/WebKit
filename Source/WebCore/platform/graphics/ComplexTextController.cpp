@@ -823,7 +823,8 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             bool treatAsSpace = FontCascade::treatAsSpace(character);
             bool isTabWithTabStops = character == tabCharacter && m_run->allowTabs();
             CGGlyph glyph = glyphs[glyphIndex];
-            FloatSize advance = treatAsSpace ? FloatSize(spaceWidth, advances[glyphIndex].height()) : advances[glyphIndex];
+            bool shapingReplacedSpaceGlyph = character == space && glyph != font->spaceGlyph();
+            FloatSize advance = treatAsSpace && !shapingReplacedSpaceGlyph ? FloatSize(spaceWidth, advances[glyphIndex].height()) : advances[glyphIndex];
 
             // Adjusting a cluster base's advance also moves the pen used to position its combining marks. We
             // need to compensate for that pen movement when positioning the marks. Most adjustments need this

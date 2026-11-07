@@ -1,0 +1,5 @@
+Á B
+
+PASS Laid out text with a combining mark uses the advance of the glyph that replaced the space
+PASS Canvas measureText uses the advance of the glyph that replaced the space
+

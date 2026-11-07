@@ -112,6 +112,9 @@ inline auto WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsigne
         if (iterator == charactersTreatedAsSpace.end() || iterator->stringOffset != characterIndex)
             continue;
         auto& originalAdvances = *iterator;
+        bool shapingReplacedSpaceGlyph = originalAdvances.characterIsSpace && glyphBuffer.glyphAt(i) != font.spaceGlyph();
+        if (shapingReplacedSpaceGlyph)
+            continue;
         setWidth(glyphBuffer.advanceAt(i), originalAdvances.advance);
     }
     charactersTreatedAsSpace.clear();
