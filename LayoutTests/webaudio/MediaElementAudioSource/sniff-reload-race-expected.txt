@@ -1,0 +1,10 @@
+Tests that swapping a MediaElementAudioSourceNode's media element to a mis-declared resource (WebM body declared video/mp4), which drives MediaPlayer::attemptSniffAndReload(), does not race the audio render thread on MediaPlayer::m_private.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS No crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
