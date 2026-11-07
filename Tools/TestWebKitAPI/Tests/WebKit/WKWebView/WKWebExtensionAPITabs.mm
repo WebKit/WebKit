@@ -4715,6 +4715,54 @@ TEST(WKWebExtensionAPITabs, ActiveTabRemovedWithDeniedPermissions)
     EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.get().URL inTab:manager.get().defaultTab]);
 }
 
+TEST(WKWebExtensionAPITabs, ActiveTabAllowsRequestsFromExtensionPages)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<head><title>Test Title</title></head>"_s } },
+        { "/data"_s, { { { "Content-Type"_s, "text/plain"_s } }, "OK"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.onMessage.addListener(async (message, url) => {",
+        @"  if (message === 'Fetch Without Grant') {",
+        @"    let failed = false",
+        @"    try {",
+        @"      await fetch(url)",
+        @"    } catch {",
+        @"      failed = true",
+        @"    }",
+
+        @"    browser.test.assertTrue(failed, 'fetch() should fail without an activeTab grant, since the server sends no CORS headers')",
+        @"    browser.test.sendMessage('Fetched Without Grant')",
+        @"  } else if (message === 'Fetch With Grant') {",
+        @"    const response = await fetch(url)",
+        @"    browser.test.assertEq(await response.text(), 'OK', 'fetch() should succeed with an activeTab grant for the origin')",
+
+        @"    browser.test.notifyPass()",
+        @"  }",
+        @"})",
+
+        @"browser.test.sendMessage('Load Localhost')",
+    ]);
+
+    auto manager = Util::loadExtension(activeTabManifest, @{ @"background.js": backgroundScript });
+
+    auto *dataURLString = server.requestWithLocalhost("/data"_s).URL.absoluteString;
+
+    [manager runUntilTestMessage:@"Load Localhost"];
+
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager runForTimeInterval:1];
+
+    [manager sendTestMessage:@"Fetch Without Grant" withArgument:dataURLString];
+    [manager runUntilTestMessage:@"Fetched Without Grant"];
+
+    [manager.get().context userGesturePerformedInTab:manager.get().defaultTab];
+
+    [manager sendTestMessage:@"Fetch With Grant" withArgument:dataURLString];
+    [manager run];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
