@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+window.addEventListener("message", () => {
+    let result;
+    try {
+        new ApplePayReferenceSession({ clientIdentifier: "com.example.client" });
+        result = "constructed";
+    } catch (e) {
+        result = e.name;
+    }
+    parent.postMessage(result, "*");
+});
+</script>
+</head>
+</html>

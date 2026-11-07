@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ApplePayReferenceSessionEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/js-test.js"></script>
+<style>
+iframe { display: none; }
+</style>
+</head>
+<body>
+<script>
+
+description("Test ApplePayReferenceSession.prepare(), which needs no user gesture, against the mock payment coordinator.");
+
+window.jsTestIsAsync = true;
+
+const request = { clientIdentifier: "com.example.client" };
+let session;
+let token;
+let FrameSession;
+
+async function shouldRejectNamed(expression, name) {
+    try {
+        await eval(expression);
+        testFailed(`${expression} resolved.`);
+    } catch (e) {
+        if (e.name === name)
+            testPassed(`${expression} rejected with ${name}.`);
+        else
+            testFailed(`${expression} rejected with ${e.name}, not ${name}: ${e.message}`);
+    }
+}
+
+function waitFor(target, eventName) {
+    return new Promise(resolve => target.addEventListener(eventName, resolve, { once: true }));
+}
+
+window.onload = async () => {
+    const mock = internals.mockPaymentCoordinator;
+
+    debug("With a token:");
+    mock.setReferenceSessionToken("mock-token");
+    session = new ApplePayReferenceSession(request);
+    token = await session.prepare();
+    shouldBeEqualToString("token", "mock-token");
+    shouldBeEqualToString("internals.mockPaymentCoordinator.referenceSessionRequest.clientIdentifier", "com.example.client");
+    shouldBeTrue("internals.mockPaymentCoordinator.referenceSessionShouldDiscloseCapability");
+    await shouldRejectNamed("session.prepare()", "InvalidStateError");
+    debug("");
+
+    debug("When Apple Pay capability disclosure is not allowed:");
+    internals.settings.setApplePayCapabilityDisclosureAllowed(false);
+    session = new ApplePayReferenceSession(request);
+    token = await session.prepare();
+    shouldBeEqualToString("token", "mock-token");
+    shouldBeFalse("internals.mockPaymentCoordinator.referenceSessionShouldDiscloseCapability");
+    internals.settings.setApplePayCapabilityDisclosureAllowed(true);
+    debug("");
+
+    debug("Without a token:");
+    mock.setReferenceSessionToken(null);
+    session = new ApplePayReferenceSession(request);
+    await shouldRejectNamed("session.prepare()", "NotSupportedError");
+    debug("");
+
+    debug("When the frame is removed while prepare() is in flight:");
+    const frame = document.body.appendChild(document.createElement("iframe"));
+    const loaded = waitFor(frame, "load");
+    frame.src = "resources/ApplePayReferenceSession-frame.html";
+    await loaded;
+    FrameSession = frame.contentWindow.ApplePayReferenceSession;
+    new FrameSession(request).prepare().catch(() => { });
+    frame.remove();
+    await new Promise(resolve => setTimeout(resolve, 10));
+    testPassed("Removing the frame did not crash.");
+    debug("");
+
+    finishJSTest();
+};
+
+</script>
+</body>
+</html>

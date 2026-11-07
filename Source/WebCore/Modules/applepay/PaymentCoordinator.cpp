@@ -327,6 +327,21 @@ void PaymentCoordinator::endApplePaySetup()
     m_client->endApplePaySetup();
 }
 
+#if ENABLE(APPLE_PAY_REFERENCE_SESSION)
+
+void PaymentCoordinator::prepareReferenceSession(const ApplePayReferenceRequest& request, bool shouldDiscloseCapability, CompletionHandler<void(std::optional<String>&&)>&& completionHandler)
+{
+    PAYMENT_COORDINATOR_RELEASE_LOG("prepareReferenceSession()");
+    m_client->prepareReferenceSession(request, shouldDiscloseCapability, [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](std::optional<String>&& token) mutable {
+        if (!weakThis)
+            return completionHandler(std::nullopt);
+        PAYMENT_COORDINATOR_RELEASE_LOG_WITH_THIS(weakThis.get(), "prepareReferenceSession() completed (succeeded: %d)", token.has_value());
+        completionHandler(WTF::move(token));
+    });
+}
+
+#endif
+
 } // namespace WebCore
 
 #undef PAYMENT_COORDINATOR_RELEASE_LOG_ERROR

@@ -30,9 +30,13 @@
 
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "DocumentPage.h"
 #include "FrameDestructionObserverInlines.h"
+#include "Page.h"
 #include "PermissionsPolicy.h"
+#include "ScriptTrackingPrivacyCategory.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -79,6 +83,15 @@ ExceptionOr<void> PaymentSession::canCreateSession(Document& document)
     }
 
     return { };
+}
+
+bool PaymentSession::shouldDiscloseApplePayCapability(Document& document)
+{
+    RefPtr page = document.page();
+    if (!page || page->usesEphemeralSession() || document.requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::Payments))
+        return false;
+
+    return document.settings().applePayCapabilityDisclosureAllowed();
 }
 
 } // namespace WebCore
