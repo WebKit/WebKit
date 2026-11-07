@@ -1,0 +1,12 @@
+A select with author styles ignores line-height, with or without the multiple attribute, as both are dropdown boxes on iOS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(single).lineHeight is "normal"
+PASS getComputedStyle(multiple).lineHeight is "normal"
+PASS getComputedStyle(multiple).paddingInlineStart is getComputedStyle(single).paddingInlineStart
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
