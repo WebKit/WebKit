@@ -65,7 +65,7 @@ public:
     CustomElementQueue& backupElementQueue();
 
     void scheduleIdlePeriod();
-    void opportunisticallyRunIdleCallbacks(std::optional<MonotonicTime> deadline = std::nullopt);
+    void opportunisticallyRunIdleCallbacks(std::optional<MonotonicTime> deadline, bool rescheduleIfStillPending);
     MonotonicTime computeIdleDeadline();
 
     WEBCORE_EXPORT static void breakToAllowRenderingUpdate();
@@ -79,6 +79,7 @@ private:
     MicrotaskQueue& microtaskQueue() final;
 
     void startIdlePeriod(MonotonicTime);
+    bool hasPendingIdleCallbacks();
     bool shouldEndIdlePeriod();
     std::optional<MonotonicTime> nextScheduledWorkTime() const;
     std::optional<MonotonicTime> nextRenderingTime() const;
@@ -107,6 +108,7 @@ private:
 
     MonotonicTime m_lastIdlePeriodStartTime;
     Seconds m_expectedIdleCallbackDuration { 4_ms };
+    bool m_isIdleTimerArmed { false };
     mutable Markable<MonotonicTime> m_nextRenderingTimeCache;
 };
 
