@@ -165,15 +165,20 @@ void DrawGlyphsRecorder::populateInternalState(const GraphicsContextState& conte
     m_originalState.ignoreTransforms = contextState.shadowsIgnoreTransforms();
 }
 
+static void applyBrushes(GraphicsContext& context, const SourceBrush& fill, const SourceBrush& stroke)
+{
+    context.setFillBrush(fill);
+    context.applyFillPattern();
+
+    context.setStrokeBrush(stroke);
+    context.applyStrokePattern();
+}
+
 void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& contextState)
 {
     m_internalContext->setCTM(m_originalState.ctm);
 
-    m_internalContext->setFillBrush(m_originalState.fillBrush);
-    m_internalContext->applyFillPattern();
-
-    m_internalContext->setStrokeBrush(m_originalState.strokeBrush);
-    m_internalContext->applyStrokePattern();
+    applyBrushes(m_internalContext.get(), m_originalState.fillBrush, m_originalState.strokeBrush);
 
     m_internalContext->setShadowsIgnoreTransforms(m_originalState.ignoreTransforms);
 
@@ -496,6 +501,7 @@ void DrawGlyphsRecorder::drawOTSVGRun(const Font& font, std::span<const GlyphBuf
 
         // Create a local ImageBuffer because decoding the SVG fonts has to happen in WebProcess.
         if (auto imageBuffer = m_owner.createAlignedImageBuffer(bounds, m_owner.colorSpace(), RenderingMethod::Local)) {
+            applyBrushes(imageBuffer->context(), m_owner.state().fillBrush(), m_owner.state().strokeBrush());
             FontCascade::drawGlyphs(imageBuffer->context(), font, glyphs.subspan(i, 1), advances.subspan(i, 1), FloatPoint(), smoothingMode);
 
             FloatRect destinationRect = enclosingIntRect(bounds);
