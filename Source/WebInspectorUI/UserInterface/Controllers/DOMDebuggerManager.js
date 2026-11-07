@@ -203,6 +203,12 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         return breakpoints ? Array.from(breakpoints) : [];
     }
 
+    domBreakpointsForURL(url)
+    {
+        let breakpoints = this._domBreakpointURLMap.get(url);
+        return breakpoints ? Array.from(breakpoints) : [];
+    }
+
     domBreakpointsInSubtree(node)
     {
         console.assert(node instanceof WI.DOMNode);
@@ -627,7 +633,8 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
         domBreakpointNodeIdentifierMap.add(node, breakpoint);
 
-        breakpoint.domNode = node;
+        console.assert(!breakpoint.domNode || breakpoint.domNode === node, breakpoint, node);
+        breakpoint.domNode ||= node;
     }
 
     _setDOMBreakpoint(breakpoint, target)
