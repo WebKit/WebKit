@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "FrameInfoData.h"
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -52,7 +53,7 @@ public:
 
     bool isMainFrame() const { return m_stateSnapshot.isMainFrame; }
     const WebCore::ResourceRequest& request() const LIFETIME_BOUND { return m_data.request; }
-    const WebCore::SecurityOriginData& securityOrigin() const LIFETIME_BOUND { return m_data.securityOrigin; }
+    const WebCore::SecurityOriginData& securityOrigin() const LIFETIME_BOUND { return m_stateSnapshot.securityOrigin; }
     Ref<FrameHandle> handle() const;
     WebKit::WebPageProxy* page();
     const WebKit::WebPageProxy* page() const;
@@ -71,11 +72,12 @@ private:
 
     struct StateSnapshot {
         const WebCore::CertificateInfo certificateInfo;
-        Markable<WebCore::FrameIdentifier> parentFrameID;
-        WTF::String title;
-        bool isMainFrame { true };
-        ProcessID processID { 0 };
-        WeakPtr<WebKit::WebPageProxy> page;
+        const WebCore::SecurityOriginData securityOrigin;
+        const Markable<WebCore::FrameIdentifier> parentFrameID;
+        const WTF::String title;
+        const bool isMainFrame { true };
+        const ProcessID processID { 0 };
+        const WeakPtr<WebKit::WebPageProxy> page;
     };
     static StateSnapshot stateSnapshot(WebCore::FrameIdentifier);
 
