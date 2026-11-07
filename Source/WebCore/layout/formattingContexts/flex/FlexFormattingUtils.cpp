@@ -376,8 +376,14 @@ bool FlexFormattingUtils::canResolveFullyConstrainedLogicalHeight(const RenderFl
     // stretched yet - its height is 0 at that point and computeLogicalHeight would give
     // a wrong answer. This happens when the nested out-of-flow flex is laid out as part of the
     // anector flex's main-axis sizing, before the stretch phase sets the final cross size.
-    CheckedPtr containingBlock = flexBox.containingBlock();
-    return flexBox.hasFullyConstrainedLogicalHeight() && containingBlock->hasDefiniteLogicalHeight();
+    if (!flexBox.hasFullyConstrainedLogicalHeight())
+        return false;
+    CheckedRef<const RenderBoxModelObject> containingBlock = *flexBox.containingBlock();
+    // A block may first be laid out at a height it doesn't end up with (a flex item before it is stretched), while the height
+    // of an inline box comes from its content and doesn't change when the block around it is stretched.
+    if (containingBlock->isInlineBox())
+        return true;
+    return downcast<RenderBlock>(containingBlock).hasDefiniteLogicalHeight();
 }
 
 bool FlexFormattingUtils::flexItemHasComputableAspectRatio(const RenderBox& flexItem)

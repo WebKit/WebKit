@@ -269,10 +269,13 @@ void RenderTable::updateLogicalWidth()
         setMarginEnd(computedValues.margins.end);
     }
 
-    auto& containingBlock = *this->containingBlock();
+    CheckedRef<RenderBoxModelObject> containingBlock = *this->containingBlock();
+    // An inline box, the containing block of an out-of-flow table, has no floats.
+    CheckedPtr blockContainingBlock = dynamicDowncast<RenderBlock>(containingBlock);
+    bool containingBlockHasFloats = blockContainingBlock && blockContainingBlock->containsFloats();
 
     LayoutUnit availableLogicalWidth = containingBlockLogicalWidthForContent();
-    bool hasPerpendicularContainingBlock = writingMode().isOrthogonal(containingBlock.writingMode());
+    bool hasPerpendicularContainingBlock = writingMode().isOrthogonal(containingBlock->writingMode());
     LayoutUnit containerWidthInInlineDirection = hasPerpendicularContainingBlock ? perpendicularContainingBlockLogicalHeight() : availableLogicalWidth;
 
     auto& styleLogicalWidth = style().logicalWidth();
@@ -288,9 +291,9 @@ void RenderTable::updateLogicalWidth()
 
         // Subtract out our margins to get the available content width.
         LayoutUnit availableContentLogicalWidth = std::max<LayoutUnit>(0, containerWidthInInlineDirection - marginTotal);
-        if (shrinkToAvoidFloats() && containingBlock.containsFloats() && !hasPerpendicularContainingBlock) {
+        if (shrinkToAvoidFloats() && containingBlockHasFloats && !hasPerpendicularContainingBlock) {
             // FIXME: Work with regions someday.
-            availableContentLogicalWidth = shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, containingBlock);
+            availableContentLogicalWidth = shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, *blockContainingBlock);
         }
 
         // Ensure we aren't bigger than our available width.
@@ -325,10 +328,10 @@ void RenderTable::updateLogicalWidth()
     setMarginEnd(0);
     if (!hasPerpendicularContainingBlock) {
         LayoutUnit containerLogicalWidthForAutoMargins = availableLogicalWidth;
-        if (avoidsFloats() && containingBlock.containsFloats())
+        if (avoidsFloats() && containingBlockHasFloats)
             containerLogicalWidthForAutoMargins = containingBlockAvailableLineWidth();
         ComputedMarginValues marginValues;
-        bool hasSameDirection = !containingBlock.writingMode().isInlineOpposing(writingMode());
+        bool hasSameDirection = !containingBlock->writingMode().isInlineOpposing(writingMode());
         computeInlineDirectionMargins(containingBlock, availableLogicalWidth, containerLogicalWidthForAutoMargins, logicalWidth(),
             hasSameDirection ? marginValues.start : marginValues.end,
             hasSameDirection ? marginValues.end : marginValues.start);
