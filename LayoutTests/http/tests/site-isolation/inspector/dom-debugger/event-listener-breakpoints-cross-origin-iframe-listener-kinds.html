@@ -1,0 +1,102 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/dom-debugger-test-utilities.js"></script>
+<script src="resources/event-listener-breakpoint-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOMDebugger.EventListenerBreakpoint.ListenerKinds");
+
+    let frameTarget = null;
+    let frameDocument = null;
+
+    async function frameNode(selector) {
+        return WI.domManager.nodeForId(await withDeadline(frameDocument.querySelector(selector), `frame querySelector ${selector}`));
+    }
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.ListenerKinds.Setup",
+        description: "Find the cross-origin frame target and its document.",
+        async test() {
+            frameTarget = await waitForFrameTargetForURLContaining("event-listener-breakpoint-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+
+            frameDocument = await frameTargetDocument(frameTarget);
+            InspectorTest.expectNotNull(frameDocument, "Frame target should have a document.");
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.ListenerKinds.CaptureAndBubble",
+        description: "Capturing and bubbling listeners for the same event on the same node should have their own breakpoints.",
+        async test() {
+            let node = await frameNode("#capture-button");
+            let captureListener = await eventListenerForNode(node, "captureClicked");
+            let bubbleListener = await eventListenerForNode(node, "bubbleClicked");
+            InspectorTest.expectThat(captureListener?.useCapture, "Should find the capturing listener.");
+            InspectorTest.expectThat(bubbleListener && !bubbleListener.useCapture, "Should find the bubbling listener.");
+            InspectorTest.expectNotEqual(captureListener?.eventListenerId, bubbleListener?.eventListenerId, "The two listeners should have different ids.");
+
+            await setListenerBreakpoint(captureListener);
+            await expectListenerPause(frameTarget, "clickCaptureButton()", captureListener, {functionName: "captureClicked", pauseTarget: frameTarget});
+            await removeListenerBreakpoint(captureListener);
+
+            await setListenerBreakpoint(bubbleListener);
+            await expectListenerPause(frameTarget, "clickCaptureButton()", bubbleListener, {functionName: "bubbleClicked", pauseTarget: frameTarget});
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.ListenerKinds.AncestorListener",
+        description: "A breakpoint on an ancestor's listener should pause when an event of a descendant reaches it.",
+        async test() {
+            let node = await frameNode("#ancestor-child");
+            let ancestorListener = await eventListenerForNode(node, "ancestorClicked", {includeAncestors: true});
+            InspectorTest.expectThat(ancestorListener?.node?.getAttribute("id") === "ancestor", "Listener should belong to the ancestor.");
+            InspectorTest.expectThat(WI.DOMManager.supportsBreakpointForEventListener(ancestorListener), "Ancestor listener should support breakpoints.");
+
+            await setListenerBreakpoint(ancestorListener);
+            InspectorTest.log("Clicking the descendant...");
+            await expectListenerPause(frameTarget, "clickAncestorChild()", ancestorListener, {functionName: "ancestorClicked", pauseTarget: frameTarget});
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.ListenerKinds.Once",
+        description: "A breakpoint on a listener added with `once` should pause the one time the listener runs.",
+        async test() {
+            let node = await frameNode("#once-button");
+            let onceListener = await eventListenerForNode(node, "onceClicked");
+            InspectorTest.expectThat(onceListener?.once, "Should find the once listener.");
+
+            await setListenerBreakpoint(onceListener);
+            InspectorTest.log("Clicking the button...");
+            await expectListenerPause(frameTarget, "clickOnceButton()", onceListener, {functionName: "onceClicked", pauseTarget: frameTarget});
+
+            InspectorTest.log("Clicking the button again...");
+            await expectNoListenerPause(frameTarget, "clickOnceButton()", "Should not pause after the listener was removed by running once.");
+        }
+    });
+
+    addListenerBreakpointTestCase(suite, {
+        name: "SiteIsolation.DOMDebugger.EventListenerBreakpoint.ListenerKinds.Attribute",
+        description: "A breakpoint on an event handler attribute should pause in the frame.",
+        async test() {
+            let node = await frameNode("#attribute-button");
+            let attributeListener = await eventListenerForNode(node, "onclick");
+            InspectorTest.expectThat(attributeListener?.isAttribute, "Should find the attribute listener.");
+
+            await setListenerBreakpoint(attributeListener);
+            InspectorTest.log("Clicking the button...");
+            await expectListenerPause(frameTarget, "clickAttributeButton()", attributeListener, {functionName: "onclick", pauseTarget: frameTarget});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that breakpoints on capturing, bubbling, ancestor, once and attribute event listeners in a cross-origin iframe pause in the frame target.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom-debugger/resources/event-listener-breakpoint-frame.html"></iframe>
+</body>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<script>
+function parentClicked(event) { window.lastEventType = event.type; }
+function parentWindowHandler(event) { window.lastEventType = event.type; }
+
+function clickParentButton() { document.getElementById("parent-button").click(); return true; }
+function dispatchParentWindowEvent() { window.dispatchEvent(new CustomEvent("parent-window-event")); return true; }
+
+window.addEventListener("parent-window-event", parentWindowHandler);
+function nestedButton() { return document.getElementById("nested-frame").contentDocument.getElementById("nested-button"); }
+</script>
+<body>
+<button id="parent-button">Parent Button</button>
+<script>
+document.getElementById("parent-button").addEventListener("click", parentClicked);
+</script>
+<iframe id="nested-frame" srcdoc="<button id='nested-button'>Nested Button</button><script>
+function nestedClicked(event) { window.lastEventType = event.type; }
+function clickOwnButton() { document.getElementById('nested-button').click(); return true; }
+function clickParentButtonFromNestedFrame() { parent.document.getElementById('parent-button').click(); return true; }
+document.getElementById('nested-button').addEventListener('click', nestedClicked);
+</script>"></iframe>
+</body>
