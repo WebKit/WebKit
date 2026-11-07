@@ -1,0 +1,95 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/ipc-validation-helpers.js"></script>
+<body>
+<script>
+// The IPC testing API exists only in debug and ASan builds; the subtests that need it pass either way.
+
+// Captures a real outgoing message, minus its 16-byte header, instead of hand-building its arguments.
+function captureMessage(name, trigger)
+{
+    return new Promise((resolve) => {
+        IPC.addOutgoingMessageListener("UI", (outgoing) => {
+            if (outgoing.name == name)
+                resolve({ name, destinationID: outgoing.destinationID, body: new Uint8Array(outgoing.buffer).slice(16) });
+        });
+        trigger();
+    });
+}
+
+let fragmentCount = 0;
+
+function captureSameDocumentNavigation()
+{
+    return captureMessage(IPC.messages.WebPageProxy_DidSameDocumentNavigationForFrame.name, () => { location.hash = "fragment" + ++fragmentCount; });
+}
+
+// The IPC testing API cannot encode the navigation action data, so this captures the message that replaceState() sends.
+function captureViaJSMessage()
+{
+    return captureMessage(IPC.messages.WebPageProxy_DidSameDocumentNavigationForFrameViaJS.name, () => { history.replaceState(null, ""); });
+}
+
+function replaceFrameID(body, frameID, newFrameID)
+{
+    const view = new DataView(body.buffer);
+    let count = 0;
+    for (let offset = 0; offset + 8 <= body.length; offset += 8) {
+        if (view.getBigUint64(offset, true) == BigInt(frameID)) {
+            view.setBigUint64(offset, BigInt(newFrameID), true);
+            count++;
+        }
+    }
+    return count;
+}
+
+// Captures a real DidSameDocumentNavigationForFrame message and replays it, unchanged, for the page's own main frame.
+promise_test(async () => {
+    if (!window.IPC)
+        return;
+    const message = await captureSameDocumentNavigation();
+    takeInvalidMessageString();
+    IPC.sendMessage("UI", message.destinationID, message.name, message.body);
+    assert_equals(takeInvalidMessageString(), "");
+}, "didSameDocumentNavigationForFrame accepts the main frame of its own page (allowed)");
+
+// Captures another such message and replays it with its frame identifier patched to a same-site popup's main frame instead.
+promise_test(async (t) => {
+    if (!window.IPC)
+        return;
+    const popup = window.open("resources/frame-of-another-page-popup.html");
+    t.add_cleanup(() => popup.close());
+    await waitForMessage(popup, (data) => data == "opened window loaded");
+    const message = await captureSameDocumentNavigation();
+    assert_greater_than(replaceFrameID(message.body, IPC.frameID[0], popup.IPC.frameID[0]), 0);
+    takeInvalidMessageString();
+    IPC.sendMessage("UI", message.destinationID, message.name, message.body);
+    assert_true(takeInvalidMessageString().includes("frame->page() == this"));
+}, "didSameDocumentNavigationForFrame rejects a frame of another page (disallowed)");
+
+// Captures a real DidSameDocumentNavigationForFrameViaJS message and replays it, unchanged, for the page's own main frame.
+promise_test(async () => {
+    if (!window.IPC)
+        return;
+    const message = await captureViaJSMessage();
+    takeInvalidMessageString();
+    IPC.sendMessage("UI", message.destinationID, message.name, message.body);
+    assert_equals(takeInvalidMessageString(), "");
+}, "didSameDocumentNavigationForFrameViaJS accepts the main frame of its own page (allowed)");
+
+// Captures another such message and replays it with its frame identifier patched to a same-site popup's main frame instead.
+promise_test(async (t) => {
+    if (!window.IPC)
+        return;
+    const popup = window.open("resources/frame-of-another-page-popup.html");
+    t.add_cleanup(() => popup.close());
+    await waitForMessage(popup, (data) => data == "opened window loaded");
+    const message = await captureViaJSMessage();
+    assert_greater_than(replaceFrameID(message.body, IPC.frameID[0], popup.IPC.frameID[0]), 0);
+    takeInvalidMessageString();
+    IPC.sendMessage("UI", message.destinationID, message.name, message.body);
+    assert_true(takeInvalidMessageString().includes("frame->page() == this"));
+}, "didSameDocumentNavigationForFrameViaJS rejects a frame of another page (disallowed)");
+</script>
