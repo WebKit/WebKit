@@ -27,6 +27,9 @@
 #include "StyleWebKitInitialLetter.h"
 
 #include "CSSKeywordValue.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSValueKeywords.h"
+#include "CSSValuePair.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
@@ -47,6 +50,23 @@ auto CSSValueConversion<WebkitInitialLetter>::operator()(BuilderState& state, co
 
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
         return { toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, *primitiveValue) };
+
+    if (RefPtr pairValue = dynamicDowncast<CSSValuePair>(value); pairValue && is<CSSKeywordValue>(pairValue->second())) {
+        auto pair = requiredPairDowncast<CSSPrimitiveValue, CSSKeywordValue>(state, value);
+        if (!pair)
+            return CSS::Keyword::Normal { };
+
+        auto height = toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, pair->first);
+        switch (pair->second->valueID()) {
+        case CSSValueID::Drop:
+            return { height, CSS::Keyword::Drop { } };
+        case CSSValueID::Raise:
+            return { height, CSS::Keyword::Raise { } };
+        default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return CSS::Keyword::Normal { };
+        }
+    }
 
     auto pair = requiredPairDowncast<CSSPrimitiveValue>(state, value);
     if (!pair)

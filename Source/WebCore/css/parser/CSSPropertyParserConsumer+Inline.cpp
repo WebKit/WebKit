@@ -29,7 +29,9 @@
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserConsumer+NumberDefinitions.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePair.h"
 
@@ -81,6 +83,39 @@ RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range, CSS::PropertyPar
     if (range.peek().id() == CSSValueID::Auto)
         return consumeIdent(range);
     return consumeTextEdge(range);
+}
+
+RefPtr<CSSValue> consumeWebkitInitialLetter(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <'-webkit-initial-letter'> = normal | <number [0,∞]>{1,2} | <number [0,∞]> && [ drop | raise ]
+    // https://drafts.csswg.org/css-inline-3/#propdef-initial-letter
+
+    if (range.peek().id() == CSSValueID::Normal)
+        return consumeIdent(range);
+
+    auto consumeNumber = [&] {
+        return CSSPrimitiveValueResolver<CSS::Number<CSS::Nonnegative>>::consumeAndResolve(range, state);
+    };
+
+    if (RefPtr keyword = consumeIdent<CSSValueID::Drop, CSSValueID::Raise>(range)) {
+        RefPtr size = consumeNumber();
+        if (!size)
+            return nullptr;
+        return CSSValuePair::create(size.releaseNonNull(), keyword.releaseNonNull());
+    }
+
+    RefPtr size = consumeNumber();
+    if (!size)
+        return nullptr;
+
+    if (RefPtr keyword = consumeIdent<CSSValueID::Drop, CSSValueID::Raise>(range))
+        return CSSValuePair::create(size.releaseNonNull(), keyword.releaseNonNull());
+
+    // A bare number is also the sink.
+    RefPtr sink = consumeNumber();
+    if (!sink)
+        sink = size;
+    return CSSValuePair::create(size.releaseNonNull(), sink.releaseNonNull());
 }
 
 } // namespace CSSPropertyParserHelpers
