@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<title>Escaped hyphens in syncbase timing ID references with a negative offset</title>
+<link rel="help" href="https://www.w3.org/TR/SMIL3/smil-timing.html#q21">
+<meta name="assert" content="An escaped '-' within an Id-value must not be mistaken for the offset sign, and a real negative offset after such an Id-value must still apply.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<svg>
+  <rect width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="0s" dur="1s" id="a-b-c"/>
+  </rect>
+  <rect x="10" width="10" height="10" fill="blue" id="rect">
+    <set attributeName="fill" to="green" begin="a\-b\-c.end - 500ms"/>
+  </rect>
+
+  <!-- Control: same structure, no hyphens in the ID. -->
+  <rect x="20" width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="0s" dur="1s" id="abc"/>
+  </rect>
+  <rect x="30" width="10" height="10" fill="blue" id="controlRect">
+    <set attributeName="fill" to="green" begin="abc.end - 500ms"/>
+  </rect>
+</svg>
+
+<script>
+  const svg = document.querySelector('svg');
+
+  // Seeking is applied on the next animation frame, so wait for two frames
+  // before reading the computed style.
+  function seekTo(time) {
+    svg.setCurrentTime(time);
+    return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  }
+
+  function fillOf(id) {
+    return getComputedStyle(document.getElementById(id)).fill;
+  }
+
+  promise_test(async () => {
+    svg.pauseAnimations();
+    await seekTo(0.25);
+    assert_equals(fillOf('rect'), 'rgb(0, 0, 255)', 'before dependent begins');
+    await seekTo(0.75);
+    assert_equals(fillOf('rect'), 'rgb(0, 128, 0)', 'after dependent begins');
+  }, 'Escaped hyphen in syncbase ID with negative offset (begin="a\\-b\\-c.end - 500ms")');
+
+  promise_test(async () => {
+    svg.pauseAnimations();
+    await seekTo(0.25);
+    assert_equals(fillOf('controlRect'), 'rgb(0, 0, 255)', 'before dependent begins');
+    await seekTo(0.75);
+    assert_equals(fillOf('controlRect'), 'rgb(0, 128, 0)', 'after dependent begins');
+  }, 'Control: negative offset with no hyphen in the ID (begin="abc.end - 500ms")');
+</script>

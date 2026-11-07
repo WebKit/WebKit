@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<title>Escaped hyphens in syncbase timing ID references</title>
+<link rel="help" href="https://www.w3.org/TR/SMIL3/smil-timing.html#q21">
+<meta name="assert" content="Per SMIL3 § Parsing timing specifiers, the reverse solidus '\' must be used to escape hyphen-minus '-' characters within Id-values in timing attributes, so that hyphens in element IDs are not confused with the offset sign.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<svg>
+  <!-- Test 1: Hyphen in ID, no offset -->
+  <rect width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="indefinite" dur="10ms" id="my-anim" fill="freeze"/>
+  </rect>
+  <rect x="10" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="my\-anim.begin" id="dep1"/>
+  </rect>
+
+  <!-- Test 2: Hyphen in ID with a positive offset -->
+  <rect x="20" width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="indefinite" dur="10ms" id="my-other-anim" fill="freeze"/>
+  </rect>
+  <rect x="30" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="my\-other\-anim.begin+10ms" id="dep2"/>
+  </rect>
+  <!-- Test 3: Escaped hyphen with the end time symbol -->
+  <rect x="40" width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="indefinite" dur="10ms" id="end-anim" fill="freeze"/>
+  </rect>
+  <rect x="50" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="end\-anim.end" id="dep3"/>
+  </rect>
+
+  <!-- Test 4: Escaped dot and escaped hyphen in the same ID -->
+  <rect x="60" width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="indefinite" dur="10ms" id="a.b-c" fill="freeze"/>
+  </rect>
+  <rect x="70" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="a\.b\-c.begin" id="dep4"/>
+  </rect>
+
+  <!-- Test 5: Event-base value with an escaped hyphen in the element ID -->
+  <rect x="100" width="10" height="10" fill="blue" id="my-btn"/>
+  <rect x="110" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="my\-btn.click" id="dep6"/>
+  </rect>
+
+  <!-- Test 6: Escaped hyphen in a semicolon-separated list of values -->
+  <rect x="120" width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="indefinite" dur="10ms" id="list-anim" fill="freeze"/>
+  </rect>
+  <rect x="130" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="other\-missing.begin; list\-anim.begin" id="dep7"/>
+  </rect>
+  <!-- Control for Test 5: event-base value with no hyphen in the element ID -->
+  <rect x="140" width="10" height="10" fill="blue" id="btn"/>
+  <rect x="150" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="btn.click" id="dep8"/>
+  </rect>
+</svg>
+
+<script>
+  async_test(t => {
+    const trigger = document.getElementById('my-anim');
+    const dep = document.getElementById('dep1');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    trigger.beginElement();
+  }, 'Escaped hyphen in syncbase ID (begin="my\\-anim.begin")');
+
+  async_test(t => {
+    const trigger = document.getElementById('my-other-anim');
+    const dep = document.getElementById('dep2');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    trigger.beginElement();
+  }, 'Escaped hyphen in syncbase ID with positive offset (begin="my\\-other\\-anim.begin+10ms")');
+
+  async_test(t => {
+    const trigger = document.getElementById('end-anim');
+    const dep = document.getElementById('dep3');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    trigger.beginElement();
+  }, 'Escaped hyphen in syncbase ID with the end time symbol (begin="end\\-anim.end")');
+
+  async_test(t => {
+    const trigger = document.getElementById('a.b-c');
+    const dep = document.getElementById('dep4');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    trigger.beginElement();
+  }, 'Escaped dot and escaped hyphen in the same syncbase ID (begin="a\\.b\\-c.begin")');
+
+  // Event listeners for event-base values are connected once the document has loaded and the
+  // timeline has started, so wait for that before dispatching the event.
+  const loaded = new Promise(resolve => window.addEventListener('load', () => requestAnimationFrame(resolve)));
+
+  async_test(t => {
+    const dep = document.getElementById('dep6');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    loaded.then(t.step_func(() => document.getElementById('my-btn').dispatchEvent(new MouseEvent('click'))));
+  }, 'Escaped hyphen in event-base element ID (begin="my\\-btn.click")');
+
+  async_test(t => {
+    const dep = document.getElementById('dep8');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    loaded.then(t.step_func(() => document.getElementById('btn').dispatchEvent(new MouseEvent('click'))));
+  }, 'Control: event-base element ID with no hyphen (begin="btn.click")');
+
+  async_test(t => {
+    const trigger = document.getElementById('list-anim');
+    const dep = document.getElementById('dep7');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    trigger.beginElement();
+  }, 'Escaped hyphen in a semicolon-separated value list (begin="other\\-missing.begin; list\\-anim.begin")');
+</script>

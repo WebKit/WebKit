@@ -55,6 +55,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
@@ -381,14 +382,41 @@ SMILTime SVGSMILElement::parseClockValue(StringView data)
     return result;
 }
     
+static String removeBackslashEscapes(StringView string)
+{
+    if (!string.contains('\\'))
+        return string.toString();
+    StringBuilder result;
+    for (size_t i = 0; i < string.length(); ++i) {
+        if (string[i] == '\\' && i + 1 < string.length())
+            ++i;
+        result.append(string[i]);
+    }
+    return result.toString();
+}
+
 bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
 {
     auto parseString = value.trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
     
+    // Per the SMIL specification, the reverse solidus escapes the next character within Id-values and Event-symbols,
+    // so an escaped '.', '+' or '-' is an ordinary token character rather than a separator or offset sign.
+    auto findUnescaped = [](StringView string, char16_t character) -> size_t {
+        for (size_t i = 0; i < string.length(); ++i) {
+            if (string[i] == '\\') {
+                ++i;
+                continue;
+            }
+            if (string[i] == character)
+                return i;
+        }
+        return notFound;
+    };
+
     double sign = 1.;
-    size_t pos = parseString.find('+');
+    size_t pos = findUnescaped(parseString, '+');
     if (pos == notFound) {
-        pos = parseString.find('-');
+        pos = findUnescaped(parseString, '-');
         if (pos != notFound)
             sign = -1.;
     }
@@ -407,15 +435,8 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
     if (conditionString.isEmpty())
         return false;
 
-    // Find the first dot not preceded by a backslash. Per the SMIL specification,
-    // dots in element IDs can be escaped with a backslash (e.g., "my\.anim.end").
-    size_t dotPosition = 0;
-    while (dotPosition != notFound) {
-        dotPosition = conditionString.find('.', dotPosition);
-        if (dotPosition == notFound || !dotPosition || conditionString[dotPosition - 1] != '\\')
-            break;
-        ++dotPosition;
-    }
+    // Find the first dot not escaped by a backslash (e.g., "my\.anim.end").
+    size_t dotPosition = findUnescaped(conditionString, '.');
 
     StringView baseID;
     StringView nameView;
@@ -454,10 +475,8 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
         nameString = nameView.toAtomString();
     }
     
-    // Remove backslash escapes from the element ID (e.g., "my\.anim" → "my.anim").
-    auto resolvedBaseID = baseID.toString();
-    if (resolvedBaseID.contains('\\'))
-        resolvedBaseID = resolvedBaseID.impl()->replace("\\."_s, "."_s);
+    // Remove backslash escapes from the element ID (e.g., "my\.anim" → "my.anim", "my\-anim" → "my-anim").
+    auto resolvedBaseID = removeBackslashEscapes(baseID);
 
     m_conditions.append(Condition(type, beginOrEnd, WTF::move(resolvedBaseID), WTF::move(nameString), offset, repeats));
 

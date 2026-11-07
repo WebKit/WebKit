@@ -1,0 +1,9 @@
+
+PASS Escaped hyphen in syncbase ID (begin="my\-anim.begin")
+PASS Escaped hyphen in syncbase ID with positive offset (begin="my\-other\-anim.begin+10ms")
+PASS Escaped hyphen in syncbase ID with the end time symbol (begin="end\-anim.end")
+PASS Escaped dot and escaped hyphen in the same syncbase ID (begin="a\.b\-c.begin")
+PASS Escaped hyphen in event-base element ID (begin="my\-btn.click")
+PASS Control: event-base element ID with no hyphen (begin="btn.click")
+PASS Escaped hyphen in a semicolon-separated value list (begin="other\-missing.begin; list\-anim.begin")
+
