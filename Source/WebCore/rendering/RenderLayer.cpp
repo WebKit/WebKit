@@ -1777,6 +1777,12 @@ void RenderLayer::dirtyAncestorChainHasAlwaysIncludedInZOrderListsDescendants()
 
 void RenderLayer::updateTransformFromStyle(TransformationMatrix& transform, const Style::ComputedStyle& style, OptionSet<Style::TransformResolverOption> options) const
 {
+    // Not in the tree yet (only the RenderView is legitimately parentless): no reference box to resolve against.
+    if (!renderer().parent() && !renderer().isRenderView()) {
+        ASSERT(!m_anchorScrollAdjustment);
+        return;
+    }
+
     // https://drafts.csswg.org/css-anchor-position-1/#default-scroll-shift
     // > After layout has been performed for abspos, it is additionally shifted by
     // > the default scroll shift, as if affected by a transform
