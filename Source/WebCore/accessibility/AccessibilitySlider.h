@@ -30,12 +30,14 @@
 
 #include "AccessibilityMockObject.h"
 #include "AccessibilityRenderObject.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class HTMLInputElement;
 
 class AccessibilitySlider final : public AccessibilityRenderObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilitySlider);
 public:
     NODELETE static Ref<AccessibilitySlider> create(AXID, RenderObject&, AXObjectCache&);
     virtual ~AccessibilitySlider() = default;
@@ -62,6 +64,7 @@ private:
 };
 
 class AccessibilitySliderThumb final : public AccessibilityMockObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilitySliderThumb);
 public:
     static Ref<AccessibilitySliderThumb> create(AXID, AXObjectCache&);
     virtual ~AccessibilitySliderThumb() = default;

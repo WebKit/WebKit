@@ -27,12 +27,14 @@
 
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityMockObject.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class RemoteFrame;
 
 class AXRemoteFrame final : public AccessibilityMockObject {
+    WTF_MAKE_TZONE_ALLOCATED(AXRemoteFrame);
 public:
     static Ref<AXRemoteFrame> create(AXID, AXObjectCache&);
 

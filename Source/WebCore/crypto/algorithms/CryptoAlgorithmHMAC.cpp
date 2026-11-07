@@ -30,8 +30,11 @@
 #include "CryptoKeyHMAC.h"
 #include "ExceptionOr.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoAlgorithmHMAC);
 
 namespace CryptoAlgorithmHMACInternal {
 static constexpr auto ALG1 = "HS1"_s;

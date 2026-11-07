@@ -36,6 +36,7 @@
 #include "LocalNameWithNamespace.h"
 #include "RenderStyleConstants.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -47,6 +48,7 @@ class HTMLVideoElement;
 class Node;
 
 class AccessibilityNodeObject : public AccessibilityObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityNodeObject);
 public:
     NODELETE static Ref<AccessibilityNodeObject> create(AXID, Node*, AXObjectCache&);
     virtual ~AccessibilityNodeObject();

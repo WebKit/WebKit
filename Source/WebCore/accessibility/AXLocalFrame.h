@@ -28,12 +28,14 @@
 #include "AccessibilityMockObject.h"
 #include "AccessibilityRole.h"
 #include "FrameIdentifier.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class LocalFrame;
 
 class AXLocalFrame final : public AccessibilityMockObject {
+    WTF_MAKE_TZONE_ALLOCATED(AXLocalFrame);
 public:
     static Ref<AXLocalFrame> create(AXID, AXObjectCache&);
 

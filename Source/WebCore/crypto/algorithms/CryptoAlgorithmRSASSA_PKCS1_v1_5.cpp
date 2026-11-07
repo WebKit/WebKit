@@ -31,8 +31,11 @@
 #include "CryptoKeyPair.h"
 #include "CryptoKeyRSA.h"
 #include "ExceptionOr.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoAlgorithmRSASSA_PKCS1_v1_5);
 
 namespace CryptoAlgorithmRSASSA_PKCS1_v1_5Internal {
 static constexpr auto ALG1 = "RS1"_s;

@@ -33,8 +33,11 @@
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoAlgorithmECDSA);
 
 namespace CryptoAlgorithmECDSAInternal {
 static constexpr auto ALG256 = "ES256"_s;

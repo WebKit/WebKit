@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CryptoAlgorithm.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,6 +34,7 @@ class CryptoAlgorithmAesCbcCfbParams;
 class CryptoKeyAES;
 
 class CryptoAlgorithmAESCFB final : public CryptoAlgorithm {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmAESCFB);
 public:
     static constexpr ASCIILiteral s_name = "AES-CFB-8"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CFB;

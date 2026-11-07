@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CryptoAlgorithm.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,6 +34,7 @@ class CryptoAlgorithmRsaOaepParams;
 class CryptoKeyRSA;
 
 class CryptoAlgorithmRSA_OAEP final : public CryptoAlgorithm {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmRSA_OAEP);
 public:
     static constexpr ASCIILiteral s_name = "RSA-OAEP"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::RSA_OAEP;

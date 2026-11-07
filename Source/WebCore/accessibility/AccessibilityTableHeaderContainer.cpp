@@ -33,8 +33,11 @@
 #include "AXObjectCache.h"
 #include "AccessibilityObjectInlines.h"
 #include "AccessibilityNodeObject.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilityTableHeaderContainer);
 
 AccessibilityTableHeaderContainer::AccessibilityTableHeaderContainer(AXID axID, AXObjectCache& cache)
     : AccessibilityMockObject(axID, cache)

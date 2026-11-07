@@ -27,6 +27,7 @@
 
 #include "CryptoKey.h"
 #include "CryptoKeyPair.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,6 +35,7 @@ struct JsonWebKey;
 template<typename> class ExceptionOr;
 
 class CryptoKeyOKP final : public CryptoKey {
+    WTF_MAKE_TZONE_ALLOCATED(CryptoKeyOKP);
 public:
     using KeyMaterial = Vector<uint8_t>;
 
