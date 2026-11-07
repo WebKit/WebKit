@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,7 +27,7 @@
 
 namespace WebCore {
     
-class SVGPathElement;
+class SVGGeometryElement;
 
 class SVGMPathElement final : public SVGElement, public SVGURIReference {
     WTF_MAKE_TZONE_ALLOCATED(SVGMPathElement);
@@ -37,7 +37,7 @@ public:
 
     virtual ~SVGMPathElement();
 
-    RefPtr<SVGPathElement> pathElement();
+    RefPtr<SVGGeometryElement> pathElement();
 
     void targetPathChanged();
 
