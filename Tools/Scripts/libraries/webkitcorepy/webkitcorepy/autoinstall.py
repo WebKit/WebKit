@@ -23,6 +23,8 @@
 from __future__ import annotations
 
 import configparser
+import hashlib
+import http.client
 import importlib.abc
 import importlib.machinery
 import json
@@ -38,12 +40,13 @@ import tarfile
 import tempfile
 import time
 import zipfile
+import zlib
 
 from collections import defaultdict
 from contextlib import contextmanager
 from logging import NullHandler
 from types import ModuleType
-from typing import IO, Any, Iterator, Sequence
+from typing import IO, Any, Callable, Iterator, Sequence, TypeVar
 from webkitcorepy import log
 from webkitcorepy.version import Version
 from webkitcorepy.file_lock import FileLock
@@ -85,14 +88,52 @@ class SimplyPypiIndexPageParser(HTMLParser):
         return parser.packages
 
 
+T = TypeVar('T')
+
+
+class Checksum(object):
+    # Fixed-length digests, which hashlib.new() may still refuse to create, for example under FIPS.
+    ALGORITHMS = ('sha1', 'sha224', 'sha256', 'sha384', 'sha512')
+
+    def __init__(self, hexdigest: str, hasher: hashlib._Hash) -> None:
+        self.hexdigest = hexdigest
+        self._hasher = hasher
+
+    @property
+    def algorithm(self) -> str:
+        return self._hasher.name
+
+    @classmethod
+    def from_fragment(cls, fragment: str) -> Checksum | None:
+        for field in fragment.split('&'):
+            algorithm, _, value = field.partition('=')
+            if algorithm not in cls.ALGORITHMS:
+                continue
+            try:
+                hasher = hashlib.new(algorithm)
+            except ValueError:
+                continue
+            value = value.lower()
+            if len(value) == 2 * hasher.digest_size and re.fullmatch(r'[0-9a-f]+', value):
+                return cls(value, hasher)
+        return None
+
+    def new_hasher(self) -> hashlib._Hash:
+        return self._hasher.copy()
+
+
 class Package(object):
 
     class Archive(object):
-        def __init__(self, name: str, link: str, version: Version, extension: str | None = None) -> None:
+        def __init__(
+            self, name: str, link: str, version: Version, extension: str | None = None,
+            checksum: Checksum | None = None,
+        ) -> None:
             self.name = name
             self.link = link
             self.version = version
             self.extension = extension or 'tar.gz'
+            self.checksum = checksum
 
         def __repr__(self) -> str:
             return '{}-{}.{}.{}'.format(self.name, self.version.major, self.version.minor, self.version.tiny)
@@ -103,34 +144,80 @@ class Package(object):
                 raise ValueError('No AutoInstall directory, archive cannot resolve local path')
             return '{}/{}-{}.{}'.format(AutoInstall.directory, self.name, self.version, self.extension)
 
+        def _expected_size(self, response: Any) -> int | None:
+            values = [
+                part.strip()
+                for header in response.headers.get_all('Content-Length') or []
+                for part in header.split(',')
+            ]
+            if not values:
+                return None
+            if all(re.fullmatch(r'[0-9]+', value) for value in values) and len(set(int(value) for value in values)) == 1:
+                return int(values[0])
+            AutoInstall.log('Skipping size verification of {}, Content-Length is {}'.format(self.link, ', '.join(values)))
+            return None
+
+        def _verify_archive(self, path: str) -> None:
+            try:
+                if self.extension == 'tar.gz':
+                    with tarfile.open(path) as tar_file:
+                        for member in tar_file:
+                            extracted = tar_file.extractfile(member) if member.isfile() else None
+                            if extracted:
+                                while extracted.read(2 ** 16):
+                                    pass
+                elif self.extension in ['whl', 'zip']:
+                    with zipfile.ZipFile(path, 'r') as zip_file:
+                        corrupt = zip_file.testzip()
+                    if corrupt:
+                        raise zipfile.BadZipFile('{} is corrupt'.format(corrupt))
+            except (tarfile.TarError, zipfile.BadZipFile, EOFError, zlib.error, OSError) as error:
+                raise IOError('{} is not a valid {} archive: {}'.format(self.link, self.extension, error)) from error
+
+        def _receive(self, response: Any, path: str) -> None:
+            if response.code != 200:
+                raise IOError('Failed to retrieve Python module with response code {}'.format(response.code))
+
+            expected_size = self._expected_size(response)
+            hasher = self.checksum.new_hasher() if self.checksum else None
+            size = 0
+            with open(path, 'wb') as file:
+                while True:
+                    data = response.read(2 ** 13)
+                    if not data:
+                        break
+                    file.write(data)
+                    if hasher:
+                        hasher.update(data)
+                    size += len(data)
+
+            if expected_size is not None and size != expected_size:
+                raise IOError('Downloaded {} of {} bytes of {}'.format(size, expected_size, self.link))
+            if not hasher or not self.checksum:
+                self._verify_archive(path)
+                return
+            actual = hasher.hexdigest()
+            if actual == self.checksum.hexdigest:
+                return
+            # Without a Content-Length, a truncated download fails to open and is retried, while an intact wrong file fails at once.
+            if expected_size is None:
+                self._verify_archive(path)
+            raise ValueError('{} hash mismatch for {}: expected {}, received {}'.format(
+                self.checksum.algorithm, self.link, self.checksum.hexdigest, actual,
+            ))
+
         def download(self) -> None:
             AutoInstall._verify_index()
-            count = 0
-            while count <= (AutoInstall.times_to_retry or 0):
-                response = None
-                try:
-                    response = AutoInstall._request(self.link)
-                    if not response or response.code != 200:
-                        raise IOError('Failed to retrieve Python module with response code {}'.format(response.code))
-                    with open(self.path, 'wb') as file:
-                        while True:
-                            data = response.read(2 ** 13)
-                            if not data:
-                                break
-                            file.write(data)
-                    return
-                except (IOError, URLError) as e:
-                    if count == (AutoInstall.times_to_retry or 0):
-                        raise
-                    else:
-                        AutoInstall.log(str(e))
-                        AutoInstall.log('Failed to download {}, retrying'.format(self.name))
-                finally:
-                    if response:
-                        response.close()
-                    count += 1
-            # This is unreachable because the raise in the above loop should always return or raise.
-            raise RuntimeError("unreachable")
+            partial_path = '{}.partial'.format(self.path)
+            try:
+                AutoInstall.with_retries(
+                    'download {}'.format(self.name), self.link,
+                    lambda response: self._receive(response, partial_path),
+                )
+                os.replace(partial_path, self.path)
+            finally:
+                if os.path.exists(partial_path):
+                    os.remove(partial_path)
 
         def unpack(self, target: str) -> None:
             if not os.path.isfile(self.path):
@@ -197,84 +284,75 @@ class Package(object):
 
         AutoInstall._verify_index()
         path = 'simple/{}/'.format(self.pypi_name)
-        count = 0
-        while count <= (AutoInstall.times_to_retry or 0):
-            response = None
-            try:
-                response = AutoInstall._request('https://{}/{}'.format(AutoInstall.index, path))
-                if response.code != 200:
-                    raise ValueError('The package {} was not found on {}'.format(self.pypi_name, AutoInstall.index))
-
-                packages = SimplyPypiIndexPageParser.parse(response.read().decode("UTF-8"))
-                cached_tags = None
-
-                for package in reversed(packages):
-                    name = package.get('name')
-                    href = package.get('href')
-                    if not name or not href:
-                        continue
-
-                    if self.wheel or self.wheel is None and name.endswith('.whl'):
-                        match = re.search(r'.+-([^-]+-[^-]+-[^-]+).whl', name)
-                        if not match:
-                            continue
-
-                        if not cached_tags:
-                            cached_tags = set(AutoInstall.tags())
-
-                        if all([tag not in cached_tags for tag in tags.parse_tag(match.group(1))]):
-                            continue
-
-                        extension = 'whl'
-
-                    else:
-                        if name.endswith(('.tar.gz', '.tar.bz2')):
-                            extension = 'tar.gz'
-                        elif name.endswith('.zip'):
-                            extension = 'zip'
-                        else:
-                            continue
-
-                    requires = package.get('data-requires-python')
-                    if requires and not AutoInstall.version.matches(requires):
-                        continue
-
-                    version_candidate = re.search(r'\d+\.\d+(\.\d+)?', name)
-                    if not version_candidate:
-                        continue
-                    version = Version(*version_candidate.group().split('.'))
-                    if self.version and version != self.version:
-                        continue
-
-                    link = href.split('#')[0]
-                    if '://' not in link:
-                        depth = 0
-                        while link.startswith('../'):
-                            depth += 1
-                            link = link[3:]
-                        link = 'https://{}/{}{}'.format(AutoInstall.index, '/'.join(path.split('/')[depth:]), link)
-
-                    self._archives.append(self.Archive(
-                        name=self.pypi_name,
-                        link=link,
-                        version=version,
-                        extension=extension,
-                    ))
-
-                self._archives = sorted(self._archives, key=lambda archive: archive.version)
-                return self._archives
-
-            except (IOError, URLError) as e:
-                if count > (AutoInstall.times_to_retry or 0):
-                    raise
-                else:
-                    AutoInstall.log(str(e))
-                    AutoInstall.log('Failed to download {}, retrying'.format(self.name))
-            finally:
-                if response:
-                    response.close()
-                count += 1
+        self._archives = AutoInstall.with_retries(
+            'retrieve the index of {}'.format(self.pypi_name), 'https://{}/{}'.format(AutoInstall.index, path),
+            lambda response: self._parse_index(response, path),
+        )
         return self._archives
+
+    def _parse_index(self, response: Any, path: str) -> list[Package.Archive]:
+        if response.code != 200:
+            raise ValueError('The package {} was not found on {}'.format(self.pypi_name, AutoInstall.index))
+
+        packages = SimplyPypiIndexPageParser.parse(response.read().decode("UTF-8"))
+        cached_tags = None
+        archives = []
+
+        for package in reversed(packages):
+            name = package.get('name')
+            href = package.get('href')
+            if not name or not href:
+                continue
+
+            if self.wheel or self.wheel is None and name.endswith('.whl'):
+                match = re.search(r'.+-([^-]+-[^-]+-[^-]+).whl', name)
+                if not match:
+                    continue
+
+                if not cached_tags:
+                    cached_tags = set(AutoInstall.tags())
+
+                if all([tag not in cached_tags for tag in tags.parse_tag(match.group(1))]):
+                    continue
+
+                extension = 'whl'
+
+            else:
+                if name.endswith(('.tar.gz', '.tar.bz2')):
+                    extension = 'tar.gz'
+                elif name.endswith('.zip'):
+                    extension = 'zip'
+                else:
+                    continue
+
+            requires = package.get('data-requires-python')
+            if requires and not AutoInstall.version.matches(requires):
+                continue
+
+            version_candidate = re.search(r'\d+\.\d+(\.\d+)?', name)
+            if not version_candidate:
+                continue
+            version = Version(*version_candidate.group().split('.'))
+            if self.version and version != self.version:
+                continue
+
+            link, _, fragment = href.partition('#')
+            if '://' not in link:
+                depth = 0
+                while link.startswith('../'):
+                    depth += 1
+                    link = link[3:]
+                link = 'https://{}/{}{}'.format(AutoInstall.index, '/'.join(path.split('/')[depth:]), link)
+
+            archives.append(self.Archive(
+                name=self.pypi_name,
+                link=link,
+                version=version,
+                extension=extension,
+                checksum=Checksum.from_fragment(fragment),
+            ))
+
+        return sorted(archives, key=lambda archive: archive.version)
 
     def is_cached(self) -> bool:
         manifest = AutoInstall.manifest.get(self.name)
@@ -485,7 +563,6 @@ class Package(object):
 
                 self.do_post_install(temp_location)
 
-                os.remove(archive.path)
                 shutil.rmtree(temp_location, ignore_errors=True)
 
                 AutoInstall.userspace_should_own(directory)
@@ -505,6 +582,8 @@ class Package(object):
                 AutoInstall.log('Failed to install {}!'.format(archive), level=logging.CRITICAL)
                 raise
             finally:
+                if os.path.exists(archive.path):
+                    os.remove(archive.path)
                 importlib.machinery.PathFinder.invalidate_caches()
                 manifest = os.path.join(directory, AutoInstall.MANIFEST_JSON)
                 with open(manifest, 'w') as file:
@@ -594,6 +673,26 @@ class AutoInstall(importlib.abc.MetaPathFinder):
             context.load_verify_locations(cafile=cls.ca_cert_path)
 
         return urlopen(url, timeout=cls.timeout, context=context)
+
+    @classmethod
+    def with_retries(
+        cls, description: str, url: str, handle: Callable[[Any], T], request: Callable[[str], Any] | None = None,
+    ) -> T:
+        attempts = (cls.times_to_retry or 0) + 1
+        for attempt in range(attempts):
+            response = None
+            try:
+                response = (request or cls._request)(url)
+                return handle(response)
+            except (IOError, URLError, http.client.HTTPException) as error:
+                if attempt == attempts - 1:
+                    raise
+                cls.log(str(error))
+                cls.log('Failed to {}, retrying'.format(description))
+            finally:
+                if response is not None:
+                    response.close()
+        raise AssertionError('unreachable')
 
     @classmethod
     def enabled(cls) -> bool | None:
