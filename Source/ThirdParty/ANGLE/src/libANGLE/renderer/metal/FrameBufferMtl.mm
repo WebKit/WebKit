@@ -581,6 +581,12 @@ angle::Result FramebufferMtl::blit(const gl::Context *context,
     baseParams.unpackFlipX = false;
     baseParams.unpackFlipY = false;
 
+    baseParams.hasBlitCallRects  = true;
+    baseParams.blitCallSrcRect   = sourceAreaIn;
+    baseParams.blitCallDstRect   = destAreaIn;
+    baseParams.blitCallSrcFlipY  = srcFrameBuffer->getFlipY();
+    baseParams.blitCallSrcHeight = srcFramebufferDimensions.height;
+
     return blitWithDraw(context, srcFrameBuffer, blitColorBuffer, blitDepthBuffer,
                         blitStencilBuffer, filter, baseParams);
 }
