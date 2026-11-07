@@ -21,6 +21,7 @@
 #pragma once
 
 #include <WebCore/DisplayList.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/FontCascade.h>
 #include <wtf/RefPtr.h>
 
@@ -29,8 +30,20 @@ namespace WebCore {
 struct TextShapingResultAndDisplayList {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(TextShapingResultAndDisplayList);
 public:
+    struct PaintDisplayListParameters {
+        FloatSize scaleFactor;
+        FontSmoothingMode fontSmoothing { FontSmoothingMode::Auto };
+        bool shouldSubpixelQuantizeFonts { false };
+        FontCascade::CustomFontNotReadyAction customFontNotReadyAction { FontCascade::CustomFontNotReadyAction::DoNotPaintIfFontNotReady };
+
+        friend bool operator==(const PaintDisplayListParameters&, const PaintDisplayListParameters&) = default;
+    };
+
     TextShapingResult textShapingResult;
     RefPtr<const DisplayList::DisplayList> displayList;
+
+    RefPtr<const DisplayList::DisplayList> paintDisplayList;
+    PaintDisplayListParameters paintDisplayListParameters;
 };
 
 } // namespace WebCore

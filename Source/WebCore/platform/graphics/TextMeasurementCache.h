@@ -204,6 +204,19 @@ public:
             map.clear();
     }
 
+    void forEach(NOESCAPE const Invocable<void(CachedType&)> auto& function)
+    {
+        ASSERT(isMainThread());
+        for (auto& value : m_singleCharMap.values())
+            function(value);
+        for (auto& value : m_map.values())
+            function(value);
+        for (auto& map : m_outOfLineMaps) {
+            for (auto& value : map.values())
+                function(value);
+        }
+    }
+
     bool isEmpty() const { return m_singleCharMap.isEmpty() && m_map.isEmpty() && std::ranges::all_of(m_outOfLineMaps, [](auto& map) { return map.isEmpty(); }); }
 
     static constexpr unsigned inlineKeyCapacity() { return InlineKeyCapacity; }

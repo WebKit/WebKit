@@ -234,6 +234,55 @@ RefPtr<const DisplayList::DisplayList> FontCascade::displayListForTextRun(Graphi
     return displayListForGlyphBuffer(context, glyphBuffer, customFontNotReadyAction);
 }
 
+RefPtr<const DisplayList::DisplayList> FontCascade::displayListForTextRunReusingShapedText(GraphicsContext& context, const TextRun& run) const
+{
+    if (RefPtr fonts = this->fonts()) {
+        if (auto* shapedText = fonts->getOrCreateCachedShapedText(run, *this, 0, run.length(), ForTextEmphasis::No))
+            return displayListForShapedText(context, *shapedText, CustomFontNotReadyAction::DoNotPaintIfFontNotReady);
+    }
+    return displayListForTextRun(context, run);
+}
+
+static bool canRetainDisplayListForShapedText(const DisplayList::DisplayList& displayList, const GlyphBuffer& glyphBuffer)
+{
+#if USE(SKIA)
+    UNUSED_PARAM(displayList);
+    UNUSED_PARAM(glyphBuffer);
+    return false;
+#else
+    if (displayList.items().empty())
+        return false;
+
+    if (std::ranges::any_of(glyphBuffer.fonts(), [](auto& font) { return !font || font->isInterstitial() || font->platformData().isColorBitmapFont(); }))
+        return false;
+
+    return std::ranges::all_of(displayList.items(), [](auto& item) {
+        return std::holds_alternative<DisplayList::DrawGlyphs>(item);
+    });
+#endif
+}
+
+RefPtr<const DisplayList::DisplayList> FontCascade::displayListForShapedText(GraphicsContext& context, TextShapingResultAndDisplayList& shapedText, CustomFontNotReadyAction customFontNotReadyAction) const
+{
+    const auto& glyphBuffer = shapedText.textShapingResult.glyphBuffer;
+    TextShapingResultAndDisplayList::PaintDisplayListParameters parameters {
+        .scaleFactor = context.scaleFactor(),
+        .fontSmoothing = m_fontDescription.usedFontSmoothing(),
+        .shouldSubpixelQuantizeFonts = context.shouldSubpixelQuantizeFonts(),
+        .customFontNotReadyAction = customFontNotReadyAction,
+    };
+
+    if (shapedText.paintDisplayList && shapedText.paintDisplayListParameters == parameters)
+        return shapedText.paintDisplayList;
+
+    RefPtr displayList = displayListForGlyphBuffer(context, glyphBuffer, customFontNotReadyAction);
+    if (displayList && canRetainDisplayListForShapedText(*displayList, glyphBuffer)) {
+        shapedText.paintDisplayList = displayList;
+        shapedText.paintDisplayListParameters = parameters;
+    }
+    return displayList;
+}
+
 RefPtr<const DisplayList::DisplayList> FontCascade::displayListForGlyphBuffer(GraphicsContext& context, const GlyphBuffer& glyphBuffer,  CustomFontNotReadyAction customFontNotReadyAction) const
 {
     ASSERT(!context.paintingDisabled());
