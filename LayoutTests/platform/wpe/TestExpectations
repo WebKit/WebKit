@@ -1224,7 +1224,6 @@ webkit.org/b/322637 [ Debug ] imported/w3c/web-platform-tests/fullscreen/model/r
 webkit.org/b/328584 imported/w3c/web-platform-tests/fullscreen/model/remove-last-sibling.html [ Pass Failure ]
 webkit.org/b/322639 [ Debug ] imported/w3c/web-platform-tests/html/semantics/popovers/popover-remove-attribute-during-focusing-steps.html [ Pass Failure ]
 webkit.org/b/323006 [ Debug ] imported/w3c/web-platform-tests/wasm/webapi/contenttype.any.serviceworker.html [ Failure Pass ]
-webkit.org/b/323008 [ Release ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-events-and-exceptions.html [ Pass Timeout ]
 webkit.org/b/323009 [ Release ] webgl/1.0.x/conformance/textures/misc/image-decoder-to-texture.html [ Failure Pass ]
 
 webkit.org/b/323611 imported/w3c/web-platform-tests/css/css-anchor-position/position-area-overflow-icb-001.html [ ImageOnlyFailure Pass ]

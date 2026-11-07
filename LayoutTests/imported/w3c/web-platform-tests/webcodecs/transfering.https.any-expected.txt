@@ -3,10 +3,18 @@ PASS Test transfering ArrayBuffer to VideoFrame
 PASS Test transfering buffers to VideoFrame with uneven samples
 PASS Test transfering detached buffer to VideoFrame
 PASS Test transfering view of an ArrayBuffer to VideoFrame
-PASS Test transfering same array buffer twice
+PASS Test transfering same array buffer twice to VideoFrame
 PASS Test transfering ArrayBuffer to EncodedAudioChunk
 PASS Test transfering ArrayBuffer to EncodedVideoChunk
 PASS Test transfering ArrayBuffer to AudioData
 PASS Encoding from AudioData with transferred buffer
 PASS Test transfering ArrayBuffer to ImageDecoder.
+PASS Test transfering same array buffer twice to ImageDecoder
+PASS Test throwing AudioData constructor does not detach transfer buffers
+FAIL Test throwing ImageDecoder constructor does not detach transfer buffers assert_throws_js: function "() => new ImageDecoder({
+                                data: new Uint8Array(0),
+                                type: 'image/png',
+                                transfer: [unused_buffer]
+                              })" did not throw
+PASS Test throwing VideoFrame constructor does not detach transfer buffers
 

@@ -1,0 +1,5 @@
+
+FAIL MediaRecorder events and exceptions assert_throws_dom: recorder should throw() when starting with inactive stream function "function() {
+                        recorder.start();
+                      }" did not throw
+

@@ -30,6 +30,12 @@ FAIL Test AVIF image YUV 4:2:0 decoding. assert_equals: expected "I420" but got 
 FAIL Test AVIF image YUV 4:2:2 decoding. assert_equals: expected "I422" but got "BGRA"
 FAIL Test AVIF image YUV 4:4:4 decoding. assert_equals: expected "I444" but got "BGRA"
 FAIL Test WEBP image YUV 4:2:0 decoding. assert_equals: expected "I420" but got "BGRA"
+FAIL Test AVIF image HDR YUV 10-bit 4:2:0 decoding. assert_equals: expected "I420P10" but got "BGRA"
+FAIL Test AVIF image HDR YUV 10-bit 4:2:2 decoding. assert_equals: expected "I422P10" but got "BGRA"
+FAIL Test AVIF image HDR YUV 10-bit 4:4:4 decoding. assert_equals: expected "I444P10" but got "BGRA"
+FAIL Test AVIF image HDR YUV 12-bit 4:2:0 decoding. assert_equals: expected "I420P12" but got "BGRA"
+FAIL Test AVIF image HDR YUV 12-bit 4:2:2 decoding. assert_equals: expected "I422P12" but got "BGRA"
+FAIL Test AVIF image HDR YUV 12-bit 4:4:4 decoding. assert_equals: expected "I444P12" but got "BGRA"
 PASS Test invalid mime type rejects decode() requests
 PASS Test invalid mime type rejects decodeMetadata() requests
 FAIL Test out of range index returns RangeError assert_unreached: Should have rejected: undefined Reached unreachable code
@@ -74,6 +80,12 @@ FAIL Test AVIF image YUV 4:2:0 decoding. assert_equals: expected "I420" but got 
 FAIL Test AVIF image YUV 4:2:2 decoding. assert_equals: expected "I422" but got "BGRA"
 FAIL Test AVIF image YUV 4:4:4 decoding. assert_equals: expected "I444" but got "BGRA"
 FAIL Test WEBP image YUV 4:2:0 decoding. assert_equals: expected "I420" but got "BGRA"
+FAIL Test AVIF image HDR YUV 10-bit 4:2:0 decoding. assert_equals: expected "I420P10" but got "BGRA"
+FAIL Test AVIF image HDR YUV 10-bit 4:2:2 decoding. assert_equals: expected "I422P10" but got "BGRA"
+FAIL Test AVIF image HDR YUV 10-bit 4:4:4 decoding. assert_equals: expected "I444P10" but got "BGRA"
+FAIL Test AVIF image HDR YUV 12-bit 4:2:0 decoding. assert_equals: expected "I420P12" but got "BGRA"
+FAIL Test AVIF image HDR YUV 12-bit 4:2:2 decoding. assert_equals: expected "I422P12" but got "BGRA"
+FAIL Test AVIF image HDR YUV 12-bit 4:4:4 decoding. assert_equals: expected "I444P12" but got "BGRA"
 PASS Test invalid mime type rejects decode() requests
 PASS Test invalid mime type rejects decodeMetadata() requests
 FAIL Test out of range index returns RangeError assert_unreached: Should have rejected: undefined Reached unreachable code

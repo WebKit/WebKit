@@ -1,0 +1,3 @@
+
+FAIL MediaRecorder cannot record the stream using the current configuration assert_throws_dom: function "() => mediaRecorder.start()" did not throw
+

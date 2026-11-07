@@ -1,6 +1,9 @@
 You should see green/yellow gradient boxes
 
 
-
-PASS Density corrected size: canvas
+PASS resources/exif-resolution-valid-hires.jpg: 2d
+PASS resources/exif-resolution-valid-lores.jpg: 2d
+PASS resources/exif-resolution-none.jpg: webgl
+PASS resources/exif-resolution-valid-hires.jpg: webgl
+PASS resources/exif-resolution-valid-lores.jpg: webgl
 

@@ -1,0 +1,5 @@
+
+PASS MediaRecorder records from PeerConnection without sinks, {"audio":{}}
+PASS MediaRecorder records from PeerConnection without sinks, {"video":{}}
+PASS MediaRecorder records from PeerConnection without sinks, {"audio":{},"video":{}}
+

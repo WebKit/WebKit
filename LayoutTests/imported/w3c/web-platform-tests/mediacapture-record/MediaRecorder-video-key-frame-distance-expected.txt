@@ -1,0 +1,4 @@
+
+FAIL MediaRecorder interprets videoKeyFrameIntervalDuration assert_true: expected true got false
+FAIL MediaRecorder interprets videoKeyFrameIntervalCount assert_true: expected true got false
+

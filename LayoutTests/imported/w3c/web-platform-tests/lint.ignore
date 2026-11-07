@@ -9,7 +9,6 @@
 
 INDENT TABS: conformance-checkers/*
 INDENT TABS: encoding/legacy*/*
-INDENT TABS: *w3c-import.log
 
 TRAILING WHITESPACE: html/canvas/tools/current-work-canvas.xhtml
 TRAILING WHITESPACE: conformance-checkers/*
@@ -33,6 +32,7 @@ TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.mp3
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.m4a
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.mov
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.oga
+TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.ogg
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.ogv
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.webm
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.mp4
@@ -55,8 +55,14 @@ TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.sxg
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.wbn
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.avif
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.annexb
+TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.crx
+TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.xpi
+TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.tlb
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.dcb
 TRAILING WHITESPACE, INDENT TABS, CR AT EOL: *.dcz
+# MPEG-TS media segment; the .ts extension collides with TypeScript so it can't
+# be globbed, scope the binary-content checks to this file.
+TRAILING WHITESPACE, INDENT TABS, CR AT EOL: fetch/orb/**/*.ts
 
 ## .gitignore
 W3C-TEST.ORG: .gitignore
@@ -95,11 +101,13 @@ CR AT EOL: webvtt/parsing/file-parsing/tests/support/newlines.vtt
 CR AT EOL: css/css-text/ellisize-rtl-text-crash.html
 CR AT EOL: html/syntax/charset/after-head-after-1kb-crlf.html
 CR AT EOL: html/syntax/charset/after-head-in-1kb-crlf.html
+CR AT EOL: fetch/h1-parsing/resources/parsing_*.asis
 
 # Intentional use of tabs
 INDENT TABS: html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.whitespace.html
 INDENT TABS: webvtt/parsing/file-parsing/tests/support/header-tab.vtt
 INDENT TABS: webvtt/parsing/file-parsing/tests/support/whitespace-chars.vtt
+INDENT TABS: fetch/h1-parsing/resources/parsing_*.asis
 
 ## Intentional use of trailing whitespace
 TRAILING WHITESPACE: server-timing/resources/parsing/*
@@ -108,12 +116,17 @@ TRAILING WHITESPACE: webvtt/parsing/file-parsing/tests/support/*.vtt
 TRAILING WHITESPACE: xhr/resources/headers-some-are-empty.asis
 TRAILING WHITESPACE: content-security-policy/support/manifest.json
 TRAILING WHITESPACE: xml/xslt/resources/testu1LINE.xml
+TRAILING WHITESPACE: fetch/h1-parsing/resources/parsing_*.asis
 
 # Intentional use of print statements
 PRINT STATEMENT: dom/nodes/Document-createElement-namespace-tests/generate.py
 PRINT STATEMENT: encrypted-media/polyfill/make-polyfill-tests.py
 PRINT STATEMENT: resources/test/conftest.py
-PRINT STATEMENT: webdriver/tests/support/helpers.py
+PRINT STATEMENT: webdriver/tests/bidi/browser/set_download_behavior/conftest.py
+PRINT STATEMENT: webdriver/tests/bidi/browsing_context/print/*
+PRINT STATEMENT: webdriver/tests/classic/print/*
+PRINT STATEMENT: webdriver/tests/support/bidi/fixtures.py
+PRINT STATEMENT: webdriver/tests/support/classic/helpers.py
 
 # semi-legitimate use of console.*
 CONSOLE: console/*
@@ -121,11 +134,20 @@ CONSOLE: common/gc.js
 CONSOLE: resources/check-layout-th.js
 CONSOLE: resources/chromium/*
 CONSOLE: resources/testharness.js
+CONSOLE: wasm/core/js/harness/testharness.js
+CONSOLE: content-security-policy/inheritance/blob-inherits-from-meta-http-equiv-with-invalid-characters.html
 CONSOLE: service-workers/service-worker/resources/navigation-redirect-other-origin.html
 CONSOLE: service-workers/service-worker/navigation-redirect.https.html
 CONSOLE: service-workers/service-worker/resources/clients-get-other-origin.html
 CONSOLE: webrtc/tools/*
+CONSOLE: webrtc/RTCDataChannel-worker.js
 CONSOLE: webaudio/resources/audit.js:41
+
+# Intentional use of console.*
+CONSOLE: infrastructure/testdriver/bidi/subscription.html
+CONSOLE: infrastructure/testdriver/bidi/subscription.window.js
+CONSOLE: html/browsers/history/the-location-interface/cross-origin-location-stringify-crash.sub.html
+CONSOLE: html/editing/dnd/events/ua-shadow-contents-manual.html
 
 # use of console in a public library - annotation-model ensures
 # it is not actually used
@@ -148,6 +170,9 @@ SET TIMEOUT: *-manual.*
 SET TIMEOUT: annotation-model/scripts/ajv.min.js
 SET TIMEOUT: apng/animated-png-timeout.html
 SET TIMEOUT: avif/animated-avif-timeout.html
+SET TIMEOUT: jpegxl/animated-img-timeout.html
+SET TIMEOUT: clear-site-data/no-cors-fetch-iframe.https.sub.html
+SET TIMEOUT: clear-site-data/no-cors-fetch-window.https.sub.html
 SET TIMEOUT: cookies/resources/testharness-helpers.js
 SET TIMEOUT: common/reftest-wait.js
 SET TIMEOUT: compute-pressure/resources/support-iframe.html
@@ -170,6 +195,11 @@ SET TIMEOUT: custom-elements/scoped-registry/scoped-registry-define-upgrade-crit
 SET TIMEOUT: encrypted-media/polyfill/chrome-polyfill.js
 SET TIMEOUT: encrypted-media/polyfill/clearkey-polyfill.js
 SET TIMEOUT: encrypted-media/scripts/playback-temporary-events.js
+SET TIMEOUT: fedcm/support/fedcm-helper.sub.js
+SET TIMEOUT: fedcm/support/fedcm-iframe.html
+SET TIMEOUT: fedcm/support/fedcm/disconnect-iframe.html
+SET TIMEOUT: fedcm/support/login_delay.html
+SET TIMEOUT: fetch/fetch-later/resources/fetch-later-helper.js
 SET TIMEOUT: fetch/metadata/resources/helper.sub.js
 SET TIMEOUT: fetch/metadata/resources/message-opener.html
 SET TIMEOUT: fenced-frame/resources/history-length-fenced-navigations-replace-do-not-contribute-to-joint-inner.html
@@ -183,6 +213,7 @@ SET TIMEOUT: focus/support/iframe-focuses-parent-same-site-inner.html
 SET TIMEOUT: generic-sensor/resources/iframe_sensor_handler.html
 SET TIMEOUT: html/browsers/browsing-the-web/back-forward-cache/resources/inflight-fetch-helper.js
 SET TIMEOUT: html/browsers/browsing-the-web/history-traversal/*
+SET TIMEOUT: html/browsers/browsing-the-web/resources/navigates-to-blank.html
 SET TIMEOUT: html/browsers/browsing-the-web/navigating-across-documents/*
 SET TIMEOUT: html/browsers/browsing-the-web/scroll-to-fragid/*
 SET TIMEOUT: html/browsers/browsing-the-web/unloading-documents/*
@@ -202,6 +233,7 @@ SET TIMEOUT: html/canvas/element/manual/draw-element-image/onpaint-post-tree-ord
 SET TIMEOUT: html/canvas/element/manual/draw-element-image/requestPaint.tentative.html
 SET TIMEOUT: html/cross-origin-opener-policy/resources/fully-loaded.js
 SET TIMEOUT: html/editing/dnd/*
+SET TIMEOUT: html/semantics/embedded-content/media-elements/crashtests/no-blocking-loads-gc-crash.html
 SET TIMEOUT: html/semantics/embedded-content/media-elements/track/track-element/crashtests/*
 SET TIMEOUT: html/semantics/embedded-content/the-iframe-element/*
 SET TIMEOUT: html/semantics/embedded-content/the-img-element/*
@@ -218,9 +250,15 @@ SET TIMEOUT: html/webappapis/scripting/events/event-handler-processing-algorithm
 SET TIMEOUT: html/webappapis/scripting/processing-model-2/*
 SET TIMEOUT: IndexedDB/*
 SET TIMEOUT: infrastructure/*
+SET TIMEOUT: intersection-observer/animating.html
 SET TIMEOUT: intersection-observer/resources/*
 SET TIMEOUT: intersection-observer/target-in-different-window.html
+SET TIMEOUT: intersection-observer/v2/animated-opacity.html
 SET TIMEOUT: js-self-profiling/resources/profiling-script.js
+SET TIMEOUT: long-animation-frame/loaf-iframe-self.html
+SET TIMEOUT: long-animation-frame/loaf-user-callback.html
+SET TIMEOUT: long-animation-frame/resources/loaf-congested-moment-worker.js
+SET TIMEOUT: long-animation-frame/resources/utils.js
 SET TIMEOUT: measure-memory/*
 SET TIMEOUT: media-source/mediasource-util.js
 SET TIMEOUT: media-source/URL-createObjectURL-revoke.html
@@ -251,6 +289,7 @@ SET TIMEOUT: png/apng/fcTL-dispose-previous-final.html
 SET TIMEOUT: png/apng/fcTL-dispose-previous-first.html
 SET TIMEOUT: png/apng/fcTL-dispose-previous.html
 SET TIMEOUT: png/apng/fdAT-16bit.html
+SET TIMEOUT: png/apng/fDAT-inherits-cICP.html
 SET TIMEOUT: png/apng/fdAT-1bit-PLTE-tRNS.html
 SET TIMEOUT: png/apng/fdAT-1bit-PLTE.html
 SET TIMEOUT: png/apng/fdAT-2bit-PLTE-tRNS.html
@@ -268,11 +307,13 @@ SET TIMEOUT: resource-timing/resources/nested-contexts.js
 SET TIMEOUT: reporting/resources/first-csp-report.https.sub.html
 SET TIMEOUT: reporting/resources/second-csp-report.https.sub.html
 SET TIMEOUT: scheduler/tentative/yield/yield-inherit-across-promises.any.js
+SET TIMEOUT: scheduler/tentative/yield/yield-scheduling-state-cleared.any.js
 SET TIMEOUT: scheduler/tentative/yield/yield-priority-timers.any.js
 SET TIMEOUT: secure-contexts/basic-popup-and-iframe-tests.https.js
 SET TIMEOUT: service-workers/cache-storage/cache-abort.https.any.js
 SET TIMEOUT: service-workers/service-worker/activation.https.html
 SET TIMEOUT: service-workers/service-worker/fetch-frame-resource.https.html
+SET TIMEOUT: service-workers/service-worker/fetch-request-body-cancel-worker.js
 SET TIMEOUT: service-workers/service-worker/fetch-request-redirect.https.html
 SET TIMEOUT: service-workers/service-worker/fetch-waits-for-activate.https.html
 SET TIMEOUT: service-workers/service-worker/postMessage-client-worker.js
@@ -287,12 +328,21 @@ SET TIMEOUT: service-workers/service-worker/resources/opaque-response-being-prel
 SET TIMEOUT: service-workers/service-worker/resources/opaque-response-preloaded-xhr.html
 SET TIMEOUT: service-workers/service-worker/resources/performance-timeline-worker.js
 SET TIMEOUT: service-workers/service-worker/resources/resource-timing-worker.js
+SET TIMEOUT: soft-navigation-heuristics/detection/tentative/change-style-attribute-display-4.html
+SET TIMEOUT: soft-navigation-heuristics/smoke/tentative/task-attribution.html
 SET TIMEOUT: shadow-dom/Document-prototype-currentScript.html
 SET TIMEOUT: shadow-dom/scroll-to-the-fragment-in-shadow-tree.html
 SET TIMEOUT: shadow-dom/slotchange-event.html
-SET TIMEOUT: trusted-types/block-string-assignment-to-DOMWindowTimers-setTimeout-setInterval.html
-SET TIMEOUT: trusted-types/DOMWindowTimers-setTimeout-setInterval.html
-SET TIMEOUT: pending-beacon/resources/pending_beacon-helper.js
+SET TIMEOUT: subresource-integrity/integrity-policy/script.https.html
+SET TIMEOUT: subresource-integrity/integrity-policy/style.https.html
+SET TIMEOUT: trusted-types/setTimeout-setInterval-csp-tt-default-policy.html
+SET TIMEOUT: trusted-types/setTimeout-setInterval-csp-tt-no-default-policy.html
+SET TIMEOUT: trusted-types/support/block-string-assignment-to-DOMWindowTimers-setTimeout-setInterval.js
+SET TIMEOUT: trusted-types/support/DOMWindowTimers-setTimeout-setInterval.js
+SET TIMEOUT: trusted-types/support/should-sink-type-mismatch-violation-be-blocked-by-csp-002-worker-multiple-violations.js
+SET TIMEOUT: trusted-types/support/should-sink-type-mismatch-violation-be-blocked-by-csp-location.js
+SET TIMEOUT: trusted-types/support/trusted-types-reporting-check-report-sink-mismatch.js
+SET TIMEOUT: trusted-types/support/trusted-types-reporting-for-DOMWindowTimers-setTimeout-setInterval.js
 SET TIMEOUT: user-timing/*
 SET TIMEOUT: web-animations/crashtests/reparent-animating-element-002.html
 SET TIMEOUT: web-animations/timing-model/animations/*
@@ -301,6 +351,7 @@ SET TIMEOUT: webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/me
 SET TIMEOUT: webauthn/*timeout.https.html
 SET TIMEOUT: webdriver/*
 SET TIMEOUT: webmessaging/*
+SET TIMEOUT: webnn/resources/utils.js
 SET TIMEOUT: webrtc-encoded-transform/script-metadata-transform-worker.js
 SET TIMEOUT: webrtc-encoded-transform/script-transform-generateKeyFrame.js
 SET TIMEOUT: webrtc-encoded-transform/script-transform-sendKeyFrameRequest.js
@@ -310,8 +361,6 @@ SET TIMEOUT: workers/*
 SET TIMEOUT: xhr/resources/init.htm
 SET TIMEOUT: xhr/resources/xmlhttprequest-timeout.js
 SET TIMEOUT: fenced-frame/resolve-to-config-promise.https.html
-SET TIMEOUT: credential-management/support/fedcm-iframe.html
-SET TIMEOUT: credential-management/support/fedcm/disconnect-iframe.html
 
 # generate_tests implementation and sample usage
 GENERATE_TESTS: resources/test/tests/functional/generate-callback.html
@@ -394,28 +443,30 @@ SET TIMEOUT: css/css-fonts/font-display/font-display-change-ref.html
 SET TIMEOUT: css/css-fonts/font-display/font-display-feature-policy-01.tentative.html
 SET TIMEOUT: css/css-fonts/font-display/font-display-feature-policy-02.tentative.html
 SET TIMEOUT: css/css-fonts/font-display/font-display-preload.html
+SET TIMEOUT: css/css-view-transitions/no-painting-while-render-blocked.html
 SET TIMEOUT: document-policy/font-display/override-to-optional.tentative.html
-SET TIMEOUT: feature-policy/experimental-features/resources/focus-without-user-activation-iframe-tentative.html
+SET TIMEOUT: geolocation/watchposition-timeout.https.window.js
 SET TIMEOUT: permissions-policy/experimental-features/resources/focus-without-user-activation-iframe-tentative.html
 SET TIMEOUT: html/browsers/windows/auxiliary-browsing-contexts/resources/close-opener.html
-SET TIMEOUT: html/cross-origin-embedder-policy/resources/reporting-worker.js
 SET TIMEOUT: html/cross-origin-opener-policy/navigate-to-aboutblank.https.html
 SET TIMEOUT: html/cross-origin-opener-policy/navigate-top-to-aboutblank.https.html
 SET TIMEOUT: html/dom/documents/dom-tree-accessors/Document.currentScript.html
 SET TIMEOUT: html/webappapis/dynamic-markup-insertion/opening-the-input-stream/crbug-583445-regression.window.js
 SET TIMEOUT: html/webappapis/timers/*
-SET TIMEOUT: orientation-event/resources/orientation-event-helpers.js
 SET TIMEOUT: portals/history/resources/portal-harness.js
 SET TIMEOUT: requestidlecallback/callback-after-removed-frame-with-pending-timeout.html
 SET TIMEOUT: requestidlecallback/deadline-after-expired-timer.html
+SET TIMEOUT: resource-timing/tentative/initiator-url/dedicated-worker-script.html
 SET TIMEOUT: resource-timing/tentative/initiator-url/module-script-from-document.html
 SET TIMEOUT: resource-timing/tentative/initiator-url/set-timeout.html
 SET TIMEOUT: resource-timing/tentative/initiator-url/set-timeout.any.js
 SET TIMEOUT: resources/*
 SET TIMEOUT: scheduler/tentative/current-task-signal-async-abort.any.js
 SET TIMEOUT: scheduler/tentative/current-task-signal-async-priority.any.js
+SET TIMEOUT: screen-capture/tentative/getdisplaymedia-captured-surface-resolution.https.html
 SET TIMEOUT: speculation-rules/prerender/resources/activation-start.html
 SET TIMEOUT: speculation-rules/prerender/resources/prerender-response-code.html
+SET TIMEOUT: speculation-rules/prerender/resources/prerender-while-prerender-outer.html
 SET TIMEOUT: speculation-rules/prerender/resources/deferred-promise-utils.js
 SET TIMEOUT: speculation-rules/prerender/resources/session-history-harness.js
 SET TIMEOUT: speculation-rules/prerender/resources/utils.js
@@ -425,7 +476,8 @@ SET TIMEOUT: speculation-rules/prerender/resources/media-play.html
 SET TIMEOUT: html/browsers/browsing-the-web/back-forward-cache/timers.html
 SET TIMEOUT: dom/abort/crashtests/timeout-close.html
 SET TIMEOUT: xml/xslt/xslt-mutation-crash.xhtml
-SET TIMEOUT: storage-access-api/storage-access-beyond-cookies.locks.tentative.sub.https.window.js
+SET TIMEOUT: storage-access-api/storage-access-beyond-cookies.locks.sub.https.window.js
+SET TIMEOUT: pointerevents/crashtests/longpress-crash.html
 
 # setTimeout use in reftests
 SET TIMEOUT: acid/acid3/test.html
@@ -434,6 +486,7 @@ SET TIMEOUT: acid/acid3/test.html
 *: resources/webidl2/*
 *: tools/*
 *: */third_party/*
+*: third_party/*
 
 # .gitignore files in child directories
 *: cors/resources/.gitignore
@@ -484,8 +537,7 @@ CONSOLE: css/css-shapes/shape-outside/supported-shapes/support/test-utils.js
 CONSOLE: css/css-values/viewport-units-css2-001.html
 CONSOLE: css/css-writing-modes/orthogonal-parent-shrink-to-fit-001*.html
 CONSOLE: css/css-writing-modes/tools/generators/template.html
-CONSOLE: bluetooth/characteristic/readValue/characteristic-is-removed.https.window.js
-CONSOLE: bluetooth/resources/bluetooth-test.js
+CONSOLE: bluetooth/legacy/characteristic/readValue/characteristic-is-removed.https.window.js
 
 TRAILING WHITESPACE: css/css-fonts/support/fonts/gsubtest-lookup3.ufo/features.fea
 
@@ -495,10 +547,10 @@ SET TIMEOUT: css/css-transitions/events-007.html
 SET TIMEOUT: css/css-transitions/support/generalParallelTest.js
 SET TIMEOUT: css/css-transitions/support/runParallelAsyncHarness.js
 SET TIMEOUT: css/css-transitions/transitioncancel-001.html
-SET TIMEOUT: css/css-values/reference/vh_not_refreshing_on_chrome-ref.html
-SET TIMEOUT: css/css-values/reference/vh_not_refreshing_on_chrome_iframe-ref.html
-SET TIMEOUT: css/css-values/vh_not_refreshing_on_chrome.html
-SET TIMEOUT: css/css-values/support/vh_not_refreshing_on_chrome_iframe.html
+SET TIMEOUT: css/css-values/reference/vh-update-and-transition-in-subframe-ref.html
+SET TIMEOUT: css/css-values/reference/vh-update-and-transition-in-subframe-iframe-ref.html
+SET TIMEOUT: css/css-values/vh-update-and-transition-in-subframe.html
+SET TIMEOUT: css/css-values/vh-update-and-transition-in-subframe-iframe.html
 SET TIMEOUT: css/css-writing-modes/orthogonal-parent-shrink-to-fit-001.html
 SET TIMEOUT: css/css-writing-modes/orthogonal-parent-shrink-to-fit-001a.html
 SET TIMEOUT: css/css-writing-modes/orthogonal-parent-shrink-to-fit-001b.html
@@ -542,7 +594,6 @@ SET TIMEOUT: css/CSS2/tables/tables-102.xht
 SET TIMEOUT: css/mediaqueries/min-width-tables-001.html
 SET TIMEOUT: css/css-text/crashtests/rendering-rtl-bidi-override-crash.html
 SET TIMEOUT: css/css-backgrounds/color-mix-currentcolor-border-repaint-parent.html
-SET TIMEOUT: svg/painting/color-mix-currentcolor-fill-stroke-repaint.html
 SET TIMEOUT: svg/painting/currentcolor-fill-stroke-repaint.html
 SET TIMEOUT: resource-timing/resources/run-async-tasks-promise.js
 
@@ -601,6 +652,8 @@ MISSING-LINK: css/cssom-view/scrollTop-display-change.html
 
 # TODO https://github.com/web-platform-tests/wpt/issues/5770
 MISSING-LINK: css/css-highlight-api/idlharness.window.js
+MISSING-LINK: css/css-highlight-api/historical.window.js
+MISSING-LINK: css/cssom/cssstyledeclaration-csstext-setter.window.js
 MISSING-LINK: css/geometry/*.worker.js
 MISSING-LINK: css/geometry/*.any.js
 MISSING-LINK: css/filter-effects/*.any.js
@@ -608,7 +661,6 @@ MISSING-LINK: css/filter-effects/*.any.js
 # Tests that use WebKit/Blink testing APIs
 LAYOUTTESTS APIS: import-maps/data-driven/resources/test-helper-iframe.js
 LAYOUTTESTS APIS: resources/chromium/enable-hyperlink-auditing.js
-LAYOUTTESTS APIS: resources/chromium/generic_sensor_mocks.js
 LAYOUTTESTS APIS: resources/chromium/webxr-test.js
 LAYOUTTESTS APIS: webxr/resources/webxr_util.js
 
@@ -624,26 +676,26 @@ WEB-PLATFORM.TEST:web-bundle/resources/wbn/*.wbn
 WEB-PLATFORM.TEST:web-bundle/subresource-loading/*.html
 WEB-PLATFORM.TEST:web-bundle/subresource-loading/resources/*.js
 
+# The /.well-known/shared-stored/trusted-origins file uses hard-coded hosts
+WEB-PLATFORM.TEST:shared-storage/resources/trusted-origins.py
+
 # Tests that depend on resources in /gen/ in Chromium:
 # https://github.com/web-platform-tests/wpt/issues/16455
 # Please consult with ecosystem-infra@chromium.org before adding more.
 MISSING DEPENDENCY: credential-management/support/otpcredential-helper.js
-MISSING DEPENDENCY: credential-management/support/fedcm-mock.js
+MISSING DEPENDENCY: fedcm/support/fedcm-mock.js
 MISSING DEPENDENCY: resources/chromium/content-index-helpers.js
 MISSING DEPENDENCY: resources/chromium/contacts_manager_mock.js
 MISSING DEPENDENCY: resources/chromium/web-bluetooth-test.js
 MISSING DEPENDENCY: resources/chromium/webusb-test.js
 MISSING DEPENDENCY: resources/chromium/fake-serial.js
 MISSING DEPENDENCY: resources/chromium/fake-hid.js
-MISSING DEPENDENCY: resources/chromium/generic_sensor_mocks.js
 MISSING DEPENDENCY: resources/chromium/mock-battery-monitor.js
 MISSING DEPENDENCY: resources/chromium/mock-barcodedetection.js
-MISSING DEPENDENCY: resources/chromium/mock-direct-sockets.js
 MISSING DEPENDENCY: resources/chromium/mock-facedetection.js
 MISSING DEPENDENCY: resources/chromium/mock-idle-detection.js
 MISSING DEPENDENCY: resources/chromium/mock-imagecapture.js
 MISSING DEPENDENCY: resources/chromium/mock-managed-config.js
-MISSING DEPENDENCY: resources/chromium/mock-pressure-service.js
 MISSING DEPENDENCY: resources/chromium/mock-subapps.js
 MISSING DEPENDENCY: resources/chromium/mock-textdetection.js
 MISSING DEPENDENCY: resources/chromium/nfc-mock.js
@@ -655,6 +707,7 @@ AHEM SYSTEM FONT: resource-timing/font-timestamps.html
 AHEM SYSTEM FONT: resource-timing/initiator-type/style.html
 AHEM SYSTEM FONT: resource-timing/resources/iframe-reload-TAO.sub.html
 AHEM SYSTEM FONT: html/canvas/element/text/2d.text.measure.fontBoundingBox.ahem.html
+AHEM SYSTEM FONT: css/css-font-loading/fontface-fonts-loading.html
 AHEM SYSTEM FONT: css/css-font-loading/fontface-override-descriptors.html
 AHEM SYSTEM FONT: css/css-font-loading/fontface-size-adjust-descriptor.html
 AHEM SYSTEM FONT: css/css-font-loading/fontface-size-adjust-descriptor-ref.html
@@ -668,8 +721,14 @@ AHEM SYSTEM FONT: css/css-fonts/font-size-adjust-014-ref.html
 AHEM SYSTEM FONT: css/css-fonts/font-size-adjust-metrics-override.html
 AHEM SYSTEM FONT: css/css-fonts/font-size-adjust-metrics-override-ref.html
 AHEM SYSTEM FONT: css/css-fonts/line-gap-override.html
+AHEM SYSTEM FONT: css/css-fonts/matching/font-unicode-presented-as-emoji-outline.html
+AHEM SYSTEM FONT: css/css-fonts/matching/font-unicode-presented-as-emoji-outline-ref.html
 AHEM SYSTEM FONT: css/css-fonts/parsing/font-size-adjust-computed.html
 AHEM SYSTEM FONT: css/css-fonts/size-adjust-unicode-range-system-fallback.html
+AHEM SYSTEM FONT: css/css-text/zwnj-renders-invisible.html
+AHEM SYSTEM FONT: css/css-overflow/line-clamp/block-ellipsis-010.html
+AHEM SYSTEM FONT: css/css-overflow/line-clamp/reference/block-ellipsis-010-ref.html
+AHEM SYSTEM FONT: css/css-overflow/line-clamp/reference/block-ellipsis-010-alt-ref.html
 AHEM SYSTEM FONT: html/dom/render-blocking/remove-attr-unblocks-rendering.optional.html
 AHEM SYSTEM FONT: html/dom/render-blocking/remove-element-unblocks-rendering.optional.html
 
@@ -703,7 +762,6 @@ TESTHARNESS-IN-OTHER-TYPE: css/css-text/white-space/pre-line-br-with-whitespace-
 TESTHARNESS-IN-OTHER-TYPE: css/css-text/white-space/pre-with-whitespace-crash.html
 TESTHARNESS-IN-OTHER-TYPE: css/css-writing-modes/bidi-inline-fragment-crash.html
 TESTHARNESS-IN-OTHER-TYPE: dom/svg-insert-crash.html
-TESTHARNESS-IN-OTHER-TYPE: editing/run/first-letter-crossing-engine-boundary-crash.html
 TESTHARNESS-IN-OTHER-TYPE: html/canvas/element/manual/wide-gamut-canvas/imagedata-no-color-settings-crash.html
 TESTHARNESS-IN-OTHER-TYPE: html/semantics/embedded-content/the-object-element/block-object-with-ruby-crash.html
 TESTHARNESS-IN-OTHER-TYPE: html/semantics/forms/the-input-element/time-datalist-crash.html
@@ -722,9 +780,16 @@ TESTHARNESS-IN-OTHER-TYPE: svg/svg-in-svg/svg-in-svg-circular-filter-reference-c
 # Adding the testharnessreport.js script causes the test to never complete.
 MISSING-TESTHARNESSREPORT: accessibility/crashtests/computed-node-checked.html
 
-PRINT STATEMENT: webdriver/tests/bidi/browsing_context/print/*
-PRINT STATEMENT: webdriver/tests/classic/print/*
-PRINT STATEMENT: webdriver/tests/support/fixtures_bidi.py
+# Existing manual tests with references
+REFERENCE-IN-OTHER-TYPE: css/CSS2/backgrounds/background-root-012a.xht
+REFERENCE-IN-OTHER-TYPE: css/CSS2/backgrounds/background-root-013a.xht
+REFERENCE-IN-OTHER-TYPE: css/CSS2/backgrounds/background-root-014a.xht
+REFERENCE-IN-OTHER-TYPE: css/CSS2/cascade/html-precedence-004.xht
+REFERENCE-IN-OTHER-TYPE: css/css-flexbox/css-flexbox-height-animation-stretch.html
+REFERENCE-IN-OTHER-TYPE: css/css-transforms/css-transform-scale-001-manual.html
+
+# Needs control of page size
+REFERENCE-IN-OTHER-TYPE: css/css-multicol/moz-multicol3-column-balancing-break-inside-avoid-1.html
 
 DUPLICATE-BASENAME-PATH: acid/acid3/empty.html
 DUPLICATE-BASENAME-PATH: acid/acid3/empty.xml
@@ -733,16 +798,6 @@ DUPLICATE-BASENAME-PATH: dom/nodes/ParentNode-querySelector-All-content.html
 DUPLICATE-BASENAME-PATH: dom/nodes/ParentNode-querySelector-All-content.xht
 DUPLICATE-BASENAME-PATH: svg/struct/reftests/reference/green-100x100.html
 DUPLICATE-BASENAME-PATH: svg/struct/reftests/reference/green-100x100.svg
-
-# WebKit's import process materializes stub .window.html files for templated
-# (.window.js) tests so WebKit's test runner can find them. WPT lint flags the
-# pair as duplicate basenames; the stubs are required and intentional.
-DUPLICATE-BASENAME-PATH: navigation-timing/buffered-flag.window.html
-DUPLICATE-BASENAME-PATH: navigation-timing/buffered-flag.window.js
-DUPLICATE-BASENAME-PATH: navigation-timing/idlharness.window.html
-DUPLICATE-BASENAME-PATH: navigation-timing/idlharness.window.js
-DUPLICATE-BASENAME-PATH: navigation-timing/supported-navigation-type.window.html
-DUPLICATE-BASENAME-PATH: navigation-timing/supported-navigation-type.window.js
 
 SET TIMEOUT: mediacapture-insertable-streams/MediaStreamTrackProcessor-video.https.html
 
@@ -763,6 +818,7 @@ SET TIMEOUT: editing/crashtests/make-editable-div-inline-and-set-contenteditable
 SET TIMEOUT: editing/crashtests/outdent-across-svg-boundary.html
 SET TIMEOUT: editing/crashtests/textarea-will-be-blurred-by-focus-event-listener.html
 SET TIMEOUT: mathml/crashtests/mozilla/*
+SET TIMEOUT: selection/crashtests/selection-modify-line-boundary-around-empty-details.html
 PARSE-FAILED: mathml/crashtests/mozilla/289180-1.xml
 
 # Invalid HTML syntax /> on non-void elements
@@ -776,10 +832,70 @@ HTML INVALID SYNTAX: domparsing/DOMParser-parseFromString-xml-doctype.html
 HTML INVALID SYNTAX: domparsing/DOMParser-parseFromString-xml-parsererror.html
 HTML INVALID SYNTAX: domparsing/XMLSerializer-serializeToString.html
 HTML INVALID SYNTAX: html/canvas/element/manual/unclosed-canvas-4.htm
+HTML INVALID SYNTAX: html/syntax/parsing/unclosed-svg-script.html
+HTML INVALID SYNTAX: mathml/crashtests/mozilla/411603-1.html
 HTML INVALID SYNTAX: quirks/percentage-height-calculation.html
 HTML INVALID SYNTAX: trusted-types/TrustedTypePolicyFactory-getAttributeType-namespace.html
+
+# Tests that incorrectly include `testdriver.js`, which isn't supported for some
+# test types.
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemBaseHandle-IndexedDB-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemBaseHandle-getUniqueId-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemBaseHandle-isSameEntry-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemBaseHandle-postMessage-BroadcastChannel-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemBaseHandle-postMessage-Error-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemBaseHandle-postMessage-MessagePort-frames-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemBaseHandle-postMessage-MessagePort-windows-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemBaseHandle-postMessage-MessagePort-workers-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemBaseHandle-postMessage-frames-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemBaseHandle-postMessage-windows-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemBaseHandle-postMessage-workers-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemBaseHandle-remove-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemDirectoryHandle-getDirectoryHandle-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemDirectoryHandle-getFileHandle-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemDirectoryHandle-iteration-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemDirectoryHandle-move-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemDirectoryHandle-partitioned-manual.https.tentative.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemDirectoryHandle-removeEntry-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemDirectoryHandle-resolve-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemFileHandle-create-sync-access-handle-manual.https.tentative.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemFileHandle-getFile-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemFileHandle-move-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemFileHandle-partitioned-manual.https.tentative.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemWritableFileStream-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemWritableFileStream-piped-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/local_FileSystemWritableFileStream-write-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/showDirectoryPicker-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/showOpenFilePicker-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: file-system-access/showSaveFilePicker-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: mediacapture-streams/MediaStreamTrack-end-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: web-based-payment-handler/change-payment-method-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: web-based-payment-handler/change-shipping-address-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: web-based-payment-handler/change-shipping-option-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: web-based-payment-handler/payment-request-event-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: web-based-payment-handler/supports-shipping-contact-delegation-manual.https.html
+TESTDRIVER-IN-UNSUPPORTED-TYPE: speech-api/SpeechRecognition-phrases-manual.https.html
+
+# Tests automatically imported from the WebAssembly/spec repository that should be removed after getting fixed upstream.
+SET TIMEOUT: wasm/core/js/harness/testharness.js
+ASSERT_THROWS: wasm/core/js/harness/testharness.js
+GENERATE_TESTS: wasm/core/js/harness/testharness.js
+PROMISE_REJECTS: wasm/core/js/harness/testharness.js
 
 # Legitimate use of test_driver_internal
 TEST DRIVER INTERNAL: resources/testdriver.js
 
 INDENT TABS: fetch/compression-dictionary/resources/static/Makefile
+
+# WebKit-only files.
+INDENT TABS: *w3c-import.log
+TESTHARNESS-IN-OTHER-TYPE: editing/run/first-letter-crossing-engine-boundary-crash.html
+# WebKit's import process materializes stub .window.html files for templated
+# (.window.js) tests so WebKit's test runner can find them. WPT lint flags the
+# pair as duplicate basenames; the stubs are required and intentional.
+DUPLICATE-BASENAME-PATH: navigation-timing/buffered-flag.window.html
+DUPLICATE-BASENAME-PATH: navigation-timing/buffered-flag.window.js
+DUPLICATE-BASENAME-PATH: navigation-timing/idlharness.window.html
+DUPLICATE-BASENAME-PATH: navigation-timing/idlharness.window.js
+DUPLICATE-BASENAME-PATH: navigation-timing/supported-navigation-type.window.html
+DUPLICATE-BASENAME-PATH: navigation-timing/supported-navigation-type.window.js

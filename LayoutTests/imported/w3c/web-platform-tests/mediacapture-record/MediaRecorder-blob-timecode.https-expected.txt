@@ -1,3 +1,5 @@
 
-PASS MediaRecorder Blob timecode for first chunk must be 0 and monotonically increasing
+FAIL MediaRecorder Blob timecode for first chunk must be 0 and monotonically increasing for video-only assert_greater_than: last_timecode must be greater than 0 expected a number greater than 0 but got 0
+PASS MediaRecorder Blob timecode for first chunk must be 0 and monotonically increasing for audio-only
+FAIL MediaRecorder Blob timecode for first chunk must be 0 and monotonically increasing for audio/video assert_greater_than: last_timecode must be greater than 0 expected a number greater than 0 but got 0
 

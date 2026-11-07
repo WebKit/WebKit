@@ -934,7 +934,6 @@ webkit.org/b/217193 [ Release ] inspector/console/queryHolders.html [ Pass Failu
 
 webkit.org/b/217686 inspector/page/overrideSetting-ITPDebugModeEnabled.html [ Pass Failure ]
 
-webkit.org/b/217857 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Skip ]
 
 webkit.org/b/217938 http/wpt/service-workers/fetchEvent.https.html [ Pass Failure ]
 webkit.org/b/217938 http/wpt/service-workers/header-filtering.https.html [ Pass Failure ]
@@ -1812,7 +1811,28 @@ webkit.org/b/307830 [ Debug arm64 ] http/tests/site-isolation/history/add-iframe
 
 webkit.org/b/289183 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-disabled-tracks.https.html [ Pass Failure ]
 
-webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video&mimeType='' [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=audio&mimeType='' [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType='' [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=audio&mimeType=audio/webm;codecs=opus [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video&mimeType=video/webm;codecs=vp8 [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/webm;codecs=vp8,opus [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video&mimeType=video/webm;codecs=vp9 [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/webm;codecs=vp9,opus [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/mp4;codecs=avc1.64003E,mp4a.40.2 [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/mp4;codecs=avc3.64003E,mp4a.40.2 [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video&mimeType=video/mp4;codecs=vp9 [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=audio&mimeType=audio/mp4;codecs=opus [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/mp4;codecs=vp9,opus [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/mp4;codecs=av01,opus [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/mp4;codecs=av01,mp4a.40.2 [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/mp4;codecs=hvc1.1.6.L186.B0,opus [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/mp4;codecs=hev1.1.6.L186.B0,opus [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/mp4;codecs=hvc1.1.6.L186.B0,mp4a.40.2 [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/mp4;codecs=hev1.1.6.L186.B0,mp4a.40.2 [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/x-matroska;codecs=hvc1.1.6.L186.B0,opus [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/x-matroska;codecs=hev1.1.6.L186.B0,opus [ Pass Crash Failure ]
+webkit.org/b/289199 [ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html?kinds=video,audio&mimeType=video/mp4 [ Pass Crash Failure ]
 
 webkit.org/b/289211 [ Sequoia Release x86_64 ] imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenerator-with-window-tracks.https.html [ Failure ]
 

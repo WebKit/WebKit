@@ -17,6 +17,8 @@ PASS Test invalid CanvasImageSource constructed VideoFrames
 PASS Test visibleRect metadata override where source display size = visible size
 PASS Test visibleRect metadata override where source display width = 2 * visible width (anamorphic)
 PASS Test visibleRect metadata override where source display size = 2 * visible size for both width and height
+PASS Test visibleRect metadata override with fractional display size scale
+FAIL Test that a visibleRect override throwing when computed display size rounds to zero assert_throws_js: computed display height rounds to zero function "() => new VideoFrame(tinyDisplayFrame, {visibleRect: {width: 187, height: 40}})" did not throw
 PASS Test visibleRect + display size metadata override
 PASS Test display size metadata override
 PASS Test invalid buffer constructed VideoFrames
