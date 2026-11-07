@@ -176,15 +176,7 @@ static void wpeClipboardWaylandConstructed(GObject *object)
 {
     G_OBJECT_CLASS(wpe_clipboard_wayland_parent_class)->constructed(object);
 
-    auto* clipboard = WPE_CLIPBOARD(object);
-    auto* display = WPE_DISPLAY_WAYLAND(wpe_clipboard_get_display(clipboard));
-    auto* seat = wpeDisplayWaylandGetSeat(display);
-    ASSERT(seat);
-    auto* wlDataDeviceManager = wpeDisplayWaylandGetDataDeviceManager(display);
-    ASSERT(wlDataDeviceManager);
-    auto* priv = WPE_CLIPBOARD_WAYLAND(clipboard)->priv;
-    priv->wlDataDevice = wl_data_device_manager_get_data_device(wlDataDeviceManager, seat->seat());
-    wl_data_device_add_listener(priv->wlDataDevice, &wlDataDeviceListener, clipboard);
+    wpeClipboardWaylandSeatChanged(WPE_CLIPBOARD_WAYLAND(object));
 }
 
 static void wpeClipboardWaylandDispose(GObject* object)
@@ -221,8 +213,8 @@ static GBytes* wpeClipboardWaylandRead(WPEClipboard* clipboard, const char* form
 
 static void wpeClipboardWaylandChanged(WPEClipboard* clipboard, GPtrArray* formats, gboolean isLocal, WPEClipboardContent* content)
 {
-    if (isLocal) {
-        auto* priv = WPE_CLIPBOARD_WAYLAND(clipboard)->priv;
+    auto* priv = WPE_CLIPBOARD_WAYLAND(clipboard)->priv;
+    if (isLocal && priv->wlDataDevice) {
         g_clear_pointer(&priv->offer, wl_data_offer_destroy);
         g_clear_pointer(&priv->source, wl_data_source_destroy);
         priv->formats = nullptr;
@@ -239,6 +231,7 @@ static void wpeClipboardWaylandChanged(WPEClipboard* clipboard, GPtrArray* forma
         }
 
         auto* seat = wpeDisplayWaylandGetSeat(display);
+        ASSERT(seat);
         wl_data_device_set_selection(priv->wlDataDevice, priv->source, seat->keyboardSerial());
     }
 
@@ -275,4 +268,21 @@ void wpeClipboardWaylandInvalidate(WPEClipboardWayland* clipboard)
 WPEClipboard* wpe_clipboard_wayland_new(WPEDisplayWayland* display)
 {
     return WPE_CLIPBOARD(g_object_new(WPE_TYPE_CLIPBOARD_WAYLAND, "display", display, nullptr));
+}
+
+void wpeClipboardWaylandSeatChanged(WPEClipboardWayland* clipboard)
+{
+    wpeClipboardWaylandInvalidate(clipboard);
+    auto* priv = clipboard->priv;
+    priv->formats = nullptr;
+
+    auto* display = WPE_DISPLAY_WAYLAND(wpe_clipboard_get_display(WPE_CLIPBOARD(clipboard)));
+    auto* seat = wpeDisplayWaylandGetSeat(display);
+    if (!seat)
+        return;
+
+    auto* wlDataDeviceManager = wpeDisplayWaylandGetDataDeviceManager(display);
+    ASSERT(wlDataDeviceManager);
+    priv->wlDataDevice = wl_data_device_manager_get_data_device(wlDataDeviceManager, seat->seat());
+    wl_data_device_add_listener(priv->wlDataDevice, &wlDataDeviceListener, clipboard);
 }

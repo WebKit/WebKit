@@ -51,6 +51,7 @@ WaylandSeat::~WaylandSeat()
 {
     g_clear_pointer(&m_pointer.object, wl_pointer_destroy);
     g_clear_pointer(&m_keyboard.object, wl_keyboard_destroy);
+    g_clear_pointer(&m_touch.object, wl_touch_destroy);
     if (m_keyboard.repeat.source)
         g_source_destroy(m_keyboard.repeat.source.get());
     wl_seat_destroy(m_seat);

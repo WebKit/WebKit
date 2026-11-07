@@ -110,11 +110,13 @@ struct _WPEDisplayWaylandPrivate {
 #endif
     Vector<std::pair<uint32_t, uint64_t>> linuxDMABufFormats;
     std::unique_ptr<WPE::WaylandSeat> wlSeat;
+    uint32_t wlSeatName { 0 };
     std::unique_ptr<WPE::WaylandCursor> wlCursor;
     GRefPtr<WPEDRMDevice> drmDevice;
     Vector<GRefPtr<WPEScreen>, 1> screens;
     GRefPtr<WPEClipboard> clipboard;
     GRefPtr<GSource> eventSource;
+    bool isSetupDone { false };
 };
 WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(WPEDisplayWayland, wpe_display_wayland, WPE_TYPE_DISPLAY, WPEDisplay,
     wpeEnsureExtensionPointsRegistered();
@@ -264,6 +266,35 @@ static void wpeDisplayWaylandDispose(GObject* object)
     G_OBJECT_CLASS(wpe_display_wayland_parent_class)->dispose(object);
 }
 
+static void wpeDisplayWaylandSeatAdded(WPEDisplayWayland* display)
+{
+    auto* priv = display->priv;
+    ASSERT(priv->wlSeat);
+
+    if (!priv->wlCursor)
+        priv->wlCursor = makeUnique<WPE::WaylandCursor>(display);
+    if (priv->clipboard)
+        wpeClipboardWaylandSeatChanged(WPE_CLIPBOARD_WAYLAND(priv->clipboard.get()));
+
+    priv->wlSeat->setAvailableInputDevicesChangedCallback([weakDisplay = GWeakPtr { display }](WPEAvailableInputDevices devices) {
+        if (!weakDisplay)
+            return;
+
+        wpe_display_set_available_input_devices(WPE_DISPLAY(weakDisplay.get()), devices);
+    });
+    priv->wlSeat->startListening();
+}
+
+static void wpeDisplayWaylandSeatRemoved(WPEDisplayWayland* display)
+{
+    auto* priv = display->priv;
+    priv->wlSeat = nullptr;
+    priv->wlSeatName = 0;
+    if (priv->clipboard)
+        wpeClipboardWaylandSeatChanged(WPE_CLIPBOARD_WAYLAND(priv->clipboard.get()));
+    wpe_display_set_available_input_devices(WPE_DISPLAY(display), WPE_AVAILABLE_INPUT_DEVICE_NONE);
+}
+
 const struct wl_registry_listener registryListener = {
     // global
     [](void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version)
@@ -278,9 +309,15 @@ const struct wl_registry_listener registryListener = {
         else if (interfaceName == "xdg_wm_base"_s)
             priv->xdgWMBase = static_cast<struct xdg_wm_base*>(wl_registry_bind(registry, name, &xdg_wm_base_interface, 1));
         // FIXME: support zxdg_shell_v6?
-        else if (interfaceName == "wl_seat"_s)
+        else if (interfaceName == "wl_seat"_s) {
+            if (priv->wlSeat)
+                return;
+
             priv->wlSeat = makeUnique<WPE::WaylandSeat>(static_cast<struct wl_seat*>(wl_registry_bind(registry, name, &wl_seat_interface, std::min<uint32_t>(version, 8))));
-        else if (interfaceName == "wl_output"_s) {
+            priv->wlSeatName = name;
+            if (priv->isSetupDone)
+                wpeDisplayWaylandSeatAdded(display);
+        } else if (interfaceName == "wl_output"_s) {
             GRefPtr<WPEScreen> screen = adoptGRef(wpeScreenWaylandCreate(name, static_cast<struct wl_output*>(wl_registry_bind(registry, name, &wl_output_interface, std::min<uint32_t>(version, 2)))));
             auto* screenPtr = screen.get();
             priv->screens.append(WTF::move(screen));
@@ -316,6 +353,11 @@ const struct wl_registry_listener registryListener = {
     {
         auto* display = WPE_DISPLAY_WAYLAND(data);
         auto* priv = display->priv;
+        if (priv->wlSeat && priv->wlSeatName == name) {
+            wpeDisplayWaylandSeatRemoved(display);
+            return;
+        }
+
         auto index = priv->screens.findIf([name](const auto& screen) {
             return wpe_screen_get_id(screen.get()) == name;
         });
@@ -446,19 +488,11 @@ static gboolean wpeDisplayWaylandSetup(WPEDisplayWayland* display, GError** erro
 
     if (priv->xdgWMBase)
         xdg_wm_base_add_listener(priv->xdgWMBase, &xdgWMBaseListener, nullptr);
-    if (priv->wlSeat) {
-        priv->wlCursor = makeUnique<WPE::WaylandCursor>(display);
-        if (priv->wlDataDeviceManager)
-            priv->clipboard = adoptGRef(wpe_clipboard_wayland_new(display));
-
-        priv->wlSeat->setAvailableInputDevicesChangedCallback([weakDisplay = GWeakPtr { display }](WPEAvailableInputDevices devices) {
-            if (!weakDisplay)
-                return;
-
-            wpe_display_set_available_input_devices(WPE_DISPLAY(weakDisplay.get()), devices);
-        });
-        priv->wlSeat->startListening();
-    }
+    if (priv->wlDataDeviceManager)
+        priv->clipboard = adoptGRef(wpe_clipboard_wayland_new(display));
+    if (priv->wlSeat)
+        wpeDisplayWaylandSeatAdded(display);
+    priv->isSetupDone = true;
 
     if (priv->textInputManagerV3) {
         // Using this interface needs a valid seat. Do not keep around the object
