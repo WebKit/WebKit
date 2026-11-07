@@ -382,6 +382,7 @@ private:
         bool resize(const WebCore::IntSize&);
         bool handleBufferFormatChangeIfNeeded();
         const WebCore::IntSize& size() const LIFETIME_BOUND { return m_size; }
+        bool isEmpty() const { return m_freeTargets.isEmpty() && m_lockedTargets.isEmpty(); }
         RenderTarget* nextTarget();
         void releaseTarget(RendererBufferIdentifier, UnixFileDescriptor&& releaseFence);
         void reset();
