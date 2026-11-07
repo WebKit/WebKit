@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ MediaControlsMacInlineSizeSpecsEnabled=true ] -->
+<script src="../../../resources/js-test.js"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 600px; height: 300px;" controls autoplay muted></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that the hidden volume slider container is offset by the inside margin plus 2px.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+function volumeSliderContainer()
+{
+    return shadowRoot.querySelector(".media-controls.mac.inline:not(.audio):not(.show-controls) .volume-slider-container");
+}
+
+media.addEventListener("play", () => {
+    // Pause so the controls stay visible and the volume slider container is laid out.
+    media.pause();
+    shouldBecomeEqual("!!volumeSliderContainer()", "true", () => {
+        // --inline-controls-inside-margin is 6px, so the expected offset is 8px.
+        shouldBeEqualToString("getComputedStyle(volumeSliderContainer()).transform", "matrix(1, 0, 0, 1, 0, 8)");
+        finishJSTest();
+    });
+}, { once: true });
+
+</script>
+</body>
