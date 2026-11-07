@@ -2540,9 +2540,8 @@
 // Can't handle the resize of the texture
 389145696 WGPU : MipmapTestES3.ResizeBaseMipTo1x1ThenDelete/* = SKIP
 // Can't glReadPixels from a cube map face correctly.
-// 383356846 ubyte index formats are not fully supported yet.
-383356846 WGPU : LineLoopTest.*UShort* = SKIP
-383356846 WGPU : LineLoopTest.*BufferBlend* = SKIP
+// 383356846 Line loops with index buffers are not fully supported yet.
+383356846 WGPU : LineLoopTest.LineLoopUShortIndexBuffer* = SKIP
 // The WebGPU backend does not support depth ranges with near > far yet.
 0 WGPU : ViewportTest.ReversedDepthRangeAfterViewportAndFramebufferChanges/* = SKIP
 
