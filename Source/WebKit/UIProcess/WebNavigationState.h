@@ -27,6 +27,7 @@
 
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
@@ -67,6 +68,7 @@ public:
     bool hasNavigation(WebCore::NavigationIdentifier navigationID) const { return m_navigations.contains(navigationID); }
     API::Navigation* navigation(WebCore::NavigationIdentifier);
     RefPtr<API::Navigation> takeNavigation(WebCore::NavigationIdentifier);
+    RefPtr<API::Navigation> findNavigation(NOESCAPE const Function<bool(API::Navigation&)>&) const;
     void didDestroyNavigation(WebCore::ProcessIdentifier, WebCore::NavigationIdentifier);
     void clearAllNavigations();
 

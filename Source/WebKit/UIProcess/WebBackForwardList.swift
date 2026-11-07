@@ -1318,9 +1318,13 @@ final class WebBackForwardList {
     func backForwardGoToItem(connection: IPC.Connection, itemID: WebCore.BackForwardItemIdentifier) throws(InvalidMessage) {
         // On process swap, we tell the previous process to ignore the load, which causes it to restore its current back forward item to its previous
         // value. Since the load is really going on in a new provisional process, we want to ignore such requests from the committed process.
-        // Any real new load in the committed process would have cleared m_provisionalPage.
-        if let webPageProxy = page.get(), webPageProxy.hasProvisionalPage() {
-            return
+        // The first message naming the target of a main frame traversal the UI process dispatched to the sender is
+        // that traversal's answer, not such a restore, so accept it even with a provisional page.
+        if let webPageProxy = page.get() {
+            let answersDispatchedTraversal = webPageProxy.takeCursorMoveForDispatchedTraversal(connection, itemID)
+            if webPageProxy.hasProvisionalPage() && !answersDispatchedTraversal {
+                return
+            }
         }
 
         try goToItemInternal(itemID: itemID)

@@ -3422,6 +3422,24 @@ int32_t WebPageProxy::inFlightTraversalDirection() const
     return m_sessionHistoryTraversalQueue->inFlightDirection();
 }
 
+bool WebPageProxy::takeCursorMoveForDispatchedTraversal(const IPC::Connection& connection, WebCore::BackForwardItemIdentifier itemID)
+{
+    auto processID = WebProcessProxy::fromConnection(connection)->coreProcessIdentifier();
+    // A navigation lives as long as the document it loads, so it's the flag, not its lifetime, that stops its target
+    // from matching a later cursor restore to the same item.
+    RefPtr navigation = m_navigationState->findNavigation([&](API::Navigation& candidate) {
+        RefPtr targetFrameItem = candidate.targetFrameItem();
+        RefPtr targetItem = candidate.targetItem();
+        return targetFrameItem && !targetFrameItem->parent() && targetItem && targetItem->identifier() == itemID
+            && candidate.backForwardTraversalWasDispatched() && !candidate.backForwardCursorMoveDidArrive()
+            && candidate.processID() == processID;
+    });
+    if (!navigation)
+        return false;
+    navigation->setBackForwardCursorMoveDidArrive();
+    return true;
+}
+
 bool WebPageProxy::shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem& item)
 {
     RefPtr protectedPageClient { pageClient() };

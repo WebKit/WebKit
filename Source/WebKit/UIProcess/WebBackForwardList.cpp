@@ -909,9 +909,11 @@ void WebBackForwardList::backForwardGoToItem(IPC::Connection& connection, BackFo
 {
     // On process swap, we tell the previous process to ignore the load, which causes it to restore its current back forward item to its previous
     // value. Since the load is really going on in a new provisional process, we want to ignore such requests from the committed process.
-    // Any real new load in the committed process would have cleared m_provisionalPage.
+    // The first message naming the target of a main frame traversal the UI process dispatched to the sender is that
+    // traversal's answer, not such a restore, so accept it even with a provisional page.
     if (RefPtr webPageProxy = m_page.get()) {
-        if (webPageProxy->hasProvisionalPage())
+        bool answersDispatchedTraversal = webPageProxy->takeCursorMoveForDispatchedTraversal(connection, itemID);
+        if (webPageProxy->hasProvisionalPage() && !answersDispatchedTraversal)
             return;
     }
 

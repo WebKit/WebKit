@@ -1092,6 +1092,10 @@ public:
     void enqueueHistoryTraversalToItem(WebCore::BackForwardFrameItemIdentifier, CompletionHandler<void(bool)>&&);
     int32_t inFlightTraversalDirection() const;
 
+    // Whether a cursor move to itemID from the connection's process answers a main frame traversal that
+    // goToBackForwardItem() dispatched to that process, and is the first to; marks the traversal answered if so.
+    bool takeCursorMoveForDispatchedTraversal(const IPC::Connection&, WebCore::BackForwardItemIdentifier);
+
     bool shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem&);
 
     NODELETE bool willHandleHorizontalScrollEvents() const;

@@ -196,6 +196,11 @@ public:
     void setBackForwardTraversalWasDispatched(bool value) { m_backForwardTraversalWasDispatched = value; }
     bool backForwardTraversalWasDispatched() const { return m_backForwardTraversalWasDispatched; }
 
+    // True once the process a main frame traversal was dispatched to has moved the back/forward cursor to its
+    // target item, which it does once, as the traversal starts.
+    void setBackForwardCursorMoveDidArrive() { m_backForwardCursorMoveDidArrive = true; }
+    bool backForwardCursorMoveDidArrive() const { return m_backForwardCursorMoveDidArrive; }
+
     void setBackForwardTraversalDidCommitInAnyFrame() { m_backForwardTraversalDidCommitInAnyFrame = true; }
     bool backForwardTraversalDidCommitInAnyFrame() const { return m_backForwardTraversalDidCommitInAnyFrame; }
 
@@ -274,6 +279,7 @@ private:
     bool m_userContentExtensionsEnabled : 1 { true };
     bool m_isLoadedWithNavigationShared : 1 { false };
     bool m_backForwardTraversalWasDispatched : 1 { false };
+    bool m_backForwardCursorMoveDidArrive : 1 { false };
     bool m_backForwardTraversalDidCommitInAnyFrame : 1 { false };
     bool m_requestIsFromClientInput : 1 { false };
     bool m_isFromLoadData : 1 { false };

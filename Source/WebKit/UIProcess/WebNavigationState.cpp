@@ -103,6 +103,15 @@ RefPtr<API::Navigation> WebNavigationState::takeNavigation(WebCore::NavigationId
     return navigation;
 }
 
+RefPtr<API::Navigation> WebNavigationState::findNavigation(NOESCAPE const Function<bool(API::Navigation&)>& predicate) const
+{
+    for (Ref navigation : m_navigations.values()) {
+        if (predicate(navigation))
+            return navigation;
+    }
+    return nullptr;
+}
+
 void WebNavigationState::didDestroyNavigation(WebCore::ProcessIdentifier processID, WebCore::NavigationIdentifier navigationID)
 {
     auto it = m_navigations.find(navigationID);
