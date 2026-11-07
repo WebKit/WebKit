@@ -76,6 +76,12 @@
 #define Modelelement_feature_status Testable
 #endif
 
+#if defined(ENABLE_UNIFIED_MODEL_RENDERING) && ENABLE_UNIFIED_MODEL_RENDERING
+#define Unifiedmodelrendering_feature_status Preview
+#else
+#define Unifiedmodelrendering_feature_status Unstable
+#endif
+
 namespace WebKit {
 
 #if HAVE(LIQUID_GLASS)
