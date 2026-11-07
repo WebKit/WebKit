@@ -222,7 +222,8 @@ void* LocalAllocator::tryAllocateWithoutCollecting(size_t cellSize)
             // A block must own no WeakBlock before it changes cell size and owner: a survivor would
             // go on reading mark bits for cells that no longer exist at those addresses. Sweeping an
             // empty block leaves it that way, since every handle in it is reaped dead and finalized.
-            RELEASE_ASSERT(!block->weakSet().head());
+            // Only the mutator adds blocks to a WeakSet, so one with none can't change under this read.
+            RELEASE_ASSERT([&]() WTF_IGNORES_THREAD_SAFETY_ANALYSIS { return !block->weakSet().head(); }());
             ASSERT(!block->weakSet().isOnList());
 
             block->removeFromDirectory();

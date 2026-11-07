@@ -186,6 +186,28 @@ struct TrackedHandles {
     const Vector<TrackedHandle>* handles;
 };
 
+static HashSet<WeakBlock*> attachedBlocks(WeakSet& weakSet)
+{
+    HashSet<WeakBlock*> blocks;
+    Locker locker { weakSet.weakBlockLock() };
+    weakSet.forEachBlock([&](WeakBlock& block) {
+        EXPECT_TRUE(blocks.add(&block).isNewEntry);
+    });
+    return blocks;
+}
+
+static bool hasLiveHandles(WeakBlock& block)
+{
+    Locker locker { block.weakBlockLock() };
+    return block.hasLiveHandles();
+}
+
+static bool hasOnlyFinalizedHandles(WeakBlock& block)
+{
+    Locker locker { block.weakBlockLock() };
+    return block.hasOnlyFinalizedHandles();
+}
+
 class JavaScriptCore_WeakSet : public testing::Test {
 protected:
     void SetUp() final
@@ -233,7 +255,7 @@ protected:
             return population.cells.size();
         });
         for (auto& population : populations)
-            EXPECT_FALSE(population.weakSet->head());
+            EXPECT_TRUE(attachedBlocks(*population.weakSet).isEmpty());
         return populations;
     }
 
@@ -243,15 +265,6 @@ private:
     Vector<Strong<JSC::JSString>> m_roots;
     std::unique_ptr<FinalizeLedger> m_ledger;
 };
-
-static HashSet<WeakBlock*> attachedBlocks(WeakSet& weakSet)
-{
-    HashSet<WeakBlock*> blocks;
-    weakSet.forEachBlock([&](WeakBlock& block) {
-        EXPECT_TRUE(blocks.add(&block).isNewEntry);
-    });
-    return blocks;
-}
 
 static Vector<WeakImpl*> allocateHandles(JSCell* cell, size_t count, WeakHandleOwner* owner = nullptr, FinalizeLedger* ledger = nullptr)
 {
@@ -314,9 +327,8 @@ static void expectQuiescentConsistency(JSC::Heap& heap, const FinalizeLedger& le
     for (auto& list : lists) {
         if (!walkedWeakSets.add(list.weakSet).isNewEntry)
             continue;
-        list.weakSet->forEachBlock([&](WeakBlock& block) {
-            EXPECT_TRUE(attachedTo.add(&block, list.weakSet).isNewEntry) << "a block is attached twice";
-        });
+        for (WeakBlock* block : attachedBlocks(*list.weakSet))
+            EXPECT_TRUE(attachedTo.add(block, list.weakSet).isNewEntry) << "a block is attached twice";
     }
 
     unsigned wrongStates = 0;
@@ -354,7 +366,7 @@ static void expectQuiescentConsistency(JSC::Heap& heap, const FinalizeLedger& le
         if (iterator == attachedTo.end()) {
             ++detachedBlockCount;
             EXPECT_EQ(entry.value.live, 0u) << "a block holding live handles is not attached";
-            EXPECT_TRUE(block->hasOnlyFinalizedHandles());
+            EXPECT_TRUE(hasOnlyFinalizedHandles(*block));
             continue;
         }
         EXPECT_EQ(iterator->value, blockUsers.get(block)) << "a block is attached to a WeakSet other than the one its handles belong to";
@@ -365,8 +377,8 @@ static void expectQuiescentConsistency(JSC::Heap& heap, const FinalizeLedger& le
         WeakBlock* block = entry.key;
         BlockTally tally = tallies.get(block);
         EXPECT_EQ(block->isEmpty(), !tally.allocated);
-        EXPECT_EQ(block->hasLiveHandles(), !!tally.live);
-        EXPECT_EQ(block->hasOnlyFinalizedHandles(), tally.allocated && tally.finalized == tally.allocated);
+        EXPECT_EQ(hasLiveHandles(*block), !!tally.live);
+        EXPECT_EQ(hasOnlyFinalizedHandles(*block), tally.allocated && tally.finalized == tally.allocated);
         if (!tally.live)
             ++idleBlocks.add(entry.value, 0).iterator->value;
     }
@@ -377,6 +389,8 @@ static void expectQuiescentConsistency(JSC::Heap& heap, const FinalizeLedger& le
     EXPECT_LE(attachedTo.size() + detachedBlockCount, heap.weakBlockCount());
 }
 
+// The threads these tests start call clearConcurrently() but aren't GC aware threads. The tests hold
+// DeferGC while they run, so the world can't stop under them, which is what a GC aware thread guarantees.
 class SweeperThread {
     WTF_MAKE_NONCOPYABLE(SweeperThread);
 public:
@@ -473,8 +487,8 @@ TEST_F(JavaScriptCore_WeakSet, AllocateAndClearAcrossBlocks)
     EXPECT_FALSE(weakSet.isEmpty());
     for (WeakBlock* block : handleBlocks) {
         EXPECT_FALSE(block->isEmpty());
-        EXPECT_TRUE(block->hasLiveHandles());
-        EXPECT_FALSE(block->hasOnlyFinalizedHandles());
+        EXPECT_TRUE(hasLiveHandles(*block));
+        EXPECT_FALSE(hasOnlyFinalizedHandles(*block));
     }
 
     deallocateHandles(handles);
@@ -537,6 +551,25 @@ TEST_F(JavaScriptCore_WeakSet, WeakClearsOnDestruction)
         weakSet.sweep();
         EXPECT_EQ(weak.unsafeImpl()->state(), WeakImpl::Finalized);
     }
+    EXPECT_TRUE(weakSet.isEmpty());
+}
+
+TEST_F(JavaScriptCore_WeakSet, WeakClearConcurrently)
+{
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    WeakSet& weakSet = *populations[0].weakSet;
+    auto* string = JSC::asString(populations[0].cells[0]);
+
+    Weak<JSC::JSString> weak(string);
+    WeakImpl* impl = weak.unsafeImpl();
+    weak.clearConcurrently();
+    EXPECT_FALSE(weak.unsafeImpl());
+    EXPECT_EQ(impl->state(), WeakImpl::Deallocated);
+    weak.clearConcurrently();
+    EXPECT_FALSE(weak.unsafeImpl());
+
+    weakSet.sweep();
     EXPECT_TRUE(weakSet.isEmpty());
 }
 
@@ -661,6 +694,39 @@ TEST_F(JavaScriptCore_WeakSet, ClearingDeadHandleSkipsItsFinalizer)
     ledger.expectNoViolations();
 }
 
+TEST_F(JavaScriptCore_WeakSet, ClearConcurrentlyDeadHandleSkipsItsFinalizer)
+{
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    WeakSet& weakSet = *populations[0].weakSet;
+    JSCell* cell = populations[0].cells[0];
+    FinalizeLedger& ledger = makeLedger(2 * slotsPerBlock);
+
+    Vector<void*> contexts;
+    Vector<WeakImpl*> handles(2 * slotsPerBlock, [&](size_t) {
+        void* context = ledger.add(cell);
+        contexts.append(context);
+        return WeakSet::allocate(cell, &ledger, context);
+    });
+
+    weakSet.reap();
+    ledger.didReap();
+    for (size_t i = 0; i < handles.size(); i += 2)
+        handles[i]->clearConcurrently();
+
+    weakSet.sweep();
+    for (size_t i = 0; i < handles.size(); ++i) {
+        bool wasCleared = !(i % 2);
+        EXPECT_EQ(ledger.finalizeCount(contexts[i]), wasCleared ? 0u : 1u);
+        if (!wasCleared) {
+            EXPECT_EQ(handles[i]->state(), WeakImpl::Finalized);
+            WeakSet::deallocate(handles[i]);
+        }
+    }
+    EXPECT_TRUE(weakSet.isEmpty());
+    ledger.expectNoViolations();
+}
+
 TEST_F(JavaScriptCore_WeakSet, HandlesWithoutOwnerAreFinalized)
 {
     DeferGC deferGC(vm());
@@ -722,7 +788,7 @@ TEST_F(JavaScriptCore_WeakSet, OnlyFinalizedBlockIsDetached)
     weakSet.reap();
     weakSet.sweep();
     EXPECT_FALSE(attachedBlocks(weakSet).contains(first));
-    EXPECT_TRUE(first->hasOnlyFinalizedHandles());
+    EXPECT_TRUE(hasOnlyFinalizedHandles(*first));
     EXPECT_FALSE(first->isEmpty());
     EXPECT_EQ(heap().weakBlockCount(), blockCount);
     for (WeakImpl* handle : handles)
@@ -866,6 +932,431 @@ TEST_F(JavaScriptCore_WeakSet, OffThreadSweep)
     other.weakSet->sweep();
     EXPECT_TRUE(swept.weakSet->isEmpty());
     EXPECT_TRUE(other.weakSet->isEmpty());
+    ledger.expectNoViolations();
+}
+
+TEST_F(JavaScriptCore_WeakSet, ClearConcurrentlyReleasesEmptiedBlock)
+{
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    WeakSet& weakSet = *populations[0].weakSet;
+    JSCell* cell = populations[0].cells[0];
+
+    Vector<WeakImpl*> handles = allocateHandles(cell, 2 * slotsPerBlock + 1);
+    WeakBlock* first = WeakBlock::blockFor(handles[0]);
+    EXPECT_EQ(WeakBlock::blockFor(handles[slotsPerBlock - 1]), first);
+    unsigned blockCount = heap().weakBlockCount();
+
+    for (size_t i = 0; i < slotsPerBlock; ++i)
+        handles[i]->clearConcurrently();
+    EXPECT_FALSE(attachedBlocks(weakSet).contains(first));
+    EXPECT_EQ(heap().weakBlockCount(), blockCount);
+
+    deallocateHandles(Vector<WeakImpl*> { handles.span().subspan(slotsPerBlock) });
+}
+
+TEST_F(JavaScriptCore_WeakSet, ClearConcurrentlyLeavesEmptiedWeakSetForSweep)
+{
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    WeakSet& weakSet = *populations[0].weakSet;
+    JSCell* cell = populations[0].cells[0];
+
+    Vector<WeakImpl*> handles = allocateHandles(cell, slotsPerBlock + 1);
+    weakSet.shrink();
+    for (WeakImpl* handle : handles)
+        handle->clearConcurrently();
+    EXPECT_TRUE(attachedBlocks(weakSet).isEmpty());
+    EXPECT_TRUE(weakSet.isOnList());
+
+    weakSet.sweep();
+    EXPECT_FALSE(weakSet.isOnList());
+}
+
+TEST_F(JavaScriptCore_WeakSet, ClearConcurrentlyKeepsEmptiedCurrentBlock)
+{
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    WeakSet& weakSet = *populations[0].weakSet;
+    JSCell* cell = populations[0].cells[0];
+
+    Vector<WeakImpl*> handles = allocateHandles(cell, slotsPerBlock + 1);
+    WeakBlock* current = WeakBlock::blockFor(handles.last());
+    EXPECT_NE(current, WeakBlock::blockFor(handles[0]));
+
+    handles.last()->clearConcurrently();
+    EXPECT_TRUE(current->isEmpty());
+    EXPECT_TRUE(attachedBlocks(weakSet).contains(current));
+
+    weakSet.releaseBlocks();
+    EXPECT_FALSE(attachedBlocks(weakSet).contains(current));
+
+    handles.removeLast();
+    deallocateHandles(handles);
+}
+
+TEST_F(JavaScriptCore_WeakSet, ClearConcurrentlyReleasesEmptiedDetachedBlock)
+{
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    ASSERT_GE(populations.size(), 2u);
+    WeakSet& weakSet = *populations[0].weakSet;
+    JSCell* cell = populations[0].cells[0];
+
+    Vector<WeakImpl*> handles = allocateHandles(cell, slotsPerBlock + 1);
+    WeakBlock* first = WeakBlock::blockFor(handles[0]);
+    weakSet.reap();
+    weakSet.sweep();
+    EXPECT_FALSE(attachedBlocks(weakSet).contains(first));
+    EXPECT_TRUE(hasOnlyFinalizedHandles(*first));
+    unsigned blockCount = heap().weakBlockCount();
+
+    for (size_t i = 0; i < slotsPerBlock; ++i)
+        handles[i]->clearConcurrently();
+    EXPECT_EQ(heap().weakBlockCount(), blockCount);
+
+    // The pool hands out the block it took back most recently.
+    WeakImpl* other = WeakSet::allocate(populations[1].cells[0]);
+    EXPECT_EQ(WeakBlock::blockFor(other), first);
+    EXPECT_TRUE(attachedBlocks(*populations[1].weakSet).contains(first));
+
+    WeakSet::deallocate(other);
+    WeakSet::deallocate(handles.last());
+    weakSet.sweep();
+    populations[1].weakSet->sweep();
+    EXPECT_TRUE(weakSet.isEmpty());
+    EXPECT_TRUE(populations[1].weakSet->isEmpty());
+}
+
+TEST_F(JavaScriptCore_WeakSet, MutatorTrimsPoolFilledConcurrently)
+{
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    WeakSet& weakSet = *populations[0].weakSet;
+    JSCell* cell = populations[0].cells[0];
+
+    constexpr size_t maxPooledWeakBlocksEver = 1024;
+    constexpr size_t blockCount = maxPooledWeakBlocksEver + 76;
+    constexpr size_t concurrentlyClearedCount = (blockCount - 1) * slotsPerBlock;
+    Vector<WeakImpl*> handles = allocateHandles(cell, blockCount * slotsPerBlock);
+    unsigned weakBlockCount = heap().weakBlockCount();
+
+    for (size_t i = 0; i < concurrentlyClearedCount; ++i)
+        handles[i]->clearConcurrently();
+    EXPECT_EQ(heap().weakBlockCount(), weakBlockCount);
+
+    deallocateHandles(Vector<WeakImpl*> { handles.span().subspan(concurrentlyClearedCount) });
+    weakSet.releaseBlocks();
+    EXPECT_GE(weakBlockCount - heap().weakBlockCount(), blockCount - maxPooledWeakBlocksEver);
+    EXPECT_TRUE(weakSet.isEmpty());
+}
+
+TEST_F(JavaScriptCore_WeakSet, ClearConcurrentlyLetsBlockDetachWithoutReap)
+{
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    WeakSet& weakSet = *populations[0].weakSet;
+    JSCell* cell = populations[0].cells[0];
+
+    WeakImpl* finalized = WeakSet::allocate(cell);
+    WeakBlock* block = WeakBlock::blockFor(finalized);
+    weakSet.reap();
+    WeakImpl* live = WeakSet::allocate(cell);
+    EXPECT_EQ(WeakBlock::blockFor(live), block);
+    weakSet.sweep();
+    EXPECT_EQ(finalized->state(), WeakImpl::Finalized);
+    EXPECT_TRUE(attachedBlocks(weakSet).contains(block));
+
+    live->clearConcurrently();
+    EXPECT_FALSE(hasLiveHandles(*block));
+    weakSet.sweep();
+    EXPECT_FALSE(attachedBlocks(weakSet).contains(block));
+    EXPECT_TRUE(hasOnlyFinalizedHandles(*block));
+
+    WeakSet::deallocate(finalized);
+    weakSet.sweep();
+    EXPECT_TRUE(weakSet.isEmpty());
+}
+
+TEST_F(JavaScriptCore_WeakSet, ClearConcurrentlyChurnKeepsBlockWithLiveHandle)
+{
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    WeakSet& weakSet = *populations[0].weakSet;
+    JSCell* cell = populations[0].cells[0];
+
+    WeakImpl* live = WeakSet::allocate(cell);
+    WeakBlock* block = WeakBlock::blockFor(live);
+    unsigned otherBlock = 0;
+    for (unsigned i = 0; i < 4 * slotsPerBlock; ++i) {
+        WeakImpl* handle = WeakSet::allocate(cell);
+        otherBlock += WeakBlock::blockFor(handle) != block;
+        handle->clearConcurrently();
+    }
+    EXPECT_EQ(otherBlock, 0u);
+    EXPECT_TRUE(hasLiveHandles(*block));
+
+    weakSet.sweep();
+    EXPECT_TRUE(attachedBlocks(weakSet).contains(block));
+
+    WeakSet::deallocate(live);
+    weakSet.sweep();
+    EXPECT_TRUE(weakSet.isEmpty());
+}
+
+TEST_F(JavaScriptCore_WeakSet, ClearConcurrentlyDuringReap)
+{
+    static constexpr unsigned rounds = 2000;
+    static constexpr size_t handleCount = 4 * slotsPerBlock;
+
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    WeakSet& weakSet = *populations[0].weakSet;
+    JSCell* cell = populations[0].cells[0];
+
+    Vector<WeakImpl*> handles;
+    std::atomic<unsigned> startedRound { 0 };
+    std::atomic<unsigned> clearedRound { 0 };
+    auto clearer = Thread::create("WeakSet clearer"_s, [&] {
+        for (unsigned round = 1; round <= rounds; ++round) {
+            while (startedRound.load() != round)
+                Thread::yield();
+            for (size_t i = handles.size(); i--;)
+                handles[i]->clearConcurrently();
+            clearedRound = round;
+        }
+    });
+
+    for (unsigned round = 1; round <= rounds; ++round) {
+        handles = allocateHandles(cell, handleCount);
+        startedRound = round;
+        weakSet.reap();
+        while (clearedRound.load() != round)
+            Thread::yield();
+
+        for (WeakImpl* handle : handles)
+            EXPECT_EQ(handle->state(), WeakImpl::Deallocated);
+        weakSet.sweep();
+    }
+    clearer->waitForCompletion();
+    EXPECT_TRUE(weakSet.isEmpty());
+}
+
+TEST_F(JavaScriptCore_WeakSet, ClearConcurrentlyDuringAllocationAndSweep)
+{
+    static constexpr unsigned rounds = 4000;
+    static constexpr size_t handleCount = 8 * slotsPerBlock;
+    static constexpr size_t maxMutatorHandles = 2 * slotsPerBlock;
+
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    ASSERT_GE(populations.size(), 2u);
+    WeakSet& weakSet = *populations[0].weakSet;
+    WeakSet& other = *populations[1].weakSet;
+    JSCell* cell = populations[0].cells[0];
+    JSCell* otherCell = populations[1].cells[0];
+
+    Vector<WeakImpl*> handles;
+    std::atomic<unsigned> startedRound { 0 };
+    std::atomic<unsigned> clearedRound { 0 };
+    auto clearer = Thread::create("WeakSet clearer"_s, [&] {
+        for (unsigned round = 1; round <= rounds; ++round) {
+            while (startedRound.load() != round)
+                Thread::yield();
+            for (size_t i = handles.size(); i--;)
+                handles[i]->clearConcurrently();
+            clearedRound = round;
+        }
+    });
+
+    // Emptying and refilling another WeakSet exercises MarkedSpace's active-list transitions concurrently.
+    Vector<WeakImpl*> mutatorHandles;
+    Vector<WeakImpl*> otherHandles;
+    unsigned unfinalized = 0;
+    unsigned notDeallocated = 0;
+    unsigned inUnattachedBlocks = 0;
+    unsigned offActiveList = 0;
+    for (unsigned round = 1; round <= rounds; ++round) {
+        handles = allocateHandles(cell, handleCount);
+        // Leaves no current block, so the clearer can release every block it empties.
+        weakSet.sweep();
+        startedRound = round;
+        for (unsigned i = 0; clearedRound.load() != round; ++i) {
+            mutatorHandles.append(WeakSet::allocate(cell));
+            if (mutatorHandles.size() == maxMutatorHandles) {
+                weakSet.reap();
+                weakSet.sweep();
+                for (WeakImpl* handle : mutatorHandles)
+                    unfinalized += handle->state() != WeakImpl::Finalized;
+                deallocateHandles(mutatorHandles);
+                mutatorHandles.clear();
+            }
+            if (!(i % 8)) {
+                deallocateHandles(otherHandles);
+                other.sweep();
+                otherHandles = allocateHandles(otherCell, 1);
+            }
+        }
+
+        HashSet<WeakImpl*> reused;
+        for (WeakImpl* handle : mutatorHandles)
+            reused.add(handle);
+        for (WeakImpl* handle : otherHandles)
+            reused.add(handle);
+        for (WeakImpl* handle : handles)
+            notDeallocated += handle->state() != WeakImpl::Deallocated && !reused.contains(handle);
+
+        auto blocks = attachedBlocks(weakSet);
+        for (WeakImpl* handle : mutatorHandles)
+            inUnattachedBlocks += handle->state() == WeakImpl::Live && !blocks.contains(WeakBlock::blockFor(handle));
+        offActiveList += !blocks.isEmpty() && !weakSet.isOnList();
+    }
+    clearer->waitForCompletion();
+    EXPECT_EQ(unfinalized, 0u);
+    EXPECT_EQ(notDeallocated, 0u);
+    EXPECT_EQ(inUnattachedBlocks, 0u);
+    EXPECT_EQ(offActiveList, 0u);
+
+    deallocateHandles(mutatorHandles);
+    deallocateHandles(otherHandles);
+    weakSet.sweep();
+    other.sweep();
+    EXPECT_TRUE(attachedBlocks(weakSet).isEmpty());
+    EXPECT_TRUE(attachedBlocks(other).isEmpty());
+}
+
+class PartnerClearingOwner final : public WeakHandleOwner {
+public:
+    struct Pair {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(Pair);
+        WeakImpl* partner { nullptr };
+        std::atomic<unsigned> finalizeCount { 0 };
+    };
+
+    FinalizeResult finalize(JSC::Handle<JSC::Unknown>, void* context) final
+    {
+        if (!isMainThread())
+            ++m_offThreadFinalizeCount;
+        auto& pair = *static_cast<Pair*>(context);
+        if (!pair.finalizeCount.fetch_add(1) && pair.partner)
+            pair.partner->clearConcurrently();
+        return FinalizeResult::DeallocateImpl;
+    }
+
+    unsigned offThreadFinalizeCount() const { return m_offThreadFinalizeCount.load(); }
+
+private:
+    std::atomic<unsigned> m_offThreadFinalizeCount { 0 };
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PartnerClearingOwner::Pair);
+
+TEST_F(JavaScriptCore_WeakSet, FinalizerClearsHandleInBlockBeingSwept)
+{
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    WeakSet& weakSet = *populations[0].weakSet;
+    JSCell* cell = populations[0].cells[0];
+    PartnerClearingOwner owner;
+
+    PartnerClearingOwner::Pair first;
+    PartnerClearingOwner::Pair second;
+    WeakSet::allocate(cell, &owner, &first);
+    first.partner = WeakSet::allocate(cell, &owner, &second);
+    WeakBlock* block = WeakBlock::blockFor(first.partner);
+    weakSet.shrink();
+    weakSet.reap();
+
+    weakSet.sweep();
+    EXPECT_EQ(first.finalizeCount.load(), 1u);
+    EXPECT_EQ(second.finalizeCount.load(), 0u);
+    EXPECT_FALSE(attachedBlocks(weakSet).contains(block));
+    EXPECT_TRUE(weakSet.isEmpty());
+}
+
+TEST_F(JavaScriptCore_WeakSet, FinalizerReleasesBlockSweepWouldReachNext)
+{
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    WeakSet& weakSet = *populations[0].weakSet;
+    JSCell* cell = populations[0].cells[0];
+    PartnerClearingOwner owner;
+
+    PartnerClearingOwner::Pair pair;
+    WeakImpl* finalizing = WeakSet::allocate(cell, &owner, &pair);
+    Vector<WeakImpl*> fillers = allocateHandles(cell, slotsPerBlock - 1);
+    pair.partner = WeakSet::allocate(cell);
+    WeakBlock* next = WeakBlock::blockFor(pair.partner);
+    EXPECT_NE(next, WeakBlock::blockFor(finalizing));
+    EXPECT_TRUE(attachedBlocks(weakSet).contains(next));
+    weakSet.shrink();
+    weakSet.reap();
+
+    weakSet.finalizeDeadHandles();
+    EXPECT_EQ(pair.finalizeCount.load(), 1u);
+    EXPECT_EQ(pair.partner->state(), WeakImpl::Deallocated);
+    EXPECT_FALSE(attachedBlocks(weakSet).contains(next));
+    for (WeakImpl* handle : fillers)
+        EXPECT_EQ(handle->state(), WeakImpl::Finalized);
+
+    weakSet.releaseBlocks();
+    deallocateHandles(fillers);
+    weakSet.sweep();
+    EXPECT_TRUE(weakSet.isEmpty());
+}
+
+TEST_F(JavaScriptCore_WeakSet, OffThreadFinalizerClearsConcurrently)
+{
+    static constexpr unsigned rounds = 50;
+    static constexpr size_t pairsPerRound = 3 * slotsPerBlock;
+
+    DeferGC deferGC(vm());
+    auto populations = populationsByWeakSet();
+    ASSERT_GE(populations.size(), 2u);
+    Population& swept = populations[0];
+    Population& other = populations[1];
+    FinalizeLedger& ledger = makeLedger(rounds * operationsPerRound);
+    PartnerClearingOwner owner;
+    WeakRandom random(1);
+
+    Vector<TrackedHandle> otherHandles;
+    {
+        SweeperThread sweeper(*swept.weakSet);
+        for (unsigned round = 0; round < rounds; ++round) {
+            Vector<std::unique_ptr<PartnerClearingOwner::Pair>> pairs;
+            for (size_t i = 0; i < pairsPerRound; ++i) {
+                auto pair = makeUnique<PartnerClearingOwner::Pair>();
+                pair->partner = WeakSet::allocate(other.cells[random.getUint32(other.cells.size())]);
+                WeakSet::allocate(swept.cells[random.getUint32(swept.cells.size())], &owner, pair.get());
+                pairs.append(WTF::move(pair));
+            }
+            swept.weakSet->reap();
+
+            sweeper.resume();
+            for (unsigned i = 0; i < operationsPerRound; ++i) {
+                churnOnce(other, otherHandles, ledger, random);
+                if (!((i + 1) % operationsPerSweepWait))
+                    other.weakSet->releaseBlocks();
+            }
+            sweeper.waitForNextSweep();
+            sweeper.pause();
+
+            swept.weakSet->sweep();
+            other.weakSet->sweep();
+            for (auto& pair : pairs)
+                EXPECT_EQ(pair->finalizeCount.load(), 1u);
+            EXPECT_TRUE(swept.weakSet->isEmpty());
+            if (HasFailure())
+                break;
+        }
+    }
+
+    clearTrackedHandles(otherHandles, ledger);
+    swept.weakSet->sweep();
+    other.weakSet->sweep();
+    EXPECT_TRUE(swept.weakSet->isEmpty());
+    EXPECT_TRUE(other.weakSet->isEmpty());
+    EXPECT_GT(owner.offThreadFinalizeCount(), 0u);
     ledger.expectNoViolations();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,8 @@ namespace Integrity {
 class Analyzer;
 }
 
+class WTF_CAPABILITY("mutator read or weak block lock") MutatorReadOrWeakBlockLock { };
+
 class WeakSet : public BasicRawSentinelNode<WeakSet> {
     friend class LLIntOffsetsExtractor;
     friend class Integrity::Analyzer;
@@ -50,11 +52,12 @@ public:
     WeakSet(VM&);
     ~WeakSet();
     void lastChanceToFinalize();
-    
+
     JSC::Heap* heap() const;
     VM& vm() const;
+    Lock& weakBlockLock() const WTF_RETURNS_CAPABILITY(m_weakBlockLock);
 
-    bool isEmpty() const;
+    NODELETE JS_EXPORT_PRIVATE bool isEmpty() const;
     bool isTriviallyDestructible() const;
 
     JS_EXPORT_PRIVATE void reap();
@@ -67,10 +70,14 @@ public:
 
     static constexpr ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(WeakSet, m_vm); }
 
-    WeakBlock* head() { return m_blocks.head(); }
+    void assertIsHoldingWeakBlockLock() const WTF_ASSERTS_ACQUIRED_CAPABILITY(m_weakBlockLock) WTF_ASSERTS_ACQUIRED_CAPABILITY(m_mutatorReadOrWeakBlockLock);
+    // Every thread that changes m_blocks is a GC aware thread, so a stopped world excludes them all.
+    void assertWorldIsStopped() const WTF_ASSERTS_ACQUIRED_CAPABILITY(m_weakBlockLock);
+
+    WeakBlock* head() WTF_REQUIRES_CAPABILITY(m_weakBlockLock) { return m_blocks.head(); }
 
     template<typename Functor>
-    void forEachBlock(NOESCAPE const Functor& functor)
+    void forEachBlock(NOESCAPE const Functor& functor) WTF_REQUIRES_CAPABILITY(m_weakBlockLock)
     {
         for (WeakBlock* block = m_blocks.head(); block; block = block->next())
             functor(*block);
@@ -81,15 +88,24 @@ private:
     NODELETE WeakBlock* tryFindAllocator();
     WeakBlock* addAllocator(CellContainer);
 
-    JS_EXPORT_PRIVATE void didBecomeEmpty(WeakBlock*);
+    void tryReleaseBlock(Locker<Lock>&, WeakBlock*, IsConcurrent) WTF_REQUIRES_CAPABILITY(m_weakBlockLock, m_mutatorReadOrWeakBlockLock);
 
-    void tryReleaseBlock(const AbstractLocker&, WeakBlock*);
+    void resetAllocator() WTF_REQUIRES_CAPABILITY(m_weakBlockLock);
 
-    void resetAllocator(const AbstractLocker&);
+    void assertIsExclusiveAccessHolder() const WTF_ASSERTS_ACQUIRED_SHARED_CAPABILITY(m_mutatorReadOrWeakBlockLock);
 
-    WeakBlock* m_currentBlock { nullptr };
-    WeakBlock* m_nextAllocator { nullptr };
-    DoublyLinkedList<WeakBlock> m_blocks;
+    // Integrity audits cells while marking, when the weak-set pass may hold weakBlockLock() on
+    // another thread. A racy read only weakens its sanity check.
+    WeakBlock* currentBlockForAudit() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { return m_currentBlock; }
+    WeakBlock* nextAllocatorForAudit() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { return m_nextAllocator; }
+
+    NO_UNIQUE_ADDRESS WeakBlockLock m_weakBlockLock;
+    // Only the thread with heap access, or the conductor while the world is stopped, writes
+    // m_currentBlock, so it may read it without the lock.
+    NO_UNIQUE_ADDRESS MutatorReadOrWeakBlockLock m_mutatorReadOrWeakBlockLock;
+    WeakBlock* m_currentBlock WTF_GUARDED_BY_CAPABILITY(m_mutatorReadOrWeakBlockLock) { nullptr };
+    WeakBlock* m_nextAllocator WTF_GUARDED_BY_CAPABILITY(m_weakBlockLock) { nullptr };
+    DoublyLinkedList<WeakBlock> m_blocks WTF_GUARDED_BY_CAPABILITY(m_weakBlockLock);
     // m_vm must be a pointer (instead of a reference) because the JSCLLIntOffsetsExtractor
     // cannot handle it being a reference. LowLevelInterpreter.asm reaches it by name, through
     // PreciseAllocationVMOffset.
@@ -110,31 +126,12 @@ inline VM& WeakSet::vm() const
     return *m_vm;
 }
 
-inline bool WeakSet::isEmpty() const
-{
-    for (WeakBlock* block = m_blocks.head(); block; block = block->next()) {
-        if (!block->isEmpty())
-            return false;
-    }
-
-    return true;
-}
-
-inline bool WeakSet::isTriviallyDestructible() const
-{
-    if (!m_blocks.isEmpty())
-        return false;
-    if (isOnList())
-        return false;
-    return true;
-}
-
 ALWAYS_INLINE void WeakSet::deallocate(WeakImpl* weakImpl)
 {
     weakImpl->clear();
 }
 
-inline void WeakSet::resetAllocator(const AbstractLocker&)
+inline void WeakSet::resetAllocator()
 {
     m_nextAllocator = m_blocks.head();
 }
