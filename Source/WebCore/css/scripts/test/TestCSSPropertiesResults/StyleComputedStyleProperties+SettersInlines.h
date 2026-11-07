@@ -109,6 +109,13 @@ inline void ComputedStyleProperties::setTestRenderStyleStorageOneLevelReference(
     }
 }
 
+inline void ComputedStyleProperties::setTestRenderStyleStorageOneLevelSettingsFlag(Style::Number<> value)
+{
+    if (value != level1->testRenderStyleStorageOneLevelSettingsFlag) {
+        level1.access().testRenderStyleStorageOneLevelSettingsFlag = value;
+    }
+}
+
 inline void ComputedStyleProperties::setTestRenderStyleStorageOneLevelValue(Style::Number<> value)
 {
     if (value != level1->testRenderStyleStorageOneLevelValue) {

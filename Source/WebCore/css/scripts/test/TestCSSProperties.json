@@ -112,6 +112,18 @@
                 "parser-grammar": "<number>#"
             }
         },
+        "background-coordinated-value-list-property-test-settings-flag": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "settings-flag": "cssSettingsCoordinatedValueListEnabled",
+                "coordinated-value-list-property": true,
+                "coordinated-value-list-property-item-type": "Style::Number<>",
+                "computed-style-storage-container": "opaque",
+                "computed-style-storage-path": ["coordinateValueList", "aggregates"],
+                "parser-grammar": "<number>#"
+            }
+        },
         "test-numeric-value-range": {
             "animation-type": "discrete",
             "initial": "0",
@@ -1167,6 +1179,17 @@
                 "computed-style-storage-path": ["level1"],
                 "computed-style-storage-kind": "raw",
                 "computed-style-type": "Style::TestRaw"
+            }
+        },
+        "test-render-style-storage-one-level-settings-flag": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "settings-flag": "cssSettingsRenderStyleStorageEnabled",
+                "parser-grammar": "<number>",
+                "computed-style-storage-path": ["level1"],
+                "computed-style-storage-kind": "value",
+                "computed-style-type": "Style::Number<>"
             }
         },
         "test-render-style-storage-two-level-reference": {

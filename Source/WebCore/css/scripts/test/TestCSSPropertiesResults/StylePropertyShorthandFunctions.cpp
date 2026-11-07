@@ -14,6 +14,7 @@ StylePropertyShorthand allShorthand()
         CSSPropertyID::TestHighPriority,
         CSSPropertyID::TestMediumPriority,
         CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete,
+        CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag,
         CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo,
         CSSPropertyID::TestAnimationWrapper,
         CSSPropertyID::TestAnimationWrapperAccelerationAlways,
@@ -99,6 +100,7 @@ StylePropertyShorthand allShorthand()
         CSSPropertyID::TestRenderStyleStorageOneLevelEnum,
         CSSPropertyID::TestRenderStyleStorageOneLevelRaw,
         CSSPropertyID::TestRenderStyleStorageOneLevelReference,
+        CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag,
         CSSPropertyID::TestRenderStyleStorageOneLevelValue,
         CSSPropertyID::TestRenderStyleStorageTwoLevelEnum,
         CSSPropertyID::TestRenderStyleStorageTwoLevelRaw,
@@ -183,6 +185,7 @@ StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)
     case CSSPropertyID::TestLogicalPropertyGroupLogicalInline:
         return StylePropertyShorthandVector{allShorthand(), testShorthandTwoShorthand()};
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete:
+    case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag:
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo:
     case CSSPropertyID::TestAnimationWrapper:
     case CSSPropertyID::TestAnimationWrapperAccelerationAlways:
@@ -269,6 +272,7 @@ StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)
     case CSSPropertyID::TestRenderStyleStorageOneLevelEnum:
     case CSSPropertyID::TestRenderStyleStorageOneLevelRaw:
     case CSSPropertyID::TestRenderStyleStorageOneLevelReference:
+    case CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag:
     case CSSPropertyID::TestRenderStyleStorageOneLevelValue:
     case CSSPropertyID::TestRenderStyleStorageTwoLevelEnum:
     case CSSPropertyID::TestRenderStyleStorageTwoLevelRaw:

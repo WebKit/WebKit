@@ -180,6 +180,19 @@ static RefPtr<CSSValue> consumeBackgroundCoordinatedValueListPropertyTestDiscret
     return consumeUnboundedRepetition(range, state);
 }
 
+static RefPtr<CSSValue> consumeBackgroundCoordinatedValueListPropertyTestSettingsFlag(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <number>#
+    auto consumeUnboundedRepetition = [](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> RefPtr<CSSValue> {
+        auto consumeRepeatedTerm = [](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> RefPtr<CSSValue> {
+            // <number>
+            return CSSPrimitiveValueResolver<CSS::Number<>>::consumeAndResolve(range, state);
+        };
+        return consumeListSeparatedBy<',', ListBounds::minimumOf(1), ListOptimization::SingleValue, CSSValueList>(range, consumeRepeatedTerm, state);
+    };
+    return consumeUnboundedRepetition(range, state);
+}
+
 static RefPtr<CSSValue> consumeBackgroundCoordinatedValueListPropertyTestTwo(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <number>#
@@ -3323,6 +3336,7 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStylePropertyLonghand(CSSParserTokenRa
     case CSSPropertyID::TestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
     case CSSPropertyID::TestRenderStyleHasExplicitlySetPolicyValueOnly:
     case CSSPropertyID::TestRenderStyleStorageOneLevelReference:
+    case CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag:
     case CSSPropertyID::TestRenderStyleStorageOneLevelValue:
     case CSSPropertyID::TestRenderStyleStorageTwoLevelReference:
     case CSSPropertyID::TestRenderStyleStorageTwoLevelValue:
@@ -3335,6 +3349,8 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStylePropertyLonghand(CSSParserTokenRa
         return CSSPrimitiveValueResolver<CSS::Number<>>::consumeAndResolve(range, state);
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete:
         return consumeBackgroundCoordinatedValueListPropertyTestDiscrete(range, state);
+    case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag:
+        return consumeBackgroundCoordinatedValueListPropertyTestSettingsFlag(range, state);
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo:
         return consumeBackgroundCoordinatedValueListPropertyTestTwo(range, state);
     case CSSPropertyID::TestBoundedRepetitionWithCommas:

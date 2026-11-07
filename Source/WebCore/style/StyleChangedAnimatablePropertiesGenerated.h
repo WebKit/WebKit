@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class Settings;
 struct CSSPropertiesBitSet;
 
 namespace Style {
@@ -35,7 +36,7 @@ class ComputedStyle;
 
 class ChangedAnimatablePropertiesGenerated final {
 public:
-    static void conservativelyCollectChangedAnimatableProperties(const ComputedStyle&, const ComputedStyle&, CSSPropertiesBitSet&);
+    static void conservativelyCollectChangedAnimatableProperties(const ComputedStyle&, const ComputedStyle&, CSSPropertiesBitSet&, const Settings&);
 };
 
 } // namespace Style

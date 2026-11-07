@@ -30,6 +30,20 @@ public:
         };
         extractCoordinatedValueListSerialization<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete>(extractorState, builder, context, extractorState.style->backgroundLayers(), mapper);
     }
+    static RefPtr<CSSValue> extractBackgroundCoordinatedValueListPropertyTestSettingsFlag(ExtractorState& extractorState)
+    {
+        auto mapper = [](auto& extractorState, const auto& value, const std::optional<BackgroundLayers::value_type>&, const auto&) -> Ref<CSSValue> {
+            return createCSSValue(extractorState.pool, extractorState.style, value);
+        };
+        return extractCoordinatedValueListValue<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag>(extractorState, extractorState.style->backgroundLayers(), mapper);
+    }
+    static void extractBackgroundCoordinatedValueListPropertyTestSettingsFlagSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        auto mapper = [](auto& extractorState, auto& builder, const auto& context, const auto& value, const std::optional<BackgroundLayers::value_type>&, const auto&) {
+            serializationForCSS(builder, context, extractorState.style, value);
+        };
+        extractCoordinatedValueListSerialization<CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag>(extractorState, builder, context, extractorState.style->backgroundLayers(), mapper);
+    }
     static RefPtr<CSSValue> extractBackgroundCoordinatedValueListPropertyTestTwo(ExtractorState& extractorState)
     {
         auto mapper = [](auto& extractorState, const auto& value, const std::optional<BackgroundLayers::value_type>&, const auto&) -> Ref<CSSValue> {
@@ -155,6 +169,14 @@ public:
     {
         serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleStorageOneLevelReference());
     }
+    static RefPtr<CSSValue> extractTestRenderStyleStorageOneLevelSettingsFlag(ExtractorState& extractorState)
+    {
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleStorageOneLevelSettingsFlag());
+    }
+    static void extractTestRenderStyleStorageOneLevelSettingsFlagSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        serializationForCSS(builder, context, extractorState.style, extractorState.style->testRenderStyleStorageOneLevelSettingsFlag());
+    }
     static RefPtr<CSSValue> extractTestRenderStyleStorageOneLevelValue(ExtractorState& extractorState)
     {
         return createCSSValue(extractorState.pool, extractorState.style, extractorState.style->testRenderStyleStorageOneLevelValue());
@@ -232,6 +254,8 @@ RefPtr<CSSValue> ExtractorGenerated::extractValue(ExtractorState& extractorState
         return nullptr;
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete:
         return ExtractorFunctions::extractBackgroundCoordinatedValueListPropertyTestDiscrete(extractorState);
+    case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag:
+        return ExtractorFunctions::extractBackgroundCoordinatedValueListPropertyTestSettingsFlag(extractorState);
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo:
         return ExtractorFunctions::extractBackgroundCoordinatedValueListPropertyTestTwo(extractorState);
     case CSSPropertyID::FirstTestDescriptorForFirstDescriptor:
@@ -478,6 +502,8 @@ RefPtr<CSSValue> ExtractorGenerated::extractValue(ExtractorState& extractorState
         return ExtractorFunctions::extractTestRenderStyleStorageOneLevelRaw(extractorState);
     case CSSPropertyID::TestRenderStyleStorageOneLevelReference:
         return ExtractorFunctions::extractTestRenderStyleStorageOneLevelReference(extractorState);
+    case CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag:
+        return ExtractorFunctions::extractTestRenderStyleStorageOneLevelSettingsFlag(extractorState);
     case CSSPropertyID::TestRenderStyleStorageOneLevelValue:
         return ExtractorFunctions::extractTestRenderStyleStorageOneLevelValue(extractorState);
     case CSSPropertyID::TestRenderStyleStorageTwoLevelEnum:
@@ -580,6 +606,9 @@ void ExtractorGenerated::extractValueSerialization(ExtractorState& extractorStat
         return;
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete:
         ExtractorFunctions::extractBackgroundCoordinatedValueListPropertyTestDiscreteSerialization(extractorState, builder, context);
+        return;
+    case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag:
+        ExtractorFunctions::extractBackgroundCoordinatedValueListPropertyTestSettingsFlagSerialization(extractorState, builder, context);
         return;
     case CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo:
         ExtractorFunctions::extractBackgroundCoordinatedValueListPropertyTestTwoSerialization(extractorState, builder, context);
@@ -841,6 +870,9 @@ void ExtractorGenerated::extractValueSerialization(ExtractorState& extractorStat
         return;
     case CSSPropertyID::TestRenderStyleStorageOneLevelReference:
         ExtractorFunctions::extractTestRenderStyleStorageOneLevelReferenceSerialization(extractorState, builder, context);
+        return;
+    case CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag:
+        ExtractorFunctions::extractTestRenderStyleStorageOneLevelSettingsFlagSerialization(extractorState, builder, context);
         return;
     case CSSPropertyID::TestRenderStyleStorageOneLevelValue:
         ExtractorFunctions::extractTestRenderStyleStorageOneLevelValueSerialization(extractorState, builder, context);

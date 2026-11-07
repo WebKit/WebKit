@@ -3,6 +3,7 @@
 #include "config.h"
 #include "StyleChangedAnimatablePropertiesGenerated.h"
 
+#include "Settings.h"
 #include "StyleChangedAnimatablePropertiesCustom.h"
 
 namespace WebCore {
@@ -10,19 +11,21 @@ namespace Style {
 
 class ChangedAnimatablePropertiesFunctions final {
 public:
-    static void collect_coordinateValueList_aggregates(const auto&, const auto&, CSSPropertiesBitSet& changingProperties)
+    static void collect_coordinateValueList_aggregates(const auto&, const auto&, CSSPropertiesBitSet& changingProperties, const Settings& settings)
     {
         changingProperties.m_properties.set(std::to_underlying(CSSPropertyID::BackgroundCoordinatedValueListPropertyTestDiscrete));
+        if (settings.cssSettingsCoordinatedValueListEnabled())
+            changingProperties.m_properties.set(std::to_underlying(CSSPropertyID::BackgroundCoordinatedValueListPropertyTestSettingsFlag));
         changingProperties.m_properties.set(std::to_underlying(CSSPropertyID::BackgroundCoordinatedValueListPropertyTestTwo));
     }
 
-    static void collect_coordinateValueList(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties)
+    static void collect_coordinateValueList(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties, const Settings& settings)
     {
         if (a.aggregates != b.aggregates)
-            collect_coordinateValueList_aggregates(a.aggregates, b.aggregates, changingProperties);
+            collect_coordinateValueList_aggregates(a.aggregates, b.aggregates, changingProperties, settings);
     }
 
-    static void collect_level1_level2(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties)
+    static void collect_level1_level2(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties, const Settings&)
     {
         if (a.testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin != b.testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin)
             changingProperties.m_properties.set(std::to_underlying(CSSPropertyID::TestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin));
@@ -43,10 +46,10 @@ public:
             changingProperties.m_properties.set(std::to_underlying(CSSPropertyID::TestColorPropertyWithVisitedLinkSupport));
     }
 
-    static void collect_level1(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties)
+    static void collect_level1(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties, const Settings& settings)
     {
         if (a.level2.ptr() != b.level2.ptr())
-            collect_level1_level2(*a.level2, *b.level2, changingProperties);
+            collect_level1_level2(*a.level2, *b.level2, changingProperties, settings);
 
         if (a.testColor != b.testColor)
             changingProperties.m_properties.set(std::to_underlying(CSSPropertyID::TestColor));
@@ -66,23 +69,25 @@ public:
             changingProperties.m_properties.set(std::to_underlying(CSSPropertyID::TestRenderStyleStorageOneLevelRaw));
         if (a.testRenderStyleStorageOneLevelReference != b.testRenderStyleStorageOneLevelReference)
             changingProperties.m_properties.set(std::to_underlying(CSSPropertyID::TestRenderStyleStorageOneLevelReference));
+        if (settings.cssSettingsRenderStyleStorageEnabled() && a.testRenderStyleStorageOneLevelSettingsFlag != b.testRenderStyleStorageOneLevelSettingsFlag)
+            changingProperties.m_properties.set(std::to_underlying(CSSPropertyID::TestRenderStyleStorageOneLevelSettingsFlag));
         if (a.testRenderStyleStorageOneLevelValue != b.testRenderStyleStorageOneLevelValue)
             changingProperties.m_properties.set(std::to_underlying(CSSPropertyID::TestRenderStyleStorageOneLevelValue));
     }
 
-    static void collect(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties)
+    static void collect(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties, const Settings& settings)
     {
         if (a.coordinateValueList.ptr() != b.coordinateValueList.ptr())
-            collect_coordinateValueList(*a.coordinateValueList, *b.coordinateValueList, changingProperties);
+            collect_coordinateValueList(*a.coordinateValueList, *b.coordinateValueList, changingProperties, settings);
         if (a.level1.ptr() != b.level1.ptr())
-            collect_level1(*a.level1, *b.level1, changingProperties);
+            collect_level1(*a.level1, *b.level1, changingProperties, settings);
     }
 
 };
 
-void ChangedAnimatablePropertiesGenerated::conservativelyCollectChangedAnimatableProperties(const ComputedStyle& a, const ComputedStyle& b, CSSPropertiesBitSet& changingProperties)
+void ChangedAnimatablePropertiesGenerated::conservativelyCollectChangedAnimatableProperties(const ComputedStyle& a, const ComputedStyle& b, CSSPropertiesBitSet& changingProperties, const Settings& settings)
 {
-    ChangedAnimatablePropertiesFunctions::collect(a, b, changingProperties);
+    ChangedAnimatablePropertiesFunctions::collect(a, b, changingProperties, settings);
 }
 
 } // namespace WebCore
