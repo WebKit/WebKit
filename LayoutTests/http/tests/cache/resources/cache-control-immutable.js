@@ -6,7 +6,7 @@ function log(text, expected, result)
 function insertIframe(maxAge, loaded) {
     const iframe = document.createElement('iframe');
     document.body.appendChild(iframe);
-    iframe.src = "resources/iframe-with-script.cgi?script-cache-control=immutable,max-age=" + maxAge;
+    iframe.src = "resources/iframe-with-script.py?script-cache-control=immutable,max-age=" + maxAge;
     iframe.onload = () => loaded(iframe);
 }
 

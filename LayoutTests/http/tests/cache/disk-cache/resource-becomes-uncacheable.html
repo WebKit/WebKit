@@ -14,7 +14,7 @@ function loadResource(cacheable, onload)
 
     xhr = new XMLHttpRequest();
     xhr.onload = onload;
-    xhr.open("GET", "resources/generate-response-optionally-cacheable.cgi?uniqueId=" + uniqueTestId, true);
+    xhr.open("GET", "resources/generate-response-optionally-cacheable.py?uniqueId=" + uniqueTestId, true);
 
     xhr.setRequestHeader("X-Cacheable", cacheable ? "true" : "false");
     xhr.send(null);

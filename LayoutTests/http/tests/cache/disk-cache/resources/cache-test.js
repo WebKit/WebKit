@@ -14,7 +14,7 @@ function getServerDate()
 {
     var req = new XMLHttpRequest();
     var t0 = new Date().getTime();
-    req.open('GET', "/cache/resources/current-time.cgi", false /* blocking */);
+    req.open('GET', "/cache/resources/current-time.py", false /* blocking */);
     req.send();
     var serverToClientTime = (new Date().getTime() - t0) / 2;
     if (req.status != 200) {
@@ -45,7 +45,7 @@ function generateTestURL(test)
     var body = typeof test.body !== 'undefined' ? escape(test.body) : "";
     var expiresInFutureIn304 = typeof test.expiresInFutureIn304 !== 'undefined' ? test.expiresInFutureIn304 : false;
     var uniqueTestId = Math.floor((Math.random() * 1000000000000));
-    var testURL = "resources/generate-response.cgi?body=" + body;
+    var testURL = "resources/generate-response.py?body=" + body;
     if (expiresInFutureIn304)
         testURL += "&expires-in-future-in-304=1";
     if (test.delay)
