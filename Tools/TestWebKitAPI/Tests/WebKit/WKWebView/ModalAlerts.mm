@@ -131,6 +131,8 @@ static void sawDialog()
 
 TEST(WebKit, ModalAlerts)
 {
+    dialogsSeen = 0;
+
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     modalAlertsUIDelegate = adoptNS([[ModalAlertsUIDelegate alloc] init]);
@@ -183,6 +185,7 @@ TEST(WebKit, SlowBeforeUnloadPromptReject)
     [webView waitForPendingMouseEvents];
 
     shouldRejectClosingViaPrompt = true;
+    didRespondToPrompt = false;
     [webView _tryClose];
 
     TestWebKitAPI::Util::run(&didRespondToPrompt);
@@ -206,6 +209,7 @@ TEST(WebKit, SlowBeforeUnloadPromptAllow)
     [webView waitForPendingMouseEvents];
 
     shouldRejectClosingViaPrompt = false;
+    didRespondToPrompt = false;
     [webView _tryClose];
 
     TestWebKitAPI::Util::run(&didRespondToPrompt);
@@ -229,6 +233,7 @@ TEST(WebKit, BeforeUnloadPromptRejectOnReload)
     TestWebKitAPI::Util::spinRunLoop(10);
 
     shouldRejectClosingViaPrompt = true;
+    didRespondToPrompt = false;
     [webView reload];
 
     TestWebKitAPI::Util::run(&didRespondToPrompt);
@@ -254,6 +259,7 @@ TEST(WebKit, BeforeUnloadPromptAllowOnReload)
     TestWebKitAPI::Util::spinRunLoop(10);
 
     shouldRejectClosingViaPrompt = false;
+    didRespondToPrompt = false;
     [webView reload];
 
     TestWebKitAPI::Util::run(&didRespondToPrompt);
@@ -287,6 +293,9 @@ static unsigned viewDidCloseCallCount = 0;
 
 TEST(WebKit, SlowBeforeUnloadHandlerSingleClosePageCall)
 {
+    webViewDidCloseCalled = false;
+    viewDidCloseCallCount = 0;
+
     RetainPtr slowBeforeUnloadHandlerUIDelegate = adoptNS([[SlowBeforeUnloadHandlerUIDelegate alloc] init]);
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView setUIDelegate:slowBeforeUnloadHandlerUIDelegate.get()];

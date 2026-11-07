@@ -40,7 +40,7 @@ TEST(WebKit, GetPDFResourceData)
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
 
-    __block bool isDone;
+    __block bool isDone = false;
     [webView _getMainResourceDataWithCompletionHandler:^(NSData *data, NSError *error) {
         EXPECT_NULL(data);
         isDone = true;
@@ -71,7 +71,7 @@ TEST(WebKit, GetPDFResourceDataInUnparentedWebView)
 
     [webView _test_waitForDidFinishNavigation];
 
-    __block bool isDone;
+    __block bool isDone = false;
     [webView _getMainResourceDataWithCompletionHandler:^(NSData *data, NSError *error) {
         EXPECT_EQ(data.length, 10820UL);
         isDone = true;
