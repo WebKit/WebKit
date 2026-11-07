@@ -1275,9 +1275,9 @@ void RenderReplaced::layoutShadowContent(const LayoutSize& oldSize)
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
         renderBox.setLocation(LayoutPoint(borderLeft(), borderTop()) + LayoutSize(paddingLeft(), paddingTop()));
 
-        auto usedZoom = renderBox.style().usedZoomForLength();
-        renderBox.mutableStyle().setHeight(Style::PreferredSize::Fixed { newSize.height() / usedZoom.value });
-        renderBox.mutableStyle().setWidth(Style::PreferredSize::Fixed { newSize.width() / usedZoom.value });
+        auto logicalSize = renderBox.isHorizontalWritingMode() ? newSize : newSize.transposedSize();
+        renderBox.setOverridingBorderBoxLogicalWidth(renderBox.adjustBorderBoxLogicalWidthForBoxSizing(logicalSize.width()));
+        renderBox.setOverridingBorderBoxLogicalHeight(renderBox.adjustBorderBoxLogicalHeightForBoxSizing(logicalSize.height()));
 
         renderBox.setNeedsLayout(MarkingBehavior::OnlyThis);
         renderBox.layout();
