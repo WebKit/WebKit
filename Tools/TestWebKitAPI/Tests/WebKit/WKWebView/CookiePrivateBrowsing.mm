@@ -79,14 +79,15 @@ TEST(WebKit, CookiePrivateBrowsing)
 
 TEST(WebKit, CookieCacheSyncAcrossProcess)
 {
-    __block bool setDefaultCookieAcceptPolicy = false;
-    [[WKWebsiteDataStore defaultDataStore].httpCookieStore _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain completionHandler:^{
-        setDefaultCookieAcceptPolicy = true;
+    RetainPtr<WKWebsiteDataStore> dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    __block bool setCookieAcceptPolicy = false;
+    [[dataStore httpCookieStore] _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain completionHandler:^{
+        setCookieAcceptPolicy = true;
     }];
-    TestWebKitAPI::Util::run(&setDefaultCookieAcceptPolicy);
+    TestWebKitAPI::Util::run(&setCookieAcceptPolicy);
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+    [configuration setWebsiteDataStore:dataStore.get()];
     RetainPtr view1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr view2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [view1 synchronouslyLoadHTMLString:@"foo" baseURL:[NSURL URLWithString:@"http://example.com/"]];
@@ -136,7 +137,7 @@ TEST(WebKit, CookieCacheSyncAcrossProcess)
         }];
         TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
         ++timeout;
-    } while (!cookieString.isEmpty() && timeout < 50);
+    } while (cookieString != "foo=bar"_s && timeout < 50);
     EXPECT_WK_STREQ("foo=bar", cookieString);
 }
 

@@ -58,9 +58,8 @@
 
 TEST(WebKit, CookieAcceptPolicy)
 {
-    auto originalCookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];
-
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
 
     RetainPtr handler = adoptNS([[CookieAcceptPolicyMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
@@ -76,12 +75,6 @@ TEST(WebKit, CookieAcceptPolicy)
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_STREQ([(NSString *)[lastScriptMessage body] UTF8String], "COOKIE:");
-
-    setPolicy = false;
-    [configuration.get().websiteDataStore.httpCookieStore _setCookieAcceptPolicy:originalCookieAcceptPolicy completionHandler:^{
-        setPolicy = true;
-    }];
-    TestWebKitAPI::Util::run(&setPolicy);
 }
 
 TEST(WKHTTPCookieStore, CookiePolicy)
