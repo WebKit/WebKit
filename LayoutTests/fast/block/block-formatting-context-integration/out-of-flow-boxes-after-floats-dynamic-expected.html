@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<!-- The render tree path keeps the static position of an out-of-flow box that does not need layout, so this is the final state. -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; position: relative; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.a { position: absolute; background: rgba(255, 128, 0, 0.8); }
+p { margin: 0; }
+</style>
+<div class="roots">
+<div class="root"><p>x</p><div class="l" style="width: 100px"></div><span class="a">A</span><p>a float that gets wider</p></div>
+<div class="root"><p>x</p><span class="a">A</span><p>a float removed</p></div>
+<div class="root"><p>a float added</p><div class="l"></div><span class="a">A</span><p>y</p></div>
+<div class="root"><p>x</p><div class="l"></div><span class="a">A</span><p>a box that becomes absolutely positioned</p></div>
+<div class="root"><p>x</p><div class="l" style="height: 40px"></div><p>a float that gets taller</p><span class="a">A</span></div>
+</div>
