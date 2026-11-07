@@ -1,0 +1,42 @@
+Tests that a style-interleaved layout for a size query container does not move the scroll position based on partially resolved style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Pinning the height of a block above the viewport and emptying it should not scroll.
+PASS scrollDeltaAfterFirstUpdate is 0
+PASS scrollDelta is 0
+
+Emptying a block above the viewport without pinning its height should be compensated by scroll anchoring.
+PASS scrollDeltaAfterFirstUpdate is -200
+PASS scrollDelta is -200
+
+In an overflow scroller, pinning the height of a block above the scrollport and emptying it should not scroll.
+PASS scrollDeltaAfterFirstUpdate is 0
+PASS scrollDelta is 0
+
+Repeatedly pinning the height of blocks and emptying them should not disable scroll anchoring.
+PASS scrollDeltaAfterFirstUpdate is -200
+PASS scrollDelta is -200
+
+A query container above the viewport that shrinks because of its container query should be compensated by scroll anchoring.
+PASS scrollDeltaAfterFirstUpdate is -400
+PASS scrollDelta is -400
+PASS resizingContainer.children[0].getBoundingClientRect().height is 100
+
+Pinning the height of a block and emptying it with the reported :has() rule should not scroll.
+PASS scrollDeltaAfterFirstUpdate is 0
+PASS scrollDelta is 0
+
+Shrinking a block above the viewport outside query containers should be compensated by scroll anchoring.
+PASS scrollDeltaAfterFirstUpdate is -200
+PASS scrollDelta is -200
+
+At the bottom of the page, pinning the height of a block and emptying it should not scroll.
+PASS scrollDeltaAfterFirstUpdate is 0
+PASS scrollDelta is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

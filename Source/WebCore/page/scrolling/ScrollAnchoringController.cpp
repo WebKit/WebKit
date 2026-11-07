@@ -29,7 +29,6 @@
 #include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "DocumentQuirks.h"
-#include "Editing.h"
 #include "FloatRect.h"
 #include "LegacyRenderSVGModelObject.h"
 #include "LocalFrameView.h"
@@ -166,6 +165,11 @@ void ScrollAnchoringController::clearAnchor(bool includeAncestors)
     if (m_isUpdatingScrollPositionForAnchoring)
         return;
 
+    // A style-interleaved layout can clamp the scroll position to content whose style is only partially resolved.
+    // Keep the anchor so the adjustment after the final layout restores the position.
+    if (RefPtr document = frameView().frame().document(); document && document->isInStyleInterleavedLayout())
+        return;
+
     m_anchorObject = nullptr;
     m_lastAnchorOffset = { };
 
@@ -193,6 +197,7 @@ void ScrollAnchoringController::invalidate()
     m_anchorObject = nullptr;
     m_lastAnchorOffset = { };
 
+    m_wasQueuedBeforeStyleRecalc = false;
     if (m_isQueuedForScrollPositionUpdate) {
         m_isQueuedForScrollPositionUpdate = false;
         protect(frameView())->dequeueScrollableAreaForScrollAnchoringUpdate(m_owningScrollableArea);
@@ -320,8 +325,9 @@ bool ScrollAnchoringController::findPriorityCandidate(Document& document)
     if (!scrollerBox)
         return false;
 
+    // Anchors are also chosen before style recalc, from the last layout, so use the style that layout used.
     RefPtr focusedElement = document.focusedElement();
-    if (focusedElement && isEditableNode(*focusedElement)) {
+    if (focusedElement && focusedElement->computeEditability(Node::UserSelectAllTreatment::NotEditable, Node::ShouldUpdateStyle::DoNotUpdate) != Node::Editability::ReadOnly) {
         if (CheckedPtr candidate = priorityCandidateForElement(focusedElement)) {
             auto status = examinePriorityCandidate(*candidate);
             if (isViableStatus(status)) {
@@ -585,10 +591,26 @@ void ScrollAnchoringController::updateBeforeLayout()
         return;
     }
 
+    bool isInStyleInterleavedLayout = scrollerBox->document().isInStyleInterleavedLayout();
+
+    if (m_isQueuedForScrollPositionUpdate && std::exchange(m_wasQueuedBeforeStyleRecalc, false) && !isInStyleInterleavedLayout) {
+        // The style update didn't need the anchor chosen before it. Choose as usual, after the render tree update.
+        m_isQueuedForScrollPositionUpdate = false;
+        protect(frameView())->dequeueScrollableAreaForScrollAnchoringUpdate(m_owningScrollableArea);
+        if (m_choseAnchorBeforeStyleRecalc) {
+            m_anchorObject = nullptr;
+            m_lastAnchorOffset = { };
+        }
+    }
+
     if (m_isQueuedForScrollPositionUpdate) {
         m_anchoringSuppressedByStyleChange |= anchoringSuppressedByStyleChange();
         return;
     }
+
+    // Style-interleaved layouts run during style resolution, where anchors can't be chosen.
+    if (isInStyleInterleavedLayout)
+        return;
 
     CheckedRef owningScrollableArea = m_owningScrollableArea;
     auto scrollPosition = owningScrollableArea->scrollPosition();
@@ -621,6 +643,22 @@ void ScrollAnchoringController::updateBeforeLayout()
     m_isQueuedForScrollPositionUpdate = true;
 }
 
+// Style-interleaved layouts run during style resolution, where anchors can't be chosen, and see content whose style
+// is only partially resolved. Choose the anchor before style resolution, from the geometry of the last layout.
+void ScrollAnchoringController::updateBeforeStyleRecalc()
+{
+    if (m_isQueuedForScrollPositionUpdate)
+        return;
+
+    bool hadAnchor = !!m_anchorObject;
+    updateBeforeLayout();
+    if (!m_isQueuedForScrollPositionUpdate)
+        return;
+
+    m_wasQueuedBeforeStyleRecalc = true;
+    m_choseAnchorBeforeStyleRecalc = !hadAnchor;
+}
+
 // https://drafts.csswg.org/css-scroll-anchoring/#scroll-adjustment
 void ScrollAnchoringController::adjustScrollPositionForAnchoring()
 {
@@ -638,6 +676,7 @@ void ScrollAnchoringController::adjustScrollPositionForAnchoring()
     }
 
     auto queued = std::exchange(m_isQueuedForScrollPositionUpdate, false);
+    m_wasQueuedBeforeStyleRecalc = false;
     if (!m_anchorObject || !queued)
         return;
 

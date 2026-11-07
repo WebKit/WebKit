@@ -799,6 +799,22 @@ void LocalFrameView::willRecalcStyle()
         return;
 
     protect(renderView->compositor())->willRecalcStyle();
+
+    // Style resolution may lay out to evaluate container queries and anchor positioning.
+    auto mayDoInterleavedLayout = !renderView->containerQueryBoxes().isEmptyIgnoringNullReferences() || !protect(m_frame->document())->styleScope().anchorPositionedToAnchorMap().isEmpty();
+    if (!mayDoInterleavedLayout || layoutContext().isLayoutNested())
+        return;
+
+    if (CheckedPtr controller = scrollAnchoringController())
+        controller->updateBeforeStyleRecalc();
+
+    if (!m_anchoringScrollableAreas)
+        return;
+
+    for (CheckedRef scrollableArea : *m_anchoringScrollableAreas) {
+        if (CheckedPtr controller = scrollableArea->scrollAnchoringController())
+            controller->updateBeforeStyleRecalc();
+    }
 }
 
 void LocalFrameView::styleAndRenderTreeDidChange()
@@ -1307,7 +1323,9 @@ void LocalFrameView::adjustScrollbarsForLayout(bool isFirstLayout)
 
 void LocalFrameView::willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot)
 {
-    if (!m_frame->document()->isInStyleInterleavedLayout() && !layoutContext().isLayoutNested())
+    // Style-interleaved layouts only record suppressing style changes, which they clear, for the anchors chosen in willRecalcStyle().
+    // They are nested when layout resolves style, and the enclosing layout gets here only after them.
+    if (m_frame->document()->isInStyleInterleavedLayout() || !layoutContext().isLayoutNested())
         updateScrollAnchoringBeforeLayoutForScrollableAreas();
 
     bool subtreeLayout = !is<RenderView>(*layoutRoot);
@@ -4972,7 +4990,10 @@ void LocalFrameView::performPostLayoutTasks()
     updateLayoutViewport();
     viewportContentsChanged();
 
-    if (!layoutContext().isLayoutNested())
+    // Post-layout tasks deferred from a style-interleaved layout can run while the rest of that style update
+    // still needs layout. Leave queued scroll anchors for that layout to adjust, rather than acting on the
+    // interleaved geometry.
+    if (!layoutContext().isLayoutNested() && !layoutContext().needsLayout(LayoutOptions::CanDeferUpdateLayerPositions))
         adjustScrollAnchoringPositionForScrollableAreas();
 
     resnapAfterLayout();

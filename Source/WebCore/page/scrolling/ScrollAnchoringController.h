@@ -67,6 +67,7 @@ public:
     void scrollerDidLayout();
 
     void clearAnchor(bool includeAncestors = false);
+    void updateBeforeStyleRecalc();
     void updateBeforeLayout();
     void adjustScrollPositionForAnchoring();
 
@@ -136,6 +137,8 @@ private:
 
     bool m_isUpdatingScrollPositionForAnchoring { false };
     bool m_isQueuedForScrollPositionUpdate { false };
+    bool m_wasQueuedBeforeStyleRecalc { false };
+    bool m_choseAnchorBeforeStyleRecalc { false };
     bool m_anchoringSuppressedByStyleChange { false };
     unsigned m_inScrollEventCount { 0 };
     unsigned m_suppressionCount { 0 };

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .container { container-type: inline-size; }
+    #scroller { height: 400px; overflow: auto; }
+    .block > div { height: 200px; }
+    .tall > div { height: 500px; }
+    @container (width < 400px) {
+        .query > div { height: 100px; }
+    }
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="scroller"><div id="inner-container" class="container"></div></div>
+<div>
+    <div id="resizing-container" class="container"></div>
+    <div id="container" class="container"></div>
+</div>
+<div id="plain"></div>
+<div style="height: 600px"></div>
+<div id="console"></div>
+<script>
+description("Tests that a style-interleaved layout for a size query container does not move the scroll position based on partially resolved style.");
+jsTestIsAsync = true;
+
+function addBlocks(container, count, className)
+{
+    for (let i = 0; i < count; ++i) {
+        const block = document.createElement("div");
+        block.className = className(i);
+        block.append(document.createElement("div"));
+        container.append(block);
+    }
+}
+
+const scroller = document.getElementById("scroller");
+const innerContainer = document.getElementById("inner-container");
+const resizingContainer = document.getElementById("resizing-container");
+const container = document.getElementById("container");
+const plain = document.getElementById("plain");
+const blockClassName = (i) => (i === 20 || i === 40) ? "block tall" : "block";
+addBlocks(innerContainer, 60, blockClassName);
+addBlocks(resizingContainer, 5, () => "block query");
+addBlocks(container, 60, blockClassName);
+addBlocks(plain, 40, () => "block");
+
+// Dirtying the query container makes style resolution lay out the document before resolving the container's descendants.
+let generation = 0;
+function invalidateContainerStyle(element)
+{
+    element.style.setProperty("--generation", ++generation);
+}
+
+function pinHeightAndEmpty(block)
+{
+    block.style.height = block.getBoundingClientRect().height + "px";
+    block.replaceChildren();
+}
+
+let scrollDelta;
+let scrollDeltaAfterFirstUpdate;
+
+async function measure(scrollingElement, scrollPosition, mutation)
+{
+    scrollingElement.scrollTop = scrollPosition;
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    const before = scrollingElement.scrollTop;
+    await mutation();
+    await UIHelper.renderingUpdate();
+    scrollDeltaAfterFirstUpdate = scrollingElement.scrollTop - before;
+    await UIHelper.renderingUpdate();
+    scrollDelta = scrollingElement.scrollTop - before;
+}
+
+async function test(description, scrollingElement, scrollPosition, mutation, expectedDelta)
+{
+    debug("");
+    debug(description);
+    await measure(scrollingElement, scrollPosition, mutation);
+    shouldBe("scrollDeltaAfterFirstUpdate", expectedDelta);
+    shouldBe("scrollDelta", expectedDelta);
+}
+
+window.addEventListener("load", async () => {
+    const blockBottom = (index) => container.children[index].getBoundingClientRect().bottom + scrollY;
+    const innerBlockBottom = (index) => innerContainer.children[index].getBoundingClientRect().bottom - scroller.getBoundingClientRect().top + scroller.scrollTop;
+    const root = document.scrollingElement;
+
+    await test("Pinning the height of a block above the viewport and emptying it should not scroll.", root, blockBottom(20) + 300, () => {
+        pinHeightAndEmpty(container.children[20]);
+        invalidateContainerStyle(container);
+    }, "0");
+
+    await test("Emptying a block above the viewport without pinning its height should be compensated by scroll anchoring.", root, blockBottom(30) + 300, () => {
+        invalidateContainerStyle(container);
+        container.children[30].replaceChildren();
+    }, "-200");
+
+    await test("In an overflow scroller, pinning the height of a block above the scrollport and emptying it should not scroll.", scroller, innerBlockBottom(20) + 100, () => {
+        pinHeightAndEmpty(innerContainer.children[20]);
+        invalidateContainerStyle(innerContainer);
+    }, "0");
+
+    await test("Repeatedly pinning the height of blocks and emptying them should not disable scroll anchoring.", root, blockBottom(45) + 100, async () => {
+        for (let i = 1; i < 7; ++i) {
+            pinHeightAndEmpty(container.children[i]);
+            invalidateContainerStyle(container);
+            await UIHelper.renderingUpdate();
+        }
+        container.children[35].replaceChildren();
+    }, "-200");
+
+    await test("A query container above the viewport that shrinks because of its container query should be compensated by scroll anchoring.", root, blockBottom(45) + 100, () => {
+        pinHeightAndEmpty(resizingContainer.children[2]);
+        resizingContainer.style.width = "300px";
+    }, "-400");
+    shouldBe("resizingContainer.children[0].getBoundingClientRect().height", "100");
+
+    // Matches nothing, but child removal invalidates the style of all ancestors, including the query container.
+    const hasRule = document.createElement("style");
+    hasRule.textContent = ".nomatch :not(:has(*)) { display: none; }";
+    document.head.append(hasRule);
+    await test("Pinning the height of a block and emptying it with the reported :has() rule should not scroll.", root, blockBottom(50) + 300, () => {
+        pinHeightAndEmpty(container.children[40]);
+    }, "0");
+    hasRule.remove();
+
+    await test("Shrinking a block above the viewport outside query containers should be compensated by scroll anchoring.", root, plain.children[30].getBoundingClientRect().top + scrollY, () => {
+        plain.children[10].firstChild.style.height = "0px";
+    }, "-200");
+
+    await test("At the bottom of the page, pinning the height of a block and emptying it should not scroll.", root, root.scrollHeight, () => {
+        pinHeightAndEmpty(container.children[50]);
+        invalidateContainerStyle(container);
+    }, "0");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>
