@@ -60,7 +60,7 @@ std::optional<TransformationMatrix> WebXRSpace::effectiveOrigin() const
 
 std::optional<bool> WebXRSpace::isPositionEmulated() const
 {
-    RefPtr xrSession = session();
+    WebXRSession* xrSession = session();
     if (!xrSession)
         return std::nullopt;
 

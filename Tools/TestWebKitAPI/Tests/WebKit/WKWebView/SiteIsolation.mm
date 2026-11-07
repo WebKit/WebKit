@@ -17929,10 +17929,7 @@ static void checkIsSessionSupportedSettlesInCrossOriginIFrame(bool siteIsolation
         { "/subframe"_s, { subframeHTML } }
     }, HTTPServer::Protocol::HttpsProxy);
 
-    RetainPtr configuration = server.httpsProxyConfiguration();
-    // WebXR is built on macOS but off by default there, so don't rely on the platform default.
-    setFeatureEnabled(configuration.get(), @"WebXREnabled", true);
-    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectZero, siteIsolationEnabled);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server.httpsProxyConfiguration(), CGRectZero, siteIsolationEnabled);
 
     RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
     [webView setUIDelegate:uiDelegate.get()];

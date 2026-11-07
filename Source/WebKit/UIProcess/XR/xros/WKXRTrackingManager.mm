@@ -30,10 +30,8 @@
 
 #import "Logging.h"
 #import <WebCore/WebCoreObjCExtras.h>
-#import <mach/mach_time.h>
 #import <numbers>
 #import <wtf/OSObjectPtr.h>
-#import <wtf/WeakObjCPtr.h>
 #import <wtf/darwin/DispatchExtras.h>
 
 #import <pal/cocoa/ARKitSoftLink.h>
@@ -75,15 +73,12 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
 @end
 
 @implementation WKXRTrackingManager {
-    OSObjectPtr<dispatch_queue_t> _accessQueue;
-    WeakObjCPtr<cp_layer_renderer_t> _layerRenderer;
+    dispatch_queue_t _accessQueue;
+    __weak cp_layer_renderer_t _layerRenderer;
     RetainPtr<NSMutableDictionary<NSNumber *, _WKTransientAction *>> _transientActions;
 
     OSObjectPtr<ar_session_t> _arSession;
     OSObjectPtr<ar_world_tracking_provider_t> _worldTrackingProvider;
-#if PLATFORM(MAC)
-    OSObjectPtr<ar_device_t> _remoteDevice;
-#endif
 
     BOOL _handTrackingEnabled;
     OSObjectPtr<ar_hand_tracking_provider_t> _handTrackingProvider;
@@ -98,9 +93,6 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
 }
 
 - (instancetype)initWithHandTrackingEnabled:(BOOL)handTrackingEnabled layerRenderer:(cp_layer_renderer_t)layerRenderer
-#if PLATFORM(MAC)
-    remoteDevice:(ar_device_t)remoteDevice
-#endif
 #if HAVE(SPATIAL_CONTROLLERS)
     controllerManager:(RetainPtr<WKXRControllerManager> &)controllerManager
 #endif
@@ -108,21 +100,10 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
     if (!PAL::isARKitFrameworkAvailable())
         return nil;
 
-#if PLATFORM(MAC)
-    if (!remoteDevice) {
-        RELEASE_LOG_ERROR(XR, "Cannot create AR tracking manager without a remote device");
-        return nil;
-    }
-#endif
-
     if (!(self = [super init]))
         return nil;
 
-#if PLATFORM(MAC)
-    _remoteDevice = remoteDevice;
-#endif
-
-    _accessQueue = adoptOSObject(dispatch_queue_create("com.apple.WebContent.WKXRTrackingManager.AccessQueue", serialQueueWithAutoreleasePoolAttrSingleton()));
+    _accessQueue = dispatch_queue_create("com.apple.WebContent.WKXRTrackingManager.AccessQueue", serialQueueWithAutoreleasePoolAttrSingleton());
 #if ENABLE(WEBXR_HANDS) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     _handTrackingEnabled = handTrackingEnabled;
 #else
@@ -135,7 +116,7 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
     _controllerManager = controllerManager;
 #endif
 
-    dispatch_async(_accessQueue.get(), ^{
+    dispatch_async(_accessQueue, ^{
         [self _startTracking];
     });
 
@@ -147,12 +128,13 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKXRTrackingManager.class, self))
         return;
 
-    dispatch_sync(_accessQueue.get(), ^{
+    dispatch_sync(_accessQueue, ^{
         if (_arSession)
             [self _endTracking];
 
         ASSERT(!_arSession);
     });
+    dispatch_release(_accessQueue);
 
     [super dealloc];
 }
@@ -171,44 +153,21 @@ typedef NS_OPTIONS(NSUInteger, WKXRTrackingProviderType) {
 #endif
 }
 
-static NSTimeInterval currentMachTimeInSeconds()
-{
-    static double secondsPerTick = [] {
-        mach_timebase_info_data_t timebase { };
-        mach_timebase_info(&timebase);
-        return static_cast<double>(timebase.numer) / timebase.denom / NSEC_PER_SEC;
-    }();
-    return mach_absolute_time() * secondsPerTick;
-}
-
 - (OSObjectPtr<ar_device_anchor_t>)deviceAnchorAtTime:(NSTimeInterval)time
 {
     __block OSObjectPtr<ar_device_anchor_t> deviceAnchor;
 
-    dispatch_sync(_accessQueue.get(), ^{
+    dispatch_sync(_accessQueue, ^{
         if (!_worldTrackingProvider || !(self.runningProviderTypes & WKXRTrackingProviderTypeWorldTracking))
             return;
 
-        auto queryDeviceAnchor = [provider = _worldTrackingProvider](NSTimeInterval timestamp) -> OSObjectPtr<ar_device_anchor_t> {
-            OSObjectPtr<ar_device_anchor_t> anchor = adoptOSObject(ar_device_anchor_create());
-            if (ar_world_tracking_provider_query_device_anchor_at_timestamp(provider.get(), timestamp, anchor.get()) != ar_device_anchor_query_status_success)
-                return nullptr;
-            // Only returned on success, so that a caller can tell a queried anchor from an unpopulated one.
-            return anchor;
-        };
+        deviceAnchor = adoptOSObject(ar_device_anchor_create());
+        ar_device_anchor_query_status_t status = ar_world_tracking_provider_query_device_anchor_at_timestamp(_worldTrackingProvider.get(), time, deviceAnchor.get());
 
-        NSTimeInterval now = currentMachTimeInSeconds();
-        deviceAnchor = queryDeviceAnchor(time);
-        if (deviceAnchor)
+        if (status != ar_device_anchor_query_status_success) {
+            RELEASE_LOG_ERROR(XR, "Cannot get device anchor from world tracking provider");
             return;
-
-        // A remote device predicts over a shorter window than the compositor's presentation lead,
-        // so the requested time can sit past the end of it. Fall back to the newest pose the
-        // provider will return: cp_drawable_set_device_anchor reports which pose the frame was
-        // rendered with, and the compositor reprojects the difference before display.
-        deviceAnchor = queryDeviceAnchor(now);
-        if (!deviceAnchor)
-            RELEASE_LOG_ERROR(XR, "Cannot get a device anchor from the world tracking provider, neither %.1f ms ahead nor at the current time", (time - now) * 1000);
+        }
     });
 
     return deviceAnchor;
@@ -216,14 +175,10 @@ static NSTimeInterval currentMachTimeInSeconds()
 
 - (void)_startTracking
 {
-    dispatch_assert_queue(_accessQueue.get());
+    dispatch_assert_queue(_accessQueue);
     ASSERT(!_arSession);
 
-#if PLATFORM(MAC)
-    _arSession = adoptOSObject(ar_session_create_with_device(_remoteDevice.get()));
-#else
     _arSession = adoptOSObject(ar_session_create());
-#endif
     if (!_arSession) {
         RELEASE_LOG_ERROR(XR, "Cannot create AR session");
         return;
@@ -294,7 +249,7 @@ static NSTimeInterval currentMachTimeInSeconds()
 
 - (void)_stateDidChangeForDataProviders
 {
-    dispatch_async(_accessQueue.get(), ^{
+    dispatch_async(_accessQueue, ^{
         if (!_arSession)
             return;
 
@@ -318,7 +273,7 @@ static NSTimeInterval currentMachTimeInSeconds()
 
 - (void)_endTracking
 {
-    dispatch_assert_queue(_accessQueue.get());
+    dispatch_assert_queue(_accessQueue);
     ASSERT(!!_arSession);
 
     ar_session_stop(_arSession.get());
@@ -335,15 +290,14 @@ static NSTimeInterval currentMachTimeInSeconds()
 
 // MARK: - WKSpatialGestureRecognizerDelegate
 
-#if PLATFORM(IOS_FAMILY)
 - (cp_layer_renderer_t)cpLayerForGestureRecognizer:(WKSpatialGestureRecognizer *)gestureRecognizer
 {
-    return _layerRenderer.getAutoreleased();
+    return _layerRenderer;
 }
 
 - (void)gestureRecognizer:(WKSpatialGestureRecognizer *)gestureRecognizer transientActionDidStart:(NSNumber *)actionIdentifier targetRayTransform:(simd_float4x4)targetRayTransform poseTransform:(simd_float4x4)poseTransform
 {
-    dispatch_async(_accessQueue.get(), ^{
+    dispatch_async(_accessQueue, ^{
         if (!_transientActions)
             _transientActions = adoptNS([[NSMutableDictionary alloc] init]);
         RetainPtr<_WKTransientAction> transientAction = adoptNS([[_WKTransientAction alloc] initWithTargetRay:targetRayTransform pose:poseTransform]);
@@ -354,7 +308,7 @@ static NSTimeInterval currentMachTimeInSeconds()
 
 - (void)gestureRecognizer:(WKSpatialGestureRecognizer *)gestureRecognizer transientActionDidUpdate:(NSNumber *)actionIdentifier poseTransform:(simd_float4x4)poseTransform
 {
-    dispatch_async(_accessQueue.get(), ^{
+    dispatch_async(_accessQueue, ^{
         _WKTransientAction *transientAction = [_transientActions objectForKey:actionIdentifier];
         ASSERT(transientAction);
         if (!transientAction)
@@ -372,11 +326,10 @@ static NSTimeInterval currentMachTimeInSeconds()
 {
     [self _doneWithTransientActionWithIdentifier:actionIdentifier];
 }
-#endif // PLATFORM(IOS_FAMILY)
 
 - (void)_doneWithTransientActionWithIdentifier:(NSNumber *)actionIdentifier
 {
-    dispatch_async(_accessQueue.get(), ^{
+    dispatch_async(_accessQueue, ^{
         _WKTransientAction *transientAction = [_transientActions objectForKey:actionIdentifier];
         ASSERT(transientAction);
         if (!transientAction)
@@ -390,7 +343,7 @@ static NSTimeInterval currentMachTimeInSeconds()
 
 - (std::optional<PlatformXR::FrameData::InputSource>)_platformXRInputSourceFromTransientAction:(_WKTransientAction *)transientAction actionIdentifier:(int)actionIdentifier
 {
-    dispatch_assert_queue(_accessQueue.get());
+    dispatch_assert_queue(_accessQueue);
 
     simd_float4x4 multiplier = simd_mul(transientAction.pose, transientAction.inversedStartingPose);
     PlatformXRPose targetRay(simd_mul(multiplier, transientAction.targetRay));
@@ -428,7 +381,7 @@ static NSTimeInterval currentMachTimeInSeconds()
 {
     __block Vector<PlatformXR::FrameData::InputSource> result;
 
-    dispatch_sync(_accessQueue.get(), ^{
+    dispatch_sync(_accessQueue, ^{
         if (!self.isValid)
             return;
 
@@ -532,16 +485,16 @@ static const size_t xrJointCount = static_cast<size_t>(PlatformXR::HandJoint::Co
     } else
         jointPoseTransform = simd_matrix4x4(simd_quaternion(std::numbers::pi_v<float> / 2, simd_make_float3(0, 1, 0)));
 
-    OSObjectPtr<ar_hand_skeleton_t> handSkeleton = ar_hand_anchor_get_hand_skeleton(handAnchor);
+    ar_hand_skeleton_t handSkeleton = ar_hand_anchor_get_hand_skeleton(handAnchor);
     for (size_t i = 0; i < xrJointCount; ++i) {
         ar_hand_skeleton_joint_name_t jointName = jointNames[i];
-        OSObjectPtr<ar_skeleton_joint_t> skeletonJoint = ar_hand_skeleton_get_joint_named(handSkeleton.get(), jointName);
+        ar_skeleton_joint_t skeletonJoint = ar_hand_skeleton_get_joint_named(handSkeleton, jointName);
 
         PlatformXR::FrameData::InputSourceHandJoint joint;
-        simd_float4x4 skeletonTransform = ar_skeleton_joint_get_anchor_from_joint_transform(skeletonJoint.get());
+        simd_float4x4 skeletonTransform = ar_skeleton_joint_get_anchor_from_joint_transform(skeletonJoint);
         skeletonTransform = simd_mul(skeletonTransform, jointPoseTransform);
         joint.pose.pose = PlatformXRPose(skeletonTransform, originFromWrist).pose();
-        joint.pose.isPositionEmulated = !ar_skeleton_joint_is_tracked(skeletonJoint.get());
+        joint.pose.isPositionEmulated = !ar_skeleton_joint_is_tracked(skeletonJoint);
         joint.radius = 0.01f;
         handJoints.append(joint);
     }

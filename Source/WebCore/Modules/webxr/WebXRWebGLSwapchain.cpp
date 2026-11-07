@@ -101,6 +101,11 @@ void WebXRWebGLSwapchain::clearTextureRegion(GraphicsContextGL& gl, const IntRec
     });
 }
 
+static IntSize toIntSize(const auto& size)
+{
+    return IntSize(size[0], size[1]);
+}
+
 static IntSize calcImagePhysicalSize(const IntSize& leftPhysicalSize, const IntSize& rightPhysicalSize)
 {
     if (rightPhysicalSize.isEmpty())
@@ -111,8 +116,8 @@ static IntSize calcImagePhysicalSize(const IntSize& leftPhysicalSize, const IntS
 
 void WebXRWebGLSwapchain::setupExternalImage(const PlatformXR::FrameData::LayerSetupData& data)
 {
-    auto leftPhysicalSize = data.physicalSizeForEye(0);
-    auto rightPhysicalSize = data.physicalSizeForEye(1);
+    auto leftPhysicalSize = toIntSize(data.physicalSize[0]);
+    auto rightPhysicalSize = toIntSize(data.physicalSize[1]);
 
     m_texSize = calcImagePhysicalSize(leftPhysicalSize, rightPhysicalSize);
 }
@@ -250,7 +255,7 @@ void WebXRWebGLSharedImageSwapchain::bindCompositorTexturesForDisplay(GraphicsCo
     if (m_displayImagesSets.size() <= m_currentImageIndex)
         m_displayImagesSets.resizeToFit(m_currentImageIndex + 1);
 
-    IntSize texSize = layerData.layerSetup ? layerData.layerSetup->physicalSizeForEye(0) : IntSize(32, 32);
+    IntSize texSize = layerData.layerSetup ? toIntSize(layerData.layerSetup->physicalSize[0]) : IntSize(32, 32);
     if (!layerData.textureData) {
         m_currentImageIndex = 0;
         return;
@@ -630,7 +635,7 @@ void WebXRWebGLTextureArraySwapchain::bindCompositorTexturesForDisplay(GraphicsC
         if (!layerData.textureData->colorTexture)
             return;
 
-        IntSize texSize = layerData.layerSetup ? layerData.layerSetup->physicalSizeForEye(0) : IntSize(32, 32);
+        IntSize texSize = layerData.layerSetup ? toIntSize(layerData.layerSetup->physicalSize[0]) : IntSize(32, 32);
         auto colorTextureSource = makeExternalImageSource(layerData.textureData->colorTexture, texSize);
 #if PLATFORM(COCOA)
         constexpr auto kColorFormat = GL::BGRA_EXT;
@@ -731,7 +736,7 @@ void WebXRWebGLCubeSwapchain::bindCompositorTexturesForDisplay(GraphicsContextGL
             return;
 
         // The shared image is the side-by-side 2D texture (cubeCount*faceCount faces laid out horizontally) that the UIProcess reconstructs into cube swapchain faces.
-        IntSize texSize = layerData.layerSetup ? layerData.layerSetup->physicalSizeForEye(0) : IntSize(32, 32);
+        IntSize texSize = layerData.layerSetup ? toIntSize(layerData.layerSetup->physicalSize[0]) : IntSize(32, 32);
         auto colorTextureSource = makeExternalImageSource(layerData.textureData->colorTexture, texSize);
 #if PLATFORM(COCOA)
         constexpr auto kColorFormat = GL::BGRA_EXT;

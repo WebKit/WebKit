@@ -161,7 +161,7 @@ ExceptionOr<Ref<WebXRWebGLLayer>> WebXRWebGLLayer::create(WebXRSession& session,
 }
 
 WebXRWebGLLayer::WebXRWebGLLayer(WebXRSession& session, WebXRRenderingContext&& context, std::unique_ptr<WebXROpaqueFramebuffer>&& framebuffer, bool antialias, bool ignoreDepthValues, bool isCompositionEnabled)
-    : WebXRLayer(protect(session.scriptExecutionContext()).get())
+    : WebXRLayer(session.scriptExecutionContext())
     , m_session(session)
     , m_context(WTF::move(context))
     , m_leftViewport(WebXRViewport::create({ }))
@@ -176,7 +176,7 @@ WebXRWebGLLayer::WebXRWebGLLayer(WebXRSession& session, WebXRRenderingContext&& 
 
 WebXRWebGLLayer::~WebXRWebGLLayer()
 {
-    RefPtr canvasElement = canvas();
+    auto canvasElement = canvas();
     if (canvasElement)
         canvasElement->removeObserver(*this);
 }
@@ -302,7 +302,7 @@ void WebXRWebGLLayer::sessionEnded()
     ASSERT(m_session);
 
     if (m_framebuffer) {
-        auto device = protect(m_session)->device();
+        auto device = m_session->device();
         if (device)
             device->deleteLayer(m_framebuffer->handle());
         m_framebuffer = nullptr;
@@ -348,7 +348,6 @@ PlatformXR::DeviceLayer WebXRWebGLLayer::endFrame()
         .views = WTF::move(views),
 #if USE(OPENXR)
         .fenceFD = m_framebuffer->takeFenceFD(),
-#endif
 #if ENABLE(WEBXR_LAYERS)
         .blendTextureSourceAlpha = false,
         .forceMonoPresentation = false,
@@ -356,6 +355,7 @@ PlatformXR::DeviceLayer WebXRWebGLLayer::endFrame()
         .equirectLayerData = std::nullopt,
         .cylinderLayerData = std::nullopt,
         .cubeLayerData = std::nullopt,
+#endif
 #endif
     };
 }
@@ -410,7 +410,7 @@ void WebXRWebGLLayer::updateViewports()
 
 void WebXRWebGLLayer::addConsoleMessage(MessageLevel level, String&& message) const
 {
-    RefPtr scriptExecutionContext = this->scriptExecutionContext();
+    auto* scriptExecutionContext = this->scriptExecutionContext();
     if (!scriptExecutionContext)
         return;
 

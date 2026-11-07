@@ -1093,8 +1093,7 @@ WebPageProxy* WebProcessProxy::webPageWithActiveXRSession()
 {
     for (WeakRef weakPage : globalPageMap().values()) {
         Ref page = weakPage.get();
-        RefPtr xrSystem = page->xrSystem();
-        if (xrSystem && xrSystem->hasActiveSession())
+        if (page->xrSystem() && page->xrSystem()->hasActiveSession())
             return weakPage.ptr();
     }
     return nullptr;

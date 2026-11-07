@@ -29,13 +29,10 @@
 #import "APIConversions.h"
 #import "Device.h"
 #import "MetalSPI.h"
-#import "XRSubImage.h"
-#import <algorithm>
-#import <tuple>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/StdLibExtras.h>
 
-#if USE(APPLE_INTERNAL_SDK) && HAVE(COMPOSITOR_SERVICES)
+#if USE(APPLE_INTERNAL_SDK) && PLATFORM(VISION)
 #import <CompositorServices/CompositorServices_Private.h>
 #import <Metal/MTLRasterizationRate_Private.h>
 #import <wtf/SoftLinking.h>
@@ -192,7 +189,7 @@ size_t XRProjectionLayer::reusableTextureIndex() const
 
 void XRProjectionLayer::startFrame(size_t frameIndex, WTF::MachSendRight&& colorBuffer, WTF::MachSendRight&& depthBuffer, WTF::MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples)
 {
-#if USE(APPLE_INTERNAL_SDK) && HAVE(COMPOSITOR_SERVICES) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if USE(APPLE_INTERNAL_SDK) && PLATFORM(VISION) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     id<MTLDevice> device = m_device->device();
     m_reusableTextureIndex = reusableTextureIndex;
     NSNumber* textureKey = @(reusableTextureIndex);

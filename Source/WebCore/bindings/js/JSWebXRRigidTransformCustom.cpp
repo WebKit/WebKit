@@ -39,7 +39,7 @@ JSC::JSValue JSWebXRRigidTransform::matrix(JSC::JSGlobalObject& lexicalGlobalObj
 {
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
     return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, wrapped().cachedMatrix(), [&](JSC::ThrowScope& throwScope) {
-        SUPPRESS_UNCOUNTED_ARG JSC::JSValue matrix = toJS<IDLFloat32Array>(lexicalGlobalObject, *realm(), throwScope, wrapped().matrix());
+        JSC::JSValue matrix = toJS<IDLFloat32Array>(lexicalGlobalObject, *realm(), throwScope, wrapped().matrix());
         return matrix;
     });
 }

@@ -27,8 +27,8 @@
 #import "PlatformXRCoordinator.h"
 #import "PlatformXRSystem.h"
 
-#if ENABLE(WEBXR) && USE(APPLE_INTERNAL_SDK) && !USE(COMPOSITORXR)
+#if ENABLE(WEBXR) && USE(APPLE_INTERNAL_SDK)
 
 #import <WebKitAdditions/PlatformXRSystemAdditions.mm>
 
-#endif // ENABLE(WEBXR) && USE(APPLE_INTERNAL_SDK) && !USE(COMPOSITORXR)
+#endif // ENABLE(WEBXR) && USE(APPLE_INTERNAL_SDK)

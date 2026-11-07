@@ -521,8 +521,7 @@ WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(WebGLVersion ty
         if (RefPtr window = document().window()) {
             // FIXME: how to make this sync without blocking the main thread?
             // For reference: https://immersive-web.github.io/webxr/#ref-for-dom-webglcontextattributes-xrcompatible
-            Ref xrSystem = NavigatorWebXR::xr(protect(window->navigator()).get());
-            xrSystem->ensureImmersiveXRDeviceIsSelected([] { });
+            NavigatorWebXR::xr(window->navigator()).ensureImmersiveXRDeviceIsSelected([]() { });
         }
     }
 #endif

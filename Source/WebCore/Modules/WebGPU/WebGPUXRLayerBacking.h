@@ -80,7 +80,3 @@ private:
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebGPUXRLayerBacking)
-    static bool isType(const WebCore::XRLayerBacking& backing) { return !backing.isWebGLBacking(); }
-SPECIALIZE_TYPE_TRAITS_END()

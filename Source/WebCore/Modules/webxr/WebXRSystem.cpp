@@ -66,9 +66,9 @@ Ref<WebXRSystem> WebXRSystem::create(Navigator& navigator)
 }
 
 WebXRSystem::WebXRSystem(Navigator& navigator)
-    : ActiveDOMObject(protect(navigator.scriptExecutionContext()).get())
+    : ActiveDOMObject(navigator.scriptExecutionContext())
     , m_navigator(navigator)
-    , m_defaultInlineDevice(DummyInlineDevice::create(*protect(navigator.scriptExecutionContext())))
+    , m_defaultInlineDevice(DummyInlineDevice::create(*navigator.scriptExecutionContext()))
 {
     m_inlineXRDevice = m_defaultInlineDevice.get();
 }
@@ -102,32 +102,32 @@ void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& 
     }
 
     bool isFirstXRDevicesEnumeration = !m_immersiveXRDevicesHaveBeenEnumerated;
-    document->page()->chrome().client().enumerateImmersiveXRDevices([protectedThis = protect(*this), isFirstXRDevicesEnumeration, callback = WTF::move(callback)](auto& immersiveXRDevices) mutable {
-        protectedThis->m_immersiveXRDevicesHaveBeenEnumerated = true;
+    document->page()->chrome().client().enumerateImmersiveXRDevices([this, protectedThis = protect(*this), isFirstXRDevicesEnumeration, callback = WTF::move(callback)](auto& immersiveXRDevices) mutable {
+        m_immersiveXRDevicesHaveBeenEnumerated = true;
 
         auto callbackOnExit = makeScopeExit([&]() {
             callOnMainThread(WTF::move(callback));
         });
 
         // https://immersive-web.github.io/webxr/#select-an-immersive-xr-device
-        RefPtr oldDevice { protectedThis->m_activeImmersiveDevice };
+        RefPtr oldDevice { m_activeImmersiveDevice };
         if (immersiveXRDevices.isEmpty()) {
-            protectedThis->m_activeImmersiveDevice = nullptr;
+            m_activeImmersiveDevice = nullptr;
             return;
         }
         if (immersiveXRDevices.size() == 1) {
-            protectedThis->m_activeImmersiveDevice = immersiveXRDevices.first().get();
+            m_activeImmersiveDevice = immersiveXRDevices.first().get();
             return;
         }
 
-        if (protectedThis->m_activeImmersiveSession && oldDevice && immersiveXRDevices.findIf([&](auto& entry) { return entry.ptr() == oldDevice; }) != notFound)
-            ASSERT(protectedThis->m_activeImmersiveDevice.get() == oldDevice);
+        if (m_activeImmersiveSession && oldDevice && immersiveXRDevices.findIf([&](auto& entry) { return entry.ptr() == oldDevice; }) != notFound)
+            ASSERT(m_activeImmersiveDevice.get() == oldDevice);
         else {
             // FIXME: implement a better UA selection mechanism if required.
-            protectedThis->m_activeImmersiveDevice = immersiveXRDevices.first().get();
+            m_activeImmersiveDevice = immersiveXRDevices.first().get();
         }
 
-        if (isFirstXRDevicesEnumeration || protectedThis->m_activeImmersiveDevice.get() == oldDevice) {
+        if (isFirstXRDevicesEnumeration || m_activeImmersiveDevice.get() == oldDevice) {
             return;
         }
 
@@ -208,8 +208,7 @@ bool WebXRSystem::immersiveSessionRequestIsAllowedForGlobalObject(LocalDOMWindow
         return false;
 
     // https://immersive-web.github.io/webxr/#active-and-focused
-    RefPtr globalDocument = globalObject.document();
-    if (!document.hasFocus() || !protect(document.securityOrigin())->isSameOriginAs(protect(globalDocument->securityOrigin()).get()))
+    if (!document.hasFocus() || !protect(document.securityOrigin())->isSameOriginAs(globalObject.document()->securityOrigin()))
         return false;
 
     // 3. If user intent to begin an immersive session is not well understood,
@@ -551,10 +550,10 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
     // 5.2 Let optionalFeatures be options' optionalFeatures.
     // 5.3 Set device to the result of obtaining the current device for mode, requiredFeatures, and optionalFeatures.
     // 5.4 Queue a task to perform the following steps:
-    obtainCurrentDevice(mode, init.requiredFeatures, init.optionalFeatures, [protectedThis = protect(*this), protectedDocument, immersive, init, mode, promise = WTF::move(promise)](ThreadSafeWeakPtr<PlatformXR::Device> weakDevice) mutable {
+    obtainCurrentDevice(mode, init.requiredFeatures, init.optionalFeatures, [this, protectedThis = protect(*this), protectedDocument, immersive, init, mode, promise = WTF::move(promise)](ThreadSafeWeakPtr<PlatformXR::Device> weakDevice) mutable {
         auto rejectPromiseWithNotSupportedError = makeScopeExit([&]() {
             promise.reject(Exception { ExceptionCode::NotSupportedError });
-            protectedThis->m_pendingImmersiveSession = false;
+            m_pendingImmersiveSession = false;
         });
 
         // 5.4.1 If device is null or device's list of supported modes does not contain mode, run the following steps:
@@ -576,7 +575,7 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
         // 5.4.5 Let status be an XRPermissionStatus, initially null
         // 5.4.6 Request the xr permission with descriptor and status.
         // 5.4.7 If status' state is "denied" run the following steps: (same as above in 5.4.1)
-        protectedThis->resolveFeaturePermissions(mode, init, device, [weakThis = WeakPtr { protectedThis.get() }, protectedDocument, device, immersive, mode, promise](std::optional<FeatureList>&& requestedFeatures) mutable {
+        resolveFeaturePermissions(mode, init, device, [this, weakThis = WeakPtr { *this }, protectedDocument, device, immersive, mode, promise](std::optional<FeatureList>&& requestedFeatures) mutable {
             RefPtr strongThis = weakThis;
             if (!strongThis) {
                 promise.reject(Exception { ExceptionCode::NotSupportedError });
@@ -584,33 +583,21 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
             }
             if (!requestedFeatures) {
                 promise.reject(Exception { ExceptionCode::NotSupportedError });
-                strongThis->m_pendingImmersiveSession = false;
+                m_pendingImmersiveSession = false;
                 return;
             }
 
             // 5.4.2 Let session be a new XRSession object.
             // 5.4.3 Initialize the session with session, mode, and device.
-            bool deferResolutionUntilRenderingInitialized = requestedFeatures->contains(PlatformXR::SessionFeature::WebGPU);
             Ref session = WebXRSession::create(protectedDocument.get(), mode, *device, WTF::move(*requestedFeatures));
-            session->addSessionListener(*strongThis);
+            session->addSessionListener(*this);
 
             // 5.4.8 Potentially set the active immersive session as follows:
             if (immersive) {
-                strongThis->m_activeImmersiveSession = session.copyRef();
-                strongThis->m_pendingImmersiveSession = false;
+                m_activeImmersiveSession = session.copyRef();
+                m_pendingImmersiveSession = false;
             } else
-                strongThis->m_inlineSessions.add(session.copyRef());
-
-            if (deferResolutionUntilRenderingInitialized) {
-                session->whenRenderingInitialized([session = session.copyRef(), promise](bool initialized) mutable {
-                    if (!initialized) {
-                        promise.reject(Exception { ExceptionCode::NotSupportedError });
-                        return;
-                    }
-                    promise.resolve(WTF::move(session));
-                });
-                return;
-            }
+                m_inlineSessions.add(session.copyRef());
 
             // 5.4.9 Resolve promise with session.
             promise.resolve(WTF::move(session));
@@ -722,7 +709,7 @@ void WebXRSystem::DummyInlineDevice::requestFrame(std::optional<PlatformXR::Requ
     if (!document)
         return;
 
-    Ref raf = InlineRequestAnimationFrameCallback::create(*document, [callback = WTF::move(callback)] mutable {
+    Ref raf = InlineRequestAnimationFrameCallback::create(*scriptExecutionContext(), [callback = WTF::move(callback)]() mutable {
         PlatformXR::FrameData data;
         data.isTrackingValid = true;
         data.isPositionValid = true;

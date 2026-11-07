@@ -57,20 +57,19 @@ PlatformXRSystemProxy::~PlatformXRSystemProxy()
 
 void PlatformXRSystemProxy::enumerateImmersiveXRDevices(CompletionHandler<void(const PlatformXR::DeviceList&)>&& completionHandler)
 {
-    protect(m_page)->sendWithAsyncReply(Messages::PlatformXRSystem::EnumerateImmersiveXRDevices(), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](Vector<XRDeviceInfo>&& devicesInfos) mutable {
-        RefPtr protectedThis = weakThis;
-        if (!protectedThis)
+    protect(m_page)->sendWithAsyncReply(Messages::PlatformXRSystem::EnumerateImmersiveXRDevices(), [this, weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](Vector<XRDeviceInfo>&& devicesInfos) mutable {
+        if (!weakThis)
             return;
 
         PlatformXR::DeviceList devices;
         for (auto& deviceInfo : devicesInfos) {
-            if (auto device = protectedThis->deviceByIdentifier(deviceInfo.identifier))
+            if (auto device = deviceByIdentifier(deviceInfo.identifier))
                 devices.append(*device);
             else
-                devices.append(XRDeviceProxy::create(WTF::move(deviceInfo), *protectedThis));
+                devices.append(XRDeviceProxy::create(WTF::move(deviceInfo), *this));
         }
-        protectedThis->m_devices.swap(devices);
-        completionHandler(protectedThis->m_devices);
+        m_devices.swap(devices);
+        completionHandler(m_devices);
     });
 }
 
@@ -176,7 +175,7 @@ void PlatformXRSystemProxy::sessionDidInitializeRendering(XRDeviceIdentifier dev
 RefPtr<XRDeviceProxy> PlatformXRSystemProxy::deviceByIdentifier(XRDeviceIdentifier identifier)
 {
     for (auto& device : m_devices) {
-        auto* deviceProxy = downcast<XRDeviceProxy>(device.ptr());
+        auto* deviceProxy = static_cast<XRDeviceProxy*>(device.ptr());
         if (deviceProxy->identifier() == identifier)
             return deviceProxy;
     }

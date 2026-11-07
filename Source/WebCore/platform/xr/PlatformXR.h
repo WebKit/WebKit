@@ -400,8 +400,6 @@ struct FrameData {
 #if PLATFORM(COCOA)
         MachSendRight completionSyncEvent;
 #endif
-
-        WebCore::IntSize physicalSizeForEye(size_t eye) const { return { physicalSize[eye][0], physicalSize[eye][1] }; }
     };
 
 #if OS(ANDROID)

@@ -95,7 +95,6 @@ private:
     Vector<IntRect> computeViewports();
 
     bool m_ignoreDepthValues { false };
-    std::optional<float> m_fixedFoveation;
 #if ENABLE(WEBGPU)
     std::optional<GPUTextureFormat> m_depthStencilFormat;
     std::optional<PlatformXR::FrameData::LayerData> m_layerData;

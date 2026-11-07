@@ -212,7 +212,7 @@ ExceptionOr<RefPtr<WebXRViewerPose>> WebXRFrame::getViewerPose(const Document& d
         // 8.6. Let offset be an new XRRigidTransform object equal to the view offset of view in the relevant realm of session.
         // 8.7. Set xrview’s transform property to the result of multiplying the XRViewerPose's transform by the offset transform in the relevant realm of session
         auto offset = matrixFromPose(frameData.views[index].offset);
-        Ref transform = WebXRRigidTransform::create(protect(pose->transform())->rawTransform() * offset);
+        Ref transform = WebXRRigidTransform::create(pose->transform().rawTransform() * offset);
 
         // Set projection matrix for each view
         std::array<float, 16> projection = WTF::switchOn(frameData.views[index].projection, [&](const PlatformXR::FrameData::Fov& fov) {
@@ -319,12 +319,11 @@ ExceptionOr<bool> WebXRFrame::fillJointRadii(const Vector<Ref<WebXRJointSpace>>&
     //     Set allValid to false.
     // 2. Increase offset by 1.
     for (size_t i = 0; i < jointSpaces.size(); ++i) {
-        Ref jointSpace = jointSpaces[i];
-        if (jointSpace->handHasMissingPoses()) {
+        if (jointSpaces[i]->handHasMissingPoses()) {
             radii.set(i, std::numeric_limits<float>::quiet_NaN());
             allValid = false;
         } else
-            radii.set(i, jointSpace->radius());
+            radii.set(i, jointSpaces[i]->radius());
     }
 
     return allValid;

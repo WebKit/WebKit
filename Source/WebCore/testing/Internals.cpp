@@ -8683,7 +8683,7 @@ ExceptionOr<Ref<WebXRTest>> Internals::xrTest()
         return Exception { ExceptionCode::InvalidAccessError };
 
     if (!m_xrTest) {
-        RefPtr navigator = document->window()->optionalNavigator();
+        auto* navigator = contextDocument()->window()->optionalNavigator();
         if (!navigator)
             return Exception { ExceptionCode::InvalidAccessError };
 
