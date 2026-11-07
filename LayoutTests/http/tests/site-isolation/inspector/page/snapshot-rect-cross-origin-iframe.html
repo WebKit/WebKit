@@ -1,0 +1,114 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+    height: 2000px;
+}
+#box, iframe {
+    position: absolute;
+    top: 100px;
+    width: 50px;
+    height: 50px;
+    border: none;
+}
+#box {
+    left: 0;
+    background-color: rgb(0, 0, 255);
+}
+iframe {
+    left: 50px;
+}
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    // The box and the iframe are side by side at y = 100 in the document. The page is scrolled to
+    // y = 100, so they are at y = 0 in the viewport.
+    const rectInPage = {x: 0, y: 100, width: 100, height: 50};
+    const rectInViewport = {x: 0, y: 0, width: 100, height: 50};
+
+    function colorName([r, g, b]) {
+        const near = (value, expected) => Math.abs(value - expected) <= 10;
+        if (near(r, 0) && near(g, 0) && near(b, 255))
+            return "blue";
+        if (near(r, 0) && near(g, 128) && near(b, 0))
+            return "green";
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // Returns the colors at the center of the box and at the center of the iframe.
+    async function colorsInSnapshot(dataURL) {
+        let bytes = Uint8Array.from(atob(dataURL.substring(dataURL.indexOf(",") + 1)), (c) => c.charCodeAt(0));
+        let bitmap = await createImageBitmap(new Blob([bytes], {type: "image/png"}));
+        let canvas = document.createElement("canvas");
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        let context = canvas.getContext("2d");
+        context.drawImage(bitmap, 0, 0);
+
+        let scale = bitmap.width / rectInPage.width;
+        let colorAt = (x, y) => colorName(context.getImageData(Math.floor(x * scale), Math.floor(y * scale), 1, 1).data);
+        return {box: colorAt(25, 25), iframe: colorAt(75, 25)};
+    }
+
+    async function snapshot(target, rect, coordinateSystem) {
+        let {dataURL} = await target.PageAgent.snapshotRect(rect.x, rect.y, rect.width, rect.height, coordinateSystem);
+        return colorsInSnapshot(dataURL);
+    }
+
+    // The iframe's process can paint after the main frame's load event, so retry until it shows.
+    async function snapshotWhenIFrameIsPainted(target, rect, coordinateSystem) {
+        let colors;
+        for (let attempt = 0; attempt < 50; ++attempt) {
+            colors = await snapshot(target, rect, coordinateSystem);
+            if (colors.iframe === "green")
+                break;
+            await new Promise((resolve) => setTimeout(resolve, 50));
+        }
+        return colors;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SnapshotRectCrossOriginIFrame");
+
+    function addBackendTargetTestCase(coordinateSystem, rect) {
+        suite.addTestCase({
+            name: `SiteIsolation.Page.SnapshotRectCrossOriginIFrame.BackendTarget.${coordinateSystem}`,
+            description: `Page.snapshotRect on the backend target should include a cross-origin iframe (${coordinateSystem} coordinates).`,
+            async test() {
+                let colors = await snapshotWhenIFrameIsPainted(WI.backendTarget, rect, coordinateSystem);
+                InspectorTest.expectEqual(colors.box, "blue", "Snapshot should contain the main frame's box.");
+                InspectorTest.expectEqual(colors.iframe, "green", "Snapshot should contain the cross-origin iframe's content.");
+            }
+        });
+    }
+
+    addBackendTargetTestCase(InspectorBackend.Enum.Page.CoordinateSystem.Viewport, rectInViewport);
+    addBackendTargetTestCase(InspectorBackend.Enum.Page.CoordinateSystem.Page, rectInPage);
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SnapshotRectCrossOriginIFrame.PageTarget",
+        description: "Page.snapshotRect on the page target paints only the frames of the main frame's process.",
+        async test() {
+            let colors = await snapshot(WI.pageTarget, rectInPage, InspectorBackend.Enum.Page.CoordinateSystem.Page);
+            InspectorTest.expectEqual(colors.box, "blue", "Snapshot should contain the main frame's box.");
+            InspectorTest.expectNotEqual(colors.iframe, "green", "Snapshot should not contain the cross-origin iframe's content.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+window.addEventListener("load", () => {
+    window.scrollTo(0, 100);
+    runTest();
+});
+</script>
+</head>
+<body>
+<div id="box"></div>
+<iframe src="http://localhost:8000/site-isolation/inspector/page/resources/snapshot-rect-frame.html"></iframe>
+</body>
+</html>
