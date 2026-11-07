@@ -137,7 +137,10 @@ struct OverloadedDeclaration {
     std::expected<ConstantValue, String> (*constantFunction)(const Type*, const FixedVector<ConstantValue>&);
     ValidationFunction validationFunction;
     OptionSet<ShaderStage> visibility;
-    Vector<OverloadCandidate> overloads;
+    // A shader calls only a few builtins, so `overloads` stays empty until the type checker first
+    // looks the declaration up and builds them.
+    Vector<OverloadCandidate> (*buildOverloads)(TypeStore&);
+    mutable Vector<OverloadCandidate> overloads;
 };
 
 struct SelectedOverload {

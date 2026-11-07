@@ -151,7 +151,7 @@ class Constructor
     end
 
     def concrete_type
-        "m_types.#{name}Type(#{arguments.map { |a| a.respond_to? :concrete_type and a.concrete_type or a}.join ", "})"
+        "types.#{name}Type(#{arguments.map { |a| a.respond_to? :concrete_type and a.concrete_type or a}.join ", "})"
     end
 
     def to_cpp
@@ -175,7 +175,7 @@ class PrimitiveType
     end
 
     def concrete_type
-        "m_types.#{name[0].downcase}#{name[1..]}Type()"
+        "types.#{name[0].downcase}#{name[1..]}Type()"
     end
 
     def to_cpp
@@ -392,12 +392,14 @@ module DSL
             out << "    .constantFunction = #{constant_function},"
             out << "    .validationFunction = #{validation_function},"
             out << "    .visibility = { #{visibility} },"
+            out << "    .buildOverloads = []([[maybe_unused]] TypeStore& types) {"
+            out << "        return Vector<OverloadCandidate>::from("
+            out << entry[:overloads].map { |function| "#{function.to_cpp(name)}" }.join(",\n")
+            out << "        );"
+            out << "    },"
             out << "    .overloads = { }"
             out << "});"
             out << "ASSERT_UNUSED(result, result.isNewEntry);"
-            entry[:overloads].each do |function|
-                out << "result.iterator->value.overloads.append(#{function.to_cpp(name)});"
-            end
             out << "}"
             out << ""
         end
