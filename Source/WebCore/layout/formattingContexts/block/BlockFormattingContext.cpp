@@ -220,10 +220,56 @@ void BlockFormattingContext::handleBlockLevelBoxEnd(const RenderBox& box)
     m_blockLayoutState.setClampAfterBox(nullptr);
 }
 
+// Before its block-start margin joins the adjoining margins: clearance is decided once the margins give the block container its top, its
+// hypothetical position (CSS 2.2 §9.5.2).
+std::optional<ContainingBlockState::Clearance> BlockFormattingContext::clearanceAtBlockStart(const RenderBox& blockContainer) const
+{
+    auto* placedFloats = m_blockLayoutState.placedFloats();
+    if (!blockContainer.layoutBox().hasFloatClear() || !placedFloats || placedFloats->isEmpty())
+        return { };
+    // The floats waiting for their block container's top are where that top would be now, and go with it.
+    auto& rootState = m_blockLayoutState.containingBlockStates().first();
+    auto& pendingFloats = m_blockLayoutState.pendingFloats();
+    auto blockEndOfFloatsToClear = [&](NOESCAPE const Function<bool(const PlacedFloats::Item&)>& includesFloat) -> std::optional<LayoutUnit> {
+        auto floats = PlacedFloats { root().layoutBox() };
+        for (auto& floatItem : placedFloats->list()) {
+            if (includesFloat(floatItem))
+                floats.add(floatItem);
+        }
+        if (floats.isEmpty())
+            return { };
+        return FloatingContext { root().layoutBox(), floats, { }, rootState.geometry.borderBoxWidth() }.blockEndOfFloatsToClear(blockContainer.layoutBox());
+    };
+    auto isPending = [&](auto& floatItem) {
+        return pendingFloats.containsIf([&](auto& pending) {
+            return pending.floatBoxes.containsIf([&](auto& floatBox) {
+                return floatBox.ptr() == floatItem.layoutBox();
+            });
+        });
+    };
+    auto clearance = ContainingBlockState::Clearance { .marginsBeforeLogicalBottom = m_blockLayoutState.marginCollapse().collapsedLogicalBottom() };
+    if (auto floatsLogicalBottom = blockEndOfFloatsToClear([&](auto& floatItem) { return !isPending(floatItem); }))
+        clearance.floatsLogicalBottom = *floatsLogicalBottom;
+    for (auto& pending : pendingFloats) {
+        auto pendingFloatsLogicalBottom = blockEndOfFloatsToClear([&](auto& floatItem) {
+            return pending.floatBoxes.containsIf([&](auto& floatBox) {
+                return floatBox.ptr() == floatItem.layoutBox();
+            });
+        });
+        if (pendingFloatsLogicalBottom)
+            clearance.pendingFloatsLogicalBottomFromTop = std::max(clearance.pendingFloatsLogicalBottomFromTop.value_or(LayoutUnit::min()), *pendingFloatsLogicalBottom - pending.provisionalBorderBoxLogicalTop);
+    }
+    if (clearance.floatsLogicalBottom == LayoutUnit::min() && !clearance.pendingFloatsLogicalBottomFromTop)
+        return { };
+    return clearance;
+}
+
 void BlockFormattingContext::handleBlockContainerStart(const RenderBox& blockContainer)
 {
     LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(downcast<RenderBlockFlow>(blockContainer));
+    auto clearance = clearanceAtBlockStart(blockContainer);
     auto blockContainerState = computeContainingBlockStateAtBlockStart(blockContainer);
+    blockContainerState.clearance = clearance;
     if (blockContainerState.geometry.borderAndPaddingBefore())
         resolveBorderBoxLogicalTops(blockContainerState);
     startTextBoxTrim(downcast<RenderBlockFlow>(blockContainer), blockContainerState);
@@ -392,6 +438,9 @@ void BlockFormattingContext::addFloats(PlacedFloats::List&& floats, const Contai
     for (auto& pending : pendingFloats)
         pendingFloatCount += pending.floatBoxes.size();
     auto isPlacedAgainstOtherFloats = placedFloats.list().size() > pendingFloatCount;
+    auto isPlacedAgainstOtherPendingFloats = pendingFloats.containsIf([&](auto& pending) {
+        return pending.blockContainer.ptr() != blockContainerState.blockContainer.ptr();
+    });
     auto addedFloats = Vector<CheckedRef<const Box>> { };
     for (auto& floatItem : floats) {
         CheckedPtr floatBox = floatItem.layoutBox();
@@ -406,7 +455,7 @@ void BlockFormattingContext::addFloats(PlacedFloats::List&& floats, const Contai
         addedFloats.append(*floatBox);
     }
     if (!blockContainerState.borderBoxLogicalTop && !addedFloats.isEmpty())
-        pendingFloats.append({ blockContainerState.blockContainer, WTF::move(addedFloats), borderBoxOffsetInRoot(blockContainerState).height(), isPlacedAgainstOtherFloats });
+        pendingFloats.append({ blockContainerState.blockContainer, WTF::move(addedFloats), borderBoxOffsetInRoot(blockContainerState).height(), isPlacedAgainstOtherFloats, isPlacedAgainstOtherPendingFloats });
 }
 
 // The floats in the inline content of the innermost block container, in the coordinates of its border box: the content placed them before a
@@ -1248,7 +1297,6 @@ ContainingBlockState BlockFormattingContext::containingBlockStateAtBlockStart(co
 ContainingBlockState BlockFormattingContext::computeContainingBlockStateAtBlockStart(const RenderBox& box)
 {
     auto blockContainerState = containingBlockStateAtBlockStart(box);
-    // FIXME: Clearance separates the block-start margin from the margins before it (CSS 2.2 §9.5.2).
     m_blockLayoutState.marginCollapse().startBlockContainer(blockContainerState, m_blockLayoutState.containingBlockStates().last(), blockContainerState.geometry.marginBefore());
     return blockContainerState;
 }
@@ -1293,6 +1341,39 @@ LayoutUnit BlockFormattingContext::viewportStretchedBorderBoxBlockSize(LayoutUni
     return view->pageOrViewLogicalHeight() - spaceAround;
 }
 
+// A box with clear whose margins collapse through it, like RenderBlockFlow::clearFloatsIfNeeded: it goes to the bottom of the floats, the
+// margins before it give the containing blocks waiting for their top theirs, and its margins collapse with the ones after it from there,
+// though not with its containing block's block-end margin (CSS 2.2 §8.3.1, §9.5.2).
+void BlockFormattingContext::placeCollapsedThroughBoxWithClearance(const RenderBox& box, ContainingBlockState&& blockContainerState, BlockLayoutResult& result)
+{
+    auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
+    auto containingBlocksLogicalTop = containingBlockState.borderBoxLogicalTop.value_or(blockContainerState.clearance->marginsBeforeLogicalBottom);
+    auto floatsLogicalBottom = blockContainerState.clearance->floatsLogicalBottomFor(containingBlocksLogicalTop);
+    if (!containingBlockState.borderBoxLogicalTop) {
+        m_blockLayoutState.marginCollapse().endQuirkContainerBlockStartSide(containingBlockState);
+        for (auto& state : m_blockLayoutState.containingBlockStates() | std::views::reverse) {
+            if (state.borderBoxLogicalTop)
+                break;
+            state.borderBoxLogicalTop = containingBlocksLogicalTop;
+            state.clearance = { };
+        }
+    }
+    placePendingFloats(floatsLogicalBottom, blockContainerState.blockContainer.ptr());
+    placePendingFloats(*containingBlockState.borderBoxLogicalTop);
+
+    auto& geometry = blockContainerState.geometry;
+    computeBlockSize(box, { }, containingBlockState, geometry);
+    geometry.setTop(floatsLogicalBottom - *containingBlockState.borderBoxLogicalTop);
+    auto margins = blockContainerState.margins.collapsedMarginsBefore();
+    margins.add(geometry.marginAfter());
+    // They start above it by its collapsed block-start margin, which the clearance includes.
+    m_blockLayoutState.marginCollapse().resetAdjoiningMargins(floatsLogicalBottom - blockContainerState.margins.collapsedMarginsBefore().collapsedValue(), margins);
+    containingBlockState.endsWithClearedBoxCollapsedThrough = true;
+    auto collapsedMarginsAfter = AdjoiningMargins { };
+    collapsedMarginsAfter.add(geometry.marginAfter());
+    result.boxes.append({ box, WTF::move(geometry), { }, blockContainerState.margins.collapsedMarginsBefore(), collapsedMarginsAfter, blockContainerState.margins.collapsedMarginsBeforeAreQuirky(), box.style().marginAfter().hasQuirk(), false });
+}
+
 void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, ContainingBlockState&& blockContainerState, BlockLayoutResult& result)
 {
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
@@ -1301,6 +1382,11 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
     auto& geometry = blockContainerState.geometry;
     auto& collapsedMarginsBefore = blockContainerState.margins.collapsedMarginsBefore();
 
+    if (auto& clearance = blockContainerState.clearance; !blockContainerState.borderBoxLogicalTop && clearance) {
+        auto hypotheticalBorderBoxLogicalTop = m_blockLayoutState.marginCollapse().collapsedLogicalBottomForCollapsedThroughBox();
+        if (hypotheticalBorderBoxLogicalTop < clearance->floatsLogicalBottomFor(hypotheticalBorderBoxLogicalTop))
+            return placeCollapsedThroughBoxWithClearance(box, WTF::move(blockContainerState), result);
+    }
     if (!blockContainerState.borderBoxLogicalTop) {
         // Its margin-trim at the block-end edge discards the margins of its content, which all collapse with its last child's block-end margin.
         if (auto& margins = blockContainerState.adjoiningMarginsAtContentStart)
@@ -1324,6 +1410,7 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
         return;
     }
 
+    containingBlockState.endsWithClearedBoxCollapsedThrough = false;
     // The content ends at the bottom border edge of the last in-flow child whose margins do not collapse with the box's block-end margin,
     // or below the collapsed margin after it when that margin does not collapse with the box's (CSS 2.2 §10.6.3).
     CheckedRef style = box.style();
@@ -1340,7 +1427,8 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
         m_blockLayoutState.marginCollapse().resetAdjoiningMargins(m_blockLayoutState.marginCollapse().logicalTop());
         placeChildrenAtTrimmedBlockEnd(WTF::move(blockContainerState.blockEndChildren), result);
     }
-    auto marginAfterCollapsesWithChildren = !establishesBlockFormattingContext() && !geometry.borderAndPaddingAfter() && BlockFormattingUtils::blockSizeBehavesAsAuto(style->logicalHeight(writingMode), containingBlockState.contentBoxBlockSize);
+    auto marginAfterCollapsesWithChildren = !establishesBlockFormattingContext() && !geometry.borderAndPaddingAfter() && BlockFormattingUtils::blockSizeBehavesAsAuto(style->logicalHeight(writingMode), containingBlockState.contentBoxBlockSize)
+        && !blockContainerState.endsWithClearedBoxCollapsedThrough;
     // A quirk container leaves out a quirky margin after its last child (RenderBlockFlow::handleAfterSideOfBlock).
     auto contentBoxLogicalBottom = marginAfterCollapsesWithChildren || (BlockMarginCollapse::isQuirkContainer(box) && m_blockLayoutState.marginCollapse().endsWithQuirk()) ? m_blockLayoutState.marginCollapse().logicalTop() : m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
     // Negative margins may pull that above the content box top.
@@ -1411,19 +1499,43 @@ void BlockFormattingContext::resolveBorderBoxLogicalTops(ContainingBlockState& b
     ASSERT(!blockContainerState.borderBoxLogicalTop);
     m_blockLayoutState.marginCollapse().endQuirkContainerBlockStartSide(blockContainerState);
     auto borderBoxLogicalTop = m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
-    for (auto& containingBlockState : m_blockLayoutState.containingBlockStates() | std::views::reverse) {
+    // The block containers waiting for their top, from the innermost one. It is still on the stack when its line boxes separate the margins.
+    auto statesWaitingForTop = Vector<ContainingBlockState*> { };
+    auto& containingBlockStates = m_blockLayoutState.containingBlockStates();
+    if (containingBlockStates.isEmpty() || &containingBlockStates.last() != &blockContainerState)
+        statesWaitingForTop.append(&blockContainerState);
+    for (auto& containingBlockState : containingBlockStates | std::views::reverse) {
         if (containingBlockState.borderBoxLogicalTop)
             break;
-        containingBlockState.borderBoxLogicalTop = borderBoxLogicalTop;
+        statesWaitingForTop.append(&containingBlockState);
     }
-    // After the loop: the block container is still on the stack when its line boxes separate the margins, and its top would stop the loop.
-    blockContainerState.borderBoxLogicalTop = borderBoxLogicalTop;
+    // One of them with clear goes below the floats when its hypothetical position, where the margins put it, is above them. It and the ones
+    // inside it go to the bottom of the floats, and the ones around it to where the margins before its block-start margin put them, which no
+    // longer collapse with the ones after them (CSS 2.2 §9.5.2).
+    auto clearedStateIndex = statesWaitingForTop.reverseFindIf([&](auto* state) {
+        return state->clearance && borderBoxLogicalTop < state->clearance->floatsLogicalBottomFor(borderBoxLogicalTop);
+    });
+    if (clearedStateIndex != notFound) {
+        auto& clearedState = *statesWaitingForTop[clearedStateIndex];
+        auto containingBlocksLogicalTop = clearedState.clearance->marginsBeforeLogicalBottom;
+        auto floatsLogicalBottom = clearedState.clearance->floatsLogicalBottomFor(containingBlocksLogicalTop);
+        for (size_t index = 0; index < statesWaitingForTop.size(); ++index)
+            statesWaitingForTop[index]->borderBoxLogicalTop = index <= clearedStateIndex ? floatsLogicalBottom : containingBlocksLogicalTop;
+        BlockMarginCollapse::separateFromContainingBlockMarginBefore(clearedState);
+        placePendingFloats(floatsLogicalBottom, clearedState.blockContainer.ptr());
+        borderBoxLogicalTop = containingBlocksLogicalTop;
+    } else {
+        for (auto* state : statesWaitingForTop)
+            state->borderBoxLogicalTop = borderBoxLogicalTop;
+    }
+    for (auto* state : statesWaitingForTop)
+        state->clearance = { };
     m_blockLayoutState.marginCollapse().resetAdjoiningMargins(blockContainerState.contentBoxLogicalTop());
     // The floats waiting for a top are in block containers whose margins collapsed through them into these.
     placePendingFloats(borderBoxLogicalTop);
 }
 
-void BlockFormattingContext::placePendingFloats(LayoutUnit borderBoxLogicalTop)
+void BlockFormattingContext::placePendingFloats(LayoutUnit borderBoxLogicalTop, const RenderBox* blockContainer)
 {
     auto& pendingFloats = m_blockLayoutState.pendingFloats();
     if (pendingFloats.isEmpty())
@@ -1431,7 +1543,15 @@ void BlockFormattingContext::placePendingFloats(LayoutUnit borderBoxLogicalTop)
     auto& placedFloats = m_blockLayoutState.ensurePlacedFloats(root().layoutBox());
     auto floats = placedFloats.list();
     auto didMoveFloats = false;
-    for (auto& pending : std::exchange(pendingFloats, { })) {
+    // Only the ones in the block container and inside it when there is one.
+    auto pendingFloatsToPlace = Vector<BlockLayoutState::PendingFloats> { };
+    pendingFloats.removeAllMatching([&](auto& pending) {
+        if (blockContainer && pending.blockContainer.ptr() != blockContainer && !pending.blockContainer->isDescendantOf(blockContainer))
+            return false;
+        pendingFloatsToPlace.append(WTF::move(pending));
+        return true;
+    });
+    for (auto& pending : pendingFloatsToPlace) {
         auto offset = LayoutSize { 0_lu, borderBoxLogicalTop - pending.provisionalBorderBoxLogicalTop };
         if (offset.isZero())
             continue;
@@ -1440,7 +1560,7 @@ void BlockFormattingContext::placePendingFloats(LayoutUnit borderBoxLogicalTop)
         });
         if (resolvedBorderBoxLogicalTop == notFound) {
             m_resolvedBorderBoxLogicalTops.append({ pending.blockContainer, borderBoxLogicalTop });
-            m_needsLayoutWithResolvedBorderBoxLogicalTops |= pending.isPlacedAgainstOtherFloats;
+            m_needsLayoutWithResolvedBorderBoxLogicalTops |= pending.isPlacedAgainstOtherFloats || pending.isPlacedAgainstOtherPendingFloats;
         }
         for (auto& floatItem : floats) {
             auto isPending = pending.floatBoxes.containsIf([&](auto& floatBox) {

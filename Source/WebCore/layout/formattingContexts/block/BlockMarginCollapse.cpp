@@ -217,6 +217,11 @@ void BlockMarginCollapse::endQuirkContainerBlockStartSide(const ContainingBlockS
     }
 }
 
+void BlockMarginCollapse::separateFromContainingBlockMarginBefore(ContainingBlockState& blockContainerState)
+{
+    blockContainerState.margins.m_collapsesWithContainingBlockMarginBefore = false;
+}
+
 void BlockMarginCollapse::QuirkContainerBlockStartSide::endChild()
 {
     auto margins = std::exchange(childMargins, { });
