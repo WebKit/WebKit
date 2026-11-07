@@ -720,7 +720,7 @@ void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIde
         ASSERT(url().isEmpty() || WebCore::Site { url() } != WebCore::Site { request.url() } || process().isDocumentIsolationPolicyProcess() != m_provisionalFrame->process().isDocumentIsolationPolicyProcess());
 
         // Keep FrameProcess alive until message reply, so the current active document could finish dispatching necessary events.
-        protect(process())->sendWithAsyncReply(Messages::WebPage::LoadDidCommitInAnotherProcess(frameID, m_provisionalFrame->process().coreProcessIdentifier(), m_layerHostingContextIdentifier, nullptr), [keepAlive = FrameProcessRefWithExpiration::create(Ref { frameProcess() }, unloadEventsExpirationDelay)] { }, *webPageIDInCurrentProcess());
+        protect(process())->sendWithAsyncReply(Messages::WebPage::LoadDidCommitInAnotherProcess(frameID, m_provisionalFrame->process().coreProcessIdentifier(), m_layerHostingContextIdentifier, nullptr, std::nullopt), [keepAlive = FrameProcessRefWithExpiration::create(Ref { frameProcess() }, unloadEventsExpirationDelay)](DidCacheOutgoingDocument) { }, *webPageIDInCurrentProcess());
 
         WebCore::ProcessIdentifier oldProcessID = process().coreProcessIdentifier();
         std::optional<WebCore::PageIdentifier> oldPageID = webPageIDInCurrentProcess();

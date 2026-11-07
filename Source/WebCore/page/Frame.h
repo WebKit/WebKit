@@ -49,6 +49,7 @@ class FrameLoaderClient;
 class FrameLoadRequest;
 class FrameView;
 class HTMLFrameOwnerElement;
+class LocalFrame;
 class NavigationScheduler;
 class Page;
 class RenderWidget;
@@ -103,6 +104,7 @@ public:
     virtual bool isRootFrame() const = 0;
 #if ASSERT_ENABLED
     WEBCORE_EXPORT static bool isRootFrameIdentifier(FrameIdentifier);
+    static void frameExistsOnlyForCachedPages(LocalFrame&);
 #endif
 
     WEBCORE_EXPORT void detachFromPage();

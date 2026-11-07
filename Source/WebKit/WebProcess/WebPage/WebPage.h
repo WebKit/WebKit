@@ -513,6 +513,7 @@ class WebUserContentController;
 class WebWheelEvent;
 
 enum class ContentInversion : uint8_t;
+enum class DidCacheOutgoingDocument : bool;
 enum class DragControllerAction : uint8_t;
 enum class FindOptions : uint16_t;
 enum class FindDecorationStyle : uint8_t;
@@ -535,6 +536,7 @@ enum class WebEventType : uint32_t;
 enum class WebEventInputSource : uint8_t;
 enum class WebMouseEventSyntheticClickType : uint8_t;
 
+struct BackForwardItemIdentifiers;
 struct ContentWorldData;
 struct ContentWorldIdentifierType;
 struct CoreIPCAuditToken;
@@ -2462,7 +2464,7 @@ private:
     void dispatchCrossOriginBeforeUnloadCheckForFrame(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&);
     void platformDidReceiveLoadParameters(const LoadParameters&);
     void createProvisionalFrame(ProvisionalFrameCreationParameters&&);
-    void loadDidCommitInAnotherProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier>, RefPtr<WebCore::DocumentSyncData>&&, CompletionHandler<void()>&&);
+    void loadDidCommitInAnotherProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier>, RefPtr<WebCore::DocumentSyncData>&&, std::optional<BackForwardItemIdentifiers>&& cacheIdentifiers, CompletionHandler<void(DidCacheOutgoingDocument)>&&);
     NODELETE [[noreturn]] void loadRequestWaitingForProcessLaunch(LoadParameters&&, URL&&, WebPageProxyIdentifier, bool);
     void loadData(LoadParameters&&);
     void loadAlternateHTML(LoadParameters&&);

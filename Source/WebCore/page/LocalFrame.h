@@ -194,6 +194,12 @@ public:
     bool hasHadUserInteraction() const { return m_hasHadUserInteraction; }
     void setHasHadUserInteraction() { m_hasHadUserInteraction = true; }
 
+    unsigned cachedPageCount() const { return m_cachedPageCount; }
+    void incrementCachedPageCount() { ++m_cachedPageCount; }
+    void decrementCachedPageCount() { --m_cachedPageCount; }
+    bool existsOnlyForCachedPages() const { return m_existsOnlyForCachedPages; }
+    WEBCORE_EXPORT void willBeReplacedByRemoteFrame();
+
     bool requestDOMPasteAccess(DOMPasteAccessCategory = DOMPasteAccessCategory::General);
 
     String debugDescription() const override;
@@ -435,7 +441,9 @@ private:
     bool m_documentIsBeingReplaced { false };
     unsigned m_navigationDisableCount { 0 };
     unsigned m_selfOnlyRefCount { 0 };
+    unsigned m_cachedPageCount { 0 };
     bool m_hasHadUserInteraction { false };
+    bool m_existsOnlyForCachedPages { false };
 
     std::unique_ptr<OverrideScreenSize> m_overrideScreenSize;
 

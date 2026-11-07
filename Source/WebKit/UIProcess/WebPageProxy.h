@@ -543,6 +543,7 @@ class CallbackID;
 class ContextMenuContextData;
 class DownloadProxy;
 class DrawingAreaProxy;
+class FrameProcess;
 class FrameState;
 class GamepadData;
 class GeolocationPermissionRequestManagerProxy;
@@ -657,6 +658,7 @@ class PortalPresentationManagerProxy;
 #endif
 
 struct AppPrivacyReportTestingData;
+struct BackForwardItemIdentifiers;
 struct DataDetectionResult;
 struct DocumentEditingContext;
 struct DocumentEditingContextRequest;
@@ -3304,6 +3306,7 @@ private:
 
     bool suspendCurrentPageIfPossible(API::Navigation&, const ProvisionalPageProxy&, RefPtr<WebFrameProxy>&& mainFrame);
     RefPtr<WebBackForwardListItem> backForwardItemForCachingOutgoingDocument(API::Navigation&);
+    std::optional<BackForwardItemIdentifiers> cacheOutgoingDocumentInPlaceIfPossible(API::Navigation&, const ProvisionalPageProxy&, WebFrameProxy& mainFrame, FrameProcess& previousMainFrameProcess);
 
     enum class ResetStateReason : uint8_t {
         PageInvalidated,

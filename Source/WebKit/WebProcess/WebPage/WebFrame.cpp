@@ -45,6 +45,7 @@
 #include "NetworkProcessConnection.h"
 #include "PluginView.h"
 #include "ProvisionalFrameCreationParameters.h"
+#include "SessionState.h"
 #include "SessionStateConversion.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
@@ -69,6 +70,7 @@
 #include <JavaScriptCore/JSValueRef.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ArchiveResource.h>
+#include <WebCore/BackForwardCache.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContainerNodeInlines.h>
@@ -416,18 +418,18 @@ bool WebFrame::newerNavigationOwnsDownloadAttributePolicyCheckLoad(const PolicyC
     return !localFrame || localFrame->loader().policyDocumentLoader() != policyCheck.downloadAttributePolicyDocumentLoader.get();
 }
 
-void WebFrame::loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
+DidCacheOutgoingDocument WebFrame::loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier, std::optional<BackForwardItemIdentifiers>&& cacheIdentifiers)
 {
     RefPtr localFrame = coreLocalFrame();
     if (!localFrame) {
         ASSERT_NOT_REACHED();
-        return;
+        return DidCacheOutgoingDocument::No;
     }
 
     RefPtr corePage = localFrame->page();
     if (!corePage) {
         ASSERT_NOT_REACHED();
-        return;
+        return DidCacheOutgoingDocument::No;
     }
 
     RefPtr parent = localFrame->tree().parent();
@@ -436,6 +438,18 @@ void WebFrame::loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingP
     // loadDidCommitInAnotherProcess implies the new frame is cross-origin to the current frame.
     // Cross-origin navigation doesn't trigger view transitions, and does not provide any activation information.
     protect(localFrame->document())->dispatchPageswapEvent(CanTriggerCrossDocumentViewTransition::No, nullptr);
+
+    // Must precede setMainFrame() because CachedPage captures the page's current main frame.
+    bool didCache = false;
+    if (!parent) {
+        if (cacheIdentifiers)
+            didCache = BackForwardCache::singleton().addIfCacheable(cacheIdentifiers->mainFrameItemID, *corePage, cacheIdentifiers->itemID);
+        if (!didCache) {
+            // Tearing down the uncached document detaches this frame from the page, so pages cached
+            // earlier in it can no longer be restored.
+            BackForwardCache::singleton().removeAllItemsForMainFrame(*localFrame);
+        }
+    }
 
     RefPtr ownerRenderer = localFrame->ownerRenderer();
 
@@ -464,7 +478,7 @@ void WebFrame::loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingP
     if (parent)
         parent->tree().replaceChild(*localFrame, newFrame);
     else {
-        localFrame->loader().detachFromParent();
+        localFrame->willBeReplacedByRemoteFrame();
         corePage->setMainFrame(newFrame.copyRef());
         if (RefPtr page = m_page.get())
             page->updateRemoteMainFrameViewDelegatedScrolling();
@@ -486,6 +500,8 @@ void WebFrame::loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingP
 
     if (ownerElement)
         ownerElement->scheduleInvalidateStyleAndLayerComposition();
+
+    return didCache ? DidCacheOutgoingDocument::Yes : DidCacheOutgoingDocument::No;
 }
 
 void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& parameters)
