@@ -1,0 +1,61 @@
+{
+    "version": 4,
+    "include": ["glib.json"],
+    "configurePresets": [
+        {
+            "name": "gtk",
+            "hidden": true,
+            "inherits": ["glib"],
+            "cacheVariables": {
+                "PORT": {
+                    "type": "STRING",
+                    "value": "GTK"
+                }
+            }
+        },
+        {
+            "name": "gtk-release",
+            "displayName": "GTK Release",
+            "inherits": ["gtk", "release"],
+            "binaryDir": "WebKitBuild/GTK/Release"
+        },
+        {
+            "name": "gtk-debug",
+            "displayName": "GTK Debug",
+            "inherits": ["gtk", "debug"],
+            "binaryDir": "WebKitBuild/GTK/Debug"
+        },
+        {
+            "name": "gtk-dev-release",
+            "displayName": "GTK Development Release",
+            "inherits": ["gtk-release", "dev"]
+        },
+        {
+            "name": "gtk-dev-debug",
+            "displayName": "GTK Development Debug",
+            "inherits": ["gtk-debug", "dev"]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "gtk-release",
+            "displayName": "GTK Release",
+            "configurePreset": "gtk-release"
+        },
+        {
+            "name": "gtk-debug",
+            "displayName": "GTK Debug",
+            "configurePreset": "gtk-debug"
+        },
+        {
+            "name": "gtk-dev-release",
+            "displayName": "GTK Development Release",
+            "configurePreset": "gtk-dev-release"
+        },
+        {
+            "name": "gtk-dev-debug",
+            "displayName": "GTK Development Debug",
+            "configurePreset": "gtk-dev-debug"
+        }
+    ]
+}

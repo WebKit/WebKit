@@ -1,0 +1,74 @@
+{
+    "version": 4,
+    "include": ["cocoa.json"],
+    "configurePresets": [
+        {
+            "name": "xros",
+            "hidden": true,
+            "inherits": ["cocoa"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "xros.internal;xros"
+                }
+            }
+        },
+        {
+            "name": "xros-release",
+            "displayName": "visionOS Release",
+            "inherits": ["xros", "release"],
+            "binaryDir": "WebKitBuild/cmake-xros/Release"
+        },
+        {
+            "name": "xros-debug",
+            "displayName": "visionOS Debug",
+            "inherits": ["xros", "debug"],
+            "binaryDir": "WebKitBuild/cmake-xros/Debug"
+        },
+        {
+            "name": "xros-sim",
+            "hidden": true,
+            "inherits": ["cocoa"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "xrsimulator.internal;xrsimulator"
+                }
+            }
+        },
+        {
+            "name": "xros-sim-release",
+            "displayName": "visionOS Simulator Release",
+            "inherits": ["xros-sim", "release"],
+            "binaryDir": "WebKitBuild/cmake-xrsimulator/Release"
+        },
+        {
+            "name": "xros-sim-debug",
+            "displayName": "visionOS Simulator Debug",
+            "inherits": ["xros-sim", "debug"],
+            "binaryDir": "WebKitBuild/cmake-xrsimulator/Debug"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "xros-release",
+            "displayName": "visionOS Release",
+            "configurePreset": "xros-release"
+        },
+        {
+            "name": "xros-debug",
+            "displayName": "visionOS Debug",
+            "configurePreset": "xros-debug"
+        },
+        {
+            "name": "xros-sim-release",
+            "displayName": "visionOS Simulator Release",
+            "configurePreset": "xros-sim-release"
+        },
+        {
+            "name": "xros-sim-debug",
+            "displayName": "visionOS Simulator Debug",
+            "configurePreset": "xros-sim-debug"
+        }
+    ]
+}
