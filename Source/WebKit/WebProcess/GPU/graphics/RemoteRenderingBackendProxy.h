@@ -111,6 +111,8 @@ public:
 
     void transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>, WebCore::ImageBuffer&);
     std::unique_ptr<RemoteSerializedImageBufferProxy> moveToSerializedBuffer(RemoteImageBufferProxy&);
+    // The GPU process turns the buffer into the returned NativeImage without copying the pixels.
+    Ref<RemoteNativeImageProxy> sinkIntoNativeImage(RemoteImageBufferProxy&);
     RefPtr<RemoteImageBufferProxy> moveToImageBuffer(RemoteSerializedImageBufferProxy&);
     std::optional<WebCore::ImageBufferTransferIdentifier> moveSerializedBufferToTransferHeap(RemoteSerializedImageBufferProxy&);
     RefPtr<RemoteImageBufferProxy> takeTransferredBuffer(const WebCore::ImageBufferTransferHandle&);

@@ -430,6 +430,28 @@ void RemoteRenderingBackend::releaseImageBuffer(RenderingResourceIdentifier iden
     MESSAGE_CHECK(success, "Missing ImageBuffer");
 }
 
+void RemoteRenderingBackend::sinkImageBufferIntoNativeImage(RenderingResourceIdentifier identifier, RenderingResourceIdentifier imageIdentifier)
+{
+    assertIsCurrent(workQueue());
+    // Like releaseImageBuffer(), the buffer is gone after this. The web process does not release it again.
+    RefPtr remoteImageBuffer = m_remoteImageBuffers.take(identifier).get(); // NOLINT
+    MESSAGE_CHECK(remoteImageBuffer, "Missing ImageBuffer");
+    Ref imageBuffer = RemoteImageBuffer::sinkIntoImageBuffer(remoteImageBuffer.releaseNonNull());
+    MESSAGE_CHECK(imageBuffer->hasOneRef(), "ImageBuffer in use");
+    RefPtr image = ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
+    // The buffer may have failed to allocate.
+    if (!image)
+        image = createPlaceholderNativeImage();
+    MESSAGE_CHECK(image, "NativeImage could not be created");
+    bool success = m_remoteResourceCache.cacheNativeImage(imageIdentifier, image.releaseNonNull());
+    MESSAGE_CHECK(success, "NativeImage already exists");
+}
+
+RefPtr<NativeImage> RemoteRenderingBackend::createPlaceholderNativeImage()
+{
+    return ImageBuffer::sinkIntoNativeImage(ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8));
+}
+
 void RemoteRenderingBackend::createImageBufferSet(ImageBufferSetIdentifier identifier, RemoteGraphicsContextIdentifier contextIdentifier)
 {
     assertIsCurrent(workQueue());
