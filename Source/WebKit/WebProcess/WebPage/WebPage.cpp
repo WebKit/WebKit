@@ -2425,6 +2425,15 @@ void WebPage::changeListType()
     protect(frame->editor())->changeSelectionListType();
 }
 
+void WebPage::setBlockPresentationIntent(const BlockPresentationIntent& intent)
+{
+    RefPtr frame = corePage()->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    protect(frame->editor())->setBlockPresentationIntent(intent);
+}
+
 void WebPage::setBaseWritingDirection(WritingDirection direction)
 {
     RefPtr frame = corePage()->focusController().focusedOrMainFrame();

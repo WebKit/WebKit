@@ -118,6 +118,85 @@ RetainPtr<NSTextList> TextList::createTextList() const
     return result;
 }
 
+// Returns nil for an invalid header level.
+static RetainPtr<NSPresentationIntent> createPresentationIntent(const BlockPresentationIntent& intent, NSInteger identity, NSPresentationIntent *parentIntent)
+{
+    using Kind = BlockPresentationIntent::Kind;
+
+    switch (intent.kind) {
+    case Kind::Paragraph:
+        return [NSPresentationIntent paragraphIntentWithIdentity:identity nestedInsideIntent:parentIntent];
+    case Kind::Header:
+        if (intent.headerLevel < 1 || intent.headerLevel > 6)
+            return nil;
+        return [NSPresentationIntent headerIntentWithIdentity:identity level:intent.headerLevel nestedInsideIntent:parentIntent];
+    case Kind::OrderedList:
+        return [NSPresentationIntent orderedListIntentWithIdentity:identity nestedInsideIntent:parentIntent];
+    case Kind::UnorderedList:
+        return [NSPresentationIntent unorderedListIntentWithIdentity:identity nestedInsideIntent:parentIntent];
+    case Kind::ListItem:
+        return [NSPresentationIntent listItemIntentWithIdentity:identity ordinal:intent.ordinal nestedInsideIntent:parentIntent];
+    case Kind::CodeBlock:
+        return [NSPresentationIntent codeBlockIntentWithIdentity:identity languageHint:nsStringNilIfEmpty(intent.languageHint).get() nestedInsideIntent:parentIntent];
+    case Kind::BlockQuote:
+        return [NSPresentationIntent blockQuoteIntentWithIdentity:identity nestedInsideIntent:parentIntent];
+    case Kind::ThematicBreak:
+        return [NSPresentationIntent thematicBreakIntentWithIdentity:identity nestedInsideIntent:parentIntent];
+    }
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+static std::optional<BlockPresentationIntent> listIntentForListItem(NSPresentationIntent *listItemIntent)
+{
+    using Kind = BlockPresentationIntent::Kind;
+
+    switch (listItemIntent.parentIntent.intentKind) {
+    case NSPresentationIntentKindOrderedList:
+        return BlockPresentationIntent { Kind::OrderedList };
+    case NSPresentationIntentKindUnorderedList:
+        return BlockPresentationIntent { Kind::UnorderedList };
+    default:
+        return std::nullopt;
+    }
+}
+
+std::optional<BlockPresentationIntent> BlockPresentationIntent::fromPresentationIntent(NSPresentationIntent *intent)
+{
+    if (!intent)
+        return std::nullopt;
+
+    switch (intent.intentKind) {
+    case NSPresentationIntentKindParagraph:
+        // Markdown puts a list item's text in a paragraph.
+        if (intent.parentIntent.intentKind == NSPresentationIntentKindListItem)
+            return listIntentForListItem(intent.parentIntent);
+        return BlockPresentationIntent { Kind::Paragraph };
+    case NSPresentationIntentKindHeader:
+        if (intent.headerLevel < 1 || intent.headerLevel > 6)
+            return std::nullopt;
+        return BlockPresentationIntent { Kind::Header, static_cast<uint8_t>(intent.headerLevel) };
+    case NSPresentationIntentKindOrderedList:
+        return BlockPresentationIntent { Kind::OrderedList };
+    case NSPresentationIntentKindUnorderedList:
+        return BlockPresentationIntent { Kind::UnorderedList };
+    case NSPresentationIntentKindListItem:
+        return listIntentForListItem(intent);
+    case NSPresentationIntentKindCodeBlock:
+        return BlockPresentationIntent { Kind::CodeBlock, 0, 0, intent.languageHint };
+    case NSPresentationIntentKindBlockQuote:
+        return BlockPresentationIntent { Kind::BlockQuote };
+    case NSPresentationIntentKindThematicBreak:
+        return BlockPresentationIntent { Kind::ThematicBreak };
+    case NSPresentationIntentKindTable:
+    case NSPresentationIntentKindTableHeaderRow:
+    case NSPresentationIntentKindTableRow:
+    case NSPresentationIntentKindTableCell:
+        return std::nullopt;
+    }
+    return std::nullopt;
+}
+
 RetainPtr<NSDictionary> FontAttributes::createDictionary() const
 {
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
@@ -176,6 +255,15 @@ RetainPtr<NSDictionary> FontAttributes::createDictionary() const
 
     if (hasStrikeThrough)
         attributes[NSStrikethroughStyleAttributeName] = @(NSUnderlineStyleSingle);
+
+    RetainPtr<NSPresentationIntent> presentationIntent;
+    NSInteger identity = 0;
+    for (auto& blockIntent : blockPresentationIntents) {
+        if (RetainPtr intent = createPresentationIntent(blockIntent, ++identity, presentationIntent.get()))
+            presentationIntent = WTF::move(intent);
+    }
+    if (presentationIntent)
+        attributes[NSPresentationIntentAttributeName] = presentationIntent.get();
 
     return attributes;
 }

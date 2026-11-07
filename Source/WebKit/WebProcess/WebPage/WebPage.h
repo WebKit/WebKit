@@ -323,6 +323,7 @@ struct AriaNotifyData;
 struct AttributedString;
 struct BackForwardFrameItemIdentifierType;
 struct BackForwardItemIdentifierType;
+struct BlockPresentationIntent;
 struct CharacterRange;
 struct CompositionHighlight;
 struct CompositionUnderline;
@@ -2488,6 +2489,7 @@ private:
     void increaseListLevel();
     void decreaseListLevel();
     void changeListType();
+    void setBlockPresentationIntent(const WebCore::BlockPresentationIntent&);
 
     void setBaseWritingDirection(WebCore::WritingDirection);
 

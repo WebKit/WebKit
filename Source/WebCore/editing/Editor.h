@@ -96,6 +96,7 @@ class TextPlaceholderElement;
 class CachedMatchFinder;
 class WritingSuggestionData;
 
+struct BlockPresentationIntent;
 struct CompositionHighlight;
 struct DictationAlternative;
 struct FontAttributes;
@@ -287,6 +288,7 @@ public:
     WEBCORE_EXPORT RefPtr<Node> increaseSelectionListLevelUnordered();
     WEBCORE_EXPORT void decreaseSelectionListLevel();
     WEBCORE_EXPORT void changeSelectionListType();
+    WEBCORE_EXPORT void setBlockPresentationIntent(const BlockPresentationIntent&);
    
     void removeFormattingAndStyle();
 
@@ -720,6 +722,7 @@ private:
     std::optional<SimpleRange> adjustedSelectionRange();
 
 #if PLATFORM(COCOA)
+    Vector<BlockPresentationIntent> blockPresentationIntentsAtSelectionStart() const;
     RefPtr<SharedBuffer> selectionInWebArchiveFormat();
     String selectionInHTMLFormat();
     RefPtr<SharedBuffer> imageInWebArchiveFormat(Element&);
