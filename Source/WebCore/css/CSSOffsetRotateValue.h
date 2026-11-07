@@ -28,10 +28,12 @@
 #include "CSSKeywordValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSOffsetRotateValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSOffsetRotateValue);
 public:
     static Ref<CSSOffsetRotateValue> create(RefPtr<CSSValue>&& modifier, RefPtr<CSSValue>&& angle)
     {

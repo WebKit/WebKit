@@ -27,10 +27,12 @@
 
 #include "CSSValue.h"
 #include "CSSWebkitBoxReflect.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSWebkitBoxReflectValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSWebkitBoxReflectValue);
 public:
     static Ref<CSSWebkitBoxReflectValue> create(CSS::WebkitBoxReflect&&);
 

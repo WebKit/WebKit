@@ -32,10 +32,12 @@
 
 #include "CSSBasicShape.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSBasicShapeValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSBasicShapeValue);
 public:
     static Ref<CSSBasicShapeValue> create(CSS::BasicShape shape)
     {

@@ -28,12 +28,14 @@
 #include "CSSCustomPropertySyntax.h"
 #include "CSSVariableData.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MutableStyleProperties;
 
 class StyleRuleFunction final : public StyleRuleGroup {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleFunction);
 public:
     struct Parameter {
         AtomString name;
@@ -59,6 +61,7 @@ private:
 };
 
 class StyleRuleFunctionDeclarations : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleFunctionDeclarations);
 public:
     static Ref<StyleRuleFunctionDeclarations> create(Ref<StyleProperties>&& properties)
     {

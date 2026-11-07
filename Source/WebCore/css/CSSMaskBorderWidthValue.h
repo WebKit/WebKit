@@ -27,10 +27,12 @@
 
 #include "CSSMaskBorderWidth.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSMaskBorderWidthValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSMaskBorderWidthValue);
 public:
     static Ref<CSSMaskBorderWidthValue> create(CSS::MaskBorderWidth);
     ~CSSMaskBorderWidthValue();

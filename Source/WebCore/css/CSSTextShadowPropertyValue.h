@@ -26,10 +26,12 @@
 
 #include "CSSTextShadowProperty.h"
 #include "CSSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CSSTextShadowPropertyValue final : public CSSValue {
+    WTF_MAKE_TZONE_ALLOCATED(CSSTextShadowPropertyValue);
 public:
     static Ref<CSSTextShadowPropertyValue> create(CSS::TextShadowProperty);
 

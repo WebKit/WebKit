@@ -35,6 +35,7 @@
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -68,6 +69,7 @@ struct CSSPropertySourceData {
 };
 
 struct CSSStyleSourceData : public RefCounted<CSSStyleSourceData> {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(CSSStyleSourceData);
     static Ref<CSSStyleSourceData> create()
     {
         return adoptRef(*new CSSStyleSourceData);
@@ -81,6 +83,7 @@ typedef Vector<Ref<CSSRuleSourceData>> RuleSourceDataList;
 typedef Vector<SourceRange> SelectorRangeList;
 
 struct CSSRuleSourceData : public RefCounted<CSSRuleSourceData> {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(CSSRuleSourceData);
     static Ref<CSSRuleSourceData> create(StyleRuleType type)
     {
         return adoptRef(*new CSSRuleSourceData(type));

@@ -28,9 +28,12 @@
 #include "CSSFontFeatureValue.h"
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontFeatureValue);
 
 CSSFontFeatureValue::CSSFontFeatureValue(FontTag&& tag, CSS::Integer<CSS::Nonnegative>&& value)
     : CSSValue(ClassType::FontFeature)

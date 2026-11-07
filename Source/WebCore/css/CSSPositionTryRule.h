@@ -29,6 +29,7 @@
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -36,6 +37,7 @@ namespace WebCore {
 class CSSPositionTryDescriptors;
 
 class StyleRulePositionTry final : public StyleRuleBase {
+    WTF_MAKE_TZONE_ALLOCATED(StyleRulePositionTry);
 public:
     NODELETE static Ref<StyleRulePositionTry> create(AtomString&& name, Ref<StyleProperties>&&);
 
@@ -55,6 +57,7 @@ private:
 };
 
 class CSSPositionTryRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPositionTryRule);
 public:
     NODELETE static Ref<CSSPositionTryRule> create(StyleRulePositionTry&, CSSStyleSheet*);
     virtual ~CSSPositionTryRule();

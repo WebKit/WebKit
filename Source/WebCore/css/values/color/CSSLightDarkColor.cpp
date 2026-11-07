@@ -33,9 +33,12 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "Document.h"
 #include "StyleBuilderState.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace CSS {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(LightDarkColor);
 
 bool LightDarkColor::operator==(const LightDarkColor&) const = default;
 

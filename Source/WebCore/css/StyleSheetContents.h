@@ -26,6 +26,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -47,6 +48,7 @@ class StyleRuleNamespace;
 enum class CachePolicy : uint8_t;
 
 class StyleSheetContents final : public RefCountedAndCanMakeWeakPtr<StyleSheetContents> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(StyleSheetContents, WEBCORE_EXPORT);
 public:
     static Ref<StyleSheetContents> create(const CSSParserContext& context = CSSParserContext(HTMLStandardMode))
     {

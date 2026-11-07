@@ -30,6 +30,7 @@
 #include "EventTarget.h"
 #include "EventTargetInterfaces.h"
 #include "IDLTypes.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -83,6 +84,7 @@ public:
 
 private:
     struct PendingPromise : RefCounted<PendingPromise> {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(PendingPromise);
         static Ref<PendingPromise> create(LoadPromise&& promise)
         {
             return adoptRef(*new PendingPromise(WTF::move(promise)));

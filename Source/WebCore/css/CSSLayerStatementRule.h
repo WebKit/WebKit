@@ -30,12 +30,14 @@
 #pragma once
 
 #include "CSSRule.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class StyleRuleLayer;
 
 class CSSLayerStatementRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSLayerStatementRule);
 public:
     NODELETE static Ref<CSSLayerStatementRule> create(StyleRuleLayer&, CSSStyleSheet* parent);
     virtual ~CSSLayerStatementRule();

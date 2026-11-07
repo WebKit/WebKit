@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSColor.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -38,7 +39,7 @@ namespace CSS {
 struct PlatformColorResolutionState;
 
 struct ColorLayers {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ColorLayers);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ColorLayers);
 
     BlendMode blendMode;
     CommaSeparatedVector<Color> colors;

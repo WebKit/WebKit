@@ -31,8 +31,11 @@
 #include "CSSParserObserverWrapper.h"
 
 #include "CSSParserTokenRange.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSParserObserverWrapper);
 
 unsigned CSSParserObserverWrapper::startOffset(const CSSParserTokenRange& range)
 {

@@ -24,9 +24,12 @@
 #include "CSSKeywordValueInlines.h"
 #include "DeprecatedCSSOMValueList.h"
 #include <wtf/Hasher.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSValueContainingVector);
 
 CSSValueContainingVector::CSSValueContainingVector(ClassType type, ValueSeparator separator)
     : CSSValue(type)

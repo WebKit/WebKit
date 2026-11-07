@@ -29,8 +29,11 @@
 #include "CSSValuePool.h"
 #include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
 #include <wtf/Hasher.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSKeywordValue);
 
 CSSKeywordValue::CSSKeywordValue(StaticCSSValueTag, CSS::Keyword keyword)
     : CSSValue(ClassType::Keyword)

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSRule.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,6 +35,7 @@ class StyleRuleCSSStyleProperties;
 class StyleRuleFontPaletteValues;
 
 class CSSFontPaletteValuesRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontPaletteValuesRule);
 public:
     static Ref<CSSFontPaletteValuesRule> create(StyleRuleFontPaletteValues& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSFontPaletteValuesRule(rule, sheet)); }
 

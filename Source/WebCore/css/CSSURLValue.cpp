@@ -32,8 +32,11 @@
 
 #include "CSSValuePool.h"
 #include "CSSValueTypes+DeprecatedCSSOMValueCreation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSURLValue);
 
 String CSSURLValue::customCSSText(const CSS::SerializationContext& context) const
 {
