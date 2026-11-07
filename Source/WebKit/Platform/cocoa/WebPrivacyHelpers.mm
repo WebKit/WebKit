@@ -41,8 +41,12 @@
 #import <pal/spi/cocoa/WebPrivacySPI.h>
 #import <time.h>
 #import <wtf/BlockPtr.h>
+<<<<<<< Updated upstream
 #import <wtf/Borrow.h>
 #import <wtf/MonotonicTime.h>
+=======
+#import <wtf/Lock.h>
+>>>>>>> Stashed changes
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RobinHoodHashMap.h>
 #import <wtf/RunLoop.h>
@@ -587,7 +591,12 @@ public:
                     return;
                 }
 
+<<<<<<< Updated upstream
                 Locker locker { trackerLookupLock() };
+=======
+                Locker locker { listLock };
+
+>>>>>>> Stashed changes
                 version4List().clear();
                 version6List().clear();
 
@@ -612,6 +621,7 @@ public:
         });
     }
 
+<<<<<<< Updated upstream
     // Looks up the entry matching address and, while holding the lock, invokes function with it,
     // returning whether a match was found. The entry reference passed to function is valid only for
     // the duration of the call (while the lock is held) and must not escape it.
@@ -634,10 +644,14 @@ public:
 
 private:
     static const TrackerAddressLookupInfo* matchingInfo(const WebCore::IPAddress& address) WTF_REQUIRES_LOCK(trackerLookupLock())
+=======
+    static std::optional<TrackerAddressLookupInfo> find(const WebCore::IPAddress& address)
+>>>>>>> Stashed changes
     {
+        Locker locker { listLock };
         auto& list = address.isIPv4() ? version4List() : version6List();
         if (list.isEmpty())
-            return nullptr;
+            return std::nullopt;
 
         size_t lower = 0;
         size_t upper = list.size() - 1;
@@ -650,29 +664,44 @@ private:
                 auto middle = std::midpoint(lower, upper);
                 auto compareResult = address <=> list[middle].m_network;
                 if (is_eq(compareResult))
-                    return &list[middle];
+                    return list[middle];
                 if (is_lt(compareResult))
                     upper = middle;
                 else if (is_gt(compareResult))
                     lower = middle;
                 else {
                     ASSERT_NOT_REACHED();
-                    return nullptr;
+                    return std::nullopt;
                 }
             }
         }
 
+<<<<<<< Updated upstream
         Borrow borrowedList = list;
         if (borrowedList[upper].containsAddress(address))
             return &list[upper];
 
         if (upper != lower && borrowedList[lower].containsAddress(address))
             return &list[lower];
+=======
+        if (list[upper].contains(address))
+            return list[upper];
 
-        return nullptr;
+        if (upper != lower && list[lower].contains(address))
+            return list[lower];
+>>>>>>> Stashed changes
+
+        return std::nullopt;
     }
 
+<<<<<<< Updated upstream
     static Vector<TrackerAddressLookupInfo>& version4List() WTF_REQUIRES_LOCK(trackerLookupLock())
+=======
+private:
+    static Lock listLock;
+
+    static Vector<TrackerAddressLookupInfo>& version4List() WTF_REQUIRES_LOCK(listLock)
+>>>>>>> Stashed changes
     {
         static NeverDestroyed sharedList = [] {
             return Vector<TrackerAddressLookupInfo> { };
@@ -680,7 +709,11 @@ private:
         return sharedList.get();
     }
 
+<<<<<<< Updated upstream
     static Vector<TrackerAddressLookupInfo>& version6List() WTF_REQUIRES_LOCK(trackerLookupLock())
+=======
+    static Vector<TrackerAddressLookupInfo>& version6List() WTF_REQUIRES_LOCK(listLock)
+>>>>>>> Stashed changes
     {
         static NeverDestroyed sharedList = [] {
             return Vector<TrackerAddressLookupInfo> { };
@@ -699,6 +732,8 @@ private:
     UTF8CString m_host;
     CanBlock m_canBlock { CanBlock::No };
 };
+
+Lock TrackerAddressLookupInfo::listLock;
 
 class TrackerDomainLookupInfo {
 public:
@@ -818,6 +853,7 @@ void configureForAdvancedPrivacyProtections(NSURLSession *session)
         static thread_local NeverDestroyed<UTF8CString> lastHost;
 
         if (auto address = ipAddress(endpoint)) {
+<<<<<<< Updated upstream
             bool matched = TrackerAddressLookupInfo::find(*address, [&](auto& info) {
                 lastOwner.get() = info.owner().isolatedCopy();
                 lastHost.get() = info.host().isolatedCopy();
@@ -827,6 +863,13 @@ void configureForAdvancedPrivacyProtections(NSURLSession *session)
             });
             if (matched)
                 return;
+=======
+            if (auto info = TrackerAddressLookupInfo::find(*address)) {
+                *owner = info->owner().data();
+                *hostName = info->host().data();
+                *canBlock = info->canBlock() != TrackerAddressLookupInfo::CanBlock::No;
+            }
+>>>>>>> Stashed changes
         }
 
         if (auto host = hostname(endpoint)) {
