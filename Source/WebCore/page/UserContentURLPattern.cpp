@@ -244,6 +244,14 @@ bool UserContentURLPattern::matchesScheme(const UserContentURLPattern& other) co
     return equalIgnoringASCIICase(other.scheme(), m_scheme);
 }
 
+bool UserContentURLPattern::matchesPath(const URL& url) const
+{
+    if (url.hasOpaquePath())
+        return matchesPath(makeString('/', url.path()));
+
+    return matchesPath(url.path().toStringWithoutCopying());
+}
+
 bool UserContentURLPattern::matchesHost(const String& host) const
 {
     ASSERT(isValid());
