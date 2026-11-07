@@ -22,6 +22,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+header: "WebExtension.h"
 [Nested] enum class WebKit::WebExtension::ModifierFlags : uint32_t {
     Shift,
     Control,
@@ -29,6 +30,7 @@
     Command
 };
 
+header: "WebExtensionTab.h"
 [Nested] enum class WebKit::WebExtensionTab::ChangedProperties : uint16_t {
     Loading,
     Muted,
@@ -41,6 +43,7 @@
     ZoomFactor
 };
 
+header: "WebExtensionWindow.h"
 enum class WebKit::WebExtensionWindowTypeFilter : uint8_t {
     Normal,
     Popup

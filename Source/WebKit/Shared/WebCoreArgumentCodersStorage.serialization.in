@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+header: <WebCore/DOMCacheEngine.h>
 [CustomHeader] struct WebCore::DOMCacheEngine::CacheInfo {
     WebCore::DOMCacheIdentifier identifier
     String name
