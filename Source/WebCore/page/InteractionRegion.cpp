@@ -212,6 +212,17 @@ static bool shouldAllowAccessibilityRoleAsPointerCursorReplacement(const Element
     }
 }
 
+static bool shouldAllowAccessibilityRoleAsButtonOrLinkReplacement(const Element& element)
+{
+    switch (AccessibilityObject::ariaRoleToWebCoreRole(element.attributeWithoutSynchronization(HTMLNames::roleAttr))) {
+    case AccessibilityRole::Button:
+    case AccessibilityRole::Link:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static bool elementMatchesHoverRules(Element& element)
 {
     bool foundHoverRules = false;
@@ -542,6 +553,8 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
         RefPtr htmlElement = dynamicDowncast<HTMLElement>(matchedElement);
         return htmlElement && htmlElement->isLabelable();
     }();
+    // Content that paints its own box keeps its own region inside an ARIA button or link.
+    bool canBeOwnedByRole = !styleRenderer->hasVisibleBoxDecorations();
     for (RefPtr<ContainerNode> node = matchedElement; node; node = node->parentInComposedTree()) {
         RefPtr element = dynamicDowncast<Element>(node);
         if (!element)
@@ -550,7 +563,7 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
         RefPtr label = dynamicDowncast<HTMLLabelElement>(*element);
         bool matchedLabel = label && (isLabelable || hasInteractiveCursorType(*label) || label->control());
         bool matchedLink = element->isLink();
-        if (matchedButton || matchedLabel || matchedLink) {
+        if (matchedButton || matchedLabel || matchedLink || (canBeOwnedByRole && shouldAllowAccessibilityRoleAsButtonOrLinkReplacement(*element))) {
             matchedElement = element;
             break;
         }
