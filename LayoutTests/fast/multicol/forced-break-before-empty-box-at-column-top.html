@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="match" href="forced-break-before-empty-box-at-column-top-ref.html">
+<style>
+.multicol { position: relative; columns: 3; column-gap: 0; column-fill: auto; width: 300px; height: 100px; }
+.empty { height: 0; }
+.green { background: green; }
+</style>
+</head>
+<body>
+<p>Test passes if there is a green box and no red.</p>
+<div class="multicol">
+    <div style="height: 100px;"></div>
+    <div class="empty"></div>
+    <div class="green" style="height: 100px; break-before: column;"></div>
+</div>
+</body>
+</html>

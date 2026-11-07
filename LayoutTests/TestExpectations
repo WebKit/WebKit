@@ -7219,7 +7219,6 @@ imported/w3c/web-platform-tests/css/css-break/float-014.tentative.html [ ImageOn
 imported/w3c/web-platform-tests/css/css-break/float-015.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/float-016.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/float-017.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-break/forced-break-at-fragmentainer-start-000.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/fragmented-autowidth-fc-root-beside-floats.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/inline-with-float-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/line-after-unbreakable-float-after-padding.html [ ImageOnlyFailure ]
