@@ -292,7 +292,7 @@ std::optional<std::pair<LayoutUnit, LayoutUnit>> BlockFormattingUtils::aspectRat
     return std::pair { minimum, std::max(minimum, maximum) };
 }
 
-auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle, std::optional<IntrinsicWidthConstraints> contentInlineSizes, std::optional<std::pair<LayoutUnit, LayoutUnit>> aspectRatioInlineSizeLimits, std::optional<LayoutUnit> aspectRatioBorderBoxInlineSize) -> InlineSizeAndMargins
+auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle, std::optional<IntrinsicWidthConstraints> contentInlineSizes, std::optional<std::pair<LayoutUnit, LayoutUnit>> aspectRatioInlineSizeLimits, std::optional<LayoutUnit> aspectRatioBorderBoxInlineSize, std::optional<LayoutUnit> availableInlineSize) -> InlineSizeAndMargins
 {
     auto containingBlockWritingMode = containingBlockStyle.writingMode();
     CheckedRef style = box.style();
@@ -304,8 +304,10 @@ auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit
     };
     auto marginStart = usedMargin(marginStartLength);
     auto marginEnd = usedMargin(marginEndLength);
-    // The stretch-fit inline size, auto margins as zero (css-sizing-3 §5.1).
-    auto stretchFitInlineSize = std::max(borderAndPaddingInlineSize, containingBlockInlineSize - marginStart - marginEnd);
+    // The stretch-fit inline size, auto margins as zero (css-sizing-3 §5.1), and what auto margins share: for a box that avoids floats, the
+    // space they leave (§4.2), while percentages still refer to the containing block.
+    auto spaceInlineSize = availableInlineSize.value_or(containingBlockInlineSize);
+    auto stretchFitInlineSize = std::max(borderAndPaddingInlineSize, spaceInlineSize - marginStart - marginEnd);
     auto keywordBorderBoxInlineSizeFor = [&](auto& size) {
         if (size.isStretch())
             return stretchFitInlineSize;
@@ -372,7 +374,7 @@ auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit
     }
     borderBoxInlineSize = std::max(std::min(borderBoxInlineSize, maximum), minimum);
 
-    std::tie(marginStart, marginEnd) = inlineMargins(box, borderBoxInlineSize, containingBlockInlineSize, containingBlockStyle);
+    std::tie(marginStart, marginEnd) = inlineMargins(box, borderBoxInlineSize, spaceInlineSize, containingBlockStyle);
     return { borderBoxInlineSize, marginStart, marginEnd };
 }
 
@@ -409,15 +411,20 @@ std::pair<LayoutUnit, LayoutUnit> BlockFormattingUtils::inlineMargins(const Rend
         else if (marginStartLength.isAuto() || pushesToEnd)
             marginStart = containingBlockInlineSize - borderBoxInlineSize - marginEnd;
     }
-    // An over-constrained box ignores its end margin, which takes what makes the equality true. Like RenderBox::computeLogicalWidth,
-    // the end margin keeps its value in a scroll container, where it adds to the scrollable overflow, and for an orthogonal box.
+    if (containingBlockInlineSize && ignoresEndMarginWhenOverConstrained(box, containingBlockStyle))
+        marginEnd = containingBlockInlineSize - borderBoxInlineSize - marginStart;
+    return { marginStart, marginEnd };
+}
+
+// An over-constrained box ignores its end margin, which takes what makes the equality true. Like RenderBox::computeLogicalWidth,
+// the end margin keeps its value in a scroll container, where it adds to the scrollable overflow, and for an orthogonal box.
+bool BlockFormattingUtils::ignoresEndMarginWhenOverConstrained(const RenderBox& box, const Style::ComputedStyle& containingBlockStyle)
+{
     auto isScrollContainer = [&](Overflow overflow) {
         return overflow != Overflow::Visible && overflow != Overflow::Clip;
     };
-    auto isOrthogonal = style->writingMode().isOrthogonal(containingBlockWritingMode);
-    if (containingBlockInlineSize && !isAlignedByJustifySelf && !isOrthogonal && !isScrollContainer(containingBlockStyle.overflowX()) && !isScrollContainer(containingBlockStyle.overflowY()))
-        marginEnd = containingBlockInlineSize - borderBoxInlineSize - marginStart;
-    return { marginStart, marginEnd };
+    return !isAlignedByJustifySelf(box, containingBlockStyle) && !box.style().writingMode().isOrthogonal(containingBlockStyle.writingMode())
+        && !isScrollContainer(containingBlockStyle.overflowX()) && !isScrollContainer(containingBlockStyle.overflowY());
 }
 
 bool BlockFormattingUtils::isAlignedByJustifySelf(const RenderBox& box, const Style::ComputedStyle& containingBlockStyle)

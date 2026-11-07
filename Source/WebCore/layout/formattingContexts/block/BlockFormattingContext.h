@@ -149,13 +149,14 @@ private:
     LayoutUnit layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState);
     BlockLayoutResult layoutOutOfFlowIndependentFormattingContext(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&, const std::optional<OutOfFlowGeometry::DefaultAnchor>&);
     void handleFloat(const RenderBox&, BlockLayoutResult&);
+    template<typename LayoutContent> std::optional<LayoutUnit> placeBesideFloats(const RenderBox&, ContainingBlockState& boxState, LayoutUnit marginsBeforeLogicalBottom, const LayoutContent&);
     void handleOutOfFlowBox(const RenderBox&, BlockLayoutResult&);
 
     ContainingBlockState containingBlockStateForRoot(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry) const;
     ContainingBlockState containingBlockStateFor(const RenderBox& blockContainer, const BoxGeometry&, const ContainingBlockState& parentState) const;
 
     BoxGeometry computeBorderAndPadding(const RenderBox&, LayoutUnit containingBlockInlineSize) const;
-    void computeInlineSizeAndMargins(const RenderBox&, const ContainingBlockState&, BoxGeometry&) const;
+    void computeInlineSizeAndMargins(const RenderBox&, const ContainingBlockState&, BoxGeometry&, std::optional<LayoutUnit> availableInlineSize = { }) const;
     void computeLogicalLeft(const RenderBox&, const ContainingBlockState&, BoxGeometry&) const;
     ConstraintsForInlineContent constraintsForInlineContent(const RenderBox& blockContainer, const ContainingBlockState& blockContainerState) const;
     ContainingBlockState containingBlockStateAtBlockStart(const RenderBox&) const;
