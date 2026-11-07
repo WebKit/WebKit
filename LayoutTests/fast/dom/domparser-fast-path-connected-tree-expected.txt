@@ -1,0 +1,28 @@
+Tests that DOMParser.parseFromString and Document.parseHTMLUnsafe build a complete, connected document from markup the HTML fast path parser accepts, and from markup it rejects partway.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The document element has a head followed by a body holding the parsed content.
+PASS childNames(doc.documentElement) is "head body"
+PASS doc.body.innerHTML is "<p>Subtotal <b>$12</b></p>"
+Parsed elements are connected and can be found by id.
+PASS doc.getElementById('shipping-total').isConnected is true
+PASS doc.querySelector('label').control is doc.querySelector('input')
+Radio buttons with the same name form one group, so only the last checked one stays checked.
+PASS doc.querySelector('input:checked').value is "Lavender"
+The last selected option is the selected one.
+PASS doc.querySelector('select').selectedIndex is 2
+Markup the fast path parser rejects partway is parsed by the full parser alone.
+PASS doc.childNodes.length is 1
+PASS childNames(doc.documentElement) is "head body"
+PASS childNames(doc.body) is "p table"
+Document.parseHTMLUnsafe builds the same connected document.
+PASS childNames(doc.documentElement) is "head body"
+PASS doc.getElementById('shipping-total').isConnected is true
+PASS doc.childNodes.length is 1
+PASS childNames(doc.body) is "p table"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

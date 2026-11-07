@@ -915,17 +915,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             if (parsingFailed())
                 return;
 
-            if (!result.text.empty()) {
-                if (!parent.isConnected())
-                    parent.parserAppendChildIntoIsolatedTree(Text::create(m_document, result.tryUseWhitespaceCache()));
-                else
-                    parent.parserAppendChild(Text::create(m_document, result.tryUseWhitespaceCache()));
-            } else if (!result.escapedText.isEmpty()) {
-                if (!parent.isConnected())
-                    parent.parserAppendChildIntoIsolatedTree(Text::create(m_document, WTF::move(result.escapedText)));
-                else
-                    parent.parserAppendChild(Text::create(m_document, WTF::move(result.escapedText)));
-            }
+            if (!result.text.empty())
+                parent.parserAppendChildIntoIsolatedTree(Text::create(m_document, result.tryUseWhitespaceCache()));
+            else if (!result.escapedText.isEmpty())
+                parent.parserAppendChildIntoIsolatedTree(Text::create(m_document, WTF::move(result.escapedText)));
 
             if (m_parsingBuffer.atEnd())
                 return;
@@ -1077,10 +1070,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         parseAttributes(element);
         if (parsingFailed())
             return WTF::move(element);
-        if (!parent.isConnected())
-            parent.parserAppendChildIntoIsolatedTree(element);
-        else
-            parent.parserAppendChild(element);
+        parent.parserAppendChildIntoIsolatedTree(element);
         element->beginParsingChildren();
         parseChildren<Tag>(element);
         if (parsingFailed() || m_parsingBuffer.atEnd()) [[unlikely]]
@@ -1109,10 +1099,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         parseAttributes(element);
         if (parsingFailed())
             return WTF::move(element);
-        if (!parent.isConnected())
-            parent.parserAppendChildIntoIsolatedTree(element);
-        else
-            parent.parserAppendChild(element);
+        parent.parserAppendChildIntoIsolatedTree(element);
         element->beginParsingChildren();
         element->finishParsingChildren();
         return WTF::move(element);
@@ -1149,6 +1136,7 @@ static bool tryFastParsingHTMLFragmentImpl(std::span<const CharacterType> source
 
 bool tryFastParsingHTMLFragment(StringView source, Document& document, ContainerNode& destinationParent, Element& contextElement, OptionSet<ParserContentPolicy> policy)
 {
+    ASSERT(!destinationParent.isConnected());
     if (!canUseFastPath(contextElement, policy))
         return false;
 

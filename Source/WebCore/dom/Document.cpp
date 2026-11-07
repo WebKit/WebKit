@@ -1267,18 +1267,17 @@ void Document::setMarkupUnsafe(const String& markup, OptionSet<ParserContentPoli
     auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent } | parserContentPolicy;
     setParserContentPolicy(policy);
     if (this->contentType() == textHTMLContentTypeAtom()) {
-        auto html = HTMLHtmlElement::create(*this);
-        appendChild(html);
-        auto body = HTMLBodyElement::create(*this);
+        Ref html = HTMLHtmlElement::create(*this);
+        Ref body = HTMLBodyElement::create(*this);
         html->appendChild(body);
         body->beginParsingChildren();
         if (tryFastParsingHTMLFragment(StringView { markup }.substring(markup.find(isNotASCIIWhitespace<char16_t>)), *this, body, body, policy)) [[likely]] {
             body->finishParsingChildren();
-            auto head = HTMLHeadElement::create(*this);
+            Ref head = HTMLHeadElement::create(*this);
             html->insertBefore(head, body.ptr());
+            appendChild(html);
             return;
         }
-        html->remove();
     }
     open();
     protect(parser())->appendSynchronously(markup.impl());
