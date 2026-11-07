@@ -33,7 +33,6 @@
 #pragma once
 
 #include "InspectorWebAgentBase.h"
-#include "LayoutRect.h"
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/DebuggerPrimitives.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
@@ -45,11 +44,7 @@
 
 namespace WebCore {
 
-class Element;
 class Event;
-class FloatQuad;
-class Node;
-class RenderObject;
 
 enum class TimelineRecordType {
     EventDispatch,
@@ -122,8 +117,6 @@ public:
     void didEvaluateScript();
     void didTimeStamp(const String& message);
     void didPerformanceMark(const String& label, std::optional<MonotonicTime>);
-    void didEnqueueFirstContentfulPaint();
-    void didEnqueueLargestContentfulPaint(Element*, unsigned area);
     void didRequestAnimationFrame(int callbackId);
     void didCancelAnimationFrame(int callbackId);
     void willFireAnimationFrame(int callbackId);
@@ -149,8 +142,6 @@ protected:
     virtual bool shouldStartHeapInstrument() const { return true; }
     virtual bool shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument) const { return true; }
     void autoCaptureStarted() const;
-
-    virtual Inspector::Protocol::DOM::NodeId nodeIdForNode(Node*);
 
     const Vector<Inspector::Protocol::Timeline::Instrument>& instruments() const LIFETIME_BOUND { return m_instruments; }
 
