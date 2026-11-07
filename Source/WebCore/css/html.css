@@ -979,7 +979,7 @@ input[type="file"]:disabled {
 input:is([type="button"], [type="submit"], [type="reset"]):disabled,
 input[type="file"]:disabled::file-selector-button,
 button:disabled,
-select:-internal-uses-menulist:disabled {
+select:-internal-select-could-be-native-dropdown-box:disabled {
     background-color: -apple-system-opaque-secondary-fill-disabled;
     color: -apple-system-tertiary-label;
     opacity: initial;
@@ -1040,7 +1040,7 @@ select {
     -webkit-rtl-ordering: logical;
 }
 
-select:-internal-uses-menulist {
+select:-internal-select-could-be-native-dropdown-box {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     padding-inline: -internal-auto-base(0.4em, 0.7rem);
     color: -internal-auto-base(-apple-system-blue, inherit);
@@ -1077,19 +1077,19 @@ select:-internal-uses-menulist {
     word-spacing: -internal-auto-base(normal, inherit);
 }
 
-select:-internal-uses-menulist:is(:hover, :focus) {
+select:-internal-select-could-be-native-dropdown-box:is(:hover, :focus) {
     border-color: -internal-auto-base(revert-rule, color-mix(currentColor 80%));
 }
 
-select:-internal-uses-menulist:active {
+select:-internal-select-could-be-native-dropdown-box:active {
     background-color: -internal-auto-base(revert-rule, color-mix(currentColor 8%));
 }
 
-select:-internal-uses-menulist:user-invalid {
+select:-internal-select-could-be-native-dropdown-box:user-invalid {
     border-color: -internal-auto-base(revert-rule, light-dark(oklch(56% 0.2 26), oklch(66% 0.17 24)));
 }
 
-select:-internal-uses-menulist:disabled {
+select:-internal-select-could-be-native-dropdown-box:disabled {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     background-color: -internal-auto-base(-apple-system-opaque-secondary-fill-disabled, color-mix(currentColor 6%));
     color: -internal-auto-base(-apple-system-tertiary-label, color-mix(currentColor 55%));
@@ -1101,18 +1101,18 @@ select:-internal-uses-menulist:disabled {
     cursor: -internal-auto-base(revert-rule, not-allowed);
 }
 
-select:-internal-uses-menulist:not([popover]) {
+select:-internal-select-could-be-native-dropdown-box:not([popover]) {
     display: -internal-auto-base(inline-block, inline-flex);
 }
 
-select:not(:-internal-uses-menulist) {
+select:not(:-internal-select-could-be-native-dropdown-box) {
     background-color: Canvas;
     border-style: inset;
     border-color: gray;
     vertical-align: -internal-auto-base(text-bottom, initial);
 }
 
-select:not(:-internal-uses-menulist):enabled {
+select:not(:-internal-select-could-be-native-dropdown-box):enabled {
     color: CanvasText;
 }
 
@@ -1120,7 +1120,7 @@ select::-internal-select-button-slot {
     text-overflow: inherit;
 }
 
-select:-internal-uses-menulist > button:first-child {
+select:-internal-select-could-be-native-dropdown-box > button:first-child {
     all: unset;
     display: contents;
     text-overflow: inherit;
@@ -1175,7 +1175,7 @@ select:open::picker-icon {
     display: block;
 }
 
-select:-internal-uses-menulist option {
+select:-internal-select-could-be-native-dropdown-box option {
     min-inline-size: -internal-auto-base(revert-rule, 24px);
     min-block-size: -internal-auto-base(revert-rule, max(24px, 1lh));
     padding-block: -internal-auto-base(revert-rule, 0.5rem);
@@ -1223,8 +1223,8 @@ optgroup {
     cursor: -internal-auto-base(revert-rule, default);
 }
 
-select:-internal-uses-menulist :is(optgroup, option) + optgroup,
-select:-internal-uses-menulist optgroup + option {
+select:-internal-select-could-be-native-dropdown-box :is(optgroup, option) + optgroup,
+select:-internal-select-could-be-native-dropdown-box optgroup + option {
     border-block-start: -internal-auto-base(revert-rule, 1px solid color-mix(currentColor 12%));
 }
 
@@ -1248,11 +1248,11 @@ optgroup::-internal-optgroup-label {
 }
 
 @media (prefers-contrast: more) {
-    select:-internal-uses-menulist,
+    select:-internal-select-could-be-native-dropdown-box,
     :-internal-select-popover {
         border-color: -internal-auto-base(revert-rule, currentColor);
     }
-    select:-internal-uses-menulist:disabled {
+    select:-internal-select-could-be-native-dropdown-box:disabled {
         border-color: -internal-auto-base(revert-rule, color-mix(currentColor 40%));
         color: -internal-auto-base(revert-rule, color-mix(currentColor 60%));
         background-color: -internal-auto-base(revert-rule, color-mix(currentColor 10%));

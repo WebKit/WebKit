@@ -84,7 +84,7 @@ select[multiple]:-internal-select-preferred-size-one > button:first-child {
 
 /* List box. */
 
-/* :not([popover]) only to match the menulist display rule in html.css, which otherwise wins. */
+/* :not([popover]) only to match the dropdown box display rule in html.css, which otherwise wins. */
 
 select:not(:-internal-select-preferred-size-one):not([popover]) {
     display: -internal-auto-base(revert-rule, inline-block);

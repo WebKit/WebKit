@@ -1382,8 +1382,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         case CSSSelector::PseudoClass::InternalSelectPreferredSizeOne:
             return matchesSelectPreferredSizeOnePseudoClass(element);
 
-        case CSSSelector::PseudoClass::InternalUsesMenulist:
-            return matchesUsesMenulistPseudoClass(element);
+        case CSSSelector::PseudoClass::InternalSelectCouldBeNativeDropdownBox:
+            return matchesSelectCouldBeNativeDropdownBoxPseudoClass(element);
 
         case CSSSelector::PseudoClass::Open:
             return matchesOpenPseudoClass(element);
