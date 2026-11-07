@@ -1100,11 +1100,7 @@ void Format::initialize(const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::R10G10B10A2_SINT:
-            mIntendedGLFormat         = GL_RGB10_A2_SINT_ANGLEX;
-            mActualImageFormatID      = angle::FormatID::R10G10B10A2_SINT;
-            mImageInitializerFunction = nullptr;
-            mIsRenderable             = true;
-
+            // This format is not implemented in WebGPU.
             break;
 
         case angle::FormatID::R10G10B10A2_SNORM:
@@ -1124,10 +1120,12 @@ void Format::initialize(const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::R10G10B10A2_UINT:
-            mIntendedGLFormat = GL_RGB10_A2UI;
-
-            mActualBufferFormatID = angle::FormatID::R16G16B16A16_UINT;
-            mVertexLoadFunction   = CopyXYZ10W2ToXYZWFloatVertexData<false, false, false, false>;
+            mIntendedGLFormat         = GL_RGB10_A2UI;
+            mActualImageFormatID      = angle::FormatID::R10G10B10A2_UINT;
+            mImageInitializerFunction = nullptr;
+            mIsRenderable             = true;
+            mActualBufferFormatID     = angle::FormatID::R16G16B16A16_UINT;
+            mVertexLoadFunction = CopyXYZ10W2ToXYZWFloatVertexData<false, false, false, false>;
             mVertexLoadRequiresConversion = true;
             break;
 
@@ -1503,10 +1501,13 @@ void Format::initialize(const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::R32G32B32_FLOAT:
-            mIntendedGLFormat = GL_RGB32F;
-
-            mActualBufferFormatID         = angle::FormatID::R32G32B32_FLOAT;
-            mVertexLoadFunction           = CopyNativeVertexData<GLfloat, 3, 3, 0>;
+            mIntendedGLFormat         = GL_RGB32F;
+            mActualImageFormatID      = angle::FormatID::R32G32B32A32_FLOAT;
+            mImageInitializerFunction = Initialize4ComponentData<GLfloat, 0x00000000, 0x00000000,
+                                                                 0x00000000, gl::Float32One>;
+            mIsRenderable             = true;
+            mActualBufferFormatID     = angle::FormatID::R32G32B32_FLOAT;
+            mVertexLoadFunction       = CopyNativeVertexData<GLfloat, 3, 3, 0>;
             mVertexLoadRequiresConversion = false;
             break;
 
@@ -1538,8 +1539,11 @@ void Format::initialize(const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::R32G32B32_UINT:
-            mIntendedGLFormat = GL_RGB32UI;
-
+            mIntendedGLFormat    = GL_RGB32UI;
+            mActualImageFormatID = angle::FormatID::R32G32B32A32_UINT;
+            mImageInitializerFunction =
+                Initialize4ComponentData<GLuint, 0x00000000, 0x00000000, 0x00000000, 0x00000001>;
+            mIsRenderable = true;
             {
                 static constexpr BufferFormatInitInfo kInfo[] = {
                     {angle::FormatID::R32G32B32_UINT, CopyNativeVertexData<GLuint, 3, 3, 0>, false},
@@ -2162,7 +2166,7 @@ WGPUTextureFormat GetWgpuTextureFormatFromFormatID(angle::FormatID formatID)
         {angle::FormatID::EXTERNAL6, WGPUTextureFormat_Undefined},
         {angle::FormatID::EXTERNAL7, WGPUTextureFormat_Undefined},
         {angle::FormatID::NONE, WGPUTextureFormat_Undefined},
-        {angle::FormatID::R10G10B10A2_SINT, WGPUTextureFormat_RGB10A2Uint},
+        {angle::FormatID::R10G10B10A2_UINT, WGPUTextureFormat_RGB10A2Uint},
         {angle::FormatID::R10G10B10A2_UNORM, WGPUTextureFormat_RGB10A2Unorm},
         {angle::FormatID::R11G11B10_FLOAT, WGPUTextureFormat_RG11B10Ufloat},
         {angle::FormatID::R16G16B16A16_FLOAT, WGPUTextureFormat_RGBA16Float},
@@ -2329,7 +2333,7 @@ angle::FormatID GetFormatIDFromWgpuTextureFormat(WGPUTextureFormat wgpuFormat)
         case WGPUTextureFormat_Undefined:
             return angle::FormatID::NONE;
         case WGPUTextureFormat_RGB10A2Uint:
-            return angle::FormatID::R10G10B10A2_SINT;
+            return angle::FormatID::R10G10B10A2_UINT;
         case WGPUTextureFormat_RGB10A2Unorm:
             return angle::FormatID::R10G10B10A2_UNORM;
         case WGPUTextureFormat_RG11B10Ufloat:
