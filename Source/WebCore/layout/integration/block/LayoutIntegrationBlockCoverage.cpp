@@ -340,24 +340,22 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
             descendant = descendant->nextInPreOrderAfterChildren(&box);
             continue;
         }
-        // FIXME: A float among block-level boxes, which goes beside the floats before it in the max-content inline size
-        // (RenderBlockFlow::computeBlockIntrinsicLogicalWidths).
-        if (descendant != &box && descendant->isFloating()) {
-            if (CheckedPtr parentBlockContainer = dynamicDowncast<RenderBlockFlow>(*descendant->parent()); parentBlockContainer && !parentBlockContainer->childrenInline())
-                return false;
-        }
         // FIXME: A block-level box in inline content, which the inline formatting context measures through the render tree
         // (LineBuilder::handleBlockContent).
         if (CheckedPtr element = dynamicDowncast<RenderElement>(*descendant); element && element != &box && element->isBlockLevelBox() && element->parent()->isInlineBox())
             return false;
-        // The own formatting context of a box laid out through the render tree measures it (RenderBox::minContentLogicalWidthContribution),
-        // and so does the inline formatting context for an atomic inline-level box (BoxGeometryUpdater::updateLayoutBoxDimensions). A percentage
-        // block size, which an aspect ratio turns into an inline size, resolves against the block size of the containing block from its style
-        // there too (RenderBox::computePercentageLogicalHeight).
+        auto isBlockLevelFloat = [&] {
+            CheckedPtr parentBlockContainer = dynamicDowncast<RenderBlockFlow>(descendant->parent());
+            return descendant->isFloating() && parentBlockContainer && !parentBlockContainer->childrenInline();
+        };
+        // The own formatting context of a box laid out through the render tree, or of a float among block-level boxes, measures it
+        // (RenderBox::minContentLogicalWidthContribution), and so does the inline formatting context for an atomic inline-level box
+        // (BoxGeometryUpdater::updateLayoutBoxDimensions). A percentage block size, which an aspect ratio turns into an inline size, resolves
+        // against the block size of the containing block from its style there too (RenderBox::computePercentageLogicalHeight).
         // FIXME: An orthogonal box, which the render tree lays out to measure it (RenderBox::computeIntrinsicLogicalHeight), and percentage
         // padding, which resolves against its inline size, which the block formatting context writes once all of it is laid out. And scrollbars
         // that come or go with the layout, which RenderBlock::scrollbarsChanged makes the containing blocks measure again.
-        if (descendant != &box && (isLaidOutThroughRenderTree(*descendant) || isAtomicInlineLevelBox(*descendant))) {
+        if (descendant != &box && (isLaidOutThroughRenderTree(*descendant) || isAtomicInlineLevelBox(*descendant) || isBlockLevelFloat())) {
             CheckedRef leaf = downcast<RenderBox>(*descendant);
             CheckedRef style = leaf->style();
             auto writingMode = leaf->writingMode();
