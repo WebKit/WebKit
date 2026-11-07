@@ -4439,19 +4439,21 @@ constexpr unsigned structureHasBeenFlattenedBefore = 14; // ineligible for furth
 constexpr unsigned structureInlineCapacity = 15; // saturated to 4 bits
 }
 
-// reg2: sizes/counts, 16 bits (4 nibbles) each.
+// reg2: sizes/counts.
 namespace Reg2 {
-constexpr unsigned blankCellWordCount = 0; // nibbles 0-3: zero 8-byte words in the cell
-constexpr unsigned outOfLineSize = 4; // nibbles 4-7: structure's out-of-line slot count
-constexpr unsigned butterflyPublicLength = 8; // nibbles 8-11: out-of-line + indexed only
-constexpr unsigned butterflyVectorLength = 12; // nibbles 12-15: out-of-line + indexed only
+constexpr unsigned blankCellWordCount = 0; // nibbles 0-1 (8 bits, saturated): zero 8-byte words in the cell
+constexpr unsigned structureInlineSize = 2; // nibbles 2-3 (8 bits): structure's used inline slot count
+constexpr unsigned outOfLineSize = 4; // nibbles 4-7 (16 bits): structure's used out-of-line slot count
+constexpr unsigned butterflyPublicLength = 8; // nibbles 8-11 (16 bits): out-of-line + indexed only
+constexpr unsigned butterflyVectorLength = 12; // nibbles 12-15 (16 bits): out-of-line + indexed only
 }
 
-// reg4: GC state of the bad object and its prototype-chain child.
+// reg4: GC state of the bad object and its prototype-chain child + block header + offending slot re-read.
 namespace Reg4 {
 constexpr unsigned badObjectGCState = 0; // nibbles 0-5
 constexpr unsigned previousInChainGCState = GCState::nibbleCount; // nibbles 6-11
-constexpr unsigned blockHeaderZeroByteCount = 12; // nibbles 12-15 (16 bits): number of zero bytes in the block header, MarkedBlock only
+constexpr unsigned blockHeaderZeroByteCount = 12; // nibbles 12-14 (12 bits): number of zero bytes in the block header, MarkedBlock only
+constexpr unsigned offendingSlotClassification = 15; // classifySlotWord of the offending slot re-read at crash time; 0xf => not re-read
 }
 
 // reg5: GC state of the base object + global GC state + chain metadata.
@@ -4460,7 +4462,8 @@ constexpr unsigned bottomOfChainGCState = 0; // nibbles 0-5
 constexpr unsigned isMarking = 6; // MarkedSpace::isMarking()
 constexpr unsigned previousInChainIsNull = 7;
 constexpr unsigned badObjectIsBottomOfChain = 8;
-constexpr unsigned chainDepth = 9; // nibbles 9-10 (8 bits); 0xff => not reached within cap
+constexpr unsigned chainDepth = 9; // nibble 9 (4 bits); 0xf => not reached within cap
+constexpr unsigned propertyNameIsData = 10; // 1 => the offending PropertyName is "data"
 constexpr unsigned collectionScope = 11; // 0 => none, 1 => eden, 2 => full
 constexpr unsigned worldIsStopped = 12;
 constexpr unsigned mutatorState = 13; // 0 => running, 1 => allocating, 2 => sweeping, 3 => collecting
@@ -4471,15 +4474,19 @@ constexpr unsigned nextSlotClassification = 15; // ditto
 // The layout must stay nibble-aligned with no field overlapping the next.
 static_assert(Reg4::previousInChainGCState == Reg4::badObjectGCState + GCState::nibbleCount);
 static_assert(Reg5::isMarking == Reg5::bottomOfChainGCState + GCState::nibbleCount);
-static_assert(Reg5::chainDepth + 2 <= Reg5::collectionScope); // chainDepth spans 2 nibbles
+static_assert(Reg5::propertyNameIsData == Reg5::chainDepth + 1); // chainDepth spans 1 nibble
+static_assert(Reg5::collectionScope == Reg5::propertyNameIsData + 1);
 static_assert(Reg5::nextSlotClassification <= 15);
 static_assert(Reg5::nextSlotClassification == Reg5::previousSlotClassification + 1);
 static_assert(Reg1::offsetIsInline == Reg1::propertyOffset + 4); // propertyOffset spans 4 nibbles
-static_assert(Reg2::outOfLineSize == Reg2::blankCellWordCount + 4); // 16-bit fields span 4 nibbles
-static_assert(Reg2::butterflyPublicLength == Reg2::outOfLineSize + 4);
+static_assert(Reg2::structureInlineSize == Reg2::blankCellWordCount + 2); // 8-bit fields span 2 nibbles
+static_assert(Reg2::outOfLineSize == Reg2::structureInlineSize + 2);
+static_assert(Reg2::butterflyPublicLength == Reg2::outOfLineSize + 4); // 16-bit fields span 4 nibbles
 static_assert(Reg2::butterflyVectorLength + 4 <= 16);
 static_assert(Reg4::blockHeaderZeroByteCount == Reg4::previousInChainGCState + GCState::nibbleCount);
-static_assert(Reg4::blockHeaderZeroByteCount + 4 <= 16); // 16-bit count spans 4 nibbles
+static_assert(Reg4::offendingSlotClassification == Reg4::blockHeaderZeroByteCount + 3); // 12-bit count spans 3 nibbles
+static_assert(Reg4::offendingSlotClassification <= 15);
+static_assert(MarkedBlock::headerSize < (1 << 12)); // The 12-bit header zero-byte count never saturates.
 static_assert(Reg1::structureIsDictionary == Reg1::butterflyOutOfLineStorageIsZeroFilled + 1);
 static_assert(Reg1::structureIsUncacheableDictionary == Reg1::structureIsDictionary + 1);
 static_assert(Reg1::structureHasBeenFlattenedBefore == Reg1::structureIsUncacheableDictionary + 1);
@@ -4593,11 +4600,11 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
     updateDumpState(0x5706);
 
     // Backtrack the prototype chain from the original baseValue to discover how far up the bad
-    // object manifests. 0xff means we did not reach it within the cap (corrupt/cyclic chain).
+    // object manifests. 0xf means we did not reach it within the cap (corrupt/cyclic chain).
     uint64_t chainDepth = 0;
     JSObject* chainCursor = bottomOfChain;
     {
-        constexpr uint64_t maxDepth = 0xff;
+        constexpr uint64_t maxDepth = 0xf;
         while (chainCursor && chainCursor != badObject && chainDepth < maxDepth) {
             Structure* cursorStructure = chainCursor->structureID().tryDecode();
             if (!cursorStructure)
@@ -4611,7 +4618,10 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
         if (chainCursor != badObject)
             chainDepth = maxDepth;
     }
-    reg5 |= saturate<8>(chainDepth) << nibbleShift(Reg5::chainDepth);
+    reg5 |= saturate<4>(chainDepth) << nibbleShift(Reg5::chainDepth);
+
+    bool offendingNameIsData = propertyName.uid() && WTF::equal(propertyName.uid(), "data"_s);
+    reg5 |= static_cast<uint64_t>(offendingNameIsData) << nibbleShift(Reg5::propertyNameIsData);
 
     updateDumpState(0x5707);
 
@@ -4635,6 +4645,12 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
     }
     reg1 |= static_cast<uint64_t>(structureOfStructureIsStructureStructure) << nibbleShift(Reg1::structureOfStructureIsStructureStructure);
 
+    // The used slot range of the structure the lookup went through says which slots should hold
+    // values, e.g. whether the offending slot's neighbors and the cell's other zero words are in range.
+    unsigned outOfLineSize = structure->outOfLineSize();
+    reg2 |= saturate<8>(structure->inlineSize()) << nibbleShift(Reg2::structureInlineSize);
+    reg2 |= saturate<16>(outOfLineSize) << nibbleShift(Reg2::outOfLineSize);
+
     updateDumpState(0x5709);
 
     // Is the bad object zero-filled? Count its zero 8-byte words.
@@ -4649,7 +4665,7 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
         }
     }
     reg1 |= static_cast<uint64_t>(cellWords && blankCellWords == cellWords) << nibbleShift(Reg1::badObjectIsZeroFilled);
-    reg2 |= saturate<16>(blankCellWords) << nibbleShift(Reg2::blankCellWordCount);
+    reg2 |= saturate<8>(blankCellWords) << nibbleShift(Reg2::blankCellWordCount);
 
     updateDumpState(0x570a);
 
@@ -4670,7 +4686,7 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
             return zeros;
         };
         uint64_t headerZeroBytes = countZeroBytes(blockStart + MarkedBlock::offsetOfHeader, blockStart + MarkedBlock::offsetOfHeader + MarkedBlock::headerSize);
-        reg4 |= saturate<16>(headerZeroBytes) << nibbleShift(Reg4::blockHeaderZeroByteCount);
+        reg4 |= saturate<12>(headerZeroBytes) << nibbleShift(Reg4::blockHeaderZeroByteCount);
 
         // Is a critical value like the header's VM pointer zeroed out?
         // 0 => zeroed, 1 => non-null but not this structure's VM, 2 => matches `vm` from from the `structure` argument.
@@ -4709,11 +4725,10 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
         return vm->heap.objectSpace().blocks().set().contains(candidateBlock) ? 2 : 3;
     };
 
+    uint64_t offendingSlotClassification = 0xf; // Stays 0xf if the slot can't be re-read below.
+
     // For an out-of-line offending offset, inspect the butterfly the null was fetched from.
     if (isOutOfLineOffset(offset)) {
-        unsigned outOfLineSize = structure->outOfLineSize();
-        reg2 |= saturate<16>(outOfLineSize) << nibbleShift(Reg2::outOfLineSize);
-
         Butterfly* butterfly = badObject->butterfly();
         reg1 |= static_cast<uint64_t>(!butterfly) << nibbleShift(Reg1::butterflyIsNull);
 
@@ -4772,8 +4787,10 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
             uint64_t offendingWord = 0;
             uint64_t prevWord = 0;
             uint64_t nextWord = 0;
-            if (slot >= blockStart && slot + 8 <= blockEnd)
+            if (slot >= blockStart && slot + 8 <= blockEnd) {
                 memcpySpan(asMutableByteSpan(offendingWord), unsafeMakeSpan(reinterpret_cast<const uint8_t*>(slot), 8));
+                offendingSlotClassification = classifySlotWord(offendingWord);
+            }
             if (slot - 8 >= blockStart)
                 memcpySpan(asMutableByteSpan(prevWord), unsafeMakeSpan(reinterpret_cast<const uint8_t*>(slot - 8), 8));
             if (slot + 16 <= blockEnd)
@@ -4791,8 +4808,10 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
         uint64_t offendingWord = 0;
         uint64_t prevWord = 0;
         uint64_t nextWord = 0;
-        if (slot >= cellStart && slot + 8 <= cellEnd)
+        if (slot >= cellStart && slot + 8 <= cellEnd) {
             memcpySpan(asMutableByteSpan(offendingWord), unsafeMakeSpan(reinterpret_cast<const uint8_t*>(slot), 8));
+            offendingSlotClassification = classifySlotWord(offendingWord);
+        }
         if (slot - 8 >= cellStart)
             memcpySpan(asMutableByteSpan(prevWord), unsafeMakeSpan(reinterpret_cast<const uint8_t*>(slot - 8), 8));
         if (slot + 16 <= cellEnd)
@@ -4802,11 +4821,12 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
         updateDumpState(0x5711);
     }
 
+    reg4 |= offendingSlotClassification << nibbleShift(Reg4::offendingSlotClassification);
+
     updateDumpState(0x5712);
 
-    UNUSED_PARAM(propertyName);
     UNUSED_PARAM(attributes);
-    WTFCrashWithInfo(line, filename, function_name, 0x100900d0ff5e7bad, reg1, reg2, reg3, reg4, reg5, reg6);
+    WTFCrashWithInfo(line, filename, function_name, 0x200900d0ff5e7bad, reg1, reg2, reg3, reg4, reg5, reg6);
 #else
     UNUSED_PARAM(structure);
     UNUSED_PARAM(propertyName);
@@ -4814,7 +4834,7 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
     UNUSED_PARAM(bottomOfChain);
     UNUSED_PARAM(previousInChain);
     UNUSED_PARAM(attributes);
-    WTFCrashWithInfo(line, filename, function_name, 0x100900d0ff5e7bad);
+    WTFCrashWithInfo(line, filename, function_name, 0x200900d0ff5e7bad);
 #endif
 }
 
