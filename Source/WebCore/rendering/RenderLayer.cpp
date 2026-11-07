@@ -3060,6 +3060,41 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     return parentLayer;
 }
 
+// Sibling layers share a container, but when their clip crosses a painting boundary parentClipRects() computes the container's
+// clip rects for each of them. Remember them for the duration of one hit test.
+class HitTestClipRectsCache {
+    WTF_MAKE_NONCOPYABLE(HitTestClipRectsCache);
+public:
+    explicit HitTestClipRectsCache(const RenderLayer& root)
+        : m_root(&root)
+        , m_previous(std::exchange(current(), this))
+    {
+    }
+    ~HitTestClipRectsCache() { current() = m_previous; }
+
+    static HitTestClipRectsCache*& current()
+    {
+        static HitTestClipRectsCache* s_current;
+        return s_current;
+    }
+
+    // Only the clip rects hit testing asks for: root-relative to the hit test root, with the default options.
+    bool canCache(const RenderLayer::ClipRectsContext& context) const
+    {
+        auto options = context.options;
+        options.remove(RenderLayer::ClipRectsOption::Temporary);
+        return context.rootLayer == m_root.get() && context.clipRectsType == RootRelativeClipRects
+            && options == OptionSet<RenderLayer::ClipRectsOption> { RenderLayer::ClipRectsOption::RespectOverflowClip, RenderLayer::ClipRectsOption::IncludeOverlayScrollbarSize };
+    }
+    RefPtr<ClipRects> clipRects(const RenderLayer& container) const { return m_clipRects.get(&container); }
+    void setClipRects(const RenderLayer& container, Ref<ClipRects>&& clipRects) { m_clipRects.set(&container, WTF::move(clipRects)); }
+
+private:
+    CheckedPtr<const RenderLayer> m_root;
+    HitTestClipRectsCache* m_previous;
+    HashMap<CheckedPtr<const RenderLayer>, RefPtr<ClipRects>> m_clipRects;
+};
+
 LayoutPoint RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, const LayoutPoint& location, ColumnOffsetAdjustment adjustForColumns) const
 {
     if (ancestorLayer == this)
@@ -4650,6 +4685,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
             hitTestArea.intersect(frameView->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect));
     }
 
+    HitTestClipRectsCache clipRectsCache(*this);
     auto insideLayer = hitTestLayer(this, nullptr, request, result, hitTestArea, hitTestLocation, false);
     if (!insideLayer.layer) {
         // We didn't hit any layer. If we are the root layer and the mouse is -- or just was -- down,
@@ -5470,9 +5506,23 @@ RefPtr<ClipRects> RenderLayer::parentClipRects(const ClipRectsContext& clipRects
     if (clipRectsContext.clipRectsType == PaintingClipRects && m_suppressAncestorClippingInsideFilter && !clipRectsContext.options.contains(ClipRectsOption::OutsideFilter))
         return nullptr;
 
-    auto temporaryParentClipRects = [&](const ClipRectsContext& clipContext) {
+    auto temporaryParentClipRects = [&](const ClipRectsContext& clipContext) -> Ref<ClipRects> {
+        auto* hitTestCache = HitTestClipRectsCache::current();
+        bool useHitTestCache = hitTestCache && hitTestCache->canCache(clipContext);
+        if (useHitTestCache) {
+            if (auto cached = hitTestCache->clipRects(*containerLayer)) {
+#if ASSERT_ENABLED
+                auto expected = ClipRects::create();
+                containerLayer->calculateClipRects(clipContext, expected);
+                ASSERT(*cached == expected.get());
+#endif
+                return cached.releaseNonNull();
+            }
+        }
         auto parentClipRects = ClipRects::create();
         containerLayer->calculateClipRects(clipContext, parentClipRects);
+        if (useHitTestCache)
+            hitTestCache->setClipRects(*containerLayer, parentClipRects.copyRef());
         return parentClipRects;
     };
 
