@@ -1,0 +1,11 @@
+{
+	"url": "content/test-flac.mp4",
+	"type": "audio/mp4; codecs=\"fLaC\"",
+	"init": { "offset": 0, "size": 725 },
+	"duration": 3,
+	"media": [
+		{ "offset": 725,   "size": 14367, "timestamp": 0,     "duration": 1.056 },
+		{ "offset": 15092, "size": 14367, "timestamp": 1.056, "duration": 1.056 },
+		{ "offset": 29459, "size": 12239, "timestamp": 2.112, "duration": 0.888 }
+	]
+}

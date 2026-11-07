@@ -73,9 +73,9 @@ Ref<WebCore::AudioDestination> WebMediaStrategy::createAudioDestination(const We
 #endif
 
 #if ENABLE(VIDEO) && ENABLE(GPU_PROCESS)
-RefPtr<AudioVideoRenderer> WebMediaStrategy::createAudioVideoRenderer(LoggerHelper* loggerHelper, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) const
+RefPtr<AudioVideoRenderer> WebMediaStrategy::createAudioVideoRenderer(LoggerHelper* loggerHelper, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, WebCore::VideoRendererPreferences preferences) const
 {
-    return AudioVideoRendererRemote::create(loggerHelper, mediaElementIdentifier, playerIdentifier, protect(WebProcess::singleton().ensureGPUProcessConnection()));
+    return AudioVideoRendererRemote::create(loggerHelper, mediaElementIdentifier, playerIdentifier, preferences, protect(WebProcess::singleton().ensureGPUProcessConnection()));
 }
 
 static WorkQueue& webMediaStrategyQueueSingleton()

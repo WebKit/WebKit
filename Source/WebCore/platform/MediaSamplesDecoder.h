@@ -56,6 +56,8 @@ public:
         SoftwareAllowed = 1 << 1,
         HardwareAllowed = 1 << 2,
         UseSharedMemory = 1 << 3,
+        // Decode in software formats normally left to a hardware decoder.
+        ForceSoftware = 1 << 4,
     };
     using Filters = OptionSet<Filter>;
 

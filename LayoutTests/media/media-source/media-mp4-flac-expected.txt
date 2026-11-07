@@ -1,0 +1,13 @@
+
+EXPECTED (MediaSource.isTypeSupported(loader.type()) == 'true') OK
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append media segments.
+RUN(video.play())
+EVENT(ended)
+EXPECTED (video.error == 'null') OK
+END OF TEST
+
