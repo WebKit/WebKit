@@ -1338,6 +1338,12 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (void)setInitialDirection;
 @end
 
+#if HAVE(UIKIT_KEYBOARD_INPUT_SCENE)
+@interface _UIKeyboardInputScene : UIWindowScene
+@property (nullable, strong, nonatomic, readonly) UIScene *_targetScene;
+@end
+#endif
+
 #if __has_include(<UIKit/UITextInputMultiDocument.h>)
 #import <UIKit/UITextInputMultiDocument.h>
 #else
