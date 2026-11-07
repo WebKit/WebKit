@@ -141,7 +141,7 @@ static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxI
     int caretWidthLeftOfOffset = caretWidth() / 2;
     left -= caretWidthLeftOfOffset;
     int caretWidthRightOfOffset = caretWidth() - caretWidthLeftOfOffset;
-    left = roundf(left);
+    left = roundToDevicePixel(left, root->document().deviceScaleFactor());
 
     float lineLeft = lineRect.x();
     float lineRight = lineRect.maxX();
@@ -178,7 +178,7 @@ static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxI
         left = std::max(left, lineLeft);
     }
 
-    auto rect = IntRect(left, top, caretWidth(), height);
+    auto rect = LayoutRect(LayoutUnit(left), LayoutUnit(top), LayoutUnit(caretWidth()), LayoutUnit(height));
 
     if (caretRectMode == CaretRectMode::ExpandToEndOfLine)
         rect.shiftMaxXEdgeTo(lineRight);

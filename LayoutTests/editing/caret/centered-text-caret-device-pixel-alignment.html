@@ -1,0 +1,56 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ deviceScaleFactor=2.0 ] -->
+<html>
+<head>
+<style>
+.field {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family: Ahem;
+    font-size: 16px;
+    line-height: 1;
+    white-space: pre;
+    text-align: center;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Caret position in centered text must track the device-pixel grid at a device scale factor of 2, so it does not jump as the run width changes.");
+
+const text = "III";
+
+// The caret's inline offset from the field's left edge, with the caret-width distribution
+// undone so the result is independent of the platform caret width.
+function caretOffset(fieldWidth, offset)
+{
+    const field = document.createElement("div");
+    field.className = "field";
+    field.contentEditable = "true";
+    field.style.width = fieldWidth + "px";
+    field.appendChild(document.createTextNode(text));
+    document.body.appendChild(field);
+
+    field.focus();
+    getSelection().collapse(field.firstChild, offset);
+    const caret = internals.absoluteCaretBounds();
+
+    field.remove();
+    return caret.x + Math.floor(caret.width / 2);
+}
+
+// Width 101 is odd, so the centered run origin lands on a half CSS pixel (a whole device
+// pixel at 2x). The caret must snap to that device pixel; snapping it to a whole CSS pixel
+// instead moves it off the glyph grid and half a pixel too far to the right.
+shouldBe("caretOffset(101, 1)", "42");
+shouldBe("caretOffset(101, 2)", "58");
+shouldBe("caretOffset(101, 3)", "74");
+// Width 100 gives an integer origin (control): unaffected either way.
+shouldBe("caretOffset(100, 3)", "74");
+</script>
+</body>
+</html>
