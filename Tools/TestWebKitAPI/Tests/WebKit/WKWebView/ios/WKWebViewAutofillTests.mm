@@ -57,9 +57,9 @@ typedef UIView <UITextInputPrivate> AutoFillInputView;
     RetainPtr<TestInputDelegate> _testDelegate;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
 {
-    if (!(self = [super initWithFrame:frame]))
+    if (!(self = [super initWithFrame:frame configuration:configuration]))
         return nil;
 
     _testDelegate = adoptNS([[TestInputDelegate alloc] init]);
@@ -112,7 +112,9 @@ TEST(WKWebViewAutoFillTests, UsernameAndPasswordField)
 
 TEST(WKWebViewAutoFillTests, AutofillMarksSiteAsIsolated)
 {
-    RetainPtr webView = adoptNS([[AutoFillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = WKWebsiteDataStore.nonPersistentDataStore;
+    RetainPtr webView = adoptNS([[AutoFillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     NSURL *url = [NSURL URLWithString:@"https://example.com/"];
     [webView synchronouslyLoadHTMLString:@"<input id='user' type='email'><input id='password' type='password'>" baseURL:url];
 
