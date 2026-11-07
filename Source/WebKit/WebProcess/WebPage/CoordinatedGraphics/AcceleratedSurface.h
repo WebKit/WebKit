@@ -245,7 +245,9 @@ private:
         void sync(bool) override;
         void setReleaseFenceFD(UnixFileDescriptor&&) override;
 
+#if USE(GBM)
         void initializeColorBuffer(EGLImage = nullptr);
+#endif
 
         unsigned m_fbo { 0 };
         unsigned m_depthStencilBuffer { 0 };
