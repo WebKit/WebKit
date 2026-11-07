@@ -72,7 +72,7 @@ class StyleFactory(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, remotes=None, additionalArguments=None, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments))
-        self.addStep(ValidateChange())
+        self.addStep(ValidateChange(excludeFeatureBranches=False))
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
         self.addStep(SetCredentialHelper())
@@ -390,10 +390,12 @@ class ServicesFactory(Factory):
 
 
 class MergeQueueFactoryBase(factory.BuildFactory):
+    excludeFeatureBranches = True
+
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, deployment_target=None, **kwargs):
         super(MergeQueueFactoryBase, self).__init__()
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments, deployment_target=deployment_target))
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False, excludeFeatureBranches=self.excludeFeatureBranches))
         self.addStep(DetermineLabelOwner())
         self.addStep(ValidateCommitterAndReviewer())
         self.addStep(PrintConfiguration())
@@ -408,6 +410,8 @@ class MergeQueueFactoryBase(factory.BuildFactory):
         self.addStep(ShowWebKitVersion())
         self.addStep(InstallHooks())
         self.addStep(CheckOutPullRequest())
+        self.addStep(DetermineFeatureBranchRebase())
+        self.addStep(ValidateFeatureBranchRebase())
         self.addStep(ValidateChangeContent(block_pr_on_failure=True))
         self.addStep(ValidateRemote())
         self.addStep(ValidateSquashed())
@@ -436,11 +440,13 @@ class MergeQueueFactory(MergeQueueFactoryBase):
 
 
 class UnsafeMergeQueueFactory(MergeQueueFactoryBase):
+    excludeFeatureBranches = False
+
     def __init__(self, platform, **kwargs):
         super(UnsafeMergeQueueFactory, self).__init__(platform, **kwargs)
 
         self.addStep(Canonicalize())
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False, excludeFeatureBranches=self.excludeFeatureBranches))
         self.addStep(PushPullRequestBranch())
         self.addStep(UpdatePullRequest())
         self.addStep(PushCommitToWebKitRepo())
