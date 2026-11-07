@@ -48,6 +48,7 @@
 #include "RenderLineBreak.h"
 #include "RenderText.h"
 #include "RenderView.h"
+#include "ShapeOutsideInfo.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
 
@@ -221,6 +222,12 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
         CheckedRef layoutContext = box->view().frameView().layoutContext();
         auto layoutStateDisabler = LayoutStateDisabler { layoutContext.get() };
         box->layoutIfNeeded();
+    }
+    // Like BoxGeometryUpdater for a float in inline content: the shape the lines beside it wrap around, whose shape-margin percentage needs the
+    // inline size of the containing block (ShapeOutsideInfo).
+    if (box->isFloating()) {
+        auto* shapeOutsideInfo = box->shapeOutsideInfo();
+        box->layoutBox().setShape(shapeOutsideInfo ? &shapeOutsideInfo->computedShape() : nullptr);
     }
     box->clearOverridingContainingBlockContentSize();
     if (drawableContent)

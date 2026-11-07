@@ -586,7 +586,7 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
             // The floats the render tree path listed from its last layout of the box: the block formatting context placed them this time, and
             // they paint from the tree (RenderBlockFlow::paintFloats).
             blockFlow->m_floatingObjects = nullptr;
-            if (CheckedPtr lineLayout = blockFlow->inlineLayout(); lineLayout && !lineLayout->floatsInContent().isEmpty())
+            if (!blockFlow->floatsPlacedByBlockFormattingContext().isEmpty())
                 renderer->view().frameView().layoutContext().addRootWithFloatsPlacedByBlockFormattingContext(blockFormattingContextRootOf(*blockFlow));
             blockFlow->setMaxMarginBeforeValues(box.collapsedMarginsBefore.positive, box.collapsedMarginsBefore.negative);
             blockFlow->setMaxMarginAfterValues(box.collapsedMarginsAfter.positive, box.collapsedMarginsAfter.negative);
