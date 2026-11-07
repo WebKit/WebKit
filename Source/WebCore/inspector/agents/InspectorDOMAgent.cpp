@@ -505,6 +505,31 @@ Document* InspectorDOMAgent::assertDocument(Inspector::Protocol::ErrorString& er
     return document.unsafeGet();
 }
 
+RefPtr<Frame> InspectorDOMAgent::assertFrameInTree(Inspector::Protocol::ErrorString& errorString, const Inspector::Protocol::Network::FrameId& frameId)
+{
+    auto parsedFrameId = IdentifierRegistry::parseProtocolFrameId(frameId);
+    if (!parsedFrameId) {
+        // Without Site Isolation, frame IDs come from the LegacyIdentifierRegistry and are opaque.
+        RefPtr frame = protect(m_inspectedPage->inspectorController().identifierRegistry())->frameForId(frameId);
+        if (!frame)
+            errorString = "Missing frame for given frameId"_s;
+        return frame;
+    }
+
+    // Walk the frame tree instead of using the identifier registry: assertFrame() only returns LocalFrames, so
+    // it misses a cross-site child that is a RemoteFrame in this process, and the registry is keyed by the full
+    // frame ID, whose hosting process can be stale for a RemoteFrame. Compare the FrameIdentifier only. Do not
+    // look below a RemoteFrame: the frames there are reached through their own FrameDOMAgent, and an owner
+    // element in their documents is not part of this agent's tree.
+    for (RefPtr frame = &m_inspectedPage->mainFrame(); frame; frame = is<LocalFrame>(*frame) ? frame->tree().traverseNext() : frame->tree().traverseNextSkippingChildren()) {
+        if (frame->frameID() == parsedFrameId->second)
+            return frame;
+    }
+
+    errorString = "Missing frame for given frameId"_s;
+    return nullptr;
+}
+
 Element* InspectorDOMAgent::assertElement(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
 {
     RefPtr node = assertNode(errorString, nodeId);
@@ -1692,7 +1717,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightFrame(const
 {
     Inspector::Protocol::ErrorString errorString;
 
-    RefPtr frame = protect(m_inspectedPage->inspectorController().identifierRegistry())->assertFrame(errorString, frameId);
+    RefPtr frame = assertFrameInTree(errorString, frameId);
     if (!frame)
         return makeUnexpected(errorString);
 
@@ -1909,30 +1934,21 @@ Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> InspectorDO
 
 Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> InspectorDOMAgent::requestFrameOwner(const Inspector::Protocol::Network::FrameId& frameId)
 {
-    auto parsedFrameId = IdentifierRegistry::parseProtocolFrameId(frameId);
-    if (!parsedFrameId)
-        return makeUnexpected("Invalid frameId format"_s);
+    Inspector::Protocol::ErrorString errorString;
 
-    // Compare the FrameIdentifier only: the hosting process in a frame ID can be stale in a process that
-    // holds a RemoteFrame. Do not look below a RemoteFrame: the frames there are reached through their own
-    // FrameDOMAgent, and an owner element in their documents is not part of this agent's tree.
-    for (RefPtr frame = &m_inspectedPage->mainFrame(); frame; frame = is<LocalFrame>(*frame) ? frame->tree().traverseNext() : frame->tree().traverseNextSkippingChildren()) {
-        if (frame->frameID() != parsedFrameId->second)
-            continue;
+    RefPtr frame = assertFrameInTree(errorString, frameId);
+    if (!frame)
+        return makeUnexpected(errorString);
 
-        RefPtr ownerElement = frame->ownerElement();
-        if (!ownerElement)
-            return makeUnexpected("Missing owner element for given frameId"_s);
+    RefPtr ownerElement = frame->ownerElement();
+    if (!ownerElement)
+        return makeUnexpected("Missing owner element for given frameId"_s);
 
-        Inspector::Protocol::ErrorString errorString;
-        auto nodeId = pushNodePathToFrontend(errorString, ownerElement.get());
-        if (!nodeId)
-            return makeUnexpected("Unable to push the owner element for given frameId"_s);
+    auto nodeId = pushNodePathToFrontend(errorString, ownerElement.get());
+    if (!nodeId)
+        return makeUnexpected("Unable to push the owner element for given frameId"_s);
 
-        return nodeId;
-    }
-
-    return makeUnexpected("Missing frame for given frameId"_s);
+    return nodeId;
 }
 
 String InspectorDOMAgent::documentURLString(Document* document)

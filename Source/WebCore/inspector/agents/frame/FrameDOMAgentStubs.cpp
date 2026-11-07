@@ -64,16 +64,6 @@ Inspector::CommandResult<void> FrameDOMAgent::highlightSelector(const String&, c
 }
 #endif
 
-Inspector::CommandResult<void> FrameDOMAgent::highlightFrame(const String&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
-Inspector::CommandResult<void> FrameDOMAgent::focus(int)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
 Inspector::CommandResult<Ref<Inspector::Protocol::DOM::MediaStats>> FrameDOMAgent::getMediaStats(int)
 {
     return makeUnexpected("Not supported for frame targets"_s);

@@ -318,6 +318,33 @@ RefPtr<Element> FrameDOMAgent::assertElement(Inspector::Protocol::ErrorString& e
     return element;
 }
 
+RefPtr<HTMLFrameOwnerElement> FrameDOMAgent::assertChildFrameOwner(Inspector::Protocol::ErrorString& errorString, const Inspector::Protocol::Network::FrameId& frameId)
+{
+    auto parsedFrameId = IdentifierRegistry::parseProtocolFrameId(frameId);
+    if (!parsedFrameId) {
+        errorString = "Invalid frameId format"_s;
+        return nullptr;
+    }
+
+    // Only direct children: their owner elements are in this agent's document, and every other frame has
+    // its own FrameDOMAgent. Walk the frame tree instead of using the identifier registry: assertFrame() only
+    // returns LocalFrames, so it misses a cross-site child, and the registry is keyed by the full frame ID,
+    // whose hosting process can be stale for a RemoteFrame. Compare the FrameIdentifier only.
+    Ref frame = m_inspectedFrame;
+    for (RefPtr child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (child->frameID() != parsedFrameId->second)
+            continue;
+
+        RefPtr ownerElement = child->ownerElement();
+        if (!ownerElement)
+            errorString = "Missing owner element for given frameId"_s;
+        return ownerElement;
+    }
+
+    errorString = "Missing child frame for given frameId"_s;
+    return nullptr;
+}
+
 RefPtr<Node> FrameDOMAgent::assertEditableNode(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
 {
     RefPtr node = assertNode(errorString, nodeId);
@@ -1660,31 +1687,32 @@ Inspector::CommandResult<int> FrameDOMAgent::requestNode(const String& objectId)
 
 Inspector::CommandResult<int> FrameDOMAgent::requestFrameOwner(const String& frameId)
 {
-    auto parsedFrameId = IdentifierRegistry::parseProtocolFrameId(frameId);
-    if (!parsedFrameId)
-        return makeUnexpected("Invalid frameId format"_s);
+    Inspector::Protocol::ErrorString errorString;
 
-    // Only direct children: every frame has its own FrameDOMAgent, and the frontend asks the target of the
-    // child's parent. Compare the FrameIdentifier only: the hosting process in a frame ID can be stale in a
-    // process that holds a RemoteFrame.
-    Ref frame = m_inspectedFrame;
-    for (RefPtr child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
-        if (child->frameID() != parsedFrameId->second)
-            continue;
+    RefPtr ownerElement = assertChildFrameOwner(errorString, frameId);
+    if (!ownerElement)
+        return makeUnexpected(errorString);
 
-        RefPtr ownerElement = child->ownerElement();
-        if (!ownerElement)
-            return makeUnexpected("Missing owner element for given frameId"_s);
+    auto nodeId = pushNodePathToFrontend(errorString, ownerElement.get());
+    if (!nodeId)
+        return makeUnexpected(errorString);
 
-        Inspector::Protocol::ErrorString errorString;
-        auto nodeId = pushNodePathToFrontend(errorString, ownerElement.get());
-        if (!nodeId)
-            return makeUnexpected(errorString);
+    return nodeId;
+}
 
-        return nodeId;
-    }
+Inspector::CommandResult<void> FrameDOMAgent::focus(int nodeId)
+{
+    Inspector::Protocol::ErrorString errorString;
 
-    return makeUnexpected("Missing child frame for given frameId"_s);
+    RefPtr element = assertElement(errorString, nodeId);
+    if (!element)
+        return makeUnexpected(errorString);
+    if (!element->isFocusable())
+        return makeUnexpected("Element for given nodeId is not focusable"_s);
+
+    element->focus();
+
+    return { };
 }
 
 Inspector::CommandResult<void> FrameDOMAgent::setInspectedNode(int nodeId)
@@ -1846,6 +1874,23 @@ Inspector::CommandResult<void> FrameDOMAgent::innerHighlightNodeList(Ref<JSON::A
 Inspector::CommandResult<void> FrameDOMAgent::hideHighlight()
 {
     protect(overlay())->hideHighlight();
+
+    return { };
+}
+
+Inspector::CommandResult<void> FrameDOMAgent::highlightFrame(const String& frameId, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor)
+{
+    Inspector::Protocol::ErrorString errorString;
+
+    RefPtr ownerElement = assertChildFrameOwner(errorString, frameId);
+    if (!ownerElement)
+        return makeUnexpected(errorString);
+
+    auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
+    highlightConfig->showInfo = true; // Always show tooltips for frames.
+    highlightConfig->content = parseInspectorColor(WTF::move(color)).value_or(Color::transparentBlack);
+    highlightConfig->contentOutline = parseInspectorColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
+    protect(overlay())->highlightNode(ownerElement.get(), *highlightConfig);
 
     return { };
 }
