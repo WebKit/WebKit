@@ -3643,6 +3643,25 @@ StackMap BBQJIT::makeStackMap(const ControlData& data, std::span<const TypedExpr
     return stackMap;
 }
 
+void BBQJIT::emitLoopStopCheck()
+{
+    static_assert(wasmScratchGPR == GPRInfo::nonPreservedNonArgumentGPR0);
+    m_jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfTrapAwareSoftStackLimit()), wasmScratchGPR);
+    JumpList stop;
+    stop.append(m_jit.branchPtr(CCallHelpers::Above, wasmScratchGPR, MacroAssembler::stackPointerRegister));
+    MacroAssembler::Label resume = m_jit.label();
+    m_slowPaths.append({ origin(), WTF::move(stop), resume, copyBindings(), [](BBQJIT&, CCallHelpers& jit) {
+        jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+        jit.setupArguments<decltype(operationWasmLoopStopCheck)>(GPRInfo::wasmContextInstancePointer);
+        jit.callOperation<OperationPtrTag>(operationWasmLoopStopCheck);
+        auto keepGoing = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::returnValueGPR);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), wasmScratchGPR);
+        jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(wasmScratchGPR);
+        jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
+        keepGoing.link(&jit);
+    } });
+}
+
 void BBQJIT::emitLoopTierUpCheckAndOSREntryData(const ControlData& data, std::span<const TypedExpression> enclosingStack, unsigned loopIndex)
 {
     auto& tierUpCounter = m_callee.tierUpCounter();
@@ -3699,6 +3718,7 @@ void BBQJIT::emitLoopTierUpCheckAndOSREntryData(const ControlData& data, std::sp
     LOG_INDENT();
     result.startBlock(*this, args);
     result.setLoopLabel(m_jit.label());
+    emitLoopStopCheck();
 
     RELEASE_ASSERT(m_compilation->bbqLoopEntrypoints.size() == loopIndex);
     m_compilation->bbqLoopEntrypoints.append(result.loopLabel());

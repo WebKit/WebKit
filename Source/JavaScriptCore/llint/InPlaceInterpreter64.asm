@@ -287,6 +287,8 @@ end
 ipintOp(_loop, macro()
     # loop
     # We already validateOpcodeConfig in ipintLoopOSRCheck.
+    # The stop marker sits above every stack pointer, so a loop re-reads the trap-aware limit.
+    bpb sp, JSWebAssemblyInstance::m_stackMirror + StackManager::Mirror::m_trapAwareSoftStackLimit[wasmInstance], _ipint_op_loop_stop
     ipintLoopOSRCheck(1, _ipint_op_loop_tier_up)
     ipintLoopTail()
 end)
@@ -10641,6 +10643,14 @@ _ipint_op_global_set_ref:
 
 _ipint_op_loop_tier_up:
     ipintLoopOSRTierUp()
+    ipintLoopTail()
+
+_ipint_op_loop_stop:
+    loadp UnboxedWasmCalleeStackSlot[cfr], a2
+    move sp, a1
+    move cfr, a3
+    operationCallMayThrow(macro() cCall4(_ipint_extern_check_stack_and_vm_traps) end)
+    ipintLoopOSRCheck(1, _ipint_op_loop_tier_up)
     ipintLoopTail()
 
 _ipint_op_throw:

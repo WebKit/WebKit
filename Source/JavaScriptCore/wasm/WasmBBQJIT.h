@@ -1962,6 +1962,7 @@ public:
     StackMap makeStackMap(const ControlData&, std::span<const TypedExpression> enclosingStack);
 
     void emitLoopTierUpCheckAndOSREntryData(const ControlData&, std::span<const TypedExpression> enclosingStack, unsigned loopIndex);
+    void emitLoopStopCheck();
 
     [[nodiscard]] PartialResult addLoop(BlockSignature&&, std::span<TypedExpression> args, ControlType& result, uint32_t loopIndex);
 

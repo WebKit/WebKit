@@ -944,6 +944,7 @@ private:
     }
 
     void emitExceptionCheck(CCallHelpers&, Origin, ExceptionType);
+    void emitLoopStopCheck();
 
     void emitWriteBarrierForJSWrapper();
     void emitWriteBarrier(Value* cell);
@@ -5015,8 +5016,43 @@ auto OMGIRGenerator::addLoop(BlockSignature&& signature, std::span<TypedExpressi
     }
 
     m_currentBlock = body;
+    emitLoopStopCheck();
 
     return { };
+}
+
+void OMGIRGenerator::emitLoopStopCheck()
+{
+    B3::PatchpointValue* check = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
+    check->effects = B3::Effects::forCall();
+    check->clobber(RegisterSet::macroClobberedGPRs());
+    check->appendSomeRegister(instanceValue());
+    check->appendSomeRegister(framePointer());
+    check->numGPScratchRegisters = 1;
+    bool usesSIMD = m_proc.usesSIMD();
+    check->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        GPRReg scratch = params.gpScratch(0);
+        jit.loadPtr(CCallHelpers::Address(params[0].gpr(), JSWebAssemblyInstance::offsetOfTrapAwareSoftStackLimit()), scratch);
+        auto failure = jit.branchPtr(CCallHelpers::Above, scratch, params[1].gpr());
+        MacroAssembler::Label resume = jit.label();
+        params.addLatePath([failure, resume, usesSIMD](CCallHelpers& jit) {
+            failure.link(&jit);
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            auto registersToSpill = RegisterSet::registersToSaveForCCall(usesSIMD ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters()).normalizeWidths();
+            unsigned bytes = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, 0);
+            jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+            jit.setupArguments<decltype(operationWasmLoopStopCheck)>(GPRInfo::wasmContextInstancePointer);
+            jit.callOperation<OperationPtrTag>(operationWasmLoopStopCheck);
+            ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, RegisterSet { GPRInfo::returnValueGPR }, bytes, 0);
+            auto keepGoing = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::returnValueGPR);
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::nonPreservedNonArgumentGPR0);
+            jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(GPRInfo::nonPreservedNonArgumentGPR0);
+            jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
+            keepGoing.link(&jit);
+            jit.jump(resume);
+        });
+    });
 }
 
 OMGIRGenerator::ControlData OMGIRGenerator::addTopLevel(BlockSignature&& signature)
