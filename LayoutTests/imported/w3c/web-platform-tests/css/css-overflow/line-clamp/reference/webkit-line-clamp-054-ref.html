@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Reference</title>
+<style>
+  .wrapper {
+    height: 100px;
+  }
+  .container {
+    font: 16px / 20px serif;
+    width: 200px;
+  }
+  .clamped {
+    height: 40px;
+  }
+  .after {
+    width: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+</style>
+<div class="wrapper">
+  <div class="container">
+    <div class="clamped"></div>
+    <div class="after">This text overflows</div>
+  </div>
+</div>
+<div class="wrapper">
+  <div class="container">
+    <div class="clamped"></div>
+    <div class="after">This text overflows</div>
+  </div>
+</div>
