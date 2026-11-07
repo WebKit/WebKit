@@ -46,7 +46,7 @@ AutoTableLayout::~AutoTableLayout() = default;
 
 bool AutoTableLayout::isColumnCollapsed(unsigned effCol) const
 {
-    CheckedPtr colElement = m_table->colElement(effCol);
+    CheckedPtr colElement = m_table->colElement(m_table->effColToCol(effCol));
     return colElement && colElement->style().visibility() == Visibility::Collapse;
 }
 

@@ -1,0 +1,45 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>visibility: collapse on a column after a cell spanning multiple columns</title>
+<link rel="help" href="https://drafts.csswg.org/css-tables-3/#visibility-collapse-track-rendering">
+<link rel="help" href="https://drafts.csswg.org/css-tables-3/#computing-the-table-width">
+<meta name="assert" content="A collapsed column is identified by its column index, even when no row splits the columns spanned by a preceding cell.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+td {
+    padding: 0;
+}
+.a {
+    width: 20px;
+    height: 10px;
+}
+.b {
+    width: 10px;
+    height: 10px;
+}
+</style>
+<!-- No row splits the first two columns, so the first cell is the only one covering them. -->
+<table id="no-spacing" style="border-spacing: 0">
+  <col><col><col style="visibility: collapse">
+  <tr>
+    <td colspan="2"><div class="a"></div></td>
+    <td><div class="b"></div></td>
+  </tr>
+</table>
+<table id="with-spacing" style="border-spacing: 10px">
+  <col><col><col style="visibility: collapse">
+  <tr>
+    <td colspan="2"><div class="a"></div></td>
+    <td><div class="b"></div></td>
+  </tr>
+</table>
+<script>
+test(() => {
+    assert_equals(document.getElementById("no-spacing").offsetWidth, 20);
+}, "Collapsed column after a colspan cell does not contribute to the table width");
+
+test(() => {
+    assert_equals(document.getElementById("with-spacing").offsetWidth, 40);
+}, "Collapsed column after a colspan cell does not contribute border spacing");
+</script>

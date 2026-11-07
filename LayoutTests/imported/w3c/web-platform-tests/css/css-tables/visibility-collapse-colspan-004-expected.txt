@@ -1,0 +1,4 @@
+
+PASS Collapsed column after a colspan cell does not contribute to the table width
+PASS Collapsed column after a colspan cell does not contribute border spacing
+
