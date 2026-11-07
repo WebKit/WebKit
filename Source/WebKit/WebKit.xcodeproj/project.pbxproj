@@ -524,7 +524,9 @@
 		1C049840289AFF9B0010308B /* WKWebExtensionTab.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C04983C289AFF9B0010308B /* WKWebExtensionTab.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1C049841289AFF9B0010308B /* WKWebExtensionWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C04983D289AFF9B0010308B /* WKWebExtensionWindow.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1C05906D2DFA0FB7000406F9 /* JSWebExtensionAPIDOM.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C05906A2DFA0FB7000406F9 /* JSWebExtensionAPIDOM.h */; };
+		1CE5A0012E00000100000006 /* JSWebExtensionAPIExtensionTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CE5A0012E00000100000002 /* JSWebExtensionAPIExtensionTypes.h */; };
 		1C05906F2DFA1039000406F9 /* WebExtensionAPIDOM.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C05906E2DFA1039000406F9 /* WebExtensionAPIDOM.h */; };
+		1CE5A0012E00000100000007 /* WebExtensionAPIExtensionTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CE5A0012E00000100000004 /* WebExtensionAPIExtensionTypes.h */; };
 		1C0A19471C8FF1A800FE0EBB /* WebAutomationSessionProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0A19451C8FF1A800FE0EBB /* WebAutomationSessionProxy.h */; };
 		1C0A19541C8FFDFB00FE0EBB /* WebAutomationSessionProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0A19521C8FFDFB00FE0EBB /* WebAutomationSessionProxyMessages.h */; };
 		1C0A19571C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0A19551C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp */; };
@@ -4259,10 +4261,15 @@
 		1C04983C289AFF9B0010308B /* WKWebExtensionTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebExtensionTab.h; sourceTree = "<group>"; };
 		1C04983D289AFF9B0010308B /* WKWebExtensionWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebExtensionWindow.h; sourceTree = "<group>"; };
 		1C0590692DFA0EDB000406F9 /* WebExtensionAPIDOM.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIDOM.idl; sourceTree = "<group>"; };
+		1CE5A0012E00000100000001 /* WebExtensionAPIExtensionTypes.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIExtensionTypes.idl; sourceTree = "<group>"; };
 		1C05906A2DFA0FB7000406F9 /* JSWebExtensionAPIDOM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIDOM.h; sourceTree = "<group>"; };
+		1CE5A0012E00000100000002 /* JSWebExtensionAPIExtensionTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIExtensionTypes.h; sourceTree = "<group>"; };
 		1C05906B2DFA0FB7000406F9 /* JSWebExtensionAPIDOM.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIDOM.mm; sourceTree = "<group>"; };
+		1CE5A0012E00000100000003 /* JSWebExtensionAPIExtensionTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebExtensionAPIExtensionTypes.cpp; sourceTree = "<group>"; };
 		1C05906E2DFA1039000406F9 /* WebExtensionAPIDOM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIDOM.h; sourceTree = "<group>"; };
+		1CE5A0012E00000100000004 /* WebExtensionAPIExtensionTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIExtensionTypes.h; sourceTree = "<group>"; };
 		1C0590702DFA1115000406F9 /* WebExtensionAPIDOMCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIDOMCocoa.mm; sourceTree = "<group>"; };
+		1CE5A0012E00000100000005 /* WebExtensionAPIExtensionTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionAPIExtensionTypes.cpp; sourceTree = "<group>"; };
 		1C08AB282B73FC410009A6C3 /* WebExtensionAPIDevTools.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIDevTools.idl; sourceTree = "<group>"; };
 		1C08AB292B73FC410009A6C3 /* WebExtensionAPIDevToolsInspectedWindow.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIDevToolsInspectedWindow.idl; sourceTree = "<group>"; };
 		1C08AB2B2B73FC420009A6C3 /* WebExtensionAPIDevToolsPanels.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIDevToolsPanels.idl; sourceTree = "<group>"; };
@@ -11351,6 +11358,8 @@
 				7D82245F3089E91700FDB4D6 /* WebExtensionAPIEvent.cpp */,
 				B6544F912937E45000034EB0 /* WebExtensionAPIEvent.h */,
 				1C5DC468290B239C0061EC62 /* WebExtensionAPIExtension.h */,
+				1CE5A0012E00000100000005 /* WebExtensionAPIExtensionTypes.cpp */,
+				1CE5A0012E00000100000004 /* WebExtensionAPIExtensionTypes.h */,
 				760CF4A4920709706E98B98C /* WebExtensionAPIKeys.h */,
 				B6E5F2A4299C105500DBCEA3 /* WebExtensionAPILocalization.h */,
 				1CCEE4542B098B070034E059 /* WebExtensionAPIMenus.h */,
@@ -11593,6 +11602,7 @@
 				1C0590692DFA0EDB000406F9 /* WebExtensionAPIDOM.idl */,
 				B6544F7C29357B1B00034EB0 /* WebExtensionAPIEvent.idl */,
 				1C9DD99028FA19A30093BDB0 /* WebExtensionAPIExtension.idl */,
+				1CE5A0012E00000100000001 /* WebExtensionAPIExtensionTypes.idl */,
 				B6E5F2A3299C0FFB00DBCEA3 /* WebExtensionAPILocalization.idl */,
 				1CCEE44F2B097F9D0034E059 /* WebExtensionAPIMenus.idl */,
 				1C9DD9A428FA19A30093BDB0 /* WebExtensionAPINamespace.idl */,
@@ -17516,6 +17526,8 @@
 				B6114A7C2939498000380B1B /* JSWebExtensionAPIEvent.h */,
 				1C5DC462290B1C470061EC62 /* JSWebExtensionAPIExtension.h */,
 				1C5DC460290B1C440061EC62 /* JSWebExtensionAPIExtension.mm */,
+				1CE5A0012E00000100000003 /* JSWebExtensionAPIExtensionTypes.cpp */,
+				1CE5A0012E00000100000002 /* JSWebExtensionAPIExtensionTypes.h */,
 				B6CCAAB629A445E90092E846 /* JSWebExtensionAPILocalization.h */,
 				B6CCAAB729A445E90092E846 /* JSWebExtensionAPILocalization.mm */,
 				1CCEE4502B0989FC0034E059 /* JSWebExtensionAPIMenus.h */,
@@ -18747,6 +18759,7 @@
 				1C517F3B2B74393C00C46EDC /* JSWebExtensionAPIDevToolsNetwork.h in Headers */,
 				1C517F3C2B74393C00C46EDC /* JSWebExtensionAPIDevToolsPanels.h in Headers */,
 				1C05906D2DFA0FB7000406F9 /* JSWebExtensionAPIDOM.h in Headers */,
+				1CE5A0012E00000100000006 /* JSWebExtensionAPIExtensionTypes.h in Headers */,
 				1CCEE4522B0989FC0034E059 /* JSWebExtensionAPIMenus.h in Headers */,
 				1C386F352AF409F9004108F0 /* JSWebExtensionAPINotifications.h in Headers */,
 				B61AFA4829510D0F008220B1 /* JSWebExtensionAPIPermissions.h in Headers */,
@@ -19318,6 +19331,7 @@
 				1C05906F2DFA1039000406F9 /* WebExtensionAPIDOM.h in Headers */,
 				B6544F932937E45100034EB0 /* WebExtensionAPIEvent.h in Headers */,
 				1C5DC46D290B271E0061EC62 /* WebExtensionAPIExtension.h in Headers */,
+				1CE5A0012E00000100000007 /* WebExtensionAPIExtensionTypes.h in Headers */,
 				9C9869C1ABBFCCDAD348DF4F /* WebExtensionAPIKeys.h in Headers */,
 				B6E5F2A5299C105500DBCEA3 /* WebExtensionAPILocalization.h in Headers */,
 				1CCEE4552B098B070034E059 /* WebExtensionAPIMenus.h in Headers */,

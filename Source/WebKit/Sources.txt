@@ -687,6 +687,7 @@ WebProcess/Extensions/WebExtensionControllerProxy.cpp
 
 WebProcess/Extensions/API/WebExtensionAPIAlarms.cpp
 WebProcess/Extensions/API/WebExtensionAPIEvent.cpp
+WebProcess/Extensions/API/WebExtensionAPIExtensionTypes.cpp
 WebProcess/Extensions/API/WebExtensionAPIRuntime.cpp
 WebProcess/Extensions/API/WebExtensionAPINamespace.cpp
 WebProcess/Extensions/API/WebExtensionAPIStorage.cpp

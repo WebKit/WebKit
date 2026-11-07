@@ -484,6 +484,17 @@ JSValueRef fromObject(JSContextRef context, HashMap<String, Protected<JSValueRef
     return result;
 }
 
+JSValueRef makeEnumObject(JSContextRef context, std::initializer_list<std::pair<ASCIILiteral, ASCIILiteral>> entries)
+{
+    auto globalContext = JSContextGetGlobalContext(context);
+
+    HashMap<String, Protected<JSValueRef>> object;
+    for (auto& [name, value] : entries)
+        object.add(String { name }, Protected(globalContext, JSValueMakeString(context, toJSString(value).get())));
+
+    return fromObject(context, WTF::move(object));
+}
+
 NODELETE static HashMap<JSGlobalContextRef, JSWeakObjectMapRef>& wrapperCache()
 {
     static NeverDestroyed<HashMap<JSGlobalContextRef, JSWeakObjectMapRef>> wrappers;
