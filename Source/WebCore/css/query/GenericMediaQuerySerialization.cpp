@@ -69,6 +69,9 @@ static void serialize(StringBuilder& builder, const Value& value)
         [&](const auto& value) {
             CSS::serializationForCSS(builder, CSS::defaultSerializationContext(), value);
         },
+        [&](const Box<CSS::Ratio>& ratio) {
+            CSS::serializationForCSS(builder, CSS::defaultSerializationContext(), *ratio);
+        },
         [&](const Ref<CSSCustomPropertyValue>& value) {
             builder.append(protect(value)->cssText(CSS::defaultSerializationContext()));
         }
@@ -95,6 +98,9 @@ void serialize(StringBuilder& builder, const Feature& feature)
         case ComparisonOperator::GreaterThanOrEqual:
             builder.append(">="_s);
             break;
+        case ComparisonOperator::None:
+            ASSERT_NOT_REACHED();
+            break;
         }
         builder.append(' ');
     };
@@ -105,12 +111,13 @@ void serialize(StringBuilder& builder, const Feature& feature)
         break;
 
     case Syntax::Plain: {
+        ASSERT(feature.rightComparison);
         StringView name = feature.name;
-        if (feature.rightComparison->op != MQ::ComparisonOperator::Equal && name.startsWith("-webkit-"_s)) {
+        if (feature.rightComparison.op != MQ::ComparisonOperator::Equal && name.startsWith("-webkit-"_s)) {
             builder.append("-webkit-"_s);
             name = name.substring(8);
         }
-        switch (feature.rightComparison->op) {
+        switch (feature.rightComparison.op) {
         case MQ::ComparisonOperator::LessThanOrEqual:
             builder.append("max-"_s);
             break;
@@ -121,20 +128,21 @@ void serialize(StringBuilder& builder, const Feature& feature)
             break;
         case MQ::ComparisonOperator::LessThan:
         case MQ::ComparisonOperator::GreaterThan:
+        case MQ::ComparisonOperator::None:
             ASSERT_NOT_REACHED();
             break;
         }
         serializeIdentifier(builder, name);
 
         builder.append(": "_s);
-        serialize(builder, *feature.rightComparison->value);
+        serialize(builder, feature.rightComparison.value);
         break;
     }
 
     case Syntax::Range:
         if (feature.leftComparison) {
-            serialize(builder, *feature.leftComparison->value);
-            serializeRangeComparisonOperator(feature.leftComparison->op);
+            serialize(builder, feature.leftComparison.value);
+            serializeRangeComparisonOperator(feature.leftComparison.op);
         }
 
         if (feature.subject)
@@ -143,8 +151,8 @@ void serialize(StringBuilder& builder, const Feature& feature)
             serializeIdentifier(builder, feature.name);
 
         if (feature.rightComparison) {
-            serializeRangeComparisonOperator(feature.rightComparison->op);
-            serialize(builder, *feature.rightComparison->value);
+            serializeRangeComparisonOperator(feature.rightComparison.op);
+            serialize(builder, feature.rightComparison.value);
         }
         break;
     }

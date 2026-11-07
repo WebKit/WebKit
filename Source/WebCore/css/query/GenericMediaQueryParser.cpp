@@ -106,7 +106,7 @@ static std::optional<Value> consumeValue(CSSParserTokenRange& range, const CSSPa
     };
 
     if (auto value = consumeUnresolvedRatioWithBothNumeratorAndDenominator(range, parserState))
-        return Value { WTF::move(*value) };
+        return Value { Box<CSS::Ratio>::create(WTF::move(*value)) };
     if (auto value = MetaConsumer<CSS::Integer<>>::consume(range, parserState))
         return Value { WTF::move(*value) };
     if (auto value = MetaConsumer<CSS::Number<>>::consume(range, parserState))
@@ -169,7 +169,7 @@ std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserToke
     return Feature {
         .name = featureName,
         .syntax = Syntax::Plain,
-        .rightComparison = Comparison { op, WTF::move(value) }
+        .rightComparison = Comparison { op, WTF::move(*value) }
     };
 }
 
@@ -212,7 +212,7 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
 
     bool didFailParsing = false;
 
-    auto consumeLeftComparison = [&]() -> std::optional<Comparison> {
+    auto consumeLeftComparison = [&] -> Comparison {
         if (range.peek().type() == IdentToken)
             return { };
         auto value = consumeValue(range, context, options);
@@ -224,10 +224,10 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
             return { };
         }
 
-        return Comparison { *op, WTF::move(value) };
+        return Comparison { *op, WTF::move(*value) };
     };
 
-    auto consumeRightComparison = [&]() -> std::optional<Comparison> {
+    auto consumeRightComparison = [&] -> Comparison {
         auto op = consumeRangeOperator();
         if (!op)
             return { };
@@ -237,7 +237,7 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
             return { };
         }
 
-        return Comparison { *op, WTF::move(value) };
+        return Comparison { *op, WTF::move(*value) };
     };
 
     auto leftComparison = consumeLeftComparison();
@@ -255,7 +255,7 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
             return false;
         if (!leftComparison || !rightComparison)
             return true;
-        return isConsistentThreeWayComparison(leftComparison->op, rightComparison->op);
+        return isConsistentThreeWayComparison(leftComparison.op, rightComparison.op);
     };
 
     if (!range.atEnd() || !validateComparisons())
@@ -272,20 +272,17 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
 bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const FeatureSchema& schema)
 {
     auto isValid = [&] {
-        auto validateValue = [&](std::optional<Value>& value) -> bool {
-            if (!value)
-                return false;
-
+        auto validateValue = [&](Value& value) -> bool {
             switch (schema.valueType) {
             case FeatureSchema::ValueType::Integer:
-                return WTF::holdsAlternative<CSS::Integer<>>(*value);
+                return WTF::holdsAlternative<CSS::Integer<>>(value);
 
             case FeatureSchema::ValueType::Number:
-                return WTF::holdsAlternative<CSS::Number<>>(*value)
-                    || WTF::holdsAlternative<CSS::Integer<>>(*value);
+                return WTF::holdsAlternative<CSS::Number<>>(value)
+                    || WTF::holdsAlternative<CSS::Integer<>>(value);
 
             case FeatureSchema::ValueType::Length:
-                if (auto* integerValue = std::get_if<CSS::Integer<>>(&*value)) {
+                if (auto* integerValue = std::get_if<CSS::Integer<>>(&value)) {
                     return WTF::switchOn(*integerValue,
                         [](const CSS::Integer<>::Raw& raw) {
                             return !raw.value;
@@ -296,19 +293,19 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
                         }
                     );
                 }
-                return WTF::holdsAlternative<CSS::Length<>>(*value);
+                return WTF::holdsAlternative<CSS::Length<>>(value);
 
             case FeatureSchema::ValueType::Resolution:
-                return WTF::holdsAlternative<CSS::Resolution<>>(*value);
+                return WTF::holdsAlternative<CSS::Resolution<>>(value);
 
             case FeatureSchema::ValueType::Identifier:
-                if (auto* keyword = std::get_if<CSS::Keyword>(&*value))
+                if (auto* keyword = std::get_if<CSS::Keyword>(&value))
                     return keyword && schema.valueIdentifiers.contains(keyword->value);
                 return false;
 
             case FeatureSchema::ValueType::Ratio:
-                return WTF::switchOn(*value,
-                    [&](const CSS::Ratio&) {
+                return WTF::switchOn(value,
+                    [&](const Box<CSS::Ratio>&) {
                         return true;
                     },
                     [&](const CSS::Integer<>& integer) {
@@ -322,7 +319,7 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
                         );
                         if (resolved < 0)
                             return false;
-                        value = CSS::Ratio { resolved, 1.0 };
+                        value = Box<CSS::Ratio>::create(CSS::Ratio { resolved, 1.0 });
                         return true;
                     },
                     [&](const CSS::Number<>& number) {
@@ -336,7 +333,7 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
                         );
                         if (resolved < 0)
                             return false;
-                        value = CSS::Ratio { resolved, 1.0 };
+                        value = Box<CSS::Ratio>::create(CSS::Ratio { resolved, 1.0 });
                         return true;
                     },
                     [](const auto&) {
@@ -356,15 +353,15 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
         if (schema.type == FeatureSchema::Type::Discrete) {
             if (feature.syntax == Syntax::Range)
                 return false;
-            if (feature.rightComparison && feature.rightComparison->op != ComparisonOperator::Equal)
+            if (feature.rightComparison && feature.rightComparison.op != ComparisonOperator::Equal)
                 return false;
         }
         if (feature.leftComparison) {
-            if (!validateValue(feature.leftComparison->value))
+            if (!validateValue(feature.leftComparison.value))
                 return false;
         }
         if (feature.rightComparison) {
-            if (!validateValue(feature.rightComparison->value))
+            if (!validateValue(feature.rightComparison.value))
                 return false;
         }
         return true;
