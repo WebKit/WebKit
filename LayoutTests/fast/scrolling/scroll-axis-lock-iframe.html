@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="resources/scroll-axis-lock.js"></script>
+<style>
+  iframe {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
+  }
+</style>
+<p id="description"></p>
+<p id="console"></p>
+<script>
+  if (window.internals)
+    internals.settings.setAsyncFrameScrollingEnabled(true);
+  var jsTestIsAsync = true;
+  description('Verifies CSS scroll-axis-lock property affects whether iframe scroll can be axis-locked.')
+  let scroll_is_axis_locked = UIHelper.isMac();
+  let iframe = document.createElement('iframe');
+  iframe.srcdoc = `<!DOCTYPE html><body style='width: 200vw; height: 200vh; background: linear-gradient(45deg, red, green);'></body>`
+  iframe.addEventListener('load', () => runTest({ iframe, scroll_is_axis_locked }));
+  document.body.appendChild(iframe);
+</script>

@@ -152,6 +152,8 @@ public:
     virtual OverscrollBehavior horizontalOverscrollBehavior() const { return OverscrollBehavior::Auto; }
     virtual OverscrollBehavior verticalOverscrollBehavior() const { return OverscrollBehavior::Auto; }
 
+    virtual ScrollAxisLock scrollAxisLock() const { return ScrollAxisLock::Auto; }
+
     void setScrollbarRevealBehavior(ScrollbarRevealBehavior behavior) { m_scrollbarRevealBehavior = behavior; }
     ScrollbarRevealBehavior scrollbarRevealBehavior() const { return m_scrollbarRevealBehavior; }
 
