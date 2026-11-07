@@ -901,7 +901,8 @@ BlockLayoutCoverage computeBlockLayoutCoverage(const RenderView& renderView)
         auto [renderer, blockFormattingContext] = renderersToVisit.takeLast();
         auto& avoidanceReason = blockFormattingContext.avoidanceReason;
         for (CheckedRef child : childrenOfType<RenderElement>(renderer)) {
-            if (is<RenderBlockFlow>(renderer) && is<RenderBox>(child) && !child->isInline()) {
+            // The view places the document element itself (RenderView::layout), in no block formatting context.
+            if (is<RenderBlockFlow>(renderer) && !is<RenderView>(renderer) && is<RenderBox>(child) && !child->isInline()) {
                 ++coverage.boxes;
                 if (!avoidanceReason)
                     ++coverage.coveredBoxes;
