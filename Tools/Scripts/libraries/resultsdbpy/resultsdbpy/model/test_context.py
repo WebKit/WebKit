@@ -22,7 +22,9 @@
 
 import calendar
 import collections
+import hashlib
 import json
+import re
 import time
 
 from cassandra.cqlengine import columns
@@ -137,6 +139,11 @@ class Expectations:
 
 class TestContext(UploadCallbackContext):
     DEFAULT_LIMIT = 100
+    MAXIMUM_LOG_LENGTH = 8 * 1024
+    MINIMUM_LOG_LINE_LENGTH = 200
+    LOG_LINE_NOTE = ' [{:,} more bytes]'
+    LOG_LEFT_OUT_NOTE = '[{:,} bytes left out]'
+    LOG_HASH_LENGTH = 32
 
     class TestResultsBase(ClusteredByConfiguration):
         suite = columns.Text(partition_key=True, required=True)
@@ -176,6 +183,28 @@ class TestContext(UploadCallbackContext):
         suite = columns.Text(partition_key=True, required=True)
         test = columns.Text(primary_key=True, required=True)
 
+    class TestLogsByCommit(ClusteredByConfiguration):
+        __table_name__ = 'test_logs_by_commit'
+        suite = columns.Text(partition_key=True, required=True)
+        branch = columns.Text(partition_key=True, required=True)
+        test = columns.Text(partition_key=True, required=True)
+        uuid = columns.BigInt(primary_key=True, required=True, clustering_order='DESC')
+        sdk = columns.Text(primary_key=True, required=True)
+        start_time = columns.DateTime(primary_key=True, required=True)
+        log = columns.Text(required=True)
+
+        def unpack(self):
+            return dict(
+                uuid=self.uuid,
+                start_time=calendar.timegm(self.start_time.timetuple()),
+                log=self.log,
+            )
+
+    class TestLogsByHash(Model):
+        __table_name__ = 'test_logs_by_hash'
+        hash = columns.Text(partition_key=True, required=True)
+        log = columns.Text(required=True)
+
     def __init__(self, *args, **kwargs):
         super(TestContext, self).__init__('test-results', *args, **kwargs)
 
@@ -183,6 +212,63 @@ class TestContext(UploadCallbackContext):
             self.cassandra.create_table(self.TestResultsByCommit)
             self.cassandra.create_table(self.TestResultsByStartTime)
             self.cassandra.create_table(self.TestNameBySuite)
+            self.cassandra.create_table(self.TestLogsByCommit)
+            self.cassandra.create_table(self.TestLogsByHash)
+
+    @classmethod
+    def truncate_log(cls, log):
+        encoded = log.encode('utf-8', 'replace')
+        if len(encoded) <= cls.MAXIMUM_LOG_LENGTH:
+            return encoded.decode('utf-8')
+
+        lines = encoded.split(b'\n')
+        kept = cls.truncate_log_lines(lines)
+        truncated = b'\n'.join(kept)
+        if len(truncated) > cls.MAXIMUM_LOG_LENGTH:
+            truncated = b'\n'.join(cls.keep_log_ends(lines, kept))
+        return truncated.decode('utf-8')
+
+    @classmethod
+    def truncate_log_lines(cls, lines):
+        room = cls.MAXIMUM_LOG_LENGTH - (len(lines) - 1)
+        lengths = sorted(len(line) for line in lines)
+        for index, length in enumerate(lengths):
+            lines_left = len(lengths) - index
+            share = room // lines_left
+            if length > share:
+                notes = sum(len(cls.LOG_LINE_NOTE.format(cut_length)) for cut_length in lengths[index:])
+                ceiling = max((room - notes) // lines_left, cls.MINIMUM_LOG_LINE_LENGTH)
+                return [cls.truncate_log_line(line, ceiling) if len(line) > share else line for line in lines]
+            room -= length
+        return lines
+
+    @classmethod
+    def truncate_log_line(cls, line, length):
+        kept = line[:length].decode('utf-8', 'ignore').encode('utf-8')
+        truncated = kept + cls.LOG_LINE_NOTE.format(len(line) - len(kept)).encode('utf-8')
+        return truncated if len(truncated) < len(line) else line
+
+    @classmethod
+    def keep_log_ends(cls, lines, kept):
+        room = cls.MAXIMUM_LOG_LENGTH - len(cls.LOG_LEFT_OUT_NOTE.format(len(b'\n'.join(lines))))
+        top, top_length = 0, 0
+        while top_length + len(kept[top]) + 1 <= room // 2:
+            top_length += len(kept[top]) + 1
+            top += 1
+        bottom, bottom_length = len(kept), 0
+        while bottom_length + len(kept[bottom - 1]) + 1 <= room - room // 2:
+            bottom -= 1
+            bottom_length += len(kept[bottom]) + 1
+        left_out = cls.LOG_LEFT_OUT_NOTE.format(len(b'\n'.join(lines[top:bottom]))).encode('utf-8')
+        return kept[:top] + [left_out] + kept[bottom:]
+
+    @classmethod
+    def hash_log(cls, log):
+        return hashlib.md5(log.encode('utf-8')).hexdigest()
+
+    @classmethod
+    def is_log_hash(cls, log):
+        return bool(re.fullmatch(f'[0-9a-f]{{{cls.LOG_HASH_LENGTH}}}', log))
 
     def names(self, suite, test=None, limit=DEFAULT_LIMIT):
         with self:
@@ -215,16 +301,28 @@ class TestContext(UploadCallbackContext):
             with self:
                 uuid = self.commit_context.uuid_for_commits(commits)
                 ttl = int((uuid // Commit.UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None
+                log_rows = []
+                logs_by_hash = {}
 
                 def callback(test, result, branch):
                     self.cassandra.insert_row(self.TestNameBySuite.__table_name__, suite=suite, test=test, ttl=ttl)
+                    log = result.get('log')
+                    details = {key: value for key, value in result.items() if key not in ['actual', 'expected', 'log']}
                     if number_of_links:
-                        result = dict(result, number_of_links=number_of_links)
+                        details['number_of_links'] = number_of_links
+                    if isinstance(log, str) and log:
+                        details['has_log'] = True
+                        log = self.truncate_log(log)
+                        if len(log) > self.LOG_HASH_LENGTH:
+                            log_hash = self.hash_log(log)
+                            logs_by_hash[log_hash] = log
+                            log = log_hash
+                        log_rows.append(dict(test=test, branch=branch, log=log))
 
                     args_to_write = dict(
                         actual=bytearray(Expectations.string_to_state_ids(result.get('actual', ''))),
                         expected=bytearray(Expectations.string_to_state_ids(result.get('expected', ''))),
-                        details=json.dumps({key: value for key, value in result.items() if key not in ['actual', 'expected']}),
+                        details=json.dumps(details),
                     )
                     for table in [self.TestResultsByCommit, self.TestResultsByStartTime]:
                         self.configuration_context.insert_row_with_configuration(
@@ -239,6 +337,16 @@ class TestContext(UploadCallbackContext):
                             test_results.get('results'),
                             lambda test, result: callback(test, result, branch=branch),
                         )
+
+                for log_hash, log in logs_by_hash.items():
+                    self.cassandra.insert_row(self.TestLogsByHash.__table_name__, hash=log_hash, log=log, ttl=self.ttl_seconds)
+
+                for log_row in log_rows:
+                    self.configuration_context.insert_row_with_configuration(
+                        self.TestLogsByCommit.__table_name__, configuration=configuration, suite=suite,
+                        uuid=uuid, ttl=ttl, sdk=configuration.sdk or '?', start_time=timestamp,
+                        **log_row,
+                    )
 
         except Exception as e:
             return self.partial_status(e)
@@ -280,3 +388,18 @@ class TestContext(UploadCallbackContext):
 
     def find_by_start_time(self, *args, **kwargs):
         return self._find_results(self.TestResultsByStartTime, *args, **kwargs)
+
+    def find_logs_by_commit(self, *args, **kwargs):
+        results = self._find_results(self.TestLogsByCommit, *args, **kwargs)
+        log_hashes = {run['log'] for runs in results.values() for run in runs if self.is_log_hash(run['log'])}
+        if not log_hashes:
+            return results
+
+        with self:
+            logs_by_hash = {row.hash: row.log for row in self.cassandra.select_from_table(
+                self.TestLogsByHash.__table_name__, hash__in=list(log_hashes),
+            )}
+        return {
+            config: [dict(run, log=logs_by_hash.get(run['log'], run['log'])) for run in runs]
+            for config, runs in results.items()
+        }

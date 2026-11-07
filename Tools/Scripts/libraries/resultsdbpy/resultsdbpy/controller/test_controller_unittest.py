@@ -35,6 +35,8 @@ from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 
 class TestControllerTest(FlaskTestCase, WaitForDockerTestCase):
     KEYSPACE = 'test_controller_test_keyspace'
+    API_TEST = 'TestWebKitAPI.MessagePortSecurity.SharedWorkerPortStillWorksAfterContextProcessDiesWithCachedClient'
+    LOG = 'Tools/TestWebKitAPI/Resources/cocoa/MessagePortSecurity.mm:861\n  Actual: false\nExpected: true\n'
 
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
@@ -45,6 +47,13 @@ class TestControllerTest(FlaskTestCase, WaitForDockerTestCase):
 
             MockModelFactory.add_mock_results(model)
             MockModelFactory.process_results(model)
+            for minutes_ago in (2, 1, 0):
+                MockModelFactory.add_mock_results(model, suite='api-tests', test_results=dict(
+                    details=dict(link='dummy-link'),
+                    run_stats=dict(tests_skipped=0),
+                    results={cls.API_TEST: dict(expected='PASS', actual='FAIL', time=1200, log=cls.LOG)},
+                ), timestamp=time.time() - 60 * minutes_ago)
+            MockModelFactory.process_results(model, suite='api-tests')
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
@@ -136,6 +145,33 @@ class TestControllerTest(FlaskTestCase, WaitForDockerTestCase):
         response = client.get(self.URL + f'/api/results/layout-tests/fast/encoding/css-link-charset.html?platform=ios&style=Debug&recent=False&after_time={time.time() + 1}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 0)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_logs(self, client, **kwargs):
+        response = client.get(f'{self.URL}/api/logs/api-tests/{self.API_TEST}?platform=mac&style=Release&flavor=wk1')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 1)
+        runs = response.json()[0]['results']
+        self.assertEqual([run['log'] for run in runs], [self.LOG] * 10)
+        self.assertEqual(sorted(runs[0].keys()), ['log', 'start_time', 'uuid'])
+        self.assertEqual([run['uuid'] for run in runs], sorted(run['uuid'] for run in runs))
+        self.assertEqual(len(client.get(f'{self.URL}/api/logs/api-tests/{self.API_TEST}?platform=mac&style=Release&flavor=wk1&limit=100').json()[0]['results']), 15)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_logs_for_one_commit(self, client, **kwargs):
+        uuid = client.get(f'{self.URL}/api/logs/api-tests/{self.API_TEST}?platform=mac&style=Release&flavor=wk1').json()[0]['results'][2]['uuid']
+        response = client.get(f'{self.URL}/api/logs/api-tests/{self.API_TEST}?platform=mac&style=Release&flavor=wk1&uuid={uuid}')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([run['uuid'] for run in response.json()[0]['results']], [uuid] * 3)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_no_logs(self, client, **kwargs):
+        response = client.get(self.URL + '/api/logs/layout-tests/fast/encoding/css-charset.html?platform=mac&style=Release&flavor=wk1')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
