@@ -82,6 +82,7 @@ TEST(WebKit, AccessibilityIncreaseContrast)
 
     ASSERT_FALSE(contrastCheck());
 
+    receivedPreferenceNotification = false;
     CFPreferencesSetAppValue(INCREASE_CONTRAST_PREFERENCE, kCFBooleanTrue, ACCESSIBILITY_DOMAIN);
 
     TestWebKitAPI::Util::run(&receivedPreferenceNotification);

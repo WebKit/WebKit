@@ -74,6 +74,9 @@ static void didCrash(WKPageRef page, const void*)
 
 TEST(WebKit, ReloadPageAfterCrash)
 {
+    loadBeforeCrash = false;
+    loadAfterCrash = false;
+
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
@@ -117,6 +120,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 TEST(WebKit, FocusedFrameAfterCrash)
 {
+    loadBeforeCrash = false;
+    loadAfterCrash = false;
+    calledCrashHandler = false;
+
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
