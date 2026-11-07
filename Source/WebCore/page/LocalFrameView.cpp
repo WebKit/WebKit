@@ -5260,8 +5260,14 @@ void LocalFrameView::performSizeToContentAutoSize()
             if (!localVerticalScrollbar)
                 localVerticalScrollbar = createScrollbar(ScrollbarOrientation::Vertical);
             newSize.expand(localVerticalScrollbar->occupiedWidth(), 0);
+            // scrollbar-gutter: stable both-edges also reserves a gutter on the leading edge.
+            if (scrollbarGutterStyle().isStableBothEdges())
+                newSize.expand(localVerticalScrollbar->occupiedWidth(), 0);
             // Don't bother checking for a horizontal scrollbar because the height is
             // already greater the maximum.
+        } else if (!verticalScrollbar()) {
+            // No scrollbar is needed, but scrollbar-gutter may still reserve space that is not part of the content.
+            newSize.expand(totalScrollbarSpace().width(), 0);
         }
 
         // Ensure the size is at least the min bounds.
@@ -5307,8 +5313,12 @@ void LocalFrameView::performSizeToContentAutoSize()
     // FIXME: Use the final layout's result as the content size (webkit.org/b/173561).
     layoutWithAdjustedStyleIfNeeded();
     m_autoSizeContentSize = contentsSize();
-    if (RefPtr scrollbar = verticalScrollbar())
+    if (RefPtr scrollbar = verticalScrollbar()) {
         m_autoSizeContentSize.expand(scrollbar->occupiedWidth(), 0);
+        if (scrollbarGutterStyle().isStableBothEdges())
+            m_autoSizeContentSize.expand(scrollbar->occupiedWidth(), 0);
+    } else
+        m_autoSizeContentSize.expand(totalScrollbarSpace().width(), 0);
     if (RefPtr scrollbar = horizontalScrollbar())
         m_autoSizeContentSize.expand(0, scrollbar->occupiedHeight());
 }
