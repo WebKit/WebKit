@@ -35,12 +35,7 @@ WebCoreOpaqueRoot root(StyleSheet*);
 
 inline WebCoreOpaqueRoot root(CSSRule* rule)
 {
-    Locker locker { rule->opaqueRootLockForGC() };
-    if (SUPPRESS_UNCOUNTED_LOCAL auto* parentRule = rule->parentRule())
-        return root(parentRule);
-    if (SUPPRESS_UNCOUNTED_LOCAL auto* parentStyleSheet = rule->parentStyleSheet())
-        return root(parentStyleSheet);
-    return WebCoreOpaqueRoot { rule };
+    return rule->opaqueRootForGCThread();
 }
 
 } // namespace WebCore

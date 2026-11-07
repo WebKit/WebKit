@@ -42,20 +42,20 @@ bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
     if (!jsCSSRuleList->hasCustomProperties())
         return false;
 
-    if (CSSStyleSheet* styleSheet = jsCSSRuleList->wrapped().styleSheet()) {
-        if (reason) [[unlikely]]
-            *reason = "CSSStyleSheet is opaque root"_s;
+    // This runs concurrently on the parallel GC marker threads and on the conducting mutator, with
+    // no synchronization between them, so it must not touch the CSSOM in any way that allocates,
+    // refcounts or lazily creates a wrapper. Neither CSSRuleList::styleSheet() (which walks the
+    // CSSRule parent links without CSSRule::opaqueRootLockForGC()) nor CSSRuleList::item() (which
+    // lazily creates the child CSSOM wrapper) may be used here; opaqueRootForGCThread() computes
+    // the same root by reading the owner's parent links under that lock instead.
+    auto root = jsCSSRuleList->wrapped().opaqueRootForGCThread();
+    if (!root.pointer())
+        return false;
 
-        return containsWebCoreOpaqueRoot(visitor, styleSheet);
-    }
-    
-    if (CSSRule* cssRule = jsCSSRuleList->wrapped().item(0)) {
-        if (reason) [[unlikely]]
-            *reason = "CSSRule is opaque root"_s;
+    if (reason) [[unlikely]]
+        *reason = "CSSRuleList owner is opaque root"_s;
 
-        return containsWebCoreOpaqueRoot(visitor, cssRule);
-    }
-    return false;
+    return containsWebCoreOpaqueRoot(visitor, root);
 }
 
 }

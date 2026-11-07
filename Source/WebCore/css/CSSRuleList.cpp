@@ -34,4 +34,14 @@ StaticCSSRuleList::StaticCSSRuleList() = default;
 
 StaticCSSRuleList::~StaticCSSRuleList() = default;
 
+WebCoreOpaqueRoot StaticCSSRuleList::opaqueRootForGCThread() const
+{
+    // Unlike the live lists, a static list owns already-created wrappers, so there is nothing to
+    // create lazily here. The list is filled on the main thread before it is ever handed to script,
+    // and the wrappers it holds are parentless clones, so this only reads.
+    if (m_rules.isEmpty())
+        return WebCoreOpaqueRoot { nullptr };
+    return m_rules[0]->opaqueRootForGCThread();
+}
+
 } // namespace WebCore
