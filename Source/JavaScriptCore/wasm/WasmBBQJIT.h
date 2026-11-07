@@ -1112,6 +1112,8 @@ public:
 
     void emitWriteBarrier(GPRReg cellGPR);
     void emitMutatorFence();
+    template<typename Func>
+    void emitPassiveBitClear(ptrdiff_t bitVectorOffset, unsigned bitIndex, Func operation);
 
     [[nodiscard]] PartialResult setGlobal(uint32_t index, Value value);
 
