@@ -1,0 +1,8 @@
+text text
+text text
+text text text text
+
+PASS A block ellipsis that overflows the line is scrollable overflow
+PASS A block ellipsis that overflows a right-to-left line is scrollable overflow on the left
+PASS A block ellipsis that fits does not overflow
+

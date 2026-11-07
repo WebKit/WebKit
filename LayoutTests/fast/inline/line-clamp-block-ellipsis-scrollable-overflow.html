@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>A block ellipsis that overflows its line is scrollable overflow</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+.clamp {
+    font: 16px/20px monospace;
+    width: 10ch;
+    overflow: auto;
+    scrollbar-width: none;
+    line-clamp: 2 "very long block ellipsis";
+}
+</style>
+<div class="clamp" id="ltr">text text text text text text</div>
+<div class="clamp" id="rtl" dir="rtl">text text text text text text</div>
+<div class="clamp" id="fits" style="line-clamp: 2">text text text text text text</div>
+<script>
+// "If any part of the block overflow ellipsis overflows, it is treated as scrollable overflow"
+// https://drafts.csswg.org/css-overflow-4/#block-ellipsis
+test(() => {
+    const box = document.getElementById("ltr");
+    assert_greater_than(box.scrollWidth, box.clientWidth);
+}, "A block ellipsis that overflows the line is scrollable overflow");
+
+test(() => {
+    const box = document.getElementById("rtl");
+    assert_greater_than(box.scrollWidth, box.clientWidth);
+    box.scrollLeft = -box.scrollWidth;
+    assert_less_than(box.scrollLeft, 0);
+}, "A block ellipsis that overflows a right-to-left line is scrollable overflow on the left");
+
+test(() => {
+    const box = document.getElementById("fits");
+    assert_equals(box.scrollWidth, box.clientWidth);
+}, "A block ellipsis that fits does not overflow");
+</script>
