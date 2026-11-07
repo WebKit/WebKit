@@ -344,7 +344,7 @@ class Land(Command):
                 run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path, env=push_env)
                 rmt.pull_requests.update(
                     pull_request=pull_request,
-                    title=PullRequest.title_for(commits),
+                    title=PullRequest.title_for(commits[::-1], PullRequest.title_style(repository, args)),
                     commits=commits,
                     base=branch_point.branch,
                     head=source_branch,
@@ -357,7 +357,7 @@ class Land(Command):
                 run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path, env=push_env)
                 rmt.pull_requests.update(
                     pull_request=pull_request,
-                    title=PullRequest.title_for(commits),
+                    title=PullRequest.title_for(commits, PullRequest.title_style(repository, args)),
                     commits=commits,
                     base=branch_point.branch,
                     head=source_branch,
