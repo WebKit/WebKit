@@ -647,6 +647,7 @@ public:
 
     void compileIsCellWithType(Node*);
     void compileArrayIsArray(Node*);
+    void compileObjectIsExtensible(Node*);
 
     void emitCall(Node*);
 

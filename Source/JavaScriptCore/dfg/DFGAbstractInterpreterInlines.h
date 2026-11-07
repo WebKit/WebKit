@@ -2056,6 +2056,43 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case ObjectIsExtensible: {
+        AbstractValue& child = forNode(node->child1());
+        if (!child.couldBeType(SpecObject)) {
+            didFoldClobberWorld();
+            setConstant(node, jsBoolean(false));
+            break;
+        }
+        if (!child.couldBeType(SpecProxyObject | SpecGlobalProxy)) {
+            didFoldClobberWorld();
+            if (child.isType(SpecObject) && child.m_structure.isFinite() && !child.m_structure.isClear()) {
+                std::optional<TriState> extensible;
+                child.m_structure.forEach([&](RegisteredStructure structure) {
+                    TriState current = structure->typeInfo().overridesIsExtensible()
+                        ? TriState::Indeterminate
+                        : triState(structure->isStructureExtensible());
+                    if (!extensible)
+                        extensible = current;
+                    else if (*extensible != current)
+                        extensible = TriState::Indeterminate;
+                });
+                if (extensible == TriState::False) {
+                    setConstant(node, jsBoolean(false));
+                    break;
+                }
+                if (extensible == TriState::True) {
+                    setConstant(node, jsBoolean(true));
+                    break;
+                }
+            }
+            setNonCellTypeForNode(node, SpecBoolean);
+            break;
+        }
+        clobberWorld();
+        setNonCellTypeForNode(node, SpecBoolean);
+        break;
+    }
+
     case NumberIsNaN: {
         AbstractValue& child = forNode(node->child1());
         if (JSValue value = child.value()) {
