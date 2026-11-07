@@ -2178,7 +2178,7 @@ public:
         }
         regexEnd();
 
-#ifdef ASSERT_ENABLED
+#if ASSERT_ENABLED
         if (Options::dumpCompiledRegExpPatterns())
             ByteTermDumper(&m_pattern).dumpDisjunction(m_bodyDisjunction.get());
 #endif
