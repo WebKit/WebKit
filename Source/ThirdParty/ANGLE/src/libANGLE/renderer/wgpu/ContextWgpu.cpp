@@ -70,6 +70,40 @@ constexpr angle::PackedEnumMap<webgpu::RenderPassClosureReason, const char *>
          "Render pass closed to clear with a draw call (e.g. for scissored or masked clears)"},
     }};
 
+// Returns the GL viewport in WebGPU framebuffer coordinates, within the bounds that WebGPU allows.
+// The viewport is not clipped to the framebuffer: that would change how clip space maps to window
+// coordinates. WebGPU allows viewports past the edges of the render target, with x and y at least
+// -2 * maxTextureDimension2D and x + width, y + height at most 2 * maxTextureDimension2D - 1.
+// Viewports that intersect the framebuffer are within these bounds. For the others, x and y are
+// clamped to leave room for a width and height of at least 1, and the width and height are then
+// shrunk to the upper bound, so these viewports stay outside the framebuffer.
+gl::Rectangle GetWgpuViewport(const gl::Rectangle &viewport,
+                              int framebufferHeight,
+                              bool flipY,
+                              int maxTextureDimension2D)
+{
+    // The front end clamps the size to the maximum viewport size, maxTextureDimension2D.
+    ASSERT(viewport.width >= 0 && viewport.width <= maxTextureDimension2D);
+    ASSERT(viewport.height >= 0 && viewport.height <= maxTextureDimension2D);
+
+    const int64_t boundsLow  = -2 * static_cast<int64_t>(maxTextureDimension2D);
+    const int64_t boundsHigh = 2 * static_cast<int64_t>(maxTextureDimension2D) - 1;
+
+    int64_t x = viewport.x;
+    int64_t y = viewport.y;
+    if (flipY)
+    {
+        y = static_cast<int64_t>(framebufferHeight) - y - viewport.height;
+    }
+    x = std::clamp(x, boundsLow, boundsHigh - 1);
+    y = std::clamp(y, boundsLow, boundsHigh - 1);
+    const int64_t width  = std::min<int64_t>(viewport.width, boundsHigh - x);
+    const int64_t height = std::min<int64_t>(viewport.height, boundsHigh - y);
+
+    return gl::Rectangle(static_cast<int>(x), static_cast<int>(y), static_cast<int>(width),
+                         static_cast<int>(height));
+}
+
 }  // namespace
 
 ContextWgpu::ContextWgpu(const gl::State &state, gl::ErrorSet *errorSet, DisplayWgpu *display)
@@ -1382,11 +1416,10 @@ angle::Result ContextWgpu::handleDirtyViewport(DirtyBits::Iterator *dirtyBitsIte
     const gl::Extents &framebufferSize = framebuffer->getExtents();
     const gl::Rectangle framebufferRect(0, 0, framebufferSize.width, framebufferSize.height);
 
-    gl::Rectangle clampedViewport;
-    if (!ClipRectangle(mState.getViewport(), framebufferRect, &clampedViewport))
-    {
-        clampedViewport = gl::Rectangle(0, 0, 1, 1);
-    }
+    FramebufferWgpu *drawFramebufferWgpu = webgpu::GetImpl(framebuffer);
+    const gl::Rectangle viewport =
+        GetWgpuViewport(mState.getViewport(), framebufferSize.height, drawFramebufferWgpu->flipY(),
+                        getCaps().maxViewportWidth);
 
     float depthMin = mState.getNearPlane();
     float depthMax = mState.getFarPlane();
@@ -1402,7 +1435,7 @@ angle::Result ContextWgpu::handleDirtyViewport(DirtyBits::Iterator *dirtyBitsIte
         UNIMPLEMENTED();
     }
 
-    bool isDefaultViewport = (clampedViewport == framebufferRect) && depthMin == 0 && depthMax == 1;
+    bool isDefaultViewport = (viewport == framebufferRect) && depthMin == 0 && depthMax == 1;
     if (isDefaultViewport && !mCommandBuffer.hasSetViewportCommand())
     {
         // Each render pass has a default viewport set equal to the size of the render targets. We
@@ -1410,16 +1443,9 @@ angle::Result ContextWgpu::handleDirtyViewport(DirtyBits::Iterator *dirtyBitsIte
         return angle::Result::Continue;
     }
 
-    FramebufferWgpu *drawFramebufferWgpu = webgpu::GetImpl(mState.getDrawFramebuffer());
-    if (drawFramebufferWgpu->flipY())
-    {
-        clampedViewport.y =
-            drawFramebufferWgpu->getState().getDimensions().height - clampedViewport.y1();
-    }
-
     ASSERT(mCurrentGraphicsPipeline);
-    mCommandBuffer.setViewport(clampedViewport.x, clampedViewport.y, clampedViewport.width,
-                               clampedViewport.height, depthMin, depthMax);
+    mCommandBuffer.setViewport(viewport.x, viewport.y, viewport.width, viewport.height, depthMin,
+                               depthMax);
 
     return angle::Result::Continue;
 }
