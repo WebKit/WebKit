@@ -87,10 +87,8 @@ static inline AtomString convertPropertyNameToAttributeName(const StringImpl& na
 {
     static constexpr auto dataPrefix = WTF::toArray<CharacterType>({ 'd', 'a', 't', 'a', '-' });
 
-    Vector<CharacterType, 32> buffer;
-
     unsigned length = name.length();
-    buffer.reserveInitialCapacity(dataPrefix.size() + length);
+    Vector<CharacterType, 32> buffer(ReserveCapacityTag { }, dataPrefix.size() + length);
 
     buffer.append(std::span { dataPrefix });
 

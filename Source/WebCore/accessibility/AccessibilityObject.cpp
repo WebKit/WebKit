@@ -3888,9 +3888,8 @@ Vector<String> AccessibilityObject::classList() const
         return { };
 
     Ref domClassList = element->classList();
-    Vector<String> classList;
     unsigned length = domClassList->length();
-    classList.reserveInitialCapacity(length);
+    Vector<String> classList(ReserveCapacityTag { }, length);
     for (unsigned k = 0; k < length; k++)
         classList.append(domClassList->item(k).string());
     return classList;

@@ -1130,9 +1130,8 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
     }
 
     // 4. Let validated first match capabilities be an empty JSON List.
-    Vector<RefPtr<JSON::Object>> validatedFirstMatchCapabilitiesList;
     auto firstMatchCapabilitiesListLength = firstMatchCapabilitiesList->length();
-    validatedFirstMatchCapabilitiesList.reserveInitialCapacity(firstMatchCapabilitiesListLength);
+    Vector<RefPtr<JSON::Object>> validatedFirstMatchCapabilitiesList(ReserveCapacityTag { }, firstMatchCapabilitiesListLength);
     // 5. For each first match capabilities corresponding to an indexed property in all first match capabilities.
     for (unsigned i = 0; i < firstMatchCapabilitiesListLength; ++i) {
         auto firstMatchCapabilities = firstMatchCapabilitiesList->get(i)->asObject();

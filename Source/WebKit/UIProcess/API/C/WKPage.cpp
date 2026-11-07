@@ -1033,9 +1033,8 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
 
             RefPtr<API::Array> array = adoptRef(toImpl(newMenu));
 
-            Vector<Ref<WebContextMenuItem>> customMenu;
             size_t newSize = array ? array->size() : 0;
-            customMenu.reserveInitialCapacity(newSize);
+            Vector<Ref<WebContextMenuItem>> customMenu(ReserveCapacityTag { }, newSize);
             for (size_t i = 0; i < newSize; ++i) {
                 RefPtr item = array->at<WebContextMenuItem>(i);
                 if (!item) {

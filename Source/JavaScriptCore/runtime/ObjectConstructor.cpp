@@ -943,10 +943,8 @@ static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, 
 
     unsigned index = 0;
     unsigned numProperties = propertyNames.size();
-    Vector<PropertyDescriptor, 16> descriptors;
+    Vector<PropertyDescriptor, 16> descriptors(ReserveCapacityTag { }, numProperties);
     MarkedArgumentBuffer markBuffer;
-
-    descriptors.reserveInitialCapacity(numProperties);
 
 #define RETURN_IF_EXCEPTION_CLEARING_OVERFLOW(value) do { \
     if (scope.exception()) [[unlikely]] { \

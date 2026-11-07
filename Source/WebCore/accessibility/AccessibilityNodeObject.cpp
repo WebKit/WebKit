@@ -2144,10 +2144,9 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::cells()
     if (!rareData)
         return { };
 
-    AXCoreObject::AccessibilityChildrenVector cells;
     // row * columns may not be exactly correct when considering things
     // like rowspan / colspan, but it should be close enough.
-    cells.reserveInitialCapacity(rareData->rowCount() * rareData->columnCount());
+    AXCoreObject::AccessibilityChildrenVector cells(ReserveCapacityTag { }, rareData->rowCount() * rareData->columnCount());
     for (const auto& row : rareData->tableRows())
         cells.appendVector(row->unignoredChildren());
     return cells;
