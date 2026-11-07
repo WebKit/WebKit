@@ -131,6 +131,7 @@ namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, DidCreateJavaScriptContextSanity1)
 {
+    didCompleteTestSuccessfully = false;
     @autoreleasepool {
         RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
         RetainPtr<DidCreateJavaScriptContextFrameLoadDelegate> frameLoadDelegate = adoptNS([[DidCreateJavaScriptContextFrameLoadDelegate alloc] init]);
@@ -179,6 +180,7 @@ TEST(WebKitLegacy, DidCreateJavaScriptContextSanity2)
 
 TEST(WebKitLegacy, DidCreateJavaScriptContextCallJSFunctionFromObjCCallbackTest)
 {
+    didCompleteTestSuccessfully = false;
     @autoreleasepool {
         RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
         RetainPtr<DidCreateJavaScriptContextFrameLoadDelegate> frameLoadDelegate = adoptNS([[DidCreateJavaScriptContextFrameLoadDelegate alloc] init]);

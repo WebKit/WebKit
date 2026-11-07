@@ -54,6 +54,7 @@ namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, JSWrapperForNode)
 {
+    didFinishLoad = false;
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
     RetainPtr<JSWrapperForNodeFrameLoadDelegate> frameLoadDelegate = adoptNS([[JSWrapperForNodeFrameLoadDelegate alloc] init]);
 
@@ -99,6 +100,7 @@ TEST(WebKitLegacy, JSWrapperForNode)
 
 TEST(WebKitLegacy, JSDOMWindowWrapperBeforeOriginInitialization)
 {
+    didFinishLoad = false;
     [WKProcessPool _setLinkedOnOrBeforeEverythingForTesting];
     RetainPtr webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
     RetainPtr frameLoadDelegate = adoptNS([[JSWrapperForNodeFrameLoadDelegate alloc] init]);

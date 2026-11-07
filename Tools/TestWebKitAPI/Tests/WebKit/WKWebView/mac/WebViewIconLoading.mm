@@ -161,6 +161,7 @@ TEST(WebKitLegacy, IconLoadingDelegateDefaultFirst)
 {
     [NSURLProtocol registerClass:[IconLoadingProtocol class]];
 
+    messageReceived = false;
     currentMainHTML = &defaultFaviconHTML;
     @autoreleasepool {
         RetainPtr webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
@@ -202,6 +203,7 @@ TEST(WebKitLegacy, IconLoadingDelegateCustomFirst)
 {
     [NSURLProtocol registerClass:[IconLoadingProtocol class]];
 
+    messageReceived = false;
     currentMainHTML = &customFaviconHTML;
     @autoreleasepool {
         RetainPtr webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
