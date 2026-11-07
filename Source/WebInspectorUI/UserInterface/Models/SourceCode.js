@@ -53,6 +53,119 @@ WI.SourceCode = class SourceCode extends WI.Object
         return null;
     }
 
+    static clearDisplayNameAffixes()
+    {
+        WI.SourceCode._sourceCodesForDisplayName.clear();
+        WI.SourceCode._urlDisplayNameForSourceCode = new WeakMap;
+        WI.SourceCode._affixesForSourceCode.clear();
+    }
+
+    static _regenerateAffixesForDisplayName(displayName)
+    {
+        let sourceCodes = Array.from(WI.SourceCode._sourceCodesForDisplayName.get(displayName) || []);
+
+        let affixesForSourceCode = new Map;
+        if (sourceCodes.length < 2) {
+            for (let sourceCode of sourceCodes)
+                affixesForSourceCode.set(sourceCode, {prefix: "", suffix: ""});
+        } else {
+            let candidates = sourceCodes.map((sourceCode) => {
+                let urlComponents = sourceCode.urlComponents;
+                let path = urlComponents.path || "";
+                if (path.endsWith("/"))
+                    path = path.substring(0, path.length - 1);
+                let lastSlashIndex = path.lastIndexOf("/");
+                let directory = lastSlashIndex > 0 ? path.substring(0, lastSlashIndex) : "";
+                let prefixSegments = directory.split("/").filter((segment) => segment).map(tryDecodeURIComponent).reverse();
+
+                let origin = urlComponents.host ? urlComponents.host + (urlComponents.port ? ":" + urlComponents.port : "") : "";
+                if (origin)
+                    prefixSegments.push(origin);
+
+                return {
+                    sourceCode,
+                    url: sourceCode.url,
+                    displayName: WI.displayNameForURL(sourceCode.url, urlComponents),
+                    prefixSegments,
+                    shownSegmentCount: 0,
+                    suffix: urlComponents.queryString ? "?" + tryDecodeURIComponent(urlComponents.queryString) : "",
+                };
+            });
+
+            function generatePrefix(candidate) {
+                if (!candidate.shownSegmentCount)
+                    return "";
+                return candidate.prefixSegments.slice(0, candidate.shownSegmentCount).reverse().join("/") + "/";
+            }
+
+            function generateSuffix(candidate) {
+                return candidate.suffix;
+            }
+
+            while (true) {
+                let candidatesForDisplayName = new Multimap;
+                for (let candidate of candidates) {
+                    let displayName = generatePrefix(candidate) + candidate.displayName + generateSuffix(candidate);
+                    candidatesForDisplayName.add(displayName, candidate);
+                }
+
+                let didGrow = false;
+                for (let [, candidatesWithDisplayName] of candidatesForDisplayName.sets()) {
+                    if (candidatesWithDisplayName.size < 2)
+                        continue;
+
+                    let duplicate = true;
+                    for (let candidate of candidatesWithDisplayName) {
+                        if (candidate.url !== candidatesWithDisplayName.firstValue.url) {
+                            duplicate = false;
+                            break;
+                        }
+                    }
+                    if (duplicate)
+                        continue;
+
+                    for (let candidate of candidatesWithDisplayName) {
+                        if (candidate.shownSegmentCount < candidate.prefixSegments.length) {
+                            ++candidate.shownSegmentCount;
+                            didGrow = true;
+                        }
+                    }
+                }
+                if (!didGrow)
+                    break;
+            }
+
+            for (let candidate of candidates) {
+                affixesForSourceCode.set(candidate.sourceCode, {
+                    prefix: generatePrefix(candidate),
+                    suffix: generateSuffix(candidate),
+                });
+            }
+        }
+
+        let changedSourceCodes = [];
+        for (let sourceCode of sourceCodes) {
+            let {prefix, suffix} = affixesForSourceCode.get(sourceCode) || {};
+            let {prefix: previousPrefix, suffix: previousSuffix} = WI.SourceCode._affixesForSourceCode.get(sourceCode) || {};
+
+            if (!prefix && !suffix) {
+                if (previousPrefix || previousSuffix) {
+                    WI.SourceCode._affixesForSourceCode.delete(sourceCode);
+                    changedSourceCodes.push(sourceCode);
+                }
+                continue;
+            }
+
+            if (previousPrefix !== prefix || previousSuffix !== suffix) {
+                WI.SourceCode._affixesForSourceCode.set(sourceCode, {prefix, suffix});
+                changedSourceCodes.push(sourceCode);
+            }
+        }
+
+        for (let sourceCode of changedSourceCodes)
+            sourceCode.dispatchEventToListeners(WI.SourceCode.Event.DisplayNameChanged);
+    }
+
     // Public
 
     get displayName()
@@ -60,6 +173,19 @@ WI.SourceCode = class SourceCode extends WI.Object
         // Implemented by subclasses.
         console.error("Needs to be implemented by a subclass.");
         return "";
+    }
+
+    displayNameWithAffix(options = {})
+    {
+        const displayName = WI.displayNameForURL(this._url, this.urlComponents, options);
+
+        this._regenerateAffixesForDisplayName(displayName);
+
+        let affix = WI.SourceCode._affixesForSourceCode.get(this);
+        if (!affix)
+            return displayName;
+
+        return affix.prefix + displayName + affix.suffix;
     }
 
     get originalRevision()
@@ -262,6 +388,33 @@ WI.SourceCode = class SourceCode extends WI.Object
 
     // Private
 
+    _regenerateAffixesForDisplayName(displayName)
+    {
+        let {url: previousURL, displayName: previousDisplayName} = WI.SourceCode._urlDisplayNameForSourceCode.get(this) || {};
+        if (previousURL === this._url)
+            return;
+
+        if (previousDisplayName) {
+            WI.SourceCode._sourceCodesForDisplayName.get(previousDisplayName)?.delete(this);
+            WI.SourceCode._affixesForSourceCode.delete(this);
+        }
+
+        if (!this.urlComponents.lastPathComponent || isWebKitInternalScript(this._url) || this._url.startsWith("data:")) {
+            WI.SourceCode._urlDisplayNameForSourceCode.delete(this);
+            if (previousDisplayName)
+                WI.SourceCode._regenerateAffixesForDisplayName(previousDisplayName);
+            return;
+        }
+
+        WI.SourceCode._urlDisplayNameForSourceCode.set(this, {url: this._url, displayName});
+        WI.SourceCode._sourceCodesForDisplayName.getOrInsert(displayName, new IterableWeakSet).add(this);
+
+        if (previousDisplayName && previousDisplayName !== displayName)
+            WI.SourceCode._regenerateAffixesForDisplayName(previousDisplayName);
+
+        WI.SourceCode._regenerateAffixesForDisplayName(displayName);
+    }
+
     _processContent(parameters)
     {
         // Different backend APIs return one of `content, `body`, `text`, or `scriptSource`.
@@ -306,5 +459,10 @@ WI.SourceCode.Event = {
     SourceMapAdded: "source-code-source-map-added",
     FormatterDidChange: "source-code-formatter-did-change",
     LoadingDidFinish: "source-code-loading-did-finish",
-    LoadingDidFail: "source-code-loading-did-fail"
+    LoadingDidFail: "source-code-loading-did-fail",
+    DisplayNameChanged: "source-code-display-name-changed",
 };
+
+WI.SourceCode._sourceCodesForDisplayName = new Map;
+WI.SourceCode._urlDisplayNameForSourceCode = new WeakMap;
+WI.SourceCode._affixesForSourceCode = new IterableWeakMap;
