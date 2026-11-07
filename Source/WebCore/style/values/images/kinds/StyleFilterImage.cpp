@@ -140,11 +140,11 @@ RefPtr<ImageBuffer> FilterImage::resolvedImage(const RenderElement& renderElemen
     if (!styleImage || !styleImage->canDrawAtSize(renderer, size))
         return nullptr;
 
-    auto preferredFilterRenderingModes = protect(renderer->page())->preferredFilterRenderingModes(destinationContext);
+    auto preferredFilterRenderingModes = protect(renderer->document())->preferredFilterRenderingModes(destinationContext);
     auto sourceImageRect = FloatRect { { }, size };
 
     auto renderingOptions(protect(renderer->settings())->showDebugBorders() ? std::make_optional(FilterRenderingOption::ShowDebugOverlay) : std::nullopt);
-    auto cssFilter = CSSFilterRenderer::create(const_cast<RenderElement&>(renderer.get()), m_filter, {
+    auto cssFilter = CSSFilterRenderer::create(const_cast<RenderElement*>(renderer.ptr()), m_filter, {
             .referenceBox = sourceImageRect,
             .filterRegion = sourceImageRect,
             .scale = { 1, 1 },

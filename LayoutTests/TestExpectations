@@ -6895,6 +6895,7 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFi
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.infinity.worker.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.infinity.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.invalid.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.html [ Skip ]
 
 webkit.org/b/290526 imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.fontVariantCaps1.html [ Pass ImageOnlyFailure ]
 webkit.org/b/290526 imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.fontVariantCaps3.html [ Pass ImageOnlyFailure ]
