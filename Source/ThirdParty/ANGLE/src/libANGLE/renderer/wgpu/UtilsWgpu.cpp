@@ -50,6 +50,48 @@ fn vs_main(in: VertexInput) -> VertexOutput {
 }
 )";
 
+constexpr char kBlitVertexMain[] = R"(
+struct VertexInput {
+    @location(0) pos: vec2<f32>,
+    @location(1) texScale: vec2<f32>,
+    @location(2) texOffset: vec2<f32>,
+    @location(3) nearest0: vec4<i32>,
+    @location(4) nearest1: vec4<i32>,
+    @location(5) nearest2: vec4<i32>,
+    @location(6) nearest3: vec4<i32>,
+};
+
+struct VertexOutput {
+    @builtin(position) position: vec4<f32>,
+    @location(0) @interpolate(flat) texScale: vec2<f32>,
+    @location(1) @interpolate(flat) texOffset: vec2<f32>,
+    @location(2) @interpolate(flat) nearest0: vec4<i32>,
+    @location(3) @interpolate(flat) nearest1: vec4<i32>,
+    @location(4) @interpolate(flat) nearest2: vec4<i32>,
+    @location(5) @interpolate(flat) nearest3: vec4<i32>,
+};
+
+@vertex
+fn vs_main(in: VertexInput) -> VertexOutput {
+    var out: VertexOutput;
+    out.position = vec4<f32>(in.pos, 0.0, 1.0);
+    out.texScale = in.texScale;
+    out.texOffset = in.texOffset;
+    out.nearest0 = in.nearest0;
+    out.nearest1 = in.nearest1;
+    out.nearest2 = in.nearest2;
+    out.nearest3 = in.nearest3;
+    return out;
+}
+
+// The GL_NEAREST source texel of the fragment, computed exactly in integers.
+fn nearestTexel(in: VertexOutput) -> vec2<i32> {
+    let m = vec2<i32>(floor(in.position.xy)) - in.nearest3.zw;
+    let t = in.nearest0.xy + m * in.nearest0.zw + (in.nearest1.xy + m * in.nearest1.zw) / in.nearest2.xy;
+    return in.nearest2.zw + in.nearest3.xy * t;
+}
+)";
+
 struct ClearParamsUniforms
 {
     float clearColor[4];
@@ -74,6 +116,12 @@ const char *GetWgslTextureComponentTypeFromGlComponent(GLenum componentType)
 const char *GetWgslTextureComponentTypeFromFormat(const angle::Format &format)
 {
     return GetWgslTextureComponentTypeFromGlComponent(format.componentType);
+}
+
+// 32-bit float formats can only be filtered with the float32-filterable feature.
+bool IsUnfilterableFloatFormat(const angle::Format &format)
+{
+    return format.componentType == GL_FLOAT && format.redBits == 32;
 }
 
 WGPUTextureSampleType GetWgpuTextureSampleType(GLenum componentType)
@@ -147,7 +195,7 @@ webgpu::ShaderModuleHandle UtilsWgpu::getBlitShaderModule(ContextWgpu *context, 
 
     const angle::Format &dstFormat = angle::Format::Get(key.dstActualFormatID);
 
-    ss << kVertexMain;
+    ss << kBlitVertexMain;
     ss << "@group(0) @binding(0)\n var t_source: texture_2d<"
        << GetWgslTextureComponentTypeFromGlComponent(key.srcComponentType) << ">;\n";
     ss << "@group(0) @binding(1)\n var t_sampler: sampler;\n";
@@ -156,25 +204,55 @@ webgpu::ShaderModuleHandle UtilsWgpu::getBlitShaderModule(ContextWgpu *context, 
        << "(in: VertexOutput) -> @location(0) "
           "vec4<"
        << GetWgslTextureComponentTypeFromFormat(dstFormat) << "> {\n";
+    // The source coordinate of the pixel center, in texels.
+    ss << "    let texCoord = in.texOffset + in.position.xy * in.texScale;\n";
 
-    if (key.srcComponentType != GL_INT && key.srcComponentType != GL_UNSIGNED_INT)
+    const bool srcIsInteger =
+        key.srcComponentType == GL_INT || key.srcComponentType == GL_UNSIGNED_INT;
+    if (key.filter == GL_LINEAR && !srcIsInteger && !key.srcUnfilterable)
     {
-        ss << "    var srcValue = textureSample(t_source, t_sampler, in.texCoord);\n";
+        ss << "    let size = vec2<f32>(textureDimensions(t_source));\n";
+        ss << "    var srcValue = textureSampleLevel(t_source, t_sampler, texCoord / size, "
+              "0.0);\n";
+    }
+    else if (key.filter == GL_LINEAR && !srcIsInteger)
+    {
+        // Bilinear filtering in the shader, with the texels clamped to the edge.
+        ss << "    let maxCoord = vec2<i32>(textureDimensions(t_source)) - vec2<i32>(1);\n";
+        ss << "    let p = texCoord - vec2<f32>(0.5);\n";
+        ss << "    let f = fract(p);\n";
+        ss << "    let c0 = clamp(vec2<i32>(floor(p)), vec2<i32>(0), maxCoord);\n";
+        ss << "    let c1 = clamp(vec2<i32>(floor(p)) + vec2<i32>(1), vec2<i32>(0), maxCoord);\n";
+        ss << "    let top = mix(textureLoad(t_source, c0, 0), textureLoad(t_source, "
+              "vec2<i32>(c1.x, c0.y), 0), f.x);\n";
+        ss << "    let bottom = mix(textureLoad(t_source, vec2<i32>(c0.x, c1.y), 0), "
+              "textureLoad(t_source, c1, 0), f.x);\n";
+        ss << "    var srcValue = mix(top, bottom, f.y);\n";
     }
     else
     {
-        ss << "    var srcValue = textureLoad(t_source, vec2<i32>(floor(in.texCoord)), 0);\n";
+        ss << "    let maxCoord = vec2<i32>(textureDimensions(t_source)) - vec2<i32>(1);\n";
+        ss << "    let coord = clamp(nearestTexel(in), vec2<i32>(0), maxCoord);\n";
+        ss << "    var srcValue = textureLoad(t_source, coord, 0);\n";
     }
 
+    // Formats without alpha read as an alpha of one, also when the actual format stores alpha,
+    // and store an alpha of one.
     ss << "    var out_rgb = srcValue.rgb;\n";
     ss << "    var out_a = srcValue.a;\n";
-    if (!key.dstIntentedFormatHasAlphaBits)
+    if (!key.srcIntendedFormatHasAlphaBits || !key.dstIntentedFormatHasAlphaBits)
     {
-        ss << "    out_a = 1.0;\n";
+        ss << "    out_a = " << GetWgslTextureComponentTypeFromGlComponent(key.srcComponentType)
+           << "(1);\n";
     }
     ss << "    return vec4<" << GetWgslTextureComponentTypeFromFormat(dstFormat)
        << ">(out_rgb, out_a);\n";
     ss << "}\n";
+
+    if (kLogShaders)
+    {
+        ANGLE_LOG(INFO) << ss.str();
+    }
 
     return getShaderModule(context, ss.str());
 }
@@ -194,11 +272,10 @@ webgpu::ShaderModuleHandle UtilsWgpu::getShaderModule(ContextWgpu *context,
 }
 
 angle::Result UtilsWgpu::createPipeline(ContextWgpu *context,
-                                        WgpuPipelineOp op,
                                         angle::FormatID dstFormatID,
                                         const webgpu::ShaderModuleHandle &shader,
                                         webgpu::BindGroupLayoutHandle bindGroupLayout,
-                                        uint8_t stencilWriteMask,
+                                        bool blitVertexLayout,
                                         CachedPipeline *cachedPipelineOut)
 {
     webgpu::ShaderModuleHandle shaderModule = shader;
@@ -207,18 +284,35 @@ angle::Result UtilsWgpu::createPipeline(ContextWgpu *context,
     pipelineDesc.primitive.topology           = WGPUPrimitiveTopology_TriangleStrip;
     pipelineDesc.multisample.count            = 1;
 
-    WGPUVertexAttribute attributes[2] = {WGPU_VERTEX_ATTRIBUTE_INIT, WGPU_VERTEX_ATTRIBUTE_INIT};
-    attributes[0].format              = WGPUVertexFormat_Float32x2;
-    attributes[0].offset              = offsetof(CopyVertex, position);
-    attributes[0].shaderLocation      = 0;
-    attributes[1].format              = WGPUVertexFormat_Float32x2;
-    attributes[1].offset              = offsetof(CopyVertex, texCoord);
-    attributes[1].shaderLocation      = 1;
+    WGPUVertexAttribute attributes[7];
+    for (uint32_t i = 0; i < 7; ++i)
+    {
+        attributes[i]        = WGPU_VERTEX_ATTRIBUTE_INIT;
+        attributes[i].format = i < 3 ? WGPUVertexFormat_Float32x2 : WGPUVertexFormat_Sint32x4;
+        attributes[i].shaderLocation = i;
+    }
 
     WGPUVertexBufferLayout vertexBufferLayout = WGPU_VERTEX_BUFFER_LAYOUT_INIT;
-    vertexBufferLayout.arrayStride            = sizeof(CopyVertex);
-    vertexBufferLayout.attributeCount         = 2;
     vertexBufferLayout.attributes             = attributes;
+    if (blitVertexLayout)
+    {
+        attributes[0].offset              = offsetof(BlitVertex, position);
+        attributes[1].offset              = offsetof(BlitVertex, texScale);
+        attributes[2].offset              = offsetof(BlitVertex, texOffset);
+        for (uint32_t i = 0; i < 4; ++i)
+        {
+            attributes[3 + i].offset = offsetof(BlitVertex, nearest) + i * sizeof(int32_t[4]);
+        }
+        vertexBufferLayout.arrayStride    = sizeof(BlitVertex);
+        vertexBufferLayout.attributeCount = 7;
+    }
+    else
+    {
+        attributes[0].offset              = offsetof(CopyVertex, position);
+        attributes[1].offset              = offsetof(CopyVertex, texCoord);
+        vertexBufferLayout.arrayStride    = sizeof(CopyVertex);
+        vertexBufferLayout.attributeCount = 2;
+    }
 
     pipelineDesc.vertex.bufferCount = 1;
     pipelineDesc.vertex.buffers     = &vertexBufferLayout;
@@ -277,29 +371,37 @@ angle::Result UtilsWgpu::getCopyPipeline(ContextWgpu *context,
     bindGroupLayout = webgpu::BindGroupLayoutHandle::Acquire(
         wgpu, wgpu->deviceCreateBindGroupLayout(device, &bglDesc));
 
-    return createPipeline(context, WgpuPipelineOp::ImageCopy, dstFormatID, shader,
-                          std::move(bindGroupLayout), 0, cachedPipelineOut);
+    return createPipeline(context, dstFormatID, shader, std::move(bindGroupLayout),
+                          /*blitVertexLayout=*/false, cachedPipelineOut);
 }
 
 angle::Result UtilsWgpu::getBlitPipeline(ContextWgpu *context,
-                                         WgpuPipelineOp op,
-                                         GLenum srcComponentType,
-                                         angle::FormatID dstFormatID,
-                                         const webgpu::ShaderModuleHandle &shader,
-                                         CachedPipeline *cachedPipelineOut,
-                                         uint8_t stencilWriteMask)
+                                         const BlitKey &key,
+                                         const CachedPipeline **cachedPipelineOut)
 {
+    BlitPipelineCache::iterator it = mBlitPipelineCache.find(key);
+    if (it != mBlitPipelineCache.end())
+    {
+        *cachedPipelineOut = &it->second;
+        return angle::Result::Continue;
+    }
+
     WGPUBindGroupLayoutEntry bglEntries[2] = {WGPU_BIND_GROUP_LAYOUT_ENTRY_INIT,
                                               WGPU_BIND_GROUP_LAYOUT_ENTRY_INIT};
     bglEntries[0].binding                  = 0;
     bglEntries[0].visibility               = WGPUShaderStage_Fragment;
     bglEntries[0].texture.viewDimension    = WGPUTextureViewDimension_2D;
-    bglEntries[0].texture.sampleType       = GetWgpuTextureSampleType(srcComponentType);
+    bglEntries[0].texture.sampleType       = GetWgpuTextureSampleType(key.srcComponentType);
+    if (key.srcUnfilterable)
+    {
+        bglEntries[0].texture.sampleType = WGPUTextureSampleType_UnfilterableFloat;
+    }
 
     bglEntries[1].binding      = 1;
     bglEntries[1].visibility   = WGPUShaderStage_Fragment;
     bglEntries[1].sampler.type = WGPUSamplerBindingType_Filtering;
-    if (srcComponentType == GL_INT || srcComponentType == GL_UNSIGNED_INT)
+    if (key.srcComponentType == GL_INT || key.srcComponentType == GL_UNSIGNED_INT ||
+        key.srcUnfilterable)
     {
         bglEntries[1].sampler.type = WGPUSamplerBindingType_NonFiltering;
     }
@@ -314,8 +416,16 @@ angle::Result UtilsWgpu::getBlitPipeline(ContextWgpu *context,
     bindGroupLayout = webgpu::BindGroupLayoutHandle::Acquire(
         wgpu, wgpu->deviceCreateBindGroupLayout(device, &bglDesc));
 
-    return createPipeline(context, op, dstFormatID, shader, std::move(bindGroupLayout),
-                          stencilWriteMask, cachedPipelineOut);
+    webgpu::ShaderModuleHandle shaderModule = getBlitShaderModule(context, key);
+    CachedPipeline newCachedPipeline;
+    ANGLE_TRY(createPipeline(context, key.dstActualFormatID, shaderModule,
+                             std::move(bindGroupLayout), /*blitVertexLayout=*/true,
+                             &newCachedPipeline));
+    std::pair<BlitPipelineCache::iterator, bool> inserted =
+        mBlitPipelineCache.emplace(key, std::move(newCachedPipeline));
+    *cachedPipelineOut = &inserted.first->second;
+
+    return angle::Result::Continue;
 }
 
 angle::Result UtilsWgpu::getClearPipeline(ContextWgpu *context,
@@ -578,57 +688,40 @@ angle::Result UtilsWgpu::copyImage(ContextWgpu *context,
                     destArea, sourceArea, srcSize, srcFlipY, dstFlipY, false, scissor, 0);
 }
 
-angle::Result UtilsWgpu::blit(ContextWgpu *context,
-                              webgpu::TextureViewHandle src,
-                              webgpu::TextureViewHandle dst,
-                              const gl::Rectangle &sourceArea,
-                              const gl::Rectangle &destArea,
-                              const WGPUExtent3D &srcSize,
-                              const WGPUExtent3D &dstSize,
-                              GLenum filter,
-                              bool srcFlipY,
-                              bool dstFlipY,
-                              uint32_t srcSamples,
-                              const angle::Format &srcFormat,
-                              angle::FormatID dstIntendedFormatID,
-                              angle::FormatID dstActualFormatID,
-                              const gl::Rectangle *scissor)
+angle::Result UtilsWgpu::blitColor(ContextWgpu *context,
+                                   const BlitParams &params,
+                                   const webgpu::TextureViewHandle &src,
+                                   uint32_t srcSamples,
+                                   angle::FormatID srcIntendedFormatID,
+                                   angle::FormatID srcActualFormatID,
+                                   const webgpu::TextureViewHandle &dst,
+                                   angle::FormatID dstIntendedFormatID,
+                                   angle::FormatID dstActualFormatID)
 {
     const DawnProcTable *wgpu              = webgpu::GetProcs(context);
+    const angle::Format &srcActualFormat   = angle::Format::Get(srcActualFormatID);
+    const angle::Format &srcIntendedFormat = angle::Format::Get(srcIntendedFormatID);
     const angle::Format &dstIntendedFormat = angle::Format::Get(dstIntendedFormatID);
     BlitKey key                            = {};
 
     key.op                            = WgpuPipelineOp::ColorBlit;
-    key.srcComponentType              = srcFormat.componentType;
+    key.srcComponentType              = srcActualFormat.componentType;
+    key.srcUnfilterable               = IsUnfilterableFloatFormat(srcActualFormat);
     key.dstActualFormatID             = dstActualFormatID;
+    key.srcIntendedFormatHasAlphaBits = srcIntendedFormat.alphaBits != 0;
     key.dstIntentedFormatHasAlphaBits = dstIntendedFormat.alphaBits != 0;
     key.srcSamples                    = srcSamples;
-    key.filter                        = filter;
-    key.stencilWriteMask              = 0;
+    key.filter                        = params.filter;
 
     const CachedPipeline *cachedPipeline = nullptr;
-    BlitPipelineCache::iterator it       = mBlitPipelineCache.find(key);
-    if (it != mBlitPipelineCache.end())
-    {
-        cachedPipeline = &it->second;
-    }
-    else
-    {
-        webgpu::ShaderModuleHandle shaderModule = getBlitShaderModule(context, key);
-        CachedPipeline newCachedPipeline;
-        ANGLE_TRY(getBlitPipeline(context, key.op, key.srcComponentType, key.dstActualFormatID,
-                                  shaderModule, &newCachedPipeline, key.stencilWriteMask));
-        std::pair<BlitPipelineCache::iterator, bool> inserted =
-            mBlitPipelineCache.emplace(key, std::move(newCachedPipeline));
-        cachedPipeline = &inserted.first->second;
-    }
+    ANGLE_TRY(getBlitPipeline(context, key, &cachedPipeline));
 
     WGPUSamplerDescriptor samplerDesc = WGPU_SAMPLER_DESCRIPTOR_INIT;
     samplerDesc.addressModeU          = WGPUAddressMode_ClampToEdge;
     samplerDesc.addressModeV          = WGPUAddressMode_ClampToEdge;
     samplerDesc.addressModeW          = WGPUAddressMode_ClampToEdge;
     samplerDesc.maxAnisotropy         = 1;
-    if (filter == GL_LINEAR)
+    if (params.filter == GL_LINEAR && !key.srcUnfilterable)
     {
         samplerDesc.magFilter = WGPUFilterMode_Linear;
         samplerDesc.minFilter = WGPUFilterMode_Linear;
@@ -641,9 +734,6 @@ angle::Result UtilsWgpu::blit(ContextWgpu *context,
 
     webgpu::SamplerHandle sampler = webgpu::SamplerHandle::Acquire(
         wgpu, wgpu->deviceCreateSampler(context->getDevice().get(), &samplerDesc));
-
-    bool srcTextureCoordsNormalized = (srcSamples <= 1 && key.srcComponentType != GL_INT &&
-                                       key.srcComponentType != GL_UNSIGNED_INT);
 
     WGPUBindGroupDescriptor bgDesc  = WGPU_BIND_GROUP_DESCRIPTOR_INIT;
     WGPUBindGroupEntry bgEntries[2] = {WGPU_BIND_GROUP_ENTRY_INIT, WGPU_BIND_GROUP_ENTRY_INIT};
@@ -660,8 +750,22 @@ angle::Result UtilsWgpu::blit(ContextWgpu *context,
     bindGroup = webgpu::BindGroupHandle::Acquire(
         wgpu, wgpu->deviceCreateBindGroup(context->getDevice().get(), &bgDesc));
 
-    return drawQuad(context, key.op, dst, dstSize, cachedPipeline, bindGroup, destArea, sourceArea,
-                    srcSize, srcFlipY, dstFlipY, srcTextureCoordsNormalized, scissor, 0);
+    webgpu::PackedRenderPassDescriptor renderPassDesc;
+    webgpu::PackedRenderPassColorAttachment colorAttachment;
+    colorAttachment.view       = dst;
+    colorAttachment.loadOp     = WGPULoadOp_Load;
+    colorAttachment.storeOp    = WGPUStoreOp_Store;
+    colorAttachment.depthSlice = WGPU_DEPTH_SLICE_UNDEFINED;
+    renderPassDesc.colorAttachments.push_back(colorAttachment);
+
+    ANGLE_TRY(startBlitRenderPass(context, params, renderPassDesc));
+
+    webgpu::CommandBuffer &commandBuffer = context->getCommandBuffer();
+    commandBuffer.setPipeline(cachedPipeline->pipeline);
+    commandBuffer.setBindGroup(0, bindGroup);
+    commandBuffer.draw(4, 1, 0, 0);
+
+    return context->endRenderPass(webgpu::RenderPassClosureReason::CopyImage);
 }
 
 angle::Result UtilsWgpu::clear(ContextWgpu *context, ClearParams params)
@@ -936,6 +1040,73 @@ angle::Result UtilsWgpu::drawQuad(ContextWgpu *context,
     commandBuffer.draw(4, 1, 0, 0);
 
     ANGLE_TRY(context->endRenderPass(webgpu::RenderPassClosureReason::CopyImage));
+
+    return angle::Result::Continue;
+}
+
+angle::Result UtilsWgpu::startBlitRenderPass(
+    ContextWgpu *context,
+    const BlitParams &params,
+    const webgpu::PackedRenderPassDescriptor &renderPassDesc)
+{
+    const DawnProcTable *wgpu = webgpu::GetProcs(context);
+
+    ANGLE_TRY(context->endRenderPass(webgpu::RenderPassClosureReason::CopyImage));
+    ANGLE_TRY(context->startRenderPass(renderPassDesc));
+
+    // Normalized device coordinates have y up, and y = 1 is texel row 0 of the destination.
+    const float dstWidth  = static_cast<float>(params.dstSize.width);
+    const float dstHeight = static_cast<float>(params.dstSize.height);
+    const float x0        = params.dstArea.x0() / dstWidth * 2.0f - 1.0f;
+    const float x1        = params.dstArea.x1() / dstWidth * 2.0f - 1.0f;
+    const float y0        = 1.0f - params.dstArea.y0() / dstHeight * 2.0f;
+    const float y1        = 1.0f - params.dstArea.y1() / dstHeight * 2.0f;
+
+    // The source coordinate, in texels, of the destination pixel position p is
+    // offset + p * scale. A reversed source rectangle flips.
+    const double scaleX      = static_cast<double>(params.srcArea.width) / params.dstArea.width;
+    const double scaleY      = static_cast<double>(params.srcArea.height) / params.dstArea.height;
+    const float texScale[2]  = {static_cast<float>(scaleX), static_cast<float>(scaleY)};
+    const float texOffset[2] = {static_cast<float>(params.srcArea.x - params.dstArea.x * scaleX),
+                                static_cast<float>(params.srcArea.y - params.dstArea.y * scaleY)};
+
+    const BlitParams::NearestAxis &nx = params.nearestX;
+    const BlitParams::NearestAxis &ny = params.nearestY;
+    const int32_t nearest[4][4]       = {{nx.q0, ny.q0, nx.a, ny.a},
+                                         {nx.r0, ny.r0, nx.b, ny.b},
+                                         {nx.denominator, ny.denominator, nx.srcBase, ny.srcBase},
+                                         {nx.srcSign, ny.srcSign, nx.dstOrigin, ny.dstOrigin}};
+
+    BlitVertex vertices[4];
+    const float positions[4][2] = {{x0, y0}, {x1, y0}, {x0, y1}, {x1, y1}};
+    for (size_t i = 0; i < 4; ++i)
+    {
+        vertices[i] = {{positions[i][0], positions[i][1]},
+                       {texScale[0], texScale[1]},
+                       {texOffset[0], texOffset[1]},
+                       {}};
+        for (size_t row = 0; row < 4; ++row)
+        {
+            for (size_t column = 0; column < 4; ++column)
+            {
+                vertices[i].nearest[row][column] = nearest[row][column];
+            }
+        }
+    }
+
+    WGPUBufferDescriptor bufferDesc   = WGPU_BUFFER_DESCRIPTOR_INIT;
+    bufferDesc.size                   = sizeof(vertices);
+    bufferDesc.usage                  = WGPUBufferUsage_Vertex | WGPUBufferUsage_CopyDst;
+    webgpu::BufferHandle vertexBuffer = webgpu::BufferHandle::Acquire(
+        wgpu, wgpu->deviceCreateBuffer(context->getDevice().get(), &bufferDesc));
+    wgpu->queueWriteBuffer(context->getQueue().get(), vertexBuffer.get(), 0, vertices,
+                           sizeof(vertices));
+
+    webgpu::CommandBuffer &commandBuffer = context->getCommandBuffer();
+    commandBuffer.setVertexBuffer(0, vertexBuffer, 0, sizeof(vertices));
+    commandBuffer.setViewport(0, 0, dstWidth, dstHeight, /*minDepth=*/0, /*maxDepth=*/1);
+    commandBuffer.setScissorRect(params.dstScissor.x, params.dstScissor.y, params.dstScissor.width,
+                                 params.dstScissor.height);
 
     return angle::Result::Continue;
 }

@@ -38,6 +38,20 @@ struct CopyVertex
     float texCoord[2];
 };
 
+// The vertices of a blit carry the mapping from destination pixels to source texels, which the
+// fragment shader applies to its position, so that the source coordinate of each pixel center is
+// not interpolated. GL_NEAREST uses the exact integer mapping in |nearest|, see
+// UtilsWgpu::BlitParams::NearestAxis.
+struct BlitVertex
+{
+    float position[2];
+    float texScale[2];
+    float texOffset[2];
+    // (q0.x, q0.y, a.x, a.y), (r0.x, r0.y, b.x, b.y), (denominator.x, denominator.y, srcBase.x,
+    // srcBase.y), (srcSign.x, srcSign.y, dstOrigin.x, dstOrigin.y).
+    int32_t nearest[4][4];
+};
+
 struct CopyKey
 {
     GLenum srcComponentType;
@@ -83,18 +97,23 @@ struct BlitKey
 {
     WgpuPipelineOp op;
     GLenum srcComponentType;
+    // Whether the source format can't be sampled with a filtering sampler, so that the shader
+    // filters.
+    bool srcUnfilterable;
     angle::FormatID dstActualFormatID;
     uint32_t srcSamples;
+    bool srcIntendedFormatHasAlphaBits;
     bool dstIntentedFormatHasAlphaBits;
     GLenum filter;
-    uint8_t stencilWriteMask;
 
     bool operator<(const BlitKey &other) const
     {
-        return std::tie(op, srcComponentType, dstActualFormatID, srcSamples,
-                        dstIntentedFormatHasAlphaBits, filter, stencilWriteMask) <
-               std::tie(other.op, other.srcComponentType, other.dstActualFormatID, other.srcSamples,
-                        other.dstIntentedFormatHasAlphaBits, other.filter, other.stencilWriteMask);
+        return std::tie(op, srcComponentType, srcUnfilterable, dstActualFormatID, srcSamples,
+                        srcIntendedFormatHasAlphaBits, dstIntentedFormatHasAlphaBits,
+                        filter) < std::tie(other.op, other.srcComponentType, other.srcUnfilterable,
+                                           other.dstActualFormatID, other.srcSamples,
+                                           other.srcIntendedFormatHasAlphaBits,
+                                           other.dstIntentedFormatHasAlphaBits, other.filter);
     }
 };
 
@@ -125,6 +144,39 @@ class UtilsWgpu : angle::NonCopyable
         RenderTargetWgpu *depthStencilTarget;
     };
 
+    // The geometry of a blit, in texels of the source and destination subresources, with row 0
+    // first.
+    struct BlitParams
+    {
+        // The destination rectangle. It is not reversed.
+        gl::Rectangle dstArea;
+        // The part of dstArea that the blit writes, the scissor.
+        gl::Rectangle dstScissor;
+        // The source rectangle that maps to dstArea. Its width or height is negative if the blit
+        // flips.
+        gl::RectangleImpl<float> srcArea;
+        // The size of the destination subresource.
+        WGPUExtent3D dstSize;
+        GLenum filter;
+
+        // The GL_NEAREST source texel of the destination texel dstOrigin + m, in one axis, is
+        // srcBase + srcSign * (q0 + m * a + (r0 + m * b) / denominator), computed in integers, with
+        // 0 <= r0, b < denominator.
+        struct NearestAxis
+        {
+            int32_t q0          = 0;
+            int32_t a           = 0;
+            int32_t r0          = 0;
+            int32_t b           = 0;
+            int32_t denominator = 1;
+            int32_t srcBase     = 0;
+            int32_t srcSign     = 1;
+            int32_t dstOrigin   = 0;
+        };
+        NearestAxis nearestX;
+        NearestAxis nearestY;
+    };
+
     UtilsWgpu();
     ~UtilsWgpu();
 
@@ -144,21 +196,16 @@ class UtilsWgpu : angle::NonCopyable
                             angle::FormatID dstActualFormatID,
                             const gl::Rectangle *scissor);
 
-    angle::Result blit(ContextWgpu *context,
-                       webgpu::TextureViewHandle src,
-                       webgpu::TextureViewHandle dst,
-                       const gl::Rectangle &sourceArea,
-                       const gl::Rectangle &destArea,
-                       const WGPUExtent3D &srcSize,
-                       const WGPUExtent3D &dstSize,
-                       GLenum filter,
-                       bool srcFlipY,
-                       bool dstFlipY,
-                       uint32_t srcSamples,
-                       const angle::Format &srcFormat,
-                       angle::FormatID dstIntendedFormatID,
-                       angle::FormatID dstActualFormatID,
-                       const gl::Rectangle *scissor);
+    // Blits a color image by sampling it in a draw. The draw converts between the formats.
+    angle::Result blitColor(ContextWgpu *context,
+                            const BlitParams &params,
+                            const webgpu::TextureViewHandle &src,
+                            uint32_t srcSamples,
+                            angle::FormatID srcIntendedFormatID,
+                            angle::FormatID srcActualFormatID,
+                            const webgpu::TextureViewHandle &dst,
+                            angle::FormatID dstIntendedFormatID,
+                            angle::FormatID dstActualFormatID);
 
     angle::Result clear(ContextWgpu *context, ClearParams params);
 
@@ -176,23 +223,19 @@ class UtilsWgpu : angle::NonCopyable
                                   CachedPipeline *cachedPipelineOut);
 
     angle::Result getBlitPipeline(ContextWgpu *context,
-                                  WgpuPipelineOp op,
-                                  GLenum srcComponentType,
-                                  angle::FormatID dstFormatID,
-                                  const webgpu::ShaderModuleHandle &shader,
-                                  CachedPipeline *cachedPipelineOut,
-                                  uint8_t stencilWriteMask);
+                                  const BlitKey &key,
+                                  const CachedPipeline **cachedPipelineOut);
 
     angle::Result getClearPipeline(ContextWgpu *context,
                                    const ClearPipelineKey &key,
                                    const CachedPipeline **cachedPipelineOut);
 
+    // The vertices are CopyVertex, or BlitVertex with blitVertexLayout.
     angle::Result createPipeline(ContextWgpu *context,
-                                 WgpuPipelineOp op,
                                  angle::FormatID dstFormatID,
                                  const webgpu::ShaderModuleHandle &shader,
                                  webgpu::BindGroupLayoutHandle bindGroupLayout,
-                                 uint8_t stencilWriteMask,
+                                 bool blitVertexLayout,
                                  CachedPipeline *cachedPipelineOut);
 
     // This method is intended for copying and blitting operations that use a simple quad
@@ -211,6 +254,12 @@ class UtilsWgpu : angle::NonCopyable
                            bool srcTextureCoordsNormalized,
                            const gl::Rectangle *scissor,
                            uint32_t stencilReference);
+
+    // Starts a render pass with the given attachments and sets the vertex buffer, viewport and
+    // scissor for a blit draw.
+    angle::Result startBlitRenderPass(ContextWgpu *context,
+                                      const BlitParams &params,
+                                      const webgpu::PackedRenderPassDescriptor &renderPassDesc);
 
     CopyPipelineCache mCopyPipelineCache;
     BlitPipelineCache mBlitPipelineCache;
