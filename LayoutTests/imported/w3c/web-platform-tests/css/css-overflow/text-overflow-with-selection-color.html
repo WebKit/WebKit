@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Overflow Test: a selected text-overflow ellipsis is painted with the ::selection color</title>
+<link rel="help" href="https://drafts.csswg.org/css-overflow-3/#text-overflow">
+<link rel="help" href="https://drafts.csswg.org/css-pseudo-4/#highlight-styling">
+<link rel="match" href="text-overflow-with-selection-color-ref.html">
+<meta name="assert" content="When the ellipsis is selected, it is painted with the ::selection color, like the rest of the selected text.">
+<style>
+#container {
+  font-family: monospace;
+  width: 10ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
+  color: red;
+}
+#container::selection {
+  color: green;
+  background-color: transparent;
+}
+</style>
+<p>Test passes if there is no red below.</p>
+<div id="container">0123456789ABCDEF</div>
+<script>
+getSelection().selectAllChildren(container);
+</script>

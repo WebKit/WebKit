@@ -64,8 +64,8 @@ void EllipsisBoxPainter::paint()
 
         // Select the correct color for painting the text.
         auto foreground = m_paintInfo.forceTextColor() ? m_paintInfo.forcedTextColor() : m_selectionForegroundColor;
-        if (foreground.isValid() && foreground != textColor)
-            context.setFillColor(foreground);
+        if (foreground.isValid())
+            textColor = foreground;
     }
 
     if (textColor != context.fillColor())
