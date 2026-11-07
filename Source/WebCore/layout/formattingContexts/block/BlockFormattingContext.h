@@ -148,6 +148,7 @@ private:
     void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);
     LayoutUnit layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState);
     BlockLayoutResult layoutOutOfFlowIndependentFormattingContext(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&, const std::optional<OutOfFlowGeometry::DefaultAnchor>&);
+    void handleFloat(const RenderBox&, BlockLayoutResult&);
     void handleOutOfFlowBox(const RenderBox&, BlockLayoutResult&);
 
     ContainingBlockState containingBlockStateForRoot(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry) const;
@@ -167,7 +168,8 @@ private:
     BlockLayoutResult layoutContent(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry);
     void resolveBorderBoxLogicalTops(ContainingBlockState& blockContainerState);
     void placePendingFloats(LayoutUnit borderBoxLogicalTop);
-    LayoutSize inlineContentOffsetInRoot(const ContainingBlockState&);
+    LayoutSize borderBoxOffsetInRoot(const ContainingBlockState&);
+    void addFloats(PlacedFloats::List&&, const ContainingBlockState&);
     void addInlineContentFloats(const PlacedFloats::List&);
 
     const RenderBlockFlow& root() const { return m_root; }
