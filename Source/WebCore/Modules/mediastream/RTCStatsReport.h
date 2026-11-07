@@ -219,7 +219,6 @@ public:
         std::optional<uint64_t> retransmittedBytesSent;
         std::optional<uint32_t> rtxSsrc;
         std::optional<double> targetBitrate;
-        std::optional<uint64_t> totalEncodedBytesTarget;
         std::optional<uint32_t> frameWidth;
         std::optional<uint32_t> frameHeight;
         std::optional<double> framesPerSecond;

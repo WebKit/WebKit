@@ -25,6 +25,7 @@ use bssl_x509::{
 };
 
 use crate::{
+    config::SrtpProtectionProfile,
     connection::{
         Client,
         Server,
@@ -121,7 +122,6 @@ fn dtls_sync_recv<R>(
             Ok(IoStatus::Retry(TlsRetryReason::WantRead | TlsRetryReason::WantWrite)) => {
                 handle_sync_dtls_timeout(conn)?;
             }
-            Ok(IoStatus::EndOfStream) => break Ok(0),
             Ok(status) => panic!("unexpected status {status:?}"),
             Err(e) => break Err(e),
         }
@@ -147,8 +147,7 @@ fn dtls_sync_shutdown<R>(conn: &mut TlsConnection<R, DtlsMode>) -> Result<(), Er
             break Ok(());
         };
         match established.sync_shutdown() {
-            // TODO: drop Syscall matching here, this is a bad error classification.
-            Ok(None | Some(TlsRetryReason::Syscall)) => break Ok(()),
+            Ok(None) => break Ok(()),
             Ok(Some(TlsRetryReason::WantRead | TlsRetryReason::WantWrite)) => {
                 handle_sync_dtls_timeout(conn)?;
             }
@@ -234,13 +233,11 @@ fn test_async_dtls() -> Result<(), Error> {
 
         let server_data = async {
             let mut buf = [0u8; TEST_DATA.len()];
-            let mut message = ReceiveBuffer::new(&mut buf);
-            let mut read_bytes = 0;
-            while read_bytes < TEST_DATA.len() {
+            loop {
+                let mut message = ReceiveBuffer::new(&mut buf);
                 match server_conn.as_pin_mut().async_recv(&mut message).await? {
-                    IoStatus::Ok(n) => read_bytes += n,
-                    IoStatus::EndOfStream => break,
-                    _ => {}
+                    IoStatus::Ok(n) if n == TEST_DATA.len() => break,
+                    _ => continue,
                 }
             }
             assert_eq!(&buf, TEST_DATA);
@@ -259,5 +256,79 @@ fn test_async_dtls() -> Result<(), Error> {
 
     executor.run(test_future)?;
 
+    Ok(())
+}
+
+#[test]
+fn test_dtls_srtp_invalid_profile() {
+    let mut ctx = TlsContextBuilder::new_dtls();
+    assert!(ctx.with_srtp_profiles(&[]).is_err());
+    assert!(
+        ctx.with_srtp_profiles(&[
+            SrtpProtectionProfile::AeadAes128Gcm,
+            SrtpProtectionProfile::AeadAes128Gcm,
+        ])
+        .is_err()
+    );
+}
+
+#[test]
+fn test_dtls_srtp_negotiation() -> Result<(), Error> {
+    let ca = Certificate::parse_one_from_pem(super::CA, None)?;
+    let server_cert = Certificate::parse_one_from_pem(super::RSA_SERVER_CERT, None)?;
+    let server_key = PrivateKey::from_pem(super::RSA_SERVER_KEY, || unreachable!())?;
+
+    let mut server_ctx_builder = TlsContextBuilder::new_dtls();
+    server_ctx_builder.with_srtp_profiles(&[
+        SrtpProtectionProfile::AeadAes128Gcm,
+        SrtpProtectionProfile::Aes128CmSha1_80,
+    ])?;
+    let server_cred = {
+        let mut builder = TlsCredentialBuilder::new();
+        builder
+            .with_certificate_chain(&[server_cert, ca])?
+            .with_private_key(server_key)?;
+        builder.build()
+    };
+    server_ctx_builder.with_credential(server_cred.unwrap())?;
+    let server_ctx = server_ctx_builder.build();
+    let mut server_conn = server_ctx.new_server_connection();
+    server_conn.with_mtu(500)?;
+    let mut server_conn = server_conn.build();
+    assert_eq!(server_conn.selected_srtp_profile(), None);
+
+    let mut client_ctx_builder = TlsContextBuilder::new_dtls();
+    client_ctx_builder.with_srtp_profiles(&[
+        SrtpProtectionProfile::Aes128CmSha1_80,
+        SrtpProtectionProfile::AeadAes128Gcm,
+    ])?;
+    let ca = X509Certificate::parse_one_from_pem(super::CA)?;
+    let mut cert_store = X509StoreBuilder::new();
+    cert_store.set_trust(Trust::SslServer)?.add_cert(ca)?;
+    let cert_store = cert_store.build();
+    client_ctx_builder.with_certificate_store(&cert_store);
+    let client_ctx = client_ctx_builder.build();
+    let mut client_conn = client_ctx.new_client_connection();
+    client_conn.with_mtu(500)?;
+    let mut client_conn = client_conn.build();
+    assert_eq!(client_conn.selected_srtp_profile(), None);
+
+    let (client_socket, server_socket, mut executor) = super::create_mock_datagram();
+    server_conn.set_datagram_socket(server_socket)?;
+    client_conn.set_datagram_socket(client_socket)?;
+
+    executor.run(async {
+        futures::future::try_join(server_conn.async_handshake(), client_conn.async_handshake())
+            .await
+    })?;
+
+    assert_eq!(
+        server_conn.selected_srtp_profile(),
+        Some(SrtpProtectionProfile::AeadAes128Gcm)
+    );
+    assert_eq!(
+        client_conn.selected_srtp_profile(),
+        Some(SrtpProtectionProfile::AeadAes128Gcm)
+    );
     Ok(())
 }

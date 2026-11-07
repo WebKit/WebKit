@@ -349,7 +349,6 @@ class RTC_EXPORT RTCOutboundRtpStreamStats final
   std::optional<uint32_t> frames_encoded;
   std::optional<uint32_t> key_frames_encoded;
   std::optional<double> total_encode_time;
-  std::optional<uint64_t> total_encoded_bytes_target;
   std::optional<uint32_t> frame_width;
   std::optional<uint32_t> frame_height;
   std::optional<double> frames_per_second;

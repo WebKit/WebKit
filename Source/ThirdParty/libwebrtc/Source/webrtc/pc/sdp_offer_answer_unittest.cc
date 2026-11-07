@@ -114,7 +114,6 @@ class SdpOfferAnswerTest : public ::testing::Test {
       : signaling_thread_(CreateAndStartThread()),
         pc_factory_(CreatePeerConnectionFactory(
             nullptr,
-            nullptr,
             signaling_thread_.get(),
             FakeAudioCaptureModule::Create(),
             CreateBuiltinAudioEncoderFactory(),

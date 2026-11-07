@@ -110,6 +110,11 @@ VideoEncoder::EncoderInfo::EncoderInfo()
       preferred_pixel_formats{VideoFrameBuffer::Type::kI420} {}
 
 VideoEncoder::EncoderInfo::EncoderInfo(const EncoderInfo&) = default;
+VideoEncoder::EncoderInfo::EncoderInfo(EncoderInfo&&) = default;
+VideoEncoder::EncoderInfo& VideoEncoder::EncoderInfo::operator=(
+    const EncoderInfo&) = default;
+VideoEncoder::EncoderInfo& VideoEncoder::EncoderInfo::operator=(EncoderInfo&&) =
+    default;
 
 VideoEncoder::EncoderInfo::~EncoderInfo() = default;
 

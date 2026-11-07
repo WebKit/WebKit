@@ -79,7 +79,6 @@ class AudioSendStream final : public webrtc::AudioSendStream,
                   const scoped_refptr<webrtc::AudioState>& audio_state,
                   RtpTransportControllerSendInterface* rtp_transport,
                   BitrateAllocatorInterface* bitrate_allocator,
-                  const std::optional<RtpState>& suspended_rtp_state,
                   std::unique_ptr<voe::ChannelSendInterface> channel_send);
 
   AudioSendStream() = delete;
@@ -190,7 +189,6 @@ class AudioSendStream final : public webrtc::AudioSendStream,
   RtpTransportControllerSendInterface* const rtp_transport_;
 
   RtpRtcpInterface* const rtp_rtcp_module_;
-  std::optional<RtpState> const suspended_rtp_state_;
 
   // RFC 8285: Each distinct extension MUST have a unique ID.
   // The ID is picked in the SDP offer/answer process; if no ID is

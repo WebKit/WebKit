@@ -50,8 +50,6 @@ typedef struct {
   // Scaling factors used for internal resize scaling for single layer SVC.
   int scaling_factor_num_resize;
   int scaling_factor_den_resize;
-  TWO_PASS twopass;
-  vpx_fixed_buf_t rc_twopass_stats_in;
   unsigned int current_video_frame_in_layer;
   int is_key_frame;
   int frames_from_key_frame;
@@ -230,9 +228,6 @@ void vp9_restore_layer_context(struct VP9_COMP *const cpi);
 
 // Save the layer context after encoding the frame.
 void vp9_save_layer_context(struct VP9_COMP *const cpi);
-
-// Initialize second pass rc for spatial svc.
-void vp9_init_second_pass_spatial_svc(struct VP9_COMP *cpi);
 
 void get_layer_resolution(const int width_org, const int height_org,
                           const int num, const int den, int *width_out,

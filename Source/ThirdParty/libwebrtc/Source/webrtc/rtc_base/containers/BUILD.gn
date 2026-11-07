@@ -36,21 +36,39 @@ rtc_source_set("flat_map") {
   ]
 }
 
-rtc_library("unittests") {
-  testonly = true
-  sources = [
-    "flat_map_unittest.cc",
-    "flat_set_unittest.cc",
-    "flat_tree_unittest.cc",
-  ]
-  deps = [
-    ":flat_containers_internal",
-    ":flat_map",
-    ":flat_set",
-    "../../test:test_support",
-    "//testing/gmock",
-    "//testing/gtest",
-    "//third_party/abseil-cpp/absl/algorithm:container",
-    "//third_party/abseil-cpp/absl/strings:string_view",
-  ]
+if (rtc_include_tests) {
+  rtc_cc_test("flat_map_unittest") {
+    sources = [ "flat_map_unittest.cc" ]
+    deps = [
+      ":flat_containers_internal",
+      ":flat_map",
+      "../../test:test_support",
+      "//testing/gmock",
+      "//testing/gtest",
+      "//third_party/abseil-cpp/absl/algorithm:container",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+
+  rtc_cc_test("flat_set_unittest") {
+    sources = [ "flat_set_unittest.cc" ]
+    deps = [
+      ":flat_containers_internal",
+      ":flat_set",
+      "../../test:test_support",
+      "//testing/gmock",
+      "//testing/gtest",
+    ]
+  }
+
+  rtc_cc_test("flat_tree_unittest") {
+    sources = [ "flat_tree_unittest.cc" ]
+    deps = [
+      ":flat_containers_internal",
+      "../../test:test_support",
+      "//testing/gmock",
+      "//testing/gtest",
+      "//third_party/abseil-cpp/absl/algorithm:container",
+    ]
+  }
 }

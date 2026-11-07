@@ -73,7 +73,7 @@ extern "C" {
 // A consumer may use this symbol in the preprocessor to temporarily build
 // against multiple revisions of BoringSSL at the same time. It is not
 // recommended to do so for longer than is necessary.
-#define BORINGSSL_API_VERSION 43
+#define BORINGSSL_API_VERSION 44
 
 #if defined(BORINGSSL_SHARED_LIBRARY)
 
@@ -287,6 +287,7 @@ typedef struct cbs_st CBS;
 typedef struct cmac_ctx_st CMAC_CTX;
 typedef struct conf_st CONF;
 typedef struct conf_value_st CONF_VALUE;
+typedef struct cpace_ctx_st CPACE_CTX;
 typedef struct crypto_buffer_pool_st CRYPTO_BUFFER_POOL;
 typedef struct crypto_buffer_st CRYPTO_BUFFER;
 typedef struct crypto_ivec_st CRYPTO_IVEC;
@@ -394,7 +395,7 @@ typedef void *OPENSSL_BLOCK;
 #if defined(BORINGSSL_NO_CXX)
 
 #define BORINGSSL_MAKE_DELETER(type, deleter)
-#define BORINGSSL_MAKE_UP_REF(type, up_ref_func)
+#define BORINGSSL_MAKE_UP_REF(type, dup_ref_func)
 #define BORINGSSL_MAKE_STACK_TRAITS(type, init_func, cleanup_func)
 #define BORINGSSL_MAKE_STACK_TRAITS_MOVABLE(type, init_func, cleanup_func, \
                                             move_func)
@@ -526,12 +527,9 @@ class StackAllocatedMovable {
 template <typename T>
 using UniquePtr = std::unique_ptr<T, internal::Deleter>;
 
-#define BORINGSSL_MAKE_UP_REF(type, up_ref_func)             \
-  inline UniquePtr<type> UpRef(type *v) {                    \
-    if (v != nullptr) {                                      \
-      up_ref_func(v);                                        \
-    }                                                        \
-    return UniquePtr<type>(v);                               \
+#define BORINGSSL_MAKE_UP_REF(type, dup_ref_func)            \
+  inline UniquePtr<type> UpRef(const type *v) {              \
+    return UniquePtr<type>(dup_ref_func(v));                 \
   }                                                          \
                                                              \
   inline UniquePtr<type> UpRef(const UniquePtr<type> &ptr) { \

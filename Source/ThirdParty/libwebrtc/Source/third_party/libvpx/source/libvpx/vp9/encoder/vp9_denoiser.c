@@ -714,6 +714,8 @@ void vp9_denoiser_free(VP9_DENOISER *denoiser) {
   vpx_free(denoiser->mc_running_avg_y);
   denoiser->mc_running_avg_y = NULL;
   vpx_free_frame_buffer(&denoiser->last_source);
+  denoiser->num_ref_frames = 0;
+  denoiser->num_layers = 0;
 }
 
 static void force_refresh_longterm_ref(VP9_COMP *const cpi) {

@@ -85,9 +85,8 @@ rtc_library("emulated_network") {
   ]
 }
 
-if (rtc_include_tests && !build_with_chromium) {
-  rtc_library("network_emulation_pc_unittest") {
-    testonly = true
+if (rtc_include_tests) {
+  rtc_cc_test("network_emulation_pc_unittest") {
     sources = [ "network_emulation_pc_unittest.cc" ]
     deps = [
       ":emulated_network",
@@ -118,31 +117,27 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../rtc_base:threading",
     ]
   }
-}
 
-rtc_library("cross_traffic_unittest") {
-  testonly = true
-  sources = [ "cross_traffic_unittest.cc" ]
-  deps = [
-    ":emulated_network",
-    "..:test_support",
-    "../../api:network_emulation_manager_api",
-    "../../api:simulated_network_api",
-    "../../api/test/network_emulation",
-    "../../api/units:data_rate",
-    "../../api/units:data_size",
-    "../../api/units:time_delta",
-    "../../api/units:timestamp",
-    "../../rtc_base:ip_address",
-    "../../rtc_base:logging",
-    "../../rtc_base:task_queue_for_test",
-    "../../system_wrappers",
-  ]
-}
+  rtc_cc_test("cross_traffic_unittest") {
+    sources = [ "cross_traffic_unittest.cc" ]
+    deps = [
+      ":emulated_network",
+      "..:test_support",
+      "../../api:network_emulation_manager_api",
+      "../../api:simulated_network_api",
+      "../../api/test/network_emulation",
+      "../../api/units:data_rate",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../rtc_base:ip_address",
+      "../../rtc_base:logging",
+      "../../rtc_base:task_queue_for_test",
+      "../../system_wrappers",
+    ]
+  }
 
-if (rtc_include_tests) {
-  rtc_library("network_emulation_unittest") {
-    testonly = true
+  rtc_cc_test("network_emulation_unittest") {
     sources = [ "network_emulation_unittest.cc" ]
     deps = [
       ":emulated_network",
@@ -175,6 +170,26 @@ if (rtc_include_tests) {
     ]
   }
 
+  if (rtc_enable_protobuf) {
+    rtc_cc_test("feedback_generator_unittest") {
+      sources = [ "feedback_generator_unittest.cc" ]
+      deps = [
+        "..:test_support",
+        "../../api:create_network_emulation_manager",
+        "../../api:network_emulation_manager_api",
+        "../../api:simulated_network_api",
+        "../../api/rtc_event_log",
+        "../../api/transport:test_feedback_generator",
+        "../../api/transport:test_feedback_generator_interface",
+        "../../api/units:time_delta",
+        "../../logging:rtc_event_log_parser",
+        "../logging:log_writer",
+      ]
+    }
+  }
+}
+
+if (rtc_include_tests) {
   rtc_library("feedback_generator") {
     testonly = true
     sources = [
@@ -205,44 +220,6 @@ if (rtc_include_tests) {
       "//third_party/abseil-cpp/absl/memory",
     ]
   }
-
-  if (rtc_enable_protobuf) {
-    rtc_library("feedback_generator_unittest") {
-      testonly = true
-      sources = [ "feedback_generator_unittest.cc" ]
-      deps = [
-        "..:test_support",
-        "../../api:create_network_emulation_manager",
-        "../../api:network_emulation_manager_api",
-        "../../api:simulated_network_api",
-        "../../api/rtc_event_log",
-        "../../api/transport:test_feedback_generator",
-        "../../api/transport:test_feedback_generator_interface",
-        "../../api/units:time_delta",
-        "../../logging:rtc_event_log_parser",
-        "../logging:log_writer",
-      ]
-    }
-  }
-
-  if (!build_with_chromium) {
-    rtc_library("network_emulation_unittests") {
-      testonly = true
-      deps = [
-        ":cross_traffic_unittest",
-        ":network_emulation_pc_unittest",
-        ":network_emulation_unittest",
-        ":simulated_network_unittest",
-      ]
-      if (rtc_enable_protobuf) {
-        deps += [
-          ":feedback_generator_unittest",
-          ":schedulable_network_behavior_test",
-          ":token_bucket_network_behavior_test",
-        ]
-      }
-    }
-  }
 }
 
 rtc_library("simulated_network") {
@@ -270,8 +247,7 @@ rtc_library("simulated_network") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("simulated_network_unittest") {
-    testonly = true
+  rtc_cc_test("simulated_network_unittest") {
     sources = [ "simulated_network_unittest.cc" ]
     deps = [
       ":simulated_network",
@@ -314,10 +290,9 @@ rtc_library("token_bucket_network_behavior") {
   ]
 }
 if (rtc_include_tests) {
-  rtc_library("token_bucket_network_behavior_test") {
+  rtc_cc_test("token_bucket_network_behavior_unittest") {
     sources = [ "token_bucket_network_behavior_unittest.cc" ]
 
-    testonly = true
     deps = [
       ":token_bucket_network_behavior",
       "..:test_support",
@@ -358,8 +333,7 @@ if (rtc_enable_protobuf) {
   }
 
   if (rtc_include_tests) {
-    rtc_library("schedulable_network_behavior_test") {
-      testonly = true
+    rtc_cc_test("schedulable_network_behavior_test") {
       sources = [ "schedulable_network_behavior_test.cc" ]
       deps = [
         ":schedulable_network_behavior",

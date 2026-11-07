@@ -44,6 +44,7 @@
 #include "rtc_base/network/received_packet.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
+#include "rtc_base/span_helpers.h"
 #include "rtc_base/ssl_adapter.h"
 #include "rtc_base/string_encode.h"
 #include "rtc_base/strings/string_builder.h"
@@ -397,16 +398,16 @@ bool TurnServer::ValidateNonce(absl::string_view nonce) const {
 
   // Decode the timestamp.
   int64_t then;
-  char* p = reinterpret_cast<char*>(&then);
-  size_t len = hex_decode(std::span<char>(p, sizeof(then)),
-                          nonce.substr(0, sizeof(then) * 2));
-  if (len != sizeof(then)) {
+  std::span<uint8_t> p =
+      HexDecode(std::span(reinterpret_cast<uint8_t*>(&then), sizeof(then)),
+                nonce.substr(0, sizeof(then) * 2));
+  if (p.size() != sizeof(then)) {
     return false;
   }
 
   // Verify the HMAC.
   if (nonce.substr(sizeof(then) * 2) !=
-      ComputeHmac(DIGEST_MD5, nonce_key_, std::string(p, sizeof(then)))) {
+      ComputeHmac(DIGEST_MD5, nonce_key_, AsStringView(p))) {
     return false;
   }
 

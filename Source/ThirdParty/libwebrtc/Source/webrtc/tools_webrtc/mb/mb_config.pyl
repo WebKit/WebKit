@@ -25,9 +25,9 @@
       # Android
       'Android32 Builder arm': 'android_pure_release_bot_arm',
       'Android32 Builder x86': 'android_release_bot_x86',
-      'Android32 Builder x86 (dbg)': 'android_debug_static_bot_x86',
+      'Android32 Builder x86 (dbg)': 'android_debug_bot_x86',
       'Android64': 'android_release_bot_arm64',
-      'Android64 (dbg)': 'android_debug_static_bot_arm64',
+      'Android64 (dbg)': 'android_debug_bot_arm64',
       'Android64 (more configs)': {
         'dummy_audio_file_devices_no_protobuf':
         'dummy_audio_file_devices_no_protobuf_android_arm64',
@@ -35,7 +35,7 @@
         'cxx23': 'use_cxx23_android_arm64',
       },
       'Android64 Builder arm64': 'android_pure_release_bot_arm64',
-      'Android64 Builder x64 (dbg)': 'android_debug_static_bot_x64',
+      'Android64 Builder x64 (dbg)': 'android_debug_bot_x64',
 
       # Fuchsia
       'Fuchsia Builder': 'release_bot_x64_fuchsia',
@@ -113,7 +113,7 @@
     },
     'tryserver.webrtc': {
       # Android
-      'android_arm_dbg': 'android_debug_static_bot_arm64',
+      'android_arm_dbg': 'android_debug_bot_arm64',
       'android_arm_more_configs': {
         'dummy_audio_file_devices_no_protobuf':
         'dummy_audio_file_devices_no_protobuf_android_arm64',
@@ -123,11 +123,11 @@
         'cxx23': 'use_cxx23_android_arm64',
       },
       'android_arm_rel': 'android_release_bot_arm64',
-      'android_compile_arm_dbg': 'android_debug_static_bot_arm64',
+      'android_compile_arm_dbg': 'android_debug_bot_arm64',
       'android_compile_arm_rel': 'android_pure_release_bot_arm64',
-      'android_compile_x64_dbg': 'android_debug_static_bot_x64',
+      'android_compile_x64_dbg': 'android_debug_bot_x64',
       'android_compile_x64_rel': 'android_release_bot_x64',
-      'android_compile_x86_dbg': 'android_debug_static_bot_x86',
+      'android_compile_x86_dbg': 'android_debug_bot_x86',
       'android_compile_x86_rel': 'android_release_bot_x86',
 
       # Fuchsia
@@ -211,21 +211,21 @@
   # A given config *may* be platform-specific but is not necessarily so (i.e.,
   # we might have mac, win, and linux bots all using the 'release_bot' config).
   'configs': {
-    'android_debug_static_bot_arm64': [
+    'android_debug_bot_arm64': [
       'android',
-      'debug_static_bot',
+      'debug_bot',
       'arm64',
       'h265',
     ],
-    'android_debug_static_bot_x64': [
+    'android_debug_bot_x64': [
       'android',
-      'debug_static_bot',
+      'debug_bot',
       'x64',
       'h265',
     ],
-    'android_debug_static_bot_x86': [
+    'android_debug_bot_x86': [
       'android',
-      'debug_static_bot',
+      'debug_bot',
       'x86',
       'h265',
     ],
@@ -281,18 +281,26 @@
       'release_bot',
     ],
     'disable_trace_events_x64': ['x64', 'disable_trace_events', 'release_bot'],
-    'disable_trace_events_x86': ['x86', 'disable_trace_events', 'release_bot'],
+    'disable_trace_events_x86': [
+      'x86',
+      'disable_trace_events',
+      'release_bot',
+    ],
     'dummy_audio_file_devices_no_protobuf_android_arm64': [
       'android',
       'arm64',
-      'debug_static_bot',
+      'debug_bot',
       'dummy_audio_file_devices',
       'no_protobuf',
     ],
     'dummy_audio_file_devices_no_protobuf_x64':
     ['debug_bot', 'x64', 'dummy_audio_file_devices', 'no_protobuf'],
-    'dummy_audio_file_devices_no_protobuf_x86':
-    ['debug_bot', 'x86', 'dummy_audio_file_devices', 'no_protobuf'],
+    'dummy_audio_file_devices_no_protobuf_x86': [
+      'debug_bot',
+      'x86',
+      'dummy_audio_file_devices',
+      'no_protobuf',
+    ],
     'ios_debug_bot_arm64': [
       'ios',
       'ios_simulator',
@@ -341,7 +349,13 @@
     ],
     'perfetto_x64': ['x64', 'perfetto', 'release_bot'],
     'perfetto_x86': ['x86', 'perfetto', 'release_bot'],
-    'pure_release_bot_arm64': ['openh264', 'pure_release_bot', 'arm64', 'h265'],
+    'pure_release_bot_arm64': [
+      'openh264',
+      'pure_release_bot',
+      'no_symbols',
+      'arm64',
+      'h265',
+    ],
     'pure_release_bot_x64': ['openh264', 'pure_release_bot', 'x64', 'h265'],
     'pure_release_bot_x86': ['openh264', 'pure_release_bot', 'x86', 'h265'],
     'release_bot_arm': ['openh264', 'release_bot', 'arm', 'h265'],
@@ -353,12 +367,17 @@
     'rtti_no_sctp_android_arm64': [
       'android',
       'arm64',
-      'debug_static_bot',
+      'debug_bot',
       'no_sctp',
       'rtti',
     ],
-    'rtti_no_sctp_no_unicode_win_x86':
-    ['debug_bot', 'x86', 'rtti', 'no_sctp', 'win_undef_unicode'],
+    'rtti_no_sctp_no_unicode_win_x86': [
+      'debug_bot',
+      'x86',
+      'rtti',
+      'no_sctp',
+      'win_undef_unicode',
+    ],
     'rtti_no_sctp_x64': ['debug_bot', 'x64', 'rtti', 'no_sctp'],
     'tsan_clang_release_bot_x64':
     ['tsan', 'clang', 'openh264', 'pure_release_bot', 'x64', 'h265'],
@@ -385,7 +404,6 @@
     'win_asan_clang_release_bot_x64': [
       'asan',
       'clang',
-      'full_symbols',
       'openh264',
       'pure_release_bot',
       'x64',
@@ -409,6 +427,7 @@
       'clang',
       'openh264',
       'pure_release_bot',
+      'no_symbols',
       'x64',
       'h265',
     ],
@@ -462,14 +481,8 @@
     'debug_bot': {
       'mixins': [
         'debug',
-        'remoteexec',
-        'strict_field_trials',
-      ],
-    },
-    'debug_static_bot': {
-      'mixins': [
-        'debug',
         'minimal_symbols',
+        'no_cc_test_bins',
         'remoteexec',
         'strict_field_trials',
       ],
@@ -482,9 +495,6 @@
     },
     'fuchsia': {
       'gn_args': 'target_os="fuchsia"'
-    },
-    'full_symbols': {
-      'gn_args': 'symbol_level=2',
     },
     'h265': {
       'gn_args': 'rtc_use_h265=true',
@@ -511,6 +521,9 @@
     'no_build_ssl': {
       'gn_args': 'rtc_build_ssl=false libsrtp_build_boringssl=false',
     },
+    'no_cc_test_bins': {
+      'gn_args': 'rtc_build_cc_test_bins=false',
+    },
     'no_custom_libcxx': {
       'gn_args': 'use_custom_libcxx=false',
     },
@@ -529,6 +542,9 @@
     'no_sctp': {
       'gn_args': 'rtc_enable_sctp=false',
     },
+    'no_symbols': {
+      'gn_args': 'symbol_level=0',
+    },
     'openh264': {
       'gn_args': 'ffmpeg_branding="Chrome" rtc_use_h264=true',
     },
@@ -546,7 +562,12 @@
     # 100% release build without DCHECKs while 'release_bot' is a partial
     # release configs since `dcheck_always_on` is set to true.
     'pure_release_bot': {
-      'mixins': ['release', 'remoteexec', 'dcheck_off'],
+      'mixins': [
+        'release',
+        'remoteexec',
+        'dcheck_off',
+        'no_cc_test_bins'
+      ],
     },
     'release': {
       'gn_args': 'is_debug=false',
@@ -555,6 +576,7 @@
       'mixins': [
         'pure_release_bot',
         'dcheck_always_on',
+        'no_symbols',
         'strict_field_trials',
       ],
     },

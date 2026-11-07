@@ -253,4 +253,149 @@ if (rtc_include_tests) {
       "transmission_control_block_test.cc",
     ]
   }
+
+  rtc_cc_test("dcsctp_socket_network_test") {
+    deps = [
+      ":dcsctp_socket",
+      "../../../api:create_network_emulation_manager",
+      "../../../api:network_emulation_manager_api",
+      "../../../api:simulated_network_api",
+      "../../../api/task_queue",
+      "../../../api/task_queue:pending_task_safety_flag",
+      "../../../api/test/network_emulation",
+      "../../../api/units:data_rate",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../rtc_base:copy_on_write_buffer",
+      "../../../rtc_base:logging",
+      "../../../rtc_base:random",
+      "../../../rtc_base:socket_address",
+      "../../../rtc_base:stringutils",
+      "../../../rtc_base:threading",
+      "../../../system_wrappers",
+      "../../../test:test_support",
+      "../public:socket",
+      "../public:types",
+      "../testing:testing_macros",
+      "../timer:task_queue_timeout",
+      "//third_party/abseil-cpp/absl/base:nullability",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+    sources = [ "dcsctp_socket_network_test.cc" ]
+  }
+
+  rtc_cc_test("dcsctp_socket_test") {
+    deps = [
+      ":dcsctp_socket",
+      ":mock_callbacks",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../rtc_base:logging",
+      "../../../test:test_support",
+      "../common:handover_testing",
+      "../common:internal_types",
+      "../common:math",
+      "../packet:chunk",
+      "../packet:data",
+      "../packet:error_cause",
+      "../packet:parameter",
+      "../packet:sctp_packet",
+      "../packet:tlv_trait",
+      "../public:socket",
+      "../public:types",
+      "../public:utils",
+      "../rx:reassembly_queue",
+      "../testing:testing_macros",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+    sources = [ "dcsctp_socket_test.cc" ]
+  }
+
+  rtc_cc_test("heartbeat_handler_test") {
+    deps = [
+      ":heartbeat_handler",
+      ":mock_callbacks",
+      ":mock_context",
+      "../../../api/task_queue",
+      "../../../api/units:time_delta",
+      "../../../test:test_support",
+      "../packet:chunk",
+      "../packet:parameter",
+      "../packet:sctp_packet",
+      "../public:types",
+      "../testing:testing_macros",
+      "../timer",
+    ]
+    sources = [ "heartbeat_handler_test.cc" ]
+  }
+
+  rtc_cc_test("packet_sender_test") {
+    deps = [
+      ":mock_callbacks",
+      ":packet_sender",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../packet:chunk",
+      "../packet:sctp_packet",
+      "../public:socket",
+      "../public:types",
+    ]
+    sources = [ "packet_sender_test.cc" ]
+  }
+
+  rtc_cc_test("state_cookie_test") {
+    deps = [
+      ":dcsctp_socket",
+      ":transmission_control_block",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../public:types",
+      "../testing:testing_macros",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+    sources = [ "state_cookie_test.cc" ]
+  }
+
+  rtc_cc_test("stream_reset_handler_test") {
+    deps = [
+      ":mock_callbacks",
+      ":mock_context",
+      ":stream_reset_handler",
+      "../../../api/task_queue",
+      "../../../api/units:time_delta",
+      "../../../test:test_support",
+      "../common:handover_testing",
+      "../common:internal_types",
+      "../packet:chunk",
+      "../packet:parameter",
+      "../packet:sctp_packet",
+      "../public:socket",
+      "../public:types",
+      "../rx:data_tracker",
+      "../rx:reassembly_queue",
+      "../testing:data_generator",
+      "../testing:testing_macros",
+      "../timer",
+      "../tx:mock_send_queue",
+      "../tx:retransmission_queue",
+    ]
+    sources = [ "stream_reset_handler_test.cc" ]
+  }
+
+  rtc_cc_test("transmission_control_block_test") {
+    deps = [
+      ":mock_callbacks",
+      ":packet_sender",
+      ":transmission_control_block",
+      "../../../api/task_queue",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../public:socket",
+      "../public:types",
+      "../timer",
+      "../tx:mock_send_queue",
+    ]
+    sources = [ "transmission_control_block_test.cc" ]
+  }
 }

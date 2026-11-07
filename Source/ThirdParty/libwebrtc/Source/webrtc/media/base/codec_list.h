@@ -100,7 +100,7 @@ class CodecList {
   template <typename Sink>
   friend void AbslStringify(Sink& sink, const CodecList& list) {
     absl::Format(&sink, "\n--- Codec list of size %d\n", list.size());
-    for (Codec codec : list) {
+    for (const Codec& codec : list) {
       absl::Format(&sink, "%v\n", codec);
     }
     sink.Append("--- End\n");

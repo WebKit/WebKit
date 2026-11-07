@@ -9,10 +9,13 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include <assert.h>
 #include <emmintrin.h>  // SSE2
 
 #include "config/av1_rtcd.h"
 #include "aom_dsp/x86/synonyms.h"
+#include "aom_ports/mem.h"
+#include "av1/encoder/random.h"
 
 static int64_t k_means_horizontal_sum_sse2(__m128i a) {
   const __m128i sum1 = _mm_unpackhi_epi64(a, a);
@@ -120,5 +123,103 @@ void av1_calc_indices_dim2_sse2(const int16_t *data, const int16_t *centroids,
   }
   if (total_dist) {
     *total_dist = k_means_horizontal_sum_sse2(sum);
+  }
+}
+
+// Adds the pixels of d0 and d1 picked by the byte mask to the count and sum
+// accumulators.
+static inline void accumulate_cluster_sse2(__m128i mask, __m128i d0, __m128i d1,
+                                           __m128i *count_acc,
+                                           __m128i *sum_acc) {
+  const __m128i ones = _mm_set1_epi16(1);
+  const __m128i mask0 = _mm_unpacklo_epi8(mask, mask);
+  const __m128i mask1 = _mm_unpackhi_epi8(mask, mask);
+  // Each int16 lane counts at most 2 * 32768 / 16 pixels.
+  *count_acc = _mm_sub_epi16(*count_acc, _mm_add_epi16(mask0, mask1));
+  *sum_acc = _mm_add_epi32(
+      *sum_acc, _mm_add_epi32(_mm_madd_epi16(_mm_and_si128(d0, mask0), ones),
+                              _mm_madd_epi16(_mm_and_si128(d1, mask1), ones)));
+}
+
+static inline void add_cluster_sse2(__m128i count_acc, __m128i sum_acc,
+                                    int *count, int *sum) {
+  const __m128i ones = _mm_set1_epi16(1);
+  // Add up the sum and the count together, they end up in lanes 0 and 2.
+  const __m128i count32 = _mm_madd_epi16(count_acc, ones);
+  __m128i t = _mm_add_epi32(_mm_unpacklo_epi64(sum_acc, count32),
+                            _mm_unpackhi_epi64(sum_acc, count32));
+  t = _mm_add_epi32(t, _mm_srli_epi64(t, 32));
+  *sum += _mm_cvtsi128_si32(t);
+  *count += _mm_cvtsi128_si32(_mm_srli_si128(t, 8));
+}
+
+// Adds the size and the pixel sum of cluster j to count and sum.
+static inline void count_and_sum_sse2(const int16_t *data,
+                                      const uint8_t *indices, int n16, int j,
+                                      int *count, int *sum) {
+  const __m128i index = _mm_set1_epi8(j);
+  __m128i count_acc = _mm_setzero_si128();
+  __m128i sum_acc = _mm_setzero_si128();
+  for (int i = 0; i < n16; i += 16) {
+    // All ones in the lanes that belong to cluster j.
+    const __m128i mask =
+        _mm_cmpeq_epi8(_mm_loadu_si128((const __m128i *)(indices + i)), index);
+    const __m128i d0 = _mm_loadu_si128((const __m128i *)(data + i));
+    const __m128i d1 = _mm_loadu_si128((const __m128i *)(data + i + 8));
+    accumulate_cluster_sse2(mask, d0, d1, &count_acc, &sum_acc);
+  }
+  add_cluster_sse2(count_acc, sum_acc, &count[j], &sum[j]);
+}
+
+// Adds the size and the pixel sum of the clusters j and j + 1 to count and
+// sum. Two clusters per pass share the loads.
+static inline void count_and_sum_pair_sse2(const int16_t *data,
+                                           const uint8_t *indices, int n16,
+                                           int j, int *count, int *sum) {
+  const __m128i index0 = _mm_set1_epi8(j);
+  const __m128i index1 = _mm_set1_epi8(j + 1);
+  __m128i count_acc[2] = { _mm_setzero_si128(), _mm_setzero_si128() };
+  __m128i sum_acc[2] = { _mm_setzero_si128(), _mm_setzero_si128() };
+  for (int i = 0; i < n16; i += 16) {
+    const __m128i idx = _mm_loadu_si128((const __m128i *)(indices + i));
+    const __m128i d0 = _mm_loadu_si128((const __m128i *)(data + i));
+    const __m128i d1 = _mm_loadu_si128((const __m128i *)(data + i + 8));
+    // All ones in the lanes that belong to cluster j or j + 1.
+    accumulate_cluster_sse2(_mm_cmpeq_epi8(idx, index0), d0, d1, &count_acc[0],
+                            &sum_acc[0]);
+    accumulate_cluster_sse2(_mm_cmpeq_epi8(idx, index1), d0, d1, &count_acc[1],
+                            &sum_acc[1]);
+  }
+  add_cluster_sse2(count_acc[0], sum_acc[0], &count[j], &sum[j]);
+  add_cluster_sse2(count_acc[1], sum_acc[1], &count[j + 1], &sum[j + 1]);
+}
+
+void av1_calc_centroids_dim1_sse2(const int16_t *data, int16_t *centroids,
+                                  const uint8_t *indices, int n, int k) {
+  int count[PALETTE_MAX_SIZE] = { 0 };
+  int sum[PALETTE_MAX_SIZE] = { 0 };
+  const int n16 = n & ~15;
+  assert(n <= 32768);
+
+  for (int i = n16; i < n; ++i) {
+    ++count[indices[i]];
+    sum[indices[i]] += data[i];
+  }
+
+  int j = 0;
+  for (; j + 1 < k; j += 2) {
+    count_and_sum_pair_sse2(data, indices, n16, j, count, sum);
+  }
+  if (j < k) {
+    count_and_sum_sse2(data, indices, n16, j, count, sum);
+  }
+
+  unsigned int rand_state = (unsigned int)data[0];
+  for (j = 0; j < k; ++j) {
+    if (count[j] == 0) {
+      centroids[j] = data[lcg_rand16(&rand_state) % n];
+    } else {
+      centroids[j] = DIVIDE_AND_ROUND(sum[j], count[j]);
+    }
   }
 }

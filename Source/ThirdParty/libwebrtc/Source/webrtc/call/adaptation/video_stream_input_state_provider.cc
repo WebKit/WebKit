@@ -37,7 +37,7 @@ void VideoStreamInputStateProvider::OnFrameSizeObserved(int frame_size_pixels) {
 }
 
 void VideoStreamInputStateProvider::OnEncoderSettingsChanged(
-    EncoderSettings encoder_settings) {
+    const EncoderSettings& encoder_settings) {
   MutexLock lock(&mutex_);
   input_state_.set_video_codec_type(
       encoder_settings.encoder_config().codec_type);

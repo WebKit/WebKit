@@ -28,6 +28,7 @@ BSSL_NAMESPACE_BEGIN
 
 struct ParsedCrlTbsCertList;
 struct ParsedDistributionPoint;
+class VerifyCertificateChainDelegate;
 
 // TODO(https://crbug.com/749276): This is the same enum with the same meaning
 // as OCSPRevocationStatus, maybe they should be merged?
@@ -99,9 +100,6 @@ enum class CrlVersion {
 
 // Corresponds with "TBSCertList" from RFC 5280 Section 5.1:
 struct OPENSSL_EXPORT ParsedCrlTbsCertList {
-  ParsedCrlTbsCertList();
-  ~ParsedCrlTbsCertList();
-
   //         version                 Version OPTIONAL,
   //                                      -- if present, MUST be v2
   //
@@ -220,6 +218,13 @@ GetCRLStatusForCert(der::Input cert_serial, CrlVersion crl_version,
 //        implemented as time since the `thisUpdate` field in the CRL
 //        TBSCertList. Responses older than `max_age_seconds` will be
 //        considered invalid.
+//  * `delegate`: Used to check the signature algorithm.
+[[nodiscard]] OPENSSL_EXPORT CRLRevocationStatus CheckCRL(
+    std::string_view raw_crl, const ParsedCertificateList &valid_chain,
+    size_t target_cert_index, const ParsedDistributionPoint &cert_dp,
+    int64_t verify_time_epoch_seconds, std::optional<int64_t> max_age_seconds,
+    VerifyCertificateChainDelegate* delegate);
+
 [[nodiscard]] OPENSSL_EXPORT CRLRevocationStatus CheckCRL(
     std::string_view raw_crl, const ParsedCertificateList &valid_chain,
     size_t target_cert_index, const ParsedDistributionPoint &cert_dp,

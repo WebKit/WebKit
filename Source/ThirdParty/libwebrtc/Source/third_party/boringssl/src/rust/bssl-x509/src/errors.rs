@@ -14,11 +14,22 @@
 
 //! X.509 certificate verification errors.
 
-use core::ffi::{CStr, c_char};
-use core::fmt::{self, Debug, Display};
+use core::{
+    ffi::{
+        CStr,
+        c_char, //
+    },
+    fmt::{
+        self,
+        Debug,
+        Display, //
+    }, //
+};
 
-use bssl_macros::bssl_enum;
-use bssl_sys::LibCode;
+use bssl_crypto::{
+    LibCode,
+    bssl_enum, //
+};
 
 bssl_enum! {
     /// X.509 certificate verification result code.

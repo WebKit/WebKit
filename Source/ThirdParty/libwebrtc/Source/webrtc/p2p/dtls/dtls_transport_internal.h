@@ -100,6 +100,9 @@ class DtlsTransportInternal : public PacketTransportInternal {
     return false;
   }
 
+  // Enable early DTLS start because DTLS-in-STUN was negotiated.
+  virtual void MaybeStartDtlsInStun() = 0;
+
   // Set DTLS remote fingerprint and role. Must be after local identity set.
   virtual RTCError SetRemoteParameters(absl::string_view digest_alg,
                                        const uint8_t* digest,

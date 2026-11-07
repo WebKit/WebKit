@@ -143,7 +143,7 @@ void X509_get0_uids(const X509 *x509, const ASN1_BIT_STRING **out_issuer_uid,
   }
 }
 
-int X509_set_pubkey(X509 *x, EVP_PKEY *pkey) {
+int X509_set_pubkey(X509 *x, const EVP_PKEY *pkey) {
   if (x == nullptr) {
     return 0;
   }

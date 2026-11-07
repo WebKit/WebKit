@@ -162,6 +162,22 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
   ~RtpRtcpRtxNackTest() override {}
 
   void SetUp() override {
+    CreateSendModule(kRtxOff);
+    media_receiver_ = transport_.stream_receiver_controller_.CreateReceiver(
+        kTestSsrc, &media_stream_);
+
+    for (size_t n = 0; n < sizeof(payload_data); n++) {
+      payload_data[n] = n % 10;
+    }
+  }
+
+  // Creates the RTP module, which sends RTX with `rtx_mode`, and the
+  // RTPSenderVideo that uses it.
+  void CreateSendModule(RtxMode rtx_mode) {
+    // `rtp_sender_video_` uses the module, which uses `receive_statistics_`,
+    // so they are deleted in that order before being replaced.
+    rtp_sender_video_ = nullptr;
+    rtp_rtcp_module_ = nullptr;
     RtpRtcpInterface::Configuration configuration;
     configuration.audio = false;
     receive_statistics_ = ReceiveStatistics::Create(&fake_clock_);
@@ -170,6 +186,9 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
     configuration.retransmission_rate_limiter = &retransmission_rate_limiter_;
     configuration.local_media_ssrc = kTestSsrc;
     configuration.rtx_send_ssrc = kTestRtxSsrc;
+    configuration.rtx_mode = rtx_mode;
+    configuration.rtx_payload_types = {{kPayloadType, kRtxPayloadType}};
+    configuration.rtp_state = RtpState{.start_timestamp = 111111};
     configuration.rtcp_mode = RtcpMode::kCompound;
     rtp_rtcp_module_ =
         ModuleRtpRtcpImpl2::CreateSendModule(env_, configuration);
@@ -181,19 +200,11 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
     rtp_rtcp_module_->SetStorePacketsStatus(true, 600);
     EXPECT_EQ(0, rtp_rtcp_module_->SetSendingStatus(true));
     rtp_rtcp_module_->SetSequenceNumber(kTestSequenceNumber);
-    rtp_rtcp_module_->SetStartTimestamp(111111);
 
     // Used for NACK processing.
     rtp_rtcp_module_->SetRemoteSSRC(kTestSsrc);
 
-    rtp_rtcp_module_->SetRtxSendPayloadType(kRtxPayloadType, kPayloadType);
     transport_.SetSendModule(rtp_rtcp_module_.get());
-    media_receiver_ = transport_.stream_receiver_controller_.CreateReceiver(
-        kTestSsrc, &media_stream_);
-
-    for (size_t n = 0; n < sizeof(payload_data); n++) {
-      payload_data[n] = n % 10;
-    }
   }
 
   int BuildNackList(uint16_t* nack_list) {
@@ -232,7 +243,7 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
   void RunRtxTest(RtxMode rtx_method, int loss) {
     rtx_receiver_ = transport_.stream_receiver_controller_.CreateReceiver(
         kTestRtxSsrc, &rtx_stream_);
-    rtp_rtcp_module_->SetRtxSendStatus(rtx_method);
+    CreateSendModule(rtx_method);
     transport_.DropEveryNthPacket(loss);
     uint32_t timestamp = 3000;
     uint16_t nack_list[kVideoNackListSize];

@@ -100,11 +100,11 @@ impl<Socket: DatagramSocket, Reactor: PollFor<Socket> + Send> AbstractWriter
     ) -> AbstractSocketResult {
         loop {
             match (self.socket.send(buffer), async_ctx.as_mut()) {
-                (AbstractSocketResult::Retry, Some(ctx)) => {
-                    if matches!(self.reactor.poll_write(ctx), Poll::Pending) {
-                        return AbstractSocketResult::Retry;
-                    }
-                }
+                (AbstractSocketResult::Retry, Some(ctx)) => match self.reactor.poll_write(ctx) {
+                    Poll::Pending => return AbstractSocketResult::Retry,
+                    Poll::Ready(Ok(())) => {}
+                    Poll::Ready(Err(e)) => return AbstractSocketResult::Err(Box::new(e)),
+                },
                 (res, _) => return res,
             }
         }

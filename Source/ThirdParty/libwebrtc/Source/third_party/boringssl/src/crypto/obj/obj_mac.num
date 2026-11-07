@@ -959,9 +959,9 @@ ML_DSA_65		968
 ML_DSA_87		969
 ML_KEM_768		970
 X_Wing		972
-alg_mtcProof_draft		976
-rdna_trustAnchorID_draft		977
-pe_mtcCertificationAuthority_draft		978
-SLH_DSA_SHA2_128s		979
-SLH_DSA_SHAKE_256f		980
-SLH_DSA_SHA2_128s_WITH_SHA256		981
+SLH_DSA_SHA2_128s		973
+SLH_DSA_SHAKE_256f		974
+SLH_DSA_SHA2_128s_WITH_SHA256		975
+alg_mtcProof		976
+rdna_trustAnchorID		977
+pe_mtcCertificationAuthority_SHA256		978

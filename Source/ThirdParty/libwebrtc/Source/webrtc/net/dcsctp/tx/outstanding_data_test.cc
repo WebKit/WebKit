@@ -9,6 +9,8 @@
  */
 #include "net/dcsctp/tx/outstanding_data.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <vector>
 
@@ -95,7 +97,7 @@ TEST_F(OutstandingDataTest, InsertChunk) {
 TEST_F(OutstandingDataTest, AcksSingleChunk) {
   buf_.Insert(kMessageId, gen_.Ordered({1}, "BE"), kNow);
   OutstandingData::AckInfo ack =
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(10)), {}, false);
+      buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(10)), {}, false);
 
   EXPECT_EQ(ack.bytes_acked, DataChunk::kHeaderSize + RoundUpTo4(1));
   EXPECT_EQ(ack.highest_tsn_acked.Wrap(), TSN(10));
@@ -113,7 +115,7 @@ TEST_F(OutstandingDataTest, AcksSingleChunk) {
 
 TEST_F(OutstandingDataTest, AcksPreviousChunkDoesntUpdate) {
   buf_.Insert(kMessageId, gen_.Ordered({1}, "BE"), kNow);
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), {}, false);
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), {}, false);
 
   EXPECT_EQ(buf_.unacked_payload_bytes(), 1u);
   EXPECT_EQ(buf_.unacked_items(), 1u);
@@ -132,7 +134,7 @@ TEST_F(OutstandingDataTest, AcksAndNacksWithGapAckBlocks) {
 
   std::vector<SackChunk::GapAckBlock> gab = {SackChunk::GapAckBlock(2, 2)};
   OutstandingData::AckInfo ack =
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab, false);
+      buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab, false);
   EXPECT_EQ(ack.bytes_acked, DataChunk::kHeaderSize + RoundUpTo4(1));
   EXPECT_EQ(ack.highest_tsn_acked.Wrap(), TSN(11));
   EXPECT_FALSE(ack.has_packet_loss);
@@ -155,16 +157,16 @@ TEST_F(OutstandingDataTest, NacksThreeTimesWithSameTsnDoesntRetransmit) {
   buf_.Insert(kMessageId, gen_.Ordered({1}, "E"), kNow);
 
   std::vector<SackChunk::GapAckBlock> gab1 = {SackChunk::GapAckBlock(2, 2)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab1, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab1, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab1, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab1, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab1, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab1, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
   EXPECT_THAT(buf_.GetChunkStatesForTesting(),
@@ -180,18 +182,18 @@ TEST_F(OutstandingDataTest, NacksThreeTimesResultsInRetransmission) {
   buf_.Insert(kMessageId, gen_.Ordered({1}, "E"), kNow);
 
   std::vector<SackChunk::GapAckBlock> gab1 = {SackChunk::GapAckBlock(2, 2)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab1, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab1, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
   std::vector<SackChunk::GapAckBlock> gab2 = {SackChunk::GapAckBlock(2, 3)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab2, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab2, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
   std::vector<SackChunk::GapAckBlock> gab3 = {SackChunk::GapAckBlock(2, 4)};
   OutstandingData::AckInfo ack =
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab3, false);
+      buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab3, false);
   EXPECT_EQ(ack.bytes_acked, DataChunk::kHeaderSize + RoundUpTo4(1));
   EXPECT_EQ(ack.highest_tsn_acked.Wrap(), TSN(13));
   EXPECT_TRUE(ack.has_packet_loss);
@@ -205,9 +207,9 @@ TEST_F(OutstandingDataTest, NacksThreeTimesResultsInRetransmission) {
                           Pair(TSN(12), State::kAcked),              //
                           Pair(TSN(13), State::kAcked)));
 
-  EXPECT_THAT(buf_.GetChunksToBeFastRetransmitted(1000),
+  EXPECT_THAT(buf_.GetChunksToBeFastRetransmitted(kNow, 1000),
               ElementsAre(Pair(TSN(10), _)));
-  EXPECT_THAT(buf_.GetChunksToBeRetransmitted(1000), IsEmpty());
+  EXPECT_THAT(buf_.GetChunksToBeRetransmitted(kNow, 1000), IsEmpty());
 }
 
 TEST_F(OutstandingDataTest, NacksThreeTimesResultsInAbandoning) {
@@ -218,20 +220,20 @@ TEST_F(OutstandingDataTest, NacksThreeTimesResultsInAbandoning) {
   buf_.Insert(kMessageId, gen_.Ordered({1}, "E"), kNow, kMaxRetransmissions);
 
   std::vector<SackChunk::GapAckBlock> gab1 = {SackChunk::GapAckBlock(2, 2)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab1, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab1, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
   std::vector<SackChunk::GapAckBlock> gab2 = {SackChunk::GapAckBlock(2, 3)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab2, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab2, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
   EXPECT_CALL(on_discard_, Call(StreamID(1), kMessageId))
       .WillOnce(Return(false));
   std::vector<SackChunk::GapAckBlock> gab3 = {SackChunk::GapAckBlock(2, 4)};
   OutstandingData::AckInfo ack =
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab3, false);
+      buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab3, false);
   EXPECT_EQ(ack.bytes_acked, DataChunk::kHeaderSize + RoundUpTo4(1));
   EXPECT_EQ(ack.highest_tsn_acked.Wrap(), TSN(13));
   EXPECT_TRUE(ack.has_packet_loss);
@@ -254,20 +256,20 @@ TEST_F(OutstandingDataTest, NacksThreeTimesResultsInAbandoningWithPlaceholder) {
   buf_.Insert(kMessageId, gen_.Ordered({1}, ""), kNow, kMaxRetransmissions);
 
   std::vector<SackChunk::GapAckBlock> gab1 = {SackChunk::GapAckBlock(2, 2)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab1, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab1, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
   std::vector<SackChunk::GapAckBlock> gab2 = {SackChunk::GapAckBlock(2, 3)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab2, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab2, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
   EXPECT_CALL(on_discard_, Call(StreamID(1), kMessageId))
       .WillOnce(Return(true));
   std::vector<SackChunk::GapAckBlock> gab3 = {SackChunk::GapAckBlock(2, 4)};
   OutstandingData::AckInfo ack =
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab3, false);
+      buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab3, false);
   EXPECT_EQ(ack.bytes_acked, DataChunk::kHeaderSize + RoundUpTo4(1));
   EXPECT_EQ(ack.highest_tsn_acked.Wrap(), TSN(13));
   EXPECT_TRUE(ack.has_packet_loss);
@@ -319,7 +321,7 @@ TEST_F(OutstandingDataTest, CanGenerateForwardTsn) {
 
   EXPECT_CALL(on_discard_, Call(StreamID(1), kMessageId))
       .WillOnce(Return(false));
-  buf_.NackAll();
+  buf_.NackAll(kNow);
 
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
   EXPECT_THAT(buf_.GetChunkStatesForTesting(),
@@ -356,7 +358,7 @@ TEST_F(OutstandingDataTest, AckWithGapBlocksFromRFC4960Section334) {
 
   std::vector<SackChunk::GapAckBlock> gab = {SackChunk::GapAckBlock(2, 3),
                                              SackChunk::GapAckBlock(5, 5)};
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(12)), gab, false);
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(12)), gab, false);
 
   EXPECT_THAT(buf_.GetChunkStatesForTesting(),
               ElementsAre(Pair(TSN(12), State::kAcked),   //
@@ -394,18 +396,18 @@ TEST_F(OutstandingDataTest, MustRetransmitBeforeGettingNackedAgain) {
   }
 
   std::vector<SackChunk::GapAckBlock> gab1 = {SackChunk::GapAckBlock(2, 2)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab1, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab1, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
   std::vector<SackChunk::GapAckBlock> gab2 = {SackChunk::GapAckBlock(2, 3)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab2, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab2, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
   std::vector<SackChunk::GapAckBlock> gab3 = {SackChunk::GapAckBlock(2, 4)};
   OutstandingData::AckInfo ack =
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab3, false);
+      buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab3, false);
   EXPECT_TRUE(ack.has_packet_loss);
   EXPECT_TRUE(buf_.has_data_to_be_retransmitted());
 
@@ -414,47 +416,108 @@ TEST_F(OutstandingDataTest, MustRetransmitBeforeGettingNackedAgain) {
   // SACKs indicating packet loss.
 
   std::vector<SackChunk::GapAckBlock> gab4 = {SackChunk::GapAckBlock(2, 5)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab4, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab4, false)
+                   .has_packet_loss);
   EXPECT_TRUE(buf_.has_data_to_be_retransmitted());
 
   std::vector<SackChunk::GapAckBlock> gab5 = {SackChunk::GapAckBlock(2, 6)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab5, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab5, false)
+                   .has_packet_loss);
   EXPECT_TRUE(buf_.has_data_to_be_retransmitted());
 
   std::vector<SackChunk::GapAckBlock> gab6 = {SackChunk::GapAckBlock(2, 7)};
   OutstandingData::AckInfo ack2 =
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab6, false);
+      buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab6, false);
 
   EXPECT_FALSE(ack2.has_packet_loss);
   EXPECT_TRUE(buf_.has_data_to_be_retransmitted());
 
   // Now it's retransmitted.
-  EXPECT_THAT(buf_.GetChunksToBeFastRetransmitted(1000),
+  EXPECT_THAT(buf_.GetChunksToBeFastRetransmitted(kNow, 1000),
               ElementsAre(Pair(TSN(10), _)));
-  EXPECT_THAT(buf_.GetChunksToBeRetransmitted(1000), IsEmpty());
+  EXPECT_THAT(buf_.GetChunksToBeRetransmitted(kNow, 1000), IsEmpty());
+
+  // SACKs that only newly ack chunks sent before the retransmission don't count
+  // as miss indications - see
+  // SacksPredatingRetransmissionAreNotMissIndications. So send more data after
+  // the retransmission (TSN 21..23).
+  for (int tsn = 21; tsn <= 23; ++tsn) {
+    buf_.Insert(kMessageId, gen_.Ordered({1}, ""), kNow + TimeDelta::Millis(1),
+                kOneRetransmission);
+  }
 
   // And obviously lost, as it will get NACKed and abandoned.
-  std::vector<SackChunk::GapAckBlock> gab7 = {SackChunk::GapAckBlock(2, 8)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab7, false).has_packet_loss);
+  std::vector<SackChunk::GapAckBlock> gab7 = {SackChunk::GapAckBlock(2, 12)};
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab7, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
-  std::vector<SackChunk::GapAckBlock> gab8 = {SackChunk::GapAckBlock(2, 9)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab8, false).has_packet_loss);
+  std::vector<SackChunk::GapAckBlock> gab8 = {SackChunk::GapAckBlock(2, 13)};
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab8, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
   EXPECT_CALL(on_discard_, Call(StreamID(1), kMessageId))
       .WillOnce(Return(false));
 
-  std::vector<SackChunk::GapAckBlock> gab9 = {SackChunk::GapAckBlock(2, 10)};
+  std::vector<SackChunk::GapAckBlock> gab9 = {SackChunk::GapAckBlock(2, 14)};
   OutstandingData::AckInfo ack3 =
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab9, false);
+      buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab9, false);
 
   EXPECT_TRUE(ack3.has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
+}
+
+TEST_F(OutstandingDataTest, SacksPredatingRetransmissionAreNotMissIndications) {
+  // TSN 10..30 are sent in a burst, and TSN 10 is lost.
+  for (int tsn = 10; tsn <= 30; ++tsn) {
+    buf_.Insert(kMessageId, gen_.Ordered({1}, "BE"), kNow);
+  }
+
+  // The SACKs for TSN 11, 12 and 13 result in TSN 10 being fast retransmitted.
+  for (int end = 2; end <= 3; ++end) {
+    std::vector<SackChunk::GapAckBlock> gab = {SackChunk::GapAckBlock(2, end)};
+    EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab, false)
+                     .has_packet_loss);
+  }
+  std::vector<SackChunk::GapAckBlock> gab = {SackChunk::GapAckBlock(2, 4)};
+  EXPECT_TRUE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab, false)
+                  .has_packet_loss);
+  EXPECT_THAT(buf_.GetChunksToBeFastRetransmitted(kNow, 1000),
+              ElementsAre(Pair(TSN(10), _)));
+  EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
+
+  // The receiver will continue to receive TSN 14..30, which were all sent
+  // before the retransmission of TSN 10 could have reached it. The SACKs for
+  // those still report TSN 10 as missing, but they can't be used as evidence
+  // that the retransmission was lost.
+  for (int end = 5; end <= 21; ++end) {
+    std::vector<SackChunk::GapAckBlock> gab2 = {SackChunk::GapAckBlock(2, end)};
+    EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab2, true)
+                     .has_packet_loss)
+        << "gap ack block end=" << end;
+    EXPECT_FALSE(buf_.has_data_to_be_retransmitted())
+        << "gap ack block end=" << end;
+  }
+
+  // New data (TSN 31..33) is sent after the retransmission. SACKs for these
+  // are valid miss indications for the retransmitted TSN 10.
+  for (int tsn = 31; tsn <= 33; ++tsn) {
+    buf_.Insert(kMessageId, gen_.Ordered({1}, "BE"),
+                kNow + TimeDelta::Millis(100));
+  }
+  for (int end = 22; end <= 23; ++end) {
+    std::vector<SackChunk::GapAckBlock> gab3 = {SackChunk::GapAckBlock(2, end)};
+    EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab3, true)
+                     .has_packet_loss);
+    EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
+  }
+  std::vector<SackChunk::GapAckBlock> gab4 = {SackChunk::GapAckBlock(2, 24)};
+  EXPECT_TRUE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab4, true)
+                  .has_packet_loss);
+  // It is fast retransmitted again, even though in fast recovery.
+  EXPECT_THAT(buf_.GetChunksToBeFastRetransmitted(kNow, 1000),
+              ElementsAre(Pair(TSN(10), _)));
 }
 
 TEST_F(OutstandingDataTest, LifecyleReturnsAckedItemsInAckInfo) {
@@ -469,13 +532,13 @@ TEST_F(OutstandingDataTest, LifecyleReturnsAckedItemsInAckInfo) {
               LifecycleId(44));
 
   OutstandingData::AckInfo ack1 =
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(11)), {}, false);
+      buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(11)), {}, false);
 
   EXPECT_THAT(ack1.acked_lifecycle_ids,
               ElementsAre(LifecycleId(42), LifecycleId(43)));
 
   OutstandingData::AckInfo ack2 =
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(12)), {}, false);
+      buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(12)), {}, false);
 
   EXPECT_THAT(ack2.acked_lifecycle_ids, ElementsAre(LifecycleId(44)));
 }
@@ -488,20 +551,20 @@ TEST_F(OutstandingDataTest, LifecycleReturnsAbandonedNackedThreeTimes) {
               Timestamp::PlusInfinity(), LifecycleId(42));
 
   std::vector<SackChunk::GapAckBlock> gab1 = {SackChunk::GapAckBlock(2, 2)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab1, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab1, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
   std::vector<SackChunk::GapAckBlock> gab2 = {SackChunk::GapAckBlock(2, 3)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab2, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab2, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
   std::vector<SackChunk::GapAckBlock> gab3 = {SackChunk::GapAckBlock(2, 4)};
   EXPECT_CALL(on_discard_, Call(StreamID(1), kMessageId))
       .WillOnce(Return(false));
   OutstandingData::AckInfo ack1 =
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab3, false);
+      buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab3, false);
   EXPECT_TRUE(ack1.has_packet_loss);
   EXPECT_THAT(ack1.abandoned_lifecycle_ids, IsEmpty());
 
@@ -511,7 +574,7 @@ TEST_F(OutstandingDataTest, LifecycleReturnsAbandonedNackedThreeTimes) {
   EXPECT_EQ(chunk.new_cumulative_tsn(), TSN(13));
 
   OutstandingData::AckInfo ack2 =
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(13)), {}, false);
+      buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(13)), {}, false);
   EXPECT_FALSE(ack2.has_packet_loss);
   EXPECT_THAT(ack2.abandoned_lifecycle_ids, ElementsAre(LifecycleId(42)));
 }
@@ -531,8 +594,8 @@ TEST_F(OutstandingDataTest, LifecycleReturnsAbandonedAfterT3rtxExpired) {
                           Pair(TSN(13), State::kInFlight)));
 
   std::vector<SackChunk::GapAckBlock> gab1 = {SackChunk::GapAckBlock(2, 4)};
-  EXPECT_FALSE(
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab1, false).has_packet_loss);
+  EXPECT_FALSE(buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab1, false)
+                   .has_packet_loss);
   EXPECT_FALSE(buf_.has_data_to_be_retransmitted());
 
   EXPECT_THAT(buf_.GetChunkStatesForTesting(),
@@ -545,7 +608,7 @@ TEST_F(OutstandingDataTest, LifecycleReturnsAbandonedAfterT3rtxExpired) {
   // T3-rtx triggered.
   EXPECT_CALL(on_discard_, Call(StreamID(1), kMessageId))
       .WillOnce(Return(false));
-  buf_.NackAll();
+  buf_.NackAll(kNow);
 
   EXPECT_THAT(buf_.GetChunkStatesForTesting(),
               ElementsAre(Pair(TSN(9), State::kAcked),       //
@@ -560,7 +623,7 @@ TEST_F(OutstandingDataTest, LifecycleReturnsAbandonedAfterT3rtxExpired) {
   EXPECT_EQ(chunk.new_cumulative_tsn(), TSN(13));
 
   OutstandingData::AckInfo ack2 =
-      buf_.HandleSack(unwrapper_.Unwrap(TSN(13)), {}, false);
+      buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(13)), {}, false);
   EXPECT_FALSE(ack2.has_packet_loss);
   EXPECT_THAT(ack2.abandoned_lifecycle_ids, ElementsAre(LifecycleId(42)));
 }
@@ -611,8 +674,8 @@ TEST_F(OutstandingDataTest, GeneratesForwardTsnUntilNextStreamResetTsn) {
 
   EXPECT_FALSE(buf_.ShouldSendForwardTsn());
 
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(11)), {}, false);
-  buf_.NackAll();
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(11)), {}, false);
+  buf_.NackAll(kNow);
   EXPECT_THAT(buf_.GetChunkStatesForTesting(),
               ElementsAre(Pair(TSN(11), State::kAcked),      //
                           Pair(TSN(12), State::kAbandoned),  //
@@ -630,7 +693,7 @@ TEST_F(OutstandingDataTest, GeneratesForwardTsnUntilNextStreamResetTsn) {
                          StreamID(1), SSN(44))))));
 
   // Ack 12, allowing a FORWARD-TSN that spans to TSN=14 to be created.
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(12)), {}, false);
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(12)), {}, false);
   EXPECT_TRUE(buf_.ShouldSendForwardTsn());
   EXPECT_THAT(
       buf_.CreateForwardTsn(),
@@ -640,7 +703,7 @@ TEST_F(OutstandingDataTest, GeneratesForwardTsnUntilNextStreamResetTsn) {
                          StreamID(2), SSN(46))))));
 
   // Ack 13, allowing a FORWARD-TSN that spans to TSN=14 to be created.
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(13)), {}, false);
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(13)), {}, false);
   EXPECT_TRUE(buf_.ShouldSendForwardTsn());
   EXPECT_THAT(
       buf_.CreateForwardTsn(),
@@ -650,7 +713,7 @@ TEST_F(OutstandingDataTest, GeneratesForwardTsnUntilNextStreamResetTsn) {
                          StreamID(2), SSN(46))))));
 
   // Ack 14, allowing a FORWARD-TSN that spans to TSN=15 to be created.
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(14)), {}, false);
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(14)), {}, false);
   EXPECT_TRUE(buf_.ShouldSendForwardTsn());
   EXPECT_THAT(
       buf_.CreateForwardTsn(),
@@ -659,7 +722,7 @@ TEST_F(OutstandingDataTest, GeneratesForwardTsnUntilNextStreamResetTsn) {
                      UnorderedElementsAre(ForwardTsnChunk::SkippedStream(
                          StreamID(3), SSN(47))))));
 
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(15)), {}, false);
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(15)), {}, false);
   EXPECT_FALSE(buf_.ShouldSendForwardTsn());
 }
 
@@ -699,7 +762,7 @@ TEST_F(OutstandingDataTest,
       SackChunk::GapAckBlock(4, 4),  // TSN 14
       SackChunk::GapAckBlock(6, 6)   // TSN 16
   };
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(10)), gab1,
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(10)), gab1,
                   /*is_in_fast_recovery=*/false);
 
   // SACK 2: Cumulative Ack advances to 11. Same gap blocks (12, 14, 16).
@@ -711,7 +774,7 @@ TEST_F(OutstandingDataTest,
       SackChunk::GapAckBlock(3, 3),  // TSN 14
       SackChunk::GapAckBlock(5, 5)   // TSN 16
   };
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(11)), gab2,
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(11)), gab2,
                   /*is_in_fast_recovery=*/true);
 
   // SACK 3: Cumulative Ack advances to 12.
@@ -722,7 +785,7 @@ TEST_F(OutstandingDataTest,
       SackChunk::GapAckBlock(2, 2),  // TSN 14
       SackChunk::GapAckBlock(4, 4)   // TSN 16
   };
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(12)), gab3,
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(12)), gab3,
                   /*is_in_fast_recovery=*/true);
 
   // 13 and 15 should now be retransmitted.
@@ -745,7 +808,7 @@ TEST_F(OutstandingDataTest, NackBetweenAckBlocksDoesNotAccessOutOfBounds) {
       SackChunk::GapAckBlock(1, 40000)};
 
   // This should not crash or trigger ASAN errors.
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(10)), malformed_blocks,
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(10)), malformed_blocks,
                   /*is_in_fast_recovery=*/false);
 }
 
@@ -759,7 +822,7 @@ TEST_F(OutstandingDataTest, HandlesSacksWithOutOfBoundsTsns) {
   SackChunk::GapAckBlock sack1[] = {{2, 2},   // TSN 12
                                     {4, 4},   // TSN 14
                                     {6, 6}};  // TSN 16
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(10)), sack1,
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(10)), sack1,
                   /*is_in_fast_recovery=*/false);
   EXPECT_EQ(buf_.unacked_items(), 3u);  // 11, 13, 15
 
@@ -768,7 +831,7 @@ TEST_F(OutstandingDataTest, HandlesSacksWithOutOfBoundsTsns) {
   SackChunk::GapAckBlock sack2[] = {{1, 1},          // TSN 12
                                     {1000, 60000}};  // TSN 1011..60011
 
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(11)), sack2,
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(11)), sack2,
                   /*is_in_fast_recovery=*/true);
   // Packet 11 has been acknowledged.
   EXPECT_EQ(buf_.unacked_items(), 2u);  // 13, 15
@@ -797,8 +860,8 @@ TEST_F(OutstandingDataTest, RestoreFromStateOverridesDummyInitialTsn) {
 
 TEST_F(OutstandingDataTest, HandoverAndRestorePreservesRetransmissionCount) {
   buf_.Insert(kMessageId, gen_.Ordered({1}, "BE"), kNow);
-  buf_.NackAll();
-  buf_.GetChunksToBeRetransmitted(1000);
+  buf_.NackAll(kNow);
+  buf_.GetChunksToBeRetransmitted(kNow, 1000);
 
   DcSctpSocketHandoverState state;
   buf_.AddHandoverState(kNow, state);
@@ -829,7 +892,7 @@ TEST_F(OutstandingDataTest, HandoverAndRestorePreservesAbandonedState) {
   EXPECT_CALL(on_discard_, Call(StreamID(1), kMessageId))
       .WillOnce(Return(false));
   buf_.Insert(kMessageId, gen_.Ordered({1}, "BE"), kNow, MaxRetransmits(0));
-  buf_.NackAll();
+  buf_.NackAll(kNow);
 
   DcSctpSocketHandoverState state;
   buf_.AddHandoverState(kNow, state);
@@ -856,7 +919,7 @@ TEST_F(OutstandingDataTest, HandoverAndRestorePreservesNackedState) {
   buf_.Insert(kMessageId, gen_.Ordered({1}, "E"), kNow);
 
   std::vector<SackChunk::GapAckBlock> gab = {SackChunk::GapAckBlock(2, 2)};
-  buf_.HandleSack(unwrapper_.Unwrap(TSN(9)), gab, false);
+  buf_.HandleSack(kNow, unwrapper_.Unwrap(TSN(9)), gab, false);
 
   DcSctpSocketHandoverState state;
   buf_.AddHandoverState(kNow, state);
@@ -874,6 +937,242 @@ TEST_F(OutstandingDataTest, HandoverAndRestorePreservesNackedState) {
               ElementsAre(Pair(TSN(9), State::kAcked),
                           Pair(TSN(10), State::kToBeRetransmitted),
                           Pair(TSN(11), State::kAcked)));
+}
+
+TEST_F(OutstandingDataTest,
+       ExpiresChunkBeforeRetransmittingWhenBehindNonExpiredChunk) {
+  // TSN 10 is reliable (never expires).
+  buf_.Insert(OutgoingMessageId(1), gen_.Ordered({1}, "BE"), kNow);
+  // TSN 11 and 12 have a limited lifetime and expire at kNow + 50ms.
+  buf_.Insert(OutgoingMessageId(2), gen_.Ordered({2}, "B"), kNow,
+              MaxRetransmits::NoLimit(), kNow + TimeDelta::Millis(50));
+  buf_.Insert(OutgoingMessageId(2), gen_.Ordered({3}, "E"), kNow,
+              MaxRetransmits::NoLimit(), kNow + TimeDelta::Millis(50));
+
+  buf_.NackAll(kNow);
+
+  // ExpireOutstandingChunks stops at the first non-expired chunk (TSN 10).
+  buf_.ExpireOutstandingChunks(kNow + TimeDelta::Millis(50));
+  EXPECT_THAT(buf_.GetChunkStatesForTesting(),
+              ElementsAre(Pair(TSN(9), State::kAcked),
+                          Pair(TSN(10), State::kToBeRetransmitted),
+                          Pair(TSN(11), State::kToBeRetransmitted),
+                          Pair(TSN(12), State::kToBeRetransmitted)));
+
+  // When extracting chunks for retransmission, TSN 11 and 12 are expired and
+  // abandoned instead of being retransmitted.
+  EXPECT_CALL(on_discard_, Call(StreamID(1), OutgoingMessageId(2)))
+      .WillOnce(Return(false));
+  EXPECT_THAT(
+      buf_.GetChunksToBeRetransmitted(kNow + TimeDelta::Millis(50), 1000),
+      ElementsAre(Pair(TSN(10), _)));
+
+  EXPECT_THAT(
+      buf_.GetChunkStatesForTesting(),
+      ElementsAre(Pair(TSN(9), State::kAcked), Pair(TSN(10), State::kInFlight),
+                  Pair(TSN(11), State::kAbandoned),
+                  Pair(TSN(12), State::kAbandoned)));
+  EXPECT_FALSE(buf_.ShouldSendForwardTsn());
+
+  // Once TSN 10 is acknowledged, FORWARD-TSN can be sent for TSN 11 and 12.
+  buf_.HandleSack(kNow + TimeDelta::Millis(50), unwrapper_.Unwrap(TSN(10)), {},
+                  false);
+  EXPECT_TRUE(buf_.ShouldSendForwardTsn());
+  EXPECT_EQ(buf_.CreateForwardTsn().new_cumulative_tsn(), TSN(12));
+}
+
+TEST_F(OutstandingDataTest, ExpiresChunkOnNackAll) {
+  // TSN 10 is reliable (never expires).
+  buf_.Insert(OutgoingMessageId(1), gen_.Ordered({1}, "BE"), kNow);
+  // TSN 11 and 12 have a limited lifetime and expire at kNow + 50ms.
+  buf_.Insert(OutgoingMessageId(2), gen_.Ordered({2}, "B"), kNow,
+              MaxRetransmits::NoLimit(), kNow + TimeDelta::Millis(50));
+  buf_.Insert(OutgoingMessageId(2), gen_.Ordered({3}, "E"), kNow,
+              MaxRetransmits::NoLimit(), kNow + TimeDelta::Millis(50));
+
+  EXPECT_CALL(on_discard_, Call(StreamID(1), OutgoingMessageId(2)))
+      .WillOnce(Return(false));
+  buf_.NackAll(kNow + TimeDelta::Millis(50));
+
+  EXPECT_THAT(buf_.GetChunkStatesForTesting(),
+              ElementsAre(Pair(TSN(9), State::kAcked),
+                          Pair(TSN(10), State::kToBeRetransmitted),
+                          Pair(TSN(11), State::kAbandoned),
+                          Pair(TSN(12), State::kAbandoned)));
+}
+
+TEST_F(OutstandingDataTest, ExpiresChunkWhenNackedThreeTimes) {
+  // TSN 10 is reliable (never expires).
+  buf_.Insert(OutgoingMessageId(1), gen_.Ordered({1}, "BE"), kNow);
+  // TSN 11 has a limited lifetime and expires at kNow + 50ms.
+  buf_.Insert(OutgoingMessageId(2), gen_.Ordered({2}, "BE"), kNow,
+              MaxRetransmits::NoLimit(), kNow + TimeDelta::Millis(50));
+  // TSN 12, 13, 14 are used to trigger 3 miss indications.
+  buf_.Insert(OutgoingMessageId(3), gen_.Ordered({3}, "BE"), kNow);
+  buf_.Insert(OutgoingMessageId(4), gen_.Ordered({4}, "BE"), kNow);
+  buf_.Insert(OutgoingMessageId(5), gen_.Ordered({5}, "BE"), kNow);
+
+  std::vector<SackChunk::GapAckBlock> gab1 = {SackChunk::GapAckBlock(3, 3)};
+  buf_.HandleSack(kNow + TimeDelta::Millis(10), unwrapper_.Unwrap(TSN(9)), gab1,
+                  false);
+
+  std::vector<SackChunk::GapAckBlock> gab2 = {SackChunk::GapAckBlock(3, 4)};
+  buf_.HandleSack(kNow + TimeDelta::Millis(20), unwrapper_.Unwrap(TSN(9)), gab2,
+                  false);
+
+  EXPECT_CALL(on_discard_, Call(StreamID(1), OutgoingMessageId(2)))
+      .WillOnce(Return(false));
+  std::vector<SackChunk::GapAckBlock> gab3 = {SackChunk::GapAckBlock(3, 5)};
+  buf_.HandleSack(kNow + TimeDelta::Millis(50), unwrapper_.Unwrap(TSN(9)), gab3,
+                  false);
+
+  EXPECT_THAT(
+      buf_.GetChunkStatesForTesting(),
+      ElementsAre(
+          Pair(TSN(9), State::kAcked), Pair(TSN(10), State::kToBeRetransmitted),
+          Pair(TSN(11), State::kAbandoned), Pair(TSN(12), State::kAcked),
+          Pair(TSN(13), State::kAcked), Pair(TSN(14), State::kAcked)));
+  EXPECT_THAT(
+      buf_.GetChunksToBeFastRetransmitted(kNow + TimeDelta::Millis(50), 1000),
+      ElementsAre(Pair(TSN(10), _)));
+}
+
+TEST_F(OutstandingDataTest, ExpiredChunkDoesNotConsumeRetransmissionBudget) {
+  std::vector<uint8_t> payload(100);
+  // TSN 10 has a limited lifetime and expires at kNow + 50ms.
+  buf_.Insert(OutgoingMessageId(1), gen_.Ordered(payload, "BE"), kNow,
+              MaxRetransmits::NoLimit(), kNow + TimeDelta::Millis(50));
+  // TSN 11 is reliable (never expires).
+  buf_.Insert(OutgoingMessageId(2), gen_.Ordered(payload, "BE"), kNow);
+
+  buf_.NackAll(kNow);
+
+  EXPECT_CALL(on_discard_, Call(StreamID(1), OutgoingMessageId(1)))
+      .WillOnce(Return(false));
+  // Budget fits exactly one chunk. TSN 10 should be expired without consuming
+  // budget, allowing TSN 11 to be returned.
+  size_t one_chunk_budget = DataChunk::kHeaderSize + payload.size();
+  EXPECT_THAT(buf_.GetChunksToBeRetransmitted(kNow + TimeDelta::Millis(50),
+                                              one_chunk_budget),
+              ElementsAre(Pair(TSN(11), _)));
+
+  EXPECT_THAT(
+      buf_.GetChunkStatesForTesting(),
+      ElementsAre(Pair(TSN(9), State::kAcked), Pair(TSN(10), State::kAbandoned),
+                  Pair(TSN(11), State::kInFlight)));
+}
+
+TEST_F(OutstandingDataTest, DoesNotExpireChunkBeforeExpiryTimestamp) {
+  // TSN 10 is reliable (never expires).
+  buf_.Insert(OutgoingMessageId(1), gen_.Ordered({1}, "BE"), kNow);
+  // TSN 11 and 12 expire at kNow + 50ms.
+  buf_.Insert(OutgoingMessageId(2), gen_.Ordered({2}, "B"), kNow,
+              MaxRetransmits::NoLimit(), kNow + TimeDelta::Millis(50));
+  buf_.Insert(OutgoingMessageId(2), gen_.Ordered({3}, "E"), kNow,
+              MaxRetransmits::NoLimit(), kNow + TimeDelta::Millis(50));
+
+  buf_.NackAll(kNow);
+
+  // At 1ms before expiry, all three chunks are still valid and returned.
+  EXPECT_THAT(
+      buf_.GetChunksToBeRetransmitted(kNow + TimeDelta::Millis(49), 1000),
+      ElementsAre(Pair(TSN(10), _), Pair(TSN(11), _), Pair(TSN(12), _)));
+}
+
+TEST_F(OutstandingDataTest,
+       ExpiresFastRetransmitLeftoverChunkOnNormalRetransmit) {
+  std::vector<uint8_t> payload(100);
+  // TSN 10 is reliable (never expires).
+  buf_.Insert(OutgoingMessageId(1), gen_.Ordered(payload, "BE"), kNow);
+  // TSN 11 expires at kNow + 50ms.
+  buf_.Insert(OutgoingMessageId(2), gen_.Ordered(payload, "BE"), kNow,
+              MaxRetransmits::NoLimit(), kNow + TimeDelta::Millis(50));
+  // TSN 12, 13, 14 are used to trigger 3 miss indications.
+  buf_.Insert(OutgoingMessageId(3), gen_.Ordered({3}, "BE"), kNow);
+  buf_.Insert(OutgoingMessageId(4), gen_.Ordered({4}, "BE"), kNow);
+  buf_.Insert(OutgoingMessageId(5), gen_.Ordered({5}, "BE"), kNow);
+
+  std::vector<SackChunk::GapAckBlock> gab1 = {SackChunk::GapAckBlock(3, 3)};
+  buf_.HandleSack(kNow + TimeDelta::Millis(10), unwrapper_.Unwrap(TSN(9)), gab1,
+                  false);
+  std::vector<SackChunk::GapAckBlock> gab2 = {SackChunk::GapAckBlock(3, 4)};
+  buf_.HandleSack(kNow + TimeDelta::Millis(20), unwrapper_.Unwrap(TSN(9)), gab2,
+                  false);
+  // 3rd SACK arrives before TSN 11 expires (at kNow + 30ms).
+  std::vector<SackChunk::GapAckBlock> gab3 = {SackChunk::GapAckBlock(3, 5)};
+  buf_.HandleSack(kNow + TimeDelta::Millis(30), unwrapper_.Unwrap(TSN(9)), gab3,
+                  false);
+
+  // Only TSN 10 fits in the fast-retransmit packet; TSN 11 is moved to
+  // `to_be_retransmitted_`.
+  size_t one_chunk_budget = DataChunk::kHeaderSize + payload.size();
+  EXPECT_THAT(buf_.GetChunksToBeFastRetransmitted(kNow + TimeDelta::Millis(30),
+                                                  one_chunk_budget),
+              ElementsAre(Pair(TSN(10), _)));
+
+  // Later, at kNow + 50ms, TSN 11 has expired and is abandoned when extracted.
+  EXPECT_CALL(on_discard_, Call(StreamID(1), OutgoingMessageId(2)))
+      .WillOnce(Return(false));
+  EXPECT_THAT(
+      buf_.GetChunksToBeRetransmitted(kNow + TimeDelta::Millis(50), 1000),
+      IsEmpty());
+  EXPECT_THAT(
+      buf_.GetChunkStatesForTesting(),
+      ElementsAre(Pair(TSN(9), State::kAcked), Pair(TSN(10), State::kInFlight),
+                  Pair(TSN(11), State::kAbandoned),
+                  Pair(TSN(12), State::kAcked), Pair(TSN(13), State::kAcked),
+                  Pair(TSN(14), State::kAcked)));
+}
+
+TEST_F(OutstandingDataTest, ExpiresChunkBeforeRetransmittingWithPlaceholder) {
+  // TSN 10 is reliable (never expires).
+  buf_.Insert(OutgoingMessageId(1), gen_.Ordered({1}, "BE"), kNow);
+  // TSN 11 is the beginning of a multi-fragment message that expires at
+  // kNow + 50ms, with remaining unsent fragments still in the SendQueue.
+  buf_.Insert(OutgoingMessageId(2), gen_.Ordered({2}, "B"), kNow,
+              MaxRetransmits::NoLimit(), kNow + TimeDelta::Millis(50));
+
+  buf_.NackAll(kNow);
+
+  EXPECT_CALL(on_discard_, Call(StreamID(1), OutgoingMessageId(2)))
+      .WillOnce(Return(true));
+  EXPECT_THAT(
+      buf_.GetChunksToBeRetransmitted(kNow + TimeDelta::Millis(50), 1000),
+      ElementsAre(Pair(TSN(10), _)));
+
+  // An unsent end placeholder was appended at TSN 12 and marked abandoned.
+  EXPECT_EQ(buf_.next_tsn().Wrap(), TSN(13));
+  EXPECT_THAT(
+      buf_.GetChunkStatesForTesting(),
+      ElementsAre(Pair(TSN(9), State::kAcked), Pair(TSN(10), State::kInFlight),
+                  Pair(TSN(11), State::kAbandoned),
+                  Pair(TSN(12), State::kAbandoned)));
+}
+
+TEST_F(OutstandingDataTest, ExpiresRestoredChunkBeforeRetransmitting) {
+  buf_.Insert(kMessageId, gen_.Ordered({1}, "BE"), kNow,
+              MaxRetransmits::NoLimit(), kNow + TimeDelta::Millis(50));
+  buf_.NackAll(kNow);
+
+  Timestamp handover_time = kNow + TimeDelta::Millis(60);
+  DcSctpSocketHandoverState state;
+  buf_.AddHandoverState(handover_time, state);
+  ASSERT_THAT(state.tx.outstanding_data, SizeIs(1));
+  EXPECT_LT(state.tx.outstanding_data[0].expires_in_ms, 0);
+
+  OutstandingData restored_buf(DataChunk::kHeaderSize,
+                               unwrapper_.Unwrap(TSN(0)),
+                               on_discard_.AsStdFunction());
+  restored_buf.RestoreFromState(handover_time, unwrapper_.Unwrap(TSN(9)),
+                                state);
+
+  EXPECT_CALL(on_discard_, Call(StreamID(1), kMessageId))
+      .WillOnce(Return(false));
+  EXPECT_THAT(restored_buf.GetChunksToBeRetransmitted(handover_time, 1000),
+              IsEmpty());
+  EXPECT_THAT(restored_buf.GetChunkStatesForTesting(),
+              ElementsAre(Pair(TSN(9), State::kAcked),
+                          Pair(TSN(10), State::kAbandoned)));
 }
 
 }  // namespace

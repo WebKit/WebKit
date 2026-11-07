@@ -1577,5 +1577,21 @@ TEST(BIOTest, WriteExConversion) {
   }
 }
 
+TEST(BIOTest, CreateFailure) {
+  UniquePtr<BIO_METHOD> method(BIO_meth_new(0, nullptr));
+  ASSERT_TRUE(method);
+  ASSERT_TRUE(
+      BIO_meth_set_create(method.get(), [](BIO *) -> int { return 0; }));
+  ASSERT_TRUE(BIO_meth_set_destroy(method.get(), [](BIO *) -> int {
+    ADD_FAILURE() << "destroy must not be called if create failed";
+    return 0;
+  }));
+
+  // If `create` fails, `BIO_new` should return nullptr without calling
+  // `destroy`.
+  UniquePtr<BIO> bio(BIO_new(method.get()));
+  EXPECT_FALSE(bio);
+}
+
 }  // namespace
 BSSL_NAMESPACE_END

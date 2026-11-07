@@ -439,6 +439,7 @@ static void dealloc_compressor_data(VP8_COMP *cpi) {
 
   vp8_yv12_de_alloc_frame_buffer(&cpi->pick_lf_lvl_frame);
   vp8_yv12_de_alloc_frame_buffer(&cpi->scaled_source);
+  vp8_yv12_de_alloc_frame_buffer(&cpi->raw_source_frame);
   dealloc_raw_frame_buffers(cpi);
 
   vpx_free(cpi->tok);
@@ -2365,7 +2366,10 @@ static uint64_t calc_plane_error(unsigned char *orig, int orig_stride,
 }
 
 static void generate_psnr_packet(VP8_COMP *cpi) {
-  YV12_BUFFER_CONFIG *orig = cpi->Source;
+  YV12_BUFFER_CONFIG *orig =
+      (cpi->oxcf.noise_sensitivity > 0 && cpi->raw_source_frame.buffer_alloc)
+          ? &cpi->raw_source_frame
+          : cpi->Source;
   YV12_BUFFER_CONFIG *recon = cpi->common.frame_to_show;
   struct vpx_codec_cx_pkt pkt;
   uint64_t sse;
@@ -3822,6 +3826,21 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 
   scale_and_extend_source(cpi->un_scaled_source, cpi);
 
+  if (cpi->b_calculate_psnr && cpi->pass != 1 && cm->show_frame &&
+      cpi->oxcf.noise_sensitivity > 0) {
+    if (cpi->raw_source_frame.y_width != cpi->Source->y_width ||
+        cpi->raw_source_frame.y_height != cpi->Source->y_height) {
+      vp8_yv12_de_alloc_frame_buffer(&cpi->raw_source_frame);
+      if (vp8_yv12_alloc_frame_buffer(
+              &cpi->raw_source_frame, cpi->Source->y_width,
+              cpi->Source->y_height, VP8BORDERINPIXELS) < 0) {
+        vpx_internal_error(&cm->error, VPX_CODEC_MEM_ERROR,
+                           "Failed to allocate raw source frame buffer");
+      }
+    }
+    vp8_yv12_copy_frame(cpi->Source, &cpi->raw_source_frame);
+  }
+
 #if CONFIG_TEMPORAL_DENOISING && CONFIG_POSTPROC
   // Option to apply spatial blur under the aggressive or adaptive
   // (temporal denoising) mode.
@@ -5208,7 +5227,10 @@ int vp8_get_compressed_data(VP8_COMP *cpi, unsigned int *frame_flags,
       if (cpi->b_calculate_psnr) {
         uint64_t ye, ue, ve;
         double frame_psnr;
-        YV12_BUFFER_CONFIG *orig = cpi->Source;
+        YV12_BUFFER_CONFIG *orig = (cpi->oxcf.noise_sensitivity > 0 &&
+                                    cpi->raw_source_frame.buffer_alloc)
+                                       ? &cpi->raw_source_frame
+                                       : cpi->Source;
         YV12_BUFFER_CONFIG *recon = cpi->common.frame_to_show;
         unsigned int y_width = cpi->common.Width;
         unsigned int y_height = cpi->common.Height;

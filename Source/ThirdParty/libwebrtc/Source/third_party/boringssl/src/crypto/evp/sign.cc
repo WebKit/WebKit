@@ -19,8 +19,6 @@
 #include <openssl/digest.h>
 #include <openssl/err.h>
 
-#include "internal.h"
-
 
 int EVP_SignInit_ex(EVP_MD_CTX *ctx, const EVP_MD *type, ENGINE *impl) {
   return EVP_DigestInit_ex(ctx, type, impl);
@@ -35,7 +33,7 @@ int EVP_SignUpdate(EVP_MD_CTX *ctx, const void *data, size_t len) {
 }
 
 int EVP_SignFinal(const EVP_MD_CTX *ctx, uint8_t *sig, unsigned *out_sig_len,
-                  EVP_PKEY *pkey) {
+                  const EVP_PKEY *pkey) {
   // Ensure the final result will fit in `unsigned`.
   size_t sig_len = EVP_PKEY_size(pkey);
   if (sig_len > UINT_MAX) {
@@ -75,7 +73,7 @@ int EVP_VerifyUpdate(EVP_MD_CTX *ctx, const void *data, size_t len) {
 }
 
 int EVP_VerifyFinal(EVP_MD_CTX *ctx, const uint8_t *sig, size_t sig_len,
-                    EVP_PKEY *pkey) {
+                    const EVP_PKEY *pkey) {
   uint8_t m[EVP_MAX_MD_SIZE];
   unsigned m_len;
   bssl::ScopedEVP_MD_CTX tmp_ctx;
@@ -85,11 +83,9 @@ int EVP_VerifyFinal(EVP_MD_CTX *ctx, const uint8_t *sig, size_t sig_len,
   }
 
   bssl::UniquePtr<EVP_PKEY_CTX> pkctx(EVP_PKEY_CTX_new(pkey, nullptr));
-  if (!pkctx ||
-      !EVP_PKEY_verify_init(pkctx.get()) ||
+  if (!pkctx || !EVP_PKEY_verify_init(pkctx.get()) ||
       !EVP_PKEY_CTX_set_signature_md(pkctx.get(), ctx->digest)) {
     return 0;
   }
   return EVP_PKEY_verify(pkctx.get(), sig, sig_len, m, m_len);
 }
-

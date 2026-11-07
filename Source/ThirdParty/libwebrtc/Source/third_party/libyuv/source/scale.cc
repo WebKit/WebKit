@@ -114,6 +114,15 @@ static void ScalePlaneDown2(int src_width,
     }
   }
 #endif
+#if defined(HAS_SCALEROWDOWN2_AVX512BW)
+  if (TestCpuFlag(kCpuHasAVX512BW)) {
+    ScaleRowDown2 =
+        filtering == kFilterNone
+            ? ScaleRowDown2_AVX512BW
+            : (filtering == kFilterLinear ? ScaleRowDown2Linear_AVX512BW
+                                          : ScaleRowDown2Box_AVX512BW);
+  }
+#endif
 #if defined(HAS_SCALEROWDOWN2_LSX)
   if (TestCpuFlag(kCpuHasLSX)) {
     ScaleRowDown2 =
@@ -135,6 +144,22 @@ static void ScalePlaneDown2(int src_width,
                         ? ScaleRowDown2_RVV
                         : (filtering == kFilterLinear ? ScaleRowDown2Linear_RVV
                                                       : ScaleRowDown2Box_RVV);
+  }
+#endif
+#if defined(HAS_SCALEROWDOWN2_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD)) {
+    ScaleRowDown2 =
+        filtering == kFilterNone
+            ? ScaleRowDown2_Any_WASMSIMD
+            : (filtering == kFilterLinear ? ScaleRowDown2Linear_Any_WASMSIMD
+                                          : ScaleRowDown2Box_Any_WASMSIMD);
+    if (IS_ALIGNED(dst_width, 16)) {
+      ScaleRowDown2 =
+          filtering == kFilterNone
+              ? ScaleRowDown2_WASMSIMD
+              : (filtering == kFilterLinear ? ScaleRowDown2Linear_WASMSIMD
+                                            : ScaleRowDown2Box_WASMSIMD);
+    }
   }
 #endif
 
@@ -271,6 +296,16 @@ static void ScalePlaneDown4(int src_width,
 #if defined(HAS_SCALEROWDOWN4_RVV)
   if (TestCpuFlag(kCpuHasRVV)) {
     ScaleRowDown4 = filtering ? ScaleRowDown4Box_RVV : ScaleRowDown4_RVV;
+  }
+#endif
+#if defined(HAS_SCALEROWDOWN4_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD)) {
+    ScaleRowDown4 =
+        filtering ? ScaleRowDown4Box_Any_WASMSIMD : ScaleRowDown4_Any_WASMSIMD;
+    if (IS_ALIGNED(dst_width, 16)) {
+      ScaleRowDown4 =
+          filtering ? ScaleRowDown4Box_WASMSIMD : ScaleRowDown4_WASMSIMD;
+    }
   }
 #endif
 
@@ -428,6 +463,27 @@ static void ScalePlaneDown34(int src_width,
     } else {
       ScaleRowDown34_0 = ScaleRowDown34_0_Box_RVV;
       ScaleRowDown34_1 = ScaleRowDown34_1_Box_RVV;
+    }
+  }
+#endif
+#if defined(HAS_SCALEROWDOWN34_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD)) {
+    if (dst_width % 24 == 0) {
+      if (!filtering) {
+        ScaleRowDown34_0 = ScaleRowDown34_WASMSIMD;
+        ScaleRowDown34_1 = ScaleRowDown34_WASMSIMD;
+      } else {
+        ScaleRowDown34_0 = ScaleRowDown34_0_Box_WASMSIMD;
+        ScaleRowDown34_1 = ScaleRowDown34_1_Box_WASMSIMD;
+      }
+    } else {
+      if (!filtering) {
+        ScaleRowDown34_0 = ScaleRowDown34_Any_WASMSIMD;
+        ScaleRowDown34_1 = ScaleRowDown34_Any_WASMSIMD;
+      } else {
+        ScaleRowDown34_0 = ScaleRowDown34_0_Box_Any_WASMSIMD;
+        ScaleRowDown34_1 = ScaleRowDown34_1_Box_Any_WASMSIMD;
+      }
     }
   }
 #endif
@@ -634,6 +690,26 @@ static void ScalePlaneDown38(int src_width,
     } else {
       ScaleRowDown38_3 = ScaleRowDown38_3_Box_RVV;
       ScaleRowDown38_2 = ScaleRowDown38_2_Box_RVV;
+    }
+  }
+#endif
+#if defined(HAS_SCALEROWDOWN38_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD)) {
+    if (!filtering) {
+      ScaleRowDown38_3 = ScaleRowDown38_Any_WASMSIMD;
+      ScaleRowDown38_2 = ScaleRowDown38_Any_WASMSIMD;
+    } else {
+      ScaleRowDown38_3 = ScaleRowDown38_3_Box_Any_WASMSIMD;
+      ScaleRowDown38_2 = ScaleRowDown38_2_Box_Any_WASMSIMD;
+    }
+    if (dst_width % 12 == 0) {
+      if (!filtering) {
+        ScaleRowDown38_3 = ScaleRowDown38_WASMSIMD;
+        ScaleRowDown38_2 = ScaleRowDown38_WASMSIMD;
+      } else {
+        ScaleRowDown38_3 = ScaleRowDown38_3_Box_WASMSIMD;
+        ScaleRowDown38_2 = ScaleRowDown38_2_Box_WASMSIMD;
+      }
     }
   }
 #endif
@@ -1053,6 +1129,11 @@ static int ScalePlaneBilinearDown(int src_width,
     }
   }
 #endif
+#if defined(HAS_INTERPOLATEROW_AVX512BW)
+  if (TestCpuFlag(kCpuHasAVX512BW)) {
+    InterpolateRow = InterpolateRow_AVX512BW;
+  }
+#endif
 #if defined(HAS_INTERPOLATEROW_NEON)
   if (TestCpuFlag(kCpuHasNEON)) {
     InterpolateRow = InterpolateRow_Any_NEON;
@@ -1084,6 +1165,14 @@ static int ScalePlaneBilinearDown(int src_width,
     InterpolateRow = InterpolateRow_RVV;
   }
 #endif
+#if defined(HAS_INTERPOLATEROW_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD)) {
+    InterpolateRow = InterpolateRow_Any_WASMSIMD;
+    if (IS_ALIGNED(src_width, 16)) {
+      InterpolateRow = InterpolateRow_WASMSIMD;
+    }
+  }
+#endif
 
 #if defined(HAS_SCALEFILTERCOLS_SSSE3)
   if (TestCpuFlag(kCpuHasSSSE3) && src_width < 32768) {
@@ -1103,6 +1192,14 @@ static int ScalePlaneBilinearDown(int src_width,
     ScaleFilterCols = ScaleFilterCols_Any_LSX;
     if (IS_ALIGNED(dst_width, 16)) {
       ScaleFilterCols = ScaleFilterCols_LSX;
+    }
+  }
+#endif
+#if defined(HAS_SCALEFILTERCOLS_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD) && src_width < 32768) {
+    ScaleFilterCols = ScaleFilterCols_Any_WASMSIMD;
+    if (IS_ALIGNED(dst_width, 8)) {
+      ScaleFilterCols = ScaleFilterCols_WASMSIMD;
     }
   }
 #endif
@@ -1191,6 +1288,14 @@ static int ScalePlaneBilinearDown_16(int src_width,
     InterpolateRow = InterpolateRow_16_SME;
   }
 #endif
+#if defined(HAS_INTERPOLATEROW_16_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD)) {
+    InterpolateRow = InterpolateRow_16_Any_WASMSIMD;
+    if (IS_ALIGNED(src_width, 8)) {
+      InterpolateRow = InterpolateRow_16_WASMSIMD;
+    }
+  }
+#endif
 
 #if defined(HAS_SCALEFILTERCOLS_16_SSSE3)
   if (TestCpuFlag(kCpuHasSSSE3) && src_width < 32768) {
@@ -1262,6 +1367,11 @@ static int ScalePlaneBilinearUp(int src_width,
     }
   }
 #endif
+#if defined(HAS_INTERPOLATEROW_AVX512BW)
+  if (TestCpuFlag(kCpuHasAVX512BW)) {
+    InterpolateRow = InterpolateRow_AVX512BW;
+  }
+#endif
 #if defined(HAS_INTERPOLATEROW_NEON)
   if (TestCpuFlag(kCpuHasNEON)) {
     InterpolateRow = InterpolateRow_Any_NEON;
@@ -1283,6 +1393,14 @@ static int ScalePlaneBilinearUp(int src_width,
 #if defined(HAS_INTERPOLATEROW_RVV)
   if (TestCpuFlag(kCpuHasRVV)) {
     InterpolateRow = InterpolateRow_RVV;
+  }
+#endif
+#if defined(HAS_INTERPOLATEROW_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD)) {
+    InterpolateRow = InterpolateRow_Any_WASMSIMD;
+    if (IS_ALIGNED(dst_width, 16)) {
+      InterpolateRow = InterpolateRow_WASMSIMD;
+    }
   }
 #endif
 
@@ -1307,6 +1425,14 @@ static int ScalePlaneBilinearUp(int src_width,
     ScaleFilterCols = ScaleFilterCols_Any_LSX;
     if (IS_ALIGNED(dst_width, 16)) {
       ScaleFilterCols = ScaleFilterCols_LSX;
+    }
+  }
+#endif
+#if defined(HAS_SCALEFILTERCOLS_WASMSIMD)
+  if (filtering && TestCpuFlag(kCpuHasWASMSIMD) && src_width < 32768) {
+    ScaleFilterCols = ScaleFilterCols_Any_WASMSIMD;
+    if (IS_ALIGNED(dst_width, 8)) {
+      ScaleFilterCols = ScaleFilterCols_WASMSIMD;
     }
   }
 #endif
@@ -1781,6 +1907,14 @@ static int ScalePlaneBilinearUp_16(int src_width,
     InterpolateRow = InterpolateRow_16_SME;
   }
 #endif
+#if defined(HAS_INTERPOLATEROW_16_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD)) {
+    InterpolateRow = InterpolateRow_16_Any_WASMSIMD;
+    if (IS_ALIGNED(dst_width, 8)) {
+      InterpolateRow = InterpolateRow_16_WASMSIMD;
+    }
+  }
+#endif
 
   if (filtering && src_width >= 32768) {
     ScaleFilterCols = ScaleFilterCols64_16_C;
@@ -1951,11 +2085,12 @@ int ScalePlane(const uint8_t* src,
                int dst_width,
                int dst_height,
                enum FilterMode filtering) {
-  // Reject dimensions larger than 32768 (or smaller than -32768 for height).
-  // This prevents FixedDiv signed integer overflows that can lead to division
-  // by zero/overflow crashes (SIGFPE on x86) or incorrect step calculations.
+  // Reject width larger than 32768 and height larger than 32767 or smaller than
+  // -32767. This prevents FixedDiv signed integer overflows that can lead to
+  // division by zero/overflow crashes (SIGFPE on x86) or incorrect step
+  // calculations.
   if (!src || src_width <= 0 || src_height == 0 || src_width > 32768 ||
-      src_height < -32768 || src_height > 32768 || !dst || dst_width <= 0 ||
+      src_height < -32767 || src_height > 32767 || !dst || dst_width <= 0 ||
       dst_height <= 0) {
     return -1;
   }
@@ -2066,11 +2201,12 @@ int ScalePlane_16(const uint16_t* src,
                   int dst_width,
                   int dst_height,
                   enum FilterMode filtering) {
-  // Reject dimensions larger than 32768 (or smaller than -32768 for height).
-  // This prevents FixedDiv signed integer overflows that can lead to division
-  // by zero/overflow crashes (SIGFPE on x86) or incorrect step calculations.
+  // Reject width larger than 32768 and height larger than 32767 or smaller than
+  // -32767. This prevents FixedDiv signed integer overflows that can lead to
+  // division by zero/overflow crashes (SIGFPE on x86) or incorrect step
+  // calculations.
   if (!src || src_width <= 0 || src_height == 0 || src_width > 32768 ||
-      src_height < -32768 || src_height > 32768 || !dst || dst_width <= 0 ||
+      src_height < -32767 || src_height > 32767 || !dst || dst_width <= 0 ||
       dst_height <= 0) {
     return -1;
   }

@@ -346,7 +346,6 @@ void vp9_restore_layer_context(VP9_COMP *const cpi) {
   const int old_ext_use_post_encode_drop = cpi->rc.ext_use_post_encode_drop;
 
   cpi->rc = lc->rc;
-  cpi->twopass = lc->twopass;
   cpi->oxcf.target_bandwidth = lc->target_bandwidth;
   cpi->alt_ref_source = lc->alt_ref_source;
   // Check if it is one_pass_cbr_svc mode and lc->speed > 0 (real-time mode
@@ -387,7 +386,6 @@ void vp9_save_layer_context(VP9_COMP *const cpi) {
   LAYER_CONTEXT *const lc = get_layer_context(cpi);
 
   lc->rc = cpi->rc;
-  lc->twopass = cpi->twopass;
   lc->target_bandwidth = (int)oxcf->target_bandwidth;
   lc->alt_ref_source = cpi->alt_ref_source;
   lc->frame_qp = cpi->common.base_qindex;
@@ -416,24 +414,6 @@ void vp9_save_layer_context(VP9_COMP *const cpi) {
     lc->qindex_delta[2] = cr->qindex_delta[2];
   }
 }
-
-#if !CONFIG_REALTIME_ONLY
-void vp9_init_second_pass_spatial_svc(VP9_COMP *cpi) {
-  SVC *const svc = &cpi->svc;
-  int i;
-
-  for (i = 0; i < svc->number_spatial_layers; ++i) {
-    TWO_PASS *const twopass = &svc->layer_context[i].twopass;
-
-    svc->spatial_layer_id = i;
-    vp9_init_second_pass(cpi);
-
-    twopass->total_stats.spatial_layer_id = i;
-    twopass->total_left_stats.spatial_layer_id = i;
-  }
-  svc->spatial_layer_id = 0;
-}
-#endif  // !CONFIG_REALTIME_ONLY
 
 void vp9_inc_frame_in_layer(VP9_COMP *const cpi) {
   LAYER_CONTEXT *const lc =

@@ -12,6 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::{
+    io::{
+        Read,
+        Write, //
+    },
+    marker::PhantomData, //
+};
+
 use crate::{
     connection::{
         Client,
@@ -19,19 +27,14 @@ use crate::{
         TlsConnection, //
     },
     context::TlsContext,
-    errors::Error,
+    errors::{
+        Error,
+        UnknownError, //
+    },
     io::sync_io::{
         NoAsync,
         StdIoWithReactor, //
     }, //
-};
-
-use std::{
-    io::{
-        Read,
-        Write, //
-    },
-    marker::PhantomData, //
 };
 
 /// A convenient wrapper around `TlsContext` for creating synchronous client connections.
@@ -64,8 +67,10 @@ impl TlsConnector {
             .expect("connection is freshly constructed and it cannot already be established")
             .set_host(domain)?;
         conn.set_io(StdIoWithReactor::new(stream, NoAsync))?;
-        if let Some(reason) = conn.do_handshake()? {
-            return Err(Error::Unknown(Box::new(reason)));
+        if conn.do_handshake()?.is_some() {
+            return Err(Error::Unknown(UnknownError(
+                "unexpected non-I/O suspension",
+            )));
         }
 
         Ok(TlsStream {
@@ -101,8 +106,10 @@ impl TlsAcceptor {
     {
         let mut conn = self.ctx.new_server_connection().build();
         conn.set_io(StdIoWithReactor::new(stream, NoAsync))?;
-        if let Some(reason) = conn.do_handshake()? {
-            return Err(Error::Unknown(Box::new(reason)));
+        if conn.do_handshake()?.is_some() {
+            return Err(Error::Unknown(UnknownError(
+                "unexpected non-I/O suspension",
+            )));
         }
 
         Ok(TlsStream {

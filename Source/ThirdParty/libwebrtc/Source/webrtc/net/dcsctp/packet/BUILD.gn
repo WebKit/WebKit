@@ -226,73 +226,471 @@ rtc_library("sctp_packet") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("dcsctp_packet_unittests") {
-    testonly = true
-
+  rtc_cc_test("bounded_byte_reader_test") {
     deps = [
       ":bounded_io",
+      "../../../test:test_support",
+    ]
+    sources = [ "bounded_byte_reader_test.cc" ]
+  }
+
+  rtc_cc_test("bounded_byte_writer_test") {
+    deps = [
+      ":bounded_io",
+      "../../../test:test_support",
+    ]
+    sources = [ "bounded_byte_writer_test.cc" ]
+  }
+
+  rtc_cc_test("abort_chunk_test") {
+    deps = [
+      ":chunk",
+      ":error_cause",
+      ":parameter",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/abort_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("cookie_ack_chunk_test") {
+    deps = [
+      ":chunk",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/cookie_ack_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("cookie_echo_chunk_test") {
+    deps = [
+      ":chunk",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/cookie_echo_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("data_chunk_test") {
+    deps = [
+      ":chunk",
+      ":data",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../public:types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/data_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("error_chunk_test") {
+    deps = [
+      ":chunk",
+      ":error_cause",
+      ":parameter",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/error_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("forward_tsn_chunk_test") {
+    deps = [
+      ":chunk",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../public:types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/forward_tsn_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("heartbeat_ack_chunk_test") {
+    deps = [
+      ":chunk",
+      ":parameter",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/heartbeat_ack_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("heartbeat_request_chunk_test") {
+    deps = [
+      ":chunk",
+      ":parameter",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/heartbeat_request_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("idata_chunk_test") {
+    deps = [
+      ":chunk",
+      ":data",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../public:types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/idata_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("iforward_tsn_chunk_test") {
+    deps = [
+      ":chunk",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../public:types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/iforward_tsn_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("init_ack_chunk_test") {
+    deps = [
+      ":chunk",
+      ":parameter",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/init_ack_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("init_chunk_test") {
+    deps = [
+      ":chunk",
+      ":parameter",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/init_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("reconfig_chunk_test") {
+    deps = [
+      ":chunk",
+      ":parameter",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../public:types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/reconfig_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("sack_chunk_test") {
+    deps = [
+      ":chunk",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/sack_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("shutdown_ack_chunk_test") {
+    deps = [
+      ":chunk",
+      "../../../test:test_support",
+    ]
+    sources = [ "chunk/shutdown_ack_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("shutdown_chunk_test") {
+    deps = [
+      ":chunk",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "chunk/shutdown_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("shutdown_complete_chunk_test") {
+    deps = [
+      ":chunk",
+      "../../../test:test_support",
+    ]
+    sources = [ "chunk/shutdown_complete_chunk_test.cc" ]
+  }
+
+  rtc_cc_test("chunk_validators_test") {
+    deps = [
       ":chunk",
       ":chunk_validators",
+      "../../../test:test_support",
+      "../common:internal_types",
+    ]
+    sources = [ "chunk_validators_test.cc" ]
+  }
+
+  rtc_cc_test("crc32c_test") {
+    deps = [
       ":crc32c",
-      ":data",
+      "../../../test:test_support",
+    ]
+    sources = [ "crc32c_test.cc" ]
+  }
+
+  rtc_cc_test("cookie_received_while_shutting_down_cause_test") {
+    deps = [
+      ":error_cause",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources =
+        [ "error_cause/cookie_received_while_shutting_down_cause_test.cc" ]
+  }
+
+  rtc_cc_test("invalid_mandatory_parameter_cause_test") {
+    deps = [
+      ":error_cause",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "error_cause/invalid_mandatory_parameter_cause_test.cc" ]
+  }
+
+  rtc_cc_test("invalid_stream_identifier_cause_test") {
+    deps = [
+      ":error_cause",
+      "../../../test:test_support",
+      "../public:types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "error_cause/invalid_stream_identifier_cause_test.cc" ]
+  }
+
+  rtc_cc_test("missing_mandatory_parameter_cause_test") {
+    deps = [
+      ":error_cause",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "error_cause/missing_mandatory_parameter_cause_test.cc" ]
+  }
+
+  rtc_cc_test("no_user_data_cause_test") {
+    deps = [
+      ":error_cause",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "error_cause/no_user_data_cause_test.cc" ]
+  }
+
+  rtc_cc_test("out_of_resource_error_cause_test") {
+    deps = [
+      ":error_cause",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "error_cause/out_of_resource_error_cause_test.cc" ]
+  }
+
+  rtc_cc_test("protocol_violation_cause_test") {
+    deps = [
+      ":error_cause",
+      ":parameter",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "error_cause/protocol_violation_cause_test.cc" ]
+  }
+
+  rtc_cc_test("restart_of_an_association_with_new_address_cause_test") {
+    deps = [
+      ":error_cause",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [
+      "error_cause/restart_of_an_association_with_new_address_cause_test.cc",
+    ]
+  }
+
+  rtc_cc_test("stale_cookie_error_cause_test") {
+    deps = [
+      ":error_cause",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "error_cause/stale_cookie_error_cause_test.cc" ]
+  }
+
+  rtc_cc_test("unrecognized_chunk_type_cause_test") {
+    deps = [
+      ":error_cause",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "error_cause/unrecognized_chunk_type_cause_test.cc" ]
+  }
+
+  rtc_cc_test("unrecognized_parameter_cause_test") {
+    deps = [
+      ":error_cause",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "error_cause/unrecognized_parameter_cause_test.cc" ]
+  }
+
+  rtc_cc_test("unresolvable_address_cause_test") {
+    deps = [
+      ":error_cause",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "error_cause/unresolvable_address_cause_test.cc" ]
+  }
+
+  rtc_cc_test("user_initiated_abort_cause_test") {
+    deps = [
+      ":error_cause",
+      ":parameter",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "error_cause/user_initiated_abort_cause_test.cc" ]
+  }
+
+  rtc_cc_test("add_incoming_streams_request_parameter_test") {
+    deps = [
+      ":parameter",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "parameter/add_incoming_streams_request_parameter_test.cc" ]
+  }
+
+  rtc_cc_test("add_outgoing_streams_request_parameter_test") {
+    deps = [
+      ":parameter",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "parameter/add_outgoing_streams_request_parameter_test.cc" ]
+  }
+
+  rtc_cc_test("forward_tsn_supported_parameter_test") {
+    deps = [
+      ":parameter",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "parameter/forward_tsn_supported_parameter_test.cc" ]
+  }
+
+  rtc_cc_test("incoming_ssn_reset_request_parameter_test") {
+    deps = [
+      ":parameter",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../public:types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "parameter/incoming_ssn_reset_request_parameter_test.cc" ]
+  }
+
+  rtc_cc_test("outgoing_ssn_reset_request_parameter_test") {
+    deps = [
+      ":parameter",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../public:types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "parameter/outgoing_ssn_reset_request_parameter_test.cc" ]
+  }
+
+  rtc_cc_test("parameter_test") {
+    deps = [
+      ":parameter",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../public:types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "parameter/parameter_test.cc" ]
+  }
+
+  rtc_cc_test("reconfiguration_response_parameter_test") {
+    deps = [
+      ":parameter",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "parameter/reconfiguration_response_parameter_test.cc" ]
+  }
+
+  rtc_cc_test("ssn_tsn_reset_request_parameter_test") {
+    deps = [
+      ":parameter",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "parameter/ssn_tsn_reset_request_parameter_test.cc" ]
+  }
+
+  rtc_cc_test("state_cookie_parameter_test") {
+    deps = [
+      ":parameter",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "parameter/state_cookie_parameter_test.cc" ]
+  }
+
+  rtc_cc_test("supported_extensions_parameter_test") {
+    deps = [
+      ":parameter",
+      "../../../test:test_support",
+      "../testing:testing_macros",
+    ]
+    sources = [ "parameter/supported_extensions_parameter_test.cc" ]
+  }
+
+  rtc_cc_test("zero_checksum_acceptable_chunk_parameter_test") {
+    deps = [
+      ":parameter",
+      "../../../test:test_support",
+      "../public:types",
+      "../testing:testing_macros",
+    ]
+    sources = [ "parameter/zero_checksum_acceptable_chunk_parameter_test.cc" ]
+  }
+
+  rtc_cc_test("sctp_packet_test") {
+    deps = [
+      ":chunk",
       ":error_cause",
       ":parameter",
       ":sctp_packet",
-      ":tlv_trait",
       "../../../test:test_support",
       "../common:internal_types",
       "../common:math",
       "../public:types",
       "../testing:testing_macros",
     ]
-    sources = [
-      "bounded_byte_reader_test.cc",
-      "bounded_byte_writer_test.cc",
-      "chunk/abort_chunk_test.cc",
-      "chunk/cookie_ack_chunk_test.cc",
-      "chunk/cookie_echo_chunk_test.cc",
-      "chunk/data_chunk_test.cc",
-      "chunk/error_chunk_test.cc",
-      "chunk/forward_tsn_chunk_test.cc",
-      "chunk/heartbeat_ack_chunk_test.cc",
-      "chunk/heartbeat_request_chunk_test.cc",
-      "chunk/idata_chunk_test.cc",
-      "chunk/iforward_tsn_chunk_test.cc",
-      "chunk/init_ack_chunk_test.cc",
-      "chunk/init_chunk_test.cc",
-      "chunk/reconfig_chunk_test.cc",
-      "chunk/sack_chunk_test.cc",
-      "chunk/shutdown_ack_chunk_test.cc",
-      "chunk/shutdown_chunk_test.cc",
-      "chunk/shutdown_complete_chunk_test.cc",
-      "chunk_validators_test.cc",
-      "crc32c_test.cc",
-      "error_cause/cookie_received_while_shutting_down_cause_test.cc",
-      "error_cause/invalid_mandatory_parameter_cause_test.cc",
-      "error_cause/invalid_stream_identifier_cause_test.cc",
-      "error_cause/missing_mandatory_parameter_cause_test.cc",
-      "error_cause/no_user_data_cause_test.cc",
-      "error_cause/out_of_resource_error_cause_test.cc",
-      "error_cause/protocol_violation_cause_test.cc",
-      "error_cause/restart_of_an_association_with_new_address_cause_test.cc",
-      "error_cause/stale_cookie_error_cause_test.cc",
-      "error_cause/unrecognized_chunk_type_cause_test.cc",
-      "error_cause/unrecognized_parameter_cause_test.cc",
-      "error_cause/unresolvable_address_cause_test.cc",
-      "error_cause/user_initiated_abort_cause_test.cc",
-      "parameter/add_incoming_streams_request_parameter_test.cc",
-      "parameter/add_outgoing_streams_request_parameter_test.cc",
-      "parameter/forward_tsn_supported_parameter_test.cc",
-      "parameter/incoming_ssn_reset_request_parameter_test.cc",
-      "parameter/outgoing_ssn_reset_request_parameter_test.cc",
-      "parameter/parameter_test.cc",
-      "parameter/reconfiguration_response_parameter_test.cc",
-      "parameter/ssn_tsn_reset_request_parameter_test.cc",
-      "parameter/state_cookie_parameter_test.cc",
-      "parameter/supported_extensions_parameter_test.cc",
-      "parameter/zero_checksum_acceptable_chunk_parameter_test.cc",
-      "sctp_packet_test.cc",
-      "tlv_trait_test.cc",
+    sources = [ "sctp_packet_test.cc" ]
+  }
+
+  rtc_cc_test("tlv_trait_test") {
+    deps = [
+      ":bounded_io",
+      ":tlv_trait",
+      "../../../test:test_support",
     ]
+    sources = [ "tlv_trait_test.cc" ]
   }
 }

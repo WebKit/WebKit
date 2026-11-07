@@ -194,6 +194,8 @@ err:
   return ret;
 }
 
+namespace {
+
 struct pkcs12_context {
   EVP_PKEY **out_key;
   STACK_OF(X509) *out_certs;
@@ -203,9 +205,9 @@ struct pkcs12_context {
 
 // PKCS12_handle_sequence parses a BER-encoded SEQUENCE of elements in a PKCS#12
 // structure.
-static int PKCS12_handle_sequence(
-    CBS *sequence, struct pkcs12_context *ctx,
-    int (*handle_element)(CBS *cbs, struct pkcs12_context *ctx)) {
+int PKCS12_handle_sequence(CBS *sequence, struct pkcs12_context *ctx,
+                           int (*handle_element)(CBS *cbs,
+                                                 struct pkcs12_context *ctx)) {
   uint8_t *storage = nullptr;
   CBS in;
   int ret = 0;
@@ -272,8 +274,8 @@ static const uint8_t kX509Certificate[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
 // It sets `*out_friendly_name` to a newly-allocated copy of the friendly name,
 // encoded as a UTF-8 string, or NULL if there is none. It returns one on
 // success and zero on error.
-static int parse_bag_attributes(CBS *attrs, uint8_t **out_friendly_name,
-                                size_t *out_friendly_name_len) {
+int parse_bag_attributes(CBS *attrs, uint8_t **out_friendly_name,
+                         size_t *out_friendly_name_len) {
   *out_friendly_name = nullptr;
   *out_friendly_name_len = 0;
 
@@ -326,7 +328,7 @@ err:
 
 // PKCS12_handle_safe_bag parses a single SafeBag element in a PKCS#12
 // structure.
-static int PKCS12_handle_safe_bag(CBS *safe_bag, struct pkcs12_context *ctx) {
+int PKCS12_handle_safe_bag(CBS *safe_bag, struct pkcs12_context *ctx) {
   CBS bag_id, wrapped_value, bag_attrs;
   if (!CBS_get_asn1(safe_bag, &bag_id, CBS_ASN1_OBJECT) ||
       !CBS_get_asn1(safe_bag, &wrapped_value,
@@ -437,8 +439,7 @@ static const uint8_t kPKCS7EncryptedData[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
 
 // PKCS12_handle_content_info parses a single PKCS#7 ContentInfo element in a
 // PKCS#12 structure.
-static int PKCS12_handle_content_info(CBS *content_info,
-                                      struct pkcs12_context *ctx) {
+int PKCS12_handle_content_info(CBS *content_info, struct pkcs12_context *ctx) {
   CBS content_type, wrapped_contents, contents;
   int ret = 0;
   uint8_t *storage = nullptr;
@@ -514,10 +515,9 @@ err:
   return ret;
 }
 
-static int pkcs12_check_mac(int *out_mac_ok, const char *password,
-                            size_t password_len, const CBS *salt,
-                            uint32_t iterations, const EVP_MD *md,
-                            const CBS *authsafes, const CBS *expected_mac) {
+int pkcs12_check_mac(int *out_mac_ok, const char *password, size_t password_len,
+                     const CBS *salt, uint32_t iterations, const EVP_MD *md,
+                     const CBS *authsafes, const CBS *expected_mac) {
   int ret = 0;
   uint8_t hmac_key[EVP_MAX_MD_SIZE];
   if (!pkcs12_key_gen(password, password_len, CBS_data(salt), CBS_len(salt),
@@ -543,6 +543,8 @@ err:
   OPENSSL_cleanse(hmac_key, sizeof(hmac_key));
   return ret;
 }
+
+}  // namespace
 
 
 int PKCS12_get_key_and_certs(EVP_PKEY **out_key, STACK_OF(X509) *out_certs,
@@ -902,10 +904,12 @@ int PKCS12_verify_mac(const PKCS12 *p12, const char *password,
   return 1;
 }
 
+namespace {
+
 // add_bag_attributes adds the bagAttributes field of a SafeBag structure,
 // containing the specified friendlyName and localKeyId attributes.
-static int add_bag_attributes(CBB *bag, const char *name, size_t name_len,
-                              const uint8_t *key_id, size_t key_id_len) {
+int add_bag_attributes(CBB *bag, const char *name, size_t name_len,
+                       const uint8_t *key_id, size_t key_id_len) {
   if (name == nullptr && key_id_len == 0) {
     return 1;  // Omit the OPTIONAL SET.
   }
@@ -947,8 +951,8 @@ static int add_bag_attributes(CBB *bag, const char *name, size_t name_len,
   return CBB_flush_asn1_set_of(&attrs) && CBB_flush(bag);
 }
 
-static int add_cert_bag(CBB *cbb, X509 *cert, const char *name,
-                        const uint8_t *key_id, size_t key_id_len) {
+int add_cert_bag(CBB *cbb, const X509 *cert, const char *name,
+                 const uint8_t *key_id, size_t key_id_len) {
   CBB bag, bag_contents, cert_bag, wrapped_cert, cert_value;
   if (  // See https://tools.ietf.org/html/rfc7292#section-4.2.
       !CBB_add_asn1(cbb, &bag, CBS_ASN1_SEQUENCE) ||
@@ -990,9 +994,9 @@ static int add_cert_bag(CBB *cbb, X509 *cert, const char *name,
   return 1;
 }
 
-static int add_cert_safe_contents(CBB *cbb, X509 *cert,
-                                  const STACK_OF(X509) *chain, const char *name,
-                                  const uint8_t *key_id, size_t key_id_len) {
+int add_cert_safe_contents(CBB *cbb, const X509 *cert,
+                           const STACK_OF(X509) *chain, const char *name,
+                           const uint8_t *key_id, size_t key_id_len) {
   CBB safe_contents;
   if (!CBB_add_asn1(cbb, &safe_contents, CBS_ASN1_SEQUENCE) ||
       (cert != nullptr &&
@@ -1014,11 +1018,9 @@ static int add_cert_safe_contents(CBB *cbb, X509 *cert,
 // add_encrypted_data encrypts `in` with `pbe_nid` and `pbe_cipher`, writing the
 // result to `out`. It returns one on success and zero on error. `pbe_nid` and
 // `pbe_cipher` are interpreted as in `PKCS8_encrypt`.
-static int add_encrypted_data(CBB *out, int pbe_nid,
-                              const EVP_CIPHER *pbe_cipher,
-                              const char *password, size_t password_len,
-                              uint32_t iterations, const uint8_t *in,
-                              size_t in_len) {
+int add_encrypted_data(CBB *out, int pbe_nid, const EVP_CIPHER *pbe_cipher,
+                       const char *password, size_t password_len,
+                       uint32_t iterations, const uint8_t *in, size_t in_len) {
   uint8_t salt[PKCS5_SALT_LEN];
   if (!RAND_bytes(salt, sizeof(salt))) {
     return 0;
@@ -1070,8 +1072,10 @@ static int add_encrypted_data(CBB *out, int pbe_nid,
   return 1;
 }
 
+}  // namespace
+
 PKCS12 *PKCS12_create(const char *password, const char *name,
-                      const EVP_PKEY *pkey, X509 *cert,
+                      const EVP_PKEY *pkey, const X509 *cert,
                       const STACK_OF(X509) *chain, int key_nid, int cert_nid,
                       int iterations, int mac_iterations, int key_type) {
   if (key_nid == 0) {

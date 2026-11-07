@@ -572,6 +572,81 @@ TEST(EncodeAPI, SetReferenceSizeValidationVp8) {
   EXPECT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
 }
 
+// Bug: 564326761.
+TEST(EncodeAPI, ValidateConfigVp8) {
+  vpx_codec_iface_t *const iface = vpx_codec_vp8_cx();
+  vpx_codec_enc_cfg_t default_cfg;
+  ASSERT_EQ(vpx_codec_enc_config_default(iface, &default_cfg, 0), VPX_CODEC_OK);
+
+  const vpx_rational_t dsf = { 1, 1 };
+  vpx_codec_ctx_t enc = {};
+
+  // Invalid ss_number_layers (0 and > VPX_SS_MAX_LAYERS).
+  for (const unsigned int layers : { 0U, VPX_SS_MAX_LAYERS + 1U }) {
+    vpx_codec_enc_cfg_t cfg = default_cfg;
+    cfg.ss_number_layers = layers;
+    EXPECT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0),
+              VPX_CODEC_INVALID_PARAM);
+    EXPECT_EQ(vpx_codec_enc_init_multi(&enc, iface, &cfg, 1, 0, &dsf),
+              VPX_CODEC_INVALID_PARAM);
+  }
+
+  // Invalid boost factor denominators (0).
+  {
+    vpx_codec_enc_cfg_t cfg = default_cfg;
+    cfg.kf_frame_max_boost_first_factor.den = 0;
+    EXPECT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0),
+              VPX_CODEC_INVALID_PARAM);
+  }
+  {
+    vpx_codec_enc_cfg_t cfg = default_cfg;
+    cfg.kf_max_total_boost_factor.den = 0;
+    EXPECT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0),
+              VPX_CODEC_INVALID_PARAM);
+  }
+
+  // Ensure scalar range checks run before dereferencing rc_twopass_stats_in.buf
+  // when g_pass == VPX_RC_LAST_PASS.
+  {
+    uint8_t dummy_buf[1] = { 0 };
+    constexpr size_t kDummyStatsSize = 52992;
+    vpx_codec_enc_cfg_t cfg = default_cfg;
+    cfg.g_pass = VPX_RC_LAST_PASS;
+    cfg.ss_number_layers = VPX_SS_MAX_LAYERS + 1;
+    cfg.rc_twopass_stats_in.buf = dummy_buf;
+    cfg.rc_twopass_stats_in.sz = kDummyStatsSize;
+    EXPECT_EQ(vpx_codec_enc_init_multi(&enc, iface, &cfg, 1, 0, &dsf),
+              VPX_CODEC_INVALID_PARAM);
+  }
+}
+
+// Bug: 564326909.
+TEST(EncodeAPI, SetReferenceValidationVp8) {
+  vpx_codec_iface_t *const iface = vpx_codec_vp8_cx();
+  vpx_codec_enc_cfg_t cfg;
+  vpx_codec_ctx_t enc;
+  ASSERT_EQ(vpx_codec_enc_config_default(iface, &cfg, 0), VPX_CODEC_OK);
+  ASSERT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0), VPX_CODEC_OK);
+
+  vpx_image_t *const ref_img =
+      CreateImage(VPX_BITS_8, VPX_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+  ASSERT_NE(ref_img, nullptr);
+
+  for (const int plane : { VPX_PLANE_Y, VPX_PLANE_U, VPX_PLANE_V }) {
+    vpx_ref_frame_t ref_frame;
+    ref_frame.frame_type = VP8_LAST_FRAME;
+    ref_frame.img = *ref_img;
+    ref_frame.img.planes[plane] = nullptr;
+    EXPECT_EQ(vpx_codec_control(&enc, VP8_SET_REFERENCE, &ref_frame),
+              VPX_CODEC_INVALID_PARAM);
+    EXPECT_EQ(vpx_codec_control(&enc, VP8_COPY_REFERENCE, &ref_frame),
+              VPX_CODEC_INVALID_PARAM);
+  }
+
+  vpx_img_free(ref_img);
+  EXPECT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
+}
+
 // Emulates the WebCodecs VideoEncoder interface.
 class VP8Encoder {
  public:
@@ -1111,6 +1186,34 @@ TEST(EncodeAPI, Vp8SSIMMultipleFrames) {
 }
 #endif  // CONFIG_VP8_ENCODER
 
+#if CONFIG_VP9_ENCODER
+TEST(EncodeAPI, SetReferenceValidationVp9) {
+  vpx_codec_iface_t *const iface = vpx_codec_vp9_cx();
+  vpx_codec_enc_cfg_t cfg;
+  vpx_codec_ctx_t enc;
+  ASSERT_EQ(vpx_codec_enc_config_default(iface, &cfg, 0), VPX_CODEC_OK);
+  ASSERT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0), VPX_CODEC_OK);
+
+  vpx_image_t *const ref_img =
+      CreateImage(VPX_BITS_8, VPX_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+  ASSERT_NE(ref_img, nullptr);
+
+  for (const int plane : { VPX_PLANE_Y, VPX_PLANE_U, VPX_PLANE_V }) {
+    vpx_ref_frame_t ref_frame;
+    ref_frame.frame_type = VP8_LAST_FRAME;
+    ref_frame.img = *ref_img;
+    ref_frame.img.planes[plane] = nullptr;
+    EXPECT_EQ(vpx_codec_control(&enc, VP8_SET_REFERENCE, &ref_frame),
+              VPX_CODEC_INVALID_PARAM);
+    EXPECT_EQ(vpx_codec_control(&enc, VP8_COPY_REFERENCE, &ref_frame),
+              VPX_CODEC_INVALID_PARAM);
+  }
+
+  vpx_img_free(ref_img);
+  EXPECT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
+}
+#endif  // CONFIG_VP9_ENCODER
+
 // Set up 2 spatial streams with 2 temporal layers per stream, and generate
 // invalid configuration by setting the temporal layer rate allocation
 // (ts_target_bitrate[]) to 0 for both layers. This should fail independent of
@@ -1360,6 +1463,82 @@ TEST(EncodeAPI, SetRoi) {
     EXPECT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
   }
 }
+
+#if CONFIG_VP9_ENCODER
+// Segment ids in the ROI map must be in [0, MAX_SEGMENTS). vp9_set_roi_map()
+// did not validate the map contents, so out-of-range ids were used to index
+// segment count arrays on the stack while encoding inter frames.
+TEST(EncodeAPI, SetRoiInvalidSegmentIdVp9) {
+  constexpr int kWidth = 64;
+  constexpr int kHeight = 64;
+  constexpr int kRows = (kHeight + 7) >> 3;
+  constexpr int kCols = (kWidth + 7) >> 3;
+  constexpr uint8_t kMaxSegments = 8;  // MAX_SEGMENTS
+
+  vpx_codec_ctx_t enc;
+  vpx_codec_enc_cfg_t cfg;
+  ASSERT_EQ(vpx_codec_enc_config_default(vpx_codec_vp9_cx(), &cfg, /*usage=*/0),
+            VPX_CODEC_OK);
+  cfg.g_w = kWidth;
+  cfg.g_h = kHeight;
+  cfg.g_lag_in_frames = 0;
+  ASSERT_EQ(vpx_codec_enc_init(&enc, vpx_codec_vp9_cx(), &cfg, 0),
+            VPX_CODEC_OK);
+  ASSERT_EQ(vpx_codec_control(&enc, VP8E_SET_CPUUSED, 5), VPX_CODEC_OK);
+
+  vpx_image_t *const img =
+      vpx_img_alloc(nullptr, VPX_IMG_FMT_I420, kWidth, kHeight, 32);
+  ASSERT_NE(img, nullptr);
+  for (int plane = 0; plane < 3; ++plane) {
+    const int w = plane ? kWidth >> 1 : kWidth;
+    const int h = plane ? kHeight >> 1 : kHeight;
+    uint8_t *row = img->planes[plane];
+    for (int y = 0; y < h; ++y) {
+      for (int x = 0; x < w; ++x) {
+        row[x] = static_cast<uint8_t>((x * 7 + y * 13) & 255);
+      }
+      row += img->stride[plane];
+    }
+  }
+
+  vpx_roi_map_t roi = {};
+  uint8_t roi_map[kRows * kCols];
+  roi.roi_map = roi_map;
+  roi.rows = kRows;
+  roi.cols = kCols;
+  roi.delta_q[0] = -10;  // Enable segmentation.
+  // -1 disables the ref frame feature: with 0 the ROI would force intra
+  // prediction and the second frame would not exercise an inter frame.
+  for (int i = 0; i < 8; ++i) {
+    roi.ref_frame[i] = -1;
+  }
+
+  // Segment ids out of range must be rejected.
+  memset(roi_map, kMaxSegments, sizeof(roi_map));
+  EXPECT_EQ(vpx_codec_control(&enc, VP9E_SET_ROI_MAP, &roi),
+            VPX_CODEC_INVALID_PARAM);
+
+  // Valid segment ids must be accepted...
+  for (size_t i = 0; i < sizeof(roi_map); ++i) {
+    roi_map[i] = static_cast<uint8_t>(i % kMaxSegments);
+  }
+  EXPECT_EQ(vpx_codec_control(&enc, VP9E_SET_ROI_MAP, &roi), VPX_CODEC_OK);
+
+  // ...and encoding a key frame followed by an inter frame with the ROI map
+  // enabled must succeed.
+  for (int frame = 0; frame < 2; ++frame) {
+    ASSERT_EQ(vpx_codec_encode(&enc, img, /*pts=*/frame, /*duration=*/1,
+                               /*flags=*/0, VPX_DL_REALTIME),
+              VPX_CODEC_OK);
+    vpx_codec_iter_t iter = nullptr;
+    while (vpx_codec_get_cx_data(&enc, &iter) != nullptr) {
+    }
+  }
+
+  vpx_img_free(img);
+  EXPECT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
+}
+#endif  // CONFIG_VP9_ENCODER
 
 TEST(EncodeAPI, ConfigChangeThreadCount) {
   constexpr int kWidth = 1920;
@@ -1617,6 +1796,104 @@ TEST(EncodeAPI, PerFramePsnr) {
     ASSERT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
   }
 }
+
+#if CONFIG_VP8_ENCODER && CONFIG_TEMPORAL_DENOISING
+uint64_t CalcPlaneSseVp8(const uint8_t *a, int stride_a, const uint8_t *b,
+                         int stride_b, int width, int height) {
+  uint64_t sse = 0;
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
+      const int diff = static_cast<int>(a[y * stride_a + x]) -
+                       static_cast<int>(b[y * stride_b + x]);
+      sse += static_cast<uint64_t>(diff * diff);
+    }
+  }
+  return sse;
+}
+
+TEST(EncodeAPI, VP8DenoiserPsnr) {
+  constexpr int kWidth = 64;
+  constexpr int kHeight = 64;
+
+  vpx_codec_iface_t *const iface = vpx_codec_vp8_cx();
+  vpx_codec_enc_cfg_t cfg;
+  ASSERT_EQ(vpx_codec_enc_config_default(iface, &cfg, 0), VPX_CODEC_OK);
+  cfg.g_w = kWidth;
+  cfg.g_h = kHeight;
+  cfg.g_lag_in_frames = 0;
+  cfg.g_pass = VPX_RC_ONE_PASS;
+  cfg.rc_end_usage = VPX_CBR;
+
+  vpx_codec_ctx_t enc;
+  ASSERT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, VPX_CODEC_USE_PSNR),
+            VPX_CODEC_OK);
+  ASSERT_EQ(vpx_codec_control(&enc, VP8E_SET_CPUUSED, -6), VPX_CODEC_OK);
+  // Set noise_sensitivity = 2 (kDenoiserOnYUV) so UV planes are denoised
+  // in-place in cpi->Source.
+  ASSERT_EQ(vpx_codec_control(&enc, VP8E_SET_NOISE_SENSITIVITY, 2),
+            VPX_CODEC_OK);
+
+  // Frame 0 (keyframe, Y=128, U/V=200) initializes the denoiser reference.
+  // U/V must be away from 128 so vp8_denoiser_filter_uv does not skip them.
+  vpx_image_t *const img =
+      CreateImage(VPX_BITS_8, VPX_IMG_FMT_I420, kWidth, kHeight);
+  ASSERT_NE(img, nullptr);
+  for (int y = 0; y < kHeight / 2; ++y) {
+    memset(img->planes[VPX_PLANE_U] + y * img->stride[VPX_PLANE_U], 200,
+           kWidth / 2);
+    memset(img->planes[VPX_PLANE_V] + y * img->stride[VPX_PLANE_V], 200,
+           kWidth / 2);
+  }
+  ASSERT_EQ(vpx_codec_encode(&enc, img, 0, 1, 0, VPX_DL_REALTIME),
+            VPX_CODEC_OK);
+
+  // Frame 1 (inter frame, U/V=202): small chroma perturbation is filtered back
+  // toward 200 in-place in cpi->Source (u_buffer/v_buffer) by the denoiser.
+  for (int y = 0; y < kHeight / 2; ++y) {
+    memset(img->planes[VPX_PLANE_U] + y * img->stride[VPX_PLANE_U], 202,
+           kWidth / 2);
+    memset(img->planes[VPX_PLANE_V] + y * img->stride[VPX_PLANE_V], 202,
+           kWidth / 2);
+  }
+  ASSERT_EQ(vpx_codec_encode(&enc, img, 1, 1, 0, VPX_DL_REALTIME),
+            VPX_CODEC_OK);
+
+  const vpx_image_t *const recon = vpx_codec_get_preview_frame(&enc);
+  ASSERT_NE(recon, nullptr);
+
+  const uint64_t expected_sse_y = CalcPlaneSseVp8(
+      img->planes[VPX_PLANE_Y], img->stride[VPX_PLANE_Y],
+      recon->planes[VPX_PLANE_Y], recon->stride[VPX_PLANE_Y], kWidth, kHeight);
+  const uint64_t expected_sse_u =
+      CalcPlaneSseVp8(img->planes[VPX_PLANE_U], img->stride[VPX_PLANE_U],
+                      recon->planes[VPX_PLANE_U], recon->stride[VPX_PLANE_U],
+                      kWidth / 2, kHeight / 2);
+  const uint64_t expected_sse_v =
+      CalcPlaneSseVp8(img->planes[VPX_PLANE_V], img->stride[VPX_PLANE_V],
+                      recon->planes[VPX_PLANE_V], recon->stride[VPX_PLANE_V],
+                      kWidth / 2, kHeight / 2);
+  EXPECT_GT(expected_sse_u, 0u);
+  EXPECT_GT(expected_sse_v, 0u);
+
+  const vpx_codec_cx_pkt_t *pkt;
+  vpx_codec_iter_t iter = nullptr;
+  bool had_psnr_pkt = false;
+  while ((pkt = vpx_codec_get_cx_data(&enc, &iter)) != nullptr) {
+    if (pkt->kind == VPX_CODEC_PSNR_PKT) {
+      had_psnr_pkt = true;
+      EXPECT_EQ(pkt->data.psnr.sse[0],
+                expected_sse_y + expected_sse_u + expected_sse_v);
+      EXPECT_EQ(pkt->data.psnr.sse[1], expected_sse_y);
+      EXPECT_EQ(pkt->data.psnr.sse[2], expected_sse_u);
+      EXPECT_EQ(pkt->data.psnr.sse[3], expected_sse_v);
+    }
+  }
+  EXPECT_TRUE(had_psnr_pkt);
+
+  vpx_img_free(img);
+  ASSERT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
+}
+#endif  // CONFIG_VP8_ENCODER && CONFIG_TEMPORAL_DENOISING
 
 #if CONFIG_VP9_ENCODER
 // Frame size needed to trigger the overflow exceeds the max buffer allowed on
@@ -3001,6 +3278,12 @@ TEST(EncodeAPI, SvcTestInvalidInputs) {
   cfg.layer_target_bitrate[2] = 300;
   cfg.layer_target_bitrate[3] = 400;
   cfg.rc_target_bitrate = 700;
+  // Multi-layer encoding is only supported for one-pass.
+  cfg.g_pass = VPX_RC_FIRST_PASS;
+  ASSERT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0), VPX_CODEC_INVALID_PARAM);
+  cfg.g_pass = VPX_RC_LAST_PASS;
+  ASSERT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0), VPX_CODEC_INVALID_PARAM);
+  cfg.g_pass = VPX_RC_ONE_PASS;
   ASSERT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0), VPX_CODEC_OK);
   vpx_svc_extra_cfg_t svc_cfg = {};
   svc_cfg.scaling_factor_num[0] = 1;
@@ -3029,6 +3312,63 @@ TEST(EncodeAPI, SvcTestInvalidInputs) {
   svc_cfg.min_quantizers[1] = -1;
   svc_cfg.max_quantizers[1] = 56;
   ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_SVC_PARAMETERS, &svc_cfg),
+            VPX_CODEC_INVALID_PARAM);
+
+  // Check for invalid layer id input.
+  vpx_svc_layer_id_t layer_id = {};
+  layer_id.spatial_layer_id = 0;
+  layer_id.temporal_layer_id = 0;
+  for (unsigned int i = 0; i < cfg.ss_number_layers; i++) {
+    layer_id.temporal_layer_id_per_spatial[i] = 0;
+  }
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_SVC_LAYER_ID, &layer_id),
+            VPX_CODEC_OK);
+
+  layer_id.temporal_layer_id_per_spatial[0] = cfg.ts_number_layers;
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_SVC_LAYER_ID, &layer_id),
+            VPX_CODEC_INVALID_PARAM);
+
+  layer_id.temporal_layer_id_per_spatial[0] = -1;
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_SVC_LAYER_ID, &layer_id),
+            VPX_CODEC_INVALID_PARAM);
+  layer_id.temporal_layer_id_per_spatial[0] = 0;
+
+  layer_id.temporal_layer_id = cfg.ts_number_layers;
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_SVC_LAYER_ID, &layer_id),
+            VPX_CODEC_INVALID_PARAM);
+
+  layer_id.temporal_layer_id = -1;
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_SVC_LAYER_ID, &layer_id),
+            VPX_CODEC_INVALID_PARAM);
+
+  // Check for invalid frame buffer index input. Valid indices are in
+  // [0, REF_FRAMES) (REF_FRAMES is 8); -1 is used internally for "no
+  // reference" but is not a valid input here.
+  vpx_svc_ref_frame_config_t fb_config = {};
+  for (unsigned int i = 0; i < cfg.ss_number_layers; i++) {
+    fb_config.lst_fb_idx[i] = 0;
+    fb_config.gld_fb_idx[i] = 0;
+    fb_config.alt_fb_idx[i] = 0;
+    fb_config.reference_last[i] = 1;
+    fb_config.update_last[i] = 1;
+    fb_config.duration[i] = 1000;
+  }
+  fb_config.lst_fb_idx[0] = 7;
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_SVC_REF_FRAME_CONFIG, &fb_config),
+            VPX_CODEC_OK);
+  fb_config.lst_fb_idx[0] = 8;
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_SVC_REF_FRAME_CONFIG, &fb_config),
+            VPX_CODEC_INVALID_PARAM);
+  fb_config.lst_fb_idx[0] = -1;
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_SVC_REF_FRAME_CONFIG, &fb_config),
+            VPX_CODEC_INVALID_PARAM);
+  fb_config.lst_fb_idx[0] = 0;
+  fb_config.gld_fb_idx[0] = -2000000;
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_SVC_REF_FRAME_CONFIG, &fb_config),
+            VPX_CODEC_INVALID_PARAM);
+  fb_config.gld_fb_idx[0] = 0;
+  fb_config.alt_fb_idx[1] = 8;
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_SVC_REF_FRAME_CONFIG, &fb_config),
             VPX_CODEC_INVALID_PARAM);
 
   // Check for invalid duration input.
@@ -3707,6 +4047,148 @@ TEST(EncodeAPI, ResizeRealtimeSourceSadOverflow) {
   vpx_img_free(image);
   ASSERT_EQ(vpx_codec_destroy(&codec), VPX_CODEC_OK);
 }
+
+#if CONFIG_VP9_TEMPORAL_DENOISING
+uint64_t CalcPlaneSse(const uint8_t *a, int stride_a, const uint8_t *b,
+                      int stride_b, int width, int height) {
+  uint64_t sse = 0;
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
+      const int diff = static_cast<int>(a[y * stride_a + x]) -
+                       static_cast<int>(b[y * stride_b + x]);
+      sse += static_cast<uint64_t>(diff * diff);
+    }
+  }
+  return sse;
+}
+
+TEST(EncodeAPI, VP9DenoiserPsnr) {
+  constexpr int kWidth = 64;
+  constexpr int kHeight = 64;
+
+  vpx_codec_iface_t *const iface = vpx_codec_vp9_cx();
+  vpx_codec_enc_cfg_t cfg;
+  ASSERT_EQ(vpx_codec_enc_config_default(iface, &cfg, 0), VPX_CODEC_OK);
+  cfg.g_w = kWidth;
+  cfg.g_h = kHeight;
+  cfg.g_lag_in_frames = 0;
+  cfg.g_pass = VPX_RC_ONE_PASS;
+  cfg.rc_end_usage = VPX_CBR;
+
+  vpx_codec_ctx_t enc;
+  ASSERT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, VPX_CODEC_USE_PSNR),
+            VPX_CODEC_OK);
+  ASSERT_EQ(vpx_codec_control(&enc, VP8E_SET_CPUUSED, 6), VPX_CODEC_OK);
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_NOISE_SENSITIVITY, 1),
+            VPX_CODEC_OK);
+
+  // Frame 0 (keyframe, Y=128) initializes the temporal denoiser reference.
+  vpx_image_t *const img =
+      CreateImage(VPX_BITS_8, VPX_IMG_FMT_I420, kWidth, kHeight);
+  ASSERT_NE(img, nullptr);
+  ASSERT_EQ(vpx_codec_encode(&enc, img, 0, 1, 0, VPX_DL_REALTIME),
+            VPX_CODEC_OK);
+
+  // Frame 1 (inter frame, Y=130): small luma perturbation is filtered back
+  // toward 128 in-place in cpi->Source by the temporal denoiser.
+  for (int y = 0; y < kHeight; ++y) {
+    memset(img->planes[VPX_PLANE_Y] + y * img->stride[VPX_PLANE_Y], 130,
+           kWidth);
+  }
+  ASSERT_EQ(vpx_codec_encode(&enc, img, 1, 1, 0, VPX_DL_REALTIME),
+            VPX_CODEC_OK);
+
+  const vpx_image_t *const recon = vpx_codec_get_preview_frame(&enc);
+  ASSERT_NE(recon, nullptr);
+
+  const uint64_t expected_sse_y = CalcPlaneSse(
+      img->planes[VPX_PLANE_Y], img->stride[VPX_PLANE_Y],
+      recon->planes[VPX_PLANE_Y], recon->stride[VPX_PLANE_Y], kWidth, kHeight);
+  const uint64_t expected_sse_u =
+      CalcPlaneSse(img->planes[VPX_PLANE_U], img->stride[VPX_PLANE_U],
+                   recon->planes[VPX_PLANE_U], recon->stride[VPX_PLANE_U],
+                   kWidth / 2, kHeight / 2);
+  const uint64_t expected_sse_v =
+      CalcPlaneSse(img->planes[VPX_PLANE_V], img->stride[VPX_PLANE_V],
+                   recon->planes[VPX_PLANE_V], recon->stride[VPX_PLANE_V],
+                   kWidth / 2, kHeight / 2);
+  EXPECT_GT(expected_sse_y, 0u);
+
+  const vpx_codec_cx_pkt_t *pkt;
+  vpx_codec_iter_t iter = nullptr;
+  bool had_psnr_pkt = false;
+  while ((pkt = vpx_codec_get_cx_data(&enc, &iter)) != nullptr) {
+    if (pkt->kind == VPX_CODEC_PSNR_PKT) {
+      had_psnr_pkt = true;
+      EXPECT_EQ(pkt->data.psnr.sse[0],
+                expected_sse_y + expected_sse_u + expected_sse_v);
+      EXPECT_EQ(pkt->data.psnr.sse[1], expected_sse_y);
+      EXPECT_EQ(pkt->data.psnr.sse[2], expected_sse_u);
+      EXPECT_EQ(pkt->data.psnr.sse[3], expected_sse_v);
+    }
+  }
+  EXPECT_TRUE(had_psnr_pkt);
+
+  vpx_img_free(img);
+  ASSERT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
+}
+
+TEST(EncodeAPI, VP9DenoiserResolutionChange) {
+  vpx_codec_iface_t *const iface = vpx_codec_vp9_cx();
+  vpx_codec_enc_cfg_t cfg;
+  ASSERT_EQ(vpx_codec_enc_config_default(iface, &cfg, 0), VPX_CODEC_OK);
+  cfg.g_w = 320;
+  cfg.g_h = 240;
+  cfg.g_lag_in_frames = 0;
+  cfg.g_pass = VPX_RC_ONE_PASS;
+  cfg.rc_end_usage = VPX_CBR;
+
+  vpx_codec_ctx_t enc;
+  ASSERT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0), VPX_CODEC_OK);
+  ASSERT_EQ(vpx_codec_control(&enc, VP8E_SET_CPUUSED, 6), VPX_CODEC_OK);
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_NOISE_SENSITIVITY, 1),
+            VPX_CODEC_OK);
+
+  vpx_image_t *img =
+      CreateImage(VPX_BITS_8, VPX_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+  ASSERT_NE(img, nullptr);
+  ASSERT_EQ(vpx_codec_encode(&enc, img, 0, 1, 0, VPX_DL_REALTIME),
+            VPX_CODEC_OK);
+  vpx_img_free(img);
+
+  // Increase frame height while temporal denoiser is enabled.
+  cfg.g_h = 720;
+  ASSERT_EQ(vpx_codec_enc_config_set(&enc, &cfg), VPX_CODEC_OK);
+
+  img = CreateImage(VPX_BITS_8, VPX_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+  ASSERT_NE(img, nullptr);
+  ASSERT_EQ(
+      vpx_codec_encode(&enc, img, 1, 1, VPX_EFLAG_FORCE_KF, VPX_DL_REALTIME),
+      VPX_CODEC_OK);
+  ASSERT_EQ(vpx_codec_encode(&enc, img, 2, 1, 0, VPX_DL_REALTIME),
+            VPX_CODEC_OK);
+  vpx_img_free(img);
+
+  // Disable noise sensitivity, increase width, and re-enable noise sensitivity.
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_NOISE_SENSITIVITY, 0),
+            VPX_CODEC_OK);
+  cfg.g_w = 640;
+  ASSERT_EQ(vpx_codec_enc_config_set(&enc, &cfg), VPX_CODEC_OK);
+  ASSERT_EQ(vpx_codec_control(&enc, VP9E_SET_NOISE_SENSITIVITY, 1),
+            VPX_CODEC_OK);
+
+  img = CreateImage(VPX_BITS_8, VPX_IMG_FMT_I420, cfg.g_w, cfg.g_h);
+  ASSERT_NE(img, nullptr);
+  ASSERT_EQ(
+      vpx_codec_encode(&enc, img, 3, 1, VPX_EFLAG_FORCE_KF, VPX_DL_REALTIME),
+      VPX_CODEC_OK);
+  ASSERT_EQ(vpx_codec_encode(&enc, img, 4, 1, 0, VPX_DL_REALTIME),
+            VPX_CODEC_OK);
+  vpx_img_free(img);
+
+  ASSERT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
+}
+#endif  // CONFIG_VP9_TEMPORAL_DENOISING
 #endif  // CONFIG_VP9_ENCODER
 
 }  // namespace

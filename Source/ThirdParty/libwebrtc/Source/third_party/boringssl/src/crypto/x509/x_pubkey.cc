@@ -37,12 +37,10 @@
 
 using namespace bssl;
 
-X509_PUBKEY *X509_PUBKEY_new() { return New<X509Pubkey>(); }
+namespace {
 
-void X509_PUBKEY_free(X509_PUBKEY *key) { Delete(FromOpaque(key)); }
-
-static void x509_pubkey_changed(X509Pubkey *pub,
-                                Span<const EVP_PKEY_ALG *const> algs) {
+void x509_pubkey_changed(X509Pubkey *pub,
+                         Span<const EVP_PKEY_ALG *const> algs) {
   pub->pkey = nullptr;
 
   // Re-encode the `X509_PUBKEY` to DER and parse it with EVP's APIs. If the
@@ -63,6 +61,16 @@ static void x509_pubkey_changed(X509Pubkey *pub,
   pub->pkey = std::move(pkey);
 }
 
+int x509_parse_public_key_default(CBS *cbs, X509_PUBKEY *out) {
+  return x509_parse_public_key(cbs, FromOpaque(out), GetDefaultEVPAlgorithms());
+}
+
+}  // namespace
+
+X509_PUBKEY *X509_PUBKEY_new() { return New<X509Pubkey>(); }
+
+void X509_PUBKEY_free(X509_PUBKEY *key) { Delete(FromOpaque(key)); }
+
 int bssl::x509_parse_public_key(CBS *cbs, X509_PUBKEY *out,
                                 Span<const EVP_PKEY_ALG *const> algs) {
   auto *out_impl = FromOpaque(out);
@@ -76,10 +84,6 @@ int bssl::x509_parse_public_key(CBS *cbs, X509_PUBKEY *out,
   }
   x509_pubkey_changed(out_impl, algs);
   return 1;
-}
-
-static int x509_parse_public_key_default(CBS *cbs, X509_PUBKEY *out) {
-  return x509_parse_public_key(cbs, FromOpaque(out), GetDefaultEVPAlgorithms());
 }
 
 int bssl::x509_marshal_public_key(CBB *cbb, const X509_PUBKEY *in) {
@@ -118,7 +122,7 @@ IMPLEMENT_EXTERN_ASN1_PARSE_INTO(X509_PUBKEY, X509_PUBKEY_new, X509_PUBKEY_free,
 
 BSSL_NAMESPACE_END
 
-int bssl::x509_pubkey_set1(X509_PUBKEY *key, EVP_PKEY *pkey) {
+int bssl::x509_pubkey_set1(X509_PUBKEY *key, const EVP_PKEY *pkey) {
   ScopedCBB cbb;
   if (!CBB_init(cbb.get(), 64) || !EVP_marshal_public_key(cbb.get(), pkey)) {
     OPENSSL_PUT_ERROR(X509, X509_R_PUBLIC_KEY_ENCODE_ERROR);
@@ -133,7 +137,7 @@ int bssl::x509_pubkey_set1(X509_PUBKEY *key, EVP_PKEY *pkey) {
   return x509_parse_public_key(&cbs, key, GetDefaultEVPAlgorithms());
 }
 
-int X509_PUBKEY_set(X509_PUBKEY **x, EVP_PKEY *pkey) {
+int X509_PUBKEY_set(X509_PUBKEY **x, const EVP_PKEY *pkey) {
   UniquePtr<X509_PUBKEY> new_key(X509_PUBKEY_new());
   if (new_key == nullptr ||
       !x509_pubkey_set1(FromOpaque(new_key.get()), pkey)) {

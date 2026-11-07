@@ -124,10 +124,11 @@ void AudioRtpReceiver::OnChanged() {
   if (cached_track_enabled_ == enabled)
     return;
   cached_track_enabled_ = enabled;
-  worker_thread_->PostTask(SafeTask(worker_thread_safety_, [this, enabled]() {
-    RTC_DCHECK_RUN_ON(worker_thread_);
-    Reconfigure(enabled);
-  }));
+  worker_thread_->PostTask(SafeTask(worker_thread_safety_,
+                                    [this, enabled, volume = cached_volume_]() {
+                                      RTC_DCHECK_RUN_ON(worker_thread_);
+                                      Reconfigure(enabled, volume);
+                                    }));
 }
 
 void AudioRtpReceiver::SetOutputVolume_w(double volume) {
@@ -148,17 +149,20 @@ void AudioRtpReceiver::OnSetVolume(double volume) {
   RTC_DCHECK_LE(volume, 10);
 
   bool track_enabled = track_->internal()->enabled();
-  worker_thread_->BlockingCall([&]() {
+  // Update the cached_volume_ even when stopped, to allow clients to set
+  // the volume before starting/restarting, eg see crbug.com/1272566.
+  cached_volume_ = volume;
+  // When the track is disabled, the volume of the source, which is the
+  // corresponding WebRtc Voice Engine channel will be 0. So we do not
+  // allow setting the volume to the source when the track is disabled.
+  if (!track_enabled)
+    return;
+
+  // SetVolume() does not return a result, so there's no need to block.
+  worker_thread_->PostTask(SafeTask(worker_thread_safety_, [this, volume]() {
     RTC_DCHECK_RUN_ON(worker_thread_);
-    // Update the cached_volume_ even when stopped, to allow clients to set
-    // the volume before starting/restarting, eg see crbug.com/1272566.
-    cached_volume_ = volume;
-    // When the track is disabled, the volume of the source, which is the
-    // corresponding WebRtc Voice Engine channel will be 0. So we do not
-    // allow setting the volume to the source when the track is disabled.
-    if (track_enabled)
-      SetOutputVolume_w(volume);
-  });
+    SetOutputVolume_w(volume);
+  }));
 }
 
 scoped_refptr<DtlsTransportInterface> AudioRtpReceiver::dtls_transport() const {
@@ -200,20 +204,25 @@ absl::AnyInvocable<void() &&>
 AudioRtpReceiver::GetRestartFunctionForMediaChannel(
     std::optional<uint32_t> ssrc) {
   RTC_DCHECK_RUN_ON(&signaling_thread_checker_);
-  ssrc_s_ = ssrc;
+  signaled_ssrc_s_ = ssrc;
   bool enabled = track_->internal()->enabled();
   MediaSourceInterface::SourceState state = source_->state();
   source_->SetState(MediaSourceInterface::kLive);
-  return [this, ssrc = std::move(ssrc), enabled, state]() mutable {
+  // Like `enabled`, the volume is a snapshot of the state when the restart
+  // function is created.
+  return [this, ssrc = std::move(ssrc), enabled, state,
+          volume = cached_volume_]() mutable {
     RTC_DCHECK_RUN_ON(worker_thread_);
-    GetRestartFunctionForMediaChannel_w(std::move(ssrc), enabled, state);
+    GetRestartFunctionForMediaChannel_w(std::move(ssrc), enabled, state,
+                                        volume);
   };
 }
 
 void AudioRtpReceiver::GetRestartFunctionForMediaChannel_w(
     std::optional<uint32_t> ssrc,
     bool track_enabled,
-    MediaSourceInterface::SourceState state) {
+    MediaSourceInterface::SourceState state,
+    double volume) {
   RTC_DCHECK_RUN_ON(worker_thread_);
   if (!media_channel_)
     return;  // Can't restart.
@@ -236,7 +245,7 @@ void AudioRtpReceiver::GetRestartFunctionForMediaChannel_w(
                                                  delay_.GetMs());
   }
 
-  Reconfigure(track_enabled);
+  Reconfigure(track_enabled, volume);
 }
 
 absl::AnyInvocable<void() &&> AudioRtpReceiver::GetSetupForMediaChannel(
@@ -301,11 +310,11 @@ void AudioRtpReceiver::SetStreams(
   streams_ = streams;
 }
 
-void AudioRtpReceiver::Reconfigure(bool track_enabled) {
+void AudioRtpReceiver::Reconfigure(bool track_enabled, double volume) {
   RTC_DCHECK_RUN_ON(worker_thread_);
   RTC_DCHECK(media_channel_);
 
-  SetOutputVolume_w(track_enabled ? cached_volume_ : 0);
+  SetOutputVolume_w(track_enabled ? volume : 0);
 
   if (signaled_ssrc_ && frame_decryptor_) {
     // Reattach the frame decryptor if we were reconfigured.

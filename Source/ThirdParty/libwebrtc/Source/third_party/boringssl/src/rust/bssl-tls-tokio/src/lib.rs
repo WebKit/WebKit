@@ -163,15 +163,10 @@ mod tests;
 
 /// Translates a `std::io::Error` into an `AbstractSocketResult`.
 pub(crate) fn translate_stdio_err(err: io::Error) -> AbstractSocketResult {
-    match err.kind() {
-        io::ErrorKind::WouldBlock => AbstractSocketResult::Retry,
-        io::ErrorKind::ConnectionReset
-        | io::ErrorKind::ConnectionRefused
-        | io::ErrorKind::ConnectionAborted
-        | io::ErrorKind::BrokenPipe
-        | io::ErrorKind::NotConnected
-        | io::ErrorKind::UnexpectedEof => AbstractSocketResult::EndOfStream,
-        _ => AbstractSocketResult::Err(Box::new(err)),
+    if matches!(err.kind(), io::ErrorKind::WouldBlock) {
+        AbstractSocketResult::Retry
+    } else {
+        AbstractSocketResult::Err(Box::new(err))
     }
 }
 
@@ -186,13 +181,7 @@ fn tokio_async_read<T: AsyncRead>(
     let mut buf = ReadBuf::new(buffer);
     loop {
         return match this.as_mut().poll_read(ctx, &mut buf) {
-            Poll::Ready(Ok(())) => {
-                if buf.filled().is_empty() && buf.remaining() > 0 {
-                    AbstractSocketResult::EndOfStream
-                } else {
-                    AbstractSocketResult::Ok(buf.filled().len())
-                }
-            }
+            Poll::Ready(Ok(())) => AbstractSocketResult::Ok(buf.filled().len()),
             Poll::Pending => AbstractSocketResult::Retry,
             Poll::Ready(Err(e)) => {
                 if e.kind() == io::ErrorKind::Interrupted {
@@ -211,15 +200,7 @@ fn tokio_async_write<T: AsyncWrite>(
 ) -> AbstractSocketResult {
     loop {
         return match this.as_mut().poll_write(ctx, buffer) {
-            Poll::Ready(Ok(bytes)) => {
-                if buffer.is_empty() {
-                    AbstractSocketResult::Ok(0)
-                } else if bytes == 0 {
-                    AbstractSocketResult::EndOfStream
-                } else {
-                    AbstractSocketResult::Ok(bytes)
-                }
-            }
+            Poll::Ready(Ok(bytes)) => AbstractSocketResult::Ok(bytes),
             Poll::Pending => AbstractSocketResult::Retry,
             Poll::Ready(Err(e)) => {
                 if e.kind() == io::ErrorKind::Interrupted {
@@ -434,6 +415,21 @@ impl<Role> DerefMut for TokioTlsConnection<Role> {
     }
 }
 
+pub(crate) fn map_tls_err(err: bssl_tls::errors::Error) -> io::Error {
+    match err {
+        bssl_tls::errors::Error::Io(bssl_tls::errors::IoError::EndOfStream) => {
+            io::Error::new(io::ErrorKind::UnexpectedEof, "unexpected eof")
+        }
+        bssl_tls::errors::Error::Io(bssl_tls::errors::IoError::Transport(e)) => {
+            match e.downcast::<io::Error>() {
+                Ok(err) => *err,
+                Err(e) => io::Error::other(e),
+            }
+        }
+        e => io::Error::other(e),
+    }
+}
+
 impl<R> AsyncRead for TokioTlsConnection<R> {
     fn poll_read(
         mut self: Pin<&mut Self>,
@@ -447,7 +443,7 @@ impl<R> AsyncRead for TokioTlsConnection<R> {
         let status = match self.inner.as_pin_mut().async_poll_read(&mut recv_buf, cx) {
             Ok(Some(status)) => status,
             Ok(None) => return Poll::Pending,
-            Err(e) => return Poll::Ready(Err(io::Error::other(e))),
+            Err(e) => return Poll::Ready(Err(map_tls_err(e))),
         };
         match status {
             IoStatus::Ok(bytes) => {
@@ -458,7 +454,6 @@ impl<R> AsyncRead for TokioTlsConnection<R> {
                 buf.advance(bytes);
                 Poll::Ready(Ok(()))
             }
-            IoStatus::EndOfStream => Poll::Ready(Ok(())),
             _ => Poll::Ready(Err(io::Error::other("Unexpected I/O status"))),
         }
     }
@@ -473,11 +468,10 @@ impl<R> AsyncWrite for TokioTlsConnection<R> {
         let status = match self.inner.as_pin_mut().async_poll_write(buf, cx) {
             Ok(Some(status)) => status,
             Ok(None) => return Poll::Pending,
-            Err(e) => return Poll::Ready(Err(io::Error::other(e))),
+            Err(e) => return Poll::Ready(Err(map_tls_err(e))),
         };
         match status {
             IoStatus::Ok(bytes) => Poll::Ready(Ok(bytes)),
-            IoStatus::EndOfStream => Poll::Ready(Ok(0)),
             _ => Poll::Ready(Err(io::Error::other("Unexpected I/O status"))),
         }
     }
@@ -486,11 +480,10 @@ impl<R> AsyncWrite for TokioTlsConnection<R> {
         let status = match self.inner.as_pin_mut().async_poll_flush(cx) {
             Ok(Some(status)) => status,
             Ok(None) => return Poll::Pending,
-            Err(e) => return Poll::Ready(Err(io::Error::other(e))),
+            Err(e) => return Poll::Ready(Err(map_tls_err(e))),
         };
         match status {
             IoStatus::Ok(_) => Poll::Ready(Ok(())),
-            IoStatus::EndOfStream => Poll::Ready(Ok(())),
             _ => Poll::Ready(Err(io::Error::other("Unexpected I/O status"))),
         }
     }
@@ -499,7 +492,7 @@ impl<R> AsyncWrite for TokioTlsConnection<R> {
         match self.inner.as_pin_mut().async_poll_shutdown(cx) {
             Ok(true) => Poll::Ready(Ok(())),
             Ok(false) => Poll::Pending,
-            Err(e) => Poll::Ready(Err(io::Error::other(e))),
+            Err(e) => Poll::Ready(Err(map_tls_err(e))),
         }
     }
 }

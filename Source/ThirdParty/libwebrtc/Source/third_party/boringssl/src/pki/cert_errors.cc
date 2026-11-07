@@ -37,18 +37,6 @@ void AppendLinesWithIndentation(const std::string &text,
 
 }  // namespace
 
-CertError::CertError() = default;
-
-CertError::CertError(Severity in_severity, CertErrorId in_id,
-                     std::unique_ptr<CertErrorParams> in_params)
-    : severity(in_severity), id(in_id), params(std::move(in_params)) {}
-
-CertError::CertError(CertError &&other) = default;
-
-CertError &CertError::operator=(CertError &&) = default;
-
-CertError::~CertError() = default;
-
 std::string CertError::ToDebugString() const {
   std::string result;
   switch (severity) {
@@ -69,14 +57,9 @@ std::string CertError::ToDebugString() const {
   return result;
 }
 
-CertErrors::CertErrors() = default;
-CertErrors::CertErrors(CertErrors &&other) = default;
-CertErrors &CertErrors::operator=(CertErrors &&) = default;
-CertErrors::~CertErrors() = default;
-
 void CertErrors::Add(CertError::Severity severity, CertErrorId id,
                      std::unique_ptr<CertErrorParams> params) {
-  nodes_.emplace_back(severity, id, std::move(params));
+  nodes_.push_back(CertError{severity, id, std::move(params)});
 }
 
 void CertErrors::AddError(CertErrorId id,
@@ -125,13 +108,6 @@ bool CertErrors::ContainsAnyErrorWithSeverity(
   }
   return false;
 }
-
-CertPathErrors::CertPathErrors() = default;
-
-CertPathErrors::CertPathErrors(CertPathErrors &&other) = default;
-CertPathErrors &CertPathErrors::operator=(CertPathErrors &&) = default;
-
-CertPathErrors::~CertPathErrors() = default;
 
 CertErrors *CertPathErrors::GetErrorsForCert(size_t cert_index) {
   if (cert_index >= cert_errors_.size()) {

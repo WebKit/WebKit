@@ -244,6 +244,21 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver,
     fec_generator_ = fec_generator;
     CreateModuleImpl();
   }
+  // Recreates the module with the given initial RTP states, as when a
+  // suspended stream is resumed.
+  void ReinitWithRtpState(
+      const RtpState& rtp_state,
+      std::optional<RtpState> rtx_rtp_state = std::nullopt) {
+    rtp_state_ = rtp_state;
+    rtx_rtp_state_ = rtx_rtp_state;
+    CreateModuleImpl();
+  }
+  // Recreates the module with RTX enabled. The rest of the configuration, such
+  // as the initial RTP states, is kept.
+  void ReinitWithRtx() {
+    rtx_mode_ = kRtxRetransmitted | kRtxRedundantPayloads;
+    CreateModuleImpl();
+  }
 
   void CreateModuleImpl() {
     RtpRtcpInterface::Configuration config;
@@ -256,6 +271,10 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver,
     config.local_media_ssrc = is_sender_ ? kSenderSsrc : kReceiverSsrc;
     config.rtx_send_ssrc =
         is_sender_ ? std::make_optional(kRtxSenderSsrc) : std::nullopt;
+    config.rtx_mode = rtx_mode_;
+    config.rtx_payload_types = {{kPayloadType, kRtxPayloadType}};
+    config.rtp_state = rtp_state_;
+    config.rtx_rtp_state = rtx_rtp_state_;
     config.need_rtp_packet_infos = true;
     config.non_sender_rtt_measurement = true;
     config.send_packet_observer = this;
@@ -272,6 +291,9 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver,
   std::optional<SentPacket> last_sent_packet_;
   VideoFecGenerator* fec_generator_ = nullptr;
   TimeDelta rtcp_report_interval_ = kDefaultReportInterval;
+  std::optional<RtpState> rtp_state_;
+  std::optional<RtpState> rtx_rtp_state_;
+  int rtx_mode_ = kRtxOff;
 };
 }  // namespace
 
@@ -699,11 +721,11 @@ TEST_F(RtpRtcpImpl2Test, RtpSenderEgressTimestampOffset) {
 
   RtpState saved_rtp_state = sender_.impl_->GetRtpState();
 
-  // Change RTP timestamp offset.
-  sender_.impl_->SetStartTimestamp(2000);
-
-  // Restores RtpState and make sure the old timestamp offset is in place.
-  sender_.impl_->SetRtpState(saved_rtp_state);
+  // Recreate the sender with the saved RtpState and make sure the old
+  // timestamp offset is in place.
+  sender_.ReinitWithRtpState(saved_rtp_state);
+  SetUp();
+  EXPECT_EQ(sender_.impl_->StartTimestamp(), saved_rtp_state.start_timestamp);
   seqno = sender_.impl_->GetRtpState().sequence_number;
   media_rtp_ts = 1031;
   rtp_ts = media_rtp_ts + sender_.impl_->StartTimestamp();
@@ -717,8 +739,8 @@ TEST_F(RtpRtcpImpl2Test, RtpSenderEgressTimestampOffset) {
 
 TEST_F(RtpRtcpImpl2Test, StoresPacketInfoForSentPackets) {
   const uint32_t kStartTimestamp = 1u;
+  sender_.ReinitWithRtpState(RtpState{.start_timestamp = kStartTimestamp});
   SetUp();
-  sender_.impl_->SetStartTimestamp(kStartTimestamp);
 
   sender_.impl_->SetSequenceNumber(1);
 
@@ -1081,8 +1103,9 @@ TEST_F(RtpRtcpImpl2Test, RtpStateReflectsCurrentState) {
   const Timestamp capture_time = time;
   const uint32_t timestamp = capture_time.ms() * kCaptureTimeMsToRtpTimestamp;
 
+  sender_.ReinitWithRtpState(RtpState{.start_timestamp = kStartTimestamp});
+  SetUp();
   sender_.impl_->SetSequenceNumber(kSeq - 1);
-  sender_.impl_->SetStartTimestamp(kStartTimestamp);
   EXPECT_TRUE(SendFrame(&sender_, sender_video_.get(), kBaseLayerTid));
 
   // Simulate an RTCP receiver report in order to populate `ssrc_has_acked`.
@@ -1099,11 +1122,10 @@ TEST_F(RtpRtcpImpl2Test, RtpStateReflectsCurrentState) {
   EXPECT_EQ(state.last_timestamp_time, time);
   EXPECT_EQ(state.ssrc_has_acked, true);
 
-  // Reset sender, advance time, restore state. Directly observing state
+  // Advance time, recreate the sender with the state. Directly observing state
   // is not feasible, so just verify returned state matches what we set.
-  sender_.CreateModuleImpl();
   time_controller_.AdvanceTime(TimeDelta::Millis(10));
-  sender_.impl_->SetRtpState(state);
+  sender_.ReinitWithRtpState(state);
 
   state = sender_.impl_->GetRtpState();
   EXPECT_EQ(state.sequence_number, kSeq);
@@ -1115,14 +1137,13 @@ TEST_F(RtpRtcpImpl2Test, RtpStateReflectsCurrentState) {
 }
 
 TEST_F(RtpRtcpImpl2Test, RtxRtpStateReflectsCurrentState) {
-  // Enable RTX.
-  sender_.impl_->SetStorePacketsStatus(/*enable=*/true, /*number_to_store=*/10);
-  sender_.impl_->SetRtxSendPayloadType(kRtxPayloadType, kPayloadType);
-  sender_.impl_->SetRtxSendStatus(kRtxRetransmitted | kRtxRedundantPayloads);
-
   // `start_timestamp` is the only timestamp populate in the RTX state.
   const uint32_t kStartTimestamp = 3456;
-  sender_.impl_->SetStartTimestamp(kStartTimestamp);
+  sender_.ReinitWithRtpState(RtpState{.start_timestamp = kStartTimestamp});
+  // Enable RTX.
+  sender_.ReinitWithRtx();
+  SetUp();
+  sender_.impl_->SetStorePacketsStatus(/*enable=*/true, /*number_to_store=*/10);
 
   // Send a frame and ask for a retransmit of the last packet. Capture the RTX
   // packet in order to verify RTX sequence number.
@@ -1145,13 +1166,11 @@ TEST_F(RtpRtcpImpl2Test, RtxRtpStateReflectsCurrentState) {
   EXPECT_EQ(rtx_state.ssrc_has_acked, true);
   EXPECT_EQ(rtx_state.sequence_number, rtx_packet.SequenceNumber() + 1);
 
-  // Reset sender, advance time, restore state. Directly observing state
-  // is not feasible, so just verify returned state matches what we set.
-  // Needs SetRtpState() too in order to propagate start timestamp.
-  sender_.CreateModuleImpl();
+  // Advance time, recreate the sender with the states. Directly observing
+  // state is not feasible, so just verify returned state matches what we set.
+  // Needs `rtp_state` too in order to propagate start timestamp.
   time_controller_.AdvanceTime(TimeDelta::Millis(10));
-  sender_.impl_->SetRtpState(rtp_state);
-  sender_.impl_->SetRtxState(rtx_state);
+  sender_.ReinitWithRtpState(rtp_state, rtx_state);
 
   rtx_state = sender_.impl_->GetRtxState();
   EXPECT_EQ(rtx_state.start_timestamp, kStartTimestamp);

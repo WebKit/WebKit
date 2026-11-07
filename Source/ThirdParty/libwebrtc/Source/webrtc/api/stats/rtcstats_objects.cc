@@ -310,7 +310,6 @@ WEBRTC_RTCSTATS_IMPL(
     AttributeInit("framesEncoded", &frames_encoded),
     AttributeInit("keyFramesEncoded", &key_frames_encoded),
     AttributeInit("totalEncodeTime", &total_encode_time),
-    AttributeInit("totalEncodedBytesTarget", &total_encoded_bytes_target),
     AttributeInit("frameWidth", &frame_width),
     AttributeInit("frameHeight", &frame_height),
     AttributeInit("framesPerSecond", &frames_per_second),

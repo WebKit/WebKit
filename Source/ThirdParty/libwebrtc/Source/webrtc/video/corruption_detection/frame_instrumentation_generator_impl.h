@@ -34,7 +34,7 @@ namespace webrtc {
 class FrameInstrumentationGeneratorImpl : public FrameInstrumentationGenerator {
  public:
   FrameInstrumentationGeneratorImpl(
-      const Environment* environment,
+      const Environment& environment,
       VideoCodecType video_codec_type,
       std::optional<ScalabilityMode> scalability_mode);
 

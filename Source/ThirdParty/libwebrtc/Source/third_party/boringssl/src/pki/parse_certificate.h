@@ -196,11 +196,6 @@ enum class CertificateVersion {
 // subsequent field descriptions are in terms of what ParseTbsCertificate()
 // sets.
 struct OPENSSL_EXPORT ParsedTbsCertificate {
-  ParsedTbsCertificate();
-  ParsedTbsCertificate(ParsedTbsCertificate &&other);
-  ParsedTbsCertificate &operator=(ParsedTbsCertificate &&other) = default;
-  ~ParsedTbsCertificate();
-
   // Corresponds with "version" from RFC 5280:
   //         version         [0]  EXPLICIT Version DEFAULT v1,
   //
@@ -595,10 +590,6 @@ struct AuthorityInfoAccessDescription {
 //    reasons                 [1]     ReasonFlags OPTIONAL,
 //    cRLIssuer               [2]     GeneralNames OPTIONAL }
 struct OPENSSL_EXPORT ParsedDistributionPoint {
-  ParsedDistributionPoint();
-  ParsedDistributionPoint(ParsedDistributionPoint &&other);
-  ~ParsedDistributionPoint();
-
   // The parsed fullName, if distributionPoint was present and was a fullName.
   std::unique_ptr<GeneralNames> distribution_point_fullname;
 
@@ -633,11 +624,6 @@ struct OPENSSL_EXPORT ParsedDistributionPoint {
 //
 //    KeyIdentifier ::= OCTET STRING
 struct OPENSSL_EXPORT ParsedAuthorityKeyIdentifier {
-  ParsedAuthorityKeyIdentifier();
-  ~ParsedAuthorityKeyIdentifier();
-  ParsedAuthorityKeyIdentifier(ParsedAuthorityKeyIdentifier &&other);
-  ParsedAuthorityKeyIdentifier &operator=(ParsedAuthorityKeyIdentifier &&other);
-
   // The keyIdentifier, which is an OCTET STRING.
   std::optional<der::Input> key_identifier;
 

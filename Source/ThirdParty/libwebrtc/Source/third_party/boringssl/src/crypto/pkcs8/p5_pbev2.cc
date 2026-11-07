@@ -25,11 +25,12 @@
 #include <openssl/nid.h>
 #include <openssl/rand.h>
 
-#include "../internal.h"
 #include "internal.h"
 
 
 using namespace bssl;
+
+namespace {
 
 // 1.2.840.113549.1.5.12
 static const uint8_t kPBKDF2[] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
@@ -80,7 +81,7 @@ static const struct {
      &EVP_aes_256_cbc},
 };
 
-static const EVP_CIPHER *cbs_to_cipher(const CBS *cbs) {
+const EVP_CIPHER *cbs_to_cipher(const CBS *cbs) {
   for (const auto &cipher : kCipherOIDs) {
     if (CBS_mem_equal(cbs, cipher.oid, cipher.oid_len)) {
       return cipher.cipher_func();
@@ -90,7 +91,7 @@ static const EVP_CIPHER *cbs_to_cipher(const CBS *cbs) {
   return nullptr;
 }
 
-static int add_cipher_oid(CBB *out, int nid) {
+int add_cipher_oid(CBB *out, int nid) {
   for (const auto &cipher : kCipherOIDs) {
     if (cipher.nid == nid) {
       return CBB_add_asn1_element(out, CBS_ASN1_OBJECT, cipher.oid,
@@ -102,20 +103,11 @@ static int add_cipher_oid(CBB *out, int nid) {
   return 0;
 }
 
-const EVP_CIPHER *bssl::pkcs5_pbe2_nid_to_cipher(int nid) {
-  for (const auto &cipher : kCipherOIDs) {
-    if (cipher.nid == nid) {
-      return cipher.cipher_func();
-    }
-  }
-  return nullptr;
-}
-
-static int pkcs5_pbe2_cipher_init(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
-                                  const EVP_MD *pbkdf2_md, uint32_t iterations,
-                                  const char *pass, size_t pass_len,
-                                  const uint8_t *salt, size_t salt_len,
-                                  const uint8_t *iv, size_t iv_len, int enc) {
+int pkcs5_pbe2_cipher_init(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
+                           const EVP_MD *pbkdf2_md, uint32_t iterations,
+                           const char *pass, size_t pass_len,
+                           const uint8_t *salt, size_t salt_len,
+                           const uint8_t *iv, size_t iv_len, int enc) {
   if (iv_len != EVP_CIPHER_iv_length(cipher)) {
     OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_ERROR_SETTING_CIPHER_PARAMS);
     return 0;
@@ -127,6 +119,17 @@ static int pkcs5_pbe2_cipher_init(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
             EVP_CipherInit_ex(ctx, cipher, nullptr /* engine */, key, iv, enc);
   OPENSSL_cleanse(key, EVP_MAX_KEY_LENGTH);
   return ret;
+}
+
+}  // namespace
+
+const EVP_CIPHER *bssl::pkcs5_pbe2_nid_to_cipher(int nid) {
+  for (const auto &cipher : kCipherOIDs) {
+    if (cipher.nid == nid) {
+      return cipher.cipher_func();
+    }
+  }
+  return nullptr;
 }
 
 int bssl::PKCS5_pbe2_encrypt_init(CBB *out, EVP_CIPHER_CTX *ctx,
@@ -261,8 +264,8 @@ int bssl::PKCS5_pbe2_decrypt_init(const struct pbe_suite *suite,
 
     // All supported PRFs use a NULL parameter.
     CBS null;
-    if (!CBS_get_asn1(&alg_id, &null, CBS_ASN1_NULL) ||
-        CBS_len(&null) != 0 ||
+    if (!CBS_get_asn1(&alg_id, &null, CBS_ASN1_NULL) ||  //
+        CBS_len(&null) != 0 ||                           //
         CBS_len(&alg_id) != 0) {
       OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_DECODE_ERROR);
       return 0;

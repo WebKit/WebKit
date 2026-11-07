@@ -24,6 +24,7 @@ set ( ly_common_source_files
   ${ly_src_dir}/compare.cc
   ${ly_src_dir}/compare_common.cc
   ${ly_src_dir}/compare_gcc.cc
+  ${ly_src_dir}/compare_wasm.cc
   ${ly_src_dir}/compare_win.cc
   ${ly_src_dir}/convert.cc
   ${ly_src_dir}/convert_argb.cc
@@ -41,11 +42,14 @@ set ( ly_common_source_files
   ${ly_src_dir}/rotate_argb.cc
   ${ly_src_dir}/rotate_common.cc
   ${ly_src_dir}/rotate_gcc.cc
+  ${ly_src_dir}/rotate_rvv.cc
+  ${ly_src_dir}/rotate_wasm.cc
   ${ly_src_dir}/rotate_win.cc
   ${ly_src_dir}/row_any.cc
   ${ly_src_dir}/row_common.cc
   ${ly_src_dir}/row_gcc.cc
   ${ly_src_dir}/row_rvv.cc
+  ${ly_src_dir}/row_wasm.cc
   ${ly_src_dir}/row_win.cc
   ${ly_src_dir}/scale.cc
   ${ly_src_dir}/scale_any.cc
@@ -55,6 +59,7 @@ set ( ly_common_source_files
   ${ly_src_dir}/scale_rgb.cc
   ${ly_src_dir}/scale_rvv.cc
   ${ly_src_dir}/scale_uv.cc
+  ${ly_src_dir}/scale_wasm.cc
   ${ly_src_dir}/scale_win.cc
   ${ly_src_dir}/video_common.cc)
 
@@ -110,6 +115,7 @@ if(NOT MSVC)
 
     # Enable AArch64 SVE kernels.
     add_library(${ly_lib_name}_sve OBJECT
+      ${ly_src_dir}/rotate_sve.cc
       ${ly_src_dir}/row_sve.cc)
     target_compile_options(${ly_lib_name}_sve PRIVATE -march=armv8.5-a+i8mm+sve2)
     list(APPEND ly_lib_parts $<TARGET_OBJECTS:${ly_lib_name}_sve>)
@@ -154,7 +160,7 @@ int main(void) { return 0; }
       include(CheckCSourceCompiles)
       set(OLD_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
       set(OLD_CMAKE_TRY_COMPILE_TARGET_TYPE ${CMAKE_TRY_COMPILE_TARGET_TYPE})
-      set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${RISCV_COMPILER_FLAGS}")
+      set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${RISCV_COMPILER_FLAGS} -fno-tree-vectorize -fno-tree-slp-vectorize")
       set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
       check_c_source_compiles("
 int main(void) { return 0; }
@@ -164,8 +170,8 @@ int main(void) { return 0; }
 
       if(CAN_COMPILE_RVV)
         if(NOT CMAKE_C_FLAGS MATCHES "-march=" AND NOT CMAKE_C_FLAGS MATCHES "-mcpu=")
-          set(CMAKE_C_FLAGS "${RISCV_COMPILER_FLAGS} -fno-vectorize -fno-slp-vectorize ${CMAKE_C_FLAGS}")
-          set(CMAKE_CXX_FLAGS "${RISCV_COMPILER_FLAGS} -fno-vectorize -fno-slp-vectorize ${CMAKE_CXX_FLAGS}")
+          set(CMAKE_C_FLAGS "${RISCV_COMPILER_FLAGS} -fno-tree-vectorize -fno-tree-slp-vectorize ${CMAKE_C_FLAGS}")
+          set(CMAKE_CXX_FLAGS "${RISCV_COMPILER_FLAGS} -fno-tree-vectorize -fno-tree-slp-vectorize ${CMAKE_CXX_FLAGS}")
         endif()
       else()
         add_definitions(-DLIBYUV_DISABLE_RVV)
@@ -173,6 +179,11 @@ int main(void) { return 0; }
     else()
       add_definitions(-DLIBYUV_DISABLE_RVV)
     endif()
+  endif()
+
+  if(arch_lowercase MATCHES "^wasm" OR EMSCRIPTEN)
+    set(CMAKE_C_FLAGS "-msimd128 ${CMAKE_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-msimd128 ${CMAKE_CXX_FLAGS}")
   endif()
 endif()
 
@@ -206,6 +217,7 @@ if(LOONGARCH64)
   endif()
   if(SUPPORTS_LASX)
     add_library(${ly_lib_name}_lasx OBJECT
+      ${ly_src_dir}/rotate_lasx.cc
       ${ly_src_dir}/row_lasx.cc)
     target_compile_options(${ly_lib_name}_lasx PRIVATE -mlasx)
     list(APPEND ly_lib_parts $<TARGET_OBJECTS:${ly_lib_name}_lasx>)
@@ -234,6 +246,9 @@ target_link_libraries	( yuvconvert ${ly_lib_static} )
 # this creates the yuvconstants tool
 add_executable      ( yuvconstants ${ly_base_dir}/util/yuvconstants.c )
 target_link_libraries  ( yuvconstants ${ly_lib_static} )
+if(NOT MSVC)
+  target_link_libraries  ( yuvconstants m )
+endif()
 
 if (NOT LIBYUV_DISABLE_JPEG)
   find_package ( JPEG )
@@ -266,6 +281,9 @@ if(UNIT_TEST)
 
   add_executable(libyuv_unittest ${ly_unittest_sources})
   target_link_libraries(libyuv_unittest ${ly_lib_name} ${GTEST_LIBRARY})
+  if(NOT MSVC)
+    target_link_libraries(libyuv_unittest m)
+  endif()
   find_library(PTHREAD_LIBRARY pthread)
   if(NOT PTHREAD_LIBRARY STREQUAL "PTHREAD_LIBRARY-NOTFOUND")
     target_link_libraries(libyuv_unittest pthread)

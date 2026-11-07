@@ -279,13 +279,13 @@ int TRUST_TOKEN_CLIENT_add_key(TRUST_TOKEN_CLIENT *ctx, size_t *out_key_index,
   return 1;
 }
 
-int TRUST_TOKEN_CLIENT_set_srr_key(TRUST_TOKEN_CLIENT *ctx, EVP_PKEY *key) {
+int TRUST_TOKEN_CLIENT_set_srr_key(TRUST_TOKEN_CLIENT *ctx,
+                                   const EVP_PKEY *key) {
   if (!ctx->method->has_srr) {
     return 1;
   }
   EVP_PKEY_free(ctx->srr_key);
-  EVP_PKEY_up_ref(key);
-  ctx->srr_key = key;
+  ctx->srr_key = EVP_PKEY_dup_ref(key);
   return 1;
 }
 
@@ -515,10 +515,10 @@ int TRUST_TOKEN_ISSUER_add_key(TRUST_TOKEN_ISSUER *ctx, const uint8_t *key,
   return 1;
 }
 
-int TRUST_TOKEN_ISSUER_set_srr_key(TRUST_TOKEN_ISSUER *ctx, EVP_PKEY *key) {
+int TRUST_TOKEN_ISSUER_set_srr_key(TRUST_TOKEN_ISSUER *ctx,
+                                   const EVP_PKEY *key) {
   EVP_PKEY_free(ctx->srr_key);
-  EVP_PKEY_up_ref(key);
-  ctx->srr_key = key;
+  ctx->srr_key = EVP_PKEY_dup_ref(key);
   return 1;
 }
 

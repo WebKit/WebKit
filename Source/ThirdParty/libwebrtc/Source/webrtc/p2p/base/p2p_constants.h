@@ -14,6 +14,7 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "absl/strings/string_view.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/system/plan_b_only.h"
 #include "rtc_base/system/rtc_export.h"
@@ -50,8 +51,11 @@ extern const char CONNECTIONROLE_PASSIVE_STR[];
 extern const char CONNECTIONROLE_ACTPASS_STR[];
 extern const char CONNECTIONROLE_HOLDCONN_STR[];
 
-// RFC 6762, the .local pseudo-top-level domain used for mDNS names.
-extern const char LOCAL_TLD[];
+// Returns true if `hostname` is in the .local domain, i.e. if it is resolved
+// using mDNS. DNS names are case-insensitive and may be written in fully
+// qualified form, with a trailing dot, so e.g. "name.local", "NAME.LOCAL" and
+// "name.local." are all considered to be mDNS names.
+bool IsMdnsHostname(absl::string_view hostname);
 
 // Most of the following constants are the default values of IceConfig
 // paramters. See IceConfig for detailed definition.

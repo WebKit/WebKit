@@ -39,7 +39,7 @@ class Input;
 // Returns true if verification was successful.
 [[nodiscard]] OPENSSL_EXPORT bool VerifySignedData(
     SignatureAlgorithm algorithm, der::Input signed_data,
-    const der::BitString &signature_value, EVP_PKEY *public_key,
+    const der::BitString &signature_value, const EVP_PKEY *public_key,
     SignatureVerifyCache *cache);
 
 // Same as above overload, only the public key is inputted as an SPKI and will

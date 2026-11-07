@@ -116,7 +116,6 @@ rtc_library("stun_types") {
     "../../rtc_base:span_helpers",
     "../../rtc_base:stringutils",
     "../../system_wrappers:metrics",
-    "//third_party/abseil-cpp/absl/base:core_headers",
     "//third_party/abseil-cpp/absl/strings:string_view",
   ]
 }
@@ -154,8 +153,7 @@ if (rtc_include_tests) {
 }
 
 if (rtc_include_tests) {
-  rtc_library("ecn_marking_unittest") {
-    testonly = true
+  rtc_cc_test("ecn_marking_unittest") {
     sources = [ "ecn_marking_unittest.cc" ]
     deps = [
       ":ecn_marking",
@@ -164,9 +162,7 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_library("stun_unittest") {
-    visibility = [ "*" ]
-    testonly = true
+  rtc_cc_test("stun_unittest") {
     sources = [ "stun_unittest.cc" ]
     deps = [
       ":stun_types",

@@ -40,10 +40,16 @@ use core::{
     }, //
 };
 
-use bssl_crypto::FromFfiSlice;
+use bssl_crypto::{
+    FromFfiSlice,
+    bssl_enum, //
+};
 use bssl_x509::{
     errors::PemReason,
-    keys::{PrivateKey, PublicKey},
+    keys::{
+        PrivateKey,
+        PublicKey, //
+    }, //
 };
 
 use crate::{
@@ -418,7 +424,7 @@ impl TlsCredential {
                 ctx_len,
             )
         };
-        let cred = NonNull::new(cred).ok_or_else(|| Error::extract_lib_err())?;
+        let cred = NonNull::new(cred).ok_or_else(|| Error::extract_lib_err_or_unknown())?;
         Ok(TlsCredential(cred))
     }
 
@@ -528,7 +534,7 @@ impl Certificate {
             let header = Alloc(header);
             let data = Alloc(data);
             if name.0.is_null() || header.0.is_null() || data.0.is_null() || ret == 0 {
-                return Err(Error::extract_lib_err());
+                return Err(Error::extract_lib_err_or_unknown());
             }
             if len == 0 {
                 continue;
@@ -741,7 +747,7 @@ where
     }
 }
 
-bssl_macros::bssl_enum! {
+bssl_enum! {
     /// [IANA] designation of TLS signature algorithms.
     ///
     /// [IANA]: https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-16
@@ -1100,7 +1106,7 @@ pub(crate) unsafe extern "C" fn cert_cb<M: VerifyCertificateMethods>(
     })
 }
 
-bssl_macros::bssl_enum! {
+bssl_enum! {
     /// [IANA] designation of TLS certificate types.
     ///
     /// [IANA]: https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#tls-extensiontype-values-3
@@ -1116,7 +1122,7 @@ bssl_macros::bssl_enum! {
     }
 }
 
-bssl_macros::bssl_enum! {
+bssl_enum! {
     /// Certificate verification mode
     pub enum CertificateVerificationMode: i8 {
         /// Verifies the server certificate on a client but does not make errors fatal.

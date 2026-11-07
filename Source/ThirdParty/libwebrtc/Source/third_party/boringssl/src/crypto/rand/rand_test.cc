@@ -22,7 +22,7 @@
 
 #include <openssl/span.h>
 
-#include "../bcm_support.h"
+#include "../bcm_support.h"  // IWYU pragma: keep
 #include "../fipsmodule/rand/internal.h"
 #include "../test/abi_test.h"
 #include "../test/test_util.h"
@@ -62,7 +62,7 @@ TEST(RandTest, NotObviouslyBroken) {
 #if !defined(OPENSSL_WINDOWS) && !defined(OPENSSL_IOS) && \
     !defined(OPENSSL_FUCHSIA) &&                          \
     !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
-static bool ForkAndRand(Span<uint8_t> out, bool fork_unsafe_buffering) {
+bool ForkAndRand(Span<uint8_t> out, bool fork_unsafe_buffering) {
   int pipefds[2];
   if (pipe(pipefds) < 0) {
     perror("pipe");
@@ -171,7 +171,7 @@ TEST(RandTest, Fork) {
         // !OPENSSL_FUCHSIA && !FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
 
 #if defined(OPENSSL_THREADS)
-static void RunConcurrentRands(size_t num_threads) {
+void RunConcurrentRands(size_t num_threads) {
   static const uint8_t kZeros[256] = {0};
 
   std::vector<std::array<uint8_t, 256>> bufs(num_threads);

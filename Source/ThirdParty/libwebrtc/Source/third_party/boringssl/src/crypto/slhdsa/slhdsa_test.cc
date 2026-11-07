@@ -342,5 +342,44 @@ TEST(SLHDSATest, NullptrArgumentsToCreate) {
             bcm_status::failure);
 }
 
+// The SHAKE-based parameter set has no CAST, so it must not report that it is
+// approved.
+TEST(SLHDSATest, SHAKEIsNotApproved) {
+  uint8_t pub[BCM_SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES];
+  uint8_t priv[BCM_SLHDSA_SHAKE_256F_PRIVATE_KEY_BYTES];
+  const uint8_t seed[3 * BCM_SLHDSA_SHAKE_256F_N] = {0};
+  EXPECT_EQ(BCM_slhdsa_shake_256f_generate_key_from_seed(pub, priv, seed),
+            bcm_infallible::not_approved);
+  EXPECT_EQ(BCM_slhdsa_shake_256f_generate_key_from_seed_fips(pub, priv, seed),
+            bcm_status::not_approved);
+  EXPECT_EQ(BCM_slhdsa_shake_256f_generate_key_fips(pub, priv),
+            bcm_status::not_approved);
+  EXPECT_EQ(BCM_slhdsa_shake_256f_public_from_private(pub, priv),
+            bcm_infallible::not_approved);
+
+  const uint8_t kMessage[] = {0x42};
+  std::vector<uint8_t> sig(BCM_SLHDSA_SHAKE_256F_SIGNATURE_BYTES);
+  EXPECT_EQ(BCM_slhdsa_shake_256f_sign(sig.data(), priv, kMessage,
+                                       sizeof(kMessage), nullptr, 0),
+            bcm_status::not_approved);
+  EXPECT_EQ(BCM_slhdsa_shake_256f_verify(sig.data(), sig.size(), pub, kMessage,
+                                         sizeof(kMessage), nullptr, 0),
+            bcm_status::not_approved);
+  // An invalid signature must still fail.
+  sig[0] ^= 1;
+  EXPECT_EQ(BCM_slhdsa_shake_256f_verify(sig.data(), sig.size(), pub, kMessage,
+                                         sizeof(kMessage), nullptr, 0),
+            bcm_status::failure);
+
+  const uint8_t kHash[32] = {0};
+  EXPECT_EQ(BCM_slhdsa_shake_256f_prehash_sign(
+                sig.data(), priv, kHash, sizeof(kHash), NID_sha256, nullptr, 0),
+            bcm_status::not_approved);
+  EXPECT_EQ(BCM_slhdsa_shake_256f_prehash_verify(sig.data(), sig.size(), pub,
+                                                 kHash, sizeof(kHash),
+                                                 NID_sha256, nullptr, 0),
+            bcm_status::not_approved);
+}
+
 }  // namespace
 BSSL_NAMESPACE_END

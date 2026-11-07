@@ -17,8 +17,7 @@
     unsafe_op_in_unsafe_fn,
     clippy::indexing_slicing,
     clippy::unwrap_used,
-    clippy::panic,
-    clippy::expect_used
+    clippy::panic
 )]
 #![cfg_attr(not(any(feature = "std", test)), no_std)]
 
@@ -43,6 +42,7 @@ pub mod aes;
 /// Ciphers.
 pub mod cipher;
 
+pub mod cpace;
 pub mod digest;
 pub mod ec;
 pub mod ecdh;
@@ -574,4 +574,124 @@ fn cbb_to_vec<F: FnOnce(*mut bssl_sys::CBB)>(len: usize, func: F) -> Vec<u8> {
 mod sealed {
     pub struct SealedType;
     pub trait Sealed {}
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! bssl_enum {
+    (
+        $(#[$attr:meta])*
+        $vis:vis enum $name:ident : $repr:ty {
+            $(
+                $(#[$vattr:meta])*
+                $item:ident = $e:expr
+            ),* $(,)?
+        }
+    ) => {
+        $(#[$attr])*
+        #[repr($repr)]
+        $vis enum $name {
+            $(
+                $(#[$vattr])*
+                $item = $e,
+            )*
+        }
+
+        impl ::core::convert::TryFrom<$repr> for $name {
+            type Error = $repr;
+
+            fn try_from(value: $repr) -> Result<Self, Self::Error> {
+                $(
+                    #[allow(non_upper_case_globals)]
+                    #[allow(deprecated)]
+                    const $item: $repr = $e;
+                )*
+
+                #[allow(non_upper_case_globals)]
+                #[allow(deprecated)]
+                match value {
+                    $(
+                        $item => ::core::result::Result::Ok(Self::$item),
+                    )*
+                    _ => ::core::result::Result::Err(value),
+                }
+            }
+        }
+    };
+}
+
+bssl_enum! {
+    /// Library code of the BoringSSL errors.
+    #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+    #[non_exhaustive]
+    pub enum LibCode: i32 {
+        /// No module
+        None = bssl_sys::ERR_LIB_NONE as i32,
+        /// Module `SYS`
+        Sys = bssl_sys::ERR_LIB_SYS as i32,
+        /// Module `BN`
+        Bn = bssl_sys::ERR_LIB_BN as i32,
+        /// Module `RSA`
+        Rsa = bssl_sys::ERR_LIB_RSA as i32,
+        /// Module `DH`
+        Dh = bssl_sys::ERR_LIB_DH as i32,
+        /// Module `EVP`
+        Evp = bssl_sys::ERR_LIB_EVP as i32,
+        /// Module `BUF`
+        Buf = bssl_sys::ERR_LIB_BUF as i32,
+        /// Module `OBJ`
+        Obj = bssl_sys::ERR_LIB_OBJ as i32,
+        /// Module `PEM`
+        Pem = bssl_sys::ERR_LIB_PEM as i32,
+        /// Module `DSA`
+        Dsa = bssl_sys::ERR_LIB_DSA as i32,
+        /// Module `X509`
+        X509 = bssl_sys::ERR_LIB_X509 as i32,
+        /// Module `ASN1`
+        Asn1 = bssl_sys::ERR_LIB_ASN1 as i32,
+        /// Module `CONF`
+        Conf = bssl_sys::ERR_LIB_CONF as i32,
+        /// Module `CRYPTO`
+        Crypto = bssl_sys::ERR_LIB_CRYPTO as i32,
+        /// Module `EC`
+        Ec = bssl_sys::ERR_LIB_EC as i32,
+        /// Module `SSL`
+        Ssl = bssl_sys::ERR_LIB_SSL as i32,
+        /// Module `BIO`
+        Bio = bssl_sys::ERR_LIB_BIO as i32,
+        /// Module `PKCS7`
+        Pkcs7 = bssl_sys::ERR_LIB_PKCS7 as i32,
+        /// Module `PKCS8`
+        Pkcs8 = bssl_sys::ERR_LIB_PKCS8 as i32,
+        /// Module `X509V3`
+        X509v3 = bssl_sys::ERR_LIB_X509V3 as i32,
+        /// Module `RAND`
+        Rand = bssl_sys::ERR_LIB_RAND as i32,
+        /// Module `ENGINE`
+        Engine = bssl_sys::ERR_LIB_ENGINE as i32,
+        /// Module `OCSP`
+        Ocsp = bssl_sys::ERR_LIB_OCSP as i32,
+        /// Module `UI`
+        Ui = bssl_sys::ERR_LIB_UI as i32,
+        /// Module `COMP`
+        Comp = bssl_sys::ERR_LIB_COMP as i32,
+        /// Module `ECDSA`
+        Ecdsa = bssl_sys::ERR_LIB_ECDSA as i32,
+        /// Module `ECDH`
+        Ecdh = bssl_sys::ERR_LIB_ECDH as i32,
+        /// Module `HMAC`
+        Hmac = bssl_sys::ERR_LIB_HMAC as i32,
+        /// Module `DIGEST`
+        Digest = bssl_sys::ERR_LIB_DIGEST as i32,
+        /// Module `CIPHER`
+        Cipher = bssl_sys::ERR_LIB_CIPHER as i32,
+        /// Module `HKDF`
+        Hkdf = bssl_sys::ERR_LIB_HKDF as i32,
+        /// Module `TRUST_TOKEN`
+        TrustToken = bssl_sys::ERR_LIB_TRUST_TOKEN as i32,
+        /// Module `CMS`
+        Cms = bssl_sys::ERR_LIB_CMS as i32,
+        /// User sourced
+        User = bssl_sys::ERR_LIB_USER as i32,
+    }
 }

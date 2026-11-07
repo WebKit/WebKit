@@ -401,6 +401,7 @@ absl_cc_test(
   COPTS
     ${ABSL_TEST_COPTS}
   DEPS
+    absl::algorithm_container
     absl::btree
     absl::core_headers
     absl::dynamic_annotations
@@ -713,6 +714,8 @@ absl_cc_test(
     absl::string_view
     absl::strings
     GTest::gmock_main
+  SHARD_COUNT
+    4
 )
 
 absl_cc_test(
@@ -1195,6 +1198,8 @@ absl_cc_test(
     absl::string_view
     absl::strings
     GTest::gmock_main
+  SHARD_COUNT
+    4
 )
 
 absl_cc_test(
@@ -1232,6 +1237,8 @@ absl_cc_test(
     absl::string_view
     absl::strings
     GTest::gmock_main
+  SHARD_COUNT
+    4
 )
 
 absl_cc_test(

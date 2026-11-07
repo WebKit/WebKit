@@ -199,7 +199,6 @@ TEST(EncodeForcedMaxFrameWidthHeight, DimensionDecreasing) {
 
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
 }
-
 #endif  // !CONFIG_REALTIME_ONLY
 
 TEST(EncodeForcedMaxFrameWidthHeight, RealtimeLag0TunePSNR) {
@@ -568,5 +567,70 @@ TEST(EncodeForcedMaxFrameWidthHeight,
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 0, 0));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
 }
+
+// Fills an 8-bit image with a non-flat pattern, different for each value of
+// |seed|, so that the encoder codes coefficients in every block.
+void FillImagePattern(aom_image_t *image, int seed) {
+  for (int plane = 0; plane < 3; plane++) {
+    const int plane_width = aom_img_plane_width(image, plane);
+    const int plane_height = aom_img_plane_height(image, plane);
+    for (int y = 0; y < plane_height; ++y) {
+      unsigned char *row = image->planes[plane] + y * image->stride[plane];
+      for (int x = 0; x < plane_width; ++x) {
+        row[x] =
+            static_cast<unsigned char>((x * 7 + y * 13 + seed * 37) ^ (x * y));
+      }
+    }
+  }
+}
+
+// Raising g_forced_max_frame_width/height with aom_codec_enc_config_set()
+// after a frame has been encoded, without changing the frame size, does not
+// reallocate the coefficient buffer. It must still be indexed with the layout
+// it was allocated with, not one computed from the new forced maximum.
+void RunRaiseForcedMaxTest(unsigned int usage) {
+  constexpr unsigned int kWidth = 256;
+  constexpr unsigned int kHeight = 256;
+  constexpr unsigned int kMaxWidth = 1024;
+  constexpr unsigned int kMaxHeight = 1024;
+  aom_codec_iface_t *iface = aom_codec_av1_cx();
+  aom_codec_enc_cfg_t cfg;
+  ASSERT_EQ(AOM_CODEC_OK, aom_codec_enc_config_default(iface, &cfg, usage));
+  cfg.g_w = kWidth;
+  cfg.g_h = kHeight;
+  cfg.g_lag_in_frames = 0;
+  aom_codec_ctx_t enc;
+  ASSERT_EQ(AOM_CODEC_OK, aom_codec_enc_init(&enc, iface, &cfg, 0));
+  ASSERT_EQ(AOM_CODEC_OK,
+            aom_codec_control(&enc, AOME_SET_CPUUSED,
+                              usage == AOM_USAGE_REALTIME ? 9 : 6));
+  ASSERT_EQ(AOM_CODEC_OK, aom_codec_set_option(&enc, "tune", "ssim"));
+
+  aom_image_t *image =
+      aom_img_alloc(nullptr, AOM_IMG_FMT_I420, kWidth, kHeight, 1);
+  ASSERT_NE(image, nullptr);
+  FillImagePattern(image, 0);
+  ASSERT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, image, 0, 1, 0));
+
+  cfg.g_forced_max_frame_width = kMaxWidth;
+  cfg.g_forced_max_frame_height = kMaxHeight;
+  ASSERT_EQ(AOM_CODEC_OK, aom_codec_enc_config_set(&enc, &cfg));
+  FillImagePattern(image, 1);
+  ASSERT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, image, 1, 1, 0));
+
+  ASSERT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 0, 0));
+  aom_img_free(image);
+  ASSERT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
+}
+
+TEST(EncodeForcedMaxFrameWidthHeight, RaiseForcedMaxRealtime) {
+  RunRaiseForcedMaxTest(AOM_USAGE_REALTIME);
+}
+
+#if !CONFIG_REALTIME_ONLY
+TEST(EncodeForcedMaxFrameWidthHeight, RaiseForcedMaxGoodQuality) {
+  RunRaiseForcedMaxTest(AOM_USAGE_GOOD_QUALITY);
+}
+#endif  // !CONFIG_REALTIME_ONLY
 
 }  // namespace

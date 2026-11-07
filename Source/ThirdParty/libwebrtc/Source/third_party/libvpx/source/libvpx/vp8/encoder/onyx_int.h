@@ -303,6 +303,7 @@ typedef struct VP8_COMP {
   YV12_BUFFER_CONFIG *Source;
   YV12_BUFFER_CONFIG *un_scaled_source;
   YV12_BUFFER_CONFIG scaled_source;
+  YV12_BUFFER_CONFIG raw_source_frame;
   YV12_BUFFER_CONFIG *last_frame_unscaled_source;
 
   unsigned int frames_till_alt_ref_frame;

@@ -39,12 +39,17 @@ config("libyuv_config") {
   }
   if (libyuv_disable_rvv) {
     defines += [ "LIBYUV_DISABLE_RVV" ]
+  } else if (libyuv_use_rvv) {
+    defines += [ "LIBYUV_RVV" ]
   }
   if (!libyuv_use_lsx) {
     defines += [ "LIBYUV_DISABLE_LSX" ]
   }
   if (!libyuv_use_lasx) {
     defines += [ "LIBYUV_DISABLE_LASX" ]
+  }
+  if (current_cpu == "wasm") {
+    cflags_cc = [ "-msimd128" ]
   }
 }
 
@@ -86,6 +91,10 @@ group("libyuv") {
 
   if (libyuv_use_sme) {
     deps += [ ":libyuv_sme" ]
+  }
+
+  if (libyuv_use_rvv && !libyuv_disable_rvv) {
+    deps += [ ":libyuv_rvv" ]
   }
 
   if (libyuv_use_lsx) {
@@ -139,6 +148,7 @@ static_library("libyuv_internal") {
     "source/compare.cc",
     "source/compare_common.cc",
     "source/compare_gcc.cc",
+    "source/compare_wasm.cc",
     "source/compare_win.cc",
     "source/convert.cc",
     "source/convert_argb.cc",
@@ -156,11 +166,12 @@ static_library("libyuv_internal") {
     "source/rotate_argb.cc",
     "source/rotate_common.cc",
     "source/rotate_gcc.cc",
+    "source/rotate_wasm.cc",
     "source/rotate_win.cc",
     "source/row_any.cc",
     "source/row_common.cc",
     "source/row_gcc.cc",
-    "source/row_rvv.cc",
+    "source/row_wasm.cc",
     "source/row_win.cc",
     "source/scale.cc",
     "source/scale_any.cc",
@@ -168,8 +179,8 @@ static_library("libyuv_internal") {
     "source/scale_common.cc",
     "source/scale_gcc.cc",
     "source/scale_rgb.cc",
-    "source/scale_rvv.cc",
     "source/scale_uv.cc",
+    "source/scale_wasm.cc",
     "source/scale_win.cc",
     "source/video_common.cc",
   ]
@@ -239,7 +250,10 @@ if (libyuv_use_neon) {
 
 if (libyuv_use_sve) {
   static_library("libyuv_sve") {
-    sources = [ "source/row_sve.cc" ]
+    sources = [
+      "source/rotate_sve.cc",
+      "source/row_sve.cc",
+    ]
 
     deps = [ ":libyuv_internal" ]
 
@@ -274,6 +288,37 @@ if (libyuv_use_sme) {
   }
 }
 
+if (libyuv_use_rvv && !libyuv_disable_rvv) {
+  static_library("libyuv_rvv") {
+    sources = [
+      "source/rotate_rvv.cc",
+      "source/row_rvv.cc",
+      "source/scale_rvv.cc",
+    ]
+
+    deps = [ ":libyuv_internal" ]
+
+    public_configs = [ ":libyuv_config" ]
+
+    # The -march arguments below are incompatible with libc++ modules.
+    use_libcxx_modules = false
+
+    if (current_cpu == "riscv64") {
+      cflags = [
+        "-march=rv64gcv",
+        "-fno-tree-vectorize",
+        "-fno-tree-slp-vectorize",
+      ]
+    } else {
+      cflags = [
+        "-march=rv32gcv",
+        "-fno-tree-vectorize",
+        "-fno-tree-slp-vectorize",
+      ]
+    }
+  }
+}
+
 if (libyuv_use_lsx) {
   static_library("libyuv_lsx") {
     sources = [
@@ -298,6 +343,7 @@ if (libyuv_use_lasx) {
   static_library("libyuv_lasx") {
     sources = [
       # LASX Source Files
+      "source/rotate_lasx.cc",
       "source/row_lasx.cc",
     ]
 
@@ -328,6 +374,7 @@ if (libyuv_include_tests) {
       ]
     }
   }
+
   config("libyuv_unittest_config") {
     defines = [ "GTEST_RELATIVE_PATH" ]
   }

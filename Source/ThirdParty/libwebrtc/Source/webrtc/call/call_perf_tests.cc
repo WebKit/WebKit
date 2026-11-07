@@ -382,15 +382,10 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
     sender_call_->DestroyAudioSendStream(audio_send_stream);
     receiver_call_->DestroyAudioReceiveStream(audio_receive_stream);
 
-    DestroyCalls();
-    // Call may post periodic rtcp packet to the transport on the process
-    // thread, thus transport should be destroyed after the call objects.
-    // Though transports keep pointers to the call objects, transports handle
-    // packets on the task_queue() and thus wouldn't create a race while current
-    // destruction happens in the same task as destruction of the call objects.
     video_send_transport.reset();
     audio_send_transport.reset();
     receive_transport.reset();
+    DestroyCalls();
   });
 
   observer->PrintResults();
@@ -403,8 +398,7 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
 #endif
   }
 
-  task_queue()->PostTask(
-      [to_delete = observer.release()]() { delete to_delete; });
+  task_queue()->PostTask([to_delete = std::move(observer)]() {});
 }
 
 TEST_F(CallPerfTest, Synchronization_PlaysOutAudioAndVideoWithoutClockDrift) {

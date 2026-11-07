@@ -12,6 +12,13 @@
 
 #include "libyuv/row.h"
 
+// Note: every register written by an inline asm block (vector, general
+// purpose, mask/predicate, "cc" for flags and "memory" for stores) must be
+// listed in its clobber list, even when the ABI treats it as caller-saved.
+// With LTO/LTCG the compiler may keep values live in any register across the
+// asm statement, and other OS ABIs (e.g. Windows) differ in which registers
+// are callee-saved. List "memory" first, then "cc", then registers.
+
 #if !defined(LIBYUV_DISABLE_LASX) && defined(__loongarch_asx)
 #include "libyuv/loongson_intrinsics.h"
 
@@ -279,6 +286,20 @@ void ARGBMirrorRow_LASX(const uint8_t* src, uint8_t* dst, int width) {
     __lasx_xvst(dst1, dst, 32);
     dst += 64;
     src -= 64;
+  }
+}
+
+void CopyRow_LASX(const uint8_t* src, uint8_t* dst, int width) {
+  int x;
+  int len = width / 64;
+  __m256i src0, src1;
+
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lasx_xvld, src, 0, src, 32, src0, src1);
+    __lasx_xvst(src0, dst, 0);
+    __lasx_xvst(src1, dst, 32);
+    src += 64;
+    dst += 64;
   }
 }
 
@@ -1422,6 +1443,42 @@ void RAWToARGBRow_LASX(const uint8_t* src_raw, uint8_t* dst_argb, int width) {
   }
 }
 
+void RAWToRGB24Row_LASX(const uint8_t* src_raw, uint8_t* dst_rgb24, int width) {
+  int x;
+  int len = width / 32;
+  __m256i reg0, reg1, reg2;
+  __m256i src0, src1, src2;
+  __m256i tmp0, tmp1, tmp2;
+  __m256i dst0, dst1, dst2;
+  __m256i shuf0 = {0x0708030405000102, 0x110C0D0E090A0B06, 0x0708030405000102,
+                   0x110C0D0E090A0B06};
+  __m256i shuf1 = {0x1516171213140F10, 0x1F1E1B1C1D18191A, 0x1516171213140F10,
+                   0x1F1E1B1C1D18191A};
+  __m256i shuf2 = {0x090405060102031E, 0x0D0E0F0A0B0C0708, 0x090405060102031E,
+                   0x0D0E0F0A0B0C0708};
+
+  for (x = 0; x < len; x++) {
+    reg0 = __lasx_xvld(src_raw, 0);
+    reg1 = __lasx_xvld(src_raw, 32);
+    reg2 = __lasx_xvld(src_raw, 64);
+    src0 = __lasx_xvpermi_q(reg1, reg0, 0x30);
+    src1 = __lasx_xvpermi_q(reg2, reg0, 0x21);
+    src2 = __lasx_xvpermi_q(reg2, reg1, 0x30);
+    DUP2_ARG3(__lasx_xvshuf_b, src1, src0, shuf0, src1, src0, shuf1, tmp0,
+              tmp1);
+    tmp2 = __lasx_xvshuf_b(src1, src2, shuf2);
+    tmp1 = __lasx_xvextrins_b(tmp1, src2, 0xE0);
+    dst0 = __lasx_xvpermi_q(tmp1, tmp0, 0x20);
+    dst1 = __lasx_xvpermi_q(tmp0, tmp2, 0x30);
+    dst2 = __lasx_xvpermi_q(tmp2, tmp1, 0x31);
+    __lasx_xvst(dst0, dst_rgb24, 0);
+    __lasx_xvst(dst1, dst_rgb24, 32);
+    __lasx_xvst(dst2, dst_rgb24, 64);
+    src_raw += 96;
+    dst_rgb24 += 96;
+  }
+}
+
 void ARGB1555ToYRow_LASX(const uint8_t* src_argb1555,
                          uint8_t* dst_y,
                          int width) {
@@ -1924,7 +1981,9 @@ void ARGBToYMatrixRow_LASX(const uint8_t* src_argb,
         "+&r"(dst_y),     // %1
         "+&r"(width)      // %2
       : "r"(c), "r"(shuff)
-      : "memory");
+      : "memory", "$xr0", "$xr1", "$xr2", "$xr3", "$xr4", "$xr5", "$xr6",
+        "$xr7", "$xr8", "$xr9", "$xr10", "$xr11", "$xr12", "$xr13", "$xr20",
+        "$xr21");
 }
 
 void RGBToYMatrixRow_LASX(const uint8_t* src_rgba,
@@ -1982,7 +2041,9 @@ void RGBToYMatrixRow_LASX(const uint8_t* src_rgba,
         "+&r"(width)      // %2
       : "r"(c),           // %3
         "r"(shuff)        // %4
-      : "memory");
+      : "memory", "$xr0", "$xr1", "$xr2", "$xr3", "$xr4", "$xr5", "$xr6",
+        "$xr7", "$xr8", "$xr9", "$xr10", "$xr11", "$xr12", "$xr13", "$xr14",
+        "$xr15", "$xr16", "$xr17");
 }
 // undef for unified sources build
 #undef ALPHA_VAL

@@ -72,7 +72,7 @@ impl TlsSession {
             bssl_sys::SSL_SESSION_to_bytes(self.ptr(), &raw mut out_data, &raw mut out_len)
         };
         if rc != 1 {
-            return Err(Error::extract_lib_err());
+            return Err(Error::extract_lib_err_or_unknown());
         }
         let out_data = Alloc(out_data);
         let slice = unsafe {
@@ -91,7 +91,7 @@ impl TlsSession {
             bssl_sys::SSL_SESSION_to_bytes_for_ticket(self.ptr(), &mut out_data, &mut out_len)
         };
         if rc != 1 {
-            return Err(Error::extract_lib_err());
+            return Err(Error::extract_lib_err_or_unknown());
         }
         let out_data = Alloc(out_data);
         let slice = unsafe {
@@ -108,7 +108,7 @@ impl TlsSession {
             // Safety: bytes is a valid slice and the context is still valid.
             bssl_sys::SSL_SESSION_from_bytes(ptr, len, ctx.ptr())
         };
-        let ptr = NonNull::new(ptr).ok_or_else(|| Error::extract_lib_err())?;
+        let ptr = NonNull::new(ptr).ok_or_else(|| Error::extract_lib_err_or_unknown())?;
         Ok(Self(ptr))
     }
 

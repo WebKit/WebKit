@@ -24,6 +24,7 @@
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "rtc_base/experiments/retransmit_flushed_packets_settings.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -55,6 +56,9 @@ class RtpPacketHistory {
   static constexpr int kMinPacketDurationRtt = 3;
   // With kStoreAndCull, always remove packets after 3x max(1000ms, 3x rtt).
   static constexpr int kPacketCullingDelayFactor = 3;
+  // Default RTT used when calculating earliest allowed retransmission for
+  // packets not allowed sending if no RTT has been set yet.
+  static constexpr TimeDelta kDefaultRtt = TimeDelta::Millis(200);
 
   RtpPacketHistory(const Environment& env, PaddingMode padding_mode);
 
@@ -128,7 +132,8 @@ class RtpPacketHistory {
     StoredPacket() = default;
     StoredPacket(std::unique_ptr<RtpPacketToSend> packet,
                  Timestamp send_time,
-                 uint64_t insert_order);
+                 uint64_t insert_order,
+                 Timestamp earliest_allowed_retransmission);
     StoredPacket(StoredPacket&&);
     StoredPacket& operator=(StoredPacket&&);
     ~StoredPacket();
@@ -141,21 +146,27 @@ class RtpPacketHistory {
     Timestamp send_time() const { return send_time_; }
     void set_send_time(Timestamp value) { send_time_ = value; }
 
+    Timestamp earliest_allowed_retransmission() const {
+      return earliest_allowed_retransmission_;
+    }
+
     // The actual packet.
     std::unique_ptr<RtpPacketToSend> packet_;
 
     // True if the packet is currently in the pacer queue pending transmission.
-    bool pending_transmission_;
+    bool pending_transmission_ = false;
 
    private:
+    // Do not restrict retransmission by default.
+    Timestamp earliest_allowed_retransmission_ = Timestamp::MinusInfinity();
     Timestamp send_time_ = Timestamp::Zero();
 
     // Unique number per StoredPacket, incremented by one for each added
     // packet. Used to sort on insert order.
-    uint64_t insert_order_;
+    uint64_t insert_order_ = 0;
 
     // Number of times RE-transmitted, ie excluding the first transmission.
-    size_t times_retransmitted_;
+    size_t times_retransmitted_ = 0;
   };
 
   // Helper method to check if packet has too recently been sent.
@@ -174,6 +185,9 @@ class RtpPacketHistory {
 
   Clock* const clock_;
   const PaddingMode padding_mode_;
+  // TODO(bugs.webrtc.org/564720400): Either remove or make permanent once
+  // experiment is concluded.
+  const RetransmitFlushedPacketsSettings retransmit_flushed_packets_settings_;
   mutable Mutex lock_;
   size_t number_to_store_ RTC_GUARDED_BY(lock_);
   StorageMode mode_ RTC_GUARDED_BY(lock_);

@@ -15,6 +15,7 @@
 #include <cstdint>
 #include <memory>
 #include <span>
+#include <utility>
 #include <vector>
 
 #include "api/scoped_refptr.h"
@@ -222,14 +223,14 @@ std::vector<FilteredSample> GetSampleValuesForFrame(
           /*crop_height=*/frame.height());
       scaled_frame.set_video_frame_buffer(scaled_buffer);
     } else {
-      scoped_refptr<I420Buffer> scaled_buffer =
-          I420Buffer::Create(scaled_width, scaled_height);
       scoped_refptr<I420BufferInterface> buffer =
           frame.video_frame_buffer()->ToI420ForInspection();
       if (buffer == nullptr) {
         RTC_LOG(LS_WARNING) << "Unable to convert frame to I420 format.";
         return {};
       }
+      scoped_refptr<I420Buffer> scaled_buffer =
+          I420Buffer::Create(scaled_width, scaled_height);
       scaled_buffer->ScaleFrom(*buffer);
       scaled_frame.set_video_frame_buffer(scaled_buffer);
     }
@@ -308,7 +309,9 @@ std::vector<FilteredSample> GetSampleValuesForFrame(
     int scaled_height,
     double std_dev_gaussian_blur) {
   return GetSampleValuesForFrame(
-      VideoFrame::Builder().set_video_frame_buffer(i420_frame_buffer).build(),
+      VideoFrame::Builder()
+          .set_video_frame_buffer(std::move(i420_frame_buffer))
+          .build(),
       sample_coordinates, scaled_width, scaled_height, std_dev_gaussian_blur);
 }
 

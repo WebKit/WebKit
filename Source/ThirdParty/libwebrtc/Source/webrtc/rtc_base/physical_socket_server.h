@@ -98,6 +98,7 @@ class RTC_EXPORT PhysicalSocketServer : public SocketServer {
   // SocketServer:
   bool Wait(TimeDelta max_wait_duration, bool process_io) override;
   void WakeUp() override;
+  bool CanCreateSockets() const override { return true; }
 
   void Add(Dispatcher* dispatcher);
   void Remove(Dispatcher* dispatcher);

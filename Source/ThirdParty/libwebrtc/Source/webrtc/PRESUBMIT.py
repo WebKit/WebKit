@@ -1473,12 +1473,6 @@ def CheckAddedDepsHaveTargetApprovals(input_api, output_api):
         return []
 
     if input_api.is_committing:
-        if input_api.tbr:
-            return [
-                output_api.PresubmitNotifyResult(
-                    '--tbr was specified, skipping OWNERS check for DEPS '
-                    'additions')
-            ]
         if input_api.dry_run:
             return [
                 output_api.PresubmitNotifyResult(

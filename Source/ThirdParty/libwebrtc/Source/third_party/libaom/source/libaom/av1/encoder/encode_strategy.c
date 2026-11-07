@@ -656,10 +656,10 @@ int av1_get_refresh_frame_flags(
   if (ext_refresh_frame_flags->update_pending) {
     if (rtc_ref->set_ref_frame_config ||
         use_rtc_reference_structure_one_layer(cpi)) {
-      for (unsigned int i = 0; i < INTER_REFS_PER_FRAME; i++) {
-        int ref_frame_map_idx = rtc_ref->ref_idx[i];
-        refresh_mask |= rtc_ref->refresh[ref_frame_map_idx]
-                        << ref_frame_map_idx;
+      // refresh[] is indexed by buffer slot. A refreshed slot does not have to
+      // be pointed to by any of the ref_idx[] entries.
+      for (unsigned int i = 0; i < REF_FRAMES; i++) {
+        refresh_mask |= rtc_ref->refresh[i] << i;
       }
       return refresh_mask;
     }
@@ -835,14 +835,17 @@ static int denoise_and_encode(AV1_COMP *const cpi, uint8_t *const dest,
       // Right now, we are still using tf_buf_second_arf due to
       // implementation complexity.
       // TODO(angiebird): Reuse tf_info->tf_buf here.
-      av1_temporal_filter(cpi, arf_src_index, cpi->gf_frame_index, &frame_diff,
-                          tf_buf_second_arf);
-      show_existing_alt_ref =
-          av1_check_show_filtered_frame(tf_buf_second_arf, &frame_diff, q_index,
-                                        cm->seq_params->bit_depth, 1, 1);
-      if (show_existing_alt_ref) {
-        aom_extend_frame_borders(tf_buf_second_arf, av1_num_planes(cm));
-        frame_input->source = tf_buf_second_arf;
+      if (av1_lookahead_peek(cpi->ppi->lookahead, arf_src_index,
+                             cpi->compressor_stage)) {
+        av1_temporal_filter(cpi, arf_src_index, cpi->gf_frame_index,
+                            &frame_diff, tf_buf_second_arf);
+        show_existing_alt_ref = av1_check_show_filtered_frame(
+            tf_buf_second_arf, &frame_diff, q_index, cm->seq_params->bit_depth,
+            1, 1);
+        if (show_existing_alt_ref) {
+          aom_extend_frame_borders(tf_buf_second_arf, av1_num_planes(cm));
+          frame_input->source = tf_buf_second_arf;
+        }
       }
       // Currently INTNL_ARF_UPDATE only do show_existing.
       cpi->common.showable_frame |= 1;
@@ -899,7 +902,7 @@ static int denoise_and_encode(AV1_COMP *const cpi, uint8_t *const dest,
     if (allow_tpl) {
       if (!cpi->skip_tpl_setup_stats) {
         av1_tpl_preload_rc_estimate(cpi, frame_params);
-        av1_tpl_setup_stats(cpi, 0, frame_params);
+        av1_tpl_setup_stats(cpi, /*approx_gop_eval=*/false, frame_params);
 #if CONFIG_BITRATE_ACCURACY && !CONFIG_THREE_PASS
         assert(cpi->gf_frame_index == 0);
         av1_vbr_rc_update_q_index_list(&cpi->vbr_rc_info, &cpi->ppi->tpl_data,
@@ -1509,11 +1512,16 @@ int av1_encode_strategy(AV1_COMP *const cpi, size_t *const size,
           cm->seq_params->film_grain_params_present;
     }
 #endif
-    // only one operating point supported now
-    const int64_t pts64 = ticks_to_timebase_units(timestamp_ratio, *time_stamp);
-    if (pts64 < 0 || pts64 > UINT32_MAX) return AOM_CODEC_ERROR;
-
-    cm->frame_presentation_time = (uint32_t)pts64;
+    if (cm->seq_params->decoder_model_info_present_flag &&
+        cm->seq_params->timing_info.equal_picture_interval == 0) {
+      // only one operating point supported now
+      const int64_t pts64 =
+          ticks_to_timebase_units(timestamp_ratio, *time_stamp);
+      const int frame_presentation_time_length =
+          cm->seq_params->decoder_model_info.frame_presentation_time_length;
+      const int64_t modulus = 1LL << frame_presentation_time_length;
+      cm->frame_presentation_time = (uint32_t)(pts64 % modulus);
+    }
   }
 
 #if CONFIG_COLLECT_COMPONENT_TIMING
@@ -1638,8 +1646,31 @@ int av1_encode_strategy(AV1_COMP *const cpi, size_t *const size,
                            cpi->gf_frame_index, 1, cm->remapped_ref_idx);
       } else if (cpi->ppi->rtc_ref.set_ref_frame_config ||
                  use_rtc_reference_structure_one_layer(cpi)) {
-        for (unsigned int i = 0; i < INTER_REFS_PER_FRAME; i++)
-          cm->remapped_ref_idx[i] = cpi->ppi->rtc_ref.ref_idx[i];
+        // With set_ref_frame_config, the ref_idx[] entries of references
+        // that are not in use are don't-cares, and may point to slots that
+        // are not valid references for this frame, e.g. a slot of another
+        // spatial layer. All seven references are signaled in the bitstream
+        // though, and decoders reject a frame with an invalid reference.
+        // Without order hints, unused references otherwise only affect how
+        // the frame size is signaled, so point them to the first reference in
+        // use. With order hints, they also affect the decoding process (e.g.
+        // temporal motion vector projection), so leave them as configured.
+        int first_ref_map_idx = INVALID_IDX;
+        if (cpi->ppi->rtc_ref.set_ref_frame_config &&
+            !cm->seq_params->order_hint_info.enable_order_hint) {
+          for (unsigned int i = 0; i < INTER_REFS_PER_FRAME; i++) {
+            if (cpi->ppi->rtc_ref.reference[i]) {
+              first_ref_map_idx = cpi->ppi->rtc_ref.ref_idx[i];
+              break;
+            }
+          }
+        }
+        for (unsigned int i = 0; i < INTER_REFS_PER_FRAME; i++) {
+          cm->remapped_ref_idx[i] = (first_ref_map_idx != INVALID_IDX &&
+                                     !cpi->ppi->rtc_ref.reference[i])
+                                        ? first_ref_map_idx
+                                        : cpi->ppi->rtc_ref.ref_idx[i];
+        }
       }
     }
 

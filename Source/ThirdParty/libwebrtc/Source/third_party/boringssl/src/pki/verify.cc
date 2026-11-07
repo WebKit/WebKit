@@ -69,8 +69,6 @@ InternalParseCertificate(Span<const uint8_t> cert, std::string *out_diagnostic) 
 
 CertPool::CertPool() {}
 
-CertificateVerifyOptions::CertificateVerifyOptions() {}
-
 static std::unique_ptr<VerifyTrustStore> WrapTrustStore(
     std::unique_ptr<TrustStoreInMemory> trust_store) {
   std::unique_ptr<VerifyTrustStore> ret(new VerifyTrustStore);
@@ -139,8 +137,6 @@ std::unique_ptr<CertPool> CertPool::FromCerts(
 
   return pool;
 }
-
-CertificateVerifyStatus::CertificateVerifyStatus() {}
 
 size_t CertificateVerifyStatus::IterationCount() const {
   return iteration_count_;

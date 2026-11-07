@@ -671,7 +671,7 @@ static bool remove_session(SSLContext *ctx, SSLSession *session, bool lock) {
   return found;
 }
 
-void ssl_set_session(SSLImpl *ssl, SSLSession *session) {
+void ssl_set_session(SSLImpl *ssl, const SSLSession *session) {
   if (ssl->session.get() == session) {
     return;
   }
@@ -893,6 +893,13 @@ int SSL_SESSION_up_ref(SSL_SESSION *session) {
   return 1;
 }
 
+SSL_SESSION *SSL_SESSION_dup_ref(const SSL_SESSION *session) {
+  if (session == nullptr) {
+    return nullptr;
+  }
+  return FromOpaque(session)->DupRefInternal();
+}
+
 void SSL_SESSION_free(SSL_SESSION *session) {
   if (session == nullptr) {
     return;
@@ -1083,7 +1090,7 @@ int SSL_SESSION_early_data_capable(const SSL_SESSION *session) {
          session_impl->ticket_max_early_data != 0;
 }
 
-SSL_SESSION *SSL_SESSION_copy_without_early_data(SSL_SESSION *session) {
+SSL_SESSION *SSL_SESSION_copy_without_early_data(const SSL_SESSION *session) {
   auto *session_impl = FromOpaque(session);
   if (!SSL_SESSION_early_data_capable(session)) {
     return UpRef(session).release();
@@ -1110,7 +1117,7 @@ SSL_SESSION *SSL_get_session(const SSL *ssl) {
   return ssl_get_session(FromOpaque(ssl));
 }
 
-SSL_SESSION *SSL_get1_session(SSL *ssl) {
+SSL_SESSION *SSL_get1_session(const SSL *ssl) {
   SSL_SESSION *ret = SSL_get_session(ssl);
   if (ret != nullptr) {
     SSL_SESSION_up_ref(ret);
@@ -1144,7 +1151,7 @@ int SSL_CTX_remove_session(SSL_CTX *ctx, SSL_SESSION *session) {
   return remove_session(FromOpaque(ctx), FromOpaque(session), /*lock=*/true);
 }
 
-int SSL_set_session(SSL *ssl, SSL_SESSION *session) {
+int SSL_set_session(SSL *ssl, const SSL_SESSION *session) {
   auto *ssl_impl = FromOpaque(ssl);
   // SSL_set_session may only be called before the handshake has started.
   if (ssl_impl->s3->initial_handshake_complete ||  //

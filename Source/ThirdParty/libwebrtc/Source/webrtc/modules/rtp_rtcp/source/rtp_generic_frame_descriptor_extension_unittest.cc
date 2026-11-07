@@ -263,5 +263,22 @@ TEST(RtpGenericFrameDescriptorExtensionTest,
   EXPECT_TRUE(RtpGenericFrameDescriptorExtension00::Write(buffer, descriptor));
   EXPECT_THAT(buffer, ElementsAreArray(kRaw));
 }
+
+TEST(RtpGenericFrameDescriptorExtensionTest,
+     AddFrameDependencyDiffRejectsUnrepresentableDiffs) {
+  constexpr int kMaxDiff = RtpGenericFrameDescriptor::kMaxFrameDependencyDiff;
+  RtpGenericFrameDescriptor descriptor;
+  descriptor.SetFirstPacketInSubFrame(true);
+
+  EXPECT_FALSE(descriptor.AddFrameDependencyDiff(0));
+  EXPECT_FALSE(descriptor.AddFrameDependencyDiff(-1));
+  EXPECT_FALSE(descriptor.AddFrameDependencyDiff(kMaxDiff + 1));
+  // Would be 1 if truncated to 16 bits.
+  EXPECT_FALSE(descriptor.AddFrameDependencyDiff((int64_t{1} << 16) + 1));
+  EXPECT_TRUE(descriptor.AddFrameDependencyDiff(1));
+  EXPECT_TRUE(descriptor.AddFrameDependencyDiff(kMaxDiff));
+
+  EXPECT_THAT(descriptor.FrameDependenciesDiffs(), ElementsAre(1, kMaxDiff));
+}
 }  // namespace
 }  // namespace webrtc

@@ -199,4 +199,51 @@
         vtrn.16         \r2,  \r3
 .endm
 
+
+#if CONFIG_ASM_DEBUG
+.macro call_c func, line, msg, first, last, ptr, offset
+        push            {lr}
+        mov             lr,  sp
+        push            {lr}
+        push            {r0-r12}
+        mrs             lr,  cpsr
+        push            {lr}
+        vpush           {d16-d31}
+        vpush           {d0-d15}
+        add             r0,  \ptr, #\offset
+        push            {r0}
+        ldr             r0,  =\line
+        adr             r1,  777f
+        mov             r2,  \first
+        mov             r3,  \last
+        bl              X(\func)
+        pop             {r0}
+        vpop            {d0-d15}
+        vpop            {d16-d31}
+        pop             {lr}
+        msr             cpsr, lr
+        pop             {r0-r12}
+        add             sp,  sp,  #4
+        pop             {lr}
+.endm
+
+#define CALL_C(func, msg, first, last, ptr, offset) \
+        call_c func, __LINE__, msg, first, last, ptr, offset; \
+        b 778f; \
+    777: \
+        .asciz msg; \
+        .align 2; \
+        .ltorg; \
+    778:
+
+#define DUMP_SIMD_S8(msg, first, last)  CALL_C(dump_simd_s8,  msg, first, last, sp, 0)
+#define DUMP_SIMD_U8(msg, first, last)  CALL_C(dump_simd_u8,  msg, first, last, sp, 0)
+#define DUMP_SIMD_S16(msg, first, last) CALL_C(dump_simd_s16, msg, first, last, sp, 0)
+#define DUMP_SIMD_U16(msg, first, last) CALL_C(dump_simd_u16, msg, first, last, sp, 0)
+#define DUMP_SIMD_S32(msg, first, last) CALL_C(dump_simd_s32, msg, first, last, sp, 0)
+#define DUMP_MEM_S16(msg, reg, n)       CALL_C(dump_simd_s16, msg, 0, n-1, reg, 0)
+#define DUMP_GPR(msg, first, last)      CALL_C(dump_gpr,      msg, first, last, sp, 260)
+
+#endif /* CONFIG_ASM_DEBUG */
+
 #endif /* DAV1D_SRC_ARM_32_UTIL_S */

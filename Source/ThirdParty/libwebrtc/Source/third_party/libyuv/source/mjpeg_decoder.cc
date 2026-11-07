@@ -25,7 +25,8 @@
 
 #endif
 
-#include <stdio.h>  // For jpeglib.h.
+#include <stdio.h>   // For jpeglib.h.
+#include <stdlib.h>  // For calloc(), malloc(), and free().
 
 // C++ build requires extern C for jpeg internals.
 #ifdef __cplusplus
@@ -71,10 +72,11 @@ MJpegDecoder::MJpegDecoder()
       scanlines_sizes_(NULL),
       databuf_(NULL),
       databuf_strides_(NULL) {
-  decompress_struct_ = new jpeg_decompress_struct;
-  source_mgr_ = new jpeg_source_mgr;
+  decompress_struct_ = static_cast<jpeg_decompress_struct*>(
+      malloc(sizeof(jpeg_decompress_struct)));
+  source_mgr_ = static_cast<jpeg_source_mgr*>(malloc(sizeof(jpeg_source_mgr)));
 #ifdef HAVE_SETJMP
-  error_mgr_ = new SetJmpErrorMgr;
+  error_mgr_ = static_cast<SetJmpErrorMgr*>(malloc(sizeof(SetJmpErrorMgr)));
   decompress_struct_->err = jpeg_std_error(&error_mgr_->base);
   // Override standard exit()-based error handler.
   error_mgr_->base.error_exit = &ErrorHandler;
@@ -94,10 +96,10 @@ MJpegDecoder::MJpegDecoder()
 
 MJpegDecoder::~MJpegDecoder() {
   jpeg_destroy_decompress(decompress_struct_);
-  delete decompress_struct_;
-  delete source_mgr_;
+  free(decompress_struct_);
+  free(source_mgr_);
 #ifdef HAVE_SETJMP
-  delete error_mgr_;
+  free(error_mgr_);
 #endif
   DestroyOutputBuffers();
 }
@@ -126,10 +128,9 @@ bool MJpegDecoder::LoadFrame(const uint8_t* src, size_t src_len) {
   for (int i = 0; i < num_outbufs_; ++i) {
     int scanlines_size = GetComponentScanlinesPerImcuRow(i);
     if (scanlines_sizes_[i] != scanlines_size) {
-      if (scanlines_[i]) {
-        delete[] scanlines_[i];
-      }
-      scanlines_[i] = new uint8_t*[scanlines_size];
+      free(scanlines_[i]);
+      scanlines_[i] =
+          static_cast<uint8_t**>(malloc(scanlines_size * sizeof(uint8_t*)));
       scanlines_sizes_[i] = scanlines_size;
     }
 
@@ -147,10 +148,8 @@ bool MJpegDecoder::LoadFrame(const uint8_t* src, size_t src_len) {
     //  - Sampling factor is stored in 4 bits, so scanlines_size is < 16.
     int databuf_size = scanlines_size * databuf_stride;
     if (databuf_strides_[i] != databuf_stride) {
-      if (databuf_[i]) {
-        delete[] databuf_[i];
-      }
-      databuf_[i] = new uint8_t[databuf_size];
+      free(databuf_[i]);
+      databuf_[i] = static_cast<uint8_t*>(malloc(databuf_size));
       databuf_strides_[i] = databuf_stride;
     }
 
@@ -481,17 +480,11 @@ void MJpegDecoder::AllocOutputBuffers(int num_outbufs) {
     // it.
     DestroyOutputBuffers();
 
-    scanlines_ = new uint8_t**[num_outbufs];
-    scanlines_sizes_ = new int[num_outbufs];
-    databuf_ = new uint8_t*[num_outbufs];
-    databuf_strides_ = new int[num_outbufs];
-
-    for (int i = 0; i < num_outbufs; ++i) {
-      scanlines_[i] = NULL;
-      scanlines_sizes_[i] = 0;
-      databuf_[i] = NULL;
-      databuf_strides_[i] = 0;
-    }
+    scanlines_ =
+        static_cast<uint8_t***>(calloc(num_outbufs, sizeof(uint8_t**)));
+    scanlines_sizes_ = static_cast<int*>(calloc(num_outbufs, sizeof(int)));
+    databuf_ = static_cast<uint8_t**>(calloc(num_outbufs, sizeof(uint8_t*)));
+    databuf_strides_ = static_cast<int*>(calloc(num_outbufs, sizeof(int)));
 
     num_outbufs_ = num_outbufs;
   }
@@ -499,13 +492,13 @@ void MJpegDecoder::AllocOutputBuffers(int num_outbufs) {
 
 void MJpegDecoder::DestroyOutputBuffers() {
   for (int i = 0; i < num_outbufs_; ++i) {
-    delete[] scanlines_[i];
-    delete[] databuf_[i];
+    free(scanlines_[i]);
+    free(databuf_[i]);
   }
-  delete[] scanlines_;
-  delete[] databuf_;
-  delete[] scanlines_sizes_;
-  delete[] databuf_strides_;
+  free(scanlines_);
+  free(databuf_);
+  free(scanlines_sizes_);
+  free(databuf_strides_);
   scanlines_ = NULL;
   databuf_ = NULL;
   scanlines_sizes_ = NULL;

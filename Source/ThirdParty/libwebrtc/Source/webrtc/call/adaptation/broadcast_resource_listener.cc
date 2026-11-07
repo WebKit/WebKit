@@ -57,7 +57,7 @@ class BroadcastResourceListener::AdapterResource : public Resource {
 
 BroadcastResourceListener::BroadcastResourceListener(
     scoped_refptr<Resource> source_resource)
-    : source_resource_(source_resource), is_listening_(false) {
+    : source_resource_(std::move(source_resource)), is_listening_(false) {
   RTC_DCHECK(source_resource_);
 }
 

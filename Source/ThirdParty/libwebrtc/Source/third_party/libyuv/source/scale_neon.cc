@@ -16,6 +16,13 @@ namespace libyuv {
 extern "C" {
 #endif
 
+// Note: every register written by an inline asm block (vector, general
+// purpose, mask/predicate, "cc" for flags and "memory" for stores) must be
+// listed in its clobber list, even when the ABI treats it as caller-saved.
+// With LTO/LTCG the compiler may keep values live in any register across the
+// asm statement, and other OS ABIs (e.g. Windows) differ in which registers
+// are callee-saved. List "memory" first, then "cc", then registers.
+
 // This module is for GCC Neon.
 #if !defined(LIBYUV_DISABLE_NEON) && defined(__ARM_NEON__) && \
     !defined(__aarch64__)
@@ -40,7 +47,7 @@ void ScaleRowDown2_NEON(const uint8_t* src_ptr,
         "+r"(dst),       // %1
         "+r"(dst_width)  // %2
       :
-      : "q0", "q1"  // Clobber List
+      : "memory", "cc", "q0", "q1"  // Clobber List
   );
 }
 
@@ -61,7 +68,7 @@ void ScaleRowDown2Linear_NEON(const uint8_t* src_ptr,
         "+r"(dst),       // %1
         "+r"(dst_width)  // %2
       :
-      : "q0", "q1"  // Clobber List
+      : "memory", "cc", "q0", "q1"  // Clobber List
   );
 }
 
@@ -92,7 +99,7 @@ void ScaleRowDown2Box_NEON(const uint8_t* src_ptr,
         "+r"(dst),         // %2
         "+r"(dst_width)    // %3
       :
-      : "q0", "q1", "q2", "q3"  // Clobber List
+      : "memory", "cc", "q0", "q1", "q2", "q3"  // Clobber List
   );
 }
 
@@ -296,7 +303,7 @@ void ScaleRowDown38_NEON(const uint8_t* src_ptr,
         "+r"(dst_ptr),   // %1
         "+r"(dst_width)  // %2
       : "r"(&kShuf38)    // %3
-      : "d0", "d1", "d2", "d3", "d4", "d5", "memory", "cc");
+      : "memory", "cc", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7");
 }
 
 // 32x3 -> 12x1
@@ -725,7 +732,7 @@ void ScaleRowUp2_Linear_16_NEON(const uint16_t* src_ptr,
         "+r"(dst_width),  // %2
         "+r"(src_temp)    // %3
       :
-      : "memory", "cc", "q0", "q1", "q2", "q15"  // Clobber List
+      : "memory", "cc", "q0", "q1", "q2", "q3", "q4", "q5", "q15"  // Clobber List
   );
 }
 

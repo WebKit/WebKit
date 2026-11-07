@@ -799,6 +799,14 @@ static int I4xxToPxxx(const uint8_t* src_y,
     Convert8To16Row = Convert8To16Row_RVV;
   }
 #endif
+#if defined(HAS_CONVERT8TO16ROW_WASMSIMD)
+  if (TestCpuFlag(kCpuHasWASMSIMD)) {
+    Convert8To16Row = Convert8To16Row_Any_WASMSIMD;
+    if (IS_ALIGNED(uv_width, 16)) {
+      Convert8To16Row = Convert8To16Row_WASMSIMD;
+    }
+  }
+#endif
 #if defined(HAS_MERGEUVROW_16_AVX2)
   if (TestCpuFlag(kCpuHasAVX2)) {
     MergeUVRow_16 = MergeUVRow_16_Any_AVX2;

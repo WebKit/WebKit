@@ -29,19 +29,20 @@ use crate::{
 fn translate_res_for_stdio(res: Result<IoStatus, Error>) -> Result<usize, io::Error> {
     match res {
         Ok(IoStatus::Ok(bytes)) => Ok(bytes),
-        Ok(IoStatus::EndOfStream) | Err(Error::Io(IoError::EndOfStream)) => Ok(0),
+        // We must be able to differentiate between a graceful shutdown and a transport EOF
+        Err(Error::Io(IoError::EndOfStream)) => Err(io::Error::new(
+            io::ErrorKind::UnexpectedEof,
+            "unexpected eof",
+        )),
+
         Ok(IoStatus::Retry(TlsRetryReason::WantRead | TlsRetryReason::WantWrite)) => {
             Err(io::Error::new(io::ErrorKind::WouldBlock, "would block"))
         }
         Ok(IoStatus::Retry(reason)) => Err(io::Error::new(io::ErrorKind::Other, reason)),
-        Ok(IoStatus::Err) => Err(io::Error::new(
-            io::ErrorKind::Other,
-            "The transport has failed the I/O operation",
-        )),
-        Ok(IoStatus::Empty) => Err(io::Error::new(
-            io::ErrorKind::ConnectionReset,
-            "connection reset or panicked",
-        )),
+        Err(Error::Io(IoError::Transport(e))) => match e.downcast::<io::Error>() {
+            Ok(err) => Err(*err),
+            Err(e) => Err(io::Error::new(io::ErrorKind::Other, e)),
+        },
         Err(
             e @ (Error::Library(..)
             | Error::Configuration(..)
@@ -58,17 +59,17 @@ fn translate_res_for_stdio(res: Result<IoStatus, Error>) -> Result<usize, io::Er
 impl<R> io::Read for TlsConnection<R, TlsMode> {
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
         let mut buf = ReceiveBuffer::new(buf);
-        let res = self.sync_read(&mut buf);
+        let res = self.poll_read(&mut buf);
         translate_res_for_stdio(res)
     }
 }
 
 impl<R> io::Write for TlsConnection<R, TlsMode> {
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-        translate_res_for_stdio(self.sync_write(buf))
+        translate_res_for_stdio(self.poll_write(buf))
     }
 
     fn flush(&mut self) -> io::Result<()> {
-        translate_res_for_stdio(self.flush()).map(|_| ())
+        translate_res_for_stdio(self.poll_flush()).map(|_| ())
     }
 }

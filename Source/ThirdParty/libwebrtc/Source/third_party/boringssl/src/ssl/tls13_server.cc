@@ -36,6 +36,26 @@
 
 BSSL_NAMESPACE_BEGIN
 
+enum tls13_server_hs_state_t {
+  state13_select_parameters = 0,
+  state13_select_session,
+  state13_send_hello_retry_request,
+  state13_read_second_client_hello,
+  state13_send_server_hello,
+  state13_send_server_certificate_verify,
+  state13_send_server_finished,
+  state13_send_half_rtt_ticket,
+  state13_read_second_client_flight,
+  state13_process_end_of_early_data,
+  state13_read_client_encrypted_extensions,
+  state13_read_client_certificate,
+  state13_read_client_certificate_verify,
+  state13_read_channel_id,
+  state13_read_client_finished,
+  state13_send_new_session_ticket,
+  state13_done,
+};
+
 static const uint8_t kZeroes[EVP_MAX_MD_SIZE] = {0};
 
 // Allow a minute of ticket age skew in either direction. This covers
@@ -1155,7 +1175,7 @@ static enum ssl_hs_wait_t do_send_server_finished(SSL_HANDSHAKE *hs) {
   }
 
   hs->tls13_state = state13_send_half_rtt_ticket;
-  return hs->handback ? ssl_hs_handback : ssl_hs_ok;
+  return ssl_hs_ok;
 }
 
 static enum ssl_hs_wait_t do_send_half_rtt_ticket(SSL_HANDSHAKE *hs) {

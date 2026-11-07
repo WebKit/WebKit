@@ -58,7 +58,8 @@ static const uint8_t kEncryptedPBES2WithDESAndSHA1[] = {
 };
 
 // kEncryptedPBES2WithAESAndSHA256 is a PKCS#8 encrypted private key using PBES2
-// with AES-128-CBC and HMAC-SHA-256 and a password of "testing". It was generated with:
+// with AES-128-CBC and HMAC-SHA-256 and a password of "testing". It was
+// generated with:
 //
 // clang-format off
 //
@@ -196,8 +197,7 @@ static const uint8_t kExplicitHMACWithSHA1[] = {
     0x68, 0xf9, 0x5e, 0x01, 0x66, 0x59, 0x5f, 0x3f, 0x05, 0x57, 0xcd,
 };
 
-static void TestDecrypt(const uint8_t *der, size_t der_len,
-                        const char *password) {
+void TestDecrypt(const uint8_t *der, size_t der_len, const char *password) {
   const uint8_t *data = der;
   UniquePtr<X509_SIG> sig(d2i_X509_SIG(nullptr, &data, der_len));
   ASSERT_TRUE(sig.get());
@@ -208,9 +208,8 @@ static void TestDecrypt(const uint8_t *der, size_t der_len,
   ASSERT_TRUE(keypair);
 }
 
-static void TestRoundTrip(int pbe_nid, const EVP_CIPHER *cipher,
-                          const char *password, const uint8_t *salt,
-                          size_t salt_len, int iterations) {
+void TestRoundTrip(int pbe_nid, const EVP_CIPHER *cipher, const char *password,
+                   const uint8_t *salt, size_t salt_len, int iterations) {
   static const uint8_t kSampleKey[] = {
       0x30, 0x81, 0x87, 0x02, 0x01, 0x00, 0x30, 0x13, 0x06, 0x07, 0x2a, 0x86,
       0x48, 0xce, 0x3d, 0x02, 0x01, 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d,
@@ -273,41 +272,41 @@ TEST(PKCS8Test, DecryptExplicitHMACWithSHA1) {
 
 TEST(PKCS8Test, RoundTripPBEWithrSHA1And3KeyTripleDES) {
   // Test with different salts.
-  TestRoundTrip(NID_pbe_WithSHA1And3_Key_TripleDES_CBC, nullptr,
-                "password", nullptr, 0, 10);
-  TestRoundTrip(NID_pbe_WithSHA1And3_Key_TripleDES_CBC, nullptr,
-                "password", nullptr, 4, 10);
-  TestRoundTrip(NID_pbe_WithSHA1And3_Key_TripleDES_CBC, nullptr,
-                "password", (const uint8_t *)"salt", 4, 10);
+  TestRoundTrip(NID_pbe_WithSHA1And3_Key_TripleDES_CBC, nullptr, "password",
+                nullptr, 0, 10);
+  TestRoundTrip(NID_pbe_WithSHA1And3_Key_TripleDES_CBC, nullptr, "password",
+                nullptr, 4, 10);
+  TestRoundTrip(NID_pbe_WithSHA1And3_Key_TripleDES_CBC, nullptr, "password",
+                (const uint8_t *)"salt", 4, 10);
   // Test with a different iteration count.
-  TestRoundTrip(NID_pbe_WithSHA1And3_Key_TripleDES_CBC, nullptr,
-                "password", nullptr, 0, 1);
+  TestRoundTrip(NID_pbe_WithSHA1And3_Key_TripleDES_CBC, nullptr, "password",
+                nullptr, 0, 1);
 }
 
 // Test that both "" (empty password, encoded as "\0\0") and nullptr (no
 // password, encoded as "") work.
 TEST(PKCS8Test, RoundTripPBEWithSHA1And3KeyTripleDESEmptyPassword) {
-  TestRoundTrip(NID_pbe_WithSHA1And3_Key_TripleDES_CBC, nullptr, "",
-                nullptr, 0, 1);
+  TestRoundTrip(NID_pbe_WithSHA1And3_Key_TripleDES_CBC, nullptr, "", nullptr, 0,
+                1);
   TestRoundTrip(NID_pbe_WithSHA1And3_Key_TripleDES_CBC, nullptr, nullptr,
                 nullptr, 0, 1);
 }
 
 TEST(PKCS8Test, RoundTripPBEWithSHA1And40BitRC2CBC) {
-  TestRoundTrip(NID_pbe_WithSHA1And40BitRC2_CBC, nullptr, "password",
-                nullptr, 0, 10);
+  TestRoundTrip(NID_pbe_WithSHA1And40BitRC2_CBC, nullptr, "password", nullptr,
+                0, 10);
 }
 
 TEST(PKCS8Test, RoundTripPBEWithSHA1And128BitRC4) {
-  TestRoundTrip(NID_pbe_WithSHA1And128BitRC4, nullptr, "password",
-                nullptr, 0, 10);
+  TestRoundTrip(NID_pbe_WithSHA1And128BitRC4, nullptr, "password", nullptr, 0,
+                10);
 }
 
 TEST(PKCS8Test, RoundTripPBES2) {
   TestRoundTrip(-1, EVP_aes_128_cbc(), "password", nullptr, 0, 10);
   TestRoundTrip(-1, EVP_aes_128_cbc(), "password", nullptr, 4, 10);
-  TestRoundTrip(-1, EVP_aes_128_cbc(), "password", (const uint8_t *)"salt",
-                4, 10);
+  TestRoundTrip(-1, EVP_aes_128_cbc(), "password", (const uint8_t *)"salt", 4,
+                10);
   TestRoundTrip(-1, EVP_aes_128_cbc(), "password", nullptr, 0, 1);
   TestRoundTrip(-1, EVP_rc2_cbc(), "password", nullptr, 0, 10);
 }

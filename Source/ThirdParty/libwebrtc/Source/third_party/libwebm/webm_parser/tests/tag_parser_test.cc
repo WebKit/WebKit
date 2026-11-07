@@ -32,10 +32,12 @@ TEST_F(TagParserTest, DefaultParse) {
 
 TEST_F(TagParserTest, DefaultValues) {
   SetReaderData({
-      0x63, 0xC0,  // ID = 0x63C0 (Targets).
+      0x63,
+      0xC0,  // ID = 0x63C0 (Targets).
       0x80,  // Size = 0.
 
-      0x67, 0xC8,  // ID = 0x67C8 (SimpleTag).
+      0x67,
+      0xC8,  // ID = 0x67C8 (SimpleTag).
       0x80,  // Size = 0.
   });
 

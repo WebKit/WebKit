@@ -46,6 +46,8 @@ SVE_COPTS = select({
 
 SUPPORTS_RVV_COPTS = [
     "-DLIBYUV_RVV",
+    "-fno-tree-vectorize",
+    "-fno-tree-slp-vectorize",
 ]
 
 ENABLE_RVV_COPTS = [
@@ -62,6 +64,16 @@ RVV_COPTS = select({
     "//conditions:default": [],
 })
 
+ARCH_SUPPORT_COPTS = select({
+    "@platforms//cpu:armv7": SUPPORTS_NEON_COPTS,
+    "@platforms//cpu:aarch64": SUPPORTS_NEON_COPTS + SUPPORTS_SVE_COPTS,
+    "@platforms//cpu:riscv32": SUPPORTS_RVV_COPTS,
+    "@platforms//cpu:riscv64": SUPPORTS_RVV_COPTS,
+    "@platforms//cpu:wasm32": ["-msimd128"],
+    "@platforms//cpu:wasm64": ["-msimd128"],
+    "//conditions:default": [],
+})
+
 PLATFORM_COPTS = select({
     "@platforms//os:android": ["-DHAVE_JPEG"],
     "@platforms//os:linux": ["-DHAVE_JPEG"],
@@ -74,7 +86,7 @@ PLATFORM_COPTS = select({
     "-DGOOGLE_COMMANDLINEFLAGS_FULL_API",
 ]
 
-ALL_COPTS = PLATFORM_COPTS
+ALL_COPTS = PLATFORM_COPTS + ARCH_SUPPORT_COPTS
 
 ALL_NEON_COPTS = NEON_COPTS + PLATFORM_COPTS
 

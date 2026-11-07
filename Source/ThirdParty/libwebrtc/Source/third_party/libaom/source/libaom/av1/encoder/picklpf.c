@@ -247,9 +247,15 @@ void av1_pick_filter_level(const YV12_BUFFER_CONFIG *sd, AV1_COMP *cpi,
   }
 
   if (cpi->oxcf.tune_cfg.content == AOM_CONTENT_SCREEN &&
-      cpi->oxcf.q_cfg.aq_mode == CYCLIC_REFRESH_AQ &&
-      cpi->sf.rt_sf.skip_lf_screen)
-    disable_filter_rt_screen = av1_cyclic_refresh_disable_lf_cdef(cpi);
+      cpi->sf.rt_sf.skip_lf_screen) {
+    // Skip the filter when most of the frame is inactive, for any aq mode.
+    if (cpi->active_map.enabled &&
+        cpi->rc.percent_blocks_inactive >
+            cpi->sf.rt_sf.thresh_active_maps_skip_lf_cdef)
+      disable_filter_rt_screen = 1;
+    else if (cpi->oxcf.q_cfg.aq_mode == CYCLIC_REFRESH_AQ)
+      disable_filter_rt_screen = av1_cyclic_refresh_disable_lf(cpi);
+  }
 
   if (disable_filter_rt_screen ||
       cpi->oxcf.algo_cfg.loopfilter_control == LOOPFILTER_NONE ||

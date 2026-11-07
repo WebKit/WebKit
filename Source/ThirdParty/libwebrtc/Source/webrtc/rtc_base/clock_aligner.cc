@@ -30,16 +30,16 @@ constexpr double kMaxDriftRate = 0.001;
 
 ClockAligner::ClockAligner(const Environment& env)
     : env_(env),
-      fix_non_monotonic_clock_(
-          env_.field_trials().IsEnabled("WebRTC-ClockAligner")) {}
+      disable_non_monotonic_clock_fix_(
+          env_.field_trials().IsDisabled("WebRTC-ClockAligner")) {}
 
 Timestamp ClockAligner::Align(Timestamp time) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   Timestamp current_time = env_.clock().CurrentTime();
-  if (fix_non_monotonic_clock_) {
-    return AlignNonMonotonicClock(time, current_time);
+  if (disable_non_monotonic_clock_fix_) {
+    return AlignAssumingMonotonicClock(time, current_time);
   }
-  return AlignAssumingMonotonicClock(time, current_time);
+  return AlignNonMonotonicClock(time, current_time);
 }
 
 Timestamp ClockAligner::AlignAssumingMonotonicClock(Timestamp time,

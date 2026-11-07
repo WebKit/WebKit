@@ -35,7 +35,7 @@ use crate::{
     }, //
 };
 
-bssl_macros::bssl_enum! {
+bssl_crypto::bssl_enum! {
     /// Results from selecting a certificate in the callback.
     pub enum EarlyCallbackResult: i32 {
         /// The certificate selection was successful.

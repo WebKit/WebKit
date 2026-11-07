@@ -437,6 +437,57 @@ TEST_F(PacketRouterTest,
   packet_router.RemoveSendRtpModule(&rtp_1);
 }
 
+TEST_F(
+    PacketRouterTest,
+    DoesNotAllocateTransportSequenceNumberOrNotifyBweWhenAllowSendingIsFalse) {
+  const uint32_t kSsrc1 = 1234;
+
+  PacketRouter packet_router;
+  testing::MockFunction<void(const RtpPacketToSend& packet,
+                             const PacedPacketInfo& pacing_info)>
+      notify_bwe_callback;
+  NiceMock<MockRtpRtcpInterface> rtp_1;
+  packet_router.RegisterNotifyBweCallback(notify_bwe_callback.AsStdFunction());
+
+  ON_CALL(rtp_1, SSRC()).WillByDefault(Return(kSsrc1));
+  ON_CALL(rtp_1, CanSendPacket).WillByDefault(Return(true));
+
+  packet_router.AddSendRtpModule(&rtp_1, false);
+  packet_router.SetGenerateTransportSequenceNumbers(true);
+
+  // Send a packet with allow_sending = false. It should still have an RTP
+  // sequence number assigned and be forwarded to the RTP module, but should
+  // not be assigned a transport sequence number or notify BWE.
+  auto untransmitted_packet = BuildRtpPacket(kSsrc1);
+  EXPECT_TRUE(
+      untransmitted_packet->ReserveExtension<TransportSequenceNumber>());
+  untransmitted_packet->set_allow_sending(false);
+  EXPECT_CALL(rtp_1, AssignSequenceNumber);
+  EXPECT_CALL(notify_bwe_callback, Call).Times(0);
+  EXPECT_CALL(
+      rtp_1,
+      SendPacket(Pointee(Property(&RtpPacketToSend::transport_sequence_number,
+                                  std::nullopt)),
+                 _));
+  packet_router.SendPacket(std::move(untransmitted_packet), PacedPacketInfo());
+
+  // Send a normal packet and verify transport sequence number starts at 1.
+  auto transmitted_packet = BuildRtpPacket(kSsrc1);
+  EXPECT_TRUE(transmitted_packet->ReserveExtension<TransportSequenceNumber>());
+  EXPECT_CALL(rtp_1, AssignSequenceNumber);
+  EXPECT_CALL(
+      notify_bwe_callback,
+      Call(Property(&RtpPacketToSend::transport_sequence_number, 1), _));
+  EXPECT_CALL(rtp_1,
+              SendPacket(Pointee(Property(
+                             &RtpPacketToSend::transport_sequence_number, 1)),
+                         _));
+  packet_router.SendPacket(std::move(transmitted_packet), PacedPacketInfo());
+
+  packet_router.OnBatchComplete();
+  packet_router.RemoveSendRtpModule(&rtp_1);
+}
+
 TEST_F(PacketRouterTest, SendPacketsAsEct1IfConfigured) {
   const uint16_t kSsrc1 = 1234;
   PacketRouter packet_router;

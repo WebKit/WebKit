@@ -1724,6 +1724,10 @@ void av1_tf_info_filtering(TEMPORAL_FILTER_INFO *tf_info, AV1_COMP *cpi,
       int buf_idx = gf_group->frame_type[gf_index] == INTER_FRAME;
       int lookahead_idx = gf_group->arf_src_offset[gf_index] +
                           gf_group->cur_frame_idx[gf_index];
+      if (!av1_lookahead_peek(cpi->ppi->lookahead, lookahead_idx,
+                              cpi->compressor_stage)) {
+        continue;
+      }
       // This function is designed to be called multiple times after
       // av1_tf_info_reset(). It will only generate the filtered frame that does
       // not exist yet.

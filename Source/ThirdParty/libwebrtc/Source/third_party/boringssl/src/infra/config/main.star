@@ -1585,6 +1585,25 @@ both_builders(
     }),
 )
 
+# clang-cl in shared library mode matches Chromium's Windows component build.
+# clang-cl does not treat cross-DLL function addresses as constant expressions,
+# so this catches constexpr initializers in tests that the MSVC shared builders
+# have missed.
+both_builders(
+    "win64_clang_shared_compile",
+    WIN_HOST,
+    category = "win|x86-64|clang",
+    short_name = "sh",
+    properties = compile_only({
+        "clang": True,
+        "msvc_target": "x64",
+        "cmake_args": {
+            "BUILD_SHARED_LIBS": "1",
+        },
+        "upload_to_cas": FINISHED_OUTPUT_FILES_WIN_SHARED,
+    }),
+)
+
 both_builders(
     "win64",
     WIN_HOST,

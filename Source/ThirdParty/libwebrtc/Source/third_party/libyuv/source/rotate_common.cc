@@ -77,6 +77,19 @@ void TransposeUVWx8_C(const uint8_t* src,
   }
 }
 
+void TransposeUVWx16_C(const uint8_t* src,
+                       int src_stride,
+                       uint8_t* dst_a,
+                       int dst_stride_a,
+                       uint8_t* dst_b,
+                       int dst_stride_b,
+                       int width) {
+  TransposeUVWx8_C(src, src_stride, dst_a, dst_stride_a, dst_b, dst_stride_b,
+                   width);
+  TransposeUVWx8_C((src + 8 * src_stride), src_stride, (dst_a + 8),
+                   dst_stride_a, (dst_b + 8), dst_stride_b, width);
+}
+
 void TransposeWxH_C(const uint8_t* src,
                     int src_stride,
                     uint8_t* dst,
@@ -153,7 +166,7 @@ static inline void Copy4(uint8_t* dst, const uint8_t* src) {
 }
 
 // Transpose 32 bit values (ARGB)
-void Transpose4x4_32_C(const uint8_t* src,
+void TransposeWx4_32_C(const uint8_t* src,
                        int src_stride,
                        uint8_t* dst,
                        int dst_stride,
@@ -190,6 +203,22 @@ void Transpose4x4_32_C(const uint8_t* src,
     dst1 += 4 * 4;
     dst2 += 4 * 4;
     dst3 += 4 * 4;
+  }
+}
+
+void TransposeWxH_32_C(const uint8_t* src,
+                       int src_stride,
+                       uint8_t* dst,
+                       int dst_stride,
+                       int width,
+                       int height) {
+  int i;
+  for (i = 0; i < width; ++i) {
+    int j;
+    for (j = 0; j < height; ++j) {
+      Copy4(dst + (ptrdiff_t)i * dst_stride + j * 4,
+            src + (ptrdiff_t)j * src_stride + i * 4);
+    }
   }
 }
 

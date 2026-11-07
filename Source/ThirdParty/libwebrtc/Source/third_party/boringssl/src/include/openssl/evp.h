@@ -302,22 +302,22 @@ OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_rsa_pss_sha512(void);
 // via `EVP_pkey_rsa_pss_sha256`. This differs from upstream OpenSSL, where
 // callers are exposed to `EVP_PKEY_RSA_PSS` by default.
 
-OPENSSL_EXPORT int EVP_PKEY_set1_RSA(EVP_PKEY *pkey, RSA *key);
+OPENSSL_EXPORT int EVP_PKEY_set1_RSA(EVP_PKEY *pkey, const RSA *key);
 OPENSSL_EXPORT int EVP_PKEY_assign_RSA(EVP_PKEY *pkey, RSA *key);
 OPENSSL_EXPORT RSA *EVP_PKEY_get0_RSA(const EVP_PKEY *pkey);
 OPENSSL_EXPORT RSA *EVP_PKEY_get1_RSA(const EVP_PKEY *pkey);
 
-OPENSSL_EXPORT int EVP_PKEY_set1_DSA(EVP_PKEY *pkey, DSA *key);
+OPENSSL_EXPORT int EVP_PKEY_set1_DSA(EVP_PKEY *pkey, const DSA *key);
 OPENSSL_EXPORT int EVP_PKEY_assign_DSA(EVP_PKEY *pkey, DSA *key);
 OPENSSL_EXPORT DSA *EVP_PKEY_get0_DSA(const EVP_PKEY *pkey);
 OPENSSL_EXPORT DSA *EVP_PKEY_get1_DSA(const EVP_PKEY *pkey);
 
-OPENSSL_EXPORT int EVP_PKEY_set1_EC_KEY(EVP_PKEY *pkey, EC_KEY *key);
+OPENSSL_EXPORT int EVP_PKEY_set1_EC_KEY(EVP_PKEY *pkey, const EC_KEY *key);
 OPENSSL_EXPORT int EVP_PKEY_assign_EC_KEY(EVP_PKEY *pkey, EC_KEY *key);
 OPENSSL_EXPORT EC_KEY *EVP_PKEY_get0_EC_KEY(const EVP_PKEY *pkey);
 OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 
-OPENSSL_EXPORT int EVP_PKEY_set1_DH(EVP_PKEY *pkey, DH *key);
+OPENSSL_EXPORT int EVP_PKEY_set1_DH(EVP_PKEY *pkey, const DH *key);
 OPENSSL_EXPORT int EVP_PKEY_assign_DH(EVP_PKEY *pkey, DH *key);
 OPENSSL_EXPORT DH *EVP_PKEY_get0_DH(const EVP_PKEY *pkey);
 OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
@@ -498,13 +498,10 @@ OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_generate_from_alg(const EVP_PKEY_ALG *alg);
 // Ed25519, `type` should be NULL. The `EVP_MD_CTX` itself is unused but is
 // present so the API is uniform. See `EVP_DigestSign`.
 //
-// This function does not mutate `pkey` for thread-safety purposes and may be
-// used concurrently with other non-mutating functions on `pkey`.
-//
 // It returns one on success, or zero on error.
 OPENSSL_EXPORT int EVP_DigestSignInit(EVP_MD_CTX *ctx, EVP_PKEY_CTX **pctx,
                                       const EVP_MD *type, ENGINE *e,
-                                      EVP_PKEY *pkey);
+                                      const EVP_PKEY *pkey);
 
 // EVP_DigestSignUpdate appends `len` bytes from `data` to the data which will
 // be signed in `EVP_DigestSignFinal`. It returns one.
@@ -554,13 +551,10 @@ OPENSSL_EXPORT int EVP_DigestSign(EVP_MD_CTX *ctx, uint8_t *out_sig,
 // Ed25519, `type` should be NULL. The `EVP_MD_CTX` itself is unused but is
 // present so the API is uniform. See `EVP_DigestVerify`.
 //
-// This function does not mutate `pkey` for thread-safety purposes and may be
-// used concurrently with other non-mutating functions on `pkey`.
-//
 // It returns one on success, or zero on error.
 OPENSSL_EXPORT int EVP_DigestVerifyInit(EVP_MD_CTX *ctx, EVP_PKEY_CTX **pctx,
                                         const EVP_MD *type, ENGINE *e,
-                                        EVP_PKEY *pkey);
+                                        const EVP_PKEY *pkey);
 
 // EVP_DigestVerifyUpdate appends `len` bytes from `data` to the data which
 // will be verified by `EVP_DigestVerifyFinal`. It returns one.
@@ -615,13 +609,9 @@ OPENSSL_EXPORT int EVP_SignUpdate(EVP_MD_CTX *ctx, const void *data,
 // actual size of the signature is written to `*out_sig_len`.
 //
 // It returns one on success and zero otherwise.
-//
-// It does not modify `ctx`, thus it's possible to continue to use `ctx` in
-// order to sign a longer message. It also does not mutate `pkey` for
-// thread-safety purposes and may be used concurrently with other non-mutating
-// functions on `pkey`.
 OPENSSL_EXPORT int EVP_SignFinal(const EVP_MD_CTX *ctx, uint8_t *sig,
-                                 unsigned int *out_sig_len, EVP_PKEY *pkey);
+                                 unsigned int *out_sig_len,
+                                 const EVP_PKEY *pkey);
 
 
 // Verifying (old functions)
@@ -650,13 +640,8 @@ OPENSSL_EXPORT int EVP_VerifyUpdate(EVP_MD_CTX *ctx, const void *data,
 // calls to `EVP_VerifyUpdate`.
 //
 // It returns one on success and zero otherwise.
-//
-// It does not modify `ctx`, thus it's possible to continue to use `ctx` in
-// order to verify a longer message. It also does not mutate `pkey` for
-// thread-safety purposes and may be used concurrently with other non-mutating
-// functions on `pkey`.
 OPENSSL_EXPORT int EVP_VerifyFinal(EVP_MD_CTX *ctx, const uint8_t *sig,
-                                   size_t sig_len, EVP_PKEY *pkey);
+                                   size_t sig_len, const EVP_PKEY *pkey);
 
 
 // Printing
@@ -752,7 +737,7 @@ OPENSSL_EXPORT int EVP_PBE_scrypt(const char *password, size_t password_len,
 
 // EVP_PKEY_CTX_new allocates a fresh `EVP_PKEY_CTX` for use with `pkey`. It
 // returns the context or NULL on error.
-OPENSSL_EXPORT EVP_PKEY_CTX *EVP_PKEY_CTX_new(EVP_PKEY *pkey, ENGINE *e);
+OPENSSL_EXPORT EVP_PKEY_CTX *EVP_PKEY_CTX_new(const EVP_PKEY *pkey, ENGINE *e);
 
 // EVP_PKEY_CTX_new_id allocates a fresh `EVP_PKEY_CTX` for a key of type `id`
 // (e.g. `EVP_PKEY_HMAC`). This can be used for key generation where
@@ -770,7 +755,7 @@ OPENSSL_EXPORT void EVP_PKEY_CTX_free(EVP_PKEY_CTX *ctx);
 OPENSSL_EXPORT EVP_PKEY_CTX *EVP_PKEY_CTX_dup(EVP_PKEY_CTX *ctx);
 
 // EVP_PKEY_CTX_get0_pkey returns the `EVP_PKEY` associated with `ctx`.
-OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_CTX_get0_pkey(EVP_PKEY_CTX *ctx);
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_CTX_get0_pkey(const EVP_PKEY_CTX *ctx);
 
 // EVP_PKEY_sign_init initialises an `EVP_PKEY_CTX` for a signing operation. It
 // should be called before `EVP_PKEY_sign`.
@@ -897,7 +882,8 @@ OPENSSL_EXPORT int EVP_PKEY_derive_init(EVP_PKEY_CTX *ctx);
 // by `ctx` to `peer`. It should be called after `EVP_PKEY_derive_init`. (For
 // example, this is used to set the peer's key in (EC)DH.) It returns one on
 // success and zero on error.
-OPENSSL_EXPORT int EVP_PKEY_derive_set_peer(EVP_PKEY_CTX *ctx, EVP_PKEY *peer);
+OPENSSL_EXPORT int EVP_PKEY_derive_set_peer(EVP_PKEY_CTX *ctx,
+                                            const EVP_PKEY *peer);
 
 // EVP_PKEY_derive derives a shared key from `ctx`. If `key` is non-NULL then,
 // on entry, `out_key_len` must contain the amount of space at `key`. If
@@ -1271,7 +1257,7 @@ OPENSSL_EXPORT const EVP_KEM *EVP_kem_ml_kem_1024(void);
 // defined in draft-irtf-cfrg-concrete-hybrid-kems.
 OPENSSL_EXPORT const EVP_KEM *EVP_kem_xwing(void);
 
-// TODO(crbug.com/449751916): Add more supported KEMs.
+// Additional KEMs are defined in hpke.h: See `EVP_kem_dhkem_*`.
 
 // EVP_KEM_ciphertext_len returns the fixed length, in bytes, of a ciphertext
 // produced and consumed by `kem`.
@@ -1633,7 +1619,7 @@ extern "C++" {
 BSSL_NAMESPACE_BEGIN
 
 BORINGSSL_MAKE_DELETER(EVP_PKEY, EVP_PKEY_free)
-BORINGSSL_MAKE_UP_REF(EVP_PKEY, EVP_PKEY_up_ref)
+BORINGSSL_MAKE_UP_REF(EVP_PKEY, EVP_PKEY_dup_ref)
 BORINGSSL_MAKE_DELETER(EVP_PKEY_CTX, EVP_PKEY_CTX_free)
 
 BSSL_NAMESPACE_END

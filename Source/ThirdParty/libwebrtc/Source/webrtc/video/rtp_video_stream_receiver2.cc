@@ -342,7 +342,8 @@ RtpVideoStreamReceiver2::RtpVideoStreamReceiver2(
                                             &rtcp_feedback_buffer_)),
       packet_buffer_(kPacketBufferStartSize,
                      PacketBufferMaxSize(env_.field_trials())),
-      reference_finder_(std::make_unique<RtpFrameReferenceFinder>()),
+      reference_finder_(
+          std::make_unique<RtpFrameReferenceFinder>(&env_.field_trials())),
       has_received_frame_(false),
       frames_decryptable_(false),
       absolute_capture_time_interpolator_(&env_.clock()),
@@ -659,11 +660,8 @@ std::optional<int64_t> RtpVideoStreamReceiver2::UnwrapSequenceNumberOrRecover(
                                   video_header->codec == kVideoCodecH265)) {
     const int64_t unwrapped_seq_num =
         rtp_seq_num_unwrapper_.Unwrap(rtp_packet.SequenceNumber());
-    if (!newest_media_seq_num_.has_value() ||
-        unwrapped_seq_num > *newest_media_seq_num_) {
-      newest_media_seq_num_ = unwrapped_seq_num;
-      newest_media_rtp_timestamp_ = rtp_packet.Timestamp();
-    }
+    UpdateNewestMediaSeqNumAndTimestamp(unwrapped_seq_num,
+                                        rtp_packet.Timestamp());
     return unwrapped_seq_num;
   }
 
@@ -675,8 +673,9 @@ std::optional<int64_t> RtpVideoStreamReceiver2::UnwrapSequenceNumberOrRecover(
       is_media && video_header->frame_type == VideoFrameType::kVideoFrameKey;
 
   // PacketBuffer cannot recover dependencies across more packets than it can
-  // retain. A newer RTP timestamp corroborates that this is resumed media,
-  // rather than a severely reordered packet from an old frame.
+  // retain. An RTP timestamp newer than any received media corroborates that
+  // this is resumed media, rather than a severely reordered packet from an old
+  // frame.
   const bool large_backward_jump =
       newest_media_seq_num_.has_value() &&
       *newest_media_seq_num_ - unwrapped_seq_num > kPacketBufferMaxSize;
@@ -712,6 +711,7 @@ std::optional<int64_t> RtpVideoStreamReceiver2::UnwrapSequenceNumberOrRecover(
     // Drop state from the previous epoch and anchor at the recovery keyframe.
     packet_buffer_.Clear();
     reference_finder_ = std::make_unique<RtpFrameReferenceFinder>(
+        &env_.field_trials(),
         last_completed_picture_id_ + std::numeric_limits<uint16_t>::max());
     nack_module_ = MaybeConstructNackModule(
         env_, worker_queue_, nack_periodic_processor_, config_.rtp.nack,
@@ -749,12 +749,25 @@ std::optional<int64_t> RtpVideoStreamReceiver2::UnwrapSequenceNumberOrRecover(
 
   unwrapped_seq_num =
       rtp_seq_num_unwrapper_.Unwrap(rtp_packet.SequenceNumber());
-  if (is_media && (!newest_media_seq_num_.has_value() ||
-                   unwrapped_seq_num > *newest_media_seq_num_)) {
-    newest_media_seq_num_ = unwrapped_seq_num;
-    newest_media_rtp_timestamp_ = rtp_packet.Timestamp();
+  if (is_media) {
+    UpdateNewestMediaSeqNumAndTimestamp(unwrapped_seq_num,
+                                        rtp_packet.Timestamp());
   }
   return unwrapped_seq_num;
+}
+
+void RtpVideoStreamReceiver2::UpdateNewestMediaSeqNumAndTimestamp(
+    int64_t unwrapped_seq_num,
+    uint32_t rtp_timestamp) {
+  RTC_DCHECK_RUN_ON(worker_queue_);
+  if (!newest_media_seq_num_.has_value() ||
+      unwrapped_seq_num > *newest_media_seq_num_) {
+    newest_media_seq_num_ = unwrapped_seq_num;
+  }
+  if (!newest_media_rtp_timestamp_.has_value() ||
+      AheadOf(rtp_timestamp, *newest_media_rtp_timestamp_)) {
+    newest_media_rtp_timestamp_ = rtp_timestamp;
+  }
 }
 
 RtpVideoStreamReceiver2::StashResult
@@ -1180,6 +1193,7 @@ void RtpVideoStreamReceiver2::OnAssembledFrame(
         // start from the `last_completed_picture_id_` and add an offset in case
         // of reordering.
         reference_finder_ = std::make_unique<RtpFrameReferenceFinder>(
+            &env_.field_trials(),
             last_completed_picture_id_ + std::numeric_limits<uint16_t>::max());
         current_codec_ = frame->codec_type();
       } else {

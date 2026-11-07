@@ -185,19 +185,15 @@ der::Input SequenceValueFromString(std::string_view s) {
   return ::testing::AssertionSuccess();
 }
 
-VerifyCertChainTest::VerifyCertChainTest()
-    : user_initial_policy_set{der::Input(kAnyPolicyOid)} {}
-VerifyCertChainTest::~VerifyCertChainTest() = default;
-
 bool VerifyCertChainTest::HasHighSeverityErrors() const {
   // This function assumes that high severity warnings are prefixed with
   // "ERROR: " and warnings are prefixed with "WARNING: ". This is an
   // implementation detail of CertError::ToDebugString).
   //
   // Do a quick sanity-check to confirm this.
-  CertError error(CertError::SEVERITY_HIGH, "unused", nullptr);
+  CertError error{CertError::SEVERITY_HIGH, "unused", nullptr};
   EXPECT_EQ("ERROR: unused\n", error.ToDebugString());
-  CertError warning(CertError::SEVERITY_WARNING, "unused", nullptr);
+  CertError warning{CertError::SEVERITY_WARNING, "unused", nullptr};
   EXPECT_EQ("WARNING: unused\n", warning.ToDebugString());
 
   // Do a simple substring test (not perfect, but good enough for our test

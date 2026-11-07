@@ -355,6 +355,13 @@ class RtpVideoStreamReceiver2 : public LossNotificationSender,
       const RTPVideoHeader* absl_nullable video_header)
       RTC_RUN_ON(worker_queue_);
 
+  // Updates the newest media sequence number and RTP timestamp independently,
+  // so that a packet with a newer sequence number but an older RTP timestamp
+  // cannot make previously received media look newer.
+  void UpdateNewestMediaSeqNumAndTimestamp(int64_t unwrapped_seq_num,
+                                           uint32_t rtp_timestamp)
+      RTC_RUN_ON(worker_queue_);
+
   // Entry point doing non-stats work for a received packet. Called
   // for the same packet both before and after RED decapsulation.
   void ReceivePacket(const RtpPacketReceived& rtp_packet)

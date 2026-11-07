@@ -139,6 +139,17 @@ if (rtc_include_tests) {
   }
 
   if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+    rtc_cc_test("restore_token_manager_unittest") {
+      sources = [ "linux/wayland/restore_token_manager_unittest.cc" ]
+      configs += [ "../portal:gio" ]
+      deps = [
+        ":desktop_capture",
+        ":primitives",
+        "../../test:test_support",
+        "../portal",
+      ]
+    }
+
     rtc_test("shared_screencast_stream_test") {
       testonly = true
 
@@ -517,6 +528,9 @@ if (rtc_include_tests) {
       ":screen_capturer_helper_unittest",
       ":test_utils_unittest",
     ]
+    if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+      tests += [ ":restore_token_manager_unittest" ]
+    }
   }
 
   rtc_library("screen_drawer") {

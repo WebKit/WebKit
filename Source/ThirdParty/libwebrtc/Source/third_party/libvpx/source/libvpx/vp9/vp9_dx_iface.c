@@ -454,6 +454,13 @@ static vpx_codec_err_t ctrl_set_reference(vpx_codec_alg_priv_t *ctx,
   if (data) {
     vpx_ref_frame_t *const frame = (vpx_ref_frame_t *)data;
     YV12_BUFFER_CONFIG sd;
+
+    if (frame->img.planes[VPX_PLANE_Y] == NULL ||
+        frame->img.planes[VPX_PLANE_U] == NULL ||
+        frame->img.planes[VPX_PLANE_V] == NULL) {
+      return VPX_CODEC_INVALID_PARAM;
+    }
+
     image2yuvconfig(&frame->img, &sd);
     if (!ctx->pbi) return VPX_CODEC_ERROR;
     return vp9_set_reference_dec(
@@ -470,6 +477,13 @@ static vpx_codec_err_t ctrl_copy_reference(vpx_codec_alg_priv_t *ctx,
   if (data) {
     vpx_ref_frame_t *frame = (vpx_ref_frame_t *)data;
     YV12_BUFFER_CONFIG sd;
+
+    if (frame->img.planes[VPX_PLANE_Y] == NULL ||
+        frame->img.planes[VPX_PLANE_U] == NULL ||
+        frame->img.planes[VPX_PLANE_V] == NULL) {
+      return VPX_CODEC_INVALID_PARAM;
+    }
+
     image2yuvconfig(&frame->img, &sd);
     if (!ctx->pbi) return VPX_CODEC_ERROR;
     return vp9_copy_reference_dec(ctx->pbi, (VP9_REFFRAME)frame->frame_type,

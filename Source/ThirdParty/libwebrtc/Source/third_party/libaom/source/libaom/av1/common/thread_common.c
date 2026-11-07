@@ -10,6 +10,7 @@
  */
 
 #include <assert.h>
+#include <limits.h>
 
 #include "aom/aom_image.h"
 #include "config/aom_config.h"
@@ -204,8 +205,16 @@ static inline void cdef_row_mt_sync_write(AV1CdefSync *const cdef_sync,
 #endif  // CONFIG_MULTITHREAD
 }
 
-static inline void sync_read(AV1LfSync *const lf_sync, int r, int c,
+// Value of cur_sb_col[plane][r] after a worker has encountered an error. It
+// wakes up the workers waiting in sync_read() and tells them to exit.
+#define LF_SYNC_EXIT INT_MAX
+
+// Returns true if the sync read is successful and the caller can continue.
+// Returns false if the caller should exit because a worker has encountered an
+// error.
+static inline bool sync_read(AV1LfSync *const lf_sync, int r, int c,
                              int plane) {
+  bool lf_mt_continue = true;
 #if CONFIG_MULTITHREAD
   const int nsync = lf_sync->sync_range;
 
@@ -216,6 +225,7 @@ static inline void sync_read(AV1LfSync *const lf_sync, int r, int c,
     while (c > lf_sync->cur_sb_col[plane][r - 1] - nsync) {
       pthread_cond_wait(&lf_sync->cond_[plane][r - 1], mutex);
     }
+    lf_mt_continue = lf_sync->cur_sb_col[plane][r - 1] != LF_SYNC_EXIT;
     pthread_mutex_unlock(mutex);
   }
 #else
@@ -224,6 +234,7 @@ static inline void sync_read(AV1LfSync *const lf_sync, int r, int c,
   (void)c;
   (void)plane;
 #endif  // CONFIG_MULTITHREAD
+  return lf_mt_continue;
 }
 
 static inline void sync_write(AV1LfSync *const lf_sync, int r, int c,
@@ -244,11 +255,9 @@ static inline void sync_write(AV1LfSync *const lf_sync, int r, int c,
   if (sig) {
     pthread_mutex_lock(&lf_sync->mutex_[plane][r]);
 
-    // When a thread encounters an error, cur_sb_col[plane][r] is set to maximum
-    // column number. In this case, the AOMMAX operation here ensures that
-    // cur_sb_col[plane][r] is not overwritten with a smaller value thus
-    // preventing the infinite waiting of threads in the relevant sync_read()
-    // function.
+    // After an error cur_sb_col[plane][r] holds LF_SYNC_EXIT. AOMMAX keeps it
+    // from being lowered, so workers waiting in sync_read() still see it and
+    // exit.
     lf_sync->cur_sb_col[plane][r] = AOMMAX(lf_sync->cur_sb_col[plane][r], cur);
 
     pthread_cond_broadcast(&lf_sync->cond_[plane][r]);
@@ -313,22 +322,12 @@ void av1_thread_loop_filter_rows(
 
       if (lf_sync != NULL) {
         // Wait for vertical edge filtering of the top-right block to be
-        // completed
-        sync_read(lf_sync, r, c, plane);
+        // completed. Exit in case any worker has encountered an error.
+        if (!sync_read(lf_sync, r, c, plane)) return;
 
         // Wait for vertical edge filtering of the right block to be completed
-        sync_read(lf_sync, r + 1, c, plane);
+        if (!sync_read(lf_sync, r + 1, c, plane)) return;
       }
-
-#if CONFIG_MULTITHREAD
-      if (lf_sync && lf_sync->num_workers > 1) {
-        pthread_mutex_lock(lf_sync->job_mutex);
-        const bool lf_mt_exit = lf_sync->lf_mt_exit;
-        pthread_mutex_unlock(lf_sync->job_mutex);
-        // Exit in case any worker has encountered an error.
-        if (lf_mt_exit) return;
-      }
-#endif
 
       av1_setup_dst_planes(planes, cm->seq_params->sb_size, frame_buffer,
                            mi_row, mi_col, plane, plane + num_planes);
@@ -352,20 +351,28 @@ void av1_thread_loop_filter_rows(
 
 void av1_set_vert_loop_filter_done(AV1_COMMON *cm, AV1LfSync *lf_sync,
                                    int num_mis_in_lpf_unit_height_log2) {
-  int plane, sb_row;
-  const int sb_cols =
-      CEIL_POWER_OF_TWO(cm->mi_params.mi_cols, num_mis_in_lpf_unit_height_log2);
+#if CONFIG_MULTITHREAD
   const int sb_rows =
       CEIL_POWER_OF_TWO(cm->mi_params.mi_rows, num_mis_in_lpf_unit_height_log2);
 
   // In case of loopfilter row-multithreading, the worker on an SB row waits for
   // the vertical edge filtering of the right and top-right SBs. Hence, in case
-  // a thread (main/worker) encounters an error, update that vertical
-  // loopfiltering of every SB row in the frame is complete in order to avoid
-  // dependent workers waiting indefinitely.
-  for (sb_row = 0; sb_row < sb_rows; ++sb_row)
-    for (plane = 0; plane < MAX_MB_PLANE; ++plane)
-      sync_write(lf_sync, sb_row, sb_cols - 1, sb_cols, plane);
+  // a thread (main/worker) encounters an error, mark every SB row in the frame
+  // with LF_SYNC_EXIT. This avoids dependent workers waiting indefinitely and
+  // makes them exit instead of filtering.
+  for (int sb_row = 0; sb_row < sb_rows; ++sb_row) {
+    for (int plane = 0; plane < MAX_MB_PLANE; ++plane) {
+      pthread_mutex_lock(&lf_sync->mutex_[plane][sb_row]);
+      lf_sync->cur_sb_col[plane][sb_row] = LF_SYNC_EXIT;
+      pthread_cond_broadcast(&lf_sync->cond_[plane][sb_row]);
+      pthread_mutex_unlock(&lf_sync->mutex_[plane][sb_row]);
+    }
+  }
+#else
+  (void)cm;
+  (void)lf_sync;
+  (void)num_mis_in_lpf_unit_height_log2;
+#endif  // CONFIG_MULTITHREAD
 }
 
 static inline void sync_lf_workers(AVxWorker *const workers,

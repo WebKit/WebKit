@@ -18,15 +18,18 @@
 #include <utility>
 #include <vector>
 
+#include "absl/base/no_destructor.h"
 #include "absl/strings/ascii.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "api/rtc_error.h"
 #include "p2p/base/p2p_constants.h"
+#include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/crc32.h"
 #include "rtc_base/crypto_random.h"
 #include "rtc_base/ip_address.h"
+#include "rtc_base/message_digest.h"
 #include "rtc_base/net_helper.h"
 #include "rtc_base/network_constants.h"
 #include "rtc_base/socket_address.h"
@@ -343,6 +346,20 @@ RTCErrorOr<Candidate> ParseCandidate(absl::string_view message) {
   return candidate;
 }
 
+// Returns the key used for computing candidate foundations. The key is randomly
+// generated once per process and, unlike the ICE tie-breaker, never leaves the
+// process.
+absl::string_view GetFoundationKey() {
+  static const absl::NoDestructor<std::string> key([] {
+    // Use a key of the same size as the output of SHA-256.
+    constexpr size_t kKeySize = 32;
+    std::string random_key;
+    RTC_CHECK(CreateRandomData(kKeySize, &random_key));
+    return random_key;
+  }());
+  return *key;
+}
+
 }  // namespace
 
 absl::string_view IceCandidateTypeToString(IceCandidateType type) {
@@ -459,6 +476,8 @@ bool Candidate::MatchesForRemoval(const Candidate& c) const {
 
 std::string Candidate::ToStringInternal(bool sensitive) const {
   StringBuilder ost;
+  // Fits the typical description without reallocations.
+  ost.Reserve(256);
   std::string address =
       sensitive ? address_.ToSensitiveString() : address_.ToString();
   std::string related_address = sensitive ? related_address_.ToSensitiveString()
@@ -592,7 +611,19 @@ void Candidate::ComputeFoundation(const SocketAddress& base_address,
   // - 1 (that is, a 64-bit positive integer).  This number is used in
   // connectivity checks to detect and repair this case [...]
   sb << absl::StrCat(tie_breaker);
-  foundation_ = absl::StrCat(ComputeCrc32(sb.Release()));
+
+  // Since the tie-breaker is sent in connectivity checks, it can't by itself
+  // prevent the base address, which may be hidden behind an mDNS name, from
+  // being recovered from the foundation by brute force. So the foundation is
+  // computed using a keyed cryptographic hash, with a key that is never sent.
+  const absl::string_view key = GetFoundationKey();
+  const std::string input = sb.Release();
+  uint8_t digest[MessageDigest::kMaxSize];
+  const size_t digest_size =
+      ComputeHmac(DIGEST_SHA_256, key.data(), key.size(), input.data(),
+                  input.size(), digest, sizeof(digest));
+  RTC_CHECK_GE(digest_size, sizeof(uint32_t));
+  foundation_ = absl::StrCat(GetBE32(digest));
 }
 
 void Candidate::ComputePrflxFoundation() {

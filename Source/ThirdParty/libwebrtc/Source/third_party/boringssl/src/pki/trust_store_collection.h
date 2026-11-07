@@ -28,12 +28,10 @@ BSSL_NAMESPACE_BEGIN
 // the order the stores were added.
 class OPENSSL_EXPORT TrustStoreCollection : public TrustStore {
  public:
-  TrustStoreCollection();
+  TrustStoreCollection() = default;
 
   TrustStoreCollection(const TrustStoreCollection &) = delete;
   TrustStoreCollection &operator=(const TrustStoreCollection &) = delete;
-
-  ~TrustStoreCollection() override;
 
   // Includes results from `store` in the combined output. `store` must
   // outlive the TrustStoreCollection.

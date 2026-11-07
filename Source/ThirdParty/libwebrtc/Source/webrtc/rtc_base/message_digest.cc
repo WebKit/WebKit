@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <cstring>
 #include <memory>
+#include <span>
 #include <string>
 
 #include "absl/strings/string_view.h"
@@ -71,10 +72,10 @@ size_t ComputeDigest(absl::string_view alg,
 }
 
 std::string ComputeDigest(MessageDigest* digest, absl::string_view input) {
-  std::unique_ptr<char[]> output(new char[digest->Size()]);
+  auto output = std::make_unique_for_overwrite<uint8_t[]>(digest->Size());
   ComputeDigest(digest, input.data(), input.size(), output.get(),
                 digest->Size());
-  return hex_encode(absl::string_view(output.get(), digest->Size()));
+  return HexEncode(std::span(output.get(), digest->Size()));
 }
 
 bool ComputeDigest(absl::string_view alg,
@@ -154,10 +155,10 @@ size_t ComputeHmac(absl::string_view alg,
 std::string ComputeHmac(MessageDigest* digest,
                         absl::string_view key,
                         absl::string_view input) {
-  std::unique_ptr<char[]> output(new char[digest->Size()]);
+  auto output = std::make_unique_for_overwrite<uint8_t[]>(digest->Size());
   ComputeHmac(digest, key.data(), key.size(), input.data(), input.size(),
               output.get(), digest->Size());
-  return hex_encode(absl::string_view(output.get(), digest->Size()));
+  return HexEncode(std::span(output.get(), digest->Size()));
 }
 
 bool ComputeHmac(absl::string_view alg,

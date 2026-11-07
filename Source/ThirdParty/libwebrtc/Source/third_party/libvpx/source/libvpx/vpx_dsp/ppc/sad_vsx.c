@@ -181,10 +181,10 @@ SAD64AVG(64);
     for (i = 0; i < 4; i++) sad_array[i] = 0;                             \
                                                                           \
     for (y = 0; y < height; y++) {                                        \
-      UNPACK_SRC(y *src_stride, v_ah, v_al);                              \
+      UNPACK_SRC(y * src_stride, v_ah, v_al);                             \
       for (i = 0; i < 4; i++) {                                           \
         int32x4_t v_sad = vec_splat_s32(0);                               \
-        PROCESS16_4D(y *ref_stride, ref_array[i], v_ah, v_al);            \
+        PROCESS16_4D(y * ref_stride, ref_array[i], v_ah, v_al);           \
                                                                           \
         vec_vsx_st((uint32x4_t)v_sad, 0, sad);                            \
         sad_array[i] += (sad[3] + sad[2] + sad[1] + sad[0]);              \
@@ -206,12 +206,12 @@ SAD64AVG(64);
     for (i = 0; i < 4; i++) sad_array[i] = 0;                             \
                                                                           \
     for (y = 0; y < height; y++) {                                        \
-      UNPACK_SRC(y *src_stride, v_ah1, v_al1);                            \
-      UNPACK_SRC(y *src_stride + 16, v_ah2, v_al2);                       \
+      UNPACK_SRC(y * src_stride, v_ah1, v_al1);                           \
+      UNPACK_SRC(y * src_stride + 16, v_ah2, v_al2);                      \
       for (i = 0; i < 4; i++) {                                           \
         int32x4_t v_sad = vec_splat_s32(0);                               \
-        PROCESS16_4D(y *ref_stride, ref_array[i], v_ah1, v_al1);          \
-        PROCESS16_4D(y *ref_stride + 16, ref_array[i], v_ah2, v_al2);     \
+        PROCESS16_4D(y * ref_stride, ref_array[i], v_ah1, v_al1);         \
+        PROCESS16_4D(y * ref_stride + 16, ref_array[i], v_ah2, v_al2);    \
                                                                           \
         vec_vsx_st((uint32x4_t)v_sad, 0, sad);                            \
         sad_array[i] += (sad[3] + sad[2] + sad[1] + sad[0]);              \
@@ -234,16 +234,16 @@ SAD64AVG(64);
     for (i = 0; i < 4; i++) sad_array[i] = 0;                             \
                                                                           \
     for (y = 0; y < height; y++) {                                        \
-      UNPACK_SRC(y *src_stride, v_ah1, v_al1);                            \
-      UNPACK_SRC(y *src_stride + 16, v_ah2, v_al2);                       \
-      UNPACK_SRC(y *src_stride + 32, v_ah3, v_al3);                       \
-      UNPACK_SRC(y *src_stride + 48, v_ah4, v_al4);                       \
+      UNPACK_SRC(y * src_stride, v_ah1, v_al1);                           \
+      UNPACK_SRC(y * src_stride + 16, v_ah2, v_al2);                      \
+      UNPACK_SRC(y * src_stride + 32, v_ah3, v_al3);                      \
+      UNPACK_SRC(y * src_stride + 48, v_ah4, v_al4);                      \
       for (i = 0; i < 4; i++) {                                           \
         int32x4_t v_sad = vec_splat_s32(0);                               \
-        PROCESS16_4D(y *ref_stride, ref_array[i], v_ah1, v_al1);          \
-        PROCESS16_4D(y *ref_stride + 16, ref_array[i], v_ah2, v_al2);     \
-        PROCESS16_4D(y *ref_stride + 32, ref_array[i], v_ah3, v_al3);     \
-        PROCESS16_4D(y *ref_stride + 48, ref_array[i], v_ah4, v_al4);     \
+        PROCESS16_4D(y * ref_stride, ref_array[i], v_ah1, v_al1);         \
+        PROCESS16_4D(y * ref_stride + 16, ref_array[i], v_ah2, v_al2);    \
+        PROCESS16_4D(y * ref_stride + 32, ref_array[i], v_ah3, v_al3);    \
+        PROCESS16_4D(y * ref_stride + 48, ref_array[i], v_ah4, v_al4);    \
                                                                           \
         vec_vsx_st((uint32x4_t)v_sad, 0, sad);                            \
         sad_array[i] += (sad[3] + sad[2] + sad[1] + sad[0]);              \

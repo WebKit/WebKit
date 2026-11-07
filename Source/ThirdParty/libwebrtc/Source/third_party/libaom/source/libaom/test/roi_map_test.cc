@@ -11,6 +11,7 @@
 
 #include <climits>
 #include <cstring>
+#include <string>
 #include <vector>
 
 #include "gtest/gtest.h"
@@ -21,6 +22,7 @@
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
 #include "test/i420_video_source.h"
+#include "test/md5_helper.h"
 #include "test/util.h"
 
 namespace {
@@ -160,5 +162,85 @@ AV1_INSTANTIATE_TEST_SUITE(ROIMapTest,
                            ::testing::Values(::libaom_test::kRealTime),
                            ::testing::Range(7, 12), ::testing::Values(0, 1),
                            ::testing::Values(0, 1));
+
+// Codes the top left 32x32 of every 64x64 and skips the rest, so every
+// superblock has a skipped segment and is coded without the variance
+// partitioning. The output must not depend on the number of threads.
+class ROIMapThreadTest : public ::libaom_test::CodecTestWithParam<int>,
+                         public ::libaom_test::EncoderTest {
+ protected:
+  static const int kWidth = 640;
+  static const int kHeight = 480;
+
+  ROIMapThreadTest() : EncoderTest(GET_PARAM(0)), cpu_used_(GET_PARAM(1)) {}
+  ~ROIMapThreadTest() override = default;
+
+  void SetUp() override {
+    InitializeConfig(::libaom_test::kRealTime);
+    cfg_.g_lag_in_frames = 0;
+    cfg_.rc_end_usage = AOM_CBR;
+    cfg_.rc_target_bitrate = 4000;
+    cfg_.kf_max_dist = 90000;
+    cfg_.rc_min_quantizer = 0;
+    cfg_.rc_max_quantizer = 52;
+  }
+
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
+    if (video->frame() != 0) return;
+    encoder->Control(AOME_SET_CPUUSED, cpu_used_);
+    encoder->Control(AV1E_SET_AQ_MODE, 0);
+    encoder->Control(AV1E_SET_ROW_MT, 1);
+    encoder->Control(AV1E_SET_TILE_COLUMNS, 1);
+    // Costs updated per superblock differ between one thread and row mt.
+    encoder->Control(AV1E_SET_COEFF_COST_UPD_FREQ, 3);
+    encoder->Control(AV1E_SET_MODE_COST_UPD_FREQ, 3);
+    encoder->Control(AV1E_SET_MV_COST_UPD_FREQ, 3);
+    aom_roi_map_t roi = aom_roi_map_t();
+    roi.rows = (kHeight + 3) / 4;
+    roi.cols = (kWidth + 3) / 4;
+    std::vector<uint8_t> map(roi.rows * roi.cols);
+    for (unsigned int i = 0; i < roi.rows; ++i) {
+      for (unsigned int j = 0; j < roi.cols; ++j) {
+        map[i * roi.cols + j] = (i & 15) < 8 && (j & 15) < 8;
+      }
+    }
+    roi.enabled = 1;
+    roi.roi_map = map.data();
+    memset(roi.ref_frame, -1, sizeof(roi.ref_frame));
+    roi.skip[0] = 1;
+    // Segment 1 needs a feature to stay a separate segment.
+    roi.delta_q[1] = 8;
+    encoder->Control(AOME_SET_ROI_MAP, &roi);
+  }
+
+  void FramePktHook(const aom_codec_cx_pkt_t *pkt) override {
+    ::libaom_test::MD5 md5;
+    md5.Add(static_cast<const uint8_t *>(pkt->data.frame.buf),
+            pkt->data.frame.sz);
+    md5_.push_back(md5.Get());
+  }
+
+  std::vector<std::string> Encode(int threads) {
+    cfg_.g_threads = threads;
+    md5_.clear();
+    ::libaom_test::I420VideoSource video("niklas_640_480_30.yuv", kWidth,
+                                         kHeight, 30, 1, 0, 30);
+    EXPECT_NO_FATAL_FAILURE(RunLoop(&video));
+    return md5_;
+  }
+
+  int cpu_used_;
+  std::vector<std::string> md5_;
+};
+
+TEST_P(ROIMapThreadTest, SameOutput) {
+  const std::vector<std::string> ref = Encode(1);
+  ASSERT_EQ(ref.size(), 30u);
+  EXPECT_EQ(ref, Encode(2));
+  EXPECT_EQ(ref, Encode(4));
+}
+
+AV1_INSTANTIATE_TEST_SUITE(ROIMapThreadTest, ::testing::Values(9));
 
 }  // namespace

@@ -51,18 +51,23 @@ TEST_F(CueTrackPositionsParserTest, DefaultParse) {
 TEST_F(CueTrackPositionsParserTest, DefaultValues) {
   SetReaderData({
       0xF7,  // ID = 0xF7 (CueTrack).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
 
       0xF1,  // ID = 0xF1 (CueClusterPosition).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
 
       0xF0,  // ID = 0xF0 (CueRelativePosition).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
 
       0xB2,  // ID = 0xB2 (CueDuration).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
 
-      0x53, 0x78,  // ID = 0x5378 (CueBlockNumber).
+      0x53,
+      0x78,  // ID = 0x5378 (CueBlockNumber).
       0x80,  // Size = 0.
   });
 

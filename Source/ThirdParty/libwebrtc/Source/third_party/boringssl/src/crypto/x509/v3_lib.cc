@@ -29,10 +29,14 @@
 
 using namespace bssl;
 
+namespace {
+
 // This is indirected though a pointer to avoid a global destructor. If we ever
 // add bssl::NoDestructor, we can avoid this, but this API is already
 // problematic and not thread-safe.
-static bssl::Vector<const X509V3_EXT_METHOD *> *ext_list = nullptr;
+bssl::Vector<const X509V3_EXT_METHOD *> *ext_list = nullptr;
+
+}  // namespace
 
 int X509V3_EXT_add(X509V3_EXT_METHOD *ext) {
   // We only support `ASN1_ITEM`-based extensions.

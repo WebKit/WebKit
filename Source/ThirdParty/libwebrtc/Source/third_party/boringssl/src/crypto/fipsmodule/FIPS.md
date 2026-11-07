@@ -62,8 +62,13 @@ Each known-answer test (KAT) uses a unique, random input value. `util/fipstools/
 
 Some FIPS tests cannot be broken by replacing a known string in the binary. For those, when `BORINGSSL_FIPS_BREAK_TESTS` is defined, the environment variable `BORINGSSL_FIPS_BREAK_TEST` can be set to one of a number of values in order to break the corresponding test:
 
-1. `RSA_PWCT`
-1. `ECDSA_PWCT`
+1. `RSA_PWCT`: RSA pairwise consistency test.
+1. `ECDSA_PWCT`: ECDSA pairwise consistency test.
+1. `MLDSA_PWCT`: ML-DSA pairwise consistency test.
+1. `MLKEM_PWCT`: ML-KEM pairwise consistency test.
+1. `SLHDSA_PWCT`: SLH-DSA pairwise consistency test.
+1. `JITTER_RCT`: Jitter entropy source repetition count test.
+1. `JITTER_APT`: Jitter entropy source adaptive proportion test.
 
 ## Breaking the integrity test
 

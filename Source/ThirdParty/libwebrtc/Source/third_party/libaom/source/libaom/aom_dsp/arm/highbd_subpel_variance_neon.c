@@ -715,11 +715,11 @@ HBD_SPECIALIZED_SUBPEL_AVG_VARIANCE_WXH_NEON(12, 64, 16)
 
 #define HBD_MASKED_SUBPEL_VARIANCE_WXH_NEON(bitdepth, w, h)                    \
   unsigned int                                                                 \
-      aom_highbd_##bitdepth##_masked_sub_pixel_variance##w##x##h##_neon(       \
-          const uint8_t *src, int src_stride, int xoffset, int yoffset,        \
-          const uint8_t *ref, int ref_stride, const uint8_t *second_pred,      \
-          const uint8_t *msk, int msk_stride, int invert_mask,                 \
-          unsigned int *sse) {                                                 \
+  aom_highbd_##bitdepth##_masked_sub_pixel_variance##w##x##h##_neon(           \
+      const uint8_t *src, int src_stride, int xoffset, int yoffset,            \
+      const uint8_t *ref, int ref_stride, const uint8_t *second_pred,          \
+      const uint8_t *msk, int msk_stride, int invert_mask,                     \
+      unsigned int *sse) {                                                     \
     uint16_t tmp0[w * (h + 1)];                                                \
     uint16_t tmp1[w * (h + 1)];                                                \
     uint16_t tmp2[w * h];                                                      \
@@ -736,11 +736,11 @@ HBD_SPECIALIZED_SUBPEL_AVG_VARIANCE_WXH_NEON(12, 64, 16)
 
 #define HBD_SPECIALIZED_MASKED_SUBPEL_VARIANCE_WXH_NEON(bitdepth, w, h)        \
   unsigned int                                                                 \
-      aom_highbd_##bitdepth##_masked_sub_pixel_variance##w##x##h##_neon(       \
-          const uint8_t *src, int src_stride, int xoffset, int yoffset,        \
-          const uint8_t *ref, int ref_stride, const uint8_t *second_pred,      \
-          const uint8_t *msk, int msk_stride, int invert_mask,                 \
-          unsigned int *sse) {                                                 \
+  aom_highbd_##bitdepth##_masked_sub_pixel_variance##w##x##h##_neon(           \
+      const uint8_t *src, int src_stride, int xoffset, int yoffset,            \
+      const uint8_t *ref, int ref_stride, const uint8_t *second_pred,          \
+      const uint8_t *msk, int msk_stride, int invert_mask,                     \
+      unsigned int *sse) {                                                     \
     uint16_t *src_ptr = CONVERT_TO_SHORTPTR(src);                              \
     if (xoffset == 0) {                                                        \
       uint16_t tmp0[w * h];                                                    \
@@ -952,9 +952,9 @@ HBD_SPECIALIZED_MASKED_SUBPEL_VARIANCE_WXH_NEON(12, 64, 16)
 #if !CONFIG_REALTIME_ONLY
 #define HIGHBD_OBMC_SUBPEL_VARIANCE_WXH_NEON(bitdepth, w, h)                \
   unsigned int                                                              \
-      aom_highbd_##bitdepth##_obmc_sub_pixel_variance##w##x##h##_neon(      \
-          const uint8_t *pre, int pre_stride, int xoffset, int yoffset,     \
-          const int32_t *wsrc, const int32_t *mask, unsigned int *sse) {    \
+  aom_highbd_##bitdepth##_obmc_sub_pixel_variance##w##x##h##_neon(          \
+      const uint8_t *pre, int pre_stride, int xoffset, int yoffset,         \
+      const int32_t *wsrc, const int32_t *mask, unsigned int *sse) {        \
     uint16_t *pre_ptr = CONVERT_TO_SHORTPTR(pre);                           \
     uint16_t tmp0[w * (h + 1)];                                             \
     uint16_t tmp1[w * h];                                                   \
@@ -967,9 +967,9 @@ HBD_SPECIALIZED_MASKED_SUBPEL_VARIANCE_WXH_NEON(12, 64, 16)
 
 #define SPECIALIZED_HIGHBD_OBMC_SUBPEL_VARIANCE_WXH_NEON(bitdepth, w, h)       \
   unsigned int                                                                 \
-      aom_highbd_##bitdepth##_obmc_sub_pixel_variance##w##x##h##_neon(         \
-          const uint8_t *pre, int pre_stride, int xoffset, int yoffset,        \
-          const int32_t *wsrc, const int32_t *mask, unsigned int *sse) {       \
+  aom_highbd_##bitdepth##_obmc_sub_pixel_variance##w##x##h##_neon(             \
+      const uint8_t *pre, int pre_stride, int xoffset, int yoffset,            \
+      const int32_t *wsrc, const int32_t *mask, unsigned int *sse) {           \
     uint16_t *pre_ptr = CONVERT_TO_SHORTPTR(pre);                              \
     if (xoffset == 0) {                                                        \
       if (yoffset == 0) {                                                      \

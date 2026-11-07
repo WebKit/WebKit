@@ -67,20 +67,24 @@ TEST_F(ClusterParserTest, DefaultActionIsRead) {
 TEST_F(ClusterParserTest, DefaultValues) {
   SetReaderData({
       0xE7,  // ID = 0xE7 (Timecode).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
 
       0xAB,  // ID = 0xAB (PrevSize).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
 
       0xA3,  // ID = 0xA3 (SimpleBlock).
       0x85,  // Size = 5.
       0x81,  // Track number = 1.
-      0x00, 0x00,  // Timecode = 0.
+      0x00,
+      0x00,  // Timecode = 0.
       0x00,  // Flags = 0.
       0x00,  // Frame 0.
 
       0xA0,  // ID = 0xA0 (BlockGroup).
-      0x40, 0x00,  // Size = 0.
+      0x40,
+      0x00,  // Size = 0.
   });
 
   {
@@ -209,7 +213,8 @@ TEST_F(ClusterParserTest, SkipSimpleBlock) {
       0xA3,  // ID = 0xA3 (SimpleBlock).
       0x85,  // Size = 5.
       0x81,  // Track number = 1.
-      0x00, 0x00,  // Timecode = 0.
+      0x00,
+      0x00,  // Timecode = 0.
       0x00,  // Flags = 0.
       0x00,  // Frame 0.
   });
@@ -239,10 +244,12 @@ TEST_F(ClusterParserTest, SkipSimpleBlock) {
 TEST_F(ClusterParserTest, SkipBlockGroup) {
   SetReaderData({
       0xA0,  // ID = 0xA0 (BlockGroup).
-      0x40, 0x04,  // Size = 4.
+      0x40,
+      0x04,  // Size = 4.
 
       0x9B,  //   ID = 0x9B (BlockDuration).
-      0x40, 0x01,  //   Size = 1.
+      0x40,
+      0x01,  //   Size = 1.
       0x01,  //   Body (value = 1).
   });
 

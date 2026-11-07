@@ -140,9 +140,9 @@ int vp9_optimize_b(MACROBLOCK *mb, int plane, int block, TX_SIZE tx_size,
 #else
   const uint16_t *cat6_high_cost = vp9_get_high_cost_table(8);
 #endif
-  unsigned int(*const token_costs)[2][COEFF_CONTEXTS][ENTROPY_TOKENS] =
+  unsigned int (*const token_costs)[2][COEFF_CONTEXTS][ENTROPY_TOKENS] =
       mb->token_costs[tx_size][plane_type][ref];
-  unsigned int(*token_costs_cur)[2][COEFF_CONTEXTS][ENTROPY_TOKENS];
+  unsigned int (*token_costs_cur)[2][COEFF_CONTEXTS][ENTROPY_TOKENS];
   int64_t eob_cost0, eob_cost1;
   int64_t accu_rate = 0;
   // Initialized to the worst possible error for the largest transform size.
@@ -269,9 +269,9 @@ int vp9_optimize_b(MACROBLOCK *mb, int plane, int block, TX_SIZE tx_size,
           const int token_next =
               (i + 1 != eob) ? vp9_get_token(qcoeff[scan[i + 1]]) : EOB_TOKEN;
           ASSUME_VALID_TOKEN(token_next);
-          unsigned int(*const token_costs_next)[2][COEFF_CONTEXTS]
-                                               [ENTROPY_TOKENS] =
-                                                   token_costs + band_next;
+          unsigned int (*const token_costs_next)[2][COEFF_CONTEXTS]
+                                                [ENTROPY_TOKENS] =
+                                                    token_costs + band_next;
           token_cache[rc] = vp9_pt_energy_class[t0];
           ctx_next = get_coef_context(nb, token_cache, i + 1);
           // token_cache is initialized with valid energy classes.

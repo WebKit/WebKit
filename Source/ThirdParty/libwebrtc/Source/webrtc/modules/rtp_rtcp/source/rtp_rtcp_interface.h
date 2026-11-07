@@ -36,6 +36,7 @@
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/rtp_rtcp/source/rtp_sequence_number_map.h"
 #include "modules/rtp_rtcp/source/video_fec_generator.h"
+#include "rtc_base/containers/flat_map.h"
 #include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
@@ -127,11 +128,33 @@ class RtpRtcpInterface : public RtcpFeedbackSenderInterface {
     std::optional<uint32_t> rtx_send_ssrc;
     std::optional<uint32_t> remote_ssrc;
 
+    // RTX (RFC 4588) mode, a combination of `RtxMode` values, and the mapping
+    // from associated payload type to RTX payload type. Enabling RTX requires
+    // `rtx_send_ssrc` and at least one payload type mapping. If that is not
+    // the case, or if any of the payload types is invalid, an error is logged
+    // and RTX stays off.
+    int rtx_mode = kRtxOff;
+    flat_map<int, int> rtx_payload_types;
+
+    // Initial state of the media and RTX streams, e.g. when a stream is
+    // recreated after being suspended. A stream without a state starts with a
+    // random sequence number, and the media stream with a random start
+    // timestamp. Only `sequence_number` and `ssrc_has_acked` are used from
+    // `rtx_rtp_state`. `RTPSender` only uses `start_timestamp` and
+    // `ssrc_has_acked`.
+    std::optional<RtpState> rtp_state;
+    std::optional<RtpState> rtx_rtp_state;
+
     bool need_rtp_packet_infos = false;
 
     // Estimate RTT as non-sender as described in
     // https://tools.ietf.org/html/rfc3611#section-4.4 and #section-4.5
     bool non_sender_rtt_measurement = false;
+
+    // Media identification (MID) value of the media description this module
+    // sends media for, as defined in RFC 9143. Doesn't change for the
+    // lifetime of the module.
+    std::string mid;
 
     // If non-empty, sets the value for sending in the RID (and Repaired) RTP
     // header extension. RIDs are used to identify an RTP stream if SSRCs are
@@ -218,17 +241,12 @@ class RtpRtcpInterface : public RtcpFeedbackSenderInterface {
   // Returns true if RTP module is send media, and any of the extensions
   // required for bandwidth estimation is registered.
   virtual bool SupportsPadding() const = 0;
-  // Same as SupportsPadding(), but additionally requires that
-  // SetRtxSendStatus() has been called with the kRtxRedundantPayloads option
-  // enabled.
+  // Same as SupportsPadding(), but additionally requires that RTX is enabled
+  // with the kRtxRedundantPayloads option, see `Configuration::rtx_mode`.
   virtual bool SupportsRtxPayloadPadding() const = 0;
 
   // Returns start timestamp.
   virtual uint32_t StartTimestamp() const = 0;
-
-  // Sets start timestamp. Start timestamp is set to a random value if this
-  // function is never called.
-  virtual void SetStartTimestamp(uint32_t timestamp) = 0;
 
   // Returns SequenceNumber.
   virtual uint16_t SequenceNumber() const = 0;
@@ -236,8 +254,6 @@ class RtpRtcpInterface : public RtcpFeedbackSenderInterface {
   // Sets SequenceNumber, default is a random number.
   virtual void SetSequenceNumber(uint16_t seq) = 0;
 
-  virtual void SetRtpState(const RtpState& rtp_state) = 0;
-  virtual void SetRtxState(const RtpState& rtp_state) = 0;
   virtual RtpState GetRtpState() const = 0;
   virtual RtpState GetRtxState() const = 0;
 
@@ -247,26 +263,12 @@ class RtpRtcpInterface : public RtcpFeedbackSenderInterface {
   // Returns SSRC.
   virtual uint32_t SSRC() const = 0;
 
-  // Sets the value for sending in the MID RTP header extension.
-  // The MID RTP header extension should be registered for this to do anything.
-  // Once set, this value can not be changed or removed.
-  virtual void SetMid(absl::string_view mid) = 0;
-
-  // Turns on/off sending RTX (RFC 4588). The modes can be set as a combination
-  // of values of the enumerator RtxMode.
-  virtual void SetRtxSendStatus(int modes) = 0;
-
   // Returns status of sending RTX (RFC 4588). The returned value can be
   // a combination of values of the enumerator RtxMode.
   virtual int RtxSendStatus() const = 0;
 
   // Returns the SSRC used for RTX if set, otherwise a nullopt.
   virtual std::optional<uint32_t> RtxSsrc() const = 0;
-
-  // Sets the payload type to use when sending RTX packets. Note that this
-  // doesn't enable RTX, only the payload type is set.
-  virtual void SetRtxSendPayloadType(int payload_type,
-                                     int associated_payload_type) = 0;
 
   // Returns the FlexFEC SSRC, if there is one.
   virtual std::optional<uint32_t> FlexfecSsrc() const = 0;
@@ -361,7 +363,7 @@ class RtpRtcpInterface : public RtcpFeedbackSenderInterface {
 
   // Access to packet state (e.g. sequence numbering) must only be access by
   // one thread at a time. It may be only one thread, or a construction thread
-  // that calls SetRtpState() - handing over to a pacer thread that calls
+  // that sets the initial state - handing over to a pacer thread that calls
   // TrySendPacket() - and at teardown ownership is handed to a destruciton
   // thread that calls GetRtpState().
   // This method is used to signal that "ownership" of the rtp state is being

@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_SSL_SPAN_H
 #define OPENSSL_HEADER_SSL_SPAN_H
 
-#include <openssl/base.h>   // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
 
 #if !defined(BORINGSSL_NO_CXX)
 

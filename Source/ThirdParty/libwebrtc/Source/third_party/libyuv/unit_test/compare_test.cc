@@ -497,6 +497,36 @@ TEST_F(LibYUVCompareTest, SumSquareError) {
   free_aligned_buffer_page_end(src_b);
 }
 
+// Test every count, aligned and unaligned, ending at the end of a page.
+TEST_F(LibYUVCompareTest, TestCompareAnyCount) {
+  const int kMaxCount = 64 * 5 + 1;
+  align_buffer_page_end(src_a, kMaxCount + 1);
+  align_buffer_page_end(src_b, kMaxCount + 1);
+  MemRandomize(src_a, kMaxCount + 1);
+  MemRandomize(src_b, kMaxCount + 1);
+
+  for (int count = 0; count <= kMaxCount; ++count) {
+    for (int offset = 0; offset < 2; ++offset) {
+      const uint8_t* a = src_a + kMaxCount + 1 - count - offset;
+      const uint8_t* b = src_b + kMaxCount + 1 - count - offset;
+      MaskCpuFlags(disable_cpu_flags_);
+      uint32_t c_hash = HashDjb2(a, count, 5381);
+      uint64_t c_diff = ComputeHammingDistance(a, b, count);
+      uint64_t c_err = ComputeSumSquareError(a, b, count);
+      MaskCpuFlags(benchmark_cpu_info_);
+      uint32_t opt_hash = HashDjb2(a, count, 5381);
+      uint64_t opt_diff = ComputeHammingDistance(a, b, count);
+      uint64_t opt_err = ComputeSumSquareError(a, b, count);
+      EXPECT_EQ(c_hash, opt_hash) << "count " << count << " offset " << offset;
+      EXPECT_EQ(c_diff, opt_diff) << "count " << count << " offset " << offset;
+      EXPECT_EQ(c_err, opt_err) << "count " << count << " offset " << offset;
+    }
+  }
+
+  free_aligned_buffer_page_end(src_a);
+  free_aligned_buffer_page_end(src_b);
+}
+
 TEST_F(LibYUVCompareTest, BenchmarkPsnr_Opt) {
   align_buffer_page_end(src_a, benchmark_width_ * benchmark_height_);
   align_buffer_page_end(src_b, benchmark_width_ * benchmark_height_);

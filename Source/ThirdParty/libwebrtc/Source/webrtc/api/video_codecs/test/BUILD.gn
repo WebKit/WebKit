@@ -18,35 +18,10 @@ if (rtc_include_tests) {
     deps = [ "../../../rtc_base:checks" ]
   }
 
-  rtc_library("video_codecs_api_unittests") {
+  rtc_library("video_codec_test_utils") {
     testonly = true
-    sources = [
-      "builtin_video_encoder_factory_unittest.cc",
-      "h264_profile_level_id_unittest.cc",
-      "sdp_video_format_unittest.cc",
-      "temporal_layer_pattern_for_test_unittest.cc",
-      "video_codec_test_utils.h",
-      "video_codec_unittest.cc",
-      "video_decoder_software_fallback_wrapper_unittest.cc",
-      "video_encoder_factory_unittest.cc",
-      "video_encoder_functional_unittest.cc",
-      "video_encoder_rate_control_unittest.cc",
-      "video_encoder_software_fallback_wrapper_unittest.cc",
-    ]
-
-    if (rtc_use_h265) {
-      sources += [ "h265_profile_tier_level_unittest.cc" ]
-    }
-
+    sources = [ "video_codec_test_utils.h" ]
     deps = [
-      ":temporal_layer_pattern_for_test",
-      ":video_decoder_factory_template_tests",
-      ":video_encoder_factory_template_tests",
-      "..:builtin_video_decoder_factory",
-      "..:builtin_video_encoder_factory",
-      "..:libaom_av1_encoder_factory",
-      "..:rtc_software_fallback_wrappers",
-      "..:scalability_mode",
       "..:video_codecs_api",
       "..:video_decoder_factory_template",
       "..:video_decoder_factory_template_dav1d_adapter",
@@ -57,60 +32,213 @@ if (rtc_include_tests) {
       "..:video_encoder_factory_interface",
       "..:video_encoder_interface",
       "..:video_encoding_general",
-      "../..:fec_controller_api",
-      "../..:field_trials",
+      "../..:frame_generator_api",
+      "../..:scoped_refptr",
+      "../../../api/units:data_rate",
+      "../../../api/units:time_delta",
+      "../../../common_video",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:rtc_event",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+      "../../../test:video_test_support",
+      "../../../test:y4m_frame_generator",
+      "../../environment",
+      "../../video:encoded_image",
+      "../../video:resolution",
+      "../../video:video_frame",
+      "//third_party/abseil-cpp/absl/strings",
+    ]
+  }
+
+  rtc_cc_test("builtin_video_encoder_factory_unittest") {
+    sources = [ "builtin_video_encoder_factory_unittest.cc" ]
+    deps = [
+      "..:builtin_video_encoder_factory",
+      "..:video_codecs_api",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("h264_profile_level_id_unittest") {
+    sources = [ "h264_profile_level_id_unittest.cc" ]
+    deps = [
+      "..:video_codecs_api",
+      "../..:rtp_parameters",
+      "../../../test:test_support",
+    ]
+  }
+
+  if (rtc_use_h265) {
+    rtc_cc_test("h265_profile_tier_level_unittest") {
+      sources = [ "h265_profile_tier_level_unittest.cc" ]
+      deps = [
+        "..:video_codecs_api",
+        "../..:rtp_parameters",
+        "../../../test:test_support",
+        "../../video:resolution",
+      ]
+    }
+  }
+
+  rtc_cc_test("sdp_video_format_unittest") {
+    sources = [ "sdp_video_format_unittest.cc" ]
+    deps = [
+      "..:video_codecs_api",
+      "../..:rtp_parameters",
+      "../../../media:media_constants",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("temporal_layer_pattern_for_test_unittest") {
+    sources = [ "temporal_layer_pattern_for_test_unittest.cc" ]
+    deps = [
+      ":temporal_layer_pattern_for_test",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_cc_test("video_codec_unittest") {
+    sources = [ "video_codec_unittest.cc" ]
+    deps = [
+      "..:video_codecs_api",
+      "../../../rtc_base:checks",
+      "../../../test:test_support",
+      "../../video:video_frame",
+    ]
+  }
+
+  rtc_cc_test("video_decoder_software_fallback_wrapper_unittest") {
+    sources = [ "video_decoder_software_fallback_wrapper_unittest.cc" ]
+    deps = [
+      "..:rtc_software_fallback_wrappers",
+      "..:video_codecs_api",
+      "../../../modules/video_coding:video_codec_interface",
+      "../../../modules/video_coding:webrtc_vp8",
+      "../../../rtc_base:checks",
+      "../../../test:create_test_environment",
+      "../../../test:test_support",
+      "../../environment",
+      "../../video:encoded_image",
+      "../../video:video_frame",
+      "../../video:video_frame_type",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+
+  rtc_cc_test("video_encoder_factory_unittest") {
+    sources = [ "video_encoder_factory_unittest.cc" ]
+    deps = [
+      "..:scalability_mode",
+      "..:video_codecs_api",
+      "../../../test:test_support",
+      "../../environment",
+      "//third_party/abseil-cpp/absl/container:inlined_vector",
+    ]
+  }
+
+  rtc_cc_test("video_encoder_functional_unittest") {
+    sources = [ "video_encoder_functional_unittest.cc" ]
+    deps = [
+      ":video_codec_test_utils",
+      "..:libaom_av1_encoder_factory",
+      "..:video_codecs_api",
+      "..:video_encoder_factory_interface",
+      "..:video_encoder_interface",
+      "..:video_encoding_general",
+      "../..:create_frame_generator",
       "../..:frame_generator_api",
       "../..:media_stream_interface",
-      "../..:mock_video_encoder",
-      "../..:rtp_parameters",
       "../..:scoped_refptr",
-      "../../:create_frame_generator",
+      "../../../api/units:data_rate",
+      "../../../api/units:data_size",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../rtc_base:logging",
+      "../../../rtc_base:platform_thread_types",
+      "../../../rtc_base:rtc_numerics",
+      "../../../test:create_test_environment",
+      "../../../test:frame_utils",
+      "../../../test:test_support",
+      "../../../test:video_test_support",
+      "../../environment",
+      "../../video:resolution",
+      "../../video:video_frame",
+      "../../video:video_frame_i010",
+      "//third_party/abseil-cpp/absl/algorithm:container",
+      "//third_party/libyuv",
+    ]
+    data_deps = [ "../../../resources:rtc_unittests_data" ]
+    if (is_ios) {
+      deps += [ "../../../resources:rtc_unittests_bundle_data" ]
+    }
+  }
+
+  rtc_cc_test("video_encoder_rate_control_unittest") {
+    sources = [ "video_encoder_rate_control_unittest.cc" ]
+    deps = [
+      ":temporal_layer_pattern_for_test",
+      ":video_codec_test_utils",
+      "..:libaom_av1_encoder_factory",
+      "..:video_codecs_api",
+      "..:video_encoder_builders_for_test",
+      "..:video_encoder_factory_interface",
+      "..:video_encoder_interface",
+      "..:video_encoding_general",
+      "../..:create_frame_generator",
+      "../..:frame_generator_api",
+      "../..:media_stream_interface",
+      "../..:scoped_refptr",
       "../../../api/units:data_rate",
       "../../../api/units:data_size",
       "../../../api/units:frequency",
       "../../../api/units:time_delta",
       "../../../api/units:timestamp",
-      "../../../common_video",
-      "../../../media:media_constants",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:logging",
+      "../../../test:create_test_environment",
+      "../../../test:fileutils",
+      "../../../test:qp_parser_for_test",
+      "../../../test:test_support",
+      "../../../test:video_test_support",
+      "../../../test/time_controller",
+      "../../environment",
+      "../../video:resolution",
+      "../../video:video_frame",
+    ]
+    data_deps = [ "../../../resources:rtc_unittests_data" ]
+    if (is_ios) {
+      deps += [ "../../../resources:rtc_unittests_bundle_data" ]
+    }
+  }
+
+  rtc_cc_test("video_encoder_software_fallback_wrapper_unittest") {
+    sources = [ "video_encoder_software_fallback_wrapper_unittest.cc" ]
+    deps = [
+      "..:rtc_software_fallback_wrappers",
+      "..:video_codecs_api",
+      "../..:fec_controller_api",
+      "../..:mock_video_encoder",
+      "../..:scoped_refptr",
       "../../../modules/video_coding:video_codec_interface",
       "../../../modules/video_coding:video_coding_utility",
       "../../../modules/video_coding:webrtc_vp8",
-      "../../../rtc_base:checks",
-      "../../../rtc_base:logging",
-      "../../../rtc_base:platform_thread_types",
-      "../../../rtc_base:rtc_event",
-      "../../../rtc_base:rtc_numerics",
-      "../../../system_wrappers",
       "../../../test:create_test_environment",
-      "../../../test:create_test_field_trials",
       "../../../test:fake_video_codecs",
-      "../../../test:fileutils",
-      "../../../test:frame_utils",
-      "../../../test:qp_parser_for_test",
       "../../../test:test_support",
       "../../../test:video_test_common",
-      "../../../test:video_test_support",
-      "../../../test:y4m_frame_generator",
-      "../../../test/time_controller",
       "../../environment",
       "../../video:encoded_image",
-      "../../video:resolution",
       "../../video:video_bitrate_allocator",
       "../../video:video_frame",
-      "../../video:video_frame_i010",
       "../../video:video_frame_type",
       "../../video:video_rtp_headers",
-      "//testing/gtest",
-      "//third_party/abseil-cpp/absl/algorithm:container",
-      "//third_party/abseil-cpp/absl/container:inlined_vector",
-      "//third_party/abseil-cpp/absl/strings",
       "//third_party/abseil-cpp/absl/strings:string_view",
-      "//third_party/libyuv",
     ]
   }
 
-  rtc_library("video_encoder_factory_template_tests") {
-    testonly = true
+  rtc_cc_test("video_encoder_factory_template_tests") {
     sources = [ "video_encoder_factory_template_tests.cc" ]
 
     deps = [
@@ -129,8 +257,7 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_library("video_decoder_factory_template_tests") {
-    testonly = true
+  rtc_cc_test("video_decoder_factory_template_tests") {
     sources = [ "video_decoder_factory_template_tests.cc" ]
 
     deps = [

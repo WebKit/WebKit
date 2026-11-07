@@ -30,7 +30,6 @@
 #include <openssl/sha.h>
 #include <openssl/stack.h>
 
-#include "../crypto/internal.h"
 #include "internal.h"
 
 
@@ -360,7 +359,8 @@ static constexpr SSL_CIPHER kCiphers[] = {
 
 Span<const SSL_CIPHER> AllCiphers() { return kCiphers; }
 
-static constexpr size_t NumTLS13Ciphers() {
+namespace {
+constexpr size_t NumTLS13Ciphers() {
   size_t num = 0;
   for (const auto &cipher : kCiphers) {
     if (cipher.algorithm_mkey == SSL_kGENERIC) {
@@ -403,8 +403,7 @@ typedef struct cipher_alias_st {
   // include_deprecated, if true, means this alias includes deprecated ciphers.
   bool include_deprecated = false;
 } CIPHER_ALIAS;
-
-static const CIPHER_ALIAS kCipherAliases[] = {
+const CIPHER_ALIAS kCipherAliases[] = {
     {"ALL", ~0u, ~0u, ~0u, ~0u, 0},
 
     // The "COMPLEMENTOFDEFAULT" rule is omitted. It matches nothing.
@@ -450,16 +449,15 @@ static const CIPHER_ALIAS kCipherAliases[] = {
 
     // Legacy protocol minimum version aliases. "TLSv1" is intentionally the
     // same as "SSLv3".
-    {"SSLv3", ~0u, ~0u, ~0u, ~0u, SSL3_VERSION},
-    {"TLSv1", ~0u, ~0u, ~0u, ~0u, SSL3_VERSION},
+    {"SSLv3", ~0u, ~0u, ~0u, ~0u, TLS1_VERSION},
+    {"TLSv1", ~0u, ~0u, ~0u, ~0u, TLS1_VERSION},
     {"TLSv1.2", ~0u, ~0u, ~0u, ~0u, TLS1_2_VERSION},
 
     // Legacy strength classes.
     {"HIGH", ~0u, ~0u, ~0u, ~0u, 0},
     {"FIPS", ~0u, ~0u, ~0u, ~0u, 0},
 };
-
-static const size_t kCipherAliasesLen = std::size(kCipherAliases);
+}  // namespace
 
 bool ssl_cipher_get_evp_aead(const EVP_AEAD **out_aead,
                              size_t *out_mac_secret_len,
@@ -962,7 +960,7 @@ static bool ssl_cipher_process_rulestr(const char *rule_str,
                                        CIPHER_ORDER **tail_p, bool strict) {
   const char *l, *buf;
   bool in_group = false, has_group = false;
-  size_t j, buf_len;
+  size_t buf_len;
   char ch;
 
   l = rule_str;
@@ -1069,35 +1067,38 @@ static bool ssl_cipher_process_rulestr(const char *rule_str,
       }
       if (cipher_id == 0) {
         // If not an exact cipher, look for a matching cipher alias.
-        for (j = 0; j < kCipherAliasesLen; j++) {
-          if (rule_equals(kCipherAliases[j].name, buf, buf_len)) {
-            alias.algorithm_mkey &= kCipherAliases[j].algorithm_mkey;
-            alias.algorithm_auth &= kCipherAliases[j].algorithm_auth;
-            alias.algorithm_enc &= kCipherAliases[j].algorithm_enc;
-            alias.algorithm_mac &= kCipherAliases[j].algorithm_mac;
-
-            // When specifying a combination of aliases, if any aliases
-            // enables deprecated ciphers, deprecated ciphers are included. This
-            // is slightly different from the bitmasks in that adding aliases
-            // can increase the set of matched ciphers. This is so that an alias
-            // like "RSA" will only specify AES-based RSA ciphers, but
-            // "RSA+3DES" will still specify 3DES.
-            alias.include_deprecated |= kCipherAliases[j].include_deprecated;
-
-            if (alias.min_version != 0 &&
-                alias.min_version != kCipherAliases[j].min_version) {
-              skip_rule = true;
-            } else {
-              alias.min_version = kCipherAliases[j].min_version;
-            }
-            break;
-          }
-        }
-        if (j == kCipherAliasesLen) {
+        const auto found =
+            std::find_if(std::begin(kCipherAliases), std::end(kCipherAliases),
+                         [buf, buf_len](const CIPHER_ALIAS &cipher_alias) {
+                           return rule_equals(cipher_alias.name, buf, buf_len);
+                         });
+        if (found == std::end(kCipherAliases)) {
           skip_rule = true;
           if (strict) {
             OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_COMMAND);
             return false;
+          }
+        } else {
+          alias.algorithm_mkey &= found->algorithm_mkey;
+          alias.algorithm_auth &= found->algorithm_auth;
+          alias.algorithm_enc &= found->algorithm_enc;
+          alias.algorithm_mac &= found->algorithm_mac;
+
+          // When specifying a combination of aliases, if any aliases
+          // enables deprecated ciphers, deprecated ciphers are included. This
+          // is slightly different from the bitmasks in that adding aliases
+          // can increase the set of matched ciphers. This is so that an alias
+          // like "RSA" will only specify AES-based RSA ciphers, but
+          // "RSA+3DES" will still specify 3DES.
+          alias.include_deprecated |= found->include_deprecated;
+
+          if (found->min_version != 0) {
+            if (alias.min_version != 0 &&
+                alias.min_version != found->min_version) {
+              skip_rule = true;
+            } else {
+              alias.min_version = found->min_version;
+            }
           }
         }
       }
@@ -1518,7 +1519,7 @@ uint16_t SSL_CIPHER_get_min_version(const SSL_CIPHER *cipher) {
     // afterwards specify a particular hash.
     return TLS1_2_VERSION;
   }
-  return SSL3_VERSION;
+  return TLS1_VERSION;
 }
 
 uint16_t SSL_CIPHER_get_max_version(const SSL_CIPHER *cipher) {

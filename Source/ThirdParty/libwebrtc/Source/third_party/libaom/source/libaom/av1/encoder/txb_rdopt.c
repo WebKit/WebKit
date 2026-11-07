@@ -11,6 +11,7 @@
 
 #include "av1/encoder/txb_rdopt.h"
 #include "av1/encoder/txb_rdopt_utils.h"
+#include "av1/encoder/rdopt_utils.h"
 
 #include "aom_ports/mem.h"
 #include "av1/common/idct.h"
@@ -190,7 +191,7 @@ static AOM_FORCE_INLINE void update_coeff_eob(
     const int16_t *scan, const LV_MAP_EOB_COST *txb_eob_costs,
     const LV_MAP_COEFF_COST *txb_costs, const tran_low_t *tcoeff,
     tran_low_t *qcoeff, tran_low_t *dqcoeff, uint8_t *levels, int sharpness,
-    const qm_val_t *iqmatrix, const qm_val_t *qmatrix) {
+    const qm_val_t *iqmatrix, const qm_val_t *qmatrix, int is_noise_pattern) {
   assert(si != *eob - 1);
   const int ci = scan[si];
   const tran_low_t qc = qcoeff[ci];
@@ -272,7 +273,8 @@ static AOM_FORCE_INLINE void update_coeff_eob(
       }
     }
 
-    const int qc_threshold = (si <= 5) ? 2 : 1;
+    const int min_eob_cutoff = is_noise_pattern ? 8 : 5;
+    const int qc_threshold = (si <= min_eob_cutoff) ? 2 : 1;
     const int allow_lower_qc = sharpness ? abs_qc > qc_threshold : 1;
 
     if (allow_lower_qc) {
@@ -284,7 +286,7 @@ static AOM_FORCE_INLINE void update_coeff_eob(
       }
     }
 
-    if ((sharpness == 0 || new_eob >= 5) && rd_new_eob < rd) {
+    if ((sharpness == 0 || new_eob >= min_eob_cutoff) && rd_new_eob < rd) {
       for (int ni = 0; ni < *nz_num; ++ni) {
         int last_ci = nz_ci[ni];
         levels[get_padded_idx(last_ci, bhl)] = 0;
@@ -374,12 +376,13 @@ static AOM_FORCE_INLINE void update_coeff_eob_facade(
     const int16_t *scan, const LV_MAP_EOB_COST *txb_eob_costs,
     const LV_MAP_COEFF_COST *txb_costs, const tran_low_t *tcoeff,
     tran_low_t *qcoeff, tran_low_t *dqcoeff, uint8_t *levels, int sharpness,
-    const qm_val_t *iqmatrix, const qm_val_t *qmatrix, int max_nz_num) {
+    const qm_val_t *iqmatrix, const qm_val_t *qmatrix, int max_nz_num,
+    int is_noise_pattern) {
   for (; *si >= 0 && *nz_num <= max_nz_num; --*si) {
     update_coeff_eob(accu_rate, accu_dist, eob, nz_num, nz_ci, *si, tx_size,
                      tx_class, bhl, width, dc_sign_ctx, rdmult, shift, dequant,
                      scan, txb_eob_costs, txb_costs, tcoeff, qcoeff, dqcoeff,
-                     levels, sharpness, iqmatrix, qmatrix);
+                     levels, sharpness, iqmatrix, qmatrix, is_noise_pattern);
   }
 }
 
@@ -440,6 +443,22 @@ int av1_optimize_txb(const struct AV1_COMP *cpi, MACROBLOCK *x, int plane,
   const LV_MAP_EOB_COST *txb_eob_costs =
       &coeff_costs->eob_costs[eob_multi_size][plane_type];
 
+  int is_noise_pattern = 0;
+#if CONFIG_AV1_HIGHBITDEPTH
+  if (xd->bd > 8 && sharpness == 3 && plane == AOM_PLANE_Y) {
+    int64_t src_var, rec_var;
+    av1_get_variance_stats(x, &src_var, &rec_var);
+    if (src_var > rec_var) {
+      const int num_pixels =
+          block_size_wide[mbmi->bsize] * block_size_high[mbmi->bsize];
+      const int64_t src_var_per_px = src_var / num_pixels;
+      if (src_var_per_px < 64) {
+        is_noise_pattern = 1;
+      }
+    }
+  }
+#endif
+
   // For the IQ and SSIMULACRA 2 tunings, increase rshift from 2 to 4.
   // This biases trellis quantization towards keeping more coefficients, and
   // together with the IQ and SSIMULACRA2 rdmult adjustment in
@@ -449,11 +468,11 @@ int av1_optimize_txb(const struct AV1_COMP *cpi, MACROBLOCK *x, int plane,
   const int rshift = (cpi->oxcf.tune_cfg.tuning == AOM_TUNE_IQ ||
                       cpi->oxcf.tune_cfg.tuning == AOM_TUNE_SSIMULACRA2)
                          ? 7
-                         : 5;
+                         : (is_noise_pattern ? 6 : 5);
 
-  const int(*trellis_rd_mult)[2] = cpi->sf.tx_sf.use_chroma_trellis_rd_mult
-                                       ? plane_rd_mult_chroma
-                                       : plane_rd_mult;
+  const int (*trellis_rd_mult)[2] = cpi->sf.tx_sf.use_chroma_trellis_rd_mult
+                                        ? plane_rd_mult_chroma
+                                        : plane_rd_mult;
   const int64_t rdmult = ROUND_POWER_OF_TWO(
       (int64_t)x->rdmult * (8 - sharpness) *
           (trellis_rd_mult[is_inter][plane_type] << (2 * (xd->bd - 8))),
@@ -499,13 +518,13 @@ int av1_optimize_txb(const struct AV1_COMP *cpi, MACROBLOCK *x, int plane,
     --si;
   }
 
-#define UPDATE_COEFF_EOB_CASE(tx_class_literal)                            \
-  case tx_class_literal:                                                   \
-    update_coeff_eob_facade(                                               \
-        &accu_rate, &accu_dist, &eob, &nz_num, nz_ci, &si, tx_size,        \
-        tx_class_literal, bhl, width, txb_ctx->dc_sign_ctx, rdmult, shift, \
-        dequant, scan, txb_eob_costs, txb_costs, tcoeff, qcoeff, dqcoeff,  \
-        levels, sharpness, iqmatrix, qmatrix, max_nz_num);                 \
+#define UPDATE_COEFF_EOB_CASE(tx_class_literal)                              \
+  case tx_class_literal:                                                     \
+    update_coeff_eob_facade(                                                 \
+        &accu_rate, &accu_dist, &eob, &nz_num, nz_ci, &si, tx_size,          \
+        tx_class_literal, bhl, width, txb_ctx->dc_sign_ctx, rdmult, shift,   \
+        dequant, scan, txb_eob_costs, txb_costs, tcoeff, qcoeff, dqcoeff,    \
+        levels, sharpness, iqmatrix, qmatrix, max_nz_num, is_noise_pattern); \
     break
   switch (tx_class) {
     UPDATE_COEFF_EOB_CASE(TX_CLASS_2D);
@@ -590,7 +609,7 @@ static AOM_FORCE_INLINE int warehouse_efficients_txb(
 
   av1_get_nz_map_contexts(levels, scan, eob, tx_size, tx_class, coeff_contexts);
 
-  const int(*lps_cost)[COEFF_BASE_RANGE + 1 + COEFF_BASE_RANGE + 1] =
+  const int (*lps_cost)[COEFF_BASE_RANGE + 1 + COEFF_BASE_RANGE + 1] =
       coeff_costs->lps_cost;
   int c = eob - 1;
   {
@@ -617,7 +636,7 @@ static AOM_FORCE_INLINE int warehouse_efficients_txb(
       }
     }
   }
-  const int(*base_cost)[8] = coeff_costs->base_cost;
+  const int (*base_cost)[8] = coeff_costs->base_cost;
   for (c = eob - 2; c >= 1; --c) {
     const int pos = scan[c];
     const int coeff_ctx = coeff_contexts[pos];

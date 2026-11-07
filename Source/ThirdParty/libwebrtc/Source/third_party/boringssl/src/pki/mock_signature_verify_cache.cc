@@ -18,10 +18,6 @@
 
 BSSL_NAMESPACE_BEGIN
 
-MockSignatureVerifyCache::MockSignatureVerifyCache() = default;
-
-MockSignatureVerifyCache::~MockSignatureVerifyCache() = default;
-
 void MockSignatureVerifyCache::Store(const std::string &key,
                                      SignatureVerifyCache::Value value) {
   cache_.insert_or_assign(key, value);

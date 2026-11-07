@@ -25,13 +25,18 @@
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
 #include "modules/rtp_rtcp/source/ulpfec_header_reader_writer.h"
+#include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/random.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
 namespace {
+
+using ::testing::IsEmpty;
+using ::testing::SizeIs;
 
 // Transport header size in bytes. Assume UDP/IPv4 as a reasonable minimum.
 constexpr size_t kTransportOverhead = 28;
@@ -265,6 +270,48 @@ TYPED_TEST(RtpFecTest,
                                kNumImportantPackets, kUseUnequalProtection,
                                kFecMaskBursty, &this->generated_fec_packets_));
   EXPECT_TRUE(this->generated_fec_packets_.empty());
+}
+
+TYPED_TEST(RtpFecTest,
+           WillNotProtectMediaPacketsWithOutOfOrderWrappedSequenceNumbers) {
+  ForwardErrorCorrection::PacketList media_packets =
+      this->media_packet_generator_.ConstructMediaPackets(3);
+  ASSERT_THAT(media_packets, SizeIs(3));
+  // Set RTP sequence numbers.
+  auto it = media_packets.begin();
+  SetBE16((**(it++)).data.AsMutableSpan().subspan(2), 0);
+  SetBE16((**(it++)).data.AsMutableSpan().subspan(2), 47);
+  // Sequence number = 2^16 + 20 after wrap around become 20.
+  SetBE16((**(it++)).data.AsMutableSpan().subspan(2), 20);
+
+  std::list<ForwardErrorCorrection::Packet*> generated_fec_packets;
+  EXPECT_LT(this->fec_.EncodeFec(media_packets, /*protection_factor=*/127,
+                                 /*num_important_packets=*/3,
+                                 /*use_unequal_protection=*/false,
+                                 kFecMaskBursty, &generated_fec_packets),
+            0);
+  EXPECT_THAT(generated_fec_packets, IsEmpty());
+}
+
+TYPED_TEST(RtpFecTest,
+           WillNotProtectMediaPacketsWithOutOfOrderWrappedSequenceNumbers2) {
+  ForwardErrorCorrection::PacketList media_packets =
+      this->media_packet_generator_.ConstructMediaPackets(3);
+  ASSERT_THAT(media_packets, SizeIs(3));
+  // Set RTP sequence numbers.
+  auto it = media_packets.begin();
+  SetBE16((**(it++)).data.AsMutableSpan().subspan(2), 0);
+  SetBE16((**(it++)).data.AsMutableSpan().subspan(2), 46);
+  // Sequence number = 2^16 + 20 after wrap around become 20.
+  SetBE16((**(it++)).data.AsMutableSpan().subspan(2), 20);
+
+  std::list<ForwardErrorCorrection::Packet*> generated_fec_packets;
+  EXPECT_LT(this->fec_.EncodeFec(media_packets, /*protection_factor=*/127,
+                                 /*num_important_packets=*/3,
+                                 /*use_unequal_protection=*/false,
+                                 kFecMaskBursty, &generated_fec_packets),
+            0);
+  EXPECT_THAT(generated_fec_packets, IsEmpty());
 }
 
 TYPED_TEST(RtpFecTest, FecRecoveryNoLoss) {

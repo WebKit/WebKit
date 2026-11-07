@@ -56,10 +56,14 @@ int RAND_poll() { return 1; }
 
 int RAND_status() { return 1; }
 
+namespace {
+
 static const struct rand_meth_st kSSLeayMethod = {
     RAND_seed, RAND_bytes,        RAND_cleanup,
     RAND_add,  RAND_pseudo_bytes, RAND_status,
 };
+
+}  // namespace
 
 RAND_METHOD *RAND_SSLeay() { return (RAND_METHOD *)&kSSLeayMethod; }
 

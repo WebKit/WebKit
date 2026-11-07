@@ -188,3 +188,49 @@ fn format_serial_number_padding() {
         "1e51139d9c81903825327251f3331b70d09b6a5c     "
     );
 }
+
+#[test]
+fn parse_der_privkey_invalid() {
+    assert!(keys::PrivateKey::from_der(b"not valid der").is_err());
+}
+
+#[test]
+fn parse_der_privkey_roundtrip() {
+    let pem_key = keys::PrivateKey::from_pem(PEM_WITH_PASS, || b"BoringSSL is awesome!").unwrap();
+    let der = pem_key.private_key_to_der();
+    let der_key = keys::PrivateKey::from_der(&der).unwrap();
+    assert_eq!(der_key.private_key_to_der(), der);
+}
+
+#[test]
+fn parse_der_privkey_ec_p256() {
+    let ec_key = bssl_crypto::ecdsa::PrivateKey::<bssl_crypto::ec::P256>::generate();
+    let ec_der_key = keys::PrivateKey::from_der(ec_key.to_der_private_key_info().as_ref()).unwrap();
+    assert_eq!(ec_der_key.algorithm(), Some(keys::PrivateKeyAlgorithm::Ec));
+}
+
+#[cfg(feature = "experimental")]
+#[test]
+fn generate_self_signed_cert() -> Result<(), errors::PkiError> {
+    let ec_key = bssl_crypto::ecdsa::PrivateKey::<bssl_crypto::ec::P256>::generate();
+    let key = keys::PrivateKey::from_der(ec_key.to_der_private_key_info().as_ref())?;
+    let not_before = 1_700_000_000;
+    let not_after = 1_700_086_400;
+    let mut builder = certificates::X509CertificateBuilder::new();
+    builder
+        .with_serial_number(42)?
+        .with_not_before(not_before)?
+        .with_not_after(not_after)?
+        .with_subject_common_name("WebRTC")?;
+    let cert = builder.build_self_signed(&key)?;
+    assert!(cert.matches_private_key(&key));
+    assert_eq!(format!("{:x}", cert.serial_number()), "2a");
+    assert_eq!(cert.not_before(), Some(not_before));
+    assert_eq!(cert.not_after(), Some(not_after));
+
+    let der = cert.to_der()?;
+    let (parsed, rem) = certificates::X509Certificate::from_der(&der)?;
+    assert!(rem.is_empty());
+    assert!(parsed.matches_private_key(&key));
+    Ok(())
+}

@@ -14,6 +14,9 @@
 #include "gtest/gtest.h"
 
 #include "./vpx_config.h"
+#if CONFIG_VP8_DECODER && CONFIG_MULTITHREAD && defined(__linux__)
+#include <sys/resource.h>
+#endif
 #include "test/ivf_video_source.h"
 #include "test/video_source.h"
 #if CONFIG_VP8_ENCODER || CONFIG_VP9_ENCODER
@@ -354,6 +357,100 @@ TEST(DecodeAPI, Vp8MultiThreadedWorkerDecodeErrorFailsFrame) {
   EXPECT_EQ(vpx_codec_destroy(&dec), VPX_CODEC_OK);
 }
 #endif  // CONFIG_VP8_ENCODER && CONFIG_MULTITHREAD
+
+#if CONFIG_MULTITHREAD && defined(__linux__)
+// Issue: 571147583
+// Verifies that when restarting decode threads fails on a keyframe with a new
+// resolution, the cached dimensions (ctx->si.w, ctx->si.h) are cleared so a
+// subsequent decode triggers a resolution change and reallocates frame buffers.
+TEST(DecodeAPI, Vp8MultiThreadedRestartResolutionChange) {
+  // Minimal 2-partition VP8 keyframe buffer (first partition = 256 bytes).
+  std::vector<uint8_t> frame(1500, 0);
+  frame[0] = 0x10;
+  frame[1] = 0x20;
+  frame[3] = 0x9d;
+  frame[4] = 0x01;
+  frame[5] = 0x2a;
+  frame[6] = 0x00;  // width = 256
+  frame[7] = 0x01;
+  frame[8] = 0x00;  // height = 256
+  frame[9] = 0x01;
+  frame[10] = 0x0f;  // 2 token partitions
+  frame[11] = 0xc1;
+  frame[12] = 0x28;
+  frame[266] = 0x58;  // token partition 0 size = 600
+  frame[267] = 0x02;
+
+  vpx_codec_ctx_t dec;
+  vpx_codec_dec_cfg_t cfg = { /*threads=*/2, /*w=*/0, /*h=*/0 };
+  ASSERT_EQ(vpx_codec_dec_init(&dec, &vpx_codec_vp8_dx_algo, &cfg, 0),
+            VPX_CODEC_OK);
+
+  // Frame 0: valid 256x256 keyframe initializes 256x256 frame buffers
+  // (yv12_fb_new->y_width = 256, pc->Width = 256) and worker threads.
+  ASSERT_EQ(
+      vpx_codec_decode(&dec, frame.data(),
+                       static_cast<unsigned int>(frame.size()), nullptr, 0),
+      VPX_CODEC_OK);
+
+  // Frame 1: truncate token partition 0 to 1 byte so the worker thread fails in
+  // vp8mt_decode_mb_rows(), shutting down threads and setting
+  // ctx->restart_threads = 1.
+  frame[266] = 1;
+  frame[267] = 0;
+  EXPECT_EQ(
+      vpx_codec_decode(&dec, frame.data(),
+                       static_cast<unsigned int>(frame.size()), nullptr, 0),
+      VPX_CODEC_CORRUPT_FRAME);
+
+  // Change keyframe header to 16x64. In each iteration:
+  // 1. Set RLIMIT_NPROC = 0 so pthread_create fails inside restart_threads and
+  //    vpx_codec_decode returns VPX_CODEC_ERROR after vp8_peek_si_internal()
+  //    has updated ctx->si.w = 16, ctx->si.h = 64.
+  // 2. Restore RLIMIT_NPROC and decode again so restart_threads succeeds and
+  //    allocates mt_yabove_row for pc->Width.
+  //
+  // Without the fix:
+  // - ctx->si.w = 16, ctx->si.h = 64 remain cached after step 1, so step 2
+  //   sees resolution_change == 0 and skips vp8_alloc_frame_buffers()
+  //   (leaving yv12_fb_new->y_width = 256).
+  // - In iteration 0 step 2, vp8_decode_frame() sets pc->Width = 16 from the
+  //   keyframe header before failing on the truncated token partition
+  //   (setting ctx->restart_threads = 1 again).
+  // - In iteration 1 step 2, restart_threads allocates mt_yabove_row for
+  //   pc->Width = 16 (103 bytes) while yv12_fb_new->y_width is still 256,
+  //   causing a 261-byte write (heap-buffer-overflow) in
+  //   vp8mt_decode_mb_rows().
+  //
+  // With the fix:
+  // - Step 1 clears ctx->si.w = 0, ctx->si.h = 0 on thread restart failure.
+  // - Step 2 detects resolution_change == 1, reallocates frame buffers to
+  //   16x64, and cleanly returns VPX_CODEC_CORRUPT_FRAME on the truncated
+  //   partition.
+  frame[6] = 16;
+  frame[7] = 0;
+  frame[8] = 64;
+  frame[9] = 0;
+  struct rlimit old_lim;
+  ASSERT_EQ(getrlimit(RLIMIT_NPROC, &old_lim), 0);
+  const struct rlimit zero_lim = { 0, old_lim.rlim_max };
+  for (int i = 0; i < 2; ++i) {
+    ASSERT_EQ(setrlimit(RLIMIT_NPROC, &zero_lim), 0);
+    const vpx_codec_err_t res =
+        vpx_codec_decode(&dec, frame.data(),
+                         static_cast<unsigned int>(frame.size()), nullptr, 0);
+    ASSERT_EQ(setrlimit(RLIMIT_NPROC, &old_lim), 0);
+    EXPECT_EQ(res, VPX_CODEC_ERROR);
+
+    EXPECT_EQ(
+        vpx_codec_decode(&dec, frame.data(),
+                         static_cast<unsigned int>(frame.size()), nullptr, 0),
+        VPX_CODEC_CORRUPT_FRAME);
+  }
+
+  EXPECT_EQ(vpx_codec_destroy(&dec), VPX_CODEC_OK);
+}
+#endif  // CONFIG_MULTITHREAD && defined(__linux__)
 #endif  // CONFIG_VP8_DECODER
 
 #if CONFIG_VP9_DECODER
@@ -531,5 +628,55 @@ TEST(DecodeAPI, HighBitDepthCapability) {
 #endif
 #endif
 }
+
+#if CONFIG_VP8_DECODER
+TEST(DecodeAPI, SetReferenceValidationVp8) {
+  vpx_codec_ctx_t dec;
+  ASSERT_EQ(vpx_codec_dec_init(&dec, vpx_codec_vp8_dx(), nullptr, 0),
+            VPX_CODEC_OK);
+
+  vpx_image_t ref_img;
+  ASSERT_NE(vpx_img_alloc(&ref_img, VPX_IMG_FMT_I420, 64, 64, 1), nullptr);
+
+  for (const int plane : { VPX_PLANE_Y, VPX_PLANE_U, VPX_PLANE_V }) {
+    vpx_ref_frame_t ref_frame;
+    ref_frame.frame_type = VP8_LAST_FRAME;
+    ref_frame.img = ref_img;
+    ref_frame.img.planes[plane] = nullptr;
+    EXPECT_EQ(vpx_codec_control(&dec, VP8_SET_REFERENCE, &ref_frame),
+              VPX_CODEC_INVALID_PARAM);
+    EXPECT_EQ(vpx_codec_control(&dec, VP8_COPY_REFERENCE, &ref_frame),
+              VPX_CODEC_INVALID_PARAM);
+  }
+
+  vpx_img_free(&ref_img);
+  EXPECT_EQ(vpx_codec_destroy(&dec), VPX_CODEC_OK);
+}
+#endif  // CONFIG_VP8_DECODER
+
+#if CONFIG_VP9_DECODER
+TEST(DecodeAPI, SetReferenceValidationVp9) {
+  vpx_codec_ctx_t dec;
+  ASSERT_EQ(vpx_codec_dec_init(&dec, vpx_codec_vp9_dx(), nullptr, 0),
+            VPX_CODEC_OK);
+
+  vpx_image_t ref_img;
+  ASSERT_NE(vpx_img_alloc(&ref_img, VPX_IMG_FMT_I420, 64, 64, 1), nullptr);
+
+  for (const int plane : { VPX_PLANE_Y, VPX_PLANE_U, VPX_PLANE_V }) {
+    vpx_ref_frame_t ref_frame;
+    ref_frame.frame_type = VP8_LAST_FRAME;
+    ref_frame.img = ref_img;
+    ref_frame.img.planes[plane] = nullptr;
+    EXPECT_EQ(vpx_codec_control(&dec, VP8_SET_REFERENCE, &ref_frame),
+              VPX_CODEC_INVALID_PARAM);
+    EXPECT_EQ(vpx_codec_control(&dec, VP8_COPY_REFERENCE, &ref_frame),
+              VPX_CODEC_INVALID_PARAM);
+  }
+
+  vpx_img_free(&ref_img);
+  EXPECT_EQ(vpx_codec_destroy(&dec), VPX_CODEC_OK);
+}
+#endif  // CONFIG_VP9_DECODER
 
 }  // namespace

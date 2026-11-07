@@ -49,10 +49,6 @@ DEFINE_CERT_ERROR_ID(kFailedReadingGeneralName,
 
 }  // namespace
 
-GeneralNames::GeneralNames() = default;
-
-GeneralNames::~GeneralNames() = default;
-
 // static
 std::unique_ptr<GeneralNames> GeneralNames::Create(der::Input general_names_tlv,
                                                    CertErrors *errors) {

@@ -37,7 +37,7 @@ if(RISCV_COMPILER_FLAGS STREQUAL "")
     list(APPEND RISCV_COMPILER_FLAGS "-march=rv64gcv")
     if(NOT USE_AUTO_VECTORIZER)
       # Disable auto-vectorizer
-      add_compile_options(-fno-vectorize -fno-slp-vectorize)
+      add_compile_options(-fno-tree-vectorize -fno-tree-slp-vectorize)
     endif()
   else()
     list(APPEND RISCV_COMPILER_FLAGS "-march=rv64gc")

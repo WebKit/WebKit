@@ -41,7 +41,9 @@ void __msan_unpoison(void *, size_t);
 }
 #endif
 
-static ssize_t boringssl_getrandom(void *buf, size_t buf_len, unsigned flags) {
+namespace {
+
+ssize_t boringssl_getrandom(void *buf, size_t buf_len, unsigned flags) {
   ssize_t ret;
   do {
     ret = syscall(__NR_getrandom, buf, buf_len, flags);
@@ -63,14 +65,14 @@ static ssize_t boringssl_getrandom(void *buf, size_t buf_len, unsigned flags) {
 static const int kHaveGetrandom = -3;
 
 // urandom_fd is a file descriptor to /dev/urandom. It's protected by `once`.
-static int urandom_fd;
+int urandom_fd;
 
-static CRYPTO_once_t rand_once = CRYPTO_ONCE_INIT;
+CRYPTO_once_t g_rand_once = CRYPTO_ONCE_INIT;
 
 // init_once initializes the state of this module to values previously
 // requested. This is the only function that modifies `urandom_fd`, which may be
 // read safely after calling the once.
-static void init_once() {
+void init_once() {
   int have_getrandom;
   uint8_t dummy;
   ssize_t getrandom_ret =
@@ -113,7 +115,9 @@ static void init_once() {
   urandom_fd = fd;
 }
 
-void bssl::CRYPTO_init_sysrand() { CRYPTO_once(&rand_once, init_once); }
+}  // namespace
+
+void bssl::CRYPTO_init_sysrand() { CRYPTO_once(&g_rand_once, init_once); }
 
 // CRYPTO_sysrand writes `len` bytes of entropy into `out`.
 void bssl::CRYPTO_sysrand(uint8_t *out, size_t len) {

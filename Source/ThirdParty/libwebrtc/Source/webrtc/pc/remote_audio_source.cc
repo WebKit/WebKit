@@ -118,6 +118,14 @@ bool RemoteAudioSource::remote() const {
 void RemoteAudioSource::SetVolume(double volume) {
   RTC_DCHECK_GE(volume, 0);
   RTC_DCHECK_LE(volume, 10);
+  if (!main_thread_->IsCurrent()) {
+    // The Android and Objective-C SDKs call SetVolume() on the application's
+    // thread, but the audio observers are registered on the main thread.
+    main_thread_->PostTask([thiz = scoped_refptr<RemoteAudioSource>(this),
+                            volume] { thiz->SetVolume(volume); });
+    return;
+  }
+  RTC_DCHECK_RUN_ON(main_thread_);
   RTC_LOG(LS_INFO) << StringFormat("RAS::%s({volume=%.2f})", __func__, volume);
   for (auto* observer : audio_observers_) {
     observer->OnSetVolume(volume);
@@ -125,12 +133,14 @@ void RemoteAudioSource::SetVolume(double volume) {
 }
 
 void RemoteAudioSource::RegisterAudioObserver(AudioObserver* observer) {
+  RTC_DCHECK_RUN_ON(main_thread_);
   RTC_DCHECK(observer != nullptr);
   RTC_DCHECK(!absl::c_linear_search(audio_observers_, observer));
   audio_observers_.push_back(observer);
 }
 
 void RemoteAudioSource::UnregisterAudioObserver(AudioObserver* observer) {
+  RTC_DCHECK_RUN_ON(main_thread_);
   RTC_DCHECK(observer != nullptr);
   audio_observers_.remove(observer);
 }

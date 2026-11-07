@@ -91,7 +91,7 @@ inline bool TooLongWithoutResponse(
   if (pings_since_last_response.empty())
     return false;
 
-  auto first = pings_since_last_response[0];
+  const auto& first = pings_since_last_response[0];
   return now > (first.sent_time + maximum_time);
 }
 
@@ -666,7 +666,8 @@ void Connection::MaybeHandleDtlsPiggybackingAttributes(
       piggyback_acks->push_back(sent_hash);
     }
   }
-  dtls_stun_piggyback_callbacks_.recv_data(piggyback_data, piggyback_acks);
+  dtls_stun_piggyback_callbacks_.recv_data(piggyback_data,
+                                           std::move(piggyback_acks));
 }
 
 void Connection::HandleStunBindingOrGoogPingRequest(IceMessage* msg) {
@@ -1425,6 +1426,8 @@ std::string Connection::ToString() const {
       "S",  // selected (true)
   };
   StringBuilder ss;
+  // Fits the typical description without reallocations.
+  ss.Reserve(256);
   ss << "Conn[" << ToDebugId();
 
   if (!port_) {
@@ -1432,18 +1435,17 @@ std::string Connection::ToString() const {
     // the names with a hash (rhyming with trash).
     ss << ":#:#:";
   } else {
-    ss << ":" << port_->content_name() << ":" << port_->Network()->ToString()
-       << ":";
+    ss << ":" << port_->content_name() << ":" << *port_->Network() << ":";
   }
 
   const Candidate& local = local_candidate();
   const Candidate& remote = remote_candidate();
   ss << local.id() << ":" << local.component() << ":" << local.generation()
      << ":" << local.type_name() << ":" << local.protocol() << ":"
-     << local.address().ToSensitiveString() << "->" << remote.id() << ":"
+     << SocketAddress::Sensitive(local.address()) << "->" << remote.id() << ":"
      << remote.component() << ":" << remote.priority() << ":"
      << remote.type_name() << ":" << remote.protocol() << ":"
-     << remote.address().ToSensitiveString() << "|";
+     << SocketAddress::Sensitive(remote.address()) << "|";
 
   ss << CONNECT_STATE_ABBREV[connected_] << RECEIVE_STATE_ABBREV[receiving_]
      << WRITE_STATE_ABBREV[write_state_] << ICESTATE[static_cast<int>(state_)]

@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_DSA_H
 #define OPENSSL_HEADER_DSA_H
 
-#include <openssl/base.h>   // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
 
 #include <openssl/ex_data.h>
 
@@ -50,6 +50,11 @@ OPENSSL_EXPORT void DSA_free(DSA *dsa);
 // DSA_up_ref increments the reference count of `dsa` and returns one. It does
 // not mutate `dsa` for thread-safety purposes and may be used concurrently.
 OPENSSL_EXPORT int DSA_up_ref(DSA *dsa);
+
+// DSA_dup_ref increments the reference count of `dsa` and returns the same
+// handle. It does not mutate `dsa` for thread-safety purposes and may be used
+// concurrently.
+OPENSSL_EXPORT DSA *DSA_dup_ref(const DSA *dsa);
 
 
 // Properties.
@@ -370,7 +375,7 @@ extern "C++" {
 BSSL_NAMESPACE_BEGIN
 
 BORINGSSL_MAKE_DELETER(DSA, DSA_free)
-BORINGSSL_MAKE_UP_REF(DSA, DSA_up_ref)
+BORINGSSL_MAKE_UP_REF(DSA, DSA_dup_ref)
 BORINGSSL_MAKE_DELETER(DSA_SIG, DSA_SIG_free)
 
 BSSL_NAMESPACE_END

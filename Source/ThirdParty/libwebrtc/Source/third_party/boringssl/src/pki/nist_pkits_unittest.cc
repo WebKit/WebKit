@@ -79,10 +79,6 @@ PkitsTestInfo::PkitsTestInfo() {
   SetUserConstrainedPolicySet("NIST-test-policy-1");
 }
 
-PkitsTestInfo::PkitsTestInfo(const PkitsTestInfo &other) = default;
-
-PkitsTestInfo::~PkitsTestInfo() = default;
-
 void PkitsTestInfo::SetInitialExplicitPolicy(bool b) {
   initial_explicit_policy =
       b ? InitialExplicitPolicy::kTrue : InitialExplicitPolicy::kFalse;

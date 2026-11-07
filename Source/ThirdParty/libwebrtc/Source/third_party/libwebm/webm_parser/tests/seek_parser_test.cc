@@ -32,7 +32,8 @@ TEST_F(SeekParserTest, DefaultValues) {
   SetReaderData({
       // A SeekID element with a length of 0 isn't valid, so we don't test it.
 
-      0x53, 0xAC,  // ID = 0x53AC (SeekPosition).
+      0x53,
+      0xAC,  // ID = 0x53AC (SeekPosition).
       0x80,  // Size = 0.
   });
 
@@ -46,11 +47,13 @@ TEST_F(SeekParserTest, DefaultValues) {
 
 TEST_F(SeekParserTest, CustomValues) {
   SetReaderData({
-      0x53, 0xAB,  // ID = 0x53AB (SeekID).
+      0x53,
+      0xAB,  // ID = 0x53AB (SeekID).
       0x81,  // Size = 1.
       0x01,  // Body.
 
-      0x53, 0xAC,  // ID = 0x53AC (SeekPosition).
+      0x53,
+      0xAC,  // ID = 0x53AC (SeekPosition).
       0x81,  // Size = 1.
       0x02,  // Body (value = 2).
   });

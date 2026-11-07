@@ -48,16 +48,20 @@ TEST_F(EditionEntryParserTest, DefaultValues) {
 TEST_F(EditionEntryParserTest, CustomValues) {
   SetReaderData({
       0xB6,  // ID = 0xB6 (ChapterAtom).
-      0x40, 0x04,  // Size = 4.
+      0x40,
+      0x04,  // Size = 4.
 
-      0x73, 0xC4,  //   ID = 0x73C4 (ChapterUID).
+      0x73,
+      0xC4,  //   ID = 0x73C4 (ChapterUID).
       0x81,  //   Size = 1.
       0x01,  //   Body (value = 1).
 
       0xB6,  // ID = 0xB6 (ChapterAtom).
-      0x40, 0x04,  // Size = 4.
+      0x40,
+      0x04,  // Size = 4.
 
-      0x73, 0xC4,  //   ID = 0x73C4 (ChapterUID).
+      0x73,
+      0xC4,  //   ID = 0x73C4 (ChapterUID).
       0x81,  //   Size = 1.
       0x02,  //   Body (value = 2).
   });

@@ -13,12 +13,8 @@ if (is_android) {
 }
 
 if (rtc_include_tests) {
-  rtc_library("audio_codecs_api_unittests") {
-    testonly = true
-    sources = [
-      "audio_decoder_factory_template_unittest.cc",
-      "audio_encoder_factory_template_unittest.cc",
-    ]
+  rtc_cc_test("audio_decoder_factory_template_unittest") {
+    sources = [ "audio_decoder_factory_template_unittest.cc" ]
     deps = [
       "..:audio_codecs_api",
       "../..:make_ref_counted",
@@ -28,12 +24,25 @@ if (rtc_include_tests) {
       "../../../test:test_support",
       "../../environment",
       "../L16:audio_decoder_L16",
-      "../L16:audio_encoder_L16",
       "../g711:audio_decoder_g711",
-      "../g711:audio_encoder_g711",
       "../g722:audio_decoder_g722",
-      "../g722:audio_encoder_g722",
       "../opus:audio_decoder_opus",
+    ]
+  }
+
+  rtc_cc_test("audio_encoder_factory_template_unittest") {
+    sources = [ "audio_encoder_factory_template_unittest.cc" ]
+    deps = [
+      "..:audio_codecs_api",
+      "../..:make_ref_counted",
+      "../..:scoped_refptr",
+      "../../../test:audio_codec_mocks",
+      "../../../test:create_test_environment",
+      "../../../test:test_support",
+      "../../environment",
+      "../L16:audio_encoder_L16",
+      "../g711:audio_encoder_g711",
+      "../g722:audio_encoder_g722",
       "../opus:audio_encoder_opus",
     ]
   }

@@ -32,9 +32,7 @@ rtc_library("dcsctp_fuzzers") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("dcsctp_fuzzers_unittests") {
-    testonly = true
-
+  rtc_cc_test("dcsctp_fuzzers_test") {
     deps = [
       ":dcsctp_fuzzers",
       "../../../test:test_support",

@@ -26,7 +26,6 @@
 
 #include "../../internal.h"
 #include "../../mem_internal.h"
-#include "../bcm_interface.h"
 #include "../delocate.h"
 #include "../ecdsa/internal.h"
 #include "../service_indicator/internal.h"
@@ -145,6 +144,13 @@ int EC_KEY_up_ref(EC_KEY *r) {
   auto *impl = FromOpaque(r);
   impl->UpRefInternal();
   return 1;
+}
+
+EC_KEY *EC_KEY_dup_ref(const EC_KEY *key) {
+  if (key == nullptr) {
+    return nullptr;
+  }
+  return FromOpaque(key)->DupRefInternal();
 }
 
 int EC_KEY_is_opaque(const EC_KEY *key) {

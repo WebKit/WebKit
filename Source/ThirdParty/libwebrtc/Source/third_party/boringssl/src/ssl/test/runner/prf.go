@@ -20,10 +20,18 @@ import (
 )
 
 // copyHash returns a copy of |h|, which must be an instance of |hashType|.
-func copyHash(h hash.Hash, hash crypto.Hash) hash.Hash {
+func copyHash(h hash.Hash, hashType crypto.Hash) hash.Hash {
 	// While hash.Hash is not copyable, the documentation says all standard
-	// library hash.Hash implementations implement BinaryMarshaler and
-	// BinaryUnmarshaler interfaces.
+	// library hash.Hash implementations implement hash.Cloner, except with
+	// GOFIPS140=v1.0.0, where we use BinaryMarshaler and BinaryUnmarshaler.
+	if c, ok := h.(hash.Cloner); ok {
+		ret, err := c.Clone()
+		if err != nil {
+			panic(err)
+		}
+		return ret
+	}
+
 	m, ok := h.(encoding.BinaryMarshaler)
 	if !ok {
 		panic("hash did not implement encoding.BinaryMarshaler")
@@ -32,7 +40,7 @@ func copyHash(h hash.Hash, hash crypto.Hash) hash.Hash {
 	if err != nil {
 		panic(err)
 	}
-	ret := hash.New()
+	ret := hashType.New()
 	u, ok := ret.(encoding.BinaryUnmarshaler)
 	if !ok {
 		panic("hash did not implement BinaryUnmarshaler")
