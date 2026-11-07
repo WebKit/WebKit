@@ -37,9 +37,12 @@
 namespace TestWebKitAPI {
 
 static bool didFinishLoad;
-static bool didNotHandleKeyDownEvent;
 static bool javascriptRun;
 static bool isScrolled;
+
+#if PLATFORM(COCOA)
+static bool didNotHandleKeyDownEvent;
+#endif
 
 static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
 {
@@ -48,8 +51,10 @@ static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const voi
 
 static void didNotHandleKeyEventCallback(WKPageRef, WKNativeEventPtr event, const void*)
 {
+#if PLATFORM(COCOA)
     if (Util::isKeyDown(event))
         didNotHandleKeyDownEvent = true;
+#endif
 }
 
 
@@ -109,7 +114,9 @@ TEST(WebKit, SpacebarScrolling)
 
     EXPECT_JS_EQ(webView.page(), "blurTextField()", "undefined");
 
+#if PLATFORM(COCOA)
     didNotHandleKeyDownEvent = false;
+#endif
     webView.simulateSpacebarKeyPress();
 
     while (!isScrolled) {

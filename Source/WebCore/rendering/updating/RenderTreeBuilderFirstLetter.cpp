@@ -340,7 +340,7 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
     RenderElement* firstLetterContainer = textContentParent;
     if (!firstLetterContainer)
         return;
-    
+
     auto pseudoStyle = styleForFirstLetter(*firstLetterContainer);
     if (!pseudoStyle)
         return;
