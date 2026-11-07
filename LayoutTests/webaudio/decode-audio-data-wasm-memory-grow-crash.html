@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// Regression test for rdar://182930759: decodeAudioData() used to hand the
+// script-visible ArrayBuffer's storage to the Audio Decoder thread as a raw
+// span, protected only by ArrayBuffer::pin(). pin() blocks transfer(), but
+// WebAssembly.Memory.grow() relocates a bounds-checking Wasm memory and frees
+// its old allocation regardless, leaving the decoder thread reading freed
+// memory.
+const pageCount = 128;
+const total = pageCount * 0x10000;
+
+// A CAF file with no early `desc` chunk, so AudioToolbox's format probe walks
+// ~700,000 empty `free` chunk headers before reading a chunk header at
+// 0x7efff8. That keeps the decoder thread reading the buffer long enough for
+// grow() to free it underneath.
+function makeCaf()
+{
+    const bytes = new Uint8Array(total);
+    const view = new DataView(bytes.buffer);
+    bytes.set([0x63, 0x61, 0x66, 0x66, 0x00, 0x01, 0x00, 0x00], 0); // "caff", version 1
+    const target = 0x7efff8;
+    const firstPayload = (target - 8 - 12) % 12;
+    let offset = 8;
+    bytes.set([0x66, 0x72, 0x65, 0x65], offset); // "free"
+    view.setBigUint64(offset + 4, BigInt(firstPayload));
+    offset += 12 + firstPayload;
+    while (offset + 12 <= target) {
+        bytes.set([0x66, 0x72, 0x65, 0x65], offset);
+        offset += 12;
+    }
+    bytes.set([0x64, 0x61, 0x74, 0x61], target); // "data", straddling the end of the allocation
+    view.setBigUint64(target + 4, BigInt(total - target - 12));
+    return bytes;
+}
+
+const template = makeCaf();
+// Retaining these makes the victim's 8 MiB reservation the one the replacement
+// ArrayBuffer below reclaims; without it the freed region usually is not
+// reused and the unfixed code reads unmapped-but-still-reserved memory.
+const retained = [Array.from({ length: 8 }, () => new WebAssembly.Memory({ initial: 1, maximum: 2 }))];
+const victim = new WebAssembly.Memory({ initial: pageCount, maximum: pageCount + 1 });
+new Uint8Array(victim.buffer).set(template);
+const context = new AudioContext({ sampleRate: 8000 });
+const decode = context.decodeAudioData(victim.buffer);
+retained.push(victim, context, decode, template);
+
+setTimeout(() => {
+    // Frees the old 8 MiB Wasm memory reservation the decoder thread was reading.
+    victim.grow(1);
+    // Reclaim it with an allocation whose final page is unmapped, so a read past
+    // the end of the freed region faults rather than silently succeeding.
+    const activeSize = total - 0x10000;
+    const replacement = new ArrayBuffer(activeSize, { maxByteLength: total });
+    const bytes = new Uint8Array(replacement);
+    bytes.set(template.subarray(0, activeSize));
+    retained.push(replacement, bytes);
+    decode.catch(() => { }).then(() => {
+        document.body.appendChild(document.createTextNode("PASS if no crash"));
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+}, 0);
+globalThis.retained = retained;
+</script>
+</body>
+</html>
