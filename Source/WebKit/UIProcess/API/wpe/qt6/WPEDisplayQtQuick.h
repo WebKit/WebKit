@@ -29,12 +29,16 @@
 #include <glib-object.h>
 #include <wpe/wpe-platform.h>
 
+class QOpenGLFunctions;
+
 G_BEGIN_DECLS
 
 #define WPE_TYPE_DISPLAY_QTQUICK (wpe_display_qtquick_get_type())
 G_DECLARE_FINAL_TYPE (WPEDisplayQtQuick, wpe_display_qtquick, WPE, DISPLAY_QTQUICK, WPEDisplay)
 
 WPEDisplay *wpe_display_qtquick_new (void);
+gboolean wpe_display_qtquick_wait_rendering_fence(WPEDisplayQtQuick*, WPEBuffer*, GError**);
+int wpe_display_qtquick_create_release_fence(WPEDisplayQtQuick*, QOpenGLFunctions*);
 
 G_END_DECLS
 
