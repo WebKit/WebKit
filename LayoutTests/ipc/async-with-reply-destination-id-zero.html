@@ -15,7 +15,7 @@ setTimeout(async () => {
 
     const { CoreIPC } = await import('./coreipc.js');
     CoreIPC.UI.WebExtensionContextProxy.DispatchRuntimeMessageEventReply(
-        0, { replyJSON : 'A' });
+        0, { reply: { optionalValue: { value: { variantIndex: 0, variant: 'A' } } } });
     testRunner?.notifyDone();
 }, 10);
 
