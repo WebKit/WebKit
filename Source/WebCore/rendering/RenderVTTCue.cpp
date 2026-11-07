@@ -81,6 +81,14 @@ void RenderVTTCue::layout()
         repositionGenericCue();
 }
 
+void RenderVTTCue::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    if (borderBoxRect().isEmpty())
+        return;
+
+    RenderBlockFlow::paint(paintInfo, paintOffset);
+}
+
 bool RenderVTTCue::initializeLayoutParameters(LayoutUnit& step, LayoutUnit& position)
 {
     if (!firstChild())
