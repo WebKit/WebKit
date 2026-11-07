@@ -4434,6 +4434,7 @@ RenderBlockFlow::InlineContentStatus RenderBlockFlow::markInlineContentDirtyForL
     auto hasDirtyInFlowBlockLevelElement = false;
     auto hasSimpleOutOfFlowContentOnly = !hasLineIfEmpty();
     auto hasSimpleStaticPositionForInlineLevelOutOfFlowContentByStyle = hasSimpleStaticPositionForInlineLevelOutOfFlowChildrenByStyle(style());
+    auto dirtyInlineBoxesWithOutOfFlowContent = SingleThreadWeakHashSet<const RenderObject> { };
 
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
@@ -4491,6 +4492,9 @@ RenderBlockFlow::InlineContentStatus RenderBlockFlow::markInlineContentDirtyForL
         if (renderer.needsLayout())
             contentNeedsNormalChildLayoutOnly = contentNeedsNormalChildLayoutOnly.value_or(true) && renderer.needsNormalChildOrSimplifiedLayoutOnly();
 
+        if (renderer.isInlineBox() && renderer.needsLayout() && downcast<RenderElement>(renderer).canContainAbsolutelyPositionedObjects())
+            dirtyInlineBoxesWithOutOfFlowContent.add(renderer);
+
         if (isAnyOf<RenderLineBreak, RenderText>(renderer) || renderer.isInlineBox())
             renderer.clearNeedsLayout();
 
@@ -4499,6 +4503,22 @@ RenderBlockFlow::InlineContentStatus RenderBlockFlow::markInlineContentDirtyForL
             cache->onTextRunsChanged(renderer);
 #endif
     }
+
+    auto markOutOfFlowBoxesInDirtyInlineBoxesForLayout = [&] {
+        if (dirtyInlineBoxesWithOutOfFlowContent.isEmptyIgnoringNullReferences())
+            return;
+        // An inline box forwards its out-of-flow boxes to its nearest non-anonymous containing block, which lays them out after this inline layout.
+        // These out-of-flow boxes resolve their insets and percentages against the inline box's size, which changes with its content.
+        auto* outOfFlowBoxes = nearestNonAnonymousContainingBlockIncludingSelf()->outOfFlowBoxes();
+        if (!outOfFlowBoxes)
+            return;
+        for (auto& outOfFlowBox : *outOfFlowBoxes) {
+            if (CheckedPtr container = outOfFlowBox.container(); container && dirtyInlineBoxesWithOutOfFlowContent.contains(*container))
+                outOfFlowBox.setChildNeedsLayout(MarkingBehavior::OnlyThis);
+        }
+    };
+    markOutOfFlowBoxesInDirtyInlineBoxesForLayout();
+
     return { hasSimpleOutOfFlowContentOnly, hasDirtyInFlowBlockLevelElement, hasInFlowBlockLevelElement ? contentNeedsNormalChildLayoutOnly : std::nullopt };
 }
 
