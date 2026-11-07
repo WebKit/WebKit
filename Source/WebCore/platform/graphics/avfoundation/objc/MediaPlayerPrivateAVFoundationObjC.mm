@@ -2553,6 +2553,15 @@ void determineChangedTracksFromNewTracksAndOldItems(NSArray* tracks, NSString* t
     for (SUPPRESS_UNRETAINED_LOCAL AVPlayerItemTrack* track in addedTracks.get())
         addedItems.append(itemFactory(track));
 
+    // Ensure tracks appear in a deterministic order:
+    std::sort(addedItems.begin(), addedItems.end(), [](auto& a, auto& b) {
+        RetainPtr<AVAssetTrack> aTrack = [a->playerItemTrack() assetTrack];
+        RetainPtr<AVAssetTrack> bTrack = [b->playerItemTrack() assetTrack];
+        if (!aTrack || !bTrack)
+            return aTrack && !bTrack;
+        return [aTrack trackID] < [bTrack trackID];
+    });
+
     replacementItems.appendVector(addedItems);
     oldItems.swap(replacementItems);
 
@@ -2612,6 +2621,13 @@ void determineChangedTracksFromNewTracksAndOldItems(MediaSelectionGroupAVFObjC* 
 
     for (auto& option : addedSelectionOptions)
         addedItems.append(itemFactory(option));
+
+    // Ensure tracks appear in a deterministic order:
+    std::sort(addedItems.begin(), addedItems.end(), [](auto& a, auto& b) {
+        auto* aOption = a->mediaSelectionOption();
+        auto* bOption = b->mediaSelectionOption();
+        return (aOption ? aOption->index() : 0) < (bOption ? bOption->index() : 0);
+    });
 
     replacementItems.appendVector(addedItems);
     oldItems.swap(replacementItems);
