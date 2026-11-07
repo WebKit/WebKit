@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div style="height: 10000px"></div>
+<audio id="audio" controls></audio>
+
+<script>
+var output = "This tests that an off-screen audio element exposes its controls when accessibility is enabled after the element was inserted.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    requestAnimationFrame(() => requestAnimationFrame(async () => {
+        await waitFor(() => {
+            window.axAudio = accessibilityController.accessibleElementById("audio");
+            return axAudio && axAudio.childrenCount > 0;
+        });
+        output += expect("axAudio.childrenCount > 0", "true");
+
+        debug(output);
+        finishJSTest();
+    }));
+}
+</script>
+</body>
+</html>

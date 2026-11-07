@@ -2443,7 +2443,9 @@ RefPtr<CaretPosition> Document::caretPositionFromPoint(double x, double y, Caret
             return CaretPosition::create(WTF::move(anchorNode), position.offsetInContainerNode());
     }
 
-    bool adjustPosition = false;
+    // A media element whose controls are not built yet has no shadow content to climb out of.
+    RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(anchorNode);
+    bool adjustPosition = mediaElement && mediaElement->controls();
     while (anchorNode->isInShadowTree() && !(options.shadowRoots.size() && options.shadowRoots.contains(Ref(anchorNode->treeScope().rootNode())))) {
         anchorNode = anchorNode->shadowHost();
         adjustPosition = true;

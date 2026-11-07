@@ -4,6 +4,8 @@
 <script src="../../resources/js-test-pre.js"></script>
 <script src="../../media/media-file.js"></script>
 <script src="../../media/video-test.js"></script>
+<!-- Must load after video-test.js, which defines a different waitFor(). -->
+<script src="../../resources/accessibility-helper.js"></script>
 <script>
 var successfullyParsed = false;
 </script>
@@ -25,10 +27,13 @@ var successfullyParsed = false;
 
     var button;
     var audioElement;
-    function go() {
+    async function go() {
         if (window.accessibilityController) {
-            audioElement = accessibilityController.accessibleElementById("audio1");
-            button = audioElement.childAtIndex(0).childAtIndex(0).childAtIndex(1);
+            await waitFor(() => {
+                audioElement = accessibilityController.accessibleElementById("audio1");
+                button = audioElement?.childAtIndex(0)?.childAtIndex(0)?.childAtIndex(1);
+                return button;
+            });
             shouldBeTrue("button.boolAttributeValue('AXHasTouchEventListener')");
             shouldBe("button.description", "'AXLabel: Play'");
             finishJSTest();

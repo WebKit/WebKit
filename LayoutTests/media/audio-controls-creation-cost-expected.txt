@@ -1,0 +1,3 @@
+
+PASS Adding the controls attribute does not make creating and laying out audio elements more than 20x slower
+

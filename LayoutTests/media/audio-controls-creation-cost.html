@@ -1,0 +1,45 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Creating many audio elements with the controls attribute is not drastically more expensive than without it</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="container"></div>
+<script>
+// Compares two runs on the same machine so the ratio, not wall-clock time, carries the assertion.
+const N = 300;
+const container = document.getElementById("container");
+
+function build(withControls) {
+    container.textContent = "";
+    const start = performance.now();
+    for (let i = 0; i < N; i++) {
+        const audio = document.createElement("audio");
+        if (withControls)
+            audio.controls = true;
+        container.appendChild(audio);
+    }
+    container.offsetHeight;
+    const elapsed = performance.now() - start;
+    container.textContent = "";
+    return elapsed;
+}
+
+test(() => {
+    // Warm up so one-time controls setup is not timed.
+    const warmup = document.createElement("audio");
+    warmup.controls = true;
+    container.appendChild(warmup);
+    container.offsetHeight;
+    container.textContent = "";
+
+    const plainMs = Math.min(build(false), build(false), build(false));
+    const controlsMs = build(true);
+    container.remove();
+
+    // Floor the baseline so timer granularity on a very fast plain run cannot inflate the ratio.
+    const ratio = controlsMs / Math.max(plainMs, 5);
+    assert_less_than(ratio, 20, `${N} <audio controls> took ${controlsMs.toFixed(1)} ms vs ${plainMs.toFixed(1)} ms without controls`);
+}, "Adding the controls attribute does not make creating and laying out audio elements more than 20x slower");
+</script>
