@@ -1,0 +1,3 @@
+Within budget: 12 will-change layers, 1 transformed layers
+Over budget: 0 will-change layers, 1 transformed layers
+

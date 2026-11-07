@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            overflow: hidden;
+        }
+        .will-change {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 600px;
+            height: 500px;
+            background-color: silver;
+            will-change: transform;
+        }
+        .transformed {
+            position: absolute;
+            top: 10px;
+            left: 650px;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+            transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function countLayers(width, height)
+        {
+            return internals.layerTreeAsText(document).split(`(bounds ${width}.00 ${height}.00)`).length - 1;
+        }
+
+        function logLayerCounts(label)
+        {
+            document.getElementById('result').textContent += `${label}: ${countLayers(600, 500)} will-change layers, ${countLayers(100, 100)} transformed layers\n`;
+        }
+
+        function addWillChangeBox()
+        {
+            const box = document.createElement('div');
+            box.className = 'will-change';
+            document.body.insertBefore(box, document.querySelector('.transformed'));
+        }
+
+        window.addEventListener('load', () => {
+            requestAnimationFrame(() => {
+                if (!window.internals)
+                    return;
+
+                // Twelve 600x500 boxes are within 8x the 800x600 viewport, thirteen are not.
+                for (let i = 0; i < 12; ++i)
+                    addWillChangeBox();
+                logLayerCounts('Within budget');
+
+                addWillChangeBox();
+                logLayerCounts('Over budget');
+
+                testRunner.notifyDone();
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="transformed"></div>
+<pre id="result"></pre>
+</body>
+</html>

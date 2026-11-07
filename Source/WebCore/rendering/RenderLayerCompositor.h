@@ -446,7 +446,10 @@ private:
     // Returns true if the policy changed.
     bool updateCompositingPolicy();
     bool canUpdateCompositingPolicy() const;
-    
+    void beginWillChangeAreaEstimate();
+    void addToWillChangeAreaEstimate(const LayerOverlapMap&, const RenderLayer&);
+    bool willChangeAreaEstimateExceedsBudget();
+
     // GraphicsLayerClient implementation
     void paintContents(const GraphicsLayer&, GraphicsContext&, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>) override;
     void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const override;
@@ -653,7 +656,17 @@ private:
     
     CompositingPolicy m_compositingPolicy;
     PAL::HysteresisActivity m_compositingPolicyHysteresis;
+    MonotonicTime m_willChangeBudgetBackoffEndTime;
+    Seconds m_willChangeBudgetBackoffDuration;
 
+    struct WillChangeAreaEstimate {
+        double budget { 0 };
+        FloatRect coverageRect;
+        double area { 0 };
+    };
+    std::optional<WillChangeAreaEstimate> m_willChangeAreaEstimate;
+
+    bool m_ignoresWillChangeOverBudget { false };
     bool m_showDebugBorders { false };
     bool m_showRepaintCounter { false };
     bool m_acceleratedDrawingEnabled { false };

@@ -553,12 +553,17 @@ static inline bool layersLogEnabled()
 
 static constexpr Seconds conservativeCompositingPolicyHysteresisDuration { 2_s };
 
+static constexpr double willChangeBudgetViewportAreaMultiplier = 8;
+static constexpr Seconds initialWillChangeBudgetBackoff { 2_s };
+static constexpr Seconds maximumWillChangeBudgetBackoff { 32_s };
+
 RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     : m_renderView(renderView)
     , m_updateCompositingLayersTimer(*this, &RenderLayerCompositor::updateCompositingLayersTimerFired)
     , m_updateRenderingTimer(*this, &RenderLayerCompositor::scheduleRenderingUpdate)
     , m_compositingPolicy { CompositingPolicy::Normal }
     , m_compositingPolicyHysteresis([](PAL::HysteresisState) { }, conservativeCompositingPolicyHysteresisDuration)
+    , m_willChangeBudgetBackoffDuration(initialWillChangeBudgetBackoff)
 {
 #if PLATFORM(IOS_FAMILY)
     if (m_renderView.frameView().platformWidget())
@@ -1141,7 +1146,17 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         BackingSharingState backingSharingState;
         LayerOverlapMap overlapMap(rootLayer);
 
+        beginWillChangeAreaEstimate();
         computeCompositingRequirements(nullptr, rootLayer, overlapMap, compositingState, backingSharingState);
+
+        if (willChangeAreaEstimateExceedsBudget()) {
+            rootLayer->setDescendantsNeedCompositingRequirementsTraversal();
+
+            CompositingState overBudgetCompositingState(updateRoot);
+            BackingSharingState overBudgetBackingSharingState;
+            LayerOverlapMap overBudgetOverlapMap(rootLayer);
+            computeCompositingRequirements(nullptr, rootLayer, overBudgetOverlapMap, overBudgetCompositingState, overBudgetBackingSharingState);
+        }
     }
 
     LOG(Compositing, "\nRenderLayerCompositor::updateCompositingLayers - mid");
@@ -1531,6 +1546,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     ASSERT(willBeComposited == needsToBeComposited(layer, queryData));
 
+    if (willBeComposited)
+        addToWillChangeAreaEstimate(overlapMap, layer);
+
     // Create or destroy backing here. However, we can't update geometry because layers above us may become composited
     // during post-order traversal (e.g. for clipping).
     bool needsCompositingStatusUpdate = false;
@@ -1632,6 +1650,7 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
         LOG_WITH_STREAM(CompositingOverlap, stream << "unchangedSubtree: layer " << &layer << " will composite, pushed container " << overlapMap);
 
         computeExtent(overlapMap, layer, layerExtent);
+        addToWillChangeAreaEstimate(overlapMap, layer);
         currentState.ancestorHasTransformAnimation |= layerExtent.hasTransformAnimation;
         // Too hard to compute animated bounds if both us and some ancestor is animating transform.
         layerExtent.animationCausesExtentUncertainty |= layerExtent.hasTransformAnimation && compositingState.ancestorHasTransformAnimation;
@@ -4024,6 +4043,9 @@ bool RenderLayerCompositor::requiresCompositingForWillChange(RenderLayerModelObj
     if (!renderer.style().willChange().canTriggerCompositing())
         return false;
 
+    if (m_ignoresWillChangeOverBudget)
+        return false;
+
 #if ENABLE(FULLSCREEN_API)
     // FIXME: does this require layout?
     if (renderer.layer() && isDescendantOfFullScreenLayer(*renderer.layer()) == FullScreenDescendant::No)
@@ -4040,6 +4062,66 @@ bool RenderLayerCompositor::requiresCompositingForWillChange(RenderLayerModelObj
         return true;
 
     return renderer.style().willChange().canTriggerCompositingOnInline();
+}
+
+// Will-change is only a hint, so stop honoring it when pages use it for far more area than they can display.
+void RenderLayerCompositor::beginWillChangeAreaEstimate()
+{
+    m_willChangeAreaEstimate = std::nullopt;
+
+    if (m_ignoresWillChangeOverBudget) {
+        if (MonotonicTime::now() < m_willChangeBudgetBackoffEndTime)
+            return;
+        m_ignoresWillChangeOverBudget = false;
+        rootRenderLayer().setDescendantsNeedCompositingRequirementsTraversal();
+    }
+
+    Ref frameView = m_renderView.frameView();
+    FloatRect visibleRect = frameView->visibleContentRect();
+#if PLATFORM(IOS_FAMILY)
+    FloatRect coverageRect = frameView->exposedContentRect().raw();
+#else
+    FloatRect coverageRect = visibleRect;
+#endif
+    // Tiled layers only retain tiles near the visible area.
+    if (auto* backing = rootRenderLayer().backing()) {
+        if (CheckedPtr tiledBacking = backing->tiledBacking())
+            coverageRect.unite(tiledBacking->coverageRect());
+    }
+
+    m_willChangeAreaEstimate = WillChangeAreaEstimate { visibleRect.area() * willChangeBudgetViewportAreaMultiplier, coverageRect };
+}
+
+void RenderLayerCompositor::addToWillChangeAreaEstimate(const LayerOverlapMap& overlapMap, const RenderLayer& layer)
+{
+    if (!m_willChangeAreaEstimate)
+        return;
+
+    if (!requiresCompositingForWillChange(rendererForCompositingTests(layer)))
+        return;
+
+    // Not the OverlapExtent bounds, which inflate fixed and sticky layers to cover every scroll position.
+    auto bounds = overlapMap.geometryMap().absoluteRect(layer.overlapBounds());
+    m_willChangeAreaEstimate->area += intersection(bounds, m_willChangeAreaEstimate->coverageRect).area();
+}
+
+bool RenderLayerCompositor::willChangeAreaEstimateExceedsBudget()
+{
+    auto estimate = std::exchange(m_willChangeAreaEstimate, std::nullopt);
+    if (!estimate)
+        return false;
+
+    if (estimate->area <= estimate->budget) {
+        if (estimate->area < estimate->budget / 2)
+            m_willChangeBudgetBackoffDuration = initialWillChangeBudgetBackoff;
+        return false;
+    }
+
+    RELEASE_LOG(Compositing, "RenderLayerCompositor %p will-change area %.0f exceeds budget %.0f, ignoring will-change for %.0fs", this, estimate->area, estimate->budget, m_willChangeBudgetBackoffDuration.seconds());
+    m_ignoresWillChangeOverBudget = true;
+    m_willChangeBudgetBackoffEndTime = MonotonicTime::now() + m_willChangeBudgetBackoffDuration;
+    m_willChangeBudgetBackoffDuration = std::min(m_willChangeBudgetBackoffDuration * 2, maximumWillChangeBudgetBackoff);
+    return true;
 }
 
 bool RenderLayerCompositor::requiresCompositingForModel(RenderLayerModelObject& renderer) const
