@@ -850,10 +850,12 @@ auto CSSSelector::RareData::create(AtomString value) -> Ref<RareData>
 
 bool CSSSelector::RareData::matchNth(int count)
 {
+    int64_t wideA = a;
+    int64_t wideB = b;
     if (a > 0)
-        return count >= b && !((count - b) % a);
+        return count >= b && !((count - wideB) % wideA);
     if (a < 0)
-        return count <= b && !((b - count) % -a);
+        return count <= b && !((wideB - count) % -wideA);
     return count == b;
 }
 
