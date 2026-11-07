@@ -208,7 +208,7 @@ ExceptionOr<void> HTMLDialogElement::showModal(Element* source)
     setAttributeWithoutSynchronization(openAttr, emptyAtom());
 
     {
-        CheckedPtr<RenderBlock> containingBlockBeforeStyleResolution;
+        CheckedPtr<RenderBoxModelObject> containingBlockBeforeStyleResolution;
         CheckedPtr renderer = this->renderer();
         if (renderer)
             containingBlockBeforeStyleResolution = renderer->containingBlock();

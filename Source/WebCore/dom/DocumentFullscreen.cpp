@@ -374,7 +374,7 @@ void DocumentFullscreen::elementEnterFullscreen(Element& element)
 
     document->hidePopoversForTopLayerElement(element, FireEvents::No);
 
-    auto containingBlockBeforeStyleResolution = SingleThreadWeakPtr<RenderBlock> { };
+    auto containingBlockBeforeStyleResolution = SingleThreadWeakPtr<RenderBoxModelObject> { };
     if (CheckedPtr renderer = element.renderer())
         containingBlockBeforeStyleResolution = renderer->containingBlock();
 
