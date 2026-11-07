@@ -203,6 +203,28 @@ static void axPerformAction(uint64_t elementToken, const char* actionName)
     axSendRequest("AXPerformAction", dictionary.get());
 }
 
+static bool axReplaceRangeWithText(uint64_t elementToken, JSStringRef text, int location, int length)
+{
+    WKRetainPtr dictionary = adoptWK(WKMutableDictionaryCreate());
+    setValue(dictionary, "elementToken", elementToken);
+    setValue(dictionary, "text", text);
+    setValue(dictionary, "location", static_cast<uint64_t>(location));
+    setValue(dictionary, "length", static_cast<uint64_t>(length));
+
+    WKRetainPtr returnData = axSendRequest("AXReplaceRangeWithText", dictionary.get());
+    return returnData && WKGetTypeID(returnData.get()) == WKBooleanGetTypeID() && WKBooleanGetValue(static_cast<WKBooleanRef>(returnData.get()));
+}
+
+static bool axPostSyncNotification(uint64_t elementToken, JSStringRef handle)
+{
+    WKRetainPtr dictionary = adoptWK(WKMutableDictionaryCreate());
+    setValue(dictionary, "elementToken", elementToken);
+    setValue(dictionary, "handle", handle);
+
+    WKRetainPtr returnData = axSendRequest("AXPostSyncNotification", dictionary.get());
+    return returnData && WKGetTypeID(returnData.get()) == WKBooleanGetTypeID() && WKBooleanGetValue(static_cast<WKBooleanRef>(returnData.get()));
+}
+
 Ref<AccessibilityUIElementClientMac> AccessibilityUIElementClientMac::create(uint64_t elementToken)
 {
     return adoptRef(*new AccessibilityUIElementClientMac(elementToken));
@@ -430,6 +452,22 @@ void AccessibilityUIElementClientMac::showMenu()
         return;
 
     axPerformAction(m_elementToken, "AXShowMenu");
+}
+
+bool AccessibilityUIElementClientMac::replaceTextInRange(JSStringRef text, int location, int length)
+{
+    if (!isValid() || location < 0 || length < 0)
+        return false;
+
+    return axReplaceRangeWithText(m_elementToken, text, location, length);
+}
+
+bool AccessibilityUIElementClientMac::postSyncNotification(JSStringRef handle)
+{
+    if (!isValid())
+        return false;
+
+    return axPostSyncNotification(m_elementToken, handle);
 }
 
 JSValueRef AccessibilityUIElementClientMac::uiElementsForSearchPredicate(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly, unsigned resultsLimit)

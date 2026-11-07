@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="field" type="text" value="">
+<input id="password" type="password" value="">
+<button id="button">Button</button>
+
+<script>
+var output = "Tests that AXSyncNotification is posted with the requested handle, after the notifications for changes made before it was requested.\n\n";
+
+// Notifications in the order they were received.
+var receivedNotifications = [];
+var syncNotificationResolvers = new Map();
+
+function notificationCallback(element, notificationName, userInfo) {
+    if (notificationName === "AXSyncNotification") {
+        const handle = userInfo?.AXSyncNotificationHandle;
+        receivedNotifications.push({ name: notificationName, handle });
+        syncNotificationResolvers.get(handle)?.();
+    } else if (notificationName === "AXValueChanged")
+        receivedNotifications.push({ name: notificationName, id: element.domIdentifier });
+}
+
+// |onReceived| runs as soon as the sync notification is received, before anything else can change.
+function requestSyncNotification(element, handle, onReceived) {
+    const received = new Promise((resolve) => syncNotificationResolvers.set(handle, () => {
+        onReceived?.();
+        resolve();
+    }));
+    if (!element.postSyncNotification(handle))
+        return Promise.resolve(false);
+    return received.then(() => true);
+}
+
+// How many AXValueChanged notifications for the element with |id| were received before the sync notification with |handle|.
+function valueChangesBeforeSync(id, handle) {
+    const syncIndex = receivedNotifications.findIndex((notification) => notification.handle === handle);
+    return receivedNotifications.slice(0, syncIndex).filter((notification) => notification.name === "AXValueChanged" && notification.id === id).length;
+}
+
+function valueChangesAfterSync(id, handle) {
+    const syncIndex = receivedNotifications.findIndex((notification) => notification.handle === handle);
+    return receivedNotifications.slice(syncIndex + 1).filter((notification) => notification.name === "AXValueChanged" && notification.id === id).length;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var axField = accessibilityController.accessibleElementById("field");
+    var axPassword = accessibilityController.accessibleElementById("password");
+    var axButton = accessibilityController.accessibleElementById("button");
+
+    setTimeout(async function() {
+        output += expect("accessibilityController.addNotificationListener(notificationCallback)", "true");
+
+        output += expect("axField.postSyncNotification('')", "false");
+        output += expect("axField.postSyncNotification('x'.repeat(257))", "false");
+
+        // A change made by the page queues its AXValueChanged, which must still be posted first.
+        document.getElementById("field").value = "Changed by script";
+        window.received = await requestSyncNotification(axField, "after-script-change");
+        output += expect("received", "true");
+        output += expect("valueChangesBeforeSync('field', 'after-script-change') > 0", "true");
+
+        // Notifications for password fields are posted one at a time on an interval, but the sync notification
+        // must still follow all of them. How many there are is up to the platform, so don't count them.
+        document.getElementById("password").focus();
+        axPassword.replaceTextInRange("c", 0, 0);
+        axPassword.replaceTextInRange("b", 0, 0);
+        axPassword.replaceTextInRange("a", 0, 0);
+        window.received = await requestSyncNotification(axPassword, "after-password-edits", () => {
+            window.passwordValueAtSync = axPassword.stringValue;
+        });
+        output += expect("received", "true");
+        output += expect("document.getElementById('password').value", "'abc'");
+        output += expect("valueChangesBeforeSync('password', 'after-password-edits') > 0", "true");
+
+        // The sync notification is still posted when the element it was requested on goes away.
+        const syncAfterRemoval = requestSyncNotification(axButton, "after-removal");
+        document.getElementById("button").remove();
+        window.received = await syncAfterRemoval;
+        output += expect("received", "true");
+
+        // A password notification posted after its sync notification would most likely have arrived by now. This doesn't
+        // wait for one, so if that regresses the test fails intermittently rather than every time.
+        output += expect("valueChangesAfterSync('password', 'after-password-edits')", "0");
+        output += expect("passwordValueAtSync", "axPassword.stringValue");
+
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

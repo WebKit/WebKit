@@ -322,6 +322,7 @@ public:
     // Text input
     bool insertText(JSStringRef) override;
     bool replaceTextInRange(JSStringRef, int position, int length) override;
+    bool postSyncNotification(JSStringRef handle) override;
 
     // Text marker methods
     RefPtr<AccessibilityTextMarker> textMarkerForPoint(int x, int y) override;

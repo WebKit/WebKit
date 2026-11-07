@@ -158,8 +158,16 @@ struct PossibleFormValidationErrorData {
 };
 #endif // PLATFORM(COCOA)
 
+// Identifies an AXSyncNotification for the client that asked for it.
+struct SyncNotificationData {
+    String handle;
+
+    String debugDescription() const { return makeString("SyncNotificationData { handle: "_s, handle, " }"_s); }
+};
+
 struct AXNotificationWithData {
     using DataVariant = Variant<std::monostate, AriaNotifyData
+        , SyncNotificationData
 #if PLATFORM(COCOA)
         , LiveRegionAnnouncementData
         , PossibleFormValidationErrorData
@@ -175,6 +183,9 @@ struct AXNotificationWithData {
 
     AXNotificationWithData(AXNotification notification, const AriaNotifyData& data)
         : notification(notification), data(data) { }
+
+    AXNotificationWithData(AXNotification notification, SyncNotificationData&& data)
+        : notification(notification), data(WTF::move(data)) { }
 
 #if PLATFORM(COCOA)
     AXNotificationWithData(AXNotification notification, const LiveRegionAnnouncementData& data)
@@ -673,6 +684,10 @@ public:
     void postNotification(AccessibilityObject&, AXNotification);
     void postDeferredNotification(RenderObject&, AXNotification);
     void postARIANotifyNotification(Node&, const String&, const AriaNotifyOptions&);
+    // Asks for AXSyncNotification with the given handle to be posted on the object with the given ID, once every
+    // notification for work done before this call has been posted, so a client can tell which notifications reflect
+    // a change it just made. Callable from any thread.
+    static void requestSyncNotification(std::optional<AXTreeID>, AXID, String&& handle);
 #if PLATFORM(IOS_FAMILY)
     // Tells assistive technology which captions or subtitles are currently displayed for a media element.
     void postCaptionsDisplayedNotification(const Vector<String>&);
@@ -887,9 +902,11 @@ protected:
     WEBCORE_EXPORT void postPlatformARIANotifyNotification(AccessibilityObject&, const AriaNotifyData&);
     WEBCORE_EXPORT void postPlatformLiveRegionNotification(AccessibilityObject&, const LiveRegionAnnouncementData&);
     WEBCORE_EXPORT void postPlatformPossibleFormValidationErrorNotification(AccessibilityObject&, const PossibleFormValidationErrorData&);
+    WEBCORE_EXPORT void postPlatformSyncNotification(AccessibilityObject&, const SyncNotificationData&);
 #else
     void postPlatformAnnouncementNotification(const String&) { }
     void postPlatformARIANotifyNotification(AccessibilityObject&, const AriaNotifyData&) { }
+    void postPlatformSyncNotification(AccessibilityObject&, const SyncNotificationData&) { }
 #endif
 
     void frameLoadingEventPlatformNotification(RenderView*, AXLoadingEvent);
@@ -931,6 +948,8 @@ private:
 
     void notificationPostTimerFired();
     void enqueueNotificationToPost(Ref<AccessibilityObject>&&, AXNotificationWithData&&);
+    void postSyncNotification(AccessibilityObject&, const String& handle);
+    void enqueueSyncNotification(AccessibilityObject&, SyncNotificationData&&);
 
     void announcementTranslationDidComplete(uint64_t requestID, Vector<String>&& translatedSegments);
     bool isReRenderedContent(const AccessibilityObject&) const;
@@ -1128,6 +1147,14 @@ private:
 #if PLATFORM(COCOA)
     Timer m_passwordNotificationTimer;
     Deque<std::pair<Ref<AccessibilityObject>, AXTextChangeContext>> m_passwordNotifications;
+    // Password notifications are posted one per interval, so a sync notification requested while some are
+    // queued waits until those ahead of it have been posted.
+    struct SyncNotificationAwaitingPasswordNotifications {
+        Ref<AccessibilityObject> object;
+        SyncNotificationData data;
+        size_t passwordNotificationsAhead;
+    };
+    Deque<SyncNotificationAwaitingPasswordNotifications> m_syncNotificationsAwaitingPasswordNotifications;
 #endif
 
     Timer m_liveRegionChangedPostTimer;

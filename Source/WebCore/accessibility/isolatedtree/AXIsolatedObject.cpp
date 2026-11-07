@@ -1843,6 +1843,17 @@ bool AXIsolatedObject::replaceTextInRange(const String& replacementText, const C
     }, Accessibility::InteractiveTimeout, false);
 }
 
+bool AXIsolatedObject::postSyncNotification(const String& handle)
+{
+    if (!Accessibility::isValidSyncNotificationHandle(handle))
+        return false;
+
+    // Don't wait for the main thread. This is queued behind any request made before it, such as an edit,
+    // which is all the ordering a sync notification needs.
+    AXObjectCache::requestSyncNotification(treeID(), objectID(), handle.isolatedCopy());
+    return true;
+}
+
 bool AXIsolatedObject::insertText(const String& text)
 {
     AXTRACE(makeString("AXIsolatedObject::insertText text = "_s, text));

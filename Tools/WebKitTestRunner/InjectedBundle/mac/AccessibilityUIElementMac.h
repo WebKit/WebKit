@@ -282,6 +282,7 @@ public:
     RefPtr<AccessibilityTextMarkerRange> selectedTextMarkerRange() override;
     void resetSelectedTextMarkerRange() override;
     bool replaceTextInRange(JSStringRef, int position, int length) override;
+    bool postSyncNotification(JSStringRef handle) override;
     bool insertText(JSStringRef) override;
     RefPtr<AccessibilityTextMarkerRange> textInputMarkedTextMarkerRange() const override;
     RefPtr<AccessibilityTextMarker> startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*) override;
