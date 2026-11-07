@@ -19,6 +19,28 @@ TestPage.registerInitializer(() => {
         };
     }
 
+    // Layout timeline records do not know which target sent them, so keep the target and type of every record
+    // payload, nested ones included.
+    let recordPayloads = [];
+    let recordPayloadListeners = [];
+    let originalEventRecorded = WI.timelineManager.eventRecorded;
+    WI.timelineManager.eventRecorded = function(target, recordPayload) {
+        let payloads = [recordPayload];
+        while (payloads.length) {
+            let payload = payloads.pop();
+            recordPayloads.push({target, type: payload.type});
+            for (let listener of recordPayloadListeners.slice()) {
+                if (listener.target === target && listener.type === payload.type) {
+                    recordPayloadListeners.remove(listener);
+                    listener.resolve();
+                }
+            }
+            if (payload.children)
+                payloads.push(...payload.children);
+        }
+        return originalEventRecorded.call(this, target, recordPayload);
+    };
+
     window.FrameTimelineTest = {};
 
     // Resolves when the target reports that the domain started (or stopped) tracking, including if it already did
@@ -40,6 +62,22 @@ TestPage.registerInitializer(() => {
         return trackingEvents.some((event) => event.functionName === functionName && event.target === target && event.domain === domain);
     };
 
+    // Resolves when the target sends a record payload of the given type.
+    FrameTimelineTest.awaitRecordPayload = function(target, type) {
+        return new Promise((resolve) => {
+            recordPayloadListeners.push({target, type, resolve});
+        });
+    };
+
+    FrameTimelineTest.clearRecordPayloads = function() {
+        recordPayloads = [];
+    };
+
+    // Returns the types of the record payloads from the target since they were last cleared.
+    FrameTimelineTest.recordPayloadTypes = function(target) {
+        return recordPayloads.filter((payload) => payload.target === target).map((payload) => payload.type);
+    };
+
     FrameTimelineTest.awaitCapturingState = function(capturingState) {
         return new Promise((resolve) => {
             let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
@@ -55,6 +93,7 @@ TestPage.registerInitializer(() => {
     // Starts a new recording, and resolves once each of the given targets has started its Timeline domain.
     FrameTimelineTest.startCapturing = async function(targets) {
         FrameTimelineTest.clearTrackingEvents();
+        FrameTimelineTest.clearRecordPayloads();
 
         let activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
         const newRecording = true;

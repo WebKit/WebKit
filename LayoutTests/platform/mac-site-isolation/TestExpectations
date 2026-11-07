@@ -27,6 +27,8 @@ http/tests/media/media-stream/enumerate-devices-source-id.html [ Timeout ]
 http/tests/workers/service/resultingClientId.https.html [ Timeout ]
 http/tests/navigation/cross-site-iframe-nav-with-bfcache.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-video.html [ Pass Timeout ]
+webkit.org/b/329361 inspector/timeline/timeline-layout-events.html [ Timeout ]
+webkit.org/b/329361 inspector/timeline/timeline-layout-events-iframe.html [ Timeout ]
 
 ########################
 # Tests that Text fail #
