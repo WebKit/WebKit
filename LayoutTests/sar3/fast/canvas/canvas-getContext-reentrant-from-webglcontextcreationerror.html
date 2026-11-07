@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForWebGLEnabled=true runSingly=true ] -->
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const canvas = document.createElement("canvas");
+
+let contextFromListener;
+canvas.addEventListener("webglcontextcreationerror", () => {
+    contextFromListener = canvas.getContext("webgl");
+});
+
+const gl = canvas.getContext("webgl", { failContextCreationForTesting: "IPCBufferOOM" });
+
+if (window.GCController)
+    GCController.collect();
+
+const log = [
+    `gl = ${gl}`,
+    `context from listener = ${contextFromListener.constructor.name}`,
+    `its canvas is the same element = ${contextFromListener.canvas === canvas}`,
+    `it still owns the slot = ${contextFromListener === canvas.getContext("webgl")}`,
+    "PASS if no crash.",
+];
+document.body.appendChild(document.createElement("pre")).textContent = log.join("\n");
+</script>
