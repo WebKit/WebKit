@@ -76,13 +76,34 @@ class HTMLDiff(DiffBase):
     font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace;
     font-size: 12px;
     margin: 1em 0;
-    overflow-x: auto;
     position: relative;
+}
+div.file.empty {
+    overflow-wrap: anywhere;
+    padding: 0.5em 0;
+}
+div.file:not(.empty), details.file[open] {
+    overflow-x: auto;
+}
+.file-note {
+    color: #57606a;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 0.25em 1.5em;
 }
 @media (prefers-color-scheme: dark) {
     .file {
         background-color: #161b22;
     }
+    .file-note {
+        color: #848d97;
+    }
+}
+
+summary {
+    cursor: pointer;
+    padding: 0.5em 0;
+    position: sticky;
+    left: 0;
 }
 
 h1 {
@@ -94,6 +115,37 @@ h1 {
     display: inline;
     width: 100%;
     padding: 0.5em;
+}
+
+.search {
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 0.5em;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+.search input {
+    width: 30em;
+}
+.search-status {
+    color: #57606a;
+    margin-left: 1em;
+}
+::highlight(search) {
+    background-color: #fff8c5;
+}
+::highlight(search-current) {
+    background-color: #ffd33d;
+}
+@media (prefers-color-scheme: dark) {
+    ::highlight(search) {
+        background-color: #4d3d00;
+    }
+    ::highlight(search-current) {
+        background-color: #9e6a03;
+    }
 }
 
 .section {
@@ -203,8 +255,265 @@ pre, .text {
     }
 }
 </style>
+<script>
+var MAX_EXPANDED_FILES = 20;
+var MAX_EXPANDED_MATCHES = 50;
+
+var search = {
+    query: '',
+    files: [],
+    byElement: new Map(),
+    fileIndex: -1,
+    matchIndex: -1,
+};
+var lowercaseCache = new WeakMap();
+
+function deferredContents(details) {
+    return details.querySelector(':scope > script[type="text/html"]');
+}
+
+function inflate(details) {
+    var deferred = deferredContents(details);
+    if (!deferred)
+        return;
+    deferred.insertAdjacentHTML('afterend', deferred.textContent);
+    deferred.remove();
+}
+
+document.addEventListener('toggle', function(event) {
+    var details = event.target;
+    if (!details.open || !details.classList || !details.classList.contains('file'))
+        return;
+    inflate(details);
+
+    var file = search.byElement.get(details);
+    if (file && !file.ranges) {
+        computeMatches(file);
+        updateHighlights();
+        updateStatus();
+    }
+}, true);
+
+// Must match Python's html.escape(), which produced the deferred contents.
+function escapeHTML(string) {
+    return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
+}
+
+function countOccurrences(text, query) {
+    var count = 0;
+    for (var index = text.indexOf(query); index >= 0; index = text.indexOf(query, index + query.length))
+        ++count;
+    return count;
+}
+
+// Estimates matches in a file whose contents have not been inflated by searching the escaped markup
+// directly, ignoring matches inside of tags. Exact counts are computed once the file is inflated.
+function countDeferredMatches(details, query) {
+    var count = countOccurrences(details.querySelector(':scope > summary').textContent.toLowerCase(), query);
+    var deferred = deferredContents(details);
+    var html = lowercaseCache.get(deferred);
+    if (html === undefined) {
+        html = deferred.textContent.toLowerCase();
+        lowercaseCache.set(deferred, html);
+    }
+    var escaped = escapeHTML(query);
+    for (var index = html.indexOf(escaped); index >= 0; index = html.indexOf(escaped, index + escaped.length)) {
+        if (html.lastIndexOf('>', index) > html.lastIndexOf('<', index))
+            ++count;
+    }
+    return count;
+}
+
+function rangesFor(element, query) {
+    var ranges = [];
+    var walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    for (var node = walker.nextNode(); node; node = walker.nextNode()) {
+        var text = node.data.toLowerCase();
+        for (var index = text.indexOf(query); index >= 0; index = text.indexOf(query, index + query.length)) {
+            var range = new Range();
+            range.setStart(node, index);
+            range.setEnd(node, index + query.length);
+            ranges.push(range);
+        }
+    }
+    return ranges;
+}
+
+function computeMatches(file) {
+    if (deferredContents(file.element)) {
+        file.ranges = null;
+        file.count = countDeferredMatches(file.element, search.query);
+        return;
+    }
+    file.ranges = rangesFor(file.element, search.query);
+    file.count = file.ranges.length;
+}
+
+function materialize(file) {
+    if (file.ranges)
+        return;
+    inflate(file.element);
+    file.element.open = true;
+    computeMatches(file);
+    updateHighlights();
+}
+
+function updateHighlights() {
+    if (!window.CSS || !CSS.highlights)
+        return;
+    var highlight = new Highlight();
+    for (var file of search.files) {
+        for (var range of file.ranges || [])
+            highlight.add(range);
+    }
+    CSS.highlights.set('search', highlight);
+
+    var current = search.files[search.fileIndex];
+    if (current && current.ranges && current.ranges[search.matchIndex]) {
+        var currentHighlight = new Highlight(current.ranges[search.matchIndex]);
+        currentHighlight.priority = 1;
+        CSS.highlights.set('search-current', currentHighlight);
+    } else
+        CSS.highlights.delete('search-current');
+}
+
+function updateStatus() {
+    var status = document.querySelector('.search-status');
+    if (!search.query) {
+        status.textContent = '';
+        return;
+    }
+    var total = 0;
+    var position = 0;
+    for (var index = 0; index < search.files.length; ++index) {
+        if (index < search.fileIndex)
+            position += search.files[index].count;
+        total += search.files[index].count;
+    }
+    if (!total) {
+        status.textContent = 'No matches';
+        return;
+    }
+    var files = search.files.length + (search.files.length === 1 ? ' file' : ' files');
+    if (search.fileIndex < 0)
+        status.textContent = total + ' matches in ' + files;
+    else
+        status.textContent = (position + search.matchIndex + 1) + ' of ' + total + ' matches in ' + files;
+}
+
+function select(fileIndex, matchIndex) {
+    search.fileIndex = fileIndex;
+    search.matchIndex = matchIndex;
+    var file = search.files[fileIndex];
+    file.element.open = true;
+    updateHighlights();
+    updateStatus();
+    file.ranges[matchIndex].startContainer.parentElement.scrollIntoView({ block: 'center', inline: 'nearest' });
+}
+
+function step(direction) {
+    var count = search.files.length;
+    if (!count)
+        return;
+    var fileIndex = search.fileIndex < 0 ? (direction > 0 ? -1 : 0) : search.fileIndex;
+    var matchIndex = search.fileIndex < 0 ? -1 : search.matchIndex + direction;
+    for (var attempts = 0; attempts <= count; ++attempts) {
+        var file = search.files[fileIndex];
+        if (file && file.ranges && matchIndex >= 0 && matchIndex < file.ranges.length) {
+            select(fileIndex, matchIndex);
+            return;
+        }
+        fileIndex = (fileIndex + direction + count) % count;
+        file = search.files[fileIndex];
+        materialize(file);
+        matchIndex = direction > 0 ? 0 : file.ranges.length - 1;
+    }
+}
+
+function runSearch(query) {
+    search.query = query.toLowerCase();
+    search.files = [];
+    search.byElement = new Map();
+    search.fileIndex = -1;
+    search.matchIndex = -1;
+
+    for (var element of document.querySelectorAll('div.file.commit, details.file, div.file.empty')) {
+        if (!search.query) {
+            element.hidden = false;
+            continue;
+        }
+        var file = { element: element, count: 0, ranges: null };
+        computeMatches(file);
+        // Commit messages stay visible as context for the files around them.
+        if (!element.classList.contains('commit'))
+            element.hidden = !file.count;
+        if (!file.count)
+            continue;
+        search.files.push(file);
+        search.byElement.set(element, file);
+        if (element.tagName === 'DETAILS' && search.files.length <= MAX_EXPANDED_MATCHES)
+            materialize(file);
+    }
+
+    updateHighlights();
+    updateStatus();
+    if (search.query)
+        step(1);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var files = document.querySelectorAll('details.file');
+    if (files.length <= MAX_EXPANDED_FILES) {
+        for (var file of files)
+            file.open = true;
+    }
+
+    var input = document.querySelector('.search input');
+    var timer = null;
+
+    // Steps to the next match, unless the query has changed since the last search.
+    function advance(direction) {
+        clearTimeout(timer);
+        if (input.value.toLowerCase() !== search.query)
+            runSearch(input.value);
+        else
+            step(direction);
+    }
+
+    input.addEventListener('input', function() {
+        clearTimeout(timer);
+        timer = setTimeout(function() { runSearch(input.value); }, 300);
+    });
+    input.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            advance(event.shiftKey ? -1 : 1);
+        } else if (event.key === 'Escape')
+            input.blur();
+    });
+
+    // The browser's find only sees expanded files, so Cmd-F uses our search, which covers every file.
+    document.addEventListener('keydown', function(event) {
+        if (!(event.metaKey || event.ctrlKey) || event.altKey)
+            return;
+        var key = event.key.toLowerCase();
+        if (key === 'f') {
+            event.preventDefault();
+            input.focus();
+            input.select();
+        } else if (key === 'g' && input.value) {
+            event.preventDefault();
+            advance(event.shiftKey ? -1 : 1);
+        }
+    });
+});
+</script>
 </head>
 <body>
+<div class='search'>
+    <input type='search' placeholder='Search all files'>
+    <span class='search-status'></span>
+</div>
 '''
     TAIL = '</body>\n</html>\n'
     INDENT = 4 * ' '
@@ -218,7 +527,7 @@ pre, .text {
         MOVED = 3
 
     class Section(object):
-        SECTION_RE = re.compile(r'@@\s+-(\d+),\d+\s+\+(\d+),\d+\s+@@\s+(.*)')
+        SECTION_RE = re.compile(r'@@\s+-(\d+)(?:,(\d+))?\s+\+(\d+)(?:,(\d+))?\s+@@\s*(.*)')
         ORIGINAL = 1
         EDITED = 2
         CONFLICT = 3
@@ -231,15 +540,33 @@ pre, .text {
             if not match:
                 return None
             return cls(
-                title=match.group(3),
+                title=match.group(5),
                 original_position=match.group(1),
-                edited_position=match.group(2),
+                edited_position=match.group(3),
+                original_length=match.group(2) or 1,
+                edited_length=match.group(4) or 1,
             )
 
-        def __init__(self, title: str, original_position: int | str, edited_position: int | str) -> None:
+        def __init__(
+            self, title: str,
+            original_position: int | str, edited_position: int | str,
+            original_length: int | str = 0, edited_length: int | str = 0,
+        ) -> None:
             self.title = title
             self.original_position = int(original_position)
             self.edited_position = int(edited_position)
+            self.original_remaining = int(original_length)
+            self.edited_remaining = int(edited_length)
+
+        @property
+        def complete(self) -> bool:
+            return self.original_remaining <= 0 and self.edited_remaining <= 0
+
+        def consume(self, prefix: str) -> None:
+            if prefix != '+':
+                self.original_remaining -= 1
+            if prefix != '-':
+                self.edited_remaining -= 1
 
         def header(self) -> list[str]:
             return [
@@ -302,6 +629,22 @@ pre, .text {
             return files[0]
         return '{} -> {}'.format(*files)
 
+    @classmethod
+    def paths_from_diff_header(cls, args: str) -> list[str]:
+        args = args.rstrip()
+        if not args.startswith('--git '):
+            return args.split()[-1:]
+        args = args[len('--git '):]
+
+        # Paths may contain spaces, so prefer the split where both sides name the same file
+        half = len(args) // 2
+        if args[half:half + 1] == ' ' and args[2:half] == args[half + 3:]:
+            return [args[:half], args[half + 1:]]
+        if ' b/' in args:
+            original, edited = args.split(' b/', 1)
+            return [original, 'b/' + edited]
+        return args.split()
+
     def commit_message_line(self, line: str, context: str | None = None) -> list[str]:
         if context:
             return [
@@ -327,32 +670,97 @@ pre, .text {
         self.accepted = True
 
         self._file_handle: IO[str] | None = None
-        self._div: list[str | None] = []
+        self._div: list[tuple[str | None, str]] = []
         self._section: HTMLDiff.Section | None = None
         self._current_title: str | None = None
+        self._pending_title: str | None = None
+        self._pending_notes: list[str] = []
+        self._file_status: str | None = None
+        self._old_mode: str | None = None
         self._files: list[str] = []
         self._conflict_side: str | None = None
         self._in_commit_message = False
+        self._skip_until_header = False
         self._position = 1
 
         self.file = os.path.join(tempfile.gettempdir(), 'diff.html')
 
-    def _start_div(self, klass: str | None = None) -> None:
+    def _start_div(self, klass: str | None = None, extra_class: str | None = None) -> None:
         assert self._file_handle is not None
-        self._file_handle.write("{}<div class='{}'>\n".format(len(self._div) * self.INDENT, klass))
-        self._div.append(klass)
+        self._file_handle.write("{}<div class='{}'>\n".format(len(self._div) * self.INDENT, '{} {}'.format(klass, extra_class) if extra_class else klass))
+        self._div.append((klass, '</div>'))
 
-    def _end_div(self, klass: str | None = None) -> None:
-        if not self._div or self._div[-1] != klass:
+    def _start_collapsed_file(self, title: str | None) -> None:
+        # File contents are deferred inside an inert script block so the browser does not build their DOM
+        # until the user expands the file. Contents are escaped, so they cannot contain a closing script tag.
+        assert self._file_handle is not None
+        indent = len(self._div) * self.INDENT
+        self._file_handle.write("{}<details class='file'>\n".format(indent))
+        self._file_handle.write('{}{}<summary><h1>{}</h1></summary>\n'.format(indent, self.INDENT, escape(title or '')))
+        self._file_handle.write("{}{}<script type='text/html'>\n".format(indent, self.INDENT))
+        self._div.append(('file', '{}</script>\n{}</details>'.format(self.INDENT, indent)))
+
+    def _flush_pending_file(self) -> None:
+        # Files without any sections (pure moves, copies, binary or mode changes) have nothing to expand.
+        if self._pending_title is None:
             return
         assert self._file_handle is not None
-        self._div.pop()
-        self._file_handle.write("{}</div>\n".format(len(self._div) * self.INDENT))
+        indent = len(self._div) * self.INDENT
+        self._file_handle.write("{}<div class='file empty'>\n".format(indent))
+        self._file_handle.write('{}{}<h1>{}</h1>\n'.format(indent, self.INDENT, escape(self._pending_title)))
+        self._write_notes(indent + self.INDENT)
+        self._file_handle.write('{}</div>\n'.format(indent))
+        self._pending_title = None
+
+    def _add_note(self, note: str) -> None:
+        # Notes describe changes without sections, they can only be attached to a file which hasn't been written yet
+        if self._pending_title is not None:
+            self._pending_notes.append(note)
+
+    def _write_notes(self, indent: str) -> None:
+        assert self._file_handle is not None
+        for note in self._pending_notes:
+            self._file_handle.write("{}<div class='file-note'>{}</div>\n".format(indent, escape(note)))
+        self._pending_notes = []
+
+    def _set_title(self, title: str | None) -> None:
+        if title is None or title == self._current_title:
+            return
+        self._flush_pending_file()
+        self._end_div(klass='file')
+        self._pending_title = title
+        self._current_title = title
+
+    def _end_div(self, klass: str | None = None) -> None:
+        if not self._div or self._div[-1][0] != klass:
+            return
+        assert self._file_handle is not None
+        _, closing = self._div.pop()
+        self._file_handle.write("{}{}\n".format(len(self._div) * self.INDENT, closing))
 
     def add_line(self, line: str | None) -> str:
         line = super(HTMLDiff, self).add_line(line)
-        splitline = line.rstrip().split(maxsplit=1)
-        if len(splitline) == 2 and splitline[0] in ('rename', 'new', 'deleted'):
+        # local.Git.diff strips trailing whitespace from the signature delimiter
+        is_signature = line.rstrip() == '--'
+        if self._skip_until_header:
+            if not is_signature and not line.startswith(('diff ', 'From ')):
+                return line
+            self._skip_until_header = False
+        if line.rstrip() == 'GIT binary patch':
+            # Binary patches are base85 encoded data, which cannot be meaningfully displayed
+            self._skip_until_header = True
+            self._add_note('Binary file {}'.format(self._file_status or 'changed'))
+            return line
+        if is_signature and not self._in_commit_message and (not self._section or self._section.complete):
+            # format-patch ends each patch with a signature (usually the git version), which is not part of the diff
+            self._end_div(klass='section')
+            self._section = None
+            self._skip_until_header = True
+            return line
+
+        # Indented lines are always section content, never headers
+        splitline = [] if line[:1].isspace() else line.rstrip().split(maxsplit=1)
+        if len(splitline) == 2 and splitline[0] in ('rename', 'copy', 'new', 'deleted', 'old', 'Binary'):
             splitline = line.rstrip().split(maxsplit=2)
             splitline[0] = '{} {}'.format(splitline[0], splitline.pop(1))
         word = splitline[0] if splitline else None
@@ -375,43 +783,69 @@ pre, .text {
             return line
 
         if word == 'From':
+            self._flush_pending_file()
             self._in_commit_message = True
             self._end_div(klass='section')
             self._end_div(klass='file')
-            self._start_div(klass='file')
+            self._start_div(klass='file', extra_class='commit')
             assert self._file_handle is not None
-            self._file_handle.write('{}<h1>{}</h1>\n'.format(len(self._div) * self.INDENT, splitline[1] if len(splitline) > 1 else '?'))
+            self._file_handle.write('{}<h1>{}</h1>\n'.format(len(self._div) * self.INDENT, escape(splitline[1]) if len(splitline) > 1 else '?'))
             self._start_div(klass='section')
             self._position = 1
             self._section = None
+            self._files = []
+            self._current_title = None
+            self._file_status = None
             return line
 
         if word in ('diff', 'index', 'deleted', 'new file', 'deleted file'):
             self._files = []
             self._end_div(klass='section')
+            self._section = None
+            if word == 'diff':
+                self._file_status = None
+                self._old_mode = None
+                # Binary and mode-only changes have no ---/+++ lines, the diff header is their only title
+                self._set_title(self.title_for(*self.paths_from_diff_header(splitline[1] if len(splitline) > 1 else '')))
+            elif word == 'new file':
+                self._file_status = 'added'
+            elif word == 'deleted file':
+                self._file_status = 'deleted'
             return line
 
-        if word in ('similarity',):
+        if word == 'old mode' and len(splitline) > 1:
+            self._old_mode = splitline[1]
+            return line
+        if word == 'new mode' and len(splitline) > 1:
+            self._add_note('Mode changed from {} to {}'.format(self._old_mode or '?', splitline[1]))
+            return line
+        if word == 'Binary files':
+            self._add_note('Binary file {}'.format(self._file_status or 'changed'))
+            return line
+        if word in ('similarity', 'dissimilarity'):
             return line
 
-        if not self._files and word in ('---', 'rename from') and len(splitline) > 1:
+        if not self._files and word in ('---', 'rename from', 'copy from') and len(splitline) > 1:
             self._files = [splitline[1]]
             return line
-        if len(self._files) == 1 and word in ('+++', 'rename to'):
+        if len(self._files) == 1 and word in ('+++', 'rename to', 'copy to'):
             self._files.append(splitline[1])
             title = self.title_for(*self._files)
-
-            if title != self._current_title:
-                self._end_div(klass='file')
-                self._start_div(klass='file')
-                assert self._file_handle is not None
-                self._file_handle.write('{}<h1>{}</h1>\n'.format(len(self._div) * self.INDENT, title))
-            self._current_title = title
+            if self._pending_title is not None and title is not None:
+                # Prefer these paths over the title parsed from the diff header, which can be ambiguous
+                self._pending_title = title
+                self._current_title = title
+            else:
+                self._set_title(title)
             return line
 
         new_section = self.Section.from_header(line)
         if new_section:
             assert self._file_handle is not None
+            if self._pending_title is not None:
+                self._start_collapsed_file(self._pending_title)
+                self._write_notes(len(self._div) * self.INDENT)
+                self._pending_title = None
             if self._section:
                 self._end_div(klass='section')
                 self._file_handle.write('{}<br>\n'.format(len(self._div) * self.INDENT))
@@ -455,6 +889,9 @@ pre, .text {
         elif line[0] == '+':
             typ = self._section.EDITED
 
+        # '\ No newline at end of file' annotates the previous line, it is not counted in the hunk
+        if line[0] != '\\':
+            self._section.consume(line[0])
         for output_line in self._section.line(line[1:-1], type=typ):
             self._file_handle.write('{}{}\n'.format(len(self._div) * self.INDENT, output_line))
 
@@ -465,7 +902,12 @@ pre, .text {
         self._div = []
         self._section = None
         self._current_title = None
+        self._pending_title = None
+        self._pending_notes = []
+        self._file_status = None
+        self._old_mode = None
         self._files = []
+        self._skip_until_header = False
 
         self._file_handle.write(self.HEAD)
 
@@ -475,8 +917,9 @@ pre, .text {
         if not self._file_handle:
             return
 
+        self._flush_pending_file()
         while self._div:
-            self._end_div(klass=self._div[-1])
+            self._end_div(klass=self._div[-1][0])
         self._file_handle.write(self.TAIL)
 
         self._file_handle.close()
