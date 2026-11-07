@@ -46,6 +46,7 @@ private:
     NODELETE bool supportsBaseAppearance(StyleAppearance) const final;
 
     void didAttachRenderers() final;
+    void didRecalcStyle(OptionSet<Style::Change>) final;
     void setPopoverVisibilityState(PopoverVisibilityState) final;
     void popoverWasHidden() final;
 };

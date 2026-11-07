@@ -26,12 +26,15 @@
 #include "config.h"
 #include "SelectPopoverElement.h"
 
+#include "AXObjectCache.h"
 #include "Document.h"
 #include "HTMLSelectElement.h"
+#include "NodeDocument.h"
 #include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "ShadowRoot.h"
 #include "StyleAppearance.h"
+#include "StyleChange.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -67,6 +70,17 @@ void SelectPopoverElement::didAttachRenderers()
 
     if (RefPtr select = selectElement())
         select->closePickerIfNoLongerBaseAppearance();
+}
+
+void SelectPopoverElement::didRecalcStyle(OptionSet<Style::Change> styleChange)
+{
+    HTMLDivElement::didRecalcStyle(styleChange);
+
+    if (!styleChange.contains(Style::Change::Renderer))
+        return;
+    RefPtr select = selectElement();
+    if (CheckedPtr cache = protect(document())->existingAXObjectCache(); cache && select)
+        cache->onSelectPickerStyleChange(*select);
 }
 
 void SelectPopoverElement::setPopoverVisibilityState(PopoverVisibilityState visibilityState)
